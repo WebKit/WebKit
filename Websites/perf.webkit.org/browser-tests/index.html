@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.2.5/mocha.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/expect/1.20.2/expect.min.js"></script>
+<script>
+
+mocha.setup('bdd');
+
+</script>
+</head>
+<body>
+<div id="mocha"></div>
+<script src="component-base-tests.js"></script>
+<script>
+
+afterEach(() => {
+    BrowsingContext.cleanup();
+});
+
+class BrowsingContext {
+
+    constructor()
+    {
+        let iframe = document.createElement('iframe');
+        document.body.appendChild(iframe);
+        iframe.style.position = 'absolute';
+        iframe.style.left = '0px';
+        iframe.style.top = '0px';
+        BrowsingContext._iframes.push(iframe);
+
+        this._iframe = iframe;
+        this.symbols = {};
+        this.global = this._iframe.contentWindow;
+        this.document = this._iframe.contentDocument;
+    }
+
+    importScript(path, ...symbolList)
+    {
+        const doc = this._iframe.contentDocument;
+        const global = this._iframe.contentWindow;
+        return new Promise((resolve, reject) => {
+            let script = doc.createElement('script');
+            script.addEventListener('load', resolve);
+            script.addEventListener('error', reject);
+            script.src = path;
+            doc.body.appendChild(script);
+        }).then(() => {
+            const script = doc.createElement('script');
+            script.textContent = `window.importedSymbols = [${symbolList.join(', ')}];`;
+            doc.body.appendChild(script);
+
+            const importedSymbols = global.importedSymbols;
+            for (let i = 0; i < symbolList.length; i++)
+                this.symbols[symbolList[i]] = importedSymbols[i];
+
+            return symbolList.length == 1 ? importedSymbols[0] : importedSymbols;
+        });
+    }
+
+    static cleanup()
+    {
+        BrowsingContext._iframes.forEach((iframe) => { iframe.remove(); });
+        BrowsingContext._iframes = [];
+    }
+
+    static createWithScripts(scriptList)
+    {
+        let iframe = document.createElement('iframe');
+        document.body.appendChild(iframe);
+        const doc = iframe.contentDocument;
+
+        let symbolList = [];
+        return Promise.all(scriptList.map((entry) => {
+            let [path, ...symbols] = entry;
+            symbolList = symbolList.concat(symbols);
+            return new Promise((resolve, reject) => {
+                let script = doc.createElement('script');
+                script.addEventListener('load', resolve);
+                script.addEventListener('error', reject);
+                script.src = path;
+                doc.body.appendChild(script);
+            });
+        })).then(() => {
+            const script = doc.createElement('script');
+            script.textContent = `var symbols = { ${symbolList.join(', ')} };`;
+            doc.body.appendChild(script);
+            return iframe.contentWindow;
+        });
+    }
+}
+BrowsingContext._iframes = [];
+
+mocha.checkLeaks();
+mocha.globals(['expect', 'BrowsingContext']);
+mocha.run();
+
+</script>
+</body>
+</html>

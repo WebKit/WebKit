@@ -1,3 +1,65 @@
+2017-01-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Adopt custom elements API in perf dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=167045
+
+        Reviewed by Darin Adler.
+
+        Adopt custom elements API in ComponentBase, and create the shadow tree lazily in content() and render()
+        instead of eagerly creating it inside the constructor.
+
+        For now, create a separate element class for each component in ComponentBase.defineElement instead of
+        making ComponentBase inherit from HTMLElement to preserve the semantics we have as well as to test
+        the boundaries of what custom elements API allows for framework authors.
+
+        In order to ensure one-to-one correspondence between elements and their components, we use a static map,
+        ComponentBase._currentlyConstructedByInterface, to remember which element or component is being created
+        and use that in custom element's constructor to update element.component() and this._element.
+
+        Also dropped the support for not having attachShadow as we've shipped this feature in Safari 10.
+
+        Finally, added tests to be ran inside a browser to test the front end code in browser-tests.
+
+        * browser-tests/component-base-tests.js: Added. Basic tests for ComponentBase.
+        * browser-tests/index.html: Added.
+
+        * public/v3/components/base.js:
+        (ComponentBase): Don't create the shadow tree. Use the currently constructed element as this._element if
+        there is one (the custom element's constructor is getting called). Otherwise create a new element but
+        store this component in the map to avoid creating a new component in the custom element's constructor.
+        (ComponentBase.prototype.content): Lazily create the shadow tree now.
+        (ComponentBase.prototype.render): Ditto.
+        (ComponentBase.prototype._ensureShadowTree): Renamed from _constructShadowTree. Dropped the support for
+        not having shadow DOM API. This is now required. Also use importNode instead of cloneNode in cloning
+        the template content since the latter would not get upgraded.
+        (ComponentBase.prototype._recursivelyReplaceUnknownElementsByComponents): Modernized the code. Don't
+        re-create a component if its element had already been upgraded by its custom element constructor.
+        (ComponentBase.defineElement): Add this component to the static maps. _componentByName is used by
+        _recursivelyReplaceUnknownElementsByComponents to instantiate new components in the browsers that don't
+        support custom elements API and _componentByClass is used by ComponentBase's constructor to lookup the
+        element name. The latter should go away once all components fully adopt ComponentBase.defineElement.
+        (ComponentBase.defineElement.elementClass): A class to define a custom element for the component.
+        We need to reconfigure the property since class's name is not writable but configurable.
+
+        * public/v3/components/button-base.js:
+        (ButtonBase.htmlTemplate): Added. Extracted the common code from CloseButton and WarningIcon.
+        (ButtonBase.buttonContent): Added. An abstract method overridden by CloseButton and WarningIcon.
+        (ButtonBase.sizeFactor): Added. Overridden by WarningIcon.
+        (ButtonBase.cssTemplate): Updated to use :host.
+        * public/v3/components/close-button.js:
+        (CloseButton.buttonContent): Renamed from htmlTemplate.
+        * public/v3/components/spinner-icon.js:
+        (SpinnerIcon.cssTemplate): Removed webkit prefixed properties, and updated it to animate stroke instead
+        of opacity to reduce the power usage.
+        (SpinnerIcon.htmlTemplate): Factored stroke, stroke-width, and stroke-linecap into cssTemplate.
+        * public/v3/components/warning-icon.js:
+        (WarningIcon.cssTemplate): Deleted.
+        (WarningIcon.sizeFactor): Added.
+        (WarningIcon.buttonContent): Renamed from htmlTemplate.
+        * public/v3/pages/summary-page.js:
+        (SummaryPage._constructRatioGraph): Fixed a bug that we were not never calling spinner.updateRendering().
+        (SummaryPage.prototype._renderCell):
+
 2017-01-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Instrument calls to render()

@@ -112,14 +112,17 @@ class SummaryPage extends PageWithHeading {
 
         var state = ChartsPage.createStateForConfigurationList(configurationList);
         var anchor = link(ratioGraph, this.router().url('charts', state));
-        var cell = element('td', [anchor, new SpinnerIcon]);
+        var spinner = new SpinnerIcon;
+        var cell = element('td', [anchor, spinner]);
 
-        this._renderQueue.push(this._renderCell.bind(this, cell, anchor, ratioGraph, configurationGroup));
+        this._renderQueue.push(this._renderCell.bind(this, cell, spinner, anchor, ratioGraph, configurationGroup));
         return cell;
     }
 
-    _renderCell(cell, anchor, ratioGraph, configurationGroup)
+    _renderCell(cell, spinner, anchor, ratioGraph, configurationGroup)
     {
+        spinner.updateRendering();
+
         if (configurationGroup.isFetching())
             cell.classList.add('fetching');
         else
