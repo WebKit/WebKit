@@ -18,7 +18,7 @@
         _quickLookHandle in the initializer instead.
         (-[WebPreviewConverter initWithResourceLoader:quickLookHandle:]): Changed to take references
         to resourceLoader and quickLookHandle.
-        (-[WebPreviewConverter _sendDidReceiveResponseIfNecessary]): Stoped checking for a nil
+        (-[WebPreviewConverter _sendDidReceiveResponseIfNecessary]): Stopped checking for a nil
         _quickLookHandle, since it is never nil.
         (-[WebResourceLoaderQuickLookDelegate connection:didReceiveDataArray:]): Deleted.
         QLPreviewConverter never calls this method.
