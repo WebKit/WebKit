@@ -1,3 +1,10 @@
+2017-01-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove CSSPropertyNames.in from the project. It's not used any more,
+        now that we generate files from CSSProperties.json.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Accept-language could be set twice in a row for the default context
