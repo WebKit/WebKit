@@ -1,3 +1,44 @@
+2017-01-16  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Do some cleanup in QuickLookHandle
+        https://bugs.webkit.org/show_bug.cgi?id=166864
+
+        Reviewed by Darin Adler.
+
+        * loader/ios/QuickLook.h: Stopped including QuickLookHandleClient.h and forward-declared
+        instead; changed setClient() to take a Ref<QuickLookHandleClient>&&; renamed nsResponse() to
+        previewResponse(); changed QuickLookHandle() to take a ResourceLoader& and const
+        ResourceResponse&; gave m_delegate a stronger type; removed unused m_quicklookFileHandle;
+        initialized m_finishedLoadingDataIntoConverter to false.
+        (WebCore::QuickLookHandle::firstRequestURL): Stopped exporting.
+        (WebCore::QuickLookHandle::setClient): Moved definition out-of-line.
+        * loader/ios/QuickLook.mm: Renamed WebResourceLoaderQuickLookDelegate to
+        WebPreviewConverterDelegate and stopped conforming to NSURLConnectionDelegate and
+        WebCoreResourceLoaderDelegate; removed @property quickLookHandle and initialized
+        _quickLookHandle in the initializer instead.
+        (-[WebPreviewConverter initWithResourceLoader:quickLookHandle:]): Changed to take references
+        to resourceLoader and quickLookHandle.
+        (-[WebPreviewConverter _sendDidReceiveResponseIfNecessary]): Stoped checking for a nil
+        _quickLookHandle, since it is never nil.
+        (-[WebResourceLoaderQuickLookDelegate connection:didReceiveDataArray:]): Deleted.
+        QLPreviewConverter never calls this method.
+        (-[WebPreviewConverter connection:didReceiveData:lengthReceived:]): Stopped checking for a
+        nil _resourceLoader, since it is never nil.
+        (-[WebPreviewConverter connectionDidFinishLoading:]): Ditto.
+        (-[WebPreviewConverter connection:didFailWithError:]): Ditto.
+        (WebCore::emptyClient): Changed to return a reference.
+        (WebCore::QuickLookHandle::QuickLookHandle): Moved creation of the delegate,
+        firstRequestURL, and response to here from QuickLookHandle::create(). Called
+        ResourceLoader::didCreateQuickLookHandle() here instead of in QuickLookHandle::create().
+        (WebCore::QuickLookHandle::create): Used std::make_unique to create the QuickLookHandle.
+        (WebCore::QuickLookHandle::didFinishLoading): Set m_finishedLoadingDataIntoConverter to true
+        instead of YES.
+        (WebCore::QuickLookHandle::setClient): Moved the client rvalue reference into m_client.
+        (WebCore::QuickLookHandle::~QuickLookHandle): Stopped clearing m_converter and calling
+        -detachHandle.
+        (WebCore::QuickLookHandle::previewRequestURL): Used dot syntax.
+        (WebCore::QuickLookHandle::previewResponse): Renamed from nsResponse().
+
 2017-01-16  Simon Fraser  <simon.fraser@apple.com>
 
         Remove CSSPropertyNames.in from the project. It's not used any more,
