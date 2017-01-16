@@ -851,6 +851,7 @@ localizedStrings["Y1"] = "Y1";
 localizedStrings["Y2"] = "Y2";
 localizedStrings["Yes"] = "Yes";
 localizedStrings["Z-Index"] = "Z-Index";
+localizedStrings["Zoom:"] = "Zoom:";
 localizedStrings["computed"] = "computed";
 localizedStrings["default"] = "default";
 localizedStrings["key"] = "key";

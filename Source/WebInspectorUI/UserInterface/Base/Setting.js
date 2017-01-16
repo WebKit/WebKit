@@ -109,4 +109,5 @@ WebInspector.settings = {
     indentWithTabs: new WebInspector.Setting("indent-with-tabs", false),
     showWhitespaceCharacters: new WebInspector.Setting("show-whitespace-characters", false),
     showInvalidCharacters: new WebInspector.Setting("show-invalid-characters", false),
+    zoomFactor: new WebInspector.Setting("zoom-factor", 1),
 };

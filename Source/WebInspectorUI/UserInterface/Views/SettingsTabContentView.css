@@ -77,7 +77,7 @@
 }
 
 .content-view.settings > .setting-container > .setting-value-controller input[type="number"] {
-    max-width: 42px;
+    max-width: 48px;
     margin: 0 5px 0 2px;
     text-align: right;
 }
