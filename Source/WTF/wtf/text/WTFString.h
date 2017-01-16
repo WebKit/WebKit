@@ -26,6 +26,7 @@
 // on systems without case-sensitive file systems.
 
 #include <wtf/text/ASCIIFastPath.h>
+#include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringImpl.h>
 
 #ifdef __OBJC__
@@ -712,6 +713,12 @@ template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const S
 {
     return startsWithLettersIgnoringASCIICase(string.impl(), lowercaseLetters);
 }
+
+template<> struct IntegerToStringConversionTrait<String> {
+    using ReturnType = String;
+    using AdditionalArgumentType = void;
+    static String flush(LChar* characters, unsigned length, void*) { return { characters, length }; }
+};
 
 }
 

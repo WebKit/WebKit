@@ -1,3 +1,78 @@
+2017-01-15  Sam Weinig  <sam@webkit.org>
+
+        Add the ability to use numbers in makeString()
+        https://bugs.webkit.org/show_bug.cgi?id=167087
+
+        Reviewed by Darin Adler.
+
+        Allow numbers to be easily used in makeString() and tryMakeString().
+
+        For instance, you can now write:
+            int amount = 7;
+            auto foo = makeString("There are ", amount, " apples in the cart");
+
+        * WTF.xcodeproj/project.pbxproj:
+        Add new file.
+
+        * wtf/text/IntegerToStringConversion.h:
+        (WTF::writeNumberToBufferImpl):
+        (WTF::writeNumberToBufferSigned):
+        (WTF::writeNumberToBufferUnsigned):
+        (WTF::lengthOfNumberAsStringImpl):
+        (WTF::lengthOfNumberAsStringSigned):
+        (WTF::lengthOfNumberAsStringUnsigned):
+        Add variants of integer writing code that compute the length of the string
+        that would be produced and writes the string to an existing buffer.
+
+        (WTF::IntegerToStringConversionTrait<AtomicString>::flush): Deleted.
+        (WTF::IntegerToStringConversionTrait<String>::flush): Deleted.
+        (WTF::IntegerToStringConversionTrait<StringBuilder>::flush): Deleted.
+        Move these traits to their respective classes.
+
+        * wtf/text/AtomicString.h:
+        (WTF::IntegerToStringConversionTrait<AtomicString>::flush):
+        * wtf/text/StringBuilder.h:
+        (WTF::IntegerToStringConversionTrait<StringBuilder>::flush):
+        * wtf/text/WTFString.h:
+        (WTF::IntegerToStringConversionTrait<String>::flush):
+        Traits moved here from IntegerToStringConversion.h
+
+        * wtf/text/StringConcatenateNumbers.h: Added.
+        (WTF::StringTypeAdapter<int>::StringTypeAdapter<int>):
+        (WTF::StringTypeAdapter<int>::length):
+        (WTF::StringTypeAdapter<int>::is8Bit):
+        (WTF::StringTypeAdapter<int>::writeTo):
+        (WTF::StringTypeAdapter<int>::toString):
+        (WTF::StringTypeAdapter<unsigned>::StringTypeAdapter<unsigned>):
+        (WTF::StringTypeAdapter<unsigned>::length):
+        (WTF::StringTypeAdapter<unsigned>::is8Bit):
+        (WTF::StringTypeAdapter<unsigned>::writeTo):
+        (WTF::StringTypeAdapter<unsigned>::toString):
+        (WTF::StringTypeAdapter<float>::StringTypeAdapter<float>):
+        (WTF::StringTypeAdapter<float>::length):
+        (WTF::StringTypeAdapter<float>::is8Bit):
+        (WTF::StringTypeAdapter<float>::writeTo):
+        (WTF::StringTypeAdapter<float>::toString):
+        (WTF::StringTypeAdapter<double>::StringTypeAdapter<double>):
+        (WTF::StringTypeAdapter<double>::length):
+        (WTF::StringTypeAdapter<double>::is8Bit):
+        (WTF::StringTypeAdapter<double>::writeTo):
+        (WTF::StringTypeAdapter<double>::toString):
+        Add basic adaptors for int, unsigned, float, and double.
+
+        (WTF::FormattedNumber::fixedPrecision):
+        (WTF::FormattedNumber::fixedWidth):
+        (WTF::FormattedNumber::length):
+        (WTF::FormattedNumber::buffer):
+        (WTF::FormattedNumber::stringView):
+        (WTF::StringTypeAdapter<FormattedNumber>::StringTypeAdapter<FormattedNumber>):
+        (WTF::StringTypeAdapter<FormattedNumber>::length):
+        (WTF::StringTypeAdapter<FormattedNumber>::is8Bit):
+        (WTF::StringTypeAdapter<FormattedNumber>::writeTo):
+        (WTF::StringTypeAdapter<FormattedNumber>::toString):
+        Add a special class, FormattedNumber, and an adaptor for it, allowing for
+        fixedPrecision and fixedWidth representation of doubles.
+
 2017-01-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         WebAssembly: Suppress warnings & errors in GCC

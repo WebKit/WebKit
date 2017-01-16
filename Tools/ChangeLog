@@ -1,3 +1,14 @@
+2017-01-15  Sam Weinig  <sam@webkit.org>
+
+        Add the ability to use numbers in makeString()
+        https://bugs.webkit.org/show_bug.cgi?id=167087
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/StringConcatenate.cpp: Added.
+        Add tests for StringConcatenate, focusing on new numeric additions.
+
 2017-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, remove stale comment.

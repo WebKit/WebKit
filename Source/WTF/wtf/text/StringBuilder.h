@@ -28,6 +28,7 @@
 #define StringBuilder_h
 
 #include <wtf/text/AtomicString.h>
+#include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
@@ -367,6 +368,12 @@ inline bool operator==(const StringBuilder& a, const String& b) { return equal(a
 inline bool operator!=(const StringBuilder& a, const String& b) { return !equal(a, b); }
 inline bool operator==(const String& a, const StringBuilder& b) { return equal(b, a); }
 inline bool operator!=(const String& a, const StringBuilder& b) { return !equal(b, a); }
+
+template<> struct IntegerToStringConversionTrait<StringBuilder> {
+    using ReturnType = void;
+    using AdditionalArgumentType = StringBuilder;
+    static void flush(LChar* characters, unsigned length, StringBuilder* stringBuilder) { stringBuilder->append(characters, length); }
+};
 
 } // namespace WTF
 

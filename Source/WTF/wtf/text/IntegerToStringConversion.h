@@ -22,8 +22,6 @@
 #ifndef IntegerToStringConversion_h
 #define IntegerToStringConversion_h
 
-#include "StringBuilder.h"
-
 namespace WTF {
 
 enum PositiveOrNegativeNumber {
@@ -32,22 +30,6 @@ enum PositiveOrNegativeNumber {
 };
 
 template<typename T> struct IntegerToStringConversionTrait;
-
-template<> struct IntegerToStringConversionTrait<AtomicString> {
-    typedef AtomicString ReturnType;
-    typedef void AdditionalArgumentType;
-    static ReturnType flush(LChar* characters, unsigned length, void*) { return AtomicString(characters, length); }
-};
-template<> struct IntegerToStringConversionTrait<String> {
-    typedef String ReturnType;
-    typedef void AdditionalArgumentType;
-    static ReturnType flush(LChar* characters, unsigned length, void*) { return String(characters, length); }
-};
-template<> struct IntegerToStringConversionTrait<StringBuilder> {
-    typedef void ReturnType;
-    typedef StringBuilder AdditionalArgumentType;
-    static ReturnType flush(LChar* characters, unsigned length, StringBuilder* stringBuilder) { stringBuilder->append(characters, length); }
-};
 
 template<typename T, typename UnsignedIntegerType, PositiveOrNegativeNumber NumberType, typename AdditionalArgumentType>
 static typename IntegerToStringConversionTrait<T>::ReturnType numberToStringImpl(UnsignedIntegerType number, AdditionalArgumentType additionalArgument)
@@ -80,6 +62,72 @@ inline typename IntegerToStringConversionTrait<T>::ReturnType numberToStringUnsi
 {
     return numberToStringImpl<T, UnsignedIntegerType, PositiveNumber>(number, additionalArgument);
 }
+
+
+template<typename CharacterType, typename UnsignedIntegerType, PositiveOrNegativeNumber NumberType>
+static void writeNumberToBufferImpl(UnsignedIntegerType number, CharacterType* destination)
+{
+    LChar buf[sizeof(UnsignedIntegerType) * 3 + 1];
+    LChar* end = buf + WTF_ARRAY_LENGTH(buf);
+    LChar* p = end;
+
+    do {
+        *--p = static_cast<LChar>((number % 10) + '0');
+        number /= 10;
+    } while (number);
+
+    if (NumberType == NegativeNumber)
+        *--p = '-';
+    
+    while (p < end)
+        *destination++ = static_cast<CharacterType>(*p++);
+}
+
+template<typename CharacterType, typename SignedIntegerType>
+inline void writeNumberToBufferSigned(SignedIntegerType number, CharacterType* destination)
+{
+    if (number < 0)
+        return writeNumberToBufferImpl<CharacterType, typename std::make_unsigned<SignedIntegerType>::type, NegativeNumber>(-number, destination);
+    return writeNumberToBufferImpl<CharacterType, typename std::make_unsigned<SignedIntegerType>::type, PositiveNumber>(number, destination);
+}
+
+template<typename CharacterType, typename UnsignedIntegerType>
+inline void writeNumberToBufferUnsigned(UnsignedIntegerType number, CharacterType* destination)
+{
+    return writeNumberToBufferImpl<CharacterType, UnsignedIntegerType, PositiveNumber>(number, destination);
+}
+
+
+template<typename UnsignedIntegerType, PositiveOrNegativeNumber NumberType>
+static unsigned lengthOfNumberAsStringImpl(UnsignedIntegerType number)
+{
+    unsigned length = 0;
+
+    do {
+        ++length;
+        number /= 10;
+    } while (number);
+
+    if (NumberType == NegativeNumber)
+        ++length;
+
+    return length;
+}
+
+template<typename SignedIntegerType>
+inline unsigned lengthOfNumberAsStringSigned(SignedIntegerType number)
+{
+    if (number < 0)
+        return lengthOfNumberAsStringImpl<typename std::make_unsigned<SignedIntegerType>::type, NegativeNumber>(-number);
+    return lengthOfNumberAsStringImpl<typename std::make_unsigned<SignedIntegerType>::type, PositiveNumber>(number);
+}
+
+template<typename UnsignedIntegerType>
+inline unsigned lengthOfNumberAsStringUnsigned(UnsignedIntegerType number)
+{
+    return lengthOfNumberAsStringImpl<UnsignedIntegerType, PositiveNumber>(number);
+}
+
 
 } // namespace WTF
 
