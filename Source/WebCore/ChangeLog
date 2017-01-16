@@ -1,5 +1,32 @@
 2017-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Accept-language could be set twice in a row for the default context
+        https://bugs.webkit.org/show_bug.cgi?id=167089
+
+        Reviewed by Žan Doberšek.
+
+        If NetworkStorageSession doesn't have a SoupNetworkSession yet, we are creating it only to set the
+        languages. Since we already set the global value, the languages will be set when the SoupNetworkSession is
+        created later. This is not a big deal for the language property, but it will be for proxies after bug #128674.
+        Since NetworkStorageSession::soupNetworkSession() it's actually getting or creating the SoupNetworkSession, this
+        patch renames it as NetworkStorageSession::getOrCreateSoupNetworkSession() and now
+        NetworkStorageSession::soupNetworkSession() returns a pointer without creating the SoupNetworkSession, so it can
+        be nullptr. This can now be used to only use the default SoupNetworkSession when it has already been created.
+
+        * platform/network/NetworkStorageSession.h:
+        (WebCore::NetworkStorageSession::soupNetworkSession): Use NetworkStorageSession::getOrCreateSoupNetworkSession().
+        * platform/network/soup/DNSSoup.cpp:
+        (WebCore::DNSResolveQueue::updateIsUsingProxy): Ditto.
+        (WebCore::DNSResolveQueue::platformResolve): Ditto.
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::getOrCreateSoupNetworkSession): This is the old soupNetworkSession(), now renamed.
+        (WebCore::NetworkStorageSession::soupNetworkSession): Return a pointer with the current value of m_session that
+        now can be nullptr.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::sessionFromContext): Use NetworkStorageSession::getOrCreateSoupNetworkSession().
+
+2017-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Fix handling of accept language property
         https://bugs.webkit.org/show_bug.cgi?id=166969
 

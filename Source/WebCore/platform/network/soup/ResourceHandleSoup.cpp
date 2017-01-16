@@ -80,8 +80,8 @@ ResourceHandleInternal::~ResourceHandleInternal()
 static SoupSession* sessionFromContext(NetworkingContext* context)
 {
     if (!context || !context->isValid())
-        return NetworkStorageSession::defaultStorageSession().soupNetworkSession().soupSession();
-    return context->storageSession().soupNetworkSession().soupSession();
+        return NetworkStorageSession::defaultStorageSession().getOrCreateSoupNetworkSession().soupSession();
+    return context->storageSession().getOrCreateSoupNetworkSession().soupSession();
 }
 
 ResourceHandle::~ResourceHandle()

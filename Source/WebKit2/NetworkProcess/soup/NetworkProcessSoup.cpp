@@ -97,7 +97,8 @@ void NetworkProcess::userPreferredLanguagesChanged(const Vector<String>& languag
     auto acceptLanguages = buildAcceptLanguages(languages);
     SoupNetworkSession::setInitialAcceptLanguages(acceptLanguages);
     NetworkStorageSession::forEach([&acceptLanguages](const WebCore::NetworkStorageSession& session) {
-        session.soupNetworkSession().setAcceptLanguages(acceptLanguages);
+        if (auto* soupSession = session.soupNetworkSession())
+            soupSession->setAcceptLanguages(acceptLanguages);
     });
 }
 

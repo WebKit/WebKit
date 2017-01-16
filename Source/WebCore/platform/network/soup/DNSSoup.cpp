@@ -79,7 +79,7 @@ static void proxyResolvedForHttpsUriCallback(GObject* source, GAsyncResult* resu
 void DNSResolveQueue::updateIsUsingProxy()
 {
     GRefPtr<GProxyResolver> resolver;
-    g_object_get(NetworkStorageSession::defaultStorageSession().soupNetworkSession().soupSession(), "proxy-resolver", &resolver.outPtr(), nullptr);
+    g_object_get(NetworkStorageSession::defaultStorageSession().getOrCreateSoupNetworkSession().soupSession(), "proxy-resolver", &resolver.outPtr(), nullptr);
     ASSERT(resolver);
 
     g_proxy_resolver_lookup_async(resolver.get(), "http://example.com/", nullptr, proxyResolvedForHttpUriCallback, &m_isUsingProxy);
@@ -95,7 +95,7 @@ void DNSResolveQueue::platformResolve(const String& hostname)
 {
     ASSERT(isMainThread());
 
-    soup_session_prefetch_dns(NetworkStorageSession::defaultStorageSession().soupNetworkSession().soupSession(), hostname.utf8().data(), nullptr, resolvedCallback, nullptr);
+    soup_session_prefetch_dns(NetworkStorageSession::defaultStorageSession().getOrCreateSoupNetworkSession().soupSession(), hostname.utf8().data(), nullptr, resolvedCallback, nullptr);
 }
 
 void prefetchDNS(const String& hostname)

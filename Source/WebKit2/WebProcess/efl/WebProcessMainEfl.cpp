@@ -99,7 +99,7 @@ public:
         if (!ecore_main_loop_glib_integrate())
             return false;
 
-        NetworkStorageSession::defaultStorageSession().soupNetworkSession().setupHTTPProxyFromEnvironment();
+        NetworkStorageSession::defaultStorageSession().getOrCreateSoupNetworkSession().setupHTTPProxyFromEnvironment();
         return true;
     }
 

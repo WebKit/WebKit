@@ -71,7 +71,8 @@ public:
     NetworkStorageSession(SessionID, std::unique_ptr<SoupNetworkSession>&&);
     ~NetworkStorageSession();
 
-    SoupNetworkSession& soupNetworkSession() const;
+    SoupNetworkSession* soupNetworkSession() const { return m_session.get(); };
+    SoupNetworkSession& getOrCreateSoupNetworkSession() const;
     SoupCookieJar* cookieStorage() const;
     void getCredentialFromPersistentStorage(const ProtectionSpace&, Function<void (Credential&&)> completionHandler);
     void saveCredentialToPersistentStorage(const ProtectionSpace&, const Credential&);

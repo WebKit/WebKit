@@ -75,7 +75,7 @@ void WebCookieManager::setCookiePersistentStorage(const String& storagePath, uin
 
     auto& storageSession = NetworkStorageSession::defaultStorageSession();
     soup_cookie_jar_set_accept_policy(jar.get(), soup_cookie_jar_get_accept_policy(storageSession.cookieStorage()));
-    storageSession.soupNetworkSession().setCookieJar(jar.get());
+    storageSession.getOrCreateSoupNetworkSession().setCookieJar(jar.get());
 }
 
 } // namespace WebKit

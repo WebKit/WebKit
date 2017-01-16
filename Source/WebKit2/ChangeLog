@@ -1,5 +1,24 @@
 2017-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Accept-language could be set twice in a row for the default context
+        https://bugs.webkit.org/show_bug.cgi?id=167089
+
+        Reviewed by Žan Doberšek.
+
+        * NetworkProcess/CustomProtocols/soup/CustomProtocolManagerSoup.cpp:
+        (WebKit::CustomProtocolManager::registerScheme): Use NetworkStorageSession::getOrCreateSoupNetworkSession().
+        * NetworkProcess/efl/NetworkProcessMainEfl.cpp:
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::userPreferredLanguagesChanged): Only set the languages if NetworkStorageSession has a
+        SoupNetworkSession.
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::soupSession): Use NetworkStorageSession::getOrCreateSoupNetworkSession().
+        * WebProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        (WebKit::WebCookieManager::setCookiePersistentStorage): Ditto.
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+
+2017-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Fix handling of accept language property
         https://bugs.webkit.org/show_bug.cgi?id=166969
 

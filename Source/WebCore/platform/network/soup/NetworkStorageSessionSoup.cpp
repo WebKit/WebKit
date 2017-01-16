@@ -86,7 +86,7 @@ void NetworkStorageSession::switchToNewTestingSession()
     defaultSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), std::make_unique<SoupNetworkSession>());
 }
 
-SoupNetworkSession& NetworkStorageSession::soupNetworkSession() const
+SoupNetworkSession& NetworkStorageSession::getOrCreateSoupNetworkSession() const
 {
     if (!m_session)
         m_session = std::make_unique<SoupNetworkSession>(cookieStorage());
