@@ -84,8 +84,6 @@ void NetworkStorageSession::ensurePrivateBrowsingSession(SessionID sessionID, co
 void NetworkStorageSession::switchToNewTestingSession()
 {
     defaultSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), std::make_unique<SoupNetworkSession>());
-    // FIXME: Creating a testing session is losing soup session values set when initializing the network process.
-    g_object_set(defaultSession()->soupNetworkSession().soupSession(), "accept-language", "en-us", nullptr);
 }
 
 SoupNetworkSession& NetworkStorageSession::soupNetworkSession() const

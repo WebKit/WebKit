@@ -41,14 +41,64 @@
 #include <wtf/RAMSize.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
+static CString buildAcceptLanguages(const Vector<String>& languages)
+{
+    size_t languagesCount = languages.size();
+
+    // Ignore "C" locale.
+    size_t cLocalePosition = languages.find("c");
+    if (cLocalePosition != notFound)
+        languagesCount--;
+
+    // Fallback to "en" if the list is empty.
+    if (!languagesCount)
+        return "en";
+
+    // Calculate deltas for the quality values.
+    int delta;
+    if (languagesCount < 10)
+        delta = 10;
+    else if (languagesCount < 20)
+        delta = 5;
+    else
+        delta = 1;
+
+    // Set quality values for each language.
+    StringBuilder builder;
+    for (size_t i = 0; i < languages.size(); ++i) {
+        if (i == cLocalePosition)
+            continue;
+
+        if (i)
+            builder.appendLiteral(", ");
+
+        builder.append(languages[i]);
+
+        int quality = 100 - i * delta;
+        if (quality > 0 && quality < 100) {
+            char buffer[8];
+            g_ascii_formatd(buffer, 8, "%.2f", quality / 100.0);
+            builder.append(String::format(";q=%s", buffer));
+        }
+    }
+
+    return builder.toString().utf8();
+}
+
 void NetworkProcess::userPreferredLanguagesChanged(const Vector<String>& languages)
 {
-    NetworkStorageSession::defaultStorageSession().soupNetworkSession().setAcceptLanguages(languages);
+    auto acceptLanguages = buildAcceptLanguages(languages);
+    SoupNetworkSession::setInitialAcceptLanguages(acceptLanguages);
+    NetworkStorageSession::forEach([&acceptLanguages](const WebCore::NetworkStorageSession& session) {
+        session.soupNetworkSession().setAcceptLanguages(acceptLanguages);
+    });
 }
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)

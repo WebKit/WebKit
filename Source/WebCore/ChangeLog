@@ -1,3 +1,22 @@
+2017-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Fix handling of accept language property
+        https://bugs.webkit.org/show_bug.cgi?id=166969
+
+        Reviewed by Michael Catanzaro.
+
+        Add SoupNetworkSession::setInitialAcceptLanguages() static method and update setAcceptLanguages to receive the
+        string already built from the languages vector. Now the SoupNetworkSession saves that value globally that
+        is always used when creating new sessions.
+
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::switchToNewTestingSession): Remove workaround.
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::SoupNetworkSession): If initial accept languages were set, apply them to the newly created context.
+        (WebCore::SoupNetworkSession::setInitialAcceptLanguages): Just save the given value globally.
+        (WebCore::SoupNetworkSession::setAcceptLanguages): It receives now the string, so just set it to the session.
+        * platform/network/soup/SoupNetworkSession.h:
+
 2017-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] SoupNetworkSession constructor should be explicit

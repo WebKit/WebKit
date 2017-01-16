@@ -41,11 +41,11 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 static bool gIgnoreTLSErrors;
+static CString gInitialAcceptLanguages;
 
 #if !LOG_DISABLED
 inline static void soupLogPrinter(SoupLogger*, SoupLoggerLogLevel, char direction, const char* data, gpointer)
@@ -137,6 +137,9 @@ SoupNetworkSession::SoupNetworkSession(SoupCookieJar* cookieJar)
         SOUP_SESSION_SSL_USE_SYSTEM_CA_FILE, TRUE,
         SOUP_SESSION_SSL_STRICT, FALSE,
         nullptr);
+
+    if (!gInitialAcceptLanguages.isNull())
+        setAcceptLanguages(gInitialAcceptLanguages);
 
 #if SOUP_CHECK_VERSION(2, 53, 92)
     if (soup_auth_negotiate_supported()) {
@@ -247,53 +250,15 @@ void SoupNetworkSession::setupHTTPProxyFromEnvironment()
 #endif
 }
 
-static CString buildAcceptLanguages(const Vector<String>& languages)
+
+void SoupNetworkSession::setInitialAcceptLanguages(const CString& languages)
 {
-    size_t languagesCount = languages.size();
-
-    // Ignore "C" locale.
-    size_t cLocalePosition = languages.find("c");
-    if (cLocalePosition != notFound)
-        languagesCount--;
-
-    // Fallback to "en" if the list is empty.
-    if (!languagesCount)
-        return "en";
-
-    // Calculate deltas for the quality values.
-    int delta;
-    if (languagesCount < 10)
-        delta = 10;
-    else if (languagesCount < 20)
-        delta = 5;
-    else
-        delta = 1;
-
-    // Set quality values for each language.
-    StringBuilder builder;
-    for (size_t i = 0; i < languages.size(); ++i) {
-        if (i == cLocalePosition)
-            continue;
-
-        if (i)
-            builder.appendLiteral(", ");
-
-        builder.append(languages[i]);
-
-        int quality = 100 - i * delta;
-        if (quality > 0 && quality < 100) {
-            char buffer[8];
-            g_ascii_formatd(buffer, 8, "%.2f", quality / 100.0);
-            builder.append(String::format(";q=%s", buffer));
-        }
-    }
-
-    return builder.toString().utf8();
+    gInitialAcceptLanguages = languages;
 }
 
-void SoupNetworkSession::setAcceptLanguages(const Vector<String>& languages)
+void SoupNetworkSession::setAcceptLanguages(const CString& languages)
 {
-    g_object_set(m_soupSession.get(), "accept-language", buildAcceptLanguages(languages).data(), nullptr);
+    g_object_set(m_soupSession.get(), "accept-language", languages.data(), nullptr);
 }
 
 void SoupNetworkSession::setShouldIgnoreTLSErrors(bool ignoreTLSErrors)

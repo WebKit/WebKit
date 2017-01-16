@@ -1,3 +1,15 @@
+2017-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Fix handling of accept language property
+        https://bugs.webkit.org/show_bug.cgi?id=166969
+
+        Reviewed by Michael Catanzaro.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::buildAcceptLanguages): Moved from WebCore.
+        (WebKit::NetworkProcess::userPreferredLanguagesChanged): Build the accept language string from the vector and
+        pass set it to SoupNetworkSession to be used for new sessions, and also to all other existing sessions.
+
 2017-01-14  Tim Horton  <timothy_horton@apple.com>
 
         Remove unused WKView initializer parameter
