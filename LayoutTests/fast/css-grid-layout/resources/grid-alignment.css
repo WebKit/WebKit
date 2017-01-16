@@ -18,6 +18,8 @@
 .alignSelfEndSafe { align-self: end safe; }
 .alignSelfEndUnsafe { align-self: end unsafe; }
 
+.alignSelfBaseline { align-self: baseline; }
+
 /* align-items */
 .alignItemsAuto { align-items: auto; }
 .alignItemsStretch { align-items: stretch; }
@@ -124,6 +126,11 @@
 .itemsSelfEnd {
     align-items: self-end;
     justify-items: self-end;
+}
+
+.selfBaseline {
+    align-self: baseline;
+    justify-self: baseline;
 }
 
 /* Both align-self and justify-self */

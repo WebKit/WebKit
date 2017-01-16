@@ -2499,6 +2499,75 @@ void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& child)
     }
 }
 
+// FIXME: This logic could be refactored somehow and defined in RenderBox.
+static int synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionMode direction)
+{
+    return (direction == HorizontalLine ? box.size().height() : box.size().width()).toInt();
+}
+
+bool RenderGrid::isInlineBaselineAlignedChild(const RenderBox& child) const
+{
+    return alignSelfForChild(child).position() == ItemPositionBaseline && !isOrthogonalChild(child) && !hasAutoMarginsInColumnAxis(child);
+}
+
+// FIXME: This logic is shared by RenderFlexibleBox, so it might be refactored somehow.
+int RenderGrid::baselinePosition(FontBaseline, bool, LineDirectionMode direction, LinePositionMode mode) const
+{
+#if ENABLE(ASSERT)
+    ASSERT(mode == PositionOnContainingLine);
+#else
+    UNUSED_PARAM(mode);
+#endif
+    int baseline = firstLineBaseline().value_or(synthesizedBaselineFromBorderBox(*this, direction));
+
+    int marginSize = direction == HorizontalLine ? verticalMarginExtent() : horizontalMarginExtent();
+    return baseline + marginSize;
+}
+
+std::optional<int> RenderGrid::firstLineBaseline() const
+{
+    if (isWritingModeRoot() || !m_grid.hasGridItems())
+        return std::nullopt;
+
+    const RenderBox* baselineChild = nullptr;
+    // Finding the first grid item in grid order.
+    unsigned numColumns = m_grid.numTracks(ForColumns);
+    for (size_t column = 0; column < numColumns; column++) {
+        for (const auto* child : m_grid.cell(0, column)) {
+            // If an item participates in baseline alignment, we select such item.
+            if (isInlineBaselineAlignedChild(*child)) {
+                // FIXME: self-baseline and content-baseline alignment not implemented yet.
+                baselineChild = child;
+                break;
+            }
+            if (!baselineChild)
+                baselineChild = child;
+        }
+    }
+
+    if (!baselineChild)
+        return std::nullopt;
+
+    auto baseline = isOrthogonalChild(*baselineChild) ? std::nullopt : baselineChild->firstLineBaseline();
+    // We take border-box's bottom if no valid baseline.
+    if (!baseline) {
+        // FIXME: We should pass |direction| into firstLineBaseline and stop bailing out if we're a writing
+        // mode root. This would also fix some cases where the grid is orthogonal to its container.
+        LineDirectionMode direction = isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
+        return synthesizedBaselineFromBorderBox(*baselineChild, direction) + baselineChild->logicalTop().toInt();
+    }
+    return baseline.value() + baselineChild->logicalTop().toInt();
+}
+
+std::optional<int> RenderGrid::inlineBlockBaseline(LineDirectionMode direction) const
+{
+    if (std::optional<int> baseline = firstLineBaseline())
+        return baseline;
+
+    int marginAscent = direction == HorizontalLine ? marginTop() : marginRight();
+    return synthesizedBaselineFromBorderBox(*this, direction) + marginAscent;
+}
+
 GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) const
 {
     bool hasSameWritingMode = child.style().writingMode() == style().writingMode();

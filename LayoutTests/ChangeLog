@@ -1,3 +1,25 @@
+2017-01-16  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Implementing baseline positioning for grid containers
+        https://bugs.webkit.org/show_bug.cgi?id=165063
+
+        Reviewed by Darin Adler and Sergio Villar Senin.
+
+        Tests to verify the baseline positioning of grid and inline-grid blocks.
+        Note that two of these new tests are expected to fail because of a Flexbox
+        bug, since we use Flexbox as reference test.
+
+        * TestExpectations:
+        * fast/css-grid-layout/grid-baseline-expected.html: Added.
+        * fast/css-grid-layout/grid-baseline-margins-expected.html: Added.
+        * fast/css-grid-layout/grid-baseline-margins.html: Added.
+        * fast/css-grid-layout/grid-baseline-must-respect-grid-order-expected.txt: Added.
+        * fast/css-grid-layout/grid-baseline-must-respect-grid-order.html: Added.
+        * fast/css-grid-layout/grid-baseline.html: Added.
+        * fast/css-grid-layout/resources/grid-alignment.css:
+        (.alignSelfBaseline):
+        (.selfBaseline):
+
 2017-01-15  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for HTMLInputElement, HTMLFrameElement, HTMLMediaElement and HTMLOptionsCollection
