@@ -577,7 +577,8 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
             auto* parentNode = range->startContainer().parentNode();
             if (!parentNode)
                 continue;
-
+            if (!is<Text>(range->startContainer()))
+                continue;
             auto& currentTextNode = downcast<Text>(range->startContainer());
             Document& document = currentTextNode.document();
             String textNodeData;
