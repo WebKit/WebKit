@@ -382,6 +382,16 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
     else if (format == Extensions3D::SRGB_EXT)
         openGLFormat = GL_RGB;
 #endif
+
+    if (m_usingCoreProfile && openGLInternalFormat == ALPHA) {
+        // We are using a core profile. This means that GL_ALPHA, which is a valid format in WebGL for texImage2D
+        // is not supported in OpenGL. It needs to be backed with a GL_RED plane. We change the formats to GL_RED
+        // (both need to be GL_ALPHA in WebGL) and instruct the texture to swizzle the red component values with
+        // the the alpha component values.
+        openGLInternalFormat = openGLFormat = RED;
+        texParameteri(target, TEXTURE_SWIZZLE_A, RED);
+    }
+
     texImage2DDirect(target, level, openGLInternalFormat, width, height, border, openGLFormat, type, pixels);
     return true;
 }
