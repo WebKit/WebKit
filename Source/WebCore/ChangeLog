@@ -1,3 +1,29 @@
+2017-01-17  Andreas Kling  <akling@apple.com>
+
+        Kill the presentation attribute cache.
+        <https://webkit.org/b/119542>
+
+        Reviewed by Antti Koivisto.
+
+        This cache was added to placate some old page cycler test that was measuring load times
+        on pages captured in 2000. That content is not super relevant anymore, and I think
+        we can live without this cache.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::rebuildPresentationAttributeStyle):
+        (WebCore::presentationAttributeCache): Deleted.
+        (WebCore::PresentationAttributeCacheCleaner::PresentationAttributeCacheCleaner): Deleted.
+        (WebCore::PresentationAttributeCacheCleaner::didHitPresentationAttributeCache): Deleted.
+        (WebCore::PresentationAttributeCacheCleaner::cleanCache): Deleted.
+        (WebCore::presentationAttributeCacheCleaner): Deleted.
+        (WebCore::StyledElement::clearPresentationAttributeCache): Deleted.
+        (WebCore::attributeNameSort): Deleted.
+        (WebCore::StyledElement::makePresentationAttributeCacheKey): Deleted.
+        (WebCore::computePresentationAttributeCacheHash): Deleted.
+        * dom/StyledElement.h:
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseNoncriticalMemory):
+
 2017-01-17  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out http://trac.webkit.org/changeset/210821

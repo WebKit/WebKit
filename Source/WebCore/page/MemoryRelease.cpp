@@ -60,8 +60,6 @@ static void releaseNoncriticalMemory()
 
     MemoryCache::singleton().pruneDeadResourcesToSize(0);
 
-    StyledElement::clearPresentationAttributeCache();
-
     InlineStyleSheetOwner::clearCache();
 }
 

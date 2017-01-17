@@ -46,83 +46,6 @@ COMPILE_ASSERT(sizeof(StyledElement) == sizeof(Element), styledelement_should_re
 
 using namespace HTMLNames;
 
-struct PresentationAttributeCacheKey {
-    AtomicStringImpl* tagName { nullptr };
-    // Only the values need refcounting.
-    Vector<std::pair<AtomicStringImpl*, AtomicString>, 3> attributesAndValues;
-};
-
-struct PresentationAttributeCacheEntry {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    PresentationAttributeCacheKey key;
-    RefPtr<StyleProperties> value;
-};
-
-typedef HashMap<unsigned, std::unique_ptr<PresentationAttributeCacheEntry>, AlreadyHashed> PresentationAttributeCache;
-    
-static bool operator!=(const PresentationAttributeCacheKey& a, const PresentationAttributeCacheKey& b)
-{
-    if (a.tagName != b.tagName)
-        return true;
-    return a.attributesAndValues != b.attributesAndValues;
-}
-
-static PresentationAttributeCache& presentationAttributeCache()
-{
-    static NeverDestroyed<PresentationAttributeCache> cache;
-    return cache;
-}
-
-class PresentationAttributeCacheCleaner {
-    WTF_MAKE_NONCOPYABLE(PresentationAttributeCacheCleaner); WTF_MAKE_FAST_ALLOCATED;
-public:
-    PresentationAttributeCacheCleaner()
-        : m_hitCount(0)
-        , m_cleanTimer(*this, &PresentationAttributeCacheCleaner::cleanCache)
-    {
-    }
-
-    void didHitPresentationAttributeCache()
-    {
-        if (presentationAttributeCache().size() < minimumPresentationAttributeCacheSizeForCleaning)
-            return;
-
-        m_hitCount++;
-
-        if (!m_cleanTimer.isActive())
-            m_cleanTimer.startOneShot(presentationAttributeCacheCleanTimeInSeconds);
-     }
-
-private:
-    static const unsigned presentationAttributeCacheCleanTimeInSeconds = 60;
-    static const int minimumPresentationAttributeCacheSizeForCleaning = 100;
-    static const unsigned minimumPresentationAttributeCacheHitCountPerMinute = (100 * presentationAttributeCacheCleanTimeInSeconds) / 60;
-
-    void cleanCache()
-    {
-        unsigned hitCount = m_hitCount;
-        m_hitCount = 0;
-        if (hitCount > minimumPresentationAttributeCacheHitCountPerMinute)
-            return;
-        presentationAttributeCache().clear();
-    }
-
-    unsigned m_hitCount;
-    Timer m_cleanTimer;
-};
-
-static PresentationAttributeCacheCleaner& presentationAttributeCacheCleaner()
-{
-    static NeverDestroyed<PresentationAttributeCacheCleaner> cleaner;
-    return cleaner;
-}
-
-void StyledElement::clearPresentationAttributeCache()
-{
-    presentationAttributeCache().clear();
-}
-
 void StyledElement::synchronizeStyleAttributeInternal(StyledElement* styledElement)
 {
     ASSERT(styledElement->elementData());
@@ -295,92 +218,17 @@ void StyledElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
     });
 }
 
-static inline bool attributeNameSort(const std::pair<AtomicStringImpl*, AtomicString>& p1, const std::pair<AtomicStringImpl*, AtomicString>& p2)
-{
-    // Sort based on the attribute name pointers. It doesn't matter what the order is as long as it is always the same. 
-    return p1.first < p2.first;
-}
-
-void StyledElement::makePresentationAttributeCacheKey(PresentationAttributeCacheKey& result) const
-{    
-    // FIXME: Enable for SVG.
-    if (namespaceURI() != xhtmlNamespaceURI)
-        return;
-    // Interpretation of the size attributes on <input> depends on the type attribute.
-    if (hasTagName(inputTag))
-        return;
-    for (const Attribute& attribute : attributesIterator()) {
-        if (!isPresentationAttribute(attribute.name()))
-            continue;
-        if (!attribute.namespaceURI().isNull())
-            return;
-        // FIXME: Background URL may depend on the base URL and can't be shared. Disallow caching.
-        if (attribute.name() == backgroundAttr)
-            return;
-        result.attributesAndValues.append(std::make_pair(attribute.localName().impl(), attribute.value()));
-    }
-    if (result.attributesAndValues.isEmpty())
-        return;
-    // Attribute order doesn't matter. Sort for easy equality comparison.
-    std::sort(result.attributesAndValues.begin(), result.attributesAndValues.end(), attributeNameSort);
-    // The cache key is non-null when the tagName is set.
-    result.tagName = localName().impl();
-}
-
-static unsigned computePresentationAttributeCacheHash(const PresentationAttributeCacheKey& key)
-{
-    if (!key.tagName)
-        return 0;
-    ASSERT(key.attributesAndValues.size());
-    unsigned attributeHash = StringHasher::hashMemory(key.attributesAndValues.data(), key.attributesAndValues.size() * sizeof(key.attributesAndValues[0]));
-    return WTF::pairIntHash(key.tagName->existingHash(), attributeHash);
-}
-
 void StyledElement::rebuildPresentationAttributeStyle()
 {
-    PresentationAttributeCacheKey cacheKey;
-    makePresentationAttributeCacheKey(cacheKey);
-
-    unsigned cacheHash = computePresentationAttributeCacheHash(cacheKey);
-
-    PresentationAttributeCache::iterator cacheIterator;
-    if (cacheHash) {
-        cacheIterator = presentationAttributeCache().add(cacheHash, nullptr).iterator;
-        if (cacheIterator->value && cacheIterator->value->key != cacheKey)
-            cacheHash = 0;
-    } else
-        cacheIterator = presentationAttributeCache().end();
-
-    RefPtr<StyleProperties> style;
-    if (cacheHash && cacheIterator->value) {
-        style = cacheIterator->value->value;
-        presentationAttributeCacheCleaner().didHitPresentationAttributeCache();
-    } else {
-        style = MutableStyleProperties::create(isSVGElement() ? SVGAttributeMode : HTMLQuirksMode);
-        for (const Attribute& attribute : attributesIterator())
-            collectStyleForPresentationAttribute(attribute.name(), attribute.value(), static_cast<MutableStyleProperties&>(*style));
-    }
+    RefPtr<StyleProperties> style = MutableStyleProperties::create(isSVGElement() ? SVGAttributeMode : HTMLQuirksMode);
+    for (const Attribute& attribute : attributesIterator())
+        collectStyleForPresentationAttribute(attribute.name(), attribute.value(), static_cast<MutableStyleProperties&>(*style));
 
     // ShareableElementData doesn't store presentation attribute style, so make sure we have a UniqueElementData.
     UniqueElementData& elementData = ensureUniqueElementData();
 
     elementData.setPresentationAttributeStyleIsDirty(false);
-    elementData.m_presentationAttributeStyle = style->isEmpty() ? nullptr : style;
-
-    if (!cacheHash || cacheIterator->value)
-        return;
-
-    std::unique_ptr<PresentationAttributeCacheEntry> newEntry = std::make_unique<PresentationAttributeCacheEntry>();
-    newEntry->key = cacheKey;
-    newEntry->value = WTFMove(style);
-
-    static const int presentationAttributeCacheMaximumSize = 4096;
-    if (presentationAttributeCache().size() > presentationAttributeCacheMaximumSize) {
-        // Start building from scratch if the cache ever gets big.
-        presentationAttributeCache().clear();
-        presentationAttributeCache().set(cacheHash, WTFMove(newEntry));
-    } else
-        cacheIterator->value = WTFMove(newEntry);
+    elementData.m_presentationAttributeStyle = style->isEmpty() ? nullptr : WTFMove(style);
 }
 
 void StyledElement::addPropertyToPresentationAttributeStyle(MutableStyleProperties& style, CSSPropertyID propertyID, CSSValueID identifier)
