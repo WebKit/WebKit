@@ -18,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/button.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/checkbox.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/checked.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/clone.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/cloning-steps.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/contains.json

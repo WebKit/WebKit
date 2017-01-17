@@ -16,6 +16,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCDataChannelEvent-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnectionIceEvent-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/no-media-call.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/promises-call.html

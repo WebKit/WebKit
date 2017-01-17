@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: line 1380: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 1380: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+
+PASS Basic sanity-checking 
+PASS Only whitelisted properties are accessible cross-origin 
+PASS [[GetPrototypeOf]] should return null 
+PASS [[SetPrototypeOf]] should throw 
+PASS [[IsExtensible]] should return true for cross-origin objects 
+FAIL [[PreventExtensions]] should throw for cross-origin objects assert_throws: preventExtensions on cross-origin Location should throw function "function () { Object.preventExtensions(C.location) }" threw object "SecurityError (DOM Exception 18): Blocked a frame with or..." ("SecurityError") expected object "TypeError" ("TypeError")
+PASS [[GetOwnProperty]] - Properties on cross-origin objects should be reported |own| 
+PASS [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly 
+PASS [[Delete]] Should throw on cross-origin objects 
+PASS [[DefineOwnProperty]] Should throw for cross-origin objects 
+PASS [[Enumerate]] should return an empty iterator 
+PASS [[OwnPropertyKeys]] should return all properties from cross-origin objects 
+PASS A and B jointly observe the same identity for cross-origin Window and Location 
+PASS Cross-origin functions get local Function.prototype 
+PASS Cross-origin Window accessors get local Function.prototype 
+PASS Same-origin observers get different functions for cross-origin objects 
+PASS Same-origin observers get different accessors for cross-origin Window 
+PASS Same-origin observers get different accessors for cross-origin Location 
+ 

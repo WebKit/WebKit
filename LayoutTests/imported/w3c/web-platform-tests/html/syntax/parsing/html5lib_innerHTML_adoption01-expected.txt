@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 257: ReferenceError: Can't find variable: template
+html5lib Parser Test
+
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: template
+
+FAIL html5lib_innerHTML_adoption01.html 0bf80e1546d4c221354aa9734f61713b7d64ee6d assert_equals: expected "#document\n| <b>\n|   <em>\n|     <foo>\n|       <foob>\n|         <fooc>\n| <aside>\n|   <b>" but got "#document\n| <b>\n|   <em>\n|     <foo>\n|       <foob>\n|         <fooc>\n| <aside>\n|   <em>\n|     <b>"
+

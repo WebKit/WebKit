@@ -1,6 +1,6 @@
 
-FAIL Fetch with GET assert_equals: Request should have header origin: http://localhost:8800 expected (string) "http://localhost:8800" but got (object) null
-FAIL Fetch with HEAD assert_equals: Request should have header origin: http://localhost:8800 expected (string) "http://localhost:8800" but got (object) null
+PASS Fetch with GET 
+FAIL Fetch with HEAD assert_equals: Request should have header content-length: null expected (object) null but got (string) "0"
 PASS Fetch with PUT without body 
 PASS Fetch with PUT with body 
 PASS Fetch with POST without body 
@@ -17,4 +17,10 @@ FAIL Fetch with POST with DataView body assert_equals: Request should have heade
 PASS Fetch with POST with Blob body with mime type 
 FAIL Fetch with Chicken assert_equals: Request should have header content-length: null expected (object) null but got (string) "0"
 PASS Fetch with Chicken with body 
+PASS Fetch with GET and mode "cors" does not need an Origin header 
+PASS Fetch with POST and mode "same-origin" needs an Origin header 
+PASS Fetch with POST and mode "no-cors" needs an Origin header 
+PASS Fetch with PUT and mode "same-origin" needs an Origin header 
+PASS Fetch with TacO and mode "same-origin" needs an Origin header 
+PASS Fetch with TacO and mode "cors" needs an Origin header 
 

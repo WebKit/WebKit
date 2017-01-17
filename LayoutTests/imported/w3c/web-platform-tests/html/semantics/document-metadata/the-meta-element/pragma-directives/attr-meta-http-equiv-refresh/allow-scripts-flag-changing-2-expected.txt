@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 45: TypeError: Argument 1 ('node') to Node.appendChild must be an instance of Node
+
+Harness Error (FAIL), message = TypeError: Argument 1 ('node') to Node.appendChild must be an instance of Node
+
+

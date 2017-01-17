@@ -7,7 +7,6 @@ PASS [BUTTON in RESET status] Must be barred from the constraint validation
 FAIL [fieldset]  Must not be barred from the constraint validation assert_true: The willValidate attribute should be true. expected true got false
 FAIL [output]  Must not be barred from the constraint validation assert_true: The willValidate attribute should be true. expected true got false
 PASS [object]  Must be barred from the constraint validation 
-PASS [keygen]  Must be barred from the constraint validation 
 PASS [INPUT in TEXT status] Must be barred from the constraint validation if it is disabled 
 PASS [INPUT in TEXT status] The willValidate attribute must be true if an element is mutable 
 PASS [INPUT in TEXT status] Must be barred from the constraint validation if it is readonly 

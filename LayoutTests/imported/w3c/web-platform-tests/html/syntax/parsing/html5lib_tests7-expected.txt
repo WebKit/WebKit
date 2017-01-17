@@ -13,6 +13,7 @@ PASS html5lib_tests7.html 620e44a8a55e82cec0d51e9d93025d8a5c4456fc
 PASS html5lib_tests7.html 37b910b755c2df155a3129d5a1150f0c0fdd7934 
 PASS html5lib_tests7.html 868bff3a23219b836fdc702063d637f817ce65e1 
 PASS html5lib_tests7.html a33a56f5571b4bcb23138ffb60df3824f5c53773 
+PASS html5lib_tests7.html facf5e60205451cf740f64628b8608f0aee30f3a 
 PASS html5lib_tests7.html 8ba11b54fa74a1c229d079b2902d6e33e139f33b 
 PASS html5lib_tests7.html 84e2152c284f4dfee7d8d12846c08b2c025578a6 
 PASS html5lib_tests7.html 8e3432411baa59cbef731ab3ba2703cb5d518453 

@@ -12,7 +12,7 @@
   </head>
   <body>
     <script id="headers-idl" type="text/plain">
-      typedef (Headers or sequence<sequence<ByteString>> or OpenEndedDictionary<ByteString>) HeadersInit;
+      typedef (sequence<sequence<ByteString>> or record<ByteString>) HeadersInit;
 
       [Constructor(optional HeadersInit init),
       Exposed=(Window,Worker)]

@@ -26,4 +26,5 @@ PASS html5lib_entities02.html f908b529ac9ca5366e1160856db2c3d17e3898c9
 PASS html5lib_entities02.html 1294ffc6bee2ee41f65a60ac48ba445b99504286 
 PASS html5lib_entities02.html ba7d8cdd4b40020f7af6bdde75a3574b5771fac9 
 PASS html5lib_entities02.html ce23051409f58749cbce6836bc4c7c21e9c548cf 
+PASS html5lib_entities02.html 6bbeec30b849cebd1366ebb2e6d2a6c1790e8c68 
 

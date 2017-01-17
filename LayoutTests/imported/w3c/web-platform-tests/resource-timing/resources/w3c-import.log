@@ -15,10 +15,14 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/fake_responses.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/fake_responses.py
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/gzip_xml.py
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/inject_resource_test.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/resource_timing_test0.css
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/resource_timing_test0.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/resource_timing_test0.js
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/resource_timing_test0.png
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/resource_timing_test0.xml
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/webperftestharness.js
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/webperftestharnessextension.js

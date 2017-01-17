@@ -1,6 +1,9 @@
 
 PASS Basic URLSearchParams construction 
-PASS URLSearchParams constructor, empty. 
+PASS URLSearchParams constructor, no arguments 
+FAIL URLSearchParams constructor, DOMException.prototype as argument Can only call DOMException.toString on instances of DOMException
+PASS URLSearchParams constructor, empty string as argument 
+FAIL URLSearchParams constructor, {} as argument assert_equals: expected "" but got "%5Bobject+Object%5D="
 PASS URLSearchParams constructor, string. 
 PASS URLSearchParams constructor, object. 
 PASS Parse + 
@@ -12,4 +15,8 @@ PASS Parse ⎄
 PASS Parse %e2%8e%84 
 PASS Parse 💩 
 PASS Parse %f0%9f%92%a9 
+FAIL Construct with object with + assert_array_equals: property 0, expected " " but got "[object Object]"
+FAIL Construct with object with two keys assert_array_equals: property 0, expected "c" but got "[object Object]"
+FAIL Construct with array with two keys assert_array_equals: property 0, expected "c" but got "c,x,a,?"
+FAIL Custom [Symbol.iterator] assert_equals: expected (string) "b" but got (object) null
 

@@ -10,4 +10,10 @@ PASS Fetch with POST with Float32Array body
 PASS Fetch with POST with Float64Array body 
 PASS Fetch with POST with DataView body 
 PASS Fetch with POST with Blob body with mime type 
+FAIL Fetch with POST with ReadableStream assert_equals: expected "Test" but got ""
+FAIL Fetch with POST with ReadableStream containing String undefined is not an object (evaluating 'promise.then')
+FAIL Fetch with POST with ReadableStream containing null undefined is not an object (evaluating 'promise.then')
+FAIL Fetch with POST with ReadableStream containing number undefined is not an object (evaluating 'promise.then')
+FAIL Fetch with POST with ReadableStream containing ArrayBuffer undefined is not an object (evaluating 'promise.then')
+FAIL Fetch with POST with ReadableStream containing Blob undefined is not an object (evaluating 'promise.then')
 

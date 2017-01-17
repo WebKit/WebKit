@@ -5,8 +5,9 @@ PASS Create headers from empty object
 PASS Create headers with null should throw 
 PASS Create headers with 1 should throw 
 PASS Create headers with sequence 
-PASS Create headers with OpenEndedDictionary 
+PASS Create headers with record 
 PASS Create headers with existing headers 
+FAIL Create headers with existing headers with custom iterator assert_equals: expected (string) "test" but got (object) null
 PASS Check append method 
 PASS Check set method 
 PASS Check has method 

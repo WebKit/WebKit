@@ -29,7 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-click.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-detached-click.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-handlers-changed.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/dom/events/Event-dispatch-multiple-cancelBubble.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-multiple-cancelBubble.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-multiple-stopPropagation.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-omitted-capture.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-order.html

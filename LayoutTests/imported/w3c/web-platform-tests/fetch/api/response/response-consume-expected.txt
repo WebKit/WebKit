@@ -37,4 +37,5 @@ FAIL Consume response's body: from fetch to blob assert_equals: Blob body type s
 PASS Consume response's body: from fetch to text 
 PASS Consume response's body: from fetch to arrayBuffer 
 FAIL Consume response's body: from fetch without correct type to formData (error case) assert_throws: function "function () { throw e }" threw "Not implemented" (undefined) expected object "TypeError" ("TypeError")
+FAIL Consume response's body: from multipart form data blob to formData promise_test: Unhandled rejection with value: "Not implemented"
 

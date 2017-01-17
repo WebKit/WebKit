@@ -1,3 +1,22 @@
+2017-01-17  Youenn Fablet  <youenn@apple.com>
+
+        Refresh WPT tests up to 73f4ad361ca56d890b5f46d62c3bc84371a77e10
+        https://bugs.webkit.org/show_bug.cgi?id=167105
+
+        Reviewed by Alex Christensen.
+
+         Skipping two fetch tests as they reach an ASSERT on debug builds (missing implemented feature).
+
+        * TestExpectations:
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-expected.txt: Added.
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt:
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form-expected.txt.
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/labelable-elements-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/labelable-elements-expected.txt.
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-validity-expected.txt: Added.
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt.
+        * tests-options.json:
+
 2017-01-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][MSE] Update list of media-source tests that fail.

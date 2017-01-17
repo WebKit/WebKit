@@ -30,6 +30,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/get-host-info.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/common/large.py
 /LayoutTests/imported/w3c/web-platform-tests/common/media.js
+/LayoutTests/imported/w3c/web-platform-tests/common/redirect-opt-in.py
 /LayoutTests/imported/w3c/web-platform-tests/common/redirect.py
 /LayoutTests/imported/w3c/web-platform-tests/common/reftest-wait.js
 /LayoutTests/imported/w3c/web-platform-tests/common/stringifiers.js

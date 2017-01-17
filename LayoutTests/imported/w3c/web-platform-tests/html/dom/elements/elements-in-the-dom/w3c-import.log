@@ -15,4 +15,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/elements-in-the-dom/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/elements-in-the-dom/unknown-element.html

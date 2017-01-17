@@ -1,0 +1,6 @@
+
+FAIL RTCPeerConnectionIceEvent constructor with no candidate provided. Can't find variable: RTCPeerConnectionIceEvent
+FAIL RTCPeerConnectionIceEvent constructor with candidate passed as null. Can't find variable: RTCPeerConnectionIceEvent
+FAIL RTCPeerConnectionIceEvent constructor with candidate passed as undefined. Can't find variable: RTCPeerConnectionIceEvent
+FAIL RTCPeerConnectionIceEvent constructor with full arguments. Can't find variable: RTCPeerConnectionIceEvent
+

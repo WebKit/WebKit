@@ -311,6 +311,13 @@ webkit.org/b/157068 imported/w3c/web-platform-tests/fetch/nosniff/importscripts.
 webkit.org/b/157145 imported/w3c/web-platform-tests/fetch/nosniff/stylesheet.html [ Failure Pass ]
 webkit.org/b/161312 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context.html [ Failure Pass ]
 
+# Flaky tests due to always changing assertion error message
+imported/w3c/web-platform-tests/fetch/api/basic/request-headers.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encoded.html [ Failure ]
+
+[ Debug ] imported/w3c/web-platform-tests/fetch/api/basic/request-upload.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/fetch/api/basic/request-upload-worker.html [ Skip ]
+
 imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect.html [ DumpJSConsoleLogInStdErr ]
@@ -962,7 +969,6 @@ webkit.org/b/163706 imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-ima
 webkit.org/b/163706 imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-024.html [ Skip ]
 imported/blink/http/tests/security/shape-image-cors-disallow-origin.html [ ImageOnlyFailure ]
 imported/blink/http/tests/security/shape-image-cors-port.html [ ImageOnlyFailure ]
-
 webkit.org/b/163887 svg/as-image/svg-image-with-data-uri-use-data-uri.svg [ Pass Crash ]
 
 # Temporary failure until we start using ANGLE as a WebGL backend

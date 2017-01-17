@@ -45,7 +45,6 @@ PASS html5lib_tests2.html 0582a2e2c0eb00e0ba60b280187006c5e7de6991
 PASS html5lib_tests2.html 478db7eafb3ac4a6abb8dbe083664c8d3ada35d8 
 PASS html5lib_tests2.html c6abe422542794d7e8196d73283e562c309fe2e3 
 PASS html5lib_tests2.html 9fd0577023d0eb3662569333f5f231090439a217 
-FAIL html5lib_tests2.html a288ea4fde56fc652f4ec4db0b63af1ddfeac826 assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <form>\n|       <hr>\n|       <label>\n|         \"This is a searchable index. Enter search keywords: \"\n|         <input>\n|           name=\"isindex\"\n|           test=\"x\"\n|       <hr>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <isindex>\n|       name=\"x\"\n|       test=\"x\""
 PASS html5lib_tests2.html 0c917166dc089cb23a100af2f07cbf95f164533a 
 PASS html5lib_tests2.html 60f3ef7971b3259c3d800da672d886b2db778276 
 PASS html5lib_tests2.html 341bdf232d96b774988ee3163c953f2581752335 
@@ -64,31 +63,4 @@ PASS html5lib_tests2.html 2a818d5fd74c60ac2bb369fb2355b84edab31777
 PASS html5lib_tests2.html 9f88d21c8b77696f7238064a4ee87931cc16a03f 
 PASS html5lib_tests2.html 1d00919bf0b2493dfee7422a24acee9026de5fff 
 PASS html5lib_tests2.html 0c48a9e7584ede9d13d606057202883c5cff3eab 
-a288ea4fde56fc652f4ec4db0b63af1ddfeac826
-Input
-
-<isindex test=x name=x>
-Expected
-
-#document
-| <html>
-|   <head>
-|   <body>
-|     <form>
-|       <hr>
-|       <label>
-|         "This is a searchable index. Enter search keywords: "
-|         <input>
-|           name="isindex"
-|           test="x"
-|       <hr>
-Actual
-
-#document
-| <html>
-|   <head>
-|   <body>
-|     <isindex>
-|       name="x"
-|       test="x"
 

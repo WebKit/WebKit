@@ -48,9 +48,20 @@ var documentNuked = [
   "renameNode",
   "defaultCharset",
   "height",
-  "width"
+  "width",
+  // https://github.com/whatwg/html/commit/a64aea7fdb221bba027d95dc3cabda09e0b3e5dc
+  "commands",
+  // https://github.com/whatwg/html/commit/797b4d273955a0fe3cc2e2d0ca5d578f37c0f126
+  "cssElementMap",
+  // https://github.com/whatwg/html/commit/e236f46820b93d6fe2e2caae0363331075c6c4fb
+  "async",
 ]
 documentNuked.forEach(isNukedFromDocument)
+
+test(function() {
+  // https://github.com/whatwg/html/commit/e236f46820b93d6fe2e2caae0363331075c6c4fb
+  assert_false("load" in document);
+}, "document.load");
 
 test(function() {
   assert_equals(document.implementation["getFeature"], undefined)
@@ -70,6 +81,18 @@ var elementNuked = [
   "setIdAttributeNode"
 ]
 elementNuked.forEach(isNukedFromElement)
+
+function isNukedFromAttr(name) {
+  test(function() {
+    var attr = document.createAttribute("test")
+    assert_equals(attr[name], undefined)
+  }, "Attr member must be nuked: " + name)
+}
+var attrNuked = [
+  "schemaTypeInfo",
+  "isId"
+]
+attrNuked.forEach(isNukedFromAttr)
 
 function isNukedFromDoctype(name) {
   test(function() {
@@ -129,4 +152,29 @@ var windowNuked = [
   "attachEvent"
 ]
 windowNuked.forEach(isNukedFromWindow)
+
+function isRemovedFromEvent(name) {
+  test(() => {
+    assert_equals(Event[name], undefined)
+  }, "Event should not have this constant: " + name)
+}
+var EventRemoved = [
+  "MOUSEDOWN",
+  "MOUSEUP",
+  "MOUSEOVER",
+  "MOUSEOUT",
+  "MOUSEMOVE",
+  "MOUSEDRAG",
+  "CLICK",
+  "DBLCLICK",
+  "KEYDOWN",
+  "KEYUP",
+  "KEYPRESS",
+  "DRAGDROP",
+  "FOCUS",
+  "BLUR",
+  "SELECT",
+  "CHANGE"
+]
+EventRemoved.forEach(isRemovedFromEvent)
 </script>

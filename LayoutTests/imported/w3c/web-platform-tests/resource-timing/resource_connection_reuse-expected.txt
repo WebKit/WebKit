@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 175: TypeError: undefined is not an object (evaluating 'this.performanceContext.getEntriesByType.apply')
+Description
+
+This test validates that connectStart and connectEnd are the same when a connection is reused (e.g. when a persistent connection is used).
+
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'this.performanceContext.getEntriesByType.apply')
+
+PASS window.performance is defined 
+PASS window.performance.getEntriesByType is defined 
+

@@ -21,5 +21,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/iframe-setdomain.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource-timing.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource-timing.js
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_cached.htm
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resource_dynamic_insertion.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/test_resource_timing.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/test_resource_timing.js

@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 47: TypeError: Argument 1 ('node') to Node.appendChild must be an instance of Node
+
+Harness Error (FAIL), message = TypeError: Argument 1 ('node') to Node.appendChild must be an instance of Node
+
+PASS Meta refresh is blocked by the allow-scripts sandbox flag at its creation time, not when refresh comes due 
+

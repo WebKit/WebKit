@@ -15,6 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-bad-port.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-cache-default-conditional.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-cache-default.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-cache-force-cache.html

@@ -242,6 +242,7 @@
         "web-platform-tests/html/syntax/parsing/foreign_content_013.html",
         "web-platform-tests/html/webappapis/scripting/events/onerroreventhandler-frame.html",
         "web-platform-tests/mathml/relations/html5-tree/unique-identifier-1-iframe.html",
-        "web-platform-tests/resource-timing/iframe-setdomain.sub.html"
+        "web-platform-tests/resource-timing/iframe-setdomain.sub.html",
+        "web-platform-tests/upgrade-insecure-requests/support/post-origin-to-parent.html"
     ]
 }

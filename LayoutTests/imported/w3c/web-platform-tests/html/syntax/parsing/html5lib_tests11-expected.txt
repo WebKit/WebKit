@@ -4,19 +4,23 @@ CONSOLE MESSAGE: line 1: Warning: Problem parsing viewBox=""
 html5lib Parser Test
 
 
-FAIL html5lib_tests11.html d3a8de194ffc676baf08142bcda59ba18dcde2ba assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       attributeName=\"\"\n|       attributeType=\"\"\n|       baseFrequency=\"\"\n|       baseProfile=\"\"\n|       calcMode=\"\"\n|       clipPathUnits=\"\"\n|       contentscripttype=\"\"\n|       contentstyletype=\"\"\n|       diffuseConstant=\"\"\n|       edgeMode=\"\"\n|       externalresourcesrequired=\"\"\n|       filterUnits=\"\"\n|       filterres=\"\"\n|       glyphRef=\"\"\n|       gradientTransform=\"\"\n|       gradientUnits=\"\"\n|       kernelMatrix=\"\"\n|       kernelUnitLength=\"\"\n|       keyPoints=\"\"\n|       keySplines=\"\"\n|       keyTimes=\"\"\n|       lengthAdjust=\"\"\n|       limitingConeAngle=\"\"\n|       markerHeight=\"\"\n|       markerUnits=\"\"\n|       markerWidth=\"\"\n|       maskContentUnits=\"\"\n|       maskUnits=\"\"\n|       numOctaves=\"\"\n|       pathLength=\"\"\n|       patternContentUnits=\"\"\n|       patternTransform=\"\"\n|       patternUnits=\"\"\n|       pointsAtX=\"\"\n|       pointsAtY=\"\"\n|       pointsAtZ=\"\"\n|       preserveAlpha=\"\"\n|       preserveAspectRatio=\"\"\n|       primitiveUnits=\"\"\n|       refX=\"\"\n|       refY=\"\"\n|       repeatCount=\"\"\n|       repeatDur=\"\"\n|       requiredExtensions=\"\"\n|       requiredFeatures=\"\"\n|       specularConstant=\"\"\n|       specularExponent=\"\"\n|       spreadMethod=\"\"\n|       startOffset=\"\"\n|       stdDeviation=\"\"\n|       stitchTiles=\"\"\n|       surfaceScale=\"\"\n|       systemLanguage=\"\"\n|       tableValues=\"\"\n|       targetX=\"\"\n|       targetY=\"\"\n|       textLength=\"\"\n|       viewBox=\"\"\n|       viewTarget=\"\"\n|       xChannelSelector=\"\"\n|       yChannelSelector=\"\"\n|       zoomAndPan=\"\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       attributeName=\"\"\n|       attributeType=\"\"\n|       baseFrequency=\"\"\n|       baseProfile=\"\"\n|       calcMode=\"\"\n|       clipPathUnits=\"\"\n|       contentScriptType=\"\"\n|       contentStyleType=\"\"\n|       diffuseConstant=\"\"\n|       edgeMode=\"\"\n|       externalResourcesRequired=\"\"\n|       filterRes=\"\"\n|       filterUnits=\"\"\n|       glyphRef=\"\"\n|       gradientTransform=\"\"\n|       gradientUnits=\"\"\n|       kernelMatrix=\"\"\n|       kernelUnitLength=\"\"\n|       keyPoints=\"\"\n|       keySplines=\"\"\n|       keyTimes=\"\"\n|       lengthAdjust=\"\"\n|       limitingConeAngle=\"\"\n|       markerHeight=\"\"\n|       markerUnits=\"\"\n|       markerWidth=\"\"\n|       maskContentUnits=\"\"\n|       maskUnits=\"\"\n|       numOctaves=\"\"\n|       pathLength=\"\"\n|       patternContentUnits=\"\"\n|       patternTransform=\"\"\n|       patternUnits=\"\"\n|       pointsAtX=\"\"\n|       pointsAtY=\"\"\n|       pointsAtZ=\"\"\n|       preserveAlpha=\"\"\n|       preserveAspectRatio=\"\"\n|       primitiveUnits=\"\"\n|       refX=\"\"\n|       refY=\"\"\n|       repeatCount=\"\"\n|       repeatDur=\"\"\n|       requiredExtensions=\"\"\n|       requiredFeatures=\"\"\n|       specularConstant=\"\"\n|       specularExponent=\"\"\n|       spreadMethod=\"\"\n|       startOffset=\"\"\n|       stdDeviation=\"\"\n|       stitchTiles=\"\"\n|       surfaceScale=\"\"\n|       systemLanguage=\"\"\n|       tableValues=\"\"\n|       targetX=\"\"\n|       targetY=\"\"\n|       textLength=\"\"\n|       viewBox=\"\"\n|       viewTarget=\"\"\n|       xChannelSelector=\"\"\n|       yChannelSelector=\"\"\n|       zoomAndPan=\"\""
-FAIL html5lib_tests11.html 7ab36bc30d0d6bee4be899f13baed214e1ff0a74 assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       attributeName=\"\"\n|       attributeType=\"\"\n|       baseFrequency=\"\"\n|       baseProfile=\"\"\n|       calcMode=\"\"\n|       clipPathUnits=\"\"\n|       contentscripttype=\"\"\n|       contentstyletype=\"\"\n|       diffuseConstant=\"\"\n|       edgeMode=\"\"\n|       externalresourcesrequired=\"\"\n|       filterUnits=\"\"\n|       filterres=\"\"\n|       glyphRef=\"\"\n|       gradientTransform=\"\"\n|       gradientUnits=\"\"\n|       kernelMatrix=\"\"\n|       kernelUnitLength=\"\"\n|       keyPoints=\"\"\n|       keySplines=\"\"\n|       keyTimes=\"\"\n|       lengthAdjust=\"\"\n|       limitingConeAngle=\"\"\n|       markerHeight=\"\"\n|       markerUnits=\"\"\n|       markerWidth=\"\"\n|       maskContentUnits=\"\"\n|       maskUnits=\"\"\n|       numOctaves=\"\"\n|       pathLength=\"\"\n|       patternContentUnits=\"\"\n|       patternTransform=\"\"\n|       patternUnits=\"\"\n|       pointsAtX=\"\"\n|       pointsAtY=\"\"\n|       pointsAtZ=\"\"\n|       preserveAlpha=\"\"\n|       preserveAspectRatio=\"\"\n|       primitiveUnits=\"\"\n|       refX=\"\"\n|       refY=\"\"\n|       repeatCount=\"\"\n|       repeatDur=\"\"\n|       requiredExtensions=\"\"\n|       requiredFeatures=\"\"\n|       specularConstant=\"\"\n|       specularExponent=\"\"\n|       spreadMethod=\"\"\n|       startOffset=\"\"\n|       stdDeviation=\"\"\n|       stitchTiles=\"\"\n|       surfaceScale=\"\"\n|       systemLanguage=\"\"\n|       tableValues=\"\"\n|       targetX=\"\"\n|       targetY=\"\"\n|       textLength=\"\"\n|       viewBox=\"\"\n|       viewTarget=\"\"\n|       xChannelSelector=\"\"\n|       yChannelSelector=\"\"\n|       zoomAndPan=\"\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       attributeName=\"\"\n|       attributeType=\"\"\n|       baseFrequency=\"\"\n|       baseProfile=\"\"\n|       calcMode=\"\"\n|       clipPathUnits=\"\"\n|       contentScriptType=\"\"\n|       contentStyleType=\"\"\n|       diffuseConstant=\"\"\n|       edgeMode=\"\"\n|       externalResourcesRequired=\"\"\n|       filterRes=\"\"\n|       filterUnits=\"\"\n|       glyphRef=\"\"\n|       gradientTransform=\"\"\n|       gradientUnits=\"\"\n|       kernelMatrix=\"\"\n|       kernelUnitLength=\"\"\n|       keyPoints=\"\"\n|       keySplines=\"\"\n|       keyTimes=\"\"\n|       lengthAdjust=\"\"\n|       limitingConeAngle=\"\"\n|       markerHeight=\"\"\n|       markerUnits=\"\"\n|       markerWidth=\"\"\n|       maskContentUnits=\"\"\n|       maskUnits=\"\"\n|       numOctaves=\"\"\n|       pathLength=\"\"\n|       patternContentUnits=\"\"\n|       patternTransform=\"\"\n|       patternUnits=\"\"\n|       pointsAtX=\"\"\n|       pointsAtY=\"\"\n|       pointsAtZ=\"\"\n|       preserveAlpha=\"\"\n|       preserveAspectRatio=\"\"\n|       primitiveUnits=\"\"\n|       refX=\"\"\n|       refY=\"\"\n|       repeatCount=\"\"\n|       repeatDur=\"\"\n|       requiredExtensions=\"\"\n|       requiredFeatures=\"\"\n|       specularConstant=\"\"\n|       specularExponent=\"\"\n|       spreadMethod=\"\"\n|       startOffset=\"\"\n|       stdDeviation=\"\"\n|       stitchTiles=\"\"\n|       surfaceScale=\"\"\n|       systemLanguage=\"\"\n|       tableValues=\"\"\n|       targetX=\"\"\n|       targetY=\"\"\n|       textLength=\"\"\n|       viewBox=\"\"\n|       viewTarget=\"\"\n|       xChannelSelector=\"\"\n|       yChannelSelector=\"\"\n|       zoomAndPan=\"\""
-FAIL html5lib_tests11.html 45b6adfc38d306084d105aa7779a3b4fb83c031f assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       attributeName=\"\"\n|       attributeType=\"\"\n|       baseFrequency=\"\"\n|       baseProfile=\"\"\n|       calcMode=\"\"\n|       clipPathUnits=\"\"\n|       contentscripttype=\"\"\n|       contentstyletype=\"\"\n|       diffuseConstant=\"\"\n|       edgeMode=\"\"\n|       externalresourcesrequired=\"\"\n|       filterUnits=\"\"\n|       filterres=\"\"\n|       glyphRef=\"\"\n|       gradientTransform=\"\"\n|       gradientUnits=\"\"\n|       kernelMatrix=\"\"\n|       kernelUnitLength=\"\"\n|       keyPoints=\"\"\n|       keySplines=\"\"\n|       keyTimes=\"\"\n|       lengthAdjust=\"\"\n|       limitingConeAngle=\"\"\n|       markerHeight=\"\"\n|       markerUnits=\"\"\n|       markerWidth=\"\"\n|       maskContentUnits=\"\"\n|       maskUnits=\"\"\n|       numOctaves=\"\"\n|       pathLength=\"\"\n|       patternContentUnits=\"\"\n|       patternTransform=\"\"\n|       patternUnits=\"\"\n|       pointsAtX=\"\"\n|       pointsAtY=\"\"\n|       pointsAtZ=\"\"\n|       preserveAlpha=\"\"\n|       preserveAspectRatio=\"\"\n|       primitiveUnits=\"\"\n|       refX=\"\"\n|       refY=\"\"\n|       repeatCount=\"\"\n|       repeatDur=\"\"\n|       requiredExtensions=\"\"\n|       requiredFeatures=\"\"\n|       specularConstant=\"\"\n|       specularExponent=\"\"\n|       spreadMethod=\"\"\n|       startOffset=\"\"\n|       stdDeviation=\"\"\n|       stitchTiles=\"\"\n|       surfaceScale=\"\"\n|       systemLanguage=\"\"\n|       tableValues=\"\"\n|       targetX=\"\"\n|       targetY=\"\"\n|       textLength=\"\"\n|       viewBox=\"\"\n|       viewTarget=\"\"\n|       xChannelSelector=\"\"\n|       yChannelSelector=\"\"\n|       zoomAndPan=\"\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       attributeName=\"\"\n|       attributeType=\"\"\n|       baseFrequency=\"\"\n|       baseProfile=\"\"\n|       calcMode=\"\"\n|       clipPathUnits=\"\"\n|       contentScriptType=\"\"\n|       contentStyleType=\"\"\n|       diffuseConstant=\"\"\n|       edgeMode=\"\"\n|       externalResourcesRequired=\"\"\n|       filterRes=\"\"\n|       filterUnits=\"\"\n|       glyphRef=\"\"\n|       gradientTransform=\"\"\n|       gradientUnits=\"\"\n|       kernelMatrix=\"\"\n|       kernelUnitLength=\"\"\n|       keyPoints=\"\"\n|       keySplines=\"\"\n|       keyTimes=\"\"\n|       lengthAdjust=\"\"\n|       limitingConeAngle=\"\"\n|       markerHeight=\"\"\n|       markerUnits=\"\"\n|       markerWidth=\"\"\n|       maskContentUnits=\"\"\n|       maskUnits=\"\"\n|       numOctaves=\"\"\n|       pathLength=\"\"\n|       patternContentUnits=\"\"\n|       patternTransform=\"\"\n|       patternUnits=\"\"\n|       pointsAtX=\"\"\n|       pointsAtY=\"\"\n|       pointsAtZ=\"\"\n|       preserveAlpha=\"\"\n|       preserveAspectRatio=\"\"\n|       primitiveUnits=\"\"\n|       refX=\"\"\n|       refY=\"\"\n|       repeatCount=\"\"\n|       repeatDur=\"\"\n|       requiredExtensions=\"\"\n|       requiredFeatures=\"\"\n|       specularConstant=\"\"\n|       specularExponent=\"\"\n|       spreadMethod=\"\"\n|       startOffset=\"\"\n|       stdDeviation=\"\"\n|       stitchTiles=\"\"\n|       surfaceScale=\"\"\n|       systemLanguage=\"\"\n|       tableValues=\"\"\n|       targetX=\"\"\n|       targetY=\"\"\n|       textLength=\"\"\n|       viewBox=\"\"\n|       viewTarget=\"\"\n|       xChannelSelector=\"\"\n|       yChannelSelector=\"\"\n|       zoomAndPan=\"\""
-PASS html5lib_tests11.html b6ce0d4b36700a2f000199109155d1869f3c8d2f 
+PASS html5lib_tests11.html ba7a66dfcf59885c08e8638d15b01df3878531e7 
+PASS html5lib_tests11.html e69c7c08a54ca868ab33b2825d998fa6c3cac90e 
+FAIL html5lib_tests11.html 0e5897aafe87e460f84576c2d1d983504d12a7db assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       attributeName=\"\"\n|       attributeType=\"\"\n|       baseFrequency=\"\"\n|       baseProfile=\"\"\n|       calcMode=\"\"\n|       clipPathUnits=\"\"\n|       diffuseConstant=\"\"\n|       edgeMode=\"\"\n|       filterUnits=\"\"\n|       filterres=\"\"\n|       glyphRef=\"\"\n|       gradientTransform=\"\"\n|       gradientUnits=\"\"\n|       kernelMatrix=\"\"\n|       kernelUnitLength=\"\"\n|       keyPoints=\"\"\n|       keySplines=\"\"\n|       keyTimes=\"\"\n|       lengthAdjust=\"\"\n|       limitingConeAngle=\"\"\n|       markerHeight=\"\"\n|       markerUnits=\"\"\n|       markerWidth=\"\"\n|       maskContentUnits=\"\"\n|       maskUnits=\"\"\n|       numOctaves=\"\"\n|       pathLength=\"\"\n|       patternContentUnits=\"\"\n|       patternTransform=\"\"\n|       patternUnits=\"\"\n|       pointsAtX=\"\"\n|       pointsAtY=\"\"\n|       pointsAtZ=\"\"\n|       preserveAlpha=\"\"\n|       preserveAspectRatio=\"\"\n|       primitiveUnits=\"\"\n|       refX=\"\"\n|       refY=\"\"\n|       repeatCount=\"\"\n|       repeatDur=\"\"\n|       requiredExtensions=\"\"\n|       requiredFeatures=\"\"\n|       specularConstant=\"\"\n|       specularExponent=\"\"\n|       spreadMethod=\"\"\n|       startOffset=\"\"\n|       stdDeviation=\"\"\n|       stitchTiles=\"\"\n|       surfaceScale=\"\"\n|       systemLanguage=\"\"\n|       tableValues=\"\"\n|       targetX=\"\"\n|       targetY=\"\"\n|       textLength=\"\"\n|       viewBox=\"\"\n|       viewTarget=\"\"\n|       xChannelSelector=\"\"\n|       yChannelSelector=\"\"\n|       zoomAndPan=\"\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       attributeName=\"\"\n|       attributeType=\"\"\n|       baseFrequency=\"\"\n|       baseProfile=\"\"\n|       calcMode=\"\"\n|       clipPathUnits=\"\"\n|       diffuseConstant=\"\"\n|       edgeMode=\"\"\n|       filterRes=\"\"\n|       filterUnits=\"\"\n|       glyphRef=\"\"\n|       gradientTransform=\"\"\n|       gradientUnits=\"\"\n|       kernelMatrix=\"\"\n|       kernelUnitLength=\"\"\n|       keyPoints=\"\"\n|       keySplines=\"\"\n|       keyTimes=\"\"\n|       lengthAdjust=\"\"\n|       limitingConeAngle=\"\"\n|       markerHeight=\"\"\n|       markerUnits=\"\"\n|       markerWidth=\"\"\n|       maskContentUnits=\"\"\n|       maskUnits=\"\"\n|       numOctaves=\"\"\n|       pathLength=\"\"\n|       patternContentUnits=\"\"\n|       patternTransform=\"\"\n|       patternUnits=\"\"\n|       pointsAtX=\"\"\n|       pointsAtY=\"\"\n|       pointsAtZ=\"\"\n|       preserveAlpha=\"\"\n|       preserveAspectRatio=\"\"\n|       primitiveUnits=\"\"\n|       refX=\"\"\n|       refY=\"\"\n|       repeatCount=\"\"\n|       repeatDur=\"\"\n|       requiredExtensions=\"\"\n|       requiredFeatures=\"\"\n|       specularConstant=\"\"\n|       specularExponent=\"\"\n|       spreadMethod=\"\"\n|       startOffset=\"\"\n|       stdDeviation=\"\"\n|       stitchTiles=\"\"\n|       surfaceScale=\"\"\n|       systemLanguage=\"\"\n|       tableValues=\"\"\n|       targetX=\"\"\n|       targetY=\"\"\n|       textLength=\"\"\n|       viewBox=\"\"\n|       viewTarget=\"\"\n|       xChannelSelector=\"\"\n|       yChannelSelector=\"\"\n|       zoomAndPan=\"\""
+PASS html5lib_tests11.html f71dd198831309fc9ccd66ef91cde63fda9b9bda 
+FAIL html5lib_tests11.html a8f7a23601363454b4a13f66aed99ec9708ae87b assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       contentscripttype=\"\"\n|       contentstyletype=\"\"\n|       externalresourcesrequired=\"\"\n|       filterres=\"\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       contentScriptType=\"\"\n|       contentStyleType=\"\"\n|       externalResourcesRequired=\"\"\n|       filterRes=\"\""
+FAIL html5lib_tests11.html f8f7f6c576acc9eb874acb0dce6988f0f7b6fc5f assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       contentscripttype=\"\"\n|       contentstyletype=\"\"\n|       externalresourcesrequired=\"\"\n|       filterres=\"\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       contentScriptType=\"\"\n|       contentStyleType=\"\"\n|       externalResourcesRequired=\"\"\n|       filterRes=\"\""
+FAIL html5lib_tests11.html fb4dc9f70129a8a045fca3a1e3acee052d0990b3 assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       contentscripttype=\"\"\n|       contentstyletype=\"\"\n|       externalresourcesrequired=\"\"\n|       filterres=\"\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       contentScriptType=\"\"\n|       contentStyleType=\"\"\n|       externalResourcesRequired=\"\"\n|       filterRes=\"\""
+PASS html5lib_tests11.html 8f77b846acce75edf1988ea655c79f1de4321de9 
 PASS html5lib_tests11.html 39c50f080b2b9ae9e7a1070679ab97d7b814f9ec 
 PASS html5lib_tests11.html 6d1fa1599f75625fe4d019abb04a064cf6ed39e8 
 PASS html5lib_tests11.html 791437ece7ba684e00162d1dd79dfe540e3621a7 
 PASS html5lib_tests11.html af40d26164229c29b9be77ed6dd7dda780cba55c 
 PASS html5lib_tests11.html 16e68d18f8f0fb81013fe77a30b7d396c5081e5e 
-d3a8de194ffc676baf08142bcda59ba18dcde2ba
+0e5897aafe87e460f84576c2d1d983504d12a7db
 Input
 
-<!DOCTYPE html><body><svg attributeName='' attributeType='' baseFrequency='' baseProfile='' calcMode='' clipPathUnits='' contentScriptType='' contentStyleType='' diffuseConstant='' edgeMode='' externalResourcesRequired='' filterRes='' filterUnits='' glyphRef='' gradientTransform='' gradientUnits='' kernelMatrix='' kernelUnitLength='' keyPoints='' keySplines='' keyTimes='' lengthAdjust='' limitingConeAngle='' markerHeight='' markerUnits='' markerWidth='' maskContentUnits='' maskUnits='' numOctaves='' pathLength='' patternContentUnits='' patternTransform='' patternUnits='' pointsAtX='' pointsAtY='' pointsAtZ='' preserveAlpha='' preserveAspectRatio='' primitiveUnits='' refX='' refY='' repeatCount='' repeatDur='' requiredExtensions='' requiredFeatures='' specularConstant='' specularExponent='' spreadMethod='' startOffset='' stdDeviation='' stitchTiles='' surfaceScale='' systemLanguage='' tableValues='' targetX='' targetY='' textLength='' viewBox='' viewTarget='' xChannelSelector='' yChannelSelector='' zoomAndPan=''></svg>
+<!DOCTYPE html><body><svg attributename='' attributetype='' basefrequency='' baseprofile='' calcmode='' clippathunits='' diffuseconstant='' edgemode='' filterunits='' filterres='' glyphref='' gradienttransform='' gradientunits='' kernelmatrix='' kernelunitlength='' keypoints='' keysplines='' keytimes='' lengthadjust='' limitingconeangle='' markerheight='' markerunits='' markerwidth='' maskcontentunits='' maskunits='' numoctaves='' pathlength='' patterncontentunits='' patterntransform='' patternunits='' pointsatx='' pointsaty='' pointsatz='' preservealpha='' preserveaspectratio='' primitiveunits='' refx='' refy='' repeatcount='' repeatdur='' requiredextensions='' requiredfeatures='' specularconstant='' specularexponent='' spreadmethod='' startoffset='' stddeviation='' stitchtiles='' surfacescale='' systemlanguage='' tablevalues='' targetx='' targety='' textlength='' viewbox='' viewtarget='' xchannelselector='' ychannelselector='' zoomandpan=''></svg>
 Expected
 
 #document
@@ -31,11 +35,8 @@ Expected
 |       baseProfile=""
 |       calcMode=""
 |       clipPathUnits=""
-|       contentscripttype=""
-|       contentstyletype=""
 |       diffuseConstant=""
 |       edgeMode=""
-|       externalresourcesrequired=""
 |       filterUnits=""
 |       filterres=""
 |       glyphRef=""
@@ -101,11 +102,8 @@ Actual
 |       baseProfile=""
 |       calcMode=""
 |       clipPathUnits=""
-|       contentScriptType=""
-|       contentStyleType=""
 |       diffuseConstant=""
 |       edgeMode=""
-|       externalResourcesRequired=""
 |       filterRes=""
 |       filterUnits=""
 |       glyphRef=""
@@ -157,10 +155,10 @@ Actual
 |       xChannelSelector=""
 |       yChannelSelector=""
 |       zoomAndPan=""
-7ab36bc30d0d6bee4be899f13baed214e1ff0a74
+a8f7a23601363454b4a13f66aed99ec9708ae87b
 Input
 
-<!DOCTYPE html><BODY><SVG ATTRIBUTENAME='' ATTRIBUTETYPE='' BASEFREQUENCY='' BASEPROFILE='' CALCMODE='' CLIPPATHUNITS='' CONTENTSCRIPTTYPE='' CONTENTSTYLETYPE='' DIFFUSECONSTANT='' EDGEMODE='' EXTERNALRESOURCESREQUIRED='' FILTERRES='' FILTERUNITS='' GLYPHREF='' GRADIENTTRANSFORM='' GRADIENTUNITS='' KERNELMATRIX='' KERNELUNITLENGTH='' KEYPOINTS='' KEYSPLINES='' KEYTIMES='' LENGTHADJUST='' LIMITINGCONEANGLE='' MARKERHEIGHT='' MARKERUNITS='' MARKERWIDTH='' MASKCONTENTUNITS='' MASKUNITS='' NUMOCTAVES='' PATHLENGTH='' PATTERNCONTENTUNITS='' PATTERNTRANSFORM='' PATTERNUNITS='' POINTSATX='' POINTSATY='' POINTSATZ='' PRESERVEALPHA='' PRESERVEASPECTRATIO='' PRIMITIVEUNITS='' REFX='' REFY='' REPEATCOUNT='' REPEATDUR='' REQUIREDEXTENSIONS='' REQUIREDFEATURES='' SPECULARCONSTANT='' SPECULAREXPONENT='' SPREADMETHOD='' STARTOFFSET='' STDDEVIATION='' STITCHTILES='' SURFACESCALE='' SYSTEMLANGUAGE='' TABLEVALUES='' TARGETX='' TARGETY='' TEXTLENGTH='' VIEWBOX='' VIEWTARGET='' XCHANNELSELECTOR='' YCHANNELSELECTOR='' ZOOMANDPAN=''></SVG>
+<!DOCTYPE html><body><svg contentScriptType='' contentStyleType='' externalResourcesRequired='' filterRes=''></svg>
 Expected
 
 #document
@@ -169,68 +167,10 @@ Expected
 |   <head>
 |   <body>
 |     <svg svg>
-|       attributeName=""
-|       attributeType=""
-|       baseFrequency=""
-|       baseProfile=""
-|       calcMode=""
-|       clipPathUnits=""
 |       contentscripttype=""
 |       contentstyletype=""
-|       diffuseConstant=""
-|       edgeMode=""
 |       externalresourcesrequired=""
-|       filterUnits=""
 |       filterres=""
-|       glyphRef=""
-|       gradientTransform=""
-|       gradientUnits=""
-|       kernelMatrix=""
-|       kernelUnitLength=""
-|       keyPoints=""
-|       keySplines=""
-|       keyTimes=""
-|       lengthAdjust=""
-|       limitingConeAngle=""
-|       markerHeight=""
-|       markerUnits=""
-|       markerWidth=""
-|       maskContentUnits=""
-|       maskUnits=""
-|       numOctaves=""
-|       pathLength=""
-|       patternContentUnits=""
-|       patternTransform=""
-|       patternUnits=""
-|       pointsAtX=""
-|       pointsAtY=""
-|       pointsAtZ=""
-|       preserveAlpha=""
-|       preserveAspectRatio=""
-|       primitiveUnits=""
-|       refX=""
-|       refY=""
-|       repeatCount=""
-|       repeatDur=""
-|       requiredExtensions=""
-|       requiredFeatures=""
-|       specularConstant=""
-|       specularExponent=""
-|       spreadMethod=""
-|       startOffset=""
-|       stdDeviation=""
-|       stitchTiles=""
-|       surfaceScale=""
-|       systemLanguage=""
-|       tableValues=""
-|       targetX=""
-|       targetY=""
-|       textLength=""
-|       viewBox=""
-|       viewTarget=""
-|       xChannelSelector=""
-|       yChannelSelector=""
-|       zoomAndPan=""
 Actual
 
 #document
@@ -239,72 +179,14 @@ Actual
 |   <head>
 |   <body>
 |     <svg svg>
-|       attributeName=""
-|       attributeType=""
-|       baseFrequency=""
-|       baseProfile=""
-|       calcMode=""
-|       clipPathUnits=""
 |       contentScriptType=""
 |       contentStyleType=""
-|       diffuseConstant=""
-|       edgeMode=""
 |       externalResourcesRequired=""
 |       filterRes=""
-|       filterUnits=""
-|       glyphRef=""
-|       gradientTransform=""
-|       gradientUnits=""
-|       kernelMatrix=""
-|       kernelUnitLength=""
-|       keyPoints=""
-|       keySplines=""
-|       keyTimes=""
-|       lengthAdjust=""
-|       limitingConeAngle=""
-|       markerHeight=""
-|       markerUnits=""
-|       markerWidth=""
-|       maskContentUnits=""
-|       maskUnits=""
-|       numOctaves=""
-|       pathLength=""
-|       patternContentUnits=""
-|       patternTransform=""
-|       patternUnits=""
-|       pointsAtX=""
-|       pointsAtY=""
-|       pointsAtZ=""
-|       preserveAlpha=""
-|       preserveAspectRatio=""
-|       primitiveUnits=""
-|       refX=""
-|       refY=""
-|       repeatCount=""
-|       repeatDur=""
-|       requiredExtensions=""
-|       requiredFeatures=""
-|       specularConstant=""
-|       specularExponent=""
-|       spreadMethod=""
-|       startOffset=""
-|       stdDeviation=""
-|       stitchTiles=""
-|       surfaceScale=""
-|       systemLanguage=""
-|       tableValues=""
-|       targetX=""
-|       targetY=""
-|       textLength=""
-|       viewBox=""
-|       viewTarget=""
-|       xChannelSelector=""
-|       yChannelSelector=""
-|       zoomAndPan=""
-45b6adfc38d306084d105aa7779a3b4fb83c031f
+f8f7f6c576acc9eb874acb0dce6988f0f7b6fc5f
 Input
 
-<!DOCTYPE html><body><svg attributename='' attributetype='' basefrequency='' baseprofile='' calcmode='' clippathunits='' contentscripttype='' contentstyletype='' diffuseconstant='' edgemode='' externalresourcesrequired='' filterres='' filterunits='' glyphref='' gradienttransform='' gradientunits='' kernelmatrix='' kernelunitlength='' keypoints='' keysplines='' keytimes='' lengthadjust='' limitingconeangle='' markerheight='' markerunits='' markerwidth='' maskcontentunits='' maskunits='' numoctaves='' pathlength='' patterncontentunits='' patterntransform='' patternunits='' pointsatx='' pointsaty='' pointsatz='' preservealpha='' preserveaspectratio='' primitiveunits='' refx='' refy='' repeatcount='' repeatdur='' requiredextensions='' requiredfeatures='' specularconstant='' specularexponent='' spreadmethod='' startoffset='' stddeviation='' stitchtiles='' surfacescale='' systemlanguage='' tablevalues='' targetx='' targety='' textlength='' viewbox='' viewtarget='' xchannelselector='' ychannelselector='' zoomandpan=''></svg>
+<!DOCTYPE html><body><svg CONTENTSCRIPTTYPE='' CONTENTSTYLETYPE='' EXTERNALRESOURCESREQUIRED='' FILTERRES=''></svg>
 Expected
 
 #document
@@ -313,68 +195,10 @@ Expected
 |   <head>
 |   <body>
 |     <svg svg>
-|       attributeName=""
-|       attributeType=""
-|       baseFrequency=""
-|       baseProfile=""
-|       calcMode=""
-|       clipPathUnits=""
 |       contentscripttype=""
 |       contentstyletype=""
-|       diffuseConstant=""
-|       edgeMode=""
 |       externalresourcesrequired=""
-|       filterUnits=""
 |       filterres=""
-|       glyphRef=""
-|       gradientTransform=""
-|       gradientUnits=""
-|       kernelMatrix=""
-|       kernelUnitLength=""
-|       keyPoints=""
-|       keySplines=""
-|       keyTimes=""
-|       lengthAdjust=""
-|       limitingConeAngle=""
-|       markerHeight=""
-|       markerUnits=""
-|       markerWidth=""
-|       maskContentUnits=""
-|       maskUnits=""
-|       numOctaves=""
-|       pathLength=""
-|       patternContentUnits=""
-|       patternTransform=""
-|       patternUnits=""
-|       pointsAtX=""
-|       pointsAtY=""
-|       pointsAtZ=""
-|       preserveAlpha=""
-|       preserveAspectRatio=""
-|       primitiveUnits=""
-|       refX=""
-|       refY=""
-|       repeatCount=""
-|       repeatDur=""
-|       requiredExtensions=""
-|       requiredFeatures=""
-|       specularConstant=""
-|       specularExponent=""
-|       spreadMethod=""
-|       startOffset=""
-|       stdDeviation=""
-|       stitchTiles=""
-|       surfaceScale=""
-|       systemLanguage=""
-|       tableValues=""
-|       targetX=""
-|       targetY=""
-|       textLength=""
-|       viewBox=""
-|       viewTarget=""
-|       xChannelSelector=""
-|       yChannelSelector=""
-|       zoomAndPan=""
 Actual
 
 #document
@@ -383,66 +207,36 @@ Actual
 |   <head>
 |   <body>
 |     <svg svg>
-|       attributeName=""
-|       attributeType=""
-|       baseFrequency=""
-|       baseProfile=""
-|       calcMode=""
-|       clipPathUnits=""
 |       contentScriptType=""
 |       contentStyleType=""
-|       diffuseConstant=""
-|       edgeMode=""
 |       externalResourcesRequired=""
 |       filterRes=""
-|       filterUnits=""
-|       glyphRef=""
-|       gradientTransform=""
-|       gradientUnits=""
-|       kernelMatrix=""
-|       kernelUnitLength=""
-|       keyPoints=""
-|       keySplines=""
-|       keyTimes=""
-|       lengthAdjust=""
-|       limitingConeAngle=""
-|       markerHeight=""
-|       markerUnits=""
-|       markerWidth=""
-|       maskContentUnits=""
-|       maskUnits=""
-|       numOctaves=""
-|       pathLength=""
-|       patternContentUnits=""
-|       patternTransform=""
-|       patternUnits=""
-|       pointsAtX=""
-|       pointsAtY=""
-|       pointsAtZ=""
-|       preserveAlpha=""
-|       preserveAspectRatio=""
-|       primitiveUnits=""
-|       refX=""
-|       refY=""
-|       repeatCount=""
-|       repeatDur=""
-|       requiredExtensions=""
-|       requiredFeatures=""
-|       specularConstant=""
-|       specularExponent=""
-|       spreadMethod=""
-|       startOffset=""
-|       stdDeviation=""
-|       stitchTiles=""
-|       surfaceScale=""
-|       systemLanguage=""
-|       tableValues=""
-|       targetX=""
-|       targetY=""
-|       textLength=""
-|       viewBox=""
-|       viewTarget=""
-|       xChannelSelector=""
-|       yChannelSelector=""
-|       zoomAndPan=""
+fb4dc9f70129a8a045fca3a1e3acee052d0990b3
+Input
+
+<!DOCTYPE html><body><svg contentscripttype='' contentstyletype='' externalresourcesrequired='' filterres=''></svg>
+Expected
+
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       contentscripttype=""
+|       contentstyletype=""
+|       externalresourcesrequired=""
+|       filterres=""
+Actual
+
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       contentScriptType=""
+|       contentStyleType=""
+|       externalResourcesRequired=""
+|       filterRes=""
 

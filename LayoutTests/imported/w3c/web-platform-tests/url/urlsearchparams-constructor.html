@@ -18,15 +18,25 @@ test(function() {
 }, 'Basic URLSearchParams construction');
 
 test(function() {
-    assert_throws(new TypeError(), function () { URLSearchParams(); },
-                  'Calling \'URLSearchParams\' without \'new\' should throw.');
-    assert_throws(new TypeError(), function () { new URLSearchParams(DOMException.prototype); });
-    var params = new URLSearchParams('');
+    var params = new URLSearchParams()
+    assert_equals(params.toString(), "")
+}, "URLSearchParams constructor, no arguments")
+
+test(() => {
+    params = new URLSearchParams(DOMException.prototype);
+    assert_equals(params.toString(), "Error=")
+}, "URLSearchParams constructor, DOMException.prototype as argument")
+
+test(() => {
+    params = new URLSearchParams('');
     assert_true(params != null, 'constructor returned non-null value.');
     assert_equals(params.__proto__, URLSearchParams.prototype, 'expected URLSearchParams.prototype as prototype.');
+}, "URLSearchParams constructor, empty string as argument")
+
+test(() => {
     params = new URLSearchParams({});
-    assert_equals(params + '', '%5Bobject+Object%5D=');
-}, 'URLSearchParams constructor, empty.');
+    assert_equals(params + '', "");
+}, 'URLSearchParams constructor, {} as argument');
 
 test(function() {
     var params = new URLSearchParams('a=b');
@@ -124,6 +134,30 @@ test(function() {
     params = new URLSearchParams('a%f0%9f%92%a9b=c');
     assert_equals(params.get('a\uD83D\uDCA9b'), 'c');
 }, 'Parse %f0%9f%92%a9');  // Unicode Character 'PILE OF POO' (U+1F4A9)
+
+;[
+  { "input": {"+": "%C2"}, "output": [[" ", "\uFFFD"]], "name": "object with +" },
+  { "input": {c: "x", a: "?"}, "output": [["c", "x"], ["a", "?"]], "name": "object with two keys" },
+  { "input": [["c", "x"], ["a", "?"]], "output": [["c", "x"], ["a", "?"]], "name": "array with two keys" }
+].forEach((val) => {
+    test(() => {
+        let params = new URLSearchParams(val.input),
+            i = 0
+        for (let param of params) {
+            assert_array_equals(param, val.output[i])
+            i++
+        }
+    }, "Construct with " + val.name)
+})
+
+test(() => {
+  params = new URLSearchParams()
+  params[Symbol.iterator] = function *() {
+    yield ["a", "b"]
+  }
+  let params2 = new URLSearchParams(params)
+  assert_equals(params2.get("a"), "b")
+}, "Custom [Symbol.iterator]")
 </script>
 </head>
 </html>

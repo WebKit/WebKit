@@ -23,6 +23,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/cross_origin_joined_frame.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/document_location.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-pathname-setter-question-mark.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-stringifier.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign_about_blank-1.html

@@ -21,4 +21,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-ask-for-reset.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-named-getter.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-remove.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-validity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-value.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/selected-index.html

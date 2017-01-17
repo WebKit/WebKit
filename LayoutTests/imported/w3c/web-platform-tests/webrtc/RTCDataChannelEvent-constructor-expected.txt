@@ -1,0 +1,6 @@
+
+FAIL RTCDataChannelEvent constructor without a required argument. Can't find variable: RTCDataChannelEvent
+FAIL RTCDataChannelEvent constructor with channel passed as null. assert_throws: function "function () { new RTCDataChannelEvent('type', { channel: ..." threw object "ReferenceError: Can't find variable: RTCDataChannelEvent" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL RTCDataChannelEvent constructor with a channel passed as undefined. assert_throws: function "function () { new RTCDataChannelEvent('type', { channel: ..." threw object "ReferenceError: Can't find variable: RTCDataChannelEvent" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL RTCDataChannelEvent constructor with full arguments. Can't find variable: RTCDataChannelEvent
+

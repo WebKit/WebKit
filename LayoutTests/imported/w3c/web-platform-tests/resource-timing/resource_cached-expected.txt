@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 175: TypeError: undefined is not an object (evaluating 'this.performanceContext.getEntriesByType.apply')
+Description
+
+This test validates that a 304 Not Modified resource appears in the buffer.
+
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'this.performanceContext.getEntriesByType.apply')
+
+PASS window.performance is defined 
+PASS window.performance.getEntriesByType is defined 
+

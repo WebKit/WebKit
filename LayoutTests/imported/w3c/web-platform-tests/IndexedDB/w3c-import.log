@@ -259,6 +259,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_put7.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_put8.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_put9.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbrequest_error.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbrequest_result.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbtransaction-oncomplete.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbtransaction.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbtransaction_abort.htm
@@ -295,6 +297,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-lifetime.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction-requestqueue.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/transaction_bubble-and-capture.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/upgrade-transaction-lifecycle-backend-aborted.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/upgrade-transaction-lifecycle-committed.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/upgrade-transaction-lifecycle-user-aborted.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/value.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/value_recursive.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/writer-starvation.htm
