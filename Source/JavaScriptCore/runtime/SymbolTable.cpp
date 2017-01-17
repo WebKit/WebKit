@@ -49,7 +49,7 @@ SymbolTableEntry& SymbolTableEntry::copySlow(const SymbolTableEntry& other)
 
 void SymbolTable::destroy(JSCell* cell)
 {
-    SymbolTable* thisObject = jsCast<SymbolTable*>(cell);
+    SymbolTable* thisObject = static_cast<SymbolTable*>(cell);
     thisObject->SymbolTable::~SymbolTable();
 }
 

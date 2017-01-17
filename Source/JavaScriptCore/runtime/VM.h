@@ -363,6 +363,9 @@ public:
     std::once_flag m_wasmSignatureInformationOnceFlag;
     std::unique_ptr<Wasm::SignatureInformation> m_wasmSignatureInformation;
 #endif
+    
+    JSCell* currentlyDestructingCallbackObject;
+    const ClassInfo* currentlyDestructingCallbackObjectClassInfo;
 
     AtomicStringTable* m_atomicStringTable;
     WTF::SymbolRegistry m_symbolRegistry;

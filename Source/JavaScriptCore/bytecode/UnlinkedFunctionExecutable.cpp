@@ -119,7 +119,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
 
 void UnlinkedFunctionExecutable::destroy(JSCell* cell)
 {
-    jsCast<UnlinkedFunctionExecutable*>(cell)->~UnlinkedFunctionExecutable();
+    static_cast<UnlinkedFunctionExecutable*>(cell)->~UnlinkedFunctionExecutable();
 }
 
 void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)

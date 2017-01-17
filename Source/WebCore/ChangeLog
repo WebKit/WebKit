@@ -1,3 +1,22 @@
+2017-01-16  Filip Pizlo  <fpizlo@apple.com>
+
+        JSCell::classInfo() shouldn't have a bunch of mitigations for being called during destruction
+        https://bugs.webkit.org/show_bug.cgi?id=167066
+
+        Reviewed by Keith Miller and Michael Saboff.
+
+        No new tests because no new behavior.
+        
+        It's now necessary to avoid jsCast in destructors and finalizers. This was an easy
+        rule to introduce because this used to always be the rule.
+
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::JSDeprecatedCSSOMValueOwner::finalize):
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::IteratorTraits>::destroy):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+
 2017-01-17  Miguel Gomez  <magomez@igalia.com>
 
         REGRESSION(r208997): [GLX] Google maps labels broken when using glXCreateContextAttribsARB

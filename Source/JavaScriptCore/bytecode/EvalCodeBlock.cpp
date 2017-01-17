@@ -39,7 +39,7 @@ const ClassInfo EvalCodeBlock::s_info = {
 
 void EvalCodeBlock::destroy(JSCell* cell)
 {
-    jsCast<EvalCodeBlock*>(cell)->~EvalCodeBlock();
+    static_cast<EvalCodeBlock*>(cell)->~EvalCodeBlock();
 }
 
 } // namespace JSC
