@@ -1,3 +1,38 @@
+2017-01-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Crash when closing tab with debugger paused
+        https://bugs.webkit.org/show_bug.cgi?id=161746
+        <rdar://problem/15607819>
+
+        Reviewed by Brian Burg and Brent Fulgham.
+
+        * page/Page.h:
+        (WebCore::Page::incrementNestedRunLoopCount):
+        (WebCore::Page::decrementNestedRunLoopCount):
+        (WebCore::Page::insideNestedRunLoop):
+        Keep track of whether or not this Page is inside of a nested run loop.
+        Currently the only nested run loop we know about is EventLoop used
+        by Web Inspector when debugging JavaScript.
+
+        (WebCore::Page::whenUnnested):
+        Callback that can be called when we are no longer inside of a nested
+        run loop.
+
+        (WebCore::Page::~Page):
+        Ensure we are not in a known nested run loop when destructing, since
+        that could be unsafe.
+
+        * inspector/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::runEventLoopWhilePausedInternal):
+        Increment and decrement as we go into or leave the nested runloop.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::disconnectAllFrontends):
+        Rework destruction to allow disconnectAllFrontends to happen earlier
+        if necessary. WebKit clients may use this to disconnect remote
+        frontends when closing a Page.
+
 2017-01-16  Filip Pizlo  <fpizlo@apple.com>
 
         JSCell::classInfo() shouldn't have a bunch of mitigations for being called during destruction

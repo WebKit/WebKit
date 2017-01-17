@@ -192,6 +192,11 @@ public:
     void decrementSubframeCount() { ASSERT(m_subframeCount); --m_subframeCount; }
     int subframeCount() const { checkSubframeCountConsistency(); return m_subframeCount; }
 
+    void incrementNestedRunLoopCount();
+    void decrementNestedRunLoopCount();
+    bool insideNestedRunLoop() const { return m_nestedRunLoopCount > 0; }
+    WEBCORE_EXPORT void whenUnnested(std::function<void()>);
+
 #if ENABLE(REMOTE_INSPECTOR)
     WEBCORE_EXPORT bool remoteInspectionAllowed() const;
     WEBCORE_EXPORT void setRemoteInspectionAllowed(bool);
@@ -622,7 +627,10 @@ private:
     std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;
     std::unique_ptr<WebGLStateTracker> m_webGLStateTracker;
 
-    int m_subframeCount;
+    int m_nestedRunLoopCount { 0 };
+    std::function<void()> m_unnestCallback;
+
+    int m_subframeCount { 0 };
     String m_groupName;
     bool m_openedByDOM;
 
