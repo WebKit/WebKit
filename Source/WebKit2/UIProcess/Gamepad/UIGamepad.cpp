@@ -38,6 +38,7 @@ namespace WebKit {
 UIGamepad::UIGamepad(WebCore::PlatformGamepad& platformGamepad)
     : m_index(platformGamepad.index())
     , m_id(platformGamepad.id())
+    , m_lastUpdateTime(platformGamepad.lastUpdateTime())
 {
     m_axisValues.resize(platformGamepad.axisValues().size());
     m_buttonValues.resize(platformGamepad.buttonValues().size());
@@ -53,16 +54,17 @@ void UIGamepad::updateFromPlatformGamepad(WebCore::PlatformGamepad& platformGame
 
     m_axisValues = platformGamepad.axisValues();
     m_buttonValues = platformGamepad.buttonValues();
+    m_lastUpdateTime = platformGamepad.lastUpdateTime();
 }
 
 GamepadData UIGamepad::condensedGamepadData() const
 {
-    return { m_index, m_axisValues, m_buttonValues };
+    return { m_index, m_axisValues, m_buttonValues, m_lastUpdateTime };
 }
 
 GamepadData UIGamepad::fullGamepadData() const
 {
-    return { m_index, m_id, m_axisValues, m_buttonValues };
+    return { m_index, m_id, m_axisValues, m_buttonValues, m_lastUpdateTime };
 }
 
 

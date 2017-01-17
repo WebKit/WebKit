@@ -54,6 +54,7 @@ private:
     String m_id;
     Vector<double> m_axisValues;
     Vector<double> m_buttonValues;
+    double m_lastUpdateTime;
 };
 
 }

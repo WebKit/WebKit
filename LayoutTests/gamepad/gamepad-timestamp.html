@@ -20,11 +20,21 @@ function finishTest()
 var rafCount = 0;
 var increasingTimestampsSeen = 0;
 var timestamp = 0;
+var gamepad2Timestamp = -1;
 
 function rafCallback()
 {
     var gamepad = navigator.getGamepads()[0];
-    
+    var gamepad2 = navigator.getGamepads()[1];
+
+    if (gamepad2Timestamp == -1)
+        gamepad2Timestamp = gamepad2.timestamp;
+
+    if (gamepad2Timestamp != gamepad2.timestamp) {
+        log("Timestamp of gamepad 2 should never change throughout this test, but it did!");
+        finishTest();
+    }
+
     if (gamepad.timestamp < timestamp) {
         log("Timestamp on gamepad is " + gamepad.timestamp + " which is less than " + timestamp);
         finishTest();
@@ -68,6 +78,12 @@ function runTest() {
     testRunner.setMockGamepadButtonValue(0, 0, 1.0);
     testRunner.setMockGamepadButtonValue(0, 1, 1.0);
     testRunner.connectMockGamepad(0);
+    testRunner.setMockGamepadDetails(1, "Test Joystick 2", 2, 2);
+    testRunner.setMockGamepadAxisValue(1, 0, 0.7);
+    testRunner.setMockGamepadAxisValue(1, 1, -1.0);
+    testRunner.setMockGamepadButtonValue(1, 0, 1.0);
+    testRunner.setMockGamepadButtonValue(1, 1, 1.0);
+    testRunner.connectMockGamepad(1);
 }
 
 </script>

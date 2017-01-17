@@ -1,3 +1,29 @@
+2017-01-17  Brady Eidson  <beidson@apple.com>
+
+        An update to one gamepad's values should only change that gamepad's modified timestamp.
+        <rdar://problem/28620865> and https://bugs.webkit.org/show_bug.cgi?id=167139
+
+        Reviewed by Andy Estes.
+
+        Track the lastModifiedTime for a gamepad in the UI process, and pass it along to web processes.
+
+        * Shared/Gamepad/GamepadData.cpp:
+        (WebKit::GamepadData::GamepadData):
+        (WebKit::GamepadData::encode):
+        (WebKit::GamepadData::decode):
+        * Shared/Gamepad/GamepadData.h:
+        (WebKit::GamepadData::lastUpdateTime):
+
+        * UIProcess/Gamepad/UIGamepad.cpp:
+        (WebKit::UIGamepad::UIGamepad):
+        (WebKit::UIGamepad::updateFromPlatformGamepad):
+        (WebKit::UIGamepad::condensedGamepadData):
+        (WebKit::UIGamepad::fullGamepadData):
+        * UIProcess/Gamepad/UIGamepad.h:
+
+        * WebProcess/Gamepad/WebGamepad.cpp:
+        (WebKit::WebGamepad::updateValues):
+
 2017-01-17  Anders Carlsson  <andersca@apple.com>
 
         It's not possible to perform a POST request with HTTPBody content in a WKWebView

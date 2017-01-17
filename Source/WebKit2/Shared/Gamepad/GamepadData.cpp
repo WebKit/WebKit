@@ -33,18 +33,20 @@
 
 namespace WebKit {
 
-GamepadData::GamepadData(unsigned index, const Vector<double>& axisValues, const Vector<double>& buttonValues)
+GamepadData::GamepadData(unsigned index, const Vector<double>& axisValues, const Vector<double>& buttonValues, double lastUpdateTime)
     : m_index(index)
     , m_axisValues(axisValues)
     , m_buttonValues(buttonValues)
+    , m_lastUpdateTime(lastUpdateTime)
 {
 }
 
-GamepadData::GamepadData(unsigned index, const String& id, const Vector<double>& axisValues, const Vector<double>& buttonValues)
+GamepadData::GamepadData(unsigned index, const String& id, const Vector<double>& axisValues, const Vector<double>& buttonValues, double lastUpdateTime)
     : m_index(index)
     , m_id(id)
     , m_axisValues(axisValues)
     , m_buttonValues(buttonValues)
+    , m_lastUpdateTime(lastUpdateTime)
 {
 }
 
@@ -54,7 +56,7 @@ void GamepadData::encode(IPC::Encoder& encoder) const
     if (m_isNull)
         return;
 
-    encoder << m_index << m_id << m_axisValues << m_buttonValues;
+    encoder << m_index << m_id << m_axisValues << m_buttonValues << m_lastUpdateTime;
 }
 
 bool GamepadData::decode(IPC::Decoder& decoder, GamepadData& data)
@@ -75,6 +77,9 @@ bool GamepadData::decode(IPC::Decoder& decoder, GamepadData& data)
         return false;
 
     if (!decoder.decode(data.m_buttonValues))
+        return false;
+
+    if (!decoder.decode(data.m_lastUpdateTime))
         return false;
 
     return true;
