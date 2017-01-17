@@ -1,3 +1,10 @@
+2017-01-17  Tomas Popela  <tpopela@redhat.com>
+
+        Unreviewed build fix for the Release build with enabled logging
+
+        * html/MediaElementSession.cpp:
+        * html/track/InbandGenericTextTrack.cpp:
+
 2017-01-17  Zan Dobersek  <zdobersek@igalia.com>
 
         MediaKeySession: use existing 'message' event name

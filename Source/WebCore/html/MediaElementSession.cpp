@@ -48,6 +48,7 @@
 #include "ScriptController.h"
 #include "SourceBuffer.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS)
 #include "AudioSession.h"
