@@ -1,3 +1,16 @@
+2017-01-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][MSE] Update list of media-source tests that fail.
+
+        Unskip imported/w3c/web-platform-tests/media-source tests for WebKitGTK+
+        Report the list of those tests that fail.
+        Rebase imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer.html.
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer-expected.txt: Added. Rebased.
+
 2017-01-16  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Implementing baseline positioning for grid containers
