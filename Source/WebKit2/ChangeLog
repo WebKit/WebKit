@@ -1,3 +1,24 @@
+2017-01-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        ThreadedCoordinatedLayerTreeHost::renderNextFrame() should short-cut to layer flushing
+        https://bugs.webkit.org/show_bug.cgi?id=157614
+
+        Reviewed by Carlos Garcia Campos.
+
+        CoordinatedLayerTreeHost prevents any layer flushes while a previously-commited scene
+        state is still being rendered on the composition thread. renderNextFrame() is called
+        once that is complete, and a new layer flush is scheduled.
+
+        This change improves the whole ordeal by immediately performing the layer flush only if
+        it was requested during the time we were waiting on the renderer (i.e. when the latest
+        scene state was being composited), instead of scheduling it unconditionally.
+        m_scheduledWhileWaitingForRenderer member variable is added to track that occurrence.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::scheduleLayerFlush):
+        (WebKit::CoordinatedLayerTreeHost::renderNextFrame):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+
 2016-12-27  Emanuele Aina  <emanuele.aina@collabora.com>
 
         Ensure NetworkProcess is ready before whitelisting TLS certificates
