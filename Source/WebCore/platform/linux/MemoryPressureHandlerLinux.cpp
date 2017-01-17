@@ -29,6 +29,7 @@
 
 #if OS(LINUX)
 
+#include "CurrentProcessMemoryStatus.h"
 #include "Logging.h"
 
 #include <errno.h>
@@ -59,7 +60,6 @@ static const unsigned s_holdOffMultiplier = 20;
 
 static const char* s_cgroupMemoryPressureLevel = "/sys/fs/cgroup/memory/memory.pressure_level";
 static const char* s_cgroupEventControl = "/sys/fs/cgroup/memory/cgroup.event_control";
-static const char* s_processStatus = "/proc/self/status";
 
 #if USE(GLIB)
 typedef struct {
@@ -155,27 +155,6 @@ void MemoryPressureHandler::EventFDPoller::readAndNotify() const
     }
 
     m_notifyHandler();
-}
-
-static inline String nextToken(FILE* file)
-{
-    if (!file)
-        return String();
-
-    static const unsigned bufferSize = 128;
-    char buffer[bufferSize] = {0, };
-    unsigned index = 0;
-    while (index < bufferSize) {
-        int ch = fgetc(file);
-        if (ch == EOF || (isASCIISpace(ch) && index)) // Break on non-initial ASCII space.
-            break;
-        if (!isASCIISpace(ch)) {
-            buffer[index] = ch;
-            index++;
-        }
-    }
-
-    return String(buffer);
 }
 
 inline void MemoryPressureHandler::logErrorAndCloseFDs(const char* log)
@@ -293,6 +272,13 @@ void MemoryPressureHandler::holdOff(unsigned seconds)
     m_holdOffTimer.startOneShot(seconds);
 }
 
+static size_t processMemoryUsage()
+{
+    ProcessMemoryStatus memoryStatus;
+    currentProcessMemoryStatus(memoryStatus);
+    return (memoryStatus.resident - memoryStatus.shared);
+}
+
 void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchronous synchronous)
 {
     uninstall();
@@ -313,22 +299,7 @@ void MemoryPressureHandler::platformReleaseMemory(Critical)
 
 size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
 {
-    FILE* file = fopen(s_processStatus, "r");
-    if (!file)
-        return static_cast<size_t>(-1);
-
-    size_t vmSize = static_cast<size_t>(-1); // KB
-    String token = nextToken(file);
-    while (!token.isEmpty()) {
-        if (token == "VmSize:") {
-            vmSize = nextToken(file).toInt() * KB;
-            break;
-        }
-        token = nextToken(file);
-    }
-    fclose(file);
-
-    return vmSize;
+    return processMemoryUsage();
 }
 
 void MemoryPressureHandler::setMemoryPressureMonitorHandle(int fd)
