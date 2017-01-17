@@ -778,7 +778,7 @@ void WebChromeClient::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 }
 #endif
 
-#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
+#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
 void WebChromeClient::scheduleAnimation()
 {
 #if USE(COORDINATED_GRAPHICS)

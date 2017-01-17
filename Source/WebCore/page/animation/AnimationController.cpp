@@ -244,7 +244,6 @@ void AnimationControllerPrivate::addElementChangeToDispatch(Ref<Element>&& eleme
     startUpdateStyleIfNeededDispatcher();
 }
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
 void AnimationControllerPrivate::animationFrameCallbackFired()
 {
     double timeToNextService = updateAnimations(CallSetChanged);
@@ -252,7 +251,6 @@ void AnimationControllerPrivate::animationFrameCallbackFired()
     if (timeToNextService >= 0)
         m_frame.document()->view()->scheduleAnimation();
 }
-#endif
 
 void AnimationControllerPrivate::animationTimerFired()
 {
@@ -620,9 +618,7 @@ bool AnimationController::updateAnimations(RenderElement& renderer, const Render
 
     if (renderer.parent() || newStyle.animations() || (oldStyle && oldStyle->animations())) {
         m_data->updateAnimationTimerForRenderer(renderer);
-#if ENABLE(REQUEST_ANIMATION_FRAME)
         renderer.view().frameView().scheduleAnimation();
-#endif
     }
 
     return animationStateChanged;
@@ -706,12 +702,10 @@ void AnimationController::setAllowsNewAnimationsWhileSuspended(bool allowed)
     m_data->setAllowsNewAnimationsWhileSuspended(allowed);
 }
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
 void AnimationController::serviceAnimations()
 {
     m_data->animationFrameCallbackFired();
 }
-#endif
 
 void AnimationController::suspendAnimationsForDocument(Document* document)
 {

@@ -63,9 +63,7 @@ protected:
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     void scheduleAnimation() override;
-#endif
 
     void setViewOverlayRootLayer(WebCore::GraphicsLayer*) override;
 

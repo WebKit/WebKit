@@ -70,9 +70,7 @@ public:
     WEBCORE_EXPORT bool isSuspended() const;
     WEBCORE_EXPORT void suspendAnimations();
     WEBCORE_EXPORT void resumeAnimations();
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     void serviceAnimations();
-#endif
 
     void suspendAnimationsForDocument(Document*);
     void resumeAnimationsForDocument(Document*);

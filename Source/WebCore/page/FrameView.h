@@ -79,9 +79,7 @@ public:
     WEBCORE_EXPORT void invalidateRect(const IntRect&) final;
     void setFrameRect(const IntRect&) final;
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     bool scheduleAnimation() final;
-#endif
 
     Frame& frame() const { return m_frame; }
 
@@ -145,9 +143,7 @@ public:
     bool useCustomFixedPositionLayoutRect() const { return false; }
 #endif
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     WEBCORE_EXPORT void serviceScriptedAnimations();
-#endif
 
     void willRecalcStyle();
     bool updateCompositingLayersAfterStyleChange();

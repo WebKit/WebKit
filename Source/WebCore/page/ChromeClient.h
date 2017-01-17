@@ -177,7 +177,7 @@ public:
     virtual void setCursor(const Cursor&) = 0;
     virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
 #endif
-#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
+#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
     virtual void scheduleAnimation() = 0;
 #endif
     // End methods used by HostWindow.

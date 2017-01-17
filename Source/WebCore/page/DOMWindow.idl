@@ -159,11 +159,11 @@
 
     [Conditional=WEB_TIMING, Replaceable] readonly attribute Performance performance;
 
-    [Conditional=REQUEST_ANIMATION_FRAME] long requestAnimationFrame(RequestAnimationFrameCallback callback);
-    [Conditional=REQUEST_ANIMATION_FRAME] void cancelAnimationFrame(long id);
-    [Conditional=REQUEST_ANIMATION_FRAME] long webkitRequestAnimationFrame(RequestAnimationFrameCallback callback);
-    [Conditional=REQUEST_ANIMATION_FRAME, ImplementedAs=cancelAnimationFrame] void webkitCancelAnimationFrame(long id);
-    [Conditional=REQUEST_ANIMATION_FRAME, ImplementedAs=cancelAnimationFrame] void webkitCancelRequestAnimationFrame(long id); // This is a deprecated alias for webkitCancelAnimationFrame(). Remove this when removing vendor prefix.
+    long requestAnimationFrame(RequestAnimationFrameCallback callback);
+    void cancelAnimationFrame(long id);
+    long webkitRequestAnimationFrame(RequestAnimationFrameCallback callback);
+    [ImplementedAs=cancelAnimationFrame] void webkitCancelAnimationFrame(long id);
+    [ImplementedAs=cancelAnimationFrame] void webkitCancelRequestAnimationFrame(long id); // This is a deprecated alias for webkitCancelAnimationFrame(). Remove this when removing vendor prefix.
 
     void captureEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.
     void releaseEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.

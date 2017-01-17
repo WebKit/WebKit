@@ -480,14 +480,12 @@ void Chrome::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 #endif
 }
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
 void Chrome::scheduleAnimation()
 {
 #if !USE(REQUEST_ANIMATION_FRAME_TIMER)
     m_client.scheduleAnimation();
 #endif
 }
-#endif
 
 PlatformDisplayID Chrome::displayID() const
 {

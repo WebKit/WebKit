@@ -188,7 +188,7 @@ private:
     void setCursor(const WebCore::Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
 #endif
-#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
+#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
     void scheduleAnimation() override;
 #endif
     

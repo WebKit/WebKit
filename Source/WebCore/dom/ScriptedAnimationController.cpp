@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ScriptedAnimationController.h"
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-
 #include "DOMWindow.h"
 #include "DisplayRefreshMonitor.h"
 #include "DisplayRefreshMonitorManager.h"
@@ -253,7 +251,4 @@ RefPtr<DisplayRefreshMonitor> ScriptedAnimationController::createDisplayRefreshM
 }
 #endif
 
-
 }
-
-#endif

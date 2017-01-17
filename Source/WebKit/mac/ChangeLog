@@ -1,3 +1,13 @@
+2017-01-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove the REQUEST_ANIMATION_FRAME flag
+        https://bugs.webkit.org/show_bug.cgi?id=156980
+        <rdar://problem/25906849>
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-01-16  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Do some cleanup in QuickLookHandle

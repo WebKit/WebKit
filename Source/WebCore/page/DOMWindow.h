@@ -266,11 +266,9 @@ public:
     ExceptionOr<int> setInterval(std::unique_ptr<ScheduledAction>, int timeout);
     void clearInterval(int timeoutId);
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     int requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     int webkitRequestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     void cancelAnimationFrame(int id);
-#endif
 
     // Events
     // EventTarget API

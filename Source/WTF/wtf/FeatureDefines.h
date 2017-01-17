@@ -648,10 +648,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_REMOTE_INSPECTOR 0
 #endif
 
-#if !defined(ENABLE_REQUEST_ANIMATION_FRAME)
-#define ENABLE_REQUEST_ANIMATION_FRAME 0
-#endif
-
 #if !defined(ENABLE_REQUEST_AUTOCOMPLETE)
 #define ENABLE_REQUEST_AUTOCOMPLETE 0
 #endif

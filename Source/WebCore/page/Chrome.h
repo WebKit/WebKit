@@ -85,9 +85,7 @@ public:
     void setCursor(const Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     void scheduleAnimation() override;
-#endif
 
     PlatformDisplayID displayID() const override;
     void windowScreenDidChange(PlatformDisplayID) override;

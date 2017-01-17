@@ -139,6 +139,7 @@
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "RequestAnimationFrameCallback.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocumentExtensions.h"
@@ -154,6 +155,7 @@
 #include "ScriptModuleLoader.h"
 #include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
+#include "ScriptedAnimationController.h"
 #include "ScrollingCoordinator.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
@@ -242,11 +244,6 @@
 
 #if USE(QUICK_LOOK)
 #include "QuickLook.h"
-#endif
-
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-#include "RequestAnimationFrameCallback.h"
-#include "ScriptedAnimationController.h"
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -720,9 +717,7 @@ void Document::commonTeardown()
     if (svgExtensions())
         accessSVGExtensions().pauseAnimations();
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     clearScriptedAnimationController();
-#endif
 }
 
 Element* Document::getElementByAccessKey(const String& key)
@@ -5441,36 +5436,26 @@ void Document::resumeScheduledTasks(ActiveDOMObject::ReasonForSuspension reason)
 
 void Document::suspendScriptedAnimationControllerCallbacks()
 {
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     if (m_scriptedAnimationController)
         m_scriptedAnimationController->suspend();
-#endif
 }
 
 void Document::resumeScriptedAnimationControllerCallbacks()
 {
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     if (m_scriptedAnimationController)
         m_scriptedAnimationController->resume();
-#endif
 }
 
 void Document::scriptedAnimationControllerSetThrottled(bool isThrottled)
 {
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     if (m_scriptedAnimationController)
         m_scriptedAnimationController->setThrottled(isThrottled);
-#else
-    UNUSED_PARAM(isThrottled);
-#endif
 }
 
 void Document::windowScreenDidChange(PlatformDisplayID displayID)
 {
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     if (m_scriptedAnimationController)
         m_scriptedAnimationController->windowScreenDidChange(displayID);
-#endif
 
     if (RenderView* view = renderView()) {
         if (view->usesCompositing())
@@ -6026,8 +6011,6 @@ double Document::monotonicTimestamp() const
     return loader ? loader->timing().monotonicTimeToZeroBasedDocumentTime(monotonicallyIncreasingTime()) : 0;
 }
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-
 int Document::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callback)
 {
     if (!m_scriptedAnimationController) {
@@ -6067,8 +6050,6 @@ void Document::clearScriptedAnimationController()
         m_scriptedAnimationController->clearDocumentPointer();
     m_scriptedAnimationController = nullptr;
 }
-
-#endif
     
 void Document::sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, const IntPoint& newPosition, const IntRect& visibleRect, const IntSize& contentsSize, Element* target)
 {

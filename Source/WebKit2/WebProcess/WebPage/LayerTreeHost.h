@@ -88,7 +88,7 @@ public:
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) { };
 #endif
 
-#if USE(COORDINATED_GRAPHICS) && ENABLE(REQUEST_ANIMATION_FRAME)
+#if USE(COORDINATED_GRAPHICS)
     virtual void scheduleAnimation() = 0;
 #endif
 

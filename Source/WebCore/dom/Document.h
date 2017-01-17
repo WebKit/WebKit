@@ -99,6 +99,7 @@ class DocumentType;
 class ExtensionStyleSheets;
 class FloatQuad;
 class FloatRect;
+class FontFaceSet;
 class FormController;
 class Frame;
 class FrameView;
@@ -141,12 +142,14 @@ class QualifiedName;
 class Range;
 class RenderFullScreen;
 class RenderView;
+class RequestAnimationFrameCallback;
 class SVGDocumentExtensions;
 class SVGSVGElement;
 class ScriptElementData;
 class ScriptModuleLoader;
 class ScriptRunner;
 class ScriptableDocumentParser;
+class ScriptedAnimationController;
 class SecurityOrigin;
 class SegmentedString;
 class SelectorQuery;
@@ -186,13 +189,6 @@ struct AnnotatedRegionValue;
 class Touch;
 class TouchList;
 #endif
-
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-class RequestAnimationFrameCallback;
-class ScriptedAnimationController;
-#endif
-
-class FontFaceSet;
 
 #if PLATFORM(IOS)
 class DeviceMotionClient;
@@ -961,9 +957,7 @@ public:
 
     void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     ScriptedAnimationController* scriptedAnimationController() { return m_scriptedAnimationController.get(); }
-#endif
     void suspendScriptedAnimationControllerCallbacks();
     void resumeScriptedAnimationControllerCallbacks();
     void scriptedAnimationControllerSetThrottled(bool);
@@ -1135,11 +1129,9 @@ public:
 
     double monotonicTimestamp() const;
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     int requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     void cancelAnimationFrame(int id);
     void serviceScriptedAnimations(double timestamp);
-#endif
 
     void sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, const IntPoint& newPosition, const IntRect& visibleRect, const IntSize& contentsSize, Element* target = nullptr);
 
@@ -1631,10 +1623,8 @@ private:
 
     double m_lastHandledUserGestureTimestamp;
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     void clearScriptedAnimationController();
     RefPtr<ScriptedAnimationController> m_scriptedAnimationController;
-#endif
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
     std::unique_ptr<DeviceMotionClient> m_deviceMotionClient;

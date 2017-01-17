@@ -542,8 +542,6 @@ void FrameView::setFrameRect(const IntRect& newRect)
     viewportContentsChanged();
 }
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-
 bool FrameView::scheduleAnimation()
 {
     auto* page = frame().page();
@@ -552,8 +550,6 @@ bool FrameView::scheduleAnimation()
     page->chrome().scheduleAnimation();
     return true;
 }
-
-#endif
 
 void FrameView::setMarginWidth(LayoutUnit w)
 {
@@ -2546,10 +2542,8 @@ void FrameView::updateScriptedAnimationsAndTimersThrottlingState(const IntRect& 
     // We don't throttle zero-size or display:none frames because those are usually utility frames.
     bool shouldThrottle = visibleRect.isEmpty() && !m_size.isEmpty() && frame().ownerRenderer();
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     if (auto* scriptedAnimationController = document->scriptedAnimationController())
         scriptedAnimationController->setThrottled(shouldThrottle);
-#endif
 
     document->setTimerThrottlingEnabled(shouldThrottle);
 }
@@ -3112,7 +3106,6 @@ void FrameView::unscheduleRelayout()
     m_delayedLayout = false;
 }
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
 void FrameView::serviceScriptedAnimations()
 {
     for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext()) {
@@ -3131,7 +3124,6 @@ void FrameView::serviceScriptedAnimations()
     for (auto& document : documents)
         document->serviceScriptedAnimations(timestamp);
 }
-#endif
 
 bool FrameView::isTransparent() const
 {

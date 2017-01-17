@@ -81,6 +81,7 @@
 #include "PageGroup.h"
 #include "PageTransitionEvent.h"
 #include "Performance.h"
+#include "RequestAnimationFrameCallback.h"
 #include "ResourceLoadInfo.h"
 #include "RuntimeApplicationChecks.h"
 #include "RuntimeEnabledFeatures.h"
@@ -127,10 +128,6 @@
 
 #if ENABLE(PROXIMITY_EVENTS)
 #include "DeviceProximityController.h"
-#endif
-
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-#include "RequestAnimationFrameCallback.h"
 #endif
 
 #if ENABLE(GAMEPAD)
@@ -1713,8 +1710,6 @@ void DOMWindow::clearInterval(int timeoutId)
     DOMTimer::removeById(*context, timeoutId);
 }
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-
 int DOMWindow::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callback)
 {
     callback->m_useLegacyTimeBase = false;
@@ -1740,8 +1735,6 @@ void DOMWindow::cancelAnimationFrame(int id)
         return;
     document->cancelAnimationFrame(id);
 }
-
-#endif
 
 static void didAddStorageEventListener(DOMWindow& window)
 {

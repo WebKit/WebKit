@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-
 #include "DOMTimeStamp.h"
 #include "PlatformScreen.h"
 #include <wtf/RefCounted.h>
@@ -104,5 +102,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(REQUEST_ANIMATION_FRAME)

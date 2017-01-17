@@ -961,14 +961,10 @@ ExceptionOr<bool> Internals::isTimerThrottled(int timeoutId)
 
 bool Internals::isRequestAnimationFrameThrottled() const
 {
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     auto* scriptedAnimationController = contextDocument()->scriptedAnimationController();
     if (!scriptedAnimationController)
         return false;
     return scriptedAnimationController->isThrottled();
-#else
-    return false;
-#endif
 }
 
 bool Internals::areTimersThrottled() const
