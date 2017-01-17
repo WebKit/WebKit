@@ -74,17 +74,11 @@ JSCallbackObject<Parent>::JSCallbackObject(VM& vm, JSClassRef jsClass, Structure
 template <class Parent>
 JSCallbackObject<Parent>::~JSCallbackObject()
 {
-    VM* vm = this->HeapCell::vm();
-    vm->currentlyDestructingCallbackObject = this;
-    ASSERT(m_classInfo);
-    vm->currentlyDestructingCallbackObjectClassInfo = m_classInfo;
     JSObjectRef thisRef = toRef(static_cast<JSObject*>(this));
     for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectFinalizeCallback finalize = jsClass->finalize)
             finalize(thisRef);
     }
-    vm->currentlyDestructingCallbackObject = nullptr;
-    vm->currentlyDestructingCallbackObjectClassInfo = nullptr;
 }
     
 template <class Parent>
@@ -123,8 +117,6 @@ void JSCallbackObject<Parent>::init(ExecState* exec)
         JSObjectInitializeCallback initialize = initRoutines[i];
         initialize(toRef(exec), toRef(this));
     }
-    
-    m_classInfo = this->classInfo();
 }
 
 template <class Parent>

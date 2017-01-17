@@ -267,13 +267,17 @@ inline bool JSCell::canUseFastGetOwnProperty(const Structure& structure)
 
 ALWAYS_INLINE const ClassInfo* JSCell::classInfo() const
 {
-    VM* vm;
-    if (isLargeAllocation())
-        vm = largeAllocation().vm();
-    else
-        vm = markedBlock().vm();
-    ASSERT(vm->heap.mutatorState() == MutatorState::Running || vm->apiLock().ownerThread() != std::this_thread::get_id());
-    return structure(*vm)->classInfo();
+    if (isLargeAllocation()) {
+        LargeAllocation& allocation = largeAllocation();
+        if (allocation.attributes().destruction == NeedsDestruction
+            && !(inlineTypeFlags() & StructureIsImmortal))
+            return static_cast<const JSDestructibleObject*>(this)->classInfo();
+        return structure(*allocation.vm())->classInfo();
+    }
+    MarkedBlock& block = markedBlock();
+    if (block.needsDestruction() && !(inlineTypeFlags() & StructureIsImmortal))
+        return static_cast<const JSDestructibleObject*>(this)->classInfo();
+    return structure(*block.vm())->classInfo();
 }
 
 inline bool JSCell::toBoolean(ExecState* exec) const
@@ -303,7 +307,7 @@ inline void JSCell::callDestructor(VM& vm)
         MethodTable::DestroyFunctionPtr destroy = classInfo->methodTable.destroy;
         destroy(this);
     } else
-        static_cast<JSDestructibleObject*>(this)->classInfo()->methodTable.destroy(this);
+        jsCast<JSDestructibleObject*>(this)->classInfo()->methodTable.destroy(this);
     zap();
 }
 

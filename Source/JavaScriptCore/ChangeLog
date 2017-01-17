@@ -1,3 +1,73 @@
+2017-01-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out http://trac.webkit.org/changeset/210821
+        It was causing crashes.
+
+        * API/JSAPIWrapperObject.mm:
+        (JSAPIWrapperObjectHandleOwner::finalize):
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::~JSCallbackObject):
+        (JSC::JSCallbackObject<Parent>::init):
+        * API/JSObjectRef.cpp:
+        (JSObjectGetPrivate):
+        (JSObjectSetPrivate):
+        (classInfoPrivate): Deleted.
+        * bytecode/EvalCodeBlock.cpp:
+        (JSC::EvalCodeBlock::destroy):
+        * bytecode/FunctionCodeBlock.cpp:
+        (JSC::FunctionCodeBlock::destroy):
+        * bytecode/ModuleProgramCodeBlock.cpp:
+        (JSC::ModuleProgramCodeBlock::destroy):
+        * bytecode/ProgramCodeBlock.cpp:
+        (JSC::ProgramCodeBlock::destroy):
+        * bytecode/UnlinkedEvalCodeBlock.cpp:
+        (JSC::UnlinkedEvalCodeBlock::destroy):
+        * bytecode/UnlinkedFunctionCodeBlock.cpp:
+        (JSC::UnlinkedFunctionCodeBlock::destroy):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::destroy):
+        * bytecode/UnlinkedModuleProgramCodeBlock.cpp:
+        (JSC::UnlinkedModuleProgramCodeBlock::destroy):
+        * bytecode/UnlinkedProgramCodeBlock.cpp:
+        (JSC::UnlinkedProgramCodeBlock::destroy):
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::lastChanceToFinalize):
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateSlowCaseImpl):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::sweep):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::finalize):
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::destroy):
+        * runtime/ExecutableBase.cpp:
+        (JSC::ExecutableBase::clearCode):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::classInfo):
+        (JSC::JSCell::callDestructor):
+        * runtime/JSLock.h:
+        (JSC::JSLock::exclusiveThread):
+        (JSC::JSLock::ownerThread): Deleted.
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::destroy):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::destroy):
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::destroy):
+        * runtime/JSSegmentedVariableObject.h:
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::destroy):
+        * runtime/VM.h:
+        * wasm/js/JSWebAssemblyCallee.cpp:
+        (JSC::JSWebAssemblyCallee::destroy):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::destroy):
+        * wasm/js/WebAssemblyToJSCallee.cpp:
+        (JSC::WebAssemblyToJSCallee::WebAssemblyToJSCallee):
+        (JSC::WebAssemblyToJSCallee::destroy):
+
 2017-01-16  Filip Pizlo  <fpizlo@apple.com>
 
         JSCell::classInfo() shouldn't have a bunch of mitigations for being called during destruction

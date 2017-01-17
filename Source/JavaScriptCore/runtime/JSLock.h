@@ -99,7 +99,6 @@ public:
         ASSERT(m_hasExclusiveThread);
         return m_ownerThreadID;
     }
-    std::thread::id ownerThread() const { return m_ownerThreadID; }
     JS_EXPORT_PRIVATE void setExclusiveThread(std::thread::id);
     JS_EXPORT_PRIVATE bool currentThreadIsHoldingLock();
 

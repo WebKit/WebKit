@@ -26,7 +26,6 @@
 #include "config.h"
 #include "MarkedBlock.h"
 
-#include "HelpingGCScope.h"
 #include "JSCell.h"
 #include "JSDestructibleObject.h"
 #include "JSCInlines.h"
@@ -196,9 +195,6 @@ FreeList MarkedBlock::Handle::specializedSweep()
 
 FreeList MarkedBlock::Handle::sweep(SweepMode sweepMode)
 {
-    // FIXME: Maybe HelpingGCScope should just be called SweepScope?
-    HelpingGCScope helpingGCScope(*heap());
-    
     m_allocator->setIsUnswept(NoLockingNecessary, this, false);
     
     m_weakSet.sweep();

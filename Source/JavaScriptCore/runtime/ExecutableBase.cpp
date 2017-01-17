@@ -60,36 +60,36 @@ void ExecutableBase::clearCode()
     m_numParametersForCall = NUM_PARAMETERS_NOT_COMPILED;
     m_numParametersForConstruct = NUM_PARAMETERS_NOT_COMPILED;
 
-    if (structure()->classInfo() == FunctionExecutable::info()) {
-        FunctionExecutable* executable = static_cast<FunctionExecutable*>(this);
+    if (classInfo() == FunctionExecutable::info()) {
+        FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
         executable->m_codeBlockForCall.clear();
         executable->m_codeBlockForConstruct.clear();
         return;
     }
 
-    if (structure()->classInfo() == EvalExecutable::info()) {
-        EvalExecutable* executable = static_cast<EvalExecutable*>(this);
+    if (classInfo() == EvalExecutable::info()) {
+        EvalExecutable* executable = jsCast<EvalExecutable*>(this);
         executable->m_evalCodeBlock.clear();
         executable->m_unlinkedEvalCodeBlock.clear();
         return;
     }
     
-    if (structure()->classInfo() == ProgramExecutable::info()) {
-        ProgramExecutable* executable = static_cast<ProgramExecutable*>(this);
+    if (classInfo() == ProgramExecutable::info()) {
+        ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
         executable->m_programCodeBlock.clear();
         executable->m_unlinkedProgramCodeBlock.clear();
         return;
     }
 
-    if (structure()->classInfo() == ModuleProgramExecutable::info()) {
-        ModuleProgramExecutable* executable = static_cast<ModuleProgramExecutable*>(this);
+    if (classInfo() == ModuleProgramExecutable::info()) {
+        ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(this);
         executable->m_moduleProgramCodeBlock.clear();
         executable->m_unlinkedModuleProgramCodeBlock.clear();
         executable->m_moduleEnvironmentSymbolTable.clear();
         return;
     }
     
-    ASSERT(structure()->classInfo() == NativeExecutable::info());
+    ASSERT(classInfo() == NativeExecutable::info());
 }
 
 void ExecutableBase::dump(PrintStream& out) const

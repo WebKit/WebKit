@@ -50,7 +50,7 @@ bool JSDeprecatedCSSOMValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Un
 
 void JSDeprecatedCSSOMValueOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSDeprecatedCSSOMValue* jsCSSValue = static_cast<JSDeprecatedCSSOMValue*>(handle.slot()->asCell());
+    JSDeprecatedCSSOMValue* jsCSSValue = jsCast<JSDeprecatedCSSOMValue*>(handle.slot()->asCell());
     DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
     world.m_deprecatedCSSOMValueRoots.remove(&jsCSSValue->wrapped());
     uncacheWrapper(world, &jsCSSValue->wrapped(), jsCSSValue);

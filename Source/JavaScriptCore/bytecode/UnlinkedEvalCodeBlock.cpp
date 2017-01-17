@@ -34,7 +34,7 @@ const ClassInfo UnlinkedEvalCodeBlock::s_info = { "UnlinkedEvalCodeBlock", &Base
 
 void UnlinkedEvalCodeBlock::destroy(JSCell* cell)
 {
-    static_cast<UnlinkedEvalCodeBlock*>(cell)->~UnlinkedEvalCodeBlock();
+    jsCast<UnlinkedEvalCodeBlock*>(cell)->~UnlinkedEvalCodeBlock();
 }
 
 }

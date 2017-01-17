@@ -59,7 +59,7 @@ JSModuleRecord::JSModuleRecord(VM& vm, Structure* structure, const Identifier& m
 
 void JSModuleRecord::destroy(JSCell* cell)
 {
-    JSModuleRecord* thisObject = static_cast<JSModuleRecord*>(cell);
+    JSModuleRecord* thisObject = jsCast<JSModuleRecord*>(cell);
     thisObject->JSModuleRecord::~JSModuleRecord();
 }
 

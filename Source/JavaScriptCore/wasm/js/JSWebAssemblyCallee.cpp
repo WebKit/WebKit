@@ -47,7 +47,7 @@ void JSWebAssemblyCallee::finishCreation(VM& vm, Wasm::Entrypoint&& entrypoint)
 
 void JSWebAssemblyCallee::destroy(JSCell* cell)
 {
-    JSWebAssemblyCallee* thisObject = static_cast<JSWebAssemblyCallee*>(cell);
+    JSWebAssemblyCallee* thisObject = jsCast<JSWebAssemblyCallee*>(cell);
     thisObject->JSWebAssemblyCallee::~JSWebAssemblyCallee();
 }
 

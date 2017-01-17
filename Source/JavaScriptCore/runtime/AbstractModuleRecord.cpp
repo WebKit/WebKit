@@ -46,7 +46,7 @@ AbstractModuleRecord::AbstractModuleRecord(VM& vm, Structure* structure, const I
 
 void AbstractModuleRecord::destroy(JSCell* cell)
 {
-    AbstractModuleRecord* thisObject = static_cast<AbstractModuleRecord*>(cell);
+    AbstractModuleRecord* thisObject = jsCast<AbstractModuleRecord*>(cell);
     thisObject->AbstractModuleRecord::~AbstractModuleRecord();
 }
 
