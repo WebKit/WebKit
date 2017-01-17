@@ -1,3 +1,41 @@
+2017-01-16  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] QLPreviewConverter should be owned by its delegate
+        https://bugs.webkit.org/show_bug.cgi?id=167104
+
+        Reviewed by Andreas Kling.
+        
+        Instead of having QuickLookHandle own both the QLPreviewConverter and its delegate, have it
+        just own the delegate and have the delegate own the QLPreviewConverter.
+
+        No change in behavior. Covered by existing tests.
+
+        * loader/ios/QuickLook.h:
+        (WebCore::QuickLookHandle::converter): Moved out-of-line.
+        * loader/ios/QuickLook.mm: Renamed WebPreviewConverterDelegate to WebPreviewConverter, and
+        gave it ownership of the QLPreviewConverter, QuickLookHandleClient, and preview response.
+        (-[WebPreviewConverter initWithResourceLoader:resourceResponse:quickLookHandle:]):
+        Added a ResourceResponse parameter.
+        (-[WebPreviewConverter setClient:]): Moved from QuickLookHandle::setClient().
+        (-[WebPreviewConverter appendDataArray:]): Moved from QuickLookHandle::didReceiveDataArray().
+        (-[WebPreviewConverter finishedAppending]): Moved from QuickLookHandle::didFinishLoading().
+        (-[WebPreviewConverter failed]): Moved from QuickLookHandle::didFail().
+        (-[WebPreviewConverter platformConverter]): Added to return the QLPreviewConverter.
+        (-[WebPreviewConverter _sendDidReceiveResponseIfNecessary]): Used _previewResponse directly.
+        (WebCore::QuickLookHandle::~QuickLookHandle): Removed unneeded logging.
+        (WebCore::QuickLookHandle::didReceiveData): Called -[WebPreviewConverter appendDataArray:].
+        (WebCore::QuickLookHandle::didReceiveBuffer): Ditto.
+        (WebCore::QuickLookHandle::didFinishLoading): Called -[WebPreviewConverter finishedAppending].
+        (WebCore::QuickLookHandle::didFail): Called -[WebPreviewConverter failed].
+        (WebCore::QuickLookHandle::setClient): Called -[WebPreviewConverter setClient:].
+        (WebCore::QuickLookHandle::previewFileName): Retrieved the QLPreviewConverter via
+        -[WebPreviewConverter platformConverter].
+        (WebCore::QuickLookHandle::previewUTI): Ditto.
+        (WebCore::QuickLookHandle::previewRequestURL): Ditto.
+        (WebCore::QuickLookHandle::converter): Ditto.
+        (WebCore::QuickLookHandle::didReceiveDataArray): Deleted.
+        (WebCore::QuickLookHandle::previewResponse): Deleted.
+
 2017-01-16  Antti Koivisto  <antti@apple.com>
 
         CrashTracer: com.apple.WebKit.WebContent at JavaScriptCore: WTF::StringImpl::containsOnlyWhitespace

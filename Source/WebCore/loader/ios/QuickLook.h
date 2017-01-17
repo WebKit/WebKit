@@ -29,7 +29,6 @@
 
 #include <objc/objc.h>
 #include <wtf/Forward.h>
-#include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSArray;
@@ -41,7 +40,7 @@ OBJC_CLASS NSURL;
 OBJC_CLASS NSURLRequest;
 OBJC_CLASS NSURLResponse;
 OBJC_CLASS QLPreviewConverter;
-OBJC_CLASS WebPreviewConverterDelegate;
+OBJC_CLASS WebPreviewConverter;
 
 namespace WebCore {
 
@@ -87,21 +86,15 @@ public:
     WEBCORE_EXPORT String previewFileName() const;
     WEBCORE_EXPORT String previewUTI() const;
     WEBCORE_EXPORT NSURL *previewRequestURL() const;
-    NSURLResponse *previewResponse() const;
+    WEBCORE_EXPORT QLPreviewConverter *converter() const;
     NSURL *firstRequestURL() const { return m_firstRequestURL.get(); }
-    QLPreviewConverter *converter() const { return m_converter.get(); }
 
 private:
     friend std::unique_ptr<QuickLookHandle> std::make_unique<QuickLookHandle>(ResourceLoader&, const ResourceResponse&);
     QuickLookHandle(ResourceLoader&, const ResourceResponse&);
 
-    void didReceiveDataArray(NSArray *);
-
     RetainPtr<NSURL> m_firstRequestURL;
-    RetainPtr<WebPreviewConverterDelegate> m_delegate;
-    RetainPtr<QLPreviewConverter> m_converter;
-    RetainPtr<NSURLResponse> m_previewResponse;
-    Ref<QuickLookHandleClient> m_client;
+    RetainPtr<WebPreviewConverter> m_converter;
     bool m_finishedLoadingDataIntoConverter { false };
 };
 
