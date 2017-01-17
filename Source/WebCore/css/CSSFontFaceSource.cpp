@@ -43,7 +43,6 @@
 #include "FontCustomPlatformData.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
-#include "SVGNames.h"
 #include "SVGURIReference.h"
 #endif
 

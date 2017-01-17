@@ -24,8 +24,6 @@
 #include "config.h"
 #include "RenderSVGRoot.h"
 
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"

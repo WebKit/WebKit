@@ -30,7 +30,6 @@
 #include "ApplicationCacheResource.h"
 #include "ApplicationCacheStorage.h"
 #include "ResourceRequest.h"
-#include "SecurityOrigin.h"
 #include <algorithm>
 #include <stdio.h>
 #include <wtf/text/CString.h>

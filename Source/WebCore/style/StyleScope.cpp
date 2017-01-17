@@ -38,7 +38,6 @@
 #include "HTMLStyleElement.h"
 #include "InspectorInstrumentation.h"
 #include "ProcessingInstruction.h"
-#include "SVGNames.h"
 #include "SVGStyleElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"

@@ -28,7 +28,6 @@
 #include "ContentSecurityPolicy.h"
 #include "DocumentLoader.h"
 #include "Event.h"
-#include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "GCController.h"

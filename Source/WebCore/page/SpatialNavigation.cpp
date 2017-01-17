@@ -34,7 +34,6 @@
 #include "HTMLAreaElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLMapElement.h"
-#include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "IntRect.h"
 #include "MainFrame.h"

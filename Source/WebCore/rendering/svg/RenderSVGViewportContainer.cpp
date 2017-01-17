@@ -25,7 +25,6 @@
 
 #include "GraphicsContext.h"
 #include "RenderView.h"
-#include "SVGNames.h"
 #include "SVGSVGElement.h"
 
 namespace WebCore {

@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>
@@ -36,10 +35,8 @@ namespace WebCore {
 
 class ApplicationCacheGroup;
 class ApplicationCacheResource;
-class DocumentLoader;
 class URL;
 class ResourceRequest;
-class SecurityOrigin;
 
 typedef Vector<std::pair<URL, URL>> FallbackURLVector;
 

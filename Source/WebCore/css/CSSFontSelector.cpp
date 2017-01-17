@@ -51,8 +51,6 @@
 #include "FontVariantBuilder.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "SVGFontFaceElement.h"
-#include "SVGNames.h"
 #include "Settings.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"

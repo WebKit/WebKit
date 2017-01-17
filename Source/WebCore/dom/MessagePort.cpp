@@ -31,7 +31,6 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "MessageEvent.h"
-#include "SecurityOrigin.h"
 #include "WorkerGlobalScope.h"
 
 namespace WebCore {

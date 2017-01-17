@@ -26,14 +26,11 @@
 #include "config.h"
 #include "PageGroup.h"
 
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageCache.h"
-#include "SecurityOrigin.h"
 #include "StorageNamespace.h"
 #include <heap/HeapInlines.h>
 #include <runtime/StructureInlines.h>

@@ -28,7 +28,6 @@
 
 #include "Document.h"
 #include "ElementIterator.h"
-#include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
 #include <wtf/CurrentTime.h>

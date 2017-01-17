@@ -33,7 +33,6 @@
 #include "Document.h"
 #include "IDBFactory.h"
 #include "Page.h"
-#include "SecurityOrigin.h"
 
 namespace WebCore {
 

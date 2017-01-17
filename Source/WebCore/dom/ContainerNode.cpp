@@ -26,8 +26,6 @@
 #include "AXObjectCache.h"
 #include "AllDescendantsCollection.h"
 #include "ChildListMutationScope.h"
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "ClassCollection.h"
 #include "CommonVM.h"
 #include "ContainerNodeAlgorithms.h"
@@ -61,7 +59,6 @@
 #include "SelectorQuery.h"
 #include "TemplateContentDocumentFragment.h"
 #include <algorithm>
-#include <wtf/CurrentTime.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {

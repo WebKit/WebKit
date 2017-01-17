@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ProgressEvent.h"
 
-#include "EventNames.h"
-
 namespace WebCore {
 
 ProgressEvent::ProgressEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)

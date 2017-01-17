@@ -25,7 +25,6 @@
 #include "GraphicsContext.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "HTMLNames.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"

@@ -36,7 +36,6 @@
 #include "RenderMathMLRow.h"
 #include "RenderTreeUpdater.h"
 #include "SVGElement.h"
-#include "SVGNames.h"
 
 namespace WebCore {
 

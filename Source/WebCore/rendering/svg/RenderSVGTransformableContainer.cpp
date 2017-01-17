@@ -23,7 +23,6 @@
 #include "RenderSVGTransformableContainer.h"
 
 #include "SVGGElement.h"
-#include "SVGNames.h"
 #include "SVGUseElement.h"
 
 namespace WebCore {

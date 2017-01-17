@@ -41,7 +41,6 @@ namespace WebCore {
     class ResourceRequest;
     class ResourceResponse;
     class ScriptExecutionContext;
-    class SecurityOrigin;
     class ThreadableLoaderClient;
 
     enum PreflightPolicy {

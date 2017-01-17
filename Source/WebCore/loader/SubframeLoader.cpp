@@ -33,8 +33,6 @@
 #include "config.h"
 #include "SubframeLoader.h"
 
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "ContentSecurityPolicy.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"

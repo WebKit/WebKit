@@ -56,7 +56,6 @@
 #include "Text.h"
 #include "TextDocument.h"
 #include "XMLDocument.h"
-#include "XMLNames.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 

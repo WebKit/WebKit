@@ -27,7 +27,6 @@
 #include "DeviceMotionEvent.h"
 
 #include "DeviceMotionData.h"
-#include "EventNames.h"
 
 namespace WebCore {
 

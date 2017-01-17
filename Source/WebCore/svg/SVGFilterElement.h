@@ -28,7 +28,6 @@
 #include "SVGAnimatedLength.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
-#include "SVGNames.h"
 #include "SVGURIReference.h"
 #include "SVGUnitTypes.h"
 

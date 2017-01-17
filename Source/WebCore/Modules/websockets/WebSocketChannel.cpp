@@ -46,7 +46,6 @@
 #include "ProgressTracker.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
-#include "Settings.h"
 #include "SocketProvider.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandle.h"

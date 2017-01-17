@@ -30,7 +30,6 @@
 #include "AudioTrackList.h"
 
 #include "AudioTrack.h"
-#include "EventNames.h"
 
 using namespace WebCore;
 

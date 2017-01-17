@@ -27,8 +27,6 @@
 #include "config.h"
 #include "CompositionEvent.h"
 
-#include "EventNames.h"
-
 namespace WebCore {
 
 CompositionEvent::CompositionEvent()

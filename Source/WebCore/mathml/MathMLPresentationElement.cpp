@@ -39,7 +39,6 @@
 #include "MathMLNames.h"
 #include "RenderMathMLBlock.h"
 #include "RenderTableCell.h"
-#include "SVGNames.h"
 #include "SVGSVGElement.h"
 
 namespace WebCore {

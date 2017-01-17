@@ -46,7 +46,6 @@
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageCache.h"
-#include "PageGroup.h"
 #include "ScrollingCoordinator.h"
 #include "SerializedScriptValue.h"
 #include "VisitedLinkStore.h"

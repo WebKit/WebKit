@@ -36,7 +36,6 @@
 #include "PlatformMouseEvent.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
-#include "Settings.h"
 #include "VoidCallback.h"
 
 

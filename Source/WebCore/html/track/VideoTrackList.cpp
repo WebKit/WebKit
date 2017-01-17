@@ -29,7 +29,6 @@
 
 #include "VideoTrackList.h"
 
-#include "EventNames.h"
 #include "VideoTrack.h"
 
 using namespace WebCore;

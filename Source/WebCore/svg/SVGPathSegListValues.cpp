@@ -23,7 +23,6 @@
 #include "config.h"
 #include "SVGPathSegListValues.h"
 
-#include "SVGNames.h"
 #include "SVGPathElement.h"
 #include "SVGPathUtilities.h"
 

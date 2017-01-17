@@ -41,6 +41,7 @@ namespace WebCore {
     class ContentSecurityPolicy;
     class ResourceError;
     class ResourceRequest;
+    class SecurityOrigin;
     class WorkerGlobalScope;
     class WorkerLoaderProxy;
 

@@ -38,7 +38,6 @@
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderSVGImage.h"
-#include "SecurityOrigin.h"
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(VIDEO)

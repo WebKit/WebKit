@@ -29,8 +29,6 @@
 #include "HTMLSelectElement.h"
 
 #include "AXObjectCache.h"
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "ElementTraversal.h"
 #include "EventHandler.h"
 #include "EventNames.h"

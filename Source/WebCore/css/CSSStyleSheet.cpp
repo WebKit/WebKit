@@ -32,11 +32,9 @@
 #include "ExceptionCode.h"
 #include "ExtensionStyleSheets.h"
 #include "HTMLLinkElement.h"
-#include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "MediaList.h"
 #include "Node.h"
-#include "SVGNames.h"
 #include "SVGStyleElement.h"
 #include "SecurityOrigin.h"
 #include "ShadowRoot.h"
@@ -44,7 +42,6 @@
 #include "StyleRule.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
-
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

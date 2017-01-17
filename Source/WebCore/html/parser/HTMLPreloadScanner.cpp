@@ -37,7 +37,6 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "RenderView.h"
-#include "Settings.h"
 #include "SizesAttributeParser.h"
 #include <wtf/MainThread.h>
 

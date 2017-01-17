@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PageTransitionEvent.h"
 
-#include "EventNames.h"
-
 namespace WebCore {
 
 PageTransitionEvent::PageTransitionEvent(const AtomicString& type, bool persisted)

@@ -24,8 +24,6 @@
 #include "InlineTextBox.h"
 
 #include "BreakLines.h"
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "DashArray.h"
 #include "Document.h"
 #include "DocumentMarkerController.h"

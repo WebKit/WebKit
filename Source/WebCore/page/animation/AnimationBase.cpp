@@ -34,7 +34,6 @@
 #include "CSSPropertyAnimation.h"
 #include "CompositeAnimation.h"
 #include "Document.h"
-#include "EventNames.h"
 #include "FloatConversion.h"
 #include "GeometryUtilities.h"
 #include "Logging.h"

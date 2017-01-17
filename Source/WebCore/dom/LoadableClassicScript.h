@@ -30,7 +30,6 @@
 #include "CachedScript.h"
 #include "LoadableScript.h"
 #include "LoadableScriptClient.h"
-#include "SecurityOrigin.h"
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {

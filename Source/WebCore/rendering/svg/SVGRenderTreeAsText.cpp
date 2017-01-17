@@ -30,7 +30,6 @@
 #include "SVGRenderTreeAsText.h"
 
 #include "GraphicsTypes.h"
-#include "HTMLNames.h"
 #include "NodeRenderStyle.h"
 #include "RenderImage.h"
 #include "RenderIterator.h"
@@ -51,7 +50,6 @@
 #include "SVGEllipseElement.h"
 #include "SVGInlineTextBox.h"
 #include "SVGLineElement.h"
-#include "SVGNames.h"
 #include "SVGPathElement.h"
 #include "SVGPathUtilities.h"
 #include "SVGPolyElement.h"

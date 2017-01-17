@@ -37,7 +37,6 @@
 #import "ScrollingCoordinator.h"
 #import "ScrollingTree.h"
 #import "ScrollingStateTree.h"
-#import "Settings.h"
 #import "TextStream.h"
 #import "TileController.h"
 #import "WebLayer.h"

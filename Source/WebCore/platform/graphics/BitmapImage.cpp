@@ -33,7 +33,6 @@
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "Logging.h"
-#include "MIMETypeRegistry.h"
 #include "TextStream.h"
 #include "Timer.h"
 #include <wtf/CurrentTime.h>

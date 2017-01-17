@@ -27,7 +27,6 @@
 #include "WorkerEventQueue.h"
 
 #include "Event.h"
-#include "EventNames.h"
 #include "EventTarget.h"
 #include "ScriptExecutionContext.h"
 

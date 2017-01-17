@@ -43,7 +43,6 @@
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLPlugInElement.h"
-#include "SecurityOrigin.h"
 
 #if USE(QUICK_LOOK)
 #include "QuickLook.h"

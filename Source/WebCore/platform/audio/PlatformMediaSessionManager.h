@@ -29,7 +29,6 @@
 #include "AudioHardwareListener.h"
 #include "PlatformMediaSession.h"
 #include "RemoteCommandListener.h"
-#include "Settings.h"
 #include "SystemSleepListener.h"
 #include <map>
 #include <wtf/Vector.h>

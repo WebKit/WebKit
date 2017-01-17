@@ -27,8 +27,6 @@
 #include "RenderSnapshottedPlugIn.h"
 
 #include "CachedImage.h"
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "Cursor.h"
 #include "EventNames.h"
 #include "Filter.h"

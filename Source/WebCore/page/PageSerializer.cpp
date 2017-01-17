@@ -48,7 +48,6 @@
 #include "HTMLStyleElement.h"
 #include "HTTPParsers.h"
 #include "Image.h"
-#include "MIMETypeRegistry.h"
 #include "MainFrame.h"
 #include "MarkupAccumulator.h"
 #include "Page.h"

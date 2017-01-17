@@ -42,8 +42,6 @@
 #import "AccessibilityTableCell.h"
 #import "AccessibilityTableColumn.h"
 #import "AccessibilityTableRow.h"
-#import "Chrome.h"
-#import "ChromeClient.h"
 #import "ColorMac.h"
 #import "ContextMenuController.h"
 #import "Font.h"

@@ -36,7 +36,6 @@
 #include "InlineElementBox.h"
 #include "Node.h"
 #include "PODIntervalTree.h"
-#include "PaintInfo.h"
 #include "RenderBoxRegionInfo.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"

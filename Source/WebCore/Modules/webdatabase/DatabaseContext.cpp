@@ -40,7 +40,6 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
-#include "Settings.h"
 
 namespace WebCore {
 

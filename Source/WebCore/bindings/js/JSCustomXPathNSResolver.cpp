@@ -34,7 +34,6 @@
 #include "JSMainThreadExecState.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
-#include "SecurityOrigin.h"
 #include <runtime/JSLock.h>
 #include <wtf/Ref.h>
 

@@ -37,7 +37,6 @@
 #include "IDBOpenDBRequest.h"
 #include "Logging.h"
 #include "Page.h"
-#include "SchemeRegistry.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 

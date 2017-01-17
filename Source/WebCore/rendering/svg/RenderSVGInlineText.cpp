@@ -30,7 +30,6 @@
 #include "RenderBlock.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
-#include "Settings.h"
 #include "SVGInlineTextBox.h"
 #include "SVGRenderingContext.h"
 #include "SVGRootInlineBox.h"

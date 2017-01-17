@@ -23,8 +23,6 @@
 
 #include "Document.h"
 #include "Event.h"
-#include "EventNames.h"
-#include "HTMLNames.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
 #include "XLinkNames.h"
 

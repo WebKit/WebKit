@@ -72,7 +72,6 @@ class PolicyChecker;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
-class SecurityOrigin;
 class SerializedScriptValue;
 class SharedBuffer;
 class SubframeLoader;

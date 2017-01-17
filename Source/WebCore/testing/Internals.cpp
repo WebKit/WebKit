@@ -40,8 +40,6 @@
 #include "CSSSupportsRule.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "ComposedTreeIterator.h"

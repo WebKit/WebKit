@@ -26,8 +26,6 @@
 #include "RenderBox.h"
 
 #include "CSSFontSelector.h"
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "ControlStates.h"
 #include "Document.h"
 #include "EventHandler.h"

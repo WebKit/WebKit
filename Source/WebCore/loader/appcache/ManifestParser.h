@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ApplicationCache.h"
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 

@@ -43,14 +43,11 @@
 #include "LoadableModuleScript.h"
 #include "MIMETypeRegistry.h"
 #include "PendingScript.h"
-#include "SVGNames.h"
 #include "SVGScriptElement.h"
 #include "ScriptController.h"
 #include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
 #include "ScriptableDocumentParser.h"
-#include "SecurityOrigin.h"
-#include "Settings.h"
 #include "TextNodeTraversal.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>

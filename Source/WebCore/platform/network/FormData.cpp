@@ -20,7 +20,6 @@
  */
 
 #include "config.h"
-
 #include "FormData.h"
 
 #include "BlobRegistryImpl.h"
@@ -32,7 +31,6 @@
 #include "FileSystem.h"
 #include "FormDataBuilder.h"
 #include "FormDataList.h"
-#include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "TextEncoding.h"
 

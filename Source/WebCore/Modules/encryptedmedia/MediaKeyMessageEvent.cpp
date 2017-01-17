@@ -31,8 +31,6 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "EventNames.h"
-
 namespace WebCore {
 
 MediaKeyMessageEvent::MediaKeyMessageEvent(const AtomicString& type, const MediaKeyMessageEvent::Init& initializer, IsTrusted isTrusted)

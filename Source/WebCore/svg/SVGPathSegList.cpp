@@ -21,7 +21,6 @@
 #include "SVGPathSegList.h"
 
 #include "SVGAnimatedPathSegListPropertyTearOff.h"
-#include "SVGNames.h"
 #include "SVGPathElement.h"
 #include "SVGPathSegWithContext.h"
 

@@ -29,7 +29,6 @@
 #if ENABLE(MATHML)
 
 #include "GraphicsContext.h"
-#include "PaintInfo.h"
 
 namespace WebCore {
 

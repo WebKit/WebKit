@@ -48,7 +48,6 @@
 #include "RenderInline.h"
 #include "SVGAElement.h"
 #include "SVGImageElement.h"
-#include "SVGNames.h"
 #include "Scrollbar.h"
 #include "ShadowRoot.h"
 #include "TextIterator.h"

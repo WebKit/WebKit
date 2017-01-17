@@ -34,7 +34,6 @@
 #include "JSCustomElementInterface.h"
 #include "MathMLNames.h"
 #include "QualifiedName.h"
-#include "SVGNames.h"
 #include "ShadowRoot.h"
 #include <runtime/JSCJSValueInlines.h>
 #include <wtf/text/AtomicString.h>

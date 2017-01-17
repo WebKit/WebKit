@@ -29,8 +29,6 @@
 
 #include "TrackEvent.h"
 
-#include "EventNames.h"
-
 namespace WebCore {
 
 static inline std::optional<TrackEvent::TrackEventTrack> convertToTrackEventTrack(Ref<TrackBase>&& track)

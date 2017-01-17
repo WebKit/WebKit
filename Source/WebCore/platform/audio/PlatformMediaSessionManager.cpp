@@ -26,11 +26,9 @@
 #include "config.h"
 #include "PlatformMediaSessionManager.h"
 
-
 #include "AudioSession.h"
 #include "Document.h"
 #include "Logging.h"
-#include "NotImplemented.h"
 #include "PlatformMediaSession.h"
 
 namespace WebCore {

@@ -22,7 +22,6 @@
 #include "HTMLProgressElement.h"
 
 #include "ElementIterator.h"
-#include "EventNames.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "ProgressShadowElement.h"

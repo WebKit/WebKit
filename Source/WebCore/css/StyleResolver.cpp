@@ -111,7 +111,6 @@
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
-#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "ShadowData.h"
 #include "ShadowRoot.h"
@@ -135,7 +134,6 @@
 #include "VisitedLinkState.h"
 #include "WebKitCSSRegionRule.h"
 #include "WebKitFontFamilyNames.h"
-#include "XMLNames.h"
 #include <bitset>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>

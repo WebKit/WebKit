@@ -28,7 +28,6 @@
 #include "CachedResourceLoader.h"
 #include "SVGCursorElement.h"
 #include "SVGLengthContext.h"
-#include "SVGNames.h"
 #include "SVGURIReference.h"
 #include "TreeScope.h"
 #include <wtf/MathExtras.h>

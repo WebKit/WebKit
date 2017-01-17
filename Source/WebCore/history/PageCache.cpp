@@ -28,7 +28,6 @@
 
 #include "ApplicationCacheHost.h"
 #include "BackForwardController.h"
-#include "MemoryCache.h"
 #include "CachedPage.h"
 #include "DOMWindow.h"
 #include "DeviceMotionController.h"
@@ -50,7 +49,6 @@
 #include "Page.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/CString.h>

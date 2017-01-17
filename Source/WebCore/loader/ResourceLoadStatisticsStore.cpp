@@ -31,7 +31,6 @@
 #include "NetworkStorageSession.h"
 #include "PlatformStrategies.h"
 #include "ResourceLoadStatistics.h"
-#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "URL.h"
 #include <wtf/NeverDestroyed.h>

@@ -22,7 +22,6 @@
 #include "config.h"
 #include "SVGZoomEvent.h"
 
-#include "EventNames.h"
 #include "SVGPoint.h"
 #include "SVGRect.h"
 

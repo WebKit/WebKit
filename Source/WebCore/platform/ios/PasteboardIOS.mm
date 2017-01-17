@@ -35,7 +35,6 @@
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
 #import "HTMLElement.h"
-#import "HTMLNames.h"
 #import "HTMLParserIdioms.h"
 #import "Image.h"
 #import "LegacyWebArchive.h"

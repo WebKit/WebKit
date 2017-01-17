@@ -32,10 +32,8 @@
 #import "ScrollingCoordinator.h"
 #import "ScrollingTree.h"
 #import "ScrollingStateTree.h"
-#import "Settings.h"
 #import "TileController.h"
 #import "WebLayer.h"
-
 #import <QuartzCore/QuartzCore.h>
 
 namespace WebCore {

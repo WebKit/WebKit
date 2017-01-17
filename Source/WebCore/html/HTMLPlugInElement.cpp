@@ -24,8 +24,6 @@
 #include "HTMLPlugInElement.h"
 
 #include "BridgeJSC.h"
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "Event.h"

@@ -28,7 +28,6 @@
 
 #include "CompositionEvent.h"
 #include "EventContext.h"
-#include "EventNames.h"
 #include "EventPath.h"
 #include "Frame.h"
 #include "FrameView.h"

@@ -29,7 +29,6 @@
 
 #include "SVGCircleElement.h"
 #include "SVGEllipseElement.h"
-#include "SVGNames.h"
 
 namespace WebCore {
 

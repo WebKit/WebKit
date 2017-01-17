@@ -35,7 +35,6 @@
 #include "HitTestResult.h"
 #include "IntRect.h"
 #include "LayoutRepainter.h"
-#include "PaintInfo.h"
 #include "Range.h"
 #include "RenderBoxRegionInfo.h"
 #include "RenderInline.h"

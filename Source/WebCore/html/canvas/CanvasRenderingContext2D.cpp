@@ -68,10 +68,6 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
-#if PLATFORM(IOS)
-#include "Settings.h"
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;

@@ -43,7 +43,6 @@
 #include "HTMLPlugInElement.h"
 #include "HitTestResult.h"
 #include "LocalizedStrings.h"
-#include "MIMETypeRegistry.h"
 #include "MouseEvent.h"
 #include "Page.h"
 #include "PaintInfo.h"

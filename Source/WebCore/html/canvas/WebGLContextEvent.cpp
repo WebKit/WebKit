@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebGLContextEvent.h"
 
-#include "EventNames.h"
-
 #if ENABLE(WEBGL)
 
 namespace WebCore {

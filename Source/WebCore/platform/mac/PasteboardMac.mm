@@ -38,7 +38,6 @@
 #import "FrameLoaderClient.h"
 #import "HitTestResult.h"
 #import "htmlediting.h"
-#import "HTMLNames.h"
 #import "Image.h"
 #import "URL.h"
 #import "LegacyWebArchive.h"

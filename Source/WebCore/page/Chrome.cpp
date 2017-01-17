@@ -44,7 +44,6 @@
 #include "PopupOpeningObserver.h"
 #include "RenderObject.h"
 #include "ResourceHandle.h"
-#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
 #include "WindowFeatures.h"

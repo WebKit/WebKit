@@ -36,7 +36,6 @@
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Logging.h"
-#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "VTTCue.h"
 #include "WebVTTParser.h"

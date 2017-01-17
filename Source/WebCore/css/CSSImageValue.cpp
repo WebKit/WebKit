@@ -33,7 +33,6 @@
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "Document.h"
 #include "Element.h"
-#include "MemoryCache.h"
 
 namespace WebCore {
 

@@ -36,7 +36,6 @@
 #include "DocumentThreadableLoader.h"
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"
-#include "SecurityOrigin.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerRunLoop.h"
 #include "WorkerThreadableLoader.h"

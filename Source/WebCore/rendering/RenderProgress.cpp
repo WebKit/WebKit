@@ -21,9 +21,7 @@
 #include "config.h"
 #include "RenderProgress.h"
 
-#include "HTMLNames.h"
 #include "HTMLProgressElement.h"
-#include "PaintInfo.h"
 #include "RenderTheme.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/RefPtr.h>

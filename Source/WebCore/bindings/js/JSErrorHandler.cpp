@@ -35,7 +35,6 @@
 #include "Document.h"
 #include "ErrorEvent.h"
 #include "Event.h"
-#include "EventNames.h"
 #include "JSDOMConvert.h"
 #include "JSEvent.h"
 #include "JSMainThreadExecState.h"
@@ -59,7 +58,6 @@ JSErrorHandler::~JSErrorHandler()
 
 void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
 {
-
     if (!is<ErrorEvent>(*event))
         return JSEventListener::handleEvent(scriptExecutionContext, event);
 

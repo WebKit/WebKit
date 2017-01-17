@@ -23,7 +23,6 @@
 #include "GraphicsContext3DPrivate.h"
 
 #include "HostWindow.h"
-#include "NotImplemented.h"
 #include <wtf/StdLibExtras.h>
 
 #if USE(CAIRO)

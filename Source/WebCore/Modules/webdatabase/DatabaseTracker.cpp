@@ -29,8 +29,6 @@
 #include "config.h"
 #include "DatabaseTracker.h"
 
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "Database.h"
 #include "DatabaseContext.h"
 #include "DatabaseManager.h"

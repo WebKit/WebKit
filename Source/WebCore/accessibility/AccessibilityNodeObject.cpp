@@ -65,7 +65,6 @@
 #include "RenderImage.h"
 #include "RenderView.h"
 #include "SVGElement.h"
-#include "SVGNames.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
 #include "UserGestureIndicator.h"

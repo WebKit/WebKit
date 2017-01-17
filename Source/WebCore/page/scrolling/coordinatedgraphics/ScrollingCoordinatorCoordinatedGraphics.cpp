@@ -40,7 +40,6 @@
 #include "ScrollingStateScrollingNode.h"
 #include "ScrollingStateStickyNode.h"
 #include "ScrollingStateTree.h"
-#include "Settings.h"
 
 namespace WebCore {
 

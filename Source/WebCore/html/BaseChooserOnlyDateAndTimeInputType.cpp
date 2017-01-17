@@ -28,7 +28,6 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
-#include "Chrome.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "Page.h"
