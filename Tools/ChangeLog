@@ -1,3 +1,21 @@
+2017-01-17  Jonathan Bedard  <jbedard@apple.com>
+
+        'webkit-patch post' no longer works with moved/copied files
+        https://bugs.webkit.org/show_bug.cgi?id=166914
+        <rdar://problem/29979707>
+
+        Reviewed by Daniel Bates.
+
+        SVN 1.9 has a bug where when a file has been moved or copied, the svn diff of the new
+        file outputs only the "Index:" line with an empty body.  This workaround
+        ignores such output from svn diff.  A issue has been filed with SVN, a link to the
+        public email list tracking this bug is below.
+        http://mail-archives.apache.org/mod_mbox/subversion-users/201701.mbox/%3cCF9BDE0A-7454-4405-8259-1120C6B76A03@apple.com%3e
+        
+
+        * Scripts/svn-create-patch:
+        (generateDiff): Ignore an "Index:" line with an empty body.
+
 2017-01-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove the REQUEST_ANIMATION_FRAME flag
