@@ -1,3 +1,18 @@
+2017-01-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        MediaKeySession: use existing 'message' event name
+        https://bugs.webkit.org/show_bug.cgi?id=167095
+
+        Reviewed by Sam Weinig.
+
+        When dispatching the 'message' event in MediaKeySession::enqueueMessage(),
+        use the messageEvent member that's provided by the EventNames object. This
+        removes the need for a custom static AtomicString object.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::enqueueMessage):
+        (WebCore::messageEventName): Deleted.
+
 2017-01-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove the REQUEST_ANIMATION_FRAME flag

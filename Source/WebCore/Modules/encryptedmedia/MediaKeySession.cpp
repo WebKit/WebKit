@@ -33,6 +33,7 @@
 
 #include "CDM.h"
 #include "CDMInstance.h"
+#include "EventNames.h"
 #include "MediaKeyMessageEvent.h"
 #include "MediaKeyMessageType.h"
 #include "MediaKeyStatusMap.h"
@@ -41,12 +42,6 @@
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
-
-static AtomicString& messageEventName()
-{
-    NeverDestroyed<AtomicString> message { "message" };
-    return message.get();
-}
 
 Ref<MediaKeySession> MediaKeySession::create(ScriptExecutionContext& context, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
 {
@@ -276,7 +271,7 @@ void MediaKeySession::enqueueMessage(MediaKeyMessageType messageType, const Shar
     // 2. Queue a task to create an event named message that does not bubble and is not cancellable using the MediaKeyMessageEvent
     //    interface with its type attribute set to message and its isTrusted attribute initialized to true, and dispatch it at the
     //    session.
-    auto messageEvent = MediaKeyMessageEvent::create(messageEventName(), {messageType, message.createArrayBuffer()}, Event::IsTrusted::Yes);
+    auto messageEvent = MediaKeyMessageEvent::create(eventNames().messageEvent, {messageType, message.createArrayBuffer()}, Event::IsTrusted::Yes);
     m_eventQueue.enqueueEvent(WTFMove(messageEvent));
 }
 
