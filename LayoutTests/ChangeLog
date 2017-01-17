@@ -1,3 +1,16 @@
+2016-12-14  Daniel Bates  <dabates@apple.com>
+
+        CSP: Allow HTTPS URL to match HTTP source expression
+        https://bugs.webkit.org/show_bug.cgi?id=159520
+        <rdar://problem/27287177>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/security/contentSecurityPolicy/script-src-parsing-implicit-and-explicit-port-number-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/script-src-parsing-implicit-and-explicit-port-number.html: Added.
+        * platform/wk2/TestExpectations: Skip the test on WebKit2 because it makes use of Internals.registerDefaultPortForProtocol(),
+        which does not work with NetworkProcess.
+
 2016-12-13  Daniel Bates  <dabates@apple.com>
 
         CSP: ws: and wss: blocked with connect-src *
