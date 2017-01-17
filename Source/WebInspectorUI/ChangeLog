@@ -1,5 +1,30 @@
 2017-01-16  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: add "Persist Logs on Navigation" to settings screen
+        https://bugs.webkit.org/show_bug.cgi?id=166992
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Controllers/LogManager.js:
+        (WebInspector.LogManager):
+        (WebInspector.LogManager.prototype._delayedMessagesCleared):
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._sessionStarted):
+        (WebInspector.LogContentView.prototype._handleContextMenuEvent):
+        (WebInspector.LogContentView.prototype._toggleClearLogOnNavigateSetting):
+        Move setting and UI toggle for "Keep Log on Navigation" to the global settings dictionary
+        and content view.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WebInspector.SettingsTabContentView.prototype.initialLayout):
+        (WebInspector.SettingsTabContentView):
+        Add checkbox for new setting and spacer between text settings and log settings.
+
+2017-01-16  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: add UI Zoom level to Settings screen
         https://bugs.webkit.org/show_bug.cgi?id=166991
 

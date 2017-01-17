@@ -33,8 +33,6 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
         this._clearMessagesRequested = false;
         this._isNewPageOrReload = false;
 
-        this.clearLogOnNavigateSetting = new WebInspector.Setting("clear-log-on-navigate", true);
-
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
 
@@ -81,7 +79,7 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
         if (this._isNewPageOrReload) {
             this._isNewPageOrReload = false;
 
-            if (!this.clearLogOnNavigateSetting.value)
+            if (!WebInspector.settings.clearLogOnNavigate.value)
                 return;
         }
 
