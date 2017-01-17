@@ -1,3 +1,12 @@
+2016-12-30  Bernd Homuth  <dev@hmt.im>
+
+        [GTK] German translation update
+        https://bugs.webkit.org/show_bug.cgi?id=152228
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * de.po:
+
 2016-10-19  Gabor Kelemen  <kelemeng@ubuntu.com>
 
         [GTK] [L10n] Updated Hungarian translation
