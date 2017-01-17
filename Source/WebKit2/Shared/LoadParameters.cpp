@@ -34,6 +34,11 @@ void LoadParameters::encode(IPC::Encoder& encoder) const
 {
     encoder << navigationID;
     encoder << request;
+
+    encoder << static_cast<bool>(request.httpBody());
+    if (request.httpBody())
+        request.httpBody()->encode(encoder);
+
     encoder << sandboxExtensionHandle;
     encoder << data;
     encoder << string;
@@ -55,6 +60,17 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
 
     if (!decoder.decode(data.request))
         return false;
+
+    bool hasHTTPBody;
+    if (!decoder.decode(hasHTTPBody))
+        return false;
+
+    if (hasHTTPBody) {
+        RefPtr<WebCore::FormData> formData = WebCore::FormData::decode(decoder);
+        if (!formData)
+            return false;
+        data.request.setHTTPBody(WTFMove(formData));
+    }
 
     if (!decoder.decode(data.sandboxExtensionHandle))
         return false;

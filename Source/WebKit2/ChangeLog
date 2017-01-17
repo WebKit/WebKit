@@ -1,3 +1,17 @@
+2017-01-17  Anders Carlsson  <andersca@apple.com>
+
+        It's not possible to perform a POST request with HTTPBody content in a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=167131
+        rdar://problem/20464240
+
+        Reviewed by Beth Dakin.
+
+        Encode/decode the form data if necessary.
+
+        * Shared/LoadParameters.cpp:
+        (WebKit::LoadParameters::encode):
+        (WebKit::LoadParameters::decode):
+
 2017-01-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Crash when closing tab with debugger paused
