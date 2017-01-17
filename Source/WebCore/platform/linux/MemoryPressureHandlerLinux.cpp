@@ -53,9 +53,13 @@ namespace WebCore {
 // seconds after receiving an event. Don't let events fire any sooner than
 // s_holdOffMultiplier times the last cleanup processing time. Effectively
 // this is 1 / s_holdOffMultiplier percent of the time.
+// If after releasing the memory we don't free at least s_minimumBytesFreedToUseMinimumHoldOffTime,
+// we wait longer to try again (s_maximumHoldOffTime).
 // These value seems reasonable and testing verifies that it throttles frequent
 // low memory events, greatly reducing CPU usage.
 static const unsigned s_minimumHoldOffTime = 5;
+static const unsigned s_maximumHoldOffTime = 30;
+static const size_t s_minimumBytesFreedToUseMinimumHoldOffTime = 1 * MB;
 static const unsigned s_holdOffMultiplier = 20;
 
 static const char* s_cgroupMemoryPressureLevel = "/sys/fs/cgroup/memory/memory.pressure_level";
@@ -284,8 +288,12 @@ void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchrono
     uninstall();
 
     double startTime = monotonicallyIncreasingTime();
+    int64_t processMemory = processMemoryUsage();
     m_lowMemoryHandler(critical, synchronous);
-    unsigned holdOffTime = (monotonicallyIncreasingTime() - startTime) * s_holdOffMultiplier;
+    int64_t bytesFreed = processMemory - processMemoryUsage();
+    unsigned holdOffTime = s_maximumHoldOffTime;
+    if (bytesFreed > 0 && static_cast<size_t>(bytesFreed) >= s_minimumBytesFreedToUseMinimumHoldOffTime)
+        holdOffTime = (monotonicallyIncreasingTime() - startTime) * s_holdOffMultiplier;
     holdOff(std::max(holdOffTime, s_minimumHoldOffTime));
 }
 
