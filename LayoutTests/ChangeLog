@@ -1,3 +1,22 @@
+2016-12-13  Daniel Bates  <dabates@apple.com>
+
+        CSP: ws: and wss: blocked with connect-src *
+        https://bugs.webkit.org/show_bug.cgi?id=165804
+        <rdar://problem/28563643>
+
+        Reviewed by David Kilzer.
+
+        Add tests to ensure that * matches ws: and wss:.
+
+        * http/tests/security/contentSecurityPolicy/connect-src-star-secure-websocket-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-star-secure-websocket-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-star-websocket-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-star-websocket-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/default-src-star-secure-websocket-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/default-src-star-secure-websocket-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/default-src-star-websocket-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/default-src-star-websocket-allowed.html: Added.
+
 2016-09-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Change the MemoryCache and CachedResource adjustSize functions to take a long argument
