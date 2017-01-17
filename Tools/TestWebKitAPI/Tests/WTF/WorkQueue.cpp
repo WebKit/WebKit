@@ -200,4 +200,37 @@ TEST(WTF_WorkQueue, DispatchAfter)
     EXPECT_STREQ(dispatchAfterLabel, m_functionCallOrder[1].c_str());
 }
 
+TEST(WTF_WorkQueue, DestroyOnSelf)
+{
+    Lock lock;
+    Condition dispatchAfterTestStarted;
+    Condition dispatchAfterTestCompleted;
+    bool started = false;
+    bool completed = false;
+
+    {
+        LockHolder locker(lock);
+        {
+            auto queue = WorkQueue::create("com.apple.WebKit.Test.dispatchAfter");
+            queue->dispatchAfter(std::chrono::milliseconds(500), [&](void) {
+                LockHolder locker(lock);
+                dispatchAfterTestStarted.wait(lock, [&] {
+                    return started;
+                });
+                completed = true;
+                dispatchAfterTestCompleted.notifyOne();
+            });
+        }
+        started = true;
+        dispatchAfterTestStarted.notifyOne();
+    }
+    {
+        LockHolder locker(lock);
+        dispatchAfterTestCompleted.wait(lock, [&] {
+            return completed;
+        });
+        WTF::sleep(0.1);
+    }
+}
+
 } // namespace TestWebKitAPI
