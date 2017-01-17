@@ -1,3 +1,9 @@
+2017-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.14.3 release.
+
+        * gtk/NEWS: Add release notes for 2.14.3.
+
 2017-01-10  Zan Dobersek  <zdobersek@igalia.com>
 
         ThreadedCoordinatedLayerTreeHost::renderNextFrame() should short-cut to layer flushing

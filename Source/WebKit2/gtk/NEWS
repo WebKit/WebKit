@@ -1,4 +1,24 @@
 ==================
+WebKitGTK+  2.14.3
+==================
+
+What's new in WebKitGTK+ 2.14.3?
+
+  - Create GLX OpenGL contexts using version 3.2 (core profile) when available to reduce the memory
+    consumption on Mesa based drivers.
+  - Improve memory pressure handler to reduce the CPU usage on memory pressure situations.
+  - Fix a regression in WebKitWebView title notify signal emission that caused the signal to be emitted
+    multiple times.
+  - Fix high CPU usage in the web process loading hyphenation dictionaries.
+  - More user agent string improvements to improve compatibility with several websites.
+  - Fix web process crash when closing the web view in X11.
+  - Fix the build with OpenGL ES2 enabled.
+  - Fix several crashes and rendering issues.
+  - Translation updates: German.
+  - Security fixes: CVE-2016-7656, CVE-2016-7635, CVE-2016-7654, CVE-2016-7639, CVE-2016-7645, CVE-2016-7652,
+    CVE-2016-7641, CVE-2016-7632, CVE-2016-7599, CVE-2016-7592, CVE-2016-7589, CVE-2016-7623, CVE-2016-7586.
+
+==================
 WebKitGTK+  2.14.2
 ==================
 
