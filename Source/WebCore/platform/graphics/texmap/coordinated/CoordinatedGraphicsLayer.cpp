@@ -126,6 +126,7 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
 #endif
 #if USE(COORDINATED_GRAPHICS_THREADED)
     , m_shouldSyncPlatformLayer(false)
+    , m_shouldUpdatePlatformLayer(false)
 #endif
     , m_coordinator(0)
     , m_compositedNativeImagePtr(0)
@@ -383,7 +384,7 @@ void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
         m_pendingPlatformLayerOperation |= SyncPlatformLayer;
 #elif USE(COORDINATED_GRAPHICS_THREADED)
     if (m_platformLayer)
-        m_shouldSyncPlatformLayer = true;
+        m_shouldUpdatePlatformLayer = true;
 #endif
 
     notifyFlushRequired();
@@ -744,10 +745,20 @@ void CoordinatedGraphicsLayer::syncPlatformLayer()
 
     m_shouldSyncPlatformLayer = false;
     m_layerState.platformLayerChanged = true;
-    if (m_platformLayer) {
-        m_platformLayer->swapBuffersIfNeeded();
+    if (m_platformLayer)
         m_layerState.platformLayerProxy = m_platformLayer->proxy();
-    }
+#endif
+}
+
+void CoordinatedGraphicsLayer::updatePlatformLayer()
+{
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    if (!m_shouldUpdatePlatformLayer)
+        return;
+
+    m_shouldUpdatePlatformLayer = false;
+    if (m_platformLayer)
+        m_platformLayer->swapBuffersIfNeeded();
 #endif
 }
 
@@ -801,6 +812,7 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly(bool)
     syncChildren();
     syncFilters();
     syncPlatformLayer();
+    updatePlatformLayer();
 
     // Only unset m_movingVisibleRect after we have updated the visible rect after the animation stopped.
     if (!hasActiveTransformAnimation)
