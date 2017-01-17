@@ -51,6 +51,7 @@ exclude Source/WebCore/platform/audio/resources
 exclude Source/WebCore/bindings/scripts/test
 exclude Source/WebCore/platform/efl/DefaultTheme
 exclude Source/WebCore/Resources
+exclude Source/WebKit/.*
 exclude Source/cmake/EFLHelpers.cmake$
 exclude Source/cmake/OptionsWinCairo.cmake$
 exclude Source/cmake/OptionsWindows.cmake$
@@ -60,17 +61,13 @@ exclude Source/cmake/eflsymbols.filter$
 exclude Source/WebInspectorUI/Tools
 exclude Source/WebInspectorUI/UserInterface/Images
 
-directory Source/WebInspectorUI/UserInterface/Images/gtk
-
-# Most of the files in Source/WebKit are not necessary to build GTK+ and
-# the directory includes lots of images, so we're a bit more picky here.
-exclude Source/WebKit/.*
 exclude Source/WebKit2/Resources
 exclude Source/WebKit2/gtk/NEWS$
 
 # We do want to include the NEWS, but we want it to be in the root of the archive.
 file Source/WebKit2/gtk/NEWS NEWS
 
+directory Source/WebInspectorUI/UserInterface/Images/gtk
 file Source/WebCore/English.lproj/mediaControlsLocalizedStrings.js Source/WebCore/English.lproj/mediaControlsLocalizedStrings.js
 file Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js
 

@@ -1,3 +1,14 @@
+2017-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r173753): [GTK] Source/WebKit is distributed in tarballs
+        https://bugs.webkit.org/show_bug.cgi?id=165797
+
+        Reviewed by Michael Catanzaro.
+
+        Move directory ruleset after all exclude rules of Source rulset.
+
+        * gtk/manifest.txt.in:
+
 2017-01-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         WorkQueueGeneric's platformInvalidate() can deadlock when called on the RunLoop's thread
