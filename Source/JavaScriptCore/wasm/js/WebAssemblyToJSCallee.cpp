@@ -48,7 +48,8 @@ Structure* WebAssemblyToJSCallee::createStructure(VM& vm, JSGlobalObject* global
 
 WebAssemblyToJSCallee::WebAssemblyToJSCallee(VM& vm, Structure* structure)
     : Base(vm, structure)
-{ }
+{
+}
 
 void WebAssemblyToJSCallee::finishCreation(VM& vm)
 {
@@ -57,7 +58,7 @@ void WebAssemblyToJSCallee::finishCreation(VM& vm)
 
 void WebAssemblyToJSCallee::destroy(JSCell* cell)
 {
-    WebAssemblyToJSCallee* thisObject = jsCast<WebAssemblyToJSCallee*>(cell);
+    WebAssemblyToJSCallee* thisObject = static_cast<WebAssemblyToJSCallee*>(cell);
     thisObject->WebAssemblyToJSCallee::~WebAssemblyToJSCallee();
 }
 

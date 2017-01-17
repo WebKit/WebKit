@@ -164,7 +164,7 @@ bool JSTestCustomConstructorWithNoInterfaceObjectOwner::isReachableFromOpaqueRoo
 
 void JSTestCustomConstructorWithNoInterfaceObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestCustomConstructorWithNoInterfaceObject = jsCast<JSTestCustomConstructorWithNoInterfaceObject*>(handle.slot()->asCell());
+    auto* jsTestCustomConstructorWithNoInterfaceObject = static_cast<JSTestCustomConstructorWithNoInterfaceObject*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestCustomConstructorWithNoInterfaceObject->wrapped(), jsTestCustomConstructorWithNoInterfaceObject);
 }

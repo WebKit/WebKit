@@ -84,7 +84,7 @@ MacroAssemblerCodeRef JITThunks::ctiStub(VM* vm, ThunkGenerator generator)
 
 void JITThunks::finalize(Handle<Unknown> handle, void*)
 {
-    auto* nativeExecutable = jsCast<NativeExecutable*>(handle.get().asCell());
+    auto* nativeExecutable = static_cast<NativeExecutable*>(handle.get().asCell());
     weakRemove(*m_hostFunctionStubMap, std::make_tuple(nativeExecutable->function(), nativeExecutable->constructor(), nativeExecutable->name()), nativeExecutable);
 }
 

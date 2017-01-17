@@ -174,7 +174,7 @@ bool JSInterfaceNameOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> 
 
 void JSInterfaceNameOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsInterfaceName = jsCast<JSInterfaceName*>(handle.slot()->asCell());
+    auto* jsInterfaceName = static_cast<JSInterfaceName*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsInterfaceName->wrapped(), jsInterfaceName);
 }

@@ -47,6 +47,8 @@ class LLIntOffsetsExtractor;
 // JSSegmentedVariableObject has its own GC tracing functionality, since it knows the
 // exact dimensions of the variables array at all times.
 
+// Except for JSGlobalObject, subclasses of this don't call the destructor and leak memory.
+
 class JSSegmentedVariableObject : public JSSymbolTableObject {
     friend class JIT;
     friend class LLIntOffsetsExtractor;

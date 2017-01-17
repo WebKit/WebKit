@@ -39,7 +39,7 @@ const ClassInfo FunctionCodeBlock::s_info = {
 
 void FunctionCodeBlock::destroy(JSCell* cell)
 {
-    jsCast<FunctionCodeBlock*>(cell)->~FunctionCodeBlock();
+    static_cast<FunctionCodeBlock*>(cell)->~FunctionCodeBlock();
 }
 
 } // namespace JSC

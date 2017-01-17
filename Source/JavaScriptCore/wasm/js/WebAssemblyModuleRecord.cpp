@@ -64,7 +64,7 @@ WebAssemblyModuleRecord::WebAssemblyModuleRecord(VM& vm, Structure* structure, c
 
 void WebAssemblyModuleRecord::destroy(JSCell* cell)
 {
-    WebAssemblyModuleRecord* thisObject = jsCast<WebAssemblyModuleRecord*>(cell);
+    WebAssemblyModuleRecord* thisObject = static_cast<WebAssemblyModuleRecord*>(cell);
     thisObject->WebAssemblyModuleRecord::~WebAssemblyModuleRecord();
 }
 

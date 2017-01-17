@@ -225,7 +225,7 @@ template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::ExecState& state
 template<typename JSWrapper, typename IteratorTraits>
 void JSDOMIterator<JSWrapper, IteratorTraits>::destroy(JSCell* cell)
 {
-    JSDOMIterator<JSWrapper, IteratorTraits>* thisObject = JSC::jsCast<JSDOMIterator<JSWrapper, IteratorTraits>*>(cell);
+    JSDOMIterator<JSWrapper, IteratorTraits>* thisObject = static_cast<JSDOMIterator<JSWrapper, IteratorTraits>*>(cell);
     thisObject->JSDOMIterator<JSWrapper, IteratorTraits>::~JSDOMIterator();
 }
 

@@ -211,7 +211,7 @@ bool JSTestOverloadedConstructorsWithSequenceOwner::isReachableFromOpaqueRoots(J
 
 void JSTestOverloadedConstructorsWithSequenceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestOverloadedConstructorsWithSequence = jsCast<JSTestOverloadedConstructorsWithSequence*>(handle.slot()->asCell());
+    auto* jsTestOverloadedConstructorsWithSequence = static_cast<JSTestOverloadedConstructorsWithSequence*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestOverloadedConstructorsWithSequence->wrapped(), jsTestOverloadedConstructorsWithSequence);
 }

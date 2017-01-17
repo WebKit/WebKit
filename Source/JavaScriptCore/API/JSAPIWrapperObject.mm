@@ -48,7 +48,7 @@ static JSAPIWrapperObjectHandleOwner* jsAPIWrapperObjectHandleOwner()
 
 void JSAPIWrapperObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*)
 {
-    JSC::JSAPIWrapperObject* wrapperObject = JSC::jsCast<JSC::JSAPIWrapperObject*>(handle.get().asCell());
+    JSC::JSAPIWrapperObject* wrapperObject = static_cast<JSC::JSAPIWrapperObject*>(handle.get().asCell());
     if (!wrapperObject->wrappedObject())
         return;
 
