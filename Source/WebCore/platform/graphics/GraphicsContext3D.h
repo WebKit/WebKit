@@ -1419,6 +1419,7 @@ private:
     WebGLRenderingContextBase* m_webglContext;
 
     bool m_isForWebGL2 { false };
+    bool m_usingCoreProfile { false };
 
 #if USE(CAIRO)
     Platform3DObject m_vao { 0 };

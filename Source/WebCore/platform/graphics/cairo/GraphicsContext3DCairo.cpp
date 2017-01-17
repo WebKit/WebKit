@@ -148,6 +148,8 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
     ::glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
     if (GLContext::current()->version() >= 320) {
+        m_usingCoreProfile = true;
+
         // From version 3.2 on we use the OpenGL Core profile, so request that ouput to the shader compiler.
         // OpenGL version 3.2 uses GLSL version 1.50.
         m_compiler = ANGLEWebKitBridge(SH_GLSL_150_CORE_OUTPUT);

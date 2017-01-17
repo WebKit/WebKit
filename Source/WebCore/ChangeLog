@@ -1,3 +1,28 @@
+2017-01-17  Miguel Gomez  <magomez@igalia.com>
+
+        REGRESSION(r208997): [GLX] Google maps labels broken when using glXCreateContextAttribsARB
+        https://bugs.webkit.org/show_bug.cgi?id=166489
+
+        Reviewed by Žan Doberšek.
+
+        The format GL_ALPHA that can be used in WebGL's texImage2D and texSubImage2D functions is deprecated
+        in the OpenGL layer when using a core profile. Due to this, when using core, we need to transform
+        that parameter into something supported by OpenGL.
+
+        What we do is to use a texture with just GL_RED format (that allows a single color component) to
+        store the alpha values, and then configure the texture to swizzle red and alpha when accessing the
+        pixel components.
+
+        No new tests added.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::texImage2D):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::texSubImage2D):
+
 2017-01-17  Tomas Popela  <tpopela@redhat.com>
 
         Unreviewed build fix for the Release build with enabled logging
