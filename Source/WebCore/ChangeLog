@@ -1,3 +1,58 @@
+2017-01-17  Chris Dumez  <cdumez@apple.com>
+
+        Document title changed twice when setting document.title
+        https://bugs.webkit.org/show_bug.cgi?id=167065
+
+        Reviewed by Darin Adler.
+
+        Setting document.title would call the document title to be set twice
+        first to the empty string and then to the new title. This is because
+        setting document.title is equivalent to setting title.textContent [1],
+        which first removes all children and then inserts the new one [2], and
+        we call updateTitle() for each step. This is because
+        HTMLTitleElement::childrenChanged() is called twice (once for the
+        removal of the existing children, and a second time when the new child
+        is inserted), and childrenChanged() calls document::titleElementTextChanged().
+
+        Since no JS event is fired between those 2 mutations, it is safe (i.e. non
+        observable from JS) to update the title only once after both mutations have
+        taken place. To achieve this, add a new replaceAllChildren() function
+        which implements [3]. This replaceAllChildren() has the benefit of
+        calling ContainerNode::childrenChanged() only once, after both mutations
+        have taken place, thus avoiding unnecessary work. This fixes the issue
+        when setting the title and should be performance-positive in general.
+
+        [1] https://html.spec.whatwg.org/#document.title
+        [2] https://dom.spec.whatwg.org/#dom-node-textcontent
+        [3] https://dom.spec.whatwg.org/#concept-node-replace-all
+
+        Test: fast/dom/Node/textContent-mutationEvents.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::notifyChildInserted):
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::replaceAllChildren):
+        (WebCore::ContainerNode::rebuildSVGExtensionsElementsIfNecessary):
+        (WebCore::ContainerNode::removeChildren):
+        (WebCore::ContainerNode::updateTreeAfterInsertion):
+        * dom/ContainerNode.h:
+        Add new replaceAllChildrenWith() function which implements [3]
+        in a way that calls ContainerNode::childrenChanged() only once.
+
+        * dom/Element.cpp:
+        (WebCore::Element::childrenChanged):
+        Deal with new AllChildrenReplaced ChildChange type.
+
+        * dom/Node.cpp:
+        (WebCore::Node::setTextContent):
+        Call replaceAllChildrenWith() as per the specification:
+        - https://dom.spec.whatwg.org/#dom-node-textcontent
+
+        * dom/Range.cpp:
+        (WebCore::Range::surroundContents):
+        Call replaceAllChildrenWith(nullptr) as per the specification:
+        - https://dom.spec.whatwg.org/#dom-range-surroundcontents
+
 2017-01-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         ENABLE(USER_TIMING) Not Defined for Apple Windows or OS X Ports

@@ -53,6 +53,8 @@ public:
     ExceptionOr<void> replaceChild(Node& newChild, Node& oldChild);
     WEBCORE_EXPORT ExceptionOr<void> removeChild(Node& child);
     WEBCORE_EXPORT ExceptionOr<void> appendChild(Node& newChild);
+    void replaceAllChildren(Ref<Node>&&);
+    void replaceAllChildren(std::nullptr_t);
 
     // These methods are only used during parsing.
     // They don't send DOM mutation events or handle reparenting.
@@ -62,11 +64,12 @@ public:
     void parserInsertBefore(Node& newChild, Node& refChild);
 
     void removeChildren();
+
     void takeAllChildrenFrom(ContainerNode*);
 
     void cloneChildNodes(ContainerNode& clone);
 
-    enum ChildChangeType { ElementInserted, ElementRemoved, TextInserted, TextRemoved, TextChanged, AllChildrenRemoved, NonContentsChildChanged };
+    enum ChildChangeType { ElementInserted, ElementRemoved, TextInserted, TextRemoved, TextChanged, AllChildrenRemoved, NonContentsChildChanged, AllChildrenReplaced };
     enum ChildChangeSource { ChildChangeSourceParser, ChildChangeSourceAPI };
     struct ChildChange {
         ChildChangeType type;
@@ -120,10 +123,13 @@ private:
     void insertBeforeCommon(Node& nextChild, Node& oldChild);
     void appendChildCommon(Node&);
 
-    void notifyChildInserted(Node& child, ChildChangeSource);
+    void notifyChildInserted(Node& child, const ChildChange&);
     void notifyChildRemoved(Node& child, Node* previousSibling, Node* nextSibling, ChildChangeSource);
 
-    void updateTreeAfterInsertion(Node& child);
+    enum class ReplacedAllChildren { No, Yes };
+    void updateTreeAfterInsertion(Node& child, ReplacedAllChildren = ReplacedAllChildren::No);
+    static ChildChange changeForChildInsertion(Node&, ChildChangeSource, ReplacedAllChildren = ReplacedAllChildren::No);
+    void rebuildSVGExtensionsElementsIfNecessary();
 
     bool isContainerNode() const = delete;
 

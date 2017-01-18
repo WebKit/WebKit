@@ -947,6 +947,52 @@ static void testWebViewPreferredSize(WebViewTest* test, gconstpointer)
     g_assert_cmpint(naturalSize.height, ==, 615);
 }
 
+class WebViewTitleTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(WebViewTitleTest);
+
+    static void titleChangedCallback(WebKitWebView* view, GParamSpec*, WebViewTitleTest* test)
+    {
+        test->m_webViewTitles.append(webkit_web_view_get_title(view));
+    }
+
+    WebViewTitleTest()
+    {
+        g_signal_connect(m_webView, "notify::title", G_CALLBACK(titleChangedCallback), this);
+    }
+
+    Vector<CString> m_webViewTitles;
+};
+
+static void testWebViewTitleChange(WebViewTitleTest* test, gconstpointer)
+{
+    g_assert_cmpint(test->m_webViewTitles.size(), ==, 0);
+
+    test->loadHtml("<head><title>Page Title</title></head>", nullptr);
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(test->m_webViewTitles.size(), ==, 1);
+    g_assert_cmpstr(test->m_webViewTitles[0].data(), ==, "Page Title");
+
+    test->loadHtml("<head><title>Another Page Title</title></head>", nullptr);
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(test->m_webViewTitles.size(), ==, 3);
+    /* Page title should be immediately unset when loading a new page. */
+    g_assert_cmpstr(test->m_webViewTitles[1].data(), ==, "");
+    g_assert_cmpstr(test->m_webViewTitles[2].data(), ==, "Another Page Title");
+
+    test->loadHtml("<p>This page has no title!</p>", nullptr);
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(test->m_webViewTitles.size(), ==, 4);
+    g_assert_cmpstr(test->m_webViewTitles[3].data(), ==, "");
+
+    test->loadHtml("<script>document.title = 'one'; document.title = 'two'; document.title = 'three';</script>", nullptr);
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(test->m_webViewTitles.size(), ==, 7);
+    g_assert_cmpstr(test->m_webViewTitles[4].data(), ==, "one");
+    g_assert_cmpstr(test->m_webViewTitles[5].data(), ==, "two");
+    g_assert_cmpstr(test->m_webViewTitles[6].data(), ==, "three");
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     if (message->method != SOUP_METHOD_GET) {
@@ -984,6 +1030,7 @@ void beforeAll()
     IsPlayingAudioWebViewTest::add("WebKitWebView", "is-playing-audio", testWebViewIsPlayingAudio);
     WebViewTest::add("WebKitWebView", "background-color", testWebViewBackgroundColor);
     WebViewTest::add("WebKitWebView", "preferred-size", testWebViewPreferredSize);
+    WebViewTitleTest::add("WebKitWebView", "title-change", testWebViewTitleChange);
 }
 
 void afterAll()

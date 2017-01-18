@@ -56,6 +56,7 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
+#include "SVGUseElement.h"
 #include "SelectorQuery.h"
 #include "TemplateContentDocumentFragment.h"
 #include <algorithm>
@@ -327,18 +328,25 @@ void ContainerNode::appendChildCommon(Node& child)
     m_lastChild = &child;
 }
 
-void ContainerNode::notifyChildInserted(Node& child, ChildChangeSource source)
+inline auto ContainerNode::changeForChildInsertion(Node& child, ChildChangeSource source, ReplacedAllChildren replacedAllChildren) -> ChildChange
+{
+    if (replacedAllChildren == ReplacedAllChildren::Yes)
+        return { AllChildrenReplaced, nullptr, nullptr, source };
+
+    return {
+        child.isElementNode() ? ElementInserted : child.isTextNode() ? TextInserted : NonContentsChildChanged,
+        ElementTraversal::previousSibling(child),
+        ElementTraversal::nextSibling(child),
+        source
+    };
+}
+
+void ContainerNode::notifyChildInserted(Node& child, const ChildChange& change)
 {
     ChildListMutationScope(*this).childAdded(child);
 
     NodeVector postInsertionNotificationTargets;
     notifyChildNodeInserted(*this, child, postInsertionNotificationTargets);
-
-    ChildChange change;
-    change.type = child.isElementNode() ? ElementInserted : child.isTextNode() ? TextInserted : NonContentsChildChanged;
-    change.previousSiblingElement = ElementTraversal::previousSibling(child);
-    change.nextSiblingElement = ElementTraversal::nextSibling(child);
-    change.source = source;
 
     childrenChanged(change);
 
@@ -375,7 +383,7 @@ void ContainerNode::parserInsertBefore(Node& newChild, Node& nextChild)
 
     newChild.updateAncestorConnectedSubframeCountForInsertion();
 
-    notifyChildInserted(newChild, ChildChangeSourceParser);
+    notifyChildInserted(newChild, changeForChildInsertion(newChild, ChildChangeSourceParser));
 }
 
 ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
@@ -534,13 +542,7 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
         notifyChildRemoved(child, prev, next, ChildChangeSourceAPI);
     }
 
-
-    if (document().svgExtensions()) {
-        Element* shadowHost = this->shadowHost();
-        if (!shadowHost || !shadowHost->hasTagName(SVGNames::useTag))
-            document().accessSVGExtensions().rebuildElements();
-    }
-
+    rebuildSVGExtensionsElementsIfNecessary();
     dispatchSubtreeModifiedEvent();
 
     return { };
@@ -598,6 +600,65 @@ void ContainerNode::parserRemoveChild(Node& oldChild)
     notifyChildRemoved(oldChild, prev, next, ChildChangeSourceParser);
 }
 
+// https://dom.spec.whatwg.org/#concept-node-replace-all
+void ContainerNode::replaceAllChildren(std::nullptr_t)
+{
+    ChildListMutationScope mutation(*this);
+    removeChildren();
+}
+
+// https://dom.spec.whatwg.org/#concept-node-replace-all
+void ContainerNode::replaceAllChildren(Ref<Node>&& node)
+{
+    // This function assumes the input node is not a DocumentFragment and is parentless to decrease complexity.
+    ASSERT(!is<DocumentFragment>(node));
+    ASSERT(!node->parentNode());
+
+    if (!hasChildNodes()) {
+        // appendChildWithoutPreInsertionValidityCheck() can only throw when node has a parent and we already asserted it doesn't.
+        auto result = appendChildWithoutPreInsertionValidityCheck(node);
+        ASSERT_UNUSED(result, !result.hasException());
+        return;
+    }
+
+    Ref<ContainerNode> protectedThis(*this);
+    ChildListMutationScope mutation(*this);
+
+    // If node is not null, adopt node into parent’s node document.
+    treeScope().adoptIfNeeded(node);
+
+    // Remove all parent's children, in tree order.
+    willRemoveChildren(*this);
+
+    {
+        WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+        {
+            NoEventDispatchAssertion assertNoEventDispatch;
+            while (RefPtr<Node> child = m_firstChild) {
+                removeBetween(nullptr, child->nextSibling(), *child);
+                notifyChildNodeRemoved(*this, *child);
+            }
+
+            // If node is not null, insert node into parent before null.
+            ASSERT(!ensurePreInsertionValidity(node, nullptr).hasException());
+            InspectorInstrumentation::willInsertDOMNode(document(), *this);
+
+            appendChildCommon(node);
+        }
+
+        updateTreeAfterInsertion(node, ReplacedAllChildren::Yes);
+    }
+
+    rebuildSVGExtensionsElementsIfNecessary();
+    dispatchSubtreeModifiedEvent();
+}
+
+inline void ContainerNode::rebuildSVGExtensionsElementsIfNecessary()
+{
+    if (document().svgExtensions() && !is<SVGUseElement>(shadowHost()))
+        document().accessSVGExtensions().rebuildElements();
+}
+
 // this differs from other remove functions because it forcibly removes all the children,
 // regardless of read-only status or event exceptions, e.g.
 void ContainerNode::removeChildren()
@@ -626,12 +687,7 @@ void ContainerNode::removeChildren()
         childrenChanged(change);
     }
 
-    if (document().svgExtensions()) {
-        Element* shadowHost = this->shadowHost();
-        if (!shadowHost || !shadowHost->hasTagName(SVGNames::useTag))
-            document().accessSVGExtensions().rebuildElements();
-    }
-
+    rebuildSVGExtensionsElementsIfNecessary();
     dispatchSubtreeModifiedEvent();
 }
 
@@ -709,7 +765,7 @@ void ContainerNode::parserAppendChild(Node& newChild)
 
     newChild.updateAncestorConnectedSubframeCountForInsertion();
 
-    notifyChildInserted(newChild, ChildChangeSourceParser);
+    notifyChildInserted(newChild, changeForChildInsertion(newChild, ChildChangeSourceParser));
 }
 
 void ContainerNode::childrenChanged(const ChildChange& change)
@@ -792,11 +848,11 @@ static void dispatchChildRemovalEvents(Node& child)
     }
 }
 
-void ContainerNode::updateTreeAfterInsertion(Node& child)
+void ContainerNode::updateTreeAfterInsertion(Node& child, ReplacedAllChildren replacedAllChildren)
 {
     ASSERT(child.refCount());
 
-    notifyChildInserted(child, ChildChangeSourceAPI);
+    notifyChildInserted(child, changeForChildInsertion(child, ChildChangeSourceAPI, replacedAllChildren));
 
     dispatchChildInsertionEvents(child);
 }

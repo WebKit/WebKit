@@ -6,19 +6,23 @@ function runTests() {
         testRunner.dumpAsText();
         testRunner.dumpTitleChanges();
     }
-    
-    document.title = '1. setting document.title';
+
+    console.log("Setting document.title to TITLE1");    
+    document.title = 'TITLE1';
 
     title = document.getElementsByTagName('title').item(0);
     
-    title.text = '2. setting title.text';
+    console.log("Setting title element's text to TITLE2");
+    title.text = 'TITLE2';
     
     newTitle = document.createElement('title');
-    newTitle.appendChild(document.createTextNode('3. appending a new title node (should not trigger a title change)'));
+    console.log("Should not set title");
+    newTitle.appendChild(document.createTextNode('FAIL'));
     
     document.getElementsByTagName('head').item(0).appendChild(newTitle);
-    
+   
     // Remove both title elements
+    console.log("Should reset title to the empty string");
     titleElements = document.getElementsByTagName('title');
     while (titleElements.length) {
         titleElement = titleElements[titleElements.length - 1];

@@ -2035,6 +2035,7 @@ void Element::childrenChanged(const ChildChange& change)
             // For elements, we notify shadowRoot in Element::insertedInto and Element::removedFrom.
             break;
         case AllChildrenRemoved:
+        case AllChildrenReplaced:
             shadowRoot->didRemoveAllChildrenOfShadowHost();
             break;
         case TextInserted:

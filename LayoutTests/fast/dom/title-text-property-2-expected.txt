@@ -1,6 +1,8 @@
-TITLE CHANGED: ''
-TITLE CHANGED: '1. setting document.title'
-TITLE CHANGED: ''
-TITLE CHANGED: '2. setting title.text'
+CONSOLE MESSAGE: line 10: Setting document.title to TITLE1
+TITLE CHANGED: 'TITLE1'
+CONSOLE MESSAGE: line 15: Setting title element's text to TITLE2
+TITLE CHANGED: 'TITLE2'
+CONSOLE MESSAGE: line 19: Should not set title
+CONSOLE MESSAGE: line 25: Should reset title to the empty string
 TITLE CHANGED: ''
 

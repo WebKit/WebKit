@@ -1,3 +1,22 @@
+2017-01-17  Chris Dumez  <cdumez@apple.com>
+
+        Document title changed twice when setting document.title
+        https://bugs.webkit.org/show_bug.cgi?id=167065
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Node/textContent-mutationEvents-expected.txt: Added.
+        * fast/dom/Node/textContent-mutationEvents.html: Added.
+        Add layout test to make sure that the mutation events are properly
+        fired when setting Node.textContent.
+
+        * fast/dom/title-text-property-2-expected.txt:
+        * fast/dom/title-text-property-2.html:
+        * fast/dom/title-text-property-expected.txt:
+        * http/tests/globalhistory/history-delegate-basic-title-expected.txt:
+        Update / rebaseline existing tests now that we no longer temporarily
+        reset document.title to the empty string when overriding the title.
+
 2017-01-17  Zalan Bujtas  <zalan@apple.com>
 
         Editing nested RTL-LTR content makes the process unresponsive.

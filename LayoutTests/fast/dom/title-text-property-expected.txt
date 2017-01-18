@@ -1,4 +1,3 @@
-TITLE CHANGED: ''
 TITLE CHANGED: 'This is the new title'
 Original title is: 'Original Title'
 Setting new title to: 'This is the new title'
