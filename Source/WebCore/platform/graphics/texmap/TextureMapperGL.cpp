@@ -417,6 +417,16 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
     drawTexture(textureGL.id(), textureGL.isOpaque() ? 0 : ShouldBlend, textureGL.size(), targetRect, matrix, opacity, exposedEdges);
 }
 
+static bool driverSupportsNPOTTextures(GraphicsContext3D& context)
+{
+    if (context.isGLES2Compliant()) {
+        static bool supportsNPOTTextures = context.getExtensions().supports("GL_OES_texture_npot");
+        return supportsNPOTTextures;
+    }
+
+    return true;
+}
+
 void TextureMapperGL::drawTexture(Platform3DObject texture, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges)
 {
     bool useRect = flags & ShouldUseARBTextureRect;
@@ -433,6 +443,8 @@ void TextureMapperGL::drawTexture(Platform3DObject texture, Flags flags, const I
         options |= TextureMapperShaderProgram::Antialiasing;
         flags |= ShouldAntialias;
     }
+    if (wrapMode() == RepeatWrap && !driverSupportsNPOTTextures(*m_context3D))
+        options |= TextureMapperShaderProgram::ManualRepeat;
 
     RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: 0;
     GC3Duint filterContentTextureID = 0;
@@ -554,7 +566,7 @@ void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram& pr
     GC3Denum target = flags & ShouldUseARBTextureRect ? GC3Denum(Extensions3D::TEXTURE_RECTANGLE_ARB) : GC3Denum(GraphicsContext3D::TEXTURE_2D);
     m_context3D->bindTexture(target, texture);
     m_context3D->uniform1i(program.samplerLocation(), 0);
-    if (wrapMode() == RepeatWrap) {
+    if (wrapMode() == RepeatWrap && driverSupportsNPOTTextures(*m_context3D)) {
         m_context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::REPEAT);
         m_context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::REPEAT);
     }
