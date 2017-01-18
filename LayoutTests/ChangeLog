@@ -1,5 +1,17 @@
 2017-01-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK][MediaStream] Update bug number for some tests after r210838.
+
+        Fix the bug number for tests fast/mediastream/MediaStream-add-ended-tracks.html
+        and fast/mediastream/MediaStream-add-remove-tracks.html that I wrongly updated
+        in r210838.
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
+2017-01-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [GTK][MediaStream] Update list of MediaStream tests that fail.
 
         Unskip all the MediaStream tests and instead mark them as failing or timing out.
