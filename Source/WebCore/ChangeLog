@@ -1,3 +1,11 @@
+2017-01-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove WEBCORE_EXPORT from newly inlined functions after r210845.
+
+        Unreviewed build fix.
+
+        * loader/DocumentLoader.h:
+
 2017-01-18  Per Arne Vollan  <pvollan@apple.com>
 
         Crash when changing video subtitles.

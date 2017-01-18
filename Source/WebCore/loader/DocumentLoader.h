@@ -99,22 +99,22 @@ public:
     
     DocumentWriter& writer() const { return m_writer; }
 
-    WEBCORE_EXPORT const ResourceRequest& originalRequest() const;
-    WEBCORE_EXPORT const ResourceRequest& originalRequestCopy() const;
+    const ResourceRequest& originalRequest() const;
+    const ResourceRequest& originalRequestCopy() const;
 
-    WEBCORE_EXPORT const ResourceRequest& request() const;
-    WEBCORE_EXPORT ResourceRequest& request();
+    const ResourceRequest& request() const;
+    ResourceRequest& request();
 
     CachedResourceLoader& cachedResourceLoader() { return m_cachedResourceLoader; }
 
     const SubstituteData& substituteData() const { return m_substituteData; }
 
-    WEBCORE_EXPORT const URL& url() const;
-    WEBCORE_EXPORT const URL& unreachableURL() const;
+    const URL& url() const;
+    const URL& unreachableURL() const;
 
     const URL& originalURL() const;
-    WEBCORE_EXPORT const URL& responseURL() const;
-    WEBCORE_EXPORT const String& responseMIMEType() const;
+    const URL& responseURL() const;
+    const String& responseMIMEType() const;
 #if PLATFORM(IOS)
     // FIXME: This method seems to violate the encapsulation of this class.
     WEBCORE_EXPORT void setResponseMIMEType(const String&);
