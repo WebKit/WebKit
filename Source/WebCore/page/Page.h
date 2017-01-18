@@ -573,6 +573,7 @@ private:
 #endif
 
     void measurePostLoadCPUUsage();
+    void measurePostBackgroundingCPUUsage();
 
     enum ShouldHighlightMatches { DoNotHighlightMatches, HighlightMatches };
     enum ShouldMarkMatches { DoNotMarkMatches, MarkMatches };
@@ -760,8 +761,10 @@ private:
     // For testing.
     std::optional<EventThrottlingBehavior> m_eventThrottlingBehaviorOverride;
 
-    Timer m_cpuUsageMeasurementTimer;
+    Timer m_postPageLoadCPUUsageTimer;
     std::optional<CPUTime> m_postLoadCPUTime;
+    Timer m_postBackgroundingCPUUsageTimer;
+    std::optional<CPUTime> m_postBackgroundingCPUTime;
 };
 
 inline PageGroup& Page::group()

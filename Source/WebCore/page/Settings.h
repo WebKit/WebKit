@@ -200,6 +200,7 @@ public:
 #endif
 
     static bool isPostLoadCPUUsageMeasurementEnabled();
+    static bool isPostBackgroundingCPUUsageMeasurementEnabled();
 
     static bool globalConstRedeclarationShouldThrow();
 

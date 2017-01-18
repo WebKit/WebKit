@@ -101,6 +101,7 @@ public:
     static String playedKey();
     static String pluginLoadedKey();
     static String pluginLoadingFailedKey();
+    static String postPageBackgroundingKey();
     static String postPageLoadKey();
     static String provisionalLoadKey();
     static String prunedDueToMaxSizeReached();
