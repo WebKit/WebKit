@@ -5,7 +5,7 @@ PASS Fetch with PUT without body
 PASS Fetch with PUT with body 
 PASS Fetch with POST without body 
 PASS Fetch with POST with text body 
-FAIL Fetch with POST with FormData body assert_true: Request should have header content-type starting with multipart/form-data; boundary=, but got multipart/form-data;boundary=----WebKitFormBoundary7HBc13pIcNoBV6R5 expected true got false
+PASS Fetch with POST with FormData body 
 PASS Fetch with POST with URLSearchParams body 
 FAIL Fetch with POST with Blob body assert_equals: Request should have header content-type: null expected (object) null but got (string) ""
 FAIL Fetch with POST with ArrayBuffer body assert_equals: Request should have header content-type: null expected (object) null but got (string) "application/x-www-form-urlencoded"

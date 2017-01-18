@@ -311,10 +311,6 @@ webkit.org/b/157068 imported/w3c/web-platform-tests/fetch/nosniff/importscripts.
 webkit.org/b/157145 imported/w3c/web-platform-tests/fetch/nosniff/stylesheet.html [ Failure Pass ]
 webkit.org/b/161312 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context.html [ Failure Pass ]
 
-# Flaky tests due to always changing assertion error message
-imported/w3c/web-platform-tests/fetch/api/basic/request-headers.html [ Failure ]
-imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encoded.html [ Failure ]
-
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/basic/request-upload.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/basic/request-upload-worker.html [ Skip ]
 
@@ -325,6 +321,9 @@ imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.html [ Dump
 imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-preflight.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/159724 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Failure Pass ]
+
+# Flaky tests due to always changing assertion error message
+imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encoded.html [ Failure ]
 
 # New W3C ref tests that are failing.
 webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]

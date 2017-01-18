@@ -57,7 +57,7 @@ std::optional<FetchBody> FetchBody::extract(ScriptExecutionContext& context, JSC
         ASSERT(!context.isWorkerGlobalScope());
         auto& domFormData = *JSDOMFormData::toWrapped(value);
         auto formData = FormData::createMultiPart(domFormData, domFormData.encoding(), &static_cast<Document&>(context));
-        contentType = makeString("multipart/form-data;boundary=", formData->boundary().data());
+        contentType = makeString("multipart/form-data; boundary=", formData->boundary().data());
         return FetchBody(WTFMove(formData));
     }
     if (value.isString()) {
