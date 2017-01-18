@@ -1,5 +1,12 @@
 2017-01-18  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed fix for the macOS build.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:disableOrdering:carbon:]):
+
+2017-01-18  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r210848.
 
         This change introduced media-related LayoutTest failures and
