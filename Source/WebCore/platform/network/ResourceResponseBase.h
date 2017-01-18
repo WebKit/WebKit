@@ -32,6 +32,7 @@
 #include "NetworkLoadTiming.h"
 #include "ParsedContentRange.h"
 #include "URL.h"
+#include <wtf/SHA1.h>
 
 namespace WebCore {
 
@@ -135,6 +136,9 @@ public:
     WEBCORE_EXPORT Source source() const;
     WEBCORE_EXPORT void setSource(Source);
 
+    const std::optional<SHA1::Digest>& cacheBodyKey() const { return m_cacheBodyKey; }
+    void setCacheBodyKey(const SHA1::Digest& key) { m_cacheBodyKey = key; }
+
     NetworkLoadTiming& networkLoadTiming() const { return m_networkLoadTiming; }
 
     // The ResourceResponse subclass may "shadow" this method to provide platform-specific memory usage information
@@ -210,6 +214,8 @@ private:
 
     Source m_source { Source::Unknown };
 
+    std::optional<SHA1::Digest> m_cacheBodyKey;
+
     Type m_type { Type::Default };
     bool m_isRedirected { false };
 };
@@ -241,6 +247,7 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     encoder << m_httpStatusCode;
     encoder << m_certificateInfo;
     encoder.encodeEnum(m_source);
+    encoder << m_cacheBodyKey;
     encoder.encodeEnum(m_type);
     encoder << m_isRedirected;
 }
@@ -279,6 +286,8 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
     if (!decoder.decode(response.m_certificateInfo))
         return false;
     if (!decoder.decodeEnum(response.m_source))
+        return false;
+    if (!decoder.decode(response.m_cacheBodyKey))
         return false;
     if (!decoder.decodeEnum(response.m_type))
         return false;

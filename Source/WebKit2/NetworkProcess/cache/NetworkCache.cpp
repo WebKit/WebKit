@@ -351,7 +351,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
     auto startTime = std::chrono::system_clock::now();
     auto priority = static_cast<unsigned>(request.priority());
 
-    m_storage->retrieve(storageKey, priority, [this, request, completionHandler = WTFMove(completionHandler), startTime, storageKey, frameID](std::unique_ptr<Storage::Record> record) {
+    m_storage->retrieve(storageKey, priority, [this, request, completionHandler = WTFMove(completionHandler), startTime, storageKey, frameID](auto record) {
         if (!record) {
             LOG(NetworkCache, "(NetworkProcess) not found in storage");
 
@@ -613,6 +613,30 @@ void Cache::clear()
 String Cache::recordsPath() const
 {
     return m_storage ? m_storage->recordsPath() : String();
+}
+
+void Cache::retrieveData(const DataKey& dataKey, Function<void (const uint8_t* data, size_t size)> completionHandler)
+{
+    ASSERT(isEnabled());
+
+    Key key { dataKey, m_storage->salt() };
+    m_storage->retrieve(key, 4, [completionHandler = WTFMove(completionHandler)] (auto record) {
+        if (!record || !record->body.size()) {
+            completionHandler(nullptr, 0);
+            return true;
+        }
+        completionHandler(record->body.data(), record->body.size());
+        return true;
+    });
+}
+
+void Cache::storeData(const DataKey& dataKey, const uint8_t* data, size_t size)
+{
+    if (!m_storage)
+        return;
+    Key key { dataKey, m_storage->salt() };
+    Storage::Record record { key, std::chrono::system_clock::now(), { }, Data { data, size }, { } };
+    m_storage->store(record, { });
 }
 
 }

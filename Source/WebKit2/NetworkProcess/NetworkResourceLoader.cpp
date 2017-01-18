@@ -563,23 +563,60 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
     if (isSynchronous()) {
         m_synchronousLoadData->response = entry->response();
         sendReplyToSynchronousRequest(*m_synchronousLoadData, entry->buffer());
-    } else {
-        bool needsContinueDidReceiveResponseMessage = isMainResource();
-        send(Messages::WebResourceLoader::DidReceiveResponse(entry->response(), needsContinueDidReceiveResponseMessage));
-
-#if ENABLE(SHAREABLE_RESOURCE)
-        if (!entry->shareableResourceHandle().isNull())
-            send(Messages::WebResourceLoader::DidReceiveResource(entry->shareableResourceHandle(), currentTime()));
-        else {
-#endif
-            sendBuffer(*entry->buffer(), entry->buffer()->size());
-            send(Messages::WebResourceLoader::DidFinishResourceLoad(currentTime()));
-#if ENABLE(SHAREABLE_RESOURCE)
-        }
-#endif
+        cleanup();
+        return;
     }
 
+    bool needsContinueDidReceiveResponseMessage = isMainResource();
+    send(Messages::WebResourceLoader::DidReceiveResponse(entry->response(), needsContinueDidReceiveResponseMessage));
+
+    if (entry->sourceStorageRecord().bodyHash && !m_parameters.derivedCachedDataTypesToRetrieve.isEmpty()) {
+#if ENABLE(CACHE_PARTITIONING)
+        String partition = originalRequest().cachePartition();
+#else
+        String partition;
+#endif
+        auto bodyHash = *entry->sourceStorageRecord().bodyHash;
+        auto* entryPtr = entry.release();
+        auto retrieveCount = m_parameters.derivedCachedDataTypesToRetrieve.size();
+
+        for (auto& type : m_parameters.derivedCachedDataTypesToRetrieve) {
+            NetworkCache::DataKey key { partition, type, bodyHash };
+            NetworkCache::singleton().retrieveData(key, [loader = makeRef(*this), entryPtr, type, retrieveCount] (const uint8_t* data, size_t size) mutable {
+                loader->m_retrievedDerivedDataCount++;
+                bool retrievedAll = loader->m_retrievedDerivedDataCount == retrieveCount;
+                std::unique_ptr<NetworkCache::Entry> entry(retrievedAll ? entryPtr : nullptr);
+                if (loader->hasOneRef())
+                    return;
+                if (data) {
+                    IPC::DataReference dataReference(data, size);
+                    loader->send(Messages::WebResourceLoader::DidRetrieveDerivedData(type, dataReference));
+                }
+                if (retrievedAll) {
+                    loader->sendResultForCacheEntry(WTFMove(entry));
+                    loader->cleanup();
+                }
+            });
+        }
+        return;
+    }
+
+    sendResultForCacheEntry(WTFMove(entry));
+
     cleanup();
+}
+
+void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
+{
+#if ENABLE(SHAREABLE_RESOURCE)
+    if (!entry->shareableResourceHandle().isNull()) {
+        send(Messages::WebResourceLoader::DidReceiveResource(entry->shareableResourceHandle(), currentTime()));
+        return;
+    }
+#endif
+
+    sendBuffer(*entry->buffer(), entry->buffer()->size());
+    send(Messages::WebResourceLoader::DidFinishResourceLoad(currentTime()));
 }
 
 void NetworkResourceLoader::validateCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)

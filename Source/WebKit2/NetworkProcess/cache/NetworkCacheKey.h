@@ -36,6 +36,22 @@
 namespace WebKit {
 namespace NetworkCache {
 
+struct DataKey {
+    String partition;
+    String type;
+    SHA1::Digest identifier;
+
+    template <class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << partition << type << identifier;
+    }
+
+    template <class Decoder> static bool decode(Decoder& decoder, DataKey& dataKey)
+    {
+        return decoder.decode(dataKey.partition) && decoder.decode(dataKey.type) && decoder.decode(dataKey.identifier);
+    }
+};
+
 class Key {
 public:
     typedef SHA1::Digest HashType;
@@ -44,6 +60,7 @@ public:
     Key(const Key&);
     Key(Key&&) = default;
     Key(const String& partition, const String& type, const String& range, const String& identifier, const Salt&);
+    Key(const DataKey&, const Salt&);
 
     Key& operator=(const Key&);
     Key& operator=(Key&&) = default;

@@ -51,6 +51,7 @@ public:
     Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.
     RefPtr<SandboxExtension> resourceSandboxExtension; // Created automatically for the sender.
     std::chrono::milliseconds maximumBufferingTime { 0ms };
+    Vector<String> derivedCachedDataTypesToRetrieve;
 };
 
 } // namespace WebKit

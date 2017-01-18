@@ -162,4 +162,15 @@ bool ArgumentCoder<String>::decode(Decoder& decoder, String& result)
     return decodeStringText<UChar>(decoder, length, result);
 }
 
+
+void ArgumentCoder<SHA1::Digest>::encode(Encoder& encoder, const SHA1::Digest& digest)
+{
+    encoder.encodeFixedLengthData(digest.data(), sizeof(digest), 1);
+}
+
+bool ArgumentCoder<SHA1::Digest>::decode(Decoder& decoder, SHA1::Digest& digest)
+{
+    return decoder.decodeFixedLengthData(digest.data(), sizeof(digest), 1);
+}
+
 } // namespace IPC

@@ -64,6 +64,15 @@ Key::Key(WTF::HashTableDeletedValueType)
 {
 }
 
+Key::Key(const DataKey& dataKey, const Salt& salt)
+    : m_partition(dataKey.partition)
+    , m_type(dataKey.type)
+    , m_identifier(hashAsString(dataKey.identifier))
+    , m_hash(computeHash(salt))
+    , m_partitionHash(computePartitionHash(salt))
+{
+}
+
 Key& Key::operator=(const Key& other)
 {
     m_partition = other.m_partition.isolatedCopy();

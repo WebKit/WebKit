@@ -80,6 +80,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << defersLoading;
     encoder << needsCertificateInfo;
     encoder << maximumBufferingTime;
+    encoder << derivedCachedDataTypesToRetrieve;
 }
 
 bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourceLoadParameters& result)
@@ -140,6 +141,8 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decode(result.needsCertificateInfo))
         return false;
     if (!decoder.decode(result.maximumBufferingTime))
+        return false;
+    if (!decoder.decode(result.derivedCachedDataTypesToRetrieve))
         return false;
 
     return true;

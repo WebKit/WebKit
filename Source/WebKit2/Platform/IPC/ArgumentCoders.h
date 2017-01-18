@@ -34,6 +34,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
+#include <wtf/SHA1.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 
@@ -397,6 +398,11 @@ template<> struct ArgumentCoder<CString> {
 template<> struct ArgumentCoder<String> {
     static void encode(Encoder&, const String&);
     static bool decode(Decoder&, String&);
+};
+
+template<> struct ArgumentCoder<SHA1::Digest> {
+    static void encode(Encoder&, const SHA1::Digest&);
+    static bool decode(Decoder&, SHA1::Digest&);
 };
 
 } // namespace IPC

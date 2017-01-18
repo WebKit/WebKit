@@ -258,6 +258,8 @@ public:
 
     virtual void didSendData(unsigned long long /* bytesSent */, unsigned long long /* totalBytesToBeSent */) { }
 
+    virtual void didRetrieveDerivedDataFromCache(const String& /* type */, SharedBuffer&) { }
+
     void setLoadFinishTime(double finishTime) { m_loadFinishTime = finishTime; }
     double loadFinishTime() const { return m_loadFinishTime; }
 

@@ -135,6 +135,14 @@ void WebResourceLoader::didReceiveData(const IPC::DataReference& data, int64_t e
     m_coreLoader->didReceiveData(reinterpret_cast<const char*>(data.data()), data.size(), encodedDataLength, DataPayloadBytes);
 }
 
+void WebResourceLoader::didRetrieveDerivedData(const String& type, const IPC::DataReference& data)
+{
+    LOG(Network, "(WebProcess) WebResourceLoader::didRetrieveDerivedData of size %lu for '%s'", data.size(), m_coreLoader->url().string().latin1().data());
+
+    auto buffer = SharedBuffer::create(data.data(), data.size());
+    m_coreLoader->didRetrieveDerivedDataFromCache(type, buffer.get());
+}
+
 void WebResourceLoader::didFinishResourceLoad(double finishTime)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didFinishResourceLoad for '%s'", m_coreLoader->url().string().latin1().data());

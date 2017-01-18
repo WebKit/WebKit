@@ -28,6 +28,7 @@
 #include "ResourceHandleTypes.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceLoaderOptions.h"
+#include <wtf/SHA1.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -41,6 +42,7 @@ class ResourceError;
 class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
+class SharedBuffer;
 class SubresourceLoader;
 class URL;
 
@@ -58,6 +60,8 @@ public:
     virtual void resumePendingRequests() = 0;
 
     virtual void createPingHandle(NetworkingContext*, ResourceRequest&, bool shouldUseCredentialStorage, bool shouldFollowRedirects) = 0;
+
+    virtual void storeDerivedDataToCache(const SHA1::Digest& bodyKey, const String& type, const String& partition, WebCore::SharedBuffer&) = 0;
 
 protected:
     virtual ~LoaderStrategy();

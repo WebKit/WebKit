@@ -1,3 +1,74 @@
+2017-01-17  Antti Koivisto  <antti@apple.com>
+
+        Persist derived data
+        https://bugs.webkit.org/show_bug.cgi?id=167136
+
+        Reviewed by Andreas Kling.
+
+        Add a mechanism for storing arbitrary data into disk cache.
+
+        From WebCore level data can be stored using
+
+            loaderStrategy()->storeDerivedDataToCache(key, partition, type, data);
+
+        The data is keyed with the body hash of a network resource. It can be retrieved along
+        with the resource by specifying the type in ResourceLoaderOptions. If a related data
+        blob is found it will be deliver via CachedResource::didRetrieveDerivedDataFromCache()
+        callback.
+
+        This patch adds the mechanism but doesn't yet use it for anything.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::storeDerivedDataToCache):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+
+            Look for related resources to return if needed.
+
+        (WebKit::NetworkResourceLoader::sendResultForCacheEntry):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::resourceType):
+         (WebKit::NetworkCache::Cache::retrieveData):
+        (WebKit::NetworkCache::Cache::storeData):
+        (WebKit::NetworkCache::Cache::makeCacheKey): Deleted.
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::encodeAsStorageRecord):
+        (WebKit::NetworkCache::Entry::decodeStorageRecord):
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::NetworkCache::Key::Key):
+        * NetworkProcess/cache/NetworkCacheKey.h:
+        (WebKit::NetworkCache::DataKey::encode):
+        (WebKit::NetworkCache::DataKey::decode):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::readRecord):
+        (WebKit::NetworkCache::Storage::traverse):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
+            Return body hash with the Record.
+
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp:
+        (WebKit::NetworkCache::SubresourcesEntry::encodeAsStorageRecord):
+        * Platform/IPC/ArgumentCoders.cpp:
+        (IPC::ArgumentCoder<SHA1::Digest>::encode):
+        (IPC::ArgumentCoder<SHA1::Digest>::decode):
+        * Platform/IPC/ArgumentCoders.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::storeDerivedDataToCache):
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didRetrieveDerivedData):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+
 2017-01-17  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Turn modern media controls on by default

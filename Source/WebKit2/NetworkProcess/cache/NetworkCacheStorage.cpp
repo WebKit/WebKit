@@ -458,7 +458,8 @@ void Storage::readRecord(ReadOperation& readOperation, const Data& recordData)
         metaData.key,
         timeStamp,
         headerData,
-        bodyData
+        bodyData,
+        metaData.bodyHash
     });
 }
 
@@ -837,7 +838,8 @@ void Storage::traverse(const String& type, TraverseFlags flags, TraverseHandler&
                         metaData.key,
                         std::chrono::system_clock::time_point(metaData.epochRelativeTimeStamp),
                         headerData,
-                        { }
+                        { },
+                        metaData.bodyHash
                     };
                     RecordInfo info {
                         static_cast<size_t>(metaData.bodySize),

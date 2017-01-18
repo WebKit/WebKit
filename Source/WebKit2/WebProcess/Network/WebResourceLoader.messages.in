@@ -26,6 +26,7 @@ messages -> WebResourceLoader LegacyReceiver {
     DidReceiveResponse(WebCore::ResourceResponse response, bool needsContinueDidReceiveResponseMessage)
     DidReceiveData(IPC::DataReference data, int64_t encodedDataLength)
     DidFinishResourceLoad(double finishTime)
+    DidRetrieveDerivedData(String type, IPC::DataReference data)
     DidFailResourceLoad(WebCore::ResourceError error)
 
 #if ENABLE(SHAREABLE_RESOURCE)

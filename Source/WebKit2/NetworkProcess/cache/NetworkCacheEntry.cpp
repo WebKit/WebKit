@@ -101,7 +101,7 @@ Storage::Record Entry::encodeAsStorageRecord() const
     if (m_buffer)
         body = { reinterpret_cast<const uint8_t*>(m_buffer->data()), m_buffer->size() };
 
-    return { m_key, m_timeStamp, header, body };
+    return { m_key, m_timeStamp, header, body, { } };
 }
 
 std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storageEntry)
@@ -112,6 +112,8 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
     if (!decoder.decode(entry->m_response))
         return nullptr;
     entry->m_response.setSource(WebCore::ResourceResponse::Source::DiskCache);
+    if (storageEntry.bodyHash)
+        entry->m_response.setCacheBodyKey(*storageEntry.bodyHash);
 
     bool hasVaryingRequestHeaders;
     if (!decoder.decode(hasVaryingRequestHeaders))

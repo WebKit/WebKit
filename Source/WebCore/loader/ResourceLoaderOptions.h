@@ -32,6 +32,8 @@
 
 #include "FetchOptions.h"
 #include "ResourceHandleTypes.h"
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -119,6 +121,8 @@ struct ResourceLoaderOptions : public FetchOptions {
 
     ClientCredentialPolicy clientCredentialPolicy { ClientCredentialPolicy::CannotAskClientForCredentials };
     unsigned maxRedirectCount { 20 };
+
+    Vector<String> derivedCachedDataTypesToRetrieve;
 };
 
 } // namespace WebCore

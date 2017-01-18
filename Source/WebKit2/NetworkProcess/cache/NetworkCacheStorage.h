@@ -57,6 +57,7 @@ public:
         std::chrono::system_clock::time_point timeStamp;
         Data header;
         Data body;
+        std::optional<SHA1::Digest> bodyHash;
     };
     // This may call completion handler synchronously on failure.
     typedef Function<bool (std::unique_ptr<Record>)> RetrieveCompletionHandler;

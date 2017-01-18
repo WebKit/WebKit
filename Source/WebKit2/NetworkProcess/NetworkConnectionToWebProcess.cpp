@@ -27,7 +27,9 @@
 #include "NetworkConnectionToWebProcess.h"
 
 #include "BlobDataFileReferenceWithSandboxExtension.h"
+#include "DataReference.h"
 #include "NetworkBlobRegistry.h"
+#include "NetworkCache.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
@@ -320,6 +322,11 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<Stri
             m_connection->send(Messages::NetworkProcessConnection::DidWriteBlobsToTemporaryFiles(requestIdentifier, fileNames), 0);
         });
     });
+}
+
+void NetworkConnectionToWebProcess::storeDerivedDataToCache(const WebKit::NetworkCache::DataKey& dataKey, const IPC::DataReference& data)
+{
+    NetworkCache::singleton().storeData(dataKey, data.data(), data.size());
 }
 
 void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()

@@ -44,6 +44,10 @@ class NetworkResourceLoader;
 class SyncNetworkResourceLoader;
 typedef uint64_t ResourceLoadIdentifier;
 
+namespace NetworkCache {
+struct DataKey;
+}
+
 class NetworkConnectionToWebProcess : public RefCounted<NetworkConnectionToWebProcess>, IPC::Connection::Client {
 public:
     static Ref<NetworkConnectionToWebProcess> create(IPC::Connection::Identifier);
@@ -96,6 +100,8 @@ private:
     void blobSize(const WebCore::URL&, uint64_t& resultSize);
     void unregisterBlobURL(const WebCore::URL&);
     void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, uint64_t requestIdentifier);
+
+    void storeDerivedDataToCache(const WebKit::NetworkCache::DataKey&, const IPC::DataReference&);
 
     void ensureLegacyPrivateBrowsingSession();
 

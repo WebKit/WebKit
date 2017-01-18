@@ -744,4 +744,8 @@ bool ResourceLoader::isAlwaysOnLoggingAllowed() const
     return frameLoader() && frameLoader()->isAlwaysOnLoggingAllowed();
 }
 
+void ResourceLoader::didRetrieveDerivedDataFromCache(const String&, SharedBuffer&)
+{
+}
+
 }

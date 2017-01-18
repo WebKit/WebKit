@@ -621,6 +621,13 @@ void SubresourceLoader::didCancel(const ResourceError&)
     notifyDone();
 }
 
+void SubresourceLoader::didRetrieveDerivedDataFromCache(const String& type, SharedBuffer& buffer)
+{
+    if (m_state != Initialized)
+        return;
+    m_resource->didRetrieveDerivedDataFromCache(type, buffer);
+}
+
 void SubresourceLoader::notifyDone()
 {
     if (reachedTerminalState())

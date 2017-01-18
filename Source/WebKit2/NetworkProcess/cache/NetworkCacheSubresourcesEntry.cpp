@@ -70,7 +70,7 @@ Storage::Record SubresourcesEntry::encodeAsStorageRecord() const
 
     encoder.encodeChecksum();
 
-    return { m_key, m_timeStamp, { encoder.buffer(), encoder.bufferSize() } , { } };
+    return { m_key, m_timeStamp, { encoder.buffer(), encoder.bufferSize() }, { }, { }};
 }
 
 std::unique_ptr<SubresourcesEntry> SubresourcesEntry::decodeStorageRecord(const Storage::Record& storageEntry)
