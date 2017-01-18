@@ -838,7 +838,8 @@ void VTTCue::removeDisplayTree()
     if (m_notifyRegion && track()) {
         if (VTTRegionList* regions = track()->regions()) {
             if (VTTRegion* region = regions->getRegionById(m_regionId))
-                region->willRemoveTextTrackCueBox(m_displayTree.get());
+                if (hasDisplayTree())
+                    region->willRemoveTextTrackCueBox(m_displayTree.get());
         }
     }
 
