@@ -1,3 +1,10 @@
+2017-01-18  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * PlatformMac.cmake:
+        * platform/spi/cocoa/IOSurfaceSPI.h:
+
 2017-01-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Variation fonts without variations specified are not rendered as if the default variations were specified

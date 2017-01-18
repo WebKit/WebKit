@@ -313,6 +313,7 @@ list(APPEND WebCore_SOURCES
     platform/cf/SharedBufferCF.cpp
     platform/cf/URLCF.cpp
 
+    platform/cocoa/CPUTimeCocoa.mm
     platform/cocoa/ContentFilterUnblockHandlerCocoa.mm
     platform/cocoa/CoreVideoSoftLink.cpp
     platform/cocoa/DisplaySleepDisablerCocoa.cpp

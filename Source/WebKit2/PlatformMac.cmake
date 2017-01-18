@@ -156,6 +156,7 @@ list(APPEND WebKit2_SOURCES
     Shared/mac/WebHitTestResultData.mm
     Shared/mac/WebMemorySampler.mac.mm
 
+    UIProcess/HighPerformanceGraphicsUsageSampler.cpp
     UIProcess/WebContextMenuListenerProxy.cpp
     UIProcess/WebResourceLoadStatisticsStore.cpp
 

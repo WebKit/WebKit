@@ -1,3 +1,9 @@
+2017-01-18  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * PlatformMac.cmake:
+
 2017-01-18  Megan Gardner  <megan_gardner@apple.com>
 
         Ignore Connection Assertion if we are not using connection to send messages

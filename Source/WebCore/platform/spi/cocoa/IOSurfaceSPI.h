@@ -88,12 +88,16 @@ WTF_EXTERN_C_END
 
 #else
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#import <IOSurface/IOSurfaceTypes.h>
+#else
 enum {
     kIOSurfacePurgeableNonVolatile = 0,
     kIOSurfacePurgeableVolatile = 1,
     kIOSurfacePurgeableEmpty = 2,
     kIOSurfacePurgeableKeepCurrent = 3,
 };
+#endif
 
 #endif
 
