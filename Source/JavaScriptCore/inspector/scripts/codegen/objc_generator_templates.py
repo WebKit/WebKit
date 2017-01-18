@@ -82,8 +82,7 @@ namespace Inspector {""")
 """)
 
     ImplementationPrelude = (
-    """#import "config.h"
-#import ${primaryInclude}
+    """#import ${primaryInclude}
 
 ${secondaryIncludes}
 

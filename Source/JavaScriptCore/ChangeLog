@@ -1,3 +1,33 @@
+2017-01-18  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: remove an unnecessary include in generated Objective-C Inspector protocol code
+        https://bugs.webkit.org/show_bug.cgi?id=167156
+
+        Rubber-stamped by Geoffrey Garen.
+
+        * inspector/scripts/codegen/objc_generator_templates.py:
+        This include of config.h doesn't make sense when using the code generator
+        outside of JavaScriptCore/WebKit. It is not necessary either, so remove it.
+
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/generic/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/generic/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+        * inspector/scripts/tests/ios/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result:
+        Rebaseline test results.
+
 2017-01-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the JSCOnly build after r210844
