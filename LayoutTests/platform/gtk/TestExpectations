@@ -2666,6 +2666,10 @@ webkit.org/b/163383 accessibility/meter-element.html [ Failure ]
 webkit.org/b/163383 accessibility/roles-computedRoleString.html [ Failure ]
 webkit.org/b/163383 accessibility/roles-exposed.html [ Failure ]
 
+webkit.org/b/163518 media/modern-media-controls/airplay-button/airplay-button-on.html [ Failure ]
+webkit.org/b/163519 media/modern-media-controls/icon-button/icon-button-active-state.html [ Failure ]
+webkit.org/b/163520 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-controls-bar-styles.html [ Failure ]
+
 webkit.org/b/163512 media/media-controls-accessibility.html [ Failure ]
 webkit.org/b/163521 media/tab-focus-inside-media-elements.html [ Failure ]
 webkit.org/b/163523 media/track/track-manual-mode.html [ Failure ]
@@ -2683,6 +2687,8 @@ webkit.org/b/163823 media/audio-playback-restriction-play.html [ Failure ]
 webkit.org/b/163823 media/context-menu-actions.html [ Failure ]
 webkit.org/b/163823 media/video-defaultmuted.html [ Failure ]
 webkit.org/b/163823 media/video-volume-slider.html [ Failure ]
+
+webkit.org/b/163825 media/modern-media-controls/media-controller/media-controller-resize.html [ Failure ]
 
 webkit.org/b/163826 storage/domstorage/events/basic-body-attribute.html [ Failure ]
 

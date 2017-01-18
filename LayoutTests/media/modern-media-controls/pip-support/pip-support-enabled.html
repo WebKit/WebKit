@@ -15,13 +15,15 @@
     }
     
 </style>
-<video src="../../content/test.mp4" controls autoplay></video>
+<video src="../../content/test.mp4"></video>
 <div id="host"></div>
 <script type="text/javascript">
 
 window.jsTestIsAsync = true;
 
 description("Testing the <code>PipSupport</code> behavior.");
+
+iconService.directoryPath = "../../../../Source/WebCore/Modules/modern-media-controls/images";
 
 if (window.internals)
     window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=true ] -->
 <script src="../../../resources/js-test-pre.js"></script>
 <body>
 <video src="../../content/test.mp4" style="position: absolute; top: 0; left: 0; width: 320px; height: 240px;" controls autoplay></video>
@@ -24,12 +24,10 @@ media.addEventListener("play", () => {
     window.requestAnimationFrame(() => clickOnElement(shadowRoot.querySelector("button.fullscreen")));
 });
 
-let previousPresentationMode = media.webkitPresentationMode;
-media.addEventListener("webkitpresentationmodechanged", () => {
-    if (previousPresentationMode === media.webkitPresentationMode)
+let becameInline = false;
+media.addEventListener("webkitpresentationmodechanged", function() {
+    if (becameInline)
         return;
-
-    previousPresentationMode = media.webkitPresentationMode;
 
     debug("");
     debug(`Media received a webkitpresentationmodechanged event, media.webkitPresentationMode = ${media.webkitPresentationMode}.`);
@@ -47,9 +45,10 @@ media.addEventListener("webkitpresentationmodechanged", () => {
     case "picture-in-picture":
         debug("");
         debug("We exit picture-in-picture.");
-        window.setTimeout(() => media.webkitSetPresentationMode("inline"));
+        media.webkitSetPresentationMode("inline");
         break;
     case "inline":
+        becameInline = true;
         window.requestAnimationFrame(() => {
             shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('inline')");
 

@@ -50,10 +50,7 @@ class PiPSupport extends MediaControllerSupport
     syncControl()
     {
         const media = this.mediaController.media;
-        if (media.webkitSupportsPresentationMode)
-            this.control.enabled = media instanceof HTMLVideoElement && media.webkitSupportsPresentationMode(PiPMode) && !media.webkitCurrentPlaybackTargetIsWireless;
-        else
-            this.control.enabled = false;
+        this.control.enabled = media instanceof HTMLVideoElement && media.webkitSupportsPresentationMode && media.webkitSupportsPresentationMode(PiPMode) && !media.webkitCurrentPlaybackTargetIsWireless;
     }
 
 }
