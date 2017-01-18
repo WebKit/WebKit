@@ -192,7 +192,7 @@ public:
             double timing = after - m_before;
             SimpleStats& stats = timingStats(m_name, *m_scope);
             stats.add(timing);
-            dataLog("[GC:", *m_scope, "] ", m_name, " took: ", timing, " ms (average ", stats.mean(), " ms).\n");
+            dataLog("[GC:", *m_scope, "] ", m_name, " took: ", timing, "ms (average ", stats.mean(), "ms).\n");
         }
     }
 private:
@@ -260,6 +260,7 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_collectorSlotVisitor(std::make_unique<SlotVisitor>(*this))
     , m_mutatorMarkStack(std::make_unique<MarkStackArray>())
     , m_raceMarkStack(std::make_unique<MarkStackArray>())
+    , m_constraintSet(std::make_unique<MarkingConstraintSet>())
     , m_handleSet(vm)
     , m_codeBlocks(std::make_unique<CodeBlockSet>())
     , m_jitStubRoutines(std::make_unique<JITStubRoutineSet>())
@@ -361,6 +362,7 @@ void Heap::lastChanceToFinalize()
     
     m_arrayBuffers.lastChanceToFinalize();
     m_codeBlocks->lastChanceToFinalize();
+    m_objectSpace.stopAllocating();
     m_objectSpace.lastChanceToFinalize();
     releaseDelayedReleasedObjects();
 
@@ -585,12 +587,20 @@ void Heap::markToFixpoint(double gcStartTime)
     // checks because bootstrap would have put things into the visitor. So, we should fall
     // through to draining.
     
-    for (unsigned iteration = 1; ; ++iteration) {
+    unsigned iteration = 1;
+    for (;;) {
         if (Options::logGC())
-            dataLog("i#", iteration, " b=", m_barriersExecuted, " ");
+            dataLog("v=", bytesVisited() / 1024, "kb o=", m_opaqueRoots.size(), " b=", m_barriersExecuted, " ");
         
         if (slotVisitor.didReachTermination()) {
+            if (Options::logGC())
+                dataLog("i#", iteration, " ");
+        
             assertSharedMarkStacksEmpty();
+            
+            slotVisitor.mergeIfNecessary();
+            for (auto& parallelVisitor : m_parallelSlotVisitors)
+                parallelVisitor->mergeIfNecessary();
             
             // FIXME: Take m_mutatorDidRun into account when scheduling constraints. Most likely,
             // we don't have to execute root constraints again unless the mutator did run. At a
@@ -603,14 +613,15 @@ void Heap::markToFixpoint(double gcStartTime)
             // when we have deep stacks or a lot of DOM stuff.
             // https://bugs.webkit.org/show_bug.cgi?id=166831
             
-            bool executedEverything =
+            bool converged =
                 m_constraintSet->executeConvergence(slotVisitor, MonotonicTime::infinity());
-            if (executedEverything && slotVisitor.isEmpty()) {
+            if (converged && slotVisitor.isEmpty()) {
                 assertSharedMarkStacksEmpty();
                 break;
             }
             
             m_scheduler->didExecuteConstraints();
+            iteration++;
         }
         
         if (Options::logGC())
@@ -628,7 +639,7 @@ void Heap::markToFixpoint(double gcStartTime)
         
         if (Options::logGC()) {
             double thisPauseMS = (MonotonicTime::now() - m_stopTime).milliseconds();
-            dataLog("p=", thisPauseMS, " ms (max ", maxPauseMS(thisPauseMS), ")...]\n");
+            dataLog("p=", thisPauseMS, "ms (max ", maxPauseMS(thisPauseMS), ")...]\n");
         }
         
         resumeTheWorld();
@@ -780,9 +791,7 @@ void Heap::updateObjectCounts(double gcStartTime)
     if (m_collectionScope == CollectionScope::Full)
         m_totalBytesVisited = 0;
 
-    m_totalBytesVisitedThisCycle =
-        m_collectorSlotVisitor->bytesVisited() +
-        threadBytesVisited();
+    m_totalBytesVisitedThisCycle = bytesVisited();
     
     m_totalBytesVisited += m_totalBytesVisitedThisCycle;
 }
@@ -1011,14 +1020,14 @@ void Heap::collectAllGarbage()
     else {
         double before = 0;
         if (Options::logGC()) {
-            dataLog("[Full sweep: ", capacity() / 1024, " kb ");
+            dataLog("[Full sweep: ", capacity() / 1024, "kb ");
             before = currentTimeMS();
         }
         m_objectSpace.sweep();
         m_objectSpace.shrink();
         if (Options::logGC()) {
             double after = currentTimeMS();
-            dataLog("=> ", capacity() / 1024, " kb, ", after - before, " ms]\n");
+            dataLog("=> ", capacity() / 1024, "kb, ", after - before, "ms]\n");
         }
     }
     m_objectSpace.assertNoUnswept();
@@ -1101,7 +1110,7 @@ void Heap::collectInThread()
 
     MonotonicTime before;
     if (Options::logGC()) {
-        dataLog("[GC: START ", capacity() / 1024, " kb ");
+        dataLog("[GC: START ", capacity() / 1024, "kb ");
         before = MonotonicTime::now();
     }
     
@@ -1170,7 +1179,7 @@ void Heap::collectInThread()
     if (Options::logGC()) {
         MonotonicTime after = MonotonicTime::now();
         double thisPauseMS = (after - m_stopTime).milliseconds();
-        dataLog("p=", thisPauseMS, " ms (max ", maxPauseMS(thisPauseMS), "), cycle ", (after - before).milliseconds(), " ms END]\n");
+        dataLog("p=", thisPauseMS, "ms (max ", maxPauseMS(thisPauseMS), "), cycle ", (after - before).milliseconds(), "ms END]\n");
     }
     
     {
@@ -1196,6 +1205,12 @@ void Heap::stopTheWorld()
     RELEASE_ASSERT(!m_collectorBelievesThatTheWorldIsStopped);
     waitWhileNeedFinalize();
     stopTheMutator();
+    
+    if (m_mutatorDidRun)
+        m_mutatorExecutionVersion++;
+    
+    m_mutatorDidRun = false;
+    
     suspendCompilerThreads();
     m_collectorBelievesThatTheWorldIsStopped = true;
 
@@ -1769,7 +1784,7 @@ void Heap::updateAllocationLimits()
     m_bytesAllocatedThisCycle = 0;
 
     if (Options::logGC())
-        dataLog("=> ", currentHeapSize / 1024, " kb, ");
+        dataLog("=> ", currentHeapSize / 1024, "kb, ");
 }
 
 void Heap::didFinishCollection(double gcStartTime)
@@ -1976,6 +1991,11 @@ size_t Heap::threadVisitCount()
     return result;
 }
 
+size_t Heap::bytesVisited()
+{
+    return m_collectorSlotVisitor->bytesVisited() + threadBytesVisited();
+}
+
 size_t Heap::threadBytesVisited()
 {       
     size_t result = 0;
@@ -2125,10 +2145,8 @@ void Heap::setRunLoop(CFRunLoopRef runLoop)
 }
 #endif // USE(CF)
 
-void Heap::buildConstraintSet()
+void Heap::addCoreConstraints()
 {
-    m_constraintSet = std::make_unique<MarkingConstraintSet>();
-    
     m_constraintSet->add(
         "Cs", "Conservative Scan",
         [this] (SlotVisitor& slotVisitor, const VisitingTimeout&) {
@@ -2141,7 +2159,7 @@ void Heap::buildConstraintSet()
             gatherScratchBufferRoots(conservativeRoots);
             slotVisitor.append(conservativeRoots);
         },
-        MarkingConstraint::GreyedByExecution);
+        ConstraintVolatility::GreyedByExecution);
     
     m_constraintSet->add(
         "Msr", "Misc Small Roots",
@@ -2162,7 +2180,7 @@ void Heap::buildConstraintSet()
             slotVisitor.appendUnbarriered(m_vm->exception());
             slotVisitor.appendUnbarriered(m_vm->lastException());
         },
-        MarkingConstraint::GreyedByExecution);
+        ConstraintVolatility::GreyedByExecution);
     
     m_constraintSet->add(
         "Sh", "Strong Handles",
@@ -2170,7 +2188,7 @@ void Heap::buildConstraintSet()
             m_handleSet.visitStrongHandles(slotVisitor);
             m_handleStack.visit(slotVisitor);
         },
-        MarkingConstraint::GreyedByExecution);
+        ConstraintVolatility::GreyedByExecution);
     
     m_constraintSet->add(
         "D", "Debugger",
@@ -2190,25 +2208,21 @@ void Heap::buildConstraintSet()
             
             m_vm->shadowChicken().visitChildren(slotVisitor);
         },
-        MarkingConstraint::GreyedByExecution);
+        ConstraintVolatility::GreyedByExecution);
     
     m_constraintSet->add(
         "Jsr", "JIT Stub Routines",
         [this] (SlotVisitor& slotVisitor, const VisitingTimeout&) {
             m_jitStubRoutines->traceMarkedStubRoutines(slotVisitor);
         },
-        MarkingConstraint::GreyedByExecution);
+        ConstraintVolatility::GreyedByExecution);
     
     m_constraintSet->add(
         "Ws", "Weak Sets",
         [this] (SlotVisitor& slotVisitor, const VisitingTimeout&) {
-            slotVisitor.mergeOpaqueRootsIfNecessary();
-            for (auto& parallelVisitor : m_parallelSlotVisitors)
-                parallelVisitor->mergeOpaqueRootsIfNecessary();
-            
             m_objectSpace.visitWeakSets(slotVisitor);
         },
-        MarkingConstraint::GreyedByMarking);
+        ConstraintVolatility::GreyedByMarking);
     
     m_constraintSet->add(
         "Wrh", "Weak Reference Harvesters",
@@ -2216,7 +2230,7 @@ void Heap::buildConstraintSet()
             for (WeakReferenceHarvester* current = m_weakReferenceHarvesters.head(); current; current = current->next())
                 current->visitWeakReferences(slotVisitor);
         },
-        MarkingConstraint::GreyedByMarking);
+        ConstraintVolatility::GreyedByMarking);
     
 #if ENABLE(DFG_JIT)
     m_constraintSet->add(
@@ -2236,7 +2250,7 @@ void Heap::buildConstraintSet()
             if (Options::logGC() == GCLogging::Verbose)
                 dataLog("DFG Worklists:\n", slotVisitor);
         },
-        MarkingConstraint::GreyedByMarking);
+        ConstraintVolatility::GreyedByMarking);
 #endif
     
     m_constraintSet->add(
@@ -2250,7 +2264,7 @@ void Heap::buildConstraintSet()
                         slotVisitor.visitAsConstraint(codeBlock);
                 });
         },
-        MarkingConstraint::GreyedByExecution);
+        ConstraintVolatility::SeldomGreyed);
     
     m_constraintSet->add(
         "Mrms", "Mutator+Race Mark Stack",
@@ -2268,12 +2282,18 @@ void Heap::buildConstraintSet()
         [this] (SlotVisitor&) -> double {
             return m_mutatorMarkStack->size() + m_raceMarkStack->size();
         },
-        MarkingConstraint::GreyedByExecution);
+        ConstraintVolatility::GreyedByExecution);
+}
+
+void Heap::addMarkingConstraint(std::unique_ptr<MarkingConstraint> constraint)
+{
+    PreventCollectionScope preventCollectionScope(*this);
+    m_constraintSet->add(WTFMove(constraint));
 }
 
 void Heap::notifyIsSafeToCollect()
 {
-    buildConstraintSet();
+    addCoreConstraints();
     
     m_isSafeToCollect = true;
     
@@ -2311,6 +2331,9 @@ void Heap::notifyIsSafeToCollect()
 
 void Heap::preventCollection()
 {
+    if (!m_isSafeToCollect)
+        return;
+    
     // This prevents the collectContinuously thread from starting a collection.
     m_collectContinuouslyLock.lock();
     
@@ -2327,6 +2350,9 @@ void Heap::preventCollection()
 
 void Heap::allowCollection()
 {
+    if (!m_isSafeToCollect)
+        return;
+    
     m_collectContinuouslyLock.unlock();
 }
 
@@ -2339,27 +2365,10 @@ void Heap::forEachSlotVisitor(const Func& func)
         func(*slotVisitor);
 }
 
-void Heap::writeBarrierOpaqueRootSlow(void* root)
-{
-    ASSERT(mutatorShouldBeFenced());
-    
-    auto locker = holdLock(m_opaqueRootsMutex);
-    m_opaqueRoots.add(root);
-}
-
-void Heap::addMutatorShouldBeFencedCache(bool& cache)
-{
-    ASSERT(hasHeapAccess());
-    cache = m_mutatorShouldBeFenced;
-    m_mutatorShouldBeFencedCaches.append(&cache);
-}
-
 void Heap::setMutatorShouldBeFenced(bool value)
 {
     m_mutatorShouldBeFenced = value;
     m_barrierThreshold = value ? tautologicalThreshold : blackThreshold;
-    for (bool* cache : m_mutatorShouldBeFencedCaches)
-        *cache = value;
 }
     
 } // namespace JSC

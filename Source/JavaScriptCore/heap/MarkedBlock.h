@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2009, 2011, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,7 @@ class JSCell;
 class MarkedAllocator;
 class MarkedSpace;
 class SlotVisitor;
+class Subspace;
 
 typedef uintptr_t Bits;
 typedef uint32_t HeapVersion;
@@ -110,6 +111,7 @@ public:
         void lastChanceToFinalize();
 
         MarkedAllocator* allocator() const;
+        Subspace* subspace() const;
         Heap* heap() const;
         inline MarkedSpace* space() const;
         VM* vm() const;
@@ -127,13 +129,17 @@ public:
         enum SweepMode { SweepOnly, SweepToFreeList };
         FreeList sweep(SweepMode = SweepOnly);
         
+        // This is to be called by Subspace.
+        template<typename DestroyFunc>
+        FreeList finishSweepKnowingSubspace(SweepMode, const DestroyFunc&);
+        
         void unsweepWithNoNewlyAllocated();
         
         void zap(const FreeList&);
         
         void shrink();
             
-        unsigned visitWeakSet(SlotVisitor&);
+        void visitWeakSet(SlotVisitor&);
         void reapWeakSet();
             
         // While allocating from a free list, MarkedBlock temporarily has bogus
@@ -174,8 +180,9 @@ public:
         template <typename Functor> IterationStatus forEachCell(const Functor&);
         template <typename Functor> inline IterationStatus forEachLiveCell(const Functor&);
         template <typename Functor> inline IterationStatus forEachDeadCell(const Functor&);
+        template <typename Functor> inline IterationStatus forEachMarkedCell(const Functor&);
             
-        bool areMarksStale();
+        JS_EXPORT_PRIVATE bool areMarksStale();
         
         void assertMarksNotStale();
             
@@ -194,33 +201,20 @@ public:
         Handle(Heap&, void*);
         
         enum SweepDestructionMode { BlockHasNoDestructors, BlockHasDestructors, BlockHasDestructorsAndCollectorIsRunning };
-        
-        template<SweepDestructionMode>
-        FreeList sweepHelperSelectScribbleMode(SweepMode = SweepOnly);
-            
         enum ScribbleMode { DontScribble, Scribble };
-            
-        template<SweepDestructionMode, ScribbleMode>
-        FreeList sweepHelperSelectEmptyMode(SweepMode = SweepOnly);
-            
         enum EmptyMode { IsEmpty, NotEmpty };
-        
-        template<EmptyMode, SweepDestructionMode, ScribbleMode>
-        FreeList sweepHelperSelectHasNewlyAllocated(SweepMode = SweepOnly);
-        
         enum NewlyAllocatedMode { HasNewlyAllocated, DoesNotHaveNewlyAllocated };
-        
-        template<EmptyMode, SweepDestructionMode, ScribbleMode, NewlyAllocatedMode>
-        FreeList sweepHelperSelectSweepMode(SweepMode = SweepOnly);
-        
-        template<EmptyMode, SweepMode, SweepDestructionMode, ScribbleMode, NewlyAllocatedMode>
-        FreeList sweepHelperSelectMarksMode();
-        
         enum MarksMode { MarksStale, MarksNotStale };
         
-        template<EmptyMode, SweepMode, SweepDestructionMode, ScribbleMode, NewlyAllocatedMode, MarksMode>
-        FreeList specializedSweep();
-            
+        SweepDestructionMode sweepDestructionMode();
+        EmptyMode emptyMode();
+        ScribbleMode scribbleMode();
+        NewlyAllocatedMode newlyAllocatedMode();
+        MarksMode marksMode();
+        
+        template<bool, EmptyMode, SweepMode, SweepDestructionMode, ScribbleMode, NewlyAllocatedMode, MarksMode, typename DestroyFunc>
+        FreeList specializedSweep(EmptyMode, SweepMode, SweepDestructionMode, ScribbleMode, NewlyAllocatedMode, MarksMode, const DestroyFunc&);
+        
         template<typename Func>
         void forEachFreeCell(const FreeList&, const Func&);
         
@@ -282,7 +276,7 @@ public:
         
     WeakSet& weakSet();
 
-    bool areMarksStale();
+    JS_EXPORT_PRIVATE bool areMarksStale();
     bool areMarksStale(HeapVersion markingVersion);
     struct MarksWithDependency {
         bool areStale;
@@ -432,7 +426,7 @@ inline void MarkedBlock::Handle::shrink()
     m_weakSet.shrink();
 }
 
-inline unsigned MarkedBlock::Handle::visitWeakSet(SlotVisitor& visitor)
+inline void MarkedBlock::Handle::visitWeakSet(SlotVisitor& visitor)
 {
     return m_weakSet.visit(visitor);
 }

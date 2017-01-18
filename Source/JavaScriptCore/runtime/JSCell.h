@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2007, 2008, 2009, 2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -81,6 +81,12 @@ public:
 
     static const bool needsDestruction = false;
 
+    // Don't call this directly. Call JSC::subspaceFor<Type>(vm) instead.
+    // FIXME: Refer to Subspace by reference.
+    // https://bugs.webkit.org/show_bug.cgi?id=166988
+    template<typename CellType>
+    static Subspace* subspaceFor(VM&);
+
     static JSCell* seenMultipleCalleeObjects() { return bitwise_cast<JSCell*>(static_cast<uintptr_t>(1)); }
 
     enum CreatingEarlyCellTag { CreatingEarlyCell };
@@ -154,6 +160,7 @@ public:
     JS_EXPORT_PRIVATE static size_t estimatedSize(JSCell*);
 
     static void visitChildren(JSCell*, SlotVisitor&);
+    static void visitOutputConstraints(JSCell*, SlotVisitor&);
 
     JS_EXPORT_PRIVATE static void heapSnapshot(JSCell*, HeapSnapshotBuilder&);
 
@@ -288,6 +295,14 @@ inline To jsDynamicCast(JSValue from)
     if (LIKELY(from.isCell() && from.asCell()->inherits(std::remove_pointer<To>::type::info())))
         return static_cast<To>(from.asCell());
     return nullptr;
+}
+
+// FIXME: Refer to Subspace by reference.
+// https://bugs.webkit.org/show_bug.cgi?id=166988
+template<typename Type>
+inline Subspace* subspaceFor(VM& vm)
+{
+    return Type::template subspaceFor<Type>(vm);
 }
 
 } // namespace JSC

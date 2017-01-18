@@ -93,17 +93,19 @@ void MarkingConstraintSet::resetStats()
     for (auto& constraint : m_set) {
         constraint->resetStats();
         switch (constraint->volatility()) {
-        case MarkingConstraint::GreyedByExecution:
+        case ConstraintVolatility::GreyedByExecution:
             m_unexecutedRoots.set(constraint->index());
             break;
-        case MarkingConstraint::GreyedByMarking:
+        case ConstraintVolatility::GreyedByMarking:
             m_unexecutedOutgrowths.set(constraint->index());
+            break;
+        case ConstraintVolatility::SeldomGreyed:
             break;
         }
     }
 }
 
-void MarkingConstraintSet::add(CString abbreviatedName, CString name, Function<void(SlotVisitor&, const VisitingTimeout&)> function, MarkingConstraint::Volatility volatility)
+void MarkingConstraintSet::add(CString abbreviatedName, CString name, Function<void(SlotVisitor&, const VisitingTimeout&)> function, ConstraintVolatility volatility)
 {
     add(std::make_unique<MarkingConstraint>(WTFMove(abbreviatedName), WTFMove(name), WTFMove(function), volatility));
 }
@@ -112,7 +114,7 @@ void MarkingConstraintSet::add(
     CString abbreviatedName, CString name,
     Function<void(SlotVisitor&, const VisitingTimeout&)> executeFunction,
     Function<double(SlotVisitor&)> quickWorkEstimateFunction,
-    MarkingConstraint::Volatility volatility)
+    ConstraintVolatility volatility)
 {
     add(std::make_unique<MarkingConstraint>(WTFMove(abbreviatedName), WTFMove(name), WTFMove(executeFunction), WTFMove(quickWorkEstimateFunction), volatility));
 }
@@ -122,7 +124,7 @@ void MarkingConstraintSet::add(
 {
     constraint->m_index = m_set.size();
     m_ordered.append(constraint.get());
-    if (constraint->volatility() == MarkingConstraint::GreyedByMarking)
+    if (constraint->volatility() == ConstraintVolatility::GreyedByMarking)
         m_outgrowths.append(constraint.get());
     m_set.append(WTFMove(constraint));
 }
@@ -194,14 +196,29 @@ bool MarkingConstraintSet::executeConvergenceImpl(SlotVisitor& visitor, Monotoni
         m_ordered.begin(), m_ordered.end(),
         [&] (MarkingConstraint* a, MarkingConstraint* b) -> bool {
             // Remember: return true if a should come before b.
-            if (a->volatility() != b->volatility()) {
+            
+            auto volatilityScore = [] (MarkingConstraint* constraint) -> unsigned {
+                return constraint->volatility() == ConstraintVolatility::GreyedByMarking ? 1 : 0;
+            };
+            
+            unsigned aVolatilityScore = volatilityScore(a);
+            unsigned bVolatilityScore = volatilityScore(b);
+            
+            if (aVolatilityScore != bVolatilityScore) {
                 if (isWavefrontAdvancing)
-                    return a->volatility() > b->volatility(); // GreyedByMarking should come before GreyedByExecution.
+                    return aVolatilityScore > bVolatilityScore;
                 else
-                    return a->volatility() < b->volatility(); // GreyedByExecution should come before GreyedByMarking.
+                    return aVolatilityScore < bVolatilityScore;
             }
             
-            return a->workEstimate(visitor) > b->workEstimate(visitor);
+            double aWorkEstimate = a->workEstimate(visitor);
+            double bWorkEstimate = b->workEstimate(visitor);
+            
+            if (aWorkEstimate != bWorkEstimate)
+                return aWorkEstimate > bWorkEstimate;
+            
+            // This causes us to use SeldomGreyed vs GreyedByExecution as a final tie-breaker.
+            return a->volatility() > b->volatility();
         });
     
     for (MarkingConstraint* constraint : m_ordered) {

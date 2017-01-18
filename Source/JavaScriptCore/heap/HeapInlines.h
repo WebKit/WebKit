@@ -39,6 +39,11 @@
 
 namespace JSC {
 
+ALWAYS_INLINE VM* Heap::vm() const
+{
+    return bitwise_cast<VM*>(bitwise_cast<uintptr_t>(this) - OBJECT_OFFSETOF(VM, heap));
+}
+
 ALWAYS_INLINE Heap* Heap::heap(const HeapCell* cell)
 {
     return cell->heap();
@@ -175,136 +180,6 @@ template<typename Functor> inline void Heap::forEachProtectedCell(const Functor&
     m_handleSet.forEachStrongHandle(functor, m_protectedValues);
 }
 
-inline void* Heap::allocateWithDestructor(size_t bytes)
-{
-#if ENABLE(ALLOCATION_LOGGING)
-    dataLogF("JSC GC allocating %lu bytes with normal destructor.\n", bytes);
-#endif
-    ASSERT(isValidAllocation(bytes));
-    return m_objectSpace.allocateWithDestructor(bytes);
-}
-
-inline void* Heap::allocateWithoutDestructor(size_t bytes)
-{
-#if ENABLE(ALLOCATION_LOGGING)
-    dataLogF("JSC GC allocating %lu bytes without destructor.\n", bytes);
-#endif
-    ASSERT(isValidAllocation(bytes));
-    return m_objectSpace.allocateWithoutDestructor(bytes);
-}
-
-inline void* Heap::allocateWithDestructor(GCDeferralContext* deferralContext, size_t bytes)
-{
-    ASSERT(isValidAllocation(bytes));
-    return m_objectSpace.allocateWithDestructor(deferralContext, bytes);
-}
-
-inline void* Heap::allocateWithoutDestructor(GCDeferralContext* deferralContext, size_t bytes)
-{
-    ASSERT(isValidAllocation(bytes));
-    return m_objectSpace.allocateWithoutDestructor(deferralContext, bytes);
-}
-
-template<typename ClassType>
-inline void* Heap::allocateObjectOfType(size_t bytes)
-{
-    // JSCell::classInfo() expects objects allocated with normal destructor to derive from JSDestructibleObject.
-    ASSERT((!ClassType::needsDestruction || (ClassType::StructureFlags & StructureIsImmortal) || std::is_convertible<ClassType, JSDestructibleObject>::value));
-
-    if (ClassType::needsDestruction)
-        return allocateWithDestructor(bytes);
-    return allocateWithoutDestructor(bytes);
-}
-
-template<typename ClassType>
-inline void* Heap::allocateObjectOfType(GCDeferralContext* deferralContext, size_t bytes)
-{
-    ASSERT((!ClassType::needsDestruction || (ClassType::StructureFlags & StructureIsImmortal) || std::is_convertible<ClassType, JSDestructibleObject>::value));
-
-    if (ClassType::needsDestruction)
-        return allocateWithDestructor(deferralContext, bytes);
-    return allocateWithoutDestructor(deferralContext, bytes);
-}
-
-template<typename ClassType>
-inline MarkedSpace::Subspace& Heap::subspaceForObjectOfType()
-{
-    // JSCell::classInfo() expects objects allocated with normal destructor to derive from JSDestructibleObject.
-    ASSERT((!ClassType::needsDestruction || (ClassType::StructureFlags & StructureIsImmortal) || std::is_convertible<ClassType, JSDestructibleObject>::value));
-    
-    if (ClassType::needsDestruction)
-        return subspaceForObjectDestructor();
-    return subspaceForObjectWithoutDestructor();
-}
-
-template<typename ClassType>
-inline MarkedAllocator* Heap::allocatorForObjectOfType(size_t bytes)
-{
-    // JSCell::classInfo() expects objects allocated with normal destructor to derive from JSDestructibleObject.
-    ASSERT((!ClassType::needsDestruction || (ClassType::StructureFlags & StructureIsImmortal) || std::is_convertible<ClassType, JSDestructibleObject>::value));
-
-    MarkedAllocator* result;
-    if (ClassType::needsDestruction)
-        result = allocatorForObjectWithDestructor(bytes);
-    else
-        result = allocatorForObjectWithoutDestructor(bytes);
-    
-    ASSERT(result || !ClassType::info()->isSubClassOf(JSCallee::info()));
-    return result;
-}
-
-inline void* Heap::allocateAuxiliary(JSCell* intendedOwner, size_t bytes)
-{
-    void* result = m_objectSpace.allocateAuxiliary(bytes);
-#if ENABLE(ALLOCATION_LOGGING)
-    dataLogF("JSC GC allocating %lu bytes of auxiliary for %p: %p.\n", bytes, intendedOwner, result);
-#else
-    UNUSED_PARAM(intendedOwner);
-#endif
-    return result;
-}
-
-inline void* Heap::tryAllocateAuxiliary(JSCell* intendedOwner, size_t bytes)
-{
-    void* result = m_objectSpace.tryAllocateAuxiliary(bytes);
-#if ENABLE(ALLOCATION_LOGGING)
-    dataLogF("JSC GC allocating %lu bytes of auxiliary for %p: %p.\n", bytes, intendedOwner, result);
-#else
-    UNUSED_PARAM(intendedOwner);
-#endif
-    return result;
-}
-
-inline void* Heap::tryAllocateAuxiliary(GCDeferralContext* deferralContext, JSCell* intendedOwner, size_t bytes)
-{
-    void* result = m_objectSpace.tryAllocateAuxiliary(deferralContext, bytes);
-#if ENABLE(ALLOCATION_LOGGING)
-    dataLogF("JSC GC allocating %lu bytes of auxiliary for %p: %p.\n", bytes, intendedOwner, result);
-#else
-    UNUSED_PARAM(intendedOwner);
-#endif
-    return result;
-}
-
-inline void* Heap::tryReallocateAuxiliary(JSCell* intendedOwner, void* oldBase, size_t oldSize, size_t newSize)
-{
-    void* newBase = tryAllocateAuxiliary(intendedOwner, newSize);
-    if (!newBase)
-        return nullptr;
-    memcpy(newBase, oldBase, oldSize);
-    return newBase;
-}
-
-inline void Heap::ascribeOwner(JSCell* intendedOwner, void* storage)
-{
-#if ENABLE(ALLOCATION_LOGGING)
-    dataLogF("JSC GC ascribing %p as owner of storage %p.\n", intendedOwner, storage);
-#else
-    UNUSED_PARAM(intendedOwner);
-    UNUSED_PARAM(storage);
-#endif
-}
-
 #if USE(FOUNDATION)
 template <typename T>
 inline void Heap::releaseSoon(RetainPtr<T>&& object)
@@ -403,12 +278,6 @@ inline void Heap::stopIfNecessary()
 {
     if (mayNeedToStop())
         stopIfNecessarySlow();
-}
-
-inline void Heap::writeBarrierOpaqueRoot(void* root)
-{
-    if (mutatorShouldBeFenced())
-        writeBarrierOpaqueRootSlow(root);
 }
 
 } // namespace JSC

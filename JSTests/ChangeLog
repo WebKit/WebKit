@@ -1,5 +1,20 @@
 2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210844. rdar://problem/29993906
+
+    2017-01-16  Filip Pizlo  <fpizlo@apple.com>
+
+            Make opaque root scanning truly constraint-based
+            https://bugs.webkit.org/show_bug.cgi?id=165760
+
+            Reviewed by Geoffrey Garen.
+
+            Added this test, which demonstrates the benefit of having a dedicated string subspace.
+
+            * microbenchmarks/stringalloc.js: Added.
+
+2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210695. rdar://problem/29913445
 
     2017-01-12  Saam Barati  <sbarati@apple.com>

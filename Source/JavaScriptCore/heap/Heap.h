@@ -31,7 +31,6 @@
 #include "HeapObserver.h"
 #include "ListableHandler.h"
 #include "MachineStackMarker.h"
-#include "MarkedAllocator.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
 #include "MarkedSpace.h"
@@ -71,7 +70,9 @@ class JSCell;
 class JSValue;
 class LLIntOffsetsExtractor;
 class MarkStackArray;
+class MarkedAllocator;
 class MarkedArgumentBuffer;
+class MarkingConstraint;
 class MarkingConstraintSet;
 class MutatorScheduler;
 class SlotVisitor;
@@ -124,17 +125,16 @@ public:
     // Take this if you know that from->cellState() < barrierThreshold.
     JS_EXPORT_PRIVATE void writeBarrierSlowPath(const JSCell* from);
 
-    void writeBarrierOpaqueRoot(void*);
-
     Heap(VM*, HeapType);
     ~Heap();
     void lastChanceToFinalize();
     void releaseDelayedReleasedObjects();
 
+    VM* vm() const;
+
     // Set a hard limit where JSC will crash if live heap size exceeds it.
     void setMaxLiveSize(size_t size) { m_maxLiveSize = size; }
 
-    VM* vm() const { return m_vm; }
     MarkedSpace& objectSpace() { return m_objectSpace; }
     MachineThreads& machineThreads() { return m_machineThreads; }
 
@@ -159,20 +159,6 @@ public:
     // helping heap.
     JS_EXPORT_PRIVATE bool isCurrentThreadBusy();
     
-    MarkedSpace::Subspace& subspaceForObjectWithoutDestructor() { return m_objectSpace.subspaceForObjectsWithoutDestructor(); }
-    MarkedSpace::Subspace& subspaceForObjectDestructor() { return m_objectSpace.subspaceForObjectsWithDestructor(); }
-    MarkedSpace::Subspace& subspaceForAuxiliaryData() { return m_objectSpace.subspaceForAuxiliaryData(); }
-    template<typename ClassType> MarkedSpace::Subspace& subspaceForObjectOfType();
-    MarkedAllocator* allocatorForObjectWithoutDestructor(size_t bytes) { return m_objectSpace.allocatorFor(bytes); }
-    MarkedAllocator* allocatorForObjectWithDestructor(size_t bytes) { return m_objectSpace.destructorAllocatorFor(bytes); }
-    template<typename ClassType> MarkedAllocator* allocatorForObjectOfType(size_t bytes);
-    MarkedAllocator* allocatorForAuxiliaryData(size_t bytes) { return m_objectSpace.auxiliaryAllocatorFor(bytes); }
-    void* allocateAuxiliary(JSCell* intendedOwner, size_t);
-    void* tryAllocateAuxiliary(JSCell* intendedOwner, size_t);
-    void* tryAllocateAuxiliary(GCDeferralContext*, JSCell* intendedOwner, size_t);
-    void* tryReallocateAuxiliary(JSCell* intendedOwner, void* oldBase, size_t oldSize, size_t newSize);
-    void ascribeOwner(JSCell* intendedOwner, void*);
-
     typedef void (*Finalizer)(JSCell*);
     JS_EXPORT_PRIVATE void addFinalizer(JSCell*, Finalizer);
     void addExecutable(ExecutableBase*);
@@ -350,8 +336,14 @@ public:
     void preventCollection();
     void allowCollection();
     
-    JS_EXPORT_PRIVATE void addMutatorShouldBeFencedCache(bool&);
+    size_t bytesVisited();
     
+    uint64_t mutatorExecutionVersion() const { return m_mutatorExecutionVersion; }
+    
+    JS_EXPORT_PRIVATE void addMarkingConstraint(std::unique_ptr<MarkingConstraint>);
+    
+    size_t numOpaqueRoots() const { return m_opaqueRoots.size(); }
+
 #if USE(CF)
     CFRunLoopRef runLoop() const { return m_runLoop.get(); }
     JS_EXPORT_PRIVATE void setRunLoop(CFRunLoopRef);
@@ -383,18 +375,6 @@ private:
 
     class Thread;
     friend class Thread;
-
-    template<typename T> friend void* allocateCell(Heap&);
-    template<typename T> friend void* allocateCell(Heap&, size_t);
-    template<typename T> friend void* allocateCell(Heap&, GCDeferralContext*);
-    template<typename T> friend void* allocateCell(Heap&, GCDeferralContext*, size_t);
-
-    void* allocateWithDestructor(size_t); // For use with objects with destructors.
-    void* allocateWithoutDestructor(size_t); // For use with objects without destructors.
-    void* allocateWithDestructor(GCDeferralContext*, size_t);
-    void* allocateWithoutDestructor(GCDeferralContext*, size_t);
-    template<typename ClassType> void* allocateObjectOfType(size_t); // Chooses one of the methods above based on type.
-    template<typename ClassType> void* allocateObjectOfType(GCDeferralContext*, size_t);
 
     static const size_t minExtraMemory = 256;
     
@@ -490,11 +470,9 @@ private:
     
     void forEachCodeBlockImpl(const ScopedLambda<bool(CodeBlock*)>&);
     
-    JS_EXPORT_PRIVATE void writeBarrierOpaqueRootSlow(void*);
-    
     void setMutatorShouldBeFenced(bool value);
     
-    void buildConstraintSet();
+    void addCoreConstraints();
     
     template<typename Func>
     void iterateExecutingAndCompilingCodeBlocks(const Func&);
@@ -566,7 +544,6 @@ private:
 
     bool m_mutatorShouldBeFenced { Options::forceFencedBarrier() };
     unsigned m_barrierThreshold { Options::forceFencedBarrier() ? tautologicalThreshold : blackThreshold };
-    Vector<bool*> m_mutatorShouldBeFencedCaches;
 
     VM* m_vm;
     double m_lastFullGCLength;
@@ -610,7 +587,7 @@ private:
     bool m_parallelMarkersShouldExit { false };
 
     Lock m_opaqueRootsMutex;
-    HashSet<void*> m_opaqueRoots;
+    HashSet<const void*> m_opaqueRoots;
 
     static const size_t s_blockFragmentLength = 32;
 
@@ -645,6 +622,7 @@ private:
     bool m_threadShouldStop { false };
     bool m_threadIsStopping { false };
     bool m_mutatorDidRun { true };
+    uint64_t m_mutatorExecutionVersion { 0 };
     Box<Lock> m_threadLock;
     RefPtr<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     RefPtr<AutomaticThread> m_thread;

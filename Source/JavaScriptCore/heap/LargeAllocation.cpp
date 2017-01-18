@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,24 +32,31 @@
 
 namespace JSC {
 
-LargeAllocation* LargeAllocation::tryCreate(Heap& heap, size_t size, const AllocatorAttributes& attributes)
+LargeAllocation* LargeAllocation::tryCreate(Heap& heap, size_t size, Subspace* subspace)
 {
     void* space = tryFastAlignedMalloc(alignment, headerSize() + size);
     if (!space)
         return nullptr;
     if (scribbleFreeCells())
         scribble(space, size);
-    return new (NotNull, space) LargeAllocation(heap, size, attributes);
+    return new (NotNull, space) LargeAllocation(heap, size, subspace);
 }
 
-LargeAllocation::LargeAllocation(Heap& heap, size_t size, const AllocatorAttributes& attributes)
+LargeAllocation::LargeAllocation(Heap& heap, size_t size, Subspace* subspace)
     : m_cellSize(size)
     , m_isNewlyAllocated(true)
     , m_hasValidCell(true)
-    , m_attributes(attributes)
+    , m_attributes(subspace->attributes())
+    , m_subspace(subspace)
     , m_weakSet(heap.vm(), *this)
 {
     m_isMarked.store(0);
+}
+
+LargeAllocation::~LargeAllocation()
+{
+    if (isOnList())
+        remove();
 }
 
 void LargeAllocation::lastChanceToFinalize()
@@ -92,7 +99,7 @@ void LargeAllocation::sweep()
     
     if (m_hasValidCell && !isLive()) {
         if (m_attributes.destruction == NeedsDestruction)
-            static_cast<JSCell*>(cell())->callDestructor(*vm());
+            m_subspace->destroy(*vm(), static_cast<JSCell*>(cell()));
         m_hasValidCell = false;
     }
 }

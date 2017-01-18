@@ -1218,6 +1218,7 @@ set(WebCore_SOURCES
     bindings/js/ScriptState.cpp
     bindings/js/StructuredClone.cpp
     bindings/js/SerializedScriptValue.cpp
+    bindings/js/WebCoreJSClientData.cpp
     bindings/js/WebCoreTypedArrayController.cpp
     bindings/js/WorkerScriptController.cpp
 

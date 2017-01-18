@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,9 @@
 #include "Intrinsic.h"
 #include "JITThunks.h"
 #include "JSCJSValue.h"
+#include "JSDestructibleObjectSubspace.h"
 #include "JSLock.h"
+#include "JSStringSubspace.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Microtask.h"
 #include "NumericStrings.h"
@@ -49,6 +51,7 @@
 #include "SmallStrings.h"
 #include "SourceCode.h"
 #include "Strong.h"
+#include "Subspace.h"
 #include "TemplateRegistryKeyTable.h"
 #include "ThunkGenerators.h"
 #include "VMEntryRecord.h"
@@ -282,6 +285,14 @@ public:
     // The heap should be just after executableAllocator and before other members to ensure that it's
     // destructed after all the objects that reference it.
     Heap heap;
+    
+    Subspace auxiliarySpace;
+    
+    // Whenever possible, use subspaceFor<CellType>(vm) to get one of these subspaces.
+    Subspace cellSpace;
+    Subspace destructibleCellSpace;
+    JSStringSubspace stringSpace;
+    JSDestructibleObjectSubspace destructibleObjectSpace;
 
 #if ENABLE(DFG_JIT)
     std::unique_ptr<DFG::LongLivedState> dfgState;

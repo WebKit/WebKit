@@ -33,7 +33,7 @@ namespace JSC {
 MarkingConstraint::MarkingConstraint(
     CString abbreviatedName, CString name,
     ::Function<void(SlotVisitor&, const VisitingTimeout&)> executeFunction,
-    Volatility volatility)
+    ConstraintVolatility volatility)
     : m_abbreviatedName(abbreviatedName)
     , m_name(WTFMove(name))
     , m_executeFunction(WTFMove(executeFunction))
@@ -45,7 +45,7 @@ MarkingConstraint::MarkingConstraint(
     CString abbreviatedName, CString name,
     ::Function<void(SlotVisitor&, const VisitingTimeout&)> executeFunction,
     ::Function<double(SlotVisitor&)> quickWorkEstimateFunction,
-    Volatility volatility)
+    ConstraintVolatility volatility)
     : m_abbreviatedName(abbreviatedName)
     , m_name(WTFMove(name))
     , m_executeFunction(WTFMove(executeFunction))

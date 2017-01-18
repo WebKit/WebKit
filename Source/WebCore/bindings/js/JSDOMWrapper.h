@@ -73,6 +73,9 @@ protected:
     }
 };
 
+WEBCORE_EXPORT JSC::Subspace* outputConstraintSubspaceFor(JSC::VM&);
+WEBCORE_EXPORT JSC::Subspace* globalObjectOutputConstraintSubspaceFor(JSC::VM&);
+
 template<typename ImplementationClass> class JSDOMWrapper : public JSDOMObject {
 public:
     typedef JSDOMObject Base;

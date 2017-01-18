@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2014, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -85,9 +85,17 @@ public:
 
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
-
+    
+    // We specialize the string subspace to get the fastest possible sweep. This wouldn't be
+    // necessary if JSString didn't have a destructor.
+    template<typename>
+    static Subspace* subspaceFor(VM& vm)
+    {
+        return &vm.stringSpace;
+    }
+    
     static const unsigned MaxLength = std::numeric_limits<int32_t>::max();
-
+    
 private:
     JSString(VM& vm, PassRefPtr<StringImpl> value)
         : JSCell(vm, vm.stringStructure.get())
@@ -234,6 +242,8 @@ private:
     friend JSString* jsSubstring(ExecState*, JSString*, unsigned offset, unsigned length);
 };
 
+// NOTE: This class cannot override JSString's destructor. JSString's destructor is called directly
+// from JSStringSubspace::
 class JSRopeString final : public JSString {
     friend class JSString;
 

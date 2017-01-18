@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -135,7 +135,7 @@ public:
     static ptrdiff_t offsetOfFreeList();
     static ptrdiff_t offsetOfCellSize();
 
-    MarkedAllocator(Heap*, MarkedSpace*, size_t cellSize, const AllocatorAttributes&);
+    MarkedAllocator(Heap*, Subspace*, size_t cellSize);
     void lastChanceToFinalize();
     void prepareForAllocation();
     void stopAllocating();
@@ -163,6 +163,7 @@ public:
     }
     
     template<typename Functor> void forEachBlock(const Functor&);
+    template<typename Functor> void forEachNotEmptyBlock(const Functor&);
     
     void addBlock(MarkedBlock::Handle*);
     void removeBlock(MarkedBlock::Handle*);
@@ -200,13 +201,17 @@ public:
     }
     
     MarkedAllocator* nextAllocator() const { return m_nextAllocator; }
+    MarkedAllocator* nextAllocatorInSubspace() const { return m_nextAllocatorInSubspace; }
     
-    // MarkedSpace calls this during init.
     void setNextAllocator(MarkedAllocator* allocator) { m_nextAllocator = allocator; }
+    void setNextAllocatorInSubspace(MarkedAllocator* allocator) { m_nextAllocatorInSubspace = allocator; }
     
     MarkedBlock::Handle* findEmptyBlockToSteal();
     
     MarkedBlock::Handle* findBlockToSweep();
+    
+    Subspace* subspace() const { return m_subspace; }
+    MarkedSpace& markedSpace() const;
     
     void dump(PrintStream&) const;
     void dumpBits(PrintStream& = WTF::dataFile());
@@ -253,9 +258,12 @@ private:
     Lock m_lock;
     unsigned m_cellSize;
     AllocatorAttributes m_attributes;
+    // FIXME: All of these should probably be references.
+    // https://bugs.webkit.org/show_bug.cgi?id=166988
     Heap* m_heap;
-    MarkedSpace* m_markedSpace;
-    MarkedAllocator* m_nextAllocator;
+    Subspace* m_subspace;
+    MarkedAllocator* m_nextAllocator { nullptr };
+    MarkedAllocator* m_nextAllocatorInSubspace { nullptr };
 };
 
 inline ptrdiff_t MarkedAllocator::offsetOfFreeList()
@@ -266,50 +274,6 @@ inline ptrdiff_t MarkedAllocator::offsetOfFreeList()
 inline ptrdiff_t MarkedAllocator::offsetOfCellSize()
 {
     return OBJECT_OFFSETOF(MarkedAllocator, m_cellSize);
-}
-
-ALWAYS_INLINE void* MarkedAllocator::tryAllocate(GCDeferralContext* deferralContext)
-{
-    unsigned remaining = m_freeList.remaining;
-    if (remaining) {
-        unsigned cellSize = m_cellSize;
-        remaining -= cellSize;
-        m_freeList.remaining = remaining;
-        return m_freeList.payloadEnd - remaining - cellSize;
-    }
-    
-    FreeCell* head = m_freeList.head;
-    if (UNLIKELY(!head))
-        return tryAllocateSlowCase(deferralContext);
-    
-    m_freeList.head = head->next;
-    return head;
-}
-
-ALWAYS_INLINE void* MarkedAllocator::allocate(GCDeferralContext* deferralContext)
-{
-    unsigned remaining = m_freeList.remaining;
-    if (remaining) {
-        unsigned cellSize = m_cellSize;
-        remaining -= cellSize;
-        m_freeList.remaining = remaining;
-        return m_freeList.payloadEnd - remaining - cellSize;
-    }
-    
-    FreeCell* head = m_freeList.head;
-    if (UNLIKELY(!head))
-        return allocateSlowCase(deferralContext);
-    
-    m_freeList.head = head->next;
-    return head;
-}
-
-template <typename Functor> inline void MarkedAllocator::forEachBlock(const Functor& functor)
-{
-    m_live.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
 }
 
 } // namespace JSC

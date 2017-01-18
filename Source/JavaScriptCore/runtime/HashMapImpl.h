@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -171,11 +171,11 @@ public:
         return bitwise_cast<BucketType**>(this);
     }
 
-    static HashMapBuffer* create(ExecState* exec, VM& vm, JSCell* owner, uint32_t capacity)
+    static HashMapBuffer* create(ExecState* exec, VM& vm, JSCell*, uint32_t capacity)
     {
         auto scope = DECLARE_THROW_SCOPE(vm);
         size_t allocationSize = HashMapBuffer::allocationSize(capacity);
-        void* data = vm.heap.tryAllocateAuxiliary(owner, allocationSize);
+        void* data = vm.auxiliarySpace.tryAllocate(allocationSize);
         if (!data) {
             throwOutOfMemoryError(exec, scope);
             return nullptr;

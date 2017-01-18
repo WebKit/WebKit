@@ -1,5 +1,64 @@
 2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210844. rdar://problem/29993906
+
+    2017-01-16  Filip Pizlo  <fpizlo@apple.com>
+
+            Make opaque root scanning truly constraint-based
+            https://bugs.webkit.org/show_bug.cgi?id=165760
+
+            Reviewed by Geoffrey Garen.
+
+            No new tests yet. I think that writing tests for this is a big investigation:
+            https://bugs.webkit.org/show_bug.cgi?id=165808
+
+            Remove the previous advancing wavefront DOM write barrier. I don't think this will scale
+            very well. It's super confusing.
+
+            This change makes it so that visitAdditionalChildren can become a GC constraint that
+            executes as part of the fixpoint. This changes all WebCore visitAdditionalChildren into
+            output constraints by using new JSC API for Subspaces and MarkingConstraints.
+
+            * ForwardingHeaders/heap/MarkedAllocatorInlines.h: Added.
+            * ForwardingHeaders/heap/MarkedBlockInlines.h: Added.
+            * ForwardingHeaders/heap/MarkingConstraint.h: Added.
+            * ForwardingHeaders/heap/SubspaceInlines.h: Added.
+            * ForwardingHeaders/heap/VisitingTimeout.h: Added.
+            * WebCore.xcodeproj/project.pbxproj:
+            * bindings/js/CommonVM.cpp:
+            (WebCore::commonVMSlow):
+            (WebCore::writeBarrierOpaqueRootSlow): Deleted.
+            * bindings/js/CommonVM.h:
+            (WebCore::writeBarrierOpaqueRoot): Deleted.
+            * bindings/js/JSDOMGlobalObject.cpp:
+            (WebCore::JSDOMGlobalObject::finishCreation):
+            (WebCore::JSDOMGlobalObject::scriptExecutionContext):
+            * bindings/js/JSDOMWrapper.cpp:
+            (WebCore::outputConstraintSubspaceFor):
+            (WebCore::globalObjectOutputConstraintSubspaceFor):
+            * bindings/js/JSDOMWrapper.h:
+            * bindings/js/WebCoreJSClientData.cpp: Added.
+            (WebCore::JSVMClientData::JSVMClientData):
+            (WebCore::JSVMClientData::~JSVMClientData):
+            (WebCore::JSVMClientData::getAllWorlds):
+            (WebCore::initNormalWorldClientData):
+            * bindings/js/WebCoreJSClientData.h:
+            (WebCore::JSVMClientData::outputConstraintSpace):
+            (WebCore::JSVMClientData::globalObjectOutputConstraintSpace):
+            (WebCore::JSVMClientData::forEachOutputConstraintSpace):
+            (WebCore::JSVMClientData::JSVMClientData): Deleted.
+            (WebCore::JSVMClientData::~JSVMClientData): Deleted.
+            (WebCore::JSVMClientData::getAllWorlds): Deleted.
+            (WebCore::initNormalWorldClientData): Deleted.
+            * bindings/scripts/CodeGeneratorJS.pm:
+            (GenerateHeader):
+            (GenerateImplementation):
+            * dom/ContainerNodeAlgorithms.cpp:
+            (WebCore::notifyChildNodeInserted):
+            (WebCore::notifyChildNodeRemoved):
+
+2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210829. rdar://problem/30044439
 
     2017-01-16  Filip Pizlo  <fpizlo@apple.com>

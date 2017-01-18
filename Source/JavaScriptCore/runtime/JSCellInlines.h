@@ -120,6 +120,10 @@ inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.appendUnbarriered(cell->structure(visitor.vm()));
 }
 
+inline void JSCell::visitOutputConstraints(JSCell*, SlotVisitor&)
+{
+}
+
 ALWAYS_INLINE VM& ExecState::vm() const
 {
     ASSERT(callee());
@@ -129,12 +133,20 @@ ALWAYS_INLINE VM& ExecState::vm() const
     return *callee()->markedBlock().vm();
 }
 
+template<typename CellType>
+Subspace* JSCell::subspaceFor(VM& vm)
+{
+    if (CellType::needsDestruction)
+        return &vm.destructibleCellSpace;
+    return &vm.cellSpace;
+}
+
 template<typename T>
 void* allocateCell(Heap& heap, size_t size)
 {
     ASSERT(!DisallowGC::isGCDisallowedOnCurrentThread());
     ASSERT(size >= sizeof(T));
-    JSCell* result = static_cast<JSCell*>(heap.allocateObjectOfType<T>(size));
+    JSCell* result = static_cast<JSCell*>(subspaceFor<T>(*heap.vm())->allocate(size));
 #if ENABLE(GC_VALIDATION)
     ASSERT(!heap.vm()->isInitializingObject());
     heap.vm()->setInitializingObjectClass(T::info());
@@ -153,7 +165,7 @@ template<typename T>
 void* allocateCell(Heap& heap, GCDeferralContext* deferralContext, size_t size)
 {
     ASSERT(size >= sizeof(T));
-    JSCell* result = static_cast<JSCell*>(heap.allocateObjectOfType<T>(deferralContext, size));
+    JSCell* result = static_cast<JSCell*>(subspaceFor<T>(*heap.vm())->allocate(deferralContext, size));
 #if ENABLE(GC_VALIDATION)
     ASSERT(!heap.vm()->isInitializingObject());
     heap.vm()->setInitializingObjectClass(T::info());

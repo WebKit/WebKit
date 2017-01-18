@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *  Copyright (C) 2009 Google, Inc. All rights reserved.
  *
@@ -33,34 +33,17 @@ namespace WebCore {
 class JSVMClientData : public JSC::VM::ClientData {
     WTF_MAKE_NONCOPYABLE(JSVMClientData); WTF_MAKE_FAST_ALLOCATED;
     friend class VMWorldIterator;
-    friend void initNormalWorldClientData(JSC::VM*);
 
 public:
-    explicit JSVMClientData(JSC::VM& vm)
-        : m_builtinFunctions(vm)
-        , m_builtinNames(&vm)
-    {
-    }
+    explicit JSVMClientData(JSC::VM&);
 
-    virtual ~JSVMClientData()
-    {
-        ASSERT(m_worldSet.contains(m_normalWorld.get()));
-        ASSERT(m_worldSet.size() == 1);
-        ASSERT(m_normalWorld->hasOneRef());
-        m_normalWorld = nullptr;
-        ASSERT(m_worldSet.isEmpty());
-    }
+    virtual ~JSVMClientData();
+    
+    WEBCORE_EXPORT static void initNormalWorld(JSC::VM*);
 
     DOMWrapperWorld& normalWorld() { return *m_normalWorld; }
 
-    void getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
-    {
-        ASSERT(worlds.isEmpty());
-
-        worlds.reserveInitialCapacity(m_worldSet.size());
-        for (auto it = m_worldSet.begin(), end = m_worldSet.end(); it != end; ++it)
-            worlds.uncheckedAppend(*(*it));
-    }
+    void getAllWorlds(Vector<Ref<DOMWrapperWorld>>&);
 
     void rememberWorld(DOMWrapperWorld& world)
     {
@@ -76,6 +59,16 @@ public:
 
     WebCoreBuiltinNames& builtinNames() { return m_builtinNames; }
     JSBuiltinFunctions& builtinFunctions() { return m_builtinFunctions; }
+    
+    JSC::Subspace& outputConstraintSpace() { return m_outputConstraintSpace; }
+    JSC::Subspace& globalObjectOutputConstraintSpace() { return m_globalObjectOutputConstraintSpace; }
+    
+    template<typename Func>
+    void forEachOutputConstraintSpace(const Func& func)
+    {
+        func(m_outputConstraintSpace);
+        func(m_globalObjectOutputConstraintSpace);
+    }
 
 private:
     HashSet<DOMWrapperWorld*> m_worldSet;
@@ -83,14 +76,9 @@ private:
 
     JSBuiltinFunctions m_builtinFunctions;
     WebCoreBuiltinNames m_builtinNames;
+    
+    JSC::JSDestructibleObjectSubspace m_outputConstraintSpace;
+    JSC::Subspace m_globalObjectOutputConstraintSpace;
 };
-
-inline void initNormalWorldClientData(JSC::VM* vm)
-{
-    JSVMClientData* clientData = new JSVMClientData(*vm);
-    vm->clientData = clientData; // ~VM deletes this pointer.
-    clientData->m_normalWorld = DOMWrapperWorld::create(*vm, true);
-    vm->m_typedArrayController = adoptRef(new WebCoreTypedArrayController());
-}
 
 } // namespace WebCore

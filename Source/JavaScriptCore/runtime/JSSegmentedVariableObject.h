@@ -85,7 +85,7 @@ public:
     
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
     JS_EXPORT_PRIVATE static void heapSnapshot(JSCell*, HeapSnapshotBuilder&);
-
+    
 protected:
     JSSegmentedVariableObject(VM& vm, Structure* structure, JSScope* scope)
         : JSSymbolTableObject(vm, structure, scope)
@@ -99,6 +99,8 @@ protected:
     }
     
 private:
+    // FIXME: This needs a destructor, which can only be added using custom subspace.
+    
     SegmentedVector<WriteBarrier<Unknown>, 16> m_variables;
     ConcurrentJSLock m_lock;
 };

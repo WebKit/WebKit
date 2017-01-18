@@ -1,5 +1,353 @@
 2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210844. rdar://problem/29993906
+
+    2017-01-16  Filip Pizlo  <fpizlo@apple.com>
+
+            Make opaque root scanning truly constraint-based
+            https://bugs.webkit.org/show_bug.cgi?id=165760
+
+            Reviewed by Geoffrey Garen.
+
+            We have bugs when visitChildren() changes its mind about what opaque root to add, since
+            we don't have barriers on opaque roots. This supposedly once worked for generational GC,
+            and I started adding more barriers to support concurrent GC. But I think that the real
+            bug here is that we want the JSObject->OpaqueRoot to be evaluated as a constraint that
+            participates in the fixpoint. I like to think of this as an *output* constraint, because it
+            is concerned with outgoing edges in the heap from the object that registered the constraint.
+            An *input* constraint is like what Weak<> does when deciding whether the thing it points to
+            should be live.
+
+            Whether or not an object has output constraints depends on its type. So, we want the GC to
+            have a feature where we rapidly call some function on all marked objects of some type.
+
+            It's easy to rapidly scan all marked objects in a MarkedBlock. So, we want to allocate all
+            objects that have output constraints in their own MarkedBlocks and we want to track the set
+            of MarkedBlocks with output constraints.
+
+            This patch makes it easy to have clients of JSC's internal C++ APIs create a Subspace - like
+            what we used to call MarkedSpace::Subspace but now it's in the JSC namespace - which is
+            a collection of objects that you can easily scan during GC from a MarkingConstraint. It's
+            now possible for internal C++ API clients to register their own MarkingConstraints. The DOM
+            now uses this to create two Subspaces (more on why two below) and it calls
+            JSCell::visitOutputConstraints() on all of the marked objects in those subspaces using a new
+            MarkingConstraint. That MarkingConstraint uses a new style of volatility, called
+            SeldomGreyed, which is like GreyedByExecution except it is opportunistically not executed
+            as roots in the hopes that their sole execution will be the snapshot-at-the-end. I also
+            converted the CodeBlock rescan constraint to SeldomGreyed, since that's also an output
+            constraint.
+
+            This patch also uses Subspace for something pretty obvious: knowing how to call the
+            destructor. Subspaces can specialize the sweep for their way of invoking destructors. We
+            have the following subspaces:
+
+            - auxiliary
+            - cell
+            - destructibleCell - for JSCell subclasses that have destructors and StructureIsImmortal
+            - stringSpace - inlines ~JSString into the sweep, making string allocation 7% faster
+            - destructibleObjectSpace - for JSDestructibleObject subclasses
+
+            And WebCore adds:
+
+            - outputConstraint - for JSDOMObjects that have a visitAdditionalChildren
+            - globalObjectOutputConstraint - for JSDOMGlobalObjects that have a visitAdditionalChildren,
+              since JSDOMGlobalObjects are not JSDestructibleObjects
+
+            The Subspace for a type is selected by saying JSC::subspaceFor<Type>(vm). This calls
+            Type::subspaceFor<Type>(vm). This allows cell classes to override subspaceFor<> and it
+            allows any subspaceFor<> implementation to query static flags in the type. This is how
+            JSCell::subspaceFor<> can select either cellSpace or destructibleCellSpace.
+
+            This patch is mostly about:
+
+            - Moving MarkedSpace::Subspace out of MarkedSpace and making it a nice class with a nice
+              API. Almost all of its functionality is just taken out of MarkedSpace.
+            - Converting users of the old API for allocating objects and getting MarkedAllocators, like
+              heap.allocatorForObjectWithoutDestructor() and its friends. That would now say
+              vm.cellSpace.allocatorFor().
+
+            Altogether, this means that we only have a small regression on Dromaeo. The regression is
+            due to the fact that we scan output constraints. Before the Subspace optimizations (see
+            r209766, which was rolled out in r209812), this regression on Dromaeo/jslib was 2x but after
+            the optimizations in this patch it's only 1.12x. Note that Dromaeo/jslib creats gigabytes of
+            DOM nodes. Compared to web pages, this is a very extreme synthetic microbenchmark. Still, we
+            like optimizing these because we don't want to presume what web pages will look like.
+
+            The use of Subspaces to specialize destructors happened not because it's super necessary but
+            because I wanted to introduce a single unified way of communicating to the GC how to treat
+            different types. Any Subspace feature that allowed us to collect some types together would
+            have to be mindful of the destructorness of objects. I could have turned this into a
+            liability where each Subspace has two subsubspaces - one for destructor objects and one for
+            non-destructor objects, which would have allowed me to keep the old sweep specialization
+            code. Just days prior, mlam wanted to do something that was hard because of that old sweep
+            specializer, so I decided to take the opportunity to fix the sweep specializer while also
+            making Subspace be the one true way of teaching the GC about types. To validate that this
+            actually does things, I added a JSStringSubspace and a test that shows that this is a 7%
+            string allocation progression.
+
+            In bug 167066, I'm getting rid of the rest of the code in JSC that would special-case for
+            JSDestructibleObject vs StructureIsImmortal by using the GC's DestructionMode. After that,
+            Subspace will be only mechanism by which JSC uses the GC to encode types.
+
+            Prior to this change, having multiple MarkedSpace::Subspaces would have been expensive
+            because they create a bunch of MarkedAllocators upfront. We now have the ability to create
+            MarkedAllocators lazily. We create them on the first allocation from that size class or when
+            a JIT asks for the MarkedAllocator. The concurrent JITs can ask for MarkedAllocators because
+            their creation is under a lock.
+
+            On my machine, this might be a 1.1% JetStream speed-up with 87% confidence and it might be
+            a 0.4% PLT3 slow-down with 92% confidence. Note that 0.4% on PLT3 is the level of systematic
+            error on PLT3 on my computer: I've seen definite 0.4% speed-ups and slow-downs that were not
+            confirmed by any bot. Let's see what the bots say.
+
+            * CMakeLists.txt:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * bytecode/ObjectAllocationProfile.h:
+            (JSC::ObjectAllocationProfile::initialize):
+            * bytecode/PolymorphicAccess.cpp:
+            (JSC::AccessCase::generateImpl):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+            (JSC::DFG::SpeculativeJIT::compileMakeRope):
+            (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+            (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+            (JSC::DFG::SpeculativeJIT::compileNewTypedArray):
+            (JSC::DFG::SpeculativeJIT::emitAllocateButterfly):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * ftl/FTLAbstractHeapRepository.h:
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+            (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+            (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+            (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorageWithSizeImpl):
+            (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+            (JSC::FTL::DFG::LowerDFGToB3::allocatorForSize):
+            (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedObject):
+            (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedCell):
+            (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+            * heap/AllocatorAttributes.h:
+            (JSC::AllocatorAttributes::AllocatorAttributes):
+            * heap/ConstraintVolatility.h: Added.
+            (WTF::printInternal):
+            * heap/GCActivityCallback.cpp:
+            * heap/Heap.cpp:
+            (JSC::Heap::Heap):
+            (JSC::Heap::lastChanceToFinalize):
+            (JSC::Heap::markToFixpoint):
+            (JSC::Heap::updateObjectCounts):
+            (JSC::Heap::collectAllGarbage):
+            (JSC::Heap::collectInThread):
+            (JSC::Heap::stopTheWorld):
+            (JSC::Heap::updateAllocationLimits):
+            (JSC::Heap::bytesVisited):
+            (JSC::Heap::addCoreConstraints):
+            (JSC::Heap::addMarkingConstraint):
+            (JSC::Heap::notifyIsSafeToCollect):
+            (JSC::Heap::preventCollection):
+            (JSC::Heap::allowCollection):
+            (JSC::Heap::setMutatorShouldBeFenced):
+            (JSC::Heap::buildConstraintSet): Deleted.
+            (JSC::Heap::writeBarrierOpaqueRootSlow): Deleted.
+            (JSC::Heap::addMutatorShouldBeFencedCache): Deleted.
+            * heap/Heap.h:
+            (JSC::Heap::mutatorExecutionVersion):
+            (JSC::Heap::numOpaqueRoots):
+            (JSC::Heap::vm): Deleted.
+            (JSC::Heap::subspaceForObjectWithoutDestructor): Deleted.
+            (JSC::Heap::subspaceForObjectDestructor): Deleted.
+            (JSC::Heap::subspaceForAuxiliaryData): Deleted.
+            (JSC::Heap::allocatorForObjectWithoutDestructor): Deleted.
+            (JSC::Heap::allocatorForObjectWithDestructor): Deleted.
+            (JSC::Heap::allocatorForAuxiliaryData): Deleted.
+            * heap/HeapInlines.h:
+            (JSC::Heap::vm):
+            (JSC::Heap::allocateWithDestructor): Deleted.
+            (JSC::Heap::allocateWithoutDestructor): Deleted.
+            (JSC::Heap::allocateObjectOfType): Deleted.
+            (JSC::Heap::subspaceForObjectOfType): Deleted.
+            (JSC::Heap::allocatorForObjectOfType): Deleted.
+            (JSC::Heap::allocateAuxiliary): Deleted.
+            (JSC::Heap::tryAllocateAuxiliary): Deleted.
+            (JSC::Heap::tryReallocateAuxiliary): Deleted.
+            (JSC::Heap::ascribeOwner): Deleted.
+            (JSC::Heap::writeBarrierOpaqueRoot): Deleted.
+            * heap/LargeAllocation.cpp:
+            (JSC::LargeAllocation::tryCreate):
+            (JSC::LargeAllocation::LargeAllocation):
+            (JSC::LargeAllocation::~LargeAllocation):
+            (JSC::LargeAllocation::sweep):
+            * heap/LargeAllocation.h:
+            * heap/MarkedAllocator.cpp:
+            (JSC::MarkedAllocator::MarkedAllocator):
+            (JSC::MarkedAllocator::tryAllocateWithoutCollecting):
+            (JSC::MarkedAllocator::tryAllocateIn):
+            (JSC::MarkedAllocator::allocateSlowCaseImpl):
+            (JSC::MarkedAllocator::tryAllocateBlock):
+            (JSC::MarkedAllocator::shrink):
+            (JSC::MarkedAllocator::markedSpace):
+            * heap/MarkedAllocator.h:
+            (JSC::MarkedAllocator::nextAllocatorInSubspace):
+            (JSC::MarkedAllocator::setNextAllocatorInSubspace):
+            (JSC::MarkedAllocator::subspace):
+            (JSC::MarkedAllocator::tryAllocate): Deleted.
+            (JSC::MarkedAllocator::allocate): Deleted.
+            (JSC::MarkedAllocator::forEachBlock): Deleted.
+            * heap/MarkedAllocatorInlines.h: Added.
+            (JSC::MarkedAllocator::tryAllocate):
+            (JSC::MarkedAllocator::allocate):
+            (JSC::MarkedAllocator::forEachBlock):
+            (JSC::MarkedAllocator::forEachNotEmptyBlock):
+            * heap/MarkedBlock.cpp:
+            (JSC::MarkedBlock::Handle::subspace):
+            (JSC::MarkedBlock::Handle::sweep):
+            (JSC::MarkedBlock::Handle::specializedSweep): Deleted.
+            (JSC::MarkedBlock::Handle::sweepHelperSelectScribbleMode): Deleted.
+            (JSC::MarkedBlock::Handle::sweepHelperSelectEmptyMode): Deleted.
+            (JSC::MarkedBlock::Handle::sweepHelperSelectHasNewlyAllocated): Deleted.
+            (JSC::MarkedBlock::Handle::sweepHelperSelectSweepMode): Deleted.
+            (JSC::MarkedBlock::Handle::sweepHelperSelectMarksMode): Deleted.
+            * heap/MarkedBlock.h:
+            (JSC::MarkedBlock::Handle::visitWeakSet):
+            * heap/MarkedBlockInlines.h:
+            (JSC::MarkedBlock::Handle::isNewlyAllocatedStale):
+            (JSC::MarkedBlock::Handle::hasAnyNewlyAllocated):
+            (JSC::MarkedBlock::heap):
+            (JSC::MarkedBlock::space):
+            (JSC::MarkedBlock::Handle::space):
+            (JSC::MarkedBlock::Handle::specializedSweep):
+            (JSC::MarkedBlock::Handle::finishSweepKnowingSubspace):
+            (JSC::MarkedBlock::Handle::sweepDestructionMode):
+            (JSC::MarkedBlock::Handle::emptyMode):
+            (JSC::MarkedBlock::Handle::scribbleMode):
+            (JSC::MarkedBlock::Handle::newlyAllocatedMode):
+            (JSC::MarkedBlock::Handle::marksMode):
+            (JSC::MarkedBlock::Handle::forEachMarkedCell):
+            * heap/MarkedSpace.cpp:
+            (JSC::MarkedSpace::initializeSizeClassForStepSize):
+            (JSC::MarkedSpace::MarkedSpace):
+            (JSC::MarkedSpace::lastChanceToFinalize):
+            (JSC::MarkedSpace::addMarkedAllocator):
+            (JSC::MarkedSpace::allocate): Deleted.
+            (JSC::MarkedSpace::tryAllocate): Deleted.
+            (JSC::MarkedSpace::allocateLarge): Deleted.
+            (JSC::MarkedSpace::tryAllocateLarge): Deleted.
+            * heap/MarkedSpace.h:
+            (JSC::MarkedSpace::heap):
+            (JSC::MarkedSpace::allocatorLock):
+            (JSC::MarkedSpace::subspaceForObjectsWithDestructor): Deleted.
+            (JSC::MarkedSpace::subspaceForObjectsWithoutDestructor): Deleted.
+            (JSC::MarkedSpace::subspaceForAuxiliaryData): Deleted.
+            (JSC::MarkedSpace::allocatorFor): Deleted.
+            (JSC::MarkedSpace::destructorAllocatorFor): Deleted.
+            (JSC::MarkedSpace::auxiliaryAllocatorFor): Deleted.
+            (JSC::MarkedSpace::allocateWithoutDestructor): Deleted.
+            (JSC::MarkedSpace::allocateWithDestructor): Deleted.
+            (JSC::MarkedSpace::allocateAuxiliary): Deleted.
+            (JSC::MarkedSpace::tryAllocateAuxiliary): Deleted.
+            (JSC::MarkedSpace::forEachSubspace): Deleted.
+            * heap/MarkingConstraint.cpp:
+            (JSC::MarkingConstraint::MarkingConstraint):
+            * heap/MarkingConstraint.h:
+            (JSC::MarkingConstraint::volatility):
+            * heap/MarkingConstraintSet.cpp:
+            (JSC::MarkingConstraintSet::resetStats):
+            (JSC::MarkingConstraintSet::add):
+            (JSC::MarkingConstraintSet::executeConvergenceImpl):
+            * heap/MarkingConstraintSet.h:
+            * heap/SlotVisitor.cpp:
+            (JSC::SlotVisitor::visitChildren):
+            (JSC::SlotVisitor::visitAsConstraint):
+            (JSC::SlotVisitor::drain):
+            (JSC::SlotVisitor::addOpaqueRoot):
+            (JSC::SlotVisitor::mergeIfNecessary):
+            (JSC::SlotVisitor::mergeOpaqueRootsIfNecessary): Deleted.
+            * heap/SlotVisitor.h:
+            (JSC::SlotVisitor::setIgnoreNewOpaqueRoots):
+            * heap/SlotVisitorInlines.h:
+            (JSC::SlotVisitor::reportExtraMemoryVisited):
+            (JSC::SlotVisitor::reportExternalMemoryVisited):
+            * heap/Subspace.cpp: Added.
+            (JSC::Subspace::Subspace):
+            (JSC::Subspace::~Subspace):
+            (JSC::Subspace::finishSweep):
+            (JSC::Subspace::destroy):
+            (JSC::Subspace::allocate):
+            (JSC::Subspace::tryAllocate):
+            (JSC::Subspace::allocatorForSlow):
+            (JSC::Subspace::allocateSlow):
+            (JSC::Subspace::tryAllocateSlow):
+            * heap/Subspace.h: Added.
+            (JSC::Subspace::tryAllocatorFor):
+            (JSC::Subspace::allocatorFor):
+            * heap/SubspaceInlines.h: Added.
+            (JSC::Subspace::forEachMarkedBlock):
+            (JSC::Subspace::forEachNotEmptyMarkedBlock):
+            (JSC::Subspace::forEachLargeAllocation):
+            (JSC::Subspace::forEachMarkedCell):
+            * heap/WeakBlock.cpp:
+            (JSC::WeakBlock::specializedVisit):
+            * heap/WeakBlock.h:
+            * heap/WeakSet.h:
+            (JSC::WeakSet::visit):
+            * jit/AssemblyHelpers.h:
+            (JSC::AssemblyHelpers::emitAllocateJSObjectWithKnownSize):
+            (JSC::AssemblyHelpers::emitAllocateVariableSized):
+            (JSC::AssemblyHelpers::emitAllocateVariableSizedCell):
+            * jit/JITOpcodes.cpp:
+            (JSC::JIT::emit_op_new_object):
+            * jsc.cpp:
+            * runtime/ButterflyInlines.h:
+            (JSC::Butterfly::createUninitialized):
+            (JSC::Butterfly::growArrayRight):
+            * runtime/ClassInfo.h:
+            * runtime/ClonedArguments.cpp:
+            (JSC::ClonedArguments::createEmpty):
+            * runtime/DirectArguments.cpp:
+            (JSC::DirectArguments::overrideThings):
+            * runtime/GenericArgumentsInlines.h:
+            (JSC::GenericArguments<Type>::initModifiedArgumentsDescriptor):
+            * runtime/HashMapImpl.h:
+            (JSC::HashMapBuffer::create):
+            * runtime/JSArray.cpp:
+            (JSC::JSArray::tryCreateUninitialized):
+            (JSC::JSArray::unshiftCountSlowCase):
+            * runtime/JSArrayBufferView.cpp:
+            (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+            * runtime/JSCell.h:
+            (JSC::subspaceFor):
+            * runtime/JSCellInlines.h:
+            (JSC::JSCell::visitOutputConstraints):
+            (JSC::JSCell::subspaceFor):
+            (JSC::allocateCell):
+            * runtime/JSDestructibleObject.h:
+            (JSC::JSDestructibleObject::subspaceFor):
+            * runtime/JSDestructibleObjectSubspace.cpp: Added.
+            (JSC::JSDestructibleObjectSubspace::JSDestructibleObjectSubspace):
+            (JSC::JSDestructibleObjectSubspace::~JSDestructibleObjectSubspace):
+            (JSC::JSDestructibleObjectSubspace::finishSweep):
+            (JSC::JSDestructibleObjectSubspace::destroy):
+            * runtime/JSDestructibleObjectSubspace.h: Added.
+            * runtime/JSObject.h:
+            (JSC::JSObject::JSObject):
+            * runtime/JSObjectInlines.h:
+            * runtime/JSSegmentedVariableObject.h:
+            * runtime/JSString.h:
+            (JSC::JSString::subspaceFor):
+            * runtime/JSStringSubspace.cpp: Added.
+            (JSC::JSStringSubspace::JSStringSubspace):
+            (JSC::JSStringSubspace::~JSStringSubspace):
+            (JSC::JSStringSubspace::finishSweep):
+            (JSC::JSStringSubspace::destroy):
+            * runtime/JSStringSubspace.h: Added.
+            * runtime/RegExpMatchesArray.h:
+            (JSC::tryCreateUninitializedRegExpMatchesArray):
+            * runtime/VM.cpp:
+            (JSC::VM::VM):
+            * runtime/VM.h:
+
+2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210829. rdar://problem/30044439
 
     2017-01-16  Filip Pizlo  <fpizlo@apple.com>

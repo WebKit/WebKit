@@ -504,6 +504,7 @@ set(JavaScriptCore_SOURCES
     heap/SlotVisitor.cpp
     heap/SpaceTimeMutatorScheduler.cpp
     heap/StopIfNecessaryTimer.cpp
+    heap/Subspace.cpp
     heap/SynchronousStopTheWorldMutatorScheduler.cpp
     heap/VisitRaceKey.cpp
     heap/Weak.cpp
@@ -752,6 +753,7 @@ set(JavaScriptCore_SOURCES
     runtime/JSDataView.cpp
     runtime/JSDataViewPrototype.cpp
     runtime/JSDateMath.cpp
+    runtime/JSDestructibleObjectSubspace.cpp
     runtime/JSEnvironmentRecord.cpp
     runtime/JSFixedArray.cpp
     runtime/JSFunction.cpp
@@ -790,6 +792,7 @@ set(JavaScriptCore_SOURCES
     runtime/JSString.cpp
     runtime/JSStringIterator.cpp
     runtime/JSStringJoiner.cpp
+    runtime/JSStringSubspace.cpp
     runtime/JSSymbolTableObject.cpp
     runtime/JSTemplateRegistryKey.cpp
     runtime/JSTypedArrayConstructors.cpp

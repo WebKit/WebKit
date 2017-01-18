@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,7 +65,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
         void* temp;
         size_t size = sizeOf(length, elementSize);
         if (size) {
-            temp = vm.heap.tryAllocateAuxiliary(nullptr, size);
+            temp = vm.auxiliarySpace.tryAllocate(nullptr, size);
             if (!temp)
                 return;
         } else

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ConstraintVolatility.h"
 #include "VisitingTimeout.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
@@ -41,34 +42,18 @@ class MarkingConstraint {
     WTF_MAKE_NONCOPYABLE(MarkingConstraint);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum Volatility {
-        // FIXME: We could introduce a new kind of volatility called GreyedByResumption, which
-        // would mean running all of the times that GreyedByExecution runs except as a root in a
-        // full GC.
-        // https://bugs.webkit.org/show_bug.cgi?id=166830
-        
-        // The constraint needs to be reevaluated anytime the mutator runs: so at GC start and
-        // whenever the GC resuspends after a resumption. This is almost always something that
-        // you'd call a "root" in a traditional GC.
-        GreyedByExecution,
-        
-        // The constraint needs to be reevaluated any time any object is marked and anytime the
-        // mutator resumes.
-        GreyedByMarking
-    };
-    
-    MarkingConstraint(
+    JS_EXPORT_PRIVATE MarkingConstraint(
         CString abbreviatedName, CString name,
         ::Function<void(SlotVisitor&, const VisitingTimeout&)>,
-        Volatility);
+        ConstraintVolatility);
     
-    MarkingConstraint(
+    JS_EXPORT_PRIVATE MarkingConstraint(
         CString abbreviatedName, CString name,
         ::Function<void(SlotVisitor&, const VisitingTimeout&)>,
         ::Function<double(SlotVisitor&)>,
-        Volatility);
+        ConstraintVolatility);
     
-    ~MarkingConstraint();
+    JS_EXPORT_PRIVATE ~MarkingConstraint();
     
     unsigned index() const { return m_index; }
     
@@ -93,7 +78,7 @@ public:
         return lastVisitCount() + quickWorkEstimate(visitor);
     }
     
-    Volatility volatility() const { return m_volatility; }
+    ConstraintVolatility volatility() const { return m_volatility; }
     
 private:
     friend class MarkingConstraintSet; // So it can set m_index.
@@ -103,7 +88,7 @@ private:
     CString m_name;
     ::Function<void(SlotVisitor&, const VisitingTimeout& timeout)> m_executeFunction;
     ::Function<double(SlotVisitor&)> m_quickWorkEstimateFunction;
-    Volatility m_volatility;
+    ConstraintVolatility m_volatility;
     size_t m_lastVisitCount { 0 };
 };
 
