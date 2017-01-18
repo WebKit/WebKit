@@ -47,11 +47,20 @@
 @property (readonly, nonatomic) NSURLResponse *previewResponse;
 @end
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 #define kQLReturnPasswordProtected 1 << 2
+#else
+#define kQLReturnMask 0xaf00
+#define kQLReturnPasswordProtected (kQLReturnMask | 20)
+#endif
 
 #endif
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 static_assert(kQLReturnPasswordProtected == 4, "kQLReturnPasswordProtected should equal 4.");
+#else
+static_assert(kQLReturnPasswordProtected == 44832, "kQLReturnPasswordProtected should equal 44832.");
+#endif
 
 WTF_EXTERN_C_BEGIN
 
@@ -61,4 +70,3 @@ NSString *QLTypeCopyBestMimeTypeForURLAndMimeType(NSURL *, NSString *mimeType);
 NSString *QLTypeCopyUTIForURLAndMimeType(NSURL *, NSString *mimeType);
 
 WTF_EXTERN_C_END
-
