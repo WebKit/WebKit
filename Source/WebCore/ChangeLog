@@ -1,3 +1,21 @@
+2017-01-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GStreamer] media source tests crashing
+        https://bugs.webkit.org/show_bug.cgi?id=167158
+
+        Reviewed by Carlos Garcia Campos.
+
+        This fixes several media source tests which are asserting on debug builds,
+        such as:
+
+        - fast/history/page-cache-removed-source-buffer.html
+        - imported/w3c/web-platform-tests/media-source/
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::AppendPipeline): do not adopt the GStPipeline
+        upon creation. A regular assignment will do the right thing, sinking the
+        floating ref.
+
 2017-01-18  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Turn modern media controls on by default
