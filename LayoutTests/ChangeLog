@@ -1,5 +1,15 @@
 2017-01-18  Youenn Fablet  <youenn@apple.com>
 
+        [Streams API] ReadableStream generic reader constructor does not need to call ReadableStream getReader
+        https://bugs.webkit.org/show_bug.cgi?id=167137
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * streams/shadowing-getReader-expected.txt: Added.
+        * streams/shadowing-getReader.html: Added.
+
+2017-01-18  Youenn Fablet  <youenn@apple.com>
+
         Reject fetch promise in case of ReadableStream upload
         https://bugs.webkit.org/show_bug.cgi?id=167145
 
