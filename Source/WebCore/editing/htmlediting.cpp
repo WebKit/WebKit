@@ -496,11 +496,6 @@ static HTMLElement* lastInSpecialElement(const Position& position)
     return nullptr;
 }
 
-static bool isFirstVisiblePositionInSpecialElement(const Position& position)
-{
-    return firstInSpecialElement(position);
-}
-
 Position positionBeforeContainingSpecialElement(const Position& position, HTMLElement** containingSpecialElement)
 {
     auto* element = firstInSpecialElement(position);
@@ -514,11 +509,6 @@ Position positionBeforeContainingSpecialElement(const Position& position, HTMLEl
     return result;
 }
 
-static bool isLastVisiblePositionInSpecialElement(const Position& position)
-{
-    return lastInSpecialElement(position);
-}
-
 Position positionAfterContainingSpecialElement(const Position& position, HTMLElement** containingSpecialElement)
 {
     auto* element = lastInSpecialElement(position);
@@ -530,15 +520,6 @@ Position positionAfterContainingSpecialElement(const Position& position, HTMLEle
     if (containingSpecialElement)
         *containingSpecialElement = element;
     return result;
-}
-
-Position positionOutsideContainingSpecialElement(const Position& position, HTMLElement** containingSpecialElement)
-{
-    if (isFirstVisiblePositionInSpecialElement(position))
-        return positionBeforeContainingSpecialElement(position, containingSpecialElement);
-    if (isLastVisiblePositionInSpecialElement(position))
-        return positionAfterContainingSpecialElement(position, containingSpecialElement);
-    return position;
 }
 
 Element* isFirstPositionAfterTable(const VisiblePosition& position)
