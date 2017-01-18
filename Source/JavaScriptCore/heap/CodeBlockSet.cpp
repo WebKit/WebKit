@@ -65,10 +65,10 @@ void CodeBlockSet::lastChanceToFinalize()
 {
     LockHolder locker(&m_lock);
     for (CodeBlock* codeBlock : m_newCodeBlocks)
-        codeBlock->classInfo()->methodTable.destroy(codeBlock);
+        codeBlock->structure()->classInfo()->methodTable.destroy(codeBlock);
 
     for (CodeBlock* codeBlock : m_oldCodeBlocks)
-        codeBlock->classInfo()->methodTable.destroy(codeBlock);
+        codeBlock->structure()->classInfo()->methodTable.destroy(codeBlock);
 }
 
 void CodeBlockSet::deleteUnmarkedAndUnreferenced(CollectionScope scope)
@@ -83,7 +83,7 @@ void CodeBlockSet::deleteUnmarkedAndUnreferenced(CollectionScope scope)
             unmarked.append(codeBlock);
         }
         for (CodeBlock* codeBlock : unmarked) {
-            codeBlock->classInfo()->methodTable.destroy(codeBlock);
+            codeBlock->structure()->classInfo()->methodTable.destroy(codeBlock);
             set.remove(codeBlock);
         }
         unmarked.resize(0);

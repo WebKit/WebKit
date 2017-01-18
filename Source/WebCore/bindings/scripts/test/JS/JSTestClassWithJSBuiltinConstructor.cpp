@@ -173,7 +173,7 @@ bool JSTestClassWithJSBuiltinConstructorOwner::isReachableFromOpaqueRoots(JSC::H
 
 void JSTestClassWithJSBuiltinConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestClassWithJSBuiltinConstructor = jsCast<JSTestClassWithJSBuiltinConstructor*>(handle.slot()->asCell());
+    auto* jsTestClassWithJSBuiltinConstructor = static_cast<JSTestClassWithJSBuiltinConstructor*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestClassWithJSBuiltinConstructor->wrapped(), jsTestClassWithJSBuiltinConstructor);
 }

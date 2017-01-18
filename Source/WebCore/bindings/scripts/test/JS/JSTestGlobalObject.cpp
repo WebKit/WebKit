@@ -502,7 +502,7 @@ bool JSTestGlobalObjectOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknow
 
 void JSTestGlobalObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestGlobalObject = jsCast<JSTestGlobalObject*>(handle.slot()->asCell());
+    auto* jsTestGlobalObject = static_cast<JSTestGlobalObject*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestGlobalObject->wrapped(), jsTestGlobalObject);
 }

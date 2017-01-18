@@ -232,7 +232,7 @@ bool JSTestCEReactionsStringifierOwner::isReachableFromOpaqueRoots(JSC::Handle<J
 
 void JSTestCEReactionsStringifierOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestCEReactionsStringifier = jsCast<JSTestCEReactionsStringifier*>(handle.slot()->asCell());
+    auto* jsTestCEReactionsStringifier = static_cast<JSTestCEReactionsStringifier*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestCEReactionsStringifier->wrapped(), jsTestCEReactionsStringifier);
 }

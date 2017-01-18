@@ -42,7 +42,7 @@ void UnlinkedProgramCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 void UnlinkedProgramCodeBlock::destroy(JSCell* cell)
 {
-    jsCast<UnlinkedProgramCodeBlock*>(cell)->~UnlinkedProgramCodeBlock();
+    static_cast<UnlinkedProgramCodeBlock*>(cell)->~UnlinkedProgramCodeBlock();
 }
 
 }

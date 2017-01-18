@@ -379,21 +379,38 @@ bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef pr
     return result;
 }
 
+// API objects have private properties, which may get accessed during destruction. This
+// helper lets us get the ClassInfo of an API object from a function that may get called
+// during destruction.
+static const ClassInfo* classInfoPrivate(JSObject* jsObject)
+{
+    VM* vm = jsObject->vm();
+    
+    if (vm->currentlyDestructingCallbackObject != jsObject)
+        return jsObject->classInfo();
+
+    return vm->currentlyDestructingCallbackObjectClassInfo;
+}
+
 void* JSObjectGetPrivate(JSObjectRef object)
 {
     JSObject* jsObject = uncheckedToJS(object);
 
+    const ClassInfo* classInfo = classInfoPrivate(jsObject);
+    
     // Get wrapped object if proxied
-    if (jsObject->inherits(JSProxy::info()))
-        jsObject = jsCast<JSProxy*>(jsObject)->target();
+    if (classInfo->isSubClassOf(JSProxy::info())) {
+        jsObject = static_cast<JSProxy*>(jsObject)->target();
+        classInfo = jsObject->classInfo();
+    }
 
-    if (jsObject->inherits(JSCallbackObject<JSGlobalObject>::info()))
-        return jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivate();
-    if (jsObject->inherits(JSCallbackObject<JSDestructibleObject>::info()))
-        return jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->getPrivate();
+    if (classInfo->isSubClassOf(JSCallbackObject<JSGlobalObject>::info()))
+        return static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivate();
+    if (classInfo->isSubClassOf(JSCallbackObject<JSDestructibleObject>::info()))
+        return static_cast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->getPrivate();
 #if JSC_OBJC_API_ENABLED
-    if (jsObject->inherits(JSCallbackObject<JSAPIWrapperObject>::info()))
-        return jsCast<JSCallbackObject<JSAPIWrapperObject>*>(jsObject)->getPrivate();
+    if (classInfo->isSubClassOf(JSCallbackObject<JSAPIWrapperObject>::info()))
+        return static_cast<JSCallbackObject<JSAPIWrapperObject>*>(jsObject)->getPrivate();
 #endif
     
     return 0;
@@ -403,20 +420,24 @@ bool JSObjectSetPrivate(JSObjectRef object, void* data)
 {
     JSObject* jsObject = uncheckedToJS(object);
 
+    const ClassInfo* classInfo = classInfoPrivate(jsObject);
+    
     // Get wrapped object if proxied
-    if (jsObject->inherits(JSProxy::info()))
+    if (classInfo->isSubClassOf(JSProxy::info())) {
         jsObject = jsCast<JSProxy*>(jsObject)->target();
+        classInfo = jsObject->classInfo();
+    }
 
-    if (jsObject->inherits(JSCallbackObject<JSGlobalObject>::info())) {
+    if (classInfo->isSubClassOf(JSCallbackObject<JSGlobalObject>::info())) {
         jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivate(data);
         return true;
     }
-    if (jsObject->inherits(JSCallbackObject<JSDestructibleObject>::info())) {
+    if (classInfo->isSubClassOf(JSCallbackObject<JSDestructibleObject>::info())) {
         jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->setPrivate(data);
         return true;
     }
 #if JSC_OBJC_API_ENABLED
-    if (jsObject->inherits(JSCallbackObject<JSAPIWrapperObject>::info())) {
+    if (classInfo->isSubClassOf(JSCallbackObject<JSAPIWrapperObject>::info())) {
         jsCast<JSCallbackObject<JSAPIWrapperObject>*>(jsObject)->setPrivate(data);
         return true;
     }

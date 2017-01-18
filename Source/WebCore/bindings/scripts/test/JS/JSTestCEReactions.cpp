@@ -315,7 +315,7 @@ bool JSTestCEReactionsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown
 
 void JSTestCEReactionsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestCEReactions = jsCast<JSTestCEReactions*>(handle.slot()->asCell());
+    auto* jsTestCEReactions = static_cast<JSTestCEReactions*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestCEReactions->wrapped(), jsTestCEReactions);
 }

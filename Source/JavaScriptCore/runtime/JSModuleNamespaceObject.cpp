@@ -83,7 +83,7 @@ void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject* gl
 
 void JSModuleNamespaceObject::destroy(JSCell* cell)
 {
-    JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
+    JSModuleNamespaceObject* thisObject = static_cast<JSModuleNamespaceObject*>(cell);
     thisObject->JSModuleNamespaceObject::~JSModuleNamespaceObject();
 }
 

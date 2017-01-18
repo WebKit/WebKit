@@ -259,9 +259,26 @@ ALWAYS_INLINE bool Structure::checkOffsetConsistency() const
     if (isCompilationThread())
         return true;
     
-    RELEASE_ASSERT(numberOfSlotsForLastOffset(m_offset, m_inlineCapacity) == propertyTable->propertyStorageSize());
     unsigned totalSize = propertyTable->propertyStorageSize();
-    RELEASE_ASSERT((totalSize < inlineCapacity() ? 0 : totalSize - inlineCapacity()) == numberOfOutOfLineSlotsForLastOffset(m_offset));
+    unsigned inlineOverflowAccordingToTotalSize = totalSize < m_inlineCapacity ? 0 : totalSize - m_inlineCapacity;
+
+    auto fail = [&] (const char* description) {
+        dataLog("Detected offset inconsistency: ", description, "!\n");
+        dataLog("this = ", RawPointer(this), "\n");
+        dataLog("m_offset = ", m_offset, "\n");
+        dataLog("m_inlineCapacity = ", m_inlineCapacity, "\n");
+        dataLog("propertyTable = ", RawPointer(propertyTable), "\n");
+        dataLog("numberOfSlotsForLastOffset = ", numberOfSlotsForLastOffset(m_offset, m_inlineCapacity), "\n");
+        dataLog("totalSize = ", totalSize, "\n");
+        dataLog("inlineOverflowAccordingToTotalSize = ", inlineOverflowAccordingToTotalSize, "\n");
+        dataLog("numberOfOutOfLineSlotsForLastOffset = ", numberOfOutOfLineSlotsForLastOffset(m_offset), "\n");
+        UNREACHABLE_FOR_PLATFORM();
+    };
+    
+    if (numberOfSlotsForLastOffset(m_offset, m_inlineCapacity) != totalSize)
+        fail("numberOfSlotsForLastOffset doesn't match totalSize");
+    if (inlineOverflowAccordingToTotalSize != numberOfOutOfLineSlotsForLastOffset(m_offset))
+        fail("inlineOverflowAccordingToTotalSize doesn't match numberOfOutOfLineSlotsForLastOffset");
 
     return true;
 }

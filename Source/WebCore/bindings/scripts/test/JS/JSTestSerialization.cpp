@@ -397,7 +397,7 @@ bool JSTestSerializationOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unkno
 
 void JSTestSerializationOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto* jsTestSerialization = jsCast<JSTestSerialization*>(handle.slot()->asCell());
+    auto* jsTestSerialization = static_cast<JSTestSerialization*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestSerialization->wrapped(), jsTestSerialization);
 }

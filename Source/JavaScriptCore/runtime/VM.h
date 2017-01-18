@@ -354,6 +354,9 @@ public:
     Strong<JSCell> iterationTerminator;
     Strong<JSCell> emptyPropertyNameEnumerator;
 
+    JSCell* currentlyDestructingCallbackObject;
+    const ClassInfo* currentlyDestructingCallbackObjectClassInfo;
+
     AtomicStringTable* m_atomicStringTable;
     WTF::SymbolRegistry m_symbolRegistry;
     TemplateRegistryKeyTable m_templateRegistryKeytable;

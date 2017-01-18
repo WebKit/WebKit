@@ -1,5 +1,116 @@
 2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210829. rdar://problem/30044439
+
+    2017-01-16  Filip Pizlo  <fpizlo@apple.com>
+
+            JSCell::classInfo() shouldn't have a bunch of mitigations for being called during destruction
+            https://bugs.webkit.org/show_bug.cgi?id=167066
+
+            Reviewed by Keith Miller and Michael Saboff.
+
+            This reduces the size of JSCell::classInfo() by half and removes some checks that
+            this function previously had to do in case it was called from destructors.
+
+            I changed all of the destructors so that they don't call JSCell::classInfo() and I
+            added an assertion to JSCell::classInfo() to catch cases where someone called it
+            from a destructor accidentally.
+
+            This means that we only have one place in destruction that needs to know the class:
+            the sweeper's call to the destructor.
+
+            One of the trickiest outcomes of this is the need to support inherits() tests in
+            JSObjectGetPrivate(), when it is called from the destructor callback on the object
+            being destructed. JSObjectGetPrivate() is undefined behavior anyway if you use it
+            on any dead-but-not-destructed object other than the one being destructed right
+            now. The purpose of the inherits() tests is to distinguish between different kinds
+            of CallbackObjects, which may have different kinds of base classes. I think that
+            this was always subtly wrong - for example, if the object being destructed is a
+            JSGlobalObject then it's not a DestructibleObject, is not in a destructor block,
+            but does not have an immortal Structure - so classInfo() is not valid. This fixes
+            the issue by having ~JSCallbackObject know its classInfo. It now stashes its
+            classInfo in VM so that JSObjectGetPrivate can use that classInfo if it detects
+            that it's being used on a currently-destructing object.
+
+            That was the only really weird part of this patch. The rest is mostly removing
+            illegal uses of jsCast<> in destructors. There were a few other genuine uses of
+            classInfo() but they were in code that already knew how to get its classInfo()
+            using other means:
+
+            - You can still say structure()->classInfo(), and I use this form in code that
+              knows that its StructureIsImmortal.
+
+            - You can use this->classInfo() if it's overridden, like in subclasses of
+              JSDestructibleObject.
+
+            Rolling this back in because I think I fixed the crashes.
+
+            * API/JSAPIWrapperObject.mm:
+            (JSAPIWrapperObjectHandleOwner::finalize):
+            * API/JSCallbackObject.h:
+            * API/JSCallbackObjectFunctions.h:
+            (JSC::JSCallbackObject<Parent>::~JSCallbackObject):
+            (JSC::JSCallbackObject<Parent>::init):
+            * API/JSObjectRef.cpp:
+            (classInfoPrivate):
+            (JSObjectGetPrivate):
+            (JSObjectSetPrivate):
+            * bytecode/EvalCodeBlock.cpp:
+            (JSC::EvalCodeBlock::destroy):
+            * bytecode/FunctionCodeBlock.cpp:
+            (JSC::FunctionCodeBlock::destroy):
+            * bytecode/ModuleProgramCodeBlock.cpp:
+            (JSC::ModuleProgramCodeBlock::destroy):
+            * bytecode/ProgramCodeBlock.cpp:
+            (JSC::ProgramCodeBlock::destroy):
+            * bytecode/UnlinkedEvalCodeBlock.cpp:
+            (JSC::UnlinkedEvalCodeBlock::destroy):
+            * bytecode/UnlinkedFunctionCodeBlock.cpp:
+            (JSC::UnlinkedFunctionCodeBlock::destroy):
+            * bytecode/UnlinkedFunctionExecutable.cpp:
+            (JSC::UnlinkedFunctionExecutable::destroy):
+            * bytecode/UnlinkedModuleProgramCodeBlock.cpp:
+            (JSC::UnlinkedModuleProgramCodeBlock::destroy):
+            * bytecode/UnlinkedProgramCodeBlock.cpp:
+            (JSC::UnlinkedProgramCodeBlock::destroy):
+            * heap/CodeBlockSet.cpp:
+            (JSC::CodeBlockSet::lastChanceToFinalize):
+            (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced):
+            * heap/MarkedAllocator.cpp:
+            (JSC::MarkedAllocator::allocateSlowCaseImpl):
+            * heap/MarkedBlock.cpp:
+            (JSC::MarkedBlock::Handle::sweep):
+            * jit/JITThunks.cpp:
+            (JSC::JITThunks::finalize):
+            * runtime/AbstractModuleRecord.cpp:
+            (JSC::AbstractModuleRecord::destroy):
+            * runtime/ExecutableBase.cpp:
+            (JSC::ExecutableBase::clearCode):
+            * runtime/JSCellInlines.h:
+            (JSC::JSCell::classInfo):
+            (JSC::JSCell::callDestructor):
+            * runtime/JSLock.h:
+            (JSC::JSLock::ownerThread):
+            * runtime/JSModuleNamespaceObject.cpp:
+            (JSC::JSModuleNamespaceObject::destroy):
+            * runtime/JSModuleRecord.cpp:
+            (JSC::JSModuleRecord::destroy):
+            * runtime/JSPropertyNameEnumerator.cpp:
+            (JSC::JSPropertyNameEnumerator::destroy):
+            * runtime/JSSegmentedVariableObject.h:
+            * runtime/SymbolTable.cpp:
+            (JSC::SymbolTable::destroy):
+            * runtime/VM.h:
+            * wasm/js/JSWebAssemblyCallee.cpp:
+            (JSC::JSWebAssemblyCallee::destroy):
+            * wasm/js/WebAssemblyModuleRecord.cpp:
+            (JSC::WebAssemblyModuleRecord::destroy):
+            * wasm/js/WebAssemblyToJSCallee.cpp:
+            (JSC::WebAssemblyToJSCallee::WebAssemblyToJSCallee):
+            (JSC::WebAssemblyToJSCallee::destroy):
+
+2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210745. rdar://problem/30019309
 
     2017-01-13  Saam Barati  <sbarati@apple.com>

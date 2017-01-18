@@ -212,7 +212,7 @@ void* MarkedAllocator::allocateSlowCaseImpl(GCDeferralContext* deferralContext, 
     
     didConsumeFreeList();
     
-    AllocatingScope healpingHeap(*m_heap);
+    AllocatingScope helpingHeap(*m_heap);
 
     m_heap->collectIfNecessaryOrDefer(deferralContext);
     
