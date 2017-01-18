@@ -1,3 +1,16 @@
+2017-01-18  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Clipboard tests are flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=167088
+
+        Reviewed by Brent Fulgham.
+
+        Tests involving the clipboard are flaky when running with multiple DRTs, since the clipboard is global. 
+        We can fix this by assigning each DRT a separate window station (each window station has its own clipboard).
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+
 2017-01-18  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Turn modern media controls on by default

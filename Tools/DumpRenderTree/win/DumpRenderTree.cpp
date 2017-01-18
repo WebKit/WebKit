@@ -1471,6 +1471,28 @@ int main(int argc, const char* argv[])
     // Redirect stdout to stderr.
     int result = _dup2(_fileno(stderr), 1);
 
+    // Tests involving the clipboard are flaky when running with multiple DRTs, since the clipboard is global.
+    // We can fix this by assigning each DRT a separate window station (each window station has its own clipboard).
+    DWORD processId = ::GetCurrentProcessId();
+    String windowStationName = String::format("windowStation%d", processId);
+    String desktopName = String::format("desktop%d", processId);
+    HDESK desktop = nullptr;
+
+    auto windowsStation = ::CreateWindowStation(windowStationName.charactersWithNullTermination().data(), CWF_CREATE_ONLY, WINSTA_ALL_ACCESS, nullptr);
+    if (windowsStation) {
+        if (!::SetProcessWindowStation(windowsStation))
+            fprintf(stderr, "SetProcessWindowStation failed with error %d\n", ::GetLastError());
+
+        desktop = ::CreateDesktop(desktopName.charactersWithNullTermination().data(), nullptr, nullptr, 0, GENERIC_ALL, nullptr);
+        if (!desktop)
+            fprintf(stderr, "Failed to create desktop with error %d\n", ::GetLastError());
+    } else {
+        DWORD error = ::GetLastError();
+        fprintf(stderr, "Failed to create window station with error %d\n", error);
+        if (error == ERROR_ACCESS_DENIED)
+            fprintf(stderr, "DumpRenderTree should be run as Administrator!\n");
+    }
+
     initialize();
 
     setDefaultsToConsistentValuesForTesting();
@@ -1572,6 +1594,11 @@ int main(int argc, const char* argv[])
 #ifdef _CRTDBG_MAP_ALLOC
     _CrtDumpMemoryLeaks();
 #endif
+
+    if (desktop)
+        ::CloseDesktop(desktop);
+    if (windowsStation)
+        ::CloseWindowStation(windowsStation);
 
     ::OleUninitialize();
 
