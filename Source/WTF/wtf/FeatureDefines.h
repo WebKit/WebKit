@@ -767,6 +767,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_WEB_TIMING 0
 #endif
 
+#if !defined(ENABLE_USER_TIMING)
+#define ENABLE_USER_TIMING 0
+#endif
+
 #if !defined(ENABLE_WILL_REVEAL_EDGE_EVENTS)
 #define ENABLE_WILL_REVEAL_EDGE_EVENTS 1
 #endif

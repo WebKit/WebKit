@@ -120,7 +120,6 @@ my (
     $readableByteStreamAPISupport,
     $registerProtocolHandlerSupport,
     $resolutionMediaQuerySupport,
-    $resourceTimingSupport,
     $scriptedSpeechSupport,
     $subtleCrypto,
     $svgFontsSupport,
@@ -361,9 +360,6 @@ my @features = (
 
     { option => "resolution-media-query", desc => "Toggle resolution media query support",
       define => "ENABLE_RESOLUTION_MEDIA_QUERY", default => isEfl(), value => \$resolutionMediaQuerySupport },
-
-    { option => "resource-timing", desc => "Toggle Resource Timing support",
-      define => "ENABLE_RESOURCE_TIMING", default => isGtk(), value => \$resourceTimingSupport },
 
     { option => "scripted-speech", desc => "Toggle Scripted Speech support",
       define => "ENABLE_SCRIPTED_SPEECH", default => 0, value => \$scriptedSpeechSupport },
