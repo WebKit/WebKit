@@ -1,3 +1,16 @@
+2017-01-17  Andreas Kling  <akling@apple.com>
+
+        WidthCache should be off while under memory pressure.
+        <https://webkit.org/b/167141>
+
+        Reviewed by Antti Koivisto.
+
+        Since we empty all the WidthCaches when we come under memory pressure, we shouldn't
+        repopulate them until the pressure has gone away.
+
+        * platform/graphics/WidthCache.h:
+        (WebCore::WidthCache::add):
+
 2017-01-17  Antti Koivisto  <antti@apple.com>
 
         Persist derived data
