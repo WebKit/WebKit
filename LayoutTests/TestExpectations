@@ -908,8 +908,6 @@ media/video-contained-in-fullscreen-element-going-into-pip.html [ WontFix ]
 
 webkit.org/b/159370 [ Debug ] fast/history/page-cache-destroy-document.html [ Skip ]
 
-webkit.org/b/159678 http/tests/preload/single_download_preload_runner.html [ Timeout ]
-
 # This test is way too slow for debug.
 [ Debug ] workers/bomb.html [ Skip ]
 # This test is just way too slow.

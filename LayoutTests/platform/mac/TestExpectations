@@ -1355,9 +1355,6 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 [ Sierra+ ] http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html [ Skip ]
 [ Sierra+ ] http/tests/security/contentSecurityPolicy/video-redirect-allowed2.html [ Skip ]
 
-# <rdar://problem/26590623> LayoutTest http/tests/preload/single_download_preload_runner.html failing
-[ Sierra+ ] http/tests/preload/single_download_preload_runner.html [ Pass Timeout Failure ]
-
 # rdar://problem/26952627
 [ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ Pass ImageOnlyFailure ]
 [ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ Pass ImageOnlyFailure ]
