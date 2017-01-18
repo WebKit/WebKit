@@ -1,3 +1,65 @@
+2017-01-18  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Support password-protected documents
+        https://bugs.webkit.org/show_bug.cgi?id=167153
+        <rdar://problem/28544527>
+
+        Reviewed by Alex Christensen.
+
+        Added support for previewing password-protected documents. If a document is
+        password-protected, QLPreviewConverter will call -connection:didFailWithError: with an error
+        code of kQLReturnPasswordProtected. When this happens, QuickLookHandle will ask the client
+        for a password, create a new QLPreviewConverter with the password specified in an options
+        dictionary, and replay the buffered input data into the converter. QLPreviewConverter will
+        then send the converted document data to its delegate as usual.
+        
+        Password entry UI will be added later; this patch implements the necessary QuickLookHandle
+        logic and adds support for testing.
+
+        Test: quicklook/password-protected.html
+
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/ios/QuickLook.h: Declared setClientForTesting().
+        * loader/ios/QuickLook.mm: 
+        (testingClient): Created a static RefPtr to hold the testing client.
+        (testingOrEmptyClient): Returns the testing client if it's set, otherwise returns the empty client.
+        (-[WebPreviewConverter initWithResourceLoader:resourceResponse:quickLookHandle:]):
+        Initialized _client to testingOrEmptyClient(), stored the ResourceResponse's nsURLResponse()
+        in _originalResponse, and initialized _bufferedDataArray.
+        (-[WebPreviewConverter setClient:]): Ignore the new client if there is already a testing client.
+        (-[WebPreviewConverter appendDataArray:]): Stored the data array in _bufferedDataArray.
+        (-[WebPreviewConverter _sendDidReceiveResponseIfNecessary]): Cleared _bufferedDataArray.
+        (-[WebPreviewConverter connection:didReceiveData:lengthReceived:]): Changed the
+        UNUSED_PARAM() to an ASSERT_UNUSED().
+        (-[WebPreviewConverter connectionDidFinishLoading:]): Ditto.
+        (-[WebPreviewConverter connection:didFailWithError:]): If the error code is
+        kQLReturnPasswordProtected and the domain is QuickLookErrorDomain, request a password from
+        the client then create a new QLPreviewConverter with the password specified in the options dictionary.
+        (WebCore::QuickLookHandle::setClientForTesting): Set testingClient() to the specified client.
+        * platform/ios/QuickLookSoftLink.h: Soft-linked kQLPreviewOptionPasswordKey.
+        * platform/ios/QuickLookSoftLink.mm: Ditto.
+        * platform/network/ios/QuickLookHandleClient.h:
+        (WebCore::QuickLookHandleClient::supportsPasswordEntry): Added. Tells QuickLookHandle
+        whether the client supports password entry.
+        (WebCore::QuickLookHandleClient::didRequestPassword): Added. Asks the client to specify a
+        password in the completionHandler lambda.
+        * platform/spi/ios/QuickLookSPI.h: Declared kQLReturnPasswordProtected for the public SDK
+        and asserted that its value is 4.
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState): Reset the MockQuickLookHandleClient password
+        to the empty string and uninstalled the testing client.
+        (WebCore::Internals::setQuickLookPassword): Installed the testing client and set a password
+        on the MockQuickLookHandleClient.
+        * testing/Internals.h: 
+        * testing/Internals.idl: Defined Internals.setQuickLookPassword().
+        * testing/MockQuickLookHandleClient.cpp: Added.
+        (WebCore::MockQuickLookHandleClient::singleton): Returned a shared MockQuickLookHandleClient.
+        (WebCore::MockQuickLookHandleClient::didRequestPassword): Dispatched a lambda on the
+        main-or-Web-thread run loop to call the completionHandler with the specified password.
+        This simulates the delay that would happen when prompting the user for a password.
+        * testing/MockQuickLookHandleClient.h: Added.
+
 2017-01-18  Youenn Fablet  <youenn@apple.com>
 
         [Streams API] ReadableStream generic reader constructor does not need to call ReadableStream getReader

@@ -224,6 +224,11 @@
 #include "PointerLockController.h"
 #endif
 
+#if USE(QUICK_LOOK)
+#include "MockQuickLookHandleClient.h"
+#include "QuickLook.h"
+#endif
+
 using JSC::CallData;
 using JSC::CallType;
 using JSC::CodeBlock;
@@ -424,6 +429,11 @@ void Internals::resetToConsistentState(Page& page)
 #endif
 
     page.setShowAllPlugins(false);
+
+#if USE(QUICK_LOOK)
+    MockQuickLookHandleClient::singleton().setPassword("");
+    QuickLookHandle::setClientForTesting(nullptr);
+#endif
 }
 
 Internals::Internals(Document& document)
@@ -3651,5 +3661,14 @@ Vector<String> Internals::accessKeyModifiers() const
 
     return accessKeyModifierStrings;
 }
+
+#if USE(QUICK_LOOK)
+void Internals::setQuickLookPassword(const String& password)
+{
+    auto& quickLookHandleClient = MockQuickLookHandleClient::singleton();
+    QuickLookHandle::setClientForTesting(&quickLookHandleClient);
+    quickLookHandleClient.setPassword(password);
+}
+#endif
 
 } // namespace WebCore

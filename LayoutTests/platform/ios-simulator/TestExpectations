@@ -2830,3 +2830,6 @@ webkit.org/b/166736 fast/scrolling/page-cache-back-overflow-scroll-restore.html 
 
 # editing/caret/ios/emoji.html is used instead.
 editing/caret/emoji.html [ Failure ]
+
+# Requires changes to QuickLook.framework tracked by rdar://problem/28544527
+quicklook/password-protected.html [ Skip ]

@@ -82,6 +82,7 @@ public:
     void didFail();
 
     WEBCORE_EXPORT void setClient(Ref<QuickLookHandleClient>&&);
+    WEBCORE_EXPORT static void setClientForTesting(RefPtr<QuickLookHandleClient>&&);
 
     WEBCORE_EXPORT String previewFileName() const;
     WEBCORE_EXPORT String previewUTI() const;

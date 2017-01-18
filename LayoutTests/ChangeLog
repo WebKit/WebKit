@@ -1,3 +1,17 @@
+2017-01-18  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Support password-protected documents
+        https://bugs.webkit.org/show_bug.cgi?id=167153
+        <rdar://problem/28544527>
+
+        Reviewed by Alex Christensen.
+
+        * platform/ios-simulator/TestExpectations: Temporarily skipped the new test until the
+        necessary support is available in QuickLook.framework.
+        * quicklook/password-protected-expected.html: Added.
+        * quicklook/password-protected.html: Added.
+        * quicklook/resources/password-protected.pages: Added.
+
 2017-01-18  Youenn Fablet  <youenn@apple.com>
 
         [Streams API] ReadableStream generic reader constructor does not need to call ReadableStream getReader

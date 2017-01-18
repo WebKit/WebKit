@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,5 +42,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, QuickLook, QLTypeCopyUTIForURLAndMimeType
 
 SOFT_LINK_POINTER_FOR_HEADER(WebCore, QuickLook, QLPreviewScheme, NSString *)
 #define QLPreviewScheme get_QuickLook_QLPreviewScheme()
+
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, QuickLook, kQLPreviewOptionPasswordKey, CFStringRef)
+#define kQLPreviewOptionPasswordKey get_QuickLook_kQLPreviewOptionPasswordKey()
 
 #endif // USE(QUICK_LOOK)

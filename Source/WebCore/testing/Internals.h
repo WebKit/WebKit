@@ -531,6 +531,10 @@ public:
 
     Vector<String> accessKeyModifiers() const;
 
+#if USE(QUICK_LOOK)
+    void setQuickLookPassword(const String&);
+#endif
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

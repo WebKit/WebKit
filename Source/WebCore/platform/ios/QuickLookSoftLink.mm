@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,5 +39,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, QuickLook, QLTypeCopyBestMimeTypeForURLAn
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, QuickLook, QLTypeCopyUTIForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
 
 SOFT_LINK_POINTER_FOR_SOURCE(WebCore, QuickLook, QLPreviewScheme, NSString *)
+
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, QuickLook, kQLPreviewOptionPasswordKey, CFStringRef)
 
 #endif // USE(QUICK_LOOK)

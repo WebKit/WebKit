@@ -747,6 +747,7 @@ list(APPEND WebCoreTestSupport_SOURCES
     testing/Internals.mm
     testing/MockContentFilter.cpp
     testing/MockContentFilterSettings.cpp
+    testing/MockQuickLookHandleClient.cpp
 
     testing/cocoa/WebArchiveDumpSupport.mm
 )

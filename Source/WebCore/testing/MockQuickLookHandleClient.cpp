@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "MockQuickLookHandleClient.h"
 
 #if USE(QUICK_LOOK)
 
-#include <CoreFoundation/CoreFoundation.h>
-#include <wtf/Function.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
-class QuickLookHandleClient : public RefCounted<QuickLookHandleClient> {
-public:
-    virtual ~QuickLookHandleClient() { }
-    virtual void didReceiveDataArray(CFArrayRef) { }
-    virtual void didFinishLoading() { }
-    virtual void didFail() { }
-    virtual bool supportsPasswordEntry() const { return false; }
-    virtual void didRequestPassword(Function<void(const String&)>&& completionHandler) { completionHandler(""); }
-};
+MockQuickLookHandleClient& MockQuickLookHandleClient::singleton()
+{
+    static NeverDestroyed<MockQuickLookHandleClient> sharedClient;
+    return sharedClient.get();
+}
+
+void MockQuickLookHandleClient::didRequestPassword(Function<void(const String&)>&& completionHandler)
+{
+    ASSERT(isMainThread());
+    RunLoop::current().dispatch([completionHandler = WTFMove(completionHandler), password = m_password] {
+        completionHandler(password);
+    });
+}
 
 } // namespace WebCore
 
