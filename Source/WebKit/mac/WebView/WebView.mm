@@ -582,6 +582,38 @@ static WebPageVisibilityState kit(PageVisibilityState visibilityState)
     return WebPageVisibilityStateVisible;
 }
 
+namespace WebKit {
+
+class DeferredPageDestructor {
+public:
+    static void createDeferredPageDestructor(std::unique_ptr<Page> page)
+    {
+        new DeferredPageDestructor(WTFMove(page));
+    }
+
+private:
+    DeferredPageDestructor(std::unique_ptr<Page> page)
+        : m_page(WTFMove(page))
+    {
+        tryDestruction();
+    }
+
+    void tryDestruction()
+    {
+        if (m_page->insideNestedRunLoop()) {
+            m_page->whenUnnested([this] { tryDestruction(); });
+            return;
+        }
+
+        m_page = nullptr;
+        delete this;
+    }
+
+    std::unique_ptr<Page> m_page;
+};
+
+} // namespace WebKit
+
 @interface WebView (WebFileInternal)
 #if !PLATFORM(IOS)
 - (float)_deviceScaleFactor;
@@ -2148,8 +2180,8 @@ static bool fastDocumentTeardownEnabled()
     // all the plug-ins in the page cache to break any retain cycles.
     // See comment in HistoryItem::releaseAllPendingPageCaches() for more information.
     Page* page = _private->page;
-    _private->page = 0;
-    delete page;
+    _private->page = nullptr;
+    WebKit::DeferredPageDestructor::createDeferredPageDestructor(std::unique_ptr<Page>(page));
 
 #if !PLATFORM(IOS)
     if (_private->hasSpellCheckerDocumentTag) {

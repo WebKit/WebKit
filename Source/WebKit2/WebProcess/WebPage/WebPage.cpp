@@ -144,6 +144,7 @@
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/InspectorController.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -276,6 +277,37 @@ public:
 
 private:
     WebPage* m_page;
+};
+
+class DeferredPageDestructor {
+public:
+    static void createDeferredPageDestructor(std::unique_ptr<Page> page, WebPage* webPage)
+    {
+        new DeferredPageDestructor(WTFMove(page), webPage);
+    }
+
+private:
+    DeferredPageDestructor(std::unique_ptr<Page> page, WebPage* webPage)
+        : m_page(WTFMove(page))
+        , m_webPage(webPage)
+    {
+        tryDestruction();
+    }
+
+    void tryDestruction()
+    {
+        if (m_page->insideNestedRunLoop()) {
+            m_page->whenUnnested([this] { tryDestruction(); });
+            return;
+        }
+
+        m_page = nullptr;
+        m_webPage = nullptr;
+        delete this;
+    }
+
+    std::unique_ptr<Page> m_page;
+    RefPtr<WebPage> m_webPage;
 };
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageCounter, ("WebPage"));
@@ -1023,6 +1055,8 @@ void WebPage::close()
         m_inspector = nullptr;
     }
 
+    m_page->inspectorController().disconnectAllFrontends();
+
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenManager = nullptr;
 #endif
@@ -1080,8 +1114,9 @@ void WebPage::close()
 
     m_printContext = nullptr;
     m_mainFrame->coreFrame()->loader().detachFromParent();
-    m_page = nullptr;
     m_drawingArea = nullptr;
+
+    DeferredPageDestructor::createDeferredPageDestructor(WTFMove(m_page), this);
 
     bool isRunningModal = m_isRunningModal;
     m_isRunningModal = false;
@@ -2398,7 +2433,6 @@ void WebPage::gestureEvent(const WebGestureEvent& gestureEvent)
     bool handled = handleGestureEvent(gestureEvent, m_page.get());
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(gestureEvent.type()), handled));
 }
-
 #endif
 
 bool WebPage::scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)

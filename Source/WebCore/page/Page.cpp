@@ -189,7 +189,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_plugInClient(pageConfiguration.plugInClient)
     , m_validationMessageClient(WTFMove(pageConfiguration.validationMessageClient))
     , m_diagnosticLoggingClient(WTFMove(pageConfiguration.diagnosticLoggingClient))
-    , m_subframeCount(0)
     , m_openedByDOM(false)
     , m_tabKeyCyclesThroughElements(true)
     , m_defersLoading(false)
@@ -275,6 +274,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
 
 Page::~Page()
 {
+    ASSERT(!m_nestedRunLoopCount);
+    ASSERT(!m_unnestCallback);
+
     m_validationMessageClient = nullptr;
     m_diagnosticLoggingClient = nullptr;
     m_mainFrame->setView(nullptr);
@@ -1579,6 +1581,41 @@ void Page::addFooterWithHeight(int footerHeight)
     renderView->compositor().updateLayerForFooter(m_footerHeight);
 }
 #endif
+
+void Page::incrementNestedRunLoopCount()
+{
+    m_nestedRunLoopCount++;
+}
+
+void Page::decrementNestedRunLoopCount()
+{
+    ASSERT(m_nestedRunLoopCount);
+    if (m_nestedRunLoopCount <= 0)
+        return;
+
+    m_nestedRunLoopCount--;
+
+    if (!m_nestedRunLoopCount && m_unnestCallback) {
+        callOnMainThread([this] {
+            if (insideNestedRunLoop())
+                return;
+
+            // This callback may destruct the Page.
+            if (m_unnestCallback) {
+                auto callback = m_unnestCallback;
+                m_unnestCallback = nullptr;
+                callback();
+            }
+        });
+    }
+}
+
+void Page::whenUnnested(std::function<void()> callback)
+{
+    ASSERT(!m_unnestCallback);
+
+    m_unnestCallback = callback;
+}
 
 #if ENABLE(REMOTE_INSPECTOR)
 bool Page::remoteInspectionAllowed() const

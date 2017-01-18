@@ -114,9 +114,13 @@ void PageScriptDebugServer::runEventLoopWhilePausedInternal()
 {
     TimerBase::fireTimersInNestedEventLoop();
 
+    m_page.incrementNestedRunLoopCount();
+
     EventLoop loop;
     while (!m_doneProcessingDebuggerEvents && !loop.ended())
         loop.cycle();
+
+    m_page.decrementNestedRunLoopCount();
 }
 
 bool PageScriptDebugServer::isContentScript(ExecState* exec) const
