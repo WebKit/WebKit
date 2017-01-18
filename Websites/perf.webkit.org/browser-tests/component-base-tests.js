@@ -4,7 +4,7 @@ describe('ComponentBase', function() {
     function createTestToCheckExistenceOfShadowTree(callback, options = {htmlTemplate: false, cssTemplate: true})
     {
         const context = new BrowsingContext();
-        return context.importScript('../public/v3/components/base.js', 'ComponentBase').then((ComponentBase) => {
+        return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
             class SomeComponent extends ComponentBase { }
             if (options.htmlTemplate)
                 SomeComponent.htmlTemplate = () => { return '<div style="height: 10px;"></div>'; };
@@ -20,13 +20,13 @@ describe('ComponentBase', function() {
 
     describe('constructor', () => {
         it('is a function', () => {
-            return new BrowsingContext().importScript('../public/v3/components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return new BrowsingContext().importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
                 expect(ComponentBase).toBeA('function');
             });
         });
 
         it('can be instantiated', () => {
-            return new BrowsingContext().importScript('../public/v3/components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return new BrowsingContext().importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
                 let callCount = 0;
                 class SomeComponent extends ComponentBase {
                     constructor() {
@@ -51,7 +51,7 @@ describe('ComponentBase', function() {
     describe('element()', () => {
         it('must return an element', () => {
             const context = new BrowsingContext();
-            return context.importScript('../public/v3/components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
                 class SomeComponent extends ComponentBase { }
                 let instance = new SomeComponent('some-component');
                 expect(instance.element()).toBeA(context.global.HTMLElement);
@@ -59,7 +59,7 @@ describe('ComponentBase', function() {
         });
 
         it('must return an element whose component() matches the component', () => {
-            return new BrowsingContext().importScript('../public/v3/components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return new BrowsingContext().importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
                 class SomeComponent extends ComponentBase { }
                 let instance = new SomeComponent('some-component');
                 expect(instance.element().component()).toBe(instance);
@@ -87,6 +87,187 @@ describe('ComponentBase', function() {
                 expect(instance.content()).toBe(instance.content());
             });
         });
+    });
+
+    describe('enqueueToRender()', () => {
+        it('must not immediately call render()', () => {
+            const context = new BrowsingContext();
+            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+                context.global.requestAnimationFrame = () => {}
+
+                let renderCallCount = 0;
+                const SomeComponent = class extends ComponentBase {
+                    render() { renderCallCount++; }
+                }
+                ComponentBase.defineElement('some-component', SomeComponent);
+
+                (new SomeComponent).enqueueToRender();
+                expect(renderCallCount).toBe(0);
+
+                (new SomeComponent).enqueueToRender();
+                expect(renderCallCount).toBe(0);
+            });
+        });
+
+        it('must request an animation frame exactly once', () => {
+            const context = new BrowsingContext();
+            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+                let requestAnimationFrameCount = 0;
+                context.global.requestAnimationFrame = () => { requestAnimationFrameCount++; }
+
+                const SomeComponent = class extends ComponentBase { }
+                ComponentBase.defineElement('some-component', SomeComponent);
+
+                expect(requestAnimationFrameCount).toBe(0);
+                let instance = new SomeComponent;
+                instance.enqueueToRender();
+                expect(requestAnimationFrameCount).toBe(1);
+
+                instance.enqueueToRender();
+                expect(requestAnimationFrameCount).toBe(1);
+
+                (new SomeComponent).enqueueToRender();
+                expect(requestAnimationFrameCount).toBe(1);
+
+                const AnotherComponent = class extends ComponentBase { }
+                ComponentBase.defineElement('another-component', AnotherComponent);
+                (new AnotherComponent).enqueueToRender();
+                expect(requestAnimationFrameCount).toBe(1);
+            });
+        });
+
+        it('must invoke render() when the callback to requestAnimationFrame is called', () => {
+            const context = new BrowsingContext();
+            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+                let callback = null;
+                context.global.requestAnimationFrame = (newCallback) => {
+                    expect(callback).toBe(null);
+                    expect(newCallback).toNotBe(null);
+                    callback = newCallback;
+                }
+
+                let renderCalls = [];
+                const SomeComponent = class extends ComponentBase {
+                    render() {
+                        renderCalls.push(this);
+                    }
+                }
+                ComponentBase.defineElement('some-component', SomeComponent);
+
+                expect(renderCalls.length).toBe(0);
+                const instance = new SomeComponent;
+                instance.enqueueToRender();
+                instance.enqueueToRender();
+
+                const anotherInstance = new SomeComponent;
+                anotherInstance.enqueueToRender();
+                expect(renderCalls.length).toBe(0);
+
+                callback();
+
+                expect(renderCalls.length).toBe(2);
+                expect(renderCalls[0]).toBe(instance);
+                expect(renderCalls[1]).toBe(anotherInstance);
+            });
+        });
+
+        it('must immediately invoke render() on a component enqueued inside another render() call', () => {
+            const context = new BrowsingContext();
+            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+                let callback = null;
+                context.global.requestAnimationFrame = (newCallback) => {
+                    expect(callback).toBe(null);
+                    expect(newCallback).toNotBe(null);
+                    callback = newCallback;
+                }
+
+                let renderCalls = [];
+                let instanceToEnqueue = null;
+                const SomeComponent = class extends ComponentBase {
+                    render() {
+                        renderCalls.push(this);
+                        if (instanceToEnqueue)
+                            instanceToEnqueue.enqueueToRender();
+                        instanceToEnqueue = null;
+                    }
+                }
+                ComponentBase.defineElement('some-component', SomeComponent);
+
+                expect(renderCalls.length).toBe(0);
+                const instance = new SomeComponent;
+                const anotherInstance = new SomeComponent;
+                instance.enqueueToRender();
+                instanceToEnqueue = anotherInstance;
+                callback();
+                callback = null;
+                expect(renderCalls.length).toBe(2);
+                expect(renderCalls[0]).toBe(instance);
+                expect(renderCalls[1]).toBe(anotherInstance);
+                renderCalls = [];
+
+                instance.enqueueToRender();
+                anotherInstance.enqueueToRender();
+                instanceToEnqueue = instance;
+                callback();
+                expect(renderCalls.length).toBe(3);
+                expect(renderCalls[0]).toBe(instance);
+                expect(renderCalls[1]).toBe(anotherInstance);
+                expect(renderCalls[2]).toBe(instance);
+            });
+        });
+
+        it('must request a new animation frame once it exited the callback from requestAnimationFrame', () => {
+            const context = new BrowsingContext();
+            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+                let requestAnimationFrameCount = 0;
+                let callback = null;
+                context.global.requestAnimationFrame = (newCallback) => {
+                    expect(callback).toBe(null);
+                    expect(newCallback).toNotBe(null);
+                    callback = newCallback;
+                    requestAnimationFrameCount++;
+                }
+
+                let renderCalls = [];
+                const SomeComponent = class extends ComponentBase {
+                    render() { renderCalls.push(this); }
+                }
+                ComponentBase.defineElement('some-component', SomeComponent);
+
+                const instance = new SomeComponent;
+                const anotherInstance = new SomeComponent;
+                expect(requestAnimationFrameCount).toBe(0);
+
+                instance.enqueueToRender();
+                expect(requestAnimationFrameCount).toBe(1);
+                anotherInstance.enqueueToRender();
+                expect(requestAnimationFrameCount).toBe(1);
+
+                expect(renderCalls.length).toBe(0);
+                callback();
+                callback = null;
+                expect(renderCalls.length).toBe(2);
+                expect(renderCalls[0]).toBe(instance);
+                expect(renderCalls[1]).toBe(anotherInstance);
+                expect(requestAnimationFrameCount).toBe(1);
+
+                anotherInstance.enqueueToRender();
+                expect(requestAnimationFrameCount).toBe(2);
+                instance.enqueueToRender();
+                expect(requestAnimationFrameCount).toBe(2);
+
+                expect(renderCalls.length).toBe(2);
+                callback();
+                callback = null;
+                expect(renderCalls.length).toBe(4);
+                expect(renderCalls[0]).toBe(instance);
+                expect(renderCalls[1]).toBe(anotherInstance);
+                expect(renderCalls[2]).toBe(anotherInstance);
+                expect(renderCalls[3]).toBe(instance);
+                expect(requestAnimationFrameCount).toBe(2);
+            });
+        });
+
     });
 
     describe('render()', () => {
@@ -123,7 +304,7 @@ describe('ComponentBase', function() {
 
         it('must define a custom element with a class of an appropriate name', () => {
             const context = new BrowsingContext();
-            return context.importScript('../public/v3/components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
                 class SomeComponent extends ComponentBase { }
                 ComponentBase.defineElement('some-component', SomeComponent);
 
@@ -135,7 +316,7 @@ describe('ComponentBase', function() {
 
         it('must define a custom element that can be instantiated via document.createElement', () => {
             const context = new BrowsingContext();
-            return context.importScript('../public/v3/components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
                 let instances = [];
                 class SomeComponent extends ComponentBase {
                     constructor() {
@@ -158,7 +339,7 @@ describe('ComponentBase', function() {
 
         it('must define a custom element that can be instantiated via new', () => {
             const context = new BrowsingContext();
-            return context.importScript('../public/v3/components/base.js', 'ComponentBase').then((ComponentBase) => {
+            return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
                 let instances = [];
                 class SomeComponent extends ComponentBase {
                     constructor() {
@@ -176,6 +357,52 @@ describe('ComponentBase', function() {
                 expect(component.element()).toBeA(context.global.HTMLElement);
                 expect(component.element().component()).toBe(component);
                 expect(instances.length).toBe(1);
+            });
+        });
+
+        it('must enqueue a connected component to render upon a resize event if enqueueToRenderOnResize is true', () => {
+            const context = new BrowsingContext();
+            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+                class SomeComponent extends ComponentBase {
+                    static get enqueueToRenderOnResize() { return true; }
+                }
+                ComponentBase.defineElement('some-component', SomeComponent);
+
+                let requestAnimationFrameCount = 0;
+                let callback = null;
+                context.global.requestAnimationFrame = (newCallback) => {
+                    callback = newCallback;
+                    requestAnimationFrameCount++;
+                }
+
+                expect(requestAnimationFrameCount).toBe(0);
+                const instance = new SomeComponent;
+                context.global.dispatchEvent(new Event('resize'));
+                context.document.body.appendChild(instance.element());
+                context.global.dispatchEvent(new Event('resize'));
+                expect(requestAnimationFrameCount).toBe(1);
+            });
+        });
+
+        it('must not enqueue a disconnected component to render upon a resize event if enqueueToRenderOnResize is true', () => {
+            const context = new BrowsingContext();
+            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+                class SomeComponent extends ComponentBase {
+                    static get enqueueToRenderOnResize() { return true; }
+                }
+                ComponentBase.defineElement('some-component', SomeComponent);
+
+                let requestAnimationFrameCount = 0;
+                let callback = null;
+                context.global.requestAnimationFrame = (newCallback) => {
+                    callback = newCallback;
+                    requestAnimationFrameCount++;
+                }
+
+                const instance = new SomeComponent;
+                expect(requestAnimationFrameCount).toBe(0);
+                context.global.dispatchEvent(new Event('resize'));
+                expect(requestAnimationFrameCount).toBe(0);
             });
         });
 

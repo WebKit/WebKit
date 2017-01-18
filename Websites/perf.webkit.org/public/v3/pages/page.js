@@ -19,7 +19,7 @@ class Page extends ComponentBase {
         if (this._router)
             this._router.pageDidOpen(this);
         this.updateFromSerializedState(state, true);
-        this.updateRendering();
+        this.enqueueToRender();
     }
 
     render()

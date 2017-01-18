@@ -6,7 +6,7 @@ function createTrendLineExecutableFromAveragingFunction(callback) {
         if (!values.length)
             return Promise.resolve(null);
 
-        var averageValues = callback.call(null, values, parameters[0], parameters[1]);
+        var averageValues = callback.call(null, values, ...parameters);
         if (!averageValues)
             return Promise.resolve(null);
 
@@ -186,8 +186,8 @@ class ChartPane extends ChartPaneBase {
     {
         if (repository != this._commitLogViewer.currentRepository()) {
             var range = this._mainChartStatus.setCurrentRepository(repository);
-            this._commitLogViewer.view(repository, range.from, range.to).then(() => { this.updateRendering(); });
-            this.updateRendering();
+            this._commitLogViewer.view(repository, range.from, range.to).then(() => { this.enqueueToRender(); });
+            this.enqueueToRender();
         }
     }
 
@@ -402,15 +402,15 @@ class ChartPane extends ChartPaneBase {
         var link = ComponentBase.createLink;
         var self = this;
 
-        if (this._trendLineType == null) {
-            this.renderReplace(this.content().querySelector('.trend-line-types'), [
+        const trendLineTypesContainer = this.content().querySelector('.trend-line-types');
+        if (!trendLineTypesContainer.querySelector('select')) {
+            this.renderReplace(trendLineTypesContainer, [
                 element('select', {onchange: this._trendLineTypeDidChange.bind(this)},
-                    ChartTrendLineTypes.map(function (type) {
-                        return element('option', type == self._trendLineType ? {value: type.id, selected: true} : {value: type.id}, type.label);
-                    }))
+                    ChartTrendLineTypes.map((type) => { return element('option', {value: type.id}, type.label); }))
             ]);
-        } else
-            this.content().querySelector('.trend-line-types select').value = this._trendLineType.id;
+        }
+        if (this._trendLineType)
+            trendLineTypesContainer.querySelector('select').value = this._trendLineType.id;
 
         if (this._renderedTrendLineOptions)
             return;
@@ -448,7 +448,7 @@ class ChartPane extends ChartPaneBase {
 
         this._updateTrendLine();
         this._chartsPage.graphOptionsDidChange();
-        this.updateRendering();
+        this.enqueueToRender();
     }
 
     _defaultParametersForTrendLine(type)
@@ -493,7 +493,7 @@ class ChartPane extends ChartPaneBase {
 
         if (!currentTrendLineType.execute) {
             this._mainChart.clearTrendLines();
-            this.updateRendering();
+            this.enqueueToRender();
         } else {
             // Wait for all trendlines to be ready. Otherwise we might see FOC when the domain is expanded.
             Promise.all(sourceList.map(function (source, sourceIndex) {
@@ -502,7 +502,7 @@ class ChartPane extends ChartPaneBase {
                         self._mainChart.setTrendLine(sourceIndex, trendlineSeries);
                 });
             })).then(function () {
-                self.updateRendering();
+                self.enqueueToRender();
             });
         }
     }

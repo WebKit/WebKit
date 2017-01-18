@@ -2,7 +2,7 @@
 class TimeSeriesChart extends ComponentBase {
     constructor(sourceList, options)
     {
-        super('time-series-chart');
+        super();
         this.element().style.display = 'block';
         this.element().style.position = 'relative';
         this._canvas = null;
@@ -22,12 +22,6 @@ class TimeSeriesChart extends ComponentBase {
         this._contextScaleX = 1;
         this._contextScaleY = 1;
         this._rem = null;
-
-        if (!TimeSeriesChart._chartList) {
-            TimeSeriesChart._chartList = [];
-            window.addEventListener('resize', TimeSeriesChart._updateAllCharts.bind(TimeSeriesChart));
-        }
-        TimeSeriesChart._chartList.push(this);
     }
 
     _ensureCanvas()
@@ -46,6 +40,7 @@ class TimeSeriesChart extends ComponentBase {
     }
 
     static cssTemplate() { return ''; }
+    static get enqueueToRenderOnResize() { return true; }
 
     _createCanvas()
     {
@@ -55,22 +50,6 @@ class TimeSeriesChart extends ComponentBase {
     static _updateAllCharts()
     {
         TimeSeriesChart._chartList.map(function (chart) { chart.render(); });
-    }
-
-    enqueueToRender()
-    {
-        if (!TimeSeriesChart._chartQueue) {
-            TimeSeriesChart._chartQueue = new Set;
-            window.requestAnimationFrame(TimeSeriesChart._renderEnqueuedCharts.bind(TimeSeriesChart));
-        }
-        TimeSeriesChart._chartQueue.add(this);
-    }
-
-    static _renderEnqueuedCharts()
-    {
-        for (var chart of TimeSeriesChart._chartQueue)
-            chart.updateRendering();
-        TimeSeriesChart._chartQueue = null;
     }
 
     setDomain(startTime, endTime)
@@ -804,3 +783,5 @@ class TimeSeriesChart extends ComponentBase {
         return gridValues;
     }
 }
+
+ComponentBase.defineElement('time-series-chart', TimeSeriesChart);

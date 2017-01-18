@@ -18,16 +18,16 @@ class BuildRequestQueuePage extends PageWithHeading {
 
                 BuildRequest.fetchForTriggerable(entry.name).then(function (requests) {
                     triggerable.buildRequests = requests;
-                    self.updateRendering();
+                    self.enqueueToRender();
                 });
 
                 return triggerable;
             });
-            self.updateRendering();
+            self.enqueueToRender();
         });
 
         AnalysisTask.fetchAll().then(function () {
-            self.updateRendering();
+            self.enqueueToRender();
         });
 
         super.open(state);

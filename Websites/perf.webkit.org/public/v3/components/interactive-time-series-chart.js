@@ -481,3 +481,5 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
         Instrumentation.endMeasuringTime('InteractiveTimeSeriesChart', 'renderChartContent');
     }
 }
+
+ComponentBase.defineElement('interactive-time-series-chart', InteractiveTimeSeriesChart);

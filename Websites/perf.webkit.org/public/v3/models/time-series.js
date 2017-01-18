@@ -8,6 +8,7 @@ var TimeSeries = class {
         this._data = [];
     }
 
+    values() { return this._data.map((point) => point.value); }
     length() { return this._data.length; }
 
     append(item)

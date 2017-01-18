@@ -34,7 +34,7 @@ class ChartsToolbar extends DomainControlToolbar {
     render()
     {
         super.render();
-        this._paneSelector.updateRendering();
+        this._paneSelector.enqueueToRender();
         this._labelSpan.textContent = this._numberOfDays;
         this._setInputElementValue(this._numberOfDays);
     }

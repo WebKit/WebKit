@@ -15,6 +15,9 @@ class ComponentBase {
 
         this._element = element;
         this._shadow = null;
+
+        if (!window.customElements && new.target.enqueueToRenderOnResize)
+            ComponentBase._connectedComponentToRenderOnResize(this);
     }
 
     element() { return this._element; }
@@ -26,11 +29,52 @@ class ComponentBase {
 
     render() { this._ensureShadowTree(); }
 
-    updateRendering()
+    enqueueToRender()
     {
         Instrumentation.startMeasuringTime('ComponentBase', 'updateRendering');
-        this.render();
+
+        if (!ComponentBase._componentsToRender) {
+            ComponentBase._componentsToRender = new Set;
+            requestAnimationFrame(() => ComponentBase.renderingTimerDidFire());
+        }
+        ComponentBase._componentsToRender.add(this);
+
         Instrumentation.endMeasuringTime('ComponentBase', 'updateRendering');
+    }
+
+    static renderingTimerDidFire()
+    {
+        Instrumentation.startMeasuringTime('ComponentBase', 'renderingTimerDidFire');
+
+        do {
+            const currentSet = [...ComponentBase._componentsToRender];
+            ComponentBase._componentsToRender.clear();
+            for (let component of currentSet) {
+                Instrumentation.startMeasuringTime('ComponentBase', 'renderingTimerDidFire.render');
+                component.render();
+                Instrumentation.endMeasuringTime('ComponentBase', 'renderingTimerDidFire.render');
+            }
+        } while (ComponentBase._componentsToRender.size);
+        ComponentBase._componentsToRender = null;
+
+        Instrumentation.endMeasuringTime('ComponentBase', 'renderingTimerDidFire');
+    }
+
+    static _connectedComponentToRenderOnResize(component)
+    {
+        if (!ComponentBase._componentsToRenderOnResize) {
+            ComponentBase._componentsToRenderOnResize = new Set;
+            window.addEventListener('resize', () => {
+                for (let component of ComponentBase._componentsToRenderOnResize)
+                    component.enqueueToRender();
+            });
+        }
+        ComponentBase._componentsToRenderOnResize.add(component);
+    }
+
+    static _disconnectedComponentToRenderOnResize(component)
+    {
+        ComponentBase._componentsToRenderOnResize.delete(component);
     }
 
     renderReplace(element, content) { ComponentBase.renderReplace(element, content); }
@@ -94,6 +138,8 @@ class ComponentBase {
         ComponentBase._componentByName.set(name, elementInterface);
         ComponentBase._componentByClass.set(elementInterface, name);
 
+        const enqueueToRenderOnResize = elementInterface.enqueueToRenderOnResize;
+
         if (!window.customElements)
             return;
 
@@ -110,6 +156,18 @@ class ComponentBase {
                 currentlyConstructed.set(elementInterface, this);
                 new elementInterface();
                 currentlyConstructed.delete(elementInterface);
+            }
+
+            connectedCallback()
+            {
+                if (enqueueToRenderOnResize)
+                    ComponentBase._connectedComponentToRenderOnResize(this.component());
+            }
+
+            disconnectedCallback()
+            {
+                if (enqueueToRenderOnResize)
+                    ComponentBase._disconnectedComponentToRenderOnResize(this.component());
             }
         }
 
@@ -193,7 +251,5 @@ class ComponentBase {
 ComponentBase._componentByName = new Map;
 ComponentBase._componentByClass = new Map;
 ComponentBase._currentlyConstructedByInterface = new Map;
-
-ComponentBase.css = Symbol();
-ComponentBase.html = Symbol();
-ComponentBase.map = {};
+ComponentBase._componentsToRender = null;
+ComponentBase._componentsToRenderOnResize = null;

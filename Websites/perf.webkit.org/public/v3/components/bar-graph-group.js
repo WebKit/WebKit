@@ -35,7 +35,7 @@ class BarGraphGroup {
             var start = min - (range - diff) / 2;
 
             entry.bar.update((value - start) / range, formattedValue);
-            entry.bar.updateRendering();
+            entry.bar.enqueueToRender();
         }
 
         Instrumentation.endMeasuringTime('BarGraphGroup', 'updateGroupRendering');

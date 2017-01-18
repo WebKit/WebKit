@@ -1,3 +1,144 @@
+2017-01-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make calls to render() functions async
+        https://bugs.webkit.org/show_bug.cgi?id=167151
+
+        Reviewed by Andreas Kling.
+
+        Make calls to render() async by coalescing calls inside enqueueToRender(), which has been renamed from
+        updateRendering(). We now queue up all the components and wait until the next animation frame to invoke
+        render() on all those components.
+
+        This reduces render() calls in the summary page of our internal dashboard by 15x from ~9400 to ~600 by
+        eliminating pathological O(n^2) behavior between render() calls.
+
+        Consolidated TimeSeriesChart's enqueueRender into this newly added feature of ComponentBase along with
+        the support to call render() on a resize event. New implementation makes use of connectedCallback and
+        disconnectedCallback to avoid the work when the component is not in a document tree.
+
+        The rest of the patch concerns with renaming updateRendering to enqueueToRender and fixing a few minor bugs
+        that I encountered while working on this patch.
+
+        * browser-tests/component-base-tests.js: Added tests for ComponentBase.enqueueToRender().
+        * browser-tests/index.html:
+        (BrowserContext.prototype.importScripts): Renamed from importScript; Now supports loading multiple scripts.
+        (BrowserContext.prototype.importScript): Added.
+        (BrowserContext): Removed the unused createWithScripts.
+
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer.prototype._expandBetween):
+        * public/v3/components/bar-graph-group.js:
+        (BarGraphGroup.prototype.updateGroupRendering):
+
+        * public/v3/components/base.js:
+        (ComponentBase): When the browser doesn't support custom elements and 
+        (ComponentBase.prototype.enqueueToRender): Renamed from updateRendering. Queues up the component to call
+        render() instead of immediately invoking it.
+        (ComponentBase.renderingTimerDidFire): Call render(). Since render() function often calls enqueueToRender
+        on child components, go ahead and invoke render() on any components enqueued during render() calls.
+        (ComponentBase._connectedComponentToRenderOnResize): Added.
+        (ComponentBase._disconnectedComponentToRenderOnResize): Added.
+        (ComponentBase.defineElement.elementClass.prototype.connectedCallback): Added. This is an optimization to
+        avoid the work when the component is not in the document; e.g. because the entire page component has been
+        detached from the document. The old implementation in TimeSeriesChart was not doing this.
+        (ComponentBase.defineElement.elementClass.prototype.disconnectedCallback): Added.
+        (ComponentBase): Replaced unused static variables with _componentsToRender and _componentsToRenderOnResize.
+
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase.prototype.fetchAnalysisTasks):
+        (ChartPaneBase.prototype.didUpdateAnnotations): Added. Addresses the bug that the annotation bars in the
+        charts shown an an analysis task doesn't update its color when the state is updated in the UI. 
+        (ChartPaneBase.prototype._mainSelectionDidZoom):
+        (ChartPaneBase.prototype._updateStatus):
+        (ChartPaneBase.prototype._requestOpeningCommitViewer):
+        (ChartPaneBase.prototype._keyup):
+        (ChartPaneBase.prototype.render):
+        * public/v3/components/commit-log-viewer.js:
+        * public/v3/components/customizable-test-group-form.js:
+        (CustomizableTestGroupForm):
+        (CustomizableTestGroupForm.prototype._customize):
+        * public/v3/components/editable-text.js:
+        (EditableText.prototype._didUpdate):
+        * public/v3/components/interactive-time-series-chart.js:
+        * public/v3/components/pane-selector.js:
+        (PaneSelector.prototype._selectedItem):
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart): Removed the logic to update upon resize. See _connectedComponentToRenderOnResize above.
+        (TimeSeriesChart.prototype.get enqueueToRenderOnResize): Added. Returns true.
+        (TimeSeriesChart.prototype.enqueueToRender): Deleted.
+        (TimeSeriesChart._renderEnqueuedCharts): Deleted.
+        (TimeSeriesChart): Call ComponentBase.defineElement to make this a proper component so that the logic in
+        connectedCallback to update upon resize event would work.
+        * public/v3/instrumentation.js:
+        (Instrumentation.dumpStatistics): Sort results by the key names.
+        * public/v3/models/time-series.js:
+        (TimeSeries.prototype.values): Added. This method was never ported to v3 in r198462, and broke the feature
+        to show moving averages, etc... on the charts page.
+        * public/v3/pages/analysis-category-page.js:
+        (AnalysisCategoryPage.prototype.open):
+        (AnalysisCategoryPage.prototype.updateFromSerializedState):
+        (AnalysisCategoryPage.prototype.filterDidChange):
+        (AnalysisCategoryPage.prototype.render):
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskChartPane.prototype._updateStatus):
+        (AnalysisTaskPage.prototype.updateFromSerializedState):
+        (AnalysisTaskPage.prototype._didFetchTask):
+        (AnalysisTaskPage.prototype._didFetchRelatedAnalysisTasks):
+        (AnalysisTaskPage.prototype._didFetchMeasurement):
+        (AnalysisTaskPage.prototype._didFetchTestGroups):
+        (AnalysisTaskPage.prototype._showAllTestGroups):
+        (AnalysisTaskPage.prototype._didFetchAnalysisResults):
+        (AnalysisTaskPage.prototype.render):
+        (AnalysisTaskPage.prototype._renderTestGroupList.):
+        (AnalysisTaskPage.prototype._renderTestGroupList):
+        (AnalysisTaskPage.prototype._createTestGroupListItem):
+        (AnalysisTaskPage.prototype._showTestGroup):
+        (AnalysisTaskPage.prototype._didStartEditingTaskName):
+        (AnalysisTaskPage.prototype._updateTaskName):
+        (AnalysisTaskPage.prototype._updateTestGroupName):
+        (AnalysisTaskPage.prototype._hideCurrentTestGroup):
+        (AnalysisTaskPage.prototype._updateChangeType): Fixed the bug that we were never updating annotation bars
+        in the main chart by calling didUpdateAnnotations.
+        (AnalysisTaskPage.prototype._associateBug):
+        (AnalysisTaskPage.prototype._dissociateBug):
+        (AnalysisTaskPage.prototype._associateCommit):
+        (AnalysisTaskPage.prototype._dissociateCommit):
+        (AnalysisTaskPage.prototype._chartSelectionDidChange):
+        (AnalysisTaskPage.prototype._selectedRowInAnalysisResultsViewer):
+        * public/v3/pages/build-request-queue-page.js:
+        (BuildRequestQueuePage.prototype.open.):
+        (BuildRequestQueuePage.prototype.open):
+        * public/v3/pages/chart-pane.js:
+        (ChartPane.prototype.setOpenRepository):
+        (ChartPane.prototype._renderTrendLinePopover): Fixed a race condition. Insert a select element as needed
+        before trying to assign the current value on it.
+        (ChartPane.prototype._trendLineTypeDidChange):
+        (ChartPane.prototype._updateTrendLine):
+        * public/v3/pages/charts-page.js:
+        (ChartsPage.prototype.updateFromSerializedState):
+        (ChartsPage.prototype._updateDomainsFromSerializedState):
+        (ChartsPage.prototype.setNumberOfDaysFromToolbar):
+        (ChartsPage.prototype._didMutatePaneList):
+        (ChartsPage.prototype.render):
+        * public/v3/pages/charts-toolbar.js:
+        (ChartsToolbar.prototype.render):
+        * public/v3/pages/create-analysis-task-page.js:
+        (CreateAnalysisTaskPage.prototype.updateFromSerializedState):
+        * public/v3/pages/dashboard-page.js:
+        (DashboardPage.prototype.updateFromSerializedState):
+        (DashboardPage.prototype._fetchedData):
+        * public/v3/pages/heading.js:
+        (Heading.prototype.render):
+        * public/v3/pages/page-with-heading.js:
+        (PageWithHeading.prototype.render):
+        * public/v3/pages/page.js:
+        (Page.prototype.open):
+        * public/v3/pages/summary-page.js:
+        (SummaryPage.prototype.open):
+        (SummaryPage.prototype.this._renderQueue.push):
+        (SummaryPage):
+        (SummaryPage.prototype._renderCell):
+
 2017-01-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add the build fix for browsers that don't yet support custom elements SPI.

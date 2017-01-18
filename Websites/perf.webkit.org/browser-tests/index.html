@@ -36,17 +36,20 @@ class BrowsingContext {
         this.document = this._iframe.contentDocument;
     }
 
-    importScript(path, ...symbolList)
+    importScripts(pathList, ...symbolList)
     {
         const doc = this._iframe.contentDocument;
         const global = this._iframe.contentWindow;
-        return new Promise((resolve, reject) => {
-            let script = doc.createElement('script');
-            script.addEventListener('load', resolve);
-            script.addEventListener('error', reject);
-            script.src = path;
-            doc.body.appendChild(script);
-        }).then(() => {
+
+        return Promise.all(pathList.map((path) => {
+            return new Promise((resolve, reject) => {
+                let script = doc.createElement('script');
+                script.addEventListener('load', resolve);
+                script.addEventListener('error', reject);
+                script.src = '../public/v3/' + path;
+                doc.body.appendChild(script);
+            });
+        })).then(() => {
             const script = doc.createElement('script');
             script.textContent = `window.importedSymbols = [${symbolList.join(', ')}];`;
             doc.body.appendChild(script);
@@ -59,35 +62,15 @@ class BrowsingContext {
         });
     }
 
+    importScript(path, ...symbols)
+    {
+        return this.importScripts([path], ...symbols);
+    }
+
     static cleanup()
     {
         BrowsingContext._iframes.forEach((iframe) => { iframe.remove(); });
         BrowsingContext._iframes = [];
-    }
-
-    static createWithScripts(scriptList)
-    {
-        let iframe = document.createElement('iframe');
-        document.body.appendChild(iframe);
-        const doc = iframe.contentDocument;
-
-        let symbolList = [];
-        return Promise.all(scriptList.map((entry) => {
-            let [path, ...symbols] = entry;
-            symbolList = symbolList.concat(symbols);
-            return new Promise((resolve, reject) => {
-                let script = doc.createElement('script');
-                script.addEventListener('load', resolve);
-                script.addEventListener('error', reject);
-                script.src = path;
-                doc.body.appendChild(script);
-            });
-        })).then(() => {
-            const script = doc.createElement('script');
-            script.textContent = `var symbols = { ${symbolList.join(', ')} };`;
-            doc.body.appendChild(script);
-            return iframe.contentWindow;
-        });
     }
 }
 BrowsingContext._iframes = [];
