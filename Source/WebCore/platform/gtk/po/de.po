@@ -11,16 +11,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: webkit HEAD\n"
 "Report-Msgid-Bugs-To: https://bugs.webkit.org/\n"
-"POT-Creation-Date: 2016-12-25 03:35+0000\n"
-"PO-Revision-Date: 2016-12-25 10:53+0100\n"
-"Last-Translator: Bernd Homuth <dev@hmt.im>\n"
+"POT-Creation-Date: 2016-09-22 02:30+0000\n"
+"PO-Revision-Date: 2016-09-23 01:21+0200\n"
+"Last-Translator: Benedikt M. Thoma <gnome@thomba.net>\n"
 "Language-Team: Deutsch <gnome-de@gnome.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 1.8.8\n"
 
 #: ../ErrorsGtk.cpp:32
 msgid "Load request cancelled"
@@ -327,345 +327,317 @@ msgid "description"
 msgstr "Beschreibung"
 
 #: ../LocalizedStringsGtk.cpp:451
-msgid "details"
-msgstr "Details"
-
-#: ../LocalizedStringsGtk.cpp:456
-msgid "summary"
-msgstr "Zusammenfassung"
-
-#: ../LocalizedStringsGtk.cpp:461
-msgid "figure"
-msgstr "Abbildung"
-
-#: ../LocalizedStringsGtk.cpp:466
-msgid "output"
-msgstr "Ausgabe"
-
-#: ../LocalizedStringsGtk.cpp:471
-msgid "email field"
-msgstr "E-Mail-Feld"
-
-#: ../LocalizedStringsGtk.cpp:476
-msgid "telephone number field"
-msgstr "Telefonnummern-Feld"
-
-#: ../LocalizedStringsGtk.cpp:481
-msgid "URL field"
-msgstr "URL-Feld"
-
-#: ../LocalizedStringsGtk.cpp:486
-msgid "date field"
-msgstr "Datums-Feld"
-
-#: ../LocalizedStringsGtk.cpp:491
-msgid "time field"
-msgstr "Zeit-Feld"
-
-#: ../LocalizedStringsGtk.cpp:496
 msgid "footer"
 msgstr "Fußzeile"
 
-#: ../LocalizedStringsGtk.cpp:501
+#: ../LocalizedStringsGtk.cpp:456
 msgid "cancel"
 msgstr "Abbrechen"
 
-#: ../LocalizedStringsGtk.cpp:506
+#: ../LocalizedStringsGtk.cpp:461
 msgid "password auto fill"
 msgstr "Passwörter automatisch eintragen"
 
-#: ../LocalizedStringsGtk.cpp:511
+#: ../LocalizedStringsGtk.cpp:466
 msgid "contact info auto fill"
 msgstr "Kontaktdaten automatisch eintragen"
 
-#: ../LocalizedStringsGtk.cpp:516
+#: ../LocalizedStringsGtk.cpp:471
 msgid "press"
 msgstr "drücken"
 
-#: ../LocalizedStringsGtk.cpp:521
+#: ../LocalizedStringsGtk.cpp:476
 msgid "select"
 msgstr "markieren"
 
-#: ../LocalizedStringsGtk.cpp:526
+#: ../LocalizedStringsGtk.cpp:481
 msgid "activate"
 msgstr "aktivieren"
 
-#: ../LocalizedStringsGtk.cpp:531
+#: ../LocalizedStringsGtk.cpp:486
 msgid "uncheck"
 msgstr "abwählen"
 
-#: ../LocalizedStringsGtk.cpp:536
+#: ../LocalizedStringsGtk.cpp:491
 msgid "check"
 msgstr "wählen"
 
-#: ../LocalizedStringsGtk.cpp:541
+#: ../LocalizedStringsGtk.cpp:496
 msgid "jump"
 msgstr "überspringen"
 
-#: ../LocalizedStringsGtk.cpp:561
+#: ../LocalizedStringsGtk.cpp:516
 msgid "Missing Plug-in"
 msgstr "Fehlende Erweiterung"
 
-#: ../LocalizedStringsGtk.cpp:567
+#: ../LocalizedStringsGtk.cpp:522
 msgid "Plug-in Failure"
 msgstr "Versagen der Erweiterung"
 
 #. FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
-#: ../LocalizedStringsGtk.cpp:585
+#: ../LocalizedStringsGtk.cpp:540
 msgid " files"
 msgstr " Dateien"
 
-#: ../LocalizedStringsGtk.cpp:590
+#: ../LocalizedStringsGtk.cpp:545
 msgid "Unknown"
 msgstr "Unbekannt"
 
-#: ../LocalizedStringsGtk.cpp:595
+#: ../LocalizedStringsGtk.cpp:550
 #, c-format
 msgctxt "Title string for images"
 msgid "%s  (%dx%d pixels)"
 msgstr "%s  (%dx%d Pixel)"
 
-#: ../LocalizedStringsGtk.cpp:606
+#: ../LocalizedStringsGtk.cpp:561
 msgid "Loading..."
 msgstr "Ladevorgang …"
 
-#: ../LocalizedStringsGtk.cpp:611
+#: ../LocalizedStringsGtk.cpp:566
 msgid "Live Broadcast"
 msgstr "Live-Ausstrahlung"
 
-#: ../LocalizedStringsGtk.cpp:617
+#: ../LocalizedStringsGtk.cpp:572
 msgid "audio playback"
 msgstr "Audio-Wiedergabe"
 
-#: ../LocalizedStringsGtk.cpp:619
+#: ../LocalizedStringsGtk.cpp:574
 msgid "video playback"
 msgstr "Video-Wiedergabe"
 
-#: ../LocalizedStringsGtk.cpp:621
+#: ../LocalizedStringsGtk.cpp:576
 msgid "mute"
 msgstr "Stumm schalten"
 
-#: ../LocalizedStringsGtk.cpp:623
+#: ../LocalizedStringsGtk.cpp:578
 msgid "unmute"
 msgstr "Laut schalten"
 
-#: ../LocalizedStringsGtk.cpp:625
+#: ../LocalizedStringsGtk.cpp:580
 msgid "play"
 msgstr "Abspielen"
 
-#: ../LocalizedStringsGtk.cpp:627
+#: ../LocalizedStringsGtk.cpp:582
 msgid "pause"
 msgstr "Pausieren"
 
-#: ../LocalizedStringsGtk.cpp:629
+#: ../LocalizedStringsGtk.cpp:584
 msgid "movie time"
 msgstr "Filmdauer"
 
-#: ../LocalizedStringsGtk.cpp:631
+#: ../LocalizedStringsGtk.cpp:586
 msgid "timeline slider thumb"
 msgstr "Rollbalken-Schieber der Zeitleiste"
 
-#: ../LocalizedStringsGtk.cpp:633
+#: ../LocalizedStringsGtk.cpp:588
 msgid "back 30 seconds"
 msgstr "30 Sekunden zurück"
 
-#: ../LocalizedStringsGtk.cpp:635
+#: ../LocalizedStringsGtk.cpp:590
 msgid "return to realtime"
 msgstr "Auf Echtzeit zurückstellen"
 
-#: ../LocalizedStringsGtk.cpp:637
+#: ../LocalizedStringsGtk.cpp:592
 msgid "elapsed time"
 msgstr "Vergangene Zeit"
 
-#: ../LocalizedStringsGtk.cpp:639
+#: ../LocalizedStringsGtk.cpp:594
 msgid "remaining time"
 msgstr "Verbleibende Zeit"
 
-#: ../LocalizedStringsGtk.cpp:641
+#: ../LocalizedStringsGtk.cpp:596
 msgid "status"
 msgstr "Status"
 
-#: ../LocalizedStringsGtk.cpp:643
+#: ../LocalizedStringsGtk.cpp:598
 msgid "enter fullscreen"
 msgstr "Vollbild starten"
 
-#: ../LocalizedStringsGtk.cpp:645
+#: ../LocalizedStringsGtk.cpp:600
 msgid "exit fullscreen"
 msgstr "Vollbild verlassen"
 
-#: ../LocalizedStringsGtk.cpp:647
+#: ../LocalizedStringsGtk.cpp:602
 msgid "fast forward"
 msgstr "Vorspulen"
 
-#: ../LocalizedStringsGtk.cpp:649
+#: ../LocalizedStringsGtk.cpp:604
 msgid "fast reverse"
 msgstr "Zurückspulen"
 
-#: ../LocalizedStringsGtk.cpp:651
+#: ../LocalizedStringsGtk.cpp:606
 msgid "show closed captions"
 msgstr "geschlossene Beschriftung zeigen"
 
-#: ../LocalizedStringsGtk.cpp:653
+#: ../LocalizedStringsGtk.cpp:608
 msgid "hide closed captions"
 msgstr "geschlossene Beschriftung verbergen"
 
-#: ../LocalizedStringsGtk.cpp:655
+#: ../LocalizedStringsGtk.cpp:610
 msgid "media controls"
 msgstr "Medien-Steuerung"
 
-#: ../LocalizedStringsGtk.cpp:664
+#: ../LocalizedStringsGtk.cpp:619
 msgid "audio element playback controls and status display"
 msgstr "Wiedergabesteuerung und Statusanzeige für Audio-Elemente"
 
-#: ../LocalizedStringsGtk.cpp:666
+#: ../LocalizedStringsGtk.cpp:621
 msgid "video element playback controls and status display"
 msgstr "Wiedergabesteuerung und Statusanzeige für Video-Elemente"
 
-#: ../LocalizedStringsGtk.cpp:668
+#: ../LocalizedStringsGtk.cpp:623
 msgid "mute audio tracks"
 msgstr "Tonspuren stumm schalten"
 
-#: ../LocalizedStringsGtk.cpp:670
+#: ../LocalizedStringsGtk.cpp:625
 msgid "unmute audio tracks"
 msgstr "Tonspuren laut schalten"
 
-#: ../LocalizedStringsGtk.cpp:672
+#: ../LocalizedStringsGtk.cpp:627
 msgid "begin playback"
 msgstr "Wiedergabe starten"
 
-#: ../LocalizedStringsGtk.cpp:674
+#: ../LocalizedStringsGtk.cpp:629
 msgid "pause playback"
 msgstr "Wiedergabe pausieren"
 
-#: ../LocalizedStringsGtk.cpp:676
+#: ../LocalizedStringsGtk.cpp:631
 msgid "movie time scrubber"
 msgstr "Zeitschieber für Filme"
 
-#: ../LocalizedStringsGtk.cpp:678
+#: ../LocalizedStringsGtk.cpp:633
 msgid "movie time scrubber thumb"
 msgstr "Zeitschiebergriff für Filme"
 
-#: ../LocalizedStringsGtk.cpp:680
+#: ../LocalizedStringsGtk.cpp:635
 msgid "seek movie back 30 seconds"
 msgstr "Film 30 Sekunden zurückspulen"
 
-#: ../LocalizedStringsGtk.cpp:682
+#: ../LocalizedStringsGtk.cpp:637
 msgid "return streaming movie to real time"
 msgstr "Streaming-Video auf Echtzeit zurückstellen"
 
-#: ../LocalizedStringsGtk.cpp:684
+#: ../LocalizedStringsGtk.cpp:639
 msgid "current movie time in seconds"
 msgstr "Aktuelle Filmwiedergabezeit in Sekunden"
 
-#: ../LocalizedStringsGtk.cpp:686
+#: ../LocalizedStringsGtk.cpp:641
 msgid "number of seconds of movie remaining"
 msgstr "Anzahl verbleibender Sekunden des Films"
 
-#: ../LocalizedStringsGtk.cpp:688
+#: ../LocalizedStringsGtk.cpp:643
 msgid "current movie status"
 msgstr "Status des aktuellen Films"
 
-#: ../LocalizedStringsGtk.cpp:690
+#: ../LocalizedStringsGtk.cpp:645
 msgid "seek quickly back"
 msgstr "Schnell zurückspulen"
 
-#: ../LocalizedStringsGtk.cpp:692
+#: ../LocalizedStringsGtk.cpp:647
 msgid "seek quickly forward"
 msgstr "Schnell vorspulen"
 
-#: ../LocalizedStringsGtk.cpp:694
+#: ../LocalizedStringsGtk.cpp:649
 msgid "Play movie in fullscreen mode"
 msgstr "Den momentanen Film im Vollbildmodus wiedergeben"
 
-#: ../LocalizedStringsGtk.cpp:696
+#: ../LocalizedStringsGtk.cpp:651
 msgid "Exit fullscreen mode"
 msgstr "Den Vollbildmodus verlassen"
 
-#: ../LocalizedStringsGtk.cpp:698
+#: ../LocalizedStringsGtk.cpp:653
 msgid "start displaying closed captions"
 msgstr "beginnen, geschlossene Beschriftung zu zeigen"
 
-#: ../LocalizedStringsGtk.cpp:700
+#: ../LocalizedStringsGtk.cpp:655
 msgid "stop displaying closed captions"
 msgstr "beenden, geschlossene Beschriftung zu zeigen"
 
-#: ../LocalizedStringsGtk.cpp:709
+#: ../LocalizedStringsGtk.cpp:664
 msgid "indefinite time"
 msgstr "Unbegrenzte Zeit"
 
-#: ../LocalizedStringsGtk.cpp:739
+#: ../LocalizedStringsGtk.cpp:694
 msgid "value missing"
 msgstr "Wert fehlt"
 
-#: ../LocalizedStringsGtk.cpp:775
+#: ../LocalizedStringsGtk.cpp:730
 msgid "type mismatch"
 msgstr "Typ passt nicht"
 
-#: ../LocalizedStringsGtk.cpp:798
+#: ../LocalizedStringsGtk.cpp:753
 msgid "pattern mismatch"
 msgstr "Muster passt nicht"
 
-#: ../LocalizedStringsGtk.cpp:803
+#: ../LocalizedStringsGtk.cpp:758
 msgid "too short"
 msgstr "Zu kurz"
 
-#: ../LocalizedStringsGtk.cpp:808
+#: ../LocalizedStringsGtk.cpp:763
 msgid "too long"
 msgstr "Zu lang"
 
-#: ../LocalizedStringsGtk.cpp:813
+#: ../LocalizedStringsGtk.cpp:768
 msgid "range underflow"
 msgstr "Bereich unterschritten"
 
-#: ../LocalizedStringsGtk.cpp:818
+#: ../LocalizedStringsGtk.cpp:773
 msgid "range overflow"
 msgstr "Bereich überschritten"
 
-#: ../LocalizedStringsGtk.cpp:823
+#: ../LocalizedStringsGtk.cpp:778
 msgid "step mismatch"
 msgstr "Schritt passt nicht"
 
-#: ../LocalizedStringsGtk.cpp:828
+#: ../LocalizedStringsGtk.cpp:783
 msgid "Unacceptable TLS certificate"
 msgstr "Inakzeptables TLS-Zertifikat"
 
-#: ../LocalizedStringsGtk.cpp:845
+#: ../LocalizedStringsGtk.cpp:800
 msgctxt "Menu section heading for subtitles"
 msgid "Subtitles"
 msgstr "Untertitel"
 
-#: ../LocalizedStringsGtk.cpp:850
+#: ../LocalizedStringsGtk.cpp:805
 msgctxt ""
 "Menu item label for the track that represents disabling closed captions"
 msgid "Off"
 msgstr "Aus"
 
-#: ../LocalizedStringsGtk.cpp:855
+#: ../LocalizedStringsGtk.cpp:810
 msgctxt "Menu item label for the automatically chosen track"
 msgid "Auto"
 msgstr "Automatisch"
 
-#: ../LocalizedStringsGtk.cpp:860
+#: ../LocalizedStringsGtk.cpp:815
 msgctxt "Menu item label for a closed captions track that has no other name"
 msgid "No label"
 msgstr "Keine Beschriftung"
 
-#: ../LocalizedStringsGtk.cpp:865
+#: ../LocalizedStringsGtk.cpp:820
 msgctxt "Menu item label for an audio track that has no other name"
 msgid "No label"
 msgstr "Keine Beschriftung"
 
 # Snapshot == Speicherauszug?
-#: ../LocalizedStringsGtk.cpp:871
+#: ../LocalizedStringsGtk.cpp:826
 msgctxt "Snapshotted Plug-In"
 msgid "Title of the label to show on a snapshotted plug-in"
 msgstr "Beschriftung für den Speicherauszug einer Erweiterung"
 
 # Snapshot == Speicherauszug?
-#: ../LocalizedStringsGtk.cpp:876
+#: ../LocalizedStringsGtk.cpp:831
 msgctxt "Click to restart"
 msgid "Subtitle of the label to show on a snapshotted plug-in"
 msgstr "Untertitel der Beschriftung für den Speicherauszug einer Erweiterung"
+
+#: ../../../../WebKit2/NetworkProcess/Downloads/soup/DownloadSoup.cpp:100
+#, c-format
+msgid ""
+"Cannot determine destination URI for download with suggested filename %s"
+msgstr ""
+"Zieladresse zum Herunterladen mit vorgeschlagenem Dateinamen %s kann nicht "
+"bestimmt werden"
 
 #. Title of the HTTP authentication dialog.
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:93
@@ -1493,7 +1465,7 @@ msgstr "Die aktuelle aktive Adresse der Ressource"
 msgid "The response of the resource"
 msgstr "Die Antwort der Ressource"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp:1246
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp:1238
 msgid "Website running in fullscreen mode"
 msgstr "Internetseite läuft im Vollbildmodus"
 
@@ -1547,7 +1519,7 @@ msgstr "Einstellungen WebView"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:843
 msgid "The WebKitSettings of the view"
-msgstr "Die WebKit-Einstellungen der Ansicht"
+msgstr "Das WebKit-Einstellungen der Ansicht"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:859
 msgid "WebView user content manager"
@@ -1571,7 +1543,7 @@ msgstr "Geschätzter Ladefortschritt"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:893
 msgid "An estimate of the percent completion for a document load"
-msgstr "Geschätzter Ladefortschritt eines Dokuments in Prozent"
+msgstr "Eine Schätzung der abgeschlossenen Prozent beim Laden eines Dokuments"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:905
 msgid "Favicon"
@@ -1579,7 +1551,7 @@ msgstr "Favoritensymbol"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:906
 msgid "The favicon associated to the view, if any"
-msgstr "Das Favoritensymbol der Ansicht, falls vorhanden"
+msgstr "Das Favoritensymbol der Ansicht falls vorhanden"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:918
 msgid "The current active URI of the view"
@@ -1591,7 +1563,7 @@ msgstr "Vergrößerungsstufe"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:934
 msgid "The zoom level of the view content"
-msgstr "Die Vergrößerungsstufe der Inhaltsansicht"
+msgstr "Die Vergrößerungsstufe des Inhalts der Ansicht"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:953
 msgid "Is Loading"
@@ -1617,13 +1589,13 @@ msgstr "Legt fest, ob der Inhalt durch den Benutzer bearbeitet werden darf."
 msgid "An exception was raised in JavaScript"
 msgstr "Ein Fehler ist in JavaScript aufgetreten"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3413
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3415
 msgid "There was an error creating the snapshot"
 msgstr "Es trat ein Fehler beim Erstellen des Schnappschusses auf"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:210
 msgid "Geometry"
-msgstr "Fenstereinstellung"
+msgstr "Geometrie"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:211
 msgid "The size and position of the window on the screen."
@@ -1691,12 +1663,6 @@ msgstr "Legt fest, ob das Fenster im Vollbild angezeigt werden soll."
 #: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:186
 msgid "Web Inspector"
 msgstr "Web-Inspector"
-
-#~ msgid ""
-#~ "Cannot determine destination URI for download with suggested filename %s"
-#~ msgstr ""
-#~ "Zieladresse zum Herunterladen mit vorgeschlagenem Dateinamen %s kann "
-#~ "nicht bestimmt werden"
 
 #~ msgctxt "Closed Captions"
 #~ msgid "Menu section heading for closed captions"
