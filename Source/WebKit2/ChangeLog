@@ -1,3 +1,15 @@
+2017-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Add instrumentation for when we fail to receive a message
+        https://bugs.webkit.org/show_bug.cgi?id=167179
+
+        Reviewed by Alexey Proskuryakov.
+
+        This will help us diagnose what the error from mach_msg is.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::readFromMachPort):
+
 2017-01-18  Alex Christensen  <achristensen@webkit.org>
 
         Fix CFURLConnection build on Mac
