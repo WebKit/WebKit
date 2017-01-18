@@ -1,3 +1,23 @@
+2017-01-18  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Turn modern media controls on by default
+        https://bugs.webkit.org/show_bug.cgi?id=165668
+
+        Reviewed by Dean Jackson.
+
+        Tests: media/modern-media-controls/fullscreen-support/ipad/fullscreen-support-tap.html
+               media/modern-media-controls/pip-support/ipad/pip-support-enabled.html
+               media/modern-media-controls/pip-support/ipad/pip-support-tap.html
+               media/modern-media-controls/placard-support/ipad/placard-support-pip.html
+               media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html
+
+        Fix an error which may be triggered prior to Sierra where we would assume the presentation
+        mode API was avaiable when it might not be, which caused a few tests to fail.
+
+        * Modules/modern-media-controls/media/pip-support.js:
+        (PiPSupport.prototype.syncControl):
+        (PiPSupport):
+
 2017-01-18  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] [TextureMapper] [GLES2] Draw repeated patterns for NPOT textures manually

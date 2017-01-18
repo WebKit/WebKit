@@ -46,4 +46,38 @@ function shouldBeEqualToRGBAColor(expr, expectedColor)
     shouldBeCloseTo(`rgba(${expr}).a`, expectedRGBA.a, 0.001);
 }
 
+function pressOnElement(element, continuation)
+{
+    if (typeof continuation !== "function")
+        continuation = new Function;
 
+    const bounds = element.getBoundingClientRect();
+    if (bounds.width === 0 || bounds.height === 0)
+        return false;
+
+    const centerX = bounds.left + bounds.width / 2;
+    const centerY = bounds.top + bounds.height / 2;
+
+    // debug(`Trying to press on &lt;${element.localName} class="${element.className}"> at ${centerX}x${centerY}.`);
+
+    if ("createTouch" in document) {
+        testRunner.runUIScript(`
+            uiController.singleTapAtPoint(${centerX}, ${centerY}, function() {
+                uiController.uiScriptComplete("Done");
+            });`, continuation);
+    } else {
+        eventSender.mouseMoveTo(centerX, centerY);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        continuation();
+    }
+
+    return true;
+}
+
+function finishMediaControlsTest()
+{
+    if (scheduler)
+        scheduler.frameDidFire = null;
+    finishJSTest();
+}

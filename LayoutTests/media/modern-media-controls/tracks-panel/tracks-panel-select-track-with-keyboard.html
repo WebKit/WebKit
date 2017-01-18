@@ -77,7 +77,7 @@ scheduler.frameDidFire = function()
 
             debug("");
             debug("Activating the focused track by pressing the Enter key");
-            eventSender.keyDown("Enter");
+            window.requestAnimationFrame(() => eventSender.keyDown("Enter"));
         });
 
         eventSender.keyDown("ArrowDown");

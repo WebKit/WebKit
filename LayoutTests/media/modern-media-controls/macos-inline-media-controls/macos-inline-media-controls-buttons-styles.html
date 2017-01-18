@@ -25,6 +25,9 @@ scheduler.frameDidFire = function()
 {
     document.body.appendChild(mediaControls.element);
 
+    if (buttonPositions.some(buttonPosition => buttonPosition[0].width == 0))
+        return;
+
     for (let [button, y] of buttonPositions) {
         style = window.getComputedStyle(button.element);
         debug(button.constructor.name);
@@ -35,8 +38,7 @@ scheduler.frameDidFire = function()
     }
 
     mediaControls.element.remove();
-
-    finishJSTest();
+    finishMediaControlsTest();
 };
 
 </script>

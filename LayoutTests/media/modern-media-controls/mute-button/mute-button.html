@@ -1,5 +1,6 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
 <script type="text/javascript">
 
@@ -27,7 +28,7 @@ scheduler.frameDidFire = function()
 
     shouldBeTrue('muteButton.element.style.webkitMaskImage.includes("macOS/volume@")');
     shouldBeTrue('mutedButton.element.style.webkitMaskImage.includes("macOS/volume-mute@")');
-    finishJSTest();
+    finishMediaControlsTest();
 };
 
 </script>
