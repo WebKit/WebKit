@@ -992,6 +992,11 @@ void FrameLoader::provisionalLoadStarted()
         m_stateMachine.advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
     m_frame.navigationScheduler().cancel(true);
     m_client.provisionalLoadStarted();
+
+    if (m_frame.isMainFrame()) {
+        if (auto* page = m_frame.page())
+            page->didStartProvisionalLoad();
+    }
 }
 
 void FrameLoader::resetMultipleFormSubmissionProtection()
@@ -2294,7 +2299,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             Page* page = m_frame.page();
             if (page) {
                 if (m_frame.isMainFrame())
-                    page->resetRelevantPaintedObjectCounter();
+                    page->didFinishLoad();
             }
 
             const ResourceError& error = dl->mainDocumentError();

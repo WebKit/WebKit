@@ -778,6 +778,15 @@ bool Settings::globalConstRedeclarationShouldThrow()
 #endif
 }
 
+bool Settings::isPostLoadCPUUsageMeasurementEnabled()
+{
+#if PLATFORM(COCOA)
+    return true;
+#else
+    return false;
+#endif
+}
+
 void Settings::setAllowsAnySSLCertificate(bool allowAnySSLCertificate)
 {
     gAllowsAnySSLCertificate = allowAnySSLCertificate;

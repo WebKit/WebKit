@@ -21,6 +21,7 @@
 #pragma once
 
 #include "ActivityState.h"
+#include "CPUTime.h"
 #include "FindOptions.h"
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestones.h"
@@ -299,6 +300,9 @@ public:
     UserInterfaceLayoutDirection userInterfaceLayoutDirection() const { return m_userInterfaceLayoutDirection; }
     WEBCORE_EXPORT void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection);
 
+    void didStartProvisionalLoad();
+    void didFinishLoad(); // Called when the load has been committed in the main frame.
+
     // The view scale factor is multiplied into the page scale factor by all
     // callers of setPageScaleFactor.
     WEBCORE_EXPORT void setViewScaleFactor(float);
@@ -568,6 +572,8 @@ private:
     void checkSubframeCountConsistency() const;
 #endif
 
+    void measurePostLoadCPUUsage();
+
     enum ShouldHighlightMatches { DoNotHighlightMatches, HighlightMatches };
     enum ShouldMarkMatches { DoNotMarkMatches, MarkMatches };
 
@@ -753,6 +759,9 @@ private:
     
     // For testing.
     std::optional<EventThrottlingBehavior> m_eventThrottlingBehaviorOverride;
+
+    Timer m_cpuUsageMeasurementTimer;
+    std::optional<CPUTime> m_postLoadCPUTime;
 };
 
 inline PageGroup& Page::group()

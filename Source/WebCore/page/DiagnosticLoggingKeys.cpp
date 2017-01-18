@@ -53,6 +53,11 @@ String DiagnosticLoggingKeys::pluginLoadingFailedKey()
     return ASCIILiteral("pluginFailedLoading");
 }
 
+String DiagnosticLoggingKeys::postPageLoadKey()
+{
+    return ASCIILiteral("postPageLoad");
+}
+
 String DiagnosticLoggingKeys::provisionalLoadKey()
 {
     return ASCIILiteral("provisionalLoad");
@@ -306,6 +311,11 @@ String DiagnosticLoggingKeys::documentLoaderStoppingKey()
 String DiagnosticLoggingKeys::cannotSuspendActiveDOMObjectsKey()
 {
     return ASCIILiteral("cannotSuspendActiveDOMObjects");
+}
+
+String DiagnosticLoggingKeys::cpuUsageKey()
+{
+    return ASCIILiteral("cpuUsage");
 }
 
 String DiagnosticLoggingKeys::createSharedBufferFailedKey()
