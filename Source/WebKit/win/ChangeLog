@@ -1,3 +1,14 @@
+2017-01-18  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WinCairo build after r210845.
+        https://bugs.webkit.org/show_bug.cgi?id=167055
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        shouldCacheResponse isn't used when loading with libcurl.
+        It was dead code before Darin added "override".
+        WebCore/FrameLoaderClient.h has this inside of USE(CFURLCONNECTION) macros, now we have them here, too.
+
 2017-01-18  Andreas Kling  <akling@apple.com>
 
         Document::securityOrigin() should return a reference.

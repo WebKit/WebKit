@@ -293,6 +293,7 @@ void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, unsign
     resourceLoadDelegate->didFailLoadingWithError(webView, identifier, webError.get(), getWebDataSource(loader));
 }
 
+#if USE(CFURLCONNECTION)
 bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response, const unsigned char* data, const unsigned long long length)
 {
     WebView* webView = m_webFrame->webView();
@@ -311,6 +312,7 @@ bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader* loader, unsigned 
 
     return true;
 }
+#endif
 
 void WebFrameLoaderClient::dispatchDidDispatchOnloadEvents()
 {

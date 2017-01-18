@@ -74,7 +74,9 @@ public:
     void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long identifier, int dataLength) override;
     void dispatchDidFinishLoading(WebCore::DocumentLoader*, unsigned long identifier) override;
     void dispatchDidFailLoading(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceError&) override;
+#if USE(CFURLCONNECTION)
     bool shouldCacheResponse(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceResponse&, const unsigned char* data, unsigned long long length) override;
+#endif
 
     void dispatchDidDispatchOnloadEvents() override;
     void dispatchDidReceiveServerRedirectForProvisionalLoad() override;
