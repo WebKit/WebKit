@@ -1679,7 +1679,8 @@ void Heap::snapshotUnswept()
 
 void Heap::deleteSourceProviderCaches()
 {
-    m_vm->clearSourceProviderCaches();
+    if (*m_lastCollectionScope == CollectionScope::Full)
+        m_vm->clearSourceProviderCaches();
 }
 
 void Heap::notifyIncrementalSweeper()

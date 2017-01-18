@@ -1,3 +1,18 @@
+2017-01-18  Antti Koivisto  <antti@apple.com>
+
+        Only delete source provider caches on full collection
+        https://bugs.webkit.org/show_bug.cgi?id=167173
+
+        Reviewed by Andreas Kling.
+
+        They are currently often wiped and recreated during page loading due to eden collections.
+
+        It is not clear that tying the lifetime of these caches to gc makes sense at all but this
+        should at least help some.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteSourceProviderCaches):
+
 2017-01-18  Filip Pizlo  <fpizlo@apple.com>
 
         JSObjectSetPrivate should not use jsCast<>
