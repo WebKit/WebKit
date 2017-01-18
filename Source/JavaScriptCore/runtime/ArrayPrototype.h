@@ -49,7 +49,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(DerivedArrayType, StructureFlags), info(), ArrayClass);
     }
 
-    void initializeSpeciesWatchpoint(ExecState*);
+    void tryInitializeSpeciesWatchpoint(ExecState*);
 
     static const bool needsDestruction = false;
     // We don't need destruction since we use a finalizer.

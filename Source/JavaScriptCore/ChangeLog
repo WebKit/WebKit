@@ -1,5 +1,45 @@
 2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210745. rdar://problem/30019309
+
+    2017-01-13  Saam Barati  <sbarati@apple.com>
+
+            Initialize the ArraySpecies watchpoint as Clear and transition to IsWatched once slice is called for the first time
+            https://bugs.webkit.org/show_bug.cgi?id=167017
+            <rdar://problem/30019309>
+
+            Reviewed by Keith Miller and Filip Pizlo.
+
+            This patch is to reverse the JSBench regression from r210695.
+
+            The new state diagram for the array species watchpoint is as
+            follows:
+
+            1. On GlobalObject construction, it starts life out as ClearWatchpoint.
+            2. When slice is called for the first time, we observe the state
+            of the world, and either transition it to IsWatched if we were able
+            to set up the object property conditions, or to IsInvalidated if we
+            were not.
+            3. The DFG compiler will now only lower slice as an intrinsic if
+            it observed the speciesWatchpoint.state() as IsWatched.
+            4. The IsWatched => IsInvalidated transition happens only when
+            one of the object property condition watchpoints fire.
+
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+            * runtime/ArrayPrototype.cpp:
+            (JSC::speciesWatchpointIsValid):
+            (JSC::speciesConstructArray):
+            (JSC::arrayProtoPrivateFuncConcatMemcpy):
+            (JSC::ArrayPrototype::tryInitializeSpeciesWatchpoint):
+            (JSC::ArrayPrototype::initializeSpeciesWatchpoint): Deleted.
+            * runtime/ArrayPrototype.h:
+            * runtime/JSGlobalObject.cpp:
+            (JSC::JSGlobalObject::JSGlobalObject):
+            (JSC::JSGlobalObject::init):
+
+2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210695. rdar://problem/29913445
 
     2017-01-12  Saam Barati  <sbarati@apple.com>
