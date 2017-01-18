@@ -311,9 +311,6 @@ webkit.org/b/157068 imported/w3c/web-platform-tests/fetch/nosniff/importscripts.
 webkit.org/b/157145 imported/w3c/web-platform-tests/fetch/nosniff/stylesheet.html [ Failure Pass ]
 webkit.org/b/161312 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context.html [ Failure Pass ]
 
-[ Debug ] imported/w3c/web-platform-tests/fetch/api/basic/request-upload.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/fetch/api/basic/request-upload-worker.html [ Skip ]
-
 imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect.html [ DumpJSConsoleLogInStdErr ]

@@ -68,8 +68,11 @@ std::optional<FetchBody> FetchBody::extract(ScriptExecutionContext& context, JSC
         contentType = HTTPHeaderValues::formURLEncodedContentType();
         return FetchBody(*JSURLSearchParams::toWrapped(value));
     }
-    if (value.inherits(JSReadableStream::info()))
-        return FetchBody();
+    if (value.inherits(JSReadableStream::info())) {
+        FetchBody body;
+        body.m_isReadableStream = true;
+        return WTFMove(body);
+    }
     if (value.inherits(JSC::JSArrayBuffer::info())) {
         ArrayBuffer* data = toUnsharedArrayBuffer(value);
         ASSERT(data);

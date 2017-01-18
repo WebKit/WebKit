@@ -96,6 +96,7 @@ public:
 
     const FetchOptions& fetchOptions() const { return m_internalRequest.options; }
     ResourceRequest internalRequest() const;
+    bool isBodyReadableStream() const { return !isBodyNull() && body().isReadableStream(); }
 
     const String& internalRequestReferrer() const { return m_internalRequest.referrer; }
 

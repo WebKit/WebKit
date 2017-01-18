@@ -1,5 +1,14 @@
 2017-01-18  Youenn Fablet  <youenn@apple.com>
 
+        Reject fetch promise in case of ReadableStream upload
+        https://bugs.webkit.org/show_bug.cgi?id=167145
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+
+2017-01-18  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Update content-type in case of form data
         https://bugs.webkit.org/show_bug.cgi?id=167143
 

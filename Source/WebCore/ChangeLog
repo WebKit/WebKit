@@ -1,3 +1,20 @@
+2017-01-18  Youenn Fablet  <youenn@apple.com>
+
+        Reject fetch promise in case of ReadableStream upload
+        https://bugs.webkit.org/show_bug.cgi?id=167145
+
+        Reviewed by Alex Christensen.
+
+        Covered by rebased tests.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::extract): Storing the fact that body data is represented as a ReadableStream.
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::isReadableStream):
+        * Modules/fetch/FetchRequest.h:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::fetch): Rejecting if request body data is a ReadableStream.
+
 2017-01-18  Andreas Kling  <akling@apple.com>
 
         Document::securityOrigin() should return a reference.
