@@ -624,7 +624,7 @@ void ContainerNode::replaceAllChildren(Ref<Node>&& node)
     Ref<ContainerNode> protectedThis(*this);
     ChildListMutationScope mutation(*this);
 
-    // If node is not null, adopt node into parent’s node document.
+    // If node is not null, adopt node into parent's node document.
     treeScope().adoptIfNeeded(node);
 
     // Remove all parent's children, in tree order.

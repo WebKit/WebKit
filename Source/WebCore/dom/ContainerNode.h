@@ -128,7 +128,7 @@ private:
 
     enum class ReplacedAllChildren { No, Yes };
     void updateTreeAfterInsertion(Node& child, ReplacedAllChildren = ReplacedAllChildren::No);
-    static ChildChange changeForChildInsertion(Node&, ChildChangeSource, ReplacedAllChildren = ReplacedAllChildren::No);
+    static ChildChange changeForChildInsertion(Node& child, ChildChangeSource, ReplacedAllChildren = ReplacedAllChildren::No);
     void rebuildSVGExtensionsElementsIfNecessary();
 
     bool isContainerNode() const = delete;
