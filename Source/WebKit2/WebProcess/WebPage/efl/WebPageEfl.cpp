@@ -157,7 +157,7 @@ String WebPage::cachedSuggestedFilenameForURL(const URL&)
     return String();
 }
 
-PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const URL&)
+RefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const URL&)
 {
     notImplemented();
     return 0;

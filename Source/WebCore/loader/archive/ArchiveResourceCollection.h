@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,24 +28,29 @@
 
 #pragma once
 
-#include "Archive.h"
-#include "ArchiveResource.h"
-#include "URL.h"
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
+class Archive;
+class ArchiveResource;
+class URL;
+
 class ArchiveResourceCollection {
-    WTF_MAKE_NONCOPYABLE(ArchiveResourceCollection); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(ArchiveResourceCollection);
+    WTF_MAKE_FAST_ALLOCATED;
+
 public:
-    ArchiveResourceCollection();
+    ArchiveResourceCollection() = default;
 
     void addResource(Ref<ArchiveResource>&&);
-    void addAllResources(Archive*);
+    void addAllResources(Archive&);
     
     WEBCORE_EXPORT ArchiveResource* archiveResourceForURL(const URL&);
-    PassRefPtr<Archive> popSubframeArchive(const String& frameName, const URL&);
+    RefPtr<Archive> popSubframeArchive(const String& frameName, const URL&);
     
 private:    
     HashMap<String, RefPtr<ArchiveResource>> m_subresources;

@@ -47,16 +47,13 @@ using namespace WebCore;
 NetworkStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 {
     ASSERT(isMainThread());
-
     NetworkStorageSession::ensurePrivateBrowsingSession(SessionID::legacyPrivateSessionID(), [[NSBundle mainBundle] bundleIdentifier]);
-
     return *NetworkStorageSession::storageSession(SessionID::legacyPrivateSessionID());
 }
 
 void WebFrameNetworkingContext::destroyPrivateBrowsingSession()
 {
     ASSERT(isMainThread());
-
     NetworkStorageSession::destroySession(SessionID::legacyPrivateSessionID());
 }
 
@@ -68,19 +65,19 @@ bool WebFrameNetworkingContext::localFileContentSniffingEnabled() const
 SchedulePairHashSet* WebFrameNetworkingContext::scheduledRunLoopPairs() const
 {
     if (!frame() || !frame()->page())
-        return 0;
+        return nullptr;
     return frame()->page()->scheduledRunLoopPairs();
 }
 
 RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() const
 {
     if (!frame() || !frame()->page())
-        return 0;
+        return nullptr;
     
     WebView *webview = kit(frame()->page());
-    
     if (!webview)
-        return 0;
+        return nullptr;
+
     return reinterpret_cast<CFDataRef>(webview._sourceApplicationAuditData);
 }
 
@@ -98,7 +95,7 @@ NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
     ASSERT(isMainThread());
     if (frame() && frame()->page()->sessionID().isEphemeral()) {
-        if (NetworkStorageSession* session = NetworkStorageSession::storageSession(SessionID::legacyPrivateSessionID()))
+        if (auto* session = NetworkStorageSession::storageSession(SessionID::legacyPrivateSessionID()))
             return *session;
         // Some requests may still be coming shortly before WebCore updates the session ID and after WebKit destroys the private browsing session.
         LOG_ERROR("Invalid session ID. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");

@@ -1,3 +1,50 @@
+2017-01-15  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr from "loader" directory of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=167055
+
+        Reviewed by Alex Christensen.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::mediaCanStart): Fix call to dispatchDidFailToStartPlugin
+        by calling it directly on WebFrameLoaderClient. If my theory is correct, the old
+        call has been broken and doing nothing since r177941, two years ago, which made
+        the argument types different between FrameLoaderClient and WebFrameLoaderClient,
+        leaving WebFrameLoaderClient::dispatchDidFailToStartPlugin as dead code.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::runOpenPanel): Updated for change to ChromeClient.
+        * WebCoreSupport/WebChromeClient.h: Ditto.
+
+        * WebCoreSupport/WebEditorClient.cpp:
+        (WebEditorUndoCommand::WebEditorUndoCommand): Take a reference instead of
+        a PassRefPtr. Also use Ref instead of RefPtr.
+        (WebEditorClient::shouldChangeTypingStyle): Deleted. Empty function that was
+        never called.
+        (WebEditorClient::webViewDidChangeTypingStyle): Ditto.
+        (WebEditorClient::webViewDidChangeSelection): Ditto.
+        (WebEditorClient::registerUndoStep):  Take reference instead of PassRefPtr.
+        (WebEditorClient::registerRedoStep): Ditto.
+        * WebCoreSupport/WebEditorClient.h: Updated for the above. Also marked the
+        class and member functions final and made them all private, which will
+        help us catch if there are any that don't correctly match WebCore.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction): Updated
+        for change to ChromeClient.
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Ditto.
+        (WebFrameLoaderClient::dispatchWillSendSubmitEvent): Ditto.
+        (WebFrameLoaderClient::dispatchWillSubmitForm): Ditto.
+        (WebFrameLoaderClient::createFrame): Ditto. Also merged two functions into
+        one because one was private and only called by the other.
+        (WebFrameLoaderClient::createPlugin): Ditto.
+        (WebFrameLoaderClient::createJavaAppletWidget): Ditto.
+        (WebFrameLoaderClient::createNetworkingContext): Ditto.
+        * WebCoreSupport/WebFrameLoaderClient.h: Ditto.
+
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+        (WebFrameNetworkingContext::create): Return a Ref instead of a PassRefPtr.
+
 2017-01-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unnecessary includes of Page.h

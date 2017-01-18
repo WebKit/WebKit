@@ -1,6 +1,6 @@
 /*
 * Copyright (C) 2011 Google Inc. All rights reserved.
-* Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+* Copyright (C) 2014-2017 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -1073,10 +1073,10 @@ void InspectorInstrumentation::networkStateChangedImpl(InstrumentingAgents& inst
         applicationCacheAgent->networkStateChanged();
 }
 
-void InspectorInstrumentation::updateApplicationCacheStatusImpl(InstrumentingAgents& instrumentingAgents, Frame* frame)
+void InspectorInstrumentation::updateApplicationCacheStatusImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
 {
-    if (InspectorApplicationCacheAgent* applicationCacheAgent = instrumentingAgents.inspectorApplicationCacheAgent())
-        applicationCacheAgent->updateApplicationCacheStatus(frame);
+    if (auto* applicationCacheAgent = instrumentingAgents.inspectorApplicationCacheAgent())
+        applicationCacheAgent->updateApplicationCacheStatus(&frame);
 }
 
 bool InspectorInstrumentation::consoleAgentEnabled(ScriptExecutionContext* scriptExecutionContext)

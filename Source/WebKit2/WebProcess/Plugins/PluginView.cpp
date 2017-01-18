@@ -185,23 +185,19 @@ static String buildHTTPHeaders(const ResourceResponse& response, long long& expe
     if (!response.isHTTP())
         return String();
 
-    StringBuilder stringBuilder;
-    
-    String statusLine = String::format("HTTP %d ", response.httpStatusCode());
-    stringBuilder.append(statusLine);
-    stringBuilder.append(response.httpStatusText());
-    stringBuilder.append('\n');
-    
-    HTTPHeaderMap::const_iterator end = response.httpHeaderFields().end();
-    for (HTTPHeaderMap::const_iterator it = response.httpHeaderFields().begin(); it != end; ++it) {
-        stringBuilder.append(it->key);
-        stringBuilder.appendLiteral(": ");
-        stringBuilder.append(it->value);
-        stringBuilder.append('\n');
+    StringBuilder header;
+    header.appendLiteral("HTTP ");
+    header.appendNumber(response.httpStatusCode());
+    header.append(' ');
+    header.append(response.httpStatusText());
+    header.append('\n');
+    for (auto& field : response.httpHeaderFields()) {
+        header.append(field.key);
+        header.appendLiteral(": ");
+        header.append(field.value);
+        header.append('\n');
     }
-    
-    String headers = stringBuilder.toString();
-    
+
     // If the content is encoded (most likely compressed), then don't send its length to the plugin,
     // which is only interested in the decoded length, not yet known at the moment.
     // <rdar://problem/4470599> tracks a request for -[NSURLResponse expectedContentLength] to incorporate this logic.
@@ -209,7 +205,7 @@ static String buildHTTPHeaders(const ResourceResponse& response, long long& expe
     if (!contentEncoding.isNull() && contentEncoding != "identity")
         expectedContentLength = -1;
 
-    return headers;
+    return header.toString();
 }
 
 static uint32_t lastModifiedDateMS(const ResourceResponse& response)
@@ -292,37 +288,19 @@ static inline WebPage* webPage(HTMLPlugInElement* pluginElement)
     return webFrame->page();
 }
 
-Ref<PluginView> PluginView::create(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
+Ref<PluginView> PluginView::create(HTMLPlugInElement& pluginElement, Ref<Plugin>&& plugin, const Plugin::Parameters& parameters)
 {
-    return adoptRef(*new PluginView(pluginElement, plugin, parameters));
+    return adoptRef(*new PluginView(pluginElement, WTFMove(plugin), parameters));
 }
 
-PluginView::PluginView(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
+PluginView::PluginView(HTMLPlugInElement& pluginElement, Ref<Plugin>&& plugin, const Plugin::Parameters& parameters)
     : PluginViewBase(0)
-    , m_pluginElement(pluginElement)
-    , m_plugin(plugin)
+    , m_pluginElement(&pluginElement)
+    , m_plugin(WTFMove(plugin))
     , m_webPage(webPage(m_pluginElement.get()))
     , m_parameters(parameters)
-    , m_isInitialized(false)
-    , m_isWaitingForSynchronousInitialization(false)
-    , m_isWaitingUntilMediaCanStart(false)
-    , m_isBeingDestroyed(false)
-    , m_pluginProcessHasCrashed(false)
-#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    , m_didPlugInStartOffScreen(false)
-#endif
     , m_pendingURLRequestsTimer(RunLoop::main(), this, &PluginView::pendingURLRequestsTimerFired)
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    , m_npRuntimeObjectMap(this)
-#endif
-    , m_manualStreamState(StreamStateInitial)
     , m_pluginSnapshotTimer(*this, &PluginView::pluginSnapshotTimerFired, pluginSnapshotTimerDelay)
-#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC) || PLATFORM(COCOA)
-    , m_countSnapshotRetries(0)
-#endif
-    , m_didReceiveUserInteraction(false)
-    , m_pageScaleFactor(1)
-    , m_pluginIsPlayingAudio(false)
 {
     m_webPage->addPluginView(this);
 }
@@ -374,7 +352,7 @@ void PluginView::destroyPluginAndReset()
     cancelAllStreams();
 }
 
-void PluginView::recreateAndInitialize(PassRefPtr<Plugin> plugin)
+void PluginView::recreateAndInitialize(Ref<Plugin>&& plugin)
 {
     if (m_plugin) {
         if (m_pluginSnapshotTimer.isActive())
@@ -382,13 +360,12 @@ void PluginView::recreateAndInitialize(PassRefPtr<Plugin> plugin)
         destroyPluginAndReset();
     }
 
-    // Reset member variables to initial values.
-    m_plugin = plugin;
+    m_plugin = WTFMove(plugin);
     m_isInitialized = false;
     m_isWaitingForSynchronousInitialization = false;
     m_isWaitingUntilMediaCanStart = false;
     m_isBeingDestroyed = false;
-    m_manualStreamState = StreamStateInitial;
+    m_manualStreamState = ManualStreamState::Initial;
     m_transientPaintingSnapshot = nullptr;
 
     initializePlugin();
@@ -421,8 +398,8 @@ void PluginView::manualLoadDidReceiveResponse(const ResourceResponse& response)
         return;
 
     if (!m_isInitialized) {
-        ASSERT(m_manualStreamState == StreamStateInitial);
-        m_manualStreamState = StreamStateHasReceivedResponse;
+        ASSERT(m_manualStreamState == ManualStreamState::Initial);
+        m_manualStreamState = ManualStreamState::HasReceivedResponse;
         m_manualStreamResponse = response;
         return;
     }
@@ -448,7 +425,7 @@ void PluginView::manualLoadDidReceiveData(const char* bytes, int length)
         return;
 
     if (!m_isInitialized) {
-        ASSERT(m_manualStreamState == StreamStateHasReceivedResponse);
+        ASSERT(m_manualStreamState == ManualStreamState::HasReceivedResponse);
         if (!m_manualStreamData)
             m_manualStreamData = SharedBuffer::create();
 
@@ -466,8 +443,8 @@ void PluginView::manualLoadDidFinishLoading()
         return;
 
     if (!m_isInitialized) {
-        ASSERT(m_manualStreamState == StreamStateHasReceivedResponse);
-        m_manualStreamState = StreamStateFinished;
+        ASSERT(m_manualStreamState == ManualStreamState::HasReceivedResponse);
+        m_manualStreamState = ManualStreamState::Finished;
         return;
     }
 
@@ -481,7 +458,7 @@ void PluginView::manualLoadDidFail(const ResourceError& error)
         return;
 
     if (!m_isInitialized) {
-        m_manualStreamState = StreamStateFinished;
+        m_manualStreamState = ManualStreamState::Finished;
         m_manualStreamError = error;
         m_manualStreamData = nullptr;
         return;
@@ -1007,7 +984,7 @@ void PluginView::willDetatchRenderer()
     m_plugin->willDetatchRenderer();
 }
 
-PassRefPtr<SharedBuffer> PluginView::liveResourceData() const
+RefPtr<SharedBuffer> PluginView::liveResourceData() const
 {
     if (!m_isInitialized || !m_plugin)
         return 0;
@@ -1308,12 +1285,12 @@ void PluginView::cancelAllStreams()
 
 void PluginView::redeliverManualStream()
 {
-    if (m_manualStreamState == StreamStateInitial) {
+    if (m_manualStreamState == ManualStreamState::Initial) {
         // Nothing to do.
         return;
     }
 
-    if (m_manualStreamState == StreamStateFailed) {
+    if (m_manualStreamState == ManualStreamState::Failed) {
         manualLoadDidFail(m_manualStreamError);
         return;
     }
@@ -1334,7 +1311,7 @@ void PluginView::redeliverManualStream()
         m_manualStreamData = nullptr;
     }
 
-    if (m_manualStreamState == StreamStateFinished)
+    if (m_manualStreamState == ManualStreamState::Finished)
         manualLoadDidFinishLoading();
 }
 

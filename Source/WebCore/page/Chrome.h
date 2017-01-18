@@ -154,7 +154,7 @@ public:
     std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient*, const Color& initialColor);
 #endif
 
-    void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
+    void runOpenPanel(Frame&, FileChooser&);
     void loadIconForFiles(const Vector<String>&, FileIconLoader&);
 
     void dispatchViewportPropertiesDidChange(const ViewportArguments&) const;

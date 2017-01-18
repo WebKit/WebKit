@@ -122,15 +122,15 @@ RefPtr<MHTMLArchive> MHTMLArchive::create(const URL& url, SharedBuffer& data)
         RefPtr<MHTMLArchive> archive = parser.frameAt(i);
         for (size_t j = 1; j < parser.frameCount(); ++j) {
             if (i != j)
-                archive->addSubframeArchive(parser.frameAt(j));
+                archive->addSubframeArchive(*parser.frameAt(j));
         }
         for (size_t j = 0; j < parser.subResourceCount(); ++j)
-            archive->addSubresource(parser.subResourceAt(j));
+            archive->addSubresource(*parser.subResourceAt(j));
     }
     return mainArchive;
 }
 
-PassRefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
+RefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
 {
     Vector<PageSerializer::Resource> resources;
     PageSerializer pageSerializer(&resources);

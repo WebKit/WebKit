@@ -191,7 +191,7 @@ void FileInputType::handleDOMActivateEvent(Event& event)
     if (!ScriptController::processingUserGesture())
         return;
 
-    if (Chrome* chrome = this->chrome()) {
+    if (auto* chrome = this->chrome()) {
         FileChooserSettings settings;
         HTMLInputElement& input = element();
         settings.allowsMultipleFiles = input.hasAttributeWithoutSynchronization(multipleAttr);
@@ -201,9 +201,8 @@ void FileInputType::handleDOMActivateEvent(Event& event)
 #if ENABLE(MEDIA_CAPTURE)
         settings.mediaCaptureType = input.mediaCaptureType();
 #endif
-
         applyFileChooserSettings(settings);
-        chrome->runOpenPanel(input.document().frame(), m_fileChooser);
+        chrome->runOpenPanel(*input.document().frame(), *m_fileChooser);
     }
 
     event.setDefaultHandled();

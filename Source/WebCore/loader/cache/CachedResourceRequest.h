@@ -58,7 +58,7 @@ public:
     const ResourceLoaderOptions& options() const { return m_options; }
     void setOptions(const ResourceLoaderOptions& options) { m_options = options; }
     const std::optional<ResourceLoadPriority>& priority() const { return m_priority; }
-    void setInitiator(PassRefPtr<Element>);
+    void setInitiator(Element&);
     void setInitiator(const AtomicString& name);
     const AtomicString& initiatorName() const;
     bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching; }

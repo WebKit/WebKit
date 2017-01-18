@@ -28,9 +28,9 @@
 
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
-    static PassRefPtr<WebFrameNetworkingContext> create(WebCore::Frame* frame)
+    static Ref<WebFrameNetworkingContext> create(WebCore::Frame* frame)
     {
-        return adoptRef(new WebFrameNetworkingContext(frame));
+        return adoptRef(*new WebFrameNetworkingContext(frame));
     }
 
 #if USE(CFURLCONNECTION)

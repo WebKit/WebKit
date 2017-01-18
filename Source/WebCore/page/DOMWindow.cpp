@@ -769,7 +769,7 @@ DOMApplicationCache* DOMWindow::applicationCache() const
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_applicationCache)
-        m_applicationCache = DOMApplicationCache::create(m_frame);
+        m_applicationCache = DOMApplicationCache::create(*m_frame);
     return m_applicationCache.get();
 }
 
@@ -2079,7 +2079,7 @@ void DOMWindow::setLocation(DOMWindow& activeWindow, DOMWindow& firstWindow, con
     // We want a new history item if we are processing a user gesture.
     LockHistory lockHistory = (locking != LockHistoryBasedOnGestureState || !ScriptController::processingUserGesture()) ? LockHistory::Yes : LockHistory::No;
     LockBackForwardList lockBackForwardList = (locking != LockHistoryBasedOnGestureState) ? LockBackForwardList::Yes : LockBackForwardList::No;
-    m_frame->navigationScheduler().scheduleLocationChange(activeDocument, activeDocument->securityOrigin(),
+    m_frame->navigationScheduler().scheduleLocationChange(*activeDocument, activeDocument->securityOrigin(),
         // FIXME: What if activeDocument()->frame() is 0?
         completedURL, activeDocument->frame()->loader().outgoingReferrer(),
         lockHistory, lockBackForwardList);
@@ -2205,7 +2205,7 @@ RefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicStrin
         newFrame->loader().changeLocation(frameRequest);
     } else if (!urlString.isEmpty()) {
         LockHistory lockHistory = ScriptController::processingUserGesture() ? LockHistory::No : LockHistory::Yes;
-        newFrame->navigationScheduler().scheduleLocationChange(activeWindow.document(), activeWindow.document()->securityOrigin(), completedURL, referrer, lockHistory, LockBackForwardList::No);
+        newFrame->navigationScheduler().scheduleLocationChange(*activeWindow.document(), activeWindow.document()->securityOrigin(), completedURL, referrer, lockHistory, LockBackForwardList::No);
     }
 
     // Navigating the new frame could result in it being detached from its page by a navigation policy delegate.
@@ -2215,28 +2215,26 @@ RefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicStrin
     return newFrame;
 }
 
-RefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
-    DOMWindow& activeWindow, DOMWindow& firstWindow)
+RefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow)
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
 
-    Document* activeDocument = activeWindow.document();
+    auto* activeDocument = activeWindow.document();
     if (!activeDocument)
         return nullptr;
 
-    Frame* firstFrame = firstWindow.frame();
+    auto* firstFrame = firstWindow.frame();
     if (!firstFrame)
         return nullptr;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (firstFrame->document()
-        && firstFrame->mainFrame().page()
+        && firstFrame->page()
         && firstFrame->mainFrame().document()
         && firstFrame->mainFrame().document()->loader()) {
-        ResourceLoadInfo resourceLoadInfo = { firstFrame->document()->completeURL(urlString), firstFrame->mainFrame().document()->url(), ResourceType::Popup };
-        Vector<ContentExtensions::Action> actions = firstFrame->mainFrame().page()->userContentProvider().actionsForResourceLoad(resourceLoadInfo, *firstFrame->mainFrame().document()->loader());
-        for (const ContentExtensions::Action& action : actions) {
+        ResourceLoadInfo resourceLoadInfo { firstFrame->document()->completeURL(urlString), firstFrame->mainFrame().document()->url(), ResourceType::Popup };
+        for (auto& action : firstFrame->page()->userContentProvider().actionsForResourceLoad(resourceLoadInfo, *firstFrame->mainFrame().document()->loader())) {
             if (action.type() == ContentExtensions::ActionType::BlockLoad)
                 return nullptr;
         }
@@ -2276,7 +2274,7 @@ RefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicString& f
         // For whatever reason, Firefox uses the first window rather than the active window to
         // determine the outgoing referrer. We replicate that behavior here.
         LockHistory lockHistory = ScriptController::processingUserGesture() ? LockHistory::No : LockHistory::Yes;
-        targetFrame->navigationScheduler().scheduleLocationChange(activeDocument, activeDocument->securityOrigin(), completedURL, firstFrame->loader().outgoingReferrer(),
+        targetFrame->navigationScheduler().scheduleLocationChange(*activeDocument, activeDocument->securityOrigin(), completedURL, firstFrame->loader().outgoingReferrer(),
             lockHistory, LockBackForwardList::No);
         return targetFrame->document()->domWindow();
     }

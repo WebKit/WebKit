@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,37 +28,33 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-    class Document;
-    class HTMLFormElement;
+class Document;
+class HTMLFormElement;
 
-    enum FormSubmissionTrigger {
-        SubmittedByJavaScript,
-        NotSubmittedByJavaScript
-    };
-    
-    typedef Vector<std::pair<String, String>> StringPairVector;
+enum FormSubmissionTrigger { SubmittedByJavaScript, NotSubmittedByJavaScript };
 
-    class FormState : public RefCounted<FormState> {
-    public:
-        static Ref<FormState> create(PassRefPtr<HTMLFormElement>, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Document>, FormSubmissionTrigger);
+using StringPairVector = Vector<std::pair<String, String>>;
 
-        HTMLFormElement* form() const { return m_form.get(); }
-        const StringPairVector& textFieldValues() const { return m_textFieldValues; }
-        Document* sourceDocument() const { return m_sourceDocument.get(); }
-        FormSubmissionTrigger formSubmissionTrigger() const { return m_formSubmissionTrigger; }
+class FormState : public RefCounted<FormState> {
+public:
+    static Ref<FormState> create(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger);
 
-    private:
-        FormState(PassRefPtr<HTMLFormElement>, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Document>, FormSubmissionTrigger);
+    HTMLFormElement& form() const { return m_form; }
+    const StringPairVector& textFieldValues() const { return m_textFieldValues; }
+    Document& sourceDocument() const { return m_sourceDocument; }
+    FormSubmissionTrigger formSubmissionTrigger() const { return m_formSubmissionTrigger; }
 
-        RefPtr<HTMLFormElement> m_form;
-        StringPairVector m_textFieldValues;
-        RefPtr<Document> m_sourceDocument;
-        FormSubmissionTrigger m_formSubmissionTrigger;
-    };
+private:
+    FormState(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger);
+
+    Ref<HTMLFormElement> m_form;
+    StringPairVector m_textFieldValues;
+    Ref<Document> m_sourceDocument;
+    FormSubmissionTrigger m_formSubmissionTrigger;
+};
 
 } // namespace WebCore

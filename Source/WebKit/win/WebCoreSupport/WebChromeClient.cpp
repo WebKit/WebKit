@@ -618,15 +618,13 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_
     notImplemented();
 }
 
-void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
+void WebChromeClient::runOpenPanel(Frame&, FileChooser& fileChooser)
 {
-    RefPtr<FileChooser> fileChooser = prpFileChooser;
-
     HWND viewWindow;
     if (FAILED(m_webView->viewWindow(&viewWindow)))
         return;
 
-    bool multiFile = fileChooser->settings().allowsMultipleFiles;
+    bool multiFile = fileChooser.settings().allowsMultipleFiles;
     Vector<WCHAR> fileBuf(multiFile ? maxFilePathsListSize : MAX_PATH);
 
     OPENFILENAME ofn;
@@ -675,7 +673,7 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChoose
         } else
             fileList.append(file);
         ASSERT(fileList.size());
-        fileChooser->chooseFiles(fileList);
+        fileChooser.chooseFiles(fileList);
     }
     // FIXME: Show some sort of error if too many files are selected and the buffer is too small.  For now, this will fail silently.
 }

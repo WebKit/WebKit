@@ -88,7 +88,7 @@ void SVGFEImageElement::requestImageResource()
     options.contentSecurityPolicyImposition = isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
     CachedResourceRequest request(ResourceRequest(document().completeURL(href())), options);
-    request.setInitiator(this);
+    request.setInitiator(*this);
     m_cachedImage = document().cachedResourceLoader().requestImage(WTFMove(request));
 
     if (m_cachedImage)

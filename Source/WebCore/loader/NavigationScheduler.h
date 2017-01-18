@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2009 Adam Barth. All rights reserved.
  *
@@ -68,10 +68,10 @@ public:
     bool redirectScheduledDuringLoad();
     bool locationChangePending();
 
-    void scheduleRedirect(Document* initiatingDocument, double delay, const URL&);
-    void scheduleLocationChange(Document* initiatingDocument, SecurityOrigin*, const URL&, const String& referrer, LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
-    void scheduleFormSubmission(PassRefPtr<FormSubmission>);
-    void scheduleRefresh(Document* initiatingDocument);
+    void scheduleRedirect(Document& initiatingDocument, double delay, const URL&);
+    void scheduleLocationChange(Document& initiatingDocument, SecurityOrigin*, const URL&, const String& referrer, LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
+    void scheduleFormSubmission(Ref<FormSubmission>&&);
+    void scheduleRefresh(Document& initiatingDocument);
     void scheduleHistoryNavigation(int steps);
     void schedulePageBlock(Document& originDocument);
 

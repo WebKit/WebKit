@@ -59,15 +59,17 @@ String CachedResourceRequest::splitFragmentIdentifierFromRequestURL(ResourceRequ
     return fragmentIdentifier;
 }
 
-void CachedResourceRequest::setInitiator(PassRefPtr<Element> element)
+void CachedResourceRequest::setInitiator(Element& element)
 {
-    ASSERT(!m_initiatorElement && m_initiatorName.isEmpty());
-    m_initiatorElement = element;
+    ASSERT(!m_initiatorElement);
+    ASSERT(m_initiatorName.isEmpty());
+    m_initiatorElement = &element;
 }
 
 void CachedResourceRequest::setInitiator(const AtomicString& name)
 {
-    ASSERT(!m_initiatorElement && m_initiatorName.isEmpty());
+    ASSERT(!m_initiatorElement);
+    ASSERT(m_initiatorName.isEmpty());
     m_initiatorName = name;
 }
 
@@ -209,10 +211,12 @@ void CachedResourceRequest::removeFragmentIdentifierIfNeeded()
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
+
 void CachedResourceRequest::applyBlockedStatus(const ContentExtensions::BlockedStatus& blockedStatus)
 {
     ContentExtensions::applyBlockedStatusToRequest(blockedStatus, m_resourceRequest);
 }
+
 #endif
 
 void CachedResourceRequest::updateReferrerOriginAndUserAgentHeaders(FrameLoader& frameLoader, ReferrerPolicy defaultPolicy)

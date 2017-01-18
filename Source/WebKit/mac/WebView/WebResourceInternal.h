@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,13 @@
  */
 
 #import "WebResourcePrivate.h"
-#import <wtf/PassRefPtr.h>
+#import <wtf/Ref.h>
 
 namespace WebCore {
     class ArchiveResource;
 }
 
 @interface WebResource (WebResourceInternal)
-- (id)_initWithCoreResource:(PassRefPtr<WebCore::ArchiveResource>)coreResource;
-- (WebCore::ArchiveResource*)_coreResource;
+- (id)_initWithCoreResource:(Ref<WebCore::ArchiveResource>&&)coreResource;
+- (WebCore::ArchiveResource&)_coreResource;
 @end

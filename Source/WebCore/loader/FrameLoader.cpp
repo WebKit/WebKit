@@ -364,17 +364,15 @@ void FrameLoader::urlSelected(const FrameLoadRequest& passedRequest, Event* trig
 
 void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
 {
-    ASSERT(submission->method() == FormSubmission::PostMethod || submission->method() == FormSubmission::GetMethod);
+    ASSERT(submission->method() == FormSubmission::Method::Post || submission->method() == FormSubmission::Method::Get);
 
     // FIXME: Find a good spot for these.
-    ASSERT(submission->data());
-    ASSERT(submission->state());
-    ASSERT(!submission->state()->sourceDocument()->frame() || submission->state()->sourceDocument()->frame() == &m_frame);
+    ASSERT(!submission->state().sourceDocument().frame() || submission->state().sourceDocument().frame() == &m_frame);
 
     if (!m_frame.page())
         return;
 
-    if (submission->state()->sourceDocument()->pageCacheState() != Document::NotInPageCache)
+    if (submission->state().sourceDocument().pageCacheState() != Document::NotInPageCache)
         return;
 
     if (submission->action().isEmpty())
@@ -396,12 +394,12 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
         return;
     }
 
-    Frame* targetFrame = findFrameForNavigation(submission->target(), submission->state()->sourceDocument());
+    Frame* targetFrame = findFrameForNavigation(submission->target(), &submission->state().sourceDocument());
     if (!targetFrame) {
         if (!DOMWindow::allowPopUp(&m_frame) && !ScriptController::processingUserGesture())
             return;
 
-        // FIXME: targetFrame can be 0 for two distinct reasons:
+        // FIXME: targetFrame can be null for two distinct reasons:
         // 1. The frame was not found by name, so we should try opening a new window.
         // 2. The frame was found, but navigating it was not allowed, e.g. by HTML5 sandbox or by origin checks.
         // Continuing form submission makes no sense in the latter case.
@@ -432,7 +430,7 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
         m_submittedFormURL = submission->requestURL();
     }
 
-    submission->data()->generateFiles(m_frame.document());
+    submission->data().generateFiles(m_frame.document());
     submission->setReferrer(outgoingReferrer());
     submission->setOrigin(outgoingOrigin());
 
@@ -658,20 +656,18 @@ void FrameLoader::receivedFirstData()
     if (!m_documentLoader)
         return;
 
+    ASSERT(m_frame.document());
+    auto& document = *m_frame.document();
+
     double delay;
     String urlString;
     if (!parseHTTPRefresh(m_documentLoader->response().httpHeaderField(HTTPHeaderName::Refresh), delay, urlString))
         return;
-    URL completedURL;
-    if (urlString.isEmpty())
-        completedURL = m_frame.document()->url();
-    else
-        completedURL = m_frame.document()->completeURL(urlString);
-
+    auto completedURL = urlString.isEmpty() ? document.url() : document.completeURL(urlString);
     if (!protocolIsJavaScript(completedURL))
-        m_frame.navigationScheduler().scheduleRedirect(m_frame.document(), delay, completedURL);
+        m_frame.navigationScheduler().scheduleRedirect(document, delay, completedURL);
     else {
-        String message = "Refused to refresh " + m_frame.document()->url().stringCenterEllipsizedToLength() + " to a javascript: URL";
+        auto message = "Refused to refresh " + document.url().stringCenterEllipsizedToLength() + " to a javascript: URL";
         m_frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
     }
 }
@@ -1137,7 +1133,7 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, Event* event
         || event->target()->toNode()->document().pageCacheState() == Document::NotInPageCache);
 
     // Protect frame from getting blown away inside dispatchBeforeLoadEvent in loadWithDocumentLoader.
-    Ref<Frame> protect(m_frame);
+    auto protectFrame = makeRef(m_frame);
 
     URL url = request.resourceRequest().url();
 
@@ -1170,7 +1166,7 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, Event* event
 
     // FIXME: It's possible this targetFrame will not be the same frame that was targeted by the actual
     // load if frame names have changed.
-    Frame* sourceFrame = formState ? formState->sourceDocument()->frame() : &m_frame;
+    Frame* sourceFrame = formState ? formState->sourceDocument().frame() : &m_frame;
     if (!sourceFrame)
         sourceFrame = &m_frame;
     Frame* targetFrame = sourceFrame->loader().findFrameForNavigation(request.frameName());
@@ -1254,7 +1250,7 @@ void FrameLoader::loadURL(const FrameLoadRequest& frameLoadRequest, const String
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
         policyChecker().setLoadType(newLoadType);
-        policyChecker().checkNavigationPolicy(request, false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this](const ResourceRequest& request, FormState*, bool shouldContinue) {
+        policyChecker().checkNavigationPolicy(request, false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this] (const ResourceRequest& request, FormState*, bool shouldContinue) {
             continueFragmentScrollAfterNavigationPolicy(request, shouldContinue);
         });
         return;
@@ -1450,7 +1446,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         oldDocumentLoader->setTriggeringAction(action);
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
-        policyChecker().checkNavigationPolicy(loader->request(), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this](const ResourceRequest& request, FormState*, bool shouldContinue) {
+        policyChecker().checkNavigationPolicy(loader->request(), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this] (const ResourceRequest& request, FormState*, bool shouldContinue) {
             continueFragmentScrollAfterNavigationPolicy(request, shouldContinue);
         });
         return;
@@ -1477,7 +1473,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         }
     }
 
-    policyChecker().checkNavigationPolicy(loader->request(), false /* didReceiveRedirectResponse */, loader, formState, [this, allowNavigationToInvalidURL](const ResourceRequest& request, FormState* formState, bool shouldContinue) {
+    policyChecker().checkNavigationPolicy(loader->request(), false /* didReceiveRedirectResponse */, loader, formState, [this, allowNavigationToInvalidURL] (const ResourceRequest& request, FormState* formState, bool shouldContinue) {
         continueLoadAfterNavigationPolicy(request, formState, shouldContinue, allowNavigationToInvalidURL);
     });
 }
@@ -2709,7 +2705,7 @@ void FrameLoader::loadPostRequest(const FrameLoadRequest& request, const String&
             return;
         }
 
-        policyChecker().checkNewWindowPolicy(action, workingResourceRequest, WTFMove(formState), frameName, [this, allowNavigationToInvalidURL, openerPolicy](const ResourceRequest& request, FormState* formState, const String& frameName, const NavigationAction& action, bool shouldContinue) {
+        policyChecker().checkNewWindowPolicy(action, workingResourceRequest, WTFMove(formState), frameName, [this, allowNavigationToInvalidURL, openerPolicy] (const ResourceRequest& request, FormState* formState, const String& frameName, const NavigationAction& action, bool shouldContinue) {
             continueLoadAfterNewWindowPolicy(request, formState, frameName, action, shouldContinue, allowNavigationToInvalidURL, openerPolicy);
         });
         return;
@@ -2767,11 +2763,11 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
     if (error.isNull()) {
         ASSERT(!newRequest.isNull());
 
-        if (!documentLoader()->applicationCacheHost()->maybeLoadSynchronously(newRequest, error, response, data)) {
+        if (!documentLoader()->applicationCacheHost().maybeLoadSynchronously(newRequest, error, response, data)) {
             Vector<char> buffer;
             platformStrategies()->loaderStrategy()->loadResourceSynchronously(networkingContext(), identifier, newRequest, storedCredentials, clientCredentialPolicy, error, response, buffer);
             data = SharedBuffer::adoptVector(buffer);
-            documentLoader()->applicationCacheHost()->maybeLoadFallbackSynchronously(newRequest, error, response, data);
+            documentLoader()->applicationCacheHost().maybeLoadFallbackSynchronously(newRequest, error, response, data);
             ResourceLoadObserver::sharedObserver().logSubresourceLoading(&m_frame, newRequest, response);
         }
     }
@@ -3106,7 +3102,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         return;
     }
 
-    m_client.dispatchWillSubmitForm(formState, [this](PolicyAction action) {
+    m_client.dispatchWillSubmitForm(*formState, [this] (PolicyAction action) {
         policyChecker().continueLoadAfterWillSubmitForm(action);
     });
 }

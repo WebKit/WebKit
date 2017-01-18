@@ -104,8 +104,8 @@ public:
     virtual void discardedComposition(Frame*) = 0;
     virtual void canceledComposition() = 0;
 
-    virtual void registerUndoStep(PassRefPtr<UndoStep>) = 0;
-    virtual void registerRedoStep(PassRefPtr<UndoStep>) = 0;
+    virtual void registerUndoStep(UndoStep&) = 0;
+    virtual void registerRedoStep(UndoStep&) = 0;
     virtual void clearUndoRedoOperations() = 0;
 
     virtual bool canCopyCut(Frame*, bool defaultValue) const = 0;

@@ -191,7 +191,7 @@ void ResourceLoader::start()
         return;
 #endif
 
-    if (m_documentLoader->applicationCacheHost()->maybeLoadResource(*this, m_request, m_request.url()))
+    if (m_documentLoader->applicationCacheHost().maybeLoadResource(*this, m_request, m_request.url()))
         return;
 
     if (m_defersLoading) {
@@ -607,7 +607,7 @@ ResourceError ResourceLoader::cannotShowURLError()
 
 ResourceRequest ResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest&& request, ResourceResponse&& redirectResponse)
 {
-    if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForRedirect(this, request, redirectResponse))
+    if (documentLoader()->applicationCacheHost().maybeLoadFallbackForRedirect(this, request, redirectResponse))
         return WTFMove(request);
     willSendRequestInternal(request, redirectResponse);
     return WTFMove(request);
@@ -620,7 +620,7 @@ void ResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, 
 
 void ResourceLoader::didReceiveResponse(ResourceHandle*, ResourceResponse&& response)
 {
-    if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForResponse(this, response))
+    if (documentLoader()->applicationCacheHost().maybeLoadFallbackForResponse(this, response))
         return;
     didReceiveResponse(response);
 }
@@ -642,7 +642,7 @@ void ResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)
 
 void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
-    if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForError(this, error))
+    if (documentLoader()->applicationCacheHost().maybeLoadFallbackForError(this, error))
         return;
     didFail(error);
 }

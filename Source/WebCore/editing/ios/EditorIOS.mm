@@ -262,27 +262,25 @@ bool Editor::WebContentReader::readWebArchive(SharedBuffer* buffer)
     if (!buffer)
         return false;
 
-    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(URL(), *buffer);
+    auto archive = LegacyWebArchive::create(URL(), *buffer);
     if (!archive)
         return false;
 
-    RefPtr<ArchiveResource> mainResource = archive->mainResource();
+    auto* mainResource = archive->mainResource();
     if (!mainResource)
         return false;
 
-    const String& type = mainResource->mimeType();
+    auto& type = mainResource->mimeType();
+    if (!frame.loader().client().canShowMIMETypeAsHTML(type))
+        return false;
 
-    if (frame.loader().client().canShowMIMETypeAsHTML(type)) {
-        // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
-        if (DocumentLoader* loader = frame.loader().documentLoader())
-            loader->addAllArchiveResources(archive.get());
+    // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
+    if (auto* loader = frame.loader().documentLoader())
+        loader->addAllArchiveResources(*archive);
 
-        String markupString = String::fromUTF8(mainResource->data().data(), mainResource->data().size());
-        addFragment(createFragmentFromMarkup(*frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent));
-        return true;
-    }
-
-    return false;
+    auto markupString = String::fromUTF8(mainResource->data().data(), mainResource->data().size());
+    addFragment(createFragmentFromMarkup(*frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent));
+    return true;
 }
 
 bool Editor::WebContentReader::readFilenames(const Vector<String>&)

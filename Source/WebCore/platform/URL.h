@@ -158,7 +158,7 @@ public:
     // URL (with nothing after it). To clear the query, pass a null string.
     void setQuery(const String&);
 
-    void setFragmentIdentifier(const String&);
+    void setFragmentIdentifier(StringView);
     void removeFragmentIdentifier();
 
     WEBCORE_EXPORT friend bool equalIgnoringFragmentIdentifier(const URL&, const URL&);

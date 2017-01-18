@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
 #import "WebChromeClientIOS.h"
+
+#if PLATFORM(IOS)
 
 #import "DOMNodeInternal.h"
 #import "PopupMenuIOS.h"
@@ -43,9 +44,6 @@
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import "WebViewPrivate.h"
-
-#import <wtf/HashMap.h>
-#import <wtf/RefPtr.h>
 #import <WebCore/FileChooser.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/Frame.h>
@@ -61,6 +59,8 @@
 #import <WebCore/ScrollingConstraints.h>
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WebCoreThreadMessage.h>
+#import <wtf/HashMap.h>
+#import <wtf/RefPtr.h>
 
 NSString * const WebOpenPanelConfigurationAllowMultipleFilesKey = @"WebOpenPanelConfigurationAllowMultipleFilesKey";
 NSString * const WebOpenPanelConfigurationMediaCaptureTypeKey = @"WebOpenPanelConfigurationMediaCaptureTypeKey";
@@ -69,9 +69,10 @@ NSString * const WebOpenPanelConfigurationMimeTypesKey = @"WebOpenPanelConfigura
 using namespace WebCore;
 
 #if ENABLE(MEDIA_CAPTURE)
-static WebMediaCaptureType webMediaCaptureType(MediaCaptureType mediaCaptureType)
+
+static WebMediaCaptureType webMediaCaptureType(MediaCaptureType type)
 {
-    switch (mediaCaptureType) {
+    switch (type) {
     case MediaCaptureTypeNone:
         return WebMediaCaptureTypeNone;
     case MediaCaptureTypeUser:
@@ -83,6 +84,7 @@ static WebMediaCaptureType webMediaCaptureType(MediaCaptureType mediaCaptureType
     ASSERT_NOT_REACHED();
     return WebMediaCaptureTypeNone;
 }
+
 #endif
 
 void WebChromeClientIOS::setWindowRect(const WebCore::FloatRect& r)
@@ -124,18 +126,15 @@ bool WebChromeClientIOS::runJavaScriptPrompt(Frame* frame, const WTF::String& pr
     return !result.isNull();
 }
 
-void WebChromeClientIOS::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
+void WebChromeClientIOS::runOpenPanel(Frame&, FileChooser& chooser)
 {
-    const FileChooserSettings& settings = chooser->settings();
+    auto& settings = chooser.settings();
     BOOL allowMultipleFiles = settings.allowsMultipleFiles;
-    Vector<String> acceptMIMETypes = settings.acceptMIMETypes;
     WebOpenPanelResultListener *listener = [[WebOpenPanelResultListener alloc] initWithChooser:chooser];
 
-    // Convert the accept attribute string into a list of MIME types.
-    size_t numMIMETypes = acceptMIMETypes.size();
-    NSMutableArray *mimeTypes = [NSMutableArray arrayWithCapacity:numMIMETypes];
-    for (size_t i = 0; i < numMIMETypes; ++i)
-        [mimeTypes addObject:acceptMIMETypes[i]];
+    NSMutableArray *mimeTypes = [NSMutableArray arrayWithCapacity:settings.acceptMIMETypes.size()];
+    for (auto& type : settings.acceptMIMETypes)
+        [mimeTypes addObject:type];
 
     WebMediaCaptureType captureType = WebMediaCaptureTypeNone;
 #if ENABLE(MEDIA_CAPTURE)
@@ -158,10 +157,12 @@ void WebChromeClientIOS::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
+
 void WebChromeClientIOS::didPreventDefaultForEvent()
 {
     [[webView() _UIKitDelegateForwarder] webViewDidPreventDefaultForEvent:webView()];
 }
+
 #endif
 
 void WebChromeClientIOS::didReceiveMobileDocType(bool isMobileDoctype)
@@ -355,10 +356,12 @@ void WebChromeClientIOS::showPlaybackTargetPicker(bool hasVideo)
 }
 
 #if ENABLE(ORIENTATION_EVENTS)
+
 int WebChromeClientIOS::deviceOrientation() const
 {
     return [[webView() _UIKitDelegateForwarder] deviceOrientation];
 }
+
 #endif
 
 #endif // PLATFORM(IOS)

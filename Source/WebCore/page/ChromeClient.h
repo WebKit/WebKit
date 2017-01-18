@@ -273,7 +273,7 @@ public:
     virtual std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) = 0;
 #endif
 
-    virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;
+    virtual void runOpenPanel(Frame&, FileChooser&) = 0;
     // Asynchronous request to load an icon for specified filenames.
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader&) = 0;
         

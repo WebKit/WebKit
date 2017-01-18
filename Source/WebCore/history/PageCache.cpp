@@ -162,7 +162,7 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
     }
     // FIXME: We should investigating caching frames that have an associated
     // application cache. <rdar://problem/5917899> tracks that work.
-    if (!documentLoader->applicationCacheHost()->canCacheInPageCache()) {
+    if (!documentLoader->applicationCacheHost().canCacheInPageCache()) {
         PCLOG("   -The DocumentLoader uses an application cache");
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::applicationCacheKey());
         isCacheable = false;

@@ -36,31 +36,21 @@
 
 namespace WebCore {
 
-class Document;
 class Event;
 class FormData;
+
 struct FrameLoadRequest;
-class HTMLFormElement;
-class TextEncoding;
 
 class FormSubmission : public RefCounted<FormSubmission> {
 public:
-    enum Method { GetMethod, PostMethod };
+    enum class Method { Get, Post };
 
     class Attributes {
-        WTF_MAKE_NONCOPYABLE(Attributes);
     public:
-        Attributes()
-            : m_method(GetMethod)
-            , m_isMultiPartForm(false)
-            , m_encodingType("application/x-www-form-urlencoded")
-        {
-        }
-
         Method method() const { return m_method; }
         static Method parseMethodType(const String&);
         void updateMethodType(const String&);
-        static String methodString(Method method) { return method == PostMethod ? "post" : "get"; }
+        static ASCIILiteral methodString(Method method) { return ASCIILiteral { method == Method::Post ? "post" : "get" }; }
 
         const String& action() const { return m_action; }
         void parseAction(const String&);
@@ -76,50 +66,46 @@ public:
         const String& acceptCharset() const { return m_acceptCharset; }
         void setAcceptCharset(const String& value) { m_acceptCharset = value; }
 
-        void copyFrom(const Attributes&);
-
     private:
-        Method m_method;
-        bool m_isMultiPartForm;
-
+        Method m_method { Method::Get };
+        bool m_isMultiPartForm { false };
         String m_action;
         String m_target;
-        String m_encodingType;
+        String m_encodingType { ASCIILiteral { "application/x-www-form-urlencoded" } };
         String m_acceptCharset;
     };
 
-    static Ref<FormSubmission> create(HTMLFormElement*, const Attributes&, PassRefPtr<Event> event, LockHistory, FormSubmissionTrigger);
+    static Ref<FormSubmission> create(HTMLFormElement&, const Attributes&, Event*, LockHistory, FormSubmissionTrigger);
 
     void populateFrameLoadRequest(FrameLoadRequest&);
-    
     URL requestURL() const;
 
     Method method() const { return m_method; }
     const URL& action() const { return m_action; }
     const String& target() const { return m_target; }
-    void clearTarget() { m_target = String(); }
     const String& contentType() const { return m_contentType; }
-    FormState* state() const { return m_formState.get(); }
-    FormData* data() const { return m_formData.get(); }
+    FormState& state() const { return m_formState; }
+    FormData& data() const { return m_formData; }
     const String boundary() const { return m_boundary; }
     LockHistory lockHistory() const { return m_lockHistory; }
     Event* event() const { return m_event.get(); }
-
     const String& referrer() const { return m_referrer; }
-    void setReferrer(const String& referrer) { m_referrer = referrer; }
     const String& origin() const { return m_origin; }
+
+    void clearTarget() { m_target = { }; }
+    void setReferrer(const String& referrer) { m_referrer = referrer; }
     void setOrigin(const String& origin) { m_origin = origin; }
 
 private:
-    FormSubmission(Method, const URL& action, const String& target, const String& contentType, PassRefPtr<FormState>, PassRefPtr<FormData>, const String& boundary, LockHistory, PassRefPtr<Event>);
+    FormSubmission(Method, const URL& action, const String& target, const String& contentType, Ref<FormState>&&, Ref<FormData>&&, const String& boundary, LockHistory, Event*);
 
     // FIXME: Hold an instance of Attributes instead of individual members.
     Method m_method;
     URL m_action;
     String m_target;
     String m_contentType;
-    RefPtr<FormState> m_formState;
-    RefPtr<FormData> m_formData;
+    Ref<FormState> m_formState;
+    Ref<FormData> m_formData;
     String m_boundary;
     LockHistory m_lockHistory;
     RefPtr<Event> m_event;

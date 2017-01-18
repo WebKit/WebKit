@@ -23,23 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextCheckerState_h
-#define TextCheckerState_h
+#pragma once
 
 #include "ArgumentCoders.h"
 
 namespace WebKit {
 
 struct TextCheckerState {
-    bool isContinuousSpellCheckingEnabled;
-    bool isGrammarCheckingEnabled;
+    bool isContinuousSpellCheckingEnabled { false };
+    bool isGrammarCheckingEnabled { false };
 
 #if USE(APPKIT)
-    bool isAutomaticSpellingCorrectionEnabled;
-    bool isAutomaticQuoteSubstitutionEnabled;
-    bool isAutomaticDashSubstitutionEnabled;
-    bool isAutomaticLinkDetectionEnabled;
-    bool isAutomaticTextReplacementEnabled;
+    bool isAutomaticSpellingCorrectionEnabled { false };
+    bool isAutomaticQuoteSubstitutionEnabled { false };
+    bool isAutomaticDashSubstitutionEnabled { false };
+    bool isAutomaticLinkDetectionEnabled { false };
+    bool isAutomaticTextReplacementEnabled { false };
 #endif
 };
 
@@ -48,5 +47,3 @@ struct TextCheckerState {
 namespace IPC {
 template<> struct ArgumentCoder<WebKit::TextCheckerState> : SimpleArgumentCoder<WebKit::TextCheckerState> { };
 };
-
-#endif // TextCheckerState_h

@@ -374,7 +374,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
 
     PageConfiguration pageConfiguration(makeUniqueRef<WebEditorClient>(this), WebSocketProvider::create());
-    pageConfiguration.chromeClient = new WebChromeClient(this);
+    pageConfiguration.chromeClient = new WebChromeClient(*this);
 #if ENABLE(CONTEXT_MENUS)
     pageConfiguration.contextMenuClient = new WebContextMenuClient(this);
 #endif
@@ -730,7 +730,8 @@ void WebPage::initializeInjectedBundleDiagnosticLoggingClient(WKBundlePageDiagno
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginElement, const Plugin::Parameters& parameters, String& newMIMEType)
+
+RefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginElement, const Plugin::Parameters& parameters, String& newMIMEType)
 {
     String frameURLString = frame->coreFrame()->loader().documentLoader()->responseURL().string();
     String pageURLString = m_page->mainFrame().loader().documentLoader()->responseURL().string();
@@ -1360,7 +1361,7 @@ void WebPage::layoutIfNeeded()
 
 WebPage* WebPage::fromCorePage(Page* page)
 {
-    return static_cast<WebChromeClient&>(page->chrome().client()).page();
+    return &static_cast<WebChromeClient&>(page->chrome().client()).page();
 }
 
 void WebPage::setSize(const WebCore::IntSize& viewSize)
@@ -1826,7 +1827,8 @@ void WebPage::postInjectedBundleMessage(const String& messageName, const UserDat
 }
 
 #if !PLATFORM(IOS)
-void WebPage::setHeaderPageBanner(PassRefPtr<PageBanner> pageBanner)
+
+void WebPage::setHeaderPageBanner(PageBanner* pageBanner)
 {
     if (m_headerBanner)
         m_headerBanner->detachFromPage();
@@ -1842,7 +1844,7 @@ PageBanner* WebPage::headerPageBanner()
     return m_headerBanner.get();
 }
 
-void WebPage::setFooterPageBanner(PassRefPtr<PageBanner> pageBanner)
+void WebPage::setFooterPageBanner(PageBanner* pageBanner)
 {
     if (m_footerBanner)
         m_footerBanner->detachFromPage();
@@ -3609,6 +3611,7 @@ void WebPage::setActivePopupMenu(WebPopupMenu* menu)
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
+
 void WebPage::setActiveColorChooser(WebColorChooser* colorChooser)
 {
     m_activeColorChooser = colorChooser;
@@ -3623,11 +3626,12 @@ void WebPage::didChooseColor(const WebCore::Color& color)
 {
     m_activeColorChooser->didChooseColor(color);
 }
+
 #endif
 
-void WebPage::setActiveOpenPanelResultListener(PassRefPtr<WebOpenPanelResultListener> openPanelResultListener)
+void WebPage::setActiveOpenPanelResultListener(Ref<WebOpenPanelResultListener>&& openPanelResultListener)
 {
-    m_activeOpenPanelResultListener = openPanelResultListener;
+    m_activeOpenPanelResultListener = WTFMove(openPanelResultListener);
 }
 
 bool WebPage::findStringFromInjectedBundle(const String& target, FindOptions options)
@@ -5442,11 +5446,11 @@ bool WebPage::plugInIsPrimarySize(WebCore::HTMLPlugInImageElement& plugInImageEl
 
 #endif // ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
 
-PassRefPtr<Range> WebPage::currentSelectionAsRange()
+RefPtr<Range> WebPage::currentSelectionAsRange()
 {
-    Frame* frame = frameWithSelection(m_page.get());
+    auto* frame = frameWithSelection(m_page.get());
     if (!frame)
-        return 0;
+        return nullptr;
 
     return frame->selection().toNormalizedRange();
 }
@@ -5546,7 +5550,7 @@ void WebPage::getSamplingProfilerOutput(uint64_t callbackID)
 #endif
 }
 
-PassRefPtr<WebCore::Range> WebPage::rangeFromEditingRange(WebCore::Frame& frame, const EditingRange& range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)
+RefPtr<WebCore::Range> WebPage::rangeFromEditingRange(WebCore::Frame& frame, const EditingRange& range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)
 {
     ASSERT(range.location != notFound);
 

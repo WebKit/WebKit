@@ -75,7 +75,7 @@ RefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
         RefPtr<ArchiveResource> resource = parseNextPart(*header, String(), String(), endOfArchiveReached);
         if (!resource)
             return nullptr;
-        archive->setMainResource(resource);
+        archive->setMainResource(resource.releaseNonNull());
         return archive;
     }
 
@@ -101,7 +101,7 @@ RefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
             // The top-frame is the first frame found, regardless of the nesting level.
             if (subframeArchive->mainResource())
                 addResourceToArchive(subframeArchive->mainResource(), archive.get());
-            archive->addSubframeArchive(subframeArchive);
+            archive->addSubframeArchive(subframeArchive.releaseNonNull());
             continue;
         }
 
@@ -126,13 +126,13 @@ void MHTMLParser::addResourceToArchive(ArchiveResource* resource, MHTMLArchive* 
 
     // The first document suitable resource is the main frame.
     if (!archive->mainResource()) {
-        archive->setMainResource(resource);
+        archive->setMainResource(*resource);
         m_frames.append(archive);
         return;
     }
 
     RefPtr<MHTMLArchive> subframe = MHTMLArchive::create();
-    subframe->setMainResource(resource);
+    subframe->setMainResource(*resource);
     m_frames.append(subframe);
 }
 

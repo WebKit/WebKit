@@ -1,3 +1,407 @@
+2017-01-15  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr from "loader" directory of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=167055
+
+        Reviewed by Alex Christensen.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Pass a reference.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::unapply): Ditto.
+        (WebCore::EditCommandComposition::reapply): Ditto.
+        (WebCore::CompositeEditCommand::ensureComposition): Return a reference.
+        (WebCore::CompositeEditCommand::applyCommandToComposite): Use a reference.
+        * editing/CompositeEditCommand.h: Updated for above changes.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::unappliedEditing): Take a reference instead of a PassRefPtr.
+        (WebCore::Editor::reappliedEditing): Ditto.
+        * editing/Editor.h: Updated for above changes. Also changed the
+        FragmentAndResources resources vector to hold Ref instead of RefPtr.
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::createFragmentAndAddResources): Updated for change to
+        FragmentAndResources.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::WebContentReader::readWebArchive): Pass a reference.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::WebContentReader::readWebArchive): Pass a reference.
+
+        * history/PageCache.cpp:
+        (WebCore::canCacheFrame): Use a reference.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::handleDOMActivateEvent): Pass references.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::formMethod): Use auto.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::prepareForSubmission): Updated to use a return
+        values for textFieldValues intsead of an out argument with getTextFieldValues.
+        (WebCore::HTMLFormElement::textFieldValues): Renamed from getTextFieldValues
+        and changed to use a return value instead of an out argument.
+        (WebCore::HTMLFormElement::submit): Pass a reference.
+        (WebCore::HTMLFormElement::requestAutocomplete): Pass a Ref&&.
+        * html/HTMLFormElement.h: Updated for above changes.
+
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::insertedByParser): Use a reference.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process): Pass a reference.
+        (WebCore::HTMLLinkElement::setCSSStyleSheet): Use auto.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource): Use a reference.
+
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::updateApplicationCacheStatus): Use a reference,
+        also update for struct-style member names withou m_ prefix.
+        (WebCore::InspectorApplicationCacheAgent::getFramesWithManifests): Ditto.
+        (WebCore::InspectorApplicationCacheAgent::getManifestForFrame): Ditto.
+        (WebCore::InspectorApplicationCacheAgent::getApplicationCacheForFrame): Ditto.
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCache): Ditto.
+        (WebCore::InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources): Ditto.
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource): Ditto.
+        * inspector/InspectorApplicationCacheAgent.h: Updated for above changes.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::updateApplicationCacheStatusImpl): Take a reference.
+        * inspector/InspectorInstrumentation.h: Updated for the above.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader): Move much initialization to class definition.
+        (WebCore::DocumentLoader::originalRequest): Moved to header to make it inline.
+        (WebCore::DocumentLoader::originalRequestCopy): Ditto.
+        (WebCore::DocumentLoader::request): Ditto.
+        (WebCore::DocumentLoader::url): Ditto.
+        (WebCore::DocumentLoader::stopLoading): Pass a reference.
+        (WebCore::DocumentLoader::willSendRequest): Updated to take a raw pointer instead of a
+        PassRefPtr.
+        (WebCore::DocumentLoader::commitData): Call shouldUseMainResourceEncoding instead of
+        special casing WebArchive.
+        (WebCore::DocumentLoader::maybeCreateArchive): Pass references.
+        (WebCore::DocumentLoader::setArchive): Take Ref&& instead of PassRefPtr.
+        (WebCore::DocumentLoader::addAllArchiveResources): Take a reference instead
+        of a pointer.
+        (WebCore::DocumentLoader::popArchiveForSubframe): Return RefPtr instead of
+        PassRefPtr.
+        (WebCore::DocumentLoader::subresource): Ditto.
+        (WebCore::DocumentLoader::subresources): Return a Vector<Ref> instead of a
+        Vector<RefPtr>.
+        (WebCore::DocumentLoader::substituteResourceDeliveryTimerFired): Use move
+        instead of swap.
+        (WebCore::DocumentLoader::scheduleArchiveLoad): Use shouldLoadFromArchiveOnly
+        instead of a special case for each type of archive.
+        (WebCore::DocumentLoader::originalURL): Moved to header to make it inline.
+        (WebCore::DocumentLoader::responseURL): Ditto.
+        (WebCore::DocumentLoader::documentURL): Call shouldUseMainResourceURL instead of
+        special casing WebArchive.
+        (WebCore::DocumentLoader::responseMIMEType): Moved to header to make it inline.
+        (WebCore::DocumentLoader::currentContentType): Ditto.
+        (WebCore::DocumentLoader::contentFilter): Ditto.
+        (WebCore::DocumentLoader::getIconLoadDecisionForIconURL): Pass a reference.
+        (WebCore::DocumentLoader::getIconDataForIconURL): Ditto.
+        (WebCore::DocumentLoader::dispatchOnloadEvents): Use a reference.
+        (WebCore::DocumentLoader::unreachableURL): Moved to header to make it inline.
+        * loader/DocumentLoader.h: Updated for the above.
+
+        * loader/EmptyClients.cpp: Updated for changes to client interfaces.
+        * loader/EmptyClients.h: Ditto.
+
+        * loader/FormState.cpp:
+        (WebCore::FormState::FormState): Take references instead of PassRefPtr, also
+        take Vector&& instead of Vector& when we want to take ownership and use move
+        instead of swap to do that.
+        (WebCore::FormState::create): Ditto.
+        * loader/FormState.h: Updated for the above. Also changed return values to be
+        references instead of pointers and members to be Ref instead of RefPtr.
+
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::Attributes::parseMethodType): Updated for change
+        to the Method enumeration.
+        (WebCore::FormSubmission::Attributes::copyFrom): Deleted.
+        (WebCore::FormSubmission::FormSubmission): Use Ref&& instead of PassRefPtr.
+        (WebCore::FormSubmission::create): Use reference instead of pointer and
+        raw pointer instead of PassRefPtr. Also copy attributes using copy constructor
+        instead of an explicit copyFrom function.
+        (WebCore::FormSubmission::requestURL): Updated for change to the Method
+        enumeration.
+        (WebCore::FormSubmission::populateFrameLoadRequest): Ditto.
+        * loader/FormSubmission.h: Updated for the above changes. Made the Attributes
+        class copyable, since we copy it. Changed some functions to return references
+        instead of pointers and use Ref instead of RefPtr for data members.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm): Updated for changes to FormSubmission
+        and FormState.
+        (WebCore::FrameLoader::receivedFirstData): Ditto.
+        (WebCore::FrameLoader::loadFrameRequest): Ditto.
+        (WebCore::FrameLoader::loadResourceSynchronously): Ditto.
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy): Ditto.
+
+        * loader/FrameLoaderClient.h: Use references, pointers, RefPtr, and Ref
+        instead of PassRefPtr. Removed unused empty dispatchDidFailToStartPlugin.
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::pushState): Take RefPtr&& instead of PassRefPtr.
+        (WebCore::HistoryController::replaceState): Ditto.
+        * loader/HistoryController.h: Updated for the above.
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement): Pass a reference.
+
+        * loader/NavigationScheduler.cpp: Use refernces and Ref&& instead of
+        pointers and PassRefPtr.
+        (WebCore::ScheduledNavigation::ScheduledNavigation): Added an overload
+        that sests m_shouldOpenExternalURLsPolicy.
+        * loader/NavigationScheduler.h: Updated for the above.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::start): Use and pass references.
+        (WebCore::ResourceLoader::willSendRequest): Ditto.
+        (WebCore::ResourceLoader::didReceiveResponse): Ditto.
+        (WebCore::ResourceLoader::didFail): Ditto.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::createJavaAppletWidget): Return RefPtr instead
+        of PassRefPtr. Pass references instead of pointers.
+        (WebCore::SubframeLoader::loadOrRedirectSubframe): Ditto.
+        (WebCore::SubframeLoader::loadSubframe): Ditto.
+        (WebCore::SubframeLoader::document): Deleted. This was never really the
+        correct idiom for getting the appropriate document; hiding the dependency
+        on m_frame wasn't paing off.
+        (WebCore::SubframeLoader::loadPlugin): Pass reference instead of pointer.
+        (WebCore::SubframeLoader::shouldConvertInvalidURLsToBlank): Eliminated
+        unneeded null checking and complexity due to going through the document
+        instead of the frame for this check.
+        * loader/SubframeLoader.h: Updated for the above.
+
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::ApplicationCache): Moved data member
+        initialization to the class definition.
+        (WebCore::ApplicationCache::~ApplicationCache): Pass a reference instead
+        of a pointer.
+        (WebCore::ApplicationCache::isComplete): Ditto.
+        (WebCore::ApplicationCache::setManifestResource): Take Ref&& instead of
+        PassRefPtr.
+        (WebCore::ApplicationCache::addResource): Ditto.
+        (WebCore::ApplicationCache::removeResource): Deleted. Was unused.
+        * loader/appcache/ApplicationCache.h: Updated for above changes.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::ApplicationCacheGroup): Moved most
+        member initialization to the class definition.
+        (WebCore::ApplicationCacheGroup::~ApplicationCacheGroup): Pass a reference.
+        (WebCore::ApplicationCacheGroup::cacheForMainRequest): Removed
+        unnecessary preflight for removeFragmentIdentifier, which efficiently
+        does nothing if there is no identifier. Use early return.
+        (WebCore::ApplicationCacheGroup::fallbackCacheForMainRequest): More of
+        the same.
+        (WebCore::ApplicationCacheGroup::selectCache): Ditto, also take a reference,
+        and use event names instead of a special enumeration to poast events.
+        (WebCore::ApplicationCacheGroup::selectCacheWithoutManifestURL): Ditto.
+        (WebCore::ApplicationCacheGroup::finishedLoadingMainResource): Ditto.
+        (WebCore::ApplicationCacheGroup::failedLoadingMainResource): Ditto.
+        (WebCore::ApplicationCacheGroup::disassociateDocumentLoader): Ditto.
+        (WebCore::ApplicationCacheGroup::cacheDestroyed): Ditto.
+        (WebCore::ApplicationCacheGroup::stopLoadingInFrame): Ditto.
+        (WebCore::ApplicationCacheGroup::setNewestCache): Use Ref&& instead of
+        PassRefPtr.
+        (WebCore::ApplicationCacheGroup::makeObsolete): More of the same.
+        (WebCore::ApplicationCacheGroup::update): Ditto.
+        (WebCore::ApplicationCacheGroup::abort): Ditto.
+        (WebCore::ApplicationCacheGroup::didReceiveResponse): Ditto.
+        (WebCore::ApplicationCacheGroup::didFinishLoading): Ditto.
+        (WebCore::ApplicationCacheGroup::didFail): Ditto.
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest): Ditto.
+        (WebCore::ApplicationCacheGroup::manifestNotFound): Ditto.
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete): Ditto.
+        (WebCore::ApplicationCacheGroup::startLoadingEntry): Ditto.
+        (WebCore::ApplicationCacheGroup::deliverDelayedMainResources): Use a modern
+        for loop.
+        (WebCore::ApplicationCacheGroup::addEntry): Use auto and simplify logic
+        for adding.
+        (WebCore::ApplicationCacheGroup::associateDocumentLoaderWithCache): Update since
+        function result is a reference.
+        (WebCore::ApplicationCacheGroup::scheduleReachedMaxAppCacheSizeCallback):
+        Use auto.
+        (WebCore::ApplicationCacheGroup::postListenerTask): Take event type instead of
+        taking a special enumeration.
+        * loader/appcache/ApplicationCacheGroup.h: Updated for the above.
+
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::ApplicationCacheHost): Move most member
+        initialization to the class definition.
+        (WebCore::ApplicationCacheHost::~ApplicationCacheHost): Use reference.
+        (WebCore::ApplicationCacheHost::selectCacheWithoutManifest): Ditto.
+        (WebCore::ApplicationCacheHost::selectCacheWithManifest): Ditto.
+        (WebCore::ApplicationCacheHost::mainResourceDataReceived): Ditto.
+        (WebCore::ApplicationCacheHost::failedLoadingMainResource): Ditto.
+        (WebCore::ApplicationCacheHost::finishedLoadingMainResource): Ditto.
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForRedirect): Ditto.
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForResponse): Ditto.
+        (WebCore::ApplicationCacheHost::createFileURL): Ditto.
+        (WebCore::ApplicationCacheHost::maybeLoadSynchronously): Ditto.
+        (WebCore::ApplicationCacheHost::notifyDOMApplicationCache): Take event
+        type instead of special enumeration.
+        (WebCore::ApplicationCacheHost::stopLoadingInFrame): Use reference.
+        (WebCore::ApplicationCacheHost::stopDeferringEvents): Updated to use
+        event types instead of special enumeration and also repaired possible
+        edge case where code in event handler somehow triggers additional events.
+        (WebCore::ApplicationCacheHost::resourceList): Renamed from fillResourceList
+        and changed to return a vector instead of populating one.
+        (WebCore::ApplicationCacheHost::applicationCacheInfo): Tweak coding style a bit.
+        (WebCore::createApplicationCacheEvent): Factored this helper out of
+        dispatchDOMEvent so we can use Ref instead of RefPtr.
+        (WebCore::ApplicationCacheHost::dispatchDOMEvent): Updated to recent event type
+        rather than receiving an event id and mapping it to a type.
+        (WebCore::ApplicationCacheHost::setApplicationCache): Take RefPtr&& instead of
+        PassRefPtr.
+        (WebCore::ApplicationCacheHost::update): Pass a reference.
+        (WebCore::ApplicationCacheHost::swapCache): Ditto.
+        (WebCore::ApplicationCacheHost::abort): Ditto.
+        * loader/appcache/ApplicationCacheHost.h: Updated for the above.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::loadCacheGroup): Pass a Ref instead of RefPtr.
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL): Ditto.
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL): Ditto.
+        (WebCore::ApplicationCacheStorage::cacheGroupDestroyed): Take a reference.
+        (WebCore::ApplicationCacheStorage::cacheGroupMadeObsolete): Ditto.
+        (WebCore::ApplicationCacheStorage::storeNewestCache): Ditto.
+        (WebCore::ApplicationCacheStorage::loadCache): Return RefPtr instead of PassRefPtr.
+        (WebCore::ApplicationCacheStorage::deleteCacheGroup): Pass a reference.
+        * loader/appcache/ApplicationCacheStorage.h: Updated for the above.
+
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::DOMApplicationCache): Take a reference.
+        (WebCore::DOMApplicationCache::toEventType): Deleted.
+        * loader/appcache/DOMApplicationCache.h: Updated for the above. Made most
+        members private.
+
+        * loader/archive/Archive.cpp:
+        (WebCore::Archive::clearAllSubframeArchives): Use a set for the logic that
+        prevents us from walking the same archive more than once, rather than using
+        a vector. Left it recursive, though.
+        * loader/archive/Archive.h: Git rid of the type function, replacing it with
+        three functions for the four different policies we currently have about the
+        different archive types. Changed functions to take Ref&& instead of PassRefPtr
+        and return const Vector<Ref>& instead of const Vector<RefPtr>&, changing the
+        data members to match.
+
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::createArchiveMIMETypesMap): Factored this out of the archiveMIMETypes
+        function so we don't need a boolean. Also use ASCIILiteral.
+        (WebCore::archiveMIMETypes): Updated to se the above.
+
+        * loader/archive/ArchiveResourceCollection.cpp:
+        (WebCore::ArchiveResourceCollection::addAllResources): Take a reference.
+        (WebCore::ArchiveResourceCollection::popSubframeArchive): Return RefPtr instead
+        of PassRefPtr.
+        * loader/archive/ArchiveResourceCollection.h: Updated for the above.
+
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::createPropertyListRepresentation): Use auto and
+        fewer local variables, more references for argument types and return values.
+        (WebCore::LegacyWebArchive::createResourceResponseFromPropertyListData): Ditto.
+        (WebCore::LegacyWebArchive::createResource): Ditto.
+        (WebCore::LegacyWebArchive::create): Ditto.
+        (WebCore::LegacyWebArchive::extract): Ditto.
+        (WebCore::LegacyWebArchive::type): Deleted.
+        (WebCore::LegacyWebArchive::rawDataRepresentation): More of the same.
+        (WebCore::LegacyWebArchive::createFromSelection): Ditto.
+        * loader/archive/cf/LegacyWebArchive.h: Updated for the above. Also marked the
+        class final and added overrides for the four new policy member functions.
+
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        (WebCore::MHTMLArchive::create): Pass references.
+        (WebCore::MHTMLArchive::generateMHTMLData): Return RefPtr instead of
+        PassRefPtr.
+        * loader/archive/mhtml/MHTMLArchive.h: Updated for the above. Also marked the
+        class final and added overrides for the four new policy member functions.
+
+        * loader/archive/mhtml/MHTMLParser.cpp:
+        (WebCore::MHTMLParser::parseArchiveWithHeader): Pass Ref instead of RefPtr
+        to setMainResource and addSubframeArchive.
+        (WebCore::MHTMLParser::addResourceToArchive): Ditto.
+
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::restoreParsedStyleSheet): Return RefPtr instead
+        of PassRefPtr.
+        * loader/cache/CachedCSSStyleSheet.h: Updated for the above.
+
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::setInitiator): Take a reference instead of a
+        PassRefPtr.
+        * loader/cache/CachedResourceRequest.h: Updated for the above.
+
+        * loader/cocoa/DiskCacheMonitor.h: Removed. This is a duplicate, unused copy
+        of DiskCacheMonitorCocoa.h.
+
+        * loader/cocoa/DiskCacheMonitorCocoa.h: Removed unneeded exporting and virtual
+        member functions, made more things private, and changed return type to RefPtr
+        instead of PassRefPtr.
+        * loader/cocoa/DiskCacheMonitorCocoa.mm:
+        (WebCore::DiskCacheMonitor::tryGetFileBackedSharedBufferFromCFURLCachedResponse):
+        Changed return type to RefPtr instead of PassRefPtr.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::setIconDataForIconURL): Take raw pointer instead of
+        PassRefPtr.
+        (WebCore::IconDatabase::getOrCreateIconRecord): Return Ref instead of PassRefPtr.
+        (WebCore::IconDatabase::getImageDataForIconURLFromSQLDatabase): Return RefPtr
+        instead of PassRefPtr.
+        * loader/icon/IconDatabase.h: Updated for the above. Also marked functions final
+        instead of override.
+        * loader/icon/IconDatabaseBase.h: Ditto.
+
+        * loader/icon/PageURLRecord.cpp:
+        (WebCore::PageURLRecord::PageURLRecord): Moved initialization to the header.
+        (WebCore::PageURLRecord::~PageURLRecord): Wrote code here instead of calling
+        setIconRecord(nullptr).
+        (WebCore::PageURLRecord::setIconRecord): Take RefPtr&& instead of PassRefPtr.
+        * loader/icon/PageURLRecord.h: Updatd for the above.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::runOpenPanel): Updated to take two references.
+        * page/Chrome.h: Ditto.
+        * page/ChromeClient.h: ditto.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::applicationCache): Pass a reference.
+        (WebCore::DOMWindow::setLocation): Ditto.
+        (WebCore::DOMWindow::createWindow): Ditto.
+        (WebCore::DOMWindow::open): Ditto.
+
+        * page/EditorClient.h: Changed arguments to references instead of PassRefPtr.
+
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded): Pass an rvalue reference.
+
+        * page/Location.cpp:
+        (WebCore::Location::reload): Pass reference instead of pointer.
+        (WebCore::Location::setLocation): Ditto.
+
+        * platform/URL.cpp:
+        (WebCore::URL::setFragmentIdentifier): Take a StringView rather than
+        a String, which is more flexible for callers. Also eliminated an unneeded
+        string allocation when the old string had a fragment that is being replaced.
+        * platform/URL.h: Updated for the above.
+
+        * replay/ReplayInputDispatchMethods.cpp:
+        (WebCore::InitialNavigation::dispatch): Pass reference.
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::requestImageResource): Ditto.
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::loadFont): Ditto.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::updateExternalDocument): Ditto.
+
 2017-01-16  Filip Pizlo  <fpizlo@apple.com>
 
         Make opaque root scanning truly constraint-based

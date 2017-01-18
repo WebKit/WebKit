@@ -102,7 +102,7 @@ Ref<InjectedBundleNavigationAction> InjectedBundleNavigationAction::create(WebFr
     return adoptRef(*new InjectedBundleNavigationAction(frame, action, formState));
 }
 
-InjectedBundleNavigationAction::InjectedBundleNavigationAction(WebFrame* frame, const NavigationAction& navigationAction, PassRefPtr<FormState> prpFormState)
+InjectedBundleNavigationAction::InjectedBundleNavigationAction(WebFrame* frame, const NavigationAction& navigationAction, PassRefPtr<FormState> formState)
     : m_navigationType(navigationAction.type())
     , m_modifiers(modifiersForNavigationAction(navigationAction))
     , m_mouseButton(WebMouseEvent::NoButton)
@@ -116,11 +116,8 @@ InjectedBundleNavigationAction::InjectedBundleNavigationAction(WebFrame* frame, 
         m_syntheticClickType = syntheticClickTypeForNavigationAction(navigationAction);
     }
 
-    RefPtr<FormState> formState = prpFormState;
-    if (formState) {
-        ASSERT(formState->form());
-        m_formElement   = InjectedBundleNodeHandle::getOrCreate(formState->form());
-    }
+    if (formState)
+        m_formElement = InjectedBundleNodeHandle::getOrCreate(formState->form());
 }
 
 } // namespace WebKit

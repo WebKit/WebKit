@@ -119,8 +119,8 @@ static WebViewInsertAction kit(EditorInsertAction action)
     RefPtr<UndoStep> m_step;   
 }
 
-+ (WebUndoStep *)stepWithUndoStep:(PassRefPtr<UndoStep>)step;
-- (UndoStep *)step;
++ (WebUndoStep *)stepWithUndoStep:(UndoStep&)step;
+- (UndoStep&)step;
 
 @end
 
@@ -135,13 +135,12 @@ static WebViewInsertAction kit(EditorInsertAction action)
 #endif
 }
 
-- (id)initWithUndoStep:(PassRefPtr<UndoStep>)step
+- (id)initWithUndoStep:(UndoStep&)step
 {
-    ASSERT(step);
     self = [super init];
     if (!self)
         return nil;
-    m_step = step;
+    m_step = &step;
     return self;
 }
 
@@ -153,14 +152,14 @@ static WebViewInsertAction kit(EditorInsertAction action)
     [super dealloc];
 }
 
-+ (WebUndoStep *)stepWithUndoStep:(PassRefPtr<UndoStep>)step
++ (WebUndoStep *)stepWithUndoStep:(UndoStep&)step
 {
     return [[[WebUndoStep alloc] initWithUndoStep:step] autorelease];
 }
 
-- (UndoStep *)step
+- (UndoStep&)step
 {
-    return m_step.get();
+    return *m_step;
 }
 
 @end
@@ -177,13 +176,13 @@ static WebViewInsertAction kit(EditorInsertAction action)
 - (void)undoEditing:(id)arg
 {
     ASSERT([arg isKindOfClass:[WebUndoStep class]]);
-    [arg step]->unapply();
+    [arg step].unapply();
 }
 
 - (void)redoEditing:(id)arg
 {
     ASSERT([arg isKindOfClass:[WebUndoStep class]]);
-    [arg step]->reapply();
+    [arg step].reapply();
 }
 
 @end
@@ -642,10 +641,8 @@ static NSString* undoNameForEditAction(EditAction editAction)
     return nil;
 }
 
-void WebEditorClient::registerUndoOrRedoStep(PassRefPtr<UndoStep> step, bool isRedo)
+void WebEditorClient::registerUndoOrRedoStep(UndoStep& step, bool isRedo)
 {
-    ASSERT(step);
-    
     NSUndoManager *undoManager = [m_webView undoManager];
 
 #if PLATFORM(IOS)
@@ -656,7 +653,7 @@ void WebEditorClient::registerUndoOrRedoStep(PassRefPtr<UndoStep> step, bool isR
         return;
 #endif
 
-    NSString *actionName = undoNameForEditAction(step->editingAction());
+    NSString *actionName = undoNameForEditAction(step.editingAction());
     WebUndoStep *webEntry = [WebUndoStep stepWithUndoStep:step];
     [undoManager registerUndoWithTarget:m_undoTarget.get() selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:webEntry];
     if (actionName)
@@ -684,12 +681,12 @@ void WebEditorClient::updateEditorStateAfterLayoutIfEditabilityChanged()
         [m_webView updateTouchBar];
 }
 
-void WebEditorClient::registerUndoStep(PassRefPtr<UndoStep> cmd)
+void WebEditorClient::registerUndoStep(UndoStep& cmd)
 {
     registerUndoOrRedoStep(cmd, false);
 }
 
-void WebEditorClient::registerRedoStep(PassRefPtr<UndoStep> cmd)
+void WebEditorClient::registerRedoStep(UndoStep& cmd)
 {
     registerUndoOrRedoStep(cmd, true);
 }

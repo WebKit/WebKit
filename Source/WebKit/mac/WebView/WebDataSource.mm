@@ -166,25 +166,22 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)_addSubframeArchives:(NSArray *)subframeArchives
 {
-    // FIXME: This SPI is poor, poor design.  Can we come up with another solution for those who need it?
-    NSEnumerator *enumerator = [subframeArchives objectEnumerator];
-    WebArchive *archive;
-    while ((archive = [enumerator nextObject]) != nil)
-        toPrivate(_private)->loader->addAllArchiveResources([archive _coreLegacyWebArchive]);
+    // FIXME: This SPI is poor, poor design. Can we come up with another solution for those who need it?
+    for (WebArchive *archive in subframeArchives)
+        toPrivate(_private)->loader->addAllArchiveResources(*[archive _coreLegacyWebArchive]);
 }
 
 #if !PLATFORM(IOS)
+
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL
 {
     if ([URL isFileURL])
         return [[[NSFileWrapper alloc] initWithURL:[URL URLByResolvingSymlinksInPath] options:0 error:nullptr] autorelease];
 
-    WebResource *resource = [self subresourceForURL:URL];
-    if (resource)
+    if (auto resource = [self subresourceForURL:URL])
         return [resource _fileWrapperRepresentation];
-    
-    NSCachedURLResponse *cachedResponse = [[self _webView] _cachedResponseForURL:URL];
-    if (cachedResponse) {
+
+    if (auto cachedResponse = [[self _webView] _cachedResponseForURL:URL]) {
         NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[cachedResponse data]] autorelease];
         [wrapper setPreferredFilename:[[cachedResponse response] suggestedFilename]];
         return wrapper;
@@ -192,6 +189,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     
     return nil;
 }
+
 #endif
 
 - (NSString *)_responseMIMEType
@@ -305,9 +303,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         NSString *MIMEType = [mainResource MIMEType];
         if ([WebView canShowMIMETypeAsHTML:MIMEType]) {
             NSString *markupString = [[NSString alloc] initWithData:[mainResource data] encoding:NSUTF8StringEncoding];
+
             // FIXME: seems poor form to do this as a side effect of getting a document fragment
             if (toPrivate(_private)->loader)
-                toPrivate(_private)->loader->addAllArchiveResources([archive _coreLegacyWebArchive]);
+                toPrivate(_private)->loader->addAllArchiveResources(*[archive _coreLegacyWebArchive]);
 
             DOMDocumentFragment *fragment = [[self webFrame] _documentFragmentWithMarkupString:markupString baseURLString:[[mainResource URL] _web_originalDataAsString]];
             [markupString release];
@@ -324,7 +323,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 {
     DOMElement *imageElement = [self _imageElementWithImageResource:resource];
     if (!imageElement)
-        return 0;
+        return nil;
     DOMDocumentFragment *fragment = [[[self webFrame] DOMDocument] createDocumentFragment];
     [fragment appendChild:imageElement];
     return fragment;
@@ -519,32 +518,31 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 - (WebResource *)mainResource
 {
     auto coreResource = toPrivate(_private)->loader->mainResource();
-    return [[[WebResource alloc] _initWithCoreResource:WTFMove(coreResource)] autorelease];
+    if (!coreResource)
+        return nil;
+    return [[[WebResource alloc] _initWithCoreResource:coreResource.releaseNonNull()] autorelease];
 }
 
 - (NSArray *)subresources
 {
     auto coreSubresources = toPrivate(_private)->loader->subresources();
-
     auto subresources = adoptNS([[NSMutableArray alloc] initWithCapacity:coreSubresources.size()]);
-    for (const auto& coreSubresource : coreSubresources) {
-        if (auto resource = adoptNS([[WebResource alloc] _initWithCoreResource:coreSubresource]))
+    for (auto& coreSubresource : coreSubresources) {
+        if (auto resource = adoptNS([[WebResource alloc] _initWithCoreResource:coreSubresource.copyRef()]))
             [subresources addObject:resource.get()];
     }
-
     return subresources.autorelease();
 }
 
 - (WebResource *)subresourceForURL:(NSURL *)URL
 {
-    RefPtr<ArchiveResource> subresource = toPrivate(_private)->loader->subresource(URL);
-    
-    return subresource ? [[[WebResource alloc] _initWithCoreResource:subresource.get()] autorelease] : nil;
+    auto subresource = toPrivate(_private)->loader->subresource(URL);
+    return subresource ? [[[WebResource alloc] _initWithCoreResource:subresource.releaseNonNull()] autorelease] : nil;
 }
 
 - (void)addSubresource:(WebResource *)subresource
 {    
-    toPrivate(_private)->loader->addArchiveResource(*[subresource _coreResource]);
+    toPrivate(_private)->loader->addArchiveResource([subresource _coreResource]);
 }
 
 @end

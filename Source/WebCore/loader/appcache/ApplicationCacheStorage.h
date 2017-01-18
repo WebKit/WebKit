@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2010, 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ class ApplicationCacheResource;
 class URL;
 class SecurityOrigin;
 class SharedBuffer;
-template <class T> class StorageIDJournal;
+template<typename> class StorageIDJournal;
 
 class ApplicationCacheStorage : public RefCounted<ApplicationCacheStorage> {
 public:
@@ -73,19 +73,19 @@ public:
 
     ApplicationCacheGroup* findOrCreateCacheGroup(const URL& manifestURL);
     ApplicationCacheGroup* findInMemoryCacheGroup(const URL& manifestURL) const;
-    void cacheGroupDestroyed(ApplicationCacheGroup*);
-    void cacheGroupMadeObsolete(ApplicationCacheGroup*);
-        
-    bool storeNewestCache(ApplicationCacheGroup*, ApplicationCache* oldCache, FailureReason& failureReason);
-    bool storeNewestCache(ApplicationCacheGroup*); // Updates the cache group, but doesn't remove old cache.
+    void cacheGroupDestroyed(ApplicationCacheGroup&);
+    void cacheGroupMadeObsolete(ApplicationCacheGroup&);
+
+    bool storeNewestCache(ApplicationCacheGroup&, ApplicationCache* oldCache, FailureReason&);
+    bool storeNewestCache(ApplicationCacheGroup&); // Updates the cache group, but doesn't remove old cache.
     bool store(ApplicationCacheResource*, ApplicationCache*);
     bool storeUpdatedType(ApplicationCacheResource*, ApplicationCache*);
 
     // Removes the group if the cache to be removed is the newest one (so, storeNewestCache() needs to be called beforehand when updating).
     void remove(ApplicationCache*);
-    
+
     WEBCORE_EXPORT void empty();
-    
+
     bool getManifestURLs(Vector<URL>* urls);
     bool cacheGroupSize(const String& manifestURL, int64_t* size);
     bool deleteCacheGroup(const String& manifestURL);
@@ -105,14 +105,15 @@ public:
 
     static int64_t unknownQuota() { return -1; }
     static int64_t noQuota() { return std::numeric_limits<int64_t>::max(); }
+
 private:
     ApplicationCacheStorage(const String& cacheDirectory, const String& flatFileSubdirectoryName);
 
-    PassRefPtr<ApplicationCache> loadCache(unsigned storageID);
+    RefPtr<ApplicationCache> loadCache(unsigned storageID);
     ApplicationCacheGroup* loadCacheGroup(const URL& manifestURL);
     
-    typedef StorageIDJournal<ApplicationCacheResource> ResourceStorageIDJournal;
-    typedef StorageIDJournal<ApplicationCacheGroup> GroupStorageIDJournal;
+    using ResourceStorageIDJournal = StorageIDJournal<ApplicationCacheResource>;
+    using GroupStorageIDJournal = StorageIDJournal<ApplicationCacheGroup>;
 
     bool store(ApplicationCacheGroup*, GroupStorageIDJournal*);
     bool store(ApplicationCache*, ResourceStorageIDJournal*);
@@ -152,8 +153,7 @@ private:
     // we keep a hash set of the hosts of the manifest URLs of all non-obsolete cache groups.
     HashCountedSet<unsigned, AlreadyHashed> m_cacheHostSet;
     
-    typedef HashMap<String, ApplicationCacheGroup*> CacheGroupMap;
-    CacheGroupMap m_cachesInMemory; // Excludes obsolete cache groups.
+    HashMap<String, ApplicationCacheGroup*> m_cachesInMemory; // Excludes obsolete cache groups.
 
     friend class WTF::NeverDestroyed<ApplicationCacheStorage>;
 };

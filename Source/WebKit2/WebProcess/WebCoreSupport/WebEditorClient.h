@@ -71,8 +71,8 @@ private:
     void didWriteSelectionToPasteboard() final;
     void getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
     
-    void registerUndoStep(PassRefPtr<WebCore::UndoStep>) final;
-    void registerRedoStep(PassRefPtr<WebCore::UndoStep>) final;
+    void registerUndoStep(WebCore::UndoStep&) final;
+    void registerRedoStep(WebCore::UndoStep&) final;
     void clearUndoRedoOperations() final;
 
     bool canCopyCut(WebCore::Frame*, bool defaultValue) const final;

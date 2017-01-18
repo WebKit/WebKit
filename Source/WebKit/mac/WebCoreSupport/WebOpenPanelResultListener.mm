@@ -36,30 +36,18 @@ using namespace WebCore;
 
 @implementation WebOpenPanelResultListener
 
-- (id)initWithChooser:(PassRefPtr<FileChooser>)chooser
+- (id)initWithChooser:(FileChooser&)chooser
 {
     self = [super init];
     if (!self)
         return nil;
-    _chooser = chooser.leakRef();
+    _chooser = &chooser;
     return self;
 }
 
-#ifndef NDEBUG
-- (void)dealloc
-{
-    ASSERT(!_chooser);
-    [super dealloc];
-}
-#endif
-
 - (void)cancel
 {
-    ASSERT(_chooser);
-    if (!_chooser)
-        return;
-    _chooser->deref();
-    _chooser = 0;
+    _chooser = nullptr;
 }
 
 - (void)chooseFilename:(NSString *)filename
@@ -68,8 +56,7 @@ using namespace WebCore;
     if (!_chooser)
         return;
     _chooser->chooseFile(filename);
-    _chooser->deref();
-    _chooser = 0;
+    _chooser = nullptr;
 }
 
 - (void)chooseFilenames:(NSArray *)filenames
@@ -82,11 +69,11 @@ using namespace WebCore;
     for (NSUInteger i = 0; i < count; i++)
         names[i] = [filenames objectAtIndex:i];
     _chooser->chooseFiles(names);
-    _chooser->deref();
-    _chooser = 0;
+    _chooser = nullptr;
 }
 
 #if PLATFORM(IOS)
+
 - (void)chooseFilename:(NSString *)filename displayString:(NSString *)displayString iconImage:(CGImageRef)imageRef
 {
     [self chooseFilenames:[NSArray arrayWithObject:filename] displayString:displayString iconImage:imageRef];
@@ -98,18 +85,14 @@ using namespace WebCore;
     if (!_chooser)
         return;
 
-    RefPtr<Icon> icon = Icon::createIconForImage(imageRef);
-
-    NSUInteger count = [filenames count];
-    Vector<String> names(count);
-    for (NSUInteger i = 0; i < count; ++i)
-        names[i] = [filenames objectAtIndex:i];
-    _chooser->chooseMediaFiles(names, displayString, icon.get());
-    
-    // FIXME: we shouldn't be manually deref()'ing here.
-    _chooser->deref();
+    Vector<String> names;
+    names.reserveInitialCapacity([filenames count]);
+    for (NSString *filename in filenames)
+        names.uncheckedAppend(filename);
+    _chooser->chooseMediaFiles(names, displayString, Icon::createIconForImage(imageRef).get());
     _chooser = nullptr;
 }
+
 #endif
 
 @end

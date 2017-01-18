@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,9 +57,9 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 @interface WebResourcePrivate : NSObject {
 @public
-    ArchiveResource* coreResource;
+    RefPtr<ArchiveResource> coreResource;
 }
-- (instancetype)initWithCoreResource:(PassRefPtr<ArchiveResource>)coreResource;
+- (instancetype)initWithCoreResource:(Ref<ArchiveResource>&&)coreResource;
 @end
 
 @implementation WebResourcePrivate
@@ -78,13 +78,12 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     return [super init];
 }
 
-- (instancetype)initWithCoreResource:(PassRefPtr<ArchiveResource>)passedResource
+- (instancetype)initWithCoreResource:(Ref<ArchiveResource>&&)passedResource
 {
     self = [super init];
     if (!self)
         return nil;
-    // Acquire the PassRefPtr<>'s ref as our own manual ref
-    coreResource = passedResource.leakRef();
+    coreResource = WTFMove(passedResource);
     return self;
 }
 
@@ -92,9 +91,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 {
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebResourcePrivate class], self))
         return;
-
-    if (coreResource)
-        coreResource->deref();
     [super dealloc];
 }
 
@@ -153,14 +149,19 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return nil;
     }
 
-    _private = [[WebResourcePrivate alloc] initWithCoreResource:ArchiveResource::create(SharedBuffer::wrapNSData(data), url, mimeType, textEncoding, frameName, response)];
+    auto coreResource = ArchiveResource::create(SharedBuffer::wrapNSData(data), url, mimeType, textEncoding, frameName, response);
+    if (!coreResource) {
+        [self release];
+        return nil;
+    }
 
+    _private = [[WebResourcePrivate alloc] initWithCoreResource:coreResource.releaseNonNull()];
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
-    ArchiveResource *resource = _private->coreResource;
+    auto* resource = _private->coreResource.get();
     
     NSData *data = nil;
     NSURL *url = nil;
@@ -209,8 +210,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
     if (!_private->coreResource)
         return nil;
-    NSURL *url = _private->coreResource->url();
-    return url;
+    return _private->coreResource->url();
 }
 
 - (NSString *)MIMEType
@@ -252,22 +252,19 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 @implementation WebResource (WebResourceInternal)
 
-- (id)_initWithCoreResource:(PassRefPtr<ArchiveResource>)coreResource
+- (id)_initWithCoreResource:(Ref<ArchiveResource>&&)coreResource
 {
     self = [super init];
     if (!self)
         return nil;
-            
-    ASSERT(coreResource);
-    
-    _private = [[WebResourcePrivate alloc] initWithCoreResource:coreResource];
-            
+
+    _private = [[WebResourcePrivate alloc] initWithCoreResource:WTFMove(coreResource)];
     return self;
 }
 
-- (WebCore::ArchiveResource *)_coreResource
+- (WebCore::ArchiveResource&)_coreResource
 {
-    return _private->coreResource;
+    return *_private->coreResource;
 }
 
 @end
@@ -304,8 +301,13 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return nil;
     }
 
-    _private = [[WebResourcePrivate alloc] initWithCoreResource:ArchiveResource::create(SharedBuffer::wrapNSData(copyData ? [[data copy] autorelease] : data), URL, MIMEType, textEncodingName, frameName, response)];
+    auto coreResource = ArchiveResource::create(SharedBuffer::wrapNSData(copyData ? [[data copy] autorelease] : data), URL, MIMEType, textEncodingName, frameName, response);
+    if (!coreResource) {
+        [self release];
+        return nil;
+    }
 
+    _private = [[WebResourcePrivate alloc] initWithCoreResource:coreResource.releaseNonNull()];
     return self;
 }
 

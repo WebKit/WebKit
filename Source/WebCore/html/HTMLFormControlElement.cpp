@@ -89,7 +89,7 @@ void HTMLFormControlElement::setFormEnctype(const String& value)
 
 String HTMLFormControlElement::formMethod() const
 {
-    const AtomicString& formMethodAttr = attributeWithoutSynchronization(formmethodAttr);
+    auto& formMethodAttr = attributeWithoutSynchronization(formmethodAttr);
     if (formMethodAttr.isNull())
         return emptyString();
     return FormSubmission::Attributes::methodString(FormSubmission::Attributes::parseMethodType(formMethodAttr));

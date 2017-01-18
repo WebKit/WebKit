@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,7 +128,7 @@
 #import <runtime/InitializeThreading.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>
-#import <wtf/PassRefPtr.h>
+#import <wtf/Ref.h>
 #import <wtf/RunLoop.h>
 #import <wtf/text/WTFString.h>
 
@@ -885,7 +885,7 @@ static BOOL shouldTryAppLink(WebView *webView, const NavigationAction& action, F
 #endif
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, FramePolicyFunction function)
+void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction& action, const ResourceRequest& request, FormState* formState, const String& frameName, FramePolicyFunction function)
 {
     WebView *webView = getWebView(m_webFrame.get());
     BOOL tryAppLink = shouldTryAppLink(webView, action, nullptr);
@@ -897,7 +897,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
                           decisionListener:setUpPolicyListener(WTFMove(function), tryAppLink ? (NSURL *)request.url() : nil).get()];
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState, FramePolicyFunction function)
+void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& action, const ResourceRequest& request, FormState* formState, FramePolicyFunction function)
 {
     WebView *webView = getWebView(m_webFrame.get());
     BOOL tryAppLink = shouldTryAppLink(webView, action, core(m_webFrame.get()));
@@ -921,29 +921,28 @@ void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError& 
     [[webView _policyDelegateForwarder] webView:webView unableToImplementPolicyWithError:error frame:m_webFrame.get()];    
 }
 
-static NSDictionary *makeFormFieldValuesDictionary(FormState* formState)
+static NSDictionary *makeFormFieldValuesDictionary(FormState& formState)
 {
-    const StringPairVector& textFieldValues = formState->textFieldValues();
+    auto& textFieldValues = formState.textFieldValues();
     size_t size = textFieldValues.size();
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithCapacity:size];
-    for (size_t i = 0; i < size; ++i)
-        [dictionary setObject:textFieldValues[i].second forKey:textFieldValues[i].first];
-
+    for (auto& value : textFieldValues)
+        [dictionary setObject:value.second forKey:value.first];
     return [dictionary autorelease];
 }
 
-void WebFrameLoaderClient::dispatchWillSendSubmitEvent(PassRefPtr<WebCore::FormState> formState)
+void WebFrameLoaderClient::dispatchWillSendSubmitEvent(Ref<WebCore::FormState>&& formState)
 {
     id <WebFormDelegate> formDelegate = [getWebView(m_webFrame.get()) _formDelegate];
     if (!formDelegate)
         return;
 
-    DOMHTMLFormElement *formElement = kit(formState->form());
+    DOMHTMLFormElement *formElement = kit(&formState->form());
     NSDictionary *values = makeFormFieldValuesDictionary(formState.get());
     CallFormDelegate(getWebView(m_webFrame.get()), @selector(willSendSubmitEventToForm:inFrame:withValues:), formElement, m_webFrame.get(), values);
 }
 
-void WebFrameLoaderClient::dispatchWillSubmitForm(PassRefPtr<FormState> formState, FramePolicyFunction function)
+void WebFrameLoaderClient::dispatchWillSubmitForm(FormState& formState, FramePolicyFunction function)
 {
     id <WebFormDelegate> formDelegate = [getWebView(m_webFrame.get()) _formDelegate];
     if (!formDelegate) {
@@ -951,8 +950,8 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(PassRefPtr<FormState> formStat
         return;
     }
 
-    NSDictionary *values = makeFormFieldValuesDictionary(formState.get());
-    CallFormDelegate(getWebView(m_webFrame.get()), @selector(frame:sourceFrame:willSubmitForm:withValues:submissionListener:), m_webFrame.get(), kit(formState->sourceDocument()->frame()), kit(formState->form()), values, setUpPolicyListener(WTFMove(function)).get());
+    NSDictionary *values = makeFormFieldValuesDictionary(formState);
+    CallFormDelegate(getWebView(m_webFrame.get()), @selector(frame:sourceFrame:willSubmitForm:withValues:submissionListener:), m_webFrame.get(), kit(formState.sourceDocument().frame()), kit(&formState.form()), values, setUpPolicyListener(WTFMove(function)).get());
 }
 
 void WebFrameLoaderClient::revertToProvisionalState(DocumentLoader* loader)
@@ -1553,7 +1552,7 @@ static const MouseEvent* findMouseEvent(const Event* event)
     return 0;
 }
 
-NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& action, PassRefPtr<FormState> formState) const
+NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& action, FormState* formState) const
 {
     unsigned modifierFlags = 0;
     const Event* event = action.event();
@@ -1594,10 +1593,8 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
             [result setObject:[NSNumber numberWithInt:WebCore::NoButton] forKey:WebActionButtonKey];
     }
 
-    if (formState) {
-        ASSERT(formState->form());
-        [result setObject:kit(formState->form()) forKey:WebActionFormKey];
-    }
+    if (formState)
+        [result setObject:kit(&formState->form()) forKey:WebActionFormKey];
 
     return result;
 }
@@ -1623,7 +1620,7 @@ bool WebFrameLoaderClient::canCachePage() const
     return true;
 }
 
-RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement& ownerElement,
     const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -1632,7 +1629,7 @@ RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& na
     
     WebFrameView *childView = [[WebFrameView alloc] init];
     
-    RefPtr<Frame> result = [WebFrame _createSubframeWithOwnerElement:ownerElement frameName:name frameView:childView];
+    RefPtr<Frame> result = [WebFrame _createSubframeWithOwnerElement:&ownerElement frameName:name frameView:childView];
     [childView release];
 
     WebFrame *newFrame = kit(result.get());
@@ -1910,7 +1907,7 @@ static bool shouldBlockPlugin(WebBasePluginPackage *pluginPackage)
 #endif
 }
 
-RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugInElement* element, const URL& url,
+RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugInElement& element, const URL& url,
     const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -1949,7 +1946,7 @@ RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugI
             attributes, WebPlugInAttributesKey,
             [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
             [NSNumber numberWithBool:!loadManually], WebPlugInShouldLoadMainResourceKey,
-            kit(element), WebPlugInContainingElementKey,
+            kit(&element), WebPlugInContainingElementKey,
             // FIXME: We should be passing base URL, see <https://bugs.webkit.org/show_bug.cgi?id=35215>.
             pluginURL, WebPlugInBaseURLKey, // pluginURL might be nil, so add it last
             nil];
@@ -1995,11 +1992,11 @@ RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugI
     if (pluginPackage) {
         if (shouldBlockPlugin(pluginPackage)) {
             errorCode = WebKitErrorBlockedPlugInVersion;
-            if (is<RenderEmbeddedObject>(element->renderer()))
-                downcast<RenderEmbeddedObject>(*element->renderer()).setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
+            if (is<RenderEmbeddedObject>(element.renderer()))
+                downcast<RenderEmbeddedObject>(*element.renderer()).setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
         } else {
             if ([pluginPackage isKindOfClass:[WebPluginPackage class]])
-                view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, attributeKeys, kit(paramValues), baseURL, kit(element), loadManually);
+                view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, attributeKeys, kit(paramValues), baseURL, kit(&element), loadManually);
 #if ENABLE(NETSCAPE_PLUGIN_API)
             else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
                 WebBaseNetscapePluginView *pluginView = [[[NETSCAPE_PLUGIN_VIEW alloc]
@@ -2011,7 +2008,7 @@ RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugI
                     attributeKeys:attributeKeys
                     attributeValues:kit(paramValues)
                     loadManually:loadManually
-                    element:element] autorelease];
+                    element:&element] autorelease];
 
                 return adoptRef(new NetscapePluginWidget(pluginView));
             }
@@ -2082,7 +2079,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
     
-PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, HTMLAppletElement* element, const URL& baseURL, 
+RefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, HTMLAppletElement& element, const URL& baseURL,
     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -2100,8 +2097,8 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
     if (pluginPackage) {
         if (shouldBlockPlugin(pluginPackage)) {
             errorCode = WebKitErrorBlockedPlugInVersion;
-            if (is<RenderEmbeddedObject>(element->renderer()))
-                downcast<RenderEmbeddedObject>(*element->renderer()).setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
+            if (is<RenderEmbeddedObject>(element.renderer()))
+                downcast<RenderEmbeddedObject>(*element.renderer()).setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
         } else {
 #if ENABLE(NETSCAPE_PLUGIN_API)
             if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
@@ -2113,7 +2110,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
                     attributeKeys:kit(paramNames)
                     attributeValues:kit(paramValues)
                     loadManually:NO
-                    element:element] autorelease];
+                    element:&element] autorelease];
                 if (view)
                     return adoptRef(new NetscapePluginWidget(static_cast<WebBaseNetscapePluginView *>(view)));
             }
@@ -2210,7 +2207,7 @@ void WebFrameLoaderClient::registerForIconNotification(bool listen)
 #endif
 }
 
-PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()
+Ref<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()
 {
     return WebFrameNetworkingContext::create(core(m_webFrame.get()));
 }

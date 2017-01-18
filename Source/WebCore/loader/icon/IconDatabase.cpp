@@ -533,7 +533,7 @@ void IconDatabase::performReleaseIconForPageURL(const String& pageURLOriginal, i
     delete pageRecord;
 }
 
-void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, const String& iconURLOriginal)
+void IconDatabase::setIconDataForIconURL(SharedBuffer* dataOriginal, const String& iconURLOriginal)
 {    
     ASSERT_NOT_SYNC_THREAD();
     
@@ -542,7 +542,7 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
     if (!isOpen() || iconURLOriginal.isEmpty())
         return;
     
-    RefPtr<SharedBuffer> data = dataOriginal ? dataOriginal->copy() : PassRefPtr<SharedBuffer>(nullptr);
+    auto data = dataOriginal ? RefPtr<SharedBuffer> { dataOriginal->copy() } : nullptr;
     String iconURL = iconURLOriginal.isolatedCopy();
     
     Vector<String> pageURLs;
@@ -885,18 +885,17 @@ String IconDatabase::defaultDatabaseFilename()
 }
 
 // Unlike getOrCreatePageURLRecord(), getOrCreateIconRecord() does not mark the icon as "interested in import"
-PassRefPtr<IconRecord> IconDatabase::getOrCreateIconRecord(const String& iconURL)
+Ref<IconRecord> IconDatabase::getOrCreateIconRecord(const String& iconURL)
 {
     // Clients of getOrCreateIconRecord() are required to acquire the m_urlAndIconLock before calling this method
     ASSERT(!m_urlAndIconLock.tryLock());
 
-    if (IconRecord* icon = m_iconURLToRecordMap.get(iconURL))
-        return icon;
+    if (auto* icon = m_iconURLToRecordMap.get(iconURL))
+        return *icon;
 
     auto newIcon = IconRecord::create(iconURL);
     m_iconURLToRecordMap.set(iconURL, newIcon.ptr());
-
-    return WTFMove(newIcon);
+    return newIcon;
 }
 
 // This method retrieves the existing PageURLRecord, or creates a new one and marks it as "interested in the import" for later notification
@@ -1917,7 +1916,7 @@ int64_t IconDatabase::addIconURLToSQLDatabase(const String& iconURL)
     return iconID;
 }
 
-PassRefPtr<SharedBuffer> IconDatabase::getImageDataForIconURLFromSQLDatabase(const String& iconURL)
+RefPtr<SharedBuffer> IconDatabase::getImageDataForIconURLFromSQLDatabase(const String& iconURL)
 {
     ASSERT_ICON_SYNC_THREAD();
     
@@ -1936,7 +1935,7 @@ PassRefPtr<SharedBuffer> IconDatabase::getImageDataForIconURLFromSQLDatabase(con
 
     m_getImageDataForIconURLStatement->reset();
     
-    return WTFMove(imageData);
+    return imageData;
 }
 
 void IconDatabase::removeIconFromSQLDatabase(const String& iconURL)

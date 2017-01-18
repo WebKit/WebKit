@@ -158,21 +158,11 @@ WebProcess::WebProcess()
 #if PLATFORM(IOS)
     , m_viewUpdateDispatcher(ViewUpdateDispatcher::create())
 #endif
-    , m_inDidClose(false)
-    , m_hasSetCacheModel(false)
-    , m_cacheModel(CacheModelDocumentViewer)
-    , m_fullKeyboardAccessEnabled(false)
-    , m_textCheckerState()
-    , m_iconDatabaseProxy(*new WebIconDatabaseProxy(this))
+    , m_iconDatabaseProxy(*new WebIconDatabaseProxy(*this))
     , m_webLoaderStrategy(*new WebLoaderStrategy)
     , m_dnsPrefetchHystereris([this](HysteresisState state) { if (state == HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
-#endif
-#if ENABLE(SERVICE_CONTROLS)
-    , m_hasImageServices(false)
-    , m_hasSelectionServices(false)
-    , m_hasRichContentServices(false)
 #endif
     , m_nonVisibleProcessCleanupTimer(*this, &WebProcess::nonVisibleProcessCleanupTimerFired)
     , m_statisticsChangedTimer(*this, &WebProcess::statisticsChangedTimerFired)
@@ -194,9 +184,11 @@ WebProcess::WebProcess()
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     addSupplement<WebNotificationManager>();
 #endif
+
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     addSupplement<WebMediaKeyStorageManager>();
 #endif
+
     m_plugInAutoStartOriginHashes.add(SessionID::defaultSessionID(), HashMap<unsigned, double>());
 
 #if ENABLE(INDEXED_DATABASE)
@@ -207,7 +199,6 @@ WebProcess::WebProcess()
     m_resourceLoadStatisticsStorage->setNotificationCallback([this] {
         if (m_statisticsChangedTimer.isActive())
             return;
-        
         m_statisticsChangedTimer.startOneShot(std::chrono::seconds(5));
     });
 }

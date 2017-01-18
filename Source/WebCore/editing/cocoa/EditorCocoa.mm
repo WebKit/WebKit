@@ -285,11 +285,9 @@ RefPtr<DocumentFragment> Editor::createFragmentAndAddResources(NSAttributedStrin
 
     auto fragmentAndResources = createFragment(string);
 
-    if (DocumentLoader* loader = m_frame.loader().documentLoader()) {
-        for (auto& resource : fragmentAndResources.resources) {
-            if (resource)
-                loader->addArchiveResource(resource.releaseNonNull());
-        }
+    if (auto* loader = m_frame.loader().documentLoader()) {
+        for (auto& resource : fragmentAndResources.resources)
+            loader->addArchiveResource(WTFMove(resource));
     }
 
     if (wasImagesEnabled)

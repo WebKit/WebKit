@@ -115,7 +115,7 @@ public:
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
     virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t totalSpaceNeeded);
 
-    virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
+    virtual void runOpenPanel(WebCore::Frame&, WebCore::FileChooser&);
     virtual void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader&);
 
     virtual void setCursor(const WebCore::Cursor&);

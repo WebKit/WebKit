@@ -724,7 +724,7 @@ String WebPage::cachedResponseMIMETypeForURL(const URL& url)
     return [[cachedResponseForURL(this, url) response] MIMEType];
 }
 
-PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const URL& url)
+RefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const URL& url)
 {
     return SharedBuffer::wrapNSData([cachedResponseForURL(this, url) data]);
 }
@@ -773,37 +773,33 @@ void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& ev
         result = !!hitResult.scrollbar();
 }
 
-void WebPage::setTopOverhangImage(PassRefPtr<WebImage> image)
+void WebPage::setTopOverhangImage(WebImage* image)
 {
-    FrameView* frameView = m_mainFrame->coreFrame()->view();
+    auto* frameView = m_mainFrame->coreFrame()->view();
     if (!frameView)
         return;
 
-    GraphicsLayer* layer = frameView->setWantsLayerForTopOverHangArea(image.get());
+    auto* layer = frameView->setWantsLayerForTopOverHangArea(image);
     if (!layer)
         return;
 
     layer->setSize(image->size());
     layer->setPosition(FloatPoint(0, -image->size().height()));
-
-    RetainPtr<CGImageRef> cgImage = image->bitmap().makeCGImageCopy();
-    layer->platformLayer().contents = (id)cgImage.get();
+    layer->platformLayer().contents = (id)image->bitmap().makeCGImageCopy().get();
 }
 
-void WebPage::setBottomOverhangImage(PassRefPtr<WebImage> image)
+void WebPage::setBottomOverhangImage(WebImage* image)
 {
-    FrameView* frameView = m_mainFrame->coreFrame()->view();
+    auto* frameView = m_mainFrame->coreFrame()->view();
     if (!frameView)
         return;
 
-    GraphicsLayer* layer = frameView->setWantsLayerForBottomOverHangArea(image.get());
+    auto* layer = frameView->setWantsLayerForBottomOverHangArea(image);
     if (!layer)
         return;
 
     layer->setSize(image->size());
-    
-    RetainPtr<CGImageRef> cgImage = image->bitmap().makeCGImageCopy();
-    layer->platformLayer().contents = (id)cgImage.get();
+    layer->platformLayer().contents = (id)image->bitmap().makeCGImageCopy().get();
 }
 
 void WebPage::updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor)

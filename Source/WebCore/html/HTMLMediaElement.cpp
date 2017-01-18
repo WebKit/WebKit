@@ -1428,11 +1428,8 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    DocumentLoader* documentLoader = frame->loader().documentLoader();
-
-    if (documentLoader) {
-        auto blockedStatus = page->userContentProvider().processContentExtensionRulesForLoad(url, ResourceType::Media, *documentLoader);
-        if (blockedStatus.blockedLoad) {
+    if (auto* documentLoader = frame->loader().documentLoader()) {
+        if (page->userContentProvider().processContentExtensionRulesForLoad(url, ResourceType::Media, *documentLoader).blockedLoad) {
             mediaLoadingFailed(MediaPlayer::FormatError);
             return;
         }
@@ -1442,11 +1439,9 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     // The resource fetch algorithm 
     m_networkState = NETWORK_LOADING;
 
-    // If the url should be loaded from the application cache, pass the url of the cached file
-    // to the media engine.
-    ApplicationCacheHost* cacheHost = frame->loader().documentLoader()->applicationCacheHost();
+    // If the URL should be loaded from the application cache, pass the URL of the cached file to the media engine.
     ApplicationCacheResource* resource = nullptr;
-    if (cacheHost && cacheHost->shouldLoadResourceFromApplicationCache(ResourceRequest(url), resource)) {
+    if (frame->loader().documentLoader()->applicationCacheHost().shouldLoadResourceFromApplicationCache(ResourceRequest(url), resource)) {
         // Resources that are not present in the manifest will always fail to load (at least, after the
         // cache has been primed the first time), making the testing of offline applications simpler.
         if (!resource || resource->path().isEmpty()) {
@@ -1460,7 +1455,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
     m_firstTimePlaying = true;
 
-    // Set m_currentSrc *before* changing to the cache url, the fact that we are loading from the app
+    // Set m_currentSrc *before* changing to the cache URL, the fact that we are loading from the app
     // cache is an internal detail not exposed through the media element API.
     m_currentSrc = url;
 

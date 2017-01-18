@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  * Copyright (C) 2010 Girish Ramakrishnan <girish@forwardbias.in>
  *
@@ -31,6 +31,7 @@
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include "PluginPackage.h"
+#include "WebFrameLoaderClient.h"
 #include <WebCore/BridgeJSC.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/CommonVM.h>
@@ -275,7 +276,7 @@ void PluginView::mediaCanStart(Document&)
 {
     ASSERT(!m_isStarted);
     if (!start())
-        parentFrame()->loader().client().dispatchDidFailToStartPlugin(this);
+        static_cast<WebFrameLoaderClient&>(parentFrame()->loader().client()).dispatchDidFailToStartPlugin(this);
 }
 
 PluginView::~PluginView()

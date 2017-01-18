@@ -138,7 +138,7 @@ class EmptyChromeClient : public ChromeClient {
     std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) final;
 #endif
 
-    void runOpenPanel(Frame*, PassRefPtr<FileChooser>) final;
+    void runOpenPanel(Frame&, FileChooser&) final;
     void loadIconForFiles(const Vector<String>&, FileIconLoader&) final { }
 
     void elementDidFocus(const Node*) final { }

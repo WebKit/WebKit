@@ -42,17 +42,13 @@ static inline bool fallbackURLLongerThan(const std::pair<URL, URL>& lhs, const s
 }
 
 ApplicationCache::ApplicationCache()
-    : m_group(nullptr)
-    , m_manifest(nullptr)
-    , m_estimatedSizeInStorage(0)
-    , m_storageID(0)
 {
 }
 
 ApplicationCache::~ApplicationCache()
 {
     if (m_group)
-        m_group->cacheDestroyed(this);
+        m_group->cacheDestroyed(*this);
 }
     
 void ApplicationCache::setGroup(ApplicationCacheGroup* group)
@@ -63,57 +59,39 @@ void ApplicationCache::setGroup(ApplicationCacheGroup* group)
 
 bool ApplicationCache::isComplete()
 {
-    return m_group && m_group->cacheIsComplete(this);
+    return m_group && m_group->cacheIsComplete(*this);
 }
 
-void ApplicationCache::setManifestResource(PassRefPtr<ApplicationCacheResource> manifest)
+void ApplicationCache::setManifestResource(Ref<ApplicationCacheResource>&& manifest)
 {
-    ASSERT(manifest);
     ASSERT(!m_manifest);
     ASSERT(manifest->type() & ApplicationCacheResource::Manifest);
-    
-    m_manifest = manifest.get();
-    
-    addResource(manifest);
+
+    m_manifest = manifest.ptr();
+
+    addResource(WTFMove(manifest));
 }
     
-void ApplicationCache::addResource(PassRefPtr<ApplicationCacheResource> resource)
+void ApplicationCache::addResource(Ref<ApplicationCacheResource>&& resource)
 {
-    ASSERT(resource);
-    
-    const String& url = resource->url();
-    
+    auto& url = resource->url();
+
+    ASSERT(!URL(ParsedURLString, url).hasFragmentIdentifier());
     ASSERT(!m_resources.contains(url));
-    
+
     if (m_storageID) {
         ASSERT(!resource->storageID());
         ASSERT(resource->type() & ApplicationCacheResource::Master);
-        
+
         // Add the resource to the storage.
-        m_group->storage().store(resource.get(), this);
+        m_group->storage().store(resource.ptr(), this);
     }
 
     m_estimatedSizeInStorage += resource->estimatedSizeInStorage();
 
-    m_resources.set(url, resource);
+    m_resources.set(url, WTFMove(resource));
 }
 
-unsigned ApplicationCache::removeResource(const String& url)
-{
-    HashMap<String, RefPtr<ApplicationCacheResource>>::iterator it = m_resources.find(url);
-    if (it == m_resources.end())
-        return 0;
-
-    // The resource exists, get its type so we can return it.
-    unsigned type = it->value->type();
-
-    m_estimatedSizeInStorage -= it->value->estimatedSizeInStorage();
-
-    m_resources.remove(it);
-
-    return type;
-}    
-    
 ApplicationCacheResource* ApplicationCache::resourceForURL(const String& url)
 {
     ASSERT(!URL(ParsedURLString, url).hasFragmentIdentifier());
@@ -132,9 +110,7 @@ ApplicationCacheResource* ApplicationCache::resourceForRequest(const ResourceReq
         return nullptr;
 
     URL url(request.url());
-    if (url.hasFragmentIdentifier())
-        url.removeFragmentIdentifier();
-
+    url.removeFragmentIdentifier();
     return resourceForURL(url);
 }
 

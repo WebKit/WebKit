@@ -239,7 +239,7 @@ void EditCommandComposition::unapply()
     for (size_t i = size; i; --i)
         m_commands[i - 1]->doUnapply();
 
-    frame->editor().unappliedEditing(this);
+    frame->editor().unappliedEditing(*this);
 
     if (AXObjectCache::accessibilityEnabled())
         m_replacedText.postTextStateChangeNotificationForUnapply(m_document->existingAXObjectCache());
@@ -265,7 +265,7 @@ void EditCommandComposition::reapply()
     for (auto& command : m_commands)
         command->doReapply();
 
-    frame->editor().reappliedEditing(this);
+    frame->editor().reappliedEditing(*this);
 
     if (AXObjectCache::accessibilityEnabled())
         m_replacedText.postTextStateChangeNotificationForReapply(m_document->existingAXObjectCache());
@@ -416,14 +416,14 @@ EditCommandComposition* CompositeEditCommand::composition() const
     return nullptr;
 }
 
-EditCommandComposition* CompositeEditCommand::ensureComposition()
+EditCommandComposition& CompositeEditCommand::ensureComposition()
 {
-    CompositeEditCommand* command = this;
-    while (command && command->parent())
-        command = command->parent();
+    auto* command = this;
+    while (auto* parent = command->parent())
+        command = parent;
     if (!command->m_composition)
         command->m_composition = EditCommandComposition::create(document(), startingSelection(), endingSelection(), editingAction());
-    return command->m_composition.get();
+    return *command->m_composition;
 }
 
 bool CompositeEditCommand::isCreateLinkCommand() const
@@ -465,7 +465,7 @@ void CompositeEditCommand::applyCommandToComposite(PassRefPtr<EditCommand> prpCo
     command->doApply();
     if (command->isSimpleEditCommand()) {
         command->setParent(nullptr);
-        ensureComposition()->append(toSimpleEditCommand(command.get()));
+        ensureComposition().append(toSimpleEditCommand(command.get()));
     }
     m_commands.append(WTFMove(command));
 }

@@ -115,8 +115,8 @@ private:
     void discardedComposition(WebCore::Frame*) final;
     void canceledComposition() final;
 
-    void registerUndoStep(PassRefPtr<WebCore::UndoStep>) final;
-    void registerRedoStep(PassRefPtr<WebCore::UndoStep>) final;
+    void registerUndoStep(WebCore::UndoStep&) final;
+    void registerRedoStep(WebCore::UndoStep&) final;
     void clearUndoRedoOperations() final;
 
     bool canCopyCut(WebCore::Frame*, bool defaultValue) const final;
@@ -174,7 +174,7 @@ private:
     void handleAcceptedCandidateWithSoftSpaces(WebCore::TextCheckingResult) final;
 #endif
 
-    void registerUndoOrRedoStep(PassRefPtr<WebCore::UndoStep>, bool isRedo);
+    void registerUndoOrRedoStep(WebCore::UndoStep&, bool isRedo);
 
     WebView *m_webView;
     RetainPtr<WebEditorUndoTarget> m_undoTarget;

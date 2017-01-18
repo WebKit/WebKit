@@ -46,6 +46,7 @@
 #include "HTMLFormElement.h"
 #include "InProcessIDBServer.h"
 #include "InspectorClient.h"
+#include "NetworkStorageSession.h"
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "PaymentCoordinatorClient.h"
@@ -171,8 +172,8 @@ private:
     void requestCandidatesForSelection(const VisibleSelection&) final { }
     void handleAcceptedCandidateWithSoftSpaces(TextCheckingResult) final { }
 
-    void registerUndoStep(PassRefPtr<UndoStep>) final;
-    void registerRedoStep(PassRefPtr<UndoStep>) final;
+    void registerUndoStep(UndoStep&) final;
+    void registerRedoStep(UndoStep&) final;
     void clearUndoRedoOperations() final { }
 
     bool canCopyCut(Frame*, bool defaultValue) const final { return defaultValue; }
@@ -331,14 +332,14 @@ class EmptyFrameLoaderClient final : public FrameLoaderClient {
     void dispatchShow() final { }
 
     void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, FramePolicyFunction) final { }
-    void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String&, FramePolicyFunction) final;
-    void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, FramePolicyFunction) final;
+    void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, FramePolicyFunction) final;
+    void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, FormState*, FramePolicyFunction) final;
     void cancelPolicyCheck() final { }
 
     void dispatchUnableToImplementPolicy(const ResourceError&) final { }
 
-    void dispatchWillSendSubmitEvent(PassRefPtr<FormState>) final;
-    void dispatchWillSubmitForm(PassRefPtr<FormState>, FramePolicyFunction) final;
+    void dispatchWillSendSubmitEvent(Ref<FormState>&&) final;
+    void dispatchWillSubmitForm(FormState&, FramePolicyFunction) final;
 
     void revertToProvisionalState(DocumentLoader*) final { }
     void setMainDocumentError(DocumentLoader*, const ResourceError&) final { }
@@ -410,10 +411,10 @@ class EmptyFrameLoaderClient final : public FrameLoaderClient {
     void didDisplayInsecureContent() final { }
     void didRunInsecureContent(SecurityOrigin*, const URL&) final { }
     void didDetectXSS(const URL&, bool) final { }
-    RefPtr<Frame> createFrame(const URL&, const String&, HTMLFrameOwnerElement*, const String&, bool, int, int) final;
-    RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool) final;
+    RefPtr<Frame> createFrame(const URL&, const String&, HTMLFrameOwnerElement&, const String&, bool, int, int) final;
+    RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool) final;
     void recreatePlugin(Widget*) final;
-    PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const URL&, const Vector<String>&, const Vector<String>&) final;
+    RefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement&, const URL&, const Vector<String>&, const Vector<String>&) final;
 
     ObjectContentType objectContentType(const URL&, const String&) final { return ObjectContentType::None; }
     String overrideMediaType() const final { return { }; }
@@ -432,14 +433,35 @@ class EmptyFrameLoaderClient final : public FrameLoaderClient {
     bool shouldCacheResponse(DocumentLoader*, unsigned long, const ResourceResponse&, const unsigned char*, unsigned long long) final { return true; }
 #endif
 
-    PassRefPtr<FrameNetworkingContext> createNetworkingContext() final;
+    Ref<FrameNetworkingContext> createNetworkingContext() final;
 
 #if ENABLE(REQUEST_AUTOCOMPLETE)
-    void didRequestAutocomplete(PassRefPtr<FormState>) final { }
+    void didRequestAutocomplete(Ref<FormState>&&) final { }
 #endif
 
     bool isEmptyFrameLoaderClient() final { return true; }
     void prefetchDNS(const String&) final { }
+};
+
+class EmptyFrameNetworkingContext final : public FrameNetworkingContext {
+public:
+    static Ref<EmptyFrameNetworkingContext> create() { return adoptRef(*new EmptyFrameNetworkingContext); }
+
+private:
+    EmptyFrameNetworkingContext();
+
+    bool shouldClearReferrerOnHTTPSToHTTPRedirect() const { return true; }
+    NetworkStorageSession& storageSession() const final { return NetworkStorageSession::defaultStorageSession(); }
+
+#if PLATFORM(COCOA)
+    bool localFileContentSniffingEnabled() const { return false; }
+    SchedulePairHashSet* scheduledRunLoopPairs() const { return nullptr; }
+    RetainPtr<CFDataRef> sourceApplicationAuditData() const { return nullptr; };
+#endif
+
+#if PLATFORM(COCOA) || PLATFORM(WIN)
+    ResourceError blockedError(const ResourceRequest&) const final { return { }; }
+#endif
 };
 
 class EmptyInspectorClient final : public InspectorClient {
@@ -569,23 +591,23 @@ std::unique_ptr<ColorChooser> EmptyChromeClient::createColorChooser(ColorChooser
 
 #endif
 
-void EmptyChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser>)
+void EmptyChromeClient::runOpenPanel(Frame&, FileChooser&)
 {
 }
 
-void EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String&, FramePolicyFunction)
+void EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, FramePolicyFunction)
 {
 }
 
-void EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, FramePolicyFunction)
+void EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, FormState*, FramePolicyFunction)
 {
 }
 
-void EmptyFrameLoaderClient::dispatchWillSendSubmitEvent(PassRefPtr<FormState>)
+void EmptyFrameLoaderClient::dispatchWillSendSubmitEvent(Ref<FormState>&&)
 {
 }
 
-void EmptyFrameLoaderClient::dispatchWillSubmitForm(PassRefPtr<FormState>, FramePolicyFunction)
+void EmptyFrameLoaderClient::dispatchWillSubmitForm(FormState&, FramePolicyFunction)
 {
 }
 
@@ -594,12 +616,12 @@ Ref<DocumentLoader> EmptyFrameLoaderClient::createDocumentLoader(const ResourceR
     return DocumentLoader::create(request, substituteData);
 }
 
-RefPtr<Frame> EmptyFrameLoaderClient::createFrame(const URL&, const String&, HTMLFrameOwnerElement*, const String&, bool, int, int)
+RefPtr<Frame> EmptyFrameLoaderClient::createFrame(const URL&, const String&, HTMLFrameOwnerElement&, const String&, bool, int, int)
 {
     return nullptr;
 }
 
-RefPtr<Widget> EmptyFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement*, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool)
+RefPtr<Widget> EmptyFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool)
 {
     return nullptr;
 }
@@ -608,25 +630,30 @@ void EmptyFrameLoaderClient::recreatePlugin(Widget*)
 {
 }
 
-PassRefPtr<Widget> EmptyFrameLoaderClient::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const URL&, const Vector<String>&, const Vector<String>&)
+RefPtr<Widget> EmptyFrameLoaderClient::createJavaAppletWidget(const IntSize&, HTMLAppletElement&, const URL&, const Vector<String>&, const Vector<String>&)
 {
     return nullptr;
 }
 
-PassRefPtr<FrameNetworkingContext> EmptyFrameLoaderClient::createNetworkingContext()
+inline EmptyFrameNetworkingContext::EmptyFrameNetworkingContext()
+    : FrameNetworkingContext { nullptr }
 {
-    return PassRefPtr<FrameNetworkingContext>();
+}
+
+Ref<FrameNetworkingContext> EmptyFrameLoaderClient::createNetworkingContext()
+{
+    return EmptyFrameNetworkingContext::create();
 }
 
 void EmptyEditorClient::EmptyTextCheckerClient::requestCheckingOfString(TextCheckingRequest&, const VisibleSelection&)
 {
 }
 
-void EmptyEditorClient::registerUndoStep(PassRefPtr<UndoStep>)
+void EmptyEditorClient::registerUndoStep(UndoStep&)
 {
 }
 
-void EmptyEditorClient::registerRedoStep(PassRefPtr<UndoStep>)
+void EmptyEditorClient::registerRedoStep(UndoStep&)
 {
 }
 

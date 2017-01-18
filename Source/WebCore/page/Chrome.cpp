@@ -431,7 +431,7 @@ std::unique_ptr<ColorChooser> Chrome::createColorChooser(ColorChooserClient* cli
 }
 #endif
 
-void Chrome::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileChooser)
+void Chrome::runOpenPanel(Frame& frame, FileChooser& fileChooser)
 {
     notifyPopupOpeningObservers();
     m_client.runOpenPanel(frame, fileChooser);

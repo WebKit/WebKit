@@ -105,7 +105,7 @@ public:
     void apply();
     bool isFirstCommand(EditCommand* command) { return !m_commands.isEmpty() && m_commands.first() == command; }
     EditCommandComposition* composition() const;
-    EditCommandComposition* ensureComposition();
+    EditCommandComposition& ensureComposition();
 
     virtual bool isCreateLinkCommand() const;
     virtual bool isTypingCommand() const;

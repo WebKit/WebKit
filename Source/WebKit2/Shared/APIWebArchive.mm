@@ -38,9 +38,9 @@ using namespace WebCore;
 
 namespace API {
 
-Ref<WebArchive> WebArchive::create(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives)
+Ref<WebArchive> WebArchive::create(WebArchiveResource* mainResource, RefPtr<API::Array>&& subresources, RefPtr<API::Array>&& subframeArchives)
 {
-    return adoptRef(*new WebArchive(mainResource, subresources, subframeArchives));
+    return adoptRef(*new WebArchive(mainResource, WTFMove(subresources), WTFMove(subframeArchives)));
 }
 
 Ref<WebArchive> WebArchive::create(API::Data* data)
@@ -48,9 +48,9 @@ Ref<WebArchive> WebArchive::create(API::Data* data)
     return adoptRef(*new WebArchive(data));
 }
 
-Ref<WebArchive> WebArchive::create(PassRefPtr<LegacyWebArchive> legacyWebArchive)
+Ref<WebArchive> WebArchive::create(RefPtr<LegacyWebArchive>&& legacyWebArchive)
 {
-    return adoptRef(*new WebArchive(legacyWebArchive));
+    return adoptRef(*new WebArchive(legacyWebArchive.releaseNonNull()));
 }
 
 Ref<WebArchive> WebArchive::create(Range* range)
@@ -58,31 +58,32 @@ Ref<WebArchive> WebArchive::create(Range* range)
     return adoptRef(*new WebArchive(LegacyWebArchive::create(range)));
 }
 
-WebArchive::WebArchive(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives)
+WebArchive::WebArchive(WebArchiveResource* mainResource, RefPtr<API::Array>&& subresources, RefPtr<API::Array>&& subframeArchives)
     : m_cachedMainResource(mainResource)
     , m_cachedSubresources(subresources)
     , m_cachedSubframeArchives(subframeArchives)
 {
-    RefPtr<ArchiveResource> coreMainResource = m_cachedMainResource->coreArchiveResource();
+    auto coreMainResource = m_cachedMainResource->coreArchiveResource();
 
-    Vector<RefPtr<ArchiveResource>> coreArchiveResources;
+    Vector<Ref<ArchiveResource>> coreArchiveResources;
     coreArchiveResources.reserveInitialCapacity(m_cachedSubresources->size());
     for (size_t i = 0; i < m_cachedSubresources->size(); ++i) {
-        RefPtr<WebArchiveResource> resource = m_cachedSubresources->at<WebArchiveResource>(i);
+        auto resource = m_cachedSubresources->at<WebArchiveResource>(i);
         ASSERT(resource);
-        coreArchiveResources.uncheckedAppend(resource->coreArchiveResource());
+        ASSERT(resource->coreArchiveResource());
+        coreArchiveResources.uncheckedAppend(*resource->coreArchiveResource());
     }
 
-    Vector<RefPtr<LegacyWebArchive>> coreSubframeLegacyWebArchives;
+    Vector<Ref<LegacyWebArchive>> coreSubframeLegacyWebArchives;
     coreSubframeLegacyWebArchives.reserveInitialCapacity(m_cachedSubframeArchives->size());
-
     for (size_t i = 0; i < m_cachedSubframeArchives->size(); ++i) {
-        RefPtr<WebArchive> subframeWebArchive = m_cachedSubframeArchives->at<WebArchive>(i);
+        auto subframeWebArchive = m_cachedSubframeArchives->at<WebArchive>(i);
         ASSERT(subframeWebArchive);
-        coreSubframeLegacyWebArchives.uncheckedAppend(subframeWebArchive->coreLegacyWebArchive());
+        ASSERT(subframeWebArchive->coreLegacyWebArchive());
+        coreSubframeLegacyWebArchives.uncheckedAppend(*subframeWebArchive->coreLegacyWebArchive());
     }
 
-    m_legacyWebArchive = LegacyWebArchive::create(WTFMove(coreMainResource), WTFMove(coreArchiveResources), WTFMove(coreSubframeLegacyWebArchives));
+    m_legacyWebArchive = LegacyWebArchive::create(*coreMainResource, WTFMove(coreArchiveResources), WTFMove(coreSubframeLegacyWebArchives));
 }
 
 WebArchive::WebArchive(API::Data* data)
@@ -90,7 +91,7 @@ WebArchive::WebArchive(API::Data* data)
     m_legacyWebArchive = LegacyWebArchive::create(SharedBuffer::create(data->bytes(), data->size()).get());
 }
 
-WebArchive::WebArchive(PassRefPtr<LegacyWebArchive> legacyWebArchive)
+WebArchive::WebArchive(RefPtr<LegacyWebArchive>&& legacyWebArchive)
     : m_legacyWebArchive(legacyWebArchive)
 {
 }
@@ -111,10 +112,8 @@ API::Array* WebArchive::subresources()
     if (!m_cachedSubresources) {
         Vector<RefPtr<API::Object>> subresources;
         subresources.reserveInitialCapacity(m_legacyWebArchive->subresources().size());
-
-        for (const auto& subresource : m_legacyWebArchive->subresources())
-            subresources.uncheckedAppend(WebArchiveResource::create(subresource));
-
+        for (auto& subresource : m_legacyWebArchive->subresources())
+            subresources.uncheckedAppend(WebArchiveResource::create(subresource.ptr()));
         m_cachedSubresources = API::Array::create(WTFMove(subresources));
     }
 
@@ -126,10 +125,8 @@ API::Array* WebArchive::subframeArchives()
     if (!m_cachedSubframeArchives) {
         Vector<RefPtr<API::Object>> subframeWebArchives;
         subframeWebArchives.reserveInitialCapacity(m_legacyWebArchive->subframeArchives().size());
-
-        for (const auto& subframeArchive : m_legacyWebArchive->subframeArchives())
-            subframeWebArchives.uncheckedAppend(WebArchive::create(static_cast<LegacyWebArchive*>(subframeArchive.get())));
-
+        for (auto& subframeArchive : m_legacyWebArchive->subframeArchives())
+            subframeWebArchives.uncheckedAppend(WebArchive::create(static_cast<LegacyWebArchive*>(subframeArchive.ptr())));
         m_cachedSubframeArchives = API::Array::create(WTFMove(subframeWebArchives));
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #import "WebUIDelegate.h"
-#import <wtf/Forward.h>
+#import <wtf/RefPtr.h>
 
 namespace WebCore {
 class FileChooser;
@@ -32,9 +32,9 @@ class FileChooser;
 
 @interface WebOpenPanelResultListener : NSObject <WebOpenPanelResultListener>
 {
-    WebCore::FileChooser* _chooser;
+    RefPtr<WebCore::FileChooser> _chooser;
 }
 
-- (id)initWithChooser:(PassRefPtr<WebCore::FileChooser>)chooser;
+- (id)initWithChooser:(WebCore::FileChooser&)chooser;
 
 @end

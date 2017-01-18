@@ -1,3 +1,133 @@
+2017-01-15  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr from "loader" directory of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=167055
+
+        Reviewed by Alex Christensen.
+
+        * Shared/APIWebArchive.h: Use RefPtr&& instead of PassRefPtr.
+        * Shared/APIWebArchive.mm:
+        (API::WebArchive::create): Ditto.
+        (API::WebArchive::WebArchive): Ditto.
+        (API::WebArchive::subresources): Ditto.
+        (API::WebArchive::subframeArchives): Ditto.
+
+        * Shared/TextCheckerState.h: Initialize data members so classes
+        using this won't have to explicitly initalize them.
+
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::setIconDataForIconURL): Pass a raw
+        pointer to WebCore.
+
+        * UIProcess/WebPageProxy.h: Removed forward declaration of
+        StringPairVector, not needed here.
+
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.cpp:
+        (WebKit::WebIconDatabaseProxy::WebIconDatabaseProxy): Take a reference.
+        (WebKit::WebIconDatabaseProxy::retainIconForPageURL): Updated for reference.
+        (WebKit::WebIconDatabaseProxy::releaseIconForPageURL): Ditto.
+        (WebKit::WebIconDatabaseProxy::synchronousIconForPageURL): Ditto.
+        (WebKit::WebIconDatabaseProxy::loadDecisionForIconURL): Ditto.
+        (WebKit::WebIconDatabaseProxy::receivedIconLoadDecision): Ditto.
+        (WebKit::WebIconDatabaseProxy::iconDataForIconURL): Ditto.
+        (WebKit::WebIconDatabaseProxy::setIconURLForPageURL): Ditto.
+        (WebKit::WebIconDatabaseProxy::setIconDataForIconURL): Ditto.
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.h: Updated for the above.
+        Marked the class final, made most functions private and final.
+
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        (WebKit::InjectedBundleNavigationAction::InjectedBundleNavigationAction):
+        Removed assertion that a pointer is non-null since that pointer is now a
+        reference. Left use of PassRefPtr here for now.z
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad): Updated since application cache
+        host is now a reference rather thna a pointer.
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest): Ditto.
+        (WebKit::WebResourceLoader::didReceiveResponse): Ditto.
+        (WebKit::WebResourceLoader::didFailResourceLoad): Ditto.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::buildHTTPHeaders): Got rid of unneeded use of String::format.
+        (WebKit::PluginView::create): Take a reference instead of PassRefPtr.
+        (WebKit::PluginView::PluginView): Ditto. Also moved much of the data
+        member initialization to the class definition.
+        (WebKit::PluginView::recreateAndInitialize): Take Ref&& instead of PassRefPtr.
+        (WebKit::PluginView::manualLoadDidReceiveResponse): Updated for change to
+        ManualStreamState enumeration.
+        (WebKit::PluginView::manualLoadDidReceiveData): Ditto.
+        (WebKit::PluginView::manualLoadDidFinishLoading Ditto.):
+        (WebKit::PluginView::manualLoadDidFail): Ditto.
+        (WebKit::PluginView::liveResourceData): Return RefPtr insead of PassRefPtr.
+        (WebKit::PluginView::redeliverManualStream): Updated for ManualStreamState.
+        * WebProcess/Plugins/PluginView.h: Updated for the above. Also changed
+        ManualStreamState into an enum class.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp: Changed m_page to a reference.
+        (WebKit::WebChromeClient::runOpenPanel): Take both arguments as references.
+        * WebProcess/WebCoreSupport/WebChromeClient.h: Updated for the above.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerUndoStep): Take reference instead of PassRefPtr.
+        (WebKit::WebEditorClient::registerRedoStep): Ditto.
+        * WebProcess/WebCoreSupport/WebEditorClient.h: Updated for the above
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        Updated for change to FrameLoaderClient.
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Ditto.
+        (WebKit::WebFrameLoaderClient::dispatchWillSendSubmitEvent): Ditto.
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm): Ditto.
+        (WebKit::WebFrameLoaderClient::createFrame): Ditto.
+        (WebKit::WebFrameLoaderClient::createPlugin): Ditto.
+        (WebKit::WebFrameLoaderClient::recreatePlugin): Ditto.
+        (WebKit::WebFrameLoaderClient::createJavaAppletWidget): Ditto.
+        (WebKit::WebFrameLoaderClient::createNetworkingContext): Ditto.
+        (WebKit::WebFrameLoaderClient::didRequestAutocomplete): Ditto.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h: Updated for the above.
+
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::didReceiveMobileDocType): Updated since m_page is a
+        reference now.
+        (WebKit::WebChromeClient::observedContentChange): Ditto.
+        (WebKit::WebChromeClient::notifyRevealedSelectionByScrollingFrame): Ditto.
+        (WebKit::WebChromeClient::didLayout): Ditto.
+        (WebKit::WebChromeClient::didStartOverflowScroll): Ditto.
+        (WebKit::WebChromeClient::didEndOverflowScroll): Ditto.
+        (WebKit::WebChromeClient::hasStablePageScaleFactor): Ditto.
+        (WebKit::WebChromeClient::showPlaybackTargetPicker): Ditto.
+        (WebKit::WebChromeClient::eventThrottlingDelay): Ditto.
+        (WebKit::WebChromeClient::deviceOrientation): Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Pass reference.
+        (WebKit::WebPage::createPlugin): Return RefPtr instead of PassRefPtr.
+        (WebKit::WebPage::fromCorePage): Updated for change to WebChromeClient.
+        (WebKit::WebPage::setHeaderPageBanner): Take pointer instead of PassRefPtr.
+        (WebKit::WebPage::setFooterPageBanner): Ditto.
+        (WebKit::WebPage::setActiveOpenPanelResultListener): Take Ref&& instead of
+        PassRefPtr.
+        (WebKit::WebPage::currentSelectionAsRange): Return RefPtr instead of PassRefPtr.
+        (WebKit::WebPage::rangeFromEditingRange): Ditto.
+        * WebProcess/WebPage/WebPage.h: Updated for the above.
+
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::WebPage::cachedResponseDataForURL): Return RefPtr instead of PassRefPtr.
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::cachedResponseDataForURL): Ditto.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::cachedResponseDataForURL): Ditto.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::cachedResponseDataForURL): Ditto.
+        (WebKit::WebPage::setTopOverhangImage): Take raw pointer instead of PassRefPtr.
+        (WebKit::WebPage::setBottomOverhangImage): Ditto.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess): Pass a reference. Move most initialization to
+        the class definition.
+        * WebProcess/WebProcess.h: Updaed for the above.
+
 2017-01-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r210834

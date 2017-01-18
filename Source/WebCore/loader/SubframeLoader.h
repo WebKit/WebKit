@@ -61,7 +61,7 @@ public:
     bool requestObject(HTMLPlugInImageElement&, const String& url, const AtomicString& frameName,
         const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
-    PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
+    RefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
     WEBCORE_EXPORT bool allowPlugins();
 
@@ -78,14 +78,12 @@ private:
     bool shouldUsePlugin(const URL&, const String& mimeType, bool hasFallback, bool& useFallback);
     bool pluginIsLoadable(const URL&, const String& mimeType);
 
-    Document* document() const;
+    URL completeURL(const String&) const;
 
     bool shouldConvertInvalidURLsToBlank() const;
 
     bool m_containsPlugins;
     Frame& m_frame;
-
-    URL completeURL(const String&) const;
 };
 
 } // namespace WebCore

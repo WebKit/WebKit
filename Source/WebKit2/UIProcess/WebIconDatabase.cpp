@@ -130,7 +130,7 @@ void WebIconDatabase::setIconDataForIconURL(const IPC::DataReference& iconData, 
     LOG(IconDatabase, "WK2 UIProcess setting icon data (%i bytes) for page URL %s", (int)iconData.size(), iconURL.ascii().data());
     if (!m_iconDatabaseImpl)
         return;
-    m_iconDatabaseImpl->setIconDataForIconURL(SharedBuffer::create(iconData.data(), iconData.size()), iconURL);
+    m_iconDatabaseImpl->setIconDataForIconURL(SharedBuffer::create(iconData.data(), iconData.size()).ptr(), iconURL);
 }
 
 void WebIconDatabase::synchronousIconDataForPageURL(const String&, IPC::DataReference& iconData)

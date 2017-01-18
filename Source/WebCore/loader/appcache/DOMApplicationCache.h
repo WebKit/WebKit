@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,46 +25,39 @@
 
 #pragma once
 
-#include "ApplicationCacheHost.h"
 #include "DOMWindowProperty.h"
 #include "EventTarget.h"
-#include "ExceptionOr.h"
-#include "ScriptWrappable.h"
-#include <wtf/HashMap.h>
-#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 
+class ApplicationCacheHost;
 class Frame;
-class URL;
 
 class DOMApplicationCache final : public RefCounted<DOMApplicationCache>, public EventTargetWithInlineData, public DOMWindowProperty {
 public:
-    static Ref<DOMApplicationCache> create(Frame* frame) { return adoptRef(*new DOMApplicationCache(frame)); }
+    static Ref<DOMApplicationCache> create(Frame& frame) { return adoptRef(*new DOMApplicationCache(frame)); }
     virtual ~DOMApplicationCache() { ASSERT(!m_frame); }
-
-    void disconnectFrameForDocumentSuspension() override;
-    void reconnectFrameFromDocumentSuspension(Frame*) override;
-    void willDestroyGlobalObjectInFrame() override;
 
     unsigned short status() const;
     ExceptionOr<void> update();
     ExceptionOr<void> swapCache();
     void abort();
 
-    using RefCounted<DOMApplicationCache>::ref;
-    using RefCounted<DOMApplicationCache>::deref;
-
-    EventTargetInterface eventTargetInterface() const override { return DOMApplicationCacheEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const override;
-
-    static const AtomicString& toEventType(ApplicationCacheHost::EventID id);
+    using RefCounted::ref;
+    using RefCounted::deref;
 
 private:
-    explicit DOMApplicationCache(Frame*);
+    explicit DOMApplicationCache(Frame&);
 
-    void refEventTarget() override { ref(); }
-    void derefEventTarget() override { deref(); }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
+
+    EventTargetInterface eventTargetInterface() const final { return DOMApplicationCacheEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final;
+
+    void disconnectFrameForDocumentSuspension() final;
+    void reconnectFrameFromDocumentSuspension(Frame*) final;
+    void willDestroyGlobalObjectInFrame() final;
 
     ApplicationCacheHost* applicationCacheHost() const;
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -177,14 +177,14 @@ public:
     virtual void dispatchShow() = 0;
 
     virtual void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, FramePolicyFunction) = 0;
-    virtual void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, FramePolicyFunction) = 0;
-    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, FramePolicyFunction) = 0;
+    virtual void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String& frameName, FramePolicyFunction) = 0;
+    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, FormState*, FramePolicyFunction) = 0;
     virtual void cancelPolicyCheck() = 0;
 
     virtual void dispatchUnableToImplementPolicy(const ResourceError&) = 0;
 
-    virtual void dispatchWillSendSubmitEvent(PassRefPtr<FormState>) = 0;
-    virtual void dispatchWillSubmitForm(PassRefPtr<FormState>, FramePolicyFunction) = 0;
+    virtual void dispatchWillSendSubmitEvent(Ref<FormState>&&) = 0;
+    virtual void dispatchWillSubmitForm(FormState&, FramePolicyFunction) = 0;
 
     virtual void revertToProvisionalState(DocumentLoader*) = 0;
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) = 0;
@@ -272,14 +272,12 @@ public:
     virtual bool canCachePage() const = 0;
     virtual void convertMainResourceLoadToDownload(DocumentLoader*, SessionID, const ResourceRequest&, const ResourceResponse&) = 0;
 
-    virtual RefPtr<Frame> createFrame(const URL&, const String& name, HTMLFrameOwnerElement*, const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) = 0;
-    virtual RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) = 0;
+    virtual RefPtr<Frame> createFrame(const URL&, const String& name, HTMLFrameOwnerElement&, const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) = 0;
+    virtual RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) = 0;
     virtual void recreatePlugin(Widget*) = 0;
     virtual void redirectDataToPlugin(Widget* pluginWidget) = 0;
 
-    virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const URL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues) = 0;
-
-    virtual void dispatchDidFailToStartPlugin(const PluginViewBase*) const { }
+    virtual RefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement&, const URL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues) = 0;
 
     virtual ObjectContentType objectContentType(const URL&, const String& mimeType) = 0;
     virtual String overrideMediaType() const = 0;
@@ -294,6 +292,7 @@ public:
     virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long identifier, NSCachedURLResponse*) const = 0;
     virtual NSDictionary *dataDetectionContext() { return nullptr; }
 #endif
+
 #if PLATFORM(WIN) && USE(CFURLCONNECTION)
     // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
     virtual bool shouldCacheResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&, const unsigned char* data, unsigned long long length) = 0;
@@ -309,10 +308,10 @@ public:
     // Clients that generally disallow universal access can make exceptions for particular URLs.
     virtual bool shouldForceUniversalAccessFromLocalURL(const URL&) { return false; }
 
-    virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() = 0;
+    virtual Ref<FrameNetworkingContext> createNetworkingContext() = 0;
 
 #if ENABLE(REQUEST_AUTOCOMPLETE)
-    virtual void didRequestAutocomplete(PassRefPtr<FormState>) = 0;
+    virtual void didRequestAutocomplete(Ref<FormState>&&) = 0;
 #endif
 
     virtual bool shouldPaintBrokenImage(const URL&) const { return true; }

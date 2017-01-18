@@ -996,23 +996,23 @@ bool Editor::willUnapplyEditing(const EditCommandComposition& composition) const
     return dispatchBeforeInputEvents(composition.startingRootEditableElement(), composition.endingRootEditableElement(), "historyUndo");
 }
 
-void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
+void Editor::unappliedEditing(EditCommandComposition& composition)
 {
     document().updateLayout();
 
-    notifyTextFromControls(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
+    notifyTextFromControls(composition.startingRootEditableElement(), composition.endingRootEditableElement());
 
-    VisibleSelection newSelection(cmd->startingSelection());
+    VisibleSelection newSelection(composition.startingSelection());
     changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions());
-    dispatchInputEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement(), "historyUndo");
+    dispatchInputEvents(composition.startingRootEditableElement(), composition.endingRootEditableElement(), "historyUndo");
 
     updateEditorUINowIfScheduled();
 
-    m_alternativeTextController->respondToUnappliedEditing(cmd.get());
+    m_alternativeTextController->respondToUnappliedEditing(&composition);
 
     m_lastEditCommand = nullptr;
-    if (client())
-        client()->registerRedoStep(cmd);
+    if (auto* client = this->client())
+        client->registerRedoStep(composition);
     respondToChangedContents(newSelection);
 }
 
@@ -1021,21 +1021,21 @@ bool Editor::willReapplyEditing(const EditCommandComposition& composition) const
     return dispatchBeforeInputEvents(composition.startingRootEditableElement(), composition.endingRootEditableElement(), "historyRedo");
 }
 
-void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
+void Editor::reappliedEditing(EditCommandComposition& composition)
 {
     document().updateLayout();
 
-    notifyTextFromControls(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
+    notifyTextFromControls(composition.startingRootEditableElement(), composition.endingRootEditableElement());
 
-    VisibleSelection newSelection(cmd->endingSelection());
+    VisibleSelection newSelection(composition.endingSelection());
     changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions());
-    dispatchInputEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement(), "historyRedo");
+    dispatchInputEvents(composition.startingRootEditableElement(), composition.endingRootEditableElement(), "historyRedo");
     
     updateEditorUINowIfScheduled();
 
     m_lastEditCommand = nullptr;
-    if (client())
-        client()->registerUndoStep(cmd);
+    if (auto* client = this->client())
+        client->registerUndoStep(composition);
     respondToChangedContents(newSelection);
 }
 

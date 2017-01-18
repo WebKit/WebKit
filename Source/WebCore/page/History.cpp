@@ -207,10 +207,10 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
         m_frame->document()->updateURLForPushOrReplaceState(fullURL);
 
     if (stateObjectType == StateObjectType::Push) {
-        m_frame->loader().history().pushState(data, title, fullURL.string());
+        m_frame->loader().history().pushState(WTFMove(data), title, fullURL.string());
         m_frame->loader().client().dispatchDidPushStateWithinPage();
     } else if (stateObjectType == StateObjectType::Replace) {
-        m_frame->loader().history().replaceState(data, title, fullURL.string());
+        m_frame->loader().history().replaceState(WTFMove(data), title, fullURL.string());
         m_frame->loader().client().dispatchDidReplaceStateWithinPage();
     }
 

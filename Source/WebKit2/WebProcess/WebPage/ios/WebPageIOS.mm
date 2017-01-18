@@ -468,10 +468,10 @@ String WebPage::cachedResponseMIMETypeForURL(const URL&)
     return String();
 }
 
-PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const URL&)
+RefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const URL&)
 {
     notImplemented();
-    return 0;
+    return nullptr;
 }
 
 bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest&)

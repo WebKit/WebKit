@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007, 2011, 2014-2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -374,22 +374,6 @@ bool WebEditorClient::shouldMoveRangeAfterDelete(Range*, Range*)
     return true;
 }
 
-bool WebEditorClient::shouldChangeTypingStyle(StyleProperties*, StyleProperties*)
-{
-    notImplemented();
-    return false;
-}
-
-void WebEditorClient::webViewDidChangeTypingStyle(WebNotification* /*notification*/)
-{
-    notImplemented();
-}
-
-void WebEditorClient::webViewDidChangeSelection(WebNotification* /*notification*/)
-{
-    notImplemented();
-}
-
 bool WebEditorClient::smartInsertDeleteEnabled(void)
 {
     Page* page = m_webView->page();
@@ -521,7 +505,7 @@ void WebEditorClient::textDidChangeInTextArea(Element* e)
 class WebEditorUndoCommand : public IWebUndoCommand
 {
 public:
-    WebEditorUndoCommand(PassRefPtr<UndoStep>, bool isUndo);
+    WebEditorUndoCommand(UndoStep&, bool isUndo);
     void execute();
 
     // IUnknown
@@ -531,11 +515,11 @@ public:
 
 private:
     ULONG m_refCount;
-    RefPtr<UndoStep> m_step;
+    Ref<UndoStep> m_step;
     bool m_isUndo;
 };
 
-WebEditorUndoCommand::WebEditorUndoCommand(PassRefPtr<UndoStep> step, bool isUndo)
+WebEditorUndoCommand::WebEditorUndoCommand(UndoStep& step, bool isUndo)
     : m_step(step)
     , m_isUndo(isUndo) 
     , m_refCount(1)
@@ -640,11 +624,11 @@ static String undoNameForEditAction(EditAction editAction)
     return String();
 }
 
-void WebEditorClient::registerUndoStep(PassRefPtr<UndoStep> step)
+void WebEditorClient::registerUndoStep(UndoStep& step)
 {
     IWebUIDelegate* uiDelegate = 0;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
-        String actionName = undoNameForEditAction(step->editingAction());
+        String actionName = undoNameForEditAction(step.editingAction());
         WebEditorUndoCommand* undoCommand = new WebEditorUndoCommand(step, true);
         if (!undoCommand)
             return;
@@ -656,7 +640,7 @@ void WebEditorClient::registerUndoStep(PassRefPtr<UndoStep> step)
     }
 }
 
-void WebEditorClient::registerRedoStep(PassRefPtr<UndoStep> step)
+void WebEditorClient::registerRedoStep(UndoStep& step)
 {
     IWebUIDelegate* uiDelegate = 0;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {

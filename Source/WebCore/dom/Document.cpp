@@ -3136,7 +3136,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content, bool
             else
                 completedURL = completeURL(urlString);
             if (!protocolIsJavaScript(completedURL))
-                frame->navigationScheduler().scheduleRedirect(this, delay, completedURL);
+                frame->navigationScheduler().scheduleRedirect(*this, delay, completedURL);
             else {
                 String message = "Refused to refresh " + m_url.stringCenterEllipsizedToLength() + " to a javascript: URL";
                 addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);

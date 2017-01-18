@@ -407,7 +407,7 @@ private:
 #endif
 
     static void networkStateChangedImpl(InstrumentingAgents&);
-    static void updateApplicationCacheStatusImpl(InstrumentingAgents&, Frame*);
+    static void updateApplicationCacheStatusImpl(InstrumentingAgents&, Frame&);
 
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
     static void renderLayerDestroyedImpl(InstrumentingAgents&, const RenderLayer&);
@@ -1181,8 +1181,8 @@ inline void InspectorInstrumentation::networkStateChanged(Page& page)
 inline void InspectorInstrumentation::updateApplicationCacheStatus(Frame* frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        updateApplicationCacheStatusImpl(*instrumentingAgents, frame);
+    if (auto* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        updateApplicationCacheStatusImpl(*instrumentingAgents, *frame);
 }
 
 inline void InspectorInstrumentation::addMessageToConsole(Page& page, std::unique_ptr<Inspector::ConsoleMessage> message)

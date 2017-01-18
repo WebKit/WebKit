@@ -267,7 +267,7 @@ void HTMLLinkElement::process()
         if (!isActive)
             priority = ResourceLoadPriority::VeryLow;
         CachedResourceRequest request(url, CachedResourceLoader::defaultCachedResourceOptions(), priority, WTFMove(charset));
-        request.setInitiator(this);
+        request.setInitiator(*this);
 
         if (document().contentSecurityPolicy()->allowStyleWithNonce(attributeWithoutSynchronization(HTMLNames::nonceAttr))) {
             ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
@@ -367,7 +367,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
     CSSParserContext parserContext(document(), baseURL, charset);
     auto cachePolicy = frame->loader().subresourceCachePolicy();
 
-    if (RefPtr<StyleSheetContents> restoredSheet = const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->restoreParsedStyleSheet(parserContext, cachePolicy)) {
+    if (auto restoredSheet = const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->restoreParsedStyleSheet(parserContext, cachePolicy)) {
         ASSERT(restoredSheet->isCacheable());
         ASSERT(!restoredSheet->isLoading());
         initializeStyleSheet(restoredSheet.releaseNonNull(), *cachedStyleSheet);

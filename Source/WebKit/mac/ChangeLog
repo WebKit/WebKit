@@ -1,3 +1,90 @@
+2017-01-15  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr from "loader" directory of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=167055
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebChromeClient.h: Updated for changes to ChromeClient.
+        Also made class final and most functions private and final.
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::runOpenPanel): Updated to take references.
+
+        * WebCoreSupport/WebEditorClient.h: Updated for changes to EditorClient.
+        * WebCoreSupport/WebEditorClient.mm:
+        (-[WebUndoStep initWithUndoStep:]): Take reference instead of PassRefPtr.
+        (+[WebUndoStep stepWithUndoStep:]): Ditto.
+        (-[WebUndoStep step]): Return reference instead of pointer.
+        (-[WebEditorUndoTarget undoEditing:]): Updated for the above.
+        (-[WebEditorUndoTarget redoEditing:]): Ditto.
+        (WebEditorClient::registerUndoOrRedoStep): Take reference instead of
+        PassRefPtr.
+        (WebEditorClient::registerUndoStep): Ditto.
+        (WebEditorClient::registerRedoStep): Ditto.
+
+        * WebCoreSupport/WebFrameLoaderClient.h: Updated for changes to
+        FrameLoaderClient, marked functions final instead of override.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction): Take
+        pointer instead of PassRefPtr.
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Ditto.
+        (makeFormFieldValuesDictionary): Take a reference.
+        (WebFrameLoaderClient::dispatchWillSendSubmitEvent): Take Ref&& instead
+        of PassRefPtr.
+        (WebFrameLoaderClient::dispatchWillSubmitForm): Take a reference instead
+        of PassRefPtr.
+        (WebFrameLoaderClient::actionDictionary): Take a pointer instead of PassRePtr.
+        (WebFrameLoaderClient::createFrame): Take a reference instead of a pointer.
+        (WebFrameLoaderClient::createPlugin): Ditto.
+        (WebFrameLoaderClient::createJavaAppletWidget): Ditto.
+        (WebFrameLoaderClient::createNetworkingContext): Ditto.
+        (WebFrameLoaderClient::didCreateQuickLookHandle): Pass a reference.
+
+        * WebCoreSupport/WebFrameNetworkingContext.h: Use Ref instead of PassRefPtr.
+        * WebCoreSupport/WebFrameNetworkingContext.mm: Tweak style a bit.
+
+        * WebCoreSupport/WebOpenPanelResultListener.h: Take a reference instead of
+        PassRefPtr. Use RefPtr for class field.
+        * WebCoreSupport/WebOpenPanelResultListener.mm:
+        (-[WebOpenPanelResultListener dealloc]): Deleted. Compiler will now do it
+        correctly without us declaring anything explicitly.
+        (-[WebOpenPanelResultListener cancel]): Get rid of hand-written deref code,
+        and let RefPtr do the work.
+        (-[WebOpenPanelResultListener chooseFilename:]): Ditto.
+        (-[WebOpenPanelResultListener chooseFilenames:]): Ditto.
+        (-[WebOpenPanelResultListener chooseFilenames:displayString:iconImage:]):
+        Rewrote to use a modern Objective-C for loop, reserveInitialCapacity,
+        and uncheckedAppend.
+
+        * WebView/WebArchive.mm:
+        (-[WebArchive initWithMainResource:subresources:subframeArchives:]):
+        Updated for changes to LegacyWebArchive.
+        (-[WebArchive mainResource]): Ditto.
+        (-[WebArchive subresources]): Ditto.
+        (-[WebArchive subframeArchives]): Ditto.
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _addSubframeArchives:]): Use a modern Objective-C for loop
+        instead of NSEnumerator.
+        (-[WebDataSource _fileWrapperForURL:]): Use auto.
+        (-[WebDataSource _documentFragmentWithArchive:]): Pass a reference.
+        (-[WebDataSource mainResource]): Ditto.
+        (-[WebDataSource subresources]): Ditto.
+        (-[WebDataSource subresourceForURL:]): Ditto.
+        (-[WebDataSource addSubresource:]): Ditto.
+
+        * WebView/WebResource.mm:
+        (-[WebResourcePrivate initWithCoreResource:]): Take Ref&& instead of PassRefPtr.
+        (-[WebResourcePrivate dealloc]): Remove explicit deref since RefPtr will now take
+        care of it
+        (-[WebResource initWithCoder:]): Pass a reference.
+        (-[WebResource encodeWithCoder:]): Updated since coreResource is now RefPtr.
+        (-[WebResource _initWithCoreResource:]): Take Ref&& instead of PassRefPtr.
+        (-[WebResource _coreResource]): Return reference rather than pointer.
+        (-[WebResource _initWithData:URL:MIMEType:textEncodingName:frameName:response:copyData:]):
+        Added code to handle the null case and pass a reference rather than a pointer.
+        * WebView/WebResourceInternal.h: Updated for the above.
+
 2017-01-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r210834

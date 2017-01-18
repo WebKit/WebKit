@@ -66,15 +66,15 @@ void HTMLHtmlElement::insertedByParser()
     if (!document().frame())
         return;
 
-    DocumentLoader* documentLoader = document().frame()->loader().documentLoader();
+    auto* documentLoader = document().frame()->loader().documentLoader();
     if (!documentLoader)
         return;
 
-    const AtomicString& manifest = attributeWithoutSynchronization(manifestAttr);
+    auto& manifest = attributeWithoutSynchronization(manifestAttr);
     if (manifest.isEmpty())
-        documentLoader->applicationCacheHost()->selectCacheWithoutManifest();
+        documentLoader->applicationCacheHost().selectCacheWithoutManifest();
     else
-        documentLoader->applicationCacheHost()->selectCacheWithManifest(document().completeURL(manifest));
+        documentLoader->applicationCacheHost().selectCacheWithManifest(document().completeURL(manifest));
 }
 
 }

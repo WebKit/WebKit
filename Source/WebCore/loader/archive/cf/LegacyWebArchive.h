@@ -37,23 +37,26 @@ class Frame;
 class Node;
 class Range;
 
-class LegacyWebArchive : public Archive {
+class LegacyWebArchive final : public Archive {
 public:
     WEBCORE_EXPORT static Ref<LegacyWebArchive> create();
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(SharedBuffer&);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const URL&, SharedBuffer&);
-    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(RefPtr<ArchiveResource>&& mainResource, Vector<RefPtr<ArchiveResource>>&& subresources, Vector<RefPtr<LegacyWebArchive>>&& subframeArchives);
+    WEBCORE_EXPORT static Ref<LegacyWebArchive> create(Ref<ArchiveResource>&& mainResource, Vector<Ref<ArchiveResource>>&& subresources, Vector<Ref<LegacyWebArchive>>&& subframeArchives);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Node&, std::function<bool(Frame&)> frameFilter = nullptr);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Frame&);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> createFromSelection(Frame*);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Range*);
 
-    Type type() const override;
-
     WEBCORE_EXPORT RetainPtr<CFDataRef> rawDataRepresentation();
 
 private:
-    LegacyWebArchive() { }
+    LegacyWebArchive() = default;
+
+    bool shouldLoadFromArchiveOnly() const final { return false; }
+    bool shouldOverrideBaseURL() const final { return false; }
+    bool shouldUseMainResourceEncoding() const final { return true; }
+    bool shouldUseMainResourceURL() const final { return true; }
 
     enum MainResourceStatus { Subresource, MainResource };
 
@@ -62,7 +65,7 @@ private:
     static ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef);
     static ResourceResponse createResourceResponseFromPropertyListData(CFDataRef, CFStringRef responseDataType);
     static RetainPtr<CFDataRef> createPropertyListRepresentation(const ResourceResponse&);
-    static RetainPtr<CFDictionaryRef> createPropertyListRepresentation(Archive*);
+    static RetainPtr<CFDictionaryRef> createPropertyListRepresentation(Archive&);
     static RetainPtr<CFDictionaryRef> createPropertyListRepresentation(ArchiveResource*, MainResourceStatus);
 
     bool extract(CFDictionaryRef);

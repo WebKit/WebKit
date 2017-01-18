@@ -64,9 +64,9 @@ class WebEvent;
 
 class PluginView : public WebCore::PluginViewBase, public PluginController, private WebCore::MediaCanStartListener, private WebFrame::LoadListener, private WebCore::MediaProducer {
 public:
-    static Ref<PluginView> create(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters&);
+    static Ref<PluginView> create(WebCore::HTMLPlugInElement&, Ref<Plugin>&&, const Plugin::Parameters&);
 
-    void recreateAndInitialize(PassRefPtr<Plugin>);
+    void recreateAndInitialize(Ref<Plugin>&&);
 
     WebCore::Frame* frame() const;
 
@@ -112,13 +112,13 @@ public:
 
     bool shouldAllowScripting();
 
-    PassRefPtr<WebCore::SharedBuffer> liveResourceData() const;
+    RefPtr<WebCore::SharedBuffer> liveResourceData() const;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
     String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const;
 
 private:
-    PluginView(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);
+    PluginView(WebCore::HTMLPlugInElement&, Ref<Plugin>&&, const Plugin::Parameters&);
     virtual ~PluginView();
 
     void initializePlugin();
@@ -244,14 +244,14 @@ private:
     WebPage* m_webPage;
     Plugin::Parameters m_parameters;
 
-    bool m_isInitialized;
-    bool m_isWaitingForSynchronousInitialization;
-    bool m_isWaitingUntilMediaCanStart;
-    bool m_isBeingDestroyed;
-    bool m_pluginProcessHasCrashed;
+    bool m_isInitialized { false };
+    bool m_isWaitingForSynchronousInitialization { false };
+    bool m_isWaitingUntilMediaCanStart { false };
+    bool m_isBeingDestroyed { false };
+    bool m_pluginProcessHasCrashed { false };
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    bool m_didPlugInStartOffScreen;
+    bool m_didPlugInStartOffScreen { false };
 #endif
 
     // Pending URLRequests that the plug-in has made.
@@ -267,18 +267,13 @@ private:
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     // A map of all related NPObjects for this plug-in view.
-    NPRuntimeObjectMap m_npRuntimeObjectMap;
+    NPRuntimeObjectMap m_npRuntimeObjectMap { this };
 #endif
 
     // The manual stream state. This is used so we can deliver a manual stream to a plug-in
     // when it is initialized.
-    enum ManualStreamState {
-        StreamStateInitial,
-        StreamStateHasReceivedResponse,
-        StreamStateFinished,
-        StreamStateFailed
-    };
-    ManualStreamState m_manualStreamState;
+    enum class ManualStreamState { Initial, HasReceivedResponse, Finished, Failed };
+    ManualStreamState m_manualStreamState { ManualStreamState::Initial };
 
     WebCore::ResourceResponse m_manualStreamResponse;
     WebCore::ResourceError m_manualStreamError;
@@ -289,13 +284,13 @@ private:
     // This timer is used when plugin snapshotting is enabled, to capture a plugin placeholder.
     WebCore::DeferrableOneShotTimer m_pluginSnapshotTimer;
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC) || PLATFORM(COCOA)
-    unsigned m_countSnapshotRetries;
+    unsigned m_countSnapshotRetries { 0 };
 #endif
-    bool m_didReceiveUserInteraction;
+    bool m_didReceiveUserInteraction { false };
 
-    double m_pageScaleFactor;
+    double m_pageScaleFactor { 1 };
 
-    bool m_pluginIsPlayingAudio;
+    bool m_pluginIsPlayingAudio { false };
 };
 
 } // namespace WebKit

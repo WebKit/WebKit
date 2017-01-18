@@ -32,6 +32,7 @@
 #include "ContentSecurityPolicy.h"
 #include "DocumentLoader.h"
 #include "DOMApplicationCache.h"
+#include "EventNames.h"
 #include "FileSystem.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -48,31 +49,29 @@
 namespace WebCore {
 
 ApplicationCacheHost::ApplicationCacheHost(DocumentLoader& documentLoader)
-    : m_domApplicationCache(nullptr)
-    , m_documentLoader(documentLoader)
-    , m_defersEvents(true)
-    , m_candidateApplicationCacheGroup(nullptr)
+    : m_documentLoader(documentLoader)
 {
 }
 
 ApplicationCacheHost::~ApplicationCacheHost()
 {
     ASSERT(!m_applicationCache || !m_candidateApplicationCacheGroup || m_applicationCache->group() == m_candidateApplicationCacheGroup);
-
     if (m_applicationCache)
-        m_applicationCache->group()->disassociateDocumentLoader(&m_documentLoader);
+        m_applicationCache->group()->disassociateDocumentLoader(m_documentLoader);
     else if (m_candidateApplicationCacheGroup)
-        m_candidateApplicationCacheGroup->disassociateDocumentLoader(&m_documentLoader);
+        m_candidateApplicationCacheGroup->disassociateDocumentLoader(m_documentLoader);
 }
 
 void ApplicationCacheHost::selectCacheWithoutManifest()
 {
-    ApplicationCacheGroup::selectCacheWithoutManifestURL(m_documentLoader.frame());
+    ASSERT(m_documentLoader.frame());
+    ApplicationCacheGroup::selectCacheWithoutManifestURL(*m_documentLoader.frame());
 }
 
 void ApplicationCacheHost::selectCacheWithManifest(const URL& manifestURL)
 {
-    ApplicationCacheGroup::selectCache(m_documentLoader.frame(), manifestURL);
+    ASSERT(m_documentLoader.frame());
+    ApplicationCacheGroup::selectCache(*m_documentLoader.frame(), manifestURL);
 }
 
 void ApplicationCacheHost::maybeLoadMainResource(ResourceRequest& request, SubstituteData& substituteData)
@@ -140,12 +139,11 @@ bool ApplicationCacheHost::maybeLoadFallbackForMainError(const ResourceRequest& 
 
 void ApplicationCacheHost::mainResourceDataReceived(const char*, int, long long, bool)
 {
-    // This method is here to facilitate alternate implemetations of this interface by the host browser.
 }
 
 void ApplicationCacheHost::failedLoadingMainResource()
 {
-    ApplicationCacheGroup* group = m_candidateApplicationCacheGroup;
+    auto* group = m_candidateApplicationCacheGroup;
     if (!group && m_applicationCache) {
         if (mainResourceApplicationCache()) {
             // Even when the main resource is being loaded from an application cache, loading can fail if aborted.
@@ -155,17 +153,17 @@ void ApplicationCacheHost::failedLoadingMainResource()
     }
     
     if (group)
-        group->failedLoadingMainResource(&m_documentLoader);
+        group->failedLoadingMainResource(m_documentLoader);
 }
 
 void ApplicationCacheHost::finishedLoadingMainResource()
 {
-    ApplicationCacheGroup* group = candidateApplicationCacheGroup();
+    auto* group = candidateApplicationCacheGroup();
     if (!group && applicationCache() && !mainResourceApplicationCache())
         group = applicationCache()->group();
     
     if (group)
-        group->finishedLoadingMainResource(&m_documentLoader);
+        group->finishedLoadingMainResource(m_documentLoader);
 }
 
 bool ApplicationCacheHost::maybeLoadResource(ResourceLoader& loader, const ResourceRequest& request, const URL& originalURL)
@@ -186,17 +184,19 @@ bool ApplicationCacheHost::maybeLoadResource(ResourceLoader& loader, const Resou
 
 bool ApplicationCacheHost::maybeLoadFallbackForRedirect(ResourceLoader* resourceLoader, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    if (!redirectResponse.isNull() && !protocolHostAndPortAreEqual(request.url(), redirectResponse.url()))
+    if (!redirectResponse.isNull() && !protocolHostAndPortAreEqual(request.url(), redirectResponse.url())) {
         if (scheduleLoadFallbackResourceFromApplicationCache(resourceLoader))
             return true;
+    }
     return false;
 }
 
 bool ApplicationCacheHost::maybeLoadFallbackForResponse(ResourceLoader* resourceLoader, const ResourceResponse& response)
 {
-    if (response.httpStatusCode() / 100 == 4 || response.httpStatusCode() / 100 == 5)
+    if (response.httpStatusCode() / 100 == 4 || response.httpStatusCode() / 100 == 5) {
         if (scheduleLoadFallbackResourceFromApplicationCache(resourceLoader))
             return true;
+    }
     return false;
 }
 
@@ -220,11 +220,9 @@ URL ApplicationCacheHost::createFileURL(const String& path)
     // app cache media files are always created with encodeForFileName(createCanonicalUUIDString()).
 
 #if USE(CF) && PLATFORM(WIN)
-    RetainPtr<CFURLRef> cfURL = adoptCF(CFURLCreateWithFileSystemPath(0, path.createCFString().get(), kCFURLWindowsPathStyle, false));
-    URL url(cfURL.get());
+    URL url(adoptCF(CFURLCreateWithFileSystemPath(0, path.createCFString().get(), kCFURLWindowsPathStyle, false)).get());
 #else
     URL url;
-
     url.setProtocol(ASCIILiteral("file"));
     url.setPath(path);
 #endif
@@ -246,7 +244,7 @@ bool ApplicationCacheHost::maybeLoadSynchronously(ResourceRequest& request, Reso
     if (!shouldLoadResourceFromApplicationCache(request, resource))
         return false;
 
-    RefPtr<SharedBuffer> responseData = resource ? bufferFromResource(*resource) : nullptr;
+    auto responseData = resource ? bufferFromResource(*resource) : nullptr;
     if (!responseData) {
         error = m_documentLoader.frameLoader()->client().cannotShowURLError(request);
         return true;
@@ -286,20 +284,21 @@ void ApplicationCacheHost::setDOMApplicationCache(DOMApplicationCache* domApplic
     m_domApplicationCache = domApplicationCache;
 }
 
-void ApplicationCacheHost::notifyDOMApplicationCache(EventID id, int total, int done)
+void ApplicationCacheHost::notifyDOMApplicationCache(const AtomicString& eventType, int total, int done)
 {
-    if (id != PROGRESS_EVENT)
+    if (eventType != eventNames().progressEvent)
         InspectorInstrumentation::updateApplicationCacheStatus(m_documentLoader.frame());
 
     if (m_defersEvents) {
         // Event dispatching is deferred until document.onload has fired.
-        m_deferredEvents.append(DeferredEvent(id, total, done));
+        m_deferredEvents.append({ eventType, total, done });
         return;
     }
-    dispatchDOMEvent(id, total, done);
+
+    dispatchDOMEvent(eventType, total, done);
 }
 
-void ApplicationCacheHost::stopLoadingInFrame(Frame* frame)
+void ApplicationCacheHost::stopLoadingInFrame(Frame& frame)
 {
     ASSERT(!m_applicationCache || !m_candidateApplicationCacheGroup || m_applicationCache->group() == m_candidateApplicationCacheGroup);
 
@@ -312,53 +311,68 @@ void ApplicationCacheHost::stopLoadingInFrame(Frame* frame)
 void ApplicationCacheHost::stopDeferringEvents()
 {
     Ref<DocumentLoader> protect(m_documentLoader);
-    for (auto& event : m_deferredEvents)
-        dispatchDOMEvent(event.eventID, event.progressTotal, event.progressDone);
+
+    // Note, do not cache the size in a local variable.
+    // This code needs to properly handle the case where more events are added to
+    // m_deferredEvents while iterating it. This is why we don't use a modern for loop.
+    for (size_t i = 0; i < m_deferredEvents.size(); ++i) {
+        auto& event = m_deferredEvents[i];
+        dispatchDOMEvent(event.eventType, event.progressTotal, event.progressDone);
+    }
+
     m_deferredEvents.clear();
     m_defersEvents = false;
 }
 
-void ApplicationCacheHost::fillResourceList(ResourceInfoList* resources)
+Vector<ApplicationCacheHost::ResourceInfo> ApplicationCacheHost::resourceList()
 {
-    ApplicationCache* cache = applicationCache();
+    Vector<ResourceInfo> result;
+
+    auto* cache = applicationCache();
     if (!cache || !cache->isComplete())
-        return;
+        return result;
 
-    for (const auto& urlAndResource : cache->resources()) {
-        ApplicationCacheResource* resource = urlAndResource.value.get();
+    result.reserveInitialCapacity(cache->resources().size());
 
-        unsigned type = resource->type();
+    for (auto& urlAndResource : cache->resources()) {
+        ASSERT(urlAndResource.value);
+        auto& resource = *urlAndResource.value;
+
+        unsigned type = resource.type();
         bool isMaster = type & ApplicationCacheResource::Master;
         bool isManifest = type & ApplicationCacheResource::Manifest;
         bool isExplicit = type & ApplicationCacheResource::Explicit;
         bool isForeign = type & ApplicationCacheResource::Foreign;
         bool isFallback = type & ApplicationCacheResource::Fallback;
 
-        resources->append(ResourceInfo(resource->url(), isMaster, isManifest, isFallback, isForeign, isExplicit, resource->estimatedSizeInStorage()));
+        result.uncheckedAppend({ resource.url(), isMaster, isManifest, isFallback, isForeign, isExplicit, resource.estimatedSizeInStorage() });
     }
+
+    return result;
 }
 
 ApplicationCacheHost::CacheInfo ApplicationCacheHost::applicationCacheInfo()
 {
-    ApplicationCache* cache = applicationCache();
+    auto* cache = applicationCache();
     if (!cache || !cache->isComplete())
-        return CacheInfo(URL(), 0, 0, 0);
+        return { { }, 0, 0, 0 };
 
     // FIXME: Add "Creation Time" and "Update Time" to Application Caches.
-    return CacheInfo(cache->manifestResource()->url(), 0, 0, cache->estimatedSizeInStorage());
+    return { cache->manifestResource()->url(), 0, 0, cache->estimatedSizeInStorage() };
 }
 
-void ApplicationCacheHost::dispatchDOMEvent(EventID id, int total, int done)
+static Ref<Event> createApplicationCacheEvent(const AtomicString& eventType, int total, int done)
 {
-    if (m_domApplicationCache) {
-        const AtomicString& eventType = DOMApplicationCache::toEventType(id);
-        RefPtr<Event> event;
-        if (id == PROGRESS_EVENT)
-            event = ProgressEvent::create(eventType, true, done, total);
-        else
-            event = Event::create(eventType, false, false);
-        m_domApplicationCache->dispatchEvent(*event);
-    }
+    if (eventType == eventNames().progressEvent)
+        return ProgressEvent::create(eventType, true, done, total);
+    return Event::create(eventType, false, false);
+}
+
+void ApplicationCacheHost::dispatchDOMEvent(const AtomicString& eventType, int total, int done)
+{
+    if (!m_domApplicationCache)
+        return;
+    m_domApplicationCache->dispatchEvent(createApplicationCacheEvent(eventType, total, done));
 }
 
 void ApplicationCacheHost::setCandidateApplicationCacheGroup(ApplicationCacheGroup* group)
@@ -367,25 +381,24 @@ void ApplicationCacheHost::setCandidateApplicationCacheGroup(ApplicationCacheGro
     m_candidateApplicationCacheGroup = group;
 }
     
-void ApplicationCacheHost::setApplicationCache(PassRefPtr<ApplicationCache> applicationCache)
+void ApplicationCacheHost::setApplicationCache(RefPtr<ApplicationCache>&& applicationCache)
 {
     if (m_candidateApplicationCacheGroup) {
         ASSERT(!m_applicationCache);
         m_candidateApplicationCacheGroup = nullptr;
     }
-
-    m_applicationCache = applicationCache;
+    m_applicationCache = WTFMove(applicationCache);
 }
 
 bool ApplicationCacheHost::shouldLoadResourceFromApplicationCache(const ResourceRequest& originalRequest, ApplicationCacheResource*& resource)
 {
-    ApplicationCache* cache = applicationCache();
+    auto* cache = applicationCache();
     if (!cache || !cache->isComplete())
         return false;
 
     ResourceRequest request(originalRequest);
-    if (Frame* loaderFrame = m_documentLoader.frame()) {
-        if (Document* document = loaderFrame->document())
+    if (auto* loaderFrame = m_documentLoader.frame()) {
+        if (auto* document = loaderFrame->document())
             document->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
     }
     
@@ -430,7 +443,6 @@ bool ApplicationCacheHost::getApplicationCacheFallbackResource(const ResourceReq
 
     resource = cache->resourceForURL(fallbackURL);
     ASSERT(resource);
-
     return true;
 }
 
@@ -444,30 +456,27 @@ bool ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache(Reso
         return false;
 
     loader->willSwitchToSubstituteResource();
-
     m_documentLoader.scheduleSubstituteResourceLoad(*loader, *resource);
-
     return true;
 }
 
 ApplicationCacheHost::Status ApplicationCacheHost::status() const
 {
-    ApplicationCache* cache = applicationCache();    
+    auto* cache = applicationCache();
     if (!cache)
         return UNCACHED;
 
     switch (cache->group()->updateStatus()) {
-        case ApplicationCacheGroup::Checking:
-            return CHECKING;
-        case ApplicationCacheGroup::Downloading:
-            return DOWNLOADING;
-        case ApplicationCacheGroup::Idle: {
-            if (cache->group()->isObsolete())
-                return OBSOLETE;
-            if (cache != cache->group()->newestCache())
-                return UPDATEREADY;
-            return IDLE;
-        }
+    case ApplicationCacheGroup::Checking:
+        return CHECKING;
+    case ApplicationCacheGroup::Downloading:
+        return DOWNLOADING;
+    case ApplicationCacheGroup::Idle:
+        if (cache->group()->isObsolete())
+            return OBSOLETE;
+        if (cache != cache->group()->newestCache())
+            return UPDATEREADY;
+        return IDLE;
     }
 
     ASSERT_NOT_REACHED();
@@ -476,27 +485,30 @@ ApplicationCacheHost::Status ApplicationCacheHost::status() const
 
 bool ApplicationCacheHost::update()
 {
-    ApplicationCache* cache = applicationCache();
+    auto* cache = applicationCache();
     if (!cache)
         return false;
-    cache->group()->update(m_documentLoader.frame(), ApplicationCacheUpdateWithoutBrowsingContext);
+    auto* frame = m_documentLoader.frame();
+    if (!frame)
+        return false;
+    cache->group()->update(*frame, ApplicationCacheUpdateWithoutBrowsingContext);
     return true;
 }
 
 bool ApplicationCacheHost::swapCache()
 {
-    ApplicationCache* cache = applicationCache();
+    auto* cache = applicationCache();
     if (!cache)
         return false;
 
     // If the group of application caches to which cache belongs has the lifecycle status obsolete, unassociate document from cache.
     if (cache->group()->isObsolete()) {
-        cache->group()->disassociateDocumentLoader(&m_documentLoader);
+        cache->group()->disassociateDocumentLoader(m_documentLoader);
         return true;
     }
 
     // If there is no newer cache, raise an INVALID_STATE_ERR exception.
-    ApplicationCache* newestCache = cache->group()->newestCache();
+    auto* newestCache = cache->group()->newestCache();
     if (cache == newestCache)
         return false;
     
@@ -508,14 +520,13 @@ bool ApplicationCacheHost::swapCache()
 
 void ApplicationCacheHost::abort()
 {
-    ApplicationCacheGroup* cacheGroup = candidateApplicationCacheGroup();
-    if (cacheGroup)
-        cacheGroup->abort(m_documentLoader.frame());
-    else {
-        ApplicationCache* cache = applicationCache();
-        if (cache)
-            cache->group()->abort(m_documentLoader.frame());
-    }
+    auto* frame = m_documentLoader.frame();
+    if (!frame)
+        return;
+    if (auto* cacheGroup = candidateApplicationCacheGroup())
+        cacheGroup->abort(*frame);
+    else if (auto* cache = applicationCache())
+        cache->group()->abort(*frame);
 }
 
 bool ApplicationCacheHost::isApplicationCacheEnabled()
@@ -525,15 +536,12 @@ bool ApplicationCacheHost::isApplicationCacheEnabled()
 
 bool ApplicationCacheHost::isApplicationCacheBlockedForRequest(const ResourceRequest& request)
 {
-    Frame* frame = m_documentLoader.frame();
+    auto* frame = m_documentLoader.frame();
     if (!frame)
         return false;
-
     if (frame->isMainFrame())
         return false;
-
-    Ref<SecurityOrigin> origin(SecurityOrigin::create(request.url()));
-    return !origin.get().canAccessApplicationCache(frame->document()->topOrigin());
+    return !SecurityOrigin::create(request.url())->canAccessApplicationCache(frame->document()->topOrigin());
 }
 
 }  // namespace WebCore

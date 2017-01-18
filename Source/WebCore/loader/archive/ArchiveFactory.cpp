@@ -49,31 +49,33 @@ namespace WebCore {
 typedef RefPtr<Archive> RawDataCreationFunction(const URL&, SharedBuffer&);
 typedef HashMap<String, RawDataCreationFunction*, ASCIICaseInsensitiveHash> ArchiveMIMETypesMap;
 
-// The create functions in the archive classes return PassRefPtr to concrete subclasses
+// The create functions in the archive classes return RefPtr to concrete subclasses
 // of Archive. This adaptor makes the functions have a uniform return type.
-template <typename ArchiveClass> static RefPtr<Archive> archiveFactoryCreate(const URL& url, SharedBuffer& buffer)
+template<typename ArchiveClass> static RefPtr<Archive> archiveFactoryCreate(const URL& url, SharedBuffer& buffer)
 {
     return ArchiveClass::create(url, buffer);
 }
 
-static ArchiveMIMETypesMap& archiveMIMETypes()
+static ArchiveMIMETypesMap createArchiveMIMETypesMap()
 {
-    static NeverDestroyed<ArchiveMIMETypesMap> mimeTypes;
-    static bool initialized = false;
-
-    if (initialized)
-        return mimeTypes;
+    ArchiveMIMETypesMap map;
 
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
-    mimeTypes.get().set("application/x-webarchive", archiveFactoryCreate<LegacyWebArchive>);
-#endif
-#if ENABLE(MHTML)
-    mimeTypes.get().set("multipart/related", archiveFactoryCreate<MHTMLArchive>);
-    mimeTypes.get().set("application/x-mimearchive", archiveFactoryCreate<MHTMLArchive>);
+    map.add(ASCIILiteral { "application/x-webarchive" }, archiveFactoryCreate<LegacyWebArchive>);
 #endif
 
-    initialized = true;
-    return mimeTypes;
+#if ENABLE(MHTML)
+    map.add(ASCIILiteral { "multipart/related" }, archiveFactoryCreate<MHTMLArchive>);
+    map.add(ASCIILiteral { "application/x-mimearchive" }, archiveFactoryCreate<MHTMLArchive>);
+#endif
+
+    return map;
+}
+
+static ArchiveMIMETypesMap& archiveMIMETypes()
+{
+    static NeverDestroyed<ArchiveMIMETypesMap> map = createArchiveMIMETypesMap();
+    return map;
 }
 
 bool ArchiveFactory::isArchiveMimeType(const String& mimeType)
@@ -83,10 +85,14 @@ bool ArchiveFactory::isArchiveMimeType(const String& mimeType)
 
 RefPtr<Archive> ArchiveFactory::create(const URL& url, SharedBuffer* data, const String& mimeType)
 {
-    RawDataCreationFunction* function = mimeType.isEmpty() ? 0 : archiveMIMETypes().get(mimeType);
     if (!data)
         return nullptr;
-    return function ? function(url, *data) : RefPtr<Archive>(nullptr);
+    if (mimeType.isEmpty())
+        return nullptr;
+    auto* function = archiveMIMETypes().get(mimeType);
+    if (!function)
+        return nullptr;
+    return function(url, *data);
 }
 
 void ArchiveFactory::registerKnownArchiveMIMETypes()

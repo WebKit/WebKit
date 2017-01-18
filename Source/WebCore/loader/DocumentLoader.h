@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,8 +76,7 @@ class SharedBuffer;
 class SubresourceLoader;
 class SubstituteResource;
 
-typedef HashMap<unsigned long, RefPtr<ResourceLoader>> ResourceLoaderMap;
-typedef Vector<ResourceResponse> ResponseVector;
+using ResourceLoaderMap = HashMap<unsigned long, RefPtr<ResourceLoader>>;
 
 class DocumentLoader : public RefCounted<DocumentLoader>, private CachedRawResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -150,14 +149,15 @@ public:
 #endif
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-    void setArchive(PassRefPtr<Archive>);
-    WEBCORE_EXPORT void addAllArchiveResources(Archive*);
+    void setArchive(Ref<Archive>&&);
+    WEBCORE_EXPORT void addAllArchiveResources(Archive&);
     WEBCORE_EXPORT void addArchiveResource(Ref<ArchiveResource>&&);
-    PassRefPtr<Archive> popArchiveForSubframe(const String& frameName, const URL&);
+    RefPtr<Archive> popArchiveForSubframe(const String& frameName, const URL&);
     WEBCORE_EXPORT SharedBuffer* parsedArchiveData() const;
 
     WEBCORE_EXPORT bool scheduleArchiveLoad(ResourceLoader&, const ResourceRequest&);
 #endif
+
     void scheduleSubstituteResourceLoad(ResourceLoader&, SubstituteResource&);
 
     // Return the ArchiveResource for the URL only when loading an Archive
@@ -166,9 +166,10 @@ public:
     WEBCORE_EXPORT RefPtr<ArchiveResource> mainResource() const;
 
     // Return an ArchiveResource for the URL, either creating from live data or
-    // pulling from the ArchiveResourceCollection
-    WEBCORE_EXPORT PassRefPtr<ArchiveResource> subresource(const URL&) const;
-    WEBCORE_EXPORT Vector<RefPtr<ArchiveResource>> subresources() const;
+    // pulling from the ArchiveResourceCollection.
+    WEBCORE_EXPORT RefPtr<ArchiveResource> subresource(const URL&) const;
+
+    WEBCORE_EXPORT Vector<Ref<ArchiveResource>> subresources() const;
 
 #ifndef NDEBUG
     bool isSubstituteLoadPending(ResourceLoader*) const;
@@ -176,7 +177,7 @@ public:
     void cancelPendingSubstituteLoad(ResourceLoader*);   
     
     void addResponse(const ResourceResponse&);
-    const ResponseVector& responses() const { return m_responses; }
+    const Vector<ResourceResponse>& responses() const { return m_responses; }
 
     const NavigationAction& triggeringAction() const { return m_triggeringAction; }
     void setTriggeringAction(const NavigationAction&);
@@ -240,17 +241,7 @@ public:
 
     void setDeferMainResourceDataLoad(bool defer) { m_deferMainResourceDataLoad = defer; }
     
-    void didTellClientAboutLoad(const String& url)
-    { 
-#if !PLATFORM(COCOA)
-        // Don't include data urls here, as if a lot of data is loaded
-        // that way, we hold on to the (large) url string for too long.
-        if (protocolIs(url, "data"))
-            return;
-#endif
-        if (!url.isEmpty())
-            m_resourcesClientKnowsAbout.add(url);
-    }
+    void didTellClientAboutLoad(const String& url);
     bool haveToldClientAboutLoad(const String& url) { return m_resourcesClientKnowsAbout.contains(url); }
     void recordMemoryCacheLoadForFutureClientNotification(const ResourceRequest&);
     void takeMemoryCacheLoadsForClientNotification(Vector<ResourceRequest>& loads);
@@ -258,11 +249,11 @@ public:
     LoadTiming& timing() { return m_loadTiming; }
     void resetTiming() { m_loadTiming = LoadTiming(); }
 
-    // The WebKit layer calls this function when it's ready for the data to
-    // actually be added to the document.
+    // The WebKit layer calls this function when it's ready for the data to actually be added to the document.
     WEBCORE_EXPORT void commitData(const char* bytes, size_t length);
 
-    ApplicationCacheHost* applicationCacheHost() const { return m_applicationCacheHost.get(); }
+    ApplicationCacheHost& applicationCacheHost() const;
+    ApplicationCacheHost* applicationCacheHostUnlessBeingDestroyed() const;
 
     void checkLoadComplete();
 
@@ -297,7 +288,7 @@ protected:
 
     WEBCORE_EXPORT virtual void attachToFrame();
 
-    bool m_deferMainResourceDataLoad;
+    bool m_deferMainResourceDataLoad { true };
 
 private:
     Document* document() const;
@@ -358,7 +349,7 @@ private:
     void cancelPolicyCheckIfNeeded();
     void becomeMainResourceClient();
 
-    Frame* m_frame;
+    Frame* m_frame { nullptr };
     Ref<CachedResourceLoader> m_cachedResourceLoader;
 
     CachedResourceHandle<CachedRawResource> m_mainResource;
@@ -390,15 +381,15 @@ private:
     ResourceError m_mainDocumentError;    
 
     bool m_originalSubstituteDataWasValid;
-    bool m_committed;
-    bool m_isStopping;
-    bool m_gotFirstByte;
-    bool m_isClientRedirect;
-    bool m_isLoadingMultipartContent;
+    bool m_committed { false };
+    bool m_isStopping { false };
+    bool m_gotFirstByte { false };
+    bool m_isClientRedirect { false };
+    bool m_isLoadingMultipartContent { false };
 
     // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadDispatched are roughly the same
     // and should be merged.
-    bool m_wasOnloadDispatched;
+    bool m_wasOnloadDispatched { false };
 
     StringWithDirection m_pageTitle;
 
@@ -415,8 +406,8 @@ private:
     // We retain all the received responses so we can play back the
     // WebResourceLoadDelegate messages if the item is loaded from the
     // page cache.
-    ResponseVector m_responses;
-    bool m_stopRecordingResponses;
+    Vector<ResourceResponse> m_responses;
+    bool m_stopRecordingResponses { false };
     
     typedef HashMap<RefPtr<ResourceLoader>, RefPtr<SubstituteResource>> SubstituteResourceMap;
     SubstituteResourceMap m_pendingSubstituteResources;
@@ -432,13 +423,13 @@ private:
     Vector<ResourceRequest> m_resourcesLoadedFromMemoryCacheForClientNotification;
     
     String m_clientRedirectSourceForHistory;
-    bool m_didCreateGlobalHistoryEntry;
+    bool m_didCreateGlobalHistoryEntry { false };
 
-    bool m_loadingMainResource;
+    bool m_loadingMainResource { false };
     LoadTiming m_loadTiming;
 
-    double m_timeOfLastDataReceived;
-    unsigned long m_identifierForLoadWithoutResourceLoader;
+    double m_timeOfLastDataReceived { 0 };
+    unsigned long m_identifierForLoadWithoutResourceLoader { 0 };
 
     DocumentLoaderTimer m_dataLoadTimer;
     bool m_waitingForContentPolicy { false };
@@ -452,7 +443,7 @@ private:
     HashMap<uint64_t, LinkIcon> m_iconsPendingLoadDecision;
     HashMap<std::unique_ptr<IconLoader>, uint64_t> m_iconLoaders;
 
-    bool m_subresourceLoadersArePageCacheAcceptable;
+    bool m_subresourceLoadersArePageCacheAcceptable { false };
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
 
     std::unique_ptr<ApplicationCacheHost> m_applicationCacheHost;
@@ -485,6 +476,89 @@ inline void DocumentLoader::takeMemoryCacheLoadsForClientNotification(Vector<Res
 {
     loadsSet.swap(m_resourcesLoadedFromMemoryCacheForClientNotification);
     m_resourcesLoadedFromMemoryCacheForClientNotification.clear();
+}
+
+inline const ResourceRequest& DocumentLoader::originalRequest() const
+{
+    return m_originalRequest;
+}
+
+inline const ResourceRequest& DocumentLoader::originalRequestCopy() const
+{
+    return m_originalRequestCopy;
+}
+
+inline const ResourceRequest& DocumentLoader::request() const
+{
+    return m_request;
+}
+
+inline ResourceRequest& DocumentLoader::request()
+{
+    return m_request;
+}
+
+inline const URL& DocumentLoader::url() const
+{
+    return m_request.url();
+}
+
+inline const URL& DocumentLoader::originalURL() const
+{
+    return m_originalRequestCopy.url();
+}
+
+inline const URL& DocumentLoader::responseURL() const
+{
+    return m_response.url();
+}
+
+inline const String& DocumentLoader::responseMIMEType() const
+{
+    return m_response.mimeType();
+}
+
+inline const String& DocumentLoader::currentContentType() const
+{
+    return m_writer.mimeType();
+}
+
+inline const URL& DocumentLoader::unreachableURL() const
+{
+    return m_substituteData.failingURL();
+}
+
+inline ApplicationCacheHost& DocumentLoader::applicationCacheHost() const
+{
+    // For a short time while the document loader is being destroyed, m_applicationCacheHost is null.
+    // It's not acceptable to call this function during that time.
+    ASSERT(m_applicationCacheHost);
+    return *m_applicationCacheHost;
+}
+
+inline ApplicationCacheHost* DocumentLoader::applicationCacheHostUnlessBeingDestroyed() const
+{
+    return m_applicationCacheHost.get();
+}
+
+#if ENABLE(CONTENT_FILTERING)
+
+inline ContentFilter* DocumentLoader::contentFilter() const
+{
+    return m_contentFilter.get();
+}
+
+#endif
+
+inline void DocumentLoader::didTellClientAboutLoad(const String& url)
+{
+#if !PLATFORM(COCOA)
+    // Don't include data URLs here, as if a lot of data is loaded that way, we hold on to the (large) URL string for too long.
+    if (protocolIs(url, "data"))
+        return;
+#endif
+    if (!url.isEmpty())
+        m_resourcesClientKnowsAbout.add(url);
 }
 
 }

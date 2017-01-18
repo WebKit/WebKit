@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIconDatabaseProxy_h
-#define WebIconDatabaseProxy_h
+#pragma once
 
 #include "APIObject.h"
 #include "MessageReceiver.h"
@@ -37,43 +36,41 @@ namespace WebKit {
 
 class WebProcess;
 
-class WebIconDatabaseProxy : public WebCore::IconDatabaseBase, private IPC::MessageReceiver {
+class WebIconDatabaseProxy final : public WebCore::IconDatabaseBase, private IPC::MessageReceiver {
 public:
-    explicit WebIconDatabaseProxy(WebProcess*);
+    explicit WebIconDatabaseProxy(WebProcess&);
     virtual ~WebIconDatabaseProxy();
 
-    bool isEnabled() const override;
-    void setEnabled(bool) override;
-
-    void retainIconForPageURL(const String&) override;
-    void releaseIconForPageURL(const String&) override;
-    void setIconURLForPageURL(const String&, const String&) override;
-    void setIconDataForIconURL(PassRefPtr<WebCore::SharedBuffer>, const String&) override;
-
-    String synchronousIconURLForPageURL(const String&) override;
-    bool synchronousIconDataKnownForIconURL(const String&) override;
-    WebCore::IconLoadDecision synchronousLoadDecisionForIconURL(const String&, WebCore::DocumentLoader*) override;
-    WebCore::Image* synchronousIconForPageURL(const String&, const WebCore::IntSize&) override;
-    
-    // Asynchronous calls we should use to replace the above when supported.
-    bool supportsAsynchronousMode() override;
-    void loadDecisionForIconURL(const String&, PassRefPtr<WebCore::IconLoadDecisionCallback>) override;
-    void receivedIconLoadDecision(int decision, uint64_t callbackID);
-    void iconDataForIconURL(const String&, PassRefPtr<WebCore::IconDataCallback>) override;
+    void setEnabled(bool) final;
 
 private:
+    bool isEnabled() const final;
+
+    void retainIconForPageURL(const String&) final;
+    void releaseIconForPageURL(const String&) final;
+    void setIconURLForPageURL(const String&, const String&) final;
+    void setIconDataForIconURL(WebCore::SharedBuffer*, const String&) final;
+
+    String synchronousIconURLForPageURL(const String&) final;
+    bool synchronousIconDataKnownForIconURL(const String&) final;
+    WebCore::IconLoadDecision synchronousLoadDecisionForIconURL(const String&, WebCore::DocumentLoader*) final;
+    WebCore::Image* synchronousIconForPageURL(const String&, const WebCore::IntSize&) final;
+    
+    bool supportsAsynchronousMode() final;
+    void loadDecisionForIconURL(const String&, WebCore::IconLoadDecisionCallback&) final;
+    void receivedIconLoadDecision(int decision, uint64_t callbackID);
+    void iconDataForIconURL(const String&, WebCore::IconDataCallback&) final;
+
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     
     // Callbacks from the UIProcess
     void urlImportFinished();
 
-    bool m_isEnabled;
-    WebProcess* m_process;
+    bool m_isEnabled { false };
+    WebProcess& m_process;
     
     HashMap<uint64_t, RefPtr<WebCore::IconLoadDecisionCallback>> m_iconLoadDecisionCallbacks;
 };
 
 } // namespace WebKit
-
-#endif // WebIconDatabaseProxy_h

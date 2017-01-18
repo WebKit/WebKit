@@ -328,7 +328,7 @@ bool Editor::WebContentReader::readWebArchive(SharedBuffer* buffer)
     if (!buffer)
         return false;
 
-    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(URL(), *buffer);
+    auto archive = LegacyWebArchive::create(URL(), *buffer);
     if (!archive)
         return false;
 
@@ -341,7 +341,7 @@ bool Editor::WebContentReader::readWebArchive(SharedBuffer* buffer)
     if (frame.loader().client().canShowMIMETypeAsHTML(type)) {
         // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
         if (DocumentLoader* loader = frame.loader().documentLoader())
-            loader->addAllArchiveResources(archive.get());
+            loader->addAllArchiveResources(*archive);
 
         String markupString = String::fromUTF8(mainResource->data().data(), mainResource->data().size());
         fragment = createFragmentFromMarkup(*frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent);

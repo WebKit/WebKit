@@ -45,6 +45,7 @@ namespace WebCore {
 // Dummy version of IconDatabase that does nothing.
 class IconDatabase final : public IconDatabaseBase {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     static void delayDatabaseCleanup() { }
     static void allowDatabaseCleanup() { }
@@ -70,32 +71,32 @@ public:
     WEBCORE_EXPORT IconDatabase();
     ~IconDatabase();
 
-    WEBCORE_EXPORT void setClient(IconDatabaseClient*) override;
+    WEBCORE_EXPORT void setClient(IconDatabaseClient*) final;
 
-    WEBCORE_EXPORT bool open(const String& directory, const String& filename) override;
-    WEBCORE_EXPORT void close() override;
+    WEBCORE_EXPORT bool open(const String& directory, const String& filename) final;
+    WEBCORE_EXPORT void close() final;
             
-    WEBCORE_EXPORT void removeAllIcons() override;
+    WEBCORE_EXPORT void removeAllIcons() final;
 
     void readIconForPageURLFromDisk(const String&);
 
-    WEBCORE_EXPORT Image* defaultIcon(const IntSize&) override;
+    WEBCORE_EXPORT Image* defaultIcon(const IntSize&) final;
 
-    WEBCORE_EXPORT void retainIconForPageURL(const String&) override;
-    WEBCORE_EXPORT void releaseIconForPageURL(const String&) override;
-    WEBCORE_EXPORT void setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&) override;
-    WEBCORE_EXPORT void setIconURLForPageURL(const String& iconURL, const String& pageURL) override;
+    WEBCORE_EXPORT void retainIconForPageURL(const String&) final;
+    WEBCORE_EXPORT void releaseIconForPageURL(const String&) final;
+    WEBCORE_EXPORT void setIconDataForIconURL(SharedBuffer* data, const String& iconURL) final;
+    WEBCORE_EXPORT void setIconURLForPageURL(const String& iconURL, const String& pageURL) final;
 
-    WEBCORE_EXPORT Image* synchronousIconForPageURL(const String&, const IntSize&) override;
-    NativeImagePtr synchronousNativeIconForPageURL(const String& pageURLOriginal, const IntSize&) override;
-    WEBCORE_EXPORT String synchronousIconURLForPageURL(const String&) override;
-    bool synchronousIconDataKnownForIconURL(const String&) override;
-    WEBCORE_EXPORT IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*) override;
+    WEBCORE_EXPORT Image* synchronousIconForPageURL(const String&, const IntSize&) final;
+    NativeImagePtr synchronousNativeIconForPageURL(const String& pageURLOriginal, const IntSize&) final;
+    WEBCORE_EXPORT String synchronousIconURLForPageURL(const String&) final;
+    bool synchronousIconDataKnownForIconURL(const String&) final;
+    WEBCORE_EXPORT IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*) final;
 
-    WEBCORE_EXPORT void setEnabled(bool) override;
-    WEBCORE_EXPORT bool isEnabled() const override;
+    WEBCORE_EXPORT void setEnabled(bool);
+    WEBCORE_EXPORT bool isEnabled() const final;
 
-    WEBCORE_EXPORT void setPrivateBrowsingEnabled(bool flag) override;
+    WEBCORE_EXPORT void setPrivateBrowsingEnabled(bool flag) final;
     bool isPrivateBrowsingEnabled() const;
 
     WEBCORE_EXPORT static void delayDatabaseCleanup();
@@ -103,10 +104,10 @@ public:
     WEBCORE_EXPORT static void checkIntegrityBeforeOpening();
 
     // Support for WebCoreStatistics in WebKit
-    WEBCORE_EXPORT size_t pageURLMappingCount() override;
-    WEBCORE_EXPORT size_t retainedPageURLCount() override;
-    WEBCORE_EXPORT size_t iconRecordCount() override;
-    WEBCORE_EXPORT size_t iconRecordCountWithData() override;
+    WEBCORE_EXPORT size_t pageURLMappingCount() final;
+    WEBCORE_EXPORT size_t retainedPageURLCount() final;
+    WEBCORE_EXPORT size_t iconRecordCount() final;
+    WEBCORE_EXPORT size_t iconRecordCountWithData() final;
 
 private:
     friend IconDatabaseBase& iconDatabase();
@@ -130,12 +131,12 @@ private:
 
 // *** Any Thread ***
 public:
-    WEBCORE_EXPORT bool isOpen() const override;
-    WEBCORE_EXPORT String databasePath() const override;
+    WEBCORE_EXPORT bool isOpen() const final;
+    WEBCORE_EXPORT String databasePath() const final;
     WEBCORE_EXPORT static String defaultDatabaseFilename();
 
 private:
-    PassRefPtr<IconRecord> getOrCreateIconRecord(const String& iconURL);
+    Ref<IconRecord> getOrCreateIconRecord(const String& iconURL);
     PageURLRecord* getOrCreatePageURLRecord(const String& pageURL);
     
     bool m_isEnabled;
@@ -178,7 +179,7 @@ private:
 
 // *** Sync Thread Only ***
 public:
-    WEBCORE_EXPORT bool shouldStopThreadActivity() const override;
+    WEBCORE_EXPORT bool shouldStopThreadActivity() const final;
 
 private:    
     static void iconDatabaseSyncThreadStart(void *);
@@ -213,7 +214,7 @@ private:
     void removePageURLFromSQLDatabase(const String& pageURL);
     int64_t getIconIDForIconURLFromSQLDatabase(const String& iconURL);
     int64_t addIconURLToSQLDatabase(const String&);
-    PassRefPtr<SharedBuffer> getImageDataForIconURLFromSQLDatabase(const String& iconURL);
+    RefPtr<SharedBuffer> getImageDataForIconURLFromSQLDatabase(const String& iconURL);
     void removeIconFromSQLDatabase(const String& iconURL);
     void writeIconSnapshotToSQLDatabase(const IconSnapshot&);    
 

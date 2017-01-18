@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,73 +24,77 @@
  */
 
 #if PLATFORM(IOS)
+
 #import "WebChromeClient.h"
 
-class WebChromeClientIOS : public WebChromeClient {
+class WebChromeClientIOS final : public WebChromeClient {
 public:
-    WebChromeClientIOS(WebView *webView)
+    WebChromeClientIOS(WebView* webView)
         : WebChromeClient(webView)
-        , m_formNotificationSuppressions(0) { }
-    
-    void setWindowRect(const WebCore::FloatRect&) override;
-    WebCore::FloatRect windowRect() override;
-    void setStatusbarText(const WTF::String&) override { }
-
-    void focus() override;
-    void takeFocus(WebCore::FocusDirection) override { }
-
-    void runJavaScriptAlert(WebCore::Frame*, const WTF::String&) override;
-    bool runJavaScriptConfirm(WebCore::Frame*, const WTF::String&) override;
-    bool runJavaScriptPrompt(WebCore::Frame*, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result) override;
-
-    void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>) override;
-
-#if ENABLE(TOUCH_EVENTS)
-    void didPreventDefaultForEvent() override;
-#endif
-    void didReceiveMobileDocType(bool) override;
-    void setNeedsScrollNotifications(WebCore::Frame*, bool) override;
-    void observedContentChange(WebCore::Frame*) override;
-    void clearContentChangeObservers(WebCore::Frame*) override;
-    WebCore::FloatSize screenSize() const override;
-    WebCore::FloatSize availableScreenSize() const override;
-    void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const override;
-    void notifyRevealedSelectionByScrollingFrame(WebCore::Frame*) override;
-    bool isStopping() override;
-    void didLayout(LayoutType) override;
-    void didStartOverflowScroll() override;
-    void didEndOverflowScroll() override;
-
-    void suppressFormNotifications() override;
-    void restoreFormNotifications() override;
-    
-    void elementDidFocus(const WebCore::Node*) override;
-    void elementDidBlur(const WebCore::Node*) override;
-
-    void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
-
-    void didFlushCompositingLayers() override;
-
-    void updateViewportConstrainedLayers(HashMap<PlatformLayer*, std::unique_ptr<WebCore::ViewportConstraints>>&, HashMap<PlatformLayer*, PlatformLayer*>&) override;
-
-    bool fetchCustomFixedPositionLayoutRect(WebCore::IntRect&) override;
-    void addOrUpdateScrollingLayer(WebCore::Node*, PlatformLayer*, PlatformLayer*, const WebCore::IntSize&, bool allowHorizontalScrollbar, bool allowVerticalScrollbar) override;
-    void removeScrollingLayer(WebCore::Node*, PlatformLayer*, PlatformLayer*) override;
-
-    bool selectItemWritingDirectionIsNatural() override;
-    bool selectItemAlignmentFollowsMenuWritingDirection() override;
-    RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const override;
-    RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const override;
-
-    void webAppOrientationsUpdated() override;
-    void focusedElementChanged(WebCore::Element*) override;
-    void showPlaybackTargetPicker(bool hasVideo) override;
-
-#if ENABLE(ORIENTATION_EVENTS)
-    int deviceOrientation() const override;
-#endif
+    {
+    }
 
 private:
-    int m_formNotificationSuppressions;
+    void setWindowRect(const WebCore::FloatRect&) final;
+    WebCore::FloatRect windowRect() final;
+    void setStatusbarText(const WTF::String&) final { }
+
+    void focus() final;
+    void takeFocus(WebCore::FocusDirection) final { }
+
+    void runJavaScriptAlert(WebCore::Frame*, const WTF::String&) final;
+    bool runJavaScriptConfirm(WebCore::Frame*, const WTF::String&) final;
+    bool runJavaScriptPrompt(WebCore::Frame*, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result) final;
+
+    void runOpenPanel(WebCore::Frame&, WebCore::FileChooser&) final;
+
+#if ENABLE(TOUCH_EVENTS)
+    void didPreventDefaultForEvent() final;
+#endif
+
+    void didReceiveMobileDocType(bool) final;
+    void setNeedsScrollNotifications(WebCore::Frame*, bool) final;
+    void observedContentChange(WebCore::Frame*) final;
+    void clearContentChangeObservers(WebCore::Frame*) final;
+    WebCore::FloatSize screenSize() const final;
+    WebCore::FloatSize availableScreenSize() const final;
+    void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const final;
+    void notifyRevealedSelectionByScrollingFrame(WebCore::Frame*) final;
+    bool isStopping() final;
+    void didLayout(LayoutType) final;
+    void didStartOverflowScroll() final;
+    void didEndOverflowScroll() final;
+
+    void suppressFormNotifications() final;
+    void restoreFormNotifications() final;
+    
+    void elementDidFocus(const WebCore::Node*) final;
+    void elementDidBlur(const WebCore::Node*) final;
+
+    void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) final;
+
+    void didFlushCompositingLayers() final;
+
+    void updateViewportConstrainedLayers(HashMap<PlatformLayer*, std::unique_ptr<WebCore::ViewportConstraints>>&, HashMap<PlatformLayer*, PlatformLayer*>&) final;
+
+    bool fetchCustomFixedPositionLayoutRect(WebCore::IntRect&) final;
+    void addOrUpdateScrollingLayer(WebCore::Node*, PlatformLayer*, PlatformLayer*, const WebCore::IntSize&, bool allowHorizontalScrollbar, bool allowVerticalScrollbar) final;
+    void removeScrollingLayer(WebCore::Node*, PlatformLayer*, PlatformLayer*) final;
+
+    bool selectItemWritingDirectionIsNatural() final;
+    bool selectItemAlignmentFollowsMenuWritingDirection() final;
+    RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const final;
+    RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const final;
+
+    void webAppOrientationsUpdated() final;
+    void focusedElementChanged(WebCore::Element*) final;
+    void showPlaybackTargetPicker(bool hasVideo) final;
+
+#if ENABLE(ORIENTATION_EVENTS)
+    int deviceOrientation() const final;
+#endif
+
+    int m_formNotificationSuppressions { 0 };
 };
+
 #endif

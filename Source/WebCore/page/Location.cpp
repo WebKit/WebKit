@@ -221,9 +221,10 @@ void Location::setHash(DOMWindow& activeWindow, DOMWindow& firstWindow, const St
 {
     if (!m_frame)
         return;
-    URL url = m_frame->document()->url();
-    String oldFragmentIdentifier = url.fragmentIdentifier();
-    String newFragmentIdentifier = hash;
+    ASSERT(m_frame->document());
+    auto url = m_frame->document()->url();
+    auto oldFragmentIdentifier = url.fragmentIdentifier();
+    auto newFragmentIdentifier = hash;
     if (hash[0] == '#')
         newFragmentIdentifier = hash.substring(1);
     url.setFragmentIdentifier(newFragmentIdentifier);
@@ -246,7 +247,9 @@ void Location::replace(DOMWindow& activeWindow, DOMWindow& firstWindow, const St
 {
     if (!m_frame)
         return;
-    // Note: We call DOMWindow::setLocation directly here because replace() always operates on the current frame.
+    ASSERT(m_frame->document());
+    ASSERT(m_frame->document()->domWindow());
+    // We call DOMWindow::setLocation directly here because replace() always operates on the current frame.
     m_frame->document()->domWindow()->setLocation(activeWindow, firstWindow, url, LockHistoryAndBackForwardList);
 }
 
@@ -254,26 +257,38 @@ void Location::reload(DOMWindow& activeWindow)
 {
     if (!m_frame)
         return;
+
+    ASSERT(activeWindow.document());
+    ASSERT(m_frame->document());
+    ASSERT(m_frame->document()->domWindow());
+
+    auto& activeDocument = *activeWindow.document();
+    auto& targetDocument = *m_frame->document();
+
     // FIXME: It's not clear this cross-origin security check is valuable.
     // We allow one page to change the location of another. Why block attempts to reload?
     // Other location operations simply block use of JavaScript URLs cross origin.
-    DOMWindow* targetWindow = m_frame->document()->domWindow();
-    if (!activeWindow.document()->securityOrigin()->canAccess(m_frame->document()->securityOrigin())) {
-        targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(activeWindow));
+    if (!activeDocument.securityOrigin()->canAccess(targetDocument.securityOrigin())) {
+        auto& targetWindow = *targetDocument.domWindow();
+        targetWindow.printErrorMessage(targetWindow.crossDomainAccessErrorMessage(activeWindow));
         return;
     }
-    if (protocolIsJavaScript(m_frame->document()->url()))
+
+    if (protocolIsJavaScript(targetDocument.url()))
         return;
-    m_frame->navigationScheduler().scheduleRefresh(activeWindow.document());
+
+    m_frame->navigationScheduler().scheduleRefresh(activeDocument);
 }
 
 void Location::setLocation(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& url)
 {
     ASSERT(m_frame);
-    Frame* frame = m_frame->loader().findFrameForNavigation(String(), activeWindow.document());
-    if (!frame)
+    auto* targetFrame = m_frame->loader().findFrameForNavigation({ }, activeWindow.document());
+    if (!targetFrame)
         return;
-    frame->document()->domWindow()->setLocation(activeWindow, firstWindow, url);
+    ASSERT(targetFrame->document());
+    ASSERT(targetFrame->document()->domWindow());
+    targetFrame->document()->domWindow()->setLocation(activeWindow, firstWindow, url);
 }
 
 } // namespace WebCore

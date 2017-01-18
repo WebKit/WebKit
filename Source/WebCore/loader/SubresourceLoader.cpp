@@ -256,6 +256,7 @@ void SubresourceLoader::didSendData(unsigned long long bytesSent, unsigned long 
 }
 
 #if USE(QUICK_LOOK)
+
 bool SubresourceLoader::shouldCreateQuickLookHandleForResponse(const ResourceResponse& response) const
 {
     if (m_resource->type() != CachedResource::MainResource)
@@ -266,6 +267,7 @@ bool SubresourceLoader::shouldCreateQuickLookHandleForResponse(const ResourceRes
 
     return QuickLookHandle::shouldCreateForMIMEType(response.mimeType());
 }
+
 #endif
 
 void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)

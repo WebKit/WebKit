@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,41 +29,38 @@
 #pragma once
 
 #include "ArchiveResource.h"
-
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
 class Archive : public RefCounted<Archive> {
 public:
-    enum Type {
-      WebArchive,
-      MHTML
-    };
     virtual ~Archive();
-    virtual Type type() const = 0;
+
+    virtual bool shouldLoadFromArchiveOnly() const = 0;
+    virtual bool shouldOverrideBaseURL() const = 0;
+    virtual bool shouldUseMainResourceEncoding() const = 0;
+    virtual bool shouldUseMainResourceURL() const = 0;
+
     ArchiveResource* mainResource() { return m_mainResource.get(); }
-    const Vector<RefPtr<ArchiveResource>>& subresources() const { return m_subresources; }
-    const Vector<RefPtr<Archive>>& subframeArchives() const { return m_subframeArchives; }
+    const Vector<Ref<ArchiveResource>>& subresources() const { return m_subresources; }
+    const Vector<Ref<Archive>>& subframeArchives() const { return m_subframeArchives; }
 
 protected:
     // These methods are meant for subclasses for different archive types to add resources in to the archive,
     // and should not be exposed as archives should be immutable to clients
-    void setMainResource(PassRefPtr<ArchiveResource> mainResource) { m_mainResource = mainResource; }
-    void addSubresource(PassRefPtr<ArchiveResource> subResource) { m_subresources.append(subResource); }
-    void addSubframeArchive(PassRefPtr<Archive> subframeArchive) { m_subframeArchives.append(subframeArchive); }
+    void setMainResource(Ref<ArchiveResource>&& mainResource) { m_mainResource = WTFMove(mainResource); }
+    void addSubresource(Ref<ArchiveResource>&& resource) { m_subresources.append(WTFMove(resource)); }
+    void addSubframeArchive(Ref<Archive>&& subframeArchive) { m_subframeArchives.append(WTFMove(subframeArchive)); }
 
     void clearAllSubframeArchives();
 
 private:
-    void clearAllSubframeArchivesImpl(Vector<RefPtr<Archive>>* clearedArchives);
+    void clearAllSubframeArchives(HashSet<Archive*>&);
 
     RefPtr<ArchiveResource> m_mainResource;
-    Vector<RefPtr<ArchiveResource>> m_subresources;
-    Vector<RefPtr<Archive>> m_subframeArchives;
+    Vector<Ref<ArchiveResource>> m_subresources;
+    Vector<Ref<Archive>> m_subframeArchives;
 };
 
 } // namespace WebCore

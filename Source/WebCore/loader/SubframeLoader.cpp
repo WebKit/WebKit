@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
@@ -107,23 +107,25 @@ bool SubframeLoader::resourceWillUsePlugin(const String& url, const String& mime
 
 bool SubframeLoader::pluginIsLoadable(const URL& url, const String& mimeType)
 {
+    auto* document = m_frame.document();
+
     if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType)) {
         if (!m_frame.settings().isJavaEnabled())
             return false;
-        if (document() && document()->securityOrigin()->isLocal() && !m_frame.settings().isJavaEnabledForLocalFiles())
+        if (document && document->securityOrigin()->isLocal() && !m_frame.settings().isJavaEnabledForLocalFiles())
             return false;
     }
 
-    if (document()) {
-        if (document()->isSandboxed(SandboxPlugins))
+    if (document) {
+        if (document->isSandboxed(SandboxPlugins))
             return false;
 
-        if (!document()->securityOrigin()->canDisplay(url)) {
+        if (!document->securityOrigin()->canDisplay(url)) {
             FrameLoader::reportLocalLoadFailed(&m_frame, url.string());
             return false;
         }
 
-        if (!m_frame.loader().mixedContentChecker().canRunInsecureContent(document()->securityOrigin(), url))
+        if (!m_frame.loader().mixedContentChecker().canRunInsecureContent(document->securityOrigin(), url))
             return false;
     }
 
@@ -204,18 +206,20 @@ bool SubframeLoader::requestObject(HTMLPlugInImageElement& ownerElement, const S
     if (url.isEmpty() && mimeType.isEmpty())
         return false;
 
+    auto& document = ownerElement.document();
+
     URL completedURL;
     if (!url.isEmpty())
         completedURL = completeURL(url);
 
-    document()->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(completedURL, ContentSecurityPolicy::InsecureRequestType::Load);
+    document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(completedURL, ContentSecurityPolicy::InsecureRequestType::Load);
 
     bool hasFallbackContent = is<HTMLObjectElement>(ownerElement) && downcast<HTMLObjectElement>(ownerElement).hasFallbackContent();
 
     bool useFallback;
     if (shouldUsePlugin(completedURL, mimeType, hasFallbackContent, useFallback)) {
         bool success = requestPlugin(ownerElement, completedURL, mimeType, paramNames, paramValues, useFallback);
-        logPluginRequest(document()->page(), mimeType, completedURL, success);
+        logPluginRequest(document.page(), mimeType, completedURL, success);
         return success;
     }
 
@@ -225,7 +229,7 @@ bool SubframeLoader::requestObject(HTMLPlugInImageElement& ownerElement, const S
     return loadOrRedirectSubframe(ownerElement, completedURL, frameName, LockHistory::Yes, LockBackForwardList::Yes);
 }
 
-PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, HTMLAppletElement& element, const Vector<String>& paramNames, const Vector<String>& paramValues)
+RefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, HTMLAppletElement& element, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     String baseURLString;
     String codeBaseURLString;
@@ -254,14 +258,14 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
     }
 
     if (baseURLString.isEmpty())
-        baseURLString = m_frame.document()->baseURL().string();
+        baseURLString = element.document().baseURL().string();
     URL baseURL = completeURL(baseURLString);
 
     RefPtr<Widget> widget;
     if (allowPlugins())
-        widget = m_frame.loader().client().createJavaAppletWidget(size, &element, baseURL, paramNames, paramValues);
+        widget = m_frame.loader().client().createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
 
-    logPluginRequest(document()->page(), element.serviceType(), String(), widget);
+    logPluginRequest(m_frame.page(), element.serviceType(), String(), widget);
 
     if (!widget) {
         RenderEmbeddedObject* renderer = element.renderEmbeddedObject();
@@ -275,16 +279,18 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
     return widget;
 }
 
-Frame* SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement& ownerElement, const URL& requestUrl, const AtomicString& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList)
+Frame* SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement& ownerElement, const URL& requestURL, const AtomicString& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList)
 {
-    URL url = requestUrl;
-    ownerElement.document().contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(url, ContentSecurityPolicy::InsecureRequestType::Load);
+    auto& initiatingDocument = ownerElement.document();
 
-    Frame* frame = ownerElement.contentFrame();
+    URL upgradedRequestURL = requestURL;
+    initiatingDocument.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(upgradedRequestURL, ContentSecurityPolicy::InsecureRequestType::Load);
+
+    auto* frame = ownerElement.contentFrame();
     if (frame)
-        frame->navigationScheduler().scheduleLocationChange(m_frame.document(), m_frame.document()->securityOrigin(), url, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList);
+        frame->navigationScheduler().scheduleLocationChange(initiatingDocument, initiatingDocument.securityOrigin(), upgradedRequestURL, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList);
     else
-        frame = loadSubframe(ownerElement, url, frameName, m_frame.loader().outgoingReferrer());
+        frame = loadSubframe(ownerElement, upgradedRequestURL, frameName, m_frame.loader().outgoingReferrer());
 
     if (!frame)
         return nullptr;
@@ -301,13 +307,15 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const U
     int marginWidth = -1;
     int marginHeight = -1;
     if (is<HTMLFrameElementBase>(ownerElement)) {
-        HTMLFrameElementBase& frameElementBase = downcast<HTMLFrameElementBase>(ownerElement);
+        auto& frameElementBase = downcast<HTMLFrameElementBase>(ownerElement);
         allowsScrolling = frameElementBase.scrollingMode() != ScrollbarAlwaysOff;
         marginWidth = frameElementBase.marginWidth();
         marginHeight = frameElementBase.marginHeight();
     }
 
-    if (!ownerElement.document().securityOrigin()->canDisplay(url)) {
+    auto document = makeRef(ownerElement.document());
+
+    if (!document->securityOrigin()->canDisplay(url)) {
         FrameLoader::reportLocalLoadFailed(&m_frame, url.string());
         return nullptr;
     }
@@ -315,20 +323,20 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const U
     if (!SubframeLoadingDisabler::canLoadFrame(ownerElement))
         return nullptr;
 
-    String referrerToUse = SecurityPolicy::generateReferrerHeader(ownerElement.document().referrerPolicy(), url, referrer);
+    String referrerToUse = SecurityPolicy::generateReferrerHeader(document->referrerPolicy(), url, referrer);
 
     // Prevent initial empty document load from triggering load events.
-    m_frame.document()->incrementLoadEventDelayCount();
+    document->incrementLoadEventDelayCount();
 
-    RefPtr<Frame> frame = m_frame.loader().client().createFrame(url, name, &ownerElement, referrerToUse, allowsScrolling, marginWidth, marginHeight);
+    auto frame = m_frame.loader().client().createFrame(url, name, ownerElement, referrerToUse, allowsScrolling, marginWidth, marginHeight);
 
-    m_frame.document()->decrementLoadEventDelayCount();
+    document->decrementLoadEventDelayCount();
 
     if (!frame)  {
         m_frame.loader().checkCallImplicitClose();
         return nullptr;
     }
-    
+
     // All new frames will have m_isComplete set to true at this point due to synchronously loading
     // an empty document in FrameLoader::init(). But many frames will now be starting an
     // asynchronous load of url, so we set m_isComplete to false and then check if the load is
@@ -338,12 +346,12 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const U
     frame->loader().started();
    
     auto* renderer = ownerElement.renderer();
-    FrameView* view = frame->view();
+    auto* view = frame->view();
     if (is<RenderWidget>(renderer) && view)
         downcast<RenderWidget>(*renderer).setWidget(view);
-    
+
     m_frame.loader().checkCallImplicitClose();
-    
+
     // Some loads are performed synchronously (e.g., about:blank and loads
     // cancelled by returning a null ResourceRequest from requestFromDelegate).
     // In these cases, the synchronous load would have finished
@@ -379,17 +387,14 @@ bool SubframeLoader::shouldUsePlugin(const URL& url, const String& mimeType, boo
     return objectType == ObjectContentType::None || objectType == ObjectContentType::PlugIn;
 }
 
-Document* SubframeLoader::document() const
-{
-    return m_frame.document();
-}
-
 bool SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginElement, const URL& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback)
 {
     if (useFallback)
         return false;
 
-    RenderEmbeddedObject* renderer = pluginElement.renderEmbeddedObject();
+    auto& document = pluginElement.document();
+    auto* renderer = pluginElement.renderEmbeddedObject();
+
     // FIXME: This code should not depend on renderer!
     if (!renderer)
         return false;
@@ -397,17 +402,19 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginElement, const URL
     pluginElement.subframeLoaderWillCreatePlugIn(url);
 
     IntSize contentSize = roundedIntSize(LayoutSize(renderer->contentWidth(), renderer->contentHeight()));
-    bool loadManually = is<PluginDocument>(*document()) && !m_containsPlugins && downcast<PluginDocument>(*document()).shouldLoadPluginManually();
+    bool loadManually = is<PluginDocument>(document) && !m_containsPlugins && downcast<PluginDocument>(document).shouldLoadPluginManually();
 
 #if PLATFORM(IOS)
     // On iOS, we only tell the plugin to be in full page mode if the containing plugin document is the top level document.
-    if (document()->ownerElement())
+    if (document.ownerElement())
         loadManually = false;
 #endif
 
-    WeakPtr<RenderWidget> weakRenderer = renderer->createWeakPtr();
-    // createPlugin *may* cause this renderer to disappear from underneath.
-    RefPtr<Widget> widget = m_frame.loader().client().createPlugin(contentSize, &pluginElement, url, paramNames, paramValues, mimeType, loadManually);
+    auto weakRenderer = renderer->createWeakPtr();
+
+    auto widget = m_frame.loader().client().createPlugin(contentSize, pluginElement, url, paramNames, paramValues, mimeType, loadManually);
+
+    // The call to createPlugin *may* cause this renderer to disappear from underneath.
     if (!weakRenderer)
         return false;
 
@@ -431,9 +438,7 @@ URL SubframeLoader::completeURL(const String& url) const
 
 bool SubframeLoader::shouldConvertInvalidURLsToBlank() const
 {
-    if (Settings* settings = document() ? document()->settings() : nullptr)
-        return settings->shouldConvertInvalidURLsToBlank();
-    return true;
+    return m_frame.settings().shouldConvertInvalidURLsToBlank();
 }
 
 } // namespace WebCore

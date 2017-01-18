@@ -128,7 +128,7 @@ public:
     const Vector<FormAssociatedElement*>& associatedElements() const { return m_associatedElements; }
     const Vector<HTMLImageElement*>& imageElements() const { return m_imageElements; }
 
-    void getTextFieldValues(StringPairVector& fieldNamesAndValues) const;
+    StringPairVector textFieldValues() const;
 
     static HTMLFormElement* findClosestFormAncestor(const Element&);
 
