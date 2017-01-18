@@ -1,3 +1,12 @@
+2017-01-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the JSCOnly build after r210844
+        https://bugs.webkit.org/show_bug.cgi?id=167155
+
+        Unreviewed buildfix.
+
+        * heap/EdenGCActivityCallback.cpp:
+
 2017-01-16  Filip Pizlo  <fpizlo@apple.com>
 
         Make opaque root scanning truly constraint-based
