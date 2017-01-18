@@ -25,26 +25,21 @@
 
 #pragma once
 
-namespace WebCore {
+#include <wtf/RunLoop.h>
 
-struct GraphicsContext3DAttributes {
-    // WebGLContextAttributes
-    bool alpha { true };
-    bool depth { true };
-    bool stencil { false };
-    bool antialias { true };
-    bool premultipliedAlpha { true };
-    bool preserveDrawingBuffer { false };
-    bool preferLowPowerToHighPerformance { false };
-    bool failIfMajorPerformanceCaveat { false };
+namespace WebKit {
 
-    // Additional attributes.
-    bool forceSoftwareRenderer { false };
-    bool shareResources { true };
-    bool useGLES3 { false };
-    bool noExtensions { false };
-    float devicePixelRatio { 1 };
-    bool initialPreferLowPowerToHighPerformance { false };
+class WebProcessPool;
+
+class HighPerformanceGraphicsUsageSampler {
+public:
+    explicit HighPerformanceGraphicsUsageSampler(WebProcessPool&);
+
+private:
+    void timerFired();
+
+    WebProcessPool& m_webProcessPool;
+    RunLoop::Timer<HighPerformanceGraphicsUsageSampler> m_timer;
 };
 
-}
+} // namespace WebKit

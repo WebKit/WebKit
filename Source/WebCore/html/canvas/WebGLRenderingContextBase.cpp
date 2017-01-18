@@ -399,7 +399,8 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     if (frame->settings().forceSoftwareWebGLRendering())
         attributes.forceSoftwareRenderer = true;
 
-    if (!attributes.preferLowPowerToHighPerformance && frame->settings().preferLowPowerWebGLRendering())
+    attributes.initialPreferLowPowerToHighPerformance = attributes.preferLowPowerToHighPerformance;
+    if (frame->settings().preferLowPowerWebGLRendering())
         attributes.preferLowPowerToHighPerformance = true;
 
     if (page)
@@ -470,6 +471,7 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCa
     , m_isPendingPolicyResolution(true)
     , m_hasRequestedPolicyResolution(false)
 {
+    registerWithWebGLStateTracker();
 }
 
 WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCanvas, RefPtr<GraphicsContext3D>&& context, WebGLContextAttributes attributes)
@@ -499,6 +501,20 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCa
 
     setupFlags();
     initializeNewContext();
+    registerWithWebGLStateTracker();
+}
+
+void WebGLRenderingContextBase::registerWithWebGLStateTracker()
+{
+    auto* page = canvas().document().page();
+    if (!page)
+        return;
+
+    auto* tracker = page->webGLStateTracker();
+    if (!tracker)
+        return;
+
+    m_trackerToken = tracker->token(m_attributes.initialPreferLowPowerToHighPerformance);
 }
 
 void WebGLRenderingContextBase::initializeNewContext()

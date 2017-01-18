@@ -33,6 +33,7 @@
 #include "WebGLContextAttributes.h"
 #include "WebGLGetInfo.h"
 #include "WebGLObject.h"
+#include "WebGLStateTracker.h"
 #include "WebGLTexture.h"
 #include <memory>
 #include <runtime/Float32Array.h>
@@ -801,6 +802,9 @@ protected:
 
 private:
     bool validateArrayBufferType(const char* functionName, GC3Denum type, std::optional<JSC::TypedArrayType>);
+    void registerWithWebGLStateTracker();
+
+    WebGLStateTracker::Token m_trackerToken;
 };
 
 } // namespace WebCore

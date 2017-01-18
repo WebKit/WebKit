@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebGLStateTracker.h"
 
 namespace WebCore {
 
-struct GraphicsContext3DAttributes {
-    // WebGLContextAttributes
-    bool alpha { true };
-    bool depth { true };
-    bool stencil { false };
-    bool antialias { true };
-    bool premultipliedAlpha { true };
-    bool preserveDrawingBuffer { false };
-    bool preferLowPowerToHighPerformance { false };
-    bool failIfMajorPerformanceCaveat { false };
-
-    // Additional attributes.
-    bool forceSoftwareRenderer { false };
-    bool shareResources { true };
-    bool useGLES3 { false };
-    bool noExtensions { false };
-    float devicePixelRatio { 1 };
-    bool initialPreferLowPowerToHighPerformance { false };
-};
-
+WebGLStateTracker::WebGLStateTracker(StateChangeHandler&& handler)
+    : m_webGLContextCounter([this](RefCounterEvent) { updateWebGLState(); })
+    , m_stateChangeHandler(WTFMove(handler))
+{
 }
+
+auto WebGLStateTracker::token(bool preferLowPower) -> Token
+{
+    // We only track high performance WebGL contexts at the moment.
+    if (preferLowPower)
+        return { };
+    return m_webGLContextCounter.count();
+}
+
+void WebGLStateTracker::updateWebGLState()
+{
+    if (!m_webGLContextCounter.value())
+        m_stateChangeHandler(false);
+    else if (m_webGLContextCounter.value() == 1)
+        m_stateChangeHandler(true);
+}
+
+} // namespace WebCore
