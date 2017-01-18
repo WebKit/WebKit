@@ -32,7 +32,7 @@ namespace WebCore {
 
 class WebGLStateTracker {
 public:
-    using StateChangeHandler = Function<void(bool isUsingWebGL)>;
+    using StateChangeHandler = WTF::Function<void(bool isUsingWebGL)>;
     WEBCORE_EXPORT explicit WebGLStateTracker(StateChangeHandler&&);
 
     enum WebGLContextCounterType { };
