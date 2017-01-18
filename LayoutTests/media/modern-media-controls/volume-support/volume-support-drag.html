@@ -1,5 +1,6 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
 <style type="text/css" media="screen">
     
@@ -32,15 +33,15 @@ shouldBe("mediaController.controls.volumeSlider.value", "0");
 
 let numberOfFrames = 0;
 scheduler.frameDidFire = function() {
-    if (media.paused)
+    const muteButtonElement = mediaController.controls.muteButton.element;
+    const muteButtonBounds = muteButtonElement.getBoundingClientRect();
+    if (media.paused || muteButtonBounds.width === 0)
         return;
 
     numberOfFrames++;
 
     if (numberOfFrames == 1) {
         // Controls are now visible, let's hover over the mute button to make the volume control visible.
-        const muteButtonElement = mediaController.controls.muteButton.element;
-        const muteButtonBounds = muteButtonElement.getBoundingClientRect();
         eventSender.mouseMoveTo(muteButtonBounds.left + muteButtonBounds.width / 2, muteButtonBounds.top + muteButtonBounds.height / 2);
     } else if (numberOfFrames == 2) {
         // Volume slider is visible, let's start dragging in the middle of it.
@@ -73,7 +74,7 @@ scheduler.frameDidFire = function() {
         shouldBe("media.volume", "1");
         container.remove();
         media.remove();
-        finishJSTest();
+        finishMediaControlsTest();
     }
 };
 

@@ -44,7 +44,7 @@ struct TestOptions {
     bool ignoresViewportScaleLimits { false };
     bool useCharacterSelectionGranularity { false };
     bool enableIntersectionObserver { false };
-    bool enableModernMediaControls { false };
+    bool enableModernMediaControls { true };
     bool enablePointerLock { false };
 
     float deviceScaleFactor { 1 };

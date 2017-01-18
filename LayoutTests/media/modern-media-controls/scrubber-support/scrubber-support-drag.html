@@ -32,15 +32,13 @@ scheduler.frameDidFire = function() {
     if (media.paused)
         return;
 
-    media.pause();
-
     const input = mediaController.controls.timeControl.scrubber.children[1].element;
     const bounds = input.getBoundingClientRect();
-
     if (bounds.width === 0)
         return;
 
-    const minX = bounds.left;
+    media.pause();
+
     const dragStartX = bounds.left + bounds.width / 2;
     const dragEndX = bounds.left;
     const centerY = bounds.top + bounds.height / 2;
@@ -49,7 +47,7 @@ scheduler.frameDidFire = function() {
         numberOfEvents++;
 
         if (numberOfEvents == 1) {
-            shouldBeCloseTo("media.currentTime", media.duration / 2, 0.01);
+            shouldBeCloseTo("media.currentTime", media.duration / 2, 0.2);
             const delta = dragEndX - dragStartX;
             const iterations = Math.abs(delta);
             for (let i = 1; i <= iterations; ++i)
@@ -62,12 +60,13 @@ scheduler.frameDidFire = function() {
             media.remove();
             finishJSTest();
         }
-        
+    
     });
 
     // Start dragging.
     eventSender.mouseMoveTo(dragStartX, centerY);
     eventSender.mouseDown();
+    scheduler.frameDidFire = null;
 };
 
 </script>

@@ -1,5 +1,6 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
 <script type="text/javascript">
 
@@ -17,7 +18,7 @@ scheduler.frameDidFire = function()
     shouldBeEqualToString("window.getComputedStyle(mediaControls.statusLabel.element).fontFamily", "-apple-system");
     mediaControls.element.remove();
     debug("");
-    finishJSTest();
+    finishMediaControlsTest();
 };
 
 </script>

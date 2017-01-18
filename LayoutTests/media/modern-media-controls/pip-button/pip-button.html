@@ -1,5 +1,6 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
 <script type="text/javascript">
 
@@ -23,7 +24,7 @@ scheduler.frameDidFire = function()
 
     shouldBeTrue('pipButton.element.style.webkitMaskImage.includes("macOS/pip-in@")');
     shouldBeTrue('iOSPiPButton.element.style.webkitMaskImage.includes("iOS/pip-in@")');
-    finishJSTest();
+    finishMediaControlsTest();
 };
 
 </script>

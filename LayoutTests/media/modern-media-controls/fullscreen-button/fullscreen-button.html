@@ -1,5 +1,6 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
 <script type="text/javascript">
 
@@ -27,7 +28,7 @@ scheduler.frameDidFire = function()
     shouldBeTrue('enterFullscreenButton.element.style.webkitMaskImage.includes("macOS/enter-fullscreen@")');
     shouldBeTrue('iOSEnterFullscreenButton.element.style.webkitMaskImage.includes("iOS/enter-fullscreen@")');
     shouldBeTrue('exitFullscreenButton.element.style.webkitMaskImage.includes("macOS/exit-fullscreen@")');
-    finishJSTest();
+    finishMediaControlsTest();
 };
 
 </script>

@@ -11,30 +11,46 @@ const iconButton = new IconButton({ layoutDelegate: { layoutTraits: LayoutTraits
 iconButton.iconName = Icons.Pause;
 document.body.appendChild(iconButton.element);
 
+let x, y;
+
 function checkBackgroundColor()
 {
-    shouldBeEqualToString("window.getComputedStyle(iconButton.element).backgroundColor", "rgb(255, 255, 255)");
-    finishJSTest();
-}
-
-if ("testRunner" in window) {
-    const bounds = iconButton.element.getBoundingClientRect();
-    const x = bounds.left + 1;
-    const y = bounds.top + 1;
+    shouldBeEqualToString("window.getComputedStyle(iconButton.element).backgroundColor", "rgb(255, 255, 255)")
     if ("createTouch" in document) {
         testRunner.runUIScript(`
-        (function() {
-            uiController.touchDownAtPoint(${x}, ${y}, 1, function() {
+            uiController.liftUpAtPoint(${x}, ${y}, 1, function() {
                 uiController.uiScriptComplete("Done");
-            });
-        })();`, checkBackgroundColor);
+            })`, finishJSTest);
     } else {
-        eventSender.mouseMoveTo(x, y);
-        eventSender.mouseDown();
-        checkBackgroundColor();
+        eventSender.mouseUp();
+        finishJSTest();
     }
-} else
-    debug("This test is designed to run in DRT.");
+}
+
+scheduler.frameDidFire = function()
+{
+    const bounds = iconButton.element.getBoundingClientRect();
+    if (bounds.height === 0)
+        return;
+
+    scheduler.frameDidFire = null;
+
+    if ("testRunner" in window) {
+        x = bounds.left + 1;
+        y = bounds.top + 1;
+        if ("createTouch" in document) {
+            testRunner.runUIScript(`
+                uiController.touchDownAtPoint(${x}, ${y}, 1, function() {
+                    uiController.uiScriptComplete("Done");
+                })`, checkBackgroundColor);
+        } else {
+            eventSender.mouseMoveTo(x, y);
+            eventSender.mouseDown();
+            checkBackgroundColor();
+        }
+    } else
+        debug("This test is designed to run in DRT.");
+}
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

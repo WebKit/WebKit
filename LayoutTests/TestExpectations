@@ -682,9 +682,6 @@ webkit.org/b/146182 editing/selection/leak-document-with-selection-inside.html [
 # Media Sessions is not yet enabled by default: ENABLE(MEDIA_SESSION)
 media/session [ Skip ]
 
-# Skip modern-media-controls tests until flakiness can be resolved - webkit.org/b/164322
-media/modern-media-controls [ Skip ]
-
 # Only iOS WK1 has testRunner.setPagePaused.
 fast/dom/timer-fire-after-page-pause.html [ Skip ]
 
@@ -998,3 +995,6 @@ webkit.org/b/165195 fast/css/parsing-css-allowed-string-characters.html [ Pass F
 # Visual viewports
 webkit.org/b/165460 compositing/repaint/scroll-fixed-layer-no-content.html [ Failure ]
 webkit.org/b/165460 compositing/repaint/scroll-fixed-layer-out-of-view.html [ Failure ]
+
+# iOS-specific test
+media/modern-media-controls/media-controller/media-controller-scale-factor.html [ Skip ]

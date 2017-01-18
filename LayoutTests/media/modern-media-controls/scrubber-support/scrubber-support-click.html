@@ -1,5 +1,6 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
 <style type="text/css" media="screen">
     
@@ -33,6 +34,10 @@ scheduler.frameDidFire = function() {
     if (media.paused)
         return;
 
+    const scrubber = mediaController.controls.timeControl.scrubber.children[1].element;
+    if (scrubber.getBoundingClientRect().width === 0)
+        return;
+
     media.pause();
 
     media.addEventListener("timeupdate", () => {
@@ -41,15 +46,9 @@ scheduler.frameDidFire = function() {
         media.remove();
         finishJSTest();
     });
-
-    const input = mediaController.controls.timeControl.scrubber.children[1].element;
-    const bounds = input.getBoundingClientRect();
-    const centerX = bounds.left + bounds.width / 2;
-    const centerY = bounds.top + bounds.height / 2;
-
-    eventSender.mouseMoveTo(centerX, centerY);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    
+    scheduler.frameDidFire = null;
+    pressOnElement(scrubber);
 };
 
 </script>
