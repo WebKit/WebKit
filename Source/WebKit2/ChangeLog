@@ -1,5 +1,24 @@
 2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210761. rdar://problem/29544024
+
+    2017-01-13  Brady Eidson  <beidson@apple.com>
+
+            Crash when visiting a webpage that uses Gamepads in a new WebProcess after a previous page has used gamepads..
+            https://bugs.webkit.org/show_bug.cgi?id=167033
+
+            Reviewed by Alex Christensen.
+
+            * UIProcess/Gamepad/UIGamepadProvider.cpp:
+            (WebKit::UIGamepadProvider::processPoolStartedUsingGamepads): Don't schedule a state update here.
+            (WebKit::UIGamepadProvider::processPoolStoppedUsingGamepads): Ditto.
+            * UIProcess/Gamepad/UIGamepadProvider.h:
+
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::startedUsingGamepads): Populate the WebProcess with initial gamepads.
+
+2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210829. rdar://problem/30044439
 
     2017-01-17  Filip Pizlo  <fpizlo@apple.com>

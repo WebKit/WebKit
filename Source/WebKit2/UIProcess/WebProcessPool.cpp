@@ -1269,6 +1269,8 @@ void WebProcessPool::startedUsingGamepads(IPC::Connection& connection)
 
     if (!wereAnyProcessesUsingGamepads)
         UIGamepadProvider::singleton().processPoolStartedUsingGamepads(*this);
+
+    proxy->send(Messages::WebProcess::SetInitialGamepads(UIGamepadProvider::singleton().snapshotGamepads()), 0);
 }
 
 void WebProcessPool::stoppedUsingGamepads(IPC::Connection& connection)

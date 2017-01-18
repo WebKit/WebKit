@@ -56,6 +56,8 @@ public:
     static void setUsesGameControllerFramework();
 #endif
 
+    Vector<GamepadData> snapshotGamepads();
+
 private:
     friend NeverDestroyed<UIGamepadProvider>;
     UIGamepadProvider();
@@ -76,8 +78,6 @@ private:
 
     void scheduleGamepadStateSync();
     void gamepadSyncTimerFired();
-
-    Vector<GamepadData> snapshotGamepads();
 
     HashSet<WebProcessPool*> m_processPoolsUsingGamepads;
 
