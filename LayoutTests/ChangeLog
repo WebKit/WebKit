@@ -1,3 +1,13 @@
+2017-01-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][MediaStream] Update list of MediaStream tests that fail.
+
+        Unskip all the MediaStream tests and instead mark them as failing or timing out.
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2017-01-17  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Turn modern media controls on by default
