@@ -46,10 +46,8 @@ ExceptionOr<RefPtr<Database>> DOMWindowWebDatabase::openDatabase(DOMWindow& wind
     auto* document = window.document();
     if (!document)
         return Exception { SECURITY_ERR };
-    auto* securityOrigin = document->securityOrigin();
-    if (!securityOrigin)
-        return Exception { SECURITY_ERR };
-    if (!securityOrigin->canAccessDatabase(document->topOrigin()))
+    auto& securityOrigin = document->securityOrigin();
+    if (!securityOrigin.canAccessDatabase(document->topOrigin()))
         return Exception { SECURITY_ERR };
     auto result = manager.openDatabase(*window.document(), name, version, displayName, estimatedSize, WTFMove(creationCallback));
     if (result.hasException()) {

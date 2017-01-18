@@ -125,7 +125,7 @@ static inline bool checkShapeImageOrigin(Document& document, const StyleImage& s
 
     ASSERT(styleImage.cachedImage());
     CachedImage& cachedImage = *(styleImage.cachedImage());
-    if (cachedImage.isOriginClean(document.securityOrigin()))
+    if (cachedImage.isOriginClean(&document.securityOrigin()))
         return true;
 
     const URL& url = cachedImage.url();

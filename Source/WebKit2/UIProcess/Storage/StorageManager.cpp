@@ -695,7 +695,7 @@ void StorageManager::createTransientLocalStorageMap(IPC::Connection& connection,
         Ref<StorageArea> area = *it->value;
         if (!area->isSessionStorage())
             continue;
-        if (!origin.securityOrigin()->isSameSchemeHostPort(area->securityOrigin().securityOrigin().ptr()))
+        if (!origin.securityOrigin()->isSameSchemeHostPort(area->securityOrigin().securityOrigin().get()))
             continue;
         area->addListener(connection, storageMapID);
         m_storageAreasByConnection.remove(it);

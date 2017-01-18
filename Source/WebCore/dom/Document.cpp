@@ -373,28 +373,28 @@ static bool acceptsEditingFocus(Node* node)
     return frame->editor().shouldBeginEditing(rangeOfContents(*root).ptr());
 }
 
-static bool canAccessAncestor(const SecurityOrigin* activeSecurityOrigin, Frame* targetFrame)
+static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame* targetFrame)
 {
     // targetFrame can be 0 when we're trying to navigate a top-level frame
     // that has a 0 opener.
     if (!targetFrame)
         return false;
 
-    const bool isLocalActiveOrigin = activeSecurityOrigin->isLocal();
+    const bool isLocalActiveOrigin = activeSecurityOrigin.isLocal();
     for (Frame* ancestorFrame = targetFrame; ancestorFrame; ancestorFrame = ancestorFrame->tree().parent()) {
         Document* ancestorDocument = ancestorFrame->document();
         // FIXME: Should be an ASSERT? Frames should alway have documents.
         if (!ancestorDocument)
             return true;
 
-        const SecurityOrigin* ancestorSecurityOrigin = ancestorDocument->securityOrigin();
-        if (activeSecurityOrigin->canAccess(ancestorSecurityOrigin))
+        const SecurityOrigin& ancestorSecurityOrigin = ancestorDocument->securityOrigin();
+        if (activeSecurityOrigin.canAccess(ancestorSecurityOrigin))
             return true;
         
         // Allow file URL descendant navigation even when allowFileAccessFromFileURLs is false.
         // FIXME: It's a bit strange to special-case local origins here. Should we be doing
         // something more general instead?
-        if (isLocalActiveOrigin && ancestorSecurityOrigin->isLocal())
+        if (isLocalActiveOrigin && ancestorSecurityOrigin.isLocal())
             return true;
     }
 
@@ -3041,7 +3041,7 @@ Frame* Document::findUnsafeParentScrollPropagationBoundary()
     Frame* ancestorFrame = currentFrame->tree().parent();
 
     while (ancestorFrame) {
-        if (!ancestorFrame->document()->securityOrigin()->canAccess(securityOrigin()))
+        if (!ancestorFrame->document()->securityOrigin().canAccess(securityOrigin()))
             return currentFrame;
         currentFrame = ancestorFrame;
         ancestorFrame = ancestorFrame->tree().parent();
@@ -4230,7 +4230,7 @@ ExceptionOr<String> Document::cookie()
     // INVALID_STATE_ERR exception on getting if the Document has no
     // browsing context.
 
-    if (!securityOrigin()->canAccessCookies())
+    if (!securityOrigin().canAccessCookies())
         return Exception { SECURITY_ERR };
 
     URL cookieURL = this->cookieURL();
@@ -4252,7 +4252,7 @@ ExceptionOr<void> Document::setCookie(const String& value)
     // INVALID_STATE_ERR exception on setting if the Document has no
     // browsing context.
 
-    if (!securityOrigin()->canAccessCookies())
+    if (!securityOrigin().canAccessCookies())
         return Exception { SECURITY_ERR };
 
     URL cookieURL = this->cookieURL();
@@ -4273,17 +4273,17 @@ String Document::referrer() const
 
 String Document::origin() const
 {
-    return SecurityOriginData::fromSecurityOrigin(*securityOrigin()).databaseIdentifier();
+    return SecurityOriginData::fromSecurityOrigin(securityOrigin()).databaseIdentifier();
 }
 
 String Document::domain() const
 {
-    return securityOrigin()->domain();
+    return securityOrigin().domain();
 }
 
 ExceptionOr<void> Document::setDomain(const String& newDomain)
 {
-    if (SchemeRegistry::isDomainRelaxationForbiddenForURLScheme(securityOrigin()->protocol()))
+    if (SchemeRegistry::isDomainRelaxationForbiddenForURLScheme(securityOrigin().protocol()))
         return Exception { SECURITY_ERR };
 
     // Both NS and IE specify that changing the domain is only allowed when
@@ -4294,13 +4294,13 @@ ExceptionOr<void> Document::setDomain(const String& newDomain)
     String oldDomain = domain();
 
     // If the new domain is the same as the old domain, still call
-    // securityOrigin()->setDomainForDOM. This will change the
+    // securityOrigin().setDomainForDOM. This will change the
     // security check behavior. For example, if a page loaded on port 8000
     // assigns its current domain using document.domain, the page will
     // allow other pages loaded on different ports in the same domain that
     // have also assigned to access this page.
     if (equalIgnoringASCIICase(oldDomain, newDomain)) {
-        securityOrigin()->setDomainFromDOM(newDomain);
+        securityOrigin().setDomainFromDOM(newDomain);
         return { };
     }
 
@@ -4311,8 +4311,8 @@ ExceptionOr<void> Document::setDomain(const String& newDomain)
         return Exception { SECURITY_ERR };
 
     auto ipAddressSetting = settings() && settings()->treatIPAddressAsDomain() ? OriginAccessEntry::TreatIPAddressAsDomain : OriginAccessEntry::TreatIPAddressAsIPAddress;
-    OriginAccessEntry accessEntry { securityOrigin()->protocol(), newDomain, OriginAccessEntry::AllowSubdomains, ipAddressSetting };
-    if (!accessEntry.matchesOrigin(*securityOrigin()))
+    OriginAccessEntry accessEntry { securityOrigin().protocol(), newDomain, OriginAccessEntry::AllowSubdomains, ipAddressSetting };
+    if (!accessEntry.matchesOrigin(securityOrigin()))
         return Exception { SECURITY_ERR };
 
     if (oldDomain[oldLength - newLength - 1] != '.')
@@ -4320,7 +4320,7 @@ ExceptionOr<void> Document::setDomain(const String& newDomain)
     if (StringView { oldDomain }.substring(oldLength - newLength) != newDomain)
         return Exception { SECURITY_ERR };
 
-    securityOrigin()->setDomainFromDOM(newDomain);
+    securityOrigin().setDomainFromDOM(newDomain);
     return { };
 }
 
@@ -4646,7 +4646,7 @@ void Document::unregisterForMediaVolumeCallbacks(Element* e)
 void Document::storageBlockingStateDidChange()
 {
     if (Settings* settings = this->settings())
-        securityOrigin()->setStorageBlockingPolicy(settings->storageBlockingPolicy());
+        securityOrigin().setStorageBlockingPolicy(settings->storageBlockingPolicy());
 }
 
 void Document::privateBrowsingStateDidChange() 
@@ -5084,7 +5084,7 @@ static bool shouldInheritSecurityOriginFromOwner(const URL& url)
 void Document::initSecurityContext()
 {
     if (haveInitializedSecurityOrigin()) {
-        ASSERT(securityOrigin());
+        ASSERT(SecurityContext::securityOrigin());
         return;
     }
 
@@ -5121,23 +5121,23 @@ void Document::initSecurityContext()
 
     if (Settings* settings = this->settings()) {
         if (settings->needsStorageAccessFromFileURLsQuirk())
-            securityOrigin()->grantStorageAccessFromFileURLsQuirk();
+            securityOrigin().grantStorageAccessFromFileURLsQuirk();
         if (!settings->webSecurityEnabled()) {
             // Web security is turned off. We should let this document access every other document. This is used primary by testing
             // harnesses for web sites.
-            securityOrigin()->grantUniversalAccess();
-        } else if (securityOrigin()->isLocal()) {
+            securityOrigin().grantUniversalAccess();
+        } else if (securityOrigin().isLocal()) {
             if (settings->allowUniversalAccessFromFileURLs() || m_frame->loader().client().shouldForceUniversalAccessFromLocalURL(m_url)) {
                 // Some clients want local URLs to have universal access, but that setting is dangerous for other clients.
-                securityOrigin()->grantUniversalAccess();
+                securityOrigin().grantUniversalAccess();
             } else if (!settings->allowFileAccessFromFileURLs()) {
                 // Some clients want local URLs to have even tighter restrictions by default, and not be able to access other local files.
                 // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
                 // still can have other privileges that can be remembered, thereby not making them unique origins.
-                securityOrigin()->enforceFilePathSeparation();
+                securityOrigin().enforceFilePathSeparation();
             }
         }
-        securityOrigin()->setStorageBlockingPolicy(settings->storageBlockingPolicy());
+        securityOrigin().setStorageBlockingPolicy(settings->storageBlockingPolicy());
     }
 
     Document* parentDocument = ownerElement() ? &ownerElement()->document() : nullptr;
@@ -5178,8 +5178,8 @@ void Document::initSecurityContext()
         // but we're also sandboxed, the only thing we inherit is the ability
         // to load local resources. This lets about:blank iframes in file://
         // URL documents load images and other resources from the file system.
-        if (ownerFrame->document()->securityOrigin()->canLoadLocalResources())
-            securityOrigin()->grantLoadLocalResources();
+        if (ownerFrame->document()->securityOrigin().canLoadLocalResources())
+            securityOrigin().grantLoadLocalResources();
         return;
     }
 
@@ -5320,7 +5320,7 @@ void Document::initDNSPrefetch()
     Settings* settings = this->settings();
 
     m_haveExplicitlyDisabledDNSPrefetch = false;
-    m_isDNSPrefetchEnabled = settings && settings->dnsPrefetchingEnabled() && securityOrigin()->protocol() == "http";
+    m_isDNSPrefetchEnabled = settings && settings->dnsPrefetchingEnabled() && securityOrigin().protocol() == "http";
 
     // Inherit DNS prefetch opt-out from parent frame    
     if (Document* parent = parentDocument()) {
@@ -5364,7 +5364,7 @@ void Document::addMessage(MessageSource source, MessageLevel level, const String
 
 SecurityOrigin* Document::topOrigin() const
 {
-    return topDocument().securityOrigin();
+    return &topDocument().securityOrigin();
 }
 
 void Document::postTask(Task&& task)

@@ -52,7 +52,7 @@ void InitialNavigation::dispatch(ReplayController& controller)
 {
     auto& frame = controller.page().mainFrame();
     ASSERT(frame.document());
-    frame.navigationScheduler().scheduleLocationChange(*frame.document(), m_securityOrigin.get(), m_url, m_referrer);
+    frame.navigationScheduler().scheduleLocationChange(*frame.document(), *m_securityOrigin, m_url, m_referrer);
 }
 
 void HandleKeyPress::dispatch(ReplayController& controller)

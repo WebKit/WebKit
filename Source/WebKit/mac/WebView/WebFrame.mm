@@ -2053,7 +2053,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 {
     if (!_private->coreFrame)
         return YES;
-    return _private->coreFrame->document()->securityOrigin()->canDisplay(URL);
+    return _private->coreFrame->document()->securityOrigin().canDisplay(URL);
 }
 
 - (NSString *)_stringByEvaluatingJavaScriptFromString:(NSString *)string withGlobalObject:(JSObjectRef)globalObjectRef inScriptWorld:(WebScriptWorld *)world

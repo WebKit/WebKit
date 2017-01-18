@@ -1222,6 +1222,8 @@ public:
 
     WEBCORE_EXPORT void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) final;
 
+    SecurityOrigin& securityOrigin() const { return *SecurityContext::securityOrigin(); }
+
     WEBCORE_EXPORT SecurityOrigin* topOrigin() const final;
 
     Ref<FontFaceSet> fonts();

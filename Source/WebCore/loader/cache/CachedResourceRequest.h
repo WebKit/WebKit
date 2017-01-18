@@ -79,7 +79,7 @@ public:
     void setDomainForCachePartition(Document&);
 #endif
 
-    void setOrigin(RefPtr<SecurityOrigin>&& origin) { m_origin = WTFMove(origin); }
+    void setOrigin(Ref<SecurityOrigin>&& origin) { m_origin = WTFMove(origin); }
     RefPtr<SecurityOrigin> releaseOrigin() { return WTFMove(m_origin); }
     SecurityOrigin* origin() const { return m_origin.get(); }
 

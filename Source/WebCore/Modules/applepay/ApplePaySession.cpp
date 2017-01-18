@@ -380,14 +380,14 @@ static ExceptionOr<void> canCallApplePaySessionAPIs(Document& document)
     if (&document != &topDocument) {
         auto& topOrigin = *topDocument.topOrigin();
 
-        if (!document.securityOrigin()->isSameSchemeHostPort(&topOrigin))
+        if (!document.securityOrigin().isSameSchemeHostPort(topOrigin))
             return Exception { INVALID_ACCESS_ERR, "Trying to call an ApplePaySession API from a document with an different security origin than its top-level frame." };
 
         for (auto* ancestorDocument = document.parentDocument(); ancestorDocument != &topDocument; ancestorDocument = ancestorDocument->parentDocument()) {
             if (!isSecure(*ancestorDocument->loader()))
                 return Exception { INVALID_ACCESS_ERR, "Trying to call an ApplePaySession API from a document with an insecure parent frame." };
 
-            if (!ancestorDocument->securityOrigin()->isSameSchemeHostPort(&topOrigin))
+            if (!ancestorDocument->securityOrigin().isSameSchemeHostPort(topOrigin))
                 return Exception { INVALID_ACCESS_ERR, "Trying to call an ApplePaySession API from a document with an different security origin than its top-level frame." };
         }
     }

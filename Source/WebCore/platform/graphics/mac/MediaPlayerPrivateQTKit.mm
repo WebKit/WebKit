@@ -1480,8 +1480,8 @@ bool MediaPlayerPrivateQTKit::hasSingleSecurityOrigin() const
     if (!m_qtMovie)
         return false;
 
-    RefPtr<SecurityOrigin> resolvedOrigin = SecurityOrigin::create(URL(wkQTMovieResolvedURL(m_qtMovie.get())));
-    RefPtr<SecurityOrigin> requestedOrigin = SecurityOrigin::createFromString(m_movieURL);
+    Ref<SecurityOrigin> resolvedOrigin = SecurityOrigin::create(URL(wkQTMovieResolvedURL(m_qtMovie.get())));
+    Ref<SecurityOrigin> requestedOrigin = SecurityOrigin::createFromString(m_movieURL);
     return resolvedOrigin->isSameSchemeHostPort(requestedOrigin.get());
 }
 

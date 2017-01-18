@@ -285,7 +285,7 @@ WKSecurityOriginRef WKBundleFrameCopySecurityOrigin(WKBundleFrameRef frameRef)
     if (!coreFrame)
         return 0;
 
-    return toCopiedAPI(coreFrame->document()->securityOrigin());
+    return toCopiedAPI(&coreFrame->document()->securityOrigin());
 }
 
 void WKBundleFrameFocus(WKBundleFrameRef frameRef)

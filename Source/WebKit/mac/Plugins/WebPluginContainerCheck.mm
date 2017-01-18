@@ -97,14 +97,14 @@ using namespace WebCore;
 
 - (BOOL)_isForbiddenFileLoad
 {
-   Frame* coreFrame = core([_controller webFrame]);
-   ASSERT(coreFrame);
-   if (!coreFrame->document()->securityOrigin()->canDisplay([_request URL])) {
-       [self _continueWithPolicy:PolicyIgnore];
-       return YES;
-   }
+    Frame* coreFrame = core([_controller webFrame]);
+    ASSERT(coreFrame);
+    if (!coreFrame->document()->securityOrigin().canDisplay([_request URL])) {
+        [self _continueWithPolicy:PolicyIgnore];
+        return YES;
+    }
 
-   return NO;
+    return NO;
 }
 
 - (NSDictionary *)_actionInformationWithURL:(NSURL *)URL

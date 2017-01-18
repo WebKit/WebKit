@@ -1359,7 +1359,7 @@ bool MediaPlayerPrivateAVFoundationCF::hasSingleSecurityOrigin() const
 
     Ref<SecurityOrigin> resolvedOrigin(SecurityOrigin::create(resolvedURL()));
     Ref<SecurityOrigin> requestedOrigin(SecurityOrigin::createFromString(assetURL()));
-    return resolvedOrigin.get().isSameSchemeHostPort(&requestedOrigin.get());
+    return resolvedOrigin->isSameSchemeHostPort(requestedOrigin.get());
 }
 
 AVFWrapper::AVFWrapper(MediaPlayerPrivateAVFoundationCF* owner)

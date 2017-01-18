@@ -578,7 +578,7 @@ static inline bool shouldClearWindowName(const Frame& frame, const Document& new
     if (frame.loader().opener())
         return false;
 
-    return !newDocument.securityOrigin()->isSameOriginAs(frame.document()->securityOrigin());
+    return !newDocument.securityOrigin().isSameOriginAs(frame.document()->securityOrigin());
 }
 
 void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool clearScriptObjects, bool clearFrameView)
@@ -938,7 +938,7 @@ String FrameLoader::outgoingReferrer() const
 
 String FrameLoader::outgoingOrigin() const
 {
-    return m_frame.document()->securityOrigin()->toString();
+    return m_frame.document()->securityOrigin().toString();
 }
 
 bool FrameLoader::checkIfFormActionAllowedByCSP(const URL& url, bool didReceiveRedirectResponse) const
@@ -1207,7 +1207,7 @@ void FrameLoader::loadURL(const FrameLoadRequest& frameLoadRequest, const String
     }
 #if ENABLE(CACHE_PARTITIONING)
     if (&m_frame.tree().top() != &m_frame)
-        request.setDomainForCachePartition(m_frame.tree().top().document()->securityOrigin()->domainForCachePartition());
+        request.setDomainForCachePartition(m_frame.tree().top().document()->securityOrigin().domainForCachePartition());
 #endif
     addExtraFieldsToRequest(request, newLoadType, true);
     if (newLoadType == FrameLoadType::Reload || newLoadType == FrameLoadType::ReloadFromOrigin)
@@ -3009,7 +3009,7 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
             Document* parentDocument = parentFrame->document();
             if (!parentDocument)
                 return true;
-            if (!m_frame.document() || !m_frame.document()->securityOrigin()->canAccess(parentDocument->securityOrigin())) {
+            if (!m_frame.document() || !m_frame.document()->securityOrigin().canAccess(parentDocument->securityOrigin())) {
                 document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Blocked attempt to show beforeunload confirmation dialog on behalf of a frame with different security origin. Protocols, domains, and ports must match."));
                 return true;
             }

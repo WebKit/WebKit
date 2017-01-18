@@ -87,9 +87,8 @@ const AtomicString& CachedResourceRequest::initiatorName() const
 void CachedResourceRequest::setAsPotentiallyCrossOrigin(const String& mode, Document& document)
 {
     ASSERT(m_options.mode == FetchOptions::Mode::NoCors);
-    ASSERT(document.securityOrigin());
 
-    m_origin = document.securityOrigin();
+    m_origin = &document.securityOrigin();
 
     if (mode.isNull())
         return;
@@ -101,15 +100,14 @@ void CachedResourceRequest::setAsPotentiallyCrossOrigin(const String& mode, Docu
         ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
     m_options.credentials = credentials;
     m_options.allowCredentials = credentials == FetchOptions::Credentials::Include ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-    WebCore::updateRequestForAccessControl(m_resourceRequest, *document.securityOrigin(), m_options.allowCredentials);
+    WebCore::updateRequestForAccessControl(m_resourceRequest, document.securityOrigin(), m_options.allowCredentials);
 }
 
 void CachedResourceRequest::updateForAccessControl(Document& document)
 {
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
-    ASSERT(document.securityOrigin());
 
-    m_origin = document.securityOrigin();
+    m_origin = &document.securityOrigin();
     WebCore::updateRequestForAccessControl(m_resourceRequest, *m_origin, m_options.allowCredentials);
 }
 

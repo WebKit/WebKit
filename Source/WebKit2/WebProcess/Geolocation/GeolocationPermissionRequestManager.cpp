@@ -72,9 +72,9 @@ void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
-    SecurityOrigin* origin = frame->document()->securityOrigin();
+    SecurityOrigin& origin = frame->document()->securityOrigin();
 
-    m_page->send(Messages::WebPageProxy::RequestGeolocationPermissionForFrame(geolocationID, webFrame->frameID(), SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier()));
+    m_page->send(Messages::WebPageProxy::RequestGeolocationPermissionForFrame(geolocationID, webFrame->frameID(), SecurityOriginData::fromSecurityOrigin(origin).databaseIdentifier()));
 }
 
 void GeolocationPermissionRequestManager::cancelRequestForGeolocation(Geolocation* geolocation)

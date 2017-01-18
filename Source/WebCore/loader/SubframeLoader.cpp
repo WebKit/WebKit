@@ -112,7 +112,7 @@ bool SubframeLoader::pluginIsLoadable(const URL& url, const String& mimeType)
     if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType)) {
         if (!m_frame.settings().isJavaEnabled())
             return false;
-        if (document && document->securityOrigin()->isLocal() && !m_frame.settings().isJavaEnabledForLocalFiles())
+        if (document && document->securityOrigin().isLocal() && !m_frame.settings().isJavaEnabledForLocalFiles())
             return false;
     }
 
@@ -120,7 +120,7 @@ bool SubframeLoader::pluginIsLoadable(const URL& url, const String& mimeType)
         if (document->isSandboxed(SandboxPlugins))
             return false;
 
-        if (!document->securityOrigin()->canDisplay(url)) {
+        if (!document->securityOrigin().canDisplay(url)) {
             FrameLoader::reportLocalLoadFailed(&m_frame, url.string());
             return false;
         }
@@ -243,7 +243,7 @@ RefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, HTMLA
 
     if (!codeBaseURLString.isEmpty()) {
         URL codeBaseURL = completeURL(codeBaseURLString);
-        if (!element.document().securityOrigin()->canDisplay(codeBaseURL)) {
+        if (!element.document().securityOrigin().canDisplay(codeBaseURL)) {
             FrameLoader::reportLocalLoadFailed(&m_frame, codeBaseURL.string());
             return nullptr;
         }
@@ -315,7 +315,7 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const U
 
     auto document = makeRef(ownerElement.document());
 
-    if (!document->securityOrigin()->canDisplay(url)) {
+    if (!document->securityOrigin().canDisplay(url)) {
         FrameLoader::reportLocalLoadFailed(&m_frame, url.string());
         return nullptr;
     }

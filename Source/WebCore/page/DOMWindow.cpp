@@ -858,7 +858,7 @@ ExceptionOr<Storage*> DOMWindow::sessionStorage() const
     if (!document)
         return nullptr;
 
-    if (!document->securityOrigin()->canAccessSessionStorage(document->topOrigin()))
+    if (!document->securityOrigin().canAccessSessionStorage(document->topOrigin()))
         return Exception { SECURITY_ERR };
 
     if (m_sessionStorage) {
@@ -871,7 +871,7 @@ ExceptionOr<Storage*> DOMWindow::sessionStorage() const
     if (!page)
         return nullptr;
 
-    auto storageArea = page->sessionStorage()->storageArea(SecurityOriginData::fromSecurityOrigin(*document->securityOrigin()));
+    auto storageArea = page->sessionStorage()->storageArea(SecurityOriginData::fromSecurityOrigin(document->securityOrigin()));
     if (!storageArea->canAccessStorage(m_frame))
         return Exception { SECURITY_ERR };
 
@@ -888,7 +888,7 @@ ExceptionOr<Storage*> DOMWindow::localStorage() const
     if (!document)
         return nullptr;
 
-    if (!document->securityOrigin()->canAccessLocalStorage(nullptr))
+    if (!document->securityOrigin().canAccessLocalStorage(nullptr))
         return Exception { SECURITY_ERR };
 
     auto* page = document->page();
@@ -933,7 +933,7 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::ExecState& state, DOMWindow& calle
     if (targetOrigin == "/") {
         if (!sourceDocument)
             return { };
-        target = sourceDocument->securityOrigin();
+        target = &sourceDocument->securityOrigin();
     } else if (targetOrigin != "*") {
         target = SecurityOrigin::createFromString(targetOrigin);
         // It doesn't make sense target a postMessage at a unique origin
@@ -955,7 +955,7 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::ExecState& state, DOMWindow& calle
     // in order to capture the source of the message correctly.
     if (!sourceDocument)
         return { };
-    auto sourceOrigin = sourceDocument->securityOrigin()->toString();
+    auto sourceOrigin = sourceDocument->securityOrigin().toString();
 
     // Capture stack trace only when inspector front-end is loaded as it may be time consuming.
     RefPtr<ScriptCallStack> stackTrace;
@@ -983,7 +983,7 @@ void DOMWindow::dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTarg
         // Check target origin now since the target document may have changed since the timer was scheduled.
         if (!intendedTargetOrigin->isSameSchemeHostPort(document()->securityOrigin())) {
             if (PageConsoleClient* pageConsole = console()) {
-                String message = makeString("Unable to post message to ", intendedTargetOrigin->toString(), ". Recipient has origin ", document()->securityOrigin()->toString(), ".\n");
+                String message = makeString("Unable to post message to ", intendedTargetOrigin->toString(), ". Recipient has origin ", document()->securityOrigin().toString(), ".\n");
                 pageConsole->addMessage(MessageSource::Security, MessageLevel::Error, message, stackTrace);
             }
             return;
@@ -1755,7 +1755,7 @@ bool DOMWindow::isSameSecurityOriginAsMainFrame() const
 
     Document* mainFrameDocument = m_frame->mainFrame().document();
 
-    if (mainFrameDocument && document()->securityOrigin()->canAccess(mainFrameDocument->securityOrigin()))
+    if (mainFrameDocument && document()->securityOrigin().canAccess(mainFrameDocument->securityOrigin()))
         return true;
 
     return false;
@@ -2100,12 +2100,12 @@ String DOMWindow::crossDomainAccessErrorMessage(const DOMWindow& activeWindow)
     if (activeWindowURL.isNull())
         return String();
 
-    ASSERT(!activeWindow.document()->securityOrigin()->canAccess(document()->securityOrigin()));
+    ASSERT(!activeWindow.document()->securityOrigin().canAccess(document()->securityOrigin()));
 
     // FIXME: This message, and other console messages, have extra newlines. Should remove them.
-    SecurityOrigin* activeOrigin = activeWindow.document()->securityOrigin();
-    SecurityOrigin* targetOrigin = document()->securityOrigin();
-    String message = "Blocked a frame with origin \"" + activeOrigin->toString() + "\" from accessing a frame with origin \"" + targetOrigin->toString() + "\". ";
+    SecurityOrigin& activeOrigin = activeWindow.document()->securityOrigin();
+    SecurityOrigin& targetOrigin = document()->securityOrigin();
+    String message = "Blocked a frame with origin \"" + activeOrigin.toString() + "\" from accessing a frame with origin \"" + targetOrigin.toString() + "\". ";
 
     // Sandbox errors: Use the origin of the frames' location, rather than their actual origin (since we know that at least one will be "null").
     URL activeURL = activeWindow.document()->url();
@@ -2120,16 +2120,16 @@ String DOMWindow::crossDomainAccessErrorMessage(const DOMWindow& activeWindow)
     }
 
     // Protocol errors: Use the URL's protocol rather than the origin's protocol so that we get a useful message for non-heirarchal URLs like 'data:'.
-    if (targetOrigin->protocol() != activeOrigin->protocol())
+    if (targetOrigin.protocol() != activeOrigin.protocol())
         return message + " The frame requesting access has a protocol of \"" + activeURL.protocol() + "\", the frame being accessed has a protocol of \"" + targetURL.protocol() + "\". Protocols must match.\n";
 
     // 'document.domain' errors.
-    if (targetOrigin->domainWasSetInDOM() && activeOrigin->domainWasSetInDOM())
-        return message + "The frame requesting access set \"document.domain\" to \"" + activeOrigin->domain() + "\", the frame being accessed set it to \"" + targetOrigin->domain() + "\". Both must set \"document.domain\" to the same value to allow access.";
-    if (activeOrigin->domainWasSetInDOM())
-        return message + "The frame requesting access set \"document.domain\" to \"" + activeOrigin->domain() + "\", but the frame being accessed did not. Both must set \"document.domain\" to the same value to allow access.";
-    if (targetOrigin->domainWasSetInDOM())
-        return message + "The frame being accessed set \"document.domain\" to \"" + targetOrigin->domain() + "\", but the frame requesting access did not. Both must set \"document.domain\" to the same value to allow access.";
+    if (targetOrigin.domainWasSetInDOM() && activeOrigin.domainWasSetInDOM())
+        return message + "The frame requesting access set \"document.domain\" to \"" + activeOrigin.domain() + "\", the frame being accessed set it to \"" + targetOrigin.domain() + "\". Both must set \"document.domain\" to the same value to allow access.";
+    if (activeOrigin.domainWasSetInDOM())
+        return message + "The frame requesting access set \"document.domain\" to \"" + activeOrigin.domain() + "\", but the frame being accessed did not. Both must set \"document.domain\" to the same value to allow access.";
+    if (targetOrigin.domainWasSetInDOM())
+        return message + "The frame being accessed set \"document.domain\" to \"" + targetOrigin.domain() + "\", but the frame requesting access did not. Both must set \"document.domain\" to the same value to allow access.";
 
     // Default.
     return message + "Protocols, domains, and ports must match.";
@@ -2151,7 +2151,7 @@ bool DOMWindow::isInsecureScriptAccess(DOMWindow& activeWindow, const String& ur
 
         // FIXME: The name canAccess seems to be a roundabout way to ask "can execute script".
         // Can we name the SecurityOrigin function better to make this more clear?
-        if (activeWindow.document()->securityOrigin()->canAccess(document()->securityOrigin()))
+        if (activeWindow.document()->securityOrigin().canAccess(document()->securityOrigin()))
             return false;
     }
 

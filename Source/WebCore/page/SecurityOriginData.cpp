@@ -63,11 +63,7 @@ SecurityOriginData SecurityOriginData::fromFrame(Frame* frame)
     if (!document)
         return SecurityOriginData();
 
-    SecurityOrigin* origin = document->securityOrigin();
-    if (!origin)
-        return SecurityOriginData();
-    
-    return SecurityOriginData::fromSecurityOrigin(*origin);
+    return SecurityOriginData::fromSecurityOrigin(document->securityOrigin());
 }
 
 Ref<SecurityOrigin> SecurityOriginData::securityOrigin() const

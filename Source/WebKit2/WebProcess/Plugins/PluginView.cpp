@@ -706,7 +706,7 @@ void PluginView::storageBlockingStateChanged()
     if (!m_isInitialized || !m_plugin)
         return;
 
-    bool storageBlockingPolicy = !frame()->document()->securityOrigin()->canAccessPluginStorage(frame()->document()->topOrigin());
+    bool storageBlockingPolicy = !frame()->document()->securityOrigin().canAccessPluginStorage(frame()->document()->topOrigin());
 
     m_plugin->storageBlockingStateChanged(storageBlockingPolicy);
 }
@@ -1176,7 +1176,7 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
     if (!frame)
         return;
 
-    if (!m_pluginElement->document().securityOrigin()->canDisplay(request->request().url())) {
+    if (!m_pluginElement->document().securityOrigin().canDisplay(request->request().url())) {
         // We can't load the request, send back a reply to the plug-in.
         m_plugin->frameDidFail(request->requestID(), false);
         return;
@@ -1608,7 +1608,7 @@ bool PluginView::isPrivateBrowsingEnabled()
     if (!frame())
         return true;
 
-    if (!frame()->document()->securityOrigin()->canAccessPluginStorage(frame()->document()->topOrigin()))
+    if (!frame()->document()->securityOrigin().canAccessPluginStorage(frame()->document()->topOrigin()))
         return true;
 
     return frame()->page()->usesEphemeralSession();

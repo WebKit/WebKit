@@ -145,7 +145,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
         return { };
 
     URL fullURL = urlForState(urlString);
-    if (!fullURL.isValid() || !m_frame->document()->securityOrigin()->canRequest(fullURL))
+    if (!fullURL.isValid() || !m_frame->document()->securityOrigin().canRequest(fullURL))
         return Exception { SECURITY_ERR };
 
     if (fullURL.hasUsername() || fullURL.hasPassword()) {

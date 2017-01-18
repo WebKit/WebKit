@@ -440,14 +440,14 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
 {
     auto& options = request.options();
 
-    if (document() && !document()->securityOrigin()->canDisplay(url)) {
+    if (document() && !document()->securityOrigin().canDisplay(url)) {
         if (forPreload == ForPreload::No)
             FrameLoader::reportLocalLoadFailed(frame(), url.stringCenterEllipsizedToLength());
         LOG(ResourceLoading, "CachedResourceLoader::requestResource URL was not allowed by SecurityOrigin::canDisplay");
         return false;
     }
 
-    if (options.mode == FetchOptions::Mode::SameOrigin && !m_document->securityOrigin()->canRequest(url) && !isSameOriginDataURL(url, options)) {
+    if (options.mode == FetchOptions::Mode::SameOrigin && !m_document->securityOrigin().canRequest(url) && !isSameOriginDataURL(url, options)) {
         printAccessDeniedMessage(url);
         return false;
     }
@@ -474,7 +474,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
 // FIXME: Should we find a way to know whether the redirection is for a preload request like we do for CachedResourceLoader::canRequest?
 bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options) const
 {
-    if (document() && !document()->securityOrigin()->canDisplay(url)) {
+    if (document() && !document()->securityOrigin().canDisplay(url)) {
         FrameLoader::reportLocalLoadFailed(frame(), url.stringCenterEllipsizedToLength());
         LOG(ResourceLoading, "CachedResourceLoader::requestResource URL was not allowed by SecurityOrigin::canDisplay");
         return false;
@@ -483,7 +483,7 @@ bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type,
     // FIXME: According to https://fetch.spec.whatwg.org/#http-redirect-fetch, we should check that the URL is HTTP(s) except if in navigation mode.
     // But we currently allow at least data URLs to be loaded.
 
-    if (options.mode == FetchOptions::Mode::SameOrigin && !m_document->securityOrigin()->canRequest(url)) {
+    if (options.mode == FetchOptions::Mode::SameOrigin && !m_document->securityOrigin().canRequest(url)) {
         printAccessDeniedMessage(url);
         return false;
     }
@@ -529,7 +529,7 @@ bool CachedResourceLoader::canRequestInContentDispositionAttachmentSandbox(Cache
         return true;
     }
 
-    if (!document->shouldEnforceContentDispositionAttachmentSandbox() || document->securityOrigin()->canRequest(url))
+    if (!document->shouldEnforceContentDispositionAttachmentSandbox() || document->securityOrigin().canRequest(url))
         return true;
 
     String message = "Unsafe attempt to load URL " + url.stringCenterEllipsizedToLength() + " from document with Content-Disposition: attachment at URL " + document->url().stringCenterEllipsizedToLength() + ".";

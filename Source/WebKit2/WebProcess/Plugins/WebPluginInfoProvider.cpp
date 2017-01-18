@@ -119,10 +119,8 @@ void WebPluginInfoProvider::getWebVisiblePluginInfo(WebCore::Page& page, Vector<
 
 #if PLATFORM(MAC)
     if (auto* document = page.mainFrame().document()) {
-        if (auto* securityOrigin = document->securityOrigin()) {
-            if (securityOrigin->isLocal())
-                return;
-        }
+        if (document->securityOrigin().isLocal())
+            return;
     }
 
     for (int32_t i = plugins.size() - 1; i >= 0; --i) {

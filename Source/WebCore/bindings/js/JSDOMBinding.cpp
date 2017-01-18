@@ -773,7 +773,7 @@ static inline bool canAccessDocument(JSC::ExecState* state, Document* targetDocu
 
     DOMWindow& active = activeDOMWindow(state);
 
-    if (active.document()->securityOrigin()->canAccess(targetDocument->securityOrigin()))
+    if (active.document()->securityOrigin().canAccess(targetDocument->securityOrigin()))
         return true;
 
     switch (reportingOption) {

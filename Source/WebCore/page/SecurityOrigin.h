@@ -92,7 +92,7 @@ public:
     // SecurityOrigin. For example, call this function before allowing
     // script from one security origin to read or write objects from
     // another SecurityOrigin.
-    WEBCORE_EXPORT bool canAccess(const SecurityOrigin*) const;
+    WEBCORE_EXPORT bool canAccess(const SecurityOrigin&) const;
 
     // Returns true if this SecurityOrigin can read content retrieved from
     // the given URL. For example, call this function before issuing
@@ -102,7 +102,7 @@ public:
     // Returns true if this SecurityOrigin can receive drag content from the
     // initiator. For example, call this function before allowing content to be
     // dropped onto a target.
-    bool canReceiveDragData(const SecurityOrigin* dragInitiator) const;    
+    bool canReceiveDragData(const SecurityOrigin& dragInitiator) const;
 
     // Returns true if |document| can display content from the given URL (e.g.,
     // in an iframe or as an image). For example, web sites generally cannot
@@ -194,11 +194,11 @@ public:
 
     // This method checks for equality, ignoring the value of document.domain
     // (and whether it was set) but considering the host. It is used for postMessage.
-    WEBCORE_EXPORT bool isSameSchemeHostPort(const SecurityOrigin*) const;
+    WEBCORE_EXPORT bool isSameSchemeHostPort(const SecurityOrigin&) const;
 
     // This method implements the "same origin" algorithm from the HTML Standard:
     // https://html.spec.whatwg.org/multipage/browsers.html#same-origin
-    WEBCORE_EXPORT bool isSameOriginAs(const SecurityOrigin*) const;
+    WEBCORE_EXPORT bool isSameOriginAs(const SecurityOrigin&) const;
 
     static URL urlWithUniqueSecurityOrigin();
 

@@ -190,7 +190,7 @@ void DragController::dragExited(const DragData& dragData)
 {
     if (RefPtr<FrameView> v = m_page.mainFrame().view()) {
 #if ENABLE(DASHBOARD_SUPPORT)
-        DataTransferAccessPolicy policy = (m_page.mainFrame().settings().usesDashboardBackwardCompatibilityMode() && (!m_documentUnderMouse || m_documentUnderMouse->securityOrigin()->isLocal()))
+        DataTransferAccessPolicy policy = (m_page.mainFrame().settings().usesDashboardBackwardCompatibilityMode() && (!m_documentUnderMouse || m_documentUnderMouse->securityOrigin().isLocal()))
             ? DataTransferAccessPolicy::Readable : DataTransferAccessPolicy::TypesReadable;
 #else
         DataTransferAccessPolicy policy = DataTransferAccessPolicy::TypesReadable;
@@ -320,7 +320,7 @@ bool DragController::tryDocumentDrag(const DragData& dragData, DragDestinationAc
     if (!m_documentUnderMouse)
         return false;
 
-    if (m_dragInitiator && !m_documentUnderMouse->securityOrigin()->canReceiveDragData(m_dragInitiator->securityOrigin()))
+    if (m_dragInitiator && !m_documentUnderMouse->securityOrigin().canReceiveDragData(m_dragInitiator->securityOrigin()))
         return false;
 
     bool isHandlingDrag = false;
@@ -611,7 +611,7 @@ bool DragController::tryDHTMLDrag(const DragData& dragData, DragOperation& opera
         return false;
 
 #if ENABLE(DASHBOARD_SUPPORT)
-    DataTransferAccessPolicy policy = (mainFrame->settings().usesDashboardBackwardCompatibilityMode() && m_documentUnderMouse->securityOrigin()->isLocal()) ?
+    DataTransferAccessPolicy policy = (mainFrame->settings().usesDashboardBackwardCompatibilityMode() && m_documentUnderMouse->securityOrigin().isLocal()) ?
         DataTransferAccessPolicy::Readable : DataTransferAccessPolicy::TypesReadable;
 #else
     DataTransferAccessPolicy policy = DataTransferAccessPolicy::TypesReadable;
@@ -844,7 +844,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             return false;
 
         doSystemDrag(dragImage, dragLoc, dragOrigin, dataTransfer, src, false);
-    } else if (!src.document()->securityOrigin()->canDisplay(linkURL)) {
+    } else if (!src.document()->securityOrigin().canDisplay(linkURL)) {
         src.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to drag local resource: " + linkURL.stringCenterEllipsizedToLength());
         startedDrag = false;
     } else if (!imageURL.isEmpty() && image && !image->isNull() && (m_dragSourceAction & DragSourceActionImage)) {

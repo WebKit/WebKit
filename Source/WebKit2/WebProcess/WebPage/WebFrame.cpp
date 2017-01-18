@@ -482,7 +482,7 @@ bool WebFrame::allowsFollowingLink(const WebCore::URL& url) const
     if (!m_coreFrame)
         return true;
         
-    return m_coreFrame->document()->securityOrigin()->canDisplay(url);
+    return m_coreFrame->document()->securityOrigin().canDisplay(url);
 }
 
 JSGlobalContextRef WebFrame::jsContext()

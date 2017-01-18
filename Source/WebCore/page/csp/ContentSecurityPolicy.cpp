@@ -592,7 +592,7 @@ static String stripURLForUseInReport(Document& document, const URL& url)
         return String();
     if (!url.isHierarchical() || url.protocolIs("file"))
         return url.protocol().toString();
-    return document.securityOrigin()->canRequest(url) ? url.strippedForUseAsReferrer() : SecurityOrigin::create(url).get().toString();
+    return document.securityOrigin().canRequest(url) ? url.strippedForUseAsReferrer() : SecurityOrigin::create(url).get().toString();
 }
 
 void ContentSecurityPolicy::reportViolation(const String& violatedDirective, const ContentSecurityPolicyDirective& effectiveViolatedDirective, const URL& blockedURL, const String& consoleMessage, JSC::ExecState* state) const

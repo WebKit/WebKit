@@ -857,7 +857,7 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
             // load local resources. See https://bugs.webkit.org/show_bug.cgi?id=16756
             // and https://bugs.webkit.org/show_bug.cgi?id=19760 for further
             // discussion.
-            m_frame->document()->securityOrigin()->grantLoadLocalResources();
+            m_frame->document()->securityOrigin().grantLoadLocalResources();
         }
 
         if (frameLoader()->stateMachine().creatingInitialEmptyDocument())

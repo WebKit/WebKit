@@ -1,3 +1,199 @@
+2017-01-18  Andreas Kling  <akling@apple.com>
+
+        Document::securityOrigin() should return a reference.
+        <https://webkit.org/b/167124>
+
+        Reviewed by Sam Weinig.
+
+        The security origin is always initialized by the Document constructor
+        through Document::initSecurityContext(), so it's effectively always present.
+        Make it return a reference and remove unnecessary null checks exposed by this.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::canCallApplePaySessionAPIs):
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::getSupportedConfiguration):
+        (WebCore::CDM::getConsentStatus):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::mediaKeysStorageDirectory):
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::canCallGetUserMedia):
+        * Modules/webdatabase/DOMWindowWebDatabase.cpp:
+        (WebCore::DOMWindowWebDatabase::openDatabase):
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::allowDatabaseAccess):
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientOrigin):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::canAccessDocument):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::collectIsolatedContexts):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::canAccessRules):
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRulesFromSheet):
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::setCSSStyleSheet):
+        * dom/Document.cpp:
+        (WebCore::canAccessAncestor):
+        (WebCore::Document::findUnsafeParentScrollPropagationBoundary):
+        (WebCore::Document::cookie):
+        (WebCore::Document::setCookie):
+        (WebCore::Document::origin):
+        (WebCore::Document::domain):
+        (WebCore::Document::setDomain):
+        (WebCore::Document::storageBlockingStateDidChange):
+        (WebCore::Document::initSecurityContext):
+        (WebCore::Document::initDNSPrefetch):
+        (WebCore::Document::topOrigin):
+        * dom/Document.h:
+        (WebCore::Document::securityOrigin):
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::isSecureTransitionTo):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::canEmbedJava):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::securityOrigin):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::isSafeToLoadURL):
+        (WebCore::HTMLMediaElement::mediaPlayerMediaKeysStorageDirectory):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::allowedToLoadFrameURL):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::storageId):
+        (WebCore::InspectorDOMStorageAgent::findStorageArea):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore::InspectorIndexedDBAgent::requestDatabaseNames):
+        (WebCore::InspectorIndexedDBAgent::requestDatabase):
+        (WebCore::InspectorIndexedDBAgent::requestData):
+        (WebCore::InspectorIndexedDBAgent::clearObjectStore):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::findFrameWithSecurityOrigin):
+        (WebCore::InspectorPageAgent::buildObjectForFrame):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitData):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        (WebCore::DocumentThreadableLoader::securityOrigin):
+        * loader/DocumentWriter.cpp:
+        (WebCore::canReferToParentFrameEncoding):
+        * loader/EmptyClients.cpp:
+        * loader/FrameLoadRequest.cpp:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::shouldClearWindowName):
+        (WebCore::FrameLoader::outgoingOrigin):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::dispatchBeforeUnloadEvent):
+        * loader/FrameLoaderClient.h:
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::isMixedContent):
+        (WebCore::MixedContentChecker::canDisplayInsecureContent):
+        (WebCore::MixedContentChecker::canRunInsecureContent):
+        (WebCore::MixedContentChecker::checkFormForMixedContent):
+        * loader/MixedContentChecker.h:
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::scheduleRedirect):
+        (WebCore::NavigationScheduler::scheduleLocationChange):
+        (WebCore::NavigationScheduler::scheduleRefresh):
+        * loader/NavigationScheduler.h:
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::sendViolationReport):
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::ResourceLoadInfo::isThirdParty):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init):
+        (WebCore::ResourceLoader::isAllowedToAskUserForCredentials):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::pluginIsLoadable):
+        (WebCore::SubframeLoader::createJavaAppletWidget):
+        (WebCore::SubframeLoader::loadSubframe):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::selectCacheWithoutManifestURL):
+        (WebCore::ApplicationCacheGroup::update):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::CachedResourceLoader::canRequestAfterRedirection):
+        (WebCore::CachedResourceLoader::canRequestInContentDispositionAttachmentSandbox):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::setAsPotentiallyCrossOrigin):
+        (WebCore::CachedResourceRequest::updateForAccessControl):
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore::CachedResourceRequest::setOrigin):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage):
+        (WebCore::DOMWindow::localStorage):
+        (WebCore::DOMWindow::postMessage):
+        (WebCore::DOMWindow::dispatchMessageEventWithOriginCheck):
+        (WebCore::DOMWindow::isSameSecurityOriginAsMainFrame):
+        (WebCore::DOMWindow::crossDomainAccessErrorMessage):
+        (WebCore::DOMWindow::isInsecureScriptAccess):
+        * page/DragController.cpp:
+        (WebCore::DragController::dragExited):
+        (WebCore::DragController::tryDocumentDrag):
+        (WebCore::DragController::tryDHTMLDrag):
+        (WebCore::DragController::startDrag):
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded):
+        * page/Location.cpp:
+        (WebCore::Location::ancestorOrigins):
+        (WebCore::Location::reload):
+        * page/Navigator.cpp:
+        (WebCore::Navigator::javaEnabled):
+        * page/Page.cpp:
+        (WebCore::Page::showAllPlugins):
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::passesTimingAllowCheck):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canAccess):
+        (WebCore::SecurityOrigin::canRequest):
+        (WebCore::SecurityOrigin::canReceiveDragData):
+        (WebCore::SecurityOrigin::canAccessStorage):
+        (WebCore::SecurityOrigin::isSameOriginAs):
+        (WebCore::SecurityOrigin::equal):
+        (WebCore::SecurityOrigin::isSameSchemeHostPort):
+        * page/SecurityOrigin.h:
+        * page/SecurityOriginData.cpp:
+        (WebCore::SecurityOriginData::fromFrame):
+        * page/SecurityOriginHash.h:
+        (WebCore::SecurityOriginHash::equal):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::stripURLForUseInReport):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::hasSingleSecurityOrigin):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasSingleSecurityOrigin):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::hasSingleSecurityOrigin):
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::checkShapeImageOrigin):
+        * replay/ReplayInputCreationMethods.cpp:
+        (WebCore::InitialNavigation::createFromPage):
+        * replay/ReplayInputDispatchMethods.cpp:
+        (WebCore::InitialNavigation::dispatch):
+        * storage/Storage.cpp:
+        (WebCore::Storage::isDisabledByPrivateBrowsing):
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEvents):
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEvents):
+        * storage/StorageNamespaceProvider.cpp:
+        (WebCore::StorageNamespaceProvider::localStorageArea):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setApplicationCacheOriginQuota):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::docLoaderFunc):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::shouldAllowExternalLoad):
+
 2017-01-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove WEBCORE_EXPORT from newly inlined functions after r210845.

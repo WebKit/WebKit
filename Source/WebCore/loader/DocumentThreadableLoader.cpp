@@ -379,7 +379,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         CachedResourceRequest newRequest(WTFMove(request), options);
         if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
             newRequest.setInitiator(m_options.initiator);
-        newRequest.setOrigin(&securityOrigin());
+        newRequest.setOrigin(securityOrigin());
 
         ASSERT(!m_resource);
         // We create an URL here as the request will be moved in requestRawResource
@@ -488,8 +488,7 @@ bool DocumentThreadableLoader::isXMLHttpRequest() const
 
 SecurityOrigin& DocumentThreadableLoader::securityOrigin() const
 {
-    ASSERT(m_document.securityOrigin());
-    return m_origin ? *m_origin : *m_document.securityOrigin();
+    return m_origin ? *m_origin : m_document.securityOrigin();
 }
 
 const ContentSecurityPolicy& DocumentThreadableLoader::contentSecurityPolicy() const

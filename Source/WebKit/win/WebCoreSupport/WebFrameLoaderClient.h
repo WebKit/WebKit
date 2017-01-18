@@ -135,7 +135,7 @@ public:
     void updateGlobalHistoryItemForPage() override;
 
     void didDisplayInsecureContent() override;
-    void didRunInsecureContent(WebCore::SecurityOrigin*, const WebCore::URL&) override;
+    void didRunInsecureContent(WebCore::SecurityOrigin&, const WebCore::URL&) override;
     void didDetectXSS(const WebCore::URL&, bool didBlockEntirePage) override;
 
     WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) override;

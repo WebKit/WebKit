@@ -142,7 +142,7 @@ private:
     bool shouldGoToHistoryItem(WebCore::HistoryItem*) const final;
 
     void didDisplayInsecureContent() final;
-    void didRunInsecureContent(WebCore::SecurityOrigin*, const WebCore::URL&) final;
+    void didRunInsecureContent(WebCore::SecurityOrigin&, const WebCore::URL&) final;
     void didDetectXSS(const WebCore::URL&, bool didBlockEntirePage) final;
 
     WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) final;

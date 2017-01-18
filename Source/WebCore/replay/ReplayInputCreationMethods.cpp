@@ -43,7 +43,7 @@ std::unique_ptr<InitialNavigation> InitialNavigation::createFromPage(const Page&
     ASSERT(mainFrame.document());
 
     // Make sure that this is in sync with ReplayController::beginCapturing().
-    RefPtr<SecurityOrigin> originCopy = mainFrame.document()->securityOrigin()->isolatedCopy();
+    RefPtr<SecurityOrigin> originCopy = mainFrame.document()->securityOrigin().isolatedCopy();
     URL url = mainFrame.document()->url();
     String referrer = mainFrame.loader().referrer();
     return std::make_unique<InitialNavigation>(WTFMove(originCopy), url, referrer);

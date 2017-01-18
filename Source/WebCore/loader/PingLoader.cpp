@@ -88,7 +88,7 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
     ASSERT(frame.document());
     auto& document = *frame.document();
 
-    if (!document.securityOrigin()->canDisplay(url)) {
+    if (!document.securityOrigin().canDisplay(url)) {
         FrameLoader::reportLocalLoadFailed(&frame, url);
         return;
     }
@@ -129,13 +129,12 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
     frame.loader().addExtraFieldsToSubresourceRequest(request);
 
-    ASSERT(document.securityOrigin());
-    auto& sourceOrigin = *document.securityOrigin();
+    auto& sourceOrigin = document.securityOrigin();
     FrameLoader::addHTTPOriginIfNeeded(request, sourceOrigin.toString());
     request.setHTTPHeaderField(HTTPHeaderName::PingTo, destinationURL);
     if (!SecurityPolicy::shouldHideReferrer(pingURL, frame.loader().outgoingReferrer())) {
         request.setHTTPHeaderField(HTTPHeaderName::PingFrom, document.url());
-        if (!sourceOrigin.isSameSchemeHostPort(SecurityOrigin::create(pingURL).ptr())) {
+        if (!sourceOrigin.isSameSchemeHostPort(SecurityOrigin::create(pingURL).get())) {
             String referrer = SecurityPolicy::generateReferrerHeader(document.referrerPolicy(), pingURL, frame.loader().outgoingReferrer());
             if (!referrer.isEmpty())
                 request.setHTTPReferrer(referrer);
@@ -168,10 +167,8 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
     }
 
     bool removeCookies = true;
-    if (auto* securityOrigin = document.securityOrigin()) {
-        if (securityOrigin->isSameSchemeHostPort(SecurityOrigin::create(reportURL).ptr()))
-            removeCookies = false;
-    }
+    if (document.securityOrigin().isSameSchemeHostPort(SecurityOrigin::create(reportURL).get()))
+        removeCookies = false;
     if (removeCookies)
         request.setAllowCookies(false);
 

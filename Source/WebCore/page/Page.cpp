@@ -566,10 +566,8 @@ bool Page::showAllPlugins() const
     if (m_showAllPlugins)
         return true;
 
-    if (Document* document = mainFrame().document()) {
-        if (SecurityOrigin* securityOrigin = document->securityOrigin())
-            return securityOrigin->isLocal();
-    }
+    if (Document* document = mainFrame().document())
+        return document->securityOrigin().isLocal();
 
     return false;
 }

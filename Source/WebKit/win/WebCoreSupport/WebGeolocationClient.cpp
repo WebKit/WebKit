@@ -90,7 +90,7 @@ void WebGeolocationClient::requestPermission(Geolocation* geolocation)
     }
 
     Frame* frame = geolocation->frame();
-    COMPtr<WebSecurityOrigin> origin(AdoptCOM, WebSecurityOrigin::createInstance(frame->document()->securityOrigin()));
+    COMPtr<WebSecurityOrigin> origin(AdoptCOM, WebSecurityOrigin::createInstance(&frame->document()->securityOrigin()));
     COMPtr<WebGeolocationPolicyListener> listener = WebGeolocationPolicyListener::createInstance(geolocation);
     HRESULT hr = uiDelegatePrivate2->decidePolicyForGeolocationRequest(m_webView.get(), kit(frame), origin.get(), listener.get());
     if (hr != E_NOTIMPL)

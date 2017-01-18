@@ -54,7 +54,7 @@ static double monotonicTimeToDocumentMilliseconds(Document* document, double sec
 
 static bool passesTimingAllowCheck(const ResourceResponse& response, Document* requestingDocument)
 {
-    RefPtr<SecurityOrigin> resourceOrigin = SecurityOrigin::create(response.url());
+    Ref<SecurityOrigin> resourceOrigin = SecurityOrigin::create(response.url());
     if (resourceOrigin->isSameSchemeHostPort(requestingDocument->securityOrigin()))
         return true;
 
@@ -65,7 +65,7 @@ static bool passesTimingAllowCheck(const ResourceResponse& response, Document* r
     if (timingAllowOriginString == "*")
         return true;
 
-    const String& securityOrigin = requestingDocument->securityOrigin()->toString();
+    const String& securityOrigin = requestingDocument->securityOrigin().toString();
     Vector<String> timingAllowOrigins;
     timingAllowOriginString.split(' ', timingAllowOrigins);
     for (auto& origin : timingAllowOrigins) {

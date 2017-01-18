@@ -169,7 +169,7 @@ bool WebSocketHandshake::secure() const
 
 String WebSocketHandshake::clientOrigin() const
 {
-    return m_document->securityOrigin()->toString();
+    return m_document->securityOrigin().toString();
 }
 
 String WebSocketHandshake::clientLocation() const

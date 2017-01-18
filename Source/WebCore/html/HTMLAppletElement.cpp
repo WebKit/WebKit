@@ -188,7 +188,7 @@ bool HTMLAppletElement::canEmbedJava() const
     if (!settings->isJavaEnabled())
         return false;
 
-    if (document().securityOrigin()->isLocal() && !settings->isJavaEnabledForLocalFiles())
+    if (document().securityOrigin().isLocal() && !settings->isJavaEnabledForLocalFiles())
         return false;
 
     return true;

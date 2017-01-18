@@ -1,3 +1,22 @@
+2017-01-18  Andreas Kling  <akling@apple.com>
+
+        Document::securityOrigin() should return a reference.
+        <https://webkit.org/b/167124>
+
+        Reviewed by Sam Weinig.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::load):
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::exceededDatabaseQuota):
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::didRunInsecureContent):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebGeolocationClient.cpp:
+        (WebGeolocationClient::requestPermission):
+        * WebFrame.cpp:
+        (WebFrame::allowsFollowingLink):
+
 2017-01-15  Darin Adler  <darin@apple.com>
 
         Remove PassRefPtr from "loader" directory of WebCore

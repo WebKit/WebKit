@@ -411,7 +411,7 @@ void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, const MediaQueryEvalu
             addRulesFromSheet(*rule->styleSheet(), medium, resolver);
     }
 
-    bool hasDocumentSecurityOrigin = resolver && resolver->document().securityOrigin()->canRequest(sheet.baseURL());
+    bool hasDocumentSecurityOrigin = resolver && resolver->document().securityOrigin().canRequest(sheet.baseURL());
     AddRuleFlags addRuleFlags = static_cast<AddRuleFlags>((hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : 0));
 
     // FIXME: Skip Content Security Policy check when stylesheet is in a user agent shadow tree.

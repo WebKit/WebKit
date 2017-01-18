@@ -782,7 +782,7 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
             return NPERR_GENERIC_ERROR;
         }
     } else {
-        if (!core([m_pluginView webFrame])->document()->securityOrigin()->canDisplay(URL))
+        if (!core([m_pluginView webFrame])->document()->securityOrigin().canDisplay(URL))
             return NPERR_GENERIC_ERROR;
     }
     

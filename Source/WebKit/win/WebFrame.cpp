@@ -1253,7 +1253,7 @@ HRESULT WebFrame::allowsFollowingLink(_In_ BSTR url, _Out_ BOOL* result)
     if (!frame)
         return E_UNEXPECTED;
 
-    *result = frame->document()->securityOrigin()->canDisplay(MarshallingHelpers::BSTRToKURL(url));
+    *result = frame->document()->securityOrigin().canDisplay(MarshallingHelpers::BSTRToKURL(url));
     return S_OK;
 }
 

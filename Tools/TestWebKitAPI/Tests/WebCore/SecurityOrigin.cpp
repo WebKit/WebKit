@@ -77,11 +77,11 @@ TEST_F(SecurityOriginTest, SecurityOriginConstructors)
     EXPECT_EQ("http://example.com", o5->toString());
     EXPECT_EQ("http://example.com", o6->toString());
 
-    EXPECT_TRUE(o1->isSameOriginAs(o2.ptr()));
-    EXPECT_TRUE(o1->isSameOriginAs(o3.ptr()));
-    EXPECT_TRUE(o1->isSameOriginAs(o4.ptr()));
-    EXPECT_TRUE(o1->isSameOriginAs(o5.ptr()));
-    EXPECT_TRUE(o1->isSameOriginAs(o6.ptr()));
+    EXPECT_TRUE(o1->isSameOriginAs(o2.get()));
+    EXPECT_TRUE(o1->isSameOriginAs(o3.get()));
+    EXPECT_TRUE(o1->isSameOriginAs(o4.get()));
+    EXPECT_TRUE(o1->isSameOriginAs(o5.get()));
+    EXPECT_TRUE(o1->isSameOriginAs(o6.get()));
 }
 
 } // namespace TestWebKitAPI

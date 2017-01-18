@@ -1064,7 +1064,7 @@ void WebFrameLoaderClient::didDisplayInsecureContent()
     webPage->send(Messages::WebPageProxy::DidDisplayInsecureContentForFrame(m_frame->frameID(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin*, const URL&)
+void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin&, const URL&)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)

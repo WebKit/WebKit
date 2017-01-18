@@ -231,11 +231,7 @@ String WebKitMediaKeySession::mediaKeysStorageDirectory() const
     if (storageDirectory.isEmpty())
         return emptyString();
 
-    auto* origin = document->securityOrigin();
-    if (!origin)
-        return emptyString();
-
-    return pathByAppendingComponent(storageDirectory, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
+    return pathByAppendingComponent(storageDirectory, SecurityOriginData::fromSecurityOrigin(document->securityOrigin()).databaseIdentifier());
 }
 
 bool WebKitMediaKeySession::hasPendingActivity() const
