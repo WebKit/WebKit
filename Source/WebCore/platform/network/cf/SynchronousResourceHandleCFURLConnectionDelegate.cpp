@@ -65,6 +65,8 @@ void SynchronousResourceHandleCFURLConnectionDelegate::setupRequest(CFMutableURL
 {
 #if PLATFORM(IOS)
     CFURLRequestSetShouldStartSynchronously(request, 1);
+#else
+    UNUSED_PARAM(request);
 #endif
 }
 
@@ -259,13 +261,13 @@ Boolean SynchronousResourceHandleCFURLConnectionDelegate::canRespondToProtection
 
     LOG(Network, "CFNet - SynchronousResourceHandleCFURLConnectionDelegate::canRespondToProtectionSpace(handle=%p (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
-#if PLATFORM(IOS)
     ProtectionSpace coreProtectionSpace = ProtectionSpace(protectionSpace);
+#if PLATFORM(IOS)
     if (coreProtectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeUnknown)
         return false;
     return m_handle->canAuthenticateAgainstProtectionSpace(coreProtectionSpace);
 #else
-    return m_handle->canAuthenticateAgainstProtectionSpace(core(protectionSpace));
+    return m_handle->canAuthenticateAgainstProtectionSpace(coreProtectionSpace);
 #endif
 }
 #endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)

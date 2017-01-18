@@ -93,6 +93,7 @@ CFURLAuthChallengeRef createCF(const AuthenticationChallenge& coreChallenge)
     return result;
 }
 
+#if !PLATFORM(COCOA)
 CFURLCredentialRef createCF(const Credential& coreCredential)
 {
     CFURLCredentialPersistence persistence = kCFURLCredentialPersistenceNone;
@@ -274,6 +275,7 @@ ProtectionSpace core(CFURLProtectionSpaceRef cfSpace)
                            CFURLProtectionSpaceGetRealm(cfSpace),
                            scheme);
 }
+#endif
 
 }
 

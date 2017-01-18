@@ -50,26 +50,6 @@ void ResourceRequest::updateNSURLRequest()
         m_nsRequest = adoptNS([[NSMutableURLRequest alloc] _initWithCFURLRequest:m_cfRequest.get()]);
 }
 
-void ResourceRequest::clearOrUpdateNSURLRequest()
-{
-    // There is client code that extends NSURLRequest and expects to get back, in the delegate
-    // callbacks, an object of the same type that they passed into WebKit. To keep then running, we
-    // create an object of the same type and return that. See <rdar://9843582>.
-    // Also, developers really really want an NSMutableURLRequest so try to create an
-    // NSMutableURLRequest instead of NSURLRequest.
-    static Class nsURLRequestClass = [NSURLRequest class];
-    static Class nsMutableURLRequestClass = [NSMutableURLRequest class];
-    Class requestClass = [m_nsRequest.get() class];
-
-    if (!m_cfRequest)
-        return;
-
-    if (requestClass && requestClass != nsURLRequestClass && requestClass != nsMutableURLRequestClass)
-        m_nsRequest = adoptNS([[requestClass alloc] _initWithCFURLRequest:m_cfRequest.get()]);
-    else
-        m_nsRequest = nullptr;
-}
-
 #endif // USE(CFURLCONNECTION)
 
 } // namespace WebCore

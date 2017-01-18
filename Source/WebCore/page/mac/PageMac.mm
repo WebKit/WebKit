@@ -51,7 +51,11 @@ void Page::platformInitialize()
     addSchedulePair(SchedulePair::create(WebThreadNSRunLoop(), kCFRunLoopCommonModes));
 #endif // USE(CFURLCONNECTION)
 #else
+#if USE(CFURLCONNECTION)
+    addSchedulePair(SchedulePair::create([[NSRunLoop currentRunLoop] getCFRunLoop], kCFRunLoopCommonModes));
+#else
     addSchedulePair(SchedulePair::create([NSRunLoop currentRunLoop], kCFRunLoopCommonModes));
+#endif
 #endif
 
 #if ENABLE(TREE_DEBUGGING)

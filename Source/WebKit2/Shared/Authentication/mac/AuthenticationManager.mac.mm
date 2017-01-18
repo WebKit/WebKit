@@ -31,6 +31,7 @@
 #include <Security/SecIdentity.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 
@@ -80,16 +81,26 @@ bool AuthenticationManager::tryUseCertificateInfoForChallenge(const Authenticati
         LOG_ERROR("Unable to create SecIdentityRef with certificate - %i", result);
         if (completionHandler)
             completionHandler(AuthenticationChallengeDisposition::Cancel, { });
-        else
+        else {
+#if USE(CFURLCONNECTION)
+            notImplemented();
+#else
             [challenge.sender() cancelAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
+#endif
+        }
         return true;
     }
 
     NSURLCredential *credential = [NSURLCredential credentialWithIdentity:identity certificates:chain(certificateInfo) persistence:NSURLCredentialPersistenceNone];
     if (completionHandler)
         completionHandler(AuthenticationChallengeDisposition::UseCredential, Credential(credential));
-    else
+    else {
+#if USE(CFURLCONNECTION)
+        notImplemented();
+#else
         [challenge.sender() useCredential:credential forAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
+#endif
+    }
     return true;
 }
 

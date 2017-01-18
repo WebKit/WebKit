@@ -1,5 +1,26 @@
 2017-01-18  Alex Christensen  <achristensen@webkit.org>
 
+        Fix CFURLConnection build on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=167168
+
+        Reviewed by Andy Estes.
+
+        * NetworkProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::resume):
+        (WebKit::Download::platformDidFinish):
+        (WebKit::Download::platformCancelNetworkLoad):
+        (WebKit::Download::startNetworkLoadWithHandle):
+        (WebKit::Download::startNetworkLoad):
+        (WebKit::Download::platformInvalidate):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::allowsSpecificHTTPSCertificateForHost):
+        (WebKit::serverTrustCredential):
+        * Shared/Authentication/mac/AuthenticationManager.mac.mm:
+        (WebKit::AuthenticationManager::tryUseCertificateInfoForChallenge):
+        * config.h:
+
+2017-01-18  Alex Christensen  <achristensen@webkit.org>
+
         Modernize DelayedReply IPC code
         https://bugs.webkit.org/show_bug.cgi?id=167176
 

@@ -1,3 +1,28 @@
+2017-01-18  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CFURLConnection build on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=167168
+
+        Reviewed by Andy Estes.
+
+        This is old code, and it hurts to do this, but I need this working to compare with Windows
+        to get the ResourceHandleCFURLConnectionDelegateWithOperationQueue working so we can make
+        loading asynchronous in WebCore.
+
+        * page/mac/PageMac.mm:
+        (WebCore::Page::platformInitialize):
+        * platform/network/cf/AuthenticationCF.cpp:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::setupRequest):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::canRespondToProtectionSpace):
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::clearOrUpdateNSURLRequest):
+        Moved from iOS-specific file.  It's needed on Mac using CFURLConnection, too.
+        * platform/network/ios/ResourceRequestIOS.mm:
+        (WebCore::ResourceRequest::clearOrUpdateNSURLRequest): Deleted.
+
 2017-01-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r210531): Broke local resource loads from custom local protocols

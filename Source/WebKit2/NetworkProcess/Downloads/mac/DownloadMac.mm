@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Download.h"
 
-#if !USE(CFURLCONNECTION) && !USE(NETWORK_SESSION)
+#if !USE(NETWORK_SESSION)
 
 #import <WebCore/AuthenticationChallenge.h>
 #import <WebCore/AuthenticationMac.h>
@@ -37,6 +37,44 @@
 #import <WebCore/ResourceResponse.h>
 #import "DataReference.h"
 #import "WebPage.h"
+
+#if USE(CFURLCONNECTION)
+
+namespace WebKit {
+
+void Download::resume(const IPC::DataReference&, const String&, const SandboxExtension::Handle&)
+{
+    notImplemented();
+}
+
+void Download::platformDidFinish()
+{
+    notImplemented();
+}
+
+void Download::platformCancelNetworkLoad()
+{
+    notImplemented();
+}
+
+void Download::startNetworkLoadWithHandle(WebCore::ResourceHandle*, const WebCore::ResourceResponse&)
+{
+    notImplemented();
+}
+
+void Download::startNetworkLoad()
+{
+    notImplemented();
+}
+
+void Download::platformInvalidate()
+{
+    notImplemented();
+}
+
+}
+
+#else
 
 @interface WKDownloadAsDelegate : NSObject <NSURLDownloadDelegate> {
     WebKit::Download* _download;
@@ -272,4 +310,5 @@ static void dispatchOnMainThread(void (^block)())
 
 @end
 
-#endif // !USE(CFURLCONNECTION) && !USE(NETWORK_SESSION)
+#endif // USE(CFURLCONNECTION)
+#endif // !USE(NETWORK_SESSION)

@@ -40,6 +40,7 @@
 #import <WebCore/CFNetworkSPI.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/NetworkStorageSession.h>
+#import <WebCore/NotImplemented.h>
 #import <WebCore/ResourceRequest.h>
 #import <wtf/MainThread.h>
 #import <wtf/text/Base64.h>
@@ -278,6 +279,7 @@ void NetworkDataTaskCocoa::transferSandboxExtensionToDownload(Download& download
     download.setSandboxExtension(WTFMove(m_sandboxExtension));
 }
 
+#if !USE(CFURLCONNECTION)
 static bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
 {
     if (!trust1 || !trust2)
@@ -299,6 +301,7 @@ static bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
 
     return true;
 }
+#endif
 
 bool NetworkDataTaskCocoa::allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge& challenge)
 {
@@ -315,7 +318,12 @@ bool NetworkDataTaskCocoa::allowsSpecificHTTPSCertificateForHost(const WebCore::
         return false;
     RetainPtr<SecTrustRef> trust = adoptCF(trustRef);
 
+#if USE(CFURLCONNECTION)
+    notImplemented();
+    return false;
+#else
     return certificatesMatch(trust.get(), challenge.nsURLAuthenticationChallenge().protectionSpace.serverTrust);
+#endif
 }
 
 String NetworkDataTaskCocoa::suggestedFilename() const
@@ -363,7 +371,12 @@ NetworkDataTask::State NetworkDataTaskCocoa::state() const
 
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge& challenge)
 {
+#if USE(CFURLCONNECTION)
+    notImplemented();
+    return { };
+#else
     return WebCore::Credential([NSURLCredential credentialForTrust:challenge.nsURLAuthenticationChallenge().protectionSpace.serverTrust]);
+#endif
 }
 
 }
