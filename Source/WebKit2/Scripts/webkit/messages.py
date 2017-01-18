@@ -118,7 +118,7 @@ def message_to_struct_declaration(message):
         if message.has_attribute(DELAYED_ATTRIBUTE):
             send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
             result.append('    struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {\n')
-            result.append('        DelayedReply(PassRefPtr<IPC::Connection>, std::unique_ptr<IPC::Encoder>);\n')
+            result.append('        DelayedReply(Ref<IPC::Connection>&&, std::unique_ptr<IPC::Encoder>);\n')
             result.append('        ~DelayedReply();\n')
             result.append('\n')
             result.append('        bool send(%s);\n' % ', '.join([' '.join(x) for x in send_parameters]))
@@ -486,8 +486,8 @@ def generate_message_handler(file):
             if message.condition:
                 result.append('#if %s\n\n' % message.condition)
 
-            result.append('%s::DelayedReply::DelayedReply(PassRefPtr<IPC::Connection> connection, std::unique_ptr<IPC::Encoder> encoder)\n' % message.name)
-            result.append('    : m_connection(connection)\n')
+            result.append('%s::DelayedReply::DelayedReply(Ref<IPC::Connection>&& connection, std::unique_ptr<IPC::Encoder> encoder)\n' % message.name)
+            result.append('    : m_connection(WTFMove(connection))\n')
             result.append('    , m_encoder(WTFMove(encoder))\n')
             result.append('{\n')
             result.append('}\n')

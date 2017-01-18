@@ -416,14 +416,12 @@ void WebProcessPool::networkProcessCrashed(NetworkProcessProxy* networkProcessPr
     m_networkProcess = nullptr;
 }
 
-void WebProcessPool::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)
+void WebProcessPool::getNetworkProcessConnection(Ref<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>&& reply)
 {
-    ASSERT(reply);
-
     ensureNetworkProcess();
     ASSERT(m_networkProcess);
 
-    m_networkProcess->getNetworkProcessConnection(reply);
+    m_networkProcess->getNetworkProcessConnection(WTFMove(reply));
 }
 
 #if ENABLE(DATABASE_PROCESS)
@@ -448,13 +446,11 @@ void WebProcessPool::ensureDatabaseProcess()
     m_databaseProcess->send(Messages::DatabaseProcess::InitializeDatabaseProcess(parameters), 0);
 }
 
-void WebProcessPool::getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply> reply)
+void WebProcessPool::getDatabaseProcessConnection(Ref<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>&& reply)
 {
-    ASSERT(reply);
-
     ensureDatabaseProcess();
 
-    m_databaseProcess->getDatabaseProcessConnection(reply);
+    m_databaseProcess->getDatabaseProcessConnection(WTFMove(reply));
 }
 
 void WebProcessPool::databaseProcessCrashed(DatabaseProcessProxy* databaseProcessProxy)

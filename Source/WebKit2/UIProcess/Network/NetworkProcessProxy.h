@@ -59,7 +59,7 @@ public:
     static Ref<NetworkProcessProxy> create(WebProcessPool&);
     ~NetworkProcessProxy();
 
-    void getNetworkProcessConnection(RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>&&);
+    void getNetworkProcessConnection(Ref<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>&&);
 
     DownloadProxy* createDownloadProxy(const WebCore::ResourceRequest&);
 
@@ -122,7 +122,7 @@ private:
     WebProcessPool& m_processPool;
     
     unsigned m_numPendingConnectionRequests;
-    Deque<RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> m_pendingConnectionReplies;
+    Deque<Ref<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> m_pendingConnectionReplies;
 
     HashMap<uint64_t, std::function<void (WebsiteData)>> m_pendingFetchWebsiteDataCallbacks;
     HashMap<uint64_t, std::function<void ()>> m_pendingDeleteWebsiteDataCallbacks;

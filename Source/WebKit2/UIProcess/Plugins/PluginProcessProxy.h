@@ -76,7 +76,7 @@ public:
 
     // Asks the plug-in process to create a new connection to a web process. The connection identifier will be
     // encoded in the given argument encoder and sent back to the connection of the given web process.
-    void getPluginProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
+    void getPluginProcessConnection(Ref<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>&&);
 
     void fetchWebsiteData(std::function<void (Vector<String>)> completionHandler);
     void deleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);

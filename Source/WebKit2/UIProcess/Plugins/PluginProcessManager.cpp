@@ -79,12 +79,12 @@ uint64_t PluginProcessManager::pluginProcessToken(const PluginModuleInfo& plugin
     return token;
 }
 
-void PluginProcessManager::getPluginProcessConnection(uint64_t pluginProcessToken, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
+void PluginProcessManager::getPluginProcessConnection(uint64_t pluginProcessToken, Ref<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>&& reply)
 {
     ASSERT(pluginProcessToken);
 
     PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken);
-    pluginProcess->getPluginProcessConnection(reply);
+    pluginProcess->getPluginProcessConnection(WTFMove(reply));
 }
 
 void PluginProcessManager::removePluginProcessProxy(PluginProcessProxy* pluginProcessProxy)

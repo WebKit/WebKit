@@ -58,7 +58,7 @@ public:
 
     uint64_t pluginProcessToken(const PluginModuleInfo&, PluginProcessType, PluginProcessSandboxPolicy);
 
-    void getPluginProcessConnection(uint64_t pluginProcessToken, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
+    void getPluginProcessConnection(uint64_t pluginProcessToken, Ref<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>&&);
     void removePluginProcessProxy(PluginProcessProxy*);
 
     void fetchWebsiteData(const PluginModuleInfo&, std::function<void (Vector<String>)> completionHandler);

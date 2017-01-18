@@ -99,9 +99,9 @@ void PluginProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 // Asks the plug-in process to create a new connection to a web process. The connection identifier will be 
 // encoded in the given argument encoder and sent back to the connection of the given web process.
-void PluginProcessProxy::getPluginProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
+void PluginProcessProxy::getPluginProcessConnection(Ref<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>&& reply)
 {
-    m_pendingConnectionReplies.append(reply);
+    m_pendingConnectionReplies.append(WTFMove(reply));
 
     if (state() == State::Launching) {
         m_numPendingConnectionRequests++;

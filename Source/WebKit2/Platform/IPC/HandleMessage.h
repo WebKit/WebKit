@@ -63,15 +63,15 @@ void callMemberFunction(ArgsTuple&& args, ReplyArgsTuple& replyArgs, C* object, 
 // Dispatch functions with delayed reply arguments.
 
 template <typename C, typename MF, typename R, typename ArgsTuple, size_t... ArgsIndex>
-void callMemberFunctionImpl(C* object, MF function, PassRefPtr<R> delayedReply, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
+void callMemberFunctionImpl(C* object, MF function, Ref<R>&& delayedReply, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
 {
-    (object->*function)(std::get<ArgsIndex>(args)..., delayedReply);
+    (object->*function)(std::get<ArgsIndex>(args)..., WTFMove(delayedReply));
 }
 
 template<typename C, typename MF, typename R, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>
-void callMemberFunction(ArgsTuple&& args, PassRefPtr<R> delayedReply, C* object, MF function)
+void callMemberFunction(ArgsTuple&& args, Ref<R>&& delayedReply, C* object, MF function)
 {
-    callMemberFunctionImpl(object, function, delayedReply, std::forward<ArgsTuple>(args), ArgsIndicies());
+    callMemberFunctionImpl(object, function, WTFMove(delayedReply), std::forward<ArgsTuple>(args), ArgsIndicies());
 }
 
 // Dispatch functions with connection parameter with no reply arguments.
@@ -174,8 +174,8 @@ void handleMessageDelayed(Connection& connection, Decoder& decoder, std::unique_
         return;
     }
 
-    RefPtr<typename T::DelayedReply> delayedReply = adoptRef(new typename T::DelayedReply(&connection, WTFMove(replyEncoder)));
-    callMemberFunction(WTFMove(arguments), PassRefPtr<typename T::DelayedReply>(WTFMove(delayedReply)), object, function);
+    Ref<typename T::DelayedReply> delayedReply = adoptRef(*new typename T::DelayedReply(connection, WTFMove(replyEncoder)));
+    callMemberFunction(WTFMove(arguments), WTFMove(delayedReply), object, function);
 }
 
 } // namespace IPC
