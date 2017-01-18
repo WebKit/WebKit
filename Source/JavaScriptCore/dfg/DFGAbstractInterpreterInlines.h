@@ -1650,6 +1650,20 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).setType(SpecBytecodeNumber);
         break;
+
+    case ArraySlice: {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+
+        // FIXME: We could do better here if we prove that the
+        // incoming value has only a single structure.
+        StructureSet structureSet;
+        structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithInt32));
+        structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous));
+        structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithDouble));
+
+        forNode(node).set(m_graph, structureSet);
+        break;
+    }
             
     case ArrayPop:
         clobberWorld(node->origin.semantic, clobberLimit);

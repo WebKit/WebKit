@@ -860,6 +860,7 @@ private:
             break;
         }
             
+        case ArraySlice:
         case NewArrayWithSpread:
         case NewArray:
         case NewArrayWithSize:

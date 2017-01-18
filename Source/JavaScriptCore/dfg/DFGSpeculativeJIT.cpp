@@ -7169,6 +7169,182 @@ void SpeculativeJIT::compileGetRestLength(Node* node)
     int32Result(resultGPR, node);
 }
 
+void SpeculativeJIT::compileArraySlice(Node* node)
+{
+    ASSERT(node->op() == ArraySlice);
+
+    JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
+
+    GPRTemporary temp(this);
+    StorageOperand storage(this, node->numChildren() == 3 ? m_jit.graph().varArgChild(node, 2) : m_jit.graph().varArgChild(node, 3));
+    GPRTemporary result(this);
+    
+    GPRReg storageGPR = storage.gpr();
+    GPRReg resultGPR = result.gpr();
+    GPRReg tempGPR = temp.gpr();
+
+    auto populateIndex = [&] (unsigned childIndex, GPRReg length, GPRReg result) {
+        SpeculateInt32Operand index(this, m_jit.graph().varArgChild(node, childIndex));
+        GPRReg indexGPR = index.gpr();
+        MacroAssembler::JumpList done;
+        auto isPositive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, indexGPR, TrustedImm32(0));
+        m_jit.move(length, result);
+        done.append(m_jit.branchAdd32(MacroAssembler::PositiveOrZero, indexGPR, result));
+        m_jit.move(TrustedImm32(0), result);
+        done.append(m_jit.jump());
+
+        isPositive.link(&m_jit);
+        m_jit.move(indexGPR, result);
+        done.append(m_jit.branch32(MacroAssembler::BelowOrEqual, result, length));
+        m_jit.move(length, result);
+
+        done.link(&m_jit);
+    };
+
+    {
+        GPRTemporary tempLength(this);
+        GPRReg lengthGPR = tempLength.gpr();
+        m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), lengthGPR);
+
+        if (node->numChildren() == 4)
+            populateIndex(2, lengthGPR, tempGPR);
+        else
+            m_jit.move(lengthGPR, tempGPR);
+
+        GPRTemporary tempStartIndex(this);
+        GPRReg startGPR = tempStartIndex.gpr();
+        populateIndex(1, lengthGPR, startGPR);
+
+        auto tooBig = m_jit.branch32(MacroAssembler::Above, startGPR, tempGPR);
+        m_jit.sub32(startGPR, tempGPR); // the size of the array we'll make.
+        auto done = m_jit.jump();
+
+        tooBig.link(&m_jit);
+        m_jit.move(TrustedImm32(0), tempGPR);
+        done.link(&m_jit);
+    }
+
+
+    GPRTemporary temp3(this);
+    GPRReg tempValue = temp3.gpr();
+    {
+        SpeculateCellOperand cell(this, m_jit.graph().varArgChild(node, 0));
+        m_jit.load8(MacroAssembler::Address(cell.gpr(), JSCell::indexingTypeAndMiscOffset()), tempValue);
+        m_jit.and32(TrustedImm32(AllArrayTypesAndHistory), tempValue);
+    }
+
+    {
+#if USE(JSVALUE64)
+        GPRTemporary emptyValue(this);
+        JSValueRegs emptyValueRegs = JSValueRegs(emptyValue.gpr());
+#else
+        GPRTemporary emptyValuePayload(this);
+        GPRTemporary emptyValueTag(this);
+        JSValueRegs emptyValueRegs(emptyValueTag.gpr(), emptyValuePayload.gpr());
+#endif
+
+        GPRTemporary storage(this);
+        GPRReg storageResultGPR = storage.gpr();
+
+        GPRReg sizeGPR = tempGPR; 
+
+        CCallHelpers::JumpList done;
+
+        auto emitMoveEmptyValue = [&] (JSValue v) {
+#if USE(JSVALUE64)
+            m_jit.move(TrustedImm64(JSValue::encode(v)), emptyValueRegs.gpr());
+#else
+            m_jit.move(TrustedImm32(v.tag()), emptyValueRegs.tagGPR());
+            m_jit.move(TrustedImm32(v.payload()), emptyValueRegs.payloadGPR());
+#endif
+        };
+
+        auto isContiguous = m_jit.branch32(MacroAssembler::Equal, tempValue, TrustedImm32(ArrayWithContiguous));
+        auto isInt32 = m_jit.branch32(MacroAssembler::Equal, tempValue, TrustedImm32(ArrayWithInt32));
+        // When we emit an ArraySlice, we dominate the use of the array by a CheckStructure
+        // to ensure the incoming array is one to be one of the original array structures
+        // with one of the following indexing shapes: Int32, Contiguous, Double. Therefore,
+        // we're a double array here.
+        m_jit.move(TrustedImmPtr(globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithDouble)), tempValue);
+        emitMoveEmptyValue(jsNaN());
+        done.append(m_jit.jump());
+
+        isContiguous.link(&m_jit);
+        m_jit.move(TrustedImmPtr(globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous)), tempValue);
+        emitMoveEmptyValue(JSValue());
+        done.append(m_jit.jump());
+
+        isInt32.link(&m_jit);
+        m_jit.move(TrustedImmPtr(globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithInt32)), tempValue);
+        emitMoveEmptyValue(JSValue());
+
+        done.link(&m_jit);
+
+        {
+            GPRTemporary scratch(this);
+            GPRTemporary scratch2(this);
+            GPRReg scratchGPR = scratch.gpr();
+            GPRReg scratch2GPR = scratch2.gpr();
+
+            MacroAssembler::JumpList slowCases;
+            m_jit.move(TrustedImmPtr(0), storageResultGPR);
+
+            emitAllocateButterfly(storageResultGPR, sizeGPR, scratchGPR, scratch2GPR, resultGPR, slowCases);
+            emitInitializeButterfly(storageResultGPR, sizeGPR, emptyValueRegs, scratchGPR);
+            emitAllocateJSObject<JSArray>(resultGPR, tempValue, storageResultGPR, scratchGPR, scratch2GPR, slowCases);
+            m_jit.mutatorFence();
+
+            addSlowPathGenerator(std::make_unique<CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator>(
+                slowCases, this, operationNewArrayWithSize, resultGPR, tempValue, sizeGPR, storageResultGPR, scratchGPR));
+        }
+    }
+
+    GPRTemporary temp4(this);
+    GPRReg loadIndex = temp4.gpr();
+
+    m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), tempValue);
+    if (node->numChildren() == 4)
+        populateIndex(2, tempValue, tempGPR);
+    else
+        m_jit.move(tempValue, tempGPR);
+    populateIndex(1, tempValue, loadIndex);
+
+    GPRTemporary temp5(this);
+    GPRReg storeIndex = temp5.gpr();
+    m_jit.move(TrustedImmPtr(0), storeIndex);
+
+    GPRTemporary temp2(this);
+    GPRReg resultButterfly = temp2.gpr();
+
+    m_jit.loadPtr(MacroAssembler::Address(resultGPR, JSObject::butterflyOffset()), resultButterfly);
+    m_jit.zeroExtend32ToPtr(tempGPR, tempGPR);
+    m_jit.zeroExtend32ToPtr(loadIndex, loadIndex);
+    auto done = m_jit.branchPtr(MacroAssembler::AboveOrEqual, loadIndex, tempGPR);
+
+    auto loop = m_jit.label();
+#if USE(JSVALUE64)
+    m_jit.load64(
+        MacroAssembler::BaseIndex(storageGPR, loadIndex, MacroAssembler::TimesEight), tempValue);
+    m_jit.store64(
+        tempValue, MacroAssembler::BaseIndex(resultButterfly, storeIndex, MacroAssembler::TimesEight));
+#else
+    m_jit.load32(
+        MacroAssembler::BaseIndex(storageGPR, loadIndex, MacroAssembler::TimesEight, PayloadOffset), tempValue);
+    m_jit.store32(
+        tempValue, MacroAssembler::BaseIndex(resultButterfly, storeIndex, MacroAssembler::TimesEight, PayloadOffset));
+    m_jit.load32(
+        MacroAssembler::BaseIndex(storageGPR, loadIndex, MacroAssembler::TimesEight, TagOffset), tempValue);
+    m_jit.store32(
+        tempValue, MacroAssembler::BaseIndex(resultButterfly, storeIndex, MacroAssembler::TimesEight, TagOffset));
+#endif // USE(JSVALUE64)
+    m_jit.addPtr(TrustedImm32(1), loadIndex);
+    m_jit.addPtr(TrustedImm32(1), storeIndex);
+    m_jit.branchPtr(MacroAssembler::Below, loadIndex, tempGPR).linkTo(loop, &m_jit);
+
+    done.link(&m_jit);
+    cellResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileNotifyWrite(Node* node)
 {
     WatchpointSet* set = node->watchpointSet();
@@ -9379,6 +9555,21 @@ void SpeculativeJIT::compileDefineAccessorProperty(Node* node)
     }
 
     noResult(node, UseChildrenCalledExplicitly);
+}
+
+void SpeculativeJIT::emitAllocateButterfly(GPRReg storageResultGPR, GPRReg sizeGPR, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, MacroAssembler::JumpList& slowCases)
+{
+    RELEASE_ASSERT(RegisterSet(storageResultGPR, sizeGPR, scratch1, scratch2, scratch3).numberOfSetGPRs() == 5);
+    ASSERT((1 << 3) == sizeof(JSValue));
+    m_jit.zeroExtend32ToPtr(sizeGPR, scratch1);
+    m_jit.lshift32(TrustedImm32(3), scratch1);
+    m_jit.add32(TrustedImm32(sizeof(IndexingHeader)), scratch1, scratch2);
+    m_jit.emitAllocateVariableSized(
+        storageResultGPR, m_jit.vm()->heap.subspaceForAuxiliaryData(), scratch2, scratch1, scratch3, slowCases);
+    m_jit.addPtr(TrustedImm32(sizeof(IndexingHeader)), storageResultGPR);
+
+    m_jit.store32(sizeGPR, MacroAssembler::Address(storageResultGPR, Butterfly::offsetOfPublicLength()));
+    m_jit.store32(sizeGPR, MacroAssembler::Address(storageResultGPR, Butterfly::offsetOfVectorLength()));
 }
 
 } } // namespace JSC::DFG

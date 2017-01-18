@@ -309,6 +309,7 @@ bool doesGC(Graph& graph, Node* node)
     case ToLowerCase:
     case CallDOMGetter:
     case CallDOM:
+    case ArraySlice:
         return true;
         
     case MultiPutByOffset:

@@ -248,6 +248,7 @@ namespace JSC { namespace DFG {
     /* Optimizations for array mutation. */\
     macro(ArrayPush, NodeResultJS | NodeMustGenerate) \
     macro(ArrayPop, NodeResultJS | NodeMustGenerate) \
+    macro(ArraySlice, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     \
     /* Optimizations for regular expression matching. */\
     macro(RegExpExec, NodeResultJS | NodeMustGenerate) \

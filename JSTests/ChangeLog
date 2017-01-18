@@ -1,5 +1,45 @@
 2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210695. rdar://problem/29913445
+
+    2017-01-12  Saam Barati  <sbarati@apple.com>
+
+            Add a slice intrinsic to the DFG/FTL
+            https://bugs.webkit.org/show_bug.cgi?id=166707
+            <rdar://problem/29913445>
+
+            Reviewed by Filip Pizlo.
+
+            * stress/array-slice-intrinsic.js: Added.
+            (assert):
+            (shallowEq):
+            (runTest1):
+            (runTest2):
+            * stress/array-slice-jettison-on-constructor-change.js: Added.
+            (assert):
+            (runTest1):
+            (runTest2):
+            (addRandomProperties):
+            (runTests):
+            * stress/array-slice-osr-exit-2.js: Added.
+            (assert):
+            (Foo):
+            (shallowEq):
+            (runTest1):
+            (runTest2):
+            (addRandomProperties):
+            (runTests):
+            * stress/array-slice-osr-exit.js: Added.
+            (assert):
+            (Foo):
+            (shallowEq):
+            (runTest1):
+            (runTest2):
+            (addRandomProperties):
+            (runTests):
+
+2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210837. rdar://problem/29432371
 
     2017-01-17  Michael Saboff  <msaboff@apple.com>

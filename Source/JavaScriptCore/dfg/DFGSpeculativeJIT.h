@@ -743,6 +743,8 @@ public:
 
     void emitCall(Node*);
 
+    void emitAllocateButterfly(GPRReg storageGPR, GPRReg sizeGPR, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, MacroAssembler::JumpList& slowCases);
+    void emitInitializeButterfly(GPRReg storageGPR, GPRReg sizeGPR, JSValueRegs emptyValueRegs, GPRReg scratchGPR);
     void compileAllocateNewArrayWithSize(JSGlobalObject*, GPRReg resultGPR, GPRReg sizeGPR, IndexingType, bool shouldConvertLargeSizeToArrayStorage = true);
     
     // Called once a node has completed code generation but prior to setting
@@ -2680,6 +2682,7 @@ public:
     void compileSpread(Node*);
     void compileNewArrayWithSpread(Node*);
     void compileGetRestLength(Node*);
+    void compileArraySlice(Node*);
     void compileNotifyWrite(Node*);
     bool compileRegExpExec(Node*);
     void compileIsObjectOrNull(Node*);

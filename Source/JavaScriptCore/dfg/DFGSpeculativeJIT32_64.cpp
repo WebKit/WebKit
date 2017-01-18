@@ -3550,6 +3550,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ArraySlice: {
+        compileArraySlice(node);
+        break;
+    }
+
     case DFG::Jump: {
         jump(node->targetBlock());
         noResult(node);
@@ -5666,6 +5671,18 @@ void SpeculativeJIT::compileArithRandom(Node* node)
     doubleResult(result.fpr(), node);
 }
 
+void SpeculativeJIT::emitInitializeButterfly(GPRReg storageGPR, GPRReg sizeGPR, JSValueRegs emptyValueRegs, GPRReg scratchGPR)
+{
+    m_jit.move(sizeGPR, scratchGPR);
+    MacroAssembler::Jump done = m_jit.branchTest32(MacroAssembler::Zero, scratchGPR);
+    MacroAssembler::Label loop = m_jit.label();
+    m_jit.sub32(TrustedImm32(1), scratchGPR);
+    m_jit.store32(emptyValueRegs.tagGPR(), MacroAssembler::BaseIndex(storageGPR, scratchGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
+    m_jit.store32(emptyValueRegs.payloadGPR(), MacroAssembler::BaseIndex(storageGPR, scratchGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
+    m_jit.branchTest32(MacroAssembler::NonZero, scratchGPR).linkTo(loop, &m_jit);
+    done.link(&m_jit);
+}
+
 void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObject, GPRReg resultGPR, GPRReg sizeGPR, IndexingType indexingType, bool shouldConvertLargeSizeToArrayStorage)
 {
     GPRTemporary storage(this);
@@ -5681,34 +5698,21 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObjec
     MacroAssembler::JumpList slowCases;
     if (shouldConvertLargeSizeToArrayStorage)
         slowCases.append(m_jit.branch32(MacroAssembler::AboveOrEqual, sizeGPR, TrustedImm32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)));
-            
-    ASSERT((1 << 3) == sizeof(JSValue));
-    m_jit.move(sizeGPR, scratchGPR);
-    m_jit.lshift32(TrustedImm32(3), scratchGPR);
-    m_jit.add32(TrustedImm32(sizeof(IndexingHeader)), scratchGPR, resultGPR);
-    m_jit.emitAllocateVariableSized(
-        storageGPR, m_jit.vm()->heap.subspaceForAuxiliaryData(), resultGPR, scratchGPR,
-        scratch2GPR, slowCases);
-    m_jit.addPtr(TrustedImm32(sizeof(IndexingHeader)), storageGPR);
 
-    m_jit.store32(sizeGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
-    m_jit.store32(sizeGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
-            
+    // We can use result as a scratch for this.
+    emitAllocateButterfly(storageGPR, sizeGPR, scratchGPR, scratch2GPR, resultGPR, slowCases);
+
     JSValue hole;
     if (hasDouble(indexingType))
         hole = JSValue(JSValue::EncodeAsDouble, PNaN);
     else
         hole = JSValue();
+    JSValueRegs emptyValueRegs(scratchGPR, scratch2GPR);
+    m_jit.move(TrustedImm32(hole.tag()), emptyValueRegs.tagGPR());
+    m_jit.move(TrustedImm32(hole.payload()), emptyValueRegs.payloadGPR());
+    // We can use result as a scratch for this.
+    emitInitializeButterfly(storageGPR, sizeGPR, emptyValueRegs, resultGPR);
             
-    m_jit.move(sizeGPR, scratchGPR);
-    MacroAssembler::Jump done = m_jit.branchTest32(MacroAssembler::Zero, scratchGPR);
-    MacroAssembler::Label loop = m_jit.label();
-    m_jit.sub32(TrustedImm32(1), scratchGPR);
-    m_jit.store32(TrustedImm32(hole.u.asBits.tag), MacroAssembler::BaseIndex(storageGPR, scratchGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
-    m_jit.store32(TrustedImm32(hole.u.asBits.payload), MacroAssembler::BaseIndex(storageGPR, scratchGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
-    m_jit.branchTest32(MacroAssembler::NonZero, scratchGPR).linkTo(loop, &m_jit);
-    done.link(&m_jit);
-    
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
     emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, scratchGPR, scratch2GPR, slowCases);
             

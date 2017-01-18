@@ -124,6 +124,45 @@ private:
     Vector<SilentRegisterSavePlan, 2> m_plans;
 };
 
+class CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
+public:
+    CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator(
+        MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_EStZB function,
+        GPRReg resultGPR, GPRReg structureGPR, GPRReg sizeGPR, GPRReg storageGPR, GPRReg scratchGPR)
+        : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
+        , m_function(function)
+        , m_resultGPR(resultGPR)
+        , m_structureGPR(structureGPR)
+        , m_sizeGPR(sizeGPR)
+        , m_storageGPR(storageGPR)
+        , m_scratchGPR(scratchGPR)
+    {
+        jit->silentSpillAllRegistersImpl(false, m_plans, resultGPR, m_scratchGPR);
+    }
+
+protected:
+    void generateInternal(SpeculativeJIT* jit) override
+    {
+        linkFrom(jit);
+        for (unsigned i = 0; i < m_plans.size(); ++i)
+            jit->silentSpill(m_plans[i]);
+        jit->callOperation(m_function, m_resultGPR, m_structureGPR, m_sizeGPR, m_storageGPR);
+        for (unsigned i = m_plans.size(); i--;)
+            jit->silentFill(m_plans[i], m_scratchGPR);
+        jit->m_jit.exceptionCheck();
+        jumpTo(jit);
+    }
+    
+private:
+    P_JITOperation_EStZB m_function;
+    GPRReg m_resultGPR;
+    GPRReg m_structureGPR;
+    GPRReg m_sizeGPR;
+    GPRReg m_storageGPR;
+    GPRReg m_scratchGPR;
+    Vector<SilentRegisterSavePlan, 2> m_plans;
+};
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
