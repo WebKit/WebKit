@@ -67,7 +67,7 @@ void WebGamepad::updateValues(const GamepadData& gamepadData)
     m_axisValues = gamepadData.axisValues();
     m_buttonValues = gamepadData.buttonValues();
 
-    m_lastUpdateTime = monotonicallyIncreasingTime();
+    m_lastUpdateTime = gamepadData.lastUpdateTime();
 }
 
 }
