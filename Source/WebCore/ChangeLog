@@ -1,5 +1,25 @@
 2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210831. rdar://problem/29057611
+
+    2017-01-17  Zalan Bujtas  <zalan@apple.com>
+
+            Editing nested RTL-LTR content makes the process unresponsive.
+            https://bugs.webkit.org/show_bug.cgi?id=167140
+            rdar://problem/29057611
+
+            Reviewed by Ryosuke Niwa.
+
+            Break out of the loop if we keep coming back to the same position.
+            This is a workaround for the underlying editing/position bug -> webkit.org/b/167138.
+
+            Test: editing/rtl-to-ltr-editing-word-move-spin.html
+
+            * editing/VisibleUnits.cpp:
+            (WebCore::visualWordPosition):
+
+2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210795. rdar://problem/24457632
 
     2017-01-16  Antti Koivisto  <antti@apple.com>

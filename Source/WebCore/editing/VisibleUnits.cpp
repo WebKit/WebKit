@@ -352,6 +352,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
     TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
     InlineBox* previouslyVisitedBox = nullptr;
     VisiblePosition current = visiblePosition;
+    std::optional<VisiblePosition> previousPosition;
     UBreakIterator* iter = nullptr;
 
     CachedLogicallyOrderedLeafBoxes leafBoxes;
@@ -360,6 +361,9 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
     while (1) {
         VisiblePosition adjacentCharacterPosition = direction == MoveRight ? current.right(true) : current.left(true); 
         if (adjacentCharacterPosition == current || adjacentCharacterPosition.isNull())
+            return VisiblePosition();
+        // FIXME: This is a workaround for webkit.org/b/167138.
+        if (previousPosition && adjacentCharacterPosition == previousPosition.value())
             return VisiblePosition();
     
         InlineBox* box;
@@ -409,6 +413,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
         if (isWordBreak)
             return adjacentCharacterPosition;
     
+        previousPosition = current;
         current = adjacentCharacterPosition;
     }
     return VisiblePosition();
