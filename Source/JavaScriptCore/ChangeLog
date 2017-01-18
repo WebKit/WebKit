@@ -1,3 +1,13 @@
+2017-01-18  Filip Pizlo  <fpizlo@apple.com>
+
+        JSObjectSetPrivate should not use jsCast<>
+        rdar://problem/30069096
+
+        Reviewed by Keith Miller.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectSetPrivate):
+
 2017-01-18  Brian Burg  <bburg@apple.com>
 
         Web Inspector: remove an unnecessary include in generated Objective-C Inspector protocol code
