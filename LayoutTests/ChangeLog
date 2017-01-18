@@ -1,3 +1,15 @@
+2017-01-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        background-repeat-x doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=166997
+
+        Reviewed by Simon Fraser.
+
+        * fast/backgrounds/background-repeat-x-y-expected.html: Added.
+        * fast/backgrounds/background-repeat-x-y-parse-expected.txt: Added.
+        * fast/backgrounds/background-repeat-x-y-parse.html: Added.
+        * fast/backgrounds/background-repeat-x-y.html: Added.
+
 2017-01-18  Yoav Weiss  <yoav@yoav.ws>
 
         REGRESSION(r203110): LayoutTest http/tests/preload/single_download_preload_runner.html timing out

@@ -930,9 +930,8 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     // FIXME-NEWPARSER: Treat all as a keyword property.
     // case CSSPropertyAll:
 
-    // FIXME-NEWPARSER: Treat the following properties as keyword properties:
-    // case CSSPropertyBackgroundRepeatX:
-    // case CSSPropertyBackgroundRepeatY:
+    case CSSPropertyBackgroundRepeatX:
+    case CSSPropertyBackgroundRepeatY:
 
     // FIXME-NEWPARSER: Add the following unprefixed properties:
     // case CSSPropertyBackfaceVisibility:

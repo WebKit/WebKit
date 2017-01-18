@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.test {
+	display: inline-block;
+	width: 150px;
+	height: 150px;
+	background-image: url('resources/map.jpg');
+	background-position: top left; 
+}
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="test1" class="test" style="background-repeat-x: repeat; border: 1px solid black;"></div>
+<div id="test2" class="test" style="background-repeat-x: no-repeat; border: 1px solid black;"></div>
+<div id="test3" class="test" style="background-repeat-y: repeat; border: 1px solid black;"></div>
+<div id="test4" class="test" style="background-repeat-y: no-repeat; border: 1px solid black;"></div>
+<div id="test5" class="test" style="background-repeat-x: no-repeat; background-repeat-y: no-repeat; border: 1px solid black;"></div>
+<div id="test6" class="test" style="background-repeat: repeat-y; background-repeat-y: no-repeat; border: 1px solid black;"></div>
+<div id="test7" class="test" style="background-repeat: repeat-x; background-repeat-x: no-repeat; border: 1px solid black;"></div>
+<div id="test8" class="test" style="background-repeat-x: no-repeat; background-repeat: repeat-x; border: 1px solid black;"></div>
+<div id="test9" class="test" style="background-repeat-y: no-repeat; background-repeat: repeat-y; border: 1px solid black;"></div>
+<div id="test10" class="test" style="background-repeat-x: garbage; border: 1px solid black;"></div>
+<script>
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).getPropertyValue('background-repeat')", "repeat");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).getPropertyValue('background-repeat')", "repeat-y");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test3')).getPropertyValue('background-repeat')", "repeat");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).getPropertyValue('background-repeat')", "repeat-x");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).getPropertyValue('background-repeat')", "no-repeat");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test6')).getPropertyValue('background-repeat')", "no-repeat");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test7')).getPropertyValue('background-repeat')", "no-repeat");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test8')).getPropertyValue('background-repeat')", "repeat-x");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test9')).getPropertyValue('background-repeat')", "repeat-y");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test10')).getPropertyValue('background-repeat')", "repeat");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
