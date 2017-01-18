@@ -53,7 +53,7 @@ WorkerScriptController::WorkerScriptController(WorkerGlobalScope* workerGlobalSc
 {
     m_vm->heap.acquireAccess(); // It's not clear that we have good discipline for heap access, so turn it on permanently.
     m_vm->ensureWatchdog();
-    initNormalWorldClientData(m_vm.get());
+    JSVMClientData::initNormalWorld(m_vm.get());
 }
 
 WorkerScriptController::~WorkerScriptController()

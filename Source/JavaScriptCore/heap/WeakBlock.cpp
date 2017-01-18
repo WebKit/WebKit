@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,7 +100,8 @@ void WeakBlock::specializedVisit(ContainerType& container, SlotVisitor& visitor)
 {
     HeapVersion markingVersion = visitor.markingVersion();
 
-    for (size_t i = 0; i < weakImplCount(); ++i) {
+    size_t count = weakImplCount();
+    for (size_t i = 0; i < count; ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
         if (weakImpl->state() != WeakImpl::Live)
             continue;

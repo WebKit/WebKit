@@ -42,14 +42,14 @@ public:
         CString abbreviatedName,
         CString name,
         ::Function<void(SlotVisitor&, const VisitingTimeout&)>,
-        MarkingConstraint::Volatility);
+        ConstraintVolatility);
     
     void add(
         CString abbreviatedName,
         CString name,
         ::Function<void(SlotVisitor&, const VisitingTimeout&)>,
         ::Function<double(SlotVisitor&)>,
-        MarkingConstraint::Volatility);
+        ConstraintVolatility);
     
     void add(std::unique_ptr<MarkingConstraint>);
     
@@ -62,8 +62,8 @@ public:
     // that you'll do some draining after this and then use executeConvergence().
     bool executeBootstrap(SlotVisitor&, MonotonicTime timeout = MonotonicTime::infinity());
     
-    // Returns true if all constraints were executed. This assumes that you've alraedy
-    // visited roots and drained from there.
+    // Returns true if this executed all constraints and none of them produced new work. This
+    // assumes that you've alraedy visited roots and drained from there.
     bool executeConvergence(
         SlotVisitor&,
         MonotonicTime timeout = MonotonicTime::infinity());

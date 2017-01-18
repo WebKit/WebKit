@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -118,7 +118,7 @@ void DirectArguments::overrideThings(VM& vm)
     putDirect(vm, vm.propertyNames->callee, m_callee.get(), DontEnum);
     putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), DontEnum);
     
-    void* backingStore = vm.heap.tryAllocateAuxiliary(this, mappedArgumentsSize());
+    void* backingStore = vm.auxiliarySpace.tryAllocate(mappedArgumentsSize());
     RELEASE_ASSERT(backingStore);
     bool* overrides = static_cast<bool*>(backingStore);
     m_mappedArguments.set(vm, this, overrides);

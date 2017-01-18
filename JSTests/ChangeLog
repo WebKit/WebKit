@@ -1,3 +1,14 @@
+2017-01-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Make opaque root scanning truly constraint-based
+        https://bugs.webkit.org/show_bug.cgi?id=165760
+
+        Reviewed by Geoffrey Garen.
+        
+        Added this test, which demonstrates the benefit of having a dedicated string subspace.
+
+        * microbenchmarks/stringalloc.js: Added.
+
 2017-01-17  Michael Saboff  <msaboff@apple.com>
 
         Nested parenthesized regular expressions with non-zero minimum counts appear to hang and use lots of memory

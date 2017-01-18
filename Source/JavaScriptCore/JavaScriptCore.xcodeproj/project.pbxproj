@@ -130,7 +130,7 @@
 		0F1FB38E1E173A6500A9BE50 /* SynchronousStopTheWorldMutatorScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F1FB38A1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.cpp */; };
 		0F1FB38F1E173A6700A9BE50 /* SynchronousStopTheWorldMutatorScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1FB38B1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.h */; };
 		0F1FB3901E173A6B00A9BE50 /* MutatorScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F1FB38C1E173A6200A9BE50 /* MutatorScheduler.cpp */; };
-		0F1FB3931E177A7200A9BE50 /* VisitingTimeout.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1FB3921E177A6F00A9BE50 /* VisitingTimeout.h */; };
+		0F1FB3931E177A7200A9BE50 /* VisitingTimeout.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1FB3921E177A6F00A9BE50 /* VisitingTimeout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F1FB3961E1AF7E100A9BE50 /* DFGPlanInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1FB3941E1AF7DF00A9BE50 /* DFGPlanInlines.h */; };
 		0F1FB3971E1AF7E300A9BE50 /* DFGWorklistInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1FB3951E1AF7DF00A9BE50 /* DFGWorklistInlines.h */; };
 		0F1FB3991E1F65FB00A9BE50 /* MutatorScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1FB3981E1F65F900A9BE50 /* MutatorScheduler.h */; };
@@ -463,7 +463,7 @@
 		0F64B27A1A7957B2006E4E66 /* CallEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F64B2781A7957B2006E4E66 /* CallEdge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F64EAF31C4ECD0600621E9B /* AirArgInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F64EAF21C4ECD0600621E9B /* AirArgInlines.h */; };
 		0F660E371E0517B90031462C /* MarkingConstraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F660E331E0517B70031462C /* MarkingConstraint.cpp */; };
-		0F660E381E0517BB0031462C /* MarkingConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F660E341E0517B70031462C /* MarkingConstraint.h */; };
+		0F660E381E0517BB0031462C /* MarkingConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F660E341E0517B70031462C /* MarkingConstraint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F660E391E0517BF0031462C /* MarkingConstraintSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F660E351E0517B70031462C /* MarkingConstraintSet.cpp */; };
 		0F660E3A1E0517C10031462C /* MarkingConstraintSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F660E361E0517B80031462C /* MarkingConstraintSet.h */; };
 		0F664CE81DA304EF00B00A11 /* CodeBlockSetInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F664CE71DA304ED00B00A11 /* CodeBlockSetInlines.h */; };
@@ -523,13 +523,22 @@
 		0F7C39FB1C8F629300480151 /* RegExpInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C39FA1C8F629300480151 /* RegExpInlines.h */; };
 		0F7C39FD1C8F659500480151 /* RegExpObjectInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C39FC1C8F659500480151 /* RegExpObjectInlines.h */; };
 		0F7C39FF1C90C55B00480151 /* DFGOpInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C39FE1C90C55B00480151 /* DFGOpInfo.h */; };
-		0F7C5FB81D888A0C0044F5E2 /* MarkedBlockInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C5FB71D888A010044F5E2 /* MarkedBlockInlines.h */; };
-		0F7C5FBA1D8895070044F5E2 /* MarkedSpaceInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C5FB91D8895050044F5E2 /* MarkedSpaceInlines.h */; };
+		0F7C5FB81D888A0C0044F5E2 /* MarkedBlockInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C5FB71D888A010044F5E2 /* MarkedBlockInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7CF94F1DBEEE880098CC12 /* ReleaseHeapAccessScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7CF94E1DBEEE860098CC12 /* ReleaseHeapAccessScope.h */; };
 		0F7CF9521DC027D90098CC12 /* StopIfNecessaryTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7CF9511DC027D70098CC12 /* StopIfNecessaryTimer.h */; };
 		0F7CF9531DC027DB0098CC12 /* StopIfNecessaryTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7CF9501DC027D70098CC12 /* StopIfNecessaryTimer.cpp */; };
 		0F7CF9561DC1258D0098CC12 /* AtomicsObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7CF9541DC1258B0098CC12 /* AtomicsObject.cpp */; };
 		0F7CF9571DC125900098CC12 /* AtomicsObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7CF9551DC1258B0098CC12 /* AtomicsObject.h */; };
+		0F7DF1341E2970D70095951B /* ConstraintVolatility.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7DF12F1E2970D50095951B /* ConstraintVolatility.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F7DF1351E2970DC0095951B /* MarkedSpaceInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7DF1301E2970D50095951B /* MarkedSpaceInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F7DF1361E2970DF0095951B /* Subspace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7DF1311E2970D50095951B /* Subspace.cpp */; };
+		0F7DF1371E2970E10095951B /* Subspace.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7DF1321E2970D50095951B /* Subspace.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F7DF1381E2970E40095951B /* SubspaceInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7DF1331E2970D50095951B /* SubspaceInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F7DF13B1E2971110095951B /* JSDestructibleObjectSubspace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7DF1391E29710E0095951B /* JSDestructibleObjectSubspace.cpp */; };
+		0F7DF13C1E2971130095951B /* JSDestructibleObjectSubspace.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7DF13A1E29710E0095951B /* JSDestructibleObjectSubspace.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F7DF13F1E2AFC4D0095951B /* JSStringSubspace.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7DF13E1E2AFC4B0095951B /* JSStringSubspace.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F7DF1401E2AFC500095951B /* JSStringSubspace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7DF13D1E2AFC4B0095951B /* JSStringSubspace.cpp */; };
+		0F7DF1461E2BEF6A0095951B /* MarkedAllocatorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7DF1451E2BEF680095951B /* MarkedAllocatorInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7F988B1D9596C500F4F12E /* DFGStoreBarrierClusteringPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7F98891D9596C300F4F12E /* DFGStoreBarrierClusteringPhase.cpp */; };
 		0F7F988C1D9596C800F4F12E /* DFGStoreBarrierClusteringPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7F988A1D9596C300F4F12E /* DFGStoreBarrierClusteringPhase.h */; };
 		0F8023EA1613832B00A0BA45 /* ByValInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8023E91613832300A0BA45 /* ByValInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2965,12 +2974,21 @@
 		0F7C39FC1C8F659500480151 /* RegExpObjectInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpObjectInlines.h; sourceTree = "<group>"; };
 		0F7C39FE1C90C55B00480151 /* DFGOpInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOpInfo.h; path = dfg/DFGOpInfo.h; sourceTree = "<group>"; };
 		0F7C5FB71D888A010044F5E2 /* MarkedBlockInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedBlockInlines.h; sourceTree = "<group>"; };
-		0F7C5FB91D8895050044F5E2 /* MarkedSpaceInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedSpaceInlines.h; sourceTree = "<group>"; };
 		0F7CF94E1DBEEE860098CC12 /* ReleaseHeapAccessScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReleaseHeapAccessScope.h; sourceTree = "<group>"; };
 		0F7CF9501DC027D70098CC12 /* StopIfNecessaryTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StopIfNecessaryTimer.cpp; sourceTree = "<group>"; };
 		0F7CF9511DC027D70098CC12 /* StopIfNecessaryTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StopIfNecessaryTimer.h; sourceTree = "<group>"; };
 		0F7CF9541DC1258B0098CC12 /* AtomicsObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomicsObject.cpp; sourceTree = "<group>"; };
 		0F7CF9551DC1258B0098CC12 /* AtomicsObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomicsObject.h; sourceTree = "<group>"; };
+		0F7DF12F1E2970D50095951B /* ConstraintVolatility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstraintVolatility.h; sourceTree = "<group>"; };
+		0F7DF1301E2970D50095951B /* MarkedSpaceInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedSpaceInlines.h; sourceTree = "<group>"; };
+		0F7DF1311E2970D50095951B /* Subspace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Subspace.cpp; sourceTree = "<group>"; };
+		0F7DF1321E2970D50095951B /* Subspace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Subspace.h; sourceTree = "<group>"; };
+		0F7DF1331E2970D50095951B /* SubspaceInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubspaceInlines.h; sourceTree = "<group>"; };
+		0F7DF1391E29710E0095951B /* JSDestructibleObjectSubspace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDestructibleObjectSubspace.cpp; sourceTree = "<group>"; };
+		0F7DF13A1E29710E0095951B /* JSDestructibleObjectSubspace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDestructibleObjectSubspace.h; sourceTree = "<group>"; };
+		0F7DF13D1E2AFC4B0095951B /* JSStringSubspace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStringSubspace.cpp; sourceTree = "<group>"; };
+		0F7DF13E1E2AFC4B0095951B /* JSStringSubspace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringSubspace.h; sourceTree = "<group>"; };
+		0F7DF1451E2BEF680095951B /* MarkedAllocatorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedAllocatorInlines.h; sourceTree = "<group>"; };
 		0F7F98891D9596C300F4F12E /* DFGStoreBarrierClusteringPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStoreBarrierClusteringPhase.cpp; path = dfg/DFGStoreBarrierClusteringPhase.cpp; sourceTree = "<group>"; };
 		0F7F988A1D9596C300F4F12E /* DFGStoreBarrierClusteringPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStoreBarrierClusteringPhase.h; path = dfg/DFGStoreBarrierClusteringPhase.h; sourceTree = "<group>"; };
 		0F8023E91613832300A0BA45 /* ByValInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByValInfo.h; sourceTree = "<group>"; };
@@ -5698,6 +5716,7 @@
 				0FA762011DB9242300B7A2FD /* CollectionScope.h */,
 				146B14DB12EB5B12001BEC1B /* ConservativeRoots.cpp */,
 				149DAAF212EB559D0083B12B /* ConservativeRoots.h */,
+				0F7DF12F1E2970D50095951B /* ConstraintVolatility.h */,
 				2A7A58EE1808A4C40020BDF7 /* DeferGC.cpp */,
 				0F136D4B174AD69B0075B354 /* DeferGC.h */,
 				0FBB73BA1DEF8644002C009E /* DeleteAllCodeEffort.h */,
@@ -5772,13 +5791,14 @@
 				14B7234012D7D0DA003BD5ED /* MachineStackMarker.h */,
 				C2B916C414DA040C00CBAC86 /* MarkedAllocator.cpp */,
 				C2B916C114DA014E00CBAC86 /* MarkedAllocator.h */,
+				0F7DF1451E2BEF680095951B /* MarkedAllocatorInlines.h */,
 				142D6F0613539A2800B02E86 /* MarkedBlock.cpp */,
 				142D6F0713539A2800B02E86 /* MarkedBlock.h */,
 				0F7C5FB71D888A010044F5E2 /* MarkedBlockInlines.h */,
 				141448CA13A176EC00F5BA1A /* MarkedBlockSet.h */,
 				14D2F3D8139F4BE200491031 /* MarkedSpace.cpp */,
 				14D2F3D9139F4BE200491031 /* MarkedSpace.h */,
-				0F7C5FB91D8895050044F5E2 /* MarkedSpaceInlines.h */,
+				0F7DF1301E2970D50095951B /* MarkedSpaceInlines.h */,
 				0F660E331E0517B70031462C /* MarkingConstraint.cpp */,
 				0F660E341E0517B70031462C /* MarkingConstraint.h */,
 				0F660E351E0517B70031462C /* MarkingConstraintSet.cpp */,
@@ -5801,6 +5821,9 @@
 				0F7CF9511DC027D70098CC12 /* StopIfNecessaryTimer.h */,
 				142E3132134FF0A600AFADB5 /* Strong.h */,
 				145722851437E140005FDE26 /* StrongInlines.h */,
+				0F7DF1311E2970D50095951B /* Subspace.cpp */,
+				0F7DF1321E2970D50095951B /* Subspace.h */,
+				0F7DF1331E2970D50095951B /* SubspaceInlines.h */,
 				0F1FB38A1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.cpp */,
 				0F1FB38B1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.h */,
 				141448CC13A1783700F5BA1A /* TinyBloomFilter.h */,
@@ -6330,9 +6353,9 @@
 				E178633F0D9BEC0000D74E75 /* InitializeThreading.h */,
 				E35E035D1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp */,
 				E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */,
+				A7A8AF2B17ADB5F3005AB174 /* Int8Array.h */,
 				A7A8AF2C17ADB5F3005AB174 /* Int16Array.h */,
 				A7A8AF2D17ADB5F3005AB174 /* Int32Array.h */,
-				A7A8AF2B17ADB5F3005AB174 /* Int8Array.h */,
 				BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */,
 				BC11667A0E199C05008066DD /* InternalFunction.h */,
 				A1B9E2331B4E0D6700BC7FED /* IntlCollator.cpp */,
@@ -6397,6 +6420,8 @@
 				9788FC221471AD0C0068CE2D /* JSDateMath.cpp */,
 				9788FC231471AD0C0068CE2D /* JSDateMath.h */,
 				C2A7F687160432D400F76B98 /* JSDestructibleObject.h */,
+				0F7DF1391E29710E0095951B /* JSDestructibleObjectSubspace.cpp */,
+				0F7DF13A1E29710E0095951B /* JSDestructibleObjectSubspace.h */,
 				BC22A39A0E16E14800AF21C8 /* JSEnvironmentRecord.cpp */,
 				14F252560D08DD8D004ECFFF /* JSEnvironmentRecord.h */,
 				A7B4ACAE1484C9CE00B38A36 /* JSExportMacros.h */,
@@ -6425,9 +6450,9 @@
 				BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */,
 				BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */,
 				79B819921DD25CF500DDC714 /* JSGlobalObjectInlines.h */,
+				0F2B66C917B6B5AB00A7AE3F /* JSInt8Array.h */,
 				0F2B66CA17B6B5AB00A7AE3F /* JSInt16Array.h */,
 				0F2B66CB17B6B5AB00A7AE3F /* JSInt32Array.h */,
-				0F2B66C917B6B5AB00A7AE3F /* JSInt8Array.h */,
 				E33F507E1B8429A400413856 /* JSInternalPromise.cpp */,
 				E33F507F1B8429A400413856 /* JSInternalPromise.h */,
 				E33F50761B84225700413856 /* JSInternalPromiseConstructor.cpp */,
@@ -6491,6 +6516,8 @@
 				70EC0EBD1AA0D7DA00B6AAFA /* JSStringIterator.h */,
 				2600B5A4152BAAA70091EE5F /* JSStringJoiner.cpp */,
 				2600B5A5152BAAA70091EE5F /* JSStringJoiner.h */,
+				0F7DF13D1E2AFC4B0095951B /* JSStringSubspace.cpp */,
+				0F7DF13E1E2AFC4B0095951B /* JSStringSubspace.h */,
 				0F919D09157EE09D004A4E7D /* JSSymbolTableObject.cpp */,
 				0F919D0A157EE09D004A4E7D /* JSSymbolTableObject.h */,
 				70ECA6001AFDBEA200449739 /* JSTemplateRegistryKey.cpp */,
@@ -6507,10 +6534,10 @@
 				53F256E11B87E28000B4B768 /* JSTypedArrayViewPrototype.cpp */,
 				53917E7C1B791106000EBD33 /* JSTypedArrayViewPrototype.h */,
 				6507D2970E871E4A00D7D896 /* JSTypeInfo.h */,
-				0F2B66D417B6B5AB00A7AE3F /* JSUint16Array.h */,
-				0F2B66D517B6B5AB00A7AE3F /* JSUint32Array.h */,
 				0F2B66D217B6B5AB00A7AE3F /* JSUint8Array.h */,
 				0F2B66D317B6B5AB00A7AE3F /* JSUint8ClampedArray.h */,
+				0F2B66D417B6B5AB00A7AE3F /* JSUint16Array.h */,
+				0F2B66D517B6B5AB00A7AE3F /* JSUint32Array.h */,
 				A7CA3AE117DA41AE006538AF /* JSWeakMap.cpp */,
 				A7CA3AE217DA41AE006538AF /* JSWeakMap.h */,
 				709FB8611AE335C60039D069 /* JSWeakSet.cpp */,
@@ -6647,6 +6674,7 @@
 				0F5B4A321C84F0D600F1B17E /* SlowPathReturnType.h */,
 				93303FE80E6A72B500786E6A /* SmallStrings.cpp */,
 				93303FEA0E6A72C000786E6A /* SmallStrings.h */,
+				425BA1337E4344E1B269A671 /* SourceOrigin.h */,
 				0F0CD4C315F6B6B50032F1C0 /* SparseArrayValueMap.cpp */,
 				0FB7F39215ED8E3800F167B2 /* SparseArrayValueMap.h */,
 				0F3AC751183EA1040032029F /* StackAlignment.h */,
@@ -6715,11 +6743,11 @@
 				0F2D4DE019832D91007D4B19 /* TypeProfilerLog.h */,
 				0F2D4DE319832D91007D4B19 /* TypeSet.cpp */,
 				0F2D4DE419832D91007D4B19 /* TypeSet.h */,
+				A7A8AF3017ADB5F3005AB174 /* Uint8Array.h */,
+				A7A8AF3117ADB5F3005AB174 /* Uint8ClampedArray.h */,
 				A7A8AF3217ADB5F3005AB174 /* Uint16Array.h */,
 				866739D113BFDE710023D87C /* Uint16WithFraction.h */,
 				A7A8AF3317ADB5F3005AB174 /* Uint32Array.h */,
-				A7A8AF3017ADB5F3005AB174 /* Uint8Array.h */,
-				A7A8AF3117ADB5F3005AB174 /* Uint8ClampedArray.h */,
 				0FE050231AA9095600D33B33 /* VarOffset.cpp */,
 				0FE050241AA9095600D33B33 /* VarOffset.h */,
 				E18E3A570DF9278C00D90B34 /* VM.cpp */,
@@ -6743,7 +6771,6 @@
 				709FB8661AE335C60039D069 /* WeakSetPrototype.h */,
 				A7DCB77912E3D90500911940 /* WriteBarrier.h */,
 				C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */,
-				425BA1337E4344E1B269A671 /* SourceOrigin.h */,
 				F73926918DC64330AFCDF0D7 /* JSSourceCode.cpp */,
 				3032175DF1AD47D8998B34E1 /* JSSourceCode.h */,
 				11C197C2624848EDA84CED7F /* JSScriptFetcher.cpp */,
@@ -8071,6 +8098,7 @@
 				BCD203E80E1718F4002C7E82 /* DatePrototype.lut.h in Headers */,
 				BC18C3FA0E16F5CD00B34460 /* Debugger.h in Headers */,
 				BC18C3FB0E16F5CD00B34460 /* DebuggerCallFrame.h in Headers */,
+				0F7DF1351E2970DC0095951B /* MarkedSpaceInlines.h in Headers */,
 				6AD2CB4D19B9140100065719 /* DebuggerEvalEnabler.h in Headers */,
 				A5FC84B21D1DDAD6006B5C46 /* DebuggerLocation.h in Headers */,
 				A5A1A0941D8CB33E004C2EB8 /* DebuggerParseData.h in Headers */,
@@ -8212,6 +8240,7 @@
 				0FC0977114693AF500CF2442 /* DFGOSRExitCompiler.h in Headers */,
 				0F7025AA1714B0FC00382C0E /* DFGOSRExitCompilerCommon.h in Headers */,
 				0F392C8A1B46188400844728 /* DFGOSRExitFuzz.h in Headers */,
+				0F7DF13F1E2AFC4D0095951B /* JSStringSubspace.h in Headers */,
 				0FEFC9AB1681A3B600567F53 /* DFGOSRExitJumpPlaceholder.h in Headers */,
 				0F235BEE17178E7300690C7F /* DFGOSRExitPreparation.h in Headers */,
 				0F6237981AE45CA700D402EA /* DFGPhantomInsertionPhase.h in Headers */,
@@ -8388,8 +8417,10 @@
 				A54E8EB018BFFBBB00556D28 /* GCSegmentedArray.h in Headers */,
 				A54E8EB118BFFBBE00556D28 /* GCSegmentedArrayInlines.h in Headers */,
 				0F86A26F1D6F7B3300CB0C92 /* GCTypeMap.h in Headers */,
+				0F7DF1381E2970E40095951B /* SubspaceInlines.h in Headers */,
 				9959E9311BD18272001AA413 /* generate-combined-inspector-json.py in Headers */,
 				C4703CC0192844960013FBEA /* generate-inspector-protocol-bindings.py in Headers */,
+				0F7DF1461E2BEF6A0095951B /* MarkedAllocatorInlines.h in Headers */,
 				99DA00AF1BD5994E00F4575C /* generate-js-builtins.py in Headers */,
 				A5EA70EC19F5B3EA0098F5EC /* generate_cpp_alternate_backend_dispatcher_header.py in Headers */,
 				A5EF9B141A1D43F600702E90 /* generate_cpp_backend_dispatcher_header.py in Headers */,
@@ -8552,6 +8583,7 @@
 				FE187A021BFBE5610038BBCA /* JITMulGenerator.h in Headers */,
 				FE99B2491C24C3D300C82159 /* JITNegGenerator.h in Headers */,
 				0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */,
+				0F7DF1371E2970E10095951B /* Subspace.h in Headers */,
 				FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */,
 				0F766D3115AA8112008F363E /* JITStubRoutine.h in Headers */,
 				0F766D2C15A8CC3A008F363E /* JITStubRoutineSet.h in Headers */,
@@ -8668,6 +8700,7 @@
 				7C184E1F17BEE22E007CB63A /* JSPromisePrototype.h in Headers */,
 				996B731F1BDA08EF00331B84 /* JSPromisePrototype.lut.h in Headers */,
 				2A05ABD61961DF2400341750 /* JSPropertyNameEnumerator.h in Headers */,
+				0F7DF13C1E2971130095951B /* JSDestructibleObjectSubspace.h in Headers */,
 				E3EF88751B66DF23003F26CB /* JSPropertyNameIterator.h in Headers */,
 				862553D216136E1A009F17D0 /* JSProxy.h in Headers */,
 				A552C3801ADDB8FE00139726 /* JSRemoteInspector.h in Headers */,
@@ -8677,6 +8710,7 @@
 				A7C0C4AC168103020017011D /* JSScriptRefPrivate.h in Headers */,
 				0F919D11157F332C004A4E7D /* JSSegmentedVariableObject.h in Headers */,
 				A7299D9E17D12837005F5FF9 /* JSSet.h in Headers */,
+				0F7DF1341E2970D70095951B /* ConstraintVolatility.h in Headers */,
 				A790DD70182F499700588807 /* JSSetIterator.h in Headers */,
 				BC18C4270E16F5CD00B34460 /* JSString.h in Headers */,
 				86E85539111B9968001AF51E /* JSStringBuilder.h in Headers */,
@@ -8780,7 +8814,6 @@
 				0F7C5FB81D888A0C0044F5E2 /* MarkedBlockInlines.h in Headers */,
 				141448CB13A176EC00F5BA1A /* MarkedBlockSet.h in Headers */,
 				14D2F3DB139F4BE200491031 /* MarkedSpace.h in Headers */,
-				0F7C5FBA1D8895070044F5E2 /* MarkedSpaceInlines.h in Headers */,
 				142D6F1213539A4100B02E86 /* MarkStack.h in Headers */,
 				8612E4CD152389EC00C836BE /* MatchResult.h in Headers */,
 				4340A4851A9051AF00D73CCA /* MathCommon.h in Headers */,
@@ -9943,6 +9976,7 @@
 				0F7F988B1D9596C500F4F12E /* DFGStoreBarrierClusteringPhase.cpp in Sources */,
 				0F9E32631B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.cpp in Sources */,
 				0FC20CB51852E2C600C9E954 /* DFGStrengthReductionPhase.cpp in Sources */,
+				0F7DF13B1E2971110095951B /* JSDestructibleObjectSubspace.cpp in Sources */,
 				0F893BDB1936E23C001211F4 /* DFGStructureAbstractValue.cpp in Sources */,
 				0F79085519A290B200F6310C /* DFGStructureRegistrationPhase.cpp in Sources */,
 				0F2FCCFE18A60070001A27F8 /* DFGThreadData.cpp in Sources */,
@@ -10153,6 +10187,7 @@
 				5B70CFDF1DB69E6600EC23F9 /* JSAsyncFunction.cpp in Sources */,
 				1421359B0A677F4F00A8195E /* JSBase.cpp in Sources */,
 				86FA9E91142BBB2E001773B7 /* JSBoundFunction.cpp in Sources */,
+				0F7DF1401E2AFC500095951B /* JSStringSubspace.cpp in Sources */,
 				1440F8AF0A508D200005F061 /* JSCallbackConstructor.cpp in Sources */,
 				1440F8920A508B100005F061 /* JSCallbackFunction.cpp in Sources */,
 				14ABDF600A437FEF00ECCA01 /* JSCallbackObject.cpp in Sources */,
@@ -10180,6 +10215,7 @@
 				A5C3A1A518C0490200C9593A /* JSGlobalObjectConsoleClient.cpp in Sources */,
 				A59455921824744700CC3843 /* JSGlobalObjectDebuggable.cpp in Sources */,
 				A57D23E91891B0770031C7FA /* JSGlobalObjectDebuggerAgent.cpp in Sources */,
+				0F7DF1361E2970DF0095951B /* Subspace.cpp in Sources */,
 				ADE8029B1E08F1DE0058DE78 /* WebAssemblyLinkErrorPrototype.cpp in Sources */,
 				14E9D17B107EC469004DDA21 /* JSGlobalObjectFunctions.cpp in Sources */,
 				A51007C0187CC3C600B38879 /* JSGlobalObjectInspectorController.cpp in Sources */,

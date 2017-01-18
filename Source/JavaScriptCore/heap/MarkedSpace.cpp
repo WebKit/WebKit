@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@
 #include "IncrementalSweeper.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
+#include "MarkedAllocatorInlines.h"
 #include "MarkedBlockInlines.h"
 #include <wtf/ListDump.h>
 
@@ -177,16 +178,18 @@ void buildSizeClassTable(TableType& table, const SizeClassCons& cons, const Defa
 
 void MarkedSpace::initializeSizeClassForStepSize()
 {
-    // We call this multiple times and we may call it simultaneously from multiple threads. That's
-    // OK, since it always stores the same values into the table.
-    
-    buildSizeClassTable(
-        s_sizeClassForSizeStep,
-        [&] (size_t sizeClass) -> size_t {
-            return sizeClass;
-        },
-        [&] (size_t sizeClass) -> size_t {
-            return sizeClass;
+    static std::once_flag flag;
+    std::call_once(
+        flag,
+        [] {
+            buildSizeClassTable(
+                s_sizeClassForSizeStep,
+                [&] (size_t sizeClass) -> size_t {
+                    return sizeClass;
+                },
+                [&] (size_t sizeClass) -> size_t {
+                    return sizeClass;
+                });
         });
 }
 
@@ -196,35 +199,6 @@ MarkedSpace::MarkedSpace(Heap* heap)
     , m_isIterating(false)
 {
     initializeSizeClassForStepSize();
-    
-    forEachSubspace(
-        [&] (Subspace& subspace, AllocatorAttributes attributes) -> IterationStatus {
-            subspace.attributes = attributes;
-            
-            buildSizeClassTable(
-                subspace.allocatorForSizeStep,
-                [&] (size_t sizeClass) -> MarkedAllocator* {
-                    return subspace.bagOfAllocators.add(heap, this, sizeClass, attributes);
-                },
-                [&] (size_t) -> MarkedAllocator* {
-                    return nullptr;
-                });
-            
-            return IterationStatus::Continue;
-        });
-    
-    MarkedAllocator* previous = nullptr;
-    forEachSubspace(
-        [&] (Subspace& subspace, AllocatorAttributes) -> IterationStatus {
-            for (MarkedAllocator* allocator : subspace.bagOfAllocators) {
-                allocator->setNextAllocator(previous);
-                previous = allocator;
-            }
-            
-            return IterationStatus::Continue;
-        });
-    m_firstAllocator = previous;
-    m_allocatorForEmptyAllocation = previous;
 }
 
 MarkedSpace::~MarkedSpace()
@@ -240,7 +214,6 @@ MarkedSpace::~MarkedSpace()
 
 void MarkedSpace::lastChanceToFinalize()
 {
-    stopAllocating();
     forEachAllocator(
         [&] (MarkedAllocator& allocator) -> IterationStatus {
             allocator.lastChanceToFinalize();
@@ -248,72 +221,6 @@ void MarkedSpace::lastChanceToFinalize()
         });
     for (LargeAllocation* allocation : m_largeAllocations)
         allocation->lastChanceToFinalize();
-}
-
-void* MarkedSpace::allocate(Subspace& subspace, size_t bytes)
-{
-    if (false)
-        dataLog("Allocating ", bytes, " bytes in ", subspace.attributes, ".\n");
-    if (MarkedAllocator* allocator = allocatorFor(subspace, bytes)) {
-        void* result = allocator->allocate();
-        return result;
-    }
-    return allocateLarge(subspace, nullptr, bytes);
-}
-
-void* MarkedSpace::allocate(Subspace& subspace, GCDeferralContext* deferralContext, size_t bytes)
-{
-    if (false)
-        dataLog("Allocating ", bytes, " deferred bytes in ", subspace.attributes, ".\n");
-    if (MarkedAllocator* allocator = allocatorFor(subspace, bytes)) {
-        void* result = allocator->allocate(deferralContext);
-        return result;
-    }
-    return allocateLarge(subspace, deferralContext, bytes);
-}
-
-void* MarkedSpace::tryAllocate(Subspace& subspace, size_t bytes)
-{
-    if (false)
-        dataLog("Try-allocating ", bytes, " bytes in ", subspace.attributes, ".\n");
-    if (MarkedAllocator* allocator = allocatorFor(subspace, bytes)) {
-        void* result = allocator->tryAllocate();
-        return result;
-    }
-    return tryAllocateLarge(subspace, nullptr, bytes);
-}
-
-void* MarkedSpace::tryAllocate(Subspace& subspace, GCDeferralContext* deferralContext, size_t bytes)
-{
-    if (false)
-        dataLog("Try-allocating ", bytes, " deferred bytes in ", subspace.attributes, ".\n");
-    if (MarkedAllocator* allocator = allocatorFor(subspace, bytes)) {
-        void* result = allocator->tryAllocate(deferralContext);
-        return result;
-    }
-    return tryAllocateLarge(subspace, deferralContext, bytes);
-}
-
-void* MarkedSpace::allocateLarge(Subspace& subspace, GCDeferralContext* deferralContext, size_t size)
-{
-    void* result = tryAllocateLarge(subspace, deferralContext, size);
-    RELEASE_ASSERT(result);
-    return result;
-}
-
-void* MarkedSpace::tryAllocateLarge(Subspace& subspace, GCDeferralContext* deferralContext, size_t size)
-{
-    m_heap->collectIfNecessaryOrDefer(deferralContext);
-    
-    size = WTF::roundUpToMultipleOf<sizeStep>(size);
-    LargeAllocation* allocation = LargeAllocation::tryCreate(*m_heap, size, subspace.attributes);
-    if (!allocation)
-        return nullptr;
-    
-    m_largeAllocations.append(allocation);
-    m_heap->didAllocate(size);
-    m_capacity += size;
-    return allocation->cell();
 }
 
 void MarkedSpace::sweep()
@@ -652,6 +559,26 @@ void MarkedSpace::dumpBits(PrintStream& out)
             allocator.dumpBits(out);
             return IterationStatus::Continue;
         });
+}
+
+MarkedAllocator* MarkedSpace::addMarkedAllocator(
+    const AbstractLocker&, Subspace* subspace, size_t sizeClass)
+{
+    MarkedAllocator* allocator = m_bagOfAllocators.add(heap(), subspace, sizeClass);
+    allocator->setNextAllocator(nullptr);
+    
+    WTF::storeStoreFence();
+
+    if (!m_firstAllocator) {
+        m_firstAllocator = allocator;
+        m_lastAllocator = allocator;
+        m_allocatorForEmptyAllocation = allocator;
+    } else {
+        m_lastAllocator->setNextAllocator(allocator);
+        m_lastAllocator = allocator;
+    }
+    
+    return allocator;
 }
 
 } // namespace JSC

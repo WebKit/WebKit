@@ -73,12 +73,15 @@ protected:
     }
 };
 
+WEBCORE_EXPORT JSC::Subspace* outputConstraintSubspaceFor(JSC::VM&);
+WEBCORE_EXPORT JSC::Subspace* globalObjectOutputConstraintSubspaceFor(JSC::VM&);
+
 template<typename ImplementationClass> class JSDOMWrapper : public JSDOMObject {
 public:
     typedef JSDOMObject Base;
     typedef ImplementationClass DOMWrapped;
     static constexpr bool isDOMWrapper = true;
-
+    
     ImplementationClass& wrapped() const { return m_wrapped; }
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSDOMWrapper<ImplementationClass>, m_wrapped); }
 

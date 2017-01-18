@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,7 +82,7 @@ public:
         ASSERT(inlineCapacity <= JSFinalObject::maxInlineCapacity());
 
         size_t allocationSize = JSFinalObject::allocationSize(inlineCapacity);
-        MarkedAllocator* allocator = vm.heap.allocatorForObjectWithoutDestructor(allocationSize);
+        MarkedAllocator* allocator = vm.cellSpace.allocatorFor(allocationSize);
         
         // Take advantage of extra inline capacity available in the size class.
         if (allocator) {

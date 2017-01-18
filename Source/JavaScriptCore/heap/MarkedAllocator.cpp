@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "Heap.h"
 #include "IncrementalSweeper.h"
 #include "JSCInlines.h"
+#include "MarkedAllocatorInlines.h"
 #include "MarkedBlockInlines.h"
 #include "SuperSampler.h"
 #include "VM.h"
@@ -38,13 +39,13 @@
 
 namespace JSC {
 
-MarkedAllocator::MarkedAllocator(Heap* heap, MarkedSpace* markedSpace, size_t cellSize, const AllocatorAttributes& attributes)
+MarkedAllocator::MarkedAllocator(Heap* heap, Subspace* subspace, size_t cellSize)
     : m_currentBlock(0)
     , m_lastActiveBlock(0)
     , m_cellSize(static_cast<unsigned>(cellSize))
-    , m_attributes(attributes)
+    , m_attributes(subspace->attributes())
     , m_heap(heap)
-    , m_markedSpace(markedSpace)
+    , m_subspace(subspace)
 {
 }
 
@@ -111,7 +112,7 @@ void* MarkedAllocator::tryAllocateWithoutCollecting()
     
     if (Options::stealEmptyBlocksFromOtherAllocators()
         && shouldStealEmptyBlocksFromOtherAllocators()) {
-        if (MarkedBlock::Handle* block = m_markedSpace->findEmptyBlockToSteal()) {
+        if (MarkedBlock::Handle* block = markedSpace().findEmptyBlockToSteal()) {
             block->sweep();
             
             // It's good that this clears canAllocateButNotEmpty as well as all other bits,
@@ -166,7 +167,7 @@ void* MarkedAllocator::tryAllocateIn(MarkedBlock::Handle* block)
     }
     RELEASE_ASSERT(result);
     setIsEden(NoLockingNecessary, m_currentBlock, true);
-    m_markedSpace->didAllocateInBlock(m_currentBlock);
+    markedSpace().didAllocateInBlock(m_currentBlock);
     return result;
 }
 
@@ -206,7 +207,7 @@ void* MarkedAllocator::allocateSlowCaseImpl(GCDeferralContext* deferralContext, 
     ASSERT(m_heap->vm()->currentThreadIsHoldingAPILock());
     doTestCollectionsIfNeeded(deferralContext);
 
-    ASSERT(!m_markedSpace->isIterating());
+    ASSERT(!markedSpace().isIterating());
     m_heap->didAllocate(m_freeList.originalSize);
     
     didConsumeFreeList();
@@ -254,7 +255,7 @@ MarkedBlock::Handle* MarkedAllocator::tryAllocateBlock()
     if (!handle)
         return nullptr;
     
-    m_markedSpace->didAddBlock(handle);
+    markedSpace().didAddBlock(handle);
     
     return handle;
 }
@@ -444,7 +445,7 @@ void MarkedAllocator::shrink()
 {
     m_empty.forEachSetBit(
         [&] (size_t index) {
-            m_markedSpace->freeBlock(m_blocks[index]);
+            markedSpace().freeBlock(m_blocks[index]);
         });
 }
 
@@ -484,6 +485,11 @@ void MarkedAllocator::dumpBits(PrintStream& out)
                 out.print(" ");
             out.print(vector, "\n");
         });
+}
+
+MarkedSpace& MarkedAllocator::markedSpace() const
+{
+    return m_subspace->space();
 }
 
 } // namespace JSC

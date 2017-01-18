@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008, 2016 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -38,7 +38,7 @@ ALWAYS_INLINE JSArray* tryCreateUninitializedRegExpMatchesArray(VM& vm, GCDeferr
     if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
         return 0;
 
-    void* temp = vm.heap.tryAllocateAuxiliary(deferralContext, nullptr, Butterfly::totalSize(0, structure->outOfLineCapacity(), true, vectorLength * sizeof(EncodedJSValue)));
+    void* temp = vm.auxiliarySpace.tryAllocate(deferralContext, Butterfly::totalSize(0, structure->outOfLineCapacity(), true, vectorLength * sizeof(EncodedJSValue)));
     if (!temp)
         return nullptr;
     Butterfly* butterfly = Butterfly::fromBase(temp, 0, structure->outOfLineCapacity());

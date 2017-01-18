@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -259,7 +259,7 @@ void GenericArguments<Type>::initModifiedArgumentsDescriptor(VM& vm, unsigned ar
     RELEASE_ASSERT(!m_modifiedArgumentsDescriptor);
 
     if (argsLength) {
-        void* backingStore = vm.heap.tryAllocateAuxiliary(this, WTF::roundUpToMultipleOf<8>(argsLength));
+        void* backingStore = vm.auxiliarySpace.tryAllocate(WTF::roundUpToMultipleOf<8>(argsLength));
         RELEASE_ASSERT(backingStore);
         bool* modifiedArguments = static_cast<bool*>(backingStore);
         m_modifiedArgumentsDescriptor.set(vm, this, modifiedArguments);

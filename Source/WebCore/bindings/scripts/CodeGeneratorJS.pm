@@ -1965,6 +1965,23 @@ sub GenerateHeader
         push(@headerContent, "    static void visitChildren(JSCell*, JSC::SlotVisitor&);\n");
         push(@headerContent, "    void visitAdditionalChildren(JSC::SlotVisitor&);\n") if $interface->extendedAttributes->{JSCustomMarkFunction};
         push(@headerContent, "\n");
+
+        if ($interface->extendedAttributes->{JSCustomMarkFunction}) {
+            # We assume that the logic in visitAdditionalChildren is highly volatile, and during a
+            # concurrent GC or in between eden GCs something may happen that would lead to this
+            # logic behaving differently. Since this could mark objects or add opaque roots, this
+            # means that after any increment of mutator resumption in a concurrent GC and at least
+            # once during any eden GC we need to re-execute visitAdditionalChildren on any objects
+            # that we had executed it on before. We do this using the DOM's own MarkingConstraint,
+            # which will call visitOutputConstraints on all objects in the DOM's own
+            # outputConstraintSubspace. visitOutputConstraints is the name JSC uses for the method
+            # that the GC calls to ask an object is it would like to mark anything else after the
+            # program resumed since the last call to visitChildren or visitOutputConstraints. Since
+            # this just calls visitAdditionalChildren, you usually don't have to worry about this.
+            push(@headerContent, "    static void visitOutputConstraints(JSCell*, JSC::SlotVisitor&);\n");
+            my $subspaceFunc = IsDOMGlobalObject($interface) ? "globalObjectOutputConstraintSubspaceFor" : "outputConstraintSubspaceFor";
+            push(@headerContent, "    template<typename> static JSC::Subspace* subspaceFor(JSC::VM& vm) { return $subspaceFunc(vm); }\n");
+        }
     }
 
     if (InstanceNeedsEstimatedSize($interface)) {
@@ -4134,6 +4151,15 @@ END
             }
         }
         push(@implContent, "}\n\n");
+        if ($interface->extendedAttributes->{JSCustomMarkFunction}) {
+            push(@implContent, "void ${className}::visitOutputConstraints(JSCell* cell, SlotVisitor& visitor)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
+            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
+            push(@implContent, "    Base::visitOutputConstraints(thisObject, visitor);\n");
+            push(@implContent, "    thisObject->visitAdditionalChildren(visitor);\n");
+            push(@implContent, "}\n\n");
+        }
     }
 
     if (InstanceNeedsEstimatedSize($interface)) {

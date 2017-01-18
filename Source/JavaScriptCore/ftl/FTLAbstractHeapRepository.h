@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,8 +124,8 @@ namespace JSC { namespace FTL {
     macro(JSEnvironmentRecord_variables, JSEnvironmentRecord::offsetOfVariables(), sizeof(EncodedJSValue)) \
     macro(JSPropertyNameEnumerator_cachedPropertyNamesVectorContents, 0, sizeof(WriteBarrier<JSString>)) \
     macro(JSRopeString_fibers, JSRopeString::offsetOfFibers(), sizeof(WriteBarrier<JSString>)) \
-    macro(MarkedSpace_Subspace_allocatorForSizeStep, OBJECT_OFFSETOF(MarkedSpace::Subspace, allocatorForSizeStep), sizeof(MarkedAllocator*)) \
     macro(ScopedArguments_overflowStorage, ScopedArguments::overflowStorageOffset(), sizeof(EncodedJSValue)) \
+    macro(Subspace_allocatorForSizeStep, Subspace::offsetOfAllocatorForSizeStep(), sizeof(MarkedAllocator*)) \
     macro(WriteBarrierBuffer_bufferContents, 0, sizeof(JSCell*)) \
     macro(characters8, 0, sizeof(LChar)) \
     macro(characters16, 0, sizeof(UChar)) \

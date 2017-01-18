@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ContainerNodeAlgorithms.h"
 
-#include "CommonVM.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorInstrumentation.h"
 #include "NoEventDispatchAssertion.h"
@@ -102,8 +101,6 @@ void notifyChildNodeInserted(ContainerNode& insertionPoint, Node& node, NodeVect
         notifyNodeInsertedIntoDocument(insertionPoint, node, postInsertionNotificationTargets);
     else if (is<ContainerNode>(node))
         notifyNodeInsertedIntoTree(insertionPoint, downcast<ContainerNode>(node), postInsertionNotificationTargets);
-
-    writeBarrierOpaqueRoot([&insertionPoint] () -> void* { return insertionPoint.opaqueRoot(); });
 }
 
 void notifyNodeRemovedFromDocument(ContainerNode& insertionPoint, Node& node)
@@ -155,8 +152,6 @@ void notifyNodeRemovedFromTree(ContainerNode& insertionPoint, ContainerNode& nod
 
 void notifyChildNodeRemoved(ContainerNode& insertionPoint, Node& child)
 {
-    writeBarrierOpaqueRoot([&child] () -> void* { return &child; });
-
     if (!child.inDocument()) {
         if (is<ContainerNode>(child))
             notifyNodeRemovedFromTree(insertionPoint, downcast<ContainerNode>(child));

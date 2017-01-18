@@ -92,6 +92,7 @@ public:
     void append(const Weak<T>& weak);
     
     JS_EXPORT_PRIVATE void addOpaqueRoot(void*);
+    
     JS_EXPORT_PRIVATE bool containsOpaqueRoot(void*) const;
     TriState containsOpaqueRootTriState(void*) const;
 
@@ -116,6 +117,8 @@ public:
 
     SharedDrainResult drainInParallel(MonotonicTime timeout = MonotonicTime::infinity());
     SharedDrainResult drainInParallelPassively(MonotonicTime timeout = MonotonicTime::infinity());
+    
+    JS_EXPORT_PRIVATE void mergeIfNecessary();
 
     // This informs the GC about auxiliary of some size that we are keeping alive. If you don't do
     // this then the space will be freed at end of GC.
@@ -135,8 +138,6 @@ public:
     
     HeapVersion markingVersion() const { return m_markingVersion; }
 
-    void mergeOpaqueRootsIfNecessary();
-    
     bool mutatorIsStopped() const { return m_mutatorIsStopped; }
     
     Lock& rightToRun() { return m_rightToRun; }
@@ -155,6 +156,8 @@ public:
     void visitAsConstraint(const JSCell*);
     
     bool didReachTermination();
+    
+    void setIgnoreNewOpaqueRoots(bool value) { m_ignoreNewOpaqueRoots = value; }
 
 private:
     friend class ParallelModeEnabler;
@@ -176,7 +179,8 @@ private:
     
     void noteLiveAuxiliaryCell(HeapCell*);
     
-    JS_EXPORT_PRIVATE void mergeOpaqueRoots();
+    void mergeOpaqueRoots();
+
     void mergeOpaqueRootsIfProfitable();
 
     void visitChildren(const JSCell*);
@@ -190,6 +194,7 @@ private:
     MarkStackArray m_collectorStack;
     MarkStackArray m_mutatorStack;
     OpaqueRootSet m_opaqueRoots; // Handle-owning data structures not visible to the garbage collector.
+    bool m_ignoreNewOpaqueRoots { false }; // Useful as a debugging mode.
     
     size_t m_bytesVisited;
     size_t m_visitCount;
@@ -201,7 +206,7 @@ private:
 
     HeapSnapshotBuilder* m_heapSnapshotBuilder { nullptr };
     JSCell* m_currentCell { nullptr };
-    bool m_isVisitingMutatorStack { false };
+    bool m_isFirstVisit { false };
     bool m_mutatorIsStopped { false };
     bool m_canOptimizeForStoppedMutator { false };
     Lock m_rightToRun;
