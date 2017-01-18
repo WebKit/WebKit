@@ -464,7 +464,7 @@ class YarrGenerator : private MacroAssembler {
         OpSimpleNestedAlternativeBegin,
         OpSimpleNestedAlternativeNext,
         OpSimpleNestedAlternativeEnd,
-        // Used to wrap 'Once' subpattern matches (quantityCount == 1).
+        // Used to wrap 'Once' subpattern matches (quantityMaxCount == 1).
         OpParenthesesSubpatternOnceBegin,
         OpParenthesesSubpatternOnceEnd,
         // Used to wrap 'Terminal' subpattern matches (at the end of the regexp).
@@ -841,7 +841,7 @@ class YarrGenerator : private MacroAssembler {
             
             if (nextTerm->type != PatternTerm::TypePatternCharacter
                 || nextTerm->quantityType != QuantifierFixedCount
-                || nextTerm->quantityCount != 1
+                || nextTerm->quantityMaxCount != 1
                 || nextTerm->inputPosition != (startTermPosition + numberCharacters))
                 break;
 
@@ -924,10 +924,10 @@ class YarrGenerator : private MacroAssembler {
         const RegisterID countRegister = regT1;
 
         move(index, countRegister);
-        sub32(Imm32(term->quantityCount.unsafeGet()), countRegister);
+        sub32(Imm32(term->quantityMaxCount.unsafeGet()), countRegister);
 
         Label loop(this);
-        readCharacter(m_checkedOffset - term->inputPosition - term->quantityCount, character, countRegister);
+        readCharacter(m_checkedOffset - term->inputPosition - term->quantityMaxCount, character, countRegister);
         // For case-insesitive compares, non-ascii characters that have different
         // upper & lower case representations are converted to a character class.
         ASSERT(!m_pattern.ignoreCase() || isASCIIAlpha(ch) || isCanonicallyUnique(ch));
@@ -965,10 +965,10 @@ class YarrGenerator : private MacroAssembler {
 
             add32(TrustedImm32(1), countRegister);
             add32(TrustedImm32(1), index);
-            if (term->quantityCount == quantifyInfinite)
+            if (term->quantityMaxCount == quantifyInfinite)
                 jump(loop);
             else
-                branch32(NotEqual, countRegister, Imm32(term->quantityCount.unsafeGet())).linkTo(loop, this);
+                branch32(NotEqual, countRegister, Imm32(term->quantityMaxCount.unsafeGet())).linkTo(loop, this);
 
             failures.link(this);
         }
@@ -1020,8 +1020,8 @@ class YarrGenerator : private MacroAssembler {
         if (!((ch > 0xff) && (m_charSize == Char8))) {
             JumpList nonGreedyFailures;
             nonGreedyFailures.append(atEndOfInput());
-            if (term->quantityCount != quantifyInfinite)
-                nonGreedyFailures.append(branch32(Equal, countRegister, Imm32(term->quantityCount.unsafeGet())));
+            if (term->quantityMaxCount != quantifyInfinite)
+                nonGreedyFailures.append(branch32(Equal, countRegister, Imm32(term->quantityMaxCount.unsafeGet())));
             nonGreedyFailures.append(jumpIfCharNotEquals(ch, m_checkedOffset - term->inputPosition, character));
 
             add32(TrustedImm32(1), countRegister);
@@ -1067,11 +1067,11 @@ class YarrGenerator : private MacroAssembler {
         const RegisterID countRegister = regT1;
 
         move(index, countRegister);
-        sub32(Imm32(term->quantityCount.unsafeGet()), countRegister);
+        sub32(Imm32(term->quantityMaxCount.unsafeGet()), countRegister);
 
         Label loop(this);
         JumpList matchDest;
-        readCharacter(m_checkedOffset - term->inputPosition - term->quantityCount, character, countRegister);
+        readCharacter(m_checkedOffset - term->inputPosition - term->quantityMaxCount, character, countRegister);
         matchCharacterClass(character, matchDest, term->characterClass);
 
         if (term->invert())
@@ -1116,8 +1116,8 @@ class YarrGenerator : private MacroAssembler {
 
         add32(TrustedImm32(1), countRegister);
         add32(TrustedImm32(1), index);
-        if (term->quantityCount != quantifyInfinite) {
-            branch32(NotEqual, countRegister, Imm32(term->quantityCount.unsafeGet())).linkTo(loop, this);
+        if (term->quantityMaxCount != quantifyInfinite) {
+            branch32(NotEqual, countRegister, Imm32(term->quantityMaxCount.unsafeGet())).linkTo(loop, this);
             failures.append(jump());
         } else
             jump(loop);
@@ -1169,7 +1169,7 @@ class YarrGenerator : private MacroAssembler {
         loadFromFrame(term->frameLocation, countRegister);
 
         nonGreedyFailures.append(atEndOfInput());
-        nonGreedyFailures.append(branch32(Equal, countRegister, Imm32(term->quantityCount.unsafeGet())));
+        nonGreedyFailures.append(branch32(Equal, countRegister, Imm32(term->quantityMaxCount.unsafeGet())));
 
         JumpList matchDest;
         readCharacter(m_checkedOffset - term->inputPosition, character);
@@ -1265,7 +1265,7 @@ class YarrGenerator : private MacroAssembler {
         case PatternTerm::TypePatternCharacter:
             switch (term->quantityType) {
             case QuantifierFixedCount:
-                if (term->quantityCount == 1)
+                if (term->quantityMaxCount == 1)
                     generatePatternCharacterOnce(opIndex);
                 else
                     generatePatternCharacterFixed(opIndex);
@@ -1282,7 +1282,7 @@ class YarrGenerator : private MacroAssembler {
         case PatternTerm::TypeCharacterClass:
             switch (term->quantityType) {
             case QuantifierFixedCount:
-                if (term->quantityCount == 1)
+                if (term->quantityMaxCount == 1)
                     generateCharacterClassOnce(opIndex);
                 else
                     generateCharacterClassFixed(opIndex);
@@ -1331,7 +1331,7 @@ class YarrGenerator : private MacroAssembler {
         case PatternTerm::TypePatternCharacter:
             switch (term->quantityType) {
             case QuantifierFixedCount:
-                if (term->quantityCount == 1)
+                if (term->quantityMaxCount == 1)
                     backtrackPatternCharacterOnce(opIndex);
                 else
                     backtrackPatternCharacterFixed(opIndex);
@@ -1348,7 +1348,7 @@ class YarrGenerator : private MacroAssembler {
         case PatternTerm::TypeCharacterClass:
             switch (term->quantityType) {
             case QuantifierFixedCount:
-                if (term->quantityCount == 1)
+                if (term->quantityMaxCount == 1)
                     backtrackCharacterClassOnce(opIndex);
                 else
                     backtrackCharacterClassFixed(opIndex);
@@ -1617,7 +1617,7 @@ class YarrGenerator : private MacroAssembler {
                 PatternTerm* term = op.m_term;
                 unsigned parenthesesFrameLocation = term->frameLocation;
                 const RegisterID indexTemporary = regT0;
-                ASSERT(term->quantityCount == 1);
+                ASSERT(term->quantityMaxCount == 1);
 
                 // Upon entry to a Greedy quantified set of parenthese store the index.
                 // We'll use this for two purposes:
@@ -1664,7 +1664,7 @@ class YarrGenerator : private MacroAssembler {
             case OpParenthesesSubpatternOnceEnd: {
                 PatternTerm* term = op.m_term;
                 const RegisterID indexTemporary = regT0;
-                ASSERT(term->quantityCount == 1);
+                ASSERT(term->quantityMaxCount == 1);
 
                 // Runtime ASSERT to make sure that the nested alternative handled the
                 // "no input consumed" check.
@@ -1707,7 +1707,7 @@ class YarrGenerator : private MacroAssembler {
             case OpParenthesesSubpatternTerminalBegin: {
                 PatternTerm* term = op.m_term;
                 ASSERT(term->quantityType == QuantifierGreedy);
-                ASSERT(term->quantityCount == quantifyInfinite);
+                ASSERT(term->quantityMaxCount == quantifyInfinite);
                 ASSERT(!term->capture());
 
                 // Upon entry set a label to loop back to.
@@ -2191,7 +2191,7 @@ class YarrGenerator : private MacroAssembler {
             // matching start, depending of whether the match is Greedy or NonGreedy.
             case OpParenthesesSubpatternOnceBegin: {
                 PatternTerm* term = op.m_term;
-                ASSERT(term->quantityCount == 1);
+                ASSERT(term->quantityMaxCount == 1);
 
                 // We only need to backtrack to thispoint if capturing or greedy.
                 if ((term->capture() && compileMode == IncludeSubpatterns) || term->quantityType == QuantifierGreedy) {
@@ -2330,7 +2330,7 @@ class YarrGenerator : private MacroAssembler {
     // Emits ops for a subpattern (set of parentheses). These consist
     // of a set of alternatives wrapped in an outer set of nodes for
     // the parentheses.
-    // Supported types of parentheses are 'Once' (quantityCount == 1)
+    // Supported types of parentheses are 'Once' (quantityMaxCount == 1)
     // and 'Terminal' (non-capturing parentheses quantified as greedy
     // and infinite).
     // Alternatives will use the 'Simple' set of ops if either the
@@ -2351,7 +2351,10 @@ class YarrGenerator : private MacroAssembler {
         // comes where the subpattern is capturing, in which case we would
         // need to restore the capture from the first subpattern upon a
         // failure in the second.
-        if (term->quantityCount == 1 && !term->parentheses.isCopy) {
+        if (term->quantityMinCount && term->quantityMinCount != term->quantityMaxCount) {
+            m_shouldFallBack = true;
+            return;
+        } if (term->quantityMaxCount == 1 && !term->parentheses.isCopy) {
             // Select the 'Once' nodes.
             parenthesesBeginOpCode = OpParenthesesSubpatternOnceBegin;
             parenthesesEndOpCode = OpParenthesesSubpatternOnceEnd;

@@ -1,3 +1,18 @@
+2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r210837. rdar://problem/29432371
+
+    2017-01-17  Michael Saboff  <msaboff@apple.com>
+
+            Nested parenthesized regular expressions with non-zero minimum counts appear to hang and use lots of memory
+            https://bugs.webkit.org/show_bug.cgi?id=167125
+
+            Reviewed by Filip Pizlo.
+
+            * microbenchmarks/regexp-nested-nonzero-min-counted-parens.js: Added.
+            New test with limits that run slow and take a reasonable amount of memory
+            before the change and run fast, using little memory with the change.
+
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r210563. rdar://problem/29940224

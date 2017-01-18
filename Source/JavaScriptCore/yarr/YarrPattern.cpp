@@ -522,6 +522,7 @@ public:
         
         PatternTerm termCopy = term;
         termCopy.parentheses.disjunction = copyDisjunction(termCopy.parentheses.disjunction, filterStartsWithBOL);
+        m_pattern.m_hasCopiedParenSubexpressions = true;
         return termCopy;
     }
     
@@ -537,7 +538,7 @@ public:
 
         PatternTerm& term = m_alternative->lastTerm();
         ASSERT(term.type > PatternTerm::TypeAssertionWordBoundary);
-        ASSERT((term.quantityCount == 1) && (term.quantityType == QuantifierFixedCount));
+        ASSERT(term.quantityMinCount == 1 && term.quantityMaxCount == 1 && term.quantityType == QuantifierFixedCount);
 
         if (term.type == PatternTerm::TypeParentheticalAssertion) {
             // If an assertion is quantified with a minimum count of zero, it can simply be removed.
@@ -559,12 +560,12 @@ public:
             return;
         }
 
-        if (min == 0)
-            term.quantify(max, greedy   ? QuantifierGreedy : QuantifierNonGreedy);
-        else if (min == max)
-            term.quantify(min, QuantifierFixedCount);
+        if (min == max)
+            term.quantify(min, max, QuantifierFixedCount);
+        else if (!min || (term.type == PatternTerm::TypeParenthesesSubpattern && m_pattern.m_hasCopiedParenSubexpressions))
+            term.quantify(min, max, greedy ? QuantifierGreedy : QuantifierNonGreedy);
         else {
-            term.quantify(min, QuantifierFixedCount);
+            term.quantify(min, min, QuantifierFixedCount);
             m_alternative->m_terms.append(copyTerm(term));
             // NOTE: this term is interesting from an analysis perspective, in that it can be ignored.....
             m_alternative->lastTerm().quantify((max == quantifyInfinite) ? max : max - min, greedy ? QuantifierGreedy : QuantifierNonGreedy);
@@ -614,9 +615,9 @@ public:
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoPatternCharacter;
                     alternative->m_hasFixedSize = false;
                 } else if (m_pattern.unicode()) {
-                    currentInputPosition += U16_LENGTH(term.patternCharacter) * term.quantityCount;
+                    currentInputPosition += U16_LENGTH(term.patternCharacter) * term.quantityMaxCount;
                 } else
-                    currentInputPosition += term.quantityCount;
+                    currentInputPosition += term.quantityMaxCount;
                 break;
 
             case PatternTerm::TypeCharacterClass:
@@ -628,16 +629,16 @@ public:
                 } else if (m_pattern.unicode()) {
                     term.frameLocation = currentCallFrameSize;
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoCharacterClass;
-                    currentInputPosition += term.quantityCount;
+                    currentInputPosition += term.quantityMaxCount;
                     alternative->m_hasFixedSize = false;
                 } else
-                    currentInputPosition += term.quantityCount;
+                    currentInputPosition += term.quantityMaxCount;
                 break;
 
             case PatternTerm::TypeParenthesesSubpattern:
                 // Note: for fixed once parentheses we will ensure at least the minimum is available; others are on their own.
                 term.frameLocation = currentCallFrameSize;
-                if (term.quantityCount == 1 && !term.parentheses.isCopy) {
+                if (term.quantityMaxCount == 1 && !term.parentheses.isCopy) {
                     if (term.quantityType != QuantifierFixedCount)
                         currentCallFrameSize += YarrStackSpaceForBackTrackInfoParenthesesOnce;
                     error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition.unsafeGet(), currentCallFrameSize);
@@ -754,7 +755,8 @@ public:
                 PatternTerm& term = terms.last();
                 if (term.type == PatternTerm::TypeParenthesesSubpattern
                     && term.quantityType == QuantifierGreedy
-                    && term.quantityCount == quantifyInfinite
+                    && term.quantityMinCount == 0
+                    && term.quantityMaxCount == quantifyInfinite
                     && !term.capture())
                     term.parentheses.isTerminal = true;
             }
@@ -955,6 +957,7 @@ YarrPattern::YarrPattern(const String& pattern, RegExpFlags flags, const char** 
     : m_containsBackreferences(false)
     , m_containsBOL(false)
     , m_containsUnsignedLengthPattern(false)
+    , m_hasCopiedParenSubexpressions(false)
     , m_flags(flags)
     , m_numSubpatterns(0)
     , m_maxBackReference(0)
