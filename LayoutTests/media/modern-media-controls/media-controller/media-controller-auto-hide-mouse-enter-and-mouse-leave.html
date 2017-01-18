@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=true ] -->
 <script src="../../../resources/js-test-pre.js"></script>
 <body>
 <video src="../../content/test.mp4" style="position: absolute; left: 0; top: 0; width: 320px; height: 240px;" controls autoplay data-auto-hide-delay="250"></video>
@@ -11,37 +11,35 @@ description("Testing the controls bar appears when the mouse enters and disappea
 let controlsBar;
 
 document.querySelector("video").addEventListener("play", (event) => {
-    window.requestAnimationFrame(() => {
-        const media = event.target;
-        controlsBar = window.internals.shadowRoot(media).querySelector(".controls-bar");
+    const media = event.target;
+    controlsBar = window.internals.shadowRoot(media).querySelector(".controls-bar");
 
-        debug("Video started playing, controls bar is visible by default.");
-        shouldBeFalse("controlsBar.classList.contains('faded')");
+    debug("Video started playing, controls bar is visible by default.");
+    shouldBeFalse("controlsBar.classList.contains('faded')");
 
-        setTimeout(() => {
+    setTimeout(() => {
+        debug("");
+        debug("Auto-hide timer has elapsed, controls bar should be faded.");
+        shouldBeTrue("controlsBar.classList.contains('faded')");
+
+        eventSender.mouseMoveTo(100, 100);
+        window.requestAnimationFrame(() => {
             debug("");
-            debug("Auto-hide timer has elapsed, controls bar should be faded.");
-            shouldBeTrue("controlsBar.classList.contains('faded')");
+            debug("Mouse moved over the media, controls bar should be visible.");
+            shouldBeFalse("controlsBar.classList.contains('faded')");
 
-            eventSender.mouseMoveTo(100, 100);
+            eventSender.mouseMoveTo(400, 400);
             window.requestAnimationFrame(() => {
                 debug("");
-                debug("Mouse moved over the media, controls bar should be visible.");
-                shouldBeFalse("controlsBar.classList.contains('faded')");
+                debug("Mouse moved out of the media, controls bar should be faded.");
+                shouldBeTrue("controlsBar.classList.contains('faded')");
 
-                eventSender.mouseMoveTo(400, 400);
-                window.requestAnimationFrame(() => {
-                    debug("");
-                    debug("Mouse moved out of the media, controls bar should be faded.");
-                    shouldBeTrue("controlsBar.classList.contains('faded')");
-
-                    debug("");
-                    media.remove();
-                    finishJSTest();
-                });
+                debug("");
+                media.remove();
+                finishJSTest();
             });
-        }, 300);
-    });
+        });
+    }, 300);
 });
 
 </script>

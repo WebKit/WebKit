@@ -1,6 +1,5 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
-<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
 <style type="text/css" media="screen">
     
@@ -37,20 +36,21 @@ scheduler.frameDidFire = function() {
     if (media.paused)
         return;
 
-    const button = mediaController.controls.pipButton.element;
-    if (button.getBoundingClientRect().width === 0)
-        return;
+    const input = mediaController.controls.pipButton.element;
+    const bounds = input.getBoundingClientRect();
+    const centerX = bounds.left + bounds.width / 2;
+    const centerY = bounds.top + bounds.height / 2;
 
-    media.pause();
-    pressOnElement(button);
-    scheduler.frameDidFire = null;
+    eventSender.mouseMoveTo(centerX, centerY);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
 };
 
 media.addEventListener("webkitpresentationmodechanged", () => {
     shouldBeEqualToString("media.webkitPresentationMode", "picture-in-picture");
     container.remove();
     media.remove();
-    finishMediaControlsTest();
+    finishJSTest();
 });
 
 </script>

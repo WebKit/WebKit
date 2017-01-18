@@ -291,10 +291,3 @@ webkit.org/b/165541 compositing/layer-creation/fixed-overlap-extent-rtl.html [ F
 webkit.org/b/165541 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
 
 webkit.org/b/165589 pointer-lock/lock-lost-on-esc-in-fullscreen.html [ Skip ]
-
-# webkit.org/b/163585
-media/track/track-cues-cuechange.html [ Pass Crash ]
-media/track/track-cue-rendering-horizontal.html [ Pass Crash ]
-media/accessibility-closed-captions-has-aria-owns.html [ Pass Crash ]
-media/track/track-cues-enter-exit.html [ Pass Crash ]
-media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html [ Pass Timeout ]

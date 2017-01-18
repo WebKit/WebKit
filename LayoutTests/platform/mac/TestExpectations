@@ -1458,32 +1458,6 @@ webkit.org/b/165222 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/idbindex
 webkit.org/b/165530 compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
 webkit.org/b/165530 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
 
-# picture-in-picture is not supported prior to Sierra.
-[ ElCapitan Yosemite ] media/modern-media-controls/pip-support [ Skip ]
-[ ElCapitan Yosemite ] media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Skip ]
-[ ElCapitan Yosemite ] media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
-
-# internals.setMockMediaPlaybackTargetPickerState() is not available on Yosemite
-[ Yosemite ] media/modern-media-controls/airplay-support/airplay-support.html [ Skip ]
-[ Yosemite ] media/modern-media-controls/placard-support/placard-support-airplay.html [ Skip ]
-
-# internals.setMockMediaPlaybackTargetPickerEnabled() is not available on Yosemite
-[ Yosemite ] media/modern-media-controls/audio/audio-controls-buttons.html [ Skip ]
-
-# iPad-specific tests
-media/modern-media-controls/fullscreen-support/ipad/fullscreen-support-tap.html [ Skip ]
-media/modern-media-controls/pip-support/ipad/pip-support-enabled.html [ Skip ]
-media/modern-media-controls/pip-support/ipad/pip-support-tap.html [ Skip ]
-media/modern-media-controls/placard-support/ipad/placard-support-pip.html [ Skip ]
-media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ Skip ]
-
-# These sometimes work but more often than not don't
-webkit.org/b/164323 media/modern-media-controls/airplay-support/airplay-support.html [ Pass Failure ]
-webkit.org/b/164298 media/modern-media-controls/placard-support/placard-support-airplay.html [ Pass Failure ]
-
-# This one always times out on the bots, cannot reproduce locally.
-webkit.org/b/165234 media/modern-media-controls/audio/audio-controls-buttons.html [ Pass Timeout ]
-
 webkit.org/b/165874 [ Debug ] streams/pipe-to.html [ Pass Failure ]
 
 # New Encrypted Media API not enabled on Mac

@@ -1,4 +1,5 @@
 <script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
 <body>
 <div id="container"></div>
@@ -30,31 +31,25 @@ scheduler.frameDidFire = function()
     if (buttons.some(button => button.width == 0))
         return;
 
-    // All buttons have been loaded, we wait for the next tick to ensure
-    // that their CSS properties have also been committed.
-    window.requestAnimationFrame(() => {
-        document.getElementById("container").appendChild(mediaControls.element);
+    document.getElementById("container").appendChild(mediaControls.element);
 
-        centerContainerBounds = centerContainer.element.getBoundingClientRect();
+    centerContainerBounds = centerContainer.element.getBoundingClientRect();
+    shouldBe("centerContainerBounds.left", "311");
+    shouldBe("centerContainerBounds.top", "500");
+    shouldBe("centerContainerBounds.width", "178");
+    shouldBe("centerContainerBounds.height", "44");
 
-        shouldBe("centerContainerBounds.left", "311");
-        shouldBe("centerContainerBounds.top", "500");
-        shouldBe("centerContainerBounds.width", "178");
-        shouldBe("centerContainerBounds.height", "44");
+    debug("");
+    rightContainerBounds = rightContainer.element.getBoundingClientRect();
+    shouldBeCloseTo("rightContainerBounds.left", 493, 0.5);
+    shouldBe("rightContainerBounds.top", "500");
+    shouldBeCloseTo("rightContainerBounds.width", 141, 0.5);
+    shouldBe("rightContainerBounds.height", "44");
 
-        debug("");
-        rightContainerBounds = rightContainer.element.getBoundingClientRect();
-        shouldBeCloseTo("rightContainerBounds.left", 493, 0.5);
-        shouldBe("rightContainerBounds.top", "500");
-        shouldBeCloseTo("rightContainerBounds.width", 141, 0.5);
-        shouldBe("rightContainerBounds.height", "44");
+    mediaControls.element.remove();
 
-        debug("");
-        mediaControls.element.remove();
-        finishJSTest();
-    });
-
-    scheduler.frameDidFire = null;
+    debug("");
+    finishJSTest();
 };
 
 </script>
