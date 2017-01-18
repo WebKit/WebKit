@@ -1,3 +1,16 @@
+2017-01-17  Andreas Kling  <akling@apple.com>
+
+        Annotate FastMalloc functions with returns_nonnull attribute.
+        <https://webkit.org/b/167144>
+
+        Reviewed by Antti Koivisto.
+
+        Decorate fastMalloc() and friends with __attribute__((returns_nonnull)) for supporting
+        compilers that can do useful things with that information.
+
+        * wtf/Compiler.h:
+        * wtf/FastMalloc.h:
+
 2017-01-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         ENABLE(USER_TIMING) Not Defined for Apple Windows or OS X Ports

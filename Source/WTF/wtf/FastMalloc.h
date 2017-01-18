@@ -45,11 +45,11 @@ private:
 WTF_EXPORT_PRIVATE bool isFastMallocEnabled();
 
 // These functions call CRASH() if an allocation fails.
-WTF_EXPORT_PRIVATE void* fastMalloc(size_t);
-WTF_EXPORT_PRIVATE void* fastZeroedMalloc(size_t);
-WTF_EXPORT_PRIVATE void* fastCalloc(size_t numElements, size_t elementSize);
-WTF_EXPORT_PRIVATE void* fastRealloc(void*, size_t);
-WTF_EXPORT_PRIVATE char* fastStrDup(const char*);
+WTF_EXPORT_PRIVATE void* fastMalloc(size_t) RETURNS_NONNULL;
+WTF_EXPORT_PRIVATE void* fastZeroedMalloc(size_t) RETURNS_NONNULL;
+WTF_EXPORT_PRIVATE void* fastCalloc(size_t numElements, size_t elementSize) RETURNS_NONNULL;
+WTF_EXPORT_PRIVATE void* fastRealloc(void*, size_t) RETURNS_NONNULL;
+WTF_EXPORT_PRIVATE char* fastStrDup(const char*) RETURNS_NONNULL;
 
 WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastMalloc(size_t);
 TryMallocReturnValue tryFastZeroedMalloc(size_t);
@@ -58,7 +58,7 @@ WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastCalloc(size_t numElements, size_t
 WTF_EXPORT_PRIVATE void fastFree(void*);
 
 // Allocations from fastAlignedMalloc() must be freed using fastAlignedFree().
-WTF_EXPORT_PRIVATE void* fastAlignedMalloc(size_t alignment, size_t);
+WTF_EXPORT_PRIVATE void* fastAlignedMalloc(size_t alignment, size_t) RETURNS_NONNULL;
 WTF_EXPORT_PRIVATE void* tryFastAlignedMalloc(size_t alignment, size_t);
 WTF_EXPORT_PRIVATE void fastAlignedFree(void*);
 

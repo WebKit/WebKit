@@ -240,6 +240,15 @@
 #define NO_RETURN
 #endif
 
+/* RETURNS_NONNULL */
+#if !defined(RETURNS_NONNULL) && COMPILER(GCC_OR_CLANG)
+#define RETURNS_NONNULL __attribute__((returns_nonnull))
+#endif
+
+#if !defined(RETURNS_NONNULL)
+#define RETURNS_NONNULL
+#endif
+
 /* NO_RETURN_WITH_VALUE */
 
 #if !defined(NO_RETURN_WITH_VALUE) && !COMPILER(MSVC)
