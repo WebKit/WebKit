@@ -1,3 +1,79 @@
+2017-01-17  Michael Saboff  <msaboff@apple.com>
+
+        Nested parenthesized regular expressions with non-zero minimum counts appear to hang and use lots of memory
+        https://bugs.webkit.org/show_bug.cgi?id=167125
+
+        Reviewed by Filip Pizlo.
+
+        Changed Yarr to handle nested parenthesized subexpressions where the minimum count is
+        not 0 directly in the Yarr interpreter.  Previously we'd factor an expression like
+        (a|b)+ into (a|b)(a|b)* with special handling for captures.  This factoring was done
+        using a deep copy that doubled the size of the resulting expresion for each nested 
+        parenthesized subexpression.  Now the Yarr interpreter can directly process a regexp
+        like (a|b){2,42}.  
+
+        The parser will allow one level of nested, non-zero minimum, counted parenthesis using
+        the old copy method.  After one level, it will generate parenthesis terms with a non-zero
+        minimum.   Such an expression wasn't handled by the Yarr JIT before the change, so this
+        change isn't a performance regression.
+
+        Added a minimum count to the YarrPattern and ByteTerm classes, and then factored that
+        minimum into the interpreter.  A non-zero minimum is only handled by the Yarr interpreter.
+        If the Yarr JIT see such a term, it punts back to the interpreter.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::backtrackPatternCharacter):
+        (JSC::Yarr::Interpreter::backtrackPatternCasedCharacter):
+        (JSC::Yarr::Interpreter::matchCharacterClass):
+        (JSC::Yarr::Interpreter::backtrackCharacterClass):
+        (JSC::Yarr::Interpreter::matchBackReference):
+        (JSC::Yarr::Interpreter::backtrackBackReference):
+        (JSC::Yarr::Interpreter::matchParenthesesOnceBegin):
+        (JSC::Yarr::Interpreter::matchParenthesesOnceEnd):
+        (JSC::Yarr::Interpreter::backtrackParenthesesOnceBegin):
+        (JSC::Yarr::Interpreter::backtrackParenthesesOnceEnd):
+        (JSC::Yarr::Interpreter::matchParenthesesTerminalBegin):
+        (JSC::Yarr::Interpreter::backtrackParenthesesTerminalBegin):
+        (JSC::Yarr::Interpreter::matchParentheticalAssertionBegin):
+        (JSC::Yarr::Interpreter::matchParentheticalAssertionEnd):
+        (JSC::Yarr::Interpreter::backtrackParentheticalAssertionBegin):
+        (JSC::Yarr::Interpreter::backtrackParentheticalAssertionEnd):
+        (JSC::Yarr::Interpreter::matchParentheses):
+        (JSC::Yarr::Interpreter::backtrackParentheses):
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::ByteCompiler::atomPatternCharacter):
+        (JSC::Yarr::ByteCompiler::atomCharacterClass):
+        (JSC::Yarr::ByteCompiler::atomBackReference):
+        (JSC::Yarr::ByteCompiler::atomParentheticalAssertionEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesOnceEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesTerminalEnd):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::ByteTerm::ByteTerm):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterOnce):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterFixed):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackPatternCharacterNonGreedy):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassFixed):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassNonGreedy):
+        (JSC::Yarr::YarrGenerator::generateTerm):
+        (JSC::Yarr::YarrGenerator::backtrackTerm):
+        (JSC::Yarr::YarrGenerator::generate):
+        (JSC::Yarr::YarrGenerator::backtrack):
+        (JSC::Yarr::YarrGenerator::opCompileParenthesesSubpattern):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::copyTerm):
+        (JSC::Yarr::YarrPatternConstructor::quantifyAtom):
+        (JSC::Yarr::YarrPatternConstructor::checkForTerminalParentheses):
+        (JSC::Yarr::YarrPattern::YarrPattern):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::PatternTerm::PatternTerm):
+        (JSC::Yarr::PatternTerm::quantify):
+        (JSC::Yarr::YarrPattern::reset):
+
 2017-01-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         ENABLE(USER_TIMING) Not Defined for Apple Windows or OS X Ports
