@@ -18,6 +18,7 @@ var MockModels = {
             MockModels.ios = Repository.ensureSingleton(22, {name: 'iOS'});
             MockModels.webkit = Repository.ensureSingleton(11, {name: 'WebKit', url: 'http://trac.webkit.org/changeset/$1'});
             MockModels.sharedRepository = Repository.ensureSingleton(16, {name: 'Shared'});
+            MockModels.webkitGit = Repository.ensureSingleton(17, {name: 'WebKit-Git'});
             MockModels.builder = new Builder(176, {name: 'WebKit Perf Builder', buildUrl: 'http://build.webkit.org/builders/$builderName/$buildNumber'});
 
             MockModels.someTest = Test.ensureSingleton(1, {name: 'Some test'});

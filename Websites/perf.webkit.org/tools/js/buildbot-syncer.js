@@ -222,9 +222,14 @@ class BuildbotSyncer {
             else if ('root' in value) {
                 let repositoryName = value['root'];
                 let repository = repositoryByName[repositoryName];
-                assert(repository, '"${repositoryName}" must be specified');
+                assert(repository, `"${repositoryName}" must be specified`);
                 properties[key] = rootSet.revisionForRepository(repository);
-            } else if ('rootsExcluding' in value) {
+            } else if ('rootOptions' in value) {
+                const filteredOptions = value['rootOptions'].filter((option) => option in repositoryByName);
+                assert.equal(filteredOptions.length, 1, `There should be exactly one valid root among "${value['rootOptions']}".`);
+                properties[key] = rootSet.revisionForRepository(repositoryByName[filteredOptions[0]]);
+            }
+            else if ('rootsExcluding' in value) {
                 let revisionSet = this._revisionSetFromRootSetWithExclusionList(rootSet, value['rootsExcluding']);
                 properties[key] = JSON.stringify(revisionSet);
             }
@@ -334,25 +339,25 @@ class BuildbotSyncer {
                 continue;
 
             switch (name) {
-            case 'properties': // fallthrough
+            case 'properties': // Fallthrough
             case 'arguments':
                 assert.equal(typeof(value), 'object', 'arguments should be a dictionary');
                 if (!config['properties'])
                     config['properties'] = {};
                 this._validateAndMergeProperties(config['properties'], value);
                 break;
-            case 'test': // fallthrough
-            case 'slaveList': // fallthrough
+            case 'test': // Fallthrough
+            case 'slaveList': // Fallthrough
             case 'platforms':
             case 'types':
                 assert(value instanceof Array, `${name} should be an array`);
                 assert(value.every(function (part) { return typeof part == 'string'; }), `${name} should be an array of strings`);
                 config[name] = value.slice();
                 break;
-            case 'type': // fallthrough
-            case 'builder': // fallthrough
-            case 'platform': // fallthrough
-            case 'slaveArgument': // fallthrough
+            case 'type': // Fallthrough
+            case 'builder': // Fallthrough
+            case 'platform': // Fallthrough
+            case 'slaveArgument': // Fallthrough
             case 'buildRequestArgument':
                 assert.equal(typeof(value), 'string', `${name} should be of string type`);
                 config[name] = value;
@@ -373,7 +378,7 @@ class BuildbotSyncer {
                 continue;
             }
             assert.equal(typeof(value), 'object', 'A argument value must be either a string or a dictionary');
-                
+
             let keys = Object.keys(value);
             assert.equal(keys.length, 1, 'arguments value cannot contain more than one key');
             let namedValue = value[keys[0]];
@@ -381,10 +386,11 @@ class BuildbotSyncer {
             case 'root':
                 assert.equal(typeof(namedValue), 'string', 'root name must be a string');
                 break;
+            case 'rootOptions': // Fallthrough
             case 'rootsExcluding':
-                assert(namedValue instanceof Array, 'rootsExcluding must specify an array');
+                assert(namedValue instanceof Array, `${keys[0]} must specify an array`);
                 for (let excludedRootName of namedValue)
-                    assert.equal(typeof(excludedRootName), 'string', 'rootsExcluding must specify an array of strings');
+                    assert.equal(typeof(excludedRootName), 'string', `${keys[0]} must specify an array of strings`);
                 namedValue = namedValue.slice();
                 break;
             default:

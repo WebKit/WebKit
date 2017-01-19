@@ -16,6 +16,7 @@ function sampleiOSConfig()
             {
                 'arguments': {
                     'desired_image': {'root': 'iOS'},
+                    'opensource': {'rootOptions': ['WebKit-SVN', 'WebKit-Git']},
                     'roots_dict': {'rootsExcluding': ['iOS']}
                 },
                 'slaveArgument': 'slavename',
@@ -107,7 +108,6 @@ function sampleiOSConfigWithExpansions()
             },
         ]
     }
-    
 }
 
 let sampleRootSetData = {
@@ -122,7 +122,13 @@ let sampleRootSetData = {
         'time': 1456931874000,
         'repository': 'Shared',
         'revision': '80229',
-    }
+    },
+    'WebKit-Git': {
+        "id":"111239",
+        "time":1456931874000,
+        "repository":"WebKit-Git",
+        "revision":"9abcdef",
+    },
 };
 
 function smallConfiguration()
@@ -204,6 +210,7 @@ function createSampleBuildRequest(platform, test)
     let rootSet = RootSet.ensureSingleton('4197', {roots: [
         {'id': '111127', 'time': 1456955807334, 'repository': MockModels.webkit, 'revision': '197463'},
         {'id': '111237', 'time': 1456931874000, 'repository': MockModels.sharedRepository, 'revision': '80229'},
+        {'id': '111239', 'time': 1456931874000, 'repository': MockModels.webkitGit, 'revision': '9abcdef'},
         {'id': '88930', 'time': 0, 'repository': MockModels.ios, 'revision': '13A452'},
     ]});
 
@@ -564,7 +571,7 @@ describe('BuildbotSyncer', function () {
         it('should include all properties specified in a given configuration', function () {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
             let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
-            assert.deepEqual(Object.keys(properties), ['desired_image', 'roots_dict', 'test_name', 'forcescheduler', 'build_request_id']);
+            assert.deepEqual(Object.keys(properties), ['desired_image', 'opensource', 'roots_dict', 'test_name', 'forcescheduler', 'build_request_id']);
         });
 
         it('should preserve non-parametric property values', function () {
@@ -582,6 +589,12 @@ describe('BuildbotSyncer', function () {
             let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
             let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
             assert.equal(properties['desired_image'], '13A452');
+        });
+
+        it('should resolve "rootOptions"', function () {
+            let syncers = BuildbotSyncer._loadConfig(RemoteAPI, sampleiOSConfig());
+            let properties = syncers[0]._propertiesForBuildRequest(createSampleBuildRequest(MockModels.iphone, MockModels.speedometer));
+            assert.equal(properties['roots_dict'], JSON.stringify(sampleRootSetData));
         });
 
         it('should resolve "rootsExcluding"', function () {
@@ -892,9 +905,11 @@ describe('BuildbotSyncer', function () {
                 assert.deepEqual(requests[0].data, {
                     'build_request_id': '16733-' + MockModels.iphone.id(),
                     'desired_image': '13A452',
+                    "opensource": "9abcdef",
                     'forcescheduler': 'ABTest-iPhone-RunBenchmark-Tests-ForceScheduler',
                     'roots_dict': '{"WebKit":{"id":"111127","time":1456955807334,"repository":"WebKit","revision":"197463"},'
-                        + '"Shared":{"id":"111237","time":1456931874000,"repository":"Shared","revision":"80229"}}',
+                        + '"Shared":{"id":"111237","time":1456931874000,"repository":"Shared","revision":"80229"},'
+                        + '"WebKit-Git":{"id":"111239","time":1456931874000,"repository":"WebKit-Git","revision":"9abcdef"}}',
                     'slavename': 'some-slave',
                     'test_name': 'speedometer'
                 });
