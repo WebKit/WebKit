@@ -1,3 +1,12 @@
+2017-01-19  Timothy Hatcher  <timothy@hatcher.name>
+
+        Remove my old email address from contributors.json and watchlist.
+
+        * Scripts/validate-committer-lists:
+        (CommitterListFromGit): Change the mapping to the correct email.
+        * Scripts/webkitpy/common/config/contributors.json:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2017-01-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r210848.

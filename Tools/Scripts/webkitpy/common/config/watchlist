@@ -10,9 +10,6 @@
 #
 {
     "DEFINITIONS": {
-        "AppleMacPublicApi": {
-            "filename": r"Source/WebCore/bindings/objc/PublicDOMInterfaces.h"
-        },
         "Forms": {
             "filename": r"Source/WebCore/html/HTML(DataList|FieldSet|Input|Keygen|Label|Legend|OptGroup|Option|Output|Select|TextArea)Element\."
                         r"|Source/WebCore/html/.*Form[A-Z].*\."
@@ -353,7 +350,6 @@
         "Accessibility": [ "cfleizach@apple.com", "dmazzoni@google.com", "apinheiro@igalia.com", "jdiggs@igalia.com", "aboxhall@chromium.org", "mario@webkit.org", "samuel_white@apple.com", "jcraig@apple.com" ],
         "Animation" : [ "simon.fraser@apple.com", "dino@apple.com", "dstockwell@chromium.org" ],
         "MotionMark" : [ "sabouhallawa@apple.com" ],
-        "AppleMacPublicApi": [ "timothy@apple.com" ],
         "BindingsScripts": [ "cdumez@apple.com" ],
         "CMake": [ "rakuco@webkit.org", "gyuyoung.kim@webkit.org", "ryuan.choi@gmail.com", "sergio.correia@openbossa.org", "mcatanzaro@igalia.com" ],
         "CoordinatedGraphics" : [ "noam@webkit.org", "zeno@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org", "ryuan.choi@gmail.com", "sergio.correia@openbossa.org", "gyuyoung.kim@webkit.org" ],
@@ -405,7 +401,7 @@
         "WTF": [ "benjamin@webkit.org", "cmarcelo@webkit.org", "cdumez@apple.com", "dbates@webkit.org" ],
         "WebGL": [ "dino@apple.com", "kondapallykalyan@gmail.com", "graouts@webkit.org" ],
         "WebIDL": [ "esprehn+autocc@chromium.org", "cdumez@apple.com", "kondapallykalyan@gmail.com" ],
-        "WebInspectorAPI": [ "timothy@apple.com", "joepeck@webkit.org" ],
+        "WebInspectorAPI": [ "joepeck@webkit.org" ],
         "WebInspectorGenerator": [ "bburg@apple.com", "joepeck@webkit.org" ],
         "WebInspectorUIImages": [ "agomez@igalia.com" ],
         "WebReplayGenerator": [ "bburg@apple.com" ],
@@ -417,10 +413,6 @@
         "webkitpy": [ "glenn@skynav.com" ],
     },
     "MESSAGE_RULES": {
-        "AppleMacPublicApi": [ "Please wait for approval from timothy@apple.com (or another member "
-                               "of the Apple Safari Team) before submitting "
-                               "because this patch contains changes to the Apple Mac "
-                               "WebKit.framework public API.", ],
         "GtkWebKit2PublicAPI": [ "Thanks for the patch. If this patch contains new public API "
                                  "please make sure it follows the guidelines for new WebKit2 GTK+ API. "
                                  "See http://trac.webkit.org/wiki/WebKitGTK/AddingNewWebKit2API", ],
