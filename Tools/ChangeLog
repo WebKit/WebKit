@@ -1,5 +1,19 @@
 2017-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ unit tests failing since r210531.
+
+        Avoid using paths to files that don't actually exist.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestConsoleMessage.cpp:
+        (testWebKitConsoleMessageNetworkError):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestContextMenu.cpp:
+        (testContextMenuDefaultMenu):
+        * TestWebKitAPI/Tests/WebKit2Gtk/resources/silence.mpg: Added.
+        * TestWebKitAPI/Tests/WebKit2Gtk/resources/simple.json: Added.
+        * TestWebKitAPI/Tests/WebKit2Gtk/resources/tracks.ogg: Added.
+
+2017-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Provide API to set proxy settings
         https://bugs.webkit.org/show_bug.cgi?id=128674
 

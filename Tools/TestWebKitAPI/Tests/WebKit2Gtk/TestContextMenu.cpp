@@ -369,6 +369,7 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
 {
     test->showInWindowAndWaitUntilMapped();
 
+    GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().data()));
     const char* linksHTML =
         "<html><head>"
         " <script>"
@@ -381,14 +382,14 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
         " </script>"
         "</head><body>"
         " <a style='position:absolute; left:1; top:1' href='http://www.webkitgtk.org' title='WebKitGTK+ Title'>WebKitGTK+ Website</a>"
-        " <img style='position:absolute; left:1; top:10' src='0xdeadbeef' width=5 height=5></img>"
-        " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK+ Logo'><img src='0xdeadbeef' width=5 height=5></img></a>"
+        " <img style='position:absolute; left:1; top:10' src='blank.ico' width=5 height=5></img>"
+        " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK+ Logo'><img src='blank.ico' width=5 height=5></img></a>"
         " <input style='position:absolute; left:1; top:30' size='10'></input>"
-        " <video style='position:absolute; left:1; top:50' width='300' height='300' controls='controls' preload='none'><source src='movie.ogg' type='video/ogg' /></video>"
+        " <video style='position:absolute; left:1; top:50' width='300' height='300' controls='controls' preload='none'><source src='silence.mpg' type='video/mpeg' /></video>"
         " <audio style='position:absolute; left:1; top:60' width='50' height='20' controls='controls' preload='none'><source src='track.ogg' type='audio/ogg' /></audio>"
         " <p style='position:absolute; left:1; top:90' id='text_to_select'>Lorem ipsum.</p>"
         "</body></html>";
-    test->loadHtml(linksHTML, "file:///");
+    test->loadHtml(linksHTML, baseDir.get());
     test->waitUntilLoadFinished();
 
     // Context menu for selection.
