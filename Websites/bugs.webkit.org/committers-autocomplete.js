@@ -85,7 +85,7 @@ WebKitCommitters = (function() {
 })();
 
 (function() {
-    var SINGLE_EMAIL_INPUTS = ['email1', 'email2', 'requester', 'requestee', 'assigned_to'];
+    var SINGLE_EMAIL_INPUTS = ['email1', 'email2', 'email3', 'requester', 'requestee', 'assigned_to'];
     var EMAIL_INPUTS = SINGLE_EMAIL_INPUTS.concat(['cc', 'newcc', 'new_watchedusers']);
 
     var m_menus = {};

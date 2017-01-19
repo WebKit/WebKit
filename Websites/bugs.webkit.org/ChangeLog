@@ -1,3 +1,12 @@
+2017-01-19  Timothy Hatcher  <timothy@hatcher.name>
+
+        Bugzilla email autocomplete does not work on third email field of advanced search page
+        https://bugs.webkit.org/show_bug.cgi?id=167204
+
+        Reviewed by Alexey Proskuryakov.
+
+        * committers-autocomplete.js: Added email3 to SINGLE_EMAIL_INPUTS list.
+
 2016-10-09  Simon Fraser  <simon.fraser@apple.com>
 
         Convert contributors.json to a flat list
