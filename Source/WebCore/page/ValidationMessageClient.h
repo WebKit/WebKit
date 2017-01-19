@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class Document;
 class Element;
 
 class ValidationMessageClient {
@@ -49,6 +50,8 @@ public:
     virtual bool isValidationMessageVisible(const Element& anchor) = 0;
 
     virtual void updateValidationBubbleStateIfNeeded() = 0;
+
+    virtual void documentDetached(Document&) = 0;
 };
 
 } // namespace WebCore

@@ -180,6 +180,7 @@
 #include "TextNodeTraversal.h"
 #include "TransformSource.h"
 #include "TreeWalker.h"
+#include "ValidationMessageClient.h"
 #include "VisitedLinkState.h"
 #include "WheelEvent.h"
 #include "WindowFeatures.h"
@@ -2270,6 +2271,11 @@ void Document::prepareForDestruction()
     if (page())
         page()->pointerLockController().documentDetached(*this);
 #endif
+
+    if (auto* page = this->page()) {
+        if (auto* validationMessageClient = page->validationMessageClient())
+            validationMessageClient->documentDetached(*this);
+    }
 
     InspectorInstrumentation::documentDetached(*this);
 
