@@ -1,5 +1,11 @@
 2017-01-19  Timothy Hatcher  <timothy@hatcher.name>
 
+        Add back my old email address so old commits will still match it.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2017-01-19  Timothy Hatcher  <timothy@hatcher.name>
+
         Remove my old email address from contributors.json and watchlist.
 
         * Scripts/validate-committer-lists:
