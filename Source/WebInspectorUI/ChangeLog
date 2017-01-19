@@ -1,3 +1,21 @@
+2017-01-19  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Dashboard's log/error/warning help tag says "click to show the Console" even when clicking does nothing
+        https://bugs.webkit.org/show_bug.cgi?id=167102
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.showConsoleTab):
+        Don't revert to the All scopes if the requested scope is already selected.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/DefaultDashboardView.js:
+        (WebInspector.DefaultDashboardView):
+        (WebInspector.DefaultDashboardView.prototype._appendElementForNamedItem):
+        (WebInspector.DefaultDashboardView.prototype._setItemEnabled):
+        Only apply a title to the element when it is enabled.
+
 2017-01-18  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: split console should be allowed for Network and Timeline tabs when Inspector is not docked

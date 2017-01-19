@@ -954,16 +954,11 @@ WebInspector.hideSplitConsole = function()
 
 WebInspector.showConsoleTab = function(requestedScope)
 {
+    requestedScope = requestedScope || WebInspector.LogContentView.Scopes.All;
+
     this.hideSplitConsole();
 
-    var scope = requestedScope || WebInspector.LogContentView.Scopes.All;
-
-    // If the requested scope is already selected and the console is showing, then switch back to All.
-    if (this.isShowingConsoleTab() && this.consoleContentView.scopeBar.item(scope).selected)
-        scope = WebInspector.LogContentView.Scopes.All;
-
-    if (requestedScope || !this.consoleContentView.scopeBar.selectedItems.length)
-        this.consoleContentView.scopeBar.item(scope).selected = true;
+    this.consoleContentView.scopeBar.item(requestedScope).selected = true;
 
     this.showRepresentedObject(this._consoleRepresentedObject);
 
