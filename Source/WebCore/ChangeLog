@@ -1,3 +1,67 @@
+2017-01-19  Andreas Kling  <akling@apple.com>
+
+        ScriptExecutionContext::topOrigin() should return a reference.
+        <https://webkit.org/b/167190>
+
+        Reviewed by Sam Weinig.
+
+        There is always a topOrigin() SecurityOrigin, so make it return a reference
+        and remove some unnecessary null-checks exposed by this change.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::canCallApplePaySessionAPIs):
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::getSupportedConfiguration):
+        (WebCore::CDM::getConsentStatus):
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::openInternal):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/mediastream/MediaDevicesEnumerationRequest.cpp:
+        (WebCore::MediaDevicesEnumerationRequest::topLevelDocumentOrigin):
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::topLevelDocumentOrigin):
+        (WebCore::canCallGetUserMedia):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::revokeObjectURL):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore::InspectorIndexedDBAgent::requestDatabaseNames):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResource):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::selectCacheWithoutManifestURL):
+        (WebCore::ApplicationCacheGroup::update):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::setDomainForCachePartition):
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::canAccessDatabase):
+        (WebCore::SecurityOrigin::canAccessSessionStorage):
+        (WebCore::SecurityOrigin::canAccessPluginStorage):
+        (WebCore::SecurityOrigin::canAccessApplicationCache):
+        * storage/StorageNamespaceProvider.cpp:
+        (WebCore::StorageNamespaceProvider::localStorageArea):
+        * testing/Internals.cpp:
+        (WebCore::Internals::isLoadingFromMemoryCache):
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create):
+        (WebCore::DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread):
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope):
+        * workers/DedicatedWorkerThread.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        (WebCore::WorkerThread::WorkerThread):
+        * workers/WorkerThread.h:
+
 2017-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Provide API to set proxy settings

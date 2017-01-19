@@ -575,16 +575,14 @@ void InspectorIndexedDBAgent::requestDatabaseNames(ErrorString& errorString, con
 
     auto& openingOrigin = document->securityOrigin();
 
-    auto* topOrigin = document->topOrigin();
-    if (!topOrigin)
-        return;
+    auto& topOrigin = document->topOrigin();
 
     IDBFactory* idbFactory = assertIDBFactory(errorString, document);
     if (!idbFactory)
         return;
 
     RefPtr<RequestDatabaseNamesCallback> callback = WTFMove(requestCallback);
-    idbFactory->getAllDatabaseNames(*topOrigin, openingOrigin, [callback](auto& databaseNames) {
+    idbFactory->getAllDatabaseNames(topOrigin, openingOrigin, [callback](auto& databaseNames) {
         if (!callback->isActive())
             return;
 

@@ -378,7 +378,7 @@ static ExceptionOr<void> canCallApplePaySessionAPIs(Document& document)
 
     auto& topDocument = document.topDocument();
     if (&document != &topDocument) {
-        auto& topOrigin = *topDocument.topOrigin();
+        auto& topOrigin = topDocument.topOrigin();
 
         if (!document.securityOrigin().isSameSchemeHostPort(topOrigin))
             return Exception { INVALID_ACCESS_ERR, "Trying to call an ApplePaySession API from a document with an different security origin than its top-level frame." };

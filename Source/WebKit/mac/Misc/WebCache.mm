@@ -170,7 +170,7 @@
     WebCore::SecurityOrigin* topOrigin = nullptr;
 #if ENABLE(CACHE_PARTITIONING)
     if (frame)
-        topOrigin = core(frame)->document()->topOrigin();
+        topOrigin = &core(frame)->document()->topOrigin();
 #endif
     return WebCore::MemoryCache::singleton().addImageToCache(RetainPtr<CGImageRef>(image), url, topOrigin ? topOrigin->domainForCachePartition() : emptyString());
 }
@@ -187,7 +187,7 @@
     WebCore::SecurityOrigin* topOrigin = nullptr;
 #if ENABLE(CACHE_PARTITIONING)
     if (frame)
-        topOrigin = core(frame)->document()->topOrigin();
+        topOrigin = &core(frame)->document()->topOrigin();
 #endif
     WebCore::MemoryCache::singleton().removeImageFromCache(url, topOrigin ? topOrigin->domainForCachePartition() : emptyString());
 }

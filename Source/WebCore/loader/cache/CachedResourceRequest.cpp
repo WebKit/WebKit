@@ -132,8 +132,7 @@ void CachedResourceRequest::upgradeInsecureRequestIfNeeded(Document& document)
 #if ENABLE(CACHE_PARTITIONING)
 void CachedResourceRequest::setDomainForCachePartition(Document& document)
 {
-    ASSERT(document.topOrigin());
-    m_resourceRequest.setDomainForCachePartition(document.topOrigin()->domainForCachePartition());
+    m_resourceRequest.setDomainForCachePartition(document.topOrigin().domainForCachePartition());
 }
 #endif
 

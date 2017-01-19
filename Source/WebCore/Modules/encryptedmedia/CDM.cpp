@@ -413,11 +413,9 @@ std::optional<MediaKeySystemConfiguration> CDM::getSupportedConfiguration(const 
         return std::nullopt;
 
     SecurityOrigin& origin = document->securityOrigin();
-    SecurityOrigin* topOrigin = document->topOrigin();
-    if (!topOrigin)
-        return std::nullopt;
+    SecurityOrigin& topOrigin = document->topOrigin();
 
-    if ((accumulatedConfiguration.distinctiveIdentifier == MediaKeysRequirement::Required || accumulatedConfiguration.persistentState == MediaKeysRequirement::Required) && !origin.canAccessLocalStorage(topOrigin))
+    if ((accumulatedConfiguration.distinctiveIdentifier == MediaKeysRequirement::Required || accumulatedConfiguration.persistentState == MediaKeysRequirement::Required) && !origin.canAccessLocalStorage(&topOrigin))
         return std::nullopt;
 
     return WTFMove(accumulatedConfiguration);
@@ -548,11 +546,7 @@ void CDM::getConsentStatus(MediaKeySystemConfiguration&& accumulatedConfiguratio
         }
 
         SecurityOrigin& origin = document->securityOrigin();
-        SecurityOrigin* topOrigin = document->topOrigin();
-        if (!topOrigin) {
-            callback(ConsentStatus::ConsentDenied, WTFMove(accumulatedConfiguration), WTFMove(restrictions));
-            return;
-        }
+        SecurityOrigin& topOrigin = document->topOrigin();
 
         // 3.1.1.2 Get Supported Configuration and Consent, ctd.
         // 21. If accumulated configuration's distinctiveIdentifier value is "required" and the Distinctive Identifier(s) associated
@@ -592,7 +586,7 @@ void CDM::getConsentStatus(MediaKeySystemConfiguration&& accumulatedConfiguratio
         // 3.2.1. Update restrictions to reflect the configurations for which consent was denied.
         // 3.2.1. Return ConsentDenied and restrictions.
         // NOTE: assume implied consent if the combination of origin and topOrigin allows it.
-        if (accumulatedConfiguration.distinctiveIdentifier == MediaKeysRequirement::Required && !origin.canAccessLocalStorage(topOrigin)) {
+        if (accumulatedConfiguration.distinctiveIdentifier == MediaKeysRequirement::Required && !origin.canAccessLocalStorage(&topOrigin)) {
             restrictions.distinctiveIdentifierDenied = true;
             callback(ConsentStatus::ConsentDenied, WTFMove(accumulatedConfiguration), WTFMove(restrictions));
             return;

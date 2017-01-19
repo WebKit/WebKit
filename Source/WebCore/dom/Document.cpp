@@ -5362,11 +5362,6 @@ void Document::addMessage(MessageSource source, MessageLevel level, const String
         page->console().addMessage(source, level, message, sourceURL, lineNumber, columnNumber, WTFMove(callStack), state, requestIdentifier);
 }
 
-SecurityOrigin* Document::topOrigin() const
-{
-    return &topDocument().securityOrigin();
-}
-
 void Document::postTask(Task&& task)
 {
     callOnMainThread([documentReference = m_weakFactory.createWeakPtr(), task = WTFMove(task)]() mutable {

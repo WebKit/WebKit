@@ -52,7 +52,7 @@ using namespace Inspector;
 
 namespace WebCore {
 
-WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, WorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, RefPtr<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
+WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, WorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
     : m_url(url)
     , m_identifier(identifier)
     , m_userAgent(userAgent)
@@ -61,7 +61,7 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& identifier, c
     , m_inspectorController(std::make_unique<WorkerInspectorController>(*this))
     , m_shouldBypassMainWorldContentSecurityPolicy(shouldBypassMainWorldContentSecurityPolicy)
     , m_eventQueue(*this)
-    , m_topOrigin(topOrigin)
+    , m_topOrigin(WTFMove(topOrigin))
 #if ENABLE(INDEXED_DATABASE)
     , m_connectionProxy(connectionProxy)
 #endif

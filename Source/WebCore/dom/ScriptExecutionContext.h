@@ -98,7 +98,7 @@ public:
     void addConsoleMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) = 0;
 
-    virtual SecurityOrigin* topOrigin() const = 0;
+    virtual SecurityOrigin& topOrigin() const = 0;
 
     virtual bool shouldBypassMainWorldContentSecurityPolicy() const { return false; }
 

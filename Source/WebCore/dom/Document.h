@@ -912,7 +912,7 @@ public:
     WEBCORE_EXPORT void setDesignMode(const String&);
 
     Document* parentDocument() const;
-    Document& topDocument() const;
+    WEBCORE_EXPORT Document& topDocument() const;
     
     ScriptRunner* scriptRunner() { return m_scriptRunner.get(); }
     ScriptModuleLoader* moduleLoader() { return m_moduleLoader.get(); }
@@ -1223,8 +1223,7 @@ public:
     WEBCORE_EXPORT void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) final;
 
     SecurityOrigin& securityOrigin() const { return *SecurityContext::securityOrigin(); }
-
-    WEBCORE_EXPORT SecurityOrigin* topOrigin() const final;
+    SecurityOrigin& topOrigin() const final { return topDocument().securityOrigin(); }
 
     Ref<FontFaceSet> fonts();
 

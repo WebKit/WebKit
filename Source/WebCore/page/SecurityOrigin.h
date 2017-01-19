@@ -142,11 +142,11 @@ public:
     WEBCORE_EXPORT String domainForCachePartition() const;
 #endif
 
-    bool canAccessDatabase(const SecurityOrigin* topOrigin = nullptr) const { return canAccessStorage(topOrigin); };
-    bool canAccessSessionStorage(const SecurityOrigin* topOrigin) const { return canAccessStorage(topOrigin, AlwaysAllowFromThirdParty); }
+    bool canAccessDatabase(const SecurityOrigin& topOrigin) const { return canAccessStorage(&topOrigin); };
+    bool canAccessSessionStorage(const SecurityOrigin& topOrigin) const { return canAccessStorage(&topOrigin, AlwaysAllowFromThirdParty); }
     bool canAccessLocalStorage(const SecurityOrigin* topOrigin) const { return canAccessStorage(topOrigin); };
-    bool canAccessPluginStorage(const SecurityOrigin* topOrigin) const { return canAccessStorage(topOrigin); }
-    bool canAccessApplicationCache(const SecurityOrigin* topOrigin) const { return canAccessStorage(topOrigin); }
+    bool canAccessPluginStorage(const SecurityOrigin& topOrigin) const { return canAccessStorage(&topOrigin); }
+    bool canAccessApplicationCache(const SecurityOrigin& topOrigin) const { return canAccessStorage(&topOrigin); }
     bool canAccessCookies() const { return !isUnique(); }
     bool canRequestGeolocation() const { return !isUnique(); }
     Policy canShowNotifications() const;

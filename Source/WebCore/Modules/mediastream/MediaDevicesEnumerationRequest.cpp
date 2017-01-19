@@ -70,7 +70,7 @@ SecurityOrigin* MediaDevicesEnumerationRequest::topLevelDocumentOrigin() const
             return nullptr;
     }
 
-    return scriptExecutionContext()->topOrigin();
+    return &scriptExecutionContext()->topOrigin();
 }
 
 void MediaDevicesEnumerationRequest::contextDestroyed()
