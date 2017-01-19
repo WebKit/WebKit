@@ -888,6 +888,11 @@ WebInspector.isShowingSplitConsole = function()
     return !this.splitContentBrowser.element.classList.contains("hidden");
 };
 
+WebInspector.dockedConfigurationSupportsSplitContentBrowser = function()
+{
+    return this._dockConfiguration !== WebInspector.DockConfiguration.Bottom;
+};
+
 WebInspector.doesCurrentTabSupportSplitContentBrowser = function()
 {
     var currentContentView = this.tabBrowser.selectedTabContentView;

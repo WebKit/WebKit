@@ -1,3 +1,26 @@
+2017-01-18  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: split console should be allowed for Network and Timeline tabs when Inspector is not docked
+        https://bugs.webkit.org/show_bug.cgi?id=167075
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.dockedConfigurationSupportsSplitContentBrowser):
+        Helper function to determine if the current docked state supports having the content view
+        and split console at the same time.  Currently set to be true if not docked bottom.
+
+        * UserInterface/Views/ClusterContentView.js:
+        (WebInspector.ClusterContentView.prototype.get supportsSplitContentBrowser):
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.prototype.get supportsSplitContentBrowser):
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WebInspector.NetworkTabContentView.prototype.get supportsSplitContentBrowser):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.prototype.get supportsSplitContentBrowser): Deleted.
+        Update supportsSplitContentBrowser functions to only be true/false based on the return value
+        of WebInspector.dockedConfigurationSupportsSplitContentBrowser.
+
 2017-01-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.table only works for the first 5 properties

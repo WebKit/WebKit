@@ -309,11 +309,6 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
         return representedObject instanceof WebInspector.TimelineRecording;
     }
 
-    get supportsSplitContentBrowser()
-    {
-        return false;
-    }
-
     // Protected
 
     restoreFromCookie(cookie)

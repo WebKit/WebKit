@@ -310,7 +310,7 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
     get supportsSplitContentBrowser()
     {
         // Implemented by subclasses.
-        return true;
+        return WebInspector.dockedConfigurationSupportsSplitContentBrowser();
     }
 
     shown()

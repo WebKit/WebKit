@@ -61,6 +61,8 @@ WebInspector.NetworkTabContentView = class NetworkTabContentView extends WebInsp
 
     get supportsSplitContentBrowser()
     {
+        // Since the Network tab has a real sidebar, showing the split console would cause items in
+        // the sidebar to be aligned with an item in the datagrid that isn't shown.
         return false;
     }
 };
