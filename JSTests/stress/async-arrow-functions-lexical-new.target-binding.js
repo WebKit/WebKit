@@ -43,10 +43,19 @@ function C2() {
     return async () => { return await new.target };
 }
 
+function C2WithAwait() {
+    return async () => { 
+        var self = new.target; await new.target;
+        return new.target;
+    }
+}
+
 shouldBeAsync(C1, new C1());
 shouldBeAsync(undefined, C1());
 shouldBeAsync(C2, new C2());
 shouldBeAsync(undefined, C2());
+shouldBeAsync(C2WithAwait, new C2WithAwait());
+shouldBeAsync(undefined, C2WithAwait());
 
 shouldThrowAsync(async () => await new.target, ReferenceError);
 shouldThrowAsync(async () => { return await new.target; }, ReferenceError);

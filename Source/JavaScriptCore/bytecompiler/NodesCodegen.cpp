@@ -3506,6 +3506,9 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
             RefPtr<RegisterID> homeObject = emitHomeObjectForCallee(generator);
             emitPutHomeObject(generator, next.get(), homeObject.get());
         }
+        
+        if (generator.parseMode() == SourceParseMode::AsyncArrowFunctionMode && generator.isThisUsedInInnerArrowFunction())
+            generator.emitLoadThisFromArrowFunctionLexicalEnvironment();
 
         generator.emitPutGeneratorFields(next.get());
 

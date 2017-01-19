@@ -20,6 +20,28 @@ function shouldBeAsync(expected, run, msg) {
     shouldBe(expected, actual, msg);
 }
 
+class BaseWrongClassClass {
+    baseClassValue() {
+        return "wrong #1";
+    }
+    get property() {
+        return "wrong #2";
+    }
+}
+
+function shouldBeAsyncAndStoreBind(expected, run, msg) {
+    shouldBeAsync(expected, run, msg);
+    shouldBeAsync(expected, run.bind({}), msg);
+    shouldBeAsync(expected, run.bind(1), msg);
+    shouldBeAsync(expected, run.bind(undefined), msg);
+    const obj = { 
+        property : 'wrong value #1', 
+        baseClassValue : () => 'worng value #2'
+    };
+    shouldBeAsync(expected, run.bind(obj), msg);
+    shouldBeAsync(expected, run.bind(new BaseWrongClassClass()), msg);
+}
+
 class BaseClass {
     baseClassValue() {
         return "BaseClassValue";
@@ -52,11 +74,25 @@ class ChildClass extends BaseClass {
     asyncThisPropBody() {
         return async x => { return this.classProperty; };
     }
+    asyncThisPropWithAwaitBody() {
+        return async x => { 
+            var self = this.classProperty; 
+            self = await 'abc';  
+            return this.classProperty; 
+        };
+    }
     asyncThisPropInEvalExp() {
         return async x => eval('this.classProperty');
     }
     asyncThisPropInEvalBody() {
         return async x => { return eval('this.classProperty'); };
+    }
+    asyncThisPropInEvalWithAwaitBody() {
+        return async x => { 
+            var self = eval('this.classProperty');
+            await 'abc';
+            return eval('this.classProperty'); 
+        };
     }
     asyncThisValueExp() {
         return async x => this.classValue();
@@ -64,33 +100,76 @@ class ChildClass extends BaseClass {
     asyncThisValueBody() {
         return async x => { return this.classValue(); };
     }
+    asyncThisValueBodyWithAwait() {
+        return async x => { 
+            var self = this.classValue();
+            await 'self'; 
+            return this.classValue(); 
+        };
+    }
     asyncThisValueInEvalExp() {
         return async x => eval('this.classValue()');
     }
     asyncThisValueInEvalBody() {
         return async x => { return eval('this.classValue()'); };
     }
+    asyncThisValueInEvalWithAwaitBody() {
+        return async x => { 
+            var self = eval('this.classValue()');
+            await 'self'; 
+            return eval('this.classValue()'); 
+        };
+    }
 }
 
-shouldBeAsync("value", new ChildClass().asyncValueExp());
-shouldBeAsync("value", new ChildClass().asyncValueBody());
+shouldBeAsyncAndStoreBind("value", new ChildClass().asyncValueExp());
+shouldBeAsyncAndStoreBind("value", new ChildClass().asyncValueBody());
 
-shouldBeAsync("classProperty", new ChildClass().asyncThisPropExp());
-shouldBeAsync("classProperty", new ChildClass().asyncThisPropBody());
+shouldBeAsyncAndStoreBind("classProperty", new ChildClass().asyncThisPropExp());
+shouldBeAsyncAndStoreBind("classProperty", new ChildClass().asyncThisPropBody());
+shouldBeAsyncAndStoreBind("classProperty", new ChildClass().asyncThisPropWithAwaitBody());
+shouldBeAsyncAndStoreBind("classProperty", new ChildClass().asyncThisPropWithAwaitBody());
 
-shouldBeAsync("classProperty", new ChildClass().asyncThisPropInEvalExp());
-shouldBeAsync("classProperty", new ChildClass().asyncThisPropInEvalBody());
+shouldBeAsyncAndStoreBind("classProperty", new ChildClass().asyncThisPropInEvalExp());
+shouldBeAsyncAndStoreBind("classProperty", new ChildClass().asyncThisPropInEvalBody());
+shouldBeAsyncAndStoreBind("classProperty", new ChildClass().asyncThisPropInEvalWithAwaitBody());
 
-shouldBeAsync("classValue", new ChildClass().asyncThisValueExp());
-shouldBeAsync("classValue", new ChildClass().asyncThisValueBody());
+shouldBeAsyncAndStoreBind("classValue", new ChildClass().asyncThisValueExp());
+shouldBeAsyncAndStoreBind("classValue", new ChildClass().asyncThisValueBody());
+shouldBeAsyncAndStoreBind("classValue", new ChildClass().asyncThisValueBodyWithAwait());
 
-shouldBeAsync("classValue", new ChildClass().asyncThisValueInEvalExp());
-shouldBeAsync("classValue", new ChildClass().asyncThisValueInEvalBody());
+shouldBeAsyncAndStoreBind("classValue", new ChildClass().asyncThisValueInEvalExp());
+shouldBeAsyncAndStoreBind("classValue", new ChildClass().asyncThisValueInEvalBody());
+shouldBeAsyncAndStoreBind("classValue", new ChildClass().asyncThisValueInEvalWithAwaitBody());
 
 class ChildClass2 extends BaseClass {
     constructor() {
         super();
+        this.value = 'internalValue';
         return async () => this.classValue() + ' ' + this.classProperty;
+    }
+    classStaticValue() {
+        return "classStaticValue";
+    }
+    classValue() {
+        return this.value;
+    }
+    get classProperty() {
+        return "classProperty";
+    }
+}
+
+shouldBeAsyncAndStoreBind("internalValue classProperty", new ChildClass2());
+
+class ChildClass3 extends BaseClass {
+    constructor() {
+        super();
+        this.internalValue = 'internalValue';
+        return async () => {
+            var self = this.classValue() + ' ' + this.classProperty;
+            await 'self';
+            return this.classValue() + ' ' + this.classProperty;
+        }
     }
     classValue() {
         return "classValue";
@@ -100,4 +179,4 @@ class ChildClass2 extends BaseClass {
     }
 }
 
-shouldBeAsync("classValue classProperty", new ChildClass2());
+shouldBeAsyncAndStoreBind("classValue classProperty", new ChildClass3());

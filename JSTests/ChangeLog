@@ -1,3 +1,22 @@
+2017-01-19  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        "this" missing after await in async arrow function
+        https://bugs.webkit.org/show_bug.cgi?id=166919
+
+        Reviewed by Saam Barati.
+
+        * stress/async-arrow-functions-lexical-binding-in-class.js:
+        (ChildClass.prototype.asyncThisPropWithAwaitBody):
+        (ChildClass.prototype.asyncThisPropInEvalWithAwaitBody):
+        (ChildClass.prototype.asyncThisValueBodyWithAwait):
+        (ChildClass.prototype.asyncThisValueInEvalWithAwaitBody):
+        (ChildClass):
+        (ChildClass3):
+        (ChildClass3.prototype.classValue):
+        (ChildClass3.prototype.get classProperty):
+        * stress/async-arrow-functions-lexical-new.target-binding.js:
+        (C2WithAwait):
+
 2017-01-16  Filip Pizlo  <fpizlo@apple.com>
 
         Make opaque root scanning truly constraint-based

@@ -1,3 +1,19 @@
+2017-01-19  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        "this" missing after await in async arrow function
+        https://bugs.webkit.org/show_bug.cgi?id=166919
+
+        Reviewed by NOBODY Saam Barati.
+
+        This patch fixed issue in async arrow function. Issue appears because in arrow
+        function _this_ is loaded from arrow function virtual scope. 
+        Async arrow function can be suspended and when resuming should be used _this_ from 
+        virtual scope, to allow this we load _this_ from virtual scope before store it to 
+        generator.generatorThis property 
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionNode::emitBytecode):
+
 2017-01-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [B3] B3 strength reduction could encounter Value without owner in PureCSE
