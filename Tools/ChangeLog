@@ -1,3 +1,14 @@
+2017-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Variation fonts are erroneously disabled on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=167172
+
+        Reviewed by Simon Fraser.
+
+        OpenSource builders don't seem to understand sdk=embedded*.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2017-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ unit tests failing since r210531.
