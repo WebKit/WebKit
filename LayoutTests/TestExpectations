@@ -976,7 +976,7 @@ webkit.org/b/164080 http/tests/websocket/tests/hybi/stop-on-resume-in-error-hand
 webkit.org/b/164539 http/tests/security/module-crossorigin-error-event-information.html [ Failure ]
 webkit.org/b/164539 http/tests/security/module-crossorigin-onerror-information.html [ Failure ]
 
-webkit.org/b/165764 http/tests/misc/module-script-async.html [ Slow ]
+webkit.org/b/165764 http/tests/misc/module-script-async.html [ Pass Timeout ]
 
 # Clean layout tree after FrameView::layout
 webkit.org/b/164856 [ Debug ] editing/execCommand/indent-block-in-list.html [ Skip ]
