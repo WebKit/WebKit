@@ -1476,3 +1476,5 @@ webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-diffferent-opti
 webkit.org/b/166672 [ Sierra+ ] fast/text/variations/advances.html [ Failure ]
 
 webkit.org/b/162507 http/tests/media/hls/hls-video-resize.html [ Pass Failure ]
+
+webkit.org/b/162510 [ Debug ] fast/images/animated-gif-restored-from-bfcache.html [ Pass Failure ]
