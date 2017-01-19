@@ -42,6 +42,7 @@
 
 #if USE(SOUP)
 #include "HTTPCookieAcceptPolicy.h"
+#include <WebCore/SoupNetworkProxySettings.h>
 #endif
 
 namespace API {
@@ -173,6 +174,10 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(WAYLAND)
     String waylandCompositorDisplayName;
+#endif
+
+#if USE(SOUP)
+    WebCore::SoupNetworkProxySettings proxySettings;
 #endif
 };
 

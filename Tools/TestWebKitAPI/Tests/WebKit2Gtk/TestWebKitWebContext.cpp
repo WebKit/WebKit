@@ -550,6 +550,11 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, "foo", 3);
         soup_message_body_complete(message->response_body);
         soup_message_set_status(message, SOUP_STATUS_OK);
+    } else if (g_str_equal(path, "/echoPort")) {
+        char* port = g_strdup_printf("%u", soup_server_get_port(server));
+        soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, port, strlen(port));
+        soup_message_body_complete(message->response_body);
+        soup_message_set_status(message, SOUP_STATUS_OK);
     } else
         soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
 }
@@ -700,6 +705,90 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
     webkit_settings_set_allow_file_access_from_file_urls(webkit_web_view_get_settings(test->m_webView), FALSE);
 }
 
+class ProxyTest : public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(ProxyTest);
+
+    ProxyTest()
+    {
+        // This "proxy server" is actually just a different instance of the main
+        // test server (kServer), listening on a different port. Requests
+        // will not actually be proxied to kServer because proxyServer is not
+        // actually a proxy server. We're testing whether the proxy settings
+        // work, not whether we can write a soup proxy server.
+        m_proxyServer.run(serverCallback);
+        g_assert(m_proxyServer.baseURI());
+    }
+
+    CString loadURIAndGetMainResourceData(const char* uri)
+    {
+        loadURI(uri);
+        waitUntilLoadFinished();
+        size_t dataSize = 0;
+        const char* data = mainResourceData(dataSize);
+        return CString(data, dataSize);
+    }
+
+    GUniquePtr<char> proxyServerPortAsString()
+    {
+        GUniquePtr<char> port(g_strdup_printf("%u", soup_uri_get_port(m_proxyServer.baseURI())));
+        return port;
+    }
+
+    WebKitTestServer m_proxyServer;
+};
+
+static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
+{
+    // Proxy URI is unset by default. Requests to kServer should be received by kServer.
+    GUniquePtr<char> serverPortAsString(g_strdup_printf("%u", soup_uri_get_port(kServer->baseURI())));
+    auto mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
+    ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
+
+    // Set default proxy URI to point to proxyServer. Requests to kServer should be received by proxyServer instead.
+    GUniquePtr<char> proxyURI(soup_uri_to_string(test->m_proxyServer.baseURI(), FALSE));
+    WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(proxyURI.get(), nullptr);
+    webkit_web_context_set_network_proxy_settings(test->m_webContext.get(), WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
+    GUniquePtr<char> proxyServerPortAsString = test->proxyServerPortAsString();
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
+    ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
+    webkit_network_proxy_settings_free(settings);
+
+    // Remove the proxy. Requests to kServer should be received by kServer again.
+    webkit_web_context_set_network_proxy_settings(test->m_webContext.get(), WEBKIT_NETWORK_PROXY_MODE_NO_PROXY, nullptr);
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
+    ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
+
+    // Use a default proxy uri, but ignoring requests to localhost.
+    static const char* ignoreHosts[] = { "localhost", nullptr };
+    settings = webkit_network_proxy_settings_new(proxyURI.get(), ignoreHosts);
+    webkit_web_context_set_network_proxy_settings(test->m_webContext.get(), WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
+    ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
+    GUniquePtr<char> localhostEchoPortURI(g_strdup_printf("http://localhost:%s/echoPort", serverPortAsString.get()));
+    mainResourceData = test->loadURIAndGetMainResourceData(localhostEchoPortURI.get());
+    ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
+    webkit_network_proxy_settings_free(settings);
+
+    // Remove the proxy again to ensure next test is not using any previous values.
+    webkit_web_context_set_network_proxy_settings(test->m_webContext.get(), WEBKIT_NETWORK_PROXY_MODE_NO_PROXY, nullptr);
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
+    ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
+
+    // Use scheme specific proxy instead of the default.
+    settings = webkit_network_proxy_settings_new(nullptr, nullptr);
+    webkit_network_proxy_settings_add_proxy_for_scheme(settings, "http", proxyURI.get());
+    webkit_web_context_set_network_proxy_settings(test->m_webContext.get(), WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
+    ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
+    webkit_network_proxy_settings_free(settings);
+
+    // Reset to use the default resolver.
+    webkit_web_context_set_network_proxy_settings(test->m_webContext.get(), WEBKIT_NETWORK_PROXY_MODE_DEFAULT, nullptr);
+    mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
+    ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -713,6 +802,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebContext", "languages", testWebContextLanguages);
     SecurityPolicyTest::add("WebKitSecurityManager", "security-policy", testWebContextSecurityPolicy);
     WebViewTest::add("WebKitSecurityManager", "file-xhr", testWebContextSecurityFileXHR);
+    ProxyTest::add("WebKitWebContext", "proxy", testWebContextProxySettings);
 }
 
 void afterAll()

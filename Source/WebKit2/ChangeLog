@@ -1,5 +1,70 @@
 2017-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Provide API to set proxy settings
+        https://bugs.webkit.org/show_bug.cgi?id=128674
+
+        Reviewed by Michael Catanzaro.
+
+        Add new method webkit_web_context_set_network_proxy_settings() that allows to set proxy settings in a
+        WebKitWebContext. It receives an enum WebKitNetworkProxyMode with modes Default, NoProxy and Custom, and an
+        optional WebKitNetworkProxySettings that is used when mode is Custom. WebKitNetworkProxySettings is a simple
+        boxed type that user can create to set proxy settins with a similar API to GSimpleProxyResolver.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in: Add SetNetworkProxySettings message.
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode): Encode proxy settings.
+        (WebKit::NetworkProcessCreationParameters::decode): Decode proxy settings.
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/efl/NetworkProcessMainEfl.cpp: Use SoupNetworkSession::setProxySettingsFromEnvironment().
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess): Set proxy settings if provided by the user.
+        (WebKit::NetworkProcess::setNetworkProxySettings): Set global proxy settings and setup the proxy for all
+        existing contexts.
+        * PlatformGTK.cmake: Add new files to compilation.
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Encode proxy settings.
+        (WebKit::WebProcessCreationParameters::decode): Decode proxy settings.
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<SoupNetworkProxySettings>::encode): Add encoder implementation for SoupNetworkProxySettings.
+        (IPC::ArgumentCoder<SoupNetworkProxySettings>::decode): add decoder implementation for SoupNetworkProxySettings.
+        * UIProcess/API/gtk/WebKitNetworkProxySettings.cpp: Added.
+        (_WebKitNetworkProxySettings::_WebKitNetworkProxySettings):
+        (webkitNetworkProxySettingsGetNetworkProxySettings):
+        (webkit_network_proxy_settings_new): Create a new WebKitNetworkProxySettings with optional default proxy uri and
+        ignore hosts list.
+        (webkit_network_proxy_settings_copy):
+        (webkit_network_proxy_settings_free):
+        (webkit_network_proxy_settings_add_proxy): Add a proxy uri for a given uri scheme.
+        * UIProcess/API/gtk/WebKitNetworkProxySettings.h: Added.
+        * UIProcess/API/gtk/WebKitNetworkProxySettingsPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_set_network_proxy_settings): Set proxy settings.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Add new symbols to the documentation.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section for WebKitNetworkProxySettings.
+        * UIProcess/API/gtk/webkit2.h: Include WebKitNetworkProxySettings.h.
+        * UIProcess/WebProcessPool.h: Add m_networkProxySettings and a setter for soup.
+        * UIProcess/efl/WebProcessPoolEfl.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Set m_networkProxySettings to parameters.
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Ditto.
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess): Ditto.
+        (WebKit::WebProcessPool::setNetworkProxySettings): Update m_networkProxySettings and notify all processes.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in: Add SetNetworkProxySettings message.
+        * WebProcess/efl/WebProcessMainEfl.cpp: Use SoupNetworkSession::setProxySettingsFromEnvironment().
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformSetCacheModel): Remove comment that is no longer true.
+        (WebKit::WebProcess::platformInitializeWebProcess): Set proxy settings if provided by the user.
+        (WebKit::WebProcess::setNetworkProxySettings): Set global proxy settings and setup the proxy for all
+        existing contexts.
+
+2017-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Do not update the backing store state unnecessarily when page visibility changes
         https://bugs.webkit.org/show_bug.cgi?id=167195
 

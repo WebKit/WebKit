@@ -150,6 +150,10 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(WAYLAND)
     encoder << waylandCompositorDisplayName;
 #endif
+
+#if USE(SOUP)
+    encoder << proxySettings;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -314,6 +318,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 
 #if PLATFORM(WAYLAND)
     if (!decoder.decode(parameters.waylandCompositorDisplayName))
+        return false;
+#endif
+
+#if USE(SOUP)
+    if (!decoder.decode(parameters.proxySettings))
         return false;
 #endif
 

@@ -120,6 +120,12 @@ struct ViewportArguments;
 }
 #endif
 
+#if USE(SOUP)
+namespace WebCore {
+struct SoupNetworkProxySettings;
+}
+#endif
+
 #if ENABLE(CONTENT_FILTERING)
 namespace WebCore {
 class ContentFilterUnblockHandler;
@@ -382,6 +388,13 @@ template<> struct ArgumentCoder<WebCore::PasteboardWebContent> {
 template<> struct ArgumentCoder<WebCore::PasteboardImage> {
     static void encode(Encoder&, const WebCore::PasteboardImage&);
     static bool decode(Decoder&, WebCore::PasteboardImage&);
+};
+#endif
+
+#if USE(SOUP)
+template<> struct ArgumentCoder<WebCore::SoupNetworkProxySettings> {
+    static void encode(Encoder&, const WebCore::SoupNetworkProxySettings&);
+    static bool decode(Decoder&, WebCore::SoupNetworkProxySettings&);
 };
 #endif
 

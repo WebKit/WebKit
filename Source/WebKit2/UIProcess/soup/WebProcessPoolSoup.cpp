@@ -30,6 +30,8 @@
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "WebCookieManagerProxy.h"
+#include "WebCoreArgumentCoders.h"
+#include "WebProcessMessages.h"
 #include <WebCore/Language.h>
 
 namespace WebKit {
@@ -43,6 +45,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     for (const auto& scheme : m_urlSchemesRegisteredForCustomProtocols)
         parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
     parameters.shouldEnableNetworkCacheEfficacyLogging = false;
+    parameters.proxySettings = m_networkProxySettings;
 }
 
 void WebProcessPool::setIgnoreTLSErrors(bool ignoreTLSErrors)
@@ -58,6 +61,14 @@ void WebProcessPool::setCustomProtocolManagerClient(std::unique_ptr<API::CustomP
         m_customProtocolManagerClient = std::make_unique<API::CustomProtocolManagerClient>();
     else
         m_customProtocolManagerClient = WTFMove(customProtocolManagerClient);
+}
+
+void WebProcessPool::setNetworkProxySettings(const WebCore::SoupNetworkProxySettings& settings)
+{
+    m_networkProxySettings = settings;
+    sendToAllProcesses(Messages::WebProcess::SetNetworkProxySettings(m_networkProxySettings));
+    if (m_networkProcess)
+        m_networkProcess->send(Messages::NetworkProcess::SetNetworkProxySettings(m_networkProxySettings), 0);
 }
 
 }

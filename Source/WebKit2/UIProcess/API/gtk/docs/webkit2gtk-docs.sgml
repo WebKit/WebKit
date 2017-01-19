@@ -53,6 +53,7 @@
     <xi:include href="xml/WebKitNotificationPermissionRequest.xml"/>
     <xi:include href="xml/WebKitSecurityOrigin.xml"/>
     <xi:include href="xml/WebKitWebsiteDataManager.xml"/>
+    <xi:include href="xml/WebKitNetworkProxySettings.xml"/>
   </chapter>
 
   <chapter>

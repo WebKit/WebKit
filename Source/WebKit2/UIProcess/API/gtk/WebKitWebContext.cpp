@@ -37,6 +37,7 @@
 #include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitGeolocationProvider.h"
 #include "WebKitInjectedBundleClient.h"
+#include "WebKitNetworkProxySettingsPrivate.h"
 #include "WebKitNotificationProvider.h"
 #include "WebKitPluginPrivate.h"
 #include "WebKitPrivate.h"
@@ -573,6 +574,47 @@ void webkit_web_context_clear_cache(WebKitWebContext* context)
     websiteDataTypes |= WebsiteDataType::DiskCache;
     auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get()).websiteDataStore();
     websiteDataStore.removeData(websiteDataTypes, std::chrono::system_clock::time_point::min(), [] { });
+}
+
+/**
+ * webkit_web_context_set_network_proxy_settings:
+ * @context: a #WebKitWebContext
+ * @proxy_mode: a #WebKitNetworkProxyMode
+ * @proxy_settings: (allow-none): a #WebKitNetworkProxySettings, or %NULL
+ *
+ * Set the network proxy settings to be used by connections started in @context.
+ * By default %WEBKIT_NETWORK_PROXY_MODE_DEFAULT is used, which means that the
+ * system settings will be used (g_proxy_resolver_get_default()).
+ * If you want to override the system default settings, you can either use
+ * %WEBKIT_NETWORK_PROXY_MODE_NO_PROXY to make sure no proxies are used at all,
+ * or %WEBKIT_NETWORK_PROXY_MODE_CUSTOM to provide your own proxy settings.
+ * When @proxy_mode is %WEBKIT_NETWORK_PROXY_MODE_CUSTOM @proxy_settings must be
+ * a valid #WebKitNetworkProxySettings; otherwise, @proxy_settings must be %NULL.
+ *
+ * Since: 2.16
+ */
+void webkit_web_context_set_network_proxy_settings(WebKitWebContext* context, WebKitNetworkProxyMode proxyMode, WebKitNetworkProxySettings* proxySettings)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+    g_return_if_fail((proxyMode != WEBKIT_NETWORK_PROXY_MODE_CUSTOM && !proxySettings) || (proxyMode == WEBKIT_NETWORK_PROXY_MODE_CUSTOM && proxySettings));
+
+    WebKitWebContextPrivate* priv = context->priv;
+    switch (proxyMode) {
+    case WEBKIT_NETWORK_PROXY_MODE_DEFAULT:
+        priv->processPool->setNetworkProxySettings({ });
+        break;
+    case WEBKIT_NETWORK_PROXY_MODE_NO_PROXY:
+        priv->processPool->setNetworkProxySettings(WebCore::SoupNetworkProxySettings(WebCore::SoupNetworkProxySettings::Mode::NoProxy));
+        break;
+    case WEBKIT_NETWORK_PROXY_MODE_CUSTOM:
+        const auto& settings = webkitNetworkProxySettingsGetNetworkProxySettings(proxySettings);
+        if (settings.isEmpty()) {
+            g_warning("Invalid attempt to set custom network proxy settings with an empty WebKitNetworkProxySettings. Use "
+                "WEBKIT_NETWORK_PROXY_MODE_NO_PROXY to not use any proxy or WEBKIT_NETWORK_PROXY_MODE_DEFAULT to use the default system settings");
+        } else
+            priv->processPool->setNetworkProxySettings(settings);
+        break;
+    }
 }
 
 typedef HashMap<DownloadProxy*, GRefPtr<WebKitDownload> > DownloadsMap;

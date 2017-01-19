@@ -187,6 +187,9 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp
     UIProcess/API/gtk/WebKitNavigationPolicyDecision.h
     UIProcess/API/gtk/WebKitNavigationPolicyDecisionPrivate.h
+    UIProcess/API/gtk/WebKitNetworkProxySettings.cpp
+    UIProcess/API/gtk/WebKitNetworkProxySettings.h
+    UIProcess/API/gtk/WebKitNetworkProxySettingsPrivate.h
     UIProcess/API/gtk/WebKitNotification.cpp
     UIProcess/API/gtk/WebKitNotification.h
     UIProcess/API/gtk/WebKitNotificationPermissionRequest.cpp
@@ -527,6 +530,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitMimeInfo.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNavigationAction.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNavigationPolicyDecision.h
+    ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNetworkProxySettings.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNotificationPermissionRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNotification.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitPermissionRequest.h

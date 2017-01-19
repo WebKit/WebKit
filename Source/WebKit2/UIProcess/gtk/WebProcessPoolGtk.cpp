@@ -93,6 +93,7 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 {
     initInspectorServer();
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModelDocumentViewer;
+    parameters.proxySettings = m_networkProxySettings;
 }
 
 void WebProcessPool::platformInvalidateContext()

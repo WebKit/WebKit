@@ -29,21 +29,33 @@
 
 #include "WebProcessCreationParameters.h"
 #include <WebCore/MemoryCache.h>
+#include <WebCore/NetworkStorageSession.h>
+#include <WebCore/SoupNetworkSession.h>
 
 namespace WebKit {
 
 void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 {
-    // FIXME: this is no longer soup specific, this file should be renamed.
     WebCore::MemoryCache::singleton().setDisabled(cacheModel == CacheModelDocumentViewer);
 }
 
-void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&&)
+void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& parameters)
 {
+    if (parameters.proxySettings.mode != WebCore::SoupNetworkProxySettings::Mode::Default)
+        setNetworkProxySettings(parameters.proxySettings);
 }
 
 void WebProcess::platformTerminate()
 {
+}
+
+void WebProcess::setNetworkProxySettings(const WebCore::SoupNetworkProxySettings& settings)
+{
+    WebCore::SoupNetworkSession::setProxySettings(settings);
+    WebCore::NetworkStorageSession::forEach([](const WebCore::NetworkStorageSession& session) {
+        if (auto* soupSession = session.soupNetworkSession())
+            soupSession->setupProxy();
+    });
 }
 
 } // namespace WebKit

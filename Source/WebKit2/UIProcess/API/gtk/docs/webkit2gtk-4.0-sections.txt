@@ -27,6 +27,7 @@ WebKitWebContext
 WebKitCacheModel
 WebKitProcessModel
 WebKitTLSErrorsPolicy
+WebKitNetworkProxyMode
 webkit_web_context_get_default
 webkit_web_context_new
 webkit_web_context_new_with_website_data_manager
@@ -36,6 +37,7 @@ webkit_web_context_set_cache_model
 webkit_web_context_get_web_process_count_limit
 webkit_web_context_set_web_process_count_limit
 webkit_web_context_clear_cache
+webkit_web_context_set_network_proxy_settings
 webkit_web_context_download_uri
 webkit_web_context_get_cookie_manager
 webkit_web_context_get_favicon_database
@@ -1255,6 +1257,21 @@ WEBKIT_WEBSITE_DATA_MANAGER_GET_CLASS
 <SUBSECTION Private>
 WebKitWebsiteDataManagerPrivate
 webkit_website_data_manager_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitNetworkProxySettings</FILE>
+WebKitNetworkProxySettings
+webkit_network_proxy_settings_new
+webkit_network_proxy_settings_copy
+webkit_network_proxy_settings_free
+webkit_network_proxy_settings_add_proxy_for_scheme
+
+<SUBSECTION Private>
+webkit_network_proxy_settings_get_type
+
+<SUBSECTION Standard>
+WEBKIT_TYPE_NETWORK_NETWORK_PROXY_SETTINGS
 </SECTION>
 
 <SECTION>

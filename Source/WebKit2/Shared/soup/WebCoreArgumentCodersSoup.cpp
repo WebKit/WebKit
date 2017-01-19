@@ -33,6 +33,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/SoupNetworkProxySettings.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -149,6 +150,55 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, Resource
     resourceError.setCertificate(certificateInfo.certificate());
     resourceError.setTLSErrors(certificateInfo.tlsErrors());
     return true;
+}
+
+void ArgumentCoder<SoupNetworkProxySettings>::encode(Encoder& encoder, const SoupNetworkProxySettings& settings)
+{
+    ASSERT(!settings.isEmpty());
+    encoder.encodeEnum(settings.mode);
+    if (settings.mode != SoupNetworkProxySettings::Mode::Custom)
+        return;
+
+    encoder << settings.defaultProxyURL;
+    uint32_t ignoreHostsCount = settings.ignoreHosts ? g_strv_length(settings.ignoreHosts.get()) : 0;
+    encoder << ignoreHostsCount;
+    if (ignoreHostsCount) {
+        for (uint32_t i = 0; settings.ignoreHosts.get()[i]; ++i)
+            encoder << CString(settings.ignoreHosts.get()[i]);
+    }
+    encoder << settings.proxyMap;
+}
+
+bool ArgumentCoder<SoupNetworkProxySettings>::decode(Decoder& decoder, SoupNetworkProxySettings& settings)
+{
+    if (!decoder.decodeEnum(settings.mode))
+        return false;
+
+    if (settings.mode != SoupNetworkProxySettings::Mode::Custom)
+        return true;
+
+    if (!decoder.decode(settings.defaultProxyURL))
+        return false;
+
+    uint32_t ignoreHostsCount;
+    if (!decoder.decode(ignoreHostsCount))
+        return false;
+
+    if (ignoreHostsCount) {
+        settings.ignoreHosts.reset(g_new0(char*, ignoreHostsCount + 1));
+        for (uint32_t i = 0; i < ignoreHostsCount; ++i) {
+            CString host;
+            if (!decoder.decode(host))
+                return false;
+
+            settings.ignoreHosts.get()[i] = g_strdup(host.data());
+        }
+    }
+
+    if (!decoder.decode(settings.proxyMap))
+        return false;
+
+    return !settings.isEmpty();
 }
 
 void ArgumentCoder<ProtectionSpace>::encodePlatformData(Encoder&, const ProtectionSpace&)

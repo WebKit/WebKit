@@ -67,6 +67,7 @@ class SessionID;
 class UserGestureToken;
 struct PluginInfo;
 struct SecurityOriginData;
+struct SoupNetworkProxySettings;
 }
 
 namespace WebKit {
@@ -283,6 +284,10 @@ private:
     void setInitialGamepads(const Vector<GamepadData>&);
     void gamepadConnected(const GamepadData&);
     void gamepadDisconnected(unsigned index);
+#endif
+
+#if USE(SOUP)
+    void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
 #endif
 
     void releasePageCache();

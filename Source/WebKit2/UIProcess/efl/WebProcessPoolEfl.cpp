@@ -93,6 +93,7 @@ String WebProcessPool::legacyPlatformDefaultMediaCacheDirectory()
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     initializeInspectorServer();
+    parameters.proxySettings = m_networkProxySettings;
 }
 
 void WebProcessPool::platformInvalidateContext()

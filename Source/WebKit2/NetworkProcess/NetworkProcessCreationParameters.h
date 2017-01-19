@@ -33,6 +33,7 @@
 
 #if USE(SOUP)
 #include "HTTPCookieAcceptPolicy.h"
+#include <WebCore/SoupNetworkProxySettings.h>
 #endif
 
 namespace IPC {
@@ -101,6 +102,7 @@ struct NetworkProcessCreationParameters {
     HTTPCookieAcceptPolicy cookieAcceptPolicy;
     bool ignoreTLSErrors;
     Vector<String> languages;
+    WebCore::SoupNetworkProxySettings proxySettings;
 #endif
 
 #if OS(LINUX)

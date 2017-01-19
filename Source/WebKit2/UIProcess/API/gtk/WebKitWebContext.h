@@ -29,6 +29,7 @@
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitDownload.h>
 #include <webkit2/WebKitFaviconDatabase.h>
+#include <webkit2/WebKitNetworkProxySettings.h>
 #include <webkit2/WebKitSecurityManager.h>
 #include <webkit2/WebKitURISchemeRequest.h>
 #include <webkit2/WebKitWebsiteDataManager.h>
@@ -104,6 +105,22 @@ typedef enum {
 } WebKitTLSErrorsPolicy;
 
 /**
+ * WebKitNetworkProxyMode:
+ * @WEBKIT_NETWORK_PROXY_MODE_DEFAULT: Use the default proxy of the system.
+ * @WEBKIT_NETWORK_PROXY_MODE_NO_PROXY: Do not use any proxy.
+ * @WEBKIT_NETWORK_PROXY_MODE_CUSTOM: Use custom proxy settings.
+ *
+ * Enum values used to set the network proxy mode.
+ *
+ * Since: 2.16
+ */
+typedef enum {
+    WEBKIT_NETWORK_PROXY_MODE_DEFAULT,
+    WEBKIT_NETWORK_PROXY_MODE_NO_PROXY,
+    WEBKIT_NETWORK_PROXY_MODE_CUSTOM
+} WebKitNetworkProxyMode;
+
+/**
  * WebKitURISchemeRequestCallback:
  * @request: the #WebKitURISchemeRequest
  * @user_data: user data passed to the callback
@@ -170,6 +187,11 @@ webkit_web_context_get_web_process_count_limit      (WebKitWebContext           
 
 WEBKIT_API void
 webkit_web_context_clear_cache                      (WebKitWebContext              *context);
+
+WEBKIT_API void
+webkit_web_context_set_network_proxy_settings       (WebKitWebContext              *context,
+                                                     WebKitNetworkProxyMode         proxy_mode,
+                                                     WebKitNetworkProxySettings    *proxy_settings);
 
 WEBKIT_API WebKitDownload *
 webkit_web_context_download_uri                     (WebKitWebContext              *context,

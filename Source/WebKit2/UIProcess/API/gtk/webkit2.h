@@ -53,6 +53,7 @@
 #include <webkit2/WebKitMimeInfo.h>
 #include <webkit2/WebKitNavigationAction.h>
 #include <webkit2/WebKitNavigationPolicyDecision.h>
+#include <webkit2/WebKitNetworkProxySettings.h>
 #include <webkit2/WebKitNotification.h>
 #include <webkit2/WebKitNotificationPermissionRequest.h>
 #include <webkit2/WebKitPermissionRequest.h>

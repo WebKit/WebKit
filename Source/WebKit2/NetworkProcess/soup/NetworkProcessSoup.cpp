@@ -104,6 +104,9 @@ void NetworkProcess::userPreferredLanguagesChanged(const Vector<String>& languag
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
+    if (parameters.proxySettings.mode != SoupNetworkProxySettings::Mode::Default)
+        setNetworkProxySettings(parameters.proxySettings);
+
     ASSERT(!parameters.diskCacheDirectory.isEmpty());
     m_diskCacheDirectory = parameters.diskCacheDirectory;
 
@@ -159,6 +162,15 @@ void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifi
 void NetworkProcess::platformTerminate()
 {
     notImplemented();
+}
+
+void NetworkProcess::setNetworkProxySettings(const SoupNetworkProxySettings& settings)
+{
+    SoupNetworkSession::setProxySettings(settings);
+    NetworkStorageSession::forEach([](const NetworkStorageSession& session) {
+        if (auto* soupSession = session.soupNetworkSession())
+            soupSession->setupProxy();
+    });
 }
 
 } // namespace WebKit

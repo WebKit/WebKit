@@ -50,6 +50,7 @@ class ProtectionSpace;
 class SecurityOrigin;
 class SessionID;
 struct SecurityOriginData;
+struct SoupNetworkProxySettings;
 }
 
 namespace WebKit {
@@ -192,6 +193,7 @@ private:
 #if USE(SOUP)
     void setIgnoreTLSErrors(bool);
     void userPreferredLanguagesChanged(const Vector<String>&);
+    void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
 #endif
 
     // Platform Helpers
