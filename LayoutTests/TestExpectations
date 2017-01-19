@@ -613,7 +613,7 @@ webkit.org/b/142175 js/promises-tests/promises-tests-2-1-2.html [ Pass Timeout ]
 
 webkit.org/b/139840 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Pass Failure ]
 
-webkit.org/b/140043 [ Debug ] js/dom/Promise.html [ Pass Failure ]
+webkit.org/b/140043 js/dom/Promise.html [ Pass Failure ]
 
 webkit.org/b/141267 http/tests/misc/detached-frame-console.html [ Pass Failure ]
 
