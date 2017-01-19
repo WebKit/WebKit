@@ -12,6 +12,7 @@ function Person(firstName, lastName) {
 var john = new Person("John", "Smith");
 var jane = new Person("Jane", "Doe");
 var emily = new Person("Emily", "Jones");
+var manyProperties = {one:1, two:2, three:3, four:4, five:5, six:6};
 
 function test()
 {
@@ -24,6 +25,7 @@ function test()
         "console.table([['John', 'Smith'], ['Jane', 'Doe'], ['Emily', 'Jones']])", // Index, 0, 1
         "console.table([john, jane, emily])", // Index, firstName, lastName
         "console.table([john, jane, emily], ['firstName'])", // Index, firstName (at least).
+        `console.table([manyProperties, manyProperties], ['five', 'six'])`, // Index, five, size (at least)
     ];
 
     function remoteObjectJSONFilter(key, value)
@@ -50,6 +52,6 @@ function test()
 }
 </script>
 </head>
-<body onload="runTest();">
+<body onload="runTest()">
 </body>
 </html>

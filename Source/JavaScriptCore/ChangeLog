@@ -1,3 +1,17 @@
+2017-01-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: console.table only works for the first 5 properties
+        https://bugs.webkit.org/show_bug.cgi?id=167175
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype.wrapTable):
+        (InjectedScript.RemoteObject.createObjectPreviewForValue):
+        (InjectedScript.RemoteObject.prototype._appendPropertyPreviews):
+        Pass through secondLevelKeys. Though the keys are themselves ignored, the
+        existence is a signal that we should send more than the first 5 properties.
+
 2017-01-18  Antti Koivisto  <antti@apple.com>
 
         Only delete source provider caches on full collection

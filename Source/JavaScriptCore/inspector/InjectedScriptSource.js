@@ -163,7 +163,7 @@ InjectedScript.prototype = {
 
         // FIXME: Currently columns are ignored. Instead, the frontend filters all
         // properties based on the provided column names and in the provided order.
-        // Should we filter here too?
+        // We could filter here to avoid sending very large preview objects.
 
         var columnNames = null;
         if (typeof columns === "string")
@@ -971,9 +971,9 @@ InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType, 
     }
 };
 
-InjectedScript.RemoteObject.createObjectPreviewForValue = function(value, generatePreview)
+InjectedScript.RemoteObject.createObjectPreviewForValue = function(value, generatePreview, columnNames)
 {
-    var remoteObject = new InjectedScript.RemoteObject(value, undefined, false, generatePreview, undefined);
+    var remoteObject = new InjectedScript.RemoteObject(value, undefined, false, generatePreview, columnNames);
     if (remoteObject.objectId)
         injectedScript.releaseObject(remoteObject.objectId);
     if (remoteObject.classPrototype && remoteObject.classPrototype.objectId)
@@ -1155,7 +1155,7 @@ InjectedScript.RemoteObject.prototype = {
             // Second level.
             if ((secondLevelKeys === null || secondLevelKeys) || this._isPreviewableObject(value, object)) {
                 // FIXME: If we want secondLevelKeys filter to continue we would need some refactoring.
-                var subPreview = InjectedScript.RemoteObject.createObjectPreviewForValue(value, value !== object);
+                var subPreview = InjectedScript.RemoteObject.createObjectPreviewForValue(value, value !== object, secondLevelKeys);
                 property.valuePreview = subPreview;
                 if (!subPreview.lossless)
                     preview.lossless = false;

@@ -759,7 +759,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
                     continue;
 
                 var rowValue = {};
-                var maxColumnsToRender = 10;
+                var maxColumnsToRender = 15;
                 for (var j = 0; j < rowPreview.propertyPreviews.length; ++j) {
                     var cellProperty = rowPreview.propertyPreviews[j];
                     var columnRendered = columnNames.includes(cellProperty.name);
