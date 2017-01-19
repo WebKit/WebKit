@@ -1,3 +1,28 @@
+2017-01-19  Filip Pizlo  <fpizlo@apple.com>
+
+        The mutator needs to fire a barrier after memmoving stuff around in an object that the GC scans
+        https://bugs.webkit.org/show_bug.cgi?id=167208
+
+        Reviewed by Saam Barati.
+        
+        It used to be that if you moved a value from one place to another in the same object
+        then there is no need for a barrier because the generational GC would have no need to
+        know that some old object still continues to refer to the same other old object.
+
+        But the concurrent GC might scan that object as the mutator moves pointers around in
+        it. If the ordering is right, this could mean that the collector never sees some of
+        those pointers. This can be fixed by adding a barrier.
+
+        This fixes the most obvious cases I found. There may be more and I'll continue to
+        audit. Most of the other memmove users seem to already use some kind of synchronization
+        to prevent this. For example, this can also be fixed by just holding the cell lock
+        around the memmove since we're dealing with indexing storage and the GC reads that
+        under the cell lock.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+
 2017-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Variation fonts are erroneously disabled on iOS
