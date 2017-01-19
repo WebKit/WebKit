@@ -1238,6 +1238,8 @@
 		831EEBBE1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831EEBBC1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.cpp */; };
 		832AE2521BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 832AE2501BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h */; };
 		832AE2531BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832AE2511BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp */; };
+		832ED18B1E2FE157006BA64A /* PerActivityStateCPUUsageSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832ED1891E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.cpp */; };
+		832ED18C1E2FE157006BA64A /* PerActivityStateCPUUsageSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 832ED18A1E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.h */; };
 		834B250F1A831A8D00CFB150 /* NetworkCacheFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B250E1A831A8D00CFB150 /* NetworkCacheFileSystem.h */; };
 		834B25121A842C8700CFB150 /* NetworkCacheStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B25101A842C8700CFB150 /* NetworkCacheStatistics.h */; };
 		8360349F1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8360349D1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp */; };
@@ -3391,6 +3393,8 @@
 		831EEBBC1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheSpeculativeLoad.cpp; sourceTree = "<group>"; };
 		832AE2501BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheSpeculativeLoadManager.h; sourceTree = "<group>"; };
 		832AE2511BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheSpeculativeLoadManager.cpp; sourceTree = "<group>"; };
+		832ED1891E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerActivityStateCPUUsageSampler.cpp; sourceTree = "<group>"; };
+		832ED18A1E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerActivityStateCPUUsageSampler.h; sourceTree = "<group>"; };
 		834B250E1A831A8D00CFB150 /* NetworkCacheFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheFileSystem.h; sourceTree = "<group>"; };
 		834B25101A842C8700CFB150 /* NetworkCacheStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheStatistics.h; sourceTree = "<group>"; };
 		8360349D1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSQLiteDatabaseTracker.cpp; sourceTree = "<group>"; };
@@ -6292,6 +6296,8 @@
 				BC6EDAA5111271C600E7678B /* PageClient.h */,
 				1AC75379183A9FDA0072CB15 /* PageLoadState.cpp */,
 				1AC7537A183A9FDB0072CB15 /* PageLoadState.h */,
+				832ED1891E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.cpp */,
+				832ED18A1E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.h */,
 				37716A59195B910500EE8B1B /* ProcessAssertion.cpp */,
 				86F9536018FF4FD4001DB2EF /* ProcessAssertion.h */,
 				86E67A22190F411800004AB7 /* ProcessThrottler.cpp */,
@@ -8081,6 +8087,7 @@
 				CE1A0BD71A48E6C60054EF74 /* TextInputSPI.h in Headers */,
 				1AAF263914687C39004A1E8A /* TiledCoreAnimationDrawingArea.h in Headers */,
 				1AF05D8714688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h in Headers */,
+				832ED18C1E2FE157006BA64A /* PerActivityStateCPUUsageSampler.h in Headers */,
 				1AFE436618B6C081009C7A48 /* UIDelegate.h in Headers */,
 				515BE1B51D5917FF00DD7C68 /* UIGamepad.h in Headers */,
 				515BE1A91D55293400DD7C68 /* UIGamepadProvider.h in Headers */,
@@ -9245,6 +9252,7 @@
 				93A88B471BC8829700ABA5C2 /* APIHitTestResult.cpp in Sources */,
 				7CD3A4821A5D02FA009623B8 /* APINavigation.cpp in Sources */,
 				BCF69FA31176D01400471A52 /* APINavigationData.cpp in Sources */,
+				832ED18B1E2FE157006BA64A /* PerActivityStateCPUUsageSampler.cpp in Sources */,
 				B63403F914910D57001070B5 /* APIObject.cpp in Sources */,
 				378E1A3D181ED6FF0031007A /* APIObject.mm in Sources */,
 				BC857FB612B830E600EDEB2E /* APIOpenPanelParameters.cpp in Sources */,

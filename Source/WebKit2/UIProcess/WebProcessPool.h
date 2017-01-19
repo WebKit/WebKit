@@ -85,6 +85,7 @@ namespace WebKit {
 class DownloadProxy;
 class HighPerformanceGraphicsUsageSampler;
 class UIGamepad;
+class PerActivityStateCPUUsageSampler;
 class WebAutomationSession;
 class WebContextSupplement;
 class WebIconDatabase;
@@ -258,6 +259,8 @@ public:
 
     void clearCachedCredentials();
     void terminateDatabaseProcess();
+
+    void reportWebContentCPUTime(int64_t cpuTime, uint64_t activityState);
 
     void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
 
@@ -532,6 +535,7 @@ private:
     RetainPtr<NSObject> m_automaticDashSubstitutionNotificationObserver;
 
     std::unique_ptr<HighPerformanceGraphicsUsageSampler> m_highPerformanceGraphicsUsageSampler;
+    std::unique_ptr<PerActivityStateCPUUsageSampler> m_perActivityStateCPUUsageSampler;
 #endif
 
     String m_overrideIconDatabasePath;

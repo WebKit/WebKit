@@ -34,4 +34,6 @@ messages -> WebProcessPool {
     # Plug-in messages.
     void AddPlugInAutoStartOriginHash(String pageOrigin, uint32_t hash, WebCore::SessionID sessionID)
     void PlugInDidReceiveUserInteraction(uint32_t hash, WebCore::SessionID sessionID)
+
+    ReportWebContentCPUTime(int64_t cpuTime, uint64_t activityState)
 }

@@ -57,6 +57,7 @@ extern "C" {
     M(NetworkCacheStorage) \
     M(NetworkScheduling) \
     M(NetworkSession) \
+    M(PerformanceLogging) \
     M(Plugins) \
     M(Printing) \
     M(ProcessSuspension) \

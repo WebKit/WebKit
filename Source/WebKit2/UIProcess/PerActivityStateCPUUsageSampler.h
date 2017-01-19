@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,31 @@
 
 #pragma once
 
-namespace WebCore {
+#include <WebCore/Page.h>
+#include <wtf/HashMap.h>
+#include <wtf/RunLoop.h>
 
-struct ActivityState {
-    enum {
-        WindowIsActive = 1 << 0,
-        IsFocused = 1 << 1,
-        IsVisible = 1 << 2,
-        IsVisibleOrOccluded = 1 << 3,
-        IsInWindow = 1 << 4,
-        IsVisuallyIdle = 1 << 5,
-        IsAudible = 1 << 6,
-        IsLoading = 1 << 7,
-    };
+namespace WebKit {
 
-    typedef unsigned Flags;
+class WebPageProxy;
+class WebProcessPool;
 
-    static const Flags NoFlags = 0;
-    static const Flags AllFlags = WindowIsActive | IsFocused | IsVisible | IsVisibleOrOccluded | IsInWindow | IsVisuallyIdle | IsAudible | IsLoading;
+class PerActivityStateCPUUsageSampler {
+public:
+    explicit PerActivityStateCPUUsageSampler(WebProcessPool&);
+    ~PerActivityStateCPUUsageSampler();
+
+    void reportWebContentCPUTime(int64_t cpuTime, WebCore::ActivityStateForCPUSampling);
+
+private:
+    void loggingTimerFired();
+    WebPageProxy* pageForLogging() const;
+
+    WebProcessPool& m_processPool;
+    RunLoop::Timer<PerActivityStateCPUUsageSampler> m_loggingTimer;
+    typedef HashMap<WebCore::ActivityStateForCPUSampling, int64_t, WTF::IntHash<WebCore::ActivityStateForCPUSampling>, WTF::StrongEnumHashTraits<WebCore::ActivityStateForCPUSampling>> CPUTimeInActivityStateMap;
+    CPUTimeInActivityStateMap m_cpuTimeInActivityState;
+    double m_lastCPUTime;
 };
 
-enum class ActivityStateForCPUSampling {
-    NonVisible,
-    VisibleNonActive,
-    VisibleAndActive
-};
-
-} // namespace WebCore
+} // namespace WebKit

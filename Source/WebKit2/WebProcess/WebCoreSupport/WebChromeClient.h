@@ -67,6 +67,8 @@ private:
     
     bool canRunModal() final;
     void runModal() final;
+
+    void reportProcessCPUTime(int64_t, WebCore::ActivityStateForCPUSampling) final;
     
     void setToolbarsVisible(bool) final;
     bool toolbarsVisible() final;

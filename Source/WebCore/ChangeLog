@@ -1,3 +1,53 @@
+2017-01-19  Chris Dumez  <cdumez@apple.com>
+
+        Implement per activity state CPU usage reporting using diagnostic logging
+        https://bugs.webkit.org/show_bug.cgi?id=167163
+        <rdar://problem/30058349>
+
+        Reviewed by Andreas Kling.
+
+        Implement per activity state CPU usage reporting using diagnostic logging.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/ActivityState.h:
+        * page/ChromeClient.h:
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::nonVisibleStateKey):
+        (WebCore::DiagnosticLoggingKeys::visibleNonActiveStateKey):
+        (WebCore::DiagnosticLoggingKeys::visibleAndActiveStateKey):
+        (WebCore::DiagnosticLoggingKeys::foregroundCPUUsageToDiagnosticLogginKey):
+        (WebCore::DiagnosticLoggingKeys::backgroundCPUUsageToDiagnosticLogginKey):
+        * page/DiagnosticLoggingKeys.h:
+        * page/Page.cpp:
+        (WebCore::isUtilityPageChromeClient):
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        (WebCore::Page::didStartProvisionalLoad):
+        (WebCore::Page::didFinishLoad):
+        (WebCore::Page::isUtilityPage):
+        (WebCore::Page::setActivityState):
+        (WebCore::Page::setIsVisibleInternal):
+        * page/Page.h:
+        (WebCore::Page::activityState):
+        (WebCore::Page::isUtilityPage):
+        * page/PerformanceMonitor.cpp: Added.
+        (WebCore::activityStateForCPUSampling):
+        (WebCore::PerformanceMonitor::PerformanceMonitor):
+        (WebCore::PerformanceMonitor::didStartProvisionalLoad):
+        (WebCore::PerformanceMonitor::didFinishLoad):
+        (WebCore::PerformanceMonitor::activityStateChanged):
+        (WebCore::PerformanceMonitor::measurePostLoadCPUUsage):
+        (WebCore::PerformanceMonitor::measurePostBackgroundingCPUUsage):
+        (WebCore::PerformanceMonitor::measurePerActivityStateCPUUsage):
+        (WebCore::stringForCPUSamplingActivityState):
+        (WebCore::PerformanceMonitor::measureCPUUsageInActivityState):
+        * page/PerformanceMonitor.h: Copied from Source/WebCore/page/ActivityState.h.
+        * page/Settings.cpp:
+        * page/Settings.h:
+        (WebCore::Settings::isPostLoadCPUUsageMeasurementEnabled):
+        (WebCore::Settings::isPostBackgroundingCPUUsageMeasurementEnabled):
+        (WebCore::Settings::isPerActivityStateCPUUsageMeasurementEnabled):
+
 2017-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Variation fonts are erroneously disabled on iOS

@@ -40,7 +40,7 @@ public:
     static String cachedResourceRevalidationKey();
     static String canCacheKey();
     static String cannotSuspendActiveDOMObjectsKey();
-    static String cpuUsageKey();
+    WEBCORE_EXPORT static String cpuUsageKey();
     WEBCORE_EXPORT static String createSharedBufferFailedKey();
     WEBCORE_EXPORT static String deltaKey();
     static String deniedByClientKey();
@@ -88,6 +88,7 @@ public:
     static String noDocumentLoaderKey();
     WEBCORE_EXPORT static String noLongerInCacheKey();
     static String noStoreKey();
+    WEBCORE_EXPORT static String nonVisibleStateKey();
     WEBCORE_EXPORT static String notHTTPFamilyKey();
     WEBCORE_EXPORT static String notInCacheKey();
     static String notInMemoryCacheKey();
@@ -150,11 +151,16 @@ public:
     WEBCORE_EXPORT static String userKey();
     WEBCORE_EXPORT static String varyingHeaderMismatchKey();
     static String videoKey();
+    WEBCORE_EXPORT static String visibleNonActiveStateKey();
+    WEBCORE_EXPORT static String visibleAndActiveStateKey();
     WEBCORE_EXPORT static String wastedSpeculativeWarmupWithRevalidationKey();
     WEBCORE_EXPORT static String wastedSpeculativeWarmupWithoutRevalidationKey();
     WEBCORE_EXPORT static String webGLKey();
     WEBCORE_EXPORT static String webViewKey();
     WEBCORE_EXPORT static String zoomedKey();
+
+    WEBCORE_EXPORT static String foregroundCPUUsageToDiagnosticLoggingKey(double cpuUsage);
+    WEBCORE_EXPORT static String backgroundCPUUsageToDiagnosticLoggingKey(double cpuUsage);
 
     // Success / Failure keys.
     static String successKey();

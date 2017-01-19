@@ -455,6 +455,8 @@ public:
 
     virtual void didInvalidateDocumentMarkerRects() { }
 
+    virtual void reportProcessCPUTime(int64_t, ActivityStateForCPUSampling) { }
+
 protected:
     virtual ~ChromeClient() { }
 };
