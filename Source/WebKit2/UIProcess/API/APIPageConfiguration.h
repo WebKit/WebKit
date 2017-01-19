@@ -88,9 +88,6 @@ public:
 #if PLATFORM(IOS)
     bool alwaysRunsAtForegroundPriority() { return m_alwaysRunsAtForegroundPriority; }
     void setAlwaysRunsAtForegroundPriority(bool alwaysRunsAtForegroundPriority) { m_alwaysRunsAtForegroundPriority = alwaysRunsAtForegroundPriority; } 
-    
-    uint32_t contentUpdateFrequency() const { return m_contentUpdateFrequency; }
-    void setContentUpdateFrequency(uint32_t updateFrequency) { m_contentUpdateFrequency = updateFrequency; }
 #endif
     bool initialCapitalizationEnabled() { return m_initialCapitalizationEnabled; }
     void setInitialCapitalizationEnabled(bool initialCapitalizationEnabled) { m_initialCapitalizationEnabled = initialCapitalizationEnabled; }
@@ -119,7 +116,6 @@ private:
     bool m_treatsSHA1SignedCertificatesAsInsecure = true;
 #if PLATFORM(IOS)
     bool m_alwaysRunsAtForegroundPriority = false;
-    uint32_t m_contentUpdateFrequency { 0 };
 #endif
     bool m_initialCapitalizationEnabled = true;
     bool m_waitsForPaintAfterViewDidMoveToWindow = true;

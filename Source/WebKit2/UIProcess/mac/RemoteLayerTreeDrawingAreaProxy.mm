@@ -26,7 +26,6 @@
 #import "config.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 
-#import "APIPageConfiguration.h"
 #import "Logging.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "DrawingAreaMessages.h"
@@ -69,7 +68,7 @@ using namespace WebCore;
         _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
         [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
         _displayLink.paused = YES;
-        _displayLink.preferredFramesPerSecond = drawingAreaProxy->contentUpdateFrequency();
+        _displayLink.preferredFramesPerSecond = 60;
     }
     return self;
 }
@@ -136,16 +135,6 @@ RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
 #endif
 }
 
-uint32_t RemoteLayerTreeDrawingAreaProxy::contentUpdateFrequency() const
-{
-#if PLATFORM(IOS)
-    return m_webPageProxy.configuration().contentUpdateFrequency();
-#else
-    return 0;
-#endif
-}
-
-    
 void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
 {
     if (!m_webPageProxy.isValid())

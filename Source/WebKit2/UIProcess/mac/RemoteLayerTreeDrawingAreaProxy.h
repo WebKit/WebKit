@@ -54,8 +54,6 @@ public:
 
     void didRefreshDisplay();
     
-    uint32_t contentUpdateFrequency() const;
-
     bool hasDebugIndicator() const { return !!m_debugIndicatorLayerTreeHost; }
 
 private:

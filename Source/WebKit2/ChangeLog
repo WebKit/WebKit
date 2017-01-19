@@ -1,3 +1,33 @@
+2017-01-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS][WK2] Remove the WebView private configuration contentUpdateFrequency
+        https://bugs.webkit.org/show_bug.cgi?id=167188
+
+        Reviewed by Simon Fraser.
+
+        This patch reverts r209294. This configuration is not needed anymore.
+        The CADisplayLink::preferredFramesPerSecond for WK2 will be set to the
+        default value always.
+
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::setAlwaysRunsAtForegroundPriority):
+        (API::PageConfiguration::contentUpdateFrequency): Deleted.
+        (API::PageConfiguration::setContentUpdateFrequency): Deleted.
+        (): Deleted.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _setAllowsInlineMediaPlaybackAfterFullscreen:]):
+        (-[WKWebViewConfiguration _contentUpdateFrequency]): Deleted.
+        (-[WKWebViewConfiguration _setContentUpdateFrequency:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (-[WKOneShotDisplayLinkHandler initWithDrawingAreaProxy:]):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::contentUpdateFrequency): Deleted.
+
 2017-01-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r210848.
