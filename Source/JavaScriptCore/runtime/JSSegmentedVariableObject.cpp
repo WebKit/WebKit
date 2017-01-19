@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,6 +91,29 @@ void JSSegmentedVariableObject::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& 
         if (toValue && toValue.isCell())
             builder.appendVariableNameEdge(thisObject, toValue.asCell(), it->key.get());
     }
+}
+
+void JSSegmentedVariableObject::destroy(JSCell* cell)
+{
+    static_cast<JSSegmentedVariableObject*>(cell)->JSSegmentedVariableObject::~JSSegmentedVariableObject();
+}
+
+JSSegmentedVariableObject::JSSegmentedVariableObject(VM& vm, Structure* structure, JSScope* scope)
+    : JSSymbolTableObject(vm, structure, scope)
+    , m_classInfo(structure->classInfo())
+{
+}
+
+JSSegmentedVariableObject::~JSSegmentedVariableObject()
+{
+    RELEASE_ASSERT(!m_alreadyDestroyed);
+    m_alreadyDestroyed = true;
+}
+
+void JSSegmentedVariableObject::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    setSymbolTable(vm, SymbolTable::create(vm));
 }
 
 } // namespace JSC

@@ -44,7 +44,7 @@ JSVMClientData::JSVMClientData(VM& vm)
     : m_builtinFunctions(vm)
     , m_builtinNames(&vm)
     , m_outputConstraintSpace("WebCore Wrapper w/ Output Constraint", vm.heap)
-    , m_globalObjectOutputConstraintSpace("WebCore Global Object w/ Output Constraint", vm.heap, AllocatorAttributes(DoesNotNeedDestruction, HeapCell::JSCell))
+    , m_globalObjectOutputConstraintSpace("WebCore Global Object w/ Output Constraint", vm.heap)
 {
 }
 

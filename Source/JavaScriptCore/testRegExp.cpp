@@ -112,7 +112,6 @@ public:
     static GlobalObject* create(VM& vm, Structure* structure, const Vector<String>& arguments)
     {
         GlobalObject* globalObject = new (NotNull, allocateCell<GlobalObject>(vm.heap)) GlobalObject(vm, structure, arguments);
-        vm.heap.addFinalizer(globalObject, destroy);
         return globalObject;
     }
 

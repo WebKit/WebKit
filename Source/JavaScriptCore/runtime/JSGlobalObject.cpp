@@ -1449,4 +1449,29 @@ bool JSGlobalObject::hasInteractiveDebugger() const
     return m_debugger && m_debugger->isInteractivelyDebugging();
 }
 
+JSGlobalObject* JSGlobalObject::create(VM& vm, Structure* structure)
+{
+    JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(vm.heap)) JSGlobalObject(vm, structure);
+    globalObject->finishCreation(vm);
+    return globalObject;
+}
+
+void JSGlobalObject::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    structure()->setGlobalObject(vm, this);
+    m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
+    init(vm);
+    setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, getPrototypeDirect(), PureForwardingProxyType), this));
+}
+
+void JSGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
+{
+    Base::finishCreation(vm);
+    structure()->setGlobalObject(vm, this);
+    m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
+    init(vm);
+    setGlobalThis(vm, thisValue);
+}
+
 } // namespace JSC

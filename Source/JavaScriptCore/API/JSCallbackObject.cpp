@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,6 @@ JSCallbackObject<JSGlobalObject>* JSCallbackObject<JSGlobalObject>::create(VM& v
 {
     JSCallbackObject<JSGlobalObject>* callbackObject = new (NotNull, allocateCell<JSCallbackObject<JSGlobalObject>>(vm.heap)) JSCallbackObject(vm, classRef, structure);
     callbackObject->finishCreation(vm);
-    vm.heap.addFinalizer(callbackObject, destroy);
     return callbackObject;
 }
 

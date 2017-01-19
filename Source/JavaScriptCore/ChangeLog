@@ -1,3 +1,58 @@
+2017-01-18  Filip Pizlo  <fpizlo@apple.com>
+
+        JSSegmentedVariableObject and its subclasses should have a sane destruction story
+        https://bugs.webkit.org/show_bug.cgi?id=167193
+
+        Reviewed by Saam Barati.
+        
+        Prior to this change, JSSegmentedVariableObjects' subclasses install finalizers that call
+        destroy. They did this in random ways, which sometimes resulted in
+        JSSegmentedVariableObject::~JSSegmentedVariableObject executing more than once (which worked
+        because of the way that ~SegmentedVector is written). Maybe this works now, but it's a disaster
+        waiting to happen.
+
+        Fortunately we can now just give those things their own Subspace and teach it its own protocol of
+        destruction. This change introduces JSSegmentedVariableObjectSubspace and stashes a m_classInfo
+        in JSSegmentedVariableObject. Now, subclasses of JSSegmentedVariableObject are destructible in
+        much the same way as JSDestructibleObject without having to be subclasses of
+        JSDestructibleObject.
+
+        * API/JSCallbackObject.cpp:
+        (JSC::JSCallbackObject<JSGlobalObject>::create):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jsc.cpp:
+        (GlobalObject::create):
+        * runtime/JSGlobalLexicalEnvironment.h:
+        (JSC::JSGlobalLexicalEnvironment::create):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::create):
+        (JSC::JSGlobalObject::finishCreation):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::create): Deleted.
+        (JSC::JSGlobalObject::finishCreation): Deleted.
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::destroy):
+        (JSC::JSSegmentedVariableObject::JSSegmentedVariableObject):
+        (JSC::JSSegmentedVariableObject::~JSSegmentedVariableObject):
+        (JSC::JSSegmentedVariableObject::finishCreation):
+        * runtime/JSSegmentedVariableObject.h:
+        (JSC::JSSegmentedVariableObject::subspaceFor):
+        (JSC::JSSegmentedVariableObject::classInfo):
+        (JSC::JSSegmentedVariableObject::JSSegmentedVariableObject): Deleted.
+        (JSC::JSSegmentedVariableObject::finishCreation): Deleted.
+        * runtime/JSSegmentedVariableObjectSubspace.cpp: Added.
+        (JSC::JSSegmentedVariableObjectSubspace::JSSegmentedVariableObjectSubspace):
+        (JSC::JSSegmentedVariableObjectSubspace::~JSSegmentedVariableObjectSubspace):
+        (JSC::JSSegmentedVariableObjectSubspace::finishSweep):
+        (JSC::JSSegmentedVariableObjectSubspace::destroy):
+        * runtime/JSSegmentedVariableObjectSubspace.h: Added.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * testRegExp.cpp:
+        (GlobalObject::create):
+
 2017-01-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.table only works for the first 5 properties

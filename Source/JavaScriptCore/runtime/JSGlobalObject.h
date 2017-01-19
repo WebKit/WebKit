@@ -433,13 +433,7 @@ public:
     typedef JSSegmentedVariableObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | OverridesToThis;
 
-    static JSGlobalObject* create(VM& vm, Structure* structure)
-    {
-        JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(vm.heap)) JSGlobalObject(vm, structure);
-        globalObject->finishCreation(vm);
-        vm.heap.addFinalizer(globalObject, destroy);
-        return globalObject;
-    }
+    JS_EXPORT_PRIVATE static JSGlobalObject* create(VM&, Structure*);
 
     DECLARE_EXPORT_INFO;
 
@@ -450,31 +444,15 @@ public:
 protected:
     JS_EXPORT_PRIVATE explicit JSGlobalObject(VM&, Structure*, const GlobalObjectMethodTable* = 0);
 
-    void finishCreation(VM& vm)
-    {
-        Base::finishCreation(vm);
-        structure()->setGlobalObject(vm, this);
-        m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
-        init(vm);
-        setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, getPrototypeDirect(), PureForwardingProxyType), this));
-    }
+    JS_EXPORT_PRIVATE void finishCreation(VM&);
 
-    void finishCreation(VM& vm, JSObject* thisValue)
-    {
-        Base::finishCreation(vm);
-        structure()->setGlobalObject(vm, this);
-        m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
-        init(vm);
-        setGlobalThis(vm, thisValue);
-    }
+    JS_EXPORT_PRIVATE void finishCreation(VM&, JSObject*);
 
     void addGlobalVar(const Identifier&);
 
 public:
     JS_EXPORT_PRIVATE ~JSGlobalObject();
     JS_EXPORT_PRIVATE static void destroy(JSCell*);
-    // We don't need a destructor because we use a finalizer instead.
-    static const bool needsDestruction = false;
 
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 

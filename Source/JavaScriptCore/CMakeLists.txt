@@ -788,6 +788,7 @@ set(JavaScriptCore_SOURCES
     runtime/JSScope.cpp
     runtime/JSScriptFetcher.cpp
     runtime/JSSegmentedVariableObject.cpp
+    runtime/JSSegmentedVariableObjectSubspace.cpp
     runtime/JSSet.cpp
     runtime/JSSetIterator.cpp
     runtime/JSSourceCode.cpp

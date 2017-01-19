@@ -42,6 +42,7 @@
 #include "JSCJSValue.h"
 #include "JSDestructibleObjectSubspace.h"
 #include "JSLock.h"
+#include "JSSegmentedVariableObjectSubspace.h"
 #include "JSStringSubspace.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Microtask.h"
@@ -298,6 +299,7 @@ public:
     Subspace destructibleCellSpace;
     JSStringSubspace stringSpace;
     JSDestructibleObjectSubspace destructibleObjectSpace;
+    JSSegmentedVariableObjectSubspace segmentedVariableObjectSpace;
 
 #if ENABLE(DFG_JIT)
     std::unique_ptr<DFG::LongLivedState> dfgState;

@@ -1119,7 +1119,6 @@ public:
     {
         GlobalObject* object = new (NotNull, allocateCell<GlobalObject>(vm.heap)) GlobalObject(vm, structure);
         object->finishCreation(vm, arguments);
-        vm.heap.addFinalizer(object, destroy);
         return object;
     }
 
