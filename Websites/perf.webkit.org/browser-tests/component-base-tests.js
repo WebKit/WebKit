@@ -7,7 +7,7 @@ describe('ComponentBase', function() {
         return context.importScript('components/base.js', 'ComponentBase').then((ComponentBase) => {
             class SomeComponent extends ComponentBase { }
             if (options.htmlTemplate)
-                SomeComponent.htmlTemplate = () => { return '<div style="height: 10px;"></div>'; };
+                SomeComponent.htmlTemplate = () => { return '<div id="div" style="height: 10px;"></div>'; };
             if (options.cssTemplate)
                 SomeComponent.cssTemplate = () => { return ':host { height: 10px; }'; };
 
@@ -85,6 +85,82 @@ describe('ComponentBase', function() {
         it('must return the same shadow tree each time it is called', () => {
             return createTestToCheckExistenceOfShadowTree((instance, hasShadowTree) => {
                 expect(instance.content()).toBe(instance.content());
+            });
+        });
+
+        it('must return the element matching the id if an id is specified', () => {
+            return new BrowsingContext().importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+                class SomeComponent extends ComponentBase {
+                    static htmlTemplate() { return '<div id="part1" title="foo"></div><div id="part1"></div>'; }
+                }
+                ComponentBase.defineElement('some-component', SomeComponent);
+
+                const instance = new SomeComponent;
+                const part1 = instance.content('part1');
+                expect(part1.localName).toBe('div');
+                expect(part1.title).toBe('foo');
+                expect(instance.content('part2')).toBe(null);
+            });
+        });
+    });
+
+    describe('part()', () => {
+        it('must create shadow tree', () => {
+            return createTestToCheckExistenceOfShadowTree((instance, hasShadowTree) => {
+                instance.part('foo');
+                expect(hasShadowTree()).toBe(true);
+            });
+        });
+
+        it('must return the component matching the id if an id is specified', () => {
+            return new BrowsingContext().importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+                class SomeComponent extends ComponentBase { }
+                ComponentBase.defineElement('some-component', SomeComponent);
+
+                class OtherComponent extends ComponentBase {
+                    static htmlTemplate() { return '<some-component id="foo"></some-component>'; }
+                }
+                ComponentBase.defineElement('other-component', OtherComponent);
+
+                const otherComponent = new OtherComponent;
+                const someComponent = otherComponent.part('foo');
+                expect(someComponent).toBeA(SomeComponent);
+                expect(someComponent.element().id).toBe('foo');
+                expect(otherComponent.part('foo')).toBe(someComponent);
+                expect(otherComponent.part('bar')).toBe(null);
+            });
+        });
+    });
+
+    describe('dispatchAction()', () => {
+        it('must invoke a callback specified in listenToAction', () => {
+            return new BrowsingContext().importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+                class SomeComponent extends ComponentBase { }
+                ComponentBase.defineElement('some-component', SomeComponent);
+
+                const instance = new SomeComponent;
+
+                const calls = [];
+                instance.listenToAction('action', (...args) => {
+                    calls.push(args);
+                });
+                const object = {'foo': 1};
+                instance.dispatchAction('action', 'bar', object, 5);
+
+                expect(calls.length).toBe(1);
+                expect(calls[0][0]).toBe('bar');
+                expect(calls[0][1]).toBe(object);
+                expect(calls[0][2]).toBe(5);
+            });
+        });
+
+        it('must not do anything when there are no callbacks', () => {
+            return new BrowsingContext().importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+                class SomeComponent extends ComponentBase { }
+                ComponentBase.defineElement('some-component', SomeComponent);
+
+                const object = {'foo': 1};
+                (new SomeComponent).dispatchAction('action', 'bar', object, 5);
             });
         });
     });
@@ -297,6 +373,36 @@ describe('ComponentBase', function() {
                 instance.render();
                 expect(hasShadowTree()).toBe(true);
             }, {htmlTemplate: false, cssTemplate: true});
+        });
+
+        it('must invoke didConstructShadowTree after creating the shadow tree', () => {
+            const context = new BrowsingContext();
+            return context.importScripts(['instrumentation.js', 'components/base.js'], 'ComponentBase').then((ComponentBase) => {
+                let didConstructShadowTreeCount = 0;
+                let htmlTemplateCount = 0;
+
+                class SomeComponent extends ComponentBase {
+                    didConstructShadowTree()
+                    {
+                        expect(this.content()).toBeA(context.global.ShadowRoot);
+                        didConstructShadowTreeCount++;
+                    }
+
+                    static htmlTemplate()
+                    {
+                        htmlTemplateCount++;
+                        return '';
+                    }
+                }
+                ComponentBase.defineElement('some-component', SomeComponent);
+
+                const instance = new SomeComponent;
+                expect(didConstructShadowTreeCount).toBe(0);
+                expect(htmlTemplateCount).toBe(0);
+                instance.render();
+                expect(didConstructShadowTreeCount).toBe(1);
+                expect(htmlTemplateCount).toBe(1);
+            });
         });
     });
 

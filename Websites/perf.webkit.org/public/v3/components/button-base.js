@@ -1,18 +1,15 @@
 
 class ButtonBase extends ComponentBase {
-    constructor(name)
+    didConstructShadowTree()
     {
-        super(name);
-    }
-
-    setCallback(callback)
-    {
-        this.content().querySelector('a').addEventListener('click', ComponentBase.createActionHandler(callback));
+        this.content('button').addEventListener('click', this.createEventHandler(() => {
+            this.dispatchAction('activate');
+        }));
     }
 
     static htmlTemplate()
     {
-        return `<a class="button" href="#"><svg viewBox="0 0 100 100">${this.buttonContent()}</svg></a>`;
+        return `<a id="button" href="#"><svg viewBox="0 0 100 100">${this.buttonContent()}</svg></a>`;
     }
 
     static buttonContent() { throw 'NotImplemented'; }
@@ -28,18 +25,18 @@ class ButtonBase extends ComponentBase {
                 height: ${sizeFactor}rem;
             }
 
-            .button {
+            a {
                 vertical-align: bottom;
                 display: block;
                 opacity: 0.3;
             }
 
-            .button svg {
-                display: block;
+            a:hover {
+                opacity: 0.6;
             }
 
-            .button:hover {
-                opacity: 0.6;
+            svg {
+                display: block;
             }
         `;
     }

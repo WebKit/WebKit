@@ -1,3 +1,42 @@
+2017-01-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a mechanism to dispatch and listen to an action
+        https://bugs.webkit.org/show_bug.cgi?id=167191
+
+        Reviewed by Antti Koivisto.
+
+        Added the notion of an action to components. Like DOM events, it can be dispatched or listen to.
+
+        Also added ComponentBase.prototype.part which finds a sub-component inside a component's shadow tree,
+        and made ComponentBase.prototype.content take an id to find an element that matches it.
+
+        * browser-tests/close-button-tests.js: Added. Tests for CloseButton.
+        * browser-tests/component-base-tests.js: Added tests for ComponentBase's part(~), content(id), dispatchEvent.
+        * browser-tests/index.html:
+        * public/v3/components/base.js:
+        (ComponentBase): Added this._actionCallbacks, which is a map of an action name to a callback to be invoked.
+        (ComponentBase.prototype.content): Return an element of the given id if one is specified.
+        (ComponentBase.prototype.part): Find a component whose element has the matching id.
+        (ComponentBase.prototype.dispatchAction): Added.
+        (ComponentBase.prototype.listenToAction): Added.
+        (ComponentBase.prototype._ensureShadowTree): Call didConstructShadowTree.
+        (ComponentBase.prototype.didConstructShadowTree): Added.
+        (ComponentBase.prototype._recursivelyReplaceUnknownElementsByComponents): Copy attributes when instantiating
+        an element for a component when the browser doesn't support custom elements API.
+        (ComponentBase.createLink):
+        (ComponentBase.prototype.createEventHandler): Added.
+        (ComponentBase.createEventHandler): Renamed from createActionHandler.
+        * public/v3/components/button-base.js:
+        (ButtonBase.prototype.didConstructShadowTree): Added. Dispatch "activate" action when the button is clicked.
+        (ButtonBase.prototype.setCallback): Deleted.
+        (ButtonBase.htmlTemplate): Use id instead of class so that this.content() can find it.
+        (ButtonBase.cssTemplate): Updated style rules.
+        * public/v3/pages/chart-pane.js:
+        (ChartPane):
+        (ChartPane.prototype.didConstructShadowTree): Added. Listen to "activate" action on the close button.
+        (ChartPane.prototype.render): Fixed a bug that we were never calling enqueueToRender on the close button.
+        (ChartPane.htmlTemplate): Add the id on the close button.
+
 2017-01-18  Dewei Zhu  <dewei_zhu@apple.com>
 
         'buildbot-syncer.js' should be able to determine force build argument from a list of possible repositories.

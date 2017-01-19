@@ -77,9 +77,14 @@ class ChartPane extends ChartPaneBase {
         this._trendLineVersion = 0;
         this._renderedTrendLineOptions = false;
 
-        this.content().querySelector('close-button').component().setCallback(chartsPage.closePane.bind(chartsPage, this));
-
         this.configure(platformId, metricId);
+    }
+
+    didConstructShadowTree()
+    {
+        this.part('close').listenToAction('activate', () => {
+            this._chartsPage.closePane(this);
+        })
     }
 
     serializeState()
@@ -251,6 +256,8 @@ class ChartPane extends ChartPaneBase {
         var element = ComponentBase.createElement;
         var link = ComponentBase.createLink;
         var self = this;
+
+        this.part('close').enqueueToRender();
 
         if (this._chartsPage.canBreakdown(platform, metric)) {
             actions.push(element('li', link('Breakdown', function () {
@@ -514,7 +521,7 @@ class ChartPane extends ChartPaneBase {
                 <h2 class="chart-pane-title">-</h2>
                 <nav class="chart-pane-actions">
                     <ul>
-                        <li class="close"><close-button></close-button></li>
+                        <li><close-button id="close"></close-button></li>
                     </ul>
                     <ul class="chart-pane-action-buttons buttoned-toolbar"></ul>
                     <ul class="chart-pane-alternative-platforms popover" style="display:none"></ul>

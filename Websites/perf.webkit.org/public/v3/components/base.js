@@ -15,16 +15,42 @@ class ComponentBase {
 
         this._element = element;
         this._shadow = null;
+        this._actionCallbacks = new Map;
 
         if (!window.customElements && new.target.enqueueToRenderOnResize)
             ComponentBase._connectedComponentToRenderOnResize(this);
     }
 
     element() { return this._element; }
-    content()
+    content(id = null)
     {
         this._ensureShadowTree();
+        if (this._shadow && id != null)
+            return this._shadow.getElementById(id);
         return this._shadow;
+    }
+
+    part(id)
+    {
+        this._ensureShadowTree();
+        if (!this._shadow)
+            return null;
+        const part = this._shadow.getElementById(id);
+        if (!part)
+            return null;
+        return part.component();
+    }
+
+    dispatchAction(actionName, ...args)
+    {
+        const callback = this._actionCallbacks.get(actionName);
+        if (callback)
+            callback.apply(this, args);
+    }
+
+    listenToAction(actionName, callback)
+    {
+        this._actionCallbacks.set(actionName, callback);
     }
 
     render() { this._ensureShadowTree(); }
@@ -112,9 +138,11 @@ class ComponentBase {
             style.textContent = newTarget.cssTemplate();
             shadow.appendChild(style);
         }
-
         this._shadow = shadow;
+        this.didConstructShadowTree();
     }
+
+    didConstructShadowTree() { }
 
     _recursivelyReplaceUnknownElementsByComponents(parent)
     {
@@ -125,6 +153,12 @@ class ComponentBase {
                 if (elementInterface) {
                     const component = new elementInterface();
                     const newChild = component.element();
+
+                    for (let i = 0; i < child.attributes.length; i++) {
+                        const attr = child.attributes[i];
+                        newChild.setAttribute(attr.name, attr.value);
+                    }
+
                     parent.replaceChild(newChild, child);
                     child = newChild;
                 }
@@ -231,14 +265,15 @@ class ComponentBase {
         if (typeof(callback) === 'string')
             attributes['href'] = callback;
         else
-            attributes['onclick'] = ComponentBase.createActionHandler(callback);
+            attributes['onclick'] = ComponentBase.createEventHandler(callback);
 
         if (isExternal)
             attributes['target'] = '_blank';
         return ComponentBase.createElement('a', attributes, content);
     }
 
-    static createActionHandler(callback)
+    createEventHandler(callback) { return ComponentBase.createEventHandler(callback); }
+    static createEventHandler(callback)
     {
         return function (event) {
             event.preventDefault();

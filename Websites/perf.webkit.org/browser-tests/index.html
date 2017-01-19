@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>In-Browser Tests for Performance Dashboard</title>
 <link rel="stylesheet" href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.2.5/mocha.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/expect/1.20.2/expect.min.js"></script>
@@ -13,6 +14,7 @@ mocha.setup('bdd');
 <body>
 <div id="mocha"></div>
 <script src="component-base-tests.js"></script>
+<script src="close-button-tests.js"></script>
 <script>
 
 afterEach(() => {
@@ -47,6 +49,7 @@ class BrowsingContext {
                 script.addEventListener('load', resolve);
                 script.addEventListener('error', reject);
                 script.src = '../public/v3/' + path;
+                script.async = false;
                 doc.body.appendChild(script);
             });
         })).then(() => {
