@@ -1,5 +1,22 @@
 2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210888. rdar://problem/30068195
+
+    2017-01-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+            REGRESSION(r210531): Broke local resource loads from custom local protocols
+            https://bugs.webkit.org/show_bug.cgi?id=167058
+
+            Reviewed by Brent Fulgham.
+
+            Allow local protocols to access resources on different volumes unless the protocol is
+            "file".
+
+            * page/SecurityOrigin.cpp:
+            (WebCore::SecurityOrigin::canDisplay):
+
+2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210862. rdar://problem/30055009
 
     2017-01-18  Youenn Fablet  <youenn@apple.com>
