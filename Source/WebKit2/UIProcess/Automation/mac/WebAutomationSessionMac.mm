@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,22 +26,120 @@
 #import "config.h"
 #import "WebAutomationSession.h"
 
+#if PLATFORM(MAC)
+
+#import "WebAutomationSessionMacros.h"
+#import "WebInspectorProxy.h"
 #import "WebPageProxy.h"
 #import "_WKAutomationSession.h"
+#import <HIToolbox/Events.h>
 #import <WebCore/IntPoint.h>
 #import <WebCore/IntSize.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <objc/runtime.h>
 
-#if USE(APPKIT)
-#import <HIToolbox/Events.h>
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {
 
-#if USE(APPKIT)
+#pragma mark Commands for Platform: 'macOS'
+
+void WebAutomationSession::resizeWindowOfBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& sizeObject)
+{
+    float width;
+    if (!sizeObject.getDouble(WTF::ASCIILiteral("width"), width))
+        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'width' parameter was not found or invalid.");
+
+    float height;
+    if (!sizeObject.getDouble(WTF::ASCIILiteral("height"), height))
+        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'height' parameter was not found or invalid.");
+
+    if (width < 0)
+        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'width' parameter had an invalid value.");
+
+    if (height < 0)
+        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'height' parameter had an invalid value.");
+
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+
+    WebCore::FloatRect originalFrame;
+    page->getWindowFrame(originalFrame);
+
+    WebCore::FloatRect newFrame = WebCore::FloatRect(originalFrame.location(), WebCore::FloatSize(width, height));
+    if (newFrame == originalFrame)
+        return;
+
+    page->setWindowFrame(newFrame);
+
+    // If nothing changed at all, it's probably fair to report that something went wrong.
+    // (We can't assume that the requested frame size will be honored exactly, however.)
+    WebCore::FloatRect updatedFrame;
+    page->getWindowFrame(updatedFrame);
+    if (originalFrame == updatedFrame)
+        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The window size was expected to have changed, but did not.");
+}
+
+void WebAutomationSession::moveWindowOfBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& positionObject)
+{
+    float x;
+    if (!positionObject.getDouble(WTF::ASCIILiteral("x"), x))
+        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'x' parameter was not found or invalid.");
+
+    float y;
+    if (!positionObject.getDouble(WTF::ASCIILiteral("y"), y))
+        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The 'y' parameter was not found or invalid.");
+
+    if (x < 0)
+        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'x' parameter had an invalid value.");
+
+    if (y < 0)
+        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The 'y' parameter had an invalid value.");
+
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+
+    WebCore::FloatRect originalFrame;
+    page->getWindowFrame(originalFrame);
+
+    WebCore::FloatRect newFrame = WebCore::FloatRect(WebCore::FloatPoint(x, y), originalFrame.size());
+    if (newFrame == originalFrame)
+        return;
+
+    page->setWindowFrame(newFrame);
+
+    // If nothing changed at all, it's probably fair to report that something went wrong.
+    // (We can't assume that the requested frame size will be honored exactly, however.)
+    WebCore::FloatRect updatedFrame;
+    page->getWindowFrame(updatedFrame);
+    if (originalFrame == updatedFrame)
+        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The window position was expected to have changed, but did not.");
+}
+
+void WebAutomationSession::inspectBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const bool* optionalEnableAutoCapturing, Ref<InspectBrowsingContextCallback>&& callback)
+{
+    WebPageProxy* page = webPageProxyForHandle(handle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+
+    if (auto callback = m_pendingInspectorCallbacksPerPage.take(page->pageID()))
+        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
+    m_pendingInspectorCallbacksPerPage.set(page->pageID(), WTFMove(callback));
+
+    // Don't bring the inspector to front since this may be done automatically.
+    // We just want it loaded so it can pause if a breakpoint is hit during a command.
+    if (page->inspector()) {
+        page->inspector()->connect();
+
+        // Start collecting profile information immediately so the entire session is captured.
+        if (optionalEnableAutoCapturing && *optionalEnableAutoCapturing)
+            page->inspector()->togglePageProfiling();
+    }
+}
+
+#pragma mark AppKit Event Simulation Support
 
 static const NSInteger synthesizedMouseEventMagicEventNumber = 0;
 static const void *synthesizedAutomationEventAssociatedObjectKey = &synthesizedAutomationEventAssociatedObjectKey;
@@ -91,6 +189,8 @@ bool WebAutomationSession::wasEventSynthesizedForAutomation(NSEvent *event)
 
     return false;
 }
+
+#pragma mark Platform-dependent Implementations
 
 void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, const WebCore::IntPoint& viewPosition, Inspector::Protocol::Automation::MouseInteraction interaction, Inspector::Protocol::Automation::MouseButton button, WebEvent::Modifiers keyModifiers)
 {
@@ -489,21 +589,6 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());
 }
 
-String WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& imageDataHandle)
-{
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(imageDataHandle, SharedMemory::Protection::ReadOnly);
-    RetainPtr<CGImageRef> cgImage = bitmap->makeCGImage();
-    RetainPtr<NSMutableData> imageData = adoptNS([[NSMutableData alloc] init]);
-    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData((CFMutableDataRef)imageData.get(), kUTTypePNG, 1, 0));
-    if (!destination)
-        return String();
-
-    CGImageDestinationAddImage(destination.get(), cgImage.get(), 0);
-    CGImageDestinationFinalize(destination.get());
-
-    return [imageData base64EncodedStringWithOptions:0];
-}
-
-#endif // USE(APPKIT)
-
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)

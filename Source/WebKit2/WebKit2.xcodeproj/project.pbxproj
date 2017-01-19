@@ -1323,7 +1323,9 @@
 		9955A6F51C7986E000EB6A93 /* AutomationBackendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6F11C79866400EB6A93 /* AutomationBackendDispatchers.h */; };
 		9955A6F61C7986E300EB6A93 /* AutomationProtocolObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9955A6F21C79866400EB6A93 /* AutomationProtocolObjects.cpp */; };
 		9955A6F71C7986E500EB6A93 /* AutomationProtocolObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6F31C79866400EB6A93 /* AutomationProtocolObjects.h */; };
-		9986BDD71CA9A22C004800AA /* WebAutomationSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9986BDD61CA9A222004800AA /* WebAutomationSessionCocoa.mm */; };
+		99C3AE241DAD8E3700AF5C16 /* WebAutomationSessionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99C3AE231DAD8E3400AF5C16 /* WebAutomationSessionMac.mm */; };
+		99C3AE271DAD948900AF5C16 /* WebAutomationSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99C3AE261DAD948500AF5C16 /* WebAutomationSessionCocoa.mm */; };
+		99C3AE2D1DADA6AD00AF5C16 /* WebAutomationSessionMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C3AE2C1DADA6A700AF5C16 /* WebAutomationSessionMacros.h */; };
 		99C81D591C20E1E5005C4C82 /* AutomationClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99C81D561C20DFBE005C4C82 /* AutomationClient.mm */; };
 		99C81D5A1C20E7E2005C4C82 /* AutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D551C20DFBE005C4C82 /* AutomationClient.h */; };
 		99C81D5D1C21F38B005C4C82 /* APIAutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */; };
@@ -3475,7 +3477,9 @@
 		9955A6F11C79866400EB6A93 /* AutomationBackendDispatchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomationBackendDispatchers.h; sourceTree = "<group>"; };
 		9955A6F21C79866400EB6A93 /* AutomationProtocolObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutomationProtocolObjects.cpp; sourceTree = "<group>"; };
 		9955A6F31C79866400EB6A93 /* AutomationProtocolObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomationProtocolObjects.h; sourceTree = "<group>"; };
-		9986BDD61CA9A222004800AA /* WebAutomationSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAutomationSessionCocoa.mm; sourceTree = "<group>"; };
+		99C3AE231DAD8E3400AF5C16 /* WebAutomationSessionMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAutomationSessionMac.mm; sourceTree = "<group>"; };
+		99C3AE261DAD948500AF5C16 /* WebAutomationSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAutomationSessionCocoa.mm; sourceTree = "<group>"; };
+		99C3AE2C1DADA6A700AF5C16 /* WebAutomationSessionMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAutomationSessionMacros.h; sourceTree = "<group>"; };
 		99C81D551C20DFBE005C4C82 /* AutomationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomationClient.h; sourceTree = "<group>"; };
 		99C81D561C20DFBE005C4C82 /* AutomationClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutomationClient.mm; sourceTree = "<group>"; };
 		99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIAutomationClient.h; sourceTree = "<group>"; };
@@ -4914,7 +4918,6 @@
 				2DAF4FFA1B636181006013D6 /* ViewGestureController.cpp */,
 				2D125C5C1857EA05003BA3CB /* ViewGestureController.h */,
 				2D1B5D5A18586599006C6596 /* ViewGestureController.messages.in */,
-				9986BDD61CA9A222004800AA /* WebAutomationSessionCocoa.mm */,
 				1AC0273E196622D600C12B75 /* WebPageProxyCocoa.mm */,
 				7C4694CB1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm */,
 				CDA29A1E1CBEB5FB00901CCF /* WebPlaybackSessionManagerProxy.h */,
@@ -6025,11 +6028,30 @@
 			isa = PBXGroup;
 			children = (
 				9955A6E91C7980BB00EB6A93 /* Automation.json */,
+				99C3AE251DAD946700AF5C16 /* cocoa */,
+				99C3AE221DAD8E1400AF5C16 /* mac */,
 				9955A6EA1C7980BB00EB6A93 /* WebAutomationSession.cpp */,
 				9955A6EB1C7980BB00EB6A93 /* WebAutomationSession.h */,
 				1C0A19591C9006EA00FE0EBB /* WebAutomationSession.messages.in */,
+				99C3AE2C1DADA6A700AF5C16 /* WebAutomationSessionMacros.h */,
 			);
 			path = Automation;
+			sourceTree = "<group>";
+		};
+		99C3AE221DAD8E1400AF5C16 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				99C3AE231DAD8E3400AF5C16 /* WebAutomationSessionMac.mm */,
+			);
+			path = mac;
+			sourceTree = "<group>";
+		};
+		99C3AE251DAD946700AF5C16 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				99C3AE261DAD948500AF5C16 /* WebAutomationSessionCocoa.mm */,
+			);
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		A182D5B11BE6BCF40087A7CC /* ios */ = {
@@ -8301,6 +8323,7 @@
 				BC49862F124D18C100D834E1 /* WKBundleHitTestResult.h in Headers */,
 				BC204EF211C83EC8008F3375 /* WKBundleInitialize.h in Headers */,
 				65B86F1E12F11DE300B7DD8A /* WKBundleInspector.h in Headers */,
+				99C3AE2D1DADA6AD00AF5C16 /* WebAutomationSessionMacros.h in Headers */,
 				1A8B66B41BC45B010082DF77 /* WKBundleMac.h in Headers */,
 				BC7043CC12F75EE0006472B9 /* WKBundleNavigationAction.h in Headers */,
 				51A728DE1B1BAD3800102EEE /* WKBundleNavigationActionPrivate.h in Headers */,
@@ -9434,6 +9457,7 @@
 				51FD18B51651FBAD00DBE1CE /* NetworkResourceLoader.cpp in Sources */,
 				E152551A17011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp in Sources */,
 				5C1426EF1C23F80900D41183 /* NetworkResourceLoadParameters.cpp in Sources */,
+				99C3AE271DAD948900AF5C16 /* WebAutomationSessionCocoa.mm in Sources */,
 				BC8283AC16B4BF3F00A278FE /* NetworkServiceEntryPoint.mm in Sources */,
 				532159531DBAE7180054AA3C /* NetworkSession.cpp in Sources */,
 				5C20CB9D1BB0DCFA00895BB1 /* NetworkSessionCocoa.mm in Sources */,
@@ -9600,7 +9624,6 @@
 				1A8E7D3C18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp in Sources */,
 				CEDA12E2152CD1AE00D9E08D /* WebAlternativeTextClient.cpp in Sources */,
 				9955A6ED1C7980CA00EB6A93 /* WebAutomationSession.cpp in Sources */,
-				9986BDD71CA9A22C004800AA /* WebAutomationSessionCocoa.mm in Sources */,
 				1C0A19571C90068F00FE0EBB /* WebAutomationSessionMessageReceiver.cpp in Sources */,
 				1C0A19461C8FF1A800FE0EBB /* WebAutomationSessionProxy.cpp in Sources */,
 				1C0A19531C8FFDFB00FE0EBB /* WebAutomationSessionProxyMessageReceiver.cpp in Sources */,
@@ -9744,6 +9767,7 @@
 				BCBD3914125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp in Sources */,
 				512127C31908239A00DAF35C /* WebPasteboardOverrides.cpp in Sources */,
 				7C4694D01A51E36800AD5845 /* WebPasteboardProxy.cpp in Sources */,
+				99C3AE241DAD8E3700AF5C16 /* WebAutomationSessionMac.mm in Sources */,
 				7C4694CC1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm in Sources */,
 				7C4694C91A4B4EA100AD5845 /* WebPasteboardProxyMessageReceiver.cpp in Sources */,
 				1AB1F7741D1B2F8A007C9BD1 /* WebPaymentCoordinator.cpp in Sources */,

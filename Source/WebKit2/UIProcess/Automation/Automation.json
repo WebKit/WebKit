@@ -248,6 +248,7 @@
         {
             "name": "resizeWindowOfBrowsingContext",
             "description": "Resizes the window of the specified browsing context to the specified size.",
+            "platform": "macOS",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context to be resized." },
                 { "name": "size", "$ref": "Size", "description": "The new size for the browsing context's window." }
@@ -256,6 +257,7 @@
         {
             "name": "moveWindowOfBrowsingContext",
             "description": "Moves the window of the specified browsing context to the specified position.",
+            "platform": "macOS",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context to be moved." },
                 { "name": "origin", "$ref": "Point", "description": "The new origin for the browsing context's window. The position is interpreted in screen coordinate space, relative to the upper left corner of the screen." }
@@ -297,6 +299,7 @@
         {
             "name": "inspectBrowsingContext",
             "description": "Inspect the specified browsing context using Web Inspector.",
+            "platform": "macOS",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be inspected." },
                 { "name": "enableAutoCapturing", "type": "boolean", "optional": true, "description": "If this option is present and set to true, the Web Inspector will automatically start a timeline recording of the specified browsing context once it is attached. Note that this disables the debugger for the duration of the recording." }

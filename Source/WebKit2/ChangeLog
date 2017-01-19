@@ -1,3 +1,58 @@
+2017-01-19  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: move Mac-specific automation commands to a separate implementation file
+        https://bugs.webkit.org/show_bug.cgi?id=163297
+        <rdar://problem/28718990>
+
+        Reviewed by Timothy Hatcher.
+
+        Not all Automation commands are available on all platforms. Start splitting out
+        command declarations and implementations based on the target platform.
+
+        * DerivedSources.make:
+        Set an appropriate --platform so the correct backend interface is generated.
+
+        * UIProcess/Automation/Automation.json:
+        Guard commands that should not be available on iOS:
+            - resizeWindowOfBrowsingContext
+            - moveWindowOfBrowsingContext
+            - inspectBrowsingContext
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::platformSimulateKeySequence): Deleted.
+        - Move shared convenience macros to header file.
+        - Move out Cocoa-only or Mac-only command implementations.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        Rearrange some declarations and switch from USE(APPKIT) to PLATFORM(MAC).
+
+        * UIProcess/Automation/WebAutomationSessionMacros.h: Added.
+
+        * UIProcess/Automation/cocoa/WebAutomationSessionCocoa.mm: Added.
+        (WebKit::WebAutomationSession::platformGetBase64EncodedPNGData):
+        Moved from WebAutomationSessionCocoa.mm. Add iOS-specific header includes.
+
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm: Renamed from Source/WebKit2/UIProcess/Cocoa/WebAutomationSessionCocoa.mm.
+        (WebKit::WebAutomationSession::resizeWindowOfBrowsingContext):
+        (WebKit::WebAutomationSession::moveWindowOfBrowsingContext):
+        (WebKit::WebAutomationSession::inspectBrowsingContext):
+        Move macOS platform command implementations to here. If other desktop ports want
+        to use these commands, we can move them somewhere else later.
+
+        (WebKit::WebAutomationSession::sendSynthesizedEventsToPage):
+        (WebKit::WebAutomationSession::markEventAsSynthesizedForAutomation):
+        (WebKit::WebAutomationSession::wasEventSynthesizedForAutomation):
+        Move out AppKit-specific event simulation code to here.
+
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        (WebKit::WebAutomationSession::platformSimulateKeyStroke):
+        (WebKit::WebAutomationSession::platformSimulateKeySequence):
+        Move out Mac platformFoo implementations to here.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        - Added UIProcess/Automation/{mac,cocoa} groups.
+        - Add new platform-specific implementation files.
+
 2017-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Provide API to set proxy settings
