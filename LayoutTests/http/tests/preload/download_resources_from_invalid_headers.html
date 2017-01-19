@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<script>
+    if (window.internals)
+        window.internals.setLinkPreloadSupport(true);
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpChildFramesAsText();
+    }
+</script>
+<iframe src="resources/invalid_resources_from_header.php">
+

@@ -43,6 +43,7 @@
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
+#include "LinkHeader.h"
 #include "LinkPreloadResourceClients.h"
 #include "LinkRelAttribute.h"
 #include "RuntimeEnabledFeatures.h"
@@ -81,6 +82,24 @@ void LinkLoader::notifyFinished(CachedResource& resource)
 
     m_cachedLinkResource->removeClient(*this);
     m_cachedLinkResource = nullptr;
+}
+
+void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseURL, Document& document)
+{
+    if (headerValue.isEmpty())
+        return;
+    LinkHeaderSet headerSet(headerValue);
+    for (auto& header : headerSet) {
+        if (!header.valid() || header.url().isEmpty() || header.rel().isEmpty())
+            continue;
+
+        LinkRelAttribute relAttribute(header.rel());
+        URL url(baseURL, header.url());
+        // Sanity check to avoid re-entrancy here.
+        if (equalIgnoringFragmentIdentifier(url, baseURL))
+            continue;
+        preloadIfNeeded(relAttribute, url, document, header.as(), header.crossOrigin(), nullptr, nullptr);
+    }
 }
 
 std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const String& as)
@@ -139,21 +158,22 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
     return nullptr;
 }
 
-void LinkLoader::preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL& href, Document& document, const String& as, const String& crossOriginMode)
+std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL& href, Document& document, const String& as, const String& crossOriginMode, LinkLoader* loader, LinkLoaderClient* client)
 {
     if (!document.loader() || !relAttribute.isLinkPreload)
-        return;
+        return nullptr;
 
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().linkPreloadEnabled());
     if (!href.isValid()) {
         document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, String("<link rel=preload> has an invalid `href` value"));
-        return;
+        return nullptr;
     }
     auto type = LinkLoader::resourceTypeFromAsAttribute(as);
     if (!type) {
         document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, String("<link rel=preload> must have a valid `as` value"));
-        m_client.linkLoadingErrored();
-        return;
+        if (client)
+            client->linkLoadingErrored();
+        return nullptr;
     }
 
     ResourceRequest resourceRequest(document.completeURL(href));
@@ -164,8 +184,9 @@ void LinkLoader::preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL
     linkRequest.setAsPotentiallyCrossOrigin(crossOriginMode, document);
     CachedResourceHandle<CachedResource> cachedLinkResource = document.cachedResourceLoader().preload(type.value(), WTFMove(linkRequest));
 
-    if (cachedLinkResource)
-        m_preloadResourceClient = createLinkPreloadResourceClient(*cachedLinkResource, *this, type.value());
+    if (cachedLinkResource && loader)
+        return createLinkPreloadResourceClient(*cachedLinkResource, *loader, type.value());
+    return nullptr;
 }
 
 bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href, const String& as, const String& crossOrigin, Document& document)
@@ -178,8 +199,11 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
             document.frame()->loader().client().prefetchDNS(href.host());
     }
 
-    if (m_client.shouldLoadLink())
-        preloadIfNeeded(relAttribute, href, document, as, crossOrigin);
+    if (m_client.shouldLoadLink()) {
+        auto resourceClient = preloadIfNeeded(relAttribute, href, document, as, crossOrigin, this, &m_client);
+        if (resourceClient)
+            m_preloadResourceClient = WTFMove(resourceClient);
+    }
 
 #if ENABLE(LINK_PREFETCH)
     if ((relAttribute.isLinkPrefetch || relAttribute.isLinkSubresource) && href.isValid() && document.frame()) {

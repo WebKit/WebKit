@@ -1856,6 +1856,7 @@ set(WebCore_SOURCES
     loader/FrameLoaderStateMachine.cpp
     loader/HistoryController.cpp
     loader/ImageLoader.cpp
+    loader/LinkHeader.cpp
     loader/LinkLoader.cpp
     loader/LinkPreloadResourceClients.cpp
     loader/LoadTiming.cpp

@@ -1,3 +1,57 @@
+2017-01-18  Yoav Weiss  <yoav@yoav.ws>
+
+        Add Link header support for preload.
+        https://bugs.webkit.org/show_bug.cgi?id=165521
+
+        Reviewed by Alex Christensen.
+
+        This patch adds Link header support for preload, by adding a Link
+        header parser, and calling it from FrameLoader::receivedFirstData.
+
+        Test: http/tests/preload/download_resources_from_header.php
+
+        * CMakeLists.txt: Add LinkHeader files.
+        * WebCore.xcodeproj/project.pbxproj: Add LinkHeader files.
+        * loader/FrameLoader.cpp:
+        (WebCore::receivedFirstData): Trigger Link based preloading by calling loadLinksFromHeader.
+        * loader/LinkHeader.cpp: Added.
+        (WebCore::isWhitespace):
+        (WebCore::isValidURLChar):
+        (WebCore::isValidParameterNameChar):
+        (WebCore::isValidParameterValueEnd):
+        (WebCore::isValidParameterValueChar):
+        (WebCore::isExtensionParameter):
+        (WebCore::parseURL):
+        (WebCore::invalidParameterDelimiter):
+        (WebCore::validFieldEnd):
+        (WebCore::parseParameterDelimiter):
+        (WebCore::paramterNameFromString):
+        (WebCore::parseParameterName):
+        (WebCore::skipQuotesIfNeeded):
+        (WebCore::parseParameterValue):
+        (WebCore::LinkHeader::setValue):
+        (WebCore::findNextHeader):
+        (WebCore::LinkHeader::LinkHeader):
+        (WebCore::LinkHeaderSet::LinkHeaderSet):
+        (WebCore::LinkHeaderSet::init):
+        * loader/LinkHeader.h: Added.
+        (WebCore::LinkHeader::url):
+        (WebCore::LinkHeader::rel):
+        (WebCore::LinkHeader::as):
+        (WebCore::LinkHeader::mimeType):
+        (WebCore::LinkHeader::media):
+        (WebCore::LinkHeader::crossOrigin):
+        (WebCore::LinkHeader::valid):
+        (WebCore::LinkHeaderSet::begin):
+        (WebCore::LinkHeaderSet::end):
+        (WebCore::LinkHeaderSet::operator[]):
+        (WebCore::LinkHeaderSet::size):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLinksFromHeader): Loads link preload directives that arrive from Link headers.
+        (WebCore::LinkLoader::preloadIfNeeded): Add return value.
+        * loader/LinkLoader.h:
+        * platform/network/HTTPHeaderNames.in: Add "Link" as a header name.
+
 2017-01-18  Filip Pizlo  <fpizlo@apple.com>
 
         JSSegmentedVariableObject and its subclasses should have a sane destruction story

@@ -79,6 +79,7 @@
 #include "IgnoreOpensDuringUnloadCountIncrementer.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
+#include "LinkLoader.h"
 #include "LoadTiming.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
@@ -658,6 +659,9 @@ void FrameLoader::receivedFirstData()
 
     ASSERT(m_frame.document());
     auto& document = *m_frame.document();
+
+    ASSERT(m_frame.document());
+    LinkLoader::loadLinksFromHeader(m_documentLoader->response().httpHeaderField(HTTPHeaderName::Link), m_frame.document()->url(), *m_frame.document());
 
     double delay;
     String urlString;

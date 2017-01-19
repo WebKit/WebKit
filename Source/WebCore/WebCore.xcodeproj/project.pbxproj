@@ -5708,6 +5708,8 @@
 		CB38FD5B1CD2325B00592A3F /* JSPerformanceResourceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = CB38FD591CD2314500592A3F /* JSPerformanceResourceTiming.h */; };
 		CB61C7931D755207001ADC7D /* LinkPreloadResourceClients.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBB6B2D11CB7ADC6009EDE1A /* LinkPreloadResourceClients.cpp */; };
 		CB8CF0181A9358D4000D510B /* Microtasks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB8CF0151A934B43000D510B /* Microtasks.cpp */; };
+		CBA9DC0A1DF44DF10005675C /* LinkHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBA9DC081DF44DC40005675C /* LinkHeader.cpp */; };
+		CBA9DC0B1DF44DF40005675C /* LinkHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = CBA9DC091DF44DC40005675C /* LinkHeader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CBB6B2D41CB7AE51009EDE1A /* LinkPreloadResourceClients.h in Headers */ = {isa = PBXBuildFile; fileRef = CBB6B2D21CB7ADD0009EDE1A /* LinkPreloadResourceClients.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CBC2D22F1CE5B89D00D1880B /* ResourceTimingInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBC2D22D1CE5B77400D1880B /* ResourceTimingInformation.cpp */; };
 		CBC2D2301CE5B8A100D1880B /* ResourceTimingInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = CBC2D22E1CE5B77D00D1880B /* ResourceTimingInformation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13637,6 +13639,8 @@
 		CB38FD581CD2314500592A3F /* JSPerformanceResourceTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceResourceTiming.cpp; sourceTree = "<group>"; };
 		CB38FD591CD2314500592A3F /* JSPerformanceResourceTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPerformanceResourceTiming.h; sourceTree = "<group>"; };
 		CB8CF0151A934B43000D510B /* Microtasks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Microtasks.cpp; sourceTree = "<group>"; };
+		CBA9DC081DF44DC40005675C /* LinkHeader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkHeader.cpp; sourceTree = "<group>"; };
+		CBA9DC091DF44DC40005675C /* LinkHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkHeader.h; sourceTree = "<group>"; };
 		CBB6B2D11CB7ADC6009EDE1A /* LinkPreloadResourceClients.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkPreloadResourceClients.cpp; sourceTree = "<group>"; };
 		CBB6B2D21CB7ADD0009EDE1A /* LinkPreloadResourceClients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkPreloadResourceClients.h; sourceTree = "<group>"; };
 		CBC2D22D1CE5B77400D1880B /* ResourceTimingInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceTimingInformation.cpp; sourceTree = "<group>"; };
@@ -22332,6 +22336,8 @@
 		BCB16BFB0979C38700467741 /* loader */ = {
 			isa = PBXGroup;
 			children = (
+				CBA9DC081DF44DC40005675C /* LinkHeader.cpp */,
+				CBA9DC091DF44DC40005675C /* LinkHeader.h */,
 				1A8F6BB00DB55CDC001DB794 /* appcache */,
 				512DD8E80D91E691000F89EE /* archive */,
 				A8D2B2521287A56000AF4DDA /* cache */,
@@ -25814,6 +25820,7 @@
 				A8EA7CAF0A192B9C00A8EF5F /* HTMLHRElement.h in Headers */,
 				A871DE270A152AC800B12A68 /* HTMLHtmlElement.h in Headers */,
 				A871DE2A0A152AC800B12A68 /* HTMLIFrameElement.h in Headers */,
+				CBA9DC0B1DF44DF40005675C /* LinkHeader.h in Headers */,
 				A8EA7D2D0A19385500A8EF5F /* HTMLImageElement.h in Headers */,
 				A8EA7D2B0A19385500A8EF5F /* HTMLImageLoader.h in Headers */,
 				A81369CC097374F600D74463 /* HTMLInputElement.h in Headers */,
@@ -30589,6 +30596,7 @@
 				1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */,
 				1A0409F31A43675C009E47F3 /* MachSendRight.cpp in Sources */,
 				932AD70517EFA2C30038F8FF /* MainFrame.cpp in Sources */,
+				CBA9DC0A1DF44DF10005675C /* LinkHeader.cpp in Sources */,
 				7AE6C93B1BE0C60100E19E03 /* MainThreadSharedTimer.cpp in Sources */,
 				7AE6C9381BE0C5C800E19E03 /* MainThreadSharedTimerCF.cpp in Sources */,
 				1A8F6BC50DB55CDC001DB794 /* ManifestParser.cpp in Sources */,

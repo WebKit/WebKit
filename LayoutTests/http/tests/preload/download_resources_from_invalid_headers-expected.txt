@@ -1,0 +1,25 @@
+CONSOLE MESSAGE: Refused to load http://localhost:8000/preload/resources/square.png because it does not appear in the img-src directive of the Content Security Policy.
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS internals.isPreloaded('../resources/dummy.js'); is true
+PASS internals.isPreloaded('../×ž×©××‘×™×/dummy.css'); is false
+PASS internals.isPreloaded('../rÃ©sÃ´Ã»rcÃ¨s/square.png'); is false
+PASS internals.isPreloaded('../resources/Ahem{.ttf,.woff}'); is true
+PASS internals.isPreloaded('../resources/test.mp4'); is false
+PASS internals.isPreloaded('../resources/test.mp4'); is true
+PASS internals.isPreloaded('../security/resources/cap	tions.vtt'); is true
+PASS internals.isPreloaded('../resources/dummy.xml?badvalue'); is false
+PASS internals.isPreloaded('../resources/dummy   .xml'); is true
+PASS internals.isPreloaded('../resources/dummy.xml'); is false
+PASS internals.isPreloaded('../resources/dumm'); is false
+PASS internals.isPreloaded('http://localhost:8000/preload/resources/square.png'); is false
+PASS internals.isPreloaded('http://localhost:53/preload/resources/dummy.js'); is true
+PASS internals.isPreloaded('#foobar'); is false
+PASS internals.isPreloaded('../resources/Ahem.ttf'); is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
