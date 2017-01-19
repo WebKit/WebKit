@@ -59,7 +59,7 @@
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 static_assert(kQLReturnPasswordProtected == 4, "kQLReturnPasswordProtected should equal 4.");
 #else
-static_assert(kQLReturnPasswordProtected == 44832, "kQLReturnPasswordProtected should equal 44832.");
+static_assert(kQLReturnPasswordProtected == 44820, "kQLReturnPasswordProtected should equal 44820.");
 #endif
 
 WTF_EXTERN_C_BEGIN
