@@ -100,6 +100,10 @@ Ref<FetchResponse> FetchResponse::cloneForJS()
 
 void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, FetchPromise&& promise)
 {
+    if (request.isBodyReadableStream()) {
+        promise.reject(TypeError, "ReadableStream uploading is not supported");
+        return;
+    }
     auto response = adoptRef(*new FetchResponse(context, FetchBody::loadingBody(), FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
 
     // Setting pending activity until BodyLoader didFail or didSucceed callback is called.
