@@ -1,5 +1,19 @@
 2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210858. rdar://problem/30069096
+
+    2017-01-18  Filip Pizlo  <fpizlo@apple.com>
+
+            JSObjectSetPrivate should not use jsCast<>
+            rdar://problem/30069096
+
+            Reviewed by Keith Miller.
+
+            * API/JSObjectRef.cpp:
+            (JSObjectSetPrivate):
+
+2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210844. rdar://problem/29993906
 
     2017-01-16  Filip Pizlo  <fpizlo@apple.com>
