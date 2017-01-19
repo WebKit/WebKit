@@ -1,5 +1,27 @@
 2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210861. rdar://problem/30015304
+
+    2017-01-18  Megan Gardner  <megan_gardner@apple.com>
+
+            Ignore Connection Assertion if we are not using connection to send messages
+            https://bugs.webkit.org/show_bug.cgi?id=167022
+
+            Reviewed by Darin Adler.
+
+            Ask the process about a particular connection rather that getting it and making the
+            comparison ourselves.
+
+            * UIProcess/ChildProcessProxy.h:
+            (WebKit::ChildProcessProxy::hasConnection):
+            Check to see the the ProcessProxy has this particular connection. This get around the assert
+            that we would run into when just requesting the connection directly.
+            * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+            (WebKit::WebPasteboardProxy::setPasteboardPathnamesForType):
+            Use the new check instead of getting the raw connection.
+
+2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210753. rdar://problem/29883469
 
     2017-01-13  Chris Dumez  <cdumez@apple.com>

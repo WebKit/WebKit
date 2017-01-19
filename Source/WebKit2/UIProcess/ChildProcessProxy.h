@@ -51,6 +51,11 @@ public:
         ASSERT(m_connection);
         return m_connection.get();
     }
+    
+    bool hasConnection(const IPC::Connection& connection) const
+    {
+        return m_connection == &connection;
+    }
 
     void addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver&);
     void addMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID, IPC::MessageReceiver&);

@@ -102,7 +102,7 @@ void WebPasteboardProxy::setPasteboardTypes(const String& pasteboardName, const 
 void WebPasteboardProxy::setPasteboardPathnamesForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, const Vector<String>& pathnames, uint64_t& newChangeCount)
 {
     for (auto* webProcessProxy : m_webProcessProxyList) {
-        if (webProcessProxy->connection() != &connection)
+        if (!webProcessProxy->hasConnection(connection))
             continue;
         
         for (const auto& pathname : pathnames) {
