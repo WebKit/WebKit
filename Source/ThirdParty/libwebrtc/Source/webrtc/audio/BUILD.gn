@@ -1,0 +1,54 @@
+# Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../build/webrtc.gni")
+
+rtc_static_library("audio") {
+  sources = [
+    "audio_receive_stream.cc",
+    "audio_receive_stream.h",
+    "audio_send_stream.cc",
+    "audio_send_stream.h",
+    "audio_state.cc",
+    "audio_state.h",
+    "conversion.h",
+    "scoped_voe_interface.h",
+  ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  deps = [
+    "..:webrtc_common",
+    "../api:audio_mixer_api",
+    "../api:call_api",
+    "../system_wrappers",
+    "../voice_engine",
+  ]
+}
+if (rtc_include_tests) {
+  rtc_source_set("audio_tests") {
+    testonly = true
+    sources = [
+      "audio_receive_stream_unittest.cc",
+      "audio_send_stream_unittest.cc",
+      "audio_state_unittest.cc",
+    ]
+    deps = [
+      ":audio",
+      "//testing/gmock",
+      "//testing/gtest",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+}

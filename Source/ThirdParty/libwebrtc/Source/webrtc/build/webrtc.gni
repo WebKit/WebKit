@@ -1,0 +1,315 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//build/config/arm.gni")
+import("//build/config/features.gni")
+import("//build/config/mips.gni")
+import("//build/config/sanitizers/sanitizers.gni")
+import("//build_overrides/build.gni")
+import("//testing/test.gni")
+
+declare_args() {
+  # Disable this to avoid building the Opus audio codec.
+  rtc_include_opus = true
+
+  # Disable to use absolute header paths for some libraries.
+  rtc_relative_path = true
+
+  # Used to specify an external Jsoncpp include path when not compiling the
+  # library that comes with WebRTC (i.e. rtc_build_json == 0).
+  rtc_jsoncpp_root = "//third_party/jsoncpp/source/include"
+
+  # Used to specify an external OpenSSL include path when not compiling the
+  # library that comes with WebRTC (i.e. rtc_build_ssl == 0).
+  rtc_ssl_root = ""
+
+  # Selects fixed-point code where possible.
+  rtc_prefer_fixed_point = false
+
+  # Enables the use of protocol buffers for debug recordings.
+  rtc_enable_protobuf = true
+
+  # Disable the code for the intelligibility enhancer by default.
+  rtc_enable_intelligibility_enhancer = false
+
+  # Selects whether debug dumps for the audio processing module
+  # should be generated.
+  apm_debug_dump = false
+
+  # Set this to true to enable BWE test logging.
+  rtc_enable_bwe_test_logging = false
+
+  # Disable these to not build components which can be externally provided.
+  rtc_build_expat = true
+  rtc_build_json = true
+  rtc_build_libjpeg = true
+  rtc_build_libsrtp = true
+  rtc_build_libvpx = true
+  rtc_libvpx_build_vp9 = true
+  rtc_build_libyuv = true
+  rtc_build_openmax_dl = true
+  rtc_build_opus = true
+  rtc_build_ssl = true
+  rtc_build_usrsctp = true
+
+  # Disable by default.
+  rtc_have_dbus_glib = false
+
+  # Enable to use the Mozilla internal settings.
+  build_with_mozilla = false
+
+  rtc_enable_android_opensl = false
+
+  # Link-Time Optimizations.
+  # Executes code generation at link-time instead of compile-time.
+  # https://gcc.gnu.org/wiki/LinkTimeOptimization
+  rtc_use_lto = false
+
+  # Set to "func", "block", "edge" for coverage generation.
+  # At unit test runtime set UBSAN_OPTIONS="coverage=1".
+  # It is recommend to set include_examples=0.
+  # Use llvm's sancov -html-report for human readable reports.
+  # See http://clang.llvm.org/docs/SanitizerCoverage.html .
+  rtc_sanitize_coverage = ""
+
+  # Enable libevent task queues on platforms that support it.
+  if (is_win || is_mac || is_ios || is_nacl) {
+    rtc_enable_libevent = false
+    rtc_build_libevent = false
+  } else {
+    rtc_enable_libevent = true
+    rtc_build_libevent = true
+  }
+
+  if (current_cpu == "arm" || current_cpu == "arm64") {
+    rtc_prefer_fixed_point = true
+  }
+
+  if (!is_ios && (current_cpu != "arm" || arm_version >= 7) &&
+      current_cpu != "mips64el") {
+    rtc_use_openmax_dl = true
+  } else {
+    rtc_use_openmax_dl = false
+  }
+
+  # Determines whether NEON code will be built.
+  rtc_build_with_neon =
+      (current_cpu == "arm" && arm_use_neon) || current_cpu == "arm64"
+
+  # Enable this to build OpenH264 encoder/FFmpeg decoder. This is supported on
+  # all platforms except Android and iOS. Because FFmpeg can be built
+  # with/without H.264 support, |ffmpeg_branding| has to separately be set to a
+  # value that includes H.264, for example "Chrome". If FFmpeg is built without
+  # H.264, compilation succeeds but |H264DecoderImpl| fails to initialize. See
+  # also: |rtc_initialize_ffmpeg|.
+  # CHECK THE OPENH264, FFMPEG AND H.264 LICENSES/PATENTS BEFORE BUILDING.
+  # http://www.openh264.org, https://www.ffmpeg.org/
+  rtc_use_h264 = proprietary_codecs && !is_android && !is_ios
+
+  # Determines whether QUIC code will be built.
+  rtc_use_quic = false
+
+  # By default, use normal platform audio support or dummy audio, but don't
+  # use file-based audio playout and record.
+  rtc_use_dummy_audio_file_devices = false
+
+  # FFmpeg must be initialized for |H264DecoderImpl| to work. This can be done
+  # by WebRTC during |H264DecoderImpl::InitDecode| or externally. FFmpeg must
+  # only be initialized once. Projects that initialize FFmpeg externally, such
+  # as Chromium, must turn this flag off so that WebRTC does not also
+  # initialize.
+  rtc_initialize_ffmpeg = !build_with_chromium
+
+  # Build sources requiring GTK. NOTICE: This is not present in Chrome OS
+  # build environments, even if available for Chromium builds.
+  rtc_use_gtk = !build_with_chromium
+}
+
+# A second declare_args block, so that declarations within it can
+# depend on the possibly overridden variables in the first
+# declare_args block.
+declare_args() {
+  # Include the iLBC audio codec?
+  rtc_include_ilbc = !(build_with_chromium || build_with_mozilla)
+
+  rtc_restrict_logging = build_with_chromium
+
+  # Excluded in Chromium since its prerequisites don't require Pulse Audio.
+  rtc_include_pulse_audio = !build_with_chromium
+
+  # Chromium uses its own IO handling, so the internal ADM is only built for
+  # standalone WebRTC.
+  rtc_include_internal_audio_device = !build_with_chromium
+
+  # Include tests in standalone checkout.
+  rtc_include_tests = !build_with_chromium
+}
+
+# Make it possible to provide custom locations for some libraries (move these
+# up into declare_args should we need to actually use them for the GN build).
+rtc_libvpx_dir = "//third_party/libvpx"
+rtc_libyuv_dir = "//third_party/libyuv"
+rtc_opus_dir = "//third_party/opus"
+
+###############################################################################
+# Templates
+#
+
+# Points to //webrtc/ in webrtc stand-alone or to //third_party/webrtc/ in
+# chromium.
+# We need absolute paths for all configs in templates as they are shared in
+# different subdirectories.
+webrtc_root = get_path_info("../", "abspath")
+
+# Global configuration that should be applied to all WebRTC targets.
+# You normally shouldn't need to include this in your target as it's
+# automatically included when using the rtc_* templates.
+# It sets defines, include paths and compilation warnings accordingly,
+# both for WebRTC stand-alone builds and for the scenario when WebRTC
+# native code is built as part of Chromium.
+rtc_common_configs = [ webrtc_root + ":common_config" ]
+
+# Global public configuration that should be applied to all WebRTC targets. You
+# normally shouldn't need to include this in your target as it's automatically
+# included when using the rtc_* templates. It set the defines, include paths and
+# compilation warnings that should be propagated to dependents of the targets
+# depending on the target having this config.
+rtc_common_inherited_config = webrtc_root + ":common_inherited_config"
+
+if (is_ios) {
+  rtc_common_configs += [ webrtc_root + "/build/ios:rtc_ios_common_config" ]
+}
+
+# Common configs to remove or add in all rtc targets.
+rtc_remove_configs = []
+rtc_add_configs = rtc_common_configs
+
+set_defaults("rtc_test") {
+  configs = rtc_add_configs
+  suppressed_configs = []
+}
+
+set_defaults("rtc_source_set") {
+  configs = rtc_add_configs
+  suppressed_configs = []
+}
+
+set_defaults("rtc_executable") {
+  configs = rtc_add_configs
+  suppressed_configs = []
+}
+
+set_defaults("rtc_static_library") {
+  configs = rtc_add_configs
+  suppressed_configs = []
+}
+
+set_defaults("rtc_shared_library") {
+  configs = rtc_add_configs
+  suppressed_configs = []
+}
+
+template("rtc_test") {
+  test(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "configs",
+                             "public_configs",
+                             "suppressed_configs",
+                           ])
+    configs += invoker.configs
+    configs -= rtc_remove_configs
+    configs -= invoker.suppressed_configs
+    public_configs = [ rtc_common_inherited_config ]
+    if (defined(invoker.public_configs)) {
+      public_configs += invoker.public_configs
+    }
+  }
+}
+
+template("rtc_source_set") {
+  source_set(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "configs",
+                             "public_configs",
+                             "suppressed_configs",
+                           ])
+    configs += invoker.configs
+    configs -= rtc_remove_configs
+    configs -= invoker.suppressed_configs
+    public_configs = [ rtc_common_inherited_config ]
+    if (defined(invoker.public_configs)) {
+      public_configs += invoker.public_configs
+    }
+  }
+}
+
+template("rtc_executable") {
+  executable(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "deps",
+                             "configs",
+                             "public_configs",
+                             "suppressed_configs",
+                           ])
+    configs += invoker.configs
+    configs -= rtc_remove_configs
+    configs -= invoker.suppressed_configs
+    deps = [
+      "//build/config/sanitizers:deps",
+    ]
+    deps += invoker.deps
+    public_configs = [ rtc_common_inherited_config ]
+    if (defined(invoker.public_configs)) {
+      public_configs += invoker.public_configs
+    }
+  }
+}
+
+template("rtc_static_library") {
+  static_library(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "configs",
+                             "public_configs",
+                             "suppressed_configs",
+                           ])
+    configs += invoker.configs
+    configs -= rtc_remove_configs
+    configs -= invoker.suppressed_configs
+    public_configs = [ rtc_common_inherited_config ]
+    if (defined(invoker.public_configs)) {
+      public_configs += invoker.public_configs
+    }
+  }
+}
+
+template("rtc_shared_library") {
+  shared_library(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "configs",
+                             "public_configs",
+                             "suppressed_configs",
+                           ])
+    configs += invoker.configs
+    configs -= rtc_remove_configs
+    configs -= invoker.suppressed_configs
+    public_configs = [ rtc_common_inherited_config ]
+    if (defined(invoker.public_configs)) {
+      public_configs += invoker.public_configs
+    }
+  }
+}

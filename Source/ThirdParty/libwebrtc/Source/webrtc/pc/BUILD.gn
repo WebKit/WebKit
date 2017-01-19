@@ -1,0 +1,124 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../build/webrtc.gni")
+
+group("pc") {
+  public_deps = [
+    ":rtc_pc",
+  ]
+}
+
+config("rtc_pc_config") {
+  defines = [
+    "HAVE_SCTP",
+    "HAVE_SRTP",
+  ]
+}
+
+rtc_static_library("rtc_pc") {
+  defines = []
+  sources = [
+    "audiomonitor.cc",
+    "audiomonitor.h",
+    "bundlefilter.cc",
+    "bundlefilter.h",
+    "channel.cc",
+    "channel.h",
+    "channelmanager.cc",
+    "channelmanager.h",
+    "currentspeakermonitor.cc",
+    "currentspeakermonitor.h",
+    "mediamonitor.cc",
+    "mediamonitor.h",
+    "mediasession.cc",
+    "mediasession.h",
+    "rtcpmuxfilter.cc",
+    "rtcpmuxfilter.h",
+    "srtpfilter.cc",
+    "srtpfilter.h",
+    "voicechannel.h",
+  ]
+
+  deps = [
+    "../api:call_api",
+    "../base:rtc_base",
+    "../media",
+  ]
+
+  if (build_with_chromium) {
+    sources += [
+      "externalhmac.cc",
+      "externalhmac.h",
+    ]
+  }
+  if (rtc_build_libsrtp) {
+    deps += [ "//third_party/libsrtp" ]
+  }
+
+  public_configs = [ ":rtc_pc_config" ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+}
+
+if (rtc_include_tests) {
+  config("rtc_pc_unittests_config") {
+    # GN orders flags on a target before flags from configs. The default config
+    # adds -Wall, and this flag have to be after -Wall -- so they need to
+    # come from a config and can't be on the target directly.
+    if (!is_win && !is_clang) {
+      cflags = [ "-Wno-maybe-uninitialized" ]  # Only exists for GCC.
+    }
+  }
+
+  rtc_test("rtc_pc_unittests") {
+    testonly = true
+
+    sources = [
+      "bundlefilter_unittest.cc",
+      "channel_unittest.cc",
+      "channelmanager_unittest.cc",
+      "currentspeakermonitor_unittest.cc",
+      "mediasession_unittest.cc",
+      "rtcpmuxfilter_unittest.cc",
+      "srtpfilter_unittest.cc",
+    ]
+
+    include_dirs = [ "//third_party/libsrtp/srtp" ]
+
+    configs += [ ":rtc_pc_unittests_config" ]
+
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+
+    if (is_win) {
+      libs = [ "strmiids.lib" ]
+    }
+
+    deps = [
+      ":rtc_pc",
+      "../api:libjingle_peerconnection",
+      "../base:rtc_base_tests_utils",
+      "../media:rtc_unittest_main",
+      "../system_wrappers:metrics_default",
+    ]
+
+    if (rtc_build_libsrtp) {
+      deps += [ "//third_party/libsrtp" ]
+    }
+
+    if (is_android) {
+      deps += [ "//testing/android/native_test:native_test_support" ]
+    }
+  }
+}

@@ -1,0 +1,41 @@
+This file describes how to setup Eclipse and then the Python Charts project
+
+Setup Eclipse
+-------------
+These instructions were tested on Linux, but are very similar for Windows and
+Mac.
+1. Ensure you have Python 2.x installed
+2. Download and install Google App Engine SDK for Python from 
+   http://code.google.com/appengine/downloads.html
+3. Note which location you put App Engine in, as this will be needed later on.
+4. Download Eclipse from http://www.eclipse.org. Any distribution will probably
+   do, but if you're going to do mainly web development, you might pick Eclipse
+   IDE for JavaScript Web Developers
+5. Install the PyDev plugin using the Eclipse update site mentioned at 
+   http://pydev.org/download.html
+6. Install the Google Plugin for Eclipse: http://code.google.com/eclipse/
+
+Setup the project
+-----------------
+Generic instructions are available at
+http://code.google.com/appengine/docs/python/gettingstarted/ but the following
+should be enough:
+1. Launch Eclipse and create a workspace
+2. Create a new PyDev Project
+3. In the PyDev Project wizard, uncheck the "Use Default" checkbox for Project
+   contents and browse to your tools/python_charts directory.
+4. Enter a project name. We'll assume PythonCharts in the examples below.
+5. In the radio button of the lower part of the window, select
+   "Add project directory to the PYTHONPATH"
+6. Click Finish
+7. Select the Run > Run Configuration… menu item
+8. Create a new "Python Run" configuration
+9. Select your Python Charts project as project
+10. As Main Module, enter the path to your dev_appserver.py, which is a part
+    of your App Engine installation,
+    e.g. /usr/local/google_appengine/dev_appserver.py
+11. At the Arguments tab, enter the location of your project root.
+    Using Eclipse variables if your project name is PythonCharts:
+    ${workspace_loc:PythonCharts}
+12. Launch the development app server by clicking the Run button.
+13. Launch a browser and go to http://localhost:8080

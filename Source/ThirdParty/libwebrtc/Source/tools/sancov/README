@@ -1,0 +1,9 @@
+Blacklist for llvm's sancov
+
+See http://clang.llvm.org/docs/SanitizerCoverage.html .
+
+Example usage:
+> cd out/Debug
+> UBSAN_OPTIONS="coverage=1" ./peerconnection_unittests
+> sancov -html-report -blacklist ../../tools/sancov/blacklist.txt \
+>   peerconnection_unittests peerconnection_unittests.123.sancov

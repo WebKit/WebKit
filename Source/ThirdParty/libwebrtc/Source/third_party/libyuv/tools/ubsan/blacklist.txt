@@ -1,0 +1,15 @@
+#############################################################################
+# UBSan blacklist.
+# Please think twice before you add or remove these rules.
+
+# This is a stripped down copy of Chromium's blacklist.txt, to enable
+# adding WebRTC-specific blacklist entries.
+
+#############################################################################
+# YASM does some funny things that UBsan doesn't like.
+# https://crbug.com/489901
+src:*/third_party/yasm/*
+
+#############################################################################
+# Ignore system libraries.
+src:*/usr/*

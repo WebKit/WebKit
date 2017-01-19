@@ -1,0 +1,9 @@
+URL: https://github.com/google/gtest-parallel
+Version: d0cebaba01c5dbf3af8a1c89b64eed7596c2b56c
+License: Apache 2.0
+License File: LICENSE
+
+Description:
+Parallelization script for gtest binaries.
+
+Local Modifications: None

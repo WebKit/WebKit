@@ -1,0 +1,388 @@
+Binary files usrsctplib/.DS_Store and overrides/usrsctplib/.DS_Store differ
+Only in usrsctplib: .cvsignore
+Only in usrsctplib: .git
+Only in usrsctplib: Makefile.am
+Only in usrsctplib: Makefile.nmake
+Only in usrsctplib/netinet: sctp.h
+Only in usrsctplib/netinet: sctp_asconf.c
+Only in usrsctplib/netinet: sctp_asconf.h
+Only in usrsctplib/netinet: sctp_auth.c
+diff -PcrB usrsctplib/netinet/sctp_auth.h overrides/usrsctplib/netinet/sctp_auth.h
+*** usrsctplib/netinet/sctp_auth.h	2013-07-26 05:00:15.000000000 -0400
+--- overrides/usrsctplib/netinet/sctp_auth.h	2013-06-18 11:40:34.000000000 -0400
+***************
+*** 38,43 ****
+--- 38,44 ----
+  #ifndef _NETINET_SCTP_AUTH_H_
+  #define _NETINET_SCTP_AUTH_H_
+  
++ #include <netinet/sctp_sha1.h>
+  
+  /* digest lengths */
+  #define SCTP_AUTH_DIGEST_LEN_SHA1	20
+Only in usrsctplib/netinet: sctp_bsd_addr.c
+Only in usrsctplib/netinet: sctp_bsd_addr.h
+Only in usrsctplib/netinet: sctp_callout.c
+Only in usrsctplib/netinet: sctp_callout.h
+Only in usrsctplib/netinet: sctp_cc_functions.c
+Only in usrsctplib/netinet: sctp_constants.h
+Only in usrsctplib/netinet: sctp_crc32.c
+Only in usrsctplib/netinet: sctp_crc32.h
+Only in usrsctplib/netinet: sctp_dtrace_declare.h
+Only in usrsctplib/netinet: sctp_dtrace_define.h
+Only in usrsctplib/netinet: sctp_hashdriver.c
+Only in usrsctplib/netinet: sctp_hashdriver.h
+Only in usrsctplib/netinet: sctp_header.h
+Only in usrsctplib/netinet: sctp_indata.c
+Only in usrsctplib/netinet: sctp_indata.h
+Only in usrsctplib/netinet: sctp_input.c
+Only in usrsctplib/netinet: sctp_input.h
+Only in usrsctplib/netinet: sctp_lock_userspace.h
+diff -PcrB usrsctplib/netinet/sctp_nss_sha1.c overrides/usrsctplib/netinet/sctp_nss_sha1.c
+*** usrsctplib/netinet/sctp_nss_sha1.c	1969-12-31 19:00:00.000000000 -0500
+--- overrides/usrsctplib/netinet/sctp_nss_sha1.c	2013-07-29 21:32:35.000000000 -0400
+***************
+*** 0 ****
+--- 1,64 ----
++ /*-
++  * Copyright (c) 2001-2007, by Cisco Systems, Inc. All rights reserved.
++  * Copyright (c) 2008-2012, by Randall Stewart. All rights reserved.
++  * Copyright (c) 2008-2012, by Michael Tuexen. All rights reserved.
++  *
++  * Redistribution and use in source and binary forms, with or without
++  * modification, are permitted provided that the following conditions are met:
++  *
++  * a) Redistributions of source code must retain the above copyright notice,
++  *   this list of conditions and the following disclaimer.
++  *
++  * b) Redistributions in binary form must reproduce the above copyright
++  *    notice, this list of conditions and the following disclaimer in
++  *   the documentation and/or other materials provided with the distribution.
++  *
++  * c) Neither the name of Cisco Systems, Inc. nor the names of its
++  *    contributors may be used to endorse or promote products derived
++  *    from this software without specific prior written permission.
++  *
++  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++  * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
++  * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++  * THE POSSIBILITY OF SUCH DAMAGE.
++  */
++ 
++ #ifdef __FreeBSD__
++ #include <sys/cdefs.h>
++ __FBSDID("$FreeBSD$");
++ #endif
++ 
++ #ifdef SCTP_USE_NSS_SHA1
++ #include <netinet/sctp_nss_sha1.h>
++ 
++ /* A SHA-1 Digest is 160 bits, or 20 bytes */
++ #define SHA_DIGEST_LENGTH (20)
++ 
++ void
++ SCTP_NSS_SHA1_Init(struct sha1_context *ctx)
++ {
++ 	ctx->pk11_ctx = PK11_CreateDigestContext(SEC_OID_SHA1);
++ 	PK11_DigestBegin(ctx->pk11_ctx);
++ }
++ 
++ void
++ SCTP_NSS_SHA1_Update(struct sha1_context *ctx, const unsigned char *ptr, int siz)
++ {
++ 	PK11_DigestOp(ctx->pk11_ctx, ptr, siz);
++ }
++ 
++ void
++ SCTP_NSS_SHA1_Final(unsigned char *digest, struct sha1_context *ctx)
++ {
++ 	unsigned int output_len = 0;
++ 	PK11_DigestFinal(ctx->pk11_ctx, digest, &output_len, SHA_DIGEST_LENGTH);
++ 	PK11_DestroyContext(ctx->pk11_ctx, PR_TRUE);
++ }
++ #endif
+diff -PcrB usrsctplib/netinet/sctp_nss_sha1.h overrides/usrsctplib/netinet/sctp_nss_sha1.h
+*** usrsctplib/netinet/sctp_nss_sha1.h	1969-12-31 19:00:00.000000000 -0500
+--- overrides/usrsctplib/netinet/sctp_nss_sha1.h	2013-07-26 03:58:48.000000000 -0400
+***************
+*** 0 ****
+--- 1,64 ----
++ /*-
++  * Copyright (c) 2001-2007, by Cisco Systems, Inc. All rights reserved.
++  * Copyright (c) 2008-2012, by Randall Stewart. All rights reserved.
++  * Copyright (c) 2008-2012, by Michael Tuexen. All rights reserved.
++  *
++  * Redistribution and use in source and binary forms, with or without
++  * modification, are permitted provided that the following conditions are met:
++  *
++  * a) Redistributions of source code must retain the above copyright notice,
++  *   this list of conditions and the following disclaimer.
++  *
++  * b) Redistributions in binary form must reproduce the above copyright
++  *    notice, this list of conditions and the following disclaimer in
++  *   the documentation and/or other materials provided with the distribution.
++  *
++  * c) Neither the name of Cisco Systems, Inc. nor the names of its
++  *    contributors may be used to endorse or promote products derived
++  *    from this software without specific prior written permission.
++  *
++  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++  * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
++  * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++  * THE POSSIBILITY OF SUCH DAMAGE.
++  */
++ 
++ #ifdef __FreeBSD__
++ #include <sys/cdefs.h>
++ __FBSDID("$FreeBSD$");
++ #endif
++ 
++ #ifndef __SCTP_NSS_SHA1_h__
++ #define __SCTP_NSS_SHA1_h__
++ 
++ #ifdef __Userspace_os_Darwin
++ #define __APPLE__
++ #endif
++ 
++ #include <sys/types.h>
++ #include <pk11pub.h>
++ 
++ #ifdef __Userspace_os_Darwin
++ #undef __APPLE__
++ #endif
++ 
++ struct sha1_context {
++ 	struct PK11Context *pk11_ctx;
++ };   // Opaque structure.
++ 
++ typedef struct sha1_context SHA1_CTX;
++ 
++ #if defined(_KERNEL) || defined(__Userspace__)
++ #define SHA1_Init SCTP_NSS_SHA1_Init
++ #define SHA1_Update SCTP_NSS_SHA1_Update
++ #define SHA1_Final SCTP_NSS_SHA1_Final
++ 
++ #endif  /* _KERNEL */
++ #endif  /* __SCTP_NSS_SHA1_h__ */
+diff -PcrB usrsctplib/netinet/sctp_openssl_sha1.h overrides/usrsctplib/netinet/sctp_openssl_sha1.h
+*** usrsctplib/netinet/sctp_openssl_sha1.h	1969-12-31 19:00:00.000000000 -0500
+--- overrides/usrsctplib/netinet/sctp_openssl_sha1.h	2013-06-18 11:40:34.000000000 -0400
+***************
+*** 0 ****
+--- 1,48 ----
++ /*-
++  * Copyright (c) 2001-2007, by Cisco Systems, Inc. All rights reserved.
++  * Copyright (c) 2008-2012, by Randall Stewart. All rights reserved.
++  * Copyright (c) 2008-2012, by Michael Tuexen. All rights reserved.
++  *
++  * Redistribution and use in source and binary forms, with or without
++  * modification, are permitted provided that the following conditions are met:
++  *
++  * a) Redistributions of source code must retain the above copyright notice,
++  *   this list of conditions and the following disclaimer.
++  *
++  * b) Redistributions in binary form must reproduce the above copyright
++  *    notice, this list of conditions and the following disclaimer in
++  *   the documentation and/or other materials provided with the distribution.
++  *
++  * c) Neither the name of Cisco Systems, Inc. nor the names of its
++  *    contributors may be used to endorse or promote products derived
++  *    from this software without specific prior written permission.
++  *
++  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++  * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
++  * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++  * THE POSSIBILITY OF SUCH DAMAGE.
++  */
++ 
++ #ifdef __FreeBSD__
++ #include <sys/cdefs.h>
++ __FBSDID("$FreeBSD$");
++ #endif
++ 
++ #ifndef __SCTP_OPENSSL_SHA1_h__
++ #define __SCTP_OPENSSL_SHA1_h__
++ 
++ #include <openssl/md5.h>
++ #include <openssl/sha.h>
++ /* libssl-dev calls this SHA_CTX, but it's refered to as SHA1_CTX within the
++  *  SCTP stack code so here we typedef (or macro?) to equate the two.
++  */
++ typedef SHA_CTX SHA1_CTX;
++ 
++ #endif
+diff -PcrB usrsctplib/netinet/sctp_os.h overrides/usrsctplib/netinet/sctp_os.h
+*** usrsctplib/netinet/sctp_os.h	2013-07-26 05:00:15.000000000 -0400
+--- overrides/usrsctplib/netinet/sctp_os.h	2013-06-18 11:40:34.000000000 -0400
+***************
+*** 73,79 ****
+  #endif
+  
+  #if defined(__APPLE__)
+! #include <netinet/sctp_os_macosx.h>
+  #endif
+  
+  #if defined(__Panda__)
+--- 73,80 ----
+  #endif
+  
+  #if defined(__APPLE__)
+! #undef __APPLE__
+! // #include <netinet/sctp_os_macosx.h>
+  #endif
+  
+  #if defined(__Panda__)
+diff -PcrB usrsctplib/netinet/sctp_os_userspace.h overrides/usrsctplib/netinet/sctp_os_userspace.h
+*** usrsctplib/netinet/sctp_os_userspace.h	2013-07-26 05:03:12.000000000 -0400
+--- overrides/usrsctplib/netinet/sctp_os_userspace.h	2013-07-26 04:46:41.000000000 -0400
+***************
+*** 996,1012 ****
+  #define SCTP_READ_RANDOM(buf, len)	read_random(buf, len)
+  
+  
+- #ifdef USE_SCTP_SHA1
+  #include <netinet/sctp_sha1.h>
+! #else
+! #if 0 /*this was old _KERNEL code... */
+! #include <crypto/sha1.h>
+! /* map standard crypto API names */
+! #define SHA1_Init	SHA1Init
+! #define SHA1_Update	SHA1Update
+! #define SHA1_Final(x,y)	SHA1Final((caddr_t)x, y)
+! #endif
+! #endif
+  
+  #if defined(HAVE_SHA2)
+  #include <crypto/sha2/sha2.h>
+--- 996,1003 ----
+  #define SCTP_READ_RANDOM(buf, len)	read_random(buf, len)
+  
+  
+  #include <netinet/sctp_sha1.h>
+! 
+  
+  #if defined(HAVE_SHA2)
+  #include <crypto/sha2/sha2.h>
+Only in usrsctplib/netinet: sctp_output.c
+Only in usrsctplib/netinet: sctp_output.h
+Only in usrsctplib/netinet: sctp_pcb.c
+Only in usrsctplib/netinet: sctp_pcb.h
+Only in usrsctplib/netinet: sctp_peeloff.c
+Only in usrsctplib/netinet: sctp_peeloff.h
+Only in usrsctplib/netinet: sctp_process_lock.h
+Only in usrsctplib/netinet: sctp_sha1.c
+diff -PcrB usrsctplib/netinet/sctp_sha1.h overrides/usrsctplib/netinet/sctp_sha1.h
+*** usrsctplib/netinet/sctp_sha1.h	2013-07-26 05:00:15.000000000 -0400
+--- overrides/usrsctplib/netinet/sctp_sha1.h	2013-07-29 23:00:51.000000000 -0400
+***************
+*** 36,46 ****
+  #endif
+  
+  
+! #ifndef __SCTP_SLA1_h__
+! #define __SCTP_SLA1_h__
+  
+  #include <sys/types.h>
+  
+  struct sha1_context {
+  	unsigned int A;
+  	unsigned int B;
+--- 36,69 ----
+  #endif
+  
+  
+! #ifndef __SCTP_SHA1_h__
+! #define __SCTP_SHA1_h__
+  
+  #include <sys/types.h>
+  
++ #if !defined(SSL_USE_OPENSSL) && !defined(SSL_USE_NSS)
++ #if defined(WIN32)
++ 
++ #define SCTP_USE_SCTP_SHA1 1
++ 
++ #else  // defined(WIN32)
++ 
++ #if defined(HAVE_OPENSSL_SSL_H)
++ #define SSL_USE_OPENSSL 1
++ #elif defined(HAVE_NSS_SSL_H)
++ #define SSL_USE_NSS 1
++ #else
++ #define SCTP_USE_SCTP_SHA1
++ #endif
++ 
++ #endif  // !defined(WIN32)
++ #endif
++ 
++ #if defined(SSL_USE_NSS)
++ #include <netinet/sctp_nss_sha1.h>
++ #elif defined(SSL_USE_OPENSSL)
++ #include <netinet/sctp_openssl_sha1.h>
++ #else  // SCTP_USE_SCTP_SHA1
+  struct sha1_context {
+  	unsigned int A;
+  	unsigned int B;
+***************
+*** 95,98 ****
+  void SHA1_Final(unsigned char *, struct sha1_context *);
+  
+  #endif				/* _KERNEL */
+! #endif
+--- 118,122 ----
+  void SHA1_Final(unsigned char *, struct sha1_context *);
+  
+  #endif				/* _KERNEL */
+! #endif        /* !defined(SSL_USE_OPENSSL) && !defined(SSL_USE_NSS) */
+! #endif        /* __SCTP_SHA1_h__ */
+Only in usrsctplib/netinet: sctp_ss_functions.c
+Only in usrsctplib/netinet: sctp_structs.h
+Only in usrsctplib/netinet: sctp_sysctl.c
+Only in usrsctplib/netinet: sctp_sysctl.h
+Only in usrsctplib/netinet: sctp_timer.c
+Only in usrsctplib/netinet: sctp_timer.h
+Only in usrsctplib/netinet: sctp_uio.h
+Only in usrsctplib/netinet: sctp_userspace.c
+Only in usrsctplib/netinet: sctp_usrreq.c
+Only in usrsctplib/netinet: sctp_var.h
+Only in usrsctplib/netinet: sctputil.c
+Only in usrsctplib/netinet: sctputil.h
+Only in usrsctplib: netinet6
+Only in usrsctplib: user_atomic.h
+Only in usrsctplib: user_environment.c
+Only in usrsctplib: user_environment.h
+Only in usrsctplib: user_inpcb.h
+Only in usrsctplib: user_ip6_var.h
+Only in usrsctplib: user_ip_icmp.h
+Only in usrsctplib: user_malloc.h
+Only in usrsctplib: user_mbuf.c
+Only in usrsctplib: user_mbuf.h
+Only in usrsctplib: user_queue.h
+Only in usrsctplib: user_recv_thread.c
+Only in usrsctplib: user_recv_thread.h
+Only in usrsctplib: user_route.h
+Only in usrsctplib: user_sctp_timer_iterate.c
+Only in usrsctplib: user_socket.c
+Only in usrsctplib: user_socketvar.h
+Only in usrsctplib: user_uma.h
+Only in usrsctplib: usrsctp.h

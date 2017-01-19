@@ -1,0 +1,72 @@
+# Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+# The location of the build configuration file.
+buildconfig = "//build/config/BUILDCONFIG.gn"
+
+# The secondary source root is a parallel directory tree where
+# GN build files are placed when they can not be placed directly
+# in the source tree, e.g. for third party source trees.
+secondary_source = "//build/secondary/"
+
+# These are the targets to check headers for by default. The files in targets
+# matching these patterns (see "gn help label_pattern" for format) will have
+# their includes checked for proper dependencies when you run either
+# "gn check" or "gn gen --check".
+# TODO(kjellander): Keep adding paths to this list as work in webrtc:5589 is done.
+check_targets = [
+  "//webrtc/api:audio_mixer_api",
+  "//webrtc/api:rtc_stats_api",
+  "//webrtc/modules/audio_coding:audio_decoder_factory_interface",
+  "//webrtc/modules/audio_coding:audio_format",
+  "//webrtc/modules/audio_coding:audio_format_conversion",
+  "//webrtc/modules/audio_coding:g711_test",
+  "//webrtc/modules/audio_coding:g722_test",
+  "//webrtc/modules/audio_coding:ilbc_test",
+  "//webrtc/modules/audio_coding:isac",
+  "//webrtc/modules/audio_coding:isac_api_test",
+  "//webrtc/modules/audio_coding:isac_fix_test",
+  "//webrtc/modules/audio_coding:isac_switch_samprate_test",
+  "//webrtc/modules/audio_coding:isac_test",
+  "//webrtc/modules/audio_coding:webrtc_opus_fec_test",
+  "//webrtc/modules/audio_device/*",
+  "//webrtc/modules/audio_mixer/*",
+  "//webrtc/stats:rtc_stats",
+  "//webrtc/voice_engine:level_indicator",
+]
+
+# These are the list of GN files that run exec_script. This whitelist exists
+# to force additional review for new uses of exec_script, which is strongly
+# discouraged except for gypi_to_gn calls.
+exec_script_whitelist = [
+  "//build/config/BUILD.gn",
+  "//build/config/android/BUILD.gn",
+  "//build/config/android/config.gni",
+  "//build/config/android/internal_rules.gni",
+  "//build/config/android/rules.gni",
+  "//build/config/compiler/BUILD.gn",
+  "//build/config/gcc/gcc_version.gni",
+  "//build/config/ios/ios_sdk.gni",
+  "//build/config/linux/BUILD.gn",
+  "//build/config/linux/pkg_config.gni",
+  "//build/config/mac/mac_sdk.gni",
+  "//build/config/posix/BUILD.gn",
+  "//build/config/sysroot.gni",
+  "//build/config/win/BUILD.gn",
+  "//build/config/win/visual_studio_version.gni",
+  "//build/gn_helpers.py",
+  "//build/gypi_to_gn.py",
+  "//build/toolchain/concurrent_links.gni",
+  "//build/toolchain/gcc_toolchain.gni",
+  "//build/toolchain/mac/BUILD.gn",
+  "//build/toolchain/win/BUILD.gn",
+  "//third_party/boringssl/BUILD.gn",
+  "//third_party/openh264/BUILD.gn",
+  "//third_party/opus/BUILD.gn",
+  "//webrtc/modules/video_render/BUILD.gn",
+]

@@ -1,0 +1,35 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+config("jsoncpp_config") {
+  include_dirs = [
+    "overrides/include",
+    "source/include",
+  ]
+}
+
+source_set("jsoncpp") {
+  sources = [
+    "overrides/include/json/value.h",
+    "overrides/src/lib_json/json_reader.cpp",
+    "overrides/src/lib_json/json_value.cpp",
+    "source/include/json/assertions.h",
+    "source/include/json/autolink.h",
+    "source/include/json/config.h",
+    "source/include/json/features.h",
+    "source/include/json/forwards.h",
+    "source/include/json/json.h",
+    "source/include/json/reader.h",
+    "source/include/json/writer.h",
+    "source/src/lib_json/json_batchallocator.h",
+    "source/src/lib_json/json_tool.h",
+    "source/src/lib_json/json_writer.cpp",
+  ]
+
+  public_configs = [ ":jsoncpp_config" ]
+
+  defines = [ "JSON_USE_EXCEPTION=0" ]
+
+  include_dirs = [ "source/src/lib_json" ]
+}

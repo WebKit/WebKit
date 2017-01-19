@@ -1,0 +1,415 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../build/webrtc.gni")
+import("//build/config/ui.gni")
+if (is_android) {
+  import("//build/config/android/rules.gni")
+}
+
+group("test") {
+  testonly = true
+
+  deps = [
+    ":field_trial",
+    ":rtp_test_utils",
+    ":test_common",
+    ":test_renderer",
+    ":test_support",
+    ":test_support_main",
+    ":test_support_unittests",
+    ":video_test_common",
+  ]
+}
+
+rtc_source_set("video_test_common") {
+  testonly = true
+  sources = [
+    "fake_texture_frame.cc",
+    "fake_texture_frame.h",
+    "frame_generator.cc",
+    "frame_generator.h",
+    "frame_utils.cc",
+    "frame_utils.h",
+  ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  deps = [
+    "../common_video",
+  ]
+}
+
+rtc_source_set("rtp_test_utils") {
+  testonly = true
+  sources = [
+    "rtcp_packet_parser.cc",
+    "rtcp_packet_parser.h",
+    "rtp_file_reader.cc",
+    "rtp_file_reader.h",
+    "rtp_file_writer.cc",
+    "rtp_file_writer.h",
+  ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  deps = [
+    "..:webrtc_common",
+    "../modules/rtp_rtcp",
+    "//testing/gtest",
+  ]
+}
+
+rtc_source_set("field_trial") {
+  testonly = true
+  sources = [
+    "field_trial.cc",
+    "field_trial.h",
+  ]
+
+  deps = [
+    "..:webrtc_common",
+    "../system_wrappers",
+    "../system_wrappers:field_trial_default",
+  ]
+}
+
+rtc_source_set("test_main") {
+  testonly = true
+  sources = [
+    "test_main.cc",
+  ]
+
+  deps = [
+    ":field_trial",
+    ":test_support",
+    "../system_wrappers:metrics_default",
+    "//testing/gtest",
+    "//third_party/gflags",
+  ]
+}
+
+rtc_source_set("test_support") {
+  testonly = true
+
+  sources = [
+    "gmock.h",
+    "gtest.h",
+    "testsupport/fileutils.cc",
+    "testsupport/fileutils.h",
+    "testsupport/frame_reader.cc",
+    "testsupport/frame_reader.h",
+    "testsupport/frame_writer.cc",
+    "testsupport/frame_writer.h",
+    "testsupport/iosfileutils.mm",
+    "testsupport/metrics/video_metrics.cc",
+    "testsupport/metrics/video_metrics.h",
+    "testsupport/mock/mock_frame_reader.h",
+    "testsupport/mock/mock_frame_writer.h",
+    "testsupport/packet_reader.cc",
+    "testsupport/packet_reader.h",
+    "testsupport/perf_test.cc",
+    "testsupport/perf_test.h",
+    "testsupport/trace_to_stderr.cc",
+    "testsupport/trace_to_stderr.h",
+  ]
+
+  deps = [
+    ":video_test_common",
+    "../base:gtest_prod",
+    "../base:rtc_base_approved",
+    "../common_video",
+    "../system_wrappers",
+    "//testing/gmock",
+    "//testing/gtest",
+  ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  if (is_ios) {
+    configs += [ "//build/config/compiler:enable_arc" ]
+  }
+
+  if (use_x11) {
+    deps += [ "//tools/xdisplaycheck" ]
+  }
+
+  if (is_android) {
+    deps += [ "//base:base" ]
+  }
+}
+
+# Depend on this target when you want to have test_support but also the
+# main method needed for gtest to execute!
+rtc_source_set("test_support_main") {
+  testonly = true
+
+  sources = [
+    "run_all_unittests.cc",
+    "test_suite.cc",
+    "test_suite.h",
+  ]
+
+  deps = [
+    ":field_trial",
+    ":test_support",
+    "../system_wrappers:metrics_default",
+    "//testing/gmock",
+    "//testing/gtest",
+    "//third_party/gflags",
+  ]
+}
+
+# Depend on this target when you want to have test_support and a special
+# main for mac which will run your test on a worker thread and consume
+# events on the main thread. Useful if you want to access a webcam.
+# This main will provide all the scaffolding and objective-c black magic
+# for you. All you need to do is to implement a function in the
+# run_threaded_main_mac.h file (ImplementThisToRunYourTest).
+rtc_source_set("test_support_main_threaded_mac") {
+  testonly = true
+
+  sources = [
+    "testsupport/mac/run_threaded_main_mac.h",
+    "testsupport/mac/run_threaded_main_mac.mm",
+  ]
+
+  deps = [
+    ":test_support",
+  ]
+}
+
+rtc_source_set("run_test") {
+  testonly = true
+  sources = [
+    "run_test.h",
+  ]
+  if (is_mac) {
+    sources += [ "mac/run_test.mm" ]
+  } else {
+    sources += [ "run_test.cc" ]
+  }
+}
+
+test_support_unittests_resources = [
+  "//resources/foreman_cif_short.yuv",
+  "//resources/video_coding/frame-ethernet-ii.pcap",
+  "//resources/video_coding/frame-loopback.pcap",
+  "//resources/video_coding/pltype103.rtp",
+  "//resources/video_coding/pltype103_header_only.rtp",
+  "//resources/video_coding/ssrcs-2.pcap",
+  "//resources/video_coding/ssrcs-3.pcap",
+]
+
+if (is_ios) {
+  bundle_data("test_support_unittests_bundle_data") {
+    testonly = true
+    sources = test_support_unittests_resources
+    outputs = [
+      "{{bundle_resources_dir}}/{{source_file_part}}",
+    ]
+  }
+}
+
+rtc_test("test_support_unittests") {
+  deps = []
+  sources = [
+    "fake_network_pipe_unittest.cc",
+    "frame_generator_unittest.cc",
+    "rtp_file_reader_unittest.cc",
+    "rtp_file_writer_unittest.cc",
+    "testsupport/always_passing_unittest.cc",
+    "testsupport/fileutils_unittest.cc",
+    "testsupport/frame_reader_unittest.cc",
+    "testsupport/frame_writer_unittest.cc",
+    "testsupport/metrics/video_metrics_unittest.cc",
+    "testsupport/packet_reader_unittest.cc",
+    "testsupport/perf_test_unittest.cc",
+    "testsupport/unittest_utils.h",
+  ]
+
+  # TODO(jschuh): Bug 1348: fix this warning.
+  configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
+
+  if (is_win) {
+    cflags = [ "/wd4373" ]  # virtual override w/different const/volatile signature.
+  }
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  data = test_support_unittests_resources
+  if (is_android) {
+    deps += [ "//testing/android/native_test:native_test_support" ]
+    shard_timeout = 900
+  }
+
+  if (is_ios) {
+    deps += [ ":test_support_unittests_bundle_data" ]
+  }
+
+  deps += [
+    ":test_common",
+    ":test_support_main",
+    "../modules/video_capture",
+    "//testing/gmock",
+    "//testing/gtest",
+  ]
+}
+
+rtc_source_set("test_common") {
+  testonly = true
+  sources = [
+    "call_test.cc",
+    "call_test.h",
+    "configurable_frame_size_encoder.cc",
+    "configurable_frame_size_encoder.h",
+    "constants.cc",
+    "constants.h",
+    "direct_transport.cc",
+    "direct_transport.h",
+    "drifting_clock.cc",
+    "drifting_clock.h",
+    "encoder_settings.cc",
+    "encoder_settings.h",
+    "fake_audio_device.cc",
+    "fake_audio_device.h",
+    "fake_decoder.cc",
+    "fake_decoder.h",
+    "fake_encoder.cc",
+    "fake_encoder.h",
+    "fake_network_pipe.cc",
+    "fake_network_pipe.h",
+    "fake_videorenderer.h",
+    "frame_generator_capturer.cc",
+    "frame_generator_capturer.h",
+    "layer_filtering_transport.cc",
+    "layer_filtering_transport.h",
+    "mock_transport.h",
+    "mock_voe_channel_proxy.h",
+    "mock_voice_engine.h",
+    "null_transport.cc",
+    "null_transport.h",
+    "rtp_rtcp_observer.h",
+    "statistics.cc",
+    "statistics.h",
+    "vcm_capturer.cc",
+    "vcm_capturer.h",
+    "video_capturer.h",
+    "win/run_loop_win.cc",
+  ]
+  if (!is_win) {
+    sources += [
+      "run_loop.cc",
+      "run_loop.h",
+    ]
+  }
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  deps = [
+    ":rtp_test_utils",
+    ":test_support",
+    "..:webrtc_common",
+    "../audio",
+    "../base:rtc_base_approved",
+    "../call",
+    "../modules/media_file",
+    "../modules/video_capture:video_capture_module",
+    "../video",
+    "//testing/gmock",
+    "//testing/gtest",
+  ]
+}
+
+config("test_renderer_exported_config") {
+  if (is_win && is_clang) {
+    # GN orders flags on a target before flags from configs. The default config
+    # adds -Wall, and this flag have to be after -Wall -- so they need to
+    # come from a config and cannot be on the target directly.
+    cflags = [
+      "-Wno-bool-conversion",
+      "-Wno-comment",
+      "-Wno-delete-non-virtual-dtor",
+    ]
+  }
+}
+
+rtc_source_set("test_renderer") {
+  testonly = true
+  libs = []
+  sources = [
+    "linux/glx_renderer.cc",
+    "linux/glx_renderer.h",
+    "linux/video_renderer_linux.cc",
+    "mac/video_renderer_mac.h",
+    "mac/video_renderer_mac.mm",
+    "video_renderer.cc",
+    "video_renderer.h",
+    "win/d3d_renderer.cc",
+    "win/d3d_renderer.h",
+  ]
+  if (!is_linux && !is_mac && !is_win) {
+    sources += [ "null_platform_renderer.cc" ]
+  }
+  if (is_linux || is_mac) {
+    sources += [
+      "gl/gl_renderer.cc",
+      "gl/gl_renderer.h",
+    ]
+  }
+
+  if (is_linux) {
+    libs += [
+      "Xext",
+      "X11",
+      "GL",
+    ]
+  }
+  if (is_android) {
+    libs += [
+      "GLESv2",
+      "log",
+    ]
+  }
+  if (is_mac) {
+    libs = [
+      "Cocoa.framework",
+      "OpenGL.framework",
+      "CoreVideo.framework",
+    ]
+  }
+
+  public_configs = [ ":test_renderer_exported_config" ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  deps = [
+    ":test_support",
+    ":video_test_common",
+    "../modules/media_file",
+    "//testing/gtest",
+  ]
+}

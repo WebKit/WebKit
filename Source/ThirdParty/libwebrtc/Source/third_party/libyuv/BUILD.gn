@@ -1,0 +1,304 @@
+# Copyright 2014 The LibYuv Project Authors. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS. All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("libyuv.gni")
+import("//testing/test.gni")
+
+config("libyuv_config") {
+  include_dirs = [ "include" ]
+  if (is_android && current_cpu=="arm64") {
+    ldflags = [ "-Wl,--dynamic-linker,/system/bin/linker64" ]
+  }
+  if (is_android && current_cpu != "arm64") {
+    ldflags = [ "-Wl,--dynamic-linker,/system/bin/linker" ]
+  }
+}
+
+# This target is built when no specific target is specified on the command line.
+group("default") {
+  testonly = true
+  deps = [
+    ":libyuv",
+  ]
+  if (libyuv_include_tests) {
+    deps += [
+      ":compare",
+      ":convert",
+      ":cpuid",
+      ":libyuv_unittest",
+      ":psnr",
+    ]
+  }
+}
+
+static_library("libyuv") {
+  sources = [
+    # Headers
+    "include/libyuv.h",
+    "include/libyuv/basic_types.h",
+    "include/libyuv/compare.h",
+    "include/libyuv/convert.h",
+    "include/libyuv/convert_argb.h",
+    "include/libyuv/convert_from.h",
+    "include/libyuv/convert_from_argb.h",
+    "include/libyuv/cpu_id.h",
+    "include/libyuv/mjpeg_decoder.h",
+    "include/libyuv/planar_functions.h",
+    "include/libyuv/rotate.h",
+    "include/libyuv/rotate_argb.h",
+    "include/libyuv/rotate_row.h",
+    "include/libyuv/row.h",
+    "include/libyuv/scale.h",
+    "include/libyuv/scale_argb.h",
+    "include/libyuv/scale_row.h",
+    "include/libyuv/version.h",
+    "include/libyuv/video_common.h",
+
+    # Source Files
+    "source/compare.cc",
+    "source/compare_common.cc",
+    "source/compare_gcc.cc",
+    "source/compare_win.cc",
+    "source/convert.cc",
+    "source/convert_argb.cc",
+    "source/convert_from.cc",
+    "source/convert_from_argb.cc",
+    "source/convert_jpeg.cc",
+    "source/convert_to_argb.cc",
+    "source/convert_to_i420.cc",
+    "source/cpu_id.cc",
+    "source/mjpeg_decoder.cc",
+    "source/mjpeg_validate.cc",
+    "source/planar_functions.cc",
+    "source/rotate.cc",
+    "source/rotate_any.cc",
+    "source/rotate_argb.cc",
+    "source/rotate_common.cc",
+    "source/rotate_mips.cc",
+    "source/rotate_gcc.cc",
+    "source/rotate_win.cc",
+    "source/row_any.cc",
+    "source/row_common.cc",
+    "source/row_mips.cc",
+    "source/row_gcc.cc",
+    "source/row_win.cc",
+    "source/scale.cc",
+    "source/scale_any.cc",
+    "source/scale_argb.cc",
+    "source/scale_common.cc",
+    "source/scale_mips.cc",
+    "source/scale_gcc.cc",
+    "source/scale_win.cc",
+    "source/video_common.cc",
+  ]
+
+  public_configs = [ ":libyuv_config" ]
+
+  defines = []
+  deps = []
+
+  if (!is_ios) {
+    defines += [ "HAVE_JPEG" ]
+    deps += [ "//third_party:jpeg" ]
+  }
+
+  if (libyuv_use_neon) {
+    deps += [ ":libyuv_neon" ]
+  }
+
+  if (libyuv_use_msa) {
+    deps += [ ":libyuv_msa" ]
+  }
+
+  # Always enable optimization for Release and NaCl builds (to workaround
+  # crbug.com/538243).
+  if (!is_debug || is_nacl) {
+    configs -= [ "//build/config/compiler:default_optimization" ]
+    # Enable optimize for speed (-O2) over size (-Os).
+    configs += [ "//build/config/compiler:optimize_max" ]
+  }
+
+  # To enable AVX2 or other cpu optimization, pass flag here
+  #  cflags = [ "-mavx2" ]
+
+}
+
+if (libyuv_use_neon) {
+  static_library("libyuv_neon") {
+    sources = [
+      # ARM Source Files
+      "source/compare_neon.cc",
+      "source/compare_neon64.cc",
+      "source/rotate_neon.cc",
+      "source/rotate_neon64.cc",
+      "source/row_neon.cc",
+      "source/row_neon64.cc",
+      "source/scale_neon.cc",
+      "source/scale_neon64.cc",
+    ]
+
+    public_configs = [ ":libyuv_config" ]
+
+    # Always enable optimization for Release and NaCl builds (to workaround
+    # crbug.com/538243).
+    if (!is_debug) {
+      configs -= [ "//build/config/compiler:default_optimization" ]
+      # Enable optimize for speed (-O2) over size (-Os).
+      configs += [ "//build/config/compiler:optimize_max" ]
+    }
+
+    if (current_cpu != "arm64") {
+      configs -= [ "//build/config/compiler:compiler_arm_fpu" ]
+      cflags = [ "-mfpu=neon" ]
+    }
+  }
+}
+
+if (libyuv_use_msa) {
+  static_library("libyuv_msa") {
+    sources = [
+      # MSA Source Files
+      "source/row_msa.cc",
+    ]
+
+    public_configs = [ ":libyuv_config" ]
+  }
+}
+
+if (libyuv_include_tests) {
+  config("libyuv_unittest_warnings_config") {
+    if (!is_win) {
+      cflags = [
+        # TODO(fbarchard): Fix sign and unused variable warnings.
+        "-Wno-sign-compare",
+        "-Wno-unused-variable"
+      ]
+    }
+    if (is_win) {
+      cflags = [
+        "/wd4245", # signed/unsigned mismatch
+        "/wd4189", # local variable is initialized but not referenced
+      ]
+    }
+  }
+  config("libyuv_unittest_config") {
+    defines = [ "GTEST_RELATIVE_PATH" ]
+  }
+
+  test("libyuv_unittest") {
+    testonly = true
+
+    sources = [
+      # headers
+      "unit_test/unit_test.h",
+      # sources
+      "unit_test/basictypes_test.cc",
+      "unit_test/compare_test.cc",
+      "unit_test/color_test.cc",
+      "unit_test/convert_test.cc",
+      "unit_test/cpu_test.cc",
+      "unit_test/math_test.cc",
+      "unit_test/planar_test.cc",
+      "unit_test/rotate_argb_test.cc",
+      "unit_test/rotate_test.cc",
+      "unit_test/scale_argb_test.cc",
+      "unit_test/scale_test.cc",
+      "unit_test/unit_test.cc",
+      "unit_test/video_common_test.cc",
+    ]
+
+    deps = [
+      ":libyuv",
+      "//testing/gtest",
+      "//third_party/gflags",
+    ]
+
+    configs += [ ":libyuv_unittest_warnings_config" ]
+
+    public_deps = [ "//testing/gtest" ]
+    public_configs = [ ":libyuv_unittest_config" ]
+
+    defines = []
+
+    if (is_linux) {
+      cflags = [ "-fexceptions" ]
+    }
+    if (is_ios) {
+      configs -= [ "//build/config/compiler:default_symbols" ]
+      configs += [ "//build/config/compiler:symbols" ]
+      cflags = [ "-Wno-sometimes-uninitialized" ]
+    }
+    if (!is_ios && !libyuv_disable_jpeg) {
+      defines += [ "HAVE_JPEG" ]
+    }
+    if (is_android) {
+      deps += [ "//testing/android/native_test:native_test_native_code" ]
+    }
+
+    # TODO(YangZhang): These lines can be removed when high accuracy
+    # YUV to RGB to Neon is ported.
+    if ((target_cpu=="armv7" || target_cpu=="armv7s" ||
+        (target_cpu=="arm" && arm_version >= 7) || target_cpu=="arm64") &&
+        (arm_use_neon || arm_optionally_use_neon)) {
+      defines += [ "LIBYUV_NEON" ]
+    }
+
+    defines += [
+      # Enable the following 3 macros to turn off assembly for specified CPU.
+      # "LIBYUV_DISABLE_X86",
+      # "LIBYUV_DISABLE_NEON",
+      # "LIBYUV_DISABLE_MIPS",
+      # Enable the following macro to build libyuv as a shared library (dll).
+      # "LIBYUV_USING_SHARED_LIBRARY"
+    ]
+  }
+
+  executable("compare") {
+    sources = [
+      # sources
+      "util/compare.cc"
+    ]
+    deps = [ ":libyuv" ]
+    if (is_linux) {
+      cflags = [ "-fexceptions" ]
+    }
+  }
+
+  executable("convert") {
+    sources = [
+      # sources
+      "util/convert.cc"
+    ]
+    deps = [ ":libyuv" ]
+    if (is_linux) {
+      cflags = [ "-fexceptions" ]
+    }
+  }
+
+  executable("psnr") {
+    sources = [
+      # sources
+      "util/psnr_main.cc",
+      "util/psnr.cc",
+      "util/ssim.cc"
+    ]
+    deps = [ ":libyuv" ]
+
+    if (!is_ios && !libyuv_disable_jpeg) {
+      defines = [ "HAVE_JPEG" ]
+    }
+  }
+
+  executable("cpuid") {
+    sources = [
+      # sources
+      "util/cpuid.c"
+    ]
+    deps = [ ":libyuv" ]
+  }
+}

@@ -1,0 +1,275 @@
+Changelog
+
+1.5.2
+ 
+  Autoconf checks for libz and libdl for buildroot support.
+
+  Pull request 96 - Include config.h to get inline on Windows.
+
+  Pull request 93 - Don't include AES-192 when compiling against BoringSSL.
+
+1.5.1
+
+  Pull request 95 - Additional header check from Chromium
+
+  Pull request 94 - Add missing copyright headers. 
+
+  Pull request 90 - Fix out-of-source tree builds.
+
+  Pull request 89 - Introduce little endian RISC support
+
+  Pull request 86 - Add support for cross-compiling the shared library for Windows and OS X
+
+  Pull request 85 - Add -f <pcap filter> option to rtp_decoder
+
+  Pull request 84 - Avoid problems due to unsafe macros
+
+  Pull request 82 - Align the AES ICM nonce
+
+  Pull request 80 - Take advantage of base64 conversion in testapps
+
+  Pull request 75 - Cleanup: miscellaneous cleanup of initial OpenSSL AES support
+
+  Pull request 74 - Allow testing with pcap file or capture - Issue #45
+
+  Other trivial fixes are included as well.  Please see github for details.
+
+1.5.0
+ 
+  Add support for using OpenSSL crypto using the --enable-openssl 
+  option.
+
+  Add support for AES-GCM crypto suites. 
+
+  Add support for pkg_config.
+
+  Add user data API to allow user to associate additional data with a 
+  SRTP context.
+
+  This release also includes a variety of bug fixes, which can be 
+  viewed at: https://github.com/cisco/libsrtp/commits/master
+
+  Note: The change log was not maintained between versions 1.3.20 and
+        1.4.5.
+
+1.3.20
+
+  Lots of changes.  Thanks to Jeff Chan for catching a memory leak and
+  helping track down the endian issues with the SSRCs.
+
+1.3.8
+
+  This is an interim release.  Several little-endian bugs were identified
+  and fixed; this means that we can use intel/linux for development again.
+
+  Cleaned up sha1 and hmac code significantly, got rid of some excess
+  functions and properly documented the fuctions in the .h files.
+
+  Eliminated some vestigial files.
+
+  There is a SIGBUS error in the AES encrypt function on sparc
+  (observed on both solaris and openbsd) with gcc 2.95.  Was unable to
+  find bad pointer anywhere, so I'm wondering if it isn't a compiler
+  problem (there's a known problem whose profile it fits).  It doesn't
+  appear on any other platform, even in the cipher_driver stress
+  tests.
+
+  Planned changes
+
+  Change interface to nonces (xtd_seq_num_t) so that it uses
+  network byte ordering, and is consistent with other arguments.
+
+
+1.3.6 
+
+  Changed /dev/random (in configure.in and crypto/rng/rand_source.c) to
+  /dev/urandom; the latter is non-blocking on all known platforms (which 
+  corrects some programs that seem to hang) and is actually present on 
+  Open BSD (unlike /dev/random, which only works in the presence of 
+  hardware supported random number generation).
+
+  Added machine/types.h case in include/integers.h.
+
+1.3.5
+
+  Removing srtp_t::template and stream_clone().
+
+  Adding a new policy structure, which will reflect a complete SRTP
+  policy (including SRTCP).
+
+  This version is *incomplete* and will undergo more changes.  It is
+  provided only as a basis for discussion.
+
+1.3.4
+
+   Removed tmmh.c and tmmh.h, which implemented version one of TMMH.
+
+   Changed srtp_get_trailer_length() to act on streams rather than
+   sessions, and documented the macro SRTP_MAX_TRAILER_LEN, which should
+   usually be used rather than that function.
+
+   Removed 'salt' from cipher input. 
+
+   Changed rdbx to use err.h error codes.
+
+   Changed malloc() and free() to xalloc() and xfree; these functions
+   are defined in crypto/kernel/alloc.c and declared in 
+   include/alloc.h.
+
+   Added 'output' functions to cipher, in addition to 'encrypt'
+   functions.  It is no longer necessary to zeroize a buffer before
+   encrypting in order to get keystream.
+
+   Changed octet_string_hex_string() so that "times two" isn't needed
+   in its input.
+
+   Added crypto_kernel_init() prior to command-line parsing, so that
+   kernel can be passed command-line arguments, such as "-d
+   debug_module".  This was done to for the applications
+   test/srtp-driver, test/kernel-driver, and test/ust-driver.
+
+   Improved srtp_init_aes_128_prf - wrote key derivation function
+   (srtp_kdf_t).
+
+   Add the tag_len as an argument to the auth_compute() function, but
+   not the corresponding macro.  This change allows the tag length for
+   a given auth func to be set to different values at initialization
+   time.  Previously, the structure auth_t contained the
+   output_length, but that value was inaccessible from hmac_compute()
+   and other functions.
+
+   Re-named files from a-b.c to a_b.c. in order to help portability.
+
+   Re-named rijndael to aes (or aes_128 as appropriate).
+
+
+1.2.1 
+
+  Changes so that 1.2.0 compiles on cygwin-win2k.
+
+  Added better error reporting system.  If syslog is present on the
+  OS, then it is used.
+
+
+1.2.0 Many improvements and additions, and a fex fixes
+
+   Fixed endian issues in RTP header construction in the function
+   rtp_sendto() in srtp/rtp.c.
+
+   Implemented RIJNDAEL decryption operation, adding the functions
+   rijndael_decrypt() and rijndael_expand_decryption_key().  Also
+   re-named rijndael_expand_key() to rijndael_expand_encryption_key()
+   for consistency.
+
+   Implemented random number source using /dev/random, in the files
+   crypto/rng/rand_source.c and include/rand_source.h.
+
+   Added index check to SEAL cipher (only values less than 2^32 are
+   allowed)
+
+   Added test case for null_auth authentication function.
+
+   Added a timing test which tests the effect of CPU cache thrash on
+   cipher throughput.  The test is done by the function
+   cipher_test_throughput_array(); the function
+   cipher_array_alloc_init() creates an array of ciphers for use in
+   this test.  This test can be accessed by using the -a flag to
+   the application cipher-driver in the test subdirectory.
+ 
+   Added argument processing to ust-driver.c, and added that app to
+   the 'runtest' target in Makefile.in.
+
+   A minor auth_t API change: last argument of auth_init() eliminated.
+
+
+1.0.6 A small but important fix
+
+   Fixed srtp_init_aes_128_prf() by adding octet_string_set_to_zero()
+   after buffer allocation.
+
+   Eliminated references to no-longer-existing variables in debugging
+   code in srtp/srtp.c.  This fixes the compilation failure that
+   occured when using PRINT_DEBUG in that file.
+
+   Corrected spelling of Richard Priestley's name in credits.  Sorry
+   Richard!
+
+
+1.0.5 Many little fixes
+
+   Fixed octet_string_set_to_zero(), which was writing one
+   more zero octet than it should.  This bug caused srtp_protect()
+   and srtp_unprotect() to overwrite the byte that followed the
+   srtp packet.
+
+   Changed sizeof(uint32_t) to srtp_get_trailer_length() in
+   srtp-driver.c.  This is just defensive coding.
+
+   Added NULL check to malloc in srtp_alloc().
+
+
+1.0.4 Many minor fixes and two big ones (thanks for the bug reports!)
+
+   Removed 'ssrc' from the srtp_init_aes_128_prf() function argument
+   list.  This is so that applications which do not a priori know the
+   ssrc which they will be receiving can still use libsrtp.  Now the
+   SSRC value is gleaned from the rtp header and exored into the
+   counter mode offset in the srtp_protect() and srtp_unprotect()
+   functions, if that cipher is used.  This change cascaed through
+   many other functions, including srtp_init_from_hex(),
+   srtp_sender_init() and srtp_receiver_init() in rtp.c, and also
+   changing the CLI to test/rtpw.  In the future, another function
+   call will be added to the library that enables multiple ssrc/key
+   pairs to be installed into the same srtp session, so that libsrtp
+   works with multiple srtp senders.  For now, this functionality is
+   lacking.
+
+   Removed the GDOI interface to the rtpw demo program.  This will be
+   added again at a later date, after the SRTP and GDOI distributions
+   stabilize.  For now, I've left in the GDOI #defines and autoconf
+   definitions so that they'll be in place when needed.
+
+   Updated tmmhv2_compute() so that it didn't assume any particular
+   alginment of the output tag.
+
+   Changed bit field variables in srtp.h to unsigned char from
+   unsigned int in order to avoid a potential endianness issue.
+
+   Fixed rdbx_estimate_index() to handle all input cases.  This solves
+   the now notorious "abaft" bug in the rtpw demo app on linux/intel,
+   in which spurious replay protection failures happen after that word
+   is received.
+
+   Added ntohs(hdr->seq) to srtp_protect and srtp_unprotect, removed
+   from rijndael_icm_set_segment().
+
+   Added error checking and handling to srtp_sender_init() and
+   srtp_receiver_init().
+
+   Changed srtp_alloc() so that it does what you'd expect: allocate an
+   srtp_ctx_t structure.  This hides the library internals.
+
+
+1.0.1   Many minor fixes
+
+   Added cipher_driver_buffer_test(...) to test/cipher-driver.c.  This
+   function checks that the byte-buffering functions used by a cipher
+   are correct.
+
+   Fixed SunOS/Solaris build problems: added HAVE_SYS_INT_TYPES_H and
+   changed index_t to xtd_seq_num_t (see include/rdbx.h).
+
+   Fixed SEAL3.0 output byte buffering, added byte-buffering test to
+   cipher/cipher-driver.c.
+
+   Fixed roc-driver so that the non-sequential insertion test
+   automatically recovers from bad estimates.  This was required to
+   prevent spurious failures.
+
+   Made rdbx_estimate_index(...) function smarter, so that initial RTP
+   sequence numbers greater than 32,768 don't cause it to estimate the
+   rollover counter of 0xffffffff.
+
+
+1.0.0   Initial release
+

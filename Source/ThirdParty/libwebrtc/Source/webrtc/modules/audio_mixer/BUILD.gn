@@ -1,0 +1,61 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../build/webrtc.gni")
+
+group("audio_mixer") {
+  public_deps = [
+    ":audio_frame_manipulator",
+    ":audio_mixer_impl",
+  ]
+}
+
+rtc_static_library("audio_mixer_impl") {
+  visibility = [
+    "../../audio:audio",
+    "../../modules/*",
+  ]
+  sources = [
+    "audio_mixer_impl.cc",
+    "audio_mixer_impl.h",
+  ]
+
+  public = [
+    "audio_mixer_impl.h",
+  ]
+
+  public_deps = [
+    "../../api:audio_mixer_api",
+  ]
+
+  deps = [
+    ":audio_frame_manipulator",
+    "../..:webrtc_common",
+    "../../base:rtc_base_approved",
+    "../../modules/audio_processing",
+    "../../modules/utility",
+    "../../system_wrappers",
+  ]
+}
+
+rtc_static_library("audio_frame_manipulator") {
+  visibility = [
+    ":*",
+    "../../modules:*",
+  ]
+
+  sources = [
+    "audio_frame_manipulator.cc",
+    "audio_frame_manipulator.h",
+  ]
+
+  deps = [
+    "../../base:rtc_base_approved",
+    "../../modules/utility",
+  ]
+}

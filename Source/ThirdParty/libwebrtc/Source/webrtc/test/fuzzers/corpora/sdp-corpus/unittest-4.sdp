@@ -1,0 +1,11 @@
+v=0
+o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1
+s=-
+t=0 0
+a=msid-semantic: WMS
+m=audio 9 RTP/SAVPF 111 103 104
+c=IN IP4 0.0.0.0
+a=x-google-flag:conference
+m=video 9 RTP/SAVPF 120
+c=IN IP4 0.0.0.0
+a=x-google-flag:conference

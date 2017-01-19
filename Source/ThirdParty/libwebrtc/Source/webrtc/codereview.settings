@@ -1,0 +1,6 @@
+
+Creating CLs from this location is not supported! Please make sure the current
+working directory is the parent directory of this directory.
+If you're working with a Chromium checkout, you'll have to create a full WebRTC
+checkout and upload a CL from that. See
+https://webrtc.org/native-code/development/ for instructions.

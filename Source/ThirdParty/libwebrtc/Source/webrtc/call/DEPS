@@ -1,0 +1,14 @@
+include_rules = [
+  "+webrtc/audio",
+  "+webrtc/base",
+  "+webrtc/logging/rtc_event_log",
+  "+webrtc/modules/audio_coding",
+  "+webrtc/modules/bitrate_controller",
+  "+webrtc/modules/congestion_controller",
+  "+webrtc/modules/pacing",
+  "+webrtc/modules/rtp_rtcp",
+  "+webrtc/modules/utility",
+  "+webrtc/system_wrappers",
+  "+webrtc/voice_engine",
+  "+webrtc/video",
+]

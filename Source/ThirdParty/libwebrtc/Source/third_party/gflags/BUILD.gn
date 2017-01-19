@@ -1,0 +1,73 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+if (is_win) {
+  gflags_gen_arch_root = "gen/win"
+} else {
+  gflags_gen_arch_root = "gen/posix"
+}
+
+config("gflags_config") {
+  include_dirs = [
+    "$gflags_gen_arch_root/include",  # For configured files.
+    "src/src",  # For everything else.
+  ]
+
+  defines = [
+    # These macros exist so flags and symbols are properly exported when
+    # building DLLs. Since we don't build DLLs, we need to disable them.
+    "GFLAGS_DLL_DECL=",
+    "GFLAGS_DLL_DECLARE_FLAG=",
+    "GFLAGS_DLL_DEFINE_FLAG=",
+  ]
+
+  # GN orders flags on a target before flags from configs. The default config
+  # adds -Wall, and this flag have to be after -Wall -- so they need to
+  # come from a config and can't be on the target directly.
+  if (is_clang) {
+    cflags = [ "-Wno-unused-local-typedef" ]
+  }
+}
+
+source_set("gflags") {
+  cflags = []
+  sources = [
+    "src/src/gflags.cc",
+    "src/src/gflags_completions.cc",
+    "src/src/gflags_reporting.cc",
+  ]
+  if (is_win) {
+    sources += [ "src/src/windows_port.cc" ]
+
+    cflags += [
+      "/wd4005",  # WIN32_LEAN_AND_MEAN.
+      "/wd4267",  # Conversion from size_t to "type".
+    ]
+  }
+
+  include_dirs = [
+    "$gflags_gen_arch_root/include/gflags",  # For configured files.
+    "$gflags_gen_arch_root/include/private",  # For config.h
+  ]
+
+  public_configs = [ ":gflags_config" ]
+
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [ "//build/config/compiler:no_chromium_code" ]
+
+  if (is_win) {
+    configs -= [ "//build/config/win:unicode" ]
+  }
+
+  if (is_clang) {
+    # TODO(andrew): Look into fixing this warning upstream:
+    # http://code.google.com/p/webrtc/issues/detail?id=760
+    configs -= [ "//build/config/clang:extra_warnings" ]
+    cflags += [ "-Wno-microsoft-include" ]
+  }
+}

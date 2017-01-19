@@ -1,0 +1,33 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../build/webrtc.gni")
+
+rtc_static_library("pacing") {
+  sources = [
+    "alr_detector.cc",
+    "alr_detector.h",
+    "bitrate_prober.cc",
+    "bitrate_prober.h",
+    "paced_sender.cc",
+    "paced_sender.h",
+    "packet_router.cc",
+    "packet_router.h",
+  ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  deps = [
+    "../../system_wrappers",
+    "../bitrate_controller",
+    "../rtp_rtcp",
+  ]
+}

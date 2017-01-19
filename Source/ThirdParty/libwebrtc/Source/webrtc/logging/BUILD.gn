@@ -1,0 +1,107 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../build/webrtc.gni")
+import("//third_party/protobuf/proto_library.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+
+group("logging") {
+  public_deps = [
+    ":rtc_event_log_impl",
+  ]
+  if (rtc_enable_protobuf) {
+    public_deps += [ ":rtc_event_log_parser" ]
+  }
+}
+
+rtc_source_set("rtc_event_log_api") {
+  sources = [
+    "rtc_event_log/rtc_event_log.h",
+  ]
+}
+
+rtc_static_library("rtc_event_log_impl") {
+  sources = [
+    "rtc_event_log/ringbuffer.h",
+    "rtc_event_log/rtc_event_log.cc",
+    "rtc_event_log/rtc_event_log_helper_thread.cc",
+    "rtc_event_log/rtc_event_log_helper_thread.h",
+  ]
+
+  defines = []
+
+  deps = [
+    ":rtc_event_log_api",
+    "..:webrtc_common",
+    "../api:call_api",
+    "../modules/rtp_rtcp",
+  ]
+
+  if (rtc_enable_protobuf) {
+    defines += [ "ENABLE_RTC_EVENT_LOG" ]
+    deps += [ ":rtc_event_log_proto" ]
+  }
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("rtc_event_log_tests") {
+    testonly = true
+    sources = [
+      "rtc_event_log/ringbuffer_unittest.cc",
+      "rtc_event_log/rtc_event_log_unittest.cc",
+      "rtc_event_log/rtc_event_log_unittest_helper.cc",
+    ]
+    deps = [
+      ":rtc_event_log_impl",
+      ":rtc_event_log_parser",
+      "../modules/rtp_rtcp",
+      "../system_wrappers:metrics_default",
+      "//testing/gmock",
+      "//testing/gtest",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+}
+
+if (rtc_enable_protobuf) {
+  proto_library("rtc_event_log_proto") {
+    sources = [
+      "rtc_event_log/rtc_event_log.proto",
+    ]
+    proto_out_dir = "webrtc/logging/rtc_event_log"
+  }
+}
+
+if (rtc_enable_protobuf) {
+  rtc_static_library("rtc_event_log_parser") {
+    sources = [
+      "rtc_event_log/rtc_event_log_parser.cc",
+      "rtc_event_log/rtc_event_log_parser.h",
+    ]
+
+    public_deps = [
+      ":rtc_event_log_proto",
+      "..:webrtc_common",
+    ]
+
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+}

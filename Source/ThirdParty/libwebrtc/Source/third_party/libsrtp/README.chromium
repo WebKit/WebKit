@@ -1,0 +1,16 @@
+Name: libsrtp
+URL: https://github.com/cisco/libsrtp
+Version: 2cbd85085037dc7bf2eda48d4cf62e2829056e2d
+License: 3-clause BSD
+License File: srtp/LICENSE
+Security Critical: Yes
+
+Description:
+  Libsrtp provides secure media transmission in a real
+  time communication. It's used with libjingle which
+  provides the p2p session setup.
+
+Local Modifications:
+  Removed many unused files, e.g. all non-OpenSSL cipher implementations.
+
+  Patched in https://github.com/cisco/libsrtp/pull/209.

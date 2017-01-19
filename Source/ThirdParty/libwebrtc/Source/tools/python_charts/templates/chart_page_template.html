@@ -1,0 +1,90 @@
+<html>
+  <!--
+  Copyright (c) 2011 The WebRTC project authors. All Rights Reserved.
+
+  Use of this source code is governed by a BSD-style license
+  that can be found in the LICENSE file in the root of the source
+  tree. An additional intellectual property rights grant can be found
+  in the file PATENTS.  All contributing project authors may
+  be found in the AUTHORS file in the root of the source tree.
+
+  Template file to be used to generate Charts for Video Quality Metrics.
+   -->
+  <head>
+    <link href="http://code.google.com/css/codesite.pack.04102009.css"
+          rel="stylesheet" type="text/css" />
+  </head>
+  <script src="https://www.google.com/jsapi" type="text/javascript"></script>
+  <script>
+    google.load('visualization', '1', {packages:['table', 'corechart']});
+
+    google.setOnLoadCallback(drawTable);
+    function drawTable() {
+      /* Build data tables and views */
+      var configurations_data_table =
+        new google.visualization.DataTable(%(json_configurations)s);
+      var ssim_data_table =
+        new google.visualization.DataTable(%(json_ssim_data)s);
+      var psnr_data_table =
+        new google.visualization.DataTable(%(json_psnr_data)s);
+      var packet_loss_data_table =
+        new google.visualization.DataTable(%(json_packet_loss_data)s);
+      var bit_rate_data_table =
+        new google.visualization.DataTable(%(json_bit_rate_data)s);
+
+      /* Display tables and charts */
+      var configurations_table = new google.visualization.Table(
+        document.getElementById('table_div_configurations'));
+      configurations_table.draw(configurations_data_table, {
+        height: 200
+      });
+
+      var ssim_chart = new google.visualization.LineChart(
+        document.getElementById('table_div_ssim'));
+      ssim_chart.draw(ssim_data_table, {
+        colors: ['blue', 'red', 'lightblue', 'pink'],
+        vAxis: {title: 'SSIM'},
+        hAxis: {title: 'Frame'},
+        width: 1200, height: 300,
+      });
+
+      var psnr_chart = new google.visualization.LineChart(
+        document.getElementById('table_div_psnr'));
+      psnr_chart.draw(psnr_data_table, {
+        colors: ['blue', 'red', 'lightblue', 'pink'],
+        vAxis: {title: 'PSNR (dB)'},
+        hAxis: {title: 'Frame'},
+        width: 1200, height: 300,
+      });
+
+      var packet_loss_chart = new google.visualization.LineChart(
+        document.getElementById('table_div_packet_loss'));
+      packet_loss_chart.draw(packet_loss_data_table, {
+        colors: ['blue', 'red', 'lightblue', 'pink'],
+        vAxis: {title: 'Packets dropped'},
+        hAxis: {title: 'Frame'},
+        width: 1200, height: 300,
+      });
+
+      var bit_rate_chart = new google.visualization.LineChart(
+        document.getElementById('table_div_bit_rate'));
+      bit_rate_chart.draw(bit_rate_data_table, {
+        colors: ['blue', 'red', 'lightblue', 'pink', 'green'],
+        vAxis: {title: 'Bit rate'},
+        hAxis: {title: 'Frame'},
+        width: 1200, height: 300,
+      });
+    }
+  </script>
+  <body>
+    <h3>Test Configurations:</h3>
+    <div id="table_div_configurations"></div>
+    <h3>Messages:</h3>
+    <pre>%(messages)s</pre>
+    <h3>Metrics measured per frame:</h3>
+    <div id="table_div_ssim"></div>
+    <div id="table_div_psnr"></div>
+    <div id="table_div_packet_loss"></div>
+    <div id="table_div_bit_rate"></div>
+  </body>
+</html>

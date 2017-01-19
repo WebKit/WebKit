@@ -1,0 +1,209 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../build/webrtc.gni")
+
+rtc_static_library("rtp_rtcp") {
+  sources = [
+    "include/flexfec_receiver.h",
+    "include/flexfec_sender.h",
+    "include/receive_statistics.h",
+    "include/remote_ntp_time_estimator.h",
+    "include/rtp_header_parser.h",
+    "include/rtp_payload_registry.h",
+    "include/rtp_receiver.h",
+    "include/rtp_rtcp.h",
+    "include/rtp_rtcp_defines.h",
+    "include/ulpfec_receiver.h",
+    "mocks/mock_rtp_rtcp.h",
+    "source/byte_io.h",
+    "source/dtmf_queue.cc",
+    "source/dtmf_queue.h",
+    "source/fec_private_tables_bursty.h",
+    "source/fec_private_tables_random.h",
+    "source/flexfec_header_reader_writer.cc",
+    "source/flexfec_header_reader_writer.h",
+    "source/flexfec_receiver.cc",
+    "source/flexfec_sender.cc",
+    "source/forward_error_correction.cc",
+    "source/forward_error_correction.h",
+    "source/forward_error_correction_internal.cc",
+    "source/forward_error_correction_internal.h",
+    "source/mock/mock_rtp_payload_strategy.h",
+    "source/packet_loss_stats.cc",
+    "source/packet_loss_stats.h",
+    "source/playout_delay_oracle.cc",
+    "source/playout_delay_oracle.h",
+    "source/receive_statistics_impl.cc",
+    "source/receive_statistics_impl.h",
+    "source/remote_ntp_time_estimator.cc",
+    "source/rtcp_packet.cc",
+    "source/rtcp_packet.h",
+    "source/rtcp_packet/app.cc",
+    "source/rtcp_packet/app.h",
+    "source/rtcp_packet/bye.cc",
+    "source/rtcp_packet/bye.h",
+    "source/rtcp_packet/common_header.cc",
+    "source/rtcp_packet/common_header.h",
+    "source/rtcp_packet/compound_packet.cc",
+    "source/rtcp_packet/compound_packet.h",
+    "source/rtcp_packet/dlrr.cc",
+    "source/rtcp_packet/dlrr.h",
+    "source/rtcp_packet/extended_jitter_report.cc",
+    "source/rtcp_packet/extended_jitter_report.h",
+    "source/rtcp_packet/extended_reports.cc",
+    "source/rtcp_packet/extended_reports.h",
+    "source/rtcp_packet/fir.cc",
+    "source/rtcp_packet/fir.h",
+    "source/rtcp_packet/nack.cc",
+    "source/rtcp_packet/nack.h",
+    "source/rtcp_packet/pli.cc",
+    "source/rtcp_packet/pli.h",
+    "source/rtcp_packet/psfb.cc",
+    "source/rtcp_packet/psfb.h",
+    "source/rtcp_packet/rapid_resync_request.cc",
+    "source/rtcp_packet/rapid_resync_request.h",
+    "source/rtcp_packet/receiver_report.cc",
+    "source/rtcp_packet/receiver_report.h",
+    "source/rtcp_packet/remb.cc",
+    "source/rtcp_packet/remb.h",
+    "source/rtcp_packet/report_block.cc",
+    "source/rtcp_packet/report_block.h",
+    "source/rtcp_packet/rpsi.cc",
+    "source/rtcp_packet/rpsi.h",
+    "source/rtcp_packet/rrtr.cc",
+    "source/rtcp_packet/rrtr.h",
+    "source/rtcp_packet/rtpfb.cc",
+    "source/rtcp_packet/rtpfb.h",
+    "source/rtcp_packet/sdes.cc",
+    "source/rtcp_packet/sdes.h",
+    "source/rtcp_packet/sender_report.cc",
+    "source/rtcp_packet/sender_report.h",
+    "source/rtcp_packet/sli.cc",
+    "source/rtcp_packet/sli.h",
+    "source/rtcp_packet/target_bitrate.cc",
+    "source/rtcp_packet/target_bitrate.h",
+    "source/rtcp_packet/tmmb_item.cc",
+    "source/rtcp_packet/tmmb_item.h",
+    "source/rtcp_packet/tmmbn.cc",
+    "source/rtcp_packet/tmmbn.h",
+    "source/rtcp_packet/tmmbr.cc",
+    "source/rtcp_packet/tmmbr.h",
+    "source/rtcp_packet/transport_feedback.cc",
+    "source/rtcp_packet/transport_feedback.h",
+    "source/rtcp_packet/voip_metric.cc",
+    "source/rtcp_packet/voip_metric.h",
+    "source/rtcp_receiver.cc",
+    "source/rtcp_receiver.h",
+    "source/rtcp_sender.cc",
+    "source/rtcp_sender.h",
+    "source/rtcp_utility.cc",
+    "source/rtcp_utility.h",
+    "source/rtp_format.cc",
+    "source/rtp_format.h",
+    "source/rtp_format_h264.cc",
+    "source/rtp_format_h264.h",
+    "source/rtp_format_video_generic.cc",
+    "source/rtp_format_video_generic.h",
+    "source/rtp_format_vp8.cc",
+    "source/rtp_format_vp8.h",
+    "source/rtp_format_vp9.cc",
+    "source/rtp_format_vp9.h",
+    "source/rtp_header_extension.cc",
+    "source/rtp_header_extension.h",
+    "source/rtp_header_extensions.cc",
+    "source/rtp_header_extensions.h",
+    "source/rtp_header_parser.cc",
+    "source/rtp_packet.cc",
+    "source/rtp_packet.h",
+    "source/rtp_packet_history.cc",
+    "source/rtp_packet_history.h",
+    "source/rtp_packet_received.h",
+    "source/rtp_packet_to_send.h",
+    "source/rtp_payload_registry.cc",
+    "source/rtp_receiver_audio.cc",
+    "source/rtp_receiver_audio.h",
+    "source/rtp_receiver_impl.cc",
+    "source/rtp_receiver_impl.h",
+    "source/rtp_receiver_strategy.cc",
+    "source/rtp_receiver_strategy.h",
+    "source/rtp_receiver_video.cc",
+    "source/rtp_receiver_video.h",
+    "source/rtp_rtcp_config.h",
+    "source/rtp_rtcp_impl.cc",
+    "source/rtp_rtcp_impl.h",
+    "source/rtp_sender.cc",
+    "source/rtp_sender.h",
+    "source/rtp_sender_audio.cc",
+    "source/rtp_sender_audio.h",
+    "source/rtp_sender_video.cc",
+    "source/rtp_sender_video.h",
+    "source/rtp_utility.cc",
+    "source/rtp_utility.h",
+    "source/ssrc_database.cc",
+    "source/ssrc_database.h",
+    "source/time_util.cc",
+    "source/time_util.h",
+    "source/tmmbr_help.cc",
+    "source/tmmbr_help.h",
+    "source/ulpfec_generator.cc",
+    "source/ulpfec_generator.h",
+    "source/ulpfec_header_reader_writer.cc",
+    "source/ulpfec_header_reader_writer.h",
+    "source/ulpfec_receiver_impl.cc",
+    "source/ulpfec_receiver_impl.h",
+    "source/video_codec_information.h",
+    "source/vp8_partition_aggregator.cc",
+    "source/vp8_partition_aggregator.h",
+  ]
+
+  if (rtc_enable_bwe_test_logging) {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=1" ]
+  } else {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
+  }
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  deps = [
+    "../..:webrtc_common",
+    "../../common_video",
+    "../../system_wrappers",
+    "../remote_bitrate_estimator",
+  ]
+
+  # TODO(jschuh): Bug 1348: fix this warning.
+  configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
+
+  if (is_win) {
+    cflags = [
+      # TODO(kjellander): Bug 261: fix this warning.
+      "/wd4373",  # virtual function override.
+    ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_executable("test_packet_masks_metrics") {
+    testonly = true
+
+    sources = [
+      "test/testFec/average_residual_loss_xor_codes.h",
+      "test/testFec/test_packet_masks_metrics.cc",
+    ]
+
+    deps = [
+      ":rtp_rtcp",
+      "//testing/gtest",
+      "//webrtc/test:test_support_main",
+    ]
+  }  # test_packet_masks_metrics
+}

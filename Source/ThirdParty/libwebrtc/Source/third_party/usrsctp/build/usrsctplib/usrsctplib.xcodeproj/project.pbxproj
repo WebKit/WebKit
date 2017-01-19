@@ -1,0 +1,1455 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		0F409D2E224D434DBBAB736C /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DFE5E94E56114B65B33803A5 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				A8D4973D7C85482DA8AE2916 /* CMake Rules */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		46AE4A10477A43E7BC8565C3 /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 7B85835E0B5745AE8D1CCA16 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				533AA6715AD2437D8BFCD4EC /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				66AD34A77B8A4C1F9E361122 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
+		90C5B391DF0B46A78910083A /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 2CB38DC0037D4A55A7A10246 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				71C8D40C29A245109ADE212C /* CMake Rules */,
+			);
+			dependencies = (
+				D10B9CF703AF44F0A84A1948 /* PBXTargetDependency */,
+				F95BD20E678A4AD5AFA60631 /* PBXTargetDependency */,
+				F0251488B54D4CA8A5B24B90 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		00280056391C4679BD5E298D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.h */ = {isa = PBXBuildFile; fileRef = CF4A629E979C452FB6FF3157 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.h */; settings = {COMPILER_FLAGS = ""; }; };
+		01278FC88F7D4F1CAF71476D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.h */ = {isa = PBXBuildFile; fileRef = 0A1402F40E6F4FF084C12B86 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.h */; settings = {COMPILER_FLAGS = ""; }; };
+		01298DE62688405A96ECA6B5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.h */ = {isa = PBXBuildFile; fileRef = AB670DD9C7FB495EA73C9951 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.h */; settings = {COMPILER_FLAGS = ""; }; };
+		0608D8068CCE4773A62D03DD /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.h */ = {isa = PBXBuildFile; fileRef = 91A8290605A34C149B7430BF /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.h */; settings = {COMPILER_FLAGS = ""; }; };
+		07752C9A14744BE29E849BD6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c */ = {isa = PBXBuildFile; fileRef = CCEC58F94BE643C1BE705CFD /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c */; settings = {COMPILER_FLAGS = ""; }; };
+		0953106503B44A5A9C886783 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_atomic.h */ = {isa = PBXBuildFile; fileRef = EDD655595DCF4355953135D3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_atomic.h */; settings = {COMPILER_FLAGS = ""; }; };
+		0B064291CF9C42748EAD97F7 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip6_var.h */ = {isa = PBXBuildFile; fileRef = DBCA22BF00F84499A0AD9458 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip6_var.h */; settings = {COMPILER_FLAGS = ""; }; };
+		0B88617E1F5141C08CE2363E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_lock_userspace.h */ = {isa = PBXBuildFile; fileRef = ECDC78806F61438E979A84CC /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_lock_userspace.h */; settings = {COMPILER_FLAGS = ""; }; };
+		0F24C5B8EA4246298F50BE82 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_route.h */ = {isa = PBXBuildFile; fileRef = AABEA53AB69140FA9A43E55F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_route.h */; settings = {COMPILER_FLAGS = ""; }; };
+		11E511A81E9B4D4C95E2FED8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_userspace.c */ = {isa = PBXBuildFile; fileRef = B99852378F8A4FFABF496375 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_userspace.c */; settings = {COMPILER_FLAGS = ""; }; };
+		126253355FBC4880BAAD15C6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c */ = {isa = PBXBuildFile; fileRef = E450B806AAED4176A40E549F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c */; settings = {COMPILER_FLAGS = ""; }; };
+		140F8677B15545A887AC5D41 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_uma.h */ = {isa = PBXBuildFile; fileRef = 321EF4B993C64A3D8FA8C1AB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_uma.h */; settings = {COMPILER_FLAGS = ""; }; };
+		157D38CE158A4D0E9BA3A299 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.c */ = {isa = PBXBuildFile; fileRef = 4AD343FBFA9E4E0D8ABE3E23 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.c */; settings = {COMPILER_FLAGS = ""; }; };
+		17917FE511DF434EBC3C80A7 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_constants.h */ = {isa = PBXBuildFile; fileRef = 32E4B3E0B23D49C696C81598 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_constants.h */; settings = {COMPILER_FLAGS = ""; }; };
+		1CA5BF18136B4BDAAC7603AC /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_header.h */ = {isa = PBXBuildFile; fileRef = 258F7303C2314DD6B74CA79D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_header.h */; settings = {COMPILER_FLAGS = ""; }; };
+		1D3CC77EECAB4638B9B20DDE /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_var.h */ = {isa = PBXBuildFile; fileRef = 66167780477942E78806F71E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_var.h */; settings = {COMPILER_FLAGS = ""; }; };
+		22750C3FB756404CAEE3B83B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_uma.h */ = {isa = PBXBuildFile; fileRef = 84910BA741304C97948D6C6C /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_uma.h */; settings = {COMPILER_FLAGS = ""; }; };
+		2611778723A7478089273628 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.h */ = {isa = PBXBuildFile; fileRef = A2CF65E8956B467085775E37 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.h */; settings = {COMPILER_FLAGS = ""; }; };
+		27271A214B54454188319027 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip_icmp.h */ = {isa = PBXBuildFile; fileRef = D8E52CE1257140F0A1B97A3F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip_icmp.h */; settings = {COMPILER_FLAGS = ""; }; };
+		27321D8C778D49DA97A01E99 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.h */ = {isa = PBXBuildFile; fileRef = FD5992CC97134B16949976D4 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.h */; settings = {COMPILER_FLAGS = ""; }; };
+		29DFC45C607A42DDAE709788 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c */ = {isa = PBXBuildFile; fileRef = 801A4FF3A20A46AE946DD248 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c */; settings = {COMPILER_FLAGS = ""; }; };
+		2EBF57264E734A2683F3CC9B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.h */ = {isa = PBXBuildFile; fileRef = B5470A2B51BA418EA0D46E9F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.h */; settings = {COMPILER_FLAGS = ""; }; };
+		310A8C2CF8664FD5BD536196 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip6_var.h */ = {isa = PBXBuildFile; fileRef = 851F1BEC38074497812985D9 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip6_var.h */; settings = {COMPILER_FLAGS = ""; }; };
+		31A03E0C60B5453ABEFBA8E5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.h */ = {isa = PBXBuildFile; fileRef = 7897EBA6CAA64A6B8B9EE7AF /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.h */; settings = {COMPILER_FLAGS = ""; }; };
+		345264D65FBD4B1983192643 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.c */ = {isa = PBXBuildFile; fileRef = 98E61CA88831445496C5FFDE /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.c */; settings = {COMPILER_FLAGS = ""; }; };
+		3611CB98403E499781A2D3A4 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c */ = {isa = PBXBuildFile; fileRef = 248C56ADEA6C470FB87AEBF3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c */; settings = {COMPILER_FLAGS = ""; }; };
+		36223F3B14D84D8884F22813 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c */ = {isa = PBXBuildFile; fileRef = 6C91224B393B45E7A44226D0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c */; settings = {COMPILER_FLAGS = ""; }; };
+		3697395FA505458788D59AD8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c */ = {isa = PBXBuildFile; fileRef = 09FECCBB8DB849128DF6DE6D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c */; settings = {COMPILER_FLAGS = ""; }; };
+		37B0000CE9B140BE8F11FB81 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c */ = {isa = PBXBuildFile; fileRef = 74E81E478C134A638746714F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c */; settings = {COMPILER_FLAGS = ""; }; };
+		3B2D434A7A0740ADA65B2819 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_queue.h */ = {isa = PBXBuildFile; fileRef = D549C80FAB264B2CAD4EDFF8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_queue.h */; settings = {COMPILER_FLAGS = ""; }; };
+		3CB594D408A84A6FBCED2AE5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c */ = {isa = PBXBuildFile; fileRef = 1B40AE0139A84A3AA560F2AB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c */; settings = {COMPILER_FLAGS = ""; }; };
+		3D4D46570FBE491498F435D2 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c */ = {isa = PBXBuildFile; fileRef = 1FB8BE41FEBB4FCCAD253CFA /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c */; settings = {COMPILER_FLAGS = ""; }; };
+		45C71E6192FB495F8508F7C0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/usrsctp.h */ = {isa = PBXBuildFile; fileRef = DC323B35D8D74FD593A18FC0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/usrsctp.h */; settings = {COMPILER_FLAGS = ""; }; };
+		46D95996C0A94F789118A643 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_route.h */ = {isa = PBXBuildFile; fileRef = 29CFAE3544C148868A62D512 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_route.h */; settings = {COMPILER_FLAGS = ""; }; };
+		4904EC02DD93490D9B3B00C3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.h */ = {isa = PBXBuildFile; fileRef = 88B1986C8F97414589F2539A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.h */; settings = {COMPILER_FLAGS = ""; }; };
+		4995100E3F824D189F108C5F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c */ = {isa = PBXBuildFile; fileRef = 0D985BC2802D47A8BAC61177 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c */; settings = {COMPILER_FLAGS = ""; }; };
+		4BFFCDDFA7B54F8EBC8388B9 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os_userspace.h */ = {isa = PBXBuildFile; fileRef = 58BA6947740941A0B79EDAE4 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os_userspace.h */; settings = {COMPILER_FLAGS = ""; }; };
+		4D085B9046304777AB3BDEAA /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c */ = {isa = PBXBuildFile; fileRef = 74B6ACE438684F3FAFDEAE71 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c */; settings = {COMPILER_FLAGS = ""; }; };
+		4D2D0606DE894773B06923D8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.h */ = {isa = PBXBuildFile; fileRef = DC72BB0344174218BD315475 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.h */; settings = {COMPILER_FLAGS = ""; }; };
+		4F58DF25B552445587732997 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c */ = {isa = PBXBuildFile; fileRef = 34C6634260E6466DB1FF2109 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c */; settings = {COMPILER_FLAGS = ""; }; };
+		4F7E315AF0FA4695AE1F9C6B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.h */ = {isa = PBXBuildFile; fileRef = 79F1FFE350DD496AB0F4F731 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.h */; settings = {COMPILER_FLAGS = ""; }; };
+		5116487ECD3641BC98B9020D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os.h */ = {isa = PBXBuildFile; fileRef = 3638EE0AF1B346CF8C6FBC5A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os.h */; settings = {COMPILER_FLAGS = ""; }; };
+		525788CB704D47D5905274CD /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c */ = {isa = PBXBuildFile; fileRef = A9A67F5104084FE9A33EA5C6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c */; settings = {COMPILER_FLAGS = ""; }; };
+		53922E0CCCBE469786F9FE15 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c */ = {isa = PBXBuildFile; fileRef = 3F68C0E1A6EB4EA383AFFCDA /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c */; settings = {COMPILER_FLAGS = ""; }; };
+		5604EB6500B142C8AC47F990 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_constants.h */ = {isa = PBXBuildFile; fileRef = 8B3F78AB86D14CE5A9347C44 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_constants.h */; settings = {COMPILER_FLAGS = ""; }; };
+		57B81CD15B4448E7A583AFF8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os.h */ = {isa = PBXBuildFile; fileRef = 7DD68690E95545739D76F704 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os.h */; settings = {COMPILER_FLAGS = ""; }; };
+		59C86F47F20748A598A0D4AB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_lock_userspace.h */ = {isa = PBXBuildFile; fileRef = 971BCEDD36334338AEB23DE0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_lock_userspace.h */; settings = {COMPILER_FLAGS = ""; }; };
+		666442B53FD2459F81CE80A3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.h */ = {isa = PBXBuildFile; fileRef = 2AE74C3B0B6048D399ABE01D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.h */; settings = {COMPILER_FLAGS = ""; }; };
+		68360F593470449C8EBA2FB4 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_inpcb.h */ = {isa = PBXBuildFile; fileRef = 991E96D014124A9C99600260 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_inpcb.h */; settings = {COMPILER_FLAGS = ""; }; };
+		6870AFFA7B224FF8A63C5349 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.h */ = {isa = PBXBuildFile; fileRef = 02796D43B66E420DA964BF44 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.h */; settings = {COMPILER_FLAGS = ""; }; };
+		6B87276845E643A2A0D9174C /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.h */ = {isa = PBXBuildFile; fileRef = 9E2A6672301E483195289E9F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.h */; settings = {COMPILER_FLAGS = ""; }; };
+		6C19901074A34367BFAA4198 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.h */ = {isa = PBXBuildFile; fileRef = C05A6C123B634D189613222E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.h */; settings = {COMPILER_FLAGS = ""; }; };
+		6C5A2D83C27742029BDD228A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.h */ = {isa = PBXBuildFile; fileRef = CF174958CBF44639B23F9FDF /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.h */; settings = {COMPILER_FLAGS = ""; }; };
+		6F54AA1092F4413BB7B8FDA3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c */ = {isa = PBXBuildFile; fileRef = 6F930E093A02454890E07CEC /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c */; settings = {COMPILER_FLAGS = ""; }; };
+		6FF04046C9904F59AF3C5EB4 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_process_lock.h */ = {isa = PBXBuildFile; fileRef = 211E1C7090A44EB5BF554DB5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_process_lock.h */; settings = {COMPILER_FLAGS = ""; }; };
+		7252A39DC9CC41A798548494 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.h */ = {isa = PBXBuildFile; fileRef = A666C72B824B4038B49FFD06 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.h */; settings = {COMPILER_FLAGS = ""; }; };
+		756C0BD806AA454FADE1E25E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c */ = {isa = PBXBuildFile; fileRef = E36814A0DA6A40FDB5654552 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c */; settings = {COMPILER_FLAGS = ""; }; };
+		79934798C35E416ABADF73BB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.c */ = {isa = PBXBuildFile; fileRef = CC8F8DD3BF8945ABB4B42345 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.c */; settings = {COMPILER_FLAGS = ""; }; };
+		7D742D7D3DB54E57B0321AED /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_queue.h */ = {isa = PBXBuildFile; fileRef = 5436CB73D16F40C4997438BD /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_queue.h */; settings = {COMPILER_FLAGS = ""; }; };
+		7E76D1BC53B04A0FB630CE7D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.c */ = {isa = PBXBuildFile; fileRef = 6A13DA2A0D4743AD92287A78 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.c */; settings = {COMPILER_FLAGS = ""; }; };
+		7F17C508BF764BC39F39649B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.h */ = {isa = PBXBuildFile; fileRef = 739B946E3FD24762B4700535 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.h */; settings = {COMPILER_FLAGS = ""; }; };
+		7F93F24814184767B238383F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c */ = {isa = PBXBuildFile; fileRef = 855846CF2F05493BB58599F1 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c */; settings = {COMPILER_FLAGS = ""; }; };
+		7FEDFA3092FF4E19A13F9840 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.h */ = {isa = PBXBuildFile; fileRef = 0F740500C2E140EDB3A3D673 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.h */; settings = {COMPILER_FLAGS = ""; }; };
+		8112BA9A714D4D3481880CD0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.c */ = {isa = PBXBuildFile; fileRef = 5CC6453A60EB40AD8785E1B0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.c */; settings = {COMPILER_FLAGS = ""; }; };
+		86571C63F90842A281A7736F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c */ = {isa = PBXBuildFile; fileRef = F6184554282B4766B77A044D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c */; settings = {COMPILER_FLAGS = ""; }; };
+		867B1E5CBB3E4DB9BD3DEA1D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c */ = {isa = PBXBuildFile; fileRef = F36F0CDCC98E47D2808D0519 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c */; settings = {COMPILER_FLAGS = ""; }; };
+		88CD53C284FD41A8803CEA59 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_uio.h */ = {isa = PBXBuildFile; fileRef = AB126C9467204E538C153F06 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_uio.h */; settings = {COMPILER_FLAGS = ""; }; };
+		8A3E7E3A962A4F3FBA834F4E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c */ = {isa = PBXBuildFile; fileRef = C9952E254F464FE587143A35 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c */; settings = {COMPILER_FLAGS = ""; }; };
+		8C7D8C7279B3437DA1B5C5EC /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c */ = {isa = PBXBuildFile; fileRef = CF54FC32B0634FF5B2FC6D9E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c */; settings = {COMPILER_FLAGS = ""; }; };
+		8E8CA2AA15B14F86BE2373EA /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.c */ = {isa = PBXBuildFile; fileRef = EADADCB5AD8E43E69D3977CF /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.c */; settings = {COMPILER_FLAGS = ""; }; };
+		8F2021B95F31459980DE32AB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.h */ = {isa = PBXBuildFile; fileRef = D688C570BBAF43D7B4D1974A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.h */; settings = {COMPILER_FLAGS = ""; }; };
+		9044E89C9D8F470B9C0879B7 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_var.h */ = {isa = PBXBuildFile; fileRef = 4A57D55E94974DD09EB5B29A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_var.h */; settings = {COMPILER_FLAGS = ""; }; };
+		92001E15AD674065AB29C116 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_var.h */ = {isa = PBXBuildFile; fileRef = B517CD503C254FFE8EF8BD0A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_var.h */; settings = {COMPILER_FLAGS = ""; }; };
+		942AFC151E494FCAA34BC42C /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.c */ = {isa = PBXBuildFile; fileRef = CDD96E6869C84FFBA94F7D43 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.c */; settings = {COMPILER_FLAGS = ""; }; };
+		9C8086B0BA5E44F08BBE82A1 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c */ = {isa = PBXBuildFile; fileRef = 543BE76784384CD484864630 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c */; settings = {COMPILER_FLAGS = ""; }; };
+		9D78B229830F4C30B53BB88D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.h */ = {isa = PBXBuildFile; fileRef = 85C66FFB669347A7BB00D908 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.h */; settings = {COMPILER_FLAGS = ""; }; };
+		A58ECDEC25C74B55A5D0C69F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c */ = {isa = PBXBuildFile; fileRef = 600588ACCD364AFF8B65DBA5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c */; settings = {COMPILER_FLAGS = ""; }; };
+		A7F54278661F4358AC110A54 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_var.h */ = {isa = PBXBuildFile; fileRef = CDA195012B5B46D598708B68 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_var.h */; settings = {COMPILER_FLAGS = ""; }; };
+		AB376AB60580470D924B679B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c */ = {isa = PBXBuildFile; fileRef = FED0DAEF41EB4C21BF1D7421 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c */; settings = {COMPILER_FLAGS = ""; }; };
+		AB6AF5851A534A11893F4449 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_inpcb.h */ = {isa = PBXBuildFile; fileRef = 5D64B89702BA4F07BFB6E571 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_inpcb.h */; settings = {COMPILER_FLAGS = ""; }; };
+		AC46371AA569480D8D85B229 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.h */ = {isa = PBXBuildFile; fileRef = 81BA9B7B599049F0B1C1D3BD /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.h */; settings = {COMPILER_FLAGS = ""; }; };
+		ACB65111E83D4C5C88CEB3FE /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_malloc.h */ = {isa = PBXBuildFile; fileRef = 7026D0A3A9AE45B48FB500F6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_malloc.h */; settings = {COMPILER_FLAGS = ""; }; };
+		B1FDD55E29D7469786ED9330 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socketvar.h */ = {isa = PBXBuildFile; fileRef = DA6FC262E58946829EC0E420 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socketvar.h */; settings = {COMPILER_FLAGS = ""; }; };
+		B67320AFB6434672A4387F54 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/usrsctp.h */ = {isa = PBXBuildFile; fileRef = 4A752653B2E0434991ACCF7A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/usrsctp.h */; settings = {COMPILER_FLAGS = ""; }; };
+		B67ACDB8F38E4BF9BC390732 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c */ = {isa = PBXBuildFile; fileRef = 7B47310B5F0F4915AFAC5E4B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c */; settings = {COMPILER_FLAGS = ""; }; };
+		B6F92964EA0842F0B6A27750 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp.h */ = {isa = PBXBuildFile; fileRef = 462915D2194345A4A451E038 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp.h */; settings = {COMPILER_FLAGS = ""; }; };
+		B947FBF1642C4DE38DE36C4A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.h */ = {isa = PBXBuildFile; fileRef = AF826706758344E49BF38828 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.h */; settings = {COMPILER_FLAGS = ""; }; };
+		BA4CCB4629A341908EC97FF6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.h */ = {isa = PBXBuildFile; fileRef = 498E5325DBD6492297ECFDEB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.h */; settings = {COMPILER_FLAGS = ""; }; };
+		BA6902A073BD439C943A6EE0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.h */ = {isa = PBXBuildFile; fileRef = 6B706CCEADDA465889FD0F15 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.h */; settings = {COMPILER_FLAGS = ""; }; };
+		BA8E36AADEBD4FCC8B705F8B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c */ = {isa = PBXBuildFile; fileRef = CE76352832AD4F59B76C458B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c */; settings = {COMPILER_FLAGS = ""; }; };
+		BAC59C0B0446418CB7F8567C /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip_icmp.h */ = {isa = PBXBuildFile; fileRef = 36794799AFE5462EBF3ACF85 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip_icmp.h */; settings = {COMPILER_FLAGS = ""; }; };
+		BC4D4A6167F94E4F848B401E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c */ = {isa = PBXBuildFile; fileRef = 650AF9FF5CCC4F7EA629CC39 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c */; settings = {COMPILER_FLAGS = ""; }; };
+		C133F1D73E024F0E8FA5C2CC /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_process_lock.h */ = {isa = PBXBuildFile; fileRef = 386A0B91FC5042EDB94768C5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_process_lock.h */; settings = {COMPILER_FLAGS = ""; }; };
+		C5430FF1C44C4E73889CCFC3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c */ = {isa = PBXBuildFile; fileRef = 8FFDFB1001CD45ED946F246E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c */; settings = {COMPILER_FLAGS = ""; }; };
+		C5837FC52126457EB44A9033 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.h */ = {isa = PBXBuildFile; fileRef = 1E9022FFBE754425B1036310 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.h */; settings = {COMPILER_FLAGS = ""; }; };
+		C704238DA92A4286A357C8C6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = D23A55AF56DA414FA81E0E21 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/CMakeLists.txt */; settings = {COMPILER_FLAGS = ""; }; };
+		C7136D868BDC484A94BD8B06 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.h */ = {isa = PBXBuildFile; fileRef = FEAF1E79FE1C44D48434B29D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.h */; settings = {COMPILER_FLAGS = ""; }; };
+		C8ABB1352DF24A29992423B3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.h */ = {isa = PBXBuildFile; fileRef = 8D0056BBA3224B568985A339 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.h */; settings = {COMPILER_FLAGS = ""; }; };
+		CA3AC92B85464410876599B3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c */ = {isa = PBXBuildFile; fileRef = F35858801C6842929E4BD716 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c */; settings = {COMPILER_FLAGS = ""; }; };
+		CAC782F839854BBB8E03ADC9 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.c */ = {isa = PBXBuildFile; fileRef = 6CF75BC0A5FA412BA878C986 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.c */; settings = {COMPILER_FLAGS = ""; }; };
+		CB4FF6F6A7A849A5A43597B0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.h */ = {isa = PBXBuildFile; fileRef = 87BF0911130D43F3ADABCA4F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.h */; settings = {COMPILER_FLAGS = ""; }; };
+		CB9FD633B8924EAEA9627DC8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c */ = {isa = PBXBuildFile; fileRef = 3262350CC5BB430599AD8DE6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c */; settings = {COMPILER_FLAGS = ""; }; };
+		CBE8BB75050D46D3BE9A7D96 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.h */ = {isa = PBXBuildFile; fileRef = 00D3B7B79B9C4B9EAFDEF5DC /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.h */; settings = {COMPILER_FLAGS = ""; }; };
+		CC4EBF26589A413F8F01ECA0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.h */ = {isa = PBXBuildFile; fileRef = CE597318E760415FAAA6D3ED /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.h */; settings = {COMPILER_FLAGS = ""; }; };
+		CD35AF52E61D45E0B0723A8D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp.h */ = {isa = PBXBuildFile; fileRef = 8D1E3A48D51C4814B3D8C1C8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp.h */; settings = {COMPILER_FLAGS = ""; }; };
+		CF179445B7074E939F2A49AD /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os_userspace.h */ = {isa = PBXBuildFile; fileRef = 6CCE81950D4F436F8E7D4754 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os_userspace.h */; settings = {COMPILER_FLAGS = ""; }; };
+		D3B56075DE6B4B0E889854E9 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c */ = {isa = PBXBuildFile; fileRef = BE48161A66CA4B2FBD79016D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c */; settings = {COMPILER_FLAGS = ""; }; };
+		D51CECCC77D44ACCB59E3402 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_header.h */ = {isa = PBXBuildFile; fileRef = D3AC6879A3604CD291C3A828 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_header.h */; settings = {COMPILER_FLAGS = ""; }; };
+		D7B32D4FD2CE429B8EA658E7 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c */ = {isa = PBXBuildFile; fileRef = DFF770E3ABB943C2BACFBFC8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c */; settings = {COMPILER_FLAGS = ""; }; };
+		DA6BECDDF40E4EA8899FFF71 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.h */ = {isa = PBXBuildFile; fileRef = 62B5FDAF00334F3DA5D8BEF6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.h */; settings = {COMPILER_FLAGS = ""; }; };
+		DC3A015AD9E44374A8764422 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_userspace.c */ = {isa = PBXBuildFile; fileRef = 4BDD2C475E4A40E6AD1AE481 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_userspace.c */; settings = {COMPILER_FLAGS = ""; }; };
+		DDE207C1B76B41A18BA099C9 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c */ = {isa = PBXBuildFile; fileRef = 046973E05E074972AF3885B5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c */; settings = {COMPILER_FLAGS = ""; }; };
+		DFAC1D354AF54E4988E0522F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_structs.h */ = {isa = PBXBuildFile; fileRef = D1C7C777C49C4BFFB6D33F9F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_structs.h */; settings = {COMPILER_FLAGS = ""; }; };
+		E27F930CD6CD4719872D997B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c */ = {isa = PBXBuildFile; fileRef = C497DA5A8DF84383B63A4374 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c */; settings = {COMPILER_FLAGS = ""; }; };
+		E586F88F10F945C78F01F323 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 2DDB3B87FF6B4867A5259637 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/CMakeLists.txt */; settings = {COMPILER_FLAGS = ""; }; };
+		E9720062774949529AC7285A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c */ = {isa = PBXBuildFile; fileRef = 5FA8D6E1EFC04CE2BA64A82E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c */; settings = {COMPILER_FLAGS = ""; }; };
+		EAC3B09039704CB6996287B1 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.h */ = {isa = PBXBuildFile; fileRef = 45A367269F10471BBFF95592 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.h */; settings = {COMPILER_FLAGS = ""; }; };
+		EE8779429B894A13ABC64E70 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.h */ = {isa = PBXBuildFile; fileRef = 0943A9F8AB2D4E7CACCCE9CB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.h */; settings = {COMPILER_FLAGS = ""; }; };
+		F1B9227892964DA79E9C73E2 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c */ = {isa = PBXBuildFile; fileRef = D82C7876913B4AB5B70F8E13 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c */; settings = {COMPILER_FLAGS = ""; }; };
+		F2218F7E676A4811A47B8E42 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_structs.h */ = {isa = PBXBuildFile; fileRef = D1F9A1268E1F4FB8AFCC1C9B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_structs.h */; settings = {COMPILER_FLAGS = ""; }; };
+		F878A3BA139141F287A9476F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_atomic.h */ = {isa = PBXBuildFile; fileRef = 5E3BB0B7C0A94BF19795D4A7 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_atomic.h */; settings = {COMPILER_FLAGS = ""; }; };
+		FD87B1A76C7D497A8B82BD81 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_malloc.h */ = {isa = PBXBuildFile; fileRef = 5C3AF09CBF0547E6B8DBFD97 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_malloc.h */; settings = {COMPILER_FLAGS = ""; }; };
+		FEDF7AAA790B4ADA8971604E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socketvar.h */ = {isa = PBXBuildFile; fileRef = 3758340EB01B4100B08F4C86 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socketvar.h */; settings = {COMPILER_FLAGS = ""; }; };
+		FF14AB27296C4381B31DB7F3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_uio.h */ = {isa = PBXBuildFile; fileRef = 8CE840FE23F349CCABA949F1 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_uio.h */; settings = {COMPILER_FLAGS = ""; }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		42D0C88A92B94A0E90AFC55A /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+		546D3F0E0B4342AEADEE5652 /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+		59AD8597A5ED465A817B1077 = {
+			isa = PBXBuildStyle;
+		};
+		C3FD4A6361904C6094D0D895 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+		FF467B277C7B45EABC31950E /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+		238CD83229214DE1A0ED299A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 62A09F447B284CDBB4EF630E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 90C5B391DF0B46A78910083A;
+			remoteInfo = ALL_BUILD;
+		};
+		35862C6655EF4C289A6E8E92 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 62A09F447B284CDBB4EF630E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 545D60B0B7D945C1B75FC216;
+			remoteInfo = usrsctp;
+		};
+		60C69FCD0B0142BDA06FEADD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 62A09F447B284CDBB4EF630E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0F409D2E224D434DBBAB736C;
+			remoteInfo = ZERO_CHECK;
+		};
+		B1B5295A8C78478496DFA8FE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 62A09F447B284CDBB4EF630E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0F409D2E224D434DBBAB736C;
+			remoteInfo = ZERO_CHECK;
+		};
+		D6D78FD3E2C54F1287089762 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 62A09F447B284CDBB4EF630E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0F409D2E224D434DBBAB736C;
+			remoteInfo = ZERO_CHECK;
+		};
+		FA48C5BD597443B5A66452BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 62A09F447B284CDBB4EF630E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 09CFCF3BC7854EE186CE0346;
+			remoteInfo = "usrsctp-static";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		00D3B7B79B9C4B9EAFDEF5DC /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_peeloff.h; path = netinet/sctp_peeloff.h; sourceTree = SOURCE_ROOT; };
+		02796D43B66E420DA964BF44 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_mbuf.h; path = user_mbuf.h; sourceTree = SOURCE_ROOT; };
+		046973E05E074972AF3885B5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_sysctl.c; path = netinet/sctp_sysctl.c; sourceTree = SOURCE_ROOT; };
+		0943A9F8AB2D4E7CACCCE9CB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_auth.h; path = netinet/sctp_auth.h; sourceTree = SOURCE_ROOT; };
+		09FECCBB8DB849128DF6DE6D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = user_environment.c; path = user_environment.c; sourceTree = SOURCE_ROOT; };
+		0A1402F40E6F4FF084C12B86 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_output.h; path = netinet/sctp_output.h; sourceTree = SOURCE_ROOT; };
+		0D985BC2802D47A8BAC61177 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_output.c; path = netinet/sctp_output.c; sourceTree = SOURCE_ROOT; };
+		0F740500C2E140EDB3A3D673 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_timer.h; path = netinet/sctp_timer.h; sourceTree = SOURCE_ROOT; };
+		1B40AE0139A84A3AA560F2AB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_usrreq.c; path = netinet/sctp_usrreq.c; sourceTree = SOURCE_ROOT; };
+		1E9022FFBE754425B1036310 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_peeloff.h; path = netinet/sctp_peeloff.h; sourceTree = SOURCE_ROOT; };
+		1FB8BE41FEBB4FCCAD253CFA /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = user_socket.c; path = user_socket.c; sourceTree = SOURCE_ROOT; };
+		211E1C7090A44EB5BF554DB5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_process_lock.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_process_lock.h; path = netinet/sctp_process_lock.h; sourceTree = SOURCE_ROOT; };
+		248C56ADEA6C470FB87AEBF3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_sysctl.c; path = netinet/sctp_sysctl.c; sourceTree = SOURCE_ROOT; };
+		258F7303C2314DD6B74CA79D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_header.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_header.h; path = netinet/sctp_header.h; sourceTree = SOURCE_ROOT; };
+		29CFAE3544C148868A62D512 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_route.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_route.h; path = user_route.h; sourceTree = SOURCE_ROOT; };
+		2AE74C3B0B6048D399ABE01D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_callout.h; path = netinet/sctp_callout.h; sourceTree = SOURCE_ROOT; };
+		2DDB3B87FF6B4867A5259637 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		321EF4B993C64A3D8FA8C1AB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_uma.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_uma.h; path = user_uma.h; sourceTree = SOURCE_ROOT; };
+		3262350CC5BB430599AD8DE6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = user_mbuf.c; path = user_mbuf.c; sourceTree = SOURCE_ROOT; };
+		32E4B3E0B23D49C696C81598 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_constants.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_constants.h; path = netinet/sctp_constants.h; sourceTree = SOURCE_ROOT; };
+		34C6634260E6466DB1FF2109 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_pcb.c; path = netinet/sctp_pcb.c; sourceTree = SOURCE_ROOT; };
+		3638EE0AF1B346CF8C6FBC5A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_os.h; path = netinet/sctp_os.h; sourceTree = SOURCE_ROOT; };
+		36794799AFE5462EBF3ACF85 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip_icmp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_ip_icmp.h; path = user_ip_icmp.h; sourceTree = SOURCE_ROOT; };
+		3758340EB01B4100B08F4C86 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socketvar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_socketvar.h; path = user_socketvar.h; sourceTree = SOURCE_ROOT; };
+		386A0B91FC5042EDB94768C5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_process_lock.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_process_lock.h; path = netinet/sctp_process_lock.h; sourceTree = SOURCE_ROOT; };
+		3F68C0E1A6EB4EA383AFFCDA /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = user_recv_thread.c; path = user_recv_thread.c; sourceTree = SOURCE_ROOT; };
+		45A367269F10471BBFF95592 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_crc32.h; path = netinet/sctp_crc32.h; sourceTree = SOURCE_ROOT; };
+		462915D2194345A4A451E038 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp.h; path = netinet/sctp.h; sourceTree = SOURCE_ROOT; };
+		498E5325DBD6492297ECFDEB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_pcb.h; path = netinet/sctp_pcb.h; sourceTree = SOURCE_ROOT; };
+		4A57D55E94974DD09EB5B29A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_var.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_var.h; path = netinet/sctp_var.h; sourceTree = SOURCE_ROOT; };
+		4A752653B2E0434991ACCF7A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/usrsctp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = usrsctp.h; path = usrsctp.h; sourceTree = SOURCE_ROOT; };
+		4AD343FBFA9E4E0D8ABE3E23 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_sha1.c; path = netinet/sctp_sha1.c; sourceTree = SOURCE_ROOT; };
+		4BDD2C475E4A40E6AD1AE481 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_userspace.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_userspace.c; path = netinet/sctp_userspace.c; sourceTree = SOURCE_ROOT; };
+		5436CB73D16F40C4997438BD /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_queue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_queue.h; path = user_queue.h; sourceTree = SOURCE_ROOT; };
+		543BE76784384CD484864630 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_asconf.c; path = netinet/sctp_asconf.c; sourceTree = SOURCE_ROOT; };
+		58BA6947740941A0B79EDAE4 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os_userspace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_os_userspace.h; path = netinet/sctp_os_userspace.h; sourceTree = SOURCE_ROOT; };
+		5C3AF09CBF0547E6B8DBFD97 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_malloc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_malloc.h; path = user_malloc.h; sourceTree = SOURCE_ROOT; };
+		5CC6453A60EB40AD8785E1B0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_crc32.c; path = netinet/sctp_crc32.c; sourceTree = SOURCE_ROOT; };
+		5D64B89702BA4F07BFB6E571 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_inpcb.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_inpcb.h; path = user_inpcb.h; sourceTree = SOURCE_ROOT; };
+		5E3BB0B7C0A94BF19795D4A7 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_atomic.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_atomic.h; path = user_atomic.h; sourceTree = SOURCE_ROOT; };
+		5FA8D6E1EFC04CE2BA64A82E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = user_socket.c; path = user_socket.c; sourceTree = SOURCE_ROOT; };
+		600588ACCD364AFF8B65DBA5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_asconf.c; path = netinet/sctp_asconf.c; sourceTree = SOURCE_ROOT; };
+		62B5FDAF00334F3DA5D8BEF6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_sha1.h; path = netinet/sctp_sha1.h; sourceTree = SOURCE_ROOT; };
+		650AF9FF5CCC4F7EA629CC39 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = user_environment.c; path = user_environment.c; sourceTree = SOURCE_ROOT; };
+		66167780477942E78806F71E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_var.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp6_var.h; path = netinet6/sctp6_var.h; sourceTree = SOURCE_ROOT; };
+		6A13DA2A0D4743AD92287A78 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_peeloff.c; path = netinet/sctp_peeloff.c; sourceTree = SOURCE_ROOT; };
+		6B706CCEADDA465889FD0F15 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_timer.h; path = netinet/sctp_timer.h; sourceTree = SOURCE_ROOT; };
+		6C91224B393B45E7A44226D0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_indata.c; path = netinet/sctp_indata.c; sourceTree = SOURCE_ROOT; };
+		6CCE81950D4F436F8E7D4754 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os_userspace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_os_userspace.h; path = netinet/sctp_os_userspace.h; sourceTree = SOURCE_ROOT; };
+		6CF75BC0A5FA412BA878C986 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_peeloff.c; path = netinet/sctp_peeloff.c; sourceTree = SOURCE_ROOT; };
+		6F930E093A02454890E07CEC /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_cc_functions.c; path = netinet/sctp_cc_functions.c; sourceTree = SOURCE_ROOT; };
+		7026D0A3A9AE45B48FB500F6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_malloc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_malloc.h; path = user_malloc.h; sourceTree = SOURCE_ROOT; };
+		739B946E3FD24762B4700535 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_indata.h; path = netinet/sctp_indata.h; sourceTree = SOURCE_ROOT; };
+		74B6ACE438684F3FAFDEAE71 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_indata.c; path = netinet/sctp_indata.c; sourceTree = SOURCE_ROOT; };
+		74E81E478C134A638746714F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_bsd_addr.c; path = netinet/sctp_bsd_addr.c; sourceTree = SOURCE_ROOT; };
+		7897EBA6CAA64A6B8B9EE7AF /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_auth.h; path = netinet/sctp_auth.h; sourceTree = SOURCE_ROOT; };
+		79F1FFE350DD496AB0F4F731 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_environment.h; path = user_environment.h; sourceTree = SOURCE_ROOT; };
+		7B47310B5F0F4915AFAC5E4B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctputil.c; path = netinet/sctputil.c; sourceTree = SOURCE_ROOT; };
+		7DD68690E95545739D76F704 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_os.h; path = netinet/sctp_os.h; sourceTree = SOURCE_ROOT; };
+		801A4FF3A20A46AE946DD248 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_input.c; path = netinet/sctp_input.c; sourceTree = SOURCE_ROOT; };
+		80DC66850A76437FAE5EA565 /* usrsctp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libusrsctp.dylib; refType = 0; sourceTree = BUILT_PRODUCTS_DIR; };
+		81BA9B7B599049F0B1C1D3BD /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_recv_thread.h; path = user_recv_thread.h; sourceTree = SOURCE_ROOT; };
+		84910BA741304C97948D6C6C /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_uma.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_uma.h; path = user_uma.h; sourceTree = SOURCE_ROOT; };
+		851F1BEC38074497812985D9 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip6_var.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_ip6_var.h; path = user_ip6_var.h; sourceTree = SOURCE_ROOT; };
+		855846CF2F05493BB58599F1 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_ss_functions.c; path = netinet/sctp_ss_functions.c; sourceTree = SOURCE_ROOT; };
+		85C66FFB669347A7BB00D908 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_input.h; path = netinet/sctp_input.h; sourceTree = SOURCE_ROOT; };
+		87BF0911130D43F3ADABCA4F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_callout.h; path = netinet/sctp_callout.h; sourceTree = SOURCE_ROOT; };
+		88B1986C8F97414589F2539A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_input.h; path = netinet/sctp_input.h; sourceTree = SOURCE_ROOT; };
+		8B3F78AB86D14CE5A9347C44 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_constants.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_constants.h; path = netinet/sctp_constants.h; sourceTree = SOURCE_ROOT; };
+		8CE840FE23F349CCABA949F1 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_uio.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_uio.h; path = netinet/sctp_uio.h; sourceTree = SOURCE_ROOT; };
+		8D0056BBA3224B568985A339 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_sysctl.h; path = netinet/sctp_sysctl.h; sourceTree = SOURCE_ROOT; };
+		8D1E3A48D51C4814B3D8C1C8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp.h; path = netinet/sctp.h; sourceTree = SOURCE_ROOT; };
+		8F5E31E51A4D42A49790DFA2 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		8FFDFB1001CD45ED946F246E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_pcb.c; path = netinet/sctp_pcb.c; sourceTree = SOURCE_ROOT; };
+		91A8290605A34C149B7430BF /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_bsd_addr.h; path = netinet/sctp_bsd_addr.h; sourceTree = SOURCE_ROOT; };
+		971BCEDD36334338AEB23DE0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_lock_userspace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_lock_userspace.h; path = netinet/sctp_lock_userspace.h; sourceTree = SOURCE_ROOT; };
+		98E61CA88831445496C5FFDE /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_sha1.c; path = netinet/sctp_sha1.c; sourceTree = SOURCE_ROOT; };
+		991E96D014124A9C99600260 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_inpcb.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_inpcb.h; path = user_inpcb.h; sourceTree = SOURCE_ROOT; };
+		9E2A6672301E483195289E9F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_pcb.h; path = netinet/sctp_pcb.h; sourceTree = SOURCE_ROOT; };
+		A2CF65E8956B467085775E37 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_sha1.h; path = netinet/sctp_sha1.h; sourceTree = SOURCE_ROOT; };
+		A666C72B824B4038B49FFD06 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_environment.h; path = user_environment.h; sourceTree = SOURCE_ROOT; };
+		A9A67F5104084FE9A33EA5C6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = user_mbuf.c; path = user_mbuf.c; sourceTree = SOURCE_ROOT; };
+		AABEA53AB69140FA9A43E55F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_route.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_route.h; path = user_route.h; sourceTree = SOURCE_ROOT; };
+		AB126C9467204E538C153F06 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_uio.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_uio.h; path = netinet/sctp_uio.h; sourceTree = SOURCE_ROOT; };
+		AB670DD9C7FB495EA73C9951 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_recv_thread.h; path = user_recv_thread.h; sourceTree = SOURCE_ROOT; };
+		AF826706758344E49BF38828 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_crc32.h; path = netinet/sctp_crc32.h; sourceTree = SOURCE_ROOT; };
+		B517CD503C254FFE8EF8BD0A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_var.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_var.h; path = netinet/sctp_var.h; sourceTree = SOURCE_ROOT; };
+		B5470A2B51BA418EA0D46E9F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_sysctl.h; path = netinet/sctp_sysctl.h; sourceTree = SOURCE_ROOT; };
+		B99852378F8A4FFABF496375 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_userspace.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_userspace.c; path = netinet/sctp_userspace.c; sourceTree = SOURCE_ROOT; };
+		BE48161A66CA4B2FBD79016D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_auth.c; path = netinet/sctp_auth.c; sourceTree = SOURCE_ROOT; };
+		C05A6C123B634D189613222E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_mbuf.h; path = user_mbuf.h; sourceTree = SOURCE_ROOT; };
+		C497DA5A8DF84383B63A4374 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_output.c; path = netinet/sctp_output.c; sourceTree = SOURCE_ROOT; };
+		C9952E254F464FE587143A35 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_timer.c; path = netinet/sctp_timer.c; sourceTree = SOURCE_ROOT; };
+		CC8F8DD3BF8945ABB4B42345 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_callout.c; path = netinet/sctp_callout.c; sourceTree = SOURCE_ROOT; };
+		CCEC58F94BE643C1BE705CFD /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_ss_functions.c; path = netinet/sctp_ss_functions.c; sourceTree = SOURCE_ROOT; };
+		CDA195012B5B46D598708B68 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_var.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp6_var.h; path = netinet6/sctp6_var.h; sourceTree = SOURCE_ROOT; };
+		CDD96E6869C84FFBA94F7D43 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_callout.c; path = netinet/sctp_callout.c; sourceTree = SOURCE_ROOT; };
+		CE597318E760415FAAA6D3ED /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_asconf.h; path = netinet/sctp_asconf.h; sourceTree = SOURCE_ROOT; };
+		CE76352832AD4F59B76C458B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_input.c; path = netinet/sctp_input.c; sourceTree = SOURCE_ROOT; };
+		CF174958CBF44639B23F9FDF /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_bsd_addr.h; path = netinet/sctp_bsd_addr.h; sourceTree = SOURCE_ROOT; };
+		CF4A629E979C452FB6FF3157 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctputil.h; path = netinet/sctputil.h; sourceTree = SOURCE_ROOT; };
+		CF54FC32B0634FF5B2FC6D9E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp6_usrreq.c; path = netinet6/sctp6_usrreq.c; sourceTree = SOURCE_ROOT; };
+		D1C7C777C49C4BFFB6D33F9F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_structs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_structs.h; path = netinet/sctp_structs.h; sourceTree = SOURCE_ROOT; };
+		D1F9A1268E1F4FB8AFCC1C9B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_structs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_structs.h; path = netinet/sctp_structs.h; sourceTree = SOURCE_ROOT; };
+		D23A55AF56DA414FA81E0E21 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		D3AC6879A3604CD291C3A828 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_header.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_header.h; path = netinet/sctp_header.h; sourceTree = SOURCE_ROOT; };
+		D549C80FAB264B2CAD4EDFF8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_queue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_queue.h; path = user_queue.h; sourceTree = SOURCE_ROOT; };
+		D64ACFEF42B449A0ACDEC660 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		D688C570BBAF43D7B4D1974A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_asconf.h; path = netinet/sctp_asconf.h; sourceTree = SOURCE_ROOT; };
+		D82C7876913B4AB5B70F8E13 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_usrreq.c; path = netinet/sctp_usrreq.c; sourceTree = SOURCE_ROOT; };
+		D8E52CE1257140F0A1B97A3F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip_icmp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_ip_icmp.h; path = user_ip_icmp.h; sourceTree = SOURCE_ROOT; };
+		DA6FC262E58946829EC0E420 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socketvar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_socketvar.h; path = user_socketvar.h; sourceTree = SOURCE_ROOT; };
+		DBCA22BF00F84499A0AD9458 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip6_var.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_ip6_var.h; path = user_ip6_var.h; sourceTree = SOURCE_ROOT; };
+		DC323B35D8D74FD593A18FC0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/usrsctp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = usrsctp.h; path = usrsctp.h; sourceTree = SOURCE_ROOT; };
+		DC72BB0344174218BD315475 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_output.h; path = netinet/sctp_output.h; sourceTree = SOURCE_ROOT; };
+		DFF770E3ABB943C2BACFBFC8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctputil.c; path = netinet/sctputil.c; sourceTree = SOURCE_ROOT; };
+		E36814A0DA6A40FDB5654552 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = user_recv_thread.c; path = user_recv_thread.c; sourceTree = SOURCE_ROOT; };
+		E450B806AAED4176A40E549F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_auth.c; path = netinet/sctp_auth.c; sourceTree = SOURCE_ROOT; };
+		EADADCB5AD8E43E69D3977CF /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_crc32.c; path = netinet/sctp_crc32.c; sourceTree = SOURCE_ROOT; };
+		ECDC78806F61438E979A84CC /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_lock_userspace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_lock_userspace.h; path = netinet/sctp_lock_userspace.h; sourceTree = SOURCE_ROOT; };
+		EDD655595DCF4355953135D3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_atomic.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = user_atomic.h; path = user_atomic.h; sourceTree = SOURCE_ROOT; };
+		F35858801C6842929E4BD716 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_timer.c; path = netinet/sctp_timer.c; sourceTree = SOURCE_ROOT; };
+		F36F0CDCC98E47D2808D0519 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_cc_functions.c; path = netinet/sctp_cc_functions.c; sourceTree = SOURCE_ROOT; };
+		F6184554282B4766B77A044D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp_bsd_addr.c; path = netinet/sctp_bsd_addr.c; sourceTree = SOURCE_ROOT; };
+		F7DB23E58E364D87829537EC /* usrsctp-static */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libusrsctp.a; refType = 0; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD5992CC97134B16949976D4 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctputil.h; path = netinet/sctputil.h; sourceTree = SOURCE_ROOT; };
+		FEAF1E79FE1C44D48434B29D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sctp_indata.h; path = netinet/sctp_indata.h; sourceTree = SOURCE_ROOT; };
+		FED0DAEF41EB4C21BF1D7421 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sctp6_usrreq.c; path = netinet6/sctp6_usrreq.c; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0B8A402C3DA84B778336C81D /* ZERO_CHECK */ = {
+			isa = PBXGroup;
+			children = (
+				6C41CAE1F97E47159F6B0527 /* CMake Rules */,
+				8F5E31E51A4D42A49790DFA2 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/CMakeLists.txt */,
+			);
+			name = ZERO_CHECK;
+			sourceTree = "<group>";
+		};
+		116797C46BB24AB88F8FD678 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				543BE76784384CD484864630 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c */,
+				E450B806AAED4176A40E549F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c */,
+				74E81E478C134A638746714F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c */,
+				CDD96E6869C84FFBA94F7D43 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.c */,
+				F36F0CDCC98E47D2808D0519 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c */,
+				EADADCB5AD8E43E69D3977CF /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.c */,
+				74B6ACE438684F3FAFDEAE71 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c */,
+				CE76352832AD4F59B76C458B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c */,
+				C497DA5A8DF84383B63A4374 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c */,
+				34C6634260E6466DB1FF2109 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c */,
+				6A13DA2A0D4743AD92287A78 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.c */,
+				98E61CA88831445496C5FFDE /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.c */,
+				CCEC58F94BE643C1BE705CFD /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c */,
+				046973E05E074972AF3885B5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c */,
+				F35858801C6842929E4BD716 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c */,
+				4BDD2C475E4A40E6AD1AE481 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_userspace.c */,
+				D82C7876913B4AB5B70F8E13 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c */,
+				DFF770E3ABB943C2BACFBFC8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c */,
+				FED0DAEF41EB4C21BF1D7421 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c */,
+				650AF9FF5CCC4F7EA629CC39 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c */,
+				3262350CC5BB430599AD8DE6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c */,
+				3F68C0E1A6EB4EA383AFFCDA /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c */,
+				5FA8D6E1EFC04CE2BA64A82E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		164F15AF3D8243A6B8D3AA8D /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				E96696DD235941E6B6FFA964 /* usrsctp-static */,
+				C189D4B3436E4A3698BDA2C8 /* usrsctp */,
+				7113CEC75EB84F7D9D2033AC /* ALL_BUILD */,
+				0B8A402C3DA84B778336C81D /* ZERO_CHECK */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		25B7AD4E13BB469FAA69C138 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				462915D2194345A4A451E038 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp.h */,
+				D688C570BBAF43D7B4D1974A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.h */,
+				7897EBA6CAA64A6B8B9EE7AF /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.h */,
+				CF174958CBF44639B23F9FDF /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.h */,
+				2AE74C3B0B6048D399ABE01D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.h */,
+				8B3F78AB86D14CE5A9347C44 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_constants.h */,
+				AF826706758344E49BF38828 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.h */,
+				258F7303C2314DD6B74CA79D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_header.h */,
+				FEAF1E79FE1C44D48434B29D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.h */,
+				88B1986C8F97414589F2539A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.h */,
+				ECDC78806F61438E979A84CC /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_lock_userspace.h */,
+				3638EE0AF1B346CF8C6FBC5A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os.h */,
+				58BA6947740941A0B79EDAE4 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os_userspace.h */,
+				DC72BB0344174218BD315475 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.h */,
+				9E2A6672301E483195289E9F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.h */,
+				00D3B7B79B9C4B9EAFDEF5DC /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.h */,
+				211E1C7090A44EB5BF554DB5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_process_lock.h */,
+				A2CF65E8956B467085775E37 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.h */,
+				D1F9A1268E1F4FB8AFCC1C9B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_structs.h */,
+				B5470A2B51BA418EA0D46E9F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.h */,
+				0F740500C2E140EDB3A3D673 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.h */,
+				8CE840FE23F349CCABA949F1 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_uio.h */,
+				B517CD503C254FFE8EF8BD0A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_var.h */,
+				CF4A629E979C452FB6FF3157 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.h */,
+				CDA195012B5B46D598708B68 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_var.h */,
+				EDD655595DCF4355953135D3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_atomic.h */,
+				A666C72B824B4038B49FFD06 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.h */,
+				991E96D014124A9C99600260 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_inpcb.h */,
+				851F1BEC38074497812985D9 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip6_var.h */,
+				D8E52CE1257140F0A1B97A3F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip_icmp.h */,
+				5C3AF09CBF0547E6B8DBFD97 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_malloc.h */,
+				C05A6C123B634D189613222E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.h */,
+				5436CB73D16F40C4997438BD /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_queue.h */,
+				81BA9B7B599049F0B1C1D3BD /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.h */,
+				29CFAE3544C148868A62D512 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_route.h */,
+				3758340EB01B4100B08F4C86 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socketvar.h */,
+				321EF4B993C64A3D8FA8C1AB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_uma.h */,
+				4A752653B2E0434991ACCF7A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/usrsctp.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		68907AF6853F478B8431AED0 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				8D1E3A48D51C4814B3D8C1C8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp.h */,
+				CE597318E760415FAAA6D3ED /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.h */,
+				0943A9F8AB2D4E7CACCCE9CB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.h */,
+				91A8290605A34C149B7430BF /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.h */,
+				87BF0911130D43F3ADABCA4F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.h */,
+				32E4B3E0B23D49C696C81598 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_constants.h */,
+				45A367269F10471BBFF95592 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.h */,
+				D3AC6879A3604CD291C3A828 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_header.h */,
+				739B946E3FD24762B4700535 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.h */,
+				85C66FFB669347A7BB00D908 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.h */,
+				971BCEDD36334338AEB23DE0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_lock_userspace.h */,
+				7DD68690E95545739D76F704 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os.h */,
+				6CCE81950D4F436F8E7D4754 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_os_userspace.h */,
+				0A1402F40E6F4FF084C12B86 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.h */,
+				498E5325DBD6492297ECFDEB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.h */,
+				1E9022FFBE754425B1036310 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.h */,
+				386A0B91FC5042EDB94768C5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_process_lock.h */,
+				62B5FDAF00334F3DA5D8BEF6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.h */,
+				D1C7C777C49C4BFFB6D33F9F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_structs.h */,
+				8D0056BBA3224B568985A339 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.h */,
+				6B706CCEADDA465889FD0F15 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.h */,
+				AB126C9467204E538C153F06 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_uio.h */,
+				4A57D55E94974DD09EB5B29A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_var.h */,
+				FD5992CC97134B16949976D4 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.h */,
+				66167780477942E78806F71E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_var.h */,
+				5E3BB0B7C0A94BF19795D4A7 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_atomic.h */,
+				79F1FFE350DD496AB0F4F731 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.h */,
+				5D64B89702BA4F07BFB6E571 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_inpcb.h */,
+				DBCA22BF00F84499A0AD9458 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip6_var.h */,
+				36794799AFE5462EBF3ACF85 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_ip_icmp.h */,
+				7026D0A3A9AE45B48FB500F6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_malloc.h */,
+				02796D43B66E420DA964BF44 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.h */,
+				D549C80FAB264B2CAD4EDFF8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_queue.h */,
+				AB670DD9C7FB495EA73C9951 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.h */,
+				AABEA53AB69140FA9A43E55F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_route.h */,
+				DA6FC262E58946829EC0E420 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socketvar.h */,
+				84910BA741304C97948D6C6C /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_uma.h */,
+				DC323B35D8D74FD593A18FC0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/usrsctp.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		6C41CAE1F97E47159F6B0527 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		7113CEC75EB84F7D9D2033AC /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				AEDCEC78112443F1A8F58A5F /* CMake Rules */,
+				D64ACFEF42B449A0ACDEC660 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		7C7ED28AD2C04875BD49A1AD = {
+			isa = PBXGroup;
+			children = (
+				164F15AF3D8243A6B8D3AA8D /* Sources */,
+				F5265D367C56425E8F16DF90 /* Resources */,
+				F5DB1D6358C94B2082DF8CB0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AEDCEC78112443F1A8F58A5F /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		C189D4B3436E4A3698BDA2C8 /* usrsctp */ = {
+			isa = PBXGroup;
+			children = (
+				116797C46BB24AB88F8FD678 /* Source Files */,
+				25B7AD4E13BB469FAA69C138 /* Header Files */,
+				2DDB3B87FF6B4867A5259637 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/CMakeLists.txt */,
+			);
+			name = usrsctp;
+			sourceTree = "<group>";
+		};
+		DED04A87476C489AADFDC41C /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				600588ACCD364AFF8B65DBA5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c */,
+				BE48161A66CA4B2FBD79016D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c */,
+				F6184554282B4766B77A044D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c */,
+				CC8F8DD3BF8945ABB4B42345 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.c */,
+				6F930E093A02454890E07CEC /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c */,
+				5CC6453A60EB40AD8785E1B0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.c */,
+				6C91224B393B45E7A44226D0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c */,
+				801A4FF3A20A46AE946DD248 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c */,
+				0D985BC2802D47A8BAC61177 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c */,
+				8FFDFB1001CD45ED946F246E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c */,
+				6CF75BC0A5FA412BA878C986 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.c */,
+				4AD343FBFA9E4E0D8ABE3E23 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.c */,
+				855846CF2F05493BB58599F1 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c */,
+				248C56ADEA6C470FB87AEBF3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c */,
+				C9952E254F464FE587143A35 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c */,
+				B99852378F8A4FFABF496375 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_userspace.c */,
+				1B40AE0139A84A3AA560F2AB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c */,
+				7B47310B5F0F4915AFAC5E4B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c */,
+				CF54FC32B0634FF5B2FC6D9E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c */,
+				09FECCBB8DB849128DF6DE6D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c */,
+				A9A67F5104084FE9A33EA5C6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c */,
+				E36814A0DA6A40FDB5654552 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c */,
+				1FB8BE41FEBB4FCCAD253CFA /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		E96696DD235941E6B6FFA964 /* usrsctp-static */ = {
+			isa = PBXGroup;
+			children = (
+				DED04A87476C489AADFDC41C /* Source Files */,
+				68907AF6853F478B8431AED0 /* Header Files */,
+				D23A55AF56DA414FA81E0E21 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/CMakeLists.txt */,
+			);
+			name = "usrsctp-static";
+			sourceTree = "<group>";
+		};
+		F5265D367C56425E8F16DF90 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		F5DB1D6358C94B2082DF8CB0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				80DC66850A76437FAE5EA565 /* usrsctp */,
+				F7DB23E58E364D87829537EC /* usrsctp-static */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		09CFCF3BC7854EE186CE0346 /* usrsctp-static */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4EFC1C6044D649659A0A97DB /* Build configuration list for PBXNativeTarget "usrsctp-static" */;
+			buildPhases = (
+				A1AF75DC906941DB89AC3966 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0C2DE834B9954058AD7CB42D /* PBXTargetDependency */,
+			);
+			name = "usrsctp-static";
+			productName = "usrsctp-static";
+			productReference = F7DB23E58E364D87829537EC /* usrsctp-static */;
+			productType = "com.apple.product-type.library.static";
+		};
+		545D60B0B7D945C1B75FC216 /* usrsctp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC93ECA786F745E280AE832B /* Build configuration list for PBXNativeTarget "usrsctp" */;
+			buildPhases = (
+				38C1056EDBE14DDBBFBAFF9A /* Sources */,
+				745DCA5D3AD1402C9A93A8DC /* CMake PostBuild Rules */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				985323E581034286A80AB13E /* PBXTargetDependency */,
+			);
+			name = usrsctp;
+			productName = usrsctp;
+			productReference = 80DC66850A76437FAE5EA565 /* usrsctp */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		62A09F447B284CDBB4EF630E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0820;
+			};
+			buildConfigurationList = A70821A20C104ED08F048433 /* Build configuration list for PBXProject "usrsctplib" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				FF467B277C7B45EABC31950E /* Debug */,
+				C3FD4A6361904C6094D0D895 /* Release */,
+				42D0C88A92B94A0E90AFC55A /* MinSizeRel */,
+				546D3F0E0B4342AEADEE5652 /* RelWithDebInfo */,
+			);
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = 7C7ED28AD2C04875BD49A1AD;
+			projectDirPath = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib;
+			projectRoot = "";
+			targets = (
+				90C5B391DF0B46A78910083A /* ALL_BUILD */,
+				0F409D2E224D434DBBAB736C /* ZERO_CHECK */,
+				46AE4A10477A43E7BC8565C3 /* install */,
+				545D60B0B7D945C1B75FC216 /* usrsctp */,
+				09CFCF3BC7854EE186CE0346 /* usrsctp-static */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		432683EEC5AD4E3A8D278F86 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		533AA6715AD2437D8BFCD4EC /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib -f /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib/CMakeScripts/install_postBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		71C8D40C29A245109ADE212C /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib -f /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib/CMakeScripts/ALL_BUILD_cmakeRulesBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		745DCA5D3AD1402C9A93A8DC /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib -f /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib/CMakeScripts/usrsctp_postBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		A8D4973D7C85482DA8AE2916 /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib -f /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib/CMakeScripts/ZERO_CHECK_cmakeRulesBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		EB0DAE9AA3A846EEBA77D921 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		FE0DF22D49E648F79FA78012 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		38C1056EDBE14DDBBFBAFF9A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9C8086B0BA5E44F08BBE82A1 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c */,
+				126253355FBC4880BAAD15C6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c */,
+				37B0000CE9B140BE8F11FB81 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c */,
+				942AFC151E494FCAA34BC42C /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.c */,
+				867B1E5CBB3E4DB9BD3DEA1D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c */,
+				8E8CA2AA15B14F86BE2373EA /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.c */,
+				4D085B9046304777AB3BDEAA /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c */,
+				BA8E36AADEBD4FCC8B705F8B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c */,
+				E27F930CD6CD4719872D997B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c */,
+				4F58DF25B552445587732997 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c */,
+				7E76D1BC53B04A0FB630CE7D /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.c */,
+				345264D65FBD4B1983192643 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.c */,
+				07752C9A14744BE29E849BD6 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c */,
+				DDE207C1B76B41A18BA099C9 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c */,
+				CA3AC92B85464410876599B3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c */,
+				DC3A015AD9E44374A8764422 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_userspace.c */,
+				F1B9227892964DA79E9C73E2 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c */,
+				D7B32D4FD2CE429B8EA658E7 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c */,
+				AB376AB60580470D924B679B /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c */,
+				BC4D4A6167F94E4F848B401E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c */,
+				CB9FD633B8924EAEA9627DC8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c */,
+				53922E0CCCBE469786F9FE15 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c */,
+				E9720062774949529AC7285A /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1AF75DC906941DB89AC3966 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A58ECDEC25C74B55A5D0C69F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c */,
+				D3B56075DE6B4B0E889854E9 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c */,
+				86571C63F90842A281A7736F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c */,
+				79934798C35E416ABADF73BB /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_callout.c */,
+				6F54AA1092F4413BB7B8FDA3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c */,
+				8112BA9A714D4D3481880CD0 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.c */,
+				36223F3B14D84D8884F22813 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c */,
+				29DFC45C607A42DDAE709788 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c */,
+				4995100E3F824D189F108C5F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c */,
+				C5430FF1C44C4E73889CCFC3 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c */,
+				CAC782F839854BBB8E03ADC9 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.c */,
+				157D38CE158A4D0E9BA3A299 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sha1.c */,
+				7F93F24814184767B238383F /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c */,
+				3611CB98403E499781A2D3A4 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c */,
+				8A3E7E3A962A4F3FBA834F4E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c */,
+				11E511A81E9B4D4C95E2FED8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_userspace.c */,
+				3CB594D408A84A6FBCED2AE5 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c */,
+				B67ACDB8F38E4BF9BC390732 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c */,
+				8C7D8C7279B3437DA1B5C5EC /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c */,
+				3697395FA505458788D59AD8 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_environment.c */,
+				525788CB704D47D5905274CD /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c */,
+				756C0BD806AA454FADE1E25E /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_recv_thread.c */,
+				3D4D46570FBE491498F435D2 /* /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0C2DE834B9954058AD7CB42D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0F409D2E224D434DBBAB736C /* ZERO_CHECK */;
+			targetProxy = B1B5295A8C78478496DFA8FE /* PBXContainerItemProxy */;
+		};
+		66AD34A77B8A4C1F9E361122 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 90C5B391DF0B46A78910083A /* ALL_BUILD */;
+			targetProxy = 238CD83229214DE1A0ED299A /* PBXContainerItemProxy */;
+		};
+		985323E581034286A80AB13E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0F409D2E224D434DBBAB736C /* ZERO_CHECK */;
+			targetProxy = 60C69FCD0B0142BDA06FEADD /* PBXContainerItemProxy */;
+		};
+		D10B9CF703AF44F0A84A1948 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 09CFCF3BC7854EE186CE0346 /* usrsctp-static */;
+			targetProxy = FA48C5BD597443B5A66452BD /* PBXContainerItemProxy */;
+		};
+		F0251488B54D4CA8A5B24B90 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0F409D2E224D434DBBAB736C /* ZERO_CHECK */;
+			targetProxy = D6D78FD3E2C54F1287089762 /* PBXContainerItemProxy */;
+		};
+		F95BD20E678A4AD5AFA60631 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 545D60B0B7D945C1B75FC216 /* usrsctp */;
+			targetProxy = 35862C6655EF4C289A6E8E92 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		116B55328A004DCEA397D0CD /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1.0.0;
+				DYLIB_CURRENT_VERSION = 1.0.0;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", usrsctp_EXPORTS, __Userspace__, __Userspace_os_Darwin, _GNU_SOURCE, HAVE_SA_LEN, HAVE_SIN_LEN, HAVE_SIN6_LEN, HAVE_SCONN_LEN, __APPLE_USE_RFC_2292, SCTP_DEBUG, INET, INET6, SCTP_SIMPLE_ALLOCATOR, SCTP_PROCESS_LEVEL_LOCKS, );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				OTHER_CFLAGS = " -pedantic -Wall -std=c99 -Werror        -DNDEBUG -fPIC   -U__APPLE__";
+				OTHER_LDFLAGS = " -dynamiclib -Wl,-headerpad_max_install_names -install_name /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib/RelWithDebInfo/libusrsctp.1.dylib  ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = usrsctp.1.0.0;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = RelWithDebInfo;
+		};
+		1783281F96B7436EB0D7DD4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Release;
+		};
+		331F145817874F62AA577699 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk;
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib/build;
+			};
+			name = Debug;
+		};
+		3356E571D6B44CF289FF6E80 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", __Userspace__, __Userspace_os_Darwin, _GNU_SOURCE, HAVE_SA_LEN, HAVE_SIN_LEN, HAVE_SIN6_LEN, HAVE_SCONN_LEN, __APPLE_USE_RFC_2292, SCTP_DEBUG, INET, INET6, SCTP_SIMPLE_ALLOCATOR, SCTP_PROCESS_LEVEL_LOCKS, );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = " -pedantic -Wall -std=c99 -Werror     -DNDEBUG   -U__APPLE__";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = usrsctp;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = MinSizeRel;
+		};
+		3BB55E51CCD3462295EAAA3F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", __Userspace__, __Userspace_os_Darwin, _GNU_SOURCE, HAVE_SA_LEN, HAVE_SIN_LEN, HAVE_SIN6_LEN, HAVE_SCONN_LEN, __APPLE_USE_RFC_2292, SCTP_DEBUG, INET, INET6, SCTP_SIMPLE_ALLOCATOR, SCTP_PROCESS_LEVEL_LOCKS, );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = " -pedantic -Wall -std=c99 -Werror     -DNDEBUG   -U__APPLE__";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = usrsctp;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Release;
+		};
+		4222D8D1534E4753B649594E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Debug;
+		};
+		4E3A546003074B9FAF5B2B4D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Debug;
+		};
+		6B5D68F5E3F547E0ADAD82CD /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = RelWithDebInfo;
+		};
+		71D27776ED9C41DABDE78234 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = MinSizeRel;
+		};
+		89B95C72178D42FEB6D2B1CF /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk;
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib/build;
+			};
+			name = MinSizeRel;
+		};
+		9E54AEAFF8CF4F9AB21DA9FD /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk;
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib/build;
+			};
+			name = RelWithDebInfo;
+		};
+		A1CAC793416B4881BC53F080 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Release;
+		};
+		A1EBC96DD80A485C8FA52AE3 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = MinSizeRel;
+		};
+		A58C506278C44031A20A1309 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1.0.0;
+				DYLIB_CURRENT_VERSION = 1.0.0;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", usrsctp_EXPORTS, __Userspace__, __Userspace_os_Darwin, _GNU_SOURCE, HAVE_SA_LEN, HAVE_SIN_LEN, HAVE_SIN6_LEN, HAVE_SCONN_LEN, __APPLE_USE_RFC_2292, SCTP_DEBUG, INET, INET6, SCTP_SIMPLE_ALLOCATOR, SCTP_PROCESS_LEVEL_LOCKS, );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				OTHER_CFLAGS = " -pedantic -Wall -std=c99 -Werror     -DNDEBUG -fPIC   -U__APPLE__";
+				OTHER_LDFLAGS = " -dynamiclib -Wl,-headerpad_max_install_names -install_name /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib/Release/libusrsctp.1.dylib  ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = usrsctp.1.0.0;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Release;
+		};
+		AFEB749E2FDA42C588ECBC40 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Debug;
+		};
+		C296F9B078CD4692831A0254 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", __Userspace__, __Userspace_os_Darwin, _GNU_SOURCE, HAVE_SA_LEN, HAVE_SIN_LEN, HAVE_SIN6_LEN, HAVE_SCONN_LEN, __APPLE_USE_RFC_2292, SCTP_DEBUG, INET, INET6, SCTP_SIMPLE_ALLOCATOR, SCTP_PROCESS_LEVEL_LOCKS, );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = " -pedantic -Wall -std=c99 -Werror      -U__APPLE__";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = usrsctp;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Debug;
+		};
+		C83B7609A32D4DD5B67BFB3C /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = RelWithDebInfo;
+		};
+		CB15A9046D044B28ACA9B3E3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Release;
+		};
+		D24D2642CED74CE7AC240F3B /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = MinSizeRel;
+		};
+		D81E753EDDC1460ABCA79FAB /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", __Userspace__, __Userspace_os_Darwin, _GNU_SOURCE, HAVE_SA_LEN, HAVE_SIN_LEN, HAVE_SIN6_LEN, HAVE_SCONN_LEN, __APPLE_USE_RFC_2292, SCTP_DEBUG, INET, INET6, SCTP_SIMPLE_ALLOCATOR, SCTP_PROCESS_LEVEL_LOCKS, );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = " -pedantic -Wall -std=c99 -Werror        -DNDEBUG   -U__APPLE__";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = usrsctp;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = RelWithDebInfo;
+		};
+		D9C5835159514CBF8A431F0E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk;
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib/build;
+			};
+			name = Release;
+		};
+		E8808902325340A7B373414D /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = RelWithDebInfo;
+		};
+		E9C410823D5743F3A2143968 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1.0.0;
+				DYLIB_CURRENT_VERSION = 1.0.0;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", usrsctp_EXPORTS, __Userspace__, __Userspace_os_Darwin, _GNU_SOURCE, HAVE_SA_LEN, HAVE_SIN_LEN, HAVE_SIN6_LEN, HAVE_SCONN_LEN, __APPLE_USE_RFC_2292, SCTP_DEBUG, INET, INET6, SCTP_SIMPLE_ALLOCATOR, SCTP_PROCESS_LEVEL_LOCKS, );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				OTHER_CFLAGS = " -pedantic -Wall -std=c99 -Werror    -fPIC   -U__APPLE__";
+				OTHER_LDFLAGS = " -dynamiclib -Wl,-headerpad_max_install_names -install_name /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib/Debug/libusrsctp.1.dylib  ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = usrsctp.1.0.0;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Debug;
+		};
+		FF5F5DF2439D442B86069471 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1.0.0;
+				DYLIB_CURRENT_VERSION = 1.0.0;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", usrsctp_EXPORTS, __Userspace__, __Userspace_os_Darwin, _GNU_SOURCE, HAVE_SA_LEN, HAVE_SIN_LEN, HAVE_SIN6_LEN, HAVE_SCONN_LEN, __APPLE_USE_RFC_2292, SCTP_DEBUG, INET, INET6, SCTP_SIMPLE_ALLOCATOR, SCTP_PROCESS_LEVEL_LOCKS, );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet, /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/usrsctplib/usrsctplib/netinet6, );
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				OTHER_CFLAGS = " -pedantic -Wall -std=c99 -Werror     -DNDEBUG -fPIC   -U__APPLE__";
+				OTHER_LDFLAGS = " -dynamiclib -Wl,-headerpad_max_install_names -install_name /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib/MinSizeRel/libusrsctp.1.dylib  ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = usrsctp.1.0.0;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/youenn/Apple/Safari/OpenSource/Source/ThirdParty/libwebrtc/third_party/usrsctp/build/usrsctplib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = MinSizeRel;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2CB38DC0037D4A55A7A10246 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AFEB749E2FDA42C588ECBC40 /* Debug */,
+				CB15A9046D044B28ACA9B3E3 /* Release */,
+				D24D2642CED74CE7AC240F3B /* MinSizeRel */,
+				6B5D68F5E3F547E0ADAD82CD /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4EFC1C6044D649659A0A97DB /* Build configuration list for PBXNativeTarget "usrsctp-static" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C296F9B078CD4692831A0254 /* Debug */,
+				3BB55E51CCD3462295EAAA3F /* Release */,
+				3356E571D6B44CF289FF6E80 /* MinSizeRel */,
+				D81E753EDDC1460ABCA79FAB /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7B85835E0B5745AE8D1CCA16 /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4E3A546003074B9FAF5B2B4D /* Debug */,
+				A1CAC793416B4881BC53F080 /* Release */,
+				A1EBC96DD80A485C8FA52AE3 /* MinSizeRel */,
+				C83B7609A32D4DD5B67BFB3C /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A70821A20C104ED08F048433 /* Build configuration list for PBXProject "usrsctplib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				331F145817874F62AA577699 /* Debug */,
+				D9C5835159514CBF8A431F0E /* Release */,
+				89B95C72178D42FEB6D2B1CF /* MinSizeRel */,
+				9E54AEAFF8CF4F9AB21DA9FD /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AC93ECA786F745E280AE832B /* Build configuration list for PBXNativeTarget "usrsctp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9C410823D5743F3A2143968 /* Debug */,
+				A58C506278C44031A20A1309 /* Release */,
+				FF5F5DF2439D442B86069471 /* MinSizeRel */,
+				116B55328A004DCEA397D0CD /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DFE5E94E56114B65B33803A5 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4222D8D1534E4753B649594E /* Debug */,
+				1783281F96B7436EB0D7DD4B /* Release */,
+				71D27776ED9C41DABDE78234 /* MinSizeRel */,
+				E8808902325340A7B373414D /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 62A09F447B284CDBB4EF630E /* Project object */;
+}

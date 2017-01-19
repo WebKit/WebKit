@@ -1,0 +1,28 @@
+URL: https://github.com/gflags/gflags
+Version: 2.1.2
+License: New BSD
+License File: LICENSE
+
+Description:
+The gflags package contains a library that implements commandline
+flags processing. As such it's a replacement for getopt(). It has
+increased flexibility, including built-in support for C++ types like
+string, and the ability to define flags in the source file in which
+they're used.
+
+Local Modifications: None
+
+
+How to update platform configuration files:
+The gen/ directory contains pre-generated configuration header files.
+Historically, all operating systems and architectures have generated
+similar configurations except for Windows. This is why there's only
+posix and win directories below gen/.
+When rolling gflags to a newer version, it's a good idea to check if
+new configuration files needs to be generated as well.
+Do this by running ./configure in the newly checked out version of
+gflags. Then diff the generated files with the ones below gen/.
+If you notice a diff, update the files with the updated ones.
+If you suspect platform dependend changes other than Windows, you'll
+have to checkout gflags on the other platforms as well and run
+./configure there too.

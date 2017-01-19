@@ -1,0 +1,25 @@
+{
+  "tests": [
+    {
+      "app": "audio_decoder_unittests"
+    },
+    {
+      "app": "common_audio_unittests"
+    },
+    {
+      "app": "common_video_unittests"
+    },
+    {
+      "app": "modules_tests"
+    },
+    {
+      "app": "rtc_pc_unittests"
+    },
+    {
+      "app": "system_wrappers_unittests"
+    },
+    {
+      "app": "voice_engine_unittests"
+    }
+  ]
+}

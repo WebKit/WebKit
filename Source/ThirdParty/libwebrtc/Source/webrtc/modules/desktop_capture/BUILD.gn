@@ -1,0 +1,228 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//build/config/ui.gni")
+import("../../build/webrtc.gni")
+
+use_desktop_capture_differ_sse2 =
+    !is_ios && (current_cpu == "x86" || current_cpu == "x64")
+
+rtc_static_library("primitives") {
+  sources = [
+    "desktop_capture_types.h",
+    "desktop_frame.cc",
+    "desktop_frame.h",
+    "desktop_geometry.cc",
+    "desktop_geometry.h",
+    "desktop_region.cc",
+    "desktop_region.h",
+    "shared_desktop_frame.cc",
+    "shared_desktop_frame.h",
+  ]
+
+  deps = [
+    "../../base:rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
+  ]
+}
+
+if (rtc_include_tests) {
+  source_set("rgba_color") {
+    testonly = true
+
+    public_deps = [
+      ":desktop_capture",
+    ]
+
+    sources = [
+      "rgba_color.cc",
+      "rgba_color.h",
+    ]
+  }
+
+  source_set("screen_drawer") {
+    testonly = true
+
+    public_deps = [
+      ":rgba_color",
+    ]
+
+    sources = [
+      "screen_drawer.cc",
+      "screen_drawer.h",
+      "screen_drawer_linux.cc",
+      "screen_drawer_mac.cc",
+      "screen_drawer_win.cc",
+    ]
+  }
+
+  source_set("desktop_capture_mock") {
+    testonly = true
+
+    public_deps = [
+      ":desktop_capture",
+      ":rgba_color",
+      "//testing/gmock",
+    ]
+
+    sources = [
+      "desktop_frame_generator.cc",
+      "desktop_frame_generator.h",
+      "fake_desktop_capturer.cc",
+      "fake_desktop_capturer.h",
+      "mock_desktop_capturer_callback.cc",
+      "mock_desktop_capturer_callback.h",
+      "screen_capturer_mock_objects.h",
+    ]
+  }
+}
+
+rtc_static_library("desktop_capture") {
+  sources = [
+    "cropped_desktop_frame.cc",
+    "cropped_desktop_frame.h",
+    "cropping_window_capturer.cc",
+    "cropping_window_capturer.h",
+    "cropping_window_capturer_win.cc",
+    "desktop_and_cursor_composer.cc",
+    "desktop_and_cursor_composer.h",
+    "desktop_capture_options.cc",
+    "desktop_capture_options.h",
+    "desktop_capturer.cc",
+    "desktop_capturer.h",
+    "desktop_frame_win.cc",
+    "desktop_frame_win.h",
+    "mac/desktop_configuration.h",
+    "mac/desktop_configuration.mm",
+    "mac/desktop_configuration_monitor.cc",
+    "mac/desktop_configuration_monitor.h",
+    "mac/full_screen_chrome_window_detector.cc",
+    "mac/full_screen_chrome_window_detector.h",
+    "mac/scoped_pixel_buffer_object.cc",
+    "mac/scoped_pixel_buffer_object.h",
+    "mac/window_list_utils.cc",
+    "mac/window_list_utils.h",
+    "mouse_cursor.cc",
+    "mouse_cursor.h",
+    "mouse_cursor_monitor.h",
+    "mouse_cursor_monitor_mac.mm",
+    "mouse_cursor_monitor_win.cc",
+    "screen_capture_frame_queue.h",
+    "screen_capturer_helper.cc",
+    "screen_capturer_helper.h",
+    "screen_capturer_mac.mm",
+    "screen_capturer_win.cc",
+    "shared_memory.cc",
+    "shared_memory.h",
+    "win/cursor.cc",
+    "win/cursor.h",
+    "win/d3d_device.cc",
+    "win/d3d_device.h",
+    "win/desktop.cc",
+    "win/desktop.h",
+    "win/dxgi_adapter_duplicator.cc",
+    "win/dxgi_adapter_duplicator.h",
+    "win/dxgi_duplicator_controller.cc",
+    "win/dxgi_duplicator_controller.h",
+    "win/dxgi_output_duplicator.cc",
+    "win/dxgi_output_duplicator.h",
+    "win/dxgi_texture.cc",
+    "win/dxgi_texture.h",
+    "win/dxgi_texture_mapping.cc",
+    "win/dxgi_texture_mapping.h",
+    "win/dxgi_texture_staging.cc",
+    "win/dxgi_texture_staging.h",
+    "win/scoped_gdi_object.h",
+    "win/scoped_thread_desktop.cc",
+    "win/scoped_thread_desktop.h",
+    "win/screen_capture_utils.cc",
+    "win/screen_capture_utils.h",
+    "win/screen_capturer_win_directx.cc",
+    "win/screen_capturer_win_directx.h",
+    "win/screen_capturer_win_gdi.cc",
+    "win/screen_capturer_win_gdi.h",
+    "win/screen_capturer_win_magnifier.cc",
+    "win/screen_capturer_win_magnifier.h",
+    "win/window_capture_utils.cc",
+    "win/window_capture_utils.h",
+    "window_capturer_mac.mm",
+    "window_capturer_win.cc",
+  ]
+
+  if (use_x11) {
+    sources += [
+      "mouse_cursor_monitor_x11.cc",
+      "screen_capturer_x11.cc",
+      "window_capturer_x11.cc",
+      "x11/shared_x_display.cc",
+      "x11/shared_x_display.h",
+      "x11/x_error_trap.cc",
+      "x11/x_error_trap.h",
+      "x11/x_server_pixel_buffer.cc",
+      "x11/x_server_pixel_buffer.h",
+    ]
+    configs += [ "//build/config/linux:x11" ]
+  }
+
+  if (!is_win && !is_mac && !use_x11) {
+    sources += [
+      "mouse_cursor_monitor_null.cc",
+      "screen_capturer_null.cc",
+      "window_capturer_null.cc",
+    ]
+  }
+
+  if (!is_ios) {
+    sources += [
+      "desktop_capturer_differ_wrapper.cc",
+      "desktop_capturer_differ_wrapper.h",
+      "differ_block.cc",
+      "differ_block.h",
+    ]
+  }
+
+  if (is_mac) {
+    libs = [
+      "AppKit.framework",
+      "IOKit.framework",
+      "OpenGL.framework",
+    ]
+  }
+
+  if (is_win) {
+    libs = [
+      "d3d11.lib",
+      "dxgi.lib",
+    ]
+  }
+
+  deps = [
+    ":primitives",
+    "../../base:rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
+    "../../system_wrappers",
+  ]
+
+  if (use_desktop_capture_differ_sse2) {
+    deps += [ ":desktop_capture_differ_sse2" ]
+  }
+}
+
+if (use_desktop_capture_differ_sse2) {
+  # Have to be compiled as a separate target because it needs to be compiled
+  # with SSE2 enabled.
+  rtc_static_library("desktop_capture_differ_sse2") {
+    visibility = [ ":*" ]
+    sources = [
+      "differ_vector_sse2.cc",
+      "differ_vector_sse2.h",
+    ]
+
+    if (is_posix) {
+      cflags = [ "-msse2" ]
+    }
+  }
+}

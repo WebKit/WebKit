@@ -1,0 +1,14 @@
+*.pyc
+*~
+.*.sw?
+.DS_Store
+.code_review_password
+.cproject
+.metadata
+.project
+.pydevproject
+.settings
+.status_password
+/third_party/gaeunit
+/third_party/google-visualization-python
+/third_party/oauth2

@@ -1,0 +1,33 @@
+unchanged:
+--- protobuf-cleaned/src/google/protobuf/generated_message_util.cc	2015-12-30 13:21:46.000000000 -0800
++++ protobuf-patched/src/google/protobuf/generated_message_util.cc	2016-03-31 13:25:32.180017848 -0700
+@@ -60,6 +60,12 @@
+   OnShutdown(&DeleteEmptyString);
+ }
+ 
++const ::std::string& GetEmptyString() {
++  ::google::protobuf::GoogleOnceInit(&empty_string_once_init_, &InitEmptyString);
++  return GetEmptyStringAlreadyInited();
++}
++
++
+ int StringSpaceUsedExcludingSelf(const string& str) {
+   const void* start = &str;
+   const void* end = &str + 1;
+only in patch2:
+unchanged:
+--- protobuf-cleaned/src/google/protobuf/generated_message_util.h	2015-12-30 13:21:46.000000000 -0800
++++ protobuf-patched/src/google/protobuf/generated_message_util.h	2016-03-31 13:25:40.252007316 -0700
+@@ -84,10 +84,8 @@
+   assert(empty_string_ != NULL);
+   return *empty_string_;
+ }
+-LIBPROTOBUF_EXPORT inline const ::std::string& GetEmptyString() {
+-  ::google::protobuf::GoogleOnceInit(&empty_string_once_init_, &InitEmptyString);
+-  return GetEmptyStringAlreadyInited();
+-}
++
++LIBPROTOBUF_EXPORT const ::std::string& GetEmptyString();
+ 
+ LIBPROTOBUF_EXPORT int StringSpaceUsedExcludingSelf(const string& str);
+ 

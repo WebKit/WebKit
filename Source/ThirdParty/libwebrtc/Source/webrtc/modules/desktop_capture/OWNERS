@@ -1,0 +1,9 @@
+alexeypa@chromium.org
+jiayl@webrtc.org
+sergeyu@chromium.org
+wez@chromium.org
+
+# These are for the common case of adding or renaming files. If you're doing
+# structural changes, please get a review from a reviewer in this file.
+per-file *.gn=*
+per-file *.gni=*

@@ -1,0 +1,9 @@
+include_rules = [
+  "+WebRTC",
+  "+webrtc/api",
+  "+webrtc/common_video/include",
+  "+webrtc/common_video/h264",
+  "+webrtc/media",
+  "+webrtc/modules/video_coding",
+  "+webrtc/system_wrappers",
+]

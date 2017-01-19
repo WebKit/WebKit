@@ -1,0 +1,198 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../build/webrtc.gni")
+
+# Note this target is missing an implementation for the video capture.
+# Targets must link with either 'video_capture' or
+# 'video_capture_internal_impl' depending on whether they want to
+# use the internal capturer.
+rtc_static_library("video_capture_module") {
+  sources = [
+    "device_info_impl.cc",
+    "device_info_impl.h",
+    "video_capture.h",
+    "video_capture_config.h",
+    "video_capture_defines.h",
+    "video_capture_delay.h",
+    "video_capture_factory.cc",
+    "video_capture_factory.h",
+    "video_capture_impl.cc",
+    "video_capture_impl.h",
+  ]
+
+  deps = [
+    "../..:webrtc_common",
+    "../../common_video",
+    "../../system_wrappers",
+    "../utility",
+  ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+}
+
+rtc_static_library("video_capture") {
+  sources = [
+    "external/device_info_external.cc",
+    "external/video_capture_external.cc",
+  ]
+
+  deps = [
+    ":video_capture_module",
+    "../../system_wrappers",
+  ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+}
+
+if (!build_with_chromium) {
+  config("video_capture_internal_impl_config") {
+    if (is_ios || is_mac) {
+      libs = [
+        "AVFoundation.framework",
+        "CoreMedia.framework",
+        "CoreVideo.framework",
+      ]
+    }
+  }
+
+  config("video_capture_internal_impl_warnings_config") {
+    if (is_win && is_clang) {
+      cflags = [
+        "-Wno-comment",
+        "-Wno-ignored-attributes",
+
+        # See https://bugs.chromium.org/p/webrtc/issues/detail?id=6269
+        # for -Wno-ignored-qualifiers
+        "-Wno-ignored-qualifiers",
+        "-Wno-microsoft-extra-qualification",
+        "-Wno-missing-braces",
+        "-Wno-overloaded-virtual",
+        "-Wno-reorder",
+        "-Wno-writable-strings",
+      ]
+    }
+  }
+
+  rtc_static_library("video_capture_internal_impl") {
+    configs += [ ":video_capture_internal_impl_warnings_config" ]
+
+    deps = [
+      ":video_capture_module",
+      "../../system_wrappers",
+    ]
+
+    if (is_linux) {
+      sources = [
+        "linux/device_info_linux.cc",
+        "linux/device_info_linux.h",
+        "linux/video_capture_linux.cc",
+        "linux/video_capture_linux.h",
+      ]
+      deps += [ "../..:webrtc_common" ]
+    }
+    if (is_win) {
+      sources = [
+        "windows/device_info_ds.cc",
+        "windows/device_info_ds.h",
+        "windows/device_info_mf.cc",
+        "windows/device_info_mf.h",
+        "windows/help_functions_ds.cc",
+        "windows/help_functions_ds.h",
+        "windows/sink_filter_ds.cc",
+        "windows/sink_filter_ds.h",
+        "windows/video_capture_ds.cc",
+        "windows/video_capture_ds.h",
+        "windows/video_capture_factory_windows.cc",
+        "windows/video_capture_mf.cc",
+        "windows/video_capture_mf.h",
+      ]
+
+      libs = [ "Strmiids.lib" ]
+
+      deps += [ "//third_party/winsdk_samples" ]
+    }
+    if (is_ios || is_mac) {
+      sources = [
+        "objc/device_info.h",
+        "objc/device_info.mm",
+        "objc/device_info_objc.h",
+        "objc/device_info_objc.mm",
+        "objc/rtc_video_capture_objc.h",
+        "objc/rtc_video_capture_objc.mm",
+        "objc/video_capture.h",
+        "objc/video_capture.mm",
+      ]
+
+      cflags = [
+        "-fobjc-arc",  # CLANG_ENABLE_OBJC_ARC = YES.
+
+        # To avoid warnings for deprecated videoMinFrameDuration and
+        # videoMaxFrameDuration properties in iOS 7.0.
+        # See webrtc:3705 for more details.
+        "-Wno-deprecated-declarations",
+      ]
+    }
+
+    all_dependent_configs = [ ":video_capture_internal_impl_config" ]
+
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+
+  if (!is_android && rtc_include_tests) {
+    rtc_test("video_capture_tests") {
+      sources = [
+        "test/video_capture_unittest.cc",
+      ]
+
+      cflags = []
+      if (is_linux || is_mac) {
+        cflags += [ "-Wno-write-strings" ]
+      }
+
+      ldflags = []
+      if (is_linux || is_mac) {
+        ldflags += [
+          "-lpthread",
+          "-lm",
+        ]
+      }
+      if (is_linux) {
+        ldflags += [
+          "-lrt",
+          "-lXext",
+          "-lX11",
+        ]
+      }
+
+      deps = [
+        ":video_capture_internal_impl",
+        ":video_capture_module",
+        "../../system_wrappers:system_wrappers_default",
+        "../../test:video_test_common",
+        "../utility",
+        "//testing/gtest",
+      ]
+      deps += [ "//webrtc/test:test_support_main" ]
+
+      if (!build_with_chromium && is_clang) {
+        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+      }
+    }
+  }
+}

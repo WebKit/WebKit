@@ -1,0 +1,229 @@
+syntax = "proto2";
+option optimize_for = LITE_RUNTIME;
+package webrtc.rtclog;
+
+enum MediaType {
+  ANY = 0;
+  AUDIO = 1;
+  VIDEO = 2;
+  DATA = 3;
+}
+
+// This is the main message to dump to a file, it can contain multiple event
+// messages, but it is possible to append multiple EventStreams (each with a
+// single event) to a file.
+// This has the benefit that there's no need to keep all data in memory.
+message EventStream {
+  repeated Event stream = 1;
+}
+
+message Event {
+  // required - Elapsed wallclock time in us since the start of the log.
+  optional int64 timestamp_us = 1;
+
+  // The different types of events that can occur, the UNKNOWN_EVENT entry
+  // is added in case future EventTypes are added, in that case old code will
+  // receive the new events as UNKNOWN_EVENT.
+  enum EventType {
+    UNKNOWN_EVENT = 0;
+    LOG_START = 1;
+    LOG_END = 2;
+    RTP_EVENT = 3;
+    RTCP_EVENT = 4;
+    AUDIO_PLAYOUT_EVENT = 5;
+    BWE_PACKET_LOSS_EVENT = 6;
+    BWE_PACKET_DELAY_EVENT = 7;
+    VIDEO_RECEIVER_CONFIG_EVENT = 8;
+    VIDEO_SENDER_CONFIG_EVENT = 9;
+    AUDIO_RECEIVER_CONFIG_EVENT = 10;
+    AUDIO_SENDER_CONFIG_EVENT = 11;
+  }
+
+  // required - Indicates the type of this event
+  optional EventType type = 2;
+
+  // optional - but required if type == RTP_EVENT
+  optional RtpPacket rtp_packet = 3;
+
+  // optional - but required if type == RTCP_EVENT
+  optional RtcpPacket rtcp_packet = 4;
+
+  // optional - but required if type == AUDIO_PLAYOUT_EVENT
+  optional AudioPlayoutEvent audio_playout_event = 5;
+
+  // optional - but required if type == BWE_PACKET_LOSS_EVENT
+  optional BwePacketLossEvent bwe_packet_loss_event = 6;
+
+  // optional - but required if type == VIDEO_RECEIVER_CONFIG_EVENT
+  optional VideoReceiveConfig video_receiver_config = 8;
+
+  // optional - but required if type == VIDEO_SENDER_CONFIG_EVENT
+  optional VideoSendConfig video_sender_config = 9;
+
+  // optional - but required if type == AUDIO_RECEIVER_CONFIG_EVENT
+  optional AudioReceiveConfig audio_receiver_config = 10;
+
+  // optional - but required if type == AUDIO_SENDER_CONFIG_EVENT
+  optional AudioSendConfig audio_sender_config = 11;
+}
+
+message RtpPacket {
+  // required - True if the packet is incoming w.r.t. the user logging the data
+  optional bool incoming = 1;
+
+  // required
+  optional MediaType type = 2;
+
+  // required - The size of the packet including both payload and header.
+  optional uint32 packet_length = 3;
+
+  // required - The RTP header only.
+  optional bytes header = 4;
+
+  // Do not add code to log user payload data without a privacy review!
+}
+
+message RtcpPacket {
+  // required - True if the packet is incoming w.r.t. the user logging the data
+  optional bool incoming = 1;
+
+  // required
+  optional MediaType type = 2;
+
+  // required - The whole packet including both payload and header.
+  optional bytes packet_data = 3;
+}
+
+message AudioPlayoutEvent {
+  // required - The SSRC of the audio stream associated with the playout event.
+  optional uint32 local_ssrc = 2;
+}
+
+message BwePacketLossEvent {
+  // required - Bandwidth estimate (in bps) after the update.
+  optional int32 bitrate = 1;
+
+  // required - Fraction of lost packets since last receiver report
+  // computed as floor( 256 * (#lost_packets / #total_packets) ).
+  // The possible values range from 0 to 255.
+  optional uint32 fraction_loss = 2;
+
+  // TODO(terelius): Is this really needed? Remove or make optional?
+  // required - Total number of packets that the BWE update is based on.
+  optional int32 total_packets = 3;
+}
+
+// TODO(terelius): Video and audio streams could in principle share SSRC,
+// so identifying a stream based only on SSRC might not work.
+// It might be better to use a combination of SSRC and media type
+// or SSRC and port number, but for now we will rely on SSRC only.
+message VideoReceiveConfig {
+  // required - Synchronization source (stream identifier) to be received.
+  optional uint32 remote_ssrc = 1;
+  // required - Sender SSRC used for sending RTCP (such as receiver reports).
+  optional uint32 local_ssrc = 2;
+
+  // Compound mode is described by RFC 4585 and reduced-size
+  // RTCP mode is described by RFC 5506.
+  enum RtcpMode {
+    RTCP_COMPOUND = 1;
+    RTCP_REDUCEDSIZE = 2;
+  }
+  // required - RTCP mode to use.
+  optional RtcpMode rtcp_mode = 3;
+
+  // required - Receiver estimated maximum bandwidth.
+  optional bool remb = 4;
+
+  // Map from video RTP payload type -> RTX config.
+  repeated RtxMap rtx_map = 5;
+
+  // RTP header extensions used for the received stream.
+  repeated RtpHeaderExtension header_extensions = 6;
+
+  // List of decoders associated with the stream.
+  repeated DecoderConfig decoders = 7;
+}
+
+// Maps decoder names to payload types.
+message DecoderConfig {
+  // required
+  optional string name = 1;
+
+  // required
+  optional int32 payload_type = 2;
+}
+
+// Maps RTP header extension names to numerical IDs.
+message RtpHeaderExtension {
+  // required
+  optional string name = 1;
+
+  // required
+  optional int32 id = 2;
+}
+
+// RTX settings for incoming video payloads that may be received.
+// RTX is disabled if there's no config present.
+message RtxConfig {
+  // required - SSRC to use for the RTX stream.
+  optional uint32 rtx_ssrc = 1;
+
+  // required - Payload type to use for the RTX stream.
+  optional int32 rtx_payload_type = 2;
+}
+
+message RtxMap {
+  // required
+  optional int32 payload_type = 1;
+
+  // required
+  optional RtxConfig config = 2;
+}
+
+message VideoSendConfig {
+  // Synchronization source (stream identifier) for outgoing stream.
+  // One stream can have several ssrcs for e.g. simulcast.
+  // At least one ssrc is required.
+  repeated uint32 ssrcs = 1;
+
+  // RTP header extensions used for the outgoing stream.
+  repeated RtpHeaderExtension header_extensions = 2;
+
+  // List of SSRCs for retransmitted packets.
+  repeated uint32 rtx_ssrcs = 3;
+
+  // required if rtx_ssrcs is used - Payload type for retransmitted packets.
+  optional int32 rtx_payload_type = 4;
+
+  // required - Encoder associated with the stream.
+  optional EncoderConfig encoder = 5;
+}
+
+// Maps encoder names to payload types.
+message EncoderConfig {
+  // required
+  optional string name = 1;
+
+  // required
+  optional int32 payload_type = 2;
+}
+
+message AudioReceiveConfig {
+  // required - Synchronization source (stream identifier) to be received.
+  optional uint32 remote_ssrc = 1;
+
+  // required - Sender SSRC used for sending RTCP (such as receiver reports).
+  optional uint32 local_ssrc = 2;
+
+  // RTP header extensions used for the received audio stream.
+  repeated RtpHeaderExtension header_extensions = 3;
+}
+
+message AudioSendConfig {
+  // required - Synchronization source (stream identifier) for outgoing stream.
+  optional uint32 ssrc = 1;
+
+  // RTP header extensions used for the outgoing audio stream.
+  repeated RtpHeaderExtension header_extensions = 2;
+}

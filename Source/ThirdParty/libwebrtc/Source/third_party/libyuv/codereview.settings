@@ -1,0 +1,11 @@
+# This file is used by gcl to get repository specific information.
+CODE_REVIEW_SERVER: codereview.chromium.org
+#CC_LIST:
+VIEW_VC: https://chromium.googlesource.com/libyuv/libyuv/+/
+#STATUS:
+FORCE_HTTPS_COMMIT_URL: True
+PROJECT: libyuv
+TRY_ON_UPLOAD: False
+TRYSERVER_ROOT: src
+#GITCL_PREUPLOAD:
+#GITCL_PREDCOMMIT:

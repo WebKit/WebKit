@@ -1,0 +1,15 @@
+name: "android-cmake"
+description:
+    "android-cmake is a collection of CMake scripts for building against the "
+    "Android NDK."
+
+third_party {
+  url {
+    type: HOMEPAGE
+    value: "https://github.com/taka-no-me/android-cmake/"
+  }
+  version: "556cc14296c226f753a3778d99d8b60778b7df4f"
+  last_upgrade_date { year: 2016 month: 6 day: 2 }
+
+  local_modifications: "LICENSE file has been created for compliance purposes. Not included in original distribution."
+}

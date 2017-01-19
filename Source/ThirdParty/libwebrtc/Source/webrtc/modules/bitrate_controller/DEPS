@@ -1,0 +1,6 @@
+include_rules = [
+  "+webrtc/base",
+  "+webrtc/call",
+  "+webrtc/logging/rtc_event_log",
+  "+webrtc/system_wrappers",
+]

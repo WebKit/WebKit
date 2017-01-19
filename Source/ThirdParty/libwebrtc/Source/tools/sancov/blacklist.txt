@@ -1,0 +1,21 @@
+#############################################################################
+# sancov blacklist.
+# Please think twice before you add or remove these rules.
+
+#############################################################################
+# no coverage report for third party
+src:*/chromium/*
+src:*/third_party/*
+
+# OpenH264 triggers some errors that are out of our control.
+src:*/third_party/ffmpeg/libavcodec/*
+src:*/third_party/openh264/*
+
+#############################################################################
+# Ignore system libraries.
+src:*/usr/*
+
+#############################################################################
+# Ignore test source.
+src:*/test/*
+src:*_unittest.cc

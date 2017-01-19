@@ -1,0 +1,10 @@
+perkj@webrtc.org
+henrika@webrtc.org
+henrikg@webrtc.org
+mflodman@webrtc.org
+niklas.enbom@webrtc.org
+
+# These are for the common case of adding or renaming files. If you're doing
+# structural changes, please get a review from a reviewer in this file.
+per-file *.gn=*
+per-file *.gni=*

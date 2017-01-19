@@ -1,0 +1,101 @@
+#!/usr/bin/env python
+#
+# Copyright 2014 The LibYuv Project Authors. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS. All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+# This script is used to run GYP for libyuv. It contains selected parts of the
+# main function from the src/build/gyp_chromium file.
+
+import glob
+import os
+import shlex
+import sys
+
+checkout_root = os.path.dirname(os.path.realpath(__file__))
+
+sys.path.insert(0, os.path.join(checkout_root, 'build'))
+import gyp_chromium
+import gyp_helper
+import vs_toolchain
+
+sys.path.insert(0, os.path.join(checkout_root, 'tools', 'gyp', 'pylib'))
+import gyp
+
+def GetSupplementalFiles():
+  """Returns a list of the supplemental files that are included in all GYP
+  sources."""
+  # Can't use the one in gyp_chromium since the directory location of the root
+  # is different.
+  return glob.glob(os.path.join(checkout_root, '*', 'supplement.gypi'))
+
+
+if __name__ == '__main__':
+  args = sys.argv[1:]
+
+  if int(os.environ.get('GYP_CHROMIUM_NO_ACTION', 0)):
+    print 'Skipping gyp_libyuv due to GYP_CHROMIUM_NO_ACTION env var.'
+    sys.exit(0)
+
+  # This could give false positives since it doesn't actually do real option
+  # parsing.  Oh well.
+  gyp_file_specified = False
+  for arg in args:
+    if arg.endswith('.gyp'):
+      gyp_file_specified = True
+      break
+
+  # If we didn't get a file, assume 'all.gyp' in the root of the checkout.
+  if not gyp_file_specified:
+    # Because of a bug in gyp, simply adding the abspath to all.gyp doesn't
+    # work, but chdir'ing and adding the relative path does. Spooky :/
+    os.chdir(checkout_root)
+    args.append('all.gyp')
+
+  # There shouldn't be a circular dependency relationship between .gyp files,
+  args.append('--no-circular-check')
+
+  # Default to ninja unless GYP_GENERATORS is set.
+  if not os.environ.get('GYP_GENERATORS'):
+    os.environ['GYP_GENERATORS'] = 'ninja'
+
+  vs2013_runtime_dll_dirs = None
+  if int(os.environ.get('DEPOT_TOOLS_WIN_TOOLCHAIN', '1')):
+    vs2013_runtime_dll_dirs = vs_toolchain.SetEnvironmentAndGetRuntimeDllDirs()
+
+  # Enforce gyp syntax checking. This adds about 20% execution time.
+  args.append('--check')
+
+  supplemental_includes = gyp_chromium.GetSupplementalFiles()
+  gyp_vars_dict = gyp_chromium.GetGypVars(supplemental_includes)
+
+  # Automatically turn on crosscompile support for platforms that need it.
+  if all(('ninja' in os.environ.get('GYP_GENERATORS', ''),
+          gyp_vars_dict.get('OS') in ['android', 'ios'],
+          'GYP_CROSSCOMPILE' not in os.environ)):
+    os.environ['GYP_CROSSCOMPILE'] = '1'
+
+  args.extend(['-I' + i for i in
+               gyp_chromium.additional_include_files(supplemental_includes,
+                                                     args)])
+
+  # Set the gyp depth variable to the root of the checkout.
+  args.append('--depth=' + os.path.relpath(checkout_root))
+
+  print 'Updating projects from gyp files...'
+  sys.stdout.flush()
+
+  # Off we go...
+  gyp_rc = gyp.main(args)
+
+  if vs2013_runtime_dll_dirs:
+    x64_runtime, x86_runtime = vs2013_runtime_dll_dirs
+    vs_toolchain.CopyVsRuntimeDlls(
+        os.path.join(checkout_root, gyp_chromium.GetOutputDirectory()),
+        (x86_runtime, x64_runtime))
+
+  sys.exit(gyp_rc)

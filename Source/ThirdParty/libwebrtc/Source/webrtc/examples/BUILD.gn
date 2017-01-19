@@ -1,0 +1,611 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../build/webrtc.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+} else if (is_mac) {
+  import("//build/config/mac/rules.gni")
+} else if (is_ios) {
+  import("//build/config/ios/rules.gni")
+}
+if (is_linux) {
+  import("//build/config/linux/pkg_config.gni")
+}
+
+group("examples") {
+  # This target shall build all targets in examples.
+  testonly = true
+  public_deps = []
+
+  if (is_android) {
+    public_deps += [
+      ":AppRTCMobile",
+      ":AppRTCMobileTest",
+    ]
+  }
+
+  if (!build_with_chromium) {
+    public_deps += [ ":stun_prober" ]
+  }
+
+  if (is_ios || (is_mac && target_cpu != "x86")) {
+    public_deps += [ ":AppRTCMobile" ]
+  }
+
+  if (is_linux || is_win) {
+    public_deps += [
+      ":peerconnection_client",
+      ":peerconnection_server",
+      ":relayserver",
+      ":stunserver",
+      ":turnserver",
+    ]
+  }
+}
+
+if (is_android) {
+  android_apk("AppRTCMobile") {
+    apk_name = "AppRTCMobile"
+    android_manifest = "androidapp/AndroidManifest.xml"
+
+    deps = [
+      ":AppRTCMobile_javalib",
+      ":AppRTCMobile_resources",
+      "//base:base_java",
+      "//webrtc/base:base_java",
+    ]
+
+    shared_libraries = [ "//webrtc/api:libjingle_peerconnection_so" ]
+  }
+
+  android_library("AppRTCMobile_javalib") {
+    java_files = [
+      "androidapp/src/org/appspot/apprtc/AppRTCAudioManager.java",
+      "androidapp/src/org/appspot/apprtc/AppRTCClient.java",
+      "androidapp/src/org/appspot/apprtc/AppRTCProximitySensor.java",
+      "androidapp/src/org/appspot/apprtc/CallActivity.java",
+      "androidapp/src/org/appspot/apprtc/CallFragment.java",
+      "androidapp/src/org/appspot/apprtc/CaptureQualityController.java",
+      "androidapp/src/org/appspot/apprtc/ConnectActivity.java",
+      "androidapp/src/org/appspot/apprtc/CpuMonitor.java",
+      "androidapp/src/org/appspot/apprtc/DirectRTCClient.java",
+      "androidapp/src/org/appspot/apprtc/HudFragment.java",
+      "androidapp/src/org/appspot/apprtc/PeerConnectionClient.java",
+      "androidapp/src/org/appspot/apprtc/PercentFrameLayout.java",
+      "androidapp/src/org/appspot/apprtc/RoomParametersFetcher.java",
+      "androidapp/src/org/appspot/apprtc/SettingsActivity.java",
+      "androidapp/src/org/appspot/apprtc/SettingsFragment.java",
+      "androidapp/src/org/appspot/apprtc/TCPChannelClient.java",
+      "androidapp/src/org/appspot/apprtc/UnhandledExceptionHandler.java",
+      "androidapp/src/org/appspot/apprtc/WebSocketChannelClient.java",
+      "androidapp/src/org/appspot/apprtc/WebSocketRTCClient.java",
+      "androidapp/src/org/appspot/apprtc/util/AppRTCUtils.java",
+      "androidapp/src/org/appspot/apprtc/util/AsyncHttpURLConnection.java",
+    ]
+
+    deps = [
+      ":AppRTCMobile_resources",
+      "//webrtc/api:libjingle_peerconnection_java",
+      "//webrtc/base:base_java",
+      "//webrtc/examples/androidapp/third_party/autobanh:autobanh_java",
+    ]
+  }
+
+  android_resources("AppRTCMobile_resources") {
+    resource_dirs = [ "androidapp/res" ]
+    custom_package = "org.appspot.apprtc"
+  }
+
+  instrumentation_test_apk("AppRTCMobileTest") {
+    apk_name = "AppRTCMobileTest"
+    android_manifest = "androidtests/AndroidManifest.xml"
+
+    java_files = [
+      "androidtests/src/org/appspot/apprtc/test/FileVideoCapturerTest.java",
+      "androidtests/src/org/appspot/apprtc/test/PeerConnectionClientTest.java",
+      "androidtests/src/org/appspot/apprtc/test/VideoFileRendererTest.java",
+    ]
+
+    apk_under_test = ":AppRTCMobile"
+
+    deps = [
+      ":AppRTCMobile_javalib",
+      "//webrtc/api:libjingle_peerconnection_java",
+    ]
+
+    data = [
+      "//webrtc/examples/androidtests/src/org/appspot/apprtc/test/capturetestvideo.y4m",
+    ]
+  }
+}
+
+if (is_ios || (is_mac && target_cpu != "x86")) {
+  config("warnings_config") {
+    # GN orders flags on a target before flags from configs. The default config
+    # adds these flags so to cancel them out they need to come from a config and
+    # cannot be on the target directly.
+    if (is_ios) {
+      # Suppress compiler warnings about deprecated that triggered
+      # when moving from ios_deployment_target 7.0 to 9.0.
+      # See webrtc:5549 for more details.
+      cflags = [ "-Wno-deprecated-declarations" ]
+      cflags_objc = [
+        # Enabled for cflags_objc in build/config/compiler/BUILD.gn.
+        # See webrtc:6520.
+        "-Wno-objc-missing-property-synthesis",
+      ]
+    }
+  }
+
+  config("apprtc_common_config") {
+    include_dirs = [ "objc/AppRTCMobile/common" ]
+  }
+
+  rtc_static_library("apprtc_common") {
+    sources = [
+      "objc/AppRTCMobile/common/ARDUtilities.h",
+      "objc/AppRTCMobile/common/ARDUtilities.m",
+    ]
+    configs += [
+      ":warnings_config",
+      "//build/config/compiler:enable_arc",
+    ]
+    public_configs = [ ":apprtc_common_config" ]
+
+    deps = [
+      "../sdk:rtc_sdk_common_objc",
+      "../system_wrappers:field_trial_default",
+      "../system_wrappers:metrics_default",
+    ]
+  }
+
+  config("apprtc_signaling_config") {
+    include_dirs = [ "objc/AppRTCMobile" ]
+
+    # GN orders flags on a target before flags from configs. The default config
+    # adds these flags so to cancel them out they need to come from a config and
+    # cannot be on the target directly.
+    cflags = [
+      "-Wno-sign-compare",
+      "-Wno-unused-variable",
+    ]
+    if (is_mac) {
+      cflags += [ "-Wno-partial-availability" ]
+    }
+  }
+
+  rtc_static_library("apprtc_signaling") {
+    sources = [
+      "objc/AppRTCMobile/ARDAppClient+Internal.h",
+      "objc/AppRTCMobile/ARDAppClient.h",
+      "objc/AppRTCMobile/ARDAppClient.m",
+      "objc/AppRTCMobile/ARDAppEngineClient.h",
+      "objc/AppRTCMobile/ARDAppEngineClient.m",
+      "objc/AppRTCMobile/ARDBitrateTracker.h",
+      "objc/AppRTCMobile/ARDBitrateTracker.m",
+      "objc/AppRTCMobile/ARDCEODTURNClient.h",
+      "objc/AppRTCMobile/ARDCEODTURNClient.m",
+      "objc/AppRTCMobile/ARDJoinResponse+Internal.h",
+      "objc/AppRTCMobile/ARDJoinResponse.h",
+      "objc/AppRTCMobile/ARDJoinResponse.m",
+      "objc/AppRTCMobile/ARDMessageResponse+Internal.h",
+      "objc/AppRTCMobile/ARDMessageResponse.h",
+      "objc/AppRTCMobile/ARDMessageResponse.m",
+      "objc/AppRTCMobile/ARDRoomServerClient.h",
+      "objc/AppRTCMobile/ARDSDPUtils.h",
+      "objc/AppRTCMobile/ARDSDPUtils.m",
+      "objc/AppRTCMobile/ARDSignalingChannel.h",
+      "objc/AppRTCMobile/ARDSignalingMessage.h",
+      "objc/AppRTCMobile/ARDSignalingMessage.m",
+      "objc/AppRTCMobile/ARDStatsBuilder.h",
+      "objc/AppRTCMobile/ARDStatsBuilder.m",
+      "objc/AppRTCMobile/ARDTURNClient.h",
+      "objc/AppRTCMobile/ARDWebSocketChannel.h",
+      "objc/AppRTCMobile/ARDWebSocketChannel.m",
+      "objc/AppRTCMobile/RTCIceCandidate+JSON.h",
+      "objc/AppRTCMobile/RTCIceCandidate+JSON.m",
+      "objc/AppRTCMobile/RTCIceServer+JSON.h",
+      "objc/AppRTCMobile/RTCIceServer+JSON.m",
+      "objc/AppRTCMobile/RTCMediaConstraints+JSON.h",
+      "objc/AppRTCMobile/RTCMediaConstraints+JSON.m",
+      "objc/AppRTCMobile/RTCSessionDescription+JSON.h",
+      "objc/AppRTCMobile/RTCSessionDescription+JSON.m",
+    ]
+    configs += [
+      "//build/config/compiler:enable_arc",
+      ":warnings_config",
+    ]
+    public_configs = [ ":apprtc_signaling_config" ]
+    deps = [
+      ":apprtc_common",
+      ":socketrocket",
+    ]
+    public_deps = [
+      "../sdk:rtc_sdk_peerconnection_objc",
+    ]
+    libs = [ "QuartzCore.framework" ]
+  }
+
+  if (is_ios) {
+    rtc_static_library("AppRTCMobile_lib") {
+      sources = [
+        "objc/AppRTCMobile/ios/ARDAppDelegate.m",
+        "objc/AppRTCMobile/ios/ARDMainView.h",
+        "objc/AppRTCMobile/ios/ARDMainView.m",
+        "objc/AppRTCMobile/ios/ARDMainViewController.h",
+        "objc/AppRTCMobile/ios/ARDMainViewController.m",
+        "objc/AppRTCMobile/ios/ARDSettingsModel+Private.h",
+        "objc/AppRTCMobile/ios/ARDSettingsModel.h",
+        "objc/AppRTCMobile/ios/ARDSettingsModel.m",
+        "objc/AppRTCMobile/ios/ARDSettingsStore.h",
+        "objc/AppRTCMobile/ios/ARDSettingsStore.m",
+        "objc/AppRTCMobile/ios/ARDSettingsViewController.h",
+        "objc/AppRTCMobile/ios/ARDSettingsViewController.m",
+        "objc/AppRTCMobile/ios/ARDStatsView.h",
+        "objc/AppRTCMobile/ios/ARDStatsView.m",
+        "objc/AppRTCMobile/ios/ARDVideoCallView.h",
+        "objc/AppRTCMobile/ios/ARDVideoCallView.m",
+        "objc/AppRTCMobile/ios/ARDVideoCallViewController.h",
+        "objc/AppRTCMobile/ios/ARDVideoCallViewController.m",
+        "objc/AppRTCMobile/ios/AppRTCMobile-Prefix.pch",
+        "objc/AppRTCMobile/ios/UIImage+ARDUtilities.h",
+        "objc/AppRTCMobile/ios/UIImage+ARDUtilities.m",
+      ]
+      configs += [
+        "//build/config/compiler:enable_arc",
+        ":warnings_config",
+      ]
+
+      deps = [
+        ":apprtc_common",
+        ":apprtc_signaling",
+      ]
+    }
+
+    ios_app_bundle("AppRTCMobile") {
+      sources = [
+        "objc/AppRTCMobile/ios/main.m",
+      ]
+
+      info_plist = "objc/AppRTCMobile/ios/Info.plist"
+
+      configs += [ "..:common_config" ]
+      public_configs = [ "..:common_inherited_config" ]
+
+      deps = [
+        ":AppRTCMobile_ios_bundle_data",
+        ":AppRTCMobile_lib",
+      ]
+
+      if (target_cpu == "x86") {
+        deps += [ "//testing/iossim:iossim" ]
+      }
+    }
+
+    bundle_data("AppRTCMobile_ios_bundle_data") {
+      sources = [
+        "objc/AppRTCMobile/ios/resources/Roboto-Regular.ttf",
+        "objc/AppRTCMobile/ios/resources/iPhone5@2x.png",
+        "objc/AppRTCMobile/ios/resources/iPhone6@2x.png",
+        "objc/AppRTCMobile/ios/resources/iPhone6p@3x.png",
+        "objc/AppRTCMobile/ios/resources/ic_call_end_black_24dp.png",
+        "objc/AppRTCMobile/ios/resources/ic_call_end_black_24dp@2x.png",
+        "objc/AppRTCMobile/ios/resources/ic_clear_black_24dp.png",
+        "objc/AppRTCMobile/ios/resources/ic_clear_black_24dp@2x.png",
+        "objc/AppRTCMobile/ios/resources/ic_settings_black_24dp.png",
+        "objc/AppRTCMobile/ios/resources/ic_settings_black_24dp@2x.png",
+        "objc/AppRTCMobile/ios/resources/ic_surround_sound_black_24dp.png",
+        "objc/AppRTCMobile/ios/resources/ic_surround_sound_black_24dp@2x.png",
+        "objc/AppRTCMobile/ios/resources/ic_switch_video_black_24dp.png",
+        "objc/AppRTCMobile/ios/resources/ic_switch_video_black_24dp@2x.png",
+        "objc/AppRTCMobile/ios/resources/mozart.mp3",
+        "objc/Icon.png",
+      ]
+      outputs = [
+        "{{bundle_resources_dir}}/{{source_file_part}}",
+      ]
+    }
+  }
+
+  if (is_mac) {
+    rtc_static_library("AppRTCMobile_lib") {
+      sources = [
+        "objc/AppRTCMobile/mac/APPRTCAppDelegate.h",
+        "objc/AppRTCMobile/mac/APPRTCAppDelegate.m",
+        "objc/AppRTCMobile/mac/APPRTCViewController.h",
+        "objc/AppRTCMobile/mac/APPRTCViewController.m",
+      ]
+      configs += [
+        "..:common_objc",
+        "//build/config/compiler:enable_arc",
+      ]
+      deps = [
+        ":apprtc_common",
+        ":apprtc_signaling",
+      ]
+    }
+
+    mac_app_bundle("AppRTCMobile") {
+      output_name = "AppRTCMobile"
+
+      extra_substitutions = [ "MACOSX_DEPLOYMENT_TARGET=10.8" ]
+
+      sources = [
+        "objc/AppRTCMobile/mac/main.m",
+      ]
+
+      public_configs = [ "..:common_inherited_config" ]
+
+      info_plist = "objc/AppRTCMobile/mac/Info.plist"
+
+      libs = [ "AppKit.framework" ]
+
+      deps = [
+        ":AppRTCMobile_lib",
+      ]
+    }
+  }
+
+  config("socketrocket_include_config") {
+    include_dirs = [ "objc/AppRTCMobile/third_party/SocketRocket" ]
+  }
+
+  config("socketrocket_warning_config") {
+    # GN orders flags on a target before flags from configs. The default config
+    # adds these flags so to cancel them out they need to come from a config and
+    # cannot be on the target directly.
+    cflags = [
+      "-Wno-deprecated-declarations",
+      "-Wno-nonnull",
+      "-Wno-semicolon-before-method-body",
+      "-Wno-unused-variable",
+    ]
+
+    cflags_objc = [
+      # Enabled for cflags_objc in build/config/compiler/BUILD.gn.
+      "-Wno-objc-missing-property-synthesis",
+
+      # Hide the warning for SecRandomCopyBytes(), until we update to upstream.
+      # https://bugs.chromium.org/p/webrtc/issues/detail?id=6396
+      "-Wno-unused-result",
+    ]
+
+    if (is_mac) {
+      cflags += [ "-Wno-partial-availability" ]
+    }
+  }
+
+  rtc_static_library("socketrocket") {
+    sources = [
+      "objc/AppRTCMobile/third_party/SocketRocket/SRWebSocket.h",
+      "objc/AppRTCMobile/third_party/SocketRocket/SRWebSocket.m",
+    ]
+    configs += [
+      "//build/config/compiler:enable_arc",
+      ":socketrocket_warning_config",
+    ]
+    public_configs = [ ":socketrocket_include_config" ]
+
+    libs = [
+      "CFNetwork.framework",
+      "icucore",
+    ]
+  }
+
+  if (rtc_include_tests) {
+    config("rtc_apprtcmobile_config") {
+      defines = [ "GTEST_RELATIVE_PATH" ]
+    }
+
+    rtc_test("apprtcmobile_tests") {
+      include_dirs = [ "objc/AppRTCMobile/ios" ]
+      deps = [
+        ":AppRTCMobile_lib",
+        ":apprtc_signaling",
+        "//testing/gtest",
+        "//third_party/ocmock",
+      ]
+
+      sources = [
+        "objc/AppRTCMobile/tests/ARDAppClientTest.mm",
+        "objc/AppRTCMobile/tests/ARDSettingsModelTests.mm",
+      ]
+
+      if (is_ios) {
+        info_plist = "objc/AppRTCMobile/ios/Info.plist"
+      }
+
+      configs += [
+        ":rtc_apprtcmobile_config",
+        "//build/config/compiler:enable_arc",
+      ]
+    }
+  }
+}
+
+if (is_linux || is_win) {
+  if (is_linux) {
+    pkg_config("gtk2_config") {
+      # Gtk requires gmodule, but it does not list it as a dependency in some
+      # misconfigured systems.
+      packages = [
+        "gmodule-2.0",
+        "gtk+-2.0",
+        "gthread-2.0",
+      ]
+    }
+  }
+
+  config("peerconnection_client_warnings_config") {
+    cflags = []
+    if (is_win && is_clang) {
+      cflags += [
+        # Disable warnings failing when compiling with Clang on Windows.
+        # https://bugs.chromium.org/p/webrtc/issues/detail?id=5366
+        "-Wno-format",
+
+        # See https://bugs.chromium.org/p/webrtc/issues/detail?id=6271
+        # for -Wno-reorder and -Wno-sign-compare
+        "-Wno-reorder",
+        "-Wno-sign-compare",
+      ]
+    }
+    if (is_linux && target_cpu == "x86") {
+      cflags += [
+        # Needed to compile on Linux 32-bit.
+        "-Wno-sentinel",
+      ]
+    }
+
+    if (is_clang) {
+      # TODO(ehmaldonado): Make peerconnection_client compile with the standard
+      # set of warnings.
+      # See https://bugs.chromium.org/p/webrtc/issues/detail?id=6306
+      cflags += [ "-Wno-inconsistent-missing-override" ]
+    }
+  }
+
+  rtc_executable("peerconnection_client") {
+    sources = [
+      "peerconnection/client/conductor.cc",
+      "peerconnection/client/conductor.h",
+      "peerconnection/client/defaults.cc",
+      "peerconnection/client/defaults.h",
+      "peerconnection/client/peer_connection_client.cc",
+      "peerconnection/client/peer_connection_client.h",
+    ]
+
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+    if (is_win) {
+      sources += [
+        "peerconnection/client/flagdefs.h",
+        "peerconnection/client/main.cc",
+        "peerconnection/client/main_wnd.cc",
+        "peerconnection/client/main_wnd.h",
+      ]
+      cflags = [ "/wd4245" ]
+      configs += [ "//build/config/win:windowed" ]
+    }
+    if (is_linux) {
+      sources += [
+        "peerconnection/client/linux/main.cc",
+        "peerconnection/client/linux/main_wnd.cc",
+        "peerconnection/client/linux/main_wnd.h",
+      ]
+      libs = [
+        "X11",
+        "Xcomposite",
+        "Xext",
+        "Xrender",
+      ]
+      public_configs = [ ":gtk2_config" ]
+    }
+    deps = [
+      "//third_party/libyuv",
+      "//webrtc/api:libjingle_peerconnection",
+      "//webrtc/system_wrappers:field_trial_default",
+      "//webrtc/system_wrappers:metrics_default",
+    ]
+    configs += [ ":peerconnection_client_warnings_config" ]
+    if (rtc_build_json) {
+      deps += [ "//third_party/jsoncpp" ]
+    }
+  }
+
+  rtc_executable("peerconnection_server") {
+    sources = [
+      "peerconnection/server/data_socket.cc",
+      "peerconnection/server/data_socket.h",
+      "peerconnection/server/main.cc",
+      "peerconnection/server/peer_channel.cc",
+      "peerconnection/server/peer_channel.h",
+      "peerconnection/server/utils.cc",
+      "peerconnection/server/utils.h",
+    ]
+    deps = [
+      "//webrtc:webrtc_common",
+      "//webrtc/base:rtc_base_approved",
+      "//webrtc/tools:command_line_parser",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+  rtc_executable("relayserver") {
+    sources = [
+      "relayserver/relayserver_main.cc",
+    ]
+    deps = [
+      "//webrtc/base:rtc_base_approved",
+      "//webrtc/pc:rtc_pc",
+      "//webrtc/system_wrappers:field_trial_default",
+      "//webrtc/system_wrappers:metrics_default",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+  rtc_executable("turnserver") {
+    sources = [
+      "turnserver/turnserver_main.cc",
+    ]
+    deps = [
+      "//webrtc/base:rtc_base_approved",
+      "//webrtc/pc:rtc_pc",
+      "//webrtc/system_wrappers:field_trial_default",
+      "//webrtc/system_wrappers:metrics_default",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+  rtc_executable("stunserver") {
+    sources = [
+      "stunserver/stunserver_main.cc",
+    ]
+    deps = [
+      "//webrtc/base:rtc_base_approved",
+      "//webrtc/pc:rtc_pc",
+      "//webrtc/system_wrappers:field_trial_default",
+      "//webrtc/system_wrappers:metrics_default",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+}
+
+if (!build_with_chromium) {
+  # Doesn't build within Chrome on Win.
+  rtc_executable("stun_prober") {
+    sources = [
+      "stunprober/main.cc",
+    ]
+
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from Chrome's Clang plugins.
+      # See http://code.google.com/p/webrtc/issues/detail?id=163 for details.
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+
+    deps = [
+      "../p2p:libstunprober",
+      "../p2p:rtc_p2p",
+      "../system_wrappers:field_trial_default",
+    ]
+  }
+}

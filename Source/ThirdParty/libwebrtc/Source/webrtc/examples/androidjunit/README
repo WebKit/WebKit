@@ -1,0 +1,8 @@
+This directory contains example JUnit tests for Android AppRTCMobile.
+Many of these test utilize Robolectric to mock Android classes.
+
+To compile:
+ninja -C out/Debug android_junit_tests
+
+To run:
+out/Debug/bin/run_android_junit_tests

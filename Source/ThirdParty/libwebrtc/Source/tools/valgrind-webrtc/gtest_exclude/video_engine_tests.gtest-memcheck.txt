@@ -1,0 +1,11 @@
+# Fails when run under memcheck
+EndToEndTest.CanSwitchToUseAllSsrcs
+EndToEndTest.SendsAndReceivesH264
+EndToEndTest.SendsAndReceivesVP9
+VideoSendStreamTest.VP9FlexMode
+# Times out due to using a real VP8 encoder.
+EndToEndTest.VerifyHistogramStatsWithRed
+
+# https://bugs.chromium.org/p/webrtc/issues/detail?id=5134
+EndToEndTest.AssignsTransportSequenceNumbers
+

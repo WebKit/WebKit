@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <style name="CallActivityTheme" parent="android:Theme.Black">
+    <item name="android:windowActionBar">false</item>
+    <item name="android:windowFullscreen">true</item>
+    <item name="android:windowNoTitle">true</item>
+  </style>
+</resources>

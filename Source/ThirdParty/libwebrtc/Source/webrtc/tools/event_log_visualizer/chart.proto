@@ -1,0 +1,36 @@
+// Describes a chart generated from WebRTC event log data.
+syntax = "proto3";
+option optimize_for = LITE_RUNTIME;
+
+package webrtc.analytics;
+
+message ChartStyle {
+  enum Type {
+    UNDEFINED = 0;
+    LINE_CHART = 1;
+    BAR_CHART = 2;
+  }
+}
+
+message DataSet {
+  repeated float x_values = 1;
+  repeated float y_values = 2;
+  string label = 3;
+  ChartStyle.Type style = 4;
+  bool highlight_points = 5;
+}
+
+message Chart {
+  repeated DataSet data_sets = 1;
+  float xaxis_min = 2;
+  float xaxis_max = 3;
+  string xaxis_label = 4;
+  float yaxis_min = 5;
+  float yaxis_max = 6;
+  string yaxis_label = 7;
+  string title = 8;
+}
+
+message ChartCollection {
+  repeated Chart charts = 1;
+}

@@ -1,0 +1,111 @@
+## gflags CMake configuration file
+
+# library version information
+set (@PACKAGE_NAME@_VERSION_STRING "@PACKAGE_VERSION@")
+set (@PACKAGE_NAME@_VERSION_MAJOR  @PACKAGE_VERSION_MAJOR@)
+set (@PACKAGE_NAME@_VERSION_MINOR  @PACKAGE_VERSION_MINOR@)
+set (@PACKAGE_NAME@_VERSION_PATCH  @PACKAGE_VERSION_PATCH@)
+
+# import targets
+include ("${CMAKE_CURRENT_LIST_DIR}/@PACKAGE_NAME@-export.cmake")
+
+# installation prefix
+get_filename_component (CMAKE_CURRENT_LIST_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component (_INSTALL_PREFIX "${CMAKE_CURRENT_LIST_DIR}/@INSTALL_PREFIX_REL2CONFIG_DIR@" ABSOLUTE)
+
+# include directory
+#
+# Newer versions of CMake set the INTERFACE_INCLUDE_DIRECTORIES property
+# of the imported targets. It is hence not necessary to add this path
+# manually to the include search path for targets which link to gflags.
+set (@PACKAGE_NAME@_INCLUDE_DIR "${_INSTALL_PREFIX}/@INCLUDE_INSTALL_DIR@")
+
+# default settings
+if (NOT DEFINED @PACKAGE_NAME@_SHARED)
+  if (TARGET @PACKAGE_NAME@-static OR TARGET @PACKAGE_NAME@_nothreads-static)
+    set (@PACKAGE_NAME@_SHARED FALSE)
+  else ()
+    set (@PACKAGE_NAME@_SHARED TRUE)
+  endif ()
+endif ()
+if (NOT DEFINED @PACKAGE_NAME@_NOTHREADS)
+  if (TARGET @PACKAGE_NAME@-static OR TARGET @PACKAGE_NAME@-shared)
+    set (@PACKAGE_NAME@_NOTHREADS FALSE)
+  else ()
+    set (@PACKAGE_NAME@_NOTHREADS TRUE)
+  endif ()
+endif ()
+
+# choose imported library target
+if (NOT @PACKAGE_NAME@_TARGET)
+  if (@PACKAGE_NAME@_SHARED)
+    if (@PACKAGE_NAME@_NOTHREADS)
+      set (@PACKAGE_NAME@_TARGET @PACKAGE_NAME@_nothreads-shared)
+    else ()
+      set (@PACKAGE_NAME@_TARGET @PACKAGE_NAME@-shared)
+    endif ()
+  else ()
+    if (@PACKAGE_NAME@_NOTHREADS)
+      set (@PACKAGE_NAME@_TARGET @PACKAGE_NAME@_nothreads-static)
+    else ()
+      set (@PACKAGE_NAME@_TARGET @PACKAGE_NAME@-static)
+    endif ()
+  endif ()
+endif ()
+if (NOT TARGET ${@PACKAGE_NAME@_TARGET})
+  message (FATAL_ERROR "Your @PACKAGE_NAME@ installation does not contain a ${@PACKAGE_NAME@_TARGET} library target!"
+                       " Try a different combination of @PACKAGE_NAME@_SHARED and @PACKAGE_NAME@_NOTHREADS.")
+endif ()
+
+# add more convenient "@PACKAGE_NAME@" import target
+if (NOT TARGET @PACKAGE_NAME@)
+  if (@PACKAGE_NAME@_SHARED)
+    add_library (@PACKAGE_NAME@ SHARED IMPORTED)
+  else ()
+    add_library (@PACKAGE_NAME@ STATIC IMPORTED)
+  endif ()
+  # INTERFACE_INCLUDE_DIRECTORIES
+  get_target_property (_@PACKAGE_NAME@_INCLUDES ${@PACKAGE_NAME@_TARGET} INTERFACE_INCLUDE_DIRECTORIES)
+  if (_@PACKAGE_NAME@_INCLUDES)
+    set_target_properties(@PACKAGE_NAME@ PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "${_@PACKAGE_NAME@_INCLUDES}"
+    )
+  endif ()
+  unset (_@PACKAGE_NAME@_INCLUDES)
+  # set configuration specific properties
+  get_target_property (_@PACKAGE_NAME@_CONFIGURATIONS ${@PACKAGE_NAME@_TARGET} IMPORTED_CONFIGURATIONS)
+  set_target_properties (@PACKAGE_NAME@ PROPERTIES IMPORTED_CONFIGURATIONS "${_@PACKAGE_NAME@_CONFIGURATIONS}")
+  foreach (_@PACKAGE_NAME@_CONFIG IN LISTS _@PACKAGE_NAME@_CONFIGURATIONS)
+    # IMPORTED_LOCATION_<config>
+    get_target_property (_@PACKAGE_NAME@_LOCATION ${@PACKAGE_NAME@_TARGET} IMPORTED_LOCATION_${_@PACKAGE_NAME@_CONFIG})
+    if (_@PACKAGE_NAME@_LOCATION)
+      set_target_properties(@PACKAGE_NAME@ PROPERTIES
+        IMPORTED_LOCATION_${_@PACKAGE_NAME@_CONFIG} "${_@PACKAGE_NAME@_LOCATION}"
+      )
+    endif ()
+    unset (_@PACKAGE_NAME@_LOCATION)
+    # IMPORTED_LINK_INTERFACE_LANGUAGES_<config> (static)
+    get_target_property (_@PACKAGE_NAME@_LANGUAGES ${@PACKAGE_NAME@_TARGET} IMPORTED_LINK_INTERFACE_LANGUAGES_${_@PACKAGE_NAME@_CONFIG})
+    if (_@PACKAGE_NAME@_LANGUAGES)
+      set_target_properties(@PACKAGE_NAME@ PROPERTIES
+        IMPORTED_LINK_INTERFACE_LANGUAGES_${_@PACKAGE_NAME@_CONFIG} "${_@PACKAGE_NAME@_LANGUAGES}"
+      )
+    endif ()
+    unset (_@PACKAGE_NAME@_LANGUAGES)
+    # IMPORTED_SONAME_<config> (shared)
+    get_target_property (_@PACKAGE_NAME@_SONAME ${@PACKAGE_NAME@_TARGET} IMPORTED_SONAME_${_@PACKAGE_NAME@_CONFIG})
+    if (_@PACKAGE_NAME@_SONAME)
+      set_target_properties(@PACKAGE_NAME@ PROPERTIES
+        IMPORTED_SONAME_${_@PACKAGE_NAME@_CONFIG} "${_@PACKAGE_NAME@_SONAME}"
+      )
+    endif ()
+    unset (_@PACKAGE_NAME@_SONAME)
+  endforeach ()
+  unset (_@PACKAGE_NAME@_CONFIGURATIONS)
+endif ()
+
+# alias for default import target to be compatible with older CMake package configurations
+set (@PACKAGE_NAME@_LIBRARIES "${@PACKAGE_NAME@_TARGET}")
+
+# unset private variables
+unset (_INSTALL_PREFIX)

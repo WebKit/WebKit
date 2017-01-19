@@ -1,0 +1,57 @@
+# Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../build/webrtc.gni")
+
+rtc_static_library("call") {
+  sources = [
+    "bitrate_allocator.cc",
+    "call.cc",
+    "flexfec_receive_stream.cc",
+    "flexfec_receive_stream.h",
+  ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  deps = [
+    "..:webrtc_common",
+    "../api:call_api",
+    "../audio",
+    "../base:rtc_task_queue",
+    "../logging:rtc_event_log_impl",
+    "../modules/congestion_controller",
+    "../modules/rtp_rtcp",
+    "../system_wrappers",
+    "../video",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("call_tests") {
+    testonly = true
+    sources = [
+      "bitrate_allocator_unittest.cc",
+      "bitrate_estimator_tests.cc",
+      "call_unittest.cc",
+      "flexfec_receive_stream_unittest.cc",
+      "packet_injection_tests.cc",
+    ]
+    deps = [
+      ":call",
+      "//testing/gmock",
+      "//testing/gtest",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+}

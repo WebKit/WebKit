@@ -1,0 +1,23 @@
+/*
+ *  Copyright 2013 The WebRTC Project Authors. All rights reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+//
+// Prefix header for all source files of the 'AppRTCMobile' target in the
+// 'AppRTCMobile' project
+//
+
+#import <Availability.h>
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_6_0
+#warning "This project uses features only available in iOS SDK 6.0 and later."
+#endif
+
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>

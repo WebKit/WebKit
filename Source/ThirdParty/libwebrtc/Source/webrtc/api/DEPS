@@ -1,0 +1,27 @@
+include_rules = [
+  "+third_party/libyuv",
+  "+webrtc/base",
+  "+webrtc/common_video",
+  "+webrtc/media",
+  "+webrtc/p2p",
+  "+webrtc/pc",
+  "+webrtc/logging/rtc_event_log",
+  "+webrtc/modules/audio_device",
+  "+webrtc/modules/rtp_rtcp",
+  "+webrtc/modules/video_coding",
+  "+webrtc/modules/video_render",
+  "+webrtc/system_wrappers",
+]
+
+specific_include_rules = {
+  "androidtestinitializer\.cc": [
+    "+base/android",  # Allowed only for Android tests.
+    "+webrtc/voice_engine",
+  ],
+  "peerconnection_jni\.cc": [
+    "+webrtc/voice_engine",
+  ],
+  "peerconnectionfactory\.cc": [
+    "+webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h",
+  ],
+}

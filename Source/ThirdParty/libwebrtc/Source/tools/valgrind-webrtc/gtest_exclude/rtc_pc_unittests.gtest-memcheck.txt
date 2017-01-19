@@ -1,0 +1,8 @@
+# TODO(wu): Reenable P2PTransportChannelTest after issue 2158 is resolved.
+P2PTransportChannelTest.*
+P2PTransportChannelSameNatTest.TestConesBehindSameCone
+PortTest.TestSendStunMessageAsIce
+PseudoTcpTest.TestSendBothUseLargeWindowScale
+# Issue 3447
+P2PTransportChannelMultihomedTest.TestFailover
+P2PTransportChannelMultihomedTest.TestDrain

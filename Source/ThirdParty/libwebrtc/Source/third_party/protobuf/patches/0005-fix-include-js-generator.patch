@@ -1,0 +1,11 @@
+--- protobuf-3.0.0-beta-3/src/google/protobuf/compiler/js/js_generator.cc       2016-05-16 11:34:04.000000000 -0700
++++ /usr/local/google/home/xyzzyz/chromium/src/third_party/protobuf/src/google/protobuf/compiler/js/js_generator.cc   2016-05-17 12:46:08.746078982 -0700
+@@ -28,7 +28,7 @@
+ // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+-#include "google/protobuf/compiler/js/js_generator.h"
++#include <google/protobuf/compiler/js/js_generator.h>
+ 
+ #include <assert.h>
+ #include <algorithm>

@@ -1,0 +1,48 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../build/webrtc.gni")
+
+rtc_static_library("utility") {
+  sources = [
+    "include/audio_frame_operations.h",
+    "include/file_player.h",
+    "include/file_recorder.h",
+    "include/helpers_android.h",
+    "include/jvm_android.h",
+    "include/process_thread.h",
+    "source/audio_frame_operations.cc",
+    "source/coder.cc",
+    "source/coder.h",
+    "source/file_player.cc",
+    "source/file_recorder.cc",
+    "source/helpers_android.cc",
+    "source/helpers_ios.mm",
+    "source/jvm_android.cc",
+    "source/process_thread_impl.cc",
+    "source/process_thread_impl.h",
+  ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  if (is_ios) {
+    libs = [ "AVFoundation.framework" ]
+  }
+
+  deps = [
+    "../..:webrtc_common",
+    "../../base:rtc_task_queue",
+    "../../common_audio",
+    "../../system_wrappers",
+    "../audio_coding",
+    "../media_file",
+  ]
+}

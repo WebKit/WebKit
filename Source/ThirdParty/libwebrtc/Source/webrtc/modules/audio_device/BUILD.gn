@@ -1,0 +1,291 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../build/webrtc.gni")
+
+config("audio_device_config") {
+  include_dirs = [
+    "../include",
+    "include",
+    "dummy",  # Contains dummy audio device implementations.
+  ]
+  if (is_ios) {
+    # GN orders flags on a target before flags from configs. In order to be able
+    # suppress the -Wthread-safety-analysis warning, it has come from a config
+    # and can't be on the target directly.
+    # TODO(tkchin): Remove after fixing
+    # https://bugs.chromium.org/p/webrtc/issues/detail?id=5748
+    cflags = [ "-Wno-thread-safety-analysis" ]
+  }
+}
+
+config("audio_device_warnings_config") {
+  if (is_win && is_clang) {
+    cflags = [
+      # Disable warnings failing when compiling with Clang on Windows.
+      # https://bugs.chromium.org/p/webrtc/issues/detail?id=5366
+      "-Wno-bool-conversion",
+      "-Wno-delete-non-virtual-dtor",
+      "-Wno-logical-op-parentheses",
+      "-Wno-microsoft-extra-qualification",
+      "-Wno-microsoft-goto",
+      "-Wno-missing-braces",
+      "-Wno-parentheses-equality",
+      "-Wno-reorder",
+      "-Wno-shift-overflow",
+      "-Wno-tautological-compare",
+
+      # See https://bugs.chromium.org/p/webrtc/issues/detail?id=6265
+      # for -Wno-thread-safety-analysis
+      "-Wno-thread-safety-analysis",
+      "-Wno-unused-private-field",
+    ]
+  }
+}
+
+rtc_static_library("audio_device") {
+  public_configs = [ ":audio_device_config" ]
+
+  deps = [
+    "../..:webrtc_common",
+    "../../base:rtc_base_approved",
+    "../../base:rtc_task_queue",
+    "../../common_audio",
+    "../../system_wrappers",
+    "../utility",
+  ]
+
+  sources = [
+    "audio_device_buffer.cc",
+    "audio_device_buffer.h",
+    "audio_device_config.h",
+    "audio_device_generic.cc",
+    "audio_device_generic.h",
+    "dummy/audio_device_dummy.cc",
+    "dummy/audio_device_dummy.h",
+    "dummy/file_audio_device.cc",
+    "dummy/file_audio_device.h",
+    "fine_audio_buffer.cc",
+    "fine_audio_buffer.h",
+    "include/audio_device.h",
+    "include/audio_device_defines.h",
+  ]
+
+  include_dirs = []
+  if (is_linux) {
+    include_dirs += [ "linux" ]
+  }
+  if (is_ios) {
+    include_dirs += [ "ios" ]
+  }
+  if (is_mac) {
+    include_dirs += [ "mac" ]
+  }
+  if (is_win) {
+    include_dirs += [ "win" ]
+  }
+  if (is_android) {
+    include_dirs += [ "android" ]
+  }
+  defines = []
+  cflags = []
+  if (rtc_include_internal_audio_device) {
+    sources += [
+      "audio_device_impl.cc",
+      "audio_device_impl.h",
+    ]
+    if (is_android) {
+      sources += [
+        "android/audio_device_template.h",
+        "android/audio_manager.cc",
+        "android/audio_manager.h",
+        "android/audio_record_jni.cc",
+        "android/audio_record_jni.h",
+        "android/audio_track_jni.cc",
+        "android/audio_track_jni.h",
+        "android/build_info.cc",
+        "android/build_info.h",
+        "android/opensles_common.cc",
+        "android/opensles_common.h",
+        "android/opensles_player.cc",
+        "android/opensles_player.h",
+        "android/opensles_recorder.cc",
+        "android/opensles_recorder.h",
+      ]
+      libs = [
+        "log",
+        "OpenSLES",
+      ]
+    }
+    if (rtc_use_dummy_audio_file_devices) {
+      defines += [ "WEBRTC_DUMMY_FILE_DEVICES" ]
+    } else {
+      if (is_linux) {
+        sources += [
+          "linux/alsasymboltable_linux.cc",
+          "linux/alsasymboltable_linux.h",
+          "linux/audio_device_alsa_linux.cc",
+          "linux/audio_device_alsa_linux.h",
+          "linux/audio_mixer_manager_alsa_linux.cc",
+          "linux/audio_mixer_manager_alsa_linux.h",
+          "linux/latebindingsymboltable_linux.cc",
+          "linux/latebindingsymboltable_linux.h",
+        ]
+        defines += [ "LINUX_ALSA" ]
+        libs = [
+          "dl",
+          "X11",
+        ]
+        if (rtc_include_pulse_audio) {
+          sources += [
+            "linux/audio_device_pulse_linux.cc",
+            "linux/audio_device_pulse_linux.h",
+            "linux/audio_mixer_manager_pulse_linux.cc",
+            "linux/audio_mixer_manager_pulse_linux.h",
+            "linux/pulseaudiosymboltable_linux.cc",
+            "linux/pulseaudiosymboltable_linux.h",
+          ]
+          defines += [ "LINUX_PULSE" ]
+        }
+      }
+      if (is_mac) {
+        sources += [
+          "mac/audio_device_mac.cc",
+          "mac/audio_device_mac.h",
+          "mac/audio_mixer_manager_mac.cc",
+          "mac/audio_mixer_manager_mac.h",
+          "mac/portaudio/pa_memorybarrier.h",
+          "mac/portaudio/pa_ringbuffer.c",
+          "mac/portaudio/pa_ringbuffer.h",
+        ]
+        libs = [
+          # Needed for CoreGraphics:
+          "ApplicationServices.framework",
+
+          "AudioToolbox.framework",
+          "CoreAudio.framework",
+
+          # Needed for CGEventSourceKeyState in audio_device_mac.cc:
+          "CoreGraphics.framework",
+        ]
+      }
+      if (is_ios) {
+        public_deps = [
+          "../../base:rtc_base",
+          "../../sdk:rtc_sdk_common_objc",
+        ]
+        sources += [
+          "ios/audio_device_ios.h",
+          "ios/audio_device_ios.mm",
+          "ios/audio_device_not_implemented_ios.mm",
+          "ios/audio_session_observer.h",
+          "ios/objc/RTCAudioSession+Configuration.mm",
+          "ios/objc/RTCAudioSession+Private.h",
+          "ios/objc/RTCAudioSession.h",
+          "ios/objc/RTCAudioSession.mm",
+          "ios/objc/RTCAudioSessionConfiguration.h",
+          "ios/objc/RTCAudioSessionConfiguration.m",
+          "ios/objc/RTCAudioSessionDelegateAdapter.h",
+          "ios/objc/RTCAudioSessionDelegateAdapter.mm",
+          "ios/voice_processing_audio_unit.h",
+          "ios/voice_processing_audio_unit.mm",
+        ]
+        configs += [ "//build/config/compiler:enable_arc" ]
+
+        libs = [
+          "AudioToolbox.framework",
+          "AVFoundation.framework",
+          "Foundation.framework",
+          "UIKit.framework",
+        ]
+      }
+      if (is_win) {
+        sources += [
+          "win/audio_device_core_win.cc",
+          "win/audio_device_core_win.h",
+          "win/audio_device_wave_win.cc",
+          "win/audio_device_wave_win.h",
+          "win/audio_mixer_manager_win.cc",
+          "win/audio_mixer_manager_win.h",
+        ]
+        libs = [
+          # Required for the built-in WASAPI AEC.
+          "dmoguids.lib",
+          "wmcodecdspuuid.lib",
+          "amstrmid.lib",
+          "msdmo.lib",
+        ]
+      }
+      configs += [ ":audio_device_warnings_config" ]
+    }
+  } else {
+    defines = [ "WEBRTC_DUMMY_AUDIO_BUILD" ]
+  }
+
+  if (!build_with_chromium) {
+    sources += [
+      # Do not link these into Chrome since they contain static data.
+      "dummy/file_audio_device_factory.cc",
+      "dummy/file_audio_device_factory.h",
+    ]
+  }
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+}
+
+config("mock_audio_device_config") {
+  if (is_win) {
+    cflags = [
+      # TODO(phoglund): get rid of 4373 supression when
+      # http://code.google.com/p/webrtc/issues/detail?id=261 is solved.
+      # legacy warning for ignoring const / volatile in signatures.
+      "/wd4373",
+    ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("mock_audio_device") {
+    testonly = true
+    sources = [
+      "include/mock_audio_device.h",
+      "include/mock_audio_transport.h",
+    ]
+    deps = [
+      ":audio_device",
+      "../../test:test_support",
+    ]
+    all_dependent_configs = [ ":mock_audio_device_config" ]
+  }
+}
+
+# These tests do not work on ios, see
+# https://bugs.chromium.org/p/webrtc/issues/detail?id=4755
+if (rtc_include_tests && !is_ios) {
+  rtc_executable("audio_device_tests") {
+    testonly = true
+    sources = [
+      "test/audio_device_test_api.cc",
+      "test/audio_device_test_defines.h",
+    ]
+    deps = [
+      ":audio_device",
+      "../..:webrtc_common",
+      "../../system_wrappers",
+      "../../test:test_support",
+      "../../test:test_support_main",
+      "../rtp_rtcp",
+      "../utility",
+      "//testing/gtest",
+    ]
+    public_configs = [ ":audio_device_config" ]
+  }
+}
