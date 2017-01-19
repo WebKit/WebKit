@@ -11831,6 +11831,50 @@ void testCheckSelectCheckSelect()
     CHECK(invoke<int>(*code, true, false) == 667);
 }
 
+void testCheckSelectAndCSE()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    auto* selectValue = root->appendNew<Value>(
+        proc, Select, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(
+                    proc, Origin(), GPRInfo::argumentGPR0)),
+            root->appendNew<Const32Value>(proc, Origin(), 0xff)),
+        root->appendNew<ConstPtrValue>(proc, Origin(), -42),
+        root->appendNew<ConstPtrValue>(proc, Origin(), 35));
+
+    auto* constant = root->appendNew<ConstPtrValue>(proc, Origin(), 42);
+    auto* addValue = root->appendNew<Value>(proc, Add, Origin(), selectValue, constant);
+
+    CheckValue* check = root->appendNew<CheckValue>(proc, Check, Origin(), addValue);
+    unsigned generationCount = 0;
+    check->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+
+            generationCount++;
+            jit.move(CCallHelpers::TrustedImm32(666), GPRInfo::returnValueGPR);
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+
+    auto* addValue2 = root->appendNew<Value>(proc, Add, Origin(), selectValue, constant);
+
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(), addValue, addValue2));
+
+    auto code = compile(proc);
+    CHECK(generationCount == 1);
+    CHECK(invoke<int>(*code, true) == 0);
+    CHECK(invoke<int>(*code, false) == 666);
+}
+
 double b3Pow(double x, int y)
 {
     if (y < 0 || y > 1000)
@@ -15433,6 +15477,7 @@ void run(const char* filter)
     RUN(testSelectInvert());
     RUN(testCheckSelect());
     RUN(testCheckSelectCheckSelect());
+    RUN(testCheckSelectAndCSE());
     RUN_BINARY(testPowDoubleByIntegerLoop, floatingPointOperands<double>(), int64Operands());
 
     RUN(testTruncOrHigh());

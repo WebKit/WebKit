@@ -1,3 +1,32 @@
+2017-01-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [B3] B3 strength reduction could encounter Value without owner in PureCSE
+        https://bugs.webkit.org/show_bug.cgi?id=167161
+
+        Reviewed by Filip Pizlo.
+
+        PureCSE relies on the fact that all the stored Values have owner member.
+        This assumption is broken when you execute specializeSelect in B3ReduceStrength phase.
+        It clears owner of Values which are in between Select and Check to clone them to then/else
+        blocks. If these cleared Values are already stored in PureCSE map, this map poses a Value
+        with nullptr owner in PureCSE.
+
+        This patch changes PureCSE to ignore stored Values tha have nullptr owner. This even means
+        that a client of PureCSE could deliberately null the owner if they wanted to signal the
+        Value should be ignored.
+
+        While PureCSE ignores chance for optimization if Value's owner is nullptr, in the current
+        strength reduction algorithm, this does not hurt optimization because CSE will be eventually
+        applied since the strength reduction phase want to reach fixed point. But even without
+        this iterations, our result itself is valid since PureCSE is allowed to be conservative.
+
+        * b3/B3PureCSE.cpp:
+        (JSC::B3::PureCSE::findMatch):
+        (JSC::B3::PureCSE::process):
+        * b3/testb3.cpp:
+        (JSC::B3::testCheckSelectAndCSE):
+        (JSC::B3::run):
+
 2017-01-18  Filip Pizlo  <fpizlo@apple.com>
 
         JSSegmentedVariableObject and its subclasses should have a sane destruction story
