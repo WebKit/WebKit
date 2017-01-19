@@ -1,5 +1,14 @@
 2017-01-18  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking inspector/worker/debugger-pause.html as a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=164833
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2017-01-18  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r210881.
 
         This test is failing on macOS.
