@@ -30,8 +30,7 @@
 
 #include "ExceptionOr.h"
 #include "SQLValue.h"
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
+#include <wtf/HashTraits.h>
 
 namespace WebCore {
 
@@ -46,7 +45,7 @@ public:
     void addResult(const SQLValue& result) { m_result.append(result); }
 
     unsigned length() const;
-    ExceptionOr<HashMap<String, SQLValue>> item(unsigned index) const;
+    ExceptionOr<Vector<WTF::KeyValuePair<String, SQLValue>>> item(unsigned index) const;
 
 private:
     SQLResultSetRowList() { }

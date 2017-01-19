@@ -156,11 +156,11 @@ template<typename T> struct IDLFrozenArray : IDLType<Vector<typename T::Implemen
     using ParameterType = const Vector<typename T::ImplementationType>&;
 };
 
-template<typename K, typename V> struct IDLRecord : IDLType<HashMap<typename K::ImplementationType, typename V::ImplementationType>> {
+template<typename K, typename V> struct IDLRecord : IDLType<Vector<WTF::KeyValuePair<typename K::ImplementationType, typename V::ImplementationType>>> {
     using KeyType = K;
     using ValueType = V;
 
-    using ParameterType = const HashMap<typename K::ImplementationType, typename V::ImplementationType>&;
+    using ParameterType = const Vector<WTF::KeyValuePair<typename K::ImplementationType, typename V::ImplementationType>>&;
 };
 
 template<typename T> struct IDLPromise : IDLType<DOMPromise<T>> {

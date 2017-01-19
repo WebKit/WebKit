@@ -659,39 +659,39 @@ debug("Testing record conversion")
 // testNodeRecord is a record<USVString, Node> attribute
 // testSequenceRecord is a record<ByteString, sequence<DOMString>> attribute
 
-evalAndLog("converter.testLongRecord = { key: 1, key2: 2 }");
-shouldBeType("converter.testLongRecord", "Object");
-shouldBeTrue("converter.testLongRecord.hasOwnProperty('key')");
-shouldBeTrue("'key' in converter.testLongRecord");
-shouldBe("converter.testLongRecord['key']", "1");
-shouldBeTrue("converter.testLongRecord.hasOwnProperty('key2')");
-shouldBeTrue("'key2' in converter.testLongRecord");
-shouldBe("converter.testLongRecord['key2']", "2");
-evalAndLog("converter.testLongRecord = undefined");
-shouldBeType("converter.testLongRecord", "Object");
-evalAndLog("converter.testLongRecord = null");
-shouldBeType("converter.testLongRecord", "Object");
-shouldThrow("converter.testLongRecord = 1");
-shouldThrow("converter.testLongRecord = { key: { valueOf:function() { throw new Error(); } } }");
-evalAndLog("var o = { otherKey: 2 }; Object.defineProperty(o, 'key', { enumerable: false, value: 1 }); converter.testLongRecord = o;");
-shouldBeFalse("converter.testLongRecord.hasOwnProperty('key')");
-shouldBeTrue("converter.testLongRecord.hasOwnProperty('otherKey')");
-shouldBe("converter.testLongRecord['otherKey']", "2");
-evalAndLog("var o = { otherKey: 2 }; Object.defineProperty(o, 'key', { get: function() { return 1; }, enumerable: true }); converter.testLongRecord = o;");
-shouldBeTrue("converter.testLongRecord.hasOwnProperty('key')");
-shouldBe("converter.testLongRecord['key']", "1");
-shouldBeTrue("converter.testLongRecord.hasOwnProperty('otherKey')");
-shouldBe("converter.testLongRecord['otherKey']", "2");
-shouldThrow("var o = { otherKey: 2 }; Object.defineProperty(o, 'key', { get: function() { throw new Error();; }, enumerable: true }); converter.testLongRecord = o;");
+evalAndLog("converter.setTestLongRecord({ key: 1, key2: 2 })");
+shouldBeType("converter.testLongRecord()", "Object");
+shouldBeTrue("converter.testLongRecord().hasOwnProperty('key')");
+shouldBeTrue("'key' in converter.testLongRecord()");
+shouldBe("converter.testLongRecord()['key']", "1");
+shouldBeTrue("converter.testLongRecord().hasOwnProperty('key2')");
+shouldBeTrue("'key2' in converter.testLongRecord()");
+shouldBe("converter.testLongRecord()['key2']", "2");
+evalAndLog("converter.setTestLongRecord(undefined)");
+shouldBeType("converter.testLongRecord()", "Object");
+evalAndLog("converter.setTestLongRecord(null)");
+shouldBeType("converter.testLongRecord()", "Object");
+shouldThrow("converter.setTestLongRecord(1)");
+shouldThrow("converter.setTestLongRecord({ key: { valueOf:function() { throw new Error(); } } })");
+evalAndLog("var o = { otherKey: 2 }; Object.defineProperty(o, 'key', { enumerable: false, value: 1 }); converter.setTestLongRecord(o);");
+shouldBeFalse("converter.testLongRecord().hasOwnProperty('key')");
+shouldBeTrue("converter.testLongRecord().hasOwnProperty('otherKey')");
+shouldBe("converter.testLongRecord()['otherKey']", "2");
+evalAndLog("var o = { otherKey: 2 }; Object.defineProperty(o, 'key', { get: function() { return 1; }, enumerable: true }); converter.setTestLongRecord(o);");
+shouldBeTrue("converter.testLongRecord().hasOwnProperty('key')");
+shouldBe("converter.testLongRecord()['key']", "1");
+shouldBeTrue("converter.testLongRecord().hasOwnProperty('otherKey')");
+shouldBe("converter.testLongRecord()['otherKey']", "2");
+shouldThrow("var o = { otherKey: 2 }; Object.defineProperty(o, 'key', { get: function() { throw new Error(); }, enumerable: true }); converter.setTestLongRecord(o);");
 
-evalAndLog("converter.testNodeRecord = { key: document, key2: document.documentElement }");
-shouldBeTrue("converter.testNodeRecord.hasOwnProperty('key')");
-shouldBeTrue("'key' in converter.testNodeRecord");
-shouldBe("converter.testNodeRecord['key']", "document");
-shouldBeTrue("converter.testNodeRecord.hasOwnProperty('key2')");
-shouldBeTrue("'key2' in converter.testNodeRecord");
-shouldBe("converter.testNodeRecord['key2']", "document.documentElement");
-shouldThrow("converter.testNodeRecord = { key: 'hello' }");
+evalAndLog("converter.setTestNodeRecord({ key: document, key2: document.documentElement })");
+shouldBeTrue("converter.testNodeRecord().hasOwnProperty('key')");
+shouldBeTrue("'key' in converter.testNodeRecord()");
+shouldBe("converter.testNodeRecord()['key']", "document");
+shouldBeTrue("converter.testNodeRecord().hasOwnProperty('key2')");
+shouldBeTrue("'key2' in converter.testNodeRecord()");
+shouldBe("converter.testNodeRecord()['key2']", "document.documentElement");
+shouldThrow("converter.setTestNodeRecord({ key: 'hello' })");
 
 [{input: "\uD800", expected: "\uFFFD"},
  {input: "\uDC00", expected: "\uFFFD"},
@@ -700,19 +700,19 @@ shouldThrow("converter.testNodeRecord = { key: 'hello' }");
  {input: "\uDC00\uD800", expected: "\uFFFD\uFFFD"},
  {input: "\uD834\uDD1E", expected: "\uD834\uDD1E"},
 ].forEach(function(test) {
-    evalAndLog("converter.testLongRecord = {'" + test.input + "': 1 }");
-    shouldBe("converter.testLongRecord['" + test.input + "']", "1");
-    evalAndLog("converter.testNodeRecord = {'" + test.input + "': document }");
-    shouldBe("converter.testNodeRecord['" + test.expected + "']", "document");
+    evalAndLog("converter.setTestLongRecord({'" + test.input + "': 1 })");
+    shouldBe("converter.testLongRecord()['" + test.input + "']", "1");
+    evalAndLog("converter.setTestNodeRecord({'" + test.input + "': document })");
+    shouldBe("converter.testNodeRecord()['" + test.expected + "']", "document");
 });
 
-evalAndLog("converter.testSequenceRecord = { key: ['value', 'other value'] }");
-shouldBeTrue("converter.testSequenceRecord.hasOwnProperty('key')");
-shouldBeTrue("'key' in converter.testSequenceRecord");
-shouldBe("converter.testSequenceRecord['key']", "['value', 'other value']");
-shouldThrow("converter.testSequenceRecord = { '\u0100': ['value'] }");
-evalAndLog("converter.testSequenceRecord = { '\u00FF': ['value'] }");
-shouldBe("converter.testSequenceRecord['\u00FF']", "['value']");
+evalAndLog("converter.setTestSequenceRecord({ key: ['value', 'other value'] })");
+shouldBeTrue("converter.testSequenceRecord().hasOwnProperty('key')");
+shouldBeTrue("'key' in converter.testSequenceRecord()");
+shouldBe("converter.testSequenceRecord()['key']", "['value', 'other value']");
+shouldThrow("converter.setTestSequenceRecord({ '\u0100': ['value'] })");
+evalAndLog("converter.setTestSequenceRecord({ '\u00FF': ['value'] })");
+shouldBe("converter.testSequenceRecord()['\u00FF']", "['value']");
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

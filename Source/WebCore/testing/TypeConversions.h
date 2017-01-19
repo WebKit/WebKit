@@ -102,12 +102,12 @@ public:
     const String& testByteString() const { return m_byteString; }
     void setTestByteString(const String& byteString) { m_byteString = byteString; }
 
-    const HashMap<String, int>& testLongRecord() const { return m_longRecord; }
-    void setTestLongRecord(const HashMap<String, int>& value) { m_longRecord = value; }
-    const HashMap<String, RefPtr<Node>>& testNodeRecord() const { return m_nodeRecord; }
-    void setTestNodeRecord(const HashMap<String, RefPtr<Node>>& value) { m_nodeRecord = value; }
-    const HashMap<String, Vector<String>>& testSequenceRecord() const { return m_sequenceRecord; }
-    void setTestSequenceRecord(const HashMap<String, Vector<String>>& value) { m_sequenceRecord = value; }
+    const Vector<WTF::KeyValuePair<String, int>>& testLongRecord() const { return m_longRecord; }
+    void setTestLongRecord(const Vector<WTF::KeyValuePair<String, int>>& value) { m_longRecord = value; }
+    const Vector<WTF::KeyValuePair<String, RefPtr<Node>>>& testNodeRecord() const { return m_nodeRecord; }
+    void setTestNodeRecord(const Vector<WTF::KeyValuePair<String, RefPtr<Node>>>& value) { m_nodeRecord = value; }
+    const Vector<WTF::KeyValuePair<String, Vector<String>>>& testSequenceRecord() const { return m_sequenceRecord; }
+    void setTestSequenceRecord(const Vector<WTF::KeyValuePair<String, Vector<String>>>& value) { m_sequenceRecord = value; }
 
     using TestUnion = Variant<String, int, bool, RefPtr<Node>, Vector<int>>;
     const TestUnion& testUnion() const { return m_union; }
@@ -150,9 +150,9 @@ private:
     String m_string;
     String m_usvstring;
     String m_byteString;
-    HashMap<String, int> m_longRecord;
-    HashMap<String, RefPtr<Node>> m_nodeRecord;
-    HashMap<String, Vector<String>> m_sequenceRecord;
+    Vector<WTF::KeyValuePair<String, int>> m_longRecord;
+    Vector<WTF::KeyValuePair<String, RefPtr<Node>>> m_nodeRecord;
+    Vector<WTF::KeyValuePair<String, Vector<String>>> m_sequenceRecord;
     TestUnion m_union;
     
     int m_typeConversionsDictionaryLongValue { 0 };

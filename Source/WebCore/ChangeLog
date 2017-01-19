@@ -1,3 +1,36 @@
+2017-01-18  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Records should preserve javascript object order
+        https://bugs.webkit.org/show_bug.cgi?id=167189
+
+        Reviewed by Alex Christensen.
+
+        Instead of modeling IDL records as HashMaps, use a Vector
+        of KeyValuePairs, to all preserving the iteration order.
+
+        * Modules/webdatabase/SQLResultSetRowList.cpp:
+        (WebCore::SQLResultSetRowList::item):
+        * Modules/webdatabase/SQLResultSetRowList.h:
+        Return a Vector rather than a HashMap.
+
+        * bindings/IDLTypes.h:
+        Change underlying type to be a Vector<KeyValuePair<K, V>>.
+
+        * bindings/js/JSDOMConvert.h:
+        Update conversion for new implementation type. For conversion
+        to JSValue, allow any type that can has an iterator of keyValuePairs.
+ 
+        * testing/TypeConversions.h:
+        (WebCore::TypeConversions::testLongRecord):
+        (WebCore::TypeConversions::setTestLongRecord):
+        (WebCore::TypeConversions::testNodeRecord):
+        (WebCore::TypeConversions::setTestNodeRecord):
+        (WebCore::TypeConversions::testSequenceRecord):
+        (WebCore::TypeConversions::setTestSequenceRecord):
+        * testing/TypeConversions.idl:
+        Update test IDL to use functions, since the spec mandates that
+        records can't be used with attributes.
+
 2017-01-18  Alex Christensen  <achristensen@webkit.org>
 
         Implement URLSearchParams's sort()

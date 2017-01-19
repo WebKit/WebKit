@@ -1,3 +1,14 @@
+2017-01-18  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Records should preserve javascript object order
+        https://bugs.webkit.org/show_bug.cgi?id=167189
+
+        Reviewed by Alex Christensen.
+
+        * js/dom/webidl-type-mapping-expected.txt:
+        * js/dom/webidl-type-mapping.html:
+        Update test to reflect changes to TypeConversions.idl
+
 2017-01-18  Yoav Weiss  <yoav@yoav.ws>
 
         Add Link header support for preload.

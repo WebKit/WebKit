@@ -1271,8 +1271,10 @@ template<typename K, typename V> struct Converter<IDLRecord<K, V>> : DefaultConv
                 
                 // 4. If typedKey is already a key in result, set its value to typedValue.
                 // Note: This can happen when O is a proxy object.
+                // FIXME: Handle this case.
+                
                 // 5. Otherwise, append to result a mapping (typedKey, typedValue).
-                result.set(typedKey, typedValue);
+                result.append({ typedKey, typedValue });
             }
         }
 
@@ -1285,8 +1287,8 @@ template<typename K, typename V> struct JSConverter<IDLRecord<K, V>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = true;
 
-    template<typename ValueType>
-    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const HashMap<String, ValueType>& map)
+    template<typename MapType>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const MapType& map)
     {
         auto& vm = state.vm();
     

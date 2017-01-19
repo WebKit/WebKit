@@ -43,17 +43,17 @@ unsigned SQLResultSetRowList::length() const
     return m_result.size() / m_columns.size();
 }
 
-ExceptionOr<HashMap<String, SQLValue>> SQLResultSetRowList::item(unsigned index) const
+ExceptionOr<Vector<WTF::KeyValuePair<String, SQLValue>>> SQLResultSetRowList::item(unsigned index) const
 {
     if (index >= length())
         return Exception { INDEX_SIZE_ERR };
 
-    HashMap<String, SQLValue> result;
+    Vector<WTF::KeyValuePair<String, SQLValue>> result;
 
     unsigned numberOfColumns = m_columns.size();
     unsigned valuesIndex = index * numberOfColumns;
     for (unsigned i = 0; i < numberOfColumns; i++)
-        result.set(m_columns[i], m_result[valuesIndex + i]);
+        result.append({ m_columns[i], m_result[valuesIndex + i] });
 
     return WTFMove(result);
 }
