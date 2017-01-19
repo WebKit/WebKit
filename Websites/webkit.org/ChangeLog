@@ -1,3 +1,12 @@
+2017-01-19  Timothy Hatcher  <timothy@hatcher.name>
+
+        Add Tesla to the domain associations on the team page
+        https://bugs.webkit.org/show_bug.cgi?id=167202
+
+        Reviewed by Brian Burg.
+
+        * wp-content/themes/webkit/team.php:
+
 2016-12-22  Keith Miller  <keith_miller@apple.com>
 
         Add BitOr for floating points to B3

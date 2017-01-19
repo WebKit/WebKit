@@ -114,6 +114,7 @@ var domainAffiliations = {
     'samsung.com': 'Samsung Electronics',
     'sencha.com': 'Sencha',
     'sisa.samsung.com': 'Samsung Electronics',
+    'tesla.com': 'Tesla',
     'torchmobile.com.cn': 'Torch Mobile (Beijing) Co. Ltd.',
     'digia.com': 'Digia',
     'partner.samsung.com': 'Samsung Electronics',
