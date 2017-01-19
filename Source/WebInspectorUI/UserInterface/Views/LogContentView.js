@@ -77,7 +77,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         this._scopeBar = new WebInspector.ScopeBar("log-scope-bar", scopeBarItems, scopeBarItems[0]);
         this._scopeBar.addEventListener(WebInspector.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
 
-        this._clearLogNavigationItem = new WebInspector.ButtonNavigationItem("clear-log", WebInspector.UIString("Clear log (%s or %s)").format(this._logViewController.messagesClearKeyboardShortcut.displayName, this._logViewController.messagesAlternateClearKeyboardShortcut.displayName), "Images/NavigationItemTrash.svg", 15, 15);
+        this._clearLogNavigationItem = new WebInspector.ButtonNavigationItem("clear-log", WebInspector.UIString("Clear log (%s or %s)").format(WebInspector.clearKeyboardShortcut.displayName, this._logViewController.messagesAlternateClearKeyboardShortcut.displayName), "Images/NavigationItemTrash.svg", 15, 15);
         this._clearLogNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearLog, this);
 
         var toolTip = WebInspector.UIString("Show console tab");
@@ -214,6 +214,11 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         event.clipboardData.setData("text/plain", this._formatMessagesAsData(true));
         event.stopPropagation();
         event.preventDefault();
+    }
+
+    handleClearShortcut(event)
+    {
+        this._logViewController.requestClearMessages();
     }
 
     findBannerRevealPreviousResult()

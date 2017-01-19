@@ -50,13 +50,12 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
 
         this._sessions = [];
 
-        this.messagesClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "K", this._handleClearShortcut.bind(this));
-        this.messagesAlternateClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, "L", this._handleClearShortcut.bind(this), this._element);
+        this.messagesAlternateClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, "L", this.requestClearMessages.bind(this), this._element);
 
         this._messagesFindNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._handleFindNextShortcut.bind(this), this._element);
         this._messagesFindPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "G", this._handleFindPreviousShortcut.bind(this), this._element);
 
-        this._promptAlternateClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, "L", this._handleClearShortcut.bind(this), this._prompt.element);
+        this._promptAlternateClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, "L", this.requestClearMessages.bind(this), this._prompt.element);
         this._promptFindNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._handleFindNextShortcut.bind(this), this._prompt.element);
         this._promptFindPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "G", this._handleFindPreviousShortcut.bind(this), this._prompt.element);
 
@@ -192,6 +191,11 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         this._scrollToBottomTimeout = setTimeout(delayedWork.bind(this), 0);
     }
 
+    requestClearMessages()
+    {
+        WebInspector.logManager.requestClearMessages();
+    }
+
     // Protected
 
     consolePromptHistoryDidChange(prompt)
@@ -250,11 +254,6 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
     }
 
     // Private
-
-    _handleClearShortcut()
-    {
-        WebInspector.logManager.requestClearMessages();
-    }
 
     _handleFindNextShortcut()
     {

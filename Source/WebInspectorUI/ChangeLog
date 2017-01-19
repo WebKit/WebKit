@@ -1,5 +1,33 @@
 2017-01-19  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Network Tab's "Clear Network Items" button should have keyboard shortcuts
+        https://bugs.webkit.org/show_bug.cgi?id=166943
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector._clear):
+        Move clear keyboard shortcut to main object and call _handleClearShortcut on the visible
+        content view if able.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController):
+        (WebInspector.JavaScriptLogViewController.prototype.requestClearMessages):
+        (WebInspector.JavaScriptLogViewController.prototype._handleClearShortcut): Deleted.
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView):
+        (WebInspector.LogContentView.prototype.handleClearShortcut):
+        Move logic for requesting to clear messages from the LogManager to a better named function.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        (WebInspector.NetworkGridContentView.prototype.handleClearShortcut):
+
+2017-01-19  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Dashboard's log/error/warning help tag says "click to show the Console" even when clicking does nothing
         https://bugs.webkit.org/show_bug.cgi?id=167102
 

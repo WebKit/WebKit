@@ -276,6 +276,8 @@ WebInspector.contentLoaded = function()
     this.splitContentBrowser = new WebInspector.ContentBrowser(document.getElementById("split-content-browser"), this, disableBackForward, disableFindBanner);
     this.splitContentBrowser.navigationBar.element.addEventListener("mousedown", this._consoleResizerMouseDown.bind(this));
 
+    this.clearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "K", this._clear.bind(this));
+
     this.quickConsole = new WebInspector.QuickConsole(document.getElementById("quick-console"));
     this.quickConsole.addEventListener(WebInspector.QuickConsole.Event.DidResize, this._quickConsoleDidResize, this);
 
@@ -2016,6 +2018,19 @@ WebInspector._saveAs = function(event)
         return;
 
     WebInspector.saveDataToFile(contentView.saveData, true);
+};
+
+WebInspector._clear = function(event)
+{
+    let contentView = this.focusedOrVisibleContentView();
+    if (!contentView || typeof contentView.handleClearShortcut !== "function") {
+        // If the current content view is unable to handle this event, clear the console to reset
+        // the dashboard counters.
+        this.logManager.requestClearMessages();
+        return;
+    }
+
+    contentView.handleClearShortcut(event);
 };
 
 WebInspector._copy = function(event)
