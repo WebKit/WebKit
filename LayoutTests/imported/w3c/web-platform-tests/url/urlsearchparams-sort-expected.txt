@@ -1,0 +1,10 @@
+
+PASS Parse and sort: z=b&a=b&z=a&a=a 
+PASS URL parse and sort: z=b&a=b&z=a&a=a 
+PASS Parse and sort: �=x&￼&�=a 
+PASS URL parse and sort: �=x&￼&�=a 
+PASS Parse and sort: ﬃ&🌈 
+PASS URL parse and sort: ﬃ&🌈 
+PASS Parse and sort: é&e�&é 
+PASS URL parse and sort: é&e�&é 
+

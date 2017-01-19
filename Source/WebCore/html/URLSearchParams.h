@@ -47,6 +47,7 @@ public:
     const Vector<std::pair<String, String>>& pairs() const { return m_pairs; }
     operator const Vector<std::pair<String, String>>&() { return m_pairs; }
     void updateFromAssociatedURL();
+    void sort();
 
     class Iterator {
     public:

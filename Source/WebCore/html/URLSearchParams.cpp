@@ -59,6 +59,14 @@ bool URLSearchParams::has(const String& name) const
     return false;
 }
 
+void URLSearchParams::sort()
+{
+    std::stable_sort(m_pairs.begin(), m_pairs.end(), [] (const std::pair<String, String>& a, const std::pair<String, String>& b) {
+        return WTF::codePointCompareLessThan(a.first, b.first);
+    });
+    updateURL();
+}
+
 void URLSearchParams::set(const String& name, const String& value)
 {
     for (auto& pair : m_pairs) {

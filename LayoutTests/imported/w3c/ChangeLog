@@ -1,3 +1,13 @@
+2017-01-18  Alex Christensen  <achristensen@webkit.org>
+
+        Implement URLSearchParams's sort()
+        https://bugs.webkit.org/show_bug.cgi?id=167154
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/url/urlsearchparams-sort-expected.txt: Added.
+        * web-platform-tests/url/urlsearchparams-sort.html: Added.
+
 2017-01-18  Youenn Fablet  <youenn@apple.com>
 
         Reject fetch promise in case of ReadableStream upload
