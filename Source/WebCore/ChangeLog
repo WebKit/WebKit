@@ -1,3 +1,11 @@
+2017-01-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline bindings tests after r210918.
+
+        Unreviewed test gardening.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+
 2017-01-19  Andreas Kling  <akling@apple.com>
 
         ScriptExecutionContext::topOrigin() should return a reference.
