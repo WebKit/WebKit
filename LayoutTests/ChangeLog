@@ -1,3 +1,12 @@
+2017-01-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skipping three crashing pointer lock tests.
+        https://bugs.webkit.org/show_bug.cgi?id=166765
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-01-18  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Records should preserve javascript object order
