@@ -309,6 +309,7 @@
 		1A81B38018BD66AD0007FDAC /* _WKVisitedLinkStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A81B37E18BD66AD0007FDAC /* _WKVisitedLinkStore.mm */; };
 		1A81B38118BD66AD0007FDAC /* _WKVisitedLinkStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A81B37F18BD66AD0007FDAC /* _WKVisitedLinkStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A81B38518BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A81B38418BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h */; };
+		1A85E4721E303F3700914599 /* WebKit.apinotes in Headers */ = {isa = PBXBuildFile; fileRef = 1A85E4701E303F2400914599 /* WebKit.apinotes */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A8B66B01BC43C860082DF77 /* PageLoadStateObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8B66AE1BC43C860082DF77 /* PageLoadStateObserver.h */; };
 		1A8B66B31BC45B010082DF77 /* WKBundleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8B66B11BC45B010082DF77 /* WKBundleMac.mm */; };
 		1A8B66B41BC45B010082DF77 /* WKBundleMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8B66B21BC45B010082DF77 /* WKBundleMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2367,6 +2368,7 @@
 		1A81B37E18BD66AD0007FDAC /* _WKVisitedLinkStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKVisitedLinkStore.mm; sourceTree = "<group>"; };
 		1A81B37F18BD66AD0007FDAC /* _WKVisitedLinkStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKVisitedLinkStore.h; sourceTree = "<group>"; };
 		1A81B38418BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKVisitedLinkStoreInternal.h; sourceTree = "<group>"; };
+		1A85E4701E303F2400914599 /* WebKit.apinotes */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKit.apinotes; sourceTree = "<group>"; };
 		1A8B66AE1BC43C860082DF77 /* PageLoadStateObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageLoadStateObserver.h; sourceTree = "<group>"; };
 		1A8B66B11BC45B010082DF77 /* WKBundleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBundleMac.mm; sourceTree = "<group>"; };
 		1A8B66B21BC45B010082DF77 /* WKBundleMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleMac.h; sourceTree = "<group>"; };
@@ -5493,6 +5495,7 @@
 				1AC1337E18590AE400F3EC05 /* RemoteObjectRegistry.h */,
 				1AC1338118590B0500F3EC05 /* RemoteObjectRegistry.messages.in */,
 				1AC1337D18590AE400F3EC05 /* RemoteObjectRegistry.mm */,
+				1A85E4701E303F2400914599 /* WebKit.apinotes */,
 				1A6280C41919949F006AD9F9 /* WebKit.h */,
 				1A6280F21919982A006AD9F9 /* WebKit.m */,
 				1A6280C61919950C006AD9F9 /* WebKitPrivate.h */,
@@ -7646,6 +7649,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A85E4721E303F3700914599 /* WebKit.apinotes in Headers */,
 				37A5E01418BBF93F000A081E /* _WKActivatedElementInfo.h in Headers */,
 				379A873618BBFA4300588AF2 /* _WKActivatedElementInfoInternal.h in Headers */,
 				99E714C51C124A0400665B3A /* _WKAutomationDelegate.h in Headers */,

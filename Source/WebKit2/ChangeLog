@@ -1,3 +1,14 @@
+2017-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Install WebKit.apinotes with the public headers of WebKit framework
+        https://bugs.webkit.org/show_bug.cgi?id=167182
+        rdar://problem/29008989
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/Cocoa/WebKit.apinotes: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-01-19  Brian Burg  <bburg@apple.com>
 
         Web Inspector: move Mac-specific automation commands to a separate implementation file
