@@ -1031,6 +1031,8 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
         [newEvent release];
         time += timeStep;
     }
+    
+    [interpolatedEvents addObject:endEvent];
 
     return interpolatedEvents;
 }

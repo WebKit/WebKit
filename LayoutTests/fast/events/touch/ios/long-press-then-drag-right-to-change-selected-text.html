@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="resources/basic-gestures.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+    
+        function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            var output = '';
+            var target = document.getElementById('target');
+            
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(pressAtPoint(110, 104), function(result) {
+                    if (document.getSelection().toString() == "magna")
+                        output += 'PASS: Correct Selection';
+                    else
+                        output += 'FAIL: failed to select a word as a result of a long press';
+                    output += '<br>';
+
+                    testRunner.runUIScript(dragFromPointToPoint(139,120,224,120), function(result) {
+                        if (document.getSelection().toString() == "magna aliqua.")
+                            output += 'PASS: Correct Selection';
+                        else
+                            output += 'FAIL: failed to select additional line after a drag.' + document.getSelection().toString()
+                        output += '<br>';
+                                          
+                        testRunner.runUIScript(dragFromPointToPoint(224,120,255,120), function(result) {
+                            if (document.getSelection().toString() == "magna aliqua. Ut ")
+                                output += 'PASS: Correct Selection';
+                            else
+                                output += 'FAIL: failed to select additional line after a drag.' + document.getSelection().toString()+'/end'
+                            output += '<br>';
+
+                            testRunner.runUIScript(dragFromPointToPoint(255,120,224,120), function(result) {
+                                if (document.getSelection().toString() == "magna aliqua.")
+                                    output += 'PASS: Correct Selection';
+                                else
+                                    output += 'FAIL: failed to deselect line after a drag.' + document.getSelection().toString()
+                                output += '<br>';
+
+                                testRunner.runUIScript(dragFromPointToPoint(224,120,139,120), function(result) {
+                                    if (document.getSelection().toString() == "magna")
+                                        output += 'PASS: Correct Selection';
+                                    else
+                                        output += 'FAIL: failed to deselect line after a drag.' + document.getSelection().toString()
+                                    output += '<br>';
+                            
+                                    testRunner.runUIScript(dragFromPointToPoint(139,120,40,120), function(result) {
+                                        if (document.getSelection().toString() == "m")
+                                            output += 'PASS: Correct Selection';
+                                        else
+                                            output += 'FAIL: failed to reduce selection to a single character by dragging up.'
+                                        output += '<br>';
+                                        output += result;
+                                        document.getElementById('target').innerHTML = output;
+                                        testRunner.notifyDone();
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            }
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 400px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+<div id="target">
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+
+    This test requires UIScriptController to run.
+</div>
+</body>
+</html>
