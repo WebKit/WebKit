@@ -1,3 +1,12 @@
+2017-01-19  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toPKPaymentAuthorizationStatus): Suppressed deprecation warnings.
+
 2017-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Variation fonts are erroneously disabled on iOS

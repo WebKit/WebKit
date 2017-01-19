@@ -435,6 +435,8 @@ RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy& webPageProxy, const
 
 static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(WebCore::PaymentAuthorizationStatus status)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     switch (status) {
     case WebCore::PaymentAuthorizationStatus::Success:
         return PKPaymentAuthorizationStatusSuccess;
@@ -453,6 +455,7 @@ static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(WebCore::Paym
     case WebCore::PaymentAuthorizationStatus::PINLockout:
         return PKPaymentAuthorizationStatusPINLockout;
     }
+#pragma clang diagnostic pop
 }
 
 void WebPaymentCoordinatorProxy::platformCompletePaymentSession(WebCore::PaymentAuthorizationStatus status)
