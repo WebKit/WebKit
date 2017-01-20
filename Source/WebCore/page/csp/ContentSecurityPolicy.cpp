@@ -803,15 +803,6 @@ void ContentSecurityPolicy::reportBlockedScriptExecutionToInspector(const String
         InspectorInstrumentation::scriptExecutionBlockedByCSP(m_scriptExecutionContext, directiveText);
 }
 
-bool ContentSecurityPolicy::experimentalFeaturesEnabled() const
-{
-#if ENABLE(CSP_NEXT)
-    return RuntimeEnabledFeatures::sharedFeatures().experimentalContentSecurityPolicyFeaturesEnabled();
-#else
-    return false;
-#endif
-}
-
 void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(ResourceRequest& request, InsecureRequestType requestType) const
 {
     URL url = request.url();

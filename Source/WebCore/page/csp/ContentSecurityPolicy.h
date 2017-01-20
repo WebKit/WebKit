@@ -116,8 +116,6 @@ public:
 
     void gatherReportURIs(DOMStringList&) const;
 
-    bool experimentalFeaturesEnabled() const;
-
     bool allowRunningOrDisplayingInsecureContent(const URL&);
 
     // The following functions are used by internal data structures to call back into this object when parsing, validating,

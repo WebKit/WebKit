@@ -6,6 +6,7 @@
         description('Check that a SecurityPolicyViolationEvent handler exists, and that events can be created.');
 
         try {
+            // NOTE: document.onsecuritypolicyviolation was removed in newer versions of CSP.
             shouldBeEqualToString('typeof document.onsecuritypolicyviolation', 'object');
             shouldBeEqualToString('typeof SecurityPolicyViolationEvent', 'function');
             var data = {

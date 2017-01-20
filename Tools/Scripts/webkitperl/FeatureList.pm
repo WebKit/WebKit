@@ -55,7 +55,6 @@ my (
     $canvasPathSupport,
     $canvasProxySupport,
     $channelMessagingSupport,
-    $cspNextSupport,
     $css3TextSupport,
     $cssBoxDecorationBreakSupport,
     $cssCompositingSupport,
@@ -168,9 +167,6 @@ my @features = (
 
     { option => "channel-messaging", desc => "Toggle Channel Messaging support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
-
-    { option => "csp-next", desc => "Toggle Content Security Policy 1.1 support",
-      define => "ENABLE_CSP_NEXT", default => isGtk(), value => \$cspNextSupport },
 
     { option => "css-box-decoration-break", desc => "Toggle CSS box-decoration-break support",
       define => "ENABLE_CSS_BOX_DECORATION_BREAK", default => 1, value => \$cssBoxDecorationBreakSupport },

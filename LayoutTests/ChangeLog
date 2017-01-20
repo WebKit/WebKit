@@ -1,3 +1,13 @@
+2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove outdated ENABLE(CSP_NEXT) build flag
+        https://bugs.webkit.org/show_bug.cgi?id=167252
+
+        Reviewed by Brent Fulgham.
+
+        * fast/dom/event-handler-attributes.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-basics.html:
+
 2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cleaning up TestExpectations for inspector/css/pseudo-element-matches.html.

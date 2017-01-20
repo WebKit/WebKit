@@ -94,9 +94,6 @@ void RuntimeEnabledFeatures::reset()
 #if ENABLE(INPUT_TYPE_WEEK)
     m_isInputTypeWeekEnabled = true;
 #endif
-#if ENABLE(CSP_NEXT)
-    m_areExperimentalContentSecurityPolicyFeaturesEnabled = false;
-#endif
 #if ENABLE(FONT_LOAD_EVENTS)
     m_isFontLoadEventsEnabled = true;
 #endif

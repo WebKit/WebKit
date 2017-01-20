@@ -168,11 +168,6 @@ public:
     void setInputTypeWeekEnabled(bool isEnabled) { m_isInputTypeWeekEnabled = isEnabled; }
 #endif
 
-#if ENABLE(CSP_NEXT)
-    bool experimentalContentSecurityPolicyFeaturesEnabled() const { return m_areExperimentalContentSecurityPolicyFeaturesEnabled; }
-    void setExperimentalContentSecurityPolicyFeaturesEnabled(bool isEnabled) { m_areExperimentalContentSecurityPolicyFeaturesEnabled = isEnabled; }
-#endif
-
     bool langAttributeAwareFormControlUIEnabled() const { return m_isLangAttributeAwareFormControlUIEnabled; }
     // The lang attribute support is incomplete and should only be turned on for tests.
     void setLangAttributeAwareFormControlUIEnabled(bool isEnabled) { m_isLangAttributeAwareFormControlUIEnabled = isEnabled; }
@@ -313,10 +308,6 @@ private:
 
 #if ENABLE(INPUT_TYPE_WEEK)
     bool m_isInputTypeWeekEnabled;
-#endif
-
-#if ENABLE(CSP_NEXT)
-    bool m_areExperimentalContentSecurityPolicyFeaturesEnabled;
 #endif
 
 #if ENABLE(FONT_LOAD_EVENTS)

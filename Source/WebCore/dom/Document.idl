@@ -201,7 +201,6 @@
 
     // Unique to Document
     [LenientThis] attribute EventHandler onreadystatechange;
-    [NotEnumerable, Conditional=CSP_NEXT] attribute EventHandler onsecuritypolicyviolation;
     [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockchange;
     [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockerror;
 };
