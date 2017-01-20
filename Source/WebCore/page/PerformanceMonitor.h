@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,37 @@
 
 #pragma once
 
+#include "ActivityState.h"
+#include "CPUTime.h"
+#include "Timer.h"
+#include <wtf/Optional.h>
+
 namespace WebCore {
 
-struct ActivityState {
-    enum {
-        WindowIsActive = 1 << 0,
-        IsFocused = 1 << 1,
-        IsVisible = 1 << 2,
-        IsVisibleOrOccluded = 1 << 3,
-        IsInWindow = 1 << 4,
-        IsVisuallyIdle = 1 << 5,
-        IsAudible = 1 << 6,
-        IsLoading = 1 << 7,
-    };
+class Page;
 
-    typedef unsigned Flags;
+class PerformanceMonitor {
+public:
+    explicit PerformanceMonitor(Page&);
 
-    static const Flags NoFlags = 0;
-    static const Flags AllFlags = WindowIsActive | IsFocused | IsVisible | IsVisibleOrOccluded | IsInWindow | IsVisuallyIdle | IsAudible | IsLoading;
+    void didStartProvisionalLoad();
+    void didFinishLoad();
+    void activityStateChanged(ActivityState::Flags oldState, ActivityState::Flags newState);
+
+private:
+    void measurePostLoadCPUUsage();
+    void measurePostBackgroundingCPUUsage();
+    void measurePerActivityStateCPUUsage();
+    void measureCPUUsageInActivityState(ActivityStateForCPUSampling);
+
+    Page& m_page;
+
+    Timer m_postPageLoadCPUUsageTimer;
+    std::optional<CPUTime> m_postLoadCPUTime;
+    Timer m_postBackgroundingCPUUsageTimer;
+    std::optional<CPUTime> m_postBackgroundingCPUTime;
+    Timer m_perActivityStateCPUUsageTimer;
+    std::optional<CPUTime> m_perActivityStateCPUTime;
 };
 
-enum class ActivityStateForCPUSampling {
-    NonVisible,
-    VisibleNonActive,
-    VisibleAndActive
-};
-
-} // namespace WebCore
+}

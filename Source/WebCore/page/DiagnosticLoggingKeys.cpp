@@ -163,6 +163,11 @@ String DiagnosticLoggingKeys::noStoreKey()
     return ASCIILiteral("noStore");
 }
 
+String DiagnosticLoggingKeys::nonVisibleStateKey()
+{
+    return ASCIILiteral("nonVisibleState");
+}
+
 String DiagnosticLoggingKeys::notInMemoryCacheKey()
 {
     return ASCIILiteral("notInMemoryCache");
@@ -598,6 +603,16 @@ String DiagnosticLoggingKeys::videoKey()
     return ASCIILiteral("video");
 }
 
+String DiagnosticLoggingKeys::visibleNonActiveStateKey()
+{
+    return ASCIILiteral("visibleNonActiveState");
+}
+
+String DiagnosticLoggingKeys::visibleAndActiveStateKey()
+{
+    return ASCIILiteral("visibleAndActiveState");
+}
+
 String DiagnosticLoggingKeys::wastedSpeculativeWarmupWithRevalidationKey()
 {
     return ASCIILiteral("wastedSpeculativeWarmupWithRevalidation");
@@ -656,6 +671,38 @@ String DiagnosticLoggingKeys::notInCacheKey()
 String WebCore::DiagnosticLoggingKeys::webGLKey()
 {
     return ASCIILiteral("webGL");
+}
+
+String DiagnosticLoggingKeys::foregroundCPUUsageToDiagnosticLoggingKey(double cpuUsage)
+{
+    if (cpuUsage < 10)
+        return ASCIILiteral("Below10");
+    if (cpuUsage < 20)
+        return ASCIILiteral("10to20");
+    if (cpuUsage < 40)
+        return ASCIILiteral("20to40");
+    if (cpuUsage < 60)
+        return ASCIILiteral("40to60");
+    if (cpuUsage < 80)
+        return ASCIILiteral("60to80");
+    return ASCIILiteral("over80");
+}
+
+String DiagnosticLoggingKeys::backgroundCPUUsageToDiagnosticLoggingKey(double cpuUsage)
+{
+    if (cpuUsage < 1)
+        return ASCIILiteral("Below1");
+    if (cpuUsage < 5)
+        return ASCIILiteral("1to5");
+    if (cpuUsage < 10)
+        return ASCIILiteral("5to10");
+    if (cpuUsage < 30)
+        return ASCIILiteral("10to30");
+    if (cpuUsage < 50)
+        return ASCIILiteral("30to50");
+    if (cpuUsage < 70)
+        return ASCIILiteral("50to70");
+    return ASCIILiteral("over70");
 }
 
 } // namespace WebCore

@@ -42,6 +42,7 @@
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
+#include "PerActivityStateCPUUsageSampler.h"
 #include "SandboxExtension.h"
 #include "StatisticsData.h"
 #include "TextChecker.h"
@@ -168,6 +169,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_websiteDataStore(m_configuration->shouldHaveLegacyDataStore() ? API::WebsiteDataStore::create(legacyWebsiteDataStoreConfiguration(m_configuration)).ptr() : nullptr)
 #if PLATFORM(MAC)
     , m_highPerformanceGraphicsUsageSampler(std::make_unique<HighPerformanceGraphicsUsageSampler>(*this))
+    , m_perActivityStateCPUUsageSampler(std::make_unique<PerActivityStateCPUUsageSampler>(*this))
 #endif
     , m_shouldUseTestingNetworkSession(false)
     , m_processTerminationEnabled(true)
@@ -1433,6 +1435,17 @@ void WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit()
 
     int limitInMilliseconds = maximumTimerThrottlePerPageInMS * m_hiddenPageThrottlingAutoIncreasesCounter.value();
     sendToAllProcesses(Messages::WebProcess::SetHiddenPageTimerThrottlingIncreaseLimit(limitInMilliseconds));
+}
+
+void WebProcessPool::reportWebContentCPUTime(int64_t cpuTime, uint64_t activityState)
+{
+#if PLATFORM(MAC)
+    if (m_perActivityStateCPUUsageSampler)
+        m_perActivityStateCPUUsageSampler->reportWebContentCPUTime(cpuTime, static_cast<WebCore::ActivityStateForCPUSampling>(activityState));
+#else
+    UNUSED_PARAM(cpuTime);
+    UNUSED_PARAM(activityState);
+#endif
 }
 
 } // namespace WebKit

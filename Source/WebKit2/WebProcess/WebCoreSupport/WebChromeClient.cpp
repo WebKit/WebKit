@@ -49,6 +49,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenu.h"
 #include "WebProcess.h"
+#include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebSearchPopupMenu.h"
 #include <WebCore/ApplicationCacheStorage.h>
@@ -263,6 +264,11 @@ bool WebChromeClient::canRunModal()
 void WebChromeClient::runModal()
 {
     m_page->runModal();
+}
+
+void WebChromeClient::reportProcessCPUTime(int64_t cpuTime, ActivityStateForCPUSampling activityState)
+{
+    WebProcess::singleton().send(Messages::WebProcessPool::ReportWebContentCPUTime(cpuTime, static_cast<uint64_t>(activityState)), 0);
 }
 
 void WebChromeClient::setToolbarsVisible(bool toolbarsAreVisible)

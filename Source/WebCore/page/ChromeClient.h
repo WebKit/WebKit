@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "ActivityState.h"
 #include "AXObjectCache.h"
 #include "Cursor.h"
 #include "DatabaseDetails.h"
@@ -459,6 +460,8 @@ public:
 #endif
 
     virtual void didInvalidateDocumentMarkerRects() { }
+
+    virtual void reportProcessCPUTime(int64_t, ActivityStateForCPUSampling) { }
 
 protected:
     virtual ~ChromeClient() { }

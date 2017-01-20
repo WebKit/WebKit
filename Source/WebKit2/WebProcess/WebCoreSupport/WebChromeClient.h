@@ -74,6 +74,8 @@ private:
     
     bool canRunModal() override;
     void runModal() override;
+
+    void reportProcessCPUTime(int64_t, WebCore::ActivityStateForCPUSampling) final;
     
     void setToolbarsVisible(bool) override;
     bool toolbarsVisible() override;

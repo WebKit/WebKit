@@ -66,6 +66,7 @@
 #include "PageDebuggable.h"
 #include "PageGroup.h"
 #include "PageOverlayController.h"
+#include "PerformanceMonitor.h"
 #include "PlatformMediaSessionManager.h"
 #include "PlugInClient.h"
 #include "PluginData.h"
@@ -126,13 +127,13 @@
 
 namespace WebCore {
 
-#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - Page::" fmt, this, ##__VA_ARGS__)
-
 static HashSet<Page*>* allPages;
+static unsigned nonUtilityPageCount { 0 };
 
-static const std::chrono::seconds cpuUsageMeasurementDelay { 5 };
-static const std::chrono::seconds postLoadCPUUsageMeasurementDuration { 10 };
-static const std::chrono::minutes backgroundCPUUsageMeasurementDuration { 5 };
+static inline bool isUtilityPageChromeClient(ChromeClient& chromeClient)
+{
+    return chromeClient.isEmptyChromeClient() || chromeClient.isSVGImageChromeClient();
+}
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, pageCounter, ("Page"));
 
@@ -252,8 +253,8 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_visitedLinkStore(*WTFMove(pageConfiguration.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
     , m_isClosing(false)
-    , m_postPageLoadCPUUsageTimer(*this, &Page::measurePostLoadCPUUsage)
-    , m_postBackgroundingCPUUsageTimer(*this, &Page::measurePostBackgroundingCPUUsage)
+    , m_isUtilityPage(isUtilityPageChromeClient(chrome().client()))
+    , m_performanceMonitor(isUtilityPage() ? nullptr : std::make_unique<PerformanceMonitor>(*this))
 {
     updateTimerThrottlingState();
 
@@ -270,6 +271,8 @@ Page::Page(PageConfiguration&& pageConfiguration)
 
     ASSERT(!allPages->contains(this));
     allPages->add(this);
+    if (!isUtilityPage())
+        ++nonUtilityPageCount;
 
 #ifndef NDEBUG
     pageCounter.increment();
@@ -294,6 +297,8 @@ Page::~Page()
     m_mainFrame->setView(nullptr);
     setGroupName(String());
     allPages->remove(this);
+    if (!isUtilityPage())
+        --nonUtilityPageCount;
     
     m_settings->pageDestroyed();
 
@@ -937,91 +942,21 @@ void Page::setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInte
 
 void Page::didStartProvisionalLoad()
 {
-    m_postLoadCPUTime = std::nullopt;
-    m_postPageLoadCPUUsageTimer.stop();
+    if (m_performanceMonitor)
+        m_performanceMonitor->didStartProvisionalLoad();
 }
 
 void Page::didFinishLoad()
 {
     resetRelevantPaintedObjectCounter();
 
-    // Only do post-load CPU usage measurement if there is a single Page in the process in order to reduce noise.
-    if (Settings::isPostLoadCPUUsageMeasurementEnabled() && allPages->size() == 1) {
-        m_postLoadCPUTime = std::nullopt;
-        m_postPageLoadCPUUsageTimer.startOneShot(cpuUsageMeasurementDelay);
-    }
+    if (m_performanceMonitor)
+        m_performanceMonitor->didFinishLoad();
 }
 
-static String foregroundCPUUsageToDiagnosticLogginKey(double cpuUsage)
+bool Page::isOnlyNonUtilityPage() const
 {
-    if (cpuUsage < 10)
-        return ASCIILiteral("Below10");
-    if (cpuUsage < 20)
-        return ASCIILiteral("10to20");
-    if (cpuUsage < 40)
-        return ASCIILiteral("20to40");
-    if (cpuUsage < 60)
-        return ASCIILiteral("40to60");
-    if (cpuUsage < 80)
-        return ASCIILiteral("60to80");
-    return ASCIILiteral("over80");
-}
-
-void Page::measurePostLoadCPUUsage()
-{
-    if (allPages->size() != 1)
-        return;
-
-    if (!m_postLoadCPUTime) {
-        m_postLoadCPUTime = getCPUTime();
-        if (m_postLoadCPUTime)
-            m_postPageLoadCPUUsageTimer.startOneShot(postLoadCPUUsageMeasurementDuration);
-        return;
-    }
-    std::optional<CPUTime> cpuTime = getCPUTime();
-    if (!cpuTime)
-        return;
-
-    double cpuUsage = cpuTime.value().percentageCPUUsageSince(*m_postLoadCPUTime);
-    RELEASE_LOG_IF_ALLOWED(PerformanceLogging, "measurePostLoadCPUUsage: Process was using %.1f%% percent CPU after the page load.", cpuUsage);
-    diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::postPageLoadKey(), DiagnosticLoggingKeys::cpuUsageKey(), foregroundCPUUsageToDiagnosticLogginKey(cpuUsage), ShouldSample::No);
-}
-
-static String backgroundCPUUsageToDiagnosticLogginKey(double cpuUsage)
-{
-    if (cpuUsage < 1)
-        return ASCIILiteral("Below1");
-    if (cpuUsage < 5)
-        return ASCIILiteral("1to5");
-    if (cpuUsage < 10)
-        return ASCIILiteral("5to10");
-    if (cpuUsage < 30)
-        return ASCIILiteral("10to30");
-    if (cpuUsage < 50)
-        return ASCIILiteral("30to50");
-    if (cpuUsage < 70)
-        return ASCIILiteral("50to70");
-    return ASCIILiteral("over70");
-}
-
-void Page::measurePostBackgroundingCPUUsage()
-{
-    if (allPages->size() != 1)
-        return;
-
-    if (!m_postBackgroundingCPUTime) {
-        m_postBackgroundingCPUTime = getCPUTime();
-        if (m_postBackgroundingCPUTime)
-            m_postBackgroundingCPUUsageTimer.startOneShot(backgroundCPUUsageMeasurementDuration);
-        return;
-    }
-    std::optional<CPUTime> cpuTime = getCPUTime();
-    if (!cpuTime)
-        return;
-
-    double cpuUsage = cpuTime.value().percentageCPUUsageSince(*m_postBackgroundingCPUTime);
-    RELEASE_LOG_IF_ALLOWED(PerformanceLogging, "measurePostBackgroundingCPUUsage: Process was using %.1f%% percent CPU after becoming non visible.", cpuUsage);
-    diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::postPageBackgroundingKey(), DiagnosticLoggingKeys::cpuUsageKey(), backgroundCPUUsageToDiagnosticLogginKey(cpuUsage), ShouldSample::No);
+    return !isUtilityPage() && nonUtilityPageCount == 1;
 }
 
 void Page::setTopContentInset(float contentInset)
@@ -1576,6 +1511,9 @@ void Page::setActivityState(ActivityState::Flags activityState)
 
     if (wasVisibleAndActive != isVisibleAndActive())
         PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary();
+
+    if (m_performanceMonitor)
+        m_performanceMonitor->activityStateChanged(oldActivityState, activityState);
 }
 
 bool Page::isVisibleAndActive() const
@@ -1632,13 +1570,6 @@ void Page::setIsVisibleInternal(bool isVisible)
         if (FrameView* view = mainFrame().view())
             view->hide();
     }
-
-    // Measure CPU usage of pages when they are no longer visible.
-    m_postBackgroundingCPUTime = std::nullopt;
-    if (isVisible)
-        m_postBackgroundingCPUUsageTimer.stop();
-    else if (Settings::isPostBackgroundingCPUUsageMeasurementEnabled() && allPages->size() == 1)
-        m_postBackgroundingCPUUsageTimer.startOneShot(cpuUsageMeasurementDelay);
 }
 
 void Page::setIsPrerender()
