@@ -28,6 +28,7 @@
 
 [
     Conditional=WEB_ANIMATIONS,
+    EnabledAtRuntime=WebAnimations,
     NoInterfaceObject
 ] interface Animatable {
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C

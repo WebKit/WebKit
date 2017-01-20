@@ -1,5 +1,27 @@
 2017-01-20  Antoine Quint  <graouts@apple.com>
 
+        Web Animations should be off by default and enabled as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=167115
+        <rdar://problem/30048963>
+
+        Reviewed by Joseph Pecoraro.
+
+        Conditionalize the existing parts of the Web Animations API so that they may be
+        toggled at runtime.
+
+        * animation/Animatable.idl:
+        * animation/AnimationEffect.idl:
+        * animation/AnimationTimeline.idl:
+        * animation/DocumentAnimation.idl:
+        * animation/DocumentTimeline.idl:
+        * animation/KeyframeEffect.idl:
+        * animation/WebAnimation.idl:
+        * page/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::reset):
+        * page/RuntimeEnabledFeatures.h:
+
+2017-01-20  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Turn modern media controls on by default
         https://bugs.webkit.org/show_bug.cgi?id=165668
 

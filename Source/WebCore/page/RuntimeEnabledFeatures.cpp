@@ -103,9 +103,6 @@ void RuntimeEnabledFeatures::reset()
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     m_areAnimationTriggersEnabled = false;
 #endif
-#if ENABLE(WEB_ANIMATIONS)
-    m_areWebAnimationsEnabled = false;
-#endif
 #if ENABLE(CSS_GRID_LAYOUT)
     m_cssGridLayoutEnabled = true;
 #endif

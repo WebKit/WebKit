@@ -1,3 +1,18 @@
+2017-01-20  Antoine Quint  <graouts@apple.com>
+
+        Web Animations should be off by default and enabled as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=167115
+        <rdar://problem/30048963>
+
+        Reviewed by Joseph Pecoraro.
+
+        Turn Web Animations on in DRT.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+
 2017-01-20  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Add libwebrtc build infrastructure

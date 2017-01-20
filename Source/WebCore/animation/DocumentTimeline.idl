@@ -28,6 +28,7 @@
 
 [
     Conditional=WEB_ANIMATIONS,
+    EnabledAtRuntime=WebAnimations,
     ImplementationLacksVTable,
     // FIXME: Should be DOMHighResTimeStamp rather than double (e.g. see Performance.now()).
     Constructor(double originTime),

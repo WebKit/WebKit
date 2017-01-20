@@ -1,5 +1,18 @@
 2017-01-20  Antoine Quint  <graouts@apple.com>
 
+        Web Animations should be off by default and enabled as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=167115
+        <rdar://problem/30048963>
+
+        Reviewed by Joseph Pecoraro.
+
+        Promote, or relegate depending on how you see things, the Web Animations preference
+        to an experimental feature.
+
+        * Shared/WebPreferencesDefinitions.h:
+
+2017-01-20  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Turn modern media controls on by default
         https://bugs.webkit.org/show_bug.cgi?id=165668
 

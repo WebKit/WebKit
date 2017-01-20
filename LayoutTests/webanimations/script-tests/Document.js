@@ -1,9 +1,5 @@
 description("Web Animation API: Document interface extension test.");
 
-// Enable Web Animations API.
-if (window.testRunner)
-    window.testRunner.overridePreference("WebKitWebAnimationsEnabled", "1");
-
 var iframe = document.getElementById("iframe");
 var target = document.getElementById("target");
 

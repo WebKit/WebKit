@@ -1001,6 +1001,7 @@ static void resetWebPreferencesToConsistentValues(const TestOptions& options)
 
     [preferences setMediaStreamEnabled:YES];
     [preferences setPeerConnectionEnabled:YES];
+    [preferences setWebAnimationsEnabled:YES];
 
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];

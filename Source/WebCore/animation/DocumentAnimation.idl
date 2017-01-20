@@ -27,7 +27,8 @@
  */
 
 [
-    Conditional=WEB_ANIMATIONS
+    Conditional=WEB_ANIMATIONS,
+    EnabledAtRuntime=WebAnimations,
 ] partial interface Document {
     readonly attribute DocumentTimeline timeline;
     sequence<WebAnimation> getAnimations();

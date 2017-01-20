@@ -28,6 +28,7 @@
 
 [
     Conditional=WEB_ANIMATIONS,
+    EnabledAtRuntime=WebAnimations,
     CustomToJSObject,
     ImplementationLacksVTable
 ] interface AnimationTimeline {

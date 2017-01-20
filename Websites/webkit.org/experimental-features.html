@@ -106,6 +106,10 @@ function testSubtleCrypto() {
     return window.crypto.subtle;
 }
 
+function testWebAnimations() {
+    return !!window.Animation;
+}
+
 window.addEventListener("load", function () {
     Array.from(document.querySelectorAll(".test")).forEach(element => {
         var enabled = false;
@@ -134,6 +138,7 @@ window.addEventListener("load", function () {
         <div class="test" id="InputEvents"><p>HTML Input Events</p></div>
         <div class="test" id="SubtleCrypto"><p>SubtleCrypto</p></div>
         <div class="test" id="VariationFonts"><p>Variation Fonts</p></div>
+        <div class="test" id="WebAnimations"><p>Web Animations</p></div>
         <div class="test" id="WebGL2"><p>WebGL 2.0</p></div>
     </div>
 </body>

@@ -1,3 +1,15 @@
+2017-01-20  Antoine Quint  <graouts@apple.com>
+
+        Web Animations should be off by default and enabled as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=167115
+        <rdar://problem/30048963>
+
+        Reviewed by Joseph Pecoraro.
+
+        No need for an explicit preference anymore.
+
+        * webanimations/script-tests/Document.js:
+
 2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping pointer-lock tests on macOS WK2.

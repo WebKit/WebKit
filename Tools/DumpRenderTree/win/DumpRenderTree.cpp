@@ -862,6 +862,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     prefsPrivate3->setCustomElementsEnabled(TRUE);
 
     prefsPrivate3->setModernMediaControlsEnabled(FALSE);
+    prefsPrivate3->setWebAnimationsEnabled(TRUE);
 
     setAlwaysAcceptCookies(false);
 }

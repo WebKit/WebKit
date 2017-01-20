@@ -332,7 +332,7 @@ private:
 #endif
 
 #if ENABLE(WEB_ANIMATIONS)
-    bool m_areWebAnimationsEnabled;
+    bool m_areWebAnimationsEnabled { false };
 #endif
     
     bool m_isShadowDOMEnabled;

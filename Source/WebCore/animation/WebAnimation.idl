@@ -28,6 +28,7 @@
 
 [
     Conditional=WEB_ANIMATIONS,
+    EnabledAtRuntime=WebAnimations,
     InterfaceName=Animation,
     ImplementationLacksVTable,
     Constructor([Default=Undefined] AnimationEffect? effect, [Default=Undefined] AnimationTimeline? timeline)
