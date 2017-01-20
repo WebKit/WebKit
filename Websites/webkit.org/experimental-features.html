@@ -69,7 +69,6 @@ body {
 window.es6modules = true;
 </script>
 <script>
-
 function testCSSGrid() {
     return CSS.supports("display", "grid");
 }
@@ -103,15 +102,23 @@ function testES6Modules() {
     return window.es6modules;
 }
 
+function testSubtleCrypto() {
+    return window.crypto.subtle;
+}
+
 window.addEventListener("load", function () {
     Array.from(document.querySelectorAll(".test")).forEach(element => {
-        var testFunction = window[`test${element.id}`];
-        if (typeof testFunction === "function")
-            element.classList.add(testFunction() ? "enabled" : "disabled");
+        var enabled = false;
+        try {
+            var testFunction = window[`test${element.id}`];
+            enabled = !!testFunction();
+        } catch (e) {
+            console.error(e);
+        }
+        element.classList.add(enabled ? "enabled" : "disabled");
     });
 }, false);
-
-  </script>
+</script>
 </head>
 <body>
     <div class="content">
@@ -125,6 +132,7 @@ window.addEventListener("load", function () {
         <div class="test" id="Gamepad"><p>Gamepad API</p></div>
         <div class="test" id="FormValidation"><p>HTML Form Validation</p></div>
         <div class="test" id="InputEvents"><p>HTML Input Events</p></div>
+        <div class="test" id="SubtleCrypto"><p>SubtleCrypto</p></div>
         <div class="test" id="VariationFonts"><p>Variation Fonts</p></div>
         <div class="test" id="WebGL2"><p>WebGL 2.0</p></div>
     </div>

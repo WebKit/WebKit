@@ -1,3 +1,13 @@
+2017-01-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Include SubtleCrypto test on experimental-features test page
+        https://bugs.webkit.org/show_bug.cgi?id=167226
+
+        Reviewed by Yusuke Suzuki.
+
+        * experimental-features.html:
+        Add a test for SubtleCrypto and make the test resilient against exceptions.
+
 2017-01-19  Timothy Hatcher  <timothy@hatcher.name>
 
         Add Tesla to the domain associations on the team page
