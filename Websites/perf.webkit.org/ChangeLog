@@ -1,3 +1,33 @@
+2017-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r198234): /api/commits/%revision% always fails
+        https://bugs.webkit.org/show_bug.cgi?id=167235
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by a typo in CommitLogFetcher::fetch_revision, which was calling commit_for_revision on
+        $this->db instead of $this. This had been monkey-patched in the internal dashboard so it was working there.
+
+        Also fixed a bug that /latest wasn't doing what it claimed to do, and a bug that /oldest /latest,
+        and /last-reported would return a commit with all values set to null instead of an empty list.
+
+        Finally, added server API tests for /api/commits.
+
+        * public/api/commits.php:
+        (main): Add a comment for APIs that only exist for v2 UI.
+
+        * public/include/commit-log-fetcher.php:
+        (CommitLogFetcher::fetch_latest): Fixed the bug that this function was returning the oldest commit, not the
+        the latest commit as desired.
+        (CommitLogFetcher::fetch_revision): Fixed the bug that this function would always encounter an exception
+        because commit_for_revision is defined on $this, not $this->db.
+        (CommitLogFetcher::format_single_commit): Return an empty list instead of an array with a single commit with
+        all values set to null.
+
+        * server-tests/api-commits.js: Added. Added tests for the JSON API at /api/commits.
+        (.assertCommitIsSameAsOneSubmitted): Added. A helper function to compare a commit returned by /api/commits
+        to one sent to /api/report-commits.
+
 2017-01-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         measurement-sets API can incorrectly order points with OS version without commit time

@@ -23,7 +23,7 @@ function main($paths) {
     $filter = array_get($paths, 1);
     $commits = array();
     if (!$filter) {
-        $keyword = array_get($_GET, 'keyword');
+        $keyword = array_get($_GET, 'keyword'); // V2 UI compatibility.
         $from = array_get($_GET, 'from');
         $to = array_get($_GET, 'to');
         $commits = $fetcher->fetch_between($repository_id, $from, $to, $keyword);
@@ -35,7 +35,7 @@ function main($paths) {
         $commits = $fetcher->fetch_last_reported($repository_id);
     } else if (ctype_alnum($filter)) {
         $commits = $fetcher->fetch_revision($repository_id, $filter);
-    } else {
+    } else { // V2 UI compatibility.
         $matches = array();
         if (!preg_match('/([A-Za-z0-9]+)[\:\-]([A-Za-z0-9]+)/', $filter, $matches))
             exit_with_error('UnknownFilter', array('repositoryName' => $repository_name, 'filter' => $filter));

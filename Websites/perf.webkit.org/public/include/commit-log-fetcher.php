@@ -88,7 +88,7 @@ class CommitLogFetcher {
     }
 
     function fetch_latest($repository_id) {
-        return $this->format_single_commit($this->db->select_first_row('commits', 'commit', array('repository' => $repository_id), 'time'));
+        return $this->format_single_commit($this->db->select_last_row('commits', 'commit', array('repository' => $repository_id), 'time'));
     }
 
     function fetch_last_reported($repository_id) {
@@ -96,7 +96,7 @@ class CommitLogFetcher {
     }
 
     function fetch_revision($repository_id, $revision) {
-        return $this->format_single_commit($this->db->commit_for_revision($repository_id, $revision));
+        return $this->format_single_commit($this->commit_for_revision($repository_id, $revision));
     }
 
     private function commit_for_revision($repository_id, $revision) {
@@ -111,6 +111,8 @@ class CommitLogFetcher {
     }
 
     private function format_single_commit($commit_row) {
+        if (!$commit_row)
+            return array();
         $committer = $this->db->select_first_row('committers', 'committer', array('id' => $commit_row['commit_committer']));
         return array($this->format_commit($commit_row, $committer));
     }
