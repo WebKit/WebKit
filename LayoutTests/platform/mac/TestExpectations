@@ -1488,6 +1488,8 @@ webkit.org/b/164298 media/modern-media-controls/placard-support/placard-support-
 # This one always times out on the bots, cannot reproduce locally.
 webkit.org/b/165234 media/modern-media-controls/audio/audio-controls-buttons.html [ Pass Timeout ]
 
+webkit.org/b/165290 media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside.html [ Pass Timeout ]
+
 webkit.org/b/165874 [ Debug ] streams/pipe-to.html [ Pass Failure ]
 
 # New Encrypted Media API not enabled on Mac

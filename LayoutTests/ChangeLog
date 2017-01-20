@@ -1,3 +1,12 @@
+2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside.html as flaky on macOS.
+        https://bugs.webkit.org/show_bug.cgi?id=165290
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2017-01-20  Antoine Quint  <graouts@apple.com>
 
         Web Animations should be off by default and enabled as an experimental feature
