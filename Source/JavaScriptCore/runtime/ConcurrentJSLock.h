@@ -40,7 +40,7 @@ typedef NoLock ConcurrentJSLock;
 typedef NoLockLocker ConcurrentJSLockerImpl;
 #endif
 
-class ConcurrentJSLockerBase {
+class ConcurrentJSLockerBase : public AbstractLocker {
     WTF_MAKE_NONCOPYABLE(ConcurrentJSLockerBase);
 public:
     explicit ConcurrentJSLockerBase(ConcurrentJSLock& lockable)

@@ -243,15 +243,9 @@ inline WatchpointSet* Structure::propertyReplacementWatchpointSet(PropertyOffset
     return map->get(offset);
 }
 
-ALWAYS_INLINE bool Structure::checkOffsetConsistency() const
+template<typename DetailsFunc>
+ALWAYS_INLINE bool Structure::checkOffsetConsistency(PropertyTable* propertyTable, const DetailsFunc& detailsFunc) const
 {
-    PropertyTable* propertyTable = propertyTableOrNull();
-
-    if (!propertyTable) {
-        ASSERT(!isPinnedPropertyTable());
-        return true;
-    }
-
     // We cannot reliably assert things about the property table in the concurrent
     // compilation thread. It is possible for the table to be stolen and then have
     // things added to it, which leads to the offsets being all messed up. We could
@@ -272,6 +266,7 @@ ALWAYS_INLINE bool Structure::checkOffsetConsistency() const
         dataLog("totalSize = ", totalSize, "\n");
         dataLog("inlineOverflowAccordingToTotalSize = ", inlineOverflowAccordingToTotalSize, "\n");
         dataLog("numberOfOutOfLineSlotsForLastOffset = ", numberOfOutOfLineSlotsForLastOffset(m_offset), "\n");
+        detailsFunc();
         UNREACHABLE_FOR_PLATFORM();
     };
     
@@ -281,6 +276,25 @@ ALWAYS_INLINE bool Structure::checkOffsetConsistency() const
         fail("inlineOverflowAccordingToTotalSize doesn't match numberOfOutOfLineSlotsForLastOffset");
 
     return true;
+}
+
+ALWAYS_INLINE bool Structure::checkOffsetConsistency() const
+{
+    PropertyTable* propertyTable = propertyTableOrNull();
+
+    if (!propertyTable) {
+        ASSERT(!isPinnedPropertyTable());
+        return true;
+    }
+
+    // We cannot reliably assert things about the property table in the concurrent
+    // compilation thread. It is possible for the table to be stolen and then have
+    // things added to it, which leads to the offsets being all messed up. We could
+    // get around this by grabbing a lock here, but I think that would be overkill.
+    if (isCompilationThread())
+        return true;
+
+    return checkOffsetConsistency(propertyTable, [] () { });
 }
 
 inline void Structure::checkConsistency()
@@ -302,14 +316,21 @@ inline void Structure::setObjectToStringValue(ExecState* exec, VM& vm, JSString*
     rareData()->setObjectToStringValue(exec, vm, this, value, toStringTagSymbolSlot);
 }
 
-template<typename Func>
+template<Structure::ShouldPin shouldPin, typename Func>
 inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned attributes, const Func& func)
 {
     PropertyTable* table = ensurePropertyTable(vm);
 
     GCSafeConcurrentJSLocker locker(m_lock, vm.heap);
-    
-    setPropertyTable(vm, table);
+
+    switch (shouldPin) {
+    case ShouldPin::Yes:
+        pin(locker, vm, table);
+        break;
+    case ShouldPin::No:
+        setPropertyTable(vm, table);
+        break;
+    }
     
     ASSERT(!JSC::isValidOffset(get(vm, propertyName)));
 
@@ -366,9 +387,7 @@ inline PropertyOffset Structure::remove(PropertyName propertyName, const Func& f
 template<typename Func>
 inline PropertyOffset Structure::addPropertyWithoutTransition(VM& vm, PropertyName propertyName, unsigned attributes, const Func& func)
 {
-    pin(vm, ensurePropertyTable(vm));
-    
-    return add(vm, propertyName, attributes, func);
+    return add<ShouldPin::Yes>(vm, propertyName, attributes, func);
 }
 
 template<typename Func>

@@ -1,5 +1,50 @@
 2017-01-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210947. rdar://problem/30108809
+
+    2017-01-19  Filip Pizlo  <fpizlo@apple.com>
+
+            Structure::pin() needs to be called while holding a lock
+            https://bugs.webkit.org/show_bug.cgi?id=167220
+
+            Reviewed by Saam Barati.
+
+            Imagine this race: the mutator calls pin() and the collector calls visitChildren(),
+            on the same Structure at the same time. In trunk pin() does not require a lock to be
+            held and it doesn't grab any locks. Meanwhile visitChildren() grabs the lock, checks
+            if the structure is pinned, and if not, it removes it by overwriting with zero. Now
+            imagine how this plays out when pin() runs. Since pin() grabs no locks, it is
+            irrelevant that visitChildren() grabs any locks. So, visitChildren() might check if
+            the table is pinned before pin() pins it, and then clear the table after it was
+            already pinned.
+
+            The problem here is that pin() should be holding a lock. We could either make pin()
+            grab that lock by itself, or what this patch does is makes the caller grab the lock.
+            This is great because it means that sometimes we don't have to introduce any new
+            locking.
+
+            This fixes a materializePropertyTable() checkOffsetConsistency() crash that happens
+            very rarely, but I was able to get it to reproduce with run-webkit-tests and
+            aggressive GC settings.
+
+            * runtime/ConcurrentJSLock.h:
+            * runtime/Structure.cpp:
+            (JSC::Structure::materializePropertyTable):
+            (JSC::Structure::changePrototypeTransition):
+            (JSC::Structure::attributeChangeTransition):
+            (JSC::Structure::toDictionaryTransition):
+            (JSC::Structure::nonPropertyTransition):
+            (JSC::Structure::pin):
+            (JSC::Structure::pinForCaching):
+            (JSC::Structure::add):
+            * runtime/Structure.h:
+            * runtime/StructureInlines.h:
+            (JSC::Structure::checkOffsetConsistency):
+            (JSC::Structure::add):
+            (JSC::Structure::addPropertyWithoutTransition):
+
+2017-01-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210935. rdar://problem/30101860
 
     2017-01-19  Filip Pizlo  <fpizlo@apple.com>
