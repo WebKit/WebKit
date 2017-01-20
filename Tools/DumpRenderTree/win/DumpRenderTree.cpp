@@ -678,6 +678,11 @@ static void invalidateAnyPreviousWaitToDumpWatchdog()
 
 void dump()
 {
+    if (done) {
+        fprintf(stderr, "dump() has already been called!\n");
+        return;
+    }
+
     ::InvalidateRect(webViewWindow, 0, TRUE);
     ::SendMessage(webViewWindow, WM_PAINT, 0, 0);
 
@@ -722,7 +727,7 @@ void dump()
             if (::gTestRunner->dumpBackForwardList())
                 dumpBackForwardListForAllWindows();
         } else
-            fprintf(testResult, "ERROR: nil result from %s", ::gTestRunner->dumpAsText() ? "IDOMElement::innerText" : "IFrameViewPrivate::renderTreeAsExternalRepresentation");
+            fprintf(testResult, "ERROR: nil result from %s\n", ::gTestRunner->dumpAsText() ? "IDOMElement::innerText" : "IFrameViewPrivate::renderTreeAsExternalRepresentation");
 
         if (printSeparators)
             fputs("#EOF\n", testResult); // terminate the content block

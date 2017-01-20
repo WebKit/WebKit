@@ -1,3 +1,17 @@
+2017-01-20  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Test output results should not be written twice.
+        https://bugs.webkit.org/show_bug.cgi?id=167197
+
+        Reviewed by Brent Fulgham.
+
+        Prevent test output from being written twice by returning early from
+        the dump() function, if it already has been called.
+        This patch also adds a missing newline to a test output line. 
+        
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump):
+
 2017-01-20  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Turn modern media controls on by default
