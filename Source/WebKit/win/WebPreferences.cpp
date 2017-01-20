@@ -1947,20 +1947,6 @@ HRESULT WebPreferences::setFetchAPIEnabled(BOOL enabled)
     return S_OK;
 }
 
-HRESULT WebPreferences::setDOMIteratorEnabled(BOOL enabled)
-{
-    setBoolValue(WebKitDOMIteratorEnabledPreferenceKey, enabled);
-    return S_OK;
-}
-
-HRESULT WebPreferences::domIteratorEnabled(_Out_ BOOL* enabled)
-{
-    if (!enabled)
-        return E_POINTER;
-    *enabled = boolValueForKey(WebKitDOMIteratorEnabledPreferenceKey);
-    return S_OK;
-}
-
 HRESULT WebPreferences::shadowDOMEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)

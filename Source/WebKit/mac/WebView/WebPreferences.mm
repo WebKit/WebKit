@@ -2831,16 +2831,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitCustomElementsEnabledPreferenceKey];
 }
 
-- (BOOL)DOMIteratorEnabled
-{
-    return [self _boolValueForKey:WebKitDOMIteratorEnabledPreferenceKey];
-}
-
-- (void)setDOMIteratorEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitDOMIteratorEnabledPreferenceKey];
-}
-
 - (BOOL)fetchAPIEnabled
 {
     return [self _boolValueForKey:WebKitFetchAPIEnabledPreferenceKey];

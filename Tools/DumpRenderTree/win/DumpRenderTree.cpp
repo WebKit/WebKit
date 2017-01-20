@@ -856,7 +856,6 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     prefsPrivate3->setShadowDOMEnabled(TRUE);
     prefsPrivate3->setCustomElementsEnabled(TRUE);
 
-    prefsPrivate3->setDOMIteratorEnabled(TRUE);
     prefsPrivate3->setModernMediaControlsEnabled(FALSE);
 
     setAlwaysAcceptCookies(false);

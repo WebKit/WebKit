@@ -5232,11 +5232,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     RuntimeEnabledFeatures::sharedFeatures().setWebkitIndexedDBEnabled(true);
 #endif
 
-    hr = prefsPrivate->domIteratorEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    RuntimeEnabledFeatures::sharedFeatures().setDOMIteratorEnabled(!!enabled);
-
 #if ENABLE(FETCH_API)
     hr = prefsPrivate->fetchAPIEnabled(&enabled);
     if (FAILED(hr))
