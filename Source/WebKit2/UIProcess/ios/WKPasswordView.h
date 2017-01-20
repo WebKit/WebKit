@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,15 +25,16 @@
 
 #if PLATFORM(IOS)
 
-#import "CorePDFSPI.h"
-#import "WKActionSheetAssistant.h"
-#import "WKWebViewContentProvider.h"
+#import <UIKit/UIKit.h>
 
-@interface WKPDFView : UIView <WKWebViewContentProvider, UIPDFPageViewDelegate, UIPDFAnnotationControllerDelegate, WKActionSheetAssistantDelegate>
+@interface WKPasswordView : UIView
 
-@property (nonatomic, readonly) NSString *suggestedFilename;
-@property (nonatomic, readonly) CGPDFDocumentRef pdfDocument;
-@property (nonatomic, readonly) BOOL isBackground;
+- (instancetype)initWithFrame:(CGRect)frame documentName:(NSString *)documentName;
+- (void)displayInContentView:(UIView *)contentView;
+- (void)hide;
+- (void)displayPasswordFailureAlert;
+
+@property (nonatomic, copy) void (^userDidEnterPassword)(NSString *);
 
 @end
 

@@ -1,3 +1,45 @@
+2017-01-19  Andy Estes  <aestes@apple.com>
+
+        [iOS] Move the PDF password view into its own class for possible reuse
+        https://bugs.webkit.org/show_bug.cgi?id=167192
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKPDFView.h: Stopped conforming to UIDocumentPasswordViewDelegate.
+        * UIProcess/ios/WKPDFView.mm: Changed _passwordView to a WKPasswordView.
+        (-[WKPDFView _passwordViewFrame]): Returns the frame to set on _passwordView.
+        (-[WKPDFView _updatePasswordEntryField]): Removed.
+        (-[WKPDFView _showPasswordEntryField]): Created a WKPasswordView, set a lambda on its
+        userDidEnterPassword property to do the work previously done in -_tryToUnlockWithPassword:,
+        and showed the password view.
+        (-[WKPDFView _keyboardDidShow:]): Moved to WKPasswordView.
+        (-[WKPDFView _hidePasswordEntryField]): Deleted. The userDidEnterPassword lambda now calls
+        -[WKPasswordView hide] when the document is unlocked.
+        (-[WKPDFView userDidEnterPassword:forPasswordView:]): Moved to WKPasswordView.
+        (-[WKPDFView didBeginEditingPassword:inView:]): Ditto.
+        (-[WKPDFView didEndEditingPassword:inView:]): Ditto.
+        (-[WKPDFView _didFailToUnlock]): Ditto.
+        (-[WKPDFView _tryToUnlockWithPassword:]): Moved into _passwordView's userDidEnterPassword lambda.
+        * UIProcess/ios/WKPasswordView.h: Added.
+        * UIProcess/ios/WKPasswordView.mm: Added.
+        (-[WKPasswordView initWithFrame:documentName:]): Created a UIDocumentPasswordView with
+        documentName, set self as its passwordDelegate, and added it as a subview.
+        (-[WKPasswordView layoutSubviews]): Updated _scrollView's contentSize if we are displaying
+        the view.
+        (-[WKPasswordView displayInContentView:]): Saved the scroll view's previous minimum/maximum
+        zoom scale and color, set new values for minimum/maximum zoom scale and color, and added
+        self as a subview of contentView.
+        (-[WKPasswordView hide]): Restored the saved minimum/maximum zoom scale and color on the
+        scroll view and removed self from its superview.
+        (-[WKPasswordView displayPasswordFailureAlert]): Displayed the alert previously shown by
+        -[WKPDFView _didFailToUnlock].
+        (-[WKPasswordView _keyboardDidShow:]): Moved from WKPDFView.
+        (-[WKPasswordView userDidEnterPassword:forPasswordView:]): Retained self and called the
+        _userDidEnterPassword block with the password.
+        (-[WKPasswordView didBeginEditingPassword:inView:]): Moved from WKPDFView.
+        (-[WKPasswordView didEndEditingPassword:inView:]): Ditto.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-01-19  Chris Dumez  <cdumez@apple.com>
 
         Make sure HTML validation bubble gets dismissed when its associated element's frame gets detached

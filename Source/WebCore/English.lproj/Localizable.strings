@@ -403,8 +403,8 @@
 /* Option in segmented control for inserting a numbered list in text editing */
 "Numbered list" = "Numbered list";
 
-/* OK button label in PDF password failure alert */
-"OK (PDF password failure alert)" = "OK";
+/* OK button label in document password failure alert */
+"OK (document password failure alert)" = "OK";
 
 /* Menu item label for the track that represents disabling closed captions */
 "Off" = "Off";
@@ -661,7 +661,7 @@
 /* WebKitErrorGeolocationLocationUnknown description */
 "The current location cannot be found." = "The current location cannot be found.";
 
-/* PDF password failure alert message */
+/* document password failure alert message */
 "The document could not be opened with that password." = "The document could not be opened with that password.";
 
 /* WebKitErrorCannotFindPlugin description */
