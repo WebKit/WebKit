@@ -1,3 +1,16 @@
+2017-01-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r206156): Animated images are repeated one extra iteration than the value which is saved in the image file
+        https://bugs.webkit.org/show_bug.cgi?id=167174
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/animated-image-loop-count-expected.html: Added.
+        * fast/images/animated-image-loop-count.html: Added.
+        * fast/images/resources/animated-red-green-blue-repeat-1.gif: Added.
+        * fast/images/resources/animated-red-green-blue-repeat-2.gif: Added.
+        Ensure the animated image stops animating after loopCount iterations.
+
 2017-01-19  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Extend coverage for justified content.

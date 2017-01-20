@@ -1,3 +1,25 @@
+2017-01-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r206156): Animated images are repeated one extra iteration than the value which is saved in the image file
+        https://bugs.webkit.org/show_bug.cgi?id=167174
+
+        Reviewed by Simon Fraser.
+
+        Before r206156, BitmapImage::repetitionCount() used to return zero for
+        the case loopCount = 1, -1 for loopCount = Infinity and loopCount for
+        all other cases. Having repetitionCount() return zero for loopCount = 1
+        makes the condition if (++m_repetitionsComplete > repetitionCount())
+        break the animation loop after one iteration. But it was wrong for all
+        loopCount > 1. It was causing an extra iteration to be played for the
+        animated image. After r206156, BitmapImage::repetitionCount() returns
+        loopCount for all cases loopCount != Infinity. Keeping the same condition
+        causes the extra iteration to be played even for loopCount = 1.
+
+        Test: fast/images/animated-image-loop-count.html
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::internalStartAnimation):
+
 2017-01-19  Chris Dumez  <cdumez@apple.com>
 
         iterable<> should be enabled on WK1

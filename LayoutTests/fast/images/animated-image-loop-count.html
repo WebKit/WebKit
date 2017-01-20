@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<style>
+    canvas {
+        width: 100px;
+        height: 100px;
+    }
+</style>    
+<body>
+    <div>
+        <p>Frames of a 3-frame animated image with loopCount = 1:</p>
+        <canvas id="canvas-1"></canvas>
+        <canvas id="canvas-2"></canvas>
+        <canvas id="canvas-3"></canvas>
+        <canvas id="canvas-4"></canvas>
+    </div>
+    <div>
+        <p>Frames of a 3-frame animated image with loopCount = 2:</p>
+        <canvas id="canvas-a"></canvas>
+        <canvas id="canvas-b"></canvas>
+        <canvas id="canvas-c"></canvas>
+        <canvas id="canvas-d"></canvas>
+        <canvas id="canvas-e"></canvas>
+        <canvas id="canvas-f"></canvas>
+        <canvas id="canvas-g"></canvas>
+    </div>
+    <script>
+        function drawFrame(image, canvasId) {
+            return new Promise((resolve) => {
+                let canvas = document.getElementById("canvas-" + canvasId);
+                let context = canvas.getContext("2d");
+                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                setTimeout(() => {
+                    resolve(String.fromCharCode(canvasId.charCodeAt() + 1));
+                }, 30);
+            });
+        }
+
+        function drawImage(image, canvasId, frameCount) {
+            let promise = drawFrame(image, canvasId);
+            for (let frame = 1; frame < frameCount; ++frame) {
+                promise = promise.then((canvasId) => {
+                    return drawFrame(image, canvasId);
+                });
+            }
+            return promise;
+        }
+
+        function loadImage(src, canvasId, frameCount) {
+            return new Promise((resolve) => {
+                let image = new Image;
+                image.onload = (() => {
+                    drawImage(image, canvasId, frameCount).then(resolve);
+                });
+                image.src = src;
+            });
+        }
+
+        (function() {
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            var images = [
+                { src: "resources/animated-red-green-blue-repeat-1.gif", canvasId: '1', frameCount: 4 },
+                { src: "resources/animated-red-green-blue-repeat-2.gif", canvasId: 'a', frameCount: 7 }
+            ];
+
+            var promises = [];
+
+            for (let image of images)
+                promises.push(loadImage(image.src, image.canvasId, image.frameCount));
+            
+            Promise.all(promises).then(() => {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        })();
+    </script>
+</body>
+</html>
