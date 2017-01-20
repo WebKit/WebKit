@@ -855,14 +855,13 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
 
     preferences->setFontSmoothing(FontSmoothingTypeStandard);
 
-    COMPtr<IWebPreferencesPrivate3> prefsPrivate3(Query, preferences);
-    ASSERT(prefsPrivate3);
-    prefsPrivate3->setFetchAPIEnabled(TRUE);
-    prefsPrivate3->setShadowDOMEnabled(TRUE);
-    prefsPrivate3->setCustomElementsEnabled(TRUE);
-    prefsPrivate3->setModernMediaControlsEnabled(FALSE);
-
-    preferences->setWebAnimationsEnabled(TRUE);
+    COMPtr<IWebPreferencesPrivate4> prefsPrivate4(Query, preferences);
+    ASSERT(prefsPrivate4);
+    prefsPrivate4->setFetchAPIEnabled(TRUE);
+    prefsPrivate4->setShadowDOMEnabled(TRUE);
+    prefsPrivate4->setCustomElementsEnabled(TRUE);
+    prefsPrivate4->setModernMediaControlsEnabled(FALSE);
+    prefsPrivate4->setWebAnimationsEnabled(TRUE);
 
     setAlwaysAcceptCookies(false);
 }

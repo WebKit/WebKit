@@ -1,3 +1,11 @@
+2017-01-20  Alex Christensen  <achristensen@webkit.org>
+
+        Build Fix for Windows DumpRenderTree after r210976
+        https://bugs.webkit.org/show_bug.cgi?id=167115
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+
 2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove outdated ENABLE(CSP_NEXT) build flag
