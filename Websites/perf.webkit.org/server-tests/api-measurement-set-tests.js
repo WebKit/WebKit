@@ -372,6 +372,75 @@ describe("/api/measurement-set", function () {
         }).catch(done);
     });
 
+    it("should order results by build time when commit times are missing", function (done) {
+        const remote = TestServer.remoteAPI();
+        let repositoryId;
+        addBuilderForReport(reportWithBuildTime[0]).then(() => {
+            const db = TestServer.database();
+            return Promise.all([
+                db.insert('repositories', {'id': 1, 'name': 'macOS'}),
+                db.insert('commits', {'id': 2, 'repository': 1, 'revision': 'macOS 16A323', 'order': 0}),
+                db.insert('commits', {'id': 3, 'repository': 1, 'revision': 'macOS 16C68', 'order': 1}),
+            ]);
+        }).then(() => {
+            return remote.postJSON('/api/report/', [{
+                "buildNumber": "1001",
+                "buildTime": '2017-01-19 15:28:01',
+                "revisions": {
+                    "macOS": {
+                        "revision": "macOS 16C68",
+                    },
+                },
+                "builderName": "someBuilder",
+                "builderPassword": "somePassword",
+                "platform": "Sierra",
+                "tests": { "Test": {"metrics": {"Time": { "baseline": [1, 2, 3, 4, 5] } } } },
+            }]);
+        }).then(function () {
+            return remote.postJSON('/api/report/', [{
+                "buildNumber": "1002",
+                "buildTime": '2017-01-19 19:46:37',
+                "revisions": {
+                    "macOS": {
+                        "revision": "macOS 16A323",
+                    },
+                },
+                "builderName": "someBuilder",
+                "builderPassword": "somePassword",
+                "platform": "Sierra",
+                "tests": { "Test": {"metrics": {"Time": { "baseline": [5, 6, 7, 8, 9] } } } },
+            }]);
+        }).then(function () {
+            return queryPlatformAndMetricWithRepository('Sierra', 'Time', 'macOS');
+        }).then(function (result) {
+            return remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
+        }).then(function (response) {
+            const currentRows = response['configurations']['baseline'];
+            assert.equal(currentRows.length, 2);
+            assert.deepEqual(format(response['formatMap'], currentRows[0]), {
+               mean: 3,
+               iterationCount: 5,
+               sum: 15,
+               squareSum: 55,
+               markedOutlier: false,
+               revisions: [[3, 1, 'macOS 16C68', 0]],
+               commitTime: +Date.UTC(2017, 0, 19, 15, 28, 1),
+               buildTime: +Date.UTC(2017, 0, 19, 15, 28, 1),
+               buildNumber: '1001' });
+            assert.deepEqual(format(response['formatMap'], currentRows[1]), {
+                mean: 7,
+                iterationCount: 5,
+                sum: 35,
+                squareSum: 255,
+                markedOutlier: false,
+                revisions: [[2, 1, 'macOS 16A323', 0]],
+                commitTime: +Date.UTC(2017, 0, 19, 19, 46, 37),
+                buildTime: +Date.UTC(2017, 0, 19, 19, 46, 37),
+                buildNumber: '1002' });
+            done();
+        }).catch(done);
+    });
+
     function buildNumbers(parsedResult, config)
     {
         return parsedResult['configurations'][config].map(function (row) {
@@ -416,7 +485,6 @@ describe("/api/measurement-set", function () {
             done();
         }).catch(done);
     });
-
 
     it("should create cached results", function (done) {
         const remote = TestServer.remoteAPI();

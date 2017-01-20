@@ -171,14 +171,14 @@ class MeasurementSetFetcher {
         return $this->db->query('
             SELECT test_runs.*, build_id, build_number, build_builder, build_time,
             array_agg((commit_id, commit_repository, commit_revision, extract(epoch from commit_time at time zone \'utc\') * 1000)) AS revisions,
-            extract(epoch from max(commit_time at time zone \'utc\')) * 1000 AS revision_time, max(commit_order) AS revision_order
+            extract(epoch from max(commit_time at time zone \'utc\')) * 1000 AS revision_time
                 FROM builds
                     LEFT OUTER JOIN build_commits ON commit_build = build_id
                     LEFT OUTER JOIN commits ON build_commit = commit_id, test_runs
                 WHERE run_build = build_id AND run_config = $1 AND NOT EXISTS (SELECT * FROM build_requests WHERE request_build = build_id)
                 GROUP BY build_id, build_builder, build_number, build_time, build_latest_revision, build_slave,
                     run_id, run_config, run_build, run_iteration_count_cache, run_mean_cache, run_sum_cache, run_square_sum_cache, run_marked_outlier
-                ORDER BY revision_time, revision_order, build_time', array($config_id));
+                ORDER BY revision_time, build_time', array($config_id));
     }
 
     static function format_map()

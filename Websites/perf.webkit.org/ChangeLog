@@ -1,5 +1,29 @@
 2017-01-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        measurement-sets API can incorrectly order points with OS version without commit time
+        https://bugs.webkit.org/show_bug.cgi?id=167227
+
+        Reviewed by Chris Dumez.
+
+        Ignore revision_order for the purpose of ordering data points in /api/measurement-sets.
+
+        These orderings are used in some UI (e.g A/B testing) to order OS build numbers which do not have a timestamp
+        associated with each "revision".
+
+        The baseline measurements made in our internal dashboard were using these ordering numbers before ordering
+        results with build time. Because those data points don't have an associated Webkit revisions, all data points
+        were ordered first by macOS's revision_order, then build time. Because v3 UI completely ignores revision_order
+        for the purpose of plotting data points, this resulted in some data points being plotted in a wrong order
+        with some lines going backwards in time.
+
+        This patch addresses this discrepancy by stop ordering data points with revision_order in the JSON API.
+
+        * public/api/measurement-set.php:
+        (MeasurementSetFetcher::execute_query): Fixed the bug.
+        * server-tests/api-measurement-set-tests.js: Added a test.
+
+2017-01-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r210626. We need to clear Triggerable's static map in each iteration.
 
         * tools/sync-buildbot.js:
