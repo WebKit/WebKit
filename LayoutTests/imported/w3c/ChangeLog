@@ -1,5 +1,14 @@
 2017-01-20  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, unskip innerText/ folder in ImportExpectations
+
+        This is needed so that the tests in this folder gets re-sync'ed
+        from upstream next time.
+
+        * resources/ImportExpectations:
+
+2017-01-20  Chris Dumez  <cdumez@apple.com>
+
         Re-sync innerText web-platform-tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=167229
 
