@@ -3,7 +3,7 @@ import sys
 import urllib2
 
 
-def submit_commits(commits, dashboard_url, slave_name, slave_password):
+def submit_commits(commits, dashboard_url, slave_name, slave_password, status_to_accept=['OK']):
     try:
         payload = json.dumps({
             'slaveName': slave_name,
@@ -20,8 +20,9 @@ def submit_commits(commits, dashboard_url, slave_name, slave_password):
         except Exception, error:
             raise Exception(error, output)
 
-        if result.get('status') != 'OK':
+        if result.get('status') not in status_to_accept:
             raise Exception(result)
+        return result
     except Exception as error:
         sys.exit('Failed to submit commits: %s' % str(error))
 

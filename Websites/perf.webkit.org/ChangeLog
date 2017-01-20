@@ -1,5 +1,35 @@
 2017-01-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Make sync-commits.py robust against missing Subversion authors and missing parent Git commits
+        https://bugs.webkit.org/show_bug.cgi?id=167231
+
+        Reviewed by Antti Koivisto.
+
+        Fixed a bug that a subversion commit that's missing author name (anonymous commit) results in an out of bound
+        exception, and a bug that syncing a git repository starts failing once there was a merge commit which pulled
+        in a commit data earlier than that of the last reported commit.
+
+        For the latter fix, added --max-ancestor-fetch-count to specify the number of maximum commits to look back.
+
+        * tools/sync-commits.py:
+        (main): Added --max-ancestor-fetch-count.
+        (Repository.fetch_commits_and_submit): If submit_commits fails with FailedToFindParentCommit, fetch the parent
+        commit's information until we've resolved them all.
+        (Repository.fetch_next_commit): Renamed from fetch_commit.
+        (SVNRepository.fetch_next_commit): Renamed from fetch_commit. Don't try to get the author name if it's missing
+        due to an anonymous commit. It's important to never include the "author" field in the JSON submitted to
+        a dashboard since it rejects when "author" field is not an array (e.g. null). 
+        (GitRepository.fetch_next_commit): Renamed from fetch_commit.
+        (GitRepository.fetch_commit): Added. Fetches the commit information for a given git hash. Used to retrieve
+        missing parent commits.
+        (GitRepository._revision_from_tokens): Extracted from fetch_commit.
+
+        * tools/util.py:
+        (submit_commits): Optionally takes status_to_accept to avoid throwing in the case of FailedToFindParentCommit
+        and returns the response JSON.
+
+2017-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION(r198234): /api/commits/%revision% always fails
         https://bugs.webkit.org/show_bug.cgi?id=167235
 

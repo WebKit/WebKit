@@ -23,6 +23,7 @@ def main(argv):
     parser.add_argument('--server-config-json', required=True, help='The path to a JSON file that specifies the perf dashboard')
     parser.add_argument('--seconds-to-sleep', type=float, default=900, help='The seconds to sleep between iterations')
     parser.add_argument('--max-fetch-count', type=int, default=10, help='The number of commits to fetch at once')
+    parser.add_argument('--max-ancestor-fetch-count', type=int, default=100, help='The number of commits to fetch at once if some commits are missing parents')
     args = parser.parse_args()
 
     with open(args.repository_config_json) as repository_config_json:
@@ -32,7 +33,7 @@ def main(argv):
         server_config = load_server_config(args.server_config_json)
         for repository in repositories:
             try:
-                repository.fetch_commits_and_submit(server_config, args.max_fetch_count)
+                repository.fetch_commits_and_submit(server_config, args.max_fetch_count, args.max_ancestor_fetch_count)
             except Exception as error:
                 print "Failed to fetch and sync:", error
 
@@ -56,14 +57,14 @@ class Repository(object):
         self._name = name
         self._last_fetched = None
 
-    def fetch_commits_and_submit(self, server_config, max_fetch_count):
+    def fetch_commits_and_submit(self, server_config, max_fetch_count, max_ancestor_fetch_count):
         if not self._last_fetched:
             print "Determining the stating revision for %s" % self._name
             self._last_fetched = self.determine_last_reported_revision(server_config)
 
         pending_commits = []
         for unused in range(max_fetch_count):
-            commit = self.fetch_commit(server_config, self._last_fetched)
+            commit = self.fetch_next_commit(server_config, self._last_fetched)
             if not commit:
                 break
             pending_commits += [commit]
@@ -73,15 +74,31 @@ class Repository(object):
             print "No new revision found for %s (last fetched: %s)" % (self._name, self.format_revision(self._last_fetched))
             return
 
-        revision_list = ', '.join([self.format_revision(commit['revision']) for commit in pending_commits])
+        for unused in range(max_ancestor_fetch_count):
+            revision_list = ', '.join([self.format_revision(commit['revision']) for commit in pending_commits])
+            print "Submitting revisions %s for %s to %s" % (revision_list, self._name, server_config['server']['url'])
 
-        print "Submitting revisions %s for %s to %s" % (revision_list, self._name, server_config['server']['url'])
+            result = submit_commits(pending_commits, server_config['server']['url'],
+                server_config['slave']['name'], server_config['slave']['password'], ['OK', 'FailedToFindParentCommit'])
 
-        submit_commits(pending_commits, server_config['server']['url'],
-            server_config['slave']['name'], server_config['slave']['password'])
+            if result.get('status') == 'OK':
+                break
+
+            if result.get('status') == 'FailedToFindParentCommit':
+                parent_commit = self.fetch_commit(server_config, result['commit']['parent'])
+                if not parent_commit:
+                    raise Exception('Could not find the parent %s of %s' % (result['commit']['parent'], result['commit']['revision']))
+                pending_commits = [parent_commit] + pending_commits
+
+        if result.get('status') != 'OK':
+            raise Exception(result)
 
         print "Successfully submitted."
         print
+
+    @abstractmethod
+    def fetch_next_commit(self, server_config, last_fetched):
+        pass
 
     @abstractmethod
     def fetch_commit(self, server_config, last_fetched):
@@ -115,7 +132,7 @@ class SVNRepository(Repository):
         self._use_server_auth = use_server_auth
         self._account_name_script_path = account_name_script_path
 
-    def fetch_commit(self, server_config, last_fetched):
+    def fetch_next_commit(self, server_config, last_fetched):
         if not last_fetched:
             # FIXME: This is a problematic if dashboard can get results for revisions older than oldest_revision
             # in the future because we never refetch older revisions.
@@ -139,18 +156,23 @@ class SVNRepository(Repository):
 
         xml = parseXmlString(output)
         time = text_content(xml.getElementsByTagName("date")[0])
-        author_account = text_content(xml.getElementsByTagName("author")[0])
+        author_elements = xml.getElementsByTagName("author")
+        author_account = text_content(author_elements[0]) if author_elements.length else None
         message = text_content(xml.getElementsByTagName("msg")[0])
 
-        name = self._resolve_author_name(author_account) if self._account_name_script_path else None
+        name = self._resolve_author_name(author_account) if author_account and self._account_name_script_path else None
 
-        return {
+        result = {
             'repository': self._name,
             'revision': revision_to_fetch,
             'time': time,
-            'author': {'account': author_account, 'name': name},
             'message': message,
         }
+
+        if author_account:
+            result['author'] = {'account': author_account, 'name': name}
+
+        return result
 
     def _resolve_author_name(self, account):
         try:
@@ -177,7 +199,7 @@ class GitRepository(Repository):
         self._git_url = git_url
         self._tokenized_hashes = []
 
-    def fetch_commit(self, server_config, last_fetched):
+    def fetch_next_commit(self, server_config, last_fetched):
         if not last_fetched:
             self._fetch_all_hashes()
             tokens = self._tokenized_hashes[0]
@@ -188,7 +210,16 @@ class GitRepository(Repository):
                 tokens = self._find_next_hash(last_fetched)
                 if not tokens:
                     return None
+        return self._revision_from_tokens(tokens)
 
+    def fetch_commit(self, server_config, hash_to_find):
+        assert(self._tokenized_hashes)
+        for i, tokens in enumerate(self._tokenized_hashes):
+            if tokens and tokens[0] == hash_to_find:
+                return self._revision_from_tokens(tokens)
+        return None
+
+    def _revision_from_tokens(self, tokens):
         current_hash = tokens[0]
         commit_time = int(tokens[1])
         author_email = tokens[2]
