@@ -1,3 +1,25 @@
+2017-01-20  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r210949. rdar://problem/30108531
+
+    2017-01-19  Chris Dumez  <cdumez@apple.com>
+
+            iterable<> should be enabled on WK1
+            https://bugs.webkit.org/show_bug.cgi?id=167221
+            <rdar://problem/30108531>
+
+            Reviewed by Youenn Fablet.
+
+            * DumpRenderTree/mac/DumpRenderTree.mm:
+            (resetWebPreferencesToConsistentValues):
+            * DumpRenderTree/win/DumpRenderTree.cpp:
+            (resetWebPreferencesToConsistentValues):
+            * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+            (WTR::InjectedBundle::beginTesting):
+            * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+            (WTR::TestRunner::setDOMIteratorEnabled): Deleted.
+            * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r210608. rdar://problem/15307582

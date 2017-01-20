@@ -985,8 +985,6 @@ static void resetWebPreferencesToConsistentValues(const TestOptions& options)
     [preferences setShadowDOMEnabled:YES];
     [preferences setCustomElementsEnabled:YES];
 
-    [preferences setDOMIteratorEnabled:YES];
-
     [preferences setWebGL2Enabled:YES];
 
     [preferences setFetchAPIEnabled:YES];

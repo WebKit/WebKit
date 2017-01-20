@@ -375,13 +375,6 @@ void TestRunner::setPeerConnectionEnabled(bool enabled)
     WKBundleOverrideBoolPreferenceForTestRunner(injectedBundle.bundle(), injectedBundle.pageGroup(), key.get(), enabled);
 }
 
-void TestRunner::setDOMIteratorEnabled(bool enabled)
-{
-    WKRetainPtr<WKStringRef> key(AdoptWK, WKStringCreateWithUTF8CString("WebKitDOMIteratorEnabled"));
-    auto& injectedBundle = InjectedBundle::singleton();
-    WKBundleOverrideBoolPreferenceForTestRunner(injectedBundle.bundle(), injectedBundle.pageGroup(), key.get(), enabled);
-}
-
 void TestRunner::setModernMediaControlsEnabled(bool enabled)
 {
     WKRetainPtr<WKStringRef> key(AdoptWK, WKStringCreateWithUTF8CString("WebKitModernMediaControlsEnabled"));

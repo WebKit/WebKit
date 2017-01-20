@@ -40,7 +40,6 @@
     macro(Date) \
     macro(DateTimeFormat) \
     macro(DocumentTimeline) \
-    macro(DOMIterator) \
     macro(Error) \
     macro(EvalError) \
     macro(Function) \

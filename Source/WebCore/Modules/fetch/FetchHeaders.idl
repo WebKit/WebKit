@@ -42,7 +42,7 @@
     [MayThrowException] boolean has(DOMString name);
     [MayThrowException] void set(DOMString name, DOMString value);
 
-    [EnabledAtRuntime=DOMIterator] iterable<DOMString, DOMString>;
+    iterable<DOMString, DOMString>;
 
     [ImplementedAs=append, MayThrowException, PrivateIdentifier] void appendFromJS(DOMString name, DOMString value);
     [ImplementedAs=fill, PrivateIdentifier] void fillFromJS(FetchHeaders? headers);
