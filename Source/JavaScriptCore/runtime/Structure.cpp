@@ -357,7 +357,17 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
         table->add(entry, m_offset, PropertyTable::PropertyOffsetMustNotChange);
     }
     
-    checkOffsetConsistency();
+    checkOffsetConsistency(
+        table,
+        [&] () {
+            dataLog("Detected in materializePropertyTable.\n");
+            dataLog("Found structure = ", RawPointer(structure), "\n");
+            dataLog("structures = ");
+            CommaPrinter comma;
+            for (Structure* structure : structures)
+                dataLog(comma, RawPointer(structure));
+            dataLog("\n");
+        });
     
     return table;
 }
@@ -546,8 +556,9 @@ Structure* Structure::changePrototypeTransition(VM& vm, Structure* structure, JS
     Structure* transition = create(vm, structure);
 
     transition->m_prototype.set(vm, transition, prototype);
-    
-    transition->pin(vm, structure->copyPropertyTableForPinning(vm));
+
+    PropertyTable* table = structure->copyPropertyTableForPinning(vm);
+    transition->pin(holdLock(transition->m_lock), vm, table);
     transition->m_offset = structure->m_offset;
     
     transition->checkOffsetConsistency();
@@ -558,8 +569,9 @@ Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, Pr
 {
     if (!structure->isUncacheableDictionary()) {
         Structure* transition = create(vm, structure);
-        
-        transition->pin(vm, structure->copyPropertyTableForPinning(vm));
+
+        PropertyTable* table = structure->copyPropertyTableForPinning(vm);
+        transition->pin(holdLock(transition->m_lock), vm, table);
         transition->m_offset = structure->m_offset;
         
         structure = transition;
@@ -580,7 +592,8 @@ Structure* Structure::toDictionaryTransition(VM& vm, Structure* structure, Dicti
     
     Structure* transition = create(vm, structure, deferred);
 
-    transition->pin(vm, structure->copyPropertyTableForPinning(vm));
+    PropertyTable* table = structure->copyPropertyTableForPinning(vm);
+    transition->pin(holdLock(transition->m_lock), vm, table);
     transition->m_offset = structure->m_offset;
     transition->setDictionaryKind(kind);
     transition->setHasBeenDictionary(true);
@@ -667,11 +680,12 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
         // We pin the property table on transitions that do wholesale editing of the property
         // table, since our logic for walking the property transition chain to rematerialize the
         // table doesn't know how to take into account such wholesale edits.
-        
-        transition->pinForCaching(vm, structure->copyPropertyTableForPinning(vm));
+
+        PropertyTable* table = structure->copyPropertyTableForPinning(vm);
+        transition->pinForCaching(holdLock(transition->m_lock), vm, table);
         transition->m_offset = structure->m_offset;
         
-        PropertyTable* table = transition->propertyTableOrNull();
+        table = transition->propertyTableOrNull();
         RELEASE_ASSERT(table);
         for (auto& entry : *table) {
             if (setsDontDeleteOnAllProperties(transitionKind))
@@ -689,10 +703,11 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
         && !transition->propertyTableOrNull()->isEmpty())
         transition->setHasReadOnlyOrGetterSetterPropertiesExcludingProto(true);
     
-    if (structure->isDictionary())
-        transition->pin(vm, transition->ensurePropertyTable(vm));
-    else {
-        ConcurrentJSLocker locker(structure->m_lock);
+    if (structure->isDictionary()) {
+        PropertyTable* table = transition->ensurePropertyTable(vm);
+        transition->pin(holdLock(transition->m_lock), vm, table);
+    } else {
+        auto locker = holdLock(structure->m_lock);
         structure->m_transitionTable.add(vm, transition);
     }
 
@@ -804,7 +819,7 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
     return this;
 }
 
-void Structure::pin(VM& vm, PropertyTable* table)
+void Structure::pin(const AbstractLocker&, VM& vm, PropertyTable* table)
 {
     setIsPinnedPropertyTable(true);
     setPropertyTable(vm, table);
@@ -812,7 +827,7 @@ void Structure::pin(VM& vm, PropertyTable* table)
     m_nameInPrevious = nullptr;
 }
 
-void Structure::pinForCaching(VM& vm, PropertyTable* table)
+void Structure::pinForCaching(const AbstractLocker&, VM& vm, PropertyTable* table)
 {
     setIsPinnedPropertyTable(true);
     setPropertyTable(vm, table);
@@ -978,7 +993,7 @@ Vector<PropertyMapEntry> Structure::getPropertiesConcurrently()
 
 PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned attributes)
 {
-    return add(
+    return add<ShouldPin::No>(
         vm, propertyName, attributes,
         [this] (const GCSafeConcurrentJSLocker&, PropertyOffset, PropertyOffset newLastOffset) {
             setLastOffset(newLastOffset);
