@@ -1,5 +1,19 @@
 2017-01-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210945. rdar://problem/28745101
+
+    2017-01-19  Jer Noble  <jer.noble@apple.com>
+
+            CRASH at WebCore::TrackListBase::remove
+            https://bugs.webkit.org/show_bug.cgi?id=167217
+
+            Reviewed by Brent Fulgham.
+
+            * media/media-source/media-source-error-crash-expected.txt: Added.
+            * media/media-source/media-source-error-crash.html: Added.
+
+2017-01-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210939. rdar://problem/29885052
 
     2017-01-19  Chris Dumez  <cdumez@apple.com>

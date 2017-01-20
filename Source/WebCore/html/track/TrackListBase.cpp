@@ -71,7 +71,8 @@ unsigned TrackListBase::length() const
 void TrackListBase::remove(TrackBase& track, bool scheduleEvent)
 {
     size_t index = m_inbandTracks.find(&track);
-    ASSERT(index != notFound);
+    if (index == notFound)
+        return;
 
     if (track.mediaElement()) {
         ASSERT(track.mediaElement() == m_element);
