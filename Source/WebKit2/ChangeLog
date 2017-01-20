@@ -1,3 +1,14 @@
+2017-01-20  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Turn modern media controls on by default
+        https://bugs.webkit.org/show_bug.cgi?id=165668
+
+        Reviewed by Dean Jackson.
+
+        Use DEFAULT_EXPERIMENTAL_FEATURES_ENABLED as the default value for modern media controls, which is true.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2017-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.15.3 release.

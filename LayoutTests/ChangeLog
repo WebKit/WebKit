@@ -1,3 +1,247 @@
+2017-01-20  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Turn modern media controls on by default
+        https://bugs.webkit.org/show_bug.cgi?id=165668
+
+        Reviewed by Dean Jackson.
+
+        Turn modern media controls off for a majority of pre-existing tests that made assumptions on the implementation
+        of media controls.
+
+        For tests designed for modern media controls, we don't need to opt out since modern media controls are now on
+        by default, and we turn them back on since they were skipped. But we make these tests more resilient by:
+        
+            1. adding iPad-specific tests
+            2. adding platform-agnostic ways to press an element, using either eventSender or uiController
+            3. checking that elements that are sized asynchronously are indeed sized before making assumptions to that effect
+            4. ensuring that we don't have additional scheduler.frameDidFire callbacks after we no longer need them 
+
+        * TestExpectations:
+        * accessibility/mac/video-tag-hit-test.html:
+        * accessibility/mac/video-volume-slider-accessibility.html:
+        * accessibility/media-element.html:
+        * accessibility/media-emits-object-replacement.html:
+        * compositing/video/poster-expected.html:
+        * compositing/video/poster.html:
+        * fast/hidpi/video-controls-in-hidpi.html:
+        * fast/layers/video-layer.html:
+        * fullscreen/video-controls-drag.html:
+        * fullscreen/video-controls-override.html:
+        * fullscreen/video-controls-rtl.html:
+        * fullscreen/video-controls-timeline.html:
+        * http/tests/media/hls/video-controls-live-stream.html:
+        * http/tests/media/hls/video-duration-accessibility.html:
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-allowed.html:
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked.html:
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked2.html:
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/video-controls-allowed.html:
+        * media/accessibility-closed-captions-has-aria-owns.html:
+        * media/adopt-node-crash.html:
+        * media/airplay-autoplay.html:
+        * media/audio-as-video-fullscreen.html:
+        * media/audio-controls-do-not-fade-out.html:
+        * media/audio-controls-rendering.html:
+        * media/audio-controls-timeline-in-media-document.html:
+        * media/audio-delete-while-slider-thumb-clicked.html:
+        * media/audio-repaint.html:
+        * media/click-placeholder-not-pausing.html:
+        * media/click-volume-bar-not-pausing.html:
+        * media/controls-after-reload.html:
+        * media/controls-drag-timebar.html:
+        * media/controls-right-click-on-timebar.html:
+        * media/controls-strict.html:
+        * media/controls-styling.html:
+        * media/controls-without-preload.html:
+        * media/controls/airplay-controls.html:
+        * media/controls/airplay-picker.html:
+        * media/controls/basic.html:
+        * media/controls/elementOrder.html:
+        * media/controls/forced-tracks-only.html:
+        * media/controls/fullscreen-button-inline-layout.html:
+        * media/controls/inline-elements-dropoff-order.html:
+        * media/controls/picture-in-picture.html:
+        * media/controls/pip-placeholder-without-video-controls.html:
+        * media/controls/showControlsButton.html:
+        * media/controls/statusDisplay.html:
+        * media/controls/statusDisplayBad.html:
+        * media/controls/track-menu.html:
+        * media/mac/controls-panel-not-clipped-out-expected.html:
+        * media/mac/controls-panel-not-clipped-out.html:
+        * media/media-captions-no-controls.html:
+        * media/media-controller-drag-crash.html:
+        * media/media-controls-accessibility.html:
+        * media/media-controls-cancel-events.html:
+        * media/media-controls-clone.html:
+        * media/media-controls-drag-timeline-set-controls-property.html:
+        * media/media-controls-timeline-updates-after-playing.html:
+        * media/media-controls-timeline-updates-when-hovered.html:
+        * media/media-controls-timeline-updates.html:
+        * media/media-document-audio-controls-visible.html:
+        * media/media-document-audio-repaint.html:
+        * media/media-fullscreen-return-to-inline.html:
+        * media/modern-media-controls/airplay-button/airplay-button-on.html:
+        * media/modern-media-controls/airplay-button/airplay-button.html:
+        * media/modern-media-controls/airplay-placard/airplay-placard-text-section.html:
+        * media/modern-media-controls/audio/audio-controls-buttons-expected.txt:
+        * media/modern-media-controls/audio/audio-controls-buttons.html:
+        * media/modern-media-controls/audio/audio-controls-metrics.html:
+        * media/modern-media-controls/button/button.html:
+        * media/modern-media-controls/buttons-container/buttons-container-buttons-property.html:
+        * media/modern-media-controls/forward-button/forward-button.html:
+        * media/modern-media-controls/fullscreen-button/fullscreen-button.html:
+        * media/modern-media-controls/fullscreen-support/fullscreen-support-click.html:
+        * media/modern-media-controls/fullscreen-support/ipad/fullscreen-support-tap-expected.txt: Added.
+        * media/modern-media-controls/fullscreen-support/ipad/fullscreen-support-tap.html: Added.
+        * media/modern-media-controls/icon-button/icon-button-active-state.html:
+        * media/modern-media-controls/icon-button/icon-button-on.html:
+        * media/modern-media-controls/icon-button/icon-button.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-buttons-styles.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-controls-bar-styles.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-layout.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-time-control-styles.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-dropping-controls.html:
+        * media/modern-media-controls/layout-node/addChild.html:
+        * media/modern-media-controls/layout-node/children.html:
+        * media/modern-media-controls/layout-node/height.html:
+        * media/modern-media-controls/layout-node/insertAfter.html:
+        * media/modern-media-controls/layout-node/insertBefore.html:
+        * media/modern-media-controls/layout-node/node-made-dirty-during-layout.html:
+        * media/modern-media-controls/layout-node/remove.html:
+        * media/modern-media-controls/layout-node/removeChild.html:
+        * media/modern-media-controls/layout-node/subclassing.html:
+        * media/modern-media-controls/layout-node/visible.html:
+        * media/modern-media-controls/layout-node/width.html:
+        * media/modern-media-controls/layout-node/x.html:
+        * media/modern-media-controls/layout-node/y.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-controls-bar-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-right-container-margin.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-time-control-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-volume-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-controls-bar-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-layout.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-status-label.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-time-control-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-pause.html:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter.html:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide.html:
+        * media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen.html:
+        * media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html:
+        * media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html:
+        * media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html:
+        * media/modern-media-controls/media-controller/media-controller-resize.html:
+        * media/modern-media-controls/media-controller/media-controller-scale-factor.html:
+        * media/modern-media-controls/media-controller/media-controller-single-container.html:
+        * media/modern-media-controls/mute-button/mute-button.html:
+        * media/modern-media-controls/pip-button/pip-button.html:
+        * media/modern-media-controls/pip-placard/pip-placard-text-section.html:
+        * media/modern-media-controls/pip-support/ipad/pip-support-enabled-expected.txt: Added.
+        * media/modern-media-controls/pip-support/ipad/pip-support-enabled.html: Copied from LayoutTests/media/modern-media-controls/pip-support/pip-support-enabled.html.
+        * media/modern-media-controls/pip-support/ipad/pip-support-tap-expected.txt: Added.
+        * media/modern-media-controls/pip-support/ipad/pip-support-tap.html: Copied from LayoutTests/media/modern-media-controls/pip-support/pip-support-click.html.
+        * media/modern-media-controls/pip-support/pip-support-click.html:
+        * media/modern-media-controls/pip-support/pip-support-enabled.html:
+        * media/modern-media-controls/placard-support/ipad/placard-support-pip-expected.txt: Copied from LayoutTests/media/modern-media-controls/placard-support/placard-support-airplay-expected.txt.
+        * media/modern-media-controls/placard-support/ipad/placard-support-pip.html: Added.
+        * media/modern-media-controls/placard-support/placard-support-airplay-expected.txt:
+        * media/modern-media-controls/play-pause-button/play-pause-button.html:
+        * media/modern-media-controls/playback-support/playback-support-button-click-expected.txt:
+        * media/modern-media-controls/playback-support/playback-support-button-click.html:
+        * media/modern-media-controls/resources/media-controls-utils.js:
+        (pressOnElement):
+        (finishMediaControlsTest):
+        * media/modern-media-controls/rewind-button/rewind-button.html:
+        * media/modern-media-controls/scheduler/not-reentrant.html:
+        * media/modern-media-controls/scheduler/single-callback-when-registered-multiple-times.html:
+        * media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag-expected.txt: Copied from LayoutTests/media/modern-media-controls/scrubber-support/scrubber-support-drag-expected.txt.
+        * media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html: Added.
+        * media/modern-media-controls/scrubber-support/scrubber-support-click.html:
+        * media/modern-media-controls/scrubber-support/scrubber-support-drag-expected.txt:
+        * media/modern-media-controls/scrubber-support/scrubber-support-drag.html:
+        * media/modern-media-controls/seek-backward-support/seek-backward-support.html:
+        * media/modern-media-controls/seek-forward-support/seek-forward-support.html:
+        * media/modern-media-controls/skip-back-button/skip-back-button.html:
+        * media/modern-media-controls/slider/slider-fill.html:
+        * media/modern-media-controls/slider/slider-styles.html:
+        * media/modern-media-controls/start-support/start-support-click-to-start-expected.txt:
+        * media/modern-media-controls/start-support/start-support-click-to-start.html:
+        * media/modern-media-controls/status-label/status-label-font.html:
+        * media/modern-media-controls/status-label/status-label-text-selection.html:
+        * media/modern-media-controls/status-label/status-label.html:
+        * media/modern-media-controls/time-label/time-label.html:
+        * media/modern-media-controls/tracks-button/tracks-button.html:
+        * media/modern-media-controls/tracks-panel/tracks-panel-right-x.html:
+        * media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-keyboard.html:
+        * media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html:
+        * media/modern-media-controls/tracks-support/tracks-support-show-and-populate-panel.html:
+        * media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls-expected.txt:
+        * media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html:
+        * media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html:
+        * media/modern-media-controls/volume-slider/volume-slider-value.html:
+        * media/modern-media-controls/volume-support/volume-support-click.html:
+        * media/modern-media-controls/volume-support/volume-support-drag.html:
+        * media/nodesFromRect-shadowContent.html:
+        * media/progress-events-generated-correctly.html:
+        * media/require-user-gesture-to-load-video.html:
+        * media/tab-focus-inside-media-elements.html:
+        * media/track/track-cue-rendering-horizontal.html:
+        * media/track/track-cue-rendering-vertical.html:
+        * media/track/track-cues-cuechange.html:
+        * media/track/track-cues-enter-exit.html:
+        * media/track/track-in-band-duplicate-tracks-when-source-changes.html:
+        * media/track/track-manual-mode.html:
+        * media/video-controls-audiotracks-trackmenu.html:
+        * media/video-controls-captions-trackmenu-localized.html:
+        * media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles.html:
+        * media/video-controls-captions-trackmenu-sorted.html:
+        * media/video-controls-captions-trackmenu.html:
+        * media/video-controls-drop-and-restore-timeline.html:
+        * media/video-controls-in-media-document.html:
+        * media/video-controls-no-display-with-text-track.html:
+        * media/video-controls-rendering.html:
+        * media/video-controls-show-on-kb-or-ax-event.html:
+        * media/video-controls-toggling.html:
+        * media/video-controls-transformed.html:
+        * media/video-controls-visible-audio-only.html:
+        * media/video-controls-visible-exiting-fullscreen.html:
+        * media/video-controls-zoomed.html:
+        * media/video-display-toggle.html:
+        * media/video-empty-source.html:
+        * media/video-fullscreeen-only-controls.html:
+        * media/video-fullscreeen-only-playback.html:
+        * media/video-initially-hidden-volume-slider-up.html:
+        * media/video-no-audio.html:
+        * media/video-play-audio-require-user-gesture.html:
+        * media/video-play-require-user-gesture.html:
+        * media/video-trackmenu-selection.html:
+        * media/video-volume-slider-drag.html:
+        * media/video-volume-slider.html:
+        * media/video-zoom-controls.html:
+        * media/volume-bar-empty-when-muted.html:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/media/video-play-glyph-composited-outside-overflow-scrolling-touch-container.html:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-01-20  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        Super property access in base class constructor doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=166665
+
+        Reviewed by Ryosuke Niwa.
+
+        * js/class-syntax-super-expected.txt:
+        * js/script-tests/class-syntax-super.js:
+
 2017-01-20  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         Super property access in base class constructor doesn't work

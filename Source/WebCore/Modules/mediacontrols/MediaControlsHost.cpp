@@ -278,7 +278,7 @@ String MediaControlsHost::shadowRootCSSText() const
     Page* page = m_mediaElement->document().page();
     if (!page)
         return emptyString();
-    return RenderTheme::themeForPage(page)->mediaControlsStyleSheet();
+    return RenderTheme::themeForPage(page)->modernMediaControlsStyleSheet();
 }
 
 String MediaControlsHost::base64StringForIconAndPlatform(const String& iconName, const String& platform) const

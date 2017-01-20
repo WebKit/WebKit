@@ -182,14 +182,9 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(const Element& el
 #if ENABLE(VIDEO)
         else if (is<HTMLMediaElement>(element)) {
             if (!mediaControlsStyleSheet) {
-                String mediaRules;
-                if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled())
-                    mediaRules = emptyString();
-                else {
-                    mediaRules = RenderTheme::themeForPage(element.document().page())->mediaControlsStyleSheet();
-                    if (mediaRules.isEmpty())
-                        mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + RenderTheme::themeForPage(element.document().page())->extraMediaControlsStyleSheet();
-                }
+                String mediaRules = RenderTheme::themeForPage(element.document().page())->mediaControlsStyleSheet();
+                if (mediaRules.isEmpty())
+                    mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + RenderTheme::themeForPage(element.document().page())->extraMediaControlsStyleSheet();
                 mediaControlsStyleSheet = parseUASheet(mediaRules);
                 defaultStyle->addRulesFromSheet(*mediaControlsStyleSheet, screenEval());
                 defaultPrintStyle->addRulesFromSheet(*mediaControlsStyleSheet, printEval());

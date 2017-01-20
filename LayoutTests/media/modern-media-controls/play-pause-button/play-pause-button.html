@@ -1,5 +1,6 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
 <script type="text/javascript">
 
@@ -40,7 +41,7 @@ scheduler.frameDidFire = function()
     shouldBeTrue('iOSPauseButton.element.style.webkitMaskImage.includes("iOS/pause@")');
     shouldBeTrue('fullscreenPlayButton.element.style.webkitMaskImage.includes("macOS/play-fullscreen@")');
     shouldBeTrue('fullscreenPauseButton.element.style.webkitMaskImage.includes("macOS/pause-fullscreen@")');
-    finishJSTest();
+    finishMediaControlsTest();
 };
 
 </script>

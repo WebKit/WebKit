@@ -98,6 +98,7 @@ public:
     virtual String extraPlugInsStyleSheet() { return String(); }
 #if ENABLE(VIDEO)
     virtual String mediaControlsStyleSheet() { return String(); }
+    virtual String modernMediaControlsStyleSheet() { return String(); }
     virtual String extraMediaControlsStyleSheet() { return String(); }
     virtual String mediaControlsScript() { return String(); }
     virtual String mediaControlsBase64StringForIconAndPlatform(const String&, const String&) { return String(); }

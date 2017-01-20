@@ -232,15 +232,23 @@ NSView* RenderThemeMac::documentViewFor(const RenderObject& o) const
 String RenderThemeMac::mediaControlsStyleSheet()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    if (m_legacyMediaControlsStyleSheet.isEmpty())
+        m_legacyMediaControlsStyleSheet = [NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsApple" ofType:@"css"] encoding:NSUTF8StringEncoding error:nil];
+    return m_legacyMediaControlsStyleSheet;
+#else
+    return emptyString();
+#endif
+}
+
+String RenderThemeMac::modernMediaControlsStyleSheet()
+{
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
         if (m_mediaControlsStyleSheet.isEmpty())
             m_mediaControlsStyleSheet = [NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"modern-media-controls" ofType:@"css" inDirectory:@"modern-media-controls"] encoding:NSUTF8StringEncoding error:nil];
         return m_mediaControlsStyleSheet;
     }
-
-    if (m_legacyMediaControlsStyleSheet.isEmpty())
-        m_legacyMediaControlsStyleSheet = [NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsApple" ofType:@"css"] encoding:NSUTF8StringEncoding error:nil];
-    return m_legacyMediaControlsStyleSheet;
+    return emptyString();
 #else
     return emptyString();
 #endif

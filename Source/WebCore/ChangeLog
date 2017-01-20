@@ -1,3 +1,43 @@
+2017-01-20  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Turn modern media controls on by default
+        https://bugs.webkit.org/show_bug.cgi?id=165668
+
+        Reviewed by Dean Jackson.
+
+        Tests: media/modern-media-controls/fullscreen-support/ipad/fullscreen-support-tap.html
+               media/modern-media-controls/pip-support/ipad/pip-support-enabled.html
+               media/modern-media-controls/pip-support/ipad/pip-support-tap.html
+               media/modern-media-controls/placard-support/ipad/placard-support-pip.html
+               media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html
+
+        Fix an error which may be triggered prior to Sierra where we would assume the presentation
+        mode API was avaiable when it might not be, which caused a few tests to fail.
+
+        We also ensure that we always inject the UA styles for legacy media controls as otherwise
+        toggling from modern media controls to legacy media controls would not inject those styles.
+        To facilitate this we add a dedicated method for modern media controls styles in RenderTheme
+        that is only used in the case of modern media controls when the shadow root asks for the styles
+        to inject in the shadow root.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::shadowRootCSSText):
+        * Modules/modern-media-controls/media/pip-support.js:
+        (PiPSupport.prototype.syncControl):
+        (PiPSupport):
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::modernMediaControlsStyleSheet):
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::mediaControlsStyleSheet):
+        (WebCore::RenderThemeIOS::modernMediaControlsStyleSheet):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::mediaControlsStyleSheet):
+        (WebCore::RenderThemeMac::modernMediaControlsStyleSheet):
+
 2017-01-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r206156): Animated images are repeated one extra iteration than the value which is saved in the image file

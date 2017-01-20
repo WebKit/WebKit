@@ -107,6 +107,7 @@ protected:
 #if ENABLE(VIDEO)
     // Media controls
     String mediaControlsStyleSheet() override;
+    String modernMediaControlsStyleSheet() override;
     String mediaControlsScript() override;
     String mediaControlsBase64StringForIconAndPlatform(const String&, const String&) override;
 #endif

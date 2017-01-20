@@ -63,6 +63,8 @@ scheduler.frameDidFire = function()
     debug("");
     debug("Now we'll drag to the slider thumb from 10px to 30px within the slider's bounds");
     dragSlider(10, 30);
+    
+    scheduler.frameDidFire = null;
 }
 
 </script>
