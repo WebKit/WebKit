@@ -1906,3 +1906,5 @@ webkit.org/b/165344 [ Release ] http/tests/security/module-incorrect-mime-types.
 fast/css/deferred-parsing/hover-test.html [ Skip ]
 
 webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-diffferent-options.html [ Pass Failure ]
+
+webkit.org/b/167258 media/modern-media-controls/audio/audio-controls-metrics.html [ Failure ]
