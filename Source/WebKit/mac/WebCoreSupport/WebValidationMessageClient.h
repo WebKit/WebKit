@@ -40,6 +40,7 @@ public:
     ~WebValidationMessageClient();
 
     // ValidationMessageClient API.
+    void documentDetached(WebCore::Document&) final;
     void showValidationMessage(const WebCore::Element& anchor, const String& message) final;
     void hideValidationMessage(const WebCore::Element& anchor) final;
     bool isValidationMessageVisible(const WebCore::Element& anchor) final;

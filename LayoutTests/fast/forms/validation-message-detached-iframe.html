@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<iframe id="testFrame" src="resources/form-validation-iframe.html"></iframe>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that the form validation message goes away when its element's iframe gets detached.");
+jsTestIsAsync = true;
+
+function getValidationBubbleContents()
+{
+    return `
+    (function() {
+        return JSON.stringify(uiController.contentsOfUserInterfaceItem('validationBubble'));
+    })();`
+}
+
+onload = function() {
+    var testFrame = document.getElementById("testFrame");
+    testFrame.contentDocument.getElementById("required_text_input_submit").click();
+
+    testFrame.remove();
+    testFrame = null;
+    gc();
+
+    testRunner.runUIScript(getValidationBubbleContents(), function(result) {
+        validationBubbleContents = JSON.parse(result).validationBubble;
+        shouldBeEqualToString("validationBubbleContents.message", "");
+        finishJSTest();
+    });
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+<html>

@@ -42,6 +42,14 @@ WebValidationMessageClient::~WebValidationMessageClient()
         hideValidationMessage(*m_currentAnchor);
 }
 
+void WebValidationMessageClient::documentDetached(Document& document)
+{
+    if (!m_currentAnchor)
+        return;
+    if (&m_currentAnchor->document() == &document)
+        hideValidationMessage(*m_currentAnchor);
+}
+
 void WebValidationMessageClient::showValidationMessage(const Element& anchor, const String& message)
 {
     if (m_currentAnchor)
