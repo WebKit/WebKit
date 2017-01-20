@@ -1159,13 +1159,13 @@ class DataMediaChannel : public MediaChannel {
   virtual bool SetRecvParameters(const DataRecvParameters& params) = 0;
 
   // TODO(pthatcher): Implement this.
-  virtual bool GetStats(DataMediaInfo* info) { return true; }
+  virtual bool GetStats(DataMediaInfo*) { return true; }
 
   virtual bool SetSend(bool send) = 0;
   virtual bool SetReceive(bool receive) = 0;
 
-  virtual void OnNetworkRouteChanged(const std::string& transport_name,
-                                     const rtc::NetworkRoute& network_route) {}
+  virtual void OnNetworkRouteChanged(const std::string& /* transport_name */,
+                                     const rtc::NetworkRoute&) {}
 
   virtual bool SendData(
       const SendDataParams& params,

@@ -42,6 +42,12 @@
 #define RTC_NO_SANITIZE(what)
 #endif
 
+#if !RTC_HAS_ASAN
+#define SANITIZER_UNUSED3(x, y, z)  (void)&(x); \
+  (void)&(y); \
+  (void)&(z)
+#endif
+
 // Ask ASan to mark the memory range [ptr, ptr + element_size * num_elements)
 // as being unaddressable, so that reads and writes are not allowed. ASan may
 // narrow the range to the nearest alignment boundaries.
@@ -50,6 +56,8 @@ static inline void rtc_AsanPoison(const volatile void* ptr,
                                   size_t num_elements) {
 #if RTC_HAS_ASAN
   ASAN_POISON_MEMORY_REGION(ptr, element_size * num_elements);
+#else
+  SANITIZER_UNUSED3(ptr, element_size, num_elements);
 #endif
 }
 
@@ -61,6 +69,8 @@ static inline void rtc_AsanUnpoison(const volatile void* ptr,
                                     size_t num_elements) {
 #if RTC_HAS_ASAN
   ASAN_UNPOISON_MEMORY_REGION(ptr, element_size * num_elements);
+#else
+  SANITIZER_UNUSED3(ptr, element_size, num_elements);
 #endif
 }
 
@@ -71,6 +81,8 @@ static inline void rtc_MsanMarkUninitialized(const volatile void* ptr,
                                              size_t num_elements) {
 #if RTC_HAS_MSAN
   __msan_poison(ptr, element_size * num_elements);
+#else
+  SANITIZER_UNUSED3(ptr, element_size, num_elements);
 #endif
 }
 
@@ -82,6 +94,8 @@ static inline void rtc_MsanCheckInitialized(const volatile void* ptr,
                                             size_t num_elements) {
 #if RTC_HAS_MSAN
   __msan_check_mem_is_initialized(ptr, element_size * num_elements);
+#else
+  SANITIZER_UNUSED3(ptr, element_size, num_elements);
 #endif
 }
 

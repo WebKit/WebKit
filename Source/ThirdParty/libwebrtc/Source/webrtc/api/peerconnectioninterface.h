@@ -119,9 +119,9 @@ class MetricsObserverInterface : public rtc::RefCountInterface {
   // |type| is the type of the enum counter to be incremented. |counter|
   // is the particular counter in that type. |counter_max| is the next sequence
   // number after the highest counter.
-  virtual void IncrementEnumCounter(PeerConnectionEnumCounterType type,
-                                    int counter,
-                                    int counter_max) {}
+  virtual void IncrementEnumCounter(PeerConnectionEnumCounterType,
+                                    int /* counter */,
+                                    int /* counter_max */) {}
 
   // This is used to handle sparse counters like SSL cipher suites.
   // TODO(guoweis): Remove the implementation once the dependency's interface
@@ -389,14 +389,14 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
   // |streams| indicates which stream labels the track should be associated
   // with.
   virtual rtc::scoped_refptr<RtpSenderInterface> AddTrack(
-      MediaStreamTrackInterface* track,
-      std::vector<MediaStreamInterface*> streams) {
+      MediaStreamTrackInterface*,
+      std::vector<MediaStreamInterface*>) {
     return nullptr;
   }
 
   // Remove an RtpSender from this PeerConnection.
   // Returns true on success.
-  virtual bool RemoveTrack(RtpSenderInterface* sender) {
+  virtual bool RemoveTrack(RtpSenderInterface*) {
     return false;
   }
 
@@ -410,8 +410,8 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
   // |stream_id| is used to populate the msid attribute; if empty, one will
   // be generated automatically.
   virtual rtc::scoped_refptr<RtpSenderInterface> CreateSender(
-      const std::string& kind,
-      const std::string& stream_id) {
+      const std::string& /* kind */,
+      const std::string& /* stream_id */) {
     return rtc::scoped_refptr<RtpSenderInterface>();
   }
 
@@ -433,7 +433,7 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
   // TODO(hbos): Default implementation that does nothing only exists as to not
   // break third party projects. As soon as they have been updated this should
   // be changed to "= 0;".
-  virtual void GetStats(RTCStatsCollectorCallback* callback) {}
+  virtual void GetStats(RTCStatsCollectorCallback*) {}
 
   virtual rtc::scoped_refptr<DataChannelInterface> CreateDataChannel(
       const std::string& label,
@@ -444,23 +444,23 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
 
   // Create a new offer.
   // The CreateSessionDescriptionObserver callback will be called when done.
-  virtual void CreateOffer(CreateSessionDescriptionObserver* observer,
-                           const MediaConstraintsInterface* constraints) {}
+  virtual void CreateOffer(CreateSessionDescriptionObserver*,
+                           const MediaConstraintsInterface*) {}
 
   // TODO(jiayl): remove the default impl and the old interface when chromium
   // code is updated.
-  virtual void CreateOffer(CreateSessionDescriptionObserver* observer,
-                           const RTCOfferAnswerOptions& options) {}
+  virtual void CreateOffer(CreateSessionDescriptionObserver*,
+                           const RTCOfferAnswerOptions&) {}
 
   // Create an answer to an offer.
   // The CreateSessionDescriptionObserver callback will be called when done.
-  virtual void CreateAnswer(CreateSessionDescriptionObserver* observer,
-                            const RTCOfferAnswerOptions& options) {}
+  virtual void CreateAnswer(CreateSessionDescriptionObserver*,
+                            const RTCOfferAnswerOptions&) {}
   // Deprecated - use version above.
   // TODO(hta): Remove and remove default implementations when all callers
   // are updated.
-  virtual void CreateAnswer(CreateSessionDescriptionObserver* observer,
-                            const MediaConstraintsInterface* constraints) {}
+  virtual void CreateAnswer(CreateSessionDescriptionObserver*,
+                            const MediaConstraintsInterface*) {}
 
   // Sets the local session description.
   // JsepInterface takes the ownership of |desc| even if it fails.
@@ -475,11 +475,11 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
   // Restarts or updates the ICE Agent process of gathering local candidates
   // and pinging remote candidates.
   // TODO(deadbeef): Remove once Chrome is moved over to SetConfiguration.
-  virtual bool UpdateIce(const IceServers& configuration,
-                         const MediaConstraintsInterface* constraints) {
+  virtual bool UpdateIce(const IceServers&,
+                         const MediaConstraintsInterface*) {
     return false;
   }
-  virtual bool UpdateIce(const IceServers& configuration) { return false; }
+  virtual bool UpdateIce(const IceServers&) { return false; }
   // Sets the PeerConnection's global configuration to |config|.
   // Any changes to STUN/TURN servers or ICE candidate policy will affect the
   // next gathering phase, and cause the next call to createOffer to generate
@@ -488,7 +488,7 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
   // TODO(deadbeef): Make this pure virtual once all Chrome subclasses of
   // PeerConnectionInterface implement it.
   virtual bool SetConfiguration(
-      const PeerConnectionInterface::RTCConfiguration& config) {
+      const PeerConnectionInterface::RTCConfiguration&) {
     return false;
   }
   // Provides a remote candidate to the ICE Agent.
@@ -501,7 +501,7 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
 
   // Removes a group of remote candidates from the ICE agent.
   virtual bool RemoveIceCandidates(
-      const std::vector<cricket::Candidate>& candidates) {
+      const std::vector<cricket::Candidate>&) {
     return false;
   }
 
@@ -518,8 +518,8 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
   // automatically after 10 minutes have passed, or when the StopRtcEventLog
   // function is called.
   // TODO(ivoc): Make this pure virtual when Chrome is updated.
-  virtual bool StartRtcEventLog(rtc::PlatformFile file,
-                                int64_t max_size_bytes) {
+  virtual bool StartRtcEventLog(rtc::PlatformFile,
+                                int64_t /* max_size_bytes */) {
     return false;
   }
 
@@ -553,21 +553,21 @@ class PeerConnectionObserver {
   // pointer version.
 
   // Triggered when media is received on a new stream from remote peer.
-  virtual void OnAddStream(rtc::scoped_refptr<MediaStreamInterface> stream) {}
+  virtual void OnAddStream(rtc::scoped_refptr<MediaStreamInterface>) {}
   // Deprecated; please use the version that uses a scoped_refptr.
-  virtual void OnAddStream(MediaStreamInterface* stream) {}
+  virtual void OnAddStream(MediaStreamInterface*) {}
 
   // Triggered when a remote peer close a stream.
-  virtual void OnRemoveStream(rtc::scoped_refptr<MediaStreamInterface> stream) {
+  virtual void OnRemoveStream(rtc::scoped_refptr<MediaStreamInterface>) {
   }
   // Deprecated; please use the version that uses a scoped_refptr.
-  virtual void OnRemoveStream(MediaStreamInterface* stream) {}
+  virtual void OnRemoveStream(MediaStreamInterface*) {}
 
   // Triggered when a remote peer opens a data channel.
   virtual void OnDataChannel(
-      rtc::scoped_refptr<DataChannelInterface> data_channel){};
+      rtc::scoped_refptr<DataChannelInterface>){};
   // Deprecated; please use the version that uses a scoped_refptr.
-  virtual void OnDataChannel(DataChannelInterface* data_channel) {}
+  virtual void OnDataChannel(DataChannelInterface*) {}
 
   // Triggered when renegotiation is needed. For example, an ICE restart
   // has begun.
@@ -588,10 +588,10 @@ class PeerConnectionObserver {
   // TODO(honghaiz): Make this a pure virtual method when all its subclasses
   // implement it.
   virtual void OnIceCandidatesRemoved(
-      const std::vector<cricket::Candidate>& candidates) {}
+      const std::vector<cricket::Candidate>&) {}
 
   // Called when the ICE connection receiving status changes.
-  virtual void OnIceConnectionReceivingChange(bool receiving) {}
+  virtual void OnIceConnectionReceivingChange(bool /* receiving */) {}
 
  protected:
   // Dtor protected as objects shouldn't be deleted via this interface.

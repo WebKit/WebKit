@@ -110,11 +110,11 @@ class StunRequest : public rtc::MessageHandler {
 
   // Fills in a request object to be sent.  Note that request's transaction ID
   // will already be set and cannot be changed.
-  virtual void Prepare(StunMessage* request) {}
+  virtual void Prepare(StunMessage*) {}
 
   // Called when the message receives a response or times out.
-  virtual void OnResponse(StunMessage* response) {}
-  virtual void OnErrorResponse(StunMessage* response) {}
+  virtual void OnResponse(StunMessage*) {}
+  virtual void OnErrorResponse(StunMessage*) {}
   virtual void OnTimeout() {}
   // Called when the message is sent.
   virtual void OnSent();

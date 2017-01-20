@@ -134,9 +134,9 @@ class VideoTrackInterface
       public rtc::VideoSourceInterface<VideoFrame> {
  public:
   // Register a video sink for this track.
-  void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
-                       const rtc::VideoSinkWants& wants) override{};
-  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) override{};
+  void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>*,
+                       const rtc::VideoSinkWants&) override {};
+  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>*) override {};
 
   virtual VideoTrackSourceInterface* GetSource() const = 0;
 
@@ -174,15 +174,15 @@ class AudioSourceInterface : public MediaSourceInterface {
   // Sets the volume to the source. |volume| is in  the range of [0, 10].
   // TODO(tommi): This method should be on the track and ideally volume should
   // be applied in the track in a way that does not affect clones of the track.
-  virtual void SetVolume(double volume) {}
+  virtual void SetVolume(double) {}
 
   // Registers/unregisters observer to the audio source.
-  virtual void RegisterAudioObserver(AudioObserver* observer) {}
-  virtual void UnregisterAudioObserver(AudioObserver* observer) {}
+  virtual void RegisterAudioObserver(AudioObserver*) {}
+  virtual void UnregisterAudioObserver(AudioObserver*) {}
 
   // TODO(tommi): Make pure virtual.
-  virtual void AddSink(AudioTrackSinkInterface* sink) {}
-  virtual void RemoveSink(AudioTrackSinkInterface* sink) {}
+  virtual void AddSink(AudioTrackSinkInterface*) {}
+  virtual void RemoveSink(AudioTrackSinkInterface*) {}
 };
 
 // Interface of the audio processor used by the audio track to collect
@@ -230,7 +230,7 @@ class AudioTrackInterface : public MediaStreamTrackInterface {
   // Return true on success, otherwise false.
   // TODO(xians): Change the interface to int GetSignalLevel() and pure virtual
   // after Chrome has the correct implementation of the interface.
-  virtual bool GetSignalLevel(int* level) { return false; }
+  virtual bool GetSignalLevel(int*) { return false; }
 
   // Get the audio processor used by the audio track. Return NULL if the track
   // does not have any processor.

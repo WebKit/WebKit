@@ -36,9 +36,9 @@ class WebRtcVideoEncoderFactory {
 
     VideoCodec(webrtc::VideoCodecType t,
                const std::string& nm,
-               int w,
-               int h,
-               int fr)
+               int /* w */,
+               int /* h */,
+               int /* fr */)
         : type(t), name(nm) {}
   };
 
@@ -70,7 +70,7 @@ class WebRtcVideoEncoderFactory {
   // frames to be delivered via webrtc::VideoEncoder::Encode. This flag is used
   // as the internal_source parameter to
   // webrtc::ViEExternalCodec::RegisterExternalSendCodec.
-  virtual bool EncoderTypeHasInternalSource(webrtc::VideoCodecType type) const {
+  virtual bool EncoderTypeHasInternalSource(webrtc::VideoCodecType) const {
     return false;
   }
 

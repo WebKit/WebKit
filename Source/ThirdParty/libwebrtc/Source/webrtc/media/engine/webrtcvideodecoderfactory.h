@@ -32,7 +32,7 @@ class WebRtcVideoDecoderFactory {
       webrtc::VideoCodecType type) = 0;
   virtual webrtc::VideoDecoder* CreateVideoDecoderWithParams(
       webrtc::VideoCodecType type,
-      VideoDecoderParams params) {
+      VideoDecoderParams) {
     return CreateVideoDecoder(type);
   }
   virtual ~WebRtcVideoDecoderFactory() {}

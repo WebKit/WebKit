@@ -1,3 +1,81 @@
+2017-01-20  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] libwebrtc headers are incompatible with WebKit compilation flags
+        https://bugs.webkit.org/show_bug.cgi?id=167242
+
+        Reviewed by Alex Christensen.
+
+        WebKit is enforcing -Wunused-parameter and -Wunused-variable which conflict with some included libwertc headers.
+        Removed unused parameter names for inlined functions.
+
+        * Source/webrtc/api/jsep.h:
+        (webrtc::SessionDescriptionInterface::RemoveCandidates):
+        * Source/webrtc/api/mediastreaminterface.h:
+        (webrtc::AudioSourceInterface::SetVolume):
+        (webrtc::AudioSourceInterface::RegisterAudioObserver):
+        (webrtc::AudioSourceInterface::UnregisterAudioObserver):
+        (webrtc::AudioSourceInterface::AddSink):
+        (webrtc::AudioSourceInterface::RemoveSink):
+        (webrtc::AudioTrackInterface::GetSignalLevel):
+        * Source/webrtc/api/peerconnectionfactory.h:
+        * Source/webrtc/api/peerconnectioninterface.h:
+        (webrtc::MetricsObserverInterface::IncrementEnumCounter):
+        (webrtc::PeerConnectionInterface::AddTrack):
+        (webrtc::PeerConnectionInterface::RemoveTrack):
+        (webrtc::PeerConnectionInterface::CreateSender):
+        (webrtc::PeerConnectionInterface::GetStats):
+        (webrtc::PeerConnectionInterface::CreateOffer):
+        (webrtc::PeerConnectionInterface::CreateAnswer):
+        (webrtc::PeerConnectionInterface::UpdateIce):
+        (webrtc::PeerConnectionInterface::SetConfiguration):
+        (webrtc::PeerConnectionInterface::RemoveIceCandidates):
+        (webrtc::PeerConnectionInterface::StartRtcEventLog):
+        (webrtc::PeerConnectionObserver::OnAddStream):
+        (webrtc::PeerConnectionObserver::OnRemoveStream):
+        (webrtc::PeerConnectionObserver::OnDataChannel):
+        (webrtc::PeerConnectionObserver::OnIceCandidatesRemoved):
+        (webrtc::PeerConnectionObserver::OnIceConnectionReceivingChange):
+        * Source/webrtc/api/rtpsender.cc:
+        * Source/webrtc/base/messagehandler.h:
+        (rtc::FunctorMessageHandler::OnMessage):
+        * Source/webrtc/base/sanitizer.h:
+        (rtc_AsanPoison):
+        (rtc_AsanUnpoison):
+        (rtc_MsanMarkUninitialized):
+        (rtc_MsanCheckInitialized):
+        * Source/webrtc/base/stream.h:
+        (rtc::StreamInterface::ConsumeReadData):
+        (rtc::StreamInterface::ConsumeWriteBuffer):
+        * Source/webrtc/media/base/mediachannel.h:
+        (cricket::DataMediaChannel::GetStats):
+        (cricket::DataMediaChannel::OnNetworkRouteChanged):
+        * Source/webrtc/media/engine/webrtcvideodecoderfactory.h:
+        (cricket::WebRtcVideoDecoderFactory::CreateVideoDecoderWithParams):
+        * Source/webrtc/media/engine/webrtcvideoencoderfactory.h:
+        (cricket::WebRtcVideoEncoderFactory::VideoCodec::VideoCodec):
+        (cricket::WebRtcVideoEncoderFactory::EncoderTypeHasInternalSource):
+        * Source/webrtc/media/engine/webrtcvideoengine2.cc:
+        * Source/webrtc/modules/include/module.h:
+        (webrtc::Module::ProcessThreadAttached):
+        * Source/webrtc/modules/video_coding/codecs/vp9/vp9_noop.cc:
+        * Source/webrtc/p2p/base/port.h:
+        (cricket::Port::HandleIncomingPacket):
+        (cricket::Port::HandleConnectionDestroyed):
+        (cricket::Connection::set_receiving_timeout):
+        * Source/webrtc/p2p/base/stun.h:
+        (cricket::StunAttribute::SetOwner):
+        * Source/webrtc/p2p/base/stunrequest.h:
+        (cricket::StunRequest::Prepare):
+        (cricket::StunRequest::OnResponse):
+        (cricket::StunRequest::OnErrorResponse):
+        * Source/webrtc/p2p/base/transport.h:
+        (cricket::Transport::SetLocalCertificate):
+        (cricket::Transport::GetLocalCertificate):
+        (cricket::Transport::GetSslRole):
+        (cricket::Transport::SetSslMaxProtocolVersion):
+        * Source/webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.cc:
+        * Source/webrtc/typedefs.h:
+
 2017-01-20  Youenn Fablet  <youennf@gmail.com>
 
         [WebRTC] Update libwertc AudioRtpSender::SetAudioSend

@@ -53,7 +53,7 @@ class Module {
   //
   // NOTE: This method is not called from the worker thread itself, but from
   //       the thread that registers/deregisters the module or calls Start/Stop.
-  virtual void ProcessThreadAttached(ProcessThread* process_thread) {}
+  virtual void ProcessThreadAttached(ProcessThread*) {}
 
  protected:
   virtual ~Module() {}

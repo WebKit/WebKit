@@ -40,7 +40,7 @@ class FunctorMessageHandler : public MessageHandler {
  public:
   explicit FunctorMessageHandler(const FunctorT& functor)
       : functor_(functor) {}
-  virtual void OnMessage(Message* msg) {
+  virtual void OnMessage(Message*) {
     result_ = functor_();
   }
   const ReturnT& result() const { return result_; }
@@ -56,7 +56,7 @@ class FunctorMessageHandler<class std::unique_ptr<ReturnT>, FunctorT>
     : public MessageHandler {
  public:
   explicit FunctorMessageHandler(const FunctorT& functor) : functor_(functor) {}
-  virtual void OnMessage(Message* msg) { result_ = std::move(functor_()); }
+  virtual void OnMessage(Message*) { result_ = std::move(functor_()); }
   std::unique_ptr<ReturnT> result() { return std::move(result_); }
 
  private:

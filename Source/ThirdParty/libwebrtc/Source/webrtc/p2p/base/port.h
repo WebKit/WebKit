@@ -241,9 +241,9 @@ class Port : public PortInterface, public rtc::MessageHandler,
   // port implemented this method.
   // TODO(mallinath) - Make it pure virtual.
   virtual bool HandleIncomingPacket(
-      rtc::AsyncPacketSocket* socket, const char* data, size_t size,
-      const rtc::SocketAddress& remote_addr,
-      const rtc::PacketTime& packet_time) {
+      rtc::AsyncPacketSocket*, const char*, size_t,
+      const rtc::SocketAddress&,
+      const rtc::PacketTime&) {
     ASSERT(false);
     return false;
   }
@@ -360,7 +360,7 @@ class Port : public PortInterface, public rtc::MessageHandler,
   }
 
   // Extra work to be done in subclasses when a connection is destroyed.
-  virtual void HandleConnectionDestroyed(Connection* conn) {}
+  virtual void HandleConnectionDestroyed(Connection*) {}
 
  private:
   void Construct();

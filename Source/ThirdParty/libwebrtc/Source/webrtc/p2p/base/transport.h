@@ -267,11 +267,11 @@ class Transport : public sigslot::has_slots<> {
 
   // Must be called before applying local session description.
   virtual void SetLocalCertificate(
-      const rtc::scoped_refptr<rtc::RTCCertificate>& certificate) {}
+      const rtc::scoped_refptr<rtc::RTCCertificate>&) {}
 
   // Get a copy of the local certificate provided by SetLocalCertificate.
   virtual bool GetLocalCertificate(
-      rtc::scoped_refptr<rtc::RTCCertificate>* certificate) {
+      rtc::scoped_refptr<rtc::RTCCertificate>*) {
     return false;
   }
 
@@ -320,10 +320,10 @@ class Transport : public sigslot::has_slots<> {
   bool RemoveRemoteCandidates(const std::vector<Candidate>& candidates,
                               std::string* error);
 
-  virtual bool GetSslRole(rtc::SSLRole* ssl_role) const { return false; }
+  virtual bool GetSslRole(rtc::SSLRole*) const { return false; }
 
   // Must be called before channel is starting to connect.
-  virtual bool SetSslMaxProtocolVersion(rtc::SSLProtocolVersion version) {
+  virtual bool SetSslMaxProtocolVersion(rtc::SSLProtocolVersion) {
     return false;
   }
 
