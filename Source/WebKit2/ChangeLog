@@ -1,3 +1,9 @@
+2017-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.15.3 release.
+
+        * gtk/NEWS: Add release notes for 2.15.3.
+
 2017-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Threaded Compositor] Initialize the threaded compositor with the current size

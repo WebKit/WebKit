@@ -1,4 +1,24 @@
 =================
+WebKitGTK+ 2.15.3
+=================
+
+What's new in WebKitGTK+ 2.15.3?
+
+  - Add API to set network proxy settings.
+  - Add API to set initial notification permissions.
+  - Add WebKitSecurityOrigin to the API.
+  - Add tag property to WebKitNotification.
+  - Create GLX OpenGL contexts using version 3.2 (core profile) when available to reduce the memory
+    consumption on Mesa based drivers.
+  - Improve memory pressure handler to reduce the CPU usage on memory pressure situations.
+  - Add support for key and code properties on keyboard events.
+  - More user agent string improvements to improve compatibility with several websites.
+  - Fix network process crashes when loading custom URI schemes.
+  - Fix web process crash when closing the web view in X11.
+  - Fix several crashes and rendering issues.
+  - Translation updates: German.
+
+=================
 WebKitGTK+ 2.15.2
 =================
 
