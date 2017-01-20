@@ -286,21 +286,21 @@ int Manager::fuzzyMatchURLs(const WebCore::URL& requestURL, const WebCore::URLPa
     auto resourceParameter = std::begin(resourceParameters);
 
     for (; requestParameter != std::end(requestParameters) && resourceParameter != std::end(resourceParameters); ++requestParameter, ++resourceParameter) {
-        if (requestParameter->first == resourceParameter->first) {
+        if (requestParameter->key == resourceParameter->key) {
 #if ENABLE(WTF_CAPTURE_INTERNAL_DEBUGGING)
-            if (requestParameter->second == resourceParameter->second)
+            if (requestParameter->value == resourceParameter->value)
                 DEBUG_LOG("Matching parameter names and values: \"" STRING_SPECIFIER "\" = \"" STRING_SPECIFIER "\"", DEBUG_STR(requestParameter->first), DEBUG_STR(requestParameter->second));
             else
                 DEBUG_LOG("Mismatching parameter values: \"" STRING_SPECIFIER "\" = \"" STRING_SPECIFIER "\" vs. \"" STRING_SPECIFIER "\"", DEBUG_STR(requestParameter->first), DEBUG_STR(requestParameter->second), DEBUG_STR(resourceParameter->second));
 #endif
-            score += (requestParameter->second == resourceParameter->second) ? kParameterMatchScore : kParameterMismatchScore;
+            score += (requestParameter->value == resourceParameter->value) ? kParameterMatchScore : kParameterMismatchScore;
             DEBUG_LOG("Score = %d", score);
         } else {
             DEBUG_LOG("Mismatching parameter names: " STRING_SPECIFIER ", " STRING_SPECIFIER, DEBUG_STR(requestParameter->first), DEBUG_STR(resourceParameter->first));
 
             const auto scanForwardForMatch = [this, &score, kParameterMatchScore, kParameterMismatchScore, kParameterMissingScore](const auto& fixedIter, auto& scanningIter, const auto& scannerEnd) {
                 auto scanner = scanningIter;
-                while (scanner != scannerEnd && scanner->first != fixedIter->first)
+                while (scanner != scannerEnd && scanner->key != fixedIter->key)
                     ++scanner;
                 if (scanner == scannerEnd)
                     return false;
@@ -313,7 +313,7 @@ int Manager::fuzzyMatchURLs(const WebCore::URL& requestURL, const WebCore::URLPa
                 else
                     DEBUG_LOG("Mismatching parameter values: \"" STRING_SPECIFIER "\" = \"" STRING_SPECIFIER "\" vs. \"" STRING_SPECIFIER "\"", DEBUG_STR(fixedIter->first), DEBUG_STR(fixedIter->second), DEBUG_STR(scanner->second));
 #endif
-                score += (fixedIter->second == scanner->second) ? kParameterMatchScore : kParameterMismatchScore;
+                score += (fixedIter->value == scanner->value) ? kParameterMatchScore : kParameterMismatchScore;
                 DEBUG_LOG("Score = %d", score);
                 scanningIter = scanner;
                 return true;

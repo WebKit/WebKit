@@ -24,7 +24,8 @@
  */
 
 [
-    Constructor(optional (USVString or URLSearchParams) init = ""),
+    Constructor(optional (sequence<sequence<USVString>> or record<USVString, USVString> or USVString) init = ""),
+    ConstructorMayThrowException,
     Exposed=(Window,Worker),
     ImplementationLacksVTable,
 ] interface URLSearchParams {

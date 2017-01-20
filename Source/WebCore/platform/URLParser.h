@@ -46,7 +46,7 @@ public:
     WEBCORE_EXPORT static bool enabled();
     WEBCORE_EXPORT static void setEnabled(bool);
     
-    typedef Vector<std::pair<String, String>> URLEncodedForm;
+    typedef Vector<WTF::KeyValuePair<String, String>> URLEncodedForm;
     WEBCORE_EXPORT static URLEncodedForm parseURLEncodedForm(StringView);
     static String serialize(const URLEncodedForm&);
 

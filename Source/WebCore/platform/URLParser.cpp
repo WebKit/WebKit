@@ -2717,7 +2717,7 @@ auto URLParser::parseURLEncodedForm(StringView input) -> URLEncodedForm
             auto name = formURLDecode(bytes.substring(0, valueStart));
             auto value = formURLDecode(bytes.substring(valueStart + 1));
             if (name && value)
-                output.append(std::make_pair(name.value().replace('+', 0x20), value.value().replace('+', 0x20)));
+                output.append({name.value().replace('+', 0x20), value.value().replace('+', 0x20)});
         }
     }
     return output;
@@ -2750,9 +2750,9 @@ String URLParser::serialize(const URLEncodedForm& tuples)
     for (auto& tuple : tuples) {
         if (!output.isEmpty())
             output.append('&');
-        serializeURLEncodedForm(tuple.first, output);
+        serializeURLEncodedForm(tuple.key, output);
         output.append('=');
-        serializeURLEncodedForm(tuple.second, output);
+        serializeURLEncodedForm(tuple.value, output);
     }
     return String::adopt(WTFMove(output));
 }

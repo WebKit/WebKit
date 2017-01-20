@@ -1,3 +1,31 @@
+2017-01-19  Alex Christensen  <achristensen@webkit.org>
+
+        Construct URLSearchParams from array or object
+        https://bugs.webkit.org/show_bug.cgi?id=166973
+
+        Reviewed by Sam Weinig.
+
+        Covered by newly passing web platform tests.
+
+        * html/URLSearchParams.cpp:
+        (WebCore::URLSearchParams::URLSearchParams):
+        (WebCore::URLSearchParams::create):
+        (WebCore::URLSearchParams::get):
+        (WebCore::URLSearchParams::has):
+        (WebCore::URLSearchParams::sort):
+        (WebCore::URLSearchParams::set):
+        (WebCore::URLSearchParams::getAll):
+        (WebCore::URLSearchParams::remove):
+        (WebCore::URLSearchParams::Iterator::next):
+        * html/URLSearchParams.h:
+        (WebCore::URLSearchParams::create):
+        (WebCore::URLSearchParams::pairs):
+        (WebCore::URLSearchParams::operator const Vector<std::pair<String, String>>&): Deleted.
+        * html/URLSearchParams.idl:
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::serialize):
+        * platform/URLParser.h:
+
 2017-01-19  Jer Noble  <jer.noble@apple.com>
 
         CRASH at WebCore::TrackListBase::remove
