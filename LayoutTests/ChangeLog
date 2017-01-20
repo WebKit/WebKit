@@ -1,5 +1,14 @@
 2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cleaning up TestExpectations for inspector/css/pseudo-element-matches.html.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking media/modern-media-controls/audio/audio-controls-metrics.html as failing on iOS.
         https://bugs.webkit.org/show_bug.cgi?id=167258
 
