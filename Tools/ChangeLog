@@ -1,3 +1,10 @@
+2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Build Fix for Windows DumpRenderTree after r210976
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+
 2017-01-20  Antoine Quint  <graouts@apple.com>
 
         Web Animations should be off by default and enabled as an experimental feature

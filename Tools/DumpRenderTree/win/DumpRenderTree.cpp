@@ -860,9 +860,9 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     prefsPrivate3->setFetchAPIEnabled(TRUE);
     prefsPrivate3->setShadowDOMEnabled(TRUE);
     prefsPrivate3->setCustomElementsEnabled(TRUE);
-
     prefsPrivate3->setModernMediaControlsEnabled(FALSE);
-    prefsPrivate3->setWebAnimationsEnabled(TRUE);
+
+    preferences->setWebAnimationsEnabled(TRUE);
 
     setAlwaysAcceptCookies(false);
 }
