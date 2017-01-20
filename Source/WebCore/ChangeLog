@@ -1,5 +1,26 @@
 2017-01-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210473. rdar://problem/29204422
+
+    2017-01-06  Jer Noble  <jer.noble@apple.com>
+
+            Crash in WebCore::MediaPlayerPrivateMediaSourceAVFObjC::sizeWillChangeAtTime(const MediaTime&, const FloatSize&)::block_invoke
+            https://bugs.webkit.org/show_bug.cgi?id=166738
+
+            Reviewed by Eric Carlson.
+
+            AVFoundation can potentially call the same boundary time observer multiple times, and
+            in that case, it's possible that the observer queue will be empty when we attempt
+            to remove the first item from the queue. There's an ASSERT() in Deque for this case,
+            but we need to explicitly protect against this case.
+
+            Drive-by fix: Explicitly unregister the observer before releasing it.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::sizeWillChangeAtTime):
+
+2017-01-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210939. rdar://problem/29885052
 
     2017-01-19  Chris Dumez  <cdumez@apple.com>
