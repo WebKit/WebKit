@@ -204,7 +204,7 @@ void AudioRtpSender::SetAudioSend() {
     return;
   }
   cricket::AudioOptions options;
-#if !defined(WEBRTC_CHROMIUM_BUILD)
+#if !defined(WEBRTC_CHROMIUM_BUILD) && !defined(WEBRTC_WEBKIT_BUILD)
   // TODO(tommi): Remove this hack when we move CreateAudioSource out of
   // PeerConnection.  This is a bit of a strange way to apply local audio
   // options since it is also applied to all streams/channels, local or remote.

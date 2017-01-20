@@ -1,5 +1,17 @@
 2017-01-20  Youenn Fablet  <youennf@gmail.com>
 
+        [WebRTC] Update libwertc AudioRtpSender::SetAudioSend
+        https://bugs.webkit.org/show_bug.cgi?id=167243
+
+        Reviewed by Alex Christensen.
+
+        Introducing  WEBRTC_WEBKIT_BUILD macro to match existing WEBRTC_CHROMIUM_BUILD.
+        WEBRTC_WEBKIT_BUILD is defined by current WebKit libwebrtc build system.
+
+        * Source/webrtc/api/rtpsender.cc:
+
+2017-01-20  Youenn Fablet  <youennf@gmail.com>
+
         [WebRTC] libwebrtc H.264 codec is using VTB only for IOS
         https://bugs.webkit.org/show_bug.cgi?id=167245
 
