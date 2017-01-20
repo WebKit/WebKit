@@ -1,3 +1,10 @@
+2017-01-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r210626. We need to clear Triggerable's static map in each iteration.
+
+        * tools/sync-buildbot.js:
+        (syncLoop):
+
 2017-01-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a mechanism to dispatch and listen to an action
