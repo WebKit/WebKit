@@ -70,7 +70,7 @@ layer at (0,0) size 785x732
               RenderBlock {P} at (4,56) size 747x54
                 RenderText {#text} at (0,0) size 724x54
                   text run at (0,0) width 724: "This Paragraph Is Capitalized And The First Letter In Each Word Should Therefore Appear In Uppercase. Words"
-                  text run at (0,18) width 719: "That Are In Uppercase In The Source (E.g. USA) Should Remain So. There Should Be A Capital Letter After A"
+                  text run at (0,18) width 718: "That Are In Uppercase In The Source (E.g. USA) Should Remain So. There Should Be A Capital Letter After A"
                   text run at (0,36) width 577: "Non-Breaking Space (&Nbsp;). Both Those Characters Appear In The Previous Sentence."
               RenderBlock {P} at (4,126) size 747x36
                 RenderText {#text} at (0,0) size 743x36

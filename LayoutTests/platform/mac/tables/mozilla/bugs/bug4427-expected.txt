@@ -94,7 +94,7 @@ layer at (0,0) size 800x600
                 text run at (2,56) width 103: "San Francisco,  "
                 text run at (104,56) width 31: "CA  "
                 text run at (134,56) width 45: "94132 "
-              RenderBR {BR} at (0,0) size 0x0
+              RenderBR {BR} at (178,70) size 1x0
             RenderTableCell {TD} at (252,1) size 25x5 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 20x1
             RenderTableCell {TD} at (277,1) size 148x38 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
@@ -125,7 +125,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,56) size 75x18
                 text run at (2,56) width 31: "CA  "
                 text run at (32,56) width 45: "00000 "
-              RenderBR {BR} at (0,0) size 0x0
+              RenderBR {BR} at (76,70) size 1x0
               RenderText {#text} at (2,74) size 100x18
                 text run at (2,74) width 100: "(000) 000-0000"
             RenderTableCell {TD} at (252,102) size 25x5 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]

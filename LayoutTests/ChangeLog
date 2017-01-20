@@ -1,3 +1,17 @@
+2017-01-20  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add support for non-breaking space character.
+        https://bugs.webkit.org/show_bug.cgi?id=167250
+        <rdar://problem/30119638>
+
+        Reviewed by Antti Koivisto.
+        
+        These are output progressions (they do not reflect changes in functionality).
+
+        * fast/block/float/br-with-clear-2-expected.txt:
+        * platform/mac/css1/text_properties/text_transform-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4427-expected.txt:
+
 2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html as flaky on mac-wk1.

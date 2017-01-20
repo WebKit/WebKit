@@ -76,27 +76,27 @@ enum AvoidanceReason_ : uint64_t {
     FlowHasUnsupportedUnderlineDecoration = 1LLU  << 11,
     FlowHasJustifiedNonLatinText          = 1LLU  << 12,
     FlowHasOverflowVisible                = 1LLU  << 13,
-    FlowIsNotLTR                          = 1LLU  << 14,
-    FlowHasLineBoxContainProperty         = 1LLU  << 15,
-    FlowIsNotTopToBottom                  = 1LLU  << 16,
-    FlowHasLineBreak                      = 1LLU  << 17,
-    FlowHasNonNormalUnicodeBiDi           = 1LLU  << 18,
-    FlowHasRTLOrdering                    = 1LLU  << 19,
-    FlowHasLineAlignEdges                 = 1LLU  << 20,
-    FlowHasLineSnap                       = 1LLU  << 21,
-    FlowHasHypensAuto                     = 1LLU  << 22,
-    FlowHasTextEmphasisFillOrMark         = 1LLU  << 23,
-    FlowHasTextShadow                     = 1LLU  << 24,
-    FlowHasPseudoFirstLine                = 1LLU  << 25,
-    FlowHasPseudoFirstLetter              = 1LLU  << 26,
-    FlowHasTextCombine                    = 1LLU  << 27,
-    FlowHasTextFillBox                    = 1LLU  << 28,
-    FlowHasBorderFitLines                 = 1LLU  << 29,
-    FlowHasNonAutoLineBreak               = 1LLU  << 30,
-    FlowHasNonAutoTrailingWord            = 1LLU  << 31,
-    FlowHasSVGFont                        = 1LLU  << 32,
-    FlowTextIsEmpty                       = 1LLU  << 33,
-    FlowTextHasNoBreakSpace               = 1LLU  << 34,
+    FlowHasWebKitNBSPMode                 = 1LLU  << 14,
+    FlowIsNotLTR                          = 1LLU  << 15,
+    FlowHasLineBoxContainProperty         = 1LLU  << 16,
+    FlowIsNotTopToBottom                  = 1LLU  << 17,
+    FlowHasLineBreak                      = 1LLU  << 18,
+    FlowHasNonNormalUnicodeBiDi           = 1LLU  << 19,
+    FlowHasRTLOrdering                    = 1LLU  << 20,
+    FlowHasLineAlignEdges                 = 1LLU  << 21,
+    FlowHasLineSnap                       = 1LLU  << 22,
+    FlowHasHypensAuto                     = 1LLU  << 23,
+    FlowHasTextEmphasisFillOrMark         = 1LLU  << 24,
+    FlowHasTextShadow                     = 1LLU  << 25,
+    FlowHasPseudoFirstLine                = 1LLU  << 26,
+    FlowHasPseudoFirstLetter              = 1LLU  << 27,
+    FlowHasTextCombine                    = 1LLU  << 28,
+    FlowHasTextFillBox                    = 1LLU  << 29,
+    FlowHasBorderFitLines                 = 1LLU  << 30,
+    FlowHasNonAutoLineBreak               = 1LLU  << 31,
+    FlowHasNonAutoTrailingWord            = 1LLU  << 32,
+    FlowHasSVGFont                        = 1LLU  << 33,
+    FlowTextIsEmpty                       = 1LLU  << 34,
     FlowTextHasSoftHyphen                 = 1LLU  << 35,
     FlowTextHasDirectionCharacter         = 1LLU  << 36,
     FlowIsMissingPrimaryFont              = 1LLU  << 37,
@@ -156,9 +156,6 @@ static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned le
                 SET_REASON_AND_RETURN_IF_NEEDED(FlowHasJustifiedNonLatinText, reasons, includeReasons);
         }
 
-        // These would be easy to support.
-        if (character == noBreakSpace)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasNoBreakSpace, reasons, includeReasons);
         if (character == softHyphen)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasSoftHyphen, reasons, includeReasons);
 
@@ -257,6 +254,8 @@ static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, IncludeReas
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasBorderFitLines, reasons, includeReasons);
     if (style.lineBreak() != LineBreakAuto)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonAutoLineBreak, reasons, includeReasons);
+    if (style.nbspMode() != NBNORMAL)
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasWebKitNBSPMode, reasons, includeReasons);
 #if ENABLE(CSS_TRAILING_WORD)
     if (style.trailingWord() != TrailingWord::Auto)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonAutoTrailingWord, reasons, includeReasons);
@@ -930,6 +929,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case FlowHasOverflowVisible:
         stream << "overflow: visible";
         break;
+    case FlowHasWebKitNBSPMode:
+        stream << "-webkit-nbsp-mode: space";
+        break;
     case FlowIsNotLTR:
         stream << "dir is not LTR";
         break;
@@ -983,9 +985,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case FlowHasSVGFont:
         stream << "SVG font";
-        break;
-    case FlowTextHasNoBreakSpace:
-        stream << "No-break-space character";
         break;
     case FlowTextHasSoftHyphen:
         stream << "soft hyphen character";

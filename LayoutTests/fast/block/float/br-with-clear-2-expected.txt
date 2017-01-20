@@ -7,7 +7,7 @@ layer at (0,0) size 785x1228
         RenderBlock (floating) {DIV} at (0,0) size 50x50 [color=#FF0000] [bgcolor=#FFFFE0]
           RenderText {#text} at (0,0) size 75x25
             text run at (0,0) width 75: "  A"
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (75,20) size 0x0
           RenderBR {BR} at (0,25) size 0x25
           RenderText {#text} at (0,50) size 25x25
             text run at (0,50) width 25: "B"
@@ -22,7 +22,7 @@ layer at (0,0) size 785x1228
         RenderBlock (floating) {DIV} at (0,0) size 50x50 [color=#FF0000] [bgcolor=#FFFFE0]
           RenderText {#text} at (0,0) size 75x25
             text run at (0,0) width 75: "  A"
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (75,20) size 0x0
           RenderBR {BR} at (0,25) size 0x25
           RenderText {#text} at (0,50) size 25x25
             text run at (0,50) width 25: "B"
