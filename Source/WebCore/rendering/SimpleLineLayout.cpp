@@ -136,7 +136,7 @@ enum class IncludeReasons { First , All };
 #endif
 
 template <typename CharacterType>
-static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned length, const Font& font, IncludeReasons includeReasons)
+static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned length, const Font& font, bool textIsJustified, IncludeReasons includeReasons)
 {
     AvoidanceReasonFlags reasons = { };
     // FIXME: <textarea maxlength=0> generates empty text node.
@@ -147,6 +147,14 @@ static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned le
         UChar character = text[i];
         if (character == ' ')
             continue;
+
+        if (textIsJustified) {
+            // Include characters up to Latin Extended-B and some punctuation range when text is justified.
+            bool isLatinIncludingExtendedB = character <= 0x01FF;
+            bool isPunctuationRange = character >= 0x2010 && character <= 0x2027;
+            if (!(isLatinIncludingExtendedB || isPunctuationRange))
+                SET_REASON_AND_RETURN_IF_NEEDED(FlowHasJustifiedNonLatinText, reasons, includeReasons);
+        }
 
         // These would be easy to support.
         if (character == noBreakSpace)
@@ -167,11 +175,11 @@ static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned le
     return reasons;
 }
 
-static AvoidanceReasonFlags canUseForText(const RenderText& textRenderer, const Font& font, IncludeReasons includeReasons)
+static AvoidanceReasonFlags canUseForText(const RenderText& textRenderer, const Font& font, bool textIsJustified, IncludeReasons includeReasons)
 {
     if (textRenderer.is8Bit())
-        return canUseForText(textRenderer.characters8(), textRenderer.textLength(), font, includeReasons);
-    return canUseForText(textRenderer.characters16(), textRenderer.textLength(), font, includeReasons);
+        return canUseForText(textRenderer.characters8(), textRenderer.textLength(), font, false, includeReasons);
+    return canUseForText(textRenderer.characters16(), textRenderer.textLength(), font, textIsJustified, includeReasons);
 }
 
 static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, IncludeReasons includeReasons)
@@ -183,9 +191,8 @@ static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, In
     if (primaryFont.isLoading())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsMissingPrimaryFont, reasons, includeReasons);
 
+    bool flowIsJustified = style.textAlign() == JUSTIFY;
     for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
-        if (style.textAlign() == JUSTIFY && !textRenderer.originalText().containsOnlyLatin1())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasJustifiedNonLatinText, reasons, includeReasons);
         if (textRenderer.isCombineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);
         if (textRenderer.isCounter())
@@ -199,7 +206,7 @@ static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, In
         if (style.fontCascade().codePath(TextRun(textRenderer.text())) != FontCascade::Simple)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowFontIsNotSimple, reasons, includeReasons);
 
-        auto textReasons = canUseForText(textRenderer, primaryFont, includeReasons);
+        auto textReasons = canUseForText(textRenderer, primaryFont, flowIsJustified, includeReasons);
         if (textReasons != NoReason)
             SET_REASON_AND_RETURN_IF_NEEDED(textReasons, reasons, includeReasons);
     }

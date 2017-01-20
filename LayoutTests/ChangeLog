@@ -1,3 +1,14 @@
+2017-01-19  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Extend coverage for justified content.
+        https://bugs.webkit.org/show_bug.cgi?id=167219
+        <rdar://problem/30108391>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/simple-line-layout-with-justified-punctuation-expected.html: Added.
+        * fast/text/simple-line-layout-with-justified-punctuation.html: Added.
+
 2017-01-19  Jer Noble  <jer.noble@apple.com>
 
         CRASH at WebCore::TrackListBase::remove

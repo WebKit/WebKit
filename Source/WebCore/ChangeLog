@@ -1,3 +1,19 @@
+2017-01-19  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Extend coverage for justified content.
+        https://bugs.webkit.org/show_bug.cgi?id=167219
+        <rdar://problem/30108391>
+
+        Reviewed by Antti Koivisto.
+
+        Add support for general punctuation characters (0x2010, 0x2027) and latin characters including Extended-B.
+
+        Test: fast/text/simple-line-layout-with-justified-punctuation.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForText):
+        (WebCore::SimpleLineLayout::canUseForFontAndText):
+
 2017-01-19  Alex Christensen  <achristensen@webkit.org>
 
         Construct URLSearchParams from array or object
