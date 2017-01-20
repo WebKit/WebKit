@@ -1,5 +1,12 @@
 2017-01-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r210783. Didn't mean to require custom elements API.
+
+        * public/v3/main.js:
+        (main):
+
+2017-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Make sync-commits.py robust against missing Subversion authors and missing parent Git commits
         https://bugs.webkit.org/show_bug.cgi?id=167231
 

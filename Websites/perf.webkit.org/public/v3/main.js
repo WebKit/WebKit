@@ -8,9 +8,7 @@ class SpinningPage extends Page {
 
 function main() {
     const requriedFeatures = {
-        'Custom Elements API': () => { return !!window.customElements; },
         'Shadow DOM API': () => { return !!Element.prototype.attachShadow; },
-        'Latest DOM': () => { return !!Element.prototype.getRootNode; },
     };
 
     for (let name in requriedFeatures) {
