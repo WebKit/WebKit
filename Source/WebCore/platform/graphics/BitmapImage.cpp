@@ -252,7 +252,7 @@ BitmapImage::StartAnimationResult BitmapImage::internalStartAnimation()
         ++m_repetitionsComplete;
 
         // Check for the end of animation.
-        if (repetitionCount() != RepetitionCountInfinite && m_repetitionsComplete > repetitionCount()) {
+        if (repetitionCount() != RepetitionCountInfinite && m_repetitionsComplete >= repetitionCount()) {
             m_animationFinished = true;
             destroyDecodedDataIfNecessary(false);
             return StartAnimationResult::CannotStart;
