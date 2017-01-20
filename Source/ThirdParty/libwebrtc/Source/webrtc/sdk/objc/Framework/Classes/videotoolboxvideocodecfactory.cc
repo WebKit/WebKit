@@ -12,10 +12,8 @@
 #include "webrtc/base/logging.h"
 #include "webrtc/common_video/h264/profile_level_id.h"
 #include "webrtc/media/base/codec.h"
-#if defined(WEBRTC_IOS)
 #include "webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_encoder.h"
 #include "webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_decoder.h"
-#endif
 
 // TODO(kthelgason): delete this when CreateVideoDecoder takes
 // a cricket::VideoCodec instead of webrtc::VideoCodecType.
@@ -38,7 +36,6 @@ namespace webrtc {
 
 VideoToolboxVideoEncoderFactory::VideoToolboxVideoEncoderFactory() {
 // Hardware H264 encoding only supported on iOS for now.
-#if defined(WEBRTC_IOS)
   // TODO(magjed): Push Constrained High profile as well when negotiation is
   // ready, http://crbug/webrtc/6337.
   cricket::VideoCodec constrained_baseline(cricket::kH264CodecName);
@@ -52,29 +49,24 @@ VideoToolboxVideoEncoderFactory::VideoToolboxVideoEncoderFactory() {
   constrained_baseline.SetParam(cricket::kH264FmtpLevelAsymmetryAllowed, "1");
   constrained_baseline.SetParam(cricket::kH264FmtpPacketizationMode, "1");
   supported_codecs_.push_back(constrained_baseline);
-#endif
 }
 
 VideoToolboxVideoEncoderFactory::~VideoToolboxVideoEncoderFactory() {}
 
 VideoEncoder* VideoToolboxVideoEncoderFactory::CreateVideoEncoder(
     const cricket::VideoCodec& codec) {
-#if defined(WEBRTC_IOS)
   if (FindMatchingCodec(supported_codecs_, codec)) {
     LOG(LS_INFO) << "Creating HW encoder for " << codec.name;
     return new H264VideoToolboxEncoder(codec);
   }
-#endif
   LOG(LS_INFO) << "No HW encoder found for codec " << codec.name;
   return nullptr;
 }
 
 void VideoToolboxVideoEncoderFactory::DestroyVideoEncoder(
     VideoEncoder* encoder) {
-#if defined(WEBRTC_IOS)
   delete encoder;
   encoder = nullptr;
-#endif
 }
 
 const std::vector<cricket::VideoCodec>&
@@ -85,9 +77,7 @@ VideoToolboxVideoEncoderFactory::supported_codecs() const {
 // VideoToolboxVideoDecoderFactory
 
 VideoToolboxVideoDecoderFactory::VideoToolboxVideoDecoderFactory() {
-#if defined(WEBRTC_IOS)
   supported_codecs_.push_back(cricket::VideoCodec("H264"));
-#endif
 }
 
 VideoToolboxVideoDecoderFactory::~VideoToolboxVideoDecoderFactory() {}
@@ -95,22 +85,18 @@ VideoToolboxVideoDecoderFactory::~VideoToolboxVideoDecoderFactory() {}
 VideoDecoder* VideoToolboxVideoDecoderFactory::CreateVideoDecoder(
     VideoCodecType type) {
   const auto codec = cricket::VideoCodec(NameFromCodecType(type));
-#if defined(WEBRTC_IOS)
   if (FindMatchingCodec(supported_codecs_, codec)) {
     LOG(LS_INFO) << "Creating HW decoder for " << codec.name;
     return new H264VideoToolboxDecoder();
   }
-#endif
   LOG(LS_INFO) << "No HW decoder found for codec " << codec.name;
   return nullptr;
 }
 
 void VideoToolboxVideoDecoderFactory::DestroyVideoDecoder(
     VideoDecoder* decoder) {
-#if defined(WEBRTC_IOS)
   delete decoder;
   decoder = nullptr;
-#endif
 }
 
 }  // namespace webrtc
