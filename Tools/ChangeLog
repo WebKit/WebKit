@@ -1,3 +1,15 @@
+2017-01-19  Aakash Jain  <aakash_jain@apple.com>
+
+        Ensure status server logs go to log file
+        https://bugs.webkit.org/show_bug.cgi?id=167210
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/net/statusserver.py:
+        (StatusServer.next_work_item): Change log level from debug to info in
+        order to facilitate deubgging issues.
+        (StatusServer.update_work_items): Same.
+
 2017-01-19  Megan Gardner  <megan_gardner@apple.com>
 
         Additional selection tests and interpolation fix
