@@ -14,6 +14,9 @@
       location = "group:Source/ThirdParty/ANGLE/ANGLE.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Source/ThirdParty/libwebrtc/libwebrtc.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Source/WebCore/WebCore.xcodeproj">
    </FileRef>
    <FileRef

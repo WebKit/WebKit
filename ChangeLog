@@ -1,3 +1,12 @@
+2017-01-20  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Add libwebrtc build infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=167207
+
+        Reviewed by Alex Christensen.
+
+        * WebKit.xcworkspace/contents.xcworkspacedata:
+
 2017-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.15.3 release.

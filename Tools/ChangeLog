@@ -1,3 +1,16 @@
+2017-01-20  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Add libwebrtc build infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=167207
+
+        Reviewed by Alex Christensen.
+
+        Adding a script doing the libwebrtc project json to CMake file conversion.
+
+        * Scripts/generate-libwebrtc-cmake: Added.
+        * Scripts/webkitpy/libwebrtc/__init__.py: Added.
+        * Scripts/webkitpy/libwebrtc/generate_cmake.py: Added.
+
 2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Mini Browser: Show tooltip for Experimental Features
