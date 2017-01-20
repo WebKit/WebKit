@@ -105,6 +105,12 @@ shouldThrow('x = class extends Base { constructor() { super(); } method() { retu
 shouldNotThrow('x = class extends Base { constructor() { super(); } method1() { delete (super.foo) } method2() { delete super["foo"] } }');
 shouldThrow('(new x).method1()', '"ReferenceError: Cannot delete a super property"');
 shouldThrow('(new x).method2()', '"ReferenceError: Cannot delete a super property"');
+shouldBeTrue('(new (class { constructor() { super.property = "ABC"; } })).property === "ABC"');
+shouldBeTrue('(new (class extends Base { constructor() { super(); super.property = "ABC"; } })).property === "ABC"');
+shouldBeTrue('(new (class { constructor() { var arr = () => super.property = "ABC"; arr(); } })).property === "ABC"');
+shouldBeTrue('(new (class { constructor() { var async_arr = async () => super.property = "ABC"; async_arr(); } })).property === "ABC"');
+shouldBeTrue('(new (class { constructor() { eval(\'super.property = "ABC"\'); } })).property === "ABC"');
+shouldBeTrue('(new (class { constructor() { var arr = () => eval(\'super.property = "ABC"\'); arr(); } })).property === "ABC"');
 shouldBeTrue('new (class { constructor() { return undefined; } }) instanceof Object');
 shouldBeTrue('new (class { constructor() { return 1; } }) instanceof Object');
 shouldThrow('new (class extends Base { constructor() { return undefined } })');

@@ -22,6 +22,12 @@ PASS x = class extends Base { constructor() { super(); } method() { return new s
 PASS x = class extends Base { constructor() { super(); } method1() { delete (super.foo) } method2() { delete super["foo"] } }
 PASS (new x).method1():::ReferenceError: Cannot delete a super property
 PASS (new x).method2():::ReferenceError: Cannot delete a super property
+PASS (new (class { constructor() { super.property = "ABC"; } })).property === "ABC"
+PASS (new (class extends Base { constructor() { super(); super.property = "ABC"; } })).property === "ABC"
+PASS (new (class { constructor() { var arr = () => super.property = "ABC"; arr(); } })).property === "ABC"
+PASS (new (class { constructor() { var async_arr = async () => super.property = "ABC"; async_arr(); } })).property === "ABC"
+PASS (new (class { constructor() { eval('super.property = "ABC"'); } })).property === "ABC"
+PASS (new (class { constructor() { var arr = () => eval('super.property = "ABC"'); arr(); } })).property === "ABC"
 PASS new (class { constructor() { return undefined; } }) instanceof Object
 PASS new (class { constructor() { return 1; } }) instanceof Object
 PASS new (class extends Base { constructor() { return undefined } }):::ReferenceError: Cannot access uninitialized variable.

@@ -44,6 +44,7 @@ struct SourceProviderCacheItemCreationParameters {
     bool needsFullActivation;
     bool usesEval;
     bool strictMode;
+    bool needsSuperBinding;
     InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures;
     Vector<UniquedStringImpl*, 8> usedVariables;
     bool isBodyArrowExpression { false };
@@ -88,6 +89,7 @@ public:
     unsigned constructorKind : 2; // ConstructorKind
     unsigned parameterCount : 31;
     unsigned expectedSuperBinding : 1; // SuperBinding
+    bool needsSuperBinding: 1;
     unsigned functionLength;
     unsigned lastTokenLineStartOffset;
     unsigned usedVariablesCount;
@@ -129,6 +131,7 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     , constructorKind(static_cast<unsigned>(parameters.constructorKind))
     , parameterCount(parameters.parameterCount)
     , expectedSuperBinding(static_cast<unsigned>(parameters.expectedSuperBinding))
+    , needsSuperBinding(parameters.needsSuperBinding)
     , functionLength(parameters.functionLength)
     , lastTokenLineStartOffset(parameters.lastTokenLineStartOffset)
     , usedVariablesCount(parameters.usedVariables.size())

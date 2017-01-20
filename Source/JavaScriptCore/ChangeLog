@@ -1,3 +1,29 @@
+2017-01-20  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        Super property access in base class constructor doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=166665
+
+        Reviewed by Ryosuke Niwa.
+
+        Allow to use super inside of the constructor for classes 
+        without parent class.
+        Parser checks if super used within the constructor and 
+        add this information to function metedata, and later it is used
+        during byte code generation.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ClassExprNode::emitBytecode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::Scope::usesEval):
+        (JSC::Scope::fillParametersForSourceProviderCache):
+        (JSC::Scope::restoreFromSourceProviderCache):
+        (JSC::Parser::adjustSuperBindingForBaseConstructor):
+        * parser/SourceProviderCacheItem.h:
+        (JSC::SourceProviderCacheItem::SourceProviderCacheItem):
+
 2017-01-19  Chris Dumez  <cdumez@apple.com>
 
         iterable<> should be enabled on WK1
