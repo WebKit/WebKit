@@ -1,3 +1,14 @@
+2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Mini Browser: Show tooltip for Experimental Features
+        https://bugs.webkit.org/show_bug.cgi?id=167225
+
+        Reviewed by Alex Christensen.
+
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        Include the full details string as a tooltip.
+
 2017-01-20  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Test output results should not be written twice.

@@ -175,6 +175,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 
     for (_WKExperimentalFeature *feature in features) {
         NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:feature.name action:@selector(toggleExperimentalFeature:) keyEquivalent:@""];
+        item.toolTip = feature.details;
         item.representedObject = feature;
 
         [item setTag:ExperimentalFeatureTag];
