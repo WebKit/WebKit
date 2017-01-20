@@ -1,3 +1,12 @@
+2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skipping pointer-lock tests on macOS WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=167246
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-01-20  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Turn modern media controls on by default
