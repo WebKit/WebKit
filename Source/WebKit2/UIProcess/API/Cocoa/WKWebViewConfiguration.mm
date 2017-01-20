@@ -109,7 +109,6 @@ private:
     BOOL _allowsInlineMediaPlayback;
     BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
     BOOL _allowsInlineMediaPlaybackAfterFullscreen;
-    unsigned _contentUpdateFrequency;
 #endif
 
     BOOL _invisibleAutoplayNotPermitted;
@@ -149,7 +148,6 @@ private:
     else
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
     _ignoresViewportScaleLimits = NO;
-    _contentUpdateFrequency = 60;
 #else
     _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
     _mediaDataLoadsAutomatically = YES;
@@ -302,7 +300,6 @@ private:
     configuration->_alwaysRunsAtForegroundPriority = _alwaysRunsAtForegroundPriority;
     configuration->_selectionGranularity = self->_selectionGranularity;
     configuration->_ignoresViewportScaleLimits = self->_ignoresViewportScaleLimits;
-    configuration->_contentUpdateFrequency = self->_contentUpdateFrequency;
 #endif
 #if PLATFORM(MAC)
     configuration->_userInterfaceDirectionPolicy = self->_userInterfaceDirectionPolicy;
@@ -587,16 +584,6 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setAllowsInlineMediaPlaybackAfterFullscreen:(BOOL)allows
 {
     _allowsInlineMediaPlaybackAfterFullscreen = allows;
-}
-
-- (NSUInteger)_contentUpdateFrequency
-{
-    return _contentUpdateFrequency;
-}
-
-- (void)_setContentUpdateFrequency:(NSUInteger)contentUpdateFrequency
-{
-    _contentUpdateFrequency = contentUpdateFrequency;
 }
 #endif // PLATFORM(IOS)
 
