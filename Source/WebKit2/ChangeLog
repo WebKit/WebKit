@@ -1,3 +1,28 @@
+2017-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] Initialize the threaded compositor with the current size
+        https://bugs.webkit.org/show_bug.cgi?id=167196
+
+        Reviewed by Žan Doberšek.
+
+        We are always creating the threaded compositor with an empty size and then a sizeDidChange always happen when
+        the backing store state changes. This is always happening because the threaded compositor is created before the
+        first backing store state, but if we wanted to create it later, for example to enter/leave AC mode on demand,
+        the threaded compositor will not have the viewport size unless the window is resized, or sizeDidChange is called
+        manually when entering AC mode. Creating the threaded compositor is sync and changing the size too, so it's
+        better to do both things at the same time using the same sync operation.
+
+        * Shared/CoordinatedGraphics/SimpleViewportController.cpp:
+        (WebKit::SimpleViewportController::SimpleViewportController): Pass an initial size to the constructor.
+        * Shared/CoordinatedGraphics/SimpleViewportController.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::create): Add viewportSize and scaleFactor construction parameters,
+        (WebKit::ThreadedCompositor::ThreadedCompositor): Ditto. Also mark as needs resize if the given size is not empty.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost): Initialize the threaded compositor
+        with an initial viewport size and scale factor.
+
 2017-01-19  Chris Dumez  <cdumez@apple.com>
 
         iterable<> should be enabled on WK1

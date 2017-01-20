@@ -58,7 +58,7 @@ public:
 
     enum class ShouldDoFrameSync { No, Yes };
 
-    static Ref<ThreadedCompositor> create(Client&, uint64_t nativeSurfaceHandle = 0, ShouldDoFrameSync = ShouldDoFrameSync::Yes, WebCore::TextureMapper::PaintFlags = 0);
+    static Ref<ThreadedCompositor> create(Client&, const WebCore::IntSize&, float scaleFactor, uint64_t nativeSurfaceHandle = 0, ShouldDoFrameSync = ShouldDoFrameSync::Yes, WebCore::TextureMapper::PaintFlags = 0);
     virtual ~ThreadedCompositor();
 
     void setNativeSurfaceHandleForCompositing(uint64_t);
@@ -74,7 +74,7 @@ public:
     void forceRepaint();
 
 private:
-    ThreadedCompositor(Client&, uint64_t nativeSurfaceHandle, ShouldDoFrameSync, WebCore::TextureMapper::PaintFlags);
+    ThreadedCompositor(Client&, const WebCore::IntSize&, float scaleFactor, uint64_t nativeSurfaceHandle, ShouldDoFrameSync, WebCore::TextureMapper::PaintFlags);
 
     // CoordinatedGraphicsSceneClient
     void renderNextFrame() override;

@@ -28,7 +28,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-SimpleViewportController::SimpleViewportController()
+SimpleViewportController::SimpleViewportController(const IntSize& size)
+    : m_viewportSize(size)
 {
     resetViewportToDefaultState();
 }

@@ -42,16 +42,19 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
+Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, const IntSize& viewportSize, float scaleFactor, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
 {
-    return adoptRef(*new ThreadedCompositor(client, nativeSurfaceHandle, doFrameSync, paintFlags));
+    return adoptRef(*new ThreadedCompositor(client, viewportSize, scaleFactor, nativeSurfaceHandle, doFrameSync, paintFlags));
 }
 
-ThreadedCompositor::ThreadedCompositor(Client& client, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
+ThreadedCompositor::ThreadedCompositor(Client& client, const IntSize& viewportSize, float scaleFactor, uint64_t nativeSurfaceHandle, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
     : m_client(client)
+    , m_viewportSize(viewportSize)
+    , m_scaleFactor(scaleFactor)
     , m_nativeSurfaceHandle(nativeSurfaceHandle)
     , m_doFrameSync(doFrameSync)
     , m_paintFlags(paintFlags)
+    , m_needsResize(!viewportSize.isEmpty())
     , m_compositingRunLoop(std::make_unique<CompositingRunLoop>([this] { renderLayerTree(); }))
 {
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {

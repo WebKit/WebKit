@@ -53,7 +53,12 @@ ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage& webP
     : CoordinatedLayerTreeHost(webPage)
     , m_compositorClient(*this)
     , m_surface(AcceleratedSurface::create(webPage))
+    , m_viewportController(webPage.size())
 {
+    IntSize scaledSize(m_webPage.size());
+    scaledSize.scale(m_webPage.deviceScaleFactor());
+    float scaleFactor = m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor();
+
     if (m_surface) {
         TextureMapper::PaintFlags paintFlags = 0;
 
@@ -63,10 +68,12 @@ ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage& webP
         // Do not do frame sync when rendering offscreen in the web process to ensure that SwapBuffers never blocks.
         // Rendering to the actual screen will happen later anyway since the UI process schedules a redraw for every update,
         // the compositor will take care of syncing to vblank.
-        m_compositor = ThreadedCompositor::create(m_compositorClient, m_surface->window(), ThreadedCompositor::ShouldDoFrameSync::No, paintFlags);
+        m_compositor = ThreadedCompositor::create(m_compositorClient, scaledSize, scaleFactor, m_surface->window(), ThreadedCompositor::ShouldDoFrameSync::No, paintFlags);
         m_layerTreeContext.contextID = m_surface->surfaceID();
     } else
-        m_compositor = ThreadedCompositor::create(m_compositorClient);
+        m_compositor = ThreadedCompositor::create(m_compositorClient, scaledSize, scaleFactor);
+
+    didChangeViewport();
 }
 
 void ThreadedCoordinatedLayerTreeHost::invalidate()
