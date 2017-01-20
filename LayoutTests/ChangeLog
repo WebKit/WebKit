@@ -1,5 +1,14 @@
 2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html as flaky on mac-wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=167253
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking inspector/css/pseudo-element-matches.html as a timeout on macOS.
         https://bugs.webkit.org/show_bug.cgi?id=167246
 
