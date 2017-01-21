@@ -1,3 +1,15 @@
+2017-01-20  Megan Gardner  <megan_gardner@apple.com>
+
+        REGRESSION (r210941): LayoutTest scrollingcoordinator/ios/sync-layer-positions-after-scroll.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=167262
+
+        Updating Tests to comply with change in bug 167171.
+        Change is correct, but causes the results for this test to be different.
+        
+        Unreviewed test gardening.
+
+        * scrollingcoordinator/ios/sync-layer-positions-after-scroll-expected.txt:
+
 2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html as flaky.

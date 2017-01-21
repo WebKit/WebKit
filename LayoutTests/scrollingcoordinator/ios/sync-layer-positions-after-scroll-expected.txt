@@ -9,7 +9,7 @@ visibleRectAfterScroll: {"left":0,"top":156.5,"width":800,"height":600}
       (children 1
         (GraphicsLayer
           (position 12.00 10.00)
-          (approximate position 12.00 166.50)
+          (approximate position 12.00 200.00)
           (bounds 100.00 100.00)
           (contentsOpaque 1)
         )
