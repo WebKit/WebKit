@@ -32,6 +32,7 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
 
+typedef size_t GType;
 typedef struct _SoupCache SoupCache;
 typedef struct _SoupCookieJar SoupCookieJar;
 typedef struct _SoupMessage SoupMessage;
@@ -69,6 +70,9 @@ public:
     static void setShouldIgnoreTLSErrors(bool);
     static void checkTLSErrors(SoupRequest*, SoupMessage*, std::function<void (const ResourceError&)>&&);
     static void allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String& host);
+
+    static void setCustomProtocolRequestType(GType);
+    void setupCustomProtocols();
 
 private:
     void setupLogger();
