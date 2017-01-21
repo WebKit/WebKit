@@ -53,6 +53,11 @@ testSyntaxError(`const import = 42`, `SyntaxError: Cannot use the keyword 'impor
 (async function () {
     await testSyntax(`import("./import-tests/cocoa.js")`);
     await testSyntax(`import("./import-tests/../import-tests/cocoa.js")`);
+    await testSyntax(`import("./import-tests/../import-tests/cocoa.js").then(() => { })`);
+    await testSyntax(`(import("./import-tests/../import-tests/cocoa.js").then(() => { }))`);
+    await testSyntax(`(import("./import-tests/../import-tests/cocoa.js"))`);
+    await testSyntax(`import("./import-tests/../import-tests/cocoa.js").catch(() => { })`);
+    await testSyntax(`(import("./import-tests/../import-tests/cocoa.js").catch(() => { }))`);
 }()).catch((error) => {
     print(String(error));
     abort();

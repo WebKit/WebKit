@@ -1,3 +1,38 @@
+2017-01-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        dynamic import is ambiguous with import declaration at module code
+        https://bugs.webkit.org/show_bug.cgi?id=167098
+
+        Reviewed by Darin Adler.
+
+        This patch fixes two syntax issues related to dynamic import.
+
+        1. Fix member expression parsing with dynamic import results
+
+        We should not return import expression immediately after parsing
+        it in parseMemberExpression. This prohibits us to parse the following
+        code,
+
+            import("...").then(function () {
+            });
+
+        2. dynamic import with import declaration under the module context
+
+        Before this patch, we always attempt to parse IMPORT as import declaration
+        under the module context. It means that import call in the top level
+        expression statement fails to be parsed since the parser attempts to parse
+        it as import declaration.
+
+            import("...")  // module top level statement.
+
+        In this patch, we check the condition `[lookahead != (]` before starting
+        parsing import declaration. This allows us to put import call in the module
+        top level statement.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseModuleSourceElements):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+
 2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove outdated ENABLE(CSP_NEXT) build flag

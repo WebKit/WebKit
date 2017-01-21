@@ -1,3 +1,16 @@
+2017-01-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        dynamic import is ambiguous with import declaration at module code
+        https://bugs.webkit.org/show_bug.cgi?id=167098
+
+        Reviewed by Darin Adler.
+
+        * modules/import-call.js: Added.
+        (from.string_appeared_here.import.string_appeared_here.then):
+        * modules/import-call/main.js: Added.
+        * stress/import-syntax.js:
+        (async):
+
 2017-01-19  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         "this" missing after await in async arrow function

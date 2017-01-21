@@ -375,30 +375,48 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseModuleSo
 
     while (true) {
         TreeStatement statement = 0;
-        if (match(IMPORT)) {
-            statement = parseImportDeclaration(context);
-            if (statement)
-                recordPauseLocation(context.breakpointLocation(statement));
-        } else if (match(EXPORT)) {
+        switch (m_token.m_type) {
+        case EXPORT:
             statement = parseExportDeclaration(context);
             if (statement)
                 recordPauseLocation(context.breakpointLocation(statement));
-        } else {
+            break;
+
+        case IMPORT: {
+            SavePoint savePoint = createSavePoint();
+            next();
+            bool isImportDeclaration = !match(OPENPAREN);
+            restoreSavePoint(savePoint);
+            if (isImportDeclaration) {
+                statement = parseImportDeclaration(context);
+                if (statement)
+                    recordPauseLocation(context.breakpointLocation(statement));
+                break;
+            }
+
+            // This is `import("...")` call case.
+            FALLTHROUGH;
+        }
+
+        default: {
             const Identifier* directive = 0;
             unsigned directiveLiteralLength = 0;
             if (parseMode == SourceParseMode::ModuleAnalyzeMode) {
                 if (!parseStatementListItem(syntaxChecker, directive, &directiveLiteralLength))
-                    break;
+                    goto end;
                 continue;
             }
             statement = parseStatementListItem(context, directive, &directiveLiteralLength);
+            break;
+        }
         }
 
         if (!statement)
-            break;
+            goto end;
         context.appendStatement(sourceElements, statement);
     }
 
+end:
     propagateError();
 
     for (const auto& pair : m_moduleScopeData->exportedBindings()) {
@@ -4395,7 +4413,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
         TreeExpression expr = parseAssignmentExpression(context);
         failIfFalse(expr, "Cannot parse expression");
         consumeOrFail(CLOSEPAREN, "import call expects exactly one argument");
-        return context.createImportExpr(location, expr, expressionStart, expressionEnd, lastTokenEndPosition());
+        base = context.createImportExpr(location, expr, expressionStart, expressionEnd, lastTokenEndPosition());
     } else if (!baseIsNewTarget) {
         const bool isAsync = match(ASYNC);
 
