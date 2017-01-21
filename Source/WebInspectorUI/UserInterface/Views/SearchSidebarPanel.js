@@ -64,11 +64,14 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
         WebInspector.Frame.removeEventListener(null, null, this);
     }
 
-    focusSearchField()
+    focusSearchField(performSearch)
     {
         this.show();
 
         this._inputElement.select();
+
+        if (performSearch)
+            this.performSearch(this._inputElement.value);
     }
 
     performSearch(searchQuery)

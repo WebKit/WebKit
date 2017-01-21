@@ -36,6 +36,8 @@ WebInspector.SearchTabContentView = class SearchTabContentView extends WebInspec
             detailsSidebarPanels.push(WebInspector.layerTreeDetailsSidebarPanel);
 
         super(identifier || "search", "search", tabBarItem, WebInspector.SearchSidebarPanel, detailsSidebarPanels);
+
+        this._forcePerformSearch = false;
     }
 
     static tabInfo()
@@ -73,12 +75,23 @@ WebInspector.SearchTabContentView = class SearchTabContentView extends WebInspec
 
     focusSearchField()
     {
-        this.navigationSidebarPanel.focusSearchField();
+        this.navigationSidebarPanel.focusSearchField(this._forcePerformSearch);
+
+        this._forcePerformSearch = false;
     }
 
     performSearch(searchQuery)
     {
         this.navigationSidebarPanel.performSearch(searchQuery);
+    }
+
+    // Protected
+
+    initialLayout()
+    {
+        super.initialLayout();
+
+        this._forcePerformSearch = true;
     }
 };
 
