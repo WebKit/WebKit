@@ -719,7 +719,7 @@ private:
     bool stoppedDueToErrors() const;
     bool pausedForUserInteraction() const;
     bool couldPlayIfEnoughData() const;
-    bool canTransitionFromAutoplayToPlay() const;
+    SuccessOr<MediaPlaybackDenialReason> canTransitionFromAutoplayToPlay() const;
 
     MediaTime minTimeSeekable() const;
     MediaTime maxTimeSeekable() const;
@@ -961,6 +961,7 @@ private:
     bool m_creatingControls : 1;
     bool m_receivedLayoutSizeChanged : 1;
     bool m_hasEverNotifiedAboutPlaying : 1;
+    bool m_preventedFromPlayingWithoutUserGesture : 1;
 
     bool m_hasEverHadAudio : 1;
     bool m_hasEverHadVideo : 1;

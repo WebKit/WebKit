@@ -1,3 +1,29 @@
+2017-01-20  Matt Rajca  <mrajca@apple.com>
+
+        Record whether a media element was prevented from playing without user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=167214
+
+        Reviewed by Eric Carlson.
+
+        This state will be used to notify clients when a user explicitly starts playback
+        of a media element that was prevented from autoplaying.
+
+        Tests will be added after a WebKit callback API is added.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/SuccessOr.h: Added.
+        (WebCore::SuccessOr::SuccessOr):
+        (WebCore::SuccessOr::operator bool):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canTransitionFromAutoplayToPlay):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::playInternal):
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted):
+        * html/MediaElementSession.h:
+
 2017-01-20  Brady Eidson  <beidson@apple.com>
 
         Require a button press on a gamepad for them to be exposed to the DOM.

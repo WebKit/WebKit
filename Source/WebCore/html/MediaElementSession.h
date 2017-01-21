@@ -29,6 +29,7 @@
 
 #include "MediaPlayer.h"
 #include "PlatformMediaSession.h"
+#include "SuccessOr.h"
 #include "Timer.h"
 #include <wtf/TypeCasts.h>
 
@@ -37,6 +38,12 @@ namespace WebCore {
 enum class MediaSessionMainContentPurpose {
     MediaControls,
     Autoplay
+};
+
+enum class MediaPlaybackDenialReason {
+    UserGestureRequired,
+    FullscreenRequired,
+    PageConsentRequired,
 };
 
 class Document;
@@ -52,7 +59,7 @@ public:
     void registerWithDocument(Document&);
     void unregisterWithDocument(Document&);
 
-    bool playbackPermitted(const HTMLMediaElement&) const;
+    SuccessOr<MediaPlaybackDenialReason> playbackPermitted(const HTMLMediaElement&) const;
     bool autoplayPermitted() const;
     bool dataLoadingPermitted(const HTMLMediaElement&) const;
     bool fullscreenPermitted(const HTMLMediaElement&) const;

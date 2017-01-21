@@ -2253,15 +2253,17 @@ void HTMLMediaElement::mediaPlayerReadyStateChanged(MediaPlayer*)
     endProcessingMediaPlayerCallback();
 }
 
-bool HTMLMediaElement::canTransitionFromAutoplayToPlay() const
+SuccessOr<MediaPlaybackDenialReason> HTMLMediaElement::canTransitionFromAutoplayToPlay() const
 {
-    return isAutoplaying()
-        && mediaSession().autoplayPermitted()
-        && paused()
-        && autoplay()
-        && !pausedForUserInteraction()
-        && !document().isSandboxed(SandboxAutomaticFeatures)
-        && mediaSession().playbackPermitted(*this);
+    if (isAutoplaying()
+     && mediaSession().autoplayPermitted()
+     && paused()
+     && autoplay()
+     && !pausedForUserInteraction()
+     && !document().isSandboxed(SandboxAutomaticFeatures))
+        return mediaSession().playbackPermitted(*this);
+
+    return MediaPlaybackDenialReason::PageConsentRequired;
 }
 
 void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
@@ -2375,13 +2377,15 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         if (isPotentiallyPlaying && oldState <= HAVE_CURRENT_DATA)
             scheduleNotifyAboutPlaying();
 
-        if (canTransitionFromAutoplayToPlay()) {
+        auto success = canTransitionFromAutoplayToPlay();
+        if (success) {
             m_paused = false;
             invalidateCachedTime();
             m_playbackStartedTime = currentMediaTime().toDouble();
             scheduleEvent(eventNames().playEvent);
             scheduleNotifyAboutPlaying();
-        }
+        } else if (success.value() == MediaPlaybackDenialReason::UserGestureRequired)
+            m_preventedFromPlayingWithoutUserGesture = true;
 
         shouldUpdateDisplayState = true;
     }
@@ -3061,7 +3065,10 @@ void HTMLMediaElement::play(DOMPromise<void>&& promise)
 {
     LOG(Media, "HTMLMediaElement::play(%p)", this);
 
-    if (!m_mediaSession->playbackPermitted(*this)) {
+    auto success = m_mediaSession->playbackPermitted(*this);
+    if (!success) {
+        if (success.value() == MediaPlaybackDenialReason::UserGestureRequired)
+            m_preventedFromPlayingWithoutUserGesture = true;
         promise.reject(NotAllowedError);
         return;
     }
@@ -3086,8 +3093,12 @@ void HTMLMediaElement::play()
 {
     LOG(Media, "HTMLMediaElement::play(%p)", this);
 
-    if (!m_mediaSession->playbackPermitted(*this))
+    auto success = m_mediaSession->playbackPermitted(*this);
+    if (!success) {
+        if (success.value() == MediaPlaybackDenialReason::UserGestureRequired)
+            m_preventedFromPlayingWithoutUserGesture = true;
         return;
+    }
     if (ScriptController::processingUserGestureForMedia())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
 
@@ -3151,6 +3162,11 @@ bool HTMLMediaElement::playInternal()
 #endif
     } else if (m_readyState >= HAVE_FUTURE_DATA)
         scheduleResolvePendingPlayPromises();
+
+    if (ScriptController::processingUserGestureForMedia() && m_preventedFromPlayingWithoutUserGesture) {
+        // FIXME: notify clients a user gesture was made and started playback of an element that was otherwise prevented from playing.
+        m_preventedFromPlayingWithoutUserGesture = false;
+    }
 
     m_autoplaying = false;
     updatePlayState();

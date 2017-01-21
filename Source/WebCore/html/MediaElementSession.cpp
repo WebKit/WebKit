@@ -148,33 +148,33 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
     m_restrictions &= ~restriction;
 }
 
-bool MediaElementSession::playbackPermitted(const HTMLMediaElement& element) const
+SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(const HTMLMediaElement& element) const
 {
     if (element.document().isMediaDocument() && !element.document().ownerElement())
-        return true;
+        return SuccessOr<MediaPlaybackDenialReason>();
 
     if (pageExplicitlyAllowsElementToAutoplayInline(element))
-        return true;
+        return SuccessOr<MediaPlaybackDenialReason>();
 
     if (requiresFullscreenForVideoPlayback(element) && !fullscreenPermitted(element)) {
         LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of fullscreen restriction");
-        return false;
+        return MediaPlaybackDenialReason::FullscreenRequired;
     }
 
     if (m_restrictions & OverrideUserGestureRequirementForMainContent && updateIsMainContent())
-        return true;
+        return SuccessOr<MediaPlaybackDenialReason>();
 
     if (m_restrictions & RequireUserGestureForVideoRateChange && element.isVideo() && !ScriptController::processingUserGestureForMedia()) {
         LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of video rate change restriction");
-        return false;
+        return MediaPlaybackDenialReason::UserGestureRequired;
     }
 
     if (m_restrictions & RequireUserGestureForAudioRateChange && (!element.isVideo() || element.hasAudio()) && !element.muted() && !ScriptController::processingUserGestureForMedia()) {
         LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of audio rate change restriction");
-        return false;
+        return MediaPlaybackDenialReason::UserGestureRequired;
     }
 
-    return true;
+    return SuccessOr<MediaPlaybackDenialReason>();
 }
 
 bool MediaElementSession::autoplayPermitted() const
