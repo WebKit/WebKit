@@ -1,3 +1,13 @@
+2017-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Bring back gtk-doc error messages after r209981.
+
+        Since r209981, if gtk-doc shows warnings the build fails but those warnings are not printed to stdout so it's
+        impossible to know what's wrong.
+
+        * gtk/gtkdoc.py:
+        (GTKDoc._run_command): Make print_output True by default again and use debug instead of info to log "Running" messages.
+
 2017-01-20  Youenn Fablet  <youennf@gmail.com>
 
         [WebRTC] Update build system to make G711 optional in libwebrtc

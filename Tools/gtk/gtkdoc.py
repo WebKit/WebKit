@@ -182,9 +182,9 @@ class GTKDoc(object):
             answer = raw_input(question).lower()
         return answer == 'y'
 
-    def _run_command(self, args, env=None, cwd=None, print_output=False, ignore_warnings=False):
+    def _run_command(self, args, env=None, cwd=None, print_output=True, ignore_warnings=False):
         if print_output:
-            self.logger.info("Running %s", args[0])
+            self.logger.debug("Running %s", args[0])
         self.logger.debug("Full command args: %s", str(args))
 
         process = subprocess.Popen(args, env=env, cwd=cwd,
