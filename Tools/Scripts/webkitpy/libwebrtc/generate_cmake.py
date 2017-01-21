@@ -174,6 +174,8 @@ class CMakeGenerator(object):
         self._remove_target("//webrtc/modules/audio_coding:audio_decoder_unittests")
 
         self._remove_target("//webrtc/modules/audio_coding:g711")
+        self.targets["//webrtc/modules/audio_coding:pcm16b"]["sources"].append("//webrtc/modules/audio_coding/codecs/g711/audio_encoder_pcm.cc")
+        self.targets["//webrtc/modules/audio_coding:pcm16b"]["source_outputs"]["//webrtc/modules/audio_coding/codecs/g711/audio_encoder_pcm.cc"] = "obj/webrtc/modules/audio_coding/g711/audio_encoder_pcm.o"
         for name, target in self.targets.iteritems():
             if "include_dirs" in target:
                 include_dirs = target["include_dirs"]
