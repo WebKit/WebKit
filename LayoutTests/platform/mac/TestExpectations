@@ -1490,8 +1490,6 @@ webkit.org/b/165234 media/modern-media-controls/audio/audio-controls-buttons.htm
 
 webkit.org/b/165290 media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside.html [ Pass Timeout ]
 
-webkit.org/b/167246 inspector/css/pseudo-element-matches.html [ Timeout ]
-
 webkit.org/b/167254 [ Debug ] media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html [ Pass Failure ]
 
 webkit.org/b/167263 media/modern-media-controls/media-controller/media-controller-auto-hide.html [ Pass Failure ]

@@ -1,3 +1,16 @@
+2017-01-21  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r210959): LayoutTest inspector/css/pseudo-element-matches.html timing out
+        https://bugs.webkit.org/show_bug.cgi?id=167246
+
+        Unreviewed test gardening.
+
+        This test expects elements with legacy media controls pseudo classes so we turn off
+        modern media controls for it and stop expecting a timeout.
+
+        * inspector/css/pseudo-element-matches.html:
+        * platform/mac/TestExpectations:
+
 2017-01-20  Brady Eidson  <beidson@apple.com>
 
         Require a button press on a gamepad for them to be exposed to the DOM.
