@@ -1,5 +1,14 @@
 2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking inspector/network/client-blocked-load.html as a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=167265
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking media/modern-media-controls/pip-support/pip-support-enabled.html as crashing on macOS WK1.
         https://bugs.webkit.org/show_bug.cgi?id=164336
 
