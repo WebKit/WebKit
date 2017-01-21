@@ -141,10 +141,13 @@ unsigned GameControllerGamepadProvider::indexForNewlyConnectedDevice()
     return index;
 }
 
-void GameControllerGamepadProvider::gamepadHadInput(GameControllerGamepad&)
+void GameControllerGamepadProvider::gamepadHadInput(GameControllerGamepad&, bool hadButtonPresses)
 {
     if (!m_inputNotificationTimer.isActive())
         m_inputNotificationTimer.startOneShot(InputNotificationDelay);
+
+    if (hadButtonPresses)
+        m_shouldMakeInvisibileGamepadsVisible = true;
 }
 
 void GameControllerGamepadProvider::makeInvisibileGamepadsVisible()
@@ -159,10 +162,14 @@ void GameControllerGamepadProvider::makeInvisibileGamepadsVisible()
 
 void GameControllerGamepadProvider::inputNotificationTimerFired()
 {
-    makeInvisibileGamepadsVisible();
+    if (m_shouldMakeInvisibileGamepadsVisible) {
+        setShouldMakeGamepadsVisibile();
+        makeInvisibileGamepadsVisible();
+    }
 
-    for (auto& client : m_clients)
-        client->platformGamepadInputActivity();
+    m_shouldMakeInvisibileGamepadsVisible = false;
+
+    dispatchPlatformGamepadInputActivity();
 }
 
 } // namespace WebCore

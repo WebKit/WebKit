@@ -74,7 +74,7 @@ private:
     void setInitialConnectedGamepads(const Vector<WebCore::PlatformGamepad*>&) final;
     void platformGamepadConnected(WebCore::PlatformGamepad&) final;
     void platformGamepadDisconnected(WebCore::PlatformGamepad&) final;
-    void platformGamepadInputActivity() final;
+    void platformGamepadInputActivity(bool shouldMakeGamepadsVisible) final;
 
     void scheduleGamepadStateSync();
     void gamepadSyncTimerFired();
@@ -87,6 +87,7 @@ private:
 
     bool m_isMonitoringGamepads { false };
     bool m_hasInitialGamepads { false };
+    bool m_shouldMakeGamepadsVisibleOnSync { false };
 };
 
 }

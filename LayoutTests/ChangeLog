@@ -1,3 +1,13 @@
+2017-01-20  Brady Eidson  <beidson@apple.com>
+
+        Require a button press on a gamepad for them to be exposed to the DOM.
+        <rdar://problem/28620919> and https://bugs.webkit.org/show_bug.cgi?id=167272
+
+        Reviewed by Alex Christensen.
+
+        * gamepad/gamepad-visibility-1-expected.txt: Added.
+        * gamepad/gamepad-visibility-1.html: Added.
+
 2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Cleanup RuntimeEnabledFeatures

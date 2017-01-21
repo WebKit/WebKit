@@ -963,7 +963,7 @@ public:
 #endif
 
 #if ENABLE(GAMEPAD)
-    void gamepadActivity(const Vector<GamepadData>&);
+    void gamepadActivity(const Vector<GamepadData>&, bool shouldMakeGamepadsVisible);
 #endif
     
 #if ENABLE(POINTER_LOCK)

@@ -33,7 +33,6 @@
 #include <IOKit/hid/IOHIDManager.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 
@@ -76,7 +75,6 @@ private:
 
     RetainPtr<IOHIDManagerRef> m_manager;
 
-    HashSet<GamepadProviderClient*> m_clients;
     bool m_shouldDispatchCallbacks;
 
     Timer m_connectionDelayTimer;
