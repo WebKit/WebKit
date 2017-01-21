@@ -280,11 +280,6 @@ bool FontPlatformData::isFixedPitch() const
     return m_fixedWidth;
 }
 
-unsigned FontPlatformData::hash() const
-{
-    return PtrHash<cairo_scaled_font_t*>::hash(m_scaledFont.get());
-}
-
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 {
     // FcPatternEqual does not support null pointers as arguments.

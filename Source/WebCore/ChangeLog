@@ -1,3 +1,16 @@
+2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r210778.
+
+        This change caused multiple LayoutTests to crash.
+
+        Reverted changeset:
+
+        "[Cocoa] Unify FontPlatformData's hashing and equality
+        operators"
+        https://bugs.webkit.org/show_bug.cgi?id=167061
+        http://trac.webkit.org/changeset/210778
+
 2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove outdated ENABLE(CSP_NEXT) build flag

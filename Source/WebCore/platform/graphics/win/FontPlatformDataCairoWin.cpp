@@ -85,11 +85,6 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, cairo_font_face_t* fon
     cairo_font_options_destroy(options);
 }
 
-unsigned FontPlatformData::hash() const
-{
-    return PtrHash<cairo_scaled_font_t*>::hash(m_scaledFont.get());
-}
-
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 {
     return m_font == other.m_font

@@ -172,7 +172,25 @@ public:
     FcFontSet* fallbacks() const;
 #endif
 
-    unsigned hash() const;
+    unsigned hash() const
+    {
+#if USE(CAIRO)
+        return PtrHash<cairo_scaled_font_t*>::hash(m_scaledFont.get());
+#elif PLATFORM(WIN)
+        return m_font ? m_font->hash() : 0;
+#elif PLATFORM(COCOA)
+        uintptr_t flags = static_cast<uintptr_t>(m_isHashTableDeletedValue << 5 | m_textRenderingMode << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique);
+#if USE(APPKIT)
+        uintptr_t fontHash = (uintptr_t)m_font.get();
+#else
+        uintptr_t fontHash = reinterpret_cast<uintptr_t>(CFHash(m_font.get()));
+#endif
+        uintptr_t hashCodes[3] = { fontHash, m_widthVariant, flags };
+        return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
+#else
+#error "Unsupported configuration"
+#endif
+    }
 
     bool operator==(const FontPlatformData& other) const
     {
