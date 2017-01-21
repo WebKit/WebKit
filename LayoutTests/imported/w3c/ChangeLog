@@ -1,3 +1,9 @@
+2017-01-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline html/dom/interfaces.html.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Cleanup RuntimeEnabledFeatures
