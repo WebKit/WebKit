@@ -27,7 +27,6 @@
 [
     Conditional=INDEXED_DATABASE,
     ActiveDOMObject,
-    EnabledAtRuntime=IndexedDB,
     SkipVTableValidation,
 ] interface IDBDatabase : EventTarget {
     readonly attribute DOMString name;

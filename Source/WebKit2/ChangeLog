@@ -1,3 +1,13 @@
+2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove never changing IndexedDB RuntimeEnabledFeature
+        https://bugs.webkit.org/show_bug.cgi?id=167278
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::m_resourceLoadStatisticsStorage):
+
 2017-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Custom protocols don't work in private browsing mode

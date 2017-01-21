@@ -74,12 +74,6 @@ public:
     void setModernMediaControlsEnabled(bool areEnabled) { m_areModernMediaControlsEnabled = areEnabled; }
     bool modernMediaControlsEnabled() const { return m_areModernMediaControlsEnabled; }
 
-#if ENABLE(INDEXED_DATABASE)
-    // FIXME: This is always enabled and nobody can even toggle it off. Remove?
-    void setIndexedDBEnabled(bool isEnabled) { m_isIndexedDBEnabled = isEnabled; }
-    bool indexedDBEnabled() const { return m_isIndexedDBEnabled; }
-#endif
-
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     void setIndexedDBWorkersEnabled(bool isEnabled) { m_isIndexedDBWorkersEnabled = isEnabled; }
     bool indexedDBWorkersEnabled() const { return m_isIndexedDBWorkersEnabled; }
@@ -218,10 +212,6 @@ private:
     bool m_isShadowDOMEnabled { true };
     bool m_areCustomElementsEnabled { true };
     bool m_inputEventsEnabled { true };
-
-#if ENABLE(INDEXED_DATABASE)
-    bool m_isIndexedDBEnabled { true };
-#endif
 
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     bool m_isIndexedDBWorkersEnabled { true };

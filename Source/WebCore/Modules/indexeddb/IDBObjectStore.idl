@@ -29,7 +29,6 @@ typedef (DOMString or sequence<DOMString>) IDBKeyPath;
 
 [
     Conditional=INDEXED_DATABASE,
-    EnabledAtRuntime=IndexedDB,
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,
     SkipVTableValidation,

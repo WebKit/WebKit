@@ -100,7 +100,6 @@
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/ResourceLoadStatisticsStore.h>
 #include <WebCore/RuntimeApplicationChecks.h>
-#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
@@ -190,10 +189,6 @@ WebProcess::WebProcess()
 #endif
 
     m_plugInAutoStartOriginHashes.add(SessionID::defaultSessionID(), HashMap<unsigned, double>());
-
-#if ENABLE(INDEXED_DATABASE)
-    RuntimeEnabledFeatures::sharedFeatures().setIndexedDBEnabled(true);
-#endif
 
     ResourceLoadObserver::sharedObserver().setStatisticsStore(m_resourceLoadStatisticsStorage.copyRef());
     m_resourceLoadStatisticsStorage->setNotificationCallback([this] {

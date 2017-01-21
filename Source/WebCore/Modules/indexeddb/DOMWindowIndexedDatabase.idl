@@ -27,7 +27,7 @@
 [
     Conditional=INDEXED_DATABASE,
 ] partial interface DOMWindow {
-    [EnabledAtRuntime=IndexedDB] readonly attribute IDBFactory indexedDB;
-    [EnabledAtRuntime=IndexedDB, ImplementedAs=indexedDB] readonly attribute IDBFactory webkitIndexedDB;
+    readonly attribute IDBFactory indexedDB;
+    [ImplementedAs=indexedDB] readonly attribute IDBFactory webkitIndexedDB;
 };
 
