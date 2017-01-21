@@ -1,3 +1,14 @@
+2017-01-20  Alex Christensen  <achristensen@webkit.org>
+
+        Add debugging code to compare URLParser with URL::parse
+        https://bugs.webkit.org/show_bug.cgi?id=167267
+
+        Reviewed by Brady Eidson.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::URLParser):
+        (WebCore::URLParser::parse):
+
 2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r210778.
