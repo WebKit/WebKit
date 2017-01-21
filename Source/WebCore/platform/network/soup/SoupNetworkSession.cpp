@@ -48,7 +48,6 @@ namespace WebCore {
 static bool gIgnoreTLSErrors;
 static CString gInitialAcceptLanguages;
 static SoupNetworkProxySettings gProxySettings;
-static GType gCustomProtocolRequestType;
 
 #if !LOG_DISABLED
 inline static void soupLogPrinter(SoupLogger*, SoupLoggerLogLevel, char direction, const char* data, gpointer)
@@ -140,8 +139,6 @@ SoupNetworkSession::SoupNetworkSession(SoupCookieJar* cookieJar)
         SOUP_SESSION_SSL_USE_SYSTEM_CA_FILE, TRUE,
         SOUP_SESSION_SSL_STRICT, FALSE,
         nullptr);
-
-    setupCustomProtocols();
 
     if (!gInitialAcceptLanguages.isNull())
         setAcceptLanguages(gInitialAcceptLanguages);
@@ -290,19 +287,6 @@ void SoupNetworkSession::setInitialAcceptLanguages(const CString& languages)
 void SoupNetworkSession::setAcceptLanguages(const CString& languages)
 {
     g_object_set(m_soupSession.get(), "accept-language", languages.data(), nullptr);
-}
-
-void SoupNetworkSession::setCustomProtocolRequestType(GType requestType)
-{
-    ASSERT(g_type_is_a(requestType, SOUP_TYPE_REQUEST));
-    gCustomProtocolRequestType = requestType;
-}
-
-void SoupNetworkSession::setupCustomProtocols()
-{
-    if (!g_type_is_a(gCustomProtocolRequestType, SOUP_TYPE_REQUEST))
-        return;
-    soup_session_add_feature_by_type(m_soupSession.get(), gCustomProtocolRequestType);
 }
 
 void SoupNetworkSession::setShouldIgnoreTLSErrors(bool ignoreTLSErrors)
