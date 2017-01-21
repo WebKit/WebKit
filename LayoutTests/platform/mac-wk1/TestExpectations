@@ -300,3 +300,5 @@ media/track/track-cues-enter-exit.html [ Pass Crash ]
 media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html [ Pass Timeout ]
 
 webkit.org/b/167253 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html [ Pass Failure ]
+
+webkit.org/b/164336 [ Debug ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Crash ]
