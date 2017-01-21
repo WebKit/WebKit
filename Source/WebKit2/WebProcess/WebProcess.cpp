@@ -192,7 +192,7 @@ WebProcess::WebProcess()
     m_plugInAutoStartOriginHashes.add(SessionID::defaultSessionID(), HashMap<unsigned, double>());
 
 #if ENABLE(INDEXED_DATABASE)
-    RuntimeEnabledFeatures::sharedFeatures().setWebkitIndexedDBEnabled(true);
+    RuntimeEnabledFeatures::sharedFeatures().setIndexedDBEnabled(true);
 #endif
 
     ResourceLoadObserver::sharedObserver().setStatisticsStore(m_resourceLoadStatisticsStorage.copyRef());

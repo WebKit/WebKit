@@ -767,9 +767,25 @@ static bool shouldEnableDeveloperExtras(const char* pathOrURL)
     return true;
 }
 
+static void enableExperimentalFeatures(IWebPreferences* preferences)
+{
+    COMPtr<IWebPreferencesPrivate4> prefsPrivate4(Query, preferences);    
+
+    // FIXME: CSSGridLayout
+    // FIXME: SpringTimingFunction
+    // FIXME: Gamepads
+    // FIXME: ModernMediaControls
+    // FIXME: InputEvents
+    // FIXME: SubtleCrypto
+    prefsPrivate4->setWebAnimationsEnabled(TRUE);
+    // FIXME: WebGL2
+}
+
 static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
 {
     ASSERT(preferences);
+
+    enableExperimentalFeatures(preferences);
 
     preferences->setAutosaves(FALSE);
 
@@ -861,7 +877,6 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     prefsPrivate4->setShadowDOMEnabled(TRUE);
     prefsPrivate4->setCustomElementsEnabled(TRUE);
     prefsPrivate4->setModernMediaControlsEnabled(FALSE);
-    prefsPrivate4->setWebAnimationsEnabled(TRUE);
 
     setAlwaysAcceptCookies(false);
 }

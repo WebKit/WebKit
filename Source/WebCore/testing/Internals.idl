@@ -476,19 +476,6 @@ enum EventThrottlingBehavior {
 
     DOMString composedTreeAsText(Node parent);
 
-    void setLinkPreloadSupport(boolean scalable);
-
-#if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
-    void setCSSGridLayoutEnabled(boolean enable);
-#endif
-
-#if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
-    boolean webGL2Enabled();
-    void setWebGL2Enabled(boolean enable);
-#endif
-
-    void setResourceTimingSupport(boolean scalable);
-    
     boolean isProcessingUserGesture();
 
     GCObservation? observeGC(any observed);

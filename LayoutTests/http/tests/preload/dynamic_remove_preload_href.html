@@ -3,8 +3,8 @@
 <head>
 <script>
     if (window.internals) {
-        window.internals.setLinkPreloadSupport(true);
-        window.internals.setResourceTimingSupport(true);
+        window.internals.settings.setLinkPreloadEnabled(true);
+        window.internals.settings.setResourceTimingEnabled(true);
     }
 </script>
 <script src="/js-test-resources/js-test.js"></script>
@@ -25,8 +25,8 @@
         }
         shouldBeFalse("downloadedImage");
         if (window.internals) {
-            window.internals.setLinkPreloadSupport(false);
-            window.internals.setResourceTimingSupport(false);
+            window.internals.settings.setLinkPreloadEnabled(false);
+            window.internals.settings.setResourceTimingEnabled(false);
         }
     });
 </script>

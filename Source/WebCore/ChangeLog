@@ -1,3 +1,133 @@
+2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Cleanup RuntimeEnabledFeatures
+        https://bugs.webkit.org/show_bug.cgi?id=167228
+
+        Reviewed by Simon Fraser.
+
+        RuntimeEnabledFeatures::reset() is bad for tests. It was getting called
+        after the TestRunners had set up all the Settings and RuntimeEnabledFeatures
+        they expected, so it was clearing the "consistent state" set by TestRunners.
+
+        Cleanup within RuntimeEnabledFeatures:
+
+          - Initialize all members.
+          - Remove unused features.
+          - Remove reset() no longer used.
+          - Document features that do not change (potentially removable).
+          - Document features that are not used but have APIs (use or remove later).
+          - Drop webkit prefix for these internal only apis.
+          - Move things around a bit to make it more readable.
+          - Enable the Fetch API by default (WebKit levels all were enabling it).
+
+        Cleanup within Internals:
+
+          - Move all RuntimeEnabledFeature toggling to InternalSettings
+          - Save and restore these RuntimeEnabledFeatures in InternalSettings
+
+        * Modules/mediastream/MediaStreamEvent.idl:
+        * Modules/mediastream/NavigatorMediaDevices.idl:
+        * Modules/mediastream/NavigatorUserMedia.idl:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.idl:
+        * Modules/mediastream/RTCIceCandidate.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCRtpReceiver.idl:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCRtpTransceiver.idl:
+        * Modules/mediastream/RTCSessionDescription.idl:
+        * Modules/mediastream/RTCTrackEvent.idl:
+        Canonical usage is to start with a capital letter.
+
+        * dom/EventNames.in:
+        No port has API/SPI to disable this feature at runtime and the default is
+        to have the feature enabled, so this is no different from the runtime flag.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        These features were always enabled and not toggleable. So drop the runtime
+        feature check.
+
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::experimentalFeaturesEnabled): Deleted.
+        Nobody calls this method. Drop it.
+
+        * page/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        (WebCore::RuntimeEnabledFeatures::reset):
+        (WebCore::RuntimeEnabledFeatures::javaScriptI18NAPIEnabled): Deleted.
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::langAttributeAwareFormControlUIEnabled):
+        (WebCore::RuntimeEnabledFeatures::setLangAttributeAwareFormControlUIEnabled):
+        (WebCore::RuntimeEnabledFeatures::setLinkPreloadEnabled):
+        (WebCore::RuntimeEnabledFeatures::linkPreloadEnabled):
+        (WebCore::RuntimeEnabledFeatures::setResourceTimingEnabled):
+        (WebCore::RuntimeEnabledFeatures::resourceTimingEnabled):
+        (WebCore::RuntimeEnabledFeatures::setShadowDOMEnabled):
+        (WebCore::RuntimeEnabledFeatures::shadowDOMEnabled):
+        (WebCore::RuntimeEnabledFeatures::setInputEventsEnabled):
+        (WebCore::RuntimeEnabledFeatures::inputEventsEnabled):
+        (WebCore::RuntimeEnabledFeatures::setInteractiveFormValidationEnabled):
+        (WebCore::RuntimeEnabledFeatures::interactiveFormValidationEnabled):
+        (WebCore::RuntimeEnabledFeatures::setCustomElementsEnabled):
+        (WebCore::RuntimeEnabledFeatures::customElementsEnabled):
+        (WebCore::RuntimeEnabledFeatures::setModernMediaControlsEnabled):
+        (WebCore::RuntimeEnabledFeatures::modernMediaControlsEnabled):
+        (WebCore::RuntimeEnabledFeatures::setIndexedDBEnabled):
+        (WebCore::RuntimeEnabledFeatures::fontLoadEventsEnabled):
+        (WebCore::RuntimeEnabledFeatures::setMediaStreamEnabled):
+        (WebCore::RuntimeEnabledFeatures::setPeerConnectionEnabled):
+        (WebCore::RuntimeEnabledFeatures::setLocalStorageEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::localStorageEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setSessionStorageEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::sessionStorageEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setWebkitNotificationsEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webkitNotificationsEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setApplicationCacheEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::applicationCacheEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setDataTransferItemsEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::dataTransferItemsEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setWebkitIndexedDBEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webkitIndexedDBEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::touchEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setTouchEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setDeviceMotionEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::deviceMotionEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::deviceMotionEventEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::ondevicemotionEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setDeviceOrientationEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::deviceOrientationEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::deviceOrientationEventEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::ondeviceorientationEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setJavaScriptI18NAPIEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webkitGetUserMediaEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webkitMediaStreamEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webkitRTCPeerConnectionEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::experimentalContentSecurityPolicyFeaturesEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setExperimentalContentSecurityPolicyFeaturesEnabled): Deleted.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setLangAttributeAwareFormControlUIEnabled):
+        (WebCore::InternalSettings::setResourceTimingEnabled):
+        (WebCore::InternalSettings::setLinkPreloadEnabled):
+        (WebCore::InternalSettings::setCSSGridLayoutEnabled):
+        (WebCore::InternalSettings::setWebGL2Enabled):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::setLinkPreloadSupport): Deleted.
+        (WebCore::Internals::setCSSGridLayoutEnabled): Deleted.
+        (WebCore::Internals::webGL2Enabled): Deleted.
+        (WebCore::Internals::setWebGL2Enabled): Deleted.
+        (WebCore::Internals::setResourceTimingSupport): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Move toggling of RuntimeEnabledFeatures to InternalSettings and
+        properly remember to save and restore them in Internals.
+
 2017-01-20  Alex Christensen  <achristensen@webkit.org>
 
         Add debugging code to compare URLParser with URL::parse

@@ -110,7 +110,6 @@
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
 #include "ResourceLoadObserver.h"
-#include "RuntimeEnabledFeatures.h"
 #include "SVGPathStringBuilder.h"
 #include "SchemeRegistry.h"
 #include "ScriptedAnimationController.h"
@@ -457,7 +456,6 @@ Internals::Internals(Document& document)
     if (document.page())
         document.page()->setMockMediaPlaybackTargetPickerEnabled(true);
 #endif
-    RuntimeEnabledFeatures::sharedFeatures().reset();
 
     if (contextDocument() && contextDocument()->frame()) {
         setAutomaticSpellingCorrectionEnabled(true);
@@ -3513,39 +3511,6 @@ String Internals::composedTreeAsText(Node& node)
     if (!is<ContainerNode>(node))
         return emptyString();
     return WebCore::composedTreeAsText(downcast<ContainerNode>(node));
-}
-
-void Internals::setLinkPreloadSupport(bool enable)
-{
-    RuntimeEnabledFeatures::sharedFeatures().setLinkPreloadEnabled(enable);
-}
-
-#if ENABLE(CSS_GRID_LAYOUT)
-
-void Internals::setCSSGridLayoutEnabled(bool enable)
-{
-    RuntimeEnabledFeatures::sharedFeatures().setCSSGridLayoutEnabled(enable);
-}
-
-#endif
-
-#if ENABLE(WEBGL2)
-
-bool Internals::webGL2Enabled() const
-{
-    return RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled();
-}
-
-void Internals::setWebGL2Enabled(bool enable)
-{
-    RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(enable);
-}
-
-#endif
-
-void Internals::setResourceTimingSupport(bool enable)
-{
-    RuntimeEnabledFeatures::sharedFeatures().setResourceTimingEnabled(enable);
 }
 
 bool Internals::isProcessingUserGesture()

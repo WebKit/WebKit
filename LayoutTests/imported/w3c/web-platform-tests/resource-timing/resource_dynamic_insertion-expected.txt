@@ -1,11 +1,11 @@
-CONSOLE MESSAGE: line 175: TypeError: undefined is not an object (evaluating 'this.performanceContext.getEntriesByType.apply')
 Description
 
 This test validates that initiator types are represented even when dynamically inserted.
 
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'this.performanceContext.getEntriesByType.apply')
-
 PASS window.performance is defined 
 PASS window.performance.getEntriesByType is defined 
+PASS http://localhost:8800/resource-timing/resources/inject_resource_test.html is expected to have initiatorType iframe 
+PASS http://localhost:8800/resource-timing/resources/resource_timing_test0.css is expected to have initiatorType link 
+PASS http://localhost:8800/resource-timing/resources/resource_timing_test0.png is expected to have initiatorType img 
 

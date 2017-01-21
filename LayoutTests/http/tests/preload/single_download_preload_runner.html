@@ -3,8 +3,8 @@
 <script src="/resources/testharnessreport.js"></script>
 <script>
     if (window.internals) {
-        internals.setLinkPreloadSupport(true);
-        internals.setResourceTimingSupport(true);
+        internals.settings.setLinkPreloadEnabled(true);
+        internals.settings.setResourceTimingEnabled(true);
     }
     var t = async_test('Makes sure that preloaded resources are not downloaded again when used');
 
@@ -12,8 +12,8 @@
         var data = event.data;
         assert_equals(data, 10, "The number of resource downloads");
         if (window.internals) {
-            internals.setLinkPreloadSupport(false);
-            internals.setResourceTimingSupport(false);
+            internals.settings.setLinkPreloadEnabled(false);
+            internals.settings.setResourceTimingEnabled(false);
         }
         t.done();
     }));

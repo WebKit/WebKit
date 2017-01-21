@@ -30,7 +30,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=peerConnection,
+    EnabledAtRuntime=PeerConnection,
 ] interface RTCRtpSender {
     readonly attribute MediaStreamTrack? track;
 

@@ -54,7 +54,7 @@ SVGEvents interfaceName=Event
 SVGZoomEvent
 SVGZoomEvents interfaceName=SVGZoomEvent
 IDBVersionChangeEvent conditional=INDEXED_DATABASE
-TouchEvent conditional=TOUCH_EVENTS, runtimeConditional=touchEnabled
+TouchEvent conditional=TOUCH_EVENTS
 DeviceMotionEvent conditional=DEVICE_ORIENTATION
 DeviceOrientationEvent conditional=DEVICE_ORIENTATION
 DeviceProximityEvent conditional=PROXIMITY_EVENTS

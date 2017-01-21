@@ -4,7 +4,7 @@
 <script>
     window.jsTestIsAsync = true;
     if (window.internals)
-        window.internals.setResourceTimingSupport(true);
+        window.internals.settings.setResourceTimingEnabled(true);
 </script>
 </head>
 <body>
@@ -27,7 +27,7 @@ window.addEventListener("load", function() {
     shouldBeNearZeroOrOne = integerMultipleOfResolution % 1;
     shouldBe("shouldBeNearZeroOrOne < 1e-10 || Math.abs(shouldBeNearZeroOrOne - 1) < 1e-10", "true");
     if (window.internals)
-        window.internals.setResourceTimingSupport(false);
+        window.internals.settings.setResourceTimingEnabled(false);
     finishJSTest();
 });
 </script>

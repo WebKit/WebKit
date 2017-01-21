@@ -33,7 +33,7 @@ function checkAlignItemsValue(value, computedValue, gridEnabled)
 function checkAlignmentValues(gridEnabled)
 {
     if (window.internals)
-        internals.setCSSGridLayoutEnabled(gridEnabled);
+        internals.settings.setCSSGridLayoutEnabled(gridEnabled);
 
     debug('<br>Testing Self-Alignment values.');
     checkAlignSelfValue("start unsafe", "'start unsafe'", gridEnabled)

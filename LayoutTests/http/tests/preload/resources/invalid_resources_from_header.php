@@ -42,5 +42,5 @@ header("Link: <   ../resources/dummy.js?foobar >; rel=preload; as='", false);
 </script>
 <script>
     if (window.internals)
-        window.internals.setLinkPreloadSupport(false);
+        window.internals.settings.setLinkPreloadEnabled(false);
 </script>

@@ -32,7 +32,7 @@
 [
     Conditional=WEB_RTC,
     Constructor(RTCSessionDescriptionInit descriptionInitDict),
-    EnabledAtRuntime=peerConnection,
+    EnabledAtRuntime=PeerConnection,
     ImplementationLacksVTable,
     PrivateIdentifier,
     PublicIdentifier,

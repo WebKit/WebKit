@@ -39,7 +39,7 @@ function init()
     debug("");
 
     if (window.internals)
-    	internals.setWebGL2Enabled(true);
+    	internals.settings.setWebGL2Enabled(true);
     gl = initWebGL("example", "vshader", "fshader", [ "vPosition", "index" ],
                    [ 1, 1, 1, 1 ], 1, null, true);
 

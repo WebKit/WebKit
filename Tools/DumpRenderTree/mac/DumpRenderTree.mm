@@ -895,10 +895,22 @@ static NSString *libraryPathForDumpRenderTree()
         return [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
 }
 
+static void enableExperimentalFeatures(WebPreferences* preferences)
+{
+    [preferences setCSSGridLayoutEnabled:YES];
+    // FIXME: SpringTimingFunction
+    [preferences setGamepadsEnabled:YES];
+    [preferences setModernMediaControlsEnabled:YES];
+    // FIXME: InputEvents
+    [preferences setSubtleCryptoEnabled:YES];
+    [preferences setWebGL2Enabled:YES];
+}
+
 // Called before each test.
-static void resetWebPreferencesToConsistentValues(const TestOptions& options)
+static void resetWebPreferencesToConsistentValues()
 {
     WebPreferences *preferences = [WebPreferences standardPreferences];
+    enableExperimentalFeatures(preferences);
 
     [preferences setNeedsStorageAccessFromFileURLsQuirk: NO];
     [preferences setAllowUniversalAccessFromFileURLs:YES];
@@ -993,18 +1005,21 @@ static void resetWebPreferencesToConsistentValues(const TestOptions& options)
 
     [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
     [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
-
-    preferences.intersectionObserverEnabled = options.enableIntersectionObserver;
-    preferences.modernMediaControlsEnabled = options.enableModernMediaControls;
-
-    [preferences setSubtleCryptoEnabled:YES];
-
+    
     [preferences setMediaStreamEnabled:YES];
     [preferences setPeerConnectionEnabled:YES];
     [preferences setWebAnimationsEnabled:YES];
 
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
+}
+
+static void setWebPreferencesForTestOptions(const TestOptions& options)
+{
+    WebPreferences *preferences = [WebPreferences standardPreferences];
+
+    preferences.intersectionObserverEnabled = options.enableIntersectionObserver;
+    preferences.modernMediaControlsEnabled = options.enableModernMediaControls;
 }
 
 // Called once on DumpRenderTree startup.
@@ -1853,7 +1868,8 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
 
     [WebCache clearCachedCredentials];
     
-    resetWebPreferencesToConsistentValues(options);
+    resetWebPreferencesToConsistentValues();
+    setWebPreferencesForTestOptions(options);
 
     TestRunner::setSerializeHTTPLoads(false);
     TestRunner::setAllowsAnySSLCertificate(false);

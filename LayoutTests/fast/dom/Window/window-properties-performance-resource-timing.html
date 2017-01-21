@@ -7,7 +7,7 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 if (window.internals)
-    internals.setResourceTimingSupport(true);
+    internals.settings.setResourceTimingEnabled(true);
     
 var logBuffer = [];
 function log(s)
@@ -100,5 +100,5 @@ window.performance = 'performance is replaceable';
 logValue('window.performance');
 flushLog();
 if (window.internals)
-    internals.setResourceTimingSupport(false);
+    internals.settings.setResourceTimingEnabled(false);
 </script>

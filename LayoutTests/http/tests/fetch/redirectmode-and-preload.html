@@ -10,7 +10,7 @@
     <script src="/js-test-resources/testharnessreport.js"></script>
     <script>
 if (window.internals)
-    internals.setLinkPreloadSupport(true);
+    internals.settings.setLinkPreloadEnabled(true);
     </script>
     <link rel=preload onload="startTests()" href="./resources/redirect-with-cache.php?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii">
   </head>

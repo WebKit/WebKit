@@ -65,7 +65,6 @@ enum ForcedAccessibilityValue { "system", "on", "off" };
     // Editing, forms
     [MayThrowException] void setEditingBehavior(DOMString behavior);
     [MayThrowException] void setShouldConvertPositionStyleOnCopy(boolean convertPosition);
-    void setLangAttributeAwareFormControlUIEnabled(boolean enabled);
     [MayThrowException] void setPreferMIMETypeForImages(boolean preferMimeTypeForImage);
 
     // Other switches
@@ -82,7 +81,13 @@ enum ForcedAccessibilityValue { "system", "on", "off" };
     [MayThrowException] void setAllowsInlineMediaPlaybackAfterFullscreen(boolean allows);
     [MayThrowException] void setInlineMediaPlaybackRequiresPlaysInlineAttribute(boolean requires);
 
-    void setIndexedDBWorkersEnabled(boolean requires);
+    // RuntimeEnabledFeatures.
+    void setLangAttributeAwareFormControlUIEnabled(boolean enabled);
+    void setResourceTimingEnabled(boolean enabled);
+    void setLinkPreloadEnabled(boolean enabled);
+    void setIndexedDBWorkersEnabled(boolean enabled);
+    void setCSSGridLayoutEnabled(boolean enabled);
+    void setWebGL2Enabled(boolean enabled);
 
     [MayThrowException] DOMString userInterfaceDirectionPolicy();
     [MayThrowException] void setUserInterfaceDirectionPolicy(DOMString policy);
@@ -95,7 +100,5 @@ enum ForcedAccessibilityValue { "system", "on", "off" };
     attribute ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue;
     attribute ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue;
     attribute ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue;
-
-    void setInputEventsEnabled(boolean enabled);
 };
 

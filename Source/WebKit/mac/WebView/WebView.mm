@@ -2868,7 +2868,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    RuntimeEnabledFeatures::sharedFeatures().setWebkitIndexedDBEnabled(true);
+    RuntimeEnabledFeatures::sharedFeatures().setIndexedDBEnabled(true);
 #endif
 
     RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled([preferences shadowDOMEnabled]);

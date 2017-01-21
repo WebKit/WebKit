@@ -30,7 +30,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=peerConnection,
+    EnabledAtRuntime=PeerConnection,
 ] interface RTCRtpTransceiver {
     readonly attribute DOMString? mid;
     readonly attribute RTCRtpSender sender;

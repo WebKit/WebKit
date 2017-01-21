@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved. 
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -43,20 +43,9 @@ namespace WebCore {
 class RuntimeEnabledFeatures {
     WTF_MAKE_NONCOPYABLE(RuntimeEnabledFeatures);
 public:
-    void setLocalStorageEnabled(bool isEnabled) { m_isLocalStorageEnabled = isEnabled; }
-    bool localStorageEnabled() const { return m_isLocalStorageEnabled; }
-
-    void setSessionStorageEnabled(bool isEnabled) { m_isSessionStorageEnabled = isEnabled; }
-    bool sessionStorageEnabled() const { return m_isSessionStorageEnabled; }
-
-    void setWebkitNotificationsEnabled(bool isEnabled) { m_isWebkitNotificationsEnabled = isEnabled; }
-    bool webkitNotificationsEnabled() const { return m_isWebkitNotificationsEnabled; }
-
-    void setApplicationCacheEnabled(bool isEnabled) { m_isApplicationCacheEnabled = isEnabled; }
-    bool applicationCacheEnabled() const { return m_isApplicationCacheEnabled; }
-
-    void setDataTransferItemsEnabled(bool isEnabled) { m_isDataTransferItemsEnabled = isEnabled; }
-    bool dataTransferItemsEnabled() const { return m_isDataTransferItemsEnabled; }
+    // The lang attribute support is incomplete and should only be turned on for tests.
+    bool langAttributeAwareFormControlUIEnabled() const { return m_isLangAttributeAwareFormControlUIEnabled; }
+    void setLangAttributeAwareFormControlUIEnabled(bool isEnabled) { m_isLangAttributeAwareFormControlUIEnabled = isEnabled; }
 
     void setDOMIteratorEnabled(bool isEnabled) { m_isDOMIteratorEnabled = isEnabled; }
     bool domIteratorEnabled() const { return m_isDOMIteratorEnabled; }
@@ -64,9 +53,30 @@ public:
     void setGeolocationEnabled(bool isEnabled) { m_isGeolocationEnabled = isEnabled; }
     bool geolocationEnabled() const { return m_isGeolocationEnabled; }
 
+    void setLinkPreloadEnabled(bool isEnabled) { m_isLinkPreloadEnabled = isEnabled; }
+    bool linkPreloadEnabled() const { return m_isLinkPreloadEnabled; }
+
+    void setResourceTimingEnabled(bool isEnabled) { m_isResourceTimingEnabled = isEnabled; }
+    bool resourceTimingEnabled() const { return m_isResourceTimingEnabled; }
+
+    void setShadowDOMEnabled(bool isEnabled) { m_isShadowDOMEnabled = isEnabled; }
+    bool shadowDOMEnabled() const { return m_isShadowDOMEnabled; }
+
+    void setInputEventsEnabled(bool isEnabled) { m_inputEventsEnabled = isEnabled; }
+    bool inputEventsEnabled() const { return m_inputEventsEnabled; }
+
+    void setInteractiveFormValidationEnabled(bool isEnabled) { m_isInteractiveFormValidationEnabled = isEnabled; }
+    bool interactiveFormValidationEnabled() const { return m_isInteractiveFormValidationEnabled; }
+
+    void setCustomElementsEnabled(bool areEnabled) { m_areCustomElementsEnabled = areEnabled; }
+    bool customElementsEnabled() const { return m_areCustomElementsEnabled; }
+
+    void setModernMediaControlsEnabled(bool areEnabled) { m_areModernMediaControlsEnabled = areEnabled; }
+    bool modernMediaControlsEnabled() const { return m_areModernMediaControlsEnabled; }
+
 #if ENABLE(INDEXED_DATABASE)
-    void setWebkitIndexedDBEnabled(bool isEnabled) { m_isIndexedDBEnabled = isEnabled; }
-    bool webkitIndexedDBEnabled() const { return m_isIndexedDBEnabled; }
+    // FIXME: This is always enabled and nobody can even toggle it off. Remove?
+    void setIndexedDBEnabled(bool isEnabled) { m_isIndexedDBEnabled = isEnabled; }
     bool indexedDBEnabled() const { return m_isIndexedDBEnabled; }
 #endif
 
@@ -78,59 +88,16 @@ public:
 #if ENABLE(FONT_LOAD_EVENTS)
     void setFontLoadEventsEnabled(bool isEnabled) { m_isFontLoadEventsEnabled = isEnabled; }
     bool fontLoadEventsEnabled() const { return m_isFontLoadEventsEnabled; }
-#else
-    void setFontLoadEventsEnabled(bool) { }
-    bool fontLoadEventsEnabled() { return false; }
-#endif
-
-#if ENABLE(VIDEO)
-    bool audioEnabled() const;
-    bool htmlMediaElementEnabled() const;
-    bool htmlAudioElementEnabled() const;
-    bool htmlVideoElementEnabled() const;
-    bool htmlSourceElementEnabled() const;
-    bool mediaControllerEnabled() const;
-    bool mediaErrorEnabled() const;
-    bool timeRangesEnabled() const;
-#endif
-
-#if ENABLE(WEB_SOCKETS)
-    bool webSocketEnabled() const;
-#endif
-
-#if ENABLE(TOUCH_EVENTS)
-    bool touchEnabled() const { return m_isTouchEnabled; }
-    void setTouchEnabled(bool isEnabled) { m_isTouchEnabled = isEnabled; }
-#endif
-
-    void setDeviceMotionEnabled(bool isEnabled) { m_isDeviceMotionEnabled = isEnabled; }
-    bool deviceMotionEnabled() const { return m_isDeviceMotionEnabled; }
-    bool deviceMotionEventEnabled() const { return m_isDeviceMotionEnabled; }
-    bool ondevicemotionEnabled() const { return m_isDeviceMotionEnabled; }
-
-    void setDeviceOrientationEnabled(bool isEnabled) { m_isDeviceOrientationEnabled = isEnabled; }
-    bool deviceOrientationEnabled() const { return m_isDeviceOrientationEnabled; }
-    bool deviceOrientationEventEnabled() const { return m_isDeviceOrientationEnabled; }
-    bool ondeviceorientationEnabled() const { return m_isDeviceOrientationEnabled; }
-
-    void setLinkPreloadEnabled(bool isEnabled) { m_isLinkPreloadEnabled = isEnabled; }
-    bool linkPreloadEnabled() const { return m_isLinkPreloadEnabled; }
-
-#if ENABLE(JAVASCRIPT_I18N_API)
-    bool javaScriptI18NAPIEnabled() const;
-    void setJavaScriptI18NAPIEnabled(bool isEnabled) { m_isJavaScriptI18NAPIEnabled = isEnabled; }
 #endif
 
 #if ENABLE(MEDIA_STREAM)
     bool mediaStreamEnabled() const { return m_isMediaStreamEnabled; }
     void setMediaStreamEnabled(bool isEnabled) { m_isMediaStreamEnabled = isEnabled; }
-    bool webkitGetUserMediaEnabled() const { return m_isMediaStreamEnabled; }
-    bool webkitMediaStreamEnabled() const { return m_isMediaStreamEnabled; }
 #endif
+
 #if ENABLE(WEB_RTC)
     bool peerConnectionEnabled() const { return m_isMediaStreamEnabled && m_isPeerConnectionEnabled; }
     void setPeerConnectionEnabled(bool isEnabled) { m_isPeerConnectionEnabled = isEnabled; }
-    bool webkitRTCPeerConnectionEnabled() const { return peerConnectionEnabled(); }
 #endif
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
@@ -168,19 +135,13 @@ public:
     void setInputTypeWeekEnabled(bool isEnabled) { m_isInputTypeWeekEnabled = isEnabled; }
 #endif
 
-    bool langAttributeAwareFormControlUIEnabled() const { return m_isLangAttributeAwareFormControlUIEnabled; }
-    // The lang attribute support is incomplete and should only be turned on for tests.
-    void setLangAttributeAwareFormControlUIEnabled(bool isEnabled) { m_isLangAttributeAwareFormControlUIEnabled = isEnabled; }
-
-    void setResourceTimingEnabled(bool isEnabled) { m_isResourceTimingEnabled = isEnabled; }
-    bool resourceTimingEnabled() const { return m_isResourceTimingEnabled; }
-
 #if ENABLE(GAMEPAD)
     void setGamepadsEnabled(bool areEnabled) { m_areGamepadsEnabled = areEnabled; }
     bool gamepadsEnabled() const { return m_areGamepadsEnabled; }
 #endif
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+    // FIXME: This is not used.
     void setAnimationTriggersEnabled(bool areEnabled) { m_areAnimationTriggersEnabled = areEnabled; }
     bool animationTriggersEnabled() const { return m_areAnimationTriggersEnabled; }
 #endif
@@ -189,18 +150,6 @@ public:
     void setWebAnimationsEnabled(bool areEnabled) { m_areWebAnimationsEnabled = areEnabled; }
     bool webAnimationsEnabled() const { return m_areWebAnimationsEnabled; }
 #endif
-
-    void setShadowDOMEnabled(bool isEnabled) { m_isShadowDOMEnabled = isEnabled; }
-    bool shadowDOMEnabled() const { return m_isShadowDOMEnabled; }
-
-    void setInputEventsEnabled(bool isEnabled) { m_inputEventsEnabled = isEnabled; }
-    bool inputEventsEnabled() const { return m_inputEventsEnabled; }
-
-    void setInteractiveFormValidationEnabled(bool isEnabled) { m_isInteractiveFormValidationEnabled = isEnabled; }
-    bool interactiveFormValidationEnabled() const { return m_isInteractiveFormValidationEnabled; }
-
-    void setCustomElementsEnabled(bool areEnabled) { m_areCustomElementsEnabled = areEnabled; }
-    bool customElementsEnabled() const { return m_areCustomElementsEnabled; }
 
 #if ENABLE(WEBGL2)
     void setWebGL2Enabled(bool isEnabled) { m_isWebGL2Enabled = isEnabled; }
@@ -227,9 +176,6 @@ public:
     bool intersectionObserverEnabled() const { return m_intersectionObserverEnabled; }
 #endif
 
-    void setModernMediaControlsEnabled(bool areEnabled) { m_areModernMediaControlsEnabled = areEnabled; }
-    bool modernMediaControlsEnabled() const { return m_areModernMediaControlsEnabled; }
-
 #if ENABLE(ENCRYPTED_MEDIA)
     void setEncryptedMediaAPIEnabled(bool isEnabled) { m_encryptedMediaAPIEnabled = isEnabled; }
     bool encryptedMediaAPIEnabled() const { return m_encryptedMediaAPIEnabled; }
@@ -240,78 +186,85 @@ public:
     bool subtleCryptoEnabled() const { return m_isSubtleCryptoEnabled; }
 #endif
 
-    WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
+#if ENABLE(VIDEO)
+    bool audioEnabled() const;
+    bool htmlMediaElementEnabled() const;
+    bool htmlAudioElementEnabled() const;
+    bool htmlVideoElementEnabled() const;
+    bool htmlSourceElementEnabled() const;
+    bool mediaControllerEnabled() const;
+    bool mediaErrorEnabled() const;
+    bool timeRangesEnabled() const;
+#endif
 
-    WEBCORE_EXPORT void reset();
+#if ENABLE(WEB_SOCKETS)
+    bool webSocketEnabled() const;
+#endif
+
+    WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
     // Never instantiate.
     RuntimeEnabledFeatures();
 
+    bool m_isLangAttributeAwareFormControlUIEnabled { false }; // FIXME: Move this to Settings.
     bool m_areModernMediaControlsEnabled { false };
-    bool m_isLocalStorageEnabled;
-    bool m_isSessionStorageEnabled;
-    bool m_isWebkitNotificationsEnabled;
-    bool m_isApplicationCacheEnabled;
-    bool m_isDataTransferItemsEnabled;
+    bool m_isLinkPreloadEnabled { false };
+    bool m_isResourceTimingEnabled { false };
+    bool m_isInteractiveFormValidationEnabled { false };
+
     bool m_isDOMIteratorEnabled { true };
-    bool m_isGeolocationEnabled;
-    bool m_isTouchEnabled;
-    bool m_isDeviceMotionEnabled;
-    bool m_isDeviceOrientationEnabled;
-    bool m_isLinkPreloadEnabled;
-    bool m_isLangAttributeAwareFormControlUIEnabled;
-    bool m_isResourceTimingEnabled;
+    bool m_isGeolocationEnabled { true };
+    bool m_isShadowDOMEnabled { true };
+    bool m_areCustomElementsEnabled { true };
+    bool m_inputEventsEnabled { true };
 
 #if ENABLE(INDEXED_DATABASE)
-    bool m_isIndexedDBEnabled;
+    bool m_isIndexedDBEnabled { true };
 #endif
 
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
-    bool m_isIndexedDBWorkersEnabled;
-#endif
-
-#if ENABLE(JAVASCRIPT_I18N_API)
-    bool m_isJavaScriptI18NAPIEnabled;
+    bool m_isIndexedDBWorkersEnabled { true };
 #endif
 
 #if ENABLE(MEDIA_STREAM)
     bool m_isMediaStreamEnabled { true };
 #endif
+
 #if ENABLE(WEB_RTC)
-    bool m_isPeerConnectionEnabled;
+    bool m_isPeerConnectionEnabled { true };
 #endif
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
-    bool m_isLegacyCSSVendorPrefixesEnabled;
+    bool m_isLegacyCSSVendorPrefixesEnabled { false };
 #endif
 
 #if ENABLE(INPUT_TYPE_DATE)
-    bool m_isInputTypeDateEnabled;
+    bool m_isInputTypeDateEnabled { true };
 #endif
 
 #if ENABLE(INPUT_TYPE_DATETIME_INCOMPLETE)
-    bool m_isInputTypeDateTimeEnabled;
+    bool m_isInputTypeDateTimeEnabled { false };
 #endif
 
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
-    bool m_isInputTypeDateTimeLocalEnabled;
+    bool m_isInputTypeDateTimeLocalEnabled { true };
 #endif
 
 #if ENABLE(INPUT_TYPE_MONTH)
-    bool m_isInputTypeMonthEnabled;
+    bool m_isInputTypeMonthEnabled { true };
 #endif
 
 #if ENABLE(INPUT_TYPE_TIME)
-    bool m_isInputTypeTimeEnabled;
+    bool m_isInputTypeTimeEnabled { true };
 #endif
 
 #if ENABLE(INPUT_TYPE_WEEK)
-    bool m_isInputTypeWeekEnabled;
+    bool m_isInputTypeWeekEnabled { true };
 #endif
 
 #if ENABLE(FONT_LOAD_EVENTS)
-    bool m_isFontLoadEventsEnabled;
+    bool m_isFontLoadEventsEnabled { true };
 #endif
 
 #if ENABLE(GAMEPAD)
@@ -319,27 +272,19 @@ private:
 #endif
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    bool m_areAnimationTriggersEnabled;
+    bool m_areAnimationTriggersEnabled { false };
 #endif
 
 #if ENABLE(WEB_ANIMATIONS)
     bool m_areWebAnimationsEnabled { false };
 #endif
-    
-    bool m_isShadowDOMEnabled;
-
-    bool m_inputEventsEnabled;
-
-    bool m_isInteractiveFormValidationEnabled { false };
-
-    bool m_areCustomElementsEnabled { true };
 
 #if ENABLE(WEBGL2)
-    bool m_isWebGL2Enabled;
+    bool m_isWebGL2Enabled { false };
 #endif
 
 #if ENABLE(FETCH_API)
-    bool m_isFetchAPIEnabled { false };
+    bool m_isFetchAPIEnabled { true };
 #endif
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
@@ -347,7 +292,7 @@ private:
 #endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
-    bool m_cssGridLayoutEnabled;
+    bool m_cssGridLayoutEnabled { true };
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -359,7 +304,7 @@ private:
 #endif
 
 #if ENABLE(SUBTLE_CRYPTO)
-    bool m_isSubtleCryptoEnabled;
+    bool m_isSubtleCryptoEnabled { true };
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;

@@ -2,7 +2,7 @@
 <html>
 <script>
     if (window.internals)
-        internals.setResourceTimingSupport(true);
+        internals.settings.setResourceTimingEnabled(true);
     function resolve(path) {
         var a = document.createElement("a");
         a.href = path;
@@ -27,7 +27,7 @@
         entryTypes = resources.map((entry) => entry.entryType);
         shouldBeEqualToString("entryTypes[0]", "resource");
         if (window.internals)
-            window.internals.setResourceTimingSupport(false);
+            window.internals.settings.setResourceTimingEnabled(false);
         finishJSTest();
     });
 </script>

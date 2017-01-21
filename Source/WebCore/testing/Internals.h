@@ -498,18 +498,6 @@ public:
 
     String composedTreeAsText(Node&);
     
-    void setLinkPreloadSupport(bool);
-    void setResourceTimingSupport(bool);
-
-#if ENABLE(CSS_GRID_LAYOUT)
-    void setCSSGridLayoutEnabled(bool);
-#endif
-
-#if ENABLE(WEBGL2)
-    bool webGL2Enabled() const;
-    void setWebGL2Enabled(bool);
-#endif
-
     bool isProcessingUserGesture();
 
     RefPtr<GCObservation> observeGC(JSC::JSValue);

@@ -2,7 +2,7 @@
 <html>
 <script>
     if (window.internals)
-        internals.setResourceTimingSupport(true);
+        internals.settings.setResourceTimingEnabled(true);
     if (window.testRunner) {
         testRunner.dumpAsText()
         testRunner.waitUntilDone();
@@ -23,7 +23,7 @@
         shouldBe("foundResource", "1");
         shouldBeEqualToString("initiator", "xmlhttprequest");
         if (window.internals)
-            window.internals.setResourceTimingSupport(false);
+            window.internals.settings.setResourceTimingEnabled(false);
         if (window.testRunner)
             testRunner.notifyDone();
     };

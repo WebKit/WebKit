@@ -2,7 +2,7 @@
 <html>
 <script>
     if (window.internals)
-        internals.setResourceTimingSupport(true);
+        internals.settings.setResourceTimingEnabled(true);
     var url = "../../resources/square100.png?";
     url += Math.random();
     document.write("<img src='" + url + "'>");
@@ -21,7 +21,7 @@
         };
         shouldBeTrue("foundImg");
         if (window.internals)
-            window.internals.setResourceTimingSupport(false);
+            window.internals.settings.setResourceTimingEnabled(false);
     });
 </script>
 </body>

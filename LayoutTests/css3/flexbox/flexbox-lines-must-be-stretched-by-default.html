@@ -25,7 +25,7 @@
 function runTest(gridEnabled)
 {
     if (window.internals)
-        window.internals.setCSSGridLayoutEnabled(gridEnabled);
+        window.internals.settings.setCSSGridLayoutEnabled(gridEnabled);
 
     var flexContainer = document.createElement("div");
     if (gridEnabled)

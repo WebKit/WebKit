@@ -1,3 +1,16 @@
+2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Cleanup RuntimeEnabledFeatures
+        https://bugs.webkit.org/show_bug.cgi?id=167228
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/resource-timing/resource_cached-expected.txt:
+        * web-platform-tests/resource-timing/resource_connection_reuse-expected.txt:
+        * web-platform-tests/resource-timing/resource_dynamic_insertion-expected.txt:
+        The previous internals API didn't appear to be working. Making it work
+        improved these results.
+
 2017-01-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, unskip innerText/ folder in ImportExpectations

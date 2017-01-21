@@ -23,7 +23,7 @@ function checkSupportedInitialValues(element)
 function checkInitialValues(gridEnabled)
 {
     if (window.internals)
-        window.internals.setCSSGridLayoutEnabled(gridEnabled);
+        window.internals.settings.setCSSGridLayoutEnabled(gridEnabled);
 
     var root = document.createElement("div");
     document.body.appendChild(root);

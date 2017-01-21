@@ -1,3 +1,13 @@
+2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Cleanup RuntimeEnabledFeatures
+        https://bugs.webkit.org/show_bug.cgi?id=167228
+
+        Reviewed by Simon Fraser.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2017-01-20  Alex Christensen  <achristensen@webkit.org>
 
         Build Fix for Windows DumpRenderTree after r210976

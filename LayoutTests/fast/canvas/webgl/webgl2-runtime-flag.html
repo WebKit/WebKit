@@ -18,9 +18,7 @@ function run() {
         return;
     }
 
-    var originalSetting = window.internals.webGL2Enabled();
-
-    window.internals.setWebGL2Enabled(true);
+    window.internals.settings.setWebGL2Enabled(true);
     var ctx = getContext("webgl2");
     if (ctx)
         output.textContent = "PASS: WebGL 2.0 was available when enabled.";
@@ -29,14 +27,12 @@ function run() {
 
     output = document.getElementById("output2");
 
-    window.internals.setWebGL2Enabled(false);
+    window.internals.settings.setWebGL2Enabled(false);
     var ctx = getContext("webgl2");
     if (ctx)
         output.textContent = "FAIL: WebGL 2.0 was available when disabled.";
     else
         output.textContent = "PASS: WebGL 2.0 was not available when disabled.";
-
-    window.internals.setWebGL2Enabled(originalSetting);
 }
 
 window.addEventListener("load", run, false);
