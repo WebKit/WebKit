@@ -1,5 +1,14 @@
 2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=167266
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2017-01-20  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking inspector/network/client-blocked-load.html as a flaky timeout.
         https://bugs.webkit.org/show_bug.cgi?id=167265
 

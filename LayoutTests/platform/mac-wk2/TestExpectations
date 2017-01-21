@@ -605,3 +605,5 @@ webkit.org/b/166765 pointer-lock/ [ Skip ]
 webkit.org/b/166765 http/tests/pointer-lock/ [ Skip ]
 
 webkit.org/b/167260 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/167266 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Pass Failure ]
