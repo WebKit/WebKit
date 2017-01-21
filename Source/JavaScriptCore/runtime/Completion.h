@@ -67,4 +67,6 @@ JS_EXPORT_PRIVATE JSInternalPromise* loadModule(ExecState*, const SourceCode&, J
 // Link and evaluate the already linked module. This function is called in a sync manner.
 JS_EXPORT_PRIVATE JSValue linkAndEvaluateModule(ExecState*, const Identifier& moduleKey, JSValue scriptFetcher = jsUndefined());
 
+JS_EXPORT_PRIVATE JSInternalPromise* importModule(ExecState*, const Identifier& moduleKey, JSValue scriptFetcher);
+
 } // namespace JSC

@@ -312,15 +312,6 @@ function requestSatisfy(key, fetcher)
     return satisfyPromise;
 }
 
-function requestInstantiateAll(key, fetcher)
-{
-    // https://whatwg.github.io/loader/#request-instantiate-all
-
-    "use strict";
-
-    return this.requestSatisfy(key, fetcher);
-}
-
 function requestLink(key, fetcher)
 {
     // https://whatwg.github.io/loader/#request-link
@@ -334,7 +325,7 @@ function requestLink(key, fetcher)
         return deferred.@promise;
     }
 
-    return this.requestInstantiateAll(key, fetcher).then((entry) => {
+    return this.requestSatisfy(key, fetcher).then((entry) => {
         this.link(entry, fetcher);
         return entry;
     });
@@ -453,7 +444,7 @@ function loadModule(moduleName, referrer, fetcher)
     // Take the name and resolve it to the unique identifier for the resource location.
     // For example, take the "jquery" and return the URL for the resource.
     return this.resolve(moduleName, referrer, fetcher).then((key) => {
-        return this.requestInstantiateAll(key, fetcher);
+        return this.requestSatisfy(key, fetcher);
     }).then((entry) => {
         return entry.key;
     });
@@ -471,17 +462,11 @@ function linkAndEvaluateModule(key, fetcher)
     return this.moduleEvaluation(entry.module, fetcher);
 }
 
-function importModule(moduleName, referrer, fetcher)
+function requestImportModule(key, fetcher)
 {
     "use strict";
 
-    // Loader.resolve hook point.
-    // resolve: moduleName => Promise(moduleKey)
-    // Take the name and resolve it to the unique identifier for the resource location.
-    // For example, take the "jquery" and return the URL for the resource.
-    return this.resolve(moduleName, referrer, fetcher).then((key) => {
-        return this.requestInstantiateAll(key, fetcher);
-    }).then((entry) => {
+    return this.requestSatisfy(key, fetcher).then((entry) => {
         this.linkAndEvaluateModule(entry.key, fetcher);
         return this.getModuleNamespaceObject(entry.module);
     });

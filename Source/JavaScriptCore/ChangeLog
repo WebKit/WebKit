@@ -1,5 +1,35 @@
 2017-01-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] export JSC::importModule API for WebCore dynamic import
+        https://bugs.webkit.org/show_bug.cgi?id=167099
+
+        Reviewed by Darin Adler.
+
+        We newly expose JSC::importModule API. This can be used later
+        from WebCore to implement WebCore side dynamic import.
+        And JSC shell also uses this API.
+
+        And this patch also cleans up module loader a bit:
+        Dropping requestInstantiateAll.
+
+        * builtins/BuiltinNames.h:
+        * builtins/ModuleLoaderPrototype.js:
+        (requestLink):
+        (requestImportModule):
+        (requestInstantiateAll): Deleted.
+        (importModule): Deleted.
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderImportModule):
+        * runtime/Completion.cpp:
+        (JSC::importModule):
+        * runtime/Completion.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::requestImportModule):
+        * runtime/JSModuleLoader.h:
+        * runtime/ModuleLoaderPrototype.cpp:
+
+2017-01-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         dynamic import is ambiguous with import declaration at module code
         https://bugs.webkit.org/show_bug.cgi?id=167098
 

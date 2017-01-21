@@ -1430,19 +1430,28 @@ static String absolutePath(const String& fileName)
     return resolvePath(directoryName.value(), ModuleName(fileName.impl()));
 }
 
-JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject*, ExecState* exec, JSModuleLoader* moduleLoader, JSString* moduleName, const SourceOrigin& sourceOrigin)
+JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSString* moduleNameValue, const SourceOrigin& sourceOrigin)
 {
-    auto* function = jsCast<JSObject*>(moduleLoader->get(exec, exec->propertyNames().builtinNames().importModulePublicName()));
-    CallData callData;
-    auto callType = JSC::getCallData(function, callData);
-    ASSERT(callType != CallType::None);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    MarkedArgumentBuffer arguments;
-    arguments.append(moduleName);
-    arguments.append(jsString(exec, sourceOrigin.string()));
-    arguments.append(jsUndefined());
+    auto rejectPromise = [&] (JSValue error) {
+        return JSInternalPromiseDeferred::create(exec, globalObject)->reject(exec, error);
+    };
 
-    return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, moduleLoader, arguments));
+    auto referrer = sourceOrigin.string();
+    auto moduleName = moduleNameValue->value(exec);
+    if (UNLIKELY(scope.exception())) {
+        JSValue exception = scope.exception();
+        scope.clearException();
+        return rejectPromise(exception);
+    }
+
+    auto directoryName = extractDirectoryName(referrer.impl());
+    if (!directoryName)
+        return rejectPromise(createError(exec, makeString("Could not resolve the referrer name '", String(referrer.impl()), "'.")));
+
+    return JSC::importModule(exec, Identifier::fromString(&vm, resolvePath(directoryName.value(), ModuleName(moduleName))), jsUndefined());
 }
 
 JSInternalPromise* GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSValue keyValue, JSValue referrerValue, JSValue)

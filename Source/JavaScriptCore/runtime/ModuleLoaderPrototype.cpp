@@ -77,7 +77,6 @@ const ClassInfo ModuleLoaderPrototype::s_info = { "ModuleLoader", &Base::s_info,
     requestFetch                   JSBuiltin                                           DontEnum|Function 2
     requestInstantiate             JSBuiltin                                           DontEnum|Function 2
     requestSatisfy                 JSBuiltin                                           DontEnum|Function 2
-    requestInstantiateAll          JSBuiltin                                           DontEnum|Function 2
     requestLink                    JSBuiltin                                           DontEnum|Function 2
     requestReady                   JSBuiltin                                           DontEnum|Function 2
     link                           JSBuiltin                                           DontEnum|Function 2
@@ -88,7 +87,7 @@ const ClassInfo ModuleLoaderPrototype::s_info = { "ModuleLoader", &Base::s_info,
     loadAndEvaluateModule          JSBuiltin                                           DontEnum|Function 3
     loadModule                     JSBuiltin                                           DontEnum|Function 3
     linkAndEvaluateModule          JSBuiltin                                           DontEnum|Function 2
-    importModule                   JSBuiltin                                           DontEnum|Function 3
+    requestImportModule            JSBuiltin                                           DontEnum|Function 2
     getModuleNamespaceObject       moduleLoaderPrototypeGetModuleNamespaceObject       DontEnum|Function 1
     parseModule                    moduleLoaderPrototypeParseModule                    DontEnum|Function 2
     requestedModules               moduleLoaderPrototypeRequestedModules               DontEnum|Function 1

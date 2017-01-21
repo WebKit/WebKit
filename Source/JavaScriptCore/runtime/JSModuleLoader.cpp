@@ -137,6 +137,20 @@ JSValue JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey
     return call(exec, function, callType, callData, this, arguments);
 }
 
+JSInternalPromise* JSModuleLoader::requestImportModule(ExecState* exec, const Identifier& moduleKey, JSValue scriptFetcher)
+{
+    auto* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().requestImportModulePublicName()));
+    CallData callData;
+    auto callType = JSC::getCallData(function, callData);
+    ASSERT(callType != CallType::None);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(jsString(exec, moduleKey.impl()));
+    arguments.append(scriptFetcher);
+
+    return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
+}
+
 JSInternalPromise* JSModuleLoader::importModule(ExecState* exec, JSString* moduleName, const SourceOrigin& referrer)
 {
     if (Options::dumpModuleLoadingState())

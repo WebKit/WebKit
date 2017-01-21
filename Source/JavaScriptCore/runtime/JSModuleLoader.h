@@ -67,6 +67,7 @@ public:
     JSInternalPromise* loadAndEvaluateModule(ExecState*, JSValue moduleName, JSValue referrer, JSValue scriptFetcher);
     JSInternalPromise* loadModule(ExecState*, JSValue moduleName, JSValue referrer, JSValue scriptFetcher);
     JSValue linkAndEvaluateModule(ExecState*, JSValue moduleKey, JSValue scriptFetcher);
+    JSInternalPromise* requestImportModule(ExecState*, const Identifier&, JSValue scriptFetcher);
 
     // Platform dependent hooked APIs.
     JSInternalPromise* importModule(ExecState*, JSString* moduleName, const SourceOrigin& referrer);

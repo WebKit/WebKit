@@ -160,6 +160,7 @@ namespace JSC {
     macro(stringSubstrInternal) \
     macro(makeBoundFunction) \
     macro(hasOwnLengthProperty) \
+    macro(importModule) \
     macro(WebAssembly) \
     macro(Module) \
     macro(Instance) \
