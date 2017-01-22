@@ -8,7 +8,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS addedNotification1 is true
 PASS addedNotification2 is true
-PASS liveRegionChangeCount == 2 is true
+PASS liveRegionChangeCount is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

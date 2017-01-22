@@ -34,11 +34,11 @@
 
         liveRegion1 = accessibilityController.accessibleElementById("liveregion1");
         var addedNotification1 = liveRegion1.addNotificationListener(ariaCallback);
-        shouldBe("addedNotification1", "true");
+        shouldBeTrue("addedNotification1");
 
         liveRegion2 = accessibilityController.accessibleElementById("liveregion2");
         var addedNotification2 = liveRegion2.addNotificationListener(ariaCallback);
-        shouldBe("addedNotification2", "true");
+        shouldBeTrue("addedNotification2");
 
         // perform operations on both live regions.
         textChangeOperation();
@@ -46,8 +46,8 @@
         alternativeChangeOperation();
         removeElementOperation();
 
-        // add a short delay to check after all the operations if we have exactly two notificaitons
-        setTimeout("finishTest()", 10);
+        // add a short delay to check after all the operations if we have exactly two notifications
+        setTimeout("finishTest()", 50);
     }
 
     function textChangeOperation() {
@@ -74,7 +74,7 @@
         // We should get a total of two live region changes.
         liveRegion1.removeNotificationListener();
         liveRegion2.removeNotificationListener();
-        shouldBeTrue("liveRegionChangeCount == 2");
+        shouldBe("liveRegionChangeCount", "2");
         finishJSTest();
     }
 </script>
