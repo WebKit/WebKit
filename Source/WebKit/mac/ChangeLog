@@ -1,3 +1,17 @@
+2017-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove -[WebView _contentsSizeRespectingOverflow] which is no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=167271
+
+        Reviewed by Alex Christensen.
+        
+        -_contentsSizeRespectingOverflow was added to try to make viewport sizing on iOS respect
+        overflow:hidden on the body (webkit.org/b/146924) but that was reverted (webkit.org/b/152803),
+
+        * WebView/WebView.mm:
+        (-[WebView _contentsSizeRespectingOverflow]): Deleted.
+        * WebView/WebViewPrivate.h:
+
 2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove never changing IndexedDB RuntimeEnabledFeature

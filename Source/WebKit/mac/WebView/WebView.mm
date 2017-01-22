@@ -1966,12 +1966,6 @@ static NSMutableSet *knownPluginMIMETypes()
     return _private->page->renderTreeSize();
 }
 
-// FIXME: This is incorrectly named, and should be removed <rdar://problem/22242515>.
-- (NSSize)_contentsSizeRespectingOverflow
-{
-    return [[[[self mainFrame] frameView] documentView] bounds].size;
-}
-
 - (void)_dispatchTileDidDraw:(CALayer*)tile
 {
     id mailDelegate = [self _webMailDelegate];
