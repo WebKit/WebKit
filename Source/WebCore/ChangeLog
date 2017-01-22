@@ -1,3 +1,17 @@
+2017-01-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GStreamer] Clear out m_appsinkCaps in AppendPipeline::appsinkCapsChanged() before using outPtr()
+        https://bugs.webkit.org/show_bug.cgi?id=167165
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::appsinkCapsChanged): Replace the gst_caps_replace() call
+        with a simple comparison and, in case the current appsink caps differ from the caps
+        on the sink's pad, move the reference to the latter into the m_appsinkCaps member
+        variable. This removes the use of GRefPtr<>::outPtr() which asserted in debug
+        configurations in the case of m_appsinkCaps not being null.
+
 2017-01-21  Chris Dumez  <cdumez@apple.com>
 
         JavaScript for-of does not work on a lot of collection types (e.g. HTMLCollection)

@@ -602,7 +602,8 @@ void AppendPipeline::appsinkCapsChanged()
     // This means that we're right after a new track has appeared. Otherwise, it's a caps change inside the same track.
     bool previousCapsWereNull = !m_appsinkCaps;
 
-    if (gst_caps_replace(&m_appsinkCaps.outPtr(), caps.get())) {
+    if (m_appsinkCaps != caps) {
+        m_appsinkCaps = WTFMove(caps);
         if (m_playerPrivate && previousCapsWereNull)
             m_playerPrivate->trackDetected(this, m_oldTrack, m_track);
         didReceiveInitializationSegment();
