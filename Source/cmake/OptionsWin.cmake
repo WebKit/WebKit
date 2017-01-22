@@ -182,5 +182,6 @@ endif ()
 set(PORT Win)
 set(JavaScriptCore_LIBRARY_TYPE SHARED)
 set(WTF_LIBRARY_TYPE SHARED)
+set(PAL_LIBRARY_TYPE STATIC)
 
 find_package(ICU REQUIRED)

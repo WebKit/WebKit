@@ -73,8 +73,6 @@ list(APPEND WebCore_SOURCES
 
     platform/cf/win/CertificateCFWin.cpp
 
-    platform/crypto/win/CryptoDigestWin.cpp
-
     platform/graphics/GraphicsContext3DPrivate.cpp
 
     platform/graphics/egl/GLContextEGL.cpp

@@ -29,7 +29,7 @@
 #include <gnutls/gnutls.h>
 #include <gnutls/crypto.h>
 
-namespace WebCore {
+namespace PAL {
 
 struct CryptoDigestContext {
     gnutls_digest_algorithm_t algorithm;
@@ -99,4 +99,4 @@ Vector<uint8_t> CryptoDigest::computeHash()
     return result;
 }
 
-} // namespace WebCore
+} // namespace PAL

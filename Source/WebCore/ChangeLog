@@ -1,3 +1,81 @@
+2017-01-22  Don Olmstead <don.olmstead@am.sony.com> and Myles C. Maxfield <mmaxfield@apple.com>
+
+        Introducing the Platform Abstraction Layer (PAL)
+        https://bugs.webkit.org/show_bug.cgi?id=143358
+
+        Reviewed by Alex Christensen.
+
+        In order to enforce layering and promote testability, WebCore/platform files
+        should be compiled in their own project. This new project can enforce layering
+        and can be tested with unit tests in addition to layout tests.
+
+        The name of this new project is the Platform Abstraction Layer, or "PAL."
+        This comprises of a new directory in WebCore which will be the destination
+        for files migrated from WebCore/platform. This new folder, and its associated
+        project, will maintain layering invariants. These invariants are enforced at
+        build-time by setting the #include path for PAL to not include the rest of
+        WebCore (which is the same layering enforcement mechanism for WTF). Files will
+        be migrated into this new target/directory piece-by-piece, and the migration
+        of a file will be performed as soon as it can be migrated without violating
+        layering.
+
+        Within WebCore, files should include PAL files using the convention
+        #include <pal/foo.h>. Symbols within PAL are placed within a new top-level
+        namespace, "PAL," and therefore when used should be referred to as PAL::Foo.
+
+        The first set of files to move into the new platform is the crypto/ subdirectory
+        because it is both simple but also includes platform-dependent files.
+
+        No new tests because there is no behavior change.
+
+        * CMakeLists.txt:
+        * Configurations/WebCore.xcconfig: Add PAL to the include path
+        * PAL/Configurations/Base.xcconfig: Added.
+        * PAL/Configurations/DebugRelease.xcconfig: Added.
+        * PAL/Configurations/PAL.xcconfig: Added. Sets up some PAL-specific
+        variables.
+        * PAL/Configurations/FeatureDefines.xcconfig: Added.
+        * PAL/Configurations/Version.xcconfig: Added.
+        * PAL/PAL.xcodeproj/project.pbxproj: Added. New project file.
+        * PAL/config.h: Added. Simplified from WebCore/config.h.
+        * PAL/pal/CMakeLists.txt: Added.
+        * PAL/pal/PlatformEfl.cmake: Added.
+        * PAL/pal/PlatformGTK.cmake: Added.
+        * PAL/pal/PlatformMac.cmake: Added.
+        * PAL/pal/PlatformWin.cmake: Added.
+        * PAL/pal/crypto/CryptoDigest.h: Renamed from Source/WebCore/platform/crypto/CryptoDigest.h.
+        * PAL/pal/crypto/commoncrypto/CryptoDigestCommonCrypto.cpp: Renamed from Source/WebCore/platform/crypto/commoncrypto/CryptoDigestCommonCrypto.cpp.
+        * PAL/pal/crypto/gcrypt/CryptoDigestGCrypt.cpp: Renamed from Source/WebCore/platform/crypto/gcrypt/CryptoDigestGCrypt.cpp.
+        * PAL/pal/crypto/gnutls/CryptoDigestGnuTLS.cpp: Renamed from Source/WebCore/platform/crypto/gnutls/CryptoDigestGnuTLS.cpp.
+        * PAL/pal/crypto/win/CryptoDigestWin.cpp: Renamed from Source/WebCore/platform/crypto/win/CryptoDigestWin.cpp.
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+        * WebCore.xcodeproj/project.pbxproj: Create a project link so WebCore
+        knows that it needs to build PAL as a dependency.
+        * crypto/algorithms/CryptoAlgorithmSHA1.cpp:
+        (WebCore::CryptoAlgorithmSHA1::digest): Update #include and namespace.
+        * crypto/algorithms/CryptoAlgorithmSHA224.cpp:
+        (WebCore::CryptoAlgorithmSHA224::digest): Ditto.
+        * crypto/algorithms/CryptoAlgorithmSHA256.cpp:
+        (WebCore::CryptoAlgorithmSHA256::digest): Ditto.
+        * crypto/algorithms/CryptoAlgorithmSHA384.cpp:
+        (WebCore::CryptoAlgorithmSHA384::digest): Ditto.
+        * crypto/algorithms/CryptoAlgorithmSHA512.cpp:
+        (WebCore::CryptoAlgorithmSHA512::digest): Ditto.
+        * crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp:
+        (WebCore::cryptoDigestAlgorithm): Ditto.
+        (WebCore::signRSASSA_PKCS1_v1_5): Ditto.
+        (WebCore::verifyRSASSA_PKCS1_v1_5): Ditto.
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::computeContentSecurityPolicySHA256Hash): Ditto.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::toCryptoDigestAlgorithm): Ditto.
+        (WebCore::ContentSecurityPolicy::findHashOfContentInPolicies): Ditto.
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::HostTLSCertificateSet::computeCertificateHash): Ditto.
+
 2017-01-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [GStreamer] Clear out m_appsinkCaps in AppendPipeline::appsinkCapsChanged() before using outPtr()

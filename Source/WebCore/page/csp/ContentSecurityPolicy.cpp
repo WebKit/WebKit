@@ -33,7 +33,6 @@
 #include "ContentSecurityPolicyHash.h"
 #include "ContentSecurityPolicySource.h"
 #include "ContentSecurityPolicySourceList.h"
-#include "CryptoDigest.h"
 #include "DOMStringList.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -57,6 +56,7 @@
 #include <inspector/InspectorValues.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
+#include <pal/crypto/CryptoDigest.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextPosition.h>
@@ -301,18 +301,18 @@ bool ContentSecurityPolicy::allPoliciesAllow(ViolatedDirectiveCallback&& callbac
     return isAllowed;
 }
 
-static CryptoDigest::Algorithm toCryptoDigestAlgorithm(ContentSecurityPolicyHashAlgorithm algorithm)
+static PAL::CryptoDigest::Algorithm toCryptoDigestAlgorithm(ContentSecurityPolicyHashAlgorithm algorithm)
 {
     switch (algorithm) {
     case ContentSecurityPolicyHashAlgorithm::SHA_256:
-        return CryptoDigest::Algorithm::SHA_256;
+        return PAL::CryptoDigest::Algorithm::SHA_256;
     case ContentSecurityPolicyHashAlgorithm::SHA_384:
-        return CryptoDigest::Algorithm::SHA_384;
+        return PAL::CryptoDigest::Algorithm::SHA_384;
     case ContentSecurityPolicyHashAlgorithm::SHA_512:
-        return CryptoDigest::Algorithm::SHA_512;
+        return PAL::CryptoDigest::Algorithm::SHA_512;
     }
     ASSERT_NOT_REACHED();
-    return CryptoDigest::Algorithm::SHA_512;
+    return PAL::CryptoDigest::Algorithm::SHA_512;
 }
 
 template<typename Predicate>
@@ -333,7 +333,7 @@ ContentSecurityPolicy::HashInEnforcedAndReportOnlyPoliciesPair ContentSecurityPo
     bool foundHashInEnforcedPolicies = false;
     bool foundHashInReportOnlyPolicies = false;
     for (auto algorithm : algorithms) {
-        auto cryptoDigest = CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
+        auto cryptoDigest = PAL::CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
         cryptoDigest->addBytes(contentCString.data(), contentCString.length());
         ContentSecurityPolicyHash hash = { algorithm, cryptoDigest->computeHash() };
         if (!foundHashInEnforcedPolicies && allPoliciesWithDispositionAllow(ContentSecurityPolicy::Disposition::Enforce, std::forward<Predicate>(predicate), hash))

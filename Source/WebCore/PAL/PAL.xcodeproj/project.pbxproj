@@ -1,0 +1,247 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1C09D0531E31C44100725F18 /* CryptoDigest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0521E31C44100725F18 /* CryptoDigest.h */; };
+		1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */; };
+		1C09D0581E31C57E00725F18 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0571E31C57E00725F18 /* config.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1C09D03D1E31C32800725F18 /* libPAL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPAL.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C09D0521E31C44100725F18 /* CryptoDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoDigest.h; sourceTree = "<group>"; };
+		1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoDigestCommonCrypto.cpp; path = commoncrypto/CryptoDigestCommonCrypto.cpp; sourceTree = "<group>"; };
+		1C09D0571E31C57E00725F18 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		1C09D05D1E31C77A00725F18 /* PAL.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = PAL.xcconfig; sourceTree = "<group>"; };
+		1C09D0621E31EC2800725F18 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		1C09D0631E31EC3100725F18 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		1C67CEA11E32EDA800F80F2E /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
+		1C67CEA21E32EE2600F80F2E /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1C09D03A1E31C32800725F18 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1C09D0341E31C32800725F18 = {
+			isa = PBXGroup;
+			children = (
+				1C09D05C1E31C73300725F18 /* Configurations */,
+				1C09D0571E31C57E00725F18 /* config.h */,
+				1C09D03F1E31C32800725F18 /* pal */,
+				1C09D03E1E31C32800725F18 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1C09D03E1E31C32800725F18 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1C09D03D1E31C32800725F18 /* libPAL.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1C09D03F1E31C32800725F18 /* pal */ = {
+			isa = PBXGroup;
+			children = (
+				1C09D0511E31C41200725F18 /* crypto */,
+			);
+			path = pal;
+			sourceTree = "<group>";
+		};
+		1C09D0511E31C41200725F18 /* crypto */ = {
+			isa = PBXGroup;
+			children = (
+				1C09D0541E31C45200725F18 /* commoncrypto */,
+				1C09D0521E31C44100725F18 /* CryptoDigest.h */,
+			);
+			path = crypto;
+			sourceTree = "<group>";
+		};
+		1C09D0541E31C45200725F18 /* commoncrypto */ = {
+			isa = PBXGroup;
+			children = (
+				1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */,
+			);
+			name = commoncrypto;
+			sourceTree = "<group>";
+		};
+		1C09D05C1E31C73300725F18 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				1C67CEA21E32EE2600F80F2E /* Version.xcconfig */,
+				1C67CEA11E32EDA800F80F2E /* FeatureDefines.xcconfig */,
+				1C09D05D1E31C77A00725F18 /* PAL.xcconfig */,
+				1C09D0621E31EC2800725F18 /* DebugRelease.xcconfig */,
+				1C09D0631E31EC3100725F18 /* Base.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		1C09D03B1E31C32800725F18 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C09D0581E31C57E00725F18 /* config.h in Headers */,
+				1C09D0531E31C44100725F18 /* CryptoDigest.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		1C09D03C1E31C32800725F18 /* PAL */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1C09D0481E31C32800725F18 /* Build configuration list for PBXNativeTarget "PAL" */;
+			buildPhases = (
+				1C09D0391E31C32800725F18 /* Sources */,
+				1C09D03A1E31C32800725F18 /* Frameworks */,
+				1C09D03B1E31C32800725F18 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PAL;
+			productName = PAL;
+			productReference = 1C09D03D1E31C32800725F18 /* libPAL.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1C09D0351E31C32800725F18 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0830;
+				TargetAttributes = {
+					1C09D03C1E31C32800725F18 = {
+						CreatedOnToolsVersion = 8.3;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 1C09D0381E31C32800725F18 /* Build configuration list for PBXProject "PAL" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+				Spanish,
+				Dutch,
+				Italian,
+			);
+			mainGroup = 1C09D0341E31C32800725F18;
+			productRefGroup = 1C09D03E1E31C32800725F18 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1C09D03C1E31C32800725F18 /* PAL */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1C09D0391E31C32800725F18 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1C09D0461E31C32800725F18 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C09D0621E31EC2800725F18 /* DebugRelease.xcconfig */;
+			buildSettings = {
+				DEAD_CODE_STRIPPING = "$(DEAD_CODE_STRIPPING_debug)";
+				DEBUG_DEFINES = "$(DEBUG_DEFINES_debug)";
+				GCC_OPTIMIZATION_LEVEL = "$(GCC_OPTIMIZATION_LEVEL_debug)";
+				STRIP_INSTALLED_PRODUCT = "$(STRIP_INSTALLED_PRODUCT_debug)";
+			};
+			name = Debug;
+		};
+		1C09D0471E31C32800725F18 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C09D0621E31EC2800725F18 /* DebugRelease.xcconfig */;
+			buildSettings = {
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Release;
+		};
+		1C09D0491E31C32800725F18 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C09D05D1E31C77A00725F18 /* PAL.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1C09D04A1E31C32800725F18 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C09D05D1E31C77A00725F18 /* PAL.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		1C09D05A1E31C6F000725F18 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C09D0631E31EC3100725F18 /* Base.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		1C09D05B1E31C6F000725F18 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C09D05D1E31C77A00725F18 /* PAL.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1C09D0381E31C32800725F18 /* Build configuration list for PBXProject "PAL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C09D0461E31C32800725F18 /* Debug */,
+				1C09D0471E31C32800725F18 /* Release */,
+				1C09D05A1E31C6F000725F18 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		1C09D0481E31C32800725F18 /* Build configuration list for PBXNativeTarget "PAL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C09D0491E31C32800725F18 /* Debug */,
+				1C09D04A1E31C32800725F18 /* Release */,
+				1C09D05B1E31C6F000725F18 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1C09D0351E31C32800725F18 /* Project object */;
+}

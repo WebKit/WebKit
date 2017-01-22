@@ -333,8 +333,6 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/ThemeCocoa.mm
     platform/cocoa/WebCoreNSErrorExtras.mm
 
-    platform/crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
-
     platform/gamepad/mac/HIDGamepad.cpp
     platform/gamepad/mac/HIDGamepadProvider.cpp
 

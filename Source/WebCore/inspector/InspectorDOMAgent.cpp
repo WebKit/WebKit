@@ -45,7 +45,6 @@
 #include "ContainerNode.h"
 #include "Cookie.h"
 #include "CookieJar.h"
-#include "CryptoDigest.h"
 #include "DOMEditor.h"
 #include "DOMPatchSupport.h"
 #include "DOMWindow.h"
@@ -96,6 +95,7 @@
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
+#include <pal/crypto/CryptoDigest.h>
 #include <runtime/JSCInlines.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
@@ -1316,7 +1316,7 @@ static String computeContentSecurityPolicySHA256Hash(const Element& element)
     TextEncoding documentEncoding = element.document().textEncoding();
     const TextEncoding& encodingToUse = documentEncoding.isValid() ? documentEncoding : UTF8Encoding();
     CString content = encodingToUse.encode(TextNodeTraversal::contentsAsString(element), EntitiesForUnencodables);
-    auto cryptoDigest = CryptoDigest::create(CryptoDigest::Algorithm::SHA_256);
+    auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     cryptoDigest->addBytes(content.data(), content.length());
     Vector<uint8_t> digest = cryptoDigest->computeHash();
     return makeString("sha256-", base64Encode(digest.data(), digest.size()));

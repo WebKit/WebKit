@@ -28,7 +28,7 @@
 
 #include <CommonCrypto/CommonCrypto.h>
 
-namespace WebCore {
+namespace PAL {
 
 struct CryptoDigestContext {
     CryptoDigest::Algorithm algorithm;
@@ -176,4 +176,4 @@ Vector<uint8_t> CryptoDigest::computeHash()
     return result;
 }
 
-} // namespace WebCore
+} // namespace PAL

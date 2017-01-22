@@ -29,7 +29,7 @@
 
 #include <gcrypt.h>
 
-namespace WebCore {
+namespace PAL {
 
 struct CryptoDigestContext {
     int algorithm;
@@ -94,4 +94,4 @@ Vector<uint8_t> CryptoDigest::computeHash()
     return result;
 }
 
-} // namespace WebCore
+} // namespace PAL

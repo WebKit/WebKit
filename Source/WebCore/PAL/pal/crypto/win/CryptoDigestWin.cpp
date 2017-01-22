@@ -26,9 +26,10 @@
 #include "config.h"
 #include "CryptoDigest.h"
 
+#include <windows.h>
 #include <wincrypt.h>
 
-namespace WebCore {
+namespace PAL {
 
 struct CryptoDigestContext {
     CryptoDigest::Algorithm algorithm;
@@ -100,4 +101,4 @@ Vector<uint8_t> CryptoDigest::computeHash()
     return result;
 }
 
-} // namespace WebCore
+} // namespace PAL

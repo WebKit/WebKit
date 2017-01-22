@@ -30,7 +30,6 @@
 #include "SoupNetworkSession.h"
 
 #include "AuthenticationChallenge.h"
-#include "CryptoDigest.h"
 #include "FileSystem.h"
 #include "GUniquePtrSoup.h"
 #include "Logging.h"
@@ -38,6 +37,7 @@
 #include "SoupNetworkProxySettings.h"
 #include <glib/gstdio.h>
 #include <libsoup/soup.h>
+#include <pal/crypto/CryptoDigest.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
@@ -78,7 +78,7 @@ private:
         if (!certificateData)
             return String();
 
-        auto digest = CryptoDigest::create(CryptoDigest::Algorithm::SHA_256);
+        auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
         digest->addBytes(certificateData->data, certificateData->len);
 
         auto hash = digest->computeHash();

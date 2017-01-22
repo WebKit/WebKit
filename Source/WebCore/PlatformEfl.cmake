@@ -69,8 +69,6 @@ list(APPEND WebCore_SOURCES
 
     platform/audio/efl/AudioBusEfl.cpp
 
-    platform/crypto/gcrypt/CryptoDigestGCrypt.cpp
-
     platform/efl/CursorEfl.cpp
     platform/efl/DragDataEfl.cpp
     platform/efl/DragImageEfl.cpp

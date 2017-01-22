@@ -68,8 +68,6 @@ list(APPEND WebCore_SOURCES
 
     platform/audio/glib/AudioBusGLib.cpp
 
-    platform/crypto/gcrypt/CryptoDigestGCrypt.cpp
-
     platform/gamepad/glib/GamepadsGlib.cpp
 
     platform/geoclue/GeolocationProviderGeoclue1.cpp

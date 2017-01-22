@@ -23,13 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoDigest_h
-#define CryptoDigest_h
+#pragma once
 
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
+namespace PAL {
 
 struct CryptoDigestContext;
 
@@ -55,6 +54,4 @@ private:
     std::unique_ptr<CryptoDigestContext> m_context;
 };
 
-} // namespace WebCore
-
-#endif // CryptoDigest_h
+} // namespace PAL
