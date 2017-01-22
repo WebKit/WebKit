@@ -1,3 +1,16 @@
+2017-01-21  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r210959): LayoutTest fast/mediastream/MediaStream-video-element-video-tracks-disabled.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=167260
+
+        Unreviewed test gardening.
+
+        Since this test checks against a black frame as its expected output, we need to use the legacy
+        media controls so that there is no start button.
+
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled.html:
+        * platform/mac-wk2/TestExpectations:
+
 2017-01-21  Chris Dumez  <cdumez@apple.com>
 
         JavaScript for-of does not work on a lot of collection types (e.g. HTMLCollection)
