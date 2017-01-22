@@ -1,3 +1,39 @@
+2017-01-21  Chris Dumez  <cdumez@apple.com>
+
+        JavaScript for-of does not work on a lot of collection types (e.g. HTMLCollection)
+        https://bugs.webkit.org/show_bug.cgi?id=167091
+
+        Reviewed by Darin Adler.
+
+        Update Array methods to throw a TypeError when (this === null || this === undefined)
+        instead of when (this == null). This is because (this == null) returns true for types
+        that masquerades as undefined (such as document.all) and this prevented use of the
+        Array API on such types. The specification only stays to use ToObject(), which throws
+        when the input is undefined or null.
+
+        The corresponding specification is at:
+        - https://www.ecma-international.org/ecma-262/7.0/index.html#sec-array.prototype.values
+        - https://www.ecma-international.org/ecma-262/7.0/index.html#sec-toobject
+
+        * builtins/ArrayPrototype.js:
+        (values):
+        (keys):
+        (entries):
+        (reduce):
+        (reduceRight):
+        (every):
+        (forEach):
+        (filter):
+        (map):
+        (some):
+        (fill):
+        (find):
+        (findIndex):
+        (includes):
+        (sort):
+        (concatSlowPath):
+        (copyWithin):
+
 2017-01-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] export JSC::importModule API for WebCore dynamic import

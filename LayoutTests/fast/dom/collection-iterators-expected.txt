@@ -1,0 +1,214 @@
+Tests that interfaces with an indexed getter and an integer-type length attribute get an iterator.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* AudioTrackList
+PASS obj.__proto__ is AudioTrackList.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* ClientRectList
+PASS obj.__proto__ is ClientRectList.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* CSSRuleList
+PASS obj.__proto__ is CSSRuleList.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* CSSStyleDeclaration
+PASS obj.__proto__ is CSSStyleDeclaration.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* CSSValueList
+PASS obj.__proto__ is CSSValueList.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* MimeTypeArray
+PASS obj.__proto__ is MimeTypeArray.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* WebKitNamedFlowCollection
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* Plugin
+PASS obj.__proto__ is Plugin.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* PluginArray
+PASS obj.__proto__ is PluginArray.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* DOMStringList
+PASS obj.__proto__ is DOMStringList.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* HTMLAllCollection
+PASS obj.__proto__ is HTMLAllCollection.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* HTMLCollection
+PASS obj.__proto__ is HTMLCollection.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* HTMLFormElement
+PASS obj.__proto__ is HTMLFormElement.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* HTMLOptionsCollection
+PASS obj.__proto__ is HTMLOptionsCollection.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* HTMLSelectElement
+PASS obj.__proto__ is HTMLSelectElement.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* MediaList
+PASS obj.__proto__ is MediaList.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* NamedNodeMap
+PASS obj.__proto__ is NamedNodeMap.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* SourceBufferList
+PASS obj.__proto__ is SourceBufferList.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* StyleSheetList
+PASS obj.__proto__ is StyleSheetList.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* TextTrackCueList
+PASS obj.__proto__ is TextTrackCueList.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* TextTrackList
+PASS obj.__proto__ is TextTrackList.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* VideoTrackList
+PASS obj.__proto__ is VideoTrackList.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+* VTTRegionList
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

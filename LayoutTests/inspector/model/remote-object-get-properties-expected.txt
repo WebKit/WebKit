@@ -529,6 +529,7 @@ ALL PROPERTIES:
     remove
     item
     namedItem
+    Symbol(Symbol.iterator)
     toString
     toLocaleString
     valueOf

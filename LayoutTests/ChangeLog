@@ -1,5 +1,33 @@
 2017-01-21  Chris Dumez  <cdumez@apple.com>
 
+        JavaScript for-of does not work on a lot of collection types (e.g. HTMLCollection)
+        https://bugs.webkit.org/show_bug.cgi?id=167091
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/FileList-iterator-expected.txt: Added.
+        * fast/dom/FileList-iterator.html: Added.
+        * fast/dom/collection-iterators-expected.txt: Added.
+        * fast/dom/collection-iterators.html: Added.
+        * fast/events/touch/ios/touchlist-iterator-expected.txt: Added.
+        * fast/events/touch/ios/touchlist-iterator.html: Added.
+        Add layout test coverage for all types that gained an iterator.
+
+        * fast/dom/document-all-undefined-expected.txt: Added.
+        * fast/dom/document-all-undefined.html: Added.
+        Add layout test to cover the fact that HTMLAllCollection masquerades as
+        undefined, as per:
+        - https://html.spec.whatwg.org/multipage/obsolete.html#dom-document-all
+
+        * inspector/model/remote-object-get-properties-expected.txt:
+        Rebaseline now that there is an extra Symbol.iterator property.
+
+        * platform/wk2/TestExpectations:
+        Skip that requires beginDragWithFiles() as this is unimplemented in
+        WebKitTestRunner.
+
+2017-01-21  Chris Dumez  <cdumez@apple.com>
+
         innerText should replace existing text node
         https://bugs.webkit.org/show_bug.cgi?id=167116
 

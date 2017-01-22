@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style media="screen and (min-width: 480px)">
+body {
+    background-position: 10px 20px;
+}
+</style>
+</head>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that interfaces with an indexed getter and an integer-type length attribute get an iterator.");
+
+function checkHasIterator(interfaceName, _obj)
+{
+    obj = _obj;
+    debug("* " + interfaceName);
+    if (interfaceName in window)
+        shouldBe("obj.__proto__", "" + interfaceName + ".prototype");
+    shouldBeTrue("Symbol.iterator in obj");
+    forOfSuccess = true;
+    try {
+        for (var p of obj) { }
+    } catch (e) {
+        debug("Exception: " + e);
+        forOfSuccess = false;
+    }
+    if (forOfSuccess)
+        testPassed("for..of did not throw an exception");
+    else
+        testFailed("for..of threw an exception");
+
+    shouldBeFalse("'entries' in obj");
+    shouldBeFalse("'keys' in obj");
+    shouldBeFalse("'forEach' in obj");
+    shouldBeFalse("'values' in obj");
+
+    debug("");
+}
+
+var media = document.createElement("video");
+checkHasIterator("AudioTrackList", media.audioTracks);
+checkHasIterator("ClientRectList", document.body.getClientRects());
+checkHasIterator("CSSRuleList", window.getMatchedCSSRules(document.body));
+checkHasIterator("CSSStyleDeclaration", window.getComputedStyle(document.body));
+checkHasIterator("CSSValueList", window.getComputedStyle(document.body).getPropertyCSSValue('background-position'));
+checkHasIterator("MimeTypeArray", navigator.mimeTypes);
+checkHasIterator("WebKitNamedFlowCollection", document.webkitGetNamedFlows());
+if (navigator.plugins.length)
+    checkHasIterator("Plugin", navigator.plugins[0]);
+checkHasIterator("PluginArray", navigator.plugins);
+checkHasIterator("DOMStringList", location.ancestorOrigins);
+checkHasIterator("HTMLAllCollection", document.all);
+checkHasIterator("HTMLCollection", document.getElementsByTagName("body"));
+checkHasIterator("HTMLFormElement", document.createElement("form"));
+checkHasIterator("HTMLOptionsCollection", document.createElement("select").options);
+checkHasIterator("HTMLSelectElement", document.createElement("select"));
+checkHasIterator("MediaList", document.getElementsByTagName("style")[0].sheet.media);
+checkHasIterator("NamedNodeMap", document.body.attributes);
+if ('SourceBufferList' in window)
+    checkHasIterator("SourceBufferList", (new MediaSource()).sourceBuffers);
+checkHasIterator("StyleSheetList", document.styleSheets);
+checkHasIterator("TextTrackCueList", document.createElement("video").addTextTrack("subtitles").cues);
+checkHasIterator("TextTrackList", media.textTracks);
+checkHasIterator("VideoTrackList", media.videoTracks);
+checkHasIterator("VTTRegionList", document.createElement("video").addTextTrack("subtitles").regions);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

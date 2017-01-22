@@ -2967,6 +2967,29 @@ sub GetResultTypeFilter
     return "DOMJIT::IDLResultTypeFilter<${IDLType}>::value";
 }
 
+sub GetAttributeWithName
+{
+    my ($interface, $attributeName) = @_;
+    
+    foreach my $attribute (@{$interface->attributes}) {
+        return $attribute if $attribute->name eq $attributeName;
+    }
+}
+
+# https://heycam.github.io/webidl/#es-iterator
+sub InterfaceNeedsIterator
+{
+    my ($interface) = @_;
+    
+    return 1 if $interface->iterable;
+    if (GetIndexedGetterFunction($interface)) {
+        my $lengthAttribute = GetAttributeWithName($interface, "length");
+        return 1 if $lengthAttribute and $codeGenerator->IsIntegerType($lengthAttribute->type);
+    }
+    # FIXME: This should return 1 for maplike and setlike once we support them.
+    return 0;
+}
+
 sub GenerateImplementation
 {
     my ($object, $interface, $enumerations, $dictionaries) = @_;
@@ -3320,9 +3343,16 @@ sub GenerateImplementation
             push(@implContent, "#endif\n") if $conditionalString;
         }
 
-        if ($interface->iterable) {
-            addIterableProperties($interface, $className);
+        if (InterfaceNeedsIterator($interface)) {
+            if (IsKeyValueIterableInterface($interface)) {
+                my $functionName = GetFunctionName($interface, $className, @{$interface->iterable->functions}[0]);
+                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral(\"[Symbol.Iterator]\"), $functionName), DontEnum);\n");
+            } else {
+                AddToImplIncludes("<builtins/BuiltinNames.h>");
+                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), DontEnum);\n");
+            }
         }
+        push(@implContent, "    addValueIterableMethods(*globalObject(), *this);\n") if $interface->iterable and !IsKeyValueIterableInterface($interface);
 
         addUnscopableProperties($interface);
 
@@ -5155,24 +5185,6 @@ JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState* state)
 }
 
 END
-    }
-}
-
-sub addIterableProperties()
-{
-    my $interface = shift;
-    my $className = shift;
-
-    if (NeedsRuntimeCheck($interface->iterable)) {
-        my $enable_function = GetRuntimeEnableFunctionName($interface->iterable);
-        push(@implContent, "    if (${enable_function}())\n    ");
-    }
-
-    if (IsKeyValueIterableInterface($interface)) {
-        my $functionName = GetFunctionName($interface, $className, @{$interface->iterable->functions}[0]);
-        push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral(\"[Symbol.Iterator]\"), $functionName), DontEnum);\n");
-    } else {
-        push(@implContent, "    addValueIterableMethods(*globalObject(), *this);\n");
     }
 }
 

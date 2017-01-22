@@ -1,5 +1,37 @@
 2017-01-21  Chris Dumez  <cdumez@apple.com>
 
+        JavaScript for-of does not work on a lot of collection types (e.g. HTMLCollection)
+        https://bugs.webkit.org/show_bug.cgi?id=167091
+
+        Reviewed by Darin Adler.
+
+        As per the Web IDL specification [1], https://heycam.github.io/webidl/#es-iterator
+        an interface should get an iterator if it has:
+        - an indexed property getter and an integer-typed attribute named "length".
+
+        We now comply with this part of the Web IDL specification. This adds an iterator
+        to the following interfaces:
+        - AudioTrackList, ClientRectList, CSSRuleList, CSSStyleDeclaration, CSSValueList,
+          MimeTypeArray, WebKitNamedFlowCollection, Plugin, PluginArray, DOMStringList,
+          FileList, HTMLAllCollection, HTMLCollection, HTMLFormElement, HTMLOptionsCollection,
+          HTMLSelectElement, MediaList, NamedNodeMap, SourceBufferList, StyleSheetList,
+          TextTrackCueList, TextTrackList, TouchList, VideoTrackList, VTTRegionList.
+
+        As a result, it is now possible to use `for ... of` for those types.
+
+        Tests: fast/dom/FileList-iterator.html
+               fast/dom/collection-iterators.html
+               fast/dom/document-all-undefined.html
+               fast/events/touch/ios/touchlist-iterator.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetAttributeWithName):
+        (InterfaceNeedsIterator):
+        (GenerateImplementation):
+        (addIterableProperties):
+
+2017-01-21  Chris Dumez  <cdumez@apple.com>
+
         innerText should replace existing text node
         https://bugs.webkit.org/show_bug.cgi?id=167116
 
