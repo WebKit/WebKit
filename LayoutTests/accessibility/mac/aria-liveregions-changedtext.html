@@ -29,8 +29,7 @@
     if (window.accessibilityController) {
         window.testRunner.waitUntilDone();
 
-        document.getElementById("liveregion").focus();
-        liveRegionText = window.accessibilityController.focusedElement;
+        liveRegionText = accessibilityController.accessibleElementById("liveregion");
 
         var addedNotification = liveRegionText.addNotificationListener(ariaCallbackText);
         shouldBe("addedNotification", "true");

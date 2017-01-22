@@ -1017,23 +1017,4 @@ ExceptionOr<void> replaceChildrenWithFragment(ContainerNode& container, Ref<Docu
     return containerNode->appendChild(fragment);
 }
 
-ExceptionOr<void> replaceChildrenWithText(ContainerNode& container, const String& text)
-{
-    Ref<ContainerNode> containerNode(container);
-    ChildListMutationScope mutation(containerNode);
-
-    if (hasOneTextChild(containerNode)) {
-        downcast<Text>(*containerNode->firstChild()).setData(text);
-        return { };
-    }
-
-    auto textNode = Text::create(containerNode->document(), text);
-
-    if (hasOneChild(containerNode))
-        return containerNode->replaceChild(textNode, *containerNode->firstChild());
-
-    containerNode->removeChildren();
-    return containerNode->appendChild(textNode);
-}
-
 }

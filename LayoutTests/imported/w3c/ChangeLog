@@ -1,3 +1,14 @@
+2017-01-21  Chris Dumez  <cdumez@apple.com>
+
+        innerText should replace existing text node
+        https://bugs.webkit.org/show_bug.cgi?id=167116
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing test now that one more check is passing.
+
+        * web-platform-tests/innerText/setter-expected.txt:
+
 2017-01-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline html/dom/interfaces.html.

@@ -22,7 +22,7 @@ PASS Tabs preserved
 PASS Leading whitespace preserved 
 PASS Trailing whitespace preserved 
 PASS Whitespace not compressed 
-FAIL Existing text deleted assert_not_equals: Child should be a *new* text node got disallowed value Text node "abc"
+PASS Existing text deleted 
 PASS Existing <br> deleted 
 PASS Assigning the empty string 
 PASS Assigning null 

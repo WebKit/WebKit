@@ -1,5 +1,30 @@
 2017-01-21  Chris Dumez  <cdumez@apple.com>
 
+        innerText should replace existing text node
+        https://bugs.webkit.org/show_bug.cgi?id=167116
+
+        Reviewed by Darin Adler.
+
+        * accessibility/mac/aria-liveregions-changedtext.html:
+        The text is using innerText and changed behavior now that we stopped
+        reusing the existing Text child. Code in RenderObject::willBeDestroyed()
+        is supposed to call AXObjectCache::childrenChanged(parent()) to fire
+        the AXLiveRegionChanged notification. However, it did not because the
+        parent renderer did not have an associated AccessibilityObject.
+
+        * fast/dom/HTMLElement/set-inner-outer-optimization.html:
+        Update existing test which expected the non spec-compliant Text child
+        optimization.
+
+        * fast/repaint/vertical-text-repaint-expected.txt:
+        * fast/repaint/vertical-text-repaint.html:
+        Update / rebaseline test. We now repaint each 80x80 rectangle instead of
+        only repainting the text rects because we remove the Text node then add
+        a new one instead of only updating the existing Text node's test. The
+        output looks exactly the same otherwise.
+
+2017-01-21  Chris Dumez  <cdumez@apple.com>
+
         AccessibilityRenderObject::textChanged() bypasses AXLiveRegionChanged notification coalescing
         https://bugs.webkit.org/show_bug.cgi?id=167286
         <rdar://problem/30133211>

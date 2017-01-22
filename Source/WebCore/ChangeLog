@@ -1,5 +1,29 @@
 2017-01-21  Chris Dumez  <cdumez@apple.com>
 
+        innerText should replace existing text node
+        https://bugs.webkit.org/show_bug.cgi?id=167116
+
+        Reviewed by Darin Adler.
+
+        Update setInnerText() to use ContainerNode::replaceAllChildren()
+        instead of replaceChildrenWithText(). replaceAllChildren() is
+        implemented as per specification:
+        - https://html.spec.whatwg.org/multipage/dom.html#the-innertext-idl-attribute
+        - https://dom.spec.whatwg.org/#concept-node-replace-all
+
+        As a result, we now correctly remove existing children before
+        inserting the new one.
+
+        No new tests, updated existing one.
+
+        * editing/markup.cpp:
+        (WebCore::replaceChildrenWithText): Deleted.
+        * editing/markup.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText):
+
+2017-01-21  Chris Dumez  <cdumez@apple.com>
+
         AccessibilityRenderObject::textChanged() bypasses AXLiveRegionChanged notification coalescing
         https://bugs.webkit.org/show_bug.cgi?id=167286
         <rdar://problem/30133211>

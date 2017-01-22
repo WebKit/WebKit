@@ -503,30 +503,34 @@ ExceptionOr<void> HTMLElement::setInnerText(const String& text)
     // FIXME: This doesn't take whitespace collapsing into account at all.
 
     if (!text.contains('\n') && !text.contains('\r')) {
-        if (text.isEmpty()) {
-            removeChildren();
-            return { };
-        }
-        return replaceChildrenWithText(*this, text);
+        if (text.isEmpty())
+            replaceAllChildren(nullptr);
+        else
+            replaceAllChildren(document().createTextNode(text));
+        return { };
     }
 
     // FIXME: Do we need to be able to detect preserveNewline style even when there's no renderer?
     // FIXME: Can the renderer be out of date here? Do we need to call updateStyleIfNeeded?
     // For example, for the contents of textarea elements that are display:none?
-    auto r = renderer();
+    auto* r = renderer();
     if ((r && r->style().preserveNewline()) || (inDocument() && isTextControlInnerTextElement())) {
-        if (!text.contains('\r'))
-            return replaceChildrenWithText(*this, text);
+        if (!text.contains('\r')) {
+            replaceAllChildren(document().createTextNode(text));
+            return { };
+        }
         String textWithConsistentLineBreaks = text;
         textWithConsistentLineBreaks.replace("\r\n", "\n");
         textWithConsistentLineBreaks.replace('\r', '\n');
-        return replaceChildrenWithText(*this, textWithConsistentLineBreaks);
+        replaceAllChildren(document().createTextNode(textWithConsistentLineBreaks));
+        return { };
     }
 
     // Add text nodes and <br> elements.
     auto fragment = textToFragment(text);
     if (fragment.hasException())
         return fragment.releaseException();
+    // FIXME: This should use replaceAllChildren() once it accepts DocumentFragments as input.
     return replaceChildrenWithFragment(*this, fragment.releaseReturnValue());
 }
 

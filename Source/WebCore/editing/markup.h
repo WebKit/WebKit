@@ -57,7 +57,6 @@ bool isPlainTextMarkup(Node*);
 
 // These methods are used by HTMLElement & ShadowRoot to replace the children with respected fragment/text.
 ExceptionOr<void> replaceChildrenWithFragment(ContainerNode&, Ref<DocumentFragment>&&);
-ExceptionOr<void> replaceChildrenWithText(ContainerNode&, const String&);
 
 String createMarkup(const Range&, Vector<Node*>* = nullptr, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false, EAbsoluteURLs = DoNotResolveURLs);
 String createMarkup(const Node&, EChildrenOnly = IncludeNode, Vector<Node*>* = nullptr, EAbsoluteURLs = DoNotResolveURLs, Vector<QualifiedName>* tagNamesToSkip = nullptr, EFragmentSerialization = HTMLFragmentSerialization);
