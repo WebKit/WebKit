@@ -195,60 +195,6 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
     return !_private->m_viewportConstrainedLayers.isEmpty();
 }
 
-static ViewportConstraints::AnchorEdgeFlags anchorEdgeFlagsForAnchorEdge(WebFixedPositionAnchorEdge edge)
-{
-    switch (edge) {
-    case WebFixedPositionAnchorEdgeLeft:
-        return ViewportConstraints::AnchorEdgeFlags::AnchorEdgeLeft;
-    case WebFixedPositionAnchorEdgeRight:
-        return ViewportConstraints::AnchorEdgeFlags::AnchorEdgeRight;
-    case WebFixedPositionAnchorEdgeTop:
-        return ViewportConstraints::AnchorEdgeFlags::AnchorEdgeTop;
-    case WebFixedPositionAnchorEdgeBottom:
-        return ViewportConstraints::AnchorEdgeFlags::AnchorEdgeBottom;
-    }
-}
-
-- (CGFloat)minimumOffsetFromFixedPositionLayersToAnchorEdge:(WebFixedPositionAnchorEdge)anchorEdge ofRect:(CGRect)rect inLayer:(CALayer *)layer
-{
-    LockHolder lock(WebFixedPositionContentDataLock());
-    ViewportConstraints::AnchorEdgeFlags anchorEdgeFlags = anchorEdgeFlagsForAnchorEdge(anchorEdge);
-    CGFloat minimumOffset = CGFLOAT_MAX;
-    LayerInfoMap::const_iterator end = _private->m_viewportConstrainedLayers.end();
-    for (LayerInfoMap::const_iterator it = _private->m_viewportConstrainedLayers.begin(); it != end; ++it) {
-        CALayer *fixedLayer = it->key.get();
-        ViewportConstrainedLayerData* constraintData = it->value.get();
-        const ViewportConstraints& constraints = *(constraintData->m_viewportConstraints.get());
-
-        if (!constraints.hasAnchorEdge(anchorEdgeFlags))
-            continue;
-        // According to Simon: It's possible that there are windows of time
-        // where these CALayers are unparented (because we've flushed on the web
-        // thread but haven't updated those layers yet).
-        if (![fixedLayer superlayer])
-            continue;
-
-        CGRect fixedLayerExtent = [layer convertRect:[fixedLayer bounds] fromLayer:fixedLayer];
-        CGFloat offset;
-        switch (anchorEdge) {
-        case WebFixedPositionAnchorEdgeLeft:
-            offset = CGRectGetMinX(fixedLayerExtent) - CGRectGetMinX(rect);
-            break;
-        case WebFixedPositionAnchorEdgeRight:
-            offset = CGRectGetMaxX(rect) - CGRectGetMaxX(fixedLayerExtent);
-            break;
-        case WebFixedPositionAnchorEdgeTop:
-            offset = CGRectGetMinY(fixedLayerExtent) - CGRectGetMinY(rect);
-            break;
-        case WebFixedPositionAnchorEdgeBottom:
-            offset = CGRectGetMaxY(rect) - CGRectGetMaxY(fixedLayerExtent);
-            break;
-        }
-        minimumOffset = CGFloatMin(minimumOffset, offset);
-    }
-    return minimumOffset;
-}
-
 @end
 
 #endif // PLATFORM(IOS)

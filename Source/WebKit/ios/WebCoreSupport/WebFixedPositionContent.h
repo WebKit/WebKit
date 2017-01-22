@@ -49,7 +49,5 @@ typedef NS_ENUM(NSInteger, WebFixedPositionAnchorEdge) {
 - (void)overflowScrollPositionForLayer:(CALayer *)scrollLayer changedTo:(CGPoint)scrollPosition;
 - (void)didFinishScrollingOrZooming;
 - (BOOL)hasFixedOrStickyPositionLayers;
-// Returns CGFLOAT_MAX if there are no layers anchored to the given edge.
-- (CGFloat)minimumOffsetFromFixedPositionLayersToAnchorEdge:(WebFixedPositionAnchorEdge)anchorEdge ofRect:(CGRect)rect inLayer:(CALayer *)layer;
 
 @end
