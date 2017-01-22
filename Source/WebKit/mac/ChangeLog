@@ -1,5 +1,18 @@
 2017-01-21  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove -[WebFrame sendOrientationChangeEvent:] which is unused
+        https://bugs.webkit.org/show_bug.cgi?id=167276
+
+        Reviewed by Alex Christensen.
+        
+        It was usurped by -deviceOrientationChanged in 2014.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame sendOrientationChangeEvent:]): Deleted.
+        * WebView/WebFramePrivate.h:
+
+2017-01-21  Simon Fraser  <simon.fraser@apple.com>
+
         Remove -[WebView _contentsSizeRespectingOverflow] which is no longer needed
         https://bugs.webkit.org/show_bug.cgi?id=167271
 

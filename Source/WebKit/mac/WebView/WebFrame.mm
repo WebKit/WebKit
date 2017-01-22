@@ -1279,11 +1279,6 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     });
 }
 
-- (void)sendOrientationChangeEvent:(int)newOrientation
-{
-    [self deviceOrientationChanged];
-}
-
 - (void)setNeedsLayout
 {
     WebCore::Frame *frame = core(self);

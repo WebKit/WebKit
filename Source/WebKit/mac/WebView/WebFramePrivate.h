@@ -120,8 +120,6 @@ typedef enum {
 - (void)_restoreViewState;
 
 - (void)deviceOrientationChanged;
-// FIXME: deprecated, to be removed after the call sites are updated.
-- (void)sendOrientationChangeEvent:(int)newOrientation;
 
 - (void)setNeedsLayout;
 - (CGSize)renderedSizeOfNode:(DOMNode *)node constrainedToWidth:(float)width;
