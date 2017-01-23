@@ -1,0 +1,5 @@
+Hello
+PASS - "font-variation-settings" property for "box" element at 0.5s saw something close to: normal
+PASS - "font-variation-settings" property for "box" element at 1s saw something close to: normal
+PASS - "font-variation-settings" property for "box" element at 2s saw something close to: normal
+

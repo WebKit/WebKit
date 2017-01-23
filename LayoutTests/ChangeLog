@@ -1,3 +1,52 @@
+2017-01-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Migrate font variations tests to using David Jonathan Ross's Boxis font
+        https://bugs.webkit.org/show_bug.cgi?id=167222
+
+        Reviewed by Dean Jackson.
+
+        He extremely generously made this font for doing testing of variation fonts,
+        and worked with us to licence it appropriately so it can be used in WebKit
+        directly.
+
+        Thanks so much to DJR!!!!
+
+        I also took this opportunity to make the tests in animations/font-variations
+        more robust.
+
+        * animations/font-variations/font-variation-settings-expected.html: Removed.
+        * animations/font-variations/font-variation-settings-expected.txt: Added.
+        * animations/font-variations/font-variation-settings-order-expected.html: Removed.
+        * animations/font-variations/font-variation-settings-order-expected.txt: Added.
+        * animations/font-variations/font-variation-settings-order.html:
+        * animations/font-variations/font-variation-settings-unlike-expected.html: Removed.
+        * animations/font-variations/font-variation-settings-unlike-expected.txt: Added.
+        * animations/font-variations/font-variation-settings-unlike.html:
+        * animations/font-variations/font-variation-settings.html:
+        * animations/font-variations/resources/Boxis-VF.ttf: Added.
+        * fast/backgrounds/background-repeat-x-y.html: Removed.
+        * fast/text/variations/advances.html:
+        * fast/text/variations/case-axis-names-expected.html:
+        * fast/text/variations/case-axis-names.html:
+        * fast/text/variations/default-value-expected.html:
+        * fast/text/variations/default-value.html:
+        * fast/text/variations/duplicate-axis-expected.html: Removed.
+        * fast/text/variations/duplicate-axis.html: Removed.
+        * fast/text/variations/duplicate-expected.html:
+        * fast/text/variations/duplicate.html:
+        * fast/text/variations/exist-expected-mismatch.html:
+        * fast/text/variations/exist.html:
+        * fast/text/variations/getComputedStyle-expected.txt:
+        * fast/text/variations/getComputedStyle.html:
+        * fast/text/variations/inheritance-expected.html:
+        * fast/text/variations/inheritance.html:
+        * fast/text/variations/order-expected.html:
+        * fast/text/variations/order.html:
+        * fast/text/variations/outofbounds-expected-mismatch.html:
+        * fast/text/variations/outofbounds.html:
+        * fast/text/variations/resources/Boxis-VF.ttf: Added.
+        * platform/mac/TestExpectations:
+
 2017-01-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/modern-media-controls/tracks-panel/tracks-panel-hide.html as flaky on macOS debug.

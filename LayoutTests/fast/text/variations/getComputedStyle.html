@@ -2,26 +2,43 @@
 <html>
 <head>
 <meta charset="utf-8">
+<style>
+@font-face {
+	font-family: "Boxis";
+	src: url("resources/Boxis-VF.ttf");
+}
+</style>
 <script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<div id="test0" style="font-family: 'Skia'; font-variation-settings: 'wght' 2;"></div>
-<div id="test1" style="font-family: 'Skia'; font-variation-settings: 'wght' 2, 'wght' 3;"></div>
-<div id="test2" style="font-family: 'Skia'; font-variation-settings: 'wght' 2, 'wdth' 1.2;"></div>
-<div id="test3" style="font-family: 'Skia'; font-variation-settings: 'wdth' 1.2, 'wght' 2;"></div>
-<div id="test4" style="font-family: 'Skia'; font-variation-settings: normal;"></div>
-<div id="test5" style="font-family: 'Skia'; font-variation-settings: 'abcde' 3;"></div>
-<div id="test6" style="font-family: 'Skia'; font-variation-settings: 'abc한국어e' 3;"></div>
-<div id="test7" style="font-family: 'Skia'; font-variation-settings: 'wght' 27;"></div>
+<div id="test0" style="font-family: 'Boxis'; font-variation-settings: 'hght' 400;">a</div>
+<div id="test1" style="font-family: 'Boxis'; font-variation-settings: 'hght' 400, 'hght' 500;">a</div>
+<div id="test2" style="font-family: 'Boxis'; font-variation-settings: 'hght' 400, 'wdth' 500;">a</div>
+<div id="test3" style="font-family: 'Boxis'; font-variation-settings: 'wdth' 500, 'hght' 400;">a</div>
+<div id="test4" style="font-family: 'Boxis'; font-variation-settings: normal;">a</div>
+<div id="test5" style="font-family: 'Boxis'; font-variation-settings: 'abcde' 500;">a</div>
+<div id="test6" style="font-family: 'Boxis'; font-variation-settings: 'abc한국어e' 500;">a</div>
+<div id="test7" style="font-family: 'Boxis'; font-variation-settings: 'hght' 999999;">a</div>
 <script>
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test0')).getPropertyValue('font-variation-settings')", "'wght' 2");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).getPropertyValue('font-variation-settings')", "'wght' 3");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).getPropertyValue('font-variation-settings')", "'wght' 2, 'wdth' 1.2");
-shouldBe("window.getComputedStyle(document.getElementById('test2')).getPropertyValue('font-variation-settings')", "window.getComputedStyle(document.getElementById('test3')).getPropertyValue('font-variation-settings')");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).getPropertyValue('font-variation-settings')", "normal");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).getPropertyValue('font-variation-settings')", "normal");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test6')).getPropertyValue('font-variation-settings')", "normal");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test7')).getPropertyValue('font-variation-settings')", "'wght' 27");
+window.jsTestIsAsync = true;
+
+var promises = [];
+
+document.fonts.forEach(function(f) {
+	promises.push(f.loaded);
+});
+
+Promise.all(promises).then(function() {
+	shouldBeEqualToString("window.getComputedStyle(document.getElementById('test0')).getPropertyValue('font-variation-settings')", "'hght' 400");
+	shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).getPropertyValue('font-variation-settings')", "'hght' 500");
+	shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).getPropertyValue('font-variation-settings')", "'wdth' 500, 'hght' 400");
+	shouldBe("window.getComputedStyle(document.getElementById('test3')).getPropertyValue('font-variation-settings')", "window.getComputedStyle(document.getElementById('test2')).getPropertyValue('font-variation-settings')");
+	shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).getPropertyValue('font-variation-settings')", "normal");
+	shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).getPropertyValue('font-variation-settings')", "normal");
+	shouldBeEqualToString("window.getComputedStyle(document.getElementById('test6')).getPropertyValue('font-variation-settings')", "normal");
+	shouldBeEqualToString("window.getComputedStyle(document.getElementById('test7')).getPropertyValue('font-variation-settings')", "'hght' 999999");
+	finishJSTest();
+});
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>
