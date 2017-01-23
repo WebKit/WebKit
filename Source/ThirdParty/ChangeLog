@@ -3,6 +3,14 @@
         gtest fails to link on Linux due to missing -lpthread
         https://bugs.webkit.org/show_bug.cgi?id=167313
 
+        * gtest/CMakeLists.txt: Remove find_package(Threads) that was added in my last commit.
+        This is assumed to already happen in the platform cmake options file.
+
+2017-01-23  Timothy Hatcher  <timothy@hatcher.name>
+
+        gtest fails to link on Linux due to missing -lpthread
+        https://bugs.webkit.org/show_bug.cgi?id=167313
+
         Reviewed by Alex Christensen.
 
         * gtest/CMakeLists.txt: Add call to find_package(Threads) before testing CMAKE_USE_PTHREADS_INIT.
