@@ -1,3 +1,18 @@
+2017-01-23  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GTK] asserting on unknown locale for hyphenation is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=167312
+
+        Reviewed by Carlos Garcia Campos.
+
+        The fact that we hit the assert on a test called 'hyphenation-unknown-locale' is already
+        a strong indication we should not have it. In addition to that, Carlos Lopez pointed out
+        a similar assert was removed from the Mac codepaths when the test was introduced.
+
+        * platform/text/hyphen/HyphenationLibHyphen.cpp:
+        (WebCore::lastHyphenLocation): early return when a locale that is not available is provided
+        for hyphenation, instead of asserting.
+
 2017-01-23  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix the iOS build after r211033.
