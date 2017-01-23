@@ -91,8 +91,10 @@ inline unsigned JSArrayBufferView::byteOffset()
 
 inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrapped(JSValue value)
 {
-    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(value))
-        return view->unsharedImpl();
+    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(value)) {
+        if (!view->isShared())
+            return view->unsharedImpl();
+    }
     return nullptr;
 }
 

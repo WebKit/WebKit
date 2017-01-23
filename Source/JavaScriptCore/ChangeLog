@@ -1,3 +1,17 @@
+2017-01-23  Filip Pizlo  <fpizlo@apple.com>
+
+        SharedArrayBuffer plus WebGL should not equal CRASH
+        https://bugs.webkit.org/show_bug.cgi?id=167329
+
+        Reviewed by Saam Barati.
+        
+        DOM unwrapping methods should return null rather than crashing. The code expects an
+        unshared buffer, so we should return null when it's shared. The caller can then decide
+        if they like null or not.
+
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::toWrapped):
+
 2017-01-23  Mark Lam  <mark.lam@apple.com>
 
         ObjCCallbackFunction::destroy() should not use jsCast().
