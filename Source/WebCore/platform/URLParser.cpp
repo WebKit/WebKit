@@ -1462,8 +1462,10 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                             return;
                         }
                         if (UNLIKELY(!isSlash)) {
-                            syntaxViolation(c);
-                            appendToASCIIBuffer('/');
+                            if (m_urlIsSpecial) {
+                                syntaxViolation(c);
+                                appendToASCIIBuffer('/');
+                            }
                             m_url.m_pathAfterLastSlash = currentPosition(c);
                         }
                     }

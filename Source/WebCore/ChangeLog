@@ -1,3 +1,19 @@
+2017-01-23  Alex Christensen  <achristensen@webkit.org>
+
+        Make URLs with non-special schemes and a query or fragment but no slash after the host more compatible
+        https://bugs.webkit.org/show_bug.cgi?id=167317
+        <rdar://problem/29526875>
+
+        Reviewed by Sam Weinig.
+
+        This is currently being added to the URL spec in https://github.com/whatwg/url/issues/212
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parse):
+        Only add a slash if there wasn't one if the URL has a special scheme.
+        This new behavior matches the old behavior of URL::parse.
+
 2017-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Convert langAttributeAwareFormControlUIEnabled to a Setting
