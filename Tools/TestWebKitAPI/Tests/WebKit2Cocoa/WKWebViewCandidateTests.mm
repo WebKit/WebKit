@@ -28,7 +28,7 @@
 #if WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201
 
 #import "PlatformUtilities.h"
-#import "TestWKWebViewMac.h"
+#import "TestWKWebView.h"
 
 #import <Carbon/Carbon.h>
 #import <WebKit/WebKitPrivate.h>

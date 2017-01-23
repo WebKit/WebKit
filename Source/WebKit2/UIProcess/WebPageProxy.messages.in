@@ -483,6 +483,9 @@ messages -> WebPageProxy {
 
 #if PLATFORM(MAC)
     DidHandleAcceptedCandidate()
+#endif
+
+#if PLATFORM(COCOA)
     HandleActiveNowPlayingSessionInfoResponse(bool hasActiveSession, String title, double duration, double elapsedTime)
 #endif
 

@@ -23,29 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestWKWebViewMac_h
-#define TestWKWebViewMac_h
-
 #import <WebKit/WebKit.h>
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if WK_API_ENABLED
 
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>
 - (void)addMessage:(NSString *)message withHandler:(dispatch_block_t)handler;
 @end
 
 @interface TestWKWebView : WKWebView
-// Simulates clicking with a pressure-sensitive device, if possible.
-- (void)mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure;
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action;
 - (void)loadTestPageNamed:(NSString *)pageName;
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName;
-- (void)typeCharacter:(char)character;
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
 - (void)waitForMessage:(NSString *)message;
 - (void)performAfterLoading:(dispatch_block_t)actions;
 @end
 
-#endif /* WK_API_ENABLED && PLATFORM(MAC) */
+#if PLATFORM(MAC)
+@interface TestWKWebView (MacOnly)
+// Simulates clicking with a pressure-sensitive device, if possible.
+- (void)mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure;
+- (void)typeCharacter:(char)character;
+@end
+#endif
 
-#endif /* TestWKWebViewMac_h */
+#endif // WK_API_ENABLED
+

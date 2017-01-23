@@ -1,3 +1,24 @@
+2017-01-23  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r208149): Video details does not apear and missing scrubber in Control Center
+        https://bugs.webkit.org/show_bug.cgi?id=167233
+
+        Reviewed by Alex Christensen.
+
+        Test: In TestWebKitAPI, NowPlayingControlsTests.NowPlayingControlsIOS
+
+        In r208149, we introduced a new media type, Video, and renamed the old type to
+        VideoAudio (to be able to distinguish between video-with-audio and silent-video).
+        But we missed one place where that type needs to be renamed.
+
+        For testing purposes, overload methods from PlatformMediaSessionManager which WebKit2 uses
+        to report the current now playing session and it's information.
+
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::nowPlayingEligibleSession):
+        (WebCore::MediaSessionManageriOS::updateNowPlayingInfo):
+
 2017-01-23  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r211033): ASSERTION FAILED: m_ptr in com.apple.WebCore: WTF::RefPtr<WebCore::Element>::operator* const + 70

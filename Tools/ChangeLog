@@ -1,3 +1,42 @@
+2017-01-23  Jer Noble  <jer.noble@apple.com>
+
+        Video details does not apear and missing scrubber in Control Center
+        https://bugs.webkit.org/show_bug.cgi?id=167233
+
+        Reviewed by Alex Christensen.
+
+        Refactor TestWKWebViewMac to work on PLATFORM(IOS). Add a new test to
+        NowPlayingControlTests for iOS.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/NowPlayingControlsTests.mm:
+        (-[NowPlayingTestWebView setWindowVisible:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/SnapshotStore.mm:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKWebViewCandidateTests.mm:
+        * TestWebKitAPI/cocoa/TestWKWebView.h: Renamed from Tools/TestWebKitAPI/mac/TestWKWebViewMac.h.
+        * TestWebKitAPI/cocoa/TestWKWebView.mm: Renamed from Tools/TestWebKitAPI/mac/TestWKWebViewMac.mm.
+        (SOFT_LINK_CLASS):
+        (-[TestMessageHandler addMessage:withHandler:]):
+        (-[TestMessageHandler userContentController:didReceiveScriptMessage:]):
+        (__simulated_forceClickAssociatedEventsMask):
+        (-[TestWKWebViewHostWindow _mouseDownAtPoint:simulatePressure:]):
+        (-[TestWKWebViewHostWindow isKeyWindow]):
+        (-[TestWKWebViewHostWindow makeKeyWindow]):
+        (-[TestWKWebViewHostWindow resignKeyWindow]):
+        (-[TestWKWebView initWithFrame:]):
+        (-[TestWKWebView initWithFrame:configuration:]):
+        (-[TestWKWebView _setUpTestWindow:]):
+        (-[TestWKWebView performAfterReceivingMessage:action:]):
+        (-[TestWKWebView loadTestPageNamed:]):
+        (-[TestWKWebView synchronouslyLoadTestPageNamed:]):
+        (-[TestWKWebView stringByEvaluatingJavaScript:]):
+        (-[TestWKWebView waitForMessage:]):
+        (-[TestWKWebView performAfterLoading:]):
+        (-[TestWKWebView mouseDownAtPoint:simulatePressure:]):
+        (-[TestWKWebView typeCharacter:]):
+
 2017-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Bring back gtk-doc error messages after r209981.

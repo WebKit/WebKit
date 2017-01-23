@@ -34,6 +34,7 @@
 #import "InteractionInformationAtPosition.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NavigationState.h"
+#import "StringUtilities.h"
 #import "UIKitSPI.h"
 #import "ViewSnapshotStore.h"
 #import "WKContentView.h"
@@ -747,6 +748,11 @@ WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirecti
 Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& message)
 {
     return ValidationBubble::create(m_contentView, message);
+}
+
+void PageClientImpl::handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession, const String& title, double duration, double elapsedTime)
+{
+    [m_webView _handleActiveNowPlayingSessionInfoResponse:hasActiveSession title:nsStringFromWebCoreString(title) duration:duration elapsedTime:elapsedTime];
 }
 
 } // namespace WebKit
