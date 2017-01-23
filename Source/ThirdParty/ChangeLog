@@ -1,3 +1,15 @@
+2017-01-23  Timothy Hatcher  <timothy@hatcher.name>
+
+        gtest fails to link on Linux due to missing -lpthread
+        https://bugs.webkit.org/show_bug.cgi?id=167313
+
+        Reviewed by Alex Christensen.
+
+        * gtest/CMakeLists.txt: Add call to find_package(Threads) before testing CMAKE_USE_PTHREADS_INIT.
+        Without the find_package call, CMAKE_USE_PTHREADS_INIT was always false for me. Also explicitly
+        define GTEST_HAS_PTHREAD to 0 when CMAKE_USE_PTHREADS_INIT is false to prevent gtest-port.h from
+        setting GTEST_HAS_PTHREAD based on the platform.
+
 2017-01-20  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Add libwebrtc build infrastructure
