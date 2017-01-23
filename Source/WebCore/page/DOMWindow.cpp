@@ -363,10 +363,8 @@ FloatRect DOMWindow::adjustWindowRect(Page& page, const FloatRect& pendingChange
 
 bool DOMWindow::allowPopUp(Frame& firstFrame)
 {
-    auto& settings = firstFrame.settings();
     return ScriptController::processingUserGesture()
-        || settings.allowWindowOpenWithoutUserGesture()
-        || settings.javaScriptCanOpenWindowsAutomatically();
+        || firstFrame.settings().javaScriptCanOpenWindowsAutomatically();
 }
 
 bool DOMWindow::allowPopUp()

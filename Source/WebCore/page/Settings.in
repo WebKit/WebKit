@@ -265,8 +265,6 @@ systemLayoutDirection type=TextDirection, initial=LTR
 
 allowContentSecurityPolicySourceStarToMatchAnyProtocol initial=false
 
-allowWindowOpenWithoutUserGesture initial=false
-
 selectionPaintingWithoutSelectionGapsEnabled initial=false
 
 shouldConvertInvalidURLsToBlank initial=true
