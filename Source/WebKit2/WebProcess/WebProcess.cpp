@@ -907,7 +907,7 @@ void WebProcess::clearPluginClientPolicies()
 void WebProcess::refreshPlugins()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    WebPluginInfoProvider::singleton().refreshPlugins();
+    WebPluginInfoProvider::singleton().refresh(false);
 #endif
 }
 

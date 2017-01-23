@@ -1,3 +1,18 @@
+2017-01-20  Anders Carlsson  <andersca@apple.com>
+
+        When Safari reloads pages with Flash objects after Flash is installed, placeholders don't paint (but do work!)
+        https://bugs.webkit.org/show_bug.cgi?id=167268
+        rdar://problem/29857388
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/WebPluginInfoProvider.h:
+        Make refreshPlugins() private.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::refreshPlugins):
+        Call the newly added PluginInfoProvider::refresh().
+
 2017-01-23  Antti Koivisto  <antti@apple.com>
 
         Use priorities in speculative revalidation
