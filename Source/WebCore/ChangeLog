@@ -1,5 +1,21 @@
 2017-01-23  Alex Christensen  <achristensen@webkit.org>
 
+        URLParser should fail to parse percent-encoded invalid UTF-8 sequences
+        https://bugs.webkit.org/show_bug.cgi?id=167330
+        <rdar://problem/29319962>
+
+        Reviewed by Tim Horton.
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::containsOnlyASCII):
+        (WebCore::URLParser::parseHostAndPort):
+        If UTF-8 decoding fails after percent-decoding the host, fail to parse.
+        This matches Chrome and Firefox, and it was proposed to the spec in https://github.com/whatwg/url/issues/215
+
+2017-01-23  Alex Christensen  <achristensen@webkit.org>
+
         Make URLs with non-special schemes and a query or fragment but no slash after the host more compatible
         https://bugs.webkit.org/show_bug.cgi?id=167317
         <rdar://problem/29526875>

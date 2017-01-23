@@ -787,7 +787,12 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("file:pAtH/",
         {"file", "", "", "", 0, "/pAtH/", "", "", "file:///pAtH/"},
         {"file", "", "", "", 0, "pAtH/", "", "", "file://pAtH/"});
-    
+    checkURLDifferences("http://example.com%A0",
+        {"", "", "", "", 0, "", "", "", "http://example.com%A0"},
+        {"http", "", "", "example.com%a0", 0, "/", "", "", "http://example.com%a0/"});
+    checkURLDifferences("http://%E2%98%83",
+        {"http", "", "", "xn--n3h", 0, "/", "", "", "http://xn--n3h/"},
+        {"http", "", "", "%e2%98%83", 0, "/", "", "", "http://%e2%98%83/"});
     checkURLDifferences("http://host%73",
         {"http", "", "", "hosts", 0, "/", "", "", "http://hosts/"},
         {"http", "", "", "host%73", 0, "/", "", "", "http://host%73/"});
