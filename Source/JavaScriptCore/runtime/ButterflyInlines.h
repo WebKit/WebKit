@@ -67,14 +67,24 @@ inline Butterfly* Butterfly::createUninitialized(VM& vm, JSCell*, size_t preCapa
     return result;
 }
 
-inline Butterfly* Butterfly::create(VM& vm, JSCell* intendedOwner, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, const IndexingHeader& indexingHeader, size_t indexingPayloadSizeInBytes)
+inline Butterfly* Butterfly::tryCreate(VM& vm, JSCell*, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, const IndexingHeader& indexingHeader, size_t indexingPayloadSizeInBytes)
 {
-    Butterfly* result = createUninitialized(
-        vm, intendedOwner, preCapacity, propertyCapacity, hasIndexingHeader,
-        indexingPayloadSizeInBytes);
+    size_t size = totalSize(preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
+    void* base = vm.auxiliarySpace.tryAllocate(size);
+    if (!base)
+        return nullptr;
+    Butterfly* result = fromBase(base, preCapacity, propertyCapacity);
     if (hasIndexingHeader)
         *result->indexingHeader() = indexingHeader;
     memset(result->propertyStorage() - propertyCapacity, 0, propertyCapacity * sizeof(EncodedJSValue));
+    return result;
+}
+
+inline Butterfly* Butterfly::create(VM& vm, JSCell* intendedOwner, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, const IndexingHeader& indexingHeader, size_t indexingPayloadSizeInBytes)
+{
+    Butterfly* result = tryCreate(vm, intendedOwner, preCapacity, propertyCapacity, hasIndexingHeader, indexingHeader, indexingPayloadSizeInBytes);
+
+    RELEASE_ASSERT(result);
     return result;
 }
 

@@ -1,3 +1,37 @@
+2017-01-23  Michael Saboff  <msaboff@apple.com>
+
+        IntlObject uses JSArray::tryCreateUninitialized in an unsafe way
+        https://bugs.webkit.org/show_bug.cgi?id=167288
+
+        Reviewed by Filip Pizlo.
+
+        Refactored the following "create" methods into a "tryCreate" method and a
+        "create" wrapper: JSArray::create(), Butterfly::create() and
+        createArrayButterfly().
+
+        Changed IntlObject.cpp to use JSArray::tryCreate() as it is simpler to use
+        by not requiring the caller to be GC savey.  The performance benefits of
+        tryCreateUninitialized() are not needed by the IntlObject c++ code.
+
+        Did not add a new test as the bug caused LayoutTests/js/intl.html to fail
+        reliably with the JSC option values scribbleFreeCells=true,
+        collectContinuously=true and JSC_useGenerationalGC=false.
+
+        * runtime/Butterfly.h:
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::tryCreate): Added.
+        (JSC::Butterfly::create):
+        * runtime/IntlObject.cpp:
+        (JSC::canonicalizeLocaleList):
+        (JSC::lookupSupportedLocales):
+        (JSC::intlObjectFuncGetCanonicalLocales):
+        * runtime/JSArray.h:
+        (JSC::createContiguousArrayButterfly): Deleted.
+        (JSC::tryCreateArrayButterfly): Added.
+        (JSC::createArrayButterfly):
+        (JSC::JSArray::tryCreate): Added.
+        (JSC::JSArray::create):
+
 2017-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         JavaScriptCore has a weak external symbol in it
