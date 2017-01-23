@@ -1,3 +1,47 @@
+2017-01-23  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: color picker should feature an editable CSS value
+        https://bugs.webkit.org/show_bug.cgi?id=124356
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ColorPicker.css:
+        (.color-picker):
+        (.color-picker.hide-inputs):
+        (.color-picker > .color-inputs):
+        (.color-picker > .color-inputs > div):
+        (.color-picker > .color-inputs > div[hidden]):
+        (.color-picker > .color-inputs input):
+
+        * UserInterface/Views/ColorPicker.js:
+        (WebInspector.ColorPicker.createColorInput):
+        (WebInspector.ColorPicker):
+        (WebInspector.ColorPicker.prototype.set color):
+        (WebInspector.ColorPicker.prototype.set enableColorComponentInputs):
+        (WebInspector.ColorPicker.prototype._updateColor):
+        (WebInspector.ColorPicker.prototype._handleFormatChange):
+        (WebInspector.ColorPicker.prototype._showColorComponentInputs.updateColorInput):
+        (WebInspector.ColorPicker.prototype._showColorComponentInputs):
+        (WebInspector.ColorPicker.prototype._handleColorInputInput):
+        Add an input element (with a label for the component name and its units) for each component
+        as part of the current color format (e.g. R, G, B, A).  If any of these inputs are changed
+        then the color is also changed and the "ColorChanged" event is fired.
+
+        * UserInterface/Controllers/CodeMirrorColorEditingController.js:
+        (WebInspector.CodeMirrorColorEditingController.prototype.popoverWillPresent):
+        * UserInterface/Views/InlineSwatch.js:
+        (WebInspector.InlineSwatch.prototype._swatchElementClicked):
+        Add FormatChanged event that fires whenever a new color is set with a different format or 
+        the color value is set for the first time (there is no old format to compare to).  This is
+        needed because if the format becomes RGB, RGBA, HSL, or HSLA from something not in that list
+        then the size of the containing popover needs to change since the newly added color inputs
+        will be displayed.
+
+        * UserInterface/Views/GradientEditor.js:
+        (WebInspector.GradientEditor):
+        Prevent the color inputs from displaying at all, since there aren't individual swatches for
+        each color in a gradient.
+
 2017-01-20  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Search Tab should display search results immediately when closing and reopening Inspector

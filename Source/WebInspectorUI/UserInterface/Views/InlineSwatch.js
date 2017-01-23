@@ -165,6 +165,7 @@ WebInspector.InlineSwatch = class InlineSwatch extends WebInspector.Object
         } else {
             this._valueEditor = new WebInspector.ColorPicker;
             this._valueEditor.addEventListener(WebInspector.ColorPicker.Event.ColorChanged, this._valueEditorValueDidChange, this);
+            this._valueEditor.addEventListener(WebInspector.ColorPicker.Event.FormatChanged, (event) => popover.update());
         }
 
         popover.content = this._valueEditor.element;

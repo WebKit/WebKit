@@ -72,6 +72,7 @@ WebInspector.GradientEditor = class GradientEditor extends WebInspector.Object
 
         this._colorPicker = new WebInspector.ColorPicker;
         this._colorPicker.colorWheel.dimension = 190;
+        this._colorPicker.enableColorComponentInputs = false;
         this._colorPicker.addEventListener(WebInspector.ColorPicker.Event.ColorChanged, this._colorPickerColorChanged, this);
 
         let angleLabel = this._element.appendChild(document.createElement("label"));

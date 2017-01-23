@@ -26,8 +26,12 @@
 .color-picker {
     position: relative;
     width: 256px;
-    height: 210px;
+    height: 236px;
     padding: 5px;
+}
+
+.color-picker.hide-inputs {
+    height: 210px;
 }
 
 .color-picker > * {
@@ -52,4 +56,28 @@
 
 .color-picker > .opacity {
     left: 238px;
+}
+
+.color-picker > .color-inputs {
+    display: flex;
+    justify-content: space-between;
+    top: 212px;
+    right: 0;
+    left: 0;
+}
+
+.color-picker > .color-inputs > div {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 0 4px;
+}
+
+.color-picker > .color-inputs > div[hidden] {
+    display: none;
+}
+
+.color-picker > .color-inputs input {
+    width: 100%;
+    margin: 0 0.25em;
 }
