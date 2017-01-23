@@ -776,25 +776,28 @@ void DatabaseTracker::deleteAllDatabasesImmediately()
 void DatabaseTracker::deleteDatabasesModifiedSince(std::chrono::system_clock::time_point time)
 {
     for (auto& origin : origins()) {
-        bool deletedAll = true;
-        for (auto& databaseName : databaseNames(origin)) {
+        Vector<String> databaseNames = this->databaseNames(origin);
+        Vector<String> databaseNamesToDelete;
+        databaseNamesToDelete.reserveInitialCapacity(databaseNames.size());
+        for (const auto& databaseName : databaseNames) {
             auto fullPath = fullPathForDatabase(origin, databaseName, false);
 
             time_t modificationTime;
-            if (!getFileModificationTime(fullPath, modificationTime)) {
-                deletedAll = false;
+            if (!getFileModificationTime(fullPath, modificationTime))
                 continue;
-            }
 
-            if (modificationTime < std::chrono::system_clock::to_time_t(time)) {
-                deletedAll = false;
+            if (modificationTime < std::chrono::system_clock::to_time_t(time))
                 continue;
-            }
 
-            deleteDatabase(origin, databaseName);
+            databaseNamesToDelete.uncheckedAppend(databaseName);
         }
-        if (deletedAll)
+
+        if (databaseNames.size() == databaseNamesToDelete.size())
             deleteOrigin(origin);
+        else {
+            for (const auto& databaseName : databaseNamesToDelete)
+                deleteDatabase(origin, databaseName);
+        }
     }
 }
 

@@ -1,3 +1,23 @@
+2017-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Database file not removed for origins after deleting all databases
+        https://bugs.webkit.org/show_bug.cgi?id=167281
+
+        Reviewed by Darin Adler.
+
+        When DatabaseTracker::deleteDatabasesModifiedSince() is called with a min time, all databases for every origin
+        are deleted. For each origin if all databases are removed DatabaseTracker::deleteOrigin() is called to remove
+        also the origin database file. However, DatabaseTracker::deleteOrigin() returns early if the origin doesn't have
+        databases and in this particular case it never has databases, because we have just removed them.
+
+        This will be covered by GTK+ unit tests.
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::deleteDatabasesModifiedSince): Instead of removing the databases while iterating
+        them, add the ones to be removed to a vector. If after the iteration all databases should be removed call
+        DatabaseTracker::deleteOrigin() to ensure both the databases and the database file are removed for the origin,
+        otherwhise call DatabaseTracker::deleteDatabase() for every database to delete.
+
 2017-01-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Update Safari version in user agent
