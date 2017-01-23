@@ -115,10 +115,13 @@ class WebRtcSimulcastEncoderFactory
       const cricket::VideoCodec& codec) override {
     RTC_DCHECK(factory_ != NULL);
     // If it's a codec type we can simulcast, create a wrapped encoder.
+#ifndef RTC_DISABLE_VP8
+    ASSERT(webrtc::VP8Encoder::IsSupported());
     if (CodecNamesEq(codec.name.c_str(), kVp8CodecName)) {
       return new webrtc::SimulcastEncoderAdapter(
           new EncoderFactoryAdapter(factory_));
     }
+#endif
     webrtc::VideoEncoder* encoder = factory_->CreateVideoEncoder(codec);
     if (encoder) {
       non_simulcast_encoders_.push_back(encoder);
@@ -430,9 +433,11 @@ void AddCodecAndMaybeRtxCodec(const VideoCodec& codec,
 
 std::vector<VideoCodec> DefaultVideoCodecList() {
   std::vector<VideoCodec> codecs;
-  AddCodecAndMaybeRtxCodec(
+  if (webrtc::VP8Encoder::IsSupported() && webrtc::VP8Decoder::IsSupported()) {
+    AddCodecAndMaybeRtxCodec(
       MakeVideoCodecWithDefaultFeedbackParams(kDefaultVp8PlType, kVp8CodecName),
       &codecs);
+  }
   if (webrtc::VP9Encoder::IsSupported() && webrtc::VP9Decoder::IsSupported()) {
     AddCodecAndMaybeRtxCodec(MakeVideoCodecWithDefaultFeedbackParams(
                                  kDefaultVp9PlType, kVp9CodecName),

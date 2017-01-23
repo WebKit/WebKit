@@ -103,8 +103,16 @@ int NumStreamsDisabled(const std::vector<bool>& streams) {
 }
 }  // namespace
 
+bool VP8Encoder::IsSupported() {
+  return true;
+}
+
 VP8Encoder* VP8Encoder::Create() {
   return new VP8EncoderImpl();
+}
+
+bool VP8Decoder::IsSupported() {
+  return true;
 }
 
 VP8Decoder* VP8Decoder::Create() {

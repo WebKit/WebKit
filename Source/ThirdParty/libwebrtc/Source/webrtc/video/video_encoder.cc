@@ -39,7 +39,7 @@ bool VideoEncoder::IsSupportedSoftware(EncoderType codec_type) {
     case kH264:
       return H264Encoder::IsSupported();
     case kVp8:
-      return true;
+      return VP8Encoder::IsSupported();
     case kVp9:
       return VP9Encoder::IsSupported();
     case kUnsupportedCodec:

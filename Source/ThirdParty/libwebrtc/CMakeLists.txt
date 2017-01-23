@@ -155,6 +155,7 @@ set(WebrtcModulesVideo_CodingVideo_Coding_SOURCES ${LIBWEBRTC_INPUT_DIR}/webrtc/
     ${LIBWEBRTC_INPUT_DIR}/webrtc/modules/video_coding/video_coding_impl.cc
     ${LIBWEBRTC_INPUT_DIR}/webrtc/modules/video_coding/video_receiver.cc
     ${LIBWEBRTC_INPUT_DIR}/webrtc/modules/video_coding/video_sender.cc
+    ${LIBWEBRTC_INPUT_DIR}/webrtc/modules/video_coding/codecs/vp8/vp8_noop.cc
     ${LIBWEBRTC_INPUT_DIR}/webrtc/modules/video_coding/codecs/vp9/vp9_noop.cc)
 add_library(WebrtcModulesVideo_CodingVideo_Coding STATIC ${WebrtcModulesVideo_CodingVideo_Coding_SOURCES})
 target_compile_options(WebrtcModulesVideo_CodingVideo_Coding PRIVATE "-fno-strict-aliasing" "-fstack-protector-strong" "-fcolor-diagnostics" "-arch" "x86_64" "-gdwarf-2" "-mmacosx-version-min=10.9" "-Wall" "-Werror" "-Wextra" "-Wpartial-availability" "-Wno-missing-field-initializers" "-Wno-unused-parameter" "-Wno-c++11-narrowing" "-Wno-covered-switch-default" "-Wno-deprecated-register" "-Wno-unneeded-internal-declaration" "-Wno-inconsistent-missing-override" "-Wno-shift-negative-value" "-O0" "-fvisibility=hidden" "-Wheader-hygiene" "-Wstring-conversion" "-Wno-strict-overflow" "-Wimplicit-fallthrough" "-Wthread-safety" "-Winconsistent-missing-override" "-Wundef" "-std=c99" "-fno-threadsafe-statics" "-fvisibility-inlines-hidden" "-Wno-undefined-bool-conversion" "-Wno-tautological-undefined-compare" "-stdlib=libc++" "-fno-rtti" "-fno-exceptions" "-Wnon-virtual-dtor" "-Woverloaded-virtual" "-Wobjc-missing-property-synthesis" "-fobjc-call-cxx-cdtors")
@@ -4218,6 +4219,7 @@ CMakeFiles/WebrtcModulesVideo_CodingVideo_Coding.dir/Source/webrtc/modules/video
 CMakeFiles/WebrtcModulesVideo_CodingVideo_Coding.dir/Source/webrtc/modules/video_coding/session_info.cc.o
 CMakeFiles/WebrtcModulesVideo_CodingVideo_Coding.dir/Source/webrtc/modules/video_coding/packet.cc.o
 CMakeFiles/WebrtcModulesVideo_CodingVideo_Coding.dir/Source/webrtc/modules/video_coding/timestamp_map.cc.o
+CMakeFiles/WebrtcModulesVideo_CodingVideo_Coding.dir/Source/webrtc/modules/video_coding/codecs/vp8/vp8_noop.cc.o
 CMakeFiles/WebrtcModulesVideo_CodingVideo_Coding.dir/Source/webrtc/modules/video_coding/inter_frame_delay.cc.o
 CMakeFiles/WebrtcModulesVideo_CodingVideo_Coding.dir/Source/webrtc/modules/video_coding/h264_sps_pps_tracker.cc.o
 CMakeFiles/WebrtcModulesVideo_CodingVideo_Coding.dir/Source/webrtc/modules/video_coding/frame_buffer2.cc.o

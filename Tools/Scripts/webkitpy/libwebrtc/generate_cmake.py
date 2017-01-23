@@ -281,6 +281,8 @@ class CMakeGenerator(object):
         target = self.targets["//webrtc/modules/video_coding:video_coding"]
         target["defines"].append("RTC_DISABLE_VP8")
         target["defines"].append("RTC_DISABLE_VP9")
+        target["sources"].append("//webrtc/modules/video_coding/codecs/vp8/vp8_noop.cc")
+        target["source_outputs"]["//webrtc/modules/video_coding/codecs/vp8/vp8_noop.cc"] = ["obj/webrtc/modules/video_coding/webrtc_vp8/vp8_noop.o"]
         target["sources"].append("//webrtc/modules/video_coding/codecs/vp9/vp9_noop.cc")
         target["source_outputs"]["//webrtc/modules/video_coding/codecs/vp9/vp9_noop.cc"] = ["obj/webrtc/modules/video_coding/webrtc_vp9/vp9_noop.o"]
 

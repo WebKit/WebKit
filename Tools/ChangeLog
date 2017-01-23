@@ -1,3 +1,13 @@
+2017-01-23  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Make VP8 optional in libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=167257
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/libwebrtc/generate_cmake.py:
+        (CMakeGenerator.remove_libvpx): Adding vp8_noop.cc to the build system.
+
 2017-01-23  Jer Noble  <jer.noble@apple.com>
 
         Video details does not apear and missing scrubber in Control Center

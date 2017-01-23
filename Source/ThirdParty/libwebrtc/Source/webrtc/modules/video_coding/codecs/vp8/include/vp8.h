@@ -19,6 +19,7 @@ namespace webrtc {
 
 class VP8Encoder : public VideoEncoder {
  public:
+  static bool IsSupported();
   static VP8Encoder* Create();
 
   virtual ~VP8Encoder() {}
@@ -26,6 +27,7 @@ class VP8Encoder : public VideoEncoder {
 
 class VP8Decoder : public VideoDecoder {
  public:
+  static bool IsSupported();
   static VP8Decoder* Create();
 
   virtual ~VP8Decoder() {}
