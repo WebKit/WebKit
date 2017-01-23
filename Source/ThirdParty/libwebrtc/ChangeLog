@@ -1,3 +1,12 @@
+2017-01-23  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Filter libwebrtc link flags
+        https://bugs.webkit.org/show_bug.cgi?id=167287
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+
 2017-01-23  Youenn Fablet  <youennf@gmail.com>
 
         [WebRTC] Make VP8 optional in libwebrtc

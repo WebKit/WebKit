@@ -583,6 +583,24 @@ class CMakeGenerator(object):
 
         return lines
 
+    def _compute_link_flags(self, target):
+        if not "ldflags" in target:
+            return []
+
+        flags = target["ldflags"]
+
+        self._remove_next_flag = False
+
+        def keep_flag(flag):
+            if self._remove_next_flag:
+                self._remove_next_flag = False
+                return False
+            if flag == "-isysroot":
+                self._remove_next_flag = True
+                return False
+            return True
+        return filter(keep_flag, flags)
+
     def _compute_compile_flags(self, target):
         flags = []
         for flag in ["asmflags", "cflags", "cflags_c", "cflags_cc", "cflags_objc", "cflags_objcc"]:
@@ -635,8 +653,9 @@ class CMakeGenerator(object):
         if len(dirs):
             lines.append("target_include_directories(" + name + " PRIVATE " + self.convert_inputs(dirs) + ")")
 
-        if "ldflags" in target:
-            lines.append("set_target_properties(" + name + " PROPERTIES LINK_FLAGS \"" + " ".join(target["ldflags"]) + "\")")
+        ldflags = self._compute_link_flags(target)
+        if ldflags:
+            lines.append("set_target_properties(" + name + " PROPERTIES LINK_FLAGS \"" + " ".join(ldflags) + "\")")
 
         return lines
 
