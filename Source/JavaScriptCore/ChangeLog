@@ -1,3 +1,15 @@
+2017-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JavaScriptCore has a weak external symbol in it
+        https://bugs.webkit.org/show_bug.cgi?id=167282
+
+        Reviewed by Yusuke Suzuki.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::ProfilingClient::~ProfilingClient):
+        * debugger/Debugger.h:
+        Avoid possible weak external symbol.
+
 2017-01-21  Chris Dumez  <cdumez@apple.com>
 
         JavaScript for-of does not work on a lot of collection types (e.g. HTMLCollection)

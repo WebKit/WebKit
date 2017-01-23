@@ -118,6 +118,11 @@ private:
     Debugger& m_debugger;
 };
 
+
+Debugger::ProfilingClient::~ProfilingClient()
+{
+}
+
 Debugger::Debugger(VM& vm)
     : m_vm(vm)
     , m_pauseOnExceptionsState(DontPauseOnExceptions)
