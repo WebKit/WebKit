@@ -328,7 +328,7 @@ sub manufacturePatchForAdditionWithHistory($)
         print "svn:mime-type = ${mimeType}\n\n";
     } else {
         my $escapedSourceFile = escapeSubversionPath($sourceFile);
-        print `svn cat ${escapedSourceFile} | diff -u $devNull - | tail -n +3`;
+        print `svn diff -r 0:${sourceRevision} ${escapedSourceFile} | tail -n +5`;
     }
 }
 
