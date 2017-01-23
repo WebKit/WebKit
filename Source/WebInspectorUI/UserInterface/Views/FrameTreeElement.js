@@ -108,8 +108,6 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
     {
         // Immediate superclasses are skipped, since Frames handle their own SourceMapResources.
         WebInspector.GeneralTreeElement.prototype.onattach.call(this);
-
-        this.element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this));
     }
 
     // Overrides from FolderizedTreeElement (Protected).

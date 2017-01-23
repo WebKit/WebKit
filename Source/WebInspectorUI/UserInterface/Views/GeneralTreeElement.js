@@ -208,24 +208,6 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
         if (this._statusElement)
             this._listItemNode.appendChild(this._statusElement);
         this._listItemNode.appendChild(this._titlesElement);
-
-        if (this.oncontextmenu && typeof this.oncontextmenu === "function") {
-            this._boundContextMenuEventHandler = this.oncontextmenu.bind(this);
-            this._listItemNode.addEventListener("contextmenu", this._boundContextMenuEventHandler);
-        }
-
-        if (!this._boundContextMenuEventHandler && this.treeOutline.oncontextmenu && typeof this.treeOutline.oncontextmenu === "function") {
-            this._boundContextMenuEventHandler = (event) => { this.treeOutline.oncontextmenu(event, this); };
-            this._listItemNode.addEventListener("contextmenu", this._boundContextMenuEventHandler);
-        }
-    }
-
-    ondetach()
-    {
-        if (this._boundContextMenuEventHandler) {
-            this._listItemNode.removeEventListener("contextmenu", this._boundContextMenuEventHandler);
-            this._boundContextMenuEventHandler = null;
-        }
     }
 
     onreveal()

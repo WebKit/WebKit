@@ -93,7 +93,6 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
 
         this._listItemNode.addEventListener("mouseover", this._highlightNodesWithSelector.bind(this));
         this._listItemNode.addEventListener("mouseout", this._hideDOMNodeHighlight.bind(this));
-        this._listItemNode.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this));
 
         this._checkboxElement = document.createElement("input");
         this._checkboxElement.type = "checkbox";
@@ -122,27 +121,8 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
         this._listItemNode.classList.remove("editable");
     }
 
-    // Private
-
-    _highlightNodesWithSelector()
+    populateContextMenu(contextMenu, event)
     {
-        if (!this.representedObject.ownerRule) {
-            WebInspector.domTreeManager.highlightDOMNode(this.representedObject.node.id);
-            return;
-        }
-
-        WebInspector.domTreeManager.highlightSelector(this.selectorText, this.representedObject.node.ownerDocument.frameIdentifier);
-    }
-
-    _hideDOMNodeHighlight()
-    {
-        WebInspector.domTreeManager.hideDOMNodeHighlight();
-    }
-
-    _handleContextMenuEvent(event)
-    {
-        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
-
         contextMenu.appendItem(WebInspector.UIString("Copy Rule"), () => {
             InspectorFrontendHost.copyText(this.representedObject.generateCSSRuleString());
         });
@@ -213,6 +193,25 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
                 this.representedObject.nodeStyles.addRule(pseudoSelectors.join(", "), styleText);
             });
         }
+
+        super.populateContextMenu(contextMenu, event);
+    }
+
+    // Private
+
+    _highlightNodesWithSelector()
+    {
+        if (!this.representedObject.ownerRule) {
+            WebInspector.domTreeManager.highlightDOMNode(this.representedObject.node.id);
+            return;
+        }
+
+        WebInspector.domTreeManager.highlightSelector(this.selectorText, this.representedObject.node.ownerDocument.frameIdentifier);
+    }
+
+    _hideDOMNodeHighlight()
+    {
+        WebInspector.domTreeManager.hideDOMNodeHighlight();
     }
 
     _handleCheckboxChanged(event)

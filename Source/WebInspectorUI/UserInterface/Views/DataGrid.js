@@ -1646,23 +1646,32 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         if (this.dataGrid._refreshCallback && (!gridNode || gridNode !== this.placeholderNode))
             contextMenu.appendItem(WebInspector.UIString("Refresh"), this._refreshCallback.bind(this));
 
-        if (gridNode && gridNode.selectable && gridNode.copyable && !gridNode.isEventWithinDisclosureTriangle(event)) {
-            contextMenu.appendItem(WebInspector.UIString("Copy Row"), this._copyRow.bind(this, event.target));
-            contextMenu.appendItem(WebInspector.UIString("Copy Table"), this._copyTable.bind(this));
+        if (gridNode) {
+            if (gridNode.selectable && gridNode.copyable && !gridNode.isEventWithinDisclosureTriangle(event)) {
+                contextMenu.appendItem(WebInspector.UIString("Copy Row"), this._copyRow.bind(this, event.target));
+                contextMenu.appendItem(WebInspector.UIString("Copy Table"), this._copyTable.bind(this));
 
-            if (this.dataGrid._editCallback) {
-                if (gridNode === this.placeholderNode)
-                    contextMenu.appendItem(WebInspector.UIString("Add New"), this._startEditing.bind(this, event.target));
-                else {
-                    let element = event.target.enclosingNodeOrSelfWithNodeName("td");
-                    let columnIdentifier = element.__columnIdentifier;
-                    let columnTitle = this.dataGrid.columns.get(columnIdentifier)["title"];
-                    contextMenu.appendItem(WebInspector.UIString("Edit “%s”").format(columnTitle), this._startEditing.bind(this, event.target));
+                if (this.dataGrid._editCallback) {
+                    if (gridNode === this.placeholderNode)
+                        contextMenu.appendItem(WebInspector.UIString("Add New"), this._startEditing.bind(this, event.target));
+                    else {
+                        let element = event.target.enclosingNodeOrSelfWithNodeName("td");
+                        let columnIdentifier = element.__columnIdentifier;
+                        let columnTitle = this.dataGrid.columns.get(columnIdentifier)["title"];
+                        contextMenu.appendItem(WebInspector.UIString("Edit “%s”").format(columnTitle), this._startEditing.bind(this, event.target));
+                    }
                 }
+
+                if (this.dataGrid._deleteCallback && gridNode !== this.placeholderNode)
+                    contextMenu.appendItem(WebInspector.UIString("Delete"), this._deleteCallback.bind(this, gridNode));
             }
 
-            if (this.dataGrid._deleteCallback && gridNode !== this.placeholderNode)
-                contextMenu.appendItem(WebInspector.UIString("Delete"), this._deleteCallback.bind(this, gridNode));
+            if (gridNode.children.some((child) => child.hasChildren) || (gridNode.hasChildren && !gridNode.children.length)) {
+                contextMenu.appendSeparator();
+
+                contextMenu.appendItem(WebInspector.UIString("Expand All"), gridNode.expandRecursively.bind(gridNode));
+                contextMenu.appendItem(WebInspector.UIString("Collapse All"), gridNode.collapseRecursively.bind(gridNode));
+            }
         }
     }
 

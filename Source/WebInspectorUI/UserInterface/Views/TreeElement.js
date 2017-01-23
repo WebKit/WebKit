@@ -609,4 +609,14 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
         var left = this._listItemNode.totalOffsetLeft + computedLeftPadding;
         return event.pageX >= left && event.pageX <= left + this.arrowToggleWidth && this.hasChildren;
     }
+
+    populateContextMenu(contextMenu, event)
+    {
+        if (this.children.some((child) => child.hasChildren) || (this.hasChildren && !this.children.length)) {
+            contextMenu.appendSeparator();
+
+            contextMenu.appendItem(WebInspector.UIString("Expand All"), this.expandRecursively.bind(this));
+            contextMenu.appendItem(WebInspector.UIString("Collapse All"), this.collapseRecursively.bind(this));
+        }
+    }
 };

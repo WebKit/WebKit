@@ -34,6 +34,7 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
 
         this.element = element || document.createElement("ol");
         this.element.classList.add(WebInspector.TreeOutline.ElementStyleClassName);
+        this.element.addEventListener("contextmenu", this._handleContextmenu.bind(this));
 
         this.children = [];
         this.selectedTreeElement = null;
@@ -599,6 +600,38 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         return false;
     }
 
+    // Protected
+
+    treeElementFromEvent(event)
+    {
+        let scrollContainer = this.element.parentElement;
+
+        // We choose this X coordinate based on the knowledge that our list
+        // items extend at least to the right edge of the outer <ol> container.
+        // In the no-word-wrap mode the outer <ol> may be wider than the tree container
+        // (and partially hidden), in which case we are left to use only its right boundary.
+        let x = scrollContainer.totalOffsetLeft + scrollContainer.offsetWidth - 36;
+        let y = event.pageY;
+
+        // Our list items have 1-pixel cracks between them vertically. We avoid
+        // the cracks by checking slightly above and slightly below the mouse
+        // and seeing if we hit the same element each time.
+        let elementUnderMouse = this.treeElementFromPoint(x, y);
+        let elementAboveMouse = this.treeElementFromPoint(x, y - 2);
+        let element = null;
+        if (elementUnderMouse === elementAboveMouse)
+            element = elementUnderMouse;
+        else
+            element = this.treeElementFromPoint(x, y + 2);
+
+        return element;
+    }
+
+    populateContextMenu(contextMenu, event, treeElement)
+    {
+        treeElement.populateContextMenu(contextMenu, event);
+    }
+
     // Private
 
     static _generateStyleRulesIfNeeded()
@@ -624,6 +657,16 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         WebInspector.TreeOutline._styleElement.textContent = styleText;
 
         document.head.appendChild(WebInspector.TreeOutline._styleElement);
+    }
+
+    _handleContextmenu(event)
+    {
+        let treeElement = this.treeElementFromEvent(event);
+        if (!treeElement)
+            return;
+
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
+        this.populateContextMenu(contextMenu, event, treeElement);
     }
 };
 

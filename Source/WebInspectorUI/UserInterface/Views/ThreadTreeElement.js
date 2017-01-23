@@ -108,14 +108,15 @@ WebInspector.ThreadTreeElement = class ThreadTreeElement extends WebInspector.Ge
         this.expand();
     }
 
-    oncontextmenu(event)
+    populateContextMenu(contextMenu, event)
     {
         let targetData = WebInspector.debuggerManager.dataForTarget(this._target);
 
-        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
         contextMenu.appendItem(WebInspector.UIString("Resume Thread"), () => {
             WebInspector.debuggerManager.continueUntilNextRunLoop(this._target);
         }, !targetData.paused);
+
+        super.populateContextMenu(contextMenu, event);
     }
 
     // Private

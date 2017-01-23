@@ -33,6 +33,8 @@ WebInspector.appendContextMenuItemsForSourceCode = function(contextMenu, sourceC
     if (!(sourceCode instanceof WebInspector.SourceCode))
         return;
 
+    contextMenu.appendSeparator();
+
     if (sourceCode.url) {
         contextMenu.appendItem(WebInspector.UIString("Open in New Tab"), () => {
             const frame = null;

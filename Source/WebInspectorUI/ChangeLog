@@ -1,5 +1,81 @@
 2017-01-23  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: tree elements with depth > 1 should have context menu "expand all"/"collapse all" commands
+        https://bugs.webkit.org/show_bug.cgi?id=135590
+
+        Reviewed by Timothy Hatcher.
+
+        Rework the context menu event handlers for all TreeOutline and TreeElement instances such
+        that the TreeOutline handles the event listener and creates the context menu object and the
+        TreeElement populates the list with items.  This is necessary due to the way in which
+        children are laid out, as there is padding on either side of the element that would not
+        trigger a context menu event.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WebInspector.BreakpointTreeElement.prototype.ondetach):
+        (WebInspector.BreakpointTreeElement.prototype.populateContextMenu):
+        (WebInspector.BreakpointTreeElement.prototype.oncontextmenu): Deleted.
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WebInspector.appendContextMenuItemsForSourceCode):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._populateNodeContextMenu):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline):
+        (WebInspector.DOMTreeOutline.prototype.populateContextMenu):
+        (WebInspector.DOMTreeOutline.prototype._onmousedown):
+        (WebInspector.DOMTreeOutline.prototype._onmousemove):
+        (WebInspector.DOMTreeOutline.prototype._ondragstart):
+        (WebInspector.DOMTreeOutline.prototype._ondragover):
+        (WebInspector.DOMTreeOutline.prototype._ondrop):
+        (WebInspector.DOMTreeOutline.prototype._treeElementFromEvent): Deleted.
+        (WebInspector.DOMTreeOutline.prototype._contextMenuEventFired): Deleted.
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._breakpointTreeOutlineContextMenuTreeElement):
+        * UserInterface/Views/FrameTreeElement.js:
+        (WebInspector.FrameTreeElement.prototype.onattach):
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WebInspector.GeneralTreeElement.prototype.onattach):
+        (WebInspector.GeneralTreeElement.prototype.ondetach): Deleted.
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.populateContextMenu):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._logSymbolProperty):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._logValue):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype.oncontextmenu): Deleted.
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._contextMenuHandler): Deleted.
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype.populateContextMenu):
+        (WebInspector.ResourceTreeElement.prototype.onattach): Deleted.
+        (WebInspector.ResourceTreeElement.prototype._handleContextMenuEvent): Deleted.
+        * UserInterface/Views/ThreadTreeElement.js:
+        (WebInspector.ThreadTreeElement.prototype.populateContextMenu):
+        (WebInspector.ThreadTreeElement.prototype.oncontextmenu): Deleted.
+        * UserInterface/Views/TreeElement.js:
+        (WebInspector.TreeElement.prototype.populateContextMenu):
+        (WebInspector.TreeElement):
+        * UserInterface/Views/TreeOutline.js:
+        (WebInspector.TreeOutline):
+        (WebInspector.TreeOutline.prototype.treeElementFromEvent):
+        (WebInspector.TreeOutline.prototype.populateContextMenu):
+        (WebInspector.TreeOutline._generateStyleRulesIfNeeded):
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem.prototype.onattach):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype.populateContextMenu):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._highlightNodesWithSelector):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._hideDOMNodeHighlight):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleContextMenuEvent): Deleted.
+        * UserInterface/Views/WorkerTreeElement.js:
+        (WebInspector.WorkerTreeElement.prototype.populateContextMenu):
+        (WebInspector.WorkerTreeElement.prototype.onattach):
+        (WebInspector.WorkerTreeElement.prototype._handleContextMenuEvent): Deleted.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype._contextMenuInDataTable):
+        Add "Expand All"/"Collapse All" context menu items.
+
+2017-01-23  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: color picker should feature an editable CSS value
         https://bugs.webkit.org/show_bug.cgi?id=124356
 

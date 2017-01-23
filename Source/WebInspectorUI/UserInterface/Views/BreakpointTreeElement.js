@@ -101,12 +101,6 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
         return true;
     }
 
-    oncontextmenu(event)
-    {
-        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
-        WebInspector.breakpointPopoverController.appendContextMenuItems(contextMenu, this._breakpoint, this._statusImageElement);
-    }
-
     onattach()
     {
         super.onattach();
@@ -120,12 +114,17 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
 
     ondetach()
     {
-        super.ondetach();
-
         this._listenerSet.uninstall();
 
         if (this._probeSet)
             this._removeProbeSet(this._probeSet);
+    }
+
+    populateContextMenu(contextMenu, event)
+    {
+        WebInspector.breakpointPopoverController.appendContextMenuItems(contextMenu, this._breakpoint, this._statusImageElement);
+
+        super.populateContextMenu(contextMenu, event);
     }
 
     removeStatusImage()

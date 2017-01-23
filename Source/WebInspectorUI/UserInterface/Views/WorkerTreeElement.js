@@ -100,6 +100,14 @@ WebInspector.WorkerTreeElement = class WorkerTreeElement extends WebInspector.Sc
         }
     }
 
+    populateContextMenu(contextMenu, event)
+    {
+        // FIXME: <https://webkit.org/b/164427> Web Inspector: WorkerTarget's mainResource should be a Resource not a Script
+        WebInspector.appendContextMenuItemsForSourceCode(contextMenu, this.script.resource ? this.script.resource : this.script);
+
+        super.populateContextMenu(contextMenu, event);
+    }
+
     // Overrides from SourceCodeTreeElement.
 
     updateSourceMapResources()
@@ -122,8 +130,6 @@ WebInspector.WorkerTreeElement = class WorkerTreeElement extends WebInspector.Sc
         // Handle our own SourceMapResources. Skip immediate superclasses.
 
         WebInspector.GeneralTreeElement.prototype.onattach.call(this);
-
-        this.element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this));
     }
 
     // Overrides from FolderizedTreeElement
@@ -143,14 +149,6 @@ WebInspector.WorkerTreeElement = class WorkerTreeElement extends WebInspector.Sc
     }
 
     // Private
-
-    _handleContextMenuEvent(event)
-    {
-        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
-
-        // FIXME: <https://webkit.org/b/164427> Web Inspector: WorkerTarget's mainResource should be a Resource not a Script
-        WebInspector.appendContextMenuItemsForSourceCode(contextMenu, this.script.resource ? this.script.resource : this.script);
-    }
 
     _scriptAdded(event)
     {

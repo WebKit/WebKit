@@ -55,11 +55,6 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
 
     // Protected
 
-    oncontextmenu(event)
-    {
-        this._contextMenuHandler(event);
-    }
-
     resolvedValue()
     {
         console.assert(this._property);
@@ -151,42 +146,12 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
         return setterElement;
     }
 
-    // Private
-
-    _logSymbolProperty()
-    {
-        var symbol = this._property.symbol;
-        if (!symbol)
-            return;
-
-        var text = WebInspector.UIString("Selected Symbol");
-        WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, symbol, true);
-    }
-
-    _logValue(value)
-    {
-        var resolvedValue = value || this.resolvedValue();
-        if (!resolvedValue)
-            return;
-
-        var propertyPath = this.resolvedValuePropertyPath();
-        var isImpossible = propertyPath.isFullPathImpossible();
-        var text = isImpossible ? WebInspector.UIString("Selected Value") : propertyPath.displayPath(this.propertyPathType());
-
-        if (!isImpossible)
-            WebInspector.quickConsole.prompt.pushHistoryItem(text);
-
-        WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, resolvedValue, isImpossible);
-    }
-
-    _contextMenuHandler(event)
+    populateContextMenu(contextMenu, event)
     {
         if (event.__addedObjectPreviewContextMenuItems)
             return;
         if (event.__addedObjectTreeContextMenuItems)
             return;
-
-        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
 
         event.__addedObjectTreeContextMenuItems = true;
 
@@ -215,6 +180,36 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
         contextMenu.appendSeparator();
 
         this._appendMenusItemsForObject(contextMenu, resolvedValue);
+
+        super.populateContextMenu(contextMenu, event);
+    }
+
+    // Private
+
+    _logSymbolProperty()
+    {
+        var symbol = this._property.symbol;
+        if (!symbol)
+            return;
+
+        var text = WebInspector.UIString("Selected Symbol");
+        WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, symbol, true);
+    }
+
+    _logValue(value)
+    {
+        var resolvedValue = value || this.resolvedValue();
+        if (!resolvedValue)
+            return;
+
+        var propertyPath = this.resolvedValuePropertyPath();
+        var isImpossible = propertyPath.isFullPathImpossible();
+        var text = isImpossible ? WebInspector.UIString("Selected Value") : propertyPath.displayPath(this.propertyPathType());
+
+        if (!isImpossible)
+            WebInspector.quickConsole.prompt.pushHistoryItem(text);
+
+        WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, resolvedValue, isImpossible);
     }
 
     _appendMenusItemsForObject(contextMenu, resolvedValue)
