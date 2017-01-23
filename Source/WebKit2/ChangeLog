@@ -1,3 +1,19 @@
+2017-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Asserts seen opening and closing Remote Web Inspector windows
+        https://bugs.webkit.org/show_bug.cgi?id=167316
+        <rdar://problem/28891161>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/RemoteWebInspectorProxy.cpp:
+        (WebKit::RemoteWebInspectorProxy::createFrontendPageAndWindow):
+        Assume read access, like the local web inspector, to Web Inspector resources.
+
+        * WebProcess/WebPage/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::closeWindow):
+        Clear ourselves as the inspector frontend client when closing.
+
 2017-01-20  Anders Carlsson  <andersca@apple.com>
 
         When Safari reloads pages with Flash objects after Flash is installed, placeholders don't paint (but do work!)
