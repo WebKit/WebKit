@@ -289,3 +289,5 @@ largeImageAsyncDecodingEnabled initial=true
 animatedImageAsyncDecodingEnabled initial=true
 
 shouldSuppressKeyboardInputDuringProvisionalNavigation initial=false
+
+langAttributeAwareFormControlUIEnabled initial=false

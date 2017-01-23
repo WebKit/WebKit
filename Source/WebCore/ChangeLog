@@ -1,3 +1,31 @@
+2017-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Convert langAttributeAwareFormControlUIEnabled to a Setting
+        https://bugs.webkit.org/show_bug.cgi?id=167279
+
+        Reviewed by Sam Weinig.
+
+        * dom/Document.cpp:
+        (WebCore::Document::getCachedLocale):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setupDateTimeChooserParameters):
+        Convert to use Settings instead of RuntimeEnabledFeatures.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::langAttributeAwareFormControlUIEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setLangAttributeAwareFormControlUIEnabled): Deleted.
+        * page/Settings.in:
+        Move to Settings.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setLangAttributeAwareFormControlUIEnabled): Deleted.
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        Remove the manual interface for the RuntimeEnabledFeature.
+        An identical interface is generated from Settings.in!
+
 2017-01-20  Anders Carlsson  <andersca@apple.com>
 
         When Safari reloads pages with Flash objects after Flash is installed, placeholders don't paint (but do work!)

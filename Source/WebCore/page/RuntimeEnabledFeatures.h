@@ -43,10 +43,6 @@ namespace WebCore {
 class RuntimeEnabledFeatures {
     WTF_MAKE_NONCOPYABLE(RuntimeEnabledFeatures);
 public:
-    // The lang attribute support is incomplete and should only be turned on for tests.
-    bool langAttributeAwareFormControlUIEnabled() const { return m_isLangAttributeAwareFormControlUIEnabled; }
-    void setLangAttributeAwareFormControlUIEnabled(bool isEnabled) { m_isLangAttributeAwareFormControlUIEnabled = isEnabled; }
-
     void setDOMIteratorEnabled(bool isEnabled) { m_isDOMIteratorEnabled = isEnabled; }
     bool domIteratorEnabled() const { return m_isDOMIteratorEnabled; }
 
@@ -201,7 +197,6 @@ private:
     // Never instantiate.
     RuntimeEnabledFeatures();
 
-    bool m_isLangAttributeAwareFormControlUIEnabled { false }; // FIXME: Move this to Settings.
     bool m_areModernMediaControlsEnabled { false };
     bool m_isLinkPreloadEnabled { false };
     bool m_isResourceTimingEnabled { false };

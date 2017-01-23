@@ -109,7 +109,6 @@ public:
     void setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue);
 
     // RuntimeEnabledFeatures.
-    static void setLangAttributeAwareFormControlUIEnabled(bool);
     static void setResourceTimingEnabled(bool);
     static void setLinkPreloadEnabled(bool);
     static void setIndexedDBWorkersEnabled(bool);
@@ -188,7 +187,6 @@ private:
         Settings::ForcedAccessibilityValue m_forcedPrefersReducedMotionAccessibilityValue;
 
         // Runtime enabled settings.
-        bool m_langAttributeAwareFormControlUIEnabled;
         bool m_resourceTimingEnabled;
         bool m_linkPreloadEnabled;
         bool m_indexedDBWorkersEnabled;

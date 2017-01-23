@@ -82,7 +82,6 @@ enum ForcedAccessibilityValue { "system", "on", "off" };
     [MayThrowException] void setInlineMediaPlaybackRequiresPlaysInlineAttribute(boolean requires);
 
     // RuntimeEnabledFeatures.
-    void setLangAttributeAwareFormControlUIEnabled(boolean enabled);
     void setResourceTimingEnabled(boolean enabled);
     void setLinkPreloadEnabled(boolean enabled);
     void setIndexedDBWorkersEnabled(boolean enabled);
