@@ -1,3 +1,15 @@
+2017-01-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Update Safari version in user agent
+        https://bugs.webkit.org/show_bug.cgi?id=167290
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update Safari version from 10 to 11.
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::buildUserAgentString):
+
 2017-01-20  Darin Adler  <darin@apple.com>
 
         Remove PassRefPtr from "page" directory of WebCore, also deploy references

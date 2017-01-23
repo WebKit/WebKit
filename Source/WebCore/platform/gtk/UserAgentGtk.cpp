@@ -112,7 +112,7 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
     if (!quirks.contains(UserAgentQuirks::NeedsFirefoxBrowser)) {
         // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
         // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
-        uaString.appendLiteral("Version/10.0 Safari/");
+        uaString.appendLiteral("Version/11.0 Safari/");
         uaString.append(versionForUAString());
     }
 
