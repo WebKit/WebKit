@@ -36,6 +36,7 @@ namespace NetworkCache {
 
 void SubresourceInfo::encode(WTF::Persistence::Encoder& encoder) const
 {
+    encoder << m_key;
     encoder << m_isTransient;
 
     // Do not bother serializing other data members of transient resources as they are empty.
@@ -49,6 +50,9 @@ void SubresourceInfo::encode(WTF::Persistence::Encoder& encoder) const
 
 bool SubresourceInfo::decode(WTF::Persistence::Decoder& decoder, SubresourceInfo& info)
 {
+    if (!decoder.decode(info.m_key))
+        return false;
+
     if (!decoder.decode(info.m_isTransient))
         return false;
 
@@ -99,24 +103,42 @@ SubresourcesEntry::SubresourcesEntry(const Storage::Record& storageEntry)
 {
     ASSERT(m_key.type() == "SubResources");
 }
+    
+static Vector<SubresourceInfo> makeSubresourceInfoVector(const Vector<std::unique_ptr<SubresourceLoad>>& subresourceLoads)
+{
+    Vector<SubresourceInfo> result;
+    result.reserveCapacity(subresourceLoads.size());
+    
+    HashSet<Key> seenKeys;
+    for (auto& load : subresourceLoads) {
+        if (!seenKeys.add(load->key).isNewEntry)
+            continue;
+        result.append({ load->key, load->request });
+    }
+
+    return result;
+}
 
 SubresourcesEntry::SubresourcesEntry(Key&& key, const Vector<std::unique_ptr<SubresourceLoad>>& subresourceLoads)
     : m_key(WTFMove(key))
     , m_timeStamp(std::chrono::system_clock::now())
+    , m_subresources(makeSubresourceInfoVector(subresourceLoads))
 {
     ASSERT(m_key.type() == "SubResources");
-    for (auto& subresourceLoad : subresourceLoads)
-        m_subresources.add(subresourceLoad->key, SubresourceInfo(subresourceLoad->request));
 }
 
 void SubresourcesEntry::updateSubresourceLoads(const Vector<std::unique_ptr<SubresourceLoad>>& subresourceLoads)
 {
-    auto oldSubresources = WTFMove(m_subresources);
+    HashSet<Key> previousKeys;
+    for (auto& info : m_subresources)
+        previousKeys.add(info.key());
+    
+    m_subresources = makeSubresourceInfoVector(subresourceLoads);
 
-    // Mark keys that are common with last load as non-Transient.
-    for (auto& subresourceLoad : subresourceLoads) {
-        bool isTransient = !oldSubresources.contains(subresourceLoad->key);
-        m_subresources.add(subresourceLoad->key, SubresourceInfo(subresourceLoad->request, isTransient));
+    // Mark keys that are not common with the last load as transient.
+    for (auto& subresourceInfo : m_subresources) {
+        if (!previousKeys.contains(subresourceInfo.key()))
+            subresourceInfo.setTransient();
     }
 }
 

@@ -514,9 +514,8 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo&
 
 void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& frameID, SubresourcesEntry& entry)
 {
-    for (auto& subresourcePair : entry.subresources()) {
-        auto& key = subresourcePair.key;
-        auto& subresourceInfo = subresourcePair.value;
+    for (auto& subresourceInfo : entry.subresources()) {
+        auto& key = subresourceInfo.key();
         if (!subresourceInfo.isTransient())
             preloadEntry(key, subresourceInfo, frameID);
         else {

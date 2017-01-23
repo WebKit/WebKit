@@ -43,21 +43,25 @@ public:
     static bool decode(WTF::Persistence::Decoder&, SubresourceInfo&);
 
     SubresourceInfo() = default;
-    SubresourceInfo(const WebCore::ResourceRequest& request, bool isTransient = false)
-        : m_isTransient(isTransient)
-        , m_firstPartyForCookies(isTransient ? WebCore::URL() : request.firstPartyForCookies())
-        , m_requestHeaders(isTransient ? WebCore::HTTPHeaderMap() : request.httpHeaderFields())
+    SubresourceInfo(const Key& key, const WebCore::ResourceRequest& request)
+        : m_key(key)
+        , m_firstPartyForCookies(request.firstPartyForCookies())
+        , m_requestHeaders(request.httpHeaderFields())
         , m_priority(request.priority())
     {
     }
 
+    const Key& key() const { return m_key; }
     bool isTransient() const { return m_isTransient; }
     const WebCore::URL& firstPartyForCookies() const { ASSERT(!m_isTransient); return m_firstPartyForCookies; }
     const WebCore::HTTPHeaderMap& requestHeaders() const { ASSERT(!m_isTransient); return m_requestHeaders; }
     WebCore::ResourceLoadPriority priority() const { ASSERT(!m_isTransient); return m_priority; }
+    
+    void setTransient() { m_isTransient = true; }
 
 private:
-    bool m_isTransient { true };
+    Key m_key;
+    bool m_isTransient { false };
     WebCore::URL m_firstPartyForCookies;
     WebCore::HTTPHeaderMap m_requestHeaders;
     WebCore::ResourceLoadPriority m_priority;
@@ -86,14 +90,14 @@ public:
 
     const Key& key() const { return m_key; }
     std::chrono::system_clock::time_point timeStamp() const { return m_timeStamp; }
-    const HashMap<Key, SubresourceInfo>& subresources() const { return m_subresources; }
+    const Vector<SubresourceInfo>& subresources() const { return m_subresources; }
 
     void updateSubresourceLoads(const Vector<std::unique_ptr<SubresourceLoad>>&);
 
 private:
     Key m_key;
     std::chrono::system_clock::time_point m_timeStamp;
-    HashMap<Key, SubresourceInfo> m_subresources;
+    Vector<SubresourceInfo> m_subresources;
 };
 
 } // namespace WebKit
