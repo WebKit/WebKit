@@ -2294,7 +2294,7 @@ void Node::defaultEventHandler(Event& event)
 
         if (renderer && renderer->node()) {
             if (Frame* frame = document().frame())
-                frame->eventHandler().defaultTouchEventHandler(renderer->node(), &downcast<TouchEvent>(event));
+                frame->eventHandler().defaultTouchEventHandler(*renderer->node(), downcast<TouchEvent>(event));
         }
 #endif
     }
