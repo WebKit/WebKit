@@ -822,17 +822,17 @@ void WebChromeClient::enterFullScreenForElement(Element& element)
     m_webView->fullScreenController()->enterFullScreen();
 }
 
-void WebChromeClient::exitFullScreenForElement(Element& element)
+void WebChromeClient::exitFullScreenForElement(Element* element)
 {
     COMPtr<IWebUIDelegate> uiDelegate;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
         COMPtr<IWebUIDelegatePrivate4> uiDelegatePrivate4(Query, uiDelegate);
-        COMPtr<IDOMElement> domElement(AdoptCOM, DOMElement::createInstance(&element));
+        COMPtr<IDOMElement> domElement(AdoptCOM, DOMElement::createInstance(element));
         if (uiDelegatePrivate4 && SUCCEEDED(uiDelegatePrivate4->exitFullScreenForElement(domElement.get())))
             return;
     }
 
-    ASSERT(&element == m_webView->fullScreenElement());
+    ASSERT(element == m_webView->fullScreenElement());
     m_webView->fullScreenController()->exitFullScreen();
 }
 

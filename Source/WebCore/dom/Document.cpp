@@ -5720,7 +5720,7 @@ void Document::webkitExitFullscreen()
     // Only exit out of full screen window mode if there are no remaining elements in the 
     // full screen stack.
     if (!newTop) {
-        page()->chrome().client().exitFullScreenForElement(*m_fullScreenElement);
+        page()->chrome().client().exitFullScreenForElement(m_fullScreenElement.get());
         return;
     }
 

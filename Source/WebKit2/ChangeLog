@@ -1,3 +1,15 @@
+2017-01-23  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r211033): ASSERTION FAILED: m_ptr in com.apple.WebCore: WTF::RefPtr<WebCore::Element>::operator* const + 70
+        https://bugs.webkit.org/show_bug.cgi?id=167308
+        <rdar://problem/30144964>
+
+        Unreviewed, do a partial revert of r211033 to fix assertion.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::exitFullScreenForElement):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2017-01-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         urlParserEnabled parameter is only encoded for COCOA ports

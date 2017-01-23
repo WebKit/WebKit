@@ -350,7 +350,7 @@ public:
 #if ENABLE(FULLSCREEN_API)
     virtual bool supportsFullScreenForElement(const Element&, bool) { return false; }
     virtual void enterFullScreenForElement(Element&) { }
-    virtual void exitFullScreenForElement(Element&) { }
+    virtual void exitFullScreenForElement(Element*) { }
     virtual void setRootFullScreenLayer(GraphicsLayer*) { }
 #endif
 

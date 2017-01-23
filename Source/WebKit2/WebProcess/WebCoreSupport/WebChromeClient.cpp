@@ -964,9 +964,9 @@ void WebChromeClient::enterFullScreenForElement(Element& element)
     m_page.fullScreenManager()->enterFullScreenForElement(&element);
 }
 
-void WebChromeClient::exitFullScreenForElement(Element& element)
+void WebChromeClient::exitFullScreenForElement(Element* element)
 {
-    m_page.fullScreenManager()->exitFullScreenForElement(&element);
+    m_page.fullScreenManager()->exitFullScreenForElement(element);
 }
 
 #endif

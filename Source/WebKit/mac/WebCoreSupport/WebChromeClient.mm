@@ -1013,17 +1013,17 @@ void WebChromeClient::enterFullScreenForElement(Element& element)
 #endif
 }
 
-void WebChromeClient::exitFullScreenForElement(Element& element)
+void WebChromeClient::exitFullScreenForElement(Element* element)
 {
     SEL selector = @selector(webView:exitFullScreenForElement:listener:);
     if ([[m_webView UIDelegate] respondsToSelector:selector]) {
-        WebKitFullScreenListener* listener = [[WebKitFullScreenListener alloc] initWithElement:&element];
-        CallUIDelegate(m_webView, selector, kit(&element), listener);
+        WebKitFullScreenListener* listener = [[WebKitFullScreenListener alloc] initWithElement:element];
+        CallUIDelegate(m_webView, selector, kit(element), listener);
         [listener release];
     }
 #if !PLATFORM(IOS)
     else
-        [m_webView _exitFullScreenForElement:&element];
+        [m_webView _exitFullScreenForElement:element];
 #endif
 }
 
