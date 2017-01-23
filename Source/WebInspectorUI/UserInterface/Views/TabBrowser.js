@@ -72,9 +72,12 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         this._showPreviousTabKeyboardShortcut3.implicitlyPreventsDefault = false;
 
         this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemSelected, this._tabBarItemSelected, this);
+        this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemAdded, this._tabBarItemAdded, this);
         this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemRemoved, this._tabBarItemRemoved, this);
+        this._tabBar.addEventListener(WebInspector.TabBar.Event.NewTabContextMenu, this._handleNewTabContextMenu, this);
 
         this._recentTabContentViews = [];
+        this._closedTabClasses = new Set;
     }
 
     // Public
@@ -246,6 +249,17 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         this.dispatchEventToListeners(WebInspector.TabBrowser.Event.SelectedTabContentViewDidChange);
     }
 
+    _tabBarItemAdded(event)
+    {
+        let tabContentView = event.data.tabBarItem.representedObject;
+
+        console.assert(tabContentView);
+        if (!tabContentView)
+            return;
+
+        this._closedTabClasses.delete(tabContentView.constructor);
+    }
+
     _tabBarItemRemoved(event)
     {
         let tabContentView = event.data.tabBarItem.representedObject;
@@ -255,12 +269,45 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
             return;
 
         this._recentTabContentViews.remove(tabContentView);
+
+        if (!tabContentView.constructor.isEphemeral())
+            this._closedTabClasses.add(tabContentView.constructor);
+
         this._contentViewContainer.closeContentView(tabContentView);
 
         tabContentView.parentTabBrowser = null;
 
         console.assert(this._recentTabContentViews.length === this._tabBar.normalTabCount);
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
+    }
+
+    _handleNewTabContextMenu(event)
+    {
+        // The array must be reversed because Sets insert into the end, and we want to display the
+        // most recently closed item first (which is the last item added to the set).
+        let closedTabClasses = Array.from(this._closedTabClasses).reverse();
+        let allTabClasses = Array.from(WebInspector.knownTabClasses());
+        let tabClassesToDisplay = closedTabClasses.concat(allTabClasses.filter((tabClass) => {
+            if (closedTabClasses.includes(tabClass))
+                return false;
+
+            if (tabClass.isEphemeral())
+                return false;
+
+            return WebInspector.isNewTabWithTypeAllowed(tabClass.Type);
+        }));
+        if (!tabClassesToDisplay.length)
+            return;
+
+        let contextMenu = event.data.contextMenu;
+
+        contextMenu.appendItem(WebInspector.UIString("Recently Closed Tabs"), null, true);
+
+        for (let tabClass of tabClassesToDisplay) {
+            contextMenu.appendItem(tabClass.tabInfo().title, () => {
+                WebInspector.createNewTabWithType(tabClass.Type, {shouldShowNewTab: true});
+            });
+        }
     }
 
     _sidebarPanelSelected(event)

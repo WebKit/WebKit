@@ -609,6 +609,7 @@ localizedStrings["Radius Y"] = "Radius Y";
 localizedStrings["Range Issue"] = "Range Issue";
 localizedStrings["Readonly"] = "Readonly";
 localizedStrings["Reasons for compositing:"] = "Reasons for compositing:";
+localizedStrings["Recently Closed Tabs"] = "Recently Closed Tabs";
 localizedStrings["Recording Timeline Data"] = "Recording Timeline Data";
 localizedStrings["Reference Issue"] = "Reference Issue";
 localizedStrings["Reflection"] = "Reflection";

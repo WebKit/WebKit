@@ -1,5 +1,29 @@
 2017-01-23  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: long press on New Tab Tab Item should show context menu with recently closed tabs that are still closed
+        https://bugs.webkit.org/show_bug.cgi?id=166901
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar.Event):
+        (WebInspector.TabBar.prototype._handleNewTabContextMenu):
+        Add listener dispatch for contextmenu event on New Tab tab item.
+
+        (WebInspector.TabBar.prototype.get newTabTabBarItem): Deleted.
+        Unused.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser):
+        (WebInspector.TabBrowser.prototype._tabBarItemAdded):
+        (WebInspector.TabBrowser.prototype._tabBarItemRemoved):
+        (WebInspector.TabBrowser.prototype._handleNewTabContextMenu): Added.
+        Create an array that keeps track of tabs as they are closed, and populate the contextmenu
+        of the New Tab tab item with entries for each of these tabs.
+
+2017-01-23  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: tree elements with depth > 1 should have context menu "expand all"/"collapse all" commands
         https://bugs.webkit.org/show_bug.cgi?id=135590
 
