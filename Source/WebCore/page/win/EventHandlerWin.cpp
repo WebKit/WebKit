@@ -81,7 +81,7 @@ bool EventHandler::widgetDidHandleWheelEvent(const PlatformWheelEvent& wheelEven
     return downcast<FrameView>(widget).frame().eventHandler().handleWheelEvent(wheelEvent);
 }
 
-bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const
+bool EventHandler::tabsToAllFormControls(KeyboardEvent&) const
 {
     return true;
 }
@@ -92,10 +92,12 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 }
 
 #if ENABLE(DRAG_SUPPORT)
-PassRefPtr<DataTransfer> EventHandler::createDraggingDataTransfer() const
+
+Ref<DataTransfer> EventHandler::createDraggingDataTransfer() const
 {
     return DataTransfer::createForDragAndDrop();
 }
+
 #endif
 
 void EventHandler::focusDocumentView()

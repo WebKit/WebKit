@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2012 Digia Plc. and/or its subsidiary(-ies)
  *
@@ -28,16 +28,12 @@
 #include "config.h"
 #include "EventHandler.h"
 
-#include "AXObjectCache.h"
 #include "AutoscrollController.h"
 #include "BackForwardController.h"
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Cursor.h"
 #include "CursorList.h"
-#include "Document.h"
-#include "DocumentEventQueue.h"
 #include "DragController.h"
 #include "DragState.h"
 #include "Editor.h"
@@ -94,13 +90,13 @@
 #include "UserTypingGestureIndicator.h"
 #include "VisibleUnits.h"
 #include "WheelEvent.h"
+#include "WheelEventDeltaFilter.h"
 #include "WindowsKeyboardCodes.h"
 #include "htmlediting.h"
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/WeakPtr.h>
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include "PlatformTouchEventIOS.h"
@@ -175,21 +171,6 @@ const int maximumCursorSize = 128;
 // dividing cursor sizes (limited above) by the scale.
 const double minimumCursorScale = 0.001;
 #endif
-
-enum NoCursorChangeType { NoCursorChange };
-
-class OptionalCursor {
-public:
-    OptionalCursor(NoCursorChangeType) : m_isCursorChange(false) { }
-    OptionalCursor(const Cursor& cursor) : m_isCursorChange(true), m_cursor(cursor) { }
-
-    bool isCursorChange() const { return m_isCursorChange; }
-    const Cursor& cursor() const { ASSERT(m_isCursorChange); return m_cursor; }
-
-private:
-    bool m_isCursorChange;
-    Cursor m_cursor;
-};
 
 class MaximumDurationTracker {
 public:
@@ -405,12 +386,14 @@ EventHandler::~EventHandler()
 }
     
 #if ENABLE(DRAG_SUPPORT)
+
 DragState& EventHandler::dragState()
 {
     static NeverDestroyed<DragState> state;
     return state;
 }
-#endif // ENABLE(DRAG_SUPPORT)
+
+#endif
     
 void EventHandler::clear()
 {
@@ -800,14 +783,15 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
 
     m_mousePressNode = event.targetNode();
     m_frame.document()->setFocusNavigationStartingNode(event.targetNode());
+
 #if ENABLE(DRAG_SUPPORT)
-    m_dragStartPos = event.event().position();
+    m_dragStartPosition = event.event().position();
 #endif
 
-    bool swallowEvent = false;
     m_mousePressed = true;
     m_selectionInitiationState = HaveNotStartedSelection;
 
+    bool swallowEvent = false;
     if (event.event().clickCount() == 2)
         swallowEvent = handleMousePressEventDoubleClick(event);
     else if (event.event().clickCount() >= 3)
@@ -977,11 +961,11 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
         newSelection.setExtent(positionAfterNode(rootUserSelectAllForMousePressNode).downstream(CanCrossEditingBoundary));
     } else {
         // Reset base for user select all when base is inside user-select-all area and extent < base.
-        if (rootUserSelectAllForMousePressNode && comparePositions(target->renderer()->positionForPoint(hitTestResult.localPoint(), nullptr), m_mousePressNode->renderer()->positionForPoint(m_dragStartPos, nullptr)) < 0)
+        if (rootUserSelectAllForMousePressNode && comparePositions(target->renderer()->positionForPoint(hitTestResult.localPoint(), nullptr), m_mousePressNode->renderer()->positionForPoint(m_dragStartPosition, nullptr)) < 0)
             newSelection.setBase(positionAfterNode(rootUserSelectAllForMousePressNode).downstream(CanCrossEditingBoundary));
         
         Node* rootUserSelectAllForTarget = Position::rootUserSelectAllForNode(target);
-        if (rootUserSelectAllForTarget && m_mousePressNode->renderer() && comparePositions(target->renderer()->positionForPoint(hitTestResult.localPoint(), nullptr), m_mousePressNode->renderer()->positionForPoint(m_dragStartPos, nullptr)) < 0)
+        if (rootUserSelectAllForTarget && m_mousePressNode->renderer() && comparePositions(target->renderer()->positionForPoint(hitTestResult.localPoint(), nullptr), m_mousePressNode->renderer()->positionForPoint(m_dragStartPosition, nullptr)) < 0)
             newSelection.setExtent(positionBeforeNode(rootUserSelectAllForTarget).upstream(CanCrossEditingBoundary));
         else if (rootUserSelectAllForTarget && m_mousePressNode->renderer())
             newSelection.setExtent(positionAfterNode(rootUserSelectAllForTarget).downstream(CanCrossEditingBoundary));
@@ -1047,7 +1031,7 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
     // editing, place the caret.
     if (m_mouseDownWasSingleClickInSelection && m_selectionInitiationState != ExtendedSelection
 #if ENABLE(DRAG_SUPPORT)
-            && m_dragStartPos == event.event().position()
+            && m_dragStartPosition == event.event().position()
 #endif
             && m_frame.selection().isRange()
             && event.event().button() != RightButton) {
@@ -1084,12 +1068,12 @@ void EventHandler::didPanScrollStop()
     m_autoscrollController->didPanScrollStop();
 }
 
-void EventHandler::startPanScrolling(RenderElement* renderer)
+void EventHandler::startPanScrolling(RenderElement& renderer)
 {
 #if !PLATFORM(IOS)
-    if (!is<RenderBox>(*renderer))
+    if (!is<RenderBox>(renderer))
         return;
-    m_autoscrollController->startPanScrolling(downcast<RenderBox>(renderer), lastKnownMousePosition());
+    m_autoscrollController->startPanScrolling(&downcast<RenderBox>(renderer), lastKnownMousePosition());
     invalidateClick();
 #endif
 }
@@ -1374,24 +1358,28 @@ void EventHandler::updateCursor()
     HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
     renderView->hitTest(request, result);
 
-    OptionalCursor optionalCursor = selectCursor(result, shiftKey);
-    if (optionalCursor.isCursorChange()) {
-        m_currentMouseCursor = optionalCursor.cursor();
-        view->setCursor(m_currentMouseCursor);
+    updateCursor(*view, result, shiftKey);
+}
+
+void EventHandler::updateCursor(FrameView& view, const HitTestResult& result, bool shiftKey)
+{
+    if (auto optionalCursor = selectCursor(result, shiftKey)) {
+        m_currentMouseCursor = WTFMove(optionalCursor.value());
+        view.setCursor(m_currentMouseCursor);
     }
 }
 
-OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shiftKey)
+std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bool shiftKey)
 {
     if (m_resizeLayer && m_resizeLayer->inResizeMode())
-        return NoCursorChange;
+        return std::nullopt;
 
     if (!m_frame.page())
-        return NoCursorChange;
+        return std::nullopt;
 
 #if ENABLE(PAN_SCROLLING)
     if (m_frame.mainFrame().eventHandler().panScrollInProgress())
-        return NoCursorChange;
+        return std::nullopt;
 #endif
 
     Ref<Frame> protectedFrame(m_frame);
@@ -1406,7 +1394,7 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
 
     Node* node = result.targetNode();
     if (!node)
-        return NoCursorChange;
+        return std::nullopt;
 
     auto renderer = node->renderer();
     auto* style = renderer ? &renderer->style() : nullptr;
@@ -1428,7 +1416,7 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
         case SetCursor:
             return overrideCursor;
         case DoNotSetCursor:
-            return NoCursorChange;
+            return std::nullopt;
         }
     }
 
@@ -1947,15 +1935,10 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
         // node to be detached from its FrameView, in which case the event should not be passed.
         if (newSubframe->view())
             swallowEvent |= passMouseMoveEventToSubframe(mouseEvent, newSubframe.get(), hoveredNode);
-#if ENABLE(CURSOR_SUPPORT)
     } else {
-        if (FrameView* view = m_frame.view()) {
-            OptionalCursor optionalCursor = selectCursor(mouseEvent.hitTestResult(), platformMouseEvent.shiftKey());
-            if (optionalCursor.isCursorChange()) {
-                m_currentMouseCursor = optionalCursor.cursor();
-                view->setCursor(m_currentMouseCursor);
-            }
-        }
+#if ENABLE(CURSOR_SUPPORT)
+        if (auto* view = m_frame.view())
+            updateCursor(*view, mouseEvent.hitTestResult(), platformMouseEvent.shiftKey());
 #endif
     }
     
@@ -1968,7 +1951,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
 #if ENABLE(DRAG_SUPPORT)
     if (!swallowEvent)
         swallowEvent = handleMouseDraggedEvent(mouseEvent);
-#endif // ENABLE(DRAG_SUPPORT)
+#endif
 
     return swallowEvent;
 }
@@ -2236,7 +2219,7 @@ static bool findDropZone(Node* target, DataTransfer* dataTransfer)
     return false;
 }
     
-bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, DataTransfer* dataTransfer)
+bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, DataTransfer& dataTransfer)
 {
     Ref<Frame> protectedFrame(m_frame);
 
@@ -2275,16 +2258,16 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, DataTransf
                 // for now we don't care if event handler cancels default behavior, since there is none
                 dispatchDragSrcEvent(eventNames().dragEvent, event);
             }
-            accept = dispatchDragEvent(eventNames().dragenterEvent, *newTarget, event, dataTransfer);
+            accept = dispatchDragEvent(eventNames().dragenterEvent, *newTarget, event, &dataTransfer);
             if (!accept)
-                accept = findDropZone(newTarget.get(), dataTransfer);
+                accept = findDropZone(newTarget.get(), &dataTransfer);
         }
 
         if (targetIsFrame(m_dragTarget.get(), targetFrame)) {
             if (targetFrame)
                 accept = targetFrame->eventHandler().updateDragAndDrop(event, dataTransfer);
         } else if (m_dragTarget)
-            dispatchDragEvent(eventNames().dragleaveEvent, *m_dragTarget, event, dataTransfer);
+            dispatchDragEvent(eventNames().dragleaveEvent, *m_dragTarget, event, &dataTransfer);
 
         if (newTarget) {
             // We do not explicitly call dispatchDragEvent here because it could ultimately result in the appearance that
@@ -2302,9 +2285,9 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, DataTransf
                 // for now we don't care if event handler cancels default behavior, since there is none
                 dispatchDragSrcEvent(eventNames().dragEvent, event);
             }
-            accept = dispatchDragEvent(eventNames().dragoverEvent, *newTarget, event, dataTransfer);
+            accept = dispatchDragEvent(eventNames().dragoverEvent, *newTarget, event, &dataTransfer);
             if (!accept)
-                accept = findDropZone(newTarget.get(), dataTransfer);
+                accept = findDropZone(newTarget.get(), &dataTransfer);
             m_shouldOnlyFireDragOverEvent = false;
         }
     }
@@ -2312,7 +2295,7 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, DataTransf
     return accept;
 }
 
-void EventHandler::cancelDragAndDrop(const PlatformMouseEvent& event, DataTransfer* dataTransfer)
+void EventHandler::cancelDragAndDrop(const PlatformMouseEvent& event, DataTransfer& dataTransfer)
 {
     Ref<Frame> protectedFrame(m_frame);
 
@@ -2323,12 +2306,12 @@ void EventHandler::cancelDragAndDrop(const PlatformMouseEvent& event, DataTransf
     } else if (m_dragTarget) {
         if (dragState().source && dragState().shouldDispatchEvents)
             dispatchDragSrcEvent(eventNames().dragEvent, event);
-        dispatchDragEvent(eventNames().dragleaveEvent, *m_dragTarget, event, dataTransfer);
+        dispatchDragEvent(eventNames().dragleaveEvent, *m_dragTarget, event, &dataTransfer);
     }
     clearDragState();
 }
 
-bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, DataTransfer* dataTransfer)
+bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, DataTransfer& dataTransfer)
 {
     Ref<Frame> protectedFrame(m_frame);
 
@@ -2338,7 +2321,7 @@ bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, DataTrans
         if (targetFrame)
             preventedDefault = targetFrame->eventHandler().performDragAndDrop(event, dataTransfer);
     } else if (m_dragTarget)
-        preventedDefault = dispatchDragEvent(eventNames().dropEvent, *m_dragTarget, event, dataTransfer);
+        preventedDefault = dispatchDragEvent(eventNames().dropEvent, *m_dragTarget, event, &dataTransfer);
     clearDragState();
     return preventedDefault;
 }
@@ -2353,9 +2336,10 @@ void EventHandler::clearDragState()
     m_sendingEventToSubview = false;
 #endif
 }
+
 #endif // ENABLE(DRAG_SUPPORT)
 
-void EventHandler::setCapturingMouseEventsElement(PassRefPtr<Element> element)
+void EventHandler::setCapturingMouseEventsElement(Element* element)
 {
     m_capturingMouseEventsElement = element;
     m_eventHandlerWillResetCapturingMouseEventsElement = false;
@@ -2563,7 +2547,7 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
 
     // If focus shift is blocked, we eat the event.
     auto* page = m_frame.page();
-    if (page && !page->focusController().setFocusedElement(element, &m_frame))
+    if (page && !page->focusController().setFocusedElement(element, m_frame))
         return false;
 
     return true;
@@ -3411,11 +3395,11 @@ void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperat
     m_mouseDownMayStartDrag = false;
 }
 
-void EventHandler::updateDragStateAfterEditDragIfNeeded(Element* rootEditableElement)
+void EventHandler::updateDragStateAfterEditDragIfNeeded(Element& rootEditableElement)
 {
     // If inserting the dragged contents removed the drag source, we still want to fire dragend at the root editable element.
     if (dragState().source && !dragState().source->inDocument())
-        dragState().source = rootEditableElement;
+        dragState().source = &rootEditableElement;
 }
 
 // Return value indicates if we should continue "default processing", i.e., whether event handler canceled.
@@ -3625,25 +3609,24 @@ bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEve
     return event->defaultHandled();
 }
     
-bool EventHandler::isKeyboardOptionTab(KeyboardEvent* event)
+bool EventHandler::isKeyboardOptionTab(KeyboardEvent& event)
 {
-    return event
-        && (event->type() == eventNames().keydownEvent || event->type() == eventNames().keypressEvent)
-        && event->altKey()
-        && event->keyIdentifier() == "U+0009";    
+    return (event.type() == eventNames().keydownEvent || event.type() == eventNames().keypressEvent)
+        && event.altKey()
+        && event.keyIdentifier() == "U+0009";
 }
 
-bool EventHandler::eventInvertsTabsToLinksClientCallResult(KeyboardEvent* event)
+bool EventHandler::eventInvertsTabsToLinksClientCallResult(KeyboardEvent& event)
 {
 #if PLATFORM(COCOA) || PLATFORM(EFL)
-    return EventHandler::isKeyboardOptionTab(event);
+    return isKeyboardOptionTab(event);
 #else
     UNUSED_PARAM(event);
     return false;
 #endif
 }
 
-bool EventHandler::tabsToLinks(KeyboardEvent* event) const
+bool EventHandler::tabsToLinks(KeyboardEvent& event) const
 {
     // FIXME: This function needs a better name. It can be called for keypresses other than Tab when spatial navigation is enabled.
 

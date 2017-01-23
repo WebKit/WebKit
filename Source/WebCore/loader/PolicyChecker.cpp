@@ -157,7 +157,7 @@ void PolicyChecker::checkNewWindowPolicy(const NavigationAction& action, const R
     if (m_frame.document() && m_frame.document()->isSandboxed(SandboxPopups))
         return continueAfterNavigationPolicy(PolicyIgnore);
 
-    if (!DOMWindow::allowPopUp(&m_frame))
+    if (!DOMWindow::allowPopUp(m_frame))
         return continueAfterNavigationPolicy(PolicyIgnore);
 
     m_callback.set(request, formState, frameName, action, WTFMove(function));

@@ -103,25 +103,25 @@ void WebChromeClientIOS::focus()
     [[webView() _UIDelegateForwarder] webViewFocus:webView()];
 }
 
-void WebChromeClientIOS::runJavaScriptAlert(Frame* frame, const WTF::String& message)
+void WebChromeClientIOS::runJavaScriptAlert(Frame& frame, const WTF::String& message)
 {
     WebThreadLockPushModal();
-    [[webView() _UIDelegateForwarder] webView:webView() runJavaScriptAlertPanelWithMessage:message initiatedByFrame:kit(frame)];
+    [[webView() _UIDelegateForwarder] webView:webView() runJavaScriptAlertPanelWithMessage:message initiatedByFrame:kit(&frame)];
     WebThreadLockPopModal();
 }
 
-bool WebChromeClientIOS::runJavaScriptConfirm(Frame* frame, const WTF::String& message)
+bool WebChromeClientIOS::runJavaScriptConfirm(Frame& frame, const WTF::String& message)
 {
     WebThreadLockPushModal();
-    bool result = [[webView() _UIDelegateForwarder] webView:webView() runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:kit(frame)];
+    bool result = [[webView() _UIDelegateForwarder] webView:webView() runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:kit(&frame)];
     WebThreadLockPopModal();
     return result;
 }
 
-bool WebChromeClientIOS::runJavaScriptPrompt(Frame* frame, const WTF::String& prompt, const WTF::String& defaultText, WTF::String& result)
+bool WebChromeClientIOS::runJavaScriptPrompt(Frame& frame, const WTF::String& prompt, const WTF::String& defaultText, WTF::String& result)
 {
     WebThreadLockPushModal();
-    result = [[webView() _UIDelegateForwarder] webView:webView() runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText initiatedByFrame:kit(frame)];
+    result = [[webView() _UIDelegateForwarder] webView:webView() runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText initiatedByFrame:kit(&frame)];
     WebThreadLockPopModal();
     return !result.isNull();
 }
@@ -171,26 +171,26 @@ void WebChromeClientIOS::didReceiveMobileDocType(bool isMobileDoctype)
         [[webView() _UIKitDelegateForwarder] webViewDidReceiveMobileDocType:webView()];
 }
 
-void WebChromeClientIOS::setNeedsScrollNotifications(WebCore::Frame* frame, bool flag)
+void WebChromeClientIOS::setNeedsScrollNotifications(WebCore::Frame& frame, bool flag)
 {
-    [[webView() _UIKitDelegateForwarder] webView:webView() needsScrollNotifications:[NSNumber numberWithBool:flag] forFrame:kit(frame)];
+    [[webView() _UIKitDelegateForwarder] webView:webView() needsScrollNotifications:[NSNumber numberWithBool:flag] forFrame:kit(&frame)];
 }
 
-void WebChromeClientIOS::observedContentChange(WebCore::Frame* frame)
+void WebChromeClientIOS::observedContentChange(WebCore::Frame& frame)
 {
-    [[webView() _UIKitDelegateForwarder] webView:webView() didObserveDeferredContentChange:WKObservedContentChange() forFrame:kit(frame)];
+    [[webView() _UIKitDelegateForwarder] webView:webView() didObserveDeferredContentChange:WKObservedContentChange() forFrame:kit(&frame)];
 }
 
-void WebChromeClientIOS::clearContentChangeObservers(WebCore::Frame* frame)
+void WebChromeClientIOS::clearContentChangeObservers(WebCore::Frame& frame)
 {
     ASSERT(WebThreadCountOfObservedContentModifiers() > 0);
     if (WebThreadCountOfObservedContentModifiers() > 0) {
         WebThreadClearObservedContentModifiers();
         observedContentChange(frame);
-    }        
+    }
 }
 
-static inline NSDictionary* dictionaryForViewportArguments(const WebCore::ViewportArguments& arguments)
+static inline NSDictionary *dictionaryForViewportArguments(const WebCore::ViewportArguments& arguments)
 {
     return @{ @"initial-scale":@(arguments.zoom),
               @"minimum-scale":@(arguments.minZoom),
@@ -218,9 +218,9 @@ void WebChromeClientIOS::dispatchViewportPropertiesDidChange(const WebCore::View
     [[webView() _UIKitDelegateForwarder] webView:webView() didReceiveViewportArguments:dictionaryForViewportArguments(arguments)];
 }
 
-void WebChromeClientIOS::notifyRevealedSelectionByScrollingFrame(WebCore::Frame* frame)
+void WebChromeClientIOS::notifyRevealedSelectionByScrollingFrame(WebCore::Frame& frame)
 {
-    [[webView() _UIKitDelegateForwarder] revealedSelectionByScrollingWebFrame:kit(frame)];
+    [[webView() _UIKitDelegateForwarder] revealedSelectionByScrollingWebFrame:kit(&frame)];
 }
 
 bool WebChromeClientIOS::isStopping()
@@ -256,16 +256,16 @@ void WebChromeClientIOS::restoreFormNotifications()
         m_formNotificationSuppressions = 0;
 }
 
-void WebChromeClientIOS::elementDidFocus(const WebCore::Node* node)
+void WebChromeClientIOS::elementDidFocus(WebCore::Element& element)
 {
     if (m_formNotificationSuppressions <= 0)
-        [[webView() _UIKitDelegateForwarder] webView:webView() elementDidFocusNode:kit(const_cast<WebCore::Node*>(node))];
+        [[webView() _UIKitDelegateForwarder] webView:webView() elementDidFocusNode:kit(&element)];
 }
 
-void WebChromeClientIOS::elementDidBlur(const WebCore::Node* node)
+void WebChromeClientIOS::elementDidBlur(WebCore::Element& element)
 {
     if (m_formNotificationSuppressions <= 0)
-        [[webView() _UIKitDelegateForwarder] webView:webView() elementDidBlurNode:kit(const_cast<WebCore::Node*>(node))];
+        [[webView() _UIKitDelegateForwarder] webView:webView() elementDidBlurNode:kit(&element)];
 }
 
 bool WebChromeClientIOS::selectItemWritingDirectionIsNatural()
@@ -278,17 +278,17 @@ bool WebChromeClientIOS::selectItemAlignmentFollowsMenuWritingDirection()
     return true;
 }
 
-RefPtr<WebCore::PopupMenu> WebChromeClientIOS::createPopupMenu(WebCore::PopupMenuClient* client) const
+RefPtr<WebCore::PopupMenu> WebChromeClientIOS::createPopupMenu(WebCore::PopupMenuClient& client) const
 {
-    return adoptRef(new PopupMenuIOS(client));
+    return adoptRef(new PopupMenuIOS(&client));
 }
 
-RefPtr<WebCore::SearchPopupMenu> WebChromeClientIOS::createSearchPopupMenu(WebCore::PopupMenuClient* client) const
+RefPtr<WebCore::SearchPopupMenu> WebChromeClientIOS::createSearchPopupMenu(WebCore::PopupMenuClient& client) const
 {
-    return adoptRef(new SearchPopupMenuIOS(client));
+    return adoptRef(new SearchPopupMenuIOS(&client));
 }
 
-void WebChromeClientIOS::attachRootGraphicsLayer(Frame*, GraphicsLayer* graphicsLayer)
+void WebChromeClientIOS::attachRootGraphicsLayer(Frame&, GraphicsLayer* graphicsLayer)
 {
     // FIXME: for non-root frames we rely on RenderView positioning the root layer,
     // which is a hack. <rdar://problem/5906146>

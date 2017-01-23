@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,21 +29,16 @@
 
 #include "ContextMenuContext.h"
 #include "ContextMenuItem.h"
-#include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class ContextMenu;
 class ContextMenuClient;
-class ContextMenuItem;
 class ContextMenuProvider;
 class Event;
 class Page;
 
 class ContextMenuController {
-    WTF_MAKE_NONCOPYABLE(ContextMenuController); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ContextMenuController(Page&, ContextMenuClient&);
     ~ContextMenuController();
@@ -54,8 +49,8 @@ public:
     ContextMenu* contextMenu() const { return m_contextMenu.get(); }
     WEBCORE_EXPORT void clearContextMenu();
 
-    void handleContextMenuEvent(Event*);
-    void showContextMenu(Event*, PassRefPtr<ContextMenuProvider>);
+    void handleContextMenuEvent(Event&);
+    void showContextMenu(Event&, ContextMenuProvider&);
 
     void populate();
     WEBCORE_EXPORT void contextMenuItemSelected(ContextMenuAction, const String& title);
@@ -68,16 +63,16 @@ public:
     const HitTestResult& hitTestResult() const { return m_context.hitTestResult(); }
 
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)
-    void showContextMenuAt(Frame*, const IntPoint& clickPoint);
+    void showContextMenuAt(Frame&, const IntPoint& clickPoint);
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
-    void showImageControlsMenu(Event*);
+    void showImageControlsMenu(Event&);
 #endif
 
 private:
-    std::unique_ptr<ContextMenu> maybeCreateContextMenu(Event*);
-    void showContextMenu(Event*);
+    std::unique_ptr<ContextMenu> maybeCreateContextMenu(Event&);
+    void showContextMenu(Event&);
     
     void appendItem(ContextMenuItem&, ContextMenu* parentMenu);
 

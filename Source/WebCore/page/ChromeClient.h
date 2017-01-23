@@ -123,7 +123,7 @@ public:
     // created Page has its show method called.
     // The FrameLoadRequest parameter is only for ChromeClient to check if the
     // request could be fulfilled. The ChromeClient should not load the request.
-    virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) = 0;
+    virtual Page* createWindow(Frame&, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) = 0;
     virtual void show() = 0;
 
     virtual bool canRunModal() = 0;
@@ -146,63 +146,67 @@ public:
     virtual void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) = 0;
 
     virtual bool canRunBeforeUnloadConfirmPanel() = 0;
-    virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame*) = 0;
+    virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame&) = 0;
 
     virtual void closeWindowSoon() = 0;
 
-    virtual void runJavaScriptAlert(Frame*, const String&) = 0;
-    virtual bool runJavaScriptConfirm(Frame*, const String&) = 0;
-    virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result) = 0;
+    virtual void runJavaScriptAlert(Frame&, const String&) = 0;
+    virtual bool runJavaScriptConfirm(Frame&, const String&) = 0;
+    virtual bool runJavaScriptPrompt(Frame&, const String& message, const String& defaultValue, String& result) = 0;
     virtual void setStatusbarText(const String&) = 0;
     virtual KeyboardUIMode keyboardUIMode() = 0;
 
-    // Methods used by HostWindow.
     virtual bool supportsImmediateInvalidation() { return false; }
     virtual void invalidateRootView(const IntRect&) = 0;
     virtual void invalidateContentsAndRootView(const IntRect&) = 0;
     virtual void invalidateContentsForSlowScroll(const IntRect&) = 0;
     virtual void scroll(const IntSize&, const IntRect&, const IntRect&) = 0;
+
 #if USE(COORDINATED_GRAPHICS)
     virtual void delegatedScrollRequested(const IntPoint&) = 0;
 #endif
+
     virtual IntPoint screenToRootView(const IntPoint&) const = 0;
     virtual IntRect rootViewToScreen(const IntRect&) const = 0;
+
 #if PLATFORM(IOS)
     virtual IntPoint accessibilityScreenToRootView(const IntPoint&) const = 0;
     virtual IntRect rootViewToAccessibilityScreen(const IntRect&) const = 0;
 #endif    
+
     virtual PlatformPageClient platformPageClient() const = 0;
     virtual void scrollbarsModeDidChange() const = 0;
+
 #if ENABLE(CURSOR_SUPPORT)
     virtual void setCursor(const Cursor&) = 0;
     virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
 #endif
+
 #if !USE(REQUEST_ANIMATION_FRAME_TIMER)
     virtual void scheduleAnimation() = 0;
 #endif
-    // End methods used by HostWindow.
 
-    virtual FloatSize screenSize() const { return const_cast<ChromeClient*>(this)->windowRect().size(); }
-    virtual FloatSize availableScreenSize() const { return const_cast<ChromeClient*>(this)->windowRect().size(); }
+    virtual FloatSize screenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
+    virtual FloatSize availableScreenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
 
     virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const { }
 
-    virtual void contentsSizeChanged(Frame*, const IntSize&) const = 0;
+    virtual void contentsSizeChanged(Frame&, const IntSize&) const = 0;
     virtual void scrollRectIntoView(const IntRect&) const { }; // Currently only Mac has a non empty implementation.
 
     virtual bool shouldUnavailablePluginMessageBeButton(RenderEmbeddedObject::PluginUnavailabilityReason) const { return false; }
-    virtual void unavailablePluginButtonClicked(Element*, RenderEmbeddedObject::PluginUnavailabilityReason) const { }
+    virtual void unavailablePluginButtonClicked(Element&, RenderEmbeddedObject::PluginUnavailabilityReason) const { }
     virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
 
     virtual void setToolTip(const String&, TextDirection) = 0;
 
-    virtual void print(Frame*) = 0;
+    virtual void print(Frame&) = 0;
 
     virtual Color underlayColor() const { return Color(); }
 
     virtual void pageExtendedBackgroundColorDidChange(Color) const { }
 
-    virtual void exceededDatabaseQuota(Frame*, const String& databaseName, DatabaseDetails) = 0;
+    virtual void exceededDatabaseQuota(Frame&, const String& databaseName, DatabaseDetails) = 0;
 
     // Callback invoked when the application cache fails to save a cache object
     // because storing it would grow the database file past its defined maximum
@@ -219,7 +223,7 @@ public:
     // storage, in bytes, needed to store the new cache along with all of the
     // other existing caches for the origin that would not be replaced by
     // the new cache.
-    virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t totalSpaceNeeded) = 0;
+    virtual void reachedApplicationCacheOriginQuota(SecurityOrigin&, int64_t totalSpaceNeeded) = 0;
 
 #if ENABLE(DASHBOARD_SUPPORT)
     virtual void annotatedRegionsChanged();
@@ -236,10 +240,10 @@ public:
 
 #if PLATFORM(IOS)
     virtual void didReceiveMobileDocType(bool) = 0;
-    virtual void setNeedsScrollNotifications(Frame*, bool) = 0;
-    virtual void observedContentChange(Frame*) = 0;
-    virtual void clearContentChangeObservers(Frame*) = 0;
-    virtual void notifyRevealedSelectionByScrollingFrame(Frame*) = 0;
+    virtual void setNeedsScrollNotifications(Frame&, bool) = 0;
+    virtual void observedContentChange(Frame&) = 0;
+    virtual void clearContentChangeObservers(Frame&) = 0;
+    virtual void notifyRevealedSelectionByScrollingFrame(Frame&) = 0;
 
     enum LayoutType { NormalLayout, Scroll };
     virtual void didLayout(LayoutType = NormalLayout) = 0;
@@ -270,16 +274,16 @@ public:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) = 0;
+    virtual std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) = 0;
 #endif
 
     virtual void runOpenPanel(Frame&, FileChooser&) = 0;
     // Asynchronous request to load an icon for specified filenames.
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader&) = 0;
         
-    virtual void elementDidFocus(const Node*) { };
-    virtual void elementDidBlur(const Node*) { };
-    virtual void elementDidRefocus(const Node*) { };
+    virtual void elementDidFocus(Element&) { }
+    virtual void elementDidBlur(Element&) { }
+    virtual void elementDidRefocus(Element&) { }
     
     virtual bool shouldPaintEntireContents() const { return false; }
     virtual bool hasStablePageScaleFactor() const { return true; }
@@ -291,9 +295,9 @@ public:
     virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const { return nullptr; }
 #endif
 
-    // Pass 0 as the GraphicsLayer to detatch the root layer.
-    virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) = 0;
-    virtual void attachViewOverlayGraphicsLayer(Frame*, GraphicsLayer*) = 0;
+    // Pass nullptr as the GraphicsLayer to detatch the root layer.
+    virtual void attachRootGraphicsLayer(Frame&, GraphicsLayer*) = 0;
+    virtual void attachViewOverlayGraphicsLayer(Frame&, GraphicsLayer*) = 0;
     // Sets a flag to specify that the next time content is drawn to the window,
     // the changes appear on the screen in synchrony with updates to GraphicsLayers.
     virtual void setNeedsOneShotDrawingSynchronization() = 0;
@@ -325,26 +329,28 @@ public:
 
     virtual bool adjustLayerFlushThrottling(LayerFlushThrottleState::Flags) { return false; }
 
-    virtual PassRefPtr<ScrollingCoordinator> createScrollingCoordinator(Page*) const { return nullptr; }
+    virtual RefPtr<ScrollingCoordinator> createScrollingCoordinator(Page&) const { return nullptr; }
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
-    virtual GraphicsDeviceAdapter* graphicsDeviceAdapter() const { return 0; }
+    virtual GraphicsDeviceAdapter* graphicsDeviceAdapter() const { return nullptr; }
 #endif
 
     virtual bool supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullscreenMode) { return false; }
+
 #if ENABLE(VIDEO)
     virtual void enterVideoFullscreenForVideoElement(HTMLVideoElement&, HTMLMediaElementEnums::VideoFullscreenMode) { }
     virtual void setUpPlaybackControlsManager(HTMLMediaElement&) { }
     virtual void clearPlaybackControlsManager() { }
 #endif
-    virtual void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&) { }
-    virtual void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, HTMLMediaElementEnums::VideoFullscreenMode /*targetMode*/) { }
+
+    virtual void exitVideoFullscreenForVideoElement(HTMLVideoElement&) { }
+    virtual void exitVideoFullscreenToModeWithoutAnimation(HTMLVideoElement&, HTMLMediaElementEnums::VideoFullscreenMode) { }
     virtual bool requiresFullscreenForVideoPlayback() { return false; } 
 
 #if ENABLE(FULLSCREEN_API)
-    virtual bool supportsFullScreenForElement(const Element*, bool) { return false; }
-    virtual void enterFullScreenForElement(Element*) { }
-    virtual void exitFullScreenForElement(Element*) { }
+    virtual bool supportsFullScreenForElement(const Element&, bool) { return false; }
+    virtual void enterFullScreenForElement(Element&) { }
+    virtual void exitFullScreenForElement(Element&) { }
     virtual void setRootFullScreenLayer(GraphicsLayer*) { }
 #endif
 
@@ -353,7 +359,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    virtual NSResponder *firstResponder() { return 0; }
+    virtual NSResponder *firstResponder() { return nullptr; }
     virtual void makeFirstResponder(NSResponder *) { }
     // Focuses on the containing view associated with this page.
     virtual void makeFirstResponder() { }
@@ -377,10 +383,10 @@ public:
     virtual bool selectItemAlignmentFollowsMenuWritingDirection() = 0;
     // Checks if there is an opened popup, called by RenderMenuList::showPopup().
     virtual bool hasOpenedPopup() const = 0;
-    virtual RefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const = 0;
-    virtual RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const = 0;
+    virtual RefPtr<PopupMenu> createPopupMenu(PopupMenuClient&) const = 0;
+    virtual RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient&) const = 0;
 
-    virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) { }
+    virtual void postAccessibilityNotification(AccessibilityObject&, AXObjectCache::AXNotification) { }
 
     virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
     virtual void recommendedScrollbarStyleDidChange(ScrollbarStyle) { }
@@ -408,16 +414,16 @@ public:
     virtual void didAssociateFormControls(const Vector<RefPtr<Element>>&) { };
     virtual bool shouldNotifyOnFormChanges() { return false; };
 
-    virtual void didAddHeaderLayer(GraphicsLayer*) { }
-    virtual void didAddFooterLayer(GraphicsLayer*) { }
+    virtual void didAddHeaderLayer(GraphicsLayer&) { }
+    virtual void didAddFooterLayer(GraphicsLayer&) { }
 
-    virtual bool shouldUseTiledBackingForFrameView(const FrameView*) const { return false; }
+    virtual bool shouldUseTiledBackingForFrameView(const FrameView&) const { return false; }
 
     virtual void isPlayingMediaDidChange(MediaProducer::MediaStateFlags, uint64_t) { }
 
 #if ENABLE(MEDIA_SESSION)
     virtual void hasMediaSessionWithActiveMediaElementsDidChange(bool) { }
-    virtual void mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata&) { }
+    virtual void mediaSessionMetadataDidChange(const MediaSessionMetadata&) { }
     virtual void focusedContentMediaElementDidChange(uint64_t) { }
 #endif
 
@@ -427,11 +433,12 @@ public:
 #endif
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
-    virtual void handleTelephoneNumberClick(const String&, const WebCore::IntPoint&) { }
+    virtual void handleTelephoneNumberClick(const String&, const IntPoint&) { }
 #endif
+
 #if ENABLE(SERVICE_CONTROLS)
-    virtual void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<String>&, const WebCore::IntPoint&) { }
-    virtual bool hasRelevantSelectionServices(bool /* isTextOnly */) const { return false; }
+    virtual void handleSelectionServiceClick(FrameSelection&, const Vector<String>&, const IntPoint&) { }
+    virtual bool hasRelevantSelectionServices(bool /*isTextOnly*/) const { return false; }
 #endif
 
     virtual bool shouldDispatchFakeMouseMoveEvents() const { return true; }
@@ -441,13 +448,13 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual void addPlaybackTargetPickerClient(uint64_t /*contextId*/) { }
     virtual void removePlaybackTargetPickerClient(uint64_t /*contextId*/) { }
-    virtual void showPlaybackTargetPicker(uint64_t /*contextId*/, const WebCore::IntPoint&, bool /* isVideo */) { }
+    virtual void showPlaybackTargetPicker(uint64_t /*contextId*/, const IntPoint&, bool /*isVideo*/) { }
     virtual void playbackTargetPickerClientStateDidChange(uint64_t /*contextId*/, MediaProducer::MediaStateFlags) { }
     virtual void setMockMediaPlaybackTargetPickerEnabled(bool)  { }
-    virtual void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::State) { }
+    virtual void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetContext::State) { }
 #endif
 
-    virtual void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) { }
+    virtual void imageOrMediaDocumentSizeChanged(const IntSize&) { }
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     virtual void requestInstallMissingMediaPlugins(const String& /*details*/, const String& /*description*/, MediaPlayerRequestInstallMissingPluginsCallback&) { }

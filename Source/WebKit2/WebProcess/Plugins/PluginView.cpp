@@ -1128,7 +1128,7 @@ void PluginView::focusPluginElement()
     ASSERT(frame());
     
     if (Page* page = frame()->page())
-        page->focusController().setFocusedElement(m_pluginElement.get(), frame());
+        page->focusController().setFocusedElement(m_pluginElement.get(), *frame());
     else
         frame()->document()->setFocusedElement(m_pluginElement.get());
 }
@@ -1508,7 +1508,7 @@ void PluginView::setStatusbarText(const String& statusbarText)
     if (!page)
         return;
 
-    page->chrome().setStatusbarText(frame(), statusbarText);
+    page->chrome().setStatusbarText(*frame(), statusbarText);
 }
 
 bool PluginView::isAcceleratedCompositingEnabled()

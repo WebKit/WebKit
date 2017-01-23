@@ -616,7 +616,7 @@ void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
             setUnavailablePluginIndicatorIsPressed(false);
         }
         if (m_mouseDownWasInUnavailablePluginIndicator && isInUnavailablePluginIndicator(mouseEvent)) {
-            page().chrome().client().unavailablePluginButtonClicked(&element, m_pluginUnavailabilityReason);
+            page().chrome().client().unavailablePluginButtonClicked(element, m_pluginUnavailabilityReason);
         }
         m_mouseDownWasInUnavailablePluginIndicator = false;
         event->setDefaultHandled();

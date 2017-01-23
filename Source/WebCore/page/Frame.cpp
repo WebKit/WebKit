@@ -777,7 +777,7 @@ void Frame::willDetachPage()
 
 #if PLATFORM(IOS)
     if (WebThreadCountOfObservedContentModifiers() > 0 && m_page)
-        m_page->chrome().client().clearContentChangeObservers(this);
+        m_page->chrome().client().clearContentChangeObservers(*this);
 #endif
 
     script().clearScriptObjects();

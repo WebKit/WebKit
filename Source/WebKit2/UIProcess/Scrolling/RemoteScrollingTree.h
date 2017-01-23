@@ -36,7 +36,7 @@ namespace WebKit {
 
 class RemoteScrollingCoordinatorProxy;
 
-class RemoteScrollingTree : public WebCore::ScrollingTree {
+class RemoteScrollingTree final : public WebCore::ScrollingTree {
 public:
     static Ref<RemoteScrollingTree> create(RemoteScrollingCoordinatorProxy&);
     virtual ~RemoteScrollingTree();
@@ -65,7 +65,7 @@ private:
     void scrollingTreeNodeDidEndScroll() override;
 #endif
 
-    PassRefPtr<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) override;
+    Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) override;
     
     RemoteScrollingCoordinatorProxy& m_scrollingCoordinatorProxy;
 };

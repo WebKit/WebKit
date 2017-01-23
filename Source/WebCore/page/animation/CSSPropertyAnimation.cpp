@@ -125,7 +125,7 @@ static inline TransformOperations blendFunc(const AnimationBase* animation, cons
     return to.blendByUsingMatrixInterpolation(from, progress, is<RenderBox>(*animation->renderer()) ? downcast<RenderBox>(*animation->renderer()).borderBoxRect().size() : LayoutSize());
 }
 
-static inline PassRefPtr<ClipPathOperation> blendFunc(const AnimationBase*, ClipPathOperation* from, ClipPathOperation* to, double progress)
+static inline RefPtr<ClipPathOperation> blendFunc(const AnimationBase*, ClipPathOperation* from, ClipPathOperation* to, double progress)
 {
     if (!from || !to)
         return to;
@@ -143,7 +143,7 @@ static inline PassRefPtr<ClipPathOperation> blendFunc(const AnimationBase*, Clip
     return ShapeClipPathOperation::create(toShape.blend(fromShape, progress));
 }
 
-static inline PassRefPtr<ShapeValue> blendFunc(const AnimationBase*, ShapeValue* from, ShapeValue* to, double progress)
+static inline RefPtr<ShapeValue> blendFunc(const AnimationBase*, ShapeValue* from, ShapeValue* to, double progress)
 {
     if (!from || !to)
         return to;
@@ -163,7 +163,7 @@ static inline PassRefPtr<ShapeValue> blendFunc(const AnimationBase*, ShapeValue*
     return ShapeValue::create(toShape.blend(fromShape, progress), to->cssBox());
 }
 
-static inline PassRefPtr<FilterOperation> blendFunc(const AnimationBase* animation, FilterOperation* fromOp, FilterOperation* toOp, double progress, bool blendToPassthrough = false)
+static inline RefPtr<FilterOperation> blendFunc(const AnimationBase* animation, FilterOperation* fromOp, FilterOperation* toOp, double progress, bool blendToPassthrough = false)
 {
     ASSERT(toOp);
     if (toOp->blendingNeedsRendererSize()) {
@@ -218,7 +218,7 @@ static inline FilterOperations blendFunc(const AnimationBase* anim, const Filter
     return result;
 }
 
-static inline PassRefPtr<StyleImage> blendFilter(const AnimationBase* anim, CachedImage* image, const FilterOperations& from, const FilterOperations& to, double progress)
+static inline RefPtr<StyleImage> blendFilter(const AnimationBase* anim, CachedImage* image, const FilterOperations& from, const FilterOperations& to, double progress)
 {
     ASSERT(image);
     FilterOperations filterResult = blendFilterOperations(anim, from, to, progress);
@@ -278,7 +278,7 @@ static inline Vector<SVGLengthValue> blendFunc(const AnimationBase*, const Vecto
     return result;
 }
 
-static inline PassRefPtr<StyleImage> crossfadeBlend(const AnimationBase*, StyleCachedImage* fromStyleImage, StyleCachedImage* toStyleImage, double progress)
+static inline RefPtr<StyleImage> crossfadeBlend(const AnimationBase*, StyleCachedImage* fromStyleImage, StyleCachedImage* toStyleImage, double progress)
 {
     // If progress is at one of the extremes, we want getComputedStyle to show the image,
     // not a completed cross-fade, so we hand back one of the existing images.
@@ -295,7 +295,7 @@ static inline PassRefPtr<StyleImage> crossfadeBlend(const AnimationBase*, StyleC
     return StyleGeneratedImage::create(WTFMove(crossfadeValue));
 }
 
-static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleImage* from, StyleImage* to, double progress)
+static inline RefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleImage* from, StyleImage* to, double progress)
 {
     if (!from || !to)
         return to;
@@ -364,11 +364,12 @@ static inline NinePieceImage blendFunc(const AnimationBase* anim, const NinePiec
     if (from.image()->imageSize(anim->renderer(), 1.0) != to.image()->imageSize(anim->renderer(), 1.0))
         return to;
 
-    auto newContentImage = blendFunc(anim, from.image(), to.image(), progress);
-    return NinePieceImage(newContentImage, from.imageSlices(), from.fill(), from.borderSlices(), from.outset(), from.horizontalRule(), from.verticalRule());
+    return NinePieceImage(blendFunc(anim, from.image(), to.image(), progress),
+        from.imageSlices(), from.fill(), from.borderSlices(), from.outset(), from.horizontalRule(), from.verticalRule());
 }
 
 #if ENABLE(VARIATION_FONTS)
+
 static inline FontVariationSettings blendFunc(const AnimationBase* anim, const FontVariationSettings& from, const FontVariationSettings& to, double progress)
 {
     if (from.size() != to.size())
@@ -385,6 +386,7 @@ static inline FontVariationSettings blendFunc(const AnimationBase* anim, const F
     }
     return result;
 }
+
 #endif
 
 class AnimationPropertyWrapperBase {

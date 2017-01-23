@@ -572,19 +572,19 @@ class EmptyVisitedLinkStore final : public VisitedLinkStore {
     void addVisitedLink(Page&, LinkHash) final { }
 };
 
-RefPtr<PopupMenu> EmptyChromeClient::createPopupMenu(PopupMenuClient*) const
+RefPtr<PopupMenu> EmptyChromeClient::createPopupMenu(PopupMenuClient&) const
 {
     return adoptRef(*new EmptyPopupMenu);
 }
 
-RefPtr<SearchPopupMenu> EmptyChromeClient::createSearchPopupMenu(PopupMenuClient*) const
+RefPtr<SearchPopupMenu> EmptyChromeClient::createSearchPopupMenu(PopupMenuClient&) const
 {
     return adoptRef(*new EmptySearchPopupMenu);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
-std::unique_ptr<ColorChooser> EmptyChromeClient::createColorChooser(ColorChooserClient*, const Color&)
+std::unique_ptr<ColorChooser> EmptyChromeClient::createColorChooser(ColorChooserClient&, const Color&)
 {
     return nullptr;
 }

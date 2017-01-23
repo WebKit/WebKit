@@ -39,8 +39,8 @@
 
 namespace WebCore {
 
-ThreadedScrollingTree::ThreadedScrollingTree(AsyncScrollingCoordinator* scrollingCoordinator)
-    : m_scrollingCoordinator(scrollingCoordinator)
+ThreadedScrollingTree::ThreadedScrollingTree(AsyncScrollingCoordinator& scrollingCoordinator)
+    : m_scrollingCoordinator(&scrollingCoordinator)
 {
 }
 

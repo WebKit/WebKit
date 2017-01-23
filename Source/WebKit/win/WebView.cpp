@@ -5853,7 +5853,7 @@ HRESULT WebView::standardUserAgentWithApplicationName(_In_ BSTR applicationName,
 HRESULT WebView::clearFocusNode()
 {
     if (m_page)
-        m_page->focusController().setFocusedElement(0, 0);
+        m_page->focusController().setFocusedElement(nullptr, m_page->focusController().focusedOrMainFrame());
     return S_OK;
 }
 

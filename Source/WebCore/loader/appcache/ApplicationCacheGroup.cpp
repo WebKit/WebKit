@@ -784,7 +784,7 @@ void ApplicationCacheGroup::cacheUpdateFailed()
 
 void ApplicationCacheGroup::recalculateAvailableSpaceInQuota()
 {
-    if (!m_frame->page()->applicationCacheStorage().calculateRemainingSizeForOriginExcludingCache(m_origin.get(), m_newestCache.get(), m_availableSpaceInQuota)) {
+    if (!m_frame->page()->applicationCacheStorage().calculateRemainingSizeForOriginExcludingCache(m_origin, m_newestCache.get(), m_availableSpaceInQuota)) {
         // Failed to determine what is left in the quota. Fallback to allowing anything.
         m_availableSpaceInQuota = ApplicationCacheStorage::noQuota();
     }

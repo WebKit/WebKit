@@ -133,8 +133,8 @@ RefPtr<MHTMLArchive> MHTMLArchive::create(const URL& url, SharedBuffer& data)
 RefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
 {
     Vector<PageSerializer::Resource> resources;
-    PageSerializer pageSerializer(&resources);
-    pageSerializer.serialize(page);
+    PageSerializer pageSerializer(resources);
+    pageSerializer.serialize(*page);
 
     String boundary = generateRandomBoundary();
     String endOfResourceBoundary = makeString("--", boundary, "\r\n");

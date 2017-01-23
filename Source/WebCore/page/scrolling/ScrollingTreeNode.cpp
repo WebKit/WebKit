@@ -45,22 +45,21 @@ ScrollingTreeNode::~ScrollingTreeNode()
 {
 }
 
-void ScrollingTreeNode::appendChild(PassRefPtr<ScrollingTreeNode> childNode)
+void ScrollingTreeNode::appendChild(Ref<ScrollingTreeNode>&& childNode)
 {
     childNode->setParent(this);
 
     if (!m_children)
-        m_children = std::make_unique<ScrollingTreeChildrenVector>();
-
-    m_children->append(childNode);
+        m_children = std::make_unique<Vector<RefPtr<ScrollingTreeNode>>>();
+    m_children->append(WTFMove(childNode));
 }
 
-void ScrollingTreeNode::removeChild(ScrollingTreeNode* node)
+void ScrollingTreeNode::removeChild(ScrollingTreeNode& node)
 {
     if (!m_children)
         return;
 
-    size_t index = m_children->find(node);
+    size_t index = m_children->find(&node);
 
     // The index will be notFound if the node to remove is a deeper-than-1-level descendant or
     // if node is the root state node.

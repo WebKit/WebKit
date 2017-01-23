@@ -72,7 +72,7 @@ void ScrollingStateNode::setPropertyChanged(unsigned propertyBit)
     m_scrollingStateTree.setHasChangedProperties();
 }
 
-PassRefPtr<ScrollingStateNode> ScrollingStateNode::cloneAndReset(ScrollingStateTree& adoptiveTree)
+Ref<ScrollingStateNode> ScrollingStateNode::cloneAndReset(ScrollingStateTree& adoptiveTree)
 {
     auto clone = this->clone(adoptiveTree);
 
@@ -80,7 +80,8 @@ PassRefPtr<ScrollingStateNode> ScrollingStateNode::cloneAndReset(ScrollingStateT
     resetChangedProperties();
 
     cloneAndResetChildren(clone.get(), adoptiveTree);
-    return WTFMove(clone);
+
+    return clone;
 }
 
 void ScrollingStateNode::cloneAndResetChildren(ScrollingStateNode& clone, ScrollingStateTree& adoptiveTree)
@@ -92,14 +93,13 @@ void ScrollingStateNode::cloneAndResetChildren(ScrollingStateNode& clone, Scroll
         clone.appendChild(child->cloneAndReset(adoptiveTree));
 }
 
-void ScrollingStateNode::appendChild(PassRefPtr<ScrollingStateNode> childNode)
+void ScrollingStateNode::appendChild(Ref<ScrollingStateNode>&& childNode)
 {
     childNode->setParent(this);
 
     if (!m_children)
         m_children = std::make_unique<Vector<RefPtr<ScrollingStateNode>>>();
-
-    m_children->append(childNode);
+    m_children->append(WTFMove(childNode));
 }
 
 void ScrollingStateNode::setLayer(const LayerRepresentation& layerRepresentation)

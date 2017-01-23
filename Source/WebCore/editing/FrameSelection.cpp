@@ -2157,7 +2157,7 @@ void FrameSelection::setFocusedElementIfNeeded()
     bool caretBrowsing = m_frame->settings().caretBrowsingEnabled();
     if (caretBrowsing) {
         if (Element* anchor = enclosingAnchorElement(m_selection.base())) {
-            m_frame->page()->focusController().setFocusedElement(anchor, m_frame);
+            m_frame->page()->focusController().setFocusedElement(anchor, *m_frame);
             return;
         }
     }
@@ -2169,16 +2169,16 @@ void FrameSelection::setFocusedElementIfNeeded()
             // so add the !isFrameElement check here. There's probably a better way to make this
             // work in the long term, but this is the safest fix at this time.
             if (target->isMouseFocusable() && !isFrameElement(target)) {
-                m_frame->page()->focusController().setFocusedElement(target, m_frame);
+                m_frame->page()->focusController().setFocusedElement(target, *m_frame);
                 return;
             }
             target = target->parentOrShadowHostElement();
         }
-        m_frame->document()->setFocusedElement(0);
+        m_frame->document()->setFocusedElement(nullptr);
     }
 
     if (caretBrowsing)
-        m_frame->page()->focusController().setFocusedElement(0, m_frame);
+        m_frame->page()->focusController().setFocusedElement(nullptr, *m_frame);
 }
 
 void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext& p, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
@@ -2328,7 +2328,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
                 layer->setAdjustForIOSCaretWhenScrolling(false);
                 updateAppearance();
                 if (m_frame->page())
-                    m_frame->page()->chrome().client().notifyRevealedSelectionByScrollingFrame(m_frame);
+                    m_frame->page()->chrome().client().notifyRevealedSelectionByScrollingFrame(*m_frame);
             }
         }
 #else

@@ -274,7 +274,7 @@ void PageOverlay::fadeAnimationTimerFired()
 
         // If this was a fade out, uninstall the page overlay.
         if (wasFadingOut)
-            controller()->uninstallPageOverlay(this, PageOverlay::FadeMode::DoNotFade);
+            controller()->uninstallPageOverlay(*this, PageOverlay::FadeMode::DoNotFade);
     }
 }
 

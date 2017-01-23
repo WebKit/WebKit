@@ -104,7 +104,7 @@ bool AnimationControllerPrivate::clear(RenderElement& renderer)
     Element* element = renderer.element();
 
     m_eventsToDispatch.removeAllMatching([element] (const EventToDispatch& info) {
-        return info.element == element;
+        return info.element.ptr() == element;
     });
 
     m_elementChangesToDispatch.removeAllMatching([element](auto& currentElement) {
@@ -203,7 +203,7 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
     // fire all the events
     Vector<EventToDispatch> eventsToDispatch = WTFMove(m_eventsToDispatch);
     for (auto& event : eventsToDispatch) {
-        Element& element = *event.element;
+        Element& element = event.element;
         if (event.eventType == eventNames().transitionendEvent)
             element.dispatchEvent(TransitionEvent::create(event.eventType, event.name, event.elapsedTime, PseudoElement::pseudoElementNameForEvents(element.pseudoId())));
         else
@@ -225,21 +225,15 @@ void AnimationControllerPrivate::startUpdateStyleIfNeededDispatcher()
         m_updateStyleIfNeededDispatcher.startOneShot(0);
 }
 
-void AnimationControllerPrivate::addEventToDispatch(PassRefPtr<Element> element, const AtomicString& eventType, const String& name, double elapsedTime)
+void AnimationControllerPrivate::addEventToDispatch(Element& element, const AtomicString& eventType, const String& name, double elapsedTime)
 {
-    m_eventsToDispatch.grow(m_eventsToDispatch.size()+1);
-    EventToDispatch& event = m_eventsToDispatch[m_eventsToDispatch.size()-1];
-    event.element = element;
-    event.eventType = eventType;
-    event.name = name;
-    event.elapsedTime = elapsedTime;
-    
+    m_eventsToDispatch.append({ element, eventType, name, elapsedTime });
     startUpdateStyleIfNeededDispatcher();
 }
 
-void AnimationControllerPrivate::addElementChangeToDispatch(Ref<Element>&& element)
+void AnimationControllerPrivate::addElementChangeToDispatch(Element& element)
 {
-    m_elementChangesToDispatch.append(WTFMove(element));
+    m_elementChangesToDispatch.append(element);
     ASSERT(m_elementChangesToDispatch.last()->document().pageCacheState() == Document::NotInPageCache);
     startUpdateStyleIfNeededDispatcher();
 }

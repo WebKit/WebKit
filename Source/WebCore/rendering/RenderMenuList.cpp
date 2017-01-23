@@ -371,7 +371,7 @@ void RenderMenuList::showPopup()
     // inside the showPopup call and it would fail.
     createInnerBlock();
     if (!m_popup)
-        m_popup = document().page()->chrome().createPopupMenu(this);
+        m_popup = document().page()->chrome().createPopupMenu(*this);
     m_popupIsVisible = true;
 
     // Compute the top left taking transforms into account, but use

@@ -62,7 +62,7 @@ private:
     // Frame wants to create the new Page.  Also, the newly created window
     // should not be shown to the user until the ChromeClient of the newly
     // created Page has its show method called.
-    WebCore::Page* createWindow(WebCore::Frame*, const WebCore::FrameLoadRequest&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
+    WebCore::Page* createWindow(WebCore::Frame&, const WebCore::FrameLoadRequest&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
     void show() final;
     
     bool canRunModal() final;
@@ -87,13 +87,13 @@ private:
     void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) final;
     
     bool canRunBeforeUnloadConfirmPanel() final;
-    bool runBeforeUnloadConfirmPanel(const String& message, WebCore::Frame*) final;
+    bool runBeforeUnloadConfirmPanel(const String& message, WebCore::Frame&) final;
     
     void closeWindowSoon() final;
     
-    void runJavaScriptAlert(WebCore::Frame*, const String&) final;
-    bool runJavaScriptConfirm(WebCore::Frame*, const String&) final;
-    bool runJavaScriptPrompt(WebCore::Frame*, const String& message, const String& defaultValue, String& result) final;
+    void runJavaScriptAlert(WebCore::Frame&, const String&) final;
+    bool runJavaScriptConfirm(WebCore::Frame&, const String&) final;
+    bool runJavaScriptPrompt(WebCore::Frame&, const String& message, const String& defaultValue, String& result) final;
     void setStatusbarText(const String&) final;
 
     WebCore::KeyboardUIMode keyboardUIMode() final;
@@ -117,23 +117,23 @@ private:
 #endif
 
     PlatformPageClient platformPageClient() const final;
-    void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const final;
+    void contentsSizeChanged(WebCore::Frame&, const WebCore::IntSize&) const final;
     void scrollRectIntoView(const WebCore::IntRect&) const final; // Currently only Mac has a non empty implementation.
 
     bool shouldUnavailablePluginMessageBeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
-    void unavailablePluginButtonClicked(WebCore::Element*, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
+    void unavailablePluginButtonClicked(WebCore::Element&, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
 
     void scrollbarsModeDidChange() const final;
     void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags) final;
 
     void setToolTip(const String&, WebCore::TextDirection) final;
     
-    void print(WebCore::Frame*) final;
+    void print(WebCore::Frame&) final;
 
-    void exceededDatabaseQuota(WebCore::Frame*, const String& databaseName, WebCore::DatabaseDetails) final;
+    void exceededDatabaseQuota(WebCore::Frame&, const String& databaseName, WebCore::DatabaseDetails) final;
 
     void reachedMaxAppCacheSize(int64_t spaceNeeded) final;
-    void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t spaceNeeded) final;
+    void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin&, int64_t spaceNeeded) final;
 
 #if ENABLE(DASHBOARD_SUPPORT)
     void annotatedRegionsChanged() final;
@@ -143,7 +143,7 @@ private:
     String generateReplacementFile(const String& path) final;
     
 #if ENABLE(INPUT_TYPE_COLOR)
-    std::unique_ptr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient*, const WebCore::Color&) final;
+    std::unique_ptr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient&, const WebCore::Color&) final;
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -152,10 +152,10 @@ private:
 
 #if PLATFORM(IOS)
     void didReceiveMobileDocType(bool) final;
-    void setNeedsScrollNotifications(WebCore::Frame*, bool) final;
-    void observedContentChange(WebCore::Frame*) final;
-    void clearContentChangeObservers(WebCore::Frame*) final;
-    void notifyRevealedSelectionByScrollingFrame(WebCore::Frame*) final;
+    void setNeedsScrollNotifications(WebCore::Frame&, bool) final;
+    void observedContentChange(WebCore::Frame&) final;
+    void clearContentChangeObservers(WebCore::Frame&) final;
+    void notifyRevealedSelectionByScrollingFrame(WebCore::Frame&) final;
     bool isStopping() final;
 
     void didLayout(LayoutType = NormalLayout) final;
@@ -203,12 +203,12 @@ private:
     bool selectItemWritingDirectionIsNatural() final;
     bool selectItemAlignmentFollowsMenuWritingDirection() final;
     bool hasOpenedPopup() const final;
-    RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const final;
-    RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const final;
+    RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient&) const final;
+    RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient&) const final;
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() const final;
-    void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) final;
-    void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) final;
+    void attachRootGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
+    void attachViewOverlayGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
     void setNeedsOneShotDrawingSynchronization() final;
     void scheduleCompositingLayerFlush() final;
     bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) final;
@@ -233,11 +233,11 @@ private:
     bool layerTreeStateIsFrozen() const final;
 
 #if ENABLE(ASYNC_SCROLLING)
-    PassRefPtr<WebCore::ScrollingCoordinator> createScrollingCoordinator(WebCore::Page*) const final;
+    RefPtr<WebCore::ScrollingCoordinator> createScrollingCoordinator(WebCore::Page&) const final;
 #endif
 
 #if PLATFORM(IOS)
-    void elementDidRefocus(const WebCore::Node*) final;
+    void elementDidRefocus(WebCore::Element&) final;
 #endif
 
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
@@ -253,14 +253,14 @@ private:
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard) final;
-    void enterFullScreenForElement(WebCore::Element*) final;
-    void exitFullScreenForElement(WebCore::Element*) final;
+    bool supportsFullScreenForElement(const WebCore::Element&, bool withKeyboard) final;
+    void enterFullScreenForElement(WebCore::Element&) final;
+    void exitFullScreenForElement(WebCore::Element&) final;
 #endif
 
 #if PLATFORM(COCOA)
-    void elementDidFocus(const WebCore::Node*) final;
-    void elementDidBlur(const WebCore::Node*) final;
+    void elementDidFocus(WebCore::Element&) final;
+    void elementDidBlur(WebCore::Element&) final;
 
     void makeFirstResponder() final;
 #endif
@@ -291,10 +291,10 @@ private:
     String plugInExtraStyleSheet() const final;
     String plugInExtraScript() const final;
 
-    void didAddHeaderLayer(WebCore::GraphicsLayer*) final;
-    void didAddFooterLayer(WebCore::GraphicsLayer*) final;
+    void didAddHeaderLayer(WebCore::GraphicsLayer&) final;
+    void didAddFooterLayer(WebCore::GraphicsLayer&) final;
 
-    bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) const final;
+    bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const final;
 
     void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags, uint64_t) final;
 

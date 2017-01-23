@@ -46,9 +46,9 @@ void WebChromeClient::didPreventDefaultForEvent()
 
 #endif
 
-void WebChromeClient::elementDidRefocus(const WebCore::Node* node)
+void WebChromeClient::elementDidRefocus(WebCore::Element& element)
 {
-    elementDidFocus(node);
+    elementDidFocus(element);
 }
 
 void WebChromeClient::didReceiveMobileDocType(bool isMobileDoctype)
@@ -56,22 +56,22 @@ void WebChromeClient::didReceiveMobileDocType(bool isMobileDoctype)
     m_page.didReceiveMobileDocType(isMobileDoctype);
 }
 
-void WebChromeClient::setNeedsScrollNotifications(WebCore::Frame*, bool)
+void WebChromeClient::setNeedsScrollNotifications(WebCore::Frame&, bool)
 {
     notImplemented();
 }
 
-void WebChromeClient::observedContentChange(WebCore::Frame*)
+void WebChromeClient::observedContentChange(WebCore::Frame&)
 {
     m_page.completePendingSyntheticClickForContentChangeObserver();
 }
 
-void WebChromeClient::clearContentChangeObservers(WebCore::Frame*)
+void WebChromeClient::clearContentChangeObservers(WebCore::Frame&)
 {
     notImplemented();
 }
 
-void WebChromeClient::notifyRevealedSelectionByScrollingFrame(WebCore::Frame*)
+void WebChromeClient::notifyRevealedSelectionByScrollingFrame(WebCore::Frame&)
 {
     m_page.didChangeSelection();
 }

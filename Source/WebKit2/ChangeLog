@@ -1,3 +1,84 @@
+2017-01-20  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr from "page" directory of WebCore, also deploy references
+        https://bugs.webkit.org/show_bug.cgi?id=167224
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::createScrollingTreeNode): Return a Ref
+        instead of PassRefPtr.
+        * UIProcess/Scrolling/RemoteScrollingTree.h: Updated for the above.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageInstallPageOverlay): Pass a reference.
+        (WKBundlePageUninstallPageOverlay): Ditto.
+        (WKBundlePageInstallPageOverlayWithAnimation): Ditto.
+        (WKBundlePageUninstallPageOverlayWithAnimation): Ditto.
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::jsPDFDocPrint): Ditto.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::focusPluginElement): Ditto.
+        (WebKit::PluginView::setStatusbarText): Ditto.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::elementDidFocus): Updated for changes to ChromeClient.
+        (WebKit::WebChromeClient::elementDidBlur): Ditto.
+        (WebKit::WebChromeClient::makeFirstResponder): Ditto.
+        (WebKit::WebChromeClient::createWindow): Ditto.
+        (WebKit::WebChromeClient::runBeforeUnloadConfirmPanel): Ditto.
+        (WebKit::WebChromeClient::runJavaScriptAlert): Ditto.
+        (WebKit::WebChromeClient::runJavaScriptConfirm): Ditto.
+        (WebKit::WebChromeClient::runJavaScriptPrompt): Ditto.
+        (WebKit::WebChromeClient::contentsSizeChanged): Ditto.
+        (WebKit::WebChromeClient::unavailablePluginButtonClicked): Ditto.
+        (WebKit::WebChromeClient::print): Ditto.
+        (WebKit::WebChromeClient::exceededDatabaseQuota): Ditto.
+        (WebKit::WebChromeClient::reachedApplicationCacheOriginQuota): Ditto.
+        (WebKit::WebChromeClient::createColorChooser): Ditto.
+        (WebKit::WebChromeClient::createPopupMenu): Ditto.
+        (WebKit::WebChromeClient::createSearchPopupMenu): Ditto.
+        (WebKit::WebChromeClient::attachRootGraphicsLayer): Ditto.
+        (WebKit::WebChromeClient::attachViewOverlayGraphicsLayer): Ditto.
+        (WebKit::WebChromeClient::createScrollingCoordinator): Ditto.
+        (WebKit::WebChromeClient::supportsFullScreenForElement): Ditto.
+        (WebKit::WebChromeClient::enterFullScreenForElement): Ditto.
+        (WebKit::WebChromeClient::exitFullScreenForElement): Ditto.
+        (WebKit::WebChromeClient::didAddHeaderLayer): Ditto.
+        (WebKit::WebChromeClient::didAddFooterLayer): Ditto.
+        (WebKit::WebChromeClient::shouldUseTiledBackingForFrameView): Ditto.
+        * WebProcess/WebCoreSupport/WebChromeClient.h: Ditto.
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::elementDidRefocus): Ditto.
+        (WebKit::WebChromeClient::didReceiveMobileDocType): Ditto.
+        (WebKit::WebChromeClient::observedContentChange): Ditto.
+        (WebKit::WebChromeClient::clearContentChangeObservers): Ditto.
+        (WebKit::WebChromeClient::notifyRevealedSelectionByScrollingFrame): Ditto.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchCreatePage): Pass reference.
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::~WebInspectorClient): Ditto.
+        (WebKit::WebInspectorClient::hideHighlight): Ditto.
+        (WebKit::WebInspectorClient::showPaintRect): Ditto.
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll): Ditto.
+        (WebKit::FindController::hideFindUI): Ditto.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createWithCoreMainFrame): Return Ref instead of
+        PassRefPtr.
+        (WebKit::WebFrame::createSubframe): Ditto.
+        (WebKit::WebFrame::create): Ditto.
+        * WebProcess/WebPage/WebFrame.h: Updated for the above.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::openInNewTab): Pass reference.
+
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindController::updateFindIndicator): Use reference.
+        (WebKit::FindController::hideFindIndicator): Ditto.
+
 2017-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed, rolling out r211012.

@@ -120,7 +120,7 @@ void EventHandler::touchEvent(WebEvent *event)
 }
 #endif
 
-bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
+bool EventHandler::tabsToAllFormControls(KeyboardEvent& event) const
 {
     Page* page = m_frame.page();
     if (!page)

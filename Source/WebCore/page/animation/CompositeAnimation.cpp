@@ -121,8 +121,8 @@ void CompositeAnimation::updateTransitions(RenderElement* renderer, const Render
                 // If there is a running animation for this property, the transition is overridden
                 // and we have to use the unanimatedStyle from the animation. We do the test
                 // against the unanimated style here, but we "override" the transition later.
-                RefPtr<KeyframeAnimation> keyframeAnim = getAnimationForProperty(prop);
-                auto* fromStyle = keyframeAnim ? keyframeAnim->unanimatedStyle() : currentStyle;
+                auto* keyframeAnimation = animationForProperty(prop);
+                auto* fromStyle = keyframeAnimation ? keyframeAnimation->unanimatedStyle() : currentStyle;
 
                 // See if there is a current transition for this prop
                 ImplicitAnimation* implAnim = m_transitions.get(prop);
@@ -172,7 +172,7 @@ void CompositeAnimation::updateTransitions(RenderElement* renderer, const Render
                     LOG(Animations, "Created ImplicitAnimation %p on renderer %p for property %s duration %.2f delay %.2f", implicitAnimation.ptr(), renderer, getPropertyName(prop), animation.duration(), animation.delay());
                     m_transitions.set(prop, WTFMove(implicitAnimation));
                 }
-                
+
                 // We only need one pass for the single prop case
                 if (!all)
                     break;
@@ -399,21 +399,21 @@ double CompositeAnimation::timeToNextService() const
     return minT;
 }
 
-PassRefPtr<KeyframeAnimation> CompositeAnimation::getAnimationForProperty(CSSPropertyID property) const
+KeyframeAnimation* CompositeAnimation::animationForProperty(CSSPropertyID property) const
 {
-    RefPtr<KeyframeAnimation> retval;
-    
+    KeyframeAnimation* result = nullptr;
+
     // We want to send back the last animation with the property if there are multiples.
     // So we need to iterate through all animations
     if (!m_keyframeAnimations.isEmpty()) {
         m_keyframeAnimations.checkConsistency();
         for (auto& animation : m_keyframeAnimations.values()) {
             if (animation->hasAnimationForProperty(property))
-                retval = animation;
+                result = animation.get();
         }
     }
-    
-    return retval;
+
+    return result;
 }
 
 bool CompositeAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) const

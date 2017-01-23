@@ -97,7 +97,7 @@ void RenderSearchField::addSearchResult()
 
     const AtomicString& name = autosaveName();
     if (!m_searchPopup)
-        m_searchPopup = page().chrome().createSearchPopupMenu(this);
+        m_searchPopup = page().chrome().createSearchPopupMenu(*this);
 
     m_searchPopup->saveRecentSearches(name, m_recentSearches);
 }
@@ -108,7 +108,7 @@ void RenderSearchField::showPopup()
         return;
 
     if (!m_searchPopup)
-        m_searchPopup = page().chrome().createSearchPopupMenu(this);
+        m_searchPopup = page().chrome().createSearchPopupMenu(*this);
 
     if (!m_searchPopup->enabled())
         return;
@@ -201,7 +201,7 @@ void RenderSearchField::valueChanged(unsigned listIndex, bool fireEvents)
             const AtomicString& name = autosaveName();
             if (!name.isEmpty()) {
                 if (!m_searchPopup)
-                    m_searchPopup = page().chrome().createSearchPopupMenu(this);
+                    m_searchPopup = page().chrome().createSearchPopupMenu(*this);
                 m_searchPopup->saveRecentSearches(name, m_recentSearches);
             }
         }

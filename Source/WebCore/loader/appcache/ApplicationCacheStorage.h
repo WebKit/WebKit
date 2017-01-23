@@ -63,8 +63,8 @@ public:
     int64_t defaultOriginQuota() const { return m_defaultOriginQuota; }
     WEBCORE_EXPORT void setDefaultOriginQuota(int64_t quota);
     WEBCORE_EXPORT bool calculateUsageForOrigin(const SecurityOrigin*, int64_t& usage);
-    WEBCORE_EXPORT bool calculateQuotaForOrigin(const SecurityOrigin*, int64_t& quota);
-    bool calculateRemainingSizeForOriginExcludingCache(const SecurityOrigin*, ApplicationCache*, int64_t& remainingSize);
+    WEBCORE_EXPORT bool calculateQuotaForOrigin(const SecurityOrigin&, int64_t& quota);
+    bool calculateRemainingSizeForOriginExcludingCache(const SecurityOrigin&, ApplicationCache*, int64_t& remainingSize);
     WEBCORE_EXPORT bool storeUpdatedQuotaForOrigin(const SecurityOrigin*, int64_t quota);
     bool checkOriginQuota(ApplicationCacheGroup*, ApplicationCache* oldCache, ApplicationCache* newCache, int64_t& totalSpaceNeeded);
 

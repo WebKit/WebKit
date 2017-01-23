@@ -421,7 +421,7 @@ void ApplicationCacheStorage::setDefaultOriginQuota(int64_t quota)
     m_defaultOriginQuota = quota;
 }
 
-bool ApplicationCacheStorage::calculateQuotaForOrigin(const SecurityOrigin* origin, int64_t& quota)
+bool ApplicationCacheStorage::calculateQuotaForOrigin(const SecurityOrigin& origin, int64_t& quota)
 {
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 
@@ -432,7 +432,7 @@ bool ApplicationCacheStorage::calculateQuotaForOrigin(const SecurityOrigin* orig
     if (statement.prepare() != SQLITE_OK)
         return false;
 
-    statement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
+    statement.bindText(1, SecurityOriginData::fromSecurityOrigin(origin).databaseIdentifier());
     int result = statement.step();
 
     // Return the quota, or if it was null the default.
@@ -472,7 +472,7 @@ bool ApplicationCacheStorage::calculateUsageForOrigin(const SecurityOrigin* orig
     return false;
 }
 
-bool ApplicationCacheStorage::calculateRemainingSizeForOriginExcludingCache(const SecurityOrigin* origin, ApplicationCache* cache, int64_t& remainingSize)
+bool ApplicationCacheStorage::calculateRemainingSizeForOriginExcludingCache(const SecurityOrigin& origin, ApplicationCache* cache, int64_t& remainingSize)
 {
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 
@@ -503,7 +503,7 @@ bool ApplicationCacheStorage::calculateRemainingSizeForOriginExcludingCache(cons
     if (statement.prepare() != SQLITE_OK)
         return false;
 
-    statement.bindText(1, SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
+    statement.bindText(1, SecurityOriginData::fromSecurityOrigin(origin).databaseIdentifier());
     if (excludingCacheIdentifier != 0)
         statement.bindInt64(2, excludingCacheIdentifier);
     int result = statement.step();
@@ -688,14 +688,14 @@ bool ApplicationCacheStorage::store(ApplicationCacheGroup* group, GroupStorageID
 
     statement.bindInt64(1, urlHostHash(group->manifestURL()));
     statement.bindText(2, group->manifestURL());
-    statement.bindText(3, SecurityOriginData::fromSecurityOrigin(*group->origin()).databaseIdentifier());
+    statement.bindText(3, SecurityOriginData::fromSecurityOrigin(group->origin()).databaseIdentifier());
 
     if (!executeStatement(statement))
         return false;
 
     unsigned groupStorageID = static_cast<unsigned>(m_database.lastInsertRowID());
 
-    if (!ensureOriginRecord(group->origin()))
+    if (!ensureOriginRecord(&group->origin()))
         return false;
 
     group->setStorageID(groupStorageID);
@@ -971,7 +971,7 @@ bool ApplicationCacheStorage::checkOriginQuota(ApplicationCacheGroup* group, App
 {
     // Check if the oldCache with the newCache would reach the per-origin quota.
     int64_t remainingSpaceInOrigin;
-    const SecurityOrigin* origin = group->origin();
+    auto& origin = group->origin();
     if (calculateRemainingSizeForOriginExcludingCache(origin, oldCache, remainingSpaceInOrigin)) {
         if (remainingSpaceInOrigin < newCache->estimatedSizeInStorage()) {
             int64_t quota;

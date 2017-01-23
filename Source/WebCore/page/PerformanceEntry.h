@@ -34,7 +34,6 @@
 #if ENABLE(WEB_TIMING)
 
 #include "Performance.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
@@ -54,7 +53,7 @@ public:
     virtual bool isMark() const { return false; }
     virtual bool isMeasure() const { return false; }
 
-    static bool startTimeCompareLessThan(PassRefPtr<PerformanceEntry> a, PassRefPtr<PerformanceEntry> b)
+    static bool startTimeCompareLessThan(const RefPtr<PerformanceEntry>& a, const RefPtr<PerformanceEntry>& b)
     {
         return a->startTime() < b->startTime();
     }

@@ -31,14 +31,14 @@
 
 namespace WebCore {
 
-class ScrollingTreeMac : public ThreadedScrollingTree {
+class ScrollingTreeMac final : public ThreadedScrollingTree {
 public:
-    static Ref<ScrollingTreeMac> create(AsyncScrollingCoordinator*);
+    static Ref<ScrollingTreeMac> create(AsyncScrollingCoordinator&);
 
-    PassRefPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) override;
-    
 private:
-    explicit ScrollingTreeMac(AsyncScrollingCoordinator*);
+    explicit ScrollingTreeMac(AsyncScrollingCoordinator&);
+
+    Ref<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) final;
 };
 
 } // namespace WebCore

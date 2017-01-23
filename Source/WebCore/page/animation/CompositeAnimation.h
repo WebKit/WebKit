@@ -71,7 +71,7 @@ public:
 
     bool isAnimatingProperty(CSSPropertyID, bool acceleratedOnly, AnimationBase::RunningState) const;
 
-    PassRefPtr<KeyframeAnimation> getAnimationForProperty(CSSPropertyID) const;
+    KeyframeAnimation* animationForProperty(CSSPropertyID) const;
 
     void overrideImplicitAnimations(CSSPropertyID);
     void resumeOverriddenImplicitAnimations(CSSPropertyID);

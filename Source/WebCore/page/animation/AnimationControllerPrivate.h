@@ -29,33 +29,21 @@
 #pragma once
 
 #include "AnimationBase.h"
-#include "CSSPropertyNames.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class AnimationBase;
 class CompositeAnimation;
 class Document;
-class Element;
 class Frame;
-class RenderElement;
-class RenderStyle;
 
-enum SetChanged {
-    DoNotCallSetChanged = 0,
-    CallSetChanged = 1
-};
+enum SetChanged { DoNotCallSetChanged, CallSetChanged };
 
 class AnimationControllerPrivate {
-    WTF_MAKE_NONCOPYABLE(AnimationControllerPrivate); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit AnimationControllerPrivate(Frame&);
     ~AnimationControllerPrivate();
@@ -69,8 +57,8 @@ public:
 
     void updateStyleIfNeededDispatcherFired();
     void startUpdateStyleIfNeededDispatcher();
-    void addEventToDispatch(PassRefPtr<Element> element, const AtomicString& eventType, const String& name, double elapsedTime);
-    void addElementChangeToDispatch(Ref<Element>&&);
+    void addEventToDispatch(Element&, const AtomicString& eventType, const String& name, double elapsedTime);
+    void addElementChangeToDispatch(Element&);
 
     bool hasAnimations() const { return !m_compositeAnimations.isEmpty(); }
 
@@ -134,21 +122,19 @@ private:
     Timer m_animationTimer;
     Timer m_updateStyleIfNeededDispatcher;
     Frame& m_frame;
-    
-    class EventToDispatch {
-    public:
-        RefPtr<Element> element;
+
+    struct EventToDispatch {
+        Ref<Element> element;
         AtomicString eventType;
         String name;
         double elapsedTime;
     };
-    
     Vector<EventToDispatch> m_eventsToDispatch;
     Vector<Ref<Element>> m_elementChangesToDispatch;
     
     double m_beginAnimationUpdateTime;
 
-    typedef HashSet<RefPtr<AnimationBase>> AnimationsSet;
+    using AnimationsSet = HashSet<RefPtr<AnimationBase>>;
     AnimationsSet m_animationsWaitingForStyle;
     AnimationsSet m_animationsWaitingForStartTimeResponse;
 

@@ -2253,7 +2253,7 @@ void Node::defaultEventHandler(Event& event)
     } else if (eventType == eventNames().contextmenuEvent) {
         if (Frame* frame = document().frame())
             if (Page* page = frame->page())
-                page->contextMenuController().handleContextMenuEvent(&event);
+                page->contextMenuController().handleContextMenuEvent(event);
 #endif
     } else if (eventType == eventNames().textInputEvent) {
         if (is<TextEvent>(event)) {
@@ -2272,7 +2272,7 @@ void Node::defaultEventHandler(Event& event)
 
             if (renderer) {
                 if (Frame* frame = document().frame())
-                    frame->eventHandler().startPanScrolling(downcast<RenderBox>(renderer));
+                    frame->eventHandler().startPanScrolling(downcast<RenderBox>(*renderer));
             }
         }
 #endif

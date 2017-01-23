@@ -640,13 +640,13 @@ Frame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction& navigati
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
-        return 0;
+        return nullptr;
 
     // Just call through to the chrome client.
     FrameLoadRequest request(m_frame->coreFrame()->document()->securityOrigin(), navigationAction.resourceRequest(), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, navigationAction.shouldOpenExternalURLsPolicy());
-    Page* newPage = webPage->corePage()->chrome().createWindow(m_frame->coreFrame(), request, WindowFeatures(), navigationAction);
+    Page* newPage = webPage->corePage()->chrome().createWindow(*m_frame->coreFrame(), request, WindowFeatures(), navigationAction);
     if (!newPage)
-        return 0;
+        return nullptr;
     
     return &newPage->mainFrame();
 }

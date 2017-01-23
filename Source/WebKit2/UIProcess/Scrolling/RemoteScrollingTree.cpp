@@ -110,7 +110,7 @@ void RemoteScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID
     m_scrollingCoordinatorProxy.scrollingTreeNodeRequestsScroll(nodeID, scrollPosition, representsProgrammaticScroll);
 }
 
-PassRefPtr<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     switch (nodeType) {
     case FrameScrollingNode:
@@ -124,14 +124,15 @@ PassRefPtr<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(Scrol
         return ScrollingTreeOverflowScrollingNodeIOS::create(*this, nodeID);
 #else
         ASSERT_NOT_REACHED();
-        return nullptr;
+        break;
 #endif
     case FixedNode:
         return ScrollingTreeFixedNode::create(*this, nodeID);
     case StickyNode:
         return ScrollingTreeStickyNode::create(*this, nodeID);
     }
-    return nullptr;
+    ASSERT_NOT_REACHED();
+    return ScrollingTreeFixedNode::create(*this, nodeID);
 }
 
 void RemoteScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nodeID, unsigned horizontal, unsigned vertical)

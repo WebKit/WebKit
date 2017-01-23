@@ -92,7 +92,7 @@ void MainFrame::selfOnlyDeref()
 void MainFrame::dropChildren()
 {
     while (Frame* child = tree().firstChild())
-        tree().removeChild(child);
+        tree().removeChild(*child);
 }
 
 #if PLATFORM(MAC)

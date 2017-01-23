@@ -73,7 +73,7 @@ WebInspectorClient::~WebInspectorClient()
     }
 
     if (m_paintRectOverlay && m_page->mainFrame())
-        m_page->mainFrame()->pageOverlayController().uninstallPageOverlay(m_paintRectOverlay.get(), PageOverlay::FadeMode::Fade);
+        m_page->mainFrame()->pageOverlayController().uninstallPageOverlay(*m_paintRectOverlay, PageOverlay::FadeMode::Fade);
 }
 
 void WebInspectorClient::inspectedPageDestroyed()
@@ -126,7 +126,7 @@ void WebInspectorClient::hideHighlight()
 {
 #if !PLATFORM(IOS)
     if (m_highlightOverlay && m_page->mainFrame())
-        m_page->mainFrame()->pageOverlayController().uninstallPageOverlay(m_highlightOverlay, PageOverlay::FadeMode::Fade);
+        m_page->mainFrame()->pageOverlayController().uninstallPageOverlay(*m_highlightOverlay, PageOverlay::FadeMode::Fade);
 #else
     m_page->hideInspectorHighlight();
 #endif
@@ -136,7 +136,7 @@ void WebInspectorClient::showPaintRect(const FloatRect& rect)
 {
     if (!m_paintRectOverlay) {
         m_paintRectOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
-        m_page->mainFrame()->pageOverlayController().installPageOverlay(m_paintRectOverlay, PageOverlay::FadeMode::DoNotFade);
+        m_page->mainFrame()->pageOverlayController().installPageOverlay(*m_paintRectOverlay, PageOverlay::FadeMode::DoNotFade);
     }
 
     if (!m_paintIndicatorLayerClient)

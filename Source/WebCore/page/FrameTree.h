@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -65,10 +65,9 @@ public:
     WEBCORE_EXPORT Frame* traverseNextWithWrap(bool) const;
     WEBCORE_EXPORT Frame* traversePreviousWithWrap(bool) const;
     
-    WEBCORE_EXPORT void appendChild(PassRefPtr<Frame>);
-    bool transferChild(PassRefPtr<Frame>);
+    WEBCORE_EXPORT void appendChild(Frame&);
     void detachFromParent() { m_parent = nullptr; }
-    void removeChild(Frame*);
+    void removeChild(Frame&);
 
     Frame* child(unsigned index) const;
     Frame* child(const AtomicString& name) const;
@@ -87,7 +86,6 @@ public:
 
 private:
     Frame* deepLastChild() const;
-    void actuallyAppendChild(PassRefPtr<Frame>);
 
     bool scopedBy(TreeScope*) const;
     Frame* scopedChild(unsigned index, TreeScope*) const;

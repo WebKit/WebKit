@@ -163,10 +163,9 @@ void ImplicitAnimation::onAnimationEnd(double elapsedTime)
     // running. But now that the transition has completed, we need to update this style with its new
     // destination. If we didn't, the next time through we would think a transition had started
     // (comparing the old unanimated style with the new final style of the transition).
-    RefPtr<KeyframeAnimation> keyframeAnim = m_compositeAnimation->getAnimationForProperty(m_animatingProperty);
-    if (keyframeAnim)
-        keyframeAnim->setUnanimatedStyle(RenderStyle::clonePtr(*m_toStyle));
-    
+    if (auto* animation = m_compositeAnimation->animationForProperty(m_animatingProperty))
+        animation->setUnanimatedStyle(RenderStyle::clonePtr(*m_toStyle));
+
     sendTransitionEvent(eventNames().transitionendEvent, elapsedTime);
     endAnimation();
 }
@@ -187,7 +186,7 @@ bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, doubl
                 return false;
 
             // Schedule event handling
-            m_compositeAnimation->animationController().addEventToDispatch(element, eventType, propertyName, elapsedTime);
+            m_compositeAnimation->animationController().addEventToDispatch(*element, eventType, propertyName, elapsedTime);
 
             // Restore the original (unanimated) style
             if (eventType == eventNames().transitionendEvent && element->renderer())

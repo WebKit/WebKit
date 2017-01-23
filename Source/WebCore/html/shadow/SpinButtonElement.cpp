@@ -119,7 +119,7 @@ void SpinButtonElement::defaultEventHandler(Event& event)
                     frame->eventHandler().setCapturingMouseEventsElement(this);
                     m_capturing = true;
                     if (Page* page = document().page())
-                        page->chrome().registerPopupOpeningObserver(this);
+                        page->chrome().registerPopupOpeningObserver(*this);
                 }
             }
             UpDownState oldUpDownState = m_upDownState;
@@ -205,7 +205,7 @@ void SpinButtonElement::releaseCapture()
             frame->eventHandler().setCapturingMouseEventsElement(nullptr);
             m_capturing = false;
             if (Page* page = document().page())
-                page->chrome().unregisterPopupOpeningObserver(this);
+                page->chrome().unregisterPopupOpeningObserver(*this);
         }
     }
 }

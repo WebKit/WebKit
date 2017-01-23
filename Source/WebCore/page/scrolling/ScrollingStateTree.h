@@ -74,17 +74,14 @@ public:
     void setPreferredLayerRepresentation(LayerRepresentation::Type representation) { m_preferredLayerRepresentation = representation; }
 
 private:
-    void setRootStateNode(PassRefPtr<ScrollingStateFrameScrollingNode> rootStateNode) { m_rootStateNode = rootStateNode; }
+    void setRootStateNode(Ref<ScrollingStateFrameScrollingNode>&& rootStateNode) { m_rootStateNode = WTFMove(rootStateNode); }
     void addNode(ScrollingStateNode*);
 
-    PassRefPtr<ScrollingStateNode> createNode(ScrollingNodeType, ScrollingNodeID);
+    Ref<ScrollingStateNode> createNode(ScrollingNodeType, ScrollingNodeID);
 
     bool nodeTypeAndParentMatch(ScrollingStateNode&, ScrollingNodeType, ScrollingNodeID parentID) const;
 
-    enum class SubframeNodeRemoval {
-        Delete,
-        Orphan
-    };
+    enum class SubframeNodeRemoval { Delete, Orphan };
     void removeNodeAndAllDescendants(ScrollingStateNode*, SubframeNodeRemoval = SubframeNodeRemoval::Delete);
 
     void recursiveNodeWillBeRemoved(ScrollingStateNode* currNode, SubframeNodeRemoval);

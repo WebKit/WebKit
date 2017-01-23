@@ -1,3 +1,438 @@
+2017-01-20  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr from "page" directory of WebCore, also deploy references
+        https://bugs.webkit.org/show_bug.cgi?id=167224
+
+        Reviewed by Chris Dumez.
+
+        * Modules/fetch/DOMWindowFetch.cpp:
+        (WebCore::DOMWindowFetch::fetch): Use DOMWindow::document instead of
+        scriptExecutionContext.
+
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::databaseExceededQuota): Pass a reference.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityShowContextMenu]):
+        Pass a reference.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot): Pass a reference.
+
+        * dom/Document.cpp:
+        (WebCore::Document::childrenChanged): Pass a reference. Also made the
+        didReceiveDocType code unconditional instead of iOS-only.
+        (WebCore::Document::platformSuspendOrStopActiveDOMObjects): Ditto.
+        (WebCore::Document::updateViewportArguments): Ditto.
+        (WebCore::Document::setFocusedElement): Ditto.
+        (WebCore::Document::createDOMWindow): Ditto.
+        (WebCore::Document::takeDOMWindowFrom): Ditto.
+        (WebCore::Document::requestFullScreenForElement): Ditto.
+        (WebCore::Document::webkitExitFullscreen): Ditto.
+        * dom/Element.cpp:
+        (WebCore::Element::focus): Ditto.
+        (WebCore::Element::blur): Ditto.
+        (WebCore::Element::dispatchFocusEvent): Ditto.
+        (WebCore::Element::dispatchBlurEvent): Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::defaultEventHandler): Ditto.
+        * editing/EditorCommand.cpp:
+        (WebCore::executePrint): Ditto.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setFocusedElementIfNeeded): Ditto.
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore): Ditto.
+        (WebCore::CachedFrame::CachedFrame): Ditto.
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::handleDOMActivateEvent): Ditto.
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isKeyboardFocusable): Ditto.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isKeyboardFocusable): Pass a reference,
+        and also rewrote to use && for clarity.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::supportsFullscreen): Pass a reference.
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::defaultEventHandler): Ditto.
+        (WebCore::SpinButtonElement::releaseCapture): Ditto.
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp:
+        (WebCore::ImageControlsButtonElementMac::defaultEventHandler): Ditto.
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::showContextMenu): Ditto.
+        (WebCore::InspectorFrontendHost::dispatchEventAsContextMenuEvent): Ditto.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyChromeClient::createPopupMenu): Updated to take reference.
+        (WebCore::EmptyChromeClient::createSearchPopupMenu): Ditto.
+        (WebCore::EmptyChromeClient::createColorChooser): Ditto.
+        * loader/EmptyClients.h: Ditto.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm): Pass a reference.
+        (WebCore::FrameLoader::commitProvisionalLoad): Ditto.
+        (WebCore::FrameLoader::closeAndRemoveChild): Take a reference.
+        (WebCore::FrameLoader::detachFromParent): Pass a reference.
+        (WebCore::FrameLoader::dispatchBeforeUnloadEvent): Ditto.
+        (WebCore::createWindow): Ditto.
+        * loader/FrameLoader.h: Updated for the above.
+
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNewWindowPolicy): Pass a reference.
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::recalculateAvailableSpaceInQuota): Ditto.
+
+        * loader/appcache/ApplicationCacheGroup.h: Return a reference from origin.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::calculateQuotaForOrigin): Take a reference.
+        (WebCore::ApplicationCacheStorage::calculateRemainingSizeForOriginExcludingCache):
+        Ditto.
+        (WebCore::ApplicationCacheStorage::store): Pass a reference.
+        (WebCore::ApplicationCacheStorage::checkOriginQuota): Updated since origin
+        now returns areference.
+        * loader/appcache/ApplicationCacheStorage.h: Updated for the above.
+
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        (WebCore::MHTMLArchive::generateMHTMLData): Pass a reference.
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::isKeyboardFocusable): Ditto.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::Chrome): Moved initialization of data members to the
+        class definition.
+        (WebCore::Chrome::contentsSizeChanged): Take a reference.
+        (WebCore::Chrome::createWindow): Ditto.
+        (WebCore::Chrome::runBeforeUnloadConfirmPanel): Ditto.
+        (WebCore::Chrome::runJavaScriptAlert): Ditto.
+        (WebCore::Chrome::runJavaScriptConfirm): Ditto.
+        (WebCore::Chrome::runJavaScriptPrompt): Ditto.
+        (WebCore::Chrome::setStatusbarText): Ditto.
+        (WebCore::Chrome::print): Ditto.
+        (WebCore::Chrome::createColorChooser): Ditto.
+        (WebCore::Chrome::createPopupMenu): Ditto.
+        (WebCore::Chrome::createSearchPopupMenu): Ditto.
+        (WebCore::Chrome::didReceiveDocType): Ditto. Also made unconditional, but
+        empty for non-iOS platforms.
+        (WebCore::Chrome::registerPopupOpeningObserver): Take a reference.
+        (WebCore::Chrome::unregisterPopupOpeningObserver): Ditto.
+        * page/Chrome.h: Updated for the above.
+
+        * page/ChromeClient.h: Take references. Also updated some arguments from
+        Node to Element.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent): Take a reference.
+        (WebCore::ContextMenuController::showContextMenu): Ditto.
+        (WebCore::ContextMenuController::maybeCreateContextMenu): Ditto. Also use
+        make_unique instead of unique_ptr plus new.
+        (WebCore::openNewWindow): Ditto.
+        (WebCore::insertUnicodeCharacter): Ditto.
+        (WebCore::ContextMenuController::contextMenuItemSelected): Ditto.
+        (WebCore::ContextMenuController::showContextMenuAt): Ditto.
+        (WebCore::ContextMenuController::showImageControlsMenu): Ditto.
+        * page/ContextMenuController.h: Updated for the above.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::fired): Pass a reference.
+
+        * page/DOMWindow.cpp:
+        (WebCore::PostMessageTimer::PostMessageTimer): Take Ref&& instead of
+        PassRefPtr.
+        (WebCore::DOMWindow::adjustWindowRect): Use a reference.
+        (WebCore::DOMWindow::allowPopUp): Ditto. Also rewrite to use || instead
+        of successive if statements.
+        (WebCore::DOMWindow::canShowModalDialog): Ditto.
+        (WebCore::DOMWindow::DOMWindow): Ditto.
+        (WebCore::DOMWindow::didSecureTransitionTo): Ditto.
+        (WebCore::DOMWindow::registerProperty): Ditto.
+        (WebCore::DOMWindow::unregisterProperty): Ditto.
+        (WebCore::DOMWindow::postMessageTimerFired): Merge with the function
+        immediately followed, called only from here.
+        (WebCore::DOMWindow::dispatchMessageEventWithOriginCheck): Deleted.
+        (WebCore::DOMWindow::print): Pass a reference.
+        (WebCore::DOMWindow::alert): Ditto.
+        (WebCore::DOMWindow::confirm): Ditto.
+        (WebCore::DOMWindow::prompt): Ditto.
+        (WebCore::DOMWindow::setStatus): Ditto.
+        (WebCore::DOMWindow::setDefaultStatus): Ditto.
+        (WebCore::DOMWindow::moveBy): Ditto.
+        (WebCore::DOMWindow::moveTo): Ditto.
+        (WebCore::DOMWindow::resizeBy): Ditto.
+        (WebCore::DOMWindow::resizeTo): Ditto.
+        (WebCore::DOMWindow::clearTimeout): Ditto.
+        (WebCore::DOMWindow::incrementScrollEventListenersCount): Ditto.
+        (WebCore::DOMWindow::decrementScrollEventListenersCount): Ditto.
+        (WebCore::DOMWindow::showModalDialog): Ditto.
+        * page/DOMWindow.h: Updated for the above. ALso made functions private
+        and final.
+
+        * page/DOMWindowProperty.cpp:
+        (WebCore::DOMWindowProperty::DOMWindowProperty): Pass a reference.
+        (WebCore::DOMWindowProperty::~DOMWindowProperty): Ditto.
+        (WebCore::DOMWindowProperty::willDestroyGlobalObjectInCachedFrame): Ditto.
+        (WebCore::DOMWindowProperty::willDestroyGlobalObjectInFrame): Ditto.
+
+        * page/DebugPageOverlays.cpp:
+        (WebCore::RegionOverlay::create): Return RefPtr instead of PassRefPtr.
+        (WebCore::RegionOverlay::~RegionOverlay): Pass a reference.
+        (WebCore::DebugPageOverlays::showRegionOverlay): Ditto.
+        (WebCore::DebugPageOverlays::hideRegionOverlay): Ditto.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragExited): Pass a reference.
+        (WebCore::DragController::performDragOperation): Ditto.
+        (WebCore::DragController::concludeEditDrag): Ditto.
+        (WebCore::DragController::tryDHTMLDrag): Ditto.
+
+        * page/EventHandler.cpp: Replaced OptionalCursor with std::optional<Cursor>.
+        (WebCore::EventHandler::updateCursor): Refactor into two functions so we
+        can share more code with selectCursor.
+        (WebCore::EventHandler::selectCursor): Updated to use std::optional.
+        (WebCore::EventHandler::handleMouseMoveEvent): Use the new updateCursor.
+        (WebCore::EventHandler::startPanScrolling): Use a reference.
+        (WebCore::EventHandler::updateDragAndDrop): Ditto.
+        (WebCore::EventHandler::cancelDragAndDrop): Ditto.
+        (WebCore::EventHandler::performDragAndDrop): Ditto.
+        (WebCore::EventHandler::setCapturingMouseEventsElement): Take a raw pointer
+        instead of a PassRefPtr.
+        (WebCore::EventHandler::dispatchMouseEvent): Use a reference.
+        (WebCore::EventHandler::updateDragStateAfterEditDragIfNeeded): Ditto.
+        (WebCore::EventHandler::isKeyboardOptionTab): Ditto.
+        (WebCore::EventHandler::eventInvertsTabsToLinksClientCallResult): Ditto.
+        (WebCore::EventHandler::tabsToLinks): Ditto.
+        * page/EventHandler.h: Updated for the above.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocusedFrame): Take pointer instead
+        of PassRefPtr.
+        (WebCore::FocusController::setFocusedElement): Take reference instead of
+        PassRefPtr.
+        * page/FocusController.h: Updated for the above changes.
+
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::transferChild): Deleted. Unused function.
+        (WebCore::FrameTree::appendChild): Merged with the following function
+        since it's now only used here. Take reference instead of PassRefPtr.
+        (WebCore::FrameTree::actuallyAppendChild): Deleted.
+        (WebCore::FrameTree::removeChild): Take reference instead of pointer.
+        Use move instead of trickier swap.
+        * page/FrameTree.h: Updated for the above.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setContentsSize): Use a reference.
+        * page/MainFrame.cpp:
+        (WebCore::MainFrame::dropChildren): Ditto.
+        * page/Page.cpp:
+        (WebCore::Page::scrollingCoordinator): Ditto.
+        * page/PageOverlay.cpp:
+        (WebCore::PageOverlay::fadeAnimationTimerFired): Ditto.
+
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::installPageOverlay): Take reference
+        instead of PassRefPtr.
+        (WebCore::PageOverlayController::uninstallPageOverlay): Take reference
+        intead of pointer.
+        * page/PageOverlayController.h: Updated for the above.
+
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::PageSerializer): Moved most initialization to the
+        class definition.
+        (WebCore::PageSerializer::serialize): Use reference.
+        (WebCore::PageSerializer::serializeFrame): Use initializer list instead of
+        constructor for resource.
+        (WebCore::PageSerializer::serializeCSSStyleSheet): Ditto.
+        (WebCore::PageSerializer::addImageToResources): Ditto.
+        * page/PageSerializer.h: Removed constructors from PageSerializer::Resource
+        struct since structures don't really need them. Updated for the above.
+        Changed SerializerMarkupAccumulator into a nested class.
+
+        * page/PerformanceEntry.h:
+        (WebCore::PerformanceEntry::startTimeCompareLessThan): Use const RefPtr&
+        instead of PassRefPtr to compare RefPtr in place.
+
+        * page/PerformanceUserTiming.cpp:
+        (WebCore::insertPerformanceEntry): Take Ref&& instead of PassRefPtr.
+
+        * page/ResourceUsageOverlay.cpp:
+        (WebCore::ResourceUsageOverlay::~ResourceUsageOverlay): Use refrence.
+        (WebCore::ResourceUsageOverlay::initialize): Ditto.
+
+        * page/animation/AnimationBase.h: Removed unneeded include.
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::clear): Use reference.
+        (WebCore::AnimationControllerPrivate::fireEventsAndUpdateStyle): Ditto.
+        (WebCore::AnimationControllerPrivate::addEventToDispatch): Use the
+        append function instead of a hand-written alternative.
+        (WebCore::AnimationControllerPrivate::addElementChangeToDispatch):
+        Take a reference rather than a Ref&& since no caller is passing ownership.
+        * page/animation/AnimationControllerPrivate.h: Updated for the above.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc): Return RefPtr instead of PassRefPtr.
+        (WebCore::blendFilter): Ditto.
+        (WebCore::crossfadeBlend): Ditto.
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions): Updated to use
+        animationForProperty, which returns a raw pointer.
+        (WebCore::CompositeAnimation::animationForProperty): Renamed from
+        getAnimationForProperty and changed to return raw pointer instead
+        of PassRefPtr.
+        * page/animation/CompositeAnimation.h: Updated for the above.
+
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::onAnimationEnd): Use animationForProperty.
+        (WebCore::ImplicitAnimation::sendTransitionEvent): Pass reference.
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::sendAnimationEvent): Ditto.
+
+        * page/efl/EventHandlerEfl.cpp:
+        (WebCore::EventHandler::tabsToAllFormControls): Take reference.
+        (WebCore::EventHandler::createDraggingDataTransfer): Return Ref.
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::tabsToAllFormControls): Ditto.
+        (WebCore::EventHandler::createDraggingDataTransfer): Ditto.
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::tabsToAllFormControls): Ditto.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::createDraggingDataTransfer): Ditto.
+        (WebCore::EventHandler::tabsToAllFormControls): Ditto.
+        (WebCore::EventHandler::platformPrepareForWheelEvents): Ditto.
+
+        * page/mac/ServicesOverlayController.h: Take Ref&& for ranges instead
+        of PassRefPtr. Use references.
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::createForSelection): Ditto.
+        (WebCore::ServicesOverlayController::Highlight::createForTelephoneNumber): Ditto.
+        (WebCore::ServicesOverlayController::Highlight::Highlight): Ditto.
+        (WebCore::ServicesOverlayController::buildPotentialHighlightsIfNeeded): Ditto.
+        (WebCore::ServicesOverlayController::buildPhoneNumberHighlights): Ditto.
+        (WebCore::ServicesOverlayController::buildSelectionHighlight): Ditto.
+        (WebCore::ServicesOverlayController::highlightsAreEquivalent): Ditto.
+        (WebCore::ServicesOverlayController::findTelephoneNumberHighlightContainingSelectionHighlight): Ditto.
+        (WebCore::ServicesOverlayController::handleClick): Ditto.
+
+        * page/mac/TextIndicatorWindow.mm:
+        (-[WebTextIndicatorView initWithFrame:textIndicator:margin:offset:]):
+        Take a reference instead of PassRefPtr.
+        (WebCore::TextIndicatorWindow::setTextIndicator): Updated for the above.
+
+        * page/scrolling/AsyncScrollingCoordinator.h: Use Ref&& and RefPtr intead
+        of PsasRefPtr.
+
+        * page/scrolling/ScrollLatchingState.cpp:
+        (WebCore::ScrollLatchingState::ScrollLatchingState): Initialize data members
+        in class definition.
+        (WebCore::ScrollLatchingState::setWheelEventElement): Use raw pointer instead
+        of PassRefPtr.
+        (WebCore::ScrollLatchingState::setPreviousWheelScrolledElement): Use raw
+        pointer instead of RefPtr&&.
+        (WebCore::ScrollLatchingState::setScrollableContainer): Use raw pointer instead
+        of PassRefPtr.
+        * page/scrolling/ScrollLatchingState.h: Updated for the above.
+
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::cloneAndReset): Use Ref instead of PassRefPtr.
+        (WebCore::ScrollingStateNode::appendChild): Use Ref&& instead of PassRefPtr.
+        * page/scrolling/ScrollingStateNode.h: Updated for the above.
+
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::createNode): Use Ref instead of PassRefPtr.
+        (WebCore::ScrollingStateTree::attachNode): Updated for the abve.
+        (WebCore::ScrollingStateTree::commit): Ditto.
+        * page/scrolling/ScrollingStateTree.h: Ditto.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::updateTreeFromStateNode): Use reference.
+        * page/scrolling/ScrollingTree.h: Return Ref instead of PassRefPtr.
+
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::appendChild): Take Ref&& instead of PassRefPtr.
+        (WebCore::ScrollingTreeNode::removeChild): Take reference instead of pointer.
+        * page/scrolling/ScrollingTreeNode.h: Updated for the above.
+
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::ThreadedScrollingTree): Take reference
+        instead of pointer.
+        * page/scrolling/ThreadedScrollingTree.h: Updated for the above.
+
+        * page/scrolling/ios/ScrollingCoordinatorIOS.mm:
+        (WebCore::ScrollingCoordinatorIOS::ScrollingCoordinatorIOS): Pass reference.
+
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        (WebCore::ScrollingTreeIOS::create): Take a reference.
+        (WebCore::ScrollingTreeIOS::ScrollingTreeIOS): Ditto.
+        (WebCore::ScrollingTreeIOS::createScrollingTreeNode): Return Ref instead of
+        PassRefPtr.
+        * page/scrolling/ios/ScrollingTreeIOS.h: Updated for the above.
+
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::ScrollingCoordinatorMac): Use reference.
+
+        * page/scrolling/mac/ScrollingTreeMac.cpp:
+        (ScrollingTreeMac::create): Take a reference.
+        (ScrollingTreeMac::ScrollingTreeMac): Ditto.
+        (ScrollingTreeMac::createScrollingTreeNode): Return a Ref instead of a
+        PassRefPtr.
+        * page/scrolling/mac/ScrollingTreeMac.h: Updated for the above.
+
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::tabsToAllFormControls): Take reference.
+        (WebCore::EventHandler::createDraggingDataTransfer): Return Ref.
+
+        * platform/Cursor.h: Rearranged the header a bit. Got rid of the explicit
+        copy constructor, assignment operator, and destructor. Using the ones
+        that the compiler automatically generates will work for all platforms and
+        we then also get move constructor and move assignment operator.
+
+        * platform/efl/CursorEfl.cpp:
+        (WebCore::Cursor::Cursor): Deleted.
+        (WebCore::Cursor::~Cursor): Deleted.
+        (WebCore::Cursor::operator=): Deleted.
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::Cursor::Cursor): Deleted.
+        (WebCore::Cursor::operator=): Deleted.
+        (WebCore::Cursor::~Cursor): Deleted.
+        * platform/mac/CursorMac.mm:
+        (WebCore::Cursor::Cursor): Deleted.
+        (WebCore::Cursor::operator=): Deleted.
+        (WebCore::Cursor::~Cursor): Deleted.
+        * platform/win/CursorWin.cpp:
+        (WebCore::SharedCursor::SharedCursor): Moved this here from the header
+        since it is only used within this file.
+        (WebCore::SharedCursor::create): Ditto.
+        (WebCore::Cursor::Cursor): Deleted.
+        (WebCore::Cursor::operator=): Deleted.
+        (WebCore::Cursor::~Cursor): Deleted.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent):
+        Pass reference.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking): Get to FrameView
+        through the render tree itself, rather than through the frame.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerForHeader): Use reference.
+        (WebCore::RenderLayerCompositor::updateLayerForFooter): Ditto.
+        (WebCore::RenderLayerCompositor::attachRootLayer): Ditto.
+        (WebCore::RenderLayerCompositor::detachRootLayer): Ditto.
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::showPopup): Ditto.
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::addSearchResult): Ditto.
+        (WebCore::RenderSearchField::showPopup): Ditto.
+        (WebCore::RenderSearchField::valueChanged): Ditto.
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::isKeyboardFocusable): Ditto.
+        * testing/MockPageOverlayClient.cpp:
+        (WebCore::MockPageOverlayClient::installOverlay): Ditto.
+        (WebCore::MockPageOverlayClient::uninstallAllOverlays): Ditto.
+
 2017-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Unify FontPlatformData's hashing and equality operators

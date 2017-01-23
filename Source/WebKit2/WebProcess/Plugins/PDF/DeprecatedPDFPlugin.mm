@@ -860,7 +860,7 @@ JSValueRef PDFPlugin::jsPDFDocPrint(JSContextRef ctx, JSObjectRef function, JSOb
     if (!page)
         return JSValueMakeUndefined(ctx);
 
-    page->chrome().print(coreFrame);
+    page->chrome().print(*coreFrame);
 
     return JSValueMakeUndefined(ctx);
 }

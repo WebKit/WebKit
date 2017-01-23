@@ -55,23 +55,22 @@ const float highlightFadeAnimationDuration = 0.3;
 
 namespace WebCore {
 
-Ref<ServicesOverlayController::Highlight> ServicesOverlayController::Highlight::createForSelection(ServicesOverlayController& controller, RetainPtr<DDHighlightRef> ddHighlight, PassRefPtr<Range> range)
+Ref<ServicesOverlayController::Highlight> ServicesOverlayController::Highlight::createForSelection(ServicesOverlayController& controller, RetainPtr<DDHighlightRef> ddHighlight, Ref<Range>&& range)
 {
-    return adoptRef(*new Highlight(controller, Highlight::SelectionType, ddHighlight, range));
+    return adoptRef(*new Highlight(controller, Highlight::SelectionType, ddHighlight, WTFMove(range)));
 }
 
-Ref<ServicesOverlayController::Highlight> ServicesOverlayController::Highlight::createForTelephoneNumber(ServicesOverlayController& controller, RetainPtr<DDHighlightRef> ddHighlight, PassRefPtr<Range> range)
+Ref<ServicesOverlayController::Highlight> ServicesOverlayController::Highlight::createForTelephoneNumber(ServicesOverlayController& controller, RetainPtr<DDHighlightRef> ddHighlight, Ref<Range>&& range)
 {
-    return adoptRef(*new Highlight(controller, Highlight::TelephoneNumberType, ddHighlight, range));
+    return adoptRef(*new Highlight(controller, Highlight::TelephoneNumberType, ddHighlight, WTFMove(range)));
 }
 
-ServicesOverlayController::Highlight::Highlight(ServicesOverlayController& controller, Type type, RetainPtr<DDHighlightRef> ddHighlight, PassRefPtr<WebCore::Range> range)
-    : m_range(range)
+ServicesOverlayController::Highlight::Highlight(ServicesOverlayController& controller, Type type, RetainPtr<DDHighlightRef> ddHighlight, Ref<WebCore::Range>&& range)
+    : m_range(WTFMove(range))
     , m_type(type)
     , m_controller(&controller)
 {
     ASSERT(ddHighlight);
-    ASSERT(m_range);
 
     Page* page = controller.mainFrame().page();
     m_graphicsLayer = GraphicsLayer::create(page ? page->chrome().client().graphicsLayerFactory() : nullptr, *this);
@@ -409,7 +408,7 @@ void ServicesOverlayController::buildPotentialHighlightsIfNeeded()
 
     if (m_potentialHighlights.isEmpty()) {
         if (m_servicesOverlay)
-            m_mainFrame.pageOverlayController().uninstallPageOverlay(m_servicesOverlay, PageOverlay::FadeMode::DoNotFade);
+            m_mainFrame.pageOverlayController().uninstallPageOverlay(*m_servicesOverlay, PageOverlay::FadeMode::DoNotFade);
         return;
     }
 
@@ -527,7 +526,7 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
         CGRect cgRect = rect;
         RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES));
 
-        newPotentialHighlights.add(Highlight::createForTelephoneNumber(*this, ddHighlight, range));
+        newPotentialHighlights.add(Highlight::createForTelephoneNumber(*this, ddHighlight, range.releaseNonNull()));
     }
 
     replaceHighlightsOfTypePreservingEquivalentHighlights(newPotentialHighlights, Highlight::TelephoneNumberType);
@@ -570,7 +569,7 @@ void ServicesOverlayController::buildSelectionHighlight()
             CGRect visibleRect = mainFrameView->visibleContentRect();
             RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightStyleBubbleNone | DDHighlightStyleStandardIconArrow | DDHighlightStyleButtonShowAlways, YES, NSWritingDirectionNatural, NO, YES));
             
-            newPotentialHighlights.add(Highlight::createForSelection(*this, ddHighlight, selectionRange));
+            newPotentialHighlights.add(Highlight::createForSelection(*this, ddHighlight, selectionRange.releaseNonNull()));
         }
     }
 
@@ -638,14 +637,9 @@ bool ServicesOverlayController::highlightsAreEquivalent(const Highlight* a, cons
 {
     if (a == b)
         return true;
-
     if (!a || !b)
         return false;
-
-    if (a->type() == b->type() && areRangesEqual(a->range(), b->range()))
-        return true;
-
-    return false;
+    return a->type() == b->type() && areRangesEqual(&a->range(), &b->range());
 }
 
 ServicesOverlayController::Highlight* ServicesOverlayController::findTelephoneNumberHighlightContainingSelectionHighlight(Highlight& selectionHighlight)
@@ -669,7 +663,7 @@ ServicesOverlayController::Highlight* ServicesOverlayController::findTelephoneNu
         if (highlight->type() != Highlight::TelephoneNumberType)
             continue;
 
-        if (highlight->range()->contains(*activeSelectionRange))
+        if (highlight->range().contains(*activeSelectionRange))
             return highlight.get();
     }
 
@@ -832,7 +826,7 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, Highligh
 
         page->chrome().client().handleSelectionServiceClick(page->focusController().focusedOrMainFrame().selection(), selectedTelephoneNumbers, windowPoint);
     } else if (highlight.type() == Highlight::TelephoneNumberType)
-        page->chrome().client().handleTelephoneNumberClick(highlight.range()->text(), windowPoint);
+        page->chrome().client().handleTelephoneNumberClick(highlight.range().text(), windowPoint);
 }
 
 void ServicesOverlayController::didCreateHighlight(Highlight* highlight)

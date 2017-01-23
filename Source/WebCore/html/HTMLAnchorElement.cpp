@@ -129,7 +129,7 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent& event) const
     if (!document().frame())
         return false;
 
-    if (!document().frame()->eventHandler().tabsToLinks(&event))
+    if (!document().frame()->eventHandler().tabsToLinks(event))
         return false;
 
     if (!renderer() && ancestorsOfType<HTMLCanvasElement>(*this).first())

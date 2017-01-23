@@ -29,35 +29,31 @@
 
 #include "ScrollingStateTree.h"
 #include "ScrollingTree.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class AsyncScrollingCoordinator;
 
-class ScrollingTreeIOS : public ScrollingTree {
+class ScrollingTreeIOS final : public ScrollingTree {
 public:
-    static Ref<ScrollingTreeIOS> create(AsyncScrollingCoordinator*);
+    static Ref<ScrollingTreeIOS> create(AsyncScrollingCoordinator&);
     virtual ~ScrollingTreeIOS();
 
-    // No wheel events on iOS
-    void handleWheelEvent(const PlatformWheelEvent&) override { }
-    EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) override { return DidNotHandleEvent; }
-
-    void invalidate() override;
-
 private:
-    explicit ScrollingTreeIOS(AsyncScrollingCoordinator*);
-    bool isScrollingTreeIOS() const override { return true; }
+    explicit ScrollingTreeIOS(AsyncScrollingCoordinator&);
 
-    PassRefPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) override;
+    bool isScrollingTreeIOS() const final { return true; }
 
-    void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, const std::optional<FloatPoint>& layoutViewportOrigin, ScrollingLayerPositionAction = ScrollingLayerPositionAction::Sync) override;
+    // No wheel events on iOS
+    void handleWheelEvent(const PlatformWheelEvent&) final { }
+    EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) final { return DidNotHandleEvent; }
 
-    void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, unsigned horizontal, unsigned vertical) override;
+    void invalidate() final;
 
-    FloatRect fixedPositionRect() override;
+    Ref<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) final;
+    void scrollingTreeNodeDidScroll(ScrollingNodeID, const FloatPoint& scrollPosition, const std::optional<FloatPoint>& layoutViewportOrigin, ScrollingLayerPositionAction = ScrollingLayerPositionAction::Sync) final;
+    void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, unsigned horizontal, unsigned vertical) final;
+    FloatRect fixedPositionRect() final;
 
     RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
 };

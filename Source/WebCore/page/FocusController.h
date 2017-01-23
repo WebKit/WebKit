@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,12 +30,10 @@
 #include "LayoutRect.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-struct FocusCandidate;
 class ContainerNode;
 class Document;
 class Element;
@@ -48,19 +46,21 @@ class Node;
 class Page;
 class TreeScope;
 
+struct FocusCandidate;
+
 class FocusController {
-    WTF_MAKE_NONCOPYABLE(FocusController); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit FocusController(Page&, ActivityState::Flags);
 
-    WEBCORE_EXPORT void setFocusedFrame(PassRefPtr<Frame>);
+    WEBCORE_EXPORT void setFocusedFrame(Frame*);
     Frame* focusedFrame() const { return m_focusedFrame.get(); }
     WEBCORE_EXPORT Frame& focusedOrMainFrame() const;
 
     WEBCORE_EXPORT bool setInitialFocus(FocusDirection, KeyboardEvent*);
     bool advanceFocus(FocusDirection, KeyboardEvent&, bool initialFocus = false);
 
-    WEBCORE_EXPORT bool setFocusedElement(Element*, PassRefPtr<Frame>, FocusDirection = FocusDirectionNone);
+    WEBCORE_EXPORT bool setFocusedElement(Element*, Frame&, FocusDirection = FocusDirectionNone);
 
     void setActivityState(ActivityState::Flags);
 

@@ -66,7 +66,7 @@ public:
 
     ApplicationCacheStorage& storage() { return m_storage; }
     const URL& manifestURL() const { return m_manifestURL; }
-    const SecurityOrigin* origin() const { return m_origin.get(); }
+    const SecurityOrigin& origin() const { return m_origin.get(); }
     UpdateStatus updateStatus() const { return m_updateStatus; }
     void setUpdateStatus(UpdateStatus status);
 
@@ -135,7 +135,7 @@ private:
     Ref<ApplicationCacheStorage> m_storage;
 
     URL m_manifestURL;
-    RefPtr<SecurityOrigin> m_origin;
+    Ref<SecurityOrigin> m_origin;
     UpdateStatus m_updateStatus { Idle };
     
     // This is the newest complete cache in the group.

@@ -34,30 +34,31 @@
 
 using namespace WebCore;
 
-Ref<ScrollingTreeMac> ScrollingTreeMac::create(AsyncScrollingCoordinator* scrollingCoordinator)
+Ref<ScrollingTreeMac> ScrollingTreeMac::create(AsyncScrollingCoordinator& scrollingCoordinator)
 {
     return adoptRef(*new ScrollingTreeMac(scrollingCoordinator));
 }
 
-ScrollingTreeMac::ScrollingTreeMac(AsyncScrollingCoordinator* scrollingCoordinator)
+ScrollingTreeMac::ScrollingTreeMac(AsyncScrollingCoordinator& scrollingCoordinator)
     : ThreadedScrollingTree(scrollingCoordinator)
 {
 }
 
-PassRefPtr<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+Ref<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     switch (nodeType) {
     case FrameScrollingNode:
         return ScrollingTreeFrameScrollingNodeMac::create(*this, nodeID);
     case OverflowScrollingNode:
         ASSERT_NOT_REACHED();
-        return nullptr;
+        break;
     case FixedNode:
         return ScrollingTreeFixedNode::create(*this, nodeID);
     case StickyNode:
         return ScrollingTreeStickyNode::create(*this, nodeID);
     }
-    return nullptr;
+    ASSERT_NOT_REACHED();
+    return ScrollingTreeFixedNode::create(*this, nodeID);
 }
 
 #endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)

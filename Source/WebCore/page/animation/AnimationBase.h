@@ -31,7 +31,6 @@
 #include "Animation.h"
 #include "CSSPropertyNames.h"
 #include "RenderStyleConstants.h"
-#include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {

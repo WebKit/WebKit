@@ -66,8 +66,8 @@ struct FrameInfoData;
 
 class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame> {
 public:
-    static PassRefPtr<WebFrame> createWithCoreMainFrame(WebPage*, WebCore::Frame*);
-    static PassRefPtr<WebFrame> createSubframe(WebPage*, const String& frameName, WebCore::HTMLFrameOwnerElement*);
+    static Ref<WebFrame> createWithCoreMainFrame(WebPage*, WebCore::Frame*);
+    static Ref<WebFrame> createSubframe(WebPage*, const String& frameName, WebCore::HTMLFrameOwnerElement*);
     ~WebFrame();
 
     // Called when the FrameLoaderClient (and therefore the WebCore::Frame) is being torn down.
@@ -166,8 +166,8 @@ public:
 #endif
 
 private:
-    static PassRefPtr<WebFrame> create(std::unique_ptr<WebFrameLoaderClient>);
-    WebFrame(std::unique_ptr<WebFrameLoaderClient>);
+    static Ref<WebFrame> create(std::unique_ptr<WebFrameLoaderClient>);
+    explicit WebFrame(std::unique_ptr<WebFrameLoaderClient>);
 
     WebCore::Frame* m_coreFrame;
 

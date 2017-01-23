@@ -366,7 +366,7 @@ private:
     void requestFromDelegate(ResourceRequest&, unsigned long& identifier, ResourceError&);
 
     WEBCORE_EXPORT void detachChildren();
-    void closeAndRemoveChild(Frame*);
+    void closeAndRemoveChild(Frame&);
 
     void loadInSameDocument(const URL&, SerializedScriptValue* stateObject, bool isNewNavigation);
 

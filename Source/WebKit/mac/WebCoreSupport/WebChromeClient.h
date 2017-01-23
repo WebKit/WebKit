@@ -59,7 +59,7 @@ private:
     void focusedElementChanged(WebCore::Element*) override;
     void focusedFrameChanged(WebCore::Frame*) final;
 
-    WebCore::Page* createWindow(WebCore::Frame*, const WebCore::FrameLoadRequest&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
+    WebCore::Page* createWindow(WebCore::Frame&, const WebCore::FrameLoadRequest&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
     void show() final;
 
     bool canRunModal() final;
@@ -79,16 +79,16 @@ private:
 
     void setResizable(bool) final;
 
-    void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, const WTF::String& message, unsigned lineNumber, unsigned columnNumber, const WTF::String& sourceURL) final;
+    void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceURL) final;
 
     bool canRunBeforeUnloadConfirmPanel() final;
-    bool runBeforeUnloadConfirmPanel(const WTF::String& message, WebCore::Frame*) final;
+    bool runBeforeUnloadConfirmPanel(const String& message, WebCore::Frame&) final;
 
     void closeWindowSoon() final;
 
-    void runJavaScriptAlert(WebCore::Frame*, const WTF::String&) override;
-    bool runJavaScriptConfirm(WebCore::Frame*, const WTF::String&) override;
-    bool runJavaScriptPrompt(WebCore::Frame*, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result) override;
+    void runJavaScriptAlert(WebCore::Frame&, const String&) override;
+    bool runJavaScriptConfirm(WebCore::Frame&, const String&) override;
+    bool runJavaScriptPrompt(WebCore::Frame&, const String& message, const String& defaultValue, String& result) override;
 
     bool supportsImmediateInvalidation() final;
     void invalidateRootView(const WebCore::IntRect&) final;
@@ -105,29 +105,29 @@ private:
 #endif
 
     PlatformPageClient platformPageClient() const final;
-    void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const final;
+    void contentsSizeChanged(WebCore::Frame&, const WebCore::IntSize&) const final;
     void scrollRectIntoView(const WebCore::IntRect&) const final;
 
-    void setStatusbarText(const WTF::String&) override;
+    void setStatusbarText(const String&) override;
 
     void scrollbarsModeDidChange() const final { }
     bool shouldUnavailablePluginMessageBeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
-    void unavailablePluginButtonClicked(WebCore::Element*, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
+    void unavailablePluginButtonClicked(WebCore::Element&, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
     void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags) final;
 
-    void setToolTip(const WTF::String&, WebCore::TextDirection) final;
+    void setToolTip(const String&, WebCore::TextDirection) final;
 
-    void print(WebCore::Frame*) final;
-    void exceededDatabaseQuota(WebCore::Frame*, const WTF::String& databaseName, WebCore::DatabaseDetails) final;
+    void print(WebCore::Frame&) final;
+    void exceededDatabaseQuota(WebCore::Frame&, const String& databaseName, WebCore::DatabaseDetails) final;
     void reachedMaxAppCacheSize(int64_t spaceNeeded) final;
-    void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t totalSpaceNeeded) final;
+    void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin&, int64_t totalSpaceNeeded) final;
 
 #if ENABLE(DASHBOARD_SUPPORT)
     void annotatedRegionsChanged() final;
 #endif
 
     void runOpenPanel(WebCore::Frame&, WebCore::FileChooser&) override;
-    void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader&) final;
+    void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader&) final;
 
 #if !PLATFORM(IOS)
     void setCursor(const WebCore::Cursor&) final;
@@ -135,7 +135,7 @@ private:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    std::unique_ptr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient*, const WebCore::Color&) final;
+    std::unique_ptr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient&, const WebCore::Color&) final;
 #endif
 
 #if ENABLE(POINTER_LOCK)
@@ -151,16 +151,16 @@ private:
     void enableSuddenTermination() final;
     void disableSuddenTermination() final;
 
-    bool shouldReplaceWithGeneratedFileForUpload(const WTF::String& path, WTF::String &generatedFilename) final;
-    WTF::String generateReplacementFile(const WTF::String& path) final;
+    bool shouldReplaceWithGeneratedFileForUpload(const String& path, String &generatedFilename) final;
+    String generateReplacementFile(const String& path) final;
 
-    void elementDidFocus(const WebCore::Node*) override;
-    void elementDidBlur(const WebCore::Node*) override;
+    void elementDidFocus(WebCore::Element&) override;
+    void elementDidBlur(WebCore::Element&) override;
 
     bool shouldPaintEntireContents() const final;
 
-    void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
-    void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) final;
+    void attachRootGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
+    void attachViewOverlayGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
     void setNeedsOneShotDrawingSynchronization() final;
     void scheduleCompositingLayerFlush() final;
 
@@ -189,16 +189,16 @@ private:
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard) final;
-    void enterFullScreenForElement(WebCore::Element*) final;
-    void exitFullScreenForElement(WebCore::Element*) final;
+    bool supportsFullScreenForElement(const WebCore::Element&, bool withKeyboard) final;
+    void enterFullScreenForElement(WebCore::Element&) final;
+    void exitFullScreenForElement(WebCore::Element&) final;
 #endif
 
     bool selectItemWritingDirectionIsNatural() override;
     bool selectItemAlignmentFollowsMenuWritingDirection() override;
     bool hasOpenedPopup() const final;
-    RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const override;
-    RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const override;
+    RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient&) const override;
+    RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient&) const override;
 
     void wheelEventHandlersChanged(bool) final { }
 

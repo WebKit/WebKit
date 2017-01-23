@@ -930,7 +930,7 @@ static bool executePrint(Frame& frame, Event*, EditorCommandSource, const String
     Page* page = frame.page();
     if (!page)
         return false;
-    page->chrome().print(&frame);
+    page->chrome().print(frame);
     return true;
 }
 

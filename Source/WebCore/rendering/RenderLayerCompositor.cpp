@@ -3103,7 +3103,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
         scrollingCoordinator->frameViewRootLayerDidChange(m_renderView.frameView());
 
-    page().chrome().client().didAddHeaderLayer(m_layerForHeader.get());
+    page().chrome().client().didAddHeaderLayer(*m_layerForHeader);
 
     return m_layerForHeader.get();
 }
@@ -3141,7 +3141,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
         scrollingCoordinator->frameViewRootLayerDidChange(m_renderView.frameView());
 
-    page().chrome().client().didAddFooterLayer(m_layerForFooter.get());
+    page().chrome().client().didAddFooterLayer(*m_layerForFooter);
 
     return m_layerForFooter.get();
 }
@@ -3463,11 +3463,11 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
             break;
         case RootLayerAttachedViaChromeClient: {
             Frame& frame = m_renderView.frameView().frame();
-            page().chrome().client().attachRootGraphicsLayer(&frame, rootGraphicsLayer());
+            page().chrome().client().attachRootGraphicsLayer(frame, rootGraphicsLayer());
             if (frame.isMainFrame()) {
                 PageOverlayController& pageOverlayController = frame.mainFrame().pageOverlayController();
                 pageOverlayController.willAttachRootLayer();
-                page().chrome().client().attachViewOverlayGraphicsLayer(&frame, &pageOverlayController.viewOverlayRootLayer());
+                page().chrome().client().attachViewOverlayGraphicsLayer(frame, &pageOverlayController.viewOverlayRootLayer());
             }
             break;
         }
@@ -3508,9 +3508,9 @@ void RenderLayerCompositor::detachRootLayer()
     }
     case RootLayerAttachedViaChromeClient: {
         Frame& frame = m_renderView.frameView().frame();
-        page().chrome().client().attachRootGraphicsLayer(&frame, 0);
+        page().chrome().client().attachRootGraphicsLayer(frame, nullptr);
         if (frame.isMainFrame())
-            page().chrome().client().attachViewOverlayGraphicsLayer(&frame, 0);
+            page().chrome().client().attachViewOverlayGraphicsLayer(frame, nullptr);
     }
     break;
     case RootLayerUnattached:

@@ -39,7 +39,6 @@ class Page;
 class PlatformMouseEvent;
 
 class PageOverlayController final : public GraphicsLayerClient {
-    WTF_MAKE_NONCOPYABLE(PageOverlayController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PageOverlayController(MainFrame&);
@@ -50,8 +49,8 @@ public:
 
     const Vector<RefPtr<PageOverlay>>& pageOverlays() const { return m_pageOverlays; }
 
-    WEBCORE_EXPORT void installPageOverlay(PassRefPtr<PageOverlay>, PageOverlay::FadeMode);
-    WEBCORE_EXPORT void uninstallPageOverlay(PageOverlay*, PageOverlay::FadeMode);
+    WEBCORE_EXPORT void installPageOverlay(PageOverlay&, PageOverlay::FadeMode);
+    WEBCORE_EXPORT void uninstallPageOverlay(PageOverlay&, PageOverlay::FadeMode);
 
     void setPageOverlayNeedsDisplay(PageOverlay&, const IntRect&);
     void setPageOverlayOpacity(PageOverlay&, float);

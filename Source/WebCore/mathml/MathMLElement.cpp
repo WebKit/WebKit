@@ -182,7 +182,7 @@ bool MathMLElement::isKeyboardFocusable(KeyboardEvent& event) const
         return StyledElement::isKeyboardFocusable(event);
 
     if (isLink())
-        return document().frame()->eventHandler().tabsToLinks(&event);
+        return document().frame()->eventHandler().tabsToLinks(event);
 
     return StyledElement::isKeyboardFocusable(event);
 }

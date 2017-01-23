@@ -30,7 +30,6 @@
 #include "ScrollingCoordinator.h"
 #include "ScrollingTree.h"
 #include "Timer.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -69,11 +68,11 @@ public:
 protected:
     WEBCORE_EXPORT AsyncScrollingCoordinator(Page*);
 
-    void setScrollingTree(PassRefPtr<ScrollingTree> scrollingTree) { m_scrollingTree = scrollingTree; }
+    void setScrollingTree(Ref<ScrollingTree>&& scrollingTree) { m_scrollingTree = WTFMove(scrollingTree); }
 
     ScrollingStateTree* scrollingStateTree() { return m_scrollingStateTree.get(); }
 
-    PassRefPtr<ScrollingTree> releaseScrollingTree() { return WTFMove(m_scrollingTree); }
+    RefPtr<ScrollingTree> releaseScrollingTree() { return WTFMove(m_scrollingTree); }
 
     void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, std::optional<FloatPoint> layoutViewportOrigin, bool programmaticScroll, ScrollingLayerPositionAction);
 

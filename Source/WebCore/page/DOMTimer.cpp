@@ -361,7 +361,7 @@ void DOMTimer::fired()
         if (WKObservedContentChange() == WKContentVisibilityChange || shouldReportLackOfChanges) {
             Document& document = downcast<Document>(context);
             if (Page* page = document.page())
-                page->chrome().client().observedContentChange(document.frame());
+                page->chrome().client().observedContentChange(*document.frame());
         }
     }
 #endif

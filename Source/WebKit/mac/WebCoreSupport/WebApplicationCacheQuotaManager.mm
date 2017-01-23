@@ -59,7 +59,9 @@ using namespace WebCore;
 - (unsigned long long)quota
 {
     long long quota;
-    if (webApplicationCacheStorage().calculateQuotaForOrigin([_origin _core], quota))
+    if (!_origin)
+        return 0;
+    if (webApplicationCacheStorage().calculateQuotaForOrigin(*[_origin _core], quota))
         return quota;
     return 0;
 }

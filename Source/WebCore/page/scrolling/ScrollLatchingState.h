@@ -41,7 +41,7 @@ public:
     void clear();
 
     Element* wheelEventElement() { return m_wheelEventElement.get(); }
-    void setWheelEventElement(PassRefPtr<Element>);
+    void setWheelEventElement(Element*);
     Frame* frame() { return m_frame; }
     void setFrame(Frame* frame) { m_frame = frame; }
 
@@ -49,10 +49,10 @@ public:
     void setWidgetIsLatched(bool isOverWidget);
 
     Element* previousWheelScrolledElement() { return m_previousWheelScrolledElement.get(); }
-    void setPreviousWheelScrolledElement(RefPtr<Element>&&);
+    void setPreviousWheelScrolledElement(Element*);
     
     ContainerNode* scrollableContainer() { return m_scrollableContainer.get(); }
-    void setScrollableContainer(PassRefPtr<ContainerNode>);
+    void setScrollableContainer(ContainerNode*);
     bool startedGestureAtScrollLimit() const { return m_startedGestureAtScrollLimit; }
     void setStartedGestureAtScrollLimit(bool startedAtLimit) { m_startedGestureAtScrollLimit = startedAtLimit; }
 
@@ -61,10 +61,10 @@ private:
     RefPtr<Element> m_previousWheelScrolledElement;
     RefPtr<ContainerNode> m_scrollableContainer;
 
-    Frame* m_frame;
-    
-    bool m_widgetIsLatched;
-    bool m_startedGestureAtScrollLimit;
+    Frame* m_frame { nullptr };
+
+    bool m_widgetIsLatched { false };
+    bool m_startedGestureAtScrollLimit { false };
 };
     
 } // namespace WebCore

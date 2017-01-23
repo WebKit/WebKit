@@ -87,14 +87,14 @@ UserTiming::UserTiming(Performance& performance)
 {
 }
 
-static void insertPerformanceEntry(PerformanceEntryMap& performanceEntryMap, PassRefPtr<PerformanceEntry> performanceEntry)
+static void insertPerformanceEntry(PerformanceEntryMap& performanceEntryMap, Ref<PerformanceEntry>&& performanceEntry)
 {
-    RefPtr<PerformanceEntry> entry = performanceEntry;
-    PerformanceEntryMap::iterator it = performanceEntryMap.find(entry->name());
+    RefPtr<PerformanceEntry> entry = WTFMove(performanceEntry);
+    auto it = performanceEntryMap.find(entry->name());
     if (it != performanceEntryMap.end())
-        it->value.append(entry);
+        it->value.append(WTFMove(entry));
     else
-        performanceEntryMap.set(entry->name(), Vector<RefPtr<PerformanceEntry>>{ entry });
+        performanceEntryMap.set(entry->name(), Vector<RefPtr<PerformanceEntry>> { WTFMove(entry) });
 }
 
 static void clearPeformanceEntries(PerformanceEntryMap& performanceEntryMap, const String& name)

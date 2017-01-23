@@ -53,7 +53,7 @@ ResourceUsageOverlay::~ResourceUsageOverlay()
 
     // FIXME: This is a hack so we don't try to uninstall the PageOverlay during Page destruction.
     if (m_page.mainFrame().page())
-        m_page.mainFrame().pageOverlayController().uninstallPageOverlay(m_overlay.get(), PageOverlay::FadeMode::DoNotFade);
+        m_page.mainFrame().pageOverlayController().uninstallPageOverlay(*m_overlay, PageOverlay::FadeMode::DoNotFade);
 }
 
 void ResourceUsageOverlay::initialize()
@@ -72,7 +72,7 @@ void ResourceUsageOverlay::initialize()
 
     m_overlay->setFrame(initialRect);
     m_overlay->setShouldIgnoreMouseEventsOutsideBounds(false);
-    m_page.mainFrame().pageOverlayController().installPageOverlay(m_overlay.get(), PageOverlay::FadeMode::DoNotFade);
+    m_page.mainFrame().pageOverlayController().installPageOverlay(*m_overlay, PageOverlay::FadeMode::DoNotFade);
     platformInitialize();
 }
 

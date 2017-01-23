@@ -1025,7 +1025,7 @@ RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& na
     RefPtr<Frame> childFrame = webFrame->createSubframeWithOwnerElement(m_webFrame->webView(), coreFrame->page(), &ownerElement);
 
     childFrame->tree().setName(name);
-    coreFrame->tree().appendChild(childFrame);
+    coreFrame->tree().appendChild(*childFrame);
     childFrame->init();
 
     coreFrame->loader().loadURLIntoChildFrame(url, referrer, childFrame.get());

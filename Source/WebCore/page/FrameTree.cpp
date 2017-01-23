@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -63,25 +63,6 @@ Frame* FrameTree::parent() const
     return m_parent;
 }
 
-bool FrameTree::transferChild(PassRefPtr<Frame> child)
-{
-    Frame* oldParent = child->tree().parent();
-    if (oldParent == &m_thisFrame)
-        return false; // |child| is already a child of m_thisFrame.
-
-    if (oldParent)
-        oldParent->tree().removeChild(child.get());
-
-    ASSERT(child->page() == m_thisFrame.page());
-    child->tree().m_parent = &m_thisFrame;
-
-    // We need to ensure that the child still has a unique frame name with respect to its new parent.
-    child->tree().setName(child->tree().m_name);
-
-    actuallyAppendChild(child); // Note, on return |child| is null.
-    return true;
-}
-
 unsigned FrameTree::indexInParent() const
 {
     if (!m_parent)
@@ -95,46 +76,32 @@ unsigned FrameTree::indexInParent() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void FrameTree::appendChild(PassRefPtr<Frame> child)
+void FrameTree::appendChild(Frame& child)
 {
-    ASSERT(child->page() == m_thisFrame.page());
-    child->tree().m_parent = &m_thisFrame;
-    actuallyAppendChild(child); // Note, on return |child| is null.
-}
-
-void FrameTree::actuallyAppendChild(PassRefPtr<Frame> child)
-{
-    ASSERT(child->tree().m_parent == &m_thisFrame);
+    ASSERT(child.page() == m_thisFrame.page());
+    child.tree().m_parent = &m_thisFrame;
     Frame* oldLast = m_lastChild;
-    m_lastChild = child.get();
+    m_lastChild = &child;
 
     if (oldLast) {
-        child->tree().m_previousSibling = oldLast;
-        oldLast->tree().m_nextSibling = child;
+        child.tree().m_previousSibling = oldLast;
+        oldLast->tree().m_nextSibling = &child;
     } else
-        m_firstChild = child;
+        m_firstChild = &child;
 
     m_scopedChildCount = invalidCount;
 
     ASSERT(!m_lastChild->tree().m_nextSibling);
 }
 
-void FrameTree::removeChild(Frame* child)
+void FrameTree::removeChild(Frame& child)
 {
-    child->tree().m_parent = nullptr;
+    Frame*& newLocationForPrevious = m_lastChild == &child ? m_lastChild : child.tree().m_nextSibling->tree().m_previousSibling;
+    RefPtr<Frame>& newLocationForNext = m_firstChild == &child ? m_firstChild : child.tree().m_previousSibling->tree().m_nextSibling;
 
-    // Slightly tricky way to prevent deleting the child until we are done with it, w/o
-    // extra refs. These swaps leave the child in a circular list by itself. Clearing its
-    // previous and next will then finally deref it.
-
-    RefPtr<Frame>& newLocationForNext = m_firstChild == child ? m_firstChild : child->tree().m_previousSibling->tree().m_nextSibling;
-    Frame*& newLocationForPrevious = m_lastChild == child ? m_lastChild : child->tree().m_nextSibling->tree().m_previousSibling;
-    swap(newLocationForNext, child->tree().m_nextSibling);
-    // For some inexplicable reason, the following line does not compile without the explicit std:: namespace
-    std::swap(newLocationForPrevious, child->tree().m_previousSibling);
-
-    child->tree().m_previousSibling = nullptr;
-    child->tree().m_nextSibling = nullptr;
+    child.tree().m_parent = nullptr;
+    newLocationForPrevious = std::exchange(child.tree().m_previousSibling, nullptr);
+    newLocationForNext = WTFMove(child.tree().m_nextSibling);
 
     m_scopedChildCount = invalidCount;
 }

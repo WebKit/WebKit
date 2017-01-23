@@ -302,14 +302,14 @@ WebView *getWebView(WebFrame *webFrame)
     WebView *webView = kit(page);
 
     WebFrame *frame = [[self alloc] _initWithWebFrameView:frameView webView:webView];
-    Ref<WebCore::Frame> coreFrame = Frame::create(page, ownerElement, new WebFrameLoaderClient(frame));
+    auto coreFrame = Frame::create(page, ownerElement, new WebFrameLoaderClient(frame));
     [frame release];
     frame->_private->coreFrame = coreFrame.ptr();
 
     coreFrame.get().tree().setName(name);
     if (ownerElement) {
         ASSERT(ownerElement->document().frame());
-        ownerElement->document().frame()->tree().appendChild(coreFrame.ptr());
+        ownerElement->document().frame()->tree().appendChild(coreFrame.get());
     }
 
     coreFrame.get().init();

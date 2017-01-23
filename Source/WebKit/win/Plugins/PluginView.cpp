@@ -593,7 +593,7 @@ NPError PluginView::destroyStream(NPStream* stream, NPReason reason)
 void PluginView::status(const char* message)
 {
     if (Page* page = m_parentFrame->page())
-        page->chrome().setStatusbarText(m_parentFrame.get(), String::fromUTF8(message));
+        page->chrome().setStatusbarText(*m_parentFrame, String::fromUTF8(message));
 }
 
 NPError PluginView::setValue(NPPVariable variable, void* value)
@@ -793,7 +793,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
 void PluginView::focusPluginElement()
 {
     if (Page* page = m_parentFrame->page())
-        page->focusController().setFocusedElement(m_element, m_parentFrame);
+        page->focusController().setFocusedElement(m_element, *m_parentFrame);
     else
         m_parentFrame->document()->setFocusedElement(m_element);
 }

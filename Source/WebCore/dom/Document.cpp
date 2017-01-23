@@ -848,13 +848,11 @@ void Document::childrenChanged(const ChildChange& change)
 {
     ContainerNode::childrenChanged(change);
 
-#if PLATFORM(IOS)
     // FIXME: Chrome::didReceiveDocType() used to be called only when the doctype changed. We need to check the
     // impact of calling this systematically. If the overhead is negligible, we need to rename didReceiveDocType,
     // otherwise, we need to detect the doc type changes before updating the viewport.
     if (Page* page = this->page())
-        page->chrome().didReceiveDocType(frame());
-#endif
+        page->chrome().didReceiveDocType(*frame());
 
     Element* newDocumentElement = childrenOfType<Element>(*this).first();
     if (newDocumentElement == m_documentElement)
@@ -2372,9 +2370,10 @@ void Document::platformSuspendOrStopActiveDOMObjects()
 {
 #if PLATFORM(IOS)
     if (WebThreadCountOfObservedContentModifiers() > 0) {
-        Frame* frame = this->frame();
-        if (Page* page = frame ? frame->page() : nullptr)
-            page->chrome().client().clearContentChangeObservers(frame);
+        if (auto* frame = this->frame()) {
+            if (auto* page = frame->page())
+                page->chrome().client().clearContentChangeObservers(*frame);
+        }
     }
 #endif
 }
@@ -3218,9 +3217,7 @@ void Document::updateViewportArguments()
         m_didDispatchViewportPropertiesChanged = true;
 #endif
         page()->chrome().dispatchViewportPropertiesDidChange(m_viewportArguments);
-#if PLATFORM(IOS)
-        page()->chrome().didReceiveDocType(frame());
-#endif
+        page()->chrome().didReceiveDocType(*frame());
     }
 }
 
@@ -3642,7 +3639,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
             if (is<HTMLInputElement>(*oldFocusedElement))
                 downcast<HTMLInputElement>(*oldFocusedElement).endEditing();
             if (page())
-                page()->chrome().client().elementDidBlur(oldFocusedElement.get());
+                page()->chrome().client().elementDidBlur(*oldFocusedElement);
             ASSERT(!m_focusedElement);
         }
 
@@ -4000,7 +3997,7 @@ void Document::createDOMWindow()
     ASSERT(m_frame);
     ASSERT(!m_domWindow);
 
-    m_domWindow = DOMWindow::create(this);
+    m_domWindow = DOMWindow::create(*this);
 
     ASSERT(m_domWindow->document() == this);
     ASSERT(m_domWindow->frame() == m_frame);
@@ -4015,7 +4012,7 @@ void Document::takeDOMWindowFrom(Document* document)
     ASSERT(pageCacheState() == NotInPageCache);
 
     m_domWindow = WTFMove(document->m_domWindow);
-    m_domWindow->didSecureTransitionTo(this);
+    m_domWindow->didSecureTransitionTo(*this);
 
     ASSERT(m_domWindow->document() == this);
     ASSERT(m_domWindow->frame() == m_frame);
@@ -5573,12 +5570,12 @@ void Document::requestFullScreenForElement(Element* element, FullScreenCheckType
             break;
 
         bool hasKeyboardAccess = true;
-        if (!page()->chrome().client().supportsFullScreenForElement(element, hasKeyboardAccess)) {
+        if (!page()->chrome().client().supportsFullScreenForElement(*element, hasKeyboardAccess)) {
             // The new full screen API does not accept a "flags" parameter, so fall back to disallowing
             // keyboard input if the chrome client refuses to allow keyboard input.
             hasKeyboardAccess = false;
 
-            if (!page()->chrome().client().supportsFullScreenForElement(element, hasKeyboardAccess))
+            if (!page()->chrome().client().supportsFullScreenForElement(*element, hasKeyboardAccess))
                 break;
         }
 
@@ -5631,7 +5628,7 @@ void Document::requestFullScreenForElement(Element* element, FullScreenCheckType
         // 5. Return, and run the remaining steps asynchronously.
         // 6. Optionally, perform some animation.
         m_areKeysEnabledInFullScreen = hasKeyboardAccess;
-        page()->chrome().client().enterFullScreenForElement(element);
+        page()->chrome().client().enterFullScreenForElement(*element);
 
         // 7. Optionally, display a message indicating how the user can exit displaying the context object fullscreen.
         return;
@@ -5723,12 +5720,12 @@ void Document::webkitExitFullscreen()
     // Only exit out of full screen window mode if there are no remaining elements in the 
     // full screen stack.
     if (!newTop) {
-        page()->chrome().client().exitFullScreenForElement(m_fullScreenElement.get());
+        page()->chrome().client().exitFullScreenForElement(*m_fullScreenElement);
         return;
     }
 
     // Otherwise, notify the chrome of the new full screen element.
-    page()->chrome().client().enterFullScreenForElement(newTop);
+    page()->chrome().client().enterFullScreenForElement(*newTop);
 }
 
 bool Document::webkitFullscreenEnabled() const

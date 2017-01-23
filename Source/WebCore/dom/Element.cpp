@@ -2348,7 +2348,7 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
 
     if (document().focusedElement() == this) {
         if (document().page())
-            document().page()->chrome().client().elementDidRefocus(this);
+            document().page()->chrome().client().elementDidRefocus(*this);
 
         return;
     }
@@ -2371,7 +2371,7 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
         // If a focus event handler changes the focus to a different node it
         // does not make sense to continue and update appearence.
         protect = this;
-        if (!page->focusController().setFocusedElement(this, document().frame(), direction))
+        if (!page->focusController().setFocusedElement(this, *document().frame(), direction))
             return;
     }
 
@@ -2441,7 +2441,7 @@ void Element::blur()
     cancelFocusAppearanceUpdate();
     if (treeScope().focusedElementInScope() == this) {
         if (Frame* frame = document().frame())
-            frame->page()->focusController().setFocusedElement(0, frame);
+            frame->page()->focusController().setFocusedElement(nullptr, *frame);
         else
             document().setFocusedElement(nullptr);
     }
@@ -2464,7 +2464,7 @@ void Element::dispatchFocusOutEvent(const AtomicString& eventType, RefPtr<Elemen
 void Element::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection)
 {
     if (document().page())
-        document().page()->chrome().client().elementDidFocus(this);
+        document().page()->chrome().client().elementDidFocus(*this);
 
     EventDispatcher::dispatchEvent(*this, FocusEvent::create(eventNames().focusEvent, false, false, document().defaultView(), 0, WTFMove(oldFocusedElement)));
 }
@@ -2472,7 +2472,7 @@ void Element::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirec
 void Element::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
 {
     if (document().page())
-        document().page()->chrome().client().elementDidBlur(this);
+        document().page()->chrome().client().elementDidBlur(*this);
 
     EventDispatcher::dispatchEvent(*this, FocusEvent::create(eventNames().blurEvent, false, false, document().defaultView(), 0, WTFMove(newFocusedElement)));
 }

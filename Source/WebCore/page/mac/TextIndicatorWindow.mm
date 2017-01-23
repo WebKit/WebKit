@@ -64,7 +64,7 @@ using namespace WebCore;
     BOOL _fadingOut;
 }
 
-- (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<TextIndicator>)textIndicator margin:(NSSize)margin offset:(NSPoint)offset;
+- (instancetype)initWithFrame:(NSRect)frame textIndicator:(TextIndicator&)textIndicator margin:(NSSize)margin offset:(NSPoint)offset;
 
 - (void)present;
 - (void)hideWithCompletionHandler:(void(^)(void))completionHandler;
@@ -147,12 +147,12 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
     return false;
 }
 
-- (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<TextIndicator>)textIndicator margin:(NSSize)margin offset:(NSPoint)offset
+- (instancetype)initWithFrame:(NSRect)frame textIndicator:(TextIndicator&)textIndicator margin:(NSSize)margin offset:(NSPoint)offset
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
-    _textIndicator = textIndicator;
+    _textIndicator = &textIndicator;
     _margin = margin;
 
     self.wantsLayer = YES;
@@ -465,7 +465,8 @@ void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGR
     [m_textIndicatorWindow setOpaque:NO];
     [m_textIndicatorWindow setIgnoresMouseEvents:YES];
 
-    m_textIndicatorView = adoptNS([[WebTextIndicatorView alloc] initWithFrame:NSMakeRect(0, 0, [m_textIndicatorWindow frame].size.width, [m_textIndicatorWindow frame].size.height) textIndicator:m_textIndicator margin:NSMakeSize(horizontalMargin, verticalMargin) offset:fractionalTextOffset]);
+    m_textIndicatorView = adoptNS([[WebTextIndicatorView alloc] initWithFrame:NSMakeRect(0, 0, [m_textIndicatorWindow frame].size.width, [m_textIndicatorWindow frame].size.height)
+        textIndicator:*m_textIndicator margin:NSMakeSize(horizontalMargin, verticalMargin) offset:fractionalTextOffset]);
     [m_textIndicatorWindow setContentView:m_textIndicatorView.get()];
 
     [[m_targetView window] addChildWindow:m_textIndicatorWindow.get() ordered:NSWindowAbove];

@@ -204,7 +204,7 @@ void DatabaseContext::databaseExceededQuota(const String& name, DatabaseDetails 
     if (is<Document>(*m_scriptExecutionContext)) {
         Document& document = downcast<Document>(*m_scriptExecutionContext);
         if (Page* page = document.page())
-            page->chrome().client().exceededDatabaseQuota(document.frame(), name, details);
+            page->chrome().client().exceededDatabaseQuota(*document.frame(), name, details);
         return;
     }
     ASSERT(m_scriptExecutionContext->isWorkerGlobalScope());

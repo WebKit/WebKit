@@ -42,9 +42,9 @@ private:
     void focus() final;
     void takeFocus(WebCore::FocusDirection) final { }
 
-    void runJavaScriptAlert(WebCore::Frame*, const WTF::String&) final;
-    bool runJavaScriptConfirm(WebCore::Frame*, const WTF::String&) final;
-    bool runJavaScriptPrompt(WebCore::Frame*, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result) final;
+    void runJavaScriptAlert(WebCore::Frame&, const WTF::String&) final;
+    bool runJavaScriptConfirm(WebCore::Frame&, const WTF::String&) final;
+    bool runJavaScriptPrompt(WebCore::Frame&, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result) final;
 
     void runOpenPanel(WebCore::Frame&, WebCore::FileChooser&) final;
 
@@ -53,13 +53,13 @@ private:
 #endif
 
     void didReceiveMobileDocType(bool) final;
-    void setNeedsScrollNotifications(WebCore::Frame*, bool) final;
-    void observedContentChange(WebCore::Frame*) final;
-    void clearContentChangeObservers(WebCore::Frame*) final;
+    void setNeedsScrollNotifications(WebCore::Frame&, bool) final;
+    void observedContentChange(WebCore::Frame&) final;
+    void clearContentChangeObservers(WebCore::Frame&) final;
     WebCore::FloatSize screenSize() const final;
     WebCore::FloatSize availableScreenSize() const final;
     void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const final;
-    void notifyRevealedSelectionByScrollingFrame(WebCore::Frame*) final;
+    void notifyRevealedSelectionByScrollingFrame(WebCore::Frame&) final;
     bool isStopping() final;
     void didLayout(LayoutType) final;
     void didStartOverflowScroll() final;
@@ -67,11 +67,11 @@ private:
 
     void suppressFormNotifications() final;
     void restoreFormNotifications() final;
-    
-    void elementDidFocus(const WebCore::Node*) final;
-    void elementDidBlur(const WebCore::Node*) final;
 
-    void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) final;
+    void elementDidFocus(WebCore::Element&) final;
+    void elementDidBlur(WebCore::Element&) final;
+
+    void attachRootGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
 
     void didFlushCompositingLayers() final;
 
@@ -83,8 +83,8 @@ private:
 
     bool selectItemWritingDirectionIsNatural() final;
     bool selectItemAlignmentFollowsMenuWritingDirection() final;
-    RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const final;
-    RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const final;
+    RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient&) const final;
+    RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient&) const final;
 
     void webAppOrientationsUpdated() final;
     void focusedElementChanged(WebCore::Element*) final;

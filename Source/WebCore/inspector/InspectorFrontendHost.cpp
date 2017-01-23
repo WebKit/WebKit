@@ -339,8 +339,8 @@ void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMe
         return;
     }
     auto menuProvider = FrontendMenuProvider::create(this, { &state, frontendApiObject }, items);
-    m_frontendPage->contextMenuController().showContextMenu(event, menuProvider.ptr());
     m_menuProvider = menuProvider.ptr();
+    m_frontendPage->contextMenuController().showContextMenu(*event, menuProvider);
 }
 
 #endif
@@ -355,7 +355,7 @@ void InspectorFrontendHost::dispatchEventAsContextMenuEvent(Event* event)
     MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
     IntPoint mousePoint = IntPoint(mouseEvent.clientX(), mouseEvent.clientY());
 
-    m_frontendPage->contextMenuController().showContextMenuAt(frame, mousePoint);
+    m_frontendPage->contextMenuController().showContextMenuAt(*frame, mousePoint);
 #else
     UNUSED_PARAM(event);
 #endif

@@ -52,7 +52,7 @@ ScrollingCoordinatorIOS::ScrollingCoordinatorIOS(Page* page)
     : AsyncScrollingCoordinator(page)
     , m_scrollingStateTreeCommitterTimer(*this, &ScrollingCoordinatorIOS::commitTreeState)
 {
-    setScrollingTree(ScrollingTreeIOS::create(this));
+    setScrollingTree(ScrollingTreeIOS::create(*this));
 }
 
 ScrollingCoordinatorIOS::~ScrollingCoordinatorIOS()

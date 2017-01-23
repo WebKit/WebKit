@@ -189,15 +189,15 @@ static COMPtr<IPropertyBag> createWindowFeaturesPropertyBag(const WindowFeatures
     return COMPtr<IPropertyBag>(AdoptCOM, COMPropertyBag<COMVariant>::adopt(map));
 }
 
-Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest&, const WindowFeatures& features, const NavigationAction& navigationAction)
+Page* WebChromeClient::createWindow(Frame& frame, const FrameLoadRequest&, const WindowFeatures& features, const NavigationAction& navigationAction)
 {
     COMPtr<IWebUIDelegate> delegate = uiDelegate();
     if (!delegate)
         return 0;
 
 #if ENABLE(FULLSCREEN_API)
-    if (frame->document() && frame->document()->webkitCurrentFullScreenElement())
-        frame->document()->webkitCancelFullScreen();
+    if (frame.document() && frame.document()->webkitCurrentFullScreenElement())
+        frame.document()->webkitCancelFullScreen();
 #endif
 
     COMPtr<WebMutableURLRequest> request = adoptCOM(WebMutableURLRequest::createInstance(ResourceRequest(navigationAction.url())));
@@ -361,12 +361,12 @@ bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
     return false;
 }
 
-bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
+bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame& frame)
 {
     BOOL result = TRUE;
     IWebUIDelegate* ui;
     if (SUCCEEDED(m_webView->uiDelegate(&ui)) && ui) {
-        WebFrame* webFrame = kit(frame);
+        WebFrame* webFrame = kit(&frame);
         ui->runBeforeUnloadConfirmPanelWithMessage(m_webView, BString(message), webFrame, &result);
         ui->Release();
     }
@@ -393,14 +393,14 @@ void WebChromeClient::closeWindowSoon()
     m_webView->closeWindowSoon();
 }
 
-void WebChromeClient::runJavaScriptAlert(Frame*, const String& message)
+void WebChromeClient::runJavaScriptAlert(Frame&, const String& message)
 {
     COMPtr<IWebUIDelegate> ui;
     if (SUCCEEDED(m_webView->uiDelegate(&ui)))
         ui->runJavaScriptAlertPanelWithMessage(m_webView, BString(message));
 }
 
-bool WebChromeClient::runJavaScriptConfirm(Frame*, const String& message)
+bool WebChromeClient::runJavaScriptConfirm(Frame&, const String& message)
 {
     BOOL result = FALSE;
     COMPtr<IWebUIDelegate> ui;
@@ -409,7 +409,7 @@ bool WebChromeClient::runJavaScriptConfirm(Frame*, const String& message)
     return !!result;
 }
 
-bool WebChromeClient::runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result)
+bool WebChromeClient::runJavaScriptPrompt(Frame&, const String& message, const String& defaultValue, String& result)
 {
     COMPtr<IWebUIDelegate> ui;
     if (FAILED(m_webView->uiDelegate(&ui)))
@@ -508,7 +508,7 @@ PlatformPageClient WebChromeClient::platformPageClient() const
     return viewWindow;
 }
 
-void WebChromeClient::contentsSizeChanged(Frame*, const IntSize&) const
+void WebChromeClient::contentsSizeChanged(Frame&, const IntSize&) const
 {
     notImplemented();
 }
@@ -540,7 +540,7 @@ bool WebChromeClient::shouldUnavailablePluginMessageBeButton(RenderEmbeddedObjec
     return uiDelegatePrivate3;
 }
 
-void WebChromeClient::unavailablePluginButtonClicked(Element* element, RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
+void WebChromeClient::unavailablePluginButtonClicked(Element& element, RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
     ASSERT_UNUSED(pluginUnavailabilityReason, pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing);
 
@@ -552,7 +552,7 @@ void WebChromeClient::unavailablePluginButtonClicked(Element* element, RenderEmb
     if (!uiDelegatePrivate3)
         return;
 
-    COMPtr<IDOMElement> e(AdoptCOM, DOMElement::createInstance(element));
+    COMPtr<IDOMElement> e(AdoptCOM, DOMElement::createInstance(&element));
     uiDelegatePrivate3->didPressMissingPluginButton(e.get());
 }
 
@@ -561,21 +561,21 @@ void WebChromeClient::setToolTip(const String& toolTip, TextDirection)
     m_webView->setToolTip(toolTip);
 }
 
-void WebChromeClient::print(Frame* frame)
+void WebChromeClient::print(Frame& frame)
 {
     COMPtr<IWebUIDelegate> uiDelegate;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate)))
-        uiDelegate->printFrame(m_webView, kit(frame));
+        uiDelegate->printFrame(m_webView, kit(&frame));
 }
 
-void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseIdentifier, DatabaseDetails)
+void WebChromeClient::exceededDatabaseQuota(Frame& frame, const String& databaseIdentifier, DatabaseDetails)
 {
-    COMPtr<WebSecurityOrigin> origin(AdoptCOM, WebSecurityOrigin::createInstance(&frame->document()->securityOrigin()));
+    COMPtr<WebSecurityOrigin> origin(AdoptCOM, WebSecurityOrigin::createInstance(&frame.document()->securityOrigin()));
     COMPtr<IWebUIDelegate> uiDelegate;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
         COMPtr<IWebUIDelegatePrivate> uiDelegatePrivate(Query, uiDelegate);
         if (uiDelegatePrivate)
-            uiDelegatePrivate->exceededDatabaseQuota(m_webView, kit(frame), origin.get(), BString(databaseIdentifier));
+            uiDelegatePrivate->exceededDatabaseQuota(m_webView, kit(&frame), origin.get(), BString(databaseIdentifier));
         else {
             // FIXME: remove this workaround once shipping Safari has the necessary delegate implemented.
             WCHAR path[MAX_PATH];
@@ -613,7 +613,7 @@ void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
     notImplemented();
 }
 
-void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t)
+void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin&, int64_t)
 {
     notImplemented();
 }
@@ -717,12 +717,12 @@ void WebChromeClient::setLastSetCursorToCurrentCursor()
     m_webView->setLastCursor(::GetCursor());
 }
 
-void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
+void WebChromeClient::attachRootGraphicsLayer(Frame&, GraphicsLayer* graphicsLayer)
 {
     m_webView->setRootChildLayer(graphicsLayer);
 }
 
-void WebChromeClient::attachViewOverlayGraphicsLayer(Frame*, GraphicsLayer*)
+void WebChromeClient::attachViewOverlayGraphicsLayer(Frame&, GraphicsLayer*)
 {
     // FIXME: If we want view-relative page overlays in Legacy WebKit on Windows, this would be the place to hook them up.
 }
@@ -753,7 +753,7 @@ bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullsc
     return true;
 }
 
-void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement)
+void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode)
 {
     m_webView->enterVideoFullscreenForVideoElement(videoElement);
 }
@@ -781,59 +781,61 @@ bool WebChromeClient::hasOpenedPopup() const
     return false;
 }
 
-RefPtr<PopupMenu> WebChromeClient::createPopupMenu(PopupMenuClient* client) const
+RefPtr<PopupMenu> WebChromeClient::createPopupMenu(PopupMenuClient& client) const
 {
-    return adoptRef(new PopupMenuWin(client));
+    return adoptRef(new PopupMenuWin(&client));
 }
 
-RefPtr<SearchPopupMenu> WebChromeClient::createSearchPopupMenu(PopupMenuClient* client) const
+RefPtr<SearchPopupMenu> WebChromeClient::createSearchPopupMenu(PopupMenuClient& client) const
 {
-    return adoptRef(new SearchPopupMenuWin(client));
+    return adoptRef(new SearchPopupMenuWin(&client));
 }
 
 #if ENABLE(FULLSCREEN_API)
-bool WebChromeClient::supportsFullScreenForElement(const Element* element, bool requestingKeyboardAccess)
+
+bool WebChromeClient::supportsFullScreenForElement(const Element& element, bool requestingKeyboardAccess)
 {
     COMPtr<IWebUIDelegate> uiDelegate;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
         COMPtr<IWebUIDelegatePrivate4> uiDelegatePrivate4(Query, uiDelegate);
         BOOL supports = FALSE;
-        COMPtr<IDOMElement> domElement(AdoptCOM, DOMElement::createInstance(const_cast<Element*>(element)));
+        COMPtr<IDOMElement> domElement(AdoptCOM, DOMElement::createInstance(const_cast<Element*>(&element)));
 
         if (uiDelegatePrivate4 && SUCCEEDED(uiDelegatePrivate4->supportsFullScreenForElement(domElement.get(), requestingKeyboardAccess, &supports)))
             return supports;
     }
 
-    return m_webView->supportsFullScreenForElement(element, requestingKeyboardAccess);
+    return m_webView->supportsFullScreenForElement(&element, requestingKeyboardAccess);
 }
 
-void WebChromeClient::enterFullScreenForElement(Element* element)
+void WebChromeClient::enterFullScreenForElement(Element& element)
 {
     COMPtr<IWebUIDelegate> uiDelegate;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
         COMPtr<IWebUIDelegatePrivate4> uiDelegatePrivate4(Query, uiDelegate);
-        COMPtr<IDOMElement> domElement(AdoptCOM, DOMElement::createInstance(element));
+        COMPtr<IDOMElement> domElement(AdoptCOM, DOMElement::createInstance(&element));
         if (uiDelegatePrivate4 && SUCCEEDED(uiDelegatePrivate4->enterFullScreenForElement(domElement.get())))
             return;
     } 
 
-    m_webView->setFullScreenElement(element);
+    m_webView->setFullScreenElement(&element);
     m_webView->fullScreenController()->enterFullScreen();
 }
 
-void WebChromeClient::exitFullScreenForElement(Element* element)
+void WebChromeClient::exitFullScreenForElement(Element& element)
 {
     COMPtr<IWebUIDelegate> uiDelegate;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
         COMPtr<IWebUIDelegatePrivate4> uiDelegatePrivate4(Query, uiDelegate);
-        COMPtr<IDOMElement> domElement(AdoptCOM, DOMElement::createInstance(element));
+        COMPtr<IDOMElement> domElement(AdoptCOM, DOMElement::createInstance(&element));
         if (uiDelegatePrivate4 && SUCCEEDED(uiDelegatePrivate4->exitFullScreenForElement(domElement.get())))
             return;
     }
 
-    ASSERT(element == m_webView->fullScreenElement());
+    ASSERT(&element == m_webView->fullScreenElement());
     m_webView->fullScreenController()->exitFullScreen();
 }
+
 #endif
 
 void WebChromeClient::AXStartFrameLoad()
@@ -852,10 +854,10 @@ void WebChromeClient::AXFinishFrameLoad()
         delegate->fireFrameLoadFinishedEvents();
 }
 
-bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView* frameView) const
+bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView& frameView) const
 {
 #if !USE(CAIRO)
-    return frameView && frameView->frame().isMainFrame();
+    return frameView.frame().isMainFrame();
 #else
     return false;
 #endif

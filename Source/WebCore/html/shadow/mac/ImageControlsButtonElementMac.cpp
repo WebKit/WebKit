@@ -117,7 +117,7 @@ void ImageControlsButtonElementMac::defaultEventHandler(Event& event)
         if (!page)
             return;
 
-        page->contextMenuController().showImageControlsMenu(&event);
+        page->contextMenuController().showImageControlsMenu(event);
         event.setDefaultHandled();
         return;
     }

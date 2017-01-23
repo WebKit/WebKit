@@ -31,9 +31,6 @@
 namespace WebCore {
 
 ScrollLatchingState::ScrollLatchingState()
-    : m_frame(nullptr)
-    , m_widgetIsLatched(false)
-    , m_startedGestureAtScrollLimit(false)
 {
 }
     
@@ -50,7 +47,7 @@ void ScrollLatchingState::clear()
     m_previousWheelScrolledElement = nullptr;
 }
 
-void ScrollLatchingState::setWheelEventElement(PassRefPtr<Element> element)
+void ScrollLatchingState::setWheelEventElement(Element* element)
 {
     m_wheelEventElement = element;
 }
@@ -60,14 +57,14 @@ void ScrollLatchingState::setWidgetIsLatched(bool isOverWidget)
     m_widgetIsLatched = isOverWidget;
 }
 
-void ScrollLatchingState::setPreviousWheelScrolledElement(RefPtr<Element>&& element)
+void ScrollLatchingState::setPreviousWheelScrolledElement(Element* element)
 {
     m_previousWheelScrolledElement = element;
 }
 
-void ScrollLatchingState::setScrollableContainer(PassRefPtr<ContainerNode> node)
+void ScrollLatchingState::setScrollableContainer(ContainerNode* container)
 {
-    m_scrollableContainer = node;
+    m_scrollableContainer = container;
 }
 
 }

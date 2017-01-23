@@ -156,7 +156,7 @@ void ColorInputType::handleDOMActivateEvent(Event& event)
 
     if (Chrome* chrome = this->chrome()) {
         if (!m_chooser)
-            m_chooser = chrome->createColorChooser(this, valueAsColor());
+            m_chooser = chrome->createColorChooser(*this, valueAsColor());
         else
             m_chooser->reattachColorChooser(valueAsColor());
     }

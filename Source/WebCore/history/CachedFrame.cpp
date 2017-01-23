@@ -98,9 +98,9 @@ void CachedFrameBase::restore()
     frame.loader().client().didRestoreFromPageCache();
 
     // Reconstruct the FrameTree. And open the child CachedFrames in their respective FrameLoaders.
-    for (unsigned i = 0; i < m_childFrames.size(); ++i) {
-        frame.tree().appendChild(&m_childFrames[i]->view()->frame());
-        m_childFrames[i]->open();
+    for (auto& childFrame : m_childFrames) {
+        frame.tree().appendChild(childFrame->view()->frame());
+        childFrame->open();
     }
 
 #if PLATFORM(IOS)
@@ -111,7 +111,7 @@ void CachedFrameBase::restore()
             // FIXME: Add SCROLL_LISTENER to the list of event types on Document, and use m_document->hasListenerType(). See <rdar://problem/9615482>.
             // FIXME: Can use Document::hasListenerType() now.
             if (domWindow->scrollEventListenerCount() && frame.page())
-                frame.page()->chrome().client().setNeedsScrollNotifications(&frame, true);
+                frame.page()->chrome().client().setNeedsScrollNotifications(frame, true);
         }
     }
 #endif
@@ -163,7 +163,7 @@ CachedFrame::CachedFrame(Frame& frame)
     // 1 - We reuse the main frame, so when it navigates to a new page load it needs to start with a blank FrameTree.
     // 2 - It's much easier to destroy a CachedFrame while it resides in the PageCache if it is disconnected from its parent.
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
-        frame.tree().removeChild(&m_childFrames[i]->view()->frame());
+        frame.tree().removeChild(m_childFrames[i]->view()->frame());
 
     if (!m_isMainFrame)
         frame.page()->decrementSubframeCount();
@@ -181,7 +181,7 @@ CachedFrame::CachedFrame(Frame& frame)
     if (m_isMainFrame) {
         if (DOMWindow* domWindow = m_document->domWindow()) {
             if (domWindow->scrollEventListenerCount() && frame.page())
-                frame.page()->chrome().client().setNeedsScrollNotifications(&frame, false);
+                frame.page()->chrome().client().setNeedsScrollNotifications(frame, false);
         }
     }
 #endif

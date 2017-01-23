@@ -178,7 +178,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* state, Propert
     if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot)) {
         // Detect when we're getting the property 'showModalDialog', this is disabled, and has its original value.
         bool isShowModalDialogAndShouldHide = propertyName == state->propertyNames().showModalDialog
-            && !DOMWindow::canShowModalDialog(frame)
+            && !DOMWindow::canShowModalDialog(*frame)
             && slot.isValue() && isHostFunction(slot.getValue(state, propertyName), jsDOMWindowInstanceFunctionShowModalDialog);
         // Unless we're in the showModalDialog special case, we're done.
         if (!isShowModalDialogAndShouldHide)

@@ -61,7 +61,7 @@ class EmptyChromeClient : public ChromeClient {
     void focusedElementChanged(Element*) final { }
     void focusedFrameChanged(Frame*) final { }
 
-    Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) final { return nullptr; }
+    Page* createWindow(Frame&, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) final { return nullptr; }
     void show() final { }
 
     bool canRunModal() final { return false; }
@@ -84,19 +84,19 @@ class EmptyChromeClient : public ChromeClient {
     void addMessageToConsole(MessageSource, MessageLevel, const String&, unsigned, unsigned, const String&) final { }
 
     bool canRunBeforeUnloadConfirmPanel() final { return false; }
-    bool runBeforeUnloadConfirmPanel(const String&, Frame*) final { return true; }
+    bool runBeforeUnloadConfirmPanel(const String&, Frame&) final { return true; }
 
     void closeWindowSoon() final { }
 
-    void runJavaScriptAlert(Frame*, const String&) final { }
-    bool runJavaScriptConfirm(Frame*, const String&) final { return false; }
-    bool runJavaScriptPrompt(Frame*, const String&, const String&, String&) final { return false; }
+    void runJavaScriptAlert(Frame&, const String&) final { }
+    bool runJavaScriptConfirm(Frame&, const String&) final { return false; }
+    bool runJavaScriptPrompt(Frame&, const String&, const String&, String&) final { return false; }
 
     bool selectItemWritingDirectionIsNatural() final { return false; }
     bool selectItemAlignmentFollowsMenuWritingDirection() final { return false; }
     bool hasOpenedPopup() const final { return false; }
-    RefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const final;
-    RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const final;
+    RefPtr<PopupMenu> createPopupMenu(PopupMenuClient&) const final;
+    RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient&) const final;
 
     void setStatusbarText(const String&) final { }
 
@@ -106,43 +106,47 @@ class EmptyChromeClient : public ChromeClient {
     void invalidateContentsAndRootView(const IntRect&) override { }
     void invalidateContentsForSlowScroll(const IntRect&) final { }
     void scroll(const IntSize&, const IntRect&, const IntRect&) final { }
+
 #if USE(COORDINATED_GRAPHICS)
     void delegatedScrollRequested(const IntPoint&) final { }
 #endif
+
 #if !USE(REQUEST_ANIMATION_FRAME_TIMER)
     void scheduleAnimation() final { }
 #endif
 
     IntPoint screenToRootView(const IntPoint& p) const final { return p; }
     IntRect rootViewToScreen(const IntRect& r) const final { return r; }
+
 #if PLATFORM(IOS)
     IntPoint accessibilityScreenToRootView(const IntPoint& p) const final { return p; };
     IntRect rootViewToAccessibilityScreen(const IntRect& r) const final { return r; };
 #endif
+
     PlatformPageClient platformPageClient() const final { return 0; }
-    void contentsSizeChanged(Frame*, const IntSize&) const final { }
+    void contentsSizeChanged(Frame&, const IntSize&) const final { }
 
     void scrollbarsModeDidChange() const final { }
     void mouseDidMoveOverElement(const HitTestResult&, unsigned) final { }
 
     void setToolTip(const String&, TextDirection) final { }
 
-    void print(Frame*) final { }
+    void print(Frame&) final { }
 
-    void exceededDatabaseQuota(Frame*, const String&, DatabaseDetails) final { }
+    void exceededDatabaseQuota(Frame&, const String&, DatabaseDetails) final { }
 
     void reachedMaxAppCacheSize(int64_t) final { }
-    void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t) final { }
+    void reachedApplicationCacheOriginQuota(SecurityOrigin&, int64_t) final { }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) final;
+    std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) final;
 #endif
 
     void runOpenPanel(Frame&, FileChooser&) final;
     void loadIconForFiles(const Vector<String>&, FileIconLoader&) final { }
 
-    void elementDidFocus(const Node*) final { }
-    void elementDidBlur(const Node*) final { }
+    void elementDidFocus(Element&) final { }
+    void elementDidBlur(Element&) final { }
 
 #if !PLATFORM(IOS)
     void setCursor(const Cursor&) final { }
@@ -151,8 +155,8 @@ class EmptyChromeClient : public ChromeClient {
 
     void scrollRectIntoView(const IntRect&) const final { }
 
-    void attachRootGraphicsLayer(Frame*, GraphicsLayer*) final { }
-    void attachViewOverlayGraphicsLayer(Frame*, GraphicsLayer*) final { }
+    void attachRootGraphicsLayer(Frame&, GraphicsLayer*) final { }
+    void attachViewOverlayGraphicsLayer(Frame&, GraphicsLayer*) final { }
     void setNeedsOneShotDrawingSynchronization() final { }
     void scheduleCompositingLayerFlush() final { }
 
@@ -162,15 +166,16 @@ class EmptyChromeClient : public ChromeClient {
     void AXFinishFrameLoad() final { }
 #endif
 
-#if PLATFORM(IOS)
 #if ENABLE(IOS_TOUCH_EVENTS)
     void didPreventDefaultForEvent() final { }
 #endif
+
+#if PLATFORM(IOS)
     void didReceiveMobileDocType(bool) final { }
-    void setNeedsScrollNotifications(Frame*, bool) final { }
-    void observedContentChange(Frame*) final { }
-    void clearContentChangeObservers(Frame*) final { }
-    void notifyRevealedSelectionByScrollingFrame(Frame*) final { }
+    void setNeedsScrollNotifications(Frame&, bool) final { }
+    void observedContentChange(Frame&) final { }
+    void clearContentChangeObservers(Frame&) final { }
+    void notifyRevealedSelectionByScrollingFrame(Frame&) final { }
     void didLayout(LayoutType) final { }
     void didStartOverflowScroll() final { }
     void didEndOverflowScroll() final { }

@@ -397,7 +397,7 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
 
     Frame* targetFrame = findFrameForNavigation(submission->target(), &submission->state().sourceDocument());
     if (!targetFrame) {
-        if (!DOMWindow::allowPopUp(&m_frame) && !ScriptController::processingUserGesture())
+        if (!DOMWindow::allowPopUp(m_frame) && !ScriptController::processingUserGesture())
             return;
 
         // FIXME: targetFrame can be null for two distinct reasons:
@@ -1852,11 +1852,9 @@ void FrameLoader::commitProvisionalLoad()
         history().updateForClientRedirect();
 
     if (m_loadingFromCachedPage) {
-#if PLATFORM(IOS)
         // Note, didReceiveDocType is expected to be called for cached pages. See <rdar://problem/5906758> for more details.
-        if (m_frame.document()->doctype() && m_frame.page())
-            m_frame.page()->chrome().didReceiveDocType(&m_frame);
-#endif
+        if (auto* page = m_frame.page())
+            page->chrome().didReceiveDocType(m_frame);
         m_frame.document()->resume(ActiveDOMObject::PageCache);
 
         // Force a layout to update view size and thereby update scrollbars.
@@ -2439,15 +2437,15 @@ void FrameLoader::detachChildren()
         child->loader().detachFromParent();
 }
 
-void FrameLoader::closeAndRemoveChild(Frame* child)
+void FrameLoader::closeAndRemoveChild(Frame& child)
 {
-    child->tree().detachFromParent();
+    child.tree().detachFromParent();
 
-    child->setView(nullptr);
-    if (child->ownerElement() && child->page())
-        child->page()->decrementSubframeCount();
-    child->willDetachPage();
-    child->detachFromPage();
+    child.setView(nullptr);
+    if (child.ownerElement() && child.page())
+        child.page()->decrementSubframeCount();
+    child.willDetachPage();
+    child.detachFromPage();
 
     m_frame.tree().removeChild(child);
 }
@@ -2528,7 +2526,7 @@ void FrameLoader::detachFromParent()
     m_progressTracker = nullptr;
 
     if (Frame* parent = m_frame.tree().parent()) {
-        parent->loader().closeAndRemoveChild(&m_frame);
+        parent->loader().closeAndRemoveChild(m_frame);
         parent->loader().scheduleCheckCompleted();
     } else {
         m_frame.setView(nullptr);
@@ -3032,7 +3030,7 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
     frameLoaderBeingNavigated->m_currentNavigationHasShownBeforeUnloadConfirmPanel = true;
 
     String text = document->displayStringModifiedByEncoding(beforeUnloadEvent->returnValue());
-    return chrome.runBeforeUnloadConfirmPanel(text, &m_frame);
+    return chrome.runBeforeUnloadConfirmPanel(text, m_frame);
 }
 
 void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& request, FormState* formState, bool shouldContinue, AllowNavigationToInvalidURL allowNavigationToInvalidURL)
@@ -3657,7 +3655,7 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, const FrameLo
         return nullptr;
 
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicyToApply(openerFrame, request.shouldOpenExternalURLsPolicy());
-    Page* page = oldPage->chrome().createWindow(&openerFrame, requestWithReferrer, features, NavigationAction(requestWithReferrer.resourceRequest(), shouldOpenExternalURLsPolicy));
+    Page* page = oldPage->chrome().createWindow(openerFrame, requestWithReferrer, features, NavigationAction(requestWithReferrer.resourceRequest(), shouldOpenExternalURLsPolicy));
     if (!page)
         return nullptr;
 
@@ -3705,7 +3703,7 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, const FrameLo
         windowRect.setHeight(*features.height + (windowRect.height() - viewportSize.height()));
 
     // Ensure non-NaN values, minimum size as well as being within valid screen area.
-    FloatRect newWindowRect = DOMWindow::adjustWindowRect(page, windowRect);
+    FloatRect newWindowRect = DOMWindow::adjustWindowRect(*page, windowRect);
 
     if (!frame->page())
         return nullptr;

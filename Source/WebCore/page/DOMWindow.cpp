@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,6 @@
 
 #include "BackForwardController.h"
 #include "BarProp.h"
-#include "BeforeUnloadEvent.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
@@ -125,22 +124,23 @@
 #include "WebKitNamespace.h"
 #endif
 
-#if ENABLE(PROXIMITY_EVENTS)
-#include "DeviceProximityController.h"
-#endif
-
 #if ENABLE(GAMEPAD)
 #include "GamepadManager.h"
+#endif
+
+#if ENABLE(GEOLOCATION)
+#include "NavigatorGeolocation.h"
 #endif
 
 #if ENABLE(POINTER_LOCK)
 #include "PointerLockController.h"
 #endif
 
-#if PLATFORM(IOS)
-#if ENABLE(GEOLOCATION)
-#include "NavigatorGeolocation.h"
+#if ENABLE(PROXIMITY_EVENTS)
+#include "DeviceProximityController.h"
 #endif
+
+#if PLATFORM(IOS)
 #include "WKContentObservation.h"
 #endif
 
@@ -150,9 +150,9 @@ namespace WebCore {
 
 class PostMessageTimer : public TimerBase {
 public:
-    PostMessageTimer(DOMWindow& window, PassRefPtr<SerializedScriptValue> message, const String& sourceOrigin, DOMWindow& source, std::unique_ptr<MessagePortChannelArray> channels, RefPtr<SecurityOrigin>&& targetOrigin, RefPtr<ScriptCallStack>&& stackTrace)
+    PostMessageTimer(DOMWindow& window, Ref<SerializedScriptValue>&& message, const String& sourceOrigin, DOMWindow& source, std::unique_ptr<MessagePortChannelArray> channels, RefPtr<SecurityOrigin>&& targetOrigin, RefPtr<ScriptCallStack>&& stackTrace)
         : m_window(window)
-        , m_message(message)
+        , m_message(WTFMove(message))
         , m_origin(sourceOrigin)
         , m_source(source)
         , m_channels(WTFMove(channels))
@@ -181,7 +181,7 @@ private:
     }
 
     Ref<DOMWindow> m_window;
-    RefPtr<SerializedScriptValue> m_message;
+    Ref<SerializedScriptValue> m_message;
     String m_origin;
     Ref<DOMWindow> m_source;
     std::unique_ptr<MessagePortChannelArray> m_channels;
@@ -325,12 +325,10 @@ void DOMWindow::dispatchAllPendingUnloadEvents()
 // 3) Constrains the window rect to within the top and left boundaries of the available screen rect.
 // 4) Constrains the window rect to within the bottom and right boundaries of the available screen rect.
 // 5) Translate the window rect coordinates to be within the coordinate space of the screen.
-FloatRect DOMWindow::adjustWindowRect(Page* page, const FloatRect& pendingChanges)
+FloatRect DOMWindow::adjustWindowRect(Page& page, const FloatRect& pendingChanges)
 {
-    ASSERT(page);
-
-    FloatRect screen = screenAvailableRect(page->mainFrame().view());
-    FloatRect window = page->chrome().windowRect();
+    FloatRect screen = screenAvailableRect(page.mainFrame().view());
+    FloatRect window = page.chrome().windowRect();
 
     // Make sure we're in a valid state before adjusting dimensions.
     ASSERT(std::isfinite(screen.x()));
@@ -352,7 +350,7 @@ FloatRect DOMWindow::adjustWindowRect(Page* page, const FloatRect& pendingChange
     if (!std::isnan(pendingChanges.height()))
         window.setHeight(pendingChanges.height());
 
-    FloatSize minimumSize = page->chrome().client().minimumWindowSize();
+    FloatSize minimumSize = page.chrome().client().minimumWindowSize();
     window.setWidth(std::min(std::max(minimumSize.width(), window.width()), screen.width()));
     window.setHeight(std::min(std::max(minimumSize.height(), window.height()), screen.height()));
 
@@ -363,38 +361,31 @@ FloatRect DOMWindow::adjustWindowRect(Page* page, const FloatRect& pendingChange
     return window;
 }
 
-bool DOMWindow::allowPopUp(Frame* firstFrame)
+bool DOMWindow::allowPopUp(Frame& firstFrame)
 {
-    ASSERT(firstFrame);
-    
-    auto& settings = firstFrame->settings();
-
-    if (ScriptController::processingUserGesture() || settings.allowWindowOpenWithoutUserGesture())
-        return true;
-
-    return settings.javaScriptCanOpenWindowsAutomatically();
+    auto& settings = firstFrame.settings();
+    return ScriptController::processingUserGesture()
+        || settings.allowWindowOpenWithoutUserGesture()
+        || settings.javaScriptCanOpenWindowsAutomatically();
 }
 
 bool DOMWindow::allowPopUp()
 {
-    return m_frame && allowPopUp(m_frame);
+    return m_frame && allowPopUp(*m_frame);
 }
 
-bool DOMWindow::canShowModalDialog(const Frame* frame)
+bool DOMWindow::canShowModalDialog(const Frame& frame)
 {
-    if (!frame)
-        return false;
-
     // Override support for layout testing purposes.
-    if (auto* document = frame->document()) {
+    if (auto* document = frame.document()) {
         if (auto* window = document->domWindow()) {
             if (window->m_canShowModalDialogOverride)
                 return window->m_canShowModalDialogOverride.value();
         }
     }
 
-    auto* page = frame->page();
-    return page ? page->chrome().canRunModal() : false;
+    auto* page = frame.page();
+    return page && page->chrome().canRunModal();
 }
 
 static void languagesChangedCallback(void* context)
@@ -407,20 +398,18 @@ void DOMWindow::setCanShowModalDialogOverride(bool allow)
     m_canShowModalDialogOverride = allow;
 }
 
-DOMWindow::DOMWindow(Document* document)
-    : ContextDestructionObserver(document)
-    , FrameDestructionObserver(document->frame())
+DOMWindow::DOMWindow(Document& document)
+    : ContextDestructionObserver(&document)
+    , FrameDestructionObserver(document.frame())
     , m_weakPtrFactory(this)
 {
     ASSERT(frame());
-    ASSERT(DOMWindow::document());
-
     addLanguageChangeObserver(this, &languagesChangedCallback);
 }
 
-void DOMWindow::didSecureTransitionTo(Document* document)
+void DOMWindow::didSecureTransitionTo(Document& document)
 {
-    observeContext(document);
+    observeContext(&document);
 }
 
 DOMWindow::~DOMWindow()
@@ -547,14 +536,14 @@ void DOMWindow::decrementGamepadEventListenerCount()
 
 #endif
 
-void DOMWindow::registerProperty(DOMWindowProperty* property)
+void DOMWindow::registerProperty(DOMWindowProperty& property)
 {
-    m_properties.add(property);
+    m_properties.add(&property);
 }
 
-void DOMWindow::unregisterProperty(DOMWindowProperty* property)
+void DOMWindow::unregisterProperty(DOMWindowProperty& property)
 {
-    m_properties.remove(property);
+    m_properties.remove(&property);
 }
 
 void DOMWindow::resetUnlessSuspendedForDocumentSuspension()
@@ -974,23 +963,18 @@ void DOMWindow::postMessageTimerFired(PostMessageTimer& timer)
     if (!document() || !isCurrentlyDisplayedInFrame())
         return;
 
-    dispatchMessageEventWithOriginCheck(timer.targetOrigin(), timer.event(*document()), timer.stackTrace());
-}
-
-void DOMWindow::dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, Event& event, PassRefPtr<ScriptCallStack> stackTrace)
-{
-    if (intendedTargetOrigin) {
+    if (auto* intendedTargetOrigin = timer.targetOrigin()) {
         // Check target origin now since the target document may have changed since the timer was scheduled.
         if (!intendedTargetOrigin->isSameSchemeHostPort(document()->securityOrigin())) {
-            if (PageConsoleClient* pageConsole = console()) {
+            if (auto* pageConsole = console()) {
                 String message = makeString("Unable to post message to ", intendedTargetOrigin->toString(), ". Recipient has origin ", document()->securityOrigin().toString(), ".\n");
-                pageConsole->addMessage(MessageSource::Security, MessageLevel::Error, message, stackTrace);
+                pageConsole->addMessage(MessageSource::Security, MessageLevel::Error, message, timer.stackTrace());
             }
             return;
         }
     }
 
-    dispatchEvent(event);
+    dispatchEvent(timer.event(*document()));
 }
 
 DOMSelection* DOMWindow::getSelection()
@@ -1113,7 +1097,7 @@ void DOMWindow::print()
         return;
     }
     m_shouldPrintWhenFinishedLoading = false;
-    page->chrome().print(m_frame);
+    page->chrome().print(*m_frame);
 }
 
 void DOMWindow::stop()
@@ -1145,7 +1129,7 @@ void DOMWindow::alert(const String& message)
     page->pointerLockController().requestPointerUnlock();
 #endif
 
-    page->chrome().runJavaScriptAlert(m_frame, message);
+    page->chrome().runJavaScriptAlert(*m_frame, message);
 }
 
 bool DOMWindow::confirm(const String& message)
@@ -1167,7 +1151,7 @@ bool DOMWindow::confirm(const String& message)
     page->pointerLockController().requestPointerUnlock();
 #endif
 
-    return page->chrome().runJavaScriptConfirm(m_frame, message);
+    return page->chrome().runJavaScriptConfirm(*m_frame, message);
 }
 
 String DOMWindow::prompt(const String& message, const String& defaultValue)
@@ -1190,7 +1174,7 @@ String DOMWindow::prompt(const String& message, const String& defaultValue)
 #endif
 
     String returnValue;
-    if (page->chrome().runJavaScriptPrompt(m_frame, message, defaultValue, returnValue))
+    if (page->chrome().runJavaScriptPrompt(*m_frame, message, defaultValue, returnValue))
         return returnValue;
 
     return String();
@@ -1368,7 +1352,7 @@ void DOMWindow::setStatus(const String& string)
         return;
 
     ASSERT(m_frame->document()); // Client calls shouldn't be made when the frame is in inconsistent state.
-    page->chrome().setStatusbarText(m_frame, m_status);
+    page->chrome().setStatusbarText(*m_frame, m_status);
 } 
     
 void DOMWindow::setDefaultStatus(const String& string) 
@@ -1383,7 +1367,7 @@ void DOMWindow::setDefaultStatus(const String& string)
         return;
 
     ASSERT(m_frame->document()); // Client calls shouldn't be made when the frame is in inconsistent state.
-    page->chrome().setStatusbarText(m_frame, m_defaultStatus);
+    page->chrome().setStatusbarText(*m_frame, m_defaultStatus);
 }
 
 DOMWindow* DOMWindow::self() const
@@ -1432,8 +1416,7 @@ DOMWindow* DOMWindow::top() const
 
 Document* DOMWindow::document() const
 {
-    ScriptExecutionContext* context = ContextDestructionObserver::scriptExecutionContext();
-    return downcast<Document>(context);
+    return downcast<Document>(ContextDestructionObserver::scriptExecutionContext());
 }
 
 RefPtr<StyleMedia> DOMWindow::styleMedia() const
@@ -1618,8 +1601,7 @@ void DOMWindow::moveBy(float x, float y) const
     FloatRect fr = page->chrome().windowRect();
     FloatRect update = fr;
     update.move(x, y);
-    // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-    page->chrome().setWindowRect(adjustWindowRect(page, update));
+    page->chrome().setWindowRect(adjustWindowRect(*page, update));
 }
 
 void DOMWindow::moveTo(float x, float y) const
@@ -1633,8 +1615,7 @@ void DOMWindow::moveTo(float x, float y) const
     fr.setLocation(sr.location());
     FloatRect update = fr;
     update.move(x, y);
-    // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-    page->chrome().setWindowRect(adjustWindowRect(page, update));
+    page->chrome().setWindowRect(adjustWindowRect(*page, update));
 }
 
 void DOMWindow::resizeBy(float x, float y) const
@@ -1646,7 +1627,7 @@ void DOMWindow::resizeBy(float x, float y) const
     FloatRect fr = page->chrome().windowRect();
     FloatSize dest = fr.size() + FloatSize(x, y);
     FloatRect update(fr.location(), dest);
-    page->chrome().setWindowRect(adjustWindowRect(page, update));
+    page->chrome().setWindowRect(adjustWindowRect(*page, update));
 }
 
 void DOMWindow::resizeTo(float width, float height) const
@@ -1658,7 +1639,7 @@ void DOMWindow::resizeTo(float width, float height) const
     FloatRect fr = page->chrome().windowRect();
     FloatSize dest = FloatSize(width, height);
     FloatRect update(fr.location(), dest);
-    page->chrome().setWindowRect(adjustWindowRect(page, update));
+    page->chrome().setWindowRect(adjustWindowRect(*page, update));
 }
 
 ExceptionOr<int> DOMWindow::setTimeout(std::unique_ptr<ScheduledAction> action, int timeout)
@@ -1681,7 +1662,7 @@ void DOMWindow::clearTimeout(int timeoutId)
 
                 if (!WebThreadCountOfObservedContentModifiers()) {
                     if (Page* page = m_frame->page())
-                        page->chrome().client().observedContentChange(m_frame);
+                        page->chrome().client().observedContentChange(*m_frame);
                 }
             }
         }
@@ -1841,7 +1822,7 @@ void DOMWindow::incrementScrollEventListenersCount()
     if (++m_scrollEventListenerCount == 1 && document == &document->topDocument()) {
         Frame* frame = this->frame();
         if (frame && frame->page())
-            frame->page()->chrome().client().setNeedsScrollNotifications(frame, true);
+            frame->page()->chrome().client().setNeedsScrollNotifications(*frame, true);
     }
 }
 
@@ -1851,7 +1832,7 @@ void DOMWindow::decrementScrollEventListenersCount()
     if (!--m_scrollEventListenerCount && document == &document->topDocument()) {
         Frame* frame = this->frame();
         if (frame && frame->page() && document->pageCacheState() == Document::NotInPageCache)
-            frame->page()->chrome().client().setNeedsScrollNotifications(frame, false);
+            frame->page()->chrome().client().setNeedsScrollNotifications(*frame, false);
     }
 }
 
@@ -1859,7 +1840,7 @@ void DOMWindow::decrementScrollEventListenersCount()
 
 void DOMWindow::resetAllGeolocationPermission()
 {
-    // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to Geolocation.cpp.
+    // FIXME: Can we remove the PLATFORM(IOS)-guard?
 #if ENABLE(GEOLOCATION) && PLATFORM(IOS)
     if (m_navigator)
         NavigatorGeolocation::from(m_navigator.get())->resetAllGeolocationPermission();
@@ -2287,8 +2268,7 @@ void DOMWindow::showModalDialog(const String& urlString, const String& dialogFea
 {
     if (!isCurrentlyDisplayedInFrame())
         return;
-    Frame* activeFrame = activeWindow.frame();
-    if (!activeFrame)
+    if (!activeWindow.frame())
         return;
     Frame* firstFrame = firstWindow.frame();
     if (!firstFrame)
@@ -2303,7 +2283,7 @@ void DOMWindow::showModalDialog(const String& urlString, const String& dialogFea
         return;
     }
 
-    if (!canShowModalDialog(m_frame) || !firstWindow.allowPopUp())
+    if (!canShowModalDialog(*m_frame) || !firstWindow.allowPopUp())
         return;
 
     RefPtr<Frame> dialogFrame = createWindow(urlString, emptyAtom, parseDialogFeatures(dialogFeaturesString, screenAvailableRect(m_frame->view())), activeWindow, *firstFrame, *m_frame, WTFMove(prepareDialogFunction));
