@@ -1,3 +1,36 @@
+2017-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Unify FontPlatformData's hashing and equality operators
+        https://bugs.webkit.org/show_bug.cgi?id=167061
+
+        Reviewed by Darin Adler.
+
+        On iOS, we were using CFEqual() and CFHash(), while on macOS
+        we were using pointer hashing and pointer equality. Instead,
+        we should be consistent about these operators.
+
+        Right now, FontPlatformData holds two internal CTFontRefs, and
+        switching to these higher-level CFEqual() and CFHash()
+        functions is required for eliminating one of these two
+        internal font objects.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::hash): Deleted.
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::platformIsEqual):
+        (WebCore::cascadeToLastResortAttributesDictionary):
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/win/FontPlatformDataDirect2D.cpp:
+        (WebCore::FontPlatformData::hash):
+
 2017-01-20  Dean Jackson  <dino@apple.com>
 
         [WebGL] Do not allow GPU muxing on some old Mac hardware

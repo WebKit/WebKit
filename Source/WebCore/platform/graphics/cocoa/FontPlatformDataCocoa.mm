@@ -58,18 +58,27 @@ FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBol
 #endif
 }
 
+unsigned FontPlatformData::hash() const
+{
+    uintptr_t flags = static_cast<uintptr_t>(m_widthVariant << 6 | m_isHashTableDeletedValue << 5 | m_textRenderingMode << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique);
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
+    uintptr_t fontHash = reinterpret_cast<uintptr_t>(m_font.get());
+#else
+    uintptr_t fontHash = reinterpret_cast<uintptr_t>(CFHash(m_font.get()));
+#endif
+    uintptr_t hashCodes[] = { fontHash, flags };
+    return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
+}
+
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 {
-    bool result = false;
-    if (m_font || other.m_font) {
-#if PLATFORM(IOS)
-        result = m_font && other.m_font && CFEqual(m_font.get(), other.m_font.get());
+    if (!m_font || !other.m_font)
+        return m_font == other.m_font;
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
+    return m_font == other.m_font;
 #else
-        result = m_font == other.m_font;
+    return CFEqual(m_font.get(), other.m_font.get());
 #endif
-        return result;
-    }
-    return true;
 }
 
 CTFontRef FontPlatformData::registeredFont() const
@@ -109,11 +118,11 @@ static CFDictionaryRef cascadeToLastResortAttributesDictionary()
 
     RetainPtr<CTFontDescriptorRef> lastResort = adoptCF(CTFontDescriptorCreateWithNameAndSize(CFSTR("LastResort"), 0));
 
-    const void* descriptors[] = { lastResort.get() };
+    CFTypeRef descriptors[] = { lastResort.get() };
     RetainPtr<CFArrayRef> array = adoptCF(CFArrayCreate(kCFAllocatorDefault, descriptors, WTF_ARRAY_LENGTH(descriptors), &kCFTypeArrayCallBacks));
 
-    const void* keys[] = { kCTFontCascadeListAttribute };
-    const void* values[] = { array.get() };
+    CFTypeRef keys[] = { kCTFontCascadeListAttribute };
+    CFTypeRef values[] = { array.get() };
     attributes = CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
     return attributes;
