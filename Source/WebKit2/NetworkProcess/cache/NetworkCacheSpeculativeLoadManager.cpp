@@ -103,6 +103,8 @@ static inline ResourceRequest constructRevalidationRequest(const Entry& entry, c
     String lastModified = entry.response().httpHeaderField(HTTPHeaderName::LastModified);
     if (!lastModified.isEmpty())
         revalidationRequest.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
+    
+    revalidationRequest.setPriority(subResourceInfo.priority());
 
     return revalidationRequest;
 }
@@ -404,9 +406,9 @@ void SpeculativeLoadManager::addPreloadedEntry(std::unique_ptr<Entry> entry, con
     }));
 }
 
-void SpeculativeLoadManager::retrieveEntryFromStorage(const Key& key, RetrieveCompletionHandler&& completionHandler)
+void SpeculativeLoadManager::retrieveEntryFromStorage(const Key& key, ResourceLoadPriority priority, RetrieveCompletionHandler&& completionHandler)
 {
-    m_storage.retrieve(key, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler = WTFMove(completionHandler)](auto record) {
+    m_storage.retrieve(key, static_cast<unsigned>(priority), [completionHandler = WTFMove(completionHandler)](auto record) {
         if (!record) {
             completionHandler(nullptr);
             return false;
@@ -487,9 +489,9 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo&
 {
     if (m_pendingPreloads.contains(key))
         return;
-
+    
     m_pendingPreloads.add(key, nullptr);
-    retrieveEntryFromStorage(key, [this, key, subResourceInfo, frameID](std::unique_ptr<Entry> entry) {
+    retrieveEntryFromStorage(key, subResourceInfo.priority(), [this, key, subResourceInfo, frameID](std::unique_ptr<Entry> entry) {
         ASSERT(!m_pendingPreloads.get(key));
         bool removed = m_pendingPreloads.remove(key);
         ASSERT_UNUSED(removed, removed);

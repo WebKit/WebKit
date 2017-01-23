@@ -61,7 +61,7 @@ private:
 
     void addPreloadedEntry(std::unique_ptr<Entry>, const GlobalFrameID&, std::optional<WebCore::ResourceRequest>&& revalidationRequest = std::nullopt);
     void preloadEntry(const Key&, const SubresourceInfo&, const GlobalFrameID&);
-    void retrieveEntryFromStorage(const Key&, RetrieveCompletionHandler&&);
+    void retrieveEntryFromStorage(const Key&, WebCore::ResourceLoadPriority, RetrieveCompletionHandler&&);
     void revalidateEntry(std::unique_ptr<Entry>, const SubresourceInfo&, const GlobalFrameID&);
     bool satisfyPendingRequests(const Key&, Entry*);
     void retrieveSubresourcesEntry(const Key& storageKey, std::function<void (std::unique_ptr<SubresourcesEntry>)>&&);

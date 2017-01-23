@@ -47,17 +47,20 @@ public:
         : m_isTransient(isTransient)
         , m_firstPartyForCookies(isTransient ? WebCore::URL() : request.firstPartyForCookies())
         , m_requestHeaders(isTransient ? WebCore::HTTPHeaderMap() : request.httpHeaderFields())
+        , m_priority(request.priority())
     {
     }
 
     bool isTransient() const { return m_isTransient; }
     const WebCore::URL& firstPartyForCookies() const { ASSERT(!m_isTransient); return m_firstPartyForCookies; }
     const WebCore::HTTPHeaderMap& requestHeaders() const { ASSERT(!m_isTransient); return m_requestHeaders; }
+    WebCore::ResourceLoadPriority priority() const { ASSERT(!m_isTransient); return m_priority; }
 
 private:
     bool m_isTransient { true };
     WebCore::URL m_firstPartyForCookies;
     WebCore::HTTPHeaderMap m_requestHeaders;
+    WebCore::ResourceLoadPriority m_priority;
 };
 
 struct SubresourceLoad {

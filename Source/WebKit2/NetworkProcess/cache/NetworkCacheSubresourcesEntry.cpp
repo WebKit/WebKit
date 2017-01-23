@@ -44,6 +44,7 @@ void SubresourceInfo::encode(WTF::Persistence::Encoder& encoder) const
 
     encoder << m_firstPartyForCookies;
     encoder << m_requestHeaders;
+    encoder.encodeEnum(m_priority);
 }
 
 bool SubresourceInfo::decode(WTF::Persistence::Decoder& decoder, SubresourceInfo& info)
@@ -60,6 +61,9 @@ bool SubresourceInfo::decode(WTF::Persistence::Decoder& decoder, SubresourceInfo
     if (!decoder.decode(info.m_requestHeaders))
         return false;
 
+    if (!decoder.decodeEnum(info.m_priority))
+        return false;
+    
     return true;
 }
 

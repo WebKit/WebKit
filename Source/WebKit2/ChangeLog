@@ -1,3 +1,34 @@
+2017-01-23  Antti Koivisto  <antti@apple.com>
+
+        Use priorities in speculative revalidation
+        https://bugs.webkit.org/show_bug.cgi?id=167314
+
+        Reviewed by Chris Dumez.
+
+        We currently do all speculative cache operations with 'Medium' priority
+        and network operations with 'Low'. We should use the actual request priorities instead.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::constructRevalidationRequest):
+
+            Use priority when constructing validation request.
+
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieveEntryFromStorage):
+
+            Use priority when retrieving from cache.
+
+        (WebKit::NetworkCache::SpeculativeLoadManager::preloadEntry):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp:
+        (WebKit::NetworkCache::SubresourceInfo::encode):
+        (WebKit::NetworkCache::SubresourceInfo::decode):
+
+            Save and restore the priority.
+
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.h:
+        (WebKit::NetworkCache::SubresourceInfo::SubresourceInfo):
+        (WebKit::NetworkCache::SubresourceInfo::priority):
+
 2017-01-23  Jer Noble  <jer.noble@apple.com>
 
         Video details does not apear and missing scrubber in Control Center
