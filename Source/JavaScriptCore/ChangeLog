@@ -1,3 +1,16 @@
+2017-01-23  Mark Lam  <mark.lam@apple.com>
+
+        ObjCCallbackFunction::destroy() should not use jsCast().
+        https://bugs.webkit.org/show_bug.cgi?id=167322
+
+        Reviewed by Filip Pizlo.
+
+        Since r210829, it is no longer correct for object destructors to use jsCast().
+        Fixed ObjCCallbackFunction::destroy() to use a static_cast instead.
+
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunction::destroy):
+
 2017-01-23  Michael Saboff  <msaboff@apple.com>
 
         IntlObject uses JSArray::tryCreateUninitialized in an unsafe way

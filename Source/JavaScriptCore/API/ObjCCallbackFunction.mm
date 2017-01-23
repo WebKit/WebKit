@@ -523,7 +523,7 @@ ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::VM& vm, JSC::JSGlobalObj
 
 void ObjCCallbackFunction::destroy(JSCell* cell)
 {
-    ObjCCallbackFunction& function = *jsCast<ObjCCallbackFunction*>(cell);
+    ObjCCallbackFunction& function = *static_cast<ObjCCallbackFunction*>(cell);
     function.impl()->destroy(*Heap::heap(cell));
     function.~ObjCCallbackFunction();
 }
