@@ -1,3 +1,12 @@
+2017-01-23  Mark Lam  <mark.lam@apple.com>
+
+        Added a comment to clarify an assertion.
+
+        Rubber-stamped by Filip Pizlo.
+
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::classInfo):
+
 2017-01-23  Filip Pizlo  <fpizlo@apple.com>
 
         SharedArrayBuffer plus WebGL should not equal CRASH
