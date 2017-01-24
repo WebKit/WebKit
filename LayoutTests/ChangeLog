@@ -1,3 +1,11 @@
+2017-01-23  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Update timeout tests in media/modern-media-controls
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations: Dozens of modern-media-controls tests are timeout.
+
 2017-01-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         LayoutTest gardening for modern-media-tests.
