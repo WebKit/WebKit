@@ -55,6 +55,7 @@
 #include "ShadowChicken.h"
 #include "SpaceTimeMutatorScheduler.h"
 #include "SuperSampler.h"
+#include "StochasticSpaceTimeMutatorScheduler.h"
 #include "StopIfNecessaryTimer.h"
 #include "SynchronousStopTheWorldMutatorScheduler.h"
 #include "TypeProfilerLog.h"
@@ -284,15 +285,17 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_sharedCollectorMarkStack(std::make_unique<MarkStackArray>())
     , m_sharedMutatorMarkStack(std::make_unique<MarkStackArray>())
     , m_helperClient(&heapHelperPool())
-    , m_scheduler(std::make_unique<SpaceTimeMutatorScheduler>(*this))
     , m_threadLock(Box<Lock>::create())
     , m_threadCondition(AutomaticThreadCondition::create())
 {
     m_worldState.store(0);
     
-    if (Options::useConcurrentGC())
-        m_scheduler = std::make_unique<SpaceTimeMutatorScheduler>(*this);
-    else {
+    if (Options::useConcurrentGC()) {
+        if (Options::useStochasticMutatorScheduler())
+            m_scheduler = std::make_unique<StochasticSpaceTimeMutatorScheduler>(*this);
+        else
+            m_scheduler = std::make_unique<SpaceTimeMutatorScheduler>(*this);
+    } else {
         // We simulate turning off concurrent GC by making the scheduler say that the world
         // should always be stopped when the collector is running.
         m_scheduler = std::make_unique<SynchronousStopTheWorldMutatorScheduler>();
@@ -570,32 +573,35 @@ void Heap::markToFixpoint(double gcStartTime)
 
     SlotVisitor& slotVisitor = *m_collectorSlotVisitor;
     slotVisitor.didStartMarking();
-
-    m_constraintSet->resetStats();
+    m_constraintSet->didStartMarking();
     
     m_scheduler->beginCollection();
     if (Options::logGC())
         m_scheduler->log();
     
-    // Wondering what m_constraintSet->executeXYZ does? It's running the constraints created by
-    // Heap::buildConstraintSet().
-    
-    m_constraintSet->executeBootstrap(slotVisitor, MonotonicTime::infinity());
-    m_scheduler->didExecuteConstraints();
-
     // After this, we will almost certainly fall through all of the "slotVisitor.isEmpty()"
     // checks because bootstrap would have put things into the visitor. So, we should fall
     // through to draining.
     
-    unsigned iteration = 1;
+    if (!slotVisitor.didReachTermination()) {
+        dataLog("Fatal: SlotVisitor should think that GC should terminate before constraint solving, but it does not think this.\n");
+        dataLog("slotVisitor.isEmpty(): ", slotVisitor.isEmpty(), "\n");
+        dataLog("slotVisitor.collectorMarkStack().isEmpty(): ", slotVisitor.collectorMarkStack().isEmpty(), "\n");
+        dataLog("slotVisitor.mutatorMarkStack().isEmpty(): ", slotVisitor.mutatorMarkStack().isEmpty(), "\n");
+        dataLog("m_numberOfActiveParallelMarkers: ", m_numberOfActiveParallelMarkers, "\n");
+        dataLog("m_sharedCollectorMarkStack->isEmpty(): ", m_sharedCollectorMarkStack->isEmpty(), "\n");
+        dataLog("m_sharedMutatorMarkStack->isEmpty(): ", m_sharedMutatorMarkStack->isEmpty(), "\n");
+        dataLog("slotVisitor.didReachTermination(): ", slotVisitor.didReachTermination(), "\n");
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
     for (;;) {
         if (Options::logGC())
             dataLog("v=", bytesVisited() / 1024, "kb o=", m_opaqueRoots.size(), " b=", m_barriersExecuted, " ");
         
         if (slotVisitor.didReachTermination()) {
-            if (Options::logGC())
-                dataLog("i#", iteration, " ");
-        
+            m_scheduler->didReachTermination();
+            
             assertSharedMarkStacksEmpty();
             
             slotVisitor.mergeIfNecessary();
@@ -613,6 +619,8 @@ void Heap::markToFixpoint(double gcStartTime)
             // when we have deep stacks or a lot of DOM stuff.
             // https://bugs.webkit.org/show_bug.cgi?id=166831
             
+            // Wondering what this does? Look at Heap::addCoreConstraints(). The DOM and others can also
+            // add their own using Heap::addMarkingConstraint().
             bool converged =
                 m_constraintSet->executeConvergence(slotVisitor, MonotonicTime::infinity());
             if (converged && slotVisitor.isEmpty()) {
@@ -621,7 +629,6 @@ void Heap::markToFixpoint(double gcStartTime)
             }
             
             m_scheduler->didExecuteConstraints();
-            iteration++;
         }
         
         if (Options::logGC())
@@ -631,6 +638,11 @@ void Heap::markToFixpoint(double gcStartTime)
             ParallelModeEnabler enabler(slotVisitor);
             slotVisitor.drainInParallel(m_scheduler->timeToResume());
         }
+        
+        m_scheduler->synchronousDrainingDidStall();
+
+        if (slotVisitor.didReachTermination())
+            continue;
         
         if (!m_scheduler->shouldResume())
             continue;

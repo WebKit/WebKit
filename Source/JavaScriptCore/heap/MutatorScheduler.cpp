@@ -46,7 +46,15 @@ void MutatorScheduler::willResume()
 {
 }
 
+void MutatorScheduler::didReachTermination()
+{
+}
+
 void MutatorScheduler::didExecuteConstraints()
+{
+}
+
+void MutatorScheduler::synchronousDrainingDidStall()
 {
 }
 

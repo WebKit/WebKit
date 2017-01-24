@@ -50,7 +50,16 @@ public:
     
     virtual void didStop();
     virtual void willResume();
+    
+    // At the top of an iteration, the GC will may call didReachTermination.
+    virtual void didReachTermination();
+    
+    // If it called didReachTermination, it will then later call didExecuteConstraints.
     virtual void didExecuteConstraints();
+    
+    // After doing that, it will do synchronous draining. When this stalls - either due to timeout or
+    // just 'cause, it will call this.
+    virtual void synchronousDrainingDidStall();
     
     virtual MonotonicTime timeToStop() = 0; // Call while resumed, to ask when to stop.
     virtual MonotonicTime timeToResume() = 0; // Call while stopped, to ask when to resume.
