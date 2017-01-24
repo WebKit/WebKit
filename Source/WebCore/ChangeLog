@@ -1,3 +1,20 @@
+2017-01-24  Anders Carlsson  <andersca@apple.com>
+
+        When Safari reloads pages with Flash objects after Flash is installed, placeholders don't paint (but do work!)
+        https://bugs.webkit.org/show_bug.cgi?id=167391
+        rdar://problem/29857388
+
+        Reviewed by Sam Weinig.
+
+        * page/Page.cpp:
+        (WebCore::Page::refreshPlugins):
+        Remove an unused variable.
+
+        * plugins/PluginInfoProvider.cpp:
+        (WebCore::PluginInfoProvider::refresh):
+        Make sure to call refreshPlugins(). Instead of reloading subframes, just reload all the main frames with
+        subframes that contain plug-ins.
+
 2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Clean up Performance IDL interfaces so they are easier to read

@@ -537,8 +537,6 @@ void Page::refreshPlugins(bool reload)
 
     HashSet<PluginInfoProvider*> pluginInfoProviders;
 
-    Vector<Ref<Frame>> framesNeedingReload;
-
     for (auto& page : *allPages)
         pluginInfoProviders.add(&page->pluginInfoProvider());
 
