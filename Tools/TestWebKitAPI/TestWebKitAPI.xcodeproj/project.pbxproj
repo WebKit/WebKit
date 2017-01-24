@@ -506,7 +506,6 @@
 		C540F784152E5A9A00A40C8C /* verboseMarkup.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C540F783152E5A7800A40C8C /* verboseMarkup.html */; };
 		C54237F116B8957D00E638FC /* PasteboardNotifications_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C54237ED16B8955800E638FC /* PasteboardNotifications_Bundle.cpp */; };
 		C5E1AFFE16B221F1006CC1F2 /* execCopy.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C5E1AFFD16B22179006CC1F2 /* execCopy.html */; };
-		C9CB7DE11E2ED6F900B26082 /* autoplayCheck.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9CB7DE01E2ED2A700B26082 /* autoplayCheck.html */; };
 		CD59F53419E9110D00CF1835 /* file-with-mse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53219E910AA00CF1835 /* file-with-mse.html */; };
 		CD59F53519E9110D00CF1835 /* test-mse.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53319E910BC00CF1835 /* test-mse.mp4 */; };
 		CD78E11D1DB7EA660014A2DE /* FullscreenDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD78E11A1DB7EA360014A2DE /* FullscreenDelegate.mm */; };
@@ -605,7 +604,6 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
-				C9CB7DE11E2ED6F900B26082 /* autoplayCheck.html in Copy Resources */,
 				7AEAD4811E20122700416EFE /* CrossPartitionFileSchemeAccess.html in Copy Resources */,
 				CDB4115A1E0B00DB00EAD352 /* video-with-muted-audio.html in Copy Resources */,
 				9BD4239C1E04C01C00200395 /* chinese-character-with-image.html in Copy Resources */,
@@ -1267,7 +1265,6 @@
 		C54237EE16B8955800E638FC /* PasteboardNotifications.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardNotifications.mm; sourceTree = "<group>"; };
 		C5E1AFFD16B22179006CC1F2 /* execCopy.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = execCopy.html; sourceTree = "<group>"; };
 		C95501BE19AD2FAF0049BE3E /* Preferences.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Preferences.mm; sourceTree = "<group>"; };
-		C9CB7DE01E2ED2A700B26082 /* autoplayCheck.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = autoplayCheck.html; sourceTree = "<group>"; };
 		CD225C071C45A69200140761 /* ParsedContentRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentRange.cpp; sourceTree = "<group>"; };
 		CD5393C71757BA9700C07123 /* MD5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MD5.cpp; sourceTree = "<group>"; };
 		CD5393C91757BAC400C07123 /* SHA1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SHA1.cpp; sourceTree = "<group>"; };
@@ -1948,19 +1945,18 @@
 		BC90977B125571AE00083756 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9BD4239B1E04BFD000200395 /* chinese-character-with-image.html */,
+				07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */,
 				C045F9461385C2F800C0F3CD /* 18-characters.html */,
 				1C2B81851C89252300A5529F /* Ahem.ttf */,
 				93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */,
 				F6B7BE9617469B7E008A3445 /* associate-form-controls.html */,
 				76E182DE15475A8300F1FADD /* auto-submitting-form.html */,
-				C9CB7DE01E2ED2A700B26082 /* autoplayCheck.html */,
 				7C486BA01AA1254B003F6F9B /* bundle-file.html */,
-				9BD4239B1E04BFD000200395 /* chinese-character-with-image.html */,
 				1A50AA1F1A2A4EA500F4C345 /* close-from-within-create-page.html */,
 				9B270FED1DDC25FD002D53F3 /* closed-shadow-tree-test.html */,
 				5C9E56861DF9148E00C9EE33 /* contentBlockerCheck.html */,
 				290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */,
-				07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */,
 				C5E1AFFD16B22179006CC1F2 /* execCopy.html */,
 				BC2D004A12A9FEB300E732A3 /* file-with-anchor.html */,
 				CD59F53219E910AA00CF1835 /* file-with-mse.html */,

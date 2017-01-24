@@ -817,10 +817,6 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     if (documentLoader->userContentExtensionsEnabled())
         documentLoader->setUserContentExtensionsEnabled(websitePolicies.contentBlockersEnabled);
 
-#if PLATFORM(MAC)
-    coreFrame->settings().setAudioPlaybackRequiresUserGesture(!websitePolicies.autoplayEnabled);
-#endif
-
     // We call this synchronously because WebCore cannot gracefully handle a frame load without a synchronous navigation policy reply.
     if (receivedPolicyAction)
         m_frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), newNavigationID, downloadID);
