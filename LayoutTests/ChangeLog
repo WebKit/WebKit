@@ -1,3 +1,17 @@
+2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove always true unsafePluginPastingEnabled setting
+        https://bugs.webkit.org/show_bug.cgi?id=167360
+
+        Reviewed by Andreas Kling.
+
+        * editing/pasteboard/paste-noplugin-expected.txt: Removed.
+        * editing/pasteboard/paste-noplugin-xhtml-expected.txt: Removed.
+        * editing/pasteboard/paste-noplugin-xhtml.xhtml: Removed.
+        * editing/pasteboard/paste-noplugin.html: Removed.
+        * platform/efl/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2017-01-24  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add support for hyphen: auto.

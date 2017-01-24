@@ -1,3 +1,16 @@
+2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove always true unsafePluginPastingEnabled setting
+        https://bugs.webkit.org/show_bug.cgi?id=167360
+
+        Reviewed by Andreas Kling.
+
+        Setting added by Chromium and never used by other ports.
+
+        * dom/ScriptableDocumentParser.cpp:
+        (WebCore::ScriptableDocumentParser::ScriptableDocumentParser):
+        * page/Settings.in:
+
 2017-01-24  Anders Carlsson  <andersca@apple.com>
 
         When Safari reloads pages with Flash objects after Flash is installed, placeholders don't paint (but do work!)

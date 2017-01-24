@@ -98,7 +98,6 @@ javaScriptRuntimeFlags type=JSC::RuntimeFlags
 downloadableBinaryFontsEnabled initial=true
 
 xssAuditorEnabled initial=false
-unsafePluginPastingEnabled initial=true
 acceleratedCompositingForFixedPositionEnabled initial=defaultAcceleratedCompositingForFixedPositionEnabled
 acceleratedCompositingForOverflowScrollEnabled initial=false
 rubberBandingForSubScrollableRegionsEnabled initial=true, conditional=RUBBER_BANDING
