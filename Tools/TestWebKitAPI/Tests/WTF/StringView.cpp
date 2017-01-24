@@ -30,6 +30,17 @@
 
 namespace TestWebKitAPI {
 
+StringView stringViewFromLiteral(const char* characters)
+{
+    return StringView(reinterpret_cast<const LChar*>(characters), strlen(characters));
+}
+
+StringView stringViewFromUTF8(String &ref, const char* characters)
+{
+    ref = String::fromUTF8(characters);
+    return ref;
+}
+
 TEST(WTF, StringViewEmptyVsNull)
 {
     StringView nullView;
@@ -214,6 +225,79 @@ TEST(WTF, StringViewIterators)
         StringView(b.characters16() + 3, 3)}));
 }
 
+static Vector<String> vectorFromSplitResult(const StringView::SplitResult& substrings)
+{
+    Vector<String> result;
+    for (StringView substring : substrings)
+        result.append(substring.toString());
+    return result;
+}
+
+TEST(WTF, StringViewSplitEmptyAndNullStrings)
+{
+    StringView a = emptyString();
+    auto splitResult = a.split('b');
+    EXPECT_TRUE(splitResult.begin() == splitResult.end());
+
+    a = { String { } };
+    splitResult = a.split('b');
+    EXPECT_TRUE(splitResult.begin() == splitResult.end());
+
+    a = { };
+    splitResult = a.split('b');
+    EXPECT_TRUE(splitResult.begin() == splitResult.end());
+}
+
+TEST(WTF, StringViewSplitBasic)
+{
+    String referenceHolder;
+    StringView a = stringViewFromUTF8(referenceHolder, "This is a sentence.");
+
+    // Simple
+    Vector<String> actual = vectorFromSplitResult(a.split('T'));
+    Vector<String> expected({ "his is a sentence." });
+    ASSERT_EQ(expected.size(), actual.size());
+    for (size_t i = 0; i < actual.size(); ++i)
+        EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
+
+    actual = vectorFromSplitResult(a.split('.'));
+    expected = { "This is a sentence" };
+    ASSERT_EQ(expected.size(), actual.size());
+    for (size_t i = 0; i < actual.size(); ++i)
+        EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
+
+    actual = vectorFromSplitResult(a.split('a'));
+    expected = { "This is ", " sentence." };
+    ASSERT_EQ(expected.size(), actual.size());
+    for (size_t i = 0; i < actual.size(); ++i)
+        EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
+
+    actual = vectorFromSplitResult(a.split(' '));
+    expected = { "This", "is", "a", "sentence." };
+    ASSERT_EQ(expected.size(), actual.size());
+    for (size_t i = 0; i < actual.size(); ++i)
+        EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
+
+    // Non-existent separator
+    actual = vectorFromSplitResult(a.split('z'));
+    expected = { "This is a sentence." };
+    ASSERT_EQ(expected.size(), actual.size());
+    for (size_t i = 0; i < actual.size(); ++i)
+        EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
+}
+
+TEST(WTF, StringViewSplitWithConsecutiveSeparators)
+{
+    String referenceHolder;
+    StringView a = stringViewFromUTF8(referenceHolder, "This     is  a       sentence.");
+
+    Vector<String> actual = vectorFromSplitResult(a.split(' '));
+    Vector<String> expected({ "This", "is", "a", "sentence." });
+    ASSERT_EQ(expected.size(), actual.size());
+    for (size_t i = 0; i < actual.size(); ++i)
+        EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
+}
+
 TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)
 {
     RefPtr<StringImpl> a = StringImpl::createFromLiteral("aBcDeFG");
@@ -302,17 +386,6 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseWithLatin1Characters)
     ASSERT_FALSE(equalIgnoringASCIICase(stringViewB, e));
     ASSERT_FALSE(equalIgnoringASCIICase(stringViewC, e));
     ASSERT_FALSE(equalIgnoringASCIICase(stringViewD, e));
-}
-
-StringView stringViewFromLiteral(const char* characters)
-{
-    return StringView(reinterpret_cast<const LChar*>(characters), strlen(characters));
-}
-
-StringView stringViewFromUTF8(String &ref, const char* characters)
-{
-    ref = String::fromUTF8(characters);
-    return ref;
 }
 
 TEST(WTF, StringViewFindIgnoringASCIICaseBasic)

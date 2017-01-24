@@ -1,3 +1,37 @@
+2017-01-24  Daniel Bates  <dabates@apple.com>
+
+        StringView.split() should use an iterator design pattern instead of allocating a Vector
+        https://bugs.webkit.org/show_bug.cgi?id=163225
+
+        Reviewed by Darin Adler.
+
+        Implement StringView.split() using an iterator design.
+
+        Using an iterator design avoids the need to allocate a Vector of StringView objects,
+        which is space-inefficient and error prone as the returned Vector may outlive the
+        lifetime of the underlying string associated with the split (as StringView is a non-
+        owning reference to a string).
+
+        StringView.split() now returns a StringView::SplitResult object that implements begin()/end()
+        to support iterating over StringView substrings delimited by the specified separator
+        character. For example, to iterate over the 'c'-separated substrings of a StringView v,
+        you can write:
+
+        for (StringView substring : v.split('c'))
+            // Do something with substring.
+
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::SplitResult::Iterator::findNextSubstring): Advances the iterator to point to the
+        next substring.
+        (WTF::StringView::split): Modified to return a SplitResult::Iterator object instead of a Vector<StringView>.
+        * wtf/text/StringView.h:
+        (WTF::StringView::SplitResult::SplitResult):
+        (WTF::StringView::SplitResult::Iterator::Iterator):
+        (WTF::StringView::SplitResult::Iterator::operator*):
+        (WTF::StringView::SplitResult::Iterator::operator==):
+        (WTF::StringView::SplitResult::Iterator::operator!=):
+        Implements the iterator interface.
+
 2017-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove outdated ENABLE(CSP_NEXT) build flag

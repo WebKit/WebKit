@@ -2721,10 +2721,8 @@ std::optional<String> URLParser::formURLDecode(StringView input)
 
 auto URLParser::parseURLEncodedForm(StringView input) -> URLEncodedForm
 {
-    Vector<StringView> sequences = input.split('&');
-
     URLEncodedForm output;
-    for (auto& bytes : sequences) {
+    for (StringView bytes : input.split('&')) {
         auto valueStart = bytes.find('=');
         if (valueStart == notFound) {
             if (auto name = formURLDecode(bytes))
