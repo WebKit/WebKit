@@ -107,13 +107,13 @@ SubresourcesEntry::SubresourcesEntry(const Storage::Record& storageEntry)
 static Vector<SubresourceInfo> makeSubresourceInfoVector(const Vector<std::unique_ptr<SubresourceLoad>>& subresourceLoads)
 {
     Vector<SubresourceInfo> result;
-    result.reserveCapacity(subresourceLoads.size());
+    result.reserveInitialCapacity(subresourceLoads.size());
     
     HashSet<Key> seenKeys;
     for (auto& load : subresourceLoads) {
         if (!seenKeys.add(load->key).isNewEntry)
             continue;
-        result.append({ load->key, load->request });
+        result.uncheckedAppend({ load->key, load->request });
     }
 
     return result;
