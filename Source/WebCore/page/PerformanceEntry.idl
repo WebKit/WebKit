@@ -28,7 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// See: https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/PerformanceTimeline/Overview.html
+// https://w3c.github.io/performance-timeline/
+
+typedef double DOMHighResTimeStamp;
+
 [
     Conditional=WEB_TIMING,
     EnabledAtRuntime=ResourceTiming,
@@ -36,6 +39,6 @@
 ] interface PerformanceEntry {
     readonly attribute DOMString name;
     readonly attribute DOMString entryType;
-    readonly attribute unrestricted double startTime;
-    readonly attribute unrestricted double duration;
+    readonly attribute DOMHighResTimeStamp startTime;
+    readonly attribute DOMHighResTimeStamp duration;
 };

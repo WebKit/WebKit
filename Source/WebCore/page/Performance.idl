@@ -29,34 +29,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// See: https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/NavigationTiming/Overview.html
+// https://w3c.github.io/hr-time/
+
+typedef double DOMHighResTimeStamp;
+
 [
     Conditional=WEB_TIMING,
     GenerateIsReachable=ImplFrame,
 ] interface Performance : EventTarget {
+
+    DOMHighResTimeStamp now();
+
+    // https://w3c.github.io/navigation-timing/
     readonly attribute PerformanceNavigation navigation;
     readonly attribute PerformanceTiming timing;
 
+    // https://w3c.github.io/performance-timeline/
     [EnabledAtRuntime=ResourceTiming] PerformanceEntryList getEntries();
     [EnabledAtRuntime=ResourceTiming] PerformanceEntryList getEntriesByType(DOMString entryType);
     [EnabledAtRuntime=ResourceTiming] PerformanceEntryList getEntriesByName(DOMString name, optional DOMString entryType);
 
+    // https://w3c.github.io/resource-timing/
     [EnabledAtRuntime=ResourceTiming] void clearResourceTimings();
     [EnabledAtRuntime=ResourceTiming] void setResourceTimingBufferSize(unsigned long maxSize);
-
     [EnabledAtRuntime=ResourceTiming] attribute EventHandler onresourcetimingbufferfull;
 
-    // See http://www.w3.org/TR/2012/CR-user-timing-20120726/
-#if defined(ENABLE_USER_TIMING) && ENABLE_USER_TIMING
-    [MayThrowException] void webkitMark(DOMString markName);
-    void webkitClearMarks(optional DOMString markName);
-
-    [MayThrowException] void webkitMeasure(DOMString measureName, optional DOMString startMark, optional DOMString endMark);
-    void webkitClearMeasures(optional DOMString measureName);
-#endif
-
-    // See http://www.w3.org/TR/hr-time/ for details.
-    unrestricted double now();
+    // https://w3c.github.io/user-timing/
+    [Conditional=USER_TIMING, MayThrowException] void webkitMark(DOMString markName);
+    [Conditional=USER_TIMING] void webkitClearMarks(optional DOMString markName);
+    [Conditional=USER_TIMING, MayThrowException] void webkitMeasure(DOMString measureName, optional DOMString startMark, optional DOMString endMark);
+    [Conditional=USER_TIMING] void webkitClearMeasures(optional DOMString measureName);
 };
 
 typedef sequence<PerformanceEntry> PerformanceEntryList;

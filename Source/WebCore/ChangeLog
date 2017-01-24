@@ -1,3 +1,22 @@
+2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Clean up Performance IDL interfaces so they are easier to read
+        https://bugs.webkit.org/show_bug.cgi?id=167378
+
+        Reviewed by Sam Weinig.
+
+        * page/Performance.idl:
+        * page/PerformanceEntry.idl:
+        * page/PerformanceMark.idl:
+        * page/PerformanceMeasure.idl:
+        Update spec links and use a typedef to match specs.
+
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::PerformanceResourceTiming::workerStart):
+        * page/PerformanceResourceTiming.h:
+        * page/PerformanceResourceTiming.idl:
+        Add the workerStart property which always returns 0 for non-workers.
+
 2017-01-24  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add support for hyphen: auto.

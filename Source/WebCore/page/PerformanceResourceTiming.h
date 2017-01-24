@@ -55,6 +55,7 @@ public:
 
     AtomicString initiatorType() const;
 
+    double workerStart() const;
     double redirectStart() const;
     double redirectEnd() const;
     double fetchStart() const;

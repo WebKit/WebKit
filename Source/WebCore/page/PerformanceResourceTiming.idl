@@ -28,22 +28,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// See: https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/ResourceTiming/Overview.html
+// https://w3c.github.io/resource-timing/
+
+typedef double DOMHighResTimeStamp;
+
 [
     Conditional=WEB_TIMING,
     EnabledAtRuntime=ResourceTiming
 ] interface PerformanceResourceTiming : PerformanceEntry {
     readonly attribute DOMString initiatorType;
 
-    readonly attribute unrestricted double redirectStart;
-    readonly attribute unrestricted double redirectEnd;
-    readonly attribute unrestricted double fetchStart;
-    readonly attribute unrestricted double domainLookupStart;
-    readonly attribute unrestricted double domainLookupEnd;
-    readonly attribute unrestricted double connectStart;
-    readonly attribute unrestricted double connectEnd;
-    readonly attribute unrestricted double secureConnectionStart;
-    readonly attribute unrestricted double requestStart;
-    readonly attribute unrestricted double responseStart;
-    readonly attribute unrestricted double responseEnd;
+    readonly attribute DOMHighResTimeStamp workerStart;
+    readonly attribute DOMHighResTimeStamp redirectStart;
+    readonly attribute DOMHighResTimeStamp redirectEnd;
+    readonly attribute DOMHighResTimeStamp fetchStart;
+    readonly attribute DOMHighResTimeStamp domainLookupStart;
+    readonly attribute DOMHighResTimeStamp domainLookupEnd;
+    readonly attribute DOMHighResTimeStamp connectStart;
+    readonly attribute DOMHighResTimeStamp connectEnd;
+    readonly attribute DOMHighResTimeStamp secureConnectionStart;
+    readonly attribute DOMHighResTimeStamp requestStart;
+    readonly attribute DOMHighResTimeStamp responseStart;
+    readonly attribute DOMHighResTimeStamp responseEnd;
 };
