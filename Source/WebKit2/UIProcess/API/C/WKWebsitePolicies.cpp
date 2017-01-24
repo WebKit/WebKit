@@ -52,12 +52,37 @@ bool WKWebsitePoliciesGetContentBlockersEnabled(WKWebsitePoliciesRef websitePoli
     return toImpl(websitePolicies)->contentBlockersEnabled();
 }
 
-bool WKWebsitePoliciesGetAutoplayEnabled(WKWebsitePoliciesRef websitePolicies)
+WKWebsiteAutoplayPolicy WKWebsitePoliciesGetAutoplayPolicy(WKWebsitePoliciesRef websitePolicies)
 {
-    return toImpl(websitePolicies)->autoplayEnabled();
+    switch (toImpl(websitePolicies)->autoplayPolicy()) {
+    case WebKit::WebsiteAutoplayPolicy::Default:
+        return kWKWebsiteAutoplayPolicyDefault;
+    case WebsiteAutoplayPolicy::Allow:
+        return kWKWebsiteAutoplayPolicyAllow;
+    case WebsiteAutoplayPolicy::AllowWithoutSound:
+        return kWKWebsiteAutoplayPolicyAllowWithoutSound;
+    case WebsiteAutoplayPolicy::Deny:
+        return kWKWebsiteAutoplayPolicyDeny;
+    }
+    ASSERT_NOT_REACHED();
+    return kWKWebsiteAutoplayPolicyDefault;
 }
 
-void WKWebsitePoliciesSetAutoplayEnabled(WKWebsitePoliciesRef websitePolicies, bool enabled)
+void WKWebsitePoliciesSetAutoplayPolicy(WKWebsitePoliciesRef websitePolicies, WKWebsiteAutoplayPolicy policy)
 {
-    toImpl(websitePolicies)->setAutoplayEnabled(enabled);
+    switch (policy) {
+    case kWKWebsiteAutoplayPolicyDefault:
+        toImpl(websitePolicies)->setAutoplayPolicy(WebsiteAutoplayPolicy::Default);
+        return;
+    case kWKWebsiteAutoplayPolicyAllow:
+        toImpl(websitePolicies)->setAutoplayPolicy(WebsiteAutoplayPolicy::Allow);
+        return;
+    case kWKWebsiteAutoplayPolicyAllowWithoutSound:
+        toImpl(websitePolicies)->setAutoplayPolicy(WebsiteAutoplayPolicy::AllowWithoutSound);
+        return;
+    case kWKWebsiteAutoplayPolicyDeny:
+        toImpl(websitePolicies)->setAutoplayPolicy(WebsiteAutoplayPolicy::Deny);
+        return;
+    }
+    ASSERT_NOT_REACHED();
 }

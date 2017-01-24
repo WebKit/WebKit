@@ -57,14 +57,36 @@
     return _websitePolicies->contentBlockersEnabled();
 }
 
-- (void)setAutoplayEnabled:(BOOL)enabled
+- (void)setAutoplayPolicy:(_WKWebsiteAutoplayPolicy)policy
 {
-    _websitePolicies->setAutoplayEnabled(enabled);
+    switch (policy) {
+    case _WKWebsiteAutoplayPolicyDefault:
+        _websitePolicies->setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy::Default);
+        break;
+    case _WKWebsiteAutoplayPolicyAllow:
+        _websitePolicies->setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy::Allow);
+        break;
+    case _WKWebsiteAutoplayPolicyAllowWithoutSound:
+        _websitePolicies->setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy::AllowWithoutSound);
+        break;
+    case _WKWebsiteAutoplayPolicyDeny:
+        _websitePolicies->setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy::Deny);
+        break;
+    }
 }
 
-- (BOOL)autoplayEnabled
+- (_WKWebsiteAutoplayPolicy)autoplayPolicy
 {
-    return _websitePolicies->autoplayEnabled();
+    switch (_websitePolicies->autoplayPolicy()) {
+    case WebKit::WebsiteAutoplayPolicy::Default:
+        return _WKWebsiteAutoplayPolicyDefault;
+    case WebKit::WebsiteAutoplayPolicy::Allow:
+        return _WKWebsiteAutoplayPolicyAllow;
+    case WebKit::WebsiteAutoplayPolicy::AllowWithoutSound:
+        return _WKWebsiteAutoplayPolicyAllowWithoutSound;
+    case WebKit::WebsiteAutoplayPolicy::Deny:
+        return _WKWebsiteAutoplayPolicyDeny;
+    }
 }
 
 - (NSString *)description

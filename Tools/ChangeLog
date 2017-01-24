@@ -1,3 +1,18 @@
+2017-01-24  Matt Rajca  <mrajca@apple.com>
+
+        Pass down website autoplay policies to media elements
+        https://bugs.webkit.org/show_bug.cgi?id=167355
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/autoplay-check.html: Renamed from Tools/TestWebKitAPI/Tests/WebKit2/autoplayCheck.html to match our naming conventions.
+        * TestWebKitAPI/Tests/WebKit2/autoplay-no-audio-check.html: Added.
+        * TestWebKitAPI/Tests/WebKit2/test-without-audio-track.mp4: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsitePolicies.mm:
+        (-[AutoplayPoliciesDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (TEST):
+
 2017-01-24  Nan Wang  <n_wang@apple.com>
 
         AX: Speak Selection does not work in an iframe

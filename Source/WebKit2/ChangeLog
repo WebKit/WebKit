@@ -1,3 +1,28 @@
+2017-01-24  Matt Rajca  <mrajca@apple.com>
+
+        Pass down website autoplay policies to media elements
+        https://bugs.webkit.org/show_bug.cgi?id=167355
+
+        Reviewed by Alex Christensen.
+
+        Autoplay policies can be specified at the global web view preferences level or on a per-page
+        basis during navigation. This patch ensures that policies specified on a per-page basis hold
+        precedence over global policies. If no policies are specified during navigation, global
+        policies are used. A WebsiteAutoplayPolicy::Default option has been added to let clients
+        explicitly specify web view defaults should be used.
+
+        * Shared/WebsitePolicies.h:
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        (WKWebsitePoliciesGetAutoplayPolicy):
+        (WKWebsitePoliciesSetAutoplayPolicy):
+        * UIProcess/API/C/WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies setAutoplayPolicy:]):
+        (-[_WKWebsitePolicies autoplayPolicy]):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2017-01-24  Nan Wang  <n_wang@apple.com>
 
         AX: Speak Selection does not work in an iframe

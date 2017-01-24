@@ -984,6 +984,9 @@ public:
     void unregisterForMediaVolumeCallbacks(Element*);
     void mediaVolumeDidChange();
 
+    bool audioPlaybackRequiresUserGesture() const;
+    bool videoPlaybackRequiresUserGesture() const;
+
 #if ENABLE(MEDIA_SESSION)
     MediaSession& defaultMediaSession();
 #endif

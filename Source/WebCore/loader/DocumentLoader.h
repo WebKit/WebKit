@@ -78,6 +78,13 @@ class SubstituteResource;
 
 using ResourceLoaderMap = HashMap<unsigned long, RefPtr<ResourceLoader>>;
 
+enum class AutoplayPolicy {
+    Default, // Uses policies specified in document settings.
+    Allow,
+    AllowWithoutSound,
+    Deny,
+};
+
 class DocumentLoader : public RefCounted<DocumentLoader>, private CachedRawResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
     friend class ContentFilter;
@@ -231,6 +238,9 @@ public:
 
     bool userContentExtensionsEnabled() const { return m_userContentExtensionsEnabled; }
     void setUserContentExtensionsEnabled(bool enabled) { m_userContentExtensionsEnabled = enabled; }
+
+    AutoplayPolicy autoplayPolicy() const { return m_autoplayPolicy; }
+    void setAutoplayPolicy(AutoplayPolicy policy) { m_autoplayPolicy = policy; }
 
     void addSubresourceLoader(ResourceLoader*);
     void removeSubresourceLoader(ResourceLoader*);
@@ -461,6 +471,7 @@ private:
     HashMap<String, Vector<std::pair<String, uint32_t>>> m_pendingContentExtensionDisplayNoneSelectors;
 #endif
     bool m_userContentExtensionsEnabled { true };
+    AutoplayPolicy m_autoplayPolicy { AutoplayPolicy::Default };
 
 #ifndef NDEBUG
     bool m_hasEverBeenAttached { false };

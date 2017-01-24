@@ -28,16 +28,17 @@
 #if WK_API_ENABLED
 
 typedef NS_ENUM(NSInteger, _WKWebsiteAutoplayPolicy) {
-    _WKWebsiteAutoplayPolicyUseHeuristics,
-    _WKWebsiteAutoplayPolicyAlwaysAllow,
-    _WKWebsiteAutoplayPolicyAlwaysDeny
+    _WKWebsiteAutoplayPolicyDefault,
+    _WKWebsiteAutoplayPolicyAllow,
+    _WKWebsiteAutoplayPolicyAllowWithoutSound,
+    _WKWebsiteAutoplayPolicyDeny
 } WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKWebsitePolicies : NSObject
 
 @property (nonatomic) BOOL contentBlockersEnabled;
-@property (nonatomic) BOOL autoplayEnabled;
+@property (nonatomic) _WKWebsiteAutoplayPolicy autoplayPolicy;
 
 @end
 

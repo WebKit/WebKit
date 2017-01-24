@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <script>
+            function pageLoaded() {
+                setTimeout(function() {
+                    try {
+                        window.webkit.messageHandlers.testHandler.postMessage("did-not-play");
+                    } catch(e) { }
+                }, 100);
+            }
+
+            function beganPlaying() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
+                } catch(e) { }
+            }
+        </script>
+    </head>
+    <body onload="pageLoaded()">
+        <video id="video" autoplay onplaying=beganPlaying() src="test-without-audio-track.mp4" />
+    </body>
+</html>

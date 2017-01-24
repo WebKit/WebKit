@@ -1,3 +1,29 @@
+2017-01-24  Matt Rajca  <mrajca@apple.com>
+
+        Pass down website autoplay policies to media elements
+        https://bugs.webkit.org/show_bug.cgi?id=167355
+
+        Reviewed by Alex Christensen.
+
+        Autoplay policies can be specified at the global web view preferences level or on a per-page
+        basis during navigation. This patch ensures that policies specified on a per-page basis hold
+        precedence over global policies. If no policies are specified during navigation, global
+        policies are used. A WebsiteAutoplayPolicy::Default option has been added to let clients
+        explicitly specify web view defaults should be used.
+
+        * dom/Document.cpp:
+        (WebCore::Document::audioPlaybackRequiresUserGesture):
+        (WebCore::Document::videoPlaybackRequiresUserGesture):
+        * dom/Document.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::playInternal):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::audioPlaybackRequiresUserGesture):
+        (WebCore::DocumentLoader::setAudioPlaybackRequiresUserGesture):
+        (WebCore::DocumentLoader::videoPlaybackRequiresUserGesture):
+        (WebCore::DocumentLoader::setVideoPlaybackRequiresUserGesture):
+
 2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove always true selectionIncludesAltImageText setting

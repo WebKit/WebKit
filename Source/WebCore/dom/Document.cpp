@@ -4646,6 +4646,32 @@ void Document::unregisterForMediaVolumeCallbacks(Element* e)
     m_mediaVolumeCallbackElements.remove(e);
 }
 
+bool Document::audioPlaybackRequiresUserGesture() const
+{
+    if (DocumentLoader* loader = this->loader()) {
+        // If an audio playback policy was set during navigation, use it. If not, use the global settings.
+        AutoplayPolicy policy = loader->autoplayPolicy();
+        if (policy != AutoplayPolicy::Default)
+            return policy == AutoplayPolicy::AllowWithoutSound || policy == AutoplayPolicy::Deny;
+    }
+
+    Settings* settings = this->settings();
+    return settings && settings->audioPlaybackRequiresUserGesture();
+}
+
+bool Document::videoPlaybackRequiresUserGesture() const
+{
+    if (DocumentLoader* loader = this->loader()) {
+        // If a video playback policy was set during navigation, use it. If not, use the global settings.
+        AutoplayPolicy policy = loader->autoplayPolicy();
+        if (policy != AutoplayPolicy::Default)
+            return policy == AutoplayPolicy::Deny;
+    }
+
+    Settings* settings = this->settings();
+    return settings && settings->videoPlaybackRequiresUserGesture();
+}
+
 void Document::storageBlockingStateDidChange()
 {
     if (Settings* settings = this->settings())

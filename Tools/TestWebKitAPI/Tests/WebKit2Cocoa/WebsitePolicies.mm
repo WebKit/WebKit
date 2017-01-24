@@ -26,6 +26,7 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
@@ -38,10 +39,10 @@ static bool doneCompiling;
 static bool receivedAlert;
 static size_t alertCount;
 
-@interface WebsitePoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
+@interface ContentBlockingWebsitePoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
 @end
 
-@implementation WebsitePoliciesDelegate
+@implementation ContentBlockingWebsitePoliciesDelegate
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
@@ -123,7 +124,7 @@ TEST(WebKit2, WebsitePoliciesContentBlockersEnabled)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    auto delegate = adoptNS([[WebsitePoliciesDelegate alloc] init]);
+    auto delegate = adoptNS([[ContentBlockingWebsitePoliciesDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
 
@@ -146,6 +147,61 @@ TEST(WebKit2, WebsitePoliciesContentBlockersEnabled)
     TestWebKitAPI::Util::run(&receivedAlert);
 
     [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
+}
+
+@interface AutoplayPoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
+@property (nonatomic) _WKWebsiteAutoplayPolicy autoplayPolicy;
+@end
+
+@implementation AutoplayPoliciesDelegate
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    // _webView:decidePolicyForNavigationAction:decisionHandler: should be called instead if it is implemented.
+    EXPECT_TRUE(false);
+    decisionHandler(WKNavigationActionPolicyAllow);
+}
+
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+{
+    _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+    websitePolicies.autoplayPolicy = _autoplayPolicy;
+    decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
+}
+
+@end
+
+TEST(WebKit2, WebsitePoliciesAutoplayEnabled)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *requestWithAudio = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *requestWithoutAudio = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-no-audio-check" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    
+    [delegate setAutoplayPolicy:_WKWebsiteAutoplayPolicyAllowWithoutSound];
+    [webView loadRequest:requestWithAudio];
+    [webView waitForMessage:@"did-not-play"];
+
+    [webView loadRequest:requestWithoutAudio];
+    [webView waitForMessage:@"autoplayed"];
+
+    [delegate setAutoplayPolicy:_WKWebsiteAutoplayPolicyDeny];
+    [webView loadRequest:requestWithAudio];
+    [webView waitForMessage:@"did-not-play"];
+
+    [webView loadRequest:requestWithoutAudio];
+    [webView waitForMessage:@"did-not-play"];
+
+    [delegate setAutoplayPolicy:_WKWebsiteAutoplayPolicyAllow];
+    [webView loadRequest:requestWithAudio];
+    [webView waitForMessage:@"autoplayed"];
+
+    [webView loadRequest:requestWithoutAudio];
+    [webView waitForMessage:@"autoplayed"];
 }
 
 #endif
