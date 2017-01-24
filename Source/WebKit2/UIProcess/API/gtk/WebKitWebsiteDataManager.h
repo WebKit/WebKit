@@ -24,8 +24,9 @@
 #ifndef WebKitWebsiteDataManager_h
 #define WebKitWebsiteDataManager_h
 
-#include <glib-object.h>
+#include <gio/gio.h>
 #include <webkit2/WebKitDefines.h>
+#include <webkit2/WebKitWebsiteData.h>
 
 G_BEGIN_DECLS
 
@@ -56,31 +57,67 @@ struct _WebKitWebsiteDataManagerClass {
 };
 
 WEBKIT_API GType
-webkit_website_data_manager_get_type                                (void);
+webkit_website_data_manager_get_type                                  (void);
 
 WEBKIT_API WebKitWebsiteDataManager *
-webkit_website_data_manager_new                                     (const gchar              *first_option_name,
-                                                                     ...);
+webkit_website_data_manager_new                                       (const gchar              *first_option_name,
+                                                                       ...);
 WEBKIT_API const gchar *
-webkit_website_data_manager_get_base_data_directory                 (WebKitWebsiteDataManager *manager);
+webkit_website_data_manager_get_base_data_directory                   (WebKitWebsiteDataManager *manager);
 
 WEBKIT_API const gchar *
-webkit_website_data_manager_get_base_cache_directory                 (WebKitWebsiteDataManager *manager);
+webkit_website_data_manager_get_base_cache_directory                  (WebKitWebsiteDataManager *manager);
 
 WEBKIT_API const gchar *
-webkit_website_data_manager_get_local_storage_directory             (WebKitWebsiteDataManager *manager);
+webkit_website_data_manager_get_local_storage_directory               (WebKitWebsiteDataManager *manager);
 
 WEBKIT_API const gchar *
-webkit_website_data_manager_get_disk_cache_directory                (WebKitWebsiteDataManager *manager);
+webkit_website_data_manager_get_disk_cache_directory                  (WebKitWebsiteDataManager *manager);
 
 WEBKIT_API const gchar *
-webkit_website_data_manager_get_offline_application_cache_directory (WebKitWebsiteDataManager *manager);
+webkit_website_data_manager_get_offline_application_cache_directory   (WebKitWebsiteDataManager *manager);
 
 WEBKIT_API const gchar *
-webkit_website_data_manager_get_indexeddb_directory                 (WebKitWebsiteDataManager *manager);
+webkit_website_data_manager_get_indexeddb_directory                   (WebKitWebsiteDataManager *manager);
 
 WEBKIT_API const gchar *
-webkit_website_data_manager_get_websql_directory                    (WebKitWebsiteDataManager *manager);
+webkit_website_data_manager_get_websql_directory                      (WebKitWebsiteDataManager *manager);
+
+WEBKIT_API void
+webkit_website_data_manager_fetch                                     (WebKitWebsiteDataManager *manager,
+                                                                       WebKitWebsiteDataTypes    types,
+                                                                       GCancellable             *cancellable,
+                                                                       GAsyncReadyCallback       callback,
+                                                                       gpointer                  user_data);
+
+WEBKIT_API GList *
+webkit_website_data_manager_fetch_finish                              (WebKitWebsiteDataManager *manager,
+                                                                       GAsyncResult             *result,
+                                                                       GError                  **error);
+WEBKIT_API void
+webkit_website_data_manager_remove                                    (WebKitWebsiteDataManager *manager,
+                                                                       WebKitWebsiteDataTypes    types,
+                                                                       GList                    *website_data,
+                                                                       GCancellable             *cancellable,
+                                                                       GAsyncReadyCallback       callback,
+                                                                       gpointer                  user_data);
+WEBKIT_API gboolean
+webkit_website_data_manager_remove_finish                             (WebKitWebsiteDataManager *manager,
+                                                                       GAsyncResult             *result,
+                                                                       GError                  **error);
+
+WEBKIT_API void
+webkit_website_data_manager_clear                                      (WebKitWebsiteDataManager *manager,
+                                                                        WebKitWebsiteDataTypes    types,
+                                                                        GTimeSpan                 timespan,
+                                                                        GCancellable             *cancellable,
+                                                                        GAsyncReadyCallback       callback,
+                                                                        gpointer                  user_data);
+
+WEBKIT_API gboolean
+webkit_website_data_manager_clear_finish                               (WebKitWebsiteDataManager *manager,
+                                                                        GAsyncResult             *result,
+                                                                        GError                  **error);
 
 G_END_DECLS
 

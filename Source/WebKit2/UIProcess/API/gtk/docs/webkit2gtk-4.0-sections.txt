@@ -1244,6 +1244,12 @@ webkit_website_data_manager_get_disk_cache_directory
 webkit_website_data_manager_get_offline_application_cache_directory
 webkit_website_data_manager_get_indexeddb_directory
 webkit_website_data_manager_get_websql_directory
+webkit_website_data_manager_fetch
+webkit_website_data_manager_fetch_finish
+webkit_website_data_manager_remove
+webkit_website_data_manager_remove_finish
+webkit_website_data_manager_clear
+webkit_website_data_manager_clear_finish
 
 <SUBSECTION Standard>
 WebKitWebsiteDataManagerClass
@@ -1257,6 +1263,23 @@ WEBKIT_WEBSITE_DATA_MANAGER_GET_CLASS
 <SUBSECTION Private>
 WebKitWebsiteDataManagerPrivate
 webkit_website_data_manager_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWebsiteData</FILE>
+WebKitWebsiteData
+WebKitWebsiteDataTypes
+webkit_website_data_ref
+webkit_website_data_unref
+webkit_website_data_get_name
+webkit_website_data_get_types
+webkit_website_data_get_size
+
+<SUBSECTION Standard>
+WEBKIT_TYPE_WEBSITE_DATA
+
+<SUBSECTION Private>
+webkit_website_data_get_type
 </SECTION>
 
 <SECTION>

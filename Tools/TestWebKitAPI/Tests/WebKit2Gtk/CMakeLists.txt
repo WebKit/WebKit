@@ -125,6 +125,7 @@ ADD_WK2_TEST(TestWebViewEditor TestWebViewEditor.cpp)
 ADD_WK2_TEST(TestWebKitWebContext TestWebKitWebContext.cpp)
 ADD_WK2_TEST(TestWebKitWebView TestWebKitWebView.cpp)
 ADD_WK2_TEST(TestWebKitUserContentManager TestWebKitUserContentManager.cpp)
+ADD_WK2_TEST(TestWebsiteData TestWebsiteData.cpp)
 ADD_WK2_TEST(TestEditor TestEditor.cpp)
 ADD_WK2_TEST(TestConsoleMessage TestConsoleMessage.cpp)
 

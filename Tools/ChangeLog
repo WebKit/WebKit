@@ -1,3 +1,49 @@
+2017-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to WebKitWebsiteDataManager to handle website data
+        https://bugs.webkit.org/show_bug.cgi?id=146589
+
+        Reviewed by Michael Catanzaro.
+
+        Add about:data handler to MiniBrowser to manually test the website data API. Also add unit tests to test all the
+        new API, moving the WebKitWebsiteDataManager configuration API to the new file too.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewDecidePolicy):
+        (newTabCallback):
+        * MiniBrowser/gtk/main.c:
+        (createBrowserTab):
+        (aboutDataRequestFree):
+        (aboutDataRequestNew):
+        (aboutDataRequestForView):
+        (websiteDataRemovedCallback):
+        (websiteDataClearedCallback):
+        (aboutDataScriptMessageReceivedCallback):
+        (domainListFree):
+        (aboutDataFillTable):
+        (gotWebsiteDataCallback):
+        (aboutDataHandleRequest):
+        (aboutURISchemeRequestCallback):
+        (main):
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        (serverCallback):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebsiteData.cpp: Added.
+        (serverCallback):
+        (WebsiteDataTest::WebsiteDataTest):
+        (WebsiteDataTest::~WebsiteDataTest):
+        (WebsiteDataTest::fetch):
+        (WebsiteDataTest::remove):
+        (WebsiteDataTest::clear):
+        (testWebsiteDataConfiguration):
+        (testWebsiteDataCache):
+        (testWebsiteDataStorage):
+        (testWebsiteDataDatabases):
+        (testWebsiteDataAppcache):
+        (beforeAll):
+        (afterAll):
+
 2017-01-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r211062.

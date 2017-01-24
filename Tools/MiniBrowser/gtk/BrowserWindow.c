@@ -330,7 +330,11 @@ static gboolean webViewDecidePolicy(WebKitWebView *webView, WebKitPolicyDecision
         return FALSE;
 
     /* Opening a new tab if link clicked with the middle button. */
-    WebKitWebView *newWebView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(webkit_web_view_get_context(webView)));
+    WebKitWebView *newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "web-context", webkit_web_view_get_context(webView),
+        "settings", webkit_web_view_get_settings(webView),
+        "user-content-manager", webkit_web_view_get_user_content_manager(webView),
+        NULL));
     browser_window_append_view(window, newWebView);
     webkit_web_view_load_request(newWebView, webkit_navigation_action_get_request(navigationAction));
 
@@ -466,8 +470,12 @@ static void newTabCallback(BrowserWindow *window)
     WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
     if (webkit_web_view_is_editable(webView))
         return;
-    WebKitSettings *settings = webkit_web_view_get_settings(webView);
-    browser_window_append_view(window, WEBKIT_WEB_VIEW(webkit_web_view_new_with_settings(settings)));
+
+    browser_window_append_view(window, WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "web-context", webkit_web_view_get_context(webView),
+        "settings", webkit_web_view_get_settings(webView),
+        "user-content-manager", webkit_web_view_get_user_content_manager(webView),
+        NULL)));
     gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), -1);
 }
 

@@ -53,6 +53,7 @@
     <xi:include href="xml/WebKitNotificationPermissionRequest.xml"/>
     <xi:include href="xml/WebKitSecurityOrigin.xml"/>
     <xi:include href="xml/WebKitWebsiteDataManager.xml"/>
+    <xi:include href="xml/WebKitWebsiteData.xml"/>
     <xi:include href="xml/WebKitNetworkProxySettings.xml"/>
   </chapter>
 
@@ -104,6 +105,16 @@
   <index id="api-index-2-12" role="2.12">
     <title>Index of new symbols in 2.12</title>
     <xi:include href="xml/api-index-2.12.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-14" role="2.14">
+    <title>Index of new symbols in 2.14</title>
+    <xi:include href="xml/api-index-2.14.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-16" role="2.16">
+    <title>Index of new symbols in 2.16</title>
+    <xi:include href="xml/api-index-2.16.xml"><xi:fallback /></xi:include>
   </index>
 
   <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>

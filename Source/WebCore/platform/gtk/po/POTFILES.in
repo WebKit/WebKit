@@ -15,6 +15,7 @@ LocalizedStringsGtk.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp
+../../../WebKit2/UIProcess/API/gtk/WebKitWebsiteData.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp

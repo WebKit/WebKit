@@ -22,6 +22,8 @@
 
 #include "APIWebsiteDataStore.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
+#include "WebKitWebsiteDataPrivate.h"
+#include "WebsiteDataFetchOption.h"
 #include <WebCore/FileSystem.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -32,7 +34,7 @@ using namespace WebKit;
  * SECTION: WebKitWebsiteDataManager
  * @Short_description: Website data manager
  * @Title: WebKitWebsiteDataManager
- * @See_also: #WebKitWebContext
+ * @See_also: #WebKitWebContext, #WebKitWebsiteData
  *
  * WebKitWebsiteDataManager allows you to manage the data that websites
  * can store in the client file system like databases or caches.
@@ -53,6 +55,10 @@ using namespace WebKit;
  * a WebKitWebsiteDataManager, the #WebKitWebContext will create a WebKitWebsiteDataManager
  * with the default configuration. To get the WebKitWebsiteDataManager of a #WebKitWebContext
  * you can use webkit_web_context_get_website_data_manager().
+ *
+ * WebKitWebsiteDataManager can also be used to fetch websites data, remove data
+ * stored by particular websites, or clear data for all websites modified since a given
+ * period of time.
  *
  * Since: 2.10
  */
@@ -482,4 +488,189 @@ const gchar* webkit_website_data_manager_get_websql_directory(WebKitWebsiteDataM
     if (!priv->webSQLDirectory)
         priv->webSQLDirectory.reset(g_strdup(API::WebsiteDataStore::defaultWebSQLDatabaseDirectory().utf8().data()));
     return priv->webSQLDirectory.get();
+}
+
+static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes types)
+{
+    OptionSet<WebsiteDataType> returnValue;
+    if (types & WEBKIT_WEBSITE_DATA_MEMORY_CACHE)
+        returnValue |= WebsiteDataType::MemoryCache;
+    if (types & WEBKIT_WEBSITE_DATA_DISK_CACHE)
+        returnValue |= WebsiteDataType::DiskCache;
+    if (types & WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE)
+        returnValue |= WebsiteDataType::OfflineWebApplicationCache;
+    if (types & WEBKIT_WEBSITE_DATA_SESSION_STORAGE)
+        returnValue |= WebsiteDataType::SessionStorage;
+    if (types & WEBKIT_WEBSITE_DATA_LOCAL_STORAGE)
+        returnValue |= WebsiteDataType::LocalStorage;
+    if (types & WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES)
+        returnValue |= WebsiteDataType::WebSQLDatabases;
+    if (types & WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES)
+        returnValue |= WebsiteDataType::IndexedDBDatabases;
+    if (types & WEBKIT_WEBSITE_DATA_PLUGIN_DATA)
+        returnValue |= WebsiteDataType::PlugInData;
+    return returnValue;
+}
+
+/**
+ * webkit_website_data_manager_fetch:
+ * @manager: a #WebKitWebsiteDataManager
+ * @types: #WebKitWebsiteDataTypes
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously get the list of #WebKitWebsiteData for the given @types.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_website_data_manager_fetch_finish() to get the result of the operation.
+ *
+ * Since: 2.16
+ */
+void webkit_website_data_manager_fetch(WebKitWebsiteDataManager* manager, WebKitWebsiteDataTypes types, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
+    manager->priv->websiteDataStore->websiteDataStore().fetchData(toWebsiteDataTypes(types), WebsiteDataFetchOption::ComputeSizes, [task = WTFMove(task)] (Vector<WebsiteDataRecord> records) {
+        GList* dataList = nullptr;
+        while (!records.isEmpty()) {
+            if (auto* data = webkitWebsiteDataCreate(records.takeLast()))
+                dataList = g_list_prepend(dataList, data);
+        }
+
+        g_task_return_pointer(task.get(), dataList, [](gpointer data) {
+            g_list_free_full(static_cast<GList*>(data), reinterpret_cast<GDestroyNotify>(webkit_website_data_unref));
+        });
+    });
+}
+
+/**
+ * webkit_website_data_manager_fetch_finish:
+ * @manager: a #WebKitWebsiteDataManager
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_website_data_manager_fetch().
+ *
+ * Returns: (element-type WebKitWebsiteData) (transfer full): a #GList of #WebKitWebsiteData. You must free the #GList with
+ *    g_list_free() and unref the #WebKitWebsiteData<!-- -->s with webkit_website_data_unref() when you're done with them.
+ *
+ * Since: 2.16
+ */
+GList* webkit_website_data_manager_fetch_finish(WebKitWebsiteDataManager* manager, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, manager), nullptr);
+
+    return static_cast<GList*>(g_task_propagate_pointer(G_TASK(result), error));
+}
+
+/**
+ * webkit_website_data_manager_remove:
+ * @manager: a #WebKitWebsiteDataManager
+ * @types: #WebKitWebsiteDataTypes
+ * @website_data: (element-type WebKitWebsiteData): a #GList of #WebKitWebsiteData
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously removes the website data of the for the given @types for websites in the given @website_data list.
+ * Use webkit_website_data_manager_clear() if you want to remove the website data for all sites.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_website_data_manager_remove_finish() to get the result of the operation.
+ *
+ * Since: 2.16
+ */
+void webkit_website_data_manager_remove(WebKitWebsiteDataManager* manager, WebKitWebsiteDataTypes types, GList* websiteData, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
+    g_return_if_fail(websiteData);
+
+    Vector<WebsiteDataRecord> records;
+    for (GList* item = websiteData; item; item = g_list_next(item)) {
+        WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(item->data);
+
+        if (webkit_website_data_get_types(data) & types)
+            records.append(webkitWebsiteDataGetRecord(data));
+    }
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
+    if (records.isEmpty()) {
+        g_task_return_boolean(task.get(), TRUE);
+        return;
+    }
+
+    manager->priv->websiteDataStore->websiteDataStore().removeData(toWebsiteDataTypes(types), records, [task = WTFMove(task)] {
+        g_task_return_boolean(task.get(), TRUE);
+    });
+}
+
+/**
+ * webkit_website_data_manager_remove_finish:
+ * @manager: a #WebKitWebsiteDataManager
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_website_data_manager_remove().
+ *
+ * Returns: %TRUE if website data resources were succesfully removed, or %FALSE otherwise.
+ *
+ * Since: 2.16
+ */
+gboolean webkit_website_data_manager_remove_finish(WebKitWebsiteDataManager* manager, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), FALSE);
+    g_return_val_if_fail(g_task_is_valid(result, manager), FALSE);
+
+    return g_task_propagate_boolean(G_TASK(result), error);
+}
+
+/**
+ * webkit_website_data_manager_clear:
+ * @manager: a #WebKitWebsiteDataManager
+ * @types: #WebKitWebsiteDataTypes
+ * @timespan: a #GTimeSpan
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously clear the website data of the given @types modified in the past @timespan.
+ * If @timespan is 0 all website data will be removed.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_website_data_manager_clear_finish() to get the result of the operation.
+ *
+ * Since: 2.16
+ */
+void webkit_website_data_manager_clear(WebKitWebsiteDataManager* manager, WebKitWebsiteDataTypes types, GTimeSpan timeSpan, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
+
+    std::chrono::system_clock::time_point timePoint = timeSpan ? std::chrono::system_clock::now() - std::chrono::microseconds(timeSpan) : std::chrono::system_clock::from_time_t(0);
+    GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
+    manager->priv->websiteDataStore->websiteDataStore().removeData(toWebsiteDataTypes(types), timePoint, [task = WTFMove(task)] {
+        g_task_return_boolean(task.get(), TRUE);
+    });
+}
+
+/**
+ * webkit_website_data_manager_clear_finish:
+ * @manager: a #WebKitWebsiteDataManager
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_website_data_manager_clear()
+ *
+ * Returns: %TRUE if website data was succesfully cleared, or %FALSE otherwise.
+ *
+ * Since: 2.16
+ */
+gboolean webkit_website_data_manager_clear_finish(WebKitWebsiteDataManager* manager, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), FALSE);
+    g_return_val_if_fail(g_task_is_valid(result, manager), FALSE);
+
+    return g_task_propagate_boolean(G_TASK(result), error);
 }

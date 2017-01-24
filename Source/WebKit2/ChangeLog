@@ -1,3 +1,42 @@
+2017-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to WebKitWebsiteDataManager to handle website data
+        https://bugs.webkit.org/show_bug.cgi?id=146589
+
+        Reviewed by Michael Catanzaro.
+
+        Add WebKitWebsiteData boxed type to wrap a WebsiteDataRecord and new methods to WebKitWebsiteDataManager to
+        fetch, remove and clear website data.
+
+        * PlatformGTK.cmake: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitWebsiteData.cpp: Added.
+        (_WebKitWebsiteData::_WebKitWebsiteData):
+        (recordContainsSupportedDataTypes): Helper function to check if the WebsiteDataRecord contains any type exposed
+        by our API.
+        (toWebKitWebsiteDataTypes): Convert from WebKit::WebsiteDataType to the GTK+ public API types.
+        (webkitWebsiteDataCreate): Create a new WebKitWebsiteData for the given WebsiteDataRecord if it contains any
+        supported type.
+        (webkitWebsiteDataGetRecord): Returns the wrapped WebsiteDataRecord.
+        (webkit_website_data_ref):
+        (webkit_website_data_unref):
+        (webkit_website_data_get_name): Return the display name.
+        (webkit_website_data_get_types): Returns the mask of types.
+        (webkit_website_data_get_size): Returns the size for the given types.
+        * UIProcess/API/gtk/WebKitWebsiteData.h: Added.
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.cpp:
+        (toWebsiteDataTypes): Convert from GTK+ public API types to WebKit::WebsiteDataType.
+        (webkit_website_data_manager_fetch): Fetch website data of the given types.
+        (webkit_website_data_manager_fetch_finish):
+        (webkit_website_data_manager_remove): Remove the website data of the given types for the given WebKitWebsiteData list.
+        (webkit_website_data_manager_remove_finish):
+        (webkit_website_data_manager_clear): Clear all website data of the given types modified since the given time span.
+        (webkit_website_data_manager_clear_finish):
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.h:
+        * UIProcess/API/gtk/WebKitWebsiteDataPrivate.h: Added.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section.
+        * UIProcess/API/gtk/webkit2.h: Inlcude WebKitWebsiteData.h
+
 2017-01-23  Antti Koivisto  <antti@apple.com>
 
         Maintain ordering when doing speculative loads
