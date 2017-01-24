@@ -41,6 +41,13 @@
 #include "HTMLCanvasElement.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
+#include "WebGLLayer.h"
+#include "WebGLObject.h"
+#include "WebGLRenderingContextBase.h"
+#include <sys/sysctl.h>
+#include <sysexits.h>
+#include <wtf/text/CString.h>
+
 #if PLATFORM(IOS)
 #import "OpenGLESSPI.h"
 #import <OpenGLES/ES2/glext.h>
@@ -48,14 +55,10 @@
 #import <OpenGLES/EAGLDrawable.h>
 #import <QuartzCore/QuartzCore.h>
 #else
+#include <IOKit/IOKitLib.h>
 #include <OpenGL/CGLRenderers.h>
 #include <OpenGL/gl.h>
 #endif
-#include "WebGLLayer.h"
-#include "WebGLObject.h"
-#include "WebGLRenderingContextBase.h"
-#include <sysexits.h>
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -78,7 +81,80 @@ public:
     ~GraphicsContext3DPrivate() { }
 };
 
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
+
+enum {
+    kAGCOpen,
+    kAGCClose
+};
+
+static io_connect_t attachToAppleGraphicsControl()
+{
+    mach_port_t masterPort;
+
+    if (IOMasterPort(MACH_PORT_NULL, &masterPort) != KERN_SUCCESS)
+        return MACH_PORT_NULL;
+
+    CFDictionaryRef classToMatch = IOServiceMatching("AppleGraphicsControl");
+    if (!classToMatch)
+        return MACH_PORT_NULL;
+
+    kern_return_t kernResult;
+    io_iterator_t iterator;
+    if ((kernResult = IOServiceGetMatchingServices(masterPort, classToMatch, &iterator)) != KERN_SUCCESS)
+        return MACH_PORT_NULL;
+
+    io_service_t serviceObject = IOIteratorNext(iterator);
+    IOObjectRelease(iterator);
+    if (!serviceObject)
+        return MACH_PORT_NULL;
+
+    io_connect_t dataPort;
+    IOObjectRetain(serviceObject);
+    kernResult = IOServiceOpen(serviceObject, mach_task_self(), 0, &dataPort);
+    IOObjectRelease(serviceObject);
+
+    return (kernResult == KERN_SUCCESS) ? dataPort : MACH_PORT_NULL;
+}
+
+static bool hasMuxCapability()
+{
+    io_connect_t dataPort = attachToAppleGraphicsControl();
+
+    if (dataPort == MACH_PORT_NULL)
+        return false;
+
+    bool result;
+    if (IOConnectCallScalarMethod(dataPort, kAGCOpen, nullptr, 0, nullptr, nullptr) == KERN_SUCCESS) {
+        IOConnectCallScalarMethod(dataPort, kAGCClose, nullptr, 0, nullptr, nullptr);
+        result = true;
+    } else
+        result = false;
+
+    IOServiceClose(dataPort);
+
+    if (result) {
+        // This is detecting Mac hardware with an Intel g575 GPU, which
+        // we don't want to make available to muxing.
+        // Based on information from Apple's OpenGL team, such devices
+        // have four or fewer processors.
+        // <rdar://problem/30060378>
+        int names[2] = { CTL_HW, HW_NCPU };
+        int cpuCount;
+        size_t cpuCountLength = sizeof(cpuCount);
+        sysctl(names, 2, &cpuCount, &cpuCountLength, nullptr, 0);
+        result = cpuCount > 4;
+    }
+
+    return result;
+}
+
+static bool hasMuxableGPU()
+{
+    static bool canMux = hasMuxCapability();
+    return canMux;
+}
+
 static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBits, int depthBits, bool accelerated, bool supersample, bool closest, bool antialias, bool allowOffline, bool useGLES3)
 {
     attribs.clear();
@@ -92,7 +168,7 @@ static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBi
     // allowing us to request the integrated graphics on a dual GPU
     // system, and not force the discrete GPU.
     // See https://developer.apple.com/library/mac/technotes/tn2229/_index.html
-    if (allowOffline)
+    if (allowOffline && hasMuxableGPU())
         attribs.append(kCGLPFAAllowOfflineRenderers);
 
     if (accelerated)

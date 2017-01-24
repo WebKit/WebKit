@@ -1,5 +1,38 @@
 2017-01-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211028. rdar://problem/30060378
+
+    2017-01-20  Dean Jackson  <dino@apple.com>
+
+            [WebGL] Do not allow GPU muxing on some old Mac hardware
+            https://bugs.webkit.org/show_bug.cgi?id=167259
+            <rdar://problem/30060378>
+
+            Reviewed by Simon Fraser and Darin Adler.
+
+            Some old Macbook Pro models should never use the
+            integrated GPU for WebGL, because they are unstable
+            when swapping between that and the discrete GPU.
+
+            Unfortunately this hardware configuration isn't in our
+            testing infrastructure, so it was confirmed manually.
+            Meanwhile, our existing tests make sure this patch
+            doesn't break anything elsewhere.
+
+            * platform/graphics/mac/GraphicsContext3DMac.mm:
+            (WebCore::attachToAppleGraphicsControl): Helper function
+            to get a mach port that talks to Apple's Graphics Control
+            system.
+            (WebCore::hasMuxCapability): Decides whether a system
+            can do live GPU switching, based on whether or not it
+            has a muxable GPU, and if that GPU is not the old hardware
+            we know is problematic.
+            (WebCore::hasMuxableGPU): Helper to return the static hasMuxCapability value.
+            (WebCore::setPixelFormat): Only request the integrated card when the
+            GPU is muxable.
+
+2017-01-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211007. rdar://problem/28620919
 
     2017-01-20  Brady Eidson  <beidson@apple.com>
