@@ -1005,7 +1005,7 @@ SLOW_PATH_DECL(slow_path_new_array_with_spread)
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
 
-    JSArray* result = JSArray::tryCreateUninitialized(vm, structure, arraySize);
+    JSArray* result = JSArray::tryCreateForInitializationPrivate(vm, structure, arraySize);
     CHECK_EXCEPTION();
 
     unsigned index = 0;

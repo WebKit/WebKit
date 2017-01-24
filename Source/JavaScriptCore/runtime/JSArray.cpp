@@ -58,7 +58,7 @@ Butterfly* createArrayButterflyInDictionaryIndexingMode(
     return butterfly;
 }
 
-JSArray* JSArray::tryCreateUninitialized(VM& vm, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength)
+JSArray* JSArray::tryCreateForInitializationPrivate(VM& vm, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength)
 {
     if (initialLength > MAX_STORAGE_VECTOR_LENGTH)
         return 0;
@@ -846,7 +846,7 @@ JSArray* JSArray::fastSlice(ExecState& exec, unsigned startIndex, unsigned count
             return nullptr;
 
         Structure* resultStructure = exec.lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(arrayType);
-        JSArray* resultArray = JSArray::tryCreateUninitialized(vm, resultStructure, count);
+        JSArray* resultArray = JSArray::tryCreateForInitializationPrivate(vm, resultStructure, count);
         if (!resultArray)
             return nullptr;
 

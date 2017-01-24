@@ -39,7 +39,7 @@ JSArray* createEmptyRegExpMatchesArray(JSGlobalObject* globalObject, JSString* i
     GCDeferralContext deferralContext(vm.heap);
     
     if (UNLIKELY(globalObject->isHavingABadTime())) {
-        array = JSArray::tryCreateUninitialized(vm, &deferralContext, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
+        array = JSArray::tryCreateForInitializationPrivate(vm, &deferralContext, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
         
         array->initializeIndexWithoutBarrier(0, jsEmptyString(&vm));
         

@@ -56,7 +56,7 @@ public:
     static JSArray* create(VM&, Structure*, unsigned initialLength = 0);
     static JSArray* createWithButterfly(VM&, GCDeferralContext*, Structure*, Butterfly*);
 
-    // tryCreateUninitialized is used for fast construction of arrays whose size and
+    // tryCreateForInitializationPrivate is used for fast construction of arrays whose size and
     // contents are known at time of creation. This should be considered a private API.
     // Clients of this interface must:
     //   - null-check the result (indicating out of memory, or otherwise unable to allocate vector).
@@ -64,10 +64,10 @@ public:
     //   - Provide a valid GCDefferalContext* if they might garbage collect when initializing properties,
     //     otherwise the caller can provide a null GCDefferalContext*.
     //
-    JS_EXPORT_PRIVATE static JSArray* tryCreateUninitialized(VM&, GCDeferralContext*, Structure*, unsigned initialLength);
-    static JSArray* tryCreateUninitialized(VM& vm, Structure* structure, unsigned initialLength)
+    JS_EXPORT_PRIVATE static JSArray* tryCreateForInitializationPrivate(VM&, GCDeferralContext*, Structure*, unsigned initialLength);
+    static JSArray* tryCreateForInitializationPrivate(VM& vm, Structure* structure, unsigned initialLength)
     {
-        return tryCreateUninitialized(vm, nullptr, structure, initialLength);
+        return tryCreateForInitializationPrivate(vm, nullptr, structure, initialLength);
     }
 
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool throwException);
@@ -295,7 +295,7 @@ inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const
 {
     VM& vm = exec->vm();
     unsigned length = values.size();
-    JSArray* array = JSArray::tryCreateUninitialized(vm, arrayStructure, length);
+    JSArray* array = JSArray::tryCreateForInitializationPrivate(vm, arrayStructure, length);
 
     // FIXME: we should probably throw an out of memory error here, but
     // when making this change we should check that all clients of this
@@ -310,7 +310,7 @@ inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const
 inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const JSValue* values, unsigned length)
 {
     VM& vm = exec->vm();
-    JSArray* array = JSArray::tryCreateUninitialized(vm, arrayStructure, length);
+    JSArray* array = JSArray::tryCreateForInitializationPrivate(vm, arrayStructure, length);
 
     // FIXME: we should probably throw an out of memory error here, but
     // when making this change we should check that all clients of this
@@ -325,7 +325,7 @@ inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const
 inline JSArray* constructArrayNegativeIndexed(ExecState* exec, Structure* arrayStructure, const JSValue* values, unsigned length)
 {
     VM& vm = exec->vm();
-    JSArray* array = JSArray::tryCreateUninitialized(vm, arrayStructure, length);
+    JSArray* array = JSArray::tryCreateForInitializationPrivate(vm, arrayStructure, length);
 
     // FIXME: we should probably throw an out of memory error here, but
     // when making this change we should check that all clients of this

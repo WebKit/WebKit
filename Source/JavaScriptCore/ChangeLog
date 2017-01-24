@@ -1,3 +1,32 @@
+2017-01-24  Michael Saboff  <msaboff@apple.com>
+
+        JSArray::tryCreateUninitialized should be called JSArray::tryCreateForInitializationPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=167334
+
+        Rubber-stamped by Filip Pizlo.
+
+        * dfg/DFGOperations.cpp:
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateForInitializationPrivate):
+        (JSC::JSArray::fastSlice):
+        (JSC::JSArray::tryCreateUninitialized): Deleted.
+        * runtime/JSArray.h:
+        (JSC::JSArray::tryCreateForInitializationPrivate):
+        (JSC::constructArray):
+        (JSC::constructArrayNegativeIndexed):
+        (JSC::JSArray::tryCreateUninitialized): Deleted.
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::createEmptyRegExpMatchesArray):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+
 2017-01-23  Michael Saboff  <msaboff@apple.com>
 
         InferredTypeTable entry manipulation is not TOCTOU race safe

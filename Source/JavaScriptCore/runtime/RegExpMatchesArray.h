@@ -80,7 +80,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
     GCDeferralContext deferralContext(vm.heap);
     
     if (UNLIKELY(globalObject->isHavingABadTime())) {
-        array = JSArray::tryCreateUninitialized(vm, &deferralContext, globalObject->regExpMatchesArrayStructure(), numSubpatterns + 1);
+        array = JSArray::tryCreateForInitializationPrivate(vm, &deferralContext, globalObject->regExpMatchesArrayStructure(), numSubpatterns + 1);
         
         setProperties();
         

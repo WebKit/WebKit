@@ -1956,7 +1956,7 @@ JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState* exec, void* buf
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
 
-    JSArray* result = JSArray::tryCreateUninitialized(vm, structure, length);
+    JSArray* result = JSArray::tryCreateForInitializationPrivate(vm, structure, length);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     unsigned index = 0;

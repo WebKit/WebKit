@@ -355,7 +355,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             Structure* structure = globalObject->restParameterStructure();
             ASSERT(argumentCount > 0);
             unsigned arraySize = (argumentCount - 1) > numberOfArgumentsToSkip ? argumentCount - 1 - numberOfArgumentsToSkip : 0;
-            JSArray* array = JSArray::tryCreateUninitialized(vm, structure, arraySize);
+            JSArray* array = JSArray::tryCreateForInitializationPrivate(vm, structure, arraySize);
             RELEASE_ASSERT(array);
 
             for (unsigned i = materialization->properties().size(); i--;) {
@@ -444,7 +444,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             }
         }
 
-        JSArray* result = JSArray::tryCreateUninitialized(vm, structure, arraySize);
+        JSArray* result = JSArray::tryCreateForInitializationPrivate(vm, structure, arraySize);
         RELEASE_ASSERT(result);
 
 #if !ASSERT_DISABLED
