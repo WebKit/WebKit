@@ -1007,6 +1007,7 @@ static EncodedJSValue JSC_HOST_CALL functionSetGlobalConstRedeclarationShouldNot
 static EncodedJSValue JSC_HOST_CALL functionGetRandomSeed(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionSetRandomSeed(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionIsRope(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionGlobalObjectForObject(ExecState*);
 
 struct Script {
     enum class StrictMode {
@@ -1230,6 +1231,8 @@ protected:
         addFunction(vm, "getRandomSeed", functionGetRandomSeed, 0);
         addFunction(vm, "setRandomSeed", functionSetRandomSeed, 1);
         addFunction(vm, "isRope", functionIsRope, 1);
+
+        addFunction(vm, "globalObjectForObject", functionGlobalObjectForObject, 1);
 
         addFunction(vm, "is32BitPlatform", functionIs32BitPlatform, 0);
 
@@ -2102,6 +2105,15 @@ EncodedJSValue JSC_HOST_CALL functionIsRope(ExecState* exec)
         return JSValue::encode(jsBoolean(false));
     const StringImpl* impl = asString(argument)->tryGetValueImpl();
     return JSValue::encode(jsBoolean(!impl));
+}
+
+EncodedJSValue JSC_HOST_CALL functionGlobalObjectForObject(ExecState* exec)
+{
+    JSValue value = exec->argument(0);
+    RELEASE_ASSERT(value.isObject());
+    JSGlobalObject* globalObject = jsCast<JSObject*>(value)->globalObject();
+    RELEASE_ASSERT(globalObject);
+    return JSValue::encode(globalObject);
 }
 
 EncodedJSValue JSC_HOST_CALL functionReadline(ExecState* exec)

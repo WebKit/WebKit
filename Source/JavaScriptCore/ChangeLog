@@ -1,5 +1,48 @@
 2017-01-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211070. rdar://problem/30121809
+
+    2017-01-23  Saam Barati  <sbarati@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=167247
+            JSC: operationSpreadGeneric uses the wrong global object for the builtin function and slow_path_spread consults the wrong global object to prove if the iterator protocol is unobservable
+            <rdar://problem/30121809>
+
+            Reviewed by Filip Pizlo.
+
+            There were two bugs in the different tiers with respect to how
+            spread handled global objects.
+
+            The first was in the LLInt/baseline inside slow_path_spread:
+
+            We consulted the lexical global object instead of the thing we're
+            spreading's global object to determine if the array iterator protocol
+            is unobservable. This is wrong if the incoming array is from a different
+            global object. We must consult the incoming array's global object
+            to determine if it can be spread using the fast path.
+
+            The second was in operationSpreadGeneric in the DFG/FTL:
+
+            We were always using the incoming array's global object, even
+            when going down the slow path. This is wrong because we were
+            fetching the builtin iteration function helper from the incoming
+            array's global object, which meant that if the iterator function
+            were to throw an exception, it could leak objects from a different
+            global object. We should be executing the iterator function with
+            the lexical global object.
+
+            * dfg/DFGOperations.cpp:
+            * jsc.cpp:
+            (GlobalObject::finishCreation):
+            (functionGlobalObjectForObject):
+            * runtime/CommonSlowPaths.cpp:
+            (JSC::SLOW_PATH_DECL):
+            * runtime/JSArray.h:
+            * runtime/JSArrayInlines.h:
+            (JSC::JSArray::isIteratorProtocolFastAndNonObservable):
+
+2017-01-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211069. rdar://problem/30173274
 
     2017-01-22  Filip Pizlo  <fpizlo@apple.com>

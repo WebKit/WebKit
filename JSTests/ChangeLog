@@ -1,3 +1,24 @@
+2017-01-24  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211070. rdar://problem/30121809
+
+    2017-01-23  Saam Barati  <sbarati@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=167247
+            JSC: operationSpreadGeneric uses the wrong global object for the builtin function and slow_path_spread consults the wrong global object to prove if the iterator protocol is unobservable
+            <rdar://problem/30121809>
+
+            Reviewed by Filip Pizlo.
+
+            * stress/spread-consults-correct-global-object.js: Added.
+            (assert):
+            (spread):
+            * stress/spread-correct-global-object-on-exception.js: Added.
+            (assert):
+            (spread):
+            (const.objectText.let.o.Symbol.iterator):
+            (catch):
+
 2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r210844. rdar://problem/29993906

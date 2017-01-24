@@ -47,6 +47,7 @@
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITExceptions.h"
+#include "JSArrayInlines.h"
 #include "JSCInlines.h"
 #include "JSFixedArray.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"
@@ -1984,19 +1985,18 @@ JSCell* JIT_OPERATION operationSpreadGeneric(ExecState* exec, JSCell* iterable)
 
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSGlobalObject* globalObject = iterable->structure(vm)->globalObject();
-    if (!globalObject)
-        globalObject = exec->lexicalGlobalObject();
-
-    if (isJSArray(iterable) && globalObject->isArrayIteratorProtocolFastAndNonObservable()) {
+    if (isJSArray(iterable)) {
         JSArray* array = jsCast<JSArray*>(iterable);
-        throwScope.release();
-        return JSFixedArray::createFromArray(exec, vm, array);
+        if (array->isIteratorProtocolFastAndNonObservable()) {
+            throwScope.release();
+            return JSFixedArray::createFromArray(exec, vm, array);
+        }
     }
 
     // FIXME: we can probably make this path faster by having our caller JS code call directly into
     // the iteration protocol builtin: https://bugs.webkit.org/show_bug.cgi?id=164520
 
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     JSArray* array;
     {
         JSFunction* iterationFunction = globalObject->iteratorProtocolFunction();
@@ -2022,7 +2022,7 @@ JSCell* JIT_OPERATION operationSpreadFastArray(ExecState* exec, JSCell* cell)
 
     ASSERT(isJSArray(cell));
     JSArray* array = jsCast<JSArray*>(cell);
-    ASSERT(array->globalObject()->isArrayIteratorProtocolFastAndNonObservable());
+    ASSERT(array->isIteratorProtocolFastAndNonObservable());
 
     return JSFixedArray::createFromArray(exec, vm, array);
 }
