@@ -55,6 +55,10 @@ extern "C" {
 WK_EXPORT id <_WKObservablePageState> WKPageCreateObservableState(WKPageRef page) NS_RETURNS_RETAINED;
 WK_EXPORT _WKRemoteObjectRegistry *WKPageGetObjectRegistry(WKPageRef page);
 
+@protocol _WKFullscreenDelegate;
+WK_EXPORT void WKPageSetFullscreenDelegate(WKPageRef page, id <_WKFullscreenDelegate>);
+WK_EXPORT id <_WKFullscreenDelegate> WKPageGetFullscreenDelegate(WKPageRef page);
+
 #endif
 
 WK_EXPORT bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url);
