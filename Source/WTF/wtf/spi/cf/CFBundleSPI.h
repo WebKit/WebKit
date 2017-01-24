@@ -38,6 +38,7 @@ WTF_EXTERN_C_BEGIN
 
 void _CFBundleSetupXPCBootstrap(xpc_object_t bootstrap);
 
+CFBundleRef _CFBundleCreateUnique(CFAllocatorRef, CFURLRef bundleURL);
 Boolean CFBundleGetLocalizationInfoForLocalization(CFStringRef localizationName, SInt32 *languageCode, SInt32 *regionCode, SInt32 *scriptCode, CFStringEncoding *stringEncoding);
 CFStringRef CFBundleCopyLocalizationForLocalizationInfo(SInt32 languageCode, SInt32 regionCode, SInt32 scriptCode, CFStringEncoding stringEncoding);
 
