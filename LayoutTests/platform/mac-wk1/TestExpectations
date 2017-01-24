@@ -312,3 +312,5 @@ webkit.org/b/167350 media/modern-media-controls/pip-button/pip-button.html [ Pas
 webkit.org/b/167347 media/modern-media-controls/airplay-button/airplay-button-on.html [ Pass Timeout ]
 
 webkit.org/b/164620 media/modern-media-controls/skip-back-button/skip-back-button.html [ Pass Timeout ]
+
+webkit.org/b/164571 media/modern-media-controls/media-controller/media-controller-resize.html [ Pass Failure ]
