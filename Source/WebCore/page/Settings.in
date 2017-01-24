@@ -106,7 +106,6 @@ rubberBandingForSubScrollableRegionsEnabled initial=true, conditional=RUBBER_BAN
 experimentalNotificationsEnabled initial=false
 webGLEnabled initial=false
 webGLErrorsToConsoleEnabled initial=true
-openGLMultisamplingEnabled initial=true
 forceSoftwareWebGLRendering initial=false
 preferLowPowerWebGLRendering initial=true
 accelerated2dCanvasEnabled initial=false

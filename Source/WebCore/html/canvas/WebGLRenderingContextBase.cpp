@@ -388,11 +388,6 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
         }
     }
 
-    if (attributes.antialias) {
-        if (!frame->settings().openGLMultisamplingEnabled())
-            attributes.antialias = false;
-    }
-
     attributes.noExtensions = true;
     attributes.shareResources = false;
 

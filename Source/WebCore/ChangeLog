@@ -1,3 +1,14 @@
+2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove always true openGLMultisamplingEnabled setting
+        https://bugs.webkit.org/show_bug.cgi?id=167364
+
+        Reviewed by Sam Weinig.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        * page/Settings.in:
+
 2017-01-24  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Do not paint non composited content into the window when using the threaded compositor
