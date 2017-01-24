@@ -93,4 +93,9 @@ ALWAYS_INLINE double toLength(ExecState* exec, JSObject* obj)
     return lengthValue.toLength(exec);
 }
 
+ALWAYS_INLINE bool JSArray::isIteratorProtocolFastAndNonObservable()
+{
+    return globalObject()->isArrayIteratorProtocolFastAndNonObservable();
+}
+
 } // namespace JSC
