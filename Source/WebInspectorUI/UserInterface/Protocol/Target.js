@@ -46,6 +46,7 @@ WebInspector.Target = class Target extends WebInspector.Object
     get RuntimeAgent() { return this._connection._agents.Runtime; }
     get ConsoleAgent() { return this._connection._agents.Console; }
     get DebuggerAgent() { return this._connection._agents.Debugger; }
+    get HeapAgent() { return this._connection._agents.Heap; }
 
     // Public
 

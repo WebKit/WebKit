@@ -87,6 +87,7 @@ InspectorBackend.registerCommand("Console.clearMessages", [], []);
 InspectorBackend.registerCommand("Console.setMonitoringXHREnabled", [{"name": "enabled", "type": "boolean", "optional": false}], []);
 InspectorBackend.registerCommand("Console.addInspectedNode", [{"name": "nodeId", "type": "number", "optional": false}], []);
 InspectorBackend.activateDomain("Console");
+InspectorBackend.workerSupportedDomain("Console");
 
 // DOM.
 InspectorBackend.registerDOMDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "DOM");
@@ -218,6 +219,7 @@ InspectorBackend.registerCommand("Debugger.setPauseOnAssertions", [{"name": "ena
 InspectorBackend.registerCommand("Debugger.evaluateOnCallFrame", [{"name": "callFrameId", "type": "string", "optional": false}, {"name": "expression", "type": "string", "optional": false}, {"name": "objectGroup", "type": "string", "optional": true}, {"name": "includeCommandLineAPI", "type": "boolean", "optional": true}, {"name": "doNotPauseOnExceptionsAndMuteConsole", "type": "boolean", "optional": true}, {"name": "returnByValue", "type": "boolean", "optional": true}, {"name": "generatePreview", "type": "boolean", "optional": true}, {"name": "saveResult", "type": "boolean", "optional": true}], ["result", "wasThrown", "savedResultIndex"]);
 InspectorBackend.registerCommand("Debugger.setOverlayMessage", [{"name": "message", "type": "string", "optional": true}], []);
 InspectorBackend.activateDomain("Debugger");
+InspectorBackend.workerSupportedDomain("Debugger");
 
 // Heap.
 InspectorBackend.registerHeapDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Heap");
@@ -368,6 +370,7 @@ InspectorBackend.registerCommand("Runtime.enableControlFlowProfiler", [], []);
 InspectorBackend.registerCommand("Runtime.disableControlFlowProfiler", [], []);
 InspectorBackend.registerCommand("Runtime.getBasicBlocks", [{"name": "sourceID", "type": "string", "optional": false}], ["basicBlocks"]);
 InspectorBackend.activateDomain("Runtime");
+InspectorBackend.workerSupportedDomain("Runtime");
 
 // ScriptProfiler.
 InspectorBackend.registerScriptProfilerDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "ScriptProfiler");

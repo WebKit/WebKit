@@ -1,3 +1,57 @@
+2017-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Provide a way to trigger a Garbage Collection
+        https://bugs.webkit.org/show_bug.cgi?id=167345
+        <rdar://problem/30102853>
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New "Garbage collect" tooltip.
+
+        * Versions/Inspector-iOS-10.3.json:
+        * UserInterface/Protocol/Legacy/10.3/InspectorBackendCommands.js:
+        Update 10.3 so it generates its list of supported domains for workers.
+        Note that the Heap domain is not be available in this backend but it is now.
+
+        * UserInterface/Protocol/Connection.js:
+        (InspectorBackend.WorkerConnection):
+        * UserInterface/Protocol/HeapObserver.js:
+        (WebInspector.HeapObserver.prototype.garbageCollected):
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass):
+        (InspectorBackendClass.prototype.get workerSupportedDomains):
+        (InspectorBackendClass.prototype.workerSupportedDomain):
+
+        * UserInterface/Images/NavigationItemClear.svg: Added.
+        * UserInterface/Images/NavigationItemGarbageCollect.svg: Added.
+        New image for Garbage Collection. Better image for clearing.
+        
+        * UserInterface/Images/gtk/NavigationItemClear.svg: Added.
+        Copy the Trash icon for Clear for gtk.
+
+        * UserInterface/Protocol/Target.js:
+        (WebInspector.Target.prototype.get HeapAgent):
+        * UserInterface/Protocol/WorkerTarget.js:
+        (WebInspector.WorkerTarget):
+        Include Heap agent for Workers.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView):
+        (WebInspector.LogContentView.prototype.get navigationItems):
+        (WebInspector.LogContentView.prototype._garbageCollect):
+        Add garbage collect button which triggers gc on all capable targets.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        Update the Clear icon to an improved icon.
+
+        * UserInterface/Controllers/HeapManager.js:
+        (WebInspector.HeapManager.prototype.garbageCollected):
+        Timelines only shows Main Target events, do not show GC events for Workers.
+
 2017-01-23  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: long press on New Tab Tab Item should show context menu with recently closed tabs that are still closed

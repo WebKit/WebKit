@@ -295,8 +295,7 @@ InspectorBackend.WorkerConnection = class InspectorBackendWorkerConnection exten
 
         this._workerId = workerId;
 
-        // FIXME: Get this list from generated InspectorBackendCommands / InspectorBackend.
-        const workerDomains = ["Runtime", "Console", "Debugger"];
+        const workerDomains = InspectorBackend.workerSupportedDomains;
 
         for (let domain of workerDomains) {
             let agent = InspectorBackend._agents[domain];

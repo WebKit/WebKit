@@ -41,6 +41,7 @@ InspectorBackendClass = class InspectorBackendClass
         this._activeTracers = [this._defaultTracer];
 
         this._dumpInspectorTimeStats = false;
+        this._workerSupportedDomains = [];
 
         let setting = WebInspector.autoLogProtocolMessagesSetting = new WebInspector.Setting("auto-collect-protocol-messages", false);
         setting.addEventListener(WebInspector.Setting.Event.Changed, this._startOrStopAutomaticTracing.bind(this));
@@ -54,6 +55,8 @@ InspectorBackendClass = class InspectorBackendClass
     }
 
     // Public
+
+    get workerSupportedDomains() { return this._workerSupportedDomains; }
 
     // It's still possible to set this flag on InspectorBackend to just
     // dump protocol traffic as it happens. For more complex uses of
@@ -166,6 +169,11 @@ InspectorBackendClass = class InspectorBackendClass
         }
 
         return null;
+    }
+
+    workerSupportedDomain(domainName)
+    {
+        this._workerSupportedDomains.push(domainName);
     }
 
     // Private

@@ -180,6 +180,7 @@ localizedStrings["Closure Variables (%s)"] = "Closure Variables (%s)";
 localizedStrings["Code"] = "Code";
 localizedStrings["Collapse All"] = "Collapse All";
 localizedStrings["Collapse columns"] = "Collapse columns";
+localizedStrings["Collect garbage"] = "Collect garbage";
 localizedStrings["Color"] = "Color";
 localizedStrings["Comment"] = "Comment";
 localizedStrings["Comment All Properties"] = "Comment All Properties";

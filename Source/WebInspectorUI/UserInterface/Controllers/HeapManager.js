@@ -35,9 +35,13 @@ WebInspector.HeapManager = class HeapManager extends WebInspector.Object
 
     // Public
 
-    garbageCollected(payload)
+    garbageCollected(target, payload)
     {
         // Called from WebInspector.HeapObserver.
+
+        // FIXME: <https://webkit.org/b/167323> Web Inspector: Enable Memory profiling in Workers
+        if (target !== WebInspector.mainTarget)
+            return;
 
         let collection = WebInspector.GarbageCollection.fromPayload(payload);
         this.dispatchEventToListeners(WebInspector.HeapManager.Event.GarbageCollected, {collection});

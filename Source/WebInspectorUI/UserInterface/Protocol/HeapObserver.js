@@ -29,7 +29,7 @@ WebInspector.HeapObserver = class HeapObserver
 
     garbageCollected(collection)
     {
-        WebInspector.heapManager.garbageCollected(collection);
+        WebInspector.heapManager.garbageCollected(this.target, collection);
     }
 
     trackingStart(timestamp, snapshotStringData)

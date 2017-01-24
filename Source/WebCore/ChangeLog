@@ -1,5 +1,17 @@
 2017-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Provide a way to trigger a Garbage Collection
+        https://bugs.webkit.org/show_bug.cgi?id=167345
+        <rdar://problem/30102853>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        Include a HeapAgent so we can do Heap.gc on Workers.
+
+2017-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Cleanup WEB_TIMING code
         https://bugs.webkit.org/show_bug.cgi?id=167339
 
