@@ -1497,6 +1497,8 @@ webkit.org/b/167311 [ Debug ] media/modern-media-controls/tracks-panel/tracks-pa
 
 webkit.org/b/167347 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html [ Pass Failure ]
 
+webkit.org/b/167266 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Pass Failure ]
+
 webkit.org/b/165874 [ Debug ] streams/pipe-to.html [ Pass Failure ]
 
 # New Encrypted Media API not enabled on Mac
