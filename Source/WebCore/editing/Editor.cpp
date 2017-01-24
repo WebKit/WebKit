@@ -2943,9 +2943,7 @@ String Editor::selectedText() const
 
 String Editor::selectedTextForDataTransfer() const
 {
-    if (m_frame.settings().selectionIncludesAltImageText())
-        return selectedText(TextIteratorEmitsImageAltText);
-    return selectedText();
+    return selectedText(TextIteratorEmitsImageAltText);
 }
 
 String Editor::selectedText(TextIteratorBehavior behavior) const

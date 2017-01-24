@@ -1,3 +1,14 @@
+2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove always true selectionIncludesAltImageText setting
+        https://bugs.webkit.org/show_bug.cgi?id=167358
+
+        Reviewed by Alex Christensen.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectedTextForDataTransfer):
+        * page/Settings.in:
+
 2017-01-24  Daniel Bates  <dabates@apple.com>
 
         StringView.split() should use an iterator design pattern instead of allocating a Vector
