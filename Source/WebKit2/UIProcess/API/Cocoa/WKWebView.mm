@@ -3464,6 +3464,18 @@ static int32_t activeOrientation(WKWebView *webView)
 {
     return [_contentView _dataDetectionResults];
 }
+
+- (void)_accessibilityRetrieveSpeakSelectionContent
+{
+    [_contentView accessibilityRetrieveSpeakSelectionContent];
+}
+
+// This method is for subclasses to override.
+// Currently it's only in TestRunnerWKWebView.
+- (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content
+{
+}
+
 #endif
 
 - (void)_didRelaunchProcess

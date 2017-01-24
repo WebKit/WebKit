@@ -105,6 +105,9 @@ editing/unsupported-content/table-type-before.html
 # Zooming works differently in iOS DRT
 fast/zooming/uiscript-zooming.html [ Failure ]
 
+# Not supported on WK1
+accessibility/ios-simulator/speak-selection-content.html [ Skip ]
+
 # FIXME: Tests that fail due to lack of textInputController <rdar://problem/5106287>
 editing/inserting/insert-composition-whitespace.html [ Failure ]
 

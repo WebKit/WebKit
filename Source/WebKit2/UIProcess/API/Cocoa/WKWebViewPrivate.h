@@ -181,6 +181,9 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (id)_snapshotLayerContentsForBackForwardListItem:(WKBackForwardListItem *)item WK_API_AVAILABLE(ios(9_0));
 - (NSArray *)_dataDetectionResults;
 
+- (void)_accessibilityRetrieveSpeakSelectionContent;
+- (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content;
+
 #else
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
 @property (nonatomic, setter=_setDrawsBackground:) BOOL _drawsBackground;

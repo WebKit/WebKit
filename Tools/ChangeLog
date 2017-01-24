@@ -1,3 +1,28 @@
+2017-01-24  Nan Wang  <n_wang@apple.com>
+
+        AX: Speak Selection does not work in an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=166794
+        <rdar://problem/29913013>
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::retrieveSpeakSelectionContent):
+        (WTR::UIScriptController::accessibilitySpeakSelectionContent):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::retrieveSpeakSelectionContent):
+        (WTR::UIScriptController::accessibilitySpeakSelectionContent):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView dealloc]):
+        (-[TestRunnerWKWebView _accessibilityDidGetSpeakSelectionContent:]):
+        (-[TestRunnerWKWebView accessibilityRetrieveSpeakSelectionContentWithCompletionHandler:]):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::retrieveSpeakSelectionContent):
+        (WTR::UIScriptController::accessibilitySpeakSelectionContent):
+
 2017-01-24  Daniel Bates  <dabates@apple.com>
 
         StringView.split() should use an iterator design pattern instead of allocating a Vector

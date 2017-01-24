@@ -139,6 +139,9 @@ public:
     JSRetainPtr<JSStringRef> scrollingTreeAsText() const;
 
     void uiScriptComplete(JSStringRef result);
+    
+    void retrieveSpeakSelectionContent(JSValueRef callback);
+    JSRetainPtr<JSStringRef> accessibilitySpeakSelectionContent() const;
 
 private:
     UIScriptController(UIScriptContext&);

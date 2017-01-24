@@ -214,4 +214,7 @@ interface UIScriptController {
     readonly attribute DOMString scrollingTreeAsText;
 
     void uiScriptComplete(DOMString result);
+
+    void retrieveSpeakSelectionContent(object callback);
+    readonly attribute DOMString accessibilitySpeakSelectionContent;
 };

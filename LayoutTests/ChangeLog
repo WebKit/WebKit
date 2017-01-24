@@ -1,3 +1,15 @@
+2017-01-24  Nan Wang  <n_wang@apple.com>
+
+        AX: Speak Selection does not work in an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=166794
+        <rdar://problem/29913013>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/speak-selection-content-expected.txt: Added.
+        * accessibility/ios-simulator/speak-selection-content.html: Added.
+        * platform/ios-simulator-wk1/TestExpectations:
+
 2017-01-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         modern-media-controls LayoutTest gardening.

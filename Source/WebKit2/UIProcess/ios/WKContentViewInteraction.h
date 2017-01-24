@@ -231,6 +231,7 @@ struct WKAutoCorrectionData {
 - (void)_setDoubleTapGesturesEnabled:(BOOL)enabled;
 - (NSArray *)_dataDetectionResults;
 - (NSArray<NSValue *> *)_uiTextSelectionRects;
+- (void)accessibilityRetrieveSpeakSelectionContent;
 @end
 
 @interface WKContentView (WKTesting)

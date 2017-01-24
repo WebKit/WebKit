@@ -289,6 +289,15 @@ JSRetainPtr<JSStringRef> UIScriptController::scrollingTreeAsText() const
     return nullptr;
 }
 
+void UIScriptController::retrieveSpeakSelectionContent(JSValueRef)
+{
+}
+
+JSRetainPtr<JSStringRef> UIScriptController::accessibilitySpeakSelectionContent() const
+{
+    return nullptr;
+}
+
 }
 
 #endif // PLATFORM(IOS)

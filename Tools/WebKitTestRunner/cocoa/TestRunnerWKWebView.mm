@@ -31,6 +31,7 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
+#import <WebKit/WKWebViewPrivate.h>
 @interface WKWebView ()
 
 // FIXME: move these to WKWebView_Private.h
@@ -50,6 +51,7 @@
 
 @property (nonatomic, copy) void (^zoomToScaleCompletionHandler)(void);
 @property (nonatomic, copy) void (^showKeyboardCompletionHandler)(void);
+@property (nonatomic, copy) void (^retrieveSpeakSelectionContentCompletionHandler)(void);
 @property (nonatomic) BOOL isShowingKeyboard;
 
 @end
@@ -91,6 +93,7 @@
 
     self.zoomToScaleCompletionHandler = nil;
     self.showKeyboardCompletionHandler = nil;
+    self.retrieveSpeakSelectionContentCompletionHandler = nil;
 
     [super dealloc];
 }
@@ -185,6 +188,19 @@
 {
     m_stableStateOverride = overrideBoolean;
     [self _updateVisibleContentRects];
+}
+
+- (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content
+{
+    self.accessibilitySpeakSelectionContent = content;
+    if (self.retrieveSpeakSelectionContentCompletionHandler)
+        self.retrieveSpeakSelectionContentCompletionHandler();
+}
+
+- (void)accessibilityRetrieveSpeakSelectionContentWithCompletionHandler:(void (^)(void))completionHandler
+{
+    self.retrieveSpeakSelectionContentCompletionHandler = completionHandler;
+    [self _accessibilityRetrieveSpeakSelectionContent];
 }
 
 #endif
