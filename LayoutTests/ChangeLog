@@ -1,5 +1,21 @@
 2017-01-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211065. rdar://problem/29784295
+
+    2017-01-23  Filip Pizlo  <fpizlo@apple.com>
+
+            SharedArrayBuffer plus WebGL should not equal CRASH
+            https://bugs.webkit.org/show_bug.cgi?id=167329
+
+            Reviewed by Saam Barati.
+
+            This test used to crash and now it doesn't. It throws some exception.
+
+            * js/shared-array-buffer-webgl-expected.txt: Added.
+            * js/shared-array-buffer-webgl.html: Added.
+
+2017-01-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211007. rdar://problem/28620919
 
     2017-01-20  Brady Eidson  <beidson@apple.com>
