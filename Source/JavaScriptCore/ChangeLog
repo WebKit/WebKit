@@ -1,3 +1,24 @@
+2017-01-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Enable the stochastic space-time scheduler on the larger multicores
+        https://bugs.webkit.org/show_bug.cgi?id=167382
+        <rdar://problem/30173375>
+
+        Rubber stamped by Saam Barati
+        
+        This looks like a 1.3% JetStream speed-up thanks to a 28% splay-latency improvement. This new
+        scheduler seems to prevent all of the same pathologies as the old one prevented. But instead of
+        periodically suspending the mutator, this new one will only suspend after an iteration of the
+        constraint fixpoint. The length of that suspension length is random with the distribution being
+        governed by mutatorUtilization. Once resumed, the mutator gets to run unimpeded until draining
+        stalls.
+        
+        I'm enabling it on platforms as I benchmark those platforms. It's possible that we will want to
+        use a different scheduler on different platforms.
+
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+
 2017-01-24  Michael Saboff  <msaboff@apple.com>
 
         JSArray::tryCreateUninitialized should be called JSArray::tryCreateForInitializationPrivate
