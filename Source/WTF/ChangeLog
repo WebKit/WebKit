@@ -1,3 +1,13 @@
+2017-01-24  Konstantin Tokarev  <annulen@yandex.ru>
+
+        VS2015 supports ref qualifiers
+        https://bugs.webkit.org/show_bug.cgi?id=167368
+
+        Reviewed by Sam Weinig.
+
+        * wtf/Compiler.h: Enable
+        WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS for VS2015
+
 2017-01-24  Daniel Bates  <dabates@apple.com>
 
         StringView.split() should use an iterator design pattern instead of allocating a Vector

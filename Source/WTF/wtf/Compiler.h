@@ -120,6 +120,11 @@
 
 #if defined(_MSC_VER)
 #define WTF_COMPILER_MSVC 1
+
+#if _MSC_VER >= 1900
+#define WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS 1
+#endif
+
 #endif
 
 #if defined(_MSC_VER) && _MSC_VER < 1800
