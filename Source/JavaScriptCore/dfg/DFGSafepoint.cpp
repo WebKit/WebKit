@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,7 +80,7 @@ void Safepoint::begin()
     if (ThreadData* data = m_plan.threadData) {
         RELEASE_ASSERT(!data->m_safepoint);
         data->m_safepoint = this;
-        data->m_rightToRun.unlock();
+        data->m_rightToRun.unlockFairly();
     }
 }
 

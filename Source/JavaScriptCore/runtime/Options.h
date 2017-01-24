@@ -158,6 +158,7 @@ typedef const char* optionString;
     v(bool, dumpB3GraphAtEachPhase, false, Normal, "dumps the B3 graph at each phase of compilation") \
     v(bool, dumpAirGraphAtEachPhase, false, Normal, "dumps the Air graph at each phase of compilation") \
     v(bool, verboseDFGByteCodeParsing, false, Normal, nullptr) \
+    v(bool, safepointBeforeEachPhase, true, Normal, nullptr) \
     v(bool, verboseCompilation, false, Normal, nullptr) \
     v(bool, verboseFTLCompilation, false, Normal, nullptr) \
     v(bool, logCompilationChanges, false, Normal, nullptr) \

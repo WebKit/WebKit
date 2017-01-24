@@ -1,3 +1,43 @@
+2017-01-24  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r210971. rdar://problem/30115838
+
+    2017-01-20  Saam Barati  <sbarati@apple.com>
+
+            We should flash a safepoint before each DFG/FTL phase
+            https://bugs.webkit.org/show_bug.cgi?id=167234
+
+            Reviewed by Filip Pizlo.
+
+            The recent GC changes caused us to regress Kraken because of a
+            longstanding issue that happened to be hit with higher frequency because
+            of a change in timing between when a particular GC was happening and
+            when a particular FTL compilation was happening. The regression is caused
+            by the GC was waiting for a large function to make it through the DFG portion
+            of an FTL compilation. This was taking 20ms-30ms and started happened during a
+            particular test with much higher frequency.
+
+            This means that anytime the GC waits for this compilation, the test ran at least
+            ~20ms slower because the GC waits for the compiler threads the mutator is stopped.
+
+            It's good that we have such an easily reproducible case of this performance
+            issue because it will effect many real JS programs, especially ones with
+            large functions that get hot.
+
+            The most straight forward solution to fix this is to flash a safepoint before
+            each phase, allowing the GC to suspend the compiler if needed. In my testing,
+            this progresses Kraken in the browser, and doesn't regress anything else. This
+            solution also makes the most sense. I did some analysis on the compilation time
+            of this function that took ~20-30ms to pass through the DFG phases, and
+            the phase times were mostly evenly distributed. Some took longer than others,
+            but no phase was longer than 3ms. Most were in the 0.25ms to 1.5ms range.
+
+            * dfg/DFGPlan.cpp:
+            (JSC::DFG::Plan::compileInThreadImpl):
+            * dfg/DFGSafepoint.cpp:
+            (JSC::DFG::Safepoint::begin):
+            * runtime/Options.h:
+
 2017-01-20  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r210949. rdar://problem/30108531
