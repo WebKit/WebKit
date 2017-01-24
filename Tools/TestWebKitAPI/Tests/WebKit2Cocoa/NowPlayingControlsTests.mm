@@ -26,12 +26,12 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
-#import "TestWKWebViewMac.h"
+#import "TestWKWebView.h"
 
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 
-#if WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201
+#if WK_API_ENABLED && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201)
 
 @interface NowPlayingTestWebView : TestWKWebView
 @property (nonatomic, readonly) BOOL hasActiveNowPlayingSession;
@@ -93,10 +93,20 @@
 
     _receivedNowPlayingInfoResponse = true;
 }
+
+- (void)setWindowVisible:(BOOL)isVisible
+{
+#if PLATFORM(MAC)
+    [self.window setIsVisible:isVisible];
+#else
+    self.window.hidden = !isVisible;
+#endif
+}
 @end
 
 namespace TestWebKitAPI {
 
+#if PLATFORM(MAC)
 TEST(NowPlayingControlsTests, NowPlayingControlsDoNotShowForForegroundPage)
 {
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
@@ -105,7 +115,7 @@ TEST(NowPlayingControlsTests, NowPlayingControlsDoNotShowForForegroundPage)
     [webView loadTestPageNamed:@"large-video-test-now-playing"];
     [webView waitForMessage:@"playing"];
 
-    [webView.window setIsVisible:YES];
+    [webView setWindowVisible:YES];
     [webView.window makeKeyWindow];
     [webView expectHasActiveNowPlayingSession:NO];
 
@@ -122,7 +132,7 @@ TEST(NowPlayingControlsTests, NowPlayingControlsShowForBackgroundPage)
     [webView loadTestPageNamed:@"large-video-test-now-playing"];
     [webView waitForMessage:@"playing"];
 
-    [webView.window setIsVisible:NO];
+    [webView setWindowVisible:NO];
     [webView.window resignKeyWindow];
     [webView expectHasActiveNowPlayingSession:YES];
 
@@ -139,12 +149,12 @@ TEST(NowPlayingControlsTests, NowPlayingControlsHideAfterShowingKeepsSessionActi
     [webView loadTestPageNamed:@"large-video-test-now-playing"];
     [webView waitForMessage:@"playing"];
 
-    [webView.window setIsVisible:NO];
+    [webView setWindowVisible:NO];
     [webView.window resignKeyWindow];
 
     [webView expectHasActiveNowPlayingSession:YES];
 
-    [webView.window setIsVisible:YES];
+    [webView setWindowVisible:YES];
     [webView.window makeKeyWindow];
 
     [webView expectHasActiveNowPlayingSession:NO];
@@ -162,8 +172,8 @@ TEST(NowPlayingControlsTests, NowPlayingControlsClearInfoAfterSessionIsNoLongerV
     [webView loadTestPageNamed:@"large-video-test-now-playing"];
     [webView waitForMessage:@"playing"];
 
-    [webView mouseDownAtPoint:NSMakePoint(240, 160) simulatePressure:YES];
-    [webView.window setIsVisible:NO];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('video').muted = true"];
+    [webView setWindowVisible:NO];
     [webView.window resignKeyWindow];
 
     [webView waitForNowPlayingInfoToChange];
@@ -172,7 +182,24 @@ TEST(NowPlayingControlsTests, NowPlayingControlsClearInfoAfterSessionIsNoLongerV
     ASSERT_TRUE(isnan(webView.lastUpdatedDuration));
     ASSERT_TRUE(isnan(webView.lastUpdatedElapsedTime));
 }
+#endif // PLATFORM(MAC)
+
+#if PLATFORM(IOS)
+TEST(NowPlayingControlsTests, NowPlayingControlsIOS)
+{
+    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+    configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    NowPlayingTestWebView *webView = [[NowPlayingTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration];
+    [webView loadTestPageNamed:@"large-video-test-now-playing"];
+    [webView waitForMessage:@"playing"];
+
+    [webView expectHasActiveNowPlayingSession:YES];
+    ASSERT_STREQ("foo", webView.lastUpdatedTitle.UTF8String);
+    ASSERT_EQ(10, webView.lastUpdatedDuration);
+    ASSERT_GE(webView.lastUpdatedElapsedTime, 0);
+}
+#endif
 
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201
+#endif // WK_API_ENABLED && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201)

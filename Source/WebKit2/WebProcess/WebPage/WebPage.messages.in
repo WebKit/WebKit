@@ -422,10 +422,13 @@ messages -> WebPage LegacyReceiver {
     DataDetectorsDidHideUI(WebCore::PageOverlay::PageOverlayID pageOverlay)
 
     HandleAcceptedCandidate(struct WebCore::TextCheckingResult acceptedCandidate)
-    RequestActiveNowPlayingSessionInfo()
 
     SetHeaderBannerHeightForTesting(int height);
     SetFooterBannerHeightForTesting(int height);
+#endif
+
+#if PLATFORM(COCOA)
+    RequestActiveNowPlayingSessionInfo()
 #endif
 
     SetShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeMouseMoveEvents)

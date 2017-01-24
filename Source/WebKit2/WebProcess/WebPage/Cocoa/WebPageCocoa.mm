@@ -27,6 +27,8 @@
 #import "WebPage.h"
 
 #import "LoadParameters.h"
+#import "WebPageProxyMessages.h"
+#import <WebCore/PlatformMediaSessionManager.h>
 
 #if PLATFORM(COCOA)
 
@@ -37,6 +39,22 @@ namespace WebKit {
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParameters)
 {
     m_dataDetectionContext = loadParameters.dataDetectionContext;
+}
+
+void WebPage::requestActiveNowPlayingSessionInfo()
+{
+    bool hasActiveSession = false;
+    String title = emptyString();
+    double duration = NAN;
+    double elapsedTime = NAN;
+    if (auto* sharedManager = WebCore::PlatformMediaSessionManager::sharedManagerIfExists()) {
+        hasActiveSession = sharedManager->hasActiveNowPlayingSession();
+        title = sharedManager->lastUpdatedNowPlayingTitle();
+        duration = sharedManager->lastUpdatedNowPlayingDuration();
+        elapsedTime = sharedManager->lastUpdatedNowPlayingElapsedTime();
+    }
+
+    send(Messages::WebPageProxy::HandleActiveNowPlayingSessionInfoResponse(hasActiveSession, title, duration, elapsedTime));
 }
 
 } // namespace WebKit

@@ -31,7 +31,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
-#import "TestWKWebViewMac.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKBackForwardListItemPrivate.h>
 #import <WebKit/WKPage.h>
 #import <WebKit/WKPagePrivate.h>

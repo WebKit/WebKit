@@ -24,19 +24,28 @@
  */
 
 #import "config.h"
-#import "TestWKWebViewMac.h"
+#import "TestWKWebView.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if WK_API_ENABLED
 
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
 
-#import <AppKit/AppKit.h>
-#import <Carbon/Carbon.h>
 #import <WebKit/WebKitPrivate.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
+
+#if PLATFORM(MAC)
+#import <AppKit/AppKit.h>
+#import <Carbon/Carbon.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
+#endif
+
+#if PLATFORM(IOS)
+#import <WebCore/SoftLinking.h>
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIWindow)
+#endif
 
 @implementation TestMessageHandler {
     NSMutableDictionary<NSString *, dispatch_block_t> *_messageHandlers;
@@ -59,13 +68,18 @@
 
 @end
 
+#if PLATFORM(MAC)
 @interface TestWKWebViewHostWindow : NSWindow
+#else
+@interface TestWKWebViewHostWindow : UIWindow
+#endif // PLATFORM(MAC)
 @end
 
 @implementation TestWKWebViewHostWindow {
     BOOL _forceKeyWindow;
 }
 
+#if PLATFORM(MAC)
 static int gEventNumber = 1;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
@@ -106,6 +120,7 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     }
 #endif
 }
+#endif // PLATFORM(MAC)
 
 - (BOOL)isKeyWindow
 {
@@ -118,7 +133,11 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
         return;
 
     _forceKeyWindow = YES;
+#if PLATFORM(MAC)
     [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidBecomeKeyNotification object:self];
+#else
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIWindowDidBecomeKeyNotification object:self];
+#endif
 }
 
 - (void)resignKeyWindow
@@ -150,16 +169,17 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 
 - (void)_setUpTestWindow:(NSRect)frame
 {
+#if PLATFORM(MAC)
     _hostWindow = [[TestWKWebViewHostWindow alloc] initWithContentRect:frame styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO];
     [_hostWindow setFrameOrigin:NSMakePoint(0, 0)];
-    [[_hostWindow contentView] addSubview:self];
     [_hostWindow setIsVisible:YES];
+    [[_hostWindow contentView] addSubview:self];
     [_hostWindow makeKeyAndOrderFront:self];
-}
-
-- (void)mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure
-{
-    [_hostWindow _mouseDownAtPoint:point simulatePressure:simulatePressure];
+#else
+    _hostWindow = [[TestWKWebViewHostWindow alloc] initWithFrame:frame];
+    _hostWindow.hidden = NO;
+    [_hostWindow addSubview:self];
+#endif
 }
 
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action
@@ -182,14 +202,6 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 {
     [self loadTestPageNamed:pageName];
     [self _test_waitForDidFinishNavigation];
-}
-
-- (void)typeCharacter:(char)character {
-    NSString *characterAsString = [NSString stringWithFormat:@"%c" , character];
-    NSEventType keyDownEventType = NSEventTypeKeyDown;
-    NSEventType keyUpEventType = NSEventTypeKeyUp;
-    [self keyDown:[NSEvent keyEventWithType:keyDownEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:_hostWindow.windowNumber context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
-    [self keyUp:[NSEvent keyEventWithType:keyUpEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:_hostWindow.windowNumber context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
 }
 
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script
@@ -231,4 +243,21 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 
 @end
 
-#endif /* WK_API_ENABLED && PLATFORM(MAC) */
+#if PLATFORM(MAC)
+@implementation TestWKWebView (MacOnly)
+- (void)mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure
+{
+    [_hostWindow _mouseDownAtPoint:point simulatePressure:simulatePressure];
+}
+
+- (void)typeCharacter:(char)character {
+    NSString *characterAsString = [NSString stringWithFormat:@"%c" , character];
+    NSEventType keyDownEventType = NSEventTypeKeyDown;
+    NSEventType keyUpEventType = NSEventTypeKeyUp;
+    [self keyDown:[NSEvent keyEventWithType:keyDownEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:_hostWindow.windowNumber context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
+    [self keyUp:[NSEvent keyEventWithType:keyUpEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:_hostWindow.windowNumber context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
+}
+@end
+#endif
+
+#endif // WK_API_ENABLED
