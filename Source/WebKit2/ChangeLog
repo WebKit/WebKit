@@ -1,3 +1,15 @@
+2017-01-23  Anders Carlsson  <andersca@apple.com>
+
+        The Score Esports crashes on launch
+        https://bugs.webkit.org/show_bug.cgi?id=167338
+        rdar://problem/29948645
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/Cocoa/WKObject.mm:
+        (+[WKObject conformsToProtocol:]):
+        Add a class method implementation in case an app ends up calling +[WKObject conformsToProtocol:] for some reason.
+
 2017-01-24  Miguel Gomez  <magomez@igalia.com>
 
         [Coordinated Graphics] Ensure that we're in AC mode before trying to create GraphicsLayers
