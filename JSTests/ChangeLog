@@ -1,3 +1,12 @@
+2017-01-24  Filip Pizlo  <fpizlo@apple.com>
+
+        -0 is a valid array index and AtomicsObject should know this
+        https://bugs.webkit.org/show_bug.cgi?id=167386
+
+        Reviewed by Mark Lam.
+
+        * stress/atomics-neg-zero.js: Added.
+
 2017-01-23  Saam Barati  <sbarati@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=167247

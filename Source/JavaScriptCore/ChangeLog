@@ -1,3 +1,12 @@
+2017-01-24  Filip Pizlo  <fpizlo@apple.com>
+
+        -0 is a valid array index and AtomicsObject should know this
+        https://bugs.webkit.org/show_bug.cgi?id=167386
+
+        Reviewed by Mark Lam.
+
+        * runtime/AtomicsObject.cpp: The bug title really says it all.
+
 2017-01-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r211091.
