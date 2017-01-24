@@ -2453,6 +2453,7 @@ Vector<LChar, URLParser::defaultInlineBufferSize> URLParser::percentDecode(const
 
 ALWAYS_INLINE static bool containsOnlyASCII(const String& string)
 {
+    ASSERT(!string.isNull());
     if (string.is8Bit())
         return charactersAreAllASCII(string.characters8(), string.length());
     return charactersAreAllASCII(string.characters16(), string.length());
@@ -2670,6 +2671,8 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
     }
     Vector<LChar, defaultInlineBufferSize> percentDecoded = percentDecode(utf8Encoded.data(), utf8Encoded.size(), hostBegin);
     String domain = String::fromUTF8(percentDecoded.data(), percentDecoded.size());
+    if (domain.isNull())
+        return false;
     if (domain != StringView(percentDecoded.data(), percentDecoded.size()))
         syntaxViolation(hostBegin);
     auto asciiDomain = domainToASCII(domain, hostBegin);
