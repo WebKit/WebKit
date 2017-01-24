@@ -1,3 +1,57 @@
+2017-01-24  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add support for hyphen: auto.
+        https://bugs.webkit.org/show_bug.cgi?id=167297
+        <rdar://problem/30119463>
+
+        Reviewed by Antti Koivisto.
+
+        Implement hyphen: auto for simple line layout. 
+
+        Tests: fast/text/simple-line-hyphens-with-text-align.html
+               fast/text/simple-line-hyphens-with-word-letter-spacing.html
+
+        * platform/text/Hyphenation.h:
+        (WebCore::enoughWidthForHyphenation):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeSimpleLine):
+        (WebCore::write):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        (WebCore::SimpleLineLayout::LineState::appendFragmentAndCreateRunIfNeeded): Inherit the hyphen attribute from the
+        run-to-be-appended. Ensure that we don't append additional runs when the last run has hyphen.
+        (WebCore::SimpleLineLayout::splitFragmentToFitLine): Before calling into the lastHyphenPosition() we need to
+        ensure that the hyphen would surely fit (even on the splitting position).
+        (WebCore::SimpleLineLayout::createLineRuns): Probe hypenation for overhanging non-whitespace runs. 
+        (WebCore::SimpleLineLayout::printReason):
+        * rendering/SimpleLineLayout.h:
+        (WebCore::SimpleLineLayout::Run::Run):
+        * rendering/SimpleLineLayoutFlowContents.h:
+        (WebCore::SimpleLineLayout::FlowContents::Segment::toSegmentPosition):
+        (WebCore::SimpleLineLayout::FlowContents::Segment::toRenderPosition):
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::Run::Run):
+        (WebCore::SimpleLineLayout::RunResolver::Run::constructStringForHyphenIfNeeded):
+        (WebCore::SimpleLineLayout::RunResolver::Run::text):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::hasHyphen):
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::Style::Style):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::nextBreakablePosition):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::nextNonWhitespacePosition):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::textWidth):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::lastHyphenPosition): We only check the actual run for hyphenation ignoring
+        the neighboring runs. This might need to be changed in the future.
+        (WebCore::SimpleLineLayout::TextFragmentIterator::runWidth):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::TextFragment):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::hasHyphen):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::operator==):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::split):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::splitWithHyphen):
+        * rendering/line/BreakingContext.h:
+        (WebCore::tryHyphenating):
+
 2017-01-24  Matt Rajca  <mrajca@apple.com>
 
         Pass down website autoplay policies to media elements

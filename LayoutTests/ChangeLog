@@ -1,3 +1,16 @@
+2017-01-24  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add support for hyphen: auto.
+        https://bugs.webkit.org/show_bug.cgi?id=167297
+        <rdar://problem/30119463>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/simple-line-hyphens-with-text-align-expected.html: Added.
+        * fast/text/simple-line-hyphens-with-text-align.html: Added.
+        * fast/text/simple-line-hyphens-with-word-letter-spacing-expected.html: Added.
+        * fast/text/simple-line-hyphens-with-word-letter-spacing.html: Added.
+
 2017-01-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         More modern-media-controls LayoutTest gardening.

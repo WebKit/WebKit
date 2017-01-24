@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SimpleLineLayoutTextFragmentIterator.h"
 
+#include "Hyphenation.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
 #include "SimpleLineLayoutFlowContents.h"
@@ -46,6 +47,8 @@ TextFragmentIterator::Style::Style(const RenderStyle& style)
     , spaceWidth(font.width(TextRun(StringView(&space, 1))))
     , wordSpacing(font.wordSpacing())
     , tabWidth(collapseWhitespace ? 0 : style.tabSize())
+    , shouldHyphenate(style.hyphens() == HyphensAuto && canHyphenate(style.locale()))
+    , hyphenStringWidth(shouldHyphenate ? font.width(TextRun(style.hyphenString())) : 0)
     , locale(style.locale())
 {
 }
@@ -143,8 +146,7 @@ unsigned TextFragmentIterator::nextBreakablePosition(const FlowContents::Segment
         m_lineBreakIterator.setPriorContext(lastCharacter, secondToLastCharacter);
         m_lineBreakIterator.resetStringAndReleaseIterator(segment.text, m_style.locale, LineBreakIteratorMode::Default);
     }
-    unsigned segmentPosition = startPosition - segment.start;
-    return segment.start + nextBreakablePositionInSegment(m_lineBreakIterator, segmentPosition, m_style.breakNBSP, m_style.keepAllWordsForCJK);
+    return segment.toRenderPosition(nextBreakablePositionInSegment(m_lineBreakIterator, segment.toSegmentPosition(startPosition), m_style.breakNBSP, m_style.keepAllWordsForCJK));
 }
 
 template <typename CharacterType>
@@ -154,7 +156,7 @@ unsigned TextFragmentIterator::nextNonWhitespacePosition(const FlowContents::Seg
     const auto* text = segment.text.characters<CharacterType>();
     unsigned position = startPosition;
     for (; position < segment.end; ++position) {
-        auto character = text[position - segment.start];
+        auto character = text[segment.toSegmentPosition(position)];
         bool isWhitespace = character == ' ' || character == '\t' || (!m_style.preserveNewline && character == '\n');
         if (!isWhitespace)
             return position;
@@ -170,8 +172,26 @@ float TextFragmentIterator::textWidth(unsigned from, unsigned to, float xPositio
     if (!m_style.font.size())
         return 0;
     if (m_style.font.isFixedPitch() || (from == segment.start && to == segment.end))
-        return downcast<RenderText>(segment.renderer).width(from - segment.start, to - from, m_style.font, xPosition, nullptr, nullptr);
+        return downcast<RenderText>(segment.renderer).width(segment.toSegmentPosition(from), to - from, m_style.font, xPosition, nullptr, nullptr);
     return runWidth(segment, from, to, xPosition);
+}
+
+std::optional<unsigned> TextFragmentIterator::lastHyphenPosition(const TextFragmentIterator::TextFragment& run, unsigned beforeIndex) const
+{
+    ASSERT(run.start() < beforeIndex);
+    auto& segment = *m_currentSegment;
+    ASSERT(segment.start <= beforeIndex && beforeIndex <= segment.end);
+    ASSERT(is<RenderText>(segment.renderer));
+    if (!m_style.shouldHyphenate || run.type() != TextFragment::NonWhitespace)
+        return std::nullopt;
+    
+    auto runStart = segment.toSegmentPosition(run.start());
+    auto before = segment.toSegmentPosition(beforeIndex) - runStart;
+    auto substringForHyphenation = StringView(segment.text).substring(runStart, run.end() - run.start());
+    auto hyphenLocation = lastHyphenLocation(substringForHyphenation, before, m_style.locale);
+    if (hyphenLocation)
+        return segment.toRenderPosition(hyphenLocation + runStart);
+    return std::nullopt;
 }
 
 unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, unsigned startPosition, float& width, float xPosition, bool& overlappingFragment)
@@ -219,8 +239,8 @@ float TextFragmentIterator::runWidth(const FlowContents::Segment& segment, unsig
     ASSERT(startPosition <= endPosition);
     if (startPosition == endPosition)
         return 0;
-    unsigned segmentFrom = startPosition - segment.start;
-    unsigned segmentTo = endPosition - segment.start;
+    unsigned segmentFrom = segment.toSegmentPosition(startPosition);
+    unsigned segmentTo = segment.toSegmentPosition(endPosition);
     bool measureWithEndSpace = m_style.collapseWhitespace && segmentTo < segment.text.length() && segment.text[segmentTo] == ' ';
     if (measureWithEndSpace)
         ++segmentTo;

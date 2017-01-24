@@ -31,6 +31,13 @@
 
 namespace WebCore {
 
+inline static bool enoughWidthForHyphenation(float availableWidth, float fontPixelSize)
+{
+    // If the maximum width available for the prefix before the hyphen is small, then it is very unlikely
+    // that an hyphenation opportunity exists, so do not bother to look for it.
+    return availableWidth > fontPixelSize * 5 / 4;
+
+}
 bool canHyphenate(const AtomicString& localeIdentifier);
 size_t lastHyphenLocation(StringView, size_t beforeIndex, const AtomicString& localeIdentifier);
 

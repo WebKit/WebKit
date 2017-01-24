@@ -47,6 +47,19 @@ static FloatSize lineSize(float logicalLeft, float logicalRight, float height)
 RunResolver::Run::Run(const Iterator& iterator)
     : m_iterator(iterator)
 {
+    constructStringForHyphenIfNeeded();
+}
+
+void RunResolver::Run::constructStringForHyphenIfNeeded()
+{
+    auto& run = m_iterator.simpleRun();
+    if (!run.hasHyphen)
+        return;
+    // Empty runs should not have hyphen.
+    ASSERT(run.start < run.end);
+    auto& segment = m_iterator.resolver().m_flowContents.segmentForRun(run.start, run.end);
+    auto text = StringView(segment.text).substring(segment.toSegmentPosition(run.start), run.end - run.start);
+    m_textWithHyphen = makeString(text, m_iterator.resolver().flow().style().hyphenString());
 }
 
 FloatRect RunResolver::Run::rect() const
@@ -69,12 +82,14 @@ FloatRect RunResolver::Run::rect() const
 
 StringView RunResolver::Run::text() const
 {
+    if (m_textWithHyphen)
+        return StringView(*m_textWithHyphen);
     auto& run = m_iterator.simpleRun();
     ASSERT(run.start < run.end);
     auto& segment = m_iterator.resolver().m_flowContents.segmentForRun(run.start, run.end);
     // We currently split runs on segment boundaries (different RenderObject).
     ASSERT(run.end <= segment.end);
-    return StringView(segment.text).substring(run.start - segment.start, run.end - run.start);
+    return StringView(segment.text).substring(segment.toSegmentPosition(run.start), run.end - run.start);
 }
 
 RunResolver::Iterator::Iterator(const RunResolver& resolver, unsigned runIndex, unsigned lineIndex)

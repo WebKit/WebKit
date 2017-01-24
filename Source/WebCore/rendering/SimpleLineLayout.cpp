@@ -33,6 +33,7 @@
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "Hyphenation.h"
 #include "InlineTextBox.h"
 #include "LineWidth.h"
 #include "Logging.h"
@@ -85,7 +86,7 @@ enum AvoidanceReason_ : uint64_t {
     FlowHasRTLOrdering                    = 1LLU  << 20,
     FlowHasLineAlignEdges                 = 1LLU  << 21,
     FlowHasLineSnap                       = 1LLU  << 22,
-    FlowHasHypensAuto                     = 1LLU  << 23,
+    FlowHasHypensLimit                    = 1LLU  << 23,
     FlowHasTextEmphasisFillOrMark         = 1LLU  << 24,
     FlowHasTextShadow                     = 1LLU  << 25,
     FlowHasPseudoFirstLine                = 1LLU  << 26,
@@ -236,8 +237,10 @@ static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, IncludeReas
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
     if (style.lineSnap() != LineSnapNone)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineSnap, reasons, includeReasons);
-    if (style.hyphens() == HyphensAuto)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHypensAuto, reasons, includeReasons);
+    if (style.hyphenationLimitBefore() != RenderStyle::initialHyphenationLimitBefore()
+        || style.hyphenationLimitAfter() != RenderStyle::initialHyphenationLimitAfter()
+        || style.hyphenationLimitLines() != RenderStyle::initialHyphenationLimitLines())
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHypensLimit, reasons, includeReasons);
     if (style.textEmphasisFill() != TextEmphasisFillFilled || style.textEmphasisMark() != TextEmphasisMarkNone)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextEmphasisFillOrMark, reasons, includeReasons);
     if (style.textShadow())
@@ -453,7 +456,7 @@ public:
         unsigned endPosition = fragment.isCollapsed() ? fragment.start() + 1 : fragment.end();
         // New line needs new run.
         if (!m_runsWidth)
-            runs.append(Run(fragment.start(), endPosition, m_runsWidth, m_runsWidth + fragment.width(), false));
+            runs.append(Run(fragment.start(), endPosition, m_runsWidth, m_runsWidth + fragment.width(), false, fragment.hasHyphen()));
         else {
             const auto& lastFragment = m_fragments.last();
             // Advance last completed fragment when the previous fragment is all set (including multiple parts across renderers)
@@ -470,11 +473,13 @@ public:
                 return;
             }
             if (lastFragment.isLastInRenderer() || lastFragment.isCollapsed())
-                runs.append(Run(fragment.start(), endPosition, m_runsWidth, m_runsWidth + fragment.width(), false));
+                runs.append(Run(fragment.start(), endPosition, m_runsWidth, m_runsWidth + fragment.width(), false, fragment.hasHyphen()));
             else {
                 Run& lastRun = runs.last();
                 lastRun.end = endPosition;
                 lastRun.logicalRight += fragment.width();
+                ASSERT(!lastRun.hasHyphen);
+                lastRun.hasHyphen = fragment.hasHyphen();
             }
         }
         m_fragments.append(fragment);
@@ -623,8 +628,26 @@ static TextFragmentIterator::TextFragment splitFragmentToFitLine(TextFragmentIte
         return availableWidth < textFragmentIterator.textWidth(start, index + 1, 0);
     });
     unsigned splitPosition = (*it);
-    if (keepAtLeastOneCharacter && splitPosition == fragmentToSplit.start())
-        ++splitPosition;
+    auto& style = textFragmentIterator.style();
+    // Does first character fit this line?
+    if (splitPosition == fragmentToSplit.start()) {
+        if (keepAtLeastOneCharacter)
+            ++splitPosition;
+    } else if (style.shouldHyphenate && enoughWidthForHyphenation(availableWidth, style.font.pixelSize())) {
+        // We might be able to fit the hyphen at the split position.
+        auto splitPositionWithHyphen = splitPosition;
+        // Find a splitting position where hyphen surely fits.
+        auto leftSideWidth = textFragmentIterator.textWidth(start, splitPosition, 0);
+        while (leftSideWidth + style.hyphenStringWidth > availableWidth) {
+            if (--splitPositionWithHyphen <= start)
+                break; // No space for hyphen.
+            leftSideWidth -= textFragmentIterator.textWidth(splitPositionWithHyphen, splitPositionWithHyphen + 1, 0);
+        }
+        if (splitPositionWithHyphen > start) {
+            if (auto hyphenPosition = textFragmentIterator.lastHyphenPosition(fragmentToSplit, splitPositionWithHyphen + 1))
+                return fragmentToSplit.splitWithHyphen(*hyphenPosition, textFragmentIterator);
+        }
+    }
     return fragmentToSplit.split(splitPosition, textFragmentIterator);
 }
 
@@ -736,8 +759,20 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
                 line.appendFragmentAndCreateRunIfNeeded(fragment, runs);
                 break;
             }
-            // Non-breakable non-whitespace first fragment. Add it to the current line. -it overflows though.
             ASSERT(fragment.type() == TextFragmentIterator::TextFragment::NonWhitespace);
+            // Find out if this non-whitespace fragment has a hyphen where we can break.
+            if (style.shouldHyphenate) {
+                auto fragmentToSplit = fragment;
+                // Split and check if we actually ended up with a hyphen.
+                auto overflowFragment = splitFragmentToFitLine(fragmentToSplit, line.availableWidth() - line.width(), emptyLine, textFragmentIterator);
+                if (fragmentToSplit.hasHyphen()) {
+                    line.setOverflowedFragment(overflowFragment);
+                    line.appendFragmentAndCreateRunIfNeeded(fragmentToSplit, runs);
+                    break;
+                }
+                // No hyphen, no split.
+            }
+            // Non-breakable non-whitespace first fragment. Add it to the current line. -it overflows though.
             if (emptyLine) {
                 forceFragmentToLine(line, textFragmentIterator, runs, fragment);
                 break;
@@ -956,8 +991,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case FlowHasLineSnap:
         stream << "-webkit-line-snap property";
         break;
-    case FlowHasHypensAuto:
-        stream << "hyphen: auto";
+    case FlowHasHypensLimit:
+        stream << "hyphen-limit-* property";
         break;
     case FlowHasTextEmphasisFillOrMark:
         stream << "text-emphasis (fill/mark)";

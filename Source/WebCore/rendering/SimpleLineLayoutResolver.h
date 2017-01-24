@@ -65,13 +65,16 @@ public:
         int baselinePosition() const;
         StringView text() const;
         bool isEndOfLine() const;
+        bool hasHyphen() const { return m_iterator.simpleRun().hasHyphen; }
 
         unsigned lineIndex() const;
 
     private:
         float computeBaselinePosition() const;
+        void constructStringForHyphenIfNeeded();
 
         const Iterator& m_iterator;
+        std::optional<String> m_textWithHyphen;
     };
 
     class Iterator {

@@ -37,6 +37,12 @@ public:
     FlowContents(const RenderBlockFlow&);
 
     struct Segment {
+        unsigned toSegmentPosition(unsigned position) const
+        {
+            ASSERT(position >= start);
+            return position - start;
+        }
+        unsigned toRenderPosition(unsigned position) const { return start + position; }
         unsigned start;
         unsigned end;
         String text;
