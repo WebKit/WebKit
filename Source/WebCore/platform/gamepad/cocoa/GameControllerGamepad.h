@@ -58,6 +58,8 @@ private:
 
     RetainPtr<GCGamepad> m_gamepad;
     RetainPtr<GCExtendedGamepad> m_extendedGamepad;
+
+    bool m_hadButtonPresses { false };
 };
 
 

@@ -158,14 +158,14 @@ bool HIDGamepad::maybeAddAxis(IOHIDElementRef element)
     return true;
 }
 
-void HIDGamepad::valueChanged(IOHIDValueRef value)
+HIDInputType HIDGamepad::valueChanged(IOHIDValueRef value)
 {
     IOHIDElementCookie cookie = IOHIDElementGetCookie(IOHIDValueGetElement(value));
     HIDGamepadElement* element = m_elementMap.get(cookie);
 
     // This might be an element we don't currently handle as input so we can skip it.
     if (!element)
-        return;
+        return HIDInputType::NotAButtonPress;
 
     element->rawValue = IOHIDValueGetScaledValue(value, kIOHIDValueScaleTypePhysical);
 
@@ -183,6 +183,8 @@ void HIDGamepad::valueChanged(IOHIDValueRef value)
         ASSERT_NOT_REACHED();
 
     m_lastUpdateTime = monotonicallyIncreasingTime();
+
+    return element->isButton() ? HIDInputType::ButtonPress : HIDInputType::NotAButtonPress;
 }
 
 } // namespace WebCore

@@ -59,7 +59,8 @@ void GameControllerGamepad::setupAsExtendedGamepad()
 
     m_extendedGamepad.get().valueChangedHandler = ^(GCExtendedGamepad *, GCControllerElement *) {
         m_lastUpdateTime = monotonicallyIncreasingTime();
-        GameControllerGamepadProvider::singleton().gamepadHadInput(*this);
+        GameControllerGamepadProvider::singleton().gamepadHadInput(*this, m_hadButtonPresses);
+        m_hadButtonPresses = false;
     };
 
     m_buttonValues.resize(8);
@@ -80,29 +81,45 @@ void GameControllerGamepad::setupAsExtendedGamepad()
     m_axisValues[4] = m_extendedGamepad.get().dpad.xAxis.value;
     m_axisValues[5] = m_extendedGamepad.get().dpad.yAxis.value;
 
-    m_extendedGamepad.get().buttonA.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL) {
+    m_extendedGamepad.get().buttonA.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
         m_buttonValues[0] = value;
+        if (pressed)
+            m_hadButtonPresses = true;
     };
-    m_extendedGamepad.get().buttonB.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL) {
+    m_extendedGamepad.get().buttonB.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
         m_buttonValues[1] = value;
+        if (pressed)
+            m_hadButtonPresses = true;
     };
-    m_extendedGamepad.get().buttonX.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL) {
+    m_extendedGamepad.get().buttonX.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
         m_buttonValues[2] = value;
+        if (pressed)
+            m_hadButtonPresses = true;
     };
-    m_extendedGamepad.get().buttonY.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL) {
+    m_extendedGamepad.get().buttonY.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
         m_buttonValues[3] = value;
+        if (pressed)
+            m_hadButtonPresses = true;
     };
-    m_extendedGamepad.get().leftShoulder.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL) {
+    m_extendedGamepad.get().leftShoulder.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
         m_buttonValues[4] = value;
+        if (pressed)
+            m_hadButtonPresses = true;
     };
-    m_extendedGamepad.get().rightShoulder.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL) {
+    m_extendedGamepad.get().rightShoulder.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
         m_buttonValues[5] = value;
+        if (pressed)
+            m_hadButtonPresses = true;
     };
-    m_extendedGamepad.get().leftTrigger.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL) {
+    m_extendedGamepad.get().leftTrigger.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
         m_buttonValues[6] = value;
+        if (pressed)
+            m_hadButtonPresses = true;
     };
-    m_extendedGamepad.get().rightTrigger.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL) {
+    m_extendedGamepad.get().rightTrigger.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
         m_buttonValues[7] = value;
+        if (pressed)
+            m_hadButtonPresses = true;
     };
 
     m_extendedGamepad.get().leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
@@ -133,7 +150,8 @@ void GameControllerGamepad::setupAsGamepad()
 
     m_gamepad.get().valueChangedHandler = ^(GCGamepad *, GCControllerElement *) {
         m_lastUpdateTime = monotonicallyIncreasingTime();
-        GameControllerGamepadProvider::singleton().gamepadHadInput(*this);
+        GameControllerGamepadProvider::singleton().gamepadHadInput(*this, m_hadButtonPresses);
+        m_hadButtonPresses = false;
     };
 
     m_buttonValues.resize(6);
@@ -148,23 +166,35 @@ void GameControllerGamepad::setupAsGamepad()
     m_axisValues[0] = m_extendedGamepad.get().dpad.xAxis.value;
     m_axisValues[1] = m_extendedGamepad.get().dpad.yAxis.value;
 
-    m_extendedGamepad.get().buttonA.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL) {
+    m_extendedGamepad.get().buttonA.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
         m_buttonValues[0] = value;
+        if (pressed)
+            m_hadButtonPresses = true;
     };
-    m_extendedGamepad.get().buttonB.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL) {
+    m_extendedGamepad.get().buttonB.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
         m_buttonValues[1] = value;
+        if (pressed)
+            m_hadButtonPresses = true;
     };
-    m_extendedGamepad.get().buttonX.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL) {
+    m_extendedGamepad.get().buttonX.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
         m_buttonValues[2] = value;
+        if (pressed)
+            m_hadButtonPresses = true;
     };
-    m_extendedGamepad.get().buttonY.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL) {
+    m_extendedGamepad.get().buttonY.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
         m_buttonValues[3] = value;
+        if (pressed)
+            m_hadButtonPresses = true;
     };
-    m_extendedGamepad.get().leftShoulder.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL) {
+    m_extendedGamepad.get().leftShoulder.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
         m_buttonValues[4] = value;
+        if (pressed)
+            m_hadButtonPresses = true;
     };
-    m_extendedGamepad.get().rightShoulder.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL) {
+    m_extendedGamepad.get().rightShoulder.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
         m_buttonValues[5] = value;
+        if (pressed)
+            m_hadButtonPresses = true;
     };
 
     m_extendedGamepad.get().leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {

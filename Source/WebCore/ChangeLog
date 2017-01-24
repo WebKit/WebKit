@@ -1,3 +1,52 @@
+2017-01-24  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211007. rdar://problem/28620919
+
+    2017-01-20  Brady Eidson  <beidson@apple.com>
+
+            Require a button press on a gamepad for them to be exposed to the DOM.
+            <rdar://problem/28620919> and https://bugs.webkit.org/show_bug.cgi?id=167272
+
+            Reviewed by Alex Christensen.
+
+            Test: gamepad/gamepad-visibility-1.html
+
+            * Modules/gamepad/GamepadManager.cpp:
+            (WebCore::GamepadManager::platformGamepadInputActivity):
+            * Modules/gamepad/GamepadManager.h:
+
+            * platform/gamepad/GamepadProvider.cpp:
+            (WebCore::GamepadProvider::dispatchPlatformGamepadInputActivity):
+            * platform/gamepad/GamepadProvider.h:
+            (WebCore::GamepadProvider::~GamepadProvider): Deleted.
+            (WebCore::GamepadProvider::isMockGamepadProvider): Deleted.
+
+            * platform/gamepad/GamepadProviderClient.h:
+
+            * platform/gamepad/cocoa/GameControllerGamepad.h:
+            * platform/gamepad/cocoa/GameControllerGamepad.mm:
+            (WebCore::GameControllerGamepad::setupAsExtendedGamepad):
+            (WebCore::GameControllerGamepad::setupAsGamepad):
+
+            * platform/gamepad/cocoa/GameControllerGamepadProvider.h:
+            * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+            (WebCore::GameControllerGamepadProvider::gamepadHadInput):
+            (WebCore::GameControllerGamepadProvider::inputNotificationTimerFired):
+
+            * platform/gamepad/mac/HIDGamepad.cpp:
+            (WebCore::HIDGamepad::valueChanged):
+            * platform/gamepad/mac/HIDGamepad.h:
+
+            * platform/gamepad/mac/HIDGamepadProvider.cpp:
+            (WebCore::HIDGamepadProvider::valuesChanged):
+            (WebCore::HIDGamepadProvider::inputNotificationTimerFired):
+            * platform/gamepad/mac/HIDGamepadProvider.h:
+
+            * testing/MockGamepadProvider.cpp:
+            (WebCore::MockGamepadProvider::setMockGamepadButtonValue):
+            (WebCore::MockGamepadProvider::gamepadInputActivity):
+            * testing/MockGamepadProvider.h:
+
 2017-01-20  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r210951. rdar://problem/29562247

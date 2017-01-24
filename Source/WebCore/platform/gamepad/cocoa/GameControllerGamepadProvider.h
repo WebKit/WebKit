@@ -29,7 +29,6 @@
 
 #include "GamepadProvider.h"
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
@@ -55,7 +54,7 @@ public:
     WEBCORE_EXPORT void stopMonitoringInput();
     WEBCORE_EXPORT void startMonitoringInput();
 
-    void gamepadHadInput(GameControllerGamepad&);
+    void gamepadHadInput(GameControllerGamepad&, bool hadButtonPresses);
 
 private:
     GameControllerGamepadProvider();
@@ -74,8 +73,6 @@ private:
 
     void makeInvisibileGamepadsVisible();
 
-    HashSet<GamepadProviderClient*> m_clients;
-
     HashMap<GCController *, std::unique_ptr<GameControllerGamepad>> m_gamepadMap;
     Vector<PlatformGamepad*> m_gamepadVector;
     HashSet<PlatformGamepad*> m_invisibleGamepads;
@@ -84,6 +81,7 @@ private:
     RetainPtr<NSObject> m_disconnectObserver;
 
     RunLoop::Timer<GameControllerGamepadProvider> m_inputNotificationTimer;
+    bool m_shouldMakeInvisibileGamepadsVisible { false };
 };
 
 } // namespace WebCore

@@ -28,6 +28,7 @@
 #if ENABLE(GAMEPAD)
 
 #include "EmptyGamepadProvider.h"
+#include "GamepadProviderClient.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -47,6 +48,14 @@ GamepadProvider& GamepadProvider::singleton()
 void GamepadProvider::setSharedProvider(GamepadProvider& newProvider)
 {
     sharedProvider = &newProvider;
+}
+
+void GamepadProvider::dispatchPlatformGamepadInputActivity()
+{
+    for (auto& client : m_clients)
+        client->platformGamepadInputActivity(m_shouldMakeGamepadsVisible);
+
+    m_shouldMakeGamepadsVisible = false;
 }
 
 } // namespace WebCore

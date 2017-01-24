@@ -95,7 +95,7 @@ void WebGamepadProvider::gamepadDisconnected(unsigned index)
         client->platformGamepadDisconnected(*disconnectedGamepad);
 }
 
-void WebGamepadProvider::gamepadActivity(const Vector<GamepadData>& gamepadDatas)
+void WebGamepadProvider::gamepadActivity(const Vector<GamepadData>& gamepadDatas, bool shouldMakeGamepadsVisible)
 {
     ASSERT(m_gamepads.size() == gamepadDatas.size());
 
@@ -105,7 +105,7 @@ void WebGamepadProvider::gamepadActivity(const Vector<GamepadData>& gamepadDatas
     }
 
     for (auto* client : m_clients)
-        client->platformGamepadInputActivity();
+        client->platformGamepadInputActivity(shouldMakeGamepadsVisible);
 }
 
 void WebGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)

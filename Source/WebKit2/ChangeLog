@@ -1,5 +1,34 @@
 2017-01-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211007. rdar://problem/28620919
+
+    2017-01-20  Brady Eidson  <beidson@apple.com>
+
+            Require a button press on a gamepad for them to be exposed to the DOM.
+            <rdar://problem/28620919> and https://bugs.webkit.org/show_bug.cgi?id=167272
+
+            Reviewed by Alex Christensen.
+
+            * UIProcess/Gamepad/UIGamepadProvider.cpp:
+            (WebKit::UIGamepadProvider::gamepadSyncTimerFired):
+            (WebKit::UIGamepadProvider::platformGamepadInputActivity):
+            * UIProcess/Gamepad/UIGamepadProvider.h:
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::gamepadActivity):
+            * UIProcess/WebPageProxy.h:
+
+            * WebProcess/Gamepad/WebGamepadProvider.cpp:
+            (WebKit::WebGamepadProvider::gamepadActivity):
+            * WebProcess/Gamepad/WebGamepadProvider.h:
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::gamepadActivity):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+
+2017-01-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210603. rdar://problem/29839194
 
     2017-01-11  Anders Carlsson  <andersca@apple.com>

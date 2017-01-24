@@ -44,7 +44,7 @@ public:
 
     void gamepadConnected(const GamepadData&);
     void gamepadDisconnected(unsigned index);
-    void gamepadActivity(const Vector<GamepadData>&);
+    void gamepadActivity(const Vector<GamepadData>&, bool shouldMakeGamepadsVisible);
 
     void setInitialGamepads(const Vector<GamepadData>&);
 

@@ -457,6 +457,6 @@ messages -> WebPage LegacyReceiver {
     SetUseIconLoadingClient(bool useIconLoadingClient)
 
 #if ENABLE(GAMEPAD)
-    GamepadActivity(Vector<WebKit::GamepadData> gamepadDatas)
+    GamepadActivity(Vector<WebKit::GamepadData> gamepadDatas, bool shouldMakeGamepadsVisible)
 #endif
 }

@@ -91,13 +91,18 @@ struct HIDGamepadAxis : HIDGamepadElement {
     }
 };
 
+enum class HIDInputType {
+    ButtonPress,
+    NotAButtonPress,
+};
+
 class HIDGamepad : public PlatformGamepad {
 public:
     HIDGamepad(IOHIDDeviceRef, unsigned index);
 
     IOHIDDeviceRef hidDevice() const { return m_hidDevice.get(); }
 
-    void valueChanged(IOHIDValueRef);
+    HIDInputType valueChanged(IOHIDValueRef);
 
     const Vector<double>& axisValues() const final { return m_axisValues; }
     const Vector<double>& buttonValues() const final { return m_buttonValues; }
