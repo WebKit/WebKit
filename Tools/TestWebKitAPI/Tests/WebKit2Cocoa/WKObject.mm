@@ -48,6 +48,14 @@ TEST(WebKit2, WKObject)
     ASSERT_EQ((id)0, weakString);
 }
 
+TEST(WebKit2, WKObject_classMethods)
+{
+    Class wkObjectClass = NSClassFromString(@"WKObject");
+    ASSERT_NE((Class)0, wkObjectClass);
+
+    ASSERT_TRUE([wkObjectClass conformsToProtocol:@protocol(NSObject)]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif

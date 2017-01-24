@@ -153,6 +153,19 @@ static inline void initializeTargetIfNeeded(WKObject *self)
     return [_target respondsToSelector:selector] || (selector && class_respondsToSelector(object_getClass(self), selector));
 }
 
++ (BOOL)conformsToProtocol:(Protocol *)protocol
+{
+    if (!protocol)
+        return NO;
+
+    for (Class cls = self; cls; cls = class_getSuperclass(cls)) {
+        if (class_conformsToProtocol(cls, protocol))
+            return YES;
+    }
+
+    return NO;
+}
+
 - (BOOL)conformsToProtocol:(Protocol *)protocol
 {
     initializeTargetIfNeeded(self);
