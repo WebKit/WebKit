@@ -2213,6 +2213,10 @@ GraphicsLayer* RenderLayerBacking::childForSuperlayers() const
 
 bool RenderLayerBacking::paintsIntoWindow() const
 {
+#if USE(COORDINATED_GRAPHICS_THREADED)
+        return false;
+#endif
+
     if (m_usingTiledCacheLayer)
         return false;
 

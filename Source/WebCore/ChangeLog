@@ -1,3 +1,18 @@
+2017-01-24  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Do not paint non composited content into the window when using the threaded compositor
+        https://bugs.webkit.org/show_bug.cgi?id=167367
+
+        Reviewed by Carlos Garcia Campos.
+
+        When using the threaded compositor we need to send the non composited content for compositing as well,
+        not painting it directly into the window.
+
+        No new tests.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintsIntoWindow):
+
 2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove always true allowCustomScrollbarInMainFrame setting
