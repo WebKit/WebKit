@@ -1,3 +1,11 @@
+2017-01-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove conflicting TestExpectations for font variations tests.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2017-01-23  Filip Pizlo  <fpizlo@apple.com>
 
         SharedArrayBuffer plus WebGL should not equal CRASH

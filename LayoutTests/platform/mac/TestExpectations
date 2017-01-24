@@ -1428,9 +1428,6 @@ webkit.org/b/162830 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Pass Ti
 
 webkit.org/b/127116 [ Debug ] svg/custom/animate-initial-pause-unpause.html [ Pass Failure ]
 
-# rdar://problem/28586837
-fast/text/variations/order.html [ Pass Crash ]
-animations/font-variations/font-variation-settings-order.html [ Pass Crash ]
 # Variation fonts are not implemented earlier than Sierra.
 [ ElCapitan Yosemite ] fast/text/variations [ Pass Failure ImageOnlyFailure ]
 [ ElCapitan Yosemite ] animations/font-variations [ Pass Failure ImageOnlyFailure ]
