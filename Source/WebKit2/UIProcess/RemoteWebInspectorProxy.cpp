@@ -129,6 +129,7 @@ void RemoteWebInspectorProxy::createFrontendPageAndWindow()
     trackInspectorPage(m_inspectorPage);
 
     m_inspectorPage->process().addMessageReceiver(Messages::RemoteWebInspectorProxy::messageReceiverName(), m_inspectorPage->pageID(), *this);
+    m_inspectorPage->process().assumeReadAccessToBaseURL(WebInspectorProxy::inspectorBaseURL());
 }
 
 void RemoteWebInspectorProxy::closeFrontendPageAndWindow()

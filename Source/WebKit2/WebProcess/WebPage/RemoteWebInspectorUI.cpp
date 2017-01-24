@@ -119,6 +119,8 @@ void RemoteWebInspectorUI::bringToFront()
 
 void RemoteWebInspectorUI::closeWindow()
 {
+    m_page.corePage()->inspectorController().setInspectorFrontendClient(nullptr);
+
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::FrontendDidClose(), m_page.pageID());
 }
 
