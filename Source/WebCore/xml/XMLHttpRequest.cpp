@@ -424,11 +424,6 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
         return Exception { SECURITY_ERR };
 
     if (!async && scriptExecutionContext()->isDocument()) {
-        if (document()->settings() && !document()->settings()->syncXHRInDocumentsEnabled()) {
-            logConsoleError(scriptExecutionContext(), "Synchronous XMLHttpRequests are disabled for this page.");
-            return Exception { INVALID_ACCESS_ERR };
-        }
-
         // Newer functionality is not available to synchronous requests in window contexts, as a spec-mandated
         // attempt to discourage synchronous XHR use. responseType is one such piece of functionality.
         // We'll only disable this functionality for HTTP(S) requests since sync requests for local protocols

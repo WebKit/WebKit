@@ -159,7 +159,6 @@ wantsBalancedSetDefersLoadingBehavior initial=false
 requestAnimationFrameEnabled initial=true
 
 fixedPositionCreatesStackingContext initial=defaultFixedPositionCreatesStackingContext
-syncXHRInDocumentsEnabled initial=true
 cookieEnabled initial=true
 mediaEnabled initial=true
 DOMPasteAllowed initial=false

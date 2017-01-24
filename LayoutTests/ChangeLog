@@ -1,3 +1,13 @@
+2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove always true syncXHRInDocumentsEnabled setting
+        https://bugs.webkit.org/show_bug.cgi?id=167359
+
+        Reviewed by Alex Christensen.
+
+        * fast/xmlhttprequest/xmlhttprequest-sync-disabled-expected.txt: Removed.
+        * fast/xmlhttprequest/xmlhttprequest-sync-disabled.html: Removed.
+
 2017-01-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Add the support for nomodule attribute on script element
