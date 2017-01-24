@@ -1,3 +1,19 @@
+2017-01-23  Michael Saboff  <msaboff@apple.com>
+
+        InferredTypeTable entry manipulation is not TOCTOU race safe
+        https://bugs.webkit.org/show_bug.cgi?id=167344
+
+        Reviewed by Filip Pizlo.
+
+        Made the accesses to table values safe from Time of Check,
+        Time of Use races with local temporary values.
+
+        * runtime/InferredTypeTable.cpp:
+        (JSC::InferredTypeTable::visitChildren):
+        (JSC::InferredTypeTable::get):
+        (JSC::InferredTypeTable::willStoreValue):
+        (JSC::InferredTypeTable::makeTop):
+
 2017-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Provide a way to trigger a Garbage Collection
