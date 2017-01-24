@@ -1,3 +1,38 @@
+2017-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Cleanup WEB_TIMING code
+        https://bugs.webkit.org/show_bug.cgi?id=167339
+
+        Reviewed by Alex Christensen.
+
+        Stylistic cleanup to WEB_TIMING related code.
+
+        * bindings/js/JSPerformanceEntryCustom.cpp:
+        * loader/ResourceTimingInformation.cpp:
+        * loader/ResourceTimingInformation.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFinishLoading):
+        * page/Performance.cpp:
+        (WebCore::Performance::getEntries):
+        (WebCore::Performance::getEntriesByType):
+        (WebCore::Performance::setResourceTimingBufferSize):
+        (WebCore::Performance::isResourceTimingBufferFull):
+        * page/Performance.h:
+        * page/PerformanceMark.h:
+        * page/PerformanceMeasure.h:
+        * page/PerformanceNavigation.h:
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::PerformanceResourceTiming::PerformanceResourceTiming):
+        (WebCore::PerformanceResourceTiming::resourceTimeToDocumentMilliseconds):
+        * page/PerformanceResourceTiming.h:
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::documentLoader):
+        (WebCore::PerformanceTiming::documentTiming):
+        (WebCore::PerformanceTiming::loadTiming):
+        * page/PerformanceTiming.h:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+
 2017-01-23  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should fail to parse percent-encoded invalid UTF-8 sequences

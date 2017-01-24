@@ -44,7 +44,6 @@ namespace WebCore {
 class Document;
 class URL;
 class NetworkLoadTiming;
-class ResourceRequest;
 class ResourceResponse;
 
 class PerformanceResourceTiming final : public PerformanceEntry {

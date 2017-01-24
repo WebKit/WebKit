@@ -31,17 +31,19 @@
 #include "config.h"
 
 #if ENABLE(WEB_TIMING)
+
 #include "JSPerformanceEntry.h"
 
 #include "JSDOMBinding.h"
-#if ENABLE(USER_TIMING)
-#include "JSPerformanceMark.h"
-#include "JSPerformanceMeasure.h"
-#endif
 #include "JSPerformanceResourceTiming.h"
 #include "PerformanceMark.h"
 #include "PerformanceMeasure.h"
 #include "PerformanceResourceTiming.h"
+
+#if ENABLE(USER_TIMING)
+#include "JSPerformanceMark.h"
+#include "JSPerformanceMeasure.h"
+#endif
 
 using namespace JSC;
 

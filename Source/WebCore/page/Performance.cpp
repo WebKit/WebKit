@@ -92,7 +92,7 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntries() const
         entries.appendVector(m_userTiming->getMarks());
         entries.appendVector(m_userTiming->getMeasures());
     }
-#endif // ENABLE(USER_TIMING)
+#endif
 
     std::sort(entries.begin(), entries.end(), PerformanceEntry::startTimeCompareLessThan);
     return entries;
@@ -102,10 +102,8 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByType(const String& ent
 {
     Vector<RefPtr<PerformanceEntry>> entries;
 
-    if (equalLettersIgnoringASCIICase(entryType, "resource")) {
-        for (auto& resource : m_resourceTimingBuffer)
-            entries.append(resource);
-    }
+    if (equalLettersIgnoringASCIICase(entryType, "resource"))
+        entries.appendVector(m_resourceTimingBuffer);
 
 #if ENABLE(USER_TIMING)
     if (m_userTiming) {
@@ -152,6 +150,7 @@ void Performance::clearResourceTimings()
 void Performance::setResourceTimingBufferSize(unsigned size)
 {
     m_resourceTimingBufferSize = size;
+
     if (isResourceTimingBufferFull())
         dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, false, false));
 }
@@ -169,7 +168,7 @@ void Performance::addResourceTiming(const String& initiatorName, Document* initi
         dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, false, false));
 }
 
-bool Performance::isResourceTimingBufferFull()
+bool Performance::isResourceTimingBufferFull() const
 {
     return m_resourceTimingBuffer.size() >= m_resourceTimingBufferSize;
 }

@@ -39,7 +39,6 @@
 #include "HTTPHeaderNames.h"
 #include "LoadTiming.h"
 #include "URL.h"
-#include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include <wtf/Vector.h>
@@ -77,7 +76,7 @@ static bool passesTimingAllowCheck(const ResourceResponse& response, Document* r
 }
 
 PerformanceResourceTiming::PerformanceResourceTiming(const AtomicString& initiatorType, const URL& originalURL, const ResourceResponse& response, LoadTiming loadTiming, Document* requestingDocument)
-    : PerformanceEntry(originalURL.string(), "resource", monotonicTimeToDocumentMilliseconds(requestingDocument, loadTiming.startTime()), monotonicTimeToDocumentMilliseconds(requestingDocument, loadTiming.responseEnd()))
+    : PerformanceEntry(originalURL.string(), ASCIILiteral("resource"), monotonicTimeToDocumentMilliseconds(requestingDocument, loadTiming.startTime()), monotonicTimeToDocumentMilliseconds(requestingDocument, loadTiming.responseEnd()))
     , m_initiatorType(initiatorType)
     , m_timing(response.networkLoadTiming())
     , m_loadTiming(loadTiming)
@@ -206,10 +205,12 @@ double PerformanceResourceTiming::resourceTimeToDocumentMilliseconds(double delt
 {
     if (!deltaMilliseconds)
         return 0.0;
+
     double documentStartTime = m_requestingDocument->loader()->timing().monotonicTimeToZeroBasedDocumentTime(m_loadTiming.fetchStart()) * 1000.0;
     double resourceTimeSeconds = (documentStartTime + deltaMilliseconds) / 1000.0;
     return 1000.0 * Performance::reduceTimeResolution(resourceTimeSeconds);
 }
 
 } // namespace WebCore
+
 #endif // ENABLE(WEB_TIMING)

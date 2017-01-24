@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
-#if ENABLE(WEB_TIMING)
 #include "ResourceTimingInformation.h"
 
+#if ENABLE(WEB_TIMING)
+
 #include "CachedResource.h"
-#include "CachedResourceRequest.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"

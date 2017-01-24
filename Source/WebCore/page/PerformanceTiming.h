@@ -81,4 +81,4 @@ private:
 
 } // namespace WebCore
 
-#endif // !ENABLE(WEB_TIMING)
+#endif // ENABLE(WEB_TIMING)

@@ -34,7 +34,6 @@
 namespace WebCore {
 
 class CachedResource;
-class CachedResourceRequest;
 class Document;
 class Frame;
 class LoadTiming;
