@@ -1,3 +1,17 @@
+2017-01-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r211091.
+        https://bugs.webkit.org/show_bug.cgi?id=167384
+
+        introduces a subtle bug in InferredTypeTable, huge
+        Octane/deltablue regression (Requested by pizlo on #webkit).
+
+        Reverted changeset:
+
+        "InferredTypeTable entry manipulation is not TOCTOU race safe"
+        https://bugs.webkit.org/show_bug.cgi?id=167344
+        http://trac.webkit.org/changeset/211091
+
 2017-01-24  Filip Pizlo  <fpizlo@apple.com>
 
         Enable the stochastic space-time scheduler on the larger multicores
