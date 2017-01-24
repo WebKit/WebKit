@@ -174,6 +174,8 @@ void AcceleratedDrawingArea::layerHostDidFlushLayers()
 
 GraphicsLayerFactory* AcceleratedDrawingArea::graphicsLayerFactory()
 {
+    if (!m_layerTreeHost)
+        enterAcceleratedCompositingMode(nullptr);
     return m_layerTreeHost ? m_layerTreeHost->graphicsLayerFactory() : nullptr;
 }
 

@@ -1,3 +1,19 @@
+2017-01-24  Miguel Gomez  <magomez@igalia.com>
+
+        [Coordinated Graphics] Ensure that we're in AC mode before trying to create GraphicsLayers
+        https://bugs.webkit.org/show_bug.cgi?id=167365
+
+        Reviewed by Carlos Garcia Campos.
+
+        When entering AC on demand, the RenderLayerCompositor wants to create the root GraphicsLayer before the
+        AcceleratedDrawingArea is in AC mode. This means there's no LayerTreeHost to request the GraphicsLayerFactory,
+        so no layers are created. Ensure that we are in AC mode before requesting the GraphicsLayerFactory.
+
+        No behaviour change, no new tests.
+
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::graphicsLayerFactory):
+
 2017-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to WebKitWebsiteDataManager to handle website data
