@@ -1,3 +1,12 @@
+2017-01-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        More modern-media-controls LayoutTest gardening.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-01-24  Nan Wang  <n_wang@apple.com>
 
         AX: Speak Selection does not work in an iframe
