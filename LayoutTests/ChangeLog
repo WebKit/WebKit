@@ -1,3 +1,11 @@
+2017-01-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        WPT LayoutTest gardening for ios-simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove always true syncXHRInDocumentsEnabled setting

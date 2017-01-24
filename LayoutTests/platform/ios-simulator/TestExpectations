@@ -2833,3 +2833,6 @@ editing/caret/emoji.html [ Failure ]
 
 # Requires changes to QuickLook.framework tracked by rdar://problem/28544527
 quicklook/password-protected.html [ Skip ]
+
+webkit.org/b/167376 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ Pass Failure ]
+webkit.org/b/167211 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html [ Pass Failure ]
