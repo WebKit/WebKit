@@ -1,3 +1,53 @@
+2017-01-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add the support for nomodule attribute on script element
+        https://bugs.webkit.org/show_bug.cgi?id=166987
+
+        Reviewed by Sam Weinig.
+
+        As discussed on https://github.com/whatwg/html/pull/2261, we should have
+        the way to suppress classic script execution when our user agent have
+        modules support. With such a feature, developers can write the code like,
+
+            <script type="module" src="./app.js"></script>
+            <script nomodule src="./bundled-app.js"></script>
+
+        In the above code, if the user agent does not support modules, the bundled-app.js
+        will be executed. On the other hand, if the user agent supports modules, we should
+        ignore the script tag which has the `nomodule` attribute.
+        This way allows us to support the legacy browsers while using modules.
+
+        In WebKit, we already support modules. Thus, we should ignore the classic script
+        attributed `nomodule`.
+
+        We also rename asyncAttributeValue and deferAttributeValue to hasAsyncAttribute and
+        hasDeferAttribute.
+
+        Tests: js/dom/modules/nomodule-has-no-effect-on-module-inline.html
+               js/dom/modules/nomodule-has-no-effect-on-module-src.html
+               js/dom/modules/nomodule-prevents-execution-classic-script-inline.html
+               js/dom/modules/nomodule-prevents-execution-classic-script-src.html
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::prepareScript):
+        * dom/ScriptElement.h:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::hasAsyncAttribute):
+        (WebCore::HTMLScriptElement::hasDeferAttribute):
+        (WebCore::HTMLScriptElement::hasNoModuleAttribute):
+        (WebCore::HTMLScriptElement::asyncAttributeValue): Deleted.
+        (WebCore::HTMLScriptElement::deferAttributeValue): Deleted.
+        * html/HTMLScriptElement.h:
+        * html/HTMLScriptElement.idl:
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::hasAsyncAttribute):
+        (WebCore::SVGScriptElement::hasDeferAttribute):
+        (WebCore::SVGScriptElement::hasNoModuleAttribute):
+        (WebCore::SVGScriptElement::asyncAttributeValue): Deleted.
+        (WebCore::SVGScriptElement::deferAttributeValue): Deleted.
+        * svg/SVGScriptElement.h:
+
 2017-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Provide a way to trigger a Garbage Collection

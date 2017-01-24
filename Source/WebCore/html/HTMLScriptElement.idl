@@ -29,4 +29,5 @@ interface HTMLScriptElement : HTMLElement {
     [Reflect] attribute DOMString type;
     attribute DOMString? crossOrigin;
     [Reflect] attribute DOMString nonce;
+    [Reflect] attribute boolean noModule;
 };

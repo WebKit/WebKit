@@ -187,7 +187,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     } else
         wasParserInserted = false;
 
-    if (wasParserInserted && !asyncAttributeValue())
+    if (wasParserInserted && !hasAsyncAttribute())
         m_forceAsync = true;
 
     // FIXME: HTML5 spec says we should check that all children are either comments or empty text nodes.
@@ -220,6 +220,9 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     if (!document.frame())
         return false;
 
+    if (scriptType == ScriptType::Classic && hasNoModuleAttribute())
+        return false;
+
     if (!document.frame()->script().canExecuteScripts(AboutToExecuteScript))
         return false;
 
@@ -249,21 +252,21 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     // is handled as the same to the external module script.
 
     bool isClassicExternalScript = scriptType == ScriptType::Classic && hasSourceAttribute();
-    bool isParserInsertedDeferredScript = ((isClassicExternalScript && deferAttributeValue()) || scriptType == ScriptType::Module)
-        && m_parserInserted && !asyncAttributeValue();
+    bool isParserInsertedDeferredScript = ((isClassicExternalScript && hasDeferAttribute()) || scriptType == ScriptType::Module)
+        && m_parserInserted && !hasAsyncAttribute();
     if (isParserInsertedDeferredScript) {
         m_willExecuteWhenDocumentFinishedParsing = true;
         m_willBeParserExecuted = true;
-    } else if (isClassicExternalScript && m_parserInserted && !asyncAttributeValue()) {
+    } else if (isClassicExternalScript && m_parserInserted && !hasAsyncAttribute()) {
         ASSERT(scriptType == ScriptType::Classic);
         m_willBeParserExecuted = true;
-    } else if ((isClassicExternalScript || scriptType == ScriptType::Module) && !asyncAttributeValue() && !m_forceAsync) {
+    } else if ((isClassicExternalScript || scriptType == ScriptType::Module) && !hasAsyncAttribute() && !m_forceAsync) {
         m_willExecuteInOrder = true;
         ASSERT(m_loadableScript);
         document.scriptRunner()->queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::IN_ORDER_EXECUTION);
     } else if (hasSourceAttribute() || scriptType == ScriptType::Module) {
         ASSERT(m_loadableScript);
-        ASSERT(asyncAttributeValue() || m_forceAsync);
+        ASSERT(hasAsyncAttribute() || m_forceAsync);
         document.scriptRunner()->queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::ASYNC_EXECUTION);
     } else if (!hasSourceAttribute() && m_parserInserted && !document.haveStylesheetsLoaded()) {
         ASSERT(scriptType == ScriptType::Classic);

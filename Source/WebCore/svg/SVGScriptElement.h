@@ -59,8 +59,9 @@ private:
     String languageAttributeValue() const final;
     String forAttributeValue() const final;
     String eventAttributeValue() const final;
-    bool asyncAttributeValue() const final;
-    bool deferAttributeValue() const final;
+    bool hasAsyncAttribute() const final;
+    bool hasDeferAttribute() const final;
+    bool hasNoModuleAttribute() const final;
     bool hasSourceAttribute() const final;
 
     void dispatchLoadEvent() final { SVGExternalResourcesRequired::dispatchLoadEvent(this); }

@@ -148,14 +148,19 @@ String HTMLScriptElement::eventAttributeValue() const
     return attributeWithoutSynchronization(eventAttr).string();
 }
 
-bool HTMLScriptElement::asyncAttributeValue() const
+bool HTMLScriptElement::hasAsyncAttribute() const
 {
     return hasAttributeWithoutSynchronization(asyncAttr);
 }
 
-bool HTMLScriptElement::deferAttributeValue() const
+bool HTMLScriptElement::hasDeferAttribute() const
 {
     return hasAttributeWithoutSynchronization(deferAttr);
+}
+
+bool HTMLScriptElement::hasNoModuleAttribute() const
+{
+    return hasAttributeWithoutSynchronization(nomoduleAttr);
 }
 
 bool HTMLScriptElement::hasSourceAttribute() const

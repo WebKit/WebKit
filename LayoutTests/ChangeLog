@@ -1,3 +1,26 @@
+2017-01-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add the support for nomodule attribute on script element
+        https://bugs.webkit.org/show_bug.cgi?id=166987
+
+        Reviewed by Sam Weinig.
+
+        * js/dom/modules/nomodule-dynamic-classic-inline-expected.txt: Added.
+        * js/dom/modules/nomodule-dynamic-classic-inline.html: Added.
+        * js/dom/modules/nomodule-dynamic-classic-src-expected.txt: Added.
+        * js/dom/modules/nomodule-dynamic-classic-src.html: Added.
+        * js/dom/modules/nomodule-has-no-effect-on-module-inline-expected.txt: Added.
+        * js/dom/modules/nomodule-has-no-effect-on-module-inline.html: Added.
+        * js/dom/modules/nomodule-has-no-effect-on-module-src-expected.txt: Added.
+        * js/dom/modules/nomodule-has-no-effect-on-module-src.html: Added.
+        * js/dom/modules/nomodule-prevents-execution-classic-script-inline-expected.txt: Added.
+        * js/dom/modules/nomodule-prevents-execution-classic-script-inline.html: Added.
+        * js/dom/modules/nomodule-prevents-execution-classic-script-src-expected.txt: Added.
+        * js/dom/modules/nomodule-prevents-execution-classic-script-src.html: Added.
+        * js/dom/modules/nomodule-reflect-expected.txt: Added.
+        * js/dom/modules/nomodule-reflect.html: Added.
+        * js/dom/modules/script-tests/error-classic-script.js: Added.
+
 2017-01-23  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Update timeout tests in media/modern-media-controls

@@ -106,9 +106,10 @@ private:
     virtual String languageAttributeValue() const = 0;
     virtual String forAttributeValue() const = 0;
     virtual String eventAttributeValue() const = 0;
-    virtual bool asyncAttributeValue() const = 0;
-    virtual bool deferAttributeValue() const = 0;
+    virtual bool hasAsyncAttribute() const = 0;
+    virtual bool hasDeferAttribute() const = 0;
     virtual bool hasSourceAttribute() const = 0;
+    virtual bool hasNoModuleAttribute() const = 0;
 
     Element& m_element;
     WTF::OrdinalNumber m_startLineNumber;

@@ -1,0 +1,13 @@
+Test dynamic "src" classic script with nomodule.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS element.noModule is true
+PASS executed is false
+PASS element.noModule is false
+PASS executed2 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

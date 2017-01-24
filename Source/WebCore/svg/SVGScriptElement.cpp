@@ -138,12 +138,17 @@ String SVGScriptElement::eventAttributeValue() const
     return String();
 }
 
-bool SVGScriptElement::asyncAttributeValue() const
+bool SVGScriptElement::hasAsyncAttribute() const
 {
     return false;
 }
 
-bool SVGScriptElement::deferAttributeValue() const
+bool SVGScriptElement::hasDeferAttribute() const
+{
+    return false;
+}
+
+bool SVGScriptElement::hasNoModuleAttribute() const
 {
     return false;
 }
