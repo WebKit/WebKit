@@ -503,6 +503,7 @@ set(JavaScriptCore_SOURCES
     heap/MutatorState.cpp
     heap/SlotVisitor.cpp
     heap/SpaceTimeMutatorScheduler.cpp
+    heap/StochasticSpaceTimeMutatorScheduler.cpp
     heap/StopIfNecessaryTimer.cpp
     heap/Subspace.cpp
     heap/SynchronousStopTheWorldMutatorScheduler.cpp

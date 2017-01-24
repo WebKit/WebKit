@@ -36,7 +36,7 @@ public:
     MarkingConstraintSet();
     ~MarkingConstraintSet();
     
-    void resetStats();
+    void didStartMarking();
     
     void add(
         CString abbreviatedName,
@@ -57,10 +57,6 @@ public:
     // not the wavefront is advancing.
     bool isWavefrontAdvancing(SlotVisitor&);
     bool isWavefrontRetreating(SlotVisitor& visitor) { return !isWavefrontAdvancing(visitor); }
-    
-    // Executes only roots. Returns true if all roots have been executed. It's expected
-    // that you'll do some draining after this and then use executeConvergence().
-    bool executeBootstrap(SlotVisitor&, MonotonicTime timeout = MonotonicTime::infinity());
     
     // Returns true if this executed all constraints and none of them produced new work. This
     // assumes that you've alraedy visited roots and drained from there.
@@ -84,6 +80,7 @@ private:
     Vector<std::unique_ptr<MarkingConstraint>> m_set;
     Vector<MarkingConstraint*> m_ordered;
     Vector<MarkingConstraint*> m_outgrowths;
+    unsigned m_iteration { 1 };
 };
 
 } // namespace JSC

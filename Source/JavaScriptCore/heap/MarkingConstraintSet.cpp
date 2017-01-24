@@ -86,7 +86,7 @@ MarkingConstraintSet::~MarkingConstraintSet()
 {
 }
 
-void MarkingConstraintSet::resetStats()
+void MarkingConstraintSet::didStartMarking()
 {
     m_unexecutedRoots.clearAll();
     m_unexecutedOutgrowths.clearAll();
@@ -103,6 +103,7 @@ void MarkingConstraintSet::resetStats()
             break;
         }
     }
+    m_iteration = 1;
 }
 
 void MarkingConstraintSet::add(CString abbreviatedName, CString name, Function<void(SlotVisitor&, const VisitingTimeout&)> function, ConstraintVolatility volatility)
@@ -129,22 +130,6 @@ void MarkingConstraintSet::add(
     m_set.append(WTFMove(constraint));
 }
 
-bool MarkingConstraintSet::executeBootstrap(SlotVisitor& visitor, MonotonicTime timeout)
-{
-    // Bootstrap means that we haven't done any object visiting yet. This means that we want to
-    // only execute root constraints (which also happens to be those that we say are greyed by
-    // resumption), since the other constraints are super unlikely to trigger without some object
-    // visiting. The expectation is that the caller will go straight to object visiting after
-    // this.
-    ExecutionContext executionContext(*this, visitor, timeout);
-    if (Options::logGC())
-        dataLog("boot:");
-    bool result = executionContext.drain(m_unexecutedRoots);
-    if (Options::logGC())
-        dataLog(" ");
-    return result;
-}
-
 bool MarkingConstraintSet::executeConvergence(SlotVisitor& visitor, MonotonicTime timeout)
 {
     bool result = executeConvergenceImpl(visitor, timeout);
@@ -166,13 +151,21 @@ bool MarkingConstraintSet::executeConvergenceImpl(SlotVisitor& visitor, Monotoni
 {
     ExecutionContext executionContext(*this, visitor, timeout);
     
+    unsigned iteration = m_iteration++;
+    
     if (Options::logGC())
-        dataLog("converge:");
+        dataLog("i#", iteration, ":");
 
     // If there are any constraints that we have not executed at all during this cycle, then
     // we should execute those now.
     if (!executionContext.drain(m_unexecutedRoots))
         return false;
+    
+    // First iteration is before any visitor draining, so it's unlikely to trigger any constraints other
+    // than roots.
+    if (iteration == 1)
+        return false;
+    
     if (!executionContext.drain(m_unexecutedOutgrowths))
         return false;
     

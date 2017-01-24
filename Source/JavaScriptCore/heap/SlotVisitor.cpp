@@ -492,12 +492,13 @@ void SlotVisitor::drain(MonotonicTime timeout)
 bool SlotVisitor::didReachTermination()
 {
     LockHolder locker(m_heap.m_markingMutex);
-    return isEmpty() && didReachTermination(locker);
+    return didReachTermination(locker);
 }
 
 bool SlotVisitor::didReachTermination(const LockHolder&)
 {
-    return !m_heap.m_numberOfActiveParallelMarkers
+    return isEmpty()
+        && !m_heap.m_numberOfActiveParallelMarkers
         && m_heap.m_sharedCollectorMarkStack->isEmpty()
         && m_heap.m_sharedMutatorMarkStack->isEmpty();
 }
@@ -514,14 +515,12 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedDrainMode shar
     
     ASSERT(Options::numberOfGCMarkers());
     
-    {
-        LockHolder locker(m_heap.m_markingMutex);
-        m_heap.m_numberOfActiveParallelMarkers++;
-    }
+    bool isActive = false;
     while (true) {
         {
             LockHolder locker(m_heap.m_markingMutex);
-            m_heap.m_numberOfActiveParallelMarkers--;
+            if (isActive)
+                m_heap.m_numberOfActiveParallelMarkers--;
             m_heap.m_numberOfWaitingParallelMarkers++;
 
             if (sharedDrainMode == MasterDrain) {
@@ -568,6 +567,7 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedDrainMode shar
         }
         
         drain(timeout);
+        isActive = true;
     }
 }
 

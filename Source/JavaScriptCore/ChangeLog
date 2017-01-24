@@ -1,5 +1,130 @@
 2017-01-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211069. rdar://problem/30173274
+
+    2017-01-22  Filip Pizlo  <fpizlo@apple.com>
+
+            Land the stochastic space-time scheduler disabled
+            https://bugs.webkit.org/show_bug.cgi?id=167249
+
+            Reviewed by Saam Barati.
+
+            The space-time scheduler is pretty weird. It uses a periodic scheduler where the next period is
+            simply determined by an integer multiple of time since when the scheduler last snapped phase. It
+            snaps phase after constraint solving. Both the snapping of the phase after constraint solving and
+            the periodicity appear to be necessary for good performance. For example, if the space-time
+            scheduler decided that it was in the resume part of the phase just by virtue of having just
+            resumed, then it would be empirically worse than our scheduler which asks "what time is it?" to
+            decide whether it should be suspended or resumed even if it just suspended or resumed. I've spent
+            a lot of time wondering why these two features are essential, and I think I found a reason.
+
+            What's happening is that sometimes the GC has an overrun and its increment takes longer than it
+            should have. The current scheduler forgives overruns when constraint solving, which seems to
+            make sense because it cannot control whether constraint solving runs with the mutator resumed or
+            suspended. It has to be suspended currently. Snapping phase after constraint solving accomplishes
+            this. What's more surprising is how important it is to manage deadline misses during draining.
+            The relevant kind of deadline miss is when doing mutator-suspended draining to catch up to the
+            retreating wavefront. Deadline misses while doing this can happen systematically in some
+            workloads, like JetStream/hash-map and some test in Speedometer. It's because they have some
+            ginormous object and it takes like ~3ms+-1.5ms just to scan it. The space-time scheduler's use
+            of time to decide what to do saves the day here: after the deadline miss, the scheduler will
+            initially realize that it missed its deadline to resume the mutator. But as soon as it does this
+            it asks: "based on current time since phase snap, what should I do?". In the case of a deadline
+            miss, this question is essentially a weighted coin flip because of the high noise in the amount
+            of time that it takes to do things in the GC. If you overrun, you will probably overrun by
+            multiple milliseconds, which is enough that where you land in the space-time scheduler's timeline
+            is random. The likelihood that you land in the "resume mutator" part of the timeline has a
+            probability that is roughly the same as what the space-time scheduler calls mutator utilization.
+            This is a super weird property. I did not intend for it to have this property, but it appears to
+            be the most important property of this scheduler.
+
+            Based on this, it seems that the fact that the space-time scheduler could suspend the mutator
+            before draining runs out of work doesn't accomplish anything. As soon as you resume the
+            mutator, you have a retreating wavefront to worry about. But if the collector is happily scanning
+            things then it's almost certain that the collector will outpace the mutator. Also, anything that
+            the mutator asks us to revisit is deferred anyway.
+
+            In the past I've tried to replace the scheduler in one patch and this turned out to be annoying
+            because even a poorly conceived scheduler should be iterated on. This patch lands a new scheduler
+            called the StochasticSpaceTime scheduler. It replaces two of the known-good features of the old
+            scheduler: (1) it forgives constraint pauses and (2) after deadline overrun its choice is random,
+            weighted by the mutator utilization target. Unlike the old scheduler, this one will only suspend
+            the mutator when the draining terminates, but it may pause for any amount of time after an
+            iteration of constraint solving. It computes the targetPause by measuring constraint solving time
+            and multiplying by the pauseScale (0.3 by default). If smaller then minimumPause (0.3ms by
+            default), then it uses minimumPause instead. The stochastic scheduler will then definitely do at
+            least targetPause worth of suspended draining after the constraint solving iteration, and then
+            it will decide whether or not to do another one at random. The probability that it will choose to
+            resume is exactly mutatorUtilization, which is computed exactly as before. Therefore, the
+            probability of resumption starts at 0.7 and goes down as memory usage rises. Conversely, the
+            probability that we will stay suspended starts at 0.3 and goes up from there.
+
+            This new scheduler looks like it might be a 25% improvement on splay-latency. It also looks like
+            a small progression on hash-map. Hash-map is a great test of one of the worst cases of retreating
+            wavefront, since it is repeatedly storing to a ginormous array. This array is sure to take a
+            while to scan, and to complete, the GC must be smart enough to visit any new objects it finds
+            while scanning the array immediately after scanning that array. This new scheduler means that
+            after scanning the array, the probability that you will scan whatever you found in it starts at
+            0.3 and rises as the program allocates. It's sure to be 0.3, and not 0.3^k, because after the
+            wavefront stops advancing, the only object on the mark stack after a constraint iteration will be
+            that array. Since there is sure to be a 0.3ms or longer pause, the GC will be sure to start
+            visiting this object. The GC can then complete if it just allows enough time after this to scan
+            whatever new objects it finds. If scanning the array overruns the deadline (and it almost
+            certainly will) then the probability that the GC keeps the mutator suspended is simply
+            1 - mutatorUtilization.
+
+            This scheduler is disabled by default. You can enable it with
+            --useStochasticMutatorScheduler=true.
+
+            * CMakeLists.txt:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * heap/Heap.cpp:
+            (JSC::Heap::Heap):
+            (JSC::Heap::markToFixpoint):
+            * heap/Heap.h:
+            * heap/MarkingConstraintSet.cpp:
+            (JSC::MarkingConstraintSet::didStartMarking):
+            (JSC::MarkingConstraintSet::executeConvergenceImpl):
+            (JSC::MarkingConstraintSet::resetStats): Deleted.
+            (JSC::MarkingConstraintSet::executeBootstrap): Deleted.
+            * heap/MarkingConstraintSet.h:
+            * heap/MutatorScheduler.cpp:
+            (JSC::MutatorScheduler::didReachTermination):
+            (JSC::MutatorScheduler::synchronousDrainingDidStall):
+            * heap/MutatorScheduler.h:
+            * heap/SlotVisitor.cpp:
+            (JSC::SlotVisitor::didReachTermination):
+            (JSC::SlotVisitor::drainFromShared):
+            * heap/StochasticSpaceTimeMutatorScheduler.cpp: Added.
+            (JSC::StochasticSpaceTimeMutatorScheduler::Snapshot::Snapshot):
+            (JSC::StochasticSpaceTimeMutatorScheduler::Snapshot::now):
+            (JSC::StochasticSpaceTimeMutatorScheduler::Snapshot::bytesAllocatedThisCycle):
+            (JSC::StochasticSpaceTimeMutatorScheduler::StochasticSpaceTimeMutatorScheduler):
+            (JSC::StochasticSpaceTimeMutatorScheduler::~StochasticSpaceTimeMutatorScheduler):
+            (JSC::StochasticSpaceTimeMutatorScheduler::state):
+            (JSC::StochasticSpaceTimeMutatorScheduler::beginCollection):
+            (JSC::StochasticSpaceTimeMutatorScheduler::didStop):
+            (JSC::StochasticSpaceTimeMutatorScheduler::willResume):
+            (JSC::StochasticSpaceTimeMutatorScheduler::didReachTermination):
+            (JSC::StochasticSpaceTimeMutatorScheduler::didExecuteConstraints):
+            (JSC::StochasticSpaceTimeMutatorScheduler::synchronousDrainingDidStall):
+            (JSC::StochasticSpaceTimeMutatorScheduler::timeToStop):
+            (JSC::StochasticSpaceTimeMutatorScheduler::timeToResume):
+            (JSC::StochasticSpaceTimeMutatorScheduler::log):
+            (JSC::StochasticSpaceTimeMutatorScheduler::endCollection):
+            (JSC::StochasticSpaceTimeMutatorScheduler::setResumeTime):
+            (JSC::StochasticSpaceTimeMutatorScheduler::bytesAllocatedThisCycleImpl):
+            (JSC::StochasticSpaceTimeMutatorScheduler::bytesSinceBeginningOfCycle):
+            (JSC::StochasticSpaceTimeMutatorScheduler::maxHeadroom):
+            (JSC::StochasticSpaceTimeMutatorScheduler::headroomFullness):
+            (JSC::StochasticSpaceTimeMutatorScheduler::mutatorUtilization):
+            * heap/StochasticSpaceTimeMutatorScheduler.h: Added.
+            * runtime/Options.cpp:
+            (JSC::overrideDefaults):
+            * runtime/Options.h:
+
+2017-01-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211065. rdar://problem/29784295
 
     2017-01-23  Filip Pizlo  <fpizlo@apple.com>
