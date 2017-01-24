@@ -1,5 +1,18 @@
 2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Remove always true allowCustomScrollbarInMainFrame setting
+        https://bugs.webkit.org/show_bug.cgi?id=167362
+
+        Reviewed by Andreas Kling.
+
+        Setting added by Chromium and never used by other ports.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::createScrollbar):
+        * page/Settings.in:
+
+2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
         Remove always true syncXHRInDocumentsEnabled setting
         https://bugs.webkit.org/show_bug.cgi?id=167359
 

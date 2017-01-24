@@ -608,9 +608,6 @@ void FrameView::updateCanHaveScrollbars()
 
 Ref<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientation)
 {
-    if (!frame().settings().allowCustomScrollbarInMainFrame() && frame().isMainFrame())
-        return ScrollView::createScrollbar(orientation);
-
     // FIXME: We need to update the scrollbar dynamically as documents change (or as doc elements and bodies get discovered that have custom styles).
     Document* doc = frame().document();
 

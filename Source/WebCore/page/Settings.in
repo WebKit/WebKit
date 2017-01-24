@@ -177,7 +177,6 @@ primaryPlugInSnapshotDetectionEnabled initial=true
 maximumPlugInSnapshotAttempts type=unsigned, initial=20
 frameFlatteningEnabled initial=false
 
-allowCustomScrollbarInMainFrame initial=true
 webSecurityEnabled initial=true
 spatialNavigationEnabled initial=false
 
