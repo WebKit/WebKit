@@ -70,13 +70,11 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-#if ENABLE(USER_TIMING)
-    ExceptionOr<void> webkitMark(const String& markName);
-    void webkitClearMarks(const String& markName);
+    ExceptionOr<void> mark(const String& markName);
+    void clearMarks(const String& markName);
 
-    ExceptionOr<void> webkitMeasure(const String& measureName, const String& startMark, const String& endMark);
-    void webkitClearMeasures(const String& measureName);
-#endif
+    ExceptionOr<void> measure(const String& measureName, const String& startMark, const String& endMark);
+    void clearMeasures(const String& measureName);
 
     static double reduceTimeResolution(double seconds);
 
@@ -100,9 +98,7 @@ private:
 
     double m_referenceTime;
 
-#if ENABLE(USER_TIMING)
     std::unique_ptr<UserTiming> m_userTiming;
-#endif
 };
 
 }

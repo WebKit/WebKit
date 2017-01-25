@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(USER_TIMING)
+#if ENABLE(WEB_TIMING)
 
 #include "ExceptionOr.h"
 #include <wtf/HashMap.h>
@@ -64,4 +64,4 @@ private:
 
 }
 
-#endif // ENABLE(USER_TIMING)
+#endif // ENABLE(WEB_TIMING)

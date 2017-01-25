@@ -55,10 +55,10 @@ typedef double DOMHighResTimeStamp;
     [EnabledAtRuntime=ResourceTiming] attribute EventHandler onresourcetimingbufferfull;
 
     // https://w3c.github.io/user-timing/
-    [Conditional=USER_TIMING, MayThrowException] void webkitMark(DOMString markName);
-    [Conditional=USER_TIMING] void webkitClearMarks(optional DOMString markName);
-    [Conditional=USER_TIMING, MayThrowException] void webkitMeasure(DOMString measureName, optional DOMString startMark, optional DOMString endMark);
-    [Conditional=USER_TIMING] void webkitClearMeasures(optional DOMString measureName);
+    [EnabledAtRuntime=UserTiming, MayThrowException] void mark(DOMString markName);
+    [EnabledAtRuntime=UserTiming] void clearMarks(optional DOMString markName);
+    [EnabledAtRuntime=UserTiming, MayThrowException] void measure(DOMString measureName, optional DOMString startMark, optional DOMString endMark);
+    [EnabledAtRuntime=UserTiming] void clearMeasures(optional DOMString measureName);
 };
 
 typedef sequence<PerformanceEntry> PerformanceEntryList;

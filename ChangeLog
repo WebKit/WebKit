@@ -1,3 +1,16 @@
+2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fold USER_TIMING into WEB_TIMING and make it a RuntimeEnabledFeature
+        https://bugs.webkit.org/show_bug.cgi?id=167394
+
+        Reviewed by Ryosuke Niwa.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmake/tools/vsprops/FeatureDefines.props:
+        * Source/cmake/tools/vsprops/FeatureDefinesCairo.props:
+
 2017-01-22  Don Olmstead <don.olmstead@am.sony.com> and Myles C. Maxfield <mmaxfield@apple.com>
 
         Introducing the Platform Abstraction Layer (PAL)

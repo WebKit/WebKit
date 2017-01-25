@@ -87,12 +87,10 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntries() const
 
     entries.appendVector(m_resourceTimingBuffer);
 
-#if ENABLE(USER_TIMING)
     if (m_userTiming) {
         entries.appendVector(m_userTiming->getMarks());
         entries.appendVector(m_userTiming->getMeasures());
     }
-#endif
 
     std::sort(entries.begin(), entries.end(), PerformanceEntry::startTimeCompareLessThan);
     return entries;
@@ -105,14 +103,12 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByType(const String& ent
     if (equalLettersIgnoringASCIICase(entryType, "resource"))
         entries.appendVector(m_resourceTimingBuffer);
 
-#if ENABLE(USER_TIMING)
     if (m_userTiming) {
         if (equalLettersIgnoringASCIICase(entryType, "mark"))
             entries.appendVector(m_userTiming->getMarks());
         else if (equalLettersIgnoringASCIICase(entryType, "measure"))
             entries.appendVector(m_userTiming->getMeasures());
     }
-#endif
 
     std::sort(entries.begin(), entries.end(), PerformanceEntry::startTimeCompareLessThan);
     return entries;
@@ -129,14 +125,12 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByName(const String& nam
         }
     }
 
-#if ENABLE(USER_TIMING)
     if (m_userTiming) {
         if (entryType.isNull() || equalLettersIgnoringASCIICase(entryType, "mark"))
             entries.appendVector(m_userTiming->getMarks(name));
         if (entryType.isNull() || equalLettersIgnoringASCIICase(entryType, "measure"))
             entries.appendVector(m_userTiming->getMeasures(name));
     }
-#endif
 
     std::sort(entries.begin(), entries.end(), PerformanceEntry::startTimeCompareLessThan);
     return entries;
@@ -173,37 +167,33 @@ bool Performance::isResourceTimingBufferFull() const
     return m_resourceTimingBuffer.size() >= m_resourceTimingBufferSize;
 }
 
-#if ENABLE(USER_TIMING)
-
-ExceptionOr<void> Performance::webkitMark(const String& markName)
+ExceptionOr<void> Performance::mark(const String& markName)
 {
     if (!m_userTiming)
         m_userTiming = std::make_unique<UserTiming>(*this);
     return m_userTiming->mark(markName);
 }
 
-void Performance::webkitClearMarks(const String& markName)
+void Performance::clearMarks(const String& markName)
 {
     if (!m_userTiming)
         m_userTiming = std::make_unique<UserTiming>(*this);
     m_userTiming->clearMarks(markName);
 }
 
-ExceptionOr<void> Performance::webkitMeasure(const String& measureName, const String& startMark, const String& endMark)
+ExceptionOr<void> Performance::measure(const String& measureName, const String& startMark, const String& endMark)
 {
     if (!m_userTiming)
         m_userTiming = std::make_unique<UserTiming>(*this);
     return m_userTiming->measure(measureName, startMark, endMark);
 }
 
-void Performance::webkitClearMeasures(const String& measureName)
+void Performance::clearMeasures(const String& measureName)
 {
     if (!m_userTiming)
         m_userTiming = std::make_unique<UserTiming>(*this);
     m_userTiming->clearMeasures(measureName);
 }
-
-#endif // ENABLE(USER_TIMING)
 
 double Performance::now() const
 {

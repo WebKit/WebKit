@@ -55,6 +55,9 @@ public:
     void setResourceTimingEnabled(bool isEnabled) { m_isResourceTimingEnabled = isEnabled; }
     bool resourceTimingEnabled() const { return m_isResourceTimingEnabled; }
 
+    void setUserTimingEnabled(bool isEnabled) { m_isUserTimingEnabled = isEnabled; }
+    bool userTimingEnabled() const { return m_isUserTimingEnabled; }
+
     void setShadowDOMEnabled(bool isEnabled) { m_isShadowDOMEnabled = isEnabled; }
     bool shadowDOMEnabled() const { return m_isShadowDOMEnabled; }
 
@@ -200,6 +203,7 @@ private:
     bool m_areModernMediaControlsEnabled { false };
     bool m_isLinkPreloadEnabled { false };
     bool m_isResourceTimingEnabled { false };
+    bool m_isUserTimingEnabled { false };
     bool m_isInteractiveFormValidationEnabled { false };
 
     bool m_isDOMIteratorEnabled { true };

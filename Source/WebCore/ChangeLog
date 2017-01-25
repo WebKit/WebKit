@@ -1,3 +1,58 @@
+2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fold USER_TIMING into WEB_TIMING and make it a RuntimeEnabledFeature
+        https://bugs.webkit.org/show_bug.cgi?id=167394
+
+        Reviewed by Ryosuke Niwa.
+
+        All of the Performance Timing specifications are highly coupled.
+        So let make WEB_TIMING encompass them all:
+
+            - High Resolution Time (window.performance)
+            - Performance Timeline (PerformanceEntry, PerformanceObserver)
+            - Navigation Timing ("navigation" entries)
+            - Resource Timing ("resource" entries)
+            - User Timing ("mark" / "measure" entries)
+
+        We can then turn on and off individual pieces as runtime features,
+        such as Resource Timing, User Timing, and Performance Observer.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add User Timing files that are now included in WEB_TIMING builds.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setUserTimingEnabled):
+        (WebCore::RuntimeEnabledFeatures::userTimingEnabled):
+        Add a runtime feature for user timing. Disabled by default.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * PAL/Configurations/FeatureDefines.xcconfig:
+        * bindings/js/JSPerformanceEntryCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * page/Performance.cpp:
+        (WebCore::Performance::getEntries):
+        (WebCore::Performance::getEntriesByType):
+        (WebCore::Performance::getEntriesByName):
+        (WebCore::Performance::mark):
+        (WebCore::Performance::clearMarks):
+        (WebCore::Performance::measure):
+        (WebCore::Performance::clearMeasures):
+        (WebCore::Performance::webkitMark): Deleted.
+        (WebCore::Performance::webkitClearMarks): Deleted.
+        (WebCore::Performance::webkitMeasure): Deleted.
+        (WebCore::Performance::webkitClearMeasures): Deleted.
+        * page/Performance.h:
+        * page/Performance.idl:
+        * page/PerformanceMark.h:
+        * page/PerformanceMark.idl:
+        * page/PerformanceMeasure.h:
+        * page/PerformanceMeasure.idl:
+        * page/PerformanceUserTiming.cpp:
+        * page/PerformanceUserTiming.h:
+        Convert USER_TIMING to WEB_TIMING.
+        Drop webkit prefixed legacy names.
+
 2017-01-24  Antoine Quint  <graouts@apple.com>
 
         LayoutTest media/modern-media-controls/tracks-panel/tracks-panel-hide.html is a flaky timeout

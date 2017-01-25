@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PerformanceUserTiming.h"
 
-#if ENABLE(USER_TIMING)
+#if ENABLE(WEB_TIMING)
 
 #include "ExceptionCode.h"
 #include "Performance.h"
@@ -204,4 +204,4 @@ Vector<RefPtr<PerformanceEntry>> UserTiming::getMeasures(const String& name) con
 
 } // namespace WebCore
 
-#endif // ENABLE(USER_TIMING)
+#endif // ENABLE(WEB_TIMING)

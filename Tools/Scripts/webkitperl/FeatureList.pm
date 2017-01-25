@@ -128,7 +128,6 @@ my (
     $touchEventsSupport,
     $touchIconLoadingSupport,
     $touchSliderSupport,
-    $userTimingSupport,
     $vibrationSupport,
     $videoSupport,
     $videoTrackSupport,
@@ -380,9 +379,6 @@ my @features = (
 
     { option => "touch-slider", desc => "Toggle Touch Slider support",
       define => "ENABLE_TOUCH_SLIDER", default => isEfl(), value => \$touchSliderSupport },
-
-    { option => "user-timing", desc => "Toggle User Timing support",
-      define => "ENABLE_USER_TIMING", default => isGtk(), value => \$userTimingSupport },
 
     { option => "vibration", desc => "Toggle Vibration support",
       define => "ENABLE_VIBRATION", default => isEfl(), value => \$vibrationSupport },
