@@ -227,6 +227,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)showDebugBorders;
 - (void)setShowDebugBorders:(BOOL)show;
 
+- (BOOL)simpleLineLayoutEnabled;
+- (void)setSimpleLineLayoutEnabled:(BOOL)enabled;
+
 - (BOOL)simpleLineLayoutDebugBordersEnabled;
 - (void)setSimpleLineLayoutDebugBordersEnabled:(BOOL)enabled;
 

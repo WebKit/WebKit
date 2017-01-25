@@ -1,3 +1,15 @@
+2017-01-24  Zalan Bujtas  <zalan@apple.com>
+
+        Add simple line layout toggle to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=167405
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _simpleLineLayoutEnabled]):
+        (-[WKPreferences _setSimpleLineLayoutEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fold USER_TIMING into WEB_TIMING and make it a RuntimeEnabledFeature

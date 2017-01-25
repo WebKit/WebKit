@@ -38,6 +38,7 @@
 @property (nonatomic, readonly) BOOL useTransparentWindows;
 @property (nonatomic, readonly) BOOL usePaginatedMode;
 @property (nonatomic, readonly) BOOL layerBordersVisible;
+@property (nonatomic, readonly) BOOL simpleLineLayoutEnabled;
 @property (nonatomic, readonly) BOOL simpleLineLayoutDebugBordersEnabled;
 @property (nonatomic, readonly) BOOL incrementalRenderingSuppressed;
 @property (nonatomic, readonly) BOOL tiledScrollingIndicatorVisible;
