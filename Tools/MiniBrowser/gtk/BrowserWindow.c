@@ -40,6 +40,8 @@
 struct _BrowserWindow {
     GtkWindow parent;
 
+    WebKitWebContext *webContext;
+
     GtkAccelGroup *accelGroup;
     GtkWidget *mainBox;
     GtkWidget *toolbar;
@@ -150,7 +152,13 @@ static void webViewURIChanged(WebKitWebView *webView, GParamSpec *pspec, Browser
 static void webViewTitleChanged(WebKitWebView *webView, GParamSpec *pspec, BrowserWindow *window)
 {
     const char *title = webkit_web_view_get_title(webView);
-    gtk_window_set_title(GTK_WINDOW(window), title ? title : defaultWindowTitle);
+    if (!title)
+        title = defaultWindowTitle;
+    char *privateTitle = NULL;
+    if (webkit_web_view_is_ephemeral(webView))
+        privateTitle = g_strdup_printf("[Private] %s", title);
+    gtk_window_set_title(GTK_WINDOW(window), privateTitle ? privateTitle : title);
+    g_free(privateTitle);
 }
 
 static gboolean resetEntryProgress(BrowserWindow *window)
@@ -287,7 +295,7 @@ static GtkWidget *webViewCreate(WebKitWebView *webView, WebKitNavigationAction *
     WebKitWebView *newWebView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_related_view(webView));
     webkit_web_view_set_settings(newWebView, webkit_web_view_get_settings(webView));
 
-    GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window));
+    GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext);
     browser_window_append_view(BROWSER_WINDOW(newWindow), newWebView);
     g_signal_connect(newWebView, "ready-to-show", G_CALLBACK(webViewReadyToShow), newWindow);
     g_signal_connect(newWebView, "run-as-modal", G_CALLBACK(webViewRunAsModal), newWindow);
@@ -484,6 +492,20 @@ static void toggleWebInspector(BrowserWindow *window)
     browser_tab_toggle_inspector(window->activeTab);
 }
 
+static void openPrivateWindow(BrowserWindow *window)
+{
+    WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
+    WebKitWebView *newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "web-context", webkit_web_view_get_context(webView),
+        "settings", webkit_web_view_get_settings(webView),
+        "user-content-manager", webkit_web_view_get_user_content_manager(webView),
+        "is-ephemeral", TRUE,
+        NULL));
+    GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext);
+    browser_window_append_view(BROWSER_WINDOW(newWindow), newWebView);
+    gtk_widget_show(GTK_WIDGET(newWindow));
+}
+
 static void reloadPage(BrowserWindow *window)
 {
     WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
@@ -608,6 +630,9 @@ static void typingAttributesChanged(WebKitEditorState *editorState, GParamSpec *
 static void browserWindowFinalize(GObject *gObject)
 {
     BrowserWindow *window = BROWSER_WINDOW(gObject);
+
+    g_signal_handlers_disconnect_matched(window->webContext, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
+
     if (window->favicon) {
         g_object_unref(window->favicon);
         window->favicon = NULL;
@@ -839,6 +864,8 @@ static void browser_window_init(BrowserWindow *window)
         g_cclosure_new_swap(G_CALLBACK(toggleWebInspector), window, NULL));
     gtk_accel_group_connect(window->accelGroup, GDK_KEY_F12, 0, GTK_ACCEL_VISIBLE,
         g_cclosure_new_swap(G_CALLBACK(toggleWebInspector), window, NULL));
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_P, GDK_CONTROL_MASK | GDK_SHIFT_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(openPrivateWindow), window, NULL));
 
     /* Reload page */
     gtk_accel_group_connect(window->accelGroup, GDK_KEY_F5, 0, GTK_ACCEL_VISIBLE,
@@ -889,8 +916,6 @@ static void browser_window_init(BrowserWindow *window)
     /* Print */
     gtk_accel_group_connect(window->accelGroup, GDK_KEY_P, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
         g_cclosure_new_swap(G_CALLBACK(printPage), window, NULL));
-
-    g_signal_connect(webkit_web_context_get_default(), "download-started", G_CALLBACK(downloadStarted), window);
 
     GtkWidget *toolbar = gtk_toolbar_new();
     window->toolbar = toolbar;
@@ -1017,17 +1042,28 @@ static void browser_window_class_init(BrowserWindowClass *klass)
 }
 
 /* Public API. */
-GtkWidget *browser_window_new(GtkWindow *parent)
+GtkWidget *browser_window_new(GtkWindow *parent, WebKitWebContext *webContext)
 {
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(webContext), NULL);
+
     BrowserWindow *window = BROWSER_WINDOW(g_object_new(BROWSER_TYPE_WINDOW,
         "type", GTK_WINDOW_TOPLEVEL, NULL));
 
+    window->webContext = webContext;
+    g_signal_connect(window->webContext, "download-started", G_CALLBACK(downloadStarted), window);
     if (parent) {
         window->parentWindow = parent;
         g_object_add_weak_pointer(G_OBJECT(parent), (gpointer *)&window->parentWindow);
     }
 
     return GTK_WIDGET(window);
+}
+
+WebKitWebContext *browser_window_get_web_context(BrowserWindow *window)
+{
+    g_return_val_if_fail(BROWSER_IS_WINDOW(window), NULL);
+
+    return window->webContext;
 }
 
 void browser_window_append_view(BrowserWindow *window, WebKitWebView *webView)

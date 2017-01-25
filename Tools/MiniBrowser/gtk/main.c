@@ -41,6 +41,7 @@ static GdkRGBA *backgroundColor;
 static gboolean editorMode;
 static const char *sessionFile;
 static char *geometry;
+static gboolean privateMode;
 
 typedef enum {
     MINI_BROWSER_ERROR_INVALID_ABOUT_PATH
@@ -62,9 +63,12 @@ static gchar *argumentToURL(const char *filename)
 
 static WebKitWebView *createBrowserTab(BrowserWindow *window, WebKitSettings *webkitSettings, WebKitUserContentManager *userContentManager)
 {
-    WebKitWebView *webView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_user_content_manager(userContentManager));
-    if (webkitSettings)
-        webkit_web_view_set_settings(webView, webkitSettings);
+    WebKitWebView *webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "web-context", browser_window_get_web_context(window),
+        "settings", webkitSettings,
+        "user-content-manager", userContentManager,
+        NULL));
+
     if (editorMode)
         webkit_web_view_set_editable(webView, TRUE);
 
@@ -90,6 +94,7 @@ static const GOptionEntry commandLineOptions[] =
     { "editor-mode", 'e', 0, G_OPTION_ARG_NONE, &editorMode, "Run in editor mode", NULL },
     { "session-file", 's', 0, G_OPTION_ARG_FILENAME, &sessionFile, "Session file", "FILE" },
     { "geometry", 'g', 0, G_OPTION_ARG_STRING, &geometry, "Set the size and position of the window (WIDTHxHEIGHT+X+Y)", "GEOMETRY" },
+    { "private", 'p', 0, G_OPTION_ARG_NONE, &privateMode, "Run in private browsing mode", NULL },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
     { 0, 0, 0, 0, 0, 0, 0 }
 };
@@ -278,7 +283,7 @@ static void websiteDataClearedCallback(WebKitWebsiteDataManager *manager, GAsync
         webkit_web_view_reload(webkit_uri_scheme_request_get_web_view(dataRequest->request));
 }
 
-static void aboutDataScriptMessageReceivedCallback(WebKitUserContentManager *userContentManager, WebKitJavascriptResult *message)
+static void aboutDataScriptMessageReceivedCallback(WebKitUserContentManager *userContentManager, WebKitJavascriptResult *message, WebKitWebContext *webContext)
 {
     JSValueRef jsValue = webkit_javascript_result_get_value(message);
     JSStringRef jsString = JSValueToStringCopy(webkit_javascript_result_get_global_context(message), jsValue, NULL);
@@ -307,7 +312,7 @@ static void aboutDataScriptMessageReceivedCallback(WebKitUserContentManager *use
         return;
     }
 
-    WebKitWebsiteDataManager *manager = webkit_web_context_get_website_data_manager(webkit_web_context_get_default());
+    WebKitWebsiteDataManager *manager = webkit_web_context_get_website_data_manager(webContext);
     guint64 types = g_ascii_strtoull(tokens[1], NULL, 10);
     if (tokenCount == 2)
         webkit_website_data_manager_clear(manager, types, 0, NULL, (GAsyncReadyCallback)websiteDataClearedCallback, dataRequest);
@@ -407,14 +412,14 @@ static void gotWebsiteDataCallback(WebKitWebsiteDataManager *manager, GAsyncResu
     g_list_free_full(dataList, (GDestroyNotify)webkit_website_data_unref);
 }
 
-static void aboutDataHandleRequest(WebKitURISchemeRequest *request)
+static void aboutDataHandleRequest(WebKitURISchemeRequest *request, WebKitWebContext *webContext)
 {
     AboutDataRequest *dataRequest = aboutDataRequestNew(request);
-    WebKitWebsiteDataManager *manager = webkit_web_context_get_website_data_manager(webkit_web_context_get_default());
+    WebKitWebsiteDataManager *manager = webkit_web_context_get_website_data_manager(webContext);
     webkit_website_data_manager_fetch(manager, WEBKIT_WEBSITE_DATA_ALL, NULL, (GAsyncReadyCallback)gotWebsiteDataCallback, dataRequest);
 }
 
-static void aboutURISchemeRequestCallback(WebKitURISchemeRequest *request, gpointer userData)
+static void aboutURISchemeRequestCallback(WebKitURISchemeRequest *request, WebKitWebContext *webContext)
 {
     GInputStream *stream;
     gsize streamLength;
@@ -434,7 +439,7 @@ static void aboutURISchemeRequestCallback(WebKitURISchemeRequest *request, gpoin
         webkit_uri_scheme_request_finish(request, stream, streamLength, "text/html");
         g_object_unref(stream);
     } else if (!g_strcmp0(path, "data"))
-        aboutDataHandleRequest(request);
+        aboutDataHandleRequest(request, webContext);
     else {
         error = g_error_new(MINI_BROWSER_ERROR, MINI_BROWSER_ERROR_INVALID_ABOUT_PATH, "Invalid about:%s page.", path);
         webkit_uri_scheme_request_finish_error(request, error);
@@ -448,10 +453,6 @@ int main(int argc, char *argv[])
 #if ENABLE_DEVELOPER_MODE
     g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
 #endif
-
-    const gchar *singleprocess = g_getenv("MINIBROWSER_SINGLEPROCESS");
-    webkit_web_context_set_process_model(webkit_web_context_get_default(), (singleprocess && *singleprocess) ?
-        WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS : WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
 
     GOptionContext *context = g_option_context_new(NULL);
     g_option_context_add_main_entries(context, commandLineOptions, 0);
@@ -474,16 +475,22 @@ int main(int argc, char *argv[])
     }
     g_option_context_free (context);
 
-    // Enable the favicon database, by specifying the default directory.
-    webkit_web_context_set_favicon_database_directory(webkit_web_context_get_default(), NULL);
+    WebKitWebContext *webContext = privateMode ? webkit_web_context_new_ephemeral() : webkit_web_context_get_default();
 
-    webkit_web_context_register_uri_scheme(webkit_web_context_get_default(), BROWSER_ABOUT_SCHEME, aboutURISchemeRequestCallback, NULL, NULL);
+    const gchar *singleprocess = g_getenv("MINIBROWSER_SINGLEPROCESS");
+    webkit_web_context_set_process_model(webContext, (singleprocess && *singleprocess) ?
+        WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS : WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
+
+    // Enable the favicon database, by specifying the default directory.
+    webkit_web_context_set_favicon_database_directory(webContext, NULL);
+
+    webkit_web_context_register_uri_scheme(webContext, BROWSER_ABOUT_SCHEME, (WebKitURISchemeRequestCallback)aboutURISchemeRequestCallback, webContext, NULL);
 
     WebKitUserContentManager *userContentManager = webkit_user_content_manager_new();
     webkit_user_content_manager_register_script_message_handler(userContentManager, "aboutData");
-    g_signal_connect(userContentManager, "script-message-received::aboutData", G_CALLBACK(aboutDataScriptMessageReceivedCallback), NULL);
+    g_signal_connect(userContentManager, "script-message-received::aboutData", G_CALLBACK(aboutDataScriptMessageReceivedCallback), webContext);
 
-    BrowserWindow *mainWindow = BROWSER_WINDOW(browser_window_new(NULL));
+    BrowserWindow *mainWindow = BROWSER_WINDOW(browser_window_new(NULL, webContext));
     if (geometry)
         gtk_window_parse_geometry(GTK_WINDOW(mainWindow), geometry);
 
@@ -521,6 +528,9 @@ int main(int argc, char *argv[])
     g_clear_object(&userContentManager);
 
     gtk_main();
+
+    if (privateMode)
+        g_object_unref(webContext);
 
     return 0;
 }

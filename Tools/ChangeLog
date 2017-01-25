@@ -1,3 +1,29 @@
+2017-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add a private browsing mode to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=167413
+
+        Reviewed by Michael Catanzaro.
+
+        Add -p/--private command line option to create a private instance. Also add CTRL+SHIFT+P shortcut to create
+        private windows, even on non-private instances.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewTitleChanged): Add [Private] to title window for private windows.
+        (webViewCreate): Pass web context to browser_window_new.
+        (openPrivateWindow): Create a new ephemeral web view and add it to a new window.
+        (browserWindowFinalize): Disconnect web context signal handlers.
+        (browser_window_init): Add shortcut for opening private window.
+        (browser_window_new): It now receives the context and connect to download-started here.
+        (browser_window_get_web_context): Return the context.
+        * MiniBrowser/gtk/BrowserWindow.h:
+        * MiniBrowser/gtk/main.c:
+        (createBrowserTab): Create the web view for the window web context.
+        (aboutDataScriptMessageReceivedCallback): Do not use the default web context, but the window one.
+        (aboutDataHandleRequest): Ditto.
+        (aboutURISchemeRequestCallback): Ditto.
+        (main): Create ephemeral web context if private command line option is used.
+
 2017-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         collectMatchingElementsInFlatTree should not find elements inside an user agent shadow tree
