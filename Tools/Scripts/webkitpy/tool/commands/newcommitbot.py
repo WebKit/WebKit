@@ -134,7 +134,7 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
                     commit_log = commit_log.replace(' <' + email + '>', '')
             else:
                 for email in contributor.emails:
-                    commit_log = commit_log.replace(email, name_with_nick)
+                    commit_log = commit_log.replace(' %s ' % email, ' %s ' % name_with_nick)
 
         lines = commit_log.split('\n')[1:-2]  # Ignore lines with ----------.
 

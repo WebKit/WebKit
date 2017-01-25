@@ -1,3 +1,19 @@
+2017-01-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        WKR should not confuse Miguel Gomez with Andres Gomez
+        https://bugs.webkit.org/show_bug.cgi?id=167389
+
+        Reviewed by Lucas Forschler.
+
+        Andres's email is a substring of Miguel's, causing WKR to credit Miguel's commits to
+        "mAndres Gomez". Fix this.
+
+        * Scripts/webkitpy/tool/commands/newcommitbot.py:
+        (NewCommitBot._summarize_commit_log): Be stricter about matching emails. SVN logs include a
+        space on each side of the email address, so expect both spaces to be there before
+        considering the email for replacement.
+        * Scripts/webkitpy/tool/commands/newcommitbot_unittest.py: Add a test.
+
 2017-01-24  Matt Rajca  <mrajca@apple.com>
 
         Pass down website autoplay policies to media elements

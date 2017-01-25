@@ -127,3 +127,25 @@ Patch by Sheriff Bot <webkit.review.bot@gmail.com> on 2012-11-22
 ------------------------------------------------------------------------"""),
             "Vsevolod Vlasov (vsevik) rolled out r134927 and r134944 in https://trac.webkit.org/r135487 :"
             " Reverting the reverts after merging.")
+
+    # Miguel <magomez@igalia.com> is not to be confused with Andres <agomez@igalia.com>.
+    def test_email_substring_problem(self):
+        self.assertEqual(NewCommitBot._summarize_commit_log("""------------------------------------------------------------------------
+r211084 | magomez@igalia.com | 2017-01-24 10:25:31 -0600 (Tue, 24 Jan 2017) | 13 lines
+
+[GTK] Do not paint non composited content into the window when using the threaded compositor
+https://bugs.webkit.org/show_bug.cgi?id=167367
+
+Reviewed by Carlos Garcia Campos.
+
+When using the threaded compositor we need to send the non composited content for compositing as well,
+not painting it directly into the window.
+
+No new tests.
+
+* rendering/RenderLayerBacking.cpp:
+(WebCore::RenderLayerBacking::paintsIntoWindow):
+
+------------------------------------------------------------------------"""),
+            "https://trac.webkit.org/r211084 by Miguel Gomez (magomez) [GTK] Do not paint non composited content into the window when using the threaded compositor"
+            " https://webkit.org/b/167367 Reviewed by Carlos Garcia Campos (KaL).")
