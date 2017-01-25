@@ -113,17 +113,6 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
 
     @classmethod
     def _summarize_commit_log(self, commit_log, committer_list=CommitterList()):
-        patch_by = self._patch_by_regex.search(commit_log)
-        commit_log = self._patch_by_regex.sub('', commit_log, count=1)
-
-        rollout = self._rollout_regex.search(commit_log)
-        commit_log = self._rollout_regex.sub('', commit_log, count=1)
-
-        requested_by = self._requested_by_regex.search(commit_log)
-
-        commit_log = self._bugzilla_url_regex.sub(r'https://webkit.org/b/\g<id>', commit_log)
-        commit_log = self._trac_url_regex.sub(r'https://trac.webkit.org/r\g<revision>', commit_log)
-
         for contributor in committer_list.contributors():
             if not contributor.irc_nicknames:
                 continue
@@ -136,10 +125,22 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
                 for email in contributor.emails:
                     commit_log = commit_log.replace(' %s ' % email, ' %s ' % name_with_nick)
 
+        patch_by = self._patch_by_regex.search(commit_log)
+        commit_log = self._patch_by_regex.sub('', commit_log, count=1)
+
+        rollout = self._rollout_regex.search(commit_log)
+        commit_log = self._rollout_regex.sub('', commit_log, count=1)
+
+        requested_by = self._requested_by_regex.search(commit_log)
+
+        commit_log = self._bugzilla_url_regex.sub(r'https://webkit.org/b/\g<id>', commit_log)
+        commit_log = self._trac_url_regex.sub(r'https://trac.webkit.org/r\g<revision>', commit_log)
+
         lines = commit_log.split('\n')[1:-2]  # Ignore lines with ----------.
 
         firstline = re.match(r'^(?P<revision>r\d+) \| (?P<email>[^\|]+) \| (?P<timestamp>[^|]+) \| [^\n]+', lines[0])
         assert firstline
+
         author = firstline.group('email')
         if patch_by:
             author = patch_by.group('author')

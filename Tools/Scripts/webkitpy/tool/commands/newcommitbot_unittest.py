@@ -67,6 +67,22 @@ instead of "false".
             "https://trac.webkit.org/r140066 by Simon Fraser (smfr)"
             " Allow PaintInfo to carry all PaintBehavior flags https://webkit.org/b/106980 Reviewed by Beth Dakin (dethbakin).")
 
+        self.assertEqual(NewCommitBot._summarize_commit_log("""------------------------------------------------------------------------
+r211085 | commit-queue@webkit.org | 2017-01-24 09:01:44 -0800 (Tue, 24 Jan 2017) | 9 lines
+
+Remove always true openGLMultisamplingEnabled setting
+https://bugs.webkit.org/show_bug.cgi?id=167364
+
+Patch by Joseph Pecoraro <pecoraro@apple.com> on 2017-01-24
+Reviewed by Sam Weinig.
+
+* html/canvas/WebGLRenderingContextBase.cpp:
+(WebCore::WebGLRenderingContextBase::create):
+* page/Settings.in:
+------------------------------------------------------------------------"""),
+            "https://trac.webkit.org/r211085 by Joseph Pecoraro (JoePeck)"
+            " Remove always true openGLMultisamplingEnabled setting https://webkit.org/b/167364 Reviewed by Sam Weinig (weinig).")
+
     def test_summarize_commit_log_rollout(self):
         self.assertEqual(NewCommitBot._summarize_commit_log("""------------------------------------------------------------------------
 r143104 | commit-queue@webkit.org | 2013-02-16 09:09:01 -0800 (Sat, 16 Feb 2013) | 27 lines

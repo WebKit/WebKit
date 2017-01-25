@@ -1,5 +1,18 @@
 2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
+        WKR does not include my nick when commit-queue lands my patch
+        https://bugs.webkit.org/show_bug.cgi?id=167388
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/tool/commands/newcommitbot.py:
+        (NewCommitBot._summarize_commit_log):
+        * Scripts/webkitpy/tool/commands/newcommitbot_unittest.py:
+        Perform nickname insertion before grabbing "Patch by" details.
+        This way we can include the nickname with the full name.
+
+2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
         Fold USER_TIMING into WEB_TIMING and make it a RuntimeEnabledFeature
         https://bugs.webkit.org/show_bug.cgi?id=167394
 
