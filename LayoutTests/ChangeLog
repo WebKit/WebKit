@@ -5,6 +5,22 @@
 
         Reviewed by Myles Maxfield.
         
+        Fix the layout tests.
+        
+        fast/backgrounds/background-repeat-x-y.html was mistakenly removed in r211060 so
+        remove its expected. Fix the parsing test.
+
+        * fast/backgrounds/background-repeat-x-y-expected.html: Removed.
+        * fast/backgrounds/background-repeat-x-y-parse-expected.txt:
+        * fast/backgrounds/background-repeat-x-y-parse.html:
+
+2017-01-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert r210882, removing support for background-repeat-x/y
+        https://bugs.webkit.org/show_bug.cgi?id=167223
+
+        Reviewed by Myles Maxfield.
+        
         Modify the test to check that background-repeat-x and background-repeat-y are not parsed.
 
         * fast/backgrounds/background-repeat-x-y-parse-expected.txt:

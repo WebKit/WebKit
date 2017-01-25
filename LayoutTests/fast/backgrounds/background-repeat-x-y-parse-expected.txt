@@ -1,14 +1,13 @@
+This test checks that background-repeat-x/y are not parsed
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 PASS window.getComputedStyle(document.getElementById('test1')).getPropertyValue('background-repeat') is "repeat"
-PASS window.getComputedStyle(document.getElementById('test2')).getPropertyValue('background-repeat') is "repeat-y"
-PASS window.getComputedStyle(document.getElementById('test3')).getPropertyValue('background-repeat') is "repeat"
+PASS window.getComputedStyle(document.getElementById('test2')).getPropertyValue('background-repeat') is "repeat"
+PASS window.getComputedStyle(document.getElementById('test3')).getPropertyValue('background-repeat') is "repeat-y"
 PASS window.getComputedStyle(document.getElementById('test4')).getPropertyValue('background-repeat') is "repeat-x"
-PASS window.getComputedStyle(document.getElementById('test5')).getPropertyValue('background-repeat') is "no-repeat"
-PASS window.getComputedStyle(document.getElementById('test6')).getPropertyValue('background-repeat') is "no-repeat"
-PASS window.getComputedStyle(document.getElementById('test7')).getPropertyValue('background-repeat') is "no-repeat"
-PASS window.getComputedStyle(document.getElementById('test8')).getPropertyValue('background-repeat') is "repeat-x"
-PASS window.getComputedStyle(document.getElementById('test9')).getPropertyValue('background-repeat') is "repeat-y"
-PASS window.getComputedStyle(document.getElementById('test10')).getPropertyValue('background-repeat') is "repeat"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-         
+   
