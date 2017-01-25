@@ -153,6 +153,7 @@ enum {
     PROP_ZOOM_LEVEL,
     PROP_IS_LOADING,
     PROP_IS_PLAYING_AUDIO,
+    PROP_IS_EPHEMERAL,
     PROP_EDITABLE
 };
 
@@ -177,6 +178,7 @@ struct _WebKitWebViewPrivate {
     CString customTextEncoding;
     CString activeURI;
     bool isLoading;
+    bool isEphemeral;
 
     std::unique_ptr<PageLoadStateObserver> loadObserver;
 
@@ -208,6 +210,7 @@ struct _WebKitWebViewPrivate {
     SnapshotResultsMap snapshotResultsMap;
     GRefPtr<WebKitAuthenticationRequest> authenticationRequest;
 
+    GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -641,12 +644,19 @@ static void webkitWebViewConstructed(GObject* object)
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     WebKitWebViewPrivate* priv = webView->priv;
-    if (priv->relatedView)
+    if (priv->relatedView) {
         priv->context = webkit_web_view_get_context(priv->relatedView);
-    else if (!priv->context)
+        priv->isEphemeral = webkit_web_view_is_ephemeral(priv->relatedView);
+    } else if (!priv->context)
         priv->context = webkit_web_context_get_default();
+    else if (!priv->isEphemeral)
+        priv->isEphemeral = webkit_web_context_is_ephemeral(priv->context.get());
+
     if (!priv->settings)
         priv->settings = adoptGRef(webkit_settings_new());
+
+    if (priv->isEphemeral && !webkit_web_context_is_ephemeral(priv->context.get()))
+        priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new_ephemeral());
 
     webkitWebContextCreatePageForWebView(priv->context.get(), webView, priv->userContentManager.get(), priv->relatedView);
 
@@ -701,6 +711,9 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_ZOOM_LEVEL:
         webkit_web_view_set_zoom_level(webView, g_value_get_double(value));
         break;
+    case PROP_IS_EPHEMERAL:
+        webView->priv->isEphemeral = g_value_get_boolean(value);
+        break;
     case PROP_EDITABLE:
         webkit_web_view_set_editable(webView, g_value_get_boolean(value));
         break;
@@ -743,6 +756,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
     case PROP_IS_PLAYING_AUDIO:
         g_value_set_boolean(value, webkit_web_view_is_playing_audio(webView));
+        break;
+    case PROP_IS_EPHEMERAL:
+        g_value_set_boolean(value, webkit_web_view_is_ephemeral(webView));
         break;
     case PROP_EDITABLE:
         g_value_set_boolean(value, webkit_web_view_is_editable(webView));
@@ -974,6 +990,29 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             _("Whether the view is playing audio"),
             FALSE,
             WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitWebView:is-ephemeral:
+     *
+     * Whether the #WebKitWebView is ephemeral. An ephemeral web view never writes
+     * website data to the client storage, no matter what #WebKitWebsiteDataManager
+     * its context is using. This is normally used to implement private browsing mode.
+     * This is a %G_PARAM_CONSTRUCT_ONLY property, so you have to create a ephemeral
+     * #WebKitWebView and it can't be changed. Note that all #WebKitWebView<!-- -->s
+     * created with an ephemeral #WebKitWebContext will be ephemeral automatically.
+     * See also webkit_web_context_new_ephemeral().
+     *
+     * Since: 2.16
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_IS_EPHEMERAL,
+        g_param_spec_boolean(
+            "is-ephemeral",
+            "Is Ephemeral",
+            _("Whether the web view is ephemeral"),
+            FALSE,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
      * WebKitWebView:editable:
@@ -2021,7 +2060,9 @@ void webkitWebViewSubmitFormRequest(WebKitWebView* webView, WebKitFormSubmission
 
 void webkitWebViewHandleAuthenticationChallenge(WebKitWebView* webView, AuthenticationChallengeProxy* authenticationChallenge)
 {
-    gboolean privateBrowsingEnabled = webkit_settings_get_enable_private_browsing(webView->priv->settings.get());
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+    gboolean privateBrowsingEnabled = webView->priv->isEphemeral || webkit_settings_get_enable_private_browsing(webView->priv->settings.get());
+    G_GNUC_END_IGNORE_DEPRECATIONS;
     webView->priv->authenticationRequest = adoptGRef(webkitAuthenticationRequestCreate(authenticationChallenge, privateBrowsingEnabled));
     gboolean returnValue;
     g_signal_emit(webView, signals[AUTHENTICATE], 0, webView->priv->authenticationRequest.get(), &returnValue);
@@ -2064,6 +2105,11 @@ void webkitWebViewRequestInstallMissingMediaPlugins(WebKitWebView* webView, Inst
 #endif
 }
 
+WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView* webView)
+{
+    return webView->priv->websiteDataManager.get();
+}
+
 /**
  * webkit_web_view_new:
  *
@@ -2095,7 +2141,10 @@ GtkWidget* webkit_web_view_new_with_context(WebKitWebContext* context)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
 
-    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW, "web-context", context, NULL));
+    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "is-ephemeral", webkit_web_context_is_ephemeral(context),
+        "web-context", context,
+        nullptr));
 }
 
 /**
@@ -2196,6 +2245,27 @@ WebKitUserContentManager* webkit_web_view_get_user_content_manager(WebKitWebView
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
 
     return webView->priv->userContentManager.get();
+}
+
+/**
+ * webkit_web_view_is_ephemeral:
+ * @web_view: a #WebKitWebView
+ *
+ * Get whether a #WebKitWebView is ephemeral. To create an ephemeral #WebKitWebView you need to
+ * use g_object_new() and pass is-ephemeral propery with %TRUE value. See
+ * #WebKitWebView:is-ephemeral for more details.
+ * If @web_view was created with a ephemeral #WebKitWebView:related-view or an
+ * ephemeral #WebKitWebView:web-context it will also be ephemeral.
+ *
+ * Returns: %TRUE if @web_view is ephemeral or %FALSE otherwise.
+ *
+ * Since: 2.16
+ */
+gboolean webkit_web_view_is_ephemeral(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    return webView->priv->isEphemeral;
 }
 
 /**

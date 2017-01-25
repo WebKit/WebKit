@@ -1,3 +1,51 @@
+2017-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to create ephemeral web views and deprecate the private browsing setting
+        https://bugs.webkit.org/show_bug.cgi?id=167370
+
+        Reviewed by Michael Catanzaro.
+
+        Add API to create ephemeral WebKitWebView, WebKitWebsiteDataManager and WebKitWebContext.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty): Ignore deprecation warnings.
+        (webKitSettingsGetProperty): Ditto.
+        (webkit_settings_class_init): Mark WebKitSettings:enable-private-browsing as deprecated.
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_new_ephemeral): Create an ephemeral WebKitWebContext. This is just a convenient method to
+        create a WebKitWebContext with an ephemeral WebKitWebsiteDataManager without having to deal with the manager.
+        (webkit_web_context_is_ephemeral): Return whether the context is ephemeral.
+        (webkitWebContextCreatePageForWebView): Configure page with the web view WebKitWebsiteDataManager if it has one.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Check if the WebView is or should be ephemeral and create a non persistent website
+        data manager if it's an ephemeral web view in a non ephemeral web context.
+        (webkitWebViewSetProperty): Add setter for is-ephemeral property.
+        (webkitWebViewGetProperty): Add getter for is-ephemeral property.
+        (webkit_web_view_class_init): Add is-ephemeral property.
+        (webkitWebViewHandleAuthenticationChallenge): Check also whether web view is ephemeral.
+        (webkitWebViewGetWebsiteDataManager): Helper private to return the web view data manager.
+        (webkit_web_view_new_with_context): Also set is-ephemeral property depending on the context.
+        (webkit_web_view_is_ephemeral): Return whether the view is ephemeral.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.cpp:
+        (webkitWebsiteDataManagerGetProperty): Add setter for is-ephemeral property.
+        (webkitWebsiteDataManagerSetProperty): Add getter for is-ephemeral property.
+        (webkit_website_data_manager_class_init): Add is-ephemeral property.
+        (webkit_website_data_manager_new_ephemeral): Create a new ephemeral WebKitWebsiteDataManager.
+        (webkit_website_data_manager_is_ephemeral): Return whether the website data manager is ephemeral.
+        (webkit_website_data_manager_get_base_data_directory): Return nullptr if manager is ephemeral.
+        (webkit_website_data_manager_get_base_cache_directory): Ditto.
+        (webkit_website_data_manager_get_local_storage_directory): Ditto.
+        (webkit_website_data_manager_get_disk_cache_directory): Ditto.
+        (webkit_website_data_manager_get_offline_application_cache_directory): Ditto.
+        (webkit_website_data_manager_get_indexeddb_directory): Ditto.
+        (webkit_website_data_manager_get_websql_directory): Ditto.
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Add new symbols.
+
 2017-01-24  Zalan Bujtas  <zalan@apple.com>
 
         Add simple line layout toggle to MiniBrowser

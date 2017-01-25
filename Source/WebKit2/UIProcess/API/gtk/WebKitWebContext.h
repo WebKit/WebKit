@@ -167,10 +167,16 @@ WEBKIT_API WebKitWebContext *
 webkit_web_context_new                              (void);
 
 WEBKIT_API WebKitWebContext *
+webkit_web_context_new_ephemeral                    (void);
+
+WEBKIT_API WebKitWebContext *
 webkit_web_context_new_with_website_data_manager    (WebKitWebsiteDataManager      *manager);
 
 WEBKIT_API WebKitWebsiteDataManager *
 webkit_web_context_get_website_data_manager         (WebKitWebContext              *context);
+
+WEBKIT_API gboolean
+webkit_web_context_is_ephemeral                     (WebKitWebContext              *context);
 
 WEBKIT_API void
 webkit_web_context_set_cache_model                  (WebKitWebContext              *context,

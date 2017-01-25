@@ -40,6 +40,40 @@ static void testWebContextDefault(Test* test, gconstpointer)
     g_assert(webkit_web_context_get_default() != test->m_webContext.get());
 }
 
+static void testWebContextEphemeral(Test* test, gconstpointer)
+{
+    // By default web contexts are not ephemeral.
+    g_assert(!webkit_web_context_is_ephemeral(webkit_web_context_get_default()));
+    g_assert(!webkit_web_context_is_ephemeral(test->m_webContext.get()));
+
+    WebKitWebsiteDataManager* manager = webkit_web_context_get_website_data_manager(webkit_web_context_get_default());
+    g_assert(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
+    g_assert(!webkit_website_data_manager_is_ephemeral(manager));
+    manager = webkit_web_context_get_website_data_manager(test->m_webContext.get());
+    g_assert(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
+    g_assert(!webkit_website_data_manager_is_ephemeral(manager));
+
+    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_assert(!webkit_web_view_is_ephemeral(webView.get()));
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(test->m_webContext.get()));
+    g_assert(!webkit_web_view_is_ephemeral(webView.get()));
+
+    GRefPtr<WebKitWebContext> context = adoptGRef(webkit_web_context_new_ephemeral());
+    g_assert(webkit_web_context_is_ephemeral(context.get()));
+    manager = webkit_web_context_get_website_data_manager(context.get());
+    g_assert(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
+    g_assert(webkit_website_data_manager_is_ephemeral(manager));
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(context.get()));
+    g_assert(webkit_web_view_is_ephemeral(webView.get()));
+
+    GRefPtr<WebKitWebsiteDataManager> ephemeralManager = adoptGRef(webkit_website_data_manager_new_ephemeral());
+    g_assert(webkit_website_data_manager_is_ephemeral(ephemeralManager.get()));
+    context = adoptGRef(webkit_web_context_new_with_website_data_manager(ephemeralManager.get()));
+    g_assert(webkit_web_context_is_ephemeral(context.get()));
+}
+
 class PluginsTest: public Test {
 public:
     MAKE_GLIB_TEST_FIXTURE(PluginsTest);
@@ -642,6 +676,14 @@ public:
     WebKitTestServer m_proxyServer;
 };
 
+static void ephemeralViewloadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
+{
+    if (loadEvent != WEBKIT_LOAD_FINISHED)
+        return;
+    g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(ephemeralViewloadChanged), test);
+    test->quitMainLoop();
+}
+
 static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 {
     // Proxy URI is unset by default. Requests to kServer should be received by kServer.
@@ -657,6 +699,30 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
     mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
     webkit_network_proxy_settings_free(settings);
+
+    // Proxy settings also affect ephemeral web views.
+    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "web-context", test->m_webContext.get(),
+        "is-ephemeral", TRUE,
+        nullptr));
+    g_assert(webkit_web_view_is_ephemeral(webView.get()));
+    g_assert(!webkit_web_context_is_ephemeral(webkit_web_view_get_context(webView.get())));
+
+    g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
+    webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/echoPort").data());
+    g_main_loop_run(test->m_mainLoop);
+    WebKitWebResource* resource = webkit_web_view_get_main_resource(webView.get());
+    g_assert(WEBKIT_IS_WEB_RESOURCE(resource));
+    webkit_web_resource_get_data(resource, nullptr, [](GObject* object, GAsyncResult* result, gpointer userData) {
+        size_t dataSize;
+        GUniquePtr<char> data(reinterpret_cast<char*>(webkit_web_resource_get_data_finish(WEBKIT_WEB_RESOURCE(object), result, &dataSize, nullptr)));
+        g_assert(data);
+        auto* test = static_cast<ProxyTest*>(userData);
+        GUniquePtr<char> proxyServerPortAsString = test->proxyServerPortAsString();
+        ASSERT_CMP_CSTRING(CString(data.get(), dataSize), ==, proxyServerPortAsString.get());
+        test->quitMainLoop();
+        }, test);
+    g_main_loop_run(test->m_mainLoop);
 
     // Remove the proxy. Requests to kServer should be received by kServer again.
     webkit_web_context_set_network_proxy_settings(test->m_webContext.get(), WEBKIT_NETWORK_PROXY_MODE_NO_PROXY, nullptr);
@@ -699,6 +765,7 @@ void beforeAll()
     kServer->run(serverCallback);
 
     Test::add("WebKitWebContext", "default-context", testWebContextDefault);
+    Test::add("WebKitWebContext", "ephemeral", testWebContextEphemeral);
     PluginsTest::add("WebKitWebContext", "get-plugins", testWebContextGetPlugins);
     URISchemeTest::add("WebKitWebContext", "uri-scheme", testWebContextURIScheme);
     Test::add("WebKitWebContext", "spell-checker", testWebContextSpellChecker);

@@ -235,7 +235,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         webkit_settings_set_default_charset(settings, g_value_get_string(value));
         break;
     case PROP_ENABLE_PRIVATE_BROWSING:
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         webkit_settings_set_enable_private_browsing(settings, g_value_get_boolean(value));
+        G_GNUC_END_IGNORE_DEPRECATIONS;
         break;
     case PROP_ENABLE_DEVELOPER_EXTRAS:
         webkit_settings_set_enable_developer_extras(settings, g_value_get_boolean(value));
@@ -402,7 +404,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         g_value_set_string(value, webkit_settings_get_default_charset(settings));
         break;
     case PROP_ENABLE_PRIVATE_BROWSING:
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         g_value_set_boolean(value, webkit_settings_get_enable_private_browsing(settings));
+        G_GNUC_END_IGNORE_DEPRECATIONS;
         break;
     case PROP_ENABLE_DEVELOPER_EXTRAS:
         g_value_set_boolean(value, webkit_settings_get_enable_developer_extras(settings));
@@ -831,6 +835,8 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      *
      * Determines whether or not private browsing is enabled. Private browsing
      * will disable history, cache and form auto-fill for any pages visited.
+     *
+     * Deprecated: 2.16. Use #WebKitWebView:is-ephemeral or #WebKitWebContext:is-ephemeral instead.
      */
     g_object_class_install_property(gObjectClass,
                                     PROP_ENABLE_PRIVATE_BROWSING,
@@ -2143,6 +2149,8 @@ void webkit_settings_set_default_charset(WebKitSettings* settings, const gchar* 
  * Get the #WebKitSettings:enable-private-browsing property.
  *
  * Returns: %TRUE If private browsing is enabled or %FALSE otherwise.
+ *
+ * Deprecated: 2.16. Use #WebKitWebView:is-ephemeral or #WebKitWebContext:is-ephemeral instead.
  */
 gboolean webkit_settings_get_enable_private_browsing(WebKitSettings* settings)
 {
@@ -2152,11 +2160,13 @@ gboolean webkit_settings_get_enable_private_browsing(WebKitSettings* settings)
 }
 
 /**
- * webkit_settings_set_private_caret_browsing:
+ * webkit_settings_set_enable_private_browsing:
  * @settings: a #WebKitSettings
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:enable-private-browsing property.
+ *
+ * Deprecated: 2.16. Use #WebKitWebView:is-ephemeral or #WebKitWebContext:is-ephemeral instead.
  */
 void webkit_settings_set_enable_private_browsing(WebKitSettings* settings, gboolean enabled)
 {

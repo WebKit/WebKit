@@ -66,5 +66,6 @@ void webkitWebViewWebProcessCrashed(WebKitWebView*);
 void webkitWebViewIsPlayingAudioChanged(WebKitWebView*);
 void webkitWebViewSelectionDidChange(WebKitWebView*);
 void webkitWebViewRequestInstallMissingMediaPlugins(WebKitWebView*, WebKit::InstallMissingMediaPluginsPermissionRequest&);
+WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView*);
 
 #endif // WebKitWebViewPrivate_h

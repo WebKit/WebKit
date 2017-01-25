@@ -290,6 +290,38 @@ static void testCookieManagerPersistentStorage(CookieManagerTest* test, gconstpo
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 0);
 }
 
+static void ephemeralViewloadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
+{
+    if (loadEvent != WEBKIT_LOAD_FINISHED)
+        return;
+    g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(ephemeralViewloadChanged), test);
+    test->quitMainLoop();
+}
+
+static void testCookieManagerEphemeral(CookieManagerTest* test, gconstpointer)
+{
+    test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
+    test->setPersistentStorage(WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT);
+    char** domains = test->getDomains();
+    g_assert(domains);
+    g_assert_cmpint(g_strv_length(domains), ==, 0);
+
+    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "web-context", webkit_web_view_get_context(test->m_webView),
+        "is-ephemeral", TRUE,
+        nullptr));
+    g_assert(webkit_web_view_is_ephemeral(webView.get()));
+    g_assert(!webkit_web_context_is_ephemeral(webkit_web_view_get_context(webView.get())));
+
+    g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
+    webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/index.html").data());
+    g_main_loop_run(test->m_mainLoop);
+
+    domains = test->getDomains();
+    g_assert(domains);
+    g_assert_cmpint(g_strv_length(domains), ==, 0);
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     if (message->method != SOUP_METHOD_GET) {
@@ -318,6 +350,7 @@ void beforeAll()
     CookieManagerTest::add("WebKitCookieManager", "delete-cookies", testCookieManagerDeleteCookies);
     CookieManagerTest::add("WebKitCookieManager", "cookies-changed", testCookieManagerCookiesChanged);
     CookieManagerTest::add("WebKitCookieManager", "persistent-storage", testCookieManagerPersistentStorage);
+    CookieManagerTest::add("WebKitCookieManager", "ephemeral", testCookieManagerEphemeral);
 }
 
 void afterAll()

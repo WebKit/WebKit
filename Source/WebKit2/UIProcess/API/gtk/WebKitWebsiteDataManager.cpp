@@ -56,6 +56,12 @@ using namespace WebKit;
  * with the default configuration. To get the WebKitWebsiteDataManager of a #WebKitWebContext
  * you can use webkit_web_context_get_website_data_manager().
  *
+ * A WebKitWebsiteDataManager can also be ephemeral and then all the directories configuration
+ * is not needed because website data will never persist. You can create an ephemeral WebKitWebsiteDataManager
+ * with webkit_website_data_manager_new_ephemeral(). Then you can pass an ephemeral WebKitWebsiteDataManager to
+ * a #WebKitWebContext to make it ephemeral or use webkit_web_context_new_ephemeral() and the WebKitWebsiteDataManager
+ * will be automatically created by the #WebKitWebContext.
+ *
  * WebKitWebsiteDataManager can also be used to fetch websites data, remove data
  * stored by particular websites, or clear data for all websites modified since a given
  * period of time.
@@ -72,7 +78,8 @@ enum {
     PROP_DISK_CACHE_DIRECTORY,
     PROP_APPLICATION_CACHE_DIRECTORY,
     PROP_INDEXEDDB_DIRECTORY,
-    PROP_WEBSQL_DIRECTORY
+    PROP_WEBSQL_DIRECTORY,
+    PROP_IS_EPHEMERAL
 };
 
 struct _WebKitWebsiteDataManagerPrivate {
@@ -114,6 +121,9 @@ static void webkitWebsiteDataManagerGetProperty(GObject* object, guint propID, G
     case PROP_WEBSQL_DIRECTORY:
         g_value_set_string(value, webkit_website_data_manager_get_websql_directory(manager));
         break;
+    case PROP_IS_EPHEMERAL:
+        g_value_set_boolean(value, webkit_website_data_manager_is_ephemeral(manager));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
     }
@@ -144,6 +154,10 @@ static void webkitWebsiteDataManagerSetProperty(GObject* object, guint propID, c
         break;
     case PROP_WEBSQL_DIRECTORY:
         manager->priv->webSQLDirectory.reset(g_value_dup_string(value));
+        break;
+    case PROP_IS_EPHEMERAL:
+        if (g_value_get_boolean(value))
+            manager->priv->websiteDataStore = API::WebsiteDataStore::createNonPersistentDataStore();
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
@@ -300,6 +314,26 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
             _("The directory where WebSQL databases will be stored"),
             nullptr,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * WebKitWebsiteDataManager:is-ephemeral:
+     *
+     * Whether the #WebKitWebsiteDataManager is ephemeral. An ephemeral #WebKitWebsiteDataManager
+     * handles all websites data as non-persistent, and nothing will be written to the client
+     * storage. Note that if you create an ephemeral #WebKitWebsiteDataManager all other construction
+     * parameters to configure data directories will be ignored.
+     *
+     * Since: 2.16
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_IS_EPHEMERAL,
+        g_param_spec_boolean(
+            "is-ephemeral",
+            "Is Ephemeral",
+            _("Whether the WebKitWebsiteDataManager is ephemeral"),
+            FALSE,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 }
 
 WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(WebsiteDataStore::Configuration&& configuration)
@@ -353,19 +387,53 @@ WebKitWebsiteDataManager* webkit_website_data_manager_new(const gchar* firstOpti
 }
 
 /**
+ * webkit_website_data_manager_new_ephemeral:
+ *
+ * Creates an ephemeral #WebKitWebsiteDataManager. See #WebKitWebsiteDataManager:is-ephemeral for more details.
+ *
+ * Returns: (transfer full): a new ephemeral #WebKitWebsiteDataManager.
+ *
+ * Since: 2.16
+ */
+WebKitWebsiteDataManager* webkit_website_data_manager_new_ephemeral()
+{
+    return WEBKIT_WEBSITE_DATA_MANAGER(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_MANAGER, "is-ephemeral", TRUE, nullptr));
+}
+
+/**
+ * webkit_website_data_manager_is_ephemeral:
+ * @manager: a #WebKitWebsiteDataManager
+ *
+ * Get whether a #WebKitWebsiteDataManager is ephemeral. See #WebKitWebsiteDataManager::is-ephemerla for more details.
+ *
+ * Returns: %TRUE if @manager is epheral or %FALSE otherwise.
+ *
+ * Since: 2.16
+ */
+gboolean webkit_website_data_manager_is_ephemeral(WebKitWebsiteDataManager* manager)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), FALSE);
+
+    return manager->priv->websiteDataStore && !manager->priv->websiteDataStore->isPersistent();
+}
+
+/**
  * webkit_website_data_manager_get_base_data_directory:
  * @manager: a #WebKitWebsiteDataManager
  *
  * Get the #WebKitWebsiteDataManager:base-data-directory property.
  *
- * Returns: the base directory for Website data, or %NULL if
- *    #WebKitWebsiteDataManager:base-data-directory was not provided.
+ * Returns: (allow-none): the base directory for Website data, or %NULL if
+ *    #WebKitWebsiteDataManager:base-data-directory was not provided or @manager is ephemeral.
  *
  * Since: 2.10
  */
 const gchar* webkit_website_data_manager_get_base_data_directory(WebKitWebsiteDataManager* manager)
 {
     g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
+
+    if (manager->priv->websiteDataStore && !manager->priv->websiteDataStore->isPersistent())
+        return nullptr;
 
     return manager->priv->baseDataDirectory.get();
 }
@@ -376,14 +444,17 @@ const gchar* webkit_website_data_manager_get_base_data_directory(WebKitWebsiteDa
  *
  * Get the #WebKitWebsiteDataManager:base-cache-directory property.
  *
- * Returns: the base directory for Website cache, or %NULL if
- *    #WebKitWebsiteDataManager:base-cache-directory was not provided.
+ * Returns: (allow-none): the base directory for Website cache, or %NULL if
+ *    #WebKitWebsiteDataManager:base-cache-directory was not provided or @manager is ephemeral.
  *
  * Since: 2.10
  */
 const gchar* webkit_website_data_manager_get_base_cache_directory(WebKitWebsiteDataManager* manager)
 {
     g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
+
+    if (manager->priv->websiteDataStore && !manager->priv->websiteDataStore->isPersistent())
+        return nullptr;
 
     return manager->priv->baseCacheDirectory.get();
 }
@@ -394,7 +465,7 @@ const gchar* webkit_website_data_manager_get_base_cache_directory(WebKitWebsiteD
  *
  * Get the #WebKitWebsiteDataManager:local-storage-directory property.
  *
- * Returns: the directory where local storage data is stored.
+ * Returns: (allow-none): the directory where local storage data is stored or %NULL if @manager is ephemeral.
  *
  * Since: 2.10
  */
@@ -403,6 +474,9 @@ const gchar* webkit_website_data_manager_get_local_storage_directory(WebKitWebsi
     g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
 
     WebKitWebsiteDataManagerPrivate* priv = manager->priv;
+    if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
+        return nullptr;
+
     if (!priv->localStorageDirectory)
         priv->localStorageDirectory.reset(g_strdup(API::WebsiteDataStore::defaultLocalStorageDirectory().utf8().data()));
     return priv->localStorageDirectory.get();
@@ -414,7 +488,7 @@ const gchar* webkit_website_data_manager_get_local_storage_directory(WebKitWebsi
  *
  * Get the #WebKitWebsiteDataManager:disk-cache-directory property.
  *
- * Returns: the directory where HTTP disk cache is stored.
+ * Returns: (allow-none): the directory where HTTP disk cache is stored or %NULL if @manager is ephemeral.
  *
  * Since: 2.10
  */
@@ -423,6 +497,9 @@ const gchar* webkit_website_data_manager_get_disk_cache_directory(WebKitWebsiteD
     g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
 
     WebKitWebsiteDataManagerPrivate* priv = manager->priv;
+    if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
+        return nullptr;
+
     if (!priv->diskCacheDirectory) {
         // The default directory already has the subdirectory.
         priv->diskCacheDirectory.reset(g_strdup(WebCore::directoryName(API::WebsiteDataStore::defaultNetworkCacheDirectory()).utf8().data()));
@@ -436,7 +513,7 @@ const gchar* webkit_website_data_manager_get_disk_cache_directory(WebKitWebsiteD
  *
  * Get the #WebKitWebsiteDataManager:offline-application-cache-directory property.
  *
- * Returns: the directory where offline web application cache is stored.
+ * Returns: (allow-none): the directory where offline web application cache is stored or %NULL if @manager is ephemeral.
  *
  * Since: 2.10
  */
@@ -445,6 +522,9 @@ const gchar* webkit_website_data_manager_get_offline_application_cache_directory
     g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
 
     WebKitWebsiteDataManagerPrivate* priv = manager->priv;
+    if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
+        return nullptr;
+
     if (!priv->applicationCacheDirectory)
         priv->applicationCacheDirectory.reset(g_strdup(API::WebsiteDataStore::defaultApplicationCacheDirectory().utf8().data()));
     return priv->applicationCacheDirectory.get();
@@ -456,7 +536,7 @@ const gchar* webkit_website_data_manager_get_offline_application_cache_directory
  *
  * Get the #WebKitWebsiteDataManager:indexeddb-directory property.
  *
- * Returns: the directory where IndexedDB databases are stored.
+ * Returns: (allow-none): the directory where IndexedDB databases are stored or %NULL if @manager is ephemeral.
  *
  * Since: 2.10
  */
@@ -465,6 +545,9 @@ const gchar* webkit_website_data_manager_get_indexeddb_directory(WebKitWebsiteDa
     g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
 
     WebKitWebsiteDataManagerPrivate* priv = manager->priv;
+    if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
+        return nullptr;
+
     if (!priv->indexedDBDirectory)
         priv->indexedDBDirectory.reset(g_strdup(API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory().utf8().data()));
     return priv->indexedDBDirectory.get();
@@ -476,7 +559,7 @@ const gchar* webkit_website_data_manager_get_indexeddb_directory(WebKitWebsiteDa
  *
  * Get the #WebKitWebsiteDataManager:websql-directory property.
  *
- * Returns: the directory where WebSQL databases are stored.
+ * Returns: (allow-none): the directory where WebSQL databases are stored or %NULL if @manager is ephemeral.
  *
  * Since: 2.10
  */
@@ -485,6 +568,9 @@ const gchar* webkit_website_data_manager_get_websql_directory(WebKitWebsiteDataM
     g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
 
     WebKitWebsiteDataManagerPrivate* priv = manager->priv;
+    if (priv->websiteDataStore && !priv->websiteDataStore->isPersistent())
+        return nullptr;
+
     if (!priv->webSQLDirectory)
         priv->webSQLDirectory.reset(g_strdup(API::WebsiteDataStore::defaultWebSQLDatabaseDirectory().utf8().data()));
     return priv->webSQLDirectory.get();

@@ -236,10 +236,10 @@ WEBKIT_API void
 webkit_settings_set_default_charset                            (WebKitSettings *settings,
                                                                 const gchar    *default_charset);
 
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_settings_get_enable_private_browsing                    (WebKitSettings *settings);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_settings_set_enable_private_browsing                    (WebKitSettings *settings,
                                                                 gboolean        enabled);
 

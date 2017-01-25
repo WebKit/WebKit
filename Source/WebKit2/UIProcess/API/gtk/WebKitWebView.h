@@ -274,6 +274,9 @@ webkit_web_view_new_with_related_view                (WebKitWebView             
 WEBKIT_API GtkWidget *
 webkit_web_view_new_with_user_content_manager        (WebKitUserContentManager  *user_content_manager);
 
+WEBKIT_API gboolean
+webkit_web_view_is_ephemeral                         (WebKitWebView             *web_view);
+
 WEBKIT_API WebKitWebContext *
 webkit_web_view_get_context                          (WebKitWebView             *web_view);
 

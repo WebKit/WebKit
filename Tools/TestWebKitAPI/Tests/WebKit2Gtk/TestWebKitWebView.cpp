@@ -94,6 +94,51 @@ static void testWebViewWebContextLifetime(WebViewTest* test, gconstpointer)
     g_object_unref(webContext2);
 }
 
+static void ephemeralViewloadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
+{
+    if (loadEvent != WEBKIT_LOAD_FINISHED)
+        return;
+    g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(ephemeralViewloadChanged), test);
+    test->quitMainLoop();
+}
+
+static void testWebViewEphemeral(WebViewTest* test, gconstpointer)
+{
+    g_assert(!webkit_web_view_is_ephemeral(test->m_webView));
+    g_assert(!webkit_web_context_is_ephemeral(webkit_web_view_get_context(test->m_webView)));
+    auto* manager = webkit_web_context_get_website_data_manager(test->m_webContext.get());
+    g_assert(!webkit_website_data_manager_is_ephemeral(manager));
+    webkit_website_data_manager_clear(manager, WEBKIT_WEBSITE_DATA_DISK_CACHE, 0, nullptr, [](GObject* manager, GAsyncResult* result, gpointer userData) {
+        webkit_website_data_manager_clear_finish(WEBKIT_WEBSITE_DATA_MANAGER(manager), result, nullptr);
+        static_cast<WebViewTest*>(userData)->quitMainLoop();
+    }, test);
+    g_main_loop_run(test->m_mainLoop);
+
+    // A WebView on a non ephemeral context can be ephemeral.
+    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "web-context", webkit_web_view_get_context(test->m_webView),
+        "is-ephemeral", TRUE,
+        nullptr));
+    g_assert(webkit_web_view_is_ephemeral(webView.get()));
+    g_assert(!webkit_web_context_is_ephemeral(webkit_web_view_get_context(webView.get())));
+
+    g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
+    webkit_web_view_load_uri(webView.get(), gServer->getURIForPath("/").data());
+    g_main_loop_run(test->m_mainLoop);
+
+    // Disk cache delays the storing of initial resources for 1 second to avoid
+    // affecting early page load. So, wait 1 second here to make sure resources
+    // have already been stored.
+    test->wait(1);
+
+    webkit_website_data_manager_fetch(manager, WEBKIT_WEBSITE_DATA_DISK_CACHE, nullptr, [](GObject* manager, GAsyncResult* result, gpointer userData) {
+        auto* test = static_cast<WebViewTest*>(userData);
+        g_assert(!webkit_website_data_manager_fetch_finish(WEBKIT_WEBSITE_DATA_MANAGER(manager), result, nullptr));
+        test->quitMainLoop();
+    }, test);
+    g_main_loop_run(test->m_mainLoop);
+}
+
 static void testWebViewCustomCharset(WebViewTest* test, gconstpointer)
 {
     test->loadURI(gServer->getURIForPath("/").data());
@@ -1014,6 +1059,7 @@ void beforeAll()
 
     WebViewTest::add("WebKitWebView", "web-context", testWebViewWebContext);
     WebViewTest::add("WebKitWebView", "web-context-lifetime", testWebViewWebContextLifetime);
+    WebViewTest::add("WebKitWebView", "ephemeral", testWebViewEphemeral);
     WebViewTest::add("WebKitWebView", "custom-charset", testWebViewCustomCharset);
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
     WebViewTest::add("WebKitWebView", "zoom-level", testWebViewZoomLevel);

@@ -207,6 +207,57 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     g_assert_cmpstr(webkit_website_data_manager_get_disk_cache_directory(baseDataManager.get()), ==, Test::dataDirectory());
 }
 
+static void ephemeralViewloadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
+{
+    if (loadEvent != WEBKIT_LOAD_FINISHED)
+        return;
+    g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(ephemeralViewloadChanged), test);
+    test->quitMainLoop();
+}
+
+static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
+{
+    GRefPtr<WebKitWebsiteDataManager> manager = adoptGRef(webkit_website_data_manager_new_ephemeral());
+    g_assert(webkit_website_data_manager_is_ephemeral(manager.get()));
+    g_assert(!webkit_website_data_manager_get_base_data_directory(manager.get()));
+    g_assert(!webkit_website_data_manager_get_base_cache_directory(manager.get()));
+    g_assert(!webkit_website_data_manager_get_local_storage_directory(manager.get()));
+    g_assert(!webkit_website_data_manager_get_disk_cache_directory(manager.get()));
+    g_assert(!webkit_website_data_manager_get_offline_application_cache_directory(manager.get()));
+    g_assert(!webkit_website_data_manager_get_indexeddb_directory(manager.get()));
+    g_assert(!webkit_website_data_manager_get_websql_directory(manager.get()));
+
+    // Configuration is ignored when is-ephemeral is used.
+    manager = adoptGRef(WEBKIT_WEBSITE_DATA_MANAGER(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_MANAGER, "base-data-directory", Test::dataDirectory(), "is-ephemeral", TRUE, nullptr)));
+    g_assert(webkit_website_data_manager_is_ephemeral(manager.get()));
+    g_assert(!webkit_website_data_manager_get_base_data_directory(manager.get()));
+
+    // Non persistent data can be queried in an ephemeral manager.
+    GRefPtr<WebKitWebContext> webContext = adoptGRef(webkit_web_context_new_with_website_data_manager(manager.get()));
+    g_assert(webkit_web_context_is_ephemeral(webContext.get()));
+    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(webContext.get()));
+    g_assert(webkit_web_view_is_ephemeral(webView.get()));
+
+    g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
+    webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/empty").data());
+    g_main_loop_run(test->m_mainLoop);
+
+    webkit_website_data_manager_fetch(manager.get(), WEBKIT_WEBSITE_DATA_MEMORY_CACHE, nullptr, [](GObject* manager, GAsyncResult* result, gpointer userData) {
+        auto* test = static_cast<WebViewTest*>(userData);
+        GList* dataList = webkit_website_data_manager_fetch_finish(WEBKIT_WEBSITE_DATA_MANAGER(manager), result, nullptr);
+        g_assert(dataList);
+        g_assert_cmpuint(g_list_length(dataList), ==, 1);
+        WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(dataList->data);
+        g_assert(data);
+        WebKitSecurityOrigin* origin = webkit_security_origin_new_for_uri(kServer->getURIForPath("/").data());
+        g_assert_cmpstr(webkit_website_data_get_name(data), ==, webkit_security_origin_get_host(origin));
+        webkit_security_origin_unref(origin);
+        g_list_free_full(dataList, reinterpret_cast<GDestroyNotify>(webkit_website_data_unref));
+        test->quitMainLoop();
+    }, test);
+    g_main_loop_run(test->m_mainLoop);
+}
+
 static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
 {
     static const WebKitWebsiteDataTypes cacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
@@ -440,6 +491,7 @@ void beforeAll()
     kServer->run(serverCallback);
 
     WebsiteDataTest::add("WebKitWebsiteData", "configuration", testWebsiteDataConfiguration);
+    WebViewTest::add("WebKitWebsiteData", "ephemeral", testWebsiteDataEphemeral);
     WebsiteDataTest::add("WebKitWebsiteData", "cache", testWebsiteDataCache);
     WebsiteDataTest::add("WebKitWebsiteData", "storage", testWebsiteDataStorage);
     WebsiteDataTest::add("WebKitWebsiteData", "databases", testWebsiteDataDatabases);

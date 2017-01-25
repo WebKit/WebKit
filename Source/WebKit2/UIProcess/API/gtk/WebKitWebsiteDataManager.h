@@ -62,6 +62,12 @@ webkit_website_data_manager_get_type                                  (void);
 WEBKIT_API WebKitWebsiteDataManager *
 webkit_website_data_manager_new                                       (const gchar              *first_option_name,
                                                                        ...);
+WEBKIT_API WebKitWebsiteDataManager *
+webkit_website_data_manager_new_ephemeral                             (void);
+
+WEBKIT_API gboolean
+webkit_website_data_manager_is_ephemeral                              (WebKitWebsiteDataManager* manager);
+
 WEBKIT_API const gchar *
 webkit_website_data_manager_get_base_data_directory                   (WebKitWebsiteDataManager *manager);
 
