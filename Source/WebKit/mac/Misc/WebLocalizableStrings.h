@@ -49,10 +49,6 @@ extern "C" {
 
 WebLocalizedStringType WebLocalizedString(WebLocalizableStringsBundle* bundle, const char* key);
 
-#if TARGET_OS_IPHONE
-void LoadWebLocalizedStrings(void); // The first WebLocalizedString call can take over 20ms unless this function is called beforehand.
-#endif
-
 #ifdef __cplusplus
 }
 #endif
