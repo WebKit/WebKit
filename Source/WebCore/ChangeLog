@@ -1,3 +1,19 @@
+2017-01-25  Antoine Quint  <graouts@apple.com>
+
+        LayoutTest media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=167253
+
+        Reviewed by Jon Lee.
+
+        An IconButton loads its image asynchronously and waits for its load to obtain metrics. Once that happens,
+        its layout delegate needs to be notified that it needs a new layout. The test was a flaky failure because
+        the images would sometime load prior to layout, and sometime after, which would cause a failure. The test
+        is now robust with a controls layout happening after all buttons had loaded.
+
+        * Modules/modern-media-controls/controls/icon-button.js:
+        (IconButton.prototype._updateImage):
+        (IconButton):
+
 2017-01-25  Timothy Hatcher  <timothy@hatcher.name>
 
         Fix the !HAVE(ACCESSIBILITY) build by properly instantiating AXObjectCache member timers.
