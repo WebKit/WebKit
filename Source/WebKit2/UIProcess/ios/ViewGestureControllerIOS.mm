@@ -129,6 +129,11 @@ static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
     return [recognizer autorelease];
 }
 
+- (BOOL)isNavigationSwipeGestureRecognizer:(UIGestureRecognizer *)recognizer
+{
+    return recognizer == [_backTransitionController gestureRecognizer] || recognizer == [_forwardTransitionController gestureRecognizer];
+}
+
 @end
 
 namespace WebKit {
@@ -139,6 +144,11 @@ void ViewGestureController::platformTeardown()
     [m_swipeTransitionContext _setInteractor:nil];
     [m_swipeTransitionContext _setAnimator:nil];
     [m_swipeInteractiveTransitionDelegate invalidate];
+}
+
+bool ViewGestureController::isNavigationSwipeGestureRecognizer(UIGestureRecognizer *recognizer) const
+{
+    return [m_swipeInteractiveTransitionDelegate isNavigationSwipeGestureRecognizer:recognizer];
 }
 
 void ViewGestureController::installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView)
