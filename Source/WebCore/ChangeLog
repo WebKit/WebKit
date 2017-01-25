@@ -1,3 +1,43 @@
+2017-01-25  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Introduce libwebrtc abstraction for WK1/WK2 implementations
+        https://bugs.webkit.org/show_bug.cgi?id=167294
+
+        Reviewed by Alex Christensen.
+
+        Introducing LibWebRTCMacros.h which should be included before any libwebrtc header.
+
+        Introducing LibWebRTCProvider as the abstraction allowing to suport WK1 and WK2 libwebrtc-based WebRTC endpoints.
+        It  will create a libwebrtc peerconnection object differently in WK1 and WK2 as networking will be done differently.
+
+        LibWebRTCUtils contains routines used by WK1 and WK2 RTC providers to create the libwebrtc peerconnection object
+        and implement the necessary functionalities for it.
+
+        Updating PageConfiguration accordingly.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::libWebRTCProvider):
+        * page/PageConfiguration.cpp:
+        (WebCore::PageConfiguration::PageConfiguration):
+        * page/PageConfiguration.h:
+        * platform/mediastream/libwebrtc/LibWebRTCMacros.h: Added.
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h: Added.
+        * platform/mediastream/libwebrtc/LibWebRTCUtils.cpp: Added.
+        (WebCore::staticFactoryAndThreads):
+        (WebCore::ThreadMessageData::ThreadMessageData):
+        (WebCore::PeerConnectionFactoryAndThreads::OnMessage):
+        (WebCore::callOnWebRTCNetworkThread):
+        (WebCore::initializePeerConnectionFactoryAndThreads):
+        (WebCore::initializeLibWebRTCInternalsWithSocketServer):
+        (WebCore::peerConnectionFactory):
+        (WebCore::createPeerConnection):
+        * platform/mediastream/libwebrtc/LibWebRTCUtils.h: Added.
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2017-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for named pasteboards, pasteboard strategies and platform pasteboards

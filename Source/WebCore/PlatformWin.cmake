@@ -243,6 +243,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     platform/graphics/transforms
     platform/graphics/win
 
+    platform/mediastream/libwebrtc
+
     platform/text/transcoder
 
     rendering/line

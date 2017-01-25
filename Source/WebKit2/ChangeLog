@@ -1,3 +1,13 @@
+2017-01-25  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Introduce libwebrtc abstraction for WK1/WK2 implementations
+        https://bugs.webkit.org/show_bug.cgi?id=167294
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_userInterfaceLayoutDirection):
+
 2017-01-25  Andy Estes  <aestes@apple.com>
 
         [iOS] Move WKPDFView's password view to WKWebView

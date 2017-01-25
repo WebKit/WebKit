@@ -97,6 +97,7 @@ class HTMLMediaElement;
 class UserInputBridge;
 class InspectorClient;
 class InspectorController;
+class LibWebRTCProvider;
 class MainFrame;
 class MediaCanStartListener;
 class MediaPlaybackTarget;
@@ -109,9 +110,7 @@ class PlugInClient;
 class PluginData;
 class PluginInfoProvider;
 class PluginViewBase;
-#if ENABLE(POINTER_LOCK)
 class PointerLockController;
-#endif
 class ProgressTracker;
 class ProgressTrackerClient;
 class Range;
@@ -223,6 +222,7 @@ public:
 #if ENABLE(POINTER_LOCK)
     PointerLockController& pointerLockController() const { return *m_pointerLockController; }
 #endif
+    LibWebRTCProvider& libWebRTCProvider() { return m_libWebRTCProvider.get(); }
 
     ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient.get(); }
     void updateValidationBubbleStateIfNeeded();
@@ -630,6 +630,8 @@ private:
     std::unique_ptr<ValidationMessageClient> m_validationMessageClient;
     std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;
     std::unique_ptr<WebGLStateTracker> m_webGLStateTracker;
+
+    UniqueRef<LibWebRTCProvider> m_libWebRTCProvider;
 
     int m_nestedRunLoopCount { 0 };
     std::function<void()> m_unnestCallback;

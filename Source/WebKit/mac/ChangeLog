@@ -1,3 +1,13 @@
+2017-01-24  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Introduce libwebrtc abstraction for WK1/WK2 implementations
+        https://bugs.webkit.org/show_bug.cgi?id=167294
+
+        Reviewed by Alex Christensen.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2017-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for named pasteboards, pasteboard strategies and platform pasteboards
