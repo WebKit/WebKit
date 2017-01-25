@@ -60,9 +60,9 @@ public:
             // Test 2
             "    alert(document.querySelector('shadow-host').shadowRoot ? 'PASS: shadowRoot created by normal world' : 'FAIL');\n"
             // Test 3
-            "    alert(window[queryMethodName] ? 'PASS: query method exists' : 'FAIL');\n"
+            "    alert(window[queryMethodName] ? `PASS: ${queryMethodName} exists` : `FAIL: ${queryMethodName} does not exist`);\n"
             // Test 4
-            "    document.dispatchEvent(new Event('testnormalworld'));\n"
+            "    document.dispatchEvent(new CustomEvent('testnormalworld', {detail: queryMethodName}));\n"
             // Test 5
             "    const queryMethod = window[queryMethodName];\n"
             "    let queryResult = Array.from(queryMethod(document, 'span'));\n"
@@ -71,6 +71,21 @@ public:
             "    const innerHost = queryMethod(document, 'inner-host')[0];\n"
             "    queryResult = Array.from(queryMethod(innerHost, 'span'));\n"
             "    alert('Found:' + queryResult.map((span) => span.textContent).join(','));\n"
+            // Test 7
+            "    alert(window.matchingElementInFlatTree ? `PASS: matchingElementInFlatTree exists` : `FAIL: matchingElementInFlatTree does not exist`);\n"
+            // Test 8
+            "    document.dispatchEvent(new CustomEvent('testnormalworld', {detail: 'matchingElementInFlatTree'}));\n"
+            // Test 9
+            "    queryResult = window.matchingElementInFlatTree(document, 'span');\n"
+            "    alert('Found:' + (queryResult ? queryResult.textContent : 'null'));\n"
+            // Test 10
+            "    queryResult = window.matchingElementInFlatTree(innerHost, 'span');\n"
+            "    alert('Found:' + (queryResult ? queryResult.textContent : 'null'));\n"
+            // Test 11
+            "    alert(`Found:${queryMethod(document, 'div').length} divs`);\n"
+            // Test 12
+            "    queryResult = window.matchingElementInFlatTree(document, 'div');\n"
+            "    alert(`Found:${!!queryResult}`);\n"
             "}\n"));
         WKBundleAddUserScript(bundle, pageGroup, world, source.get(), 0, 0, 0, kWKInjectAtDocumentStart, kWKInjectInAllFrames);
     }

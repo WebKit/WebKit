@@ -1,3 +1,14 @@
+2017-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        collectMatchingElementsInFlatTree should not find elements inside an user agent shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=167409
+
+        Reviewed by Antti Koivisto.
+
+        Added matchingElementInFlatTree as a common identifier since it's required in the bindings code.
+
+        * runtime/CommonIdentifiers.h:
+
 2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fold USER_TIMING into WEB_TIMING and make it a RuntimeEnabledFeature

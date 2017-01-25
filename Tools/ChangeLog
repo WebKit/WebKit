@@ -1,3 +1,19 @@
+2017-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        collectMatchingElementsInFlatTree should not find elements inside an user agent shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=167409
+
+        Reviewed by Antti Koivisto.
+
+        Added a test case for collectMatchingElementsInFlatTree not finding elements inside an user agent shadow tree
+        as well as tests for the newly added matchingElementInFlatTree.
+
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleMakeAllShadowRootsOpen.cpp:
+        (TestWebKitAPI::runJavaScriptAlert):
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp:
+        (TestWebKitAPI::InjectedBundleMakeAllShadowRootOpenTest::initialize):
+        * TestWebKitAPI/Tests/WebKit2/closed-shadow-tree-test.html:
+
 2017-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to create ephemeral web views and deprecate the private browsing setting

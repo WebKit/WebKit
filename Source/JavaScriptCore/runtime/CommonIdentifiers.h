@@ -280,6 +280,7 @@
     macro(valueOf) \
     macro(webkit) \
     macro(collectMatchingElementsInFlatTree) \
+    macro(matchingElementInFlatTree) \
     macro(webkitIDBCursor) \
     macro(webkitIDBDatabase) \
     macro(webkitIDBFactory) \

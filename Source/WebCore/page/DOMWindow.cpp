@@ -623,16 +623,21 @@ CustomElementRegistry& DOMWindow::ensureCustomElementRegistry()
     return *m_customElementRegistry;
 }
 
-ExceptionOr<Ref<NodeList>> DOMWindow::collectMatchingElementsInFlatTree(Node& scope, const String& selectors)
+static ExceptionOr<SelectorQuery&> selectorQueryInFrame(Frame* frame, const String& selectors)
 {
-    if (!m_frame)
+    if (!frame)
         return Exception { NOT_SUPPORTED_ERR };
 
-    Document* document = m_frame->document();
+    Document* document = frame->document();
     if (!document)
         return Exception { NOT_SUPPORTED_ERR };
 
-    auto queryOrException = document->selectorQueryForString(selectors);
+    return document->selectorQueryForString(selectors);
+}
+
+ExceptionOr<Ref<NodeList>> DOMWindow::collectMatchingElementsInFlatTree(Node& scope, const String& selectors)
+{
+    auto queryOrException = selectorQueryInFrame(m_frame, selectors);
     if (queryOrException.hasException())
         return queryOrException.releaseException();
 
@@ -643,11 +648,30 @@ ExceptionOr<Ref<NodeList>> DOMWindow::collectMatchingElementsInFlatTree(Node& sc
 
     Vector<Ref<Element>> result;
     for (auto& node : composedTreeDescendants(downcast<ContainerNode>(scope))) {
-        if (is<Element>(node) && query.matches(downcast<Element>(node)))
+        if (is<Element>(node) && query.matches(downcast<Element>(node)) && !node.isInUserAgentShadowTree())
             result.append(downcast<Element>(node));
     }
 
     return Ref<NodeList> { StaticElementList::create(WTFMove(result)) };
+}
+
+ExceptionOr<RefPtr<Element>> DOMWindow::matchingElementInFlatTree(Node& scope, const String& selectors)
+{
+    auto queryOrException = selectorQueryInFrame(m_frame, selectors);
+    if (queryOrException.hasException())
+        return queryOrException.releaseException();
+
+    if (!is<ContainerNode>(scope))
+        return RefPtr<Element> { nullptr };
+
+    SelectorQuery& query = queryOrException.releaseReturnValue();
+
+    for (auto& node : composedTreeDescendants(downcast<ContainerNode>(scope))) {
+        if (is<Element>(node) && query.matches(downcast<Element>(node)) && !node.isInUserAgentShadowTree())
+            return &downcast<Element>(node);
+    }
+
+    return RefPtr<Element> { nullptr };
 }
 
 #if ENABLE(ORIENTATION_EVENTS)

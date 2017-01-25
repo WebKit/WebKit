@@ -177,6 +177,8 @@
 
     [MayThrowException, EnabledForWorld=shadowRootIsAlwaysOpen]
     NodeList collectMatchingElementsInFlatTree(Node scope, DOMString selectors);
+    [MayThrowException, EnabledForWorld=shadowRootIsAlwaysOpen]
+    Element? matchingElementInFlatTree(Node scope, DOMString selectors);
 
     // Event handlers unique to Element and DOMWindow.
     // FIXME: Should these be exposed on Document as well (and therefore moved to GlobalEventHandlers.idl)?

@@ -278,6 +278,7 @@ public:
     CustomElementRegistry& ensureCustomElementRegistry();
 
     ExceptionOr<Ref<NodeList>> collectMatchingElementsInFlatTree(Node&, const String& selectors);
+    ExceptionOr<RefPtr<Element>> matchingElementInFlatTree(Node&, const String& selectors);
 
 #if ENABLE(ORIENTATION_EVENTS)
     // This is the interface orientation in degrees. Some examples are:

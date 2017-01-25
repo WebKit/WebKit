@@ -50,16 +50,34 @@ static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef
         EXPECT_WK_STREQ("PASS: shadowRoot created by normal world", alertText);
         break;
     case 3:
-        EXPECT_WK_STREQ("PASS: query method exists", alertText);
+        EXPECT_WK_STREQ("PASS: collectMatchingElementsInFlatTree exists", alertText);
         break;
     case 4:
-        EXPECT_WK_STREQ("PASS: query method was not present in the normal world", alertText);
+        EXPECT_WK_STREQ("PASS: collectMatchingElementsInFlatTree was not present in the normal world", alertText);
         break;
     case 5:
         EXPECT_WK_STREQ("Found:1,2,3,4,5,6", alertText);
         break;
     case 6:
         EXPECT_WK_STREQ("Found:2,3,4", alertText);
+        break;
+    case 7:
+        EXPECT_WK_STREQ("PASS: matchingElementInFlatTree exists", alertText);
+        break;
+    case 8:
+        EXPECT_WK_STREQ("PASS: matchingElementInFlatTree was not present in the normal world", alertText);
+        break;
+    case 9:
+        EXPECT_WK_STREQ("Found:1", alertText);
+        break;
+    case 10:
+        EXPECT_WK_STREQ("Found:2", alertText);
+        break;
+    case 11:
+        EXPECT_WK_STREQ("Found:0 divs", alertText);
+        break;
+    case 12:
+        EXPECT_WK_STREQ("Found:false", alertText);
         done = true;
         break;
     }
