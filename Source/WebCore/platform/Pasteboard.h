@@ -201,7 +201,7 @@ public:
     static String resourceMIMEType(const NSString *mimeType);
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     explicit Pasteboard(const String& pasteboardName);
 
     const String& name() const { return m_pasteboardName; }
@@ -231,11 +231,7 @@ private:
     String m_name;
 #endif
 
-#if PLATFORM(IOS)
-    long m_changeCount;
-#endif
-
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     String m_pasteboardName;
     long m_changeCount;
 #endif

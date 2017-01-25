@@ -60,14 +60,13 @@ private:
 
     // WebCore::PasteboardStrategy
 #if PLATFORM(IOS)
-    void writeToPasteboard(const WebCore::PasteboardWebContent&) override;
-    void writeToPasteboard(const WebCore::PasteboardImage&) override;
-    void writeToPasteboard(const String& pasteboardType, const String&) override;
-    int getPasteboardItemsCount() override;
-    String readStringFromPasteboard(int index, const String& pasteboardType) override;
-    RefPtr<WebCore::SharedBuffer> readBufferFromPasteboard(int index, const String& pasteboardType) override;
-    WebCore::URL readURLFromPasteboard(int index, const String& pasteboardType) override;
-    long changeCount() override;
+    void writeToPasteboard(const WebCore::PasteboardWebContent&, const String& pasteboardName) override;
+    void writeToPasteboard(const WebCore::PasteboardImage&, const String& pasteboardName) override;
+    void writeToPasteboard(const String& pasteboardType, const String&, const String& pasteboardName) override;
+    int getPasteboardItemsCount(const String& pasteboardName) override;
+    String readStringFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) override;
+    RefPtr<WebCore::SharedBuffer> readBufferFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) override;
+    WebCore::URL readURLFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) override;
 #endif
 #if PLATFORM(COCOA)
     void getTypes(Vector<String>& types, const String& pasteboardName) override;

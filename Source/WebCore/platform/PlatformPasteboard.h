@@ -51,7 +51,6 @@ struct PasteboardWebContent;
 
 class PlatformPasteboard {
 public:
-    // FIXME: probably we don't need a constructor that takes a pasteboard name for iOS.
     WEBCORE_EXPORT explicit PlatformPasteboard(const String& pasteboardName);
 #if PLATFORM(IOS)
     WEBCORE_EXPORT PlatformPasteboard();

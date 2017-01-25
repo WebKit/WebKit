@@ -186,43 +186,38 @@ long WebPlatformStrategies::setStringForType(const String& string, const String&
 }
 
 #if PLATFORM(IOS)
-void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebContent& content)
+void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebContent& content, const String& pasteboardName)
 {
-    PlatformPasteboard().write(content);
+    PlatformPasteboard(pasteboardName).write(content);
 }
 
-void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardImage& image)
+void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardImage& image, const String& pasteboardName)
 {
-    PlatformPasteboard().write(image);
+    PlatformPasteboard(pasteboardName).write(image);
 }
 
-void WebPlatformStrategies::writeToPasteboard(const String& pasteboardType, const String& text)
+void WebPlatformStrategies::writeToPasteboard(const String& pasteboardType, const String& text, const String& pasteboardName)
 {
-    PlatformPasteboard().write(pasteboardType, text);
+    PlatformPasteboard(pasteboardName).write(pasteboardType, text);
 }
 
-int WebPlatformStrategies::getPasteboardItemsCount()
+int WebPlatformStrategies::getPasteboardItemsCount(const String& pasteboardName)
 {
-    return PlatformPasteboard().count();
+    return PlatformPasteboard(pasteboardName).count();
 }
 
-RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(int index, const String& type)
+RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(int index, const String& type, const String& pasteboardName)
 {
-    return PlatformPasteboard().readBuffer(index, type);
+    return PlatformPasteboard(pasteboardName).readBuffer(index, type);
 }
 
-WebCore::URL WebPlatformStrategies::readURLFromPasteboard(int index, const String& type)
+WebCore::URL WebPlatformStrategies::readURLFromPasteboard(int index, const String& type, const String& pasteboardName)
 {
-    return PlatformPasteboard().readURL(index, type);
+    return PlatformPasteboard(pasteboardName).readURL(index, type);
 }
 
-String WebPlatformStrategies::readStringFromPasteboard(int index, const String& type)
+String WebPlatformStrategies::readStringFromPasteboard(int index, const String& type, const String& pasteboardName)
 {
-    return PlatformPasteboard().readString(index, type);
-}
-
-long WebPlatformStrategies::changeCount()
-{
-    return PlatformPasteboard().changeCount();
+    return PlatformPasteboard(pasteboardName).readString(index, type);
 }
 #endif // PLATFORM(IOS)

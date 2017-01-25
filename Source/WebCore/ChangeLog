@@ -1,3 +1,28 @@
+2017-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for named pasteboards, pasteboard strategies and platform pasteboards
+        https://bugs.webkit.org/show_bug.cgi?id=167404
+
+        Reviewed by Enrica Casucci.
+
+        Refactors some pasteboard-related code to plumb the name of the pasteboard across from WebCore to the client
+        layer. No new tests, because there should be no change in behavior.
+
+        * platform/DragData.h:
+        * platform/Pasteboard.h:
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::write):
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::hasData):
+        (WebCore::Pasteboard::clear):
+        (WebCore::Pasteboard::readString):
+        (WebCore::Pasteboard::writeString):
+        (WebCore::Pasteboard::types):
+
 2017-01-25  Antoine Quint  <graouts@apple.com>
 
         LayoutTest media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html is flaky

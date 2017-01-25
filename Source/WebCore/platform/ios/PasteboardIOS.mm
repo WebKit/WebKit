@@ -82,7 +82,7 @@ PasteboardImage::~PasteboardImage()
 }
 
 Pasteboard::Pasteboard()
-    : m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount())
+    : m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
 {
 }
 
@@ -102,7 +102,7 @@ std::unique_ptr<Pasteboard> Pasteboard::createPrivate()
 
 void Pasteboard::write(const PasteboardWebContent& content)
 {
-    platformStrategies()->pasteboardStrategy()->writeToPasteboard(content);
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard(content, m_pasteboardName);
 }
 
 String Pasteboard::resourceMIMEType(const NSString *mimeType)
@@ -112,17 +112,17 @@ String Pasteboard::resourceMIMEType(const NSString *mimeType)
 
 void Pasteboard::write(const PasteboardImage& pasteboardImage)
 {
-    platformStrategies()->pasteboardStrategy()->writeToPasteboard(pasteboardImage);
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard(pasteboardImage, m_pasteboardName);
 }
 
 void Pasteboard::writePlainText(const String& text, SmartReplaceOption)
 {
-    platformStrategies()->pasteboardStrategy()->writeToPasteboard(kUTTypeText, text);
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard(kUTTypeText, text, m_pasteboardName);
 }
 
 void Pasteboard::write(const PasteboardURL& pasteboardURL)
 {
-    platformStrategies()->pasteboardStrategy()->writeToPasteboard(kUTTypeURL, pasteboardURL.url.string());
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard(kUTTypeURL, pasteboardURL.url.string(), m_pasteboardName);
 }
 
 void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)
@@ -146,9 +146,9 @@ bool Pasteboard::canSmartReplace()
 void Pasteboard::read(PasteboardPlainText& text)
 {
     PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
-    text.text = strategy.readStringFromPasteboard(0, kUTTypeText);
+    text.text = strategy.readStringFromPasteboard(0, kUTTypeText, m_pasteboardName);
     if (text.text.isEmpty())
-        text.text = strategy.readStringFromPasteboard(0, kUTTypeURL);
+        text.text = strategy.readStringFromPasteboard(0, kUTTypeURL, m_pasteboardName);
 }
 
 static NSArray* supportedImageTypes()
@@ -160,7 +160,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
 {
     PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
 
-    int numberOfItems = strategy.getPasteboardItemsCount();
+    int numberOfItems = strategy.getPasteboardItemsCount(m_pasteboardName);
 
     if (!numberOfItems)
         return;
@@ -173,47 +173,47 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
             NSString *type = [types objectAtIndex:typeIndex];
 
             if ([type isEqualToString:WebArchivePboardType]) {
-                if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, WebArchivePboardType)) {
+                if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, WebArchivePboardType, m_pasteboardName)) {
                     if (reader.readWebArchive(buffer.get()))
                         break;
                 }
             }
 
             if ([type isEqualToString:(NSString *)kUTTypeHTML]) {
-                String htmlString = strategy.readStringFromPasteboard(i, kUTTypeHTML);
+                String htmlString = strategy.readStringFromPasteboard(i, kUTTypeHTML, m_pasteboardName);
                 if (!htmlString.isNull() && reader.readHTML(htmlString))
                     break;
             }
 
             if ([type isEqualToString:(NSString *)kUTTypeFlatRTFD]) {
-                if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, kUTTypeFlatRTFD)) {
+                if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, kUTTypeFlatRTFD, m_pasteboardName)) {
                     if (reader.readRTFD(*buffer))
                         break;
                 }
             }
 
             if ([type isEqualToString:(NSString *)kUTTypeRTF]) {
-                if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, kUTTypeRTF)) {
+                if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, kUTTypeRTF, m_pasteboardName)) {
                     if (reader.readRTF(*buffer))
                         break;
                 }
             }
 
             if ([supportedImageTypes() containsObject:type]) {
-                if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, type)) {
+                if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(i, type, m_pasteboardName)) {
                     if (reader.readImage(buffer.releaseNonNull(), type))
                         break;
                 }
         }
 
             if ([type isEqualToString:(NSString *)kUTTypeURL]) {
-                URL url = strategy.readURLFromPasteboard(i, kUTTypeURL);
+                URL url = strategy.readURLFromPasteboard(i, kUTTypeURL, m_pasteboardName);
                 if (!url.isNull() && reader.readURL(url, String()))
                     break;
             }
             
             if ([type isEqualToString:(NSString *)kUTTypeText]) {
-                String string = strategy.readStringFromPasteboard(i, kUTTypeText);
+                String string = strategy.readStringFromPasteboard(i, kUTTypeText, m_pasteboardName);
                 if (!string.isNull() && reader.readPlainText(string))
                     break;
             }
@@ -229,7 +229,7 @@ NSArray* Pasteboard::supportedPasteboardTypes()
 
 bool Pasteboard::hasData()
 {
-    return platformStrategies()->pasteboardStrategy()->getPasteboardItemsCount() != 0;
+    return !!platformStrategies()->pasteboardStrategy()->getPasteboardItemsCount(m_pasteboardName);
 }
 
 static String utiTypeFromCocoaType(NSString *type)
@@ -273,19 +273,19 @@ void Pasteboard::clear(const String& type)
     if (!cocoaType)
         return;
 
-    platformStrategies()->pasteboardStrategy()->writeToPasteboard(cocoaType.get(), String());
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard(cocoaType.get(), String(), m_pasteboardName);
 }
 
 void Pasteboard::clear()
 {
-    platformStrategies()->pasteboardStrategy()->writeToPasteboard(String(), String());
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard(String(), String(), m_pasteboardName);
 }
 
 String Pasteboard::readString(const String& type)
 {
     PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
 
-    int numberOfItems = strategy.getPasteboardItemsCount();
+    int numberOfItems = strategy.getPasteboardItemsCount(m_pasteboardName);
 
     if (!numberOfItems)
         return String();
@@ -296,21 +296,21 @@ String Pasteboard::readString(const String& type)
     NSString *cocoaValue = nil;
 
     if ([cocoaType isEqualToString:(NSString *)kUTTypeURL]) {
-        URL url = strategy.readURLFromPasteboard(0, kUTTypeURL);
+        URL url = strategy.readURLFromPasteboard(0, kUTTypeURL, m_pasteboardName);
         if (!url.isNull())
             cocoaValue = [(NSURL *)url absoluteString];
     } else if ([cocoaType isEqualToString:(NSString *)kUTTypeText]) {
-        String value = strategy.readStringFromPasteboard(0, kUTTypeText);
+        String value = strategy.readStringFromPasteboard(0, kUTTypeText, m_pasteboardName);
         if (!value.isNull())
             cocoaValue = [(NSString *)value precomposedStringWithCanonicalMapping];
     } else if (cocoaType) {
-        if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(0, cocoaType.get()))
+        if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(0, cocoaType.get(), m_pasteboardName))
             cocoaValue = [[[NSString alloc] initWithData:buffer->createNSData().get() encoding:NSUTF8StringEncoding] autorelease];
     }
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (cocoaValue && m_changeCount == platformStrategies()->pasteboardStrategy()->changeCount())
+    if (cocoaValue && m_changeCount == platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
         return cocoaValue;
 
     return String();
@@ -342,7 +342,7 @@ void Pasteboard::writeString(const String& type, const String& data)
     if (!cocoaType)
         return;
 
-    platformStrategies()->pasteboardStrategy()->writeToPasteboard(type, data);
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard(type, data, m_pasteboardName);
 }
 
 Vector<String> Pasteboard::types()
@@ -351,7 +351,7 @@ Vector<String> Pasteboard::types()
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount())
+    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
         return Vector<String>();
 
     ListHashSet<String> result;

@@ -107,7 +107,7 @@ public:
     unsigned numberOfFiles() const;
     void setFileNames(Vector<String>& fileNames) { m_fileNames = WTFMove(fileNames); }
     const Vector<String>& fileNames() const { return m_fileNames; }
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     const String& pasteboardName() const { return m_pasteboardName; }
     bool containsPromise() const;
 #endif
@@ -132,7 +132,7 @@ private:
     DragOperation m_draggingSourceOperationMask;
     DragApplicationFlags m_applicationFlags;
     Vector<String> m_fileNames;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     String m_pasteboardName;
 #endif
 #if PLATFORM(WIN)

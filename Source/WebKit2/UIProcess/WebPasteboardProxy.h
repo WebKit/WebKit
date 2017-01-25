@@ -68,13 +68,13 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
 #if PLATFORM(IOS)
-    void writeWebContentToPasteboard(const WebCore::PasteboardWebContent&);
-    void writeImageToPasteboard(const WebCore::PasteboardImage&);
-    void writeStringToPasteboard(const String& pasteboardType, const String&);
-    void readStringFromPasteboard(uint64_t index, const String& pasteboardType, WTF::String&);
-    void readURLFromPasteboard(uint64_t index, const String& pasteboardType, String&);
-    void readBufferFromPasteboard(uint64_t index, const String& pasteboardType, SharedMemory::Handle&, uint64_t& size);
-    void getPasteboardItemsCount(uint64_t& itemsCount);
+    void writeWebContentToPasteboard(const WebCore::PasteboardWebContent&, const String& pasteboardName);
+    void writeImageToPasteboard(const WebCore::PasteboardImage&, const String& pasteboardName);
+    void writeStringToPasteboard(const String& pasteboardType, const String&, const String& pasteboardName);
+    void readStringFromPasteboard(uint64_t index, const String& pasteboardType, const String& pasteboardName, WTF::String&);
+    void readURLFromPasteboard(uint64_t index, const String& pasteboardType, const String& pasteboardName, String&);
+    void readBufferFromPasteboard(uint64_t index, const String& pasteboardType, const String& pasteboardName, SharedMemory::Handle&, uint64_t& size);
+    void getPasteboardItemsCount(const String& pasteboardName, uint64_t& itemsCount);
 #endif
 #if PLATFORM(COCOA)
     void getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes);

@@ -22,13 +22,13 @@
 
 messages -> WebPasteboardProxy {
 #if PLATFORM(IOS)
-    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content)
-    WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage)
-    WriteStringToPasteboard(String pasteboardType, String text) 
-    ReadStringFromPasteboard(uint64_t index, String pasteboardType) -> (String string)
-    ReadURLFromPasteboard(uint64_t index, String pasteboardType) -> (String string)
-    ReadBufferFromPasteboard(uint64_t index, String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
-    GetPasteboardItemsCount() -> (uint64_t itemsCount)
+    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content, String pasteboardName)
+    WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage, String pasteboardName)
+    WriteStringToPasteboard(String pasteboardType, String text, String pasteboardName)
+    ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (String string)
+    ReadURLFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (String string)
+    ReadBufferFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
+    GetPasteboardItemsCount(String pasteboardName) -> (uint64_t itemsCount)
 #endif
 
 #if PLATFORM(COCOA)
