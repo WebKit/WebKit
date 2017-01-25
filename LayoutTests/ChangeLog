@@ -1,3 +1,15 @@
+2017-01-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert r210882, removing support for background-repeat-x/y
+        https://bugs.webkit.org/show_bug.cgi?id=167223
+
+        Reviewed by Myles Maxfield.
+        
+        Modify the test to check that background-repeat-x and background-repeat-y are not parsed.
+
+        * fast/backgrounds/background-repeat-x-y-parse-expected.txt:
+        * fast/backgrounds/background-repeat-x-y-parse.html:
+
 2017-01-25  Youenn Fablet  <youenn@apple.com>
 
         Flaky Test: imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html

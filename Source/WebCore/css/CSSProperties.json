@@ -682,13 +682,15 @@
         "background-repeat-x": {
             "codegen-properties": {
                 "name-for-methods": "RepeatX",
-                "fill-layer-property": true
+                "fill-layer-property": true,
+                "internal-only": true
             }
         },
         "background-repeat-y": {
             "codegen-properties": {
                 "name-for-methods": "RepeatY",
-                "fill-layer-property": true
+                "fill-layer-property": true,
+                "internal-only": true
             }
         },
         "background-size": {
@@ -3542,13 +3544,15 @@
         "-webkit-mask-repeat-x": {
             "codegen-properties": {
                 "name-for-methods": "RepeatX",
-                "fill-layer-property": true
+                "fill-layer-property": true,
+                "internal-only": true
             }
         },
         "-webkit-mask-repeat-y": {
             "codegen-properties": {
                 "name-for-methods": "RepeatY",
-                "fill-layer-property": true
+                "fill-layer-property": true,
+                "internal-only": true
             }
         },
         "-webkit-mask-size": {

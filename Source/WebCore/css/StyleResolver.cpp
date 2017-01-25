@@ -1483,8 +1483,6 @@ inline bool StyleResolver::isValidCueStyleProperty(CSSPropertyID id)
     case CSSPropertyBackgroundPositionX:
     case CSSPropertyBackgroundPositionY:
     case CSSPropertyBackgroundRepeat:
-    case CSSPropertyBackgroundRepeatX:
-    case CSSPropertyBackgroundRepeatY:
     case CSSPropertyBackgroundSize:
     case CSSPropertyColor:
     case CSSPropertyFont:

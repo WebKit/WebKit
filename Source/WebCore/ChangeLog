@@ -1,3 +1,26 @@
+2017-01-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert r210882, removing support for background-repeat-x/y
+        https://bugs.webkit.org/show_bug.cgi?id=167223
+
+        Reviewed by Myles Maxfield.
+
+        CSSPropertyBackgroundRepeatX and CSSPropertyBackgroundRepeatY only exist to make it easier
+        to parse CSSPropertyBackgroundRepeat as if it were a shorthand; they were never intended to
+        be web-exposed. r210882 mistakenly expose them to the web, so undo that patch, and annotate
+        the properties in CSSProperties.json with a flag which indicates their special status.
+
+        In addition, remove background-repeat-x/y from the list of properties allowed in video cues,
+        since these are not valid properties.
+
+        * css/CSSProperties.json:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::isValidCueStyleProperty):
+        * css/makeprop.pl:
+        (addProperty):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+
 2017-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] UIProcess from WebKitGtk+ 2.15.x SIGSEGVs because of X Error BadDamage in WebKit::AcceleratedBackingStoreX11::update(WebKit::LayerTreeContext const&) () at Source/WebKit2/UIProcess/gtk/AcceleratedBackingStoreX11.cpp:145

@@ -139,6 +139,8 @@ sub addProperty($$)
                     $nameToAliases{$name} = $codegenProperties->{"aliases"};
                 } elsif ($styleBuilderOptions{$codegenOptionName}) {
                     $propertiesWithStyleBuilderOptions{$name}{$codegenOptionName} = $codegenProperties->{$codegenOptionName};
+                } elsif ($codegenOptionName eq "internal-only") {
+                    # internal-only properties exist to make it easier to parse compound properties (e.g. background-repeat) as if they were shorthands. This doesn't currently affect codegen.
                 } else {
                     die "Unrecognized codegen property \"$optionName\" for $name property.";
                 }
