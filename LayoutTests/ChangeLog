@@ -1,3 +1,24 @@
+2017-01-25  Yoav Weiss  <yoav@yoav.ws>
+
+        REGRESSION(r203110): LayoutTest http/tests/preload/single_download_preload_runner.html timing out
+        https://bugs.webkit.org/show_bug.cgi?id=159678
+
+        Move the single_download_preload test to be in a single document rather than a frame, as the frame based version was timing out.
+        I suspect that recent changes to handling of feature flags resulted in feature flags turned off for frames, which caused this test
+        to fail. As the frame doesn't seem required in this case, we can fold the entire test to a single document.
+        On top of that, I added per resource verification for the number of requests, which makes the test clearer, and avoided verifying
+        result for resource types that are currently failing/flaky.
+
+        Reviewed by Alex Christensen
+
+        * TestExpectations: Removed the timeout expectation for the test.
+        * http/tests/preload/single_download_preload-expected.txt: Renamed from LayoutTests/http/tests/preload/single_download_preload_runner-expected.txt.
+        * http/tests/preload/single_download_preload.html: Renamed from LayoutTests/http/tests/preload/resources/single_download_preload.html as well as fixed.
+        * http/tests/preload/single_download_preload_runner.html: Removed.
+        * http/tests/resources/dummy.xml: Added.
+        * http/tests/resources/test.oga: Added.
+        * platform/mac/TestExpectations: Removed the timeout expectation for the test.
+
 2017-01-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Fix a typo in TestExpectations.
