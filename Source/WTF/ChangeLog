@@ -1,3 +1,15 @@
+2017-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Disable Download attribute support on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=167337
+        <rdar://problem/30154148>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Disable Download attribute support on iOS as it currently does not work.
+
+        * wtf/FeatureDefines.h:
+
 2017-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a hook to include additional feature defines

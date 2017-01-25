@@ -164,6 +164,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 1
 #endif
 
+#if !defined(ENABLE_DOWNLOAD_ATTRIBUTE)
+#define ENABLE_DOWNLOAD_ATTRIBUTE 0
+#endif
+
 #endif /* PLATFORM(IOS) */
 
 /* --------- Apple MAC port (not IOS) --------- */
