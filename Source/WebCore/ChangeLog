@@ -1,3 +1,12 @@
+2017-01-25  Youenn Fablet  <youenn@apple.com>
+
+        Fixing typos in r211161
+        https://bugs.webkit.org/show_bug.cgi?id=167433
+
+        Reviewed by Alex Christensen.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+
 2017-01-25  Simon Fraser  <simon.fraser@apple.com>
 
         Revert r210882, removing support for background-repeat-x/y

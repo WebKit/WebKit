@@ -26,7 +26,7 @@
 #pragma once
 
 #if USE(LIBWEBRTC)
-#include "LibWebRTCMacros.h"
+#include "LibWebRTCUtils.h"
 #include <webrtc/api/peerconnectioninterface.h>
 #endif
 
@@ -35,7 +35,7 @@ namespace WebCore {
 class WEBCORE_EXPORT LibWebRTCProvider {
 public:
 #if USE(LIBWEBRTC)
-    virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&) { return createPeerConnection(observer); };
+    virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver& observer) { return WebCore::createPeerConnection(observer); };
 #endif
     virtual ~LibWebRTCProvider() = default;
 
