@@ -778,9 +778,12 @@ static void webkitWebViewDispose(GObject* object)
     if (webView->priv->loadObserver) {
         getPage(webView)->pageLoadState().removeObserver(*webView->priv->loadObserver);
         webView->priv->loadObserver.reset();
-    }
 
-    webkitWebContextWebViewDestroyed(webView->priv->context.get(), webView);
+        // We notify the context here to ensure it's called only once. Ideally we should
+        // call this in finalize, not dispose, but finalize is used internally and we don't
+        // have access to the instance pointer from the private struct destructor.
+        webkitWebContextWebViewDestroyed(webView->priv->context.get(), webView);
+    }
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 }

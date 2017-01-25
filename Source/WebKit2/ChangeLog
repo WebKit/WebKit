@@ -1,5 +1,26 @@
 2017-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Icon Database should be in private browsing mode for ephemeral web views
+        https://bugs.webkit.org/show_bug.cgi?id=167414
+
+        Reviewed by Michael Catanzaro.
+
+        This is already done by WebProcessPool for the legacy private session setting, but only checking the setting and not
+        whether there are ephemeral web pages or not.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextEnableIconDatabasePrivateBrowsingIfNeeded): Enable icon database private browsing if there's
+        any ephemeral web view.
+        (webkitWebContextDisableIconDatabasePrivateBrowsingIfNeeded): Disable icon database private browsing if there
+        aren't ephemeral web views anymore.
+        (webkit_web_context_set_favicon_database_directory): Enable icon database private browsing if the web context is ephemeral.
+        (webkitWebContextCreatePageForWebView): Call webkitWebContextEnableIconDatabasePrivateBrowsingIfNeeded().
+        (webkitWebContextWebViewDestroyed): Call webkitWebContextDisableIconDatabasePrivateBrowsingIfNeeded().
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewDispose): Ensure webkitWebContextWebViewDestroyed is called only once.
+
+2017-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] UIProcess from WebKitGtk+ 2.15.x SIGSEGVs because of X Error BadDamage in WebKit::AcceleratedBackingStoreX11::update(WebKit::LayerTreeContext const&) () at Source/WebKit2/UIProcess/gtk/AcceleratedBackingStoreX11.cpp:145
         https://bugs.webkit.org/show_bug.cgi?id=165656
 

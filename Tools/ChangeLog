@@ -1,5 +1,19 @@
 2017-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Icon Database should be in private browsing mode for ephemeral web views
+        https://bugs.webkit.org/show_bug.cgi?id=167414
+
+        Reviewed by Michael Catanzaro.
+
+        Add a test case to check ephemeral web views don't write favicons to the database.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitFaviconDatabase.cpp:
+        (ephemeralViewLoadChanged):
+        (testPrivateBrowsing):
+        (testFaviconDatabase):
+
+2017-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add a private browsing mode to MiniBrowser
         https://bugs.webkit.org/show_bug.cgi?id=167413
 

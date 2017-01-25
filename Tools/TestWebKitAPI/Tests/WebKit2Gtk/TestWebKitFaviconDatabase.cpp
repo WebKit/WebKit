@@ -152,6 +152,30 @@ static void testClearDatabase(FaviconDatabaseTest* test)
     g_assert(!iconURI);
 }
 
+static void ephemeralViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
+{
+    if (loadEvent != WEBKIT_LOAD_FINISHED)
+        return;
+    g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(ephemeralViewLoadChanged), test);
+    test->quitMainLoop();
+}
+
+static void testPrivateBrowsing(FaviconDatabaseTest* test)
+{
+    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "web-context", test->m_webContext.get(),
+        "is-ephemeral", TRUE,
+        nullptr));
+    g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewLoadChanged), test);
+    webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/foo").data());
+    g_main_loop_run(test->m_mainLoop);
+
+    // An ephemeral web view should not write to the database.
+    test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/foo").data());
+    g_assert(!test->m_favicon);
+    g_assert(test->m_error);
+}
+
 static void testGetFavicon(FaviconDatabaseTest* test)
 {
     // We need to load the page first to ensure the icon data will be
@@ -228,6 +252,7 @@ static void testFaviconDatabase(FaviconDatabaseTest* test, gconstpointer)
     // See https://bugs.webkit.org/show_bug.cgi?id=111434.
     testNotInitialized(test);
     testSetDirectory(test);
+    testPrivateBrowsing(test);
     testGetFavicon(test);
     testGetFaviconURI(test);
     testWebViewFavicon(test);
