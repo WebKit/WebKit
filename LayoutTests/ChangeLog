@@ -1,5 +1,14 @@
 2017-01-25  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking fast/backgrounds/background-repeat-x-y-parse.html as failing.
+        https://bugs.webkit.org/show_bug.cgi?id=167428
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2017-01-25  Ryan Haddad  <ryanhaddad@apple.com>
+
         modern-media-tests LayoutTest gardening.
         https://bugs.webkit.org/show_bug.cgi?id=167396
 

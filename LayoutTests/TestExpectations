@@ -998,3 +998,5 @@ media/modern-media-controls/media-controller/media-controller-scale-factor.html 
 
 webkit.org/b/166911 fast/dom/Window/window-properties-performance.html [ Pass Failure ]
 webkit.org/b/166911 fast/dom/Window/window-properties-performance-resource-timing.html [ Pass Failure ]
+
+webkit.org/b/167428 fast/backgrounds/background-repeat-x-y-parse.htm [ Failure ]
