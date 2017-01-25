@@ -92,9 +92,9 @@ EncodedJSValue atomicOperationWithArgsCase(ExecState* exec, ThrowScope& scope, J
 {
     JSGenericTypedArrayView<Adaptor>* typedArray = jsCast<JSGenericTypedArrayView<Adaptor>*>(typedArrayView);
     
-    int32_t extraArgs[numExtraArgs + 1]; // Add 1 to avoid 0 size array error in VS.
+    double extraArgs[numExtraArgs + 1]; // Add 1 to avoid 0 size array error in VS.
     for (unsigned i = 0; i < numExtraArgs; ++i) {
-        int32_t value = exec->argument(2 + i).toInt32(exec);
+        double value = exec->argument(2 + i).toInteger(exec);
         RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
         extraArgs[i] = value;
     }
@@ -191,23 +191,23 @@ EncodedJSValue atomicOperationWithArgs(ExecState* exec, const Func& func)
 EncodedJSValue JSC_HOST_CALL atomicsFuncAdd(ExecState* exec)
 {
     return atomicOperationWithArgs<1>(
-        exec, [&] (auto* ptr, const int32_t* args) {
-            return jsNumber(WTF::atomicExchangeAdd(ptr, args[0]));
+        exec, [&] (auto* ptr, const double* args) {
+            return jsNumber(WTF::atomicExchangeAdd(ptr, toInt32(args[0])));
         });
 }
 
 EncodedJSValue JSC_HOST_CALL atomicsFuncAnd(ExecState* exec)
 {
     return atomicOperationWithArgs<1>(
-        exec, [&] (auto* ptr, const int32_t* args) {
-            return jsNumber(WTF::atomicExchangeAnd(ptr, args[0]));
+        exec, [&] (auto* ptr, const double* args) {
+            return jsNumber(WTF::atomicExchangeAnd(ptr, toInt32(args[0])));
         });
 }
 
 EncodedJSValue JSC_HOST_CALL atomicsFuncCompareExchange(ExecState* exec)
 {
     return atomicOperationWithArgs<2>(
-        exec, [&] (auto* ptr, const int32_t* args) {
+        exec, [&] (auto* ptr, const double* args) {
             typedef typename std::remove_pointer<decltype(ptr)>::type T;
             T expected = static_cast<T>(args[0]);
             T newValue = static_cast<T>(args[1]);
@@ -218,7 +218,7 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncCompareExchange(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL atomicsFuncExchange(ExecState* exec)
 {
     return atomicOperationWithArgs<1>(
-        exec, [&] (auto* ptr, const int32_t* args) {
+        exec, [&] (auto* ptr, const double* args) {
             typedef typename std::remove_pointer<decltype(ptr)>::type T;
             return jsNumber(WTF::atomicExchange(ptr, static_cast<T>(args[0])));
         });
@@ -249,7 +249,7 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncIsLockFree(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL atomicsFuncLoad(ExecState* exec)
 {
     return atomicOperationWithArgs<0>(
-        exec, [&] (auto* ptr, const int32_t*) {
+        exec, [&] (auto* ptr, const double*) {
             return jsNumber(WTF::atomicLoad(ptr));
         });
 }
@@ -257,22 +257,19 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncLoad(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL atomicsFuncOr(ExecState* exec)
 {
     return atomicOperationWithArgs<1>(
-        exec, [&] (auto* ptr, const int32_t* args) {
-            return jsNumber(WTF::atomicExchangeOr(ptr, args[0]));
+        exec, [&] (auto* ptr, const double* args) {
+            return jsNumber(WTF::atomicExchangeOr(ptr, toInt32(args[0])));
         });
 }
 
 EncodedJSValue JSC_HOST_CALL atomicsFuncStore(ExecState* exec)
 {
     return atomicOperationWithArgs<1>(
-        exec, [&] (auto* ptr, const int32_t* args) {
+        exec, [&] (auto* ptr, const double* args) {
             typedef typename std::remove_pointer<decltype(ptr)>::type T;
-            int32_t valueAsInt = args[0];
+            double valueAsInt = args[0];
             T valueAsT = static_cast<T>(valueAsInt);
             WTF::atomicStore(ptr, valueAsT);
-            
-            if (static_cast<int32_t>(valueAsT) == valueAsInt)
-                return jsNumber(valueAsT);
             return jsNumber(valueAsInt);
         });
 }
@@ -280,8 +277,8 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncStore(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL atomicsFuncSub(ExecState* exec)
 {
     return atomicOperationWithArgs<1>(
-        exec, [&] (auto* ptr, const int32_t* args) {
-            return jsNumber(WTF::atomicExchangeSub(ptr, args[0]));
+        exec, [&] (auto* ptr, const double* args) {
+            return jsNumber(WTF::atomicExchangeSub(ptr, toInt32(args[0])));
         });
 }
 
@@ -390,8 +387,8 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncWake(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL atomicsFuncXor(ExecState* exec)
 {
     return atomicOperationWithArgs<1>(
-        exec, [&] (auto* ptr, const int32_t* args) {
-            return jsNumber(WTF::atomicExchangeXor(ptr, args[0]));
+        exec, [&] (auto* ptr, const double* args) {
+            return jsNumber(WTF::atomicExchangeXor(ptr, toInt32(args[0])));
         });
 }
 

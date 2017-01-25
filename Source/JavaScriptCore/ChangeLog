@@ -1,3 +1,29 @@
+2017-01-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Atomics.store should return the int-converted value according to toInteger
+        https://bugs.webkit.org/show_bug.cgi?id=167399
+
+        Reviewed by Saam Barati.
+        
+        I keep getting this wrong, but I think I've finally done it right. What we want is for
+        Atomics.store to return the value it was passed after toInteger, which doesn't clip the value to
+        any kind of range. It does get truncated to double.
+        
+        This changes the code to pass those "integers" as doubles. It doesn't matter that this is slow,
+        since all of these code paths are slow due to their need to check everything. We'll take care of
+        that by making them intrinsic later.
+
+        * runtime/AtomicsObject.cpp:
+        (JSC::atomicsFuncAdd):
+        (JSC::atomicsFuncAnd):
+        (JSC::atomicsFuncCompareExchange):
+        (JSC::atomicsFuncExchange):
+        (JSC::atomicsFuncLoad):
+        (JSC::atomicsFuncOr):
+        (JSC::atomicsFuncStore):
+        (JSC::atomicsFuncSub):
+        (JSC::atomicsFuncXor):
+
 2017-01-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Optimize Number#toString with Int52

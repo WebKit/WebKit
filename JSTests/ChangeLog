@@ -1,3 +1,13 @@
+2017-01-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Atomics.store should return the int-converted value according to toInteger
+        https://bugs.webkit.org/show_bug.cgi?id=167399
+
+        Reviewed by Saam Barati.
+
+        * stress/atomics-add-uint32.js: Added.
+        * stress/atomics-store-return.js: Fix the test to match what the spec wants.
+
 2017-01-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Optimize Number#toString with Int52
