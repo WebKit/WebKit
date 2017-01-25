@@ -160,6 +160,8 @@ class CMakeGenerator(object):
         self.remove_webrtc_base_sha1()
         self.targets.pop("//build/config/sanitizers:options_sources")
 
+        self.targets["//webrtc/base:rtc_base_approved"]["defines"].append("HAVE_PTHREAD_COND_TIMEDWAIT_RELATIVE")
+
     def _remove_target(self, targetName):
         self.targets.pop(targetName)
         for name, target in self.targets.iteritems():
