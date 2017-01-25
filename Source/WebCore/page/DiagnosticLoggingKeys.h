@@ -56,6 +56,7 @@ public:
     WEBCORE_EXPORT static String entryWronglyNotWarmedUpKey();
     static String expiredKey();
     static String fontKey();
+    static String handlesContextLossKey();
     static String hasPluginsKey();
     static String httpsNoStoreKey();
     static String imageKey();
@@ -84,6 +85,7 @@ public:
     static String networkKey();
     WEBCORE_EXPORT static String networkProcessCrashedKey();
     WEBCORE_EXPORT static String neverSeenBeforeKey();
+    static String noKey();
     static String noCacheKey();
     static String noCurrentHistoryItemKey();
     static String noDocumentLoaderKey();
@@ -158,6 +160,7 @@ public:
     WEBCORE_EXPORT static String wastedSpeculativeWarmupWithoutRevalidationKey();
     WEBCORE_EXPORT static String webGLKey();
     WEBCORE_EXPORT static String webViewKey();
+    static String yesKey();
     WEBCORE_EXPORT static String zoomedKey();
 
     WEBCORE_EXPORT static String memoryUsageToDiagnosticLoggingKey(uint64_t memoryUsage);
