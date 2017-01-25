@@ -1,3 +1,24 @@
+2017-01-25  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] The inspector is broken when AC support is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=165237
+
+        Reviewed by Carlos Garcia Campos.
+
+        Ensure that PageOverlayController destroys its root GraphicsLayers when leaving AC. They
+        will be recreated if we enter AC again, avoiding a crash because the layers don't belong to
+        the appropriate compositor. Also, don't append the document overlay layers if we are not
+        in compositing mode.
+
+        No new tests added.
+
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::willDetachRootLayer):
+        * page/PageOverlayController.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::appendDocumentOverlayLayers):
+        (WebCore::RenderLayerCompositor::detachRootLayer):
+
 2017-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Custom protocols don't work in private browsing mode

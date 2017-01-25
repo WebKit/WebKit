@@ -772,7 +772,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
 void RenderLayerCompositor::appendDocumentOverlayLayers(Vector<GraphicsLayer*>& childList)
 {
-    if (!isMainFrameCompositor())
+    if (!isMainFrameCompositor() || !m_compositing)
         return;
 
     Frame& frame = m_renderView.frameView().frame();
@@ -3509,8 +3509,10 @@ void RenderLayerCompositor::detachRootLayer()
     case RootLayerAttachedViaChromeClient: {
         Frame& frame = m_renderView.frameView().frame();
         page().chrome().client().attachRootGraphicsLayer(frame, nullptr);
-        if (frame.isMainFrame())
+        if (frame.isMainFrame()) {
             page().chrome().client().attachViewOverlayGraphicsLayer(frame, nullptr);
+            frame.mainFrame().pageOverlayController().willDetachRootLayer();
+        }
     }
     break;
     case RootLayerUnattached:

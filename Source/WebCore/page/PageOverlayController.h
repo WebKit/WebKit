@@ -58,6 +58,7 @@ public:
     GraphicsLayer& layerForOverlay(PageOverlay&) const;
 
     void willAttachRootLayer();
+    void willDetachRootLayer();
 
     void didChangeViewSize();
     void didChangeDocumentSize();
