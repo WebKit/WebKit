@@ -1493,8 +1493,6 @@ webkit.org/b/167263 media/modern-media-controls/media-controller/media-controlle
 
 webkit.org/b/167275 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Pass Failure ]
 
-webkit.org/b/167311 [ Debug ] media/modern-media-controls/tracks-panel/tracks-panel-hide.html [ Pass Timeout ]
-
 webkit.org/b/167347 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html [ Pass Failure ]
 
 webkit.org/b/167266 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Pass Failure ]

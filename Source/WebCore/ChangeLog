@@ -1,3 +1,16 @@
+2017-01-24  Antoine Quint  <graouts@apple.com>
+
+        LayoutTest media/modern-media-controls/tracks-panel/tracks-panel-hide.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=167311
+
+        Reviewed by Dean Jackson.
+
+        Ensure we have a chance to start the transition (on the next frame) before registering for an event
+        tracking its completion.
+
+        * Modules/modern-media-controls/controls/tracks-panel.js:
+        (TracksPanel.prototype.hide):
+
 2017-01-24  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Avoid IOSurface readback for snapshot creation
