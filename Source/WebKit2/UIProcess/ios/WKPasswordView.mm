@@ -41,10 +41,13 @@ const CGFloat passwordEntryFieldPadding = 10;
 @end
 
 @implementation WKPasswordView {
+    RetainPtr<NSString> _documentName;
     RetainPtr<UIScrollView> _scrollView;
     RetainPtr<UIDocumentPasswordView> _passwordView;
     CGFloat _savedMinimumZoomScale;
     CGFloat _savedMaximumZoomScale;
+    CGFloat _savedZoomScale;
+    CGSize _savedContentSize;
     RetainPtr<UIColor> _savedBackgroundColor;
 }
 
@@ -54,7 +57,8 @@ const CGFloat passwordEntryFieldPadding = 10;
     if (!self)
         return nil;
 
-    _passwordView = adoptNS([[UIDocumentPasswordView alloc] initWithDocumentName:documentName]);
+    _documentName = adoptNS([documentName copy]);
+    _passwordView = adoptNS([[UIDocumentPasswordView alloc] initWithDocumentName:_documentName.get()]);
     [_passwordView setFrame:self.bounds];
     [_passwordView setPasswordDelegate:self];
     [_passwordView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
@@ -65,34 +69,42 @@ const CGFloat passwordEntryFieldPadding = 10;
     return self;
 }
 
+- (NSString *)documentName
+{
+    return _documentName.get();
+}
+
 - (void)layoutSubviews
 {
     if (_scrollView)
         [_scrollView setContentSize:self.frame.size];
 }
 
-- (void)displayInContentView:(UIView *)contentView
+- (void)showInScrollView:(UIScrollView *)scrollView
 {
-    ASSERT([contentView isKindOfClass:[WKContentView class]] || [contentView conformsToProtocol:@protocol(WKWebViewContentProvider)]);
-    ASSERT([contentView.superview isKindOfClass:[UIScrollView class]]);
-    _scrollView = (UIScrollView *)contentView.superview;
+    _scrollView = scrollView;
 
     _savedMinimumZoomScale = [_scrollView minimumZoomScale];
     _savedMaximumZoomScale = [_scrollView maximumZoomScale];
+    _savedZoomScale = [_scrollView zoomScale];
+    _savedContentSize = [_scrollView contentSize];
     _savedBackgroundColor = [_scrollView backgroundColor];
 
     [_scrollView setMinimumZoomScale:1];
     [_scrollView setMaximumZoomScale:1];
+    [_scrollView setZoomScale:1];
     [_scrollView setContentSize:self.frame.size];
     [_scrollView setBackgroundColor:[UIColor groupTableViewBackgroundColor]];
 
-    [contentView addSubview:self];
+    [scrollView addSubview:self];
 }
 
 - (void)hide
 {
     [_scrollView setMinimumZoomScale:_savedMinimumZoomScale];
     [_scrollView setMaximumZoomScale:_savedMaximumZoomScale];
+    [_scrollView setZoomScale:_savedZoomScale];
+    [_scrollView setContentSize:_savedContentSize];
     [_scrollView setBackgroundColor:_savedBackgroundColor.get()];
 
     _scrollView = nil;
@@ -101,7 +113,7 @@ const CGFloat passwordEntryFieldPadding = 10;
     [self removeFromSuperview];
 }
 
-- (void)displayPasswordFailureAlert
+- (void)showPasswordFailureAlert
 {
     [[_passwordView passwordField] setText:@""];
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:WEB_UI_STRING("The document could not be opened with that password.", "document password failure alert message") message:@"" preferredStyle:UIAlertControllerStyleAlert];

@@ -30,10 +30,11 @@
 @interface WKPasswordView : UIView
 
 - (instancetype)initWithFrame:(CGRect)frame documentName:(NSString *)documentName;
-- (void)displayInContentView:(UIView *)contentView;
+- (void)showInScrollView:(UIScrollView *)scrollView;
 - (void)hide;
-- (void)displayPasswordFailureAlert;
+- (void)showPasswordFailureAlert;
 
+@property (nonatomic, readonly) NSString *documentName;
 @property (nonatomic, copy) void (^userDidEnterPassword)(NSString *);
 
 @end

@@ -57,6 +57,7 @@
 #import "WKNSURLExtras.h"
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
+#import "WKPasswordView.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKSharedAPICast.h"
@@ -273,6 +274,8 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 
     Vector<std::function<void ()>> _snapshotsDeferredDuringResize;
     RetainPtr<NSMutableArray> _stableStatePresentationUpdateCallbacks;
+
+    RetainPtr<WKPasswordView> _passwordView;
 #endif
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
@@ -1192,6 +1195,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
 - (void)_processDidExit
 {
+    [self _hidePasswordView];
     if (!_customContentView && _dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing) {
         NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
         [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
@@ -1268,7 +1272,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
-    if (_customContentView)
+    if (![self usesStandardContentView])
         return;
 
     if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing) {
@@ -1406,7 +1410,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing)
         return;
 
-    if (_customContentView)
+    if (![self usesStandardContentView])
         return;
 
     _needsToRestoreUnobscuredCenter = NO;
@@ -1423,7 +1427,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing)
         return;
 
-    if (_customContentView)
+    if (![self usesStandardContentView])
         return;
 
     _needsToRestoreScrollPosition = NO;
@@ -1834,7 +1838,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (BOOL)usesStandardContentView
 {
-    return !_customContentView;
+    return !_customContentView && !_passwordView;
 }
 
 - (CGSize)scrollView:(UIScrollView*)scrollView contentSizeForZoomScale:(CGFloat)scale withProposedSize:(CGSize)proposedSize
@@ -2111,6 +2115,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 - (void)_updateContentRectsWithState:(BOOL)inStableState
 {
     if (![self usesStandardContentView]) {
+        [_passwordView setFrame:self.bounds];
         [_customContentView web_computedContentInsetDidChange];
         return;
     }
@@ -2329,6 +2334,27 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 {
     _frozenVisibleContentRect = std::nullopt;
     _frozenUnobscuredContentRect = std::nullopt;
+}
+
+- (void)_showPasswordViewWithDocumentName:(NSString *)documentName passwordHandler:(void (^)(NSString *))passwordHandler
+{
+    ASSERT(!_passwordView);
+    _passwordView = adoptNS([[WKPasswordView alloc] initWithFrame:self.bounds documentName:documentName]);
+    [_passwordView setUserDidEnterPassword:passwordHandler];
+    [_passwordView showInScrollView:_scrollView.get()];
+    self._currentContentView.hidden = YES;
+}
+
+- (void)_hidePasswordView
+{
+    self._currentContentView.hidden = NO;
+    [_passwordView removeFromSuperview];
+    _passwordView = nil;
+}
+
+- (WKPasswordView *)_passwordView
+{
+    return _passwordView.get();
 }
 
 #endif // PLATFORM(IOS)
@@ -4212,7 +4238,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     CGRect oldBounds = self.bounds;
     WebCore::FloatRect oldUnobscuredContentRect = _page->unobscuredContentRect();
 
-    if (_customContentView || !_hasCommittedLoadForMainFrame || CGRectIsEmpty(oldBounds) || oldUnobscuredContentRect.isEmpty()) {
+    if (![self usesStandardContentView] || !_hasCommittedLoadForMainFrame || CGRectIsEmpty(oldBounds) || oldUnobscuredContentRect.isEmpty()) {
         updateBlock();
         return;
     }

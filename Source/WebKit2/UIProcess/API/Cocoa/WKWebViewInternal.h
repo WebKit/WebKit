@@ -56,6 +56,7 @@ struct PrintInfo;
 }
 
 @class WKWebViewContentProviderRegistry;
+@class WKPasswordView;
 @class _WKFrameHandle;
 @protocol _WKWebViewPrintProvider;
 
@@ -115,6 +116,11 @@ struct PrintInfo;
 - (void)_navigationGestureDidBegin;
 - (void)_navigationGestureDidEnd;
 - (BOOL)_isNavigationSwipeGestureRecognizer:(UIGestureRecognizer *)recognizer;
+
+- (void)_showPasswordViewWithDocumentName:(NSString *)documentName passwordHandler:(void (^)(NSString *))passwordHandler;
+- (void)_hidePasswordView;
+
+@property (nonatomic, readonly) WKPasswordView *_passwordView;
 
 @property (nonatomic, readonly) BOOL _isBackground;
 

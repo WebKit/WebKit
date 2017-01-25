@@ -76,8 +76,6 @@ typedef struct {
     RetainPtr<NSString> _suggestedFilename;
     RetainPtr<WKPDFPageNumberIndicator> _pageNumberIndicator;
 
-    RetainPtr<WKPasswordView> _passwordView;
-
     Vector<PDFPageInfo> _pages;
     unsigned _centerPageNumber;
 
@@ -205,12 +203,12 @@ static void detachViewForPage(PDFPageInfo& page)
 
 - (void)web_setMinimumSize:(CGSize)size
 {
-    if (_passwordView) {
-        [_passwordView setFrame:[self _passwordViewFrame]];
+    _minimumSize = size;
+
+    if (_webView._passwordView) {
+        self.frame = { self.frame.origin, size };
         return;
     }
-
-    _minimumSize = size;
 
     CGFloat oldDocumentLeftFraction = 0;
     CGFloat oldDocumentTopFraction = 0;
@@ -361,9 +359,6 @@ static void detachViewForPage(PDFPageInfo& page)
 
 - (void)_computePageAndDocumentFrames
 {
-    if (_passwordView)
-        return;
-
     NSUInteger pageCount = [_pdfDocument numberOfPages];
     [_pageNumberIndicator setPageCount:pageCount];
     
@@ -746,28 +741,17 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 
 #pragma mark Password protection UI
 
-- (CGRect)_passwordViewFrame
-{
-    CGRect webViewBounds = _webView.bounds;
-    return CGRectMake(0, 0, webViewBounds.size.width, webViewBounds.size.height);
-}
-
 - (void)_showPasswordEntryField
 {
-    _passwordView = adoptNS([[WKPasswordView alloc] initWithFrame:[self _passwordViewFrame] documentName:_suggestedFilename.get()]);
-
-    [_passwordView setUserDidEnterPassword:[retainedSelf = retainPtr(self)](NSString *password) {
+    [_webView _showPasswordViewWithDocumentName:_suggestedFilename.get() passwordHandler:[retainedSelf = retainPtr(self), webView = retainPtr(_webView)](NSString *password) {
         if (!CGPDFDocumentUnlockWithPassword(retainedSelf->_cgPDFDocument.get(), password.UTF8String)) {
-            [retainedSelf->_passwordView displayPasswordFailureAlert];
+            [[webView _passwordView] showPasswordFailureAlert];
             return;
         }
 
-        [retainedSelf->_passwordView hide];
-        retainedSelf->_passwordView = nil;
+        [webView _hidePasswordView];
         [retainedSelf _didLoadPDFDocument];
     }];
-
-    [_passwordView displayInContentView:self];
 }
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
