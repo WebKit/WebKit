@@ -1478,9 +1478,6 @@ media/modern-media-controls/pip-support/ipad/pip-support-tap.html [ Skip ]
 media/modern-media-controls/placard-support/ipad/placard-support-pip.html [ Skip ]
 media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ Skip ]
 
-# These sometimes work but more often than not don't
-webkit.org/b/164323 media/modern-media-controls/airplay-support/airplay-support.html [ Pass Failure ]
-
 # This one always times out on the bots, cannot reproduce locally.
 webkit.org/b/165234 media/modern-media-controls/audio/audio-controls-buttons.html [ Pass Timeout ]
 

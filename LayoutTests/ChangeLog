@@ -1,3 +1,16 @@
+2017-01-24  Antoine Quint  <graouts@apple.com>
+
+        LayoutTest media/modern-media-controls/airplay-support/airplay-support.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=164323
+
+        Reviewed by Jon Lee.
+
+        Make media/modern-media-controls/airplay-support/airplay-support.html more robust by following
+        the same pattern used in media/airplay-target-availability.html which proved to be robust.
+
+        * media/modern-media-controls/airplay-support/airplay-support.html:
+        * platform/mac/TestExpectations:
+
 2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fold USER_TIMING into WEB_TIMING and make it a RuntimeEnabledFeature
