@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageClientImplIOS_h
-#define PageClientImplIOS_h
+#pragma once
 
 #if PLATFORM(IOS)
 
@@ -207,5 +206,3 @@ private:
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)
-
-#endif // PageClientImplIOS_h

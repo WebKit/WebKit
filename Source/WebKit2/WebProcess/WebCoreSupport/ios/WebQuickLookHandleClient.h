@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebQuickLookHandleClient_h
-#define WebQuickLookHandleClient_h
+#pragma once
 
 #if USE(QUICK_LOOK)
 
@@ -67,5 +66,3 @@ private:
 } // namespace WebKit
 
 #endif // USE(QUICK_LOOK)
-
-#endif // WebQuickLookHandleClient_h

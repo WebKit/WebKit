@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageClient_h
-#define PageClient_h
+#pragma once
 
 #include "ShareableBitmap.h"
 #include "WebColorPicker.h"
@@ -384,5 +383,3 @@ public:
 };
 
 } // namespace WebKit
-
-#endif // PageClient_h

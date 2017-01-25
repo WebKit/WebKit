@@ -1,5 +1,16 @@
 2017-01-25  Andy Estes  <aestes@apple.com>
 
+        Use #pragma once in a few places
+        https://bugs.webkit.org/show_bug.cgi?id=167435
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * WebProcess/WebCoreSupport/ios/WebQuickLookHandleClient.h:
+
+2017-01-25  Andy Estes  <aestes@apple.com>
+
         [QuickLook] Display a WKPasswordView when a document is password-protected
         https://bugs.webkit.org/show_bug.cgi?id=167407
         <rdar://problem/28544527>
