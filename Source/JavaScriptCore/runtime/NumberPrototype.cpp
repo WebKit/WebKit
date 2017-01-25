@@ -144,9 +144,30 @@ typedef char RadixBuffer[2180];
 // Mapping from integers 0..35 to digit identifying this value, for radix 2..36.
 static const char radixDigits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-static char* toStringWithRadix(RadixBuffer& buffer, double number, unsigned radix)
+static char* int52ToStringWithRadix(char* startOfResultString, int64_t int52Value, unsigned radix)
 {
-    ASSERT(std::isfinite(number));
+    bool negative = false;
+    uint64_t positiveNumber = int52Value;
+    if (int52Value < 0) {
+        negative = true;
+        positiveNumber = -int52Value;
+    }
+
+    do {
+        uint64_t index = positiveNumber % radix;
+        ASSERT(index < sizeof(radixDigits));
+        *--startOfResultString = radixDigits[index];
+        positiveNumber /= radix;
+    } while (positiveNumber);
+    if (negative)
+        *--startOfResultString = '-';
+
+    return startOfResultString;
+}
+
+static char* toStringWithRadix(RadixBuffer& buffer, double originalNumber, unsigned radix)
+{
+    ASSERT(std::isfinite(originalNumber));
     ASSERT(radix >= 2 && radix <= 36);
 
     // Position the decimal point at the center of the string, set
@@ -155,32 +176,38 @@ static char* toStringWithRadix(RadixBuffer& buffer, double number, unsigned radi
     char* startOfResultString = decimalPoint;
 
     // Extract the sign.
-    bool isNegative = number < 0;
-    if (std::signbit(number))
-        number = -number;
+    bool isNegative = originalNumber < 0;
+    double number = originalNumber;
+    if (std::signbit(originalNumber))
+        number = -originalNumber;
     double integerPart = floor(number);
-
-    // We use this to test for odd values in odd radix bases.
-    // Where the base is even, (e.g. 10), to determine whether a value is even we need only
-    // consider the least significant digit. For example, 124 in base 10 is even, because '4'
-    // is even. if the radix is odd, then the radix raised to an integer power is also odd.
-    // E.g. in base 5, 124 represents (1 * 125 + 2 * 25 + 4 * 5). Since each digit in the value
-    // is multiplied by an odd number, the result is even if the sum of all digits is even.
-    //
-    // For the integer portion of the result, we only need test whether the integer value is
-    // even or odd. For each digit of the fraction added, we should invert our idea of whether
-    // the number is odd if the new digit is odd.
-    //
-    // Also initialize digit to this value; for even radix values we only need track whether
-    // the last individual digit was odd.
-    bool integerPartIsOdd = integerPart <= static_cast<double>(0x1FFFFFFFFFFFFFull) && static_cast<int64_t>(integerPart) & 1;
-    ASSERT(integerPartIsOdd == static_cast<bool>(fmod(integerPart, 2)));
-    bool isOddInOddRadix = integerPartIsOdd;
-    uint32_t digit = integerPartIsOdd;
 
     // Check if the value has a fractional part to convert.
     double fractionPart = number - integerPart;
-    if (fractionPart) {
+    if (!fractionPart) {
+        *decimalPoint = '\0';
+        // We do not need to care the negative zero (-0) since it is also converted to "0" in all the radix.
+        if (integerPart < (static_cast<int64_t>(1) << (JSValue::numberOfInt52Bits - 1)))
+            return int52ToStringWithRadix(startOfResultString, static_cast<int64_t>(originalNumber), radix);
+    } else {
+        // We use this to test for odd values in odd radix bases.
+        // Where the base is even, (e.g. 10), to determine whether a value is even we need only
+        // consider the least significant digit. For example, 124 in base 10 is even, because '4'
+        // is even. if the radix is odd, then the radix raised to an integer power is also odd.
+        // E.g. in base 5, 124 represents (1 * 125 + 2 * 25 + 4 * 5). Since each digit in the value
+        // is multiplied by an odd number, the result is even if the sum of all digits is even.
+        //
+        // For the integer portion of the result, we only need test whether the integer value is
+        // even or odd. For each digit of the fraction added, we should invert our idea of whether
+        // the number is odd if the new digit is odd.
+        //
+        // Also initialize digit to this value; for even radix values we only need track whether
+        // the last individual digit was odd.
+        bool integerPartIsOdd = integerPart <= static_cast<double>(0x1FFFFFFFFFFFFFull) && static_cast<int64_t>(integerPart) & 1;
+        ASSERT(integerPartIsOdd == static_cast<bool>(fmod(integerPart, 2)));
+        bool isOddInOddRadix = integerPartIsOdd;
+        uint32_t digit = integerPartIsOdd;
+
         // Write the decimal point now.
         *decimalPoint = '.';
 
@@ -310,8 +337,7 @@ static char* toStringWithRadix(RadixBuffer& buffer, double number, unsigned radi
 
         *endOfResultString = '\0';
         ASSERT(endOfResultString < buffer + sizeof(buffer));
-    } else
-        *decimalPoint = '\0';
+    }
 
     BigInteger units(integerPart);
 
@@ -321,7 +347,7 @@ static char* toStringWithRadix(RadixBuffer& buffer, double number, unsigned radi
 
         // Read a single digit and write it to the front of the string.
         // Divide by radix to remove one digit from the value.
-        digit = units.divide(radix);
+        uint32_t digit = units.divide(radix);
         *--startOfResultString = radixDigits[digit];
     } while (!!units);
 
