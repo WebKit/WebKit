@@ -1,5 +1,14 @@
 2017-01-24  Filip Pizlo  <fpizlo@apple.com>
 
+        Atomics.store should return the int-converted value, not the value that it stored
+        https://bugs.webkit.org/show_bug.cgi?id=167395
+
+        Reviewed by Saam Barati.
+
+        * stress/atomics-store-return.js: Added.
+
+2017-01-24  Filip Pizlo  <fpizlo@apple.com>
+
         -0 is a valid array index and AtomicsObject should know this
         https://bugs.webkit.org/show_bug.cgi?id=167386
 
