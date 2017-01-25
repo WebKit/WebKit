@@ -2722,9 +2722,6 @@ fast/text/letterpress-different.html [ Pass ]
 
 webkit.org/b/162739 fast/images/gif-loop-count.html [ Pass ImageOnlyFailure ]
 
-# This variation font test requires Skia which isn't available on iOS.
-webkit.org/b/163093 fast/text/variations/advances.html [ Failure ]
-
 webkit.org/b/162647 http/tests/xmlhttprequest/onabort-response-getters.html [ Pass Failure ]
 
 # Media tests cannot tap play button on iOS.
@@ -2736,13 +2733,6 @@ webkit.org/b/163291 media/video-play-audio-require-user-gesture.html [ Failure ]
 webkit.org/b/163291 media/video-play-require-user-gesture.html
 
 webkit.org/b/163755 imported/w3c/csswg-test/css-shapes-1 [ Skip ]
-
-# These font variation tests require a variation font which supports more than 2 axes.
-animations/font-variations/font-variation-settings-order.html [ Pass ImageOnlyFailure Failure ]
-animations/font-variations/font-variation-settings-unlike.html [ Pass ImageOnlyFailure Failure ]
-
-webkit.org/b/163632 animations/font-variations/font-variation-settings.html [ Skip ]
-webkit.org/b/163632 fast/text/variations/getComputedStyle.html [ Skip ]
 
 webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
 

@@ -1057,3 +1057,6 @@ fast/events/will-reveal-edges-window-attributes.html
 
 http/tests/media/media-stream
 http/tests/ssl/media-stream
+
+animations/font-variations
+fast/text/variations
