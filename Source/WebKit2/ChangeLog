@@ -1,3 +1,21 @@
+2017-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] UIProcess from WebKitGtk+ 2.15.x SIGSEGVs because of X Error BadDamage in WebKit::AcceleratedBackingStoreX11::update(WebKit::LayerTreeContext const&) () at Source/WebKit2/UIProcess/gtk/AcceleratedBackingStoreX11.cpp:145
+        https://bugs.webkit.org/show_bug.cgi?id=165656
+
+        Reviewed by Michael Catanzaro.
+
+        We are incorrectly handling BadDamage errors because the BadDamage value we pass to the XErrorTrapper is not
+        the actual error code used by X11. Since XDamage is an extension, it has its own errors and a base error
+        code. We need to use the base error code we get when calling XDamageQueryExtension to pass the right error code
+        to the XErrorTrapper.
+
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        (WebKit::AcceleratedBackingStoreX11::create): Get also the damage base error.
+        (WebKit::xDamageErrorCode): Helper to get the actual error code.
+        (WebKit::AcceleratedBackingStoreX11::~AcceleratedBackingStoreX11): Use xDamageErrorCode().
+        (WebKit::AcceleratedBackingStoreX11::update): Ditto.
+
 2017-01-25  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] The inspector is broken when AC support is disabled

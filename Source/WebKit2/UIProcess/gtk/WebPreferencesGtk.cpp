@@ -61,8 +61,8 @@ void WebPreferences::platformInitializeStore()
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
         auto& display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay());
-        std::optional<int> damageBase;
-        if (!display.supportsXComposite() || !display.supportsXDamage(damageBase))
+        std::optional<int> damageBase, errorBase;
+        if (!display.supportsXComposite() || !display.supportsXDamage(damageBase, errorBase))
             setAcceleratedCompositingEnabled(false);
     }
 #endif
