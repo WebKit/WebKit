@@ -1,3 +1,12 @@
+2017-01-25  Youenn Fablet  <youenn@apple.com>
+
+        Flaky Test: imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html
+        https://bugs.webkit.org/show_bug.cgi?id=167380
+
+        Unreviewed.
+
+        * TestExpectations: Marking test as flaky.
+
 2017-01-24  Antoine Quint  <graouts@apple.com>
 
         LayoutTest media/modern-media-controls/airplay-support/airplay-support.html is failing

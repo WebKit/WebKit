@@ -318,6 +318,7 @@ imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.html [ Dump
 imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-preflight.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/159724 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Failure Pass ]
+webkit.org/b/167380 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ Failure Pass ]
 
 # Flaky tests due to always changing assertion error message
 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encoded.html [ Failure ]
