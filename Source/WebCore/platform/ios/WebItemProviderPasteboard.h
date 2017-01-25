@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(APPLE_INTERNAL_SDK)
-
-#import <UIKit/UIApplication_Private.h>
-#import <UIKit/UIInterface_Private.h>
-#import <UIKit/UIScreen_Private.h>
-#import <UIKit/UIViewController_Private.h>
+#import "AbstractPasteboard.h"
 
 #if ENABLE(DATA_INTERACTION)
-#import <UIKit/UIItemProvider_Private.h>
-#endif
 
-#else
+OBJC_CLASS UIItemProvider;
 
-#import <UIKit/UIKit.h>
+NS_ASSUME_NONNULL_BEGIN
 
-@interface UIApplication ()
+WEBCORE_EXPORT @interface WebItemProviderPasteboard : NSObject<AbstractPasteboard>
 
-- (BOOL)_isClassic;
++ (instancetype)sharedInstance;
 
-@end
+- (UIItemProvider *)itemProviderAtIndex:(NSInteger)index;
 
-@interface UIColor ()
-
-+ (UIColor *)systemBlueColor;
-+ (UIColor *)systemGrayColor;
-+ (UIColor *)systemGreenColor;
-+ (UIColor *)systemOrangeColor;
-+ (UIColor *)systemPinkColor;
-+ (UIColor *)systemRedColor;
-+ (UIColor *)systemYellowColor;
+@property (copy, nonatomic, nullable) NSArray<UIItemProvider *> *itemProviders;
+@property (readonly, nonatomic) NSInteger numberOfItems;
+@property (readonly, nonatomic) NSInteger changeCount;
 
 @end
 
-@interface UIScreen ()
+NS_ASSUME_NONNULL_END
 
-@property (nonatomic, readonly) CGRect _referenceBounds;
-
-@end
-
-@interface UIViewController ()
-+ (UIViewController *)viewControllerForView:(UIView *)view;
-@end
-
-#endif
+#endif // ENABLE(DATA_INTERACTION)

@@ -6506,6 +6506,9 @@
 		F478755519983AFF0024A287 /* ScrollSnapAnimatorState.mm in Sources */ = {isa = PBXBuildFile; fileRef = F478755319983AFF0024A287 /* ScrollSnapAnimatorState.mm */; };
 		F47A5E3E195B8C8A00483100 /* StyleScrollSnapPoints.h in Headers */ = {isa = PBXBuildFile; fileRef = F47A5E3B195B8C8A00483100 /* StyleScrollSnapPoints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F47A5E3F195B8E4800483100 /* StyleScrollSnapPoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F47A5E3A195B8C8A00483100 /* StyleScrollSnapPoints.cpp */; };
+		F48223101E3869B80066FC79 /* WebItemProviderPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = F482230E1E3869B80066FC79 /* WebItemProviderPasteboard.mm */; };
+		F48223111E3869B80066FC79 /* WebItemProviderPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F482230F1E3869B80066FC79 /* WebItemProviderPasteboard.h */; };
+		F48223131E386E240066FC79 /* AbstractPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F48223121E386E240066FC79 /* AbstractPasteboard.h */; };
 		F4BFB9851E1DDF9B00862C24 /* DumpEditingHistory.js in Copy Scripts */ = {isa = PBXBuildFile; fileRef = F48389831E1DDF2B0076B7EA /* DumpEditingHistory.js */; };
 		F4BFB9861E1DDF9B00862C24 /* EditingHistoryUtil.js in Copy Scripts */ = {isa = PBXBuildFile; fileRef = F48389841E1DDF2B0076B7EA /* EditingHistoryUtil.js */; };
 		F50664F7157F52DC00AC226F /* FormController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F50664F5157F52DC00AC226F /* FormController.cpp */; };
@@ -14558,6 +14561,9 @@
 		F478755319983AFF0024A287 /* ScrollSnapAnimatorState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollSnapAnimatorState.mm; sourceTree = "<group>"; };
 		F47A5E3A195B8C8A00483100 /* StyleScrollSnapPoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleScrollSnapPoints.cpp; sourceTree = "<group>"; };
 		F47A5E3B195B8C8A00483100 /* StyleScrollSnapPoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleScrollSnapPoints.h; sourceTree = "<group>"; };
+		F482230E1E3869B80066FC79 /* WebItemProviderPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebItemProviderPasteboard.mm; sourceTree = "<group>"; };
+		F482230F1E3869B80066FC79 /* WebItemProviderPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebItemProviderPasteboard.h; sourceTree = "<group>"; };
+		F48223121E386E240066FC79 /* AbstractPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractPasteboard.h; sourceTree = "<group>"; };
 		F48389831E1DDF2B0076B7EA /* DumpEditingHistory.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = DumpEditingHistory.js; path = Scripts/DumpEditingHistory.js; sourceTree = "<group>"; };
 		F48389841E1DDF2B0076B7EA /* EditingHistoryUtil.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = EditingHistoryUtil.js; path = Scripts/EditingHistoryUtil.js; sourceTree = "<group>"; };
 		F50664F5157F52DC00AC226F /* FormController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormController.cpp; sourceTree = "<group>"; };
@@ -19772,6 +19778,7 @@
 		A59E3C1B11580F340072928E /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				F48223121E386E240066FC79 /* AbstractPasteboard.h */,
 				A148328B187F506800DA63A6 /* wak */,
 				2655414B1489AA2B000DFC5D /* CursorIOS.cpp */,
 				A1ED778A1BE3293F00DC1791 /* Device.cpp */,
@@ -19836,6 +19843,8 @@
 				3FBC4AF2189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h */,
 				3FBC4AF1189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm */,
 				E453903C0EAFD637003695C8 /* WidgetIOS.mm */,
+				F482230E1E3869B80066FC79 /* WebItemProviderPasteboard.mm */,
+				F482230F1E3869B80066FC79 /* WebItemProviderPasteboard.h */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -25233,6 +25242,7 @@
 				CE799FA81C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.h in Headers */,
 				CE6DADFA1C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h in Headers */,
 				CE799FA01C6A4C160097B518 /* ContentSecurityPolicySource.h in Headers */,
+				F48223131E386E240066FC79 /* AbstractPasteboard.h in Headers */,
 				CE799F981C6A46BC0097B518 /* ContentSecurityPolicySourceList.h in Headers */,
 				CE799FAC1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.h in Headers */,
 				41D015CA0F4B5C71004A662F /* ContentType.h in Headers */,
@@ -27767,6 +27777,7 @@
 				414B82051D6DF0E50077EBE3 /* StructuredClone.h in Headers */,
 				BC5EB6A30E81DC4F00B25965 /* StyleBackgroundData.h in Headers */,
 				BC5EB67B0E81D3BE00B25965 /* StyleBoxData.h in Headers */,
+				F48223111E3869B80066FC79 /* WebItemProviderPasteboard.h in Headers */,
 				8386A96D19F61B2E00E1EC4A /* StyleBuilder.h in Headers */,
 				83B9687B19F8AB83004EF7AF /* StyleBuilderConverter.h in Headers */,
 				835D363719FF6193004C93AB /* StyleBuilderCustom.h in Headers */,
@@ -29227,6 +29238,7 @@
 				9418278E1D8CAF9200492764 /* CSSPendingSubstitutionValue.cpp in Sources */,
 				977B3862122883E900B81FF8 /* CSSPreloadScanner.cpp in Sources */,
 				A80E6D050A1989CA007FB8C5 /* CSSPrimitiveValue.cpp in Sources */,
+				F48223101E3869B80066FC79 /* WebItemProviderPasteboard.mm in Sources */,
 				A80E6CF70A1989CA007FB8C5 /* CSSProperty.cpp in Sources */,
 				78D02BC5154A18DF00B62D05 /* CSSPropertyAnimation.cpp in Sources */,
 				1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */,

@@ -783,6 +783,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_KEYBOARD_CODE_ATTRIBUTE 0
 #endif
 
+#if !defined(ENABLE_DATA_INTERACTION)
+#define ENABLE_DATA_INTERACTION 0
+#endif
+
 /* Asserts, invariants for macro definitions */
 
 #if ENABLE(VIDEO_TRACK) && !ENABLE(VIDEO)

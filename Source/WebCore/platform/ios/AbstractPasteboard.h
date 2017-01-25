@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(APPLE_INTERNAL_SDK)
+#import <Foundation/Foundation.h>
 
-#import <UIKit/UIApplication_Private.h>
-#import <UIKit/UIInterface_Private.h>
-#import <UIKit/UIScreen_Private.h>
-#import <UIKit/UIViewController_Private.h>
+@protocol AbstractPasteboard <NSObject>
+@required
 
-#if ENABLE(DATA_INTERACTION)
-#import <UIKit/UIItemProvider_Private.h>
-#endif
+@property (readonly, nonatomic) NSInteger numberOfItems;
 
-#else
-
-#import <UIKit/UIKit.h>
-
-@interface UIApplication ()
-
-- (BOOL)_isClassic;
+- (NSArray<NSString *> *)pasteboardTypes;
+- (void)setItems:(NSArray *)items;
+- (NSArray *)dataForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet;
+- (NSArray *)valuesForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet;
+- (NSInteger)changeCount;
 
 @end
-
-@interface UIColor ()
-
-+ (UIColor *)systemBlueColor;
-+ (UIColor *)systemGrayColor;
-+ (UIColor *)systemGreenColor;
-+ (UIColor *)systemOrangeColor;
-+ (UIColor *)systemPinkColor;
-+ (UIColor *)systemRedColor;
-+ (UIColor *)systemYellowColor;
-
-@end
-
-@interface UIScreen ()
-
-@property (nonatomic, readonly) CGRect _referenceBounds;
-
-@end
-
-@interface UIViewController ()
-+ (UIViewController *)viewControllerForView:(UIView *)view;
-@end
-
-#endif

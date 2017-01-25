@@ -1,0 +1,210 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#import "WebItemProviderPasteboard.h"
+
+#if ENABLE(DATA_INTERACTION)
+
+#import "SoftLinking.h"
+#import "UIKitSPI.h"
+#import <MobileCoreServices/MobileCoreServices.h>
+#import <UIKit/UIColor.h>
+#import <UIKit/UIImage.h>
+
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIColor)
+SOFT_LINK_CLASS(UIKit, UIImage)
+SOFT_LINK_CLASS(UIKit, UIItemProvider)
+
+#define MATCHES_UTI_TYPE(type, suffix) [type isEqualToString:(__bridge NSString *)kUTType ## suffix]
+#define MATCHES_UIKIT_TYPE(type, suffix) [type isEqualToString:@"com.apple.uikit. ## suffix ##"]
+
+static BOOL isRichTextType(NSString *type)
+{
+    return MATCHES_UTI_TYPE(type, RTF) || MATCHES_UTI_TYPE(type, RTFD) || MATCHES_UTI_TYPE(type, HTML);
+}
+
+static BOOL isStringType(NSString *type)
+{
+    return MATCHES_UTI_TYPE(type, Text) || MATCHES_UTI_TYPE(type, UTF8PlainText) || MATCHES_UTI_TYPE(type, UTF16PlainText);
+}
+
+static BOOL isURLType(NSString *type)
+{
+    return MATCHES_UTI_TYPE(type, URL);
+}
+
+static BOOL isColorType(NSString *type)
+{
+    return MATCHES_UIKIT_TYPE(type, color);
+}
+
+static BOOL isImageType(NSString *type)
+{
+    return MATCHES_UTI_TYPE(type, PNG) || MATCHES_UTI_TYPE(type, JPEG) || MATCHES_UTI_TYPE(type, GIF) || MATCHES_UIKIT_TYPE(type, image);
+}
+
+@interface WebItemProviderPasteboard ()
+
+@property (nonatomic) NSInteger numberOfItems;
+@property (nonatomic) NSInteger changeCount;
+
+@end
+
+@implementation WebItemProviderPasteboard
+
++ (instancetype)sharedInstance
+{
+    static WebItemProviderPasteboard *sharedPasteboard = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^() {
+        sharedPasteboard = [[WebItemProviderPasteboard alloc] init];
+    });
+    return sharedPasteboard;
+}
+
+- (instancetype)init
+{
+    if (self = [super init]) {
+        _itemProviders = [[NSArray alloc] init];
+        _changeCount = 0;
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [super dealloc];
+    [_itemProviders release];
+}
+
+- (NSArray<NSString *> *)pasteboardTypes
+{
+    NSMutableSet<NSString *> *allTypes = [NSMutableSet set];
+    for (UIItemProvider *provider in _itemProviders)
+        [allTypes addObjectsFromArray:provider.registeredTypeIdentifiers];
+    return allTypes.allObjects;
+}
+
+- (void)setItemProviders:(NSArray<UIItemProvider *> *)itemProviders
+{
+    itemProviders = itemProviders ?: [NSArray array];
+    if (_itemProviders == itemProviders || [_itemProviders isEqualToArray:itemProviders])
+        return;
+    _itemProviders = [itemProviders copy];
+    _changeCount++;
+}
+
+- (NSInteger)numberOfItems
+{
+    return _itemProviders.count;
+}
+
+- (void)setItems:(NSArray *)items
+{
+    NSMutableArray *providers = [[NSMutableArray alloc] init];
+    for (NSDictionary *item in items) {
+        if (!item.count)
+            continue;
+        UIItemProvider *itemProvider = [[getUIItemProviderClass() alloc] init];
+        for (NSString *typeIdentifier in item) {
+            [itemProvider registerDataRepresentationForTypeIdentifier:typeIdentifier loadHandler:^(UIItemProviderDataLoadCompletionBlock completionBlock, NSDictionary *) {
+                completionBlock(item[typeIdentifier], nil);
+            }];
+        }
+        [providers addObject:itemProvider];
+    }
+    _changeCount++;
+    _itemProviders = providers;
+}
+
+- (NSArray *)dataForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet
+{
+    __block NSMutableArray *values = [NSMutableArray array];
+    [itemSet enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *) {
+        UIItemProvider *provider = [self itemProviderAtIndex:index];
+        if (!provider)
+            return;
+
+        NSData *data = [provider copyDataRepresentationForTypeIdentifier:pasteboardType options:nil error:nil];
+        if (data)
+            [values addObject:data];
+    }];
+
+    return values;
+}
+
+- (NSArray *)valuesForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet
+{
+    __block NSMutableArray *values = [NSMutableArray array];
+    [itemSet enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *) {
+        UIItemProvider *provider = [self itemProviderAtIndex:index];
+        if (!provider)
+            return;
+
+        if (isRichTextType(pasteboardType) && [provider canInstantiateObjectOfClass:[NSAttributedString class]]) {
+            [values addObject:[provider instantiateObjectOfClass:[NSAttributedString class] options:nil error:nil]];
+            return;
+        }
+
+        if (isStringType(pasteboardType) && [provider canInstantiateObjectOfClass:[NSString class]]) {
+            [values addObject:[provider instantiateObjectOfClass:[NSString class] options:nil error:nil]];
+            return;
+        }
+
+        if (isColorType(pasteboardType) && [provider canInstantiateObjectOfClass:[getUIColorClass() class]]) {
+            [values addObject:[provider instantiateObjectOfClass:[getUIColorClass() class] options:nil error:nil]];
+            return;
+        }
+
+        if (isURLType(pasteboardType) && [provider canInstantiateObjectOfClass:[NSURL class]]) {
+            [values addObject:[provider instantiateObjectOfClass:[NSURL class] options:nil error:nil]];
+            return;
+        }
+
+        if (isImageType(pasteboardType) && [provider canInstantiateObjectOfClass:[getUIImageClass() class]]) {
+            [values addObject:[provider instantiateObjectOfClass:[getUIImageClass() class] options:nil error:nil]];
+            return;
+        }
+
+        WTFLogAlways("Failed to instantiate object for type: '%s' at index: %tu", pasteboardType.UTF8String, index);
+    }];
+    return values;
+}
+
+- (NSInteger)changeCount
+{
+    return _changeCount;
+}
+
+- (UIItemProvider *)itemProviderAtIndex:(NSInteger)index
+{
+    return 0 <= index && index < (NSInteger)_itemProviders.count ? _itemProviders[index] : nil;
+}
+
+@end
+
+#endif // ENABLE(DATA_INTERACTION)
