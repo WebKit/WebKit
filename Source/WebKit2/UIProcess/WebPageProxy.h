@@ -1571,6 +1571,7 @@ private:
 #if USE(QUICK_LOOK)
     void didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti);
     void didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData&);
+    void didRequestPasswordForQuickLookDocumentInMainFrame(const String& fileName);
 #endif
 
 #if ENABLE(CONTENT_FILTERING)

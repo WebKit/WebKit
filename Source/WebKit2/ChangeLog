@@ -1,3 +1,59 @@
+2017-01-25  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Display a WKPasswordView when a document is password-protected
+        https://bugs.webkit.org/show_bug.cgi?id=167407
+        <rdar://problem/28544527>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _hidePasswordView]): Added an early return if there is no _passwordView.
+        * UIProcess/PageClient.h: Declared requestPasswordForQuickLookDocument().
+        (WebKit::PageClient::didStartProvisionalLoadForMainFrame): Added an no-op base class
+        implementation.
+        (WebKit::PageClient::didFailProvisionalLoadForMainFrame): Ditto.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame): Called
+        PageClient::didStartProvisionalLoadForMainFrame() if frame is the main frame.
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame): Ditto for
+        PageClient::didFailProvisionalLoadForMainFrame().
+        * UIProcess/WebPageProxy.h: Declared didRequestPasswordForQuickLookDocumentInMainFrame().
+        * UIProcess/WebPageProxy.messages.in: Added message
+        DidRequestPasswordForQuickLookDocumentInMainFrame.
+        * UIProcess/ios/PageClientImplIOS.h: Overrode requestPasswordForQuickLookDocument(),
+        didStartProvisionalLoadForMainFrame(), and didFailProvisionalLoadForMainFrame().
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didStartProvisionalLoadForMainFrame): Called
+        -[WKWebView _hidePasswordView].
+        (WebKit::PageClientImpl::didFailProvisionalLoadForMainFrame): Ditto.
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame): Ditto.
+        (WebKit::PageClientImpl::requestPasswordForQuickLookDocument): If there is already a
+        password view, assert that it is for the same fileName. Call
+        -[WKPasswordView showPasswordFailureAlert] and update the userDidEnterPassword block.
+        Otherwise, call -[WKWebView _showPasswordViewWithDocumentName:passwordHandler:].
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrame): Called
+        PageClient::requestPasswordForQuickLookDocument() with a completion handler that send
+        message WebPage::DidReceivePasswordForQuickLookDocument.
+        * WebProcess/WebCoreSupport/ios/WebQuickLookHandleClient.cpp:
+        (WebKit::passwordCallbacks): Stores a map of page IDs to completion handler functions.
+        (WebKit::WebQuickLookHandleClient::~WebQuickLookHandleClient): Removes the current page ID
+        from passwordCallbacks().
+        (WebKit::WebQuickLookHandleClient::didRequestPassword): Asserts there is no current function
+        for this page ID in passwordCallbacks(), adds completionHandler to passwordCallbacks(), and
+        sends message WebPageProxy::DidRequestPasswordForQuickLookDocumentInMainFrame.
+        (WebKit::WebQuickLookHandleClient::didReceivePassword): Asserts there is a function for this
+        page ID in passwordCallbacks(), takes the completionHandler from passwordCallbacks(), and
+        calls it with the received password.
+        * WebProcess/WebCoreSupport/ios/WebQuickLookHandleClient.h: Declared didReceivePassword()
+        and overrode supportsPasswordEntry() and didRequestPassword().
+        * WebProcess/WebPage/WebPage.h: Declared didReceivePasswordForQuickLookDocument().
+        * WebProcess/WebPage/WebPage.messages.in: Added message
+        DidReceivePasswordForQuickLookDocument.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didReceivePasswordForQuickLookDocument): Called
+        WebQuickLookHandleClient::didReceivePassword() with the received password and current page ID.
+
 2017-01-25  Youenn Fablet  <youennf@gmail.com>
 
         [WebRTC] Introduce libwebrtc abstraction for WK1/WK2 implementations

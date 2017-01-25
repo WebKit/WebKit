@@ -31,8 +31,18 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/QuickLook.h>
+#include <wtf/Function.h>
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
+
+using PasswordCallbackMap = HashMap<uint64_t, Function<void(const String&)>>;
+static PasswordCallbackMap& passwordCallbacks()
+{
+    static NeverDestroyed<PasswordCallbackMap> callbackMap;
+    return callbackMap.get();
+}
 
 WebQuickLookHandleClient::WebQuickLookHandleClient(const WebCore::QuickLookHandle& handle, uint64_t pageID)
     : m_fileName(handle.previewFileName())
@@ -40,6 +50,11 @@ WebQuickLookHandleClient::WebQuickLookHandleClient(const WebCore::QuickLookHandl
     , m_pageID(pageID)
 {
     WebProcess::singleton().send(Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame(m_fileName, m_uti), m_pageID);
+}
+
+WebQuickLookHandleClient::~WebQuickLookHandleClient()
+{
+    passwordCallbacks().remove(m_pageID);
 }
 
 void WebQuickLookHandleClient::didReceiveDataArray(CFArrayRef dataArray)
@@ -59,6 +74,20 @@ void WebQuickLookHandleClient::didFinishLoading()
 void WebQuickLookHandleClient::didFail()
 {
     m_data.clear();
+}
+
+void WebQuickLookHandleClient::didRequestPassword(Function<void(const String&)>&& completionHandler)
+{
+    ASSERT(!passwordCallbacks().contains(m_pageID));
+    passwordCallbacks().add(m_pageID, WTFMove(completionHandler));
+    WebProcess::singleton().send(Messages::WebPageProxy::DidRequestPasswordForQuickLookDocumentInMainFrame(m_fileName), m_pageID);
+}
+
+void WebQuickLookHandleClient::didReceivePassword(const String& password, uint64_t pageID)
+{
+    ASSERT(passwordCallbacks().contains(pageID));
+    auto completionHandler = passwordCallbacks().take(pageID);
+    completionHandler(password);
 }
 
 } // namespace WebKit

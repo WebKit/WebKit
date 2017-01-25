@@ -40,6 +40,7 @@
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKGeolocationProviderIOS.h"
+#import "WKPasswordView.h"
 #import "WKProcessPoolInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProviderRegistry.h"
@@ -227,8 +228,19 @@ bool PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& 
     return true;
 }
 
+void PageClientImpl::didStartProvisionalLoadForMainFrame()
+{
+    [m_webView _hidePasswordView];
+}
+
+void PageClientImpl::didFailProvisionalLoadForMainFrame()
+{
+    [m_webView _hidePasswordView];
+}
+
 void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider)
 {
+    [m_webView _hidePasswordView];
     [m_webView _setHasCustomContentView:useCustomContentProvider loadedMIMEType:mimeType];
     [m_contentView _didCommitLoadForMainFrame];
 }
@@ -753,6 +765,20 @@ Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& messa
 void PageClientImpl::handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession, const String& title, double duration, double elapsedTime)
 {
     [m_webView _handleActiveNowPlayingSessionInfoResponse:hasActiveSession title:nsStringFromWebCoreString(title) duration:duration elapsedTime:elapsedTime];
+}
+
+void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName, std::function<void(const String&)>&& completionHandler)
+{
+    auto passwordHandler = [completionHandler = WTFMove(completionHandler)](NSString *password) {
+        completionHandler(password);
+    };
+
+    if (WKPasswordView *passwordView = m_webView._passwordView) {
+        ASSERT(fileName == String { passwordView.documentName });
+        [passwordView showPasswordFailureAlert];
+        passwordView.userDidEnterPassword = passwordHandler;
+    } else
+        [m_webView _showPasswordViewWithDocumentName:fileName passwordHandler:passwordHandler];
 }
 
 } // namespace WebKit

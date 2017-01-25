@@ -65,6 +65,8 @@ private:
     void preferencesDidChange() override;
     void toolTipChanged(const String&, const String&) override;
     bool decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, API::SecurityOrigin&, GeolocationPermissionRequestProxy&) override;
+    void didStartProvisionalLoadForMainFrame() override;
+    void didFailProvisionalLoadForMainFrame() override;
     void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
     void handleDownloadRequest(DownloadProxy*) override;
     void didChangeContentSize(const WebCore::IntSize&) override;
@@ -195,6 +197,8 @@ private:
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
     void handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession, const String& title, double duration, double elapsedTime) override;
+
+    void requestPasswordForQuickLookDocument(const String& fileName, std::function<void(const String&)>&&) override;
 
     WKContentView *m_contentView;
     WKWebView *m_webView;

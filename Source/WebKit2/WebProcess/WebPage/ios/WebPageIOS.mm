@@ -49,6 +49,7 @@
 #import "WebKitSystemInterface.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
+#import "WebQuickLookHandleClient.h"
 #import <CoreText/CTFont.h>
 #import <WebCore/Autofill.h>
 #import <WebCore/Chrome.h>
@@ -3172,6 +3173,13 @@ String WebPage::platformUserAgent(const URL&) const
 {
     return String();
 }
+
+#if USE(QUICK_LOOK)
+void WebPage::didReceivePasswordForQuickLookDocument(const String& password)
+{
+    WebQuickLookHandleClient::didReceivePassword(password, m_pageID);
+}
+#endif
 
 } // namespace WebKit
 

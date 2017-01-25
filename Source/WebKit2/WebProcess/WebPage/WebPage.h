@@ -1253,6 +1253,10 @@ private:
 
     bool canPluginHandleResponse(const WebCore::ResourceResponse&);
 
+#if USE(QUICK_LOOK)
+    void didReceivePasswordForQuickLookDocument(const String&);
+#endif
+
     uint64_t m_pageID;
 
     std::unique_ptr<WebCore::Page> m_page;

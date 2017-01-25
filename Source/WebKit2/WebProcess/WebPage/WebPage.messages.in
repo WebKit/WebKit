@@ -464,4 +464,8 @@ messages -> WebPage LegacyReceiver {
 #if ENABLE(GAMEPAD)
     GamepadActivity(Vector<WebKit::GamepadData> gamepadDatas, bool shouldMakeGamepadsVisible)
 #endif
+
+#if USE(QUICK_LOOK)
+    DidReceivePasswordForQuickLookDocument(String password)
+#endif
 }

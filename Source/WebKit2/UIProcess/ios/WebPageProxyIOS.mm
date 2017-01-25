@@ -1100,6 +1100,14 @@ void WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookD
     else
         m_loaderClient->didFinishLoadForQuickLookDocumentInMainFrame(data);
 }
+
+void WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrame(const String& fileName)
+{
+    m_pageClient.requestPasswordForQuickLookDocument(fileName, [protectedThis = makeRefPtr(this)](const String& password) {
+        protectedThis->process().send(Messages::WebPage::DidReceivePasswordForQuickLookDocument(password), protectedThis->m_pageID);
+    });
+}
+
 #endif
 
 } // namespace WebKit

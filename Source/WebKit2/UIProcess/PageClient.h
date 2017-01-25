@@ -138,6 +138,8 @@ public:
         return false;
     }
 
+    virtual void didStartProvisionalLoadForMainFrame() { };
+    virtual void didFailProvisionalLoadForMainFrame() { };
     virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) = 0;
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
@@ -375,6 +377,10 @@ public:
     virtual bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) { return false; }
 
     virtual WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() = 0;
+
+#if USE(QUICK_LOOK)
+    virtual void requestPasswordForQuickLookDocument(const String& fileName, std::function<void(const String&)>&&) = 0;
+#endif
 };
 
 } // namespace WebKit
