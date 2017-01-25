@@ -39,7 +39,9 @@ PluginInfoProvider::~PluginInfoProvider()
 
 void PluginInfoProvider::refresh(bool reloadPages)
 {
-    Vector<Ref<Frame>> framesNeedingReload;
+    refreshPlugins();
+
+    Vector<Ref<MainFrame>> framesNeedingReload;
 
     for (auto& page : m_pages) {
         page->clearPluginData();
@@ -49,7 +51,7 @@ void PluginInfoProvider::refresh(bool reloadPages)
 
         for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             if (frame->loader().subframeLoader().containsPlugins())
-                framesNeedingReload.append(*frame);
+                framesNeedingReload.append(page->mainFrame());
         }
     }
 
