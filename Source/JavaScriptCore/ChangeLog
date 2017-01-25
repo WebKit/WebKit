@@ -1,3 +1,17 @@
+2017-01-25  Filip Pizlo  <fpizlo@apple.com>
+
+        ARM/ARM64 stress/atomics-store-return.js fails
+        <rdar://problem/30192652>
+
+        Reviewed by Michael Saboff.
+        
+        The problem was relying on double->int casts for anything. We need to use toInt32().
+
+        * runtime/AtomicsObject.cpp:
+        (JSC::atomicsFuncCompareExchange):
+        (JSC::atomicsFuncExchange):
+        (JSC::atomicsFuncStore):
+
 2017-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         collectMatchingElementsInFlatTree should not find elements inside an user agent shadow tree
