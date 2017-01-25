@@ -1,3 +1,20 @@
+2017-01-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Bug 167392: REGRESSION(r210531): Relax same-volume display requirement for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=167392
+        <rdar://problem/30074665>
+
+        Reviewed by Brady Eidson.
+
+        Rebaseline two tests for ios-simulator, now that they exclude the cross-volume file check..
+
+        * platform/ios-simulator/fast/xmlhttprequest: Added.
+        * platform/ios-simulator/fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt: Added.
+        * platform/ios-simulator/storage: Added.
+        * platform/ios-simulator/storage/domstorage: Added.
+        * platform/ios-simulator/storage/domstorage/sessionstorage: Added.
+        * platform/ios-simulator/storage/domstorage/sessionstorage/blocked-file-access-expected.txt: Added.
+
 2017-01-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html as flaky on macOS WK1.
