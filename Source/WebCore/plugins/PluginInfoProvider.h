@@ -34,16 +34,17 @@ class WEBCORE_EXPORT PluginInfoProvider : public RefCounted<PluginInfoProvider> 
 public:
     virtual ~PluginInfoProvider();
 
-    void refreshPlugins(bool reloadPages);
+    void refresh(bool reloadPages);
 
     void addPage(Page&);
     void removePage(Page&);
 
-    virtual void refreshPlugins() = 0;
     virtual void getPluginInfo(Page&, Vector<PluginInfo>&) = 0;
     virtual void getWebVisiblePluginInfo(Page&, Vector<PluginInfo>&) = 0;
 
 private:
+    virtual void refreshPlugins() = 0;
+
     HashSet<Page*> m_pages;
 };
 

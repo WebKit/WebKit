@@ -538,24 +538,11 @@ void Page::refreshPlugins(bool reload)
 
     Vector<Ref<Frame>> framesNeedingReload;
 
-    for (auto& page : *allPages) {
+    for (auto& page : *allPages)
         pluginInfoProviders.add(&page->pluginInfoProvider());
-        page->m_pluginData = nullptr;
-
-        if (!reload)
-            continue;
-        
-        for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-            if (frame->loader().subframeLoader().containsPlugins())
-                framesNeedingReload.append(*frame);
-        }
-    }
 
     for (auto& pluginInfoProvider : pluginInfoProviders)
-        pluginInfoProvider->refreshPlugins();
-
-    for (auto& frame : framesNeedingReload)
-        frame->loader().reload();
+        pluginInfoProvider->refresh(reload);
 }
 
 PluginData& Page::pluginData()
@@ -563,6 +550,11 @@ PluginData& Page::pluginData()
     if (!m_pluginData)
         m_pluginData = PluginData::create(*this);
     return *m_pluginData;
+}
+
+void Page::clearPluginData()
+{
+    m_pluginData = nullptr;
 }
 
 bool Page::showAllPlugins() const

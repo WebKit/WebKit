@@ -42,13 +42,12 @@ public:
     void clearPluginClientPolicies();
 #endif
 
-    void refreshPlugins() override;
-
 private:
     WebPluginInfoProvider();
 
     void getPluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) override;
     void getWebVisiblePluginInfo(WebCore::Page&, Vector<WebCore::PluginInfo>&) override;
+    void refreshPlugins() override;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void populatePluginCache(const WebCore::Page&);
