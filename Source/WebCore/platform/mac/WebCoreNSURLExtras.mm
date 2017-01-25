@@ -481,7 +481,7 @@ static NSString *mapHostNameWithRange(NSString *string, NSRange range, BOOL enco
     UErrorCode uerror = U_ZERO_ERROR;
     UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;
     int32_t numCharactersConverted = (encode ? uidna_nameToASCII : uidna_nameToUnicode)(&URLParser::internationalDomainNameTranscoder(), sourceBuffer, length, destinationBuffer, HOST_NAME_BUFFER_LENGTH, &processingDetails, &uerror);
-    if (U_FAILURE(uerror) || processingDetails.errors) {
+    if (length && (U_FAILURE(uerror) || processingDetails.errors)) {
         *error = YES;
         return nil;
     }
