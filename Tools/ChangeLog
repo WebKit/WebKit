@@ -1,3 +1,15 @@
+2017-01-25  Matt Rajca  <mrajca@apple.com>
+
+        [ios-simulator] API test WebKit2.WebsitePoliciesAutoplayEnabled timing out
+        https://bugs.webkit.org/show_bug.cgi?id=167385
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKit2/autoplay-check.html: Avoid arbitrary timeouts in favor of promises.
+        * TestWebKitAPI/Tests/WebKit2/autoplay-no-audio-check.html:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsitePolicies.mm:
+        (TEST): Allow inline (rather than full screen) media playback on iOS.
+
 2017-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Icon Database should be in private browsing mode for ephemeral web views

@@ -33,6 +33,10 @@
 #import <WebKit/_WKWebsitePolicies.h>
 #import <wtf/RetainPtr.h>
 
+#if PLATFORM(IOS)
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#endif
+
 #if WK_API_ENABLED
 
 static bool doneCompiling;
@@ -174,6 +178,11 @@ TEST(WebKit2, WebsitePoliciesContentBlockersEnabled)
 TEST(WebKit2, WebsitePoliciesAutoplayEnabled)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+#if PLATFORM(IOS)
+    [configuration setAllowsInlineMediaPlayback:YES];
+#endif
+
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
