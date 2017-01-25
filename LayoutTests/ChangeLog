@@ -1,5 +1,19 @@
 2017-01-24  Antoine Quint  <graouts@apple.com>
 
+        LayoutTest media/modern-media-controls/placard-support/placard-support-airplay.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=164298
+
+        Reviewed by Jon Lee.
+
+        Make media/modern-media-controls/placard-support/placard-support-airplay.html more robust by
+        following the same pattern used in media/airplay-target-availability.html which proved to be robust.
+
+        * media/modern-media-controls/placard-support/placard-support-airplay-expected.txt:
+        * media/modern-media-controls/placard-support/placard-support-airplay.html:
+        * platform/mac/TestExpectations:
+
+2017-01-24  Antoine Quint  <graouts@apple.com>
+
         LayoutTest media/modern-media-controls/tracks-panel/tracks-panel-hide.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=167311
 

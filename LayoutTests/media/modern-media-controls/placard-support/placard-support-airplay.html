@@ -23,33 +23,56 @@ window.jsTestIsAsync = true;
 
 description("Testing the <code>PlacardSupport</code> behavior when playing media through AirPlay.");
 
-iconService.directoryPath = "../../../../Source/WebCore/Modules/modern-media-controls/images";
-
 const container = document.querySelector("div#host");
 const media = document.querySelector("video");
 const mediaController = createControls(container, media, null);
 
-if (window.internals) {
-    window.internals.settings.setAllowsAirPlayForMediaPlayback(true);
-    window.internals.setMediaElementRestrictions(media, "norestrictions");
+(function makeAirPlayAvailable()
+{
+    media.addEventListener("webkitplaybacktargetavailabilitychanged", playbackTargetAvailabilityChangedOnce, true);
+    window.internals.setMockMediaPlaybackTargetPickerEnabled(true);
+})();
+
+function playbackTargetAvailabilityChangedOnce(event)
+{
+    media.removeEventListener('webkitplaybacktargetavailabilitychanged', playbackTargetAvailabilityChangedOnce, true);
+    media.addEventListener('webkitplaybacktargetavailabilitychanged', playbackTargetAvailabilityChangedAgain, true);
+
+    window.internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceAvailable');
+}
+    
+function playbackTargetAvailabilityChangedAgain(event)
+{
+    // setMockMediaPlaybackTargetPickerState happens asynchronously in WK2 and a
+    // "webkitplaybacktargetavailabilitychanged" is always sent when an event listener
+    // is added, so we may get a "not available" event first.
+    if (event.availability == 'not-available')
+        return;
+
+    media.removeEventListener('webkitplaybacktargetavailabilitychanged', playbackTargetAvailabilityChangedAgain, true);
+
+    window.setTimeout(enterAirPlay, 100);
 }
 
-media.addEventListener("webkitcurrentplaybacktargetiswirelesschanged", () => {
-    if (!media.paused && media.webkitCurrentPlaybackTargetIsWireless) {
-        shouldBeTrue("mediaController.controls.showsPlacard");
-        shouldBeTrue("mediaController.controls.children.includes(mediaController.controls.airplayPlacard)");
-
-        container.remove();
-        media.remove();
-        finishJSTest();
-    }
-});
-
-media.addEventListener("play", () => {
+function enterAirPlay()
+{
+    media.addEventListener("webkitcurrentplaybacktargetiswirelesschanged", currentPlaybackTargetIsWirelessChanged);
     media.webkitShowPlaybackTargetPicker();
-    if (window.internals)
-        window.internals.setMockMediaPlaybackTargetPickerState("Sleepy TV", "DeviceAvailable");
-});
+}
+
+function currentPlaybackTargetIsWirelessChanged(event)
+{
+    if (!media.webkitCurrentPlaybackTargetIsWireless)
+        return;
+
+    shouldBeTrue("mediaController.controls.showsPlacard");
+    shouldBeTrue("mediaController.controls.children.includes(mediaController.controls.airplayPlacard)");
+
+    debug("");
+    container.remove();
+    media.remove();
+    finishJSTest();
+}
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
