@@ -1,3 +1,18 @@
+2017-01-24  Antoine Quint  <graouts@apple.com>
+
+        Work around a crash when running media/modern-media-controls/pip-support/pip-support-enabled.html
+        https://bugs.webkit.org/show_bug.cgi?id=167381
+
+        Reviewed by Dean Jackson.
+
+        The test at media/modern-media-controls/pip-support/pip-support-enabled.html would crash because the test that
+        preceded it, media/modern-media-controls/pip-support/pip-support-click.html, would not exit the PiP presentation mode
+        before exiting the test. We now exit PiP before proceeding to the next test which avoid hitting the assertion
+        and the crash in Debug builds.
+
+        * media/modern-media-controls/pip-support/pip-support-click.html:
+        * platform/mac-wk1/TestExpectations:
+
 2017-01-24  Brent Fulgham  <bfulgham@apple.com>
 
         Bug 167392: REGRESSION(r210531): Relax same-volume display requirement for iOS

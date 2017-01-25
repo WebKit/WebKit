@@ -24,8 +24,6 @@ window.jsTestIsAsync = true;
 
 description("Testing the <code>PiPSupport</code> behavior when clicking the PiP button.");
 
-iconService.directoryPath = "../../../../Source/WebCore/Modules/modern-media-controls/images";
-
 if (window.internals)
     window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
 
@@ -48,6 +46,11 @@ scheduler.frameDidFire = function() {
 
 media.addEventListener("webkitpresentationmodechanged", () => {
     shouldBeEqualToString("media.webkitPresentationMode", "picture-in-picture");
+
+    // FIXME: We exit PiP so we leave things in a clean state, otherwise the following
+    // test pip-support-enabled.html may crash, see webkit.org/b/164336.
+    media.webkitSetPresentationMode("inline");
+
     container.remove();
     media.remove();
     finishMediaControlsTest();
