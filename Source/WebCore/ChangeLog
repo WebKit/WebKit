@@ -1,3 +1,11 @@
+2017-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix 32 bit build after r211140.
+
+        Include glib-object.h instead of forward declaring GType.
+
+        * platform/network/soup/SoupNetworkSession.h:
+
 2017-01-25  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] The inspector is broken when AC support is disabled
