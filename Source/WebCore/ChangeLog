@@ -1,3 +1,15 @@
+2017-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Avoid IOSurface readback for snapshot creation
+        https://bugs.webkit.org/show_bug.cgi?id=167397
+        rdar://problem/30174873
+
+        Reviewed by Tim Horton.
+
+        Export sinkIntoImage().
+
+        * platform/graphics/cocoa/IOSurface.h:
+
 2017-01-24  Brent Fulgham  <bfulgham@apple.com>
 
         Bug 167392: REGRESSION(r210531): Relax same-volume display requirement for iOS

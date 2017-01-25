@@ -62,7 +62,7 @@ public:
     // Any images created from a surface need to be released before releasing
     // the surface, or an expensive GPU readback can result.
     WEBCORE_EXPORT RetainPtr<CGImageRef> createImage();
-    static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>);
+    WEBCORE_EXPORT static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>);
 
     id asLayerContents() const { return (id)(CFTypeRef)m_surface.get(); }
     IOSurfaceRef surface() const { return m_surface.get(); }
