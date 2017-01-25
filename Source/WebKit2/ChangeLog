@@ -1,3 +1,19 @@
+2017-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Custom protocols don't work in private browsing mode
+        https://bugs.webkit.org/show_bug.cgi?id=167236
+
+        Reviewed by Sergio Villar Senin.
+
+        We only register them in the default session, they should be registered in all existing sessions, and also on
+        newly created ones.
+
+        * NetworkProcess/CustomProtocols/soup/CustomProtocolManagerSoup.cpp:
+        (WebKit::CustomProtocolManager::registerProtocolClass): Set the WEBKIT_TYPE_SOUP_REQUEST_GENERIC as type for
+        custom protocols.
+        (WebKit::CustomProtocolManager::registerScheme): Use g_type_class_peek instead of g_type_class_ref since we know
+        the class was already created in registerProtocolClass(). Setup custom protocols in all existing sessions.
+
 2017-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to create ephemeral web views and deprecate the private browsing setting

@@ -77,6 +77,7 @@ private:
 void CustomProtocolManager::registerProtocolClass()
 {
     static_cast<WebKitSoupRequestGenericClass*>(g_type_class_ref(WEBKIT_TYPE_SOUP_REQUEST_GENERIC))->client = &CustomProtocolRequestClient::singleton();
+    SoupNetworkSession::setCustomProtocolRequestType(WEBKIT_TYPE_SOUP_REQUEST_GENERIC);
 }
 
 void CustomProtocolManager::registerScheme(const String& scheme)
@@ -89,9 +90,13 @@ void CustomProtocolManager::registerScheme(const String& scheme)
     g_ptr_array_add(m_registeredSchemes.get(), g_strdup(scheme.utf8().data()));
     g_ptr_array_add(m_registeredSchemes.get(), nullptr);
 
-    auto* genericRequestClass = static_cast<SoupRequestClass*>(g_type_class_ref(WEBKIT_TYPE_SOUP_REQUEST_GENERIC));
+    auto* genericRequestClass = static_cast<SoupRequestClass*>(g_type_class_peek(WEBKIT_TYPE_SOUP_REQUEST_GENERIC));
+    ASSERT(genericRequestClass);
     genericRequestClass->schemes = const_cast<const char**>(reinterpret_cast<char**>(m_registeredSchemes->pdata));
-    soup_session_add_feature_by_type(NetworkStorageSession::defaultStorageSession().getOrCreateSoupNetworkSession().soupSession(), WEBKIT_TYPE_SOUP_REQUEST_GENERIC);
+    NetworkStorageSession::forEach([](const WebCore::NetworkStorageSession& session) {
+        if (auto* soupSession = session.soupNetworkSession())
+            soupSession->setupCustomProtocols();
+    });
 }
 
 void CustomProtocolManager::unregisterScheme(const String&)
