@@ -1,3 +1,15 @@
+2017-01-25  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Removed leftovers of pre-2015 VisualStudio support
+        https://bugs.webkit.org/show_bug.cgi?id=167434
+
+        Reviewed by Alex Christensen.
+
+        No new tests needed.
+
+        * platform/graphics/filters/FEConvolveMatrix.cpp: Replaced MSC_VER
+        usage with COMPILER(MSVC)
+
 2017-01-25  Youenn Fablet  <youenn@apple.com>
 
         Fixing typos in r211161

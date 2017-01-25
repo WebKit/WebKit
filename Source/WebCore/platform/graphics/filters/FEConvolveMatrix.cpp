@@ -241,7 +241,7 @@ ALWAYS_INLINE void setDestinationPixels(Uint8ClampedArray* image, int& pixel, fl
         image->set(pixel++, maxAlpha);
 }
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1700)
+#if COMPILER(MSVC)
 // Incorrectly diagnosing overwrite of stack in |totals| due to |preserveAlphaValues|.
 #pragma warning(push)
 #pragma warning(disable: 4789)
@@ -385,7 +385,7 @@ void FEConvolveMatrix::fastSetOuterPixels(PaintingData& paintingData, int x1, in
     }
 }
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1700)
+#if COMPILER(MSVC)
 #pragma warning(pop) // Disable of 4789
 #endif
 
