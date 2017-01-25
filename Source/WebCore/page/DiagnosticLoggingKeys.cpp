@@ -328,6 +328,11 @@ String DiagnosticLoggingKeys::cpuUsageKey()
     return ASCIILiteral("cpuUsage");
 }
 
+String DiagnosticLoggingKeys::memoryUsageKey()
+{
+    return ASCIILiteral("memoryUsage");
+}
+
 String DiagnosticLoggingKeys::createSharedBufferFailedKey()
 {
     return ASCIILiteral("createSharedBufferFailed");
@@ -671,6 +676,33 @@ String DiagnosticLoggingKeys::notInCacheKey()
 String WebCore::DiagnosticLoggingKeys::webGLKey()
 {
     return ASCIILiteral("webGL");
+}
+
+String DiagnosticLoggingKeys::memoryUsageToDiagnosticLoggingKey(uint64_t memoryUsage)
+{
+    if (memoryUsage < 32 * MB)
+        return ASCIILiteral("below32");
+    if (memoryUsage < 64 * MB)
+        return ASCIILiteral("32to64");
+    if (memoryUsage < 128 * MB)
+        return ASCIILiteral("64to128");
+    if (memoryUsage < 256 * MB)
+        return ASCIILiteral("128to256");
+    if (memoryUsage < 512 * MB)
+        return ASCIILiteral("256to512");
+    if (memoryUsage < 1024 * MB)
+        return ASCIILiteral("512to1024");
+    if (memoryUsage < 2048 * MB)
+        return ASCIILiteral("1024to2048");
+    if (memoryUsage < 4096llu * MB)
+        return ASCIILiteral("2048to4096");
+    if (memoryUsage < 8192llu * MB)
+        return ASCIILiteral("4096to8192");
+    if (memoryUsage < 16384llu * MB)
+        return ASCIILiteral("8192to16384");
+    if (memoryUsage < 32768llu * MB)
+        return ASCIILiteral("16384to32768");
+    return ASCIILiteral("over32768");
 }
 
 String DiagnosticLoggingKeys::foregroundCPUUsageToDiagnosticLoggingKey(double cpuUsage)
