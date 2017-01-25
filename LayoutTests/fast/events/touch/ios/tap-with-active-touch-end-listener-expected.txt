@@ -3,6 +3,9 @@ Tap on Target1 (green)
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 600)
+  (layout viewport at (0,0) size 800x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,0))
   (synchronous event dispatch region for event touchend
     at (0,0) size 300x100)
 )
@@ -13,6 +16,9 @@ Tap on Target2 (red)
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 600)
+  (layout viewport at (0,0) size 800x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,0))
   (synchronous event dispatch region for event touchend
     at (0,0) size 300x100)
 )
@@ -23,6 +29,9 @@ Tap on Target3 (blue)
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 600)
+  (layout viewport at (0,0) size 800x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,0))
   (synchronous event dispatch region for event touchend
     at (0,0) size 300x100)
 )

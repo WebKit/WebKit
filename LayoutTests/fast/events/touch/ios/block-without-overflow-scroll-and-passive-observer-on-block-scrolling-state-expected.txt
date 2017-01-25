@@ -3,6 +3,9 @@ Verify that the block scrolling on overflow has touch event region with synchron
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 600)
+  (layout viewport at (0,0) size 800x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,0))
   (synchronous event dispatch region for event touchend
     at (8,8) size 784x200)
   (synchronous event dispatch region for event touchstart
