@@ -1,3 +1,15 @@
+2017-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-benchmark nests MotionMark results by the suite name twice
+        https://bugs.webkit.org/show_bug.cgi?id=164948
+
+        Reviewed by Said Abou-Hallawa.
+
+        Use a single level MotionMark now that this is the name of the benchmark,
+        and we no longer have tests that aren't part of the MotionMark suite.
+
+        * Scripts/webkitpy/benchmark_runner/data/patches/MotionMark.patch:
+
 2017-01-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r211193.

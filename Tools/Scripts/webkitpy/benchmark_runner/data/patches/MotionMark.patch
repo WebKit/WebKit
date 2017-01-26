@@ -37,11 +37,11 @@ index 65e8c54..1643e70 100644
 +    {
 +        var results = this.results.results[0];
 +        var iterationReports = this._computeIterationReports(results);
-+        var debugOutput = {
++        iterationReports['debugOutput'] = {
 +            options: benchmarkRunnerClient.results.options,
 +            data: benchmarkRunnerClient.results.data,
 +        }
-+        return {"MotionMark": {"metrics" : {"Score" : ["Geometric"]}, "tests" : iterationReports }, "debugOutput": debugOutput};
++        return iterationReports;
 +    },
 +
 +    didFinishLastIteration: function()
