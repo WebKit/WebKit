@@ -1,3 +1,15 @@
+2017-01-26  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] ASSERTION FAILED: !g_object_is_floating(ptr) in adoptGRef(GstContext* ptr)
+        https://bugs.webkit.org/show_bug.cgi?id=167458
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        GstContext is a mini_object, not a GObject. Therefore it shouldn't (and can't) be checked for floatingness.
+
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef): Removed incorrect assertion.
+
 2017-01-26  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add support for -webkit-hyphenate-limit-after and -webkit-hyphenate-limit-before
