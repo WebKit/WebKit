@@ -209,7 +209,7 @@ public:
                         || node->origin.forExit != previousNode->origin.forExit);
                 }
                 
-                VALIDATE((node), !node->hasStructure() || !!node->structure());
+                VALIDATE((node), !node->hasStructure() || !!node->structure().get());
                 VALIDATE((node), !node->hasCellOperand() || node->cellOperand()->value().isCell());
                 VALIDATE((node), !node->hasCellOperand() || !!node->cellOperand()->value());
                 
@@ -285,7 +285,7 @@ public:
                     }
                     break;
                 case MaterializeNewObject:
-                    for (Structure* structure : node->structureSet()) {
+                    for (RegisteredStructure structure : node->structureSet()) {
                         // This only supports structures that are JSFinalObject or JSArray.
                         VALIDATE(
                             (node),
@@ -565,7 +565,7 @@ private:
                     // CPS disallows int32 and double arrays. Those require weird type checks and
                     // conversions. They are not needed in the DFG right now. We should add support
                     // for these if the DFG ever needs it.
-                    for (Structure* structure : node->structureSet()) {
+                    for (RegisteredStructure structure : node->structureSet()) {
                         VALIDATE((node), !hasInt32(structure->indexingType()));
                         VALIDATE((node), !hasDouble(structure->indexingType()));
                     }

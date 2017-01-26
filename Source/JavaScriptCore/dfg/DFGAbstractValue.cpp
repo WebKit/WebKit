@@ -52,8 +52,10 @@ void AbstractValue::set(Graph& graph, const FrozenValue& value, StructureClobber
 {
     if (!!value && value.value().isCell()) {
         Structure* structure = value.structure();
-        if (graph.registerStructure(structure) == StructureRegisteredAndWatched) {
-            m_structure = structure;
+        StructureRegistrationResult result;
+        RegisteredStructure RegisteredStructure = graph.registerStructure(structure, result);
+        if (result == StructureRegisteredAndWatched) {
+            m_structure = RegisteredStructure;
             if (clobberState == StructuresAreClobbered) {
                 m_arrayModes = ALL_ARRAY_MODES;
                 m_structure.clobber();
@@ -77,18 +79,23 @@ void AbstractValue::set(Graph& graph, const FrozenValue& value, StructureClobber
 
 void AbstractValue::set(Graph& graph, Structure* structure)
 {
+    set(graph, graph.registerStructure(structure));
+}
+
+void AbstractValue::set(Graph& graph, RegisteredStructure structure)
+{
     RELEASE_ASSERT(structure);
     
     m_structure = structure;
     m_arrayModes = asArrayModes(structure->indexingType());
-    m_type = speculationFromStructure(structure);
+    m_type = speculationFromStructure(structure.get());
     m_value = JSValue();
     
     checkConsistency();
     assertIsRegistered(graph);
 }
 
-void AbstractValue::set(Graph& graph, const StructureSet& set)
+void AbstractValue::set(Graph& graph, const RegisteredStructureSet& set)
 {
     m_structure = set;
     m_arrayModes = set.arrayModesFromStructures();
@@ -104,9 +111,9 @@ void AbstractValue::setType(Graph& graph, SpeculatedType type)
     SpeculatedType cellType = type & SpecCell;
     if (cellType) {
         if (!(cellType & ~SpecString))
-            m_structure = graph.m_vm.stringStructure.get();
+            m_structure = graph.stringStructure;
         else if (isSymbolSpeculation(cellType))
-            m_structure = graph.m_vm.symbolStructure.get();
+            m_structure = graph.symbolStructure;
         else
             m_structure.makeTop();
         m_arrayModes = ALL_ARRAY_MODES;
@@ -217,7 +224,7 @@ bool AbstractValue::mergeOSREntryValue(Graph& graph, JSValue value)
     if (isClear()) {
         FrozenValue* frozenValue = graph.freeze(value);
         if (frozenValue->pointsToHeap()) {
-            m_structure = frozenValue->structure();
+            m_structure = graph.registerStructure(frozenValue->structure());
             m_arrayModes = asArrayModes(frozenValue->structure()->indexingType());
         } else {
             m_structure.clear();
@@ -229,10 +236,9 @@ bool AbstractValue::mergeOSREntryValue(Graph& graph, JSValue value)
     } else {
         mergeSpeculation(m_type, speculationFromValue(value));
         if (!!value && value.isCell()) {
-            Structure* structure = value.asCell()->structure();
-            graph.registerStructure(structure);
+            RegisteredStructure structure = graph.registerStructure(value.asCell()->structure());
             mergeArrayModes(m_arrayModes, asArrayModes(structure->indexingType()));
-            m_structure.merge(StructureSet(structure));
+            m_structure.merge(RegisteredStructureSet(structure));
         }
         if (m_value != value)
             m_value = JSValue();
@@ -256,7 +262,7 @@ bool AbstractValue::isType(Graph& graph, const InferredType::Descriptor& inferre
 }
 
 FiltrationResult AbstractValue::filter(
-    Graph& graph, const StructureSet& other, SpeculatedType admittedTypes)
+    Graph& graph, const RegisteredStructureSet& other, SpeculatedType admittedTypes)
 {
     ASSERT(!(admittedTypes & SpecCell));
     
@@ -272,10 +278,10 @@ FiltrationResult AbstractValue::filter(
     m_structure.filter(other);
     
     // It's possible that prior to the above two statements we had (Foo, TOP), where
-    // Foo is a SpeculatedType that is disjoint with the passed StructureSet. In that
+    // Foo is a SpeculatedType that is disjoint with the passed RegisteredStructureSet. In that
     // case, we will now have (None, [someStructure]). In general, we need to make
     // sure that new information gleaned from the SpeculatedType needs to be fed back
-    // into the information gleaned from the StructureSet.
+    // into the information gleaned from the RegisteredStructureSet.
     m_structure.filter(m_type);
     
     filterArrayModesByType();
@@ -283,7 +289,7 @@ FiltrationResult AbstractValue::filter(
     return normalizeClarity(graph);
 }
 
-FiltrationResult AbstractValue::changeStructure(Graph& graph, const StructureSet& other)
+FiltrationResult AbstractValue::changeStructure(Graph& graph, const RegisteredStructureSet& other)
 {
     m_type &= other.speculationFromStructures();
     m_arrayModes = other.arrayModesFromStructures();
@@ -361,10 +367,10 @@ FiltrationResult AbstractValue::filterByValue(const FrozenValue& value)
     return result;
 }
 
-bool AbstractValue::contains(Structure* structure) const
+bool AbstractValue::contains(RegisteredStructure structure) const
 {
-    return couldBeType(speculationFromStructure(structure))
-        && (m_arrayModes & arrayModeFromStructure(structure))
+    return couldBeType(speculationFromStructure(structure.get()))
+        && (m_arrayModes & arrayModeFromStructure(structure.get()))
         && m_structure.contains(structure);
 }
 

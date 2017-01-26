@@ -27,6 +27,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGRegisteredStructureSet.h"
 #include "DumpContext.h"
 #include "JSObject.h"
 #include "StructureSet.h"
@@ -119,21 +120,21 @@ public:
     {
     }
     
-    MultiGetByOffsetCase(const StructureSet& set, const GetByOffsetMethod& method)
+    MultiGetByOffsetCase(const RegisteredStructureSet& set, const GetByOffsetMethod& method)
         : m_set(set)
         , m_method(method)
     {
     }
     
-    StructureSet& set() { return m_set; }
-    const StructureSet& set() const { return m_set; }
+    RegisteredStructureSet& set() { return m_set; }
+    const RegisteredStructureSet& set() const { return m_set; }
     const GetByOffsetMethod& method() const { return m_method; }
     
     void dumpInContext(PrintStream&, DumpContext*) const;
     void dump(PrintStream&) const;
 
 private:
-    StructureSet m_set;
+    RegisteredStructureSet m_set;
     GetByOffsetMethod m_method;
 };
 

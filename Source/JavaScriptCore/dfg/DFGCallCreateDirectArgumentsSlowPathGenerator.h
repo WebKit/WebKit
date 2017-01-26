@@ -39,7 +39,7 @@ namespace JSC { namespace DFG {
 class CallCreateDirectArgumentsSlowPathGenerator : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
 public:
     CallCreateDirectArgumentsSlowPathGenerator(
-        MacroAssembler::JumpList from, SpeculativeJIT* jit, GPRReg resultGPR, Structure* structure,
+        MacroAssembler::JumpList from, SpeculativeJIT* jit, GPRReg resultGPR, RegisteredStructure structure,
         GPRReg lengthGPR, unsigned minCapacity)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_resultGPR(resultGPR)
@@ -69,7 +69,7 @@ protected:
     
 private:
     GPRReg m_resultGPR;
-    Structure* m_structure;
+    RegisteredStructure m_structure;
     GPRReg m_lengthGPR;
     unsigned m_minCapacity;
     Vector<SilentRegisterSavePlan, 2> m_plans;

@@ -2960,7 +2960,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
             result = addToGraph(CallStringConstructor, get(virtualRegisterForArgument(1, registerOffset)));
         
         if (kind == CodeForConstruct)
-            result = addToGraph(NewStringObject, OpInfo(function->globalObject()->stringObjectStructure()), result);
+            result = addToGraph(NewStringObject, OpInfo(m_graph.registerStructure(function->globalObject()->stringObjectStructure())), result);
         
         set(VirtualRegister(resultOperand), result);
         return true;
@@ -2972,7 +2972,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
 
         Node* result;
         if (argumentCountIncludingThis <= 1)
-            result = addToGraph(NewObject, OpInfo(function->globalObject()->objectStructureForObjectConstructor()));
+            result = addToGraph(NewObject, OpInfo(m_graph.registerStructure(function->globalObject()->objectStructureForObjectConstructor())));
         else
             result = addToGraph(CallObjectConstructor, get(virtualRegisterForArgument(1, registerOffset)));
         set(VirtualRegister(resultOperand), result);
@@ -3383,7 +3383,7 @@ Node* ByteCodeParser::load(
             // We did emit a structure check. That means that we have an opportunity to do constant folding
             // here, since we didn't do it above.
             JSValue constant = m_graph.tryGetConstantProperty(
-                base->asJSValue(), variant.structureSet(), variant.offset());
+                base->asJSValue(), *m_graph.addStructureSet(variant.structureSet()), variant.offset());
             if (constant)
                 return weakJSConstant(constant);
         }
@@ -3429,7 +3429,7 @@ void ByteCodeParser::handleGetById(
             }
         }
         if (ok)
-            getByIdStatus.filter(base->structure());
+            getByIdStatus.filter(base->structure().get());
     }
     
     NodeType getById;
@@ -3482,7 +3482,7 @@ void ByteCodeParser::handleGetById(
             if (variant.conditionSet().isEmpty()) {
                 cases.append(
                     MultiGetByOffsetCase(
-                        variant.structureSet(),
+                        *m_graph.addStructureSet(variant.structureSet()),
                         GetByOffsetMethod::load(variant.offset())));
                 continue;
             }
@@ -3494,7 +3494,7 @@ void ByteCodeParser::handleGetById(
                 return;
             }
             
-            cases.append(MultiGetByOffsetCase(variant.structureSet(), method));
+            cases.append(MultiGetByOffsetCase(*m_graph.addStructureSet(variant.structureSet()), method));
         }
 
         if (m_graph.compilation())
@@ -3621,8 +3621,13 @@ void ByteCodeParser::handlePutById(
         if (m_graph.compilation())
             m_graph.compilation()->noticeInlinedPutById();
 
-        for (const PutByIdVariant& variant : putByIdStatus.variants())
+        for (const PutByIdVariant& variant : putByIdStatus.variants()) {
             m_graph.registerInferredType(variant.requiredType());
+            for (Structure* structure : variant.oldStructure())
+                m_graph.registerStructure(structure);
+            if (variant.kind() == PutByIdVariant::Transition)
+                m_graph.registerStructure(variant.newStructure());
+        }
         
         MultiPutByOffsetData* data = m_graph.m_multiPutByOffsetData.add();
         data->variants = putByIdStatus.variants();
@@ -3653,7 +3658,7 @@ void ByteCodeParser::handlePutById(
     
         Node* propertyStorage;
         Transition* transition = m_graph.m_transitions.add(
-            variant.oldStructureForTransition(), variant.newStructure());
+            m_graph.registerStructure(variant.oldStructureForTransition()), m_graph.registerStructure(variant.newStructure()));
 
         if (variant.reallocatesStorage()) {
 
@@ -3900,7 +3905,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                         m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                         // The callee is still live up to this point.
                         addToGraph(Phantom, callee);
-                        set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewObject, OpInfo(structure)));
+                        set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewObject, OpInfo(m_graph.registerStructure(structure))));
                         alreadyEmitted = true;
                     }
                 }
@@ -3915,7 +3920,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_new_object: {
             set(VirtualRegister(currentInstruction[1].u.operand),
                 addToGraph(NewObject,
-                    OpInfo(currentInstruction[3].u.objectAllocationProfile->structure())));
+                    OpInfo(m_graph.registerStructure(currentInstruction[3].u.objectAllocationProfile->structure()))));
             NEXT_OPCODE(op_new_object);
         }
             
@@ -5678,7 +5683,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         ASSERT(callsiteBlockHead);
         
         m_inlineCallFrame = byteCodeParser->m_graph.m_plan.inlineCallFrames->add();
-        byteCodeParser->m_graph.freeze(codeBlock->baselineVersion());
+
         // The owner is the machine code block, and we already have a barrier on that when the
         // plan finishes.
         m_inlineCallFrame->baselineCodeBlock.setWithoutWriteBarrier(codeBlock->baselineVersion());

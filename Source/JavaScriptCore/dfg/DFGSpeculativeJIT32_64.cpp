@@ -294,7 +294,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operan
         isMasqueradesAsUndefined.link(&m_jit);
         GPRReg localGlobalObjectGPR = localGlobalObject.gpr();
         GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
-        m_jit.move(JITCompiler::TrustedImmPtr(m_jit.graph().globalObjectFor(m_currentNode->origin.semantic)), localGlobalObjectGPR);
+        m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), m_jit.graph().globalObjectFor(m_currentNode->origin.semantic)), localGlobalObjectGPR);
         m_jit.loadPtr(JITCompiler::Address(argPayloadGPR, JSCell::structureIDOffset()), resultPayloadGPR);
         m_jit.loadPtr(JITCompiler::Address(resultPayloadGPR, Structure::globalObjectOffset()), remoteGlobalObjectGPR);
         m_jit.compare32(JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, resultPayloadGPR);
@@ -358,7 +358,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined(Edge operand, N
    
         GPRReg localGlobalObjectGPR = localGlobalObject.gpr();
         GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
-        m_jit.move(TrustedImmPtr(m_jit.graph().globalObjectFor(m_currentNode->origin.semantic)), localGlobalObjectGPR);
+        m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), m_jit.graph().globalObjectFor(m_currentNode->origin.semantic)), localGlobalObjectGPR);
         m_jit.loadPtr(JITCompiler::Address(argPayloadGPR, JSCell::structureIDOffset()), resultGPR);
         m_jit.loadPtr(JITCompiler::Address(resultGPR, Structure::globalObjectOffset()), remoteGlobalObjectGPR);
         branchPtr(JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, invert ? notTaken : taken);
@@ -1082,7 +1082,7 @@ void SpeculativeJIT::emitCall(Node* node)
             m_jit.emitRestoreCalleeSaves();
     }
 
-    m_jit.move(MacroAssembler::TrustedImmPtr(info), GPRInfo::regT2);
+    m_jit.move(TrustedImmPtr(info), GPRInfo::regT2);
     JITCompiler::Call slowCall = m_jit.nearCall();
 
     done.link(&m_jit);
@@ -1242,10 +1242,9 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     switch (info.registerFormat()) {
     case DataFormatNone: {
         if (edge->hasConstant()) {
-            JSValue jsValue = edge->asJSValue();
             GPRReg gpr = allocate();
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-            m_jit.move(MacroAssembler::TrustedImmPtr(jsValue.asCell()), gpr);
+            m_jit.move(TrustedImmPtr(edge->constant()), gpr);
             info.fillCell(*m_stream, gpr);
             return gpr;
         }
@@ -1724,7 +1723,7 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse)
             m_jit.branchPtr(
                 MacroAssembler::Equal, 
                 MacroAssembler::Address(structureGPR, Structure::globalObjectOffset()), 
-                MacroAssembler::TrustedImmPtr(m_jit.graph().globalObjectFor(m_currentNode->origin.semantic))));
+                TrustedImmPtr::weakPointer(m_jit.graph(), m_jit.graph().globalObjectFor(m_currentNode->origin.semantic))));
 
         isNotMasqueradesAsUndefined.link(&m_jit);
     }
@@ -1843,7 +1842,7 @@ void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BasicBlock* taken, Ba
             m_jit.branchPtr(
                 MacroAssembler::Equal, 
                 MacroAssembler::Address(scratchGPR, Structure::globalObjectOffset()), 
-                MacroAssembler::TrustedImmPtr(m_jit.graph().globalObjectFor(m_currentNode->origin.semantic))));
+                TrustedImmPtr::weakPointer(m_jit.graph(), m_jit.graph().globalObjectFor(m_currentNode->origin.semantic))));
 
         isNotMasqueradesAsUndefined.link(&m_jit);
     }
@@ -3778,7 +3777,7 @@ void SpeculativeJIT::compile(Node* node)
     case NewArray: {
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
         if (!globalObject->isHavingABadTime() && !hasAnyArrayStorage(node->indexingType())) {
-            Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType());
+            RegisteredStructure structure = m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
             ASSERT(structure->indexingType() == node->indexingType());
             ASSERT(
                 hasUndecided(structure->indexingType())
@@ -3853,7 +3852,7 @@ void SpeculativeJIT::compile(Node* node)
             flushRegisters();
             GPRFlushedCallResult result(this);
             callOperation(
-                operationNewEmptyArray, result.gpr(), globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
+                operationNewEmptyArray, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())));
             m_jit.exceptionCheck();
             cellResult(result.gpr(), node);
             break;
@@ -3930,7 +3929,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRFlushedCallResult result(this);
         
         callOperation(
-            operationNewArray, result.gpr(), globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()),
+            operationNewArray, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())),
             static_cast<void*>(buffer), node->numChildren());
         m_jit.exceptionCheck();
 
@@ -3976,10 +3975,10 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg resultGPR = result.gpr();
         GPRReg structureGPR = selectScratchGPR(sizeGPR);
         MacroAssembler::Jump bigLength = m_jit.branch32(MacroAssembler::AboveOrEqual, sizeGPR, TrustedImm32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH));
-        m_jit.move(TrustedImmPtr(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())), structureGPR);
+        m_jit.move(TrustedImmPtr(m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()))), structureGPR);
         MacroAssembler::Jump done = m_jit.jump();
         bigLength.link(&m_jit);
-        m_jit.move(TrustedImmPtr(globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage)), structureGPR);
+        m_jit.move(TrustedImmPtr(m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage))), structureGPR);
         done.link(&m_jit);
         callOperation(operationNewArrayWithSize, resultGPR, structureGPR, sizeGPR, nullptr);
         m_jit.exceptionCheck();
@@ -3999,7 +3998,7 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg resultGPR = result.gpr();
             GPRReg storageGPR = storage.gpr();
 
-            emitAllocateRawObject(resultGPR, globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType), storageGPR, numElements, numElements);
+            emitAllocateRawObject(resultGPR, m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType)), storageGPR, numElements, numElements);
             
             if (node->indexingType() == ArrayWithDouble) {
                 JSValue* data = m_jit.codeBlock()->constantBuffer(node->startConstant());
@@ -4027,7 +4026,7 @@ void SpeculativeJIT::compile(Node* node)
         flushRegisters();
         GPRFlushedCallResult result(this);
         
-        callOperation(operationNewArrayBuffer, result.gpr(), globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()), node->startConstant(), node->numConstants());
+        callOperation(operationNewArrayBuffer, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())), node->startConstant(), node->numConstants());
         m_jit.exceptionCheck();
         
         cellResult(result.gpr(), node);
@@ -4051,7 +4050,7 @@ void SpeculativeJIT::compile(Node* node)
             JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
             callOperation(
                 operationNewTypedArrayWithOneArgumentForType(node->typedArrayType()),
-                resultGPR, globalObject->typedArrayStructureConcurrently(node->typedArrayType()), argumentRegs);
+                resultGPR, m_jit.graph().registerStructure(globalObject->typedArrayStructureConcurrently(node->typedArrayType())), argumentRegs);
             m_jit.exceptionCheck();
             
             cellResult(resultGPR, node);
@@ -4171,7 +4170,7 @@ void SpeculativeJIT::compile(Node* node)
         
         MacroAssembler::JumpList slowPath;
         
-        Structure* structure = node->structure();
+        RegisteredStructure structure = node->structure();
         size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
         MarkedAllocator* allocatorPtr = subspaceFor<JSFinalObject>(*m_jit.vm())->allocatorFor(allocationSize);
 
@@ -4416,8 +4415,8 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case PutStructure: {
-        Structure* oldStructure = node->transition()->previous;
-        Structure* newStructure = node->transition()->next;
+        RegisteredStructure oldStructure = node->transition()->previous;
+        RegisteredStructure newStructure = node->transition()->next;
 
         m_jit.jitCode()->common.notifyCompilingStructureTransition(m_jit.graph().m_plan, m_jit.codeBlock(), node);
 
@@ -4427,7 +4426,7 @@ void SpeculativeJIT::compile(Node* node)
         ASSERT_UNUSED(oldStructure, oldStructure->indexingType() == newStructure->indexingType());
         ASSERT(oldStructure->typeInfo().type() == newStructure->typeInfo().type());
         ASSERT(oldStructure->typeInfo().inlineTypeFlags() == newStructure->typeInfo().inlineTypeFlags());
-        m_jit.storePtr(MacroAssembler::TrustedImmPtr(newStructure), MacroAssembler::Address(baseGPR, JSCell::structureIDOffset()));
+        m_jit.storePtr(TrustedImmPtr(newStructure), MacroAssembler::Address(baseGPR, JSCell::structureIDOffset()));
         
         noResult(node);
         break;
@@ -4691,7 +4690,7 @@ void SpeculativeJIT::compile(Node* node)
         if (!hasInstanceValueNode->isCellConstant() || defaultHasInstanceFunction != hasInstanceValueNode->asCell()) {
             JSValueRegs hasInstanceValueRegs = hasInstanceValue.jsValueRegs();
             notDefaultHasInstanceValue.append(m_jit.branchIfNotCell(hasInstanceValueRegs));
-            notDefaultHasInstanceValue.append(m_jit.branchPtr(MacroAssembler::NotEqual, hasInstanceValueRegs.payloadGPR(), TrustedImmPtr(defaultHasInstanceFunction)));
+            notDefaultHasInstanceValue.append(m_jit.branchPtr(MacroAssembler::NotEqual, hasInstanceValueRegs.payloadGPR(), TrustedImmPtr(node->cellOperand())));
         }
 
         // Check that constructor 'ImplementsDefaultHasInstance'.
@@ -4753,7 +4752,7 @@ void SpeculativeJIT::compile(Node* node)
             isMasqueradesAsUndefined.link(&m_jit);
             GPRReg localGlobalObjectGPR = localGlobalObject.gpr();
             GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
-            m_jit.move(TrustedImmPtr(m_jit.globalObjectFor(node->origin.semantic)), localGlobalObjectGPR);
+            m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), m_jit.globalObjectFor(node->origin.semantic)), localGlobalObjectGPR);
             m_jit.loadPtr(JITCompiler::Address(value.payloadGPR(), JSCell::structureIDOffset()), result.gpr());
             m_jit.loadPtr(JITCompiler::Address(result.gpr(), Structure::globalObjectOffset()), remoteGlobalObjectGPR); 
             m_jit.compare32(JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, result.gpr());
@@ -5713,13 +5712,13 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObjec
     // We can use result as a scratch for this.
     emitInitializeButterfly(storageGPR, sizeGPR, emptyValueRegs, resultGPR);
             
-    Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
+    RegisteredStructure structure = m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType));
     emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, scratchGPR, scratch2GPR, slowCases);
             
     addSlowPathGenerator(std::make_unique<CallArrayAllocatorWithVariableSizeSlowPathGenerator>(
         slowCases, this, operationNewArrayWithSize, resultGPR,
         structure,
-        shouldConvertLargeSizeToArrayStorage ? globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage) : structure,
+        shouldConvertLargeSizeToArrayStorage ? m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage)) : structure,
         sizeGPR, storageGPR));
 }
 

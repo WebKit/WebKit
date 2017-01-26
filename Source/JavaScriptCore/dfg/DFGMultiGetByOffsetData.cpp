@@ -59,7 +59,7 @@ void GetByOffsetMethod::dump(PrintStream& out) const
 
 void MultiGetByOffsetCase::dumpInContext(PrintStream& out, DumpContext* context) const
 {
-    out.print(inContext(m_set, context), ":", inContext(m_method, context));
+    out.print(inContext(m_set.toStructureSet(), context), ":", inContext(m_method, context));
 }
 
 void MultiGetByOffsetCase::dump(PrintStream& out) const

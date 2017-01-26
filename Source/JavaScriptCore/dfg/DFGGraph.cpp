@@ -88,6 +88,10 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     
     m_indexingCache = std::make_unique<FlowIndexing>(*this);
     m_abstractValuesCache = std::make_unique<FlowMap<AbstractValue>>(*this);
+
+    registerStructure(vm.structureStructure.get());
+    this->stringStructure = registerStructure(vm.stringStructure.get());
+    this->symbolStructure = registerStructure(vm.symbolStructure.get());
 }
 
 Graph::~Graph()
@@ -245,15 +249,15 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
     if (node->hasPromotedLocationDescriptor())
         out.print(comma, node->promotedLocationDescriptor());
     if (node->hasStructureSet())
-        out.print(comma, inContext(node->structureSet(), context));
+        out.print(comma, inContext(node->structureSet().toStructureSet(), context));
     if (node->hasStructure())
-        out.print(comma, inContext(*node->structure(), context));
+        out.print(comma, inContext(*node->structure().get(), context));
     if (node->hasTransition()) {
         out.print(comma, pointerDumpInContext(node->transition(), context));
 #if USE(JSVALUE64)
         out.print(", ID:", node->transition()->next->id());
 #else
-        out.print(", ID:", RawPointer(node->transition()->next));
+        out.print(", ID:", RawPointer(node->transition()->next.get()));
 #endif
     }
     if (node->hasCellOperand()) {
@@ -1207,7 +1211,7 @@ unsigned Graph::requiredRegisterCountForExecutionAndExit()
 }
 
 JSValue Graph::tryGetConstantProperty(
-    JSValue base, const StructureSet& structureSet, PropertyOffset offset)
+    JSValue base, const RegisteredStructureSet& structureSet, PropertyOffset offset)
 {
     if (!base || !base.isObject())
         return JSValue();
@@ -1215,8 +1219,7 @@ JSValue Graph::tryGetConstantProperty(
     JSObject* object = asObject(base);
     
     for (unsigned i = structureSet.size(); i--;) {
-        Structure* structure = structureSet[i];
-        assertIsRegistered(structure);
+        RegisteredStructure structure = structureSet[i];
         
         WatchpointSet* set = structure->propertyReplacementWatchpointSet(offset);
         if (!set || !set->isStillValid())
@@ -1248,7 +1251,7 @@ JSValue Graph::tryGetConstantProperty(
     // incompatible with the getDirect we're trying to do. The easiest way to do that is to
     // determine if the structure belongs to the proven set.
     
-    if (!structureSet.contains(object->structure()))
+    if (!structureSet.toStructureSet().contains(object->structure()))
         return JSValue();
     
     return object->getDirect(offset);
@@ -1256,7 +1259,7 @@ JSValue Graph::tryGetConstantProperty(
 
 JSValue Graph::tryGetConstantProperty(JSValue base, Structure* structure, PropertyOffset offset)
 {
-    return tryGetConstantProperty(base, StructureSet(structure), offset);
+    return tryGetConstantProperty(base, RegisteredStructureSet(registerStructure(structure)), offset);
 }
 
 JSValue Graph::tryGetConstantProperty(
@@ -1278,13 +1281,13 @@ JSValue Graph::tryGetConstantProperty(const AbstractValue& base, PropertyOffset 
 }
 
 AbstractValue Graph::inferredValueForProperty(
-    const StructureSet& base, UniquedStringImpl* uid, StructureClobberState clobberState)
+    const RegisteredStructureSet& base, UniquedStringImpl* uid, StructureClobberState clobberState)
 {
     AbstractValue result;
     base.forEach(
-        [&] (Structure* structure) {
+        [&] (RegisteredStructure structure) {
             AbstractValue value;
-            value.set(*this, inferredTypeForProperty(structure, uid));
+            value.set(*this, inferredTypeForProperty(structure.get(), uid));
             result.merge(value);
         });
     if (clobberState == StructuresAreClobbered)
@@ -1413,61 +1416,18 @@ void Graph::visitChildren(SlotVisitor& visitor)
         visitor.appendUnbarriered(value->value());
         visitor.appendUnbarriered(value->structure());
     }
-    
-    for (BlockIndex blockIndex = numBlocks(); blockIndex--;) {
-        BasicBlock* block = this->block(blockIndex);
-        if (!block)
-            continue;
-        
-        for (auto* node : *block) {
-            switch (node->op()) {
-            case CheckStructure:
-                for (unsigned i = node->structureSet().size(); i--;)
-                    visitor.appendUnbarriered(node->structureSet()[i]);
-                break;
-                
-            case NewObject:
-            case ArrayifyToStructure:
-            case NewStringObject:
-                visitor.appendUnbarriered(node->structure());
-                break;
-                
-            case PutStructure:
-            case AllocatePropertyStorage:
-            case ReallocatePropertyStorage:
-                visitor.appendUnbarriered(node->transition()->previous);
-                visitor.appendUnbarriered(node->transition()->next);
-                break;
-                
-            case MultiGetByOffset:
-                for (const MultiGetByOffsetCase& getCase : node->multiGetByOffsetData().cases) {
-                    for (Structure* structure : getCase.set())
-                        visitor.appendUnbarriered(structure);
-                }
-                break;
-                    
-            case MultiPutByOffset:
-                for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
-                    PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
-                    const StructureSet& set = variant.oldStructure();
-                    for (unsigned j = set.size(); j--;)
-                        visitor.appendUnbarriered(set[j]);
-                    if (variant.kind() == PutByIdVariant::Transition)
-                        visitor.appendUnbarriered(variant.newStructure());
-                }
-                break;
-                
-            default:
-                break;
-            }
-        }
-    }
 }
 
 FrozenValue* Graph::freeze(JSValue value)
 {
     if (UNLIKELY(!value))
         return FrozenValue::emptySingleton();
+
+    // There are weird relationships in how optimized CodeBlocks
+    // point to other CodeBlocks. We don't want to have them be
+    // part of the weak pointer set. For example, an optimized CodeBlock
+    // having a weak pointer to itself will cause it to get collected.
+    RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(value));
     
     auto result = m_frozenValueMap.add(JSValue::encode(value), nullptr);
     if (LIKELY(!result.isNewEntry))
@@ -1507,12 +1467,14 @@ void Graph::convertToStrongConstant(Node* node, JSValue value)
     convertToConstant(node, freezeStrong(value));
 }
 
-StructureRegistrationResult Graph::registerStructure(Structure* structure)
+RegisteredStructure Graph::registerStructure(Structure* structure, StructureRegistrationResult& result)
 {
     m_plan.weakReferences.addLazily(structure);
     if (m_plan.watchpoints.consider(structure))
-        return StructureRegisteredAndWatched;
-    return StructureRegisteredNormally;
+        result = StructureRegisteredAndWatched;
+    else
+        result = StructureRegisteredNormally;
+    return RegisteredStructure::createPrivate(structure);
 }
 
 void Graph::assertIsRegistered(Structure* structure)

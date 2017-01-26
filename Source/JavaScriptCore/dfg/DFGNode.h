@@ -42,6 +42,8 @@
 #include "DFGNodeType.h"
 #include "DFGObjectMaterializationData.h"
 #include "DFGOpInfo.h"
+#include "DFGRegisteredStructure.h"
+#include "DFGRegisteredStructureSet.h"
 #include "DFGTransition.h"
 #include "DFGUseKind.h"
 #include "DFGVariableAccessData.h"
@@ -410,10 +412,10 @@ public:
 
     void remove();
 
-    void convertToCheckStructure(StructureSet* set)
+    void convertToCheckStructure(RegisteredStructureSet* set)
     {
         setOpAndDefaultFlags(CheckStructure);
-        m_opInfo = set; 
+        m_opInfo = set;
     }
 
     void convertToCheckStructureImmediate(Node* structure)
@@ -1614,10 +1616,10 @@ public:
         }
     }
     
-    StructureSet& structureSet()
+    const RegisteredStructureSet& structureSet()
     {
         ASSERT(hasStructureSet());
-        return *m_opInfo.as<StructureSet*>();
+        return *m_opInfo.as<RegisteredStructureSet*>();
     }
     
     bool hasStructure()
@@ -1632,10 +1634,10 @@ public:
         }
     }
     
-    Structure* structure()
+    RegisteredStructure structure()
     {
         ASSERT(hasStructure());
-        return m_opInfo.as<Structure*>();
+        return m_opInfo.asRegisteredStructure();
     }
     
     bool hasStorageAccessData()
@@ -2513,6 +2515,11 @@ private:
             u.int64 = 0;
             u.constPointer = constPointer;
         }
+        OpInfoWrapper(RegisteredStructure structure)
+        {
+            u.int64 = 0;
+            u.pointer = bitwise_cast<void*>(structure);
+        }
         OpInfoWrapper& operator=(uint32_t int32)
         {
             u.int64 = 0;
@@ -2542,6 +2549,12 @@ private:
             u.constPointer = constPointer;
             return *this;
         }
+        OpInfoWrapper& operator=(RegisteredStructure structure)
+        {
+            u.int64 = 0;
+            u.pointer = bitwise_cast<void*>(structure);
+            return *this;
+        }
         template <typename T>
         ALWAYS_INLINE auto as() const -> typename std::enable_if<std::is_pointer<T>::value && !std::is_const<typename std::remove_pointer<T>::type>::value, T>::type
         {
@@ -2562,6 +2575,11 @@ private:
         {
             return u.int64;
         }
+        ALWAYS_INLINE RegisteredStructure asRegisteredStructure() const
+        {
+            return bitwise_cast<RegisteredStructure>(u.pointer);
+        }
+
         union {
             uint32_t int32;
             uint64_t int64;

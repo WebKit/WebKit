@@ -2725,6 +2725,7 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, SlotVisitor& visito
     // GC we still have not proved liveness, then this code block is toast.
     bool allAreLiveSoFar = true;
     for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i) {
+        ASSERT(!jsDynamicCast<CodeBlock*>(dfgCommon->weakReferences[i].get()));
         if (!Heap::isMarkedConcurrently(dfgCommon->weakReferences[i].get())) {
             allAreLiveSoFar = false;
             break;

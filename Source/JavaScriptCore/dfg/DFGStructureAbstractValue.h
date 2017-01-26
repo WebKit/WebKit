@@ -27,10 +27,11 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGRegisteredStructureSet.h"
 #include "DFGTransition.h"
+#include "DumpContext.h"
 #include "JSCell.h"
 #include "SpeculatedType.h"
-#include "DumpContext.h"
 #include "StructureSet.h"
 
 namespace JSC {
@@ -42,12 +43,12 @@ namespace DFG {
 class StructureAbstractValue {
 public:
     StructureAbstractValue() { }
-    StructureAbstractValue(Structure* structure)
-        : m_set(StructureSet(structure))
+    StructureAbstractValue(RegisteredStructure structure)
+        : m_set(structure)
     {
         setClobbered(false);
     }
-    StructureAbstractValue(const StructureSet& other)
+    StructureAbstractValue(const RegisteredStructureSet& other)
         : m_set(other)
     {
         setClobbered(false);
@@ -58,13 +59,13 @@ public:
         setClobbered(other.isClobbered());
     }
     
-    ALWAYS_INLINE StructureAbstractValue& operator=(Structure* structure)
+    ALWAYS_INLINE StructureAbstractValue& operator=(RegisteredStructure structure)
     {
-        m_set = StructureSet(structure);
+        m_set = RegisteredStructureSet(structure);
         setClobbered(false);
         return *this;
     }
-    ALWAYS_INLINE StructureAbstractValue& operator=(const StructureSet& other)
+    ALWAYS_INLINE StructureAbstractValue& operator=(const RegisteredStructureSet& other)
     {
         m_set = other;
         setClobbered(false);
@@ -98,7 +99,7 @@ public:
     void clobber();
     void observeInvalidationPoint() { setClobbered(false); }
     
-    void observeTransition(Structure* from, Structure* to);
+    void observeTransition(RegisteredStructure from, RegisteredStructure to);
     void observeTransitions(const TransitionVector&);
     
     static StructureAbstractValue top()
@@ -131,9 +132,9 @@ public:
     // An infinite structure abstract value may currently have any structure.
     bool isInfinite() const { return !isFinite(); }
     
-    bool add(Structure* structure);
+    bool add(RegisteredStructure);
     
-    bool merge(const StructureSet& other);
+    bool merge(const RegisteredStructureSet& other);
     
     ALWAYS_INLINE bool merge(const StructureAbstractValue& other)
     {
@@ -151,7 +152,7 @@ public:
         return mergeSlow(other);
     }
     
-    void filter(const StructureSet& other);
+    void filter(const RegisteredStructureSet& other);
     void filter(const StructureAbstractValue& other);
     
     ALWAYS_INLINE void filter(SpeculatedType type)
@@ -178,10 +179,16 @@ public:
         return equalsSlow(other);
     }
     
-    const StructureSet& set() const
+    const RegisteredStructureSet& set() const
     {
         ASSERT(!isTop());
         return m_set;
+    }
+
+    StructureSet toStructureSet() const
+    {
+        RELEASE_ASSERT(isFinite());
+        return m_set.toStructureSet();
     }
     
     size_t size() const
@@ -190,21 +197,21 @@ public:
         return m_set.size();
     }
     
-    Structure* at(size_t i) const
+    RegisteredStructure at(size_t i) const
     {
         ASSERT(!isTop());
         return m_set.at(i);
     }
     
-    Structure* operator[](size_t i) const { return at(i); }
+    RegisteredStructure operator[](size_t i) const { return at(i); }
 
     // In most cases, what you really want to do is verify whether the set is top or clobbered, and
     // if not, enumerate the set of structures. Use this only in cases where the singleton case is
     // meaningfully special, like for transitions.
-    Structure* onlyStructure() const
+    RegisteredStructure onlyStructure() const
     {
         if (isInfinite())
-            return nullptr;
+            return RegisteredStructure();
         return m_set.onlyStructure();
     }
 
@@ -224,18 +231,19 @@ public:
     // optimizations as a consequence of the "this is smaller" return value - so false for
     // contains(), true for isSubsetOf(), false for isSupersetOf(), and false for overlaps().
 
+    bool contains(RegisteredStructure) const;
     bool contains(Structure* structure) const;
     
-    bool isSubsetOf(const StructureSet& other) const;
+    bool isSubsetOf(const RegisteredStructureSet& other) const;
     bool isSubsetOf(const StructureAbstractValue& other) const;
     
-    bool isSupersetOf(const StructureSet& other) const;
+    bool isSupersetOf(const RegisteredStructureSet& other) const;
     bool isSupersetOf(const StructureAbstractValue& other) const
     {
         return other.isSubsetOf(*this);
     }
     
-    bool overlaps(const StructureSet& other) const;
+    bool overlaps(const RegisteredStructureSet& other) const;
     bool overlaps(const StructureAbstractValue& other) const;
 
     bool isSubClassOf(const ClassInfo*) const;
@@ -243,8 +251,8 @@ public:
     void validateReferences(const TrackedReferences&) const;
     
 private:
-    static const uintptr_t clobberedFlag = StructureSet::reservedFlag;
-    static const uintptr_t topValue = StructureSet::reservedValue;
+    static const uintptr_t clobberedFlag = RegisteredStructureSet::reservedFlag;
+    static const uintptr_t topValue = RegisteredStructureSet::reservedValue;
     static const unsigned polymorphismLimit = 10;
     static const unsigned clobberedSupremacyThreshold = 2;
     
@@ -260,7 +268,7 @@ private:
         m_set.m_pointer = topValue;
     }
     
-    bool mergeNotTop(const StructureSet& other);
+    bool mergeNotTop(const RegisteredStructureSet& other);
     
     void setClobbered(bool clobbered)
     {
@@ -268,7 +276,7 @@ private:
         m_set.setReservedFlag(clobbered);
     }
     
-    StructureSet m_set;
+    RegisteredStructureSet m_set;
 };
 
 } } // namespace JSC::DFG

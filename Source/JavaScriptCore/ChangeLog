@@ -1,3 +1,284 @@
+2017-01-26  Saam Barati  <sbarati@apple.com>
+
+        Harden how the compiler references GC objects
+        https://bugs.webkit.org/show_bug.cgi?id=167277
+        <rdar://problem/30179506>
+
+        Reviewed by Filip Pizlo.
+
+        Since r210971, the DFG/FTL will flash safepoints before
+        each phase. This means that there are more opportunities for
+        a GC to happen while the compiler is running. Because of this,
+        the compiler must keep track of all the heap pointers that are part
+        of the Graph data structure. To accomplish this, I've designed
+        a new type called RegisteredStructure that can only be constructed
+        after the Graph becomes aware of its underlying Structure*. I
+        designed this new type to have the type system in C++ help us catch
+        errors where we're not informing the graph/plan of a heap pointer.
+        I've made it a compile error to create an OpInfo with a pointer
+        T* where T inherits from HeapCell. This encourages an OpInfo
+        to be created with either a FrozenValue* or a RegisteredStructure.
+        I've added similar compile time assertions for TrustedImmPtr in DFG::SpeculativeJIT
+        and FTL::Output::constIntPtr. These static asserts don't save us from all bad
+        programs because there are ways to write code that's incorrect that compiles,
+        but the new types do help us ensure that the most obvious way of writing the
+        code is correct.
+        
+        The reason this patch is so big is that I've strung RegisteredStructure and
+        RegisteredStructureSet through the entire DFG/FTL.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::determineLiveness):
+        * bytecode/StructureSet.cpp:
+        (JSC::StructureSet::filter): Deleted.
+        (JSC::StructureSet::filterArrayModes): Deleted.
+        (JSC::StructureSet::speculationFromStructures): Deleted.
+        (JSC::StructureSet::arrayModesFromStructures): Deleted.
+        (JSC::StructureSet::validateReferences): Deleted.
+        * bytecode/StructureSet.h:
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::filter):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::booleanResult):
+        (JSC::DFG::isToThisAnIdentity):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::observeTransition):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::filter):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::set):
+        (JSC::DFG::AbstractValue::setType):
+        (JSC::DFG::AbstractValue::mergeOSREntryValue):
+        (JSC::DFG::AbstractValue::filter):
+        (JSC::DFG::AbstractValue::changeStructure):
+        (JSC::DFG::AbstractValue::contains):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::observeTransition):
+        (JSC::DFG::AbstractValue::TransitionObserver::TransitionObserver):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::alreadyChecked):
+        * dfg/DFGArrayifySlowPathGenerator.h:
+        (JSC::DFG::ArrayifySlowPathGenerator::ArrayifySlowPathGenerator):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::load):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h:
+        (JSC::DFG::CallArrayAllocatorSlowPathGenerator::CallArrayAllocatorSlowPathGenerator):
+        (JSC::DFG::CallArrayAllocatorWithVariableSizeSlowPathGenerator::CallArrayAllocatorWithVariableSizeSlowPathGenerator):
+        * dfg/DFGCallCreateDirectArgumentsSlowPathGenerator.h:
+        (JSC::DFG::CallCreateDirectArgumentsSlowPathGenerator::CallCreateDirectArgumentsSlowPathGenerator):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::notifyCompilingStructureTransition):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+        (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+        (JSC::DFG::ConstantFoldingPhase::addBaseCheck):
+        (JSC::DFG::ConstantFoldingPhase::addStructureTransitionCheck):
+        * dfg/DFGDesiredWeakReferences.cpp:
+        (JSC::DFG::DesiredWeakReferences::reallyAdd):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::checkArray):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::tryGetConstantProperty):
+        (JSC::DFG::Graph::inferredValueForProperty):
+        (JSC::DFG::Graph::visitChildren):
+        (JSC::DFG::Graph::freeze):
+        (JSC::DFG::Graph::registerStructure):
+        (JSC::DFG::Graph::assertIsRegistered):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::registerStructure):
+        (JSC::DFG::Graph::addStructureSet):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::branchWeakStructure):
+        * dfg/DFGMultiGetByOffsetData.cpp:
+        (JSC::DFG::MultiGetByOffsetCase::dumpInContext):
+        * dfg/DFGMultiGetByOffsetData.h:
+        (JSC::DFG::MultiGetByOffsetCase::MultiGetByOffsetCase):
+        (JSC::DFG::MultiGetByOffsetCase::set):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToPutStructureHint):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToCheckStructure):
+        (JSC::DFG::Node::structureSet):
+        (JSC::DFG::Node::structure):
+        (JSC::DFG::Node::OpInfoWrapper::OpInfoWrapper):
+        (JSC::DFG::Node::OpInfoWrapper::operator=):
+        (JSC::DFG::Node::OpInfoWrapper::asRegisteredStructure):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGOpInfo.h:
+        (JSC::DFG::OpInfo::OpInfo):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        * dfg/DFGRegisteredStructure.h: Added.
+        (JSC::DFG::RegisteredStructure::get):
+        (JSC::DFG::RegisteredStructure::operator->):
+        (JSC::DFG::RegisteredStructure::operator==):
+        (JSC::DFG::RegisteredStructure::operator!=):
+        (JSC::DFG::RegisteredStructure::operator bool):
+        (JSC::DFG::RegisteredStructure::RegisteredStructure):
+        (JSC::DFG::RegisteredStructure::createPrivate):
+        * dfg/DFGRegisteredStructureSet.cpp: Added.
+        (JSC::DFG::RegisteredStructureSet::filter):
+        (JSC::DFG::RegisteredStructureSet::filterArrayModes):
+        (JSC::DFG::RegisteredStructureSet::speculationFromStructures):
+        (JSC::DFG::RegisteredStructureSet::arrayModesFromStructures):
+        (JSC::DFG::RegisteredStructureSet::validateReferences):
+        * dfg/DFGRegisteredStructureSet.h: Added.
+        (JSC::DFG::RegisteredStructureSet::RegisteredStructureSet):
+        (JSC::DFG::RegisteredStructureSet::onlyStructure):
+        (JSC::DFG::RegisteredStructureSet::toStructureSet):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::emitGetCallee):
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compileFromCharCode):
+        (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+        (JSC::DFG::compileClampDoubleToByte):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        (JSC::DFG::SpeculativeJIT::compileArithRounding):
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+        (JSC::DFG::SpeculativeJIT::compileCreateActivation):
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileCreateScopedArguments):
+        (JSC::DFG::SpeculativeJIT::compileCreateClonedArguments):
+        (JSC::DFG::SpeculativeJIT::compileSpread):
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        (JSC::DFG::SpeculativeJIT::compileTypeOf):
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructorOnCell):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArray):
+        (JSC::DFG::SpeculativeJIT::speculateStringOrStringObject):
+        (JSC::DFG::SpeculativeJIT::compileMaterializeNewObject):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::TrustedImmPtr):
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::weakPointer):
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::operator MacroAssembler::TrustedImmPtr):
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::asIntptr):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::emitAllocateDestructibleObject):
+        (JSC::DFG::SpeculativeJIT::speculateStringObjectForStructure):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGStructureAbstractValue.cpp:
+        (JSC::DFG::StructureAbstractValue::assertIsRegistered):
+        (JSC::DFG::StructureAbstractValue::clobber):
+        (JSC::DFG::StructureAbstractValue::observeTransition):
+        (JSC::DFG::StructureAbstractValue::observeTransitions):
+        (JSC::DFG::StructureAbstractValue::add):
+        (JSC::DFG::StructureAbstractValue::merge):
+        (JSC::DFG::StructureAbstractValue::mergeNotTop):
+        (JSC::DFG::StructureAbstractValue::filter):
+        (JSC::DFG::StructureAbstractValue::filterSlow):
+        (JSC::DFG::StructureAbstractValue::filterClassInfoSlow):
+        (JSC::DFG::StructureAbstractValue::contains):
+        (JSC::DFG::StructureAbstractValue::isSubsetOf):
+        (JSC::DFG::StructureAbstractValue::isSupersetOf):
+        (JSC::DFG::StructureAbstractValue::overlaps):
+        (JSC::DFG::StructureAbstractValue::isSubClassOf):
+        (JSC::DFG::StructureAbstractValue::dumpInContext):
+        * dfg/DFGStructureAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::StructureAbstractValue):
+        (JSC::DFG::StructureAbstractValue::operator=):
+        (JSC::DFG::StructureAbstractValue::set):
+        (JSC::DFG::StructureAbstractValue::toStructureSet):
+        (JSC::DFG::StructureAbstractValue::at):
+        (JSC::DFG::StructureAbstractValue::operator[]):
+        (JSC::DFG::StructureAbstractValue::onlyStructure):
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::StructureRegistrationPhase): Deleted.
+        (JSC::DFG::StructureRegistrationPhase::run): Deleted.
+        (JSC::DFG::StructureRegistrationPhase::registerStructures): Deleted.
+        (JSC::DFG::StructureRegistrationPhase::registerStructure): Deleted.
+        (JSC::DFG::StructureRegistrationPhase::assertAreRegistered): Deleted.
+        (JSC::DFG::StructureRegistrationPhase::assertIsRegistered): Deleted.
+        (JSC::DFG::performStructureRegistration): Deleted.
+        * dfg/DFGStructureRegistrationPhase.h:
+        * dfg/DFGTransition.cpp:
+        (JSC::DFG::Transition::dumpInContext):
+        * dfg/DFGTransition.h:
+        (JSC::DFG::Transition::Transition):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::noticeStructureCheck):
+        (JSC::DFG::TypeCheckHoistingPhase::noticeStructureCheckAccountingForArrayMode):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallObjectConstructor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArraySlice):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateDirectArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateRest):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayBuffer):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileAllocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::compileReallocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiGetByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiPutByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMapBucket):
+        (JSC::FTL::DFG::LowerDFGToB3::compileOverridesHasInstance):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckStructureImmediate):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewRegexp):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLogShadowChickenTail):
+        (JSC::FTL::DFG::LowerDFGToB3::checkStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::checkInferredType):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateUninitializedContiguousJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::boolify):
+        (JSC::FTL::DFG::LowerDFGToB3::equalNullOrUndefined):
+        (JSC::FTL::DFG::LowerDFGToB3::lowCell):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateStringObjectForStructureID):
+        (JSC::FTL::DFG::LowerDFGToB3::weakPointer):
+        (JSC::FTL::DFG::LowerDFGToB3::frozenPointer):
+        (JSC::FTL::DFG::LowerDFGToB3::weakStructureID):
+        (JSC::FTL::DFG::LowerDFGToB3::weakStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::crash):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::weakPointer):
+        (JSC::FTL::Output::constIntPtr):
+
 2017-01-26  JF Bastien  <jfbastien@apple.com>
 
         OSR entry: delay outer-loop compilation when at inner-loop

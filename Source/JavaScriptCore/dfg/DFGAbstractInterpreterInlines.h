@@ -73,7 +73,7 @@ AbstractInterpreter<AbstractStateType>::booleanResult(
     if (isCellSpeculation(value.m_type) && !value.m_structure.isTop()) {
         bool allTrue = true;
         for (unsigned i = value.m_structure.size(); i--;) {
-            Structure* structure = value.m_structure[i];
+            RegisteredStructure structure = value.m_structure[i];
             if (structure->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->origin.semantic))
                 || structure->typeInfo().type() == StringType) {
                 allTrue = false;
@@ -152,7 +152,7 @@ inline bool isToThisAnIdentity(bool isStrictMode, AbstractValue& valueForNode)
 
     if ((isStrictMode || (valueForNode.m_type && !(valueForNode.m_type & ~SpecObject))) && valueForNode.m_structure.isFinite()) {
         bool overridesToThis = false;
-        valueForNode.m_structure.forEach([&](Structure* structure) {
+        valueForNode.m_structure.forEach([&](RegisteredStructure structure) {
             TypeInfo type = structure->typeInfo();
             ASSERT(type.isObject() || type.type() == StringType || type.type() == SymbolType);
             if (!isStrictMode)
@@ -1656,10 +1656,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
         // FIXME: We could do better here if we prove that the
         // incoming value has only a single structure.
-        StructureSet structureSet;
-        structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithInt32));
-        structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous));
-        structureSet.add(globalObject->originalArrayStructureForIndexingType(ArrayWithDouble));
+        RegisteredStructureSet structureSet;
+        structureSet.add(m_graph.registerStructure(globalObject->originalArrayStructureForIndexingType(ArrayWithInt32)));
+        structureSet.add(m_graph.registerStructure(globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous)));
+        structureSet.add(m_graph.registerStructure(globalObject->originalArrayStructureForIndexingType(ArrayWithDouble)));
 
         forNode(node).set(m_graph, structureSet);
         break;
@@ -1856,7 +1856,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // structure.
             filter(
                 node->child1(),
-                m_graph.globalObjectFor(node->origin.semantic)->stringObjectStructure());
+                m_graph.registerStructure(m_graph.globalObjectFor(node->origin.semantic)->stringObjectStructure()));
             break;
         case StringOrStringObjectUse:
             break;
@@ -1963,7 +1963,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case NewObject:
-        ASSERT(node->structure());
+        ASSERT(!!node->structure().get());
         forNode(node).set(m_graph, node->structure());
         break;
 
@@ -2121,7 +2121,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             JSGlobalObject* globalObject = nullptr;
             bool ok = true;
             forNode(node->child1()).m_structure.forEach(
-                [&] (Structure* structure) {
+                [&] (RegisteredStructure structure) {
                     if (!globalObject)
                         globalObject = structure->globalObject();
                     else if (globalObject != structure->globalObject())
@@ -2184,7 +2184,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (value.m_structure.isFinite()
             && (node->child1().useKind() == CellUse || !(value.m_type & ~SpecCell))) {
             UniquedStringImpl* uid = m_graph.identifiers()[node->identifierNumber()];
-            GetByIdStatus status = GetByIdStatus::computeFor(value.m_structure.set(), uid);
+            GetByIdStatus status = GetByIdStatus::computeFor(value.m_structure.toStructureSet(), uid);
             if (status.isSimple()) {
                 // Figure out what the result is going to be - is it TOP, a constant, or maybe
                 // something more subtle?
@@ -2238,7 +2238,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CheckStructure: {
         AbstractValue& value = forNode(node->child1());
 
-        StructureSet& set = node->structureSet();
+        const RegisteredStructureSet& set = node->structureSet();
         
         // It's interesting that we could have proven that the object has a larger structure set
         // that includes the set we're testing. In that case we could make the structure check
@@ -2270,11 +2270,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // https://bugs.webkit.org/show_bug.cgi?id=136988
         
         AbstractValue& value = forNode(node->child1());
-        StructureSet& set = node->structureSet();
+        const RegisteredStructureSet& set = node->structureSet();
         
         if (value.value()) {
             if (Structure* structure = jsDynamicCast<Structure*>(value.value())) {
-                if (set.contains(structure)) {
+                if (set.contains(m_graph.registerStructure(structure))) {
                     m_state.setFoundConstants(true);
                     break;
                 }
@@ -2289,7 +2289,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 node,
                 [&] (Node* incoming) {
                     if (Structure* structure = incoming->dynamicCastConstant<Structure*>()) {
-                        if (set.contains(structure))
+                        if (set.contains(m_graph.registerStructure(structure)))
                             return;
                     }
                     allGood = false;
@@ -2300,8 +2300,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
         }
             
-        if (Structure* structure = set.onlyStructure()) {
-            filterByValue(node->child1(), *m_graph.freeze(structure));
+        if (RegisteredStructure structure = set.onlyStructure()) {
+            filterByValue(node->child1(), *m_graph.freeze(structure.get()));
             break;
         }
         
@@ -2432,7 +2432,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
     case ArrayifyToStructure: {
         AbstractValue& value = forNode(node->child1());
-        if (value.m_structure.isSubsetOf(StructureSet(node->structure())))
+        if (value.m_structure.isSubsetOf(RegisteredStructureSet(node->structure())))
             m_state.setFoundConstants(true);
         clobberStructures(clobberLimit);
         
@@ -2546,10 +2546,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         UniquedStringImpl* uid = m_graph.identifiers()[node->multiGetByOffsetData().identifierNumber];
 
         AbstractValue base = forNode(node->child1());
-        StructureSet baseSet;
+        RegisteredStructureSet baseSet;
         AbstractValue result;
         for (const MultiGetByOffsetCase& getCase : node->multiGetByOffsetData().cases) {
-            StructureSet set = getCase.set();
+            RegisteredStructureSet set = getCase.set();
             set.filter(base);
             if (set.isEmpty())
                 continue;
@@ -2591,7 +2591,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case MultiPutByOffset: {
-        StructureSet newSet;
+        RegisteredStructureSet newSet;
         TransitionVector transitions;
         
         // Ordinarily you have to be careful with calling setFoundConstants()
@@ -2604,7 +2604,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
         for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
             const PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
-            StructureSet thisSet = variant.oldStructure();
+            RegisteredStructureSet thisSet = *m_graph.addStructureSet(variant.oldStructure());
             thisSet.filter(base);
             if (thisSet.isEmpty())
                 continue;
@@ -2614,11 +2614,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             resultingValue.merge(thisValue);
             
             if (variant.kind() == PutByIdVariant::Transition) {
-                if (thisSet.onlyStructure() != variant.newStructure()) {
+                RegisteredStructure newStructure = m_graph.registerStructure(variant.newStructure());
+                if (thisSet.onlyStructure() != newStructure) {
                     transitions.append(
-                        Transition(variant.oldStructureForTransition(), variant.newStructure()));
+                        Transition(m_graph.registerStructure(variant.oldStructureForTransition()), newStructure));
                 } // else this is really a replace.
-                newSet.add(variant.newStructure());
+                newSet.add(newStructure);
             } else {
                 ASSERT(variant.kind() == PutByIdVariant::Replace);
                 newSet.merge(thisSet);
@@ -2705,25 +2706,25 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (value.m_structure.isFinite()) {
             PutByIdStatus status = PutByIdStatus::computeFor(
                 m_graph.globalObjectFor(node->origin.semantic),
-                value.m_structure.set(),
+                value.m_structure.toStructureSet(),
                 m_graph.identifiers()[node->identifierNumber()],
                 node->op() == PutByIdDirect);
 
             if (status.isSimple()) {
-                StructureSet newSet;
+                RegisteredStructureSet newSet;
                 TransitionVector transitions;
                 
                 for (unsigned i = status.numVariants(); i--;) {
                     const PutByIdVariant& variant = status[i];
                     if (variant.kind() == PutByIdVariant::Transition) {
+                        RegisteredStructure newStructure = m_graph.registerStructure(variant.newStructure());
                         transitions.append(
                             Transition(
-                                variant.oldStructureForTransition(), variant.newStructure()));
-                        m_graph.registerStructure(variant.newStructure());
-                        newSet.add(variant.newStructure());
+                                m_graph.registerStructure(variant.oldStructureForTransition()), newStructure));
+                        newSet.add(newStructure);
                     } else {
                         ASSERT(variant.kind() == PutByIdVariant::Replace);
-                        newSet.merge(variant.oldStructure());
+                        newSet.merge(*m_graph.addStructureSet(variant.oldStructure()));
                     }
                 }
                 
@@ -3059,7 +3060,7 @@ void AbstractInterpreter<AbstractStateType>::clobberStructures(unsigned clobberL
 
 template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::observeTransition(
-    unsigned clobberLimit, Structure* from, Structure* to)
+    unsigned clobberLimit, RegisteredStructure from, RegisteredStructure to)
 {
     AbstractValue::TransitionObserver transitionObserver(from, to);
     forAllValues(clobberLimit, transitionObserver);
@@ -3132,7 +3133,7 @@ void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
 
 template<typename AbstractStateType>
 FiltrationResult AbstractInterpreter<AbstractStateType>::filter(
-    AbstractValue& value, const StructureSet& set, SpeculatedType admittedTypes)
+    AbstractValue& value, const RegisteredStructureSet& set, SpeculatedType admittedTypes)
 {
     if (value.filter(m_graph, set, admittedTypes) == FiltrationOK)
         return FiltrationOK;

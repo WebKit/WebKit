@@ -1,3 +1,25 @@
+2017-01-26  Saam Barati  <sbarati@apple.com>
+
+        Harden how the compiler references GC objects
+        https://bugs.webkit.org/show_bug.cgi?id=167277
+        <rdar://problem/30179506>
+
+        Reviewed by Filip Pizlo.
+
+        I made TinyPtrSet use bitwise_cast instead of static_cast
+        for its singleEntry() function so that it can work on pointer-like
+        types just as it can on actual pointer types.
+        
+        An example of where this matters is when you have TinyPtrSet<T>
+        where T is defined to be a struct which wraps a pointer, e.g:
+        
+        struct T {
+            void* m_pointer;
+        }
+
+        * wtf/TinyPtrSet.h:
+        (WTF::TinyPtrSet::singleEntry):
+
 2017-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Introduce an item-provider-based pasteboard wrapper

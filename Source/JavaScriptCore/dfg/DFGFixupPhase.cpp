@@ -2365,7 +2365,7 @@ private:
                 if (structure) {
                     m_insertionSet.insertNode(
                         m_indexInBlock, SpecNone, ArrayifyToStructure, origin,
-                        OpInfo(structure), OpInfo(arrayMode.asWord()), Edge(array, CellUse), indexEdge);
+                        OpInfo(m_graph.registerStructure(structure)), OpInfo(arrayMode.asWord()), Edge(array, CellUse), indexEdge);
                 } else {
                     m_insertionSet.insertNode(
                         m_indexInBlock, SpecNone, Arrayify, origin,

@@ -242,14 +242,14 @@ public:
     }
 
     template<typename T>
-    Jump branchWeakStructure(RelationalCondition cond, T left, Structure* weakStructure)
+    Jump branchWeakStructure(RelationalCondition cond, T left, RegisteredStructure weakStructure)
     {
+        Structure* structure = weakStructure.get();
 #if USE(JSVALUE64)
-        Jump result = branch32(cond, left, TrustedImm32(weakStructure->id()));
-        addWeakReference(weakStructure);
+        Jump result = branch32(cond, left, TrustedImm32(structure->id()));
         return result;
 #else
-        return branchWeakPtr(cond, left, weakStructure);
+        return branchPtr(cond, left, TrustedImmPtr(structure));
 #endif
     }
 

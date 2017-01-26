@@ -393,7 +393,7 @@ private:
                     }
                     ASSERT(structure);
 
-                    if (!node->structureSet().contains(structure))
+                    if (!node->structureSet().contains(m_graph.registerStructure(structure)))
                         escape(node->child1(), node);
                     break;
                 }

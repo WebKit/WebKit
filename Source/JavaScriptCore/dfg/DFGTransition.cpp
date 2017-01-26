@@ -34,7 +34,7 @@ namespace JSC { namespace DFG {
 
 void Transition::dumpInContext(PrintStream& out, DumpContext* context) const
 {
-    out.print(pointerDumpInContext(previous, context), " -> ", pointerDumpInContext(next, context));
+    out.print(pointerDumpInContext(previous.get(), context), " -> ", pointerDumpInContext(next.get(), context));
 }
 
 void Transition::dump(PrintStream& out) const
