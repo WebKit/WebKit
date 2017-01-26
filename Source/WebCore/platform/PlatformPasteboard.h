@@ -92,7 +92,7 @@ private:
     RetainPtr<NSPasteboard> m_pasteboard;
 #endif
 #if PLATFORM(IOS)
-    RetainPtr<UIPasteboard> m_pasteboard;
+    RetainPtr<id> m_pasteboard;
 #endif
 #if PLATFORM(GTK)
     GtkClipboard* m_clipboard;

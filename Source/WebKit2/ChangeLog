@@ -1,3 +1,36 @@
+2017-01-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for recognizing data interaction gestures in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=167444
+
+        Reviewed by Beth Dakin.
+
+        Adds a new data interaction gesture recognizer, responsible for determining when to begin data interaction. This
+        is a new long press gesture recognizer that fires simultaneously with the existing long press gesture
+        recognizers (for performing long-press actions, and for showing the tap highlight).
+
+        Also tweaks logic for determining whether selection gesture recognizers should fire to account for data
+        interaction -- in particular, we don't want selection gesture recognizers to cause the current selection to
+        change while data interaction is possible. See -hasSelectablePositionAtPoint and -pointIsInAssistedNode for
+        more details.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didPerformDataInteractionControllerOperation):
+        (WebKit::PageClientImpl::startDataInteractionWithImage):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _createAndConfigureLongPressGestureRecognizer]):
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView resignFirstResponder]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView pointIsInDataInteractionContent:]):
+        (-[WKContentView pointIsInAssistedNode:]):
+
 2017-01-26  Matt Rajca  <mrajca@apple.com>
 
         Notify clients when the user plays media otherwise prevented from autoplaying

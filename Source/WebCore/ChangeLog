@@ -1,3 +1,39 @@
+2017-01-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for recognizing data interaction gestures in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=167444
+
+        Reviewed by Beth Dakin.
+
+        Minor tweaks to pasteboard code to support data interaction.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/PlatformPasteboard.h:
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::read):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::PlatformPasteboard):
+
+        If the pasteboard is the special data interaction type, use the shared item provider pasteboard; otherwise,
+        fall back to the general pasteboard.
+
+        (WebCore::PlatformPasteboard::getTypes):
+
+        Actually populate the list of available types using available pasteboardTypes.
+
+        (WebCore::PlatformPasteboard::write):
+
+        Add UTF8 plaintext type (kUTTypeUTF8PlainText) when vending data representations of rich text.
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard setItems:]):
+        (-[WebItemProviderPasteboard dataForPasteboardType:inItemSet:]):
+        (-[WebItemProviderPasteboard valuesForPasteboardType:inItemSet:]):
+
+        Move off of deprecated methods when retrieving and supplying data to the item provider pasteboard.
+
+        * platform/spi/ios/UIKitSPI.h:
+
 2017-01-26  Matt Rajca  <mrajca@apple.com>
 
         Notify clients when the user plays media otherwise prevented from autoplaying

@@ -32,6 +32,7 @@
 #import "Pasteboard.h"
 #import "SharedBuffer.h"
 #import "SoftLinking.h"
+#import "WebItemProviderPasteboard.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 
 SOFT_LINK_FRAMEWORK(UIKit)
@@ -53,13 +54,25 @@ PlatformPasteboard::PlatformPasteboard()
 {
 }
 
+#if ENABLE(DATA_INTERACTION)
+PlatformPasteboard::PlatformPasteboard(const String& name)
+{
+    if (name == "data interaction pasteboard")
+        m_pasteboard = [WebItemProviderPasteboard sharedInstance];
+    else
+        m_pasteboard = [getUIPasteboardClass() generalPasteboard];
+}
+#else
 PlatformPasteboard::PlatformPasteboard(const String&)
     : m_pasteboard([getUIPasteboardClass() generalPasteboard])
 {
 }
+#endif
 
-void PlatformPasteboard::getTypes(Vector<String>&)
+void PlatformPasteboard::getTypes(Vector<String>& types)
 {
+    for (NSString *pasteboardType in [m_pasteboard pasteboardTypes])
+        types.append(pasteboardType);
 }
 
 RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String&)
@@ -145,7 +158,9 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
         [representations setValue:content.dataInRTFDFormat->createNSData().get() forKey:(NSString *)kUTTypeFlatRTFD];
     if (content.dataInRTFFormat)
         [representations setValue:content.dataInRTFFormat->createNSData().get() forKey:(NSString *)kUTTypeRTF];
+
     [representations setValue:content.dataInStringFormat forKey:(NSString *)kUTTypeText];
+    [representations setValue:[(NSString *)content.dataInStringFormat dataUsingEncoding:NSUTF8StringEncoding] forKey:(NSString *)kUTTypeUTF8PlainText];
     [m_pasteboard setItems:@[representations.get()]];
 }
 

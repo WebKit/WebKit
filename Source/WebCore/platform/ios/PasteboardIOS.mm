@@ -150,9 +150,14 @@ bool Pasteboard::canSmartReplace()
 void Pasteboard::read(PasteboardPlainText& text)
 {
     PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
+    text.text = strategy.readStringFromPasteboard(0, kUTTypeURL, m_pasteboardName);
+    if (!text.text.isNull() && !text.text.isEmpty()) {
+        text.isURL = true;
+        return;
+    }
+
     text.text = strategy.readStringFromPasteboard(0, kUTTypeText, m_pasteboardName);
-    if (text.text.isEmpty())
-        text.text = strategy.readStringFromPasteboard(0, kUTTypeURL, m_pasteboardName);
+    text.isURL = false;
 }
 
 static NSArray* supportedImageTypes()

@@ -30,6 +30,7 @@
 
 #import "SoftLinking.h"
 #import "UIKitSPI.h"
+#import <Foundation/NSProgress.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
@@ -131,8 +132,10 @@ static BOOL isImageType(NSString *type)
             continue;
         UIItemProvider *itemProvider = [[getUIItemProviderClass() alloc] init];
         for (NSString *typeIdentifier in item) {
-            [itemProvider registerDataRepresentationForTypeIdentifier:typeIdentifier loadHandler:^(UIItemProviderDataLoadCompletionBlock completionBlock, NSDictionary *) {
+            [itemProvider registerDataRepresentationForTypeIdentifier:typeIdentifier options:nil loadHandler:^NSProgress *(UIItemProviderDataLoadCompletionBlock completionBlock)
+            {
                 completionBlock(item[typeIdentifier], nil);
+                return [NSProgress discreteProgressWithTotalUnitCount:100];
             }];
         }
         [providers addObject:itemProvider];
@@ -149,7 +152,7 @@ static BOOL isImageType(NSString *type)
         if (!provider)
             return;
 
-        NSData *data = [provider copyDataRepresentationForTypeIdentifier:pasteboardType options:nil error:nil];
+        NSData *data = [provider copyDataRepresentationForTypeIdentifier:pasteboardType error:nil];
         if (data)
             [values addObject:data];
     }];
@@ -165,28 +168,29 @@ static BOOL isImageType(NSString *type)
         if (!provider)
             return;
 
-        if (isRichTextType(pasteboardType) && [provider canInstantiateObjectOfClass:[NSAttributedString class]]) {
-            [values addObject:[provider instantiateObjectOfClass:[NSAttributedString class] options:nil error:nil]];
+        // FIXME: These should be refactored to use asynchronous calls.
+        if (isColorType(pasteboardType) && [provider canCreateObjectOfClass:[getUIColorClass() class]]) {
+            [values addObject:[provider createObjectOfClass:[getUIColorClass() class] error:nil]];
             return;
         }
 
-        if (isStringType(pasteboardType) && [provider canInstantiateObjectOfClass:[NSString class]]) {
-            [values addObject:[provider instantiateObjectOfClass:[NSString class] options:nil error:nil]];
+        if (isImageType(pasteboardType) && [provider canCreateObjectOfClass:[getUIImageClass() class]]) {
+            [values addObject:[provider createObjectOfClass:[getUIImageClass() class] error:nil]];
             return;
         }
 
-        if (isColorType(pasteboardType) && [provider canInstantiateObjectOfClass:[getUIColorClass() class]]) {
-            [values addObject:[provider instantiateObjectOfClass:[getUIColorClass() class] options:nil error:nil]];
+        if (isURLType(pasteboardType) && [provider canCreateObjectOfClass:[NSURL class]]) {
+            [values addObject:[provider createObjectOfClass:[NSURL class] error:nil]];
             return;
         }
 
-        if (isURLType(pasteboardType) && [provider canInstantiateObjectOfClass:[NSURL class]]) {
-            [values addObject:[provider instantiateObjectOfClass:[NSURL class] options:nil error:nil]];
+        if (isRichTextType(pasteboardType) && [provider canCreateObjectOfClass:[NSAttributedString class]]) {
+            [values addObject:[provider createObjectOfClass:[NSAttributedString class] error:nil]];
             return;
         }
 
-        if (isImageType(pasteboardType) && [provider canInstantiateObjectOfClass:[getUIImageClass() class]]) {
-            [values addObject:[provider instantiateObjectOfClass:[getUIImageClass() class] options:nil error:nil]];
+        if (isStringType(pasteboardType) && [provider canCreateObjectOfClass:[NSString class]]) {
+            [values addObject:[provider createObjectOfClass:[NSString class] error:nil]];
             return;
         }
 

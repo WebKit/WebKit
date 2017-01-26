@@ -765,10 +765,12 @@ Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& messa
 #if ENABLE(DATA_INTERACTION)
 void PageClientImpl::didPerformDataInteractionControllerOperation()
 {
+    [m_contentView _didPerformDataInteractionControllerOperation];
 }
 
-void PageClientImpl::startDataInteractionWithImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& image, bool isLink)
+void PageClientImpl::startDataInteractionWithImage(const IntPoint& clientPosition, const ShareableBitmap::Handle& image, bool isLink)
 {
+    [m_contentView _startDataInteractionWithImage:ShareableBitmap::create(image)->makeCGImageCopy() atClientPosition:CGPointMake(clientPosition.x(), clientPosition.y()) isLink:isLink];
 }
 #endif
 

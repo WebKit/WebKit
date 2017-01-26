@@ -67,6 +67,7 @@
 #import <WebCore/DataDetectorsCoreSPI.h>
 #import <WebCore/DataDetectorsUISPI.h>
 #import <WebCore/FloatQuad.h>
+#import <WebCore/NotImplemented.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/Path.h>
 #import <WebCore/PathUtilities.h>
@@ -79,6 +80,11 @@
 #import <WebCore/WebEvent.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WK2 should not include WebKit headers!
 #import <wtf/RetainPtr.h>
+
+#if ENABLE(DATA_INTERACTION)
+#import <WebCore/PlatformPasteboard.h>
+#import <WebCore/WebItemProviderPasteboard.h>
+#endif
 
 @interface UIEvent(UIEventInternal)
 @property (nonatomic, assign) UIKeyboardInputFlags _inputFlags;
@@ -493,6 +499,10 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
 @implementation WKContentView (WKInteraction)
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKContentViewInteractionAdditions.mm>)
+#import <WebKitAdditions/WKContentViewInteractionAdditions.mm>
+#endif
+
 static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularity)
 {
     switch (granularity) {
@@ -513,6 +523,15 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [_doubleTapGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_doubleTapGestureRecognizer.get()];
     [_singleTapGestureRecognizer requireGestureRecognizerToFail:_doubleTapGestureRecognizer.get()];
+}
+
+- (void)_createAndConfigureLongPressGestureRecognizer
+{
+    _longPressGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_longPressRecognized:)]);
+    [_longPressGestureRecognizer setDelay:tapAndHoldDelay];
+    [_longPressGestureRecognizer setDelegate:self];
+    [_longPressGestureRecognizer _setRequiresQuietImpulse:YES];
+    [self addGestureRecognizer:_longPressGestureRecognizer.get()];
 }
 
 - (void)setupInteraction
@@ -557,11 +576,16 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [_highlightLongPressGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
 
-    _longPressGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_longPressRecognized:)]);
-    [_longPressGestureRecognizer setDelay:tapAndHoldDelay];
-    [_longPressGestureRecognizer setDelegate:self];
-    [_longPressGestureRecognizer _setRequiresQuietImpulse:YES];
-    [self addGestureRecognizer:_longPressGestureRecognizer.get()];
+    [self _createAndConfigureLongPressGestureRecognizer];
+
+#if ENABLE(DATA_INTERACTION)
+    _dataInteractionGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_dataInteractionGestureRecognizer:)]);
+    [_dataInteractionGestureRecognizer setDelay:0.25];
+    [_dataInteractionGestureRecognizer setDelegate:self];
+    [_dataInteractionGestureRecognizer _setRequiresQuietImpulse:YES];
+    [self addGestureRecognizer:_dataInteractionGestureRecognizer.get()];
+    [self setupDataInteractionDelegates];
+#endif
 
     _twoFingerSingleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_twoFingerSingleTapGestureRecognized:)]);
     [_twoFingerSingleTapGestureRecognizer setAllowableMovement:60];
@@ -637,6 +661,12 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [_twoFingerSingleTapGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 
+#if ENABLE(DATA_INTERACTION)
+    [_dataInteractionGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_dataInteractionGestureRecognizer.get()];
+    [self teardownDataInteractionDelegates];
+#endif
+
     _inspectorNodeSearchEnabled = NO;
     if (_inspectorNodeSearchGestureRecognizer) {
         [_inspectorNodeSearchGestureRecognizer setDelegate:nil];
@@ -664,6 +694,9 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [self removeGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
+#if ENABLE(DATA_INTERACTION)
+    [self removeGestureRecognizer:_dataInteractionGestureRecognizer.get()];
+#endif
 }
 
 - (void)_addDefaultGestureRecognizers
@@ -675,6 +708,9 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [self addGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
+#if ENABLE(DATA_INTERACTION)
+    [self addGestureRecognizer:_dataInteractionGestureRecognizer.get()];
+#endif
 }
 
 - (UIView*)unscaledView
@@ -812,6 +848,9 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 
 - (BOOL)resignFirstResponder
 {
+#if ENABLE(DATA_INTERACTION)
+    _shouldHandleLongPressActionAfterDataInteraction = NO;
+#endif
     // FIXME: Maybe we should call resignFirstResponder on the superclass
     // and do nothing if the return value is NO.
 
@@ -1190,6 +1229,14 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _previewGestureRecognizer.get()))
         return YES;
 
+#if ENABLE(DATA_INTERACTION)
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _dataInteractionGestureRecognizer.get()))
+        return YES;
+
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _longPressGestureRecognizer.get(), _dataInteractionGestureRecognizer.get()))
+        return YES;
+#endif
+
     return NO;
 }
 
@@ -1360,6 +1407,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         }
     }
 
+#if ENABLE(DATA_INTERACTION)
+    if (gestureRecognizer == _dataInteractionGestureRecognizer)
+        return [self pointIsInDataInteractionContent:point];
+#endif
+
     return YES;
 }
 
@@ -1390,8 +1442,36 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     InteractionInformationRequest request(roundedIntPoint(point));
     [self ensurePositionInformationIsUpToDate:request];
+
+#if ENABLE(DATA_INTERACTION)
+    if (_positionInformation.hasDataInteractionAtPosition) {
+        // If the position might initiate a data interaction, we don't want to consider the content at this position to be selectable.
+        // FIXME: This should be renamed to something more precise, such as textSelectionShouldRecognizeGestureAtPoint:
+        return NO;
+    }
+#endif
+
     return _positionInformation.isSelectable;
 }
+
+#if ENABLE(DATA_INTERACTION)
+
+- (BOOL)pointIsInDataInteractionContent:(CGPoint)point
+{
+    InteractionInformationRequest request(roundedIntPoint(point));
+    [self ensurePositionInformationIsUpToDate:request];
+
+    if (_positionInformation.isImage)
+        return YES;
+
+    // FIXME: Add support for links.
+    if (_positionInformation.isLink)
+        return NO;
+
+    return _positionInformation.hasDataInteractionAtPosition;
+}
+
+#endif
 
 - (BOOL)pointIsNearMarkedText:(CGPoint)point
 {
@@ -1404,6 +1484,15 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     InteractionInformationRequest request(roundedIntPoint(point));
     [self ensurePositionInformationIsUpToDate:request];
+
+#if ENABLE(DATA_INTERACTION)
+    if (_positionInformation.hasDataInteractionAtPosition) {
+        // If the position might initiate data interaction, we don't want to change the selection.
+        // FIXME: This should be renamed to something more precise, such as textInteractionShouldRecognizeGestureAtPoint:
+        return NO;
+    }
+#endif
+
     return _positionInformation.nodeAtPositionIsAssistedNode;
 }
 

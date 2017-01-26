@@ -44,6 +44,10 @@
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKContentViewInteractionAdditions.h>)
+#import <WebKitAdditions/WKContentViewInteractionAdditions.h>
+#endif
+
 namespace API {
 class OpenPanelParameters;
 }
@@ -179,11 +183,22 @@ struct WKAutoCorrectionData {
 
     BOOL _resigningFirstResponder;
     BOOL _needsDeferredEndScrollingSelectionUpdate;
+
+#if ENABLE(DATA_INTERACTION)
+    RetainPtr<UILongPressGestureRecognizer> _dataInteractionGestureRecognizer;
+    RetainPtr<UIImage> _currentDataInteractionImage;
+    CGPoint _currentDataInteractionOrigin;
+    BOOL _shouldHandleLongPressActionAfterDataInteraction;
+#endif
 }
 
 @end
 
-@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UIWebTouchEventsGestureRecognizerDelegate, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWKInteractionViewProtocol, WKFileUploadPanelDelegate, WKActionSheetAssistantDelegate>
+@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UIWebTouchEventsGestureRecognizerDelegate, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWKInteractionViewProtocol, WKFileUploadPanelDelegate, WKActionSheetAssistantDelegate
+#if ENABLE(DATA_INTERACTION)
+    , WKViewDataInteractionSourceDelegate, WKDataInteractionSessionDelegate, WKViewDataInteractionDestinationDelegate, WKDataInteractionItemVisualTarget
+#endif
+>
 
 @property (nonatomic, readonly) CGPoint lastInteractionLocation;
 @property (nonatomic, readonly) BOOL isEditable;
@@ -232,6 +247,12 @@ struct WKAutoCorrectionData {
 - (NSArray *)_dataDetectionResults;
 - (NSArray<NSValue *> *)_uiTextSelectionRects;
 - (void)accessibilityRetrieveSpeakSelectionContent;
+
+#if ENABLE(DATA_INTERACTION)
+- (void)_didPerformDataInteractionControllerOperation;
+- (void)_startDataInteractionWithImage:(RetainPtr<CGImageRef>)image atClientPosition:(CGPoint)clientPosition isLink:(BOOL)isLink;
+#endif
+
 @end
 
 @interface WKContentView (WKTesting)
