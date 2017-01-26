@@ -1,5 +1,41 @@
 2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211120. rdar://problem/30151767
+
+    2017-01-24  Andreas Kling  <akling@apple.com>
+
+            Add memory footprint reporting using diagnostic logging.
+            <https://webkit.org/b/167285>
+            <rdar://problem/30151767>
+
+            Reviewed by Chris Dumez.
+
+            Add some basic logging of physical memory footprint post-load and post-backgrounding.
+            The logging works similarly to the CPU usage logging, though with slightly longer
+            delays to allow the measurement to stabilize.
+
+            * page/DiagnosticLoggingKeys.cpp:
+            (WebCore::DiagnosticLoggingKeys::memoryUsageKey):
+            (WebCore::DiagnosticLoggingKeys::memoryUsageToDiagnosticLoggingKey):
+            * page/DiagnosticLoggingKeys.h:
+            * page/PerformanceLogging.cpp:
+            (WebCore::PerformanceLogging::physicalFootprint):
+            * page/PerformanceLogging.h:
+            * page/PerformanceMonitor.cpp:
+            (WebCore::PerformanceMonitor::PerformanceMonitor):
+            (WebCore::PerformanceMonitor::didFinishLoad):
+            (WebCore::PerformanceMonitor::activityStateChanged):
+            (WebCore::PerformanceMonitor::measurePostLoadMemoryUsage):
+            (WebCore::PerformanceMonitor::measurePostBackgroundingMemoryUsage):
+            * page/PerformanceMonitor.h:
+            * page/Settings.h:
+            (WebCore::Settings::isPostLoadMemoryUsageMeasurementEnabled):
+            (WebCore::Settings::isPostBackgroundingMemoryUsageMeasurementEnabled):
+            * page/cocoa/PerformanceLoggingCocoa.mm:
+            (WebCore::PerformanceLogging::physicalFootprint):
+
+2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211125. rdar://problem/30074665
 
     2017-01-24  Brent Fulgham  <bfulgham@apple.com>

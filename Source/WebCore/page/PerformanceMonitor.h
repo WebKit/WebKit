@@ -48,6 +48,9 @@ private:
     void measurePerActivityStateCPUUsage();
     void measureCPUUsageInActivityState(ActivityStateForCPUSampling);
 
+    void measurePostLoadMemoryUsage();
+    void measurePostBackgroundingMemoryUsage();
+
     Page& m_page;
 
     Timer m_postPageLoadCPUUsageTimer;
@@ -56,6 +59,9 @@ private:
     std::optional<CPUTime> m_postBackgroundingCPUTime;
     Timer m_perActivityStateCPUUsageTimer;
     std::optional<CPUTime> m_perActivityStateCPUTime;
+
+    Timer m_postPageLoadMemoryUsageTimer;
+    Timer m_postBackgroundingMemoryUsageTimer;
 };
 
 }

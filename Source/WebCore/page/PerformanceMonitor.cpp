@@ -32,6 +32,7 @@
 #include "DiagnosticLoggingKeys.h"
 #include "Logging.h"
 #include "Page.h"
+#include "PerformanceLogging.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -42,6 +43,8 @@ static const std::chrono::seconds cpuUsageMeasurementDelay { 5 };
 static const std::chrono::seconds postLoadCPUUsageMeasurementDuration { 10 };
 static const std::chrono::minutes backgroundCPUUsageMeasurementDuration { 5 };
 static const std::chrono::minutes cpuUsageSamplingInterval { 10 };
+
+static const std::chrono::seconds memoryUsageMeasurementDelay { 10 };
 
 static inline ActivityStateForCPUSampling activityStateForCPUSampling(ActivityState::Flags state)
 {
@@ -57,6 +60,8 @@ PerformanceMonitor::PerformanceMonitor(Page& page)
     , m_postPageLoadCPUUsageTimer(*this, &PerformanceMonitor::measurePostLoadCPUUsage)
     , m_postBackgroundingCPUUsageTimer(*this, &PerformanceMonitor::measurePostBackgroundingCPUUsage)
     , m_perActivityStateCPUUsageTimer(*this, &PerformanceMonitor::measurePerActivityStateCPUUsage)
+    , m_postPageLoadMemoryUsageTimer(*this, &PerformanceMonitor::measurePostLoadMemoryUsage)
+    , m_postBackgroundingMemoryUsageTimer(*this, &PerformanceMonitor::measurePostBackgroundingMemoryUsage)
 {
     ASSERT(!page.isUtilityPage());
 
@@ -70,6 +75,7 @@ void PerformanceMonitor::didStartProvisionalLoad()
 {
     m_postLoadCPUTime = std::nullopt;
     m_postPageLoadCPUUsageTimer.stop();
+    m_postPageLoadMemoryUsageTimer.stop();
 }
 
 void PerformanceMonitor::didFinishLoad()
@@ -79,6 +85,10 @@ void PerformanceMonitor::didFinishLoad()
         m_postLoadCPUTime = std::nullopt;
         m_postPageLoadCPUUsageTimer.startOneShot(cpuUsageMeasurementDelay);
     }
+
+    // Likewise for post-load memory usage measurement.
+    if (Settings::isPostLoadMemoryUsageMeasurementEnabled() && m_page.isOnlyNonUtilityPage())
+        m_postPageLoadMemoryUsageTimer.startOneShot(memoryUsageMeasurementDelay);
 }
 
 void PerformanceMonitor::activityStateChanged(ActivityState::Flags oldState, ActivityState::Flags newState)
@@ -103,6 +113,13 @@ void PerformanceMonitor::activityStateChanged(ActivityState::Flags oldState, Act
             m_perActivityStateCPUUsageTimer.startRepeating(cpuUsageSamplingInterval);
         }
     }
+
+    if (Settings::isPostBackgroundingMemoryUsageMeasurementEnabled() && visibilityChanged) {
+        if (newState & ActivityState::IsVisible)
+            m_postBackgroundingMemoryUsageTimer.stop();
+        else if (m_page.isOnlyNonUtilityPage())
+            m_postBackgroundingMemoryUsageTimer.startOneShot(memoryUsageMeasurementDelay);
+    }
 }
 
 void PerformanceMonitor::measurePostLoadCPUUsage()
@@ -125,6 +142,32 @@ void PerformanceMonitor::measurePostLoadCPUUsage()
     double cpuUsage = cpuTime.value().percentageCPUUsageSince(*m_postLoadCPUTime);
     RELEASE_LOG_IF_ALLOWED(PerformanceLogging, "measurePostLoadCPUUsage: Process was using %.1f%% CPU after the page load.", cpuUsage);
     m_page.diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::postPageLoadKey(), DiagnosticLoggingKeys::cpuUsageKey(), DiagnosticLoggingKeys::foregroundCPUUsageToDiagnosticLoggingKey(cpuUsage), ShouldSample::No);
+}
+
+void PerformanceMonitor::measurePostLoadMemoryUsage()
+{
+    if (!m_page.isOnlyNonUtilityPage())
+        return;
+
+    std::optional<uint64_t> memoryUsage = PerformanceLogging::physicalFootprint();
+    if (!memoryUsage)
+        return;
+
+    RELEASE_LOG_IF_ALLOWED(PerformanceLogging, "measurePostLoadMemoryUsage: Process was using %llu bytes of memory after the page load.", memoryUsage.value());
+    m_page.diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::postPageLoadKey(), DiagnosticLoggingKeys::memoryUsageKey(), DiagnosticLoggingKeys::memoryUsageToDiagnosticLoggingKey(memoryUsage.value()), ShouldSample::No);
+}
+
+void PerformanceMonitor::measurePostBackgroundingMemoryUsage()
+{
+    if (!m_page.isOnlyNonUtilityPage())
+        return;
+
+    std::optional<uint64_t> memoryUsage = PerformanceLogging::physicalFootprint();
+    if (!memoryUsage)
+        return;
+
+    RELEASE_LOG_IF_ALLOWED(PerformanceLogging, "measurePostBackgroundingMemoryUsage: Process was using %llu bytes of memory after becoming non visible.", memoryUsage.value());
+    m_page.diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::postPageBackgroundingKey(), DiagnosticLoggingKeys::memoryUsageKey(), DiagnosticLoggingKeys::memoryUsageToDiagnosticLoggingKey(memoryUsage.value()), ShouldSample::No);
 }
 
 void PerformanceMonitor::measurePostBackgroundingCPUUsage()

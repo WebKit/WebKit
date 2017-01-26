@@ -41,6 +41,7 @@ public:
     static String canCacheKey();
     static String cannotSuspendActiveDOMObjectsKey();
     WEBCORE_EXPORT static String cpuUsageKey();
+    WEBCORE_EXPORT static String memoryUsageKey();
     WEBCORE_EXPORT static String createSharedBufferFailedKey();
     WEBCORE_EXPORT static String deltaKey();
     static String deniedByClientKey();
@@ -159,6 +160,7 @@ public:
     WEBCORE_EXPORT static String webViewKey();
     WEBCORE_EXPORT static String zoomedKey();
 
+    WEBCORE_EXPORT static String memoryUsageToDiagnosticLoggingKey(uint64_t memoryUsage);
     WEBCORE_EXPORT static String foregroundCPUUsageToDiagnosticLoggingKey(double cpuUsage);
     WEBCORE_EXPORT static String backgroundCPUUsageToDiagnosticLoggingKey(double cpuUsage);
 
