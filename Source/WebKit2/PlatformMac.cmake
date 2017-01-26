@@ -387,6 +387,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/Cocoa"
     "${WEBKIT2_DIR}/UIProcess/Launcher/mac"
     "${WEBKIT2_DIR}/UIProcess/Scrolling"
+    "${WEBKIT2_DIR}/UIProcess/ios"
     "${WEBKIT2_DIR}/Platform/cg"
     "${WEBKIT2_DIR}/Platform/mac"
     "${WEBKIT2_DIR}/Platform/unix"
