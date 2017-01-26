@@ -1,3 +1,27 @@
+2017-01-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        ImageBufferCairo: cairo_image_surface should use bmalloc-allocated memory
+        https://bugs.webkit.org/show_bug.cgi?id=165751
+
+        Reviewed by Carlos Garcia Campos.
+
+        Allocate the underlying memory for cairo_image_surface objects through FastMalloc.
+        This way we can steer such large allocations away from the default libc allocator.
+
+        Objects of this class can create Cairo surfaces that need as much as 4MB of memory
+        for the underlying pixel buffer. Allocating such objects through the default
+        libc allocator can lead to increased memory usage because of non-optimal allocation
+        strategy in libc. In contrast, bmalloc performs large allocations by directly using
+        mmap() to reserve the necessary memory.
+
+        The improvements can be significant. On nytimes.com, with the threaded version of
+        the CoordinatedGraphics system, the memory consumption can drop by roughly 20%.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::ImageBuffer): Zero-allocate the necessary memory via FastMalloc.
+        Tie that memory lifetime to the lifetime of the surface by using
+        cairo_surface_set_user_data() with the specific user data key.
+
 2017-01-26  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] WebProcess from WebKitGtk+ 2.15.3 SIGSEVs in WebCore::GraphicsContext3D::drawArrays(unsigned int, int, int) at Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:740
