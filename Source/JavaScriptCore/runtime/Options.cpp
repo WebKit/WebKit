@@ -312,7 +312,8 @@ static void overrideDefaults()
         Options::maximumMutatorUtilization() = 0.6;
         Options::concurrentGCMaxHeadroom() = 1.4;
         Options::concurrentGCPeriodMS() = 10;
-    }
+    } else
+        Options::useStochasticMutatorScheduler() = true;
 }
 
 static void recomputeDependentOptions()
