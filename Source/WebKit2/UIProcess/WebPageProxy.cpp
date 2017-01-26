@@ -3353,6 +3353,11 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
         }
     }
 
+#if ENABLE(POINTER_LOCK)
+    if (frame->isMainFrame())
+        requestPointerUnlock();
+#endif
+
     m_pageLoadState.commitChanges();
     if (m_navigationClient) {
         if (frame->isMainFrame())

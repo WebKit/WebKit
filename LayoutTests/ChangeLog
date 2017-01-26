@@ -1,3 +1,14 @@
+2017-01-26  Jeremy Jones  <jeremyj@apple.com>
+
+        Request pointer unlock on navigation and re-enable pointer-lock tests for WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=166765
+
+        Reviewed by Tim Horton.
+
+        Enabled pointer lock tests for wk2 now that pointer lock state is being reset after each test.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-01-26  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add support for -webkit-hyphenate-limit-lines

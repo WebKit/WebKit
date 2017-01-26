@@ -1,3 +1,16 @@
+2017-01-26  Jeremy Jones  <jeremyj@apple.com>
+
+        Request pointer unlock on navigation and re-enable pointer-lock tests for WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=166765
+
+        Reviewed by Tim Horton.
+
+        When the main frame is load is committed, pointer lock should end.
+        This resets pointer lock state between tests and allows tests to succeed.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+
 2017-01-26  Chris Dumez  <cdumez@apple.com>
 
         Fix WebGL diagnostic logging
