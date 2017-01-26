@@ -102,7 +102,6 @@ typedef void (*WKPageDecidePolicyForUserMediaPermissionRequestCallback)(WKPageRe
 typedef void (*WKCheckUserMediaPermissionCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin, WKUserMediaPermissionCheckRef devicesRequest, const void *clientInfo);
 typedef void (*WKPageDidClickAutoFillButtonCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageMediaSessionMetadataDidChangeCallback)(WKPageRef page, WKMediaSessionMetadataRef metadata, const void* clientInfo);
-typedef void (*WKDidPlayMediaPreventedFromPlayingWithoutUserGesture)(WKPageRef page, const void* clientInfo);
 typedef void (*WKFullscreenMayReturnToInlineCallback)(WKPageRef page, const void* clientInfo);
 
 typedef void (*WKRequestPointerLockCallback)(WKPageRef page, const void* clientInfo);
@@ -726,7 +725,6 @@ typedef struct WKPageUIClientV8 {
     // Version 8.
     WKRequestPointerLockCallback                                        requestPointerLock;
     WKDidLosePointerLockCallback                                        didLosePointerLock;
-    WKDidPlayMediaPreventedFromPlayingWithoutUserGesture                didPlayMediaPreventedFromPlayingWithoutUserGesture;
 } WKPageUIClientV8;
     
 #ifdef __cplusplus

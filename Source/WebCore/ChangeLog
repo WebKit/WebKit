@@ -1,3 +1,16 @@
+2017-01-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r211193.
+
+        This change broke internal builds.
+
+        Reverted changeset:
+
+        "Notify clients when the user plays media otherwise prevented
+        from autoplaying"
+        https://bugs.webkit.org/show_bug.cgi?id=167390
+        http://trac.webkit.org/changeset/211193
+
 2017-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add infrastructure to support data interaction in WebKit2

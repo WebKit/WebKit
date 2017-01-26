@@ -39,10 +39,6 @@
 
 #if WK_API_ENABLED
 
-@interface WKWebView ()
-- (WKPageRef)_pageForTesting;
-@end
-
 static bool doneCompiling;
 static bool receivedAlert;
 static size_t alertCount;
@@ -216,60 +212,5 @@ TEST(WebKit2, WebsitePoliciesAutoplayEnabled)
     [webView loadRequest:requestWithoutAudio];
     [webView waitForMessage:@"autoplayed"];
 }
-
-#if PLATFORM(MAC)
-static void didPlayMediaPreventedFromPlayingWithoutUserGesture(WKPageRef page, const void* clientInfo)
-{
-    receivedAlert = true;
-}
-
-TEST(WebKit2, WebsitePoliciesPlayAfterPreventedAutoplay)
-{
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 336, 276) configuration:configuration.get()]);
-
-    auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
-    [delegate setAutoplayPolicy:_WKWebsiteAutoplayPolicyDeny];
-    [webView setNavigationDelegate:delegate.get()];
-
-    WKPageUIClientV8 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
-
-    uiClient.base.version = 8;
-    uiClient.didPlayMediaPreventedFromPlayingWithoutUserGesture = didPlayMediaPreventedFromPlayingWithoutUserGesture;
-
-    WKPageSetPageUIClient([webView _pageForTesting], &uiClient.base);
-    NSPoint playButtonClickPoint = NSMakePoint(20, 256);
-
-    receivedAlert = false;
-    NSURLRequest *jsPlayRequest = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"js-play-with-controls" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:jsPlayRequest];
-    [webView waitForMessage:@"loaded"];
-    [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
-    [webView mouseUpAtPoint:playButtonClickPoint];
-    TestWebKitAPI::Util::run(&receivedAlert);
-
-    receivedAlert = false;
-    [webView loadHTMLString:@"" baseURL:nil];
-
-    NSURLRequest *autoplayRequest = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-with-controls" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:autoplayRequest];
-    [webView waitForMessage:@"loaded"];
-    [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
-    [webView mouseUpAtPoint:playButtonClickPoint];
-    TestWebKitAPI::Util::run(&receivedAlert);
-
-    receivedAlert = false;
-    [webView loadHTMLString:@"" baseURL:nil];
-
-    NSURLRequest *noAutoplayRequest = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"no-autoplay-with-controls" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:noAutoplayRequest];
-    [webView waitForMessage:@"loaded"];
-    [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
-    [webView mouseUpAtPoint:playButtonClickPoint];
-    [webView waitForMessage:@"played"];
-    ASSERT_FALSE(receivedAlert);
-}
-#endif
 
 #endif

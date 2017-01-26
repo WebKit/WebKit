@@ -152,7 +152,6 @@ public:
     virtual void isPlayingAudioDidChange(WebKit::WebPageProxy&) { }
     virtual void didBeginCaptureSession() { }
     virtual void didEndCaptureSession() { }
-    virtual void didPlayMediaPreventedFromPlayingWithoutUserGesture(WebKit::WebPageProxy&) { }
 
 #if ENABLE(MEDIA_SESSION)
     virtual void mediaSessionMetadataDidChange(WebKit::WebPageProxy&, WebKit::WebMediaSessionMetadata*) { }

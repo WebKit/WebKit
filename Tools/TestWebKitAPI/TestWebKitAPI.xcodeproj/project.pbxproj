@@ -509,9 +509,6 @@
 		C95984F41E36BC6B002C0D45 /* autoplay-check.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C95984F21E36BC55002C0D45 /* autoplay-check.html */; };
 		C95984F51E36BC6B002C0D45 /* autoplay-no-audio-check.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C95984F31E36BC55002C0D45 /* autoplay-no-audio-check.html */; };
 		C95984F71E36BCEF002C0D45 /* test-without-audio-track.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = C95984F61E36BCD7002C0D45 /* test-without-audio-track.mp4 */; };
-		C99B675C1E39721A00FC6C80 /* autoplay-with-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C99B675A1E3971FC00FC6C80 /* autoplay-with-controls.html */; };
-		C99B675D1E39722000FC6C80 /* js-play-with-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C99B675B1E3971FC00FC6C80 /* js-play-with-controls.html */; };
-		C99B675F1E39736F00FC6C80 /* no-autoplay-with-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C99B675E1E39735C00FC6C80 /* no-autoplay-with-controls.html */; };
 		CD59F53419E9110D00CF1835 /* file-with-mse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53219E910AA00CF1835 /* file-with-mse.html */; };
 		CD59F53519E9110D00CF1835 /* test-mse.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53319E910BC00CF1835 /* test-mse.mp4 */; };
 		CD78E11D1DB7EA660014A2DE /* FullscreenDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD78E11A1DB7EA360014A2DE /* FullscreenDelegate.mm */; };
@@ -610,9 +607,6 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
-				C99B675F1E39736F00FC6C80 /* no-autoplay-with-controls.html in Copy Resources */,
-				C99B675D1E39722000FC6C80 /* js-play-with-controls.html in Copy Resources */,
-				C99B675C1E39721A00FC6C80 /* autoplay-with-controls.html in Copy Resources */,
 				C95984F71E36BCEF002C0D45 /* test-without-audio-track.mp4 in Copy Resources */,
 				C95984F41E36BC6B002C0D45 /* autoplay-check.html in Copy Resources */,
 				C95984F51E36BC6B002C0D45 /* autoplay-no-audio-check.html in Copy Resources */,
@@ -1280,9 +1274,6 @@
 		C95984F21E36BC55002C0D45 /* autoplay-check.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplay-check.html"; sourceTree = "<group>"; };
 		C95984F31E36BC55002C0D45 /* autoplay-no-audio-check.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplay-no-audio-check.html"; sourceTree = "<group>"; };
 		C95984F61E36BCD7002C0D45 /* test-without-audio-track.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "test-without-audio-track.mp4"; sourceTree = "<group>"; };
-		C99B675A1E3971FC00FC6C80 /* autoplay-with-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplay-with-controls.html"; sourceTree = "<group>"; };
-		C99B675B1E3971FC00FC6C80 /* js-play-with-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "js-play-with-controls.html"; sourceTree = "<group>"; };
-		C99B675E1E39735C00FC6C80 /* no-autoplay-with-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "no-autoplay-with-controls.html"; sourceTree = "<group>"; };
 		CD225C071C45A69200140761 /* ParsedContentRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentRange.cpp; sourceTree = "<group>"; };
 		CD5393C71757BA9700C07123 /* MD5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MD5.cpp; sourceTree = "<group>"; };
 		CD5393C91757BAC400C07123 /* SHA1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SHA1.cpp; sourceTree = "<group>"; };
@@ -1970,7 +1961,6 @@
 				76E182DE15475A8300F1FADD /* auto-submitting-form.html */,
 				C95984F21E36BC55002C0D45 /* autoplay-check.html */,
 				C95984F31E36BC55002C0D45 /* autoplay-no-audio-check.html */,
-				C99B675A1E3971FC00FC6C80 /* autoplay-with-controls.html */,
 				7C486BA01AA1254B003F6F9B /* bundle-file.html */,
 				9BD4239B1E04BFD000200395 /* chinese-character-with-image.html */,
 				1A50AA1F1A2A4EA500F4C345 /* close-from-within-create-page.html */,
@@ -1991,7 +1981,6 @@
 				4A410F4D19AF7BEF002EBAB5 /* getUserMedia.html */,
 				BCBD372E125ABBE600D2C29F /* icon.png */,
 				CE3524F51B142BBB0028A7C5 /* input-focus-blur.html */,
-				C99B675B1E3971FC00FC6C80 /* js-play-with-controls.html */,
 				8349D3C31DB9724F004A9F65 /* link-with-download-attribute.html */,
 				378E647816326FDF00B6C676 /* link-with-title.html */,
 				9361002814DC957B0061379D /* lots-of-iframes.html */,
@@ -2002,7 +1991,6 @@
 				51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */,
 				7A1458FB1AD5C03500E06772 /* mouse-button-listener.html */,
 				33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */,
-				C99B675E1E39735C00FC6C80 /* no-autoplay-with-controls.html */,
 				CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */,
 				F6FDDDD514241C48004F1729 /* push-state.html */,
 				CEBABD481B71687C0051210A /* should-open-external-schemes.html */,

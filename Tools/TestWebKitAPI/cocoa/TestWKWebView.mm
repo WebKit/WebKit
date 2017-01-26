@@ -120,11 +120,6 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     }
 #endif
 }
-
-- (void)_mouseUpAtPoint:(NSPoint)point
-{
-    [self sendEvent:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:point modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:self.windowNumber context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:1 pressure:0]];
-}
 #endif // PLATFORM(MAC)
 
 - (BOOL)isKeyWindow
@@ -253,11 +248,6 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 - (void)mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure
 {
     [_hostWindow _mouseDownAtPoint:point simulatePressure:simulatePressure];
-}
-
-- (void)mouseUpAtPoint:(NSPoint)point
-{
-    [_hostWindow _mouseUpAtPoint:point];
 }
 
 - (void)typeCharacter:(char)character {

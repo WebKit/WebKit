@@ -2235,14 +2235,6 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.didLosePointerLock(toAPI(page), m_client.base.clientInfo);
         }
 #endif
-
-        void didPlayMediaPreventedFromPlayingWithoutUserGesture(WebPageProxy& page) override
-        {
-            if (!m_client.didPlayMediaPreventedFromPlayingWithoutUserGesture)
-                return;
-
-            m_client.didPlayMediaPreventedFromPlayingWithoutUserGesture(toAPI(&page), m_client.base.clientInfo);
-        }
     };
 
     toImpl(pageRef)->setUIClient(std::make_unique<UIClient>(wkClient));

@@ -279,7 +279,6 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKPageConfiguration
         0, // fullscreenMayReturnToInline
         requestPointerLock,
         0,
-        0, // didPlayMediaPreventedFromPlayingWithoutUserGesture
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
     
@@ -552,7 +551,6 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         0, // fullscreenMayReturnToInline
         requestPointerLock,
         0,
-        0, // didPlayMediaPreventedFromPlayingWithoutUserGesture
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 

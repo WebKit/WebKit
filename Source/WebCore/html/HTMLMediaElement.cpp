@@ -3167,8 +3167,7 @@ bool HTMLMediaElement::playInternal()
         scheduleResolvePendingPlayPromises();
 
     if (ScriptController::processingUserGestureForMedia() && m_preventedFromPlayingWithoutUserGesture) {
-        if (Page* page = document().page())
-            page->chrome().client().didPlayMediaPreventedFromPlayingWithoutUserGesture();
+        // FIXME: notify clients a user gesture was made and started playback of an element that was otherwise prevented from playing.
         m_preventedFromPlayingWithoutUserGesture = false;
     }
 
