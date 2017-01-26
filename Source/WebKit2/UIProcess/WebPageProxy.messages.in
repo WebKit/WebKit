@@ -439,6 +439,7 @@ messages -> WebPageProxy {
 #endif
 
     IsPlayingMediaDidChange(unsigned state, uint64_t sourceElementID)
+    DidPlayMediaPreventedFromPlayingWithoutUserGesture()
 
 #if ENABLE(MEDIA_SESSION)
     HasMediaSessionWithActiveMediaElementsDidChange(bool state)

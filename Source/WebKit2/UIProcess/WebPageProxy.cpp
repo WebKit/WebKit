@@ -6527,6 +6527,11 @@ void WebPageProxy::focusedContentMediaElementDidChange(uint64_t elementID)
 }
 #endif
 
+void WebPageProxy::didPlayMediaPreventedFromPlayingWithoutUserGesture()
+{
+    m_uiClient->didPlayMediaPreventedFromPlayingWithoutUserGesture(*this);
+}
+
 #if PLATFORM(MAC)
 void WebPageProxy::removeNavigationGestureSnapshot()
 {
