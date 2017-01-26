@@ -650,6 +650,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     platform/graphics/ca/cocoa
 
+    platform/mediastream/libwebrtc
+
     platform/network/cf
     platform/network/cocoa
     platform/network/mac

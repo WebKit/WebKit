@@ -1,3 +1,10 @@
+2017-01-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Mac][cmake] Unreviewed speculative buildfix after r211161.
+        https://bugs.webkit.org/show_bug.cgi?id=167294
+
+        * PlatformMac.cmake:
+
 2017-01-26  Zan Dobersek  <zdobersek@igalia.com>
 
         ImageBufferCairo: cairo_image_surface should use bmalloc-allocated memory
