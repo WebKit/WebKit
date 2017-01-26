@@ -47,7 +47,7 @@ public:
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
-    bool isShared() const;
+    JS_EXPORT_PRIVATE bool isShared() const;
     ArrayBufferSharingMode sharingMode() const;
     
     DECLARE_EXPORT_INFO;

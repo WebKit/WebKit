@@ -1,3 +1,19 @@
+2017-01-25  Filip Pizlo  <fpizlo@apple.com>
+
+        jsc.cpp should have the $.agent stuff for testing SAB
+        https://bugs.webkit.org/show_bug.cgi?id=167431
+
+        Reviewed by Saam Barati.
+        
+        Add a very basic test of Atomics using $.agent. This is based on
+        LayoutTests/workers/sab/simple.html.
+
+        * stress/lars-sab-workers.js: Added.
+        (startWorker):
+        (resources):
+        (wake):
+        (else):
+
 2017-01-24  Filip Pizlo  <fpizlo@apple.com>
 
         Atomics.store should return the int-converted value according to toInteger
