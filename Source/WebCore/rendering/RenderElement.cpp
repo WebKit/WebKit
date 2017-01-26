@@ -1083,9 +1083,6 @@ void RenderElement::willBeRemovedFromTree()
         removeLayers(layer);
     }
 
-    if (m_style.hasFixedBackgroundImage() && !frame().settings().fixedBackgroundsPaintRelativeToDocument())
-        view().frameView().removeSlowRepaintObject(this);
-
     if (isOutOfFlowPositioned() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(*this);
 
@@ -1112,6 +1109,9 @@ inline void RenderElement::clearLayoutRootIfNeeded() const
 
 void RenderElement::willBeDestroyed()
 {
+    if (m_style.hasFixedBackgroundImage() && !frame().settings().fixedBackgroundsPaintRelativeToDocument())
+        view().frameView().removeSlowRepaintObject(this);
+
     animation().cancelAnimations(*this);
 
     destroyLeftoverChildren();
@@ -1129,6 +1129,7 @@ void RenderElement::willBeDestroyed()
         }
     }
 #endif
+
     clearLayoutRootIfNeeded();
 }
 

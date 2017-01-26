@@ -760,4 +760,9 @@ void AnimationController::scrollWasUpdated()
 }
 #endif
 
+bool AnimationController::hasAnimations() const
+{
+    return m_data->hasAnimations();
+}
+
 } // namespace WebCore

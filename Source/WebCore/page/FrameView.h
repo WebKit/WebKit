@@ -587,6 +587,9 @@ public:
 
     bool shouldPlaceBlockDirectionScrollbarOnLeft() const final;
 
+    void willDestroyRenderTree();
+    void didDestroyRenderTree();
+
 protected:
     bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) override;
     void scrollContentsSlowPath(const IntRect& updateRect) override;

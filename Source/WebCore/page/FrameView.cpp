@@ -636,6 +636,27 @@ Ref<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientation)
     return ScrollView::createScrollbar(orientation);
 }
 
+void FrameView::willDestroyRenderTree()
+{
+    detachCustomScrollbars();
+    m_layoutRoot = nullptr;
+}
+
+void FrameView::didDestroyRenderTree()
+{
+    ASSERT(!m_layoutRoot);
+    ASSERT(m_widgetsInRenderTree.isEmpty());
+
+    // If the render tree is destroyed below FrameView::updateEmbeddedObjects(), there will still be a null sentinel in the set.
+    // Everything else should have removed itself as the tree was felled.
+    ASSERT(!m_embeddedObjectsToUpdate || m_embeddedObjectsToUpdate->isEmpty() || (m_embeddedObjectsToUpdate->size() == 1 && m_embeddedObjectsToUpdate->first() == nullptr));
+
+    ASSERT(!m_viewportConstrainedObjects || m_viewportConstrainedObjects->isEmpty());
+    ASSERT(!m_slowRepaintObjects || m_slowRepaintObjects->isEmpty());
+
+    ASSERT(!frame().animation().hasAnimations());
+}
+
 void FrameView::setContentsSize(const IntSize& size)
 {
     if (size == contentsSize())
