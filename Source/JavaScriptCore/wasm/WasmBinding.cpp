@@ -28,15 +28,19 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "AssemblyHelpers.h"
-#include "JSCJSValueInlines.h"
+#include "CCallHelpers.h"
+#include "FrameTracers.h"
+#include "JITExceptions.h"
+#include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "LinkBuffer.h"
+#include "NativeErrorConstructor.h"
 #include "WasmCallingConvention.h"
+#include "WasmExceptionType.h"
 
 namespace JSC { namespace Wasm {
 
-typedef AssemblyHelpers JIT;
+typedef CCallHelpers JIT;
 
 static void materializeImportJSCell(VM* vm, JIT& jit, unsigned importIndex, GPRReg result)
 {
@@ -61,6 +65,55 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
     jit.store64(JIT::TrustedImm32(0), JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * static_cast<int>(sizeof(Register)))); // FIXME Stop using 0 as codeBlocks. https://bugs.webkit.org/show_bug.cgi?id=165321
     jit.storePtr(JIT::TrustedImmPtr(vm->webAssemblyToJSCallee.get()), JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
 
+
+    {
+        bool hasBadI64Use = false;
+        hasBadI64Use |= signature->returnType() == I64;
+        for (unsigned argNum = 0; argNum < argCount && !hasBadI64Use; ++argNum) {
+            Type argType = signature->argument(argNum);
+            switch (argType) {
+            case Void:
+            case Func:
+            case Anyfunc:
+                RELEASE_ASSERT_NOT_REACHED();
+
+            case I64: {
+                hasBadI64Use = true;
+                break;
+            }
+
+            default:
+                break;
+            }
+        }
+
+        if (hasBadI64Use) {
+            jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
+            jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+            auto call = jit.call();
+            jit.jumpToExceptionHandler();
+
+            void (*throwBadI64)(ExecState*) = [] (ExecState* exec) -> void {
+                VM* vm = &exec->vm();
+                NativeCallFrameTracer tracer(vm, exec);
+
+                {
+                    auto throwScope = DECLARE_THROW_SCOPE(*vm);
+                    JSGlobalObject* globalObject = vm->topJSWebAssemblyInstance->globalObject();
+                    auto* error = ErrorInstance::create(exec, *vm, globalObject->typeErrorConstructor()->errorStructure(), ASCIILiteral("i64 not allowed as return type or argument to an imported function"));
+                    throwException(exec, throwScope, error);
+                }
+
+                genericUnwind(vm, exec);
+                ASSERT(!!vm->callFrameForCatch);
+            };
+
+            LinkBuffer linkBuffer(*vm, jit, GLOBAL_THUNK_ID);
+            linkBuffer.link(call, throwBadI64);
+            return FINALIZE_CODE(linkBuffer, ("WebAssembly->JavaScript invalid i64 use in import[%i]", importIndex));
+        }
+    }
+
     // Here we assume that the JS calling convention saves at least all the wasm callee saved. We therefore don't need to save and restore more registers since the wasm callee already took care of this.
     RegisterSet missingCalleeSaves = wasmCC.m_calleeSaveRegisters;
     missingCalleeSaves.exclude(jsCC.m_calleeSaveRegisters);
@@ -74,26 +127,6 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
     const unsigned stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), numberOfBytesForCall);
     jit.subPtr(MacroAssembler::TrustedImm32(stackOffset), MacroAssembler::stackPointerRegister);
     JIT::Address calleeFrame = CCallHelpers::Address(MacroAssembler::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
-    
-    for (unsigned argNum = 0; argNum < argCount; ++argNum) {
-        Type argType = signature->argument(argNum);
-        switch (argType) {
-        case Void:
-        case Func:
-        case Anyfunc:
-        case I64: {
-            // FIXME: Figure out the correct behavior here. I suspect we want such a stub to throw an exception immediately.
-            // if called. https://bugs.webkit.org/show_bug.cgi?id=165991
-            jit.breakpoint();
-            LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
-            return FINALIZE_CODE(patchBuffer, ("WebAssembly import[%i] stub for signature %i", importIndex, signatureIndex));
-        }
-        case I32:
-        case F32:
-        case F64:
-            continue;
-        }
-    }
 
     // FIXME make these loops which switch on Signature if there are many arguments on the stack. It'll otherwise be huge for huge signatures. https://bugs.webkit.org/show_bug.cgi?id=165547
     
@@ -220,10 +253,9 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
 
     materializeImportJSCell(vm, jit, importIndex, importJSCellGPRReg);
 
-    uint64_t thisArgument = ValueUndefined; // FIXME what does the WebAssembly spec say this should be? https://bugs.webkit.org/show_bug.cgi?id=165471
     jit.store64(importJSCellGPRReg, calleeFrame.withOffset(CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
     jit.store32(JIT::TrustedImm32(numberOfParameters), calleeFrame.withOffset(CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset));
-    jit.store64(JIT::TrustedImm64(thisArgument), calleeFrame.withOffset(CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register))));
+    jit.store64(JIT::TrustedImm64(ValueUndefined), calleeFrame.withOffset(CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register))));
 
     // FIXME Tail call if the wasm return type is void and no registers were spilled. https://bugs.webkit.org/show_bug.cgi?id=165488
 
@@ -240,6 +272,8 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
     JIT::Call slowCall = jit.nearCall();
     done.link(&jit);
 
+    CCallHelpers::JumpList exceptionChecks;
+
     switch (signature->returnType()) {
     case Void:
         // Discard.
@@ -249,53 +283,98 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
         // For the JavaScript embedding, imports with these types in their signature return are a WebAssembly.Module validation error.
         RELEASE_ASSERT_NOT_REACHED();
         break;
-    case I32: {
-        jit.move(JIT::TrustedImm64(TagTypeNumber), GPRInfo::returnValueGPR2);
-        JIT::Jump checkJSInt32 = jit.branch64(JIT::AboveOrEqual, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
-        jit.move64ToDouble(GPRInfo::returnValueGPR, FPRInfo::returnValueFPR);
-        jit.truncateDoubleToInt32(FPRInfo::returnValueFPR, GPRInfo::returnValueGPR);
-        JIT::Jump checkJSNumber = jit.branchTest64(JIT::NonZero, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
-        jit.abortWithReason(AHIsNotJSNumber); // FIXME Coerce when the values aren't what we expect, instead of aborting. https://bugs.webkit.org/show_bug.cgi?id=165480
-        checkJSInt32.link(&jit);
-        jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
-        checkJSNumber.link(&jit);
-        break;
-    }
     case I64: {
-        jit.move(JIT::TrustedImm64(TagTypeNumber), GPRInfo::returnValueGPR2);
-        JIT::Jump checkJSInt32 = jit.branch64(JIT::AboveOrEqual, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
-        jit.move64ToDouble(GPRInfo::returnValueGPR, FPRInfo::returnValueFPR);
-        jit.truncateDoubleToInt64(FPRInfo::returnValueFPR, GPRInfo::returnValueGPR);
-        JIT::Jump checkJSNumber = jit.branchTest64(JIT::NonZero, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
-        jit.abortWithReason(AHIsNotJSNumber); // FIXME Coerce when the values aren't what we expect, instead of aborting. https://bugs.webkit.org/show_bug.cgi?id=165480
-        checkJSInt32.link(&jit);
+        RELEASE_ASSERT_NOT_REACHED(); // Handled above.
+    }
+    case I32: {
+        CCallHelpers::JumpList done;
+        CCallHelpers::JumpList slowPath;
+
+        slowPath.append(jit.branchIfNotNumber(GPRInfo::returnValueGPR, DoNotHaveTagRegisters));
+        slowPath.append(jit.branchIfNotInt32(JSValueRegs(GPRInfo::returnValueGPR), DoNotHaveTagRegisters));
         jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
-        checkJSNumber.link(&jit);
+        done.append(jit.jump());
+
+        slowPath.link(&jit);
+        jit.setupArgumentsWithExecState(GPRInfo::returnValueGPR);
+        auto call = jit.call();
+        exceptionChecks.append(jit.emitJumpIfException());
+
+        int32_t (*convertToI32)(ExecState*, JSValue) = [] (ExecState* exec, JSValue v) -> int32_t { 
+            VM* vm = &exec->vm();
+            NativeCallFrameTracer tracer(vm, exec);
+            return v.toInt32(exec);
+        };
+        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            linkBuffer.link(call, convertToI32);
+        });
+
+        done.link(&jit);
         break;
     }
     case F32: {
+        CCallHelpers::JumpList done;
+        auto notANumber = jit.branchIfNotNumber(GPRInfo::returnValueGPR, DoNotHaveTagRegisters);
+        auto isDouble = jit.branchIfNotInt32(JSValueRegs(GPRInfo::returnValueGPR), DoNotHaveTagRegisters);
+        // We're an int32
+        jit.signExtend32ToPtr(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
+        jit.convertInt64ToFloat(GPRInfo::returnValueGPR, FPRInfo::returnValueFPR);
+        done.append(jit.jump());
+
+        isDouble.link(&jit);
         jit.move(JIT::TrustedImm64(TagTypeNumber), GPRInfo::returnValueGPR2);
+        jit.add64(GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
         jit.move64ToDouble(GPRInfo::returnValueGPR, FPRInfo::returnValueFPR);
         jit.convertDoubleToFloat(FPRInfo::returnValueFPR, FPRInfo::returnValueFPR);
-        JIT::Jump checkJSInt32 = jit.branch64(JIT::AboveOrEqual, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
-        JIT::Jump checkJSNumber = jit.branchTest64(JIT::NonZero, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
-        jit.abortWithReason(AHIsNotJSNumber); // FIXME Coerce when the values aren't what we expect, instead of aborting. https://bugs.webkit.org/show_bug.cgi?id=165480
-        checkJSInt32.link(&jit);
-        jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
-        jit.convertInt64ToFloat(GPRInfo::returnValueGPR, FPRInfo::returnValueFPR);
-        checkJSNumber.link(&jit);
+        done.append(jit.jump());
+
+        notANumber.link(&jit);
+        jit.setupArgumentsWithExecState(GPRInfo::returnValueGPR);
+        auto call = jit.call();
+        exceptionChecks.append(jit.emitJumpIfException());
+
+        float (*convertToF32)(ExecState*, JSValue) = [] (ExecState* exec, JSValue v) -> float { 
+            VM* vm = &exec->vm();
+            NativeCallFrameTracer tracer(vm, exec);
+            return static_cast<float>(v.toNumber(exec));
+        };
+        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            linkBuffer.link(call, convertToF32);
+        });
+
+        done.link(&jit);
         break;
     }
     case F64: {
-        jit.move(JIT::TrustedImm64(TagTypeNumber), GPRInfo::returnValueGPR2);
-        jit.move64ToDouble(GPRInfo::returnValueGPR, FPRInfo::returnValueFPR);
-        JIT::Jump checkJSInt32 = jit.branch64(JIT::AboveOrEqual, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
-        JIT::Jump checkJSNumber = jit.branchTest64(JIT::NonZero, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
-        jit.abortWithReason(AHIsNotJSNumber); // FIXME Coerce when the values aren't what we expect, instead of aborting. https://bugs.webkit.org/show_bug.cgi?id=165480
-        checkJSInt32.link(&jit);
-        jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
+        CCallHelpers::JumpList done;
+        auto notANumber = jit.branchIfNotNumber(GPRInfo::returnValueGPR, DoNotHaveTagRegisters);
+        auto isDouble = jit.branchIfNotInt32(JSValueRegs(GPRInfo::returnValueGPR), DoNotHaveTagRegisters);
+        // We're an int32
+        jit.signExtend32ToPtr(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
         jit.convertInt64ToDouble(GPRInfo::returnValueGPR, FPRInfo::returnValueFPR);
-        checkJSNumber.link(&jit);
+        done.append(jit.jump());
+
+        isDouble.link(&jit);
+        jit.move(JIT::TrustedImm64(TagTypeNumber), GPRInfo::returnValueGPR2);
+        jit.add64(GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
+        jit.move64ToDouble(GPRInfo::returnValueGPR, FPRInfo::returnValueFPR);
+        done.append(jit.jump());
+
+        notANumber.link(&jit);
+        jit.setupArgumentsWithExecState(GPRInfo::returnValueGPR);
+        auto call = jit.call();
+        exceptionChecks.append(jit.emitJumpIfException());
+
+        double (*convertToF64)(ExecState*, JSValue) = [] (ExecState* exec, JSValue v) -> double { 
+            VM* vm = &exec->vm();
+            NativeCallFrameTracer tracer(vm, exec);
+            return v.toNumber(exec);
+        };
+        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            linkBuffer.link(call, convertToF64);
+        });
+
+        done.link(&jit);
         break;
     }
     }
@@ -303,13 +382,36 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
     jit.emitFunctionEpilogue();
     jit.ret();
 
+    if (!exceptionChecks.empty()) {
+        exceptionChecks.link(&jit);
+        jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
+        jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        auto call = jit.call();
+        jit.jumpToExceptionHandler();
+
+        void (*doUnwinding)(ExecState*) = [] (ExecState* exec) -> void {
+            VM* vm = &exec->vm();
+            NativeCallFrameTracer tracer(vm, exec);
+            genericUnwind(vm, exec);
+            ASSERT(!!vm->callFrameForCatch);
+        };
+
+        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            linkBuffer.link(call, doUnwinding);
+        });
+    }
+
     LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
     patchBuffer.link(slowCall, FunctionPtr(vm->getCTIStub(linkCallThunkGenerator).code().executableAddress()));
     CodeLocationLabel callReturnLocation(patchBuffer.locationOfNearCall(slowCall));
     CodeLocationLabel hotPathBegin(patchBuffer.locationOf(targetToCheck));
     CodeLocationNearCall hotPathOther = patchBuffer.locationOfNearCall(fastCall);
     callLinkInfo->setCallLocations(callReturnLocation, hotPathBegin, hotPathOther);
+#if !defined(NDEBUG)
     String signatureDescription = SignatureInformation::get(vm, signatureIndex)->toString();
+#else
+    String signatureDescription;
+#endif
     return FINALIZE_CODE(patchBuffer, ("WebAssembly->JavaScript import[%i] %s", importIndex, signatureDescription.ascii().data()));
 }
 

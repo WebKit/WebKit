@@ -354,6 +354,11 @@ void AssemblyHelpers::callExceptionFuzz()
     }
 }
 
+AssemblyHelpers::Jump AssemblyHelpers::emitJumpIfException()
+{
+    return emitExceptionCheck(NormalExceptionCheck);
+}
+
 AssemblyHelpers::Jump AssemblyHelpers::emitExceptionCheck(ExceptionCheckKind kind, ExceptionJumpWidth width)
 {
     callExceptionFuzz();

@@ -976,6 +976,7 @@ auto B3IRGenerator::addCallIndirect(const Signature* signature, SignatureIndex s
             patchpoint->append(calleeCode, ValueRep::SomeRegister);
 
             patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
                 jit.call(params[returnType == Void ? 0 : 1].gpr());
             });
         });

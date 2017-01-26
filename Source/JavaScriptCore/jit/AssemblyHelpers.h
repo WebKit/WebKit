@@ -1185,6 +1185,7 @@ public:
     JS_EXPORT_PRIVATE Jump emitExceptionCheck(
         ExceptionCheckKind = NormalExceptionCheck, ExceptionJumpWidth = NormalJumpWidth);
     JS_EXPORT_PRIVATE Jump emitNonPatchableExceptionCheck();
+    Jump emitJumpIfException();
 
 #if ENABLE(SAMPLING_COUNTERS)
     static void emitCount(MacroAssembler& jit, AbstractSamplingCounter& counter, int32_t increment = 1)
