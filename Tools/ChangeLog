@@ -1,3 +1,19 @@
+2017-01-26  Per Arne Vollan  <pvollan@apple.com>
+
+        Crash when setting custom scale factor.
+        https://bugs.webkit.org/show_bug.cgi?id=167369
+
+        Reviewed by Sam Weinig.
+
+        Added API test.
+
+        * TestWebKitAPI/PlatformWin.cmake:
+        * TestWebKitAPI/Tests/WebKit/win/ScaleWebView.cpp: Added.
+        (TestWebKitAPI::WebKitCreateInstance):
+        (TestWebKitAPI::ScaleWebView::SetUp):
+        (TestWebKitAPI::ScaleWebView::TearDown):
+        (TestWebKitAPI::TEST_F):
+
 2017-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-benchmark nests MotionMark results by the suite name twice

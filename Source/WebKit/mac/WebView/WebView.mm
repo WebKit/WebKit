@@ -4941,7 +4941,7 @@ static Vector<String> toStringVector(NSArray* patterns)
 
     _private->customDeviceScaleFactor = customScaleFactor;
 
-    if (oldScaleFactor != [self _deviceScaleFactor])
+    if (_private->page && oldScaleFactor != [self _deviceScaleFactor])
         _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
 }
 #endif

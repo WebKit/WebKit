@@ -1,3 +1,15 @@
+2017-01-26  Per Arne Vollan  <pvollan@apple.com>
+
+        Crash when setting custom scale factor.
+        https://bugs.webkit.org/show_bug.cgi?id=167369
+
+        Reviewed by Sam Weinig.
+
+        Add null pointer check.
+
+        * WebView/WebView.mm:
+        (-[WebView _setCustomBackingScaleFactor:]):
+
 2017-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor drag and drop implementation on Mac

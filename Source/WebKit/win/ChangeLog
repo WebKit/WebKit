@@ -1,3 +1,15 @@
+2017-01-26  Per Arne Vollan  <pvollan@apple.com>
+
+        Crash when setting custom scale factor.
+        https://bugs.webkit.org/show_bug.cgi?id=167369
+
+        Reviewed by Sam Weinig.
+
+        Add null pointer check.
+
+        * WebView.cpp:
+        (WebView::setCustomBackingScaleFactor):
+
 2017-01-24  Youenn Fablet  <youennf@gmail.com>
 
         [WebRTC] Introduce libwebrtc abstraction for WK1/WK2 implementations

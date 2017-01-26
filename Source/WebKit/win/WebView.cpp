@@ -7757,7 +7757,7 @@ HRESULT WebView::setCustomBackingScaleFactor(double customScaleFactor)
 
     m_customDeviceScaleFactor = customScaleFactor;
 
-    if (oldScaleFactor != deviceScaleFactor())
+    if (m_page && oldScaleFactor != deviceScaleFactor())
         m_page->setDeviceScaleFactor(deviceScaleFactor());
 
     return S_OK;
