@@ -57,12 +57,10 @@ void InferredTypeTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ConcurrentJSLocker locker(inferredTypeTable->m_lock);
     
     for (auto& entry : inferredTypeTable->m_table) {
-        auto entryValue = entry.value;
-
-        if (!entryValue)
+        if (!entry.value)
             continue;
-        if (entryValue->isRelevant())
-            visitor.append(entryValue);
+        if (entry.value->isRelevant())
+            visitor.append(entry.value);
         else
             entry.value.clear();
     }
@@ -71,20 +69,16 @@ void InferredTypeTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 InferredType* InferredTypeTable::get(const ConcurrentJSLocker&, UniquedStringImpl* uid)
 {
     auto iter = m_table.find(uid);
-    if (iter == m_table.end())
-        return nullptr;
-
-    InferredType* entryValue = iter->value.get();
-    if (!entryValue)
+    if (iter == m_table.end() || !iter->value)
         return nullptr;
 
     // Take this opportunity to prune invalidated types.
-    if (!entryValue->isRelevant()) {
+    if (!iter->value->isRelevant()) {
         iter->value.clear();
         return nullptr;
     }
 
-    return entryValue;
+    return iter->value.get();
 }
 
 InferredType* InferredTypeTable::get(UniquedStringImpl* uid)
@@ -105,14 +99,10 @@ bool InferredTypeTable::willStoreValue(
     
     if (age == OldProperty) {
         TableType::iterator iter = m_table.find(propertyName.uid());
-        if (iter == m_table.end())
+        if (iter == m_table.end() || !iter->value)
             return false; // Absence on replace => top.
-
-        InferredType* entryValue = iter->value.get();
-        if (!entryValue)
-            return false;
         
-        if (entryValue->willStoreValue(vm, propertyName, value))
+        if (iter->value->willStoreValue(vm, propertyName, value))
             return true;
         
         iter->value.clear();
@@ -124,17 +114,14 @@ bool InferredTypeTable::willStoreValue(
         ConcurrentJSLocker locker(m_lock);
         result = m_table.add(propertyName.uid(), WriteBarrier<InferredType>());
     }
-    InferredType* entryValue = result.iterator->value.get();
-
     if (result.isNewEntry) {
         InferredType* inferredType = InferredType::create(vm);
         WTF::storeStoreFence();
         result.iterator->value.set(vm, this, inferredType);
-        entryValue = inferredType;
-    } else if (!entryValue)
+    } else if (!result.iterator->value)
         return false;
     
-    if (entryValue->willStoreValue(vm, propertyName, value))
+    if (result.iterator->value->willStoreValue(vm, propertyName, value))
         return true;
     
     result.iterator->value.clear();
@@ -146,15 +133,10 @@ void InferredTypeTable::makeTop(VM& vm, PropertyName propertyName, StoredPropert
     // The algorithm here relies on the fact that only one thread modifies the hash map.
     if (age == OldProperty) {
         TableType::iterator iter = m_table.find(propertyName.uid());
-        if (iter == m_table.end())
+        if (iter == m_table.end() || !iter->value)
             return; // Absence on replace => top.
 
-        InferredType* entryValue = iter->value.get();
-
-        if (!entryValue)
-            return;
-
-        entryValue->makeTop(vm, propertyName);
+        iter->value->makeTop(vm, propertyName);
         iter->value.clear();
         return;
     }
