@@ -114,6 +114,7 @@ struct PrintInfo;
 
 - (void)_navigationGestureDidBegin;
 - (void)_navigationGestureDidEnd;
+- (BOOL)_isNavigationSwipeGestureRecognizer:(UIGestureRecognizer *)recognizer;
 
 @property (nonatomic, readonly) BOOL _isBackground;
 

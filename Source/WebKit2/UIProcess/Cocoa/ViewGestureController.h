@@ -39,6 +39,7 @@
 OBJC_CLASS CALayer;
 
 #if PLATFORM(IOS)
+OBJC_CLASS UIGestureRecognizer;
 OBJC_CLASS UIView;
 OBJC_CLASS WKSwipeTransitionController;
 OBJC_CLASS _UINavigationInteractiveTransitionBase;
@@ -105,6 +106,7 @@ public:
 
     bool isPhysicallySwipingLeft(SwipeDirection) const;
 #else
+    bool isNavigationSwipeGestureRecognizer(UIGestureRecognizer *) const;
     void installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView);
     void beginSwipeGesture(_UINavigationInteractiveTransitionBase *, SwipeDirection);
     void endSwipeGesture(WebBackForwardListItem* targetItem, _UIViewControllerTransitionContext *, bool cancelled);

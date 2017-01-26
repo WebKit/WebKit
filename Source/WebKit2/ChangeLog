@@ -1,3 +1,30 @@
+2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211121. rdar://problem/22938927
+
+    2017-01-24  Tim Horton  <timothy_horton@apple.com>
+
+            Script gets touch events even after navigation swipe begins
+            https://bugs.webkit.org/show_bug.cgi?id=167383
+            <rdar://problem/22938927>
+
+            Reviewed by Simon Fraser.
+
+            * Platform/spi/ios/UIKitSPI.h:
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _isNavigationSwipeGestureRecognizer:]):
+            * UIProcess/API/Cocoa/WKWebViewInternal.h:
+            * UIProcess/Cocoa/ViewGestureController.h:
+            * UIProcess/ios/ViewGestureControllerIOS.mm:
+            (-[WKSwipeTransitionController isNavigationSwipeGestureRecognizer:]):
+            (WebKit::ViewGestureController::isNavigationSwipeGestureRecognizer):
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView gestureRecognizer:shouldRequireFailureOfGestureRecognizer:]):
+            Require the navigation swipe gesture recognizer to fail before the
+            UIWebTouchEventsGestureRecognizer can recognize. This way, the page
+            doesn't get touch events during the swipe, which previously led to
+            e.g. carousels scrolling while swiping.
+
 2017-01-25  Dean Jackson  <dino@apple.com>
 
         Disable Variation fonts on this branch.
