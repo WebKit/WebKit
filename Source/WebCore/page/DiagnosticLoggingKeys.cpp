@@ -153,6 +153,11 @@ String DiagnosticLoggingKeys::neverSeenBeforeKey()
     return ASCIILiteral("neverSeenBefore");
 }
 
+String DiagnosticLoggingKeys::noKey()
+{
+    return ASCIILiteral("no");
+}
+
 String DiagnosticLoggingKeys::noCacheKey()
 {
     return ASCIILiteral("noCache");
@@ -633,6 +638,11 @@ String DiagnosticLoggingKeys::webViewKey()
     return ASCIILiteral("webView");
 }
 
+String DiagnosticLoggingKeys::yesKey()
+{
+    return ASCIILiteral("yes");
+}
+
 String DiagnosticLoggingKeys::zoomedKey()
 {
     return ASCIILiteral("zoomed");
@@ -646,6 +656,11 @@ String DiagnosticLoggingKeys::expiredKey()
 String DiagnosticLoggingKeys::fontKey()
 {
     return ASCIILiteral("font");
+}
+
+String DiagnosticLoggingKeys::handlesContextLossKey()
+{
+    return ASCIILiteral("handlesContextLoss");
 }
 
 String DiagnosticLoggingKeys::prunedDueToMemoryPressureKey()

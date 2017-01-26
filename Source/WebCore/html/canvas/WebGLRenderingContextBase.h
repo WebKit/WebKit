@@ -803,8 +803,10 @@ protected:
 private:
     bool validateArrayBufferType(const char* functionName, GC3Denum type, std::optional<JSC::TypedArrayType>);
     void registerWithWebGLStateTracker();
+    void checkForContextLossHandling();
 
     WebGLStateTracker::Token m_trackerToken;
+    Timer m_checkForContextLossHandlingTimer;
 };
 
 } // namespace WebCore
