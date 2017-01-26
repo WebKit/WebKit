@@ -297,7 +297,6 @@ media/track/track-cues-cuechange.html [ Pass Crash ]
 media/track/track-cue-rendering-horizontal.html [ Pass Crash ]
 media/accessibility-closed-captions-has-aria-owns.html [ Pass Crash ]
 media/track/track-cues-enter-exit.html [ Pass Crash ]
-media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html [ Pass Timeout ]
 
 webkit.org/b/167320 [ Sierra Release ] media/modern-media-controls/placard-support/placard-support-pip.html [ Pass Crash ]
 
