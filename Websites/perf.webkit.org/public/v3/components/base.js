@@ -45,7 +45,7 @@ class ComponentBase {
     {
         const callback = this._actionCallbacks.get(actionName);
         if (callback)
-            callback.apply(this, args);
+            return callback.apply(this, args);
     }
 
     listenToAction(actionName, callback)

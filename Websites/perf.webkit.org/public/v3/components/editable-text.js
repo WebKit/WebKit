@@ -6,70 +6,70 @@ class EditableText extends ComponentBase {
         super('editable-text');
         this._text = text;
         this._inEditingMode = false;
-        this._startedEditingCallback = null;
-        this._updateCallback = null;
         this._updatingPromise = null;
         this._actionLink = this.content().querySelector('.editable-text-action a');
-        this._actionLink.onclick = this._didClick.bind(this);
-        this._actionLink.onmousedown = this._didClick.bind(this);
-        this._textField = this.content().querySelector('.editable-text-field');
-        this._textField.onblur = this._didBlur.bind(this);
         this._label = this.content().querySelector('.editable-text-label');
     }
 
-    editedText() { return this._textField.value; }
-    setText(text) { this._text = text; }
+    didConstructShadowTree()
+    {
+        const button = this.content('action-button');
+        button.addEventListener('mousedown', this.createEventHandler(() => this._didClick()));
+        button.addEventListener('click', this.createEventHandler(() => this._didClick()));
+        this.element().addEventListener('blur',() => {
+            if (!this.content().activeElement)
+                this._endEditingMode();
+        });
+    }
 
-    setStartedEditingCallback(callback) { this._startedEditingCallback = callback; }
-    setUpdateCallback(callback) { this._updateCallback = callback; }
+    editedText() { return this.content('text-field').value; }
+    text() { return this._text; }
+    setText(text)
+    {
+        this._text = text;
+        this.enqueueToRender();
+    }
 
     render()
     {
-        this._label.textContent = this._text;
-        this._actionLink.textContent = this._inEditingMode ? (this._updatingPromise ? '...' : 'Save') : 'Edit';
-        this._actionLink.parentNode.style.display = this._text ? null : 'none';
+        const label = this.content('label');
+        label.textContent = this._text;
+        label.style.display = this._inEditingMode ? 'none' : null;
+
+        const textField = this.content('text-field');
+        textField.style.display = this._inEditingMode ? null : 'none';
+        textField.readOnly = !!this._updatingPromise;
+
+        this.content('action-button').textContent = this._inEditingMode ? (this._updatingPromise ? '...' : 'Save') : 'Edit';
+        this.content('action-button-container').style.display = this._text ? null : 'none';
 
         if (this._inEditingMode) {
-            this._textField.readOnly = !!this._updatingPromise;
-            this._textField.style.display = null;
-            this._label.style.display = 'none';
             if (!this._updatingPromise)
-                this._textField.focus();
-        } else {
-            this._textField.style.display = 'none';
-            this._label.style.display = null;
+                textField.focus();
         }
-
-        super.render();
     }
 
-    _didClick(event)
+    _didClick()
     {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (!this._updateCallback || this._updatingPromise)
+        if (this._updatingPromise)
             return;
 
-        if (this._inEditingMode)
-            this._updatingPromise = this._updateCallback().then(this._didUpdate.bind(this));
-        else {
+        if (this._inEditingMode) {
+            const result = this.dispatchAction('update');
+            if (result instanceof Promise)
+                this._updatingPromise = result.then(() => this._endEditingMode());
+            else
+                this._endEditingMode();
+        } else {
             this._inEditingMode = true;
-            this._textField.value = this._text;
-            this._textField.style.width = (this._text.length / 1.5) + 'rem';
-            if (this._startedEditingCallback)
-                this._startedEditingCallback();
+            const textField = this.content('text-field');
+            textField.value = this._text;
+            textField.style.width = (this._text.length / 1.5) + 'rem';
+            this.enqueueToRender();
         }
     }
 
-    _didBlur(event)
-    {
-        var self = this;
-        if (self._inEditingMode && !self._updatingPromise && !self.hasFocus())
-            self._didUpdate();
-    }
-
-    _didUpdate()
+    _endEditingMode()
     {
         this._inEditingMode = false;
         this._updatingPromise = null;
@@ -79,32 +79,32 @@ class EditableText extends ComponentBase {
     static htmlTemplate()
     {
         return `
-            <span class="editable-text-container">
-                <input type="text" class="editable-text-field">
-                <span class="editable-text-label"></span>
-                <span class="editable-text-action">(<a href="#">Edit</a>)</span>
+            <span id="container">
+                <input id="text-field" type="text">
+                <span id="label"></span>
+                <span id="action-button-container">(<a id="action-button" href="#">Edit</a>)</span>
             </span>`;
     }
 
     static cssTemplate()
     {
         return `
-            .editable-text-container {
+            #container {
                 position: relative;
                 padding-right: 2.5rem;
             }
-            .editable-text-field {
+            #text-field {
                 background: transparent;
                 margin: 0;
                 padding: 0;
                 color: inherit;
                 font-weight: inherit;
                 font-size: inherit;
-                width: 8rem;
                 border: none;
             }
-            .editable-text-action {
+            #action-button-container {
                 position: absolute;
+                right: 0;
                 padding-left: 0.2rem;
                 color: #999;
                 font-size: 0.8rem;
@@ -112,7 +112,7 @@ class EditableText extends ComponentBase {
                 margin-top: -0.4rem;
                 vertical-align: middle;
             }
-            .editable-text-action a {
+            #action-button {
                 color: inherit;
                 text-decoration: none;
             }

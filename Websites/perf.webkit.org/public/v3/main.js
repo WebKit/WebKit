@@ -7,12 +7,12 @@ class SpinningPage extends Page {
 }
 
 function main() {
-    const requriedFeatures = {
+    const requiredFeatures = {
         'Shadow DOM API': () => { return !!Element.prototype.attachShadow; },
     };
 
-    for (let name in requriedFeatures) {
-        if (!requriedFeatures[name]())
+    for (let name in requiredFeatures) {
+        if (!requiredFeatures[name]())
             return alert(`Your browser does not support ${name}. Try using the latest Safari or Chrome.`);
     }
 

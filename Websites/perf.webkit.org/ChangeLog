@@ -1,3 +1,37 @@
+2017-01-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Modernize editable-text component and add tests
+        https://bugs.webkit.org/show_bug.cgi?id=167398
+
+        Reviewed by Yusuke Suzuki.
+
+        Modernized EditableText component to use the action feature added in r210938.
+
+        * browser-tests/editable-text-tests.js: Added. Added tests for EditableText component.
+        (.waitToRender):
+        * browser-tests/index.html:
+        * public/v3/components/base.js:
+        (ComponentBase.prototype.dispatchAction): Return the result from the callback.
+        * public/v3/components/editable-text.js:
+        (EditableText): Removed a bunch of instance variables that are no longer needed.
+        (EditableText.prototype.didConstructShadowTree): Added. Add event listeners on the Edit/Save button and the host.
+        (EditableText.prototype.editedText): Return the text field's value directly.
+        (EditableText.prototype.text): Added.
+        (EditableText.prototype.setText): Call enqueueToRender automatically instead of relying on the parent component
+        to do so in _startedEditingCallback, which has been removed.
+        (EditableText.prototype.render): Modernized the code.
+        (EditableText.prototype._didClick): No longer prevents the default action manually since that's automatically done
+        in createEventHandler. Handle the case where the update action is not handled.
+        (EditableText.prototype._endEditingMode): Renamed from _didUpdate.
+        (EditableText.htmlTemplate): Added ids on various elements in the shadow tree.
+        (EditableText.cssTemplate): Updated the CSS selectors per above change.
+        * public/v3/main.js:
+        (main): Fixed a typo.
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage): Use the action listener instead of manually setting callbacks.
+        (AnalysisTaskPage.prototype._createTestGroupListItem): Ditto.
+        (AnalysisTaskPage.prototype._didStartEditingTaskName): Deleted.
+
 2017-01-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r210783. Didn't mean to require custom elements API.
