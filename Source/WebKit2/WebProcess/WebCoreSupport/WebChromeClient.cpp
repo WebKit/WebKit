@@ -1084,6 +1084,11 @@ void WebChromeClient::isPlayingMediaDidChange(MediaProducer::MediaStateFlags sta
     m_page.send(Messages::WebPageProxy::IsPlayingMediaDidChange(state, sourceElementID));
 }
 
+void WebChromeClient::didPlayMediaPreventedFromPlayingWithoutUserGesture()
+{
+    m_page.send(Messages::WebPageProxy::DidPlayMediaPreventedFromPlayingWithoutUserGesture());
+}
+
 #if ENABLE(MEDIA_SESSION)
 
 void WebChromeClient::hasMediaSessionWithActiveMediaElementsDidChange(bool state)

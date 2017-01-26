@@ -1064,6 +1064,7 @@ public:
     bool hasActiveAudioStream() const { return m_mediaState & WebCore::MediaProducer::HasActiveAudioCaptureDevice; }
     bool hasActiveVideoStream() const { return m_mediaState & WebCore::MediaProducer::HasActiveVideoCaptureDevice; }
     WebCore::MediaProducer::MediaStateFlags mediaStateFlags() const { return m_mediaState; }
+    void didPlayMediaPreventedFromPlayingWithoutUserGesture();
 
 #if PLATFORM(MAC)
     void videoControlsManagerDidChange();
