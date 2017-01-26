@@ -29,10 +29,9 @@
 
 @class WKWebView;
 
-@interface WKScrollView : UIWebScrollView
+@interface WKScrollView : UIScrollView
 
 @property (nonatomic, assign) WKWebView <UIScrollViewDelegate> *internalDelegate;
-@property (nonatomic, readonly) CGFloat preferredScrollDecelerationFactor;
 
 - (void)_setContentSizePreservingContentOffsetDuringRubberband:(CGSize)contentSize;
 

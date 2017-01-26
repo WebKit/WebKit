@@ -1,3 +1,21 @@
+2017-01-25  Tim Horton  <timothy_horton@apple.com>
+
+        Stop inheriting from UIWebScrollView, just use UIScrollView
+        https://bugs.webkit.org/show_bug.cgi?id=167440
+        <rdar://problem/7729691>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewWillBeginDragging:]):
+        * UIProcess/ios/WKScrollView.h:
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView initWithFrame:]): Deleted.
+        (-[WKScrollView setDecelerationRate:]): Deleted.
+        Inherit directly from UIScrollView, no need for UIWebScrollView.
+        Set the few settings we care about directly.
+        This has the side effect of reducing the default rate of scroll deceleration.
+
 2017-01-25  Matt Rajca  <mrajca@apple.com>
 
         Notify clients when the user plays media otherwise prevented from autoplaying
