@@ -108,11 +108,16 @@ unsigned validatedAccessIndex(VM& vm, ExecState* exec, JSArrayBufferView* typedA
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue accessIndexValue = exec->argument(1);
     if (UNLIKELY(!accessIndexValue.isInt32())) {
-        accessIndexValue = jsNumber(accessIndexValue.toNumber(exec));
+        double accessIndexDouble = accessIndexValue.toNumber(exec);
         RETURN_IF_EXCEPTION(scope, 0);
-        if (!accessIndexValue.isInt32()) {
-            throwRangeError(exec, scope, ASCIILiteral("Access index is not an integer."));
-            return 0;
+        if (accessIndexDouble == 0)
+            accessIndexValue = jsNumber(0);
+        else {
+            accessIndexValue = jsNumber(accessIndexDouble);
+            if (!accessIndexValue.isInt32()) {
+                throwRangeError(exec, scope, ASCIILiteral("Access index is not an integer."));
+                return 0;
+            }
         }
     }
     int32_t accessIndex = accessIndexValue.asInt32();

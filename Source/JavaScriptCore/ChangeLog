@@ -1,5 +1,18 @@
 2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211113. rdar://problem/30174692
+
+    2017-01-24  Filip Pizlo  <fpizlo@apple.com>
+
+            -0 is a valid array index and AtomicsObject should know this
+            https://bugs.webkit.org/show_bug.cgi?id=167386
+
+            Reviewed by Mark Lam.
+
+            * runtime/AtomicsObject.cpp: The bug title really says it all.
+
+2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211111. rdar://problem/30173375
 
     2017-01-24  Filip Pizlo  <fpizlo@apple.com>
