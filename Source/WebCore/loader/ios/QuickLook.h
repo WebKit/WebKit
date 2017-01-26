@@ -52,10 +52,6 @@ class URL;
 
 WEBCORE_EXPORT NSSet *QLPreviewGetSupportedMIMETypesSet();
 
-// Used for setting the permissions on the saved QL content
-NSDictionary *QLFileAttributes();
-NSDictionary *QLDirectoryAttributes();
-
 WEBCORE_EXPORT void addQLPreviewConverterWithFileForURL(NSURL *, id converter, NSString *fileName);
 WEBCORE_EXPORT NSString *qlPreviewConverterFileNameForURL(NSURL *);
 WEBCORE_EXPORT NSString *qlPreviewConverterUTIForURL(NSURL *);

@@ -49,28 +49,6 @@ NSSet *WebCore::QLPreviewGetSupportedMIMETypesSet()
     return set.get().get();
 }
 
-NSDictionary *WebCore::QLFileAttributes()
-{
-    // Set file perms to owner read/write only
-    NSNumber *filePOSIXPermissions = [NSNumber numberWithInteger:(WEB_UREAD | WEB_UWRITE)];
-    static NSDictionary *dictionary = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:
-                                        NSUserName(), NSFileOwnerAccountName,
-                                        filePOSIXPermissions, NSFilePosixPermissions,
-                                        nullptr]).leakRef();
-    return dictionary;
-}
-
-NSDictionary *WebCore::QLDirectoryAttributes()
-{
-    // Set file perms to owner read/write/execute only
-    NSNumber *directoryPOSIXPermissions = [NSNumber numberWithInteger:(WEB_UREAD | WEB_UWRITE | WEB_UEXEC)];
-    static NSDictionary *dictionary = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:
-                                                NSUserName(), NSFileOwnerAccountName,
-                                                directoryPOSIXPermissions, NSFilePosixPermissions,
-                                                nullptr]).leakRef();
-    return dictionary;
-}
-
 static Lock& qlPreviewConverterDictionaryMutex()
 {
     static NeverDestroyed<Lock> mutex;
@@ -347,22 +325,46 @@ static QuickLookHandleClient& testingOrEmptyClient()
 
 namespace WebCore {
 
+static NSDictionary *temporaryFileAttributes()
+{
+    static NSDictionary *attributes = [@{
+        NSFileOwnerAccountName : NSUserName(),
+        NSFilePosixPermissions : [NSNumber numberWithInteger:(WEB_UREAD | WEB_UWRITE)],
+        } retain];
+    return attributes;
+}
+
+static NSDictionary *temporaryDirectoryAttributes()
+{
+    static NSDictionary *attributes = [@{
+        NSFileOwnerAccountName : NSUserName(),
+        NSFilePosixPermissions : [NSNumber numberWithInteger:(WEB_UREAD | WEB_UWRITE | WEB_UEXEC)],
+        NSFileProtectionKey : NSFileProtectionCompleteUnlessOpen,
+        } retain];
+    return attributes;
+}
+
 NSString *createTemporaryFileForQuickLook(NSString *fileName)
 {
     NSString *downloadDirectory = createTemporaryDirectory(@"QuickLookContent");
     if (!downloadDirectory)
         return nil;
 
-    NSString *contentPath = [downloadDirectory stringByAppendingPathComponent:fileName];
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *uniqueContentPath = [fileManager _web_pathWithUniqueFilenameForPath:contentPath];
 
-    BOOL success = [fileManager _web_createFileAtPathWithIntermediateDirectories:uniqueContentPath
-                                                                        contents:nil
-                                                                      attributes:QLFileAttributes()
-                                                             directoryAttributes:QLDirectoryAttributes()];
+    NSError *error;
+    if (![fileManager setAttributes:temporaryDirectoryAttributes() ofItemAtPath:downloadDirectory error:&error]) {
+        LOG_ERROR("Failed to set attribute NSFileProtectionCompleteUnlessOpen on directory %@ with error: %@.", downloadDirectory, error.localizedDescription);
+        return nil;
+    }
 
-    return success ? uniqueContentPath : nil;
+    NSString *contentPath = [downloadDirectory stringByAppendingPathComponent:fileName.lastPathComponent];
+    if (![fileManager _web_createFileAtPath:contentPath contents:nil attributes:temporaryFileAttributes()]) {
+        LOG_ERROR("Failed to create QuickLook temporary file at path %@.", contentPath);
+        return nil;
+    }
+
+    return contentPath;
 }
 
 QuickLookHandle::QuickLookHandle(ResourceLoader& loader, const ResourceResponse& response)

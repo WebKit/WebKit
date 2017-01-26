@@ -1,3 +1,35 @@
+2017-01-26  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Create temporary files with NSFileProtectionCompleteUnlessOpen
+        https://bugs.webkit.org/show_bug.cgi?id=167455
+        <rdar://problem/12499118>
+
+        Reviewed by David Kilzer.
+
+        Add the NSFileProtectionKey attribute with value NSFileProtectionCompleteUnlessOpen to
+        temporary directories created for QuickLook files. Also:
+
+        1. Stop calling -[NSFileManager _web_pathWithUniqueFilenameForPath:], since the temporary
+        directory is already unique and only one file will be placed inside it.
+        2. Create the temporary file with -[NSFileManager _web_createFileAtPath:contents:attributes:]
+        instead of with -[NSFileManager _web_createFileAtPathWithIntermediateDirectories:contents:attributes:directoryAttributes:],
+        since the intermediate directories were already created by createTemporaryDirectory().
+        3. Explicitly set the temporary directory's attributes with
+        -[NSFileManager setAttributes:ofItemAtPath:error:].
+        4. Append the lastPathComponent of fileName to downloadDirectory to ensure fileName isn't
+        really a relative path.
+
+        * loader/ios/QuickLook.h: Stopped declaring QLFileAttributes() and QLDirectoryAttributes().
+        * loader/ios/QuickLook.mm:
+        (WebCore::temporaryFileAttributes): Renamed from QLFileAttributes().
+        (WebCore::temporaryDirectoryAttributes): Renamed from QLDirectoryAttributes().
+        (WebCore::createTemporaryFileForQuickLook):
+        (WebCore::QLFileAttributes): Deleted.
+        (WebCore::QLDirectoryAttributes): Deleted.
+        * platform/spi/cocoa/NSFileManagerSPI.h: Declared -_web_createFileAtPath:contents:attributes:
+        and removed declarations for -_web_createFileAtPathWithIntermediateDirectories:contents:attributes:directoryAttributes:
+        and -_web_pathWithUniqueFilenameForPath:
+
 2017-01-26  Jeremy Jones  <jeremyj@apple.com>
 
         Pointer lock events should be delivered directly to the target element
