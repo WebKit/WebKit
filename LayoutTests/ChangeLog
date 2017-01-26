@@ -1,3 +1,12 @@
+2017-01-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking inspector/heap/gc.html as slow on macOS debug.
+        https://bugs.webkit.org/show_bug.cgi?id=167408
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2017-01-26  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Hiding controls, changing their width and showing them again shows an incorrect layout
