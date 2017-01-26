@@ -127,6 +127,11 @@ TEST(WebCore, URLExtras_Space)
     EXPECT_STREQ("site.com\xE3\x80\x80othersite.org", [WebCore::decodeHostName(@"site.com\xE3\x80\x80othersite.org") UTF8String]);
 }
 
+TEST(WebCore, URLExtras_File)
+{
+    EXPECT_STREQ("file:///%E2%98%83", [[WebCore::URLWithUserTypedString(@"file:///☃", nil) absoluteString] UTF8String]);
+}
+
 TEST(WebCore, URLExtras_ParsingError)
 {
     // Expect IDN failure.
