@@ -1,3 +1,36 @@
+2017-01-25  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Add support for libwebrtc video incoming and outgoing video tracks
+        https://bugs.webkit.org/show_bug.cgi?id=167432
+
+        Reviewed by Eric Carlson.
+
+        Not covered by tests right now, this will be covered by layout/mock tests.
+        RealtimeIncomingVideoSource consumes video frames given by libwebrtc.
+        RealtimeOutgoingVideoSource consumes video frames from WebCore tracks (capture typically) and feeds libwebrtc with them.
+
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.cpp: Added.
+        (WebCore::RealtimeIncomingVideoSource::create):
+        (WebCore::RealtimeIncomingVideoSource::RealtimeIncomingVideoSource):
+        (WebCore::RealtimeIncomingVideoSource::startProducingData):
+        (WebCore::RealtimeIncomingVideoSource::stopProducingData):
+        (WebCore::RealtimeIncomingVideoSource::OnFrame):
+        (WebCore::RealtimeIncomingVideoSource::processNewSample):
+        (WebCore::drawImage):
+        (WebCore::RealtimeIncomingVideoSource::currentFrameImage):
+        (WebCore::RealtimeIncomingVideoSource::paintCurrentFrameInContext):
+        (WebCore::RealtimeIncomingVideoSource::capabilities):
+        (WebCore::RealtimeIncomingVideoSource::settings):
+        (WebCore::RealtimeIncomingVideoSource::supportedConstraints):
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.h: Added.
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp: Added.
+        (WebCore::RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource):
+        (WebCore::RealtimeOutgoingVideoSource::GetStats):
+        (WebCore::RealtimeOutgoingVideoSource::AddOrUpdateSink):
+        (WebCore::RealtimeOutgoingVideoSource::RemoveSink):
+        (WebCore::RealtimeOutgoingVideoSource::sourceHasMoreMediaData):
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.h: Added.
+
 2017-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Introduce an item-provider-based pasteboard wrapper
