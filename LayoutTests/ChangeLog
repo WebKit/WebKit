@@ -1,3 +1,11 @@
+2017-01-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/forms/ios/ipad/focus-input-via-button.html.
+
+        Unreviewed test gardening.
+
+        * fast/forms/ios/ipad/focus-input-via-button-expected.txt:
+
 2017-01-25  Yoav Weiss  <yoav@yoav.ws>
 
         REGRESSION(r203110): LayoutTest http/tests/preload/single_download_preload_runner.html timing out
