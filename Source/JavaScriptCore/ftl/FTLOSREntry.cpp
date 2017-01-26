@@ -39,7 +39,7 @@
 namespace JSC { namespace FTL {
 
 SUPPRESS_ASAN
-void* prepareOSREntry(
+Expected<void*, OSREntryFail> prepareOSREntry(
     ExecState* exec, CodeBlock* dfgCodeBlock, CodeBlock* entryCodeBlock,
     unsigned bytecodeIndex, unsigned streamIndex)
 {
@@ -61,7 +61,7 @@ void* prepareOSREntry(
     if (bytecodeIndex != entryCode->bytecodeIndex()) {
         if (Options::verboseOSR())
             dataLog("    OSR failed because we don't have an entrypoint for bc#", bytecodeIndex, "; ours is for bc#", entryCode->bytecodeIndex(), "\n");
-        return 0;
+        return makeUnexpected(OSREntryFail::WrongBytecode);
     }
     
     Operands<JSValue> values;
@@ -95,7 +95,7 @@ void* prepareOSREntry(
     if (UNLIKELY(!vm.ensureStackCapacityFor(&exec->registers()[virtualRegisterForLocal(stackFrameSize - 1).offset()]))) {
         if (Options::verboseOSR())
             dataLog("    OSR failed because stack growth failed.\n");
-        return 0;
+        return makeUnexpected(OSREntryFail::StackGrowthFailed);
     }
     
     exec->setCodeBlock(entryCodeBlock);

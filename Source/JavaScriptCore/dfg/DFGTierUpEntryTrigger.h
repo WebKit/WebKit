@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +25,15 @@
 
 #pragma once
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(DFG_JIT)
 
-#include "DFGTierUpEntryTrigger.h"
-#include "DeferredCompilationCallback.h"
-#include <wtf/RefPtr.h>
+namespace JSC { namespace DFG {
 
-namespace JSC {
-
-class ScriptExecutable;
-
-namespace DFG {
-
-class ToFTLForOSREntryDeferredCompilationCallback : public DeferredCompilationCallback {
-protected:
-    ToFTLForOSREntryDeferredCompilationCallback(TierUpEntryTrigger* forcedOSREntryTrigger);
-
-public:
-    virtual ~ToFTLForOSREntryDeferredCompilationCallback();
-
-    static Ref<ToFTLForOSREntryDeferredCompilationCallback> create(TierUpEntryTrigger* forcedOSREntryTrigger);
-    
-    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*, CodeBlock* profiledDFGCodeBlock);
-    virtual void compilationDidComplete(CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationResult);
-
-private:
-    TierUpEntryTrigger* m_forcedOSREntryTrigger;
+enum class TierUpEntryTrigger : uint8_t {
+    None = 0, // Must stay zero: JIT-compiled code takes the triggerOSREntryNow slow-path when non-zero.
+    TakeSlowPath, // The slow path can be taken because the compilation needs to be started, or it's ready and we should OSR enter.
 };
 
 } } // namespace JSC::DFG
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(DFG_JIT)

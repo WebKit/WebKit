@@ -1,3 +1,68 @@
+2017-01-26  JF Bastien  <jfbastien@apple.com>
+
+        OSR entry: delay outer-loop compilation when at inner-loop
+        https://bugs.webkit.org/show_bug.cgi?id=167149
+
+        Reviewed by Filip Pizlo.
+
+        As of https://bugs.webkit.org/show_bug.cgi?id=155217 OSR
+        compilation can be kicked off for an entry into an outer-loop,
+        while executing an inner-loop. This is desirable because often the
+        codegen from an inner-entry isn't as good as the codegen from an
+        outer-entry, but execution from an inner-loop is often pretty hot
+        and likely to kick off compilation. This approach provided nice
+        speedups on Kraken because we'd select to enter to the outer-loop
+        very reliably, which reduces variability (the inner-loop was
+        selected roughly 1/5 times from my unscientific measurements).
+
+        When compilation starts we take a snapshot of the JSValues at the
+        current execution state using OSR's recovery mechanism. These
+        values are passed to the compiler and are used as way to perform
+        type profiling, and could be used to observe cell types as well as
+        to perform predictions such as through constant propagation.
+
+        It's therefore desired to enter from the outer-loop when we can,
+        but we need to be executing from that location to capture the
+        right JSValues, otherwise we're confusing the compiler and giving
+        it inaccurate JSValues which can lead it to predict the wrong
+        things, leading to suboptimal code or recompilation due to
+        misprediction, or in super-corner-cases a crash.
+
+        These effects are pretty hard to measure: Fil points out that
+        marsalis-osr-entry really needs mustHandleValues (the JSValues
+        from the point of execution) because right now it just happens to
+        correctly guess int32. I tried removing mustHandleValues entirely
+        and saw no slowdowns, but our benchmarks probably aren't
+        sufficient to reliably find issues, sometimes because we happen to
+        have sufficient mitigations.
+
+        DFG tier-up was added here:
+        https://bugs.webkit.org/show_bug.cgi?id=112838
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSREntry.h:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTierUpEntryTrigger.h: Copied from Source/JavaScriptCore/ftl/FTLOSREntry.h.
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::ToFTLForOSREntryDeferredCompilationCallback):
+        (JSC::DFG::Ref<ToFTLForOSREntryDeferredCompilationCallback>ToFTLForOSREntryDeferredCompilationCallback::create):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete):
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.h:
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+        * ftl/FTLOSREntry.h:
+        * jit/JITOperations.cpp:
+
 2017-01-25  Saam Barati  <sbarati@apple.com>
 
         WebAssembly JS API: coerce return values from imports
