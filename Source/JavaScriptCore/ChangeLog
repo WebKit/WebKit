@@ -1,3 +1,31 @@
+2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211180. rdar://problem/30156092
+
+    2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
+
+            Merge r211124. rdar://problem/30156092
+
+        2017-01-24  Michael Saboff  <msaboff@apple.com>
+
+                InferredTypeTable entry manipulation is not TOCTOU race safe
+                https://bugs.webkit.org/show_bug.cgi?id=167344
+
+                Reviewed by Filip Pizlo.
+
+                Made the accesses to table values safe from Time of Check,
+                Time of Use races with local temporary values.
+
+                Fixed point that we set an entry in the table to access the
+                current table entry instead of using the local entry.  In that case,
+                we reload the now changed entry.
+
+                * runtime/InferredTypeTable.cpp:
+                (JSC::InferredTypeTable::visitChildren):
+                (JSC::InferredTypeTable::get):
+                (JSC::InferredTypeTable::willStoreValue):
+                (JSC::InferredTypeTable::makeTop):
+
 2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
 
         Rollout r211180.
