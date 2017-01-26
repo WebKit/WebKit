@@ -1,3 +1,17 @@
+2017-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash under DOMSelection::deleteFromDocument()
+        https://bugs.webkit.org/show_bug.cgi?id=167232
+
+        Reviewed by Chris Dumez.
+
+        Based on a patch by Chris Dumez. Add a regression test and rebaseline a Blink test as WebKit's
+        new behavior matches that of Gecko instead of Blink.
+
+        * editing/selection/deleteFromDocument-shadow-tree-crash-expected.txt: Added.
+        * editing/selection/deleteFromDocument-shadow-tree-crash.html: Added.
+        * imported/blink/editing/selection/deleteFromDocument-crash-expected.html:
+
 2017-01-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/modern-media-controls/airplay-support/airplay-support.html as flaky.

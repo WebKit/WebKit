@@ -1,3 +1,34 @@
+2017-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash under DOMSelection::deleteFromDocument()
+        https://bugs.webkit.org/show_bug.cgi?id=167232
+
+        Reviewed by Chris Dumez.
+
+        The crash was caused by DOMSelection's deleteFromDocument() mutating contents inside the user-agent
+        shadow tree of an input element when the text field is readonly. Fixed the bug by exiting early
+        whenever the selection is inside a shadow tree since getSelection().getRangeAt(0) always returns
+        a range outside the input element or any shadow tree for that matter.
+
+        New behavior matches that of Gecko. The working draft spec of which I'm the editor states that
+        deleteFromDocument() must invoke Range's deleteContents() on the associated range, which is
+        the collapsed range returned by getSelection().getRangeAt(0) in the spec:
+        https://www.w3.org/TR/2016/WD-selection-api-20160921/#widl-Selection-deleteFromDocument-void
+        And Range's deleteContents() immediately terminates in step 1 when start and end are identical:
+        https://dom.spec.whatwg.org/commit-snapshots/6b7621282c2e3b222ac585650e484abf4c0a416b/
+
+        Note that Range's DOM mutating methods are not available inside an user-agent shadow tree because
+        WebKit never returns a Range whose end boundary points are inside the tree to author scripts.
+        Editing commands (ones executable from document.execCommand) that mutate DOM like this check whether
+        the content is editable or not. Since VisibleSelection's validate() function makes sure the selection
+        is either entirely within or outside of an root editable element (editing host in the W3C spec lingo),
+        editing commands should never mutate a random node inside an user-agent shadow tree.
+
+        Test: editing/selection/deleteFromDocument-shadow-tree-crash.html
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::deleteFromDocument):
+
 2017-01-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r211193.
