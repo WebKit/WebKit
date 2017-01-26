@@ -35,6 +35,7 @@ class Element;
 class Document;
 class Page;
 class PlatformMouseEvent;
+class PlatformWheelEvent;
 class VoidCallback;
 
 class PointerLockController {
@@ -48,6 +49,7 @@ public:
     void requestPointerUnlockAndForceCursorVisible();
     void elementRemoved(Element&);
     void documentDetached(Document&);
+    bool isLocked() const;
     WEBCORE_EXPORT bool lockPending() const;
     WEBCORE_EXPORT Element* element() const;
 
@@ -55,6 +57,7 @@ public:
     WEBCORE_EXPORT void didNotAcquirePointerLock();
     WEBCORE_EXPORT void didLosePointerLock();
     void dispatchLockedMouseEvent(const PlatformMouseEvent&, const AtomicString& eventType);
+    void dispatchLockedWheelEvent(const PlatformWheelEvent&);
 
 private:
     void clearElement();
