@@ -131,4 +131,10 @@ class MacOSInlineMediaControls extends MacOSMediaControls
         this._volumeSliderContainer.visible = event.type === "mouseenter" || event.relatedTarget === this._volumeSliderContainer.element;
     }
 
+    controlsBarVisibilityDidChange(controlsBar)
+    {
+        if (controlsBar.visible)
+            this.layout();
+    }
+
 }

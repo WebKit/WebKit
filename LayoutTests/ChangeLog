@@ -1,3 +1,17 @@
+2017-01-26  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Hiding controls, changing their width and showing them again shows an incorrect layout
+        https://bugs.webkit.org/show_bug.cgi?id=167160
+        <rdar://problem/29612318>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that creates media controls at a given width, hides the controls bar, increases the width, makes
+        the controls bar visible again, and checks that the layout was correctly updated as a result.
+
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-resize-with-hidden-controls-bar-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-resize-with-hidden-controls-bar.html: Added.
+
 2017-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash under DOMSelection::deleteFromDocument()

@@ -132,6 +132,11 @@ class MediaControls extends LayoutNode
             super.commitProperty(propertyName);
     }
 
+    controlsBarVisibilityDidChange(controlsBar)
+    {
+        // Implemented by subclasses as needed.
+    }
+
     // Private
 
     _invalidateChildren()

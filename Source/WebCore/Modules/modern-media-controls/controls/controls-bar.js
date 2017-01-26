@@ -111,6 +111,9 @@ class ControlsBar extends LayoutNode
 
     set visible(flag)
     {
+        if (this.visible === flag)
+            return;
+
         // If we just got made visible again, let's fade the controls in.
         if (flag && !this.visible)
             this.faded = false;
@@ -118,6 +121,8 @@ class ControlsBar extends LayoutNode
             this._cancelAutoHideTimer();
 
         super.visible = flag;
+
+        this._mediaControls.controlsBarVisibilityDidChange(this);
     }
 
     get faded()

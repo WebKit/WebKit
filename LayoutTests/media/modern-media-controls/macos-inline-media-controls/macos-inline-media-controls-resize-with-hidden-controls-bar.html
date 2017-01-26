@@ -1,0 +1,52 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing <code>MacOSInlineMediaControls</code> width change while the controls bar is hidden.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSInlineMediaControls({ width: 600 });
+
+const leftContainer = mediaControls.controlsBar.children[0];
+const rightContainer = mediaControls.controlsBar.children[1];
+const buttons = leftContainer.buttons.concat(rightContainer.buttons);
+
+let numberOfFrames = 0;
+let expectedRightContainerX = 0;
+scheduler.frameDidFire = function()
+{
+    if (buttons.some(button => button.width == 0))
+        return;
+
+    numberOfFrames++;
+
+    switch (numberOfFrames) {
+    case 1:
+        mediaControls.controlsBar.visible = false;
+        debug("Making the controls bar invisible.");
+        expectedRightContainerX = rightContainer.x;
+        break;
+    case 2:
+        debug("");
+        debug("Making the controls 100px wider");
+        mediaControls.width += 100;
+        break;
+    case 3:
+        mediaControls.controlsBar.visible = true;
+        debug("");
+        debug("Making the controls bar visible again.");
+        shouldBe("rightContainer.x", "expectedRightContainerX + 100");
+
+        debug("");
+        finishMediaControlsTest();
+        break;
+    }
+
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

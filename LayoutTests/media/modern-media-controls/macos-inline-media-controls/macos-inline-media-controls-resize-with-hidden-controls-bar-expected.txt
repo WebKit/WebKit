@@ -1,0 +1,16 @@
+Testing MacOSInlineMediaControls width change while the controls bar is hidden.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Making the controls bar invisible.
+
+Making the controls 100px wider
+
+Making the controls bar visible again.
+PASS rightContainer.x is expectedRightContainerX + 100
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,24 @@
+2017-01-26  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Hiding controls, changing their width and showing them again shows an incorrect layout
+        https://bugs.webkit.org/show_bug.cgi?id=167160
+        <rdar://problem/29612318>
+
+        Reviewed by Dean Jackson.
+
+        When we toggle visibility of the controls bar, we notify the hosting media controls and in the case of the
+        macOS inline media controls, we update the controls layout which would have failed to run last time it tried
+        due to the controls bar being hidden.
+
+        Test: media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-resize-with-hidden-controls-bar.html
+
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        (ControlsBar.prototype.set visible):
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.js:
+        (MacOSInlineMediaControls.prototype.controlsBarVisibilityDidChange):
+        * Modules/modern-media-controls/controls/media-controls.js:
+        (MediaControls.prototype.controlsBarVisibilityDidChange):
+
 2017-01-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] Unreviewed speculative buildfix after r211161.
