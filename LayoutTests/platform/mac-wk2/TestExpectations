@@ -603,3 +603,5 @@ webkit.org/b/165392 [ ElCapitan Release ] imported/mathml-in-html5/mathml/presen
 
 webkit.org/b/166765 pointer-lock/ [ Skip ]
 webkit.org/b/166765 http/tests/pointer-lock/ [ Skip ]
+
+webkit.org/b/161887 [ ElCapitan ] swipe/main-frame-pinning-requirement.html [ Pass Timeout ]

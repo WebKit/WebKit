@@ -1,5 +1,14 @@
 2017-01-26  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking swipe/main-frame-pinning-requirement.html as flaky on El Capitan.
+        https://bugs.webkit.org/show_bug.cgi?id=161887
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2017-01-26  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=165319
 
