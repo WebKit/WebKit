@@ -125,11 +125,16 @@ void HIDGamepad::initElementsFromArray(CFArrayRef elements)
 bool HIDGamepad::maybeAddButton(IOHIDElementRef element)
 {
     uint32_t usagePage = IOHIDElementGetUsagePage(element);
-    if (usagePage != kHIDPage_Button)
+    if (usagePage != kHIDPage_Button && usagePage != kHIDPage_GenericDesktop)
         return false;
 
     uint32_t usage = IOHIDElementGetUsage(element);
-    if (!usage)
+
+    if (usagePage == kHIDPage_GenericDesktop) {
+        if (usage < kHIDUsage_GD_DPadUp || usage > kHIDUsage_GD_DPadLeft)
+            return false;
+        usage = std::numeric_limits<uint32_t>::max();
+    } else if (!usage)
         return false;
 
     CFIndex min = IOHIDElementGetLogicalMin(element);
