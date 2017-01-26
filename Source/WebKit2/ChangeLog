@@ -1,3 +1,28 @@
+2017-01-26  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI for updating WebsitePolicies
+        https://bugs.webkit.org/show_bug.cgi?id=167040
+
+        Reviewed by Brady Eidson.
+        
+        In r209558 we added a way to send a WebsitePolicies structure to the WebProcess during navigation.
+        If the UIProcess wants to update these policies on a WKWebView while a page is open, we will
+        need to have SPI for doing so. This adds such SPI, but it's not hooked up to change functionality yet.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageUpdateWebsitePolicies):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateWebsitePolicies:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateWebsitePolicies):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateWebsitePolicies):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Threaded Compositor] Update also the contents size when creating the threaded compositor

@@ -46,6 +46,7 @@
 #include "APIPolicyClient.h"
 #include "APISessionState.h"
 #include "APIUIClient.h"
+#include "APIWebsitePolicies.h"
 #include "APIWindowFeatures.h"
 #include "AuthenticationChallengeProxy.h"
 #include "LegacySessionStateCoding.h"
@@ -313,6 +314,11 @@ WKBackForwardListRef WKPageGetBackForwardList(WKPageRef pageRef)
 bool WKPageWillHandleHorizontalScrollEvents(WKPageRef pageRef)
 {
     return toImpl(pageRef)->willHandleHorizontalScrollEvents();
+}
+
+void WKPageUpdateWebsitePolicies(WKPageRef pageRef, WKWebsitePoliciesRef websitePoliciesRef)
+{
+    toImpl(pageRef)->updateWebsitePolicies(toImpl(websitePoliciesRef)->websitePolicies());
 }
 
 WKStringRef WKPageCopyTitle(WKPageRef pageRef)

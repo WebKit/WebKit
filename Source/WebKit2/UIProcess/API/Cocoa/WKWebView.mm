@@ -86,6 +86,7 @@
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
+#import "_WKWebsitePoliciesInternal.h"
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/JSDOMBinding.h>
@@ -3571,6 +3572,11 @@ static int32_t activeOrientation(WKWebView *webView)
 - (void)_close
 {
     _page->close();
+}
+
+- (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies
+{
+    _page->updateWebsitePolicies(websitePolicies->_websitePolicies->websitePolicies());
 }
 
 - (BOOL)_allowsRemoteInspection

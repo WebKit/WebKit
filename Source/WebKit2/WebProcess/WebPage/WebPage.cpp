@@ -5468,6 +5468,11 @@ void WebPage::reportUsedFeatures()
     m_loaderClient.featuresUsedInPage(this, namedFeatures);
 }
 
+void WebPage::updateWebsitePolicies(const WebsitePolicies&)
+{
+    // FIXME: Update the website policies in m_page.
+}
+
 unsigned WebPage::extendIncrementalRenderingSuppression()
 {
     unsigned token = m_maximumRenderingSuppressionToken + 1;

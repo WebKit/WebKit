@@ -408,6 +408,8 @@ public:
 
     bool willHandleHorizontalScrollEvents() const;
 
+    void updateWebsitePolicies(const WebsitePolicies&);
+
     bool canShowMIMEType(const String& mimeType);
 
     bool drawsBackground() const { return m_drawsBackground; }
