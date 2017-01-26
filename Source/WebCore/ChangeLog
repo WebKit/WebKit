@@ -1,5 +1,21 @@
 2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211126. rdar://problem/30174873
+
+    2017-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Avoid IOSurface readback for snapshot creation
+            https://bugs.webkit.org/show_bug.cgi?id=167397
+            rdar://problem/30174873
+
+            Reviewed by Tim Horton.
+
+            Export sinkIntoImage().
+
+            * platform/graphics/cocoa/IOSurface.h:
+
+2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211120. rdar://problem/30151767
 
     2017-01-24  Andreas Kling  <akling@apple.com>
