@@ -1,3 +1,18 @@
+2017-01-26  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] WebProcess from WebKitGtk+ 2.15.3 SIGSEVs in WebCore::GraphicsContext3D::drawArrays(unsigned int, int, int) at Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:740
+        https://bugs.webkit.org/show_bug.cgi?id=167296
+
+        Reviewed by Sergio Villar Senin.
+
+        Use a VBO to pass the vertex data when using the stencil for clipping. Passing a custom array without
+        using an VBO is deprecated when using OpenGL >= 3.0 and a Core profile.
+
+        No behaviour change, no new tests.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::beginClip):
+
 2017-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash under DOMSelection::deleteFromDocument()
