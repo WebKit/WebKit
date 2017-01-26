@@ -1457,16 +1457,9 @@ webkit.org/b/165530 compositing/layer-creation/fixed-position-out-of-view-scaled
 webkit.org/b/165530 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
 
 # picture-in-picture is not supported prior to Sierra.
-[ ElCapitan Yosemite ] media/modern-media-controls/pip-support [ Skip ]
-[ ElCapitan Yosemite ] media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Skip ]
-[ ElCapitan Yosemite ] media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
-
-# internals.setMockMediaPlaybackTargetPickerState() is not available on Yosemite
-[ Yosemite ] media/modern-media-controls/airplay-support/airplay-support.html [ Skip ]
-[ Yosemite ] media/modern-media-controls/placard-support/placard-support-airplay.html [ Skip ]
-
-# internals.setMockMediaPlaybackTargetPickerEnabled() is not available on Yosemite
-[ Yosemite ] media/modern-media-controls/audio/audio-controls-buttons.html [ Skip ]
+[ ElCapitan ] media/modern-media-controls/pip-support [ Skip ]
+[ ElCapitan ] media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Skip ]
+[ ElCapitan ] media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 
 # iPad-specific tests
 media/modern-media-controls/fullscreen-support/ipad/fullscreen-support-tap.html [ Skip ]
@@ -1480,7 +1473,7 @@ webkit.org/b/165234 media/modern-media-controls/audio/audio-controls-buttons.htm
 
 webkit.org/b/165290 media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside.html [ Pass Timeout ]
 
-webkit.org/b/167254 [ Debug ] media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html [ Pass Failure ]
+webkit.org/b/167254 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html [ Pass Failure ]
 
 webkit.org/b/167263 media/modern-media-controls/media-controller/media-controller-auto-hide.html [ Pass Failure ]
 
@@ -1493,6 +1486,8 @@ webkit.org/b/167266 media/modern-media-controls/media-controller/media-controlle
 webkit.org/b/167373 media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html [ Pass Failure ]
 
 webkit.org/b/167396 media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter.html [ Pass Failure ]
+
+webkit.org/b/167441 media/modern-media-controls/placard-support/placard-support-airplay.html [ Pass Timeout ]
 
 webkit.org/b/165874 [ Debug ] streams/pipe-to.html [ Pass Failure ]
 
