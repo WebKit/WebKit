@@ -1,5 +1,20 @@
 2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211125. rdar://problem/30074665
+
+    2017-01-24  Brent Fulgham  <bfulgham@apple.com>
+
+            Bug 167392: REGRESSION(r210531): Relax same-volume display requirement for iOS
+            https://bugs.webkit.org/show_bug.cgi?id=167392
+            <rdar://problem/30074665>
+
+            Reviewed by Brady Eidson.
+
+            * page/SecurityOrigin.cpp:
+            (WebCore::SecurityOrigin::canDisplay): Exclude the new check when building on iOS.
+
+2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211137. rdar://problem/29896656
 
     2017-01-24  Alex Christensen  <achristensen@webkit.org>
