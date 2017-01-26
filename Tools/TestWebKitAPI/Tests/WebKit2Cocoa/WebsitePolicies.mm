@@ -223,7 +223,8 @@ static void didPlayMediaPreventedFromPlayingWithoutUserGesture(WKPageRef page, c
     receivedAlert = true;
 }
 
-TEST(WebKit2, WebsitePoliciesPlayAfterPreventedAutoplay)
+// FIXME: webkit.org/b/167466 Re-enable this test once the cause of timeouts on the bots can be fixed.
+TEST(WebKit2, DISABLED_WebsitePoliciesPlayAfterPreventedAutoplay)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 336, 276) configuration:configuration.get()]);

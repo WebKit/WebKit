@@ -1,3 +1,13 @@
+2017-01-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Disable API test WebKit2.WebsitePoliciesPlayAfterPreventedAutoplay.
+        https://bugs.webkit.org/show_bug.cgi?id=167466
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsitePolicies.mm:
+        (TEST):
+
 2017-01-26  Matt Rajca  <mrajca@apple.com>
 
         Notify clients when the user plays media otherwise prevented from autoplaying
