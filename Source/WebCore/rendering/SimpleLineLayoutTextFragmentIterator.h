@@ -43,7 +43,7 @@ public:
     public:
         enum Type { ContentEnd, SoftLineBreak, HardLineBreak, Whitespace, NonWhitespace };
         TextFragment() = default;
-        TextFragment(unsigned start, unsigned end, float width, Type type, bool isLastInRenderer = false, bool overlapsToNextRenderer = false, bool isCollapsed = false, bool isCollapsible = false, bool hasHyphen = false)
+        TextFragment(unsigned start, unsigned end, float width, Type type, bool isLastInRenderer = false, bool overlapsToNextRenderer = false, bool isCollapsed = false, bool isCollapsible = false)
             : m_start(start)
             , m_end(end)
             , m_width(width)
@@ -52,7 +52,6 @@ public:
             , m_overlapsToNextRenderer(overlapsToNextRenderer)
             , m_isCollapsed(isCollapsed)
             , m_isCollapsible(isCollapsible)
-            , m_hasHyphen(hasHyphen)
         {
         }
 
@@ -66,6 +65,7 @@ public:
         bool isCollapsed() const { return m_isCollapsed; }
         bool isCollapsible() const { return m_isCollapsible; }
         bool hasHyphen() const { return m_hasHyphen; }
+        unsigned wrappingWithHyphenCounter() const { return m_hyphenationCounter; }
 
         bool isEmpty() const { return start() == end() && !isLineBreak(); }
         TextFragment split(unsigned splitPosition, const TextFragmentIterator&);
@@ -93,6 +93,7 @@ public:
         bool m_isCollapsed { false };
         bool m_isCollapsible { false };
         bool m_hasHyphen { false };
+        unsigned m_hyphenationCounter { 0 };
     };
     TextFragment nextTextFragment(float xPosition = 0);
     void revertToEndOfFragment(const TextFragment&);
@@ -121,6 +122,7 @@ public:
         unsigned hyphenLimitBefore;
         unsigned hyphenLimitAfter;
         AtomicString locale;
+        std::optional<unsigned> hyphenLimitLines;
     };
     const Style& style() const { return m_style; }
 
@@ -168,6 +170,7 @@ inline TextFragmentIterator::TextFragment TextFragmentIterator::TextFragment::sp
 {
     ASSERT(textFragmentIterator.style().shouldHyphenate);
     auto rightSide = split(hyphenPosition, textFragmentIterator);
+    rightSide.m_hyphenationCounter = m_hyphenationCounter + 1;
     m_hasHyphen = true;
     m_width += textFragmentIterator.style().hyphenStringWidth;
     return rightSide;

@@ -53,6 +53,8 @@ TextFragmentIterator::Style::Style(const RenderStyle& style)
     , hyphenLimitAfter(style.hyphenationLimitAfter() < 0 ? 2 : style.hyphenationLimitAfter())
     , locale(style.locale())
 {
+    if (style.hyphenationLimitLines() > -1)
+        hyphenLimitLines = style.hyphenationLimitLines();
 }
 
 TextFragmentIterator::TextFragmentIterator(const RenderBlockFlow& flow)

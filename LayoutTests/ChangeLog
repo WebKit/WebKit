@@ -1,5 +1,19 @@
 2017-01-26  Zalan Bujtas  <zalan@apple.com>
 
+        Simple line layout: Add support for -webkit-hyphenate-limit-lines
+        https://bugs.webkit.org/show_bug.cgi?id=167446
+        <rdar://problem/30194030>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/simple-line-layout-hyphen-limit-lines-expected.html: Added.
+        * fast/text/simple-line-layout-hyphen-limit-lines.html: Added.
+        * fast/text/simple-line-layout-hyphen-limit-lines2-expected.html: Added.
+        * fast/text/simple-line-layout-hyphen-limit-lines2.html: Added.
+        * platform/mac/fast/text/hyphenate-limit-lines-expected.txt: progression
+
+2017-01-26  Zalan Bujtas  <zalan@apple.com>
+
         Simple line layout: Add support for -webkit-hyphenate-limit-after and -webkit-hyphenate-limit-before
         https://bugs.webkit.org/show_bug.cgi?id=167439
         <rdar://problem/30180184>

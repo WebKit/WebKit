@@ -1,3 +1,27 @@
+2017-01-26  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add support for -webkit-hyphenate-limit-lines
+        https://bugs.webkit.org/show_bug.cgi?id=167446
+        <rdar://problem/30194030>
+
+        Reviewed by Antti Koivisto.
+
+        Now we can set the limit on the number of lines that a word can split across through hyphenation.
+
+        Tests: fast/text/simple-line-layout-hyphen-limit-lines.html
+               fast/text/simple-line-layout-hyphen-limit-lines2.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        (WebCore::SimpleLineLayout::splitFragmentToFitLine):
+        (WebCore::SimpleLineLayout::printReason):
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::Style::Style):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::TextFragment):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::wrappingWithHyphenCounter):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::splitWithHyphen): The right side of the split has +1 on the wrapping counter.
+
 2017-01-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for recognizing data interaction gestures in WebKit2

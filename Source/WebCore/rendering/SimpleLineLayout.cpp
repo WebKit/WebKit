@@ -86,34 +86,33 @@ enum AvoidanceReason_ : uint64_t {
     FlowHasRTLOrdering                    = 1LLU  << 20,
     FlowHasLineAlignEdges                 = 1LLU  << 21,
     FlowHasLineSnap                       = 1LLU  << 22,
-    FlowHasHypensLineLimit                = 1LLU  << 23,
-    FlowHasTextEmphasisFillOrMark         = 1LLU  << 24,
-    FlowHasTextShadow                     = 1LLU  << 25,
-    FlowHasPseudoFirstLine                = 1LLU  << 26,
-    FlowHasPseudoFirstLetter              = 1LLU  << 27,
-    FlowHasTextCombine                    = 1LLU  << 28,
-    FlowHasTextFillBox                    = 1LLU  << 29,
-    FlowHasBorderFitLines                 = 1LLU  << 30,
-    FlowHasNonAutoLineBreak               = 1LLU  << 31,
-    FlowHasNonAutoTrailingWord            = 1LLU  << 32,
-    FlowHasSVGFont                        = 1LLU  << 33,
-    FlowTextIsEmpty                       = 1LLU  << 34,
-    FlowTextHasSoftHyphen                 = 1LLU  << 35,
-    FlowTextHasDirectionCharacter         = 1LLU  << 36,
-    FlowIsMissingPrimaryFont              = 1LLU  << 37,
-    FlowFontIsMissingGlyph                = 1LLU  << 38,
-    FlowTextIsCombineText                 = 1LLU  << 39,
-    FlowTextIsRenderCounter               = 1LLU  << 40,
-    FlowTextIsRenderQuote                 = 1LLU  << 41,
-    FlowTextIsTextFragment                = 1LLU  << 42,
-    FlowTextIsSVGInlineText               = 1LLU  << 43,
-    FlowFontIsNotSimple                   = 1LLU  << 44,
-    FeatureIsDisabled                     = 1LLU  << 45,
-    FlowHasNoParent                       = 1LLU  << 46,
-    FlowHasNoChild                        = 1LLU  << 47,
-    FlowChildIsSelected                   = 1LLU  << 48,
-    FlowHasHangingPunctuation             = 1LLU  << 49,
-    EndOfReasons                          = 1LLU  << 50
+    FlowHasTextEmphasisFillOrMark         = 1LLU  << 23,
+    FlowHasTextShadow                     = 1LLU  << 24,
+    FlowHasPseudoFirstLine                = 1LLU  << 25,
+    FlowHasPseudoFirstLetter              = 1LLU  << 26,
+    FlowHasTextCombine                    = 1LLU  << 27,
+    FlowHasTextFillBox                    = 1LLU  << 28,
+    FlowHasBorderFitLines                 = 1LLU  << 29,
+    FlowHasNonAutoLineBreak               = 1LLU  << 30,
+    FlowHasNonAutoTrailingWord            = 1LLU  << 31,
+    FlowHasSVGFont                        = 1LLU  << 32,
+    FlowTextIsEmpty                       = 1LLU  << 33,
+    FlowTextHasSoftHyphen                 = 1LLU  << 34,
+    FlowTextHasDirectionCharacter         = 1LLU  << 35,
+    FlowIsMissingPrimaryFont              = 1LLU  << 36,
+    FlowFontIsMissingGlyph                = 1LLU  << 37,
+    FlowTextIsCombineText                 = 1LLU  << 38,
+    FlowTextIsRenderCounter               = 1LLU  << 39,
+    FlowTextIsRenderQuote                 = 1LLU  << 40,
+    FlowTextIsTextFragment                = 1LLU  << 41,
+    FlowTextIsSVGInlineText               = 1LLU  << 42,
+    FlowFontIsNotSimple                   = 1LLU  << 43,
+    FeatureIsDisabled                     = 1LLU  << 44,
+    FlowHasNoParent                       = 1LLU  << 45,
+    FlowHasNoChild                        = 1LLU  << 46,
+    FlowChildIsSelected                   = 1LLU  << 47,
+    FlowHasHangingPunctuation             = 1LLU  << 48,
+    EndOfReasons                          = 1LLU  << 49
 };
 const unsigned NoReason = 0;
 
@@ -237,8 +236,6 @@ static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, IncludeReas
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
     if (style.lineSnap() != LineSnapNone)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineSnap, reasons, includeReasons);
-    if (style.hyphenationLimitLines() != RenderStyle::initialHyphenationLimitLines())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHypensLineLimit, reasons, includeReasons);
     if (style.textEmphasisFill() != TextEmphasisFillFilled || style.textEmphasisMark() != TextEmphasisMarkNone)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextEmphasisFillOrMark, reasons, includeReasons);
     if (style.textShadow())
@@ -617,6 +614,31 @@ static void updateLineConstrains(const RenderBlockFlow& flow, LineState& line, b
     line.setAvailableWidth(std::max<float>(0, logicalRightOffset - line.logicalLeftOffset()));
 }
 
+static std::optional<unsigned> hyphenPositionForFragment(unsigned splitPosition, TextFragmentIterator::TextFragment& fragmentToSplit,
+    const TextFragmentIterator& textFragmentIterator, float availableWidth)
+{
+    auto& style = textFragmentIterator.style();
+    bool shouldHyphenate = style.shouldHyphenate && (!style.hyphenLimitLines || fragmentToSplit.wrappingWithHyphenCounter() < *style.hyphenLimitLines);
+    if (!shouldHyphenate)
+        return std::nullopt;
+
+    if (!enoughWidthForHyphenation(availableWidth, style.font.pixelSize()))
+        return std::nullopt;
+
+    // We might be able to fit the hyphen at the split position.
+    auto splitPositionWithHyphen = splitPosition;
+    // Find a splitting position where hyphen surely fits.
+    unsigned start = fragmentToSplit.start();
+    auto leftSideWidth = textFragmentIterator.textWidth(start, splitPosition, 0);
+    while (leftSideWidth + style.hyphenStringWidth > availableWidth) {
+        if (--splitPositionWithHyphen <= start)
+            return std::nullopt; // No space for hyphen.
+        leftSideWidth -= textFragmentIterator.textWidth(splitPositionWithHyphen, splitPositionWithHyphen + 1, 0);
+    }
+    ASSERT(splitPositionWithHyphen > start);
+    return textFragmentIterator.lastHyphenPosition(fragmentToSplit, splitPositionWithHyphen + 1);
+}
+
 static TextFragmentIterator::TextFragment splitFragmentToFitLine(TextFragmentIterator::TextFragment& fragmentToSplit, float availableWidth, bool keepAtLeastOneCharacter, const TextFragmentIterator& textFragmentIterator)
 {
     // FIXME: add surrogate pair support.
@@ -626,26 +648,12 @@ static TextFragmentIterator::TextFragment splitFragmentToFitLine(TextFragmentIte
         return availableWidth < textFragmentIterator.textWidth(start, index + 1, 0);
     });
     unsigned splitPosition = (*it);
-    auto& style = textFragmentIterator.style();
     // Does first character fit this line?
-    if (splitPosition == fragmentToSplit.start()) {
+    if (splitPosition == start) {
         if (keepAtLeastOneCharacter)
             ++splitPosition;
-    } else if (style.shouldHyphenate && enoughWidthForHyphenation(availableWidth, style.font.pixelSize())) {
-        // We might be able to fit the hyphen at the split position.
-        auto splitPositionWithHyphen = splitPosition;
-        // Find a splitting position where hyphen surely fits.
-        auto leftSideWidth = textFragmentIterator.textWidth(start, splitPosition, 0);
-        while (leftSideWidth + style.hyphenStringWidth > availableWidth) {
-            if (--splitPositionWithHyphen <= start)
-                break; // No space for hyphen.
-            leftSideWidth -= textFragmentIterator.textWidth(splitPositionWithHyphen, splitPositionWithHyphen + 1, 0);
-        }
-        if (splitPositionWithHyphen > start) {
-            if (auto hyphenPosition = textFragmentIterator.lastHyphenPosition(fragmentToSplit, splitPositionWithHyphen + 1))
-                return fragmentToSplit.splitWithHyphen(*hyphenPosition, textFragmentIterator);
-        }
-    }
+    } else if (auto hyphenPosition = hyphenPositionForFragment(splitPosition, fragmentToSplit, textFragmentIterator, availableWidth))
+        return fragmentToSplit.splitWithHyphen(*hyphenPosition, textFragmentIterator);
     return fragmentToSplit.split(splitPosition, textFragmentIterator);
 }
 
@@ -988,9 +996,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case FlowHasLineSnap:
         stream << "-webkit-line-snap property";
-        break;
-    case FlowHasHypensLineLimit:
-        stream << "-webkit-hyphenate-limit-lines property";
         break;
     case FlowHasTextEmphasisFillOrMark:
         stream << "text-emphasis (fill/mark)";
