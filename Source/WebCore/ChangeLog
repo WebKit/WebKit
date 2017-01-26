@@ -1,3 +1,18 @@
+2017-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add infrastructure to support data interaction in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=167443
+
+        Reviewed by Simon Fraser.
+
+        Adds support in WebCore to determine whether there is interactive data at a given position. No new tests, since
+        there should be no behavior change yet.
+
+        * page/EventHandler.h:
+        * page/Page.cpp:
+        (WebCore::Page::hasDataInteractionAtPosition):
+        * page/Page.h:
+
 2017-01-25  Matt Rajca  <mrajca@apple.com>
 
         Notify clients when the user plays media otherwise prevented from autoplaying

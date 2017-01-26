@@ -3527,6 +3527,9 @@ void WebPage::performDragControllerAction(uint64_t action, const WebCore::DragDa
         m_pendingDropSandboxExtension = nullptr;
 
         m_pendingDropExtensionsForFileUpload.clear();
+#if ENABLE(DATA_INTERACTION)
+        send(Messages::WebPageProxy::DidPerformDataInteractionControllerOperation());
+#endif
         break;
     }
 

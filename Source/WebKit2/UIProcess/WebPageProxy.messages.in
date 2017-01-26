@@ -316,6 +316,10 @@ messages -> WebPageProxy {
     StartDrag(struct WebKit::WebSelectionData selection, uint64_t dragOperation, WebKit::ShareableBitmap::Handle dragImage)
 #endif
 
+#if ENABLE(DATA_INTERACTION)
+    DidPerformDataInteractionControllerOperation()
+#endif
+
 #if PLATFORM(COCOA)
     # Dictionary support.
     DidPerformDictionaryLookup(struct WebCore::DictionaryPopupInfo dictionaryPopupInfo)

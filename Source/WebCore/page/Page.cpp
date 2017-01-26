@@ -127,6 +127,10 @@
 #include "InProcessIDBServer.h"
 #endif
 
+#if ENABLE(DATA_INTERACTION)
+#include "SelectionRect.h"
+#endif
+
 namespace WebCore {
 
 static HashSet<Page*>* allPages;
@@ -2151,5 +2155,27 @@ void Page::accessibilitySettingsDidChange()
     if (neededRecalc)
         LOG(Layout, "hasMediaQueriesAffectedByAccessibilitySettingsChange, enqueueing style recalc");
 }
+
+#if ENABLE(DATA_INTERACTION)
+
+bool Page::hasDataInteractionAtPosition(const FloatPoint& position) const
+{
+    auto currentSelection = m_mainFrame->selection().selection();
+    if (!currentSelection.isRange())
+        return false;
+
+    if (auto selectedRange = currentSelection.toNormalizedRange()) {
+        Vector<SelectionRect> selectionRects;
+        selectedRange->collectSelectionRects(selectionRects);
+        for (auto selectionRect : selectionRects) {
+            if (FloatRect(selectionRect.rect()).contains(position))
+                return true;
+        }
+    }
+
+    return false;
+}
+
+#endif
 
 } // namespace WebCore

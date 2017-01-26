@@ -199,6 +199,11 @@ private:
 
     void requestPasswordForQuickLookDocument(const String& fileName, std::function<void(const String&)>&&) override;
 
+#if ENABLE(DATA_INTERACTION)
+    void didPerformDataInteractionControllerOperation() override;
+    void startDataInteractionWithImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& image, bool isLink) override;
+#endif
+
     WKContentView *m_contentView;
     WKWebView *m_webView;
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;

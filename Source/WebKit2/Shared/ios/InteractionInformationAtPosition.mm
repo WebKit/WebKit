@@ -43,6 +43,9 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     encoder << request;
 
     encoder << nodeAtPositionIsAssistedNode;
+#if ENABLE(DATA_INTERACTION)
+    encoder << hasDataInteractionAtPosition;
+#endif
     encoder << isSelectable;
     encoder << isNearMarkedText;
     encoder << touchCalloutEnabled;
@@ -86,6 +89,11 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
 
     if (!decoder.decode(result.nodeAtPositionIsAssistedNode))
         return false;
+
+#if ENABLE(DATA_INTERACTION)
+    if (!decoder.decode(result.hasDataInteractionAtPosition))
+        return false;
+#endif
 
     if (!decoder.decode(result.isSelectable))
         return false;

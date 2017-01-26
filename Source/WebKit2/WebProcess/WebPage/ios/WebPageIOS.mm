@@ -620,6 +620,13 @@ void WebPage::handleTap(const IntPoint& point, uint64_t lastLayerTreeTransaction
         handleSyntheticClick(nodeRespondingToClick, adjustedPoint);
 }
 
+#if ENABLE(DATA_INTERACTION)
+void WebPage::requestStartDataInteraction(const IntPoint& clientPosition, const IntPoint& globalPosition)
+{
+    m_page->mainFrame().eventHandler().tryToBeginDataInteractionAtPoint(clientPosition, globalPosition);
+}
+#endif
+
 void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
 {
 #if ENABLE(TOUCH_EVENTS)
@@ -2463,6 +2470,10 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
             }
         }
     }
+
+#if ENABLE(DATA_INTERACTION)
+    info.hasDataInteractionAtPosition = m_page->hasDataInteractionAtPosition(adjustedPoint);
+#endif
 }
 
 void WebPage::requestPositionInformation(const InteractionInformationRequest& request)

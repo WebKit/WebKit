@@ -762,6 +762,16 @@ Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& messa
     return ValidationBubble::create(m_contentView, message);
 }
 
+#if ENABLE(DATA_INTERACTION)
+void PageClientImpl::didPerformDataInteractionControllerOperation()
+{
+}
+
+void PageClientImpl::startDataInteractionWithImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& image, bool isLink)
+{
+}
+#endif
+
 void PageClientImpl::handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession, const String& title, double duration, double elapsedTime)
 {
     [m_webView _handleActiveNowPlayingSessionInfoResponse:hasActiveSession title:nsStringFromWebCoreString(title) duration:duration elapsedTime:elapsedTime];

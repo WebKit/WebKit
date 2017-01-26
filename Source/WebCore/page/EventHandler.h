@@ -315,6 +315,10 @@ public:
 
     static Widget* widgetForEventTarget(Element* eventTarget);
 
+#if ENABLE(DATA_INTERACTION)
+    WEBCORE_EXPORT bool tryToBeginDataInteractionAtPoint(const IntPoint& clientPosition, const IntPoint& globalPosition);
+#endif
+
 private:
 #if ENABLE(DRAG_SUPPORT)
     static DragState& dragState();

@@ -875,6 +875,18 @@ bool PageClientImpl::windowIsFrontWindowUnderMouse(const NativeWebMouseEvent& ev
     return m_impl->windowIsFrontWindowUnderMouse(event.nativeEvent());
 }
 
+#if ENABLE(DATA_INTERACTION)
+void PageClientImpl::didPerformDataInteractionControllerOperation()
+{
+    // FIXME: Implement me.
+}
+
+void PageClientImpl::startDataInteractionWithImage(const IntPoint&, const ShareableBitmap::Handle&, bool)
+{
+    // FIXME: Implement me.
+}
+#endif
+
 WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirection()
 {
     if (!m_view)

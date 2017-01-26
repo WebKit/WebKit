@@ -380,6 +380,11 @@ public:
 #if USE(QUICK_LOOK)
     virtual void requestPasswordForQuickLookDocument(const String& fileName, std::function<void(const String&)>&&) = 0;
 #endif
+
+#if ENABLE(DATA_INTERACTION)
+    virtual void didPerformDataInteractionControllerOperation() = 0;
+    virtual void startDataInteractionWithImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& image, bool isLink) = 0;
+#endif
 };
 
 } // namespace WebKit

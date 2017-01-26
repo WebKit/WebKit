@@ -41,6 +41,9 @@ struct InteractionInformationAtPosition {
     InteractionInformationRequest request;
 
     bool nodeAtPositionIsAssistedNode { false };
+#if ENABLE(DATA_INTERACTION)
+    bool hasDataInteractionAtPosition { false };
+#endif
     bool isSelectable { false };
     bool isNearMarkedText { false };
     bool touchCalloutEnabled { true };

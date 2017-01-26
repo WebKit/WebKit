@@ -566,6 +566,10 @@ public:
     bool isOnlyNonUtilityPage() const;
     bool isUtilityPage() const { return m_isUtilityPage; }
 
+#if ENABLE(DATA_INTERACTION)
+    WEBCORE_EXPORT bool hasDataInteractionAtPosition(const FloatPoint&) const;
+#endif
+
 private:
     WEBCORE_EXPORT void initGroup();
 

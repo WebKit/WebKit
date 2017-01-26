@@ -1,3 +1,41 @@
+2017-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add infrastructure to support data interaction in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=167443
+
+        Reviewed by Simon Fraser.
+
+        Adds plumbing for two new XPC messages: WebPageProxy::DidPerformDataInteractionControllerOperation and
+        WebPage::RequestStartDataInteraction. Additionally, adds a new field to InteractionInformationAtPosition that
+        indicates whether or not there is data to interact with at a given location.
+
+        This patch only adds infrastructure, and does not change any behavior.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didPerformDataInteractionControllerOperation):
+        (WebKit::PageClientImpl::startDataInteractionWithImage):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didPerformDataInteractionControllerOperation):
+        (WebKit::requestStartDataInteraction):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didPerformDataInteractionControllerOperation):
+        (WebKit::PageClientImpl::startDataInteractionWithImage):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestStartDataInteraction):
+        (WebKit::WebPage::getPositionInformation):
+
 2017-01-25  Tim Horton  <timothy_horton@apple.com>
 
         Stop inheriting from UIWebScrollView, just use UIScrollView

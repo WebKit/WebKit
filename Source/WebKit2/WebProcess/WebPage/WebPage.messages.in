@@ -246,6 +246,10 @@ messages -> WebPage LegacyReceiver {
     DragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation)
 #endif
 
+#if ENABLE(DATA_INTERACTION)
+    RequestStartDataInteraction(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition)
+#endif
+
     # Popup menu.
     DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
     SetTextForActivePopupMenu(int32_t index)
