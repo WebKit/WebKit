@@ -1,3 +1,24 @@
+2017-01-26  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add support for -webkit-hyphenate-limit-after and -webkit-hyphenate-limit-before
+        https://bugs.webkit.org/show_bug.cgi?id=167439
+        <rdar://problem/30180184>
+
+        Reviewed by Antti Koivisto.
+
+        Implement pre and post hyphen length constrains for simple line layout.
+
+        Tests: fast/text/simple-line-layout-hyphen-limit-after.html
+               fast/text/simple-line-layout-hyphen-limit-before.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        (WebCore::SimpleLineLayout::printReason):
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::Style::Style): Same as normal line layout default values.
+        (WebCore::SimpleLineLayout::TextFragmentIterator::lastHyphenPosition):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+
 2017-01-26  Brady Eidson  <beidson@apple.com>
 
         Gamepad support shows wrong values for PS4 controllers (D-pad is missing).

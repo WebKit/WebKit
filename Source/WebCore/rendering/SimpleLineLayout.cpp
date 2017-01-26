@@ -86,7 +86,7 @@ enum AvoidanceReason_ : uint64_t {
     FlowHasRTLOrdering                    = 1LLU  << 20,
     FlowHasLineAlignEdges                 = 1LLU  << 21,
     FlowHasLineSnap                       = 1LLU  << 22,
-    FlowHasHypensLimit                    = 1LLU  << 23,
+    FlowHasHypensLineLimit                = 1LLU  << 23,
     FlowHasTextEmphasisFillOrMark         = 1LLU  << 24,
     FlowHasTextShadow                     = 1LLU  << 25,
     FlowHasPseudoFirstLine                = 1LLU  << 26,
@@ -237,10 +237,8 @@ static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, IncludeReas
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
     if (style.lineSnap() != LineSnapNone)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineSnap, reasons, includeReasons);
-    if (style.hyphenationLimitBefore() != RenderStyle::initialHyphenationLimitBefore()
-        || style.hyphenationLimitAfter() != RenderStyle::initialHyphenationLimitAfter()
-        || style.hyphenationLimitLines() != RenderStyle::initialHyphenationLimitLines())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHypensLimit, reasons, includeReasons);
+    if (style.hyphenationLimitLines() != RenderStyle::initialHyphenationLimitLines())
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHypensLineLimit, reasons, includeReasons);
     if (style.textEmphasisFill() != TextEmphasisFillFilled || style.textEmphasisMark() != TextEmphasisMarkNone)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextEmphasisFillOrMark, reasons, includeReasons);
     if (style.textShadow())
@@ -991,8 +989,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case FlowHasLineSnap:
         stream << "-webkit-line-snap property";
         break;
-    case FlowHasHypensLimit:
-        stream << "hyphen-limit-* property";
+    case FlowHasHypensLineLimit:
+        stream << "-webkit-hyphenate-limit-lines property";
         break;
     case FlowHasTextEmphasisFillOrMark:
         stream << "text-emphasis (fill/mark)";

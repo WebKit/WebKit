@@ -49,6 +49,8 @@ TextFragmentIterator::Style::Style(const RenderStyle& style)
     , tabWidth(collapseWhitespace ? 0 : style.tabSize())
     , shouldHyphenate(style.hyphens() == HyphensAuto && canHyphenate(style.locale()))
     , hyphenStringWidth(shouldHyphenate ? font.width(TextRun(style.hyphenString())) : 0)
+    , hyphenLimitBefore(style.hyphenationLimitBefore() < 0 ? 2 : style.hyphenationLimitBefore())
+    , hyphenLimitAfter(style.hyphenationLimitAfter() < 0 ? 2 : style.hyphenationLimitAfter())
     , locale(style.locale())
 {
 }
@@ -176,20 +178,28 @@ float TextFragmentIterator::textWidth(unsigned from, unsigned to, float xPositio
     return runWidth(segment, from, to, xPosition);
 }
 
-std::optional<unsigned> TextFragmentIterator::lastHyphenPosition(const TextFragmentIterator::TextFragment& run, unsigned beforeIndex) const
+std::optional<unsigned> TextFragmentIterator::lastHyphenPosition(const TextFragmentIterator::TextFragment& run, unsigned before) const
 {
-    ASSERT(run.start() < beforeIndex);
+    ASSERT(run.start() < before);
     auto& segment = *m_currentSegment;
-    ASSERT(segment.start <= beforeIndex && beforeIndex <= segment.end);
+    ASSERT(segment.start <= before && before <= segment.end);
     ASSERT(is<RenderText>(segment.renderer));
     if (!m_style.shouldHyphenate || run.type() != TextFragment::NonWhitespace)
         return std::nullopt;
-    
+    // Check if there are enough characters in the run.
+    unsigned runLength = run.end() - run.start();
+    if (m_style.hyphenLimitBefore >= runLength || m_style.hyphenLimitAfter >= runLength || m_style.hyphenLimitBefore + m_style.hyphenLimitAfter > runLength)
+        return std::nullopt;
     auto runStart = segment.toSegmentPosition(run.start());
-    auto before = segment.toSegmentPosition(beforeIndex) - runStart;
+    auto beforeIndex = segment.toSegmentPosition(before) - runStart;
+    if (beforeIndex <= m_style.hyphenLimitBefore)
+        return std::nullopt;
+    // Adjust before index to accommodate the limit-after value (this is the last potential hyphen location).
+    beforeIndex = std::min(beforeIndex, runLength - m_style.hyphenLimitAfter + 1);
     auto substringForHyphenation = StringView(segment.text).substring(runStart, run.end() - run.start());
-    auto hyphenLocation = lastHyphenLocation(substringForHyphenation, before, m_style.locale);
-    if (hyphenLocation)
+    auto hyphenLocation = lastHyphenLocation(substringForHyphenation, beforeIndex, m_style.locale);
+    // Check if there are enough characters before and after the hyphen.
+    if (hyphenLocation && hyphenLocation >= m_style.hyphenLimitBefore && m_style.hyphenLimitAfter <= (runLength - hyphenLocation))
         return segment.toRenderPosition(hyphenLocation + runStart);
     return std::nullopt;
 }

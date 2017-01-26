@@ -118,6 +118,8 @@ public:
         unsigned tabWidth;
         bool shouldHyphenate;
         float hyphenStringWidth;
+        unsigned hyphenLimitBefore;
+        unsigned hyphenLimitAfter;
         AtomicString locale;
     };
     const Style& style() const { return m_style; }
