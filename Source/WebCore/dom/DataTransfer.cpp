@@ -290,7 +290,7 @@ void DataTransfer::updateDragImage()
     m_pasteboard->setDragImage(computedImage, computedHotSpot);
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(MAC)
 
 DragImageRef DataTransfer::createDragImage(IntPoint& location) const
 {

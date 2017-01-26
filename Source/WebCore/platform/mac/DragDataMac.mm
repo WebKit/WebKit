@@ -33,6 +33,54 @@
 #import "PlatformStrategies.h"
 #import "WebCoreNSURLExtras.h"
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/DragDataAdditions.mm>)
+
+#import <WebKitAdditions/DragDataAdditions.mm>
+
+#else
+
+static inline String rtfPasteboardType()
+{
+    return String(NSRTFPboardType);
+}
+
+static inline String rtfdPasteboardType()
+{
+    return String(NSRTFDPboardType);
+}
+
+static inline String stringPasteboardType()
+{
+    return String(NSStringPboardType);
+}
+
+static inline String urlPasteboardType()
+{
+    return String(NSURLPboardType);
+}
+
+static inline String htmlPasteboardType()
+{
+    return String(NSHTMLPboardType);
+}
+
+static inline String colorPasteboardType()
+{
+    return String(NSColorPboardType);
+}
+
+static inline String pdfPasteboardType()
+{
+    return String(NSPDFPboardType);
+}
+
+static inline String tiffPasteboardType()
+{
+    return String(NSTIFFPboardType);
+}
+
+#endif // USE(APPLE_INTERNAL_SDK)
+
 namespace WebCore {
 
 DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPoint& globalPosition, 
@@ -42,7 +90,11 @@ DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPo
     , m_platformDragData(data)
     , m_draggingSourceOperationMask(sourceOperationMask)
     , m_applicationFlags(flags)
+#if PLATFORM(MAC)
     , m_pasteboardName([[m_platformDragData draggingPasteboard] name])
+#else
+    , m_pasteboardName("data interaction pasteboard")
+#endif
 {
 }
 
@@ -66,30 +118,40 @@ bool DragData::containsColor() const
 {
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
-    return types.contains(String(NSColorPboardType));
+    return types.contains(colorPasteboardType());
 }
 
 bool DragData::containsFiles() const
 {
+#if PLATFORM(MAC)
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
     return types.contains(String(NSFilenamesPboardType)) || types.contains(String(NSFilesPromisePboardType));
+#else
+    return false;
+#endif
 }
 
 unsigned DragData::numberOfFiles() const
 {
     Vector<String> files;
+#if PLATFORM(MAC)
     platformStrategies()->pasteboardStrategy()->getPathnamesForType(files, String(NSFilenamesPboardType), m_pasteboardName);
     if (!files.size())
         platformStrategies()->pasteboardStrategy()->getPathnamesForType(files, String(NSFilesPromisePboardType), m_pasteboardName);
+#endif
     return files.size();
 }
 
 void DragData::asFilenames(Vector<String>& result) const
 {
+#if PLATFORM(MAC)
     platformStrategies()->pasteboardStrategy()->getPathnamesForType(result, String(NSFilenamesPboardType), m_pasteboardName);
     if (!result.size())
         result = fileNames();
+#else
+    UNUSED_PARAM(result);
+#endif
 }
 
 bool DragData::containsPlainText() const
@@ -97,11 +159,13 @@ bool DragData::containsPlainText() const
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
 
-    return types.contains(String(NSStringPboardType))
-        || types.contains(String(NSRTFDPboardType))
-        || types.contains(String(NSRTFPboardType))
+    return types.contains(stringPasteboardType())
+        || types.contains(rtfdPasteboardType())
+        || types.contains(rtfPasteboardType())
+#if PLATFORM(MAC)
         || types.contains(String(NSFilenamesPboardType))
-        || platformStrategies()->pasteboardStrategy()->stringForType(String(NSURLPboardType), m_pasteboardName).length();
+#endif
+        || platformStrategies()->pasteboardStrategy()->stringForType(urlPasteboardType(), m_pasteboardName).length();
 }
 
 String DragData::asPlainText() const
@@ -130,23 +194,27 @@ bool DragData::containsCompatibleContent() const
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
     return types.contains(String(WebArchivePboardType))
-        || types.contains(String(NSHTMLPboardType))
+        || types.contains(htmlPasteboardType())
+#if PLATFORM(MAC)
         || types.contains(String(NSFilenamesPboardType))
         || types.contains(String(NSFilesPromisePboardType))
-        || types.contains(String(NSTIFFPboardType))
-        || types.contains(String(NSPDFPboardType))
-        || types.contains(String(NSURLPboardType))
-        || types.contains(String(NSRTFDPboardType))
-        || types.contains(String(NSRTFPboardType))
-        || types.contains(String(NSStringPboardType))
-        || types.contains(String(NSColorPboardType))
+#endif
+        || types.contains(tiffPasteboardType())
+        || types.contains(pdfPasteboardType())
+        || types.contains(urlPasteboardType())
+        || types.contains(rtfdPasteboardType())
+        || types.contains(rtfPasteboardType())
+        || types.contains(stringPasteboardType())
+        || types.contains(colorPasteboardType())
         || types.contains(String(kUTTypePNG));
 }
 
 bool DragData::containsPromise() const
 {
     Vector<String> files;
+#if PLATFORM(MAC)
     platformStrategies()->pasteboardStrategy()->getPathnamesForType(files, String(NSFilesPromisePboardType), m_pasteboardName);
+#endif
     return files.size() == 1;
 }
 
@@ -160,24 +228,26 @@ String DragData::asURL(FilenameConversionPolicy, String* title) const
     // FIXME: Use filenamePolicy.
 
     if (title) {
+#if PLATFORM(MAC)
         String URLTitleString = platformStrategies()->pasteboardStrategy()->stringForType(String(WebURLNamePboardType), m_pasteboardName);
         if (!URLTitleString.isEmpty())
             *title = URLTitleString;
+#endif
     }
     
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
 
-    if (types.contains(String(NSURLPboardType))) {
-        NSURL *URLFromPasteboard = [NSURL URLWithString:platformStrategies()->pasteboardStrategy()->stringForType(String(NSURLPboardType), m_pasteboardName)];
+    if (types.contains(urlPasteboardType())) {
+        NSURL *URLFromPasteboard = [NSURL URLWithString:platformStrategies()->pasteboardStrategy()->stringForType(urlPasteboardType(), m_pasteboardName)];
         NSString *scheme = [URLFromPasteboard scheme];
         // Cannot drop other schemes unless <rdar://problem/10562662> and <rdar://problem/11187315> are fixed.
         if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"])
             return [URLByCanonicalizingURL(URLFromPasteboard) absoluteString];
     }
     
-    if (types.contains(String(NSStringPboardType))) {
-        NSURL *URLFromPasteboard = [NSURL URLWithString:platformStrategies()->pasteboardStrategy()->stringForType(String(NSStringPboardType), m_pasteboardName)];
+    if (types.contains(stringPasteboardType())) {
+        NSURL *URLFromPasteboard = [NSURL URLWithString:platformStrategies()->pasteboardStrategy()->stringForType(stringPasteboardType(), m_pasteboardName)];
         NSString *scheme = [URLFromPasteboard scheme];
         // Pasteboard content is not trusted, because JavaScript code can modify it. We can sanitize it for URLs and other typed content, but not for strings.
         // The result of this function is used to initiate navigation, so we shouldn't allow arbitrary file URLs.
@@ -186,6 +256,7 @@ String DragData::asURL(FilenameConversionPolicy, String* title) const
             return [URLByCanonicalizingURL(URLFromPasteboard) absoluteString];
     }
     
+#if PLATFORM(MAC)
     if (types.contains(String(NSFilenamesPboardType))) {
         Vector<String> files;
         platformStrategies()->pasteboardStrategy()->getPathnamesForType(files, String(NSFilenamesPboardType), m_pasteboardName);
@@ -199,6 +270,7 @@ String DragData::asURL(FilenameConversionPolicy, String* title) const
 
     if (types.contains(String(NSFilesPromisePboardType)) && fileNames().size() == 1)
         return [URLByCanonicalizingURL([NSURL fileURLWithPath:fileNames()[0]]) absoluteString];
+#endif
 
     return String();        
 }

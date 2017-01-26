@@ -179,7 +179,7 @@ WebView *getWebView(WebFrame *webFrame);
 - (DOMCSSStyleDeclaration *)_typingStyle;
 - (void)_setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebCore::EditAction)undoAction;
 
-#if ENABLE(DRAG_SUPPORT)
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 - (void)_dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation;
 #endif
 

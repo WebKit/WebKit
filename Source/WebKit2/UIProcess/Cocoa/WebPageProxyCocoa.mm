@@ -34,6 +34,10 @@
 #import <WebCore/ValidationBubble.h>
 #import <wtf/cf/TypeCastsCF.h>
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPageProxyAdditions.mm>)
+#import <WebKitAdditions/WebPageProxyAdditions.mm>
+#endif
+
 namespace WebKit {
 
 #if ENABLE(DATA_DETECTION)

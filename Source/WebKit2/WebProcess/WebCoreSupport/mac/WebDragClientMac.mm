@@ -51,6 +51,12 @@
 using namespace WebCore;
 using namespace WebKit;
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebDragClientAdditions.mm>)
+#import <WebKitAdditions/WebDragClientAdditions.mm>
+#endif
+
+#if PLATFORM(MAC)
+
 namespace WebKit {
 
 static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const IntSize& size, Frame& frame)
@@ -159,5 +165,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 }
 
 } // namespace WebKit
+
+#endif // PLATFORM(MAC)
 
 #endif // ENABLE(DRAG_SUPPORT)

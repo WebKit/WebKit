@@ -1,3 +1,18 @@
+2017-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor drag and drop implementation on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=167427
+
+        Reviewed by Enrica Casucci.
+
+        See WebCore ChangeLog for more details.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DragData>::encode):
+        (IPC::ArgumentCoder<DragData>::decode):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+
 2017-01-25  Andy Estes  <aestes@apple.com>
 
         Use #pragma once in a few places

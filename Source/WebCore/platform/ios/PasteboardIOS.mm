@@ -58,6 +58,10 @@
 - (BOOL)containsAttachments;
 @end
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PasteboardAdditions.mm>)
+#import <WebKitAdditions/PasteboardAdditions.mm>
+#endif
+
 namespace WebCore {
 
 // FIXME: Does this need to be declared in the header file?

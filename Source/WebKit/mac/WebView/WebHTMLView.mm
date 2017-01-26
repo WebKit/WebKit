@@ -4544,7 +4544,7 @@ static BOOL currentScrollIsBlit(NSView *clipView)
 }
 #endif
 
-#if ENABLE(DRAG_SUPPORT)
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 - (void)dragImage:(NSImage *)dragImage
                at:(NSPoint)at
            offset:(NSSize)offset
@@ -4688,7 +4688,7 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
     
     return [NSArray arrayWithObject:[path lastPathComponent]];
 }
-#endif
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
 #if !PLATFORM(IOS)
 - (void)mouseUp:(NSEvent *)event

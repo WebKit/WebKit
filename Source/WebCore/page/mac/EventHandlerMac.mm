@@ -74,10 +74,6 @@
 
 namespace WebCore {
 
-#if ENABLE(DRAG_SUPPORT)
-const double EventHandler::TextDragDelay = 0.15;
-#endif
-
 const double resetLatchedStateTimeout = 0.1;
 
 static RetainPtr<NSEvent>& currentNSEventSlot()

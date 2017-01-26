@@ -25,7 +25,7 @@
 
 #import "WebDragClient.h"
 
-#if ENABLE(DRAG_SUPPORT)
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
 #import "DOMElementInternal.h"
 #import "WebArchive.h"
@@ -143,4 +143,4 @@ void WebDragClient::dragControllerDestroyed()
     delete this;
 }
 
-#endif // ENABLE(DRAG_SUPPORT)
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

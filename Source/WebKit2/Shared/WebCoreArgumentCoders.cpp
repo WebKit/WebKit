@@ -1223,8 +1223,10 @@ void ArgumentCoder<DragData>::encode(Encoder& encoder, const DragData& dragData)
     encoder << dragData.globalPosition();
     encoder.encodeEnum(dragData.draggingSourceOperationMask());
     encoder.encodeEnum(dragData.flags());
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     encoder << dragData.pasteboardName();
+#endif
+#if PLATFORM(MAC)
     encoder << dragData.fileNames();
 #endif
 }
@@ -1248,13 +1250,15 @@ bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
         return false;
 
     String pasteboardName;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (!decoder.decode(pasteboardName))
         return false;
 #endif
     Vector<String> fileNames;
+#if PLATFORM(MAC)
     if (!decoder.decode(fileNames))
         return false;
+#endif
 
     dragData = DragData(pasteboardName, clientPosition, globalPosition, draggingSourceOperationMask, applicationFlags);
     dragData.setFileNames(fileNames);

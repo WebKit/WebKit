@@ -49,6 +49,10 @@
 #import <WebKitAdditions/EventHandlerIOSTouch.cpp>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/EventHandlerAdditions.mm>)
+#import <WebKitAdditions/EventHandlerAdditions.mm>
+#endif
+
 namespace WebCore {
 
 static RetainPtr<WebEvent>& currentEventSlot()

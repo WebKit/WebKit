@@ -131,6 +131,9 @@ const int LinkDragHysteresis = 40;
 const int ImageDragHysteresis = 5;
 const int TextDragHysteresis = 3;
 const int GeneralDragHysteresis = 3;
+#if PLATFORM(COCOA)
+const double EventHandler::TextDragDelay = 0.15;
+#endif
 #endif // ENABLE(DRAG_SUPPORT)
 
 #if ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
@@ -806,14 +809,14 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
 }
 
 #if ENABLE(DRAG_SUPPORT)
-bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& event)
+bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& event, CheckDragHysteresis checkDragHysteresis)
 {
     if (!m_mousePressed)
         return false;
 
     Ref<Frame> protectedFrame(m_frame);
 
-    if (handleDrag(event, ShouldCheckDragHysteresis))
+    if (handleDrag(event, checkDragHysteresis))
         return true;
 
     Node* targetNode = event.targetNode();

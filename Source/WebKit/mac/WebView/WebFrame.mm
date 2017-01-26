@@ -933,7 +933,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     _private->coreFrame->editor().computeAndSetTypingStyle(properties.get(), undoAction);
 }
 
-#if ENABLE(DRAG_SUPPORT)
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 - (void)_dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation
 {
     if (!_private->coreFrame)
@@ -946,7 +946,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
                              LeftButton, PlatformEvent::MouseMoved, 0, false, false, false, false, currentTime(), WebCore::ForceAtClick, WebCore::NoTap);
     _private->coreFrame->eventHandler().dragSourceEndedAt(event, (DragOperation)operation);
 }
-#endif
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
 - (BOOL)_canProvideDocumentSource
 {

@@ -120,11 +120,15 @@ DragImageRef createDragImageForNode(Frame& frame, Node& node)
     return createDragImageFromSnapshot(snapshotNode(frame, node), &node);
 }
 
+#if !ENABLE(DATA_INTERACTION)
+
 DragImageRef createDragImageForSelection(Frame& frame, bool forceBlackText)
 {
     SnapshotOptions options = forceBlackText ? SnapshotOptionsForceBlackText : SnapshotOptionsNone;
     return createDragImageFromSnapshot(snapshotSelection(frame, options), nullptr);
 }
+
+#endif
 
 struct ScopedFrameSelectionState {
     ScopedFrameSelectionState(Frame& frame)

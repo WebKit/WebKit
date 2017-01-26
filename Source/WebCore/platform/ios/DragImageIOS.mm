@@ -28,6 +28,12 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/DragImageAdditions.mm>)
+
+#import <WebKitAdditions/DragImageAdditions.mm>
+
+#else
+
 namespace WebCore {
 
 // FIXME: fix signature of dragImageSize() to avoid copying the argument.
@@ -49,3 +55,5 @@ RetainPtr<CGImageRef> createDragImageFromImage(Image*, ImageOrientationDescripti
 }
 
 } // namespace WebCore
+
+#endif // USE(APPLE_INTERNAL_SDK)

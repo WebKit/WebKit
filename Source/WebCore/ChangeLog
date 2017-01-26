@@ -1,3 +1,42 @@
+2017-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor drag and drop implementation on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=167427
+
+        Reviewed by Enrica Casucci.
+
+        Refactors some code around drag and drop on Mac, and cleans up some other related code as needed. This patch
+        should result in no behavior change.
+
+        * dom/DataTransfer.cpp:
+        * page/EventHandler.cpp:
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::eventLoopHandleMouseDragged):
+        * page/mac/EventHandlerMac.mm:
+        * platform/DragImage.cpp:
+        * platform/Pasteboard.h:
+        * platform/ios/DragImageIOS.mm:
+        * platform/ios/PasteboardIOS.mm:
+        * platform/mac/DragDataMac.mm:
+        (rtfPasteboardType):
+        (rtfdPasteboardType):
+        (stringPasteboardType):
+        (urlPasteboardType):
+        (htmlPasteboardType):
+        (colorPasteboardType):
+        (pdfPasteboardType):
+        (tiffPasteboardType):
+        (WebCore::DragData::DragData):
+        (WebCore::DragData::containsColor):
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::numberOfFiles):
+        (WebCore::DragData::asFilenames):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::containsPromise):
+        (WebCore::DragData::asURL):
+        * platform/mac/DragImageMac.mm:
+
 2017-01-25  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Add support for incoming and outgoing libwebrtc audio tracks

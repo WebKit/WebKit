@@ -26,7 +26,7 @@
 #import "config.h"
 #import "DragImage.h"
 
-#if ENABLE(DRAG_SUPPORT)
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
 #import "BitmapImage.h"
 #import "CoreGraphicsSPI.h"
@@ -348,4 +348,4 @@ DragImageRef createDragImageForLink(URL& url, const String& title, FontRendering
    
 } // namespace WebCore
 
-#endif // ENABLE(DRAG_SUPPORT)
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

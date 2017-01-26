@@ -129,7 +129,7 @@ public:
 
 struct PasteboardPlainText {
     String text;
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool isURL;
 #endif
 };
@@ -179,8 +179,8 @@ public:
     virtual void writePasteboard(const Pasteboard& sourcePasteboard);
 
 #if ENABLE(DRAG_SUPPORT)
-    static std::unique_ptr<Pasteboard> createForDragAndDrop();
-    static std::unique_ptr<Pasteboard> createForDragAndDrop(const DragData&);
+    WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForDragAndDrop();
+    WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForDragAndDrop(const DragData&);
 
     virtual void setDragImage(DragImageRef, const IntPoint& hotSpot);
 #endif

@@ -338,7 +338,7 @@ private:
     bool handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
 
 #if ENABLE(DRAG_SUPPORT)
-    bool handleMouseDraggedEvent(const MouseEventWithHitTestResults&);
+    bool handleMouseDraggedEvent(const MouseEventWithHitTestResults&, CheckDragHysteresis = ShouldCheckDragHysteresis);
 #endif
 
     WEBCORE_EXPORT bool handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
