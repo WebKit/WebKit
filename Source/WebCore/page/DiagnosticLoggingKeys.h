@@ -56,7 +56,6 @@ public:
     WEBCORE_EXPORT static String entryWronglyNotWarmedUpKey();
     static String expiredKey();
     static String fontKey();
-    static String handlesContextLossKey();
     static String hasPluginsKey();
     static String httpsNoStoreKey();
     static String imageKey();
@@ -101,6 +100,7 @@ public:
     static String pageContainsAtLeastOnePluginKey();
     static String pageContainsMediaEngineKey();
     static String pageContainsPluginKey();
+    static String pageHandlesWebGLContextLossKey();
     static String pageLoadedKey();
     static String playedKey();
     static String pluginLoadedKey();
@@ -128,7 +128,6 @@ public:
     static String sameLoadKey();
     static String scriptKey();
     static String sourceKey();
-    WEBCORE_EXPORT static String stateKey();
     WEBCORE_EXPORT static String streamingMedia();
     static String styleSheetKey();
     WEBCORE_EXPORT static String successfulSpeculativeWarmupWithRevalidationKey();
@@ -158,7 +157,7 @@ public:
     WEBCORE_EXPORT static String visibleAndActiveStateKey();
     WEBCORE_EXPORT static String wastedSpeculativeWarmupWithRevalidationKey();
     WEBCORE_EXPORT static String wastedSpeculativeWarmupWithoutRevalidationKey();
-    WEBCORE_EXPORT static String webGLKey();
+    WEBCORE_EXPORT static String webGLStateKey();
     WEBCORE_EXPORT static String webViewKey();
     static String yesKey();
     WEBCORE_EXPORT static String zoomedKey();

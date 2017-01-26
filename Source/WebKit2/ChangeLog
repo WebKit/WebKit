@@ -1,3 +1,17 @@
+2017-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Fix WebGL diagnostic logging
+        https://bugs.webkit.org/show_bug.cgi?id=167463
+        <rdar://problem/30216981>
+
+        Reviewed by Alex Christensen.
+
+        Fix WebGL diagnostic logging so that it no longer uses logDiagnosticMessageWithValue().
+        This is because the value apparently needs to be numeric on Mac.
+
+        * UIProcess/HighPerformanceGraphicsUsageSampler.cpp:
+        (WebKit::HighPerformanceGraphicsUsageSampler::timerFired):
+
 2017-01-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add support for recognizing data interaction gestures in WebKit2

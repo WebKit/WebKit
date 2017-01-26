@@ -501,7 +501,7 @@ void WebGLRenderingContextBase::checkForContextLossHandling()
         return;
 
     bool handlesContextLoss = canvas().hasEventListeners(eventNames().webglcontextlostEvent) && canvas().hasEventListeners(eventNames().webglcontextrestoredEvent);
-    page->diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::webGLKey(), DiagnosticLoggingKeys::handlesContextLossKey(), handlesContextLoss ? DiagnosticLoggingKeys::yesKey() : DiagnosticLoggingKeys::noKey(), ShouldSample::No);
+    page->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::pageHandlesWebGLContextLossKey(), handlesContextLoss ? DiagnosticLoggingKeys::yesKey() : DiagnosticLoggingKeys::noKey(), ShouldSample::No);
 }
 
 void WebGLRenderingContextBase::registerWithWebGLStateTracker()
