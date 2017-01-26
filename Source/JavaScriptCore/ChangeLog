@@ -1,5 +1,35 @@
 2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211122. rdar://problem/30177808
+
+    2017-01-24  Filip Pizlo  <fpizlo@apple.com>
+
+            Atomics.store should return the int-converted value, not the value that it stored
+            https://bugs.webkit.org/show_bug.cgi?id=167395
+
+            Reviewed by Saam Barati.
+
+            Previously the code was based around passing a lambda that operated over the native type of the
+            operation (so for example int8_t if we were doing things to Int8Arrays). But to support this
+            behavior of store, we need it to be able to control how it converts its result to JSValue and it
+            needs to see its argument as an int32_t. It turns out that it's easy for all of the functions in
+            AtomicsObject.cpp to also adopt this protocol since the conversion to JSValue is just jsNumber()
+            from the native type in those cases, and the conversion from int32_t is done for free in
+            std::atomic.
+
+            * runtime/AtomicsObject.cpp:
+            (JSC::atomicsFuncAdd):
+            (JSC::atomicsFuncAnd):
+            (JSC::atomicsFuncCompareExchange):
+            (JSC::atomicsFuncExchange):
+            (JSC::atomicsFuncLoad):
+            (JSC::atomicsFuncOr):
+            (JSC::atomicsFuncStore):
+            (JSC::atomicsFuncSub):
+            (JSC::atomicsFuncXor):
+
+2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211113. rdar://problem/30174692
 
     2017-01-24  Filip Pizlo  <fpizlo@apple.com>
