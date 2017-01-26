@@ -1,5 +1,36 @@
 2017-01-25  Youenn Fablet  <youenn@apple.com>
 
+        [WebRTC] Add support for incoming and outgoing libwebrtc audio tracks
+        https://bugs.webkit.org/show_bug.cgi?id=167438
+
+        Reviewed by Eric Carlson.
+
+        RealtimeIncomingAudioSource consumes audio buffers given by libwebrtc.
+        RealtimeOutgoingAudioSource consumes audio buffers from WebCore tracks (capture typically) and feeds libwebrtc with them.
+        To be covered by Layout/mock tests once LibWebRTC peer connection will be added.
+        These are only skeletons right now, the conversion between WebCore and LibWebRTC data is not yet implemented.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.cpp: Added.
+        (WebCore::RealtimeIncomingAudioSource::create):
+        (WebCore::RealtimeIncomingAudioSource::RealtimeIncomingAudioSource):
+        (WebCore::RealtimeIncomingAudioSource::OnData):
+        (WebCore::RealtimeIncomingAudioSource::startProducingData):
+        (WebCore::RealtimeIncomingAudioSource::stopProducingData):
+        (WebCore::RealtimeIncomingAudioSource::capabilities):
+        (WebCore::RealtimeIncomingAudioSource::settings):
+        (WebCore::RealtimeIncomingAudioSource::supportedConstraints):
+        (WebCore::RealtimeIncomingAudioSource::addObserver):
+        (WebCore::RealtimeIncomingAudioSource::removeObserver):
+        (WebCore::RealtimeIncomingAudioSource::start):
+        (WebCore::RealtimeIncomingAudioSource::audioSourceProvider):
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.h: Added.
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp: Added.
+        (WebCore::RealtimeOutgoingAudioSource::sourceHasMoreMediaData):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.h: Added.
+
+2017-01-25  Youenn Fablet  <youenn@apple.com>
+
         [WebRTC] Add support for libwebrtc video incoming and outgoing video tracks
         https://bugs.webkit.org/show_bug.cgi?id=167432
 
