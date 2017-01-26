@@ -1,3 +1,33 @@
+2017-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Fix CPU / Memory diagnostic logging in PerformanceMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=167469
+        <rdar://problem/30220959>
+
+        Reviewed by Alex Christensen.
+
+        Fix CPU / Memory diagnostic logging in PerformanceMonitor to use logDiagnosticMessage()
+        instead of logDiagnosticMessageWithValue(). logDiagnosticMessageWithValue() should only
+        be used with numeric values but we already take care of the bucketing on our side.
+
+        * page/DiagnosticLoggingClient.h:
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::postPageBackgroundingCPUUsageKey):
+        (WebCore::DiagnosticLoggingKeys::postPageBackgroundingMemoryUsageKey):
+        (WebCore::DiagnosticLoggingKeys::postPageLoadCPUUsageKey):
+        (WebCore::DiagnosticLoggingKeys::postPageLoadMemoryUsageKey):
+        (WebCore::DiagnosticLoggingKeys::foregroundCPUUsageToDiagnosticLoggingKey):
+        (WebCore::DiagnosticLoggingKeys::backgroundCPUUsageToDiagnosticLoggingKey):
+        (WebCore::DiagnosticLoggingKeys::postPageBackgroundingKey): Deleted.
+        (WebCore::DiagnosticLoggingKeys::postPageLoadKey): Deleted.
+        (WebCore::DiagnosticLoggingKeys::memoryUsageKey): Deleted.
+        * page/DiagnosticLoggingKeys.h:
+        * page/PerformanceMonitor.cpp:
+        (WebCore::PerformanceMonitor::measurePostLoadCPUUsage):
+        (WebCore::PerformanceMonitor::measurePostLoadMemoryUsage):
+        (WebCore::PerformanceMonitor::measurePostBackgroundingMemoryUsage):
+        (WebCore::PerformanceMonitor::measurePostBackgroundingCPUUsage):
+
 2017-01-26  Brady Eidson  <beidson@apple.com>
 
         Gamepads: Some DPads are still not exposed in the HID backend.

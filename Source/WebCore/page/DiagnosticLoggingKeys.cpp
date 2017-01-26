@@ -53,9 +53,14 @@ String DiagnosticLoggingKeys::pluginLoadingFailedKey()
     return ASCIILiteral("pluginFailedLoading");
 }
 
-String DiagnosticLoggingKeys::postPageBackgroundingKey()
+String DiagnosticLoggingKeys::postPageBackgroundingCPUUsageKey()
 {
-    return ASCIILiteral("postPageBackgrounding");
+    return ASCIILiteral("postPageBackgroundingCPUUsage");
+}
+
+String DiagnosticLoggingKeys::postPageBackgroundingMemoryUsageKey()
+{
+    return ASCIILiteral("postPageBackgroundingMemoryUsage");
 }
 
 String DiagnosticLoggingKeys::pageHandlesWebGLContextLossKey()
@@ -63,9 +68,14 @@ String DiagnosticLoggingKeys::pageHandlesWebGLContextLossKey()
     return ASCIILiteral("pageHandlesWebGLContextLoss");
 }
 
-String DiagnosticLoggingKeys::postPageLoadKey()
+String DiagnosticLoggingKeys::postPageLoadCPUUsageKey()
 {
-    return ASCIILiteral("postPageLoad");
+    return ASCIILiteral("postPageLoadCPUUsage");
+}
+
+String DiagnosticLoggingKeys::postPageLoadMemoryUsageKey()
+{
+    return ASCIILiteral("postPageLoadMemoryUsage");
 }
 
 String DiagnosticLoggingKeys::provisionalLoadKey()
@@ -336,11 +346,6 @@ String DiagnosticLoggingKeys::cannotSuspendActiveDOMObjectsKey()
 String DiagnosticLoggingKeys::cpuUsageKey()
 {
     return ASCIILiteral("cpuUsage");
-}
-
-String DiagnosticLoggingKeys::memoryUsageKey()
-{
-    return ASCIILiteral("memoryUsage");
 }
 
 String DiagnosticLoggingKeys::createSharedBufferFailedKey()
@@ -718,7 +723,7 @@ String DiagnosticLoggingKeys::memoryUsageToDiagnosticLoggingKey(uint64_t memoryU
 String DiagnosticLoggingKeys::foregroundCPUUsageToDiagnosticLoggingKey(double cpuUsage)
 {
     if (cpuUsage < 10)
-        return ASCIILiteral("Below10");
+        return ASCIILiteral("below10");
     if (cpuUsage < 20)
         return ASCIILiteral("10to20");
     if (cpuUsage < 40)
@@ -733,7 +738,7 @@ String DiagnosticLoggingKeys::foregroundCPUUsageToDiagnosticLoggingKey(double cp
 String DiagnosticLoggingKeys::backgroundCPUUsageToDiagnosticLoggingKey(double cpuUsage)
 {
     if (cpuUsage < 1)
-        return ASCIILiteral("Below1");
+        return ASCIILiteral("below1");
     if (cpuUsage < 5)
         return ASCIILiteral("1to5");
     if (cpuUsage < 10)

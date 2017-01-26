@@ -39,6 +39,7 @@ class DiagnosticLoggingClient {
 public:
     virtual void logDiagnosticMessage(const String& message, const String& description, ShouldSample) = 0;
     virtual void logDiagnosticMessageWithResult(const String& message, const String& description, DiagnosticLoggingResultType, ShouldSample) = 0;
+    // FIXME: rename this to logDiagnosticMessageWithNumericValue().
     virtual void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value, ShouldSample) = 0;
 
     static bool shouldLogAfterSampling(ShouldSample);
