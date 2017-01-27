@@ -1,3 +1,18 @@
+2017-01-27  Chris Dumez  <cdumez@apple.com>
+
+        Round CPU Usage diagnostic logging to 2 significant digits
+        https://bugs.webkit.org/show_bug.cgi?id=167515
+        <rdar://problem/30236297>
+
+        Reviewed by Antti Koivisto.
+
+        Round CPU Usage diagnostic logging to 2 significant digits
+        as requested by diagnostic logging team.
+
+        * UIProcess/PerActivityStateCPUUsageSampler.cpp:
+        (WebKit::toStringRoundingSignificantFigures):
+        (WebKit::PerActivityStateCPUUsageSampler::loggingTimerFired):
+
 2017-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Threaded Compositor] Stop creating the GLContext on demand the first time makeContextCurrent is called
