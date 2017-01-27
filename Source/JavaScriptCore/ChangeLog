@@ -1,3 +1,19 @@
+2017-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Extend create_hash_table to specify Intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=167505
+
+        Reviewed by Sam Weinig.
+
+        This patch extends create_hash_table to specify Intrinsic.
+        We can set Intrinsic in the static property table definition
+        in runtime/XXX.h.
+
+        And drop the adhoc code for String.fromCharCode in create_hash_table.
+
+        * create_hash_table:
+        * runtime/StringConstructor.cpp:
+
 2017-01-27  Filip Pizlo  <fpizlo@apple.com>
 
         scanExternalRememberedSet needs to mergeIfNecessary

@@ -76,11 +76,12 @@ while (<IN>) {
         $includeBuiltin = 0;
 
         $inside = 0;
-    } elsif (/^(\S+)\s*(\S+)\s*([\w\|]*)\s*(\w*)\s*$/ && $inside) {
+    } elsif (/^(\S+)\s*(\S+)\s*([\w\|]*)\s*(\w*)\s*(\w*)\s*$/ && $inside) {
         my $key = $1;
         my $val = $2;
         my $att = $3;
         my $param = $4;
+        my $intrinsic = $5;
 
         push(@keys, $key);
         push(@attrs, length($att) > 0 ? $att : "0");
@@ -90,7 +91,7 @@ while (<IN>) {
         }
 
         if ($att =~ m/Function/) {
-            push(@values, { "type" => "Function", "function" => $val, "params" => (length($param) ? $param : "") });
+            push(@values, { "type" => "Function", "function" => $val, "params" => (length($param) ? $param : ""), "intrinsic" => (length($intrinsic) ? $intrinsic : "NoIntrinsic") });
             #printf STDERR "WARNING: Number of arguments missing for $key/$val\n" if (length($param) == 0);
         } elsif ($att =~ m/Accessor/) {
             my $get = $val;
@@ -301,11 +302,13 @@ sub output() {
         my $secondValue = "";
         my $firstCastStr = "";
         my $secondCastStr = "";
+        my $intrinsic = "NoIntrinsic";
 
         if ($values[$i]{"type"} eq "Function") {
             $firstCastStr = "static_cast<NativeFunction>";
             $firstValue = $values[$i]{"function"};
             $secondValue = $values[$i]{"params"};
+            $intrinsic = $values[$i]{"intrinsic"};
         } elsif ($values[$i]{"type"} eq "Accessor") {
             $firstCastStr = "static_cast<NativeFunction>";
             $secondCastStr = "static_cast<NativeFunction>";
@@ -327,13 +330,6 @@ sub output() {
             $firstCastStr = "static_cast<LazyPropertyCallback>";
             $firstValue = $values[$i]{"cback"};
             $secondValue = "0";
-        }
-
-        my $intrinsic = "NoIntrinsic";
-        $intrinsic = "FromCharCodeIntrinsic" if ($key eq "fromCharCode");
-        if ($name eq "arrayPrototypeTable") {
-            $intrinsic = "ArrayPushIntrinsic" if ($key eq "push");
-            $intrinsic = "ArrayPopIntrinsic" if ($key eq "pop");
         }
 
         if ($values[$i]{"type"} eq "Function" && $firstValue eq "JSBuiltin")  {

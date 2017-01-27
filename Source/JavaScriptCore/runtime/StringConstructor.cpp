@@ -44,7 +44,7 @@ const ClassInfo StringConstructor::s_info = { "Function", &InternalFunction::s_i
 
 /* Source for StringConstructor.lut.h
 @begin stringConstructorTable
-  fromCharCode          stringFromCharCode         DontEnum|Function 1
+  fromCharCode          stringFromCharCode         DontEnum|Function 1 FromCharCodeIntrinsic
   fromCodePoint         stringFromCodePoint        DontEnum|Function 1
   raw                   JSBuiltin                  DontEnum|Function 1
 @end
