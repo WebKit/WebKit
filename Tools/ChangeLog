@@ -3,6 +3,18 @@
         [Cocoa] Prepare ComplexTextController for unit testing
         https://bugs.webkit.org/show_bug.cgi?id=167493
 
+        Reviewed by Simon Fraser.
+
+        Addressing post-review comments from Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebCore/ComplexTextController.cpp:
+        (TestWebKitAPI::TEST_F):
+
+2017-01-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Prepare ComplexTextController for unit testing
+        https://bugs.webkit.org/show_bug.cgi?id=167493
+
         Reviewed by Dean Jackson.
 
         Create four unit tests.

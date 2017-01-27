@@ -91,7 +91,7 @@ public:
             return adoptRef(*new ComplexTextRun(font, characters, stringLocation, stringLength, ltr));
         }
 
-        static Ref<ComplexTextRun> createForTesting(Vector<CGSize> advances, Vector<CGPoint> origins, Vector<CGGlyph> glyphs, Vector<CFIndex> stringIndices, CGSize initialAdvance, const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange, bool ltr)
+        static Ref<ComplexTextRun> createForTesting(const Vector<CGSize>& advances, const Vector<CGPoint>& origins, const Vector<CGGlyph>& glyphs, const Vector<CFIndex>& stringIndices, CGSize initialAdvance, const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange, bool ltr)
         {
             return adoptRef(*new ComplexTextRun(advances, origins, glyphs, stringIndices, initialAdvance, font, characters, stringLocation, stringLength, runRange, ltr));
         }
@@ -127,7 +127,7 @@ public:
     private:
         ComplexTextRun(CTRunRef, const Font&, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange);
         ComplexTextRun(const Font&, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr);
-        WEBCORE_EXPORT ComplexTextRun(Vector<CGSize> advances, Vector<CGPoint> origins, Vector<CGGlyph> glyphs, Vector<CFIndex> stringIndices, CGSize initialAdvance, const Font&, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange, bool ltr);
+        WEBCORE_EXPORT ComplexTextRun(const Vector<CGSize>& advances, const Vector<CGPoint>& origins, const Vector<CGGlyph>& glyphs, const Vector<CFIndex>& stringIndices, CGSize initialAdvance, const Font&, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange, bool ltr);
 
         Vector<CGSize, 64> m_baseAdvancesVector;
         Vector<CGPoint, 64> m_glyphOrigins;

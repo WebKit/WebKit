@@ -51,7 +51,7 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceWithLeftRunInRTL)
     description.setOneFamily("Times");
     description.setComputedSize(80);
     FontCascade font(description);
-    font.update(nullptr);
+    font.update();
     auto spaceWidth = font.primaryFont().spaceWidth();
 
 #if USE_LAYOUT_SPECIFIC_ADVANCES
@@ -67,8 +67,8 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceWithLeftRunInRTL)
     UChar characters[] = { 0x644, 0x637, 0x641, 0x627, 0x64b, 0x20 };
     size_t charactersLength = WTF_ARRAY_LENGTH(characters);
     TextRun textRun(StringView(characters, charactersLength));
-    Ref<ComplexTextController::ComplexTextRun> run1 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(21.875, 0) }, { CGPointZero }, { 5 }, { 5 }, CGSizeZero, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(5, 1), false);
-    Ref<ComplexTextController::ComplexTextRun> run2 = ComplexTextController::ComplexTextRun::createForTesting(advances, origins, { 193, 377, 447, 431, 458 }, { 4, 3, 2, 1, 0 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 5), false);
+    auto run1 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(21.875, 0) }, { CGPointZero }, { 5 }, { 5 }, CGSizeZero, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(5, 1), false);
+    auto run2 = ComplexTextController::ComplexTextRun::createForTesting(advances, origins, { 193, 377, 447, 431, 458 }, { 4, 3, 2, 1, 0 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 5), false);
     Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
     runs.append(WTFMove(run1));
     runs.append(WTFMove(run2));
@@ -102,7 +102,7 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceInRTL)
     description.setOneFamily("Times");
     description.setComputedSize(80);
     FontCascade font(description);
-    font.update(nullptr);
+    font.update();
 
 #if USE_LAYOUT_SPECIFIC_ADVANCES
     Vector<CGSize> advances = { CGSizeZero, CGSizeMake(21.640625, 0.0), CGSizeMake(42.3046875, 0.0), CGSizeMake(55.8984375, 0.0), CGSizeMake(22.34375, 0.0) };
@@ -117,7 +117,7 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceInRTL)
     UChar characters[] = { 0x644, 0x637, 0x641, 0x627, 0x64b };
     size_t charactersLength = WTF_ARRAY_LENGTH(characters);
     TextRun textRun(StringView(characters, charactersLength));
-    Ref<ComplexTextController::ComplexTextRun> run = ComplexTextController::ComplexTextRun::createForTesting(advances, origins, { 193, 377, 447, 431, 458 }, { 4, 3, 2, 1, 0 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 5), false);
+    auto run = ComplexTextController::ComplexTextRun::createForTesting(advances, origins, { 193, 377, 447, 431, 458 }, { 4, 3, 2, 1, 0 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 5), false);
     Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
     runs.append(WTFMove(run));
     ComplexTextController controller(font, textRun, runs);
@@ -149,7 +149,7 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceWithLeftRunInLTR)
     description.setOneFamily("LucidaGrande");
     description.setComputedSize(80);
     FontCascade font(description);
-    font.update(nullptr);
+    font.update();
     auto spaceWidth = font.primaryFont().spaceWidth();
 
 #if USE_LAYOUT_SPECIFIC_ADVANCES
@@ -165,8 +165,8 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceWithLeftRunInLTR)
     UChar characters[] = { 0x20, 0x61, 0x20e3 };
     size_t charactersLength = WTF_ARRAY_LENGTH(characters);
     TextRun textRun(StringView(characters, charactersLength));
-    Ref<ComplexTextController::ComplexTextRun> run1 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(spaceWidth, 0) }, { CGPointZero }, { 5 }, { 0 }, CGSizeZero, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 1), true);
-    Ref<ComplexTextController::ComplexTextRun> run2 = ComplexTextController::ComplexTextRun::createForTesting(advances, origins, { 68, 1471 }, { 1, 2 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(1, 2), true);
+    auto run1 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(spaceWidth, 0) }, { CGPointZero }, { 5 }, { 0 }, CGSizeZero, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 1), true);
+    auto run2 = ComplexTextController::ComplexTextRun::createForTesting(advances, origins, { 68, 1471 }, { 1, 2 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(1, 2), true);
     Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
     runs.append(WTFMove(run1));
     runs.append(WTFMove(run2));
@@ -196,7 +196,7 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceInLTR)
     description.setOneFamily("LucidaGrande");
     description.setComputedSize(80);
     FontCascade font(description);
-    font.update(nullptr);
+    font.update();
 
 #if USE_LAYOUT_SPECIFIC_ADVANCES
     Vector<CGSize> advances = { CGSizeMake(76.347656, 0.000000), CGSizeMake(0.000000, 0.000000) };
@@ -211,7 +211,7 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceInLTR)
     UChar characters[] = { 0x61, 0x20e3 };
     size_t charactersLength = WTF_ARRAY_LENGTH(characters);
     TextRun textRun(StringView(characters, charactersLength));
-    Ref<ComplexTextController::ComplexTextRun> run = ComplexTextController::ComplexTextRun::createForTesting(advances, origins, { 68, 1471 }, { 0, 1 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 2), true);
+    auto run = ComplexTextController::ComplexTextRun::createForTesting(advances, origins, { 68, 1471 }, { 0, 1 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 2), true);
     Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
     runs.append(WTFMove(run));
     ComplexTextController controller(font, textRun, runs);

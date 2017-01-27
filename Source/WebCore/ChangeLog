@@ -1,3 +1,18 @@
+2017-01-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Prepare ComplexTextController for unit testing
+        https://bugs.webkit.org/show_bug.cgi?id=167493
+
+        Reviewed by Simon Fraser.
+
+        Addressing post-review comments from Simon Fraser.
+
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/mac/ComplexTextController.h:
+        (WebCore::ComplexTextController::ComplexTextRun::createForTesting):
+        * platform/graphics/mac/ComplexTextControllerCoreText.h:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+
 2017-01-27  Simon Fraser  <simon.fraser@apple.com>
 
         Element with a backdrop-filter and a mask may not correctly mask the backdrop

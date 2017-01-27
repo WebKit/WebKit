@@ -183,7 +183,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UC
 }
 
 
-ComplexTextController::ComplexTextRun::ComplexTextRun(Vector<CGSize> advances, Vector<CGPoint> origins, Vector<CGGlyph> glyphs, Vector<CFIndex> stringIndices, CGSize initialAdvance, const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange, bool ltr)
+ComplexTextController::ComplexTextRun::ComplexTextRun(const Vector<CGSize>& advances, const Vector<CGPoint>& origins, const Vector<CGGlyph>& glyphs, const Vector<CFIndex>& stringIndices, CGSize initialAdvance, const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange, bool ltr)
     : m_baseAdvancesVector(advances)
     , m_glyphOrigins(origins)
     , m_glyphsVector(glyphs)
