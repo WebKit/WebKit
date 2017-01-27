@@ -1,3 +1,20 @@
+2017-01-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Merge r211285.
+
+    2017-01-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Rebaseline bindings tests after r211238.
+
+            Unreviewed test gardening.
+
+            * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+            (WebCore::JSTestDOMJIT::visitChildren):
+            * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+            (WebCore::JSTestEventTarget::visitChildren):
+            * bindings/scripts/test/JS/JSTestNode.cpp:
+            (WebCore::JSTestNode::visitChildren):
+
 2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r211244. rdar://problem/29956321
