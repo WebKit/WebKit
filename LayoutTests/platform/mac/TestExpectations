@@ -1341,9 +1341,6 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 # <rdar://problem/23505582> Fails on iMac10,1 and iMac11,1
 [ Sierra+ ] fast/canvas/canvas-imageSmoothingEnabled-repaint.html [ Pass Failure ]
 
-# <rdar://problem/23601055>
-[ Sierra+ ] media/track/track-in-band-style.html [ Pass Failure ]
-
 # Sierra supports true font feature coverage queries. We use the -coverage versions of these tests instead.
 [ Sierra+ ] css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
 [ Sierra+ ] css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
