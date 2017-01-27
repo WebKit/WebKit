@@ -40,6 +40,22 @@
         "description": "Allows content to specify colors outside of the sRGB Color Space."
     },
     {
+        "name": "CSS Font Display",
+        "status": {
+            "status": "Under Consideration",
+            "enabled-by-default": false
+        },
+        "url": "https://tabatkins.github.io/specs/css-font-display/",
+        "keywords": ["css font display", "font display", "font-display", "css font rendering controls", "font rendering controls"],
+        "category": "css",
+        "description": "Allows content to specify what is shown during font loading.",
+        "contact": {
+            "name": "Myles C. Maxfield",
+            "twitter": "@Litherum",
+            "email": "mmaxfield@apple.com"
+        }
+    },
+    {
         "name": "CSS Fonts Level 4",
         "url": "https://drafts.csswg.org/css-fonts-4/",
         "keywords": ["css fonts", "fonts"],
@@ -112,6 +128,22 @@
         "category": "css"
     },
     {
+        "name": "CSS Rhythmic Sizing",
+        "status": {
+            "status": "Under Consideration",
+            "enabled-by-default": false
+        },
+        "url": "https://drafts.csswg.org/css-rhythm/",
+        "keywords": ["css rhythmic sizing", "rhythmic sizing", "step sizing"],
+        "category": "css",
+        "description": "Allows block content to set a simple grid to which lines will adhere.",
+        "contact": {
+            "name": "Myles C. Maxfield",
+            "twitter": "@Litherum",
+            "email": "mmaxfield@apple.com"
+        }
+    },
+    {
         "name": "CSS Scroll Snap Points Module Level 1",
         "status": {
             "status": "In Development",
@@ -135,6 +167,22 @@
             "name": "Benjamin Poulain",
             "twitter": "@awfulben",
             "email": "benjamin@webkit.org"
+        }
+    },
+    {
+        "name": "CSS Text Decoration Level 4",
+        "status": {
+            "status": "Under Consideration",
+            "enabled-by-default": false
+        },
+        "url": "https://drafts.csswg.org/css-text-decor-4/",
+        "keywords": ["css text decoration", "text decoration"],
+        "category": "css",
+        "description": "Allows content to specify properties of text decorations such as underlines.",
+        "contact": {
+            "name": "Myles C. Maxfield",
+            "twitter": "@Litherum",
+            "email": "mmaxfield@apple.com"
         }
     },
     {

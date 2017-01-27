@@ -1,3 +1,12 @@
+2017-01-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Proclaim that we are considering font-display, rhythmic sizing, and text decoration level 4
+        https://bugs.webkit.org/show_bug.cgi?id=167340
+
+        Reviewed by Saam Barati.
+
+        * features.json:
+
 2017-01-27  Chris Dumez  <cdumez@apple.com>
 
         Fix diagnostic logging under loader/
