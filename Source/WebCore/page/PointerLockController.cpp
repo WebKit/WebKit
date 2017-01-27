@@ -43,7 +43,6 @@ namespace WebCore {
 
 PointerLockController::PointerLockController(Page& page)
     : m_page(page)
-    , m_lockPending(false)
 {
 }
 
@@ -54,7 +53,7 @@ void PointerLockController::requestPointerLock(Element* target)
         return;
     }
 
-    if (!ScriptController::processingUserGesture()) {
+    if (m_documentAllowedToRelockWithoutUserGesture != &target->document() && !ScriptController::processingUserGesture()) {
         enqueueEvent(eventNames().pointerlockerrorEvent, target);
         return;
     }
@@ -77,8 +76,7 @@ void PointerLockController::requestPointerLock(Element* target)
         m_lockPending = true;
         m_element = target;
         if (!m_page.chrome().client().requestPointerLock()) {
-            m_element = nullptr;
-            m_lockPending = false;
+            clearElement();
             enqueueEvent(eventNames().pointerlockerrorEvent, target);
         }
     }
@@ -89,14 +87,18 @@ void PointerLockController::requestPointerUnlock()
     if (!m_element)
         return;
 
+    m_unlockPending = true;
     m_page.chrome().client().requestPointerUnlock();
 }
 
 void PointerLockController::requestPointerUnlockAndForceCursorVisible()
 {
+    m_documentAllowedToRelockWithoutUserGesture = nullptr;
+
     if (!m_element)
         return;
 
+    m_unlockPending = true;
     m_page.chrome().client().requestPointerUnlock();
     m_forceCursorVisibleUponUnlock = true;
 }
@@ -107,16 +109,17 @@ void PointerLockController::elementRemoved(Element& element)
         m_documentOfRemovedElementWhileWaitingForUnlock = &m_element->document();
         // Set element null immediately to block any future interaction with it
         // including mouse events received before the unlock completes.
-        clearElement();
         requestPointerUnlock();
+        clearElement();
     }
 }
 
 void PointerLockController::documentDetached(Document& document)
 {
     if (m_element && &m_element->document() == &document) {
+        m_documentOfRemovedElementWhileWaitingForUnlock = &m_element->document();
+        requestPointerUnlock();
         clearElement();
-        requestPointerUnlockAndForceCursorVisible();
     }
 }
 
@@ -139,18 +142,25 @@ void PointerLockController::didAcquirePointerLock()
 {
     enqueueEvent(eventNames().pointerlockchangeEvent, m_element.get());
     m_lockPending = false;
+    m_forceCursorVisibleUponUnlock = false;
+    m_documentAllowedToRelockWithoutUserGesture = &m_element->document();
 }
 
 void PointerLockController::didNotAcquirePointerLock()
 {
     enqueueEvent(eventNames().pointerlockerrorEvent, m_element.get());
     clearElement();
+    m_unlockPending = false;
 }
 
 void PointerLockController::didLosePointerLock()
 {
+    if (!m_unlockPending)
+        m_documentAllowedToRelockWithoutUserGesture = nullptr;
+
     enqueueEvent(eventNames().pointerlockchangeEvent, m_element ? &m_element->document() : m_documentOfRemovedElementWhileWaitingForUnlock.get());
     clearElement();
+    m_unlockPending = false;
     m_documentOfRemovedElementWhileWaitingForUnlock = nullptr;
     if (m_forceCursorVisibleUponUnlock) {
         m_forceCursorVisibleUponUnlock = false;

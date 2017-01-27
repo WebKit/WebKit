@@ -313,3 +313,5 @@ webkit.org/b/164571 media/modern-media-controls/media-controller/media-controlle
 webkit.org/b/167372 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles.html [ Pass Failure ]
 
 webkit.org/b/163598 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html [ Pass Timeout ]
+
+webkit.org/b/167127 pointer-lock/locked-element-removed-from-dom.html

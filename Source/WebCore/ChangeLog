@@ -1,3 +1,37 @@
+2017-01-26  Jeremy Jones  <jeremyj@apple.com>
+
+        Page should be able to request pointer lock without user gesture if it relinquished it without a user gesture
+        https://bugs.webkit.org/show_bug.cgi?id=167126
+
+        Reviewed by Jon Lee.
+
+        Enabled pointer-lock/locked-element-removed-from-dom.html for WK2.
+        Not enable in WK1 because of https://bugs.webkit.org/show_bug.cgi?id=167127
+
+        This change allows a page to lock the pointer again without a user gesture if it was unlocked by
+        the page and not by the user. See https://www.w3.org/TR/2016/REC-pointerlock-20161027/ 5.1 Methods
+
+        * page/PointerLockController.cpp:
+
+        When a document acquires pointer lock with a user gesture, that document is allowed to request pointer lock again
+        until the user takes an action to end pointer lock. We know it is a user action because user actions always
+        call requestPointerUnlockAndForceCursorVisible().
+
+        When the page requests a pointer unlock (via requestPointerUnlock), that document is allowed to continue to relock
+        the page. This continues until there is either an unlock request form the user 
+        via requestPointerUnlockAndForceCursorVisible or a didLosePointerLock without a pointer unlock request.
+
+        (WebCore::PointerLockController::PointerLockController):
+        (WebCore::PointerLockController::requestPointerLock):
+        (WebCore::PointerLockController::requestPointerUnlock):
+        (WebCore::PointerLockController::requestPointerUnlockAndForceCursorVisible):
+        (WebCore::PointerLockController::elementRemoved):
+        (WebCore::PointerLockController::documentDetached):
+        (WebCore::PointerLockController::didAcquirePointerLock):
+        (WebCore::PointerLockController::didLosePointerLock):
+        (WebCore::PointerLockController::clearElement):
+        * page/PointerLockController.h:
+
 2017-01-26  Andy Estes  <aestes@apple.com>
 
         [QuickLook] REGRESSION (WebKit2): Requests are made to invalid x-apple-ql-id: URLs
