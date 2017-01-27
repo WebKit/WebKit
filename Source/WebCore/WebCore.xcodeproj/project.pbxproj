@@ -1452,7 +1452,7 @@
 		37B327D31D17096A005737FA /* PIPSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 37B327D21D17096A005737FA /* PIPSPI.h */; };
 		37BAAE581980D1DD005DFE71 /* ProtectionSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 37BAAE571980D1DD005DFE71 /* ProtectionSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37C236101097EE7700EF9F72 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */; };
-		37C236111097EE7700EF9F72 /* ComplexTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C2360F1097EE7700EF9F72 /* ComplexTextController.h */; };
+		37C236111097EE7700EF9F72 /* ComplexTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C2360F1097EE7700EF9F72 /* ComplexTextController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37C238221098C84200EF9F72 /* ComplexTextControllerCoreText.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.mm */; };
 		37D456FD1A9A50D8003330A1 /* LocalizableStrings.pm in Copy Scripts */ = {isa = PBXBuildFile; fileRef = 37D456FB1A9A50B6003330A1 /* LocalizableStrings.pm */; };
 		37DDCD9413844FD50008B793 /* MIMEHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DDCD9213844FD50008B793 /* MIMEHeader.cpp */; };

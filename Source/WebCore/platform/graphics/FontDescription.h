@@ -197,7 +197,7 @@ inline bool FontDescription::operator==(const FontDescription& other) const
 // FIXME: Move to a file of its own.
 class FontCascadeDescription : public FontDescription {
 public:
-    FontCascadeDescription();
+    WEBCORE_EXPORT FontCascadeDescription();
 
     bool operator==(const FontCascadeDescription&) const;
     bool operator!=(const FontCascadeDescription& other) const { return !(*this == other); }

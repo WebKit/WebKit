@@ -58,8 +58,11 @@ class ComplexTextController {
 public:
     ComplexTextController(const FontCascade&, const TextRun&, bool mayUseNaturalWritingDirection = false, HashSet<const Font*>* fallbackFonts = 0, bool forTextEmphasis = false);
 
+    class ComplexTextRun;
+    WEBCORE_EXPORT ComplexTextController(const FontCascade&, const TextRun&, Vector<Ref<ComplexTextRun>>&);
+
     // Advance and emit glyphs up to the specified character.
-    void advance(unsigned to, GlyphBuffer* = nullptr, GlyphIterationStyle = IncludePartialGlyphs, HashSet<const Font*>* fallbackFonts = nullptr);
+    WEBCORE_EXPORT void advance(unsigned to, GlyphBuffer* = nullptr, GlyphIterationStyle = IncludePartialGlyphs, HashSet<const Font*>* fallbackFonts = nullptr);
 
     // Compute the character offset for a given x coordinate.
     unsigned offsetForPosition(float x, bool includePartialGlyphs);
@@ -75,8 +78,7 @@ public:
     float maxGlyphBoundingBoxY() const { return m_maxGlyphBoundingBoxY; }
 
     float leadingExpansion() const { return m_leadingExpansion; }
-    
-private:
+
     class ComplexTextRun : public RefCounted<ComplexTextRun> {
     public:
         static Ref<ComplexTextRun> create(CTRunRef ctRun, const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange)
@@ -87,6 +89,11 @@ private:
         static Ref<ComplexTextRun> create(const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr)
         {
             return adoptRef(*new ComplexTextRun(font, characters, stringLocation, stringLength, ltr));
+        }
+
+        static Ref<ComplexTextRun> createForTesting(Vector<CGSize> advances, Vector<CGPoint> origins, Vector<CGGlyph> glyphs, Vector<CFIndex> stringIndices, CGSize initialAdvance, const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange, bool ltr)
+        {
+            return adoptRef(*new ComplexTextRun(advances, origins, glyphs, stringIndices, initialAdvance, font, characters, stringLocation, stringLength, runRange, ltr));
         }
 
         unsigned glyphCount() const { return m_glyphCount; }
@@ -120,6 +127,7 @@ private:
     private:
         ComplexTextRun(CTRunRef, const Font&, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange);
         ComplexTextRun(const Font&, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr);
+        WEBCORE_EXPORT ComplexTextRun(Vector<CGSize> advances, Vector<CGPoint> origins, Vector<CGGlyph> glyphs, Vector<CFIndex> stringIndices, CGSize initialAdvance, const Font&, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange, bool ltr);
 
         Vector<CGSize, 64> m_baseAdvancesVector;
         Vector<CGPoint, 64> m_glyphOrigins;
@@ -138,8 +146,10 @@ private:
         unsigned m_glyphCount;
         unsigned m_stringLocation;
         bool m_isLTR;
-        bool m_isMonotonic;
+        bool m_isMonotonic { true };
     };
+private:
+    void finishConstruction();
     
     static unsigned stringBegin(const ComplexTextRun& run) { return run.stringLocation() + run.indexBegin(); }
     static unsigned stringEnd(const ComplexTextRun& run) { return run.stringLocation() + run.indexEnd(); }

@@ -1,3 +1,41 @@
+2017-01-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Prepare ComplexTextController for unit testing
+        https://bugs.webkit.org/show_bug.cgi?id=167493
+
+        Reviewed by Dean Jackson.
+
+        ComplexTextController has three phases:
+        1. Interrogate Core Text about some text
+        2. Compute layout advances and paint advances from the information retrieved from
+        Core Text
+        3. Iterate through the layout advances or paint advances.
+
+        This patch tests phases 2 and 3 by chopping ComplexTextController between
+        phases 1 and 2, and injecting foreign metrics from a unit test. These metrics
+        have been gathered from real-world uses; however, a layout test is not appropriate
+        because the fonts which produced these metrics are not licensed appropriately.
+        The tests can enforce the correct behavior by using ComplexTextController's
+        public API.
+
+        This is in preparation for https://bugs.webkit.org/show_bug.cgi?id=166013.
+        However, the fix for that bug is quite large, so I've split out this smaller piece
+        to ease the reviewing burden. The tests I've added are disabled for now (because
+        they fail), but will be enabled by the fix to that bug.
+
+        No new tests because there is no behavior change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/FontDescription.h:
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextController):
+        (WebCore::ComplexTextController::finishConstruction):
+        * platform/graphics/mac/ComplexTextController.h:
+        (WebCore::ComplexTextController::ComplexTextRun::createForTesting):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+
 2017-01-27  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Do not bail out on -webkit-line-box-contain: block glyphs unless text overflows vertically.

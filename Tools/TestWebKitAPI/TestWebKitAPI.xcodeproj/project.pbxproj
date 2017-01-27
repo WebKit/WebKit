@@ -45,6 +45,7 @@
 		1C2B81831C891F0900A5529F /* CancelFontSubresourcePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */; };
 		1C2B81861C89259D00A5529F /* webfont.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1C2B81841C8924A200A5529F /* webfont.html */; };
 		1C2B81871C8925A000A5529F /* Ahem.ttf in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1C2B81851C89252300A5529F /* Ahem.ttf */; };
+		1C9EB8411E380DA1005C6442 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C9EB8401E380DA1005C6442 /* ComplexTextController.cpp */; };
 		1F83571B1D3FFB2300E3967B /* WKBackForwardList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F83571A1D3FFB0E00E3967B /* WKBackForwardList.mm */; };
 		26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */; };
 		26F52EAD1828827B0023D412 /* geolocationGetCurrentPosition.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EAC1828820E0023D412 /* geolocationGetCurrentPosition.html */; };
@@ -823,6 +824,7 @@
 		1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CancelFontSubresourcePlugIn.mm; sourceTree = "<group>"; };
 		1C2B81841C8924A200A5529F /* webfont.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = webfont.html; sourceTree = "<group>"; };
 		1C2B81851C89252300A5529F /* Ahem.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ahem.ttf; sourceTree = "<group>"; };
+		1C9EB8401E380DA1005C6442 /* ComplexTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextController.cpp; sourceTree = "<group>"; };
 		1CB9BC371A67482300FE5678 /* WeakPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakPtr.cpp; sourceTree = "<group>"; };
 		1CF0D3781BBF2F3D00B4EF54 /* WKRetainPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKRetainPtr.cpp; sourceTree = "<group>"; };
 		1F83571A1D3FFB0E00E3967B /* WKBackForwardList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKBackForwardList.mm; path = Tests/WebKit2/WKBackForwardList.mm; sourceTree = SOURCE_ROOT; };
@@ -1604,6 +1606,7 @@
 				440A1D3814A0103A008A66F2 /* URL.cpp */,
 				5C6E65411D5CEF8500F7862E /* URLParser.cpp */,
 				9C64DC311D76198A004B598E /* YouTubePluginReplacement.cpp */,
+				1C9EB8401E380DA1005C6442 /* ComplexTextController.cpp */,
 			);
 			path = WebCore;
 			sourceTree = "<group>";
@@ -2702,6 +2705,7 @@
 				2DFF7B6D1DA487AF00814614 /* SnapshotStore.mm in Sources */,
 				5C6E65441D5CEFD400F7862E /* URLParser.cpp in Sources */,
 				7CCE7F271A411AF600447C4C /* UserContentController.mm in Sources */,
+				1C9EB8411E380DA1005C6442 /* ComplexTextController.cpp in Sources */,
 				7CCE7F2D1A411B1000447C4C /* UserContentTest.mm in Sources */,
 				7C882E0A1C80C764006BF731 /* UserContentWorld.mm in Sources */,
 				7CCB99211D3B41F6003922F6 /* UserInitiatedActionInNavigationAction.mm in Sources */,

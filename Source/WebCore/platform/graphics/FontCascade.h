@@ -114,7 +114,7 @@ public:
 class FontCascade {
 public:
     WEBCORE_EXPORT FontCascade();
-    WEBCORE_EXPORT FontCascade(const FontCascadeDescription&, float letterSpacing, float wordSpacing);
+    WEBCORE_EXPORT FontCascade(const FontCascadeDescription&, float letterSpacing = 0, float wordSpacing = 0);
     // This constructor is only used if the platform wants to start with a native font.
     WEBCORE_EXPORT FontCascade(const FontPlatformData&, FontSmoothingMode = AutoSmoothing);
 
@@ -129,7 +129,7 @@ public:
     int pixelSize() const { return fontDescription().computedPixelSize(); }
     float size() const { return fontDescription().computedSize(); }
 
-    void update(RefPtr<FontSelector>&&) const;
+    WEBCORE_EXPORT void update(RefPtr<FontSelector>&&) const;
 
     enum CustomFontNotReadyAction { DoNotPaintIfFontNotReady, UseFallbackIfFontNotReady };
     WEBCORE_EXPORT float drawText(GraphicsContext&, const TextRun&, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt, CustomFontNotReadyAction = DoNotPaintIfFontNotReady) const;

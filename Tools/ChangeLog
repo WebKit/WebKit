@@ -1,3 +1,17 @@
+2017-01-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Prepare ComplexTextController for unit testing
+        https://bugs.webkit.org/show_bug.cgi?id=167493
+
+        Reviewed by Dean Jackson.
+
+        Create four unit tests.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ComplexTextController.cpp: Added.
+        (TestWebKitAPI::ComplexTextControllerTest::SetUp):
+        (TestWebKitAPI::TEST_F):
+
 2017-01-26  Chris Dumez  <cdumez@apple.com>
 
         Crash when navigating back to a page in PacheCache when one of its frames has been removed
