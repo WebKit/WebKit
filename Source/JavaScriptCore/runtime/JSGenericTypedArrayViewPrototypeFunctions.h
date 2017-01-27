@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -134,8 +134,11 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSet(VM& vm, ExecState
             return throwVMTypeError(exec, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
         length = jsCast<JSArrayBufferView*>(sourceArray)->length();
-    } else
-        length = sourceArray->get(exec, vm.propertyNames->length).toUInt32(exec);
+    } else {
+        JSValue lengthValue = sourceArray->get(exec, vm.propertyNames->length);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        length = lengthValue.toUInt32(exec);
+    }
 
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 

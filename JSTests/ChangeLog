@@ -1,3 +1,17 @@
+2017-01-27  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211246. rdar://problem/29916672
+
+    2017-01-26  Mark Lam  <mark.lam@apple.com>
+
+            Fix missing exception check in genericTypedArrayViewProtoFuncSet().
+            https://bugs.webkit.org/show_bug.cgi?id=166812
+            <rdar://problem/29916672>
+
+            Reviewed by Saam Barati.
+
+            * stress/regress-166812.js: Added.
+
 2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r211224. rdar://problem/29144126
