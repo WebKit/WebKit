@@ -68,12 +68,14 @@ static const size_t iceUfragSize = 6;
 // Size range from 22 to 256 ice-chars defined in RFC 5245.
 static const size_t icePasswordSize = 24;
 
+#if !USE(LIBWEBRTC)
 static std::unique_ptr<PeerConnectionBackend> createMediaEndpointPeerConnection(RTCPeerConnection& peerConnection)
 {
     return std::unique_ptr<PeerConnectionBackend>(new MediaEndpointPeerConnection(peerConnection));
 }
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createMediaEndpointPeerConnection;
+#endif
 
 static String randomString(size_t size)
 {

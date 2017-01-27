@@ -1,3 +1,14 @@
+2017-01-27  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Use MediaEndPointPeerConnection if not using libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=167504
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp: If libwebrtc, we should use libwebrtc peer connection backend.
+
 2017-01-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline bindings tests after r211238.
