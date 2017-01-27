@@ -1,3 +1,17 @@
+2017-01-27  Chris Dumez  <cdumez@apple.com>
+
+        Fix diagnostic logging in media code
+        https://bugs.webkit.org/show_bug.cgi?id=167510
+
+        Reviewed by Alex Christensen.
+
+        Fix diagnostic logging in media code. It should not use logDiagnosticMessageWithValue()
+        with a non-numeric value.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::updatePlayState):
+
 2017-01-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Prepare ComplexTextController for unit testing

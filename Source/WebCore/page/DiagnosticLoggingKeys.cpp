@@ -218,11 +218,6 @@ String DiagnosticLoggingKeys::mainResourceKey()
     return ASCIILiteral("mainResource");
 }
 
-String DiagnosticLoggingKeys::mediaKey()
-{
-    return ASCIILiteral("media");
-}
-
 String DiagnosticLoggingKeys::isErrorPageKey()
 {
     return ASCIILiteral("isErrorPage");

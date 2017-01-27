@@ -75,7 +75,6 @@ public:
     static String isLoadingKey();
     static String mainDocumentErrorKey();
     static String mainResourceKey();
-    static String mediaKey();
     static String mediaLoadedKey();
     static String mediaLoadingFailedKey();
     WEBCORE_EXPORT static String missingValidatorFieldsKey();
