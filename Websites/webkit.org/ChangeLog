@@ -1,3 +1,11 @@
+2017-01-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, update scroll snapping demos to use current Module 1 spec
+
+        * demos/scroll-snap/index.html:
+
+        Adopt the new CSS properties scroll-snap-type and scroll-snap-align.
+
 2017-01-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, add a demo page for an input events blog post
