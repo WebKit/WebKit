@@ -5,11 +5,17 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS document.onpointerlockchange event received.
 PASS document.pointerLockElement is targetdiv1
+     With a lock in place send a wheel event.
+PASS event type: wheel, target: target1, received on: target1
+PASS event type: wheel, target: target1, received on: body
      With a lock in place send a click.
 PASS event type: mousedown, target: target1, received on: target1
 PASS event type: mousedown, target: target1, received on: body
 PASS document.onpointerlockchange event received.
 PASS document.pointerLockElement is targetdiv2
+     With a lock in place send a wheel event.
+PASS event type: wheel, target: target2, received on: target2
+PASS event type: wheel, target: target2, received on: body
      With a lock in place send a click.
 PASS event type: mousedown, target: target2, received on: target2
 PASS event type: mousedown, target: target2, received on: body
