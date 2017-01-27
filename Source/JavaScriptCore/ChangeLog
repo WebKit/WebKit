@@ -1,3 +1,21 @@
+2017-01-27  Filip Pizlo  <fpizlo@apple.com>
+
+        scanExternalRememberedSet needs to mergeIfNecessary
+        https://bugs.webkit.org/show_bug.cgi?id=167523
+
+        Reviewed by Keith Miller.
+        
+        The protocol for opaque roots is that if you add to them outside of draining, then you need to call
+        mergeIfNecessary.
+        
+        This means that every MarkingConstraint that adds opaque roots needs to mergeIfNecessary after.
+        
+        scanExternalRememberedSet transitively calls addOpaqueRoot, is called from a MarkingConstraint, and
+        was missing a call to mergeIfNecessary. This fixes it.
+
+        * API/JSVirtualMachine.mm:
+        (scanExternalRememberedSet):
+
 2017-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ debug build after r211247.
