@@ -1,3 +1,39 @@
+2017-01-27  Antti Koivisto  <antti@apple.com>
+
+        Implement Cache-control: immutable
+        https://bugs.webkit.org/show_bug.cgi?id=167497
+
+        Reviewed by Chris Dumez.
+
+        Cache-control value 'immutable' indicates that a subresource does not change and so does not need to be
+        revalidated on a normal reload. This can significantly speed up reloads and reduce network traffic.
+
+        It is has been implemented in Firefox and is already used by Facebook.
+
+        https://tools.ietf.org/html/draft-mcmanus-immutable-00
+        https://hacks.mozilla.org/2017/01/using-immutable-caching-to-speed-up-the-web/
+
+        This patch implements Cache-control: immutable for memory cache only. A disk cache implementation
+        doesn't seem necessary as the resource is basically always expected to be in memory cache on reload.
+
+        Immutable is only supported for https as suggested by the draft specification (and Gecko implementation).
+
+        Test: http/tests/cache/cache-control-immutable-http.html
+              http/tests/cache/cache-control-immutable-https.html
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::makeRevalidationDecision):
+
+            On normal reloads (CachePolicyRevalidate) of https resources check for 'Cache-control: immutable'.
+            If the resource is not expired don't revalidate it.
+
+        * platform/network/CacheValidation.cpp:
+        (WebCore::parseCacheControlDirectives):
+        * platform/network/CacheValidation.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::cacheControlContainsImmutable):
+        * platform/network/ResourceResponseBase.h:
+
 2017-01-27  Youenn Fablet  <youennf@gmail.com>
 
         [WebRTC] Use MediaEndPointPeerConnection if not using libwebrtc

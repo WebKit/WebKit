@@ -1,0 +1,21 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+if (window.location.protocol == "http:")
+    window.location = "https://127.0.0.1:8443/cache/cache-control-immutable-https.html";
+</script>
+<script src="resources/cache-control-immutable.js"></script>
+<body>
+<div id=logdiv><div>
+<script>
+test(1000, (revalidated) => {
+    log("HTTPS: Test if non-expired subresource with Cache-control: immutable is revalidated", false, revalidated);
+    test(0, (revalidated) => {
+        log("HTTPS: Test if expired subresource with Cache-control: immutable is revalidated", true, revalidated);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+});
+</script>

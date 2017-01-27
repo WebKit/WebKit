@@ -1,0 +1,19 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<script src="resources/cache-control-immutable.js"></script>
+<body>
+<div id=logdiv><div>
+<script>
+test(1000, (revalidated) => {
+    log("HTTP: Test if non-expired subresource with Cache-control: immutable is revalidated", true, revalidated);
+    test(0, (revalidated) => {
+        log("HTTP: Test if expired subresource with Cache-control: immutable is revalidated", true, revalidated);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+});
+</script>

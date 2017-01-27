@@ -425,6 +425,13 @@ bool ResourceResponseBase::cacheControlContainsMustRevalidate() const
         parseCacheControlDirectives();
     return m_cacheControlDirectives.mustRevalidate;
 }
+    
+bool ResourceResponseBase::cacheControlContainsImmutable() const
+{
+    if (!m_haveParsedCacheControlHeader)
+        parseCacheControlDirectives();
+    return m_cacheControlDirectives.immutable;
+}
 
 bool ResourceResponseBase::hasCacheValidatorFields() const
 {

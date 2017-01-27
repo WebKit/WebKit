@@ -66,6 +66,7 @@ struct CacheControlDirectives {
     bool noCache { false };
     bool noStore { false };
     bool mustRevalidate { false };
+    bool immutable { false };
 };
 WEBCORE_EXPORT CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap&);
 

@@ -316,7 +316,8 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
                 double maxStale = directives[i].second.toDouble(&ok);
                 if (ok)
                     result.maxStale = duration_cast<microseconds>(duration<double>(maxStale));
-            }
+            } else if (equalLettersIgnoringASCIICase(directives[i].first, "immutable"))
+                result.immutable = true;
         }
     }
 

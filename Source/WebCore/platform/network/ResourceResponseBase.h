@@ -119,10 +119,10 @@ public:
     const std::optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };
     
     // These functions return parsed values of the corresponding response headers.
-    // NaN means that the header was not present or had invalid value.
     WEBCORE_EXPORT bool cacheControlContainsNoCache() const;
     WEBCORE_EXPORT bool cacheControlContainsNoStore() const;
     WEBCORE_EXPORT bool cacheControlContainsMustRevalidate() const;
+    WEBCORE_EXPORT bool cacheControlContainsImmutable() const;
     WEBCORE_EXPORT bool hasCacheValidatorFields() const;
     WEBCORE_EXPORT std::optional<std::chrono::microseconds> cacheControlMaxAge() const;
     WEBCORE_EXPORT std::optional<std::chrono::system_clock::time_point> date() const;

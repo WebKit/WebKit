@@ -1,3 +1,17 @@
+2017-01-27  Antti Koivisto  <antti@apple.com>
+
+        Implement Cache-control: immutable
+        https://bugs.webkit.org/show_bug.cgi?id=167497
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/cache/cache-control-immutable-http-expected.txt: Added.
+        * http/tests/cache/cache-control-immutable-http.html: Added.
+        * http/tests/cache/cache-control-immutable-https-expected.txt: Added.
+        * http/tests/cache/cache-control-immutable-https.html: Added.
+        * http/tests/cache/resources/cache-control-immutable.js: Added.
+        * http/tests/cache/resources/iframe-with-script.cgi: Added.
+
 2017-01-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/modern-media-controls/layout-node/addChild.html as flaky.
