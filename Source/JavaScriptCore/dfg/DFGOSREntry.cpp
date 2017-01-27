@@ -91,7 +91,7 @@ void OSREntryData::dump(PrintStream& out) const
 }
 
 SUPPRESS_ASAN
-void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIndex)
+Expected<void*, OSREntryFail> prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIndex)
 {
     ASSERT(JITCode::isOptimizingJIT(codeBlock->jitType()));
     ASSERT(codeBlock->alternative());
@@ -99,7 +99,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     ASSERT(!codeBlock->jitCodeMap());
 
     if (!Options::useOSREntryToDFG())
-        return 0;
+        return makeUnexpected(OSREntryFail::Disabled);
 
     if (Options::verboseOSR()) {
         dataLog(
@@ -136,7 +136,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         
         if (Options::verboseOSR())
             dataLog("    OSR failed because the target code block is not DFG.\n");
-        return 0;
+        return makeUnexpected(OSREntryFail::TargetNotDFG);
     }
     
     JITCode* jitCode = codeBlock->jitCode()->dfg();
@@ -145,7 +145,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     if (!entry) {
         if (Options::verboseOSR())
             dataLogF("    OSR failed because the entrypoint was optimized out.\n");
-        return 0;
+        return makeUnexpected(OSREntryFail::TargetOptimizedOut);
     }
     
     ASSERT(entry->m_bytecodeIndex == bytecodeIndex);
@@ -181,7 +181,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
                 entry->m_expectedValues.argument(argument).dump(WTF::dataFile());
                 dataLogF(".\n");
             }
-            return 0;
+            return makeUnexpected(OSREntryFail::BadPrediction);
         }
         
         JSValue value;
@@ -196,7 +196,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
                     "    OSR failed because argument ", argument, " is ", value,
                     ", expected ", entry->m_expectedValues.argument(argument), ".\n");
             }
-            return 0;
+            return makeUnexpected(OSREntryFail::BadPrediction);
         }
     }
     
@@ -209,7 +209,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
                         "    OSR failed because variable ", localOffset, " is ",
                         exec->registers()[localOffset].asanUnsafeJSValue(), ", expected number.\n");
                 }
-                return 0;
+                return makeUnexpected(OSREntryFail::BadPrediction);
             }
             continue;
         }
@@ -221,7 +221,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
                         exec->registers()[localOffset].asanUnsafeJSValue(), ", expected ",
                         "machine int.\n");
                 }
-                return 0;
+                return makeUnexpected(OSREntryFail::BadPrediction);
             }
             continue;
         }
@@ -232,7 +232,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
                     exec->registers()[localOffset].asanUnsafeJSValue(), ", expected ",
                     entry->m_expectedValues.local(local), ".\n");
             }
-            return 0;
+            return makeUnexpected(OSREntryFail::BadPrediction);
         }
     }
 
@@ -247,7 +247,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     if (UNLIKELY(!vm->ensureStackCapacityFor(&exec->registers()[virtualRegisterForLocal(frameSizeForCheck - 1).offset()]))) {
         if (Options::verboseOSR())
             dataLogF("    OSR failed because stack growth failed.\n");
-        return 0;
+        return makeUnexpected(OSREntryFail::StackGrowthFailed);
     }
     
     if (Options::verboseOSR())

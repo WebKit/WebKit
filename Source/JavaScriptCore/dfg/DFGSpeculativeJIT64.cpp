@@ -5781,8 +5781,10 @@ void SpeculativeJIT::compile(Node* node)
         unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex;
         auto triggerIterator = m_jit.jitCode()->tierUpEntryTriggers.find(bytecodeIndex);
         DFG_ASSERT(m_jit.graph(), node, triggerIterator != m_jit.jitCode()->tierUpEntryTriggers.end());
-        uint8_t* forceEntryTrigger = &(m_jit.jitCode()->tierUpEntryTriggers.find(bytecodeIndex)->value);
+        TierUpEntryTrigger* forceEntryTrigger = &(m_jit.jitCode()->tierUpEntryTriggers.find(bytecodeIndex)->value);
 
+        static_assert(sizeof(TierUpEntryTrigger) == 1, "8-bit load is generated below");
+        static_assert(!static_cast<uint8_t>(TierUpEntryTrigger::None), "NonZero test below depends on this");
         MacroAssembler::Jump forceOSREntry = m_jit.branchTest8(MacroAssembler::NonZero, MacroAssembler::AbsoluteAddress(forceEntryTrigger));
         MacroAssembler::Jump overflowedCounter = m_jit.branchAdd32(
             MacroAssembler::PositiveOrZero,
@@ -5802,7 +5804,7 @@ void SpeculativeJIT::compile(Node* node)
 
             silentSpill(savePlans);
             m_jit.setupArgumentsWithExecState(TrustedImm32(bytecodeIndex));
-            appendCallSetResult(triggerOSREntryNow, tempGPR);
+            appendCallSetResult(checkTierUpAndOSREnterNow, tempGPR);
 
             if (savePlans.isEmpty())
                 m_jit.branchTestPtr(MacroAssembler::Zero, tempGPR).linkTo(toNextOperation, &m_jit);

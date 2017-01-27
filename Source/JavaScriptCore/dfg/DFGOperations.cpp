@@ -2314,6 +2314,7 @@ void JIT_OPERATION triggerTierUpNow(ExecState* exec)
             jitCode->tierUpCounter, "\n");
     }
 
+    // This updates the execution counter.
     if (shouldTriggerFTLCompile(codeBlock, jitCode))
         triggerFTLReplacementCompile(vm, codeBlock, jitCode);
 
@@ -2337,50 +2338,141 @@ void JIT_OPERATION triggerTierUpNow(ExecState* exec)
     }
 }
 
-static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigned osrEntryBytecodeIndex)
+enum class EntryReason {
+    Spurious,
+    CheckingUpOnHowCompilationIsGoing,
+    HaveOSREntryReady,
+    ShouldStartCompiling,
+    ShouldStartCompilingRightNow,
+    CompilationFailed,
+};
+
+static EntryReason whatHaveYouDoneAndWhyAmIHere(VM* vm, CodeBlock* codeBlock, JITCode* jitCode, unsigned bytecodeIndex, CodeBlock*& osrEntryBlock)
 {
-    VM* vm = &exec->vm();
-    CodeBlock* codeBlock = exec->codeBlock();
+    // Gather facts about why we could be here.
 
     // Resolve any pending plan for OSR Enter on this function.
     Worklist::State worklistState;
-    if (Worklist* worklist = existingGlobalFTLWorklistOrNull()) {
-        worklistState = worklist->completeAllReadyPlansForVM(
-            *vm, CompilationKey(codeBlock->baselineVersion(), FTLForOSREntryMode));
-    } else
+    if (Worklist* worklist = existingGlobalFTLWorklistOrNull())
+        worklistState = worklist->completeAllReadyPlansForVM(*vm, CompilationKey(codeBlock->baselineVersion(), FTLForOSREntryMode));
+    else
         worklistState = Worklist::NotKnown;
 
-    JITCode* jitCode = codeBlock->jitCode()->dfg();
-    if (worklistState == Worklist::Compiling) {
+    osrEntryBlock = jitCode->osrEntryBlock();
+
+    // Was the tier-up entry trigger set to slow-path?
+    bool triggeredSlowPath = false;
+    auto tierUpEntryTriggers = jitCode->tierUpEntryTriggers.find(bytecodeIndex);
+    if (tierUpEntryTriggers != jitCode->tierUpEntryTriggers.end()) {
+        if (tierUpEntryTriggers->value == TierUpEntryTrigger::TakeSlowPath) {
+            // We were asked to enter as soon as possible. Unset this trigger so we don't continually enter.
+            if (Options::verboseOSR())
+                dataLog("EntryTrigger for ", *codeBlock, " forced slow-path.\n");
+            triggeredSlowPath = true;
+            tierUpEntryTriggers->value = TierUpEntryTrigger::None;
+        }
+    }
+
+    // Put those facts together to make a final determination.
+
+    switch (worklistState) {
+    case Worklist::NotKnown:
+        if (osrEntryBlock)
+            return EntryReason::HaveOSREntryReady;
+        if (triggeredSlowPath) {
+            // Someone went through the trouble of forcing us into slow-path, they really wanted us to compile.
+            return EntryReason::ShouldStartCompilingRightNow;
+        }
+        return EntryReason::ShouldStartCompiling;
+
+    case Worklist::Compiling:
+        if (triggeredSlowPath) {
+            // We're already compiling, and can't OSR enter. We therefore must
+            // have set our slow-path trigger as well as another slow path
+            // trigger, hoping one of these would kick off a compilation. Sure
+            // enough another bytecode location did kick off a compilation
+            // before this one got a chance to do so. There's nothing for us to
+            // do but wait.
+            return EntryReason::Spurious;
+        }
+        return EntryReason::CheckingUpOnHowCompilationIsGoing;
+
+    case Worklist::Compiled:
+        return EntryReason::CompilationFailed;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return EntryReason::Spurious;
+}
+
+enum class CanOSREnterFromHere {
+    No,
+    Yes,
+};
+
+static char* tierUpCommon(VM* vm, ExecState* exec, CodeBlock* codeBlock, JITCode* jitCode, unsigned bytecodeIndex, CanOSREnterFromHere canOSREnterFromHere)
+{
+    CodeBlock* osrEntryBlock;
+    EntryReason entryReason = whatHaveYouDoneAndWhyAmIHere(vm, codeBlock, jitCode, bytecodeIndex, osrEntryBlock);
+
+    switch (entryReason) {
+    case EntryReason::CheckingUpOnHowCompilationIsGoing:
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("still compiling"));
         jitCode->setOptimizationThresholdBasedOnCompilationResult(
             codeBlock, CompilationDeferred);
         return nullptr;
-    }
 
-    if (worklistState == Worklist::Compiled) {
+    case EntryReason::CompilationFailed:
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("compiled and failed"));
-        // This means that compilation failed and we already set the thresholds.
+        // We've already set the thresholds.
         if (Options::verboseOSR())
             dataLog("Code block ", *codeBlock, " was compiled but it doesn't have an optimized replacement.\n");
         return nullptr;
-    }
 
-    // If we can OSR Enter, do it right away.
-    if (originBytecodeIndex == osrEntryBytecodeIndex) {
-        unsigned streamIndex = jitCode->bytecodeIndexToStreamIndex.get(originBytecodeIndex);
-        if (CodeBlock* entryBlock = jitCode->osrEntryBlock()) {
-            if (void* address = FTL::prepareOSREntry(exec, codeBlock, entryBlock, originBytecodeIndex, streamIndex)) {
-                CODEBLOCK_LOG_EVENT(entryBlock, "osrEntry", ("at bc#", originBytecodeIndex));
+    case EntryReason::HaveOSREntryReady:
+        if (canOSREnterFromHere == CanOSREnterFromHere::No)
+            break; // OSR entry is for another location.
+
+        {
+            // If we can OSR Enter, do it right away.
+            unsigned streamIndex = jitCode->bytecodeIndexToStreamIndex.get(bytecodeIndex);
+            auto osrEntryPreparation = FTL::prepareOSREntry(exec, codeBlock, osrEntryBlock, bytecodeIndex, streamIndex);
+            if (osrEntryPreparation) {
+                CODEBLOCK_LOG_EVENT(osrEntryBlock, "osrEntry", ("at bc#", bytecodeIndex));
+                void* address = osrEntryPreparation.value();
+                ASSERT(address);
                 return static_cast<char*>(address);
             }
+            switch (osrEntryPreparation.error()) {
+            case FTL::OSREntryFail::StackGrowthFailed:
+                break;
+            case FTL::OSREntryFail::WrongBytecode:
+                // Above we checked that an entry was possible from the current
+                // location, but we didn't know whether the compiled OSR entry
+                // was for this location. Now we know it's not.
+                break;
+            }
+
+            break;
         }
+
+    case EntryReason::ShouldStartCompiling:
+    case EntryReason::ShouldStartCompilingRightNow:
+        // We'll take care of that below.
+        break;
+
+    case EntryReason::Spurious:
+        if (Options::verboseOSR())
+            dataLog("Code block ", *codeBlock, " was spuriously woken up, compilation is already under way.\n");
+        jitCode->checkIfOptimizationThresholdReached(codeBlock);
+        return nullptr;
     }
 
     // - If we don't have an FTL code block, then try to compile one.
     // - If we do have an FTL code block, then try to enter for a while.
     // - If we couldn't enter for a while, then trigger OSR entry.
 
+    // This updates the execution counter.
     if (!shouldTriggerFTLCompile(codeBlock, jitCode))
         return nullptr;
 
@@ -2398,8 +2490,9 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
     } else
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("avoiding replacement compile"));
 
-    // It's time to try to compile code for OSR entry.
-    if (CodeBlock* entryBlock = jitCode->osrEntryBlock()) {
+    if (osrEntryBlock) {
+        // We have a compiled OSR entry for this function, but didn't enter.
+
         if (jitCode->osrEntryRetry < Options::ftlOSREntryRetryThreshold()) {
             CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("OSR entry failed, OSR entry threshold not met"));
             jitCode->osrEntryRetry++;
@@ -2408,7 +2501,7 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
             return nullptr;
         }
 
-        FTL::ForOSREntryJITCode* entryCode = entryBlock->jitCode()->ftlForOSREntry();
+        FTL::ForOSREntryJITCode* entryCode = osrEntryBlock->jitCode()->ftlForOSREntry();
         entryCode->countEntryFailure();
         if (entryCode->entryFailureCount() <
             Options::ftlOSREntryFailureCountForReoptimization()) {
@@ -2421,40 +2514,112 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
         // OSR entry failed. Oh no! This implies that we need to retry. We retry
         // without exponential backoff and we only do this for the entry code block.
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("OSR entry failed too many times"));
-        unsigned osrEntryBytecode = entryBlock->jitCode()->ftlForOSREntry()->bytecodeIndex();
+        unsigned osrEntryBytecode = osrEntryBlock->jitCode()->ftlForOSREntry()->bytecodeIndex();
         jitCode->clearOSREntryBlock();
         jitCode->osrEntryRetry = 0;
-        jitCode->tierUpEntryTriggers.set(osrEntryBytecode, 0);
+        jitCode->tierUpEntryTriggers.set(osrEntryBytecode, TierUpEntryTrigger::None);
         jitCode->setOptimizationThresholdBasedOnCompilationResult(
             codeBlock, CompilationDeferred);
         return nullptr;
     }
 
-    unsigned streamIndex = jitCode->bytecodeIndexToStreamIndex.get(osrEntryBytecodeIndex);
-    auto tierUpHierarchyEntry = jitCode->tierUpInLoopHierarchy.find(osrEntryBytecodeIndex);
-    if (tierUpHierarchyEntry != jitCode->tierUpInLoopHierarchy.end()) {
-        for (unsigned osrEntryCandidate : tierUpHierarchyEntry->value) {
-            if (jitCode->tierUpEntrySeen.contains(osrEntryCandidate)) {
-                osrEntryBytecodeIndex = osrEntryCandidate;
-                streamIndex = jitCode->bytecodeIndexToStreamIndex.get(osrEntryBytecodeIndex);
+    // We aren't compiling and haven't compiled anything for OSR entry. So, try to compile something.
+
+    if (entryReason != EntryReason::ShouldStartCompilingRightNow) {
+        // We entered because our threshold was set, not because someone is forcing us to compile.
+        // Try to see if there would be a better place to compile from than where we currently are.
+
+        // Compiling an outer-loop for OSR entry often generates better code than an inner-loop because
+        // the entry is less disruptive. If we're at an inner-loop be smart and mark the outer-loop as
+        // needing compilation ASAP. Once execution reaches the outer-loop compilation will trigger.
+        auto tierUpHierarchyEntry = jitCode->tierUpInLoopHierarchy.find(bytecodeIndex);
+        if (tierUpHierarchyEntry != jitCode->tierUpInLoopHierarchy.end() && !tierUpHierarchyEntry->value.isEmpty()) {
+            // Traverse the loop hierarchy from the outer-most loop, to the inner-most one.
+            for (auto iterator = tierUpHierarchyEntry->value.rbegin(), end = tierUpHierarchyEntry->value.rend(); iterator != end; ++iterator) {
+                unsigned osrEntryCandidate = *iterator;
+                if (jitCode->tierUpEntrySeen.contains(osrEntryCandidate)) {
+                    unsigned outerLoopOsrEntryBytecodeIndex = osrEntryCandidate;
+
+                    // We found an outer-loop which would be a better OSR entry
+                    // than the current location:
+                    //  - Set its trigger so it takes the slow-path ASAP;
+                    //  - Tell the codeblock to stop its counter slow-path for a
+                    //    while, because it should wait for the outer-loop to
+                    //    trigger.
+                    //
+                    // If we slow-path again then one of these is true:
+                    //  1. We enter from the outer-loop because of its trigger,
+                    //     it un-sets its trigger, kicks off a compile,
+                    //     everything is good;
+                    //  2. We enter from anywhere and a compile is under way,
+                    //     just chill as usual;
+                    //  3. We never got to that outer-loop and the counter
+                    //     tripped again, bummer!
+                    //
+                    // We can detect 3. because the outer-loop's trigger is
+                    // set. It's still a great place to enter, so leave its
+                    // trigger set, but also:
+                    //  - Set the trigger for the next loop in, hope that one triggers;
+                    //  - Backoff the counter as before.
+                    // That is, unless all the inner-loop's parent triggers are
+                    // set. In that case just optimize the innermost-loop: it
+                    // won't generate as good code, but the outer-loops aren't
+                    // triggering so we may as we tier up where we can.
+                    auto outerLoopTierUpEntryTriggers = jitCode->tierUpEntryTriggers.find(outerLoopOsrEntryBytecodeIndex);
+                    ASSERT(outerLoopTierUpEntryTriggers != jitCode->tierUpEntryTriggers.end());
+
+                    if (outerLoopTierUpEntryTriggers->value != TierUpEntryTrigger::TakeSlowPath) {
+                        if (Options::verboseOSR())
+                            dataLog("Forcibly FTL-optimize outer-loop bc#", outerLoopOsrEntryBytecodeIndex, " in ", *codeBlock, "by setting its trigger.\n");
+
+                        CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("OSR entry request from inner-loop for outer-loop"));
+                        jitCode->tierUpEntryTriggers.set(outerLoopOsrEntryBytecodeIndex, TierUpEntryTrigger::TakeSlowPath);
+                        jitCode->optimizeSoon(codeBlock);
+                        return nullptr;
+                    }
+
+                    if (Options::verboseOSR())
+                        dataLog("Trying to forcibly FTL-optimize outer-loop bc#", outerLoopOsrEntryBytecodeIndex, " in ", *codeBlock, ", but trigger is already set.\n");
+                }
             }
+
+            // All the outer-loops have their trigger set, but none have been entered.
+
+            if (canOSREnterFromHere == CanOSREnterFromHere::No) {
+                // We just can't enter from here, we've asked everyone we know
+                // to please optimize ASAP, nobody has heeded our call. Keep
+                // hoping one of the outer loops triggers get to their slow
+                // path. Stop the counter, there's nothing we can do.
+                jitCode->dontOptimizeAnytimeSoon(codeBlock);
+                return nullptr;
+            }
+
+            if (Options::verboseOSR())
+                dataLog("Tried to forcibly-optimize outer-loop, but falling back to bc#", bytecodeIndex, " in ", *codeBlock, ", outer-loop triggers didn't work.\n");
         }
     }
 
-    // We aren't compiling and haven't compiled anything for OSR entry. So, try to compile
-    // something.
-    auto triggerIterator = jitCode->tierUpEntryTriggers.find(osrEntryBytecodeIndex);
-    RELEASE_ASSERT(triggerIterator != jitCode->tierUpEntryTriggers.end());
-    uint8_t* triggerAddress = &(triggerIterator->value);
+    RELEASE_ASSERT(canOSREnterFromHere == CanOSREnterFromHere::Yes);
 
+    unsigned streamIndex = jitCode->bytecodeIndexToStreamIndex.get(bytecodeIndex);
+
+    // We're not trying to kick off a compile of an outer-loop from within an
+    // inner-loop. We can compile right here, right now.
+    auto triggerIterator = jitCode->tierUpEntryTriggers.find(bytecodeIndex);
+    RELEASE_ASSERT(triggerIterator != jitCode->tierUpEntryTriggers.end());
+    TierUpEntryTrigger* triggerAddress = &(triggerIterator->value);
+
+    // Use OSR reconstruction to generate a snapshot of JSValues at the current
+    // location of execution. The optimizer is happy when it can look at real
+    // and live values, as opposed to mere type traces.
     Operands<JSValue> mustHandleValues;
     jitCode->reconstruct(
-        exec, codeBlock, CodeOrigin(osrEntryBytecodeIndex), streamIndex, mustHandleValues);
+        exec, codeBlock, CodeOrigin(bytecodeIndex), streamIndex, mustHandleValues);
     CodeBlock* replacementCodeBlock = codeBlock->newReplacement();
 
     CODEBLOCK_LOG_EVENT(codeBlock, "triggerFTLOSR", ());
     CompilationResult forEntryResult = compile(
-        *vm, replacementCodeBlock, codeBlock, FTLForOSREntryMode, osrEntryBytecodeIndex,
+        *vm, replacementCodeBlock, codeBlock, FTLForOSREntryMode, bytecodeIndex,
         mustHandleValues, ToFTLForOSREntryDeferredCompilationCallback::create(triggerAddress));
 
     if (jitCode->neverExecutedEntry)
@@ -2466,14 +2631,27 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
             codeBlock, CompilationDeferred);
         return nullptr;
     }
-    
-    CODEBLOCK_LOG_EVENT(jitCode->osrEntryBlock(), "osrEntry", ("at bc#", originBytecodeIndex));
-    // It's possible that the for-entry compile already succeeded. In that case OSR
-    // entry will succeed unless we ran out of stack. It's not clear what we should do.
-    // We signal to try again after a while if that happens.
-    void* address = FTL::prepareOSREntry(
-        exec, codeBlock, jitCode->osrEntryBlock(), originBytecodeIndex, streamIndex);
-    return static_cast<char*>(address);
+
+    // It's possible that the for-entry compile already succeeded. In that case
+    // OSR entry will succeed unless we ran out of stack.
+    auto osrEntryPreparation = FTL::prepareOSREntry(exec, codeBlock, jitCode->osrEntryBlock(), bytecodeIndex, streamIndex);
+    if (osrEntryPreparation) {
+        CODEBLOCK_LOG_EVENT(jitCode->osrEntryBlock(), "osrEntry", ("at bc#", bytecodeIndex));
+        void* address = osrEntryPreparation.value();
+        ASSERT(address);
+        return static_cast<char*>(address);
+    }
+    switch (osrEntryPreparation.error()) {
+    case FTL::OSREntryFail::StackGrowthFailed:
+        // It's not clear what we should do. We signal to try again after a
+        // while if that happens.
+        return nullptr;
+    case FTL::OSREntryFail::WrongBytecode:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 void JIT_OPERATION triggerTierUpNowInLoop(ExecState* exec, unsigned bytecodeIndex)
@@ -2496,11 +2674,15 @@ void JIT_OPERATION triggerTierUpNowInLoop(ExecState* exec, unsigned bytecodeInde
             jitCode->tierUpCounter, "\n");
     }
 
+    // It's impossible to OSR enter from the current bytecode index: CheckTierUpInLoop is only even generated for non-OSR-entry bytecodes.
+    // It's nonetheless a good spot to request that a nearby loop get optimized the next time it's entered.
+
     auto tierUpHierarchyEntry = jitCode->tierUpInLoopHierarchy.find(bytecodeIndex);
     if (tierUpHierarchyEntry != jitCode->tierUpInLoopHierarchy.end()
         && !tierUpHierarchyEntry->value.isEmpty()) {
-        tierUpCommon(exec, bytecodeIndex, tierUpHierarchyEntry->value.first());
-    } else if (shouldTriggerFTLCompile(codeBlock, jitCode))
+        // There is a suitable loop to OSR enter from.
+        tierUpCommon(vm, exec, codeBlock, jitCode, bytecodeIndex, CanOSREnterFromHere::No);
+    } else if (shouldTriggerFTLCompile(codeBlock, jitCode)) // This updates the execution counter.
         triggerFTLReplacementCompile(vm, codeBlock, jitCode);
 
     // Since we cannot OSR Enter here, the default "optimizeSoon()" is not useful.
@@ -2510,7 +2692,7 @@ void JIT_OPERATION triggerTierUpNowInLoop(ExecState* exec, unsigned bytecodeInde
     }
 }
 
-char* JIT_OPERATION triggerOSREntryNow(ExecState* exec, unsigned bytecodeIndex)
+char* JIT_OPERATION checkTierUpAndOSREnterNow(ExecState* exec, unsigned bytecodeIndex)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
@@ -2523,7 +2705,6 @@ char* JIT_OPERATION triggerOSREntryNow(ExecState* exec, unsigned bytecodeIndex)
     }
 
     JITCode* jitCode = codeBlock->jitCode()->dfg();
-    jitCode->tierUpEntrySeen.add(bytecodeIndex);
 
     if (Options::verboseOSR()) {
         dataLog(
@@ -2531,7 +2712,8 @@ char* JIT_OPERATION triggerOSREntryNow(ExecState* exec, unsigned bytecodeIndex)
             jitCode->tierUpCounter, "\n");
     }
 
-    return tierUpCommon(exec, bytecodeIndex, bytecodeIndex);
+    jitCode->tierUpEntrySeen.add(bytecodeIndex);
+    return tierUpCommon(vm, exec, codeBlock, jitCode, bytecodeIndex, CanOSREnterFromHere::Yes);
 }
 
 #endif // ENABLE(FTL_JIT)

@@ -35,7 +35,7 @@
 
 namespace JSC { namespace DFG {
 
-ToFTLForOSREntryDeferredCompilationCallback::ToFTLForOSREntryDeferredCompilationCallback(uint8_t* forcedOSREntryTrigger)
+ToFTLForOSREntryDeferredCompilationCallback::ToFTLForOSREntryDeferredCompilationCallback(TierUpEntryTrigger* forcedOSREntryTrigger)
     : m_forcedOSREntryTrigger(forcedOSREntryTrigger)
 {
 }
@@ -44,7 +44,7 @@ ToFTLForOSREntryDeferredCompilationCallback::~ToFTLForOSREntryDeferredCompilatio
 {
 }
 
-Ref<ToFTLForOSREntryDeferredCompilationCallback>ToFTLForOSREntryDeferredCompilationCallback::create(uint8_t* forcedOSREntryTrigger)
+Ref<ToFTLForOSREntryDeferredCompilationCallback>ToFTLForOSREntryDeferredCompilationCallback::create(TierUpEntryTrigger* forcedOSREntryTrigger)
 {
     return adoptRef(*new ToFTLForOSREntryDeferredCompilationCallback(forcedOSREntryTrigger));
 }
@@ -58,7 +58,7 @@ void ToFTLForOSREntryDeferredCompilationCallback::compilationDidBecomeReadyAsync
             ") did become ready.\n");
     }
 
-    *m_forcedOSREntryTrigger = 1;
+    *m_forcedOSREntryTrigger = TierUpEntryTrigger::TakeSlowPath;
 }
 
 void ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete(
@@ -76,7 +76,7 @@ void ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete(
     case CompilationSuccessful: {
         jitCode->setOSREntryBlock(*codeBlock->vm(), profiledDFGCodeBlock, codeBlock);
         unsigned osrEntryBytecode = codeBlock->jitCode()->ftlForOSREntry()->bytecodeIndex();
-        jitCode->tierUpEntryTriggers.set(osrEntryBytecode, 1);
+        jitCode->tierUpEntryTriggers.set(osrEntryBytecode, TierUpEntryTrigger::TakeSlowPath);
         break;
     }
     case CompilationFailed:

@@ -1,3 +1,31 @@
+2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211224. rdar://problem/29144126
+
+    2017-01-26  JF Bastien  <jfbastien@apple.com>
+
+            OSR entry: delay outer-loop compilation when at inner-loop
+            https://bugs.webkit.org/show_bug.cgi?id=167149
+
+            Reviewed by Filip Pizlo.
+
+            Try to be mean to OSR entry by using nested loops, and having
+            non-int32 types or truly varying types.
+
+            Mandelbrot currently never tiers up to FTL because it exits too
+            many times before this. That shouldn't happen because it's just
+            numbers and int32s. I'll file a bug to fix this.
+
+            * microbenchmarks/mandelbrot.js: Added.
+            (mandelbrot):
+            (printable):
+            * microbenchmarks/nonude.js: Added.
+            (Array.prototype.remove):
+            (const.u):
+            (const.load):
+            (const.scan):
+            (const.main):
+
 2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r211129. rdar://problem/30178458
