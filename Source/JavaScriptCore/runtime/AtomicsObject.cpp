@@ -209,8 +209,8 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncCompareExchange(ExecState* exec)
     return atomicOperationWithArgs<2>(
         exec, [&] (auto* ptr, const double* args) {
             typedef typename std::remove_pointer<decltype(ptr)>::type T;
-            T expected = static_cast<T>(args[0]);
-            T newValue = static_cast<T>(args[1]);
+            T expected = static_cast<T>(toInt32(args[0]));
+            T newValue = static_cast<T>(toInt32(args[1]));
             return jsNumber(WTF::atomicCompareExchangeStrong(ptr, expected, newValue));
         });
 }
@@ -220,7 +220,7 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncExchange(ExecState* exec)
     return atomicOperationWithArgs<1>(
         exec, [&] (auto* ptr, const double* args) {
             typedef typename std::remove_pointer<decltype(ptr)>::type T;
-            return jsNumber(WTF::atomicExchange(ptr, static_cast<T>(args[0])));
+            return jsNumber(WTF::atomicExchange(ptr, static_cast<T>(toInt32(args[0]))));
         });
 }
 
@@ -268,7 +268,7 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncStore(ExecState* exec)
         exec, [&] (auto* ptr, const double* args) {
             typedef typename std::remove_pointer<decltype(ptr)>::type T;
             double valueAsInt = args[0];
-            T valueAsT = static_cast<T>(valueAsInt);
+            T valueAsT = static_cast<T>(toInt32(valueAsInt));
             WTF::atomicStore(ptr, valueAsT);
             return jsNumber(valueAsInt);
         });

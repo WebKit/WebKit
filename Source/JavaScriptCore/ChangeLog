@@ -1,5 +1,23 @@
 2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211167. rdar://problem/30192652
+
+    2017-01-25  Filip Pizlo  <fpizlo@apple.com>
+
+            ARM/ARM64 stress/atomics-store-return.js fails
+            <rdar://problem/30192652>
+
+            Reviewed by Michael Saboff.
+
+            The problem was relying on double->int casts for anything. We need to use toInt32().
+
+            * runtime/AtomicsObject.cpp:
+            (JSC::atomicsFuncCompareExchange):
+            (JSC::atomicsFuncExchange):
+            (JSC::atomicsFuncStore):
+
+2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211180. rdar://problem/30156092
 
     2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
