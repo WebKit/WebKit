@@ -2219,9 +2219,6 @@ void Document::destroyRenderTree()
 {
     ASSERT(hasLivingRenderTree());
     ASSERT(m_pageCacheState != InPageCache);
-    ASSERT(frame()->view());
-
-    FrameView& frameView = *frame()->view();
 
     SetForScope<bool> change(m_renderTreeBeingDestroyed, true);
 
@@ -2230,7 +2227,8 @@ void Document::destroyRenderTree()
 
     documentWillBecomeInactive();
 
-    frameView.willDestroyRenderTree();
+    if (auto* frameView = view())
+        frameView->willDestroyRenderTree();
 
 #if ENABLE(FULLSCREEN_API)
     if (m_fullScreenRenderer)
@@ -2257,7 +2255,8 @@ void Document::destroyRenderTree()
     m_textAutoSizedNodes.clear();
 #endif
 
-    frameView.didDestroyRenderTree();
+    if (auto* frameView = view())
+        frameView->didDestroyRenderTree();
 }
 
 void Document::prepareForDestruction()

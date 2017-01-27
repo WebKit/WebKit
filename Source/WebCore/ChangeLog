@@ -1,3 +1,21 @@
+2017-01-26  Andreas Kling  <akling@apple.com>
+
+        Branch-specific fix for a crash seen after merging r201777.
+        <rdar://problem/30209068>
+
+        Reviewed by Andy Estes.
+
+        Add null checking of the FrameView in Document::destroyRenderTree() before
+        calling functions on it. This is not necessary in trunk, as the FrameView
+        is guaranteed to be present there.
+
+        FrameView can be missing on the branch, since render trees for page cached documents
+        are destroyed when leaving the page cache, not when entering it (trunk behavior.)
+        When leaving the page cache, the FrameView is already detached, hence the bug.
+
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree):
+
 2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r211151. rdar://problem/30171195
