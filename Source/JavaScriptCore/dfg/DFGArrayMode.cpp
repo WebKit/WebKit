@@ -360,12 +360,12 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
         if (value.m_structure.isTop())
             return false;
         for (unsigned i = value.m_structure.size(); i--;) {
-            Structure* structure = value.m_structure[i];
+            RegisteredStructure structure = value.m_structure[i];
             if ((structure->indexingType() & IndexingShapeMask) != shape)
                 return false;
             if (!(structure->indexingType() & IsArray))
                 return false;
-            if (!graph.globalObjectFor(node->origin.semantic)->isOriginalArrayStructure(structure))
+            if (!graph.globalObjectFor(node->origin.semantic)->isOriginalArrayStructure(structure.get()))
                 return false;
         }
         return true;
@@ -377,7 +377,7 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
         if (value.m_structure.isTop())
             return false;
         for (unsigned i = value.m_structure.size(); i--;) {
-            Structure* structure = value.m_structure[i];
+            RegisteredStructure structure = value.m_structure[i];
             if ((structure->indexingType() & IndexingShapeMask) != shape)
                 return false;
             if (!(structure->indexingType() & IsArray))
@@ -392,7 +392,7 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
         if (value.m_structure.isTop())
             return false;
         for (unsigned i = value.m_structure.size(); i--;) {
-            Structure* structure = value.m_structure[i];
+            RegisteredStructure structure = value.m_structure[i];
             if ((structure->indexingType() & IndexingShapeMask) != shape)
                 return false;
         }
@@ -440,7 +440,7 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
             if (value.m_structure.isTop())
                 return false;
             for (unsigned i = value.m_structure.size(); i--;) {
-                Structure* structure = value.m_structure[i];
+                RegisteredStructure structure = value.m_structure[i];
                 if (!hasAnyArrayStorage(structure->indexingType()))
                     return false;
                 if (!(structure->indexingType() & IsArray))
@@ -455,7 +455,7 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
             if (value.m_structure.isTop())
                 return false;
             for (unsigned i = value.m_structure.size(); i--;) {
-                Structure* structure = value.m_structure[i];
+                RegisteredStructure structure = value.m_structure[i];
                 if (!hasAnyArrayStorage(structure->indexingType()))
                     return false;
             }

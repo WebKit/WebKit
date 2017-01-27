@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#pragma once
+
+#if ENABLE(DFG_JIT)
+
+#include "Structure.h"
 #include "StructureSet.h"
 
-#include "TrackedReferences.h"
-#include <wtf/CommaPrinter.h>
+namespace JSC { namespace DFG {
 
-namespace JSC {
+class Graph;
 
-void StructureSet::dumpInContext(PrintStream& out, DumpContext* context) const
-{
-    CommaPrinter comma;
-    out.print("[");
-    forEach([&] (Structure* structure) { out.print(comma, inContext(*structure, context)); });
-    out.print("]");
-}
+class RegisteredStructure {
+public:
+    RegisteredStructure() = default;
 
-void StructureSet::dump(PrintStream& out) const
-{
-    dumpInContext(out, nullptr);
-}
+    ALWAYS_INLINE Structure* get() const { return m_structure; }
+    Structure* operator->() const { return get(); }
 
-} // namespace JSC
+    bool operator==(const RegisteredStructure& other) const
+    {
+        return get() == other.get();
+    }
 
+    bool operator!=(const RegisteredStructure& other) const
+    {
+        return !(*this == other);
+    }
+
+    explicit operator bool() const
+    {
+        return !!get();
+    }
+
+private:
+    friend class Graph;
+
+    RegisteredStructure(Structure* structure)
+        : m_structure(structure)
+    {
+        ASSERT(structure);
+    }
+
+    static RegisteredStructure createPrivate(Structure* structure)
+    {
+        return RegisteredStructure(structure);
+    }
+
+    Structure* m_structure { nullptr };
+};
+
+} } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)

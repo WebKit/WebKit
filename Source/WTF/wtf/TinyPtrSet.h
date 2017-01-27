@@ -43,6 +43,7 @@ namespace WTF {
 
 template<typename T>
 class TinyPtrSet {
+    static_assert(sizeof(T) == sizeof(void*), "It's in the title of the class.");
 public:
     TinyPtrSet()
         : m_pointer(0)
@@ -475,7 +476,7 @@ private:
     T singleEntry() const
     {
         ASSERT(isThin());
-        return static_cast<T>(pointer());
+        return bitwise_cast<T>(pointer());
     }
     
     OutOfLineList* list() const

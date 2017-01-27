@@ -112,7 +112,7 @@ public:
     void dump(PrintStream& out);
     
     template<typename T>
-    FiltrationResult filter(T node, const StructureSet& set, SpeculatedType admittedTypes = SpecNone)
+    FiltrationResult filter(T node, const RegisteredStructureSet& set, SpeculatedType admittedTypes = SpecNone)
     {
         return filter(forNode(node), set, admittedTypes);
     }
@@ -141,7 +141,7 @@ public:
         return filterClassInfo(forNode(node), classInfo);
     }
 
-    FiltrationResult filter(AbstractValue&, const StructureSet&, SpeculatedType admittedTypes = SpecNone);
+    FiltrationResult filter(AbstractValue&, const RegisteredStructureSet&, SpeculatedType admittedTypes = SpecNone);
     FiltrationResult filterArrayModes(AbstractValue&, ArrayModes);
     FiltrationResult filter(AbstractValue&, SpeculatedType);
     FiltrationResult filterByValue(AbstractValue&, FrozenValue);
@@ -156,7 +156,7 @@ private:
     void forAllValues(unsigned indexInBlock, Functor&);
     
     void clobberStructures(unsigned indexInBlock);
-    void observeTransition(unsigned indexInBlock, Structure* from, Structure* to);
+    void observeTransition(unsigned indexInBlock, RegisteredStructure from, RegisteredStructure to);
     void observeTransitions(unsigned indexInBlock, const TransitionVector&);
     void setDidClobber();
     

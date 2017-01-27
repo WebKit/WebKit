@@ -27,6 +27,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGRegisteredStructure.h"
 #include <wtf/PrintStream.h>
 #include <wtf/Vector.h>
 
@@ -38,16 +39,12 @@ struct DumpContext;
 namespace DFG {
 
 struct Transition {
-    Structure* previous;
-    Structure* next;
+    RegisteredStructure previous;
+    RegisteredStructure next;
     
-    Transition()
-        : previous(nullptr)
-        , next(nullptr)
-    {
-    }
+    Transition() = default;
     
-    Transition(Structure* previous, Structure* next)
+    Transition(RegisteredStructure previous, RegisteredStructure next)
         : previous(previous)
         , next(next)
     {

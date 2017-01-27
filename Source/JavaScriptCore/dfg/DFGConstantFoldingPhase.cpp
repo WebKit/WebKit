@@ -145,7 +145,7 @@ private:
             case CheckStructure:
             case ArrayifyToStructure: {
                 AbstractValue& value = m_state.forNode(node->child1());
-                StructureSet set;
+                RegisteredStructureSet set;
                 if (node->op() == ArrayifyToStructure)
                     set = node->structure();
                 else
@@ -206,11 +206,11 @@ private:
                 
             case CheckStructureImmediate: {
                 AbstractValue& value = m_state.forNode(node->child1());
-                StructureSet& set = node->structureSet();
+                const RegisteredStructureSet& set = node->structureSet();
                 
                 if (value.value()) {
                     if (Structure* structure = jsDynamicCast<Structure*>(value.value())) {
-                        if (set.contains(structure)) {
+                        if (set.contains(m_graph.registerStructure(structure))) {
                             m_interpreter.execute(indexInBlock);
                             node->remove();
                             eliminated = true;
@@ -225,7 +225,7 @@ private:
                         node,
                         [&] (Node* incoming) {
                             if (Structure* structure = incoming->dynamicCastConstant<Structure*>()) {
-                                if (set.contains(structure))
+                                if (set.contains(m_graph.registerStructure(structure)))
                                     return;
                             }
                             allGood = false;
@@ -421,7 +421,9 @@ private:
 
                 for (unsigned i = 0; i < data.variants.size(); ++i) {
                     PutByIdVariant& variant = data.variants[i];
-                    variant.oldStructure().filter(baseValue);
+                    variant.oldStructure().genericFilter([&] (Structure* structure) -> bool {
+                        return baseValue.contains(m_graph.registerStructure(structure));
+                    });
                     
                     if (variant.oldStructure().isEmpty()) {
                         data.variants[i--] = data.variants.last();
@@ -460,12 +462,12 @@ private:
                 m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
                 alreadyHandled = true; // Don't allow the default constant folder to do things to this.
 
-                if (baseValue.m_structure.isTop() || baseValue.m_structure.isClobbered()
+                if (!baseValue.m_structure.isFinite()
                     || (node->child1().useKind() == UntypedUse || (baseValue.m_type & ~SpecCell)))
                     break;
                 
                 GetByIdStatus status = GetByIdStatus::computeFor(
-                    baseValue.m_structure.set(), m_graph.identifiers()[identifierNumber]);
+                    baseValue.m_structure.toStructureSet(), m_graph.identifiers()[identifierNumber]);
                 if (!status.isSimple())
                     break;
                 
@@ -490,7 +492,7 @@ private:
                 for (const GetByIdVariant& variant : status.variants()) {
                     data->cases.append(
                         MultiGetByOffsetCase(
-                            variant.structureSet(),
+                            *m_graph.addStructureSet(variant.structureSet()),
                             GetByOffsetMethod::load(variant.offset())));
                 }
                 data->identifierNumber = identifierNumber;
@@ -515,12 +517,12 @@ private:
                 m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
                 alreadyHandled = true; // Don't allow the default constant folder to do things to this.
 
-                if (baseValue.m_structure.isTop() || baseValue.m_structure.isClobbered())
+                if (!baseValue.m_structure.isFinite())
                     break;
                 
                 PutByIdStatus status = PutByIdStatus::computeFor(
                     m_graph.globalObjectFor(origin.semantic),
-                    baseValue.m_structure.set(),
+                    baseValue.m_structure.toStructureSet(),
                     m_graph.identifiers()[identifierNumber],
                     node->op() == PutByIdDirect);
                 
@@ -713,7 +715,7 @@ private:
         // We aren't set up to handle prototype stuff.
         DFG_ASSERT(m_graph, node, variant.conditionSet().isEmpty());
 
-        if (JSValue value = m_graph.tryGetConstantProperty(baseValue.m_value, variant.structureSet(), variant.offset())) {
+        if (JSValue value = m_graph.tryGetConstantProperty(baseValue.m_value, *m_graph.addStructureSet(variant.structureSet()), variant.offset())) {
             m_graph.convertToConstant(node, m_graph.freeze(value));
             return;
         }
@@ -759,7 +761,7 @@ private:
         Transition* transition = 0;
         if (variant.kind() == PutByIdVariant::Transition) {
             transition = m_graph.m_transitions.add(
-                variant.oldStructureForTransition(), variant.newStructure());
+                m_graph.registerStructure(variant.oldStructureForTransition()), m_graph.registerStructure(variant.newStructure()));
         }
 
         Edge propertyStorage;
@@ -821,6 +823,12 @@ private:
     void addBaseCheck(
         unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const StructureSet& set)
     {
+        addBaseCheck(indexInBlock, node, baseValue, *m_graph.addStructureSet(set));
+    }
+
+    void addBaseCheck(
+        unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const RegisteredStructureSet& set)
+    {
         if (!baseValue.m_structure.isSubsetOf(set)) {
             // Arises when we prune MultiGetByOffset. We could have a
             // MultiGetByOffset with a single variant that checks for structure S,
@@ -828,7 +836,7 @@ private:
             ASSERT(node->child1());
             m_insertionSet.insertNode(
                 indexInBlock, SpecNone, CheckStructure, node->origin,
-                OpInfo(m_graph.addStructureSet(set)), node->child1());
+                OpInfo(m_graph.addStructureSet(set.toStructureSet())), node->child1());
             return;
         }
         
@@ -838,8 +846,12 @@ private:
     
     void addStructureTransitionCheck(NodeOrigin origin, unsigned indexInBlock, JSCell* cell, Structure* structure)
     {
-        if (m_graph.registerStructure(cell->structure()) == StructureRegisteredAndWatched)
-            return;
+        {
+            StructureRegistrationResult result;
+            m_graph.registerStructure(cell->structure(), result);
+            if (result == StructureRegisteredAndWatched)
+                return;
+        }
         
         m_graph.registerStructure(structure);
 

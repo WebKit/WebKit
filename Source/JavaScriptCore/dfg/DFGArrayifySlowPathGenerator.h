@@ -45,7 +45,7 @@ public:
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_op(node->op())
         , m_arrayMode(node->arrayMode())
-        , m_structure(node->op() == ArrayifyToStructure ? node->structure() : 0)
+        , m_structure(node->op() == ArrayifyToStructure ? node->structure() : RegisteredStructure())
         , m_baseGPR(baseGPR)
         , m_propertyGPR(propertyGPR)
         , m_tempGPR(tempGPR)
@@ -115,7 +115,7 @@ protected:
         jit->m_jit.exceptionCheck();
         
         if (m_op == ArrayifyToStructure) {
-            ASSERT(m_structure);
+            ASSERT(m_structure.get());
             m_badIndexingTypeJump.fill(
                 jit, jit->m_jit.branchWeakStructure(MacroAssembler::NotEqual, MacroAssembler::Address(m_baseGPR, JSCell::structureIDOffset()), m_structure));
         } else {
@@ -136,7 +136,7 @@ protected:
 private:
     NodeType m_op;
     ArrayMode m_arrayMode;
-    Structure* m_structure;
+    RegisteredStructure m_structure;
     GPRReg m_baseGPR;
     GPRReg m_propertyGPR;
     GPRReg m_tempGPR;

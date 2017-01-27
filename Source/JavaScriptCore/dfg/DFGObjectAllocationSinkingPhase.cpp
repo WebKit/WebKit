@@ -186,28 +186,28 @@ public:
         }
     }
 
-    Allocation& setStructures(const StructureSet& structures)
+    Allocation& setStructures(const RegisteredStructureSet& structures)
     {
         ASSERT(hasStructures() && !structures.isEmpty());
         m_structures = structures;
         return *this;
     }
 
-    Allocation& mergeStructures(const StructureSet& structures)
+    Allocation& mergeStructures(const RegisteredStructureSet& structures)
     {
         ASSERT(hasStructures() || structures.isEmpty());
         m_structures.merge(structures);
         return *this;
     }
 
-    Allocation& filterStructures(const StructureSet& structures)
+    Allocation& filterStructures(const RegisteredStructureSet& structures)
     {
         ASSERT(hasStructures());
         m_structures.filter(structures);
         return *this;
     }
 
-    const StructureSet& structures() const
+    const RegisteredStructureSet& structures() const
     {
         return m_structures;
     }
@@ -283,7 +283,7 @@ public:
         }
         out.print("Allocation(");
         if (!m_structures.isEmpty())
-            out.print(inContext(m_structures, context));
+            out.print(inContext(m_structures.toStructureSet(), context));
         if (!m_fields.isEmpty()) {
             if (!m_structures.isEmpty())
                 out.print(", ");
@@ -296,7 +296,7 @@ private:
     Node* m_identifier; // This is the actual node that created the allocation
     Kind m_kind;
     HashMap<PromotedLocationDescriptor, Node*> m_fields;
-    StructureSet m_structures;
+    RegisteredStructureSet m_structures;
 };
 
 class LocalHeap {
@@ -832,7 +832,7 @@ private:
             target = &m_heap.newAllocation(node, Allocation::Kind::Object);
             target->setStructures(node->structure());
             writes.add(
-                StructurePLoc, LazyNode(m_graph.freeze(node->structure())));
+                StructurePLoc, LazyNode(m_graph.freeze(node->structure().get())));
             break;
 
         case NewFunction:
@@ -879,7 +879,7 @@ private:
         case PutStructure:
             target = m_heap.onlyLocalAllocation(node->child1().node());
             if (target && target->isObjectAllocation()) {
-                writes.add(StructurePLoc, LazyNode(m_graph.freeze(JSValue(node->transition()->next))));
+                writes.add(StructurePLoc, LazyNode(m_graph.freeze(JSValue(node->transition()->next.get()))));
                 target->setStructures(node->transition()->next);
             } else
                 m_heap.escape(node->child1().node());
@@ -912,7 +912,7 @@ private:
             Allocation* allocation = m_heap.onlyLocalAllocation(node->child1().node());
             if (allocation && allocation->isObjectAllocation()) {
                 MultiGetByOffsetData& data = node->multiGetByOffsetData();
-                StructureSet validStructures;
+                RegisteredStructureSet validStructures;
                 bool hasInvalidStructures = false;
                 for (const auto& multiGetByOffsetCase : data.cases) {
                     if (!allocation->structures().overlaps(multiGetByOffsetCase.set()))
@@ -1444,12 +1444,11 @@ private:
         switch (allocation.kind()) {
         case Allocation::Kind::Object: {
             ObjectMaterializationData* data = m_graph.m_objectMaterializationData.add();
-            StructureSet* set = m_graph.addStructureSet(allocation.structures());
 
             return m_graph.addNode(
                 allocation.identifier()->prediction(), Node::VarArg, MaterializeNewObject,
                 where->origin.withSemantic(allocation.identifier()->origin.semantic),
-                OpInfo(set), OpInfo(data), 0, 0);
+                OpInfo(m_graph.addStructureSet(allocation.structures())), OpInfo(data), 0, 0);
         }
 
         case Allocation::Kind::AsyncFunction:
@@ -2103,7 +2102,7 @@ private:
         case NamedPropertyPLoc: {
             Allocation& allocation = m_heap.getAllocation(location.base());
 
-            Vector<Structure*> structures;
+            Vector<RegisteredStructure> structures;
             structures.appendRange(allocation.structures().begin(), allocation.structures().end());
             unsigned identifierNumber = location.info();
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
@@ -2111,7 +2110,7 @@ private:
             std::sort(
                 structures.begin(),
                 structures.end(),
-                [uid] (Structure *a, Structure* b) -> bool {
+                [uid] (RegisteredStructure a, RegisteredStructure b) -> bool {
                     return a->getConcurrently(uid) < b->getConcurrently(uid);
                 });
 
@@ -2142,7 +2141,7 @@ private:
             {
                 PropertyOffset currentOffset = firstOffset;
                 StructureSet currentSet;
-                for (Structure* structure : structures) {
+                for (RegisteredStructure structure : structures) {
                     PropertyOffset offset = structure->getConcurrently(uid);
                     if (offset != currentOffset) {
                         // Because our analysis treats MultiPutByOffset like an escape, we only have to
@@ -2155,7 +2154,7 @@ private:
                         currentOffset = offset;
                         currentSet.clear();
                     }
-                    currentSet.add(structure);
+                    currentSet.add(structure.get());
                 }
                 data->variants.append(
                     PutByIdVariant::replace(currentSet, currentOffset, InferredType::Top));

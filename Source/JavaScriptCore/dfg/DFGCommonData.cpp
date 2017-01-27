@@ -43,8 +43,8 @@ void CommonData::notifyCompilingStructureTransition(Plan& plan, CodeBlock* codeB
     plan.transitions.addLazily(
         codeBlock,
         node->origin.semantic.codeOriginOwner(),
-        node->transition()->previous,
-        node->transition()->next);
+        node->transition()->previous.get(),
+        node->transition()->next.get());
 }
 
 CallSiteIndex CommonData::addCodeOrigin(CodeOrigin codeOrigin)

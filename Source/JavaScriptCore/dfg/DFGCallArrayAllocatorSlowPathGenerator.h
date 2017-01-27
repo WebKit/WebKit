@@ -38,7 +38,7 @@ class CallArrayAllocatorSlowPathGenerator : public JumpingSlowPathGenerator<Macr
 public:
     CallArrayAllocatorSlowPathGenerator(
         MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_EStZB function,
-        GPRReg resultGPR, GPRReg storageGPR, Structure* structure, size_t size)
+        GPRReg resultGPR, GPRReg storageGPR, RegisteredStructure structure, size_t size)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_function(function)
         , m_resultGPR(resultGPR)
@@ -69,7 +69,7 @@ private:
     P_JITOperation_EStZB m_function;
     GPRReg m_resultGPR;
     GPRReg m_storageGPR;
-    Structure* m_structure;
+    RegisteredStructure m_structure;
     size_t m_size;
     Vector<SilentRegisterSavePlan, 2> m_plans;
 };
@@ -78,7 +78,7 @@ class CallArrayAllocatorWithVariableSizeSlowPathGenerator : public JumpingSlowPa
 public:
     CallArrayAllocatorWithVariableSizeSlowPathGenerator(
         MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_EStZB function,
-        GPRReg resultGPR, Structure* contiguousStructure, Structure* arrayStorageStructure, GPRReg sizeGPR, GPRReg storageGPR)
+        GPRReg resultGPR, RegisteredStructure contiguousStructure, RegisteredStructure arrayStorageStructure, GPRReg sizeGPR, GPRReg storageGPR)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_function(function)
         , m_resultGPR(resultGPR)
@@ -97,15 +97,15 @@ protected:
         for (unsigned i = 0; i < m_plans.size(); ++i)
             jit->silentSpill(m_plans[i]);
         GPRReg scratchGPR = AssemblyHelpers::selectScratchGPR(m_sizeGPR, m_storageGPR);
-        if (m_contiguousStructure != m_arrayStorageOrContiguousStructure) {
+        if (m_contiguousStructure.get() != m_arrayStorageOrContiguousStructure.get()) {
             MacroAssembler::Jump bigLength = jit->m_jit.branch32(MacroAssembler::AboveOrEqual, m_sizeGPR, MacroAssembler::TrustedImm32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH));
-            jit->m_jit.move(MacroAssembler::TrustedImmPtr(m_contiguousStructure), scratchGPR);
+            jit->m_jit.move(SpeculativeJIT::TrustedImmPtr(m_contiguousStructure), scratchGPR);
             MacroAssembler::Jump done = jit->m_jit.jump();
             bigLength.link(&jit->m_jit);
-            jit->m_jit.move(MacroAssembler::TrustedImmPtr(m_arrayStorageOrContiguousStructure), scratchGPR);
+            jit->m_jit.move(SpeculativeJIT::TrustedImmPtr(m_arrayStorageOrContiguousStructure), scratchGPR);
             done.link(&jit->m_jit);
         } else
-            jit->m_jit.move(MacroAssembler::TrustedImmPtr(m_contiguousStructure), scratchGPR);
+            jit->m_jit.move(SpeculativeJIT::TrustedImmPtr(m_contiguousStructure), scratchGPR);
         jit->callOperation(m_function, m_resultGPR, scratchGPR, m_sizeGPR, m_storageGPR);
         GPRReg canTrample = SpeculativeJIT::pickCanTrample(m_resultGPR);
         for (unsigned i = m_plans.size(); i--;)
@@ -117,8 +117,8 @@ protected:
 private:
     P_JITOperation_EStZB m_function;
     GPRReg m_resultGPR;
-    Structure* m_contiguousStructure;
-    Structure* m_arrayStorageOrContiguousStructure;
+    RegisteredStructure m_contiguousStructure;
+    RegisteredStructure m_arrayStorageOrContiguousStructure;
     GPRReg m_sizeGPR;
     GPRReg m_storageGPR;
     Vector<SilentRegisterSavePlan, 2> m_plans;

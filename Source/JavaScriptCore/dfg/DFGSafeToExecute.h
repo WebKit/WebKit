@@ -425,7 +425,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
         return state.forNode(node->child1()).m_structure.isSubsetOf(
-            StructureSet(node->transition()->previous));
+            RegisteredStructureSet(node->transition()->previous));
         
     case GetByOffset:
     case GetGetterSetterByOffset:

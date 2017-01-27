@@ -213,7 +213,12 @@ public:
     void convertToConstant(Node* node, JSValue value);
     void convertToStrongConstant(Node* node, JSValue value);
     
-    StructureRegistrationResult registerStructure(Structure* structure);
+    RegisteredStructure registerStructure(Structure* structure)
+    {
+        StructureRegistrationResult ignored;
+        return registerStructure(structure, ignored);
+    }
+    RegisteredStructure registerStructure(Structure*, StructureRegistrationResult&);
     void assertIsRegistered(Structure* structure);
     
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
@@ -341,12 +346,26 @@ public:
     
     static const char *opName(NodeType);
     
-    StructureSet* addStructureSet(const StructureSet& structureSet)
+    RegisteredStructureSet* addStructureSet(const StructureSet& structureSet)
     {
+        m_structureSets.append();
+        RegisteredStructureSet* result = &m_structureSets.last();
+
         for (Structure* structure : structureSet)
-            registerStructure(structure);
-        m_structureSet.append(structureSet);
-        return &m_structureSet.last();
+            result->add(registerStructure(structure));
+
+        return result;
+    }
+
+    RegisteredStructureSet* addStructureSet(const RegisteredStructureSet& structureSet)
+    {
+        m_structureSets.append();
+        RegisteredStructureSet* result = &m_structureSets.last();
+
+        for (RegisteredStructure structure : structureSet)
+            result->add(structure);
+
+        return result;
     }
     
     JSGlobalObject* globalObjectFor(CodeOrigin codeOrigin)
@@ -715,7 +734,7 @@ public:
     }
 
     AbstractValue inferredValueForProperty(
-        const StructureSet& base, UniquedStringImpl* uid, StructureClobberState = StructuresAreWatched);
+        const RegisteredStructureSet& base, UniquedStringImpl* uid, StructureClobberState = StructuresAreWatched);
 
     // This uses either constant property inference or property type inference to derive a good abstract
     // value for some property accessed with the given abstract value base.
@@ -818,7 +837,7 @@ public:
     unsigned requiredRegisterCountForExit();
     unsigned requiredRegisterCountForExecutionAndExit();
     
-    JSValue tryGetConstantProperty(JSValue base, const StructureSet&, PropertyOffset);
+    JSValue tryGetConstantProperty(JSValue base, const RegisteredStructureSet&, PropertyOffset);
     JSValue tryGetConstantProperty(JSValue base, Structure*, PropertyOffset);
     JSValue tryGetConstantProperty(JSValue base, const StructureAbstractValue&, PropertyOffset);
     JSValue tryGetConstantProperty(const AbstractValue&, PropertyOffset);
@@ -910,7 +929,6 @@ public:
     
     SegmentedVector<VariableAccessData, 16> m_variableAccessData;
     SegmentedVector<ArgumentPosition, 8> m_argumentPositions;
-    SegmentedVector<StructureSet, 16> m_structureSet;
     Bag<Transition> m_transitions;
     SegmentedVector<NewArrayBufferData, 4> m_newArrayBufferData;
     Bag<BranchData> m_branchData;
@@ -960,6 +978,9 @@ public:
     std::unique_ptr<FlowIndexing> m_indexingCache;
     std::unique_ptr<FlowMap<AbstractValue>> m_abstractValuesCache;
 
+    RegisteredStructure stringStructure;
+    RegisteredStructure symbolStructure;
+
 private:
     void addNodeToMapByIndex(Node*);
 
@@ -997,6 +1018,7 @@ private:
 
     Vector<Node*, 0, UnsafeVectorOverflow> m_nodesByIndex;
     Vector<unsigned, 0, UnsafeVectorOverflow> m_nodeIndexFreeList;
+    SegmentedVector<RegisteredStructureSet, 16> m_structureSets;
 };
 
 } } // namespace JSC::DFG

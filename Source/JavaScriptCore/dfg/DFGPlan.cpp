@@ -67,7 +67,6 @@
 #include "DFGStoreBarrierClusteringPhase.h"
 #include "DFGStoreBarrierInsertionPhase.h"
 #include "DFGStrengthReductionPhase.h"
-#include "DFGStructureRegistrationPhase.h"
 #include "DFGTierUpCheckInjectionPhase.h"
 #include "DFGTypeCheckHoistingPhase.h"
 #include "DFGUnificationPhase.h"
@@ -311,7 +310,6 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     RUN_PHASE(performBackwardsPropagation);
     RUN_PHASE(performPredictionPropagation);
     RUN_PHASE(performFixup);
-    RUN_PHASE(performStructureRegistration);
     RUN_PHASE(performInvalidationPointInjection);
     RUN_PHASE(performTypeCheckHoisting);
     
@@ -608,6 +606,11 @@ CompilationResult Plan::finalizeWithoutNotifyingCallback()
             trackedReferences.add(reference.get());
         for (WriteBarrier<Unknown>& constant : codeBlock->constants())
             trackedReferences.add(constant.get());
+
+        for (auto* inlineCallFrame : *inlineCallFrames) {
+            ASSERT(inlineCallFrame->baselineCodeBlock.get());
+            trackedReferences.add(inlineCallFrame->baselineCodeBlock.get());
+        }
         
         // Check that any other references that we have anywhere in the JITCode are also
         // tracked either strongly or weakly.

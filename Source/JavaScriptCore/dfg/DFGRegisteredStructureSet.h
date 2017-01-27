@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,23 +27,57 @@
 
 #if ENABLE(DFG_JIT)
 
-namespace JSC { namespace DFG {
+#include "DFGRegisteredStructure.h"
+#include "StructureSet.h"
+#include <wtf/TinyPtrSet.h>
 
-class Graph;
+namespace JSC {
 
-// Registers any structures we know about as weak references, and sets watchpoints on any
-// such structures that we know of that are currently watchable. It's somewhat
-// counterintuitive, but this ends up being the cleanest and most effective way of reducing
-// structure checks on terminal structures:
-//
-// - We used to only set watchpoints on watchable structures if we knew that this would
-//   remove a structure check. Experiments show that switching from that, to blindly
-//   setting watchpoints on all watchable structures, was not a regression.
-//
-// - It makes abstract interpretation a whole lot easier. We just assume that watchable
-//   structures are unclobberable without having to do any other logic.
+class TrackedReferences;
 
-bool performStructureRegistration(Graph&);
+namespace DFG {
+
+struct AbstractValue;
+class StructureAbstractValue;
+
+class RegisteredStructureSet : public TinyPtrSet<RegisteredStructure> {
+public:
+
+    RegisteredStructureSet()
+    { }
+    
+    RegisteredStructureSet(RegisteredStructure structure)
+        : TinyPtrSet(structure)
+    {
+    }
+    
+    ALWAYS_INLINE RegisteredStructureSet(const RegisteredStructureSet& other)
+        : TinyPtrSet(other)
+    {
+    }
+    
+    RegisteredStructure onlyStructure() const
+    {
+        return onlyEntry();
+    }
+
+    StructureSet toStructureSet() const
+    {
+        StructureSet result;
+        forEach([&] (RegisteredStructure structure) { result.add(structure.get()); });
+        return result;
+    }
+
+    void filter(const DFG::StructureAbstractValue&);
+    void filter(SpeculatedType);
+    void filterArrayModes(ArrayModes);
+    void filter(const DFG::AbstractValue&);
+    
+    SpeculatedType speculationFromStructures() const;
+    ArrayModes arrayModesFromStructures() const;
+
+    void validateReferences(const TrackedReferences&) const;
+};
 
 } } // namespace JSC::DFG
 

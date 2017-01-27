@@ -540,7 +540,7 @@ private:
 
             if (m_node->op() == RegExpExec) {
                 if (result) {
-                    StructureSet* structureSet = m_graph.addStructureSet(structure);
+                    RegisteredStructureSet* structureSet = m_graph.addStructureSet(structure);
 
                     // Create an array modeling the JS array that we will try to allocate. This is
                     // basically createRegExpMatchesArray but over C++ strings instead of JSStrings.
