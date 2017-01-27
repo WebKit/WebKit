@@ -1,3 +1,12 @@
+2017-01-27  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest fast/mediastream/getUserMedia-webaudio.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=167513
+
+        Unreviewed.
+
+        * TestExpectations: Not yet ready to run this test.
+
 2017-01-27  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Do not bail out on -webkit-line-box-contain: block glyphs unless text overflows vertically.

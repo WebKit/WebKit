@@ -681,6 +681,7 @@ media/session [ Skip ]
 
 # WebRTC backend not enabled by default.
 webrtc [ Skip ]
+fast/mediastream/getUserMedia-webaudio.html [ Skip ]
 
 # Only iOS WK1 has testRunner.setPagePaused.
 fast/dom/timer-fire-after-page-pause.html [ Skip ]
