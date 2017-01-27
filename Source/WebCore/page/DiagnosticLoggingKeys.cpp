@@ -58,6 +58,11 @@ String DiagnosticLoggingKeys::postPageBackgroundingKey()
     return ASCIILiteral("postPageBackgrounding");
 }
 
+String DiagnosticLoggingKeys::pageHandlesWebGLContextLossKey()
+{
+    return ASCIILiteral("pageHandlesWebGLContextLoss");
+}
+
 String DiagnosticLoggingKeys::postPageLoadKey()
 {
     return ASCIILiteral("postPageLoad");
@@ -483,11 +488,6 @@ String DiagnosticLoggingKeys::sourceKey()
     return ASCIILiteral("source");
 }
 
-String DiagnosticLoggingKeys::stateKey()
-{
-    return ASCIILiteral("state");
-}
-
 String DiagnosticLoggingKeys::streamingMedia()
 {
     return ASCIILiteral("streamingMedia");
@@ -658,11 +658,6 @@ String DiagnosticLoggingKeys::fontKey()
     return ASCIILiteral("font");
 }
 
-String DiagnosticLoggingKeys::handlesContextLossKey()
-{
-    return ASCIILiteral("handlesContextLoss");
-}
-
 String DiagnosticLoggingKeys::prunedDueToMemoryPressureKey()
 {
     return ASCIILiteral("pruned.memoryPressure");
@@ -688,9 +683,9 @@ String DiagnosticLoggingKeys::notInCacheKey()
     return ASCIILiteral("notInCache");
 }
 
-String WebCore::DiagnosticLoggingKeys::webGLKey()
+String WebCore::DiagnosticLoggingKeys::webGLStateKey()
 {
-    return ASCIILiteral("webGL");
+    return ASCIILiteral("webGLState");
 }
 
 String DiagnosticLoggingKeys::memoryUsageToDiagnosticLoggingKey(uint64_t memoryUsage)

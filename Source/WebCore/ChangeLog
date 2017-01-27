@@ -1,5 +1,30 @@
 2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211229. rdar://problem/30216981
+
+    2017-01-26  Chris Dumez  <cdumez@apple.com>
+
+            Fix WebGL diagnostic logging
+            https://bugs.webkit.org/show_bug.cgi?id=167463
+            <rdar://problem/30216981>
+
+            Reviewed by Alex Christensen.
+
+            Fix WebGL diagnostic logging so that it no longer uses logDiagnosticMessageWithValue().
+            This is because the value apparently needs to be numeric on Mac.
+
+            * html/canvas/WebGLRenderingContextBase.cpp:
+            (WebCore::WebGLRenderingContextBase::checkForContextLossHandling):
+            * page/DiagnosticLoggingKeys.cpp:
+            (WebCore::DiagnosticLoggingKeys::pageHandlesWebGLContextLossKey):
+            (WebCore::WebCore::DiagnosticLoggingKeys::webGLStateKey):
+            (WebCore::DiagnosticLoggingKeys::stateKey): Deleted.
+            (WebCore::DiagnosticLoggingKeys::handlesContextLossKey): Deleted.
+            (WebCore::WebCore::DiagnosticLoggingKeys::webGLKey): Deleted.
+            * page/DiagnosticLoggingKeys.h:
+
+2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211220. rdar://problem/29578619
 
     2017-01-26  Brady Eidson  <beidson@apple.com>
