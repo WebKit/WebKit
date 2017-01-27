@@ -1,3 +1,18 @@
+2017-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Fix CPU usage diagnostic logging in PerActivityStateCPUUsageSampler
+        https://bugs.webkit.org/show_bug.cgi?id=167471
+        <rdar://problem/30221723>
+
+        Reviewed by Alex Christensen.
+
+        Fix CPU usage diagnostic logging in PerActivityStateCPUUsageSampler
+        to use numeric values for logDiagnosticMessageWithValue().
+
+        * UIProcess/PerActivityStateCPUUsageSampler.cpp:
+        (WebKit::PerActivityStateCPUUsageSampler::loggingTimerFired):
+        (WebKit::loggingKeyForCPUUsage): Deleted.
+
 2017-01-26  Jeremy Jones  <jeremyj@apple.com>
 
         Request pointer unlock on navigation and re-enable pointer-lock tests for WK2.

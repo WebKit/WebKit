@@ -70,17 +70,6 @@ static inline String loggingKeyForActivityState(ActivityStateForCPUSampling stat
     }
 }
 
-static inline String loggingKeyForCPUUsage(ActivityStateForCPUSampling state, double cpuUsage)
-{
-    switch (state) {
-    case ActivityStateForCPUSampling::NonVisible:
-        return DiagnosticLoggingKeys::backgroundCPUUsageToDiagnosticLoggingKey(cpuUsage);
-    case ActivityStateForCPUSampling::VisibleNonActive:
-    case ActivityStateForCPUSampling::VisibleAndActive:
-        return DiagnosticLoggingKeys::foregroundCPUUsageToDiagnosticLoggingKey(cpuUsage);
-    }
-}
-
 void PerActivityStateCPUUsageSampler::loggingTimerFired()
 {
     auto* page = pageForLogging();
@@ -94,9 +83,9 @@ void PerActivityStateCPUUsageSampler::loggingTimerFired()
 
     for (auto& pair : m_cpuTimeInActivityState) {
         double cpuUsage = static_cast<double>(pair.value * 100.) / cpuTimeDelta;
-        String loggingKey = loggingKeyForActivityState(pair.key);
-        page->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::cpuUsageKey(), loggingKey, loggingKeyForCPUUsage(pair.key, cpuUsage), false);
-        RELEASE_LOG(PerformanceLogging, "WebContent processes used %.1f%% CPU in %s state", cpuUsage, loggingKey.utf8().data());
+        String activityStateKey = loggingKeyForActivityState(pair.key);
+        page->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::cpuUsageKey(), activityStateKey, String::number(cpuUsage, 1), false);
+        RELEASE_LOG(PerformanceLogging, "WebContent processes used %.1f%% CPU in %s state", cpuUsage, activityStateKey.utf8().data());
     }
 
     m_cpuTimeInActivityState.clear();
