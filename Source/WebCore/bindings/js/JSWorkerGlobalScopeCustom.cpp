@@ -42,6 +42,11 @@ void JSWorkerGlobalScope::visitAdditionalChildren(SlotVisitor& visitor)
         visitor.addOpaqueRoot(navigator);
     ScriptExecutionContext& context = wrapped();
     visitor.addOpaqueRoot(&context);
+    
+    // Normally JSEventTargetCustom.cpp's JSEventTarget::visitAdditionalChildren() would call this. But
+    // even though WorkerGlobalScope is an EventTarget, JSWorkerGlobalScope does not subclass
+    // JSEventTarget, so we need to do this here.
+    wrapped().visitJSEventListeners(visitor);
 }
 
 JSValue JSWorkerGlobalScope::setTimeout(ExecState& state)

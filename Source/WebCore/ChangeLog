@@ -1,3 +1,35 @@
+2017-01-26  Filip Pizlo  <fpizlo@apple.com>
+
+        EventTarget should visit the JSEventListeners using visitAdditionalChildren
+        https://bugs.webkit.org/show_bug.cgi?id=167462
+
+        Reviewed by Michael Saboff.
+
+        No new tests because this is already caught by existing testing. This would show up as ASSERTs
+        in debug, and we suspect it might be at fault for null deref crashes.
+        
+        Previously, EventTarget would have its event listeners visited by its subclasses' visitChildren
+        methods. Every subclass of EventTarget would call EventTarget's visitJSEventListeners. For
+        example, this means that if JSFoo has seven classes between it and JSEventTarget in the JSCell
+        class hierarchy, then JSFoo::visitChildren would end up calling visitJSEventListeners seven extra
+        times.
+        
+        Also, the weird way that visitJSEventListeners was called meant that it was not part of the GC's
+        output constraint processing. This meant that it would not be called when the GC tried to
+        terminate. So, if something about the event listener changes during a GC cycle, the GC would
+        potentially fail to mark one of the references.
+        
+        Both problems can be solved by simply moving the call to visitJSEventListeners into
+        visitAdditionalChildren.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::visitAdditionalChildren):
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::JSEventTarget::visitAdditionalChildren):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * dom/EventTarget.idl:
+
 2017-01-26  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Create temporary files with NSFileProtectionCompleteUnlessOpen

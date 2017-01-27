@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -23,6 +23,7 @@
     Exposed=(Window,Worker),
     IsImmutablePrototypeExoticObjectOnPrototype,
     JSCustomHeader,
+    JSCustomMarkFunction,
     JSCustomToNativeObject,
 ] interface EventTarget {
     [ImplementedAs=addEventListenerForBindings] void addEventListener([AtomicString] DOMString type, EventListener? callback, optional (AddEventListenerOptions or boolean) options = false);
