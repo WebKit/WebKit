@@ -20,6 +20,7 @@
 #include "config.h"
 #include "JSLazyEventListener.h"
 
+#include "CachedScriptFetcher.h"
 #include "ContentSecurityPolicy.h"
 #include "Frame.h"
 #include "JSNode.h"
@@ -112,7 +113,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
 
     JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(
         exec, exec->lexicalGlobalObject(), args, Identifier::fromString(exec, m_functionName),
-        SourceOrigin { m_sourceURL }, m_sourceURL, m_sourcePosition, overrideLineNumber);
+        SourceOrigin { m_sourceURL, CachedScriptFetcher::create(document.charset()) }, m_sourceURL, m_sourcePosition, overrideLineNumber);
 
     if (UNLIKELY(scope.exception())) {
         reportCurrentException(exec);

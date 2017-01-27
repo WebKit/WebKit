@@ -37,21 +37,28 @@ class URL;
 
 class CachedScriptFetcher : public JSC::ScriptFetcher {
 public:
-    CachedResourceHandle<CachedScript> requestScriptWithCache(Document&, const URL& sourceURL) const;
+    virtual CachedResourceHandle<CachedScript> requestModuleScript(Document&, const URL& sourceURL) const;
+
+    static Ref<CachedScriptFetcher> create(const String& charset);
 
 protected:
-    CachedScriptFetcher(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
+    CachedScriptFetcher(const String& nonce, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
         : m_nonce(nonce)
-        , m_crossOriginMode(crossOriginMode)
         , m_charset(charset)
         , m_initiatorName(initiatorName)
         , m_isInUserAgentShadowTree(isInUserAgentShadowTree)
     {
     }
 
+    CachedScriptFetcher(const String& charset)
+        : m_charset(charset)
+    {
+    }
+
+    CachedResourceHandle<CachedScript> requestScriptWithCache(Document&, const URL& sourceURL, const String& crossOriginMode) const;
+
 private:
     String m_nonce;
-    String m_crossOriginMode;
     String m_charset;
     AtomicString m_initiatorName;
     bool m_isInUserAgentShadowTree { false };

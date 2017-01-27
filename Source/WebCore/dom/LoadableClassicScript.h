@@ -47,7 +47,9 @@ public:
     bool wasCanceled() const final;
 
     CachedScript& cachedScript() { return *m_cachedScript; }
+
     bool isClassicScript() const final { return true; }
+    bool isModuleScript() const final { return false; }
 
     void execute(ScriptElement&) final;
 

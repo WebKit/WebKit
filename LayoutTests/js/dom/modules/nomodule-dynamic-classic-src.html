@@ -16,7 +16,7 @@ window.jsTestIsAsync = true;
 (function () {
     var element = document.createElement('script');
     element.noModule = true;
-    element.src = './script-tests/error-classic-script.js';
+    element.src = './resources/error-classic-script.js';
     document.body.appendChild(element);
     setTimeout(function () {
         shouldBeFalse(`executed`);

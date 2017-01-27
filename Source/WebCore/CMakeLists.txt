@@ -1475,6 +1475,7 @@ set(WebCore_SOURCES
     dom/Range.cpp
     dom/ScopedEventQueue.cpp
     dom/ScriptElement.cpp
+    dom/ScriptElementCachedScriptFetcher.cpp
     dom/ScriptExecutionContext.cpp
     dom/ScriptRunner.cpp
     dom/ScriptableDocumentParser.cpp

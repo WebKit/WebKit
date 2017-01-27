@@ -20,12 +20,12 @@ function onLoad()
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 <script type="module">
-import "./script-tests/module-load-same-module-from-different-entry-point.js"
+import "./resources/module-load-same-module-from-different-entry-point.js"
 debug('Executing the module.');
 shouldBe(`window.moduleExecutedCount`, `1`);
 var element = document.createElement("script");
 element.type = "module";
-element.innerText = `import "./script-tests/module-load-same-module-from-different-entry-point.js"`;
+element.innerText = `import "./resources/module-load-same-module-from-different-entry-point.js"`;
 element.onload = onLoad;
 document.body.appendChild(element);
 </script>

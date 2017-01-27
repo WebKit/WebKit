@@ -1,3 +1,110 @@
+2017-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Implement dynamic-import for WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=166926
+
+        Reviewed by Ryosuke Niwa.
+
+        * http/tests/misc/import-absolute-url-expected.txt: Added.
+        * http/tests/misc/import-absolute-url.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/import-scriptnonce-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/import-scriptnonce.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/import-scriptnonce-allowed1.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/import-scriptnonce-allowed2.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/import-scriptnonce-allowed3.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/import-scriptnonce-allowed4.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/import-scriptnonce-allowed5.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/import-scriptnonce-allowed6.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/import-scriptnonce-blocked1.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/import-scriptnonce-blocked2.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/import-scriptnonce-blocked3.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/import-scriptnonce-blocked4.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/import-scriptnonce-blocked5.js: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/resources/import-scriptnonce-blocked6.js: Added.
+        * http/tests/security/import-module-crossorigin-loads-error-expected.txt: Added.
+        * http/tests/security/import-module-crossorigin-loads-error-src-expected.txt: Added.
+        * http/tests/security/import-module-crossorigin-loads-error-src.html: Added.
+        * http/tests/security/import-module-crossorigin-loads-error.html: Added.
+        * http/tests/security/import-module-crossorigin-loads-expected.txt: Added.
+        * http/tests/security/import-module-crossorigin-loads-src-expected.txt: Added.
+        * http/tests/security/import-module-crossorigin-loads-src.html: Added.
+        * http/tests/security/import-module-crossorigin-loads.html: Added.
+        * http/tests/security/import-script-crossorigin-loads-error-expected.txt: Added.
+        * http/tests/security/import-script-crossorigin-loads-error.html: Added.
+        * http/tests/security/import-script-crossorigin-loads-omit-expected.txt: Added.
+        * http/tests/security/import-script-crossorigin-loads-omit.html: Added.
+        * http/tests/security/resources/cors-deny.php: Added.
+        * http/tests/security/resources/import-module-crossorigin-loads-error-src.js: Added.
+        (import.string_appeared_here.then):
+        * http/tests/security/resources/import-module-crossorigin-loads-src.js: Added.
+        (import.string_appeared_here.then):
+        * js/dom/modules/import-execution-order-expected.txt: Added.
+        * js/dom/modules/import-execution-order.html: Copied from LayoutTests/js/dom/modules/module-execution-error-inside-dependent-module-should-be-propagated-to-onerror.html.
+        * js/dom/modules/import-from-handler-expected.txt: Added.
+        * js/dom/modules/import-from-handler.html: Copied from LayoutTests/js/dom/modules/module-src-simple.html.
+        * js/dom/modules/import-from-javascript-url-expected.txt: Added.
+        * js/dom/modules/import-from-javascript-url.html: Copied from LayoutTests/js/dom/modules/module-execution-error-inside-dependent-module-should-be-propagated-to-onerror.html.
+        * js/dom/modules/import-from-loaded-classic-expected.txt: Added.
+        * js/dom/modules/import-from-loaded-classic.html: Copied from LayoutTests/js/dom/modules/module-src-simple.html.
+        * js/dom/modules/import-from-loaded-module-expected.txt: Added.
+        * js/dom/modules/import-from-loaded-module.html: Copied from LayoutTests/js/dom/modules/module-src-simple.html.
+        * js/dom/modules/import-from-module-expected.txt: Added.
+        * js/dom/modules/import-from-module.html: Copied from LayoutTests/js/dom/modules/module-src-simple.html.
+        * js/dom/modules/import-incorrect-relative-specifier-expected.txt: Added.
+        * js/dom/modules/import-incorrect-relative-specifier.html: Copied from LayoutTests/js/dom/modules/module-src-simple.html.
+        * js/dom/modules/import-simple-expected.txt: Added.
+        * js/dom/modules/import-simple.html: Copied from LayoutTests/js/dom/modules/module-src-simple.html.
+        * js/dom/modules/module-document-write-src.html:
+        * js/dom/modules/module-execution-error-inside-dependent-module-should-be-propagated-to-onerror.html:
+        * js/dom/modules/module-execution-order-mixed-with-classic-scripts.html:
+        * js/dom/modules/module-execution-order-mixed.html:
+        * js/dom/modules/module-inline-dynamic.html:
+        * js/dom/modules/module-inline-simple.html:
+        * js/dom/modules/module-load-event-with-src.html:
+        * js/dom/modules/module-load-same-module-from-different-entry-point-dynamic.html:
+        * js/dom/modules/module-load-same-module-from-different-entry-point-in-src.html:
+        * js/dom/modules/module-load-same-module-from-different-entry-point.html:
+        * js/dom/modules/module-not-found-error-event-with-src-and-import.html:
+        * js/dom/modules/module-src-current-script.html:
+        * js/dom/modules/module-src-dynamic.html:
+        * js/dom/modules/module-src-simple.html:
+        * js/dom/modules/module-type-case-insensitive.html:
+        * js/dom/modules/module-will-fire-beforeload.html:
+        * js/dom/modules/nomodule-dynamic-classic-src.html:
+        * js/dom/modules/nomodule-has-no-effect-on-module-inline.html:
+        * js/dom/modules/nomodule-has-no-effect-on-module-src.html:
+        * js/dom/modules/nomodule-prevents-execution-classic-script-src.html:
+        * js/dom/modules/nomodule-reflect.html:
+        * js/dom/modules/resources/error-classic-script.js: Renamed from LayoutTests/js/dom/modules/script-tests/error-classic-script.js.
+        * js/dom/modules/resources/import-from-loaded-classic-finish.js: Added.
+        * js/dom/modules/resources/import-from-loaded-classic.js: Added.
+        * js/dom/modules/resources/import-from-loaded-module-finish.js: Added.
+        * js/dom/modules/resources/import-from-loaded-module.js: Added.
+        * js/dom/modules/resources/module-document-write-src.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-document-write-src.js.
+        * js/dom/modules/resources/module-execution-error-inside-dependent-module-should-be-propagated-to-onerror-throw.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-execution-error-inside-dependent-module-should-be-propagated-to-onerror-throw.js.
+        * js/dom/modules/resources/module-execution-error-inside-dependent-module-should-be-propagated-to-onerror.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-execution-error-inside-dependent-module-should-be-propagated-to-onerror.js.
+        * js/dom/modules/resources/module-execution-order-mixed-2.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-execution-order-mixed-2.js.
+        * js/dom/modules/resources/module-execution-order-mixed-cappuccino.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-execution-order-mixed-cappuccino.js.
+        * js/dom/modules/resources/module-execution-order-mixed-cocoa.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-execution-order-mixed-cocoa.js.
+        * js/dom/modules/resources/module-execution-order-mixed-matcha.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-execution-order-mixed-matcha.js.
+        * js/dom/modules/resources/module-execution-order-mixed-with-classic-scripts-2.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-execution-order-mixed-with-classic-scripts-2.js.
+        * js/dom/modules/resources/module-execution-order-mixed-with-classic-scripts-cappuccino.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-execution-order-mixed-with-classic-scripts-cappuccino.js.
+        * js/dom/modules/resources/module-execution-order-mixed-with-classic-scripts-cocoa.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-execution-order-mixed-with-classic-scripts-cocoa.js.
+        * js/dom/modules/resources/module-execution-order-mixed-with-classic-scripts-matcha.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-execution-order-mixed-with-classic-scripts-matcha.js.
+        * js/dom/modules/resources/module-execution-order-mixed-with-classic-scripts.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-execution-order-mixed-with-classic-scripts.js.
+        * js/dom/modules/resources/module-execution-order-mixed.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-execution-order-mixed.js.
+        * js/dom/modules/resources/module-inline-dynamic.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-inline-dynamic.js.
+        * js/dom/modules/resources/module-inline-simple.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-inline-simple.js.
+        * js/dom/modules/resources/module-load-event-with-src.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-load-event-with-src.js.
+        * js/dom/modules/resources/module-load-same-module-from-different-entry-point.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-load-same-module-from-different-entry-point.js.
+        * js/dom/modules/resources/module-not-found-error-event-with-src-and-import.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-not-found-error-event-with-src-and-import.js.
+        * js/dom/modules/resources/module-src-current-script.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-src-current-script.js.
+        * js/dom/modules/resources/module-src-dynamic-cocoa.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-src-dynamic-cocoa.js.
+        * js/dom/modules/resources/module-src-dynamic.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-src-dynamic.js.
+        * js/dom/modules/resources/module-src-simple-cocoa.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-src-simple-cocoa.js.
+        * js/dom/modules/resources/module-src-simple.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-src-simple.js.
+        * js/dom/modules/resources/module-will-fire-beforeload.js: Renamed from LayoutTests/js/dom/modules/script-tests/module-will-fire-beforeload.js.
+
 2017-01-26  Chris Dumez  <cdumez@apple.com>
 
         Crash when navigating back to a page in PacheCache when one of its frames has been removed

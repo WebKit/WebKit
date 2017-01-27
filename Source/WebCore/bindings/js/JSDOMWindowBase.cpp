@@ -64,7 +64,7 @@ const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = {
     &javaScriptRuntimeFlags,
     &queueTaskToEventLoop,
     &shouldInterruptScriptBeforeTimeout,
-    nullptr,
+    &moduleLoaderImportModule,
     &moduleLoaderResolve,
     &moduleLoaderFetch,
     nullptr,
@@ -330,6 +330,15 @@ JSC::JSValue JSDOMWindowBase::moduleLoaderEvaluate(JSC::JSGlobalObject* globalOb
     if (RefPtr<Document> document = thisObject->wrapped().document())
         return document->moduleLoader()->evaluate(globalObject, exec, moduleLoader, moduleKey, moduleRecord, scriptFetcher);
     return JSC::jsUndefined();
+}
+
+JSC::JSInternalPromise* JSDOMWindowBase::moduleLoaderImportModule(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader* moduleLoader, JSC::JSString* moduleName, const JSC::SourceOrigin& sourceOrigin)
+{
+    JSDOMWindowBase* thisObject = JSC::jsCast<JSDOMWindowBase*>(globalObject);
+    if (RefPtr<Document> document = thisObject->wrapped().document())
+        return document->moduleLoader()->importModule(globalObject, exec, moduleLoader, moduleName, sourceOrigin);
+    JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::create(exec, globalObject);
+    return deferred->reject(exec, jsUndefined());
 }
 
 } // namespace WebCore

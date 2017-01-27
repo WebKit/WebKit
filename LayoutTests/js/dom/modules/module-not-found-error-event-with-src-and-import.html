@@ -16,7 +16,7 @@ function onError()
 }
 </script>
 <script src="../../../resources/js-test-post.js"></script>
-<script type="module" src="script-tests/module-not-found-error-event-with-src-and-import.js" onerror="onError()"></script>
+<script type="module" src="resources/module-not-found-error-event-with-src-and-import.js" onerror="onError()"></script>
 <script type="module">
 shouldNotBe(`error`, `null`);
 shouldBe(`error.type`, `"error"`);

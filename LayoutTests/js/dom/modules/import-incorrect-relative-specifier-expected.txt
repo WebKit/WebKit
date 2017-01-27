@@ -1,0 +1,12 @@
+Test import rejects the incorrect relative specifiers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS import("incorrect") rejected promise  with TypeError: Module specifier does not start with "/", "./", or "../"..
+PASS import("$hello") rejected promise  with TypeError: Module specifier does not start with "/", "./", or "../"..
+PASS import(".../test") rejected promise  with TypeError: Module specifier does not start with "/", "./", or "../"..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

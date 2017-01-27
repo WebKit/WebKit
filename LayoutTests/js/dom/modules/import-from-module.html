@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test import from module script.');
+
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+window.passedCocoa = null;
+
+function loaded(cocoa)
+{
+    window.passedCocoa = cocoa;
+    shouldBeTrue(`window.imported`);
+    shouldBe(`window.passedCocoa`, `window.exportedCocoa`);
+    finishJSTest();
+}
+
+</script>
+<script>
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script type="module">
+(async function() {
+    debug('Module is not executed yet.');
+    let ns = await import(`./resources/import-src-simple.js`);
+    loaded(ns.ok);
+}());
+</script>
+</body>
+</html>

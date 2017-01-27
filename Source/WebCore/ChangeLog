@@ -1,3 +1,91 @@
+2017-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Implement dynamic-import for WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=166926
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch introduces browser side dynamic-import implementation.
+        The dynamic-import is new ES feature which is now stage 3.
+        The JSC shell already implements it.
+
+        The dynamic-import allows us to kick module loading in a dynamic manner.
+        For example, you can write,
+
+            await module = import(`${HOST}/hello.js`);
+
+        The dynamic `import` operator (this is not a function) returns a promise with
+        module namespace object if the module loading succeeds. Otherwise, it returns
+        a rejected promise.
+
+        And importantly, this feature allows us to kick module loading from classic script.
+        Previously, module loading can be only used from <script type="module"> tag. And
+        all the module loading is done statically.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/CachedModuleScriptLoader.cpp:
+        (WebCore::CachedModuleScriptLoader::load):
+        * bindings/js/CachedScriptFetcher.cpp:
+        (WebCore::CachedScriptFetcher::create):
+        (WebCore::CachedScriptFetcher::requestModuleScript):
+        requestModuleScript function is used only when loading a new module script.
+        So, LoadableClassicScript should use requestScriptWithCache to load itself.
+        We pass String() for cross origin mode for null cross origin attribute as
+        specified.
+
+        (WebCore::CachedScriptFetcher::requestScriptWithCache):
+        * bindings/js/CachedScriptFetcher.h:
+        (WebCore::CachedScriptFetcher::CachedScriptFetcher):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::moduleLoaderImportModule):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeScript):
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::resolveModuleSpecifier):
+        Extract the part of resolving module specifier to a static function to use
+        it in ScriptModuleLoader::resolve and ScriptModuleLoader::importModule.
+
+        (WebCore::ScriptModuleLoader::resolve):
+        (WebCore::rejectPromise):
+        (WebCore::ScriptModuleLoader::importModule):
+        New hook moduleLoaderImportModule is implemented. This hook is called when
+        `import` operator is used. This hook is responsible to
+            1. resolve the module name to obtain module specifier. (like, resolve the
+                relative URL to get absolute URL.)
+            2. kick module loading with the resolved specifier.
+        When resolving the module name, the referrer information is needed.
+        For example, "./script.js" will be resolved to "http://example.com/script.js" if
+        the referrer module specifier is "http://example.com/".
+        If `import("./script.js")` is executed in the classic script
+        src="http://example.com/test.js", it starts loading "http://example.com/script.js".
+        So the information of the caller of `import` operator is necessary here.
+        This appropriate referrer is propagated by SourceOrigin.
+
+        * bindings/js/ScriptModuleLoader.h:
+        * dom/InlineClassicScript.h:
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::load):
+        * dom/LoadableClassicScript.h:
+        * dom/LoadableModuleScript.h:
+        * dom/LoadableScript.h:
+        (WebCore::LoadableScript::LoadableScript):
+        (WebCore::LoadableScript::isClassicScript): Deleted.
+        (WebCore::LoadableScript::isModuleScript): Deleted.
+        * dom/ScriptElement.h:
+        * dom/ScriptElementCachedScriptFetcher.cpp: Copied from Source/WebCore/dom/InlineClassicScript.h.
+        (WebCore::ScriptElementCachedScriptFetcher::requestModuleScript):
+        This requestModuleScript will be used when the script tag (or modules imported from the script tag) uses `import` operator.
+        In classic scripts, `crossorigin` mode always becomes "omit" while module scripts
+        propagate the original `crossorigin` value.
+
+        * dom/ScriptElementCachedScriptFetcher.h: Copied from Source/WebCore/bindings/js/CachedScriptFetcher.h.
+        (WebCore::ScriptElementCachedScriptFetcher::crossOriginMode):
+        (WebCore::ScriptElementCachedScriptFetcher::ScriptElementCachedScriptFetcher):
+
 2017-01-26  Chris Dumez  <cdumez@apple.com>
 
         Revert r210474 it is no longer needed

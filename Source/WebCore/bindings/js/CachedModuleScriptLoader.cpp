@@ -61,7 +61,7 @@ CachedModuleScriptLoader::~CachedModuleScriptLoader()
 bool CachedModuleScriptLoader::load(Document& document, const URL& sourceURL)
 {
     ASSERT(!m_cachedScript);
-    m_cachedScript = m_scriptFetcher->requestScriptWithCache(document, sourceURL);
+    m_cachedScript = m_scriptFetcher->requestModuleScript(document, sourceURL);
     if (!m_cachedScript)
         return false;
 

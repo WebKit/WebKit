@@ -16,7 +16,7 @@ debug('Module is not executed yet.');
 (function () {
     var element = document.createElement("script");
     element.textContent = `
-        import Cocoa from "./script-tests/module-inline-dynamic.js";
+        import Cocoa from "./resources/module-inline-dynamic.js";
         var cocoa = new Cocoa();
 
         debug("Module execution is confined in the module environment.");

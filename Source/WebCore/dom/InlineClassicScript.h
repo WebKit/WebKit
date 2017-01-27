@@ -25,19 +25,22 @@
 
 #pragma once
 
-#include "CachedScriptFetcher.h"
+#include "ScriptElementCachedScriptFetcher.h"
 
 namespace WebCore {
 
 class ScriptElement;
 
-class InlineClassicScript final : public CachedScriptFetcher {
+class InlineClassicScript final : public ScriptElementCachedScriptFetcher {
 public:
     static Ref<InlineClassicScript> create(ScriptElement&);
 
+    bool isClassicScript() const final { return true; }
+    bool isModuleScript() const final { return false; }
+
 private:
     InlineClassicScript(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
-        : CachedScriptFetcher(nonce, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
+        : ScriptElementCachedScriptFetcher(nonce, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
     {
     }
 };

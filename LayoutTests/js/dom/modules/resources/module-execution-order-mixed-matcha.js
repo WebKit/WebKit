@@ -1,0 +1,1 @@
+shouldBe("count++", "0");

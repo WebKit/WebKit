@@ -24,12 +24,12 @@ function onLoad() {
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 <script type="module" onload="onLoad()">
-import "./script-tests/module-load-same-module-from-different-entry-point.js"
+import "./resources/module-load-same-module-from-different-entry-point.js"
 debug('Executing the module.');
 window.firstModuleIsExecuted = true;
 </script>
 <script type="module" onload="onLoad()">
-import "./script-tests/module-load-same-module-from-different-entry-point.js"
+import "./resources/module-load-same-module-from-different-entry-point.js"
 debug('Executing the module.');
 window.secondModuleIsExecuted = true;
 </script>

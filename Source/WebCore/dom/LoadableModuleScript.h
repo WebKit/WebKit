@@ -43,6 +43,8 @@ public:
     bool wasCanceled() const final;
 
     CachedModuleScript& moduleScript() { return m_moduleScript.get(); }
+
+    bool isClassicScript() const final { return false; }
     bool isModuleScript() const final { return true; }
 
     void execute(ScriptElement&) final;

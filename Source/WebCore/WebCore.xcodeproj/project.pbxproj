@@ -6327,6 +6327,8 @@
 		E3B2F0F01D7F4CB500B0C9D1 /* LoadableClassicScript.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B2F0E41D7F35EC00B0C9D1 /* LoadableClassicScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3B7C0631DC34160001FB0B8 /* JSDocumentDOMJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B7C0621DC3415A001FB0B8 /* JSDocumentDOMJIT.cpp */; };
 		E3C99A091DC3D41C00794AD3 /* DOMJITCheckDOM.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C99A081DC3D41700794AD3 /* DOMJITCheckDOM.h */; };
+		E3E4E2A71E3B17100023BB8A /* ScriptElementCachedScriptFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E4E2A51E3B16FC0023BB8A /* ScriptElementCachedScriptFetcher.cpp */; };
+		E3E4E2A81E3B17100023BB8A /* ScriptElementCachedScriptFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E4E2A61E3B16FC0023BB8A /* ScriptElementCachedScriptFetcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3FA38641D71812D00AA5950 /* PendingScriptClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FA38611D716E7600AA5950 /* PendingScriptClient.h */; };
 		E401C27517CE53EC00C41A35 /* ElementIteratorAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E401E0A41C3C0B8300F34D10 /* StyleChange.h in Headers */ = {isa = PBXBuildFile; fileRef = E401E0A31C3C0B8300F34D10 /* StyleChange.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14378,6 +14380,8 @@
 		E3B7C0621DC3415A001FB0B8 /* JSDocumentDOMJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentDOMJIT.cpp; sourceTree = "<group>"; };
 		E3C99A081DC3D41700794AD3 /* DOMJITCheckDOM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITCheckDOM.h; sourceTree = "<group>"; };
 		E3D049931DADC04500718F3C /* NodeConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeConstants.h; sourceTree = "<group>"; };
+		E3E4E2A51E3B16FC0023BB8A /* ScriptElementCachedScriptFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptElementCachedScriptFetcher.cpp; sourceTree = "<group>"; };
+		E3E4E2A61E3B16FC0023BB8A /* ScriptElementCachedScriptFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptElementCachedScriptFetcher.h; sourceTree = "<group>"; };
 		E3FA38611D716E7600AA5950 /* PendingScriptClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PendingScriptClient.h; sourceTree = "<group>"; };
 		E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementIteratorAssertions.h; sourceTree = "<group>"; };
 		E401E0A31C3C0B8300F34D10 /* StyleChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleChange.h; sourceTree = "<group>"; };
@@ -24411,6 +24415,8 @@
 				4998AED013FB224D0090B1AA /* ScriptedAnimationController.h */,
 				08A484750E5272C500C3FE76 /* ScriptElement.cpp */,
 				08A484760E5272C500C3FE76 /* ScriptElement.h */,
+				E3E4E2A51E3B16FC0023BB8A /* ScriptElementCachedScriptFetcher.cpp */,
+				E3E4E2A61E3B16FC0023BB8A /* ScriptElementCachedScriptFetcher.h */,
 				E11C9DAF0EB3699500E409DB /* ScriptExecutionContext.cpp */,
 				E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */,
 				8A413ADF1207BBA50082016E /* ScriptRunner.cpp */,
@@ -25863,6 +25869,7 @@
 				26EA89A71B4F2B75008C5FD2 /* HashableActionList.h in Headers */,
 				8482B7461198C35400BFB005 /* HashChangeEvent.h in Headers */,
 				A8748BE012CBF2DC001FBA41 /* HashTools.h in Headers */,
+				E3E4E2A81E3B17100023BB8A /* ScriptElementCachedScriptFetcher.h in Headers */,
 				F55B3DC01251F12D003EF269 /* HiddenInputType.h in Headers */,
 				515BE19C1D54F6C100DD7C68 /* HIDGamepad.h in Headers */,
 				515BE19E1D54F6C100DD7C68 /* HIDGamepadProvider.h in Headers */,
@@ -31847,6 +31854,7 @@
 				29A8124A0FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.mm in Sources */,
 				AAA728F816D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.mm in Sources */,
 				AA478A8016CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm in Sources */,
+				E3E4E2A71E3B17100023BB8A /* ScriptElementCachedScriptFetcher.cpp in Sources */,
 				2D3EF4491917915C00034184 /* WebActionDisablingCALayerDelegate.mm in Sources */,
 				120DE3ED1C86CA3E00B6D4DD /* WebAnimation.cpp in Sources */,
 				07D637411BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.mm in Sources */,

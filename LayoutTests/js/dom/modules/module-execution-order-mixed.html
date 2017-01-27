@@ -14,11 +14,11 @@ window.jsTestIsAsync = true;
 debug('Module is not executed yet.');
 </script>
 <script src="../../../resources/js-test-post.js"></script>
-<script type="module" src="script-tests/module-execution-order-mixed.js"></script>
+<script type="module" src="resources/module-execution-order-mixed.js"></script>
 <script type="module">
 shouldBe("count++", "4");
 </script>
-<script type="module" src="script-tests/module-execution-order-mixed-2.js"></script>
+<script type="module" src="resources/module-execution-order-mixed-2.js"></script>
 <script type="module">
 shouldBe("count++", "6");
 finishJSTest();

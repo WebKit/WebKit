@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test import from loaded module.');
+
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+
+function loaded()
+{
+    shouldBeTrue(`window.imported`);
+    finishJSTest();
+}
+
+</script>
+<script>
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script type="module" src="./resources/import-from-loaded-module.js"></script>
+</body>
+</html>

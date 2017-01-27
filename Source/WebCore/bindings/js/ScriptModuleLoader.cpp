@@ -28,6 +28,7 @@
 
 #include "CachedModuleScriptLoader.h"
 #include "CachedScript.h"
+#include "CachedScriptFetcher.h"
 #include "Document.h"
 #include "Frame.h"
 #include "JSDOMBinding.h"
@@ -35,6 +36,7 @@
 #include "MIMETypeRegistry.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
+#include <runtime/Completion.h>
 #include <runtime/JSInternalPromise.h>
 #include <runtime/JSInternalPromiseDeferred.h>
 #include <runtime/JSModuleRecord.h>
@@ -61,6 +63,23 @@ static bool isRootModule(JSC::JSValue importerModuleKey)
     return importerModuleKey.isSymbol() || importerModuleKey.isUndefined();
 }
 
+static Expected<URL, ASCIILiteral> resolveModuleSpecifier(Document& document, const String& specifier, const URL& baseURL)
+{
+    // https://html.spec.whatwg.org/multipage/webappapis.html#resolve-a-module-specifier
+
+    URL absoluteURL(URL(), specifier);
+    if (absoluteURL.isValid())
+        return absoluteURL;
+
+    if (!specifier.startsWith('/') && !specifier.startsWith("./") && !specifier.startsWith("../"))
+        return makeUnexpected(ASCIILiteral("Module specifier does not start with \"/\", \"./\", or \"../\"."));
+
+    auto result = document.completeURL(specifier, baseURL);
+    if (!result.isValid())
+        return makeUnexpected(ASCIILiteral("Module name does not resolve to a valid URL."));
+    return result;
+}
+
 JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleNameValue, JSC::JSValue importerModuleKey, JSC::JSValue)
 {
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
@@ -75,60 +94,32 @@ JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGloba
         return jsPromise.promise();
     }
 
-    // https://html.spec.whatwg.org/multipage/webappapis.html#resolve-a-module-specifier
-
     if (!moduleNameValue.isString()) {
-        promise->reject(TypeError, ASCIILiteral("Module specifier is not Symbol or String."));
+        promise->reject(TypeError, ASCIILiteral("Importer module key is not a Symbol or a String."));
         return jsPromise.promise();
     }
 
     String specifier = asString(moduleNameValue)->value(exec);
-
-    // 1. Apply the URL parser to specifier. If the result is not failure, return the result.
-    URL absoluteURL(URL(), specifier);
-    if (absoluteURL.isValid()) {
-        promise->resolve<IDLDOMString>(absoluteURL.string());
-        return jsPromise.promise();
-    }
-
-    // 2. If specifier does not start with the character U+002F SOLIDUS (/), the two-character sequence U+002E FULL STOP, U+002F SOLIDUS (./),
-    //    or the three-character sequence U+002E FULL STOP, U+002E FULL STOP, U+002F SOLIDUS (../), return failure and abort these steps.
-    if (!specifier.startsWith('/') && !specifier.startsWith("./") && !specifier.startsWith("../")) {
-        promise->reject(TypeError, ASCIILiteral("Module specifier does not start with \"/\", \"./\", or \"../\"."));
-        return jsPromise.promise();
-    }
-
-    // 3. Return the result of applying the URL parser to specifier with script's base URL as the base URL.
-
-    URL completedURL;
-
+    URL baseURL;
     if (isRootModule(importerModuleKey))
-        completedURL = m_document.completeURL(specifier);
-    else if (importerModuleKey.isString()) {
+        baseURL = m_document.baseURL();
+    else {
+        ASSERT(importerModuleKey.isString());
         URL importerModuleRequestURL(URL(), asString(importerModuleKey)->value(exec));
-        if (!importerModuleRequestURL.isValid()) {
-            promise->reject(TypeError, ASCIILiteral("Importer module key is an invalid URL."));
-            return jsPromise.promise();
-        }
+        ASSERT_WITH_MESSAGE(importerModuleRequestURL.isValid(), "Invalid module referrer never starts importing dependent modules.");
 
-        URL importerModuleResponseURL = m_requestURLToResponseURLMap.get(importerModuleRequestURL);
-        if (!importerModuleResponseURL.isValid()) {
-            promise->reject(TypeError, ASCIILiteral("Importer module has an invalid response URL."));
-            return jsPromise.promise();
-        }
+        auto iterator = m_requestURLToResponseURLMap.find(importerModuleRequestURL);
+        ASSERT_WITH_MESSAGE(iterator != m_requestURLToResponseURLMap.end(), "Module referrer must register itself to the map before starting importing dependent modules.");
+        baseURL = iterator->value;
+    }
 
-        completedURL = m_document.completeURL(specifier, importerModuleResponseURL);
-    } else {
-        promise->reject(TypeError, ASCIILiteral("Importer module key is not Symbol or String."));
+    auto result = resolveModuleSpecifier(m_document, specifier, baseURL);
+    if (!result) {
+        promise->reject(TypeError, result.error());
         return jsPromise.promise();
     }
 
-    if (!completedURL.isValid()) {
-        promise->reject(TypeError, ASCIILiteral("Module name constructs an invalid URL."));
-        return jsPromise.promise();
-    }
-
-    promise->resolve<IDLDOMString>(completedURL.string());
+    promise->resolve<IDLDOMString>(result->string());
     return jsPromise.promise();
 }
 
@@ -197,6 +188,38 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject*, JSC::ExecState* 
     if (auto* frame = m_document.frame())
         return frame->script().evaluateModule(sourceURL, *moduleRecord);
     return JSC::jsUndefined();
+}
+
+static JSC::JSInternalPromise* rejectPromise(JSC::ExecState& state, JSDOMGlobalObject& globalObject, ExceptionCode ec, ASCIILiteral message)
+{
+    auto& jsPromise = *JSC::JSInternalPromiseDeferred::create(&state, &globalObject);
+    auto deferred = DeferredPromise::create(globalObject, jsPromise);
+    deferred->reject(ec, WTFMove(message));
+    return jsPromise.promise();
+}
+
+JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSString* moduleName, const JSC::SourceOrigin& sourceOrigin)
+{
+    auto& state = *exec;
+    JSC::VM& vm = exec->vm();
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
+
+    // FIXME: setTimeout and setInterval with "string()" should propagate SourceOrigin.
+    // https://webkit.org/b/167097
+    ASSERT_WITH_MESSAGE(!sourceOrigin.isNull(), "If SourceOrigin is null, this function is not invoked.");
+    if (!sourceOrigin.fetcher())
+        return rejectPromise(state, globalObject, TypeError, ASCIILiteral("Could not use import operator in this context."));
+
+    URL baseURL(URL(), sourceOrigin.string());
+    if (!baseURL.isValid())
+        return rejectPromise(state, globalObject, TypeError, ASCIILiteral("Importer module key is not Symbol or String."));
+
+    auto specifier = moduleName->value(exec);
+    auto result = resolveModuleSpecifier(m_document, specifier, baseURL);
+    if (!result)
+        return rejectPromise(state, globalObject, TypeError, result.error());
+
+    return JSC::importModule(exec, JSC::Identifier::fromString(&vm, result->string()), JSC::JSScriptFetcher::create(vm, sourceOrigin.fetcher() ));
 }
 
 void ScriptModuleLoader::notifyFinished(CachedModuleScriptLoader& loader, RefPtr<DeferredPromise> promise)
