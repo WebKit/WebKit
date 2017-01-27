@@ -1,5 +1,31 @@
 2017-01-27  Chris Dumez  <cdumez@apple.com>
 
+        Fix diagnostic logging under loader/
+        https://bugs.webkit.org/show_bug.cgi?id=167512
+
+        Reviewed by Alex Christensen.
+
+        Fix diagnostic logging under loader/. We should not be using logDiagnosticLoggingWithValue()
+        without a numeric value.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::logResourceResponseSource):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::logResourceLoaded):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::logMemoryCacheResourceRequest):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::logRevalidation):
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::memoryCacheEntryDecisionKey):
+        (WebCore::DiagnosticLoggingKeys::memoryCacheUsageKey):
+        (WebCore::DiagnosticLoggingKeys::cachedResourceRevalidationReasonKey):
+        (WebCore::DiagnosticLoggingKeys::resourceLoadedKey):
+        (WebCore::DiagnosticLoggingKeys::resourceResponseSourceKey):
+        * page/DiagnosticLoggingKeys.h:
+
+2017-01-27  Chris Dumez  <cdumez@apple.com>
+
         Fix diagnostic logging in media code
         https://bugs.webkit.org/show_bug.cgi?id=167510
 

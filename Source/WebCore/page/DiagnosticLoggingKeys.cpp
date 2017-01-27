@@ -38,6 +38,16 @@ String DiagnosticLoggingKeys::mediaLoadingFailedKey()
     return ASCIILiteral("mediaFailedLoading");
 }
 
+String DiagnosticLoggingKeys::memoryCacheEntryDecisionKey()
+{
+    return ASCIILiteral("memoryCacheEntryDecision");
+}
+
+String DiagnosticLoggingKeys::memoryCacheUsageKey()
+{
+    return ASCIILiteral("memoryCacheUsage");
+}
+
 String DiagnosticLoggingKeys::missingValidatorFieldsKey()
 {
     return ASCIILiteral("missingValidatorFields");
@@ -233,11 +243,6 @@ String DiagnosticLoggingKeys::isReloadIgnoringCacheDataKey()
     return ASCIILiteral("isReloadIgnoringCacheData");
 }
 
-String DiagnosticLoggingKeys::loadedKey()
-{
-    return ASCIILiteral("loaded");
-}
-
 String DiagnosticLoggingKeys::loadingKey()
 {
     return ASCIILiteral("loading");
@@ -306,11 +311,6 @@ String DiagnosticLoggingKeys::quirkRedirectComingKey()
 String DiagnosticLoggingKeys::rawKey()
 {
     return ASCIILiteral("raw");
-}
-
-String DiagnosticLoggingKeys::reasonKey()
-{
-    return ASCIILiteral("reason");
 }
 
 String DiagnosticLoggingKeys::redirectKey()
@@ -388,6 +388,11 @@ String DiagnosticLoggingKeys::cachedResourceRevalidationKey()
     return ASCIILiteral("cachedResourceRevalidation");
 }
 
+String DiagnosticLoggingKeys::cachedResourceRevalidationReasonKey()
+{
+    return ASCIILiteral("cachedResourceRevalidationReason");
+}
+
 String DiagnosticLoggingKeys::deniedByClientKey()
 {
     return ASCIILiteral("deniedByClient");
@@ -438,19 +443,14 @@ String DiagnosticLoggingKeys::retrievalRequestKey()
     return ASCIILiteral("retrievalRequest");
 }
 
-String DiagnosticLoggingKeys::resourceKey()
+String DiagnosticLoggingKeys::resourceLoadedKey()
 {
-    return ASCIILiteral("resource");
+    return ASCIILiteral("resourceLoaded");
 }
 
-String DiagnosticLoggingKeys::resourceRequestKey()
+String DiagnosticLoggingKeys::resourceResponseSourceKey()
 {
-    return ASCIILiteral("resourceRequest");
-}
-
-String DiagnosticLoggingKeys::resourceResponseKey()
-{
-    return ASCIILiteral("resourceResponse");
+    return ASCIILiteral("resourceResponseSource");
 }
 
 String DiagnosticLoggingKeys::retrievalKey()
@@ -476,11 +476,6 @@ String DiagnosticLoggingKeys::sameLoadKey()
 String DiagnosticLoggingKeys::scriptKey()
 {
     return ASCIILiteral("script");
-}
-
-String DiagnosticLoggingKeys::sourceKey()
-{
-    return ASCIILiteral("source");
 }
 
 String DiagnosticLoggingKeys::streamingMedia()
