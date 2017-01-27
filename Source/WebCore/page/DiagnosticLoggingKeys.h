@@ -41,7 +41,6 @@ public:
     static String canCacheKey();
     static String cannotSuspendActiveDOMObjectsKey();
     WEBCORE_EXPORT static String cpuUsageKey();
-    WEBCORE_EXPORT static String memoryUsageKey();
     WEBCORE_EXPORT static String createSharedBufferFailedKey();
     WEBCORE_EXPORT static String deltaKey();
     static String deniedByClientKey();
@@ -105,8 +104,10 @@ public:
     static String playedKey();
     static String pluginLoadedKey();
     static String pluginLoadingFailedKey();
-    static String postPageBackgroundingKey();
-    static String postPageLoadKey();
+    static String postPageBackgroundingCPUUsageKey();
+    static String postPageBackgroundingMemoryUsageKey();
+    static String postPageLoadCPUUsageKey();
+    static String postPageLoadMemoryUsageKey();
     static String provisionalLoadKey();
     static String prunedDueToMaxSizeReached();
     static String prunedDueToMemoryPressureKey();
