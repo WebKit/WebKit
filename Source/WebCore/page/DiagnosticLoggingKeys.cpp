@@ -103,16 +103,6 @@ String DiagnosticLoggingKeys::pageContainsAtLeastOneMediaEngineKey()
     return ASCIILiteral("pageContainsAtLeastOneMediaEngine");
 }
 
-String DiagnosticLoggingKeys::successKey()
-{
-    return ASCIILiteral("success");
-}
-
-String DiagnosticLoggingKeys::failureKey()
-{
-    return ASCIILiteral("failure");
-}
-
 String DiagnosticLoggingKeys::pageLoadedKey()
 {
     return ASCIILiteral("pageLoaded");
@@ -196,6 +186,11 @@ String DiagnosticLoggingKeys::notInMemoryCacheKey()
 String DiagnosticLoggingKeys::pageCacheKey()
 {
     return ASCIILiteral("pageCache");
+}
+
+String DiagnosticLoggingKeys::pageCacheFailureKey()
+{
+    return ASCIILiteral("pageCacheFailure");
 }
 
 String DiagnosticLoggingKeys::noDocumentLoaderKey()

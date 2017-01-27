@@ -97,6 +97,7 @@ public:
     static String notInMemoryCacheKey();
     WEBCORE_EXPORT static String otherKey();
     static String pageCacheKey();
+    static String pageCacheFailureKey();
     static String pageContainsAtLeastOneMediaEngineKey();
     static String pageContainsAtLeastOnePluginKey();
     static String pageContainsMediaEngineKey();
@@ -168,10 +169,6 @@ public:
     WEBCORE_EXPORT static String memoryUsageToDiagnosticLoggingKey(uint64_t memoryUsage);
     WEBCORE_EXPORT static String foregroundCPUUsageToDiagnosticLoggingKey(double cpuUsage);
     WEBCORE_EXPORT static String backgroundCPUUsageToDiagnosticLoggingKey(double cpuUsage);
-
-    // Success / Failure keys.
-    static String successKey();
-    static String failureKey();
 };
 
 } // namespace WebCore

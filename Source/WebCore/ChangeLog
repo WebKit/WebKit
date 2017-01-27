@@ -1,3 +1,22 @@
+2017-01-27  Chris Dumez  <cdumez@apple.com>
+
+        Fix PageCache diagnostic logging
+        https://bugs.webkit.org/show_bug.cgi?id=167508
+
+        Reviewed by Sam Weinig.
+
+        Fix PageCache diagnostic logging. It should not call logDiagnosticMessageWithValue()
+        with a non-numeric value. Use logDiagnosticMessage() instead.
+
+        * history/PageCache.cpp:
+        (WebCore::logPageCacheFailureDiagnosticMessage):
+        (WebCore::canCacheFrame):
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::pageCacheFailureKey):
+        (WebCore::DiagnosticLoggingKeys::successKey): Deleted.
+        (WebCore::DiagnosticLoggingKeys::failureKey): Deleted.
+        * page/DiagnosticLoggingKeys.h:
+
 2017-01-27  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Styles should not show background-repeat-x/y, or -webkit-mask-repeat-x/y
