@@ -654,8 +654,10 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
 
         propertiesObject->addItem(property.copyRef());
 
+        CSSPropertyID propertyId = cssPropertyID(name);
+
         // Default "parsedOk" == true.
-        if (!propertyEntry.parsedOk)
+        if (!propertyEntry.parsedOk || isInternalCSSProperty(propertyId))
             property->setParsedOk(false);
         if (it->hasRawText())
             property->setText(it->rawText);
@@ -678,7 +680,7 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
                 // Parsed property overrides any property with the same name. Non-parsed property overrides
                 // previous non-parsed property with the same name (if any).
                 bool shouldInactivate = false;
-                CSSPropertyID propertyId = cssPropertyID(name);
+
                 // Canonicalize property names to treat non-prefixed and vendor-prefixed property names the same (opacity vs. -webkit-opacity).
                 String canonicalPropertyName = propertyId ? getPropertyNameString(propertyId) : name;
                 HashMap<String, RefPtr<Inspector::Protocol::CSS::CSSProperty>>::iterator activeIt = propertyNameToPreviousActiveProperty.find(canonicalPropertyName);

@@ -58,6 +58,7 @@ die "We've reached more than 1024 CSS properties, please make sure to update CSS
 my %defines = map { $_ => 1 } split(/ /, $defines);
 
 my @names;
+my @internalProprerties;
 my $numPredefinedProperties = 2;
 my %nameIsInherited;
 my %nameIsHighPriority;
@@ -140,7 +141,8 @@ sub addProperty($$)
                 } elsif ($styleBuilderOptions{$codegenOptionName}) {
                     $propertiesWithStyleBuilderOptions{$name}{$codegenOptionName} = $codegenProperties->{$codegenOptionName};
                 } elsif ($codegenOptionName eq "internal-only") {
-                    # internal-only properties exist to make it easier to parse compound properties (e.g. background-repeat) as if they were shorthands. This doesn't currently affect codegen.
+                    # internal-only properties exist to make it easier to parse compound properties (e.g. background-repeat) as if they were shorthands.
+                    push @internalProprerties, $name
                 } else {
                     die "Unrecognized codegen property \"$optionName\" for $name property.";
                 }
@@ -242,11 +244,27 @@ for my $name (@names) {
     }
 }
 
-print GPERF<< "EOF";
+print GPERF << "EOF";
 %%
 const Property* findProperty(const char* str, unsigned int len)
 {
     return CSSPropertyNamesHash::findPropertyImpl(str, len);
+}
+
+bool isInternalCSSProperty(const CSSPropertyID id)
+{
+    switch (id) {
+EOF
+
+foreach my $name (@internalProprerties) {
+  print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+}
+
+print GPERF << "EOF";
+        return true;
+    default:
+        return false;
+    }
 }
 
 const char* getPropertyName(CSSPropertyID id)
@@ -380,6 +398,7 @@ print HEADER "const CSSPropertyID lastHighPriorityProperty = CSSProperty" . $nam
 
 print HEADER << "EOF";
 
+bool isInternalCSSProperty(const CSSPropertyID);
 const char* getPropertyName(CSSPropertyID);
 const WTF::AtomicString& getPropertyNameAtomicString(CSSPropertyID id);
 WTF::String getPropertyNameString(CSSPropertyID id);

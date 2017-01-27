@@ -845,6 +845,9 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<Inspector
     auto properties = Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSPropertyInfo>::create();
     for (int i = firstCSSProperty; i <= lastCSSProperty; ++i) {
         CSSPropertyID id = convertToCSSPropertyID(i);
+        if (isInternalCSSProperty(id))
+            continue;
+
         auto property = Inspector::Protocol::CSS::CSSPropertyInfo::create()
             .setName(getPropertyNameString(id))
             .release();

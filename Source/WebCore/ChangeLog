@@ -1,3 +1,23 @@
+2017-01-27  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Styles should not show background-repeat-x/y, or -webkit-mask-repeat-x/y
+        https://bugs.webkit.org/show_bug.cgi?id=167255
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/css/css-property.html
+
+        * css/makeprop.pl:
+        (addProperty):
+        Add a generated function `isInternalCSSProperty` that checks the given CSSPropertyID against
+        a derived list of properties from CSSProperties.json with "internal-only".
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getSupportedCSSProperties):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::styleWithProperties):
+        Only pass CSS property payloads to the frontend if they are not internal.
+
 2017-01-27  Antti Koivisto  <antti@apple.com>
 
         Implement Cache-control: immutable

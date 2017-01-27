@@ -1,3 +1,15 @@
+2017-01-27  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Styles should not show background-repeat-x/y, or -webkit-mask-repeat-x/y
+        https://bugs.webkit.org/show_bug.cgi?id=167255
+
+        Reviewed by Joseph Pecoraro.
+
+        Checks that internal-only CSS properties are marked as invalid when passed to WebInspector.
+
+        * inspector/css/css-property-expected.txt: Added.
+        * inspector/css/css-property.html: Added.
+
 2017-01-27  Antti Koivisto  <antti@apple.com>
 
         Implement Cache-control: immutable

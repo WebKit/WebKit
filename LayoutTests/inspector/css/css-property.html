@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let nodeStyles = null;
+
+    let suite = InspectorTest.createAsyncSuite("CSSProperty");
+
+    suite.addTestCase({
+        name: "CSSProperty.prototype.get valid",
+        description: "Ensure valid, invalid, and internal-only have correct valid state.",
+        test(resolve, reject) {
+            for (let rule of nodeStyles.matchedRules) {
+                if (rule.selectorText !== "div#x")
+                    continue;
+
+                for (let property of rule.style.properties) {
+                    switch (property.name) {
+                    case "background-repeat":
+                        InspectorTest.expectThat(property.valid, `"${property.name}" is a valid property.`);
+                        break;
+                    case "background-repeat-x":
+                    case "background-repeat-y":
+                    case "background-repeat-invalid":
+                        InspectorTest.expectFalse(property.valid, `"${property.name}" is an invalid property.`);
+                        break;
+                    }
+                }
+            }
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSSProperty.prototype.get anonymous",
+        description: "Ensure valid, invalid, and internal-only have correct anonymous state.",
+        test(resolve, reject) {
+            for (let rule of nodeStyles.matchedRules) {
+                if (rule.selectorText !== "div#x")
+                    continue;
+
+                for (let property of rule.style.properties) {
+                    switch (property.name) {
+                    case "background-repeat":
+                    case "background-repeat-x":
+                    case "background-repeat-invalid":
+                        InspectorTest.expectFalse(property.anonymous, `"${property.name}" is not an anonymous CSS property.`);
+                        break;
+                    case "background-repeat-y":
+                        InspectorTest.expectThat(property.anonymous, `"${property.name}" is an anonymous CSS property.`);
+                        break;
+                    }
+                }
+            }
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSSProperty.prototype.get implicit",
+        description: "Ensure valid, invalid, and internal-only have correct implicit state.",
+        test(resolve, reject) {
+            for (let rule of nodeStyles.matchedRules) {
+                if (rule.selectorText !== "div#x")
+                    continue;
+
+                for (let property of rule.style.properties) {
+                    switch (property.name) {
+                    case "background-repeat":
+                    case "background-repeat-x":
+                    case "background-repeat-invalid":
+                        InspectorTest.expectFalse(property.implicit, `"${property.name}" is not an implicit CSS property.`);
+                        break;
+                    case "background-repeat-y":
+                        InspectorTest.expectThat(property.implicit, `"${property.name}" is an implicit CSS property.`);
+                        break;
+                    }
+                }
+            }
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSSProperty.prototype.get value",
+        description: "Ensure valid, invalid, and internal-only have correct value.",
+        test(resolve, reject) {
+            for (let rule of nodeStyles.matchedRules) {
+                if (rule.selectorText !== "div#x")
+                    continue;
+
+                for (let property of rule.style.properties) {
+                    switch (property.name) {
+                    case "background-repeat":
+                    case "background-repeat-x":
+                    case "background-repeat-y":
+                    case "background-repeat-invalid":
+                        InspectorTest.expectEqual(property.value, "repeat", `"${property.name}" has the value "repeat".`);
+                        break;
+                    }
+                }
+            }
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSSProperty.prototype.get text",
+        description: "Ensure valid, invalid, and internal-only have correct text.",
+        test(resolve, reject) {
+            for (let rule of nodeStyles.matchedRules) {
+                if (rule.selectorText !== "div#x")
+                    continue;
+
+                // It is necessary to use "_text" because the public "text" getter will attempt to
+                // synthesize a value for the CSSProperty if it is falsy.  This is used for cases
+                // where a shorthand property is written in the style, since the longhand properties
+                // (with corresponding values) are still sent to the frontend.
+                for (let property of rule.style.properties) {
+                    switch (property.name) {
+                    case "background-repeat":
+                        InspectorTest.expectEqual(property.text, "background-repeat: repeat;", `"${property.name}" has the text "background-repeat: repeat;".`);
+                        InspectorTest.expectEqual(property._text, "background-repeat: repeat;", `"${property.name}" has the _text (private) "background-repeat: repeat;".`);
+                        break;
+                    case "background-repeat-x":
+                        InspectorTest.expectEqual(property.text, "background-repeat-x: repeat;", `"${property.name}" has the text "background-repeat-x: repeat;".`);
+                        InspectorTest.expectEqual(property._text, "background-repeat-x: repeat;", `"${property.name}" has the _text (private) "background-repeat-x: repeat;".`);
+                        break;
+                    case "background-repeat-y":
+                        InspectorTest.expectEqual(property.text, "background-repeat-y: repeat;", `"${property.name}" has the text "background-repeat-y: repeat;".`);
+                        InspectorTest.expectEqual(property._text, "", `"${property.name}" has the _text (private) "".`);
+                        break;
+                    case "background-repeat-invalid":
+                        InspectorTest.expectEqual(property.text, "background-repeat-invalid: repeat;", `"${property.name}" has the text "background-repeat-invalid: repeat;".`);
+                        InspectorTest.expectEqual(property._text, "background-repeat-invalid: repeat;", `"${property.name}" has the _text (private) "background-repeat-invalid: repeat;".`);
+                        break;
+                    }
+                }
+            }
+
+            resolve();
+        }
+    });
+
+    WebInspector.domTreeManager.requestDocument((documentNode) => {
+        WebInspector.domTreeManager.querySelector(documentNode.id, "div#x", (contentNodeId) => {
+            if (contentNodeId) {
+                let domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
+                nodeStyles = WebInspector.cssStyleManager.stylesForNode(domNode);
+
+                if (nodeStyles.needsRefresh) {
+                    nodeStyles.singleFireEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, (event) => {
+                        suite.runTestCasesAndFinish()
+                    });
+                } else
+                    suite.runTestCasesAndFinish();
+            } else {
+                InspectorTest.fail("DOM node not found.");
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing methods of CSSProperty.</p>
+
+    <style>
+    div#x {
+        background-repeat: repeat;
+        background-repeat-x: repeat;
+        background-repeat-invalid: repeat;
+    }
+    </style>
+    <div id="x"></div>
+</body>
+</html>

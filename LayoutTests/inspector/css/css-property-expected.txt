@@ -1,0 +1,38 @@
+Testing methods of CSSProperty.
+
+
+== Running test suite: CSSProperty
+-- Running test case: CSSProperty.prototype.get valid
+PASS: "background-repeat" is a valid property.
+PASS: "background-repeat-x" is an invalid property.
+PASS: "background-repeat-invalid" is an invalid property.
+PASS: "background-repeat-y" is an invalid property.
+
+-- Running test case: CSSProperty.prototype.get anonymous
+PASS: "background-repeat" is not an anonymous CSS property.
+PASS: "background-repeat-x" is not an anonymous CSS property.
+PASS: "background-repeat-invalid" is not an anonymous CSS property.
+PASS: "background-repeat-y" is an anonymous CSS property.
+
+-- Running test case: CSSProperty.prototype.get implicit
+PASS: "background-repeat" is not an implicit CSS property.
+PASS: "background-repeat-x" is not an implicit CSS property.
+PASS: "background-repeat-invalid" is not an implicit CSS property.
+PASS: "background-repeat-y" is an implicit CSS property.
+
+-- Running test case: CSSProperty.prototype.get value
+PASS: "background-repeat" has the value "repeat".
+PASS: "background-repeat-x" has the value "repeat".
+PASS: "background-repeat-invalid" has the value "repeat".
+PASS: "background-repeat-y" has the value "repeat".
+
+-- Running test case: CSSProperty.prototype.get text
+PASS: "background-repeat" has the text "background-repeat: repeat;".
+PASS: "background-repeat" has the _text (private) "background-repeat: repeat;".
+PASS: "background-repeat-x" has the text "background-repeat-x: repeat;".
+PASS: "background-repeat-x" has the _text (private) "background-repeat-x: repeat;".
+PASS: "background-repeat-invalid" has the text "background-repeat-invalid: repeat;".
+PASS: "background-repeat-invalid" has the _text (private) "background-repeat-invalid: repeat;".
+PASS: "background-repeat-y" has the text "background-repeat-y: repeat;".
+PASS: "background-repeat-y" has the _text (private) "".
+
