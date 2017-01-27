@@ -1,3 +1,9 @@
+2017-01-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, add a demo page for an input events blog post
+
+        * demos/input-events/index.html: Added.
+
 2017-01-20  Antoine Quint  <graouts@apple.com>
 
         Web Animations should be off by default and enabled as an experimental feature
