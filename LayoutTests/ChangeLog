@@ -1,5 +1,12 @@
 2017-01-27  Simon Fraser  <simon.fraser@apple.com>
 
+        Tweak the test to avoid one pixel of difference on some hardware.
+
+        * css3/filters/backdrop/backdrop-filter-uneven-corner-radii-expected.html:
+        * css3/filters/backdrop/backdrop-filter-uneven-corner-radii.html:
+
+2017-01-27  Simon Fraser  <simon.fraser@apple.com>
+
         Element with a backdrop-filter and a mask may not correctly mask the backdrop
         https://bugs.webkit.org/show_bug.cgi?id=167456
         rdar://problem/29320059
