@@ -33,7 +33,6 @@
 #include "DFGMinifiedGraph.h"
 #include "DFGOSREntry.h"
 #include "DFGOSRExit.h"
-#include "DFGTierUpEntryTrigger.h"
 #include "DFGVariableEventStream.h"
 #include "ExecutionCounter.h"
 #include "JITCode.h"
@@ -155,7 +154,7 @@ public:
     // Map each bytecode of CheckTierUpAndOSREnter to its trigger forcing OSR Entry.
     // This can never be modified after it has been initialized since the addresses of the triggers
     // are used by the JIT.
-    HashMap<unsigned, TierUpEntryTrigger> tierUpEntryTriggers;
+    HashMap<unsigned, uint8_t> tierUpEntryTriggers;
 
     // Set of bytecode that were the target of a TierUp operation.
     HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> tierUpEntrySeen;
