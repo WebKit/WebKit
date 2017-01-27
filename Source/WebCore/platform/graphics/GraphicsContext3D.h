@@ -1137,6 +1137,9 @@ public:
 #if PLATFORM(IOS)
     void endPaint();
 #endif
+#if PLATFORM(MAC)
+    void updateCGLContext();
+#endif
 
     // Support for buffer creation and deletion
     Platform3DObject createBuffer();

@@ -68,6 +68,46 @@ static Vector<GraphicsContext3D*>& activeContexts()
     return s_activeContexts;
 }
 
+#if PLATFORM(MAC)
+static void displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags flags, void*)
+{
+    if (flags & kCGDisplaySetModeFlag) {
+        for (auto* context : activeContexts())
+            context->updateCGLContext();
+    }
+}
+#endif
+
+static void addActiveContext(GraphicsContext3D* context)
+{
+    ASSERT(context);
+    if (!context)
+        return;
+
+    Vector<GraphicsContext3D*>& contexts = activeContexts();
+
+#if PLATFORM(MAC)
+    if (!contexts.size())
+        CGDisplayRegisterReconfigurationCallback(displayWasReconfigured, nullptr);
+#endif
+
+    ASSERT(!contexts.contains(context));
+    contexts.append(context);
+}
+
+static void removeActiveContext(GraphicsContext3D* context)
+{
+    Vector<GraphicsContext3D*>& contexts = activeContexts();
+
+    ASSERT(contexts.contains(context));
+    contexts.removeFirst(context);
+
+#if PLATFORM(MAC)
+    if (!contexts.size())
+        CGDisplayRemoveReconfigurationCallback(displayWasReconfigured, nullptr);
+#endif
+}
+
 const int MaxActiveContexts = 16;
 const int GPUStatusCheckThreshold = 5;
 int GraphicsContext3D::GPUCheckCounter = 0;
@@ -224,7 +264,7 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
     if (!context->m_contextObj)
         return nullptr;
 
-    contexts.append(context.get());
+    addActiveContext(context.get());
 
     return context;
 }
@@ -437,8 +477,7 @@ GraphicsContext3D::~GraphicsContext3D()
         [m_webGLLayer setContext:nullptr];
     }
 
-    ASSERT(activeContexts().contains(this));
-    activeContexts().removeFirst(this);
+    removeActiveContext(this);
 }
 
 #if PLATFORM(IOS)
@@ -514,6 +553,19 @@ void GraphicsContext3D::endPaint()
     ::glBindRenderbuffer(GL_RENDERBUFFER, m_texture);
     [static_cast<EAGLContext*>(m_contextObj) presentRenderbuffer:GL_RENDERBUFFER];
     [EAGLContext setCurrentContext:nil];
+}
+#endif
+
+#if PLATFORM(MAC)
+void GraphicsContext3D::updateCGLContext()
+{
+    if (!m_contextObj)
+        return;
+
+    LOG(WebGL, "Detected a mux switch or display reconfiguration. Update the CGLContext.");
+
+    makeContextCurrent();
+    CGLUpdateContext(m_contextObj);
 }
 #endif
 
