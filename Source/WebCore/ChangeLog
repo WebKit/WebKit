@@ -1,3 +1,27 @@
+2017-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Revert r210474 it is no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=167487
+
+        Reviewed by Daniel Bates.
+
+        Revert r210474 it is no longer needed after r211254.
+
+        * dom/Document.cpp:
+        (WebCore::Document::canNavigate):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::handleClick):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::loadFrameRequest):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::defaultEventHandler):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+
 2017-01-26  Youenn Fablet  <youennf@gmail.com>
 
         [WebRTC] Implement WebRTC PeerConnection backend based on libwebrtc

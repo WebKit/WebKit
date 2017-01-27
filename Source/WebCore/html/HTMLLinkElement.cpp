@@ -489,8 +489,6 @@ void HTMLLinkElement::handleClick(Event& event)
     Frame* frame = document().frame();
     if (!frame)
         return;
-    if (document().pageCacheState() != Document::NotInPageCache)
-        return;
     frame->loader().urlSelected(url, target(), &event, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate());
 }
 
