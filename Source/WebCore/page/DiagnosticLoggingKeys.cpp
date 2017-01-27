@@ -153,6 +153,21 @@ String DiagnosticLoggingKeys::networkCacheKey()
     return ASCIILiteral("networkCache");
 }
 
+String DiagnosticLoggingKeys::networkCacheFailureReasonKey()
+{
+    return ASCIILiteral("networkCacheFailureReason");
+}
+
+String DiagnosticLoggingKeys::networkCacheUnusedReasonKey()
+{
+    return ASCIILiteral("networkCacheUnusedReason");
+}
+
+String DiagnosticLoggingKeys::networkCacheReuseFailureKey()
+{
+    return ASCIILiteral("networkCacheReuseFailure");
+}
+
 String DiagnosticLoggingKeys::networkKey()
 {
     return ASCIILiteral("network");
@@ -343,11 +358,6 @@ String DiagnosticLoggingKeys::createSharedBufferFailedKey()
     return ASCIILiteral("createSharedBufferFailed");
 }
 
-String DiagnosticLoggingKeys::deltaKey()
-{
-    return ASCIILiteral("delta");
-}
-
 String DiagnosticLoggingKeys::activeInForegroundTabKey()
 {
     return ASCIILiteral("activeInForegroundTab");
@@ -368,9 +378,9 @@ String DiagnosticLoggingKeys::audioKey()
     return ASCIILiteral("audio");
 }
 
-String DiagnosticLoggingKeys::backNavigationKey()
+String DiagnosticLoggingKeys::backNavigationDeltaKey()
 {
-    return ASCIILiteral("backNavigation");
+    return ASCIILiteral("backNavigationDelta");
 }
 
 String DiagnosticLoggingKeys::canCacheKey()
@@ -431,11 +441,6 @@ String DiagnosticLoggingKeys::reloadKey()
 String DiagnosticLoggingKeys::replaceKey()
 {
     return ASCIILiteral("replace");
-}
-
-String DiagnosticLoggingKeys::requestKey()
-{
-    return ASCIILiteral("request");
 }
 
 String DiagnosticLoggingKeys::retrievalRequestKey()
@@ -538,11 +543,6 @@ String DiagnosticLoggingKeys::unsuspendableDOMObjectKey()
     return ASCIILiteral("unsuspendableDOMObject");
 }
 
-String DiagnosticLoggingKeys::unusableCachedEntryKey()
-{
-    return ASCIILiteral("unusableCachedEntry");
-}
-
 String DiagnosticLoggingKeys::unusedKey()
 {
     return ASCIILiteral("unused");
@@ -588,9 +588,9 @@ String DiagnosticLoggingKeys::usedKey()
     return ASCIILiteral("used");
 }
 
-String DiagnosticLoggingKeys::userKey()
+String DiagnosticLoggingKeys::userZoomActionKey()
 {
-    return ASCIILiteral("user");
+    return ASCIILiteral("userZoomAction");
 }
 
 String DiagnosticLoggingKeys::varyingHeaderMismatchKey()
@@ -633,11 +633,6 @@ String DiagnosticLoggingKeys::yesKey()
     return ASCIILiteral("yes");
 }
 
-String DiagnosticLoggingKeys::zoomedKey()
-{
-    return ASCIILiteral("zoomed");
-}
-
 String DiagnosticLoggingKeys::expiredKey()
 {
     return ASCIILiteral("expired");
@@ -676,11 +671,6 @@ String DiagnosticLoggingKeys::prunedDueToProcessSuspended()
 String WebCore::DiagnosticLoggingKeys::notHTTPFamilyKey()
 {
     return ASCIILiteral("notHTTPFamily");
-}
-
-String DiagnosticLoggingKeys::notInCacheKey()
-{
-    return ASCIILiteral("notInCache");
 }
 
 String WebCore::DiagnosticLoggingKeys::webGLStateKey()

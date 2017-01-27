@@ -35,7 +35,7 @@ public:
     WEBCORE_EXPORT static String activeInBackgroundTabOnlyKey();
     static String applicationCacheKey();
     static String audioKey();
-    WEBCORE_EXPORT static String backNavigationKey();
+    WEBCORE_EXPORT static String backNavigationDeltaKey();
     WEBCORE_EXPORT static String cacheControlNoStoreKey();
     static String cachedResourceRevalidationKey();
     static String cachedResourceRevalidationReasonKey();
@@ -43,7 +43,6 @@ public:
     static String cannotSuspendActiveDOMObjectsKey();
     WEBCORE_EXPORT static String cpuUsageKey();
     WEBCORE_EXPORT static String createSharedBufferFailedKey();
-    WEBCORE_EXPORT static String deltaKey();
     static String deniedByClientKey();
     static String deviceMotionKey();
     static String deviceOrientationKey();
@@ -83,6 +82,9 @@ public:
     static String navigationKey();
     WEBCORE_EXPORT static String needsRevalidationKey();
     WEBCORE_EXPORT static String networkCacheKey();
+    WEBCORE_EXPORT static String networkCacheFailureReasonKey();
+    WEBCORE_EXPORT static String networkCacheUnusedReasonKey();
+    WEBCORE_EXPORT static String networkCacheReuseFailureKey();
     static String networkKey();
     WEBCORE_EXPORT static String networkProcessCrashedKey();
     WEBCORE_EXPORT static String neverSeenBeforeKey();
@@ -94,7 +96,6 @@ public:
     static String noStoreKey();
     WEBCORE_EXPORT static String nonVisibleStateKey();
     WEBCORE_EXPORT static String notHTTPFamilyKey();
-    WEBCORE_EXPORT static String notInCacheKey();
     static String notInMemoryCacheKey();
     WEBCORE_EXPORT static String otherKey();
     static String pageCacheKey();
@@ -122,7 +123,6 @@ public:
     static String reloadFromOriginKey();
     static String reloadKey();
     static String replaceKey();
-    WEBCORE_EXPORT static String requestKey();
     static String resourceLoadedKey();
     static String resourceResponseSourceKey();
     WEBCORE_EXPORT static String retrievalKey();
@@ -142,7 +142,6 @@ public:
     WEBCORE_EXPORT static String unlikelyToReuseKey();
     WEBCORE_EXPORT static String unsupportedHTTPMethodKey();
     static String unsuspendableDOMObjectKey();
-    WEBCORE_EXPORT static String unusableCachedEntryKey();
     WEBCORE_EXPORT static String unusedKey();
     static String unusedReasonCredentialSettingsKey();
     static String unusedReasonErrorKey();
@@ -152,7 +151,7 @@ public:
     static String unusedReasonReloadKey();
     static String unusedReasonTypeMismatchKey();
     static String usedKey();
-    WEBCORE_EXPORT static String userKey();
+    WEBCORE_EXPORT static String userZoomActionKey();
     WEBCORE_EXPORT static String varyingHeaderMismatchKey();
     static String videoKey();
     WEBCORE_EXPORT static String visibleNonActiveStateKey();
@@ -162,7 +161,6 @@ public:
     WEBCORE_EXPORT static String webGLStateKey();
     WEBCORE_EXPORT static String webViewKey();
     static String yesKey();
-    WEBCORE_EXPORT static String zoomedKey();
 
     WEBCORE_EXPORT static String memoryUsageToDiagnosticLoggingKey(uint64_t memoryUsage);
     WEBCORE_EXPORT static String foregroundCPUUsageToDiagnosticLoggingKey(double cpuUsage);

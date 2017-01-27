@@ -220,9 +220,9 @@ void Statistics::recordNotUsingCacheForRequest(uint64_t webPageID, const Key& ke
         if (wasEverRequested) {
             String diagnosticKey = retrieveDecisionToDiagnosticKey(retrieveDecision);
             LOG(NetworkCache, "(NetworkProcess) webPageID %" PRIu64 ": %s was previously requested but we are not using the cache, reason: %s", webPageID, requestURL.string().ascii().data(), diagnosticKey.utf8().data());
-            NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::unusedKey(), diagnosticKey, WebCore::ShouldSample::Yes);
+            NetworkProcess::singleton().logDiagnosticMessage(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheUnusedReasonKey(), diagnosticKey, WebCore::ShouldSample::Yes);
         } else {
-            NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::requestKey(), WebCore::DiagnosticLoggingKeys::neverSeenBeforeKey(), WebCore::ShouldSample::Yes);
+            NetworkProcess::singleton().logDiagnosticMessage(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheUnusedReasonKey(), WebCore::DiagnosticLoggingKeys::neverSeenBeforeKey(), WebCore::ShouldSample::Yes);
             markAsRequested(hash);
         }
     });
@@ -260,9 +260,9 @@ void Statistics::recordRetrievalFailure(uint64_t webPageID, const Key& key, cons
         if (wasPreviouslyRequested) {
             String diagnosticKey = storeDecisionToDiagnosticKey(storeDecision.value());
             LOG(NetworkCache, "(NetworkProcess) webPageID %" PRIu64 ": %s was previously request but is not in the cache, reason: %s", webPageID, requestURL.string().ascii().data(), diagnosticKey.utf8().data());
-            NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::notInCacheKey(), diagnosticKey, WebCore::ShouldSample::Yes);
+            NetworkProcess::singleton().logDiagnosticMessage(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheFailureReasonKey(), diagnosticKey, WebCore::ShouldSample::Yes);
         } else {
-            NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::requestKey(), WebCore::DiagnosticLoggingKeys::neverSeenBeforeKey(), WebCore::ShouldSample::Yes);
+            NetworkProcess::singleton().logDiagnosticMessage(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheFailureReasonKey(), WebCore::DiagnosticLoggingKeys::neverSeenBeforeKey(), WebCore::ShouldSample::Yes);
             markAsRequested(hash);
         }
     });
@@ -297,13 +297,13 @@ void Statistics::recordRetrievedCachedEntry(uint64_t webPageID, const Key& key, 
 
     if (decision == UseDecision::Validate) {
         LOG(NetworkCache, "(NetworkProcess) webPageID %" PRIu64 ": %s is in the cache but needs revalidation", webPageID, requestURL.string().ascii().data());
-        NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::retrievalKey(), WebCore::DiagnosticLoggingKeys::needsRevalidationKey(), WebCore::ShouldSample::Yes);
+        NetworkProcess::singleton().logDiagnosticMessage(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::needsRevalidationKey(), WebCore::ShouldSample::Yes);
         return;
     }
 
     String diagnosticKey = cachedEntryReuseFailureToDiagnosticKey(decision);
     LOG(NetworkCache, "(NetworkProcess) webPageID %" PRIu64 ": %s is in the cache but wasn't used, reason: %s", webPageID, requestURL.string().ascii().data(), diagnosticKey.utf8().data());
-    NetworkProcess::singleton().logDiagnosticMessageWithValue(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::unusableCachedEntryKey(), diagnosticKey, WebCore::ShouldSample::Yes);
+    NetworkProcess::singleton().logDiagnosticMessage(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheReuseFailureKey(), diagnosticKey, WebCore::ShouldSample::Yes);
 }
 
 void Statistics::recordRevalidationSuccess(uint64_t webPageID, const Key& key, const WebCore::ResourceRequest& request)

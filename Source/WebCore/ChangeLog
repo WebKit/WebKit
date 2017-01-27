@@ -1,3 +1,27 @@
+2017-01-27  Chris Dumez  <cdumez@apple.com>
+
+        Fix remaining bad uses of logDiagnosticMessageWithValue()
+        https://bugs.webkit.org/show_bug.cgi?id=167526
+
+        Reviewed by Alex Christensen.
+
+        Drop unused keys, add new ones.
+
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::networkCacheFailureReasonKey):
+        (WebCore::DiagnosticLoggingKeys::networkCacheUnusedReasonKey):
+        (WebCore::DiagnosticLoggingKeys::networkCacheReuseFailureKey):
+        (WebCore::DiagnosticLoggingKeys::backNavigationDeltaKey):
+        (WebCore::DiagnosticLoggingKeys::userZoomActionKey):
+        (WebCore::DiagnosticLoggingKeys::deltaKey): Deleted.
+        (WebCore::DiagnosticLoggingKeys::backNavigationKey): Deleted.
+        (WebCore::DiagnosticLoggingKeys::requestKey): Deleted.
+        (WebCore::DiagnosticLoggingKeys::unusableCachedEntryKey): Deleted.
+        (WebCore::DiagnosticLoggingKeys::userKey): Deleted.
+        (WebCore::DiagnosticLoggingKeys::zoomedKey): Deleted.
+        (WebCore::DiagnosticLoggingKeys::notInCacheKey): Deleted.
+        * page/DiagnosticLoggingKeys.h:
+
 2017-01-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Proclaim that we are considering font-display, rhythmic sizing, and text decoration level 4
