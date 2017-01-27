@@ -1,3 +1,21 @@
+2017-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Crash when navigating back to a page in PacheCache when one of its frames has been removed
+        https://bugs.webkit.org/show_bug.cgi?id=167421
+        <rdar://problem/30188490>
+
+        Reviewed by Darin Adler.
+
+        Add a new setting allowing layout tests to enable PageCache in a window
+        that has an opener, for convenience.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2017-01-26  Keith Miller  <keith_miller@apple.com>
 
         classInfo should take a VM so it is not materialized from the object on each call

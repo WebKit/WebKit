@@ -285,3 +285,5 @@ animatedImageAsyncDecodingEnabled initial=true
 shouldSuppressKeyboardInputDuringProvisionalNavigation initial=false
 
 langAttributeAwareFormControlUIEnabled initial=false
+
+allowsPageCacheWithWindowOpener initial=false

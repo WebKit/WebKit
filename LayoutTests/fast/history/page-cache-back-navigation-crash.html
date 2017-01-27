@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Tests that removing a frame in a detached document after navigation does not cause a crash on navigating back');
+window.jsTestIsAsync = true;
+
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.setCanOpenWindows();
+}
+
+function removeFrameInChild()
+{
+    setTimeout(function() {
+        testFrame.remove();
+    }, 0);
+}
+
+window.addEventListener('load', function() {
+    newWindow = open("resources/page-cache-window-with-iframe.html", "one");
+    newWindow.onload = function () {
+        newWindow.onload = null;
+        otherWindowDocument = newWindow.document;
+        testFrame = otherWindowDocument.getElementsByTagName("iframe")[0];
+    }
+}, false);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -2195,6 +2195,8 @@ RefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicStrin
 
     newFrame->loader().setOpener(&openerFrame);
     newFrame->page()->setOpenedByDOM();
+    if (auto* openerDocument = openerFrame.document())
+        openerDocument->markHasCalledWindowOpen();
 
     if (newFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL))
         return newFrame;

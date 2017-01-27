@@ -1,3 +1,35 @@
+2017-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Crash when navigating back to a page in PacheCache when one of its frames has been removed
+        https://bugs.webkit.org/show_bug.cgi?id=167421
+        <rdar://problem/30188490>
+
+        Reviewed by Darin Adler.
+
+        * fast/history/page-cache-after-window-open-expected.txt: Added.
+        * fast/history/page-cache-after-window-open.html: Added.
+        * fast/history/page-cache-back-navigation-crash-expected.txt: Added.
+        * fast/history/page-cache-back-navigation-crash.html: Added.
+        * fast/history/page-cache-with-opener-expected.txt: Added.
+        * fast/history/page-cache-with-opener.html: Added.
+        * fast/history/resources/page-cache-window-with-iframe.html: Added.
+        * fast/history/resources/page-cache-window-with-opener.html: Added.
+        Add layout test coverage.
+
+        * editing/mac/input/unconfirmed-text-navigation-with-page-cache.html:
+        * fast/harness/page-cache-crash-on-data-urls.html:
+        * fast/harness/use-page-cache.html:
+        * fast/history/page-cache-after-window-open-expected.txt: Added.
+        * fast/history/page-cache-after-window-open.html: Added.
+        * fast/history/page-cache-with-opener-expected.txt: Added.
+        * fast/history/page-cache-with-opener.html: Added.
+        * fast/history/resources/page-cache-window-with-opener.html: Added.
+        * fast/loader/stateobjects/no-popstate-when-back-to-stateless-entry-with-page-cache.html:
+        * fast/loader/stateobjects/popstate-fires-with-page-cache.html:
+        * tiled-drawing/tiled-drawing-scroll-position-page-cache-restoration.html:
+        These tests relied on using window.open() to test PageCache for convenience. They now
+        need to override a setting in order to be allowed to do so.
+
 2017-01-26  Youenn Fablet  <youennf@gmail.com>
 
         [WebRTC] Add a LibWebRTC mock for testing

@@ -179,6 +179,8 @@ public:
     bool openedByDOM() const;
     void setOpenedByDOM();
 
+    bool openedByWindowOpen() const;
+
     WEBCORE_EXPORT void goToItem(HistoryItem&, FrameLoadType);
 
     WEBCORE_EXPORT void setGroupName(const String&);
