@@ -1,5 +1,35 @@
 2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211220. rdar://problem/29578619
+
+    2017-01-26  Brady Eidson  <beidson@apple.com>
+
+            Gamepad support shows wrong values for PS4 controllers (D-pad is missing).
+            <rdar://problem/29578619> and https://bugs.webkit.org/show_bug.cgi?id=165588
+
+            Reviewed by Alex Christensen.
+
+            No new tests (Currently unable to test HID backend directly)
+
+            DPads report their HID type as "a button", but their HID usage is "Hatswitch".
+            This patch adds a new element type that maps a "hatswitch" value to 4 additional buttons.
+
+            * platform/gamepad/mac/HIDGamepad.cpp:
+            (WebCore::HIDGamepad::initElements):
+            (WebCore::HIDGamepad::initElementsFromArray):
+            (WebCore::HIDGamepad::maybeAddButton):
+            (WebCore::HIDGamepad::maybeAddDPad):
+            (WebCore::HIDGamepad::maybeAddAxis):
+            (WebCore::fillInButtonValues):
+            (WebCore::HIDGamepad::valueChanged):
+
+            * platform/gamepad/mac/HIDGamepad.h:
+            (WebCore::HIDGamepadElement::isDPad):
+            (WebCore::HIDGamepadDPad::HIDGamepadDPad):
+            (WebCore::HIDGamepadDPad::normalizedValue):
+
+2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211201. rdar://problem/30134866
 
     2017-01-25  Ryosuke Niwa  <rniwa@webkit.org>
