@@ -1,3 +1,71 @@
+2017-01-26  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Implement WebRTC PeerConnection backend based on libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=167289
+
+        Reviewed by Alex Christensen.
+
+        Introducing an initial implementation of WebRTC peer connection backend based on LibWebRTC.
+        This is done behind a compilation flag which is off by default, until the implementation is ready.
+
+        The backend implements the PeerConnectionBackend API.
+        The implementation is split into LibWebRTCPeerConnectionBackend which contains mostly generic code and
+        passes the real work to LibWebRTCMediaEndpoint.
+        The latter class is implementing the API using LibWebRTC.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp: Added.
+        (WebCore::LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint):
+        (WebCore::sessionDescriptionType):
+        (WebCore::LibWebRTCMediaEndpoint::doSetLocalDescription):
+        (WebCore::LibWebRTCMediaEndpoint::doSetRemoteDescription):
+        (WebCore::LibWebRTCMediaEndpoint::addPendingIceCandidates):
+        (WebCore::streamId):
+        (WebCore::LibWebRTCMediaEndpoint::doCreateOffer):
+        (WebCore::LibWebRTCMediaEndpoint::doCreateAnswer):
+        (WebCore::LibWebRTCMediaEndpoint::getStats):
+        (WebCore::LibWebRTCMediaEndpoint::StatsCollector::StatsCollector):
+        (WebCore::LibWebRTCMediaEndpoint::StatsCollector::OnStatsDelivered):
+        (WebCore::signalingState):
+        (WebCore::LibWebRTCMediaEndpoint::OnSignalingChange):
+        (WebCore::trackId):
+        (WebCore::createMediaStreamTrack):
+        (WebCore::LibWebRTCMediaEndpoint::addStream):
+        (WebCore::LibWebRTCMediaEndpoint::OnAddStream):
+        (WebCore::LibWebRTCMediaEndpoint::OnRemoveStream):
+        (WebCore::LibWebRTCMediaEndpoint::OnDataChannel):
+        (WebCore::LibWebRTCMediaEndpoint::stop):
+        (WebCore::LibWebRTCMediaEndpoint::OnRenegotiationNeeded):
+        (WebCore::iceConnectionState):
+        (WebCore::LibWebRTCMediaEndpoint::OnIceConnectionChange):
+        (WebCore::LibWebRTCMediaEndpoint::OnIceGatheringChange):
+        (WebCore::LibWebRTCMediaEndpoint::OnIceCandidate):
+        (WebCore::LibWebRTCMediaEndpoint::OnIceCandidatesRemoved):
+        (WebCore::LibWebRTCMediaEndpoint::createSessionDescriptionSucceeded):
+        (WebCore::LibWebRTCMediaEndpoint::createSessionDescriptionFailed):
+        (WebCore::LibWebRTCMediaEndpoint::setLocalSessionDescriptionSucceeded):
+        (WebCore::LibWebRTCMediaEndpoint::setLocalSessionDescriptionFailed):
+        (WebCore::LibWebRTCMediaEndpoint::setRemoteSessionDescriptionSucceeded):
+        (WebCore::LibWebRTCMediaEndpoint::setRemoteSessionDescriptionFailed):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h: Added.
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp: Added.
+        (WebCore::createLibWebRTCPeerConnectionBackend):
+        (WebCore::libWebRTCProvider):
+        (WebCore::LibWebRTCPeerConnectionBackend::LibWebRTCPeerConnectionBackend):
+        (WebCore::configurationFromMediaEndpointConfiguration):
+        (WebCore::LibWebRTCPeerConnectionBackend::setConfiguration):
+        (WebCore::LibWebRTCPeerConnectionBackend::getStats):
+        (WebCore::LibWebRTCPeerConnectionBackend::doSetLocalDescription):
+        (WebCore::LibWebRTCPeerConnectionBackend::doSetRemoteDescription):
+        (WebCore::LibWebRTCPeerConnectionBackend::doCreateOffer):
+        (WebCore::LibWebRTCPeerConnectionBackend::doCreateAnswer):
+        (WebCore::LibWebRTCPeerConnectionBackend::doStop):
+        (WebCore::LibWebRTCPeerConnectionBackend::doAddIceCandidate):
+        (WebCore::LibWebRTCPeerConnectionBackend::markAsNeedingNegotiation):
+        (WebCore::LibWebRTCPeerConnectionBackend::createReceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::createDataChannelHandler):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-01-26  Chris Dumez  <cdumez@apple.com>
 
         Crash when navigating back to a page in PacheCache when one of its frames has been removed
