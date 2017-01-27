@@ -1,5 +1,41 @@
 2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211244. rdar://problem/29956321
+
+    2017-01-26  Dean Jackson  <dino@apple.com>
+
+            WebGL content in Safari sticks to GPU that it was started on, sometimes causing extra battery drain and difficulty interacting with UI
+            https://bugs.webkit.org/show_bug.cgi?id=167477
+            <rdar://problem/29956321>
+
+            Reviewed by Tim Horton.
+
+            We were not implementing the recommended approach to properly handle
+            GPU switching, causing some contexts to remain on a GPU and slow
+            down the machine's UI. It also could stop the discrete GPU from
+            turning off.
+
+            Register for CGL's display reconfiguration notification, so that we
+            can alert any active CGLContexts and cause them to update.
+
+            The code change here doesn't lend itself to automated testing because
+            it is specific to hardware with multiple GPUs, relies on some separate
+            tools to detect which GPU is active, and an external method of triggering
+            a GPU switch. It's best tested by the manual workflow in Radar.
+
+            * platform/graphics/GraphicsContext3D.h: Add a macOS-specific update
+            call.
+            * platform/graphics/mac/GraphicsContext3DMac.mm:
+            (WebCore::displayWasReconfigured): The callback for display reconfigurations.
+            (WebCore::addActiveContext): Helper to keep track of active contexts, so we
+            can register/unregister the callback when necessary.
+            (WebCore::removeActiveContext):
+            (WebCore::GraphicsContext3D::create): Use the new helpers.
+            (WebCore::GraphicsContext3D::~GraphicsContext3D):
+            (WebCore::GraphicsContext3D::updateCGLContext): Tell the CGLContextRef to update.
+
+2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211242. rdar://problem/29957753
 
     2017-01-26  Commit Queue  <commit-queue@webkit.org>
