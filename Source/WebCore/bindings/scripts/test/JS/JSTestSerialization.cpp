@@ -125,7 +125,7 @@ JSTestSerialization::JSTestSerialization(Structure* structure, JSDOMGlobalObject
 void JSTestSerialization::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -145,14 +145,14 @@ void JSTestSerialization::destroy(JSC::JSCell* cell)
     thisObject->JSTestSerialization::~JSTestSerialization();
 }
 
-template<> inline JSTestSerialization* BindingCaller<JSTestSerialization>::castForAttribute(ExecState&, EncodedJSValue thisValue)
+template<> inline JSTestSerialization* BindingCaller<JSTestSerialization>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestSerialization*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestSerialization*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSTestSerialization* BindingCaller<JSTestSerialization>::castForOperation(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestSerialization*>(state.thisValue());
+    return jsDynamicDowncast<JSTestSerialization*>(state.vm(), state.thisValue());
 }
 
 static inline JSValue jsTestSerializationFirstStringAttributeGetter(ExecState&, JSTestSerialization&, ThrowScope& throwScope);
@@ -239,7 +239,7 @@ EncodedJSValue jsTestSerializationConstructor(ExecState* state, EncodedJSValue t
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestSerializationPrototype* domObject = jsDynamicDowncast<JSTestSerializationPrototype*>(JSValue::decode(thisValue));
+    JSTestSerializationPrototype* domObject = jsDynamicDowncast<JSTestSerializationPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestSerialization::getConstructor(state->vm(), domObject->globalObject()));
@@ -250,7 +250,7 @@ bool setJSTestSerializationConstructor(ExecState* state, EncodedJSValue thisValu
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestSerializationPrototype* domObject = jsDynamicDowncast<JSTestSerializationPrototype*>(JSValue::decode(thisValue));
+    JSTestSerializationPrototype* domObject = jsDynamicDowncast<JSTestSerializationPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -440,9 +440,9 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestSe
     return wrap(state, globalObject, impl);
 }
 
-TestSerialization* JSTestSerialization::toWrapped(JSC::JSValue value)
+TestSerialization* JSTestSerialization::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestSerialization*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestSerialization*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

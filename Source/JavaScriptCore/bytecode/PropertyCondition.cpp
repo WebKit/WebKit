@@ -315,25 +315,25 @@ void PropertyCondition::validateReferences(const TrackedReferences& tracked) con
         tracked.check(requiredValue());
 }
 
-bool PropertyCondition::isValidValueForAttributes(JSValue value, unsigned attributes)
+bool PropertyCondition::isValidValueForAttributes(VM& vm, JSValue value, unsigned attributes)
 {
     bool attributesClaimAccessor = !!(attributes & Accessor);
-    bool valueClaimsAccessor = !!jsDynamicCast<GetterSetter*>(value);
+    bool valueClaimsAccessor = !!jsDynamicCast<GetterSetter*>(vm, value);
     return attributesClaimAccessor == valueClaimsAccessor;
 }
 
-bool PropertyCondition::isValidValueForPresence(JSValue value) const
+bool PropertyCondition::isValidValueForPresence(VM& vm, JSValue value) const
 {
-    return isValidValueForAttributes(value, attributes());
+    return isValidValueForAttributes(vm, value, attributes());
 }
 
-PropertyCondition PropertyCondition::attemptToMakeEquivalenceWithoutBarrier(JSObject* base) const
+PropertyCondition PropertyCondition::attemptToMakeEquivalenceWithoutBarrier(VM& vm, JSObject* base) const
 {
     Structure* structure = base->structure();
     if (!structure->isValidOffset(offset()))
         return PropertyCondition();
     JSValue value = base->getDirect(offset());
-    if (!isValidValueForPresence(value))
+    if (!isValidValueForPresence(vm, value))
         return PropertyCondition();
     return equivalenceWithoutBarrier(uid(), value);
 }

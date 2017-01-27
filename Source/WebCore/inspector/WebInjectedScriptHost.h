@@ -34,7 +34,7 @@ public:
     static Ref<WebInjectedScriptHost> create() { return adoptRef(*new WebInjectedScriptHost); }
 
     JSC::JSValue subtype(JSC::ExecState*, JSC::JSValue) override;
-    bool isHTMLAllCollection(JSC::JSValue) override;
+    bool isHTMLAllCollection(JSC::VM&, JSC::JSValue) override;
 };
 
 } // namespace WebCore

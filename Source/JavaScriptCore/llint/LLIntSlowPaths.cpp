@@ -1600,7 +1600,7 @@ LLINT_SLOW_PATH_DECL(slow_path_check_if_exception_is_uncatchable_and_notify_prof
     LLINT_BEGIN();
     RELEASE_ASSERT(!!throwScope.exception());
 
-    if (isTerminatedExecutionException(throwScope.exception()))
+    if (isTerminatedExecutionException(vm, throwScope.exception()))
         LLINT_RETURN_TWO(pc, bitwise_cast<void*>(static_cast<uintptr_t>(1)));
     LLINT_RETURN_TWO(pc, 0);
 }

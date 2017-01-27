@@ -121,7 +121,7 @@ JSTestCEReactions::JSTestCEReactions(Structure* structure, JSDOMGlobalObject& gl
 void JSTestCEReactions::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -141,14 +141,14 @@ void JSTestCEReactions::destroy(JSC::JSCell* cell)
     thisObject->JSTestCEReactions::~JSTestCEReactions();
 }
 
-template<> inline JSTestCEReactions* BindingCaller<JSTestCEReactions>::castForAttribute(ExecState&, EncodedJSValue thisValue)
+template<> inline JSTestCEReactions* BindingCaller<JSTestCEReactions>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestCEReactions*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestCEReactions*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSTestCEReactions* BindingCaller<JSTestCEReactions>::castForOperation(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestCEReactions*>(state.thisValue());
+    return jsDynamicDowncast<JSTestCEReactions*>(state.vm(), state.thisValue());
 }
 
 static inline JSValue jsTestCEReactionsAttributeWithCEReactionsGetter(ExecState&, JSTestCEReactions&, ThrowScope& throwScope);
@@ -203,7 +203,7 @@ EncodedJSValue jsTestCEReactionsConstructor(ExecState* state, EncodedJSValue thi
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestCEReactionsPrototype* domObject = jsDynamicDowncast<JSTestCEReactionsPrototype*>(JSValue::decode(thisValue));
+    JSTestCEReactionsPrototype* domObject = jsDynamicDowncast<JSTestCEReactionsPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestCEReactions::getConstructor(state->vm(), domObject->globalObject()));
@@ -214,7 +214,7 @@ bool setJSTestCEReactionsConstructor(ExecState* state, EncodedJSValue thisValue,
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestCEReactionsPrototype* domObject = jsDynamicDowncast<JSTestCEReactionsPrototype*>(JSValue::decode(thisValue));
+    JSTestCEReactionsPrototype* domObject = jsDynamicDowncast<JSTestCEReactionsPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -358,9 +358,9 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCE
     return wrap(state, globalObject, impl);
 }
 
-TestCEReactions* JSTestCEReactions::toWrapped(JSC::JSValue value)
+TestCEReactions* JSTestCEReactions::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestCEReactions*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestCEReactions*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

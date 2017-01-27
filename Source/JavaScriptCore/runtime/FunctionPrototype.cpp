@@ -93,7 +93,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = exec->thisValue();
-    if (thisValue.inherits(JSFunction::info())) {
+    if (thisValue.inherits(vm, JSFunction::info())) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
         if (function->isHostOrBuiltinFunction()) {
             scope.release();
@@ -106,7 +106,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
             return JSValue::encode(jsString(exec, classSource.toStringWithoutCopying()));
         }
 
-        if (thisValue.inherits(JSAsyncFunction::info())) {
+        if (thisValue.inherits(vm, JSAsyncFunction::info())) {
             String functionHeader = executable->isArrowFunction() ? "async " : "async function ";
 
             StringView source = executable->source().provider()->getRange(
@@ -124,7 +124,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         return JSValue::encode(jsMakeNontrivialString(exec, functionHeader, function->name(vm), source));
     }
 
-    if (thisValue.inherits(InternalFunction::info())) {
+    if (thisValue.inherits(vm, InternalFunction::info())) {
         InternalFunction* function = asInternalFunction(thisValue);
         scope.release();
         return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(), "() {\n    [native code]\n}"));
@@ -135,7 +135,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
             CallData callData;
             if (object->methodTable(vm)->getCallData(object, callData) != CallType::None) {
-                if (auto* classInfo = object->classInfo()) {
+                if (auto* classInfo = object->classInfo(vm)) {
                     scope.release();
                     return JSValue::encode(jsMakeNontrivialString(exec, "function ", classInfo->className, "() {\n    [native code]\n}"));
                 }

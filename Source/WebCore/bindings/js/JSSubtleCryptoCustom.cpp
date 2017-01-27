@@ -420,7 +420,7 @@ static RefPtr<CryptoKey> toCryptoKey(ExecState& state, JSValue value)
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    RefPtr<CryptoKey> result = JSCryptoKey::toWrapped(value);
+    RefPtr<CryptoKey> result = JSCryptoKey::toWrapped(vm, value);
     if (!result) {
         throwTypeError(&state, scope, ASCIILiteral("Invalid CryptoKey"));
         return nullptr;
@@ -504,7 +504,7 @@ static void jsSubtleCryptoFunctionEncryptPromise(ExecState& state, Ref<DeferredP
         rejectWithException(WTFMove(capturedPromise), ec);
     };
 
-    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
+    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(vm, state.thisValue());
     ASSERT(subtle);
     algorithm->encrypt(WTFMove(params), key.releaseNonNull(), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
@@ -552,7 +552,7 @@ static void jsSubtleCryptoFunctionDecryptPromise(ExecState& state, Ref<DeferredP
         rejectWithException(WTFMove(capturedPromise), ec);
     };
 
-    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
+    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(vm, state.thisValue());
     ASSERT(subtle);
     algorithm->decrypt(WTFMove(params), key.releaseNonNull(), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
@@ -600,7 +600,7 @@ static void jsSubtleCryptoFunctionSignPromise(ExecState& state, Ref<DeferredProm
         rejectWithException(WTFMove(capturedPromise), ec);
     };
 
-    JSSubtleCrypto* subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
+    JSSubtleCrypto* subtle = jsDynamicDowncast<JSSubtleCrypto*>(vm, state.thisValue());
     ASSERT(subtle);
     algorithm->sign(key.releaseNonNull(), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
@@ -651,7 +651,7 @@ static void jsSubtleCryptoFunctionVerifyPromise(ExecState& state, Ref<DeferredPr
         rejectWithException(WTFMove(capturedPromise), ec);
     };
 
-    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
+    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(vm, state.thisValue());
     ASSERT(subtle);
     algorithm->verify(key.releaseNonNull(), WTFMove(signature), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
@@ -686,7 +686,7 @@ static void jsSubtleCryptoFunctionDigestPromise(ExecState& state, Ref<DeferredPr
         rejectWithException(WTFMove(capturedPromise), ec);
     };
 
-    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
+    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(vm, state.thisValue());
     ASSERT(subtle);
     algorithm->digest(WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
@@ -942,7 +942,7 @@ static void jsSubtleCryptoFunctionWrapKeyPromise(ExecState& state, Ref<DeferredP
 
     auto context = scriptExecutionContextFromExecState(&state);
 
-    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
+    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(vm, state.thisValue());
     ASSERT(subtle);
     auto& workQueue = subtle->wrapped().workQueue();
 
@@ -1098,7 +1098,7 @@ static void jsSubtleCryptoFunctionUnwrapKeyPromise(ExecState& state, Ref<Deferre
         unwrapAlgorithm->unwrapKey(unwrappingKey.releaseNonNull(), WTFMove(wrappedKey), WTFMove(callback), WTFMove(exceptionCallback));
         return;
     }
-    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(state.thisValue());
+    auto subtle = jsDynamicDowncast<JSSubtleCrypto*>(vm, state.thisValue());
     ASSERT(subtle);
     // The following operation should be performed asynchronously.
     unwrapAlgorithm->decrypt(WTFMove(unwrapParams), unwrappingKey.releaseNonNull(), WTFMove(wrappedKey), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());

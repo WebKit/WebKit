@@ -5972,7 +5972,7 @@ private:
         bool isConstruct = node->op() == DirectConstruct;
         
         ExecutableBase* executable = node->castOperand<ExecutableBase*>();
-        FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable);
+        FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(vm(), executable);
         
         unsigned numPassedArgs = node->numChildren() - 1;
         unsigned numAllocatedArgs = numPassedArgs;
@@ -8044,7 +8044,7 @@ private:
         Node* node = m_node;
         Edge base = node->child2();
         LValue cell = lowCell(base);
-        if (JSString* string = node->child1()->dynamicCastConstant<JSString*>()) {
+        if (JSString* string = node->child1()->dynamicCastConstant<JSString*>(vm())) {
             if (string->tryGetValueImpl() && string->tryGetValueImpl()->isAtomic()) {
                 UniquedStringImpl* str = bitwise_cast<UniquedStringImpl*>(string->tryGetValueImpl());
                 B3::PatchpointValue* patchpoint = m_out.patchpoint(Int64);
@@ -8224,7 +8224,7 @@ private:
     void compileOverridesHasInstance()
     {
         FrozenValue* defaultHasInstanceFunction = m_node->cellOperand();
-        ASSERT(defaultHasInstanceFunction->cell()->inherits(JSFunction::info()));
+        ASSERT(defaultHasInstanceFunction->cell()->inherits(vm(), JSFunction::info()));
 
         LValue constructor = lowCell(m_node->child1());
         LValue hasInstance = lowJSValue(m_node->child2());
@@ -8892,7 +8892,7 @@ private:
 
         LValue scope = lowCell(m_graph.varArgChild(m_node, 1));
         SymbolTable* table = m_node->castOperand<SymbolTable*>();
-        ASSERT(table == m_graph.varArgChild(m_node, 0)->castConstant<SymbolTable*>());
+        ASSERT(table == m_graph.varArgChild(m_node, 0)->castConstant<SymbolTable*>(vm()));
         RegisteredStructure structure = m_graph.registerStructure(m_graph.globalObjectFor(m_node->origin.semantic)->activationStructure());
 
         LBasicBlock slowPath = m_out.newBlock();
@@ -9046,7 +9046,7 @@ private:
     void compileNewRegexp()
     {
         FrozenValue* regexp = m_node->cellOperand();
-        ASSERT(regexp->cell()->inherits(RegExp::info()));
+        ASSERT(regexp->cell()->inherits(vm(), RegExp::info()));
         LValue result = vmCall(
             pointerType(),
             m_out.operation(operationNewRegexp), m_callFrame,
@@ -9067,7 +9067,7 @@ private:
             && m_node->child2().useKind() == RegExpObjectUse
             && m_node->child3().useKind() == StringUse) {
 
-            if (JSString* replace = m_node->child3()->dynamicCastConstant<JSString*>()) {
+            if (JSString* replace = m_node->child3()->dynamicCastConstant<JSString*>(vm())) {
                 if (!replace->length()) {
                     LValue string = lowString(m_node->child1());
                     LValue regExp = lowRegExpObject(m_node->child2());
@@ -13700,7 +13700,7 @@ private:
         // point to other CodeBlocks. We don't want to have them be
         // part of the weak pointer set. For example, an optimized CodeBlock
         // having a weak pointer to itself will cause it to get collected.
-        RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(pointer));
+        RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(vm(), pointer));
 
         addWeakReference(pointer);
         return m_out.weakPointer(m_graph, pointer);

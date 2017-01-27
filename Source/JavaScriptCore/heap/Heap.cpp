@@ -130,10 +130,10 @@ bool isValidThreadState(VM* vm)
     return true;
 }
 
-void recordType(TypeCountSet& set, JSCell* cell)
+void recordType(VM& vm, TypeCountSet& set, JSCell* cell)
 {
     const char* typeName = "[unknown]";
-    const ClassInfo* info = cell->classInfo();
+    const ClassInfo* info = cell->classInfo(vm);
     if (info && info->className)
         typeName = info->className;
     set.add(typeName);
@@ -364,7 +364,7 @@ void Heap::lastChanceToFinalize()
     }
     
     m_arrayBuffers.lastChanceToFinalize();
-    m_codeBlocks->lastChanceToFinalize();
+    m_codeBlocks->lastChanceToFinalize(*m_vm);
     m_objectSpace.stopAllocating();
     m_objectSpace.lastChanceToFinalize();
     releaseDelayedReleasedObjects();
@@ -887,7 +887,7 @@ std::unique_ptr<TypeCountSet> Heap::protectedObjectTypeCounts()
     std::unique_ptr<TypeCountSet> result = std::make_unique<TypeCountSet>();
     forEachProtectedCell(
         [&] (JSCell* cell) {
-            recordType(*result, cell);
+            recordType(*vm(), *result, cell);
         });
     return result;
 }
@@ -900,7 +900,7 @@ std::unique_ptr<TypeCountSet> Heap::objectTypeCounts()
         iterationScope,
         [&] (HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
             if (kind == HeapCell::JSCell)
-                recordType(*result, static_cast<JSCell*>(cell));
+                recordType(*vm(), *result, static_cast<JSCell*>(cell));
             return IterationStatus::Continue;
         });
     return result;
@@ -960,7 +960,7 @@ void Heap::clearUnmarkedExecutables()
 void Heap::deleteUnmarkedCompiledCode()
 {
     clearUnmarkedExecutables();
-    m_codeBlocks->deleteUnmarkedAndUnreferenced(*m_lastCollectionScope);
+    m_codeBlocks->deleteUnmarkedAndUnreferenced(*m_vm, *m_lastCollectionScope);
     m_jitStubRoutines->deleteUnmarkedJettisonedStubRoutines();
 }
 

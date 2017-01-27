@@ -136,9 +136,10 @@ String DebuggerCallFrame::functionName() const
     if (!isValid())
         return String();
 
+    VM& vm = m_validMachineFrame->vm();
     if (isTailDeleted()) {
-        if (JSFunction* func = jsDynamicCast<JSFunction*>(m_shadowChickenFrame.callee))
-            return func->calculatedDisplayName(m_validMachineFrame->vm());
+        if (JSFunction* func = jsDynamicCast<JSFunction*>(vm, m_shadowChickenFrame.callee))
+            return func->calculatedDisplayName(vm);
         return m_shadowChickenFrame.codeBlock->inferredName().data();
     }
 
@@ -159,7 +160,7 @@ DebuggerScope* DebuggerCallFrame::scope()
             scope = m_shadowChickenFrame.scope;
         else if (codeBlock && codeBlock->scopeRegister().isValid())
             scope = m_validMachineFrame->scope(codeBlock->scopeRegister().offset());
-        else if (JSCallee* callee = jsDynamicCast<JSCallee*>(m_validMachineFrame->jsCallee()))
+        else if (JSCallee* callee = jsDynamicCast<JSCallee*>(vm, m_validMachineFrame->jsCallee()))
             scope = callee->scope();
         else
             scope = m_validMachineFrame->lexicalGlobalObject()->globalLexicalEnvironment();
@@ -178,7 +179,7 @@ DebuggerCallFrame::Type DebuggerCallFrame::type() const
     if (isTailDeleted())
         return FunctionType;
 
-    if (jsDynamicCast<JSFunction*>(m_validMachineFrame->jsCallee()))
+    if (jsDynamicCast<JSFunction*>(m_validMachineFrame->vm(), m_validMachineFrame->jsCallee()))
         return FunctionType;
 
     return ProgramType;

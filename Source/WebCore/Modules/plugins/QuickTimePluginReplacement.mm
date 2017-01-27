@@ -221,7 +221,7 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot& root)
     // Get the <video> created to replace the plug-in.
     JSC::JSValue value = replacement.get(exec, JSC::Identifier::fromString(exec, "video"));
     if (!scope.exception() && !value.isUndefinedOrNull())
-        m_mediaElement = JSHTMLVideoElement::toWrapped(value);
+        m_mediaElement = JSHTMLVideoElement::toWrapped(vm, value);
 
     if (!m_mediaElement) {
         LOG(Plugins, "%p - Failed to find <video> element created by QuickTime plugin replacement script.", this);

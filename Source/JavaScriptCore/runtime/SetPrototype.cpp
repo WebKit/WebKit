@@ -60,7 +60,7 @@ static EncodedJSValue JSC_HOST_CALL setProtoFuncSize(ExecState*);
 void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     vm.prototypeMap.addPrototype(this);
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->add, setProtoFuncAdd, DontEnum, 1);
@@ -141,7 +141,7 @@ EncodedJSValue JSC_HOST_CALL setProtoFuncValues(CallFrame* callFrame)
     VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSSet* thisObj = jsDynamicCast<JSSet*>(callFrame->thisValue());
+    JSSet* thisObj = jsDynamicCast<JSSet*>(vm, callFrame->thisValue());
     if (!thisObj)
         return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot create a Set value iterator for a non-Set object.")));
     return JSValue::encode(JSSetIterator::create(vm, callFrame->jsCallee()->globalObject()->setIteratorStructure(), thisObj, IterateValue));
@@ -152,7 +152,7 @@ EncodedJSValue JSC_HOST_CALL setProtoFuncEntries(CallFrame* callFrame)
     VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSSet* thisObj = jsDynamicCast<JSSet*>(callFrame->thisValue());
+    JSSet* thisObj = jsDynamicCast<JSSet*>(vm, callFrame->thisValue());
     if (!thisObj)
         return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot create a Set entry iterator for a non-Set object.")));
     return JSValue::encode(JSSetIterator::create(vm, callFrame->jsCallee()->globalObject()->setIteratorStructure(), thisObj, IterateKeyValue));
@@ -160,14 +160,15 @@ EncodedJSValue JSC_HOST_CALL setProtoFuncEntries(CallFrame* callFrame)
 
 EncodedJSValue JSC_HOST_CALL privateFuncSetIterator(ExecState* exec)
 {
-    ASSERT(jsDynamicCast<JSSet*>(exec->uncheckedArgument(0)));
+
+    ASSERT(jsDynamicCast<JSSet*>(exec->vm(), exec->uncheckedArgument(0)));
     JSSet* set = jsCast<JSSet*>(exec->uncheckedArgument(0));
     return JSValue::encode(JSSetIterator::create(exec->vm(), exec->jsCallee()->globalObject()->setIteratorStructure(), set, IterateKey));
 }
 
 EncodedJSValue JSC_HOST_CALL privateFuncSetIteratorNext(ExecState* exec)
 {
-    ASSERT(jsDynamicCast<JSSetIterator*>(exec->thisValue()));
+    ASSERT(jsDynamicCast<JSSetIterator*>(exec->vm(), exec->thisValue()));
     JSSetIterator* iterator = jsCast<JSSetIterator*>(exec->thisValue());
     JSValue result;
     if (iterator->next(exec, result)) {

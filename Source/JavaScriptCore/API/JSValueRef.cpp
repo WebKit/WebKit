@@ -169,9 +169,10 @@ bool JSValueIsArray(JSContextRef ctx, JSValueRef value)
         return false;
     }
     ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSLockHolder locker(exec);
 
-    return toJS(exec, value).inherits(JSArray::info());
+    return toJS(exec, value).inherits(vm, JSArray::info());
 }
 
 bool JSValueIsDate(JSContextRef ctx, JSValueRef value)
@@ -181,9 +182,10 @@ bool JSValueIsDate(JSContextRef ctx, JSValueRef value)
         return false;
     }
     ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSLockHolder locker(exec);
 
-    return toJS(exec, value).inherits(DateInstance::info());
+    return toJS(exec, value).inherits(vm, DateInstance::info());
 }
 
 bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsClass)
@@ -193,20 +195,21 @@ bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsCla
         return false;
     }
     ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSLockHolder locker(exec);
 
     JSValue jsValue = toJS(exec, value);
     
     if (JSObject* o = jsValue.getObject()) {
-        if (o->inherits(JSProxy::info()))
+        if (o->inherits(vm, JSProxy::info()))
             o = jsCast<JSProxy*>(o)->target();
 
-        if (o->inherits(JSCallbackObject<JSGlobalObject>::info()))
+        if (o->inherits(vm, JSCallbackObject<JSGlobalObject>::info()))
             return jsCast<JSCallbackObject<JSGlobalObject>*>(o)->inherits(jsClass);
-        if (o->inherits(JSCallbackObject<JSDestructibleObject>::info()))
+        if (o->inherits(vm, JSCallbackObject<JSDestructibleObject>::info()))
             return jsCast<JSCallbackObject<JSDestructibleObject>*>(o)->inherits(jsClass);
 #if JSC_OBJC_API_ENABLED
-        if (o->inherits(JSCallbackObject<JSAPIWrapperObject>::info()))
+        if (o->inherits(vm, JSCallbackObject<JSAPIWrapperObject>::info()))
             return jsCast<JSCallbackObject<JSAPIWrapperObject>*>(o)->inherits(jsClass);
 #endif
     }

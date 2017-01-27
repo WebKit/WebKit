@@ -146,7 +146,7 @@ template<typename JSClass> inline JSC::Structure* JSDOMConstructorNotConstructab
 template<typename JSClass> inline void JSDOMConstructorNotConstructable<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     initializeProperties(vm, globalObject);
 }
 
@@ -165,7 +165,7 @@ template<typename JSClass> inline JSC::Structure* JSDOMConstructor<JSClass>::cre
 template<typename JSClass> inline void JSDOMConstructor<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     initializeProperties(vm, globalObject);
 }
 
@@ -190,7 +190,7 @@ template<typename JSClass> inline JSC::Structure* JSDOMNamedConstructor<JSClass>
 template<typename JSClass> inline void JSDOMNamedConstructor<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(globalObject);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     initializeProperties(vm, globalObject);
 }
 
@@ -215,7 +215,7 @@ template<typename JSClass> inline JSC::Structure* JSBuiltinConstructor<JSClass>:
 template<typename JSClass> inline void JSBuiltinConstructor<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     setInitializeFunction(vm, *JSC::JSFunction::createBuiltinFunction(vm, initializeExecutable(vm), &globalObject));
     initializeProperties(vm, globalObject);
 }

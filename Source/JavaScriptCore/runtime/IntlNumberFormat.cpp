@@ -69,7 +69,7 @@ IntlNumberFormat::IntlNumberFormat(VM& vm, Structure* structure)
 void IntlNumberFormat::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 void IntlNumberFormat::destroy(JSCell* cell)

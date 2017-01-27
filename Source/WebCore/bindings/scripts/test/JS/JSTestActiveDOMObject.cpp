@@ -127,7 +127,7 @@ JSTestActiveDOMObject::JSTestActiveDOMObject(Structure* structure, JSDOMGlobalOb
 void JSTestActiveDOMObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -147,14 +147,14 @@ void JSTestActiveDOMObject::destroy(JSC::JSCell* cell)
     thisObject->JSTestActiveDOMObject::~JSTestActiveDOMObject();
 }
 
-template<> inline JSTestActiveDOMObject* BindingCaller<JSTestActiveDOMObject>::castForAttribute(ExecState&, EncodedJSValue thisValue)
+template<> inline JSTestActiveDOMObject* BindingCaller<JSTestActiveDOMObject>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestActiveDOMObject*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestActiveDOMObject*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSTestActiveDOMObject* BindingCaller<JSTestActiveDOMObject>::castForOperation(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestActiveDOMObject*>(state.thisValue());
+    return jsDynamicDowncast<JSTestActiveDOMObject*>(state.vm(), state.thisValue());
 }
 
 static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(ExecState&, JSTestActiveDOMObject&, ThrowScope& throwScope);
@@ -179,7 +179,7 @@ EncodedJSValue jsTestActiveDOMObjectConstructor(ExecState* state, EncodedJSValue
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestActiveDOMObjectPrototype* domObject = jsDynamicDowncast<JSTestActiveDOMObjectPrototype*>(JSValue::decode(thisValue));
+    JSTestActiveDOMObjectPrototype* domObject = jsDynamicDowncast<JSTestActiveDOMObjectPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestActiveDOMObject::getConstructor(state->vm(), domObject->globalObject()));
@@ -190,7 +190,7 @@ bool setJSTestActiveDOMObjectConstructor(ExecState* state, EncodedJSValue thisVa
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestActiveDOMObjectPrototype* domObject = jsDynamicDowncast<JSTestActiveDOMObjectPrototype*>(JSValue::decode(thisValue));
+    JSTestActiveDOMObjectPrototype* domObject = jsDynamicDowncast<JSTestActiveDOMObjectPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -298,9 +298,9 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestAc
     return wrap(state, globalObject, impl);
 }
 
-TestActiveDOMObject* JSTestActiveDOMObject::toWrapped(JSC::JSValue value)
+TestActiveDOMObject* JSTestActiveDOMObject::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestActiveDOMObject*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestActiveDOMObject*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

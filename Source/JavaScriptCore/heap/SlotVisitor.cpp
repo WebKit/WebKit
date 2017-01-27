@@ -56,20 +56,21 @@ static void validate(JSCell* cell)
 
     // Both the cell's structure, and the cell's structure's structure should be the Structure Structure.
     // I hate this sentence.
-    if (cell->structure()->structure()->JSCell::classInfo() != cell->structure()->JSCell::classInfo()) {
+    VM& vm = *cell->vm();
+    if (cell->structure()->structure()->JSCell::classInfo(vm) != cell->structure()->JSCell::classInfo(vm)) {
         const char* parentClassName = 0;
         const char* ourClassName = 0;
-        if (cell->structure()->structure() && cell->structure()->structure()->JSCell::classInfo())
-            parentClassName = cell->structure()->structure()->JSCell::classInfo()->className;
-        if (cell->structure()->JSCell::classInfo())
-            ourClassName = cell->structure()->JSCell::classInfo()->className;
+        if (cell->structure()->structure() && cell->structure()->structure()->JSCell::classInfo(vm))
+            parentClassName = cell->structure()->structure()->JSCell::classInfo(vm)->className;
+        if (cell->structure()->JSCell::classInfo(vm))
+            ourClassName = cell->structure()->JSCell::classInfo(vm)->className;
         dataLogF("parent structure (%p <%s>) of cell at %p doesn't match cell's structure (%p <%s>)\n",
             cell->structure()->structure(), parentClassName, cell, cell->structure(), ourClassName);
         CRASH();
     }
 
     // Make sure we can walk the ClassInfo chain
-    const ClassInfo* info = cell->classInfo();
+    const ClassInfo* info = cell->classInfo(vm);
     do { } while ((info = info->parentClass));
 }
 #endif

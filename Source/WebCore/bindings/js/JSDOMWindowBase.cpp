@@ -83,7 +83,7 @@ JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<DOMWindow>
 void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
 {
     Base::finishCreation(vm, shell);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     GlobalPropertyInfo staticGlobals[] = {
         GlobalPropertyInfo(vm.propertyNames->document, jsNull(), DontDelete | ReadOnly),
@@ -269,13 +269,14 @@ JSDOMWindow* toJSDOMWindow(Frame* frame, DOMWrapperWorld& world)
     return frame->script().windowShell(world)->window();
 }
 
-JSDOMWindow* toJSDOMWindow(JSValue value)
+JSDOMWindow* toJSDOMWindow(JSC::VM& vm, JSValue value)
 {
     if (!value.isObject())
         return 0;
+
     while (!value.isNull()) {
         JSObject* object = asObject(value);
-        const ClassInfo* classInfo = object->classInfo();
+        const ClassInfo* classInfo = object->classInfo(vm);
         if (classInfo == JSDOMWindow::info())
             return jsCast<JSDOMWindow*>(object);
         if (classInfo == JSDOMWindowShell::info())

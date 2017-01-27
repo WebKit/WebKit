@@ -47,7 +47,7 @@ const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table.prototy
 static ALWAYS_INLINE JSWebAssemblyTable* getTable(ExecState* exec, VM& vm, JSValue v)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSWebAssemblyTable* result = jsDynamicCast<JSWebAssemblyTable*>(v);
+    JSWebAssemblyTable* result = jsDynamicCast<JSWebAssemblyTable*>(vm, v);
     if (!result) {
         throwException(exec, throwScope, 
             createTypeError(exec, ASCIILiteral("expected |this| value to be an instance of WebAssembly.Table")));
@@ -120,7 +120,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncSet(ExecState* exec)
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     JSValue value = exec->argument(1);
-    WebAssemblyFunction* function = jsDynamicCast<WebAssemblyFunction*>(value);
+    WebAssemblyFunction* function = jsDynamicCast<WebAssemblyFunction*>(vm, value);
     if (!value.isNull() && !function) {
         throwException(exec, throwScope,
             createTypeError(exec, ASCIILiteral("WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function")));

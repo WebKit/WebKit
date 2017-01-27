@@ -126,7 +126,7 @@ StringPrototype::StringPrototype(VM& vm, Structure* structure)
 void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSString* nameAndMessage)
 {
     Base::finishCreation(vm, nameAndMessage);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, stringProtoFuncToString, DontEnum, 0, StringPrototypeValueOfIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->valueOf, stringProtoFuncToString, DontEnum, 0, StringPrototypeValueOfIntrinsic);
@@ -836,7 +836,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(ExecState* exec)
 ALWAYS_INLINE EncodedJSValue replace(
     VM& vm, ExecState* exec, JSString* string, JSValue searchValue, JSValue replaceValue)
 {
-    if (searchValue.inherits(RegExpObject::info()))
+    if (searchValue.inherits(vm, RegExpObject::info()))
         return replaceUsingRegExpSearch(vm, exec, string, searchValue, replaceValue);
     return replaceUsingStringSearch(vm, exec, string, searchValue, replaceValue);
 }
@@ -863,7 +863,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingRegExp(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue searchValue = exec->argument(0);
-    if (!searchValue.inherits(RegExpObject::info()))
+    if (!searchValue.inherits(vm, RegExpObject::info()))
         return JSValue::encode(jsUndefined());
 
     scope.release();
@@ -905,7 +905,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToString(ExecState* exec)
     if (thisValue.isString())
         return JSValue::encode(thisValue);
 
-    if (thisValue.inherits(StringObject::info()))
+    if (thisValue.inherits(vm, StringObject::info()))
         return JSValue::encode(asStringObject(thisValue)->internalValue());
 
     return throwVMTypeError(exec, scope);

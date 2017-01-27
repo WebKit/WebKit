@@ -154,7 +154,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, JSValue n
     if (numArgs == 0) // new Date() ECMA 15.9.3.3
         value = NORMAL_OR_DETERMINISTIC_FUNCTION(jsCurrentTime(), deterministicCurrentTime(globalObject));
     else if (numArgs == 1) {
-        if (args.at(0).inherits(DateInstance::info()))
+        if (args.at(0).inherits(vm, DateInstance::info()))
             value = asDateInstance(args.at(0))->internalNumber();
         else {
             JSValue primitive = args.at(0).toPrimitive(exec);

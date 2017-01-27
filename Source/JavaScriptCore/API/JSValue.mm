@@ -571,16 +571,16 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 @end
 
-inline bool isDate(JSObjectRef object, JSGlobalContextRef context)
+inline bool isDate(JSC::VM& vm, JSObjectRef object, JSGlobalContextRef context)
 {
     JSC::JSLockHolder locker(toJS(context));
-    return toJS(object)->inherits(JSC::DateInstance::info());
+    return toJS(object)->inherits(vm, JSC::DateInstance::info());
 }
 
-inline bool isArray(JSObjectRef object, JSGlobalContextRef context)
+inline bool isArray(JSC::VM& vm, JSObjectRef object, JSGlobalContextRef context)
 {
     JSC::JSLockHolder locker(toJS(context));
-    return toJS(object)->inherits(JSC::JSArray::info());
+    return toJS(object)->inherits(vm, JSC::JSArray::info());
 }
 
 @implementation JSValue(Internal)
@@ -656,6 +656,9 @@ static void reportExceptionToInspector(JSGlobalContextRef context, JSC::JSValue 
 
 static JSContainerConvertor::Task valueToObjectWithoutCopy(JSGlobalContextRef context, JSValueRef value)
 {
+    JSC::ExecState* exec = toJS(context);
+    JSC::VM& vm = exec->vm();
+
     if (!JSValueIsObject(context, value)) {
         id primitive;
         if (JSValueIsBoolean(context, value))
@@ -685,10 +688,10 @@ static JSContainerConvertor::Task valueToObjectWithoutCopy(JSGlobalContextRef co
     if (id wrapped = tryUnwrapObjcObject(context, object))
         return (JSContainerConvertor::Task){ object, wrapped, ContainerNone };
 
-    if (isDate(object, context))
+    if (isDate(vm, object, context))
         return (JSContainerConvertor::Task){ object, [NSDate dateWithTimeIntervalSince1970:JSValueToNumber(context, object, 0) / 1000.0], ContainerNone };
 
-    if (isArray(object, context))
+    if (isArray(vm, object, context))
         return (JSContainerConvertor::Task){ object, [NSMutableArray array], ContainerArray };
 
     return (JSContainerConvertor::Task){ object, [NSMutableDictionary dictionary], ContainerDictionary };

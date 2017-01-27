@@ -71,7 +71,7 @@ JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(*vm);
     void* entryAddress;
-    JSFunction* function = jsDynamicCast<JSFunction*>(protoCallFrame->callee());
+    JSFunction* function = jsDynamicCast<JSFunction*>(*vm, protoCallFrame->callee());
 
     if (!function || !protoCallFrame->needArityCheck()) {
         ASSERT(!protoCallFrame->needArityCheck());

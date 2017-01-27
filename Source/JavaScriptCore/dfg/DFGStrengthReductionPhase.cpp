@@ -404,7 +404,7 @@ private:
         }
 
         case GetGlobalObject: {
-            if (JSObject* object = m_node->child1()->dynamicCastConstant<JSObject*>()) {
+            if (JSObject* object = m_node->child1()->dynamicCastConstant<JSObject*>(vm())) {
                 m_graph.convertToConstant(m_node, object->globalObject());
                 m_changed = true;
                 break;
@@ -414,7 +414,7 @@ private:
 
         case RegExpExec:
         case RegExpTest: {
-            JSGlobalObject* globalObject = m_node->child1()->dynamicCastConstant<JSGlobalObject*>();
+            JSGlobalObject* globalObject = m_node->child1()->dynamicCastConstant<JSGlobalObject*>(vm());
             if (!globalObject) {
                 if (verbose)
                     dataLog("Giving up because no global object.\n");
@@ -429,7 +429,7 @@ private:
 
             Node* regExpObjectNode = m_node->child2().node();
             RegExp* regExp;
-            if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>())
+            if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>(vm()))
                 regExp = regExpObject->regExp();
             else if (regExpObjectNode->op() == NewRegexp)
                 regExp = regExpObjectNode->castOperand<RegExp*>();
@@ -670,7 +670,7 @@ private:
             
             Node* regExpObjectNode = m_node->child2().node();
             RegExp* regExp;
-            if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>())
+            if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>(vm()))
                 regExp = regExpObject->regExp();
             else if (regExpObjectNode->op() == NewRegexp)
                 regExp = regExpObjectNode->castOperand<RegExp*>();
@@ -767,7 +767,7 @@ private:
         case TailCall: {
             ExecutableBase* executable = nullptr;
             Edge callee = m_graph.varArgChild(m_node, 0);
-            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>())
+            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>(vm()))
                 executable = function->executable();
             else if (callee->isFunctionAllocation())
                 executable = callee->castOperand<FunctionExecutable*>();
@@ -775,7 +775,7 @@ private:
             if (!executable)
                 break;
             
-            if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable)) {
+            if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(vm(), executable)) {
                 // We need to update m_parameterSlots before we get to the backend, but we don't
                 // want to do too much of this.
                 unsigned numAllocatedArgs =

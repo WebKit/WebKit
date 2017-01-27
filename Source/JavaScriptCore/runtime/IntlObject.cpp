@@ -85,7 +85,7 @@ IntlObject* IntlObject::create(VM& vm, JSGlobalObject* globalObject, Structure* 
 void IntlObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     // Set up Collator.
     IntlCollatorPrototype* collatorPrototype = IntlCollatorPrototype::create(vm, globalObject, IntlCollatorPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));

@@ -767,14 +767,14 @@ inline bool JSValue::isConstructor(ConstructType& constructType, ConstructData& 
 }
 
 // this method is here to be after the inline declaration of JSCell::inherits
-inline bool JSValue::inherits(const ClassInfo* classInfo) const
+inline bool JSValue::inherits(VM& vm, const ClassInfo* classInfo) const
 {
-    return isCell() && asCell()->inherits(classInfo);
+    return isCell() && asCell()->inherits(vm, classInfo);
 }
 
-inline const ClassInfo* JSValue::classInfoOrNull() const
+inline const ClassInfo* JSValue::classInfoOrNull(VM& vm) const
 {
-    return isCell() ? asCell()->classInfo() : nullptr;
+    return isCell() ? asCell()->classInfo(vm) : nullptr;
 }
 
 inline JSValue JSValue::toThis(ExecState* exec, ECMAMode ecmaMode) const

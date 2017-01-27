@@ -1040,7 +1040,7 @@ void SpeculativeJIT::compileIn(Node* node)
     SpeculateCellOperand base(this, node->child2());
     GPRReg baseGPR = base.gpr();
     
-    if (JSString* string = node->child1()->dynamicCastConstant<JSString*>()) {
+    if (JSString* string = node->child1()->dynamicCastConstant<JSString*>(*m_jit.vm())) {
         if (string->tryGetValueImpl() && string->tryGetValueImpl()->isAtomic()) {
             StructureStubInfo* stubInfo = m_jit.codeBlock()->addStubInfo(AccessType::In);
             
@@ -9269,7 +9269,7 @@ void SpeculativeJIT::compileLazyJSConstant(Node* node)
 void SpeculativeJIT::compileMaterializeNewObject(Node* node)
 {
     RegisteredStructure structure = node->structureSet().at(0);
-    ASSERT(m_jit.graph().varArgChild(node, 0)->dynamicCastConstant<Structure*>() == structure.get());
+    ASSERT(m_jit.graph().varArgChild(node, 0)->dynamicCastConstant<Structure*>(*m_jit.vm()) == structure.get());
 
     ObjectMaterializationData& data = node->objectMaterializationData();
         

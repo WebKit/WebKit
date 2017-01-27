@@ -274,7 +274,7 @@ JSArray* asArray(JSValue);
 
 inline JSArray* asArray(JSCell* cell)
 {
-    ASSERT(cell->inherits(JSArray::info()));
+    ASSERT(cell->inherits(*cell->vm(), JSArray::info()));
     return jsCast<JSArray*>(cell);
 }
 
@@ -285,7 +285,7 @@ inline JSArray* asArray(JSValue value)
 
 inline bool isJSArray(JSCell* cell)
 {
-    ASSERT((cell->classInfo() == JSArray::info()) == (cell->type() == ArrayType));
+    ASSERT((cell->classInfo(*cell->vm()) == JSArray::info()) == (cell->type() == ArrayType));
     return cell->type() == ArrayType;
 }
 

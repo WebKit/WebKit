@@ -240,25 +240,21 @@ ALWAYS_INLINE void JSCell::setStructure(VM& vm, Structure* structure)
 inline const MethodTable* JSCell::methodTable() const
 {
     VM& vm = *Heap::heap(this)->vm();
-    Structure* structure = this->structure(vm);
-    if (Structure* rootStructure = structure->structure(vm))
-        RELEASE_ASSERT(rootStructure == rootStructure->structure(vm));
-
-    return &structure->classInfo()->methodTable;
+    return methodTable(vm);
 }
 
 inline const MethodTable* JSCell::methodTable(VM& vm) const
 {
     Structure* structure = this->structure(vm);
     if (Structure* rootStructure = structure->structure(vm))
-        RELEASE_ASSERT(rootStructure == rootStructure->structure(vm));
+        ASSERT_UNUSED(rootStructure, rootStructure == rootStructure->structure(vm));
 
     return &structure->classInfo()->methodTable;
 }
 
-inline bool JSCell::inherits(const ClassInfo* info) const
+inline bool JSCell::inherits(VM& vm, const ClassInfo* info) const
 {
-    return classInfo()->isSubClassOf(info);
+    return classInfo(vm)->isSubClassOf(info);
 }
 
 ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(VM& vm, Structure& structure, PropertyName name)
@@ -277,21 +273,15 @@ inline bool JSCell::canUseFastGetOwnProperty(const Structure& structure)
         && !structure.typeInfo().overridesGetOwnPropertySlot();
 }
 
-ALWAYS_INLINE const ClassInfo* JSCell::classInfo() const
+ALWAYS_INLINE const ClassInfo* JSCell::classInfo(VM& vm) const
 {
-    VM* vm;
-    if (isLargeAllocation())
-        vm = largeAllocation().vm();
-    else
-        vm = markedBlock().vm();
-
     // What we really want to assert here is that we're not currently destructing this object (which makes its classInfo
     // invalid). If mutatorState() == MutatorState::Running, then we're not currently sweeping, and therefore cannot be
     // destructing the object. The GC thread or JIT threads, unlike the mutator thread, are able to access classInfo
     // independent of whether the mutator thread is sweeping or not. Hence, we also check for ownerThread() !=
     // std::this_thread::get_id() to allow the GC thread or JIT threads to pass this assertion.
-    ASSERT(vm->heap.mutatorState() == MutatorState::Running || vm->apiLock().ownerThread() != std::this_thread::get_id());
-    return structure(*vm)->classInfo();
+    ASSERT(vm.heap.mutatorState() == MutatorState::Running || vm.apiLock().ownerThread() != std::this_thread::get_id());
+    return structure(vm)->classInfo();
 }
 
 inline bool JSCell::toBoolean(ExecState* exec) const

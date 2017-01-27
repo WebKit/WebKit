@@ -61,17 +61,17 @@ void CodeBlockSet::clearMarksForFullCollection()
         codeBlock->clearVisitWeaklyHasBeenCalled();
 }
 
-void CodeBlockSet::lastChanceToFinalize()
+void CodeBlockSet::lastChanceToFinalize(VM& vm)
 {
     LockHolder locker(&m_lock);
     for (CodeBlock* codeBlock : m_newCodeBlocks)
-        codeBlock->structure()->classInfo()->methodTable.destroy(codeBlock);
+        codeBlock->structure(vm)->classInfo()->methodTable.destroy(codeBlock);
 
     for (CodeBlock* codeBlock : m_oldCodeBlocks)
-        codeBlock->structure()->classInfo()->methodTable.destroy(codeBlock);
+        codeBlock->structure(vm)->classInfo()->methodTable.destroy(codeBlock);
 }
 
-void CodeBlockSet::deleteUnmarkedAndUnreferenced(CollectionScope scope)
+void CodeBlockSet::deleteUnmarkedAndUnreferenced(VM& vm, CollectionScope scope)
 {
     LockHolder locker(&m_lock);
     Vector<CodeBlock*> unmarked;
@@ -83,7 +83,7 @@ void CodeBlockSet::deleteUnmarkedAndUnreferenced(CollectionScope scope)
             unmarked.append(codeBlock);
         }
         for (CodeBlock* codeBlock : unmarked) {
-            codeBlock->structure()->classInfo()->methodTable.destroy(codeBlock);
+            codeBlock->structure(vm)->classInfo()->methodTable.destroy(codeBlock);
             set.remove(codeBlock);
         }
         unmarked.resize(0);

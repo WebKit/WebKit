@@ -116,7 +116,7 @@ JSTestIterable::JSTestIterable(Structure* structure, JSDOMGlobalObject& globalOb
 void JSTestIterable::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -138,14 +138,14 @@ void JSTestIterable::destroy(JSC::JSCell* cell)
 
 template<> inline JSTestIterable* BindingCaller<JSTestIterable>::castForOperation(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestIterable*>(state.thisValue());
+    return jsDynamicDowncast<JSTestIterable*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestIterableConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestIterablePrototype* domObject = jsDynamicDowncast<JSTestIterablePrototype*>(JSValue::decode(thisValue));
+    JSTestIterablePrototype* domObject = jsDynamicDowncast<JSTestIterablePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestIterable::getConstructor(state->vm(), domObject->globalObject()));
@@ -156,7 +156,7 @@ bool setJSTestIterableConstructor(ExecState* state, EncodedJSValue thisValue, En
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestIterablePrototype* domObject = jsDynamicDowncast<JSTestIterablePrototype*>(JSValue::decode(thisValue));
+    JSTestIterablePrototype* domObject = jsDynamicDowncast<JSTestIterablePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -287,9 +287,9 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestIt
     return wrap(state, globalObject, impl);
 }
 
-TestIterable* JSTestIterable::toWrapped(JSC::JSValue value)
+TestIterable* JSTestIterable::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestIterable*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestIterable*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

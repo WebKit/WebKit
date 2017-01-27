@@ -105,7 +105,7 @@ JSTestInterfaceLeadingUnderscore::JSTestInterfaceLeadingUnderscore(Structure* st
 void JSTestInterfaceLeadingUnderscore::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -125,9 +125,9 @@ void JSTestInterfaceLeadingUnderscore::destroy(JSC::JSCell* cell)
     thisObject->JSTestInterfaceLeadingUnderscore::~JSTestInterfaceLeadingUnderscore();
 }
 
-template<> inline JSTestInterfaceLeadingUnderscore* BindingCaller<JSTestInterfaceLeadingUnderscore>::castForAttribute(ExecState&, EncodedJSValue thisValue)
+template<> inline JSTestInterfaceLeadingUnderscore* BindingCaller<JSTestInterfaceLeadingUnderscore>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestInterfaceLeadingUnderscore*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestInterfaceLeadingUnderscore*>(state.vm(), JSValue::decode(thisValue));
 }
 
 static inline JSValue jsTestInterfaceLeadingUnderscoreReadonlyGetter(ExecState&, JSTestInterfaceLeadingUnderscore&, ThrowScope& throwScope);
@@ -150,7 +150,7 @@ EncodedJSValue jsTestInterfaceLeadingUnderscoreConstructor(ExecState* state, Enc
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestInterfaceLeadingUnderscorePrototype* domObject = jsDynamicDowncast<JSTestInterfaceLeadingUnderscorePrototype*>(JSValue::decode(thisValue));
+    JSTestInterfaceLeadingUnderscorePrototype* domObject = jsDynamicDowncast<JSTestInterfaceLeadingUnderscorePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestInterfaceLeadingUnderscore::getConstructor(state->vm(), domObject->globalObject()));
@@ -161,7 +161,7 @@ bool setJSTestInterfaceLeadingUnderscoreConstructor(ExecState* state, EncodedJSV
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestInterfaceLeadingUnderscorePrototype* domObject = jsDynamicDowncast<JSTestInterfaceLeadingUnderscorePrototype*>(JSValue::decode(thisValue));
+    JSTestInterfaceLeadingUnderscorePrototype* domObject = jsDynamicDowncast<JSTestInterfaceLeadingUnderscorePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -206,9 +206,9 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestIn
     return wrap(state, globalObject, impl);
 }
 
-TestInterfaceLeadingUnderscore* JSTestInterfaceLeadingUnderscore::toWrapped(JSC::JSValue value)
+TestInterfaceLeadingUnderscore* JSTestInterfaceLeadingUnderscore::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestInterfaceLeadingUnderscore*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestInterfaceLeadingUnderscore*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

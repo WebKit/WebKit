@@ -62,7 +62,7 @@ NumberConstructor::NumberConstructor(VM& vm, Structure* structure)
 void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
 {
     Base::finishCreation(vm, NumberPrototype::info()->className);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     // Number.Prototype
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);

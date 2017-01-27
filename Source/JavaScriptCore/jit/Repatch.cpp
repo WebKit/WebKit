@@ -179,12 +179,12 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             newCase = AccessCase::getLength(vm, codeBlock, AccessCase::ArrayLength);
         } else if (isJSString(baseValue))
             newCase = AccessCase::getLength(vm, codeBlock, AccessCase::StringLength);
-        else if (DirectArguments* arguments = jsDynamicCast<DirectArguments*>(baseValue)) {
+        else if (DirectArguments* arguments = jsDynamicCast<DirectArguments*>(vm, baseValue)) {
             // If there were overrides, then we can handle this as a normal property load! Guarding
             // this with such a check enables us to add an IC case for that load if needed.
             if (!arguments->overrodeThings())
                 newCase = AccessCase::getLength(vm, codeBlock, AccessCase::DirectArgumentsLength);
-        } else if (ScopedArguments* arguments = jsDynamicCast<ScopedArguments*>(baseValue)) {
+        } else if (ScopedArguments* arguments = jsDynamicCast<ScopedArguments*>(vm, baseValue)) {
             // Ditto.
             if (!arguments->overrodeThings())
                 newCase = AccessCase::getLength(vm, codeBlock, AccessCase::ScopedArgumentsLength);
@@ -261,7 +261,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
 
         JSFunction* getter = nullptr;
         if (slot.isCacheableGetter())
-            getter = jsDynamicCast<JSFunction*>(slot.getterSetter()->getter());
+            getter = jsDynamicCast<JSFunction*>(vm, slot.getterSetter()->getter());
 
         DOMJIT::GetterSetter* domJIT = nullptr;
         if (slot.isCacheableCustom() && slot.domJIT())
@@ -302,12 +302,12 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
         }
     }
 
-    LOG_IC((ICEvent::GetByIdAddAccessCase, baseValue.classInfoOrNull(), propertyName));
+    LOG_IC((ICEvent::GetByIdAddAccessCase, baseValue.classInfoOrNull(vm), propertyName));
 
     AccessGenerationResult result = stubInfo.addAccessCase(codeBlock, propertyName, WTFMove(newCase));
 
     if (result.generatedSomeCode()) {
-        LOG_IC((ICEvent::GetByIdReplaceWithJump, baseValue.classInfoOrNull(), propertyName));
+        LOG_IC((ICEvent::GetByIdReplaceWithJump, baseValue.classInfoOrNull(vm), propertyName));
         
         RELEASE_ASSERT(result.code());
         InlineAccess::rewireStubAsJump(exec->vm(), stubInfo, CodeLocationLabel(result.code()));

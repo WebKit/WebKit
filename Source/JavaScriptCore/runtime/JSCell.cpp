@@ -50,7 +50,7 @@ void JSCell::dump(PrintStream& out) const
 
 void JSCell::dumpToStream(const JSCell* cell, PrintStream& out)
 {
-    out.printf("<%p, %s>", cell, cell->className());
+    out.printf("<%p, %s>", cell, cell->className(*cell->vm()));
 }
 
 size_t JSCell::estimatedSizeInBytes() const
@@ -225,9 +225,9 @@ String JSCell::toStringName(const JSObject*, ExecState*)
     return String();
 }
 
-const char* JSCell::className() const
+const char* JSCell::className(VM& vm) const
 {
-    return classInfo()->className;
+    return classInfo(vm)->className;
 }
 
 void JSCell::getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
@@ -295,11 +295,12 @@ JSValue JSCell::getPrototype(JSObject*, ExecState*)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool JSCell::isAnyWasmCallee() const
+bool JSCell::isAnyWasmCallee(VM& vm) const
 {
 #if ENABLE(WEBASSEMBLY)
-    return inherits(JSWebAssemblyCallee::info()) || inherits(WebAssemblyToJSCallee::info());
+    return inherits(vm, JSWebAssemblyCallee::info()) || inherits(vm, WebAssemblyToJSCallee::info());
 #else
+    UNUSED_PARAM(vm);
     return false;
 #endif
 

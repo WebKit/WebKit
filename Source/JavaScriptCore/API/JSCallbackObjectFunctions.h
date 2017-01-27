@@ -44,15 +44,16 @@ namespace JSC {
 template <class Parent>
 inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(JSValue value)
 {
-    ASSERT(asObject(value)->inherits(info()));
+    ASSERT(asObject(value)->inherits(*value.getObject()->vm(), info()));
     return jsCast<JSCallbackObject*>(asObject(value));
 }
 
 template <class Parent>
-inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(EncodedJSValue value)
+inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(EncodedJSValue encodedValue)
 {
-    ASSERT(asObject(JSValue::decode(value))->inherits(info()));
-    return jsCast<JSCallbackObject*>(asObject(JSValue::decode(value)));
+    JSValue value = JSValue::decode(encodedValue);
+    ASSERT(asObject(value)->inherits(*value.getObject()->vm(), info()));
+    return jsCast<JSCallbackObject*>(asObject(value));
 }
 
 template <class Parent>
@@ -90,8 +91,9 @@ JSCallbackObject<Parent>::~JSCallbackObject()
 template <class Parent>
 void JSCallbackObject<Parent>::finishCreation(ExecState* exec)
 {
-    Base::finishCreation(exec->vm());
-    ASSERT(Parent::inherits(info()));
+    VM& vm = exec->vm();
+    Base::finishCreation(vm);
+    ASSERT(Parent::inherits(vm, info()));
     init(exec);
 }
 
@@ -99,7 +101,7 @@ void JSCallbackObject<Parent>::finishCreation(ExecState* exec)
 template <class Parent>
 void JSCallbackObject<Parent>::finishCreation(VM& vm)
 {
-    ASSERT(Parent::inherits(info()));
+    ASSERT(Parent::inherits(vm, info()));
     ASSERT(Parent::isGlobalObject());
     Base::finishCreation(vm);
     init(jsCast<JSGlobalObject*>(this)->globalExec());

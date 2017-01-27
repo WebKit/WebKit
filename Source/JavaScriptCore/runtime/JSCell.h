@@ -101,11 +101,11 @@ public:
     bool isString() const;
     bool isSymbol() const;
     bool isObject() const;
-    bool isAnyWasmCallee() const;
+    bool isAnyWasmCallee(VM&) const;
     bool isGetterSetter() const;
     bool isCustomGetterSetter() const;
     bool isProxy() const;
-    bool inherits(const ClassInfo*) const;
+    bool inherits(VM&, const ClassInfo*) const;
     bool isAPIValueWrapper() const;
     
     // Each cell has a built-in lock. Currently it's simply available for use if you need it. It's
@@ -128,7 +128,7 @@ public:
 
     TypeInfo::InlineTypeFlags inlineTypeFlags() const { return m_flags; }
 
-    const char* className() const;
+    const char* className(VM&) const;
 
     // Extracting the value.
     JS_EXPORT_PRIVATE bool getString(ExecState*, String&) const;
@@ -165,7 +165,7 @@ public:
     JS_EXPORT_PRIVATE static void heapSnapshot(JSCell*, HeapSnapshotBuilder&);
 
     // Object operations, with the toObject operation included.
-    const ClassInfo* classInfo() const;
+    const ClassInfo* classInfo(VM&) const;
     const MethodTable* methodTable() const;
     const MethodTable* methodTable(VM&) const;
     static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
@@ -270,29 +270,29 @@ private:
 template<typename To, typename From>
 inline To jsCast(From* from)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!from || from->JSCell::inherits(std::remove_pointer<To>::type::info()));
+    ASSERT_WITH_SECURITY_IMPLICATION(!from || from->JSCell::inherits(*from->JSCell::vm(), std::remove_pointer<To>::type::info()));
     return static_cast<To>(from);
 }
     
 template<typename To>
 inline To jsCast(JSValue from)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(from.isCell() && from.asCell()->JSCell::inherits(std::remove_pointer<To>::type::info()));
+    ASSERT_WITH_SECURITY_IMPLICATION(from.isCell() && from.asCell()->JSCell::inherits(*from.asCell()->vm(), std::remove_pointer<To>::type::info()));
     return static_cast<To>(from.asCell());
 }
 
 template<typename To, typename From>
-inline To jsDynamicCast(From* from)
+inline To jsDynamicCast(VM& vm, From* from)
 {
-    if (LIKELY(from->inherits(std::remove_pointer<To>::type::info())))
+    if (LIKELY(from->JSCell::inherits(vm, std::remove_pointer<To>::type::info())))
         return static_cast<To>(from);
     return nullptr;
 }
 
 template<typename To>
-inline To jsDynamicCast(JSValue from)
+inline To jsDynamicCast(VM& vm, JSValue from)
 {
-    if (LIKELY(from.isCell() && from.asCell()->inherits(std::remove_pointer<To>::type::info())))
+    if (LIKELY(from.isCell() && from.asCell()->inherits(vm, std::remove_pointer<To>::type::info())))
         return static_cast<To>(from.asCell());
     return nullptr;
 }

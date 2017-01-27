@@ -66,7 +66,7 @@ SymbolConstructor::SymbolConstructor(VM& vm, Structure* structure)
 
 void SymbolConstructor::finishCreation(VM& vm, SymbolPrototype* prototype)
 {
-    Base::finishCreation(vm, prototype->classInfo()->className);
+    Base::finishCreation(vm, prototype->classInfo(vm)->className);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
 

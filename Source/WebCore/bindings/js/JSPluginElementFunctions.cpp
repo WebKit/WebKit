@@ -99,7 +99,7 @@ EncodedJSValue pluginElementPropertyGetter(ExecState* exec, EncodedJSValue thisV
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSHTMLElement* thisObject = jsDynamicDowncast<JSHTMLElement*>(JSValue::decode(thisValue));
+    JSHTMLElement* thisObject = jsDynamicDowncast<JSHTMLElement*>(vm, JSValue::decode(thisValue));
     if (!thisObject)
         return throwVMTypeError(exec, scope);
     JSObject* scriptObject = pluginScriptObject(exec, thisObject);

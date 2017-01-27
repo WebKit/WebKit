@@ -26,7 +26,6 @@
  */
 
 #include "config.h"
-
 #include "JSWorkerGlobalScopeBase.h"
 
 #include "DOMWrapperWorld.h"
@@ -72,7 +71,7 @@ void JSWorkerGlobalScopeBase::finishCreation(VM& vm, JSProxy* proxy)
     m_proxy.set(vm, this, proxy);
 
     Base::finishCreation(vm, m_proxy.get());
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 void JSWorkerGlobalScopeBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -135,22 +134,22 @@ JSValue toJS(ExecState*, WorkerGlobalScope& workerGlobalScope)
     return contextWrapper->proxy();
 }
 
-JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSValue value)
+JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(VM& vm, JSValue value)
 {
     if (!value.isObject())
         return 0;
-    const ClassInfo* classInfo = asObject(value)->classInfo();
+    const ClassInfo* classInfo = asObject(value)->classInfo(vm);
     if (classInfo == JSDedicatedWorkerGlobalScope::info())
         return jsCast<JSDedicatedWorkerGlobalScope*>(asObject(value));
     if (classInfo == JSProxy::info())
-        return jsDynamicDowncast<JSDedicatedWorkerGlobalScope*>(jsCast<JSProxy*>(asObject(value))->target());
+        return jsDynamicDowncast<JSDedicatedWorkerGlobalScope*>(vm, jsCast<JSProxy*>(asObject(value))->target());
     return 0;
 }
 
 
-JSWorkerGlobalScope* toJSWorkerGlobalScope(JSValue value)
+JSWorkerGlobalScope* toJSWorkerGlobalScope(VM& vm, JSValue value)
 {
-    return toJSDedicatedWorkerGlobalScope(value);
+    return toJSDedicatedWorkerGlobalScope(vm, value);
 }
 
 } // namespace WebCore

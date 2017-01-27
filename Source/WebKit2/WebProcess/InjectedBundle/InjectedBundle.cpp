@@ -503,7 +503,8 @@ void InjectedBundle::reportException(JSContextRef context, JSValueRef exception)
     JSLockHolder lock(execState);
 
     // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a Page.
-    if (!toJSDOMWindow(execState->lexicalGlobalObject()))
+    JSC::JSGlobalObject* globalObject = execState->lexicalGlobalObject();
+    if (!toJSDOMWindow(globalObject->vm(), globalObject))
         return;
 
     WebCore::reportException(execState, toJS(execState, exception));
@@ -564,7 +565,7 @@ void InjectedBundle::removeAllWebNotificationPermissions(WebPage* page)
 uint64_t InjectedBundle::webNotificationID(JSContextRef jsContext, JSValueRef jsNotification)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    WebCore::Notification* notification = JSNotification::toWrapped(toJS(toJS(jsContext), jsNotification));
+    WebCore::Notification* notification = JSNotification::toWrapped(toJS(jsContext)->vm(), toJS(toJS(jsContext), jsNotification));
     if (!notification)
         return 0;
     return WebProcess::singleton().supplement<WebNotificationManager>()->notificationIDForTesting(notification);
@@ -579,7 +580,7 @@ uint64_t InjectedBundle::webNotificationID(JSContextRef jsContext, JSValueRef js
 PassRefPtr<API::Data> InjectedBundle::createWebDataFromUint8Array(JSContextRef context, JSValueRef data)
 {
     JSC::ExecState* execState = toJS(context);
-    RefPtr<Uint8Array> arrayData = WebCore::toUnsharedUint8Array(toJS(execState, data));
+    RefPtr<Uint8Array> arrayData = WebCore::toUnsharedUint8Array(execState->vm(), toJS(execState, data));
     return API::Data::create(static_cast<unsigned char*>(arrayData->baseAddress()), arrayData->byteLength());
 }
 

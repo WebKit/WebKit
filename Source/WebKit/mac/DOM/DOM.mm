@@ -534,7 +534,7 @@ id <DOMEventTarget> kit(EventTarget* eventTarget)
 + (id)_nodeFromJSWrapper:(JSObjectRef)jsWrapper
 {
     JSObject* object = toJS(jsWrapper);
-    if (!object->inherits(JSNode::info()))
+    if (!object->inherits(*object->vm(), JSNode::info()))
         return nil;
     return kit(&jsCast<JSNode*>(object)->wrapped());
 }

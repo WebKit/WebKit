@@ -890,7 +890,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
     if (thisValue.isUndefinedOrNull())
         return throwVMTypeError(exec, scope, ASCIILiteral(ObjectProtoCalledOnNullOrUndefinedError));
 
-    JSObject* thisObject = jsDynamicCast<JSObject*>(thisValue);
+    JSObject* thisObject = jsDynamicCast<JSObject*>(vm, thisValue);
     if (!thisObject) {
         JSObject* prototype = exec->thisValue().synthesizePrototype(exec);
         if (UNLIKELY(!prototype))
@@ -912,7 +912,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
 
     JSValue value = exec->argument(0);
 
-    JSObject* thisObject = jsDynamicCast<JSObject*>(thisValue);
+    JSObject* thisObject = jsDynamicCast<JSObject*>(vm, thisValue);
 
     // Setting __proto__ of a primitive should have no effect.
     if (!thisObject)

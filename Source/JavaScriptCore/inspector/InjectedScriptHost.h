@@ -38,7 +38,7 @@ public:
     virtual ~InjectedScriptHost();
 
     virtual JSC::JSValue subtype(JSC::ExecState*, JSC::JSValue) { return JSC::jsUndefined(); }
-    virtual bool isHTMLAllCollection(JSC::JSValue) { return false; }
+    virtual bool isHTMLAllCollection(JSC::VM&, JSC::JSValue) { return false; }
 
     JSC::JSValue wrapper(JSC::ExecState*, JSC::JSGlobalObject*);
     void clearAllWrappers();

@@ -56,7 +56,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyModuleProtoCustomSections(ExecState* exe
     auto* globalObject = exec->lexicalGlobalObject();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(exec->thisValue());
+    JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(vm, exec->thisValue());
     if (!module)
         throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Module.prototype.customSections called with non WebAssembly.Module |this| value")));
     RETURN_IF_EXCEPTION(throwScope, { });

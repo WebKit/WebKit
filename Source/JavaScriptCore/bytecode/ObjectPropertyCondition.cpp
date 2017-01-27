@@ -162,9 +162,9 @@ void ObjectPropertyCondition::validateReferences(const TrackedReferences& tracke
     m_condition.validateReferences(tracked);
 }
 
-ObjectPropertyCondition ObjectPropertyCondition::attemptToMakeEquivalenceWithoutBarrier() const
+ObjectPropertyCondition ObjectPropertyCondition::attemptToMakeEquivalenceWithoutBarrier(VM& vm) const
 {
-    PropertyCondition result = condition().attemptToMakeEquivalenceWithoutBarrier(object());
+    PropertyCondition result = condition().attemptToMakeEquivalenceWithoutBarrier(vm, object());
     if (!result)
         return ObjectPropertyCondition();
     return ObjectPropertyCondition(object(), result);

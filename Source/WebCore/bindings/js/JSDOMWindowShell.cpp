@@ -54,7 +54,7 @@ JSDOMWindowShell::JSDOMWindowShell(VM& vm, Structure* structure, DOMWrapperWorld
 void JSDOMWindowShell::finishCreation(VM& vm, RefPtr<DOMWindow>&& window)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     setWindow(WTFMove(window));
 }
 
@@ -106,9 +106,9 @@ DOMWindow& JSDOMWindowShell::wrapped() const
     return window()->wrapped();
 }
 
-DOMWindow* JSDOMWindowShell::toWrapped(JSObject* value)
+DOMWindow* JSDOMWindowShell::toWrapped(VM& vm, JSObject* value)
 {
-    auto* wrapper = jsDynamicDowncast<JSDOMWindowShell*>(value);
+    auto* wrapper = jsDynamicDowncast<JSDOMWindowShell*>(vm, value);
     if (!wrapper)
         return nullptr;
     return &wrapper->window()->wrapped();

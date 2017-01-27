@@ -34,6 +34,7 @@
 
 namespace JSC {
 
+class VM;
 class ArrayBuffer;
 class ArrayBufferView;
 class JSArrayBuffer;
@@ -129,7 +130,7 @@ public:
     inline void unpin();
     inline void pinAndLock();
 
-    JS_EXPORT_PRIVATE bool transferTo(ArrayBufferContents&);
+    JS_EXPORT_PRIVATE bool transferTo(VM&, ArrayBufferContents&);
     bool isNeutered() { return !m_contents.m_data; }
     
     static ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_data); }

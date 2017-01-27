@@ -42,7 +42,7 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
 
     JSFunction* callee = jsCast<JSFunction*>(exec->jsCallee());
     
-    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(exec->thisValue());
+    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(vm, exec->thisValue());
     if (!thisObject)
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver of slice must be an array buffer."));
     

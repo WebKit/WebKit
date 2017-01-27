@@ -63,7 +63,7 @@ JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, std::uniq
 void JSWebAssemblyModule::finishCreation(VM& vm, SymbolTable* exportSymbolTable)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     m_exportSymbolTable.set(vm, this, exportSymbolTable);
 }
 

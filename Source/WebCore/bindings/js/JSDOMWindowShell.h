@@ -48,7 +48,7 @@ namespace WebCore {
         DECLARE_INFO;
 
         DOMWindow& wrapped() const;
-        static WEBCORE_EXPORT DOMWindow* toWrapped(JSC::JSObject*);
+        static WEBCORE_EXPORT DOMWindow* toWrapped(JSC::VM&, JSC::JSObject*);
 
         static JSDOMWindowShell* create(JSC::VM& vm, RefPtr<DOMWindow>&& window, JSC::Structure* structure, DOMWrapperWorld& world)
         {

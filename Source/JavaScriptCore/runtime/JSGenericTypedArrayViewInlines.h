@@ -245,7 +245,7 @@ bool JSGenericTypedArrayView<Adaptor>::set(
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const ClassInfo* ci = object->classInfo();
+    const ClassInfo* ci = object->classInfo(vm);
     if (ci->typedArrayStorageType == Adaptor::typeValue) {
         // The super fast case: we can just memcpy since we're the same type.
         JSGenericTypedArrayView* other = jsCast<JSGenericTypedArrayView*>(object);

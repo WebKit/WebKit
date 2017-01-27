@@ -84,7 +84,7 @@ ReflectObject::ReflectObject(VM& vm, Structure* structure)
 void ReflectObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().ownKeysPrivateName(), reflectObjectOwnKeys, DontEnum | DontDelete | ReadOnly, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().getOwnPropertyDescriptorPrivateName(), reflectObjectGetOwnPropertyDescriptor, DontEnum | DontDelete | ReadOnly, 2);
@@ -115,7 +115,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectConstruct(ExecState* exec)
     }
 
     MarkedArgumentBuffer arguments;
-    JSObject* argumentsObject = jsDynamicCast<JSObject*>(exec->argument(1));
+    JSObject* argumentsObject = jsDynamicCast<JSObject*>(vm, exec->argument(1));
     if (!argumentsObject)
         return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Reflect.construct requires the second argument be an object")));
 

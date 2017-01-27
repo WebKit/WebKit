@@ -109,7 +109,7 @@ JSTestCustomNamedGetter::JSTestCustomNamedGetter(Structure* structure, JSDOMGlob
 void JSTestCustomNamedGetter::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -166,14 +166,14 @@ bool JSTestCustomNamedGetter::getOwnPropertySlotByIndex(JSObject* object, ExecSt
 
 template<> inline JSTestCustomNamedGetter* BindingCaller<JSTestCustomNamedGetter>::castForOperation(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestCustomNamedGetter*>(state.thisValue());
+    return jsDynamicDowncast<JSTestCustomNamedGetter*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestCustomNamedGetterConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestCustomNamedGetterPrototype* domObject = jsDynamicDowncast<JSTestCustomNamedGetterPrototype*>(JSValue::decode(thisValue));
+    JSTestCustomNamedGetterPrototype* domObject = jsDynamicDowncast<JSTestCustomNamedGetterPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestCustomNamedGetter::getConstructor(state->vm(), domObject->globalObject()));
@@ -184,7 +184,7 @@ bool setJSTestCustomNamedGetterConstructor(ExecState* state, EncodedJSValue this
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestCustomNamedGetterPrototype* domObject = jsDynamicDowncast<JSTestCustomNamedGetterPrototype*>(JSValue::decode(thisValue));
+    JSTestCustomNamedGetterPrototype* domObject = jsDynamicDowncast<JSTestCustomNamedGetterPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -270,9 +270,9 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCu
     return wrap(state, globalObject, impl);
 }
 
-TestCustomNamedGetter* JSTestCustomNamedGetter::toWrapped(JSC::JSValue value)
+TestCustomNamedGetter* JSTestCustomNamedGetter::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestCustomNamedGetter*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestCustomNamedGetter*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

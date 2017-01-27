@@ -36,10 +36,11 @@ namespace WebCore {
 
 CryptoOperationData cryptoOperationDataFromJSValue(ExecState& state, ThrowScope& scope, JSValue value)
 {
-    if (auto* buffer = toUnsharedArrayBuffer(value))
+    VM& vm = state.vm();
+    if (auto* buffer = toUnsharedArrayBuffer(vm, value))
         return { static_cast<uint8_t*>(buffer->data()), buffer->byteLength() };
 
-    if (auto bufferView = toUnsharedArrayBufferView(value))
+    if (auto bufferView = toUnsharedArrayBufferView(vm, value))
         return { static_cast<uint8_t*>(bufferView->baseAddress()), bufferView->byteLength() };
 
     throwTypeError(&state, scope, ASCIILiteral("Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData"));

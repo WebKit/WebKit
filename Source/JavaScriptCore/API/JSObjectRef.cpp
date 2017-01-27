@@ -257,13 +257,14 @@ void JSObjectSetPrototype(JSContextRef ctx, JSObjectRef object, JSValueRef value
         return;
     }
     ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSLockHolder locker(exec);
 
     JSObject* jsObject = toJS(object);
     JSValue jsValue = toJS(exec, value);
 
-    if (JSProxy* proxy = jsDynamicCast<JSProxy*>(jsObject)) {
-        if (JSGlobalObject* globalObject = jsDynamicCast<JSGlobalObject*>(proxy->target())) {
+    if (JSProxy* proxy = jsDynamicCast<JSProxy*>(vm, jsObject)) {
+        if (JSGlobalObject* globalObject = jsDynamicCast<JSGlobalObject*>(vm, proxy->target())) {
             globalObject->resetPrototype(exec->vm(), jsValue.isObject() ? jsValue : jsNull());
             return;
         }
@@ -385,24 +386,25 @@ bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef pr
 // during destruction.
 static const ClassInfo* classInfoPrivate(JSObject* jsObject)
 {
-    VM* vm = jsObject->vm();
+    VM& vm = *jsObject->vm();
     
-    if (vm->currentlyDestructingCallbackObject != jsObject)
-        return jsObject->classInfo();
+    if (vm.currentlyDestructingCallbackObject != jsObject)
+        return jsObject->classInfo(vm);
 
-    return vm->currentlyDestructingCallbackObjectClassInfo;
+    return vm.currentlyDestructingCallbackObjectClassInfo;
 }
 
 void* JSObjectGetPrivate(JSObjectRef object)
 {
     JSObject* jsObject = uncheckedToJS(object);
+    VM& vm = *jsObject->vm();
 
     const ClassInfo* classInfo = classInfoPrivate(jsObject);
     
     // Get wrapped object if proxied
     if (classInfo->isSubClassOf(JSProxy::info())) {
         jsObject = static_cast<JSProxy*>(jsObject)->target();
-        classInfo = jsObject->classInfo();
+        classInfo = jsObject->classInfo(vm);
     }
 
     if (classInfo->isSubClassOf(JSCallbackObject<JSGlobalObject>::info()))
@@ -420,13 +422,14 @@ void* JSObjectGetPrivate(JSObjectRef object)
 bool JSObjectSetPrivate(JSObjectRef object, void* data)
 {
     JSObject* jsObject = uncheckedToJS(object);
+    VM& vm = *jsObject->vm();
 
     const ClassInfo* classInfo = classInfoPrivate(jsObject);
     
     // Get wrapped object if proxied
     if (classInfo->isSubClassOf(JSProxy::info())) {
         jsObject = static_cast<JSProxy*>(jsObject)->target();
-        classInfo = jsObject->classInfo();
+        classInfo = jsObject->classInfo(vm);
     }
 
     if (classInfo->isSubClassOf(JSCallbackObject<JSGlobalObject>::info())) {
@@ -450,21 +453,23 @@ bool JSObjectSetPrivate(JSObjectRef object, void* data)
 JSValueRef JSObjectGetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)
 {
     ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSLockHolder locker(exec);
     JSObject* jsObject = toJS(object);
     JSValue result;
     Identifier name(propertyName->identifier(&exec->vm()));
 
+
     // Get wrapped object if proxied
-    if (jsObject->inherits(JSProxy::info()))
+    if (jsObject->inherits(vm, JSProxy::info()))
         jsObject = jsCast<JSProxy*>(jsObject)->target();
 
-    if (jsObject->inherits(JSCallbackObject<JSGlobalObject>::info()))
+    if (jsObject->inherits(vm, JSCallbackObject<JSGlobalObject>::info()))
         result = jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivateProperty(name);
-    else if (jsObject->inherits(JSCallbackObject<JSDestructibleObject>::info()))
+    else if (jsObject->inherits(vm, JSCallbackObject<JSDestructibleObject>::info()))
         result = jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->getPrivateProperty(name);
 #if JSC_OBJC_API_ENABLED
-    else if (jsObject->inherits(JSCallbackObject<JSAPIWrapperObject>::info()))
+    else if (jsObject->inherits(vm, JSCallbackObject<JSAPIWrapperObject>::info()))
         result = jsCast<JSCallbackObject<JSAPIWrapperObject>*>(jsObject)->getPrivateProperty(name);
 #endif
     return toRef(exec, result);
@@ -473,25 +478,26 @@ JSValueRef JSObjectGetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSSt
 bool JSObjectSetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value)
 {
     ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSLockHolder locker(exec);
     JSObject* jsObject = toJS(object);
     JSValue jsValue = value ? toJS(exec, value) : JSValue();
     Identifier name(propertyName->identifier(&exec->vm()));
 
     // Get wrapped object if proxied
-    if (jsObject->inherits(JSProxy::info()))
+    if (jsObject->inherits(vm, JSProxy::info()))
         jsObject = jsCast<JSProxy*>(jsObject)->target();
 
-    if (jsObject->inherits(JSCallbackObject<JSGlobalObject>::info())) {
+    if (jsObject->inherits(vm, JSCallbackObject<JSGlobalObject>::info())) {
         jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivateProperty(exec->vm(), name, jsValue);
         return true;
     }
-    if (jsObject->inherits(JSCallbackObject<JSDestructibleObject>::info())) {
+    if (jsObject->inherits(vm, JSCallbackObject<JSDestructibleObject>::info())) {
         jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->setPrivateProperty(exec->vm(), name, jsValue);
         return true;
     }
 #if JSC_OBJC_API_ENABLED
-    if (jsObject->inherits(JSCallbackObject<JSAPIWrapperObject>::info())) {
+    if (jsObject->inherits(vm, JSCallbackObject<JSAPIWrapperObject>::info())) {
         jsCast<JSCallbackObject<JSAPIWrapperObject>*>(jsObject)->setPrivateProperty(exec->vm(), name, jsValue);
         return true;
     }
@@ -502,24 +508,25 @@ bool JSObjectSetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRe
 bool JSObjectDeletePrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)
 {
     ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSLockHolder locker(exec);
     JSObject* jsObject = toJS(object);
     Identifier name(propertyName->identifier(&exec->vm()));
 
     // Get wrapped object if proxied
-    if (jsObject->inherits(JSProxy::info()))
+    if (jsObject->inherits(vm, JSProxy::info()))
         jsObject = jsCast<JSProxy*>(jsObject)->target();
 
-    if (jsObject->inherits(JSCallbackObject<JSGlobalObject>::info())) {
+    if (jsObject->inherits(vm, JSCallbackObject<JSGlobalObject>::info())) {
         jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->deletePrivateProperty(name);
         return true;
     }
-    if (jsObject->inherits(JSCallbackObject<JSDestructibleObject>::info())) {
+    if (jsObject->inherits(vm, JSCallbackObject<JSDestructibleObject>::info())) {
         jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->deletePrivateProperty(name);
         return true;
     }
 #if JSC_OBJC_API_ENABLED
-    if (jsObject->inherits(JSCallbackObject<JSAPIWrapperObject>::info())) {
+    if (jsObject->inherits(vm, JSCallbackObject<JSAPIWrapperObject>::info())) {
         jsCast<JSCallbackObject<JSAPIWrapperObject>*>(jsObject)->deletePrivateProperty(name);
         return true;
     }

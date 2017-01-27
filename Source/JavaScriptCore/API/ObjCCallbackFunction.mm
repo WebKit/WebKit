@@ -715,9 +715,9 @@ JSObjectRef objCCallbackFunctionForBlock(JSContext *context, id target)
     return objCCallbackFunctionForInvocation(context, invocation, CallbackBlock, nil, signature);
 }
 
-id tryUnwrapConstructor(JSObjectRef object)
+id tryUnwrapConstructor(JSC::VM* vm, JSObjectRef object)
 {
-    if (!toJS(object)->inherits(JSC::ObjCCallbackFunction::info()))
+    if (!toJS(object)->inherits(*vm, JSC::ObjCCallbackFunction::info()))
         return nil;
     JSC::ObjCCallbackFunctionImpl* impl = static_cast<JSC::ObjCCallbackFunction*>(toJS(object))->impl();
     if (!impl->isConstructible())

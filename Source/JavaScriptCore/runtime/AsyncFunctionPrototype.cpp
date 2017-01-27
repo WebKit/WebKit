@@ -48,7 +48,7 @@ AsyncFunctionPrototype::AsyncFunctionPrototype(VM& vm, Structure* structure)
 void AsyncFunctionPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "AsyncFunction"), DontEnum | ReadOnly);
     vm.prototypeMap.addPrototype(this);

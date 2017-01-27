@@ -43,7 +43,7 @@ ObjCRuntimeObject::ObjCRuntimeObject(VM& vm, Structure* structure, RefPtr<ObjcIn
 void ObjCRuntimeObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(vm, &s_info));
 }
 
 ObjcInstance* ObjCRuntimeObject::getInternalObjCInstance() const

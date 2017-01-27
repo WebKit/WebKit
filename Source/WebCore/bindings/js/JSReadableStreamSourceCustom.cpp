@@ -37,11 +37,12 @@ namespace WebCore {
 
 static void startReadableStream(JSC::ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    JSReadableStreamSource* source = jsDynamicDowncast<JSReadableStreamSource*>(state.thisValue());
+    VM& vm = state.vm();
+    JSReadableStreamSource* source = jsDynamicDowncast<JSReadableStreamSource*>(vm, state.thisValue());
     ASSERT(source);
 
     ASSERT(state.argumentCount());
-    JSReadableStreamDefaultController* controller = jsDynamicDowncast<JSReadableStreamDefaultController*>(state.uncheckedArgument(0));
+    JSReadableStreamDefaultController* controller = jsDynamicDowncast<JSReadableStreamDefaultController*>(vm, state.uncheckedArgument(0));
     ASSERT(controller);
 
     source->wrapped().start(ReadableStreamDefaultController(controller), WTFMove(promise));
@@ -49,18 +50,20 @@ static void startReadableStream(JSC::ExecState& state, Ref<DeferredPromise>&& pr
 
 JSValue JSReadableStreamSource::start(ExecState& state)
 {
+    VM& vm = state.vm();
     ASSERT(state.argumentCount());
-    JSReadableStreamDefaultController* controller = jsDynamicDowncast<JSReadableStreamDefaultController*>(state.uncheckedArgument(0));
+    JSReadableStreamDefaultController* controller = jsDynamicDowncast<JSReadableStreamDefaultController*>(vm, state.uncheckedArgument(0));
     ASSERT(controller);
 
-    m_controller.set(state.vm(), this, controller);
+    m_controller.set(vm, this, controller);
 
     return callPromiseFunction<startReadableStream, PromiseExecutionScope::WindowOrWorker>(state);
 }
 
 static void pullReadableStream(JSC::ExecState& state, Ref<DeferredPromise>&& promise)
 {
-    JSReadableStreamSource* source = jsDynamicDowncast<JSReadableStreamSource*>(state.thisValue());
+    VM& vm = state.vm();
+    JSReadableStreamSource* source = jsDynamicDowncast<JSReadableStreamSource*>(vm, state.thisValue());
     ASSERT(source);
 
     source->wrapped().pull(WTFMove(promise));

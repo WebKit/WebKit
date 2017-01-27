@@ -48,7 +48,7 @@ RegExpObject::RegExpObject(VM& vm, Structure* structure, RegExp* regExp)
 void RegExpObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)

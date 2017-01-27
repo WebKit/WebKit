@@ -40,7 +40,7 @@ typedef JSObject* (*ErrorFactory)(ExecState*, const String&, ErrorInstance::Sour
 String defaultSourceAppender(const String&, const String&, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred);
 
 JSObject* createTerminatedExecutionException(VM*);
-JS_EXPORT_PRIVATE bool isTerminatedExecutionException(Exception*);
+JS_EXPORT_PRIVATE bool isTerminatedExecutionException(VM&, Exception*);
 JS_EXPORT_PRIVATE JSObject* createError(ExecState*, JSValue, const String&, ErrorInstance::SourceAppender);
 JS_EXPORT_PRIVATE JSObject* createStackOverflowError(ExecState*);
 JSObject* createUndefinedVariableError(ExecState*, const Identifier&);

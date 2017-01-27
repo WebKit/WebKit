@@ -85,21 +85,21 @@ public:
     
     InternalFunction* internalFunction() const
     {
-        return jsDynamicCast<InternalFunction*>(m_callee);
+        return jsDynamicCast<InternalFunction*>(*m_callee->vm(), m_callee);
     }
     
     JSFunction* function() const
     {
-        return jsDynamicCast<JSFunction*>(m_callee);
+        return jsDynamicCast<JSFunction*>(*m_callee->vm(), m_callee);
     }
     
-    bool isClosureCall() const { return !!jsDynamicCast<ExecutableBase*>(m_callee); }
+    bool isClosureCall() const { return !!jsDynamicCast<ExecutableBase*>(*m_callee->vm(), m_callee); }
     
     ExecutableBase* executable() const
     {
         if (JSFunction* function = this->function())
             return function->executable();
-        return jsDynamicCast<ExecutableBase*>(m_callee);
+        return jsDynamicCast<ExecutableBase*>(*m_callee->vm(), m_callee);
     }
     
     JSCell* nonExecutableCallee() const
@@ -118,14 +118,14 @@ public:
     FunctionExecutable* functionExecutable() const
     {
         if (ExecutableBase* executable = this->executable())
-            return jsDynamicCast<FunctionExecutable*>(executable);
+            return jsDynamicCast<FunctionExecutable*>(*m_callee->vm(), executable);
         return nullptr;
     }
 
     NativeExecutable* nativeExecutable() const
     {
         if (ExecutableBase* executable = this->executable())
-            return jsDynamicCast<NativeExecutable*>(executable);
+            return jsDynamicCast<NativeExecutable*>(*m_callee->vm(), executable);
         return nullptr;
     }
 

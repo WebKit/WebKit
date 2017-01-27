@@ -42,14 +42,14 @@ DateInstance::DateInstance(VM& vm, Structure* structure)
 void DateInstance::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     setInternalValue(vm, jsNaN());
 }
 
 void DateInstance::finishCreation(VM& vm, double time)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     setInternalValue(vm, jsNumber(timeClip(time)));
 }
 

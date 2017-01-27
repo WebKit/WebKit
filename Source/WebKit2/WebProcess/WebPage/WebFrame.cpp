@@ -681,13 +681,12 @@ void WebFrame::stopLoading()
 
 WebFrame* WebFrame::frameForContext(JSContextRef context)
 {
-    JSObjectRef globalObjectRef = JSContextGetGlobalObject(context);
-    JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
-    if (strcmp(globalObjectObj->classInfo()->className, "JSDOMWindowShell") != 0)
-        return 0;
 
-    Frame* frame = static_cast<JSDOMWindowShell*>(globalObjectObj)->window()->wrapped().frame();
-    return WebFrame::fromCoreFrame(*frame);
+    JSC::JSGlobalObject* globalObjectObj = toJS(context)->lexicalGlobalObject();
+    JSDOMWindow* window = jsDynamicDowncast<JSDOMWindow*>(globalObjectObj->vm(), globalObjectObj);
+    if (!window)
+        return nullptr;
+    return WebFrame::fromCoreFrame(*(window->wrapped().frame()));
 }
 
 JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, InjectedBundleScriptWorld* world)
@@ -728,7 +727,7 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleFileHandle* fileHandle, Inj
 
 String WebFrame::counterValue(JSObjectRef element)
 {
-    if (!toJS(element)->inherits(JSElement::info()))
+    if (!toJS(element)->inherits(*toJS(element)->vm(), JSElement::info()))
         return String();
 
     return counterValueForElement(&jsCast<JSElement*>(toJS(element))->wrapped());

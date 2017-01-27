@@ -576,7 +576,7 @@ ALWAYS_INLINE static void notifyDebuggerOfUnwinding(CallFrame* callFrame)
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     if (Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger()) {
         SuspendExceptionScope scope(&vm);
-        if (jsDynamicCast<JSFunction*>(callFrame->jsCallee()))
+        if (jsDynamicCast<JSFunction*>(vm, callFrame->jsCallee()))
             debugger->unwindEvent(callFrame);
         else
             debugger->didExecuteProgram(callFrame);
@@ -681,7 +681,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
     HandlerInfo* handler = nullptr;
-    UnwindFunctor functor(callFrame, isTerminatedExecutionException(exception), codeBlock, handler);
+    UnwindFunctor functor(callFrame, isTerminatedExecutionException(vm, exception), codeBlock, handler);
     callFrame->iterate(functor);
     if (!handler)
         return nullptr;
@@ -691,6 +691,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
 
 void Interpreter::notifyDebuggerOfExceptionToBeThrown(CallFrame* callFrame, Exception* exception)
 {
+    VM& vm = callFrame->vm();
     Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger();
     if (debugger && debugger->needsExceptionCallbacks() && !exception->didNotifyInspectorOfThrow()) {
         // This code assumes that if the debugger is enabled then there is no inlining.
@@ -699,7 +700,7 @@ void Interpreter::notifyDebuggerOfExceptionToBeThrown(CallFrame* callFrame, Exce
         // https://bugs.webkit.org/show_bug.cgi?id=121754
 
         bool hasCatchHandler;
-        bool isTermination = isTerminatedExecutionException(exception);
+        bool isTermination = isTerminatedExecutionException(vm, exception);
         if (isTermination)
             hasCatchHandler = false;
         else {
@@ -850,7 +851,7 @@ failedJSONP:
     {
         CodeBlock* tempCodeBlock;
         JSObject* error = program->prepareForExecution<ProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
-        ASSERT(!throwScope.exception() || throwScope.exception() == jsDynamicCast<Exception*>(error));
+        ASSERT(!throwScope.exception() || throwScope.exception() == jsDynamicCast<Exception*>(vm, error));
         if (error)
             return checkedReturn(throwException(callFrame, throwScope, error));
         codeBlock = jsCast<ProgramCodeBlock*>(tempCodeBlock);

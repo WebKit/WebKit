@@ -108,7 +108,7 @@ JSTestCustomConstructorWithNoInterfaceObject::JSTestCustomConstructorWithNoInter
 void JSTestCustomConstructorWithNoInterfaceObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -132,7 +132,7 @@ EncodedJSValue jsTestCustomConstructorWithNoInterfaceObjectConstructor(ExecState
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestCustomConstructorWithNoInterfaceObjectPrototype* domObject = jsDynamicDowncast<JSTestCustomConstructorWithNoInterfaceObjectPrototype*>(JSValue::decode(thisValue));
+    JSTestCustomConstructorWithNoInterfaceObjectPrototype* domObject = jsDynamicDowncast<JSTestCustomConstructorWithNoInterfaceObjectPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     JSValue constructor = JSTestCustomConstructorWithNoInterfaceObjectConstructor::create(state->vm(), JSTestCustomConstructorWithNoInterfaceObjectConstructor::createStructure(state->vm(), *domObject->globalObject(), domObject->globalObject()->objectPrototype()), *jsCast<JSDOMGlobalObject*>(domObject->globalObject()));
@@ -146,7 +146,7 @@ bool setJSTestCustomConstructorWithNoInterfaceObjectConstructor(ExecState* state
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestCustomConstructorWithNoInterfaceObjectPrototype* domObject = jsDynamicDowncast<JSTestCustomConstructorWithNoInterfaceObjectPrototype*>(JSValue::decode(thisValue));
+    JSTestCustomConstructorWithNoInterfaceObjectPrototype* domObject = jsDynamicDowncast<JSTestCustomConstructorWithNoInterfaceObjectPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -207,9 +207,9 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCu
     return wrap(state, globalObject, impl);
 }
 
-TestCustomConstructorWithNoInterfaceObject* JSTestCustomConstructorWithNoInterfaceObject::toWrapped(JSC::JSValue value)
+TestCustomConstructorWithNoInterfaceObject* JSTestCustomConstructorWithNoInterfaceObject::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestCustomConstructorWithNoInterfaceObject*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestCustomConstructorWithNoInterfaceObject*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

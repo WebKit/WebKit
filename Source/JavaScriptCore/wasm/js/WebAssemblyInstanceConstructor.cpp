@@ -60,7 +60,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
     auto* globalObject = exec->lexicalGlobalObject();
 
     // If moduleObject is not a WebAssembly.Module instance, a TypeError is thrown.
-    JSWebAssemblyModule* jsModule = jsDynamicCast<JSWebAssemblyModule*>(exec->argument(0));
+    JSWebAssemblyModule* jsModule = jsDynamicCast<JSWebAssemblyModule*>(vm, exec->argument(0));
     if (!jsModule)
         return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("first argument to WebAssembly.Instance must be a WebAssembly.Module"), defaultSourceAppender, runtimeTypeForValue(exec->argument(0)))));
     const Wasm::ModuleInformation& moduleInformation = jsModule->moduleInformation();
@@ -119,7 +119,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
                 return JSValue::encode(throwException(exec, throwScope, createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("import function must be callable"))));
             JSCell* cell = value.asCell();
             // ii. If v is an Exported Function Exotic Object:
-            if (WebAssemblyFunction* importedExport = jsDynamicCast<WebAssemblyFunction*>(cell)) {
+            if (WebAssemblyFunction* importedExport = jsDynamicCast<WebAssemblyFunction*>(vm, cell)) {
                 // a. If the signature of v does not match the signature of i, throw a WebAssembly.LinkError.
                 Wasm::SignatureIndex importedSignatureIndex = importedExport->signatureIndex();
                 Wasm::SignatureIndex expectedSignatureIndex = moduleInformation.importFunctionSignatureIndices[import.kindIndex];
@@ -140,7 +140,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
             RELEASE_ASSERT(!hasTableImport); // This should be guaranteed by a validation failure.
             // 7. Otherwise (i is a table import):
             hasTableImport = true;
-            JSWebAssemblyTable* table = jsDynamicCast<JSWebAssemblyTable*>(value);
+            JSWebAssemblyTable* table = jsDynamicCast<JSWebAssemblyTable*>(vm, value);
             // i. If v is not a WebAssembly.Table object, throw a WebAssembly.LinkError.
             if (!table)
                 return JSValue::encode(throwException(exec, throwScope, createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Table import is not an instance of WebAssembly.Table"))));
@@ -172,7 +172,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
             RELEASE_ASSERT(!hasMemoryImport); // This should be guaranteed by a validation failure.
             RELEASE_ASSERT(moduleInformation.memory);
             hasMemoryImport = true;
-            JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(value);
+            JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(vm, value);
             // i. If v is not a WebAssembly.Memory object, throw a WebAssembly.LinkError.
             if (!memory)
                 return JSValue::encode(throwException(exec, throwScope, createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Memory import is not an instance of WebAssembly.Memory"))));

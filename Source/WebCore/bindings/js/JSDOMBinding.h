@@ -271,27 +271,27 @@ JSC::JSValue toJSIterator(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSValue);
 template<typename T> JSC::JSValue toJSIterator(JSC::ExecState&, JSDOMGlobalObject&, const T&);
 JSC::JSValue toJSIteratorEnd(JSC::ExecState&);
 
-RefPtr<JSC::ArrayBufferView> toPossiblySharedArrayBufferView(JSC::JSValue);
-RefPtr<JSC::Int8Array> toPossiblySharedInt8Array(JSC::JSValue);
-RefPtr<JSC::Int16Array> toPossiblySharedInt16Array(JSC::JSValue);
-RefPtr<JSC::Int32Array> toPossiblySharedInt32Array(JSC::JSValue);
-RefPtr<JSC::Uint8Array> toPossiblySharedUint8Array(JSC::JSValue);
-RefPtr<JSC::Uint8ClampedArray> toPossiblySharedUint8ClampedArray(JSC::JSValue);
-RefPtr<JSC::Uint16Array> toPossiblySharedUint16Array(JSC::JSValue);
-RefPtr<JSC::Uint32Array> toPossiblySharedUint32Array(JSC::JSValue);
-RefPtr<JSC::Float32Array> toPossiblySharedFloat32Array(JSC::JSValue);
-RefPtr<JSC::Float64Array> toPossiblySharedFloat64Array(JSC::JSValue);
+RefPtr<JSC::ArrayBufferView> toPossiblySharedArrayBufferView(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Int8Array> toPossiblySharedInt8Array(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Int16Array> toPossiblySharedInt16Array(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Int32Array> toPossiblySharedInt32Array(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Uint8Array> toPossiblySharedUint8Array(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Uint8ClampedArray> toPossiblySharedUint8ClampedArray(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Uint16Array> toPossiblySharedUint16Array(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Uint32Array> toPossiblySharedUint32Array(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Float32Array> toPossiblySharedFloat32Array(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Float64Array> toPossiblySharedFloat64Array(JSC::VM&, JSC::JSValue);
 
-RefPtr<JSC::ArrayBufferView> toUnsharedArrayBufferView(JSC::JSValue);
-RefPtr<JSC::Int8Array> toUnsharedInt8Array(JSC::JSValue);
-RefPtr<JSC::Int16Array> toUnsharedInt16Array(JSC::JSValue);
-RefPtr<JSC::Int32Array> toUnsharedInt32Array(JSC::JSValue);
-RefPtr<JSC::Uint8Array> toUnsharedUint8Array(JSC::JSValue);
-RefPtr<JSC::Uint8ClampedArray> toUnsharedUint8ClampedArray(JSC::JSValue);
-RefPtr<JSC::Uint16Array> toUnsharedUint16Array(JSC::JSValue);
-RefPtr<JSC::Uint32Array> toUnsharedUint32Array(JSC::JSValue);
-RefPtr<JSC::Float32Array> toUnsharedFloat32Array(JSC::JSValue);
-RefPtr<JSC::Float64Array> toUnsharedFloat64Array(JSC::JSValue);
+RefPtr<JSC::ArrayBufferView> toUnsharedArrayBufferView(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Int8Array> toUnsharedInt8Array(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Int16Array> toUnsharedInt16Array(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Int32Array> toUnsharedInt32Array(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Uint8Array> toUnsharedUint8Array(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Uint8ClampedArray> toUnsharedUint8ClampedArray(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Uint16Array> toUnsharedUint16Array(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Uint32Array> toUnsharedUint32Array(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Float32Array> toUnsharedFloat32Array(JSC::VM&, JSC::JSValue);
+RefPtr<JSC::Float64Array> toUnsharedFloat64Array(JSC::VM&, JSC::JSValue);
 
 template<typename T, typename JSType> Vector<Ref<T>> toRefNativeArray(JSC::ExecState&, JSC::JSValue);
 WEBCORE_EXPORT bool hasIteratorMethod(JSC::ExecState&, JSC::JSValue);
@@ -567,7 +567,7 @@ template<typename DOMClass> inline JSC::JSValue wrap(JSC::ExecState* state, JSDO
 template<typename JSClass> inline JSClass& castThisValue(JSC::ExecState& state)
 {
     auto thisValue = state.thisValue();
-    auto castedThis = jsDynamicDowncast<JSClass*>(thisValue);
+    auto castedThis = jsDynamicDowncast<JSClass*>(state.vm(), thisValue);
     ASSERT(castedThis);
     return *castedThis;
 }
@@ -691,41 +691,41 @@ inline JSC::JSValue toJSIteratorEnd(JSC::ExecState& state)
     return createIteratorResultObject(&state, JSC::jsUndefined(), true);
 }
 
-inline RefPtr<JSC::ArrayBufferView> toPossiblySharedArrayBufferView(JSC::JSValue value)
+inline RefPtr<JSC::ArrayBufferView> toPossiblySharedArrayBufferView(JSC::VM& vm, JSC::JSValue value)
 {
-    auto* wrapper = jsDynamicDowncast<JSC::JSArrayBufferView*>(value);
+    auto* wrapper = jsDynamicDowncast<JSC::JSArrayBufferView*>(vm, value);
     if (!wrapper)
         return nullptr;
     return wrapper->possiblySharedImpl();
 }
 
-inline RefPtr<JSC::ArrayBufferView> toUnsharedArrayBufferView(JSC::JSValue value)
+inline RefPtr<JSC::ArrayBufferView> toUnsharedArrayBufferView(JSC::VM& vm, JSC::JSValue value)
 {
-    auto result = toPossiblySharedArrayBufferView(value);
+    auto result = toPossiblySharedArrayBufferView(vm, value);
     if (!result || result->isShared())
         return nullptr;
     return result;
 }
 
-inline RefPtr<JSC::Int8Array> toPossiblySharedInt8Array(JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Int8Adaptor>(value); }
-inline RefPtr<JSC::Int16Array> toPossiblySharedInt16Array(JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Int16Adaptor>(value); }
-inline RefPtr<JSC::Int32Array> toPossiblySharedInt32Array(JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Int32Adaptor>(value); }
-inline RefPtr<JSC::Uint8Array> toPossiblySharedUint8Array(JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Uint8Adaptor>(value); }
-inline RefPtr<JSC::Uint8ClampedArray> toPossiblySharedUint8ClampedArray(JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Uint8ClampedAdaptor>(value); }
-inline RefPtr<JSC::Uint16Array> toPossiblySharedUint16Array(JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Uint16Adaptor>(value); }
-inline RefPtr<JSC::Uint32Array> toPossiblySharedUint32Array(JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Uint32Adaptor>(value); }
-inline RefPtr<JSC::Float32Array> toPossiblySharedFloat32Array(JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Float32Adaptor>(value); }
-inline RefPtr<JSC::Float64Array> toPossiblySharedFloat64Array(JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Float64Adaptor>(value); }
+inline RefPtr<JSC::Int8Array> toPossiblySharedInt8Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Int8Adaptor>(vm, value); }
+inline RefPtr<JSC::Int16Array> toPossiblySharedInt16Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Int16Adaptor>(vm, value); }
+inline RefPtr<JSC::Int32Array> toPossiblySharedInt32Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Int32Adaptor>(vm, value); }
+inline RefPtr<JSC::Uint8Array> toPossiblySharedUint8Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Uint8Adaptor>(vm, value); }
+inline RefPtr<JSC::Uint8ClampedArray> toPossiblySharedUint8ClampedArray(JSC::VM& vm, JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Uint8ClampedAdaptor>(vm, value); }
+inline RefPtr<JSC::Uint16Array> toPossiblySharedUint16Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Uint16Adaptor>(vm, value); }
+inline RefPtr<JSC::Uint32Array> toPossiblySharedUint32Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Uint32Adaptor>(vm, value); }
+inline RefPtr<JSC::Float32Array> toPossiblySharedFloat32Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Float32Adaptor>(vm, value); }
+inline RefPtr<JSC::Float64Array> toPossiblySharedFloat64Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Float64Adaptor>(vm, value); }
 
-inline RefPtr<JSC::Int8Array> toUnsharedInt8Array(JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Int8Adaptor>(value); }
-inline RefPtr<JSC::Int16Array> toUnsharedInt16Array(JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Int16Adaptor>(value); }
-inline RefPtr<JSC::Int32Array> toUnsharedInt32Array(JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Int32Adaptor>(value); }
-inline RefPtr<JSC::Uint8Array> toUnsharedUint8Array(JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Uint8Adaptor>(value); }
-inline RefPtr<JSC::Uint8ClampedArray> toUnsharedUint8ClampedArray(JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Uint8ClampedAdaptor>(value); }
-inline RefPtr<JSC::Uint16Array> toUnsharedUint16Array(JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Uint16Adaptor>(value); }
-inline RefPtr<JSC::Uint32Array> toUnsharedUint32Array(JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Uint32Adaptor>(value); }
-inline RefPtr<JSC::Float32Array> toUnsharedFloat32Array(JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Float32Adaptor>(value); }
-inline RefPtr<JSC::Float64Array> toUnsharedFloat64Array(JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Float64Adaptor>(value); }
+inline RefPtr<JSC::Int8Array> toUnsharedInt8Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Int8Adaptor>(vm, value); }
+inline RefPtr<JSC::Int16Array> toUnsharedInt16Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Int16Adaptor>(vm, value); }
+inline RefPtr<JSC::Int32Array> toUnsharedInt32Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Int32Adaptor>(vm, value); }
+inline RefPtr<JSC::Uint8Array> toUnsharedUint8Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Uint8Adaptor>(vm, value); }
+inline RefPtr<JSC::Uint8ClampedArray> toUnsharedUint8ClampedArray(JSC::VM& vm, JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Uint8ClampedAdaptor>(vm, value); }
+inline RefPtr<JSC::Uint16Array> toUnsharedUint16Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Uint16Adaptor>(vm, value); }
+inline RefPtr<JSC::Uint32Array> toUnsharedUint32Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Uint32Adaptor>(vm, value); }
+inline RefPtr<JSC::Float32Array> toUnsharedFloat32Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Float32Adaptor>(vm, value); }
+inline RefPtr<JSC::Float64Array> toUnsharedFloat64Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toUnsharedNativeTypedView<JSC::Float64Adaptor>(vm, value); }
 
 template<typename T, typename JST> inline Vector<Ref<T>> toRefNativeArray(JSC::ExecState& state, JSC::JSValue value)
 {
@@ -741,8 +741,8 @@ template<typename T, typename JST> inline Vector<Ref<T>> toRefNativeArray(JSC::E
     forEachInIterable(&state, value, [&result](JSC::VM& vm, JSC::ExecState* state, JSC::JSValue jsValue) {
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        if (jsValue.inherits(JST::info())) {
-            auto* object = JST::toWrapped(jsValue);
+        if (jsValue.inherits(vm, JST::info())) {
+            auto* object = JST::toWrapped(vm, jsValue);
             ASSERT(object);
             result.append(*object);
         } else

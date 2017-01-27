@@ -2064,7 +2064,8 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 
     // The global object is probably a shell object? - if so, we know how to use this!
     JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
-    if (!strcmp(globalObjectObj->classInfo()->className, "JSDOMWindowShell"))
+    JSC::VM& vm = *globalObjectObj->vm();
+    if (!strcmp(globalObjectObj->classInfo(vm)->className, "JSDOMWindowShell"))
         anyWorldGlobalObject = static_cast<JSDOMWindowShell*>(globalObjectObj)->window();
 
     // Get the frame frome the global object we've settled on.

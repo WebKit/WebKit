@@ -85,7 +85,7 @@ void NumberPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     UNUSED_PARAM(globalObject);
 #endif // ENABLE(INTL)
 
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 // ------------------------------ Functions ---------------------------

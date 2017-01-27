@@ -152,7 +152,7 @@ public:
             // point to other CodeBlocks. We don't want to have them be
             // part of the weak pointer set. For example, an optimized CodeBlock
             // having a weak pointer to itself will cause it to get collected.
-            ASSERT(!jsDynamicCast<CodeBlock*>(cell));
+            ASSERT(!jsDynamicCast<CodeBlock*>(graph.m_vm, cell));
 
             graph.m_plan.weakReferences.addLazily(cell);
             return TrustedImmPtr(bitwise_cast<size_t>(cell));

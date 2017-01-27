@@ -414,7 +414,8 @@ SpeculatedType speculationFromStructure(Structure* structure)
 
 SpeculatedType speculationFromCell(JSCell* cell)
 {
-    if (JSString* string = jsDynamicCast<JSString*>(cell)) {
+    if (cell->isString()) {
+        JSString* string = jsCast<JSString*>(cell);
         if (const StringImpl* impl = string->tryGetValueImpl()) {
             if (impl->isAtomic())
                 return SpecStringIdent;

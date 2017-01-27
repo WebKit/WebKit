@@ -53,7 +53,7 @@ void JSNativeStdFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 void JSNativeStdFunction::finishCreation(VM& vm, NativeExecutable* executable, int length, const String& name, NativeStdFunctionCell* functionCell)
 {
     Base::finishCreation(vm, executable, length, name);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     m_functionCell.set(vm, this, functionCell);
 }
 

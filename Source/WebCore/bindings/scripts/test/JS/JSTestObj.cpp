@@ -1916,7 +1916,7 @@ JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject& globalObject, Ref<
 void JSTestObj::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -1971,14 +1971,14 @@ void JSTestObj::getOwnPropertyNames(JSObject* object, ExecState* state, Property
     Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
 }
 
-template<> inline JSTestObj* BindingCaller<JSTestObj>::castForAttribute(ExecState&, EncodedJSValue thisValue)
+template<> inline JSTestObj* BindingCaller<JSTestObj>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestObj*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestObj*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSTestObj* BindingCaller<JSTestObj>::castForOperation(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestObj*>(state.thisValue());
+    return jsDynamicDowncast<JSTestObj*>(state.vm(), state.thisValue());
 }
 
 static inline JSValue jsTestObjReadOnlyLongAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
@@ -3566,7 +3566,7 @@ EncodedJSValue jsTestObjConstructor(ExecState* state, EncodedJSValue thisValue, 
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestObjPrototype* domObject = jsDynamicDowncast<JSTestObjPrototype*>(JSValue::decode(thisValue));
+    JSTestObjPrototype* domObject = jsDynamicDowncast<JSTestObjPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestObj::getConstructor(state->vm(), domObject->globalObject()));
@@ -3577,7 +3577,7 @@ bool setJSTestObjConstructor(ExecState* state, EncodedJSValue thisValue, Encoded
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestObjPrototype* domObject = jsDynamicDowncast<JSTestObjPrototype*>(JSValue::decode(thisValue));
+    JSTestObjPrototype* domObject = jsDynamicDowncast<JSTestObjPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -7209,17 +7209,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
         JSValue distinguishingArg = state->uncheckedArgument(0);
         if (distinguishingArg.isUndefinedOrNull())
             return jsTestObjPrototypeFunctionOverloadedMethod2(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
             return jsTestObjPrototypeFunctionOverloadedMethod2(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestCallbackInterface::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestCallbackInterface::info()))
             return jsTestObjPrototypeFunctionOverloadedMethod5(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSDOMStringList::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSDOMStringList::info()))
             return jsTestObjPrototypeFunctionOverloadedMethod6(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
             return jsTestObjPrototypeFunctionOverloadedMethod8(state);
-        if (distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits(JSDOMWindowShell::info()) || asObject(distinguishingArg)->inherits(JSDOMWindow::info())))
+        if (distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits(vm, JSDOMWindowShell::info()) || asObject(distinguishingArg)->inherits(vm, JSDOMWindow::info())))
             return jsTestObjPrototypeFunctionOverloadedMethod9(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSBlob::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSBlob::info()))
             return jsTestObjPrototypeFunctionOverloadedMethod13(state);
         if (hasIteratorMethod(*state, distinguishingArg))
             return jsTestObjPrototypeFunctionOverloadedMethod7(state);
@@ -7233,7 +7233,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
         JSValue distinguishingArg = state->uncheckedArgument(1);
         if (distinguishingArg.isUndefined())
             return jsTestObjPrototypeFunctionOverloadedMethod2(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSBlob::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSBlob::info()))
             return jsTestObjPrototypeFunctionOverloadedMethod13(state);
         if (distinguishingArg.isNumber())
             return jsTestObjPrototypeFunctionOverloadedMethod2(state);
@@ -7296,7 +7296,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptio
         JSValue distinguishingArg = state->uncheckedArgument(0);
         if (distinguishingArg.isUndefinedOrNull())
             return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
             return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
         return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1(state);
     }
@@ -7304,7 +7304,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptio
         JSValue distinguishingArg = state->uncheckedArgument(0);
         if (distinguishingArg.isUndefinedOrNull())
             return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
             return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(state);
         return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1(state);
     }
@@ -7359,9 +7359,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithDisti
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
             return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestNode::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestNode::info()))
             return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1(state);
         if (distinguishingArg.isNumber())
             return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2(state);
@@ -7418,11 +7418,11 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWith2Dist
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
             return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestNode::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestNode::info()))
             return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestInterface::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestInterface::info()))
             return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2(state);
         if (distinguishingArg.isNumber())
             return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2(state);
@@ -7483,9 +7483,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithNonDi
     size_t argsCount = std::min<size_t>(2, state->argumentCount());
     if (argsCount == 2) {
         JSValue distinguishingArg = state->uncheckedArgument(1);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
             return jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion1(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestNode::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestNode::info()))
             return jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion2(state);
     }
     return argsCount < 2 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
@@ -7541,9 +7541,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadWithNullableUnion
         JSValue distinguishingArg = state->uncheckedArgument(0);
         if (distinguishingArg.isUndefinedOrNull())
             return jsTestObjPrototypeFunctionOverloadWithNullableUnion1(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestObj::info()))
             return jsTestObjPrototypeFunctionOverloadWithNullableUnion1(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestNode::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestNode::info()))
             return jsTestObjPrototypeFunctionOverloadWithNullableUnion1(state);
         if (distinguishingArg.isNumber())
             return jsTestObjPrototypeFunctionOverloadWithNullableUnion2(state);
@@ -7664,7 +7664,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadWithNullableNonDi
     size_t argsCount = std::min<size_t>(2, state->argumentCount());
     if (argsCount == 2) {
         JSValue distinguishingArg = state->uncheckedArgument(1);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestNode::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSTestNode::info()))
             return jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter1(state);
         if (distinguishingArg.isNumber())
             return jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2(state);
@@ -8312,7 +8312,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSFetchRequest::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSFetchRequest::info()))
             return jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2(state);
         if (distinguishingArg.isNumber())
             return jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1(state);
@@ -8661,9 +8661,9 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestOb
     return wrap(state, globalObject, impl);
 }
 
-TestObj* JSTestObj::toWrapped(JSC::JSValue value)
+TestObj* JSTestObj::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestObj*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestObj*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

@@ -48,6 +48,7 @@ static bool populateFontFaceWithArrayBuffer(CSSFontFace& fontFace, Ref<JSC::Arra
 
 ExceptionOr<Ref<FontFace>> FontFace::create(JSC::ExecState& state, Document& document, const String& family, JSC::JSValue source, const Descriptors& descriptors)
 {
+    JSC::VM& vm = state.vm();
     auto result = adoptRef(*new FontFace(document.fontSelector()));
 
     bool dataRequiresAsynchronousLoading = true;
@@ -61,9 +62,9 @@ ExceptionOr<Ref<FontFace>> FontFace::create(JSC::ExecState& state, Document& doc
         if (!is<CSSValueList>(value.get()))
             return Exception { SYNTAX_ERR };
         CSSFontFace::appendSources(result->backing(), downcast<CSSValueList>(*value), &document, false);
-    } else if (auto arrayBufferView = toUnsharedArrayBufferView(source))
+    } else if (auto arrayBufferView = toUnsharedArrayBufferView(vm, source))
         dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
-    else if (auto arrayBuffer = toUnsharedArrayBuffer(source)) {
+    else if (auto arrayBuffer = toUnsharedArrayBuffer(vm, source)) {
         auto arrayBufferView = JSC::Uint8Array::create(arrayBuffer, 0, arrayBuffer->byteLength());
         dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
     }

@@ -44,7 +44,7 @@ ProxyRuntimeObject::ProxyRuntimeObject(VM& vm, Structure* structure, PassRefPtr<
 void ProxyRuntimeObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(vm, &s_info));
 }
 
 ProxyInstance* ProxyRuntimeObject::getInternalProxyInstance() const

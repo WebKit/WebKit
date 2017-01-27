@@ -142,7 +142,7 @@ void StructureRareData::setObjectToStringValue(ExecState* exec, VM& vm, Structur
         if (condition.condition().kind() == PropertyCondition::Presence) {
             ASSERT(isValidOffset(condition.offset()));
             condition.object()->structure(vm)->startWatchingPropertyForReplacements(vm, condition.offset());
-            equivCondition = condition.attemptToMakeEquivalenceWithoutBarrier();
+            equivCondition = condition.attemptToMakeEquivalenceWithoutBarrier(vm);
 
             // The equivalence condition won't be watchable if we have already seen a replacement.
             if (!equivCondition.isWatchable()) {

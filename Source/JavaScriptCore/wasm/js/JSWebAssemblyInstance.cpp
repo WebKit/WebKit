@@ -61,7 +61,7 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, unsig
 void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     const size_t extraMemorySize = module->moduleInformation().globals.size() * sizeof(Register);
     m_globals = MallocPtr<uint64_t>::malloc(extraMemorySize);

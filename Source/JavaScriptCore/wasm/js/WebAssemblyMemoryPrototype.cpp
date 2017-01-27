@@ -58,7 +58,7 @@ ALWAYS_INLINE JSWebAssemblyMemory* getMemory(ExecState* exec, JSValue value)
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(value); 
+    JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(vm, value); 
     if (!memory) {
         throwException(exec, throwScope, 
             createTypeError(exec, ASCIILiteral("WebAssembly.Memory.prototype.buffer getter called with non WebAssembly.Memory |this| value")));

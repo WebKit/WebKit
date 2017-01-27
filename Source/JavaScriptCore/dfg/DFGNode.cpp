@@ -175,7 +175,7 @@ void Node::convertToPutHint(const PromotedLocationDescriptor& descriptor, Node* 
 void Node::convertToPutStructureHint(Node* structure)
 {
     ASSERT(m_op == PutStructure);
-    ASSERT(structure->castConstant<Structure*>() == transition()->next.get());
+    ASSERT(structure->castConstant<Structure*>(*structure->asCell()->vm()) == transition()->next.get());
     convertToPutHint(StructurePLoc, child1().node(), structure);
 }
 

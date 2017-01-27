@@ -1299,7 +1299,8 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
 
 static bool getObjectID(NetscapePluginInstanceProxy* pluginInstanceProxy, JSObject* object, uint64_t& objectID)
 {
-    if (object->classInfo() != ProxyRuntimeObject::info())
+    JSC::VM& vm = *object->vm();
+    if (object->classInfo(vm) != ProxyRuntimeObject::info())
         return false;
 
     ProxyRuntimeObject* runtimeObject = static_cast<ProxyRuntimeObject*>(object);
@@ -1454,7 +1455,7 @@ void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t values
 
 void NetscapePluginInstanceProxy::retainLocalObject(JSC::JSValue value)
 {
-    if (!value.isObject() || value.inherits(ProxyRuntimeObject::info()))
+    if (!value.isObject() || value.inherits(*value.getObject()->vm(), ProxyRuntimeObject::info()))
         return;
 
     m_localObjects.retain(asObject(value));
@@ -1462,7 +1463,7 @@ void NetscapePluginInstanceProxy::retainLocalObject(JSC::JSValue value)
 
 void NetscapePluginInstanceProxy::releaseLocalObject(JSC::JSValue value)
 {
-    if (!value.isObject() || value.inherits(ProxyRuntimeObject::info()))
+    if (!value.isObject() || value.inherits(*value.getObject()->vm(), ProxyRuntimeObject::info()))
         return;
 
     m_localObjects.release(asObject(value));

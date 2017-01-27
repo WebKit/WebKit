@@ -119,11 +119,11 @@ JSValue JSNode::insertBefore(ExecState& state)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     JSValue newChildValue = state.uncheckedArgument(0);
-    auto* newChild = JSNode::toWrapped(newChildValue);
+    auto* newChild = JSNode::toWrapped(vm, newChildValue);
     if (UNLIKELY(!newChild))
         return JSValue::decode(throwArgumentTypeError(state, scope, 0, "node", "Node", "insertBefore", "Node"));
 
-    propagateException(state, scope, wrapped().insertBefore(*newChild, JSNode::toWrapped(state.uncheckedArgument(1))));
+    propagateException(state, scope, wrapped().insertBefore(*newChild, JSNode::toWrapped(vm, state.uncheckedArgument(1))));
     return newChildValue;
 }
 
@@ -135,9 +135,9 @@ JSValue JSNode::replaceChild(ExecState& state)
     if (UNLIKELY(state.argumentCount() < 2))
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
-    auto* newChild = JSNode::toWrapped(state.uncheckedArgument(0));
+    auto* newChild = JSNode::toWrapped(vm, state.uncheckedArgument(0));
     JSValue oldChildValue = state.uncheckedArgument(1);
-    auto* oldChild = JSNode::toWrapped(oldChildValue);
+    auto* oldChild = JSNode::toWrapped(vm, oldChildValue);
     if (UNLIKELY(!newChild || !oldChild)) {
         if (!newChild)
             return JSValue::decode(throwArgumentTypeError(state, scope, 0, "node", "Node", "replaceChild", "Node"));
@@ -154,7 +154,7 @@ JSValue JSNode::removeChild(ExecState& state)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue childValue = state.argument(0);
-    auto* child = JSNode::toWrapped(childValue);
+    auto* child = JSNode::toWrapped(vm, childValue);
     if (UNLIKELY(!child))
         return JSValue::decode(throwArgumentTypeError(state, scope, 0, "child", "Node", "removeChild", "Node"));
 
@@ -168,7 +168,7 @@ JSValue JSNode::appendChild(ExecState& state)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue newChildValue = state.argument(0);
-    auto newChild = JSNode::toWrapped(newChildValue);
+    auto newChild = JSNode::toWrapped(vm, newChildValue);
     if (UNLIKELY(!newChild))
         return JSValue::decode(throwArgumentTypeError(state, scope, 0, "node", "Node", "appendChild", "Node"));
 
@@ -178,7 +178,7 @@ JSValue JSNode::appendChild(ExecState& state)
 
 JSScope* JSNode::pushEventHandlerScope(ExecState* exec, JSScope* node) const
 {
-    if (inherits(JSHTMLElement::info()))
+    if (inherits(exec->vm(), JSHTMLElement::info()))
         return jsCast<const JSHTMLElement*>(this)->pushEventHandlerScope(exec, node);
     return node;
 }

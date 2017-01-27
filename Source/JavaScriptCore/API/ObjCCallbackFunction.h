@@ -36,7 +36,7 @@ JSObjectRef objCCallbackFunctionForMethod(JSContext *, Class, Protocol *, BOOL i
 JSObjectRef objCCallbackFunctionForBlock(JSContext *, id);
 JSObjectRef objCCallbackFunctionForInit(JSContext *, Class, Protocol *, SEL, const char* types);
 
-id tryUnwrapConstructor(JSObjectRef);
+id tryUnwrapConstructor(JSC::VM*, JSObjectRef);
 #endif
 
 namespace JSC {

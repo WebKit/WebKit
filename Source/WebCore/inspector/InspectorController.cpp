@@ -434,7 +434,8 @@ bool InspectorController::developerExtrasEnabled() const
 bool InspectorController::canAccessInspectedScriptState(JSC::ExecState* scriptState) const
 {
     JSLockHolder lock(scriptState);
-    JSDOMWindow* inspectedWindow = toJSDOMWindow(scriptState->lexicalGlobalObject());
+
+    JSDOMWindow* inspectedWindow = toJSDOMWindow(scriptState->vm(), scriptState->lexicalGlobalObject());
     if (!inspectedWindow)
         return false;
 

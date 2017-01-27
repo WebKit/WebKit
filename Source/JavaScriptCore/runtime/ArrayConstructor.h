@@ -82,12 +82,4 @@ inline bool isArray(ExecState* exec, JSValue argumentValue)
     return isArraySlow(exec, jsCast<ProxyObject*>(argument));
 }
 
-inline bool isArrayConstructor(JSValue argumentValue)
-{
-    if (!argumentValue.isObject())
-        return false;
-
-    return jsCast<JSObject*>(argumentValue)->classInfo() == ArrayConstructor::info();
-}
-
 } // namespace JSC

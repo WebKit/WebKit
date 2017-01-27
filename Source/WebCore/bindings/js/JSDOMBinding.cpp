@@ -179,7 +179,7 @@ double valueToDate(ExecState* exec, JSValue value)
 {
     if (value.isNumber())
         return value.asNumber();
-    if (!value.inherits(DateInstance::info()))
+    if (!value.inherits(exec->vm(), DateInstance::info()))
         return std::numeric_limits<double>::quiet_NaN();
     return static_cast<DateInstance*>(value.toObject(exec))->internalNumber();
 }
@@ -188,7 +188,7 @@ void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cach
 {
     VM& vm = exec->vm();
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    auto* exception = jsDynamicDowncast<JSC::Exception*>(exceptionValue);
+    auto* exception = jsDynamicDowncast<JSC::Exception*>(vm, exceptionValue);
     if (!exception) {
         exception = vm.lastException();
         if (!exception)
@@ -200,13 +200,13 @@ void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cach
 
 String retrieveErrorMessage(ExecState& state, VM& vm, JSValue exception, CatchScope& catchScope)
 {
-    if (auto* exceptionBase = toExceptionBase(exception))
+    if (auto* exceptionBase = toExceptionBase(vm, exception))
         return exceptionBase->toString();
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
     // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
     String errorMessage;
-    if (auto* error = jsDynamicDowncast<ErrorInstance*>(exception))
+    if (auto* error = jsDynamicDowncast<ErrorInstance*>(vm, exception))
         errorMessage = error->sanitizedToString(&state);
     else
         errorMessage = exception.toWTFString(&state);
@@ -224,7 +224,7 @@ void reportException(ExecState* exec, JSC::Exception* exception, CachedScript* c
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    if (isTerminatedExecutionException(exception))
+    if (isTerminatedExecutionException(vm, exception))
         return;
 
     ErrorHandlingScope errorScope(exec->vm());
@@ -234,7 +234,7 @@ void reportException(ExecState* exec, JSC::Exception* exception, CachedScript* c
     vm.clearLastException();
 
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
-    if (JSDOMWindow* window = jsDynamicDowncast<JSDOMWindow*>(globalObject)) {
+    if (JSDOMWindow* window = jsDynamicDowncast<JSDOMWindow*>(vm, globalObject)) {
         if (!window->wrapped().isCurrentlyDisplayedInFrame())
             return;
     }

@@ -40,7 +40,7 @@ NumberObject::NumberObject(VM& vm, Structure* structure)
 void NumberObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 NumberObject* constructNumber(ExecState* exec, JSGlobalObject* globalObject, JSValue number)

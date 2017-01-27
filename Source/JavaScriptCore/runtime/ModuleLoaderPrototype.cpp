@@ -112,7 +112,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeParseModule(ExecState* exec)
     const Identifier moduleKey = exec->argument(0).toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    auto* jsSourceCode = jsDynamicCast<JSSourceCode*>(exec->argument(1));
+    auto* jsSourceCode = jsDynamicCast<JSSourceCode*>(vm, exec->argument(1));
     if (!jsSourceCode)
         return throwVMTypeError(exec, scope);
     SourceCode sourceCode = jsSourceCode->sourceCode();
@@ -141,7 +141,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeRequestedModules(ExecState* ex
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(exec->argument(0));
+    JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(vm, exec->argument(0));
     if (!moduleRecord) {
         scope.release();
         return JSValue::encode(constructEmptyArray(exec, nullptr));
@@ -161,7 +161,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeModuleDeclarationInstantiation
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(exec->argument(0));
+    JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(vm, exec->argument(0));
     if (!moduleRecord)
         return JSValue::encode(jsUndefined());
 
@@ -178,11 +178,12 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeModuleDeclarationInstantiation
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeResolve(ExecState* exec)
 {
+    VM& vm = exec->vm();
     // Hook point, Loader.resolve.
     // https://whatwg.github.io/loader/#browser-resolve
     // Take the name and resolve it to the unique identifier for the resource location.
     // For example, take the "jquery" and return the URL for the resource.
-    JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(exec->thisValue());
+    JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(vm, exec->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(loader->resolve(exec, exec->argument(0), exec->argument(1), exec->argument(2)));
@@ -190,12 +191,13 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeResolve(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeFetch(ExecState* exec)
 {
+    VM& vm = exec->vm();
     // Hook point, Loader.fetch
     // https://whatwg.github.io/loader/#browser-fetch
     // Take the key and fetch the resource actually.
     // For example, JavaScriptCore shell can provide the hook fetching the resource
     // from the local file system.
-    JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(exec->thisValue());
+    JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(vm, exec->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(loader->fetch(exec, exec->argument(0), exec->argument(1)));
@@ -203,13 +205,14 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeFetch(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeInstantiate(ExecState* exec)
 {
+    VM& vm = exec->vm();
     // Hook point, Loader.instantiate
     // https://whatwg.github.io/loader/#browser-instantiate
     // Take the key and the fetched source code, and instantiate the module record
     // by parsing the module source code.
     // It has the chance to provide the optional module instance that is different from
     // the ordinary one.
-    JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(exec->thisValue());
+    JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(vm, exec->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(loader->instantiate(exec, exec->argument(0), exec->argument(1), exec->argument(2)));
@@ -220,7 +223,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeGetModuleNamespaceObject(ExecS
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* loader = jsDynamicCast<JSModuleLoader*>(exec->thisValue());
+    auto* loader = jsDynamicCast<JSModuleLoader*>(vm, exec->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
     auto* moduleNamespaceObject = loader->getModuleNamespaceObject(exec, exec->argument(0));
@@ -235,7 +238,8 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeEvaluate(ExecState* exec)
     // To instrument and retrieve the errors raised from the module execution,
     // we inserted the hook point here.
 
-    JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(exec->thisValue());
+    VM& vm = exec->vm();
+    JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(vm, exec->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(loader->evaluate(exec, exec->argument(0), exec->argument(1), exec->argument(2)));

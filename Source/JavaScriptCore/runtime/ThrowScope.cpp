@@ -80,7 +80,7 @@ void ThrowScope::throwException(ExecState* exec, Exception* exception)
 
 JSValue ThrowScope::throwException(ExecState* exec, JSValue error)
 {
-    if (!error.isCell() || !jsDynamicCast<Exception*>(error.asCell()))
+    if (!error.isCell() || !jsDynamicCast<Exception*>(m_vm, error.asCell()))
         m_vm.verifyExceptionCheckNeedIsSatisfied(m_recursionDepth, m_location);
     
     return m_vm.throwException(exec, error);
@@ -88,7 +88,7 @@ JSValue ThrowScope::throwException(ExecState* exec, JSValue error)
 
 JSObject* ThrowScope::throwException(ExecState* exec, JSObject* obj)
 {
-    if (!jsDynamicCast<Exception*>(obj))
+    if (!jsDynamicCast<Exception*>(m_vm, obj))
         m_vm.verifyExceptionCheckNeedIsSatisfied(m_recursionDepth, m_location);
     
     return m_vm.throwException(exec, obj);

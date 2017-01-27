@@ -41,7 +41,7 @@ const ClassInfo SetConstructor::s_info = { "Function", &Base::s_info, 0, CREATE_
 
 void SetConstructor::finishCreation(VM& vm, SetPrototype* setPrototype, GetterSetter* speciesSymbol)
 {
-    Base::finishCreation(vm, setPrototype->classInfo()->className);
+    Base::finishCreation(vm, setPrototype->classInfo(vm)->className);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, setPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), DontEnum | ReadOnly);
     putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum);

@@ -88,7 +88,7 @@ void JSCustomGetterSetterFunction::visitChildren(JSCell* cell, SlotVisitor& visi
 void JSCustomGetterSetterFunction::finishCreation(VM& vm, NativeExecutable* executable, CustomGetterSetter* getterSetter, const String& name)
 {
     Base::finishCreation(vm, executable, isSetter(), name);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     ASSERT(getterSetter);
     m_getterSetter.set(vm, this, getterSetter);
 }

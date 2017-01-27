@@ -77,7 +77,7 @@ Structure* AtomicsObject::createStructure(VM& vm, JSGlobalObject* globalObject, 
 void AtomicsObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     
 #define PUT_DIRECT_NATIVE_FUNC(lowerName, upperName, count) \
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, #lowerName), count, atomicsFunc ## upperName, Atomics ## upperName ## Intrinsic, DontEnum);
@@ -287,7 +287,7 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncWait(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
-    JSInt32Array* typedArray = jsDynamicCast<JSInt32Array*>(exec->argument(0));
+    JSInt32Array* typedArray = jsDynamicCast<JSInt32Array*>(vm, exec->argument(0));
     if (!typedArray) {
         throwTypeError(exec, scope, ASCIILiteral("Typed array for wait/wake must be an Int32Array."));
         return JSValue::encode(jsUndefined());
@@ -357,7 +357,7 @@ EncodedJSValue JSC_HOST_CALL atomicsFuncWake(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
-    JSInt32Array* typedArray = jsDynamicCast<JSInt32Array*>(exec->argument(0));
+    JSInt32Array* typedArray = jsDynamicCast<JSInt32Array*>(vm, exec->argument(0));
     if (!typedArray) {
         throwTypeError(exec, scope, ASCIILiteral("Typed array for wait/wake must be an Int32Array."));
         return JSValue::encode(jsUndefined());

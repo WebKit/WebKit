@@ -75,7 +75,7 @@ IntlDateTimeFormat::IntlDateTimeFormat(VM& vm, Structure* structure)
 void IntlDateTimeFormat::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 void IntlDateTimeFormat::destroy(JSCell* cell)

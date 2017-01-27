@@ -55,7 +55,6 @@ public:
 
 protected:
     JSWebAssemblyMemory(VM&, Structure*, Wasm::Memory&&);
-    ~JSWebAssemblyMemory();
     void finishCreation(VM&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);

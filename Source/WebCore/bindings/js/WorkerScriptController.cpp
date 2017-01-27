@@ -126,7 +126,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedP
 
     JSC::evaluate(exec, sourceCode.jsSourceCode(), m_workerGlobalScopeWrapper->globalThis(), returnedException);
 
-    if ((returnedException && isTerminatedExecutionException(returnedException)) || isTerminatingExecution()) {
+    if ((returnedException && isTerminatedExecutionException(vm, returnedException)) || isTerminatingExecution()) {
         forbidExecution();
         return;
     }

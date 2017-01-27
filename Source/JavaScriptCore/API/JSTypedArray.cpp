@@ -140,6 +140,7 @@ JSTypedArrayType JSValueGetTypedArrayType(JSContextRef ctx, JSValueRef valueRef,
 {
 
     ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSLockHolder locker(exec);
 
     JSValue value = toJS(exec, valueRef);
@@ -147,10 +148,10 @@ JSTypedArrayType JSValueGetTypedArrayType(JSContextRef ctx, JSValueRef valueRef,
         return kJSTypedArrayTypeNone;
     JSObject* object = value.getObject();
 
-    if (jsDynamicCast<JSArrayBuffer*>(object))
+    if (jsDynamicCast<JSArrayBuffer*>(vm, object))
         return kJSTypedArrayTypeArrayBuffer;
 
-    return toJSTypedArrayType(object->classInfo()->typedArrayStorageType);
+    return toJSTypedArrayType(object->classInfo(vm)->typedArrayStorageType);
 }
 
 JSObjectRef JSObjectMakeTypedArray(JSContextRef ctx, JSTypedArrayType arrayType, size_t length, JSValueRef* exception)
@@ -193,12 +194,13 @@ JSObjectRef JSObjectMakeTypedArrayWithBytesNoCopy(JSContextRef ctx, JSTypedArray
 JSObjectRef JSObjectMakeTypedArrayWithArrayBuffer(JSContextRef ctx, JSTypedArrayType arrayType, JSObjectRef jsBufferRef, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSLockHolder locker(exec);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
 
-    JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(toJS(jsBufferRef));
+    JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, toJS(jsBufferRef));
     if (!jsBuffer) {
         setException(exec, exception, createTypeError(exec, "JSObjectMakeTypedArrayWithArrayBuffer expects buffer to be an Array Buffer object"));
         return nullptr;
@@ -216,12 +218,13 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBuffer(JSContextRef ctx, JSTypedArray
 JSObjectRef JSObjectMakeTypedArrayWithArrayBufferAndOffset(JSContextRef ctx, JSTypedArrayType arrayType, JSObjectRef jsBufferRef, size_t offset, size_t length, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSLockHolder locker(exec);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
 
-    JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(toJS(jsBufferRef));
+    JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, toJS(jsBufferRef));
     if (!jsBuffer) {
         setException(exec, exception, createTypeError(exec, "JSObjectMakeTypedArrayWithArrayBuffer expects buffer to be an Array Buffer object"));
         return nullptr;
@@ -236,10 +239,11 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBufferAndOffset(JSContextRef ctx, JST
 void* JSObjectGetTypedArrayBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
 {
     ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSLockHolder locker(exec);
     JSObject* object = toJS(objectRef);
 
-    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object)) {
+    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object)) {
         ArrayBuffer* buffer = typedArray->possiblySharedBuffer();
         buffer->pinAndLock();
         return buffer->data();
@@ -247,31 +251,37 @@ void* JSObjectGetTypedArrayBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSV
     return nullptr;
 }
 
-size_t JSObjectGetTypedArrayLength(JSContextRef, JSObjectRef objectRef, JSValueRef*)
+size_t JSObjectGetTypedArrayLength(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
 {
+    ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSObject* object = toJS(objectRef);
 
-    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object))
+    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object))
         return typedArray->length();
 
     return 0;
 }
 
-size_t JSObjectGetTypedArrayByteLength(JSContextRef, JSObjectRef objectRef, JSValueRef*)
+size_t JSObjectGetTypedArrayByteLength(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
 {
+    ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSObject* object = toJS(objectRef);
 
-    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object))
-        return typedArray->length() * elementSize(typedArray->classInfo()->typedArrayStorageType);
+    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object))
+        return typedArray->length() * elementSize(typedArray->classInfo(vm)->typedArrayStorageType);
 
     return 0;
 }
 
-size_t JSObjectGetTypedArrayByteOffset(JSContextRef, JSObjectRef objectRef, JSValueRef*)
+size_t JSObjectGetTypedArrayByteOffset(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
 {
+    ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSObject* object = toJS(objectRef);
 
-    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object))
+    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object))
         return typedArray->byteOffset();
 
     return 0;
@@ -280,10 +290,11 @@ size_t JSObjectGetTypedArrayByteOffset(JSContextRef, JSObjectRef objectRef, JSVa
 JSObjectRef JSObjectGetTypedArrayBuffer(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
 {
     ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSLockHolder locker(exec);
     JSObject* object = toJS(objectRef);
 
-    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object))
+    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object))
         return toRef(exec->vm().m_typedArrayController->toJS(exec, typedArray->globalObject(), typedArray->possiblySharedBuffer()));
 
     return nullptr;
@@ -309,10 +320,11 @@ JSObjectRef JSObjectMakeArrayBufferWithBytesNoCopy(JSContextRef ctx, void* bytes
 void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
 {
     ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSLockHolder locker(exec);
     JSObject* object = toJS(objectRef);
 
-    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(object)) {
+    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, object)) {
         ArrayBuffer* buffer = jsBuffer->impl();
         buffer->pinAndLock();
         return buffer->data();
@@ -320,11 +332,13 @@ void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JS
     return nullptr;
 }
 
-size_t JSObjectGetArrayBufferByteLength(JSContextRef, JSObjectRef objectRef, JSValueRef*)
+size_t JSObjectGetArrayBufferByteLength(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
 {
+    ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
     JSObject* object = toJS(objectRef);
 
-    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(object))
+    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, object))
         return jsBuffer->impl()->byteLength();
     
     return 0;

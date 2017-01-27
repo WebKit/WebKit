@@ -1510,7 +1510,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
         handler = scriptListener->jsFunction(&node->document());
         if (handler && state) {
             body = handler->toString(state)->value(state);
-            if (auto function = jsDynamicDowncast<JSC::JSFunction*>(handler)) {
+            if (auto function = jsDynamicDowncast<JSC::JSFunction*>(state->vm(), handler)) {
                 if (!function->isHostOrBuiltinFunction()) {
                     if (auto executable = function->jsExecutable()) {
                         lineNumber = executable->firstLine() - 1;
@@ -2227,9 +2227,9 @@ RefPtr<Inspector::Protocol::Runtime::RemoteObject> InspectorDOMAgent::resolveNod
 
 Node* InspectorDOMAgent::scriptValueAsNode(JSC::JSValue value)
 {
-    if (!value)
+    if (!value || !value.isObject())
         return nullptr;
-    return JSNode::toWrapped(value);
+    return JSNode::toWrapped(*value.getObject()->vm(), value.getObject());
 }
 
 JSC::JSValue InspectorDOMAgent::nodeAsScriptValue(JSC::ExecState& state, Node* node)

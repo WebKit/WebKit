@@ -55,7 +55,7 @@ struct GatherSourceProviders : public MarkedBlock::VoidFunctor {
         
         JSCell* cell = static_cast<JSCell*>(heapCell);
         
-        JSFunction* function = jsDynamicCast<JSFunction*>(cell);
+        JSFunction* function = jsDynamicCast<JSFunction*>(*cell->vm(), cell);
         if (!function)
             return IterationStatus::Continue;
 

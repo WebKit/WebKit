@@ -70,7 +70,7 @@ NPRuntimeObjectMap::PluginProtector::~PluginProtector()
 NPObject* NPRuntimeObjectMap::getOrCreateNPObject(VM& vm, JSObject* jsObject)
 {
     // If this is a JSNPObject, we can just get its underlying NPObject.
-    if (jsObject->classInfo() == JSNPObject::info()) {
+    if (jsObject->classInfo(vm) == JSNPObject::info()) {
         JSNPObject* jsNPObject = jsCast<JSNPObject*>(jsObject);
         NPObject* npObject = jsNPObject->npObject();
         

@@ -71,7 +71,7 @@ public:
     JSGlobalObject* globalObject(VM&);
     JSObject* globalThis();
 
-    SymbolTable* symbolTable();
+    SymbolTable* symbolTable(VM&);
 
 protected:
     JSScope(VM&, Structure*, JSScope* next);

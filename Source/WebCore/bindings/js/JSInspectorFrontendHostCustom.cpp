@@ -51,6 +51,7 @@ namespace WebCore {
 #if ENABLE(CONTEXT_MENUS)
 static void populateContextMenuItems(ExecState* exec, JSArray* array, ContextMenu& menu)
 {
+    VM& vm = exec->vm();
     for (size_t i = 0; i < array->length(); ++i) {
         JSObject* item = asObject(array->getIndex(exec, i));
         JSValue label = item->get(exec, Identifier::fromString(exec, "label"));
@@ -66,7 +67,7 @@ static void populateContextMenuItems(ExecState* exec, JSArray* array, ContextMen
         if (typeString == "separator") {
             ContextMenuItem item(SeparatorType, ContextMenuItemTagNoAction, String());
             menu.appendItem(item);
-        } else if (typeString == "subMenu" && subItems.inherits(JSArray::info())) {
+        } else if (typeString == "subMenu" && subItems.inherits(vm, JSArray::info())) {
             ContextMenu subMenu;
             JSArray* subItemsArray = asArray(subItems);
             populateContextMenuItems(exec, subItemsArray, subMenu);
@@ -90,7 +91,8 @@ JSValue JSInspectorFrontendHost::showContextMenu(ExecState& state)
 #if ENABLE(CONTEXT_MENUS)
     if (state.argumentCount() < 2)
         return jsUndefined();
-    Event* event = JSEvent::toWrapped(state.argument(0));
+    VM& vm = state.vm();
+    Event* event = JSEvent::toWrapped(vm, state.argument(0));
 
     JSArray* array = asArray(state.argument(1));
     ContextMenu menu;

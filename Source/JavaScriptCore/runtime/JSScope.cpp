@@ -350,9 +350,9 @@ JSScope* JSScope::constantScopeForCodeBlock(ResolveType type, CodeBlock* codeBlo
     return nullptr;
 }
 
-SymbolTable* JSScope::symbolTable()
+SymbolTable* JSScope::symbolTable(VM& vm)
 {
-    if (JSSymbolTableObject* symbolTableObject = jsDynamicCast<JSSymbolTableObject*>(this))
+    if (JSSymbolTableObject* symbolTableObject = jsDynamicCast<JSSymbolTableObject*>(vm, this))
         return symbolTableObject->symbolTable();
 
     return nullptr;

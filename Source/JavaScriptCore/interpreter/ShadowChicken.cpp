@@ -84,7 +84,7 @@ void ShadowChicken::log(VM& vm, ExecState* exec, const Packet& packet)
     *m_logCursor++ = packet;
 }
 
-void ShadowChicken::update(VM&, ExecState* exec)
+void ShadowChicken::update(VM& vm, ExecState* exec)
 {
     if (verbose) {
         dataLog("Running update on: ", *this, "\n");
@@ -300,11 +300,11 @@ void ShadowChicken::update(VM&, ExecState* exec)
             CodeBlock* codeBlock = callFrame->codeBlock();
             if (codeBlock && codeBlock->wasCompiledWithDebuggingOpcodes() && codeBlock->scopeRegister().isValid()) {
                 scope = callFrame->scope(codeBlock->scopeRegister().offset());
-                RELEASE_ASSERT(scope->inherits(JSScope::info()));
+                RELEASE_ASSERT(scope->inherits(vm, JSScope::info()));
             } else if (foundFrame) {
                 scope = m_log[indexInLog].scope;
                 if (scope)
-                    RELEASE_ASSERT(scope->inherits(JSScope::info()));
+                    RELEASE_ASSERT(scope->inherits(vm, JSScope::info()));
             }
             toPush.append(Frame(jsCast<JSObject*>(visitor->callee()), callFrame, isTailDeleted, callFrame->thisValue(), scope, codeBlock, callFrame->callSiteIndex()));
 
@@ -349,7 +349,7 @@ void ShadowChicken::update(VM&, ExecState* exec)
                     }
                     Packet packet = m_log[indexInLog];
                     bool isTailDeleted = true;
-                    RELEASE_ASSERT(tailPacket.scope->inherits(JSScope::info()));
+                    RELEASE_ASSERT(tailPacket.scope->inherits(vm, JSScope::info()));
                     toPush.append(Frame(packet.callee, packet.frame, isTailDeleted, tailPacket.thisValue, tailPacket.scope, tailPacket.codeBlock, tailPacket.callSiteIndex));
                 }
             }

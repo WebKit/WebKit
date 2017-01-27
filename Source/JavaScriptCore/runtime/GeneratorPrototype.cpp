@@ -47,7 +47,7 @@ const ClassInfo GeneratorPrototype::s_info = { "Generator", &Base::s_info, &gene
 void GeneratorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Generator"), DontEnum | ReadOnly);
     vm.prototypeMap.addPrototype(this);
 }

@@ -437,7 +437,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             if (property.location().kind() == NewArrayWithSpreadArgumentPLoc) {
                 ++numProperties;
                 JSValue value = JSValue::decode(values[i]);
-                if (JSFixedArray* fixedArray = jsDynamicCast<JSFixedArray*>(value))
+                if (JSFixedArray* fixedArray = jsDynamicCast<JSFixedArray*>(vm, value))
                     arraySize += fixedArray->size();
                 else
                     arraySize += 1;
@@ -476,7 +476,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
 
         unsigned arrayIndex = 0;
         for (JSValue value : arguments) {
-            if (JSFixedArray* fixedArray = jsDynamicCast<JSFixedArray*>(value)) {
+            if (JSFixedArray* fixedArray = jsDynamicCast<JSFixedArray*>(vm, value)) {
                 for (unsigned i = 0; i < fixedArray->size(); i++) {
                     ASSERT(fixedArray->get(i));
                     result->initializeIndex(vm, arrayIndex, fixedArray->get(i));

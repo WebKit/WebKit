@@ -48,14 +48,15 @@ namespace WebCore {
 
 std::optional<FetchBody> FetchBody::extract(ScriptExecutionContext& context, JSC::ExecState& state, JSC::JSValue value, String& contentType)
 {
-    if (value.inherits(JSBlob::info())) {
-        auto& blob = *JSBlob::toWrapped(value);
+    JSC::VM& vm = state.vm();
+    if (value.inherits(vm, JSBlob::info())) {
+        auto& blob = *JSBlob::toWrapped(vm, value);
         contentType = blob.type();
         return FetchBody(blob);
     }
-    if (value.inherits(JSDOMFormData::info())) {
+    if (value.inherits(vm, JSDOMFormData::info())) {
         ASSERT(!context.isWorkerGlobalScope());
-        auto& domFormData = *JSDOMFormData::toWrapped(value);
+        auto& domFormData = *JSDOMFormData::toWrapped(vm, value);
         auto formData = FormData::createMultiPart(domFormData, domFormData.encoding(), &static_cast<Document&>(context));
         contentType = makeString("multipart/form-data; boundary=", formData->boundary().data());
         return FetchBody(WTFMove(formData));
@@ -64,22 +65,22 @@ std::optional<FetchBody> FetchBody::extract(ScriptExecutionContext& context, JSC
         contentType = HTTPHeaderValues::textPlainContentType();
         return FetchBody(String { asString(value)->value(&state) });
     }
-    if (value.inherits(JSURLSearchParams::info())) {
+    if (value.inherits(vm, JSURLSearchParams::info())) {
         contentType = HTTPHeaderValues::formURLEncodedContentType();
-        return FetchBody(*JSURLSearchParams::toWrapped(value));
+        return FetchBody(*JSURLSearchParams::toWrapped(vm, value));
     }
-    if (value.inherits(JSReadableStream::info())) {
+    if (value.inherits(vm, JSReadableStream::info())) {
         FetchBody body;
         body.m_isReadableStream = true;
         return WTFMove(body);
     }
-    if (value.inherits(JSC::JSArrayBuffer::info())) {
-        ArrayBuffer* data = toUnsharedArrayBuffer(value);
+    if (value.inherits(vm, JSC::JSArrayBuffer::info())) {
+        ArrayBuffer* data = toUnsharedArrayBuffer(vm, value);
         ASSERT(data);
         return FetchBody(*data);
     }
-    if (value.inherits(JSC::JSArrayBufferView::info()))
-        return FetchBody(toUnsharedArrayBufferView(value).releaseConstNonNull());
+    if (value.inherits(vm, JSC::JSArrayBufferView::info()))
+        return FetchBody(toUnsharedArrayBufferView(vm, value).releaseConstNonNull());
 
     return std::nullopt;
 }

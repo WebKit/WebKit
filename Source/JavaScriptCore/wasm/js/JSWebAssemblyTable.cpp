@@ -75,7 +75,7 @@ JSWebAssemblyTable::JSWebAssemblyTable(VM& vm, Structure* structure, uint32_t in
 void JSWebAssemblyTable::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 void JSWebAssemblyTable::destroy(JSCell* cell)

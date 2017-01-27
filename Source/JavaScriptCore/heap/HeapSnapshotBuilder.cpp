@@ -225,7 +225,7 @@ String HeapSnapshotBuilder::json(std::function<bool (const HeapSnapshotNode&)> a
 
         allowedNodeIdentifiers.set(node.cell, node.identifier);
 
-        auto result = classNameIndexes.add(node.cell->classInfo()->className, nextClassNameIndex);
+        auto result = classNameIndexes.add(node.cell->classInfo(vm)->className, nextClassNameIndex);
         if (result.isNewEntry)
             nextClassNameIndex++;
         unsigned classNameIndex = result.iterator->value;

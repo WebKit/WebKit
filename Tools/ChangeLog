@@ -1,3 +1,19 @@
+2017-01-26  Keith Miller  <keith_miller@apple.com>
+
+        classInfo should take a VM so it is not materialized from the object on each call
+        https://bugs.webkit.org/show_bug.cgi?id=167424
+
+        Rubber Stamped by Michael Saboff.
+
+        Previously, classInfo() would get the VM from the target's
+        MarkedBlock.  Most callers already have a VM on hand, so it is
+        wasteful to compute the VM from the marked block every time. This
+        patch refactors some of the most common callers of classInfo(),
+        jsDynamicCast and inherits to take a VM as well.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (setAudioResultCallback):
+
 2017-01-26  Jer Noble  <jer.noble@apple.com>
 
         Autoplay muted videos stop playback of any streaming app in the background

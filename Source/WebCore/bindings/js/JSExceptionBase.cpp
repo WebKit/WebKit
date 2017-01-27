@@ -34,15 +34,15 @@
 
 namespace WebCore {
 
-ExceptionBase* toExceptionBase(JSC::JSValue value)
+ExceptionBase* toExceptionBase(JSC::VM& vm, JSC::JSValue value)
 {
-    if (DOMCoreException* domException = JSDOMCoreException::toWrapped(value))
+    if (DOMCoreException* domException = JSDOMCoreException::toWrapped(vm, value))
         return reinterpret_cast<ExceptionBase*>(domException);
-    if (SVGException* svgException = JSSVGException::toWrapped(value))
+    if (SVGException* svgException = JSSVGException::toWrapped(vm, value))
         return reinterpret_cast<ExceptionBase*>(svgException);
-    if (XPathException* pathException = JSXPathException::toWrapped(value))
+    if (XPathException* pathException = JSXPathException::toWrapped(vm, value))
         return reinterpret_cast<ExceptionBase*>(pathException);
-    if (SQLException* pathException = JSSQLException::toWrapped(value))
+    if (SQLException* pathException = JSSQLException::toWrapped(vm, value))
         return reinterpret_cast<ExceptionBase*>(pathException);
 
     return 0;

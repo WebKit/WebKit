@@ -858,10 +858,10 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        ASSERT(inherits(info()));
+        ASSERT(inherits(vm, info()));
         ASSERT(getPrototypeDirect().isNull() || Heap::heap(this) == Heap::heap(getPrototypeDirect()));
         ASSERT(structure()->isObject());
-        ASSERT(classInfo());
+        ASSERT(classInfo(vm));
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -1006,7 +1006,7 @@ private:
     void fillCustomGetterPropertySlot(PropertySlot&, JSValue, unsigned, Structure*);
 
     JS_EXPORT_PRIVATE bool getOwnStaticPropertySlot(VM&, PropertyName, PropertySlot&);
-    JS_EXPORT_PRIVATE const HashTableValue* findPropertyHashEntry(PropertyName) const;
+    JS_EXPORT_PRIVATE const HashTableValue* findPropertyHashEntry(VM&, PropertyName) const;
         
     bool putIndexedDescriptor(ExecState*, SparseArrayEntry*, const PropertyDescriptor&, PropertyDescriptor& old);
         
@@ -1064,7 +1064,7 @@ protected:
     {
         Base::finishCreation(vm);
         ASSERT(!this->structure()->hasInlineStorage());
-        ASSERT(classInfo());
+        ASSERT(classInfo(vm));
     }
 };
 
@@ -1117,7 +1117,7 @@ protected:
     {
         Base::finishCreation(vm);
         ASSERT(structure()->totalStorageCapacity() == structure()->inlineCapacity());
-        ASSERT(classInfo());
+        ASSERT(classInfo(vm));
     }
 
 private:

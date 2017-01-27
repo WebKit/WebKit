@@ -124,7 +124,7 @@ RegExpObject* asRegExpObject(JSValue);
 
 inline RegExpObject* asRegExpObject(JSValue value)
 {
-    ASSERT(asObject(value)->inherits(RegExpObject::info()));
+    ASSERT(asObject(value)->inherits(*value.getObject()->vm(), RegExpObject::info()));
     return static_cast<RegExpObject*>(asObject(value));
 }
 

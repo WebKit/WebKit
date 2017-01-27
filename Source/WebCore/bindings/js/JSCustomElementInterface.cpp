@@ -132,7 +132,7 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     ASSERT(!newElement.isEmpty());
-    HTMLElement* wrappedElement = JSHTMLElement::toWrapped(newElement);
+    HTMLElement* wrappedElement = JSHTMLElement::toWrapped(vm, newElement);
     if (!wrappedElement) {
         throwTypeError(&state, scope, ASCIILiteral("The result of constructing a custom element must be a HTMLElement"));
         return nullptr;
@@ -210,7 +210,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
         return;
     }
 
-    Element* wrappedElement = JSElement::toWrapped(returnedElement);
+    Element* wrappedElement = JSElement::toWrapped(vm, returnedElement);
     if (!wrappedElement || wrappedElement != &element) {
         element.setIsFailedCustomElement(*this);
         reportException(state, createDOMException(state, INVALID_STATE_ERR, "Custom element constructor failed to upgrade an element"));

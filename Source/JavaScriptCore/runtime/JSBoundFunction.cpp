@@ -113,7 +113,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL isBoundFunction(ExecState* exec)
 {
-    return JSValue::encode(JSValue(static_cast<bool>(jsDynamicCast<JSBoundFunction*>(exec->uncheckedArgument(0)))));
+    return JSValue::encode(JSValue(static_cast<bool>(jsDynamicCast<JSBoundFunction*>(exec->vm(), exec->uncheckedArgument(0)))));
 }
 
 EncodedJSValue JSC_HOST_CALL hasInstanceBoundFunction(ExecState* exec)
@@ -129,7 +129,7 @@ inline Structure* getBoundFunctionStructure(VM& vm, ExecState* exec, JSGlobalObj
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue prototype = targetFunction->getPrototype(vm, exec);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    JSFunction* targetJSFunction = jsDynamicCast<JSFunction*>(targetFunction);
+    JSFunction* targetJSFunction = jsDynamicCast<JSFunction*>(vm, targetFunction);
 
     // We only cache the structure of the bound function if the bindee is a JSFunction since there
     // isn't any good place to put the structure on Internal Functions.
@@ -195,7 +195,7 @@ void JSBoundFunction::finishCreation(VM& vm, NativeExecutable* executable, int l
 {
     String name; // We lazily create our 'name' string property.
     Base::finishCreation(vm, executable, length, name);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     putDirectNonIndexAccessor(vm, vm.propertyNames->arguments, globalObject()->throwTypeErrorArgumentsCalleeAndCallerGetterSetter(), DontDelete | DontEnum | Accessor);
     putDirectNonIndexAccessor(vm, vm.propertyNames->caller, globalObject()->throwTypeErrorArgumentsCalleeAndCallerGetterSetter(), DontDelete | DontEnum | Accessor);

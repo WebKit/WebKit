@@ -57,12 +57,13 @@ CryptoAlgorithmIdentifier JSCryptoAlgorithmDictionary::parseAlgorithmIdentifier(
     // typedef (Algorithm or DOMString) AlgorithmIdentifier;
 
     String algorithmName;
+    VM& vm = state.vm();
 
     if (value.isString()) {
         algorithmName = asString(value)->value(&state);
         RETURN_IF_EXCEPTION(scope, { });
     } else if (value.isObject()) {
-        if (asObject(value)->inherits(StringObject::info())) {
+        if (asObject(value)->inherits(vm, StringObject::info())) {
             algorithmName = asStringObject(value)->internalValue()->value(&state);
             RETURN_IF_EXCEPTION(scope, { });
         } else {
@@ -210,7 +211,8 @@ static RefPtr<CryptoAlgorithmParametersDeprecated> createHmacKeyParams(ExecState
 
 static RefPtr<CryptoAlgorithmParametersDeprecated> createRsaKeyGenParams(ExecState& state, JSValue value)
 {
-    auto scope = DECLARE_THROW_SCOPE(state.vm());
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!value.isObject()) {
         throwTypeError(&state, scope);
@@ -229,7 +231,7 @@ static RefPtr<CryptoAlgorithmParametersDeprecated> createRsaKeyGenParams(ExecSta
     auto publicExponentValue = getProperty(state, asObject(value), "publicExponent");
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    auto publicExponentArray = toUnsharedUint8Array(publicExponentValue);
+    auto publicExponentArray = toUnsharedUint8Array(vm, publicExponentValue);
     if (!publicExponentArray) {
         throwTypeError(&state, scope, ASCIILiteral("Expected a Uint8Array in publicExponent"));
         return nullptr;

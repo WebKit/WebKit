@@ -40,7 +40,7 @@ const ClassInfo WeakSetConstructor::s_info = { "Function", &Base::s_info, 0, CRE
 
 void WeakSetConstructor::finishCreation(VM& vm, WeakSetPrototype* prototype)
 {
-    Base::finishCreation(vm, prototype->classInfo()->className);
+    Base::finishCreation(vm, prototype->classInfo(vm)->className);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), DontEnum | ReadOnly);
 }

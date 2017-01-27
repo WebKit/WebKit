@@ -390,7 +390,8 @@ void ScriptController::setupModuleScriptHandlers(CachedModuleScript& moduleScrip
 
     auto& rejectHandler = *JSNativeStdFunction::create(state.vm(), shell.window(), 1, String(), [moduleScript, moduleLoaderAlreadyReportedErrorSymbol, moduleLoaderFetchingIsCanceledSymbol](ExecState* exec) {
         JSValue error = exec->argument(0);
-        if (auto* symbol = jsDynamicCast<Symbol*>(error)) {
+        VM& vm = exec->vm();
+        if (auto* symbol = jsDynamicCast<Symbol*>(vm, error)) {
             if (symbol->privateName() == moduleLoaderAlreadyReportedErrorSymbol) {
                 moduleScript->notifyLoadFailed(LoadableScript::Error {
                     LoadableScript::ErrorType::CachedScript,
@@ -405,7 +406,6 @@ void ScriptController::setupModuleScriptHandlers(CachedModuleScript& moduleScrip
             }
         }
 
-        VM& vm = exec->vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
         moduleScript->notifyLoadFailed(LoadableScript::Error {
             LoadableScript::ErrorType::CachedScript,

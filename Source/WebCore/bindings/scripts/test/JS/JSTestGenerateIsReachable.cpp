@@ -102,7 +102,7 @@ JSTestGenerateIsReachable::JSTestGenerateIsReachable(Structure* structure, JSDOM
 void JSTestGenerateIsReachable::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -126,7 +126,7 @@ EncodedJSValue jsTestGenerateIsReachableConstructor(ExecState* state, EncodedJSV
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestGenerateIsReachablePrototype* domObject = jsDynamicDowncast<JSTestGenerateIsReachablePrototype*>(JSValue::decode(thisValue));
+    JSTestGenerateIsReachablePrototype* domObject = jsDynamicDowncast<JSTestGenerateIsReachablePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestGenerateIsReachable::getConstructor(state->vm(), domObject->globalObject()));
@@ -137,7 +137,7 @@ bool setJSTestGenerateIsReachableConstructor(ExecState* state, EncodedJSValue th
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestGenerateIsReachablePrototype* domObject = jsDynamicDowncast<JSTestGenerateIsReachablePrototype*>(JSValue::decode(thisValue));
+    JSTestGenerateIsReachablePrototype* domObject = jsDynamicDowncast<JSTestGenerateIsReachablePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -203,9 +203,9 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestGe
     return wrap(state, globalObject, impl);
 }
 
-TestGenerateIsReachable* JSTestGenerateIsReachable::toWrapped(JSC::JSValue value)
+TestGenerateIsReachable* JSTestGenerateIsReachable::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestGenerateIsReachable*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestGenerateIsReachable*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

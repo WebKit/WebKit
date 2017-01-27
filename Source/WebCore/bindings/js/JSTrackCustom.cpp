@@ -37,22 +37,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-TrackBase* toTrack(JSValue value)
-{
-    if (!value.isObject())
-        return nullptr;
-
-    JSObject* object = asObject(value);
-    if (object->inherits(JSTextTrack::info()))
-        return &jsCast<JSTextTrack*>(object)->wrapped();
-    if (object->inherits(JSAudioTrack::info()))
-        return &jsCast<JSAudioTrack*>(object)->wrapped();
-    if (object->inherits(JSVideoTrack::info()))
-        return &jsCast<JSVideoTrack*>(object)->wrapped();
-
-    return nullptr;
-}
-
 JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TrackBase& track)
 {
     switch (track.type()) {

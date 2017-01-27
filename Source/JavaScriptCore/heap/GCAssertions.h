@@ -37,7 +37,7 @@
 
 #define ASSERT_GC_OBJECT_INHERITS(object, classInfo) do {\
     ASSERT_GC_OBJECT_LOOKS_VALID(object); \
-    RELEASE_ASSERT(object->inherits(classInfo)); \
+    RELEASE_ASSERT(object->inherits(*object->JSCell::vm(), classInfo)); \
 } while (0)
 
 // Used to avoid triggering -Wundefined-bool-conversion.
@@ -47,7 +47,7 @@
 
 #define ASSERT_THIS_GC_OBJECT_INHERITS(classInfo) do {\
     ASSERT_THIS_GC_OBJECT_LOOKS_VALID(); \
-    RELEASE_ASSERT(this->inherits(classInfo)); \
+    RELEASE_ASSERT(this->inherits(*this->vm(), classInfo)); \
 } while (0)
 
 #else

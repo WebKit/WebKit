@@ -36,11 +36,15 @@ namespace JSC {
 
 FunctionExecutable* getExecutableForFunction(JSValue theFunctionValue)
 {
-    JSFunction* theFunction = jsDynamicCast<JSFunction*>(theFunctionValue);
+    if (!theFunctionValue.isCell())
+        return nullptr;
+
+    VM& vm = *theFunctionValue.asCell()->vm();
+    JSFunction* theFunction = jsDynamicCast<JSFunction*>(vm, theFunctionValue);
     if (!theFunction)
-        return 0;
+        return nullptr;
     
-    FunctionExecutable* executable = jsDynamicCast<FunctionExecutable*>(
+    FunctionExecutable* executable = jsDynamicCast<FunctionExecutable*>(vm, 
         theFunction->executable());
     return executable;
 }

@@ -228,8 +228,8 @@ public:
     bool isGetterSetter() const;
     bool isCustomGetterSetter() const;
     bool isObject() const;
-    bool inherits(const ClassInfo*) const;
-    const ClassInfo* classInfoOrNull() const;
+    bool inherits(VM&, const ClassInfo*) const;
+    const ClassInfo* classInfoOrNull(VM&) const;
         
     // Extracting the value.
     bool getString(ExecState*, WTF::String&) const;

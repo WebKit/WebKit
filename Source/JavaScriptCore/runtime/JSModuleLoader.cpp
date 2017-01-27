@@ -61,7 +61,7 @@ void JSModuleLoader::finishCreation(ExecState* exec, VM& vm, JSGlobalObject* glo
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSMap* map = JSMap::create(exec, vm, globalObject->mapStructure());
     RELEASE_ASSERT(!scope.exception());
     putDirect(vm, Identifier::fromString(&vm, "registry"), map);
@@ -232,7 +232,7 @@ JSValue JSModuleLoader::evaluate(ExecState* exec, JSValue key, JSValue moduleRec
     if (globalObject->globalObjectMethodTable()->moduleLoaderEvaluate)
         return globalObject->globalObjectMethodTable()->moduleLoaderEvaluate(globalObject, exec, this, key, moduleRecordValue, scriptFetcher);
 
-    JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(moduleRecordValue);
+    JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(exec->vm(), moduleRecordValue);
     if (!moduleRecord)
         return jsUndefined();
     return moduleRecord->evaluate(exec);
@@ -243,7 +243,7 @@ JSModuleNamespaceObject* JSModuleLoader::getModuleNamespaceObject(ExecState* exe
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(moduleRecordValue);
+    auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(vm, moduleRecordValue);
     if (!moduleRecord) {
         throwTypeError(exec, scope);
         return nullptr;

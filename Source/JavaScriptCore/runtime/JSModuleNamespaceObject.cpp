@@ -50,7 +50,7 @@ void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject* gl
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects
     // Quoted from the spec:
@@ -213,7 +213,7 @@ EncodedJSValue JSC_HOST_CALL moduleNamespaceObjectSymbolIterator(ExecState* exec
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSModuleNamespaceObject* object = jsDynamicCast<JSModuleNamespaceObject*>(exec->thisValue());
+    JSModuleNamespaceObject* object = jsDynamicCast<JSModuleNamespaceObject*>(vm, exec->thisValue());
     if (!object)
         return throwVMTypeError(exec, scope, ASCIILiteral("|this| should be a module namespace object"));
     return JSValue::encode(JSPropertyNameIterator::create(exec, exec->lexicalGlobalObject()->propertyNameIteratorStructure(), object));

@@ -27,12 +27,13 @@
 
 namespace JSC {
 class JSValue;
+class VM;
 }
 
 namespace WebCore {
 
 class ExceptionBase;
 
-ExceptionBase* toExceptionBase(JSC::JSValue);
+ExceptionBase* toExceptionBase(JSC::VM&, JSC::JSValue);
 
 } // namespace WebCore

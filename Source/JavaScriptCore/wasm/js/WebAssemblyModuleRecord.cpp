@@ -71,7 +71,7 @@ void WebAssemblyModuleRecord::destroy(JSCell* cell)
 void WebAssemblyModuleRecord::finishCreation(ExecState* exec, VM& vm, const Wasm::ModuleInformation& moduleInformation)
 {
     Base::finishCreation(exec, vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     for (const auto& exp : moduleInformation.exports)
         addExportEntry(ExportEntry::createLocal(exp.field, exp.field));
 }

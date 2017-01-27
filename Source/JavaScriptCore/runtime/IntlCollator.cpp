@@ -76,7 +76,7 @@ IntlCollator::IntlCollator(VM& vm, Structure* structure)
 void IntlCollator::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 void IntlCollator::destroy(JSCell* cell)

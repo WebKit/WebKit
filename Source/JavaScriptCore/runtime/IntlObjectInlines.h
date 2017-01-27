@@ -42,7 +42,7 @@ JSValue constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(ExecState& s
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!jsDynamicCast<IntlInstance*>(thisValue)) {
+    if (!jsDynamicCast<IntlInstance*>(vm, thisValue)) {
         JSValue prototype = callee->getDirect(vm, vm.propertyNames->prototype);
         bool hasInstance = JSObject::defaultHasInstance(&state, thisValue, prototype);
         RETURN_IF_EXCEPTION(scope, JSValue());

@@ -45,7 +45,7 @@ CRuntimeObject::CRuntimeObject(VM& vm, Structure* structure, RefPtr<CInstance>&&
 void CRuntimeObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 CInstance* CRuntimeObject::getInternalCInstance() const

@@ -103,7 +103,7 @@ void StackVisitor::readFrame(CallFrame* callFrame)
         return;
     }
 
-    if (callFrame->callee()->isAnyWasmCallee()) {
+    if (callFrame->callee()->isAnyWasmCallee(callFrame->vm())) {
         readNonInlinedFrame(callFrame);
         return;
     }
@@ -158,7 +158,7 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
     JSCell* callee = callFrame->callee();
     m_frame.m_callee = callee;
 
-    if (callee->isAnyWasmCallee()) {
+    if (callee->isAnyWasmCallee(*callee->vm())) {
         m_frame.m_isWasmFrame = true;
         m_frame.m_codeBlock = nullptr;
         m_frame.m_bytecodeOffset = 0;
@@ -255,7 +255,7 @@ RegisterAtOffsetList* StackVisitor::Frame::calleeSaveRegisters()
 #if ENABLE(WEBASSEMBLY)
     if (isWasmFrame()) {
         if (JSCell* callee = this->callee()) {
-            if (JSWebAssemblyCallee* wasmCallee = jsDynamicCast<JSWebAssemblyCallee*>(callee))
+            if (JSWebAssemblyCallee* wasmCallee = jsDynamicCast<JSWebAssemblyCallee*>(*callee->vm(), callee))
                 return wasmCallee->calleeSaveRegisters();
             // Other wasm callees (e.g, stubs) don't use callee save registers, so nothing needs
             // to be restored for them.

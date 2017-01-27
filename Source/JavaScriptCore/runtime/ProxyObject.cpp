@@ -58,11 +58,11 @@ String ProxyObject::toStringName(const JSObject* object, ExecState* exec)
     while (proxy) {
         const JSObject* target = proxy->target();
         if (isArray(exec, target))
-            return target->classInfo()->methodTable.toStringName(target, exec);
+            return target->classInfo(vm)->methodTable.toStringName(target, exec);
         if (UNLIKELY(scope.exception()))
             break;
 
-        proxy = jsDynamicCast<const ProxyObject*>(target);
+        proxy = jsDynamicCast<const ProxyObject*>(vm, target);
     }
     return ASCIILiteral("Object");
 }
@@ -87,7 +87,7 @@ void ProxyObject::finishCreation(VM& vm, ExecState* exec, JSValue target, JSValu
         throwTypeError(exec, scope, ASCIILiteral("A Proxy's 'target' should be an Object"));
         return;
     }
-    if (ProxyObject* targetAsProxy = jsDynamicCast<ProxyObject*>(target)) {
+    if (ProxyObject* targetAsProxy = jsDynamicCast<ProxyObject*>(vm, target)) {
         if (targetAsProxy->handler().isNull()) {
             throwTypeError(exec, scope, ASCIILiteral("If a Proxy's handler is another Proxy object, the other Proxy should not have been revoked"));
             return;

@@ -433,7 +433,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
         PropertyOffset offset = node->storageAccessData().offset;
 
         if (state.structureClobberState() == StructuresAreWatched) {
-            if (JSObject* knownBase = node->child1()->dynamicCastConstant<JSObject*>()) {
+            if (JSObject* knownBase = node->child1()->dynamicCastConstant<JSObject*>(graph.m_vm)) {
                 if (graph.isSafeToLoad(knownBase, offset))
                     return true;
             }

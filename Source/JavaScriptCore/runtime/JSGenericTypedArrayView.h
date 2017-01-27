@@ -267,7 +267,7 @@ public:
     static const TypedArrayType TypedArrayStorageType = Adaptor::typeValue;
 
     // This is the default DOM unwrapping. It calls toUnsharedNativeTypedView().
-    static RefPtr<typename Adaptor::ViewType> toWrapped(JSValue);
+    static RefPtr<typename Adaptor::ViewType> toWrapped(VM&, JSValue);
     
 protected:
     friend struct TypedArrayClassInfos;
@@ -360,27 +360,27 @@ private:
 };
 
 template<typename Adaptor>
-inline RefPtr<typename Adaptor::ViewType> toPossiblySharedNativeTypedView(JSValue value)
+inline RefPtr<typename Adaptor::ViewType> toPossiblySharedNativeTypedView(VM& vm, JSValue value)
 {
-    typename Adaptor::JSViewType* wrapper = jsDynamicCast<typename Adaptor::JSViewType*>(value);
+    typename Adaptor::JSViewType* wrapper = jsDynamicCast<typename Adaptor::JSViewType*>(vm, value);
     if (!wrapper)
         return nullptr;
     return wrapper->possiblySharedTypedImpl();
 }
 
 template<typename Adaptor>
-inline RefPtr<typename Adaptor::ViewType> toUnsharedNativeTypedView(JSValue value)
+inline RefPtr<typename Adaptor::ViewType> toUnsharedNativeTypedView(VM& vm, JSValue value)
 {
-    RefPtr<typename Adaptor::ViewType> result = toPossiblySharedNativeTypedView<Adaptor>(value);
+    RefPtr<typename Adaptor::ViewType> result = toPossiblySharedNativeTypedView<Adaptor>(vm, value);
     if (!result || result->isShared())
         return nullptr;
     return result;
 }
 
 template<typename Adaptor>
-RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::toWrapped(JSValue value)
+RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::toWrapped(VM& vm, JSValue value)
 {
-    return JSC::toUnsharedNativeTypedView<Adaptor>(value);
+    return JSC::toUnsharedNativeTypedView<Adaptor>(vm, value);
 }
 
 } // namespace JSC

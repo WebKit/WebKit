@@ -51,7 +51,7 @@ RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure,
 void RuntimeMethod::finishCreation(VM& vm, const String& ident)
 {
     Base::finishCreation(vm, ident);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 EncodedJSValue RuntimeMethod::lengthGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName)
@@ -59,7 +59,7 @@ EncodedJSValue RuntimeMethod::lengthGetter(ExecState* exec, EncodedJSValue thisV
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    RuntimeMethod* thisObject = jsDynamicDowncast<RuntimeMethod*>(JSValue::decode(thisValue));
+    RuntimeMethod* thisObject = jsDynamicDowncast<RuntimeMethod*>(vm, JSValue::decode(thisValue));
     if (!thisObject)
         return throwVMTypeError(exec, scope);
     return JSValue::encode(jsNumber(thisObject->m_method->numParameters()));
@@ -89,14 +89,14 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)
     RefPtr<Instance> instance;
 
     JSValue thisValue = exec->thisValue();
-    if (thisValue.inherits(RuntimeObject::info())) {
+    if (thisValue.inherits(vm, RuntimeObject::info())) {
         RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(asObject(thisValue));
         instance = runtimeObject->getInternalInstance();
         if (!instance) 
             return JSValue::encode(RuntimeObject::throwInvalidAccessError(exec, scope));
     } else {
         // Calling a runtime object of a plugin element?
-        if (thisValue.inherits(JSHTMLElement::info()))
+        if (thisValue.inherits(vm, JSHTMLElement::info()))
             instance = pluginInstance(jsCast<JSHTMLElement*>(asObject(thisValue))->wrapped());
         if (!instance)
             return throwVMTypeError(exec, scope);

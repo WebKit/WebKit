@@ -119,7 +119,7 @@ JSTestJSBuiltinConstructor::JSTestJSBuiltinConstructor(Structure* structure, JSD
 void JSTestJSBuiltinConstructor::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -139,14 +139,14 @@ void JSTestJSBuiltinConstructor::destroy(JSC::JSCell* cell)
     thisObject->JSTestJSBuiltinConstructor::~JSTestJSBuiltinConstructor();
 }
 
-template<> inline JSTestJSBuiltinConstructor* BindingCaller<JSTestJSBuiltinConstructor>::castForAttribute(ExecState&, EncodedJSValue thisValue)
+template<> inline JSTestJSBuiltinConstructor* BindingCaller<JSTestJSBuiltinConstructor>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestJSBuiltinConstructor*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestJSBuiltinConstructor*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSTestJSBuiltinConstructor* BindingCaller<JSTestJSBuiltinConstructor>::castForOperation(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestJSBuiltinConstructor*>(state.thisValue());
+    return jsDynamicDowncast<JSTestJSBuiltinConstructor*>(state.vm(), state.thisValue());
 }
 
 static inline JSValue jsTestJSBuiltinConstructorTestAttributeCustomGetter(ExecState&, JSTestJSBuiltinConstructor&, ThrowScope& throwScope);
@@ -181,7 +181,7 @@ EncodedJSValue jsTestJSBuiltinConstructorConstructor(ExecState* state, EncodedJS
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestJSBuiltinConstructorPrototype* domObject = jsDynamicDowncast<JSTestJSBuiltinConstructorPrototype*>(JSValue::decode(thisValue));
+    JSTestJSBuiltinConstructorPrototype* domObject = jsDynamicDowncast<JSTestJSBuiltinConstructorPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestJSBuiltinConstructor::getConstructor(state->vm(), domObject->globalObject()));
@@ -192,7 +192,7 @@ bool setJSTestJSBuiltinConstructorConstructor(ExecState* state, EncodedJSValue t
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestJSBuiltinConstructorPrototype* domObject = jsDynamicDowncast<JSTestJSBuiltinConstructorPrototype*>(JSValue::decode(thisValue));
+    JSTestJSBuiltinConstructorPrototype* domObject = jsDynamicDowncast<JSTestJSBuiltinConstructorPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;

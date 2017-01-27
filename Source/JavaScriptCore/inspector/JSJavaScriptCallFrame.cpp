@@ -48,7 +48,7 @@ JSJavaScriptCallFrame::JSJavaScriptCallFrame(VM& vm, Structure* structure, PassR
 void JSJavaScriptCallFrame::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 JSObject* JSJavaScriptCallFrame::createPrototype(VM& vm, JSGlobalObject* globalObject)
@@ -231,11 +231,6 @@ JSValue toJS(ExecState* exec, JSGlobalObject* globalObject, JavaScriptCallFrame*
     JSJavaScriptCallFrame* javaScriptCallFrame = JSJavaScriptCallFrame::create(exec->vm(), structure, impl);
 
     return javaScriptCallFrame;
-}
-
-JSJavaScriptCallFrame* toJSJavaScriptCallFrame(JSValue value)
-{
-    return value.inherits(JSJavaScriptCallFrame::info()) ? jsCast<JSJavaScriptCallFrame*>(value) : nullptr;
 }
 
 } // namespace Inspector

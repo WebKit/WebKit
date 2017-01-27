@@ -270,7 +270,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
                 if (ExecutableBase* executable = variant.executable()) {
                     if (executable->isHostFunction())
                         out.print(comma, "<host function>");
-                    else if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable))
+                    else if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(m_vm, executable))
                         out.print(comma, FunctionExecutableDump(functionExecutable));
                     else
                         out.print(comma, "<non-function executable>");
@@ -1318,7 +1318,7 @@ JSValue Graph::tryGetConstantClosureVar(JSValue base, ScopeOffset offset)
     if (!base)
         return JSValue();
     
-    JSLexicalEnvironment* activation = jsDynamicCast<JSLexicalEnvironment*>(base);
+    JSLexicalEnvironment* activation = jsDynamicCast<JSLexicalEnvironment*>(m_vm, base);
     if (!activation)
         return JSValue();
     
@@ -1366,7 +1366,7 @@ JSArrayBufferView* Graph::tryGetFoldableView(JSValue value)
 {
     if (!value)
         return nullptr;
-    JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(value);
+    JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(m_vm, value);
     if (!value)
         return nullptr;
     if (!view->length())
@@ -1427,7 +1427,7 @@ FrozenValue* Graph::freeze(JSValue value)
     // point to other CodeBlocks. We don't want to have them be
     // part of the weak pointer set. For example, an optimized CodeBlock
     // having a weak pointer to itself will cause it to get collected.
-    RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(value));
+    RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(m_vm, value));
     
     auto result = m_frozenValueMap.add(JSValue::encode(value), nullptr);
     if (LIKELY(!result.isNewEntry))
@@ -1639,9 +1639,9 @@ bool Graph::getRegExpPrototypeProperty(JSObject* regExpPrototype, Structure* reg
 
     // We only care about functions and getters at this point. If you want to access other properties
     // you'll have to add code for those types.
-    JSFunction* function = jsDynamicCast<JSFunction*>(value);
+    JSFunction* function = jsDynamicCast<JSFunction*>(m_vm, value);
     if (!function) {
-        GetterSetter* getterSetter = jsDynamicCast<GetterSetter*>(value);
+        GetterSetter* getterSetter = jsDynamicCast<GetterSetter*>(m_vm, value);
 
         if (!getterSetter)
             return false;
@@ -1663,7 +1663,7 @@ bool Graph::isStringPrototypeMethodSane(JSGlobalObject* globalObject, UniquedStr
 
     ObjectPropertyCondition equivalenceCondition = conditions.slotBaseCondition();
     RELEASE_ASSERT(equivalenceCondition.hasRequiredValue());
-    JSFunction* function = jsDynamicCast<JSFunction*>(equivalenceCondition.condition().requiredValue());
+    JSFunction* function = jsDynamicCast<JSFunction*>(m_vm, equivalenceCondition.condition().requiredValue());
     if (!function)
         return false;
 
@@ -1683,7 +1683,7 @@ bool Graph::canOptimizeStringObjectAccess(const CodeOrigin& codeOrigin)
     Structure* stringObjectStructure = globalObjectFor(codeOrigin)->stringObjectStructure();
     registerStructure(stringObjectStructure);
     ASSERT(stringObjectStructure->storedPrototype().isObject());
-    ASSERT(stringObjectStructure->storedPrototype().asCell()->classInfo() == StringPrototype::info());
+    ASSERT(stringObjectStructure->storedPrototype().asCell()->classInfo(*stringObjectStructure->storedPrototype().asCell()->vm()) == StringPrototype::info());
 
     if (!watchConditions(generateConditionsForPropertyMissConcurrently(m_vm, globalObject, stringObjectStructure, m_vm.propertyNames->toPrimitiveSymbol.impl())))
         return false;

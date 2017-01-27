@@ -57,8 +57,9 @@ void JSString::destroy(JSCell* cell)
 
 void JSString::dumpToStream(const JSCell* cell, PrintStream& out)
 {
+    VM& vm = *cell->vm();
     const JSString* thisObject = jsCast<const JSString*>(cell);
-    out.printf("<%p, %s, [%u], ", thisObject, thisObject->className(), thisObject->length());
+    out.printf("<%p, %s, [%u], ", thisObject, thisObject->className(vm), thisObject->length());
     if (thisObject->isRope())
         out.printf("[rope]");
     else {

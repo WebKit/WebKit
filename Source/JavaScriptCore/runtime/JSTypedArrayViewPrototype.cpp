@@ -38,7 +38,7 @@
 namespace JSC {
 
 #define CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(functionName) do {                           \
-    switch (thisValue.getObject()->classInfo()->typedArrayStorageType) {                        \
+    switch (thisValue.getObject()->classInfo(vm)->typedArrayStorageType) {                        \
     case TypeUint8Clamped:                                                                      \
         return functionName<JSUint8ClampedArray>(vm, exec);                                     \
     case TypeInt32:                                                                             \
@@ -68,7 +68,7 @@ namespace JSC {
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncIsTypedArrayView(ExecState* exec)
 {
     JSValue value = exec->uncheckedArgument(0);
-    return JSValue::encode(jsBoolean(value.isCell() && isTypedView(value.asCell()->classInfo()->typedArrayStorageType)));
+    return JSValue::encode(jsBoolean(value.isCell() && isTypedView(value.asCell()->classInfo(exec->vm())->typedArrayStorageType)));
 }
 
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState* exec)
@@ -76,7 +76,7 @@ EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue argument = exec->argument(0);
-    if (!argument.isCell() || !isTypedView(argument.asCell()->classInfo()->typedArrayStorageType))
+    if (!argument.isCell() || !isTypedView(argument.asCell()->classInfo(vm)->typedArrayStorageType))
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver should be a typed array view"));
 
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(argument);
@@ -89,8 +89,9 @@ EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncGetOriginalConstructor(ExecState* exec)
 {
+    VM& vm = exec->vm();
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    TypedArrayType type = exec->uncheckedArgument(0).getObject()->classInfo()->typedArrayStorageType;
+    TypedArrayType type = exec->uncheckedArgument(0).getObject()->classInfo(vm)->typedArrayStorageType;
     ASSERT(isTypedView(type));
     return JSValue::encode(globalObject->typedArrayConstructor(type));
 }
@@ -254,7 +255,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncToStringTag(Exe
         return JSValue::encode(jsUndefined());
 
     VM& vm = exec->vm();
-    switch (thisValue.getObject()->classInfo()->typedArrayStorageType) {
+    switch (thisValue.getObject()->classInfo(vm)->typedArrayStorageType) {
     case TypeUint8Clamped:
         return JSValue::encode(jsString(&vm, "Uint8ClampedArray"));
     case TypeInt32:
@@ -292,7 +293,7 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
 {
     Base::finishCreation(vm);
 
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     putDirectWithoutTransition(vm, vm.propertyNames->toString, globalObject->arrayProtoToStringFunction(), DontEnum);
 

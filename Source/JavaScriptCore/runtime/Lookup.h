@@ -269,7 +269,7 @@ inline bool putEntry(ExecState* exec, const HashTableValue* entry, JSObject* bas
         if (!(entry->attributes() & ReadOnly)) {
             // If this is a function or lazy property put then we just do the put because
             // logically the object already had the property, so this is just a replace.
-            if (JSObject* thisObject = jsDynamicCast<JSObject*>(thisValue))
+            if (JSObject* thisObject = jsDynamicCast<JSObject*>(vm, thisValue))
                 thisObject->putDirect(vm, propertyName, value);
             return true;
         }

@@ -39,7 +39,7 @@ static EncodedJSValue JSC_HOST_CALL SetIteratorPrototypeFuncNext(ExecState*);
 void SetIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     vm.prototypeMap.addPrototype(this);
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->next, SetIteratorPrototypeFuncNext, DontEnum, 0);
@@ -52,7 +52,7 @@ EncodedJSValue JSC_HOST_CALL SetIteratorPrototypeFuncNext(CallFrame* callFrame)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue result;
-    JSSetIterator* iterator = jsDynamicCast<JSSetIterator*>(callFrame->thisValue());
+    JSSetIterator* iterator = jsDynamicCast<JSSetIterator*>(vm, callFrame->thisValue());
     if (!iterator)
         return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot call SetIterator.next() on a non-SetIterator object")));
 

@@ -56,12 +56,13 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableByteStreamController(ExecState& 
 
 EncodedJSValue JSC_HOST_CALL constructJSReadableStreamDefaultReader(ExecState& exec)
 {
-    JSVMClientData& clientData = *static_cast<JSVMClientData*>(exec.vm().clientData);
+    VM& vm = exec.vm();
+    JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);
     JSDOMGlobalObject& globalObject = *static_cast<JSDOMGlobalObject*>(exec.lexicalGlobalObject());
 
     JSC::JSObject* constructor = JSC::asObject(globalObject.get(&exec, clientData.builtinNames().ReadableStreamDefaultReaderPrivateName()));
     ConstructData constructData;
-    ConstructType constructType = constructor->methodTable()->getConstructData(constructor, constructData);
+    ConstructType constructType = constructor->methodTable(vm)->getConstructData(constructor, constructData);
     ASSERT(constructType != ConstructType::None);
 
     MarkedArgumentBuffer args;

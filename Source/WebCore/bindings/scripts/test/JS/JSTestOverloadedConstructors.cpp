@@ -149,11 +149,11 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor:
     }
     if (argsCount == 1) {
         JSValue distinguishingArg = state->uncheckedArgument(0);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSArrayBuffer::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSArrayBuffer::info()))
             return constructJSTestOverloadedConstructors1(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSArrayBufferView::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSArrayBufferView::info()))
             return constructJSTestOverloadedConstructors2(state);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSBlob::info()))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSBlob::info()))
             return constructJSTestOverloadedConstructors3(state);
         if (distinguishingArg.isNumber())
             return constructJSTestOverloadedConstructors5(state);
@@ -202,7 +202,7 @@ JSTestOverloadedConstructors::JSTestOverloadedConstructors(Structure* structure,
 void JSTestOverloadedConstructors::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -226,7 +226,7 @@ EncodedJSValue jsTestOverloadedConstructorsConstructor(ExecState* state, Encoded
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestOverloadedConstructorsPrototype* domObject = jsDynamicDowncast<JSTestOverloadedConstructorsPrototype*>(JSValue::decode(thisValue));
+    JSTestOverloadedConstructorsPrototype* domObject = jsDynamicDowncast<JSTestOverloadedConstructorsPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestOverloadedConstructors::getConstructor(state->vm(), domObject->globalObject()));
@@ -237,7 +237,7 @@ bool setJSTestOverloadedConstructorsConstructor(ExecState* state, EncodedJSValue
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestOverloadedConstructorsPrototype* domObject = jsDynamicDowncast<JSTestOverloadedConstructorsPrototype*>(JSValue::decode(thisValue));
+    JSTestOverloadedConstructorsPrototype* domObject = jsDynamicDowncast<JSTestOverloadedConstructorsPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -303,9 +303,9 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestOv
     return wrap(state, globalObject, impl);
 }
 
-TestOverloadedConstructors* JSTestOverloadedConstructors::toWrapped(JSC::JSValue value)
+TestOverloadedConstructors* JSTestOverloadedConstructors::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestOverloadedConstructors*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestOverloadedConstructors*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

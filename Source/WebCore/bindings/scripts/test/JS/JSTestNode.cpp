@@ -157,7 +157,7 @@ JSTestNode::JSTestNode(Structure* structure, JSDOMGlobalObject& globalObject, Re
 void JSTestNode::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -171,14 +171,14 @@ JSObject* JSTestNode::prototype(VM& vm, JSGlobalObject* globalObject)
     return getDOMPrototype<JSTestNode>(vm, globalObject);
 }
 
-template<> inline JSTestNode* BindingCaller<JSTestNode>::castForAttribute(ExecState&, EncodedJSValue thisValue)
+template<> inline JSTestNode* BindingCaller<JSTestNode>::castForAttribute(ExecState& state, EncodedJSValue thisValue)
 {
-    return jsDynamicDowncast<JSTestNode*>(JSValue::decode(thisValue));
+    return jsDynamicDowncast<JSTestNode*>(state.vm(), JSValue::decode(thisValue));
 }
 
 template<> inline JSTestNode* BindingCaller<JSTestNode>::castForOperation(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestNode*>(state.thisValue());
+    return jsDynamicDowncast<JSTestNode*>(state.vm(), state.thisValue());
 }
 
 static inline JSValue jsTestNodeNameGetter(ExecState&, JSTestNode&, ThrowScope& throwScope);
@@ -201,7 +201,7 @@ EncodedJSValue jsTestNodeConstructor(ExecState* state, EncodedJSValue thisValue,
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestNodePrototype* domObject = jsDynamicDowncast<JSTestNodePrototype*>(JSValue::decode(thisValue));
+    JSTestNodePrototype* domObject = jsDynamicDowncast<JSTestNodePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestNode::getConstructor(state->vm(), domObject->globalObject()));
@@ -212,7 +212,7 @@ bool setJSTestNodeConstructor(ExecState* state, EncodedJSValue thisValue, Encode
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestNodePrototype* domObject = jsDynamicDowncast<JSTestNodePrototype*>(JSValue::decode(thisValue));
+    JSTestNodePrototype* domObject = jsDynamicDowncast<JSTestNodePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;

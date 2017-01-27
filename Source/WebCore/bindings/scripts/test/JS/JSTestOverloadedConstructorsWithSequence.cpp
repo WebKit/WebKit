@@ -153,7 +153,7 @@ JSTestOverloadedConstructorsWithSequence::JSTestOverloadedConstructorsWithSequen
 void JSTestOverloadedConstructorsWithSequence::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -177,7 +177,7 @@ EncodedJSValue jsTestOverloadedConstructorsWithSequenceConstructor(ExecState* st
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestOverloadedConstructorsWithSequencePrototype* domObject = jsDynamicDowncast<JSTestOverloadedConstructorsWithSequencePrototype*>(JSValue::decode(thisValue));
+    JSTestOverloadedConstructorsWithSequencePrototype* domObject = jsDynamicDowncast<JSTestOverloadedConstructorsWithSequencePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestOverloadedConstructorsWithSequence::getConstructor(state->vm(), domObject->globalObject()));
@@ -188,7 +188,7 @@ bool setJSTestOverloadedConstructorsWithSequenceConstructor(ExecState* state, En
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestOverloadedConstructorsWithSequencePrototype* domObject = jsDynamicDowncast<JSTestOverloadedConstructorsWithSequencePrototype*>(JSValue::decode(thisValue));
+    JSTestOverloadedConstructorsWithSequencePrototype* domObject = jsDynamicDowncast<JSTestOverloadedConstructorsWithSequencePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -254,9 +254,9 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestOv
     return wrap(state, globalObject, impl);
 }
 
-TestOverloadedConstructorsWithSequence* JSTestOverloadedConstructorsWithSequence::toWrapped(JSC::JSValue value)
+TestOverloadedConstructorsWithSequence* JSTestOverloadedConstructorsWithSequence::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestOverloadedConstructorsWithSequence*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestOverloadedConstructorsWithSequence*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

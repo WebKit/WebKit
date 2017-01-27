@@ -38,6 +38,7 @@ namespace JSC {
 class CodeBlock;
 class Heap;
 class JSCell;
+class VM;
 
 // CodeBlockSet tracks all CodeBlocks. Every CodeBlock starts out with one
 // reference coming in from GC. The GC is responsible for freeing CodeBlocks
@@ -50,7 +51,7 @@ public:
     CodeBlockSet();
     ~CodeBlockSet();
 
-    void lastChanceToFinalize();
+    void lastChanceToFinalize(VM&);
     
     // Add a CodeBlock. This is only called by CodeBlock constructors.
     void add(CodeBlock*);
@@ -67,7 +68,7 @@ public:
     
     // Delete all code blocks that are only referenced by this set (i.e. owned
     // by this set), and that have not been marked.
-    void deleteUnmarkedAndUnreferenced(CollectionScope);
+    void deleteUnmarkedAndUnreferenced(VM&, CollectionScope);
     
     void clearCurrentlyExecuting();
 

@@ -439,7 +439,7 @@ template<typename T> struct Converter<IDLInterface<T>> : DefaultConverter<IDLInt
     {
         JSC::VM& vm = state.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
-        ReturnType object = WrapperType::toWrapped(value);
+        ReturnType object = WrapperType::toWrapped(vm, value);
         if (UNLIKELY(!object))
             exceptionThrower(state, scope);
         return object;
@@ -1516,7 +1516,8 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
 
     static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
     {
-        auto scope = DECLARE_THROW_SCOPE(state.vm());
+        JSC::VM& vm = state.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
 
         // 1. If the union type includes a nullable type and V is null or undefined, then return the IDL value null.
         constexpr bool hasNullType = brigand::any<TypeList, std::is_same<IDLNull, brigand::_1>>::value;
@@ -1556,7 +1557,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                 using RawType = typename Type::RawType;
                 using WrapperType = typename JSDOMWrapperConverterTraits<RawType>::WrapperClass;
 
-                auto castedValue = WrapperType::toWrapped(value);
+                auto castedValue = WrapperType::toWrapped(vm, value);
                 if (!castedValue)
                     return;
                 
@@ -1773,7 +1774,7 @@ template<typename T> struct Converter<IDLXPathNSResolver<T>> : DefaultConverter<
     {
         JSC::VM& vm = state.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
-        ReturnType object = WrapperType::toWrapped(state, value);
+        ReturnType object = WrapperType::toWrapped(vm, state, value);
         if (UNLIKELY(!object))
             exceptionThrower(state, scope);
         return object;

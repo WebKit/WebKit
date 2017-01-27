@@ -639,9 +639,10 @@ id tryUnwrapObjcObject(JSGlobalContextRef context, JSValueRef value)
     JSObjectRef object = JSValueToObject(context, value, &exception);
     ASSERT(!exception);
     JSC::JSLockHolder locker(toJS(context));
-    if (toJS(object)->inherits(JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::info()))
+    JSC::VM& vm = toJS(context)->vm();
+    if (toJS(object)->inherits(vm, JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::info()))
         return (id)JSC::jsCast<JSC::JSAPIWrapperObject*>(toJS(object))->wrappedObject();
-    if (id target = tryUnwrapConstructor(object))
+    if (id target = tryUnwrapConstructor(&vm, object))
         return target;
     return nil;
 }

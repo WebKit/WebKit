@@ -96,7 +96,7 @@ Structure* JSWebAssembly::createStructure(VM& vm, JSGlobalObject* globalObject, 
 void JSWebAssembly::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("validate", webAssemblyValidateFunc, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("compile", webAssemblyCompileFunc, DontEnum, 1);
 }

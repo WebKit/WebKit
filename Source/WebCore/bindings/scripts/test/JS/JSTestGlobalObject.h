@@ -40,7 +40,7 @@ public:
 
     static const bool needsDestruction = false;
 
-    static TestGlobalObject* toWrapped(JSC::JSValue);
+    static TestGlobalObject* toWrapped(JSC::VM&, JSC::JSValue);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;

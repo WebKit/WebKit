@@ -70,8 +70,9 @@ JSNPObject::JSNPObject(JSGlobalObject* globalObject, Structure* structure, NPRun
 
 void JSNPObject::finishCreation(JSGlobalObject* globalObject)
 {
-    Base::finishCreation(globalObject->vm());
-    ASSERT(inherits(info()));
+    VM& vm = globalObject->vm();
+    Base::finishCreation(vm);
+    ASSERT(inherits(vm, info()));
 
     // We should never have an NPJSObject inside a JSNPObject.
     ASSERT(!NPJSObject::isNPJSObject(m_npObject));
@@ -239,7 +240,7 @@ JSValue JSNPObject::callConstructor(ExecState* exec)
 static EncodedJSValue JSC_HOST_CALL callNPJSObject(ExecState* exec)
 {
     JSObject* object = exec->jsCallee();
-    ASSERT(object->inherits(JSNPObject::info()));
+    ASSERT(object->inherits(exec->vm(), JSNPObject::info()));
 
     return JSValue::encode(jsCast<JSNPObject*>(object)->callObject(exec));
 }
@@ -258,7 +259,7 @@ JSC::CallType JSNPObject::getCallData(JSC::JSCell* cell, JSC::CallData& callData
 static EncodedJSValue JSC_HOST_CALL constructWithConstructor(ExecState* exec)
 {
     JSObject* constructor = exec->jsCallee();
-    ASSERT(constructor->inherits(JSNPObject::info()));
+    ASSERT(constructor->inherits(exec->vm(), JSNPObject::info()));
 
     return JSValue::encode(jsCast<JSNPObject*>(constructor)->callConstructor(exec));
 }

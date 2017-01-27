@@ -220,10 +220,10 @@ void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack* call
 
 void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, Exception* exception)
 {
-    if (isTerminatedExecutionException(exception))
+    VM& vm = exec->vm();
+    if (isTerminatedExecutionException(vm, exception))
         return;
 
-    VM& vm = exec->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
     ErrorHandlingScope errorScope(vm);
 

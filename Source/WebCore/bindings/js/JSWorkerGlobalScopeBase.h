@@ -77,7 +77,7 @@ namespace WebCore {
     JSC::JSValue toJS(JSC::ExecState*, WorkerGlobalScope&);
     inline JSC::JSValue toJS(JSC::ExecState* exec, WorkerGlobalScope* scope) { return scope ? toJS(exec, *scope) : JSC::jsNull(); }
 
-    JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSC::JSValue);
-    JSWorkerGlobalScope* toJSWorkerGlobalScope(JSC::JSValue);
+    JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSC::VM&, JSC::JSValue);
+    JSWorkerGlobalScope* toJSWorkerGlobalScope(JSC::VM&, JSC::JSValue);
 
 } // namespace WebCore

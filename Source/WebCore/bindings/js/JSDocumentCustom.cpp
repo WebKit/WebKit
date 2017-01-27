@@ -77,7 +77,7 @@ JSObject* cachedDocumentWrapper(ExecState& state, JSDOMGlobalObject& globalObjec
         return nullptr;
 
     // Creating a wrapper for domWindow might have created a wrapper for document as well.
-    return getCachedWrapper(toJSDOMWindow(toJS(&state, *window))->world(), document);
+    return getCachedWrapper(toJSDOMWindow(state.vm(), toJS(&state, *window))->world(), document);
 }
 
 void reportMemoryForDocumentIfFrameless(ExecState& state, Document& document)
@@ -116,7 +116,7 @@ JSValue JSDocument::createTouchList(ExecState& state)
     auto touchList = TouchList::create();
 
     for (size_t i = 0; i < state.argumentCount(); ++i) {
-        auto* item = JSTouch::toWrapped(state.uncheckedArgument(i));
+        auto* item = JSTouch::toWrapped(vm, state.uncheckedArgument(i));
         if (!item)
             return JSValue::decode(throwArgumentTypeError(state, scope, i, "touches", "Document", "createTouchList", "Touch"));
 

@@ -66,7 +66,7 @@ void JSModuleRecord::destroy(JSCell* cell)
 void JSModuleRecord::finishCreation(ExecState* exec, VM& vm)
 {
     Base::finishCreation(exec, vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 void JSModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -55,15 +55,6 @@ JSWebAssemblyMemory::JSWebAssemblyMemory(VM& vm, Structure* structure, Wasm::Mem
 {
 }
 
-JSWebAssemblyMemory::~JSWebAssemblyMemory()
-{
-    if (m_buffer) {
-        ArrayBufferContents dummyContents;
-        m_buffer->transferTo(dummyContents);
-        m_buffer = nullptr;
-    }
-}
-
 JSArrayBuffer* JSWebAssemblyMemory::buffer(VM& vm, JSGlobalObject* globalObject)
 {
     if (m_bufferWrapper)
@@ -114,7 +105,7 @@ Wasm::PageCount JSWebAssemblyMemory::grow(ExecState* exec, uint32_t delta, bool 
     // Neuter the old array.
     if (m_buffer) {
         ArrayBufferContents dummyContents;
-        m_buffer->transferTo(dummyContents);
+        m_buffer->transferTo(vm, dummyContents);
         m_buffer = nullptr;
         m_bufferWrapper.clear();
     }
@@ -125,12 +116,22 @@ Wasm::PageCount JSWebAssemblyMemory::grow(ExecState* exec, uint32_t delta, bool 
 void JSWebAssemblyMemory::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 void JSWebAssemblyMemory::destroy(JSCell* cell)
 {
-    static_cast<JSWebAssemblyMemory*>(cell)->JSWebAssemblyMemory::~JSWebAssemblyMemory();
+    auto memory = static_cast<JSWebAssemblyMemory*>(cell);
+    ASSERT(memory->classInfo() == info());
+    VM& vm = *memory->vm();
+
+    if (memory->m_buffer) {
+        ArrayBufferContents dummyContents;
+        memory->m_buffer->transferTo(vm, dummyContents);
+        memory->m_buffer = nullptr;
+    }
+
+    memory->JSWebAssemblyMemory::~JSWebAssemblyMemory();
 }
 
 void JSWebAssemblyMemory::visitChildren(JSCell* cell, SlotVisitor& visitor)

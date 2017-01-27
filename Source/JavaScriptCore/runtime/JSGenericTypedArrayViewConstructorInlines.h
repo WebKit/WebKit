@@ -122,7 +122,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
 
     JSValue firstValue = JSValue::decode(firstArgument);
 
-    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(firstValue)) {
+    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, firstValue)) {
         RefPtr<ArrayBuffer> buffer = jsBuffer->impl();
         unsigned length = 0;
 
@@ -146,10 +146,10 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
     // - Another array. This creates a copy of the of that array.
     // - An integer. This creates a new typed array of that length and zero-initializes it.
 
-    if (JSObject* object = jsDynamicCast<JSObject*>(firstValue)) {
+    if (JSObject* object = jsDynamicCast<JSObject*>(vm, firstValue)) {
         unsigned length;
 
-        if (isTypedView(object->classInfo()->typedArrayStorageType))
+        if (isTypedView(object->classInfo(vm)->typedArrayStorageType))
             length = jsCast<JSArrayBufferView*>(object)->length();
         else {
             // This getPropertySlot operation should not be observed by the Proxy.
@@ -238,7 +238,7 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
     JSValue firstValue = exec->uncheckedArgument(0);
     unsigned offset = 0;
     std::optional<unsigned> length = std::nullopt;
-    if (jsDynamicCast<JSArrayBuffer*>(firstValue) && argCount > 1) {
+    if (jsDynamicCast<JSArrayBuffer*>(vm, firstValue) && argCount > 1) {
         offset = exec->uncheckedArgument(1).toIndex(exec, "byteOffset");
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 

@@ -1,3 +1,423 @@
+2017-01-26  Keith Miller  <keith_miller@apple.com>
+
+        classInfo should take a VM so it is not materialized from the object on each call
+        https://bugs.webkit.org/show_bug.cgi?id=167424
+
+        Rubber Stamped by Michael Saboff.
+
+        Previously, classInfo() would get the VM from the target's
+        MarkedBlock.  Most callers already have a VM on hand, so it is
+        wasteful to compute the VM from the marked block every time. This
+        patch refactors some of the most common callers of classInfo(),
+        jsDynamicCast and inherits to take a VM as well.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::extract):
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::installReplacement):
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromValue):
+        * bindings/js/JSCommandLineAPIHostCustom.cpp:
+        (WebCore::JSCommandLineAPIHost::getEventListeners):
+        (WebCore::JSCommandLineAPIHost::databaseId):
+        (WebCore::JSCommandLineAPIHost::storageId):
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::JSCryptoAlgorithmDictionary::parseAlgorithmIdentifier):
+        (WebCore::createRsaKeyGenParams):
+        * bindings/js/JSCryptoCustom.cpp:
+        (WebCore::JSCrypto::getRandomValues):
+        * bindings/js/JSCryptoOperationData.cpp:
+        (WebCore::cryptoOperationDataFromJSValue):
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::constructCustomElementSynchronously):
+        (WebCore::JSCustomElementInterface::upgradeElement):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::valueToDate):
+        (WebCore::reportException):
+        (WebCore::retrieveErrorMessage):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::castThisValue):
+        (WebCore::toPossiblySharedArrayBufferView):
+        (WebCore::toUnsharedArrayBufferView):
+        (WebCore::toPossiblySharedInt8Array):
+        (WebCore::toPossiblySharedInt16Array):
+        (WebCore::toPossiblySharedInt32Array):
+        (WebCore::toPossiblySharedUint8Array):
+        (WebCore::toPossiblySharedUint8ClampedArray):
+        (WebCore::toPossiblySharedUint16Array):
+        (WebCore::toPossiblySharedUint32Array):
+        (WebCore::toPossiblySharedFloat32Array):
+        (WebCore::toPossiblySharedFloat64Array):
+        (WebCore::toUnsharedInt8Array):
+        (WebCore::toUnsharedInt16Array):
+        (WebCore::toUnsharedInt32Array):
+        (WebCore::toUnsharedUint8Array):
+        (WebCore::toUnsharedUint8ClampedArray):
+        (WebCore::toUnsharedUint16Array):
+        (WebCore::toUnsharedUint32Array):
+        (WebCore::toUnsharedFloat32Array):
+        (WebCore::toUnsharedFloat64Array):
+        (WebCore::toRefNativeArray):
+        * bindings/js/JSDOMConstructor.h:
+        (WebCore::JSDOMConstructorNotConstructable<JSClass>::finishCreation):
+        (WebCore::JSDOMConstructor<JSClass>::finishCreation):
+        (WebCore::JSDOMNamedConstructor<JSClass>::finishCreation):
+        (WebCore::JSBuiltinConstructor<JSClass>::finishCreation):
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Converter<IDLInterface<T>>::convert):
+        (WebCore::Converter<IDLXPathNSResolver<T>>::convert):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::finishCreation):
+        (WebCore::JSDOMGlobalObject::scriptExecutionContext):
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::IteratorTraits>::next):
+        (WebCore::IteratorTraits>::finishCreation):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::finishCreation):
+        (WebCore::toJSDOMWindow):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowWebKit):
+        (WebCore::JSDOMWindow::toWrapped):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::finishCreation):
+        (WebCore::JSDOMWindowShell::toWrapped):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::cachedDocumentWrapper):
+        (WebCore::JSDocument::createTouchList):
+        * bindings/js/JSDynamicDowncast.h:
+        (WebCore::JSDynamicCastTrait::cast):
+        (WebCore::JSDynamicCastTrait<JSNode>::cast):
+        (WebCore::JSDynamicCastTrait<JSElement>::cast):
+        (WebCore::JSDynamicCastTrait<JSDocument>::cast):
+        (WebCore::JSDynamicCastTrait<JSEvent>::cast):
+        (WebCore::jsDynamicDowncast):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::JSEventTarget::toWrapped):
+        (WebCore::jsEventTargetCast):
+        * bindings/js/JSEventTargetCustom.h:
+        (WebCore::BindingCaller<JSEventTarget>::callOperation):
+        * bindings/js/JSExceptionBase.cpp:
+        (WebCore::toExceptionBase):
+        * bindings/js/JSExceptionBase.h:
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::populateContextMenuItems):
+        (WebCore::JSInspectorFrontendHost::showContextMenu):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::insertBefore):
+        (WebCore::JSNode::replaceChild):
+        (WebCore::JSNode::removeChild):
+        (WebCore::JSNode::appendChild):
+        (WebCore::JSNode::pushEventHandlerScope):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginElementPropertyGetter):
+        * bindings/js/JSReadableStreamPrivateConstructors.cpp:
+        (WebCore::constructJSReadableStreamDefaultReader):
+        * bindings/js/JSReadableStreamSourceCustom.cpp:
+        (WebCore::startReadableStream):
+        (WebCore::JSReadableStreamSource::start):
+        (WebCore::pullReadableStream):
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::toCryptoKey):
+        (WebCore::jsSubtleCryptoFunctionEncryptPromise):
+        (WebCore::jsSubtleCryptoFunctionDecryptPromise):
+        (WebCore::jsSubtleCryptoFunctionSignPromise):
+        (WebCore::jsSubtleCryptoFunctionVerifyPromise):
+        (WebCore::jsSubtleCryptoFunctionDigestPromise):
+        (WebCore::jsSubtleCryptoFunctionWrapKeyPromise):
+        (WebCore::jsSubtleCryptoFunctionUnwrapKeyPromise):
+        * bindings/js/JSTrackCustom.cpp:
+        (WebCore::toTrack): Deleted.
+        * bindings/js/JSTrackCustom.h:
+        * bindings/js/JSWebKitSubtleCryptoCustom.cpp:
+        (WebCore::JSWebKitSubtleCrypto::encrypt):
+        (WebCore::JSWebKitSubtleCrypto::decrypt):
+        (WebCore::JSWebKitSubtleCrypto::sign):
+        (WebCore::JSWebKitSubtleCrypto::verify):
+        (WebCore::JSWebKitSubtleCrypto::exportKey):
+        (WebCore::JSWebKitSubtleCrypto::wrapKey):
+        (WebCore::JSWebKitSubtleCrypto::unwrapKey):
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::finishCreation):
+        (WebCore::toJSDedicatedWorkerGlobalScope):
+        (WebCore::toJSWorkerGlobalScope):
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/js/JSXPathNSResolverCustom.cpp:
+        (WebCore::JSXPathNSResolver::toWrapped):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::setupModuleScriptHandlers):
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::fetch):
+        (WebCore::ScriptModuleLoader::evaluate):
+        * bindings/js/ScriptState.cpp:
+        (WebCore::domWindowFromExecState):
+        (WebCore::scriptExecutionContextFromExecState):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::isArray):
+        (WebCore::CloneSerializer::isMap):
+        (WebCore::CloneSerializer::isSet):
+        (WebCore::CloneSerializer::dumpArrayBufferView):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::CloneDeserializer::readArrayBufferView):
+        (WebCore::CloneDeserializer::readTerminal):
+        (WebCore::transferArrayBuffers):
+        (WebCore::SerializedScriptValue::create):
+        * bindings/js/StructuredClone.cpp:
+        (WebCore::structuredCloneArrayBuffer):
+        (WebCore::structuredCloneArrayBufferView):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateOverloadedFunctionOrConstructor):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        (WebCore::JSInterfaceName::finishCreation):
+        (WebCore::jsInterfaceNameConstructor):
+        (WebCore::setJSInterfaceNameConstructor):
+        (WebCore::JSInterfaceName::toWrapped):
+        * bindings/scripts/test/JS/JSInterfaceName.h:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::JSTestActiveDOMObject::finishCreation):
+        (WebCore::BindingCaller<JSTestActiveDOMObject>::castForAttribute):
+        (WebCore::BindingCaller<JSTestActiveDOMObject>::castForOperation):
+        (WebCore::jsTestActiveDOMObjectConstructor):
+        (WebCore::setJSTestActiveDOMObjectConstructor):
+        (WebCore::JSTestActiveDOMObject::toWrapped):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::JSTestCEReactions::finishCreation):
+        (WebCore::BindingCaller<JSTestCEReactions>::castForAttribute):
+        (WebCore::BindingCaller<JSTestCEReactions>::castForOperation):
+        (WebCore::jsTestCEReactionsConstructor):
+        (WebCore::setJSTestCEReactionsConstructor):
+        (WebCore::JSTestCEReactions::toWrapped):
+        * bindings/scripts/test/JS/JSTestCEReactions.h:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::JSTestCEReactionsStringifier::finishCreation):
+        (WebCore::BindingCaller<JSTestCEReactionsStringifier>::castForAttribute):
+        (WebCore::BindingCaller<JSTestCEReactionsStringifier>::castForOperation):
+        (WebCore::jsTestCEReactionsStringifierConstructor):
+        (WebCore::setJSTestCEReactionsStringifierConstructor):
+        (WebCore::JSTestCEReactionsStringifier::toWrapped):
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.h:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::JSTestClassWithJSBuiltinConstructor::finishCreation):
+        (WebCore::jsTestClassWithJSBuiltinConstructorConstructor):
+        (WebCore::setJSTestClassWithJSBuiltinConstructorConstructor):
+        (WebCore::JSTestClassWithJSBuiltinConstructor::toWrapped):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        (WebCore::JSTestCustomConstructorWithNoInterfaceObject::finishCreation):
+        (WebCore::jsTestCustomConstructorWithNoInterfaceObjectConstructor):
+        (WebCore::setJSTestCustomConstructorWithNoInterfaceObjectConstructor):
+        (WebCore::JSTestCustomConstructorWithNoInterfaceObject::toWrapped):
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::JSTestCustomNamedGetter::finishCreation):
+        (WebCore::BindingCaller<JSTestCustomNamedGetter>::castForOperation):
+        (WebCore::jsTestCustomNamedGetterConstructor):
+        (WebCore::setJSTestCustomNamedGetterConstructor):
+        (WebCore::JSTestCustomNamedGetter::toWrapped):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::JSTestDOMJIT::finishCreation):
+        (WebCore::BindingCaller<JSTestDOMJIT>::castForAttribute):
+        (WebCore::BindingCaller<JSTestDOMJIT>::castForOperation):
+        (WebCore::jsTestDOMJITConstructor):
+        (WebCore::setJSTestDOMJITConstructor):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructor::finishCreation):
+        (WebCore::BindingCaller<JSTestEventConstructor>::castForAttribute):
+        (WebCore::jsTestEventConstructorConstructor):
+        (WebCore::setJSTestEventConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTarget::finishCreation):
+        (WebCore::BindingCaller<JSTestEventTarget>::castForOperation):
+        (WebCore::jsTestEventTargetConstructor):
+        (WebCore::setJSTestEventTargetConstructor):
+        (WebCore::JSTestEventTarget::toWrapped):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestException::finishCreation):
+        (WebCore::BindingCaller<JSTestException>::castForAttribute):
+        (WebCore::jsTestExceptionConstructor):
+        (WebCore::setJSTestExceptionConstructor):
+        (WebCore::JSTestException::toWrapped):
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::JSTestGenerateIsReachable::finishCreation):
+        (WebCore::jsTestGenerateIsReachableConstructor):
+        (WebCore::setJSTestGenerateIsReachableConstructor):
+        (WebCore::JSTestGenerateIsReachable::toWrapped):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::JSTestGlobalObject::finishCreation):
+        (WebCore::BindingCaller<JSTestGlobalObject>::castForAttribute):
+        (WebCore::BindingCaller<JSTestGlobalObject>::castForOperation):
+        (WebCore::jsTestGlobalObjectConstructor):
+        (WebCore::setJSTestGlobalObjectConstructor):
+        (WebCore::JSTestGlobalObject::toWrapped):
+        * bindings/scripts/test/JS/JSTestGlobalObject.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterface::finishCreation):
+        (WebCore::BindingCaller<JSTestInterface>::castForAttribute):
+        (WebCore::BindingCaller<JSTestInterface>::castForOperation):
+        (WebCore::jsTestInterfaceConstructor):
+        (WebCore::setJSTestInterfaceConstructor):
+        (WebCore::JSTestInterface::toWrapped):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        (WebCore::JSTestInterfaceLeadingUnderscore::finishCreation):
+        (WebCore::BindingCaller<JSTestInterfaceLeadingUnderscore>::castForAttribute):
+        (WebCore::jsTestInterfaceLeadingUnderscoreConstructor):
+        (WebCore::setJSTestInterfaceLeadingUnderscoreConstructor):
+        (WebCore::JSTestInterfaceLeadingUnderscore::toWrapped):
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.h:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        (WebCore::JSTestIterable::finishCreation):
+        (WebCore::BindingCaller<JSTestIterable>::castForOperation):
+        (WebCore::jsTestIterableConstructor):
+        (WebCore::setJSTestIterableConstructor):
+        (WebCore::JSTestIterable::toWrapped):
+        * bindings/scripts/test/JS/JSTestIterable.h:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::JSTestJSBuiltinConstructor::finishCreation):
+        (WebCore::BindingCaller<JSTestJSBuiltinConstructor>::castForAttribute):
+        (WebCore::BindingCaller<JSTestJSBuiltinConstructor>::castForOperation):
+        (WebCore::jsTestJSBuiltinConstructorConstructor):
+        (WebCore::setJSTestJSBuiltinConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListener::finishCreation):
+        (WebCore::BindingCaller<JSTestMediaQueryListListener>::castForOperation):
+        (WebCore::jsTestMediaQueryListListenerConstructor):
+        (WebCore::setJSTestMediaQueryListListenerConstructor):
+        (WebCore::JSTestMediaQueryListListener::toWrapped):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructor::finishCreation):
+        (WebCore::jsTestNamedConstructorConstructor):
+        (WebCore::setJSTestNamedConstructorConstructor):
+        (WebCore::JSTestNamedConstructor::toWrapped):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNode::finishCreation):
+        (WebCore::BindingCaller<JSTestNode>::castForAttribute):
+        (WebCore::BindingCaller<JSTestNode>::castForOperation):
+        (WebCore::jsTestNodeConstructor):
+        (WebCore::setJSTestNodeConstructor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::finishCreation):
+        (WebCore::BindingCaller<JSTestObj>::castForAttribute):
+        (WebCore::BindingCaller<JSTestObj>::castForOperation):
+        (WebCore::jsTestObjConstructor):
+        (WebCore::setJSTestObjConstructor):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableUnion):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction):
+        (WebCore::JSTestObj::toWrapped):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsConstructor::construct):
+        (WebCore::JSTestOverloadedConstructors::finishCreation):
+        (WebCore::jsTestOverloadedConstructorsConstructor):
+        (WebCore::setJSTestOverloadedConstructorsConstructor):
+        (WebCore::JSTestOverloadedConstructors::toWrapped):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::JSTestOverloadedConstructorsWithSequence::finishCreation):
+        (WebCore::jsTestOverloadedConstructorsWithSequenceConstructor):
+        (WebCore::setJSTestOverloadedConstructorsWithSequenceConstructor):
+        (WebCore::JSTestOverloadedConstructorsWithSequence::toWrapped):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.h:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::JSTestOverrideBuiltins::finishCreation):
+        (WebCore::BindingCaller<JSTestOverrideBuiltins>::castForOperation):
+        (WebCore::jsTestOverrideBuiltinsConstructor):
+        (WebCore::setJSTestOverrideBuiltinsConstructor):
+        (WebCore::JSTestOverrideBuiltins::toWrapped):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        (WebCore::JSTestSerialization::finishCreation):
+        (WebCore::BindingCaller<JSTestSerialization>::castForAttribute):
+        (WebCore::BindingCaller<JSTestSerialization>::castForOperation):
+        (WebCore::jsTestSerializationConstructor):
+        (WebCore::setJSTestSerializationConstructor):
+        (WebCore::JSTestSerialization::toWrapped):
+        * bindings/scripts/test/JS/JSTestSerialization.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterface::finishCreation):
+        (WebCore::BindingCaller<JSTestSerializedScriptValueInterface>::castForAttribute):
+        (WebCore::BindingCaller<JSTestSerializedScriptValueInterface>::castForOperation):
+        (WebCore::jsTestSerializedScriptValueInterfaceConstructor):
+        (WebCore::setJSTestSerializedScriptValueInterfaceConstructor):
+        (WebCore::JSTestSerializedScriptValueInterface::toWrapped):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefs::finishCreation):
+        (WebCore::BindingCaller<JSTestTypedefs>::castForAttribute):
+        (WebCore::BindingCaller<JSTestTypedefs>::castForOperation):
+        (WebCore::jsTestTypedefsConstructor):
+        (WebCore::setJSTestTypedefsConstructor):
+        (WebCore::JSTestTypedefs::toWrapped):
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bridge/c/CRuntimeObject.cpp:
+        (JSC::Bindings::CRuntimeObject::finishCreation):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CRuntimeMethod::finishCreation):
+        (JSC::Bindings::CInstance::invokeMethod):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertValueToNPVariant):
+        * bridge/objc/ObjCRuntimeObject.mm:
+        (JSC::Bindings::ObjCRuntimeObject::finishCreation):
+        * bridge/objc/WebScriptObject.mm:
+        (-[WebScriptObject setValue:forKey:]):
+        (+[WebScriptObject _convertValueToObjcValue:originRootObject:rootObject:]):
+        * bridge/objc/objc_instance.mm:
+        (ObjCRuntimeMethod::finishCreation):
+        (ObjcInstance::invokeMethod):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::finishCreation):
+        (JSC::Bindings::callObjCFallbackObject):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::finishCreation):
+        (JSC::RuntimeArray::lengthGetter):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::finishCreation):
+        (JSC::RuntimeMethod::lengthGetter):
+        (JSC::callRuntimeMethod):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::finishCreation):
+        (JSC::Bindings::callRuntimeObject):
+        (JSC::Bindings::callRuntimeConstructor):
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::controllerJSValue):
+        (WebCore::HTMLMediaElement::updateCaptionContainer):
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::canAccessInspectedScriptState):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        (WebCore::InspectorDOMAgent::scriptValueAsNode):
+        * inspector/WebInjectedScriptHost.cpp:
+        (WebCore::WebInjectedScriptHost::subtype):
+        (WebCore::WebInjectedScriptHost::isHTMLAllCollection):
+        * inspector/WebInjectedScriptHost.h:
+
 2017-01-26  Dean Jackson  <dino@apple.com>
 
         WebGL content in Safari sticks to GPU that it was started on, sometimes causing extra battery drain and difficulty interacting with UI

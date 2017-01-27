@@ -138,7 +138,7 @@ JSValue JSWebKitSubtleCrypto::encrypt(ExecState& state)
     auto parameters = JSCryptoAlgorithmDictionary::createParametersForEncrypt(state, scope, algorithm->identifier(), state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
+    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(vm, state.uncheckedArgument(1));
     if (!key)
         return throwTypeError(&state, scope);
 
@@ -183,7 +183,7 @@ JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
     auto parameters = JSCryptoAlgorithmDictionary::createParametersForDecrypt(state, scope, algorithm->identifier(), state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
+    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(vm, state.uncheckedArgument(1));
     if (!key)
         return throwTypeError(&state, scope);
 
@@ -228,7 +228,7 @@ JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
     auto parameters = JSCryptoAlgorithmDictionary::createParametersForSign(state, scope, algorithm->identifier(), state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
+    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(vm, state.uncheckedArgument(1));
     if (!key)
         return throwTypeError(&state, scope);
 
@@ -273,7 +273,7 @@ JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
     auto parameters = JSCryptoAlgorithmDictionary::createParametersForVerify(state, scope, algorithm->identifier(), state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
+    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(vm, state.uncheckedArgument(1));
     if (!key)
         return throwTypeError(&state, scope);
 
@@ -538,7 +538,7 @@ JSValue JSWebKitSubtleCrypto::exportKey(ExecState& state)
     auto keyFormat = cryptoKeyFormatFromJSValue(state, scope, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
+    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(vm, state.uncheckedArgument(1));
     if (!key)
         return throwTypeError(&state, scope);
 
@@ -568,11 +568,11 @@ JSValue JSWebKitSubtleCrypto::wrapKey(ExecState& state)
     auto keyFormat = cryptoKeyFormatFromJSValue(state, scope, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(state.uncheckedArgument(1));
+    RefPtr<CryptoKey> key = JSCryptoKey::toWrapped(vm, state.uncheckedArgument(1));
     if (!key)
         return throwTypeError(&state, scope);
 
-    RefPtr<CryptoKey> wrappingKey = JSCryptoKey::toWrapped(state.uncheckedArgument(2));
+    RefPtr<CryptoKey> wrappingKey = JSCryptoKey::toWrapped(vm, state.uncheckedArgument(2));
     if (!key)
         return throwTypeError(&state, scope);
 
@@ -628,7 +628,7 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
     auto wrappedKeyData = cryptoOperationDataFromJSValue(state, scope, state.uncheckedArgument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RefPtr<CryptoKey> unwrappingKey = JSCryptoKey::toWrapped(state.uncheckedArgument(2));
+    RefPtr<CryptoKey> unwrappingKey = JSCryptoKey::toWrapped(vm, state.uncheckedArgument(2));
     if (!unwrappingKey)
         return throwTypeError(&state, scope);
 

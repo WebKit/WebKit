@@ -125,7 +125,7 @@ EncodedJSValue getData(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* dataView = jsDynamicCast<JSDataView*>(exec->thisValue());
+    JSDataView* dataView = jsDynamicCast<JSDataView*>(vm, exec->thisValue());
     if (!dataView)
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver of DataView method must be a DataView"));
     
@@ -168,7 +168,7 @@ EncodedJSValue setData(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* dataView = jsDynamicCast<JSDataView*>(exec->thisValue());
+    JSDataView* dataView = jsDynamicCast<JSDataView*>(vm, exec->thisValue());
     if (!dataView)
         return throwVMTypeError(exec, scope, ASCIILiteral("Receiver of DataView method must be a DataView"));
     
@@ -218,7 +218,7 @@ EncodedJSValue JSC_HOST_CALL dataViewProtoGetterBuffer(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* view = jsDynamicCast<JSDataView*>(exec->thisValue());
+    JSDataView* view = jsDynamicCast<JSDataView*>(vm, exec->thisValue());
     if (!view)
         return throwVMTypeError(exec, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
 
@@ -230,7 +230,7 @@ EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteLength(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* view = jsDynamicCast<JSDataView*>(exec->thisValue());
+    JSDataView* view = jsDynamicCast<JSDataView*>(vm, exec->thisValue());
     if (!view)
         return throwVMTypeError(exec, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
 
@@ -242,7 +242,7 @@ EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteOffset(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* view = jsDynamicCast<JSDataView*>(exec->thisValue());
+    JSDataView* view = jsDynamicCast<JSDataView*>(vm, exec->thisValue());
     if (!view)
         return throwVMTypeError(exec, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
 

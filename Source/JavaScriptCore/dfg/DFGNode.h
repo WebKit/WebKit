@@ -738,17 +738,17 @@ public:
     }
      
     template<typename T>
-    T dynamicCastConstant()
+    T dynamicCastConstant(VM& vm)
     {
         if (!isCellConstant())
             return nullptr;
-        return jsDynamicCast<T>(asCell());
+        return jsDynamicCast<T>(vm, asCell());
     }
     
     template<typename T>
-    T castConstant()
+    T castConstant(VM& vm)
     {
-        T result = dynamicCastConstant<T>();
+        T result = dynamicCastConstant<T>(vm);
         RELEASE_ASSERT(result);
         return result;
     }

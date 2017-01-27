@@ -108,7 +108,7 @@ JSTestClassWithJSBuiltinConstructor::JSTestClassWithJSBuiltinConstructor(Structu
 void JSTestClassWithJSBuiltinConstructor::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -132,7 +132,7 @@ EncodedJSValue jsTestClassWithJSBuiltinConstructorConstructor(ExecState* state, 
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestClassWithJSBuiltinConstructorPrototype* domObject = jsDynamicDowncast<JSTestClassWithJSBuiltinConstructorPrototype*>(JSValue::decode(thisValue));
+    JSTestClassWithJSBuiltinConstructorPrototype* domObject = jsDynamicDowncast<JSTestClassWithJSBuiltinConstructorPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestClassWithJSBuiltinConstructor::getConstructor(state->vm(), domObject->globalObject()));
@@ -143,7 +143,7 @@ bool setJSTestClassWithJSBuiltinConstructorConstructor(ExecState* state, Encoded
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestClassWithJSBuiltinConstructorPrototype* domObject = jsDynamicDowncast<JSTestClassWithJSBuiltinConstructorPrototype*>(JSValue::decode(thisValue));
+    JSTestClassWithJSBuiltinConstructorPrototype* domObject = jsDynamicDowncast<JSTestClassWithJSBuiltinConstructorPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -216,9 +216,9 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCl
     return wrap(state, globalObject, impl);
 }
 
-TestClassWithJSBuiltinConstructor* JSTestClassWithJSBuiltinConstructor::toWrapped(JSC::JSValue value)
+TestClassWithJSBuiltinConstructor* JSTestClassWithJSBuiltinConstructor::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestClassWithJSBuiltinConstructor*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestClassWithJSBuiltinConstructor*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

@@ -162,7 +162,7 @@ private:
             case CheckDOM: {
                 JSValue constant = m_state.forNode(node->child1()).value();
                 if (constant) {
-                    if (constant.isCell() && constant.asCell()->inherits(node->classInfo())) {
+                    if (constant.isCell() && constant.asCell()->inherits(m_graph.m_vm, node->classInfo())) {
                         m_interpreter.execute(indexInBlock);
                         node->remove();
                         eliminated = true;
@@ -209,7 +209,7 @@ private:
                 const RegisteredStructureSet& set = node->structureSet();
                 
                 if (value.value()) {
-                    if (Structure* structure = jsDynamicCast<Structure*>(value.value())) {
+                    if (Structure* structure = jsDynamicCast<Structure*>(m_graph.m_vm, value.value())) {
                         if (set.contains(m_graph.registerStructure(structure))) {
                             m_interpreter.execute(indexInBlock);
                             node->remove();
@@ -224,7 +224,7 @@ private:
                     phiChildren->forAllTransitiveIncomingValues(
                         node,
                         [&] (Node* incoming) {
-                            if (Structure* structure = incoming->dynamicCastConstant<Structure*>()) {
+                            if (Structure* structure = incoming->dynamicCastConstant<Structure*>(m_graph.m_vm)) {
                                 if (set.contains(m_graph.registerStructure(structure)))
                                     return;
                             }

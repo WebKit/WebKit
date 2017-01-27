@@ -6492,7 +6492,7 @@ HRESULT WebView::reportException(_In_ JSContextRef context, _In_ JSValueRef exce
     JSC::JSLockHolder lock(execState);
 
     // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a WebView.
-    if (!toJSDOMWindow(execState->lexicalGlobalObject()))
+    if (!toJSDOMWindow(execState->vm(), execState->lexicalGlobalObject()))
         return E_FAIL;
 
     WebCore::reportException(execState, toJS(execState, exception));
@@ -6511,7 +6511,7 @@ HRESULT WebView::elementFromJS(_In_ JSContextRef context, _In_ JSValueRef nodeOb
 
     JSC::ExecState* exec = toJS(context);
     JSC::JSLockHolder lock(exec);
-    Element* elt = JSElement::toWrapped(toJS(exec, nodeObject));
+    Element* elt = JSElement::toWrapped(exec->vm(), toJS(exec, nodeObject));
     if (!elt)
         return E_FAIL;
 

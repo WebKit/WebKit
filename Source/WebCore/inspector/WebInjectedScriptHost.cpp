@@ -38,16 +38,17 @@ using namespace JSC;
 namespace WebCore {
     
 #define RETURN_ERROR_IF_VALUE_INHERITS_EXCEPTION_TYPE(interfaceName) \
-    if (value.inherits(JS##interfaceName::info())) \
+    if (value.inherits(vm, JS##interfaceName::info())) \
         return jsNontrivialString(exec, ASCIILiteral("error"));
 
 JSValue WebInjectedScriptHost::subtype(JSC::ExecState* exec, JSC::JSValue value)
 {
-    if (value.inherits(JSNode::info()))
+    VM& vm = exec->vm();
+    if (value.inherits(vm, JSNode::info()))
         return jsNontrivialString(exec, ASCIILiteral("node"));
-    if (value.inherits(JSNodeList::info()))
+    if (value.inherits(vm, JSNodeList::info()))
         return jsNontrivialString(exec, ASCIILiteral("array"));
-    if (value.inherits(JSHTMLCollection::info()))
+    if (value.inherits(vm, JSHTMLCollection::info()))
         return jsNontrivialString(exec, ASCIILiteral("array"));
 
     DOM_EXCEPTION_INTERFACES_FOR_EACH(RETURN_ERROR_IF_VALUE_INHERITS_EXCEPTION_TYPE)
@@ -55,9 +56,9 @@ JSValue WebInjectedScriptHost::subtype(JSC::ExecState* exec, JSC::JSValue value)
     return jsUndefined();
 }
 
-bool WebInjectedScriptHost::isHTMLAllCollection(JSC::JSValue value)
+bool WebInjectedScriptHost::isHTMLAllCollection(JSC::VM& vm, JSC::JSValue value)
 {
-    return value.inherits(JSHTMLAllCollection::info());
+    return value.inherits(vm, JSHTMLAllCollection::info());
 }
 
 } // namespace WebCore

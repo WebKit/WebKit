@@ -838,7 +838,7 @@ EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, JSGloba
     JSValue base = JSValue::decode(encodedBase);
     JSValue argument = JSValue::decode(encodedArgument);
     
-    if (!base.inherits(RegExpObject::info()))
+    if (!base.inherits(vm, RegExpObject::info()))
         return throwVMTypeError(exec, scope);
 
     JSString* input = argument.toStringOrNull(exec);
@@ -885,7 +885,7 @@ size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, JSGlobalObject*
     JSValue base = JSValue::decode(encodedBase);
     JSValue argument = JSValue::decode(encodedArgument);
 
-    if (!base.inherits(RegExpObject::info())) {
+    if (!base.inherits(vm, RegExpObject::info())) {
         throwTypeError(exec, scope);
         return false;
     }
@@ -1406,7 +1406,7 @@ size_t JIT_OPERATION operationObjectIsObject(ExecState* exec, JSGlobalObject* gl
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    ASSERT(jsDynamicCast<JSObject*>(object));
+    ASSERT(jsDynamicCast<JSObject*>(vm, object));
     
     if (object->structure(vm)->masqueradesAsUndefined(globalObject))
         return false;
@@ -1426,7 +1426,7 @@ size_t JIT_OPERATION operationObjectIsFunction(ExecState* exec, JSGlobalObject* 
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    ASSERT(jsDynamicCast<JSObject*>(object));
+    ASSERT(jsDynamicCast<JSObject*>(vm, object));
     
     if (object->structure(vm)->masqueradesAsUndefined(globalObject))
         return false;
@@ -1446,7 +1446,7 @@ JSCell* JIT_OPERATION operationTypeOfObject(ExecState* exec, JSGlobalObject* glo
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    ASSERT(jsDynamicCast<JSObject*>(object));
+    ASSERT(jsDynamicCast<JSObject*>(vm, object));
     
     if (object->structure(vm)->masqueradesAsUndefined(globalObject))
         return vm.smallStrings.undefinedString();
@@ -1466,7 +1466,7 @@ int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(ExecState* exec, JSGloba
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    ASSERT(jsDynamicCast<JSObject*>(object));
+    ASSERT(jsDynamicCast<JSObject*>(vm, object));
     
     if (object->structure(vm)->masqueradesAsUndefined(globalObject))
         return static_cast<int32_t>(TypeofType::Undefined);
@@ -1946,7 +1946,7 @@ JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState* exec, void* buf
     unsigned length = 0;
     for (unsigned i = 0; i < numItems; i++) {
         JSValue value = JSValue::decode(values[i]);
-        if (JSFixedArray* array = jsDynamicCast<JSFixedArray*>(value))
+        if (JSFixedArray* array = jsDynamicCast<JSFixedArray*>(vm, value))
             length += array->size();
         else
             ++length;
@@ -1962,7 +1962,7 @@ JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState* exec, void* buf
     unsigned index = 0;
     for (unsigned i = 0; i < numItems; i++) {
         JSValue value = JSValue::decode(values[i]);
-        if (JSFixedArray* array = jsDynamicCast<JSFixedArray*>(value)) {
+        if (JSFixedArray* array = jsDynamicCast<JSFixedArray*>(vm, value)) {
             // We are spreading.
             for (unsigned i = 0; i < array->size(); i++) {
                 result->initializeIndex(vm, index, array->get(i));

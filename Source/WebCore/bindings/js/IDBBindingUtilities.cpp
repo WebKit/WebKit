@@ -144,18 +144,19 @@ static const size_t maximumDepth = 2000;
 
 static RefPtr<IDBKey> createIDBKeyFromValue(ExecState& exec, JSValue value, Vector<JSArray*>& stack)
 {
+    VM& vm = exec.vm();
     if (value.isNumber() && !std::isnan(value.toNumber(&exec)))
         return IDBKey::createNumber(value.toNumber(&exec));
 
     if (value.isString())
         return IDBKey::createString(asString(value)->value(&exec));
 
-    if (value.inherits(DateInstance::info()) && !std::isnan(valueToDate(&exec, value)))
+    if (value.inherits(vm, DateInstance::info()) && !std::isnan(valueToDate(&exec, value)))
         return IDBKey::createDate(valueToDate(&exec, value));
 
     if (value.isObject()) {
         JSObject* object = asObject(value);
-        if (isJSArray(object) || object->inherits(JSArray::info())) {
+        if (isJSArray(object) || object->inherits(vm, JSArray::info())) {
             JSArray* array = asArray(object);
             size_t length = array->length();
 
@@ -181,10 +182,10 @@ static RefPtr<IDBKey> createIDBKeyFromValue(ExecState& exec, JSValue value, Vect
             return IDBKey::createArray(subkeys);
         }
 
-        if (auto* arrayBuffer = jsDynamicCast<JSArrayBuffer*>(value))
+        if (auto* arrayBuffer = jsDynamicCast<JSArrayBuffer*>(vm, value))
             return IDBKey::createBinary(*arrayBuffer);
 
-        if (auto* arrayBufferView = jsDynamicCast<JSArrayBufferView*>(value))
+        if (auto* arrayBufferView = jsDynamicCast<JSArrayBufferView*>(vm, value))
             return IDBKey::createBinary(*arrayBufferView);
     }
     return nullptr;

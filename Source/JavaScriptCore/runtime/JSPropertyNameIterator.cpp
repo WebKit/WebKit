@@ -73,7 +73,7 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, Structur
 void JSPropertyNameIterator::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_NATIVE_FUNCTION(vm.propertyNames->next, propertyNameIteratorFuncNext, DontEnum, 0);
 }
 
@@ -143,7 +143,7 @@ EncodedJSValue JSC_HOST_CALL propertyNameIteratorFuncNext(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSPropertyNameIterator* iterator = jsDynamicCast<JSPropertyNameIterator*>(exec->thisValue());
+    JSPropertyNameIterator* iterator = jsDynamicCast<JSPropertyNameIterator*>(vm, exec->thisValue());
     if (!iterator)
         return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Cannot call PropertyNameIterator.next() on a non-PropertyNameIterator object")));
 

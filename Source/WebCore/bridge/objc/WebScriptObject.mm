@@ -399,7 +399,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     auto scope = DECLARE_CATCH_SCOPE(vm);
     ExecState* exec = globalObject->globalExec();
 
-    JSObject* object = jsDynamicDowncast<JSObject*>([self _imp]);
+    JSObject* object = jsDynamicDowncast<JSObject*>(vm, [self _imp]);
     PutPropertySlot slot(object);
     object->methodTable()->put(object, exec, Identifier::fromString(exec, String(key)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
 
@@ -565,13 +565,14 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 {
     if (value.isObject()) {
         JSObject* object = asObject(value);
-        JSLockHolder lock(rootObject->globalObject()->vm());
+        JSC::VM& vm = rootObject->globalObject()->vm();
+        JSLockHolder lock(vm);
 
-        if (object->inherits(JSHTMLElement::info())) {
+        if (object->inherits(vm, JSHTMLElement::info())) {
             // Plugin elements cache the instance internally.
             if (ObjcInstance* instance = static_cast<ObjcInstance*>(pluginInstance(jsCast<JSHTMLElement*>(object)->wrapped())))
                 return instance->getObject();
-        } else if (object->inherits(ObjCRuntimeObject::info())) {
+        } else if (object->inherits(vm, ObjCRuntimeObject::info())) {
             ObjCRuntimeObject* runtimeObject = static_cast<ObjCRuntimeObject*>(object);
             ObjcInstance* instance = runtimeObject->getInternalObjCInstance();
             if (instance)

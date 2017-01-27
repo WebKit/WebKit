@@ -116,14 +116,14 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* 
 
     // 12.3.3 Intl.DateTimeFormat.prototype.format (ECMA-402 2.0)
     // 1. Let dtf be this DateTimeFormat object.
-    IntlDateTimeFormat* dtf = jsDynamicCast<IntlDateTimeFormat*>(state->thisValue());
+    IntlDateTimeFormat* dtf = jsDynamicCast<IntlDateTimeFormat*>(vm, state->thisValue());
 
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
     if (!dtf) {
         JSValue value = state->thisValue().get(state, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        dtf = jsDynamicCast<IntlDateTimeFormat*>(value);
+        dtf = jsDynamicCast<IntlDateTimeFormat*>(vm, value);
     }
 
     // 2. ReturnIfAbrupt(dtf).
@@ -153,14 +153,14 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(Exec
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 12.3.5 Intl.DateTimeFormat.prototype.resolvedOptions() (ECMA-402 2.0)
-    IntlDateTimeFormat* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(state->thisValue());
+    IntlDateTimeFormat* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(vm, state->thisValue());
 
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
     if (!dateTimeFormat) {
         JSValue value = state->thisValue().get(state, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(value);
+        dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(vm, value);
     }
 
     if (!dateTimeFormat)

@@ -110,7 +110,7 @@ JSTestOverrideBuiltins::JSTestOverrideBuiltins(Structure* structure, JSDOMGlobal
 void JSTestOverrideBuiltins::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
 }
 
@@ -172,14 +172,14 @@ void JSTestOverrideBuiltins::getOwnPropertyNames(JSObject* object, ExecState* st
 
 template<> inline JSTestOverrideBuiltins* BindingCaller<JSTestOverrideBuiltins>::castForOperation(ExecState& state)
 {
-    return jsDynamicDowncast<JSTestOverrideBuiltins*>(state.thisValue());
+    return jsDynamicDowncast<JSTestOverrideBuiltins*>(state.vm(), state.thisValue());
 }
 
 EncodedJSValue jsTestOverrideBuiltinsConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSTestOverrideBuiltinsPrototype* domObject = jsDynamicDowncast<JSTestOverrideBuiltinsPrototype*>(JSValue::decode(thisValue));
+    JSTestOverrideBuiltinsPrototype* domObject = jsDynamicDowncast<JSTestOverrideBuiltinsPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject))
         return throwVMTypeError(state, throwScope);
     return JSValue::encode(JSTestOverrideBuiltins::getConstructor(state->vm(), domObject->globalObject()));
@@ -190,7 +190,7 @@ bool setJSTestOverrideBuiltinsConstructor(ExecState* state, EncodedJSValue thisV
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue value = JSValue::decode(encodedValue);
-    JSTestOverrideBuiltinsPrototype* domObject = jsDynamicDowncast<JSTestOverrideBuiltinsPrototype*>(JSValue::decode(thisValue));
+    JSTestOverrideBuiltinsPrototype* domObject = jsDynamicDowncast<JSTestOverrideBuiltinsPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!domObject)) {
         throwVMTypeError(state, throwScope);
         return false;
@@ -275,9 +275,9 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestOv
     return wrap(state, globalObject, impl);
 }
 
-TestOverrideBuiltins* JSTestOverrideBuiltins::toWrapped(JSC::JSValue value)
+TestOverrideBuiltins* JSTestOverrideBuiltins::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicDowncast<JSTestOverrideBuiltins*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestOverrideBuiltins*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

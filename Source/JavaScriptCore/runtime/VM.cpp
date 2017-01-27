@@ -623,7 +623,8 @@ void VM::throwException(ExecState* exec, Exception* exception)
 
 JSValue VM::throwException(ExecState* exec, JSValue thrownValue)
 {
-    Exception* exception = jsDynamicCast<Exception*>(thrownValue);
+    VM& vm = exec->vm();
+    Exception* exception = jsDynamicCast<Exception*>(vm, thrownValue);
     if (!exception)
         exception = Exception::create(*this, thrownValue);
 

@@ -74,7 +74,7 @@ StringObject* asStringObject(JSValue);
 
 inline StringObject* asStringObject(JSValue value)
 {
-    ASSERT(asObject(value)->inherits(StringObject::info()));
+    ASSERT(asObject(value)->inherits(*value.getObject()->vm(), StringObject::info()));
     return static_cast<StringObject*>(asObject(value));
 }
 

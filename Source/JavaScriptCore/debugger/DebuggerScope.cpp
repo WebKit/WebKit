@@ -212,7 +212,7 @@ bool DebuggerScope::isNestedLexicalScope() const
 
 String DebuggerScope::name() const
 {
-    SymbolTable* symbolTable = m_scope->symbolTable();
+    SymbolTable* symbolTable = m_scope->symbolTable(*vm());
     if (!symbolTable)
         return String();
 
@@ -225,7 +225,7 @@ String DebuggerScope::name() const
 
 DebuggerLocation DebuggerScope::location() const
 {
-    SymbolTable* symbolTable = m_scope->symbolTable();
+    SymbolTable* symbolTable = m_scope->symbolTable(*vm());
     if (!symbolTable)
         return DebuggerLocation();
 

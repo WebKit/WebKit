@@ -74,8 +74,9 @@
 
 static WebScriptObject *createDOMWrapper(JSC::JSObject& jsWrapper)
 {
+    JSC::VM& vm = *jsWrapper.vm();
     #define WRAP(className) \
-        if (auto* wrapped = WebCore::JS##className::toWrapped(&jsWrapper)) \
+        if (auto* wrapped = WebCore::JS##className::toWrapped(vm, &jsWrapper)) \
             return kit(wrapped);
 
     WRAP(CSSRule)

@@ -48,7 +48,7 @@ const ClassInfo ArrayIteratorPrototype::s_info = { "Array Iterator", &Base::s_in
 void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Array Iterator"), DontEnum | ReadOnly);
     vm.prototypeMap.addPrototype(this);
 }
