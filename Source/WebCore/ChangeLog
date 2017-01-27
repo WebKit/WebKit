@@ -1,5 +1,22 @@
 2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211241. rdar://problem/30099051
+
+    2017-01-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: iOS: Memory timeline shows impossible values for Page size (underflowed)
+            https://bugs.webkit.org/show_bug.cgi?id=167468
+            <rdar://problem/30099051>
+
+            Reviewed by Andreas Kling.
+
+            * page/cocoa/ResourceUsageThreadCocoa.mm:
+            (WebCore::vmPageSize):
+            This value matches the sysctl value we were attempting to access, and is
+            the most appropriate when dealing with mach APIs, as we are using here.
+
+2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211235. rdar://problem/30058933
 
     2017-01-26  Jeremy Jones  <jeremyj@apple.com>
