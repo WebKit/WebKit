@@ -112,7 +112,8 @@ enum AvoidanceReason_ : uint64_t {
     FlowHasNoChild                        = 1LLU  << 46,
     FlowChildIsSelected                   = 1LLU  << 47,
     FlowHasHangingPunctuation             = 1LLU  << 48,
-    EndOfReasons                          = 1LLU  << 49
+    FlowFontHasOverflowGlyph              = 1LLU  << 49,
+    EndOfReasons                          = 1LLU  << 50
 };
 const unsigned NoReason = 0;
 
@@ -136,7 +137,8 @@ enum class IncludeReasons { First , All };
 #endif
 
 template <typename CharacterType>
-static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned length, const Font& font, bool textIsJustified, IncludeReasons includeReasons)
+static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned length, const Font& font, std::optional<float> lineHeightConstraint,
+    bool textIsJustified, IncludeReasons includeReasons)
 {
     AvoidanceReasonFlags reasons = { };
     // FIXME: <textarea maxlength=0> generates empty text node.
@@ -166,17 +168,20 @@ static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned le
             || direction == U_POP_DIRECTIONAL_FORMAT || direction == U_BOUNDARY_NEUTRAL)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasDirectionCharacter, reasons, includeReasons);
 
-        if (!font.glyphForCharacter(character))
+        auto glyph = font.glyphForCharacter(character);
+        if (!glyph)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowFontIsMissingGlyph, reasons, includeReasons);
+        if (lineHeightConstraint && font.boundsForGlyph(glyph).height() > *lineHeightConstraint)
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowFontHasOverflowGlyph, reasons, includeReasons);
     }
     return reasons;
 }
 
-static AvoidanceReasonFlags canUseForText(const RenderText& textRenderer, const Font& font, bool textIsJustified, IncludeReasons includeReasons)
+static AvoidanceReasonFlags canUseForText(const RenderText& textRenderer, const Font& font, std::optional<float> lineHeightConstraint, bool textIsJustified, IncludeReasons includeReasons)
 {
     if (textRenderer.is8Bit())
-        return canUseForText(textRenderer.characters8(), textRenderer.textLength(), font, false, includeReasons);
-    return canUseForText(textRenderer.characters16(), textRenderer.textLength(), font, textIsJustified, includeReasons);
+        return canUseForText(textRenderer.characters8(), textRenderer.textLength(), font, lineHeightConstraint, false, includeReasons);
+    return canUseForText(textRenderer.characters16(), textRenderer.textLength(), font, lineHeightConstraint, textIsJustified, includeReasons);
 }
 
 static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, IncludeReasons includeReasons)
@@ -187,7 +192,9 @@ static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, In
     auto& primaryFont = style.fontCascade().primaryFont();
     if (primaryFont.isLoading())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsMissingPrimaryFont, reasons, includeReasons);
-
+    std::optional<float> lineHeightConstraint;
+    if (style.lineBoxContain() & LineBoxContainGlyphs)
+        lineHeightConstraint = lineHeightFromFlow(flow).toFloat();
     bool flowIsJustified = style.textAlign() == JUSTIFY;
     for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
         if (textRenderer.isCombineText())
@@ -203,7 +210,7 @@ static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, In
         if (style.fontCascade().codePath(TextRun(textRenderer.text())) != FontCascade::Simple)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowFontIsNotSimple, reasons, includeReasons);
 
-        auto textReasons = canUseForText(textRenderer, primaryFont, flowIsJustified, includeReasons);
+        auto textReasons = canUseForText(textRenderer, primaryFont, lineHeightConstraint, flowIsJustified, includeReasons);
         if (textReasons != NoReason)
             SET_REASON_AND_RETURN_IF_NEEDED(textReasons, reasons, includeReasons);
     }
@@ -222,7 +229,7 @@ static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, IncludeReas
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowVisible, reasons, includeReasons);
     if (!style.isLeftToRightDirection())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotLTR, reasons, includeReasons);
-    if (style.lineBoxContain() != RenderStyle::initialLineBoxContain())
+    if (!(style.lineBoxContain() & LineBoxContainBlock))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
     if (style.writingMode() != TopToBottomWritingMode)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotTopToBottom, reasons, includeReasons);
@@ -977,7 +984,7 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         stream << "dir is not LTR";
         break;
     case FlowHasLineBoxContainProperty:
-        stream << "line-box-contain property";
+        stream << "line-box-contain value indicates variable line height";
         break;
     case FlowIsNotTopToBottom:
         stream << "non top-to-bottom flow";
@@ -1059,6 +1066,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case FlowChildIsSelected:
         stream << "selected content";
+        break;
+    case FlowFontHasOverflowGlyph:
+        stream << "-webkit-line-box-contain: glyphs with overflowing text.";
         break;
     case FlowTextIsEmpty:
     case FlowHasNoChild:

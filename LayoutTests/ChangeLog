@@ -1,3 +1,14 @@
+2017-01-27  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Do not bail out on -webkit-line-box-contain: block glyphs unless text overflows vertically.
+        https://bugs.webkit.org/show_bug.cgi?id=167481
+        <rdar://problem/30180150>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/simple-line-layout-line-box-contain-glyphs-expected.html: Added.
+        * fast/text/simple-line-layout-line-box-contain-glyphs.html: Added.
+
 2017-01-27  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Styles should not show background-repeat-x/y, or -webkit-mask-repeat-x/y

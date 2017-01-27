@@ -1,3 +1,22 @@
+2017-01-27  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Do not bail out on -webkit-line-box-contain: block glyphs unless text overflows vertically.
+        https://bugs.webkit.org/show_bug.cgi?id=167481
+        <rdar://problem/30180150>
+
+        Reviewed by Antti Koivisto.
+
+        Since -webkit-line-box-contain: glyphs requires variable line height support, we can use simple line layout
+        only when each line happen to have the same height ('block' property value is set, glyphs do not overflow the block line height).  
+
+        Test: fast/text/simple-line-layout-line-box-contain-glyphs.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForText):
+        (WebCore::SimpleLineLayout::canUseForFontAndText):
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        (WebCore::SimpleLineLayout::printReason):
+
 2017-01-27  Chris Dumez  <cdumez@apple.com>
 
         Fix PageCache diagnostic logging
