@@ -46,6 +46,7 @@ namespace WebCore {
 
 class QuickLookHandleClient;
 class ResourceLoader;
+class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
 class URL;
@@ -59,8 +60,6 @@ WEBCORE_EXPORT void removeQLPreviewConverterForURL(NSURL *);
 
 WEBCORE_EXPORT RetainPtr<NSURLRequest> registerQLPreviewConverterIfNeeded(NSURL *, NSString *mimeType, NSData *);
 
-const URL safeQLURLForDocumentURLAndResourceURL(const URL& documentURL, const String& resourceURL);
-
 WEBCORE_EXPORT const char* QLPreviewProtocol();
 
 WEBCORE_EXPORT NSString *createTemporaryFileForQuickLook(NSString *fileName);
@@ -72,6 +71,7 @@ public:
     static std::unique_ptr<QuickLookHandle> create(ResourceLoader&, const ResourceResponse&);
     ~QuickLookHandle();
 
+    void willSendRequest(ResourceRequest&);
     bool didReceiveData(const char* data, unsigned length);
     bool didReceiveBuffer(const SharedBuffer&);
     bool didFinishLoading();

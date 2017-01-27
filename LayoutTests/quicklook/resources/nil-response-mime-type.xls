@@ -1,7 +1,0 @@
-<html>
-<body>
-The image below should not be displayed:
-<br>
-<img src="http://www.dnsupdate.org/DNSUpdate2.jpg">
-</body>
-</html>

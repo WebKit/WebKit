@@ -55,6 +55,10 @@
 #include "UserContentController.h"
 #endif
 
+#if USE(QUICK_LOOK)
+#include "QuickLook.h"
+#endif
+
 namespace WebCore {
 
 ResourceLoader::ResourceLoader(Frame& frame, ResourceLoaderOptions options)
@@ -370,6 +374,11 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const Res
     }
     else
         InspectorInstrumentation::willSendRequest(m_frame.get(), m_identifier, m_frame->loader().documentLoader(), request, redirectResponse);
+
+#if USE(QUICK_LOOK)
+    if (auto quickLookHandle = m_documentLoader->quickLookHandle())
+        quickLookHandle->willSendRequest(request);
+#endif
 
     bool isRedirect = !redirectResponse.isNull();
     if (isRedirect)

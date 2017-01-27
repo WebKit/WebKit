@@ -1,0 +1,4 @@
+resources/invalid-ql-id-url.xls - didFinishLoading
+x-apple-ql-id://nonexistent.jpg - didReceiveResponse <NSURLResponse about:, http status code 0>
+x-apple-ql-id://nonexistent.jpg - didFinishLoading
+

@@ -1,3 +1,71 @@
+2017-01-26  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] REGRESSION (WebKit2): Requests are made to invalid x-apple-ql-id: URLs
+        https://bugs.webkit.org/show_bug.cgi?id=167453
+
+        Reviewed by Brent Fulgham.
+
+        Requests to x-apple-ql-id: URLs should be filtered by
+        -[QLPreviewConverter safeRequestForRequest:]. This method checks that the URL is one of the
+        ones generated for the current preview, and changes it to "about:" if it isn't.
+
+        WebCore::safeQLURLForDocumentURLAndResourceURL() was responsible for finding the
+        QLPreviewConverter instance to use by looking it up in an NSMutableDictionary using the
+        document URL as a key. In WebKit1, this dictionary was populated by the
+        QuickLookHandleClient when new QuickLookHandles were created, but the WebKit2
+        QuickLookHandleClient never did this. As a result, requests to invalid URLs were not being
+        rewritten.
+
+        An easy way to load a QuickLook document with invalid URLs is to create an HTML file with a
+        Microsoft Office extension (e.g. .xls); QuickLook, iWork, and Office support opening HTML
+        files with Office document extensions. In r207155 we applied a Content Security Policy to
+        QuickLook documents that only allows x-apple-ql-id: resources to load. This blocked
+        cross-origin requests from loading, but same-origin requests to URLs that weren't generated
+        by QLPreviewConverter were still allowed to load.
+
+        This change blocks these URLs by calling -[QLPreviewConverter safeRequestForRequest:] in a
+        way that works for both WebKit1 and WebKit2.
+
+        After implementing QuickLook for WebKit2, we found a bug when loading HTML-as-Office
+        documents (webkit.org/b/135651) that presented as a nil MIME type in the preview
+        NSURLResponse returned by QLPreviewConverter. Unfortunately r172159 papered over the actual
+        bug by failing to load previews with nil MIME types.
+
+        The real issue was that we were asking for the preview response before QuickLook had
+        received enough data to determine a MIME type, so this change also removes the bad fix from
+        r172159 and instead waits until QuickLook has converted the document to ask for its preview
+        response. This restores the ability to load HTML files with Office document extensions.
+        These two fixes are combined in a single patch because I don't know how to create an invalid
+        QuickLook URL for testing without loading an HTML-as-Office document.
+
+        Test: quicklook/invalid-ql-id-url.html
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequestInternal): Called
+        QuickLookHandle::willSendRequest() if m_documentLoader has a QuickLookHandle.
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load): Removed the call to
+        WebCore::safeQLURLForDocumentURLAndResourceURL().
+        * loader/ios/QuickLook.h: Removed safeQLURLForDocumentURLAndResourceURL() and declared
+        QuickLookHandle::willSendRequest().
+        * loader/ios/QuickLook.mm: Removed _previewResponse and _hasFailed ivars from
+        WebPreviewConverter.
+        (-[WebPreviewConverter initWithResourceLoader:resourceResponse:quickLookHandle:]): Stopped
+        setting _previewResponse.
+        (-[WebPreviewConverter _sendDidReceiveResponseIfNecessary]): Only emptied _bufferedDataArray
+        if we haven't already called -_sendDidReceiveResponseIfNecessary; removed the check for a
+        nil _previewResponse MIME type; accessed -[QLPreviewConverter previewResponse] now that the
+        document has been converted and asserted its MIME type is non-nil.
+        (-[WebPreviewConverter connection:didReceiveData:lengthReceived:]): Removed _hasFailed check.
+        (-[WebPreviewConverter connectionDidFinishLoading:]): Ditto.
+        (isQuickLookPasswordError): Moved the check for password failure errors to here from
+        -connection:didFailWithError: for better readability.
+        (-[WebPreviewConverter connection:didFailWithError:]): Removed _hasFailed check and used
+        more early returns.
+        (WebCore::QuickLookHandle::willSendRequest): Filtered the request through
+        -[QLPreviewConverter safeRequestWithRequest:] if the request URL's scheme is x-apple-ql-id:.
+        (WebCore::safeQLURLForDocumentURLAndResourceURL): Deleted.
+
 2017-01-26  Keith Miller  <keith_miller@apple.com>
 
         classInfo should take a VM so it is not materialized from the object on each call
