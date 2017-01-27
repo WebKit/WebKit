@@ -1,3 +1,65 @@
+2017-01-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Move Grid class out of RenderGrid
+        https://bugs.webkit.org/show_bug.cgi?id=167418
+
+        Reviewed by Antti Koivisto.
+
+        The RenderGrid should be able to use different implementations of
+        the Grid class. The latter is big enough to be in its own file. That
+        would help on the effort of moving the grid track sizing algorithm
+        out of RenderGrid too.
+
+        No new tests required as we're just moving code.
+
+        * CMakeLists.txt:
+        * rendering/Grid.cpp: Added.
+        (WebCore::Grid::Grid):
+        (WebCore::Grid::numTracks):
+        (WebCore::Grid::ensureGridSize):
+        (WebCore::Grid::insert):
+        (WebCore::Grid::setSmallestTracksStart):
+        (WebCore::Grid::smallestTrackStart):
+        (WebCore::Grid::gridItemArea):
+        (WebCore::Grid::setGridItemArea):
+        (WebCore::Grid::setAutoRepeatTracks):
+        (WebCore::Grid::autoRepeatTracks):
+        (WebCore::Grid::setAutoRepeatEmptyColumns):
+        (WebCore::Grid::setAutoRepeatEmptyRows):
+        (WebCore::Grid::hasAutoRepeatEmptyTracks):
+        (WebCore::Grid::isEmptyAutoRepeatTrack):
+        (WebCore::Grid::autoRepeatEmptyTracks):
+        (WebCore::Grid::gridItemSpan):
+        (WebCore::Grid::setNeedsItemsPlacement):
+        (WebCore::GridIterator::GridIterator):
+        (WebCore::GridIterator::nextGridItem):
+        (WebCore::GridIterator::isEmptyAreaEnough):
+        (WebCore::GridIterator::nextEmptyGridArea):
+        * rendering/Grid.h: Added.
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeEmptyTracksForAutoRepeat):
+        (WebCore::RenderGrid::Grid::numTracks): Deleted.
+        (WebCore::RenderGrid::Grid::ensureGridSize): Deleted.
+        (WebCore::RenderGrid::Grid::insert): Deleted.
+        (WebCore::RenderGrid::Grid::setSmallestTracksStart): Deleted.
+        (WebCore::RenderGrid::Grid::smallestTrackStart): Deleted.
+        (WebCore::RenderGrid::Grid::gridItemArea): Deleted.
+        (WebCore::RenderGrid::Grid::setGridItemArea): Deleted.
+        (WebCore::RenderGrid::Grid::setAutoRepeatTracks): Deleted.
+        (WebCore::RenderGrid::Grid::autoRepeatTracks): Deleted.
+        (WebCore::RenderGrid::Grid::setAutoRepeatEmptyColumns): Deleted.
+        (WebCore::RenderGrid::Grid::setAutoRepeatEmptyRows): Deleted.
+        (WebCore::RenderGrid::Grid::hasAutoRepeatEmptyTracks): Deleted.
+        (WebCore::RenderGrid::Grid::isEmptyAutoRepeatTrack): Deleted.
+        (WebCore::RenderGrid::Grid::autoRepeatEmptyTracks): Deleted.
+        (WebCore::RenderGrid::Grid::gridItemSpan): Deleted.
+        (WebCore::RenderGrid::Grid::setNeedsItemsPlacement): Deleted.
+        (WebCore::RenderGrid::GridIterator::GridIterator): Deleted.
+        (WebCore::RenderGrid::GridIterator::nextGridItem): Deleted.
+        (WebCore::RenderGrid::GridIterator::isEmptyAreaEnough): Deleted.
+        (WebCore::RenderGrid::GridIterator::nextEmptyGridArea): Deleted.
+        * rendering/RenderGrid.h:
+
 2017-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Implement dynamic-import for WebCore
