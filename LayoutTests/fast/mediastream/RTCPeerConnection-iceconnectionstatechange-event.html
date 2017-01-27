@@ -8,6 +8,9 @@
         <script>
             description("Test RTCPeerConnection 'iceconnectionstatechange' event");
 
+            if (window.internals)
+                internals.useMockRTCPeerConnectionFactory("ICEConnectionState");
+
             let expectedState;
             let expectedStates = [
                 "checking",

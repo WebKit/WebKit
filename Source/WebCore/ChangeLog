@@ -1,3 +1,64 @@
+2017-01-26  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Add a LibWebRTC mock for testing
+        https://bugs.webkit.org/show_bug.cgi?id=167429
+
+        Reviewed by Alex Christensen.
+
+        Covered by updated tests although feature is behind a flag, off by default.
+        MockLibWebRTCPeerConnection will allow us testing the code above the WebRTC implementation above LibWebRTC,
+        without reyling on it and controlling the way that the peer connections will behave.
+        Adding support for mock factory to create real peer connections in case where we want to do full testing through the local loopback.
+
+        Tests: fast/mediastream/getUserMedia-webaudio.html
+               webrtc/datachannel/basic.html
+               webrtc/video.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::useMockRTCPeerConnectionFactory):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/MockLibWebRTCPeerConnection.cpp: Added.
+        (WebCore::useMockRTCPeerConnectionFactory):
+        (WebCore::MockLibWebRTCPeerConnectionForIceCandidates::MockLibWebRTCPeerConnectionForIceCandidates):
+        (WebCore::MockLibWebRTCPeerConnectionForIceCandidates::gotLocalDescription):
+        (WebCore::MockLibWebRTCPeerConnectionForIceConnectionState::MockLibWebRTCPeerConnectionForIceConnectionState):
+        (WebCore::MockLibWebRTCPeerConnectionForIceConnectionState::gotLocalDescription):
+        (WebCore::MockLibWebRTCPeerConnectionFactory::MockLibWebRTCPeerConnectionFactory):
+        (WebCore::MockLibWebRTCPeerConnectionFactory::CreatePeerConnection):
+        (WebCore::MockLibWebRTCPeerConnectionFactory::CreateLocalMediaStream):
+        (WebCore::MockLibWebRTCPeerConnection::SetLocalDescription):
+        (WebCore::MockLibWebRTCPeerConnection::SetRemoteDescription):
+        (WebCore::MockLibWebRTCPeerConnection::CreateDataChannel):
+        (WebCore::MockLibWebRTCPeerConnection::AddStream):
+        (WebCore::MockLibWebRTCPeerConnection::RemoveStream):
+        (WebCore::MockLibWebRTCPeerConnection::CreateOffer):
+        (WebCore::MockLibWebRTCPeerConnection::CreateAnswer):
+        * testing/MockLibWebRTCPeerConnection.h: Added.
+        (WebCore::MockLibWebRTCPeerConnection::~MockLibWebRTCPeerConnection):
+        (WebCore::MockLibWebRTCPeerConnection::MockLibWebRTCPeerConnection):
+        (WebCore::MockLibWebRTCPeerConnection::local_streams):
+        (WebCore::MockLibWebRTCPeerConnection::remote_streams):
+        (WebCore::MockLibWebRTCPeerConnection::CreateDtmfSender):
+        (WebCore::MockLibWebRTCPeerConnection::GetStats):
+        (WebCore::MockLibWebRTCPeerConnection::local_description):
+        (WebCore::MockLibWebRTCPeerConnection::remote_description):
+        (WebCore::MockLibWebRTCPeerConnection::AddIceCandidate):
+        (WebCore::MockLibWebRTCPeerConnection::RegisterUMAObserver):
+        (WebCore::MockLibWebRTCPeerConnection::signaling_state):
+        (WebCore::MockLibWebRTCPeerConnection::ice_connection_state):
+        (WebCore::MockLibWebRTCPeerConnection::ice_gathering_state):
+        (WebCore::MockLibWebRTCPeerConnection::StopRtcEventLog):
+        (WebCore::MockLibWebRTCPeerConnection::Close):
+        (WebCore::MockLibWebRTCPeerConnection::gotLocalDescription):
+        (WebCore::MockLibWebRTCIceCandidate::MockLibWebRTCIceCandidate):
+        (WebCore::MockLibWebRTCAudioTrack::MockLibWebRTCAudioTrack):
+        (WebCore::MockLibWebRTCVideoTrack::MockLibWebRTCVideoTrack):
+        (WebCore::MockLibWebRTCDataChannel::MockLibWebRTCDataChannel):
+        (WebCore::MockLibWebRTCPeerConnectionFactory::create):
+
 2017-01-26  Jeremy Jones  <jeremyj@apple.com>
 
         Page should be able to request pointer lock without user gesture if it relinquished it without a user gesture

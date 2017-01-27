@@ -1,0 +1,229 @@
+/*
+ * Copyright (C) 2017 Apple Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if USE(LIBWEBRTC)
+
+#include "LibWebRTCMacros.h"
+#include <webrtc/api/mediastreaminterface.h>
+#include <webrtc/api/peerconnectioninterface.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+class LibWebRTCProvider;
+
+void useMockRTCPeerConnectionFactory(LibWebRTCProvider*, const String&);
+
+class MockLibWebRTCPeerConnection : public webrtc::PeerConnectionInterface {
+public:
+    virtual ~MockLibWebRTCPeerConnection() { }
+
+protected:
+    explicit MockLibWebRTCPeerConnection(webrtc::PeerConnectionObserver& observer) : m_observer(observer) { }
+
+private:
+    rtc::scoped_refptr<webrtc::StreamCollectionInterface> local_streams() { return nullptr; }
+    rtc::scoped_refptr<webrtc::StreamCollectionInterface> remote_streams() { return nullptr; }
+    rtc::scoped_refptr<webrtc::DtmfSenderInterface> CreateDtmfSender(webrtc::AudioTrackInterface*) { return nullptr; }
+    bool GetStats(webrtc::StatsObserver*, webrtc::MediaStreamTrackInterface*, StatsOutputLevel) { return false; }
+    const webrtc::SessionDescriptionInterface* local_description() const { return nullptr; }
+    const webrtc::SessionDescriptionInterface* remote_description() const { return nullptr; }
+    bool AddIceCandidate(const webrtc::IceCandidateInterface*) { return true; }
+    void RegisterUMAObserver(webrtc::UMAObserver*) { }
+    SignalingState signaling_state() { return kStable; }
+    IceConnectionState ice_connection_state() { return kIceConnectionNew; }
+    IceGatheringState ice_gathering_state() { return kIceGatheringNew; }
+    void StopRtcEventLog() { }
+    void Close() { }
+
+protected:
+    void SetLocalDescription(webrtc::SetSessionDescriptionObserver*, webrtc::SessionDescriptionInterface*) final;
+    void SetRemoteDescription(webrtc::SetSessionDescriptionObserver*, webrtc::SessionDescriptionInterface*) final;
+    void CreateOffer(webrtc::CreateSessionDescriptionObserver*, const webrtc::MediaConstraintsInterface*) final;
+    void CreateAnswer(webrtc::CreateSessionDescriptionObserver*, const webrtc::MediaConstraintsInterface*) final;
+    rtc::scoped_refptr<webrtc::DataChannelInterface> CreateDataChannel(const std::string&, const webrtc::DataChannelInit*) final;
+    bool AddStream(webrtc::MediaStreamInterface*) final;
+    void RemoveStream(webrtc::MediaStreamInterface*) final;
+
+    virtual void gotLocalDescription() { }
+
+    webrtc::PeerConnectionObserver& m_observer;
+    unsigned m_counter { 0 };
+    rtc::scoped_refptr<webrtc::MediaStreamInterface> m_stream;
+    bool m_isInitiator { true };
+    bool m_isReceivingAudio { false };
+    bool m_isReceivingVideo { false };
+};
+
+class MockLibWebRTCSessionDescription: public webrtc::SessionDescriptionInterface {
+public:
+    explicit MockLibWebRTCSessionDescription(std::string&& sdp) : m_sdp(WTFMove(sdp)) { }
+
+private:
+    bool ToString(std::string* out) const final { *out = m_sdp; return true; }
+
+    cricket::SessionDescription* description() final { return nullptr; }
+    const cricket::SessionDescription* description() const final { return nullptr; }
+    std::string session_id() const final { return ""; }
+    std::string session_version() const final { return ""; }
+    std::string type() const final { return ""; }
+    bool AddCandidate(const webrtc::IceCandidateInterface*) final { return true; }
+    size_t number_of_mediasections() const final { return 0; }
+    const webrtc::IceCandidateCollection* candidates(size_t) const final { return nullptr; }
+
+    std::string m_sdp;
+};
+
+class MockLibWebRTCIceCandidate : public webrtc::IceCandidateInterface {
+public:
+    MockLibWebRTCIceCandidate(const char* sdp, const char* sdpMid)
+        : m_sdp(sdp)
+        , m_sdpMid(sdpMid) { }
+
+private:
+    std::string sdp_mid() const final { return m_sdpMid; }
+    int sdp_mline_index() const final { return 0; }
+    const cricket::Candidate& candidate() const final { return m_candidate; }
+    bool ToString(std::string* out) const final { *out = m_sdp; return true; }
+
+protected:
+    const char* m_sdp;
+    const char* m_sdpMid;
+    cricket::Candidate m_candidate;
+};
+
+class MockLibWebRTCAudioTrack : public webrtc::AudioTrackInterface {
+public:
+    explicit MockLibWebRTCAudioTrack(const std::string& id, webrtc::AudioSourceInterface* source)
+        : m_id(id)
+        , m_source(source) { }
+
+private:
+    webrtc::AudioSourceInterface* GetSource() const final { return m_source; }
+    void AddSink(webrtc::AudioTrackSinkInterface*) final { }
+    void RemoveSink(webrtc::AudioTrackSinkInterface*) final { }
+    void RegisterObserver(webrtc::ObserverInterface*) final { }
+    void UnregisterObserver(webrtc::ObserverInterface*) final { }
+
+    std::string kind() const final { return "audio"; }
+    std::string id() const final { return m_id; }
+    bool enabled() const final { return m_enabled; }
+    TrackState state() const final { return kLive; }
+    bool set_enabled(bool enabled) final { m_enabled = enabled; return true; }
+
+    bool m_enabled;
+    std::string m_id;
+    webrtc::AudioSourceInterface* m_source { nullptr };
+};
+
+class MockLibWebRTCVideoTrack : public webrtc::VideoTrackInterface {
+public:
+    explicit MockLibWebRTCVideoTrack(const std::string& id, webrtc::VideoTrackSourceInterface* source)
+        : m_id(id)
+        , m_source(source) { }
+
+private:
+    webrtc::VideoTrackSourceInterface* GetSource() const final { return m_source; }
+    void RegisterObserver(webrtc::ObserverInterface*) final { }
+    void UnregisterObserver(webrtc::ObserverInterface*) final { }
+
+    std::string kind() const final { return "video"; }
+    std::string id() const final { return m_id; }
+    bool enabled() const final { return m_enabled; }
+    TrackState state() const final { return kLive; }
+    bool set_enabled(bool enabled) final { m_enabled = enabled; return true; }
+
+    bool m_enabled;
+    std::string m_id;
+    webrtc::VideoTrackSourceInterface* m_source { nullptr };
+};
+
+class MockLibWebRTCDataChannel : public webrtc::DataChannelInterface {
+public:
+    MockLibWebRTCDataChannel(std::string&& label, bool ordered, bool reliable, int id)
+        : m_label(WTFMove(label))
+        , m_ordered(ordered)
+        , m_reliable(reliable)
+        , m_id(id) { }
+
+private:
+    void RegisterObserver(webrtc::DataChannelObserver*) final { }
+    void UnregisterObserver() final { }
+    std::string label() const final { return m_label; }
+    bool reliable() const final { return m_reliable; }
+    bool ordered() const final { return m_ordered; }
+
+    int id() const final { return m_id; }
+    DataState state() const final { return kConnecting; }
+    uint64_t buffered_amount() const final { return 0; }
+    void Close() final { }
+    bool Send(const webrtc::DataBuffer&) final { return true; }
+
+    std::string m_label;
+    bool m_ordered { true };
+    bool m_reliable { false };
+    int m_id { -1 };
+};
+
+class MockLibWebRTCPeerConnectionFactory : public webrtc::PeerConnectionFactoryInterface {
+public:
+    static rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> create(LibWebRTCProvider* provider, String&& testCase) { return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionFactory>(provider, WTFMove(testCase)); }
+
+protected:
+    MockLibWebRTCPeerConnectionFactory(LibWebRTCProvider*, String&&);
+
+private:
+    rtc::scoped_refptr<webrtc::PeerConnectionInterface> CreatePeerConnection(const webrtc::PeerConnectionInterface::RTCConfiguration&, const webrtc::MediaConstraintsInterface*, std::unique_ptr<cricket::PortAllocator>, std::unique_ptr<rtc::RTCCertificateGeneratorInterface>, webrtc::PeerConnectionObserver*) final { return nullptr; }
+
+    rtc::scoped_refptr<webrtc::PeerConnectionInterface> CreatePeerConnection(const webrtc::PeerConnectionInterface::RTCConfiguration&, std::unique_ptr<cricket::PortAllocator>, std::unique_ptr<rtc::RTCCertificateGeneratorInterface>, webrtc::PeerConnectionObserver*) final;
+
+    rtc::scoped_refptr<webrtc::MediaStreamInterface> CreateLocalMediaStream(const std::string&) final;
+
+    void SetOptions(const Options&) final { }
+    rtc::scoped_refptr<webrtc::AudioSourceInterface> CreateAudioSource(const cricket::AudioOptions&) final { return nullptr; }
+    rtc::scoped_refptr<webrtc::AudioSourceInterface> CreateAudioSource(const webrtc::MediaConstraintsInterface*) final { return nullptr; }
+
+    rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> CreateVideoSource(cricket::VideoCapturer*) final { return nullptr; }
+    rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> CreateVideoSource(cricket::VideoCapturer*, const webrtc::MediaConstraintsInterface*) final { return nullptr; }
+
+    rtc::scoped_refptr<webrtc::VideoTrackInterface> CreateVideoTrack(const std::string& id, webrtc::VideoTrackSourceInterface* source) final { return new rtc::RefCountedObject<MockLibWebRTCVideoTrack>(id, source); }
+    rtc::scoped_refptr<webrtc::AudioTrackInterface> CreateAudioTrack(const std::string& id, webrtc::AudioSourceInterface* source) final { return new rtc::RefCountedObject<MockLibWebRTCAudioTrack>(id, source); }
+    bool StartAecDump(rtc::PlatformFile, int64_t) final { return false; }
+    void StopAecDump() final { }
+
+    bool StartRtcEventLog(rtc::PlatformFile, int64_t) final { return false; }
+    bool StartRtcEventLog(rtc::PlatformFile) final { return false; }
+    void StopRtcEventLog() final { }
+
+private:
+    LibWebRTCProvider* m_provider { nullptr };
+    String m_testCase;
+    unsigned m_numberOfRealPeerConnections { 0 };
+};
+
+} // namespace WebCore
+
+#endif // USE(LIBWEBRTC)

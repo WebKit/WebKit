@@ -31,6 +31,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include <webrtc/api/peerconnectionfactoryproxy.h>
 #include <webrtc/api/peerconnectionfactory.h>
 #include <webrtc/base/physicalsocketserver.h>
 #include <webrtc/p2p/client/basicportallocator.h>
@@ -74,6 +75,12 @@ void callOnWebRTCNetworkThread(Function<void()>&& callback)
     threads.networkThread->Post(RTC_FROM_HERE, &threads, 1, new ThreadMessageData(WTFMove(callback)));
 }
 
+void callOnWebRTCSignalingThread(Function<void()>&& callback)
+{
+    PeerConnectionFactoryAndThreads& threads = staticFactoryAndThreads();
+    threads.signalingThread->Post(RTC_FROM_HERE, &threads, 1, new ThreadMessageData(WTFMove(callback)));
+}
+
 static void initializePeerConnectionFactoryAndThreads()
 {
     auto& factoryAndThreads = staticFactoryAndThreads();
@@ -104,6 +111,14 @@ webrtc::PeerConnectionFactoryInterface& peerConnectionFactory()
     if (!staticFactoryAndThreads().factory)
         initializePeerConnectionFactoryAndThreads();
     return *staticFactoryAndThreads().factory;
+}
+
+void setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&& factory)
+{
+    if (!staticFactoryAndThreads().factory)
+        initializePeerConnectionFactoryAndThreads();
+
+    staticFactoryAndThreads().factory = webrtc::PeerConnectionFactoryProxy::Create(staticFactoryAndThreads().signalingThread.get(), WTFMove(factory));
 }
 
 static rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver& observer, std::unique_ptr<cricket::BasicPortAllocator>&& portAllocator)

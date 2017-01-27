@@ -10,6 +10,9 @@
 
             description("Test RTCPeerConnection 'icecandidate' event and gathering done");
 
+            if (window.internals)
+                internals.useMockRTCPeerConnectionFactory("ICECandidates");
+
             if (window.testRunner)
                 testRunner.setUserMediaPermission(true);
             else {

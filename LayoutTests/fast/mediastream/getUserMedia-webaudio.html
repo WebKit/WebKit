@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing getUserMedia plugged in Web Audio</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+if (window.testRunner)
+    testRunner.setUserMediaPermission(true);
+
+var finishTest, errorTest;
+promise_test((test) => {
+    return navigator.mediaDevices.getUserMedia({ audio: true}).then((stream) => {
+        return new Promise((resolve, reject) => {
+            finishTest = resolve;
+            errorTest = reject;
+            var audioContext = new webkitAudioContext();
+            var script = audioContext.createScriptProcessor(2048, 1, 1);
+            script.onaudioprocess = (event) => {
+                var sum = 0.0;
+                var squaredSum = 0.0;
+                event.inputBuffer.getChannelData(0).forEach((value) => {
+                    sum += value;
+                    squaredSum += value * value;
+                });
+                if (Math.abs(sum) > 5)
+                    errorTest("sum is not below 1");
+                // Mock source should send some bips with sufficient energy to finish the test
+                if (squaredSum > 30) {
+                    source.disconnect(script);
+                    script.disconnect(audioContext.destination);
+                    finishTest();
+                }
+            };
+            let source = audioContext.createMediaStreamSource(stream);
+
+            source.connect(script);
+            script.connect(audioContext.destination);
+        });
+    });
+}, "Plugging in getUserMedia audio stream into Web Audio");
+        </script>
+    </body>
+</html>

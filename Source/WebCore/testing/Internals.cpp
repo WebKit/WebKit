@@ -85,6 +85,8 @@
 #include "IntRect.h"
 #include "InternalSettings.h"
 #include "Language.h"
+#include "LibWebRTCProvider.h"
+#include "LibWebRTCUtils.h"
 #include "MainFrame.h"
 #include "MallocStatistics.h"
 #include "MediaPlayer.h"
@@ -92,6 +94,7 @@
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
 #include "MemoryPressureHandler.h"
+#include "MockLibWebRTCPeerConnection.h"
 #include "MockPageOverlay.h"
 #include "MockPageOverlayClient.h"
 #include "Page.h"
@@ -450,6 +453,7 @@ Internals::Internals(Document& document)
 
 #if ENABLE(WEB_RTC)
     enableMockMediaEndpoint();
+    useMockRTCPeerConnectionFactory(String());
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -1089,6 +1093,17 @@ void Internals::enableMockMediaEndpoint()
 void Internals::emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection& connection, const String& action)
 {
     connection.emulatePlatformEvent(action);
+}
+
+void Internals::useMockRTCPeerConnectionFactory(const String& testCase)
+{
+#if USE(LIBWEBRTC)
+    Document* document = contextDocument();
+    LibWebRTCProvider* provider = (document && document->page()) ? &document->page()->libWebRTCProvider() : nullptr;
+    WebCore::useMockRTCPeerConnectionFactory(provider, testCase);
+#else
+    UNUSED_PARAM(testCase);
+#endif
 }
 
 #endif

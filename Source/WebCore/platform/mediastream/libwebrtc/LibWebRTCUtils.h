@@ -52,6 +52,10 @@ WEBCORE_EXPORT rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerCon
 
 WEBCORE_EXPORT void callOnWebRTCNetworkThread(Function<void()>&&);
 
+// Used for mock testing
+WEBCORE_EXPORT void setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&&);
+WEBCORE_EXPORT void callOnWebRTCSignalingThread(Function<void()>&&);
+
 } // namespace WebCore
 
 #endif // USE(LIBWEBRTC)

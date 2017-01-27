@@ -1,3 +1,27 @@
+2017-01-26  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Add a LibWebRTC mock for testing
+        https://bugs.webkit.org/show_bug.cgi?id=167429
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations: Marking webrtc new tests as skipped for the moment.
+        * fast/mediastream/RTCPeerConnection-createAnswer.html:
+        * fast/mediastream/RTCPeerConnection-icecandidate-event.html:
+        * fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html:
+        * webrtc/datachannel/basic.html: Added.
+        * webrtc/routines.js: Added.
+        (createConnections):
+        (closeConnections):
+        (onCreateSessionDescriptionError):
+        (gotDescription1):
+        (gotDescription2):
+        (iceCallback1):
+        (iceCallback2):
+        (onAddIceCandidateSuccess):
+        (onAddIceCandidateError):
+        * webrtc/video.html: Added.
+
 2017-01-26  Daniel Bates  <dabates@apple.com>
 
         [QuickLook] Add test to ensure that RTF documents have a unique origin
