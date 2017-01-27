@@ -1,3 +1,16 @@
+2017-01-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: iOS: Memory timeline shows impossible values for Page size (underflowed)
+        https://bugs.webkit.org/show_bug.cgi?id=167468
+        <rdar://problem/30099051>
+
+        Reviewed by Andreas Kling.
+
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::vmPageSize):
+        This value matches the sysctl value we were attempting to access, and is
+        the most appropriate when dealing with mach APIs, as we are using here.
+
 2017-01-26  Jer Noble  <jer.noble@apple.com>
 
         Autoplay muted videos stop playback of any streaming app in the background
