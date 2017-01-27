@@ -371,7 +371,7 @@ void DOMSelection::deleteFromDocument()
         return;
 
     auto selectedRange = selection.selection().toNormalizedRange();
-    if (!selectedRange)
+    if (!selectedRange || selectedRange->shadowRoot())
         return;
 
     Ref<Frame> protector(*m_frame);
