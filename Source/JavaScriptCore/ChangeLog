@@ -1,3 +1,9 @@
+2017-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ debug build after r211247.
+
+        * heap/GCAssertions.h:
+
 2017-01-26  Keith Miller  <keith_miller@apple.com>
 
         classInfo should take a VM so it is not materialized from the object on each call
