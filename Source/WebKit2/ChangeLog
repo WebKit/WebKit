@@ -1,3 +1,21 @@
+2017-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Stop forcing accelerated compositing by default
+        https://bugs.webkit.org/show_bug.cgi?id=167492
+
+        Reviewed by Žan Doberšek.
+
+        We are now ready to bring back the on demand accelerated compositing mode with the threaded
+        compositor. Unfortunately, having AC always enabled brought a lot of issues for many people. Not only it
+        requires a lot more memory but also caused rendering issues (or even nothing rendered at all) with some graphics
+        drivers. People started to use WEBKIT_DISABLE_COMPOSITING_MODE as a workaround, but that was not expected to be
+        used by users. So, entering/leaving AC when required by web contents is not actually the solution but a huge
+        improvement for many people. If we are eventually ready to force AC mode again, we'll change this again. Note
+        that we still have WEBKIT_DISABLE_COMPOSITING_MODE, but now also WEBKIT_FORCE_COMPOSITING_MODE for testing and debugging.
+
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformInitializeStore):
+
 2017-01-26  Chris Dumez  <cdumez@apple.com>
 
         Crash when navigating back to a page in PacheCache when one of its frames has been removed
