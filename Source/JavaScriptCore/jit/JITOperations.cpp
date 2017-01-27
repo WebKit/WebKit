@@ -1423,8 +1423,7 @@ SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, int32_t byte
     CodeBlock* optimizedCodeBlock = codeBlock->replacement();
     ASSERT(JITCode::isOptimizingJIT(optimizedCodeBlock->jitType()));
     
-    if (auto osrEntryPreparation = DFG::prepareOSREntry(exec, optimizedCodeBlock, bytecodeIndex)) {
-        void* dataBuffer = osrEntryPreparation.value();
+    if (void* dataBuffer = DFG::prepareOSREntry(exec, optimizedCodeBlock, bytecodeIndex)) {
         CODEBLOCK_LOG_EVENT(optimizedCodeBlock, "osrEntry", ("at bc#", bytecodeIndex));
         if (Options::verboseOSR()) {
             dataLog(

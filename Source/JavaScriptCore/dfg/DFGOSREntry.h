@@ -28,7 +28,6 @@
 #include "DFGAbstractValue.h"
 #include "Operands.h"
 #include <wtf/BitVector.h>
-#include <wtf/Expected.h>
 
 namespace JSC {
 
@@ -36,14 +35,6 @@ class ExecState;
 class CodeBlock;
 
 namespace DFG {
-
-enum class OSREntryFail {
-    Disabled,
-    TargetNotDFG,
-    TargetOptimizedOut,
-    BadPrediction,
-    StackGrowthFailed,
-};
 
 #if ENABLE(DFG_JIT)
 struct OSREntryReshuffling {
@@ -78,10 +69,11 @@ inline unsigned getOSREntryDataBytecodeIndex(OSREntryData* osrEntryData)
     return osrEntryData->m_bytecodeIndex;
 }
 
-// Returns a pointer to a data buffer that the OSR entry thunk will recognize and parse.
-Expected<void*, OSREntryFail> prepareOSREntry(ExecState*, CodeBlock*, unsigned bytecodeIndex);
+// Returns a pointer to a data buffer that the OSR entry thunk will recognize and
+// parse. If this returns null, it means 
+void* prepareOSREntry(ExecState*, CodeBlock*, unsigned bytecodeIndex);
 #else
-inline Expected<void*, OSREntryFail> prepareOSREntry(ExecState*, CodeBlock*, unsigned) { return makeUnexpected(OSREntryFail::Disabled); }
+inline void* prepareOSREntry(ExecState*, CodeBlock*, unsigned) { return 0; }
 #endif
 
 } } // namespace JSC::DFG

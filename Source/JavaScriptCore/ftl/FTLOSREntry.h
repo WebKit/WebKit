@@ -27,8 +27,6 @@
 
 #if ENABLE(FTL_JIT)
 
-#include <wtf/Expected.h>
-
 namespace JSC {
 
 class CodeBlock;
@@ -36,12 +34,7 @@ class ExecState;
 
 namespace FTL {
 
-enum class OSREntryFail {
-    WrongBytecode,
-    StackGrowthFailed,
-};
-
-Expected<void*, OSREntryFail> prepareOSREntry(
+void* prepareOSREntry(
     ExecState*, CodeBlock* dfgCodeBlock, CodeBlock* entryCodeBlock, unsigned bytecodeIndex,
     unsigned streamIndex);
 
