@@ -1,3 +1,18 @@
+2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211223. rdar://problem/30181179
+
+    2017-01-26  Anders Carlsson  <andersca@apple.com>
+
+            Don't use _CFBundleCreateUnique on Yosemite, it's not available there
+            https://bugs.webkit.org/show_bug.cgi?id=167459
+            rdar://problem/30181179
+
+            Reviewed by Beth Dakin.
+
+            * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+            (WebKit::NetscapePluginModule::getPluginInfo):
+
 2017-01-25  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r211126. rdar://problem/30174873
