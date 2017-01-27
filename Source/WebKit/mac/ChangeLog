@@ -1,3 +1,24 @@
+2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211243. rdar://problem/30149809
+
+    2017-01-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            REGRESSION (r207483): Touch Bar: Lists and BIU Buttons Missing from Touch Bar in HTML Notes
+            https://bugs.webkit.org/show_bug.cgi?id=167472
+            <rdar://problem/30149809>
+
+            Reviewed by Beth Dakin.
+
+            Revision 207483 caused the touch bar to stop showing up in HTML Notes due to -updateTextTouchBar not
+            initializing the text touch bar and causing -makeTouchBar to return nil while processing a mouse click. The
+            purpose of bailing out of the update was to prevent the text touch bar from thrashing during a selection drag.
+            If the text touch bar doesn't exist yet, we don't have to worry about its appearance flickering from a different
+            previous state, so we should just allow the touch bar to update instead.
+
+            * WebView/WebView.mm:
+            (-[WebView updateTextTouchBar]):
+
 2017-01-25  Dean Jackson  <dino@apple.com>
 
         Disable Variation fonts on this branch.

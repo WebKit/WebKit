@@ -9552,7 +9552,8 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
 
 - (void)updateTextTouchBar
 {
-    if (_private->_isDeferringTextTouchBarUpdates) {
+    BOOL touchBarsRequireInitialization = !_private->_richTextTouchBar || !_private->_plainTextTouchBar;
+    if (_private->_isDeferringTextTouchBarUpdates && !touchBarsRequireInitialization) {
         _private->_needsDeferredTextTouchBarUpdate = YES;
         return;
     }
