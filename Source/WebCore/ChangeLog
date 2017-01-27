@@ -1,3 +1,51 @@
+2017-01-26  Jer Noble  <jer.noble@apple.com>
+
+        Autoplay muted videos stop playback of any streaming app in the background
+        https://bugs.webkit.org/show_bug.cgi?id=163993
+        <rdar://problem/29020431>
+
+        Reviewed by Eric Carlson.
+
+        Added test in TestWebKitAPI, WebKit1.AudioSessionCategoryIOS.
+
+        Previously, we would set the audio session category to "playback" if there was a media-
+        element-type media session, and if there was a session capable of playing audio. But because
+        this was an "or" operation, we would incorrectly set the category to "playback" if there was
+        a video element incapable of rendering audio (due to being muted, without an audio track,
+        etc.), and also a session capable of producing audio, such as WebAudio.
+
+        With this change, this turns into an "and" operation; there must be a media element capable
+        of rendering audio in order to switch the audio session category to "playback".
+
+        Additionally, we no longer cache the value of "canProduceAudio()"; it's queried directly
+        whenever updateSessionState() is called.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::constructCommon):
+        * Modules/webaudio/AudioContext.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::insertedInto):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::setMuted):
+        (WebCore::HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        (WebCore::HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged):
+        (WebCore::HTMLMediaElement::presentationType):
+        (WebCore::HTMLMediaElement::characteristics):
+        (WebCore::HTMLMediaElement::canProduceAudio):
+        * html/HTMLMediaElement.h:
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::activeAudioSessionRequired):
+        (WebCore::PlatformMediaSession::canProduceAudio):
+        (WebCore::PlatformMediaSession::canProduceAudioChanged):
+        (WebCore::PlatformMediaSession::setCanProduceAudio): Deleted.
+        * platform/audio/PlatformMediaSession.h:
+        (WebCore::PlatformMediaSessionClient::canProduceAudio):
+        (WebCore::PlatformMediaSession::canProduceAudio): Deleted.
+        * platform/audio/cocoa/MediaSessionManagerCocoa.cpp:
+        (PlatformMediaSessionManager::updateSessionState):
+
 2017-01-26  Filip Pizlo  <fpizlo@apple.com>
 
         EventTarget should visit the JSEventListeners using visitAdditionalChildren

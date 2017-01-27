@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+        function go() {
+            var audioContext = new webkitAudioContext();
+            audioContext.resume();
+
+            var video = document.getElementsByTagName('video')[0];
+            video.play().then(playing).catch(notPlaying);
+        }
+
+        function playing() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage('playing');
+            } catch(e) {
+                window.location = 'callback:playing';
+            }
+        }
+
+        function notPlaying() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage('not playing');
+            } catch(e) { }
+        }
+        </script>
+    </head>
+    <body onload="go()">
+        <video src="video-with-audio.mp4" muted webkit-playsinline></video>
+    </body>
+</html>

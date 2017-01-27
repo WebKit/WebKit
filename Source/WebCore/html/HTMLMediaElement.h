@@ -776,6 +776,7 @@ private:
     bool supportsSeeking() const override;
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override;
     bool shouldOverrideBackgroundLoadingRestriction() const override;
+    bool canProduceAudio() const final;
 
     void pageMutedStateDidChange() override;
 

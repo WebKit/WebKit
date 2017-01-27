@@ -512,6 +512,7 @@
 		C99B675C1E39721A00FC6C80 /* autoplay-with-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C99B675A1E3971FC00FC6C80 /* autoplay-with-controls.html */; };
 		C99B675D1E39722000FC6C80 /* js-play-with-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C99B675B1E3971FC00FC6C80 /* js-play-with-controls.html */; };
 		C99B675F1E39736F00FC6C80 /* no-autoplay-with-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C99B675E1E39735C00FC6C80 /* no-autoplay-with-controls.html */; };
+		CD321B041E3A85FA00EB21C8 /* video-with-muted-audio-and-webaudio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD321B031E3A84B700EB21C8 /* video-with-muted-audio-and-webaudio.html */; };
 		CD59F53419E9110D00CF1835 /* file-with-mse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53219E910AA00CF1835 /* file-with-mse.html */; };
 		CD59F53519E9110D00CF1835 /* test-mse.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53319E910BC00CF1835 /* test-mse.mp4 */; };
 		CD78E11D1DB7EA660014A2DE /* FullscreenDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD78E11A1DB7EA360014A2DE /* FullscreenDelegate.mm */; };
@@ -613,6 +614,7 @@
 				C99B675F1E39736F00FC6C80 /* no-autoplay-with-controls.html in Copy Resources */,
 				C99B675D1E39722000FC6C80 /* js-play-with-controls.html in Copy Resources */,
 				C99B675C1E39721A00FC6C80 /* autoplay-with-controls.html in Copy Resources */,
+				CD321B041E3A85FA00EB21C8 /* video-with-muted-audio-and-webaudio.html in Copy Resources */,
 				C95984F71E36BCEF002C0D45 /* test-without-audio-track.mp4 in Copy Resources */,
 				C95984F41E36BC6B002C0D45 /* autoplay-check.html in Copy Resources */,
 				C95984F51E36BC6B002C0D45 /* autoplay-no-audio-check.html in Copy Resources */,
@@ -1284,6 +1286,7 @@
 		C99B675B1E3971FC00FC6C80 /* js-play-with-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "js-play-with-controls.html"; sourceTree = "<group>"; };
 		C99B675E1E39735C00FC6C80 /* no-autoplay-with-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "no-autoplay-with-controls.html"; sourceTree = "<group>"; };
 		CD225C071C45A69200140761 /* ParsedContentRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentRange.cpp; sourceTree = "<group>"; };
+		CD321B031E3A84B700EB21C8 /* video-with-muted-audio-and-webaudio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "video-with-muted-audio-and-webaudio.html"; sourceTree = "<group>"; };
 		CD5393C71757BA9700C07123 /* MD5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MD5.cpp; sourceTree = "<group>"; };
 		CD5393C91757BAC400C07123 /* SHA1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SHA1.cpp; sourceTree = "<group>"; };
 		CD5451E919E41F9D0016936F /* CSSParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSParser.cpp; sourceTree = "<group>"; };
@@ -2235,6 +2238,7 @@
 				CDC8E48B1BC5C96200594FEC /* video-without-audio.html */,
 				CDC8E48C1BC5C96200594FEC /* video-without-audio.mp4 */,
 				CDB411591E09DA8E00EAD352 /* video-with-muted-audio.html */,
+				CD321B031E3A84B700EB21C8 /* video-with-muted-audio-and-webaudio.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
