@@ -44,10 +44,10 @@ class PerformanceEntry : public RefCounted<PerformanceEntry> {
 public:
     virtual ~PerformanceEntry();
 
-    String name() const;
-    String entryType() const;
-    double startTime() const;
-    double duration() const;
+    String name() const { return m_name; }
+    String entryType() const { return m_entryType; }
+    double startTime() const { return m_startTime; }
+    double duration() const { return m_duration; }
 
     virtual bool isResource() const { return false; }
     virtual bool isMark() const { return false; }

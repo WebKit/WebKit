@@ -46,6 +46,7 @@ typedef unsigned long long (PerformanceTiming::*NavigationTimingFunction)() cons
 
 static NavigationTimingFunction restrictedMarkFunction(const String& markName)
 {
+    // FIXME: Update this list when moving to Navigation Timing Level 2.
     using MapPair = std::pair<ASCIILiteral, NavigationTimingFunction>;
     static const std::array<MapPair, 21> pairs = { {
         MapPair { ASCIILiteral("navigationStart"), &PerformanceTiming::navigationStart },
@@ -97,7 +98,7 @@ static void insertPerformanceEntry(PerformanceEntryMap& performanceEntryMap, Ref
         performanceEntryMap.set(entry->name(), Vector<RefPtr<PerformanceEntry>> { WTFMove(entry) });
 }
 
-static void clearPeformanceEntries(PerformanceEntryMap& performanceEntryMap, const String& name)
+static void clearPerformanceEntries(PerformanceEntryMap& performanceEntryMap, const String& name)
 {
     if (name.isNull()) {
         performanceEntryMap.clear();
@@ -118,7 +119,7 @@ ExceptionOr<void> UserTiming::mark(const String& markName)
 
 void UserTiming::clearMarks(const String& markName)
 {
-    clearPeformanceEntries(m_marksMap, markName);
+    clearPerformanceEntries(m_marksMap, markName);
 }
 
 ExceptionOr<double> UserTiming::findExistingMarkStartTime(const String& markName)
@@ -148,7 +149,7 @@ ExceptionOr<void> UserTiming::measure(const String& measureName, const String& s
         auto startMarkResult = findExistingMarkStartTime(startMark);
         if (startMarkResult.hasException())
             return startMarkResult.releaseException();
-        endTime = startMarkResult.releaseReturnValue();
+        startTime = startMarkResult.releaseReturnValue();
     } else {
         auto endMarkResult = findExistingMarkStartTime(endMark);
         if (endMarkResult.hasException())
@@ -166,7 +167,7 @@ ExceptionOr<void> UserTiming::measure(const String& measureName, const String& s
 
 void UserTiming::clearMeasures(const String& measureName)
 {
-    clearPeformanceEntries(m_measuresMap, measureName);
+    clearPerformanceEntries(m_measuresMap, measureName);
 }
 
 static Vector<RefPtr<PerformanceEntry>> convertToEntrySequence(const PerformanceEntryMap& performanceEntryMap)

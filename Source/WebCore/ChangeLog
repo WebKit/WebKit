@@ -1,3 +1,42 @@
+2017-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add User Timing Experimental Feature
+        https://bugs.webkit.org/show_bug.cgi?id=167542
+        <rdar://problem/22746307>
+
+        Reviewed by Ryosuke Niwa.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::performanceTimelineEnabled):
+        * page/Performance.idl:
+        * page/PerformanceEntry.idl:
+        Make a better RuntimeEnabledFeature named "PerformanceTiming" which
+        is enabled if either UserTiming or ResourceTiming is enabled. This
+        will then expose the APIs that are only useful when at least one of
+        the APIs are available.
+
+        * page/PerformanceEntry.cpp:
+        (WebCore::PerformanceEntry::name): Deleted.
+        (WebCore::PerformanceEntry::entryType): Deleted.
+        (WebCore::PerformanceEntry::startTime): Deleted.
+        (WebCore::PerformanceEntry::duration): Deleted.
+        * page/PerformanceEntry.h:
+        (WebCore::PerformanceEntry::name):
+        (WebCore::PerformanceEntry::entryType):
+        (WebCore::PerformanceEntry::startTime):
+        (WebCore::PerformanceEntry::duration):
+        Inline simple accessors.
+
+        * page/PerformanceUserTiming.cpp:
+        (WebCore::UserTiming::measure):
+        Fix a bug introduced by ExceptionOr refactoring.
+
+        (WebCore::UserTiming::clearMarks):
+        (WebCore::UserTiming::clearMeasures):
+        (WebCore::clearPerformanceEntries):
+        (WebCore::clearPeformanceEntries): Deleted.
+        Fix method name typo.
+
 2017-01-27  Dan Bernstein  <mitz@apple.com>
 
         Ignore Xcode’s project.xcworkspace and userdata directories in this new project like we do

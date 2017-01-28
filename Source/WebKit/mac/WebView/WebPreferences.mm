@@ -642,15 +642,16 @@ public:
 #if ENABLE(SUBTLE_CRYPTO)
         [NSNumber numberWithBool:YES], WebKitSubtleCryptoEnabledPreferenceKey,
 #endif
-
 #if ENABLE(MEDIA_STREAM)
         [NSNumber numberWithBool:NO], WebKitMediaStreamEnabledPreferenceKey,
 #endif
-
 #if ENABLE(WEB_RTC)
         [NSNumber numberWithBool:NO], WebKitPeerConnectionEnabledPreferenceKey,
 #endif
-
+#if ENABLE(INTERSECTION_OBSERVER)
+        @NO, WebKitIntersectionObserverEnabledPreferenceKey,
+#endif
+        @NO, WebKitUserTimingEnabledPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS)
@@ -2922,6 +2923,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setIntersectionObserverEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitIntersectionObserverEnabledPreferenceKey];
+}
+
+- (BOOL)userTimingEnabled
+{
+    return [self _boolValueForKey:WebKitUserTimingEnabledPreferenceKey];
+}
+
+- (void)setUserTimingEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitUserTimingEnabledPreferenceKey];
 }
 
 @end

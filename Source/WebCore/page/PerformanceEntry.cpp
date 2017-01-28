@@ -47,26 +47,6 @@ PerformanceEntry::~PerformanceEntry()
 {
 }
 
-String PerformanceEntry::name() const
-{
-    return m_name;
-}
-
-String PerformanceEntry::entryType() const
-{
-    return m_entryType;
-}
-
-double PerformanceEntry::startTime() const
-{
-    return m_startTime;
-}
-
-double PerformanceEntry::duration() const
-{
-    return m_duration;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_TIMING)

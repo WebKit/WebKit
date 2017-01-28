@@ -528,5 +528,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 @property (nonatomic) BOOL attachmentElementEnabled;
 @property (nonatomic) BOOL allowsInlineMediaPlaybackAfterFullscreen;
 @property (nonatomic) BOOL intersectionObserverEnabled;
+@property (nonatomic) BOOL userTimingEnabled;
 
 @end

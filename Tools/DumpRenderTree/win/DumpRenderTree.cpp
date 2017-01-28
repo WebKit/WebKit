@@ -777,6 +777,7 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     // FIXME: ModernMediaControls
     // FIXME: InputEvents
     // FIXME: SubtleCrypto
+    prefsPrivate4->setUserTimingEnabled(TRUE);
     prefsPrivate4->setWebAnimationsEnabled(TRUE);
     // FIXME: WebGL2
 }

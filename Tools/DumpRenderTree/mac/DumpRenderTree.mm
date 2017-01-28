@@ -903,6 +903,8 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setModernMediaControlsEnabled:YES];
     // FIXME: InputEvents
     [preferences setSubtleCryptoEnabled:YES];
+    [preferences setUserTimingEnabled:YES];
+    [preferences setWebAnimationsEnabled:YES];
     [preferences setWebGL2Enabled:YES];
 }
 
@@ -1009,7 +1011,6 @@ static void resetWebPreferencesToConsistentValues()
     
     [preferences setMediaStreamEnabled:YES];
     [preferences setPeerConnectionEnabled:YES];
-    [preferences setWebAnimationsEnabled:YES];
 
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];

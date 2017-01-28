@@ -1581,6 +1581,16 @@ bool WKPreferencesGetIntersectionObserverEnabled(WKPreferencesRef preferencesRef
     return toImpl(preferencesRef)->intersectionObserverEnabled();
 }
 
+void WKPreferencesSetUserTimingEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setUserTimingEnabled(flag);
+}
+
+bool WKPreferencesGetUserTimingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->userTimingEnabled();
+}
+
 void WKPreferencesSetSelectionPaintingWithoutSelectionGapsEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setSelectionPaintingWithoutSelectionGapsEnabled(flag);

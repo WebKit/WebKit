@@ -307,6 +307,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebAnimationsEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitUserTimingEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 }
 
@@ -2023,5 +2025,19 @@ HRESULT WebPreferences::webAnimationsEnabled(_Out_ BOOL* enabled)
     if (!enabled)
         return E_POINTER;
     *enabled = boolValueForKey(WebKitWebAnimationsEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setUserTimingEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitUserTimingEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::userTimingEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitUserTimingEnabledPreferenceKey);
     return S_OK;
 }

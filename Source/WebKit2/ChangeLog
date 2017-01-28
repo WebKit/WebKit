@@ -1,3 +1,21 @@
+2017-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add User Timing Experimental Feature
+        https://bugs.webkit.org/show_bug.cgi?id=167542
+        <rdar://problem/22746307>
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetUserTimingEnabled):
+        (WKPreferencesGetUserTimingEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Experimental feature. Off for now while we update ResourceTiming
+        and NavigationTiming to be compatible with Performance Timing 2.
+
 2017-01-28  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/30247736> WebKit2-7604.1.5 has failed to build: error: only virtual member functions can be marked 'override'

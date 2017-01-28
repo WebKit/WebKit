@@ -178,3 +178,5 @@
 #define WebKitModernMediaControlsEnabledPreferenceKey "WebKitModernMediaControlsEnabled"
 
 #define WebKitWebAnimationsEnabledPreferenceKey "WebKitWebAnimationsEnabled"
+
+#define WebKitUserTimingEnabledPreferenceKey "WebKitUserTimingEnabled"

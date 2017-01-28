@@ -58,6 +58,8 @@ public:
     void setUserTimingEnabled(bool isEnabled) { m_isUserTimingEnabled = isEnabled; }
     bool userTimingEnabled() const { return m_isUserTimingEnabled; }
 
+    bool performanceTimelineEnabled() const { return resourceTimingEnabled() || userTimingEnabled(); }
+
     void setShadowDOMEnabled(bool isEnabled) { m_isShadowDOMEnabled = isEnabled; }
     bool shadowDOMEnabled() const { return m_isShadowDOMEnabled; }
 

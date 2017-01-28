@@ -45,9 +45,9 @@ typedef double DOMHighResTimeStamp;
     readonly attribute PerformanceTiming timing;
 
     // https://w3c.github.io/performance-timeline/
-    [EnabledAtRuntime=ResourceTiming] PerformanceEntryList getEntries();
-    [EnabledAtRuntime=ResourceTiming] PerformanceEntryList getEntriesByType(DOMString entryType);
-    [EnabledAtRuntime=ResourceTiming] PerformanceEntryList getEntriesByName(DOMString name, optional DOMString entryType);
+    [EnabledAtRuntime=PerformanceTimeline] PerformanceEntryList getEntries();
+    [EnabledAtRuntime=PerformanceTimeline] PerformanceEntryList getEntriesByType(DOMString entryType);
+    [EnabledAtRuntime=PerformanceTimeline] PerformanceEntryList getEntriesByName(DOMString name, optional DOMString entryType);
 
     // https://w3c.github.io/resource-timing/
     [EnabledAtRuntime=ResourceTiming] void clearResourceTimings();
