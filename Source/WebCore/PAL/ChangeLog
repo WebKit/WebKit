@@ -1,0 +1,24 @@
+2017-01-28  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] Clean up PAL and WebCore’s build settings a little
+        https://bugs.webkit.org/show_bug.cgi?id=167292
+
+        Reviewed by Sam Weinig.
+
+        * ChangeLog: Created this file.
+
+        * Configurations/Base.xcconfig: Simplified the definition of
+          GCC_WARN_64_TO_32_BIT_CONVERSION, removed the unused build setting PREBINDING, removed
+          a duplicate definition of GCC_GENERATE_DEBUGGING_SYMBOLS, and removed definitions specific
+          to OS X versions that are no longer supported.
+
+        * Configurations/DebugRelease.xcconfig: Removed definitions specific to OS X versions
+          that are no longer supported.
+
+        * Configurations/PAL.xcconfig: Removed header search paths that do not exist or do not
+          make sense. Simplified the definitions of INSTALL_PATH and SKIP_INSTALL. Removed the
+          unusued build settings PRODUCT_BUNDLE_IDENTIFIER and
+          WK_PREFIXED_IPHONEOS_DEPLOYMENT_TARGET. Removed the redundant definition of
+          EXECUTABLE_PREFIX.
+
+        * PAL.xcodeproj/project.pbxproj: Sorted the Configurations group.

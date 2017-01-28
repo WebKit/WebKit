@@ -1,3 +1,18 @@
+2017-01-28  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] Clean up PAL and WebCore’s build settings a little
+        https://bugs.webkit.org/show_bug.cgi?id=167292
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/Base.xcconfig: Simplified the definition of
+          GCC_WARN_64_TO_32_BIT_CONVERSION, removed the unused build setting PREBINDING, removed
+          a duplicate definition of GCC_GENERATE_DEBUGGING_SYMBOLS, and removed definitions specific
+          to OS X versions that are no longer supported.
+
+        * Configurations/DebugRelease.xcconfig: Removed definitions specific to OS X versions
+          that are no longer supported.
+
 2017-01-28  Zalan Bujtas  <zalan@apple.com>
 
         Resolve beforeChild's render tree position before calling addChildIgnoringContinuation.

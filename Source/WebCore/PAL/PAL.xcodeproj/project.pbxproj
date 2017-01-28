@@ -81,11 +81,11 @@
 		1C09D05C1E31C73300725F18 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				1C67CEA21E32EE2600F80F2E /* Version.xcconfig */,
+				1C09D0631E31EC3100725F18 /* Base.xcconfig */,
+				1C09D0621E31EC2800725F18 /* DebugRelease.xcconfig */,
 				1C67CEA11E32EDA800F80F2E /* FeatureDefines.xcconfig */,
 				1C09D05D1E31C77A00725F18 /* PAL.xcconfig */,
-				1C09D0621E31EC2800725F18 /* DebugRelease.xcconfig */,
-				1C09D0631E31EC3100725F18 /* Base.xcconfig */,
+				1C67CEA21E32EE2600F80F2E /* Version.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
