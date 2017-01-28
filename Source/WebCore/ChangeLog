@@ -1,3 +1,10 @@
+2017-01-27  Dan Bernstein  <mitz@apple.com>
+
+        Ignore Xcode’s project.xcworkspace and userdata directories in this new project like we do
+        in other projects.
+
+        * PAL/PAL.xcodeproj: Added property svn:ignore.
+
 2017-01-27  Andy Estes  <aestes@apple.com>
 
         Fix the iOS build when USE(QUICK_LOOK) is disabled.
