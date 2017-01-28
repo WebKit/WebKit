@@ -1,3 +1,12 @@
+2017-01-27  Dean Jackson  <dino@apple.com>
+
+        Add a simple demo for Touch stylus events
+        https://bugs.webkit.org/show_bug.cgi?id=167534
+
+        Reviewed by Simon Fraser.
+
+        * demos/touch/stylus.html: Added.
+
 2017-01-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, update scroll snapping demos to use current Module 1 spec

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Touch and Stylus Events</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #eee;
+}
+
+#container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+#touches {
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+#touches div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    margin-top: -100px;
+    margin-left: -100px;
+    will-change: transform;
+    transform: translate(0, 0);
+}
+
+#touches div svg.touch {
+    width: 200px;
+    height: 200px;
+}
+
+#touches div svg.touch circle {
+    cx: 100px;
+    cy: 100px;
+    fill: #cccf;
+    stroke: #aaa;
+    stroke-width: 1px;
+}
+
+#touches div.stylus svg.touch circle {
+    fill: #fccf;
+    stroke: #faa;
+}
+
+#touches div svg.touch line {
+    stroke: #666;
+    stroke-width: 4px;
+    stroke-linecap: round;
+}
+
+#touches div svg.altitude {
+    position: absolute;
+    top: -100px;
+    left: 50px;
+    width: 100px;
+    height: 100px;
+}
+
+#touches div svg.altitude line.x-axis {
+    stroke: green;
+    stroke-opacity: 0.6;
+    stroke-width: 2px;
+}
+
+#touches div svg.altitude line.angle {
+    stroke: #666;
+    stroke-width: 2px;
+}
+
+</style>
+<script>
+
+const SVGNS = "http://www.w3.org/2000/svg";
+
+var container;
+var touchObjects = {};
+
+class TouchObject {
+    constructor(touch) {
+        this.element = document.createElement("div");
+        this._touchType = touch.touchType;
+        this.root = document.createElementNS(SVGNS, "svg");
+        this.root.setAttribute("class", "touch");
+        this.touchCircle = document.createElementNS(SVGNS, "circle");
+        this.root.appendChild(this.touchCircle);
+        if (this._touchType == "stylus") {
+            this.element.className = touch.touchType;
+            this.line = document.createElementNS(SVGNS, "line");
+            this.line.setAttribute("x1", 100);
+            this.line.setAttribute("y1", 100);
+            this._azimuthAngle = touch.azimuthAngle;
+            this.root.appendChild(this.line);
+
+            var altitudeDiagram = document.createElementNS(SVGNS, "svg");
+            altitudeDiagram.setAttribute("class", "altitude");
+            var screenAxis = document.createElementNS(SVGNS, "line");
+            screenAxis.setAttribute("class", "x-axis");
+            screenAxis.setAttribute("x1", 0);
+            screenAxis.setAttribute("y1", 100);
+            screenAxis.setAttribute("x2", 100);
+            screenAxis.setAttribute("y2", 100);
+            altitudeDiagram.appendChild(screenAxis);
+            this.altitudeLine = document.createElementNS(SVGNS, "line");
+            this.altitudeLine.setAttribute("class", "angle");
+            this.altitudeLine.setAttribute("x1", 1);
+            this.altitudeLine.setAttribute("y1", 99);
+            altitudeDiagram.appendChild(this.altitudeLine);
+            this._altitudeAngle = touch.altitudeAngle;
+            this.element.appendChild(altitudeDiagram);
+        }
+
+        this.element.appendChild(this.root);
+        this._x = 0;
+        this._y = 0;
+        this._size = 0;
+        touchObjects[touch.identifier] = this;
+        document.getElementById("touches").appendChild(this.element);
+        this._update();
+    }
+    get position() {
+        return {x: this._x, y: this._y};
+    }
+    set position(newPosition) {
+        this._x = newPosition.x;
+        this._y = newPosition.y;
+        this._update();
+    }
+    get size() {
+        return this._size;
+    }
+    set size(newSize) {
+        this._size = newSize;
+        this._update();
+    }
+    get azimuthAngle() {
+        return this._azimuthAngle;
+    }
+    set azimuthAngle(newAzimuthAngle) {
+        this._azimuthAngle = newAzimuthAngle;
+        this._update();
+    }
+    get altitudeAngle() {
+        return this._altitudeAngle;
+    }
+    set altitudeAngle(newAltitudeAngle) {
+        this._altitudeAngle = newAltitudeAngle;
+        this._update();
+    }
+    delete () {
+        document.getElementById("touches").removeChild(this.element);
+        this.element = null;
+    }
+    _update() {
+        this.element.style.transform = `translate(${this._x}px, ${this._y}px)`;
+        this.touchCircle.setAttribute("r", 50 + Math.round(this._size * 49));
+        if (this._touchType == "stylus") {
+            var x = Math.round(100 - Math.cos(this._azimuthAngle) * 80);
+            var y = Math.round(100 - Math.sin(this._azimuthAngle) * 80);
+            this.line.setAttribute("x2", x);
+            this.line.setAttribute("y2", y);
+            x = Math.round(Math.cos(this._altitudeAngle) * 99);
+            y = Math.round(100 - Math.sin(this._altitudeAngle) * 99);
+            this.altitudeLine.setAttribute("x2", x);
+            this.altitudeLine.setAttribute("y2", y);
+        }
+    }
+}
+
+window.addEventListener("load", init, false);
+
+function handleTouchStart(event) {
+    event.preventDefault();
+    window.addEventListener("touchmove", handleTouchMove, false);
+    window.addEventListener("touchforcechange", handleTouchMove, false);
+    window.addEventListener("touchend", handleTouchEnd, false);
+    window.addEventListener("touchcancel", handleTouchEnd, false);
+
+    Array.from(event.changedTouches).forEach(function (touch) {
+        touchObjects[touch.identifier] = new TouchObject(touch);
+    });
+    updateTouches(event.touches);
+}
+
+function handleTouchMove(event) {
+    event.preventDefault();
+
+    updateTouches(event.touches);
+}
+
+function handleTouchEnd(event) {
+    event.preventDefault();
+    Array.from(event.changedTouches).forEach(function (touch) {
+        var touchObject = touchObjects[touch.identifier];
+        touchObject.delete();
+        touchObjects[touch.identifier] = undefined;
+    });
+    updateTouches(event.touches);
+
+    if (!event.touches || !event.touches.length) {
+        window.removeEventListener("touchmove", handleTouchMove);
+        window.removeEventListener("touchforcechange", handleTouchMove);
+        window.removeEventListener("touchend", handleTouchEnd);
+        window.removeEventListener("touchcancel", handleTouchEnd);
+    }
+}
+
+function updateTouches(touches) {
+    Array.from(touches).forEach(function (touch) {
+        var touchObject = touchObjects[touch.identifier];
+        if (touchObject) {
+            touchObject.position = {x: touch.pageX, y: touch.pageY};
+            if (touch.force) {
+                touchObject.size = touch.force;
+                touchObject.azimuthAngle = touch.azimuthAngle;
+                touchObject.altitudeAngle = touch.altitudeAngle;
+            }
+        }
+    });
+}
+
+function init() {
+    container = document.getElementById("container");
+    container.addEventListener("touchstart", handleTouchStart, false);
+}
+
+</script>
+</head>
+<body>
+<div id="touches"></div>
+<div id="container"></div>
+</body>
+</html>
