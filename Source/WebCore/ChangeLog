@@ -1,3 +1,16 @@
+2017-01-27  Michael Saboff  <msaboff@apple.com>
+
+        JSCustomElementInterface::invokeCallback can be called with a null callback because Weak<>
+        https://bugs.webkit.org/show_bug.cgi?id=167522
+
+        Reviewed by Filip Pizlo.
+
+        Added all provided callbacks to the global object with a private name the same way 
+        that the constructor was added.  This will keep these callbacks from being GC'ed.
+
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::JSCustomElementRegistry::define):
+
 2017-01-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Prepare ComplexTextController for unit testing
