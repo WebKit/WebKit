@@ -44,6 +44,7 @@
 #include "NativeExecutable.h"
 #include "PCToCodeOriginMap.h"
 #include "SlotVisitor.h"
+#include "StrongInlines.h"
 #include "VM.h"
 #include <wtf/HashSet.h>
 #include <wtf/RandomNumber.h>
@@ -363,29 +364,32 @@ void SamplingProfiler::processUnverifiedStackTraces()
         StackTrace& stackTrace = m_stackTraces.last();
         stackTrace.timestamp = unprocessedStackTrace.timestamp;
 
-        auto appendCodeBlock = [&] (CodeBlock* codeBlock, unsigned bytecodeIndex) {
-            stackTrace.frames.append(StackFrame(codeBlock->ownerExecutable()));
-            m_liveCellPointers.add(codeBlock->ownerExecutable());
-
+        auto populateCodeLocation = [] (CodeBlock* codeBlock, unsigned bytecodeIndex, StackFrame::CodeLocation& location) {
             if (bytecodeIndex < codeBlock->instructionCount()) {
                 int divot;
                 int startOffset;
                 int endOffset;
                 codeBlock->expressionRangeForBytecodeOffset(bytecodeIndex, divot, startOffset, endOffset,
-                    stackTrace.frames.last().lineNumber, stackTrace.frames.last().columnNumber);
-                stackTrace.frames.last().bytecodeIndex = bytecodeIndex;
+                    location.lineNumber, location.columnNumber);
+                location.bytecodeIndex = bytecodeIndex;
             }
             if (Options::collectSamplingProfilerDataForJSCShell()) {
-                stackTrace.frames.last().codeBlockHash = codeBlock->hash();
-                stackTrace.frames.last().jitType = codeBlock->jitType();
+                location.codeBlockHash = codeBlock->hash();
+                location.jitType = codeBlock->jitType();
             }
+        };
+
+        auto appendCodeBlock = [&] (CodeBlock* codeBlock, unsigned bytecodeIndex) {
+            stackTrace.frames.append(StackFrame(codeBlock->ownerExecutable()));
+            m_liveCellPointers.add(codeBlock->ownerExecutable());
+            populateCodeLocation(codeBlock, bytecodeIndex, stackTrace.frames.last().semanticLocation);
         };
 
         auto appendEmptyFrame = [&] {
             stackTrace.frames.append(StackFrame());
         };
 
-        auto storeCalleeIntoTopFrame = [&] (EncodedJSValue encodedCallee) {
+        auto storeCalleeIntoLastFrame = [&] (EncodedJSValue encodedCallee) {
             // Set the callee if it's a valid GC object.
             JSValue callee = JSValue::decode(encodedCallee);
             StackFrame& stackFrame = stackTrace.frames.last();
@@ -441,6 +445,30 @@ void SamplingProfiler::processUnverifiedStackTraces()
             m_liveCellPointers.add(executable);
         };
 
+        auto appendCodeOrigin = [&] (CodeBlock* machineCodeBlock, CodeOrigin origin) {
+            size_t startIndex = stackTrace.frames.size(); // We want to change stack traces that we're about to append.
+
+            CodeOrigin machineOrigin;
+            origin.walkUpInlineStack([&] (const CodeOrigin& codeOrigin) {
+                machineOrigin = codeOrigin;
+                appendCodeBlock(codeOrigin.inlineCallFrame ? codeOrigin.inlineCallFrame->baselineCodeBlock.get() : machineCodeBlock, codeOrigin.bytecodeIndex);
+            });
+
+            if (Options::collectSamplingProfilerDataForJSCShell()) {
+                RELEASE_ASSERT(machineOrigin.isSet());
+                RELEASE_ASSERT(!machineOrigin.inlineCallFrame);
+
+                StackFrame::CodeLocation machineLocation = stackTrace.frames.last().semanticLocation;
+
+                // We want to tell each inlined frame about the machine frame
+                // they were inlined into. Currently, we only use this for dumping
+                // output on the command line, but we could extend it to the web
+                // inspector in the future if we find a need for it there.
+                RELEASE_ASSERT(stackTrace.frames.size());
+                for (size_t i = startIndex; i < stackTrace.frames.size() - 1; i++)
+                    stackTrace.frames[i].machineLocation = std::make_pair(machineLocation, Strong<CodeBlock>(m_vm, machineCodeBlock));
+            }
+        };
 
         // Prepend the top-most inlined frame if needed and gather
         // location information about where the top frame is executing.
@@ -468,14 +496,12 @@ void SamplingProfiler::processUnverifiedStackTraces()
                     UNUSED_PARAM(isValidPC); // FIXME: do something with this info for the web inspector: https://bugs.webkit.org/show_bug.cgi?id=153455
 
                     appendCodeBlock(topCodeBlock, bytecodeIndex);
-                    storeCalleeIntoTopFrame(unprocessedStackTrace.frames[0].unverifiedCallee);
+                    storeCalleeIntoLastFrame(unprocessedStackTrace.frames[0].unverifiedCallee);
                     startIndex = 1;
                 }
             } else if (std::optional<CodeOrigin> codeOrigin = topCodeBlock->findPC(unprocessedStackTrace.topPC)) {
-                codeOrigin->walkUpInlineStack([&] (const CodeOrigin& codeOrigin) {
-                    appendCodeBlock(codeOrigin.inlineCallFrame ? codeOrigin.inlineCallFrame->baselineCodeBlock.get() : topCodeBlock, codeOrigin.bytecodeIndex);
-                });
-                storeCalleeIntoTopFrame(unprocessedStackTrace.frames[0].unverifiedCallee);
+                appendCodeOrigin(topCodeBlock, *codeOrigin);
+                storeCalleeIntoLastFrame(unprocessedStackTrace.frames[0].unverifiedCallee);
                 startIndex = 1;
             }
         }
@@ -492,11 +518,9 @@ void SamplingProfiler::processUnverifiedStackTraces()
 
 #if ENABLE(DFG_JIT)
                 if (codeBlock->hasCodeOrigins()) {
-                    if (codeBlock->canGetCodeOrigin(callSiteIndex)) {
-                        codeBlock->codeOrigin(callSiteIndex).walkUpInlineStack([&] (const CodeOrigin& codeOrigin) {
-                            appendCodeBlock(codeOrigin.inlineCallFrame ? codeOrigin.inlineCallFrame->baselineCodeBlock.get() : codeBlock, codeOrigin.bytecodeIndex);
-                        });
-                    } else
+                    if (codeBlock->canGetCodeOrigin(callSiteIndex))
+                        appendCodeOrigin(codeBlock, codeBlock->codeOrigin(callSiteIndex));
+                    else
                         appendCodeBlock(codeBlock, std::numeric_limits<unsigned>::max());
                 } else
                     appendCodeBlockNoInlining();
@@ -508,7 +532,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
 
             // Note that this is okay to do if we walked the inline stack because
             // the machine frame will be at the top of the processed stack trace.
-            storeCalleeIntoTopFrame(unprocessedStackFrame.unverifiedCallee);
+            storeCalleeIntoLastFrame(unprocessedStackFrame.unverifiedCallee);
         }
     }
 
@@ -843,14 +867,16 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
         return std::make_pair(maxFrameDescription, maxFrameCount);
     };
 
-    out.print("\n\nSampling rate: ", m_timingInterval.count(), " microseconds\n");
-    out.print("Hottest functions as <numSamples  'functionName:sourceID'>\n");
-    for (size_t i = 0; i < 40; i++) {
-        auto pair = takeMax();
-        if (pair.first.isEmpty())
-            break;
-        out.printf("%6zu ", pair.second);
-        out.print("   '", pair.first, "'\n");
+    if (Options::samplingProfilerTopFunctionsCount()) {
+        out.print("\n\nSampling rate: ", m_timingInterval.count(), " microseconds\n");
+        out.print("Top functions as <numSamples  'functionName:sourceID'>\n");
+        for (size_t i = 0; i < Options::samplingProfilerTopFunctionsCount(); i++) {
+            auto pair = takeMax();
+            if (pair.first.isEmpty())
+                break;
+            out.printf("%6zu ", pair.second);
+            out.print("   '", pair.first, "'\n");
+        }
     }
 }
 
@@ -873,22 +899,30 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         if (!stackTrace.frames.size())
             continue;
 
+        auto descriptionForLocation = [&] (StackFrame::CodeLocation location) -> String {
+            String bytecodeIndex;
+            String codeBlockHash;
+            if (location.hasBytecodeIndex())
+                bytecodeIndex = String::number(location.bytecodeIndex);
+            else
+                bytecodeIndex = "<nil>";
+
+            if (location.hasCodeBlockHash()) {
+                StringPrintStream stream;
+                location.codeBlockHash.dump(stream);
+                codeBlockHash = stream.toString();
+            } else
+                codeBlockHash = "<nil>";
+
+            return makeString("#", codeBlockHash, ":", JITCode::typeName(location.jitType), ":", bytecodeIndex);
+        };
+
         StackFrame& frame = stackTrace.frames.first();
-        String bytecodeIndex;
-        String codeBlockHash;
-        if (frame.hasBytecodeIndex())
-            bytecodeIndex = String::number(frame.bytecodeIndex);
-        else
-            bytecodeIndex = "<nil>";
-
-        if (frame.hasCodeBlockHash()) {
-            StringPrintStream stream;
-            frame.codeBlockHash.dump(stream);
-            codeBlockHash = stream.toString();
-        } else
-            codeBlockHash = "<nil>";
-
-        String frameDescription = makeString(frame.displayName(m_vm), "#", codeBlockHash, ":", JITCode::typeName(frame.jitType), ":", bytecodeIndex);
+        String frameDescription = makeString(frame.displayName(m_vm), descriptionForLocation(frame.semanticLocation));
+        if (std::optional<std::pair<StackFrame::CodeLocation, Strong<CodeBlock>>> machineLocation = frame.machineLocation) {
+            frameDescription = makeString(frameDescription, " <-- ",
+                machineLocation->second->inferredName().data(), descriptionForLocation(machineLocation->first));
+        }
         bytecodeCounts.add(frameDescription, 0).iterator->value++;
     }
 
@@ -906,14 +940,16 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         return std::make_pair(maxFrameDescription, maxFrameCount);
     };
 
-    out.print("\n\nSampling rate: ", m_timingInterval.count(), " microseconds\n");
-    out.print("Hottest bytecodes as <numSamples   'functionName#hash:JITType:bytecodeIndex'>\n");
-    for (size_t i = 0; i < 80; i++) {
-        auto pair = takeMax();
-        if (pair.first.isEmpty())
-            break;
-        out.printf("%6zu ", pair.second);
-        out.print("   '", pair.first, "'\n");
+    if (Options::samplingProfilerTopBytecodesCount()) {
+        out.print("\n\nSampling rate: ", m_timingInterval.count(), " microseconds\n");
+        out.print("Hottest bytecodes as <numSamples   'functionName#hash:JITType:bytecodeIndex'>\n");
+        for (size_t i = 0; i < Options::samplingProfilerTopBytecodesCount(); i++) {
+            auto pair = takeMax();
+            if (pair.first.isEmpty())
+                break;
+            out.printf("%6zu ", pair.second);
+            out.print("   '", pair.first, "'\n");
+        }
     }
 }
 

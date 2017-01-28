@@ -1,3 +1,35 @@
+2017-01-27  Saam Barati  <sbarati@apple.com>
+
+        Make the CLI for the sampling profiler better for inlined call site indices
+        https://bugs.webkit.org/show_bug.cgi?id=167482
+
+        Reviewed by Mark Lam.
+
+        This patches changes the command line interface for the sampling
+        profiler to also dump the machine frame that the semantic code
+        origin is in if the semantic code origin is inlined. This helps
+        when doing performance work because it's helpful to know the
+        context that an inlined frame is in. Before, we used to just
+        say it was in the baseline JIT if it didn't have its own optimized
+        compile. Now, we can tell that its inlined into a DFG or FTL frame.
+
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::buildSamples):
+        * runtime/Options.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::reportTopFunctions):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::StackFrame::CodeLocation::hasCodeBlockHash):
+        (JSC::SamplingProfiler::StackFrame::CodeLocation::hasBytecodeIndex):
+        (JSC::SamplingProfiler::StackFrame::CodeLocation::hasExpressionInfo):
+        (JSC::SamplingProfiler::StackFrame::hasExpressionInfo):
+        (JSC::SamplingProfiler::StackFrame::lineNumber):
+        (JSC::SamplingProfiler::StackFrame::columnNumber):
+        (JSC::SamplingProfiler::StackFrame::hasBytecodeIndex): Deleted.
+        (JSC::SamplingProfiler::StackFrame::hasCodeBlockHash): Deleted.
+
 2017-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Extend create_hash_table to specify Intrinsic

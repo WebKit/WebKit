@@ -180,8 +180,8 @@ static Ref<Protocol::ScriptProfiler::Samples> buildSamples(VM& vm, Vector<Sampli
 
             if (stackFrame.hasExpressionInfo()) {
                 Ref<Protocol::ScriptProfiler::ExpressionLocation> expressionLocation = Protocol::ScriptProfiler::ExpressionLocation::create()
-                    .setLine(stackFrame.lineNumber)
-                    .setColumn(stackFrame.columnNumber)
+                    .setLine(stackFrame.lineNumber())
+                    .setColumn(stackFrame.columnNumber())
                     .release();
                 frame->setExpressionLocation(WTFMove(expressionLocation));
             }
