@@ -20,7 +20,3 @@ header("Link: <../resources/dummy.xml>; rel=preload", false);
     shouldBeFalse("internals.isPreloaded('../resources/dummy.xml?badvalue');");
     shouldBeTrue("internals.isPreloaded('../resources/dummy.xml');");
 </script>
-<script>
-    if (window.internals)
-        window.internals.settings.setLinkPreloadEnabled(false);
-</script>

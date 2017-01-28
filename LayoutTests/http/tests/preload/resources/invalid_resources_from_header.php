@@ -40,7 +40,3 @@ header("Link: <   ../resources/dummy.js?foobar >; rel=preload; as='", false);
     shouldBeFalse("internals.isPreloaded('#foobar');");
     shouldBeFalse("internals.isPreloaded('../resources/Ahem.ttf');");
 </script>
-<script>
-    if (window.internals)
-        window.internals.settings.setLinkPreloadEnabled(false);
-</script>

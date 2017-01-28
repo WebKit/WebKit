@@ -900,6 +900,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setCSSGridLayoutEnabled:YES];
     // FIXME: SpringTimingFunction
     [preferences setGamepadsEnabled:YES];
+    [preferences setLinkPreloadEnabled:YES];
     [preferences setModernMediaControlsEnabled:YES];
     // FIXME: InputEvents
     [preferences setSubtleCryptoEnabled:YES];

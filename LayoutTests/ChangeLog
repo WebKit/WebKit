@@ -1,3 +1,35 @@
+2017-01-28  Yoav Weiss  <yoav@yoav.ws>
+
+        Add Link Preload as an off-by-default experimental feature menu item.
+        https://bugs.webkit.org/show_bug.cgi?id=167201
+
+        Reviewed by Ryosuke Niwa.
+
+        Removed code explicitly enabling Link preload from the tests, as it is now
+        turned on by default for testing. Corrected expectation files accordingly.
+
+        * http/tests/fetch/redirectmode-and-preload.html:
+        * http/tests/preload/delaying_onload_link_preload_after_discovery.html:
+        * http/tests/preload/delaying_onload_link_preload_after_discovery_image.html:
+        * http/tests/preload/download_resources-expected.txt:
+        * http/tests/preload/download_resources.html:
+        * http/tests/preload/download_resources_from_header_iframe.html:
+        * http/tests/preload/download_resources_from_invalid_headers.html:
+        * http/tests/preload/dynamic_adding_preload.html:
+        * http/tests/preload/dynamic_remove_preload_href-expected.txt:
+        * http/tests/preload/dynamic_remove_preload_href.html:
+        * http/tests/preload/not_delaying_window_onload_before_discovery.html:
+        * http/tests/preload/onerror_event-expected.txt:
+        * http/tests/preload/onerror_event.html:
+        * http/tests/preload/onload_event-expected.txt:
+        * http/tests/preload/onload_event.html:
+        * http/tests/preload/resources/download_resources_from_header.php:
+        * http/tests/preload/resources/invalid_resources_from_header.php:
+        * http/tests/preload/single_download_preload-expected.txt:
+        * http/tests/preload/single_download_preload.html:
+        * http/tests/security/cached-cross-origin-preloaded-css-stylesheet.html:
+        * http/tests/security/cached-cross-origin-preloading-css-stylesheet.html:
+
 2017-01-28  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] REGRESSION: Video stops playing after going into Full Screen in media documents

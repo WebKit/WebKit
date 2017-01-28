@@ -1,3 +1,21 @@
+2017-01-28  Yoav Weiss  <yoav@yoav.ws>
+
+        Add Link Preload as an off-by-default experimental feature menu item.
+        https://bugs.webkit.org/show_bug.cgi?id=167201
+
+        Reviewed by Ryosuke Niwa.
+
+        Removed the explicit setting of the Link Preload experimental feature,
+        as it is now on by default for testing.
+
+        No new tests as this just removes methods from settings.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2017-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix typo in error message

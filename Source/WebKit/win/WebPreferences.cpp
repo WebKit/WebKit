@@ -309,6 +309,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitUserTimingEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitLinkPreloadEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 }
 
@@ -2005,6 +2007,20 @@ HRESULT WebPreferences::modernMediaControlsEnabled(_Out_ BOOL* enabled)
     if (!enabled)
         return E_POINTER;
     *enabled = boolValueForKey(WebKitModernMediaControlsEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setLinkPreloadEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitLinkPreloadEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::linkPreloadEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitLinkPreloadEnabledPreferenceKey);
     return S_OK;
 }
 

@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <script>
-    if (window.internals) {
-        internals.settings.setLinkPreloadEnabled(true);
+    if (window.internals)
         internals.settings.setResourceTimingEnabled(true);
-    }
 </script>
 <script src="/js-test-resources/testharness.js"></script>
 <script src="/js-test-resources/testharnessreport.js"></script>
@@ -61,10 +59,8 @@
             // FIXME: XHR should trigger a single download, but it downloads 2 resources instead.
             verifyDownloadNumber("http://127.0.0.1:8000/resources/dummy.xml", 2);
             // FIXME: We should verify for video and audio as well, but they seem to (flakily?) trigger multiple partial requests.
-            if (window.internals) {
-                internals.settings.setLinkPreloadEnabled(false);
+            if (window.internals)
                 internals.settings.setResourceTimingEnabled(false);
-            }
             t.done();
             }), 100);
     }));

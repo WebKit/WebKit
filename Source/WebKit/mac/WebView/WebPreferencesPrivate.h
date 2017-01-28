@@ -529,5 +529,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 @property (nonatomic) BOOL allowsInlineMediaPlaybackAfterFullscreen;
 @property (nonatomic) BOOL intersectionObserverEnabled;
 @property (nonatomic) BOOL userTimingEnabled;
+@property (nonatomic) BOOL linkPreloadEnabled;
 
 @end

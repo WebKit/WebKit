@@ -78,6 +78,11 @@ function testWebGL2() {
     return canvas.getContext("webgl2");
 }
 
+function testLinkPreload() {
+    var link = document.createElement("link");
+    return link.relList.supports("preload");
+}
+
 function testGamepad() {
     return navigator.getGamepads;
 }
@@ -140,6 +145,7 @@ window.addEventListener("load", function () {
         <div class="test" id="Gamepad"><p>Gamepad API</p></div>
         <div class="test" id="FormValidation"><p>HTML Form Validation</p></div>
         <div class="test" id="InputEvents"><p>HTML Input Events</p></div>
+        <div class="test" id="LinkPreload"><p>Link Preload</p></div>
         <div class="test" id="SubtleCrypto"><p>SubtleCrypto</p></div>
         <div class="test" id="VariationFonts"><p>Variation Fonts</p></div>
         <div class="test" id="UserTiming"><p>User Timing</p></div>

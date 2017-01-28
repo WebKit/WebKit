@@ -461,6 +461,10 @@ WK_EXPORT bool WKPreferencesGetSubtleCryptoEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetShouldSuppressKeyboardInputDuringProvisionalNavigation(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetShouldSuppressKeyboardInputDuringProvisionalNavigation(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetLinkPreloadEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetLinkPreloadEnabled(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

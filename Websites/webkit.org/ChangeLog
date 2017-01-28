@@ -1,3 +1,12 @@
+2017-01-28  Yoav Weiss  <yoav@yoav.ws>
+
+        Add Link Preload as an off-by-default experimental feature menu item.
+        https://bugs.webkit.org/show_bug.cgi?id=167201
+
+        Reviewed by Ryosuke Niwa.
+
+        * experimental-features.html: Added Link Preload.
+
 2017-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add User Timing Experimental Feature

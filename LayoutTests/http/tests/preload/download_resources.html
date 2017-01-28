@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script>
-    if (window.internals)
-        window.internals.settings.setLinkPreloadEnabled(true);
-</script>
 <script src="/js-test-resources/js-test.js"></script>
 <link rel=preload href="../resources/dummy.js" as=script>
 <link rel=preload href="../resources/dummy.css" as=style>
@@ -28,8 +24,4 @@
     shouldBeTrue("internals.isPreloaded('../security/resources/captions.vtt');");
     shouldBeFalse("internals.isPreloaded('../resources/dummy.xml?badvalue');");
     shouldBeTrue("internals.isPreloaded('../resources/dummy.xml');");
-</script>
-<script>
-    if (window.internals)
-        window.internals.settings.setLinkPreloadEnabled(false);
 </script>

@@ -83,7 +83,6 @@ enum ForcedAccessibilityValue { "system", "on", "off" };
 
     // RuntimeEnabledFeatures.
     void setResourceTimingEnabled(boolean enabled);
-    void setLinkPreloadEnabled(boolean enabled);
     void setIndexedDBWorkersEnabled(boolean enabled);
     void setCSSGridLayoutEnabled(boolean enabled);
     void setWebGL2Enabled(boolean enabled);

@@ -196,4 +196,6 @@ interface IWebPreferencesPrivate4 : IWebPreferencesPrivate3
     HRESULT setWebAnimationsEnabled([in] BOOL enabled);
     HRESULT userTimingEnabled([out, retval] BOOL*);
     HRESULT setUserTimingEnabled([in] BOOL enabled);
+    HRESULT linkPreloadEnabled([out, retval] BOOL*);
+    HRESULT setLinkPreloadEnabled([in] BOOL enabled);
 }

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 29: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: line 27: <link rel=preload> must have a valid `as` value
 PASS successfullyParsed is true
 
 TEST COMPLETE

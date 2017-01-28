@@ -2755,6 +2755,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitPeerConnectionEnabledPreferenceKey];
 }
 
+- (BOOL)linkPreloadEnabled
+{
+    return [self _boolValueForKey:WebKitLinkPreloadEnabledPreferenceKey];
+}
+
+- (void)setLinkPreloadEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitLinkPreloadEnabledPreferenceKey];
+}
+
 - (void)setMetaRefreshEnabled:(BOOL)enabled
 {
     [self setHTTPEquivEnabled:enabled];

@@ -1641,6 +1641,16 @@ bool WKPreferencesGetSubtleCryptoEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->subtleCryptoEnabled();
 }
 
+void WKPreferencesSetLinkPreloadEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setLinkPreloadEnabled(flag);
+}
+
+bool WKPreferencesGetLinkPreloadEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->linkPreloadEnabled();
+}
+
 void WKPreferencesSetShouldSuppressKeyboardInputDuringProvisionalNavigation(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setShouldSuppressKeyboardInputDuringProvisionalNavigation(flag);
