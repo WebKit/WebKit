@@ -1,3 +1,18 @@
+2017-01-28  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] REGRESSION: Video stops playing after going into Full Screen in media documents
+        https://bugs.webkit.org/show_bug.cgi?id=167552
+        <rdar://problem/29601646>
+
+        Reviewed by Eric Carlson.
+
+        Add a new test that checks that clicking on a <video> within a media document does not paused after being clicked.
+        Since this behavior uses click events, we use window.eventSender and skip this test on iOS.
+
+        * media/modern-media-controls/media-documents/click-on-video-should-not-pause-expected.txt: Added.
+        * media/modern-media-controls/media-documents/click-on-video-should-not-pause.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2017-01-28  Zalan Bujtas  <zalan@apple.com>
 
         Resolve beforeChild's render tree position before calling addChildIgnoringContinuation.
