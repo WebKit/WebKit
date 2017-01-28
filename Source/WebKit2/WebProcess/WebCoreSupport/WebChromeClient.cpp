@@ -257,7 +257,7 @@ Page* WebChromeClient::createWindow(Frame& frame, const FrameLoadRequest& reques
     if (!newPageID)
         return nullptr;
 
-    webProcess.createWebPage(newPageID, parameters);
+    webProcess.createWebPage(newPageID, WTFMove(parameters));
     return webProcess.webPage(newPageID)->corePage();
 }
 

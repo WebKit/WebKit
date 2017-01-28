@@ -817,10 +817,6 @@ void WebPageProxy::initializeWebPage()
 
     process().send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters()), 0);
 
-#if PLATFORM(COCOA)
-    send(Messages::WebPage::SetSmartInsertDeleteEnabled(m_isSmartInsertDeleteEnabled));
-#endif
-
     m_needsToFinishInitializingWebPageAfterProcessLaunch = true;
     finishInitializingWebPageAfterProcessLaunch();
 }
@@ -5581,6 +5577,9 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.appleMailPaginationQuirkEnabled = appleMailPaginationQuirkEnabled();
 #else
     parameters.appleMailPaginationQuirkEnabled = false;
+#endif
+#if PLATFORM(COCOA)
+    parameters.smartInsertDeleteEnabled = m_isSmartInsertDeleteEnabled;
 #endif
     parameters.shouldScaleViewToFitDocument = m_shouldScaleViewToFitDocument;
     parameters.userInterfaceLayoutDirection = m_pageClient.userInterfaceLayoutDirection();

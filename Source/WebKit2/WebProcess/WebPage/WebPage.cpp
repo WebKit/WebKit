@@ -314,9 +314,9 @@ private:
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageCounter, ("WebPage"));
 
-Ref<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParameters& parameters)
+Ref<WebPage> WebPage::create(uint64_t pageID, WebPageCreationParameters&& parameters)
 {
-    Ref<WebPage> page = adoptRef(*new WebPage(pageID, parameters));
+    Ref<WebPage> page = adoptRef(*new WebPage(pageID, WTFMove(parameters)));
 
     if (page->pageGroup()->isVisibleToInjectedBundle() && WebProcess::singleton().injectedBundle())
         WebProcess::singleton().injectedBundle()->didCreatePage(page.ptr());
@@ -324,7 +324,7 @@ Ref<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParameters& p
     return page;
 }
 
-WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
+WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     : m_pageID(pageID)
     , m_viewSize(parameters.viewSize)
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
@@ -558,10 +558,11 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
 #if PLATFORM(COCOA)
     m_page->settings().setContentDispositionAttachmentSandboxEnabled(true);
+    setSmartInsertDeleteEnabled(parameters.smartInsertDeleteEnabled);
 #endif
 }
 
-void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)
+void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 {
     if (m_activityState != parameters.activityState)
         setActivityState(parameters.activityState, false, Vector<uint64_t>());

@@ -1,3 +1,28 @@
+2017-01-27  Alex Christensen  <achristensen@webkit.org>
+
+        Move smartInsertDeleteEnabled to WebPageCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=167530
+
+        Reviewed by Brady Eidson.
+
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::create):
+        (WebKit::WebPage::WebPage):
+        (WebKit::m_userInterfaceLayoutDirection):
+        (WebKit::WebPage::reinitializeWebPage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::createWebPage):
+        * WebProcess/WebProcess.h:
+        Instead of making a WebPage then immediately sending it a message to set smartInsertDeleteEnabled,
+        just call setSmartInsertDeleteEnabled at the end of the WebPage creation.  No change in behaviour.
+
 2017-01-27  Brady Eidson  <beidson@apple.com>
 
         IconLoadingClient API doesn't work asynchronously.

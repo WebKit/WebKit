@@ -214,10 +214,10 @@ class WebTouchEvent;
 
 class WebPage : public API::ObjectImpl<API::Object::Type::BundlePage>, public IPC::MessageReceiver, public IPC::MessageSender {
 public:
-    static Ref<WebPage> create(uint64_t pageID, const WebPageCreationParameters&);
+    static Ref<WebPage> create(uint64_t pageID, WebPageCreationParameters&&);
     virtual ~WebPage();
 
-    void reinitializeWebPage(const WebPageCreationParameters&);
+    void reinitializeWebPage(WebPageCreationParameters&&);
 
     void close();
 
@@ -977,7 +977,7 @@ public:
     void setUseIconLoadingClient(bool);
 
 private:
-    WebPage(uint64_t pageID, const WebPageCreationParameters&);
+    WebPage(uint64_t pageID, WebPageCreationParameters&&);
 
     void updateThrottleState();
     void updateUserActivity();

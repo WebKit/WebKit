@@ -555,19 +555,19 @@ WebPage* WebProcess::webPage(uint64_t pageID) const
     return m_pageMap.get(pageID);
 }
 
-void WebProcess::createWebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
+void WebProcess::createWebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 {
     // It is necessary to check for page existence here since during a window.open() (or targeted
     // link) the WebPage gets created both in the synchronous handler and through the normal way. 
     HashMap<uint64_t, RefPtr<WebPage>>::AddResult result = m_pageMap.add(pageID, nullptr);
     if (result.isNewEntry) {
         ASSERT(!result.iterator->value);
-        result.iterator->value = WebPage::create(pageID, parameters);
+        result.iterator->value = WebPage::create(pageID, WTFMove(parameters));
 
         // Balanced by an enableTermination in removeWebPage.
         disableTermination();
     } else
-        result.iterator->value->reinitializeWebPage(parameters);
+        result.iterator->value->reinitializeWebPage(WTFMove(parameters));
 
     ASSERT(result.iterator->value);
 }

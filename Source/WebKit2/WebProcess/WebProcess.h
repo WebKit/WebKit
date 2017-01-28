@@ -116,7 +116,7 @@ public:
     WebConnectionToUIProcess* webConnectionToUIProcess() const { return m_webConnection.get(); }
 
     WebPage* webPage(uint64_t pageID) const;
-    void createWebPage(uint64_t pageID, const WebPageCreationParameters&);
+    void createWebPage(uint64_t pageID, WebPageCreationParameters&&);
     void removeWebPage(uint64_t pageID);
     WebPage* focusedWebPage() const;
 

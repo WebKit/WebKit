@@ -135,6 +135,9 @@ struct WebPageCreationParameters {
     float textAutosizingWidth;
     bool ignoresViewportScaleLimits;
 #endif
+#if PLATFORM(COCOA)
+    bool smartInsertDeleteEnabled;
+#endif
     bool appleMailPaginationQuirkEnabled;
     bool shouldScaleViewToFitDocument;
 
