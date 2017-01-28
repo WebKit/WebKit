@@ -38,6 +38,7 @@ WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 + (WKWebProcessPlugInRangeHandle *)rangeHandleWithJSValue:(JSValue *)value inContext:(JSContext *)context;
 
 @property (nonatomic, readonly) WKWebProcessPlugInFrame *frame;
+@property (nonatomic, readonly, copy) NSString *text WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

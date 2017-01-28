@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "ImageOptions.h"
 #include <JavaScriptCore/JSBase.h>
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -54,6 +55,7 @@ public:
 
     WebCore::IntRect boundingRectInWindowCoordinates() const;
     PassRefPtr<WebImage> renderedImage(SnapshotOptions);
+    String text() const;
 
     WebCore::Range* coreRange() const;
 

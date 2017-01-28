@@ -160,4 +160,9 @@ PassRefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions op
     return WebImage::create(backingStore.releaseNonNull());
 }
 
+String InjectedBundleRangeHandle::text() const
+{
+    return m_range->text();
+}
+
 } // namespace WebKit

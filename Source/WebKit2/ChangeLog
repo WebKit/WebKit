@@ -1,3 +1,20 @@
+2017-01-27  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] No way to get the text from a WKWebProcessPlugInRangeHandle
+        https://bugs.webkit.org/show_bug.cgi?id=167535
+
+        Reviewed by Sam Weinig.
+
+        Added a text property to WKWebProcessPlugInRangeHandle.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.h: Declare new property.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.mm:
+        (-[WKWebProcessPlugInRangeHandle text]): Added. Calls InjectedBundleRangeHandle::text.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::text): Added. Calls WebCore::Range::text.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h:
+
 2017-01-27  Alex Christensen  <achristensen@webkit.org>
 
         Move smartInsertDeleteEnabled to WebPageCreationParameters

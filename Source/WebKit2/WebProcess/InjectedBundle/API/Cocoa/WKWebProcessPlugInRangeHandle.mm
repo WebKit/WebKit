@@ -59,6 +59,11 @@ using namespace WebKit;
     return [wrapper(*_rangeHandle->document()->documentFrame().leakRef()) autorelease];
 }
 
+- (NSString *)text
+{
+    return _rangeHandle->text();
+}
+
 - (InjectedBundleRangeHandle&)_rangeHandle
 {
     return *_rangeHandle;
