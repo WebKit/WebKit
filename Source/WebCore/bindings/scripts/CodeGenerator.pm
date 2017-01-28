@@ -440,7 +440,7 @@ sub GetEnumByType
 
     my $name = $type->name;
 
-    die "GetEnumByName() was called with an undefined enumeration name" unless defined($name);
+    die "GetEnumByType() was called with an undefined enumeration name" unless defined($name);
 
     for my $enumeration (@{$useDocument->enumerations}) {
         return $enumeration if $enumeration->type->name eq $name;

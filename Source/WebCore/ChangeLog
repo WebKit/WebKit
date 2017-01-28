@@ -1,3 +1,13 @@
+2017-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix typo in error message
+        https://bugs.webkit.org/show_bug.cgi?id=167554
+
+        Reviewed by Sam Weinig.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GetEnumByType):
+
 2017-01-28  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] REGRESSION: Video stops playing after going into Full Screen in media documents
