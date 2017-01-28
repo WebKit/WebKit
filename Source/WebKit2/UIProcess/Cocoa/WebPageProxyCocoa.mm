@@ -34,7 +34,7 @@
 #import <WebCore/ValidationBubble.h>
 #import <wtf/cf/TypeCastsCF.h>
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPageProxyAdditions.mm>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebPageProxyAdditions.mm>
 #endif
 

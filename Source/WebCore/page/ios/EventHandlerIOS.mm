@@ -49,7 +49,7 @@
 #import <WebKitAdditions/EventHandlerIOSTouch.cpp>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/EventHandlerAdditions.mm>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/EventHandlerAdditions.mm>
 #endif
 

@@ -28,7 +28,7 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/DragImageAdditions.mm>)
+#if USE(APPLE_INTERNAL_SDK)
 
 #import <WebKitAdditions/DragImageAdditions.mm>
 

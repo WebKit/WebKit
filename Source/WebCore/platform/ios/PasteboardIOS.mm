@@ -58,7 +58,7 @@
 - (BOOL)containsAttachments;
 @end
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PasteboardAdditions.mm>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/PasteboardAdditions.mm>
 #endif
 

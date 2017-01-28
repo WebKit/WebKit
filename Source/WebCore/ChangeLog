@@ -1,3 +1,18 @@
+2017-01-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Check USE(APPLE_INTERNAL_SDK) instead of specific headers when importing from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=167555
+
+        Reviewed by Dan Bernstein.
+
+        Instead of guarding #import <WebKitAdditions/*> on the existence of the imported file, consult
+        USE(APPLE_INTERNAL_SDK) instead.
+
+        * page/ios/EventHandlerIOS.mm:
+        * platform/ios/DragImageIOS.mm:
+        * platform/ios/PasteboardIOS.mm:
+        * platform/mac/DragDataMac.mm:
+
 2017-01-28  Yoav Weiss  <yoav@yoav.ws>
 
         Add Link Preload as an off-by-default experimental feature menu item.

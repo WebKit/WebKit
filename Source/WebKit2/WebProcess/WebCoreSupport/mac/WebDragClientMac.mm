@@ -51,7 +51,7 @@
 using namespace WebCore;
 using namespace WebKit;
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebDragClientAdditions.mm>)
+#if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebDragClientAdditions.mm>
 #endif
 
