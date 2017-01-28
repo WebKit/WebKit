@@ -1,3 +1,15 @@
+2017-01-27  Andy Estes  <aestes@apple.com>
+
+        [iOS] Add a test for _WKNSFileManagerExtras
+        https://bugs.webkit.org/show_bug.cgi?id=167478
+
+        Reviewed by Andreas Kling.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/NSFileManagerExtras.mm: Added.
+        (expectAttributes):
+        (TEST):
+
 2017-01-27  Keith Miller  <keith_miller@apple.com>
 
         run-benchmarks should make sure it passes the test url to the right application
