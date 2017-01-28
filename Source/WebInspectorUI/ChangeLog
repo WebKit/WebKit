@@ -1,3 +1,28 @@
+2017-01-27  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: gradient editor should provide horizontal slider for 'angle' value where applicable
+        https://bugs.webkit.org/show_bug.cgi?id=166937
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/GradientEditor.css:
+        (.gradient-editor):
+        (.gradient-editor > .gradient-angle):
+        (.gradient-editor > .gradient-angle > input[type="range"]):
+        (.gradient-editor > .gradient-angle > input[type="number"]):
+        (.gradient-editor > .gradient-angle > input::-webkit-inner-spin-button):
+        (.gradient-editor > .gradient-angle > input): Deleted.
+
+        * UserInterface/Views/GradientEditor.js:
+        (WebInspector.GradientEditor):
+        (WebInspector.GradientEditor.prototype.set gradient):
+        (WebInspector.GradientEditor.prototype.gradientSliderStopWasSelected):
+        (WebInspector.GradientEditor.prototype._gradientTypeChanged):
+        (WebInspector.GradientEditor.prototype._angleChanged):
+        (WebInspector.GradientEditor.prototype.dragToAdjustControllerWasAdjustedByAmount): Deleted.
+        (WebInspector.GradientEditor.prototype._angleInputValueDidChange): Deleted.
+        Remove the DragToAdjustController and replace with an <input type="range">.
+
 2017-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Provide a way to trigger a Garbage Collection

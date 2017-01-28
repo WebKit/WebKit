@@ -26,7 +26,7 @@
 .gradient-editor {
     position: relative;
     margin: 5px 11px;
-    padding-bottom: 45px;
+    padding-bottom: 40px;
 }
 
 .gradient-editor.radial-gradient {
@@ -74,10 +74,12 @@
 }
 
 .gradient-editor > .gradient-angle {
+    display: flex;
+    align-items: center;
     position: absolute;
     right: 0;
     bottom: 0;
-    text-align: right;
+    left: 0;
     font-size: 13px;
 }
 
@@ -85,9 +87,14 @@
     display: none;
 }
 
-.gradient-editor > .gradient-angle > input {
-    width: 48px;
-    margin-left: 5px;
+.gradient-editor > .gradient-angle > input[type="range"] {
+    width: 100%;
+    margin: 0 4px;
+}
+
+.gradient-editor > .gradient-angle > input[type="number"] {
+    width: 60px;
+    margin-right: 2px;
     padding-right: 4px;
     text-align: right;
     font-size: 13px;
@@ -96,4 +103,8 @@
     border: 1px solid hsl(0, 0%, 60%);
     box-shadow: inset 0 0 1px 1px hsl(0, 0%, 89%);
     outline: none;
+}
+
+.gradient-editor > .gradient-angle > input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
 }
