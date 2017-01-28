@@ -26,60 +26,78 @@
 #include "config.h"
 #include "LoadableModuleScript.h"
 
+#include "Document.h"
+#include "Frame.h"
+#include "ScriptController.h"
 #include "ScriptElement.h"
 
 namespace WebCore {
 
 Ref<LoadableModuleScript> LoadableModuleScript::create(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
 {
-    return adoptRef(*new LoadableModuleScript(nonce, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree, CachedModuleScript::create()));
+    return adoptRef(*new LoadableModuleScript(nonce, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree));
 }
 
-LoadableModuleScript::LoadableModuleScript(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree, Ref<CachedModuleScript>&& moduleScript)
+LoadableModuleScript::LoadableModuleScript(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
     : LoadableScript(nonce, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
-    , m_moduleScript(WTFMove(moduleScript))
 {
-    m_moduleScript->addClient(*this);
 }
 
 LoadableModuleScript::~LoadableModuleScript()
 {
-    m_moduleScript->removeClient(*this);
 }
 
 bool LoadableModuleScript::isLoaded() const
 {
-    return m_moduleScript->isLoaded();
+    return m_isLoaded;
 }
 
 std::optional<LoadableScript::Error> LoadableModuleScript::error() const
 {
-    return m_moduleScript->error();
+    return m_error;
 }
 
 bool LoadableModuleScript::wasCanceled() const
 {
-    return m_moduleScript->wasCanceled();
+    return m_wasCanceled;
 }
 
-void LoadableModuleScript::notifyFinished(CachedModuleScript&)
+void LoadableModuleScript::notifyLoadCompleted(UniquedStringImpl& moduleKey)
 {
+    m_moduleKey = &moduleKey;
+    m_isLoaded = true;
+    notifyClientFinished();
+}
+
+void LoadableModuleScript::notifyLoadFailed(LoadableScript::Error&& error)
+{
+    m_error = WTFMove(error);
+    m_isLoaded = true;
+    notifyClientFinished();
+}
+
+void LoadableModuleScript::notifyLoadWasCanceled()
+{
+    m_wasCanceled = true;
+    m_isLoaded = true;
     notifyClientFinished();
 }
 
 void LoadableModuleScript::execute(ScriptElement& scriptElement)
 {
-    scriptElement.executeModuleScript(m_moduleScript.get());
+    scriptElement.executeModuleScript(*this);
 }
 
 void LoadableModuleScript::load(Document& document, const URL& rootURL)
 {
-    m_moduleScript->load(document, rootURL, *this);
+    if (auto* frame = document.frame())
+        frame->script().loadModuleScript(*this, rootURL.string());
 }
 
 void LoadableModuleScript::load(Document& document, const ScriptSourceCode& sourceCode)
 {
-    m_moduleScript->load(document, sourceCode, *this);
+    if (auto* frame = document.frame())
+        frame->script().loadModuleScript(*this, sourceCode);
 }
 
 }

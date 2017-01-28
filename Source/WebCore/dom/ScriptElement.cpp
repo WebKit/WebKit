@@ -24,7 +24,6 @@
 #include "config.h"
 #include "ScriptElement.h"
 
-#include "CachedModuleScript.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedScript.h"
@@ -390,11 +389,11 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
     frame->script().evaluate(sourceCode);
 }
 
-void ScriptElement::executeModuleScript(CachedModuleScript& moduleScript)
+void ScriptElement::executeModuleScript(LoadableModuleScript& loadableModuleScript)
 {
     // https://html.spec.whatwg.org/multipage/scripting.html#execute-the-script-block
 
-    ASSERT(!moduleScript.error());
+    ASSERT(!loadableModuleScript.error());
 
     auto& document = m_element.document();
     auto* frame = document.frame();
@@ -404,7 +403,7 @@ void ScriptElement::executeModuleScript(CachedModuleScript& moduleScript)
     IgnoreDestructiveWriteCountIncrementer ignoreDesctructiveWriteCountIncrementer(&document);
     CurrentScriptIncrementer currentScriptIncrementer(document, m_element);
 
-    frame->script().linkAndEvaluateModuleScript(moduleScript);
+    frame->script().linkAndEvaluateModuleScript(loadableModuleScript);
 }
 
 void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript)

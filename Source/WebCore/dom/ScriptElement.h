@@ -30,10 +30,10 @@
 
 namespace WebCore {
 
-class CachedModuleScript;
 class CachedScript;
 class ContainerNode;
 class Element;
+class LoadableModuleScript;
 class PendingScript;
 class ScriptSourceCode;
 class URL;
@@ -51,7 +51,7 @@ public:
     String scriptCharset() const { return m_characterEncoding; }
     WEBCORE_EXPORT String scriptContent() const;
     void executeClassicScript(const ScriptSourceCode&);
-    void executeModuleScript(CachedModuleScript&);
+    void executeModuleScript(LoadableModuleScript&);
 
     void executePendingScript(PendingScript&);
 

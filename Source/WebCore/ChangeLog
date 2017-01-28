@@ -1,3 +1,48 @@
+2017-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Merge CachedModuleScript and LoadableModuleScript
+        https://bugs.webkit.org/show_bug.cgi?id=167500
+
+        Reviewed by Darin Adler.
+
+        CachedModuleScript becomes duplicate with LoadableModuleScript.
+        And CachedModuleScript does not offer any meaningful functionality
+        to LoadableModuleScript.
+        This patch merges CachedModuleScript to LoadableModuleScript.
+
+        No behavior change.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/CachedModuleScript.cpp: Removed.
+        * bindings/js/CachedModuleScript.h: Removed.
+        * bindings/js/CachedModuleScriptClient.h: Removed.
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::loadModuleScriptInWorld):
+        (WebCore::ScriptController::loadModuleScript):
+        (WebCore::ScriptController::linkAndEvaluateModuleScriptInWorld):
+        (WebCore::ScriptController::linkAndEvaluateModuleScript):
+        (WebCore::ScriptController::setupModuleScriptHandlers):
+        * bindings/js/ScriptController.h:
+        * dom/LoadableModuleScript.cpp:
+        (WebCore::LoadableModuleScript::create):
+        (WebCore::LoadableModuleScript::LoadableModuleScript):
+        (WebCore::LoadableModuleScript::~LoadableModuleScript):
+        (WebCore::LoadableModuleScript::isLoaded):
+        (WebCore::LoadableModuleScript::error):
+        (WebCore::LoadableModuleScript::wasCanceled):
+        (WebCore::LoadableModuleScript::notifyLoadCompleted):
+        (WebCore::LoadableModuleScript::notifyLoadFailed):
+        (WebCore::LoadableModuleScript::notifyLoadWasCanceled):
+        (WebCore::LoadableModuleScript::execute):
+        (WebCore::LoadableModuleScript::load):
+        (WebCore::LoadableModuleScript::notifyFinished): Deleted.
+        * dom/LoadableModuleScript.h:
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::executeModuleScript):
+        * dom/ScriptElement.h:
+
 2017-01-27  Michael Saboff  <msaboff@apple.com>
 
         JSCustomElementInterface::invokeCallback can be called with a null callback because Weak<>

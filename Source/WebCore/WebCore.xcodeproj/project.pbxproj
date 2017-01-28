@@ -6303,9 +6303,6 @@
 		E30592641E27A3AD00D57C98 /* InlineClassicScript.h in Headers */ = {isa = PBXBuildFile; fileRef = E30592621E27A38C00D57C98 /* InlineClassicScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E30592671E27A3D100D57C98 /* CachedScriptFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E30592651E27A3C600D57C98 /* CachedScriptFetcher.cpp */; };
 		E30592681E27A3D100D57C98 /* CachedScriptFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E30592661E27A3C600D57C98 /* CachedScriptFetcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E307DECC1D81E4B300141CAF /* CachedModuleScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E307DEC91D81E46E00141CAF /* CachedModuleScript.cpp */; };
-		E307DECD1D81E4B600141CAF /* CachedModuleScript.h in Headers */ = {isa = PBXBuildFile; fileRef = E307DECA1D81E46E00141CAF /* CachedModuleScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E307DECE1D81E4BA00141CAF /* CachedModuleScriptClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E307DECB1D81E49500141CAF /* CachedModuleScriptClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E307DECF1D81E4C300141CAF /* CachedModuleScriptLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E307DEC61D81E44800141CAF /* CachedModuleScriptLoader.cpp */; };
 		E307DED01D81E4C700141CAF /* CachedModuleScriptLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = E307DEC71D81E44800141CAF /* CachedModuleScriptLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E307DED11D81E4CB00141CAF /* CachedModuleScriptLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E307DEC81D81E44800141CAF /* CachedModuleScriptLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14360,9 +14357,6 @@
 		E307DEC61D81E44800141CAF /* CachedModuleScriptLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedModuleScriptLoader.cpp; sourceTree = "<group>"; };
 		E307DEC71D81E44800141CAF /* CachedModuleScriptLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedModuleScriptLoader.h; sourceTree = "<group>"; };
 		E307DEC81D81E44800141CAF /* CachedModuleScriptLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedModuleScriptLoaderClient.h; sourceTree = "<group>"; };
-		E307DEC91D81E46E00141CAF /* CachedModuleScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedModuleScript.cpp; sourceTree = "<group>"; };
-		E307DECA1D81E46E00141CAF /* CachedModuleScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedModuleScript.h; sourceTree = "<group>"; };
-		E307DECB1D81E49500141CAF /* CachedModuleScriptClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedModuleScriptClient.h; sourceTree = "<group>"; };
 		E307DED21D81E4ED00141CAF /* LoadableModuleScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableModuleScript.cpp; sourceTree = "<group>"; };
 		E307DED31D81E4ED00141CAF /* LoadableModuleScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableModuleScript.h; sourceTree = "<group>"; };
 		E3150EA51DA7218D00194012 /* DOMJITHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITHelpers.h; sourceTree = "<group>"; };
@@ -22134,9 +22128,6 @@
 				BC4EDEF70C08F414007EDD49 /* Custom */,
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
 				2DFA488E1DB541C200362B99 /* BufferSource.h */,
-				E307DEC91D81E46E00141CAF /* CachedModuleScript.cpp */,
-				E307DECA1D81E46E00141CAF /* CachedModuleScript.h */,
-				E307DECB1D81E49500141CAF /* CachedModuleScriptClient.h */,
 				E307DEC61D81E44800141CAF /* CachedModuleScriptLoader.cpp */,
 				E307DEC71D81E44800141CAF /* CachedModuleScriptLoader.h */,
 				E307DEC81D81E44800141CAF /* CachedModuleScriptLoaderClient.h */,
@@ -25169,8 +25160,6 @@
 				830030F81B7D3B7800ED3AAC /* CachedHTMLCollection.h in Headers */,
 				BCB16C1C0979C3BD00467741 /* CachedImage.h in Headers */,
 				319FBD5F15D2F464009640A6 /* CachedImageClient.h in Headers */,
-				E307DECD1D81E4B600141CAF /* CachedModuleScript.h in Headers */,
-				E307DECE1D81E4BA00141CAF /* CachedModuleScriptClient.h in Headers */,
 				E307DED01D81E4C700141CAF /* CachedModuleScriptLoader.h in Headers */,
 				E307DED11D81E4CB00141CAF /* CachedModuleScriptLoaderClient.h in Headers */,
 				510184690B08602A004A825F /* CachedPage.h in Headers */,
@@ -29079,7 +29068,6 @@
 				BC64B4CB0CB4295D005F2B62 /* CachedFont.cpp in Sources */,
 				51C0AA410F2AA15E001648C2 /* CachedFrame.cpp in Sources */,
 				BCB16C1B0979C3BD00467741 /* CachedImage.cpp in Sources */,
-				E307DECC1D81E4B300141CAF /* CachedModuleScript.cpp in Sources */,
 				E307DECF1D81E4C300141CAF /* CachedModuleScriptLoader.cpp in Sources */,
 				5101846A0B08602A004A825F /* CachedPage.cpp in Sources */,
 				D0EDA774143E303C0028E383 /* CachedRawResource.cpp in Sources */,
