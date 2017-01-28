@@ -871,10 +871,10 @@ Some other editing-related methods still unimplemented:
     private:
         typedef void (^IconLoadCompletionHandler)(NSData*);
 
-        void getLoadDecisionForIcon(const WebCore::LinkIcon& linkIcon, Function<void (std::function<void (API::Data*, WebKit::CallbackBase::Error)>)>&& completionHandler) override {
+        void getLoadDecisionForIcon(const WebCore::LinkIcon& linkIcon, std::function<void (std::function<void (API::Data*, WebKit::CallbackBase::Error)>)> completionHandler) override {
             RetainPtr<_WKLinkIconParameters> parameters = adoptNS([[_WKLinkIconParameters alloc] _initWithLinkIcon:linkIcon]);
 
-            [m_wkView performSelector:delegateSelector() withObject:parameters.get() withObject:^void (IconLoadCompletionHandler loadCompletionHandler) {
+            [m_wkView performSelector:delegateSelector() withObject:parameters.get() withObject:[completionHandler = WTFMove(completionHandler)](IconLoadCompletionHandler loadCompletionHandler) {
                 if (loadCompletionHandler) {
                     completionHandler([loadCompletionHandler = BlockPtr<void (NSData *)>(loadCompletionHandler)](API::Data* data, WebKit::CallbackBase::Error error) {
                         if (error != CallbackBase::Error::None || !data)

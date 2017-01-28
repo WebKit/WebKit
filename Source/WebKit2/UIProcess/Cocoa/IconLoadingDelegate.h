@@ -55,7 +55,7 @@ private:
         ~IconLoadingClient();
 
     private:
-        void getLoadDecisionForIcon(const WebCore::LinkIcon&, Function<void (std::function<void (API::Data*, WebKit::CallbackBase::Error)>)>&& completionHandler) override;
+        void getLoadDecisionForIcon(const WebCore::LinkIcon&, std::function<void (std::function<void (API::Data*, WebKit::CallbackBase::Error)>)> completionHandler) override;
 
         IconLoadingDelegate& m_iconLoadingDelegate;
     };

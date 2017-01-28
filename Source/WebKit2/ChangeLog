@@ -1,3 +1,26 @@
+2017-01-27  Brady Eidson  <beidson@apple.com>
+
+        IconLoadingClient API doesn't work asynchronously.
+        <rdar://problem/30243429> and https://bugs.webkit.org/show_bug.cgi?id=167532
+
+        Reviewed by Alex Christensen.
+
+        Make a WTF::Function (inherently not compatible with ObjC blocks as they must be copyable)
+        into a std::function, which is copyable.
+
+        * UIProcess/API/APIIconLoadingClient.h:
+        (API::IconLoadingClient::getLoadDecisionForIcon):
+        
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView maybeInstallIconLoadingClient]):
+        
+        * UIProcess/Cocoa/IconLoadingDelegate.h:
+        * UIProcess/Cocoa/IconLoadingDelegate.mm:
+        (WebKit::IconLoadingDelegate::IconLoadingClient::getLoadDecisionForIcon):
+        
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getLoadDecisionForIcon):
+
 2017-01-27  Chris Dumez  <cdumez@apple.com>
 
         Fix remaining bad uses of logDiagnosticMessageWithValue()
