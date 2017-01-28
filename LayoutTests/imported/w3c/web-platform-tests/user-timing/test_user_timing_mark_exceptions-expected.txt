@@ -1,0 +1,47 @@
+Description
+
+This test validates that the performance.mark() method throws a SYNTAX_ERR exception whenever a navigation timing attribute is provided for the name parameter.
+
+
+PASS window.performance is defined 
+PASS window.performance.mark("connectEnd") threw an exception. 
+PASS window.performance.mark("connectEnd") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("connectStart") threw an exception. 
+PASS window.performance.mark("connectStart") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("domComplete") threw an exception. 
+PASS window.performance.mark("domComplete") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("domContentLoadedEventEnd") threw an exception. 
+PASS window.performance.mark("domContentLoadedEventEnd") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("domContentLoadedEventStart") threw an exception. 
+PASS window.performance.mark("domContentLoadedEventStart") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("domInteractive") threw an exception. 
+PASS window.performance.mark("domInteractive") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("domLoading") threw an exception. 
+PASS window.performance.mark("domLoading") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("domainLookupEnd") threw an exception. 
+PASS window.performance.mark("domainLookupEnd") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("domainLookupStart") threw an exception. 
+PASS window.performance.mark("domainLookupStart") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("fetchStart") threw an exception. 
+PASS window.performance.mark("fetchStart") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("loadEventEnd") threw an exception. 
+PASS window.performance.mark("loadEventEnd") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("loadEventStart") threw an exception. 
+PASS window.performance.mark("loadEventStart") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("navigationStart") threw an exception. 
+PASS window.performance.mark("navigationStart") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("redirectEnd") threw an exception. 
+PASS window.performance.mark("redirectEnd") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("redirectStart") threw an exception. 
+PASS window.performance.mark("redirectStart") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("requestStart") threw an exception. 
+PASS window.performance.mark("requestStart") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("responseEnd") threw an exception. 
+PASS window.performance.mark("responseEnd") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("responseStart") threw an exception. 
+PASS window.performance.mark("responseStart") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("unloadEventEnd") threw an exception. 
+PASS window.performance.mark("unloadEventEnd") threw a SYNTAX_ERR exception. 
+PASS window.performance.mark("unloadEventStart") threw an exception. 
+PASS window.performance.mark("unloadEventStart") threw a SYNTAX_ERR exception. 
+

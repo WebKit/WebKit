@@ -1,0 +1,9 @@
+Description
+
+This test validates exception scenarios of invoking performance.mark() with param of "secureConnectionStart".
+
+
+PASS window.performance is defined 
+PASS window.performance.mark("secureConnectionStart") threw an exception when secureConnectionStart attribute of Navigation Timing is supported. 
+PASS window.performance.mark("secureConnectionStart") threw a SYNTAX_ERR when secureConnectionStart attribute of Navigation Timing is supported. 
+

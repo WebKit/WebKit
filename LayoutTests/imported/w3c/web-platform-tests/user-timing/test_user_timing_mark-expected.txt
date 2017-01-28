@@ -1,0 +1,30 @@
+Description
+
+This test validates that the performance.mark() method is working properly. This test creates the following marks to test this method:
+
+"mark1": created using a normal mark() call
+"mark1": duplicate of the first mark, used to confirm names can be re-used
+After creating each mark, the existence of these marks is validated by calling performance.getEntriesByName() (both with and without the entryType parameter provided), performance.getEntriesByType(), and performance.getEntries()
+
+PASS window.performance is defined 
+PASS window.performance.getEntriesByName("mark1")[0].name == "mark1" 
+PASS window.performance.getEntriesByName("mark1")[0].startTime is approximately correct (up to 20ms difference allowed) 
+PASS window.performance.getEntriesByName("mark1")[0].entryType == "mark" 
+PASS window.performance.getEntriesByName("mark1")[0].duration == 0 
+PASS window.performance.getEntriesByName("mark1")[1].name == "mark1" 
+PASS window.performance.getEntriesByName("mark1")[1].startTime is approximately correct (up to 20ms difference allowed) 
+PASS window.performance.getEntriesByName("mark1")[1].entryType == "mark" 
+PASS window.performance.getEntriesByName("mark1")[1].duration == 0 
+PASS window.performance.getEntriesByName("mark1", "mark") returns an object containing the "mark1" mark in the correct order 
+PASS window.performance.getEntriesByName("mark1", "mark") returns an object containing the duplicate "mark1" mark in the correct order 
+PASS The "mark1" mark returned by window.performance.getEntriesByName("mark1", "mark") matches the the "mark1" mark returned by window.performance.getEntriesByName("mark1") 
+PASS The duplicate "mark1" mark returned by window.performance.getEntriesByName("mark1", "mark") matches the the duplicate "mark1" mark returned by window.performance.getEntriesByName("mark1") 
+PASS window.performance.getEntries() returns an object containing the original "mark1" mark in the correct order 
+PASS window.performance.getEntries() returns an object containing the duplicate "mark1" mark in the correct order 
+PASS The "mark1" mark returned by window.performance.getEntries() matches the the "mark1" mark returned by window.performance.getEntriesByName("mark1") 
+PASS The "mark1" mark returned by window.performance.getEntries() matches the the duplicate "mark1" mark returned by window.performance.getEntriesByName("mark1") 
+PASS window.performance.getEntriesByType("mark") returns an object containing the original "mark1" mark in the correct order 
+PASS window.performance.getEntriesByType("mark") returns an object containing the duplicate "mark1" mark in the correct order 
+PASS The "mark1" mark returned by window.performance.getEntriesByType("mark") matches the the "mark1" mark returned by window.performance.getEntriesByName("mark1") 
+PASS The "mark1" mark returned by window.performance.getEntriesByType("mark") matches the the duplicate "mark1" mark returned by window.performance.getEntriesByName("mark1") 
+

@@ -1,0 +1,42 @@
+User Timing IDL tests
+
+
+PASS Performance interface: operation mark(DOMString) 
+PASS Performance interface: operation clearMarks(DOMString) 
+PASS Performance interface: operation measure(DOMString,DOMString,DOMString) 
+PASS Performance interface: operation clearMeasures(DOMString) 
+PASS Performance must be primary interface of window.performance 
+PASS Stringification of window.performance 
+PASS Performance interface: window.performance must inherit property "mark" with the proper type (0) 
+PASS Performance interface: calling mark(DOMString) on window.performance with too few arguments must throw TypeError 
+PASS Performance interface: window.performance must inherit property "clearMarks" with the proper type (1) 
+PASS Performance interface: calling clearMarks(DOMString) on window.performance with too few arguments must throw TypeError 
+PASS Performance interface: window.performance must inherit property "measure" with the proper type (2) 
+PASS Performance interface: calling measure(DOMString,DOMString,DOMString) on window.performance with too few arguments must throw TypeError 
+PASS Performance interface: window.performance must inherit property "clearMeasures" with the proper type (3) 
+PASS Performance interface: calling clearMeasures(DOMString) on window.performance with too few arguments must throw TypeError 
+PASS PerformanceMark interface: existence and properties of interface object 
+PASS PerformanceMark interface object length 
+PASS PerformanceMark interface object name 
+PASS PerformanceMark interface: existence and properties of interface prototype object 
+PASS PerformanceMark interface: existence and properties of interface prototype object's "constructor" property 
+PASS PerformanceMeasure interface: existence and properties of interface object 
+PASS PerformanceMeasure interface object length 
+PASS PerformanceMeasure interface object name 
+PASS PerformanceMeasure interface: existence and properties of interface prototype object 
+PASS PerformanceMeasure interface: existence and properties of interface prototype object's "constructor" property 
+partial interface Performance {
+    void mark(DOMString markName);
+    void clearMarks(optional  DOMString markName);
+
+    void measure(DOMString measureName, optional DOMString startMark, optional DOMString endMark);
+    void clearMeasures(optional DOMString measureName);
+};
+
+interface PerformanceMark : PerformanceEntry {
+};
+
+interface PerformanceMeasure : PerformanceEntry {
+};
+
+

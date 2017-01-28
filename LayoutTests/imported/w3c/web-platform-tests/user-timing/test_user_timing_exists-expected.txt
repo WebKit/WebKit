@@ -1,0 +1,11 @@
+Description
+
+This test validates that all of the methods used to interact with the User Timing API are defined.
+
+
+PASS window.performance is defined 
+PASS window.performance.mark is defined. 
+PASS window.performance.clearMarks is defined. 
+PASS window.performance.measure is defined. 
+PASS window.performance.clearMeasures is defined. 
+
