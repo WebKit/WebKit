@@ -43,7 +43,7 @@ class OSXSafariDriver(OSXBrowserDriver):
         # Stop for initialization of the safari process, otherwise, open
         # command may use the system safari.
         time.sleep(3)
-        subprocess.Popen(['open', url])
+        subprocess.Popen(['open', '-a', args[0], url])
 
     def close_browsers(self):
         super(OSXSafariDriver, self).close_browsers()

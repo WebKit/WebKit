@@ -1,3 +1,18 @@
+2017-01-27  Keith Miller  <keith_miller@apple.com>
+
+        run-benchmarks should make sure it passes the test url to the right application
+        https://bugs.webkit.org/show_bug.cgi?id=167533
+
+        Reviewed by Joseph Pecoraro.
+
+        This fixes an issue when trying to run-benchmark script with the
+        system default browser set to STP. Previously, it would run
+        the test in STP rather than the provided build. Now, it should run
+        in the provided build.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.launch_url):
+
 2017-01-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Prepare ComplexTextController for unit testing
