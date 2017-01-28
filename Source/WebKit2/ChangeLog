@@ -1,3 +1,11 @@
+2017-01-28  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/30247736> WebKit2-7604.1.5 has failed to build: error: only virtual member functions can be marked 'override'
+
+        * UIProcess/ios/PageClientImplIOS.h: Guard the declaration of requestPasswordForQuickLookDocument
+          with USE(QUICK_LOOK) to match the base class.
+        * UIProcess/ios/PageClientImplIOS.mm: Guard the implementation as well.
+
 2017-01-27  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] No way to get the text from a WKWebProcessPlugInRangeHandle

@@ -779,6 +779,7 @@ void PageClientImpl::handleActiveNowPlayingSessionInfoResponse(bool hasActiveSes
     [m_webView _handleActiveNowPlayingSessionInfoResponse:hasActiveSession title:nsStringFromWebCoreString(title) duration:duration elapsedTime:elapsedTime];
 }
 
+#if USE(QUICK_LOOK)
 void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName, std::function<void(const String&)>&& completionHandler)
 {
     auto passwordHandler = [completionHandler = WTFMove(completionHandler)](NSString *password) {
@@ -792,6 +793,7 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
     } else
         [m_webView _showPasswordViewWithDocumentName:fileName passwordHandler:passwordHandler];
 }
+#endif
 
 } // namespace WebKit
 
