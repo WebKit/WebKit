@@ -1,5 +1,18 @@
 2017-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        setTimeout / setInterval's string execution should inherit SourceOrigin correctly
+        https://bugs.webkit.org/show_bug.cgi?id=167097
+
+        Reviewed by Darin Adler.
+
+        Tests: js/dom/modules/import-from-set-interval.html
+               js/dom/modules/import-from-set-timeout.html
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeScriptInWorld):
+
+2017-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Merge CachedModuleScript and LoadableModuleScript
         https://bugs.webkit.org/show_bug.cgi?id=167500
 

@@ -649,7 +649,7 @@ void ScriptController::clearScriptObjects()
 JSValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
     UserGestureIndicator gestureIndicator(forceUserGesture ? std::optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt);
-    ScriptSourceCode sourceCode(script, m_frame.document()->url());
+    ScriptSourceCode sourceCode(script, m_frame.document()->url(), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()));
 
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
         return { };
