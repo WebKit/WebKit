@@ -1,5 +1,18 @@
 2017-01-28  Andreas Kling  <akling@apple.com>
 
+        Avoid synchronous style recalc in dispatchUnloadEvents().
+        <https://webkit.org/b/167551>
+
+        Reviewed by Antti Koivisto.
+
+        It shouldn't be necessary to force a synchronous style resolution in an unloading document.
+        This call has been here since the import of KHTMLPart.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchUnloadEvents):
+
+2017-01-28  Andreas Kling  <akling@apple.com>
+
         REGRESSION(r196383): Automatic shrink-to-fit of RuleSet no longer works.
         <https://webkit.org/b/167543>
 

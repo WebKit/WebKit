@@ -2941,8 +2941,6 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
             }
         }
         m_pageDismissalEventBeingDispatched = PageDismissalType::None;
-        if (m_frame.document())
-            m_frame.document()->updateStyleIfNeeded();
         m_wasUnloadEventEmitted = true;
     }
 
