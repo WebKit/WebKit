@@ -1,3 +1,16 @@
+2017-01-28  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r196383): Automatic shrink-to-fit of RuleSet no longer works.
+        <https://webkit.org/b/167543>
+
+        Reviewed by Antti Koivisto.
+
+        Re-enable the automatic shrink-to-fit optimization in RuleSet.
+        This was disabled accidentally, which I discovered while investigating
+        the memory footprint of extension stylesheets.
+
+        * css/RuleSet.h:
+
 2017-01-28  Antti Koivisto  <antti@apple.com>
 
         Give scripts 'high' load priority

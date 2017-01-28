@@ -210,7 +210,7 @@ private:
     RuleDataVector m_universalRules;
     Vector<StyleRulePage*> m_pageRules;
     unsigned m_ruleCount { 0 };
-    bool m_autoShrinkToFitEnabled { false };
+    bool m_autoShrinkToFitEnabled { true };
     RuleFeatureSet m_features;
     Vector<RuleSetSelectorPair> m_regionSelectorsAndRuleSets;
 };
