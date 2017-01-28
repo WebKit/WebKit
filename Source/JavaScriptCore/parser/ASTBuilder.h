@@ -275,7 +275,7 @@ public:
         return node;
     }
 
-    TemplateStringNode* createTemplateString(const JSTokenLocation& location, const Identifier& cooked, const Identifier& raw)
+    TemplateStringNode* createTemplateString(const JSTokenLocation& location, const Identifier* cooked, const Identifier* raw)
     {
         return new (m_parserArena) TemplateStringNode(location, cooked, raw);
     }

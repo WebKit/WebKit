@@ -1,5 +1,17 @@
 2017-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Lift template escape sequence restrictions in tagged templates
+        https://bugs.webkit.org/show_bug.cgi?id=166871
+
+        Reviewed by Saam Barati.
+
+        Update the error messages.
+
+        * inspector/runtime/parse-expected.txt:
+        * js/unicode-escape-sequences-expected.txt:
+
+2017-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         setTimeout / setInterval's string execution should inherit SourceOrigin correctly
         https://bugs.webkit.org/show_bug.cgi?id=167097
 

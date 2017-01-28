@@ -1,3 +1,68 @@
+2017-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Lift template escape sequence restrictions in tagged templates
+        https://bugs.webkit.org/show_bug.cgi?id=166871
+
+        Reviewed by Saam Barati.
+
+        This patch implements stage 3 Lifting Template Literal Restriction[1].
+        Prior to this patch, template literal becomes syntax error if it contains
+        invalid escape sequences. But it is too restricted; Template literal
+        can have cooked and raw representations and only cooked representation
+        can escape sequences. So even if invalid escape sequences are included,
+        the raw representation can be valid.
+
+        Lifting Template Literal Restriction relaxes the above restriction.
+        When invalid escape sequence is included, if target template literals
+        are used as tagged templates, we make the result of the template including
+        the invalid escape sequence `undefined` instead of making it SyntaxError
+        immediately. It allows us to accept the templates including invalid
+        escape sequences in the raw representations in tagged templates.
+
+        On the other hand, the raw representation is only used in tagged templates.
+        So if invalid escape sequences are included in the usual template literals,
+        we just make it SyntaxError as before.
+
+        [1]: https://github.com/tc39/proposal-template-literal-revision
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetTemplateObject):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TemplateStringNode::emitBytecode):
+        (JSC::TemplateLiteralNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createTemplateString):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<CharacterType>::parseUnicodeEscape):
+        (JSC::Lexer<T>::parseTemplateLiteral):
+        (JSC::Lexer<T>::lex):
+        (JSC::Lexer<T>::scanTemplateString):
+        (JSC::Lexer<T>::scanTrailingTemplateString): Deleted.
+        * parser/Lexer.h:
+        * parser/NodeConstructors.h:
+        (JSC::TemplateStringNode::TemplateStringNode):
+        * parser/Nodes.h:
+        (JSC::TemplateStringNode::cooked):
+        (JSC::TemplateStringNode::raw):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseAssignmentElement):
+        (JSC::Parser<LexerType>::parseTemplateString):
+        (JSC::Parser<LexerType>::parseTemplateLiteral):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/ParserTokens.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createTemplateString):
+        * runtime/TemplateRegistry.cpp:
+        (JSC::TemplateRegistry::getTemplateObject):
+        * runtime/TemplateRegistryKey.h:
+        (JSC::TemplateRegistryKey::cookedStrings):
+        (JSC::TemplateRegistryKey::create):
+        (JSC::TemplateRegistryKey::TemplateRegistryKey):
+        * runtime/TemplateRegistryKeyTable.cpp:
+        (JSC::TemplateRegistryKeyTable::createKey):
+        * runtime/TemplateRegistryKeyTable.h:
+
 2017-01-27  Saam Barati  <sbarati@apple.com>
 
         Make the CLI for the sampling profiler better for inlined call site indices

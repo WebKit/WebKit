@@ -490,16 +490,16 @@ namespace JSC {
 
     class TemplateStringNode : public ExpressionNode {
     public:
-        TemplateStringNode(const JSTokenLocation&, const Identifier& cooked, const Identifier& raw);
+        TemplateStringNode(const JSTokenLocation&, const Identifier* cooked, const Identifier* raw);
 
-        const Identifier& cooked() { return m_cooked; }
-        const Identifier& raw() { return m_raw; }
+        const Identifier* cooked() { return m_cooked; }
+        const Identifier* raw() { return m_raw; }
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
-        const Identifier& m_cooked;
-        const Identifier& m_raw;
+        const Identifier* m_cooked;
+        const Identifier* m_raw;
     };
 
     class TemplateStringListNode : public ParserArenaFreeable {

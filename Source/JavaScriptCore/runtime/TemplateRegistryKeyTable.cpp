@@ -42,9 +42,9 @@ TemplateRegistryKeyTable::~TemplateRegistryKeyTable()
         key->m_table = nullptr;
 }
 
-Ref<TemplateRegistryKey> TemplateRegistryKeyTable::createKey(const TemplateRegistryKey::StringVector& rawStrings, const TemplateRegistryKey::StringVector& cookedStrings)
+Ref<TemplateRegistryKey> TemplateRegistryKeyTable::createKey(TemplateRegistryKey::StringVector&& rawStrings, TemplateRegistryKey::OptionalStringVector&& cookedStrings)
 {
-    auto key = TemplateRegistryKey::create(rawStrings, cookedStrings);
+    auto key = TemplateRegistryKey::create(WTFMove(rawStrings), WTFMove(cookedStrings));
     auto addResult = m_atomicTable.add<TemplateRegistryKeyTranslator>(key.ptr());
     if (addResult.isNewEntry)
         (*addResult.iterator)->m_table = this;

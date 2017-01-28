@@ -904,7 +904,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseAs
     if (match(OPENBRACE) || match(OPENBRACKET)) {
         SavePoint savePoint = createSavePoint();
         assignmentTarget = parseDestructuringPattern(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth);
-        if (assignmentTarget && !match(DOT) && !match(OPENBRACKET) && !match(OPENPAREN) && !match(TEMPLATE))
+        if (assignmentTarget && !match(DOT) && !match(OPENBRACKET) && !match(OPENPAREN) && !match(BACKQUOTE))
             return assignmentTarget;
         restoreSavePoint(savePoint);
     }
@@ -4089,23 +4089,26 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseAsyncFunctio
 template <typename LexerType>
 template <class TreeBuilder> typename TreeBuilder::TemplateString Parser<LexerType>::parseTemplateString(TreeBuilder& context, bool isTemplateHead, typename LexerType::RawStringsBuildMode rawStringsBuildMode, bool& elementIsTail)
 {
-    if (!isTemplateHead) {
+    if (isTemplateHead)
+        ASSERT(match(BACKQUOTE));
+    else
         matchOrFail(CLOSEBRACE, "Expected a closing '}' following an expression in template literal");
-        // Re-scan the token to recognize it as Template Element.
-        m_token.m_type = m_lexer->scanTrailingTemplateString(&m_token, rawStringsBuildMode);
-    }
+
+    // Re-scan the token to recognize it as Template Element.
+    m_token.m_type = m_lexer->scanTemplateString(&m_token, rawStringsBuildMode);
     matchOrFail(TEMPLATE, "Expected an template element");
     const Identifier* cooked = m_token.m_data.cooked;
     const Identifier* raw = m_token.m_data.raw;
     elementIsTail = m_token.m_data.isTail;
     JSTokenLocation location(tokenLocation());
     next();
-    return context.createTemplateString(location, *cooked, *raw);
+    return context.createTemplateString(location, cooked, raw);
 }
 
 template <typename LexerType>
 template <class TreeBuilder> typename TreeBuilder::TemplateLiteral Parser<LexerType>::parseTemplateLiteral(TreeBuilder& context, typename LexerType::RawStringsBuildMode rawStringsBuildMode)
 {
+    ASSERT(match(BACKQUOTE));
     JSTokenLocation location(tokenLocation());
     bool elementIsTail = false;
 
@@ -4268,7 +4271,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         }
         return re;
     }
-    case TEMPLATE:
+    case BACKQUOTE:
         return parseTemplateLiteral(context, LexerType::RawStringsBuildMode::DontBuildRawStrings);
     case YIELD:
         if (!strictMode() && !currentScope()->isGenerator())
@@ -4505,7 +4508,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             next();
             break;
         }
-        case TEMPLATE: {
+        case BACKQUOTE: {
             semanticFailIfTrue(baseIsSuper, "Cannot use super as tag for tagged templates");
             JSTextPosition expressionEnd = lastTokenEndPosition();
             int nonLHSCount = m_parserState.nonLHSCount;

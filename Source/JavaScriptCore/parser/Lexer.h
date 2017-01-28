@@ -37,6 +37,8 @@ enum LexerFlags {
     LexexFlagsDontBuildKeywords = 4
 };
 
+enum class LexerEscapeParseMode { Template, String };
+
 struct ParsedUnicodeEscapeValue;
 
 bool isLexerKeyword(const Identifier&);
@@ -77,7 +79,7 @@ public:
     bool prevTerminator() const { return m_terminator; }
     JSTokenType scanRegExp(JSToken*, UChar patternPrefix = 0);
     enum class RawStringsBuildMode { BuildRawStrings, DontBuildRawStrings };
-    JSTokenType scanTrailingTemplateString(JSToken*, RawStringsBuildMode);
+    JSTokenType scanTemplateString(JSToken*, RawStringsBuildMode);
 
     // Functions for use after parsing.
     bool sawError() const { return m_error; }
@@ -170,9 +172,8 @@ private:
     template <bool shouldBuildStrings> ALWAYS_INLINE StringParseResult parseString(JSTokenData*, bool strictMode);
     template <bool shouldBuildStrings> NEVER_INLINE StringParseResult parseStringSlowCase(JSTokenData*, bool strictMode);
 
-    enum class EscapeParseMode { Template, String };
-    template <bool shouldBuildStrings> ALWAYS_INLINE StringParseResult parseComplexEscape(EscapeParseMode, bool strictMode, T stringQuoteCharacter);
-    template <bool shouldBuildStrings> ALWAYS_INLINE StringParseResult parseTemplateLiteral(JSTokenData*, RawStringsBuildMode);
+    template <bool shouldBuildStrings, LexerEscapeParseMode escapeParseMode> ALWAYS_INLINE StringParseResult parseComplexEscape(bool strictMode, T stringQuoteCharacter);
+    ALWAYS_INLINE StringParseResult parseTemplateLiteral(JSTokenData*, RawStringsBuildMode);
     ALWAYS_INLINE void parseHex(double& returnValue);
     ALWAYS_INLINE bool parseBinary(double& returnValue);
     ALWAYS_INLINE bool parseOctal(double& returnValue);

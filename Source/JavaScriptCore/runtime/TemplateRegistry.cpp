@@ -58,8 +58,13 @@ JSArray* TemplateRegistry::getTemplateObject(ExecState* exec, JSTemplateRegistry
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     for (unsigned index = 0; index < count; ++index) {
-        templateObject->putDirectIndex(exec, index, jsString(exec, templateKey.cookedStrings()[index]), ReadOnly | DontDelete, PutDirectIndexLikePutDirect);
+        auto cooked = templateKey.cookedStrings()[index];
+        if (cooked)
+            templateObject->putDirectIndex(exec, index, jsString(exec, cooked.value()), ReadOnly | DontDelete, PutDirectIndexLikePutDirect);
+        else
+            templateObject->putDirectIndex(exec, index, jsUndefined(), ReadOnly | DontDelete, PutDirectIndexLikePutDirect);
         RETURN_IF_EXCEPTION(scope, nullptr);
+
         rawObject->putDirectIndex(exec, index, jsString(exec, templateKey.rawStrings()[index]), ReadOnly | DontDelete, PutDirectIndexLikePutDirect);
         RETURN_IF_EXCEPTION(scope, nullptr);
     }

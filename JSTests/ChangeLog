@@ -1,3 +1,19 @@
+2017-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Lift template escape sequence restrictions in tagged templates
+        https://bugs.webkit.org/show_bug.cgi?id=166871
+
+        Reviewed by Saam Barati.
+
+        Update the error messages and add new tests.
+
+        * ChakraCore/test/es6/unicode_6_identifier_Blue524737.baseline-jsc:
+        * stress/lift-template-literal.js: Added.
+        (dump):
+        (testTag.return.tag):
+        (testTag):
+        * stress/template-literal-syntax.js:
+
 2017-01-26  Mark Lam  <mark.lam@apple.com>
 
         Fix missing exception check in genericTypedArrayViewProtoFuncSet().

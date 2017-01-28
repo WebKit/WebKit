@@ -4253,17 +4253,22 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
 RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemplateNode* taggedTemplate)
 {
     TemplateRegistryKey::StringVector rawStrings;
-    TemplateRegistryKey::StringVector cookedStrings;
+    TemplateRegistryKey::OptionalStringVector cookedStrings;
 
     TemplateStringListNode* templateString = taggedTemplate->templateLiteral()->templateStrings();
     for (; templateString; templateString = templateString->next()) {
-        rawStrings.append(templateString->value()->raw().impl());
-        cookedStrings.append(templateString->value()->cooked().impl());
+        auto* string = templateString->value();
+        ASSERT(string->raw());
+        rawStrings.append(string->raw()->impl());
+        if (!string->cooked())
+            cookedStrings.append(std::nullopt);
+        else
+            cookedStrings.append(string->cooked()->impl());
     }
 
     RefPtr<RegisterID> getTemplateObject = emitGetGlobalPrivate(newTemporary(), propertyNames().builtinNames().getTemplateObjectPrivateName());
     CallArguments arguments(*this, nullptr);
-    emitLoad(arguments.thisRegister(), JSValue(addTemplateRegistryKeyConstant(m_vm->templateRegistryKeyTable().createKey(rawStrings, cookedStrings))));
+    emitLoad(arguments.thisRegister(), JSValue(addTemplateRegistryKeyConstant(m_vm->templateRegistryKeyTable().createKey(WTFMove(rawStrings), WTFMove(cookedStrings)))));
     return emitCall(dst, getTemplateObject.get(), NoExpectedFunction, arguments, taggedTemplate->divot(), taggedTemplate->divotStart(), taggedTemplate->divotEnd(), DebuggableCall::No);
 }
 

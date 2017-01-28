@@ -67,9 +67,9 @@ Range: {"startOffset":0,"endOffset":1}
 
 PASS: Should be SyntaxErrorType UnterminatedLiteral.
 Source: var \u007
-            ^~
-Error Message: Incomplete unicode escape in identifier: '\u'
-Range: {"startOffset":4,"endOffset":6}
+            ^~~~~
+Error Message: Incomplete unicode escape in identifier: '\u007'
+Range: {"startOffset":4,"endOffset":9}
 
 
 -- Running test case: SyntaxErrorType.Recoverable

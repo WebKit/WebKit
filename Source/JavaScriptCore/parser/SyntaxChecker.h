@@ -194,7 +194,7 @@ public:
     int createArguments() { return ArgumentsResult; }
     int createArguments(int) { return ArgumentsResult; }
     ExpressionType createSpreadExpression(const JSTokenLocation&, ExpressionType, int, int, int) { return SpreadExpr; }
-    TemplateString createTemplateString(const JSTokenLocation&, const Identifier&, const Identifier&) { return TemplateStringResult; }
+    TemplateString createTemplateString(const JSTokenLocation&, const Identifier*, const Identifier*) { return TemplateStringResult; }
     TemplateStringList createTemplateStringList(TemplateString) { return TemplateStringListResult; }
     TemplateStringList createTemplateStringList(TemplateStringList, TemplateString) { return TemplateStringListResult; }
     TemplateExpressionList createTemplateExpressionList(Expression) { return TemplateExpressionListResult; }

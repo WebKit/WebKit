@@ -111,7 +111,7 @@ namespace JSC {
         previous->m_next = this;
     }
 
-    inline TemplateStringNode::TemplateStringNode(const JSTokenLocation& location, const Identifier& cooked, const Identifier& raw)
+    inline TemplateStringNode::TemplateStringNode(const JSTokenLocation& location, const Identifier* cooked, const Identifier* raw)
         : ExpressionNode(location)
         , m_cooked(cooked)
         , m_raw(raw)

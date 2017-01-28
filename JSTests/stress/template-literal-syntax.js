@@ -46,6 +46,19 @@ testSyntax("(`Hello`) + 42");
 testSyntax("`\\\n`");
 testSyntax("`\\\r\n`");
 testSyntax("`\\\r`");
+testSyntax("Hello`bad escape sequence: \\unicode`");
+testSyntax("Hello`\\00`");
+testSyntax("Hello`\\01`");
+testSyntax("Hello`\\1`");
+testSyntax("Hello`\\xo`");
+testSyntax("Hello`\\x0o`");
+testSyntax("Hello`\\uo`");
+testSyntax("Hello`\\u0o`");
+testSyntax("Hello`\\u00o`");
+testSyntax("Hello`\\u000o`");
+testSyntax("Hello`\\u{o`");
+testSyntax("Hello`\\u{0o`");
+testSyntax("Hello`\\u{110000o`");
 
 testSyntaxError("`Hello", "SyntaxError: Unexpected EOF");
 testSyntaxError("`Hello${expr}", "SyntaxError: Unexpected EOF");
@@ -81,3 +94,18 @@ testSyntaxError("`\\u20`", "SyntaxError: \\u can only be followed by a Unicode c
 testSyntaxError("`${expr}\\u20`", "SyntaxError: \\u can only be followed by a Unicode character sequence");
 testSyntaxError("`\\u202`", "SyntaxError: \\u can only be followed by a Unicode character sequence");
 testSyntaxError("`${expr}\\u202`", "SyntaxError: \\u can only be followed by a Unicode character sequence");
+
+testSyntaxError("`bad escape sequence: \\unicode`", "SyntaxError: \\u can only be followed by a Unicode character sequence");
+
+testSyntaxError("`\\00`", "SyntaxError: The only valid numeric escape in strict mode is '\\0'");
+testSyntaxError("`\\01`", "SyntaxError: The only valid numeric escape in strict mode is '\\0'");
+testSyntaxError("`\\1`", "SyntaxError: The only valid numeric escape in strict mode is '\\0'");
+testSyntaxError("`\\xo`", "SyntaxError: \\x can only be followed by a hex character sequence");
+testSyntaxError("`\\x0o`", "SyntaxError: \\x can only be followed by a hex character sequence");
+testSyntaxError("`\\uo`", "SyntaxError: \\u can only be followed by a Unicode character sequence");
+testSyntaxError("`\\u0o`", "SyntaxError: \\u can only be followed by a Unicode character sequence");
+testSyntaxError("`\\u00o`", "SyntaxError: \\u can only be followed by a Unicode character sequence");
+testSyntaxError("`\\u000o`", "SyntaxError: \\u can only be followed by a Unicode character sequence");
+testSyntaxError("`\\u{o`", "SyntaxError: \\u can only be followed by a Unicode character sequence");
+testSyntaxError("`\\u{0o`", "SyntaxError: \\u can only be followed by a Unicode character sequence");
+testSyntaxError("`\\u{110000o`", "SyntaxError: \\u can only be followed by a Unicode character sequence");
