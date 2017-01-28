@@ -197,7 +197,9 @@ private:
 
     void handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession, const String& title, double duration, double elapsedTime) override;
 
+#if USE(QUICK_LOOK)
     void requestPasswordForQuickLookDocument(const String& fileName, std::function<void(const String&)>&&) override;
+#endif
 
 #if ENABLE(DATA_INTERACTION)
     void didPerformDataInteractionControllerOperation() override;

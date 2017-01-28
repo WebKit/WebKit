@@ -1,3 +1,15 @@
+2017-01-28  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r211329.
+
+    2017-01-28  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/30247736> WebKit2-7604.1.5 has failed to build: error: only virtual member functions can be marked 'override'
+
+            * UIProcess/ios/PageClientImplIOS.h: Guard the declaration of requestPasswordForQuickLookDocument
+              with USE(QUICK_LOOK) to match the base class.
+            * UIProcess/ios/PageClientImplIOS.mm: Guard the implementation as well.
+
 2017-01-26  Chris Dumez  <cdumez@apple.com>
 
         Crash when navigating back to a page in PacheCache when one of its frames has been removed
