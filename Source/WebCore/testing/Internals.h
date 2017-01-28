@@ -520,7 +520,7 @@ public:
 
     Vector<String> accessKeyModifiers() const;
 
-#if USE(QUICK_LOOK)
+#if PLATFORM(IOS)
     void setQuickLookPassword(const String&);
 #endif
 

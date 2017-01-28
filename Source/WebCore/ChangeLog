@@ -1,3 +1,15 @@
+2017-01-27  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r211324.
+
+    2017-01-27  Andy Estes  <aestes@apple.com>
+
+            Fix the iOS build when USE(QUICK_LOOK) is disabled.
+
+            * testing/Internals.cpp:
+            (WebCore::Internals::setQuickLookPassword):
+            * testing/Internals.h:
+
 2017-01-26  Chris Dumez  <cdumez@apple.com>
 
         Revert r210474 it is no longer needed

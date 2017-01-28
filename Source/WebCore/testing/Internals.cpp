@@ -3642,12 +3642,16 @@ Vector<String> Internals::accessKeyModifiers() const
     return accessKeyModifierStrings;
 }
 
-#if USE(QUICK_LOOK)
+#if PLATFORM(IOS)
 void Internals::setQuickLookPassword(const String& password)
 {
+#if USE(QUICK_LOOK)
     auto& quickLookHandleClient = MockQuickLookHandleClient::singleton();
     QuickLookHandle::setClientForTesting(&quickLookHandleClient);
     quickLookHandleClient.setPassword(password);
+#else
+    UNUSED_PARAM(password);
+#endif
 }
 #endif
 
