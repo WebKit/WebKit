@@ -1609,7 +1609,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         makeUniqueRef<WebCore::LibWebRTCProvider>()
     );
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
+#if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = new WebDragClient(self);
 #endif
 
