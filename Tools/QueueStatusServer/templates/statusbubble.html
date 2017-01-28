@@ -54,7 +54,11 @@ form {
 <script>
 window.addEventListener("message", function(e) {
   if (e.data === 'containerMetrics') {
+    var parentContainer = bubbleContainer.parentElement;
+    var originalWidth = parentContainer.style.width;
+    parentContainer.style.width = "1000px";
     var clientRect = bubbleContainer.getBoundingClientRect();
+    parentContainer.style.width = originalWidth;
     e.source.postMessage({'width': Math.ceil(clientRect.width), 'height': Math.ceil(clientRect.height)}, e.origin);
   } else
     console.log("Unknown postMessage: " + e.data);

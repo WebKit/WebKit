@@ -490,7 +490,7 @@ div:focus {
 
 .statusBubble {
   /* The width/height get set to the bubble contents via postMessage on browsers that support it. */
-  width: 450px;
+  width: 460px;
   height: 20px;
   margin: 2px 2px 0 0;
   border: none;

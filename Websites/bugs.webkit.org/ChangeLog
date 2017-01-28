@@ -1,3 +1,20 @@
+2017-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Patch Review: EWS Bubbles wrap to multiple lines but can fit on one line
+        https://bugs.webkit.org/show_bug.cgi?id=167519
+
+        Reviewed by Ryosuke Niwa.
+
+        While we do post message to determine the size, the fact that we have
+        constrained the iframe to a size of 450px meant its body is 450px and
+        the div containing the bubbles wraps at 450px. Its full size (~458px)
+        is not returned. Although we solve this artifical constraint problem
+        inside of the bubble containerMetrics measuring, up this default value
+        from 450 to 460 to reduce UI jitter (the current measurement on my
+        machine is 458px).
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2017-01-19  Timothy Hatcher  <timothy@hatcher.name>
 
         Bugzilla email autocomplete does not work on third email field of advanced search page

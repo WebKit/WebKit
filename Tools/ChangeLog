@@ -1,3 +1,16 @@
+2017-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Patch Review: EWS Bubbles wrap to multiple lines but can fit on one line
+        https://bugs.webkit.org/show_bug.cgi?id=167519
+
+        Reviewed by Ryosuke Niwa.
+
+        * QueueStatusServer/templates/statusbubble.html:
+        To measure the bubbleContainer's width, it must not be wrapping based
+        on its parent container. So when measuring the width temporarily set
+        the parent to a very large width so as to not artificially wrap us.
+        Restore the parent's width after measuring.
+
 2017-01-27  Andy Estes  <aestes@apple.com>
 
         [iOS] Add a test for _WKNSFileManagerExtras
