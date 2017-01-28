@@ -274,9 +274,12 @@ LayoutRect RenderInline::localCaretRect(InlineBox* inlineBox, unsigned, LayoutUn
 
 void RenderInline::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
+    auto* beforeChildOrPlaceholder = beforeChild;
+    if (auto* flowThread = flowThreadContainingBlock())
+        beforeChildOrPlaceholder = flowThread->resolveMovedChild(beforeChild);
     if (continuation())
-        return addChildToContinuation(newChild, beforeChild);
-    return addChildIgnoringContinuation(newChild, beforeChild);
+        return addChildToContinuation(newChild, beforeChildOrPlaceholder);
+    return addChildIgnoringContinuation(newChild, beforeChildOrPlaceholder);
 }
 
 static RenderBoxModelObject* nextContinuation(RenderObject* renderer)
