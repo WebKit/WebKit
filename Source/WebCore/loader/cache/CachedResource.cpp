@@ -70,8 +70,8 @@ ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
     case CachedResource::MainResource:
         return ResourceLoadPriority::VeryHigh;
     case CachedResource::CSSStyleSheet:
-        return ResourceLoadPriority::High;
     case CachedResource::Script:
+        return ResourceLoadPriority::High;
 #if ENABLE(SVG_FONTS)
     case CachedResource::SVGFontResource:
 #endif

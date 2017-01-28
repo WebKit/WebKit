@@ -1,3 +1,15 @@
+2017-01-28  Antti Koivisto  <antti@apple.com>
+
+        Give scripts 'high' load priority
+        https://bugs.webkit.org/show_bug.cgi?id=167550
+
+        Reviewed by Andreas Kling.
+
+        For historical reasons it is currently 'medium', same as web fonts and some other non-parsing blocking things.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::defaultPriorityForResourceType):
+
 2017-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add User Timing Experimental Feature
