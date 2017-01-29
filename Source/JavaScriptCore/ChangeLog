@@ -1,3 +1,91 @@
+2017-01-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Need some limit on Async Call Stacks for async loops (rAF loops)
+        https://bugs.webkit.org/show_bug.cgi?id=165633
+        <rdar://problem/29738502>
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch limits the memory used by the Inspector backend to store async
+        stack trace data.
+
+        Asynchronous stack traces are stored as a disjoint set of parent pointer
+        trees. Tree nodes represent asynchronous operations, and hold a copy of
+        the stack trace at the time the operation was scheduled. Each tree can
+        be regarded as a set of stack traces, stored as singly linked lists that
+        share part of their structure (specifically their tails). Traces belonging
+        to the same tree will at least share a common root. A stack trace begins
+        at a leaf node and follows the chain of parent pointers to the root of
+        of the tree. Leaf nodes always contain pending asynchronous calls.
+
+        When an asynchronous operation is scheduled with requestAnimationFrame,
+        setInterval, etc, a node is created containing the current call stack and
+        some bookkeeping data for the operation. An unique identifier comprised
+        of an operation type and callback identifier is mapped to the node. If
+        scheduling the callback was itself the result of an asynchronous call,
+        the node becomes a child of the node associated with that call, otherwise
+        it becomes the root of a new tree.
+
+        A node is either `pending`, `active`, `dispatched`, or `canceled`. Nodes
+        start out as pending. After a callback for a pending node is dispatched
+        the node is marked as such, unless it is a repeating callback such as
+        setInterval, in which case it remains pending. Once a node is no longer
+        pending it is removed, as long as it has no children. Since nodes are
+        reference counted, it is a property of the stack trace tree that nodes
+        that are no longer pending and have no children pointing to them will be
+        automatically pruned from the tree.
+
+        If an async operation is canceled (e.g. cancelTimeout), the associated
+        node is marked as such. If the callback is not being dispatched at the
+        time, and has no children, it is removed.
+
+        Because async operations can be chained indefinitely, stack traces are
+        limited to a maximum depth. The depth of a stack trace is equal to the
+        sum of the depths of its nodes, with a node's depth equal to the number
+        of frames in its associated call stack. For any stack trace,
+
+            S = { s𝟶, s𝟷, …, s𝑘 }, with endpoints s𝟶, s𝑘
+            depth(S) = depth(s𝟶) + depth(s𝟷) + … + depth(s𝑘)
+
+        A stack trace is truncated when it exceeds the maximum depth. Truncation
+        occurs on node boundaries, not call frames, consequently the maximum depth
+        is more of a target than a guarantee:
+
+            d = maximum stack trace depth
+            for all S, depth(S) ≤ d + depth(s𝑘)
+
+        Because nodes can belong to multiple stack traces, it may be necessary
+        to clone the tail of a stack trace being truncated to prevent other traces
+        from being effected.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/AsyncStackTrace.cpp: Added.
+        (Inspector::AsyncStackTrace::create):
+        (Inspector::AsyncStackTrace::AsyncStackTrace):
+        (Inspector::AsyncStackTrace::~AsyncStackTrace):
+        (Inspector::AsyncStackTrace::isPending):
+        (Inspector::AsyncStackTrace::isLocked):
+        (Inspector::AsyncStackTrace::willDispatchAsyncCall):
+        (Inspector::AsyncStackTrace::didDispatchAsyncCall):
+        (Inspector::AsyncStackTrace::didCancelAsyncCall):
+        (Inspector::AsyncStackTrace::buildInspectorObject):
+        (Inspector::AsyncStackTrace::truncate):
+        (Inspector::AsyncStackTrace::remove):
+        * inspector/AsyncStackTrace.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::didScheduleAsyncCall):
+        (Inspector::InspectorDebuggerAgent::didCancelAsyncCall):
+        (Inspector::InspectorDebuggerAgent::willDispatchAsyncCall):
+        (Inspector::InspectorDebuggerAgent::didDispatchAsyncCall):
+        (Inspector::InspectorDebuggerAgent::didPause):
+        (Inspector::InspectorDebuggerAgent::clearAsyncStackTraceData):
+        (Inspector::InspectorDebuggerAgent::buildAsyncStackTrace): Deleted.
+        (Inspector::InspectorDebuggerAgent::refAsyncCallData): Deleted.
+        (Inspector::InspectorDebuggerAgent::derefAsyncCallData): Deleted.
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/protocol/Console.json:
+
 2017-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remote Inspector: Listing should be updated when a target gains or loses a debugger session
