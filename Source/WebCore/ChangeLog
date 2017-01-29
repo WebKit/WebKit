@@ -1,3 +1,14 @@
+2017-01-28  Tim Horton  <timothy_horton@apple.com>
+
+        Don't flash a tap highlight for the entirety of an editable WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=167486
+        <rdar://problem/30193996>
+
+        Reviewed by Dan Bernstein.
+
+        * dom/Document.h:
+        Export.
+
 2017-01-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Check USE(APPLE_INTERNAL_SDK) instead of specific headers when importing from WebKitAdditions

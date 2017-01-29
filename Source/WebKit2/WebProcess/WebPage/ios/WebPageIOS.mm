@@ -68,6 +68,7 @@
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/HTMLAreaElement.h>
 #import <WebCore/HTMLAttachmentElement.h>
+#import <WebCore/HTMLBodyElement.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLElementTypeHelpers.h>
 #import <WebCore/HTMLFormElement.h>
@@ -631,6 +632,9 @@ void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
 {
 #if ENABLE(TOUCH_EVENTS)
     if (!node)
+        return;
+
+    if (m_page->isEditable() && node == m_page->mainFrame().document()->body())
         return;
 
     if (is<Element>(*node)) {
