@@ -1002,3 +1002,142 @@ webkit.org/b/166911 fast/dom/Window/window-properties-performance.html [ Pass Fa
 webkit.org/b/166911 fast/dom/Window/window-properties-performance-resource-timing.html [ Pass Failure ]
 
 webkit.org/b/167428 fast/backgrounds/background-repeat-x-y-parse.html [ Failure ]
+
+########################################
+### START OF -disabled tests
+
+webkit.org/b/20871 js/garbage-collect-after-string-appends.html [ Skip ]
+webkit.org/b/58323 compositing/objects/composited-object-alignment.html [ Skip ]
+webkit.org/b/48454 compositing/tiling/huge-layer-resize.html [ Skip ]
+webkit.org/b/48454 compositing/tiling/huge-layer.html [ Skip ]
+webkit.org/b/17557 css2.1/t1204-increment-00-c-o.html [ Skip ]
+webkit.org/b/17557 css2.1/t1204-increment-01-c-o.html [ Skip ]
+webkit.org/b/17557 css2.1/t1204-increment-02-c-o.html [ Skip ]
+webkit.org/b/17557 css2.1/t1204-reset-00-c-o.html [ Skip ]
+webkit.org/b/17557 css2.1/t1204-reset-01-c-o.html [ Skip ]
+webkit.org/b/17557 css2.1/t1204-reset-02-c-o.html [ Skip ]
+webkit.org/b/19581 dom/xhtml/level2/html/HTMLFrameElement09.xhtml [ Skip ]
+webkit.org/b/65187 dom/xhtml/level3/core/documentsetdocumenturi01.xhtml [ Skip ]
+webkit.org/b/65187 dom/xhtml/level3/core/documentsetdocumenturi02.xhtml [ Skip ]
+webkit.org/b/10993 editing/execCommand/create-list-1.html [ Skip ]
+webkit.org/b/9640 editing/input/attributed-substring-from-range-lines.html [ Skip ]
+webkit.org/b/7899 editing/pasteboard/paste-empty-startcontainer.html [ Skip ]
+webkit.org/b/72503 fast/css/font-face-in-shadow-DOM.html [ Skip ]
+webkit.org/b/23650 fast/dom/Window/timeout-released-on-close.html [ Skip ]
+webkit.org/b/79333 fast/dynamic/crash-paint-no-documentElement-renderer.html [ Skip ]
+webkit.org/b/18057 fast/events/key-events-in-frame.html [ Skip ]
+webkit.org/b/17391 fast/frames/iframe-scroll-page-up-down.html [ Skip ]
+webkit.org/b/94130 fast/html/marquee-alternate.html [ Skip ]
+webkit.org/b/12930 fast/leaks/003.html [ Skip ]
+webkit.org/b/36425 fast/loader/api-test-go-to-current-back-forward-item.html [ Skip ]
+webkit.org/b/35594 fast/loader/api-test-new-window-data-load-base-url.html [ Skip ]
+webkit.org/b/67007 fast/ruby/after-block-doesnt-crash.html [ Skip ]
+webkit.org/b/67007 fast/ruby/after-table-doesnt-crash.html [ Skip ]
+webkit.org/b/67007 fast/ruby/generated-after-counter-doesnt-crash.html [ Skip ]
+webkit.org/b/67007 fast/ruby/generated-before-and-after-counter-doesnt-crash.html [ Skip ]
+webkit.org/b/164888 fast/shadow-dom/copy-shadow-tree.html [ Skip ]
+webkit.org/b/81826 fast/table/double-height-table-no-tbody.html [ Skip ]
+webkit.org/b/56140 fast/text/large-text-composed-char-dos.html [ Skip ]
+webkit.org/b/63268 http/tests/multipart/win-boundary-crash.html [ Skip ]
+webkit.org/b/35700 java/lc3/ArrayMethods/object-001.html [ Skip ]
+webkit.org/b/35700 java/lc3/forin/array-001.html [ Skip ]
+webkit.org/b/56080 jquery/effects.html [ Skip ]
+webkit.org/b/6547 js/kde/Date.html [ Skip ]
+webkit.org/b/15046 js/string-concatenate-outofmemory.html [ Skip ]
+webkit.org/b/24690 platform/mac/plugins/pluginDocumentView-deallocated-dataSource.html [ Skip ]
+webkit.org/b/42625 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html [ Skip ]
+webkit.org/b/42625 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html [ Skip ]
+webkit.org/b/42625 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html [ Skip ]
+webkit.org/b/42625 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html [ Skip ]
+webkit.org/b/42625 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html [ Skip ]
+webkit.org/b/42625 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html [ Skip ]
+webkit.org/b/17392 svg/batik/text/textBiDi.svg [ Skip ]
+webkit.org/b/11662 svg/custom/js-font-test.svg [ Skip ]
+webkit.org/b/63186 svg/zoom/page/zoom-svg-through-object-with-text.xhtml [ Skip ]
+
+# Test disabled in r37513 for causing next test to hang
+animations/font-size-using-ems.html [ Skip ]
+
+# Tests disabled in r18642 due to font-dependent issue with Armenian numbering
+css2.1/t1202-counter-10-b.html [ Skip ]
+css2.1/t1202-counters-10-b.html [ Skip ]
+
+# Test disabled in r11286 since it removes entire document tree so is hard to show results
+dom/xhtml/level3/core/documentadoptnode22.xhtml [ Skip ]
+
+# Tests landed disabled in r10628 for webkit.org/b/4907
+dom/xhtml/level3/core/documentnormalizedocument06.xhtml [ Skip ]
+dom/xhtml/level3/core/domimplementationregistry12.xhtml [ Skip ]
+dom/xhtml/level3/core/domimplementationregistry23.xhtml [ Skip ]
+dom/xhtml/level3/core/nodecomparedocumentposition14.xhtml [ Skip ]
+dom/xhtml/level3/core/nodecomparedocumentposition15.xhtml [ Skip ]
+dom/xhtml/level3/core/noderemovechild03.xhtml [ Skip ]
+dom/xhtml/level3/core/nodereplacechild06.xhtml [ Skip ]
+dom/xhtml/level3/core/nodereplacechild07.xhtml [ Skip ]
+dom/xhtml/level3/core/nodereplacechild08.xhtml [ Skip ]
+
+# Test disabled in r30326
+editing/selection/inconsistent-in-removeChildNode.html [ Skip ]
+
+# Test disabled in r29882 after it mysteriously started passing
+editing/style/5091898.html [ Skip ]
+
+# Test disabled in r28820 since it has different results per hardware
+fast/css/css2-system-color.html [ Skip ]
+
+# Test disabled in r64074 after dropping -khtml prefix support
+fast/css/limited-vendor-prefix-behavior.html [ Skip ]
+
+# Test disabled in r42420 since it hits test-only release assert
+fast/dom/gc-8.html [ Skip ]
+
+# Test disabled in r27657
+fast/dom/Window/window-resize-nan.html [ Skip ]
+
+# Tests disabled in r38547 for webkit.org/b/22306
+fast/events/destroyed-atomic-string.html [ Skip ]
+
+# Test disabled in r12843
+fast/loader/form-events-back-forward.html [ Skip ]
+
+# Tests landed disabled in r47056 for webkit.org/b/25463; never enabled
+fast/notifications/notifications-event-stop-propagation.html [ Skip ]
+fast/notifications/notifications-multi-events.html [ Skip ]
+
+# Test disabled in r42628
+http/tests/navigation/post-goback-repost-policy.html [ Skip ]
+
+# Tests landed disabled in r15970; never enabled
+http/tests/navigation/success200-frames-goback.html [ Skip ]
+http/tests/navigation/success200-frames-reload.html [ Skip ]
+http/tests/navigation/success200-subframeload-goback.html [ Skip ]
+
+# Test disabled in r45078
+media/video-canvas.html [ Skip ]
+
+# Tests disabled in r59504 for taking over 10 seconds to run
+sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A2.5_T1.html [ Skip ]
+sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A2.5_T1.html [ Skip ]
+sputnik/Unicode/Unicode_218/S7.6_A3.1.html [ Skip ]
+sputnik/Unicode/Unicode_218/S7.6_A3.2.html [ Skip ]
+
+# Tests landed disabled in r58534; never enabled
+sputnik/Unicode/Unicode_218/S7.6_A1.1_T5.html [ Skip ]
+sputnik/Unicode/Unicode_218/S7.6_A5.2_T5.html [ Skip ]
+sputnik/Unicode/Unicode_320/S7.6_A1.1_T5.html [ Skip ]
+sputnik/Unicode/Unicode_320/S7.6_A5.2_T5.html [ Skip ]
+sputnik/Unicode/Unicode_410/S7.6_A1.1_T5.html [ Skip ]
+sputnik/Unicode/Unicode_410/S7.6_A5.2_T5.html [ Skip ]
+sputnik/Unicode/Unicode_500/S7.6_A1.1_T5.html [ Skip ]
+sputnik/Unicode/Unicode_500/S7.6_A5.2_T5.html [ Skip ]
+sputnik/Unicode/Unicode_510/S7.6_A1.1_T5.html [ Skip ]
+sputnik/Unicode/Unicode_510/S7.6_A5.2_T5.html [ Skip ]
+
+# Test disabled in r42921 for flaky failure
+svg/custom/filter-source-alpha.svg [ Skip ]
+
+# Test landed disabled in r26904; never enabled
+svg/custom/font-face-fallback.svg [ Skip ]
+
+### END OF -disabled tests
+########################################

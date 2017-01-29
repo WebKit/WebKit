@@ -1,3 +1,124 @@
+2017-01-28  David Kilzer  <ddkilzer@apple.com>
+
+        Migrate 97 *-disabled tests to use TestExpectations
+        <https://webkit.org/b/167537>
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations: Skip renamed tests.
+
+        * fast/dom/HTMLDataGridElement/DataGridColumns-basic-expected.txt: Removed.
+        * fast/dom/HTMLDataGridElement/DataGridColumns-basic.html-disabled: Removed.
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom-attributes-expected.txt: Removed.
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom-attributes.html-disabled: Removed.
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom-expected.txt: Removed.
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom.html-disabled: Removed.
+        * fast/dom/HTMLDataGridElement/DataGridDataSource-basic-expected.txt: Removed.
+        * fast/dom/HTMLDataGridElement/DataGridDataSource-basic.html-disabled: Removed.
+        - Tests disabled in r52512. DataGrid feature removed in r84991.
+
+        * http/tests/appcache/dynamic-entries-no-cache-expected.txt: Removed.
+        * http/tests/appcache/dynamic-entries-no-cache.html-disabled: Removed.
+        - Test disabled in r39816. AppCache dynamic entry feature removed in r95486.
+
+        * svg/W3C-SVG-1.1/resources/filters-comptran-01-f.svg-disabled: Removed.
+        - Unused. Same as LayoutTests/svg/W3C-SVG-1.1/filters-comptran-01-b.svg.
+
+        * animations/font-size-using-ems.html: Renamed from LayoutTests/animations/font-size-using-ems.html-disabled.
+        * compositing/objects/composited-object-alignment.html: Renamed from LayoutTests/compositing/objects/composited-object-alignment.html-disabled.
+        * compositing/tiling/huge-layer-resize.html: Renamed from LayoutTests/compositing/tiling/huge-layer-resize.html-disabled.
+        * compositing/tiling/huge-layer.html: Renamed from LayoutTests/compositing/tiling/huge-layer.html-disabled.
+        * css2.1/t1202-counter-10-b.html: Renamed from LayoutTests/css2.1/t1202-counter-10-b.html-disabled.
+        * css2.1/t1202-counters-10-b.html: Renamed from LayoutTests/css2.1/t1202-counters-10-b.html-disabled.
+        * css2.1/t1204-increment-00-c-o.html: Renamed from LayoutTests/css2.1/t1204-increment-00-c-o.html-disabled.
+        * css2.1/t1204-increment-01-c-o.html: Renamed from LayoutTests/css2.1/t1204-increment-01-c-o.html-disabled.
+        * css2.1/t1204-increment-02-c-o.html: Renamed from LayoutTests/css2.1/t1204-increment-02-c-o.html-disabled.
+        * css2.1/t1204-reset-00-c-o.html: Renamed from LayoutTests/css2.1/t1204-reset-00-c-o.html-disabled.
+        * css2.1/t1204-reset-01-c-o.html: Renamed from LayoutTests/css2.1/t1204-reset-01-c-o.html-disabled.
+        * css2.1/t1204-reset-02-c-o.html: Renamed from LayoutTests/css2.1/t1204-reset-02-c-o.html-disabled.
+        * dom/xhtml/level2/html/HTMLFrameElement09.xhtml: Renamed from LayoutTests/dom/xhtml/level2/html/HTMLFrameElement09.xhtml-disabled.
+        * dom/xhtml/level3/core/documentadoptnode22.xhtml: Renamed from LayoutTests/dom/xhtml/level3/core/documentadoptnode22.xhtml-disabled.
+        * dom/xhtml/level3/core/documentnormalizedocument06.xhtml: Renamed from LayoutTests/dom/xhtml/level3/core/documentnormalizedocument06.xhtml-disabled.
+        * dom/xhtml/level3/core/documentsetdocumenturi01.xhtml: Renamed from LayoutTests/dom/xhtml/level3/core/documentsetdocumenturi01.xhtml-disabled.
+        * dom/xhtml/level3/core/documentsetdocumenturi02.xhtml: Renamed from LayoutTests/dom/xhtml/level3/core/documentsetdocumenturi02.xhtml-disabled.
+        * dom/xhtml/level3/core/domimplementationregistry12.xhtml: Renamed from LayoutTests/dom/xhtml/level3/core/domimplementationregistry12.xhtml-disabled.
+        * dom/xhtml/level3/core/domimplementationregistry23.xhtml: Renamed from LayoutTests/dom/xhtml/level3/core/domimplementationregistry23.xhtml-disabled.
+        * dom/xhtml/level3/core/nodecomparedocumentposition14.xhtml: Renamed from LayoutTests/dom/xhtml/level3/core/nodecomparedocumentposition14.xhtml-disabled.
+        * dom/xhtml/level3/core/nodecomparedocumentposition15.xhtml: Renamed from LayoutTests/dom/xhtml/level3/core/nodecomparedocumentposition15.xhtml-disabled.
+        * dom/xhtml/level3/core/noderemovechild03.xhtml: Renamed from LayoutTests/dom/xhtml/level3/core/noderemovechild03.xhtml-disabled.
+        * dom/xhtml/level3/core/nodereplacechild06.xhtml: Renamed from LayoutTests/dom/xhtml/level3/core/nodereplacechild06.xhtml-disabled.
+        * dom/xhtml/level3/core/nodereplacechild07.xhtml: Renamed from LayoutTests/dom/xhtml/level3/core/nodereplacechild07.xhtml-disabled.
+        * dom/xhtml/level3/core/nodereplacechild08.xhtml: Renamed from LayoutTests/dom/xhtml/level3/core/nodereplacechild08.xhtml-disabled.
+        * editing/execCommand/create-list-1.html: Renamed from LayoutTests/editing/execCommand/create-list-1.html-disabled.
+        * editing/input/attributed-substring-from-range-lines.html: Renamed from LayoutTests/editing/input/attributed-substring-from-range-lines.html-disabled.
+        * editing/pasteboard/paste-empty-startcontainer.html: Renamed from LayoutTests/editing/pasteboard/paste-empty-startcontainer.html-disabled.
+        * editing/selection/inconsistent-in-removeChildNode.html: Renamed from LayoutTests/editing/selection/inconsistent-in-removeChildNode.html-disabled.
+        * editing/style/5091898.html: Renamed from LayoutTests/editing/style/5091898.html-disabled.
+        * fast/css/css2-system-color.html: Renamed from LayoutTests/fast/css/css2-system-color.html-disabled.
+        * fast/css/font-face-in-shadow-DOM.html: Renamed from LayoutTests/fast/css/font-face-in-shadow-DOM.html-disabled.
+        * fast/css/limited-vendor-prefix-behavior.html: Renamed from LayoutTests/fast/css/limited-vendor-prefix-behavior.html-disabled.
+        * fast/dom/Window/timeout-released-on-close.html: Renamed from LayoutTests/fast/dom/Window/timeout-released-on-close.html-disabled.
+        * fast/dom/Window/window-resize-nan.html: Renamed from LayoutTests/fast/dom/Window/window-resize-nan.html-disabled.
+        * fast/dom/gc-8.html: Renamed from LayoutTests/fast/dom/gc-8.html-disabled.
+        * fast/dynamic/crash-paint-no-documentElement-renderer.html: Renamed from LayoutTests/fast/dynamic/crash-paint-no-documentElement-renderer.html-disabled.
+        * fast/events/destroyed-atomic-string.html: Renamed from LayoutTests/fast/events/destroyed-atomic-string.html-disabled.
+        * fast/events/key-events-in-frame.html: Renamed from LayoutTests/fast/events/key-events-in-frame.html-disabled.
+        * fast/frames/iframe-scroll-page-up-down.html: Renamed from LayoutTests/fast/frames/iframe-scroll-page-up-down.html-disabled.
+        * fast/html/marquee-alternate.html: Renamed from LayoutTests/fast/html/marquee-alternate.html-disabled.
+        * fast/leaks/003.html: Renamed from LayoutTests/fast/leaks/003.html-disabled.
+        * fast/loader/api-test-go-to-current-back-forward-item.html: Renamed from LayoutTests/fast/loader/api-test-go-to-current-back-forward-item.html-disabled.
+        * fast/loader/api-test-new-window-data-load-base-url.html: Renamed from LayoutTests/fast/loader/api-test-new-window-data-load-base-url.html-disabled.
+        * fast/loader/form-events-back-forward.html: Renamed from LayoutTests/fast/loader/form-events-back-forward.html-disabled.
+        * fast/notifications/notifications-event-stop-propagation.html: Renamed from LayoutTests/fast/notifications/notifications-event-stop-propagation.html-disabled.
+        * fast/notifications/notifications-multi-events.html: Renamed from LayoutTests/fast/notifications/notifications-multi-events.html-disabled.
+        * fast/ruby/after-block-doesnt-crash.html: Renamed from LayoutTests/fast/ruby/after-block-doesnt-crash.html-disabled.
+        * fast/ruby/after-table-doesnt-crash.html: Renamed from LayoutTests/fast/ruby/after-table-doesnt-crash.html-disabled.
+        * fast/ruby/generated-after-counter-doesnt-crash.html: Renamed from LayoutTests/fast/ruby/generated-after-counter-doesnt-crash.html-disabled.
+        * fast/ruby/generated-before-and-after-counter-doesnt-crash.html: Renamed from LayoutTests/fast/ruby/generated-before-and-after-counter-doesnt-crash.html-disabled.
+        * fast/shadow-dom/copy-shadow-tree.html: Renamed from LayoutTests/fast/shadow-dom/copy-shadow-tree.html-disabled.
+        * fast/table/double-height-table-no-tbody.html: Renamed from LayoutTests/fast/table/double-height-table-no-tbody.html-disabled.
+        * fast/text/large-text-composed-char-dos.html: Renamed from LayoutTests/fast/text/large-text-composed-char-dos.html-disabled.
+        * http/tests/multipart/win-boundary-crash.html: Renamed from LayoutTests/http/tests/multipart/win-boundary-crash.html-disabled.
+        * http/tests/navigation/post-goback-repost-policy.html: Renamed from LayoutTests/http/tests/navigation/post-goback-repost-policy.html-disabled.
+        * http/tests/navigation/success200-frames-goback.html: Renamed from LayoutTests/http/tests/navigation/success200-frames-goback.html-disabled.
+        * http/tests/navigation/success200-frames-reload.html: Renamed from LayoutTests/http/tests/navigation/success200-frames-reload.html-disabled.
+        * http/tests/navigation/success200-subframeload-goback.html: Renamed from LayoutTests/http/tests/navigation/success200-subframeload-goback.html-disabled.
+        * java/lc3/ArrayMethods/object-001.html: Renamed from LayoutTests/java/lc3/ArrayMethods/object-001.html-disabled.
+        * java/lc3/forin/array-001.html: Renamed from LayoutTests/java/lc3/forin/array-001.html-disabled.
+        * jquery/effects.html: Renamed from LayoutTests/jquery/effects.html-disabled.
+        * js/garbage-collect-after-string-appends.html: Renamed from LayoutTests/js/garbage-collect-after-string-appends.html-disabled.
+        * js/kde/Date.html: Renamed from LayoutTests/js/kde/Date.html-disabled.
+        * js/resources/garbage-collect-after-string-appends.js: Renamed from LayoutTests/js/resources/garbage-collect-after-string-appends.js-disabled.
+        * js/string-concatenate-outofmemory.html: Renamed from LayoutTests/js/string-concatenate-outofmemory.html-disabled.
+        * media/video-canvas.html: Renamed from LayoutTests/media/video-canvas.html-disabled.
+        * platform/mac/plugins/pluginDocumentView-deallocated-dataSource.html: Renamed from LayoutTests/platform/mac/plugins/pluginDocumentView-deallocated-dataSource.html-disabled.
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A2.5_T1.html: Renamed from LayoutTests/sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A2.5_T1.html-disabled.
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A2.5_T1.html: Renamed from LayoutTests/sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A2.5_T1.html-disabled.
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html: Renamed from LayoutTests/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html-disabled.
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html: Renamed from LayoutTests/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html-disabled.
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html: Renamed from LayoutTests/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html-disabled.
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html: Renamed from LayoutTests/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html-disabled.
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html: Renamed from LayoutTests/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html-disabled.
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html: Renamed from LayoutTests/sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html-disabled.
+        * sputnik/Unicode/Unicode_218/S7.6_A1.1_T5.html: Renamed from LayoutTests/sputnik/Unicode/Unicode_218/S7.6_A1.1_T5.html-disabled.
+        * sputnik/Unicode/Unicode_218/S7.6_A3.1.html: Renamed from LayoutTests/sputnik/Unicode/Unicode_218/S7.6_A3.1.html-disabled.
+        * sputnik/Unicode/Unicode_218/S7.6_A3.2.html: Renamed from LayoutTests/sputnik/Unicode/Unicode_218/S7.6_A3.2.html-disabled.
+        * sputnik/Unicode/Unicode_218/S7.6_A5.2_T5.html: Renamed from LayoutTests/sputnik/Unicode/Unicode_218/S7.6_A5.2_T5.html-disabled.
+        * sputnik/Unicode/Unicode_320/S7.6_A1.1_T5.html: Renamed from LayoutTests/sputnik/Unicode/Unicode_320/S7.6_A1.1_T5.html-disabled.
+        * sputnik/Unicode/Unicode_320/S7.6_A5.2_T5.html: Renamed from LayoutTests/sputnik/Unicode/Unicode_320/S7.6_A5.2_T5.html-disabled.
+        * sputnik/Unicode/Unicode_410/S7.6_A1.1_T5.html: Renamed from LayoutTests/sputnik/Unicode/Unicode_410/S7.6_A1.1_T5.html-disabled.
+        * sputnik/Unicode/Unicode_410/S7.6_A5.2_T5.html: Renamed from LayoutTests/sputnik/Unicode/Unicode_410/S7.6_A5.2_T5.html-disabled.
+        * sputnik/Unicode/Unicode_500/S7.6_A1.1_T5.html: Renamed from LayoutTests/sputnik/Unicode/Unicode_500/S7.6_A1.1_T5.html-disabled.
+        * sputnik/Unicode/Unicode_500/S7.6_A5.2_T5.html: Renamed from LayoutTests/sputnik/Unicode/Unicode_500/S7.6_A5.2_T5.html-disabled.
+        * sputnik/Unicode/Unicode_510/S7.6_A1.1_T5.html: Renamed from LayoutTests/sputnik/Unicode/Unicode_510/S7.6_A1.1_T5.html-disabled.
+        * sputnik/Unicode/Unicode_510/S7.6_A5.2_T5.html: Renamed from LayoutTests/sputnik/Unicode/Unicode_510/S7.6_A5.2_T5.html-disabled.
+        * svg/batik/text/textBiDi.svg: Renamed from LayoutTests/svg/batik/text/textBiDi.svg-disabled.
+        * svg/custom/filter-source-alpha.svg: Renamed from LayoutTests/svg/custom/filter-source-alpha.svg-disabled.
+        * svg/custom/font-face-fallback.svg: Renamed from LayoutTests/svg/custom/font-face-fallback.svg-disabled.
+        * svg/custom/js-font-test.svg: Renamed from LayoutTests/svg/custom/js-font-test.svg-disabled.
+        * svg/zoom/page/zoom-svg-through-object-with-text.xhtml: Renamed from LayoutTests/svg/zoom/page/zoom-svg-through-object-with-text.xhtml-disabled.
+        - Renamed disabled tests now that they're skipped in TestExpectations.
+
 2017-01-28  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Need some limit on Async Call Stacks for async loops (rAF loops)
