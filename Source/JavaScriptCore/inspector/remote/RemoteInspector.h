@@ -102,6 +102,9 @@ private:
     void pushListingsNow();
     void pushListingsSoon();
 
+    void updateTargetListing(unsigned targetIdentifier);
+    void updateTargetListing(const RemoteControllableTarget&);
+
     void updateHasActiveDebugSession();
     void updateClientCapabilities();
 

@@ -319,11 +319,11 @@ void RemoteInspector::setupFailed(unsigned targetIdentifier)
 
     m_targetConnectionMap.remove(targetIdentifier);
 
-    updateHasActiveDebugSession();
-
     if (targetIdentifier == m_automaticInspectionCandidateTargetIdentifier)
         m_automaticInspectionPaused = false;
 
+    updateHasActiveDebugSession();
+    updateTargetListing(targetIdentifier);
     pushListingsSoon();
 }
 
@@ -615,6 +615,26 @@ void RemoteInspector::pushListingsSoon()
     });
 }
 
+#pragma mark - Update Listing with lock
+
+void RemoteInspector::updateTargetListing(unsigned targetIdentifier)
+{
+    auto target = m_targetMap.get(targetIdentifier);
+    if (!target)
+        return;
+
+    updateTargetListing(*target);
+}
+
+void RemoteInspector::updateTargetListing(const RemoteControllableTarget& target)
+{
+    RetainPtr<NSDictionary> targetListing = listingForTarget(target);
+    if (!targetListing)
+        return;
+
+    m_targetListingMap.set(target.targetIdentifier(), targetListing);
+}
+
 #pragma mark - Active Debugger Sessions
 
 void RemoteInspector::updateHasActiveDebugSession()
@@ -628,7 +648,6 @@ void RemoteInspector::updateHasActiveDebugSession()
     // FIXME: Expose some way to access this state in an embedder.
     // Legacy iOS WebKit 1 had a notification. This will need to be smarter with WebKit2.
 }
-
 
 #pragma mark - Received XPC Messages
 
@@ -666,17 +685,17 @@ void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
             return;
         }
         m_targetConnectionMap.set(targetIdentifier, WTFMove(connectionToTarget));
-        updateHasActiveDebugSession();
     } else if (is<RemoteAutomationTarget>(target)) {
         if (!connectionToTarget->setup()) {
             connectionToTarget->close();
             return;
         }
         m_targetConnectionMap.set(targetIdentifier, WTFMove(connectionToTarget));
-        updateHasActiveDebugSession();
     } else
         ASSERT_NOT_REACHED();
 
+    updateHasActiveDebugSession();
+    updateTargetListing(*target);
     pushListingsSoon();
 }
 
@@ -716,7 +735,7 @@ void RemoteInspector::receivedDidCloseMessage(NSDictionary *userInfo)
     m_targetConnectionMap.remove(targetIdentifier);
 
     updateHasActiveDebugSession();
-
+    updateTargetListing(targetIdentifier);
     pushListingsSoon();
 }
 
@@ -792,10 +811,13 @@ void RemoteInspector::receivedConnectionDiedMessage(NSDictionary *userInfo)
         return;
 
     auto connection = it->value;
+    unsigned targetIdentifier = connection->targetIdentifier().value_or(0);
     connection->close();
     m_targetConnectionMap.remove(it);
 
     updateHasActiveDebugSession();
+    updateTargetListing(targetIdentifier);
+    pushListingsSoon();
 }
 
 void RemoteInspector::receivedAutomaticInspectionConfigurationMessage(NSDictionary *userInfo)

@@ -1,3 +1,21 @@
+2017-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remote Inspector: Listing should be updated when a target gains or loses a debugger session
+        https://bugs.webkit.org/show_bug.cgi?id=167449
+
+        Reviewed by Brian Burg.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::setupFailed):
+        (Inspector::RemoteInspector::updateTargetListing):
+        (Inspector::RemoteInspector::receivedSetupMessage):
+        (Inspector::RemoteInspector::receivedDidCloseMessage):
+        (Inspector::RemoteInspector::receivedConnectionDiedMessage):
+        Whenever we add/remove a connection we should update the listing properties
+        for that target that corresponded to that connection. In this way group
+        updating active sessions, the target, and pushing listing together.
+
 2017-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Lift template escape sequence restrictions in tagged templates
