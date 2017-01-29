@@ -119,7 +119,11 @@ CompositingRunLoop::CompositingRunLoop(std::function<void ()>&& updateFunction)
 
 CompositingRunLoop::~CompositingRunLoop()
 {
-    WorkQueuePool::singleton().invalidate(this);
+    ASSERT(isMainThread());
+    // Make sure the WorkQueue is deleted after the CompositingRunLoop, because m_updateTimer has a reference
+    // of the WorkQueue run loop. Passing this is not a problem because the pointer will only be used as a
+    // HashMap key by WorkQueuePool.
+    RunLoop::main().dispatch([context = this] { WorkQueuePool::singleton().invalidate(context); });
 }
 
 void CompositingRunLoop::performTask(Function<void ()>&& function)
