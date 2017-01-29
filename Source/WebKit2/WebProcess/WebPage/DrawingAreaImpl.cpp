@@ -152,10 +152,11 @@ void DrawingAreaImpl::forceRepaint()
         return;
     }
 
-    setNeedsDisplay();
-    m_webPage.layoutIfNeeded();
     m_isWaitingForDidUpdate = false;
-    display();
+    if (m_isPaintingEnabled) {
+        m_dirtyRegion = m_webPage.bounds();
+        display();
+    }
 }
 
 void DrawingAreaImpl::mainFrameContentSizeChanged(const WebCore::IntSize& newSize)
