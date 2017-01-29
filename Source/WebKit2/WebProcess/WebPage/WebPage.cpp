@@ -237,10 +237,6 @@
 #include <wtf/RefCountedLeakCounter.h>
 #endif
 
-#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-#include "LayerTreeHost.h"
-#endif
-
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 #include "CoordinatedLayerTreeHostMessages.h"
 #endif
@@ -1429,8 +1425,7 @@ void WebPage::sendViewportAttributesChanged(const ViewportArguments& viewportArg
     setFixedLayoutSize(roundedIntSize(attr.layoutSize));
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    if (m_drawingArea->layerTreeHost())
-        m_drawingArea->layerTreeHost()->didChangeViewportProperties(attr);
+    m_drawingArea->didChangeViewportAttributes(WTFMove(attr));
 #else
     send(Messages::WebPageProxy::DidChangeViewportProperties(attr));
 #endif
@@ -1588,8 +1583,7 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
         pluginView->pageScaleFactorDidChange();
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    if (m_drawingArea->layerTreeHost())
-        m_drawingArea->layerTreeHost()->deviceOrPageScaleFactorChanged();
+    m_drawingArea->deviceOrPageScaleFactorChanged();
 #endif
 
     send(Messages::WebPageProxy::PageScaleFactorDidChange(scale));
@@ -1666,8 +1660,7 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
     }
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    if (m_drawingArea->layerTreeHost())
-        m_drawingArea->layerTreeHost()->deviceOrPageScaleFactorChanged();
+    m_drawingArea->deviceOrPageScaleFactorChanged();
 #endif
 }
 
@@ -1751,8 +1744,8 @@ void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArgum
     if (view && view->useFixedLayout())
         sendViewportAttributesChanged(viewportArguments);
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    else if (auto* layerTreeHost = m_drawingArea->layerTreeHost())
-        layerTreeHost->didChangeViewportProperties(ViewportAttributes());
+    else
+        m_drawingArea->didChangeViewportAttributes(ViewportAttributes());
 #endif
 #endif
 

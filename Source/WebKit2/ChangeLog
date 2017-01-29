@@ -1,3 +1,36 @@
+2017-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Coordinated Graphics] WebPage shouldn't use the layerTreeHost directly
+        https://bugs.webkit.org/show_bug.cgi?id=167494
+
+        Reviewed by Michael Catanzaro.
+
+        In Coordinated Graphics we have a couple of methods that the WebPage uses directly from the layer tree host,
+        instead of using the drawing area interface. This patch adds DrawingArea::didChangeViewportAttributes and
+        DrawingArea::deviceOrPageScaleFactorChanged and renames LayerTreeHost::didChangeViewportProperties as
+        LayerTreeHost::didChangeViewportAttributes for consistency.
+
+        * Shared/CoordinatedGraphics/SimpleViewportController.cpp:
+        (WebKit::SimpleViewportController::didChangeViewportAttributes): Receive an rvalue reference to avoid copies.
+        * Shared/CoordinatedGraphics/SimpleViewportController.h:
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::didChangeViewportAttributes): Forward it to the layer tree host if any.
+        (WebKit::AcceleratedDrawingArea::deviceOrPageScaleFactorChanged): Ditto.
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::didChangeViewportAttributes): Renamed and updated to pass an rvalue reference.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::didChangeViewportProperties): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::didChangeViewportAttributes): Renamed and updated to pass an rvalue reference.
+        (WebKit::LayerTreeHost::didChangeViewportProperties): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendViewportAttributesChanged): Use the drawing area.
+        (WebKit::WebPage::scalePage): Ditto
+        (WebKit::WebPage::setDeviceScaleFactor): Ditto.
+        (WebKit::WebPage::viewportPropertiesDidChange): Ditto.
+
 2017-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Threaded Compositor] Crash when detaching the CoordinatedGraphicsScene

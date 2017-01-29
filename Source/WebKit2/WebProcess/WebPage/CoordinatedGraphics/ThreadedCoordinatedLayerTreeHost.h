@@ -59,7 +59,7 @@ private:
     void pageBackgroundTransparencyChanged() override;
 
     void contentsSizeChanged(const WebCore::IntSize&) override;
-    void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
+    void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override;
 
     void invalidate() override;
 

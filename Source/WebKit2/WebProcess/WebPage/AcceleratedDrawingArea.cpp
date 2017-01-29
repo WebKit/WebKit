@@ -371,6 +371,22 @@ void AcceleratedDrawingArea::destroyNativeSurfaceHandleForCompositing(bool& hand
 }
 #endif
 
+#if USE(COORDINATED_GRAPHICS_THREADED)
+void AcceleratedDrawingArea::didChangeViewportAttributes(ViewportAttributes&& attrs)
+{
+    if (m_layerTreeHost)
+        m_layerTreeHost->didChangeViewportAttributes(WTFMove(attrs));
+}
+#endif
+
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+void AcceleratedDrawingArea::deviceOrPageScaleFactorChanged()
+{
+    if (m_layerTreeHost)
+        m_layerTreeHost->deviceOrPageScaleFactorChanged();
+}
+#endif
+
 void AcceleratedDrawingArea::activityStateDidChange(ActivityState::Flags changed, bool, const Vector<uint64_t>&)
 {
     if (changed & ActivityState::IsVisible) {

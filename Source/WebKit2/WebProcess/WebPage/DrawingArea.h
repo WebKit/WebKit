@@ -52,6 +52,7 @@ class FrameView;
 class GraphicsLayer;
 class GraphicsLayerFactory;
 class MachSendRight;
+struct ViewportAttributes;
 }
 
 namespace WebKit {
@@ -139,6 +140,14 @@ public:
 #endif
 
     virtual void layerHostDidFlushLayers() { };
+
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    virtual void didChangeViewportAttributes(WebCore::ViewportAttributes&&) = 0;
+#endif
+
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+    virtual void deviceOrPageScaleFactorChanged() = 0;
+#endif
 
 protected:
     DrawingArea(DrawingAreaType, WebPage&);

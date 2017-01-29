@@ -139,9 +139,9 @@ void ThreadedCoordinatedLayerTreeHost::sizeDidChange(const IntSize& size)
     didChangeViewport();
 }
 
-void ThreadedCoordinatedLayerTreeHost::didChangeViewportProperties(const ViewportAttributes& attr)
+void ThreadedCoordinatedLayerTreeHost::didChangeViewportAttributes(ViewportAttributes&& attr)
 {
-    m_viewportController.didChangeViewportAttributes(attr);
+    m_viewportController.didChangeViewportAttributes(WTFMove(attr));
     didChangeViewport();
 }
 
