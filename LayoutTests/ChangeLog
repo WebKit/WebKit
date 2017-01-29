@@ -1,3 +1,11 @@
+2017-01-29  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Gardening on 29th Jan.
+
+        Unreviewed EFL gardening. Update flaky tests and crash tests.
+
+        * platform/efl/TestExpectations:
+
 2017-01-28  David Kilzer  <ddkilzer@apple.com>
 
         Migrate 97 *-disabled tests to use TestExpectations
