@@ -1,4 +1,5 @@
 CONSOLE MESSAGE: Refused to load http://localhost:8000/preload/resources/square.png because it does not appear in the img-src directive of the Content Security Policy.
+CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
 
 
 --------
@@ -19,6 +20,7 @@ PASS internals.isPreloaded('http://localhost:8000/preload/resources/square.png')
 PASS internals.isPreloaded('http://localhost:53/preload/resources/dummy.js'); is true
 PASS internals.isPreloaded('#foobar'); is false
 PASS internals.isPreloaded('../resources/Ahem.ttf'); is false
+PASS internals.isPreloaded('../resources/dummy.js?invalid'); is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

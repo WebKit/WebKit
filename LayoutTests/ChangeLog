@@ -1,3 +1,14 @@
+2017-01-29  Yoav Weiss  <yoav@yoav.ws>
+
+        Add invalid value tests to Link header handling.
+        https://bugs.webkit.org/show_bug.cgi?id=167366
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/preload/download_resources_from_invalid_headers-expected.txt:
+        * http/tests/preload/resources/download_resources_from_header.php:
+        * http/tests/preload/resources/invalid_resources_from_header.php:
+
 2017-01-29  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Gardening on 29th Jan.

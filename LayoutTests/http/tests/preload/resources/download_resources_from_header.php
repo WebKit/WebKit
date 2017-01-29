@@ -1,6 +1,6 @@
 <?php
 header("Link: <../resources/dummy.js>; rel=preload; as=script", false);
-header("Link:<../resources/dummy.css>; rel=preload; as=style", false);
+header("LiNk:<../resources/dummy.css>; rel=preload; as=style", false);
 header("Link: <../resources/square.png>;rel=preload;as=image", false);
 header("Link: <../resources/Ahem.ttf>; rel=preload; as=font; crossorigin", false);
 header("Link: <../resources/test.mp4>; rel=preload; as=media", false);

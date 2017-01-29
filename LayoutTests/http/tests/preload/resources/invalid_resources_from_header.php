@@ -18,6 +18,9 @@ header("Link: <; rel=preload; as=style", false);
 header("Link: ; rel=preload; as=style", false);
 header("Link <../resources/Ahem.ttf>; rel=preload; as=font; crossorigin", false);
 header("Link: <   ../resources/dummy.js?foobar >; rel=preload; as='", false);
+header("Link: <<../resources/dummy.js?invalid>>; rel=preload; as=script", false);
+header("Link: <../resources/dummy.js?invalid>>; rel=preload; as=script", false);
+header("Link: <<../resources/dummy.js?invalid>; rel=preload; as=script", false);
 ?>
 <!DOCTYPE html>
 <script src="/js-test-resources/js-test.js"></script>
@@ -39,4 +42,5 @@ header("Link: <   ../resources/dummy.js?foobar >; rel=preload; as='", false);
     shouldBeTrue("internals.isPreloaded('http://localhost:53/preload/resources/dummy.js');");
     shouldBeFalse("internals.isPreloaded('#foobar');");
     shouldBeFalse("internals.isPreloaded('../resources/Ahem.ttf');");
+    shouldBeFalse("internals.isPreloaded('../resources/dummy.js?invalid');");
 </script>
