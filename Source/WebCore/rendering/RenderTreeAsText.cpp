@@ -504,12 +504,9 @@ static void writeSimpleLine(TextStream& ts, const RenderText& renderText, const 
         y -= floorToInt(downcast<RenderTableCell>(*renderText.containingBlock()).intrinsicPaddingBefore());
 
     ts << "text run at (" << x << "," << y << ") width " << logicalWidth;
-    if (run.hasHyphen()) {
-        ts << ": " << quoteAndEscapeNonPrintables(run.text().substring(0, run.text().length() - 1));
+    ts << ": " << quoteAndEscapeNonPrintables(run.text());
+    if (run.hasHyphen())
         ts << " + hyphen string " << quoteAndEscapeNonPrintables(renderText.style().hyphenString().string());
-    } else
-        ts << ": " << quoteAndEscapeNonPrintables(run.text());
-
     ts << "\n";
 }
 

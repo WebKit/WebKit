@@ -118,8 +118,11 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
         if (paintRect.y() > visualOverflowRect.maxY() || paintRect.maxY() < visualOverflowRect.y())
             continue;
 
+        String textWithHyphen;
+        if (run.hasHyphen())
+            textWithHyphen = run.textWithHyphen();
         // x position indicates the line offset from the rootbox. It's always 0 in case of simple line layout.
-        TextRun textRun(run.text(), 0, run.expansion(), run.expansionBehavior());
+        TextRun textRun(run.hasHyphen() ? textWithHyphen : run.text(), 0, run.expansion(), run.expansionBehavior());
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin = FloatPoint(rect.x() + paintOffset.x(), roundToDevicePixel(run.baselinePosition() + paintOffset.y(), deviceScaleFactor));
         textPainter.paintText(textRun, textRun.length(), rect, textOrigin);

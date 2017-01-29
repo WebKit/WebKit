@@ -64,6 +64,7 @@ public:
         ExpansionBehavior expansionBehavior() const;
         int baselinePosition() const;
         StringView text() const;
+        String textWithHyphen() const;
         bool isEndOfLine() const;
         bool hasHyphen() const { return m_iterator.simpleRun().hasHyphen; }
 
@@ -74,7 +75,6 @@ public:
         void constructStringForHyphenIfNeeded();
 
         const Iterator& m_iterator;
-        std::optional<String> m_textWithHyphen;
     };
 
     class Iterator {

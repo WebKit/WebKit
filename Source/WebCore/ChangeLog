@@ -1,3 +1,28 @@
+2017-01-29  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: PerformanceTests/Layout/simple-line-layout-innertext.html regressed at r211108
+        https://bugs.webkit.org/show_bug.cgi?id=167562
+
+        Reviewed by Antti Koivisto.
+
+        Apparently RunResolver::Run::constructStringForHyphenIfNeeded() is in a superhot codepath.
+        The Run should not have any additional members anyway, so let's construct the hyphenated
+        string on demand.
+        Progression on simple-line-layout-innertext.html is from ~34runs/sec back to ~50runs/sec.
+
+        Covered by existing text.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeSimpleLine):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::Run::Run):
+        (WebCore::SimpleLineLayout::RunResolver::Run::textWithHyphen):
+        (WebCore::SimpleLineLayout::RunResolver::Run::text):
+        (WebCore::SimpleLineLayout::RunResolver::Run::constructStringForHyphenIfNeeded): Deleted.
+        * rendering/SimpleLineLayoutResolver.h:
+
 2017-01-28  Tim Horton  <timothy_horton@apple.com>
 
         Don't flash a tap highlight for the entirety of an editable WKWebView
