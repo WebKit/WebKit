@@ -1,5 +1,14 @@
 2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ debug build after r211365.
+
+        Remove invalid assert.
+
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::exitAcceleratedCompositingModeNow):
+
+2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Do not release OpenGL resource immediately when leaving accelerated compositing mode
         https://bugs.webkit.org/show_bug.cgi?id=167544
 

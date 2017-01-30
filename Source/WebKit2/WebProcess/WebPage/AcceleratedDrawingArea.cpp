@@ -372,7 +372,6 @@ void AcceleratedDrawingArea::exitAcceleratedCompositingModeSoon()
 
 void AcceleratedDrawingArea::exitAcceleratedCompositingModeNow()
 {
-    ASSERT(!m_alwaysUseCompositing);
     ASSERT(!m_layerTreeStateIsFrozen);
 
     m_exitCompositingTimer.stop();
