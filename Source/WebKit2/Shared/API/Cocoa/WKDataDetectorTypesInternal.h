@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import "WKDataDetectorTypes.h"
 
 #if WK_API_ENABLED
 
-#import <Foundation/Foundation.h>
-#import <JavaScriptCore/JavaScriptCore.h>
-#import <WebKit/WKDataDetectorTypes.h>
+#if PLATFORM(IOS)
 
-@class WKWebProcessPlugInFrame;
+#import <WebCore/DataDetection.h>
 
-WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
-@interface WKWebProcessPlugInRangeHandle : NSObject
+static inline WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint64_t types)
+{
+    if (static_cast<WKDataDetectorTypes>(types) == WKDataDetectorTypeNone)
+        return WebCore::DataDetectorTypeNone;
+    if (static_cast<WKDataDetectorTypes>(types) == WKDataDetectorTypeAll)
+        return WebCore::DataDetectorTypeAll;
 
-+ (WKWebProcessPlugInRangeHandle *)rangeHandleWithJSValue:(JSValue *)value inContext:(JSContext *)context;
+    uint32_t value = WebCore::DataDetectorTypeNone;
+    if (types & WKDataDetectorTypePhoneNumber)
+        value |= WebCore::DataDetectorTypePhoneNumber;
+    if (types & WKDataDetectorTypeLink)
+        value |= WebCore::DataDetectorTypeLink;
+    if (types & WKDataDetectorTypeAddress)
+        value |= WebCore::DataDetectorTypeAddress;
+    if (types & WKDataDetectorTypeCalendarEvent)
+        value |= WebCore::DataDetectorTypeCalendarEvent;
+    if (types & WKDataDetectorTypeTrackingNumber)
+        value |= WebCore::DataDetectorTypeTrackingNumber;
+    if (types & WKDataDetectorTypeFlightNumber)
+        value |= WebCore::DataDetectorTypeFlightNumber;
+    if (types & WKDataDetectorTypeLookupSuggestion)
+        value |= WebCore::DataDetectorTypeLookupSuggestion;
 
-@property (nonatomic, readonly) WKWebProcessPlugInFrame *frame;
-@property (nonatomic, readonly, copy) NSString *text WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+    return static_cast<WebCore::DataDetectorTypes>(value);
+}
 
-#if TARGET_OS_IPHONE
-- (NSArray *)detectDataWithTypes:(WKDataDetectorTypes)types context:(NSDictionary *)context WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #endif
 
-@end
-
-#endif // WK_API_ENABLED
+#endif

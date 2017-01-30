@@ -1,3 +1,30 @@
+2017-01-29  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Expose WebCore::DataDetection::detectContentInRange WKWebProcessPlugInRangeHandle
+        https://bugs.webkit.org/show_bug.cgi?id=167565
+
+        Reviewed by Sam Weinig.
+
+        Test: TestWebKitAPI/Tests/WebKit2Cocoa/BundleRangeHandle.mm
+
+        * Shared/API/Cocoa/WKDataDetectorTypes.h: Added. Moved the enum definition from
+          WKWebViewConfiguration.h to here.
+        * Shared/API/Cocoa/WKDataDetectorTypesInternal.h: Added.
+        (fromWKDataDetectorTypes): Moved from WKWebView.mm.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (fromWKDataDetectorTypes): Moved to WKDataDetectorTypesInternal.h.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h: Moved WKDataDetectorTypes definition out
+          to WKDataDetectorTypes.h.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added references to new files.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.mm:
+        (-[WKWebProcessPlugInRangeHandle detectDataWithTypes:context:]): Added. Calls
+          DataDetection::detectContentInRange.
+
 2017-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Coordinated Graphics] WebPage shouldn't use the layerTreeHost directly

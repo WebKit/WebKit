@@ -28,6 +28,7 @@
 #if WK_API_ENABLED
 
 #import <Foundation/Foundation.h>
+#import <WebKit/WKDataDetectorTypes.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -50,30 +51,6 @@ typedef NS_ENUM(NSInteger, WKSelectionGranularity) {
     WKSelectionGranularityDynamic,
     WKSelectionGranularityCharacter,
 } WK_API_AVAILABLE(ios(8.0));
-
-/*! @enum WKDataDetectorTypes
- @abstract The type of data detected.
- @constant WKDataDetectorTypeNone No detection is performed.
- @constant WKDataDetectorTypePhoneNumber Phone numbers are detected and turned into links.
- @constant WKDataDetectorTypeLink URLs in text are detected and turned into links.
- @constant WKDataDetectorTypeAddress Addresses are detected and turned into links.
- @constant WKDataDetectorTypeCalendarEvent Dates and times that are in the future are detected and turned into links.
- @constant WKDataDetectorTypeAll All of the above data types are turned into links when detected. Choosing this value will
- automatically include any new detection type that is added.
- */
-typedef NS_OPTIONS(NSUInteger, WKDataDetectorTypes) {
-    WKDataDetectorTypeNone = 0,
-    WKDataDetectorTypePhoneNumber = 1 << 0,
-    WKDataDetectorTypeLink = 1 << 1,
-    WKDataDetectorTypeAddress = 1 << 2,
-    WKDataDetectorTypeCalendarEvent = 1 << 3,
-    WKDataDetectorTypeTrackingNumber = 1 << 4,
-    WKDataDetectorTypeFlightNumber = 1 << 5,
-    WKDataDetectorTypeLookupSuggestion = 1 << 6,
-    WKDataDetectorTypeAll = NSUIntegerMax,
-
-    WKDataDetectorTypeSpotlightSuggestion WK_API_DEPRECATED_WITH_REPLACEMENT("WKDataDetectorTypeLookupSuggestion", ios(10.0, 10.0)) = WKDataDetectorTypeLookupSuggestion,
-} WK_API_AVAILABLE(ios(10.0));
 
 #else
 

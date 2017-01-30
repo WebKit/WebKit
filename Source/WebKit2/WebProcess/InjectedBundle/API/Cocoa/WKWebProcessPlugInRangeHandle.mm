@@ -29,7 +29,10 @@
 #if WK_API_ENABLED
 
 #import "InjectedBundleNodeHandle.h"
+#import "WKDataDetectorTypesInternal.h"
 #import "WKWebProcessPlugInFrameInternal.h"
+#import <WebCore/DataDetection.h>
+#import <WebCore/Range.h>
 
 using namespace WebKit;
 
@@ -63,6 +66,14 @@ using namespace WebKit;
 {
     return _rangeHandle->text();
 }
+
+#if TARGET_OS_IPHONE
+- (NSArray *)detectDataWithTypes:(WKDataDetectorTypes)types context:(NSDictionary *)context WK_API_AVAILABLE(ios(WK_IOS_TBA))
+{
+    RefPtr<WebCore::Range> coreRange = _rangeHandle->coreRange();
+    return WebCore::DataDetection::detectContentInRange(coreRange, fromWKDataDetectorTypes(types), context);
+}
+#endif
 
 - (InjectedBundleRangeHandle&)_rangeHandle
 {
