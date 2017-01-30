@@ -1066,6 +1066,11 @@ static NSCellStateValue kit(TriState state)
 #if !PLATFORM(IOS)
     if (promisedDragTIFFDataSource)
         promisedDragTIFFDataSource->removeClient(promisedDataClient());
+
+    if (flagsChangedEventMonitor) {
+        [NSEvent removeMonitor:flagsChangedEventMonitor];
+        flagsChangedEventMonitor = nil;
+    }
 #endif
 
     [super dealloc];
@@ -3504,8 +3509,9 @@ WEBCORE_COMMAND(toggleUnderline)
 
 #if !PLATFORM(IOS)
         if (!_private->flagsChangedEventMonitor) {
+            __block WebHTMLView *weakSelf = self;
             _private->flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskFlagsChanged handler:^(NSEvent *flagsChangedEvent) {
-                [self _postFakeMouseMovedEventForFlagsChangedEvent:flagsChangedEvent];
+                [weakSelf _postFakeMouseMovedEventForFlagsChangedEvent:flagsChangedEvent];
                 return flagsChangedEvent;
             }];
         }

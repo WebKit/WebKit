@@ -1,3 +1,18 @@
+2017-01-30  Andreas Kling  <akling@apple.com>
+
+        [macOS] WebHTMLView has an internal retain cycle with its flagsChangedEventMonitor.
+        <https://webkit.org/b/167580>
+
+        Reviewed by Antti Koivisto.
+
+        Avoid the implicit strong capture of self by keeping it in a __block variable.
+        Also add code to dealloc to unregister the event monitor, since it will otherwise leak.
+        This fixes huge WebHTMLView leaks seen on the leaks bot.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate dealloc]):
+        (-[WebHTMLView viewDidMoveToWindow]):
+
 2017-01-29  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Add a WebPreference to enable saving QuickLook documents in WebKitLegacy
