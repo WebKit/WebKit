@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 1: Viewport argument value "612;" for key "width" was truncated to its numeric prefix. Note that ';' is not a separator in viewport values. The list should be comma-separated.
+CONSOLE MESSAGE: line 38: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://127.0.0.1:8000/quicklook/top-navigation-blocked.html' from frame with URL 'http://127.0.0.1:8000/quicklook/resources/top-navigation-blocked.docx'. The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Run test

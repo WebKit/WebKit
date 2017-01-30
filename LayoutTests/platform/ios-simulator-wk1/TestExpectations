@@ -2,20 +2,6 @@
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
-# FIXME: uiController.singleTapAtPoint() is not implemented in DumpRenderTree. And
-# we cannot write these tests in terms of EventSender without identifying which
-# test tool is being used to run the test, which is not straightforward at the time
-# of writing (10/07/2016).
-http/tests/quicklook/at-import-stylesheet-blocked.html
-http/tests/quicklook/base-url-blocked.html
-http/tests/quicklook/cross-origin-iframe-blocked.html
-http/tests/quicklook/document-domain-is-empty-string.html
-http/tests/quicklook/external-stylesheet-blocked.html
-http/tests/quicklook/hide-referer-on-navigation.html
-http/tests/quicklook/resources/fail.html
-http/tests/quicklook/submit-form-blocked.html
-http/tests/quicklook/top-navigation-blocked.html
-
 # Selectively re-enable viewport tests that work
 fast/viewport/ios/ipad/width-is-device-width.html [ Pass ]
 

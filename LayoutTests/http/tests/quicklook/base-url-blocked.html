@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="resources/tap-at-point-and-notify-done.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/tap-run-test-hyperlink.js"></script>
 <script>
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
 </script>
 </head>
 <body>
 <p>This test verifies that a base URL is blocked when using QuickLook to preview a Microsoft Word document. This test PASSED only if a security error is logged to the console.</p>
-<iframe src="resources/base-url-blocked.docx" onload="tapAtPointAndNotifyDone(this.offsetLeft + 5, this.offsetTop + 5)"></iframe>
+<iframe src="resources/base-url-blocked.docx" onload="runTest(this)"></iframe>
 </body>
 </html>

@@ -1,3 +1,33 @@
+2017-01-30  Daniel Bates  <dabates@apple.com>
+
+        [QuickLook] Make HTTP QuickLook tests work in Apple Internal DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=167483
+
+        Reviewed by Andy Estes.
+
+        Write QuickLook tests that tap a hyperlink in terms of UIHelper (in LayoutTests/resources/ui-helper.js)
+        so that we can run these tests in an Apple Internal build of DumpRenderTree.
+
+        * http/tests/quicklook/at-import-stylesheet-blocked.html: Write in terms of UIHelper.
+        * http/tests/quicklook/base-url-blocked.html: Ditto.
+        * http/tests/quicklook/cross-origin-iframe-blocked.html: Ditto.
+        * http/tests/quicklook/document-domain-is-empty-string.html: Ditto.
+        * http/tests/quicklook/external-stylesheet-blocked.html: Ditto.
+        * http/tests/quicklook/hide-referer-on-navigation.html: Ditto.
+        * http/tests/quicklook/resources/tap-at-point-and-notify-done.js: Removed.
+        * http/tests/quicklook/resources/tap-run-test-hyperlink.js: Added.
+        (runTest):
+        * http/tests/quicklook/submit-form-blocked.html: Ditto.
+        * http/tests/quicklook/top-navigation-blocked.html: Ditto.
+        * platform/ios-simulator-wk1/TestExpectations: Unskip QuickLook tests as we can now run
+        them in an Apple Internal build of DumpRenderTree. Note that these test are listed in
+        file LayoutTests/platform/ios-simulator/TestExpectations so that they are skipped in
+        WebKit for iOS Simulator built with the public iOS SDK as we need to fix <https://bugs.webkit.org/show_bug.cgi?id=141906>.
+        * platform/ios-simulator-wk1/http/tests/quicklook/top-navigation-blocked-expected.txt: Added.
+        For some reason the console message "Unsafe JavaScript attempt to initiate navigation" includes
+        a line number in DumpRenderTree (why?). This line number is not emitted when the test is run
+        in WebKitTestRunner. Add platform-specific result for now.
+
 2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Skip more tests timing out in GTK+ bots.
