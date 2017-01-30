@@ -67,6 +67,7 @@ namespace WebCore {
     macro(blocked) \
     macro(blur) \
     macro(boundary) \
+    macro(bufferedAmountLowThreshold) \
     macro(cached) \
     macro(cancel) \
     macro(canplay) \

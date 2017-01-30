@@ -66,6 +66,7 @@ public:
     void doCreateOffer();
     void doCreateAnswer();
     void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&);
+    std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String&, const RTCDataChannelInit&);
 
     void storeIceCandidate(std::unique_ptr<webrtc::IceCandidateInterface>&& candidate) { m_pendingCandidates.append(WTFMove(candidate)); }
     void addPendingIceCandidates();

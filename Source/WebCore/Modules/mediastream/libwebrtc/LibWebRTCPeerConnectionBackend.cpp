@@ -29,6 +29,7 @@
 
 #include "Document.h"
 #include "IceCandidate.h"
+#include "LibWebRTCDataChannelHandler.h"
 #include "LibWebRTCMediaEndpoint.h"
 #include "MediaEndpointConfiguration.h"
 #include "Page.h"
@@ -179,10 +180,7 @@ Ref<RTCRtpReceiver> LibWebRTCPeerConnectionBackend::createReceiver(const String&
 
 std::unique_ptr<RTCDataChannelHandler> LibWebRTCPeerConnectionBackend::createDataChannelHandler(const String& label, const RTCDataChannelInit& options)
 {
-    UNUSED_PARAM(label);
-    UNUSED_PARAM(options);
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    return m_endpoint->createDataChannel(label, options);
 }
 
 } // namespace WebCore

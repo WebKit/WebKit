@@ -28,6 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include "EventNames.h"
+#include "LibWebRTCDataChannelHandler.h"
 #include "LibWebRTCPeerConnectionBackend.h"
 #include "LibWebRTCProvider.h"
 #include "LibWebRTCUtils.h"
@@ -285,7 +286,50 @@ void LibWebRTCMediaEndpoint::OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamI
 
 void LibWebRTCMediaEndpoint::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface>)
 {
-    ASSERT_NOT_REACHED();
+    notImplemented();
+}
+
+std::unique_ptr<RTCDataChannelHandler> LibWebRTCMediaEndpoint::createDataChannel(const String& label, const RTCDataChannelInit& options)
+{
+    webrtc::DataChannelInit init;
+    init.ordered = options.ordered;
+    init.maxRetransmitTime = options.maxRetransmitTime;
+    init.maxRetransmits = options.maxRetransmits;
+    init.protocol = options.protocol.utf8().data();
+    init.negotiated = options.negotiated;
+    init.id = options.id;
+
+    return std::make_unique<LibWebRTCDataChannelHandler>(m_backend->CreateDataChannel(label.utf8().data(), &init));
+}
+
+void LibWebRTCMediaEndpoint::addDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface>&& dataChannel)
+{
+    auto protocol = dataChannel->protocol();
+    auto label = dataChannel->label();
+
+    RTCDataChannelInit init;
+    init.ordered = dataChannel->ordered();
+    init.maxRetransmitTime = dataChannel->maxRetransmitTime();
+    init.maxRetransmits = dataChannel->maxRetransmits();
+    init.protocol = String(protocol.data(), protocol.size());
+    init.negotiated = dataChannel->negotiated();
+    init.id = dataChannel->id();
+
+    bool isOpened = dataChannel->state() == webrtc::DataChannelInterface::kOpen;
+
+    auto handler =  std::make_unique<LibWebRTCDataChannelHandler>(WTFMove(dataChannel));
+    ASSERT(m_peerConnectionBackend.connection().scriptExecutionContext());
+    auto channel = RTCDataChannel::create(*m_peerConnectionBackend.connection().scriptExecutionContext(), WTFMove(handler), String(label.data(), label.size()), WTFMove(init));
+
+    if (isOpened) {
+        callOnMainThread([channel = channel.copyRef()] {
+            // FIXME: We should be able to write channel->didChangeReadyState(...)
+            RTCDataChannelHandlerClient& client = channel.get();
+            client.didChangeReadyState(RTCDataChannel::ReadyStateOpen);
+        });
+    }
+
+    m_peerConnectionBackend.connection().fireEvent(RTCDataChannelEvent::create(eventNames().datachannelEvent, false, false, WTFMove(channel)));
 }
 
 void LibWebRTCMediaEndpoint::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> dataChannel)

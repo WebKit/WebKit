@@ -44,7 +44,7 @@ namespace WebCore {
 class Blob;
 class RTCPeerConnectionHandler;
 
-class RTCDataChannel final : public RefCounted<RTCDataChannel>, public EventTargetWithInlineData, public RTCDataChannelHandlerClient {
+class RTCDataChannel final : public RTCDataChannelHandlerClient, public EventTargetWithInlineData {
 public:
     static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
 
@@ -57,7 +57,9 @@ public:
 
     String label() const { return m_label; }
     const AtomicString& readyState() const;
-    unsigned bufferedAmount() const;
+    size_t bufferedAmount() const;
+    size_t bufferedAmountLowThreshold() const { return m_bufferedAmountLowThreshold; }
+    void setBufferedAmountLowThreshold(size_t value) { m_bufferedAmountLowThreshold = value; }
 
     const AtomicString& binaryType() const;
     ExceptionOr<void> setBinaryType(const AtomicString&);
@@ -71,8 +73,8 @@ public:
 
     void stop();
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    using RTCDataChannelHandlerClient::ref;
+    using RTCDataChannelHandlerClient::deref;
 
 private:
     RTCDataChannel(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
@@ -88,12 +90,12 @@ private:
 
     ScriptExecutionContext* m_scriptExecutionContext;
 
+    // RTCDataChannelHandlerClient API
     void didChangeReadyState(ReadyState) final;
     void didReceiveStringData(const String&) final;
     void didReceiveRawData(const char*, size_t) final;
     void didDetectError() final;
-    void protect() final { ref(); }
-    void unprotect() final { deref(); }
+    void bufferedAmountIsDecreasing() final;
 
     std::unique_ptr<RTCDataChannelHandler> m_handler;
 
@@ -109,6 +111,7 @@ private:
 
     String m_label;
     RTCDataChannelInit m_options;
+    size_t m_bufferedAmountLowThreshold { 0 };
 };
 
 } // namespace WebCore

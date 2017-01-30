@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,31 +24,38 @@
 
 #pragma once
 
-#if ENABLE(WEB_RTC)
+#if USE(LIBWEBRTC)
 
-#include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/text/WTFString.h>
+#include "LibWebRTCMacros.h"
+#include "RTCDataChannelHandler.h"
+#include <webrtc/api/datachannelinterface.h>
 
 namespace WebCore {
 
-class RTCDataChannelHandlerClient : public ThreadSafeRefCounted<RTCDataChannelHandlerClient> {
+class RTCDataChannelHandlerClient;
+
+class LibWebRTCDataChannelHandler final : public RTCDataChannelHandler, private webrtc::DataChannelObserver {
 public:
-    enum ReadyState {
-        ReadyStateConnecting = 0,
-        ReadyStateOpen = 1,
-        ReadyStateClosing = 2,
-        ReadyStateClosed = 3,
-    };
+    explicit LibWebRTCDataChannelHandler(rtc::scoped_refptr<webrtc::DataChannelInterface>&& channel) : m_channel(WTFMove(channel)) { ASSERT(m_channel); }
+    ~LibWebRTCDataChannelHandler();
 
-    virtual ~RTCDataChannelHandlerClient() { }
+private:
+    // RTCDataChannelHandler API
+    void setClient(RTCDataChannelHandlerClient*) final;
+    bool sendStringData(const String&) final;
+    bool sendRawData(const char*, size_t) final;
+    void close() final;
+    size_t bufferedAmount() const final { return m_channel->buffered_amount(); }
 
-    virtual void didChangeReadyState(ReadyState) = 0;
-    virtual void didReceiveStringData(const String&) = 0;
-    virtual void didReceiveRawData(const char*, size_t) = 0;
-    virtual void didDetectError() = 0;
-    virtual void bufferedAmountIsDecreasing() = 0;
+    // webrtc::DataChannelObserver API
+    void OnStateChange();
+    void OnMessage(const webrtc::DataBuffer&);
+    void OnBufferedAmountChange(uint64_t);
+
+    rtc::scoped_refptr<webrtc::DataChannelInterface> m_channel;
+    RTCDataChannelHandlerClient* m_client { nullptr };
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_RTC)
+#endif // USE(LIBWEBRTC)

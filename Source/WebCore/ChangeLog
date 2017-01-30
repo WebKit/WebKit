@@ -1,3 +1,41 @@
+2017-01-30  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Add support for libwebrtc data channel
+        https://bugs.webkit.org/show_bug.cgi?id=167489
+
+        Reviewed by Alex Christensen.
+
+        Partially covered by webrtc/datachannel/basic.html but not yet enabled on bots.
+
+        Introducing LibWebRTCDataChannelHandler as the integration layer between WebCore (RTCDataChannel)
+        and libwebrtc (DataChannelObserver).
+
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::create):
+        (WebCore::RTCDataChannel::RTCDataChannel):
+        (WebCore::RTCDataChannel::bufferedAmount):
+        (WebCore::RTCDataChannel::bufferedAmountIsDecreasing):
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp: Added.
+        (WebCore::LibWebRTCDataChannelHandler::~LibWebRTCDataChannelHandler):
+        (WebCore::LibWebRTCDataChannelHandler::setClient):
+        (WebCore::LibWebRTCDataChannelHandler::sendStringData):
+        (WebCore::LibWebRTCDataChannelHandler::sendRawData):
+        (WebCore::LibWebRTCDataChannelHandler::close):
+        (WebCore::LibWebRTCDataChannelHandler::OnStateChange):
+        (WebCore::LibWebRTCDataChannelHandler::OnMessage):
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::OnRemoveStream):
+        (WebCore::LibWebRTCMediaEndpoint::addDataChannel):
+        (): Deleted.
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::createDataChannelHandler):
+        * dom/EventNames.h:
+        * platform/mediastream/RTCDataChannelHandler.h:
+        * platform/mediastream/RTCDataChannelHandlerClient.h:
+        * platform/mock/RTCDataChannelHandlerMock.h:
+
 2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Several web timing tests crash in GTK+ and AppleWin bots
