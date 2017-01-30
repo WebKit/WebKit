@@ -1,5 +1,18 @@
 2017-01-30  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS] position:fixed inside touch-scrollable overflow is mispositioned
+        https://bugs.webkit.org/show_bug.cgi?id=167604
+        rdar://problem/29500273
+
+        Reviewed by Zalan Bujtas.
+
+        Make sure we tell m_webPageProxy.computeCustomFixedPositionRect() when visual viewports are enabled.
+
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::customFixedPositionRect):
+
+2017-01-30  Simon Fraser  <simon.fraser@apple.com>
+
         Fixed elements should not rubber-band in WK2, nor remain at negative offsets
         https://bugs.webkit.org/show_bug.cgi?id=167484
         rdar://problem/29453068
