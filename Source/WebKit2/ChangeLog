@@ -1,3 +1,15 @@
+2017-01-30  Anders Carlsson  <andersca@apple.com>
+
+        Add some more crash reporter information to diagnose a failed mach_msg
+        https://bugs.webkit.org/show_bug.cgi?id=167610
+
+        Reviewed by Dean Jackson.
+
+        Include the receive port name as well.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::readFromMachPort):
+
 2017-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] position:fixed inside touch-scrollable overflow is mispositioned
