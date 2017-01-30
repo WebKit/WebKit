@@ -25,7 +25,7 @@
 
 #import "WebDragClient.h"
 
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
+#if ENABLE(DRAG_SUPPORT)
 
 #import "DOMElementInternal.h"
 #import "WebArchive.h"
@@ -36,11 +36,15 @@
 #import "WebHTMLViewPrivate.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
-#import "WebNSPasteboardExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
+
+#if PLATFORM(MAC)
+#import "WebNSPasteboardExtras.h"
+#endif
+
 #import <WebCore/DataTransfer.h>
 #import <WebCore/DragData.h>
 #import <WebCore/Editor.h>
@@ -57,7 +61,10 @@ using namespace WebCore;
 WebDragClient::WebDragClient(WebView* webView)
     : m_webView(webView) 
 {
+    UNUSED_PARAM(m_webView);
 }
+
+#if PLATFORM(MAC)
 
 static WebHTMLView *getTopHTMLView(Frame* frame)
 {
@@ -138,9 +145,45 @@ void WebDragClient::declareAndWriteAttachment(const String& pasteboardName, Elem
 }
 #endif
 
+#else
+
+WebCore::DragDestinationAction WebDragClient::actionMaskForDrag(const WebCore::DragData&)
+{
+    return DragDestinationActionNone;
+}
+
+void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction, const WebCore::DragData&)
+{
+}
+
+WebCore::DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
+{
+    return DragSourceActionNone;
+}
+
+void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&)
+{
+}
+
+void WebDragClient::startDrag(DragImageRef, const IntPoint&, const IntPoint&, DataTransfer&, Frame&, bool)
+{
+}
+
+void WebDragClient::declareAndWriteDragImage(const String&, Element&, const URL&, const String&, WebCore::Frame*)
+{
+}
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+void WebDragClient::declareAndWriteAttachment(const String&, Element&, const URL&, const String&, WebCore::Frame*)
+{
+}
+#endif
+
+#endif
+
 void WebDragClient::dragControllerDestroyed() 
 {
     delete this;
 }
 
-#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
+#endif // ENABLE(DRAG_SUPPORT)
