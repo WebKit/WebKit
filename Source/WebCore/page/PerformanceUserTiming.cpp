@@ -88,16 +88,6 @@ UserTiming::UserTiming(Performance& performance)
 {
 }
 
-static void insertPerformanceEntry(PerformanceEntryMap& performanceEntryMap, Ref<PerformanceEntry>&& performanceEntry)
-{
-    RefPtr<PerformanceEntry> entry = WTFMove(performanceEntry);
-    auto it = performanceEntryMap.find(entry->name());
-    if (it != performanceEntryMap.end())
-        it->value.append(WTFMove(entry));
-    else
-        performanceEntryMap.set(entry->name(), Vector<RefPtr<PerformanceEntry>> { WTFMove(entry) });
-}
-
 static void clearPerformanceEntries(PerformanceEntryMap& performanceEntryMap, const String& name)
 {
     if (name.isNull()) {
@@ -113,7 +103,9 @@ ExceptionOr<void> UserTiming::mark(const String& markName)
     if (restrictedMarkFunction(markName))
         return Exception { SYNTAX_ERR };
 
-    insertPerformanceEntry(m_marksMap, PerformanceMark::create(markName, m_performance.now()));
+    auto& performanceEntryList = m_marksMap.ensure(markName, [] { return Vector<RefPtr<PerformanceEntry>>(); }).iterator->value;
+    performanceEntryList.append(PerformanceMark::create(markName, m_performance.now()));
+
     return { };
 }
 
@@ -161,7 +153,9 @@ ExceptionOr<void> UserTiming::measure(const String& measureName, const String& s
         endTime = endMarkResult.releaseReturnValue();
     }
 
-    insertPerformanceEntry(m_measuresMap, PerformanceMeasure::create(measureName, startTime, endTime));
+    auto& performanceEntryList = m_measuresMap.ensure(measureName, [] { return Vector<RefPtr<PerformanceEntry>>(); }).iterator->value;
+    performanceEntryList.append(PerformanceMeasure::create(measureName, startTime, endTime));
+
     return { };
 }
 
