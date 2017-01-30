@@ -1,3 +1,13 @@
+2017-01-30  Aakash Jain  <aakash_jain@apple.com>
+
+        QueueStatusServer should have an explicit timeout for _fetch_url
+        https://bugs.webkit.org/show_bug.cgi?id=167467
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/net/statusserver.py:
+        (StatusServer._fetch_url): Add an explicit timeout of 300s.
+
 2017-01-30  Kocsen Chung  <kocsen_chung@apple.com>
 
         Add support for Trac instances that host multiple projects.

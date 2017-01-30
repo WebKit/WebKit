@@ -166,7 +166,7 @@ class StatusServer:
     def _fetch_url(self, url):
         # FIXME: This should use NetworkTransaction's 404 handling instead.
         try:
-            return urllib2.urlopen(url).read()
+            return urllib2.urlopen(url, timeout=300).read()
         except urllib2.HTTPError, e:
             if e.code == 404:
                 return None
