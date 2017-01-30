@@ -1,3 +1,22 @@
+2017-01-30  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Need some limit on Async Call Stacks for async loops (rAF loops)
+        https://bugs.webkit.org/show_bug.cgi?id=165633
+        <rdar://problem/29738502>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add truncation test cases and cleanup call frame logging.
+
+        * inspector/debugger/async-stack-trace-expected.txt:
+        * inspector/debugger/async-stack-trace.html:
+        * inspector/debugger/resources/log-active-stack-trace.js: Added.
+        (TestPage.registerInitializer.window.getActiveStackTrace):
+        (TestPage.registerInitializer.logStackTrace.logCallFrame):
+        (TestPage.registerInitializer.):
+        (TestPage.registerInitializer.window.logActiveStackTrace):
+        (TestPage.registerInitializer):
+
 2017-01-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r211345.

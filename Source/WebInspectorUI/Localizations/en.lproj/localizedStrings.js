@@ -125,6 +125,7 @@ localizedStrings["Bubbling"] = "Bubbling";
 localizedStrings["Busy"] = "Busy";
 localizedStrings["CSP Hash"] = "CSP Hash";
 localizedStrings["Cached"] = "Cached";
+localizedStrings["Call Frames Truncated"] = "Call Frames Truncated";
 localizedStrings["Call Stack"] = "Call Stack";
 localizedStrings["Call Trees"] = "Call Trees";
 localizedStrings["Calls"] = "Calls";

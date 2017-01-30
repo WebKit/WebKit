@@ -1,3 +1,31 @@
+2017-01-30  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Need some limit on Async Call Stacks for async loops (rAF loops)
+        https://bugs.webkit.org/show_bug.cgi?id=165633
+        <rdar://problem/29738502>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Text for "Truncated" marker tree element.
+
+        * UserInterface/Models/StackTrace.js:
+        (WebInspector.StackTrace):
+        (WebInspector.StackTrace.fromPayload):
+        (WebInspector.StackTrace.prototype.get truncated):
+        Plumbing for new Console.StackTrace property `truncated`.
+
+        * UserInterface/Views/ThreadTreeElement.css:
+        (.tree-outline > .item.thread + ol > .item.truncated-call-frames):
+        (.tree-outline > .item.thread + ol > .item.truncated-call-frames .icon):
+        Styles for "Truncated" marker tree element.
+
+        * UserInterface/Views/ThreadTreeElement.js:
+        (WebInspector.ThreadTreeElement.prototype.refresh):
+        Append "Truncated" marker tree element if necessary.
+
+        * Versions/Inspector-iOS-10.3.json:
+
 2017-01-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r211345.
