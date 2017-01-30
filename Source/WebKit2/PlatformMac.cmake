@@ -492,6 +492,7 @@ set(WebKit2_FORWARDING_HEADERS_DIRECTORIES
 
     UIProcess/API/C
 
+    UIProcess/API/C/Cocoa
     UIProcess/API/C/mac
     UIProcess/API/cpp
 

@@ -1,3 +1,12 @@
+2017-01-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Mac][cmake] Fix the build after r211354.
+        https://bugs.webkit.org/show_bug.cgi?id=167565
+
+        Unreviewed buildfix.
+
+        * PlatformMac.cmake:
+
 2017-01-30  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Scrolling iframes, doesn't redraw their content
