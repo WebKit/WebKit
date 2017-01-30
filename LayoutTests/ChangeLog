@@ -1,5 +1,14 @@
 2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Skip more tests timing out in GTK+ bots.
+
+        Skip two mores tests that use UIScriptController to generate events and another one expecting native
+        HTML form validation popover.
+
+        * platform/gtk/TestExpectations:
+
+2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Skip form validation tests timing out in GTK+ bots.
 
         * platform/gtk/TestExpectations:
