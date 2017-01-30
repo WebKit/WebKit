@@ -131,6 +131,7 @@ class Port(object):
         self._web_platform_test_server = None
         self._image_differ = None
         self._server_process_constructor = server_process.ServerProcess  # overridable for testing
+        self._test_runner_process_constructor = server_process.ServerProcess
 
         if not hasattr(options, 'configuration') or not options.configuration:
             self.set_option_default('configuration', self.default_configuration())

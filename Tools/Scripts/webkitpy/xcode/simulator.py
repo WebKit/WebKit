@@ -167,7 +167,7 @@ class Device(object):
     Represents a CoreSimulator device underneath a runtime
     """
 
-    def __init__(self, name, udid, available, runtime):
+    def __init__(self, name, udid, available, runtime, host):
         """
         :param name: The device name
         :type name: str
@@ -177,7 +177,10 @@ class Device(object):
         :type available: bool
         :param runtime: The iOS Simulator runtime that hosts this device
         :type runtime: Runtime
+        :param host: The host which can run command line commands
+        :type host: Host
         """
+        self._host = host
         self.name = name
         self.udid = udid
         self.available = available
@@ -259,6 +262,31 @@ class Device(object):
             subprocess.check_call(['xcrun', 'simctl', 'erase', udid])
         except subprocess.CalledProcessError:
             raise RuntimeError('"xcrun simctl erase" failed: device state is {}'.format(Simulator.device_state(udid)))
+
+    def install_app(self, app_path):
+        return not self._host.executive.run_command(['xcrun', 'simctl', 'install', self.udid, app_path], return_exit_code=True)
+
+    def launch_app(self, bundle_id, args, env=None):
+        environment_to_use = {}
+        SIMCTL_ENV_PREFIX = 'SIMCTL_CHILD_'
+        for value in (env or {}):
+            if not value.startswith(SIMCTL_ENV_PREFIX):
+                environment_to_use[SIMCTL_ENV_PREFIX + value] = env[value]
+            else:
+                environment_to_use[value] = env[value]
+
+        output = self._host.executive.run_command(
+            ['xcrun', 'simctl', 'launch', self.udid, bundle_id] + args,
+            env=environment_to_use,
+        )
+
+        match = re.match(r'(?P<bundle>[^:]+): (?P<pid>\d+)\n', output)
+        if not match or match.group('bundle') != bundle_id:
+            raise RuntimeError('Failed to find process id for {}: {}'.format(bundle_id, output))
+        return int(match.group('pid'))
+
+    def terminate_app(self, bundle_id):
+        return not self._host.executive.run_command(['xcrun', 'simctl', 'terminate', self.udid, bundle_id], return_exit_code=True)
 
     def __eq__(self, other):
         return self.udid == other.udid
@@ -477,7 +505,8 @@ class Simulator(object):
                 device = Device(name=device_match.group('name').rstrip(),
                                 udid=device_match.group('udid'),
                                 available=device_match.group('availability') is None,
-                                runtime=current_runtime)
+                                runtime=current_runtime,
+                                host=self._host)
                 current_runtime.devices.append(device)
 
     def device_type(self, name=None, identifier=None):

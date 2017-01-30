@@ -1,3 +1,61 @@
+2017-01-30  Jonathan Bedard  <jbedard@apple.com>
+
+        Use simctl instead of LayoutTestRelay
+        https://bugs.webkit.org/show_bug.cgi?id=165927
+
+        Reviewed by Daniel Bates.
+
+        Part 1
+
+        LayoutTestRelay uses SPI, since recent versions of the iOS SDK allow for installing apps on
+        simulators through simctl (iOS 10 and later), use this functionality instead.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__): Added _test_runner_process_constructor.
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.app_identifier_from_bundle): Added function to extract bundle ID from plist.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._start): Pass worker_number to server_process so we can look up the correct simulator device to use.
+        (IOSSimulatorDriver): Deleted.
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest.test_stop_cleans_up_properly): Set _test_runner_process_constructor for testing.
+        (DriverTest.test_two_starts_cleans_up_properly): Ditto.
+        (DriverTest.test_start_actually_starts): Ditto.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort): Remove relay_name.
+        (IOSSimulatorPort.__init__): Set _test_runner_process_constructor to SimulatorProcess for IOSSimulatorPort.
+        (IOSSimulatorPort._create_simulators): Formatting change.
+        (IOSSimulatorPort.relay_path): Deleted.
+        (IOSSimulatorPort._check_relay): Deleted.
+        (IOSSimulatorPort._check_port_build): Deleted. Use base class implementation
+        (IOSSimulatorPort._build_relay): Deleted.
+        (IOSSimulatorPort._build_driver): Deleted. Use base class implementation
+        (IOSSimulatorPort._driver_class): Deleted. Use base class implementation
+        * Scripts/webkitpy/port/ios_unittest.py:
+        (iosTest.test_32bit): Update test.
+        (iosTest.test_64bit): Update test.
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.__init__): Added argument worker_number. This class does not make use of it. We will make use of this argument in SimulatorProcess to lookup the associated simulator device.
+        (ServerProcess._set_file_nonblocking): Added to share common code.
+        * Scripts/webkitpy/port/server_process_mock.py:
+        (MockServerProcess.__init__): Added argument worker_number.
+        * Scripts/webkitpy/port/simulator_process.py: Added.
+        (SimulatorProcess): Added.
+        (SimulatorProcess.Popen): Added.
+        (SimulatorProcess.Popen.__init__): Added. Initialize Popen structure with stdin, stdout, stderr and pid.
+        (SimulatorProcess.Popen.poll): Added. Check if the process is running.
+        (SimulatorProcess.Popen.wait): Added. Wait for process to close.
+        (SimulatorProcess.__init__): Added. Install app to device specified through port and worker_number.
+        (SimulatorProcess._reset): Added. Unlink fifos.
+        (SimulatorProcess._start): Added. Launch app on simulator, link fifos.
+        (SimulatorProcess._kill): Added. Shutdown app on simulator.
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Device.__init__): Accept host to run install/launch/terminate.
+        (Device.install_app): Install app to target Device.
+        (Device.launch_app): Launch app on target Device.
+        (Device.terminate_app): Shutdown app on target Device.
+        (Simulator._parse_devices): Pass host to Device.
+
 2017-01-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] pixman fails to compile on Raspberry Pi (GCC crash)

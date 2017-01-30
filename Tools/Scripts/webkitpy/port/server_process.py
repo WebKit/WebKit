@@ -1,3 +1,4 @@
+# Copyright (C) 2017 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -59,7 +60,7 @@ class ServerProcess(object):
     indefinitely. The class also handles transparently restarting processes
     as necessary to keep issuing commands."""
 
-    def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False, treat_no_data_as_crash=False):
+    def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False, treat_no_data_as_crash=False, worker_number=None):
         self._port = port_obj
         self._name = name  # Should be the command name (e.g. DumpRenderTree, ImageDiff)
         self._cmd = cmd
@@ -103,6 +104,11 @@ class ServerProcess(object):
     def process_name(self):
         return self._name
 
+    @staticmethod
+    def _set_file_nonblocking(file):
+        flags = fcntl.fcntl(file.fileno(), fcntl.F_GETFL)
+        fcntl.fcntl(file.fileno(), fcntl.F_SETFL, flags | os.O_NONBLOCK)
+
     def _start(self):
         if self._proc:
             raise ValueError("%s already running" % self._name)
@@ -117,13 +123,9 @@ class ServerProcess(object):
             universal_newlines=self._universal_newlines)
         self._pid = self._proc.pid
         self._port.find_system_pid(self.name(), self._pid)
-        fd = self._proc.stdout.fileno()
         if not self._use_win32_apis:
-            fl = fcntl.fcntl(fd, fcntl.F_GETFL)
-            fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
-            fd = self._proc.stderr.fileno()
-            fl = fcntl.fcntl(fd, fcntl.F_GETFL)
-            fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+            self._set_file_nonblocking(self._proc.stdout)
+            self._set_file_nonblocking(self._proc.stderr)
 
     def _handle_possible_interrupt(self):
         """This routine checks to see if the process crashed or exited

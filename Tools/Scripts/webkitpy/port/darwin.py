@@ -174,3 +174,11 @@ class DarwinPort(ApplePort):
         except ScriptError:
             _log.warn("xcrun failed; falling back to '%s'." % fallback)
             return fallback
+
+    def app_identifier_from_bundle(self, app_bundle):
+        plist_path = self._filesystem.join(app_bundle, 'Info.plist')
+        if not self._filesystem.exists(plist_path):
+            plist_path = self._filesystem.join(app_bundle, 'Contents', 'Info.plist')
+        if not self._filesystem.exists(plist_path):
+            return None
+        return self._executive.run_command(['/usr/libexec/PlistBuddy', '-c', 'Print CFBundleIdentifier', plist_path]).rstrip()

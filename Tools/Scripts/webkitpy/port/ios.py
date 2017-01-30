@@ -34,6 +34,7 @@ from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port import config as port_config
 from webkitpy.port import driver, image_diff
 from webkitpy.port.darwin import DarwinPort
+from webkitpy.port.simulator_process import SimulatorProcess
 from webkitpy.xcode.simulator import Simulator, Runtime, DeviceType
 from webkitpy.common.system.crashlogs import CrashLogs
 
@@ -78,7 +79,6 @@ class IOSSimulatorPort(DarwinPort):
     SDK = 'iphonesimulator'
 
     SIMULATOR_BUNDLE_ID = 'com.apple.iphonesimulator'
-    relay_name = 'LayoutTestRelay'
     SIMULATOR_DIRECTORY = "/tmp/WebKitTestingSimulators/"
     LSREGISTER_PATH = "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister"
     PROCESS_COUNT_ESTIMATE_PER_SIMULATOR_INSTANCE = 100
@@ -97,6 +97,7 @@ class IOSSimulatorPort(DarwinPort):
 
     def __init__(self, host, port_name, **kwargs):
         DarwinPort.__init__(self, host, port_name, **kwargs)
+        self._test_runner_process_constructor = SimulatorProcess
 
         optional_device_class = self.get_option('device_class')
         self._printing_cmd_line = False
@@ -148,16 +149,6 @@ class IOSSimulatorPort(DarwinPort):
             device_type = DeviceType.from_name(device_name)
         return device_type
 
-    @property
-    @memoized
-    def relay_path(self):
-        if self._root_was_set:
-            path = self._filesystem.abspath(self.get_option('root'))
-        else:
-            mac_config = port_config.Config(self._executive, self._filesystem, 'mac')
-            path = mac_config.build_directory(self.get_option('configuration'))
-        return self._filesystem.join(path, self.relay_name)
-
     @memoized
     def child_processes(self):
         return int(self.get_option('child_processes'))
@@ -182,19 +173,6 @@ class IOSSimulatorPort(DarwinPort):
 
         return min(maximum_simulator_count_on_this_system, best_child_process_count_for_cpu)
 
-    def _check_relay(self):
-        if not self._filesystem.exists(self.relay_path):
-            _log.error("%s was not found at %s" % (self.relay_name, self.relay_path))
-            return False
-        return True
-
-    def _check_port_build(self):
-        if not self._root_was_set and self.get_option('build') and not self._build_relay():
-            return False
-        if not self._check_relay():
-            return False
-        return True
-
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, time_fn=time.time, sleep_fn=time.sleep, wait_for_log=True):
         time_fn = time_fn or time.time
         sleep_fn = sleep_fn or time.sleep
@@ -215,7 +193,7 @@ class IOSSimulatorPort(DarwinPort):
             return self._get_crash_log(crashed_subprocess_name_and_pid[0], crashed_subprocess_name_and_pid[1], stdout,
                 '\n'.join(stderr_lines), newer_than, time_fn, sleep_fn, wait_for_log)
 
-        # LayoutTestRelay crashed
+        # App crashed
         _log.debug('looking for crash log for %s:%s' % (name, str(pid)))
         crash_log = ''
         crash_logs = CrashLogs(self.host)
@@ -233,25 +211,6 @@ class IOSSimulatorPort(DarwinPort):
             return stderr, None
         return stderr, crash_log
 
-    def _build_relay(self):
-        environment = self.host.copy_current_environment()
-        environment.disable_gcc_smartquotes()
-        env = environment.to_dictionary()
-
-        try:
-            # FIXME: We should be passing _arguments_for_configuration(), which respects build configuration and port,
-            # instead of hardcoding --ios-simulator.
-            self._run_script("build-layouttestrelay", args=["--ios-simulator"], env=env)
-        except ScriptError, e:
-            _log.error(e.message_with_output(output_limit=None))
-            return False
-        return True
-
-    def _build_driver(self):
-        built_tool = super(IOSSimulatorPort, self)._build_driver()
-        built_relay = self._build_relay()
-        return built_tool and built_relay
-
     def _build_driver_flags(self):
         archs = ['ARCHS=i386'] if self.architecture() == 'x86' else []
         sdk = ['--sdk', 'iphonesimulator']
@@ -263,9 +222,6 @@ class IOSSimulatorPort(DarwinPort):
             for architecture in self.ARCHITECTURES:
                 configurations.append(TestConfiguration(version=self._version, architecture=architecture, build_type=build_type))
         return configurations
-
-    def _driver_class(self):
-        return driver.IOSSimulatorDriver
 
     def default_baseline_search_path(self):
         if self.get_option('webkit_test_runner'):
@@ -280,9 +236,9 @@ class IOSSimulatorPort(DarwinPort):
 
     def _create_simulators(self):
         if (self.default_child_processes() < self.child_processes()):
-                _log.warn("You have specified very high value({0}) for --child-processes".format(self.child_processes()))
-                _log.warn("maximum child-processes which can be supported on this system are: {0}".format(self.default_child_processes()))
-                _log.warn("This is very likely to fail.")
+            _log.warn('You have specified very high value({0}) for --child-processes'.format(self.child_processes()))
+            _log.warn('maximum child-processes which can be supported on this system are: {0}'.format(self.default_child_processes()))
+            _log.warn('This is very likely to fail.')
 
         if self._using_dedicated_simulators():
             self._createSimulatorApps()
@@ -413,7 +369,7 @@ class IOSSimulatorPort(DarwinPort):
     def _testing_device(self, number):
         return Simulator.device_number(number)
 
-    # This is only exposed so that IOSSimulatorDriver can use it.
+    # FIXME: This is only exposed so that SimulatorProcess can use it.
     def device_id_for_worker_number(self, number):
         if self._printing_cmd_line:
             return '<dummy id>'

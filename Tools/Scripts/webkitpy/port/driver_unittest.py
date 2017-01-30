@@ -264,7 +264,7 @@ class DriverTest(unittest.TestCase):
 
     def test_stop_cleans_up_properly(self):
         port = TestWebKitPort()
-        port._server_process_constructor = MockServerProcess
+        port._test_runner_process_constructor = MockServerProcess
         driver = Driver(port, 0, pixel_tests=True)
         driver.start(True, [])
         last_tmpdir = port._filesystem.last_tmpdir
@@ -274,7 +274,7 @@ class DriverTest(unittest.TestCase):
 
     def test_two_starts_cleans_up_properly(self):
         port = TestWebKitPort()
-        port._server_process_constructor = MockServerProcess
+        port._test_runner_process_constructor = MockServerProcess
         driver = Driver(port, 0, pixel_tests=True)
         driver.start(True, [])
         last_tmpdir = port._filesystem.last_tmpdir
@@ -283,7 +283,7 @@ class DriverTest(unittest.TestCase):
 
     def test_start_actually_starts(self):
         port = TestWebKitPort()
-        port._server_process_constructor = MockServerProcess
+        port._test_runner_process_constructor = MockServerProcess
         driver = Driver(port, 0, pixel_tests=True)
         driver.start(True, [])
         self.assertTrue(driver._server_process.started)
