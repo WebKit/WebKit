@@ -44,6 +44,7 @@ namespace WebKit {
 
 AcceleratedDrawingArea::~AcceleratedDrawingArea()
 {
+    discardPreviousLayerTreeHost();
     if (m_layerTreeHost)
         m_layerTreeHost->invalidate();
 }
@@ -55,6 +56,7 @@ AcceleratedDrawingArea::AcceleratedDrawingArea(WebPage& webPage, const WebPageCr
     : DrawingArea(DrawingAreaTypeImpl, webPage)
 #endif
     , m_exitCompositingTimer(RunLoop::main(), this, &AcceleratedDrawingArea::exitAcceleratedCompositingMode)
+    , m_discardPreviousLayerTreeHostTimer(RunLoop::main(), this, &AcceleratedDrawingArea::discardPreviousLayerTreeHost)
 {
     if (!m_webPage.isVisible())
         suspendPainting();
@@ -91,6 +93,8 @@ void AcceleratedDrawingArea::pageBackgroundTransparencyChanged()
 {
     if (m_layerTreeHost)
         m_layerTreeHost->pageBackgroundTransparencyChanged();
+    else if (m_previousLayerTreeHost)
+        m_previousLayerTreeHost->pageBackgroundTransparencyChanged();
 }
 
 void AcceleratedDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
@@ -150,8 +154,12 @@ void AcceleratedDrawingArea::updatePreferences(const WebPreferencesStore& store)
 
 void AcceleratedDrawingArea::mainFrameContentSizeChanged(const IntSize& size)
 {
-    if (m_webPage.useFixedLayout() && m_layerTreeHost)
-        m_layerTreeHost->sizeDidChange(size);
+    if (m_webPage.useFixedLayout()) {
+        if (m_layerTreeHost)
+            m_layerTreeHost->sizeDidChange(size);
+        else if (m_previousLayerTreeHost)
+            m_previousLayerTreeHost->sizeDidChange(size);
+    }
     m_webPage.mainFrame()->pageOverlayController().didChangeDocumentSize();
 }
 
@@ -234,6 +242,8 @@ void AcceleratedDrawingArea::updateBackingStoreState(uint64_t stateID, bool resp
 #else
         if (m_layerTreeHost)
             m_layerTreeHost->sizeDidChange(m_webPage.size());
+        else if (m_previousLayerTreeHost)
+            m_previousLayerTreeHost->sizeDidChange(m_webPage.size());
 #endif
     } else {
         ASSERT(size == m_webPage.size());
@@ -317,19 +327,32 @@ void AcceleratedDrawingArea::resumePainting()
 
 void AcceleratedDrawingArea::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)
 {
+    m_discardPreviousLayerTreeHostTimer.stop();
+
     m_exitCompositingTimer.stop();
     m_wantsToExitAcceleratedCompositingMode = false;
 
     ASSERT(!m_layerTreeHost);
-    m_layerTreeHost = LayerTreeHost::create(m_webPage);
+    if (m_previousLayerTreeHost) {
+        m_layerTreeHost = WTFMove(m_previousLayerTreeHost);
+        m_layerTreeHost->setIsDiscardable(false);
+        if (!m_isPaintingSuspended)
+            m_layerTreeHost->resumeRendering();
+        if (!m_layerTreeStateIsFrozen)
+            m_layerTreeHost->setLayerFlushSchedulingEnabled(true);
+    } else {
+        m_layerTreeHost = LayerTreeHost::create(m_webPage);
+
+        if (m_isPaintingSuspended)
+            m_layerTreeHost->pauseRendering();
+    }
+
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (m_nativeSurfaceHandleForCompositing)
         m_layerTreeHost->setNativeSurfaceHandleForCompositing(m_nativeSurfaceHandleForCompositing);
 #endif
     if (!m_inUpdateBackingStoreState)
         m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(true);
-    if (m_isPaintingSuspended)
-        m_layerTreeHost->pauseRendering();
 
     m_layerTreeHost->setRootCompositingLayer(graphicsLayer);
 }
@@ -345,6 +368,32 @@ void AcceleratedDrawingArea::exitAcceleratedCompositingModeSoon()
         return;
 
     m_exitCompositingTimer.startOneShot(0);
+}
+
+void AcceleratedDrawingArea::exitAcceleratedCompositingModeNow()
+{
+    ASSERT(!m_alwaysUseCompositing);
+    ASSERT(!m_layerTreeStateIsFrozen);
+
+    m_exitCompositingTimer.stop();
+    m_wantsToExitAcceleratedCompositingMode = false;
+
+    ASSERT(m_layerTreeHost);
+    m_previousLayerTreeHost = WTFMove(m_layerTreeHost);
+    m_previousLayerTreeHost->setIsDiscardable(true);
+    m_previousLayerTreeHost->pauseRendering();
+    m_previousLayerTreeHost->setLayerFlushSchedulingEnabled(false);
+    m_discardPreviousLayerTreeHostTimer.startOneShot(5);
+}
+
+void AcceleratedDrawingArea::discardPreviousLayerTreeHost()
+{
+    m_discardPreviousLayerTreeHostTimer.stop();
+    if (!m_previousLayerTreeHost)
+        return;
+
+    m_previousLayerTreeHost->invalidate();
+    m_previousLayerTreeHost = nullptr;
 }
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
@@ -376,6 +425,8 @@ void AcceleratedDrawingArea::didChangeViewportAttributes(ViewportAttributes&& at
 {
     if (m_layerTreeHost)
         m_layerTreeHost->didChangeViewportAttributes(WTFMove(attrs));
+    else if (m_previousLayerTreeHost)
+        m_previousLayerTreeHost->didChangeViewportAttributes(WTFMove(attrs));
 }
 #endif
 
@@ -384,6 +435,8 @@ void AcceleratedDrawingArea::deviceOrPageScaleFactorChanged()
 {
     if (m_layerTreeHost)
         m_layerTreeHost->deviceOrPageScaleFactorChanged();
+    else if (m_previousLayerTreeHost)
+        m_previousLayerTreeHost->deviceOrPageScaleFactorChanged();
 }
 #endif
 

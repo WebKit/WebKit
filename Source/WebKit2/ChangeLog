@@ -1,3 +1,50 @@
+2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not release OpenGL resource immediately when leaving accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=167544
+
+        Reviewed by Michael Catanzaro.
+
+        Sometimes the conditions to be in AC mode or not change quickly, and then we leave AC mode just enter it again
+        after a very short period of time. In those cases we are dropping all the GL resources and the compositor
+        thread, and creating it again. We could keep the layer tree host alive for a while when exiting AC mode, and
+        reuse it if we enter AC mode before the previous one has been discarded. While the previous layer tree host is
+        alive we still need to keep it up to date, for example if the web view is resized or contents size change, and
+        synchronize with the threaded compositor when it becomes the layer tree host again.
+
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::~AcceleratedDrawingArea): Discard the previous layer tree host.
+        (WebKit::AcceleratedDrawingArea::AcceleratedDrawingArea): Initialize the timer to discard the previous layer
+        tree host.
+        (WebKit::AcceleratedDrawingArea::pageBackgroundTransparencyChanged): Notify the previous layer tree host if needed.
+        (WebKit::AcceleratedDrawingArea::mainFrameContentSizeChanged): Ditto.
+        (WebKit::AcceleratedDrawingArea::updateBackingStoreState): Ditto.
+        (WebKit::AcceleratedDrawingArea::enterAcceleratedCompositingMode): Reuse the previous layer tree host if possible.
+        (WebKit::AcceleratedDrawingArea::exitAcceleratedCompositingModeNow): Exit AC mode and save the layer tree host
+        starting a timer of 5 seconds to discard it if not reused.
+        (WebKit::AcceleratedDrawingArea::discardPreviousLayerTreeHost): Invalidate and destroy the previous layer tree host.
+        (WebKit::AcceleratedDrawingArea::didChangeViewportAttributes): Notify the previous layer tree host if needed.
+        (WebKit::AcceleratedDrawingArea::deviceOrPageScaleFactorChanged): Ditto.
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::scrollNonCompositedContents): If it's discardable add the action to
+        be synchronized instead.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::contentsSizeChanged): Ditto.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged): Ditto.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::pageBackgroundTransparencyChanged): Ditto.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::sizeDidChange): Ditto.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::didChangeViewportAttributes): Ditto.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::setIsDiscardable): When the layer tree host becomes discardable,
+        reset the sync actions and return. When it becomes the real layer tree host again, apply all pending actions to
+        synchronize with the threaded compositor.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::scroll): Notify the previous layer tree host if needed.
+        (WebKit::DrawingAreaImpl::mainFrameContentSizeChanged): Ditto.
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode): Use AcceleratedDrawingArea::exitAcceleratedCompositingModeNow().
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::setIsDiscardable): Added.
+
 2017-01-30  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] Remove support to enable/disable experimental features
