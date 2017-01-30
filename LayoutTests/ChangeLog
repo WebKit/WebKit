@@ -1,3 +1,13 @@
+2017-01-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rollout r211235 Pointer lock events should be delivered directly to the target element.
+
+        The LayoutTest for this change is frequently failing.
+
+        * platform/mac/TestExpectations:
+        * pointer-lock/mouse-event-delivery-expected.txt:
+        * pointer-lock/mouse-event-delivery.html:
+
 2017-01-30  Antoine Quint  <graouts@apple.com>
 
         LayoutTest media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html is flaky

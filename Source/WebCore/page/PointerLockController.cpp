@@ -123,11 +123,6 @@ void PointerLockController::documentDetached(Document& document)
     }
 }
 
-bool PointerLockController::isLocked() const
-{
-    return m_element && !m_lockPending;
-}
-
 bool PointerLockController::lockPending() const
 {
     return m_lockPending;
@@ -178,14 +173,6 @@ void PointerLockController::dispatchLockedMouseEvent(const PlatformMouseEvent& e
     // Create click events
     if (eventType == eventNames().mouseupEvent)
         m_element->dispatchMouseEvent(event, eventNames().clickEvent, event.clickCount());
-}
-
-void PointerLockController::dispatchLockedWheelEvent(const PlatformWheelEvent& event)
-{
-    if (!m_element || !m_element->document().frame())
-        return;
-
-    m_element->dispatchWheelEvent(event);
 }
 
 void PointerLockController::clearElement()
