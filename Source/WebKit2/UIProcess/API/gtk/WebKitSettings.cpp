@@ -31,7 +31,6 @@
 #include "config.h"
 #include "WebKitSettings.h"
 
-#include "ExperimentalFeatures.h"
 #include "WebKitEnumTypes.h"
 #include "WebKitPrivate.h"
 #include "WebKitSettingsPrivate.h"
@@ -156,10 +155,6 @@ static void webKitSettingsConstructed(GObject* object)
 
     WebPreferences* prefs = WEBKIT_SETTINGS(object)->priv->preferences.get();
     prefs->setShouldRespectImageOrientation(true);
-    ExperimentalFeatures features;
-    bool cssGridLayoutEnabled = features.isEnabled(ExperimentalFeatures::CSSGridLayout);
-    if (prefs->cssGridLayoutEnabled() != cssGridLayoutEnabled)
-        prefs->setCSSGridLayoutEnabled(cssGridLayoutEnabled);
 }
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)

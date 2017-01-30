@@ -1,3 +1,23 @@
+2017-01-30  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] Remove support to enable/disable experimental features
+        https://bugs.webkit.org/show_bug.cgi?id=167586
+
+        Reviewed by Michael Catanzaro.
+
+        As requested in bug #167578 we should remove the support to enable/disable
+        experimental features in WebKitGTK+.
+        One reason is that CSS Grid Layout is going to be enabled by default now,
+        so we don't need it to be in this file.
+        Another is that this support needs to be rewritten to use
+        the enumerable experimental features API.
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsConstructed):
+        * UIProcess/gtk/ExperimentalFeatures.cpp: Removed.
+        * UIProcess/gtk/ExperimentalFeatures.h: Removed.
+
 2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to handle the accelerated compositing policy

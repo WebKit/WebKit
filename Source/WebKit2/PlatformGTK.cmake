@@ -309,7 +309,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/gtk/AcceleratedBackingStoreWayland.cpp
     UIProcess/gtk/AcceleratedBackingStoreX11.cpp
     UIProcess/gtk/DragAndDropHandler.cpp
-    UIProcess/gtk/ExperimentalFeatures.cpp
     UIProcess/gtk/GestureController.cpp
     UIProcess/gtk/InputMethodFilter.cpp
     UIProcess/gtk/KeyBindingTranslator.cpp
