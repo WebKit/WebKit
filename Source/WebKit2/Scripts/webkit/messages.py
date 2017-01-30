@@ -365,6 +365,7 @@ def headers_for_type(type):
         'WebCore::TextIndicatorData': ['<WebCore/TextIndicator.h>'],
         'WebCore::TextureMapperAnimations': ['<WebCore/TextureMapperAnimation.h>'],
         'WebCore::ViewportAttributes': ['<WebCore/ViewportArguments.h>'],
+        'WebCore::SelectionRect': ['"EditorState.h"'],
         'WebKit::BackForwardListItemState': ['"SessionState.h"'],
         'WebKit::LayerHostingMode': ['"LayerTreeContext.h"'],
         'WebKit::PageState': ['"SessionState.h"'],

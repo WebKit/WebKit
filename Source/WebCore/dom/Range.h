@@ -125,6 +125,7 @@ public:
     WEBCORE_EXPORT FloatRect absoluteBoundingRect() const;
 #if PLATFORM(IOS)
     WEBCORE_EXPORT void collectSelectionRects(Vector<SelectionRect>&);
+    WEBCORE_EXPORT int collectSelectionRectsWithoutUnionInteriorLines(Vector<SelectionRect>&);
 #endif
 
     void nodeChildrenChanged(ContainerNode&);

@@ -2656,10 +2656,28 @@ static Ref<Range> collapsedToBoundary(const Range& range, bool forward)
     return result;
 }
 
-static std::optional<std::pair<size_t, size_t>> findPlainTextOffset(SearchBuffer& buffer, CharacterIterator& findIterator, bool searchForward)
+static TextIteratorBehavior findIteratorOptions(FindOptions options)
 {
-    size_t matchStart = 0;
-    size_t matchLength = 0;
+    TextIteratorBehavior iteratorOptions = TextIteratorEntersTextControls | TextIteratorClipsToFrameAncestors;
+    if (!(options & DoNotTraverseFlatTree))
+        iteratorOptions |= TextIteratorTraversesFlatTree;
+    return iteratorOptions;
+}
+
+static void findPlainTextMatches(const Range& range, const String& target, FindOptions options, const std::function<bool(size_t, size_t)>& match)
+{
+    SearchBuffer buffer(target, options);
+    if (buffer.needsMoreContext()) {
+        Ref<Range> beforeStartRange = range.ownerDocument().createRange();
+        beforeStartRange->setEnd(range.startContainer(), range.startOffset());
+        for (SimplifiedBackwardsTextIterator backwardsIterator(beforeStartRange.get()); !backwardsIterator.atEnd(); backwardsIterator.advance()) {
+            buffer.prependContext(backwardsIterator.text());
+            if (!buffer.needsMoreContext())
+                break;
+        }
+    }
+
+    CharacterIterator findIterator(range, findIteratorOptions(options));
     while (!findIterator.atEnd()) {
         findIterator.advance(buffer.append(findIterator.text()));
         while (1) {
@@ -2674,45 +2692,53 @@ static std::optional<std::pair<size_t, size_t>> findPlainTextOffset(SearchBuffer
             }
             size_t lastCharacterInBufferOffset = findIterator.characterOffset();
             ASSERT(lastCharacterInBufferOffset >= matchStartOffset);
-            matchStart = lastCharacterInBufferOffset - matchStartOffset;
-            matchLength = newMatchLength;
-            if (searchForward) // Look for the last match when searching backwards instead.
-                return std::pair<size_t, size_t> { matchStart, matchLength };
+            if (match(lastCharacterInBufferOffset - matchStartOffset, newMatchLength))
+                return;
         }
     }
+}
 
+static Ref<Range> rangeForMatch(const Range& range, FindOptions options, size_t matchStart, size_t matchLength, bool searchForward)
+{
     if (!matchLength)
-        return std::nullopt;
+        return collapsedToBoundary(range, searchForward);
+    CharacterIterator rangeComputeIterator(range, findIteratorOptions(options));
+    return characterSubrange(range.ownerDocument(), rangeComputeIterator, matchStart, matchLength);
+}
 
-    return std::pair<size_t, size_t> { matchStart, matchLength };
+Ref<Range> findClosestPlainText(const Range& range, const String& target, FindOptions options, unsigned targetOffset)
+{
+    size_t matchStart = 0;
+    size_t matchLength = 0;
+    size_t distance = std::numeric_limits<size_t>::max();
+    auto match = [targetOffset, &distance, &matchStart, &matchLength] (size_t start, size_t length) {
+        size_t newDistance = std::min(abs(static_cast<signed>(start - targetOffset)), abs(static_cast<signed>(start + length - targetOffset)));
+        if (newDistance < distance) {
+            matchStart = start;
+            matchLength = length;
+            distance = newDistance;
+        }
+        return false;
+    };
+
+    findPlainTextMatches(range, target, options, match);
+    return rangeForMatch(range, options, matchStart, matchLength, !(options & Backwards));
 }
 
 Ref<Range> findPlainText(const Range& range, const String& target, FindOptions options)
 {
-    SearchBuffer buffer(target, options);
-
-    if (buffer.needsMoreContext()) {
-        Ref<Range> beforeStartRange = range.ownerDocument().createRange();
-        beforeStartRange->setEnd(range.startContainer(), range.startOffset());
-        for (SimplifiedBackwardsTextIterator backwardsIterator(beforeStartRange.get()); !backwardsIterator.atEnd(); backwardsIterator.advance()) {
-            buffer.prependContext(backwardsIterator.text());
-            if (!buffer.needsMoreContext())
-                break;
-        }
-    }
-
     bool searchForward = !(options & Backwards);
-    TextIteratorBehavior iteratorOptions = TextIteratorEntersTextControls | TextIteratorClipsToFrameAncestors;
-    if (!(options & DoNotTraverseFlatTree))
-        iteratorOptions |= TextIteratorTraversesFlatTree;
+    size_t matchStart = 0;
+    size_t matchLength = 0;
+    auto match = [searchForward, &matchStart, &matchLength] (size_t start, size_t length) {
+        matchStart = start;
+        matchLength = length;
+        // Look for the last match when searching backwards instead.
+        return searchForward;
+    };
 
-    CharacterIterator findIterator(range, iteratorOptions);
-    auto result = findPlainTextOffset(buffer, findIterator, searchForward);
-    if (!result)
-        return collapsedToBoundary(range, searchForward);
-
-    CharacterIterator rangeComputeIterator(range, iteratorOptions);
-    return characterSubrange(range.ownerDocument(), rangeComputeIterator, result->first, result->second);
+    findPlainTextMatches(range, target, options, match);
+    return rangeForMatch(range, options, matchStart, matchLength, searchForward);
 }
 
 }

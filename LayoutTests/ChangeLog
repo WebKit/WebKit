@@ -1,3 +1,13 @@
+2017-01-29  Nan Wang  <n_wang@apple.com>
+
+        AX: WKContentView needs to implement UITextInput methods to make speak selection highlighting work
+        https://bugs.webkit.org/show_bug.cgi?id=166955
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/text-iterator/range-of-string-closest-to-position-expected.txt: Added.
+        * editing/text-iterator/range-of-string-closest-to-position.html: Added.
+
 2017-01-29  Yoav Weiss  <yoav@yoav.ws>
 
         Add invalid value tests to Link header handling.

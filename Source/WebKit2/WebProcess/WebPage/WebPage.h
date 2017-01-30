@@ -577,6 +577,8 @@ public:
     void updateSelectionAppearance();
     void getSelectionContext(uint64_t callbackID);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, uint64_t requestID);
+    void getRectsForGranularityWithSelectionOffset(uint32_t, int32_t, uint64_t callbackID);
+    void getRectsAtSelectionOffsetWithText(int32_t, const String&, uint64_t callbackID);
 #if ENABLE(IOS_TOUCH_EVENTS)
     void dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& queue);
 #endif

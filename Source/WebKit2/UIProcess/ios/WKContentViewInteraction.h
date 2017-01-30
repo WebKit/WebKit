@@ -247,6 +247,8 @@ struct WKAutoCorrectionData {
 - (NSArray *)_dataDetectionResults;
 - (NSArray<NSValue *> *)_uiTextSelectionRects;
 - (void)accessibilityRetrieveSpeakSelectionContent;
+- (void)_accessibilityRetrieveRectsEnclosingSelectionOffset:(NSInteger)offset withGranularity:(UITextGranularity)granularity;
+- (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text;
 
 #if ENABLE(DATA_INTERACTION)
 - (void)_didPerformDataInteractionControllerOperation;

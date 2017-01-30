@@ -105,6 +105,7 @@
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WKContentObservation.h>
 #import <WebCore/WebEvent.h>
+#import <WebCore/htmlediting.h>
 #import <wtf/MathExtras.h>
 #import <wtf/SetForScope.h>
 
@@ -1817,6 +1818,84 @@ void WebPage::moveSelectionByOffset(int32_t offset, uint64_t callbackID)
     if (position.isNotNull() && startPosition != position)
         frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), position.affinity(), true);
     send(Messages::WebPageProxy::VoidCallback(callbackID));
+}
+
+static VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition& position, int32_t offset)
+{
+    RefPtr<ContainerNode> root;
+    unsigned startIndex = indexForVisiblePosition(position, root);
+    return visiblePositionForIndex(startIndex + offset, root.get());
+}
+
+void WebPage::getRectsForGranularityWithSelectionOffset(uint32_t granularity, int32_t offset, uint64_t callbackID)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    VisibleSelection selection = frame.selection().selection();
+    VisiblePosition selectionStart = selection.visibleStart();
+
+    if (selectionStart.isNull()) {
+        send(Messages::WebPageProxy::SelectionRectsCallback({ }, callbackID));
+        return;
+    }
+
+    auto position = visiblePositionForPositionWithOffset(selectionStart, offset);
+    SelectionDirection direction = offset < 0 ? DirectionBackward : DirectionForward;
+
+    auto range = enclosingTextUnitOfGranularity(position, static_cast<WebCore::TextGranularity>(granularity), direction);
+    if (!range || range->collapsed()) {
+        send(Messages::WebPageProxy::SelectionRectsCallback({ }, callbackID));
+        return;
+    }
+
+    Vector<WebCore::SelectionRect> selectionRects;
+    range->collectSelectionRectsWithoutUnionInteriorLines(selectionRects);
+    convertSelectionRectsToRootView(frame.view(), selectionRects);
+    send(Messages::WebPageProxy::SelectionRectsCallback(selectionRects, callbackID));
+}
+
+static RefPtr<Range> rangeNearPositionMatchesText(const VisiblePosition& position, RefPtr<Range> originalRange, const String& matchText, RefPtr<Range> selectionRange)
+{
+    auto range = Range::create(selectionRange->ownerDocument(), selectionRange->startPosition(), position.deepEquivalent().parentAnchoredEquivalent());
+    unsigned targetOffset = TextIterator::rangeLength(range.ptr(), true);
+    return findClosestPlainText(*selectionRange.get(), matchText, 0, targetOffset);
+}
+
+void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, uint64_t callbackID)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    uint32_t length = text.length();
+    VisibleSelection selection = frame.selection().selection();
+    VisiblePosition selectionStart = selection.visibleStart();
+    VisiblePosition selectionEnd = selection.visibleEnd();
+
+    if (selectionStart.isNull() || selectionEnd.isNull()) {
+        send(Messages::WebPageProxy::SelectionRectsCallback({ }, callbackID));
+        return;
+    }
+
+    auto startPosition = visiblePositionForPositionWithOffset(selectionStart, offset);
+    auto endPosition = visiblePositionForPositionWithOffset(startPosition, length);
+    auto range = Range::create(*frame.document(), startPosition, endPosition);
+
+    if (range->collapsed()) {
+        send(Messages::WebPageProxy::SelectionRectsCallback({ }, callbackID));
+        return;
+    }
+
+    String rangeText = plainTextReplacingNoBreakSpace(range.ptr(), TextIteratorDefaultBehavior, true);
+    if (rangeText != text) {
+        auto selectionRange = selection.toNormalizedRange();
+        // Try to search for a range which is the closest to the position within the selection range that matches the passed in text.
+        if (auto wordRange = rangeNearPositionMatchesText(startPosition, range.ptr(), text, selectionRange)) {
+            if (!wordRange->collapsed())
+                range = *wordRange;
+        }
+    }
+
+    Vector<WebCore::SelectionRect> selectionRects;
+    range->collectSelectionRectsWithoutUnionInteriorLines(selectionRects);
+    convertSelectionRectsToRootView(frame.view(), selectionRects);
+    send(Messages::WebPageProxy::SelectionRectsCallback(selectionRects, callbackID));
 }
 
 VisiblePosition WebPage::visiblePositionInFocusedNodeForPoint(const Frame& frame, const IntPoint& point, bool isInteractingWithAssistedNode)

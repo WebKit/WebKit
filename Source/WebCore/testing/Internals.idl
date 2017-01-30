@@ -195,6 +195,7 @@ enum EventThrottlingBehavior {
     DOMString rangeAsText(Range range);
     Range subrange(Range range, long rangeLocation, long rangeLength);
     [MayThrowException] Range? rangeForDictionaryLookupAtLocation(long x, long y);
+    Range? rangeOfStringNearLocation(Range range, DOMString text, long targetOffset);
 
     [MayThrowException] void setDelegatesScrolling(boolean enabled);
 

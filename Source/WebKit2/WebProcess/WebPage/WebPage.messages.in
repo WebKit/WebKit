@@ -96,6 +96,8 @@ messages -> WebPage LegacyReceiver {
     SetAllowsMediaDocumentInlinePlayback(bool allows)
     HandleTwoFingerTapAtPoint(WebCore::IntPoint point, uint64_t requestID)
     SetForceAlwaysUserScalable(bool userScalable)
+    GetRectsForGranularityWithSelectionOffset(uint32_t granularity, int32_t offset, uint64_t callbackID);
+    GetRectsAtSelectionOffsetWithText(int32_t offset, String text, uint64_t callbackID);
 #endif
 
     SetControlledByAutomation(bool controlled)

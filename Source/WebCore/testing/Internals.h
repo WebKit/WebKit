@@ -201,6 +201,7 @@ public:
     String rangeAsText(const Range&);
     Ref<Range> subrange(Range&, int rangeLocation, int rangeLength);
     ExceptionOr<RefPtr<Range>> rangeForDictionaryLookupAtLocation(int x, int y);
+    RefPtr<Range> rangeOfStringNearLocation(const Range&, const String&, unsigned);
 
     ExceptionOr<void> setDelegatesScrolling(bool enabled);
 

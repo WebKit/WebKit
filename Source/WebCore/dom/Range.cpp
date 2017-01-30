@@ -1266,7 +1266,7 @@ static SelectionRect coalesceSelectionRects(const SelectionRect& original, const
 
 // This function is similar in spirit to addLineBoxRects, but annotates the returned rectangles
 // with additional state which helps iOS draw selections in its unique way.
-void Range::collectSelectionRects(Vector<SelectionRect>& rects)
+int Range::collectSelectionRectsWithoutUnionInteriorLines(Vector<SelectionRect>& rects)
 {
     auto& startContainer = this->startContainer();
     auto& endContainer = this->endContainer();
@@ -1325,7 +1325,7 @@ void Range::collectSelectionRects(Vector<SelectionRect>& rects)
         VisiblePosition endPosition(createLegacyEditingPosition(&endContainer, endOffset), VP_DEFAULT_AFFINITY);
         VisiblePosition brPosition(createLegacyEditingPosition(stopNode, 0), VP_DEFAULT_AFFINITY);
         if (endPosition == brPosition)
-            rects.last().setIsLineBreak(true);    
+            rects.last().setIsLineBreak(true);
     }
 
     int lineTop = std::numeric_limits<int>::max();
@@ -1422,7 +1422,15 @@ void Range::collectSelectionRects(Vector<SelectionRect>& rects)
         } else if (selectionRect.direction() == LTR && selectionRect.isLastOnLine())
             selectionRect.setLogicalWidth(selectionRect.maxX() - selectionRect.logicalLeft());
     }
+    
+    return maxLineNumber;
+}
 
+void Range::collectSelectionRects(Vector<SelectionRect>& rects)
+{
+    int maxLineNumber = collectSelectionRectsWithoutUnionInteriorLines(rects);
+    const size_t numberOfRects = rects.size();
+    
     // Union all the rectangles on interior lines (i.e. not first or last).
     // On first and last lines, just avoid having overlaps by merging intersecting rectangles.
     Vector<SelectionRect> unionedRects;

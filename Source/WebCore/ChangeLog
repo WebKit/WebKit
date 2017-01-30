@@ -1,3 +1,35 @@
+2017-01-29  Nan Wang  <n_wang@apple.com>
+
+        AX: WKContentView needs to implement UITextInput methods to make speak selection highlighting work
+        https://bugs.webkit.org/show_bug.cgi?id=166955
+
+        Reviewed by Ryosuke Niwa.
+
+        Created a new version of Range::collectSelectionRect() that returns rects for each
+        line, so that Speak Selection doesn't need to handle searching for soft line breaks.
+        Also added a variant of findPlainText to search for the closest matched range to the given position.
+
+        Test: editing/text-iterator/range-of-string-closest-to-position.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::collectSelectionRectsWithoutUnionInteriorLines):
+        (WebCore::Range::collectSelectionRects):
+        * dom/Range.h:
+        * editing/TextIterator.cpp:
+        (WebCore::findPlainTextMatches):
+        (WebCore::updateSearchBuffer):
+        (WebCore::findIteratorOptions):
+        (WebCore::rangeMatches):
+        (WebCore::findClosestPlainText):
+        (WebCore::findPlainText):
+        (WebCore::findPlainTextOffset): Deleted.
+        * editing/TextIterator.h:
+        * editing/htmlediting.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::rangeOfStringNearLocation):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-01-29  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Add a WebPreference to enable saving QuickLook documents in WebKitLegacy

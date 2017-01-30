@@ -1456,6 +1456,11 @@ Ref<Range> Internals::subrange(Range& range, int rangeLocation, int rangeLength)
     return TextIterator::subrange(&range, rangeLocation, rangeLength);
 }
 
+RefPtr<Range> Internals::rangeOfStringNearLocation(const Range& searchRange, const String& text, unsigned targetOffset)
+{
+    return findClosestPlainText(searchRange, text, 0, targetOffset);
+}
+
 ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, int y)
 {
 #if PLATFORM(MAC)
