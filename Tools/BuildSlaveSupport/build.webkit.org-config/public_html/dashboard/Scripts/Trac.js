@@ -30,7 +30,11 @@ Trac = function(baseURL, options)
     console.assert(baseURL);
 
     this.baseURL = baseURL;
-    this._needsAuthentication = (typeof options === "object") && options[Trac.NeedsAuthentication] === true;
+    if (typeof options === "object") {
+        this._needsAuthentication = options[Trac.NeedsAuthentication] === true;
+        // We expect the projectIdentifier option iff the target Trac instance is hosting multiple repositories && Trac version > 1.0
+        this._projectName = options[Trac.ProjectIdentifier];
+    }
 
     this.recordedCommits = []; // Will be sorted in ascending order.
 };
@@ -40,6 +44,7 @@ BaseObject.addConstructorFunctions(Trac);
 Trac.NO_MORE_REVISIONS = null;
 
 Trac.NeedsAuthentication = "needsAuthentication";
+Trac.ProjectIdentifier = "projectIdentifier";
 Trac.UpdateInterval = 45000; // 45 seconds
 
 Trac.Event = {
@@ -103,7 +108,10 @@ Trac.prototype = {
 
     revisionURL: function(revision)
     {
-        return this.baseURL + "changeset/" + encodeURIComponent(revision);
+        var url = this.baseURL + "changeset/" + encodeURIComponent(revision);
+        if (this._projectName)
+            url += '/' + encodeURIComponent(this._projectName);
+        return url;
     },
 
     _xmlTimelineURL: function(fromDate, toDate)
@@ -112,10 +120,14 @@ Trac.prototype = {
 
         var fromDay = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
         var toDay = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
+        var changesetParameter = this._projectName ? "repo-" + this._projectName : "changeset";
 
-        return this.baseURL + "timeline?changeset=on&format=rss&max=0" +
-            "&from=" +  toDay.toISOString().slice(0, 10) +
-            "&daysback=" + ((toDay - fromDay) / 1000 / 60 / 60 / 24);
+        return this.baseURL + "timeline?" +
+            changesetParameter + "=on" +
+            "&format=rss" +
+            "&max=0" +
+            "&from=" + encodeURIComponent(toDay.toISOString().slice(0, 10)) +
+            "&daysback=" + encodeURIComponent((toDay - fromDay) / 1000 / 60 / 60 / 24);
     },
 
     _parseRevisionFromURL: function(url)
@@ -150,7 +162,7 @@ Trac.prototype = {
         var location = "";
         if (parsedDescription.firstChild && parsedDescription.firstChild.className === "changes") {
             // We can extract branch information when trac.ini contains "changeset_show_files=location".
-            location = doc.evaluate("//strong", parsedDescription.firstChild, null, XPathResult.STRING_TYPE).stringValue
+            location = doc.evaluate("//strong", parsedDescription.firstChild, null, XPathResult.STRING_TYPE).stringValue;
             parsedDescription.removeChild(parsedDescription.firstChild);
         }
 

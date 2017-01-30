@@ -23,9 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-MockTrac = function()
+MockTrac = function(projectIdentifier)
 {
-    Trac.call(this, "https://trac.webkit.org/");
+    if (projectIdentifier) {
+        var options = { };
+        options[Trac.ProjectIdentifier] = projectIdentifier;
+        Trac.call(this, "https://trac.webkit.org/", options);
+    } else {
+        Trac.call(this, "https://trac.webkit.org/");
+    }
 };
 
 BaseObject.addConstructorFunctions(MockTrac);

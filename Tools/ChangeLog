@@ -1,3 +1,41 @@
+2017-01-30  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Add support for Trac instances that host multiple projects.
+        https://bugs.webkit.org/show_bug.cgi?id=167524
+
+        Reviewed by Alexey Proskuryakov.
+
+        When multiple projects are hosted on a single Trac instance, the current
+        behavior will retrieve changesets from all tracked projects.
+        This patch teaches Trac.js to get project-specific changesets from Trac.
+        We do this by replacing the parameter `changeset=on` to `repo-projectname=on`
+        when querying the Trac timeline.
+
+        To tell Trac to be aware of multi-project instances we leverage the 
+        `options` parameter when creating a new instance: 
+
+            new Trac("https://mytrac.com/", { projectIdentifier: "tracProjectName" });
+
+        If this option is not provided, the original behaviour will prevail.
+        Additionally, add corresponding tests.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Trac.js:
+        (Trac): Reason about new optional parameter 'projectIdentifier'.
+        (Trac.prototype.revisionURL): Given a projectIdentifier, append it to the end of the URL.
+        (Trac.prototype._xmlTimelineURL): Given a projectIdentifier,
+        replace default parameter `changeset=on` with `repo-projectname=on`.
+        (Trac.prototype._convertCommitInfoElementToObject): Fix missing ';'.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/MockTrac.js:
+        (MockTrac): Add support for instantiating Trac with a projectIdentifier.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/tests.js:
+        (setup): Provide a multiple-project MockTrac instance to all test cases for testing.
+        Add the following tests:
+            test("revisionURL")
+            test("revisionURL with Trac Identifier")
+            test("_xmlTimelineURL")
+            test("_xmlTimelineURL with Trac Identifier")
+        (this.view._latestProductiveIteration): Fix missing ';'.
+
 2017-01-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Correct spacing regression on inter-element complex path shaping on some fonts

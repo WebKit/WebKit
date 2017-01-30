@@ -41,6 +41,7 @@ QUnit.done = function(details) {
 module("Trac", {
     setup: function() {
         this.trac = new MockTrac();
+        this.tracWithIdentifier = new MockTrac("webkit");
     }
 });
 
@@ -121,6 +122,36 @@ test("commitsOnBranchInRevisionRange", function()
     equal(commits.length, 2, "in range 33020, 33022");
 });
 
+test("revisionURL", function()
+{
+    strictEqual(this.trac.revisionURL("33020"), "https://trac.webkit.org/changeset/33020", "changeset URL matches for 33020");
+    strictEqual(this.trac.revisionURL("0e498db5d8e5b5a342631"), "https://trac.webkit.org/changeset/0e498db5d8e5b5a342631", "changeset URL matches for 0e498db5d8e5b5a342631");
+});
+
+test("revisionURL with Trac Identifier", function()
+{
+    strictEqual(this.tracWithIdentifier.revisionURL("33020"), "https://trac.webkit.org/changeset/33020/webkit", "changeset URL matches for 33020");
+    strictEqual(this.tracWithIdentifier.revisionURL("0e498db5d8e5b5a342631"), "https://trac.webkit.org/changeset/0e498db5d8e5b5a342631/webkit", "changeset URL matches for 0e498db5d8e5b5a342631");
+});
+
+test("_xmlTimelineURL", function()
+{
+    var before = new Date("1/1/2017");
+    var after = new Date("1/2/2017");
+
+    strictEqual(this.trac._xmlTimelineURL(before, before), "https://trac.webkit.org/timeline?changeset=on&format=rss&max=0&from=2017-01-01&daysback=0");
+    strictEqual(this.trac._xmlTimelineURL(before, after), "https://trac.webkit.org/timeline?changeset=on&format=rss&max=0&from=2017-01-02&daysback=1");
+});
+
+test("_xmlTimelineURL with Trac Identifier", function()
+{
+    var before = new Date("1/1/2017");
+    var after = new Date("1/2/2017");
+
+    strictEqual(this.tracWithIdentifier._xmlTimelineURL(before, before), "https://trac.webkit.org/timeline?repo-webkit=on&format=rss&max=0&from=2017-01-01&daysback=0");
+    strictEqual(this.tracWithIdentifier._xmlTimelineURL(before, after), "https://trac.webkit.org/timeline?repo-webkit=on&format=rss&max=0&from=2017-01-02&daysback=1");
+});
+
 module("BuildBotQueueView", {
     setup: function() {
         this.trac = new MockTrac();
@@ -179,7 +210,7 @@ test("_presentPopoverForPendingCommits no pending commits", function()
             revision: { "openSource": "33021" },
         };
         return iteration;
-    }
+    };
     var element = document.createElement("div");
     var popover = new Dashboard.Popover();
     this.view._presentPopoverForPendingCommits(element, popover, this.queue);
