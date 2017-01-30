@@ -112,9 +112,9 @@ void PlatformMediaSessionManager::beginInterruption(PlatformMediaSession::Interr
     LOG(Media, "PlatformMediaSessionManager::beginInterruption");
 
     m_interrupted = true;
-    Vector<PlatformMediaSession*> sessions = m_sessions;
-    for (auto* session : sessions)
-        session->beginInterruption(type);
+    forEachSession([type] (PlatformMediaSession& session, size_t) {
+        session.beginInterruption(type);
+    });
     updateSessionState();
 }
 
@@ -123,9 +123,9 @@ void PlatformMediaSessionManager::endInterruption(PlatformMediaSession::EndInter
     LOG(Media, "PlatformMediaSessionManager::endInterruption");
 
     m_interrupted = false;
-    Vector<PlatformMediaSession*> sessions = m_sessions;
-    for (auto* session : sessions)
-        session->endInterruption(flags);
+    forEachSession([flags] (PlatformMediaSession& session, size_t) {
+        session.endInterruption(flags);
+    });
 }
 
 void PlatformMediaSessionManager::addSession(PlatformMediaSession& session)

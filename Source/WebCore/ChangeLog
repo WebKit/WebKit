@@ -1,3 +1,16 @@
+2017-01-30  Jer Noble  <jer.noble@apple.com>
+
+        NULL-deref crash at PlatformMediaSession::endInterruption
+        https://bugs.webkit.org/show_bug.cgi?id=167595
+
+        Reviewed by Eric Carlson.
+
+        Use the same, NULL-aware forEachSession() iterator rather than iterating over m_sessions directly.
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::beginInterruption):
+        (WebCore::PlatformMediaSessionManager::endInterruption):
+
 2017-01-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Correct spacing regression on inter-element complex path shaping on some fonts
