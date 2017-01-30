@@ -72,9 +72,20 @@ void TextureMapperPlatformLayerProxy::activateOnCompositingThread(Compositor* co
 void TextureMapperPlatformLayerProxy::invalidate()
 {
     ASSERT(m_compositorThreadID == WTF::currentThread());
-    LockHolder locker(m_lock);
-    m_compositor = nullptr;
-    m_targetLayer = nullptr;
+    Function<void()> updateFunction;
+    {
+        LockHolder locker(m_lock);
+        m_compositor = nullptr;
+        m_targetLayer = nullptr;
+
+        // Clear the timer and dispatch the update function manually now.
+        m_compositorThreadUpdateTimer = nullptr;
+        if (!m_compositorThreadUpdateFunction)
+            return;
+        updateFunction = WTFMove(m_compositorThreadUpdateFunction);
+    }
+
+    updateFunction();
 }
 
 bool TextureMapperPlatformLayerProxy::isActive()

@@ -1,3 +1,15 @@
+2017-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] Crash on WebCore::GLContext::version()
+        https://bugs.webkit.org/show_bug.cgi?id=167559
+
+        Reviewed by Michael Catanzaro.
+
+        Fixes crashes in several media tests.
+
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::invalidate): Clear m_compositorThreadUpdateTimer and call the update function.
+
 2017-01-29  Nan Wang  <n_wang@apple.com>
 
         AX: WKContentView needs to implement UITextInput methods to make speak selection highlighting work
