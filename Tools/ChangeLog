@@ -1,3 +1,18 @@
+2017-01-29  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Add a WebPreference to enable saving QuickLook documents in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=167563
+        <rdar://problem/30253207>
+
+        Reviewed by Andreas Kling.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/QuickLook.mm:
+        (-[QuickLookNavigationDelegate _webView:didStartLoadForQuickLookDocumentInMainFrameWithFileName:uti:]):
+        (-[QuickLookNavigationDelegate _webView:didFinishLoadForQuickLookDocumentInMainFrame:]):
+        (runTest):
+        (-[QuickLookFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (TEST):
+
 2017-01-29  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Expose WebCore::DataDetection::detectContentInRange WKWebProcessPlugInRangeHandle

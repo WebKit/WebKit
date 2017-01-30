@@ -68,42 +68,20 @@ static NSMutableDictionary *QLContentDictionary()
     return contentDictionary;
 }
 
-void WebCore::addQLPreviewConverterWithFileForURL(NSURL *url, id converter, NSString *fileName)
+void WebCore::removeQLPreviewConverterForURL(NSURL *url)
+{
+    LockHolder lock(qlPreviewConverterDictionaryMutex());
+    [QLPreviewConverterDictionary() removeObjectForKey:url];
+    [QLContentDictionary() removeObjectForKey:url];
+}
+
+static void addQLPreviewConverterWithFileForURL(NSURL *url, id converter, NSString *fileName)
 {
     ASSERT(url);
     ASSERT(converter);
     LockHolder lock(qlPreviewConverterDictionaryMutex());
     [QLPreviewConverterDictionary() setObject:converter forKey:url];
     [QLContentDictionary() setObject:(fileName ? fileName : @"") forKey:url];
-}
-
-NSString *WebCore::qlPreviewConverterFileNameForURL(NSURL *url)
-{
-    return [QLContentDictionary() objectForKey:url];
-}
-
-NSString *WebCore::qlPreviewConverterUTIForURL(NSURL *url)
-{
-    id converter = nil;
-    {
-        LockHolder lock(qlPreviewConverterDictionaryMutex());
-        converter = [QLPreviewConverterDictionary() objectForKey:url];
-    }
-    if (!converter)
-        return nil;
-    return [converter previewUTI];
-}
-
-void WebCore::removeQLPreviewConverterForURL(NSURL *url)
-{
-    LockHolder lock(qlPreviewConverterDictionaryMutex());
-    [QLPreviewConverterDictionary() removeObjectForKey:url];
-
-    // Delete the file when we remove the preview converter
-    NSString *filename = qlPreviewConverterFileNameForURL(url);
-    if ([filename length])
-        [[NSFileManager defaultManager] _web_removeFileOnlyAtPath:filename];
-    [QLContentDictionary() removeObjectForKey:url];
 }
 
 RetainPtr<NSURLRequest> WebCore::registerQLPreviewConverterIfNeeded(NSURL *url, NSString *mimeType, NSData *data)
@@ -340,8 +318,7 @@ NSString *createTemporaryFileForQuickLook(NSString *fileName)
 }
 
 QuickLookHandle::QuickLookHandle(ResourceLoader& loader, const ResourceResponse& response)
-    : m_firstRequestURL { loader.originalRequest().nsURLRequest(DoNotUpdateHTTPBody).URL }
-    , m_converter { adoptNS([[WebPreviewConverter alloc] initWithResourceLoader:loader resourceResponse:response quickLookHandle:*this]) }
+    : m_converter { adoptNS([[WebPreviewConverter alloc] initWithResourceLoader:loader resourceResponse:response quickLookHandle:*this]) }
 {
     loader.didCreateQuickLookHandle(*this);
 }
@@ -419,16 +396,6 @@ String QuickLookHandle::previewFileName() const
 String QuickLookHandle::previewUTI() const
 {
     return [m_converter platformConverter].previewUTI;
-}
-
-NSURL *QuickLookHandle::previewRequestURL() const
-{
-    return [m_converter platformConverter].previewRequest.URL;
-}
-
-QLPreviewConverter *QuickLookHandle::converter() const
-{
-    return [m_converter platformConverter];
 }
 
 }

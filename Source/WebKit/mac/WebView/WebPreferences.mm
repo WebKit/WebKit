@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2944,6 +2944,18 @@ static NSString *classIBCreatorID = nil;
 {
     [self _setBoolValue:flag forKey:WebKitUserTimingEnabledPreferenceKey];
 }
+
+#if PLATFORM(IOS)
+- (BOOL)quickLookDocumentSavingEnabled
+{
+    return [self _boolValueForKey:WebKitQuickLookDocumentSavingPreferenceKey];
+}
+
+- (void)setQuickLookDocumentSavingEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitQuickLookDocumentSavingPreferenceKey];
+}
+#endif
 
 @end
 

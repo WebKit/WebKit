@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 David Smith (catfish.man@gmail.com)
  * Copyright (C) 2010 Igalia S.L
  *
@@ -4030,19 +4030,7 @@ static inline IMP getMethod(id o, SEL s)
 #if PLATFORM(IOS)
 - (NSDictionary *)quickLookContentForURL:(NSURL *)url
 {
-#if USE(QUICK_LOOK)
-    NSString *uti = qlPreviewConverterUTIForURL(url);
-    if (!uti)
-        return nil;
-
-    NSString *fileName = qlPreviewConverterFileNameForURL(url);
-    if (!fileName)
-        return nil;
-
-    return [NSDictionary dictionaryWithObjectsAndKeys: fileName, WebQuickLookFileNameKey, uti, WebQuickLookUTIKey, nil];
-#else
     return nil;
-#endif
 }
 
 - (BOOL)_isStopping

@@ -149,7 +149,6 @@
 #endif
 
 #if USE(QUICK_LOOK)
-#import <WebCore/FileSystemIOS.h>
 #import <WebCore/NSFileManagerSPI.h>
 #import <WebCore/QuickLook.h>
 #import <WebCore/QuickLookHandleClient.h>
@@ -2230,43 +2229,26 @@ void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& ha
 {
     class QuickLookDocumentWriter : public WebCore::QuickLookHandleClient {
     public:
-        explicit QuickLookDocumentWriter(const WebCore::QuickLookHandle& handle)
-            : m_firstRequestURL(handle.firstRequestURL())
+        explicit QuickLookDocumentWriter(NSString *filePath)
+            : m_filePath { filePath }
+            , m_fileHandle { [NSFileHandle fileHandleForWritingAtPath:filePath] }
         {
-            NSURL *previewRequestURL = handle.previewRequestURL();
-            if (!IOSApplication::isMobileSafari()) {
-                // This keeps the QLPreviewConverter alive to serve any subresource requests.
-                // It is removed by -[WebDataSource dealloc].
-                addQLPreviewConverterWithFileForURL(previewRequestURL, handle.converter(), nil);
-                return;
-            }
-
-            // QuickLook consumes the incoming data, we need to store it so that it can be opened in the handling application.
-            NSString *quicklookContentPath = createTemporaryFileForQuickLook(handle.previewFileName());
-
-            if (quicklookContentPath) {
-                m_fileHandle = [NSFileHandle fileHandleForWritingAtPath:quicklookContentPath];
-                // previewRequestURL should match the URL removed from -[WebDataSource dealloc].
-                addQLPreviewConverterWithFileForURL(previewRequestURL, handle.converter(), quicklookContentPath);
-            }
+            ASSERT(filePath.length);
         }
 
-        virtual ~QuickLookDocumentWriter()
+        ~QuickLookDocumentWriter()
         {
-            if (m_fileHandle)
-                removeQLPreviewConverterForURL(m_firstRequestURL.get());
+            [[NSFileManager defaultManager] _web_removeFileOnlyAtPath:m_filePath.get()];
         }
 
     private:
+        RetainPtr<NSString> m_filePath;
         RetainPtr<NSFileHandle> m_fileHandle;
-        RetainPtr<NSURL> m_firstRequestURL;
 
         void didReceiveDataArray(CFArrayRef dataArray) override
         {
-            if (m_fileHandle) {
-                for (NSData *data in (NSArray *)dataArray)
-                    [m_fileHandle writeData:data];
-            }
+            for (NSData *data in (NSArray *)dataArray)
+                [m_fileHandle writeData:data];
         }
 
         void didFinishLoading() override
@@ -2276,12 +2258,19 @@ void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& ha
 
         void didFail() override
         {
-            m_fileHandle = nil;
-            // removeQLPreviewConverterForURL deletes the temporary file created.
-            removeQLPreviewConverterForURL(m_firstRequestURL.get());
+            [m_fileHandle closeFile];
         }
     };
-    handle.setClient(adoptRef(*new QuickLookDocumentWriter(handle)));
+
+    if (![m_webFrame webView].preferences.quickLookDocumentSavingEnabled)
+        return;
+
+    NSString *filePath = createTemporaryFileForQuickLook(handle.previewFileName());
+    if (!filePath)
+        return;
+
+    [m_webFrame provisionalDataSource]._quickLookContent = @{ WebQuickLookFileNameKey : filePath, WebQuickLookUTIKey : handle.previewUTI() };
+    handle.setClient(adoptRef(*new QuickLookDocumentWriter(filePath)));
 }
 #endif
 

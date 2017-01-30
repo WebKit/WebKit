@@ -52,4 +52,8 @@
 - (void)setDataSourceDelegate:(NSObject<WebDataSourcePrivateDelegate> *)dataSourceDelegate;
 - (NSObject<WebDataSourcePrivateDelegate> *)dataSourceDelegate;
 
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly) NSDictionary *_quickLookContent;
+#endif
+
 @end

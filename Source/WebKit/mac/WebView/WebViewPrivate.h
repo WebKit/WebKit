@@ -462,6 +462,7 @@ Could be worth adding to the API.
 #endif // PLATFORM(IOS)
 
 #if TARGET_OS_IPHONE
+// Deprecated. Use -[WebDataSource _quickLookContent] instead.
 - (NSDictionary *)quickLookContentForURL:(NSURL *)url;
 #endif
 

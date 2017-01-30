@@ -109,6 +109,9 @@ public:
 #if PLATFORM(IOS)
     NSObject<WebDataSourcePrivateDelegate> *_dataSourceDelegate;
 #endif
+#if USE(QUICK_LOOK)
+    RetainPtr<NSDictionary> _quickLookContent;
+#endif
 };
 
 static inline WebDataSourcePrivate* toPrivate(void* privateAttribute)
@@ -224,6 +227,17 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 {
     return nullptr;
 }
+
+#if PLATFORM(IOS)
+- (NSDictionary *)_quickLookContent
+{
+#if USE(QUICK_LOOK)
+    return toPrivate(_private)->_quickLookContent.get();
+#else
+    return nil;
+#endif
+}
+#endif
 
 @end
 
@@ -409,6 +423,13 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
     return self;
 }
+
+#if USE(QUICK_LOOK)
+- (void)_setQuickLookContent:(NSDictionary *)quickLookContent
+{
+    toPrivate(_private)->_quickLookContent = adoptNS([quickLookContent copy]);
+}
+#endif
 
 @end
 

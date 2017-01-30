@@ -1,3 +1,43 @@
+2017-01-29  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Add a WebPreference to enable saving QuickLook documents in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=167563
+        <rdar://problem/30253207>
+
+        Reviewed by Andreas Kling.
+
+        Instead of only saving QuickLook documents to a temporary file when the client is
+        MobileSafari, base this decision on a WebPreference that clients can choose to enable.
+
+        This also changes the SPI for accessing the temporary file path and UTI. Instead of
+        -[WebView quickLookContentForURL:], which requires the client to pass the response URL of
+        the frame that saved the QuickLook document, the content dictionary is now stored as a
+        property of WebDataSource.
+
+        This also removes the manual lifetime management of the QLPreviewConverter from
+        QuickLookDocumentWriter. The QLPreviewConverter is kept alive by DocumentLoader these days,
+        which ensures it lives long enough to respond to subresource requests.
+
+        New API test: QuickLook.LegacyQuickLookContent
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::didCreateQuickLookHandle): Moved the logic of deciding whether to
+        write a temporary file to here from the QuickLookDocumentWriter constructor.
+        * WebView/WebDataSource.mm: Declared _quickLookContent.
+        (-[WebDataSource _quickLookContent]):
+        (-[WebDataSource _setQuickLookContent:]):
+        * WebView/WebDataSourceInternal.h: Overrode _quickLookContent as a read/write property.
+        * WebView/WebDataSourcePrivate.h: Declared _quickLookContent as a readonly property.
+        * WebView/WebPreferenceKeysPrivate.h: Defined WebKitQuickLookDocumentSavingPreferenceKey.
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences quickLookDocumentSavingEnabled]):
+        (-[WebPreferences setQuickLookDocumentSavingEnabled:]):
+        * WebView/WebPreferencesPrivate.h: Declared property quickLookDocumentSavingEnabled.
+        * WebView/WebView.mm:
+        (-[WebView quickLookContentForURL:]): Changed to always return nil.
+        * WebView/WebViewPrivate.h: Added a comment stating that clients should use
+        -[WebDataSource _quickLookContent] instead.
+
 2017-01-28  Yoav Weiss  <yoav@yoav.ws>
 
         Add Link Preload as an off-by-default experimental feature menu item.

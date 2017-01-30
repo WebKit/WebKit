@@ -57,4 +57,7 @@ class WebDocumentLoaderMac;
 - (void)_revertToProvisionalState;
 - (void)_setMainDocumentError:(NSError *)error;
 - (WebCore::DocumentLoader*)_documentLoader;
+#if USE(QUICK_LOOK)
+@property (nonatomic, copy, setter=_setQuickLookContent:) NSDictionary *_quickLookContent;
+#endif
 @end
