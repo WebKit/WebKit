@@ -1,3 +1,15 @@
+2017-01-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] pixman fails to compile on Raspberry Pi (GCC crash)
+        https://bugs.webkit.org/show_bug.cgi?id=167411
+
+        Reviewed by Michael Catanzaro.
+
+        Disable the ARM iwMMXt fast path for pixman, because it triggers
+        a GCC bug on the RPi with Raspbian/PIXEL causing a build failure.
+
+        * gtk/jhbuild.modules:
+
 2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to handle the accelerated compositing policy
