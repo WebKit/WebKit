@@ -1,3 +1,29 @@
+2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to handle the accelerated compositing policy
+        https://bugs.webkit.org/show_bug.cgi?id=167509
+
+        Reviewed by Michael Catanzaro.
+
+        Now that we have brought back the on demand mode, we should allow applications to choose the policy, without
+        having to deal with environment variables. Settings also allows to set different policy depending on the web
+        view, so for example evolution could disable AC for the composer, but leave the on demand mode for the email
+        viewer. This patch adds a single new setting hardware-acceleration-policy to handle both
+        acceleratedCompositingEnabled and forceCompositingMode preferences using an enum with values
+        WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS and
+        WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty): Add setter for hardware-acceleration-policy property.
+        (webKitSettingsGetProperty): Add getter for hardware-acceleration-policy property.
+        (webkit_settings_class_init): Add hardware-acceleration-policy property.
+        (webkit_settings_get_hardware_acceleration_policy): Return policy according to the preferences.
+        (webkit_settings_set_hardware_acceleration_policy): set preferences according to the given policy.
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Add new symbols.
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::updatePreferences):
+
 2017-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Threaded Compositor] Crash on WebCore::GLContext::version()

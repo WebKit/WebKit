@@ -358,6 +358,7 @@ webkit_back_forward_list_item_get_type
 <SECTION>
 <FILE>WebKitSettings</FILE>
 WebKitSettings
+WebKitHardwareAccelerationPolicy
 webkit_settings_new
 webkit_settings_new_with_settings
 webkit_settings_get_auto_load_images
@@ -461,6 +462,8 @@ webkit_settings_get_allow_file_access_from_file_urls
 webkit_settings_set_allow_file_access_from_file_urls
 webkit_settings_get_allow_universal_access_from_file_urls
 webkit_settings_set_allow_universal_access_from_file_urls
+webkit_settings_get_hardware_acceleration_policy
+webkit_settings_set_hardware_acceleration_policy
 
 <SUBSECTION Standard>
 WebKitSettingsClass

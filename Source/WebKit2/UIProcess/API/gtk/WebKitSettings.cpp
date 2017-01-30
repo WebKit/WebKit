@@ -32,6 +32,7 @@
 #include "WebKitSettings.h"
 
 #include "ExperimentalFeatures.h"
+#include "WebKitEnumTypes.h"
 #include "WebKitPrivate.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebPageProxy.h"
@@ -145,7 +146,8 @@ enum {
     PROP_ENABLE_SPATIAL_NAVIGATION,
     PROP_ENABLE_MEDIASOURCE,
     PROP_ALLOW_FILE_ACCESS_FROM_FILE_URLS,
-    PROP_ALLOW_UNIVERSAL_ACCESS_FROM_FILE_URLS
+    PROP_ALLOW_UNIVERSAL_ACCESS_FROM_FILE_URLS,
+    PROP_HARDWARE_ACCELERATION_POLICY,
 };
 
 static void webKitSettingsConstructed(GObject* object)
@@ -323,6 +325,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ALLOW_UNIVERSAL_ACCESS_FROM_FILE_URLS:
         webkit_settings_set_allow_universal_access_from_file_urls(settings, g_value_get_boolean(value));
         break;
+    case PROP_HARDWARE_ACCELERATION_POLICY:
+        webkit_settings_set_hardware_acceleration_policy(settings, static_cast<WebKitHardwareAccelerationPolicy>(g_value_get_enum(value)));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -485,6 +490,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ALLOW_UNIVERSAL_ACCESS_FROM_FILE_URLS:
         g_value_set_boolean(value, webkit_settings_get_allow_universal_access_from_file_urls(settings));
+        break;
+    case PROP_HARDWARE_ACCELERATION_POLICY:
+        g_value_set_enum(value, webkit_settings_get_hardware_acceleration_policy(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1278,6 +1286,28 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Allow universal access from the context of file scheme URLs"),
             _("Whether or not universal access is allowed from the context of file scheme URLs"),
             FALSE,
+            readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:hardware-acceleration-policy:
+     *
+     * The #WebKitHardwareAccelerationPolicy to decide how to enable and disable
+     * hardware acceleration. The default value %WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND
+     * enables the hardware acceleration when the web contents request it, disabling it again
+     * when no longer needed. It's possible to enfore hardware acceleration to be always enabled
+     * by using %WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS. And it's also posible to disable it
+     * completely using %WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER. Note that disabling hardware
+     * acceleration might cause some websites to not render correctly or consume more CPU.
+     *
+     * Since: 2.16
+     */
+    g_object_class_install_property(gObjectClass,
+        PROP_HARDWARE_ACCELERATION_POLICY,
+        g_param_spec_enum("hardware-acceleration-policy",
+            _("Hardware Acceleration Policy"),
+            _("The policy to decide how to enable and disable hardware acceleration"),
+            WEBKIT_TYPE_HARDWARE_ACCELERATION_POLICY,
+            WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND,
             readWriteConstructParamFlags));
 }
 
@@ -3141,4 +3171,84 @@ void webkit_settings_set_allow_universal_access_from_file_urls(WebKitSettings* s
 
     priv->preferences->setAllowUniversalAccessFromFileURLs(allowed);
     g_object_notify(G_OBJECT(settings), "allow-universal-access-from-file-urls");
+}
+
+/**
+ * webkit_settings_get_hardware_acceleration_policy:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:hardware-acceleration-policy property.
+ *
+ * Return: a #WebKitHardwareAccelerationPolicy
+ *
+ * Since: 2.16
+ */
+WebKitHardwareAccelerationPolicy webkit_settings_get_hardware_acceleration_policy(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    if (!priv->preferences->acceleratedCompositingEnabled())
+        return WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER;
+
+    if (priv->preferences->forceCompositingMode())
+        return WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS;
+
+    return WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND;
+}
+
+/**
+ * webkit_settings_set_hardware_acceleration_policy:
+ * @settings: a #WebKitSettings
+ * @policy: a #WebKitHardwareAccelerationPolicy
+ *
+ * Set the #WebKitSettings:hardware-acceleration-policy property.
+ *
+ * Since: 2.16
+ */
+void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, WebKitHardwareAccelerationPolicy policy)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool changed = false;
+    switch (policy) {
+    case WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS:
+        if (!priv->preferences->acceleratedCompositingEnabled()) {
+            priv->preferences->setAcceleratedCompositingEnabled(true);
+            changed = true;
+        }
+        if (!priv->preferences->forceCompositingMode()) {
+            priv->preferences->setForceCompositingMode(true);
+            changed = true;
+        }
+        break;
+    case WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER:
+        if (priv->preferences->acceleratedCompositingEnabled()) {
+            priv->preferences->setAcceleratedCompositingEnabled(false);
+            changed = true;
+        }
+
+        if (priv->preferences->forceCompositingMode()) {
+            priv->preferences->setForceCompositingMode(false);
+            changed = true;
+        }
+        break;
+
+    case WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND:
+        if (!priv->preferences->acceleratedCompositingEnabled()) {
+            priv->preferences->setAcceleratedCompositingEnabled(true);
+            changed = true;
+        }
+
+        if (priv->preferences->forceCompositingMode()) {
+            priv->preferences->setForceCompositingMode(false);
+            changed = true;
+        }
+
+        break;
+    }
+
+    if (changed)
+        g_object_notify(G_OBJECT(settings), "hardware-acceleration-policy");
 }

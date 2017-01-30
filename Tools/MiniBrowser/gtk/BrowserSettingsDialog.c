@@ -55,6 +55,34 @@ struct _BrowserSettingsDialogClass {
 
 G_DEFINE_TYPE(BrowserSettingsDialog, browser_settings_dialog, GTK_TYPE_DIALOG)
 
+static const char *hardwareAccelerationPolicyToString(WebKitHardwareAccelerationPolicy policy)
+{
+    switch (policy) {
+    case WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS:
+        return "always";
+    case WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER:
+        return "never";
+    case WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND:
+        return "ondemand";
+    }
+
+    g_assert_not_reached();
+    return "ondemand";
+}
+
+static int stringToHardwareAccelerationPolicy(const char *policy)
+{
+    if (!g_ascii_strcasecmp(policy, "always"))
+        return WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS;
+    if (!g_ascii_strcasecmp(policy, "never"))
+        return WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER;
+    if (!g_ascii_strcasecmp(policy, "ondemand"))
+        return WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND;
+
+    g_warning("Invalid value %s for hardware-acceleration-policy setting valid values are always, never and ondemand", policy);
+    return -1;
+}
+
 static void cellRendererChanged(GtkCellRenderer *renderer, const char *path, const GValue *value, BrowserSettingsDialog *dialog)
 {
     GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(dialog->settingsList));
@@ -62,12 +90,21 @@ static void cellRendererChanged(GtkCellRenderer *renderer, const char *path, con
     GtkTreeIter iter;
     gtk_tree_model_get_iter(model, &iter, treePath);
 
+    gboolean updateTreeStore = TRUE;
     char *name;
     gtk_tree_model_get(model, &iter, SETTINGS_LIST_COLUMN_NAME, &name, -1);
-    g_object_set_property(G_OBJECT(dialog->settings), name, value);
+    if (!g_strcmp0(name, "hardware-acceleration-policy")) {
+        int policy = stringToHardwareAccelerationPolicy(g_value_get_string(value));
+        if (policy != -1)
+            webkit_settings_set_hardware_acceleration_policy(dialog->settings, policy);
+        else
+            updateTreeStore = FALSE;
+    } else
+        g_object_set_property(G_OBJECT(dialog->settings), name, value);
     g_free(name);
 
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, SETTINGS_LIST_COLUMN_VALUE, value, -1);
+    if (updateTreeStore)
+        gtk_list_store_set(GTK_LIST_STORE(model), &iter, SETTINGS_LIST_COLUMN_VALUE, value, -1);
     gtk_tree_path_free(treePath);
 }
 
@@ -134,10 +171,19 @@ static void browserSettingsDialogConstructed(GObject *object)
         GParamSpec *property = properties[i];
         const char *name = g_param_spec_get_name(property);
         const char *nick = g_param_spec_get_nick(property);
+        char *blurb = g_markup_escape_text(g_param_spec_get_blurb(property), -1);
 
         GValue value = { 0, { { 0 } } };
-        g_value_init(&value, G_PARAM_SPEC_VALUE_TYPE(property));
-        g_object_get_property(G_OBJECT(settings), name, &value);
+        if (!g_strcmp0(name, "hardware-acceleration-policy")) {
+            g_value_init(&value, G_TYPE_STRING);
+            g_value_set_string(&value, hardwareAccelerationPolicyToString(webkit_settings_get_hardware_acceleration_policy(settings)));
+            char *extendedBlutb = g_strdup_printf("%s (always, never or ondemand)", blurb);
+            g_free(blurb);
+            blurb = extendedBlutb;
+        } else {
+            g_value_init(&value, G_PARAM_SPEC_VALUE_TYPE(property));
+            g_object_get_property(G_OBJECT(settings), name, &value);
+        }
 
         GtkAdjustment *adjustment = NULL;
         if (G_PARAM_SPEC_VALUE_TYPE(property) == G_TYPE_UINT) {
@@ -146,7 +192,6 @@ static void browserSettingsDialogConstructed(GObject *object)
                                             uIntProperty->maximum, 1, 1, 1);
         }
 
-        char *blurb = g_markup_escape_text(g_param_spec_get_blurb(property), -1);
         GtkTreeIter iter;
         gtk_list_store_append(model, &iter);
         gtk_list_store_set(model, &iter,

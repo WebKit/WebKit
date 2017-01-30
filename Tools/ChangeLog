@@ -1,3 +1,21 @@
+2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to handle the accelerated compositing policy
+        https://bugs.webkit.org/show_bug.cgi?id=167509
+
+        Reviewed by Michael Catanzaro.
+
+        Handle new setting in MiniBrowser. The settings dialog doesn't support enum settings so it needs to be handled
+        as a special case. Also add test cases to the get/set API.
+
+        * MiniBrowser/gtk/BrowserSettingsDialog.c:
+        (hardwareAccelerationPolicyToString):
+        (stringToHardwareAccelerationPolicy):
+        (cellRendererChanged):
+        (browserSettingsDialogConstructed):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2017-01-29  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Add a WebPreference to enable saving QuickLook documents in WebKitLegacy

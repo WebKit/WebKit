@@ -285,6 +285,15 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_allow_universal_access_from_file_urls(settings, TRUE);
     g_assert(webkit_settings_get_allow_universal_access_from_file_urls(settings));
 
+    // Ondemand is the default hardware acceleration policy.
+    g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
+    webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER);
+    g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER);
+    webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
+    g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
+    webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
+    g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
+
     g_object_unref(G_OBJECT(settings));
 }
 

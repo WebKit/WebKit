@@ -47,6 +47,22 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_SETTINGS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_SETTINGS))
 #define WEBKIT_SETTINGS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_SETTINGS, WebKitSettingsClass))
 
+/**
+ * WebKitHardwareAccelerationPolicy:
+ * @WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND: Hardware acceleration is enabled/disabled as request by web contents.
+ * @WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS: Hardware acceleration is always enabled, even for websites not requesting it.
+ * @WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER: Hardware acceleration is always disabled, even for websites requesting it.
+ *
+ * Enum values used for determining the hardware acceleration policy.
+ *
+ * Since: 2.16
+ */
+typedef enum {
+    WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND,
+    WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS,
+    WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER
+} WebKitHardwareAccelerationPolicy;
+
 typedef struct _WebKitSettings WebKitSettings;
 typedef struct _WebKitSettingsClass WebKitSettingsClass;
 typedef struct _WebKitSettingsPrivate WebKitSettingsPrivate;
@@ -427,6 +443,13 @@ webkit_settings_get_allow_universal_access_from_file_urls      (WebKitSettings *
 WEBKIT_API void
 webkit_settings_set_allow_universal_access_from_file_urls      (WebKitSettings *settings,
                                                                 gboolean        allowed);
+
+WEBKIT_API WebKitHardwareAccelerationPolicy
+webkit_settings_get_hardware_acceleration_policy               (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_hardware_acceleration_policy               (WebKitSettings *settings,
+                                                                WebKitHardwareAccelerationPolicy policy);
 
 G_END_DECLS
 
