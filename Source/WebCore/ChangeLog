@@ -1,3 +1,18 @@
+2017-01-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Web content process crashes when initiating a drag on a very large image
+        https://bugs.webkit.org/show_bug.cgi?id=167564
+
+        Reviewed by Beth Dakin.
+
+        If we begin dragging an image element that is too large to show the cached image for, we will show an image file
+        icon instead of the cached image. This may return null if createDragImageIconForCachedImageFilename is
+        unimplemented, so in the meantime, we should not assume that dragImage will always exist before calling into
+        doSystemDrag in doImageDrag and bail from the drag operation if that is the case.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::doImageDrag):
+
 2017-01-30  Chris Dumez  <cdumez@apple.com>
 
         Update DiagnosticLoggingClient::logDiagnosticMessageWithValue() to take in the value as a double
