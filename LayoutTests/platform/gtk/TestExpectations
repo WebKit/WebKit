@@ -672,6 +672,15 @@ webkit.org/b/153833 css3/touch-action/touch-action-manipulation-fast-clicks.html
 webkit.org/b/153833 fast/events/can-click-element-on-page-with-active-pseudo-class-and-search-field.html [ Skip ]
 webkit.org/b/153833 fast/shadow-dom/touch-event-ios.html [ Skip ]
 
+# Skip tests expecting native HTML form validation popover
+webkit.org/b/167579 fast/forms/validation-bubble-disappears-when-input-detached.html [ Skip ]
+webkit.org/b/167579 fast/forms/validation-bubble-disappears-when-input-moved.html [ Skip ]
+webkit.org/b/167579 fast/forms/validation-bubble-disappears-when-input-no-longer-visible.html [ Skip ]
+webkit.org/b/167579 fast/forms/validation-custom-message.html [ Skip ]
+webkit.org/b/167579 fast/forms/validation-message-detached-iframe.html [ Skip ]
+webkit.org/b/167579 fast/forms/validation-message-detached-iframe2.html [ Skip ]
+webkit.org/b/167579 fast/forms/validation-messages.html [ Skip ]
+
 # Tests failing with GStreamer 1.6.3
 webkit.org/b/154390 http/tests/media/video-referer.html [ Failure ]
 webkit.org/b/154390 http/tests/media/video-cancel-load.html [ Pass Timeout Failure ]

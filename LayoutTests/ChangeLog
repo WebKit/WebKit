@@ -1,3 +1,9 @@
+2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Skip form validation tests timing out in GTK+ bots.
+
+        * platform/gtk/TestExpectations:
+
 2017-01-29  Nan Wang  <n_wang@apple.com>
 
         AX: WKContentView needs to implement UITextInput methods to make speak selection highlighting work
