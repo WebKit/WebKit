@@ -1,3 +1,17 @@
+2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] Crash in GraphicsContext3D::deleteTexture when destroying TextureMapperPlatformLayerProxy
+        https://bugs.webkit.org/show_bug.cgi?id=167575
+
+        Reviewed by Žan Doberšek.
+
+        We should clear all the buffers on invalidate to ensure we don't have textures alive after CoordinatedGraphicsScene::purgeGLResources().
+
+        Fix crash in media/video-poster-background.html.
+
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::invalidate): Clear current, pending and all used buffers.
+
 2017-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Threaded Compositor] Crash on WebCore::GLContext::version()

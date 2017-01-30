@@ -78,6 +78,11 @@ void TextureMapperPlatformLayerProxy::invalidate()
         m_compositor = nullptr;
         m_targetLayer = nullptr;
 
+        m_currentBuffer = nullptr;
+        m_pendingBuffer = nullptr;
+        m_releaseUnusedBuffersTimer.stop();
+        m_usedBuffers.clear();
+
         // Clear the timer and dispatch the update function manually now.
         m_compositorThreadUpdateTimer = nullptr;
         if (!m_compositorThreadUpdateFunction)
