@@ -27,6 +27,7 @@
 
 #include "ArgumentCoders.h"
 #include <WebCore/ColorSpace.h>
+#include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IndexedDB.h>
 #include <WebCore/PaymentHeaders.h>
@@ -641,6 +642,14 @@ template<> struct EnumTraits<WebCore::HasInsecureContent> {
         WebCore::HasInsecureContent,
         WebCore::HasInsecureContent::No,
         WebCore::HasInsecureContent::Yes
+    >;
+};
+
+template<> struct EnumTraits<WebCore::ShouldSample> {
+    using values = EnumValues<
+        WebCore::ShouldSample,
+        WebCore::ShouldSample::No,
+        WebCore::ShouldSample::Yes
     >;
 };
 

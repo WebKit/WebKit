@@ -235,9 +235,9 @@ messages -> WebPageProxy {
     ExecuteUndoRedo(uint32_t action) -> (bool result)
 
     # Diagnostic messages logging
-    LogSampledDiagnosticMessage(String message, String description)
-    LogSampledDiagnosticMessageWithResult(String message, String description, uint32_t result)
-    LogSampledDiagnosticMessageWithValue(String message, String description, String value)
+    LogDiagnosticMessage(String message, String description, enum WebCore::ShouldSample shouldSample)
+    LogDiagnosticMessageWithResult(String message, String description, uint32_t result, enum WebCore::ShouldSample shouldSample)
+    LogDiagnosticMessageWithValue(String message, String description, double value, unsigned significantFigures, enum WebCore::ShouldSample shouldSample)
 
     # Editor notifications
     EditorStateChanged(struct WebKit::EditorState editorState)

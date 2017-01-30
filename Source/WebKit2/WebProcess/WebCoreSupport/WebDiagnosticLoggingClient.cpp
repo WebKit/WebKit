@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+using namespace WebCore;
+
 WebDiagnosticLoggingClient::WebDiagnosticLoggingClient(WebPage& page)
     : m_page(page)
 {
@@ -50,7 +52,7 @@ void WebDiagnosticLoggingClient::logDiagnosticMessage(const String& message, con
 
     // FIXME: Remove this injected bundle API.
     m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessage(&m_page, message, description);
-    m_page.send(Messages::WebPageProxy::LogSampledDiagnosticMessage(message, description));
+    m_page.send(Messages::WebPageProxy::LogDiagnosticMessage(message, description, ShouldSample::No));
 }
 
 void WebDiagnosticLoggingClient::logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingResultType result, WebCore::ShouldSample shouldSample)
@@ -62,10 +64,10 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithResult(const String& me
 
     // FIXME: Remove this injected bundle API.
     m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessageWithResult(&m_page, message, description, result);
-    m_page.send(Messages::WebPageProxy::LogSampledDiagnosticMessageWithResult(message, description, result));
+    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithResult(message, description, result, ShouldSample::No));
 }
 
-void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(const String& message, const String& description, const String& value, WebCore::ShouldSample shouldSample)
+void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample shouldSample)
 {
     ASSERT(!m_page.corePage() || m_page.corePage()->settings().diagnosticLoggingEnabled());
 
@@ -73,8 +75,8 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(const String& mes
         return;
 
     // FIXME: Remove this injected bundle API.
-    m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessageWithValue(&m_page, message, description, value);
-    m_page.send(Messages::WebPageProxy::LogSampledDiagnosticMessageWithValue(message, description, value));
+    m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessageWithValue(&m_page, message, description, String::number(value, significantFigures));
+    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithValue(message, description, value, significantFigures, ShouldSample::No));
 }
 
 } // namespace WebKit

@@ -29,9 +29,12 @@
 #include "APIArray.h"
 #include "SessionState.h"
 #include "WebPageProxy.h"
+#include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 
 namespace WebKit {
+
+using namespace WebCore;
 
 // FIXME: Make this static once WebBackForwardListCF.cpp is no longer using it.
 uint64_t generateWebBackForwardItemID();
@@ -179,7 +182,7 @@ void WebBackForwardList::goToItem(WebBackForwardListItem* item)
     if (targetIndex < m_currentIndex) {
         unsigned delta = m_entries.size() - targetIndex - 1;
         String deltaValue = delta > 10 ? ASCIILiteral("over10") : String::number(delta);
-        m_page->logDiagnosticMessage(WebCore::DiagnosticLoggingKeys::backNavigationDeltaKey(), deltaValue, false /* shouldSample */);
+        m_page->logDiagnosticMessage(WebCore::DiagnosticLoggingKeys::backNavigationDeltaKey(), deltaValue, ShouldSample::No);
     }
 
     // If we're going to an item different from the current item, ask the client if the current

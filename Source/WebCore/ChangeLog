@@ -1,3 +1,18 @@
+2017-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Update DiagnosticLoggingClient::logDiagnosticMessageWithValue() to take in the value as a double
+        https://bugs.webkit.org/show_bug.cgi?id=167536
+
+        Reviewed by Darin Adler.
+
+        Update DiagnosticLoggingClient::logDiagnosticMessageWithValue() to take in the value as a double
+        instead of a string. The value needs to be numeric and the current API is error-prone.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerEngineFailedToLoad):
+        * loader/EmptyClients.cpp:
+        * page/DiagnosticLoggingClient.h:
+
 2017-01-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rollout r211235 Pointer lock events should be delivered directly to the target element.

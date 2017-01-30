@@ -72,7 +72,7 @@ void HighPerformanceGraphicsUsageSampler::timerFired()
     else if (isUsingHighPerformanceWebGL)
         state = DiagnosticLoggingKeys::activeInBackgroundTabOnlyKey();
 
-    firstPage->logDiagnosticMessage(DiagnosticLoggingKeys::webGLStateKey(), state, false);
+    firstPage->logDiagnosticMessage(DiagnosticLoggingKeys::webGLStateKey(), state, ShouldSample::No);
 }
 
 } // namespace WebKit

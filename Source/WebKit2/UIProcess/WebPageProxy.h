@@ -156,7 +156,7 @@ class RunLoopObserver;
 class SharedBuffer;
 class TextIndicator;
 class ValidationBubble;
-enum class HasInsecureContent;
+
 struct DictionaryPopupInfo;
 struct ExceptionDetails;
 struct FileChooserSettings;
@@ -166,6 +166,9 @@ struct TextAlternativeWithRange;
 struct TextCheckingResult;
 struct ViewportAttributes;
 struct WindowFeatures;
+
+enum class HasInsecureContent;
+enum class ShouldSample;
 }
 
 #if PLATFORM(GTK)
@@ -1123,12 +1126,9 @@ public:
     void setShouldDispatchFakeMouseMoveEvents(bool);
 
     // Diagnostic messages logging.
-    void logDiagnosticMessage(const String& message, const String& description, bool shouldSample);
-    void logDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result, bool shouldSample);
-    void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value, bool shouldSample);
-    void logSampledDiagnosticMessage(const String& message, const String& description);
-    void logSampledDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result);
-    void logSampledDiagnosticMessageWithValue(const String& message, const String& description, const String& value);
+    void logDiagnosticMessage(const String& message, const String& description, WebCore::ShouldSample);
+    void logDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result, WebCore::ShouldSample);
+    void logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
 
     // Form validation messages.
     void showValidationMessage(const WebCore::IntRect& anchorClientRect, const String& message);

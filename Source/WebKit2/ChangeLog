@@ -1,3 +1,45 @@
+2017-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Update DiagnosticLoggingClient::logDiagnosticMessageWithValue() to take in the value as a double
+        https://bugs.webkit.org/show_bug.cgi?id=167536
+
+        Reviewed by Darin Adler.
+
+        Update DiagnosticLoggingClient::logDiagnosticMessageWithValue() to take in the value as a double
+        instead of a string. The value needs to be numeric and the current API is error-prone.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::logDiagnosticMessage):
+        (WebKit::NetworkProcess::logDiagnosticMessageWithResult):
+        (WebKit::NetworkProcess::logDiagnosticMessageWithValue):
+        * NetworkProcess/NetworkProcess.h:
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/HighPerformanceGraphicsUsageSampler.cpp:
+        (WebKit::HighPerformanceGraphicsUsageSampler::timerFired):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::logDiagnosticMessage):
+        (WebKit::NetworkProcessProxy::logDiagnosticMessageWithResult):
+        (WebKit::NetworkProcessProxy::logDiagnosticMessageWithValue):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/PerActivityStateCPUUsageSampler.cpp:
+        (WebKit::PerActivityStateCPUUsageSampler::loggingTimerFired):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::goToItem):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::logDiagnosticMessage):
+        (WebKit::WebPageProxy::logDiagnosticMessageWithResult):
+        (WebKit::WebPageProxy::logDiagnosticMessageWithValue):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp:
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessage):
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessageWithResult):
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessageWithValue):
+        * WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.h:
+
 2017-01-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] Fix the build after r211354.

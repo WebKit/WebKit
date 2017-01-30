@@ -116,7 +116,7 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
 class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
     void logDiagnosticMessage(const String&, const String&, ShouldSample) final { }
     void logDiagnosticMessageWithResult(const String&, const String&, DiagnosticLoggingResultType, ShouldSample) final { }
-    void logDiagnosticMessageWithValue(const String&, const String&, const String&, ShouldSample) final { }
+    void logDiagnosticMessageWithValue(const String&, const String&, double, unsigned, ShouldSample) final { }
 };
 
 #if ENABLE(DRAG_SUPPORT)
