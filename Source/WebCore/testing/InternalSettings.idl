@@ -75,6 +75,7 @@ enum ForcedAccessibilityValue { "system", "on", "off" };
     [MayThrowException] void setAutoscrollForDragAndDropEnabled(boolean enabled);
     [MayThrowException] void setBackgroundShouldExtendBeyondPage(boolean hasExtendedBackground);
     [MayThrowException] void setScrollingTreeIncludesFrames(boolean enabled);
+    [MayThrowException] void setAllowUnclampedScrollPosition(boolean allowUnclamped);
 
     [MayThrowException] void setMinimumTimerInterval(unrestricted double intervalInSeconds);
     [MayThrowException] void setAllowsInlineMediaPlayback(boolean allows);

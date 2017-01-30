@@ -89,6 +89,10 @@ fast/media/mq-prefers-reduced-motion-live-update.html [ Skip ]
 # ApplePay is only available on iOS (greater than iOS 10) and macOS (greater than macOS 10.12) and only for WebKit2.
 http/tests/ssl/applepay/ [ Skip ]
 
+# Only WK2 allows unconstrained scrolling
+fast/visual-viewport/rubberbanding-viewport-rects.html [ Skip ]
+fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

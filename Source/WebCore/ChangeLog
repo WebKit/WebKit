@@ -1,3 +1,50 @@
+2017-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Fixed elements should not rubber-band in WK2, nor remain at negative offsets
+        https://bugs.webkit.org/show_bug.cgi?id=167484
+        rdar://problem/29453068
+
+        Reviewed by Dean Jackson.
+
+        There were various problems with the layout rect computation:
+        1. It ignored the scrollBehaviorForFixedElements() which we use to avoid rubber-banding fixed
+           elements in WK2, but allow in WK1, so make use of that.
+        2. Sometimes layouts/paints of fixed elements would be triggered when coalesced calls to
+           AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll() failed to
+           copy the layoutViewportOrigin to the scheduled update.
+        3. The layout viewport could be left with a negative top/left after rubber-banding.
+        
+        Also add a way to do unconstrained scrollTo(), so that a test can call window.scrollTo(-10, -10) to
+        simulate rubberbanding.
+
+        Tests: fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html
+               fast/visual-viewport/rubberbanding-viewport-rects.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::computeLayoutViewportOrigin): Handle ScrollBehaviorForFixedElements, incorporating it
+        into logic that clamps layoutViewportOrigin between min/max when rubberbanding is not allowed, or not in progress.
+        (WebCore::FrameView::updateLayoutViewport): Pass in scrollBehaviorForFixedElements().
+        (WebCore::FrameView::visibleDocumentRect): The clamping here was preventing the visible rect from
+        escaping the document bounds, which caused fixed elements to bounce with rubber-banding, so remove the clamping,
+        and fix the logic to allow rubber-banding while taking headers and footers into account.
+        * page/FrameView.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll): layoutViewportOrigin has to
+        be pushed onto the scheduled update, just like scroll position.
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition): Pass in m_behaviorForFixed.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::adjustScrollPositionWithinRange):
+        (WebCore::ScrollView::setScrollOffset):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::setAllowsUnclampedScrollPositionForTesting):
+        (WebCore::ScrollView::allowsUnclampedScrollPosition):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setAllowUnclampedScrollPosition):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2017-01-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Web content process crashes when initiating a drag on a very large image

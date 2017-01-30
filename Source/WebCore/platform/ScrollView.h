@@ -373,6 +373,9 @@ public:
 
     WEBCORE_EXPORT void scrollOffsetChangedViaPlatformWidget(const ScrollOffset& oldOffset, const ScrollOffset& newOffset);
 
+    void setAllowsUnclampedScrollPositionForTesting(bool allowsUnclampedScrollPosition) { m_allowsUnclampedScrollPosition = allowsUnclampedScrollPosition; }
+    bool allowsUnclampedScrollPosition() const { return m_allowsUnclampedScrollPosition; }
+
 protected:
     ScrollView();
 
@@ -433,21 +436,12 @@ private:
 
     bool isScrollView() const final { return true; }
 
-    RefPtr<Scrollbar> m_horizontalScrollbar;
-    RefPtr<Scrollbar> m_verticalScrollbar;
-    ScrollbarMode m_horizontalScrollbarMode;
-    ScrollbarMode m_verticalScrollbarMode;
-
-    bool m_horizontalScrollbarLock;
-    bool m_verticalScrollbarLock;
-
-    bool m_prohibitsScrolling;
-
     HashSet<Ref<Widget>> m_children;
 
-    // This bool is unused on Mac OS because we directly ask the platform widget
-    // whether it is safe to blit on scroll.
-    bool m_canBlitOnScroll;
+    RefPtr<Scrollbar> m_horizontalScrollbar;
+    RefPtr<Scrollbar> m_verticalScrollbar;
+    ScrollbarMode m_horizontalScrollbarMode { ScrollbarAuto };
+    ScrollbarMode m_verticalScrollbarMode { ScrollbarAuto };
 
 #if PLATFORM(IOS)
     // FIXME: exposedContentRect is a very similar concept to fixedVisibleContentRect except it does not differentiate
@@ -466,18 +460,30 @@ private:
     std::optional<IntSize> m_deferredScrollDelta; // Needed for WebKit scrolling
     std::optional<std::pair<ScrollOffset, ScrollOffset>> m_deferredScrollOffsets; // Needed for platform widget scrolling
 
-    bool m_scrollbarsSuppressed;
-
-    bool m_inUpdateScrollbars;
-    unsigned m_updateScrollbarsPass;
-
     IntPoint m_panScrollIconPoint;
-    bool m_drawPanScrollIcon;
-    bool m_useFixedLayout;
 
-    bool m_paintsEntireContents;
-    bool m_clipsRepaints;
-    bool m_delegatesScrolling;
+    bool m_horizontalScrollbarLock { false };
+    bool m_verticalScrollbarLock { false };
+
+    bool m_prohibitsScrolling { false };
+    bool m_allowsUnclampedScrollPosition { false };
+
+    // This bool is unused on Mac OS because we directly ask the platform widget
+    // whether it is safe to blit on scroll.
+    bool m_canBlitOnScroll { true };
+
+    bool m_scrollbarsSuppressed { false };
+
+    bool m_inUpdateScrollbars { false };
+    unsigned m_updateScrollbarsPass { 0 };
+
+    bool m_drawPanScrollIcon { false };
+    bool m_useFixedLayout { false };
+
+    bool m_paintsEntireContents { false };
+    bool m_clipsRepaints { true };
+    bool m_delegatesScrolling { false };
+
 
     void init();
     void destroy();

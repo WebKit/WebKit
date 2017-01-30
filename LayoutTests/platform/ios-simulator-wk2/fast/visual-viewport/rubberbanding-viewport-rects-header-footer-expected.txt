@@ -1,0 +1,20 @@
+This test scrolls the page and checks that the layout and visual viewports respond as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Scrolled to -123, -234
+JSON.stringify(layoutViewport) is {"top":0,"right":800,"bottom":600,"left":0,"width":800,"height":600}
+JSON.stringify(visualViewport) is {"top":-234,"right":677,"bottom":314,"left":-123,"width":800,"height":548}
+
+Scrolled to 475, 525
+JSON.stringify(layoutViewport) is {"top":473,"right":1275,"bottom":1073,"left":475,"width":800,"height":600}
+JSON.stringify(visualViewport) is {"top":473,"right":1275,"bottom":1073,"left":475,"width":800,"height":600}
+
+Scrolled to 1800, 1700
+JSON.stringify(layoutViewport) is {"top":1648,"right":2008,"bottom":2248,"left":1208,"width":800,"height":600}
+JSON.stringify(visualViewport) is {"top":1648,"right":2600,"bottom":2248,"left":1800,"width":800,"height":600}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

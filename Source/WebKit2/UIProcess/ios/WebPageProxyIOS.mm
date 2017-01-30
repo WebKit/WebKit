@@ -268,9 +268,9 @@ WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect&
 
     LayoutPoint layoutViewportOrigin;
     if (isBelowMinimumScale)
-        layoutViewportOrigin = FrameView::computeLayoutViewportOrigin(enclosingLayoutRect(constrainedUnobscuredRect), m_minStableLayoutViewportOrigin, m_maxStableLayoutViewportOrigin, enclosingLayoutRect(layoutViewportRect));
+        layoutViewportOrigin = FrameView::computeLayoutViewportOrigin(enclosingLayoutRect(constrainedUnobscuredRect), m_minStableLayoutViewportOrigin, m_maxStableLayoutViewportOrigin, enclosingLayoutRect(layoutViewportRect), StickToViewportBounds);
     else
-        layoutViewportOrigin = FrameView::computeLayoutViewportOrigin(enclosingLayoutRect(unobscuredContentRectRespectingInputViewBounds), m_minStableLayoutViewportOrigin, m_maxStableLayoutViewportOrigin, enclosingLayoutRect(layoutViewportRect));
+        layoutViewportOrigin = FrameView::computeLayoutViewportOrigin(enclosingLayoutRect(unobscuredContentRectRespectingInputViewBounds), m_minStableLayoutViewportOrigin, m_maxStableLayoutViewportOrigin, enclosingLayoutRect(layoutViewportRect), StickToViewportBounds);
 
     if (constraint == UnobscuredRectConstraint::ConstrainedToDocumentRect) {
         // The max stable layout viewport origin really depends on the size of the layout viewport itself, so we need to adjust the location of the layout viewport one final time to make sure it does not end up out of bounds of the document.

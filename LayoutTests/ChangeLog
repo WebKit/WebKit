@@ -1,3 +1,26 @@
+2017-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Fixed elements should not rubber-band in WK2, nor remain at negative offsets
+        https://bugs.webkit.org/show_bug.cgi?id=167484
+        rdar://problem/29453068
+
+        Reviewed by Dean Jackson.
+        
+        Add two tests that use internals.settings.setAllowUnclampedScrollPosition(true) and then
+        over-scroll to simulator rubber-banding, dumping viewport rects.
+        
+        setAllowUnclampedScrollPosition() only works in WebKit2, so skip the tests elsewhere.
+
+        * TestExpectations:
+        * fast/visual-viewport/rubberbanding-viewport-rects-expected.txt: Added.
+        * fast/visual-viewport/rubberbanding-viewport-rects-header-footer-expected.txt: Added.
+        * fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html: Added.
+        * fast/visual-viewport/rubberbanding-viewport-rects.html: Added.
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator-wk2/fast/visual-viewport/rubberbanding-viewport-rects-expected.txt: Added.
+        * platform/ios-simulator-wk2/fast/visual-viewport/rubberbanding-viewport-rects-header-footer-expected.txt: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2017-01-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rollout r211235 Pointer lock events should be delivered directly to the target element.
