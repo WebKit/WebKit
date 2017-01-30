@@ -45,7 +45,7 @@ public:
     }
 };
 
-TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceWithLeftRunInRTL)
+TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
 {
     FontCascadeDescription description;
     description.setOneFamily("Times");
@@ -79,6 +79,7 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceWithLeftRunInRTL)
         totalWidth += advances[i].width;
     EXPECT_NEAR(controller.totalWidth(), spaceWidth + totalWidth, 0.0001);
     GlyphBuffer glyphBuffer;
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(1, &glyphBuffer);
@@ -96,7 +97,7 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceWithLeftRunInRTL)
     EXPECT_NEAR(glyphBuffer.advanceAt(5).width(), spaceWidth + initialAdvance.width, 0.0001);
 }
 
-TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceInRTL)
+TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
 {
     FontCascadeDescription description;
     description.setOneFamily("Times");
@@ -127,6 +128,7 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceInRTL)
         totalWidth += advances[i].width;
     EXPECT_NEAR(controller.totalWidth(), totalWidth, 0.0001);
     GlyphBuffer glyphBuffer;
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(1, &glyphBuffer);
@@ -141,9 +143,10 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceInRTL)
     EXPECT_NEAR(glyphBuffer.advanceAt(2).width(), advances[2].width, 0.0001);
     EXPECT_NEAR(glyphBuffer.advanceAt(3).width(), advances[1].width, 0.0001);
     EXPECT_NEAR(glyphBuffer.advanceAt(4).width(), -initialAdvance.width, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(4).height(), initialAdvance.height, 0.0001);
 }
 
-TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceWithLeftRunInLTR)
+TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
 {
     FontCascadeDescription description;
     description.setOneFamily("LucidaGrande");
@@ -174,6 +177,7 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceWithLeftRunInLTR)
 
     EXPECT_NEAR(controller.totalWidth(), spaceWidth + 76.347656 + initialAdvance.width, 0.0001);
     GlyphBuffer glyphBuffer;
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(1, &glyphBuffer);
@@ -190,7 +194,7 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceWithLeftRunInLTR)
     EXPECT_NEAR(glyphBuffer.advanceAt(2).width(), 23.281250, 0.0001);
 }
 
-TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceInLTR)
+TEST_F(ComplexTextControllerTest, InitialAdvanceInLTR)
 {
     FontCascadeDescription description;
     description.setOneFamily("LucidaGrande");
@@ -218,6 +222,7 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceInLTR)
 
     EXPECT_NEAR(controller.totalWidth(), 76.347656 + initialAdvance.width, 0.0001);
     GlyphBuffer glyphBuffer;
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(1, &glyphBuffer);
@@ -229,6 +234,126 @@ TEST_F(ComplexTextControllerTest, DISABLED_InitialAdvanceInLTR)
     EXPECT_EQ(glyphBuffer.size(), 2U);
     EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), 53.066406, 0.0001);
     EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), 23.281250, 0.0001);
+}
+
+TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
+{
+    FontCascadeDescription description;
+    description.setOneFamily("Times");
+    description.setComputedSize(48);
+    FontCascade font(description);
+    font.update();
+
+    CGSize initialAdvance = CGSizeMake(4.33996383363472, 12.368896925859);
+
+    UChar characters[] = { 0x633, 0x20, 0x627, 0x650 };
+    size_t charactersLength = WTF_ARRAY_LENGTH(characters);
+    TextRun textRun(StringView(characters, charactersLength));
+    auto run1 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(-4.33996383363472, -12.368896925859), CGSizeMake(14.0397830018083, 0) }, { }, { 884, 240 }, { 3, 2 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(2, 2), false);
+    auto run2 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(12.0, 0) }, { }, { 3 }, { 1 }, CGSizeZero, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(1, 1), false);
+    auto run3 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(43.8119349005425, 0) }, { }, { 276 }, { 0 }, CGSizeZero, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 1), false);
+    Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
+    runs.append(WTFMove(run1));
+    runs.append(WTFMove(run2));
+    runs.append(WTFMove(run3));
+    ComplexTextController controller(font, textRun, runs);
+
+    CGFloat totalWidth = 14.0397830018083 + 12.0 + 43.8119349005425;
+    EXPECT_NEAR(controller.totalWidth(), totalWidth, 0.0001);
+    GlyphBuffer glyphBuffer;
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
+    controller.advance(0, &glyphBuffer);
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
+    controller.advance(1, &glyphBuffer);
+    EXPECT_NEAR(controller.runWidthSoFar(), 43.8119349005425, 0.0001);
+    controller.advance(2, &glyphBuffer);
+    EXPECT_NEAR(controller.runWidthSoFar(), 43.8119349005425 + 12.0, 0.0001);
+    controller.advance(3, &glyphBuffer);
+    EXPECT_NEAR(controller.runWidthSoFar(), totalWidth, 0.0001);
+    controller.advance(4, &glyphBuffer);
+    EXPECT_NEAR(controller.runWidthSoFar(), totalWidth, 0.0001);
+    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), initialAdvance.width, 0.0001);
+    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), initialAdvance.height, 0.0001);
+    EXPECT_EQ(glyphBuffer.size(), 4U);
+    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), 43.8119349005425, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), 12.0, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(2).width(), 14.0397830018083, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(3).width(), -4.33996383363472, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(3).height(), 12.368896925859, 0.0001);
+}
+
+TEST_F(ComplexTextControllerTest, LeadingExpansion)
+{
+    FontCascadeDescription description;
+    description.setOneFamily("Times");
+    description.setComputedSize(48);
+    FontCascade font(description);
+    font.update();
+
+    UChar characters[] = { 'a' };
+    size_t charactersLength = WTF_ARRAY_LENGTH(characters);
+    TextRun textRun(StringView(characters, charactersLength), 0, 100, ForceLeadingExpansion);
+    auto run = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(24, 0) }, { }, { 16 }, { 0 }, CGSizeZero, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 1), true);
+    Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
+    runs.append(WTFMove(run));
+    ComplexTextController controller(font, textRun, runs);
+
+    CGFloat totalWidth = 100 + 24;
+    EXPECT_NEAR(controller.totalWidth(), totalWidth, 0.0001);
+    GlyphBuffer glyphBuffer;
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
+    controller.advance(0, &glyphBuffer);
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
+    controller.advance(1, &glyphBuffer);
+    EXPECT_NEAR(controller.runWidthSoFar(), totalWidth, 0.0001);
+    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), 100, 0.0001);
+    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), 0, 0.0001);
+    EXPECT_EQ(glyphBuffer.size(), 1U);
+    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), 24, 0.0001);
+}
+
+TEST_F(ComplexTextControllerTest, VerticalAdvances)
+{
+    FontCascadeDescription description;
+    description.setOneFamily("Times");
+    description.setComputedSize(48);
+    FontCascade font(description);
+    font.update();
+
+    UChar characters[] = { 'a', 'b', 'c', 'd' };
+    size_t charactersLength = WTF_ARRAY_LENGTH(characters);
+    TextRun textRun(StringView(characters, charactersLength));
+    auto run1 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(0, 1), CGSizeMake(0, 2) }, { CGPointMake(0, 4), CGPointMake(0, 8) }, { 16, 17 }, { 0, 1 }, CGSizeMake(0, 16), font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 2), true);
+    auto run2 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(0, 32), CGSizeMake(0, 64) }, { CGPointMake(0, 128), CGPointMake(0, 256) }, { 18, 19 }, { 2, 3 }, CGSizeMake(0, 512), font.primaryFont(), characters, 0, charactersLength, CFRangeMake(2, 2), true);
+    Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
+    runs.append(WTFMove(run1));
+    runs.append(WTFMove(run2));
+    ComplexTextController controller(font, textRun, runs);
+
+    EXPECT_NEAR(controller.totalWidth(), 0, 0.0001);
+    GlyphBuffer glyphBuffer;
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
+    controller.advance(0, &glyphBuffer);
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
+    controller.advance(1, &glyphBuffer);
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
+    controller.advance(2, &glyphBuffer);
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
+    controller.advance(3, &glyphBuffer);
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
+    controller.advance(4, &glyphBuffer);
+    EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
+    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), 0, 0.0001);
+    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), 16, 0.0001);
+    EXPECT_EQ(glyphBuffer.size(), 4U);
+    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), 0, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(0).height(), 4 - 1 -8, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), 0, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(1).height(), 8 - 2 - 512, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(2).width(), 0, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(2).height(), 128 - 32 - 256, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(3).width(), 0, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(3).height(), 256 - 64, 0.0001);
 }
 
 }

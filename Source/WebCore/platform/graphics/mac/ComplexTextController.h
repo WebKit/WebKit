@@ -51,8 +51,7 @@ class TextRun;
 
 enum GlyphIterationStyle { IncludePartialGlyphs, ByWholeGlyphs };
 
-// ComplexTextController is responsible for rendering and measuring glyphs for
-// complex scripts on macOS and iOS.
+// See https://trac.webkit.org/wiki/ComplexTextController for more information about ComplexTextController.
 class ComplexTextController {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -76,8 +75,6 @@ public:
     float maxGlyphBoundingBoxX() const { return m_maxGlyphBoundingBoxX; }
     float minGlyphBoundingBoxY() const { return m_minGlyphBoundingBoxY; }
     float maxGlyphBoundingBoxY() const { return m_maxGlyphBoundingBoxY; }
-
-    float leadingExpansion() const { return m_leadingExpansion; }
 
     class ComplexTextRun : public RefCounted<ComplexTextRun> {
     public:
@@ -108,15 +105,33 @@ public:
         const CGGlyph* glyphs() const { return m_glyphs; }
 
         /*
-         *                                              X (Paint glyph position)   X (Paint glyph position)   X (Paint glyph position)
-         *                                             7                          7                          7
-         *                                            /                          /                          /
-         *                                           / (Glyph origin)           / (Glyph origin)           / (Glyph origin)
-         *                                          /                          /                          /
-         *                                         /                          /                          /
-         *                X-----------------------X--------------------------X--------------------------X---->...
-         * (text position ^)  (initial advance)          (base advance)             (base advance)
+         * This is the format of the information CoreText gives us about each run:
+         *
+         *                                        ----->X (Paint glyph position)   X (Paint glyph position)   X (Paint glyph position)
+         *                                       /     7                          7                          7
+         *                                      /     /                          /                          /
+         *                   (Initial advance) /     / (Glyph origin)           / (Glyph origin)           / (Glyph origin)
+         *                  -------------------     /                          /                          /
+         *                 /                       /                          /                          /
+         *                X                       X--------------------------X--------------------------X--------------------------X
+         * (text position ^)                             (base advance)             (base advance)             (base advance)
+         *
+         *
+         *
+         *
+         *
+         * And here is the output we transform this into (for each run):
+         *
+         *                                        ----->X------------------------->X------------------------->X
+         *                                       /            (Paint advance)            (Paint advance)       \
+         *                                      /                                                               \
+         *                   (Initial advance) /                                                                 \ (Paint advance)
+         *                  -------------------                                                                   ----------------
+         *                 /                                                                                                      \
+         *                X--------------------------------------------------X--------------------------X--------------------------X
+         * (text position ^)                (layout advance)                       (layout advance)           (layout advance)
          */
+        void growInitialAdvanceHorizontally(CGFloat delta) { m_initialAdvance.width += delta; }
         CGSize initialAdvance() const { return m_initialAdvance; }
         const CGSize* baseAdvances() const { return m_baseAdvances; }
         const CGPoint* glyphOrigins() const { return m_glyphOrigins.size() == glyphCount() ? m_glyphOrigins.data() : nullptr; }
@@ -149,6 +164,7 @@ public:
         bool m_isMonotonic { true };
     };
 private:
+    void computeExpansionOpportunity();
     void finishConstruction();
     
     static unsigned stringBegin(const ComplexTextRun& run) { return run.stringLocation() + run.indexBegin(); }
@@ -206,7 +222,6 @@ private:
     unsigned m_characterInCurrentGlyph { 0 };
     float m_expansion { 0 };
     float m_expansionPerOpportunity { 0 };
-    float m_leadingExpansion { 0 };
 
     float m_minGlyphBoundingBoxX { std::numeric_limits<float>::max() };
     float m_maxGlyphBoundingBoxX { std::numeric_limits<float>::min() };

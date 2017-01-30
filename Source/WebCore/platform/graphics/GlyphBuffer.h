@@ -102,9 +102,6 @@ public:
 
     void setInitialAdvance(GlyphBufferAdvance initialAdvance) { m_initialAdvance = initialAdvance; }
     const GlyphBufferAdvance& initialAdvance() const { return m_initialAdvance; }
-
-    void setLeadingExpansion(float leadingExpansion) { m_leadingExpansion = leadingExpansion; }
-    float leadingExpansion() const { return m_leadingExpansion; }
     
     Glyph glyphAt(unsigned index) const
     {
@@ -248,7 +245,6 @@ private:
 #if PLATFORM(WIN)
     Vector<FloatSize, 2048> m_offsets;
 #endif
-    float m_leadingExpansion;
 };
 
 }

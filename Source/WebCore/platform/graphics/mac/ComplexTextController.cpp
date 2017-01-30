@@ -107,6 +107,20 @@ float FontCascade::width(TextLayout& layout, unsigned from, unsigned len, HashSe
     return layout.width(from, len, fallbackFonts);
 }
 
+void ComplexTextController::computeExpansionOpportunity()
+{
+    if (!m_expansion)
+        m_expansionPerOpportunity = 0;
+    else {
+        unsigned expansionOpportunityCount = FontCascade::expansionOpportunityCount(m_run.text(), m_run.ltr() ? LTR : RTL, m_run.expansionBehavior()).first;
+
+        if (!expansionOpportunityCount)
+            m_expansionPerOpportunity = 0;
+        else
+            m_expansionPerOpportunity = m_expansion / expansionOpportunityCount;
+    }
+}
+
 ComplexTextController::ComplexTextController(const FontCascade& font, const TextRun& run, bool mayUseNaturalWritingDirection, HashSet<const Font*>* fallbackFonts, bool forTextEmphasis)
     : m_fallbackFonts(fallbackFonts)
     , m_font(font)
@@ -116,16 +130,7 @@ ComplexTextController::ComplexTextController(const FontCascade& font, const Text
     , m_mayUseNaturalWritingDirection(mayUseNaturalWritingDirection)
     , m_forTextEmphasis(forTextEmphasis)
 {
-    if (!m_expansion)
-        m_expansionPerOpportunity = 0;
-    else {
-        unsigned expansionOpportunityCount = FontCascade::expansionOpportunityCount(m_run.text(), m_run.ltr() ? LTR : RTL, run.expansionBehavior()).first;
-
-        if (!expansionOpportunityCount)
-            m_expansionPerOpportunity = 0;
-        else
-            m_expansionPerOpportunity = m_expansion / expansionOpportunityCount;
-    }
+    computeExpansionOpportunity();
 
     collectComplexTextRuns();
 
@@ -136,7 +141,10 @@ ComplexTextController::ComplexTextController(const FontCascade& font, const Text
     : m_font(font)
     , m_run(run)
     , m_end(run.length())
+    , m_expansion(run.expansion())
 {
+    computeExpansionOpportunity();
+
     for (auto& run : runs)
         m_complexTextRuns.append(run.ptr());
 
@@ -157,8 +165,6 @@ void ComplexTextController::finishConstruction()
             glyphCountSoFar += m_complexTextRuns[i]->glyphCount();
         }
     }
-
-    m_runWidthSoFar = m_leadingExpansion;
 }
 
 unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGlyphs)
@@ -166,7 +172,6 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
     if (h >= m_totalWidth)
         return m_run.ltr() ? m_end : 0;
 
-    h -= m_leadingExpansion;
     if (h < 0)
         return m_run.ltr() ? 0 : m_end;
 
@@ -180,8 +185,6 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
         for (unsigned j = 0; j < complexTextRun.glyphCount(); ++j) {
             size_t index = offsetIntoAdjustedGlyphs + j;
             CGFloat adjustedAdvance = m_adjustedBaseAdvances[index].width;
-            if (!index)
-                adjustedAdvance += complexTextRun.initialAdvance().width;
             if (x < adjustedAdvance) {
                 CFIndex hitGlyphStart = complexTextRun.indexAt(j);
                 CFIndex hitGlyphEnd;
@@ -561,7 +564,7 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
         offset = m_end;
 
     if (offset <= m_currentCharacter) {
-        m_runWidthSoFar = m_leadingExpansion;
+        m_runWidthSoFar = 0;
         m_numGlyphsSoFar = 0;
         m_currentRun = 0;
         m_glyphInCurrentRun = 0;
@@ -572,57 +575,59 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
 
     size_t runCount = m_complexTextRuns.size();
 
-    unsigned leftmostGlyph = 0;
-    unsigned currentRunIndex = indexOfCurrentRun(leftmostGlyph);
+    unsigned indexOfLeftmostGlyphInCurrentRun = 0; // Relative to the beginning of ComplexTextController.
+    unsigned currentRunIndex = indexOfCurrentRun(indexOfLeftmostGlyphInCurrentRun);
     while (m_currentRun < runCount) {
         const ComplexTextRun& complexTextRun = *m_complexTextRuns[currentRunIndex];
         bool ltr = complexTextRun.isLTR();
         size_t glyphCount = complexTextRun.glyphCount();
-        unsigned g = ltr ? m_glyphInCurrentRun : glyphCount - 1 - m_glyphInCurrentRun;
-        unsigned k = leftmostGlyph + g;
+        unsigned glyphIndexIntoCurrentRun = ltr ? m_glyphInCurrentRun : glyphCount - 1 - m_glyphInCurrentRun;
+        unsigned glyphIndexIntoComplexTextController = indexOfLeftmostGlyphInCurrentRun + glyphIndexIntoCurrentRun;
         if (fallbackFonts && &complexTextRun.font() != &m_font.primaryFont())
             fallbackFonts->add(&complexTextRun.font());
 
         // We must store the initial advance for the first glyph we are going to draw.
         // When leftmostGlyph is 0, it represents the first glyph to draw, taking into
         // account the text direction.
-        if (glyphBuffer && !leftmostGlyph) {
-            CGSize initialAdvance = complexTextRun.initialAdvance();
-#if USE_LAYOUT_SPECIFIC_ADVANCES
-            unsigned index = ltr ? 0 : m_adjustedBaseAdvances.size() - 1;
-            initialAdvance.width += glyphOrigin(index).x;
-            initialAdvance.height += glyphOrigin(index).y;
-#endif
-            glyphBuffer->setInitialAdvance(initialAdvance);
-
-            glyphBuffer->setLeadingExpansion(m_leadingExpansion);
-        }
+        if (!indexOfLeftmostGlyphInCurrentRun && glyphBuffer)
+            glyphBuffer->setInitialAdvance(complexTextRun.initialAdvance());
 
         while (m_glyphInCurrentRun < glyphCount) {
-            unsigned glyphStartOffset = complexTextRun.indexAt(g);
+            unsigned glyphStartOffset = complexTextRun.indexAt(glyphIndexIntoCurrentRun);
             unsigned glyphEndOffset;
             if (complexTextRun.isMonotonic()) {
                 if (ltr)
-                    glyphEndOffset = std::max<unsigned>(glyphStartOffset, static_cast<unsigned>(g + 1 < glyphCount ? complexTextRun.indexAt(g + 1) : complexTextRun.indexEnd()));
+                    glyphEndOffset = std::max<unsigned>(glyphStartOffset, static_cast<unsigned>(glyphIndexIntoCurrentRun + 1 < glyphCount ? complexTextRun.indexAt(glyphIndexIntoCurrentRun + 1) : complexTextRun.indexEnd()));
                 else
-                    glyphEndOffset = std::max<unsigned>(glyphStartOffset, static_cast<unsigned>(g > 0 ? complexTextRun.indexAt(g - 1) : complexTextRun.indexEnd()));
+                    glyphEndOffset = std::max<unsigned>(glyphStartOffset, static_cast<unsigned>(glyphIndexIntoCurrentRun > 0 ? complexTextRun.indexAt(glyphIndexIntoCurrentRun - 1) : complexTextRun.indexEnd()));
             } else
-                glyphEndOffset = complexTextRun.endOffsetAt(g);
+                glyphEndOffset = complexTextRun.endOffsetAt(glyphIndexIntoCurrentRun);
 
-            CGSize adjustedBaseAdvance = m_adjustedBaseAdvances[k];
+            CGSize adjustedBaseAdvance = m_adjustedBaseAdvances[glyphIndexIntoComplexTextController];
 
             if (glyphStartOffset + complexTextRun.stringLocation() >= m_currentCharacter)
                 return;
 
             if (glyphBuffer && !m_characterInCurrentGlyph) {
+                auto currentGlyphOrigin = glyphOrigin(glyphIndexIntoComplexTextController);
                 GlyphBufferAdvance paintAdvance = adjustedBaseAdvance;
-#if USE_LAYOUT_SPECIFIC_ADVANCES
-                if (k + 1 < m_adjustedBaseAdvances.size()) {
-                    paintAdvance.setWidth(paintAdvance.width() + glyphOrigin(k + 1).x - glyphOrigin(k).x);
-                    paintAdvance.setHeight(paintAdvance.height() - glyphOrigin(k + 1).y + glyphOrigin(k).y);
+                if (!glyphIndexIntoCurrentRun) {
+                    // The first layout advance of every run includes the "initial layout advance." However, here, we need
+                    // paint advances, so subtract it out before transforming the layout advance into a paint advance.
+                    paintAdvance.setWidth(paintAdvance.width() - (complexTextRun.initialAdvance().width - currentGlyphOrigin.x));
+                    paintAdvance.setHeight(paintAdvance.height() - (complexTextRun.initialAdvance().height - currentGlyphOrigin.y));
                 }
-#endif
-                glyphBuffer->add(m_adjustedGlyphs[k], &complexTextRun.font(), paintAdvance, complexTextRun.indexAt(m_glyphInCurrentRun));
+                paintAdvance.setWidth(paintAdvance.width() + glyphOrigin(glyphIndexIntoComplexTextController + 1).x - currentGlyphOrigin.x);
+                paintAdvance.setHeight(paintAdvance.height() + glyphOrigin(glyphIndexIntoComplexTextController + 1).y - currentGlyphOrigin.y);
+                if (glyphIndexIntoCurrentRun == glyphCount - 1 && currentRunIndex + 1 < runCount) {
+                    // Our paint advance points to the end of the run. However, the next run may have an
+                    // initial advance, and our paint advance needs to point to the location of the next
+                    // glyph. So, we need to add in the next run's initial advance.
+                    paintAdvance.setWidth(paintAdvance.width() - glyphOrigin(glyphIndexIntoComplexTextController + 1).x + m_complexTextRuns[currentRunIndex + 1]->initialAdvance().width);
+                    paintAdvance.setHeight(paintAdvance.height() - glyphOrigin(glyphIndexIntoComplexTextController + 1).y + m_complexTextRuns[currentRunIndex + 1]->initialAdvance().height);
+                }
+                paintAdvance.setHeight(-paintAdvance.height()); // Increasing y points down
+                glyphBuffer->add(m_adjustedGlyphs[glyphIndexIntoComplexTextController], &complexTextRun.font(), paintAdvance, complexTextRun.indexAt(m_glyphInCurrentRun));
             }
 
             unsigned oldCharacterInCurrentGlyph = m_characterInCurrentGlyph;
@@ -636,14 +641,14 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
             m_glyphInCurrentRun++;
             m_characterInCurrentGlyph = 0;
             if (ltr) {
-                g++;
-                k++;
+                glyphIndexIntoCurrentRun++;
+                glyphIndexIntoComplexTextController++;
             } else {
-                g--;
-                k--;
+                glyphIndexIntoCurrentRun--;
+                glyphIndexIntoComplexTextController--;
             }
         }
-        currentRunIndex = incrementCurrentRun(leftmostGlyph);
+        currentRunIndex = incrementCurrentRun(indexOfLeftmostGlyphInCurrentRun);
         m_glyphInCurrentRun = 0;
     }
 }
@@ -690,16 +695,6 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         unsigned glyphCount = complexTextRun.glyphCount();
         const Font& font = complexTextRun.font();
 
-        // Represent the initial advance for a text run by adjusting the advance
-        // of the last glyph of the previous text run in the glyph buffer.
-        if (!complexTextRun.glyphOrigins() && runIndex && m_adjustedBaseAdvances.size()) {
-            CGSize previousAdvance = m_adjustedBaseAdvances.last();
-            previousAdvance.width += complexTextRun.initialAdvance().width;
-            previousAdvance.height -= complexTextRun.initialAdvance().height;
-            m_adjustedBaseAdvances[m_adjustedBaseAdvances.size() - 1] = previousAdvance;
-        }
-        widthSinceLastCommit += complexTextRun.initialAdvance().width;
-
         if (!complexTextRun.isLTR())
             m_isLTROnly = false;
 
@@ -743,6 +738,15 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 glyph = font.spaceGlyph();
             }
 
+            if (!i) {
+                advance.width += complexTextRun.initialAdvance().width;
+                advance.height += complexTextRun.initialAdvance().height;
+                if (auto* origins = complexTextRun.glyphOrigins()) {
+                    advance.width -= origins[0].x;
+                    advance.height -= origins[0].y;
+                }
+            }
+
             advance.width += font.syntheticBoldOffset();
 
             if (hasExtraSpacing) {
@@ -774,20 +778,17 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     if (m_expansion) {
                         bool expandLeft, expandRight;
                         std::tie(expandLeft, expandRight) = expansionLocation(ideograph, treatAsSpace, m_run.ltr(), afterExpansion, forbidLeadingExpansion, forbidTrailingExpansion, forceLeadingExpansion, forceTrailingExpansion);
+                        m_expansion -= m_expansionPerOpportunity;
+                        advance.width += m_expansionPerOpportunity;
                         if (expandLeft) {
                             // Increase previous width
-                            m_expansion -= m_expansionPerOpportunity;
-                            m_totalWidth += m_expansionPerOpportunity;
                             if (m_adjustedBaseAdvances.isEmpty())
-                                m_leadingExpansion = m_expansionPerOpportunity;
+                                complexTextRun.growInitialAdvanceHorizontally(m_expansionPerOpportunity);
                             else
                                 m_adjustedBaseAdvances.last().width += m_expansionPerOpportunity;
                         }
-                        if (expandRight) {
-                            m_expansion -= m_expansionPerOpportunity;
-                            advance.width += m_expansionPerOpportunity;
+                        if (expandRight)
                             afterExpansion = true;
-                        }
                     } else
                         afterExpansion = false;
 
@@ -804,16 +805,13 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             if (m_forTextEmphasis && (!FontCascade::canReceiveTextEmphasis(ch) || (U_GET_GC_MASK(ch) & U_GC_M_MASK)))
                 glyph = 0;
 
-            advance.height *= -1;
             m_adjustedBaseAdvances.append(advance);
-#if USE_LAYOUT_SPECIFIC_ADVANCES
             if (auto* origins = complexTextRun.glyphOrigins()) {
                 ASSERT(m_glyphOrigins.size() < m_adjustedBaseAdvances.size());
                 m_glyphOrigins.grow(m_adjustedBaseAdvances.size());
                 m_glyphOrigins[m_glyphOrigins.size() - 1] = origins[i];
                 ASSERT(m_glyphOrigins.size() == m_adjustedBaseAdvances.size());
             }
-#endif
             m_adjustedGlyphs.append(glyph);
             
             FloatRect glyphBounds = font.boundsForGlyph(glyph);
