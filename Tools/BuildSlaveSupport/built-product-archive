@@ -24,6 +24,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import errno
 import optparse
 import os
 import shutil
@@ -97,6 +98,25 @@ def copyBuildFiles(source, destination, patterns):
     shutil.copytree(source, destination, ignore=shutil.ignore_patterns(*patterns))
 
 
+def createZipFromList(listToZip, configuration, excludePattern=None):
+    archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'WebKitBuild'))
+    archiveFile = os.path.join(archiveDir, configuration + '.zip')
+
+    try:
+        os.unlink(archiveFile)
+    except OSError, e:
+        if e.errno != errno.ENOENT:
+            raise
+
+    if sys.platform.startswith('linux'):
+        zipCommand = ['zip', '-y', '-r', archiveFile] + listToZip
+        if excludePattern:
+            zipCommand += ['-x', excludePattern]
+        return subprocess.call(zipCommand, cwd=_configurationBuildDirectory)
+
+    raise NotImplementedError('Unsupported platform: {platform}'.format(platform=sys.platform))
+
+
 def createZipManually(directoryToZip, archiveFile):
     archiveZip = zipfile.ZipFile(archiveFile, "w")
 
@@ -115,7 +135,7 @@ def createZip(directoryToZip, configuration, embedParentDirectoryNameOnDarwin=Fa
     try:
         os.unlink(archiveFile)
     except OSError, e:
-        if e.errno != 2:
+        if e.errno != errno.ENOENT:
             raise
 
     if sys.platform == 'darwin':
@@ -183,32 +203,17 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
         shutil.rmtree(thinDirectory)
 
     elif platform == 'gtk' or platform == 'efl':
-        thinDirectory = os.path.join(_configurationBuildDirectory, 'thin')
-
-        removeDirectoryIfExists(thinDirectory)
-        os.mkdir(thinDirectory)
-
-        neededDirectories = ["bin", "lib"]
-
+        # On GTK+/EFL we don't need the intermediate step of creating a thinDirectory
+        # to be compressed in a ZIP file, because we can create the ZIP directly.
+        # This is faster and requires less disk resources.
+        neededDirectories = ['bin', 'lib']
         # When debug fission is enabled the directories below contain dwo files
         # with the debug information needed to generate backtraces with GDB.
-        for objectDir in ["Tools", "Source"]:
+        for objectDir in ['Tools', 'Source']:
             if dirContainsdwo(objectDir):
                 neededDirectories.append(objectDir)
 
-        for dirname in neededDirectories:
-            fromDir = os.path.join(_configurationBuildDirectory, dirname, '.')
-            toDir = os.path.join(thinDirectory, dirname)
-            os.makedirs(toDir)
-            if subprocess.call('cp -R %s %s' % (fromDir, toDir), shell=True):
-                return 1
-
-        for root, dirs, files in os.walk(thinDirectory, topdown=False):
-            for name in files:
-                if name.endswith(".o"):
-                    os.remove(os.path.join(root, name))
-
-        if createZip(thinDirectory, configuration):
+        if createZipFromList(neededDirectories, configuration, excludePattern='*.o'):
             return 1
 
 def unzipArchive(directoryToExtractTo, configuration):

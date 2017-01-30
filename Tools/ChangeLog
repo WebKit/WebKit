@@ -1,3 +1,19 @@
+2017-01-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][EFL] Avoid using a thin directory to create the built product on the archive-built-product step.
+        https://bugs.webkit.org/show_bug.cgi?id=167596
+
+        Reviewed by Daniel Bates.
+
+        We avoid needing a thin directory by invoking the zip program with
+        the list of directories from the build directory to be zipped,
+        and by using the zip feature to exclude files matching a pattern.
+
+        * BuildSlaveSupport/built-product-archive:
+        (copyBuildFiles):
+        (createZipFromList):
+        (archiveBuiltProduct):
+
 2017-01-30  Jonathan Bedard  <jbedard@apple.com>
 
         Use simctl instead of LayoutTestRelay
