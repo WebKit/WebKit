@@ -514,7 +514,6 @@ set(JavaScriptCore_SOURCES
     heap/WeakSet.cpp
     heap/WriteBarrierSupport.cpp
 
-    inspector/AsyncStackTrace.cpp
     inspector/ConsoleMessage.cpp
     inspector/ContentSearchUtilities.cpp
     inspector/EventLoop.cpp

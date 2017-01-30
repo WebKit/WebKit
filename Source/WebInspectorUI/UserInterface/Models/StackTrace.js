@@ -25,7 +25,7 @@
 
 WebInspector.StackTrace = class StackTrace extends WebInspector.Object
 {
-    constructor(callFrames, topCallFrameIsBoundary, truncated, parentStackTrace)
+    constructor(callFrames, topCallFrameIsBoundary)
     {
         super();
 
@@ -33,8 +33,7 @@ WebInspector.StackTrace = class StackTrace extends WebInspector.Object
 
         this._callFrames = callFrames;
         this._topCallFrameIsBoundary = topCallFrameIsBoundary || false;
-        this._truncated = truncated || false;
-        this._parentStackTrace = parentStackTrace || null;
+        this._parentStackTrace = null;
     }
 
     // Static
@@ -46,7 +45,7 @@ WebInspector.StackTrace = class StackTrace extends WebInspector.Object
 
         while (payload) {
             let callFrames = payload.callFrames.map((x) => WebInspector.CallFrame.fromPayload(target, x));
-            let stackTrace = new WebInspector.StackTrace(callFrames, payload.topCallFrameIsBoundary, payload.truncated);
+            let stackTrace = new WebInspector.StackTrace(callFrames, payload.topCallFrameIsBoundary);
             if (!result)
                 result = stackTrace;
             if (previousStackTrace)
@@ -170,6 +169,5 @@ WebInspector.StackTrace = class StackTrace extends WebInspector.Object
     }
 
     get topCallFrameIsBoundary() { return this._topCallFrameIsBoundary; }
-    get truncated() { return this._truncated; }
     get parentStackTrace() { return this._parentStackTrace; }
 };

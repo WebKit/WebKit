@@ -50,18 +50,3 @@
 .tree-outline > .item.thread:hover .status-button.resume {
     display: inline-block;
 }
-
-.tree-outline > .item.thread + ol > .item.truncated-call-frames {
-    color: var(--text-color-gray-medium);
-    border-top: dashed 0.5px var(--border-color);
-    margin-left: 31px;
-    margin-right: 6px;
-    padding-left: 0;
-    cursor: default;
-}
-
-.tree-outline > .item.thread + ol > .item.truncated-call-frames .icon {
-    margin-left: 0;
-    content: url(../Images/Function.svg);
-    opacity: 0.6;
-}
