@@ -86,6 +86,7 @@ class ResourceHandleInternal;
 class NetworkLoadTiming;
 class ResourceRequest;
 class ResourceResponse;
+class SoupNetworkSession;
 class SharedBuffer;
 class Timer;
 
@@ -93,6 +94,10 @@ class ResourceHandle : public RefCounted<ResourceHandle>, public AuthenticationC
 public:
     WEBCORE_EXPORT static RefPtr<ResourceHandle> create(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
     WEBCORE_EXPORT static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
+
+#if USE(SOUP)
+    static RefPtr<ResourceHandle> create(SoupNetworkSession&, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
+#endif
 
     WEBCORE_EXPORT virtual ~ResourceHandle();
 
@@ -240,6 +245,10 @@ private:
         BlockedFailure,
         InvalidURLFailure
     };
+
+#if USE(SOUP)
+    ResourceHandle(SoupNetworkSession&, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
+#endif
 
     void platformSetDefersLoading(bool);
 

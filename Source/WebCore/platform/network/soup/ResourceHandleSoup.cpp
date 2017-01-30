@@ -91,7 +91,36 @@ ResourceHandle::~ResourceHandle()
 
 SoupSession* ResourceHandleInternal::soupSession()
 {
-    return sessionFromContext(m_context.get());
+    return m_session ? m_session->soupSession() : sessionFromContext(m_context.get());
+}
+
+RefPtr<ResourceHandle> ResourceHandle::create(SoupNetworkSession& session, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff)
+{
+    auto newHandle = adoptRef(*new ResourceHandle(session, request, client, defersLoading, shouldContentSniff));
+
+    if (newHandle->d->m_scheduledFailureType != NoFailure)
+        return WTFMove(newHandle);
+
+    if (newHandle->start())
+        return WTFMove(newHandle);
+
+    return nullptr;
+}
+
+ResourceHandle::ResourceHandle(SoupNetworkSession& session, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff)
+    : d(std::make_unique<ResourceHandleInternal>(this, nullptr, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url())))
+{
+    if (!request.url().isValid()) {
+        scheduleFailure(InvalidURLFailure);
+        return;
+    }
+
+    if (!portAllowed(request.url())) {
+        scheduleFailure(BlockedFailure);
+        return;
+    }
+
+    d->m_session = &session;
 }
 
 bool ResourceHandle::cancelledOrClientless()

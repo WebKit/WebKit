@@ -1,3 +1,24 @@
+2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r202615?): [GStreamer] ASSERTION FAILED: isMainThread() in WebCore::BuiltinResourceHandleConstructorMap& WebCore::builtinResourceHandleConstructorMap()
+        https://bugs.webkit.org/show_bug.cgi?id=167003
+
+        Reviewed by Michael Catanzaro.
+
+        Add a way to create a ResourceHandle for a given SoupNetworkSession and use it in the GStreamer streaming client
+        to ensure both the session and the handle are created and destroyed in the secondary thread. This way we also
+        avoid using the default session for downloading HLS fragments.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (ResourceHandleStreamingClient::ResourceHandleStreamingClient): Create a SoupNetworkSession and pass it to ResourceHandle::create().
+        * platform/network/ResourceHandle.h: Add create and constructor to receive a SoupNetworkSession.
+        * platform/network/ResourceHandleInternal.h: Add SoupNetworkSession member.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandleInternal::soupSession): Return the SoupNetworkSession if not nullptr.
+        (WebCore::ResourceHandle::create): Create a ResourceHandle without trying to use any builtin constructor and
+        using the given SoupNetworkSession.
+        (WebCore::ResourceHandle::ResourceHandle): Set the SoupNetworkSession if early request validations didn't fail.
+
 2017-01-30  Youenn Fablet  <youennf@gmail.com>
 
         [WebRTC] Add support for libwebrtc data channel
