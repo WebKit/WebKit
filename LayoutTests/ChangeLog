@@ -1,3 +1,25 @@
+2017-01-30  Antoine Quint  <graouts@apple.com>
+
+        LayoutTest media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=167254
+        <rdar://problem/30259293>
+
+        Reviewed by Dean Jackson.
+
+        We improve the test by setting off timers when the actual "play" and "pause" events are
+        triggered rather than when we call .play() or .pause() on the media element. This matches
+        when the auto-hide timer are set in ControlsBar and makes the test more robust. Combined
+        with the modern-media-controls WebCore module source changes, we can now stop marking this
+        test as flaky.
+
+        We apply the same change to media/modern-media-controls/media-controller/media-controller-auto-hide-pause.html
+        since it also sets off a timer based on the media being paused.
+
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-pause.html:
+        * platform/mac/TestExpectations:
+
 2017-01-30  Daniel Bates  <dabates@apple.com>
 
         [QuickLook] Make HTTP QuickLook tests work in Apple Internal DumpRenderTree

@@ -10,7 +10,7 @@ description("Testing the controls bar remains visible when the media is paused."
 
 let controlsBar;
 
-document.querySelector("video").addEventListener("play", (event) => {
+document.querySelector("video").addEventListener("play", event => {
     window.requestAnimationFrame(() => {
         const media = event.target;
         controlsBar = window.internals.shadowRoot(media).querySelector(".controls-bar");
@@ -19,16 +19,17 @@ document.querySelector("video").addEventListener("play", (event) => {
         shouldBeFalse("controlsBar.classList.contains('faded')");
 
         media.pause();
+        media.addEventListener("pause", event => {
+            setTimeout(() => {
+                debug("");
+                debug("Auto-hide timer would have elapsed, but media was paused so controls bar should remain visible.");
+                shouldBeFalse("controlsBar.classList.contains('faded')");
 
-        setTimeout(() => {
-            debug("");
-            debug("Auto-hide timer would have elapsed, but media was paused so controls bar should remain visible.");
-            shouldBeFalse("controlsBar.classList.contains('faded')");
-
-            debug("");
-            media.remove();
-            finishJSTest();
-        }, 300);
+                debug("");
+                media.remove();
+                finishJSTest();
+            }, 300);
+        });
     });
 });
 

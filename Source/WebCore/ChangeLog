@@ -1,3 +1,30 @@
+2017-01-30  Antoine Quint  <graouts@apple.com>
+
+        LayoutTest media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=167254
+        <rdar://problem/30259293>
+
+        Reviewed by Dean Jackson.
+
+        When we would identify that we need to prolong an existing auto-hide timer, when the previous
+        auto-hide timer was marked as non-cancelable, calling _cancelAutoHideTimer() would not actually
+        cancel the previous timer, which would let it fire and hide the controls bar. We now have two
+        methods, _cancelAutoHideTimer() which always cancels the current auto-hide timer, and
+        _cancelNonEnforcedAutoHideTimer() which is used from all other existing call sites, which only
+        cancels the current auto-hide timer if it was marked as cancelable. This, and revised timing in
+        the test itself, make media/modern-media-controls/media-controller/media-controller-auto-hide-
+        mouse-leave-after-play.html a lot more reliable.
+
+        We also make a small drive-by fix where we ensure the "autoHideDelay" property is set first so
+        that setting other members which may set a timer do not used an undefined value for the auto-hide
+        timer delay.
+
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        (ControlsBar.prototype.set visible):
+        (ControlsBar.prototype.handleEvent):
+        (ControlsBar.prototype._cancelNonEnforcedAutoHideTimer):
+        (ControlsBar.prototype._cancelAutoHideTimer):
+
 2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r202615?): [GStreamer] ASSERTION FAILED: isMainThread() in WebCore::BuiltinResourceHandleConstructorMap& WebCore::builtinResourceHandleConstructorMap()

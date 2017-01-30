@@ -33,10 +33,10 @@ class ControlsBar extends LayoutNode
         this._translation = new DOMPoint;
         this._mediaControls = mediaControls;
 
+        this.autoHideDelay = ControlsBar.DefaultAutoHideDelay;
+
         this.fadesWhileIdle = false;
         this.userInteractionEnabled = true;
-
-        this.autoHideDelay = ControlsBar.DefaultAutoHideDelay;
 
         if (GestureRecognizer.SupportsTouches)
             this._tapGestureRecognizer = new TapGestureRecognizer(this._mediaControls.element, this);
@@ -118,7 +118,7 @@ class ControlsBar extends LayoutNode
         if (flag && !this.visible)
             this.faded = false;
         else if (!flag)
-            this._cancelAutoHideTimer();
+            this._cancelNonEnforcedAutoHideTimer();
 
         super.visible = flag;
 
@@ -157,7 +157,7 @@ class ControlsBar extends LayoutNode
         } else if (event.currentTarget === this.element) {
             if (event.type === "mouseenter") {
                 this._disableAutoHiding = true;
-                this._cancelAutoHideTimer();
+                this._cancelNonEnforcedAutoHideTimer();
             } else if (event.type === "mouseleave") {
                 delete this._disableAutoHiding;
                 this._resetAutoHideTimer(true);
@@ -195,11 +195,15 @@ class ControlsBar extends LayoutNode
 
     // Private
 
+    _cancelNonEnforcedAutoHideTimer()
+    {
+        if (!this._enforceAutoHideTimer)
+            this._cancelAutoHideTimer();
+
+    }
+
     _cancelAutoHideTimer()
     {
-        if (this._enforceAutoHideTimer)
-            return;
-
         window.clearTimeout(this._autoHideTimer);
         delete this._autoHideTimer;
     }
