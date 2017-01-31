@@ -460,7 +460,7 @@ public:
         if (!m_runsWidth)
             runs.append(Run(fragment.start(), endPosition, m_runsWidth, m_runsWidth + fragment.width(), false, fragment.hasHyphen()));
         else {
-            const auto& lastFragment = m_fragments.last();
+            auto& lastFragment = m_fragments.last();
             // Advance last completed fragment when the previous fragment is all set (including multiple parts across renderers)
             if ((lastFragment.type() != fragment.type()) || !lastFragment.overlapsToNextRenderer())
                 m_lastCompleteFragment = lastFragment;
@@ -561,7 +561,8 @@ private:
     // Having one character on the line does not necessarily mean it actually fits.
     // First character of the first fragment might be forced on to the current line even if it does not fit.
     bool m_firstCharacterFits { false };
-    Vector<TextFragmentIterator::TextFragment> m_fragments;
+    // FIXME: We don't actually need this for all the simple cases. Try to remove/make it optional.
+    Vector<TextFragmentIterator::TextFragment, 30> m_fragments;
 };
 
 class FragmentForwardIterator : public std::iterator<std::forward_iterator_tag, unsigned> {

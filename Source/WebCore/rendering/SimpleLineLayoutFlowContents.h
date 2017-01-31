@@ -45,7 +45,7 @@ public:
         unsigned toRenderPosition(unsigned position) const { return start + position; }
         unsigned start;
         unsigned end;
-        String text;
+        StringView text;
         const RenderObject& renderer;
     };
     const Segment& segmentForRun(unsigned start, unsigned end) const;
@@ -57,7 +57,7 @@ public:
 private:
     unsigned segmentIndexForRunSlow(unsigned start, unsigned end) const;
     const Vector<Segment, 8> m_segments;
-    mutable unsigned m_lastSegmentIndex;
+    mutable unsigned m_lastSegmentIndex { 0 };
 };
 
 inline const FlowContents::Segment& FlowContents::segmentForRun(unsigned start, unsigned end) const

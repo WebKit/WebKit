@@ -153,14 +153,12 @@ unsigned TextFragmentIterator::nextBreakablePosition(const FlowContents::Segment
     return segment.toRenderPosition(nextBreakablePositionInSegment(m_lineBreakIterator, segment.toSegmentPosition(startPosition), m_style.breakNBSP, m_style.keepAllWordsForCJK));
 }
 
-template <typename CharacterType>
 unsigned TextFragmentIterator::nextNonWhitespacePosition(const FlowContents::Segment& segment, unsigned startPosition)
 {
     ASSERT(startPosition < segment.end);
-    const auto* text = segment.text.characters<CharacterType>();
     unsigned position = startPosition;
     for (; position < segment.end; ++position) {
-        auto character = text[segment.toSegmentPosition(position)];
+        auto character = segment.text[segment.toSegmentPosition(position)];
         bool isWhitespace = character == ' ' || character == '\t' || (!m_style.preserveNewline && character == '\n');
         if (!isWhitespace)
             return position;
@@ -213,7 +211,7 @@ unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, uns
     unsigned nextPosition = currentPosition;
     // Collapsed whitespace has constant width. Do not measure it.
     if (positionType == NonWhitespace)
-        nextPosition = m_currentSegment->text.is8Bit() ? nextNonWhitespacePosition<LChar>(*m_currentSegment, currentPosition) : nextNonWhitespacePosition<UChar>(*m_currentSegment, currentPosition);
+        nextPosition = nextNonWhitespacePosition(*m_currentSegment, currentPosition);
     else if (positionType == Breakable) {
         nextPosition = nextBreakablePosition(*m_currentSegment, currentPosition);
         // nextBreakablePosition returns the same position for certain characters such as hyphens. Call next again with modified position unless we are at the end of the segment.

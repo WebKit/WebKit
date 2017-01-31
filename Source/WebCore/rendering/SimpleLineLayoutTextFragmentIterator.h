@@ -133,7 +133,7 @@ private:
     bool isSoftLineBreak(unsigned position) const;
     bool isHardLineBreak(const FlowContents::Iterator& segment) const;
     unsigned nextBreakablePosition(const FlowContents::Segment&, unsigned startPosition);
-    template <typename CharacterType> unsigned nextNonWhitespacePosition(const FlowContents::Segment&, unsigned startPosition);
+    unsigned nextNonWhitespacePosition(const FlowContents::Segment&, unsigned startPosition);
     float runWidth(const FlowContents::Segment&, unsigned startPosition, unsigned endPosition, float xPosition) const;
 
     FlowContents m_flowContents;

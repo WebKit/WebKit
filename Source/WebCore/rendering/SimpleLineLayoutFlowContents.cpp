@@ -43,9 +43,9 @@ static Vector<FlowContents::Segment> initializeSegments(const RenderBlockFlow& f
     Vector<FlowContents::Segment> segments;
     segments.reserveCapacity(numberOfChildren);
     unsigned startPosition = 0;
-    for (const auto& child : childrenOfType<RenderObject>(flow)) {
+    for (auto& child : childrenOfType<RenderObject>(flow)) {
         if (is<RenderText>(child)) {
-            const auto& textChild = downcast<RenderText>(child);
+            auto& textChild = downcast<RenderText>(child);
             unsigned textLength = textChild.text()->length();
             segments.append(FlowContents::Segment { startPosition, startPosition + textLength, textChild.text(), textChild });
             startPosition += textLength;
@@ -62,7 +62,6 @@ static Vector<FlowContents::Segment> initializeSegments(const RenderBlockFlow& f
 
 FlowContents::FlowContents(const RenderBlockFlow& flow)
     : m_segments(initializeSegments(flow))
-    , m_lastSegmentIndex(0)
 {
 }
 

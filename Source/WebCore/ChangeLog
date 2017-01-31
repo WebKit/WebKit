@@ -1,3 +1,25 @@
+2017-01-30  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Small tweaks to improve performance.
+        https://bugs.webkit.org/show_bug.cgi?id=167611
+        <rdar://problem/30274294>
+
+        Reviewed by Simon Fraser.
+
+        This is ~10% progression on the attached test case (paragraphs with non-redundant content).
+        median: 102.08 runs/s -> median: 114.25 runs/s
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::LineState::appendFragmentAndCreateRunIfNeeded):
+        * rendering/SimpleLineLayoutFlowContents.cpp:
+        (WebCore::SimpleLineLayout::initializeSegments):
+        (WebCore::SimpleLineLayout::FlowContents::FlowContents):
+        * rendering/SimpleLineLayoutFlowContents.h:
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::nextNonWhitespacePosition):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::skipToNextPosition):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+
 2017-01-30  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy constants on Event interface
