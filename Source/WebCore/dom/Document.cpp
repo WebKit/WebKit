@@ -2213,7 +2213,8 @@ void Document::destroyRenderTree()
     ASSERT(frame()->view());
     ASSERT(page());
 
-    FrameView& frameView = *frame()->view();
+    FrameView* frameView = frame()->document() == this ? frame()->view() : nullptr;
+    ASSERT(frameView || pageCacheState() == InPageCache);
 
     // Prevent Widget tree changes from committing until the RenderView is dead and gone.
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
@@ -2225,7 +2226,8 @@ void Document::destroyRenderTree()
 
     documentWillBecomeInactive();
 
-    frameView.willDestroyRenderTree();
+    if (frameView)
+        frameView->willDestroyRenderTree();
 
 #if ENABLE(FULLSCREEN_API)
     if (m_fullScreenRenderer)
@@ -2252,7 +2254,8 @@ void Document::destroyRenderTree()
     m_textAutoSizedNodes.clear();
 #endif
 
-    frameView.didDestroyRenderTree();
+    if (frameView)
+        frameView->didDestroyRenderTree();
 }
 
 void Document::prepareForDestruction()
