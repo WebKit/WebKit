@@ -1,3 +1,12 @@
+2017-01-30  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Upload a diff of WebKit libwebrtc code and original libwebrtc code
+        https://bugs.webkit.org/show_bug.cgi?id=167573
+
+        Reviewed by Alex Christensen.
+
+        * WebKit/patch-libwebrtc: Added.
+
 2017-01-27  Dan Bernstein  <mitz@apple.com>
 
         Ignore Xcode’s project.xcworkspace and userdata directories in this new project like we do
