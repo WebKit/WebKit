@@ -12,35 +12,37 @@ if (window.testRunner) {
     testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 }
 
-let win = open("about:blank", "one");
-let otherDocument = win.document;
-win.resultDiv = document.getElementById("resultDiv");
+window.onload = function() {
+    let win = open("about:blank", "one");
+    let otherDocument = win.document;
+    win.resultDiv = document.getElementById("resultDiv");
 
-let a = otherDocument.createElement("a");
-a.href = "http://localhost:8000/security/resources/blank.html";
-a.click();
+    let a = otherDocument.createElement("a");
+    a.href = "http://localhost:8000/security/resources/blank.html";
+    a.click();
 
-window.addEventListener('message', function(e) {
-    testFailed("Script executed in cross origin iframe");
-    testFailed("Retrieved cross-origin window's URL: " + e.data);
-});
+    window.addEventListener('message', function(e) {
+        testFailed("Script executed in cross origin iframe");
+        testFailed("Retrieved cross-origin window's URL: " + e.data);
+    });
 
-it = setInterval(function() {
-    try {
-        win.location.href;
-    } catch (e) {
-        // Window has navigated to cross origin URL.
-        clearInterval(it);
+    it = setInterval(function() {
         try {
-            var frame = document.createElement("iframe");
-            frame.src = "javascript:parent.opener.postMessage(parent.location.href, '*')"
-            otherDocument.body.append(frame);
+            win.location.href;
         } catch (e) {
-            debug(e);
+            // Window has navigated to cross origin URL.
+            clearInterval(it);
+            try {
+                var frame = document.createElement("iframe");
+                frame.src = "javascript:parent.opener.postMessage(parent.location.href, '*')"
+                otherDocument.body.append(frame);
+            } catch (e) {
+                debug(e);
+            }
+            setTimeout(finishJSTest, 0);
         }
-        setTimeout(finishJSTest, 0);
-    }
-}, 10);
+    }, 10);
+}
 </script>
 <script src="/js-test-resources/js-test-post.js"></script>
 </body>

@@ -1,3 +1,13 @@
+2017-01-31  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix layout tests added in r211435.
+
+        It is important that window.open() is called *after* testRunner.waitUntilDone()
+        has been called or you'll hit assertions in DRT.
+
+        * http/tests/security/cross-origin-window-open-insert-script.html:
+        * http/tests/security/cross-origin-window-open-javascript-url.html:
+
 2017-01-31  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection methods can take dictionaries as input
