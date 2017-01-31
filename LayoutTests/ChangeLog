@@ -1,5 +1,11 @@
 2017-01-31  Antoine Quint  <graouts@apple.com>
 
+        Unreviewed, this test is only flaky on El Capitan / Debug of late.
+
+        * platform/mac-wk1/TestExpectations:
+
+2017-01-31  Antoine Quint  <graouts@apple.com>
+
         Unreviewed, this test is only flaky on El Capitan of late.
 
         * platform/mac/TestExpectations:

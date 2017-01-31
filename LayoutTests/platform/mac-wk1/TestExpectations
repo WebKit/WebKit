@@ -304,7 +304,7 @@ webkit.org/b/167352 media/modern-media-controls/rewind-button/rewind-button.html
 
 webkit.org/b/167347 media/modern-media-controls/airplay-button/airplay-button-on.html [ Pass Timeout ]
 
-webkit.org/b/164571 media/modern-media-controls/media-controller/media-controller-resize.html [ Pass Failure ]
+webkit.org/b/164571 [ ElCapitan Debug ] media/modern-media-controls/media-controller/media-controller-resize.html [ Pass Failure ]
 
 webkit.org/b/167372 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles.html [ Pass Failure ]
 
