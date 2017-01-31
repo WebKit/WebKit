@@ -169,34 +169,36 @@ static BOOL isImageType(NSString *type)
             return;
 
         // FIXME: These should be refactored to use asynchronous calls.
-        if (isColorType(pasteboardType) && [provider canCreateObjectOfClass:[getUIColorClass() class]]) {
-            [values addObject:[provider createObjectOfClass:[getUIColorClass() class] error:nil]];
+        if (isColorType(pasteboardType) && [self _tryToCreateAndAppendObjectOfClass:[getUIColorClass() class] toArray:values usingProvider:provider])
             return;
-        }
 
-        if (isImageType(pasteboardType) && [provider canCreateObjectOfClass:[getUIImageClass() class]]) {
-            [values addObject:[provider createObjectOfClass:[getUIImageClass() class] error:nil]];
+        if (isImageType(pasteboardType) && [self _tryToCreateAndAppendObjectOfClass:[NSString class] toArray:values usingProvider:provider])
             return;
-        }
 
-        if (isURLType(pasteboardType) && [provider canCreateObjectOfClass:[NSURL class]]) {
-            [values addObject:[provider createObjectOfClass:[NSURL class] error:nil]];
+        if (isURLType(pasteboardType) && [self _tryToCreateAndAppendObjectOfClass:[NSURL class] toArray:values usingProvider:provider])
             return;
-        }
 
-        if (isRichTextType(pasteboardType) && [provider canCreateObjectOfClass:[NSAttributedString class]]) {
-            [values addObject:[provider createObjectOfClass:[NSAttributedString class] error:nil]];
+        if (isRichTextType(pasteboardType) && [self _tryToCreateAndAppendObjectOfClass:[NSAttributedString class] toArray:values usingProvider:provider])
             return;
-        }
 
-        if (isStringType(pasteboardType) && [provider canCreateObjectOfClass:[NSString class]]) {
-            [values addObject:[provider createObjectOfClass:[NSString class] error:nil]];
+        if (isStringType(pasteboardType) && [self _tryToCreateAndAppendObjectOfClass:[NSString class] toArray:values usingProvider:provider])
             return;
-        }
 
         WTFLogAlways("Failed to instantiate object for type: '%s' at index: %tu", pasteboardType.UTF8String, index);
     }];
     return values;
+}
+
+- (BOOL)_tryToCreateAndAppendObjectOfClass:(Class)objectClass toArray:(NSMutableArray *)array usingProvider:(UIItemProvider *)provider
+{
+    if (![provider canCreateObjectOfClass:objectClass])
+        return NO;
+
+    id object = [provider createObjectOfClass:objectClass error:nil];
+    if (object)
+        [array addObject:object];
+
+    return !!object;
 }
 
 - (NSInteger)changeCount
