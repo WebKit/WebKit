@@ -1,3 +1,13 @@
+2017-01-31  Anders Carlsson  <andersca@apple.com>
+
+        Add more CRASH calls to try to figure out why we're failing to send mach ports over the wire
+        https://bugs.webkit.org/show_bug.cgi?id=167657
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::openFrontendConnection):
+
 2017-01-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Crash when trying to compute global location when the WKContentView does not have a window
