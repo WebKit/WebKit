@@ -851,7 +851,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 - (BOOL)resignFirstResponder
 {
 #if ENABLE(DATA_INTERACTION)
-    _shouldHandleLongPressActionAfterDataInteraction = NO;
+    _dataInteractionState.shouldHandleLongPressAction = NO;
 #endif
     // FIXME: Maybe we should call resignFirstResponder on the superclass
     // and do nothing if the return value is NO.
