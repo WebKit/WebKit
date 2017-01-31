@@ -1,3 +1,15 @@
+2017-01-31  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Enable CSS Grid Layout by default
+        https://bugs.webkit.org/show_bug.cgi?id=167578
+
+        Reviewed by Michael Catanzaro.
+
+        Now that Safari 10.1 is shipping CSS Grid Layout it seems safe to enable the feature by default:
+        https://developer.apple.com/library/prerelease/content/releasenotes/General/WhatsNewInSafari/Articles/Safari_10_1.html
+
+        * Shared/WebPreferencesDefinitions.h: Remove Grid Layout from the list of experimental flags and enable it by default.
+
 2017-01-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CoordinatedGraphics] WebCoordinatedSurface::create should do null-check of the return value of ShareableBitmap::createShareable
