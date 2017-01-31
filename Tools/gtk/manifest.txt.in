@@ -47,6 +47,8 @@ exclude .*\/(Configurations|mac|ios|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|
 
 directory Source
 exclude Source/JavaScriptCore/tests
+exclude Source/ThirdParty/libwebrtc
+exclude Source/ThirdParty/qunit
 exclude Source/WebCore/platform/audio/resources
 exclude Source/WebCore/bindings/scripts/test
 exclude Source/WebCore/platform/efl/DefaultTheme

@@ -1,3 +1,9 @@
+2017-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Do not include libwebrtc and qunit in GTK+ tarballs.
+
+        * gtk/manifest.txt.in:
+
 2017-01-31  Chris Fleizach  <cfleizach@apple.com>
 
         AX: enable search predication for iOS
