@@ -1,5 +1,58 @@
 2017-01-30  Joseph Pecoraro  <pecoraro@apple.com>
 
+        [WebIDL] Add support for inherit serializer attribute
+        https://bugs.webkit.org/show_bug.cgi?id=167274
+
+        Reviewed by Darin Adler.
+
+        Support for serializer { inherit }, which will be used by Resource Timing.
+        https://heycam.github.io/webidl/#idl-serializers
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GetInterfaceForAttribute):
+        (IsSerializableAttribute):
+        Determine if an attribute is serializable at generation time so we can
+        verify types. This allows us to support typedefs. We don't yet support
+        serializing an attribute that is itself a serializable interface.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateSerializerFunction):
+        (GenerateSerializerAttributesForInterface):
+        Generate inherited attributes first, then generate our own list.
+        Explicitly provided attribute names are expected to be serializable,
+        so produce an error if they are not.
+
+        * bindings/scripts/IDLParser.pm:
+        (parseSerializationAttributes):
+        Update parsing of serializer attributes to allow for multiple
+        special strings. The spec does not precisely define where the
+        special "attribute" keyword is allowed.
+
+        (applyMemberList):
+        (isSerializableAttribute): Deleted.
+        Move serializable attribute checking to generation.
+
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp: Added.
+        * bindings/scripts/test/JS/JSTestSerializationInherit.h: Added.
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp: Added.
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.h: Added.
+        The toJSON implementations are the most interesting.
+
+        * bindings/scripts/test/TestSerialization.idl:
+        Extend this test for typedefed attributes that are serializable.
+        Change TestNode (a serializable Interface) to TestException (an
+        unserializable Interface) for expected behavior of an
+        unserializable attribute.
+
+        * bindings/scripts/test/TestSerializationInherit.idl:
+        Test for { inherit, attribute }.
+
+        * bindings/scripts/test/TestSerializationInheritFinal.idl:
+        Test for { inherit, attribute_names... }, and multi-level inherit.
+
+2017-01-30  Joseph Pecoraro  <pecoraro@apple.com>
+
         Implement PerformanceObserver
         https://bugs.webkit.org/show_bug.cgi?id=167546
         <rdar://problem/30247959>

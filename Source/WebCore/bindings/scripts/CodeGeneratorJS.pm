@@ -4400,18 +4400,55 @@ sub GenerateSerializerFunction
     push(@implContent, "    auto* result = constructEmptyObject(state);\n");
     push(@implContent, "\n");
 
+    GenerateSerializerAttributesForInterface($interface, $className);
+
+    push(@implContent, "    return JSValue::encode(result);\n");
+    push(@implContent, "}\n");
+    push(@implContent, "\n");
+    push(@implContent, "EncodedJSValue JSC_HOST_CALL ${serializerNativeFunctionName}(ExecState* state)\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    return BindingCaller<JS$interfaceName>::callOperation<${serializerNativeFunctionName}Caller>(state, \"$serializerFunctionName\");\n");
+    push(@implContent, "}\n");
+    push(@implContent, "\n");
+}
+
+sub GenerateSerializerAttributesForInterface
+{
+    my ($interface, $className) = @_;
+
+    my $interfaceName = $interface->type->name;
+
+    if ($interface->serializable->hasInherit) {
+        my $parentSerializerInterface = 0;
+        $codeGenerator->ForAllParents($interface, sub {
+            my $parentInterface = shift;
+            if ($parentInterface->serializable && !$parentSerializerInterface) {
+                $parentSerializerInterface = $parentInterface;
+            }
+        }, 0);
+
+        die "Failed to find parent interface with \"serializer\" for \"inherit\" serializer in $interfaceName\n" if !$parentSerializerInterface;
+
+        GenerateSerializerAttributesForInterface($parentSerializerInterface, $className);
+    }
+
     my @serializedAttributes = ();
+
     foreach my $attributeName (@{$interface->serializable->attributes}) {
         my $foundAttribute = 0;
         foreach my $attribute (@{$interface->attributes}) {
             if ($attributeName eq $attribute->name) {
-                push @serializedAttributes, $attribute;
                 $foundAttribute = 1;
+                if ($codeGenerator->IsSerializableAttribute($interface, $attribute)) {
+                    push(@serializedAttributes, $attribute);                
+                    last;
+                }                    
+                die "Explicit \"serializer\" attribute \"$attributeName\" is not serializable\n" if !$interface->serializable->hasAttribute;
                 last;
             }
         }
         
-        die "Failed to find \"serializer\" attribute \"$attributeName\" in $interfaceName" if !$foundAttribute;
+        die "Failed to find \"serializer\" attribute \"$attributeName\" in $interfaceName\n" if !$foundAttribute;
     }
 
     foreach my $attribute (@serializedAttributes) {
@@ -4423,15 +4460,6 @@ sub GenerateSerializerFunction
         push(@implContent, "    result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), ${name}Value);\n");
         push(@implContent, "\n");
     }
-
-    push(@implContent, "    return JSValue::encode(result);\n");
-    push(@implContent, "}\n");
-    push(@implContent, "\n");
-    push(@implContent, "EncodedJSValue JSC_HOST_CALL ${serializerNativeFunctionName}(ExecState* state)\n");
-    push(@implContent, "{\n");
-    push(@implContent, "    return BindingCaller<JS$interfaceName>::callOperation<${serializerNativeFunctionName}Caller>(state, \"$serializerFunctionName\");\n");
-    push(@implContent, "}\n");
-    push(@implContent, "\n");
 }
 
 sub GenerateCallWithUsingReferences

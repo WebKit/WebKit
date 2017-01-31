@@ -1236,28 +1236,30 @@ sub parseSerializationAttributes
 {
     my $self = shift;
     my $serializable = shift;
-    my $token = $self->getToken();
-
-    if ($token->value() eq "getter") {
-        $serializable->hasGetter(1);
-        die "Serializer getter keyword is not currently supported.";
-
-    }
-    if ($token->value() eq "inherit") {
-        $serializable->hasInherit(1);
-        die "Serializer inherit keyword is not currently supported.";
-    }
-
-    if ($token->value() eq "attribute") {
-        $serializable->hasAttribute(1);
-        # Attributes will be filled in via applyMemberList()
-        return;
-    }
 
     my @attributes = ();
-    $self->assertTokenType($token, IdentifierToken);
-    push(@attributes, $token->value());
-    push(@attributes, @{$self->parseIdentifiers()});
+    my @identifiers = $self->parseIdentifierList();
+
+    for my $identifier (@identifiers) {
+        if ($identifier eq "getter") {
+            $serializable->hasGetter(1);
+            die "Serializer getter keyword is not currently supported.";
+        }
+
+        if ($identifier eq "inherit") {
+            $serializable->hasInherit(1);
+            next;
+        }
+
+        if ($identifier eq "attribute") {
+            $serializable->hasAttribute(1);
+            # Attributes will be filled in via applyMemberList()
+            next;
+        }
+
+        push(@attributes, $identifier);
+    }
+
     $serializable->attributes(\@attributes);
 }
 
@@ -2377,17 +2379,6 @@ sub parseName
     $self->assertUnexpectedToken($next->value());
 }
 
-sub isSerializableAttribute
-{
-    my $attribute = shift;
-
-    # FIXME: Need to support more than primitive serializable types.
-    # This check may have to move to the code generator, if we don't have enough information
-    # here to determine serializability: https://heycam.github.io/webidl/#idl-serializers
-    my $serializable_types = '^(\(byte|octet|short|unsigned short|long|unsigned long|long long|unsigned long long|float|unrestricted float|double|unrestricted double|boolean|DOMString|ByteString|USVString)$';
-    return $attribute->type->name =~ /$serializable_types/;
-}
-
 sub applyMemberList
 {
     my $interface = shift;
@@ -2424,9 +2415,7 @@ sub applyMemberList
         my $numSerializerAttributes = @{$interface->serializable->attributes};
         if ($interface->serializable->hasAttribute) {
             foreach my $attribute (@{$interface->attributes}) {
-                if (isSerializableAttribute($attribute)) {
-                    push(@{$interface->serializable->attributes}, $attribute->name);
-                }
+                push(@{$interface->serializable->attributes}, $attribute->name);
             }
         } elsif ($numSerializerAttributes == 0) {
             foreach my $attribute (@{$interface->attributes}) {

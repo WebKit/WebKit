@@ -314,6 +314,15 @@ sub IDLFileForInterface
     return $idlFiles->{$interfaceName};
 }
 
+sub GetInterfaceForAttribute
+{
+    my ($object, $currentInterface, $attribute) = @_;
+
+    return undef unless $object->IsInterfaceType($attribute->type);
+
+    return $object->ParseInterface($currentInterface, $attribute->type->name);
+}
+
 sub GetAttributeFromInterface
 {
     my ($object, $outerInterface, $interfaceName, $attributeName) = @_;
@@ -909,6 +918,31 @@ sub IsWrapperType
 
     return 1 if $object->IsInterfaceType($type);
     return 1 if $type->name eq "XPathNSResolver";
+
+    return 0;
+}
+
+sub IsSerializableAttribute
+{
+    my ($object, $currentInterface, $attribute) = @_;
+
+    # https://heycam.github.io/webidl/#dfn-serializable-type
+
+    my $type = $attribute->type;
+    return 1 if $type->name eq "boolean";
+    return 1 if $object->IsNumericType($type);
+    return 1 if $object->IsEnumType($type);
+    return 1 if $object->IsStringType($type);
+    return 0 if $type->name eq "EventHandler";
+
+    if ($type->isUnion || $object->IsSequenceType($type) || $object->IsDictionaryType($type)) {
+        die "Serializer for non-primitive types is not currently supported\n";
+    }
+
+    my $interface = GetInterfaceForAttribute($object, $currentInterface, $attribute);
+    if ($interface && $interface->serializable) {
+        die "Serializer for non-primitive types is not currently supported\n";
+    }
 
     return 0;
 }
