@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,6 +62,20 @@ void MarkStackArray::transferTo(MarkStackArray& other)
         while (canRemoveLast())
             other.append(removeLast());
     }
+}
+
+size_t MarkStackArray::transferTo(MarkStackArray& other, size_t limit)
+{
+    size_t count = 0;
+    while (count < limit && !isEmpty()) {
+        refill();
+        while (count < limit && canRemoveLast()) {
+            other.append(removeLast());
+            count++;
+        }
+    }
+    RELEASE_ASSERT(count <= limit);
+    return count;
 }
 
 void MarkStackArray::donateSomeCellsTo(MarkStackArray& other)

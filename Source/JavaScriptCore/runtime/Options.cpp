@@ -311,9 +311,9 @@ static void overrideDefaults()
     if (WTF::numberOfProcessorCores() < 4) {
         Options::maximumMutatorUtilization() = 0.6;
         Options::concurrentGCMaxHeadroom() = 1.4;
-        Options::concurrentGCPeriodMS() = 10;
-    } else
-        Options::useStochasticMutatorScheduler() = true;
+        Options::minimumGCPauseMS() = 1;
+        Options::gcIncrementScale() = 1;
+    }
 }
 
 static void recomputeDependentOptions()

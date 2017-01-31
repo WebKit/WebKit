@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@ public:
     MarkStackArray();
 
     void transferTo(MarkStackArray&);
+    size_t transferTo(MarkStackArray&, size_t limit); // Optimized for when `limit` is small.
     void donateSomeCellsTo(MarkStackArray&);
     void stealSomeCellsFrom(MarkStackArray&, size_t idleThreadCount);
 };

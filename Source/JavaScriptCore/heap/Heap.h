@@ -325,6 +325,8 @@ public:
     void stopIfNecessary();
     
     bool mayNeedToStop();
+
+    void performIncrement(size_t bytes);
     
     // This is a much stronger kind of stopping of the collector, and it may require waiting for a
     // while. This is meant to be a legacy API for clients of collectAllGarbage that expect that there
@@ -335,8 +337,6 @@ public:
     // outstanding collections to complete.
     void preventCollection();
     void allowCollection();
-    
-    size_t bytesVisited();
     
     uint64_t mutatorExecutionVersion() const { return m_mutatorExecutionVersion; }
     
@@ -466,8 +466,8 @@ private:
     void decrementDeferralDepthAndGCIfNeeded();
     JS_EXPORT_PRIVATE void decrementDeferralDepthAndGCIfNeededSlow();
 
-    size_t threadVisitCount();
-    size_t threadBytesVisited();
+    size_t visitCount();
+    size_t bytesVisited();
     
     void forEachCodeBlockImpl(const ScopedLambda<bool(CodeBlock*)>&);
     
@@ -499,6 +499,7 @@ private:
     bool m_shouldDoFullCollection;
     size_t m_totalBytesVisited;
     size_t m_totalBytesVisitedThisCycle;
+    double m_incrementBalance { 0 };
     
     std::optional<CollectionScope> m_collectionScope;
     std::optional<CollectionScope> m_lastCollectionScope;
@@ -517,6 +518,7 @@ private:
     MachineThreads m_machineThreads;
     
     std::unique_ptr<SlotVisitor> m_collectorSlotVisitor;
+    std::unique_ptr<SlotVisitor> m_mutatorSlotVisitor;
     std::unique_ptr<MarkStackArray> m_mutatorMarkStack;
 
     Lock m_raceMarkStackLock;

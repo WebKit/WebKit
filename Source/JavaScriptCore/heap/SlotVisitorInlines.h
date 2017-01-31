@@ -81,8 +81,10 @@ inline void SlotVisitor::appendValuesHidden(const WriteBarrierBase<Unknown>* bar
 
 inline void SlotVisitor::reportExtraMemoryVisited(size_t size)
 {
-    if (m_isFirstVisit)
+    if (m_isFirstVisit) {
         heap()->reportExtraMemoryVisited(size);
+        m_nonCellVisitCount += size;
+    }
 }
 
 #if ENABLE(RESOURCE_USAGE)
@@ -106,6 +108,16 @@ inline VM& SlotVisitor::vm()
 inline const VM& SlotVisitor::vm() const
 {
     return *m_heap.m_vm;
+}
+
+template<typename Func>
+IterationStatus SlotVisitor::forEachMarkStack(const Func& func)
+{
+    if (func(m_collectorStack) == IterationStatus::Done)
+        return IterationStatus::Done;
+    if (func(m_mutatorStack) == IterationStatus::Done)
+        return IterationStatus::Done;
+    return IterationStatus::Continue;
 }
 
 } // namespace JSC

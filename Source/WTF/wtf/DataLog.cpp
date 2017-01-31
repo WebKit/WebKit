@@ -53,6 +53,7 @@ namespace WTF {
 static PrintStream* s_file;
 
 static uint64_t s_fileData[(sizeof(FilePrintStream) + 7) / 8];
+static uint64_t s_lockedFileData[(sizeof(LockedPrintStream) + 7) / 8];
 
 static void initializeLogFileOnce()
 {
@@ -119,21 +120,15 @@ static void initializeLogFileOnce()
     }
 #endif // DATA_LOG_TO_FILE
     
-    bool wrapWithLocked = true;
-    
     if (!file) {
         // Use placement new; this makes it easier to use dataLog() to debug
         // fastMalloc.
         file = new (s_fileData) FilePrintStream(stderr, FilePrintStream::Borrow);
-        wrapWithLocked = false;
     }
     
     setvbuf(file->file(), 0, _IONBF, 0); // Prefer unbuffered output, so that we get a full log upon crash or deadlock.
     
-    if (wrapWithLocked)
-        s_file = new LockedPrintStream(std::unique_ptr<FilePrintStream>(file));
-    else
-        s_file = file;
+    s_file = new (s_lockedFileData) LockedPrintStream(std::unique_ptr<FilePrintStream>(file));
 }
 
 static void initializeLogFile()

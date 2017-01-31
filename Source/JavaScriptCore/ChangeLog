@@ -1,3 +1,85 @@
+2017-01-31  Filip Pizlo  <fpizlo@apple.com>
+
+        The mutator should be able to perform increments of GC work
+        https://bugs.webkit.org/show_bug.cgi?id=167528
+
+        Reviewed by Keith Miller and Geoffrey Garen.
+
+        The cool thing about having a concurrent and parallel collector is that it's easy to also make
+        it incremental, because the load balancer can also hand over work to anyone (including the
+        mutator) and since the collector is running concurrently anyway, the mutator can usually rely
+        on the balancer having some spare work.
+
+        This change adds a classic work-based incremental mode to the GC. When you allocate K bytes,
+        you have to do Options::gcIncrementScale() * K "bytes" of draining. This is ammortized so that
+        it only happens in allocation slow paths.
+
+        On computers that have a lot of CPUs, this mode is not profitable and we set gcIncrementScale
+        to zero. On such computers, Riptide was already performing great because there was no way that
+        one mutator thread could outpace many GC threads. But on computers with fewer CPUs, there were
+        problems having to do with making the collector progress quickly enough so that the heap
+        doesn't grow too much. The stochastic scheduler actually made things worse, because it relies
+        a lot on the fact that the GC will simply be faster than the mutator anyway. The old scheduler
+        claimed to address the problem of GC pace, but it used a time-based scheduler, which is not as
+        precise at keeping pase as the new work-based incremental mode.
+
+        In theory, the work-based mode guarantees a bound on how much the heap can grow during a
+        collection just because each byte allocated means some number of bytes visited. We don't try
+        to create such a theoretical bound. We're just trying to give the collector an unfair advantage
+        in any race with the mutator.
+
+        Turning on incremental mode, the stochastic scheduler, and passive draining in combination with
+        each other is a huge splay-latency speed-up on my iPad. It's also a CDjs progression. It does
+        regress splay-throughput, but I think that's fine (the regression is 11%, the progression is
+        3x).
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::~Heap):
+        (JSC::Heap::markToFixpoint):
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::endMarking):
+        (JSC::Heap::finalize):
+        (JSC::Heap::didAllocate):
+        (JSC::Heap::visitCount):
+        (JSC::Heap::bytesVisited):
+        (JSC::Heap::forEachSlotVisitor):
+        (JSC::Heap::performIncrement):
+        (JSC::Heap::threadVisitCount): Deleted.
+        (JSC::Heap::threadBytesVisited): Deleted.
+        * heap/Heap.h:
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackArray::transferTo):
+        * heap/MarkStack.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::didStartMarking):
+        (JSC::SlotVisitor::clearMarkStacks):
+        (JSC::SlotVisitor::appendToMarkStack):
+        (JSC::SlotVisitor::noteLiveAuxiliaryCell):
+        (JSC::SlotVisitor::donateKnownParallel):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::performIncrementOfDraining):
+        (JSC::SlotVisitor::didReachTermination):
+        (JSC::SlotVisitor::hasWork):
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::SlotVisitor::drainInParallelPassively):
+        (JSC::SlotVisitor::donateAll):
+        (JSC::SlotVisitor::correspondingGlobalStack):
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::reportExtraMemoryVisited):
+        (JSC::SlotVisitor::forEachMarkStack):
+        * heap/SpaceTimeMutatorScheduler.cpp:
+        (JSC::SpaceTimeMutatorScheduler::log):
+        * heap/StochasticSpaceTimeMutatorScheduler.cpp:
+        (JSC::StochasticSpaceTimeMutatorScheduler::log):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionHeapCapacity):
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+        * runtime/Options.h:
+
 2017-01-31  Tomas Popela  <tpopela@redhat.com>
 
         Compilation error in JSArrayBufferView.h

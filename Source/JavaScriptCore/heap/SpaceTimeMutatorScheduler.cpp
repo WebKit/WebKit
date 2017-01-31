@@ -141,7 +141,7 @@ void SpaceTimeMutatorScheduler::log()
     ASSERT(Options::logGC());
     Snapshot snapshot(*this);
     dataLog(
-        "a=", format("%.0lf", bytesSinceBeginningOfCycle(snapshot) / 1024), " kb ",
+        "a=", format("%.0lf", bytesSinceBeginningOfCycle(snapshot) / 1024), "kb ",
         "hf=", format("%.3lf", headroomFullness(snapshot)), " ",
         "mu=", format("%.3lf", mutatorUtilization(snapshot)), " ");
 }

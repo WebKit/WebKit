@@ -27,6 +27,7 @@
 
 #include "CellState.h"
 #include "HandleTypes.h"
+#include "IterationStatus.h"
 #include "MarkStack.h"
 #include "OpaqueRootSet.h"
 #include "VisitRaceKey.h"
@@ -117,6 +118,12 @@ public:
 
     SharedDrainResult drainInParallel(MonotonicTime timeout = MonotonicTime::infinity());
     SharedDrainResult drainInParallelPassively(MonotonicTime timeout = MonotonicTime::infinity());
+
+    // Attempts to perform an increment of draining that involves only walking `bytes` worth of data. This
+    // is likely to accidentally walk more or less than that. It will usually mark more than bytes. It may
+    // mark less than bytes if we're reaching termination or if the global worklist is empty (which may in
+    // rare cases happen temporarily even if we're not reaching termination).
+    size_t performIncrementOfDraining(size_t bytes);
     
     JS_EXPORT_PRIVATE void mergeIfNecessary();
 
@@ -159,6 +166,8 @@ public:
     
     void setIgnoreNewOpaqueRoots(bool value) { m_ignoreNewOpaqueRoots = value; }
 
+    void donateAll();
+
 private:
     friend class ParallelModeEnabler;
     
@@ -187,9 +196,16 @@ private:
     
     void donateKnownParallel();
     void donateKnownParallel(MarkStackArray& from, MarkStackArray& to);
-    
-    bool hasWork(const LockHolder&);
-    bool didReachTermination(const LockHolder&);
+
+    void donateAll(const AbstractLocker&);
+
+    bool hasWork(const AbstractLocker&);
+    bool didReachTermination(const AbstractLocker&);
+
+    template<typename Func>
+    IterationStatus forEachMarkStack(const Func&);
+
+    MarkStackArray& correspondingGlobalStack(MarkStackArray&);
 
     MarkStackArray m_collectorStack;
     MarkStackArray m_mutatorStack;
@@ -198,8 +214,9 @@ private:
     
     size_t m_bytesVisited;
     size_t m_visitCount;
+    size_t m_nonCellVisitCount { 0 }; // Used for incremental draining, ignored otherwise.
     bool m_isInParallelMode;
-    
+
     HeapVersion m_markingVersion;
     
     Heap& m_heap;

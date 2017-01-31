@@ -1087,6 +1087,7 @@ static EncodedJSValue JSC_HOST_CALL functionDollarAgentBroadcast(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDollarAgentGetReport(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDollarAgentLeaving(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionWaitForReport(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionHeapCapacity(ExecState*);
 
 struct Script {
     enum class StrictMode {
@@ -1367,6 +1368,8 @@ protected:
         addFunction(vm, agent, "leaving", functionDollarAgentLeaving, 0);
         
         addFunction(vm, "waitForReport", functionWaitForReport, 0);
+
+        addFunction(vm, "heapCapacity", functionHeapCapacity, 0);
     }
     
     void addFunction(VM& vm, JSObject* object, const char* name, NativeFunction function, unsigned arguments)
@@ -2637,6 +2640,12 @@ EncodedJSValue JSC_HOST_CALL functionWaitForReport(ExecState* exec)
         return JSValue::encode(jsNull());
     
     return JSValue::encode(jsString(&vm, string));
+}
+
+EncodedJSValue JSC_HOST_CALL functionHeapCapacity(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    return JSValue::encode(jsNumber(vm.heap.capacity()));
 }
 
 template<typename ValueType>
