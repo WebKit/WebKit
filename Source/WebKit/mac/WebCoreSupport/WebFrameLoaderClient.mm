@@ -2225,7 +2225,7 @@ bool WebFrameLoaderClient::shouldLoadMediaElementURL(const URL& url) const
 #endif
 
 #if USE(QUICK_LOOK)
-void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& handle)
+RefPtr<QuickLookHandleClient> WebFrameLoaderClient::createQuickLookHandleClient(const String& fileName, const String& uti)
 {
     class QuickLookDocumentWriter : public WebCore::QuickLookHandleClient {
     public:
@@ -2263,14 +2263,14 @@ void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& ha
     };
 
     if (![m_webFrame webView].preferences.quickLookDocumentSavingEnabled)
-        return;
+        return nullptr;
 
-    NSString *filePath = createTemporaryFileForQuickLook(handle.previewFileName());
+    NSString *filePath = createTemporaryFileForQuickLook(fileName);
     if (!filePath)
-        return;
+        return nullptr;
 
-    [m_webFrame provisionalDataSource]._quickLookContent = @{ WebQuickLookFileNameKey : filePath, WebQuickLookUTIKey : handle.previewUTI() };
-    handle.setClient(adoptRef(*new QuickLookDocumentWriter(filePath)));
+    [m_webFrame provisionalDataSource]._quickLookContent = @{ WebQuickLookFileNameKey : filePath, WebQuickLookUTIKey : uti };
+    return adoptRef(*new QuickLookDocumentWriter(filePath));
 }
 #endif
 

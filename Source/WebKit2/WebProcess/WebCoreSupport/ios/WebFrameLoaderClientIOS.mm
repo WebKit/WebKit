@@ -66,16 +66,16 @@ RetainPtr<CFDictionaryRef> WebFrameLoaderClient::connectionProperties(DocumentLo
 }
 
 #if USE(QUICK_LOOK)
-void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& handle)
+RefPtr<QuickLookHandleClient> WebFrameLoaderClient::createQuickLookHandleClient(const String& fileName, const String& uti)
 {
     if (!m_frame->isMainFrame())
-        return;
+        return nullptr;
 
     WebPage* webPage = m_frame->page();
     if (!webPage)
-        return;
+        return nullptr;
 
-    handle.setClient(WebQuickLookHandleClient::create(handle, webPage->pageID()));
+    return WebQuickLookHandleClient::create(fileName, uti, webPage->pageID());
 }
 #endif
 

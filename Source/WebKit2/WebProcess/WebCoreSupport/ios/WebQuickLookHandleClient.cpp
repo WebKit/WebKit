@@ -44,10 +44,10 @@ static PasswordCallbackMap& passwordCallbacks()
     return callbackMap.get();
 }
 
-WebQuickLookHandleClient::WebQuickLookHandleClient(const WebCore::QuickLookHandle& handle, uint64_t pageID)
-    : m_fileName(handle.previewFileName())
-    , m_uti(handle.previewUTI())
-    , m_pageID(pageID)
+WebQuickLookHandleClient::WebQuickLookHandleClient(const String& fileName, const String& uti, uint64_t pageID)
+    : m_fileName { fileName }
+    , m_uti { uti }
+    , m_pageID { pageID }
 {
     WebProcess::singleton().send(Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame(m_fileName, m_uti), m_pageID);
 }

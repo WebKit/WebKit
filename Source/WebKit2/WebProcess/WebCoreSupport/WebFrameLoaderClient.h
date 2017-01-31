@@ -245,7 +245,7 @@ private:
     void forcePageTransitionIfNeeded() final;
 
 #if USE(QUICK_LOOK)
-    void didCreateQuickLookHandle(WebCore::QuickLookHandle&) final;
+    RefPtr<WebCore::QuickLookHandleClient> createQuickLookHandleClient(const String& fileName, const String& uti) final;
 #endif
 
 #if ENABLE(CONTENT_FILTERING)

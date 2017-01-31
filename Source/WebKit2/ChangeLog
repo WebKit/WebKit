@@ -1,3 +1,19 @@
+2017-01-30  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] FrameLoaderClient should return the new QuickLookHandleClient it creates
+        https://bugs.webkit.org/show_bug.cgi?id=167625
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h: Declared createQuickLookHandleClient().
+        * WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm:
+        (WebKit::WebFrameLoaderClient::createQuickLookHandleClient): Renamed from didCreateQuickLookHandle().
+        (WebKit::WebFrameLoaderClient::didCreateQuickLookHandle): Renamed to createQuickLookHandleClient().
+        * WebProcess/WebCoreSupport/ios/WebQuickLookHandleClient.cpp:
+        (WebKit::WebQuickLookHandleClient::WebQuickLookHandleClient): Set m_fileName and m_uti from
+        the constructor arguments instead of from handle.
+        * WebProcess/WebCoreSupport/ios/WebQuickLookHandleClient.h:
+
 2017-01-30  Anders Carlsson  <andersca@apple.com>
 
         Add some more crash reporter information to diagnose a failed mach_msg

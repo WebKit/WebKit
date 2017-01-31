@@ -1,3 +1,39 @@
+2017-01-30  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] FrameLoaderClient should return the new QuickLookHandleClient it creates
+        https://bugs.webkit.org/show_bug.cgi?id=167625
+
+        Reviewed by Andreas Kling.
+
+        QuickLookHandleClients were being created by QuickLookHandle calling
+        FrameLoaderClient::didCreateQuickLookHandle() then having the FrameLoaderClient create a new
+        QuickLookHandleClient and set it using QuickLookHandle::setClient().
+
+        Since all FrameLoaderClient::didCreateQuickLookHandle() does is create a new
+        QuickLookHandleClient, this patch changes the FrameLoaderClient function to return the new
+        QuickLookHandleClient directly and removes the API from QuickLookHandle to set a client.
+        This also removes previewFileName() and previewUTI() from QuickLookHandle and instead passes
+        these as arguments to the FrameLoaderClient.
+
+        No change in behavior. Covered by existing tests.
+
+        * loader/EmptyClients.cpp: Added an implementation of createQuickLookHandleClient() that
+        returns nullptr.
+        * loader/FrameLoaderClient.h: Declared createQuickLookHandleClient() and removed
+        didCreateQuickLookHandle().
+        * loader/ios/QuickLook.h: Removed setClient(), previewFileName(), and previewUTI().
+        * loader/ios/QuickLook.mm: Removed testingOrEmptyClient().
+        (-[WebPreviewLoader initWithResourceLoader:resourceResponse:quickLookHandle:]): Set _client
+        to testingClient() if it exists, otherwise set it to the client returned by
+        FrameLoaderClient::createQuickLookHandleClient() it non-null, otherwise set it to
+        emptyClient().
+        (testingOrEmptyClient): Deleted.
+        (-[WebPreviewLoader setClient:]): Deleted.
+        (-[WebPreviewLoader converter]): Deleted.
+        (WebCore::QuickLookHandle::setClient): Deleted.
+        (WebCore::QuickLookHandle::previewFileName): Deleted.
+        (WebCore::QuickLookHandle::previewUTI): Deleted.
+
 2017-01-30  Jer Noble  <jer.noble@apple.com>
 
         NULL-deref crash in TextTrack::removeCue()

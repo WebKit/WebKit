@@ -67,6 +67,10 @@
 #include "CompiledContentExtension.h"
 #endif
 
+#if USE(QUICK_LOOK)
+#include "QuickLookHandleClient.h"
+#endif
+
 namespace WebCore {
 
 class UserMessageHandlerDescriptor;
@@ -441,6 +445,10 @@ class EmptyFrameLoaderClient final : public FrameLoaderClient {
 
     bool isEmptyFrameLoaderClient() final { return true; }
     void prefetchDNS(const String&) final { }
+
+#if USE(QUICK_LOOK)
+    RefPtr<QuickLookHandleClient> createQuickLookHandleClient(const String&, const String&) final { return nullptr; }
+#endif
 };
 
 class EmptyFrameNetworkingContext final : public FrameNetworkingContext {
