@@ -56,4 +56,4 @@ WebInspector.WorkerTarget = class WorkerTarget extends WebInspector.Target
     {
         return WebInspector.displayNameForURL(this._name);
     }
-}
+};

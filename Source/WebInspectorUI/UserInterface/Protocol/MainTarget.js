@@ -53,4 +53,4 @@ WebInspector.MainTarget = class MainTarget extends WebInspector.Target
         let mainFrame = WebInspector.frameResourceManager.mainFrame;
         return mainFrame ? mainFrame.mainResource : null;
     }
-}
+};

@@ -2588,7 +2588,7 @@ Object.defineProperty(WebInspector, "targets",
 WebInspector.assumingMainTarget = function()
 {
     return WebInspector.mainTarget;
-}
+};
 
 // OpenResourceDialog delegate
 

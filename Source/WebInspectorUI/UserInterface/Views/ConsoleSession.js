@@ -43,7 +43,7 @@ WebInspector.ConsoleSession = class ConsoleSession extends WebInspector.Object
         let headerText = "";
         switch (data.newSessionReason) {
         case WebInspector.ConsoleSession.NewSessionReason.PageReloaded:
-            headerText =  WebInspector.UIString("Page reloaded at %s");
+            headerText = WebInspector.UIString("Page reloaded at %s");
             break;
         case WebInspector.ConsoleSession.NewSessionReason.PageNavigated:
             headerText = WebInspector.UIString("Page navigated at %s");

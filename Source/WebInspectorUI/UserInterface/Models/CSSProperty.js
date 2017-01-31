@@ -230,7 +230,7 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         this._relatedShorthandProperty = property || null;
     }
 
-    get relatedLonghandProperties() { return this._relatedLonghandProperties;}
+    get relatedLonghandProperties() { return this._relatedLonghandProperties; }
 
     addRelatedLonghandProperty(property)
     {

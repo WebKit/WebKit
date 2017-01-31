@@ -815,7 +815,7 @@ EsprimaFormatter = class EsprimaFormatter
                 builder.appendSpace();
             builder.appendToken(tokenValue, tokenOffset);
             builder.appendSpace();
-            return;            
+            return;
         }
 
         if (nodeType === "ExportAllDeclaration" || nodeType === "ExportDefaultDeclaration" || nodeType === "ImportDefaultSpecifier" || nodeType === "ImportNamespaceSpecifier") {

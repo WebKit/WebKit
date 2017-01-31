@@ -1377,7 +1377,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
     _inlineSwatchDeactivated()
     {
         this._hasActiveInlineSwatchEditor = false;
-    }    
+    }
 
     _propertyOverriddenStatusChanged(event)
     {

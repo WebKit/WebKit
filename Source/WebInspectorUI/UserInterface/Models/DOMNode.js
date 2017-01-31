@@ -824,7 +824,7 @@ WebInspector.DOMNode.ShadowRootType = {
     Closed: "closed",
     Open: "open",
 };
-                     
+
 WebInspector.DOMNode.CustomElementState = {
     Builtin: "builtin",
     Custom: "custom",

@@ -1,3 +1,49 @@
+2017-01-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Address some ESLint warnings
+        https://bugs.webkit.org/show_bug.cgi?id=167634
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/DOMUtilities.js:
+        (WebInspector.linkifyNodeReference):
+        (isSimiliarNode):
+        (WebInspector.xpathIndex):
+        These empty statements were supposed to be returns!
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Models/CSSProperty.js:
+        (WebInspector.CSSProperty.prototype.get relatedLonghandProperties):
+        * UserInterface/Models/DOMNode.js:
+        * UserInterface/Protocol/Connection.js:
+        (InspectorBackend.Connection):
+        (InspectorBackend.MainConnection):
+        (InspectorBackend.WorkerConnection):
+        * UserInterface/Protocol/MainTarget.js:
+        (WebInspector.MainTarget):
+        * UserInterface/Protocol/WorkerTarget.js:
+        (WebInspector.WorkerTarget):
+        * UserInterface/Test/Test.js:
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        * UserInterface/Views/ConsoleSession.js:
+        (WebInspector.ConsoleSession):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshAccessibility.accessibilityPropertiesCallback):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshAccessibility):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasAdded):
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel):
+        * UserInterface/Views/ScriptContentView.js:
+        (WebInspector.ScriptContentView.prototype._toggleTypeAnnotations):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._createControlFlowScrollEventHandler):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView.prototype._toggleTypeAnnotations):
+        * UserInterface/Workers/Formatter/EsprimaFormatter.js:
+        (EsprimaFormatter.prototype._handleTokenAtNode):
+        Address pedantic warnings for consistent style.
+
 2017-01-30  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: "bouncy highlight" element in TextEditor/DOMTreeOutline should update or dismiss when user scrolls

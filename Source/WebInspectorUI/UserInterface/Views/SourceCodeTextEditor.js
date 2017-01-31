@@ -2213,7 +2213,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             else if (this._basicBlockAnnotator)
                 this._basicBlockAnnotator.pause();
 
-            timeoutIdentifier = setTimeout(()  => {
+            timeoutIdentifier = setTimeout(() => {
                 timeoutIdentifier = null;
                 if (this._basicBlockAnnotator)
                     this._basicBlockAnnotator.resume();

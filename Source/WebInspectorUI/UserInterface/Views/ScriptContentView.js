@@ -234,7 +234,7 @@ WebInspector.ScriptContentView = class ScriptContentView extends WebInspector.Co
         this._showTypesButtonNavigationItem.enabled = false;
         this._textEditor.toggleTypeAnnotations().then(() => {
             this._showTypesButtonNavigationItem.enabled = true;
-        })
+        });
     }
 
     _toggleUnexecutedCodeHighlights(event)

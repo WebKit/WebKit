@@ -289,7 +289,7 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
         // Worker script.
         if (script.target !== WebInspector.mainTarget) {
             if (script.isMainResource())
-                this._addTargetWithMainResource(script.target)
+                this._addTargetWithMainResource(script.target);
             return;
         }
 
