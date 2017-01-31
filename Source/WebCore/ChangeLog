@@ -1,3 +1,17 @@
+2017-01-31  Jessie Berlin  <jberlin@webkit.org>
+
+        Build fix.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::Editor::takeFindStringFromSelection):
+        (WebCore::Editor::replaceNodeFromPasteboard):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::createDraggingDataTransfer):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::createForCopyAndPaste):
+        (WebCore::Pasteboard::createForDragAndDrop):
+
 2017-01-31  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Add an audio stream description class

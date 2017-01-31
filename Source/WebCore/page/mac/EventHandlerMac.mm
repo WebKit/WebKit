@@ -724,7 +724,10 @@ Ref<DataTransfer> EventHandler::createDraggingDataTransfer() const
 {
     // Must be done before ondragstart adds types and data to the pboard,
     // also done for security, as it erases data from the last drag.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     auto pasteboard = std::make_unique<Pasteboard>(NSDragPboard);
+#pragma clang diagnostic pop
     pasteboard->clear();
     return DataTransfer::createForDragAndDrop();
 }
