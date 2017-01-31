@@ -1,3 +1,12 @@
+2017-01-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking media/modern-media-controls/buttons-container/buttons-container-buttons-property.html as flaky on macOS WK1.
+        https://bugs.webkit.org/show_bug.cgi?id=167371
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-01-30  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy Attributes.isId attribute
