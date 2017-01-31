@@ -1,3 +1,11 @@
+2017-01-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [EFL][GTK] Skip some IndexedDB tests that time out on the Perf bots.
+
+        Unreviewed performance test gardening.
+
+        * Skipped:
+
 2017-01-30  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Small tweaks to improve performance.

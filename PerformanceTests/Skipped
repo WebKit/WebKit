@@ -107,3 +107,16 @@ Animation/svg-animation.html
 # Media tests take too long to run; require MSE, HLS which are not supported on all ports;
 # and require a webserver (run-webkit-httpd) which is not part of normal performance testing.
 Media/
+
+# Bugs 167622, 167637, 167638 and 167640 - Some IndexedDB test deadlock on the GTK+ perf bot.
+[GTK] IndexedDB/index-get.html
+[GTK] IndexedDB/large-number-of-inserts.html
+[GTK] IndexedDB/objectstore-cursor.html
+[GTK] IndexedDB/objectstore-get.html
+
+# Bug 167623 - [GTK][EFL] Performance test IndexedDB/large-number-of-inserts-responsiveness.html timeouts.
+[EFL] IndexedDB/large-number-of-inserts-responsiveness.html
+[GTK] IndexedDB/large-number-of-inserts-responsiveness.html
+
+# Bug 167616 - Performance test IndexedDB/large-binary-keys.html creates a DB of more than 6GB and takes more than 10 minutes to run.
+[GTK] IndexedDB/large-binary-keys.html
