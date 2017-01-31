@@ -2602,7 +2602,7 @@ void RenderLayer::updateCompositingLayersAfterScroll()
 LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const LayoutRect &exposeRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const
 {
     FrameView& frameView = renderer().view().frameView();
-    if (insideFixed) {
+    if (renderer().isRenderView() && insideFixed) {
         // If the element is inside position:fixed and we're not scaled, no amount of scrolling is going to move things around.
         if (frameView.frameScaleFactor() == 1)
             return visibleRect;

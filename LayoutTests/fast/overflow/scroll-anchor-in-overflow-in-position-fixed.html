@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 2000px;
+        }
+        
+        .fixed {
+            position: fixed;
+            top: 250px;
+            left: 40px;
+            height: 200px;
+            width: 200px;
+            border: 1px solid black;
+        }
+        
+        #scroller {
+            height: 100%;
+            width: 100%;
+            overflow: scroll;
+        }
+        
+        #scroller > a {
+            display: block;
+            height: 50px;
+            margin-top: 600px;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+    description("Tests scrolling to an anchor inside overflow:scroll inside position:fixed correctly scrolls the overflow, and not the page");
+    window.jsTestIsAsync = true;
+
+    function runTest()
+    {
+        window.scrollTo(100, 800);
+        setTimeout(function() {
+            window.location='#anchor';
+            setTimeout(finishTest, 0);
+        }, 0);
+    }
+
+    var scroller;
+    function finishTest()
+    {
+        if (window.location.toString().indexOf("#") == -1) {
+            setTimeout(finishTest, 0);
+            return;
+        }
+        
+        scroller = document.getElementById('scroller');
+        
+        shouldBe('scroller.scrollTop', '465');
+        shouldBe('scroller.scrollLeft', '0');
+
+        shouldBe('document.scrollingElement.scrollTop', '800');
+        shouldBe('document.scrollingElement.scrollLeft', '100');
+
+        window.scrollTo(0, 0);
+        finishJSTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+
+<div class="fixed">
+    <div id="scroller">
+        <a name="anchor">Anchor is here</a>
+    </div>
+</div>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body></html>
