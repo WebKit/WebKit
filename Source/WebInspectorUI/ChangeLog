@@ -1,3 +1,15 @@
+2017-01-30  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: "bouncy highlight" element in TextEditor/DOMTreeOutline should update or dismiss when user scrolls
+        https://bugs.webkit.org/show_bug.cgi?id=167146
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype._revealSearchResult.scrollHandler):
+        (WebInspector.TextEditor.prototype._revealSearchResult.animationEnded):
+        (WebInspector.TextEditor.prototype._revealSearchResult):
+
 2017-01-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Implement PerformanceObserver
