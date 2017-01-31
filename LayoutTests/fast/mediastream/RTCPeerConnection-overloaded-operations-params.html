@@ -147,22 +147,7 @@
             function badInput(functionName, firstArg, detailedErrorsArg) {
                 detailedErrors = detailedErrorsArg;
 
-                return new Promise(function (resolve) {
-                    promiseShouldReject(`pc.${functionName}(1)`, "detailedErrors.arg1")
-                    .then(function () {
-                        debug("*** Error callback is mandatory")
-                        return promiseShouldReject(`pc.${functionName}(${firstArg}, emptyFunc)`, "'TypeError: Not enough arguments'");
-                    })
-                    .then(function () {
-                        debug("*** Callbacks are not nullable");
-                        return promiseShouldReject(`pc.${functionName}(${firstArg}, emptyFunc, null)`, "detailedErrors.arg3");
-                    })
-                    .then(function () {
-                        return promiseShouldReject(`pc.${functionName}(${firstArg}, null, emptyFunc)`, "detailedErrors.arg2");
-                    })
-                    .then(function () {
-                        return promiseShouldReject(`pc.${functionName}(${firstArg}, null, null)`, "detailedErrors.arg2");
-                    })
+                return promiseShouldReject(`pc.${functionName}(1)`, "detailedErrors.arg1")
                     .then(function () {
                         debug(`*** Bad input as ${firstArg}`);
                         return promiseShouldReject(`pc.${functionName}('foo')`, "detailedErrors.arg1");
@@ -176,21 +161,9 @@
                     .then(function () {
                         return promiseShouldReject(`pc.${functionName}(1, emptyFunc, emptyFunc)`, "detailedErrors.arg1");
                     })
-                    .then(function () {
-                        debug("*** Bad input for callback arguments");
-                        return promiseShouldReject(`pc.${functionName}(${firstArg}, {}, emptyFunc)`, "detailedErrors.arg2");
-                    })
-                    .then(function () {
-                        return promiseShouldReject(`pc.${functionName}(${firstArg}, emptyFunc, {})`, "detailedErrors.arg3");
-                    })
-                    .then(function () {
-                        resolve();
-                    })
                     .catch(function (error) {
                         testFailed(`Unexpected error in promise chain: ${error}`);
-                        resolve();
                     });
-                });
             }
 
             function testAddIceCandidate() {

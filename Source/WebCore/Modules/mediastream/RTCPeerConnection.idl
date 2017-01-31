@@ -121,10 +121,7 @@ dictionary RTCDataChannelInit {
     RTCConfiguration getConfiguration();
     [MayThrowException] void setConfiguration(RTCConfiguration configuration);
 
-    [JSBuiltin] Promise<RTCStatsReport> getStats(optional MediaStreamTrack? selector = null);
-    // Legacy signature: Promise<void> getStats(MediaStreamTrack? selector
-    //                                    RTCStatsCallback successCallback,
-    //                                    RTCPeerConnectionErrorCallback errorCallback);
+    Promise<RTCStatsReport> getStats(optional MediaStreamTrack? selector = null);
 
     // Private API used to implement the overloaded operations above. Queued functions are called by
     // runQueuedOperation() (defined in RTCPeerConnectionInternals.js).
@@ -133,7 +130,6 @@ dictionary RTCDataChannelInit {
     [PrivateIdentifier] Promise<void> queuedSetLocalDescription(RTCSessionDescription description);
     [PrivateIdentifier] Promise<void> queuedSetRemoteDescription(RTCSessionDescription description);
     [PrivateIdentifier] Promise<void> queuedAddIceCandidate(RTCIceCandidate candidate);
-    [PrivateIdentifier] Promise<RTCStatsReport> privateGetStats(MediaStreamTrack? selector);
 
     [CallWith=ScriptExecutionContext, MayThrowException] RTCDataChannel createDataChannel([TreatNullAs=EmptyString] DOMString label, optional RTCDataChannelInit options);
 

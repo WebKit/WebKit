@@ -261,29 +261,3 @@ function addIceCandidate()
         return @Promise.@resolve(@undefined);
     });
 }
-
-function getStats()
-{
-    "use strict";
-
-    if (!@isRTCPeerConnection(this))
-        return @Promise.@reject(new @TypeError("Function should be called on an RTCPeerConnection"));
-
-    const peerConnection = this;
-
-    const objectInfo = {
-        "constructor": @MediaStreamTrack,
-        "argName": "selector",
-        "argType": "MediaStreamTrack",
-        "defaultsToNull": true
-    };
-    return @objectAndCallbacksOverload(arguments, "getStats", objectInfo, function (selector) {
-        // Promise mode
-        return peerConnection.@privateGetStats(selector);
-    }, function (selector, successCallback, errorCallback) {
-        // Legacy callbacks mode
-        peerConnection.@privateGetStats(selector).@then(successCallback, errorCallback);
-
-        return @Promise.@resolve(@undefined);
-    });
-}

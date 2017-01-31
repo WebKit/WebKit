@@ -8,13 +8,13 @@ PASS promise RTCPeerConnection.prototype.createAnswer.call({}) rejected with Typ
 PASS promise RTCPeerConnection.prototype.setLocalDescription.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
 PASS promise RTCPeerConnection.prototype.setRemoteDescription.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
 PASS promise RTCPeerConnection.prototype.addIceCandidate.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
-PASS promise RTCPeerConnection.prototype.getStats.call({}, null) rejected with TypeError: Function should be called on an RTCPeerConnection
+FAIL promise RTCPeerConnection.prototype.getStats.call({}, null) rejected with TypeError: Can only call RTCPeerConnection.getStats on instances of RTCPeerConnection; expected reason TypeError: Function should be called on an RTCPeerConnection
 PASS promise objectWithPcPrototype.createOffer() rejected with TypeError: Function should be called on an RTCPeerConnection
 PASS promise objectWithPcPrototype.createAnswer() rejected with TypeError: Function should be called on an RTCPeerConnection
 PASS promise objectWithPcPrototype.setLocalDescription() rejected with TypeError: Function should be called on an RTCPeerConnection
 PASS promise objectWithPcPrototype.setRemoteDescription() rejected with TypeError: Function should be called on an RTCPeerConnection
 PASS promise objectWithPcPrototype.addIceCandidate() rejected with TypeError: Function should be called on an RTCPeerConnection
-PASS promise objectWithPcPrototype.getStats() rejected with TypeError: Function should be called on an RTCPeerConnection
+FAIL promise objectWithPcPrototype.getStats() rejected with TypeError: Can only call RTCPeerConnection.getStats on instances of RTCPeerConnection; expected reason TypeError: Function should be called on an RTCPeerConnection
 PASS End of test promise chain
 PASS successfullyParsed is true
 

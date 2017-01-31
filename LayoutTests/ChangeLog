@@ -1,3 +1,16 @@
+2017-01-30  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] getStats does not support legacy callback
+        https://bugs.webkit.org/show_bug.cgi?id=167617
+
+        Reviewed by Alex Christensen.
+
+        * fast/mediastream/RTCPeerConnection-js-built-ins-check-this-expected.txt:
+        * fast/mediastream/RTCPeerConnection-overloaded-operations-params-expected.txt:
+        * fast/mediastream/RTCPeerConnection-overloaded-operations-params.html:
+        * fast/mediastream/RTCPeerConnection-stats.html:
+        * fast/mediastream/RTCPeerConnection-statsSelector.html:
+
 2017-01-30  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, remove a couple JS files that were missed in r211395.

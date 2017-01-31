@@ -41,7 +41,7 @@
 
                 pc.addStream(stream);
                 // FIXME: Test getStats error callback: https://webkit.org/b/129860
-                shouldNotThrow('pc.getStats(statsHandler2, statsError)');
+                shouldNotThrow('pc.getStats().then(statsHandler2, statsError)');
             }
 
             function statsHandler2(status)
@@ -81,7 +81,7 @@
             var startTime = new Date().getTime();
             shouldNotThrow("pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]})");
             // FIXME: Test getStats error callback: https://webkit.org/b/129860
-            shouldNotThrow('pc.getStats(statsHandler1, statsError)');
+            shouldNotThrow('pc.getStats().then(statsHandler1, statsError)');
 
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;

@@ -1,3 +1,21 @@
+2017-01-30  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] getStats does not support legacy callback
+        https://bugs.webkit.org/show_bug.cgi?id=167617
+
+        Reviewed by Alex Christensen.
+
+        Covered by updated tests.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::getStats):
+        (WebCore::RTCPeerConnection::privateGetStats): Deleted.
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCPeerConnection.js:
+        (addIceCandidate):
+        (getStats): Deleted.
+
 2017-01-30  Sam Weinig  <sam@webkit.org>
 
         JSDOMBinding is too big. Split it up!
