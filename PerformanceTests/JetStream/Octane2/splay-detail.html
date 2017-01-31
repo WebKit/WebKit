@@ -863,6 +863,11 @@ function start()
     for (var i = 0; i < samples.length; ++i)
         scatterData.push({x: i + 1, y: samples[i]});
     
+    function msForHz(hz)
+    {
+        return 1000/hz;
+    }
+    
     if (myChart)
         myChart.destroy();
     myChart = new Chart(
@@ -870,13 +875,36 @@ function start()
         {
             type: "line",
             data: {
-                datasets: [{
-                    label: "Splay Tick Times",
-                    pointBorderColor: "rgba(0,0,0,0)",
-                    borderColor: "rgba(50,50,150,0.8)",
-                    pointRadius: 0,
-                    data: scatterData
-                }]
+                datasets: [
+                    {
+                        label: "60Hz",
+                        pointBorderColor: "rgba(0,0,0,0)",
+                        borderColor: "rgba(0,0,0,0.5)",
+                        borderDash: [6, 6],
+                        backgroundColor: "rgba(0,0,0,0)",
+                        pointRadius: 0,
+                        data: [{x:1, y:msForHz(60)}, {x:samples.length, y:msForHz(60)}],
+                        fill: false
+                    },
+                    {
+                        label: "120Hz",
+                        pointBorderColor: "rgba(0,0,0,0)",
+                        borderColor: "rgba(255,0,0,0.7)",
+                        borderDash: [3, 3],
+                        backgroundColor: "rgba(0,0,0,0)",
+                        pointRadius: 0,
+                        data: [{x:1, y:msForHz(120)}, {x:samples.length, y:msForHz(120)}],
+                        fill: false
+                    },
+                    {
+                        label: "Splay",
+                        pointBorderColor: "rgba(0,0,0,0)",
+                        borderColor: "rgba(50,50,150,0.8)",
+                        backgroundColor: "rgba(0,0,0,0)",
+                        pointRadius: 0,
+                        data: scatterData
+                    }
+                ]
             },
             options: {
                 scales: {
@@ -904,7 +932,12 @@ function start()
                     }]
                 },
                 legend: {
-                    display: false
+                    display: true,
+                    position: "right",
+                    labels: {
+                        fillColor: "rgba(0,0,0,0)",
+                        fontSize: 24
+                    }
                 },
                 title: {
                     display: true,
