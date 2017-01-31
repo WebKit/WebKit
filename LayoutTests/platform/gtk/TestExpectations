@@ -761,6 +761,7 @@ webkit.org/b/162815 animations/font-variations/font-variation-settings.html [ Im
 webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
 
 # No support for modern media controls on GTK
+http/tests/media/modern-media-controls [ Skip ]
 media/modern-media-controls [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
