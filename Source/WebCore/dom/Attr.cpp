@@ -171,11 +171,6 @@ void Attr::childrenChanged(const ChildChange&)
         m_element->attributeChanged(qualifiedName(), oldValue, newValue);
 }
 
-bool Attr::isId() const
-{
-    return qualifiedName().matches(HTMLNames::idAttr);
-}
-
 CSSStyleDeclaration* Attr::style()
 {
     // This function only exists to support the Obj-C bindings.

@@ -1,3 +1,23 @@
+2017-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy Attributes.isId attribute
+        https://bugs.webkit.org/show_bug.cgi?id=167603
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop legacy Attributes.isId attribute.
+
+        This attribute is not in the specification:
+        - https://dom.spec.whatwg.org/#interface-attr
+
+        Both Firefox and Chrome currently do not expose this attribute.
+
+        No new tests, rebaselined existing test.
+
+        * dom/Attr.cpp:
+        * dom/Attr.h:
+        * dom/Attr.idl:
+
 2017-01-30  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Small tweaks to improve performance.

@@ -56,8 +56,6 @@ public:
 
     const QualifiedName& qualifiedName() const { return m_name; }
 
-    WEBCORE_EXPORT bool isId() const;
-
     WEBCORE_EXPORT CSSStyleDeclaration* style();
 
     void attachToElement(Element&);

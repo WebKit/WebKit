@@ -1,3 +1,15 @@
+2017-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy Attributes.isId attribute
+        https://bugs.webkit.org/show_bug.cgi?id=167603
+
+        Reviewed by Ryosuke Niwa.
+
+        Keep Attr.isId in ObjC bindings.
+
+        * DOM/DOMAttr.mm:
+        (-[DOMAttr isId]):
+
 2017-01-30  Andreas Kling  <akling@apple.com>
 
         [macOS] WebHTMLView has an internal retain cycle with its flagsChangedEventMonitor.

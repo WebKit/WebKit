@@ -76,7 +76,7 @@
 - (BOOL)isId
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->isId();
+    return IMPL->qualifiedName().matches(WebCore::HTMLNames::idAttr);
 }
 
 - (DOMCSSStyleDeclaration *)style

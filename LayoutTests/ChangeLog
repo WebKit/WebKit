@@ -1,5 +1,23 @@
 2017-01-30  Chris Dumez  <cdumez@apple.com>
 
+        Drop legacy Attributes.isId attribute
+        https://bugs.webkit.org/show_bug.cgi?id=167603
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop outdated tests.
+
+        * dom/xhtml/level3/core/attrisid04-expected.txt: Removed.
+        * dom/xhtml/level3/core/attrisid04.xhtml: Removed.
+        * dom/xhtml/level3/core/attrisid05-expected.txt: Removed.
+        * dom/xhtml/level3/core/attrisid05.xhtml: Removed.
+        * fast/dom/Attr/change-id-via-attr-node-value-expected.txt:
+        * fast/dom/Attr/change-id-via-attr-node-value.html:
+        * fast/dom/Element/attrisid-extra01-expected.txt: Removed.
+        * fast/dom/Element/attrisid-extra01.html: Removed.
+
+2017-01-30  Chris Dumez  <cdumez@apple.com>
+
         Drop legacy constants on Event interface
         https://bugs.webkit.org/show_bug.cgi?id=167602
 

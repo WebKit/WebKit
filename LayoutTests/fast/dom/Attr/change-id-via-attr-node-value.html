@@ -11,7 +11,6 @@ description("Test that different ways of changing an element's id all work prope
 debug("\n1. Check id after parsing.");
 shouldBe('document.getElementById("a")', 'document.body');
 shouldBe('document.body.id', '"a"');
-shouldBe('document.body.getAttributeNode("id").isId', 'true');
 shouldBe('document.body.getAttributeNode("id").textContent', '"a"');
 
 debug("\n2. Change Attr.value.");

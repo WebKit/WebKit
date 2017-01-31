@@ -37,7 +37,7 @@ PASS Historical DOM features must be removed: setIdAttribute
 PASS Historical DOM features must be removed: setIdAttributeNS 
 PASS Historical DOM features must be removed: setIdAttributeNode 
 PASS Attr member must be nuked: schemaTypeInfo 
-FAIL Attr member must be nuked: isId assert_equals: expected (undefined) undefined but got (boolean) false
+PASS Attr member must be nuked: isId 
 PASS DocumentType member must be nuked: entities 
 PASS DocumentType member must be nuked: notations 
 PASS DocumentType member must be nuked: internalSubset 
