@@ -229,7 +229,7 @@ Ref<MediaSample> MediaSampleAVFObjC::createNonDisplayingCopy() const
         CFDictionarySetValue(attachments, kCMSampleAttachmentKey_DoNotDisplay, kCFBooleanTrue);
     }
 
-    return MediaSampleAVFObjC::create(newSampleBuffer, m_id);
+    return MediaSampleAVFObjC::create(adoptCF(newSampleBuffer).get(), m_id);
 }
 
 }

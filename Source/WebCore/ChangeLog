@@ -1,3 +1,15 @@
+2017-01-30  Andreas Kling  <akling@apple.com>
+
+        Fix CMSampleBuffer leak in MediaSampleAVFObjC::createNonDisplayingCopy().
+        <https://webkit.org/b/167621>
+
+        Reviewed by Andy Estes.
+
+        We were failing to adopt the CMSampleBuffer after copying it. Seen on leaks bot.
+
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::createNonDisplayingCopy):
+
 2017-01-30  Andy Estes  <aestes@apple.com>
 
         [QuickLook] QLPreviewConverter and QuickLookHandle have different lifetime requirements
