@@ -25,8 +25,11 @@
 #include "JSTestInterface.h"
 
 #include "JSDOMBinding.h"
+#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
+#include "JSDOMExceptionHandling.h"
+#include "JSDOMWrapperCache.h"
 #include "JSTestObj.h"
 #include "TestSupplemental.h"
 #include <runtime/Error.h>

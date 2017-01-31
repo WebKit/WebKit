@@ -33,6 +33,7 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"

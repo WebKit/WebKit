@@ -1,0 +1,130 @@
+/*
+ *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2003-2006, 2008-2009, 2013, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
+ *  Copyright (C) 2009 Google, Inc. All rights reserved.
+ *  Copyright (C) 2012 Ericsson AB. All rights reserved.
+ *  Copyright (C) 2013 Michael Pruett <michael@68k.org>
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+#pragma once
+
+#include "ExceptionCode.h"
+#include "ExceptionOr.h"
+#include <runtime/Error.h>
+
+namespace JSC {
+class CatchScope;
+}
+
+namespace WebCore {
+
+class CachedScript;
+class DeferredPromise;
+class JSDOMGlobalObject;
+
+struct ExceptionDetails {
+    String message;
+    int lineNumber { 0 };
+    int columnNumber { 0 };
+    String sourceURL;
+};
+
+WEBCORE_EXPORT JSC::EncodedJSValue reportDeprecatedGetterError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
+WEBCORE_EXPORT void reportDeprecatedSetterError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
+
+void throwAttributeTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName, const char* expectedType);
+WEBCORE_EXPORT bool throwSetterTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName);
+
+void throwArrayElementTypeError(JSC::ExecState&, JSC::ThrowScope&);
+void throwDataCloneError(JSC::ExecState&, JSC::ThrowScope&);
+void throwDOMSyntaxError(JSC::ExecState&, JSC::ThrowScope&); // Not the same as a JavaScript syntax error.
+void throwIndexSizeError(JSC::ExecState&, JSC::ThrowScope&);
+void throwInvalidStateError(JSC::ExecState&, JSC::ThrowScope&, const char* message);
+WEBCORE_EXPORT void throwNonFiniteTypeError(JSC::ExecState&, JSC::ThrowScope&);
+void throwNotSupportedError(JSC::ExecState&, JSC::ThrowScope&);
+void throwNotSupportedError(JSC::ExecState&, JSC::ThrowScope&, const char* message);
+void throwSecurityError(JSC::ExecState&, JSC::ThrowScope&, const String& message);
+WEBCORE_EXPORT void throwSequenceTypeError(JSC::ExecState&, JSC::ThrowScope&);
+void throwTypeMismatchError(JSC::ExecState&, JSC::ThrowScope&);
+
+WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::ExecState&, JSC::ThrowScope&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedValues);
+JSC::EncodedJSValue throwArgumentMustBeFunctionError(JSC::ExecState&, JSC::ThrowScope&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName);
+WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentTypeError(JSC::ExecState&, JSC::ThrowScope&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedType);
+WEBCORE_EXPORT JSC::EncodedJSValue throwRequiredMemberTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* memberName, const char* dictionaryName, const char* expectedType);
+JSC::EncodedJSValue throwConstructorScriptExecutionContextUnavailableError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName);
+
+String makeGetterTypeErrorMessage(const char* interfaceName, const char* attributeName);
+String makeThisTypeErrorMessage(const char* interfaceName, const char* attributeName);
+
+WEBCORE_EXPORT JSC::EncodedJSValue throwGetterTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName);
+WEBCORE_EXPORT JSC::EncodedJSValue throwThisTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* functionName);
+
+WEBCORE_EXPORT JSC::EncodedJSValue rejectPromiseWithGetterTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
+WEBCORE_EXPORT JSC::EncodedJSValue rejectPromiseWithThisTypeError(DeferredPromise&, const char* interfaceName, const char* operationName);
+WEBCORE_EXPORT JSC::EncodedJSValue rejectPromiseWithThisTypeError(JSC::ExecState&, const char* interfaceName, const char* operationName);
+
+String retrieveErrorMessage(JSC::ExecState&, JSC::VM&, JSC::JSValue exception, JSC::CatchScope&);
+WEBCORE_EXPORT void reportException(JSC::ExecState*, JSC::JSValue exception, CachedScript* = nullptr);
+WEBCORE_EXPORT void reportException(JSC::ExecState*, JSC::Exception*, CachedScript* = nullptr, ExceptionDetails* = nullptr);
+void reportCurrentException(JSC::ExecState*);
+
+JSC::JSValue createDOMException(JSC::ExecState&, Exception&&);
+JSC::JSValue createDOMException(JSC::ExecState*, ExceptionCode, const String&);
+
+// Convert a DOM implementation exception into a JavaScript exception in the execution state.
+void propagateException(JSC::ExecState&, JSC::ThrowScope&, Exception&&);
+WEBCORE_EXPORT void propagateExceptionSlowPath(JSC::ExecState&, JSC::ThrowScope&, Exception&&);
+
+// ExceptionOr handling.
+void propagateException(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<void>&&);
+template<typename T> JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&&);
+template<typename T> JSC::JSValue toJSNewlyCreated(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&& value);
+
+
+ALWAYS_INLINE void propagateException(JSC::ExecState& state, JSC::ThrowScope& throwScope, Exception&& exception)
+{
+    if (throwScope.exception())
+        return;
+    propagateExceptionSlowPath(state, throwScope, WTFMove(exception));
+}
+
+inline void propagateException(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<void>&& value)
+{
+    if (UNLIKELY(value.hasException()))
+        propagateException(state, throwScope, value.releaseException());
+}
+
+template<typename T> inline JSC::JSValue toJS(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, ExceptionOr<T>&& value)
+{
+    if (UNLIKELY(value.hasException())) {
+        propagateException(state, throwScope, value.releaseException());
+        return { };
+    }
+    return toJS(&state, &globalObject, value.releaseReturnValue());
+}
+
+template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, ExceptionOr<T>&& value)
+{
+    if (UNLIKELY(value.hasException())) {
+        propagateException(state, throwScope, value.releaseException());
+        return { };
+    }
+    return toJSNewlyCreated(&state, &globalObject, value.releaseReturnValue());
+}
+
+} // namespace WebCore

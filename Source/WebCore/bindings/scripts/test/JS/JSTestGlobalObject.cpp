@@ -22,8 +22,11 @@
 #include "JSTestGlobalObject.h"
 
 #include "JSDOMBinding.h"
+#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
+#include "JSDOMExceptionHandling.h"
+#include "JSDOMWrapperCache.h"
 #include "RuntimeEnabledFeatures.h"
 #include "WebCoreJSClientData.h"
 #include <runtime/Error.h>

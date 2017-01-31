@@ -33,6 +33,7 @@
 #include "JSMutationObserver.h"
 
 #include "ExceptionCode.h"
+#include "JSDOMConstructor.h"
 #include "JSMutationCallback.h"
 #include "JSNodeCustom.h"
 #include "MutationObserver.h"

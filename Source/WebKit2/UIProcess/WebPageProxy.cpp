@@ -118,6 +118,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/JSDOMBinding.h>
+#include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>

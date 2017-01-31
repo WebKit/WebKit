@@ -29,6 +29,7 @@
 #include "IDBBindingUtilities.h"
 #include "IDLTypes.h"
 #include "JSDOMBinding.h"
+#include "JSDOMExceptionHandling.h"
 #include <runtime/JSGlobalObjectInlines.h>
 #include <runtime/JSONObject.h>
 

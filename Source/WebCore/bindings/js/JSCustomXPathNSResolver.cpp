@@ -28,8 +28,8 @@
 
 #include "CommonVM.h"
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "Frame.h"
+#include "JSDOMExceptionHandling.h"
 #include "JSDOMWindowCustom.h"
 #include "JSMainThreadExecState.h"
 #include "Page.h"

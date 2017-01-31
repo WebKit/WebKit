@@ -25,6 +25,7 @@
 #include "Frame.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
+#include "JSDOMBindingSecurity.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
 #include "JSHTMLAudioElement.h"

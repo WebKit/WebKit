@@ -26,6 +26,7 @@
 
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
+#include "JSDOMExceptionHandling.h"
 #include "JSDOMStringList.h"
 #include "JSTestNode.h"
 #include "ScriptExecutionContext.h"

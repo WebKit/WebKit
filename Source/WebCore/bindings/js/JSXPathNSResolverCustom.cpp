@@ -27,7 +27,7 @@
 #include "JSXPathNSResolver.h"
 
 #include "JSCustomXPathNSResolver.h"
-#include "JSDOMBinding.h"
+#include "JSDOMExceptionHandling.h"
 
 using namespace JSC;
 

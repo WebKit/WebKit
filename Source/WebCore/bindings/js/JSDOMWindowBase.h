@@ -97,4 +97,8 @@ namespace WebCore {
     JSDOMWindow* toJSDOMWindow(Frame*, DOMWrapperWorld&);
     WEBCORE_EXPORT JSDOMWindow* toJSDOMWindow(JSC::VM&, JSC::JSValue);
 
+    DOMWindow& callerDOMWindow(JSC::ExecState*);
+    DOMWindow& activeDOMWindow(JSC::ExecState*);
+    DOMWindow& firstDOMWindow(JSC::ExecState*);
+
 } // namespace WebCore

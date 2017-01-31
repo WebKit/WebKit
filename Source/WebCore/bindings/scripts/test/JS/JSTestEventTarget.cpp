@@ -22,8 +22,11 @@
 #include "JSTestEventTarget.h"
 
 #include "JSDOMBinding.h"
+#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
+#include "JSDOMExceptionHandling.h"
+#include "JSDOMWrapperCache.h"
 #include "JSNode.h"
 #include <runtime/Error.h>
 #include <runtime/PropertyNameArray.h>

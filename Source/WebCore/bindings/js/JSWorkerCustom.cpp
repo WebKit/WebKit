@@ -28,7 +28,8 @@
 #include "JSWorker.h"
 
 #include "Document.h"
-#include "JSDOMBinding.h"
+#include "JSDOMConstructor.h"
+#include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWindowCustom.h"
 #include "Worker.h"

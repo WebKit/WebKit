@@ -29,6 +29,7 @@
 #include "config.h"
 #include "JSSQLStatementErrorCallback.h"
 
+#include "JSDOMExceptionHandling.h"
 #include "JSSQLError.h"
 #include "JSSQLTransaction.h"
 #include "ScriptExecutionContext.h"

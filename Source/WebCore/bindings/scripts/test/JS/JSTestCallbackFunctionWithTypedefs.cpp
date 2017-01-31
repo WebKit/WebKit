@@ -22,6 +22,7 @@
 #include "JSTestCallbackFunctionWithTypedefs.h"
 
 #include "JSDOMConvert.h"
+#include "JSDOMExceptionHandling.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/JSArray.h>
 #include <runtime/JSLock.h>

@@ -27,8 +27,11 @@
 #include "DOMJITIDLType.h"
 #include "DOMJITIDLTypeFilter.h"
 #include "JSDOMBinding.h"
+#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
+#include "JSDOMExceptionHandling.h"
+#include "JSDOMWrapperCache.h"
 #include "JSElement.h"
 #include "JSNodeList.h"
 #include <interpreter/FrameTracers.h>

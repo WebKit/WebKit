@@ -24,6 +24,8 @@
 #include "JSLocation.h"
 
 #include "JSDOMBinding.h"
+#include "JSDOMBindingSecurity.h"
+#include "JSDOMExceptionHandling.h"
 #include "RuntimeApplicationChecks.h"
 #include <runtime/JSFunction.h>
 

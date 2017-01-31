@@ -70,6 +70,7 @@
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
+#include "JSDOMBindingSecurity.h"
 #include "JSEventListener.h"
 #include "JSNode.h"
 #include "MainFrame.h"

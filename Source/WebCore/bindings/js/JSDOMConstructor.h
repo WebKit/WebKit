@@ -19,10 +19,63 @@
 
 #pragma once
 
-#include "DOMConstructorWithDocument.h"
-#include "JSDOMBinding.h"
+#include "Document.h"
+#include "JSDOMExceptionHandling.h"
+#include "JSDOMWrapperCache.h"
 
 namespace WebCore {
+
+// Base class for all constructor objects in the JSC bindings.
+class DOMConstructorObject : public JSDOMObject {
+public:
+    typedef JSDOMObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | JSC::ImplementsHasInstance | JSC::ImplementsDefaultHasInstance | JSC::TypeOfShouldCallGetCallData;
+    static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject*, JSC::JSValue);
+
+protected:
+    DOMConstructorObject(JSC::Structure*, JSDOMGlobalObject&);
+
+    static String className(const JSObject*);
+    static JSC::CallType getCallData(JSCell*, JSC::CallData&);
+};
+
+// Constructors using this base class depend on being in a Document and
+// can never be used from a WorkerGlobalScope.
+class DOMConstructorWithDocument : public DOMConstructorObject {
+    typedef DOMConstructorObject Base;
+public:
+    Document* document() const
+    {
+        return downcast<Document>(scriptExecutionContext());
+    }
+
+protected:
+    DOMConstructorWithDocument(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
+        : DOMConstructorObject(structure, globalObject)
+    {
+    }
+
+    void finishCreation(JSDOMGlobalObject& globalObject)
+    {
+        Base::finishCreation(globalObject.vm());
+        ASSERT(globalObject.scriptExecutionContext()->isDocument());
+    }
+};
+
+class DOMConstructorJSBuiltinObject : public DOMConstructorObject {
+public:
+    typedef DOMConstructorObject Base;
+
+protected:
+    DOMConstructorJSBuiltinObject(JSC::Structure*, JSDOMGlobalObject&);
+    static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
+
+    JSC::JSFunction* initializeFunction();
+    void setInitializeFunction(JSC::VM&, JSC::JSFunction&);
+
+private:
+    JSC::WriteBarrier<JSC::JSFunction> m_initializeFunction;
+};
 
 template<typename JSClass> class JSDOMConstructorNotConstructable : public DOMConstructorObject {
 public:
@@ -131,6 +184,37 @@ private:
     JSC::FunctionExecutable* initializeExecutable(JSC::VM&);
 };
 
+inline JSC::Structure* DOMConstructorObject::createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+{
+    return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+}
+
+inline DOMConstructorObject::DOMConstructorObject(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
+    : JSDOMObject(structure, globalObject)
+{
+}
+
+inline String DOMConstructorObject::className(const JSObject*)
+{
+    return ASCIILiteral("Function");
+}
+
+inline DOMConstructorJSBuiltinObject::DOMConstructorJSBuiltinObject(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
+    : DOMConstructorObject(structure, globalObject)
+{
+}
+
+inline JSC::JSFunction* DOMConstructorJSBuiltinObject::initializeFunction()
+{
+    return m_initializeFunction.get();
+}
+
+inline void DOMConstructorJSBuiltinObject::setInitializeFunction(JSC::VM& vm, JSC::JSFunction& function)
+{
+    m_initializeFunction.set(vm, this, &function);
+}
+
+
 template<typename JSClass> inline JSDOMConstructorNotConstructable<JSClass>* JSDOMConstructorNotConstructable<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
 {
     JSDOMConstructorNotConstructable* constructor = new (NotNull, JSC::allocateCell<JSDOMConstructorNotConstructable>(vm.heap)) JSDOMConstructorNotConstructable(structure, globalObject);
@@ -219,6 +303,8 @@ template<typename JSClass> inline void JSBuiltinConstructor<JSClass>::finishCrea
     setInitializeFunction(vm, *JSC::JSFunction::createBuiltinFunction(vm, initializeExecutable(vm), &globalObject));
     initializeProperties(vm, globalObject);
 }
+
+void callFunctionWithCurrentArguments(JSC::ExecState&, JSC::JSObject& thisObject, JSC::JSFunction&);
 
 template<typename JSClass> inline JSC::EncodedJSValue JSBuiltinConstructor<JSClass>::callConstructor(JSC::ExecState& state, JSC::JSObject& object)
 {

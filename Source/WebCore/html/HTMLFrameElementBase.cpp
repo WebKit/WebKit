@@ -31,7 +31,7 @@
 #include "FrameView.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "JSDOMBinding.h"
+#include "JSDOMBindingSecurity.h"
 #include "Page.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"

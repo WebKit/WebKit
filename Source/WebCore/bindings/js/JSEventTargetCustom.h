@@ -27,6 +27,8 @@
 
 #include "DOMWindow.h"
 #include "JSDOMBinding.h"
+#include "JSDOMBindingCaller.h"
+#include "JSDOMBindingSecurity.h"
 
 namespace WebCore {
 

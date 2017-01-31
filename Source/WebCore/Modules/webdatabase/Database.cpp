@@ -40,6 +40,7 @@
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
+#include "ExceptionCode.h"
 #include "JSDOMWindow.h"
 #include "Logging.h"
 #include "SQLError.h"

@@ -54,6 +54,7 @@
 #include "InspectorTimelineAgent.h"
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
+#include "JSDOMBindingSecurity.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowCustom.h"
 #include "JSMainThreadExecState.h"

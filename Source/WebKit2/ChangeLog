@@ -1,3 +1,13 @@
+2017-01-30  Sam Weinig  <sam@webkit.org>
+
+        JSDOMBinding is too big. Split it up!
+        https://bugs.webkit.org/show_bug.cgi?id=167601
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        Replace include of JSDOMBinding with JSDOMExceptionHandling.
+
 2017-01-30  Andy Estes  <aestes@apple.com>
 
         [QuickLook] FrameLoaderClient should return the new QuickLookHandleClient it creates

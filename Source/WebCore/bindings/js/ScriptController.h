@@ -56,11 +56,12 @@ class Frame;
 class HTMLDocument;
 class HTMLPlugInElement;
 class LoadableModuleScript;
-class SecurityOrigin;
 class ScriptSourceCode;
+class SecurityOrigin;
 class Widget;
+struct ExceptionDetails;
 
-typedef HashMap<void*, RefPtr<JSC::Bindings::RootObject>> RootObjectMap;
+using RootObjectMap = HashMap<void*, RefPtr<JSC::Bindings::RootObject>>;
 
 enum ReasonForCallingCanExecuteScripts {
     AboutToExecuteScript,

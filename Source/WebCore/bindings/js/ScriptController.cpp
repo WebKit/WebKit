@@ -32,6 +32,8 @@
 #include "GCController.h"
 #include "HTMLPlugInElement.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMBindingSecurity.h"
+#include "JSDOMExceptionHandling.h"
 #include "JSDOMWindow.h"
 #include "JSDocument.h"
 #include "JSMainThreadExecState.h"

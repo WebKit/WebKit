@@ -33,6 +33,7 @@
 #include "FrameView.h"
 #include "InspectorController.h"
 #include "InspectorFrontendClient.h"
+#include "JSDOMExceptionHandling.h"
 #include "JSDOMWindowCustom.h"
 #include "MainFrame.h"
 #include "Page.h"
@@ -45,7 +46,6 @@
 #include <wtf/StdLibExtras.h>
 
 #if PLATFORM(IOS)
-#include "JSDOMWindowBase.h"
 #include "WebCoreThreadInternal.h"
 #endif
 

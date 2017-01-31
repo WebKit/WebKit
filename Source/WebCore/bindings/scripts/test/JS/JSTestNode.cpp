@@ -22,10 +22,13 @@
 #include "JSTestNode.h"
 
 #include "JSDOMBinding.h"
+#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
+#include "JSDOMExceptionHandling.h"
 #include "JSDOMIterator.h"
 #include "JSDOMPromise.h"
+#include "JSDOMWrapperCache.h"
 #include "RuntimeEnabledFeatures.h"
 #include <runtime/Error.h>
 #include <runtime/ObjectConstructor.h>

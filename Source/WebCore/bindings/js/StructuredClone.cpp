@@ -28,6 +28,7 @@
 #include "StructuredClone.h"
 
 #include "JSDOMBinding.h"
+#include "JSDOMExceptionHandling.h"
 #include <runtime/JSTypedArrays.h>
 
 using namespace JSC;

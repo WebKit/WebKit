@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "HTMLFormElement.h"
 #include "JSCustomElementInterface.h"
+#include "JSDOMConstructor.h"
 #include "JSNodeCustom.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/InternalFunction.h>

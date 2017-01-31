@@ -22,8 +22,11 @@
 #include "JSTestIterable.h"
 
 #include "JSDOMBinding.h"
+#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMExceptionHandling.h"
 #include "JSDOMIterator.h"
+#include "JSDOMWrapperCache.h"
 #include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
 

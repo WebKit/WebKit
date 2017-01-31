@@ -25,8 +25,11 @@
 #include "JSTestSerializedScriptValueInterface.h"
 
 #include "JSDOMBinding.h"
+#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
+#include "JSDOMExceptionHandling.h"
+#include "JSDOMWrapperCache.h"
 #include "JSMessagePort.h"
 #include "SerializedScriptValue.h"
 #include <runtime/Error.h>

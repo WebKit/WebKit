@@ -29,7 +29,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "JSDOMBinding.h"
+#include "JSDOMExceptionHandling.h"
 #include "JSDOMWindow.h"
 #include "JSMainThreadExecState.h"
 #include "JSMainThreadExecStateInstrumentation.h"

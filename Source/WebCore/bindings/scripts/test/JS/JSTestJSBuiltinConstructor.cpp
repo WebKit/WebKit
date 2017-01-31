@@ -22,7 +22,10 @@
 #include "JSTestJSBuiltinConstructor.h"
 
 #include "JSDOMBinding.h"
+#include "JSDOMBindingCaller.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMExceptionHandling.h"
+#include "JSDOMWrapperCache.h"
 #include "TestJSBuiltinConstructorBuiltins.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>

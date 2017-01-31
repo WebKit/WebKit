@@ -30,6 +30,7 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "InspectorController.h"
+#include "JSDOMBindingSecurity.h"
 #include "JSDOMGlobalObjectTask.h"
 #include "JSDOMWindowCustom.h"
 #include "JSMainThreadExecState.h"
@@ -284,6 +285,54 @@ JSDOMWindow* toJSDOMWindow(JSC::VM& vm, JSValue value)
         value = object->getPrototypeDirect();
     }
     return 0;
+}
+
+DOMWindow& callerDOMWindow(ExecState* exec)
+{
+    class GetCallerGlobalObjectFunctor {
+    public:
+        GetCallerGlobalObjectFunctor() = default;
+
+        StackVisitor::Status operator()(StackVisitor& visitor) const
+        {
+            if (!m_hasSkippedFirstFrame) {
+                m_hasSkippedFirstFrame = true;
+                return StackVisitor::Continue;
+            }
+
+            if (auto* codeBlock = visitor->codeBlock())
+                m_globalObject = codeBlock->globalObject();
+            else {
+                ASSERT(visitor->callee());
+                // FIXME: Callee is not an object if the caller is Web Assembly.
+                // Figure out what to do here. We can probably get the global object
+                // from the top-most Wasm Instance. https://bugs.webkit.org/show_bug.cgi?id=165721
+                if (visitor->callee()->isObject())
+                    m_globalObject = jsCast<JSObject*>(visitor->callee())->globalObject();
+            }
+            return StackVisitor::Done;
+        }
+
+        JSGlobalObject* globalObject() const { return m_globalObject; }
+
+    private:
+        mutable bool m_hasSkippedFirstFrame { false };
+        mutable JSGlobalObject* m_globalObject { nullptr };
+    };
+
+    GetCallerGlobalObjectFunctor iter;
+    exec->iterate(iter);
+    return iter.globalObject() ? asJSDOMWindow(iter.globalObject())->wrapped() : firstDOMWindow(exec);
+}
+
+DOMWindow& activeDOMWindow(ExecState* exec)
+{
+    return asJSDOMWindow(exec->lexicalGlobalObject())->wrapped();
+}
+
+DOMWindow& firstDOMWindow(ExecState* exec)
+{
+    return asJSDOMWindow(exec->vmEntryGlobalObject())->wrapped();
 }
 
 void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(DOMWindow* window)

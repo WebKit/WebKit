@@ -3013,6 +3013,9 @@ sub GenerateImplementation
     push(@implContentHeader, GenerateImplementationContentHeader($interface));
 
     $implIncludes{"JSDOMBinding.h"} = 1;
+    $implIncludes{"JSDOMBindingCaller.h"} = 1;
+    $implIncludes{"JSDOMExceptionHandling.h"} = 1;
+    $implIncludes{"JSDOMWrapperCache.h"} = 1;
     $implIncludes{"<wtf/GetPtr.h>"} = 1;
     $implIncludes{"<runtime/PropertyNameArray.h>"} = 1 if $indexedGetterFunction;
 
@@ -3633,6 +3636,7 @@ sub GenerateImplementation
             if ($interface->extendedAttributes->{CheckSecurity} &&
                 !$attribute->extendedAttributes->{DoNotCheckSecurity} &&
                 !$attribute->extendedAttributes->{DoNotCheckSecurityOnGetter}) {
+                AddToImplIncludes("JSDOMBindingSecurity.h");
                 if ($interfaceName eq "DOMWindow") {
                     push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, thisObject.wrapped(), ThrowSecurityError))\n");
                 } else {
@@ -3803,6 +3807,7 @@ sub GenerateImplementation
             }
 
             if ($interface->extendedAttributes->{CheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurityOnSetter}) {
+                AddToImplIncludes("JSDOMBindingSecurity.h");
                 if ($interfaceName eq "DOMWindow") {
                     push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, thisObject.wrapped(), ThrowSecurityError))\n");
                 } else {
@@ -4051,6 +4056,7 @@ END
                 push(@implContent, "    UNUSED_PARAM(throwScope);\n");
 
                 if ($interface->extendedAttributes->{CheckSecurity} and !$function->extendedAttributes->{DoNotCheckSecurity}) {
+                    AddToImplIncludes("JSDOMBindingSecurity.h");
                     if ($interfaceName eq "DOMWindow") {
                         push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped(), ThrowSecurityError))\n");
                     } else {
@@ -4477,6 +4483,7 @@ sub GenerateCallWith
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "CallerDocument")) {
         $implIncludes{"Document.h"} = 1;
+        $implIncludes{"JSDOMWindowBase.h"} = 1;
         push(@$outputArray, "    auto* document = callerDOMWindow($statePointer).document();\n");
         push(@$outputArray, "    if (!document)\n");
         push(@$outputArray, "        return" . ($returnValue ? " " . $returnValue : "") . ";\n");
@@ -4488,9 +4495,21 @@ sub GenerateCallWith
         $implIncludes{"<inspector/ScriptCallStackFactory.h>"} = 1;
         push(@callWithArgs, "WTFMove(scriptArguments)");
     }
-    push(@callWithArgs, "activeDOMWindow($statePointer)") if $codeGenerator->ExtendedAttributeContains($callWith, "ActiveWindow");
-    push(@callWithArgs, "firstDOMWindow($statePointer)") if $codeGenerator->ExtendedAttributeContains($callWith, "FirstWindow");
-    push(@callWithArgs, "callerDOMWindow($statePointer)") if $codeGenerator->ExtendedAttributeContains($callWith, "CallerWindow");
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "ActiveWindow")) {
+        $implIncludes{"JSDOMWindowBase.h"} = 1;
+        push(@callWithArgs, "activeDOMWindow($statePointer)");
+        
+    }
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "FirstWindow")) {
+        $implIncludes{"JSDOMWindowBase.h"} = 1;
+        push(@callWithArgs, "firstDOMWindow($statePointer)");
+        
+    }
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "CallerWindow")) {
+        $implIncludes{"JSDOMWindowBase.h"} = 1;
+        push(@callWithArgs, "callerDOMWindow($statePointer)");
+        
+    }
 
     return @callWithArgs;
 }
@@ -4598,8 +4617,6 @@ sub GenerateParametersCheck
     } else {
         $quotedFunctionName = "nullptr";
     }
-
-    AddToImplIncludes("JSDOMBinding.h", $conditional);
 
     my $argumentIndex = 0;
     foreach my $argument (@{$function->arguments}) {
@@ -5064,6 +5081,7 @@ sub GenerateCallbackImplementationContent
 
             # FIXME: We currently just report the exception. We should probably add an extended attribute to indicate when
             # we want the exception to be rethrown instead.
+            $includesRef->{"JSDOMExceptionHandling.h"} = 1;
             push(@$contentRef, "    if (returnedException)\n");
             push(@$contentRef, "        reportException(state, returnedException);\n");
             push(@$contentRef, "    return !returnedException;\n");
@@ -5612,7 +5630,10 @@ sub NativeToJSValue
     AddToImplIncludesForIDLType($type, $conditional);
     AddToImplIncludes("JSDOMConvert.h", $conditional);
 
-    $value = "BindingSecurity::checkSecurityForNode($stateReference, $value)" if $context->extendedAttributes->{CheckSecurityForNode};
+    if ($context->extendedAttributes->{CheckSecurityForNode}) {
+        AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
+        $value = "BindingSecurity::checkSecurityForNode($stateReference, $value)";
+    }
 
     my $IDLType = GetIDLType($interface, $type, $context);
 

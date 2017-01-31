@@ -28,6 +28,7 @@
 
 #import "BridgeJSC.h"
 #import "Frame.h"
+#import "JSDOMBindingSecurity.h"
 #import "JSDOMWindow.h"
 #import "JSDOMWindowCustom.h"
 #import "JSHTMLElement.h"

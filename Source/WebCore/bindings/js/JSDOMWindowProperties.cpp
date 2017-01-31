@@ -29,6 +29,7 @@
 #include "Frame.h"
 #include "HTMLDocument.h"
 #include "JSDOMBinding.h"
+#include "JSDOMBindingSecurity.h"
 #include "JSDOMWindowBase.h"
 #include "JSElement.h"
 #include "JSHTMLCollection.h"
