@@ -302,8 +302,6 @@ webkit.org/b/167320 [ Sierra Release ] media/modern-media-controls/placard-suppo
 
 webkit.org/b/167352 media/modern-media-controls/rewind-button/rewind-button.html [ Pass Timeout ]
 
-webkit.org/b/167350 media/modern-media-controls/pip-button/pip-button.html [ Pass Timeout ]
-
 webkit.org/b/167347 media/modern-media-controls/airplay-button/airplay-button-on.html [ Pass Timeout ]
 
 webkit.org/b/164620 media/modern-media-controls/skip-back-button/skip-back-button.html [ Pass Timeout ]
