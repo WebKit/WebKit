@@ -24,6 +24,7 @@
 #include "WebKitDownloadPrivate.h"
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitWebContextPrivate.h"
+#include "WebKitWebViewPrivate.h"
 #include "WebProcessPool.h"
 #include <WebKit/WKString.h>
 #include <wtf/glib/GRefPtr.h>
@@ -44,6 +45,17 @@ private:
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(downloadProxy);
         webkitWebContextDownloadStarted(m_webContext, download.get());
+    }
+
+    void didReceiveAuthenticationChallenge(WebProcessPool*, DownloadProxy* downloadProxy, AuthenticationChallengeProxy* authenticationChallenge) override
+    {
+        GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(downloadProxy);
+        if (webkitDownloadIsCancelled(download.get()))
+            return;
+
+        // FIXME: Add API to handle authentication of downloads without a web view associted.
+        if (auto* webView = webkit_download_get_web_view(download.get()))
+            webkitWebViewHandleAuthenticationChallenge(webView, authenticationChallenge);
     }
 
     void didReceiveResponse(WebProcessPool*, DownloadProxy* downloadProxy, const ResourceResponse& resourceResponse) override

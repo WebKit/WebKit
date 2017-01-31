@@ -1,3 +1,19 @@
+2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] HTTP authentication is not implemented for downloads
+        https://bugs.webkit.org/show_bug.cgi?id=167583
+
+        Reviewed by Michael Catanzaro.
+
+        When a normal load is converted to a download, the HTTP authentication happens before the load is converted, and
+        the download starts already authenticated. However, downloads started by DownloadManager::startDownload use the
+        DownloadClient API to do the authentication. We don't implement didReceiveAuthenticationChallenge() in our
+        download client, what makes the load to be cancelled and then fail silently. We should probably add API to
+        handle downloads authentication, but we can also forward the authentication to the web view for downloads having
+        a web view associated. That would cover most of the cases, like downloading from the context menu.
+
+        * UIProcess/API/gtk/WebKitDownloadClient.cpp: Add didReceiveAuthenticationChallenge implementation.
+
 2017-01-30  Sam Weinig  <sam@webkit.org>
 
         JSDOMBinding is too big. Split it up!
