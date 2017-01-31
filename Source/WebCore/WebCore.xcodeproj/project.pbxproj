@@ -1535,6 +1535,8 @@
 		414B82051D6DF0E50077EBE3 /* StructuredClone.h in Headers */ = {isa = PBXBuildFile; fileRef = 414B82031D6DF0D90077EBE3 /* StructuredClone.h */; };
 		415071571685067300C3C7B3 /* SelectorFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 415071551685067300C3C7B3 /* SelectorFilter.cpp */; };
 		415071581685067300C3C7B3 /* SelectorFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 415071561685067300C3C7B3 /* SelectorFilter.h */; };
+		415080361E3F00AD0051D75D /* LibWebRTCAudioModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 415080341E3F00AA0051D75D /* LibWebRTCAudioModule.cpp */; };
+		415080371E3F00B00051D75D /* LibWebRTCAudioModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 415080351E3F00AA0051D75D /* LibWebRTCAudioModule.h */; };
 		4150F9F112B6E0E70008C860 /* SliderThumbElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */; };
 		4150F9F212B6E0E70008C860 /* SliderThumbElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */; };
 		415670471DBE1533009AC3BB /* PeerConnectionStates.h in Headers */ = {isa = PBXBuildFile; fileRef = 415670461DBE1524009AC3BB /* PeerConnectionStates.h */; };
@@ -8744,6 +8746,8 @@
 		414B82031D6DF0D90077EBE3 /* StructuredClone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructuredClone.h; sourceTree = "<group>"; };
 		415071551685067300C3C7B3 /* SelectorFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorFilter.cpp; sourceTree = "<group>"; };
 		415071561685067300C3C7B3 /* SelectorFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorFilter.h; sourceTree = "<group>"; };
+		415080341E3F00AA0051D75D /* LibWebRTCAudioModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCAudioModule.cpp; path = libwebrtc/LibWebRTCAudioModule.cpp; sourceTree = "<group>"; };
+		415080351E3F00AA0051D75D /* LibWebRTCAudioModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCAudioModule.h; path = libwebrtc/LibWebRTCAudioModule.h; sourceTree = "<group>"; };
 		4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SliderThumbElement.h; sourceTree = "<group>"; };
 		4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SliderThumbElement.cpp; sourceTree = "<group>"; };
 		415670461DBE1524009AC3BB /* PeerConnectionStates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeerConnectionStates.h; sourceTree = "<group>"; };
@@ -16709,6 +16713,8 @@
 		415747421E38698000E914D8 /* libwebrtc */ = {
 			isa = PBXGroup;
 			children = (
+				415080341E3F00AA0051D75D /* LibWebRTCAudioModule.cpp */,
+				415080351E3F00AA0051D75D /* LibWebRTCAudioModule.h */,
 				415747431E38699E00E914D8 /* LibWebRTCMacros.h */,
 				415747441E38699E00E914D8 /* LibWebRTCProvider.h */,
 				415747451E38699E00E914D8 /* LibWebRTCUtils.cpp */,
@@ -26226,6 +26232,7 @@
 				0F8B45721DC3FBA300443C3F /* IntersectionObserverCallback.h in Headers */,
 				0F4710DF1DB6FE22002DCEC3 /* IntersectionObserverEntry.h in Headers */,
 				B27535720B053814002CE64F /* IntPoint.h in Headers */,
+				415080371E3F00B00051D75D /* LibWebRTCAudioModule.h in Headers */,
 				E462A4A1113E71BE004A4220 /* IntPointHash.h in Headers */,
 				B27535740B053814002CE64F /* IntRect.h in Headers */,
 				A2B9217316C5CC420041DCD9 /* IntRectExtent.h in Headers */,
@@ -31669,6 +31676,7 @@
 				B2227A080D00BF220071B782 /* SVGFETurbulenceElement.cpp in Sources */,
 				845E72FB0FD2623900A87D79 /* SVGFilter.cpp in Sources */,
 				081EBF3A0FD34F4100DA7559 /* SVGFilterBuilder.cpp in Sources */,
+				415080361E3F00AD0051D75D /* LibWebRTCAudioModule.cpp in Sources */,
 				B2227A0B0D00BF220071B782 /* SVGFilterElement.cpp in Sources */,
 				B2227A0E0D00BF220071B782 /* SVGFilterPrimitiveStandardAttributes.cpp in Sources */,
 				B2227A110D00BF220071B782 /* SVGFitToViewBox.cpp in Sources */,

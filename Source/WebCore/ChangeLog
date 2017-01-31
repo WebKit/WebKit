@@ -1,3 +1,29 @@
+2017-01-31  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Add a libwebrtc AudioModule specific to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=167572
+
+        Reviewed by Alex Christensen.
+
+        To be covered by webrtc audio tests.
+        Adding an AudioModule to circumvent the default LibWebRTC Audio Module which does the audio directly.
+        The implementation of the AudioModule is restricted to enable fueling the incoming audio tracks with incoming data.
+        Code inspired from https://chromium.googlesource.com/chromium/src/+/master/remoting/protocol/webrtc_audio_module.h
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp: Added.
+        (WebCore::LibWebRTCAudioModule::LibWebRTCAudioModule):
+        (WebCore::LibWebRTCAudioModule::RegisterAudioCallback):
+        (WebCore::LibWebRTCAudioModule::OnMessage):
+        (WebCore::LibWebRTCAudioModule::StartPlayout):
+        (WebCore::LibWebRTCAudioModule::StopPlayout):
+        (WebCore::LibWebRTCAudioModule::StartPlayoutOnAudioThread):
+        (WebCore::LibWebRTCAudioModule::PollFromSource):
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.h: Added.
+        * platform/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::ThreadMessageData::ThreadMessageData):
+        (WebCore::initializePeerConnectionFactoryAndThreads):
+
 2017-01-31  Jessie Berlin  <jberlin@webkit.org>
 
         Build fix.
