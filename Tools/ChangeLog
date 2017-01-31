@@ -1,3 +1,23 @@
+2017-01-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Commit queue fails to look at real name aliases for the reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=167422
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_has_valid_reviewer): Added tests.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        (CommitterList._name_to_contributor_map):
+        Made _name_to_contributor_map include alias names.
+
+        * Scripts/webkitpy/common/config/committers_unittest.py:
+        (CommittersTest.test_contributors_by_fuzzy_match):
+        Removed subtests that are now obsolete, as these matches are strict. It is not
+        obvious if distance based fuzzy matching for names is useful at all, but we can
+        look into that some other time.
+
 2017-01-30  Aakash Jain  <aakash_jain@apple.com>
 
         QueueStatusServer should have an explicit timeout for _fetch_url

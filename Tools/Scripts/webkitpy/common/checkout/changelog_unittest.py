@@ -479,6 +479,8 @@ class ChangeLogTest(unittest.TestCase):
         self._assert_has_valid_reviewer("Rubber stamped by Eric Seidel.", True)
         self._assert_has_valid_reviewer("Unreviewed build fix.", True)
         self._assert_has_valid_reviewer("Reviewed by Gabor Rapcsanyi.", False)
+        self._assert_has_valid_reviewer("Reviewed by Myles Maxfield", True)
+        self._assert_has_valid_reviewer("Reviewed by Myles C. Maxfield", True)
 
     def test_is_touched_files_text_clean(self):
         tests = [

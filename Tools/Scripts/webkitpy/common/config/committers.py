@@ -259,9 +259,14 @@ class CommitterList(object):
     def _name_to_contributor_map(self):
         if not len(self._contributors_by_name):
             for contributor in self._contributors:
-                assert(contributor.full_name)
-                assert(contributor.full_name.lower() not in self._contributors_by_name)  # We should never have duplicate names.
+                assert contributor.full_name
+                assert contributor.full_name.lower() not in self._contributors_by_name  # We should never have duplicate names.
                 self._contributors_by_name[contributor.full_name.lower()] = contributor
+                if contributor.aliases is None:
+                    continue
+                for alias in contributor.aliases:
+                    assert alias.lower() not in self._contributors_by_name
+                    self._contributors_by_name[alias.lower()] = contributor
         return self._contributors_by_name
 
     def _email_to_account_map(self):
