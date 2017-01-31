@@ -56,7 +56,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
     JSValue module = WebAssemblyModuleConstructor::createModule(exec, exec->lexicalGlobalObject()->WebAssemblyModuleStructure());
     if (Exception* exception = catchScope.exception()) {
         catchScope.clearException();
-        promise->reject(exec, exception);
+        promise->reject(exec, exception->value());
         return JSValue::encode(promise->promise());
     }
 

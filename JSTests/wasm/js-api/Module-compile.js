@@ -28,6 +28,18 @@ async function testPromiseAPI() {
     {
         let threw = false;
         try {
+            await WebAssembly.compile();
+        } catch(e) {
+            threw = true;
+            assert.truthy(e instanceof TypeError);
+            assert.eq(e.message, "first argument must be an ArrayBufferView or an ArrayBuffer (evaluating 'WebAssembly.compile()')");
+        }
+        assert.truthy(threw);
+    }
+
+    {
+        let threw = false;
+        try {
             await WebAssembly.compile(20);
         } catch(e) {
             threw = true;
