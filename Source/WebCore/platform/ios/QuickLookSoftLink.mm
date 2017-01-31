@@ -31,15 +31,11 @@
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, QuickLook)
 
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, QuickLook, QLPreviewConverter)
-
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, QuickLook, QLPreviewGetSupportedMIMETypes, NSSet *, (), ())
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, QuickLook, QLTypeCopyBestMimeTypeForFileNameAndMimeType, NSString *, (NSString *fileName, NSString *mimeType), (fileName, mimeType))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, QuickLook, QLTypeCopyBestMimeTypeForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, QuickLook, QLTypeCopyUTIForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
 
 SOFT_LINK_POINTER_FOR_SOURCE(WebCore, QuickLook, QLPreviewScheme, NSString *)
-
-SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, QuickLook, kQLPreviewOptionPasswordKey, CFStringRef)
 
 #endif // USE(QUICK_LOOK)

@@ -70,7 +70,7 @@ class Frame;
 class FrameLoader;
 class IconLoader;
 class Page;
-class QuickLookHandle;
+class PreviewConverter;
 class ResourceLoader;
 class SharedBuffer;
 class SubresourceLoader;
@@ -271,8 +271,8 @@ public:
     URL documentURL() const;
 
 #if USE(QUICK_LOOK)
-    WEBCORE_EXPORT void setQuickLookHandle(std::unique_ptr<QuickLookHandle>);
-    QuickLookHandle* quickLookHandle() const { return m_quickLookHandle.get(); }
+    void setPreviewConverter(std::unique_ptr<PreviewConverter>&&);
+    PreviewConverter* previewConverter() const;
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -463,7 +463,7 @@ private:
 #endif
 
 #if USE(QUICK_LOOK)
-    std::unique_ptr<QuickLookHandle> m_quickLookHandle;
+    std::unique_ptr<PreviewConverter> m_previewConverter;
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)

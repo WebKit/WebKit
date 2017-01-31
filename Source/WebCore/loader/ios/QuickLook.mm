@@ -28,9 +28,13 @@
 
 #if USE(QUICK_LOOK)
 
+#import "DocumentLoader.h"
 #import "FileSystemIOS.h"
+#import "FrameLoader.h"
+#import "FrameLoaderClient.h"
 #import "Logging.h"
 #import "NSFileManagerSPI.h"
+#import "PreviewConverter.h"
 #import "QuickLookHandleClient.h"
 #import "ResourceError.h"
 #import "ResourceLoader.h"
@@ -91,14 +95,14 @@ RetainPtr<NSURLRequest> WebCore::registerQLPreviewConverterIfNeeded(NSURL *url, 
     if ([QLPreviewGetSupportedMIMETypesSet() containsObject:updatedMIMEType.get()]) {
         RetainPtr<NSString> uti = adoptNS(QLTypeCopyUTIForURLAndMimeType(url, updatedMIMEType.get()));
 
-        RetainPtr<QLPreviewConverter> converter = adoptNS([allocQLPreviewConverterInstance() initWithData:data name:nil uti:uti.get() options:nil]);
-        NSURLRequest *request = [converter previewRequest];
+        auto converter = std::make_unique<PreviewConverter>(data, uti.get());
+        ResourceRequest previewRequest = converter->previewRequest();
 
         // We use [request URL] here instead of url since it will be
         // the URL that the WebDataSource will see during -dealloc.
-        addQLPreviewConverterWithFileForURL([request URL], converter.get(), nil);
+        addQLPreviewConverterWithFileForURL(previewRequest.url(), converter->platformConverter(), nil);
 
-        return request;
+        return previewRequest.nsURLRequest(DoNotUpdateHTTPBody);
     }
 
     return nil;
@@ -137,12 +141,12 @@ static QuickLookHandleClient& testingOrEmptyClient()
     return emptyClient();
 }
 
-@interface WebPreviewConverter : NSObject {
+@interface WebPreviewLoader : NSObject {
     RefPtr<ResourceLoader> _resourceLoader;
+    ResourceResponse _response;
     QuickLookHandle* _handle;
     RefPtr<QuickLookHandleClient> _client;
-    RetainPtr<NSURLResponse> _originalResponse;
-    RetainPtr<QLPreviewConverter> _platformConverter;
+    std::unique_ptr<PreviewConverter> _converter;
     RetainPtr<NSMutableArray> _bufferedDataArray;
     BOOL _hasSentDidReceiveResponse;
 }
@@ -153,11 +157,11 @@ static QuickLookHandleClient& testingOrEmptyClient()
 - (void)finishedAppending;
 - (void)failed;
 
-@property (nonatomic, readonly) QLPreviewConverter *platformConverter;
+@property (nonatomic, readonly) PreviewConverter* converter;
 
 @end
 
-@implementation WebPreviewConverter
+@implementation WebPreviewLoader
 
 - (instancetype)initWithResourceLoader:(ResourceLoader&)resourceLoader resourceResponse:(const ResourceResponse&)resourceResponse quickLookHandle:(QuickLookHandle&)quickLookHandle
 {
@@ -166,13 +170,13 @@ static QuickLookHandleClient& testingOrEmptyClient()
         return nil;
 
     _resourceLoader = &resourceLoader;
+    _response = resourceResponse;
     _handle = &quickLookHandle;
     _client = &testingOrEmptyClient();
-    _originalResponse = resourceResponse.nsURLResponse();
-    _platformConverter = adoptNS([allocQLPreviewConverterInstance() initWithConnection:nil delegate:self response:_originalResponse.get() options:nil]);
+    _converter = std::make_unique<PreviewConverter>(self, _response);
     _bufferedDataArray = adoptNS([[NSMutableArray alloc] init]);
 
-    LOG(Network, "WebPreviewConverter created with preview file name \"%s\".", [_platformConverter previewFileName]);
+    LOG(Network, "WebPreviewConverter created with preview file name \"%s\".", _converter->previewFileName().utf8().data());
     return self;
 }
 
@@ -185,7 +189,7 @@ static QuickLookHandleClient& testingOrEmptyClient()
 - (void)appendDataArray:(NSArray<NSData *> *)dataArray
 {
     LOG(Network, "WebPreviewConverter appending data array with count %ld.", dataArray.count);
-    [_platformConverter appendDataArray:dataArray];
+    [_converter->platformConverter() appendDataArray:dataArray];
     [_bufferedDataArray addObjectsFromArray:dataArray];
     _client->didReceiveDataArray((CFArrayRef)dataArray);
 }
@@ -193,20 +197,20 @@ static QuickLookHandleClient& testingOrEmptyClient()
 - (void)finishedAppending
 {
     LOG(Network, "WebPreviewConverter finished appending data.");
-    [_platformConverter finishedAppendingData];
+    [_converter->platformConverter() finishedAppendingData];
     _client->didFinishLoading();
 }
 
 - (void)failed
 {
     LOG(Network, "WebPreviewConverter failed.");
-    [_platformConverter finishConverting];
+    [_converter->platformConverter() finishConverting];
     _client->didFail();
 }
 
-- (QLPreviewConverter *)platformConverter
+- (PreviewConverter*)converter
 {
-    return _platformConverter.get();
+    return _converter.get();
 }
 
 - (void)_sendDidReceiveResponseIfNecessary
@@ -216,9 +220,11 @@ static QuickLookHandleClient& testingOrEmptyClient()
 
     [_bufferedDataArray removeAllObjects];
 
-    ResourceResponse response { [_platformConverter previewResponse] };
+    ResourceResponse response { _converter->previewResponse() };
     response.setIsQuickLook(true);
     ASSERT(response.mimeType().length());
+
+    _resourceLoader->documentLoader()->setPreviewConverter(WTFMove(_converter));
 
     _hasSentDidReceiveResponse = YES;
     _resourceLoader->didReceiveResponse(response);
@@ -263,11 +269,11 @@ static inline bool isQuickLookPasswordError(NSError *error)
     }
 
     _client->didRequestPassword([retainedSelf = retainPtr(self)] (const String& password) {
-        NSDictionary *passwordOption = @{ (NSString *)kQLPreviewOptionPasswordKey : password };
-        auto converterWithPassword = adoptNS([allocQLPreviewConverterInstance() initWithConnection:nil delegate:retainedSelf.get() response:retainedSelf->_originalResponse.get() options:passwordOption]);
-        [converterWithPassword appendDataArray:retainedSelf->_bufferedDataArray.get()];
-        [converterWithPassword finishedAppendingData];
-        retainedSelf->_platformConverter = WTFMove(converterWithPassword);
+        auto converter = std::make_unique<PreviewConverter>(retainedSelf.get(), retainedSelf->_response, password);
+        QLPreviewConverter *platformConverter = converter->platformConverter();
+        [platformConverter appendDataArray:retainedSelf->_bufferedDataArray.get()];
+        [platformConverter finishedAppendingData];
+        retainedSelf->_converter = WTFMove(converter);
     });
 }
 
@@ -318,9 +324,9 @@ NSString *createTemporaryFileForQuickLook(NSString *fileName)
 }
 
 QuickLookHandle::QuickLookHandle(ResourceLoader& loader, const ResourceResponse& response)
-    : m_converter { adoptNS([[WebPreviewConverter alloc] initWithResourceLoader:loader resourceResponse:response quickLookHandle:*this]) }
+    : m_previewLoader { adoptNS([[WebPreviewLoader alloc] initWithResourceLoader:loader resourceResponse:response quickLookHandle:*this]) }
 {
-    loader.didCreateQuickLookHandle(*this);
+    loader.frameLoader()->client().didCreateQuickLookHandle(*this);
 }
 
 QuickLookHandle::~QuickLookHandle()
@@ -338,18 +344,12 @@ std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceLoader& loader,
     return std::make_unique<QuickLookHandle>(loader, response);
 }
 
-void QuickLookHandle::willSendRequest(ResourceRequest& request)
-{
-    if (request.url().protocolIs(QLPreviewProtocol()))
-        request = [[m_converter platformConverter] safeRequestForRequest:request.nsURLRequest(DoNotUpdateHTTPBody)];
-}
-
 bool QuickLookHandle::didReceiveData(const char* data, unsigned length)
 {
     if (m_finishedLoadingDataIntoConverter)
         return false;
 
-    [m_converter appendDataArray:@[ [NSData dataWithBytes:data length:length] ]];
+    [m_previewLoader appendDataArray:@[ [NSData dataWithBytes:data length:length] ]];
     return true;
 }
 
@@ -358,7 +358,7 @@ bool QuickLookHandle::didReceiveBuffer(const SharedBuffer& buffer)
     if (m_finishedLoadingDataIntoConverter)
         return false;
 
-    [m_converter appendDataArray:buffer.createNSDataArray().get()];
+    [m_previewLoader appendDataArray:buffer.createNSDataArray().get()];
     return true;
 }
 
@@ -368,19 +368,19 @@ bool QuickLookHandle::didFinishLoading()
         return false;
 
     m_finishedLoadingDataIntoConverter = true;
-    [m_converter finishedAppending];
+    [m_previewLoader finishedAppending];
     return true;
 }
 
 void QuickLookHandle::didFail()
 {
-    [m_converter failed];
-    m_converter = nullptr;
+    [m_previewLoader failed];
+    m_previewLoader = nullptr;
 }
 
 void QuickLookHandle::setClient(Ref<QuickLookHandleClient>&& client)
 {
-    [m_converter setClient:WTFMove(client)];
+    [m_previewLoader setClient:WTFMove(client)];
 }
 
 void QuickLookHandle::setClientForTesting(RefPtr<QuickLookHandleClient>&& client)
@@ -390,12 +390,12 @@ void QuickLookHandle::setClientForTesting(RefPtr<QuickLookHandleClient>&& client
 
 String QuickLookHandle::previewFileName() const
 {
-    return [m_converter platformConverter].previewFileName;
+    return [m_previewLoader converter]->previewFileName();
 }
 
 String QuickLookHandle::previewUTI() const
 {
-    return [m_converter platformConverter].previewUTI;
+    return [m_previewLoader converter]->previewUTI();
 }
 
 }

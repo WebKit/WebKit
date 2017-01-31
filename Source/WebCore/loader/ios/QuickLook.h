@@ -27,7 +27,6 @@
 
 #if USE(QUICK_LOOK)
 
-#include <objc/objc.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 
@@ -36,7 +35,7 @@ OBJC_CLASS NSSet;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS NSURLRequest;
-OBJC_CLASS WebPreviewConverter;
+OBJC_CLASS WebPreviewLoader;
 
 namespace WebCore {
 
@@ -59,7 +58,6 @@ public:
     static std::unique_ptr<QuickLookHandle> create(ResourceLoader&, const ResourceResponse&);
     ~QuickLookHandle();
 
-    void willSendRequest(ResourceRequest&);
     bool didReceiveData(const char* data, unsigned length);
     bool didReceiveBuffer(const SharedBuffer&);
     bool didFinishLoading();
@@ -75,7 +73,7 @@ private:
     friend std::unique_ptr<QuickLookHandle> std::make_unique<QuickLookHandle>(ResourceLoader&, const ResourceResponse&);
     QuickLookHandle(ResourceLoader&, const ResourceResponse&);
 
-    RetainPtr<WebPreviewConverter> m_converter;
+    RetainPtr<WebPreviewLoader> m_previewLoader;
     bool m_finishedLoadingDataIntoConverter { false };
 };
 

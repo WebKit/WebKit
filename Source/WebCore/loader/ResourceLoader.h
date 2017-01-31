@@ -117,9 +117,8 @@ public:
     virtual void receivedCancellation(const AuthenticationChallenge&);
 
 #if USE(QUICK_LOOK)
-    void didCreateQuickLookHandle(QuickLookHandle&);
+    bool isQuickLookResource() const;
 #endif
-    bool isQuickLookResource() { return m_isQuickLookResource; }
 
     const URL& url() const { return m_request.url(); }
     ResourceHandle* handle() const { return m_handle.get(); }
@@ -174,6 +173,9 @@ protected:
     RefPtr<DocumentLoader> m_documentLoader;
     ResourceResponse m_response;
     LoadTiming m_loadTiming;
+#if USE(QUICK_LOOK)
+    std::unique_ptr<QuickLookHandle> m_quickLookHandle;
+#endif
 
 private:
     virtual void willCancel(const ResourceError&) = 0;
@@ -230,7 +232,6 @@ private:
     bool m_defersLoading;
     ResourceRequest m_deferredRequest;
     ResourceLoaderOptions m_options;
-    bool m_isQuickLookResource { false };
 
 #if ENABLE(CONTENT_EXTENSIONS)
 protected:

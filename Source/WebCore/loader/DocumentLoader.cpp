@@ -86,6 +86,7 @@
 #endif
 
 #if USE(QUICK_LOOK)
+#include "PreviewConverter.h"
 #include "QuickLook.h"
 #endif
 
@@ -1722,9 +1723,14 @@ bool DocumentLoader::isAlwaysOnLoggingAllowed() const
 
 #if USE(QUICK_LOOK)
 
-void DocumentLoader::setQuickLookHandle(std::unique_ptr<QuickLookHandle> quickLookHandle)
+void DocumentLoader::setPreviewConverter(std::unique_ptr<PreviewConverter>&& previewConverter)
 {
-    m_quickLookHandle = WTFMove(quickLookHandle);
+    m_previewConverter = WTFMove(previewConverter);
+}
+
+PreviewConverter* DocumentLoader::previewConverter() const
+{
+    return m_previewConverter.get();
 }
 
 #endif

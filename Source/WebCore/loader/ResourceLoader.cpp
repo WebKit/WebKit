@@ -56,6 +56,7 @@
 #endif
 
 #if USE(QUICK_LOOK)
+#include "PreviewConverter.h"
 #include "QuickLook.h"
 #endif
 
@@ -376,8 +377,8 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const Res
         InspectorInstrumentation::willSendRequest(m_frame.get(), m_identifier, m_frame->loader().documentLoader(), request, redirectResponse);
 
 #if USE(QUICK_LOOK)
-    if (auto quickLookHandle = m_documentLoader->quickLookHandle())
-        quickLookHandle->willSendRequest(request);
+    if (auto previewConverter = m_documentLoader->previewConverter())
+        request = previewConverter->safeRequest(request);
 #endif
 
     bool isRedirect = !redirectResponse.isNull();
@@ -741,10 +742,9 @@ void ResourceLoader::unschedule(SchedulePair& pair)
 #endif
 
 #if USE(QUICK_LOOK)
-void ResourceLoader::didCreateQuickLookHandle(QuickLookHandle& handle)
+bool ResourceLoader::isQuickLookResource() const
 {
-    m_isQuickLookResource = true;
-    frameLoader()->client().didCreateQuickLookHandle(handle);
+    return !!m_quickLookHandle;
 }
 #endif
 

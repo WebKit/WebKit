@@ -29,8 +29,6 @@
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, QuickLook)
 
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, QuickLook, QLPreviewConverter)
-
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, QuickLook, QLPreviewGetSupportedMIMETypes, NSSet *, (), ())
 #define QLPreviewGetSupportedMIMETypes softLink_QuickLook_QLPreviewGetSupportedMIMETypes
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, QuickLook, QLTypeCopyBestMimeTypeForFileNameAndMimeType, NSString *, (NSString *fileName, NSString *mimeType), (fileName, mimeType))
@@ -42,8 +40,5 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, QuickLook, QLTypeCopyUTIForURLAndMimeType
 
 SOFT_LINK_POINTER_FOR_HEADER(WebCore, QuickLook, QLPreviewScheme, NSString *)
 #define QLPreviewScheme get_QuickLook_QLPreviewScheme()
-
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, QuickLook, kQLPreviewOptionPasswordKey, CFStringRef)
-#define kQLPreviewOptionPasswordKey get_QuickLook_kQLPreviewOptionPasswordKey()
 
 #endif // USE(QUICK_LOOK)

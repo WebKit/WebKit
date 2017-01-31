@@ -97,7 +97,9 @@ void CachedRawResource::finishLoading(SharedBuffer* data)
         notifyClientsDataWasReceived(incrementalData, incrementalDataLength);
     }
 
+#if USE(QUICK_LOOK)
     m_allowEncodedDataReplacement = !m_loader->isQuickLookResource();
+#endif
 
     CachedResource::finishLoading(data);
     if (dataBufferingPolicy == BufferData && this->dataBufferingPolicy() == DoNotBufferData) {

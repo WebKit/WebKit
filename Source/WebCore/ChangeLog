@@ -1,3 +1,74 @@
+2017-01-30  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] QLPreviewConverter and QuickLookHandle have different lifetime requirements
+        https://bugs.webkit.org/show_bug.cgi?id=167609
+
+        Reviewed by Andreas Kling.
+        
+        Currently, QuickLookHandles are owned by DocumentLoader so that the underlying
+        QLPreviewConverter stays alive to service subresource requests. However, the QuickLookHandle
+        itself only needs to live long enough to handle the main resource load. And in a follow-on
+        patch we will need to create QLPreviewConverters independent of QuickLookHandle.
+
+        This patch moves ownership of QuickLookHandle from DocumentLoader to ResourceLoader. It also
+        creates a C++ wrapper around QLPreviewConverter and teaches QuickLookHandle to transfer
+        ownership of the wrapper to DocumentLoader once the main resource conversion is complete.
+
+        No change in behavior. Covered by existing tests.
+
+        * WebCore.xcodeproj/project.pbxproj: Added PreviewConverter.{h,mm}.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setPreviewConverter): Renamed from setQuickLookHandle().
+        (WebCore::DocumentLoader::previewConverter): Renamed from quickLookHandle().
+        (WebCore::DocumentLoader::setQuickLookHandle): Renamed to setPreviewConverter().
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::quickLookHandle): Renamed to quickLookHandle().
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequestInternal): Changed to call PreviewConverter::safeRequest().
+        (WebCore::ResourceLoader::isQuickLookResource): Changed to check if m_quickLookHandle is null.
+        (WebCore::ResourceLoader::didCreateQuickLookHandle): Deleted.
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::shouldCreateQuickLookHandleForResponse): Changed to access m_quickLookHandle.
+        (WebCore::SubresourceLoader::didReceiveResponse): Ditto.
+        (WebCore::SubresourceLoader::didReceiveData): Ditto.
+        (WebCore::SubresourceLoader::didReceiveBuffer): Ditto.
+        (WebCore::SubresourceLoader::didFinishLoading): Ditto.
+        (WebCore::SubresourceLoader::didFail): Ditto.
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::finishLoading): Wrapped the call to ResourceLoader::isQuickLookResource() in USE(QUICK_LOOK).
+        * loader/ios/QuickLook.h: Renamed m_converter to m_previewLoader.
+        * loader/ios/QuickLook.mm: Renamed WebPreviewConverter to WebPreviewLoader.
+        (WebCore::registerQLPreviewConverterIfNeeded): Created a PreviewConverter instead of a QLPreviewConverter.
+        (-[WebPreviewLoader initWithResourceLoader:resourceResponse:quickLookHandle:]): Ditto.
+        (-[WebPreviewLoader appendDataArray:]): Accessed the QLPreviewConverter from the PreviewConverter.
+        (-[WebPreviewLoader finishedAppending]): Ditto.
+        (-[WebPreviewLoader failed]): Ditto.
+        (-[WebPreviewLoader converter]): Renamed from platformConverter. Returns a pointer to the PreviewConverter.
+        (-[WebPreviewLoader _sendDidReceiveResponseIfNecessary]): Moved _converter to DocumentLoader.
+        (-[WebPreviewLoader connection:didFailWithError:]): Created a PreviewConverter instead of a QLPreviewConverter.
+        (WebCore::QuickLookHandle::QuickLookHandle): Called FrameLoaderClient::didCreateQuickLookHandle() instead of going through FrameLoader.
+        (WebCore::QuickLookHandle::didReceiveData): Renamed m_converter to m_previewLoader.
+        (WebCore::QuickLookHandle::didReceiveBuffer): Ditto.
+        (WebCore::QuickLookHandle::didFinishLoading): Ditto.
+        (WebCore::QuickLookHandle::didFail): Ditto.
+        (WebCore::QuickLookHandle::setClient): Ditto.
+        (WebCore::QuickLookHandle::previewFileName): Ditto.
+        (WebCore::QuickLookHandle::previewUTI): Ditto.
+        (WebCore::QuickLookHandle::willSendRequest): Deleted.
+        * platform/ios/QuickLookSoftLink.h: Removed soft-linking of QLPreviewConverter and kQLPreviewOptionPasswordKey.
+        * platform/ios/QuickLookSoftLink.mm: Ditto.
+        * platform/network/ios/PreviewConverter.h: Added.
+        (WebCore::PreviewConverter::platformConverter): Added. Returns the underlying QLPreviewConverter.
+        * platform/network/ios/PreviewConverter.mm: Added.
+        (WebCore::optionsWithPassword): Creates a dictionary with the kQLPreviewOptionPasswordKey option set if password is non-null.
+        (WebCore::PreviewConverter::PreviewConverter): Added constructors for the delegate/response and data/uti cases.
+        (WebCore::PreviewConverter::safeRequest): Wraps -[QLPreviewConverter safeRequestForRequest:].
+        (WebCore::PreviewConverter::previewRequest): Wraps -[QLPreviewConverter previewRequest].
+        (WebCore::PreviewConverter::previewResponse): Wraps -[QLPreviewConverter previewResponse].
+        (WebCore::PreviewConverter::previewFileName): Wraps -[QLPreviewConverter previewFileName].
+        (WebCore::PreviewConverter::previewUTI): Wraps -[QLPreviewConverter previewUTI].
+
 2017-01-30  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy Attributes.isId attribute

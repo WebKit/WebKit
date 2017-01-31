@@ -3966,6 +3966,8 @@
 		A1B5B29F1AAA846F008B6042 /* MockContentFilterSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B5B29D1AAA846E008B6042 /* MockContentFilterSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1BF6B821AA96C7D00AF4A8A /* MockContentFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1BF6B801AA96C7D00AF4A8A /* MockContentFilter.cpp */; };
 		A1BF6B831AA96C7D00AF4A8A /* MockContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1BF6B811AA96C7D00AF4A8A /* MockContentFilter.h */; };
+		A1C150791E3F2B3E0032C98C /* PreviewConverter.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1C150771E3F2B3E0032C98C /* PreviewConverter.mm */; };
+		A1C1507A1E3F2B3E0032C98C /* PreviewConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C150781E3F2B3E0032C98C /* PreviewConverter.h */; };
 		A1C7FAA2133A5D3500D6732D /* JSXPathResultCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */; };
 		A1DE712D18612AC100734192 /* TouchEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DE712B18612AC100734192 /* TouchEvents.cpp */; };
 		A1DE71321861322200734192 /* TouchConstructors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DE71301861322200734192 /* TouchConstructors.cpp */; };
@@ -11676,6 +11678,8 @@
 		A1B5B29D1AAA846E008B6042 /* MockContentFilterSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockContentFilterSettings.h; sourceTree = "<group>"; };
 		A1BF6B801AA96C7D00AF4A8A /* MockContentFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockContentFilter.cpp; sourceTree = "<group>"; };
 		A1BF6B811AA96C7D00AF4A8A /* MockContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockContentFilter.h; sourceTree = "<group>"; };
+		A1C150771E3F2B3E0032C98C /* PreviewConverter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreviewConverter.mm; sourceTree = "<group>"; };
+		A1C150781E3F2B3E0032C98C /* PreviewConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewConverter.h; sourceTree = "<group>"; };
 		A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathResultCustom.cpp; sourceTree = "<group>"; };
 		A1DE712B18612AC100734192 /* TouchEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TouchEvents.cpp; sourceTree = "<group>"; };
 		A1DE71301861322200734192 /* TouchConstructors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TouchConstructors.cpp; sourceTree = "<group>"; };
@@ -16936,6 +16940,8 @@
 			children = (
 				443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.mm */,
 				A10DBF4618F92317000D70C6 /* QuickLookHandleClient.h */,
+				A1C150781E3F2B3E0032C98C /* PreviewConverter.h */,
+				A1C150771E3F2B3E0032C98C /* PreviewConverter.mm */,
 				7E428CE413E3407F003B661C /* ResourceHandleIOS.mm */,
 				7E7DE201195CEFCD0035363B /* ResourceRequestIOS.mm */,
 				44A20DB80F84166C00B3E1FE /* WebCoreURLResponseIOS.h */,
@@ -28554,6 +28560,7 @@
 				93F199EC08245E59001E9ABC /* XSLStyleSheet.h in Headers */,
 				E1F1E8300C3C2BB9006DB391 /* XSLTExtensions.h in Headers */,
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
+				A1C1507A1E3F2B3E0032C98C /* PreviewConverter.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				977E2E0F12F0FC9C00C13380 /* XSSAuditorDelegate.h in Headers */,
@@ -29348,6 +29355,7 @@
 				0F6A12BD1A00923700C6DE72 /* DebugPageOverlays.cpp in Sources */,
 				45FEA5CF156DDE8C00654101 /* Decimal.cpp in Sources */,
 				A8C228A211D5722E00D5A7D3 /* DecodedDataDocumentParser.cpp in Sources */,
+				A1C150791E3F2B3E0032C98C /* PreviewConverter.mm in Sources */,
 				4162A450101145AE00DFF3ED /* DedicatedWorkerGlobalScope.cpp in Sources */,
 				41A3D58E101C152D00316D07 /* DedicatedWorkerThread.cpp in Sources */,
 				FD06DFA5134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp in Sources */,
