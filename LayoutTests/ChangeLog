@@ -1,3 +1,18 @@
+2017-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy constants on Event interface
+        https://bugs.webkit.org/show_bug.cgi?id=167602
+
+        Reviewed by Sam Weinig.
+
+        Update / Rebaseline existing tests to stop covering those constants.
+
+        * fast/dom/constants-expected.txt:
+        * fast/dom/constants.html:
+        * fast/xmlhttprequest/xmlhttprequest-get-expected.txt:
+        * http/tests/workers/worker-importScriptsOnError-expected.txt:
+        * inspector/model/remote-object-get-properties-expected.txt:
+
 2017-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] position:fixed inside touch-scrollable overflow is mispositioned

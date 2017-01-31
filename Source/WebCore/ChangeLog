@@ -1,3 +1,22 @@
+2017-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy constants on Event interface
+        https://bugs.webkit.org/show_bug.cgi?id=167602
+
+        Reviewed by Sam Weinig.
+
+        Drop legacy constants on Event interface:
+        MOUSEDOWN, MOUSEUP, MOUSEOVER, MOUSEOUT, MOUSEMOVE, MOUSEDRAG,
+        CLICK, DBLCLICK, KEYDOWN, KEYUP, KEYPRESS, DRAGDROP, FOCUS,
+        BLUR, SELECT, and CHANGE.
+
+        Those constants are not used for anything, they are not in the
+        specification and Chrome / Firefox do not have them.
+
+        No new tests, rebaselined existing test.
+
+        * dom/Event.idl:
+
 2017-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] position:fixed inside touch-scrollable overflow is mispositioned

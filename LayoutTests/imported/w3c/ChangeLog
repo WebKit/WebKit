@@ -1,3 +1,14 @@
+2017-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy constants on Event interface
+        https://bugs.webkit.org/show_bug.cgi?id=167602
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/dom/historical-expected.txt:
+
 2017-01-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Import web-platform-tests/user-timing

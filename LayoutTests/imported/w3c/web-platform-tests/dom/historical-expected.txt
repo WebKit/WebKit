@@ -54,20 +54,20 @@ PASS Node member must be nuked: getUserData
 PASS Node member must be nuked: setUserData 
 PASS Node member must be nuked: rootNode 
 PASS Window member must be nuked: attachEvent 
-FAIL Event should not have this constant: MOUSEDOWN assert_equals: expected (undefined) undefined but got (number) 1
-FAIL Event should not have this constant: MOUSEUP assert_equals: expected (undefined) undefined but got (number) 2
-FAIL Event should not have this constant: MOUSEOVER assert_equals: expected (undefined) undefined but got (number) 4
-FAIL Event should not have this constant: MOUSEOUT assert_equals: expected (undefined) undefined but got (number) 8
-FAIL Event should not have this constant: MOUSEMOVE assert_equals: expected (undefined) undefined but got (number) 16
-FAIL Event should not have this constant: MOUSEDRAG assert_equals: expected (undefined) undefined but got (number) 32
-FAIL Event should not have this constant: CLICK assert_equals: expected (undefined) undefined but got (number) 64
-FAIL Event should not have this constant: DBLCLICK assert_equals: expected (undefined) undefined but got (number) 128
-FAIL Event should not have this constant: KEYDOWN assert_equals: expected (undefined) undefined but got (number) 256
-FAIL Event should not have this constant: KEYUP assert_equals: expected (undefined) undefined but got (number) 512
-FAIL Event should not have this constant: KEYPRESS assert_equals: expected (undefined) undefined but got (number) 1024
-FAIL Event should not have this constant: DRAGDROP assert_equals: expected (undefined) undefined but got (number) 2048
-FAIL Event should not have this constant: FOCUS assert_equals: expected (undefined) undefined but got (number) 4096
-FAIL Event should not have this constant: BLUR assert_equals: expected (undefined) undefined but got (number) 8192
-FAIL Event should not have this constant: SELECT assert_equals: expected (undefined) undefined but got (number) 16384
-FAIL Event should not have this constant: CHANGE assert_equals: expected (undefined) undefined but got (number) 32768
+PASS Event should not have this constant: MOUSEDOWN 
+PASS Event should not have this constant: MOUSEUP 
+PASS Event should not have this constant: MOUSEOVER 
+PASS Event should not have this constant: MOUSEOUT 
+PASS Event should not have this constant: MOUSEMOVE 
+PASS Event should not have this constant: MOUSEDRAG 
+PASS Event should not have this constant: CLICK 
+PASS Event should not have this constant: DBLCLICK 
+PASS Event should not have this constant: KEYDOWN 
+PASS Event should not have this constant: KEYUP 
+PASS Event should not have this constant: KEYPRESS 
+PASS Event should not have this constant: DRAGDROP 
+PASS Event should not have this constant: FOCUS 
+PASS Event should not have this constant: BLUR 
+PASS Event should not have this constant: SELECT 
+PASS Event should not have this constant: CHANGE 
 
