@@ -23,7 +23,7 @@ PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', s
 PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', sdpMLineIndex: sdpMLineIndex})) rejected with OperationError (DOM Exception 34): Invalid candidate content
 
 *** Test some OK input
-PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: sdpMid})) fulfilled with undefined
+PASS promise pc.addIceCandidate({candidate: validCandidate, sdpMid: sdpMid}) fulfilled with undefined
 PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMLineIndex: sdpMLineIndex})) fulfilled with undefined
 *** A valid sdpMid takes precedesce over a bad sdpMLineIndex
 PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: sdpMid, sdpMLineIndex: badSdpMLineIndex})) fulfilled with undefined

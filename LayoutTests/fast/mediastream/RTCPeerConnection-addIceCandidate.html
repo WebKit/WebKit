@@ -74,9 +74,11 @@
             })
             .then(function () {
                 debug("<br>*** Test some OK input");
-                return promiseShouldResolve("pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: sdpMid}))");
+                // Testing passing a RTCIceCandidateInit
+                return promiseShouldResolve("pc.addIceCandidate({candidate: validCandidate, sdpMid: sdpMid})");
             })
             .then(function () {
+                // Testing passing a RTCIceCandidate
                 return promiseShouldResolve("pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMLineIndex: sdpMLineIndex}))");
             })
             .then(function () {

@@ -71,7 +71,18 @@ function objectAndCallbacksOverload(args, functionName, objectInfo, promiseMode,
         argsCount = 1;
     } else {
         const hasMatchingType = objectArg instanceof objectInfo.constructor;
-        objectArgOk = objectInfo.defaultsToNull ? (objectArg === null || typeof objectArg === "undefined" || hasMatchingType) : hasMatchingType;
+        if (hasMatchingType)
+            objectArgOk = true;
+        else if (objectInfo.defaultsToNull)
+            objectArgOk = objectArg === null || typeof objectArg === "undefined";
+        else if (objectInfo.maybeDictionary) {
+            try {
+                objectArg = new objectInfo.constructor(objectArg);
+                objectArgOk = true;
+            } catch (e) {
+                objectArgOk = false;
+            }
+        }
     }
 
     if (!objectArgOk)

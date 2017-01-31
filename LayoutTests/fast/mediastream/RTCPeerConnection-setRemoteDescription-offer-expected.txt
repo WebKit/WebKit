@@ -33,8 +33,8 @@ PASS remoteOffer1 set as remote description (again)
 PASS pc.signalingState is 'have-remote-offer'
 
 *** Try setting local descriptions with bad types for the current state
-PASS promise pc.setRemoteDescription(new RTCSessionDescription({type:'answer', sdp:remoteOffer1.sdp})); rejected with InvalidStateError (DOM Exception 11): Description type incompatible with current signaling state
-PASS promise pc.setRemoteDescription(new RTCSessionDescription({type:'pranswer', sdp:remoteOffer1.sdp})); rejected with InvalidStateError (DOM Exception 11): Description type incompatible with current signaling state
+PASS promise pc.setRemoteDescription({type:'answer', sdp:remoteOffer1.sdp}); rejected with InvalidStateError (DOM Exception 11): Description type incompatible with current signaling state
+PASS promise pc.setRemoteDescription({type:'pranswer', sdp:remoteOffer1.sdp}); rejected with InvalidStateError (DOM Exception 11): Description type incompatible with current signaling state
 
 *** Create (remote) offer with video (remoteOffer2)
 *** Done, start testing with remoteOffer2

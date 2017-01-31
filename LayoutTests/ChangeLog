@@ -1,3 +1,24 @@
+2017-01-31  Youenn Fablet  <youenn@apple.com>
+
+        RTCPeerConnection methods can take dictionaries as input
+        https://bugs.webkit.org/show_bug.cgi?id=167590
+
+        Reviewed by Alex Christensen.
+
+        Replacing fast/mediastream/RTCPeerConnection-js-built-ins-check-this.html by webrtc/rtcpeerconnection-error-messages.html.
+        It is a bit more thorough and does not hard code the error message.
+
+        * fast/mediastream/RTCPeerConnection-addIceCandidate-expected.txt:
+        * fast/mediastream/RTCPeerConnection-addIceCandidate.html:
+        * fast/mediastream/RTCPeerConnection-js-built-ins-check-this-expected.txt: Removed.
+        * fast/mediastream/RTCPeerConnection-js-built-ins-check-this.html: Removed.
+        * fast/mediastream/RTCPeerConnection-setLocalDescription-offer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html:
+        * fast/mediastream/RTCPeerConnection-setRemoteDescription-offer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html:
+        * webrtc/rtcpeerconnection-error-messages-expected.txt: Added.
+        * webrtc/rtcpeerconnection-error-messages.html: Added.
+
 2017-01-31  Chris Dumez  <cdumez@apple.com>
 
         Add better test coverage for scripting windows opened via window.open()

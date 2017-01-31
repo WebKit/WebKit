@@ -1,3 +1,29 @@
+2017-01-31  Youenn Fablet  <youenn@apple.com>
+
+        RTCPeerConnection methods can take dictionaries as input
+        https://bugs.webkit.org/show_bug.cgi?id=167590
+
+        Reviewed by Alex Christensen.
+
+        Test: webrtc/rtcpeerconnection-error-messages.html
+
+        Made addIceCandidate/setRemoteDescription/setLocalDescription take either dictionaries or objects as parameter.
+        Spec only mandates this for addIceCandidate, but sites may be using the old version for setRemoteDescription and setLocalDescription.
+
+        Updated RTCPeerConnection methods error messages.
+
+        * Modules/mediastream/RTCPeerConnection.js:
+        (getLocalStreams):
+        (getStreamById):
+        (addStream):
+        (createOffer):
+        (createAnswer):
+        (setLocalDescription):
+        (setRemoteDescription):
+        (addIceCandidate):
+        (getStats):
+        * Modules/mediastream/RTCPeerConnectionInternals.js:
+
 2017-01-31  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r209411): Scrolling to a fragment identifier in overflow:scroll inside position:fixed no longer works

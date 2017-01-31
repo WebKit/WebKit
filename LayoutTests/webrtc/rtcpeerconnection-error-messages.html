@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<div id="log"></div>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+function log(msg)
+{
+    document.getElementById("log").innerHTML += msg + "<br>";
+}
+
+function printMethodError(method, target)
+{
+    try {
+        method.call(target);
+        assert_unreached();
+    } catch(e) {
+         log(e);
+    }
+}
+
+function printPromiseMethodError(method, target)
+{
+    return method.call(target).then(assert_unreached, (e) => {
+         log("Promise rejected with: " + e);
+    });
+}
+
+function printGetterError(object, getterName, target)
+{
+    const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(object), getterName);
+    if (property  === undefined) {
+        log(object + " has no property named " + getterName);
+        return;
+    }
+    printMethodError(property.get, target);
+}
+
+promise_test(function(test) {
+    // This test prints exceptions to check the format of their messages.
+
+    var pc = new RTCPeerConnection();
+    var candidate = new RTCIceCandidate({ candidate: "foo", sdpMid: "bar" });
+
+    var results = [
+        printPromiseMethodError(pc.createOffer, candidate),
+        printPromiseMethodError(pc.createAnswer, candidate),
+        printPromiseMethodError(pc.setLocalDescription, candidate),
+        printPromiseMethodError(pc.setRemoteDescription, candidate),
+        printPromiseMethodError(pc.addIceCandidate, candidate),
+
+        printGetterError(pc, "localDescription", candidate),
+        printGetterError(pc, "currentLocalDescription", candidate),
+        printGetterError(pc, "pendingLocalDescription", candidate),
+        printGetterError(pc, "remoteDescription", candidate),
+        printGetterError(pc, "currentRemoteDescription", candidate),
+        printGetterError(pc, "pendingRemoteDescription", candidate),
+        printGetterError(pc, "signalingState", candidate),
+        printGetterError(pc, "iceGatheringState", candidate),
+        printGetterError(pc, "iceConnectionState", candidate),
+        printGetterError(pc, "connectionState", candidate),
+        printGetterError(pc, "canTrickleIceCandidates", candidate),
+        printGetterError(pc, "defaultIceServers", candidate),
+
+        printMethodError(pc.getConfiguration, candidate),
+        printMethodError(pc.setConfiguration, candidate),
+        printMethodError(pc.close, candidate),
+
+        printGetterError(pc, "onnegotiationneeded", candidate),
+        printGetterError(pc, "onicecandidate", candidate),
+        printGetterError(pc, "onicecandidateerror", candidate),
+        printGetterError(pc, "onsignalingstatechange", candidate),
+        printGetterError(pc, "oniceconnectionstatechange", candidate),
+        printGetterError(pc, "onicegatheringstatechange", candidate),
+        printGetterError(pc, "onconnectionstatechange", candidate),
+    ];
+    return Promise.all(results);
+}, "Exercising TypeError messages in RTCPeerConnection");
+</script>
