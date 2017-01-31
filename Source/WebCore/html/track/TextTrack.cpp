@@ -333,9 +333,10 @@ ExceptionOr<void> TextTrack::removeCue(TextTrackCue& cue)
     // object's text track's text track list of cues, then throw a NotFoundError exception.
     if (cue.track() != this)
         return Exception { NOT_FOUND_ERR };
+    if (!m_cues)
+        return Exception { INVALID_STATE_ERR };
 
     // 2. Remove cue from the method's TextTrack object's text track's text track list of cues.
-    ASSERT(m_cues);
     m_cues->remove(cue);
     cue.setIsActive(false);
     cue.setTrack(nullptr);
