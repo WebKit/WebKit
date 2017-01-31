@@ -1,3 +1,31 @@
+2017-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Environment variables for enabling/disabling AC mode should take precedence over the API.
+        https://bugs.webkit.org/show_bug.cgi?id=167605
+
+        Reviewed by Žan Doberšek.
+
+        Add HardwareAccelerationManager singleton helper to handle the global values for enabling, disabling or forcing
+        accelerated compositing. This is used by WebPreferences to initialize the values like always, but also by
+        WebKitSettings to ensure those values are honored and are not changed when it's not possible. This new class can
+        be used in the future to implement the GPU blacklist.
+
+        * PlatformGTK.cmake: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkit_settings_class_init): Document that the setting depends on actual hardware capabilities.
+        (webkit_settings_set_hardware_acceleration_policy): Check HardwareAccelerationManager before trying to change
+        the settings.
+        * UIProcess/gtk/HardwareAccelerationManager.cpp: Added.
+        (WebKit::HardwareAccelerationManager::singleton):
+        (WebKit::HardwareAccelerationManager::HardwareAccelerationManager): Initialize m_canUseHardwareAcceleration and
+        m_forceHardwareAcceleration dependoing on hardware and system capabilites and
+        WEBKIT_DISABLE_COMPOSITING_MODE/WEBKIT_FORCE_COMPOSITING_MODE variables.
+        * UIProcess/gtk/HardwareAccelerationManager.h: Added.
+        (WebKit::HardwareAccelerationManager::canUseHardwareAcceleration):
+        (WebKit::HardwareAccelerationManager::forceHardwareAcceleration):
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformInitializeStore): Use HardwareAccelerationManager to set the initial values.
+
 2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] HTTP authentication is not implemented for downloads

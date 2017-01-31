@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebKitSettings.h"
 
+#include "HardwareAccelerationManager.h"
 #include "WebKitEnumTypes.h"
 #include "WebKitPrivate.h"
 #include "WebKitSettingsPrivate.h"
@@ -1293,6 +1294,10 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * by using %WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS. And it's also posible to disable it
      * completely using %WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER. Note that disabling hardware
      * acceleration might cause some websites to not render correctly or consume more CPU.
+     *
+     * Note that changing this setting might not be possible if hardware acceleration is not
+     * supported by the hardware or the system. In that case you can get the value to know the
+     * actual policy being used, but changing the setting will not have any effect.
      *
      * Since: 2.16
      */
@@ -3209,6 +3214,8 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
     bool changed = false;
     switch (policy) {
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS:
+        if (!HardwareAccelerationManager::singleton().canUseHardwareAcceleration())
+            return;
         if (!priv->preferences->acceleratedCompositingEnabled()) {
             priv->preferences->setAcceleratedCompositingEnabled(true);
             changed = true;
@@ -3219,6 +3226,8 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
         }
         break;
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER:
+        if (HardwareAccelerationManager::singleton().forceHardwareAcceleration())
+            return;
         if (priv->preferences->acceleratedCompositingEnabled()) {
             priv->preferences->setAcceleratedCompositingEnabled(false);
             changed = true;
@@ -3229,18 +3238,16 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
             changed = true;
         }
         break;
-
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND:
-        if (!priv->preferences->acceleratedCompositingEnabled()) {
+        if (!priv->preferences->acceleratedCompositingEnabled() && HardwareAccelerationManager::singleton().canUseHardwareAcceleration()) {
             priv->preferences->setAcceleratedCompositingEnabled(true);
             changed = true;
         }
 
-        if (priv->preferences->forceCompositingMode()) {
+        if (priv->preferences->forceCompositingMode() && !HardwareAccelerationManager::singleton().forceHardwareAcceleration()) {
             priv->preferences->setForceCompositingMode(false);
             changed = true;
         }
-
         break;
     }
 
