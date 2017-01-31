@@ -32,6 +32,8 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
         super(representedObject);
 
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+
         this._networkSidebarPanel = extraArguments.networkSidebarPanel;
 
         this._contentTreeOutline = this._networkSidebarPanel.contentTreeOutline;
@@ -246,6 +248,16 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         }
 
         this._pendingRecords = [];
+    }
+
+    _mainResourceDidChange(event)
+    {
+        let frame = event.target;
+        if (!frame.isMainFrame() || WebInspector.settings.clearNetworkOnNavigate.value)
+            return;
+
+        for (let dataGridNode of this._dataGrid.children)
+            dataGridNode.element.classList.add("preserved");
     }
 
     _networkTimelineReset(event)

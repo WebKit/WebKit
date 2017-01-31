@@ -110,5 +110,6 @@ WebInspector.settings = {
     showWhitespaceCharacters: new WebInspector.Setting("show-whitespace-characters", false),
     showInvalidCharacters: new WebInspector.Setting("show-invalid-characters", false),
     clearLogOnNavigate: new WebInspector.Setting("clear-log-on-navigate", true),
+    clearNetworkOnNavigate: new WebInspector.Setting("clear-network-on-navigate", true),
     zoomFactor: new WebInspector.Setting("zoom-factor", 1),
 };

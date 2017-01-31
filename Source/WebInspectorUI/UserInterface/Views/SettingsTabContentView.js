@@ -152,6 +152,15 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
 
         this.element.appendChild(document.createElement("br"));
 
+        createContainer(WebInspector.UIString("Network:"), (valueControllerContainer) => {
+            let checkbox = createCheckbox(WebInspector.settings.clearNetworkOnNavigate);
+            valueControllerContainer.appendChild(checkbox);
+
+            valueControllerContainer.append(WebInspector.UIString("Clear when page navigates"));
+        });
+
+        this.element.appendChild(document.createElement("br"));
+
         createContainer(WebInspector.UIString("Console:"), (valueControllerContainer) => {
             let checkbox = createCheckbox(WebInspector.settings.clearLogOnNavigate);
             valueControllerContainer.appendChild(checkbox);

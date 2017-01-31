@@ -95,3 +95,11 @@
     background-image: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 0%, 0.03) 50%, hsla(0, 0%, 0%, 0.03));
     background-size: 100% 40px;
 }
+
+.sidebar > .panel.navigation.network .tree-outline > .preserved:not(.selected) > :not(.status) {
+    opacity: 0.5;
+}
+
+.sidebar > .panel.navigation.network .tree-outline > .preserved:not(.selected) > .icon {
+    filter: grayscale(); 
+}

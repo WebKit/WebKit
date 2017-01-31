@@ -34,3 +34,11 @@
 .content-view.network-grid > .data-grid th {
     border-top: none;
 }
+
+.content-view.network-grid > .data-grid .preserved:not(.selected) .cell-content {
+    opacity: 0.5;
+}
+
+.content-view.network-grid > .data-grid .preserved:not(.selected) .cell-content .timeline-record-bar > .segment {
+    filter: grayscale();
+}

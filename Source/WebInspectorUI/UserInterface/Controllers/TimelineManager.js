@@ -804,7 +804,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
     _mainResourceDidChange(event)
     {
         let frame = event.target;
-        if (frame.isMainFrame())
+        if (frame.isMainFrame() && WebInspector.settings.clearNetworkOnNavigate.value)
             this._persistentNetworkTimeline.reset();
 
         let mainResource = frame.mainResource;
