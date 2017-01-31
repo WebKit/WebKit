@@ -90,7 +90,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGloba
     // So there is no correct URL to retrieve the module source code. If the module name
     // value is a Symbol, it is used directly as a module key.
     if (moduleNameValue.isSymbol()) {
-        promise->resolve<IDLAny>(toJS(exec, &globalObject, asSymbol(moduleNameValue)->privateName()));
+        promise->resolve<IDLAny>(JSC::Symbol::create(exec->vm(), asSymbol(moduleNameValue)->privateName().uid()));
         return jsPromise.promise();
     }
 

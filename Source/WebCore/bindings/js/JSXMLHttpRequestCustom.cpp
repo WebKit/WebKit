@@ -39,6 +39,7 @@
 #include "HTMLDocument.h"
 #include "InspectorInstrumentation.h"
 #include "JSBlob.h"
+#include "JSDOMConvert.h"
 #include "JSDOMFormData.h"
 #include "JSDOMWindowCustom.h"
 #include "JSDocument.h"
@@ -189,16 +190,16 @@ JSValue JSXMLHttpRequest::retrieveResponse(ExecState& state)
     case XMLHttpRequest::ResponseType::Document: {
         auto document = wrapped().responseXML();
         ASSERT(!document.hasException());
-        value = toJS(&state, globalObject(), document.releaseReturnValue());
+        value = toJS<IDLInterface<Document>>(state, *globalObject(), document.releaseReturnValue());
         break;
     }
 
     case XMLHttpRequest::ResponseType::Blob:
-        value = toJSNewlyCreated(&state, globalObject(), wrapped().createResponseBlob());
+        value = toJSNewlyCreated<IDLInterface<Blob>>(state, *globalObject(), wrapped().createResponseBlob());
         break;
 
     case XMLHttpRequest::ResponseType::Arraybuffer:
-        value = toJS(&state, globalObject(), wrapped().createResponseArrayBuffer());
+        value = toJS<IDLInterface<ArrayBuffer>>(state, *globalObject(), wrapped().createResponseArrayBuffer());
         break;
     }
 

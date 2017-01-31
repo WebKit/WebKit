@@ -149,7 +149,7 @@ void DeferredPromise::reject(const JSC::PrivateName& privateName)
     ASSERT(m_globalObject);
     JSC::ExecState* state = m_globalObject->globalExec();
     JSC::JSLockHolder locker(state);
-    reject(*state, toJS(state, m_globalObject.get(), privateName));
+    reject(*state, JSC::Symbol::create(state->vm(), privateName.uid()));
 }
 
 void rejectPromiseWithExceptionIfAny(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSPromiseDeferred& promiseDeferred)

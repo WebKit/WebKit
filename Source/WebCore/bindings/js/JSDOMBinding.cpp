@@ -56,18 +56,6 @@ JSValue jsStringOrUndefined(ExecState* exec, const String& s)
     return jsStringWithCache(exec, s);
 }
 
-JSValue jsString(ExecState* exec, const URL& url)
-{
-    return jsStringWithCache(exec, url.string());
-}
-
-JSValue jsStringOrUndefined(ExecState* exec, const URL& url)
-{
-    if (url.isNull())
-        return jsUndefined();
-    return jsStringWithCache(exec, url.string());
-}
-
 static inline String stringToByteString(ExecState& state, JSC::ThrowScope& scope, String&& string)
 {
     if (!string.containsOnlyLatin1()) {

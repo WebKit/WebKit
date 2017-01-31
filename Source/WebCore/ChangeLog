@@ -1,3 +1,50 @@
+2017-01-31  Sam Weinig  <sam@webkit.org>
+
+        Remove unused/rarely used bindings helpers
+        https://bugs.webkit.org/show_bug.cgi?id=167648
+
+        Reviewed by Anders Carlsson.
+
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::jsString): Deleted.
+        (WebCore::jsStringOrUndefined): Deleted.
+        (WebCore::finiteInt32Value): Deleted.
+        (WebCore::toJS): Deleted.
+        Remove unused functions. The toJS overrides can be replaced with their
+        modern JSDOMConvert counterparts.
+        
+        * bindings/js/JSDOMExceptionHandling.h:
+        (WebCore::toJS): Deleted.
+        (WebCore::toJSNewlyCreated): Deleted.
+        Remove unused functions.
+
+        * bindings/js/JSDOMIterator.h:
+        Add more specific include of JSDOMConvert.h to fix compile.
+
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DeferredPromise::reject):
+        Create the Symbol directly, instead of using the toJS override.
+
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::constructJSWorker):
+        Use JSDOMConvert toJS function.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::retrieveResponse):
+        Use JSDOMConvert toJS functions.
+
+        * bindings/js/ScriptController.h:
+        Add missing forward declaration of URL.
+
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::resolve):
+        Create the Symbol directly, instead of using the toJS override.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot):
+        Use JSDOMConvert toJS functions.
+
 2017-01-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WebItemProviderPasteboard should be robust when UIItemProvider fails to initialize an object

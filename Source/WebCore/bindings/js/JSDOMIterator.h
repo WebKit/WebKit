@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "JSDOMBinding.h"
+#include "JSDOMConvert.h"
 #include <runtime/IteratorPrototype.h>
 #include <runtime/JSDestructibleObject.h>
 #include <type_traits>

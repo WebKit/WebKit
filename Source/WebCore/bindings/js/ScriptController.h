@@ -58,6 +58,7 @@ class HTMLPlugInElement;
 class LoadableModuleScript;
 class ScriptSourceCode;
 class SecurityOrigin;
+class URL;
 class Widget;
 struct ExceptionDetails;
 

@@ -53,14 +53,9 @@ class JSFunction;
 
 namespace WebCore {
 
-class URL;
-
 void addImpureProperty(const AtomicString&);
 
-JSC::JSValue jsString(JSC::ExecState*, const URL&); // empty if the URL is null
-
 JSC::JSValue jsStringOrUndefined(JSC::ExecState*, const String&); // undefined if the string is null
-JSC::JSValue jsStringOrUndefined(JSC::ExecState*, const URL&); // undefined if the URL is null
 
 // See JavaScriptCore for explanation: Should be used for any string that is already owned by another
 // object, to let the engine know that collecting the JSString wrapper is unlikely to save memory.
@@ -73,8 +68,6 @@ WEBCORE_EXPORT String identifierToByteString(JSC::ExecState&, const JSC::Identif
 WEBCORE_EXPORT String valueToByteString(JSC::ExecState&, JSC::JSValue);
 WEBCORE_EXPORT String identifierToUSVString(JSC::ExecState&, const JSC::Identifier&);
 WEBCORE_EXPORT String valueToUSVString(JSC::ExecState&, JSC::JSValue);
-
-int32_t finiteInt32Value(JSC::JSValue, JSC::ExecState*, bool& okay);
 
 // The following functions convert values to integers as per the WebIDL specification.
 // The conversion fails if the value cannot be converted to a number or, if EnforceRange is specified,
@@ -114,11 +107,6 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, JSC::ArrayBuffer&);
 JSC::JSValue toJS(JSC::ExecState*, JSC::JSGlobalObject*, JSC::ArrayBufferView&);
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, JSC::ArrayBuffer*);
 JSC::JSValue toJS(JSC::ExecState*, JSC::JSGlobalObject*, JSC::ArrayBufferView*);
-template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, Ref<T>&&);
-template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, RefPtr<T>&&);
-template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const Vector<T>&);
-template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const Vector<RefPtr<T>>&);
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const JSC::PrivateName&);
 
 RefPtr<JSC::ArrayBufferView> toPossiblySharedArrayBufferView(JSC::VM&, JSC::JSValue);
 RefPtr<JSC::Int8Array> toPossiblySharedInt8Array(JSC::VM&, JSC::JSValue);
@@ -151,13 +139,6 @@ template<JSC::NativeFunction, int length> JSC::EncodedJSValue nonCachingStaticFu
 
 
 // Inline functions and template definitions.
-
-inline int32_t finiteInt32Value(JSC::JSValue value, JSC::ExecState* exec, bool& okay)
-{
-    double number = value.toNumber(exec);
-    okay = std::isfinite(number);
-    return JSC::toInt32(number);
-}
 
 inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, JSC::ArrayBuffer& buffer)
 {

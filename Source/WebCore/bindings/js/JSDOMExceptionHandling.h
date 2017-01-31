@@ -87,14 +87,7 @@ JSC::JSValue createDOMException(JSC::ExecState&, Exception&&);
 JSC::JSValue createDOMException(JSC::ExecState*, ExceptionCode, const String&);
 
 // Convert a DOM implementation exception into a JavaScript exception in the execution state.
-void propagateException(JSC::ExecState&, JSC::ThrowScope&, Exception&&);
 WEBCORE_EXPORT void propagateExceptionSlowPath(JSC::ExecState&, JSC::ThrowScope&, Exception&&);
-
-// ExceptionOr handling.
-void propagateException(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<void>&&);
-template<typename T> JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&&);
-template<typename T> JSC::JSValue toJSNewlyCreated(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&& value);
-
 
 ALWAYS_INLINE void propagateException(JSC::ExecState& state, JSC::ThrowScope& throwScope, Exception&& exception)
 {
@@ -107,24 +100,6 @@ inline void propagateException(JSC::ExecState& state, JSC::ThrowScope& throwScop
 {
     if (UNLIKELY(value.hasException()))
         propagateException(state, throwScope, value.releaseException());
-}
-
-template<typename T> inline JSC::JSValue toJS(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, ExceptionOr<T>&& value)
-{
-    if (UNLIKELY(value.hasException())) {
-        propagateException(state, throwScope, value.releaseException());
-        return { };
-    }
-    return toJS(&state, &globalObject, value.releaseReturnValue());
-}
-
-template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, ExceptionOr<T>&& value)
-{
-    if (UNLIKELY(value.hasException())) {
-        propagateException(state, throwScope, value.releaseException());
-        return { };
-    }
-    return toJSNewlyCreated(&state, &globalObject, value.releaseReturnValue());
 }
 
 } // namespace WebCore
