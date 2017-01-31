@@ -1,3 +1,9 @@
+2017-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.15.4 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2017-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fold USER_TIMING into WEB_TIMING and make it a RuntimeEnabledFeature

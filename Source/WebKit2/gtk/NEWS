@@ -1,4 +1,21 @@
 =================
+WebKitGTK+ 2.15.4
+=================
+
+What's new in WebKitGTK+ 2.15.4?
+
+  - Make accelerating compositing mode on-demand again. By default it will only be used for websites
+    that require it, saving a lot of memory on websites that don't need it.
+  - Add API to manage hardware acceleration policy.
+  - Enable CSS Grid Layout by default.
+  - Add API to create ephemeral WebViews to replace the legacy private browsing setting that is now
+    deprecated.
+  - Handle HTTP authentication for downloads having a WebView associated.
+  - Add API to WebKitWebsiteDataManager to handle websites data.
+  - Fix BadDamage X errors happening when resizing the WebView.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.15.3
 =================
 
