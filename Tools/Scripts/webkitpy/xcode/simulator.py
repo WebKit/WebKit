@@ -275,12 +275,22 @@ class Device(object):
             else:
                 environment_to_use[value] = env[value]
 
-        output = self._host.executive.run_command(
-            ['xcrun', 'simctl', 'launch', self.udid, bundle_id] + args,
-            env=environment_to_use,
-        )
+        # FIXME: This is a workaround for <rdar://problem/30273973>, Racey failure of simctl launch.
+        @staticmethod
+        def _log_debug_error(error):
+            _log.debug(error.message_with_output())
 
-        match = re.match(r'(?P<bundle>[^:]+): (?P<pid>\d+)\n', output)
+        output = None
+        for x in xrange(3):
+            output = self._host.executive.run_command(
+                ['xcrun', 'simctl', 'launch', self.udid, bundle_id] + args,
+                env=environment_to_use,
+                error_handler=_log_debug_error,
+            )
+            match = re.match(r'(?P<bundle>[^:]+): (?P<pid>\d+)\n', output)
+            if match:
+                break
+
         if not match or match.group('bundle') != bundle_id:
             raise RuntimeError('Failed to find process id for {}: {}'.format(bundle_id, output))
         return int(match.group('pid'))

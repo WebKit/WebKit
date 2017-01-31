@@ -1,3 +1,18 @@
+2017-01-30  Jonathan Bedard  <jbedard@apple.com>
+
+        Workaround for simctl launch bug
+        https://bugs.webkit.org/show_bug.cgi?id=167613
+
+        Reviewed by Daniel Bates.
+
+        simctl launch will sometimes fail because of a race condition when many
+        simulators are being run simultaneously. These failures will always have
+        an exit code of 1. This change attempts to launch an app multiple times
+        before reporting a failure to workaround this bug.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Device.launch_app): Execute multiple launch attempts, better logging of failures.
+
 2017-01-30  Alexey Proskuryakov  <ap@apple.com>
 
         Commit queue fails to look at real name aliases for the reviewer
