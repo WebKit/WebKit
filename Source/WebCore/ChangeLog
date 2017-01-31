@@ -1,3 +1,21 @@
+2017-01-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] InitDataRegistry should use base64url encoding and decoding for keyids
+        https://bugs.webkit.org/show_bug.cgi?id=167592
+
+        Reviewed by Jer Noble.
+
+        In InitDataRegistry, WTF::base64URLEncode() and WTF::base64URLDecode() should
+        be used to encode and decode the 'keyids' initialization data format, as
+        required by the relevant specification.
+        https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html#format
+
+        Relevant test case was added to media/encrypted-media/mock-MediaKeySession-generateRequest.html.
+
+        * Modules/encryptedmedia/InitDataRegistry.cpp:
+        (WebCore::extractKeyIDsKeyids):
+        (WebCore::sanitizeKeyids):
+
 2017-01-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Performance Timeline: Add serializer to PerformanceEntry

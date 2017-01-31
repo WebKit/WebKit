@@ -63,7 +63,7 @@ static Vector<Ref<SharedBuffer>> extractKeyIDsKeyids(const SharedBuffer& buffer)
             continue;
 
         Vector<char> keyIDData;
-        if (!WTF::base64Decode(keyID, { keyIDData }))
+        if (!WTF::base64URLDecode(keyID, { keyIDData }))
             continue;
 
         Ref<SharedBuffer> keyIDBuffer = SharedBuffer::adoptVector(keyIDData);
@@ -84,7 +84,7 @@ static RefPtr<SharedBuffer> sanitizeKeyids(const SharedBuffer& buffer)
     auto object = InspectorObject::create();
     auto kidsArray = InspectorArray::create();
     for (auto& buffer : keyIDBuffer)
-        kidsArray->pushString(base64Encode(buffer->data(), buffer->size()));
+        kidsArray->pushString(WTF::base64URLEncode(buffer->data(), buffer->size()));
     object->setArray("kids", WTFMove(kidsArray));
 
     CString jsonData = object->toJSONString().utf8();

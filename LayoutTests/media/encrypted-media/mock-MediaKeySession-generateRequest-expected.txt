@@ -37,5 +37,11 @@ RUN(kids = JSON.stringify({ kids: [ "MTIzNDU="], invalid: "invalid" }))
 RUN(mediaKeySession = mediaKeys.createSession("temporary"))
 RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
 Promise resolved OK
+
+initData is encoded in base64url.
+RUN(kids = JSON.stringify({ kids: [ "ig2FRSEF1BU1j-qPaObBkQ"] }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise resolved OK
 END OF TEST
 

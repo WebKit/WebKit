@@ -101,6 +101,14 @@
             run('promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids))');
             shouldResolve(promise).then(next, next);
         },
+
+        function() {
+            consoleWrite('initData is encoded in base64url.')
+            run('kids = JSON.stringify({ kids: [ "ig2FRSEF1BU1j-qPaObBkQ"] })');
+            run('mediaKeySession = mediaKeys.createSession("temporary")');
+            run('promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids))');
+            shouldResolve(promise).then(next, next);
+        },
     ];
     </script>
 </head>

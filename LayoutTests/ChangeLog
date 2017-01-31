@@ -1,3 +1,16 @@
+2017-01-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] InitDataRegistry should use base64url encoding and decoding for keyids
+        https://bugs.webkit.org/show_bug.cgi?id=167592
+
+        Reviewed by Jer Noble.
+
+        * media/encrypted-media/mock-MediaKeySession-generateRequest-expected.txt:
+        * media/encrypted-media/mock-MediaKeySession-generateRequest.html: Include a test case
+        that passes an init data JSON to generateRequest() that fails to decode when using the
+        plain base64 decoding algorithm. The test passes when base64url encoding and decoding
+        are used in InitDataRegistry.
+
 2017-01-31  Antoine Quint  <graouts@apple.com>
 
         [Sierra WK1] LayoutTest media/modern-media-controls/placard-support/placard-support-pip.html is a flaky crash
