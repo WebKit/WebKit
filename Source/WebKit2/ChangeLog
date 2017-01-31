@@ -1,3 +1,172 @@
+2017-01-31  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Add support for WK2 libwebrtc endpoint
+        https://bugs.webkit.org/show_bug.cgi?id=167306
+        <rdar://problem/30245426>
+
+        Reviewed by Alex Christensen.
+
+        Implementation of the LibWebRTC networking in WebKit2.
+        The following features are required to be moved from WebProcess to NetworkProcess:
+        1 Resolution of DNS names (RTCResolver)
+        2 Enumeration of interfaces/gathering of host addresses (RTCMonitor)
+        3 Implementation of Packet Socket for TCP/UDP communication (RTCSocket).
+
+        This patch implements the related classes in WebProcess/NetworkProcess and the integration with libwebrtc.
+        NetworkProcess implementation is using libwebetc for NetworkRTCMonitor and NetworkRTCSocket.
+        This ensures an as-close implementation to libwebrtc as possible.
+        In the future, after getting a better test infrastructure we should try to implement these using native APIs.
+
+        Currently, the implementation is as follow:
+        - libwebrtc is calling WebProcess stack on the rtc network thread
+        - WebProcess stack is forwarding calls to the main thread and makes related IPC calls
+        - NetworkProcess receives the IPC calls and forward them to the rtc network thread.
+        - The calls are processed in the rtc network thread
+        Conversely, when the rtc network thread wants to notify its client, the reverse path is used.
+
+        This patch also implements the LibWebRTCProvider for WebKit2.
+        This provider uses the related classes to create a peer connection factory that will use them.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::rtcProvider):
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.cpp: Added.
+        (WebKit::LibWebRTCSocketClient::LibWebRTCSocketClient):
+        (WebKit::LibWebRTCSocketClient::sendTo):
+        (WebKit::LibWebRTCSocketClient::close):
+        (WebKit::LibWebRTCSocketClient::setOption):
+        (WebKit::LibWebRTCSocketClient::signalReadPacket):
+        (WebKit::LibWebRTCSocketClient::signalSentPacket):
+        (WebKit::LibWebRTCSocketClient::signalAddressReady):
+        (WebKit::LibWebRTCSocketClient::signalConnect):
+        (WebKit::LibWebRTCSocketClient::signalClose):
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.h: Added.
+        * NetworkProcess/webrtc/NetworkRTCMonitor.cpp: Added.
+        (WebKit::NetworkRTCMonitor::startUpdating):
+        (WebKit::NetworkRTCMonitor::stopUpdating):
+        (WebKit::NetworkRTCMonitor::onNetworksChanged):
+        * NetworkProcess/webrtc/NetworkRTCMonitor.h: Added.
+        * NetworkProcess/webrtc/NetworkRTCMonitor.messages.in: Added.
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp: Added.
+        (WebKit::createThread):
+        (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+        (WebKit::NetworkRTCProvider::close):
+        (WebKit::NetworkRTCProvider::createUDPSocket):
+        (WebKit::NetworkRTCProvider::createServerTCPSocket):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        (WebKit::NetworkRTCProvider::addSocket):
+        (WebKit::NetworkRTCProvider::takeSocket):
+        (WebKit::NetworkRTCProvider::didReceiveNetworkRTCSocketMessage):
+        (WebKit::NetworkRTCProvider::createResolver):
+        (WebKit::NetworkRTCProvider::stopResolver):
+        (WebKit::NetworkRTCProvider::resolvedName):
+        (WebKit::NetworkMessageData::NetworkMessageData):
+        (WebKit::NetworkRTCProvider::OnMessage):
+        (WebKit::NetworkRTCProvider::callOnRTCNetworkThread):
+        (WebKit::NetworkRTCProvider::callSocket):
+        (WebKit::NetworkRTCProvider::sendFromMainThread):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h: Added.
+        (WebKit::NetworkRTCProvider::create):
+        (WebKit::NetworkRTCProvider::didReceiveNetworkRTCMonitorMessage):
+        (WebKit::NetworkRTCProvider::Resolver::Resolver):
+        (WebKit::NetworkRTCProvider::Resolver::~Resolver):
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in: Added.
+        * NetworkProcess/webrtc/NetworkRTCSocket.cpp: Added.
+        (WebKit::NetworkRTCSocket::NetworkRTCSocket):
+        (WebKit::NetworkRTCSocket::sendTo):
+        (WebKit::NetworkRTCSocket::close):
+        (WebKit::NetworkRTCSocket::setOption):
+        * NetworkProcess/webrtc/NetworkRTCSocket.h: Added.
+        * NetworkProcess/webrtc/NetworkRTCSocket.messages.in: Added.
+        * Shared/RTCNetwork.cpp: Added.
+        (WebKit::RTCNetwork::RTCNetwork):
+        (WebKit::ips):
+        (WebKit::RTCNetwork::value):
+        (WebKit::RTCNetwork::IPAddress::decode):
+        (WebKit::RTCNetwork::IPAddress::encode):
+        (WebKit::RTCNetwork::decode):
+        (WebKit::RTCNetwork::encode):
+        * Shared/RTCNetwork.h: Added.
+        (WebKit::RTCNetwork::IPAddress::IPAddress):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.h: Added.
+        (WebKit::LibWebRTCNetwork::monitor):
+        (WebKit::LibWebRTCNetwork::socketFactory):
+        (WebKit::LibWebRTCNetwork::socket):
+        (WebKit::LibWebRTCNetwork::resolver):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp: Added.
+        (WebKit::LibWebRTCProvider::createPeerConnection):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h: Added.
+        * WebProcess/Network/webrtc/LibWebRTCResolver.cpp: Added.
+        (WebKit::sendOnMainThread):
+        (WebKit::LibWebRTCResolver::Start):
+        (WebKit::LibWebRTCResolver::GetResolvedAddress):
+        (WebKit::LibWebRTCResolver::Destroy):
+        (WebKit::LibWebRTCResolver::setResolvedAddress):
+        (WebKit::LibWebRTCResolver::setError):
+        * WebProcess/Network/webrtc/LibWebRTCResolver.h: Added.
+        * WebProcess/Network/webrtc/LibWebRTCSocket.cpp: Added.
+        (WebKit::sendOnMainThread):
+        (WebKit::LibWebRTCSocket::LibWebRTCSocket):
+        (WebKit::LibWebRTCSocket::~LibWebRTCSocket):
+        (WebKit::LibWebRTCSocket::GetLocalAddress):
+        (WebKit::LibWebRTCSocket::GetRemoteAddress):
+        (WebKit::LibWebRTCSocket::signalAddressReady):
+        (WebKit::LibWebRTCSocket::signalReadPacket):
+        (WebKit::LibWebRTCSocket::signalSentPacket):
+        (WebKit::LibWebRTCSocket::signalConnect):
+        (WebKit::LibWebRTCSocket::signalClose):
+        (WebKit::authKey):
+        (WebKit::LibWebRTCSocket::willSend):
+        (WebKit::LibWebRTCSocket::SendTo):
+        (WebKit::LibWebRTCSocket::Close):
+        (WebKit::LibWebRTCSocket::GetOption):
+        (WebKit::LibWebRTCSocket::SetOption):
+        * WebProcess/Network/webrtc/LibWebRTCSocket.h: Added.
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp: Added.
+        (WebKit::LibWebRTCSocketFactory::CreateServerTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::CreateUdpSocket):
+        (WebKit::LibWebRTCSocketFactory::CreateClientTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::detach):
+        (WebKit::LibWebRTCSocketFactory::CreateAsyncResolver):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h: Added.
+        * WebProcess/Network/webrtc/WebRTCMonitor.cpp: Added.
+        (WebKit::sendOnMainThread):
+        (WebKit::WebRTCMonitor::StartUpdating):
+        (WebKit::WebRTCMonitor::StopUpdating):
+        (WebKit::WebRTCMonitor::networksChanged):
+        * WebProcess/Network/webrtc/WebRTCMonitor.h: Added.
+        * WebProcess/Network/webrtc/WebRTCMonitor.messages.in: Added.
+        * WebProcess/Network/webrtc/WebRTCResolver.cpp: Added.
+        (WebKit::WebRTCResolver::WebRTCResolver):
+        (WebKit::WebRTCResolver::setResolvedAddress):
+        (WebKit::WebRTCResolver::resolvedAddressError):
+        * WebProcess/Network/webrtc/WebRTCResolver.h: Added.
+        * WebProcess/Network/webrtc/WebRTCResolver.messages.in: Added.
+        * WebProcess/Network/webrtc/WebRTCSocket.cpp: Added.
+        (WebKit::WebRTCSocket::signalOnNetworkThread):
+        (WebKit::WebRTCSocket::WebRTCSocket):
+        (WebKit::WebRTCSocket::signalAddressReady):
+        (WebKit::WebRTCSocket::signalReadPacket):
+        (WebKit::WebRTCSocket::signalSentPacket):
+        (WebKit::WebRTCSocket::signalConnect):
+        (WebKit::WebRTCSocket::signalClose):
+        * WebProcess/Network/webrtc/WebRTCSocket.h: Added.
+        * WebProcess/Network/webrtc/WebRTCSocket.messages.in: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_userInterfaceLayoutDirection):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeLibWebRTC):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::libWebRTC):
+
 2017-01-31  Jessie Berlin  <jberlin@webkit.org>
 
         Build fix.

@@ -28,6 +28,7 @@ VPATH = \
     $(WebKit2)/NetworkProcess \
     $(WebKit2)/NetworkProcess/CustomProtocols \
     $(WebKit2)/NetworkProcess/mac \
+    $(WebKit2)/NetworkProcess/webrtc \
     $(WebKit2)/PluginProcess \
     $(WebKit2)/PluginProcess/mac \
     $(WebKit2)/Shared/Plugins \
@@ -45,6 +46,7 @@ VPATH = \
     $(WebKit2)/WebProcess/IconDatabase \
     $(WebKit2)/WebProcess/MediaCache \
     $(WebKit2)/WebProcess/Network \
+    $(WebKit2)/WebProcess/Network/webrtc \
     $(WebKit2)/WebProcess/Notifications \
     $(WebKit2)/WebProcess/OriginData \
     $(WebKit2)/WebProcess/Plugins \
@@ -100,6 +102,9 @@ MESSAGE_RECEIVERS = \
     NetworkProcess \
     NetworkProcessConnection \
     NetworkProcessProxy \
+    NetworkRTCMonitor \
+    NetworkRTCProvider \
+    NetworkRTCSocket \
     NetworkResourceLoader \
     PluginControllerProxy \
     PluginProcess \
@@ -149,6 +154,9 @@ MESSAGE_RECEIVERS = \
     WebProcessConnection \
     WebProcessPool \
     WebProcessProxy \
+    WebRTCMonitor \
+    WebRTCResolver \
+    WebRTCSocket \
     WebResourceLoader \
     WebResourceLoadStatisticsStore \
     WebUserContentController \

@@ -29,6 +29,8 @@
 #include "Connection.h"
 #include "DownloadID.h"
 #include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkRTCProvider.h"
+
 #include <WebCore/ResourceLoadPriority.h>
 #include <wtf/RefCounted.h>
 
@@ -71,7 +73,7 @@ private:
     // Message handlers.
     void didReceiveNetworkConnectionToWebProcessMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncNetworkConnectionToWebProcessMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
-    
+
     void scheduleResourceLoad(const NetworkResourceLoadParameters&);
     void performSynchronousLoad(const NetworkResourceLoadParameters&, Ref<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&&);
     void loadPing(const NetworkResourceLoadParameters&);
@@ -105,10 +107,18 @@ private:
 
     void ensureLegacyPrivateBrowsingSession();
 
+#if USE(LIBWEBRTC)
+    NetworkRTCProvider& rtcProvider();
+#endif
+    
     Ref<IPC::Connection> m_connection;
 
     HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>> m_networkResourceLoaders;
     HashMap<String, RefPtr<WebCore::BlobDataFileReference>> m_blobDataFileReferences;
+
+#if USE(LIBWEBRTC)
+    RefPtr<NetworkRTCProvider> m_rtcProvider;
+#endif
 };
 
 } // namespace WebKit

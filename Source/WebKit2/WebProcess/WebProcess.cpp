@@ -1546,4 +1546,13 @@ void WebProcess::prefetchDNS(const String& hostname)
     m_dnsPrefetchHystereris.impulse();
 }
 
+#if USE(LIBWEBRTC)
+LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
+{
+    if (!m_libWebRTCNetwork)
+        m_libWebRTCNetwork = std::make_unique<LibWebRTCNetwork>();
+    return *m_libWebRTCNetwork;
+}
+#endif
+
 } // namespace WebKit
