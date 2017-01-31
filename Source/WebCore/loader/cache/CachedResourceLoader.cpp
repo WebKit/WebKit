@@ -57,7 +57,6 @@
 #include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
-#include "Performance.h"
 #include "PingLoader.h"
 #include "PlatformStrategies.h"
 #include "RenderElement.h"

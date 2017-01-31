@@ -1231,6 +1231,27 @@ WebInspector.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 
+    Performance: {
+        clearMarks: "[name]",
+        clearMeasures: "name",
+        getEntriesByName: "name, [type]",
+        getEntriesByType: "type",
+        mark: "name",
+        measure: "name, [startMark], [endMark]",
+        __proto__: null,
+    },
+
+    PerformanceObserver: {
+        observe: "options",
+        __proto__: null,
+    },
+
+    PerformanceObserverEntryList: {
+        getEntriesByName: "name, [type]",
+        getEntriesByType: "type",
+        __proto__: null,
+    },
+
     Plugin: {
         item: "[index]",
         namedItem: "[name]",

@@ -39,7 +39,11 @@ public:
     bool isMeasure() const override { return true; }
 
 private:
-    PerformanceMeasure(const String& name, double startTime, double duration) : PerformanceEntry(name, ASCIILiteral("measure"), startTime, duration) { }
+    PerformanceMeasure(const String& name, double startTime, double duration)
+        : PerformanceEntry(PerformanceEntry::Type::Measure, name, ASCIILiteral("measure"), startTime, duration)
+    {
+    }
+
     ~PerformanceMeasure() { }
 };
 

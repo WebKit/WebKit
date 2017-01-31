@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,51 +25,31 @@
 
 #pragma once
 
-#if ENABLE(INTERSECTION_OBSERVER)
+#if ENABLE(WEB_TIMING)
 
-#include "IntersectionObserverCallback.h"
-#include "IntersectionObserverEntry.h"
 #include <wtf/RefCounted.h>
-#include <wtf/Variant.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Element;
+class PerformanceEntry;
 
-class IntersectionObserver : public RefCounted<IntersectionObserver> {
+class PerformanceObserverEntryList : public RefCounted<PerformanceObserverEntryList> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    struct Init {
-        RefPtr<Element> root;
-        String rootMargin;
-        Variant<double, Vector<double>> threshold;
-    };
+    static Ref<PerformanceObserverEntryList> create(Vector<RefPtr<PerformanceEntry>>&& entries);
 
-    static Ref<IntersectionObserver> create(Ref<IntersectionObserverCallback>&& callback, Init&& init)
-    {
-        return adoptRef(*new IntersectionObserver(WTFMove(callback), WTFMove(init)));
-    }
-    
-    Element* root() const { return m_root.get(); }
-    String rootMargin() const { return m_rootMargin; }
-    const Vector<double>& thresholds() const { return m_thresholds; }
-
-    void observe(Element&);
-    void unobserve(Element&);
-    void disconnect();
-
-    Vector<RefPtr<IntersectionObserverEntry>> takeRecords();
+    const Vector<RefPtr<PerformanceEntry>>& getEntries() const { return m_entries; }
+    Vector<RefPtr<PerformanceEntry>> getEntriesByType(const String& entryType) const;
+    Vector<RefPtr<PerformanceEntry>> getEntriesByName(const String& name, const String& entryType) const;
 
 private:
-    IntersectionObserver(Ref<IntersectionObserverCallback>&&, Init&&);
-    
-    RefPtr<Element> m_root;
-    String m_rootMargin;
-    Vector<double> m_thresholds;
-    Ref<IntersectionObserverCallback> m_callback;
-};
+    PerformanceObserverEntryList(Vector<RefPtr<PerformanceEntry>>&& entries);
 
+    Vector<RefPtr<PerformanceEntry>> m_entries;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(INTERSECTION_OBSERVER)
+#endif // ENABLE(WEB_TIMING)

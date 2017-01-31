@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,51 +25,50 @@
 
 #pragma once
 
-#if ENABLE(INTERSECTION_OBSERVER)
+#if ENABLE(WEB_TIMING)
 
-#include "IntersectionObserverCallback.h"
-#include "IntersectionObserverEntry.h"
+#include "ExceptionOr.h"
+#include "PerformanceEntry.h"
+#include "PerformanceObserverCallback.h"
+#include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Variant.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Element;
+class Performance;
+class ScriptExecutionContext;
 
-class IntersectionObserver : public RefCounted<IntersectionObserver> {
+class PerformanceObserver : public RefCounted<PerformanceObserver> {
 public:
     struct Init {
-        RefPtr<Element> root;
-        String rootMargin;
-        Variant<double, Vector<double>> threshold;
+        Vector<String> entryTypes;
     };
 
-    static Ref<IntersectionObserver> create(Ref<IntersectionObserverCallback>&& callback, Init&& init)
+    static Ref<PerformanceObserver> create(ScriptExecutionContext& context, Ref<PerformanceObserverCallback>&& callback)
     {
-        return adoptRef(*new IntersectionObserver(WTFMove(callback), WTFMove(init)));
+        return adoptRef(*new PerformanceObserver(context, WTFMove(callback)));
     }
-    
-    Element* root() const { return m_root.get(); }
-    String rootMargin() const { return m_rootMargin; }
-    const Vector<double>& thresholds() const { return m_thresholds; }
 
-    void observe(Element&);
-    void unobserve(Element&);
+    ExceptionOr<void> observe(Init&&);
     void disconnect();
 
-    Vector<RefPtr<IntersectionObserverEntry>> takeRecords();
+    OptionSet<PerformanceEntry::Type> typeFilter() const { return m_typeFilter; }
+
+    void queueEntry(PerformanceEntry&);
+    void deliver();
 
 private:
-    IntersectionObserver(Ref<IntersectionObserverCallback>&&, Init&&);
-    
-    RefPtr<Element> m_root;
-    String m_rootMargin;
-    Vector<double> m_thresholds;
-    Ref<IntersectionObserverCallback> m_callback;
-};
+    PerformanceObserver(ScriptExecutionContext&, Ref<PerformanceObserverCallback>&&);
 
+    RefPtr<Performance> m_performance;
+    Vector<RefPtr<PerformanceEntry>> m_entriesToDeliver;
+    Ref<PerformanceObserverCallback> m_callback;
+    OptionSet<PerformanceEntry::Type> m_typeFilter;
+    bool m_registered { false };
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(INTERSECTION_OBSERVER)
+#endif // ENABLE(WEB_TIMING)

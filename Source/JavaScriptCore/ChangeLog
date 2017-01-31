@@ -1,3 +1,13 @@
+2017-01-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Implement PerformanceObserver
+        https://bugs.webkit.org/show_bug.cgi?id=167546
+        <rdar://problem/30247959>
+
+        Reviewed by Ryosuke Niwa.
+
+        * runtime/CommonIdentifiers.h:
+
 2017-01-30  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Need some limit on Async Call Stacks for async loops (rAF loops)

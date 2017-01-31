@@ -1,0 +1,48 @@
+Basic Interface test for performance-timeline APIs.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PerformanceEntry
+PASS PerformanceEntry is defined.
+PASS "name" in PerformanceEntry.prototype is true
+PASS "entryType" in PerformanceEntry.prototype is true
+PASS "startTime" in PerformanceEntry.prototype is true
+PASS "duration" in PerformanceEntry.prototype is true
+PASS new PerformanceEntry() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceEntry()').
+
+Performance extensions
+PASS Performance.prototype.getEntries is defined.
+PASS Performance.prototype.getEntriesByType is defined.
+PASS Performance.prototype.getEntriesByName is defined.
+PASS performance.getEntries() instanceof Array is true
+PASS performance.getEntries().length === 0 is true
+PASS performance.mark("test"); did not throw exception.
+PASS performance.getEntries().length === 1 is true
+PASS performance.getEntries()[0] instanceof PerformanceEntry is true
+PASS performance.getEntries()[0].name is "test"
+PASS performance.getEntries()[0].entryType is "mark"
+PASS typeof performance.getEntries()[0].startTime === "number" is true
+PASS typeof performance.getEntries()[0].duration === "number" is true
+PASS performance.getEntriesByType() threw exception TypeError: Not enough arguments.
+PASS performance.getEntriesByType("not-real").length === 0 is true
+PASS performance.getEntriesByType("mark").length === 1 is true
+PASS performance.getEntriesByType("mark")[0] instanceof PerformanceEntry is true
+PASS performance.getEntriesByType("mark")[0].name is "test"
+PASS performance.getEntriesByType("mark")[0].entryType is "mark"
+PASS typeof performance.getEntriesByType("mark")[0].startTime === "number" is true
+PASS typeof performance.getEntriesByType("mark")[0].duration === "number" is true
+PASS performance.getEntriesByName() threw exception TypeError: Not enough arguments.
+PASS performance.getEntriesByName("not-real").length === 0 is true
+PASS performance.getEntriesByName("test").length === 1 is true
+PASS performance.getEntriesByName("test")[0] instanceof PerformanceEntry is true
+PASS performance.getEntriesByName("test")[0].name is "test"
+PASS performance.getEntriesByName("test")[0].entryType is "mark"
+PASS typeof performance.getEntriesByName("test")[0].startTime === "number" is true
+PASS typeof performance.getEntriesByName("test")[0].duration === "number" is true
+PASS performance.getEntriesByName("test", "not-real").length === 0 is true
+PASS performance.getEntriesByName("test", "mark").length === 1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

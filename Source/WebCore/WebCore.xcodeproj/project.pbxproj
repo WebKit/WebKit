@@ -4068,6 +4068,17 @@
 		A5A2AF0B1829734300DE1729 /* PageDebuggable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A2AF091829734300DE1729 /* PageDebuggable.cpp */; };
 		A5A2AF0C1829734300DE1729 /* PageDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A2AF0A1829734300DE1729 /* PageDebuggable.h */; };
 		A5A7AA43132F0ECC00D3A3C2 /* AutocapitalizeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A7AA42132F0ECC00D3A3C2 /* AutocapitalizeTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5A9933D1E37FB19005B5E4D /* PerformanceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A993361E37FAFD005B5E4D /* PerformanceObserver.h */; };
+		A5A9933E1E37FB1C005B5E4D /* PerformanceObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A993351E37FAFD005B5E4D /* PerformanceObserver.cpp */; };
+		A5A9933F1E37FB1F005B5E4D /* PerformanceObserverCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A993381E37FAFD005B5E4D /* PerformanceObserverCallback.h */; };
+		A5A993401E37FB25005B5E4D /* PerformanceObserverEntryList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A9933A1E37FAFD005B5E4D /* PerformanceObserverEntryList.cpp */; };
+		A5A993411E37FB28005B5E4D /* PerformanceObserverEntryList.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A9933B1E37FAFD005B5E4D /* PerformanceObserverEntryList.h */; };
+		A5A993481E3809C6005B5E4D /* JSPerformanceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A993431E380999005B5E4D /* JSPerformanceObserver.h */; };
+		A5A993491E3809C9005B5E4D /* JSPerformanceObserverCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A993441E380999005B5E4D /* JSPerformanceObserverCallback.cpp */; };
+		A5A9934A1E3809CB005B5E4D /* JSPerformanceObserverCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A993451E380999005B5E4D /* JSPerformanceObserverCallback.h */; };
+		A5A9934B1E3809CD005B5E4D /* JSPerformanceObserverEntryList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A993461E380999005B5E4D /* JSPerformanceObserverEntryList.cpp */; };
+		A5A9934C1E3809CF005B5E4D /* JSPerformanceObserverEntryList.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A993471E380999005B5E4D /* JSPerformanceObserverEntryList.h */; };
+		A5A9934D1E3809D7005B5E4D /* JSPerformanceObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A993421E380999005B5E4D /* JSPerformanceObserver.cpp */; };
 		A5AFB34F115151A700B045CB /* StepRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5AFB34D115151A700B045CB /* StepRange.cpp */; };
 		A5AFB350115151A700B045CB /* StepRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFB34E115151A700B045CB /* StepRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5DEBDA316FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5DEBD9F16FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.cpp */; };
@@ -11791,6 +11802,20 @@
 		A5A2AF091829734300DE1729 /* PageDebuggable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageDebuggable.cpp; sourceTree = "<group>"; };
 		A5A2AF0A1829734300DE1729 /* PageDebuggable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageDebuggable.h; sourceTree = "<group>"; };
 		A5A7AA42132F0ECC00D3A3C2 /* AutocapitalizeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutocapitalizeTypes.h; sourceTree = "<group>"; };
+		A5A993351E37FAFD005B5E4D /* PerformanceObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceObserver.cpp; sourceTree = "<group>"; };
+		A5A993361E37FAFD005B5E4D /* PerformanceObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceObserver.h; sourceTree = "<group>"; };
+		A5A993371E37FAFD005B5E4D /* PerformanceObserver.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceObserver.idl; sourceTree = "<group>"; };
+		A5A993381E37FAFD005B5E4D /* PerformanceObserverCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceObserverCallback.h; sourceTree = "<group>"; };
+		A5A993391E37FAFD005B5E4D /* PerformanceObserverCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceObserverCallback.idl; sourceTree = "<group>"; };
+		A5A9933A1E37FAFD005B5E4D /* PerformanceObserverEntryList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceObserverEntryList.cpp; sourceTree = "<group>"; };
+		A5A9933B1E37FAFD005B5E4D /* PerformanceObserverEntryList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceObserverEntryList.h; sourceTree = "<group>"; };
+		A5A9933C1E37FAFD005B5E4D /* PerformanceObserverEntryList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceObserverEntryList.idl; sourceTree = "<group>"; };
+		A5A993421E380999005B5E4D /* JSPerformanceObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceObserver.cpp; sourceTree = "<group>"; };
+		A5A993431E380999005B5E4D /* JSPerformanceObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPerformanceObserver.h; sourceTree = "<group>"; };
+		A5A993441E380999005B5E4D /* JSPerformanceObserverCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceObserverCallback.cpp; sourceTree = "<group>"; };
+		A5A993451E380999005B5E4D /* JSPerformanceObserverCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPerformanceObserverCallback.h; sourceTree = "<group>"; };
+		A5A993461E380999005B5E4D /* JSPerformanceObserverEntryList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceObserverEntryList.cpp; sourceTree = "<group>"; };
+		A5A993471E380999005B5E4D /* JSPerformanceObserverEntryList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPerformanceObserverEntryList.h; sourceTree = "<group>"; };
 		A5AFB34D115151A700B045CB /* StepRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StepRange.cpp; sourceTree = "<group>"; };
 		A5AFB34E115151A700B045CB /* StepRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepRange.h; sourceTree = "<group>"; };
 		A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyEventCocoa.h; sourceTree = "<group>"; };
@@ -15329,12 +15354,12 @@
 				0744ECEC1E0C4AE5000D0944 /* MockRealtimeAudioSourceMac.mm */,
 				07EE76ED1BEA619800F89133 /* MockRealtimeVideoSourceMac.h */,
 				07EE76EE1BEA619800F89133 /* MockRealtimeVideoSourceMac.mm */,
+				41103AAA1E39790A00769F03 /* RealtimeIncomingAudioSource.cpp */,
+				41103AA91E39790A00769F03 /* RealtimeIncomingAudioSource.h */,
 				4A0FFAA31AAF5EF60062803B /* RealtimeMediaSourceCenterMac.cpp */,
 				4A0FFAA41AAF5EF60062803B /* RealtimeMediaSourceCenterMac.h */,
 				41103AA71E39790A00769F03 /* RealtimeOutgoingAudioSource.cpp */,
 				41103AA81E39790A00769F03 /* RealtimeOutgoingAudioSource.h */,
-				41103AA91E39790A00769F03 /* RealtimeIncomingAudioSource.h */,
-				41103AAA1E39790A00769F03 /* RealtimeIncomingAudioSource.cpp */,
 				07D6373E1BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.h */,
 				07D6373F1BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.mm */,
 			);
@@ -16733,8 +16758,8 @@
 				51058AD81D679257009A538C /* MockGamepad.h */,
 				51058AD91D679257009A538C /* MockGamepadProvider.cpp */,
 				51058ADA1D679257009A538C /* MockGamepadProvider.h */,
-				4157EBF81E3AB06800AC9FE9 /* MockLibWebRTCPeerConnection.h */,
 				4157EBF91E3AB06800AC9FE9 /* MockLibWebRTCPeerConnection.cpp */,
+				4157EBF81E3AB06800AC9FE9 /* MockLibWebRTCPeerConnection.h */,
 				2D6F3E8A1C1ECB1C0061DBD4 /* MockPageOverlay.cpp */,
 				2D6F3E8B1C1ECB1C0061DBD4 /* MockPageOverlay.h */,
 				2D6F3E8C1C1ECB1C0061DBD4 /* MockPageOverlay.idl */,
@@ -18145,6 +18170,14 @@
 				8AF4E55211DC5A36000ED3DE /* PerformanceNavigation.cpp */,
 				8AF4E55311DC5A36000ED3DE /* PerformanceNavigation.h */,
 				8AF4E55411DC5A36000ED3DE /* PerformanceNavigation.idl */,
+				A5A993351E37FAFD005B5E4D /* PerformanceObserver.cpp */,
+				A5A993361E37FAFD005B5E4D /* PerformanceObserver.h */,
+				A5A993371E37FAFD005B5E4D /* PerformanceObserver.idl */,
+				A5A993381E37FAFD005B5E4D /* PerformanceObserverCallback.h */,
+				A5A993391E37FAFD005B5E4D /* PerformanceObserverCallback.idl */,
+				A5A9933A1E37FAFD005B5E4D /* PerformanceObserverEntryList.cpp */,
+				A5A9933B1E37FAFD005B5E4D /* PerformanceObserverEntryList.h */,
+				A5A9933C1E37FAFD005B5E4D /* PerformanceObserverEntryList.idl */,
 				86512EDB154A2AEE00A90426 /* PerformanceResourceTiming.cpp */,
 				86512EDC154A2AEF00A90426 /* PerformanceResourceTiming.h */,
 				86512EDD154A2AEF00A90426 /* PerformanceResourceTiming.idl */,
@@ -19834,8 +19867,8 @@
 		A59E3C1B11580F340072928E /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				F48223121E386E240066FC79 /* AbstractPasteboard.h */,
 				A148328B187F506800DA63A6 /* wak */,
+				F48223121E386E240066FC79 /* AbstractPasteboard.h */,
 				2655414B1489AA2B000DFC5D /* CursorIOS.cpp */,
 				A1ED778A1BE3293F00DC1791 /* Device.cpp */,
 				A1ED778B1BE3294000DC1791 /* Device.h */,
@@ -19892,6 +19925,8 @@
 				E45390380EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm */,
 				FE0D84E810484348001A179E /* WebEvent.h */,
 				FE0D84EA1048436E001A179E /* WebEvent.mm */,
+				F482230F1E3869B80066FC79 /* WebItemProviderPasteboard.h */,
+				F482230E1E3869B80066FC79 /* WebItemProviderPasteboard.mm */,
 				CDA29A2E1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.h */,
 				CDA29A2F1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.mm */,
 				3F42B31B1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h */,
@@ -19899,8 +19934,6 @@
 				3FBC4AF2189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h */,
 				3FBC4AF1189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm */,
 				E453903C0EAFD637003695C8 /* WidgetIOS.mm */,
-				F482230E1E3869B80066FC79 /* WebItemProviderPasteboard.mm */,
-				F482230F1E3869B80066FC79 /* WebItemProviderPasteboard.h */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -22428,6 +22461,12 @@
 				A58C59CF1E382EA90047859C /* JSPerformanceMeasure.h */,
 				8A9A586E11E84C35008ACFD1 /* JSPerformanceNavigation.cpp */,
 				8A9A586F11E84C36008ACFD1 /* JSPerformanceNavigation.h */,
+				A5A993421E380999005B5E4D /* JSPerformanceObserver.cpp */,
+				A5A993431E380999005B5E4D /* JSPerformanceObserver.h */,
+				A5A993441E380999005B5E4D /* JSPerformanceObserverCallback.cpp */,
+				A5A993451E380999005B5E4D /* JSPerformanceObserverCallback.h */,
+				A5A993461E380999005B5E4D /* JSPerformanceObserverEntryList.cpp */,
+				A5A993471E380999005B5E4D /* JSPerformanceObserverEntryList.h */,
 				CB38FD581CD2314500592A3F /* JSPerformanceResourceTiming.cpp */,
 				CB38FD591CD2314500592A3F /* JSPerformanceResourceTiming.h */,
 				0F43C85E189E15A600019AE2 /* JSPerformanceTiming.cpp */,
@@ -24955,13 +24994,13 @@
 				A1B5B29F1AAA846F008B6042 /* MockContentFilterSettings.h in Headers */,
 				51058ADC1D6792C1009A538C /* MockGamepad.h in Headers */,
 				51058ADE1D6792C1009A538C /* MockGamepadProvider.h in Headers */,
+				4157EBFB1E3AB67F00AC9FE9 /* MockLibWebRTCPeerConnection.h in Headers */,
 				2D6F3E911C1ECB2F0061DBD4 /* MockPageOverlay.h in Headers */,
 				2D97F04819DD4140001EE9C3 /* MockPageOverlayClient.h in Headers */,
 				A140618C1E2ECA0A0032B34E /* MockQuickLookHandleClient.h in Headers */,
 				AA5F3B8D16CC33D100455EB0 /* PlatformSpeechSynthesizerMock.h in Headers */,
 				A1763F3F1E205234001D58DE /* WebArchiveDumpSupport.h in Headers */,
 				41815C1F138319830057AAA4 /* WebCoreTestSupport.h in Headers */,
-				4157EBFB1E3AB67F00AC9FE9 /* MockLibWebRTCPeerConnection.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24969,6 +25008,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F48223131E386E240066FC79 /* AbstractPasteboard.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
 				29A812330FBB9C1D00510293 /* AccessibilityARIAGridRow.h in Headers */,
@@ -25021,7 +25061,6 @@
 				319848011A1D817B00A13318 /* AnimationEvent.h in Headers */,
 				49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */,
 				31DCD29D1AB4FBDE0072E817 /* AnimationTrigger.h in Headers */,
-				417612B01E3A994000C3D81D /* LibWebRTCMediaEndpoint.h in Headers */,
 				0F580FAF149800D400FB5BD8 /* AnimationUtilities.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
 				7C6579E31E00827000E3A27A /* ApplePayLineItem.h in Headers */,
@@ -25303,7 +25342,6 @@
 				CE799FA81C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.h in Headers */,
 				CE6DADFA1C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h in Headers */,
 				CE799FA01C6A4C160097B518 /* ContentSecurityPolicySource.h in Headers */,
-				F48223131E386E240066FC79 /* AbstractPasteboard.h in Headers */,
 				CE799F981C6A46BC0097B518 /* ContentSecurityPolicySourceList.h in Headers */,
 				CE799FAC1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.h in Headers */,
 				41D015CA0F4B5C71004A662F /* ContentType.h in Headers */,
@@ -25810,7 +25848,6 @@
 				085B92BB0EFDE73D00E6123C /* FormDataBuilder.h in Headers */,
 				A8136D380973A8E700D74463 /* FormDataList.h in Headers */,
 				7EE6846712D26E3800E79415 /* FormDataStreamCFNet.h in Headers */,
-				4157474A1E3869AD00E914D8 /* LibWebRTCUtils.h in Headers */,
 				514C764E0CE9234E007EF3CD /* FormDataStreamMac.h in Headers */,
 				9B50B1DE17CD4C0F0087F63C /* FormNamedItem.h in Headers */,
 				656D373A0ADBA5DE00A4554D /* FormState.h in Headers */,
@@ -25869,7 +25906,6 @@
 				A80D67080E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h in Headers */,
 				0F580B0D0F12A2690051D689 /* GraphicsLayer.h in Headers */,
 				499B3ED7128CD31400E726C2 /* GraphicsLayerCA.h in Headers */,
-				41103AAD1E39791000769F03 /* RealtimeIncomingAudioSource.h in Headers */,
 				0F580B0E0F12A2690051D689 /* GraphicsLayerClient.h in Headers */,
 				1AC69593161A1E53003732CB /* GraphicsLayerFactory.h in Headers */,
 				0FA24D7A162DF91900A3F4C0 /* GraphicsLayerUpdater.h in Headers */,
@@ -25885,7 +25921,6 @@
 				26EA89A71B4F2B75008C5FD2 /* HashableActionList.h in Headers */,
 				8482B7461198C35400BFB005 /* HashChangeEvent.h in Headers */,
 				A8748BE012CBF2DC001FBA41 /* HashTools.h in Headers */,
-				E3E4E2A81E3B17100023BB8A /* ScriptElementCachedScriptFetcher.h in Headers */,
 				F55B3DC01251F12D003EF269 /* HiddenInputType.h in Headers */,
 				515BE19C1D54F6C100DD7C68 /* HIDGamepad.h in Headers */,
 				515BE19E1D54F6C100DD7C68 /* HIDGamepadProvider.h in Headers */,
@@ -25895,7 +25930,6 @@
 				4969B0F313D0B33F00DF3521 /* HitTestingTransformState.h in Headers */,
 				2D8287F716E4A0380086BD00 /* HitTestLocation.h in Headers */,
 				930908910AF7EDE40081DF01 /* HitTestRequest.h in Headers */,
-				415747471E3869A400E914D8 /* LibWebRTCMacros.h in Headers */,
 				9307F1D80AF2D59000DBA31A /* HitTestResult.h in Headers */,
 				BC3BC29C0E91AB0F00835588 /* HostWindow.h in Headers */,
 				FD31609912B026F700C1A359 /* HRTFDatabase.h in Headers */,
@@ -26560,6 +26594,9 @@
 				A58C59D11E382EAE0047859C /* JSPerformanceMark.h in Headers */,
 				A58C59D31E382EB20047859C /* JSPerformanceMeasure.h in Headers */,
 				8A9A587111E84C36008ACFD1 /* JSPerformanceNavigation.h in Headers */,
+				A5A993481E3809C6005B5E4D /* JSPerformanceObserver.h in Headers */,
+				A5A9934A1E3809CB005B5E4D /* JSPerformanceObserverCallback.h in Headers */,
+				A5A9934C1E3809CF005B5E4D /* JSPerformanceObserverEntryList.h in Headers */,
 				CB38FD5B1CD2325B00592A3F /* JSPerformanceResourceTiming.h in Headers */,
 				8A9A588811E84F37008ACFD1 /* JSPerformanceTiming.h in Headers */,
 				FDEA6247152102FC00479DF0 /* JSPeriodicWave.h in Headers */,
@@ -26897,6 +26934,11 @@
 				E5BA7D63151437CA00FE1E3F /* LengthFunctions.h in Headers */,
 				0F8716701C869D83004FF0DE /* LengthPoint.h in Headers */,
 				BCFF64920EAD15C200C1D6F7 /* LengthSize.h in Headers */,
+				415747471E3869A400E914D8 /* LibWebRTCMacros.h in Headers */,
+				417612B01E3A994000C3D81D /* LibWebRTCMediaEndpoint.h in Headers */,
+				417612B21E3A994000C3D81D /* LibWebRTCPeerConnectionBackend.h in Headers */,
+				415747481E3869A700E914D8 /* LibWebRTCProvider.h in Headers */,
+				4157474A1E3869AD00E914D8 /* LibWebRTCUtils.h in Headers */,
 				84730D911248F0B300D3A9C9 /* LightSource.h in Headers */,
 				B22279650D00BF220071B782 /* LinearGradientAttributes.h in Headers */,
 				AB31C91E10AE1B8E000C7B92 /* LineClampValue.h in Headers */,
@@ -27275,6 +27317,9 @@
 				AD5A0C251DECACCC00707054 /* PerformanceLogging.h in Headers */,
 				83FE90271E307C30003E9199 /* PerformanceMonitor.h in Headers */,
 				8AF4E55611DC5A36000ED3DE /* PerformanceNavigation.h in Headers */,
+				A5A9933D1E37FB19005B5E4D /* PerformanceObserver.h in Headers */,
+				A5A9933F1E37FB1F005B5E4D /* PerformanceObserverCallback.h in Headers */,
+				A5A993411E37FB28005B5E4D /* PerformanceObserverEntryList.h in Headers */,
 				86512EDF154A2AEF00A90426 /* PerformanceResourceTiming.h in Headers */,
 				8AF4E55C11DC5A63000ED3DE /* PerformanceTiming.h in Headers */,
 				A554B5F31E38393A001D4E03 /* PerformanceUserTiming.h in Headers */,
@@ -27384,12 +27429,14 @@
 				416E6FE91BBD12E5000A6043 /* ReadableStreamBuiltins.h in Headers */,
 				416E6FE81BBD12DF000A3F64 /* ReadableStreamInternalsBuiltins.h in Headers */,
 				FD31603C12B0267600C1A359 /* RealtimeAnalyser.h in Headers */,
+				41103AAD1E39791000769F03 /* RealtimeIncomingAudioSource.h in Headers */,
 				4A4F65711AA997F100E38CDD /* RealtimeMediaSource.h in Headers */,
 				4A4F65721AA997F100E38CDD /* RealtimeMediaSourceCapabilities.h in Headers */,
 				4A0FFAA21AAF5EA20062803B /* RealtimeMediaSourceCenter.h in Headers */,
 				4A0FFAA61AAF5EF60062803B /* RealtimeMediaSourceCenterMac.h in Headers */,
 				4A4F65741AA997F100E38CDD /* RealtimeMediaSourceSettings.h in Headers */,
 				07C1C0E51BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h in Headers */,
+				41103AAC1E39791000769F03 /* RealtimeOutgoingAudioSource.h in Headers */,
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
 				FD45A958175D414C00C21EC8 /* RectangleShape.h in Headers */,
 				9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */,
@@ -27557,7 +27604,6 @@
 				4998AEC613F9D0EA0090B1AA /* RequestAnimationFrameCallback.h in Headers */,
 				F55B3DD01251F12D003EF269 /* ResetInputType.h in Headers */,
 				7EE6846A12D26E3800E79415 /* ResourceError.h in Headers */,
-				415747481E3869A700E914D8 /* LibWebRTCProvider.h in Headers */,
 				934F713C0D5A6F1900018D69 /* ResourceErrorBase.h in Headers */,
 				514C76790CE923A1007EF3CD /* ResourceHandle.h in Headers */,
 				26FAE4CD1852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.h in Headers */,
@@ -27649,6 +27695,7 @@
 				93B70D7009EB0C7C009D8468 /* ScriptController.h in Headers */,
 				4998AED213FB224D0090B1AA /* ScriptedAnimationController.h in Headers */,
 				08A484780E5272C500C3FE76 /* ScriptElement.h in Headers */,
+				E3E4E2A81E3B17100023BB8A /* ScriptElementCachedScriptFetcher.h in Headers */,
 				E11C9D9B0EB3681200E409DB /* ScriptExecutionContext.h in Headers */,
 				41F066E40F64BCF600A07EAC /* ScriptGlobalObject.h in Headers */,
 				E38838991BAD145F00D62EE3 /* ScriptModuleLoader.h in Headers */,
@@ -27843,7 +27890,6 @@
 				414B82051D6DF0E50077EBE3 /* StructuredClone.h in Headers */,
 				BC5EB6A30E81DC4F00B25965 /* StyleBackgroundData.h in Headers */,
 				BC5EB67B0E81D3BE00B25965 /* StyleBoxData.h in Headers */,
-				F48223111E3869B80066FC79 /* WebItemProviderPasteboard.h in Headers */,
 				8386A96D19F61B2E00E1EC4A /* StyleBuilder.h in Headers */,
 				83B9687B19F8AB83004EF7AF /* StyleBuilderConverter.h in Headers */,
 				835D363719FF6193004C93AB /* StyleBuilderCustom.h in Headers */,
@@ -27887,7 +27933,6 @@
 				A8EA800C0A19516E00A8EF5F /* StyleSheet.h in Headers */,
 				E4F9EEF3156DA00700D23E7E /* StyleSheetContents.h in Headers */,
 				A8EA800A0A19516E00A8EF5F /* StyleSheetList.h in Headers */,
-				417612B21E3A994000C3D81D /* LibWebRTCPeerConnectionBackend.h in Headers */,
 				BC5EB5E50E81BF6D00B25965 /* StyleSurroundData.h in Headers */,
 				BC5EB8100E81F2CE00B25965 /* StyleTransformData.h in Headers */,
 				E4DEAA1817A93DC3000E0430 /* StyleTreeResolver.h in Headers */,
@@ -27955,7 +28000,6 @@
 				B22279AE0D00BF220071B782 /* SVGDefsElement.h in Headers */,
 				B22279B10D00BF220071B782 /* SVGDescElement.h in Headers */,
 				B22279B40D00BF220071B782 /* SVGDocument.h in Headers */,
-				41103AAC1E39791000769F03 /* RealtimeOutgoingAudioSource.h in Headers */,
 				B28C6A280D00C44800334AA4 /* SVGDocumentExtensions.h in Headers */,
 				B22279B70D00BF220071B782 /* SVGElement.h in Headers */,
 				656581FE09D1508D000E61D7 /* SVGElementFactory.h in Headers */,
@@ -28436,6 +28480,7 @@
 				77A17A7812F28642004E02F6 /* WebGLVertexArrayObjectOES.h in Headers */,
 				A5840E25187B8AC200843B10 /* WebInjectedScriptHost.h in Headers */,
 				A584FE301864CB8400843B10 /* WebInjectedScriptManager.h in Headers */,
+				F48223111E3869B80066FC79 /* WebItemProviderPasteboard.h in Headers */,
 				31C0FF220E4CEB6E007D6FE5 /* WebKitAnimationEvent.h in Headers */,
 				5DFEBAB718592B6D00C75BEB /* WebKitAvailability.h in Headers */,
 				498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */,
@@ -28890,7 +28935,6 @@
 				51714EB01CF665CE004723C4 /* JSGCObservation.cpp in Sources */,
 				417DA71D13735DFA007C57FB /* JSInternals.cpp in Sources */,
 				A740B5A714C935AF00A77FA4 /* JSInternalSettings.cpp in Sources */,
-				4157EBFA1E3AB67900AC9FE9 /* MockLibWebRTCPeerConnection.cpp in Sources */,
 				53ED3FDE167A88E7006762E6 /* JSInternalSettingsGenerated.cpp in Sources */,
 				A740B59714C935AF00A77FA4 /* JSMallocStatistics.cpp in Sources */,
 				CDF4B7331E03D14900E235A2 /* JSMediaKeysRequirement.cpp in Sources */,
@@ -28906,6 +28950,7 @@
 				A1B5B29E1AAA846E008B6042 /* MockContentFilterSettings.cpp in Sources */,
 				51058ADB1D6792C1009A538C /* MockGamepad.cpp in Sources */,
 				51058ADD1D6792C1009A538C /* MockGamepadProvider.cpp in Sources */,
+				4157EBFA1E3AB67900AC9FE9 /* MockLibWebRTCPeerConnection.cpp in Sources */,
 				2D6F3E901C1ECB270061DBD4 /* MockPageOverlay.cpp in Sources */,
 				2D97F04719DD413C001EE9C3 /* MockPageOverlayClient.cpp in Sources */,
 				A140618B1E2ECA0A0032B34E /* MockQuickLookHandleClient.cpp in Sources */,
@@ -29216,7 +29261,6 @@
 				E1B4CD2510B322E200BFFD7E /* CredentialStorageMac.mm in Sources */,
 				2D481F00146B5C4C00AA7834 /* CrossfadeGeneratedImage.cpp in Sources */,
 				E1C416170F6563180092D2FB /* CrossOriginAccessControl.cpp in Sources */,
-				417612B11E3A994000C3D81D /* LibWebRTCPeerConnectionBackend.cpp in Sources */,
 				41ABE67C1D0580E0006D862D /* CrossOriginPreflightChecker.cpp in Sources */,
 				E1C415DE0F655D7C0092D2FB /* CrossOriginPreflightResultCache.cpp in Sources */,
 				E16980491133644700894115 /* CRuntimeObject.cpp in Sources */,
@@ -29309,7 +29353,6 @@
 				9418278E1D8CAF9200492764 /* CSSPendingSubstitutionValue.cpp in Sources */,
 				977B3862122883E900B81FF8 /* CSSPreloadScanner.cpp in Sources */,
 				A80E6D050A1989CA007FB8C5 /* CSSPrimitiveValue.cpp in Sources */,
-				F48223101E3869B80066FC79 /* WebItemProviderPasteboard.mm in Sources */,
 				A80E6CF70A1989CA007FB8C5 /* CSSProperty.cpp in Sources */,
 				78D02BC5154A18DF00B62D05 /* CSSPropertyAnimation.cpp in Sources */,
 				1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */,
@@ -29464,7 +29507,6 @@
 				15FCC9FC1B4DF7F200E72326 /* DOMURLMediaStream.cpp in Sources */,
 				1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */,
 				517FBA1E151AB17C00B57959 /* DOMWindowExtension.cpp in Sources */,
-				41103AAE1E39791000769F03 /* RealtimeIncomingAudioSource.cpp in Sources */,
 				418C39561C8DAC7F0051C8A3 /* DOMWindowFetch.cpp in Sources */,
 				5185FC741BB4C4E80012898F /* DOMWindowIndexedDatabase.cpp in Sources */,
 				97B38E28151C4273004622E9 /* DOMWindowNotifications.cpp in Sources */,
@@ -30368,6 +30410,9 @@
 				A58C59D01E382EAC0047859C /* JSPerformanceMark.cpp in Sources */,
 				A58C59D21E382EB00047859C /* JSPerformanceMeasure.cpp in Sources */,
 				8A9A587011E84C36008ACFD1 /* JSPerformanceNavigation.cpp in Sources */,
+				A5A9934D1E3809D7005B5E4D /* JSPerformanceObserver.cpp in Sources */,
+				A5A993491E3809C9005B5E4D /* JSPerformanceObserverCallback.cpp in Sources */,
+				A5A9934B1E3809CD005B5E4D /* JSPerformanceObserverEntryList.cpp in Sources */,
 				CB38FD5A1CD2325800592A3F /* JSPerformanceResourceTiming.cpp in Sources */,
 				0F43C85F189E15A600019AE2 /* JSPerformanceTiming.cpp in Sources */,
 				FDEA6246152102FC00479DF0 /* JSPeriodicWave.cpp in Sources */,
@@ -30535,7 +30580,6 @@
 				B2FA3DBA0AB75A6F000E5AC4 /* JSSVGPathSegArcRel.cpp in Sources */,
 				B2FA3DBC0AB75A6F000E5AC4 /* JSSVGPathSegClosePath.cpp in Sources */,
 				B2FA3DBE0AB75A6F000E5AC4 /* JSSVGPathSegCurvetoCubicAbs.cpp in Sources */,
-				417612AF1E3A994000C3D81D /* LibWebRTCMediaEndpoint.cpp in Sources */,
 				B2FA3DC00AB75A6F000E5AC4 /* JSSVGPathSegCurvetoCubicRel.cpp in Sources */,
 				B2FA3DC20AB75A6F000E5AC4 /* JSSVGPathSegCurvetoCubicSmoothAbs.cpp in Sources */,
 				B2FA3DC40AB75A6F000E5AC4 /* JSSVGPathSegCurvetoCubicSmoothRel.cpp in Sources */,
@@ -30739,6 +30783,9 @@
 				E55F497A151B888000BB67DB /* LengthFunctions.cpp in Sources */,
 				0F87166F1C869D83004FF0DE /* LengthPoint.cpp in Sources */,
 				0FEF20CE1BD4A24100128E5D /* LengthSize.cpp in Sources */,
+				417612AF1E3A994000C3D81D /* LibWebRTCMediaEndpoint.cpp in Sources */,
+				417612B11E3A994000C3D81D /* LibWebRTCPeerConnectionBackend.cpp in Sources */,
+				415747491E3869AA00E914D8 /* LibWebRTCUtils.cpp in Sources */,
 				FFB698CC1833EE0D00158A31 /* LineBreaker.cpp in Sources */,
 				89B5EAA111E8003D00F2367E /* LineEnding.cpp in Sources */,
 				FFB698CF183402BB00158A31 /* LineInfo.cpp in Sources */,
@@ -31030,6 +31077,8 @@
 				AD5A0C231DECACC000707054 /* PerformanceLoggingCocoa.mm in Sources */,
 				83FE90281E307C33003E9199 /* PerformanceMonitor.cpp in Sources */,
 				8AF4E55511DC5A36000ED3DE /* PerformanceNavigation.cpp in Sources */,
+				A5A9933E1E37FB1C005B5E4D /* PerformanceObserver.cpp in Sources */,
+				A5A993401E37FB25005B5E4D /* PerformanceObserverEntryList.cpp in Sources */,
 				86512EDE154A2AEF00A90426 /* PerformanceResourceTiming.cpp in Sources */,
 				0F43C85D189E10CF00019AE2 /* PerformanceTiming.cpp in Sources */,
 				A554B5F21E383938001D4E03 /* PerformanceUserTiming.cpp in Sources */,
@@ -31103,11 +31152,13 @@
 				6E84E9E017668BEE00815B68 /* RasterShape.cpp in Sources */,
 				418C39611C8F0AB10051C8A3 /* ReadableStreamDefaultController.cpp in Sources */,
 				FD31603B12B0267600C1A359 /* RealtimeAnalyser.cpp in Sources */,
+				41103AAE1E39791000769F03 /* RealtimeIncomingAudioSource.cpp in Sources */,
 				4A4F65701AA997F100E38CDD /* RealtimeMediaSource.cpp in Sources */,
 				4A0FFAA11AAF5EA20062803B /* RealtimeMediaSourceCenter.cpp in Sources */,
 				4A0FFAA51AAF5EF60062803B /* RealtimeMediaSourceCenterMac.cpp in Sources */,
 				4A4F65731AA997F100E38CDD /* RealtimeMediaSourceSettings.cpp in Sources */,
 				2EC41DE41C0410A300D294FE /* RealtimeMediaSourceSupportedConstraints.cpp in Sources */,
+				41103AAB1E39791000769F03 /* RealtimeOutgoingAudioSource.cpp in Sources */,
 				FD45A95A175D417100C21EC8 /* RectangleShape.cpp in Sources */,
 				BCAB418113E356E800D8AAF3 /* Region.cpp in Sources */,
 				CDFC360518CA61C20026E56F /* RemoteCommandListener.cpp in Sources */,
@@ -31318,6 +31369,7 @@
 				A83E1C740E49042C00140B9C /* ScriptControllerMac.mm in Sources */,
 				4998AED113FB224D0090B1AA /* ScriptedAnimationController.cpp in Sources */,
 				08A484770E5272C500C3FE76 /* ScriptElement.cpp in Sources */,
+				E3E4E2A71E3B17100023BB8A /* ScriptElementCachedScriptFetcher.cpp in Sources */,
 				E11C9DB00EB3699500E409DB /* ScriptExecutionContext.cpp in Sources */,
 				41F066E50F64BCF600A07EAC /* ScriptGlobalObject.cpp in Sources */,
 				E38838981BAD145F00D62EE3 /* ScriptModuleLoader.cpp in Sources */,
@@ -31411,7 +31463,6 @@
 				512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */,
 				97B1F02E13B025CA00F5103F /* SharedBufferChunkReader.cpp in Sources */,
 				1A4A95520B4EDCFF002D8C3C /* SharedBufferCocoa.mm in Sources */,
-				415747491E3869AA00E914D8 /* LibWebRTCUtils.cpp in Sources */,
 				163E88F7118A39D200ED9231 /* SimpleFontDataCoreText.cpp in Sources */,
 				E48944A2180B57D800F165D8 /* SimpleLineLayout.cpp in Sources */,
 				585D6E031A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp in Sources */,
@@ -31747,7 +31798,6 @@
 				93309E1B099E64920056E581 /* TextIterator.cpp in Sources */,
 				E4D988B617BFEB210084FB88 /* TextNodeTraversal.cpp in Sources */,
 				1C18DA58181AF6A500C4EF22 /* TextPainter.cpp in Sources */,
-				41103AAB1E39791000769F03 /* RealtimeOutgoingAudioSource.cpp in Sources */,
 				E4C91A101802343900A17F6D /* TextPaintStyle.cpp in Sources */,
 				93F19A9D08245E59001E9ABC /* TextResourceDecoder.cpp in Sources */,
 				376DCCE113B4F966002EBEFC /* TextRun.cpp in Sources */,
@@ -31878,7 +31928,6 @@
 				29A8124A0FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.mm in Sources */,
 				AAA728F816D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.mm in Sources */,
 				AA478A8016CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm in Sources */,
-				E3E4E2A71E3B17100023BB8A /* ScriptElementCachedScriptFetcher.cpp in Sources */,
 				2D3EF4491917915C00034184 /* WebActionDisablingCALayerDelegate.mm in Sources */,
 				120DE3ED1C86CA3E00B6D4DD /* WebAnimation.cpp in Sources */,
 				07D637411BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.mm in Sources */,
@@ -31951,6 +32000,7 @@
 				77A17A7712F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp in Sources */,
 				A5840E24187B8AC200843B10 /* WebInjectedScriptHost.cpp in Sources */,
 				A584FE2F1864CB8400843B10 /* WebInjectedScriptManager.cpp in Sources */,
+				F48223101E3869B80066FC79 /* WebItemProviderPasteboard.mm in Sources */,
 				31C0FF210E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp in Sources */,
 				498391580F1E776900C23782 /* WebKitCSSMatrix.cpp in Sources */,
 				8AA61CFF144D595B00F37350 /* WebKitCSSRegionRule.cpp in Sources */,

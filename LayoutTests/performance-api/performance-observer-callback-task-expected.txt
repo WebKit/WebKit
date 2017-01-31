@@ -1,0 +1,16 @@
+Test PerformanceObserver callback is a task, not a microtask.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS PerformanceObserver callback fired
+PASS microtaskExecuted is false
+PASS list.getEntries().length is 1
+PASS Promise microtask fired
+PASS PerformanceObserver callback fired
+PASS list.getEntries().length is 2
+PASS microtaskExecuted is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

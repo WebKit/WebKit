@@ -76,7 +76,7 @@ static bool passesTimingAllowCheck(const ResourceResponse& response, Document* r
 }
 
 PerformanceResourceTiming::PerformanceResourceTiming(const AtomicString& initiatorType, const URL& originalURL, const ResourceResponse& response, LoadTiming loadTiming, Document* requestingDocument)
-    : PerformanceEntry(originalURL.string(), ASCIILiteral("resource"), monotonicTimeToDocumentMilliseconds(requestingDocument, loadTiming.startTime()), monotonicTimeToDocumentMilliseconds(requestingDocument, loadTiming.responseEnd()))
+    : PerformanceEntry(PerformanceEntry::Type::Resource, originalURL.string(), ASCIILiteral("resource"), monotonicTimeToDocumentMilliseconds(requestingDocument, loadTiming.startTime()), monotonicTimeToDocumentMilliseconds(requestingDocument, loadTiming.responseEnd()))
     , m_initiatorType(initiatorType)
     , m_timing(response.networkLoadTiming())
     , m_loadTiming(loadTiming)

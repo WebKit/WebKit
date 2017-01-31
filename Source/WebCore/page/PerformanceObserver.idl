@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+// https://w3c.github.io/performance-timeline/
 
-#if ENABLE(INTERSECTION_OBSERVER)
-
-#include "IntersectionObserverCallback.h"
-#include "IntersectionObserverEntry.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Variant.h>
-#include <wtf/text/WTFString.h>
-
-namespace WebCore {
-
-class Element;
-
-class IntersectionObserver : public RefCounted<IntersectionObserver> {
-public:
-    struct Init {
-        RefPtr<Element> root;
-        String rootMargin;
-        Variant<double, Vector<double>> threshold;
-    };
-
-    static Ref<IntersectionObserver> create(Ref<IntersectionObserverCallback>&& callback, Init&& init)
-    {
-        return adoptRef(*new IntersectionObserver(WTFMove(callback), WTFMove(init)));
-    }
-    
-    Element* root() const { return m_root.get(); }
-    String rootMargin() const { return m_rootMargin; }
-    const Vector<double>& thresholds() const { return m_thresholds; }
-
-    void observe(Element&);
-    void unobserve(Element&);
+[
+    Conditional=WEB_TIMING,
+    Constructor(PerformanceObserverCallback callback),
+    ConstructorCallWith=ScriptExecutionContext,
+    EnabledAtRuntime=PerformanceTimeline,
+    ImplementationLacksVTable,
+] interface PerformanceObserver {
+    [MayThrowException] void observe(PerformanceObserverInit options);
     void disconnect();
-
-    Vector<RefPtr<IntersectionObserverEntry>> takeRecords();
-
-private:
-    IntersectionObserver(Ref<IntersectionObserverCallback>&&, Init&&);
-    
-    RefPtr<Element> m_root;
-    String m_rootMargin;
-    Vector<double> m_thresholds;
-    Ref<IntersectionObserverCallback> m_callback;
 };
 
-
-} // namespace WebCore
-
-#endif // ENABLE(INTERSECTION_OBSERVER)
+[
+    Conditional=WEB_TIMING,
+]
+dictionary PerformanceObserverInit {
+    required sequence<DOMString> entryTypes;
+};

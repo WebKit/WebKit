@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test PerformanceObserver mutating itself while in its callback.");
+window.jsTestIsAsync = true;
+
+// Observer is first watching measures => then marks => measures => both.
+// NOTE: Measures are sorted before marks due to startTime.
+
+window.callbackCount = 0;
+window.list = null;
+
+let observer = new PerformanceObserver((list) => {
+    window.list = list;
+    callbackCount++;
+    testPassed("PerformanceObserver callback fired");
+
+    if (callbackCount === 1) {
+        // Expected: [measure1]
+        shouldBe(`list.getEntries().length`, `1`);
+        shouldBeEqualToString(`list.getEntries()[0].entryType`, "measure");
+        shouldBeEqualToString(`list.getEntries()[0].name`, "measure1");
+
+        updateObserver(["mark"]);
+
+        performance.mark("mark2");
+        performance.measure("measure2");
+    } else if (callbackCount === 2) {
+        // Expected: [mark2]
+        shouldBe(`list.getEntries().length`, `1`);
+        shouldBeEqualToString(`list.getEntries()[0].entryType`, "mark");
+        shouldBeEqualToString(`list.getEntries()[0].name`, "mark2");
+
+        performance.mark("mark-before-change-observe-state-to-measure");
+        performance.measure("measure-before-change-observe-state-to-measure");
+
+        updateObserver(["measure"]);
+
+        performance.mark("mark3");
+        performance.measure("measure3");
+    } else if (callbackCount === 3) {
+        // Expected: [measure3, mark-before-change-observe-state-to-measure]
+        shouldBe(`list.getEntries().length`, `2`);
+        shouldBeEqualToString(`list.getEntries()[0].entryType`, "measure");
+        shouldBeEqualToString(`list.getEntries()[0].name`, "measure3");
+        shouldBeEqualToString(`list.getEntries()[1].entryType`, "mark");
+        shouldBeEqualToString(`list.getEntries()[1].name`, "mark-before-change-observe-state-to-measure");
+
+        performance.mark("mark-before-change-observe-state-to-both");
+        performance.measure("measure-before-change-observe-state-to-both");
+
+        updateObserver(["mark", "measure"]);
+
+        performance.mark("mark4");
+        performance.measure("measure4");
+    } else if (callbackCount === 4) {
+        // Expected: [measure-before-change-observe-state-to-both, measure4, mark4]
+        shouldBe(`list.getEntries().length`, `3`);
+        shouldBeEqualToString(`list.getEntries()[0].entryType`, "measure");
+        shouldBeEqualToString(`list.getEntries()[0].name`, "measure-before-change-observe-state-to-both");
+        shouldBeEqualToString(`list.getEntries()[1].entryType`, "measure");
+        shouldBeEqualToString(`list.getEntries()[1].name`, "measure4");
+        shouldBeEqualToString(`list.getEntries()[2].entryType`, "mark");
+        shouldBeEqualToString(`list.getEntries()[2].name`, "mark4");
+
+        performance.mark("mark-before-disconnect");
+        performance.measure("measure-before-disconnect");
+
+        observer.disconnect();
+
+        performance.mark("mark-after-disconnect");
+        performance.measure("measure-after-disconnect");
+
+        setTimeout(finishJSTest, 50);
+    } else if (callbackCount === 5)
+        testFailed("Should not have received another callback, the observer was disconnected");
+
+    for (let mark of list.getEntries())
+        debug(" - " + mark.name);
+});
+
+function updateObserver(entryTypes) {
+    debug("Observering: " + JSON.stringify(entryTypes));
+    observer.observe({entryTypes});
+}
+
+updateObserver(["measure"]);
+performance.mark("mark1");
+performance.measure("measure1");
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

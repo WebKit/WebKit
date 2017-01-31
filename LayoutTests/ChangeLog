@@ -1,3 +1,44 @@
+2017-01-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Implement PerformanceObserver
+        https://bugs.webkit.org/show_bug.cgi?id=167546
+        <rdar://problem/30247959>
+
+        Reviewed by Ryosuke Niwa.
+
+        * performance-api/performance-observer-api-expected.txt: Added.
+        * performance-api/performance-observer-api.html: Added.
+        * performance-api/performance-observer-basic-expected.txt: Added.
+        * performance-api/performance-observer-basic.html: Added.
+        * performance-api/performance-observer-callback-mutate-expected.txt: Added.
+        * performance-api/performance-observer-callback-mutate.html: Added.
+        * performance-api/performance-observer-callback-task-expected.txt: Added.
+        * performance-api/performance-observer-callback-task.html: Added.
+        * performance-api/performance-observer-entry-sort-expected.txt: Added.
+        * performance-api/performance-observer-entry-sort.html: Added.
+        * performance-api/performance-observer-exception-expected.txt: Added.
+        * performance-api/performance-observer-exception.html: Added.
+        * performance-api/performance-observer-nested-expected.txt: Added.
+        * performance-api/performance-observer-nested.html: Added.
+        * performance-api/performance-observer-order-expected.txt: Added.
+        * performance-api/performance-observer-order.html: Added.
+        * performance-api/performance-observer-periodic-expected.txt: Added.
+        * performance-api/performance-observer-periodic.html: Added.
+        PerformanceObserver tests.
+
+        * performance-api/performance-timeline-api-expected.txt: Added.
+        * performance-api/performance-timeline-api.html: Added.
+        Performance timeline tests.
+
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-elcapitan/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+        New global constructors.
+
 2017-01-30  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] getStats does not support legacy callback

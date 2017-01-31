@@ -134,7 +134,6 @@
 #if ENABLE(MEDIA_SOURCE)
 #include "DOMWindow.h"
 #include "MediaSource.h"
-#include "Performance.h"
 #include "VideoPlaybackQuality.h"
 #endif
 

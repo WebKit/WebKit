@@ -39,7 +39,11 @@ public:
     bool isMark() const override { return true; }
     
 private:
-    PerformanceMark(const String& name, double startTime) : PerformanceEntry(name, ASCIILiteral("mark"), startTime, startTime) { }
+    PerformanceMark(const String& name, double startTime)
+        : PerformanceEntry(PerformanceEntry::Type::Mark, name, ASCIILiteral("mark"), startTime, startTime)
+    {
+    }
+
     ~PerformanceMark() { }
 };
 

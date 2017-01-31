@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test PerformanceObserver mutating itself while in its callback.");
+window.jsTestIsAsync = true;
+
+function wait() {
+    let now = performance.now();
+    while (now === performance.now())
+        continue;
+}
+
+let observer = new PerformanceObserver((list) => {
+    testPassed("PerformanceObserver callback fired");
+
+    window.list = list;
+    window.sorted = true;
+
+    let entries = list.getEntries();
+    let lastStartTime = entries[0].startTime;
+    for (let i = 0; i < entries.length; ++i) {
+        let currentStartTime = entries[i].startTime;
+        if (lastStartTime > currentStartTime) {
+            sorted = false;
+            break;
+        }
+        lastStartTime = currentStartTime;
+    }
+
+    shouldBe(`list.getEntries().length`, `8`);
+    shouldBeTrue(`sorted`);
+
+    // Regardless of how identical start time elements are sorted,
+    // the first three values should be measures1,2,3 with 0 start time,
+    // followed by mark1. The last entry will be mark3.
+    shouldBeEqualToString(`list.getEntries()[0].entryType`, "measure");
+    shouldBeEqualToString(`list.getEntries()[1].entryType`, "measure");
+    shouldBeEqualToString(`list.getEntries()[2].entryType`, "measure");
+    shouldBeEqualToString(`list.getEntries()[3].entryType`, "mark");
+    shouldBeEqualToString(`list.getEntries()[3].name`, "mark1");
+    shouldBeEqualToString(`list.getEntries()[7].entryType`, "mark");
+    shouldBeEqualToString(`list.getEntries()[7].name`, "mark3");
+
+    // WebKit wants a stable sort based matching user expectations.
+    // The spec is currently imprecise here.
+    // <https://github.com/w3c/performance-timeline/issues/67>
+    shouldBeEqualToString(`list.getEntries()[0].name`, "measure1");
+    shouldBeEqualToString(`list.getEntries()[1].name`, "measure2");
+    shouldBeEqualToString(`list.getEntries()[2].name`, "measure3");
+    shouldBeEqualToString(`list.getEntries()[3].name`, "mark1");
+    shouldBeEqualToString(`list.getEntries()[4].name`, "mark2");
+    shouldBeEqualToString(`list.getEntries()[5].name`, "measure-matching-mark2-1");
+    shouldBeEqualToString(`list.getEntries()[6].name`, "measure-matching-mark2-2");
+    shouldBeEqualToString(`list.getEntries()[7].name`, "mark3");
+
+    finishJSTest();
+});
+
+observer.observe({entryTypes: ["mark", "measure"]});
+
+performance.mark("mark1");
+performance.measure("measure1");
+wait(); // Ensure mark1 !== mark2 startTime by making sure performance.now advances.
+performance.mark("mark2");
+performance.measure("measure2");
+performance.measure("measure-matching-mark2-1", "mark2");
+wait(); // Ensure mark2 !== mark3 startTime by making sure performance.now advances.
+performance.mark("mark3");
+performance.measure("measure3");
+performance.measure("measure-matching-mark2-2", "mark2");
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

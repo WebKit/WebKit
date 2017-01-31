@@ -34,6 +34,7 @@
 #if ENABLE(WEB_TIMING)
 
 #include "Performance.h"
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
@@ -49,6 +50,17 @@ public:
     double startTime() const { return m_startTime; }
     double duration() const { return m_duration; }
 
+    enum class Type {
+        Navigation = 1 << 0,
+        Mark = 1 << 1,
+        Measure = 1 << 2,
+        Resource = 1 << 3,
+    };
+
+    Type type() const { return m_type; }
+
+    static std::optional<Type> parseEntryTypeString(const String& entryType);
+
     virtual bool isResource() const { return false; }
     virtual bool isMark() const { return false; }
     virtual bool isMeasure() const { return false; }
@@ -59,13 +71,14 @@ public:
     }
 
 protected:
-    PerformanceEntry(const String& name, const String& entryType, double startTime, double finishTime);
+    PerformanceEntry(Type, const String& name, const String& entryType, double startTime, double finishTime);
 
 private:
     const String m_name;
     const String m_entryType;
     const double m_startTime;
     const double m_duration;
+    const Type m_type;
 };
 
 } // namespace WebCore

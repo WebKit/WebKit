@@ -28,13 +28,14 @@
 #if ENABLE(WEB_TIMING)
 
 #include "ExceptionOr.h"
+#include "PerformanceMark.h"
+#include "PerformanceMeasure.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
 class Performance;
-class PerformanceEntry;
 
 using PerformanceEntryMap = HashMap<String, Vector<RefPtr<PerformanceEntry>>>;
 
@@ -42,10 +43,10 @@ class UserTiming {
 public:
     explicit UserTiming(Performance&);
 
-    ExceptionOr<void> mark(const String& markName);
+    ExceptionOr<Ref<PerformanceMark>> mark(const String& markName);
     void clearMarks(const String& markName);
 
-    ExceptionOr<void> measure(const String& measureName, const String& startMark, const String& endMark);
+    ExceptionOr<Ref<PerformanceMeasure>> measure(const String& measureName, const String& startMark, const String& endMark);
     void clearMeasures(const String& measureName);
 
     Vector<RefPtr<PerformanceEntry>> getMarks() const;

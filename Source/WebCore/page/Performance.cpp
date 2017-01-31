@@ -41,6 +41,7 @@
 #include "Frame.h"
 #include "PerformanceEntry.h"
 #include "PerformanceNavigation.h"
+#include "PerformanceObserver.h"
 #include "PerformanceResourceTiming.h"
 #include "PerformanceTiming.h"
 #include "PerformanceUserTiming.h"
@@ -171,7 +172,14 @@ ExceptionOr<void> Performance::mark(const String& markName)
 {
     if (!m_userTiming)
         m_userTiming = std::make_unique<UserTiming>(*this);
-    return m_userTiming->mark(markName);
+
+    auto result = m_userTiming->mark(markName);
+    if (result.hasException())
+        return result.releaseException();
+
+    queueEntry(result.releaseReturnValue());
+
+    return { };
 }
 
 void Performance::clearMarks(const String& markName)
@@ -185,7 +193,14 @@ ExceptionOr<void> Performance::measure(const String& measureName, const String& 
 {
     if (!m_userTiming)
         m_userTiming = std::make_unique<UserTiming>(*this);
-    return m_userTiming->measure(measureName, startMark, endMark);
+
+    auto result = m_userTiming->measure(measureName, startMark, endMark);
+    if (result.hasException())
+        return result.releaseException();
+
+    queueEntry(result.releaseReturnValue());
+
+    return { };
 }
 
 void Performance::clearMeasures(const String& measureName)
@@ -193,6 +208,16 @@ void Performance::clearMeasures(const String& measureName)
     if (!m_userTiming)
         m_userTiming = std::make_unique<UserTiming>(*this);
     m_userTiming->clearMeasures(measureName);
+}
+
+void Performance::registerPerformanceObserver(PerformanceObserver& observer)
+{
+    m_observers.add(&observer);
+}
+
+void Performance::unregisterPerformanceObserver(PerformanceObserver& observer)
+{
+    m_observers.remove(&observer);
 }
 
 double Performance::now() const
@@ -205,6 +230,30 @@ double Performance::reduceTimeResolution(double seconds)
 {
     const double resolutionSeconds = 0.0001;
     return std::floor(seconds / resolutionSeconds) * resolutionSeconds;
+}
+
+void Performance::queueEntry(PerformanceEntry& entry)
+{
+    bool shouldScheduleTask = false;
+    for (auto& observer : m_observers) {
+        if (observer->typeFilter().contains(entry.type())) {
+            observer->queueEntry(entry);
+            shouldScheduleTask = true;
+        }
+    }
+
+    if (!shouldScheduleTask)
+        return;
+
+    if (m_performanceTimelineTaskQueue.hasPendingTasks())
+        return;
+
+    m_performanceTimelineTaskQueue.enqueueTask([this] () {
+        Vector<RefPtr<PerformanceObserver>> observers;
+        copyToVector(m_observers, observers);
+        for (auto& observer : observers)
+            observer->deliver();
+    });
 }
 
 } // namespace WebCore
