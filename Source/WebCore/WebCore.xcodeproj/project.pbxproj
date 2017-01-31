@@ -7218,6 +7218,9 @@
 		073794F819F5864E00E5A045 /* RTCNotifiersMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNotifiersMock.h; sourceTree = "<group>"; };
 		07394EC71BAB2CCD00BE99CD /* MediaDevicesRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaDevicesRequest.cpp; sourceTree = "<group>"; };
 		07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDevicesRequest.h; sourceTree = "<group>"; };
+		073B87561E40DCE50071C0EC /* AudioStreamDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioStreamDescription.h; sourceTree = "<group>"; };
+		073B87571E40DCFD0071C0EC /* CAAudioStreamDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CAAudioStreamDescription.cpp; sourceTree = "<group>"; };
+		073B87581E40DCFD0071C0EC /* CAAudioStreamDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAudioStreamDescription.h; sourceTree = "<group>"; };
 		073BE33E17D17E01002BD431 /* JSNavigatorUserMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorUserMedia.cpp; sourceTree = "<group>"; };
 		073BE33F17D17E01002BD431 /* JSNavigatorUserMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorUserMedia.h; sourceTree = "<group>"; };
 		0744ECEB1E0C4AE5000D0944 /* MockRealtimeAudioSourceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockRealtimeAudioSourceMac.h; sourceTree = "<group>"; };
@@ -24784,6 +24787,7 @@
 		FD31604012B026A300C1A359 /* audio */ = {
 			isa = PBXGroup;
 			children = (
+				073B87561E40DCE50071C0EC /* AudioStreamDescription.h */,
 				CD669D651D232DF4004D1866 /* cocoa */,
 				CD0EEE0D14743E48003EAFA2 /* ios */,
 				FD3160B012B0270700C1A359 /* mac */,
@@ -24876,6 +24880,8 @@
 		FD3160B012B0270700C1A359 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				073B87571E40DCFD0071C0EC /* CAAudioStreamDescription.cpp */,
+				073B87581E40DCFD0071C0EC /* CAAudioStreamDescription.h */,
 				FD3160B512B0272A00C1A359 /* AudioBusMac.mm */,
 				FD3160B612B0272A00C1A359 /* AudioDestinationMac.cpp */,
 				FD3160B712B0272A00C1A359 /* AudioDestinationMac.h */,

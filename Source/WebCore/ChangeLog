@@ -1,3 +1,31 @@
+2017-01-31  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Add an audio stream description class
+        https://bugs.webkit.org/show_bug.cgi?id=167639
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, the new class is not used yet.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/AudioStreamDescription.h: Added.
+        (WebCore::AudioStreamDescription::isPCM):
+        * platform/audio/mac/CAAudioStreamDescription.cpp: Added.
+        (WebCore::CAAudioStreamDescription::CAAudioStreamDescription):
+        (WebCore::CAAudioStreamDescription::platformDescription):
+        (WebCore::CAAudioStreamDescription::format):
+        (WebCore::toCAAudioStreamDescription):
+        (WebCore::CAAudioStreamDescription::operator==):
+        (WebCore::operator==):
+        * platform/audio/mac/CAAudioStreamDescription.h: Added.
+        (WebCore::operator!=):
+        (WebCore::CAAudioStreamDescription::bytesPerFrame):
+        (WebCore::CAAudioStreamDescription::bytesPerPacket):
+        (WebCore::CAAudioStreamDescription::formatFlags):
+        (WebCore::CAAudioStreamDescription::operator==):
+        (WebCore::CAAudioStreamDescription::operator!=):
+        (WebCore::CAAudioStreamDescription::streamDescription):
+
 2017-01-31  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection methods can take dictionaries as input
