@@ -1,3 +1,14 @@
+2017-01-31  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CoordinatedGraphics] WebCoordinatedSurface::create should do null-check of the return value of ShareableBitmap::createShareable
+        https://bugs.webkit.org/show_bug.cgi?id=167631
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::create): Do null-check of the
+        return value of ShareableBitmap::createShareable.
+
 2017-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Environment variables for enabling/disabling AC mode should take precedence over the API.

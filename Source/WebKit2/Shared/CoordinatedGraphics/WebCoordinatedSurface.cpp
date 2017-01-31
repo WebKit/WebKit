@@ -71,15 +71,15 @@ bool WebCoordinatedSurface::Handle::decode(IPC::Decoder& decoder, Handle& handle
 
 RefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags)
 {
-    RefPtr<WebCoordinatedSurface> surface;
 #if USE(GRAPHICS_SURFACE)
-    surface = createWithSurface(size, flags);
+    if (auto surface = createWithSurface(size, flags))
+        return surface;
 #endif
 
-    if (!surface)
-        surface = create(size, flags, ShareableBitmap::createShareable(size, (flags & SupportsAlpha) ? ShareableBitmap::SupportsAlpha : ShareableBitmap::NoFlags));
+    if (auto bitmap = ShareableBitmap::createShareable(size, (flags & SupportsAlpha) ? ShareableBitmap::SupportsAlpha : ShareableBitmap::NoFlags))
+        return create(size, flags, WTFMove(bitmap));
 
-    return surface;
+    return nullptr;
 }
 
 #if USE(GRAPHICS_SURFACE)
