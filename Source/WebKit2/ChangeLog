@@ -1,3 +1,9 @@
+2017-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix syntax error in GTK+ API docs.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+
 2017-01-31  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Enable CSS Grid Layout by default

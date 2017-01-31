@@ -455,7 +455,7 @@ WebKitWebContext* webkit_web_context_new(void)
  * Create a new ephemeral #WebKitWebContext. An ephemeral #WebKitWebContext is a context
  * created with an ephemeral #WebKitWebsiteDataManager. This is just a convenient method
  * to create ephemeral contexts without having to create your own #WebKitWebsiteDataManager.
- * All #WebKitWebView<!-- ->s associated with this context will also be ephemeral. Websites will
+ * All #WebKitWebView<!-- -->s associated with this context will also be ephemeral. Websites will
  * not store any data in the client storage.
  * This is normally used to implement private instances.
  *
