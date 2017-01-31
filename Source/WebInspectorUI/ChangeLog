@@ -1,3 +1,25 @@
+2017-01-31  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: User Settings: Secondary-clicking the New Tab and Settings tabs should not produce a context menu
+        https://bugs.webkit.org/show_bug.cgi?id=167651
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/PinnedTabBarItem.js:
+        (WebInspector.PinnedTabBarItem):
+        (WebInspector.PinnedTabBarItem.prototype._handleContextMenuEvent):
+        Always preventDefault() to ensure that the system context menu is never shown.
+
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar):
+        (WebInspector.TabBar.prototype.get newTabTabBarItem):
+        (WebInspector.TabBar.prototype._handleNewTabContextMenu): Deleted.
+        Move the event dispatch to WebInspector.PinnedTabBarItem to give all instances a contextmenu
+        event handler.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser):
+
 2017-01-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Address some ESLint warnings

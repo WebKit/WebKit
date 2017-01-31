@@ -74,7 +74,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemSelected, this._tabBarItemSelected, this);
         this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemAdded, this._tabBarItemAdded, this);
         this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemRemoved, this._tabBarItemRemoved, this);
-        this._tabBar.addEventListener(WebInspector.TabBar.Event.NewTabContextMenu, this._handleNewTabContextMenu, this);
+        this._tabBar.newTabTabBarItem.addEventListener(WebInspector.PinnedTabBarItem.Event.ContextMenu, this._handleNewTabContextMenu, this);
 
         this._recentTabContentViews = [];
         this._closedTabClasses = new Set;

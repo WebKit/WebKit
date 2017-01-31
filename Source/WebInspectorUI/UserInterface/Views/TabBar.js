@@ -49,11 +49,12 @@ WebInspector.TabBar = class TabBar extends WebInspector.View
         this._newTabTabBarItem = new WebInspector.PinnedTabBarItem("Images/NewTabPlus.svg", WebInspector.UIString("Create a new tab"));
         this._newTabTabBarItem.element.addEventListener("mouseenter", this._handleNewTabMouseEnter.bind(this));
         this._newTabTabBarItem.element.addEventListener("click", this._handleNewTabClick.bind(this));
-        this._newTabTabBarItem.element.addEventListener("contextmenu", this._handleNewTabContextMenu.bind(this));
         this.addTabBarItem(this._newTabTabBarItem, true);
     }
 
     // Public
+
+    get newTabTabBarItem() { return this._newTabTabBarItem; }
 
     updateNewTabTabBarItemState()
     {
@@ -729,13 +730,6 @@ WebInspector.TabBar = class TabBar extends WebInspector.View
         WebInspector.showNewTabTab(shouldAnimate);
     }
 
-    _handleNewTabContextMenu(event)
-    {
-        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
-
-        this.dispatchEventToListeners(WebInspector.TabBar.Event.NewTabContextMenu, {contextMenu});
-    }
-
     _handleNewTabMouseEnter(event)
     {
         if (!this._tabAnimatedClosedSinceMouseEnter || !this.element.classList.contains("static-layout") || this.element.classList.contains("animating"))
@@ -750,6 +744,5 @@ WebInspector.TabBar.Event = {
     TabBarItemAdded: "tab-bar-tab-bar-item-added",
     TabBarItemRemoved: "tab-bar-tab-bar-item-removed",
     TabBarItemsReordered: "tab-bar-tab-bar-items-reordered",
-    NewTabContextMenu: "tab-bar-new-tab-contextmenu",
     OpenDefaultTab: "tab-bar-open-default-tab"
 };

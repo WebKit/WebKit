@@ -30,5 +30,22 @@ WebInspector.PinnedTabBarItem = class PinnedTabBarItem extends WebInspector.TabB
         super(image, title, representedObject);
 
         this.element.classList.add("pinned");
+
+        this.element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this));
     }
+
+    // Private
+
+    _handleContextMenuEvent(event)
+    {
+        event.preventDefault();
+
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
+
+        this.dispatchEventToListeners(WebInspector.PinnedTabBarItem.Event.ContextMenu, {contextMenu});
+    }
+};
+
+WebInspector.PinnedTabBarItem.Event = {
+    ContextMenu: "pinned-tab-bar-item-context-menu",
 };
