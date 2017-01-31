@@ -1,3 +1,10 @@
+2017-01-31  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed webkitpy fix after r211405.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Device.launch_app): Remove @staticmethod on _log_debug_error.
+
 2017-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Do not include libwebrtc and qunit in GTK+ tarballs.

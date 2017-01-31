@@ -276,7 +276,6 @@ class Device(object):
                 environment_to_use[value] = env[value]
 
         # FIXME: This is a workaround for <rdar://problem/30273973>, Racey failure of simctl launch.
-        @staticmethod
         def _log_debug_error(error):
             _log.debug(error.message_with_output())
 
