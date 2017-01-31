@@ -1,5 +1,15 @@
 2017-01-31  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: add CSS color keyword entries for all grey/gray variations
+        https://bugs.webkit.org/show_bug.cgi?id=167668
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Models/Color.js:
+        (WebInspector.Color.Keywords):
+
+2017-01-31  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Network tab: provide a way to preserve log on navigation
         https://bugs.webkit.org/show_bug.cgi?id=166908
 
