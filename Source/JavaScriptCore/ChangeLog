@@ -1,3 +1,13 @@
+2017-01-31  Tomas Popela  <tpopela@redhat.com>
+
+        Compilation error in JSArrayBufferView.h
+        https://bugs.webkit.org/show_bug.cgi?id=167642
+
+        Reviewed by Alex Christensen.
+
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::vector):
+
 2017-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Do not reject WebAssembly.compile() with Exception

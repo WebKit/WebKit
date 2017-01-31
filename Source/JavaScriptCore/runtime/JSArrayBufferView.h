@@ -167,7 +167,7 @@ public:
     bool isNeutered() { return hasArrayBuffer() && !vector(); }
     void neuter();
     
-    void* vector() { return m_vector.get(); }
+    void* vector() const { return m_vector.get(); }
     
     unsigned byteOffset();
     unsigned length() const { return m_length; }
