@@ -1,3 +1,17 @@
+2017-01-31  Chris Dumez  <cdumez@apple.com>
+
+        Add better test coverage for scripting windows opened via window.open()
+        https://bugs.webkit.org/show_bug.cgi?id=167531
+
+        Reviewed by Brent Fulgham.
+
+        Add better test coverage for scripting windows opened via window.open().
+
+        * http/tests/security/cross-origin-window-open-insert-script-expected.txt: Added.
+        * http/tests/security/cross-origin-window-open-insert-script.html: Added.
+        * http/tests/security/cross-origin-window-open-javascript-url-expected.txt: Added.
+        * http/tests/security/cross-origin-window-open-javascript-url.html: Added.
+
 2017-01-31  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r209411): Scrolling to a fragment identifier in overflow:scroll inside position:fixed no longer works

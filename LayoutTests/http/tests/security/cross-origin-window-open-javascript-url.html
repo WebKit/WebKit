@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test-pre.js"></script>
+<div id="resultDiv"></div>
+<script>
+description("Tests that inserting a script into newly opened window does not bypass origin checks.");
+debug("This test passes unless you see FAIL messages below");
+jsTestIsAsync = true;
+if (window.testRunner) {
+    testRunner.setCanOpenWindows();
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
+
+let win = open("about:blank", "one");
+let otherDocument = win.document;
+win.resultDiv = document.getElementById("resultDiv");
+
+let a = otherDocument.createElement("a");
+a.href = "http://localhost:8000/security/resources/blank.html";
+a.click();
+
+window.addEventListener('message', function(e) {
+    testFailed("Script executed in cross origin iframe");
+    testFailed("Retrieved cross-origin window's URL: " + e.data);
+});
+
+it = setInterval(function() {
+    try {
+        win.location.href;
+    } catch (e) {
+        // Window has navigated to cross origin URL.
+        clearInterval(it);
+        try {
+            var frame = document.createElement("iframe");
+            frame.src = "javascript:parent.opener.postMessage(parent.location.href, '*')"
+            otherDocument.body.append(frame);
+        } catch (e) {
+            debug(e);
+        }
+        setTimeout(finishJSTest, 0);
+    }
+}, 10);
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>
