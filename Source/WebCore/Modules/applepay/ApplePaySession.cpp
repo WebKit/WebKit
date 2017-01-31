@@ -162,7 +162,7 @@ static std::optional<int64_t> parseAmount(const String& amountString)
     return amount;
 }
 
-static ExceptionOr<PaymentRequest::LineItem> convertAndValidate(ApplePayLineItem&& lineItem)
+static ExceptionOr<PaymentRequest::LineItem> convertAndValidateTotal(ApplePayLineItem&& lineItem)
 {
     auto amount = parseAmount(lineItem.amount);
     if (!amount)
@@ -170,6 +170,25 @@ static ExceptionOr<PaymentRequest::LineItem> convertAndValidate(ApplePayLineItem
 
     PaymentRequest::LineItem result;
     result.amount = *amount;
+    result.type = lineItem.type;
+    result.label = lineItem.label;
+
+    return WTFMove(result);
+}
+
+static ExceptionOr<PaymentRequest::LineItem> convertAndValidate(ApplePayLineItem&& lineItem)
+{
+    PaymentRequest::LineItem result;
+
+    // It is OK for pending types to not have an amount.
+    if (lineItem.type != PaymentRequest::LineItem::Type::Pending) {
+        auto amount = parseAmount(lineItem.amount);
+        if (!amount)
+            return Exception { TypeError, makeString("\"" + lineItem.amount, "\" is not a valid amount.") };
+
+        result.amount = *amount;
+    }
+
     result.type = lineItem.type;
     result.label = lineItem.label;
 
@@ -298,7 +317,7 @@ static ExceptionOr<PaymentRequest> convertAndValidate(unsigned version, ApplePay
 {
     PaymentRequest result;
 
-    auto total = convertAndValidate(WTFMove(paymentRequest.total));
+    auto total = convertAndValidateTotal(WTFMove(paymentRequest.total));
     if (total.hasException())
         return total.releaseException();
     result.setTotal(total.releaseReturnValue());
@@ -611,7 +630,7 @@ ExceptionOr<void> ApplePaySession::completeShippingMethodSelection(unsigned shor
     if (!authorizationStatus)
         return Exception { INVALID_ACCESS_ERR };
 
-    auto convertedNewTotal = convertAndValidate(WTFMove(newTotal));
+    auto convertedNewTotal = convertAndValidateTotal(WTFMove(newTotal));
     if (convertedNewTotal.hasException())
         return convertedNewTotal.releaseException();
 
@@ -648,7 +667,7 @@ ExceptionOr<void> ApplePaySession::completeShippingContactSelection(unsigned sho
     if (convertedNewShippingMethods.hasException())
         return convertedNewShippingMethods.releaseException();
 
-    auto convertedNewTotal = convertAndValidate(WTFMove(newTotal));
+    auto convertedNewTotal = convertAndValidateTotal(WTFMove(newTotal));
     if (convertedNewTotal.hasException())
         return convertedNewTotal.releaseException();
 
@@ -677,7 +696,7 @@ ExceptionOr<void> ApplePaySession::completePaymentMethodSelection(ApplePayLineIt
     if (!canCompletePaymentMethodSelection())
         return Exception { INVALID_ACCESS_ERR };
 
-    auto convertedNewTotal = convertAndValidate(WTFMove(newTotal));
+    auto convertedNewTotal = convertAndValidateTotal(WTFMove(newTotal));
     if (convertedNewTotal.hasException())
         return convertedNewTotal.releaseException();
 

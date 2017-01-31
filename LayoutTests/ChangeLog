@@ -1,3 +1,16 @@
+2017-01-31  Anders Carlsson  <andersca@apple.com>
+
+        Apple Pay button does nothing on nytimes.com
+        https://bugs.webkit.org/show_bug.cgi?id=167664
+        rdar://problem/30273885
+
+        Reviewed by Sam Weinig.
+
+        Add a new test.
+
+        * http/tests/ssl/applepay/ApplePaySession-expected.txt:
+        * http/tests/ssl/applepay/ApplePaySession.html:
+
 2017-01-31  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix layout tests added in r211435.

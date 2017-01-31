@@ -169,6 +169,9 @@ PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a s
 SETUP: request = validRequest(); request.lineItems = { };
 PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
 
+SETUP: request = validRequest(); request.lineItems = [{ label: 'label', type: 'pending' }];
+PASS new ApplePaySession(2, request) did not throw exception.
+
 SETUP: request = validRequest(); request.lineItems = [];
 PASS new ApplePaySession(2, request) did not throw exception.
 
