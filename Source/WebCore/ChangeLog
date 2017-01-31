@@ -1,3 +1,29 @@
+2017-01-31  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: enable search predication for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=167558
+        <rdar://problem/30251367>
+
+        Reviewed by Joanmarie Diggs.
+
+        Move the code to support accessibility searching into a shared place so it can be used by iOS.
+
+        Test: accessibility/ios-simulator/ios-search-predicate.html
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityFindMatchingObjects:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (convertToNSArray):
+        (createAccessibilitySearchKeyMap):
+        (accessibilitySearchKeyForString):
+        (accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilitySearchKeyMap): Deleted.
+        (accessibilitySearchKeyForString): Deleted.
+        (accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute): Deleted.
+        (convertToNSArray): Deleted.
+
 2017-01-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         [WebIDL] Add support for inherit serializer attribute

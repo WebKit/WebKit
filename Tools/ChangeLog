@@ -1,3 +1,28 @@
+2017-01-31  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: enable search predication for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=167558
+        <rdar://problem/30251367>
+
+        Reviewed by Joanmarie Diggs.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+        * DumpRenderTree/mac/AccessibilityCommonMac.h:
+        * DumpRenderTree/mac/AccessibilityCommonMac.mm:
+        (searchPredicateParameterizedAttributeForSearchCriteria):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (searchPredicateParameterizedAttributeForSearchCriteria): Deleted.
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::uiElementCountForSearchPredicate):
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityCommonMac.h:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityCommonMac.mm:
+        (WTR::searchPredicateParameterizedAttributeForSearchCriteria):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::searchPredicateParameterizedAttributeForSearchCriteria): Deleted.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2017-01-30  Jonathan Bedard  <jbedard@apple.com>
 
         Workaround for simctl launch bug

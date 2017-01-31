@@ -1887,6 +1887,14 @@ static RenderObject* rendererForView(WAKView* view)
     return nil;
 }
 
+- (NSArray<WebAccessibilityObjectWrapper *> *)accessibilityFindMatchingObjects:(NSDictionary *)parameters
+{
+    AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(parameters);
+    AccessibilityObject::AccessibilityChildrenVector results;
+    m_object->findMatchingObjects(&criteria, results);
+    return convertToNSArray(results);
+}
+
 - (void)accessibilityElementDidBecomeFocused
 {
     if (![self _prepareAccessibilityCall])

@@ -67,6 +67,168 @@
 using namespace WebCore;
 using namespace HTMLNames;
 
+// Search Keys
+#ifndef NSAccessibilityAnyTypeSearchKey
+#define NSAccessibilityAnyTypeSearchKey @"AXAnyTypeSearchKey"
+#endif
+
+#ifndef NSAccessibilityBlockquoteSameLevelSearchKey
+#define NSAccessibilityBlockquoteSameLevelSearchKey @"AXBlockquoteSameLevelSearchKey"
+#endif
+
+#ifndef NSAccessibilityBlockquoteSearchKey
+#define NSAccessibilityBlockquoteSearchKey @"AXBlockquoteSearchKey"
+#endif
+
+#ifndef NSAccessibilityBoldFontSearchKey
+#define NSAccessibilityBoldFontSearchKey @"AXBoldFontSearchKey"
+#endif
+
+#ifndef NSAccessibilityButtonSearchKey
+#define NSAccessibilityButtonSearchKey @"AXButtonSearchKey"
+#endif
+
+#ifndef NSAccessibilityCheckBoxSearchKey
+#define NSAccessibilityCheckBoxSearchKey @"AXCheckBoxSearchKey"
+#endif
+
+#ifndef NSAccessibilityControlSearchKey
+#define NSAccessibilityControlSearchKey @"AXControlSearchKey"
+#endif
+
+#ifndef NSAccessibilityDifferentTypeSearchKey
+#define NSAccessibilityDifferentTypeSearchKey @"AXDifferentTypeSearchKey"
+#endif
+
+#ifndef NSAccessibilityFontChangeSearchKey
+#define NSAccessibilityFontChangeSearchKey @"AXFontChangeSearchKey"
+#endif
+
+#ifndef NSAccessibilityFontColorChangeSearchKey
+#define NSAccessibilityFontColorChangeSearchKey @"AXFontColorChangeSearchKey"
+#endif
+
+#ifndef NSAccessibilityFrameSearchKey
+#define NSAccessibilityFrameSearchKey @"AXFrameSearchKey"
+#endif
+
+#ifndef NSAccessibilityGraphicSearchKey
+#define NSAccessibilityGraphicSearchKey @"AXGraphicSearchKey"
+#endif
+
+#ifndef NSAccessibilityHeadingLevel1SearchKey
+#define NSAccessibilityHeadingLevel1SearchKey @"AXHeadingLevel1SearchKey"
+#endif
+
+#ifndef NSAccessibilityHeadingLevel2SearchKey
+#define NSAccessibilityHeadingLevel2SearchKey @"AXHeadingLevel2SearchKey"
+#endif
+
+#ifndef NSAccessibilityHeadingLevel3SearchKey
+#define NSAccessibilityHeadingLevel3SearchKey @"AXHeadingLevel3SearchKey"
+#endif
+
+#ifndef NSAccessibilityHeadingLevel4SearchKey
+#define NSAccessibilityHeadingLevel4SearchKey @"AXHeadingLevel4SearchKey"
+#endif
+
+#ifndef NSAccessibilityHeadingLevel5SearchKey
+#define NSAccessibilityHeadingLevel5SearchKey @"AXHeadingLevel5SearchKey"
+#endif
+
+#ifndef NSAccessibilityHeadingLevel6SearchKey
+#define NSAccessibilityHeadingLevel6SearchKey @"AXHeadingLevel6SearchKey"
+#endif
+
+#ifndef NSAccessibilityHeadingSameLevelSearchKey
+#define NSAccessibilityHeadingSameLevelSearchKey @"AXHeadingSameLevelSearchKey"
+#endif
+
+#ifndef NSAccessibilityHeadingSearchKey
+#define NSAccessibilityHeadingSearchKey @"AXHeadingSearchKey"
+#endif
+
+#ifndef NSAccessibilityHighlightedSearchKey
+#define NSAccessibilityHighlightedSearchKey @"AXHighlightedSearchKey"
+#endif
+
+#ifndef NSAccessibilityItalicFontSearchKey
+#define NSAccessibilityItalicFontSearchKey @"AXItalicFontSearchKey"
+#endif
+
+#ifndef NSAccessibilityLandmarkSearchKey
+#define NSAccessibilityLandmarkSearchKey @"AXLandmarkSearchKey"
+#endif
+
+#ifndef NSAccessibilityLinkSearchKey
+#define NSAccessibilityLinkSearchKey @"AXLinkSearchKey"
+#endif
+
+#ifndef NSAccessibilityListSearchKey
+#define NSAccessibilityListSearchKey @"AXListSearchKey"
+#endif
+
+#ifndef NSAccessibilityLiveRegionSearchKey
+#define NSAccessibilityLiveRegionSearchKey @"AXLiveRegionSearchKey"
+#endif
+
+#ifndef NSAccessibilityMisspelledWordSearchKey
+#define NSAccessibilityMisspelledWordSearchKey @"AXMisspelledWordSearchKey"
+#endif
+
+#ifndef NSAccessibilityOutlineSearchKey
+#define NSAccessibilityOutlineSearchKey @"AXOutlineSearchKey"
+#endif
+
+#ifndef NSAccessibilityPlainTextSearchKey
+#define NSAccessibilityPlainTextSearchKey @"AXPlainTextSearchKey"
+#endif
+
+#ifndef NSAccessibilityRadioGroupSearchKey
+#define NSAccessibilityRadioGroupSearchKey @"AXRadioGroupSearchKey"
+#endif
+
+#ifndef NSAccessibilitySameTypeSearchKey
+#define NSAccessibilitySameTypeSearchKey @"AXSameTypeSearchKey"
+#endif
+
+#ifndef NSAccessibilityStaticTextSearchKey
+#define NSAccessibilityStaticTextSearchKey @"AXStaticTextSearchKey"
+#endif
+
+#ifndef NSAccessibilityStyleChangeSearchKey
+#define NSAccessibilityStyleChangeSearchKey @"AXStyleChangeSearchKey"
+#endif
+
+#ifndef NSAccessibilityTableSameLevelSearchKey
+#define NSAccessibilityTableSameLevelSearchKey @"AXTableSameLevelSearchKey"
+#endif
+
+#ifndef NSAccessibilityTableSearchKey
+#define NSAccessibilityTableSearchKey @"AXTableSearchKey"
+#endif
+
+#ifndef NSAccessibilityTextFieldSearchKey
+#define NSAccessibilityTextFieldSearchKey @"AXTextFieldSearchKey"
+#endif
+
+#ifndef NSAccessibilityUnderlineSearchKey
+#define NSAccessibilityUnderlineSearchKey @"AXUnderlineSearchKey"
+#endif
+
+#ifndef NSAccessibilityUnvisitedLinkSearchKey
+#define NSAccessibilityUnvisitedLinkSearchKey @"AXUnvisitedLinkSearchKey"
+#endif
+
+#ifndef NSAccessibilityVisitedLinkSearchKey
+#define NSAccessibilityVisitedLinkSearchKey @"AXVisitedLinkSearchKey"
+#endif
+
+// Search
+#ifndef NSAccessibilityImmediateDescendantsOnly
+#define NSAccessibilityImmediateDescendantsOnly @"AXImmediateDescendantsOnly"
+#endif
+
 static NSArray *convertMathPairsToNSArray(const AccessibilityObject::AccessibilityMathMultiscriptPairs& pairs, NSString *subscriptKey, NSString *superscriptKey)
 {
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:pairs.size()];
@@ -79,6 +241,25 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
         [array addObject:pairDictionary];
     }
     return array;
+}
+
+
+NSArray *convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector& vector)
+{
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];
+    for (const auto& child : vector) {
+        WebAccessibilityObjectWrapper* wrapper = child->wrapper();
+        ASSERT(wrapper);
+        if (wrapper) {
+            // we want to return the attachment view instead of the object representing the attachment.
+            // otherwise, we get palindrome errors in the AX hierarchy
+            if (child->isAttachment() && [wrapper attachmentView])
+                [array addObject:[wrapper attachmentView]];
+            else
+                [array addObject:wrapper];
+        }
+    }
+    return [[array copy] autorelease];
 }
 
 @implementation WebAccessibilityObjectWrapperBase
@@ -453,6 +634,127 @@ static NSDictionary *dictionaryRemovingNonSupportedTypes(NSDictionary *dictionar
         NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:notificationName, @"notificationName", userInfo, @"userInfo", nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"AXDRTNotification" object:self userInfo:info];
     }
+}
+
+#pragma mark Search helpers
+
+typedef HashMap<String, AccessibilitySearchKey> AccessibilitySearchKeyMap;
+
+struct SearchKeyEntry {
+    String key;
+    AccessibilitySearchKey value;
+};
+
+static AccessibilitySearchKeyMap* createAccessibilitySearchKeyMap()
+{
+    const SearchKeyEntry searchKeys[] = {
+        { NSAccessibilityAnyTypeSearchKey, AnyTypeSearchKey },
+        { NSAccessibilityBlockquoteSameLevelSearchKey, BlockquoteSameLevelSearchKey },
+        { NSAccessibilityBlockquoteSearchKey, BlockquoteSearchKey },
+        { NSAccessibilityBoldFontSearchKey, BoldFontSearchKey },
+        { NSAccessibilityButtonSearchKey, ButtonSearchKey },
+        { NSAccessibilityCheckBoxSearchKey, CheckBoxSearchKey },
+        { NSAccessibilityControlSearchKey, ControlSearchKey },
+        { NSAccessibilityDifferentTypeSearchKey, DifferentTypeSearchKey },
+        { NSAccessibilityFontChangeSearchKey, FontChangeSearchKey },
+        { NSAccessibilityFontColorChangeSearchKey, FontColorChangeSearchKey },
+        { NSAccessibilityFrameSearchKey, FrameSearchKey },
+        { NSAccessibilityGraphicSearchKey, GraphicSearchKey },
+        { NSAccessibilityHeadingLevel1SearchKey, HeadingLevel1SearchKey },
+        { NSAccessibilityHeadingLevel2SearchKey, HeadingLevel2SearchKey },
+        { NSAccessibilityHeadingLevel3SearchKey, HeadingLevel3SearchKey },
+        { NSAccessibilityHeadingLevel4SearchKey, HeadingLevel4SearchKey },
+        { NSAccessibilityHeadingLevel5SearchKey, HeadingLevel5SearchKey },
+        { NSAccessibilityHeadingLevel6SearchKey, HeadingLevel6SearchKey },
+        { NSAccessibilityHeadingSameLevelSearchKey, HeadingSameLevelSearchKey },
+        { NSAccessibilityHeadingSearchKey, HeadingSearchKey },
+        { NSAccessibilityHighlightedSearchKey, HighlightedSearchKey },
+        { NSAccessibilityItalicFontSearchKey, ItalicFontSearchKey },
+        { NSAccessibilityLandmarkSearchKey, LandmarkSearchKey },
+        { NSAccessibilityLinkSearchKey, LinkSearchKey },
+        { NSAccessibilityListSearchKey, ListSearchKey },
+        { NSAccessibilityLiveRegionSearchKey, LiveRegionSearchKey },
+        { NSAccessibilityMisspelledWordSearchKey, MisspelledWordSearchKey },
+        { NSAccessibilityOutlineSearchKey, OutlineSearchKey },
+        { NSAccessibilityPlainTextSearchKey, PlainTextSearchKey },
+        { NSAccessibilityRadioGroupSearchKey, RadioGroupSearchKey },
+        { NSAccessibilitySameTypeSearchKey, SameTypeSearchKey },
+        { NSAccessibilityStaticTextSearchKey, StaticTextSearchKey },
+        { NSAccessibilityStyleChangeSearchKey, StyleChangeSearchKey },
+        { NSAccessibilityTableSameLevelSearchKey, TableSameLevelSearchKey },
+        { NSAccessibilityTableSearchKey, TableSearchKey },
+        { NSAccessibilityTextFieldSearchKey, TextFieldSearchKey },
+        { NSAccessibilityUnderlineSearchKey, UnderlineSearchKey },
+        { NSAccessibilityUnvisitedLinkSearchKey, UnvisitedLinkSearchKey },
+        { NSAccessibilityVisitedLinkSearchKey, VisitedLinkSearchKey }
+    };
+    
+    AccessibilitySearchKeyMap* searchKeyMap = new AccessibilitySearchKeyMap;
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(searchKeys); i++)
+        searchKeyMap->set(searchKeys[i].key, searchKeys[i].value);
+    
+    return searchKeyMap;
+}
+
+static AccessibilitySearchKey accessibilitySearchKeyForString(const String& value)
+{
+    if (value.isEmpty())
+        return AnyTypeSearchKey;
+    
+    static const AccessibilitySearchKeyMap* searchKeyMap = createAccessibilitySearchKeyMap();
+    AccessibilitySearchKey searchKey = searchKeyMap->get(value);    
+    return searchKey ? searchKey : AnyTypeSearchKey;
+}
+
+AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(const NSDictionary *parameterizedAttribute)
+{
+    NSString *directionParameter = [parameterizedAttribute objectForKey:@"AXDirection"];
+    NSNumber *immediateDescendantsOnlyParameter = [parameterizedAttribute objectForKey:NSAccessibilityImmediateDescendantsOnly];
+    NSNumber *resultsLimitParameter = [parameterizedAttribute objectForKey:@"AXResultsLimit"];
+    NSString *searchTextParameter = [parameterizedAttribute objectForKey:@"AXSearchText"];
+    WebAccessibilityObjectWrapperBase *startElementParameter = [parameterizedAttribute objectForKey:@"AXStartElement"];
+    NSNumber *visibleOnlyParameter = [parameterizedAttribute objectForKey:@"AXVisibleOnly"];
+    id searchKeyParameter = [parameterizedAttribute objectForKey:@"AXSearchKey"];
+    
+    AccessibilitySearchDirection direction = SearchDirectionNext;
+    if ([directionParameter isKindOfClass:[NSString class]])
+        direction = [directionParameter isEqualToString:@"AXDirectionNext"] ? SearchDirectionNext : SearchDirectionPrevious;
+    
+    bool immediateDescendantsOnly = false;
+    if ([immediateDescendantsOnlyParameter isKindOfClass:[NSNumber class]])
+        immediateDescendantsOnly = [immediateDescendantsOnlyParameter boolValue];
+    
+    unsigned resultsLimit = 0;
+    if ([resultsLimitParameter isKindOfClass:[NSNumber class]])
+        resultsLimit = [resultsLimitParameter unsignedIntValue];
+    
+    String searchText;
+    if ([searchTextParameter isKindOfClass:[NSString class]])
+        searchText = searchTextParameter;
+    
+    AccessibilityObject* startElement = nullptr;
+    if ([startElementParameter isKindOfClass:[WebAccessibilityObjectWrapperBase class]])
+        startElement = [startElementParameter accessibilityObject];
+    
+    bool visibleOnly = false;
+    if ([visibleOnlyParameter isKindOfClass:[NSNumber class]])
+        visibleOnly = [visibleOnlyParameter boolValue];
+    
+    AccessibilitySearchCriteria criteria = AccessibilitySearchCriteria(startElement, direction, searchText, resultsLimit, visibleOnly, immediateDescendantsOnly);
+    
+    if ([searchKeyParameter isKindOfClass:[NSString class]])
+        criteria.searchKeys.append(accessibilitySearchKeyForString(searchKeyParameter));
+    else if ([searchKeyParameter isKindOfClass:[NSArray class]]) {
+        size_t searchKeyCount = static_cast<size_t>([searchKeyParameter count]);
+        criteria.searchKeys.reserveInitialCapacity(searchKeyCount);
+        for (size_t i = 0; i < searchKeyCount; ++i) {
+            NSString *searchKey = [searchKeyParameter objectAtIndex:i];
+            if ([searchKey isKindOfClass:[NSString class]])
+                criteria.searchKeys.uncheckedAppend(accessibilitySearchKeyForString(searchKey));
+        }
+    }
+    
+    return criteria;
 }
 
 @end

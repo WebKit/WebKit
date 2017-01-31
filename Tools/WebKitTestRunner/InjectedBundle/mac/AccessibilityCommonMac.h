@@ -31,6 +31,8 @@
 #ifndef AccessibilityCommonMac_h
 #define AccessibilityCommonMac_h
 
+#import "AccessibilityUIElement.h"
+
 #import <JavaScriptCore/JSStringRef.h>
 
 // If an unsupported attribute is passed in, it will raise an accessibility exception. These are usually caught by the Accessibility Runtime to inform
@@ -43,5 +45,11 @@
 + (NSString *)stringWithJSStringRef:(JSStringRef)jsStringRef;
 - (JSStringRef)createJSStringRef;
 @end
+
+namespace WTR {
+    
+extern NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRef, AccessibilityUIElement *startElement, bool isDirectionNext, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
+
+};
 
 #endif // AccessibilityCommonMac_h

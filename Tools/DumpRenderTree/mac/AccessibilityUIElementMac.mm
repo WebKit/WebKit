@@ -203,58 +203,6 @@ static JSStringRef descriptionOfElements(Vector<AccessibilityUIElement>& element
     return [allElementString createJSStringRef];
 }
 
-static NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRef context, AccessibilityUIElement *startElement, bool isDirectionNext, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
-{
-    NSMutableDictionary *parameterizedAttribute = [NSMutableDictionary dictionary];
-    
-    if (startElement && startElement->platformUIElement())
-        [parameterizedAttribute setObject:(id)startElement->platformUIElement() forKey:@"AXStartElement"];
-    
-    [parameterizedAttribute setObject:(isDirectionNext) ? @"AXDirectionNext" : @"AXDirectionPrevious" forKey:@"AXDirection"];
-    
-    [parameterizedAttribute setObject:@(resultsLimit) forKey:@"AXResultsLimit"];
-    
-    if (searchKey) {
-        id searchKeyParameter = nil;
-        if (JSValueIsString(context, searchKey)) {
-            JSRetainPtr<JSStringRef> searchKeyString(Adopt, JSValueToStringCopy(context, searchKey, nullptr));
-            if (searchKeyString)
-                searchKeyParameter = [NSString stringWithJSStringRef:searchKeyString.get()];
-        }
-        else if (JSValueIsObject(context, searchKey)) {
-            JSObjectRef searchKeyArray = JSValueToObject(context, searchKey, nullptr);
-            unsigned searchKeyArrayLength = 0;
-            
-            JSRetainPtr<JSStringRef> lengthPropertyString(Adopt, JSStringCreateWithUTF8CString("length"));
-            JSValueRef searchKeyArrayLengthValue = JSObjectGetProperty(context, searchKeyArray, lengthPropertyString.get(), nullptr);
-            if (searchKeyArrayLengthValue && JSValueIsNumber(context, searchKeyArrayLengthValue))
-                searchKeyArrayLength = static_cast<unsigned>(JSValueToNumber(context, searchKeyArrayLengthValue, nullptr));
-            
-            for (unsigned i = 0; i < searchKeyArrayLength; ++i) {
-                JSValueRef searchKeyValue = JSObjectGetPropertyAtIndex(context, searchKeyArray, i, nullptr);
-                JSStringRef searchKeyString = JSValueToStringCopy(context, searchKeyValue, nullptr);
-                if (searchKeyString) {
-                    if (!searchKeyParameter)
-                        searchKeyParameter = [NSMutableArray array];
-                    [searchKeyParameter addObject:[NSString stringWithJSStringRef:searchKeyString]];
-                    JSStringRelease(searchKeyString);
-                }
-            }
-        }
-        if (searchKeyParameter)
-            [parameterizedAttribute setObject:searchKeyParameter forKey:@"AXSearchKey"];
-    }
-    
-    if (searchText && JSStringGetLength(searchText))
-        [parameterizedAttribute setObject:[NSString stringWithJSStringRef:searchText] forKey:@"AXSearchText"];
-    
-    [parameterizedAttribute setObject:@(visibleOnly) forKey:@"AXVisibleOnly"];
-    
-    [parameterizedAttribute setObject:@(immediateDescendantsOnly) forKey:@"AXImmediateDescendantsOnly"];
-    
-    return parameterizedAttribute;
-}
-
 static NSDictionary *selectTextParameterizedAttributeForCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity)
 {
     NSMutableDictionary *parameterizedAttribute = [NSMutableDictionary dictionary];
