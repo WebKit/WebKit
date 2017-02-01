@@ -1,5 +1,22 @@
 2017-01-31  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211386. rdar://problem/30204866
+
+    2017-01-30  Jer Noble  <jer.noble@apple.com>
+
+            NULL-deref crash at PlatformMediaSession::endInterruption
+            https://bugs.webkit.org/show_bug.cgi?id=167595
+
+            Reviewed by Eric Carlson.
+
+            Use the same, NULL-aware forEachSession() iterator rather than iterating over m_sessions directly.
+
+            * platform/audio/PlatformMediaSessionManager.cpp:
+            (WebCore::PlatformMediaSessionManager::beginInterruption):
+            (WebCore::PlatformMediaSessionManager::endInterruption):
+
+2017-01-31  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211337. rdar://problem/30126535
 
     2017-01-28  Zalan Bujtas  <zalan@apple.com>
