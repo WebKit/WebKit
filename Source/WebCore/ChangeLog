@@ -1,3 +1,25 @@
+2017-02-01  Jer Noble  <jer.noble@apple.com>
+
+        NULL-deref crash in TextTrack::removeCue()
+        https://bugs.webkit.org/show_bug.cgi?id=167615
+
+        Reviewed by Eric Carlson.
+
+        Test: http/tests/media/track-in-band-hls-metadata-crash.html
+
+        Follow-up to r211401. When passing around a reference to an object, the assumption is that
+        the caller is retaining the underlying object. This breaks down for
+        InbandDataTextTrack::removeDataCue(), which releases its own ownership of the cue object,
+        then passes the reference to that object to its superclass to do further remove steps. The
+        retain count of the cue can thus drop to zero within the scope of
+        InbandTextTrack::removeCue(). Use "take" semantics to remove the cue from the
+        m_incompleteCueMap without releasing ownership, and pass a reference to that retained object
+        on to removeCue(), guaranteeing that the cue will not be destroyed until after the
+        romeveDataCue() method returns.
+
+        * html/track/InbandDataTextTrack.cpp:
+        (WebCore::InbandDataTextTrack::removeDataCue):
+
 2017-02-01  Nan Wang  <n_wang@apple.com>
 
         AX: Incorrect range from index and length in text controls when there are newlines

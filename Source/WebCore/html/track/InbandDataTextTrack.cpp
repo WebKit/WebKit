@@ -100,9 +100,9 @@ void InbandDataTextTrack::updateDataCue(const MediaTime& start, const MediaTime&
 
 void InbandDataTextTrack::removeDataCue(const MediaTime&, const MediaTime&, SerializedPlatformRepresentation& platformValue)
 {
-    if (auto* cue = m_incompleteCueMap.get(&platformValue)) {
+    if (auto cue = m_incompleteCueMap.take(&platformValue)) {
         LOG(Media, "InbandDataTextTrack::removeDataCue removing cue: start=%s, end=%s\n", toString(cue->startTime()).utf8().data(), toString(cue->endTime()).utf8().data());
-        removeCue(*cue);
+        InbandTextTrack::removeCue(*cue);
     }
 }
 
