@@ -457,9 +457,9 @@ public:
     void pageScaleFactorChanged();
     void userInterfaceLayoutDirectionChanged();
     WEBCORE_EXPORT String getCurrentMediaControlsStatus();
-#endif
 
     MediaControlsHost* mediaControlsHost() { return m_mediaControlsHost.get(); }
+#endif
 
     bool isDisablingSleep() const { return m_sleepDisabler.get(); }
 
