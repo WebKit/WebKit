@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,6 +99,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     SandboxExtension::consumePermanently(parameters.applicationCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.mediaCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.mediaKeyStorageDirectoryExtensionHandle);
+#if ENABLE(MEDIA_STREAM)
+    SandboxExtension::consumePermanently(parameters.audioCaptureExtensionHandle);
+#endif
 #if PLATFORM(IOS)
     SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);

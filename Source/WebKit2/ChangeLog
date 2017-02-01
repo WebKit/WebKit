@@ -1,3 +1,30 @@
+2017-01-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebRTC][WebKit2] Support expanding the sandbox to allow microphone access at process launch
+        https://bugs.webkit.org/show_bug.cgi?id=167669
+        <rdar://problem/29974333>
+
+        Reviewed by Alexey Proskuryakov.
+
+        This change implements a temporary workaround to <rdar://problem/29448368> to allow us to do live
+        testing of WebRTC microphone access. It should be removed when that underlying bug is fixed.
+
+        This change adds a new process creation parameter that indicates whether we wish to expand the
+        sandbox to allow microphone access.
+
+        Tested by WebRTC suite (part of another set of bugs).
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Serialize the audio access entitlement handle.
+        (WebKit::WebProcessCreationParameters::decode): Ditto.
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess): Create an entitlement handle and pass along to
+        the child process.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess): If an audio entitlement (for the microphone)
+        was desired, expand the sandbox to include access.
+
 2017-01-31  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build.

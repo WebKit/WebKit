@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,6 +78,9 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
     encoder << mediaKeyStorageDirectory;
     encoder << mediaKeyStorageDirectoryExtensionHandle;
+#if ENABLE(MEDIA_STREAM)
+    encoder << audioCaptureExtensionHandle;
+#endif
     encoder << shouldUseTestingNetworkSession;
     encoder << urlSchemesRegisteredAsEmptyDocument;
     encoder << urlSchemesRegisteredAsSecure;
@@ -194,6 +197,10 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     if (!decoder.decode(parameters.mediaKeyStorageDirectoryExtensionHandle))
         return false;
+#if ENABLE(MEDIA_STREAM)
+    if (!decoder.decode(parameters.audioCaptureExtensionHandle))
+        return false;
+#endif
     if (!decoder.decode(parameters.shouldUseTestingNetworkSession))
         return false;
     if (!decoder.decode(parameters.urlSchemesRegisteredAsEmptyDocument))
