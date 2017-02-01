@@ -1,3 +1,11 @@
+2017-02-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        ios-simulator TestExpectations gardening.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2017-02-01  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Implement ReadableByteStreamController pull()

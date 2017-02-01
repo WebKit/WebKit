@@ -2839,3 +2839,6 @@ quicklook/password-protected.html [ Skip ]
 
 webkit.org/b/167376 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ Pass Failure ]
 webkit.org/b/167211 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html [ Pass Failure ]
+
+webkit.org/b/167620 compositing/geometry/fixed-in-composited.html [ Failure ]
+webkit.org/b/167619 css3/filters/backdrop/dynamic-with-clip-path.html [ ImageOnlyFailure ]
