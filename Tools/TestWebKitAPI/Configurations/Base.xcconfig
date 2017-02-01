@@ -32,8 +32,6 @@ CLANG_CXX_LANGUAGE_STANDARD = gnu++14;
 CLANG_CXX_LIBRARY = libc++;
 CLANG_WARN_CXX0X_EXTENSIONS = NO;
 HEADER_SEARCH_PATHS = ${BUILT_PRODUCTS_DIR}/usr/local/include $(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders $(WEBCORE_PRIVATE_HEADERS_DIR)/icu $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport;
-FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_$(PLATFORM_NAME));
-FRAMEWORK_SEARCH_PATHS_macosx = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks;
 
 GCC_NO_COMMON_BLOCKS = YES;
 GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(FEATURE_DEFINES) GTEST_HAS_TR1_TUPLE=0 GTEST_HAS_RTTI=0 $(GCC_PREPROCESSOR_DEFINITIONS_$(PLATFORM_NAME));
@@ -94,5 +92,6 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = *IOS.h *IOS.cpp *IOS.mm;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *Mac.h *Mac.cpp *Mac.mm */mac/*;
 
 OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS);
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS);
 OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);

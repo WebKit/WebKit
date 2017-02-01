@@ -1,3 +1,18 @@
+2017-02-01  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] TestWebKitAPI includes system frameworks incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=167703
+        rdar://problem/30301498
+
+        Reviewed by Ryosuke Niwa.
+
+        FRAMEWORK_SEARCH_PATH results in frameworks being treated as user ones, not system.
+        Make TestWebKitAPI use -iframework instead, like the rest of WebKit does.
+
+        Also, reduced the number of subframework search paths, looks like we only need one now.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+
 2017-02-01  Brent Fulgham  <bfulgham@apple.com>
 
         Correct "filesHaveSameVolume" predicate
