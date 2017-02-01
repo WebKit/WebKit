@@ -73,6 +73,8 @@ CAAudioStreamDescription::CAAudioStreamDescription(double sampleRate, UInt32 num
         break;
     case None:
         ASSERT_NOT_REACHED();
+        wordsize = 0;
+        break;
     }
 
     m_streamDescription.mBitsPerChannel = wordsize * 8;
