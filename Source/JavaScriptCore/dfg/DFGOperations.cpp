@@ -2351,6 +2351,19 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
         worklistState = Worklist::NotKnown;
 
     JITCode* jitCode = codeBlock->jitCode()->dfg();
+
+    bool triggeredSlowPath = false;
+    auto tierUpEntryTriggers = jitCode->tierUpEntryTriggers.find(osrEntryBytecodeIndex);
+    if (tierUpEntryTriggers != jitCode->tierUpEntryTriggers.end()) {
+        if (tierUpEntryTriggers->value == 1) {
+            // We were asked to enter as soon as possible. Unset this trigger so we don't continually enter.
+            if (Options::verboseOSR())
+                dataLog("EntryTrigger for ", *codeBlock, " forced slow-path.\n");
+            triggeredSlowPath = true;
+            tierUpEntryTriggers->value = 0;
+        }
+    }
+
     if (worklistState == Worklist::Compiling) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("still compiling"));
         jitCode->setOptimizationThresholdBasedOnCompilationResult(
@@ -2366,8 +2379,12 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
         return nullptr;
     }
 
+    // The following is only true for triggerTierUpNowInLoop, which can never
+    // be an OSR entry.
+    bool canOSRFromHere = originBytecodeIndex == osrEntryBytecodeIndex;
+
     // If we can OSR Enter, do it right away.
-    if (originBytecodeIndex == osrEntryBytecodeIndex) {
+    if (canOSRFromHere) {
         unsigned streamIndex = jitCode->bytecodeIndexToStreamIndex.get(originBytecodeIndex);
         if (CodeBlock* entryBlock = jitCode->osrEntryBlock()) {
             if (void* address = FTL::prepareOSREntry(exec, codeBlock, entryBlock, originBytecodeIndex, streamIndex)) {
@@ -2381,10 +2398,10 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
     // - If we do have an FTL code block, then try to enter for a while.
     // - If we couldn't enter for a while, then trigger OSR entry.
 
-    if (!shouldTriggerFTLCompile(codeBlock, jitCode))
+    if (!shouldTriggerFTLCompile(codeBlock, jitCode) && !triggeredSlowPath)
         return nullptr;
 
-    if (!jitCode->neverExecutedEntry) {
+    if (!jitCode->neverExecutedEntry && !triggeredSlowPath) {
         triggerFTLReplacementCompile(vm, codeBlock, jitCode);
 
         if (!codeBlock->hasOptimizedReplacement())
@@ -2430,13 +2447,28 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
         return nullptr;
     }
 
+    if (!canOSRFromHere) {
+        // We can't OSR from here, or even start a compilation because doing so
+        // calls jitCode->reconstruct which would get the wrong state.
+        if (Options::verboseOSR())
+            dataLog("Non-OSR-able bc#", originBytecodeIndex, " in ", *codeBlock, " setting parent loop's trigger and backing off.\n");
+        jitCode->tierUpEntryTriggers.set(osrEntryBytecodeIndex, 1);
+        jitCode->dontOptimizeAnytimeSoon(codeBlock);
+        return nullptr;
+    }
+
     unsigned streamIndex = jitCode->bytecodeIndexToStreamIndex.get(osrEntryBytecodeIndex);
-    auto tierUpHierarchyEntry = jitCode->tierUpInLoopHierarchy.find(osrEntryBytecodeIndex);
-    if (tierUpHierarchyEntry != jitCode->tierUpInLoopHierarchy.end()) {
-        for (unsigned osrEntryCandidate : tierUpHierarchyEntry->value) {
-            if (jitCode->tierUpEntrySeen.contains(osrEntryCandidate)) {
-                osrEntryBytecodeIndex = osrEntryCandidate;
-                streamIndex = jitCode->bytecodeIndexToStreamIndex.get(osrEntryBytecodeIndex);
+
+    if (!triggeredSlowPath) {
+        auto tierUpHierarchyEntry = jitCode->tierUpInLoopHierarchy.find(osrEntryBytecodeIndex);
+        if (tierUpHierarchyEntry != jitCode->tierUpInLoopHierarchy.end()) {
+            for (unsigned osrEntryCandidate : tierUpHierarchyEntry->value) {
+                if (jitCode->tierUpEntrySeen.contains(osrEntryCandidate)) {
+                    // Ask an enclosing loop to compile, instead of doing so here.
+                    jitCode->tierUpEntryTriggers.set(osrEntryCandidate, 1);
+                    jitCode->dontOptimizeAnytimeSoon(codeBlock);
+                    return nullptr;
+                }
             }
         }
     }
