@@ -123,6 +123,8 @@ public:
 
     void retrieveData(const DataKey&, Function<void (const uint8_t* data, size_t size)>);
     void storeData(const DataKey&,  const uint8_t* data, size_t);
+    
+    std::unique_ptr<Entry> makeEntry(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&);
 
     void dumpContentsToFile();
 

@@ -43,24 +43,23 @@ public:
     static bool decode(WTF::Persistence::Decoder&, SubresourceInfo&);
 
     SubresourceInfo() = default;
-    SubresourceInfo(const Key& key, const WebCore::ResourceRequest& request)
-        : m_key(key)
-        , m_firstPartyForCookies(request.firstPartyForCookies())
-        , m_requestHeaders(request.httpHeaderFields())
-        , m_priority(request.priority())
-    {
-    }
+    SubresourceInfo(const Key&, const WebCore::ResourceRequest&, const SubresourceInfo* previousInfo);
 
     const Key& key() const { return m_key; }
+    std::chrono::system_clock::time_point lastSeen() const { return m_lastSeen; }
+    std::chrono::system_clock::time_point firstSeen() const { return m_firstSeen; }
+
     bool isTransient() const { return m_isTransient; }
     const WebCore::URL& firstPartyForCookies() const { ASSERT(!m_isTransient); return m_firstPartyForCookies; }
     const WebCore::HTTPHeaderMap& requestHeaders() const { ASSERT(!m_isTransient); return m_requestHeaders; }
     WebCore::ResourceLoadPriority priority() const { ASSERT(!m_isTransient); return m_priority; }
     
-    void setTransient() { m_isTransient = true; }
+    void setNonTransient() { m_isTransient = false; }
 
 private:
     Key m_key;
+    std::chrono::system_clock::time_point m_lastSeen;
+    std::chrono::system_clock::time_point m_firstSeen;
     bool m_isTransient { false };
     WebCore::URL m_firstPartyForCookies;
     WebCore::HTTPHeaderMap m_requestHeaders;

@@ -76,7 +76,7 @@ private:
     WebCore::ResourceResponse m_response;
 
     RefPtr<WebCore::SharedBuffer> m_bufferedDataForCache;
-    std::unique_ptr<NetworkCache::Entry> m_cacheEntryForValidation;
+    std::unique_ptr<NetworkCache::Entry> m_cacheEntry;
 };
 
 } // namespace NetworkCache

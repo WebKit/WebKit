@@ -46,10 +46,9 @@ SpeculativeLoad::SpeculativeLoad(const GlobalFrameID& frameID, const ResourceReq
     , m_completionHandler(WTFMove(completionHandler))
     , m_originalRequest(request)
     , m_bufferedDataForCache(SharedBuffer::create())
-    , m_cacheEntryForValidation(WTFMove(cacheEntryForValidation))
+    , m_cacheEntry(WTFMove(cacheEntryForValidation))
 {
-    ASSERT(m_cacheEntryForValidation);
-    ASSERT(m_cacheEntryForValidation->needsValidation());
+    ASSERT(!m_cacheEntry || m_cacheEntry->needsValidation());
 
     NetworkLoadParameters parameters;
     parameters.sessionID = SessionID::defaultSessionID();
@@ -82,20 +81,18 @@ auto SpeculativeLoad::didReceiveResponse(ResourceResponse&& receivedResponse) ->
     if (m_response.isMultipart())
         m_bufferedDataForCache = nullptr;
 
-    ASSERT(m_cacheEntryForValidation);
-
     bool validationSucceeded = m_response.httpStatusCode() == 304; // 304 Not Modified
-    if (validationSucceeded)
-        m_cacheEntryForValidation = NetworkCache::singleton().update(m_originalRequest, m_frameID, *m_cacheEntryForValidation, m_response);
+    if (validationSucceeded && m_cacheEntry)
+        m_cacheEntry = NetworkCache::singleton().update(m_originalRequest, m_frameID, *m_cacheEntry, m_response);
     else
-        m_cacheEntryForValidation = nullptr;
+        m_cacheEntry = nullptr;
 
     return ShouldContinueDidReceiveResponse::Yes;
 }
 
 void SpeculativeLoad::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
 {
-    ASSERT(!m_cacheEntryForValidation);
+    ASSERT(!m_cacheEntry);
 
     if (m_bufferedDataForCache) {
         // Prevent memory growth in case of streaming data.
@@ -109,8 +106,12 @@ void SpeculativeLoad::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedE
 
 void SpeculativeLoad::didFinishLoading(double finishTime)
 {
-    if (!m_cacheEntryForValidation && m_bufferedDataForCache)
-        m_cacheEntryForValidation = NetworkCache::singleton().store(m_originalRequest, m_response, WTFMove(m_bufferedDataForCache), [](auto& mappedBody) { });
+    if (!m_cacheEntry && m_bufferedDataForCache) {
+        m_cacheEntry = NetworkCache::singleton().store(m_originalRequest, m_response, WTFMove(m_bufferedDataForCache), [](auto& mappedBody) { });
+        // Create a synthetic cache entry if we can't store.
+        if (!m_cacheEntry && m_response.httpStatusCode() == 200)
+            m_cacheEntry = NetworkCache::singleton().makeEntry(m_originalRequest, m_response, WTFMove(m_bufferedDataForCache));
+    }
 
     didComplete();
 }
@@ -124,7 +125,7 @@ void SpeculativeLoad::canAuthenticateAgainstProtectionSpaceAsync(const WebCore::
 
 void SpeculativeLoad::didFailLoading(const ResourceError&)
 {
-    m_cacheEntryForValidation = nullptr;
+    m_cacheEntry = nullptr;
 
     didComplete();
 }
@@ -134,7 +135,7 @@ void SpeculativeLoad::abort()
     if (m_networkLoad)
         m_networkLoad->cancel();
 
-    m_cacheEntryForValidation = nullptr;
+    m_cacheEntry = nullptr;
     didComplete();
 }
 
@@ -145,10 +146,10 @@ void SpeculativeLoad::didComplete()
     m_networkLoad = nullptr;
 
     // Make sure speculatively revalidated resources do not get validated by the NetworkResourceLoader again.
-    if (m_cacheEntryForValidation)
-        m_cacheEntryForValidation->setNeedsValidation(false);
+    if (m_cacheEntry)
+        m_cacheEntry->setNeedsValidation(false);
 
-    m_completionHandler(WTFMove(m_cacheEntryForValidation));
+    m_completionHandler(WTFMove(m_cacheEntry));
 }
 
 } // namespace NetworkCache
