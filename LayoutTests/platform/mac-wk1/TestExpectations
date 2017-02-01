@@ -290,6 +290,8 @@ webkit.org/b/164933 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 webkit.org/b/165541 compositing/layer-creation/fixed-overlap-extent-rtl.html [ Failure ]
 webkit.org/b/165541 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
 
+webkit.org/b/154612 [ Sierra ] compositing/repaint/fixed-background-scroll.html [ Pass Failure ]
+
 webkit.org/b/165589 pointer-lock/lock-lost-on-esc-in-fullscreen.html [ Skip ]
 
 # webkit.org/b/163585
