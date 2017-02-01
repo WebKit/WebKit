@@ -28,6 +28,8 @@
 
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
 
+#include "CAAudioStreamDescription.h"
+#include <Accelerate/Accelerate.h>
 #include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/MathExtras.h>
 
@@ -37,17 +39,14 @@ const uint32_t kGeneralRingTimeBoundsQueueMask = kGeneralRingTimeBoundsQueueSize
 namespace WebCore {
 
 CARingBuffer::CARingBuffer()
-    : m_channelCount(0)
-    , m_frameCount(0)
-    , m_capacityBytes(0)
-    , m_timeBoundsQueue(kGeneralRingTimeBoundsQueueSize)
-    , m_timeBoundsQueuePtr(0)
+    : m_timeBoundsQueue(kGeneralRingTimeBoundsQueueSize)
 {
 }
 
-CARingBuffer::~CARingBuffer()
+void CARingBuffer::allocate(const CAAudioStreamDescription& format, size_t frameCount)
 {
-    deallocate();
+    m_description = format;
+    allocate(format.numberOfChannelStreams(), format.bytesPerFrame(), frameCount);
 }
 
 void CARingBuffer::allocate(uint32_t channelCount, size_t bytesPerFrame, size_t frameCount)
@@ -74,12 +73,7 @@ void CARingBuffer::allocate(uint32_t channelCount, size_t bytesPerFrame, size_t 
         channelData += m_capacityBytes;
     }
 
-    for (auto timeBounds : m_timeBoundsQueue) {
-        timeBounds.m_startFrame = 0;
-        timeBounds.m_endFrame = 0;
-        timeBounds.m_updateCounter = 0;
-    }
-    m_timeBoundsQueuePtr = 0;
+    flush();
 }
 
 void CARingBuffer::deallocate()
@@ -113,14 +107,46 @@ static void StoreABL(Byte** buffers, size_t destOffset, const AudioBufferList* l
     }
 }
 
-static void FetchABL(AudioBufferList* list, size_t destOffset, Byte** buffers, size_t srcOffset, size_t nbytes)
+static void FetchABL(AudioBufferList* list, size_t destOffset, Byte** buffers, size_t srcOffset, size_t nbytes, AudioStreamDescription::PCMFormat format, CARingBuffer::FetchMode mode)
 {
     int channelCount = list->mNumberBuffers;
     AudioBuffer* dest = list->mBuffers;
     while (--channelCount >= 0) {
         if (destOffset > dest->mDataByteSize)
             continue;
-        memcpy(static_cast<Byte*>(dest->mData) + destOffset, *buffers + srcOffset, std::min<size_t>(nbytes, dest->mDataByteSize - destOffset));
+
+        nbytes = std::min<size_t>(nbytes, dest->mDataByteSize - destOffset);
+        if (mode == CARingBuffer::Copy)
+            memcpy(static_cast<Byte*>(dest->mData) + destOffset, *buffers + srcOffset, nbytes);
+        else {
+            switch (format) {
+            case AudioStreamDescription::Int16: {
+                int16_t* destination = static_cast<int16_t*>(dest->mData);
+                int16_t* source = reinterpret_cast<int16_t*>(*buffers + srcOffset);
+                for (size_t i = 0; i < nbytes / sizeof(int16_t); i++)
+                    destination[i] += source[i];
+                break;
+            }
+            case AudioStreamDescription::Int32: {
+                int32_t* destination = static_cast<int32_t*>(dest->mData);
+                vDSP_vaddi(destination, 1, reinterpret_cast<int32_t*>(*buffers + srcOffset), 1, destination, 1, nbytes / sizeof(int32_t));
+                break;
+            }
+            case AudioStreamDescription::Float32: {
+                float* destination = static_cast<float*>(dest->mData);
+                vDSP_vadd(destination, 1, reinterpret_cast<float*>(*buffers + srcOffset), 1, destination, 1, nbytes / sizeof(float));
+                break;
+            }
+            case AudioStreamDescription::Float64: {
+                double* destination = static_cast<double*>(dest->mData);
+                vDSP_vaddD(destination, 1, reinterpret_cast<double*>(*buffers + srcOffset), 1, destination, 1, nbytes / sizeof(double));
+                break;
+            }
+            case AudioStreamDescription::None:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+        }
         ++buffers;
         ++dest;
     }
@@ -136,6 +162,17 @@ inline void ZeroABL(AudioBufferList* list, size_t destOffset, size_t nbytes)
         memset(static_cast<Byte*>(dest->mData) + destOffset, 0, std::min<size_t>(nbytes, dest->mDataByteSize - destOffset));
         ++dest;
     }
+}
+
+void CARingBuffer::flush()
+{
+    LockHolder locker(m_currentFrameBoundsLock);
+    for (auto& timeBounds : m_timeBoundsQueue) {
+        timeBounds.m_startFrame = 0;
+        timeBounds.m_endFrame = 0;
+        timeBounds.m_updateCounter = 0;
+    }
+    m_timeBoundsQueuePtr = 0;
 }
 
 CARingBuffer::Error CARingBuffer::store(const AudioBufferList* list, size_t framesToWrite, uint64_t startFrame)
@@ -249,7 +286,7 @@ uint64_t CARingBuffer::currentEndFrame() const
     return m_timeBoundsQueue[index].m_endFrame;
 }
 
-CARingBuffer::Error CARingBuffer::fetch(AudioBufferList* list, size_t nFrames, uint64_t startRead)
+CARingBuffer::Error CARingBuffer::fetch(AudioBufferList* list, size_t nFrames, uint64_t startRead, FetchMode mode)
 {
     if (!nFrames)
         return Ok;
@@ -286,11 +323,12 @@ CARingBuffer::Error CARingBuffer::fetch(AudioBufferList* list, size_t nFrames, u
     
     if (offset0 < offset1) {
         nbytes = offset1 - offset0;
-        FetchABL(list, destStartByteOffset, buffers, offset0, nbytes);
+        FetchABL(list, destStartByteOffset, buffers, offset0, nbytes, m_description.format(), mode);
     } else {
         nbytes = m_capacityBytes - offset0;
-        FetchABL(list, destStartByteOffset, buffers, offset0, nbytes);
-        FetchABL(list, destStartByteOffset + nbytes, buffers, 0, offset1);
+        FetchABL(list, destStartByteOffset, buffers, offset0, nbytes, m_description.format(), mode);
+        if (offset1)
+            FetchABL(list, destStartByteOffset + nbytes, buffers, 0, offset1, m_description.format(), mode);
         nbytes += offset1;
     }
     

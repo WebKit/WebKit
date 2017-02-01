@@ -28,6 +28,15 @@
 
 namespace WebCore {
 
+CAAudioStreamDescription::CAAudioStreamDescription()
+    : m_streamDescription({ })
+{
+}
+    
+CAAudioStreamDescription::~CAAudioStreamDescription()
+{
+}
+
 CAAudioStreamDescription::CAAudioStreamDescription(const AudioStreamBasicDescription &desc)
     : m_streamDescription(desc)
 {
@@ -46,6 +55,14 @@ CAAudioStreamDescription::CAAudioStreamDescription(double sampleRate, UInt32 num
 
     int wordsize;
     switch (format) {
+    case Int16:
+        wordsize = 2;
+        m_streamDescription.mFormatFlags |= kAudioFormatFlagIsSignedInteger;
+        break;
+    case Int32:
+        wordsize = 4;
+        m_streamDescription.mFormatFlags |= kAudioFormatFlagIsSignedInteger;
+        break;
     case Float32:
         wordsize = 4;
         m_streamDescription.mFormatFlags |= kAudioFormatFlagIsFloat;
@@ -53,10 +70,6 @@ CAAudioStreamDescription::CAAudioStreamDescription(double sampleRate, UInt32 num
     case Float64:
         wordsize = 8;
         m_streamDescription.mFormatFlags |= kAudioFormatFlagIsFloat;
-        break;
-    case Int16:
-        wordsize = 2;
-        m_streamDescription.mFormatFlags |= kAudioFormatFlagIsSignedInteger;
         break;
     case None:
         ASSERT_NOT_REACHED();
@@ -109,7 +122,7 @@ AudioStreamDescription::PCMFormat CAAudioStreamDescription::format() const
 
             if (wordsize == sizeof(float))
                 return m_format = Float32;
-            else if (wordsize == sizeof(double))
+            if (wordsize == sizeof(double))
                 return m_format = Float64;
 
             return None;
@@ -117,20 +130,16 @@ AudioStreamDescription::PCMFormat CAAudioStreamDescription::format() const
 
         if (m_streamDescription.mFormatFlags & kLinearPCMFormatFlagIsSignedInteger) {
             unsigned fractionBits = (m_streamDescription.mFormatFlags & kLinearPCMFormatFlagsSampleFractionMask) >> kLinearPCMFormatFlagsSampleFractionShift;
-            if (wordsize == 2 && !fractionBits)
-                return m_format = Int16;
+            if (!fractionBits) {
+                if (wordsize == sizeof(int16_t))
+                    return m_format = Int16;
+                if (wordsize == sizeof(int32_t))
+                    return m_format = Int32;
+            }
         }
     }
 
     return None;
-}
-
-bool CAAudioStreamDescription::operator==(const AudioStreamDescription& other)
-{
-    if (other.platformDescription().type != PlatformDescription::CAAudioStreamBasicType)
-        return false;
-
-    return operator==(*WTF::get<const AudioStreamBasicDescription*>(other.platformDescription().description));
 }
 
 bool operator==(const AudioStreamBasicDescription& a, const AudioStreamBasicDescription& b)

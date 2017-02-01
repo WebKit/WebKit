@@ -48,6 +48,7 @@ public:
     enum PCMFormat {
         None,
         Int16,
+        Int32,
         Float32,
         Float64
     };

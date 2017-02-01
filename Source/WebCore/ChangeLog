@@ -1,3 +1,43 @@
+2017-02-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Update CARingBuffer class
+        https://bugs.webkit.org/show_bug.cgi?id=167656
+
+        Reviewed by Jer Noble.
+
+        API test CARingBufferTest added.
+
+        * WebCore.xcodeproj/project.pbxproj: Add headers to framework so they can be used from the API test.
+
+        * platform/audio/AudioStreamDescription.h: Add Int32.
+
+        * platform/audio/mac/CAAudioStreamDescription.cpp:
+        (WebCore::CAAudioStreamDescription::CAAudioStreamDescription):
+        (WebCore::CAAudioStreamDescription::~CAAudioStreamDescription):
+        (WebCore::CAAudioStreamDescription::format): Support Int32.
+        (WebCore::CAAudioStreamDescription::operator==): Make inline.
+        * platform/audio/mac/CAAudioStreamDescription.h:
+
+        * platform/audio/mac/CARingBuffer.cpp:
+        (WebCore::CARingBuffer::CARingBuffer): Move initializers into class declaration.
+        (WebCore::CARingBuffer::allocate): Use flush method, get allocation info from a CAAudioStreamDescription.
+        (WebCore::FetchABL): Add a mode parameter to allow samples to replace or mix into destination.
+        (WebCore::CARingBuffer::flush): New.
+        (WebCore::CARingBuffer::fetch): Add mode parameter.
+        (WebCore::CARingBuffer::~CARingBuffer): Deleted.
+        * platform/audio/mac/CARingBuffer.h:
+        (WebCore::CARingBuffer::~CARingBuffer):
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::prepare): Use new CARingBuffer constructor.
+        (WebCore::operator==): Deleted.
+        (WebCore::operator!=): Deleted.
+
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::prepare): Use new CARingBuffer constructor
+        (WebCore::operator==): Deleted.
+        (WebCore::operator!=): Deleted.
+
 2017-02-01  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Move TextFragmentIterator::runWidth to ::textWidth.

@@ -35,15 +35,18 @@ inline bool operator!=(const AudioStreamBasicDescription& a, const AudioStreamBa
 
 class CAAudioStreamDescription final : public AudioStreamDescription {
 public:
-    CAAudioStreamDescription(const AudioStreamBasicDescription&);
-    CAAudioStreamDescription(double, uint32_t, PCMFormat, bool);
+
+    WEBCORE_EXPORT CAAudioStreamDescription();
+    WEBCORE_EXPORT CAAudioStreamDescription(const AudioStreamBasicDescription&);
+    WEBCORE_EXPORT CAAudioStreamDescription(double, uint32_t, PCMFormat, bool);
+    WEBCORE_EXPORT ~CAAudioStreamDescription();
 
     const PlatformDescription& platformDescription() const final;
 
     PCMFormat format() const final;
 
     double sampleRate() const final { return m_streamDescription.mSampleRate; }
-
+    bool isPCM() const final { return m_streamDescription.mFormatID == kAudioFormatLinearPCM; }
     bool isInterleaved() const final { return !(m_streamDescription.mFormatFlags & kAudioFormatFlagIsNonInterleaved); }
     bool isSignedInteger() const final { return isPCM() && (m_streamDescription.mFormatFlags & kAudioFormatFlagIsSignedInteger); }
     bool isFloat() const final { return isPCM() && (m_streamDescription.mFormatFlags & kAudioFormatFlagIsFloat); }
@@ -61,7 +64,13 @@ public:
 
     bool operator==(const AudioStreamBasicDescription& other) { return m_streamDescription == other; }
     bool operator!=(const AudioStreamBasicDescription& other) { return !operator == (other); }
-    bool operator==(const AudioStreamDescription&);
+    bool operator==(const AudioStreamDescription& other)
+    {
+        if (other.platformDescription().type != PlatformDescription::CAAudioStreamBasicType)
+            return false;
+
+        return operator==(*WTF::get<const AudioStreamBasicDescription*>(other.platformDescription().description));
+    }
     bool operator!=(const AudioStreamDescription& other) { return !operator == (other); }
 
     const AudioStreamBasicDescription& streamDescription() { return m_streamDescription; }

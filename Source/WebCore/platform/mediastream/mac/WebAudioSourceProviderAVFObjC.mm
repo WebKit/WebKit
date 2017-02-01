@@ -134,23 +134,6 @@ void WebAudioSourceProviderAVFObjC::setClient(AudioSourceProviderClient* client)
     }
 }
 
-static bool operator==(const AudioStreamBasicDescription& a, const AudioStreamBasicDescription& b)
-{
-    return a.mSampleRate == b.mSampleRate
-        && a.mFormatID == b.mFormatID
-        && a.mFormatFlags == b.mFormatFlags
-        && a.mBytesPerPacket == b.mBytesPerPacket
-        && a.mFramesPerPacket == b.mFramesPerPacket
-        && a.mBytesPerFrame == b.mBytesPerFrame
-        && a.mChannelsPerFrame == b.mChannelsPerFrame
-        && a.mBitsPerChannel == b.mBitsPerChannel;
-}
-
-static bool operator!=(const AudioStreamBasicDescription& a, const AudioStreamBasicDescription& b)
-{
-    return !(a == b);
-}
-
 void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription* format)
 {
     LOG(Media, "WebAudioSourceProviderAVFObjC::prepare(%p)", this);
@@ -201,7 +184,7 @@ void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription* f
         return;
 
     m_ringBuffer = std::make_unique<CARingBuffer>();
-    m_ringBuffer->allocate(numberOfChannels, format->mBytesPerFrame, static_cast<size_t>(capacity));
+    m_ringBuffer->allocate(CAAudioStreamDescription(*format), static_cast<size_t>(capacity));
 
     m_listBufferSize = static_cast<size_t>(bufferListSize);
     m_list = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize)));

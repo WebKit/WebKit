@@ -264,23 +264,6 @@ void AudioSourceProviderAVFObjC::finalize()
 {
 }
 
-static bool operator==(const AudioStreamBasicDescription& a, const AudioStreamBasicDescription& b)
-{
-    return a.mSampleRate == b.mSampleRate
-        && a.mFormatID == b.mFormatID
-        && a.mFormatFlags == b.mFormatFlags
-        && a.mBytesPerPacket == b.mBytesPerPacket
-        && a.mFramesPerPacket == b.mFramesPerPacket
-        && a.mBytesPerFrame == b.mBytesPerFrame
-        && a.mChannelsPerFrame == b.mChannelsPerFrame
-        && a.mBitsPerChannel == b.mBitsPerChannel;
-}
-
-static bool operator!=(const AudioStreamBasicDescription& a, const AudioStreamBasicDescription& b)
-{
-    return !(a == b);
-}
-
 void AudioSourceProviderAVFObjC::prepare(CMItemCount maxFrames, const AudioStreamBasicDescription *processingFormat)
 {
     ASSERT(maxFrames >= 0);
@@ -289,7 +272,6 @@ void AudioSourceProviderAVFObjC::prepare(CMItemCount maxFrames, const AudioStrea
 
     m_tapDescription = std::make_unique<AudioStreamBasicDescription>(*processingFormat);
     int numberOfChannels = processingFormat->mChannelsPerFrame;
-    size_t bytesPerFrame = processingFormat->mBytesPerFrame;
     double sampleRate = processingFormat->mSampleRate;
     ASSERT(sampleRate >= 0);
 
@@ -314,7 +296,7 @@ void AudioSourceProviderAVFObjC::prepare(CMItemCount maxFrames, const AudioStrea
     size_t capacity = std::max(static_cast<size_t>(2 * maxFrames), static_cast<size_t>(kRingBufferDuration * sampleRate));
 
     m_ringBuffer = std::make_unique<CARingBuffer>();
-    m_ringBuffer->allocate(numberOfChannels, bytesPerFrame, capacity);
+    m_ringBuffer->allocate(CAAudioStreamDescription(*processingFormat), capacity);
 
     // AudioBufferList is a variable-length struct, so create on the heap with a generic new() operator
     // with a custom size, and initialize the struct manually.
