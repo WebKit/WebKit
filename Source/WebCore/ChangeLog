@@ -1,3 +1,9 @@
+2017-02-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix.
+
+        * html/HTMLMediaElement.h: Removed property svn:executable.
+
 2017-02-01  Jer Noble  <jer.noble@apple.com>
 
         NULL-deref crash in TextTrack::removeCue()
