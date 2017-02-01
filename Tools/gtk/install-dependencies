@@ -188,7 +188,7 @@ function installDependenciesWithApt {
         libv4l-dev \
         libxcb-composite0-dev \
         libxcb-xfixes0-dev \
-        libxfont-dev \
+        $(aptIfElse libxfont1-dev libxfont-dev) \
         libxkbfile-dev \
         libtool-bin \
         libudev-dev \
