@@ -119,7 +119,7 @@ void TextFragmentIterator::revertToEndOfFragment(const TextFragment& fragment)
     m_atEndOfSegment = false;
 }
 
-static unsigned nextBreakablePositionInSegment(LazyLineBreakIterator& lineBreakIterator, unsigned startPosition, bool breakNBSP, bool keepAllWordsForCJK)
+static inline unsigned nextBreakablePositionInSegment(LazyLineBreakIterator& lineBreakIterator, unsigned startPosition, bool breakNBSP, bool keepAllWordsForCJK)
 {
     if (keepAllWordsForCJK) {
         if (breakNBSP)
@@ -164,18 +164,6 @@ unsigned TextFragmentIterator::nextNonWhitespacePosition(const FlowContents::Seg
             return position;
     }
     return position;
-}
-
-float TextFragmentIterator::textWidth(unsigned from, unsigned to, float xPosition) const
-{
-    auto& segment = *m_currentSegment;
-    ASSERT(segment.start <= from && from <= segment.end && segment.start <= to && to <= segment.end);
-    ASSERT(is<RenderText>(segment.renderer));
-    if (!m_style.font.size())
-        return 0;
-    if (m_style.font.isFixedPitch() || (from == segment.start && to == segment.end))
-        return downcast<RenderText>(segment.renderer).width(segment.toSegmentPosition(from), to - from, m_style.font, xPosition, nullptr, nullptr);
-    return runWidth(segment, from, to, xPosition);
 }
 
 std::optional<unsigned> TextFragmentIterator::lastHyphenPosition(const TextFragmentIterator::TextFragment& run, unsigned before) const
@@ -243,20 +231,25 @@ unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, uns
     return nextPosition;
 }
 
-float TextFragmentIterator::runWidth(const FlowContents::Segment& segment, unsigned startPosition, unsigned endPosition, float xPosition) const
+float TextFragmentIterator::textWidth(unsigned from, unsigned to, float xPosition) const
 {
-    ASSERT(m_style.font.size());
-    ASSERT(startPosition <= endPosition);
-    if (startPosition == endPosition)
+    auto& segment = *m_currentSegment;
+    ASSERT(segment.start <= from && from <= segment.end && segment.start <= to && to <= segment.end);
+    ASSERT(is<RenderText>(segment.renderer));
+    if (!m_style.font.size() || from == to)
         return 0;
-    unsigned segmentFrom = segment.toSegmentPosition(startPosition);
-    unsigned segmentTo = segment.toSegmentPosition(endPosition);
+
+    unsigned segmentFrom = segment.toSegmentPosition(from);
+    unsigned segmentTo = segment.toSegmentPosition(to);
+    if (m_style.font.isFixedPitch())
+        return downcast<RenderText>(segment.renderer).width(segmentFrom, segmentTo - segmentFrom, m_style.font, xPosition, nullptr, nullptr);
+
     bool measureWithEndSpace = m_style.collapseWhitespace && segmentTo < segment.text.length() && segment.text[segmentTo] == ' ';
     if (measureWithEndSpace)
         ++segmentTo;
-    TextRun run(StringView(segment.text).substring(segmentFrom, segmentTo - segmentFrom));
-    run.setXPos(xPosition);
-    run.setTabSize(!!m_style.tabWidth, m_style.tabWidth);
+    TextRun run(StringView(segment.text).substring(segmentFrom, segmentTo - segmentFrom), xPosition);
+    if (m_style.tabWidth)
+        run.setTabSize(true, m_style.tabWidth);
     float width = m_style.font.width(run);
     if (measureWithEndSpace)
         width -= (m_style.spaceWidth + m_style.wordSpacing);

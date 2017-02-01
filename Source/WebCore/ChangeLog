@@ -1,3 +1,24 @@
+2017-02-01  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Move TextFragmentIterator::runWidth to ::textWidth.
+        https://bugs.webkit.org/show_bug.cgi?id=167705
+        <rdar://problem/30314393>
+
+        Reviewed by Antti Koivisto.
+
+        We also don't need to compute logicalHeight for logicalLeft/right since the
+        cases where it matters (floating boxes) are not supported by simple line layout. 
+
+        Covered by existing test.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::updateLineConstrains):
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::nextBreakablePositionInSegment):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::textWidth):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::runWidth): Deleted.
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+
 2017-02-01  Jer Noble  <jer.noble@apple.com>
 
         Fix compilation error under recent clang update
