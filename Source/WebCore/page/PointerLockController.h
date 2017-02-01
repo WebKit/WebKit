@@ -64,10 +64,12 @@ private:
     void enqueueEvent(const AtomicString& type, Element*);
     void enqueueEvent(const AtomicString& type, Document*);
     Page& m_page;
-    bool m_lockPending;
+    bool m_lockPending { false };
+    bool m_unlockPending { false };
     bool m_forceCursorVisibleUponUnlock { false };
     RefPtr<Element> m_element;
     RefPtr<Document> m_documentOfRemovedElementWhileWaitingForUnlock;
+    RefPtr<Document> m_documentAllowedToRelockWithoutUserGesture;
 };
 
 } // namespace WebCore

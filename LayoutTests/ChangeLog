@@ -1,3 +1,20 @@
+2017-01-31  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211249. rdar://problem/29539389
+
+    2017-01-26  Jeremy Jones  <jeremyj@apple.com>
+
+            Page should be able to request pointer lock without user gesture if it relinquished it without a user gesture
+            https://bugs.webkit.org/show_bug.cgi?id=167126
+
+            Reviewed by Jon Lee.
+
+            Enable pointer-lock/locked-element-removed-from-dom.html for WK2 by enabling for Mac and disabling for WK1.
+            Not enable in WK1 becuase of https://bugs.webkit.org/show_bug.cgi?id=167127
+
+            * platform/mac-wk1/TestExpectations:
+            * platform/mac/TestExpectations:
+
 2017-01-26  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r211235. rdar://problem/30058933
