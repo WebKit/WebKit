@@ -44,12 +44,12 @@
 
 namespace Inspector {
 
+class AsyncStackTrace;
 class InjectedScript;
 class InjectedScriptManager;
 class InspectorArray;
 class InspectorObject;
 class ScriptDebugServer;
-struct AsyncCallData;
 typedef String ErrorString;
 
 class JS_EXPORT_PRIVATE InspectorDebuggerAgent : public InspectorAgentBase, public ScriptDebugListener, public DebuggerBackendDispatcherHandler {
@@ -164,29 +164,10 @@ private:
 
     typedef std::pair<int, int> AsyncCallIdentifier;
 
-    RefPtr<Inspector::Protocol::Console::StackTrace> buildAsyncStackTrace(const AsyncCallIdentifier&);
-    void refAsyncCallData(const AsyncCallIdentifier&);
-    void derefAsyncCallData(const AsyncCallIdentifier&);
-
     typedef HashMap<JSC::SourceID, Script> ScriptsMap;
     typedef HashMap<String, Vector<JSC::BreakpointID>> BreakpointIdentifierToDebugServerBreakpointIDsMap;
     typedef HashMap<String, RefPtr<InspectorObject>> BreakpointIdentifierToBreakpointMap;
     typedef HashMap<JSC::BreakpointID, String> DebugServerBreakpointIDToBreakpointIdentifier;
-
-    struct AsyncCallData {
-        AsyncCallData(RefPtr<ScriptCallStack> callStack, std::optional<AsyncCallIdentifier> parentAsyncCallIdentifier, bool singleShot)
-            : callStack(callStack)
-            , parentAsyncCallIdentifier(parentAsyncCallIdentifier)
-            , referenceCount(singleShot ? 0 : 1)
-        {
-        }
-
-        AsyncCallData() = default;
-
-        RefPtr<ScriptCallStack> callStack;
-        std::optional<AsyncCallIdentifier> parentAsyncCallIdentifier { std::nullopt };
-        unsigned referenceCount { 0 };
-    };
 
     InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<DebuggerFrontendDispatcher> m_frontendDispatcher;
@@ -204,7 +185,7 @@ private:
     RefPtr<InspectorObject> m_breakAuxData;
     ShouldDispatchResumed m_conditionToDispatchResumed { ShouldDispatchResumed::No };
     bool m_enablePauseWhenIdle { false };
-    HashMap<AsyncCallIdentifier, AsyncCallData> m_asyncCallIdentifierToData;
+    HashMap<AsyncCallIdentifier, RefPtr<AsyncStackTrace>> m_pendingAsyncCalls;
     std::optional<AsyncCallIdentifier> m_currentAsyncCallIdentifier { std::nullopt };
     bool m_enabled { false };
     bool m_javaScriptPauseScheduled { false };

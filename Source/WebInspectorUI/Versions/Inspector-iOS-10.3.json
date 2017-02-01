@@ -586,6 +586,7 @@
             "properties": [
                 { "name": "callFrames", "type": "array", "items": { "$ref": "CallFrame" } },
                 { "name": "topCallFrameIsBoundary", "type": "boolean", "optional": true, "description": "Whether the first item in <code>callFrames</code> is the native function that scheduled the asynchronous operation (e.g. setTimeout)." },
+                { "name": "truncated", "type": "boolean", "optional": true, "description": "Whether one or more frames have been truncated from the bottom of the stack." },
                 { "name": "parentStackTrace", "$ref": "StackTrace", "optional": true, "description": "Parent StackTrace." }
             ]
         }

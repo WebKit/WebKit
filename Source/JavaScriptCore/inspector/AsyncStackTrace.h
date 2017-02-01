@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.tree-outline > .item.thread .icon {
-    content: url(../Images/Thread.svg);
-    width: 15px;
-    height: 15px;
-}
+#pragma once
 
-.tree-outline > .item.thread .status-button.resume {
-    width: 11px;
-    height: 11px;
-    vertical-align: middle;
-    fill: hsla(0, 0%, 0%, 0.5);
-    stroke: none;
-    display: none;
-}
+#include "InspectorProtocolObjects.h"
+#include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
-.tree-outline > .item.thread .status-button.resume:active {
-    fill: hsla(0, 0%, 0%, 0.7);
-}
+namespace Inspector {
 
-.tree-outline:matches(:focus, .force-focus) > .item.thread.selected .status-button.resume {
-    fill: var(--selected-foreground-color);
-}
+class ScriptCallStack;
 
-.tree-outline > .item.thread.selected .status-button.resume,
-.tree-outline > .item.thread:hover .status-button.resume {
-    display: inline-block;
-}
+class JS_EXPORT_PRIVATE AsyncStackTrace : public RefCounted<AsyncStackTrace> {
+public:
+    enum class State {
+        Pending,
+        Active,
+        Dispatched,
+        Canceled,
+    };
 
-.tree-outline > .item.thread + ol > .item.truncated-call-frames {
-    color: var(--text-color-gray-medium);
-    border-top: dashed 0.5px var(--border-color);
-    margin-left: 31px;
-    margin-right: 6px;
-    padding-left: 0;
-    cursor: default;
-}
+    static RefPtr<AsyncStackTrace> create(RefPtr<ScriptCallStack>, bool singleShot, RefPtr<AsyncStackTrace> parent);
 
-.tree-outline > .item.thread + ol > .item.truncated-call-frames .icon {
-    margin-left: 0;
-    content: url(../Images/Function.svg);
-    opacity: 0.6;
-}
+    bool isPending() const;
+    bool isLocked() const;
+
+    void willDispatchAsyncCall(size_t maxDepth);
+    void didDispatchAsyncCall();
+    void didCancelAsyncCall();
+
+    RefPtr<Inspector::Protocol::Console::StackTrace> buildInspectorObject() const;
+
+    ~AsyncStackTrace();
+
+private:
+    AsyncStackTrace(RefPtr<ScriptCallStack>, bool, RefPtr<AsyncStackTrace>);
+
+    void truncate(size_t maxDepth);
+    void remove();
+
+    RefPtr<ScriptCallStack> m_callStack;
+    RefPtr<AsyncStackTrace> m_parent;
+    unsigned m_childCount { 0 };
+    State m_state { State::Pending };
+    bool m_truncated { false };
+    bool m_singleShot { true };
+};
+
+} // namespace Inspector

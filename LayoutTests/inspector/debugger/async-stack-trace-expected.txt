@@ -6,57 +6,64 @@ Tests for async stack traces.
 PAUSE #1
 CALL STACK:
 0: [F] pauseThenFinishTest
--- [N] requestAnimationFrame ----
-1: [F] testRequestAnimationFrame
-2: [P] Global Code
+ASYNC CALL STACK:
+1: --- requestAnimationFrame ---
+2: [F] testRequestAnimationFrame
+3: [P] Global Code
 
 -- Running test case: CheckAsyncStackTrace.SetTimeout
 PAUSE #1
 CALL STACK:
 0: [F] pauseThenFinishTest
--- [N] setTimeout ----
-1: [F] testSetTimeout
-2: [P] Global Code
+ASYNC CALL STACK:
+1: --- setTimeout ---
+2: [F] testSetTimeout
+3: [P] Global Code
 
 -- Running test case: CheckAsyncStackTrace.SetInterval
 PAUSE #1
 CALL STACK:
 0: [F] intervalFired
--- [N] setInterval ----
-1: [F] testSetInterval
-2: [P] Global Code
+ASYNC CALL STACK:
+1: --- setInterval ---
+2: [F] testSetInterval
+3: [P] Global Code
 PAUSE #2
 CALL STACK:
 0: [F] intervalFired
--- [N] setInterval ----
-1: [F] testSetInterval
-2: [P] Global Code
+ASYNC CALL STACK:
+1: --- setInterval ---
+2: [F] testSetInterval
+3: [P] Global Code
 PAUSE #3
 CALL STACK:
 0: [F] intervalFired
--- [N] setInterval ----
-1: [F] testSetInterval
-2: [P] Global Code
+ASYNC CALL STACK:
+1: --- setInterval ---
+2: [F] testSetInterval
+3: [P] Global Code
 
 -- Running test case: CheckAsyncStackTrace.ChainedRequestAnimationFrame
 PAUSE #1
 CALL STACK:
 0: [F] pauseThenFinishTest
--- [N] requestAnimationFrame ----
-1: [F] testRequestAnimationFrame
--- [N] requestAnimationFrame ----
-2: [F] testChainedRequestAnimationFrame
-3: [P] Global Code
+ASYNC CALL STACK:
+1: --- requestAnimationFrame ---
+2: [F] testRequestAnimationFrame
+3: --- requestAnimationFrame ---
+4: [F] testChainedRequestAnimationFrame
+5: [P] Global Code
 
 -- Running test case: CheckAsyncStackTrace.ReferenceCounting
 PAUSE #1
 CALL STACK:
 0: [F] pauseThenFinishTest
--- [N] setTimeout ----
-1: [F] intervalFired
--- [N] setInterval ----
-2: [F] testReferenceCounting
-3: [P] Global Code
+ASYNC CALL STACK:
+1: --- setTimeout ---
+2: [F] intervalFired
+3: --- setInterval ---
+4: [F] testReferenceCounting
+5: [P] Global Code
 -- Running test setup.
 Save DebuggerManager.asyncStackTraceDepth
 
@@ -67,8 +74,44 @@ Restore DebuggerManager.asyncStackTraceDepth
 -- Running test setup.
 Save DebuggerManager.asyncStackTraceDepth
 
--- Running test case: AsyncStackTrace.SetStackTraceDepth
-PASS: Number of call frames should be equal to the depth setting.
+-- Running test case: AsyncStackTrace.ForceTruncationOnCallStackBoundary
+Set Debugger.asyncStackTraceDepth equal to 4
+PASS: Non-root StackTrace should not be truncated.
+PASS: Non-root StackTrace should not be truncated.
+PASS: StackTrace root should be truncated.
+PASS: StackTrace should be truncated to the nearest call stack.
+CALL STACK:
+0: [F] pauseThenFinishTest
+1: [F] repeat
+ASYNC CALL STACK:
+2: --- requestAnimationFrame ---
+3: [F] repeat
+4: --- requestAnimationFrame ---
+5: [F] repeat
+(remaining call frames truncated)
+-- Running test teardown.
+Restore DebuggerManager.asyncStackTraceDepth
+-- Running test setup.
+Save DebuggerManager.asyncStackTraceDepth
+
+-- Running test case: AsyncStackTrace.ForceTruncationWithinCallStack
+Set Debugger.asyncStackTraceDepth equal to 5
+PASS: Non-root StackTrace should not be truncated.
+PASS: Non-root StackTrace should not be truncated.
+PASS: Non-root StackTrace should not be truncated.
+PASS: StackTrace root should be truncated.
+PASS: StackTrace should be truncated to the nearest call stack.
+CALL STACK:
+0: [F] pauseThenFinishTest
+1: [F] repeat
+ASYNC CALL STACK:
+2: --- requestAnimationFrame ---
+3: [F] repeat
+4: --- requestAnimationFrame ---
+5: [F] repeat
+6: --- requestAnimationFrame ---
+7: [F] repeat
+(remaining call frames truncated)
 -- Running test teardown.
 Restore DebuggerManager.asyncStackTraceDepth
 
