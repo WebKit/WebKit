@@ -21,5 +21,5 @@ PASS Cross-origin Window accessors get local Function.prototype
 PASS Same-origin observers get different functions for cross-origin objects 
 PASS Same-origin observers get different accessors for cross-origin Window 
 PASS Same-origin observers get different accessors for cross-origin Location 
-FAIL {}.toString.call() does the right thing on cross-origin objects Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+FAIL {}.toString.call() does the right thing on cross-origin objects assert_equals: expected "[object Object]" but got "[object Window]"
  

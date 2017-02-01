@@ -96,6 +96,11 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
         return true;
     }
 
+    if (propertyName == exec->propertyNames().toStringTagSymbol || propertyName == exec->propertyNames().hasInstanceSymbol || propertyName == exec->propertyNames().isConcatSpreadableSymbol) {
+        slot.setUndefined();
+        return true;
+    }
+
     // These are the functions we allow access to cross-origin (DoNotCheckSecurity in IDL).
     // Always provide the original function, on a fresh uncached function object.
     if (propertyName == exec->propertyNames().blur) {
