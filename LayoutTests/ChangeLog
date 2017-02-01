@@ -1,5 +1,16 @@
 2017-01-31  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211307. rdar://problem/29320059
+
+    2017-01-27  Simon Fraser  <simon.fraser@apple.com>
+
+            Tweak the test to avoid one pixel of difference on some hardware.
+
+            * css3/filters/backdrop/backdrop-filter-uneven-corner-radii-expected.html:
+            * css3/filters/backdrop/backdrop-filter-uneven-corner-radii.html:
+
+2017-01-31  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211305. rdar://problem/29320059
 
     2017-01-27  Simon Fraser  <simon.fraser@apple.com>
