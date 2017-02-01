@@ -41,6 +41,7 @@
 @end
 
 @interface DOMHTMLInputElement (WebDOMHTMLInputElementOperationsPrivate)
+- (BOOL)_isAutofilled;
 - (void)_setAutofilled:(BOOL)autofilled;
 @end
 

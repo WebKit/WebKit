@@ -182,22 +182,6 @@ using namespace WebCore;
     return core(self)->isTextField();
 }
 
-#if PLATFORM(IOS)
-
-- (BOOL)_isAutofilled
-{
-    return core(self)->isAutoFilled();
-}
-
-- (void)_setAutofilled:(BOOL)filled
-{
-    // This notifies the input element that the content has been autofilled
-    // This allows WebKit to obey the -webkit-autofill pseudo style, which
-    // changes the background color.
-    core(self)->setAutoFilled(filled);
-}
-#endif // PLATFORM(IOS)
-
 @end
 
 @implementation DOMHTMLSelectElement (FormAutoFillTransition)

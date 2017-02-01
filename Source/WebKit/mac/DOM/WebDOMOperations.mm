@@ -212,6 +212,11 @@ using namespace JSC;
 
 @implementation DOMHTMLInputElement (WebDOMHTMLInputElementOperationsPrivate)
 
+- (BOOL)_isAutofilled
+{
+    return downcast<HTMLInputElement>(core((DOMElement *)self))->isAutoFilled();
+}
+
 - (void)_setAutofilled:(BOOL)autofilled
 {
     downcast<HTMLInputElement>(core((DOMElement *)self))->setAutoFilled(autofilled);

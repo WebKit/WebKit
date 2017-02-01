@@ -1,3 +1,23 @@
+2017-01-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ld: warning: instance method '_setAutofilled:' in category conflicts with same method from another category
+        https://bugs.webkit.org/show_bug.cgi?id=167684
+
+        Reviewed by Dan Bernstein.
+
+        * DOM/DOMHTML.mm:
+        (-[DOMHTMLInputElement _isAutofilled]): Deleted.
+        (-[DOMHTMLInputElement _setAutofilled:]): Deleted.
+        Consolidate in the WebDOMOperationsPrivate category.
+
+        * DOM/DOMPrivate.h:
+        Include WebDOMOperationsPrivate header to get other DOM Private categories.
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMHTMLInputElement _isAutofilled]):
+        * DOM/WebDOMOperationsPrivate.h:
+        Include getter alongside the setter.
+
 2017-01-31  Jessie Berlin  <jberlin@webkit.org>
 
         Build fix.

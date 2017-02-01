@@ -26,6 +26,7 @@
 
 #import <WebKitLegacy/DOM.h>
 #import <WebKitLegacy/WebAutocapitalizeTypes.h>
+#import <WebKitLegacy/WebDOMOperationsPrivate.h>
 
 #if TARGET_OS_IPHONE
 #import <CoreText/CoreText.h>
@@ -95,15 +96,8 @@
 - (DOMHTMLTableCellElement *)_cellAbove;
 @end
 
-// All the methods in this category are used by Safari forms autofill and should not be used for any other purpose.
-// Each one should eventually be replaced by public DOM API, and when that happens Safari will switch to implementations 
-// using that public API, and these will be deleted.
 @interface DOMHTMLInputElement (FormAutoFillTransition)
 - (BOOL)_isTextField;
-#if TARGET_OS_IPHONE
-- (BOOL)_isAutofilled;
-- (void)_setAutofilled:(BOOL)filled;
-#endif
 @end
 
 #if TARGET_OS_IPHONE
@@ -118,10 +112,6 @@
 @end
 #endif // TARGET_OS_IPHONE
 
-// All the methods in this category are used by Safari forms autofill and should not be used for any other purpose.
-// They are stopgap measures until we finish transitioning form controls to not use NSView. Each one should become
-// replaceable by public DOM API, and when that happens Safari will switch to implementations using that public API,
-// and these will be deleted.
 @interface DOMHTMLSelectElement (FormAutoFillTransition)
 - (void)_activateItemAtIndex:(int)index;
 - (void)_activateItemAtIndex:(int)index allowMultipleSelection:(BOOL)allowMultipleSelection;
