@@ -1,3 +1,18 @@
+2017-01-31  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Do not assert on zero length/width trailing whitespace.
+        https://bugs.webkit.org/show_bug.cgi?id=167679
+
+        Reviewed by Simon Fraser.
+
+        It's valid to have an zero length/width trailing whitespace.
+
+        Covered by existing tests.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::LineState::removeTrailingWhitespace): Zero length -> nothing to do.
+        Zero width with length > 0 (font-size: 0) -> remove trailing run.
+
 2017-01-31  Alex Christensen  <achristensen@webkit.org>
 
         Fix debug libwebrtc build after r211439

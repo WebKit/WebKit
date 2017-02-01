@@ -525,10 +525,8 @@ public:
 
     void removeTrailingWhitespace(Layout::RunVector& runs)
     {
-        if (m_lastFragment.type() != TextFragmentIterator::TextFragment::Whitespace)
+        if (m_lastFragment.type() != TextFragmentIterator::TextFragment::Whitespace || m_lastFragment.end() == m_lastNonWhitespaceFragment.end())
             return;
-        ASSERT(m_trailingWhitespaceWidth);
-        ASSERT(m_lastFragment.end() != m_lastNonWhitespaceFragment.end());
         unsigned trailingWhitespaceLength = endPositionForCollapsedFragment(m_lastFragment) - m_lastNonWhitespaceFragment.end();
         revertRuns(runs, trailingWhitespaceLength, m_trailingWhitespaceWidth);
         m_runsWidth -= m_trailingWhitespaceWidth;
