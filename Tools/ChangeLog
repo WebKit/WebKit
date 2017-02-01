@@ -1,3 +1,13 @@
+2017-02-01  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer][MSE] qtdemux: Update the tfdt patch to the version finally accepted upstream
+        https://bugs.webkit.org/show_bug.cgi?id=166529
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * gtk/patches/gst-plugins-good-use-the-tfdt-decode-time.patch:
+        New patch version accepted in GStreamer upstream.
+
 2017-02-01  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] Install either libxfont1-dev or libxfont-dev as dependency
