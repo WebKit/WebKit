@@ -1,3 +1,12 @@
+2017-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the WebKit nightly open source build
+        <rdar://problem/30308635>
+
+        We cannot assume all internal SDKs have the latest WebKitAdditions, so we need an explicit header check here.
+
+        * wtf/Platform.h:
+
 2017-02-01  Andreas Kling  <akling@apple.com>
 
         Implement the alwaysRunsAtBackgroundPriority WK2 setting using thread QoS.
