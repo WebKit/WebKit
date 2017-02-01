@@ -181,8 +181,6 @@ void AudioContext::constructCommon()
 #if PLATFORM(COCOA)
     addBehaviorRestriction(RequirePageConsentForAudioStartRestriction);
 #endif
-
-    m_mediaSession->setCanProduceAudio(true);
 }
 
 AudioContext::~AudioContext()

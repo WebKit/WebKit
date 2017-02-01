@@ -162,8 +162,8 @@ public:
 #endif
 
     bool activeAudioSessionRequired();
-    bool canProduceAudio() const { return m_canProduceAudio; }
-    void setCanProduceAudio(bool);
+    bool canProduceAudio() const;
+    void canProduceAudioChanged();
 
     void scheduleClientDataBufferingCheck();
     virtual void resetPlaybackSessionState() { }
@@ -186,7 +186,6 @@ private:
     int m_interruptionCount { 0 };
     bool m_notifyingClient;
     bool m_isPlayingToWirelessPlaybackTarget { false };
-    bool m_canProduceAudio { false };
 
     friend class PlatformMediaSessionManager;
 };
@@ -217,6 +216,7 @@ public:
 
     virtual void setShouldBufferData(bool) { }
     virtual bool elementIsHidden() const { return false; }
+    virtual bool canProduceAudio() const { return false; }
 
     virtual bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const = 0;
     virtual bool shouldOverrideBackgroundLoadingRestriction() const { return false; }

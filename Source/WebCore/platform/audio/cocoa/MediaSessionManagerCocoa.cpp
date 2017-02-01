@@ -31,6 +31,7 @@
 #include "AudioSession.h"
 #include "Logging.h"
 #include "Settings.h"
+#include <wtf/Function.h>
 
 using namespace WebCore;
 
@@ -60,13 +61,20 @@ void PlatformMediaSessionManager::updateSessionState()
     if (!Settings::shouldManageAudioSessionCategory())
         return;
 
-    if (has(PlatformMediaSession::VideoAudio) || has(PlatformMediaSession::Audio)) {
-        if (canProduceAudio())
-            AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
-        else
-            AudioSession::sharedSession().setCategory(AudioSession::AmbientSound);
-    } else if (has(PlatformMediaSession::WebAudio))
+    bool hasAudioMediaType = false;
+    bool hasAudibleAudioOrVideoMediaType = anyOfSessions([this, hasAudioMediaType] (PlatformMediaSession& session, size_t) mutable {
+        auto type = session.mediaType();
+        if (type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio || type == PlatformMediaSession::WebAudio)
+            hasAudioMediaType = true;
+        return (type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio) && session.canProduceAudio();
+    });
+
+    if (hasAudibleAudioOrVideoMediaType)
+        AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
+    else if (hasAudioMediaType)
         AudioSession::sharedSession().setCategory(AudioSession::AmbientSound);
+    else
+        AudioSession::sharedSession().setCategory(AudioSession::None);
 #endif
 }
 

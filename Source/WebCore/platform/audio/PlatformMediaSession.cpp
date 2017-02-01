@@ -329,15 +329,16 @@ bool PlatformMediaSession::activeAudioSessionRequired()
         return false;
     if (state() != PlatformMediaSession::State::Playing)
         return false;
-    return m_canProduceAudio;
+    return canProduceAudio();
 }
 
-void PlatformMediaSession::setCanProduceAudio(bool canProduceAudio)
+bool PlatformMediaSession::canProduceAudio() const
 {
-    if (m_canProduceAudio == canProduceAudio)
-        return;
-    m_canProduceAudio = canProduceAudio;
+    return m_client.canProduceAudio();
+}
 
+void PlatformMediaSession::canProduceAudioChanged()
+{
     PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged(*this);
 }
 
