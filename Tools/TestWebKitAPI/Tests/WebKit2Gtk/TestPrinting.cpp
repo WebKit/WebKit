@@ -286,6 +286,196 @@ static void testPrintOperationCloseAfterPrint(CloseAfterPrintTest* test, gconstp
     test->loadHtml("<html><body onLoad=\"w = window.open();w.print();w.close();\"></body></html>", 0);
     test->waitUntilPrintFinishedAndViewClosed();
 }
+
+class PrintCustomWidgetTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(PrintCustomWidgetTest);
+
+    static void applyCallback(WebKitPrintCustomWidget*, PrintCustomWidgetTest* test)
+    {
+        test->m_applyEmitted = true;
+    }
+
+    static gboolean scheduleJumpToCustomWidget(PrintCustomWidgetTest* test)
+    {
+        test->jumpToCustomWidget();
+
+        return FALSE;
+    }
+
+    static void updateCallback(WebKitPrintCustomWidget* customWidget, GtkPageSetup*, GtkPrintSettings*, PrintCustomWidgetTest* test)
+    {
+        g_assert(test->m_widget == webkit_print_custom_widget_get_widget(customWidget));
+
+        test->m_updateEmitted = true;
+        // Would be nice to avoid the 1 second timeout here - but I didn't found
+        // a way to do so without making the test flaky.
+        g_timeout_add_seconds(1, reinterpret_cast<GSourceFunc>(scheduleJumpToCustomWidget), test);
+    }
+
+    static void widgetRealizeCallback(GtkWidget* widget, PrintCustomWidgetTest* test)
+    {
+        g_assert(GTK_IS_LABEL(widget));
+        g_assert(!g_strcmp0(gtk_label_get_text(GTK_LABEL(widget)), "Label"));
+
+        test->m_widgetRealized = true;
+        test->startPrinting();
+    }
+
+    static WebKitPrintCustomWidget* createCustomWidgetCallback(WebKitPrintOperation* printOperation, PrintCustomWidgetTest* test)
+    {
+        test->m_createEmitted = true;
+        WebKitPrintCustomWidget* printCustomWidget = test->createPrintCustomWidget();
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(printCustomWidget));
+        g_signal_connect(printCustomWidget, "apply", G_CALLBACK(applyCallback), test);
+        g_signal_connect(printCustomWidget, "update", G_CALLBACK(updateCallback), test);
+
+        GtkWidget* widget = webkit_print_custom_widget_get_widget(printCustomWidget);
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(widget));
+        g_signal_connect(widget, "realize", G_CALLBACK(widgetRealizeCallback), test);
+
+        return printCustomWidget;
+    }
+
+    static gboolean scheduleMovementThroughDialog(PrintCustomWidgetTest* test)
+    {
+        test->jumpToFirstPrinter();
+
+        return FALSE;
+    }
+
+    static gboolean openPrintDialog(PrintCustomWidgetTest* test)
+    {
+        g_idle_add(reinterpret_cast<GSourceFunc>(scheduleMovementThroughDialog), test);
+        test->m_response = webkit_print_operation_run_dialog(test->m_printOperation.get(), GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(test->m_webView))));
+
+        return FALSE;
+    }
+
+    static void printOperationFinished(WebKitPrintOperation* printOperation, PrintCustomWidgetTest* test)
+    {
+        test->printFinished();
+    }
+
+    void printFinished()
+    {
+        g_assert(m_outputFile);
+        g_file_delete(m_outputFile.get(), nullptr, nullptr);
+        m_outputFile = nullptr;
+        g_main_loop_quit(m_mainLoop);
+    }
+
+    void sendKeyEvent(unsigned gdkKeyValue, GdkEventType type, unsigned modifiers)
+    {
+        GdkEvent* event = gdk_event_new(type);
+        event->key.keyval = gdkKeyValue;
+        event->key.state = modifiers;
+        event->key.window = gtk_widget_get_window(GTK_WIDGET(m_webView));
+        event->key.time = GDK_CURRENT_TIME;
+        g_object_ref(event->key.window);
+        gdk_event_set_device(event, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_display_get_default())));
+
+        GUniqueOutPtr<GdkKeymapKey> keys;
+        gint nKeys;
+        if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), gdkKeyValue, &keys.outPtr(), &nKeys))
+            event->key.hardware_keycode = keys.get()[0].keycode;
+
+        gtk_main_do_event(event);
+
+        gdk_event_free(event);
+    }
+
+    void sendKeyPressAndReleaseEvent(unsigned gdkKeyValue, unsigned modifiers = 0)
+    {
+        sendKeyEvent(gdkKeyValue, GDK_KEY_PRESS, modifiers);
+        sendKeyEvent(gdkKeyValue, GDK_KEY_RELEASE, modifiers);
+    }
+
+    WebKitPrintOperation* createWebKitPrintOperation()
+    {
+        m_printOperation = adoptGRef(webkit_print_operation_new(m_webView));
+        g_assert(m_printOperation);
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_printOperation.get()));
+
+        g_signal_connect(m_printOperation.get(), "create-custom-widget", G_CALLBACK(createCustomWidgetCallback), this);
+        g_signal_connect(m_printOperation.get(), "finished", G_CALLBACK(printOperationFinished), this);
+    }
+
+    WebKitPrintCustomWidget* createPrintCustomWidget()
+    {
+        m_widget = gtk_label_new("Label");
+        return webkit_print_custom_widget_new(m_widget, "Custom Widget");
+    }
+
+    void startPrinting()
+    {
+        // To start printing it is enough to press the Return key
+        sendKeyPressAndReleaseEvent(GDK_KEY_Return);
+    }
+
+    void jumpToFirstPrinter()
+    {
+        // Initially the GtkNotebook has focus, so we just need to press the Tab
+        // key to jump to the first printer
+        sendKeyPressAndReleaseEvent(GDK_KEY_Tab);
+    }
+
+    void jumpToCustomWidget()
+    {
+        // Jump back to the GtkNotebook
+        sendKeyPressAndReleaseEvent(GDK_KEY_Tab, GDK_SHIFT_MASK);
+        // Custom widget is on the third tab
+        sendKeyPressAndReleaseEvent(GDK_KEY_Right);
+        sendKeyPressAndReleaseEvent(GDK_KEY_Right);
+    }
+
+    void openDialogMoveThroughItAndWaitUntilClosed()
+    {
+        g_idle_add(reinterpret_cast<GSourceFunc>(openPrintDialog), this);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    GRefPtr<WebKitPrintOperation> m_printOperation;
+    GRefPtr<GFile> m_outputFile;
+    GtkWidget* m_widget;
+    bool m_widgetRealized {false};
+    bool m_applyEmitted {false};
+    bool m_updateEmitted {false};
+    bool m_createEmitted {false};
+    WebKitPrintOperationResponse m_response {WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL};
+};
+
+static void testPrintCustomWidget(PrintCustomWidgetTest* test, gconstpointer)
+{
+    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL, 0, 0);
+
+    test->loadHtml("<html><body>Text</body></html>", 0);
+    test->waitUntilLoadFinished();
+
+    test->createWebKitPrintOperation();
+
+    GRefPtr<GtkPrinter> printer = adoptGRef(findPrintToFilePrinter());
+    if (!printer) {
+        g_message("%s", "Cannot test WebKitPrintOperation/print: no suitable printer found");
+        return;
+    }
+
+    GUniquePtr<char> outputFilename(g_build_filename(Test::dataDirectory(), "webkit-close-after-print.pdf", nullptr));
+    test->m_outputFile = adoptGRef(g_file_new_for_path(outputFilename.get()));
+    GUniquePtr<char> outputURI(g_file_get_uri(test->m_outputFile.get()));
+
+    GRefPtr<GtkPrintSettings> printSettings = adoptGRef(gtk_print_settings_new());
+    gtk_print_settings_set(printSettings.get(), GTK_PRINT_SETTINGS_OUTPUT_URI, outputURI.get());
+    webkit_print_operation_set_print_settings(test->m_printOperation.get(), printSettings.get());
+
+    test->openDialogMoveThroughItAndWaitUntilClosed();
+
+    g_assert(test->m_response == WEBKIT_PRINT_OPERATION_RESPONSE_PRINT);
+    g_assert(test->m_createEmitted);
+    g_assert(test->m_widgetRealized);
+    g_assert(test->m_updateEmitted);
+    g_assert(test->m_applyEmitted);
+}
 #endif // HAVE_GTK_UNIX_PRINTING
 
 void beforeAll()
@@ -296,6 +486,7 @@ void beforeAll()
     PrintTest::add("WebKitPrintOperation", "print", testPrintOperationPrint);
     PrintTest::add("WebKitPrintOperation", "print-errors", testPrintOperationErrors);
     CloseAfterPrintTest::add("WebKitPrintOperation", "close-after-print", testPrintOperationCloseAfterPrint);
+    PrintCustomWidgetTest::add("WebKitPrintOperation", "custom-widget", testPrintCustomWidget);
 #endif
 }
 

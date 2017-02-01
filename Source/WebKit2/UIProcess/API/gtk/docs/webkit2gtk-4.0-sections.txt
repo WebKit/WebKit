@@ -1471,3 +1471,24 @@ WEBKIT_COLOR_CHOOSER_REQUEST_GET_CLASS
 WebKitColorChooserRequestPrivate
 webkit_color_chooser_request_get_type
 </SECTION>
+
+<SECTION>
+<FILE>WebKitPrintCustomWidget</FILE>
+WebKitPrintCustomWidget
+webkit_print_custom_widget_new
+webkit_print_custom_widget_get_widget
+webkit_print_custom_widget_get_title
+
+<SUBSECTION Standard>
+WebKitPrintCustomWidgetClass
+WEBKIT_TYPE_PRINT_CUSTOM_WIDGET
+WEBKIT_PRINT_CUSTOM_WIDGET
+WEBKIT_IS_PRINT_CUSTOM_WIDGET
+WEBKIT_PRINT_CUSTOM_WIDGET_CLASS
+WEBKIT_IS_PRINT_CUSTOM_WIDGET_CLASS
+WEBKIT_PRINT_CUSTOM_WIDGET_GET_CLASS
+
+<SUBSECTION Private>
+WebKitPrintCustomWidgetPrivate
+webkit_print_custom_widget_get_type
+</SECTION>

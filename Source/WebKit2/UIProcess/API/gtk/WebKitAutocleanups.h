@@ -55,6 +55,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitNotificationPermissionRequest, g_object_unr
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitPermissionRequest, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitPlugin, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitPolicyDecision, g_object_unref)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitPrintCustomWidget, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitPrintOperation, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitResponsePolicyDecision, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitSecurityManager, g_object_unref)

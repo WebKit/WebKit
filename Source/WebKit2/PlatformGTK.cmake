@@ -208,6 +208,9 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitPolicyDecision.cpp
     UIProcess/API/gtk/WebKitPolicyDecision.h
     UIProcess/API/gtk/WebKitPolicyDecisionPrivate.h
+    UIProcess/API/gtk/WebKitPrintCustomWidget.cpp
+    UIProcess/API/gtk/WebKitPrintCustomWidget.h
+    UIProcess/API/gtk/WebKitPrintCustomWidgetPrivate.h
     UIProcess/API/gtk/WebKitPrintOperation.cpp
     UIProcess/API/gtk/WebKitPrintOperation.h
     UIProcess/API/gtk/WebKitPrintOperationPrivate.h
@@ -539,6 +542,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitPermissionRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitPlugin.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitPolicyDecision.h
+    ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitPrintCustomWidget.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitPrintOperation.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitResponsePolicyDecision.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitScriptDialog.h

@@ -1,3 +1,17 @@
+2017-02-01  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Add an API to add a custom tab into the print dialog
+        https://bugs.webkit.org/show_bug.cgi?id=151998
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a new WebKitPrintOperation/custom-widget test in TestPrinting
+        that is testing a newly added API.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestPrinting.cpp:
+        (testPrintCustomWidget):
+        (beforeAll):
+
 2017-02-01  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer][MSE] qtdemux: Update the tfdt patch to the version finally accepted upstream

@@ -1,3 +1,45 @@
+2017-02-01  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Add an API to add a custom tab into the print dialog
+        https://bugs.webkit.org/show_bug.cgi?id=151998
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a new create-custom-widget signal to the WebKitPrintOperation. The
+        signal is emitted before the dialog is displayed and it gives an
+        opportunity to embed a custom widget in the dialog. You can do so by
+        creating a new WebKitPrintCustomWidget and returning it from the
+        create-custom-widget signal handler. The WebKitPrintCustomWidget is
+        emitting two signals:
+          - update - emitted when the currently selected printer is changed,
+                     to be able to actualize the custom widget based on the
+                     current printer
+          - apply - emitted when the dialog is closed, just before the
+                    printing will start, to be able e.g. to change content
+                    based on the custom widget state.
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/WebKitAutocleanups.h:
+        * UIProcess/API/gtk/WebKitPrintCustomWidget.cpp: Added.
+        (webkitPrintCustomWidgetSetProperty):
+        (webkit_print_custom_widget_class_init):
+        (webkit_print_custom_widget_new):
+        (webkit_print_custom_widget_get_widget):
+        (webkit_print_custom_widget_get_title):
+        (webkitPrintCustomWidgetEmitCustomWidgetApplySignal):
+        (webkitPrintCustomWidgetEmitUpdateCustomWidgetSignal):
+        * UIProcess/API/gtk/WebKitPrintCustomWidget.h: Added.
+        * UIProcess/API/gtk/WebKitPrintCustomWidgetPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkitPrintOperationAccumulatorObjectHandled):
+        (webkit_print_operation_class_init):
+        (notifySelectedPrinterCallback):
+        (webkitPrintOperationRunDialog):
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0.types:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/gtk/webkit2.h:
+
 2017-02-01  Antti Koivisto  <antti@apple.com>
 
         Load resources speculatively
