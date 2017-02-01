@@ -1,3 +1,13 @@
+2017-01-31  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r210217. rdar://problem/30260068
+
+        Committed on behalf of Chris Dumez.
+
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::nameGetter):
+        Early-return false if an item has an exception (after propagating it.)
+
 2017-01-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Merge r211285.
