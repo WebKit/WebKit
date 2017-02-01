@@ -1354,13 +1354,14 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.contextMenuClient = new WebContextMenuClient(self);
     // FIXME: We should enable this on iOS as well.
     pageConfiguration.validationMessageClient = std::make_unique<WebValidationMessageClient>(self);
-#if ENABLE(DRAG_SUPPORT)
-    pageConfiguration.dragClient = new WebDragClient(self);
-#endif
     pageConfiguration.inspectorClient = new WebInspectorClient(self);
 #else
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
     pageConfiguration.inspectorClient = new WebInspectorClient(self);
+#endif
+
+#if ENABLE(DRAG_SUPPORT)
+    pageConfiguration.dragClient = new WebDragClient(self);
 #endif
 
     pageConfiguration.backForwardClient = BackForwardList::create(self);
