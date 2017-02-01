@@ -32,17 +32,18 @@
 #include "ExecutableAllocator.h"
 #include "Heap.h"
 #include "HeapStatistics.h"
-#include "Options.h"
 #include "Identifier.h"
 #include "JSDateMath.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "LLIntData.h"
+#include "Options.h"
 #include "StructureIDTable.h"
 #include "SuperSampler.h"
 #include "WriteBarrier.h"
 #include <mutex>
 #include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Threading.h>
 #include <wtf/dtoa.h>
 #include <wtf/dtoa/cached-powers.h>
@@ -59,6 +60,7 @@ void initializeThreading()
         WTF::double_conversion::initialize();
         WTF::initializeThreading();
         WTF::initializeGCThreads();
+        RunLoop::initializeMainRunLoop();
         Options::initialize();
         if (Options::recordGCPauseTimes())
             HeapStatistics::initialize();

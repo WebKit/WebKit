@@ -61,7 +61,7 @@ private:
 
 SendGarbageCollectionEventsTask::SendGarbageCollectionEventsTask(HeapFrontendDispatcher& frontendDispatcher)
     : m_frontendDispatcher(frontendDispatcher)
-    , m_timer(RunLoop::current(), this, &SendGarbageCollectionEventsTask::timerFired)
+    , m_timer(RunLoop::main(), this, &SendGarbageCollectionEventsTask::timerFired)
 {
 }
 
