@@ -1,3 +1,39 @@
+2017-01-31  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Collect fragments in LineState only when needed for post-processing.
+        https://bugs.webkit.org/show_bug.cgi?id=167655
+        <rdar://problem/30290592>
+
+        Reviewed by Antti Koivisto.
+
+        The fragments we need to keep around for basic line breaking are the last and last non-whitespace fragments.
+        However in certain cases such as text-align: justify, we have to traverse the entire line
+        at post-processing which requires all the fragments on the current line.
+        This patch speeds up the basic line handling by using m_fragment list only for the special cases.
+        It improves PerformanceTests/Layout/simple-line-layout-non-repeating-text.html by ~7% (local measurement)
+        median: 114.25 runs/s -> median: 122.16 runs
+
+        Covered by existing tests.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::LineState::setNeedsAllFragments):
+        (WebCore::SimpleLineLayout::LineState::hasTrailingWhitespace):
+        (WebCore::SimpleLineLayout::LineState::lastFragment):
+        (WebCore::SimpleLineLayout::LineState::expansionOpportunityCount):
+        (WebCore::SimpleLineLayout::LineState::isEmpty):
+        (WebCore::SimpleLineLayout::LineState::endPositionForCollapsedFragment):
+        (WebCore::SimpleLineLayout::LineState::appendFragmentAndCreateRunIfNeeded): Track uncompleted width.
+        (WebCore::SimpleLineLayout::LineState::revertToLastCompleteFragment):
+        (WebCore::SimpleLineLayout::LineState::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::updateLineConstrains): Set the slow path for text-align: justify.
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::closeLineEndingAndAdjustRuns):
+        (WebCore::SimpleLineLayout::createTextRuns):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::isValid):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::length):
+
 2017-01-31  Chris Dumez  <cdumez@apple.com>
 
         com.apple.WebKit.WebContent.Development crashed in com.apple.WebCore: WebCore::FrameView::didDestroyRenderTree
