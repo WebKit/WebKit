@@ -613,6 +613,10 @@ macro functionArityCheck(doneLabel, slowPath)
     // Move frame up t1 slots
     negi t1
     move cfr, t3
+    move t1, t0
+    lshiftp 3, t0
+    addp t0, cfr
+    addp t0, sp
 .copyLoop:
     loadi PayloadOffset[t3], t0
     storei t0, PayloadOffset[t3, t1, 8]
@@ -631,9 +635,6 @@ macro functionArityCheck(doneLabel, slowPath)
     addp 8, t3
     baddinz 1, t2, .fillLoop
 
-    lshiftp 3, t1
-    addp t1, cfr
-    addp t1, sp
 .continue:
     # Reload CodeBlock and PC, since the slow_path clobbered it.
     loadp CodeBlock[cfr], t1

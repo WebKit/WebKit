@@ -1,3 +1,14 @@
+2017-02-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        ArityFixup should adjust SP first
+        https://bugs.webkit.org/show_bug.cgi?id=167239
+
+        Reviewed by Michael Saboff.
+
+        Significantly large arity fixup reliably causes this crash.
+
+        * stress/arity-fixup-should-not-touch-stack-area-below-sp.js: Added.
+
 2017-01-31  Filip Pizlo  <fpizlo@apple.com>
 
         Move slow-running microbenchmarks out of JSTests/microbenchmarks
