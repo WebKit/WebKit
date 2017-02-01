@@ -1,3 +1,13 @@
+2017-01-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Make verifyEdge a RELEASE_ASSERT
+        <rdar://problem/30296879>
+
+        Rubber stamped by Saam Barati.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2017-01-31  JF Bastien  <jfbastien@apple.com>
 
         OSR entry: delay outer-loop compilation when at inner-loop

@@ -173,8 +173,7 @@ inline bool isToThisAnIdentity(bool isStrictMode, AbstractValue& valueForNode)
 template<typename AbstractStateType>
 bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimit, Node* node)
 {
-    if (!ASSERT_DISABLED)
-        verifyEdges(node);
+    verifyEdges(node);
     
     m_state.createValueForNode(node);
     
