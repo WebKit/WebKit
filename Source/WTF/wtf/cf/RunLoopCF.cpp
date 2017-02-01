@@ -40,7 +40,6 @@ void RunLoop::performWork(void* context)
 
 RunLoop::RunLoop()
     : m_runLoop(CFRunLoopGetCurrent())
-    , m_nestingLevel(0)
 {
     CFRunLoopSourceContext context = { 0, this, 0, 0, 0, 0, 0, 0, 0, performWork };
     m_runLoopSource = adoptCF(CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context));
@@ -65,14 +64,8 @@ void RunLoop::wakeUp()
 
 void RunLoop::run()
 {
-    current().m_nestingLevel++;
-    
-    {
-        AutodrainedPool pool;
-        CFRunLoopRun();
-    }
-    
-    current().m_nestingLevel--;
+    AutodrainedPool pool;
+    CFRunLoopRun();
 }
 
 void RunLoop::stop()

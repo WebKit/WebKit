@@ -1,3 +1,15 @@
+2017-01-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Removed unused m_nestedCount from RunLoop
+        https://bugs.webkit.org/show_bug.cgi?id=167674
+
+        Reviewed by Sam Weinig.
+
+        * wtf/RunLoop.h:
+        * wtf/cf/RunLoopCF.cpp:
+        (WTF::RunLoop::RunLoop):
+        (WTF::RunLoop::run):
+
 2017-01-31  Filip Pizlo  <fpizlo@apple.com>
 
         The mutator should be able to perform increments of GC work
