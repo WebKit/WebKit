@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    html {
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .scroller {
+        height: 500px;
+        width: 300px;
+        margin: 50px;
+        border: 25px solid gray;
+        padding: 10px;
+        overflow: scroll;
+        box-shadow: 0 0 30px black;
+    }
+    
+    .contents {
+        width: 400px;
+        height: 2000px;
+    }
+
+    .fixed {
+        position: fixed;
+        background-color: green;
+        left: 70px;
+        top: 70px;
+        height: 200px;
+        width: 200px;
+    }
+    
+    .indicator {
+        position: absolute;
+        left: 70px;
+        top: 70px;
+        height: 200px;
+        width: 200px;
+        background-color: red;
+    }
+  </style>
+</head>
+<body>
+    <div class="indicator"></div>
+    <div id="scroller" class="scroller">
+        <div class="contents">
+            <div class="fixed box"></div>
+        </div>
+    </div>
+</body>
+</html>
