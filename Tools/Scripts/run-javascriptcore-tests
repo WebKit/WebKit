@@ -279,6 +279,7 @@ sub runJSCStressTests
             "PerformanceTests/SunSpider/tests/v8-v6",
             "JSTests/stress",
             "JSTests/microbenchmarks",
+            "JSTests/slowMicrobenchmarks.yaml",
             "PerformanceTests/SunSpider/profiler-test.yaml",
             "LayoutTests/jsc-layout-tests.yaml",
             "JSTests/typeProfiler.yaml",

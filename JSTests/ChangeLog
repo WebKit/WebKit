@@ -1,3 +1,44 @@
+2017-01-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Move slow-running microbenchmarks out of JSTests/microbenchmarks
+        https://bugs.webkit.org/show_bug.cgi?id=167676
+
+        Reviewed by Saam Barati.
+        
+        The microbenchmarks directory is profitable when it's cheap to run. This change moves very slow
+        tests (>=200ms running time on my machine) and puts them in JSTests/slowMicrobenchmarks instead.
+        That directory is run only through `slow!; defaultQuickRun` and is not run by run-jsc-benchmarks.
+        This is a big progression in test running time. But because it frontloads more slow tests, the
+        tests will seem to run more slowly when you first start the test runner.
+
+        * microbenchmarks/default-derived-constructor.js: Removed.
+        * microbenchmarks/dense-set.js: Removed.
+        * microbenchmarks/ftl-polymorphic-div.js: Removed.
+        * microbenchmarks/ftl-polymorphic-mul.js: Removed.
+        * microbenchmarks/function-bind-inlining.js: Removed.
+        * microbenchmarks/function-bind-no-inlining.js: Removed.
+        * microbenchmarks/large-map-iteration-with-additions.js: Removed.
+        * microbenchmarks/large-map-iteration-with-mutation.js: Removed.
+        * microbenchmarks/map-get-get-cse.js: Removed.
+        * microbenchmarks/misc-bugs-847389-jpeg2000.js: Removed.
+        * microbenchmarks/spread-small-array.js: Removed.
+        * microbenchmarks/v8-raytrace-with-try-catch-high-frequency-throws.js: Removed.
+        * slowMicrobenchmarks: Added.
+        * slowMicrobenchmarks.yaml: Added.
+        * slowMicrobenchmarks/README: Added.
+        * slowMicrobenchmarks/default-derived-constructor.js: Copied from JSTests/microbenchmarks/default-derived-constructor.js.
+        * slowMicrobenchmarks/dense-set.js: Copied from JSTests/microbenchmarks/dense-set.js.
+        * slowMicrobenchmarks/ftl-polymorphic-div.js: Copied from JSTests/microbenchmarks/ftl-polymorphic-div.js.
+        * slowMicrobenchmarks/ftl-polymorphic-mul.js: Copied from JSTests/microbenchmarks/ftl-polymorphic-mul.js.
+        * slowMicrobenchmarks/function-bind-inlining.js: Copied from JSTests/microbenchmarks/function-bind-inlining.js.
+        * slowMicrobenchmarks/function-bind-no-inlining.js: Copied from JSTests/microbenchmarks/function-bind-no-inlining.js.
+        * slowMicrobenchmarks/large-map-iteration-with-additions.js: Copied from JSTests/microbenchmarks/large-map-iteration-with-additions.js.
+        * slowMicrobenchmarks/large-map-iteration-with-mutation.js: Copied from JSTests/microbenchmarks/large-map-iteration-with-mutation.js.
+        * slowMicrobenchmarks/map-get-get-cse.js: Copied from JSTests/microbenchmarks/map-get-get-cse.js.
+        * slowMicrobenchmarks/misc-bugs-847389-jpeg2000.js: Copied from JSTests/microbenchmarks/misc-bugs-847389-jpeg2000.js.
+        * slowMicrobenchmarks/spread-small-array.js: Copied from JSTests/microbenchmarks/spread-small-array.js.
+        * slowMicrobenchmarks/v8-raytrace-with-try-catch-high-frequency-throws.js: Copied from JSTests/microbenchmarks/v8-raytrace-with-try-catch-high-frequency-throws.js.
+
 2017-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Do not reject WebAssembly.compile() with Exception
