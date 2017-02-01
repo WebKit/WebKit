@@ -4417,7 +4417,10 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 #if USE(IOSURFACE)
     // If we are parented and thus won't incur a significant penalty from paging in tiles, snapshot the view hierarchy directly.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (CADisplay *display = self.window.screen._display) {
+#pragma clang diagnostic pop
         auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebCore::sRGBColorSpaceRef());
         if (!surface) {
             completionHandler(nullptr);

@@ -1,3 +1,10 @@
+2017-01-31  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+
 2017-01-31  Anders Carlsson  <andersca@apple.com>
 
         Add more CRASH calls to try to figure out why we're failing to send mach ports over the wire
