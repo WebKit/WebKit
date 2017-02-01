@@ -216,6 +216,9 @@ void RenderMultiColumnFlowThread::willBeRemovedFromTree()
 
 RenderObject* RenderMultiColumnFlowThread::resolveMovedChild(RenderObject* child) const
 {
+    if (!child)
+        return nullptr;
+
     if (child->style().columnSpan() != ColumnSpanAll || !is<RenderBox>(*child)) {
         // We only need to resolve for column spanners.
         return child;
