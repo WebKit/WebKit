@@ -264,9 +264,24 @@ class Device(object):
             raise RuntimeError('"xcrun simctl erase" failed: device state is {}'.format(Simulator.device_state(udid)))
 
     def install_app(self, app_path):
-        return not self._host.executive.run_command(['xcrun', 'simctl', 'install', self.udid, app_path], return_exit_code=True)
+        # FIXME: This is a workaround for <rdar://problem/30273973>, Racey failure of simctl install.
+        for x in xrange(3):
+            if self._host.executive.run_command(['xcrun', 'simctl', 'install', self.udid, app_path], return_exit_code=True):
+                return False
+            try:
+                bundle_id = self._host.executive.run_command([
+                    '/usr/libexec/PlistBuddy',
+                    '-c',
+                    'Print CFBundleIdentifier',
+                    self._host.filesystem.join(app_path, 'Info.plist'),
+                ]).rstrip()
+                self._host.executive.kill_process(self.launch_app(bundle_id, [], attempts=1))
+                return True
+            except RuntimeError:
+                pass
+        return False
 
-    def launch_app(self, bundle_id, args, env=None):
+    def launch_app(self, bundle_id, args, env=None, attempts=3):
         environment_to_use = {}
         SIMCTL_ENV_PREFIX = 'SIMCTL_CHILD_'
         for value in (env or {}):
@@ -275,12 +290,12 @@ class Device(object):
             else:
                 environment_to_use[value] = env[value]
 
-        # FIXME: This is a workaround for <rdar://problem/30273973>, Racey failure of simctl launch.
+        # FIXME: This is a workaround for <rdar://problem/30172453>.
         def _log_debug_error(error):
             _log.debug(error.message_with_output())
 
         output = None
-        for x in xrange(3):
+        for x in xrange(attempts):
             output = self._host.executive.run_command(
                 ['xcrun', 'simctl', 'launch', self.udid, bundle_id] + args,
                 env=environment_to_use,

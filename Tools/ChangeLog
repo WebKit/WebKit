@@ -1,5 +1,20 @@
 2017-01-31  Jonathan Bedard  <jbedard@apple.com>
 
+        Workaround for simctl install failing to report install failure
+        https://bugs.webkit.org/show_bug.cgi?id=167654
+
+        Reviewed by Daniel Bates.
+
+        simctl install will sometimes report success even though install has failed.
+        To workaround this bug, we attempt an app launch after install to ensure
+        install has succeeded.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Device.install_app): Attempt app launch after install, retry install if launch fails.
+        (Device.launch_app): Correct comment.
+
+2017-01-31  Jonathan Bedard  <jbedard@apple.com>
+
         Unreviewed webkitpy fix after r211405.
 
         * Scripts/webkitpy/xcode/simulator.py:
