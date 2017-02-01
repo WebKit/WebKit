@@ -1,5 +1,15 @@
 2017-02-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, remove loop
+        https://bugs.webkit.org/show_bug.cgi?id=167694
+
+        It causes timeout.
+        Original bug can be tested even without this loop.
+
+        * stress/arity-fixup-should-not-touch-stack-area-below-sp.js:
+
+2017-02-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         ArityFixup should adjust SP first
         https://bugs.webkit.org/show_bug.cgi?id=167239
 
