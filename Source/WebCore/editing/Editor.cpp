@@ -117,9 +117,13 @@ static bool dispatchBeforeInputEvent(Element& element, const AtomicString& input
 static void dispatchInputEvent(Element& element, const AtomicString& inputType, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { })
 {
     auto* settings = element.document().settings();
-    if (settings && settings->inputEventsEnabled())
-        element.dispatchEvent(InputEvent::create(eventNames().inputEvent, inputType, true, false, element.document().defaultView(), data, WTFMove(dataTransfer), targetRanges, 0));
-    else
+    if (settings && settings->inputEventsEnabled()) {
+        // FIXME: We should not be dispatching to the scoped queue here. Normally, input events are dispatched in CompositeEditCommand::apply after the end of the scope,
+        // but TypingCommands are special in that existing TypingCommands that are applied again fire input events *from within* the scope by calling typingAddedToOpenCommand.
+        // Instead, TypingCommands should always dispatch events synchronously after the end of the scoped queue in CompositeEditCommand::apply. To work around this for the
+        // time being, just revert back to calling dispatchScopedEvent.
+        element.dispatchScopedEvent(InputEvent::create(eventNames().inputEvent, inputType, true, false, element.document().defaultView(), data, WTFMove(dataTransfer), targetRanges, 0));
+    } else
         element.dispatchInputEvent();
 }
 
