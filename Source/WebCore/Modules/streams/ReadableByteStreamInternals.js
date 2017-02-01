@@ -59,7 +59,7 @@ function privateInitializeReadableByteStreamController(stream, underlyingByteSou
             @throwRangeError("autoAllocateChunkSize value is negative or equal to positive or negative infinity");
     }
     this.@autoAllocateChunkSize = autoAllocateChunkSize;
-    this.@pendingPullIntos = @newQueue();
+    this.@pendingPullIntos = [];
 
     const controller = this;
     const startResult = @promiseInvokeOrNoopNoCatch(underlyingByteSource, "start", [this]).@then(() => {
@@ -73,7 +73,7 @@ function privateInitializeReadableByteStreamController(stream, underlyingByteSou
     });
 
     this.@cancel = @readableByteStreamControllerCancel;
-    // FIXME: Implement pull.
+    this.@pull = @readableByteStreamControllerPull;
 
     return this;
 }
@@ -101,7 +101,7 @@ function readableByteStreamControllerCancel(controller, reason)
 {
     "use strict";
 
-    if (controller.@pendingPullIntos.content.length > 0)
+    if (controller.@pendingPullIntos.length > 0)
         controller.@pendingPullIntos[0].bytesFilled = 0;
     controller.@queue = @newQueue();
     controller.@totalQueuedBytes = 0;
@@ -130,7 +130,7 @@ function readableByteStreamControllerClose(controller)
         return;
     }
 
-    if (controller.@pendingPullIntos.content.length > 0) {
+    if (controller.@pendingPullIntos.length > 0) {
         if (controller.@pendingPullIntos[0].bytesFilled > 0) {
             const e = new @TypeError("Close requested while there remain pending bytes");
             @readableByteStreamControllerError(controller, e);
@@ -169,6 +169,62 @@ function readableStreamHasDefaultReader(stream)
     return stream.@reader !== @undefined && @isReadableStreamDefaultReader(stream.@reader);
 }
 
+function readableByteStreamControllerHandleQueueDrain(controller) {
+
+    "use strict";
+
+    @assert(controller.@controlledReadableStream.@state === @streamReadable);
+    if (!controller.@totalQueuedBytes && controller.@closeRequested)
+        @readableStreamClose(controller.@controlledReadableStream);
+    else
+        @readableByteStreamControllerCallPullIfNeeded(controller);
+}
+
+function readableByteStreamControllerPull(controller)
+{
+    "use strict";
+
+    const stream = controller.@controlledReadableStream;
+    @assert(@readableStreamHasDefaultReader(stream));
+
+    if (controller.@totalQueuedBytes > 0) {
+        @assert(stream.@reader.@readRequests.length === 0);
+        const entry = @dequeueValue(controller.@queue);
+        controller.@totalQueuedBytes -= entry.byteLength;
+        @readableByteStreamControllerHandleQueueDrain(controller);
+        let view;
+        try {
+            view = new @Uint8Array(entry.buffer, entry.byteOffset, entry.byteLength);
+        } catch (error) {
+            return @Promise.@reject(error);
+        }
+        return @Promise.@resolve({value: view, done: false});
+    }
+
+    if (controller.@autoAllocateChunkSize !== @undefined) {
+        let buffer;
+        try {
+            buffer = new @ArrayBuffer(controller.@autoAllocateChunkSize);
+        } catch (error) {
+            return @Promise.@reject(error);
+        }
+        const pullIntoDescriptor = {
+            buffer,
+            byteOffset: 0,
+            byteLength: controller.@autoAllocateChunkSize,
+            bytesFilled: 0,
+            elementSize: 1,
+            ctor: @Uint8Array,
+            readerType: 'default'
+        };
+        controller.@pendingPullIntos.@push(pullIntoDescriptor);
+    }
+
+    const promise = @readableStreamAddReadRequest(stream);
+    @readableByteStreamControllerCallPullIfNeeded(controller);
+    return promise;
+}
+
 function readableByteStreamControllerShouldCallPull(controller)
 {
     "use strict";
@@ -181,9 +237,9 @@ function readableByteStreamControllerShouldCallPull(controller)
         return false;
     if (!controller.@started)
         return false;
-    if (@readableStreamHasDefaultReader(stream) && stream.@reader.@readRequests > 0)
+    if (@readableStreamHasDefaultReader(stream) && stream.@reader.@readRequests.length > 0)
         return true;
-    if (@readableStreamHasBYOBReader(stream) && stream.@reader.@readIntoRequests > 0)
+    if (@readableStreamHasBYOBReader(stream) && stream.@reader.@readIntoRequests.length > 0)
         return true;
     if (@readableByteStreamControllerGetDesiredSize(controller) > 0)
         return true;

@@ -1,3 +1,25 @@
+2017-02-01  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Implement ReadableByteStreamController pull()
+        https://bugs.webkit.org/show_bug.cgi?id=167593
+
+        Reviewed by Youenn Fablet.
+
+        Implemented pull() method for ReadableByteStreamController. Also updated
+        pendingPullIntos attribute, which was a more complex object than necessary
+        (an array is enough).
+
+        Added 2 tests that allow covering most of new code. Code not yet tested will
+        become reachable as the rest of the spec is implemented (new tests will then
+        be added).
+
+        * Modules/streams/ReadableByteStreamInternals.js:
+        (privateInitializeReadableByteStreamController): Updated pendingPullIntos.
+        (readableByteStreamControllerCancel): Updated pendingPullIntos.
+        (readableByteStreamControllerClose): Updated pendingPullIntos.
+        (readableByteStreamControllerHandleQueueDrain): Added.
+        (readableByteStreamControllerPull): Added.
+
 2017-02-01  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer][MSE] qtdemux: Update the tfdt patch to the version finally accepted upstream

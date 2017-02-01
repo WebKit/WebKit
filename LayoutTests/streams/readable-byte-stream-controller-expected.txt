@@ -9,6 +9,8 @@ PASS Calling close() after calling close() should throw a TypeError
 PASS Calling close() after calling error() should throw a TypeError 
 PASS Calling read() on a reader associated to a controller that has been errored should fail with provided error 
 PASS Calling read() on a reader associated to a controller that has been closed should not be rejected 
+PASS Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is undefined) 
+FAIL Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is specified) Can't find private variable: @Uint8Array
 FAIL Calling read() after a chunk has been enqueued should result in obtaining said chunk ReadableByteStreamController enqueue() is not implemented
 PASS By default initial value of desiredSize should be 1 
 PASS Calling cancel() on a readable ReadableStream that is not locked to a reader should return a promise whose fulfillment handler returns undefined 
@@ -25,6 +27,8 @@ PASS Calling close() after calling close() should throw a TypeError
 PASS Calling close() after calling error() should throw a TypeError 
 PASS Calling read() on a reader associated to a controller that has been errored should fail with provided error 
 PASS Calling read() on a reader associated to a controller that has been closed should not be rejected 
+PASS Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is undefined) 
+FAIL Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is specified) Can't find private variable: @Uint8Array
 FAIL Calling read() after a chunk has been enqueued should result in obtaining said chunk ReadableByteStreamController enqueue() is not implemented
 PASS By default initial value of desiredSize should be 1 
 PASS Calling cancel() on a readable ReadableStream that is not locked to a reader should return a promise whose fulfillment handler returns undefined 

@@ -179,6 +179,41 @@ promise_test(function() {
     );
 }, "Calling read() on a reader associated to a controller that has been closed should not be rejected");
 
+promise_test(function(test) {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    const myError = new Error("My error");
+    let readingPromise = rs.getReader().read();
+    controller.error(myError);
+
+    return promise_rejects(test, myError, readingPromise);
+}, "Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is undefined)");
+
+promise_test(function(test) {
+    let controller;
+
+    const rs = new ReadableStream({
+        autoAllocateChunkSize: 128,
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    const myError = new Error("My error");
+    let readingPromise = rs.getReader().read();
+    controller.error(myError);
+
+    return promise_rejects(test, myError, readingPromise);
+}, "Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is specified)");
+
 promise_test(function() {
     let controller;
 
