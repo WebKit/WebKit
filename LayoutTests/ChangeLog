@@ -1,5 +1,16 @@
 2017-02-01  Simon Fraser  <simon.fraser@apple.com>
 
+        Clean up css3/filters/backdrop/backdrop-filter-with-clip-path.html expected results.
+
+        https://trac.webkit.org/changeset/201374 added some very confused results for this test.
+        Just move the -expected.html next to the test, and remove the .txt and .png results.
+
+        * css3/filters/backdrop/backdrop-filter-with-clip-path-expected.html: Renamed from LayoutTests/platform/ios-simulator/css3/filters/backdrop/backdrop-filter-with-clip-path-expected.html.
+        * css3/filters/backdrop/backdrop-filter-with-clip-path-expected.txt: Removed.
+        * platform/mac/css3/filters/backdrop/backdrop-filter-with-clip-path-expected.png: Removed.
+
+2017-02-01  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r211379): [ios-simulator] LayoutTest compositing/geometry/fixed-in-composited.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=167620
         rdar://problem/30309207
