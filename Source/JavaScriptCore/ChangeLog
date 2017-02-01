@@ -1,5 +1,56 @@
 2017-01-27  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211194. rdar://problem/30201008
+
+    2017-01-25  Filip Pizlo  <fpizlo@apple.com>
+
+            jsc.cpp should have the $.agent stuff for testing SAB
+            https://bugs.webkit.org/show_bug.cgi?id=167431
+
+            Reviewed by Saam Barati.
+
+            This adds some stuff that the SAB branch of test262 needs. None of this is exposed except for our
+            own tests and the SAB branch of test262. We now pass all of the Atomics tests in the SAB branch
+            of test262.
+
+            * jsc.cpp:
+            (Message::releaseContents):
+            (Message::index):
+            (GlobalObject::finishCreation):
+            (GlobalObject::addFunction):
+            (Message::Message):
+            (Message::~Message):
+            (Worker::Worker):
+            (Worker::~Worker):
+            (Worker::send):
+            (Worker::receive):
+            (Worker::current):
+            (Worker::currentWorker):
+            (Workers::Workers):
+            (Workers::~Workers):
+            (Workers::broadcast):
+            (Workers::report):
+            (Workers::tryGetReport):
+            (Workers::getReport):
+            (Workers::singleton):
+            (functionDollarCreateRealm):
+            (functionDollarDetachArrayBuffer):
+            (functionDollarEvalScript):
+            (functionDollarAgentStart):
+            (functionDollarAgentReceiveBroadcast):
+            (functionDollarAgentReport):
+            (functionDollarAgentSleep):
+            (functionDollarAgentBroadcast):
+            (functionDollarAgentGetReport):
+            (functionWaitForReport):
+            (checkException):
+            (runWithScripts):
+            (runJSC):
+            (jscmain):
+            * runtime/JSArrayBuffer.h:
+
+2017-01-27  Matthew Hanson  <matthew_hanson@apple.com>
+
         Rollout r211258. rdar://problem/29144126
 
 2017-01-27  Matthew Hanson  <matthew_hanson@apple.com>
