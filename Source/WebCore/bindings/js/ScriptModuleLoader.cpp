@@ -125,7 +125,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGloba
     return jsPromise.promise();
 }
 
-void rejectToPropagateNetworkError(DeferredPromise& deferred, ModuleFetchFailureKind failureKind, ASCIILiteral message)
+static void rejectToPropagateNetworkError(DeferredPromise& deferred, ModuleFetchFailureKind failureKind, ASCIILiteral message)
 {
     deferred.rejectWithCallback([&] (JSC::ExecState& state, JSDOMGlobalObject&) {
         // We annotate exception with special private symbol. It allows us to distinguish these errors from the user thrown ones.

@@ -1,5 +1,14 @@
 2017-02-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, build fix for macOS and iOS ports, part 2
+
+        Annotate the function with static.
+
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::rejectToPropagateNetworkError):
+
+2017-02-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, build fix for macOS and iOS ports
 
         * bindings/js/ModuleFetchFailureKind.h: Renamed from Source/ModuleFetchFailureKind.h.
