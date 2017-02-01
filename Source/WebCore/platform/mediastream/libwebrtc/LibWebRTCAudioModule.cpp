@@ -44,7 +44,7 @@ int32_t LibWebRTCAudioModule::RegisterAudioCallback(webrtc::AudioTransport* audi
 
 void LibWebRTCAudioModule::OnMessage(rtc::Message* message)
 {
-    ASSERT(message->message_id == 1);
+    ASSERT_UNUSED(message, message->message_id == 1);
     StartPlayoutOnAudioThread();
 }
 
