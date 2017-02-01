@@ -61,7 +61,7 @@ static bool didGetBodyInnerHTMLAfterDetectingData;
 
 @end
 
-TEST(WebKit2, WKWebProcessPlugInRangeHandle)
+TEST(WebKit2, DISABLED_WKWebProcessPlugInRangeHandle)
 {
     RetainPtr<WKWebViewConfiguration> configuration = retainPtr([WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:@"BundleRangeHandlePlugIn"]);
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
