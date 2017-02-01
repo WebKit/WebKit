@@ -2541,20 +2541,18 @@ void GraphicsLayerCA::updateMasksToBoundsRect()
 void GraphicsLayerCA::updateMaskLayer()
 {
     PlatformCALayer* maskCALayer = m_maskLayer ? downcast<GraphicsLayerCA>(*m_maskLayer).primaryLayer() : nullptr;
-    m_layer->setMask(maskCALayer);
-
-    if (m_backdropLayer) {
-        if (m_maskLayer) {
-            ReplicaState replicaState(ReplicaState::ChildBranch);
-            RefPtr<PlatformCALayer> maskClone = downcast<GraphicsLayerCA>(*m_maskLayer).fetchCloneLayers(this, replicaState, IntermediateCloneLevel);
-            m_backdropLayer->setMask(maskClone.get());
-        } else
-            m_backdropLayer->setMask(nullptr);
+    
+    LayerMap* layerCloneMap;
+    if (m_structuralLayer) {
+        m_structuralLayer->setMask(maskCALayer);
+        layerCloneMap = m_structuralLayerClones.get();
+    } else {
+        m_layer->setMask(maskCALayer);
+        layerCloneMap = m_layerClones.get();
     }
 
     LayerMap* maskLayerCloneMap = m_maskLayer ? downcast<GraphicsLayerCA>(*m_maskLayer).primaryLayerClones() : nullptr;
-    
-    if (LayerMap* layerCloneMap = m_layerClones.get()) {
+    if (layerCloneMap) {
         for (auto& clone : *layerCloneMap) {
             PlatformCALayer* maskClone = maskLayerCloneMap ? maskLayerCloneMap->get(clone.key) : nullptr;
             clone.value->setMask(maskClone);

@@ -168,6 +168,11 @@ using namespace WebCore;
     if ([[self sublayers] count] == 0)
         [curDesc appendString:@"\n"];
 
+    if (CALayer *mask = [self mask]) {
+        [curDesc appendString:@"mask: "];
+        [curDesc appendString:[mask _descriptionWithPrefix:sublayerPrefix]];
+    }
+
     return curDesc;
 }
 
