@@ -30,6 +30,7 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
+#include <wtf/DecimalNumber.h>
 
 namespace WebKit {
 
@@ -70,6 +71,14 @@ static inline String loggingKeyForActivityState(ActivityStateForCPUSampling stat
     }
 }
 
+static String toStringRoundingSignificantFigures(double value, unsigned significantFigures)
+{
+    DecimalNumber decimal(value, RoundingSignificantFigures, significantFigures);
+    NumberToLStringBuffer buffer;
+    unsigned length = decimal.toStringDecimal(buffer, WTF::NumberToStringBufferLength);
+    return String(buffer, length);
+}
+
 void PerActivityStateCPUUsageSampler::loggingTimerFired()
 {
     auto* page = pageForLogging();
@@ -84,7 +93,7 @@ void PerActivityStateCPUUsageSampler::loggingTimerFired()
     for (auto& pair : m_cpuTimeInActivityState) {
         double cpuUsage = static_cast<double>(pair.value * 100.) / cpuTimeDelta;
         String activityStateKey = loggingKeyForActivityState(pair.key);
-        page->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::cpuUsageKey(), activityStateKey, String::number(cpuUsage, 1), false);
+        page->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::cpuUsageKey(), activityStateKey, toStringRoundingSignificantFigures(cpuUsage, 2), false);
         RELEASE_LOG(PerformanceLogging, "WebContent processes used %.1f%% CPU in %s state", cpuUsage, activityStateKey.utf8().data());
     }
 
