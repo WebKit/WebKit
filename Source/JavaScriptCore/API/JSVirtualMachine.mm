@@ -326,6 +326,8 @@ void scanExternalRememberedSet(JSC::VM& vm, JSC::SlotVisitor& visitor)
         }
         [externalRememberedSet removeAllObjects];
     }
+
+    visitor.mergeIfNecessary();
 }
 
 #endif // JSC_OBJC_API_ENABLED
