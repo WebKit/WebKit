@@ -364,8 +364,7 @@ struct RecordMetaData {
 
     unsigned cacheStorageVersion;
     Key key;
-    // FIXME: Add encoder/decoder for time_point.
-    std::chrono::milliseconds epochRelativeTimeStamp;
+    std::chrono::system_clock::time_point timeStamp;
     SHA1::Digest headerHash;
     uint64_t headerSize;
     SHA1::Digest bodyHash;
@@ -385,7 +384,7 @@ static bool decodeRecordMetaData(RecordMetaData& metaData, const Data& fileData)
             return false;
         if (!decoder.decode(metaData.key))
             return false;
-        if (!decoder.decode(metaData.epochRelativeTimeStamp))
+        if (!decoder.decode(metaData.timeStamp))
             return false;
         if (!decoder.decode(metaData.headerHash))
             return false;
@@ -439,8 +438,7 @@ void Storage::readRecord(ReadOperation& readOperation, const Data& recordData)
         return;
 
     // Sanity check against time stamps in future.
-    auto timeStamp = std::chrono::system_clock::time_point(metaData.epochRelativeTimeStamp);
-    if (timeStamp > std::chrono::system_clock::now())
+    if (metaData.timeStamp > std::chrono::system_clock::now())
         return;
 
     Data bodyData;
@@ -456,7 +454,7 @@ void Storage::readRecord(ReadOperation& readOperation, const Data& recordData)
     readOperation.expectedBodyHash = metaData.bodyHash;
     readOperation.resultRecord = std::make_unique<Storage::Record>(Storage::Record {
         metaData.key,
-        timeStamp,
+        metaData.timeStamp,
         headerData,
         bodyData,
         metaData.bodyHash
@@ -469,7 +467,7 @@ static Data encodeRecordMetaData(const RecordMetaData& metaData)
 
     encoder << metaData.cacheStorageVersion;
     encoder << metaData.key;
-    encoder << metaData.epochRelativeTimeStamp;
+    encoder << metaData.timeStamp;
     encoder << metaData.headerHash;
     encoder << metaData.headerSize;
     encoder << metaData.bodyHash;
@@ -511,7 +509,7 @@ Data Storage::encodeRecord(const Record& record, std::optional<BlobStorage::Blob
     ASSERT(!blob || bytesEqual(blob.value().data, record.body));
 
     RecordMetaData metaData(record.key);
-    metaData.epochRelativeTimeStamp = std::chrono::duration_cast<std::chrono::milliseconds>(record.timeStamp.time_since_epoch());
+    metaData.timeStamp = record.timeStamp;
     metaData.headerHash = computeSHA1(record.header, m_salt);
     metaData.headerSize = record.header.size();
     metaData.bodyHash = blob ? blob.value().hash : computeSHA1(record.body, m_salt);
@@ -836,7 +834,7 @@ void Storage::traverse(const String& type, TraverseFlags flags, TraverseHandler&
                 if (decodeRecordHeader(fileData, metaData, headerData, m_salt)) {
                     Record record {
                         metaData.key,
-                        std::chrono::system_clock::time_point(metaData.epochRelativeTimeStamp),
+                        metaData.timeStamp,
                         headerData,
                         { },
                         metaData.bodyHash

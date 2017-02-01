@@ -261,6 +261,23 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Coder<
     }
 };
 
+template<> struct Coder<std::chrono::system_clock::time_point> {
+    static void encode(Encoder& encoder, const std::chrono::system_clock::time_point& timePoint)
+    {
+        encoder << static_cast<int64_t>(timePoint.time_since_epoch().count());
+    }
+    
+    static bool decode(Decoder& decoder, std::chrono::system_clock::time_point& result)
+    {
+        int64_t time;
+        if (!decoder.decode(time))
+            return false;
+
+        result = std::chrono::system_clock::time_point(std::chrono::system_clock::duration(static_cast<std::chrono::system_clock::rep>(time)));
+        return true;
+    }
+};
+
 template<> struct Coder<AtomicString> {
     WTF_EXPORT_PRIVATE static void encode(Encoder&, const AtomicString&);
     WTF_EXPORT_PRIVATE static bool decode(Decoder&, AtomicString&);

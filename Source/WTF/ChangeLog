@@ -1,3 +1,14 @@
+2017-01-31  Antti Koivisto  <antti@apple.com>
+
+        Teach cache coders to encode time_points
+        https://bugs.webkit.org/show_bug.cgi?id=167670
+
+        Reviewed by Andreas Kling.
+
+        * wtf/persistence/Coders.h:
+        (WTF::Persistence::Coder<std::chrono::system_clock::time_point>::encode):
+        (WTF::Persistence::Coder<std::chrono::system_clock::time_point>::decode):
+
 2017-01-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Removed unused m_nestedCount from RunLoop
