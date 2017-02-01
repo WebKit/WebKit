@@ -46,40 +46,54 @@
 #include "PerformanceTiming.h"
 #include "PerformanceUserTiming.h"
 #include "ResourceResponse.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
-Performance::Performance(Frame& frame)
-    : DOMWindowProperty(&frame)
-    , m_referenceTime(frame.document()->loader() ? frame.document()->loader()->timing().referenceMonotonicTime() : monotonicallyIncreasingTime())
+Performance::Performance(ScriptExecutionContext& context, double timeOrigin)
+    : ContextDestructionObserver(&context)
+    , m_timeOrigin(timeOrigin)
 {
-    ASSERT(m_referenceTime);
+    ASSERT(m_timeOrigin);
 }
 
 Performance::~Performance()
 {
 }
 
-ScriptExecutionContext* Performance::scriptExecutionContext() const
+double Performance::now() const
 {
-    if (!frame())
+    double nowSeconds = monotonicallyIncreasingTime() - m_timeOrigin;
+    return 1000.0 * reduceTimeResolution(nowSeconds);
+}
+
+double Performance::reduceTimeResolution(double seconds)
+{
+    const double resolutionSeconds = 0.0001;
+    return std::floor(seconds / resolutionSeconds) * resolutionSeconds;
+}
+
+PerformanceNavigation* Performance::navigation()
+{
+    if (!is<Document>(scriptExecutionContext()))
         return nullptr;
-    return frame()->document();
-}
 
-PerformanceNavigation& Performance::navigation()
-{
+    ASSERT(isMainThread());
     if (!m_navigation)
-        m_navigation = PerformanceNavigation::create(m_frame);
-    return *m_navigation;
+        m_navigation = PerformanceNavigation::create(downcast<Document>(*scriptExecutionContext()).frame());
+    return m_navigation.get();
 }
 
-PerformanceTiming& Performance::timing()
+PerformanceTiming* Performance::timing()
 {
+    if (!is<Document>(scriptExecutionContext()))
+        return nullptr;
+
+    ASSERT(isMainThread());
     if (!m_timing)
-        m_timing = PerformanceTiming::create(m_frame);
-    return *m_timing;
+        m_timing = PerformanceTiming::create(downcast<Document>(*scriptExecutionContext()).frame());
+    return m_timing.get();
 }
 
 Vector<RefPtr<PerformanceEntry>> Performance::getEntries() const
@@ -150,12 +164,16 @@ void Performance::setResourceTimingBufferSize(unsigned size)
         dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, false, false));
 }
 
-void Performance::addResourceTiming(const String& initiatorName, Document* initiatorDocument, const URL& originalURL, const ResourceResponse& response, const LoadTiming& loadTiming)
+void Performance::addResourceTiming(const String& initiatorName, const URL& originalURL, const ResourceResponse& response, const LoadTiming& loadTiming)
 {
     if (isResourceTimingBufferFull())
         return;
 
-    RefPtr<PerformanceEntry> entry = PerformanceResourceTiming::create(initiatorName, originalURL, response, loadTiming, initiatorDocument);
+    SecurityOrigin* securityOrigin = scriptExecutionContext()->securityOrigin();
+    if (!securityOrigin)
+        return;
+
+    RefPtr<PerformanceEntry> entry = PerformanceResourceTiming::create(initiatorName, originalURL, response, *securityOrigin, m_timeOrigin, loadTiming);
 
     m_resourceTimingBuffer.append(entry);
 
@@ -218,18 +236,6 @@ void Performance::registerPerformanceObserver(PerformanceObserver& observer)
 void Performance::unregisterPerformanceObserver(PerformanceObserver& observer)
 {
     m_observers.remove(&observer);
-}
-
-double Performance::now() const
-{
-    double nowSeconds = monotonicallyIncreasingTime() - m_referenceTime;
-    return 1000.0 * reduceTimeResolution(nowSeconds);
-}
-
-double Performance::reduceTimeResolution(double seconds)
-{
-    const double resolutionSeconds = 0.0001;
-    return std::floor(seconds / resolutionSeconds) * resolutionSeconds;
 }
 
 void Performance::queueEntry(PerformanceEntry& entry)

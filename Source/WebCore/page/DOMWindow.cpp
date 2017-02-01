@@ -799,8 +799,10 @@ Performance* DOMWindow::performance() const
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
-    if (!m_performance)
-        m_performance = Performance::create(*m_frame);
+    if (!m_performance) {
+        double timeOrigin = document()->loader() ? document()->loader()->timing().referenceMonotonicTime() : monotonicallyIncreasingTime();
+        m_performance = Performance::create(*document(), timeOrigin);
+    }
     return m_performance.get();
 }
 

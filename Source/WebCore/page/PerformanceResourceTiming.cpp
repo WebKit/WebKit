@@ -45,16 +45,18 @@
 
 namespace WebCore {
 
-static double monotonicTimeToDocumentMilliseconds(Document* document, double seconds)
+static double monotonicTimeToDOMHighResTimeStamp(double timeOrigin, double seconds)
 {
     ASSERT(seconds >= 0.0);
-    return Performance::reduceTimeResolution(document->loader()->timing().monotonicTimeToZeroBasedDocumentTime(seconds)) * 1000.0;
+    if (!seconds || !timeOrigin)
+        return 0;
+    return Performance::reduceTimeResolution(seconds - timeOrigin) * 1000.0;
 }
 
-static bool passesTimingAllowCheck(const ResourceResponse& response, Document* requestingDocument)
+static bool passesTimingAllowCheck(const ResourceResponse& response, const SecurityOrigin& initiatorSecurityOrigin)
 {
     Ref<SecurityOrigin> resourceOrigin = SecurityOrigin::create(response.url());
-    if (resourceOrigin->isSameSchemeHostPort(requestingDocument->securityOrigin()))
+    if (resourceOrigin->isSameSchemeHostPort(initiatorSecurityOrigin))
         return true;
 
     const String& timingAllowOriginString = response.httpHeaderField(HTTPHeaderName::TimingAllowOrigin);
@@ -64,7 +66,7 @@ static bool passesTimingAllowCheck(const ResourceResponse& response, Document* r
     if (timingAllowOriginString == "*")
         return true;
 
-    const String& securityOrigin = requestingDocument->securityOrigin().toString();
+    const String& securityOrigin = initiatorSecurityOrigin.toString();
     Vector<String> timingAllowOrigins;
     timingAllowOriginString.split(' ', timingAllowOrigins);
     for (auto& origin : timingAllowOrigins) {
@@ -75,23 +77,18 @@ static bool passesTimingAllowCheck(const ResourceResponse& response, Document* r
     return false;
 }
 
-PerformanceResourceTiming::PerformanceResourceTiming(const AtomicString& initiatorType, const URL& originalURL, const ResourceResponse& response, LoadTiming loadTiming, Document* requestingDocument)
-    : PerformanceEntry(PerformanceEntry::Type::Resource, originalURL.string(), ASCIILiteral("resource"), monotonicTimeToDocumentMilliseconds(requestingDocument, loadTiming.startTime()), monotonicTimeToDocumentMilliseconds(requestingDocument, loadTiming.responseEnd()))
+PerformanceResourceTiming::PerformanceResourceTiming(const AtomicString& initiatorType, const URL& originalURL, const ResourceResponse& response, const SecurityOrigin& initiatorSecurityOrigin, double timeOrigin, LoadTiming loadTiming)
+    : PerformanceEntry(PerformanceEntry::Type::Resource, originalURL.string(), ASCIILiteral("resource"), monotonicTimeToDOMHighResTimeStamp(timeOrigin, loadTiming.startTime()), monotonicTimeToDOMHighResTimeStamp(timeOrigin, loadTiming.responseEnd()))
     , m_initiatorType(initiatorType)
     , m_timing(response.networkLoadTiming())
     , m_loadTiming(loadTiming)
-    , m_shouldReportDetails(passesTimingAllowCheck(response, requestingDocument))
-    , m_requestingDocument(requestingDocument)
+    , m_shouldReportDetails(passesTimingAllowCheck(response, initiatorSecurityOrigin))
+    , m_timeOrigin(timeOrigin)
 {
 }
 
 PerformanceResourceTiming::~PerformanceResourceTiming()
 {
-}
-
-AtomicString PerformanceResourceTiming::initiatorType() const
-{
-    return m_initiatorType;
 }
 
 double PerformanceResourceTiming::workerStart() const
@@ -104,7 +101,7 @@ double PerformanceResourceTiming::redirectStart() const
     if (!m_shouldReportDetails)
         return 0.0;
 
-    return monotonicTimeToDocumentMilliseconds(m_requestingDocument.get(), m_loadTiming.redirectStart());
+    return monotonicTimeToDOMHighResTimeStamp(m_timeOrigin, m_loadTiming.redirectStart());
 }
 
 double PerformanceResourceTiming::redirectEnd() const
@@ -112,12 +109,12 @@ double PerformanceResourceTiming::redirectEnd() const
     if (!m_shouldReportDetails)
         return 0.0;
 
-    return monotonicTimeToDocumentMilliseconds(m_requestingDocument.get(), m_loadTiming.redirectEnd());
+    return monotonicTimeToDOMHighResTimeStamp(m_timeOrigin, m_loadTiming.redirectEnd());
 }
 
 double PerformanceResourceTiming::fetchStart() const
 {
-    return monotonicTimeToDocumentMilliseconds(m_requestingDocument.get(), m_loadTiming.fetchStart());
+    return monotonicTimeToDOMHighResTimeStamp(m_timeOrigin, m_loadTiming.fetchStart());
 }
 
 double PerformanceResourceTiming::domainLookupStart() const
@@ -128,7 +125,7 @@ double PerformanceResourceTiming::domainLookupStart() const
     if (m_timing.domainLookupStart <= 0)
         return fetchStart();
 
-    return resourceTimeToDocumentMilliseconds(m_timing.domainLookupStart);
+    return networkLoadTimeToDOMHighResTimeStamp(m_timing.domainLookupStart);
 }
 
 double PerformanceResourceTiming::domainLookupEnd() const
@@ -139,7 +136,7 @@ double PerformanceResourceTiming::domainLookupEnd() const
     if (m_timing.domainLookupEnd <= 0)
         return domainLookupStart();
 
-    return resourceTimeToDocumentMilliseconds(m_timing.domainLookupEnd);
+    return networkLoadTimeToDOMHighResTimeStamp(m_timing.domainLookupEnd);
 }
 
 double PerformanceResourceTiming::connectStart() const
@@ -156,7 +153,7 @@ double PerformanceResourceTiming::connectStart() const
     if (m_timing.domainLookupEnd >= 0)
         connectStart = m_timing.domainLookupEnd;
 
-    return resourceTimeToDocumentMilliseconds(connectStart);
+    return networkLoadTimeToDOMHighResTimeStamp(connectStart);
 }
 
 double PerformanceResourceTiming::connectEnd() const
@@ -168,7 +165,7 @@ double PerformanceResourceTiming::connectEnd() const
     if (m_timing.connectEnd <= 0)
         return connectStart();
 
-    return resourceTimeToDocumentMilliseconds(m_timing.connectEnd);
+    return networkLoadTimeToDOMHighResTimeStamp(m_timing.connectEnd);
 }
 
 double PerformanceResourceTiming::secureConnectionStart() const
@@ -179,7 +176,7 @@ double PerformanceResourceTiming::secureConnectionStart() const
     if (m_timing.secureConnectionStart < 0) // Secure connection not negotiated.
         return 0.0;
 
-    return resourceTimeToDocumentMilliseconds(m_timing.secureConnectionStart);
+    return networkLoadTimeToDOMHighResTimeStamp(m_timing.secureConnectionStart);
 }
 
 double PerformanceResourceTiming::requestStart() const
@@ -187,7 +184,7 @@ double PerformanceResourceTiming::requestStart() const
     if (!m_shouldReportDetails)
         return 0.0;
 
-    return resourceTimeToDocumentMilliseconds(m_timing.requestStart);
+    return networkLoadTimeToDOMHighResTimeStamp(m_timing.requestStart);
 }
 
 double PerformanceResourceTiming::responseStart() const
@@ -195,7 +192,7 @@ double PerformanceResourceTiming::responseStart() const
     if (!m_shouldReportDetails)
         return 0.0;
 
-    return resourceTimeToDocumentMilliseconds(m_timing.responseStart);
+    return networkLoadTimeToDOMHighResTimeStamp(m_timing.responseStart);
 }
 
 double PerformanceResourceTiming::responseEnd() const
@@ -203,17 +200,16 @@ double PerformanceResourceTiming::responseEnd() const
     if (!m_shouldReportDetails)
         return 0.0;
 
-    return monotonicTimeToDocumentMilliseconds(m_requestingDocument.get(), m_loadTiming.responseEnd());
+    return monotonicTimeToDOMHighResTimeStamp(m_timeOrigin, m_loadTiming.responseEnd());
 }
 
-double PerformanceResourceTiming::resourceTimeToDocumentMilliseconds(double deltaMilliseconds) const
+double PerformanceResourceTiming::networkLoadTimeToDOMHighResTimeStamp(double deltaMilliseconds) const
 {
     if (!deltaMilliseconds)
         return 0.0;
 
-    double documentStartTime = m_requestingDocument->loader()->timing().monotonicTimeToZeroBasedDocumentTime(m_loadTiming.fetchStart()) * 1000.0;
-    double resourceTimeSeconds = (documentStartTime + deltaMilliseconds) / 1000.0;
-    return 1000.0 * Performance::reduceTimeResolution(resourceTimeSeconds);
+    double seconds = m_loadTiming.fetchStart() + (deltaMilliseconds / 1000.0);
+    return Performance::reduceTimeResolution(seconds - m_timeOrigin) * 1000.0;
 }
 
 } // namespace WebCore

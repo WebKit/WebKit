@@ -34,7 +34,7 @@
 
 #if ENABLE(WEB_TIMING)
 
-#include "DOMWindowProperty.h"
+#include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "GenericTaskQueue.h"
@@ -42,24 +42,25 @@
 
 namespace WebCore {
 
-class Document;
 class LoadTiming;
 class PerformanceEntry;
 class PerformanceNavigation;
 class PerformanceObserver;
 class PerformanceTiming;
 class ResourceResponse;
+class ScriptExecutionContext;
 class URL;
 class UserTiming;
 
-class Performance final : public RefCounted<Performance>, public DOMWindowProperty, public EventTargetWithInlineData {
+class Performance final : public RefCounted<Performance>, public ContextDestructionObserver, public EventTargetWithInlineData {
 public:
-    static Ref<Performance> create(Frame& frame) { return adoptRef(*new Performance(frame)); }
+    static Ref<Performance> create(ScriptExecutionContext& context, double timeOrigin) { return adoptRef(*new Performance(context, timeOrigin)); }
     ~Performance();
 
-    PerformanceNavigation& navigation();
-    PerformanceTiming& timing();
     double now() const;
+
+    PerformanceNavigation* navigation();
+    PerformanceTiming* timing();
 
     Vector<RefPtr<PerformanceEntry>> getEntries() const;
     Vector<RefPtr<PerformanceEntry>> getEntriesByType(const String& entryType) const;
@@ -68,7 +69,7 @@ public:
     void clearResourceTimings();
     void setResourceTimingBufferSize(unsigned);
 
-    void addResourceTiming(const String& initiatorName, Document*, const URL& originalURL, const ResourceResponse&, const LoadTiming&);
+    void addResourceTiming(const String& initiatorName, const URL& originalURL, const ResourceResponse&, const LoadTiming&);
 
     ExceptionOr<void> mark(const String& markName);
     void clearMarks(const String& markName);
@@ -81,14 +82,15 @@ public:
 
     static double reduceTimeResolution(double seconds);
 
+    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+
     using RefCounted::ref;
     using RefCounted::deref;
 
 private:
-    explicit Performance(Frame&);
+    Performance(ScriptExecutionContext&, double timeOrigin);
 
     EventTargetInterface eventTargetInterface() const final { return PerformanceEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
@@ -104,7 +106,7 @@ private:
     Vector<RefPtr<PerformanceEntry>> m_resourceTimingBuffer;
     unsigned m_resourceTimingBufferSize { 150 };
 
-    double m_referenceTime;
+    double m_timeOrigin;
 
     std::unique_ptr<UserTiming> m_userTiming;
 

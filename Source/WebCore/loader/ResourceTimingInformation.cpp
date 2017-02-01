@@ -53,7 +53,7 @@ void ResourceTimingInformation::addResourceTiming(CachedResource* resource, Docu
             ASSERT(initiatorDocument->domWindow());
             ASSERT(initiatorDocument->domWindow()->performance());
             const InitiatorInfo& info = initiatorIt->value;
-            initiatorDocument->domWindow()->performance()->addResourceTiming(info.name, initiatorDocument, resource->resourceRequest().url(), resource->response(), loadTiming);
+            initiatorDocument->domWindow()->performance()->addResourceTiming(info.name, resource->resourceRequest().url(), resource->response(), loadTiming);
             initiatorIt->value.added = Added;
         }
     }

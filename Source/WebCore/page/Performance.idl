@@ -35,7 +35,7 @@ typedef double DOMHighResTimeStamp;
 
 [
     Conditional=WEB_TIMING,
-    GenerateIsReachable=ImplFrame,
+    GenerateIsReachable=ImplScriptExecutionContext,
 ] interface Performance : EventTarget {
 
     DOMHighResTimeStamp now();

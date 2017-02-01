@@ -117,10 +117,16 @@ ExceptionOr<double> UserTiming::findExistingMarkStartTime(const String& markName
         return m_marksMap.get(markName).last()->startTime();
 
     if (auto function = restrictedMarkFunction(markName)) {
-        double value = static_cast<double>((m_performance.timing().*(function))());
-        if (!value)
-            return Exception { INVALID_ACCESS_ERR };
-        return value - m_performance.timing().navigationStart();
+        if (PerformanceTiming* timing = m_performance.timing()) {
+            double value = static_cast<double>(((*timing).*(function))());
+            if (!value)
+                return Exception { INVALID_ACCESS_ERR };
+            return value - timing->navigationStart();
+        } else {
+            // FIXME: Support UserTiming in Workers.
+            ASSERT_NOT_REACHED();
+            return Exception { SYNTAX_ERR };
+        }
     }
 
     return Exception { SYNTAX_ERR };

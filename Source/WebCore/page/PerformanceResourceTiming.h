@@ -41,19 +41,18 @@
 
 namespace WebCore {
 
-class Document;
-class URL;
-class NetworkLoadTiming;
 class ResourceResponse;
+class SecurityOrigin;
+class URL;
 
 class PerformanceResourceTiming final : public PerformanceEntry {
 public:
-    static Ref<PerformanceResourceTiming> create(const AtomicString& initiatorType, const URL& originalURL, const ResourceResponse& response, LoadTiming loadTiming, Document* requestingDocument)
+    static Ref<PerformanceResourceTiming> create(const AtomicString& initiatorType, const URL& originalURL, const ResourceResponse& response, const SecurityOrigin& initiatorSecurityOrigin, double timeOrigin, LoadTiming loadTiming)
     {
-        return adoptRef(*new PerformanceResourceTiming(initiatorType, originalURL, response, loadTiming, requestingDocument));
+        return adoptRef(*new PerformanceResourceTiming(initiatorType, originalURL, response, initiatorSecurityOrigin, timeOrigin, loadTiming));
     }
 
-    AtomicString initiatorType() const;
+    AtomicString initiatorType() const { return m_initiatorType; }
 
     double workerStart() const;
     double redirectStart() const;
@@ -71,16 +70,16 @@ public:
     bool isResource() const override { return true; }
 
 private:
-    PerformanceResourceTiming(const AtomicString& initatorType, const URL& originalURL, const ResourceResponse&, LoadTiming, Document*);
+    PerformanceResourceTiming(const AtomicString& initatorType, const URL& originalURL, const ResourceResponse&, const SecurityOrigin&, double timeOrigin, LoadTiming);
     ~PerformanceResourceTiming();
 
-    double resourceTimeToDocumentMilliseconds(double deltaMilliseconds) const;
+    double networkLoadTimeToDOMHighResTimeStamp(double deltaMilliseconds) const;
 
     AtomicString m_initiatorType;
     NetworkLoadTiming m_timing;
     LoadTiming m_loadTiming;
     bool m_shouldReportDetails;
-    RefPtr<Document> m_requestingDocument;
+    double m_timeOrigin;
 };
 
 } // namespace WebCore

@@ -1,3 +1,51 @@
+2017-02-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Performance Timeline: Prepare for Worker support
+        https://bugs.webkit.org/show_bug.cgi?id=167633
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove references to Document/Frame in Performance. Instead use
+        ScriptExecutionContext and pass in the time origin / SecurityOrigin
+        where it is relevant. No tests should change this is just refactoring.
+
+        * loader/ResourceTimingInformation.cpp:
+        (WebCore::ResourceTimingInformation::addResourceTiming):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::performance):
+        * page/Performance.cpp:
+        (WebCore::Performance::Performance):
+        (WebCore::Performance::now):
+        (WebCore::Performance::reduceTimeResolution):
+        (WebCore::Performance::navigation):
+        (WebCore::Performance::timing):
+        (WebCore::Performance::addResourceTiming):
+        (WebCore::Performance::scriptExecutionContext): Deleted.
+        * page/Performance.h:
+        * page/Performance.idl:
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::monotonicTimeToDOMHighResTimeStamp):
+        (WebCore::passesTimingAllowCheck):
+        (WebCore::PerformanceResourceTiming::PerformanceResourceTiming):
+        (WebCore::PerformanceResourceTiming::redirectStart):
+        (WebCore::PerformanceResourceTiming::redirectEnd):
+        (WebCore::PerformanceResourceTiming::fetchStart):
+        (WebCore::PerformanceResourceTiming::domainLookupStart):
+        (WebCore::PerformanceResourceTiming::domainLookupEnd):
+        (WebCore::PerformanceResourceTiming::connectStart):
+        (WebCore::PerformanceResourceTiming::connectEnd):
+        (WebCore::PerformanceResourceTiming::secureConnectionStart):
+        (WebCore::PerformanceResourceTiming::requestStart):
+        (WebCore::PerformanceResourceTiming::responseStart):
+        (WebCore::PerformanceResourceTiming::responseEnd):
+        (WebCore::PerformanceResourceTiming::networkLoadTimeToDOMHighResTimeStamp):
+        (WebCore::monotonicTimeToDocumentMilliseconds): Deleted.
+        (WebCore::PerformanceResourceTiming::initiatorType): Deleted.
+        (WebCore::PerformanceResourceTiming::resourceTimeToDocumentMilliseconds): Deleted.
+        * page/PerformanceResourceTiming.h:
+        * page/PerformanceUserTiming.cpp:
+        (WebCore::UserTiming::findExistingMarkStartTime):
+
 2017-02-01  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r205136): {}.toString.call(crossOriginWindow) should not throw
