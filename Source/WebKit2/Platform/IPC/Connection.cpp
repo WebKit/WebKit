@@ -671,7 +671,7 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
 
 #if HAVE(QOS_CLASSES)
     if (message->isSyncMessage() && m_shouldBoostMainThreadOnSyncMessage) {
-        pthread_override_t override = pthread_override_qos_class_start_np(m_mainThread, QOS_CLASS_USER_INTERACTIVE, 0);
+        pthread_override_t override = pthread_override_qos_class_start_np(m_mainThread, adjustedQOSClass(QOS_CLASS_USER_INTERACTIVE), 0);
         message->setQOSClassOverride(override);
     }
 #endif

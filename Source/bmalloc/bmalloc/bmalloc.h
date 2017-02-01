@@ -85,5 +85,13 @@ inline bool isEnabled()
     return !PerProcess<Heap>::getFastCase()->debugHeap();
 }
 
+#if BOS(DARWIN)
+inline void setScavengerThreadQOSClass(qos_class_t overrideClass)
+{
+    std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
+    PerProcess<Heap>::getFastCase()->setScavengerThreadQOSClass(overrideClass);
+}
+#endif
+
 } // namespace api
 } // namespace bmalloc

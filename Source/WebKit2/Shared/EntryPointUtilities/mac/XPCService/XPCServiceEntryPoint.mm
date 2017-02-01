@@ -103,6 +103,10 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
             extraInitializationData.add(ASCIILiteral("user-directory-suffix"), userDirectorySuffix);
     }
 
+    String alwaysRunsAtBackgroundPriority = xpc_dictionary_get_string(extraDataInitializationDataObject, "always-runs-at-background-priority");
+    if (!alwaysRunsAtBackgroundPriority.isEmpty())
+        extraInitializationData.add(ASCIILiteral("always-runs-at-background-priority"), alwaysRunsAtBackgroundPriority);
+
     return true;
 }
 

@@ -47,7 +47,7 @@ AssertionState ProcessThrottler::assertionState()
     ASSERT(!m_suspendTimer.isActive());
     
     if (m_foregroundCounter.value())
-        return m_process.alwaysRunsAtBackgroundPriority() ? AssertionState::Background : AssertionState::Foreground;
+        return AssertionState::Foreground;
     if (m_backgroundCounter.value())
         return AssertionState::Background;
     return AssertionState::Suspended;

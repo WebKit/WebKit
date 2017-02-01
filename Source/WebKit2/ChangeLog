@@ -1,3 +1,43 @@
+2017-02-01  Andreas Kling  <akling@apple.com>
+
+        Implement the alwaysRunsAtBackgroundPriority WK2 setting using thread QoS.
+        <https://webkit.org/b/167387>
+        <rdar://problem/29711409>
+
+        Reviewed by Antti Koivisto.
+
+        Remove the old ProcessThrottlerClient implementation of alwaysRunsAtBackgroundPriority
+        and replace it with WTF::setGlobalMaxQOSClass().
+
+        If the setting is enabled, it's passed over to each WK2 child process along with its
+        bootstrap parameter, and we notify WTF in XPCServiceInitializer(), before anything
+        too threading related happens.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::processIncomingMessage):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getExtraInitializationData):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::ChildProcessProxy):
+        (WebKit::ChildProcessProxy::getLaunchOptions):
+        * UIProcess/ChildProcessProxy.h:
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::DatabaseProcessProxy):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::alwaysRunsAtBackgroundPriority): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::assertionState):
+        * UIProcess/ProcessThrottlerClient.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::alwaysRunsAtBackgroundPriority): Deleted.
+        * UIProcess/WebProcessProxy.h:
+
 2017-02-01  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Add an API to add a custom tab into the print dialog

@@ -31,7 +31,8 @@
 
 namespace WebKit {
 
-ChildProcessProxy::ChildProcessProxy()
+ChildProcessProxy::ChildProcessProxy(bool alwaysRunsAtBackgroundPriority)
+    : m_alwaysRunsAtBackgroundPriority(alwaysRunsAtBackgroundPriority)
 {
 }
 
@@ -50,6 +51,9 @@ void ChildProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchO
 {
     if (const char* userDirectorySuffix = getenv("DIRHELPER_USER_DIR_SUFFIX"))
         launchOptions.extraInitializationData.add(ASCIILiteral("user-directory-suffix"), userDirectorySuffix);
+
+    if (m_alwaysRunsAtBackgroundPriority)
+        launchOptions.extraInitializationData.add(ASCIILiteral("always-runs-at-background-priority"), "true");
 
 #if ENABLE(DEVELOPER_MODE) && (PLATFORM(GTK) || PLATFORM(EFL))
     const char* varname;

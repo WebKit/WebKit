@@ -109,6 +109,12 @@ void Heap::initializePageMetadata()
 void Heap::concurrentScavenge()
 {
     std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
+
+#if BOS(DARWIN)
+    if (auto requestedQOSClass = PerProcess<Heap>::getFastCase()->takeRequestedScavengerThreadQOSClass())
+        pthread_set_qos_class_self_np(requestedQOSClass, 0);
+#endif
+
     scavenge(lock, scavengeSleepDuration);
 }
 

@@ -1,3 +1,30 @@
+2017-02-01  Andreas Kling  <akling@apple.com>
+
+        Implement the alwaysRunsAtBackgroundPriority WK2 setting using thread QoS.
+        <https://webkit.org/b/167387>
+        <rdar://problem/29711409>
+
+        Reviewed by Antti Koivisto.
+
+        Add a new mechanism for overriding the max thread QoS level globally:
+
+            void setGlobalMaxQOSClass(qos_class_t)
+            qos_class_t adjustedQOSClass(qos_class_t)
+
+        The QoS cap applies to all newly created threads, threads that try to override
+        their QoS class manually, and also passed down to bmalloc.
+
+        * wtf/Threading.cpp:
+        (WTF::setCurrentThreadIsUserInteractive):
+        (WTF::setCurrentThreadIsUserInitiated):
+        (WTF::setGlobalMaxQOSClass):
+        (WTF::adjustedQOSClass):
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::createThreadInternal):
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::dispatchQOSClass):
+
 2017-01-31  Antti Koivisto  <antti@apple.com>
 
         Teach cache coders to encode time_points

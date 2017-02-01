@@ -1,3 +1,23 @@
+2017-02-01  Andreas Kling  <akling@apple.com>
+
+        Implement the alwaysRunsAtBackgroundPriority WK2 setting using thread QoS.
+        <https://webkit.org/b/167387>
+        <rdar://problem/29711409>
+
+        Reviewed by Antti Koivisto.
+
+        Support changing the QoS level of the scavenger thread asynchronously through
+        a request variable. This is not the most elegant thing in the world, but since
+        threads are only allowed to change their own QoS class, our options are limited.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::concurrentScavenge):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::takeRequestedScavengerThreadQOSClass):
+        (bmalloc::Heap::setScavengerThreadQOSClass):
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::setScavengerThreadQOSClass):
+
 2017-01-13  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Use a separate zone when using system malloc

@@ -176,7 +176,7 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     pthread_attr_t attr;
     pthread_attr_init(&attr);
 #if HAVE(QOS_CLASSES)
-    pthread_attr_set_qos_class_np(&attr, QOS_CLASS_USER_INITIATED, 0);
+    pthread_attr_set_qos_class_np(&attr, adjustedQOSClass(QOS_CLASS_USER_INITIATED), 0);
 #endif
     int error = pthread_create(&threadHandle, &attr, wtfThreadEntryPoint, invocation.get());
     pthread_attr_destroy(&attr);

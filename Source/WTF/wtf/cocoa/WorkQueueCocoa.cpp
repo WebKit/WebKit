@@ -49,15 +49,15 @@ static dispatch_qos_class_t dispatchQOSClass(WorkQueue::QOS qos)
 {
     switch (qos) {
     case WorkQueue::QOS::UserInteractive:
-        return QOS_CLASS_USER_INTERACTIVE;
+        return adjustedQOSClass(QOS_CLASS_USER_INTERACTIVE);
     case WorkQueue::QOS::UserInitiated:
-        return QOS_CLASS_USER_INITIATED;
+        return adjustedQOSClass(QOS_CLASS_USER_INITIATED);
     case WorkQueue::QOS::Default:
-        return QOS_CLASS_DEFAULT;
+        return adjustedQOSClass(QOS_CLASS_DEFAULT);
     case WorkQueue::QOS::Utility:
-        return QOS_CLASS_UTILITY;
+        return adjustedQOSClass(QOS_CLASS_UTILITY);
     case WorkQueue::QOS::Background:
-        return QOS_CLASS_BACKGROUND;
+        return adjustedQOSClass(QOS_CLASS_BACKGROUND);
     }
 }
 #else

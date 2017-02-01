@@ -38,7 +38,6 @@ public:
     virtual void sendPrepareToSuspend() = 0;
     virtual void sendCancelPrepareToSuspend() = 0;
     virtual void sendProcessDidResume() = 0;
-    virtual bool alwaysRunsAtBackgroundPriority() = 0;
     virtual void didSetAssertionState(AssertionState) = 0;
 };
 

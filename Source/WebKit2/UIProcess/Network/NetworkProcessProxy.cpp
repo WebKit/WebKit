@@ -65,7 +65,8 @@ Ref<NetworkProcessProxy> NetworkProcessProxy::create(WebProcessPool& processPool
 }
 
 NetworkProcessProxy::NetworkProcessProxy(WebProcessPool& processPool)
-    : m_processPool(processPool)
+    : ChildProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
+    , m_processPool(processPool)
     , m_numPendingConnectionRequests(0)
     , m_customProtocolManagerProxy(this, processPool)
     , m_throttler(*this)
@@ -385,11 +386,6 @@ void NetworkProcessProxy::sendProcessDidResume()
 {
     if (canSendMessage())
         send(Messages::NetworkProcess::ProcessDidResume(), 0);
-}
-
-bool NetworkProcessProxy::alwaysRunsAtBackgroundPriority()
-{
-    return m_processPool.alwaysRunsAtBackgroundPriority();
 }
 
 void NetworkProcessProxy::processReadyToSuspend()
