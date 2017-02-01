@@ -37,13 +37,13 @@ WebInspector.InlineSwatch = class InlineSwatch extends WebInspector.Object
 
         switch (this._type) {
         case WebInspector.InlineSwatch.Type.Bezier:
-            this._swatchElement.title = WebInspector.UIString("Click to open a cubic-bezier editor.");
+            this._swatchElement.title = WebInspector.UIString("Edit “cubic-bezier“ function");
             break;
         case WebInspector.InlineSwatch.Type.Spring:
-            this._swatchElement.title = WebInspector.UIString("Click to open a spring editor.");
+            this._swatchElement.title = WebInspector.UIString("Edit “spring“ function");
             break;
         case WebInspector.InlineSwatch.Type.Gradient:
-            this._swatchElement.title = WebInspector.UIString("Click to select a gradient.");
+            this._swatchElement.title = WebInspector.UIString("Edit custom gradient");
             break;
         default:
             console.assert(this._type === WebInspector.InlineSwatch.Type.Color);

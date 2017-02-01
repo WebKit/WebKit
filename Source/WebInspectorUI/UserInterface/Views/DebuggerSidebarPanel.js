@@ -55,16 +55,16 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         this._timelineRecordingWarningElement = document.createElement("div");
         this._timelineRecordingWarningElement.classList.add("warning-banner");
-        this._timelineRecordingWarningElement.append(WebInspector.UIString("Debugger is disabled during a Timeline recording."), " ");
+        this._timelineRecordingWarningElement.append(WebInspector.UIString("Debugger disabled during Timeline recording"), " ");
         let stopRecordingLink = this._timelineRecordingWarningElement.appendChild(document.createElement("a"));
-        stopRecordingLink.textContent = WebInspector.UIString("Stop recording.");
+        stopRecordingLink.textContent = WebInspector.UIString("Stop recording");
         stopRecordingLink.addEventListener("click", () => { WebInspector.timelineManager.stopCapturing(); });
 
         this._breakpointsDisabledWarningElement = document.createElement("div");
         this._breakpointsDisabledWarningElement.classList.add("warning-banner");
-        this._breakpointsDisabledWarningElement.append(WebInspector.UIString("Breakpoints are disabled."), document.createElement("br"));
+        this._breakpointsDisabledWarningElement.append(WebInspector.UIString("Breakpoints disabled"), document.createElement("br"));
         let enableBreakpointsLink = this._breakpointsDisabledWarningElement.appendChild(document.createElement("a"));
-        enableBreakpointsLink.textContent = WebInspector.UIString("Enable breakpoints.");
+        enableBreakpointsLink.textContent = WebInspector.UIString("Enable breakpoints");
         enableBreakpointsLink.addEventListener("click", () => { WebInspector.debuggerToggleBreakpoints(); });
 
         this._navigationBar = new WebInspector.NavigationBar;

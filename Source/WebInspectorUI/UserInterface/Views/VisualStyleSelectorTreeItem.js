@@ -223,9 +223,9 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
     _updateCheckboxTitle()
     {
         if (this._checkboxElement.checked)
-            this._checkboxElement.title = WebInspector.UIString("Click to disable the selected rule");
+            this._checkboxElement.title = WebInspector.UIString("Comment out rule");
         else
-            this._checkboxElement.title = WebInspector.UIString("Click to enable the selected rule");
+            this._checkboxElement.title = WebInspector.UIString("Uncomment rule");
     }
 
     _handleMainTitleMouseDown(event)
@@ -269,7 +269,7 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
         this._listItemNode.classList.toggle("selector-invalid", !!this._hasInvalidSelector);
         if (this._hasInvalidSelector) {
             this._iconElement.title = WebInspector.UIString("The selector “%s” is invalid.\nClick to revert to the previous selector.").format(this.selectorText);
-            this.mainTitleElement.title = WebInspector.UIString("Using the previous selector “%s”.").format(this.representedObject.ownerRule.selectorText);
+            this.mainTitleElement.title = WebInspector.UIString("Using previous selector “%s”").format(this.representedObject.ownerRule.selectorText);
             return;
         }
 

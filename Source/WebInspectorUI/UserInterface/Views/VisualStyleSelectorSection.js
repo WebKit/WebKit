@@ -59,7 +59,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
 
         this._newInspectorRuleSelector = null;
 
-        let addGlyphElement = useSVGSymbol("Images/Plus13.svg", "visual-style-selector-section-add-rule", WebInspector.UIString("Click to add a new rule."));
+        let addGlyphElement = useSVGSymbol("Images/Plus13.svg", "visual-style-selector-section-add-rule", WebInspector.UIString("Add new rule"));
         addGlyphElement.addEventListener("click", this._addNewRule.bind(this));
         controlElement.appendChild(addGlyphElement);
 

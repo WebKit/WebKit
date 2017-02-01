@@ -1,5 +1,58 @@
 2017-01-31  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Tooltip text should not end in a period
+        https://bugs.webkit.org/show_bug.cgi?id=167130
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/BezierEditor.js:
+        (WebInspector.BezierEditor):
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleSelectorPaste):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createTextMarkerForPropertyIfNeeded):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshAccessibility.accessibilityPropertiesCallback):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        * UserInterface/Views/GeneralTabBarItem.js:
+        (WebInspector.GeneralTabBarItem):
+        * UserInterface/Views/HeapSnapshotContentView.js:
+        (WebInspector.HeapSnapshotInstancesContentView):
+        (WebInspector.HeapSnapshotObjectGraphContentView):
+        * UserInterface/Views/InlineSwatch.js:
+        (WebInspector.InlineSwatch):
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateEntries):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._updateProperties):
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView.prototype._updateEntries):
+        (WebInspector.ObjectTreeView.prototype._updateProperties):
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype._mouseoverRecordBar):
+        * UserInterface/Views/SpringEditor.js:
+        (WebInspector.SpringEditor):
+        * UserInterface/Views/TypeTreeElement.js:
+        (WebInspector.TypeTreeElement.prototype.onpopulate):
+        * UserInterface/Views/TypeTreeView.js:
+        (WebInspector.TypeTreeView.prototype._populate):
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js:
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor):
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._generateSection.createOptionsElement):
+        * UserInterface/Views/VisualStylePropertyEditorLink.js:
+        (WebInspector.VisualStylePropertyEditorLink.prototype.set linked):
+        * UserInterface/Views/VisualStylePropertyNameInput.js:
+        (WebInspector.VisualStylePropertyNameInput):
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+        (WebInspector.VisualStyleSelectorSection):
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._updateCheckboxTitle):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._updateSelectorIcon):
+
+2017-01-31  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: add CSS color keyword entries for all grey/gray variations
         https://bugs.webkit.org/show_bug.cgi?id=167668
 

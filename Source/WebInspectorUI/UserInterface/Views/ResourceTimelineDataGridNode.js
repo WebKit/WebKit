@@ -306,7 +306,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
             if (resource.failed)
                 descriptionElement.textContent = WebInspector.UIString("Resource failed to load.");
             else if (resource.urlComponents.scheme === "data")
-                descriptionElement.textContent = WebInspector.UIString("Resource was loaded with the 'data' scheme.");
+                descriptionElement.textContent = WebInspector.UIString("Resource was loaded with the “data“ scheme.");
             else
                 descriptionElement.textContent = WebInspector.UIString("Resource was served from the cache.");
             popoverContentElement.appendChild(descriptionElement);

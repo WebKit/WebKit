@@ -104,7 +104,7 @@ WebInspector.TypeTreeElement = class TypeTreeElement extends WebInspector.Genera
         }
 
         if (!this.children.length) {
-            var emptyMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No properties."));
+            var emptyMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Properties"));
             this.appendChild(new WebInspector.TreeElement(emptyMessageElement, null, false));
         }
 

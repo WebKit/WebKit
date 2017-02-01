@@ -168,7 +168,7 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
         let optionsContainer = this.element.createChild("div", "options-container");
 
         let newRuleButton = optionsContainer.createChild("img", "new-rule");
-        newRuleButton.title = WebInspector.UIString("New Rule");
+        newRuleButton.title = WebInspector.UIString("Add new rule");
         newRuleButton.addEventListener("click", this._newRuleButtonClicked.bind(this));
 
         this._filterBar = new WebInspector.FilterBar;

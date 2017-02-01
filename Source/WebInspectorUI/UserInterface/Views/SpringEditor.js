@@ -33,7 +33,7 @@ WebInspector.SpringEditor = class SpringEditor extends WebInspector.Object
         this._element.classList.add("spring-editor");
 
         this._previewContainer = this._element.createChild("div", "spring-preview");
-        this._previewContainer.title = WebInspector.UIString("Click to restart the animation");
+        this._previewContainer.title = WebInspector.UIString("Restart animation");
         this._previewContainer.addEventListener("mousedown", this._resetPreviewAnimation.bind(this));
 
         this._previewElement = this._previewContainer.createChild("div");

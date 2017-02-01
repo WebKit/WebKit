@@ -48,7 +48,7 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
         addGlyphElement.addEventListener("click", this._addEmptyCommaSeparatedKeyword.bind(this));
         controlContainer.appendChild(addGlyphElement);
 
-        let removeGlyphElement = useSVGSymbol("Images/Minus.svg", "visual-style-remove-comma-separated-keyword", WebInspector.UIString("Click to remove the selected item."));
+        let removeGlyphElement = useSVGSymbol("Images/Minus.svg", "visual-style-remove-comma-separated-keyword", WebInspector.UIString("Remove selected item"));
         removeGlyphElement.addEventListener("click", this._removeSelectedCommaSeparatedKeyword.bind(this));
         controlContainer.appendChild(removeGlyphElement);
     }

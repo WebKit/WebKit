@@ -338,7 +338,7 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
         }
 
         if (!this.children.length) {
-            var emptyMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Entries."));
+            var emptyMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Entries"));
             this.appendChild(new WebInspector.TreeElement(emptyMessageElement, null, false));
         }
 
@@ -391,7 +391,7 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
         }
 
         if (!this.children.length || (hadProto && this.children.length === 1)) {
-            var emptyMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Properties."));
+            var emptyMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Properties"));
             this.insertChild(new WebInspector.TreeElement(emptyMessageElement, null, false), 0);
         }
     }

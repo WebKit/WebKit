@@ -1143,7 +1143,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                 // The property name is so vague or nonsensical that there are more than 3 other properties that have the same Levenshtein value.
                 invalidMarkerInfo = {
                     position: from,
-                    title: WebInspector.UIString("The property “%s” is not supported.").format(property.name),
+                    title: WebInspector.UIString("Unsupported property “%s”").format(property.name),
                     correction: false,
                     autocomplete: false
                 };

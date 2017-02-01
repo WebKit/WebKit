@@ -100,7 +100,7 @@ WebInspector.HeapSnapshotInstancesContentView = class HeapSnapshotInstancesConte
         let columns = {
             retainedSize: {
                 title: WebInspector.UIString("Retained Size"),
-                tooltip: WebInspector.UIString("Size of the current object plus the size of all objects it keeps alive."),
+                tooltip: WebInspector.UIString("Size of current object plus all objects it keeps alive"),
                 width: "140px",
                 aligned: "right",
                 sortable: true,
@@ -135,7 +135,7 @@ WebInspector.HeapSnapshotObjectGraphContentView = class HeapSnapshotObjectGraphC
         let columns = {
             retainedSize: {
                 title: WebInspector.UIString("Retained Size"),
-                tooltip: WebInspector.UIString("Size of the current object plus the size of all objects it keeps alive."),
+                tooltip: WebInspector.UIString("Size of current object plus all objects it keeps alive"),
                 width: "140px",
                 aligned: "right",
                 sortable: true,

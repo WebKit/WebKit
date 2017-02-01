@@ -274,7 +274,7 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
         }
 
         if (!this._outline.children.length) {
-            var emptyMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Entries."));
+            var emptyMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Entries"));
             this._outline.appendChild(new WebInspector.TreeElement(emptyMessageElement, null, false));
         }
 
@@ -315,7 +315,7 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
         }
 
         if (!this._outline.children.length || (hadProto && this._outline.children.length === 1)) {
-            var emptyMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Properties."));
+            var emptyMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Properties"));
             this._outline.insertChild(new WebInspector.TreeElement(emptyMessageElement, null, false), 0);
         }
     }

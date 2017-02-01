@@ -85,7 +85,7 @@ WebInspector.TypeTreeView = class TypeTreeView extends WebInspector.Object
         }
 
         if (!this._outline.children.length) {
-            var errorMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No properties."));
+            var errorMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Properties"));
             this._outline.appendChild(new WebInspector.TreeElement(errorMessageElement, null, false));
         }
     }

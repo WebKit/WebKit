@@ -40,7 +40,7 @@ WebInspector.BezierEditor = class BezierEditor extends WebInspector.Object
         this._bezierHeight = editorHeight - (this._controlHandleRadius * 2) - (this._padding * 2);
 
         this._bezierPreviewContainer = this._element.createChild("div", "bezier-preview");
-        this._bezierPreviewContainer.title = WebInspector.UIString("Click to restart the animation");
+        this._bezierPreviewContainer.title = WebInspector.UIString("Restart animation");
         this._bezierPreviewContainer.addEventListener("mousedown", this._resetPreviewAnimation.bind(this));
 
         this._bezierPreview = this._bezierPreviewContainer.createChild("div");
