@@ -558,6 +558,7 @@ webkit.org/b/159427 http/tests/loading/basic-credentials-sent-automatically.html
 webkit.org/b/160309 fast/dom/Window/child-window-focus.html [ Pass Failure ]
 
 webkit.org/b/161148 gamepad/gamepad-timestamp.html [ Pass Failure ]
+webkit.org/b/167517 gamepad/gamepad-visibility-1.html [ Pass Failure ]
 
 webkit.org/b/161633 [ Debug ] storage/indexeddb/objectstore-cursor.html [ Pass Timeout ]
 
