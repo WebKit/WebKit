@@ -147,9 +147,6 @@ public:
 
     const String* sourceURL() const { return m_sourceURL; } // 0 if we are not evaluating any script
 
-    const JSC::PrivateName& moduleLoaderAlreadyReportedErrorSymbol() const { return m_moduleLoaderAlreadyReportedErrorSymbol; }
-    const JSC::PrivateName& moduleLoaderFetchingIsCanceledSymbol() const { return m_moduleLoaderFetchingIsCanceledSymbol; }
-
     void clearWindowShellsNotMatchingDOMWindow(DOMWindow*, bool goingIntoPageCache);
     void setDOMWindowForWindowShell(DOMWindow*);
     void updateDocument();
@@ -192,8 +189,6 @@ private:
     const String* m_sourceURL;
 
     bool m_paused;
-    JSC::PrivateName m_moduleLoaderAlreadyReportedErrorSymbol;
-    JSC::PrivateName m_moduleLoaderFetchingIsCanceledSymbol;
 
     // The root object used for objects bound outside the context of a plugin, such
     // as NPAPI plugins. The plugins using these objects prevent a page from being cached so they

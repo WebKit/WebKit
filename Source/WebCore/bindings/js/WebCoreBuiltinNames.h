@@ -45,6 +45,7 @@ namespace WebCore {
     macro(controller) \
     macro(createReadableStreamSource) \
     macro(disturbed) \
+    macro(failureKind) \
     macro(fetchRequest) \
     macro(fillFromJS) \
     macro(finishConsumingStream) \

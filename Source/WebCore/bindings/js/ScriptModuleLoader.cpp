@@ -34,8 +34,10 @@
 #include "JSDOMBinding.h"
 #include "LoadableModuleScript.h"
 #include "MIMETypeRegistry.h"
+#include "ModuleFetchFailureKind.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
+#include "WebCoreJSClientData.h"
 #include <runtime/Completion.h>
 #include <runtime/JSInternalPromise.h>
 #include <runtime/JSInternalPromiseDeferred.h>
@@ -123,6 +125,20 @@ JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGloba
     return jsPromise.promise();
 }
 
+void rejectToPropagateNetworkError(DeferredPromise& deferred, ModuleFetchFailureKind failureKind, ASCIILiteral message)
+{
+    deferred.rejectWithCallback([&] (JSC::ExecState& state, JSDOMGlobalObject&) {
+        // We annotate exception with special private symbol. It allows us to distinguish these errors from the user thrown ones.
+        JSC::VM& vm = state.vm();
+        // FIXME: Propagate more descriptive error.
+        // https://bugs.webkit.org/show_bug.cgi?id=167553
+        auto* error = JSC::createTypeError(&state, message);
+        ASSERT(error);
+        error->putDirect(vm, static_cast<JSVMClientData&>(*vm.clientData).builtinNames().failureKindPrivateName(), JSC::jsNumber(static_cast<int32_t>(failureKind)));
+        return error;
+    });
+}
+
 JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue scriptFetcher)
 {
     ASSERT(JSC::jsDynamicCast<JSC::JSScriptFetcher*>(exec->vm(), scriptFetcher));
@@ -148,15 +164,13 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
         return jsPromise.promise();
     }
 
-    if (auto* frame = m_document.frame()) {
-        auto loader = CachedModuleScriptLoader::create(*this, deferred.get(), *static_cast<CachedScriptFetcher*>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()));
-        m_loaders.add(loader.copyRef());
-        if (!loader->load(m_document, completedURL)) {
-            loader->clearClient();
-            m_loaders.remove(WTFMove(loader));
-            deferred->reject(frame->script().moduleLoaderAlreadyReportedErrorSymbol());
-            return jsPromise.promise();
-        }
+    auto loader = CachedModuleScriptLoader::create(*this, deferred.get(), *static_cast<CachedScriptFetcher*>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()));
+    m_loaders.add(loader.copyRef());
+    if (!loader->load(m_document, completedURL)) {
+        loader->clearClient();
+        m_loaders.remove(WTFMove(loader));
+        rejectToPropagateNetworkError(deferred.get(), ModuleFetchFailureKind::WasErrored, ASCIILiteral("Importing a module script failed."));
+        return jsPromise.promise();
     }
 
     return jsPromise.promise();
@@ -232,16 +246,22 @@ void ScriptModuleLoader::notifyFinished(CachedModuleScriptLoader& loader, RefPtr
 
     auto& cachedScript = *loader.cachedScript();
 
-    bool failed = false;
-
     if (cachedScript.resourceError().isAccessControl()) {
         promise->reject(TypeError, ASCIILiteral("Cross-origin script load denied by Cross-Origin Resource Sharing policy."));
         return;
     }
 
-    if (cachedScript.errorOccurred())
-        failed = true;
-    else if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(cachedScript.response().mimeType())) {
+    if (cachedScript.errorOccurred()) {
+        rejectToPropagateNetworkError(*promise, ModuleFetchFailureKind::WasErrored, ASCIILiteral("Importing a module script failed."));
+        return;
+    }
+
+    if (cachedScript.wasCanceled()) {
+        rejectToPropagateNetworkError(*promise, ModuleFetchFailureKind::WasCanceled, ASCIILiteral("Importing a module script is canceled."));
+        return;
+    }
+
+    if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(cachedScript.response().mimeType())) {
         // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
         // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
         // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
@@ -249,26 +269,11 @@ void ScriptModuleLoader::notifyFinished(CachedModuleScriptLoader& loader, RefPtr
         return;
     }
 
-    auto* frame = m_document.frame();
-    if (!frame)
-        return;
-
-    if (failed) {
-        // Reject a promise to propagate the error back all the way through module promise chains to the script element.
-        promise->reject(frame->script().moduleLoaderAlreadyReportedErrorSymbol());
-        return;
-    }
-
-    if (cachedScript.wasCanceled()) {
-        promise->reject(frame->script().moduleLoaderFetchingIsCanceledSymbol());
-        return;
-    }
-
     m_requestURLToResponseURLMap.add(cachedScript.url(), cachedScript.response().url());
-    ScriptSourceCode scriptSourceCode(&cachedScript, JSC::SourceProviderSourceType::Module, loader.scriptFetcher());
-    promise->resolveWithCallback([] (JSC::ExecState& state, JSDOMGlobalObject&, JSC::SourceCode sourceCode) {
-        return JSC::JSSourceCode::create(state.vm(), WTFMove(sourceCode));
-    }, scriptSourceCode.jsSourceCode());
+    promise->resolveWithCallback([&] (JSC::ExecState& state, JSDOMGlobalObject&) {
+        return JSC::JSSourceCode::create(state.vm(),
+            JSC::SourceCode { ScriptSourceCode { &cachedScript, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() });
+    });
 }
 
 }

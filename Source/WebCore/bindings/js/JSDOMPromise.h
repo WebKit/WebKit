@@ -94,8 +94,8 @@ public:
     void reject(ExceptionCode, const String& = { });
     void reject(const JSC::PrivateName&);
 
-    template<typename Callback, typename Value>
-    void resolveWithCallback(Callback callback, Value value)
+    template<typename Callback>
+    void resolveWithCallback(Callback callback)
     {
         if (isSuspended())
             return;
@@ -103,7 +103,19 @@ public:
         ASSERT(m_globalObject);
         JSC::ExecState* exec = m_globalObject->globalExec();
         JSC::JSLockHolder locker(exec);
-        resolve(*exec, callback(*exec, *m_globalObject.get(), std::forward<Value>(value)));
+        resolve(*exec, callback(*exec, *m_globalObject.get()));
+    }
+
+    template<typename Callback>
+    void rejectWithCallback(Callback callback)
+    {
+        if (isSuspended())
+            return;
+        ASSERT(m_deferred);
+        ASSERT(m_globalObject);
+        JSC::ExecState* exec = m_globalObject->globalExec();
+        JSC::JSLockHolder locker(exec);
+        reject(*exec, callback(*exec, *m_globalObject.get()));
     }
 
     JSC::JSValue promise() const;

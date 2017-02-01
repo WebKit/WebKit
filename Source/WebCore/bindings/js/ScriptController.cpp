@@ -40,6 +40,7 @@
 #include "LoadableModuleScript.h"
 #include "MainFrame.h"
 #include "MemoryPressureHandler.h"
+#include "ModuleFetchFailureKind.h"
 #include "NP_jsobject.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
@@ -379,9 +380,6 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
     // For example, if the page load is canceled, the DeferredPromise used in the module loader pipeline will stop executing JS code.
     // Thus the promise returned from this function could remain unresolved.
 
-    JSC::PrivateName moduleLoaderAlreadyReportedErrorSymbol = m_moduleLoaderAlreadyReportedErrorSymbol;
-    JSC::PrivateName moduleLoaderFetchingIsCanceledSymbol = m_moduleLoaderFetchingIsCanceledSymbol;
-
     RefPtr<LoadableModuleScript> moduleScript(&moduleScriptRef);
 
     auto& fulfillHandler = *JSNativeStdFunction::create(state.vm(), shell.window(), 1, String(), [moduleScript](ExecState* exec) {
@@ -390,20 +388,24 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
         return JSValue::encode(jsUndefined());
     });
 
-    auto& rejectHandler = *JSNativeStdFunction::create(state.vm(), shell.window(), 1, String(), [moduleScript, moduleLoaderAlreadyReportedErrorSymbol, moduleLoaderFetchingIsCanceledSymbol](ExecState* exec) {
-        JSValue error = exec->argument(0);
+    auto& rejectHandler = *JSNativeStdFunction::create(state.vm(), shell.window(), 1, String(), [moduleScript](ExecState* exec) {
         VM& vm = exec->vm();
-        if (auto* symbol = jsDynamicCast<Symbol*>(vm, error)) {
-            if (symbol->privateName() == moduleLoaderAlreadyReportedErrorSymbol) {
-                moduleScript->notifyLoadFailed(LoadableScript::Error {
-                    LoadableScript::ErrorType::CachedScript,
-                    std::nullopt
-                });
-                return JSValue::encode(jsUndefined());
-            }
-
-            if (symbol->privateName() == moduleLoaderFetchingIsCanceledSymbol) {
-                moduleScript->notifyLoadWasCanceled();
+        JSValue errorValue = exec->argument(0);
+        if (errorValue.isObject()) {
+            auto* object = JSC::asObject(errorValue);
+            if (JSValue failureKindValue = object->getDirect(vm, static_cast<JSVMClientData&>(*vm.clientData).builtinNames().failureKindPrivateName())) {
+                // This is host propagated error in the module loader pipeline.
+                switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {
+                case ModuleFetchFailureKind::WasErrored:
+                    moduleScript->notifyLoadFailed(LoadableScript::Error {
+                        LoadableScript::ErrorType::CachedScript,
+                        std::nullopt
+                    });
+                    break;
+                case ModuleFetchFailureKind::WasCanceled:
+                    moduleScript->notifyLoadWasCanceled();
+                    break;
+                }
                 return JSValue::encode(jsUndefined());
             }
         }
@@ -414,7 +416,7 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
             LoadableScript::ConsoleMessage {
                 MessageSource::JS,
                 MessageLevel::Error,
-                retrieveErrorMessage(*exec, vm, error, scope),
+                retrieveErrorMessage(*exec, vm, errorValue, scope),
             }
         });
         return JSValue::encode(jsUndefined());
