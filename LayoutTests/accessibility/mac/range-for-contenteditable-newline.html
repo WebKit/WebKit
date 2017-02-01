@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+<div id="textcontrol" contenteditable="true">some<div>hello world</div><div>test</div></div>
+<textarea id="textarea" cols='60' rows='8'>hello test
+world</textarea>
+</div>
+<div id="textcontrol2" contenteditable="true">abc<div><br></div<div><br></div><div><br></div><div>def</div></div>
+
+<div role="group" id="console"></div>
+
+<script>
+
+    description("This tests that when there are newline characters within text controls, we can get the correct text range from index and length.");
+
+    // Test contenteditable with newlines.
+    var textControl = accessibilityController.accessibleElementById("textcontrol");
+    var textSome = textControl.stringForRange(0, 4);
+    shouldBe("textSome", "'some'");
+    
+    var textHello = textControl.stringForRange(5, 5);
+    shouldBe("textHello", "'hello'");
+    
+    var textWorld = textControl.stringForRange(11, 5);
+    shouldBe("textWorld", "'world'");
+    
+    var textTest = textControl.stringForRange(17, 4);
+    shouldBe("textTest", "'test'");
+    
+    // Test <textarea> with newlines.
+    var textarea = accessibilityController.accessibleElementById("textarea");
+    var textareaTextHello = textarea.stringForRange(0, 5);
+    var textareaTextWorld = textarea.stringForRange(11, 5);
+    shouldBe("textareaTextHello", "'hello'");
+    shouldBe("textareaTextWorld", "'world'");
+    
+    // Test multiple <br> in contenteditable
+    var textControl2 = accessibilityController.accessibleElementById("textcontrol2");
+    var textDEF = textControl2.stringForRange(7, 3);
+    shouldBe("textDEF", "'def'");
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

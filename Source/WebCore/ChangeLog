@@ -1,3 +1,23 @@
+2017-02-01  Nan Wang  <n_wang@apple.com>
+
+        AX: Incorrect range from index and length in text controls when there are newlines
+        https://bugs.webkit.org/show_bug.cgi?id=167677
+        <rdar://problem/30300099>
+
+        Reviewed by Chris Fleizach.
+
+        When there are newlines in text controls, the VisiblePosition that is created
+        from the index could be wrong. Because the index doesn't include the information 
+        regarding a position's affinity. Fixed it by using CharacterOffset instead, since
+        it doesn't require that information.
+
+        Test: accessibility/mac/range-for-contenteditable-newline.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::traverseToOffsetInRange):
+        (WebCore::AXObjectCache::nextCharacterOffset):
+        (WebCore::AXObjectCache::characterOffsetForIndex):
+
 2017-02-01  Timothy Hatcher  <timothy@hatcher.name>
 
         AXObjectCache is missing two functions at link time when !HAVE(ACCESSIBILITY)

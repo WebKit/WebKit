@@ -1,3 +1,14 @@
+2017-02-01  Nan Wang  <n_wang@apple.com>
+
+        AX: Incorrect range from index and length in text controls when there are newlines
+        https://bugs.webkit.org/show_bug.cgi?id=167677
+        <rdar://problem/30300099>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/range-for-contenteditable-newline-expected.txt: Added.
+        * accessibility/mac/range-for-contenteditable-newline.html: Added.
+
 2017-02-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         ios-simulator TestExpectations gardening.
