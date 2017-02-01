@@ -562,13 +562,14 @@ static gboolean printPage(BrowserWindow *window, gpointer user_data)
 
     return TRUE;
 }
-static void editingCommandCallback(GtkWidget*widget, BrowserWindow *window)
+
+static void editingCommandCallback(GtkWidget *widget, BrowserWindow *window)
 {
     WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
     webkit_web_view_execute_editing_command(webView, gtk_widget_get_name(widget));
 }
 
-static void insertImageCommandCallback(GtkWidget*widget, BrowserWindow *window)
+static void insertImageCommandCallback(GtkWidget *widget, BrowserWindow *window)
 {
     GtkWidget *fileChooser = gtk_file_chooser_dialog_new("Insert Image", GTK_WINDOW(window), GTK_FILE_CHOOSER_ACTION_OPEN,
         "Cancel", GTK_RESPONSE_CANCEL, "Open", GTK_RESPONSE_ACCEPT, NULL);
@@ -590,7 +591,7 @@ static void insertImageCommandCallback(GtkWidget*widget, BrowserWindow *window)
     gtk_widget_destroy(fileChooser);
 }
 
-static void insertLinkCommandCallback(GtkWidget*widget, BrowserWindow *window)
+static void insertLinkCommandCallback(GtkWidget *widget, BrowserWindow *window)
 {
     GtkWidget *dialog = gtk_dialog_new_with_buttons("Insert Link", GTK_WINDOW(window), GTK_DIALOG_MODAL, "Insert", GTK_RESPONSE_ACCEPT, NULL);
     gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
