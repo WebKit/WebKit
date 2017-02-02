@@ -1,3 +1,31 @@
+2017-02-01  Keith Miller  <keith_miller@apple.com>
+
+        The sampling profile should have an option to sample from C frames.
+        https://bugs.webkit.org/show_bug.cgi?id=167614
+
+        Reviewed by Saam Barati.
+
+        We should be able to use the sampling profiler, at least
+        internally, to trace C calls.  This patch only modifies the JSC
+        shell although it would be nice to add it to the Web Inspector in
+        a future patch.
+
+        * runtime/Options.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::FrameWalker):
+        (JSC::FrameWalker::walk):
+        (JSC::FrameWalker::recordJSFrame):
+        (JSC::CFrameWalker::CFrameWalker):
+        (JSC::CFrameWalker::walk):
+        (JSC::CFrameWalker::isCFrame):
+        (JSC::CFrameWalker::advanceToParentFrame):
+        (JSC::CFrameWalker::frame):
+        (JSC::SamplingProfiler::takeSample):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::UnprocessedStackFrame::UnprocessedStackFrame):
+
 2017-02-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Use guaranteed RunLoop instead of RunLoop::current for dispatching inspector GC event

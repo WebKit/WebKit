@@ -51,21 +51,27 @@ public:
             , verifiedCodeBlock(codeBlock)
             , callSiteIndex(callSiteIndex)
         { }
+
+        UnprocessedStackFrame(void* pc)
+            : cCodePC(pc)
+        { }
+
         UnprocessedStackFrame()
         {
             unverifiedCallee = JSValue::encode(JSValue());
-            verifiedCodeBlock = nullptr;
         }
 
+        void* cCodePC { nullptr };
         EncodedJSValue unverifiedCallee;
-        CodeBlock* verifiedCodeBlock;
+        CodeBlock* verifiedCodeBlock { nullptr };
         CallSiteIndex callSiteIndex;
     };
 
     enum class FrameType { 
         Executable,
         Host,
-        Unknown 
+        C,
+        Unknown
     };
 
     struct StackFrame {
@@ -78,6 +84,7 @@ public:
         { }
 
         FrameType frameType { FrameType::Unknown };
+        void* cCodePC { nullptr };
         ExecutableBase* executable { nullptr };
         JSObject* callee { nullptr };
 

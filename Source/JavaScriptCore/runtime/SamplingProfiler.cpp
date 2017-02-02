@@ -51,6 +51,11 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringBuilder.h>
 
+#if OS(DARWIN)
+#include <cxxabi.h>
+#include <dlfcn.h>
+#endif
+
 namespace JSC {
 
 static double sNumTotalStackTraces = 0;
@@ -76,7 +81,7 @@ ALWAYS_INLINE static void reportStats()
 
 class FrameWalker {
 public:
-    FrameWalker(ExecState* callFrame, VM& vm, const LockHolder& codeBlockSetLocker, const LockHolder& machineThreadsLocker)
+    FrameWalker(VM& vm, ExecState* callFrame, const LockHolder& codeBlockSetLocker, const LockHolder& machineThreadsLocker)
         : m_vm(vm)
         , m_callFrame(callFrame)
         , m_vmEntryFrame(vm.topVMEntryFrame)
@@ -93,15 +98,7 @@ public:
         resetAtMachineFrame();
         size_t maxStackTraceSize = stackTrace.size();
         while (!isAtTop() && !m_bailingOut && m_depth < maxStackTraceSize) {
-            CallSiteIndex callSiteIndex;
-            JSValue unsafeCallee = m_callFrame->unsafeCallee();
-            CodeBlock* codeBlock = m_callFrame->unsafeCodeBlock();
-            if (codeBlock) {
-                ASSERT(isValidCodeBlock(codeBlock));
-                callSiteIndex = m_callFrame->unsafeCallSiteIndex();
-            }
-            stackTrace[m_depth] = UnprocessedStackFrame(codeBlock, JSValue::encode(unsafeCallee), callSiteIndex);
-            m_depth++;
+            recordJSFrame(stackTrace);
             advanceToParentFrame();
             resetAtMachineFrame();
         }
@@ -115,7 +112,21 @@ public:
         return !m_bailingOut;
     }
 
-private:
+protected:
+
+    SUPPRESS_ASAN
+    void recordJSFrame(Vector<UnprocessedStackFrame>& stackTrace)
+    {
+        CallSiteIndex callSiteIndex;
+        JSValue unsafeCallee = m_callFrame->unsafeCallee();
+        CodeBlock* codeBlock = m_callFrame->unsafeCodeBlock();
+        if (codeBlock) {
+            ASSERT(isValidCodeBlock(codeBlock));
+            callSiteIndex = m_callFrame->unsafeCallSiteIndex();
+        }
+        stackTrace[m_depth] = UnprocessedStackFrame(codeBlock, JSValue::encode(unsafeCallee), callSiteIndex);
+        m_depth++;
+    }
 
     SUPPRESS_ASAN
     void advanceToParentFrame()
@@ -154,7 +165,7 @@ private:
         }
     }
 
-    bool isValidFramePointer(ExecState* exec)
+    bool isValidFramePointer(void* exec)
     {
         uint8_t* fpCast = bitwise_cast<uint8_t*>(exec);
         for (MachineThreads::Thread* thread = m_vm.heap.machineThreads().threadsListHead(m_machineThreadsLocker); thread; thread = thread->next) {
@@ -183,6 +194,85 @@ private:
     const LockHolder& m_machineThreadsLocker;
     bool m_bailingOut { false };
     size_t m_depth { 0 };
+};
+
+class CFrameWalker : public FrameWalker {
+public:
+    typedef FrameWalker Base;
+
+    CFrameWalker(VM& vm, void* machineFrame, ExecState* callFrame, const LockHolder& codeBlockSetLocker, const LockHolder& machineThreadsLocker)
+        : Base(vm, callFrame, codeBlockSetLocker, machineThreadsLocker)
+        , m_machineFrame(machineFrame)
+    {
+    }
+
+    size_t walk(Vector<UnprocessedStackFrame>& stackTrace, bool& didRunOutOfSpace)
+    {
+        if (sReportStats)
+            sNumTotalWalks++;
+        resetAtMachineFrame();
+        size_t maxStackTraceSize = stackTrace.size();
+        // The way the C walker decides if a frame it is about to trace is C or JS is by
+        // ensuring m_callFrame points to some frame above the machineFrame.
+        if (!isAtTop() && !m_bailingOut && m_machineFrame == m_callFrame) {
+            recordJSFrame(stackTrace);
+            Base::advanceToParentFrame();
+            resetAtMachineFrame();
+        }
+
+        while (!isAtTop() && !m_bailingOut && m_depth < maxStackTraceSize) {
+            if (m_machineFrame >= m_callFrame) {
+                // If we get to this state we probably have an invalid trace.
+                m_bailingOut = true;
+                break;
+            }
+
+            if (isCFrame()) {
+                RELEASE_ASSERT(!LLInt::isLLIntPC(frame()->callerFrame));
+                stackTrace[m_depth] = UnprocessedStackFrame(frame()->pc);
+                m_depth++;
+            } else
+                recordJSFrame(stackTrace);
+            advanceToParentFrame();
+            resetAtMachineFrame();
+        }
+        didRunOutOfSpace = m_depth >= maxStackTraceSize && !isAtTop();
+        reportStats();
+        return m_depth;
+    }
+
+private:
+
+    bool isCFrame()
+    {
+        return frame()->callerFrame != m_callFrame;
+    }
+
+    void advanceToParentFrame()
+    {
+        if (!isCFrame())
+            Base::advanceToParentFrame();
+        m_machineFrame = frame()->callerFrame;
+    }
+
+    void resetAtMachineFrame()
+    {
+        if (!isValidFramePointer(m_machineFrame)) {
+            // Guard against pausing the process at weird program points.
+            m_bailingOut = true;
+            if (sReportStats)
+                sNumFailedWalks++;
+            return;
+        }
+        Base::resetAtMachineFrame();
+    }
+
+    CallerFrameAndPC* frame()
+    {
+        return reinterpret_cast<CallerFrameAndPC*>(m_machineFrame);
+    }
+
+    void* m_machineFrame;
 };
 
 SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
@@ -258,6 +348,7 @@ void SamplingProfiler::takeSample(const LockHolder&, std::chrono::microseconds& 
         if (didSuspend) {
             // While the JSC thread is suspended, we can't do things like malloc because the JSC thread
             // may be holding the malloc lock.
+            void* machineFrame;
             ExecState* callFrame;
             void* machinePC;
             bool topFrameIsLLInt = false;
@@ -265,7 +356,8 @@ void SamplingProfiler::takeSample(const LockHolder&, std::chrono::microseconds& 
             {
                 MachineThreads::Thread::Registers registers;
                 m_jscExecutionThread->getRegisters(registers);
-                callFrame = static_cast<ExecState*>(registers.framePointer());
+                machineFrame = registers.framePointer();
+                callFrame = static_cast<ExecState*>(machineFrame);
                 machinePC = registers.instructionPointer();
                 llintPC = registers.llintPC();
                 m_jscExecutionThread->freeRegisters(registers);
@@ -291,8 +383,12 @@ void SamplingProfiler::takeSample(const LockHolder&, std::chrono::microseconds& 
             size_t walkSize;
             bool wasValidWalk;
             bool didRunOutOfVectorSpace;
-            {
-                FrameWalker walker(callFrame, m_vm, codeBlockSetLocker, machineThreadsLocker);
+            if (Options::sampleCCode()) {
+                CFrameWalker walker(m_vm, machineFrame, callFrame, codeBlockSetLocker, machineThreadsLocker);
+                walkSize = walker.walk(m_currentFrames, didRunOutOfVectorSpace);
+                wasValidWalk = walker.wasValidWalk();
+            } else {
+                FrameWalker walker(m_vm, callFrame, codeBlockSetLocker, machineThreadsLocker);
                 walkSize = walker.walk(m_currentFrames, didRunOutOfVectorSpace);
                 wasValidWalk = walker.wasValidWalk();
             }
@@ -527,12 +623,17 @@ void SamplingProfiler::processUnverifiedStackTraces()
 #else
                 appendCodeBlockNoInlining();
 #endif
+            } else if (unprocessedStackFrame.cCodePC) {
+                appendEmptyFrame();
+                stackTrace.frames.last().cCodePC = unprocessedStackFrame.cCodePC;
+                stackTrace.frames.last().frameType = FrameType::C;
             } else
                 appendEmptyFrame();
 
             // Note that this is okay to do if we walked the inline stack because
             // the machine frame will be at the top of the processed stack trace.
-            storeCalleeIntoLastFrame(unprocessedStackFrame.unverifiedCallee);
+            if (!unprocessedStackFrame.cCodePC)
+                storeCalleeIntoLastFrame(unprocessedStackFrame.unverifiedCallee);
         }
     }
 
@@ -644,8 +745,23 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
             return name;
     }
 
-    if (frameType == FrameType::Unknown)
-        return ASCIILiteral("(unknown)");
+    if (frameType == FrameType::Unknown || frameType == FrameType::C) {
+#if OS(DARWIN)
+        if (frameType == FrameType::C) {
+            const char* mangledName = nullptr;
+            const char* cxaDemangled = nullptr;
+            Dl_info info;
+            if (dladdr(cCodePC, &info) && info.dli_sname)
+                mangledName = info.dli_sname;
+            if (mangledName) {
+                cxaDemangled = abi::__cxa_demangle(mangledName, 0, 0, 0);
+                return String(cxaDemangled ? cxaDemangled : mangledName);
+            }
+            WTF::dataLog("couldn't get a name");
+        }
+#endif
+        return ASCIILiteral("(unknown12)");
+    }
     if (frameType == FrameType::Host)
         return ASCIILiteral("(host)");
 
@@ -671,7 +787,7 @@ String SamplingProfiler::StackFrame::displayNameForJSONTests(VM& vm)
             return name;
     }
 
-    if (frameType == FrameType::Unknown)
+    if (frameType == FrameType::Unknown || frameType == FrameType::C)
         return ASCIILiteral("(unknown)");
     if (frameType == FrameType::Host)
         return ASCIILiteral("(host)");
@@ -698,7 +814,7 @@ String SamplingProfiler::StackFrame::displayNameForJSONTests(VM& vm)
 
 int SamplingProfiler::StackFrame::functionStartLine()
 {
-    if (frameType == FrameType::Unknown || frameType == FrameType::Host)
+    if (frameType == FrameType::Unknown || frameType == FrameType::Host || frameType == FrameType::C)
         return -1;
 
     if (executable->isHostFunction())
@@ -708,7 +824,7 @@ int SamplingProfiler::StackFrame::functionStartLine()
 
 unsigned SamplingProfiler::StackFrame::functionStartColumn()
 {
-    if (frameType == FrameType::Unknown || frameType == FrameType::Host)
+    if (frameType == FrameType::Unknown || frameType == FrameType::Host || frameType == FrameType::C)
         return std::numeric_limits<unsigned>::max();
 
     if (executable->isHostFunction())
@@ -719,7 +835,7 @@ unsigned SamplingProfiler::StackFrame::functionStartColumn()
 
 intptr_t SamplingProfiler::StackFrame::sourceID()
 {
-    if (frameType == FrameType::Unknown || frameType == FrameType::Host)
+    if (frameType == FrameType::Unknown || frameType == FrameType::Host || frameType == FrameType::C)
         return -1;
 
     if (executable->isHostFunction())
@@ -730,7 +846,7 @@ intptr_t SamplingProfiler::StackFrame::sourceID()
 
 String SamplingProfiler::StackFrame::url()
 {
-    if (frameType == FrameType::Unknown || frameType == FrameType::Host)
+    if (frameType == FrameType::Unknown || frameType == FrameType::Host || frameType == FrameType::C)
         return emptyString();
 
     if (executable->isHostFunction())
@@ -968,6 +1084,7 @@ void printInternal(PrintStream& out, SamplingProfiler::FrameType frameType)
     case SamplingProfiler::FrameType::Host:
         out.print("Host");
         break;
+    case SamplingProfiler::FrameType::C:
     case SamplingProfiler::FrameType::Unknown:
         out.print("Unknown");
         break;
