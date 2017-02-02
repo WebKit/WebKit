@@ -1,3 +1,12 @@
+2017-02-02  Anders Carlsson  <andersca@apple.com>
+
+        <rdar://problem/30323148> Webkit Nightly on 10.10 broken
+
+        Try to fix the 10.10 build.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::open):
+
 2017-02-01  Anders Carlsson  <andersca@apple.com>
 
         Handle m_processLauncher being null in ChildProcessProxy::processIdentifier()

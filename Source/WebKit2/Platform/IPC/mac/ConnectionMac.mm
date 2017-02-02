@@ -227,10 +227,10 @@ bool Connection::open()
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
     if (m_exceptionPort) {
         m_exceptionPortDataAvailableSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_exceptionPort, 0, m_connectionQueue.dispatchQueue());
-        dispatch_source_set_event_handler(source, [connection] {
+        dispatch_source_set_event_handler(m_exceptionPortDataAvailableSource, [connection] {
             connection->exceptionSourceEventHandler();
         });
-        dispatch_source_set_cancel_handler(source, [connection, exceptionPort = connection->m_exceptionPort] {
+        dispatch_source_set_cancel_handler(m_exceptionPortDataAvailableSource, [connection, exceptionPort = connection->m_exceptionPort] {
             mach_port_mod_refs(mach_task_self(), exceptionPort, MACH_PORT_RIGHT_RECEIVE, -1);
         });
 
