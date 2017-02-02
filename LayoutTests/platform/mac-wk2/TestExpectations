@@ -606,3 +606,5 @@ webkit.org/b/165352 fast/dom/Window/window-resize-contents.html [ Pass Timeout ]
 webkit.org/b/165392 [ ElCapitan Release ] imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-parameters-1.html [ Pass Failure ]
 
 webkit.org/b/161887 [ ElCapitan ] swipe/main-frame-pinning-requirement.html [ Pass Timeout ]
+
+webkit.org/b/167653 http/tests/contentextensions/block-everything-unless-domain.html [ Pass Timeout ]
