@@ -41,6 +41,9 @@ passed WhileStatement
 passed WithStatement
 passed YieldExpression
 passed ClassStatement, Super, MetaProperty
+passed Import
+passed RestProperty
+passed SpreadProperty
 passed AssignmentPattern
 passed ArrowFunctionExpression
 passed Async Functions

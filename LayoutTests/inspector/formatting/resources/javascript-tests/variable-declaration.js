@@ -23,3 +23,8 @@ var a={a:1,b:2},b={x:1,y:2},c=[1,2,3],d=/regex/,e=true;
 
 var {alpha:a,beta:{b,gamma:c},club:[d,e]} = o;
 var {alpha:a,beta:{b,gamma:c},club:[d,e]} = {alpha:1,beta:{b:2,gamma:3},club:[4,5]};
+var {type,...rest} = { type: "Cocoa", taste: "Sweet" };
+var {...rest} = {a:1,b:2};
+
+var [a,b]=[0,1];
+var [a,b,...rest]=[0,1,2];

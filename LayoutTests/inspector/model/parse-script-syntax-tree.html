@@ -495,6 +495,38 @@ function test()
     InspectorTest.assert(node.body.body[0].value.body.body[1].expression.property.name === "target");
     InspectorTest.log("passed ClassStatement, Super, MetaProperty");
 
+    node = makeNode("import('./Cocoa.js')", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.CallExpression);
+    InspectorTest.assert(node.callee.type === WebInspector.ScriptSyntaxTree.NodeType.Import);
+    InspectorTest.assert(node.arguments);
+    InspectorTest.assert(node.arguments.length === 1);
+    InspectorTest.assert(node.arguments[0].type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.log("passed Import");
+
+    node = makeNode("let { ...rest } = { x: 1, y: 0 }", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclaration);
+    InspectorTest.assert(node.kind === "let");
+    InspectorTest.assert(node.declarations.length === 1);
+    InspectorTest.assert(node.declarations[0].type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator);
+    InspectorTest.assert(node.declarations[0].id.type === WebInspector.ScriptSyntaxTree.NodeType.ObjectPattern);
+    InspectorTest.assert(node.declarations[0].id.properties.length === 1);
+    InspectorTest.assert(node.declarations[0].id.properties[0].type === WebInspector.ScriptSyntaxTree.NodeType.RestProperty);
+    InspectorTest.assert(node.declarations[0].id.properties[0].argument.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.declarations[0].id.properties[0].argument.name === "rest");
+    InspectorTest.log("passed RestProperty");
+
+    node = makeNode("let n = { ...spread }", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclaration);
+    InspectorTest.assert(node.kind === "let");
+    InspectorTest.assert(node.declarations.length === 1);
+    InspectorTest.assert(node.declarations[0].type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator);
+    InspectorTest.assert(node.declarations[0].init.type === WebInspector.ScriptSyntaxTree.NodeType.ObjectExpression);
+    InspectorTest.assert(node.declarations[0].init.properties.length === 1);
+    InspectorTest.assert(node.declarations[0].init.properties[0].type === WebInspector.ScriptSyntaxTree.NodeType.SpreadProperty);
+    InspectorTest.assert(node.declarations[0].init.properties[0].argument.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.declarations[0].init.properties[0].argument.name === "spread");
+    InspectorTest.log("passed SpreadProperty");
+
     node = makeNode("let [x=20] = [];", false);
     InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclaration);
     InspectorTest.assert(node.kind === "let");

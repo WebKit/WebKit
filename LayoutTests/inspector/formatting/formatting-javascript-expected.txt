@@ -29,6 +29,9 @@ PASS
 -- Running test case: EsprimaFormatter.JavaScript.if-statement.js
 PASS
 
+-- Running test case: EsprimaFormatter.JavaScript.import.js
+PASS
+
 -- Running test case: EsprimaFormatter.JavaScript.label-break-continue-block.js
 PASS
 

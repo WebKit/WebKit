@@ -52,3 +52,14 @@ var {alpha: a, beta: {b, gamma: c}, club: [d, e]} = {
     },
     club: [4, 5]
 };
+var {type, ...rest} = {
+    type: "Cocoa",
+    taste: "Sweet"
+};
+var {...rest} = {
+    a: 1,
+    b: 2
+};
+
+var [a, b] = [0, 1];
+var [a, b, ...rest] = [0, 1, 2];

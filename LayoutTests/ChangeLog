@@ -1,3 +1,28 @@
+2017-02-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Web Inspector: Upgrade Esprima to the latest one to support dynamic import
+        https://bugs.webkit.org/show_bug.cgi?id=167698
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/formatting/formatting-javascript-expected.txt:
+        * inspector/formatting/formatting-javascript.html:
+        * inspector/formatting/resources/javascript-tests/import-expected.js: Added.
+        (async.load):
+        * inspector/formatting/resources/javascript-tests/import.js: Added.
+        (async.load):
+        * inspector/formatting/resources/javascript-tests/object-array-literal-expected.js:
+        * inspector/formatting/resources/javascript-tests/object-array-literal.js:
+        * inspector/formatting/resources/javascript-tests/variable-declaration-expected.js:
+        * inspector/formatting/resources/javascript-tests/variable-declaration.js:
+        * inspector/formatting/resources/utilities.js:
+        (TestPage.registerInitializer.):
+        (TestPage.registerInitializer):
+        Fix a bug which occurs when output is not expected one.
+
+        * inspector/model/parse-script-syntax-tree-expected.txt:
+        * inspector/model/parse-script-syntax-tree.html:
+
 2017-02-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME] Implement MediaKeySession::update()
