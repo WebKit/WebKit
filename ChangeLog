@@ -1,3 +1,9 @@
+2017-02-02  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed build fix after r211570
+
+        * Makefile: Placed back.
+
 2017-02-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Propagate networking errors correctly for import() operator
