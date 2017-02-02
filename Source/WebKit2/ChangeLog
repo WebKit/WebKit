@@ -1,3 +1,14 @@
+2017-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the nightly open source build.
+
+        Adds more header checks when importing from WebKitAdditions.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+
 2017-02-01  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] With visual viewports, a fixed bottom bar can be clipped out when the keyboard is visible

@@ -501,7 +501,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
 @implementation WKContentView (WKInteraction)
 
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKContentViewInteractionAdditions.mm>)
 #import <WebKitAdditions/WKContentViewInteractionAdditions.mm>
 #endif
 
