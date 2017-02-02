@@ -120,7 +120,7 @@ void Connection::platformInvalidate()
         }
 
         if (m_receivePort) {
-            mach_port_destruct(mach_task_self(), m_receivePort, 0, reinterpret_cast<mach_port_context_t>(this));
+            mach_port_mod_refs(mach_task_self(), m_receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
             m_receivePort = MACH_PORT_NULL;
         }
 
@@ -170,8 +170,6 @@ void Connection::platformInitialize(Identifier identifier)
     if (m_isServer) {
         m_receivePort = identifier.port;
         m_sendPort = MACH_PORT_NULL;
-
-        mach_port_guard(mach_task_self(), m_receivePort, reinterpret_cast<mach_port_context_t>(this), true);
     } else {
         m_receivePort = MACH_PORT_NULL;
         m_sendPort = identifier.port;
@@ -181,6 +179,19 @@ void Connection::platformInitialize(Identifier identifier)
     m_receiveSource = nullptr;
 
     m_xpcConnection = identifier.xpcConnection;
+}
+
+template<typename Function>
+static dispatch_source_t createReceiveSource(mach_port_t receivePort, WorkQueue& workQueue, Function&& function)
+{
+    dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, receivePort, 0, workQueue.dispatchQueue());
+    dispatch_source_set_event_handler(source, function);
+
+    dispatch_source_set_cancel_handler(source, ^{
+        mach_port_mod_refs(mach_task_self(), receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
+    });
+
+    return source;
 }
 
 bool Connection::open()
@@ -194,44 +205,36 @@ bool Connection::open()
         ASSERT(m_sendPort);
 
         // Create the receive port.
-        uint32_t flags = MPO_CONTEXT_AS_GUARD | MPO_QLIMIT |  MPO_STRICT | MPO_INSERT_SEND_RIGHT;
+        mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &m_receivePort);
 
 #if PLATFORM(MAC)
-        flags |= MPO_DENAP_RECEIVER;
+        mach_port_set_attributes(mach_task_self(), m_receivePort, MACH_PORT_DENAP_RECEIVER, (mach_port_info_t)0, 0);
 #endif
-
-        mach_port_options_t portOptions;
-        portOptions.flags = flags;
-        portOptions.mpl.mpl_qlimit = MACH_PORT_QLIMIT_LARGE;
-        mach_port_construct(mach_task_self(), &portOptions, reinterpret_cast<mach_port_context_t>(this), &m_receivePort);
 
         m_isConnected = true;
         
+        // Send the initialize message, which contains a send right for the server to use.
         auto encoder = std::make_unique<Encoder>("IPC", "InitializeConnection", 0);
-        encoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MOVE_SEND));
+        encoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
 
         initializeSendSource();
 
         sendMessage(WTFMove(encoder), { });
     }
 
+    // Change the message queue length for the receive port.
+    setMachPortQueueLength(m_receivePort, MACH_PORT_QLIMIT_LARGE);
+
+    // Register the data available handler.
     RefPtr<Connection> connection(this);
-    m_receiveSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_receivePort, 0, m_connectionQueue->dispatchQueue());
-    dispatch_source_set_event_handler(m_receiveSource, [connection] {
+    m_receiveSource = createReceiveSource(m_receivePort, m_connectionQueue, [connection] {
         connection->receiveSourceEventHandler();
-    });
-    dispatch_source_set_cancel_handler(m_receiveSource, [connection, receivePort = m_receivePort] {
-        mach_port_destruct(mach_task_self(), receivePort, 0, reinterpret_cast<mach_port_context_t>(connection.get()));
     });
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
     if (m_exceptionPort) {
-        m_exceptionPortDataAvailableSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_exceptionPort, 0, m_connectionQueue->dispatchQueue());
-        dispatch_source_set_event_handler(m_exceptionPortDataAvailableSource, [connection] {
+        m_exceptionPortDataAvailableSource = createReceiveSource(m_exceptionPort, m_connectionQueue, [connection] {
             connection->exceptionSourceEventHandler();
-        });
-        dispatch_source_set_cancel_handler(m_exceptionPortDataAvailableSource, [connection, exceptionPort = connection->m_exceptionPort] {
-            mach_port_mod_refs(mach_task_self(), exceptionPort, MACH_PORT_RIGHT_RECEIVE, -1);
         });
 
         auto encoder = std::make_unique<Encoder>("IPC", "SetExceptionPort", 0);
