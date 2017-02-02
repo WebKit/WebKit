@@ -1,0 +1,340 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "AudioSampleBufferList.h"
+
+#if ENABLE(MEDIA_STREAM)
+
+#include "Logging.h"
+#include "VectorMath.h"
+#include <Accelerate/Accelerate.h>
+#include <AudioToolbox/AudioConverter.h>
+
+namespace WebCore {
+
+using namespace VectorMath;
+
+Ref<AudioSampleBufferList> AudioSampleBufferList::create(const CAAudioStreamDescription& format, size_t maximumSampleCount)
+{
+    return adoptRef(*new AudioSampleBufferList(format, maximumSampleCount));
+}
+
+AudioSampleBufferList::AudioSampleBufferList(const CAAudioStreamDescription& format, size_t maximumSampleCount)
+{
+    m_internalFormat = std::make_unique<CAAudioStreamDescription>(format);
+
+    m_sampleCapacity = maximumSampleCount;
+    m_sampleCount = 0;
+    m_maxBufferSizePerChannel = maximumSampleCount * format.bytesPerFrame() / format.numberOfChannelStreams();
+
+    ASSERT(format.sampleRate() >= 0);
+
+    size_t bufferSize = format.numberOfChannelStreams() * m_maxBufferSizePerChannel;
+    ASSERT(bufferSize <= SIZE_MAX);
+    if (bufferSize > SIZE_MAX)
+        return;
+
+    m_bufferListBaseSize = audioBufferListSizeForStream(format);
+    ASSERT(m_bufferListBaseSize <= SIZE_MAX);
+    if (m_bufferListBaseSize > SIZE_MAX)
+        return;
+
+    size_t allocSize = m_bufferListBaseSize + bufferSize;
+    m_bufferList = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (allocSize)));
+
+    reset();
+}
+
+AudioSampleBufferList::~AudioSampleBufferList()
+{
+    m_internalFormat = nullptr;
+    m_bufferList = nullptr;
+}
+
+void AudioSampleBufferList::setSampleCount(size_t count)
+{
+    ASSERT(count <= m_sampleCapacity);
+    if (count <= m_sampleCapacity)
+        m_sampleCount = count;
+}
+
+void AudioSampleBufferList::applyGain(AudioBufferList& bufferList, float gain, AudioStreamDescription::PCMFormat format)
+{
+    for (uint32_t i = 0; i < bufferList.mNumberBuffers; ++i) {
+        switch (format) {
+        case AudioStreamDescription::Int16: {
+            int16_t* buffer = static_cast<int16_t*>(bufferList.mBuffers[i].mData);
+            int frameCount = bufferList.mBuffers[i].mDataByteSize / sizeof(int16_t);
+            for (int i = 0; i < frameCount; i++)
+                buffer[i] *= gain;
+            break;
+        }
+        case AudioStreamDescription::Int32: {
+            int32_t* buffer = static_cast<int32_t*>(bufferList.mBuffers[i].mData);
+            int frameCount = bufferList.mBuffers[i].mDataByteSize / sizeof(int32_t);
+            for (int i = 0; i < frameCount; i++)
+                buffer[i] *= gain;
+            break;
+            break;
+        }
+        case AudioStreamDescription::Float32: {
+            float* buffer = static_cast<float*>(bufferList.mBuffers[i].mData);
+            vDSP_vsmul(buffer, 1, &gain, buffer, 1, bufferList.mBuffers[i].mDataByteSize / sizeof(float));
+            break;
+        }
+        case AudioStreamDescription::Float64: {
+            double* buffer = static_cast<double*>(bufferList.mBuffers[i].mData);
+            double gainAsDouble = gain;
+            vDSP_vsmulD(buffer, 1, &gainAsDouble, buffer, 1, bufferList.mBuffers[i].mDataByteSize / sizeof(double));
+            break;
+        }
+        case AudioStreamDescription::None:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+}
+
+void AudioSampleBufferList::applyGain(float gain)
+{
+    applyGain(*m_bufferList, gain, m_internalFormat->format());
+}
+
+OSStatus AudioSampleBufferList::mixFrom(const AudioSampleBufferList& source, size_t frameCount)
+{
+    ASSERT(source.streamDescription() == streamDescription());
+
+    if (source.streamDescription() != streamDescription())
+        return kAudio_ParamError;
+
+    if (frameCount > source.sampleCount())
+        frameCount = source.sampleCount();
+
+    if (frameCount > m_sampleCapacity)
+        return kAudio_ParamError;
+
+    m_sampleCount = frameCount;
+
+    AudioBufferList& sourceBuffer = source.bufferList();
+    for (uint32_t i = 0; i < m_bufferList->mNumberBuffers; i++) {
+        switch (m_internalFormat->format()) {
+        case AudioStreamDescription::Int16: {
+            int16_t* destination = static_cast<int16_t*>(m_bufferList->mBuffers[i].mData);
+            int16_t* source = static_cast<int16_t*>(sourceBuffer.mBuffers[i].mData);
+            for (size_t i = 0; i < frameCount; i++)
+                destination[i] += source[i];
+            break;
+        }
+        case AudioStreamDescription::Int32: {
+            int32_t* destination = static_cast<int32_t*>(m_bufferList->mBuffers[i].mData);
+            vDSP_vaddi(destination, 1, reinterpret_cast<int32_t*>(sourceBuffer.mBuffers[i].mData), 1, destination, 1, frameCount);
+            break;
+        }
+        case AudioStreamDescription::Float32: {
+            float* destination = static_cast<float*>(m_bufferList->mBuffers[i].mData);
+            vDSP_vadd(destination, 1, reinterpret_cast<float*>(sourceBuffer.mBuffers[i].mData), 1, destination, 1, frameCount);
+            break;
+        }
+        case AudioStreamDescription::Float64: {
+            double* destination = static_cast<double*>(m_bufferList->mBuffers[i].mData);
+            vDSP_vaddD(destination, 1, reinterpret_cast<double*>(sourceBuffer.mBuffers[i].mData), 1, destination, 1, frameCount);
+            break;
+        }
+        case AudioStreamDescription::None:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    return 0;
+}
+
+OSStatus AudioSampleBufferList::copyFrom(const AudioSampleBufferList& source, size_t frameCount)
+{
+    ASSERT(source.streamDescription() == streamDescription());
+
+    if (source.streamDescription() != streamDescription())
+        return kAudio_ParamError;
+
+    if (frameCount > source.sampleCount())
+        frameCount = source.sampleCount();
+
+    if (frameCount > m_sampleCapacity)
+        return kAudio_ParamError;
+
+    m_sampleCount = frameCount;
+
+    for (uint32_t i = 0; i < m_bufferList->mNumberBuffers; i++) {
+        uint8_t* sourceData = static_cast<uint8_t*>(source.bufferList().mBuffers[i].mData);
+        uint8_t* destination = static_cast<uint8_t*>(m_bufferList->mBuffers[i].mData);
+        memcpy(destination, sourceData, frameCount * m_internalFormat->bytesPerPacket());
+    }
+
+    return 0;
+}
+
+OSStatus AudioSampleBufferList::copyTo(AudioBufferList& buffer, size_t frameCount)
+{
+    if (frameCount > m_sampleCount)
+        return kAudio_ParamError;
+    if (buffer.mNumberBuffers > m_bufferList->mNumberBuffers)
+        return kAudio_ParamError;
+
+    for (uint32_t i = 0; i < buffer.mNumberBuffers; i++) {
+        uint8_t* sourceData = static_cast<uint8_t*>(m_bufferList->mBuffers[i].mData);
+        uint8_t* destination = static_cast<uint8_t*>(buffer.mBuffers[i].mData);
+        memcpy(destination, sourceData, frameCount * m_internalFormat->bytesPerPacket());
+    }
+
+    return 0;
+}
+
+void AudioSampleBufferList::reset()
+{
+    m_sampleCount = 0;
+    m_timestamp = 0;
+    m_hostTime = -1;
+
+    uint8_t* data = reinterpret_cast<uint8_t*>(m_bufferList.get()) + m_bufferListBaseSize;
+    m_bufferList->mNumberBuffers = m_internalFormat->numberOfChannelStreams();
+    for (uint32_t i = 0; i < m_bufferList->mNumberBuffers; ++i) {
+        auto& buffer = m_bufferList->mBuffers[i];
+        buffer.mData = data;
+        buffer.mDataByteSize = m_maxBufferSizePerChannel;
+        buffer.mNumberChannels = m_internalFormat->numberOfInterleavedChannels();
+        data = data + m_maxBufferSizePerChannel;
+    }
+}
+
+void AudioSampleBufferList::zero()
+{
+    zeroABL(*m_bufferList, m_internalFormat->bytesPerPacket() * m_sampleCapacity);
+}
+
+void AudioSampleBufferList::zeroABL(AudioBufferList& buffer, size_t byteCount)
+{
+    for (uint32_t i = 0; i < buffer.mNumberBuffers; ++i)
+        memset(buffer.mBuffers[i].mData, 0, byteCount);
+}
+
+OSStatus AudioSampleBufferList::convertInput(UInt32* ioNumberDataPackets, AudioBufferList* ioData)
+{
+    if (!ioNumberDataPackets || !ioData || !m_converterInputBuffer) {
+        LOG_ERROR("AudioSampleBufferList::reconfigureInput(%p) invalid input to AudioConverterInput", this);
+        return kAudioConverterErr_UnspecifiedError;
+    }
+
+    size_t packetCount = m_converterInputBuffer->mBuffers[0].mDataByteSize / m_converterInputBytesPerPacket;
+    if (*ioNumberDataPackets > m_sampleCapacity) {
+        LOG_ERROR("AudioSampleBufferList::convertInput(%p) not enough internal storage: needed = %u, available = %lu", this, *ioNumberDataPackets, m_sampleCapacity);
+        return kAudioConverterErr_InvalidInputSize;
+    }
+
+    *ioNumberDataPackets = static_cast<UInt32>(packetCount);
+    for (uint32_t i = 0; i < ioData->mNumberBuffers; ++i) {
+        ioData->mBuffers[i].mData = m_converterInputBuffer->mBuffers[i].mData;
+        ioData->mBuffers[i].mDataByteSize = m_converterInputBuffer->mBuffers[i].mDataByteSize;
+    }
+
+    return 0;
+}
+
+OSStatus AudioSampleBufferList::audioConverterCallback(AudioConverterRef, UInt32* ioNumberDataPackets, AudioBufferList* ioData, AudioStreamPacketDescription**, void* inRefCon)
+{
+    return static_cast<AudioSampleBufferList*>(inRefCon)->convertInput(ioNumberDataPackets, ioData);
+}
+
+OSStatus AudioSampleBufferList::copyFrom(AudioBufferList& source, AudioConverterRef converter)
+{
+    reset();
+
+    AudioStreamBasicDescription inputFormat;
+    UInt32 propertyDataSize = sizeof(inputFormat);
+    AudioConverterGetProperty(converter, kAudioConverterCurrentInputStreamDescription, &propertyDataSize, &inputFormat);
+    m_converterInputBytesPerPacket = inputFormat.mBytesPerPacket;
+    m_converterInputBuffer = &source;
+
+    auto* outputData = m_bufferList.get();
+
+#if !LOG_DISABLED
+    AudioStreamBasicDescription outputFormat;
+    propertyDataSize = sizeof(outputFormat);
+    AudioConverterGetProperty(converter, kAudioConverterCurrentOutputStreamDescription, &propertyDataSize, &outputFormat);
+
+    ASSERT(outputFormat.mChannelsPerFrame == outputData->mNumberBuffers);
+    for (uint32_t i = 0; i < outputData->mNumberBuffers; ++i) {
+        ASSERT(outputData->mBuffers[i].mData);
+        ASSERT(outputData->mBuffers[i].mDataByteSize);
+    }
+#endif
+
+    UInt32 samplesConverted = static_cast<UInt32>(m_sampleCapacity);
+    OSStatus err = AudioConverterFillComplexBuffer(converter, audioConverterCallback, this, &samplesConverted, outputData, nullptr);
+    if (err) {
+        LOG_ERROR("AudioSampleBufferList::copyFrom(%p) AudioConverterFillComplexBuffer returned error %d (%.4s)", this, err, (char*)&err);
+        m_sampleCount = std::min(m_sampleCapacity, static_cast<size_t>(samplesConverted));
+        zero();
+        return err;
+    }
+
+    m_sampleCount = samplesConverted;
+    return 0;
+}
+
+OSStatus AudioSampleBufferList::copyFrom(AudioSampleBufferList& source, AudioConverterRef converter)
+{
+    return copyFrom(source.bufferList(), converter);
+}
+
+OSStatus AudioSampleBufferList::copyFrom(CARingBuffer& ringBuffer, size_t sampleCount, uint64_t startFrame, CARingBuffer::FetchMode mode)
+{
+    reset();
+    if (ringBuffer.fetch(&bufferList(), sampleCount, startFrame, mode) != CARingBuffer::Ok)
+        return kAudio_ParamError;
+
+    m_sampleCount = sampleCount;
+    return 0;
+}
+
+void AudioSampleBufferList::configureBufferListForStream(AudioBufferList& bufferList, const CAAudioStreamDescription& format, uint8_t* bufferData, size_t sampleCount)
+{
+    size_t bufferCount = format.numberOfChannelStreams();
+    size_t channelCount = format.numberOfInterleavedChannels();
+    size_t bytesPerChannel = sampleCount * format.bytesPerFrame();
+
+    bufferList.mNumberBuffers = bufferCount;
+    for (unsigned i = 0; i < bufferCount; ++i) {
+        bufferList.mBuffers[i].mNumberChannels = channelCount;
+        bufferList.mBuffers[i].mDataByteSize = bytesPerChannel;
+        bufferList.mBuffers[i].mData = bufferData;
+        if (bufferData)
+            bufferData = bufferData + bytesPerChannel;
+    }
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)
