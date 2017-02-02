@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 * Window
-FAIL (new Object).toString.call(crossOriginWindow) should be [object Object]. Was [object Window].
+PASS (new Object).toString.call(crossOriginWindow) is "[object Object]"
 PASS crossOriginWindow instanceof Window is false
 PASS Array.prototype.concat.call(crossOriginWindow, ['A']) is [crossOriginWindow, 'A']
 PASS crossOriginWindow.toString() threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
@@ -12,7 +12,7 @@ PASS '' + crossOriginWindow threw exception SecurityError (DOM Exception 18): Bl
 PASS crossOriginWindow.concat(['A']) threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
 
 * Location
-FAIL (new Object).toString.call(crossOriginWindow.location) should be [object Object]. Was [object Location].
+PASS (new Object).toString.call(crossOriginWindow.location) is "[object Object]"
 PASS crossOriginWindow.location instanceof Location is false
 PASS Array.prototype.concat.call(crossOriginWindow.location, ['A']) is [crossOriginWindow.location, 'A']
 PASS crossOriginWindow.location.toString() threw exception SecurityError (DOM Exception 18): Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..

@@ -1,3 +1,18 @@
+2017-02-02  Chris Dumez  <cdumez@apple.com>
+
+        {}.toString.call(crossOriginWindow) should return "[object Object]"
+        https://bugs.webkit.org/show_bug.cgi?id=167701
+        <rdar://problem/30330797>
+
+        Reviewed by Keith Miller.
+
+        Have JSProxy forward toStringName calls to its target so Window
+        can override it.
+
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::toStringName):
+        * runtime/JSProxy.h:
+
 2017-02-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r211571 and r211582.

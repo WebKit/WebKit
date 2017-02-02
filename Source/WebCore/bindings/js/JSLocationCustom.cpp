@@ -180,6 +180,14 @@ bool JSLocation::preventExtensions(JSObject* object, ExecState* exec)
     return Base::preventExtensions(object, exec);
 }
 
+String JSLocation::toStringName(const JSObject* object, ExecState* exec)
+{
+    auto* thisObject = jsCast<const JSLocation*>(object);
+    if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), DoNotReportSecurityError))
+        return ASCIILiteral("Object");
+    return ASCIILiteral("Location");
+}
+
 bool JSLocationPrototype::putDelegate(ExecState* exec, PropertyName propertyName, JSValue, PutPropertySlot&, bool& putResult)
 {
     putResult = false;

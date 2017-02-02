@@ -1,3 +1,15 @@
+2017-02-02  Chris Dumez  <cdumez@apple.com>
+
+        {}.toString.call(crossOriginWindow) should return "[object Object]"
+        https://bugs.webkit.org/show_bug.cgi?id=167701
+        <rdar://problem/30330797>
+
+        Reviewed by Keith Miller.
+
+        Rebaselined existing test now that more checks are passing.
+
+        * http/tests/security/symbols-cross-origin-expected.txt:
+
 2017-02-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark inspector/debugger/breakpoint-scope.html as flaky on macOS debug.

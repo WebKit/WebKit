@@ -67,6 +67,12 @@ String JSProxy::className(const JSObject* object)
     return thisObject->target()->methodTable()->className(thisObject->target());
 }
 
+String JSProxy::toStringName(const JSObject* object, ExecState* exec)
+{
+    const JSProxy* thisObject = jsCast<const JSProxy*>(object);
+    return thisObject->target()->methodTable(exec->vm())->toStringName(thisObject->target(), exec);
+}
+
 bool JSProxy::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSProxy* thisObject = jsCast<JSProxy*>(object);

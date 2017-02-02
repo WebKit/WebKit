@@ -380,6 +380,14 @@ bool JSDOMWindow::preventExtensions(JSObject*, ExecState* exec)
     return false;
 }
 
+String JSDOMWindow::toStringName(const JSObject* object, ExecState* exec)
+{
+    auto* thisObject = jsCast<const JSDOMWindow*>(object);
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), DoNotReportSecurityError))
+        return ASCIILiteral("Object");
+    return ASCIILiteral("Window");
+}
+
 // Custom Attributes
 
 void JSDOMWindow::setLocation(ExecState& state, JSValue value)

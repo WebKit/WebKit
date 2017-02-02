@@ -33,6 +33,7 @@
     CustomPreventExtensions,
     CustomProxyToJSObject,
     CustomPutFunction,
+    CustomToStringName,
     ExportMacro=WEBCORE_EXPORT,
     ImplicitThis,
     InterfaceName=Window,
