@@ -1,3 +1,13 @@
+2017-02-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up css3/filters/backdrop/dynamic-with-clip-path.html
+
+        This test used a clip-path that was entirely outside the element, making it confusing.
+        Move the clipping circle to the center.
+
+        * css3/filters/backdrop/dynamic-with-clip-path-expected.html:
+        * css3/filters/backdrop/dynamic-with-clip-path.html:
+
 2017-02-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/inspector/worker/blob-script-with-cross-domain-imported-scripts.html as flaky.
