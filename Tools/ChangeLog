@@ -1,3 +1,32 @@
+2017-02-01  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r210820): svn-create-patch does not emit property change only diff
+        https://bugs.webkit.org/show_bug.cgi?id=167169
+
+        Reviewed by David Kilzer.
+
+        More directly handle the SVN 1.9 or newer syntax change for a diff of a copied or moved file
+        - a SVN diff header and an empty body. In particular, remove a duplicate leading SVN diff
+        header from the output of "svn diff" on a file that was copied or moved.
+
+        Following r210820 svn-create-patch emits to standard output a diff only if it has at least one
+        chunk range line (e.g. @@ -0,0 +1,7 @@) as a means to workaround a syntax change in the diff
+        output of a copied or moved file in SVN version 1.9 or newer. In SVN 1.9 or newer "svn diff"
+        of a copied or moved file always emits to standard output a leading SVN diff header (an "Index:"
+        line followed by a separator line) with an empty body; => no chunk range lines. However a diff
+        of a file with only a property change also does not contain any chunk range lines. Therefore
+        svn-create-patch no longer emitted to standard output such a diff. Instead of indirectly detecting
+        a SVN diff header with an empty body by counting the number of chunk range lines in the diff
+        we should directly test for the presence of a leading SVN diff header with an empty body and
+        remove such lines from the diff.
+
+        * Scripts/VCSUtils.pm:
+        (fixSVNPatchForAdditionWithHistory): Added.
+        * Scripts/svn-create-patch:
+        (generateDiff): Pass the output from "svn diff" to fixSVNPatchForAdditionWithHistory() when
+        we have a non empty patch for an added file with history (i.e. a copied or moved file).
+        * Scripts/webkitperl/VCSUtils_unittest/fixSVNPatchForAdditionWithHistory.pl: Added.
+
 2017-02-01  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Update CARingBuffer class

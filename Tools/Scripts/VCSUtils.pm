@@ -1736,6 +1736,51 @@ sub setChangeLogDateAndReviewer($$$)
     return $patch;
 }
 
+# Removes a leading Subversion header without an associated diff if one exists.
+#
+# This subroutine dies if the specified patch does not begin with an "Index:" line.
+#
+# In SVN 1.9 or newer, "svn diff" of a moved/copied file without post changes always
+# emits a leading header without an associated diff:
+#     Index: B.txt
+#     ===================================================================
+# (end of file or next header)
+#
+# If the same file has a property change then the patch has the form:
+#     Index: B.txt
+#     ===================================================================
+#     Index: B.txt
+#     ===================================================================
+#     --- B.txt    (revision 1)
+#     +++ B.txt    (working copy)
+#
+#     Property change on B.txt
+#     ___________________________________________________________________
+#     Added: svn:executable
+#     ## -0,0 +1 ##
+#     +*
+#     \ No newline at end of property
+#
+# We need to apply this function to the ouput of "svn diff" for an addition with history
+# to remove a duplicate header so that svn-apply can apply the resulting patch.
+sub fixSVNPatchForAdditionWithHistory($)
+{
+    my ($patch) = @_;
+
+    $patch =~ /(\r?\n)/;
+    my $lineEnding = $1;
+    my @lines = split(/$lineEnding/, $patch);
+
+    if ($lines[0] !~ /$svnDiffStartRegEx/) {
+        die("First line of SVN diff does not begin with \"Index \": \"$lines[0]\"");
+    }
+    if (@lines <= 2) {
+        return "";
+    }
+    splice(@lines, 0, 2) if $lines[2] =~ /$svnDiffStartRegEx/;
+    return join($lineEnding, @lines);
+}
+
 # If possible, returns a ChangeLog patch equivalent to the given one,
 # but with the newest ChangeLog entry inserted at the top of the
 # file -- i.e. no leading context and all lines starting with "+".

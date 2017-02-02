@@ -225,28 +225,19 @@ sub generateDiff($$)
     }
     
     my $patch = "";
-    if ($fileData->{modificationType} eq "additionWithHistory") {
+    my $isAdditionWithHistory = $fileData->{modificationType} eq "additionWithHistory";
+    if ($isAdditionWithHistory) {
         manufacturePatchForAdditionWithHistory($fileData);
     }
 
     my $diffOptions = diffOptionsForFile($file);
     my $escapedFile = escapeSubversionPath($file);
     open DIFF, "svn diff --diff-cmd diff -x -$diffOptions '$escapedFile' |" or die;
-    my $numTextChunks = 0;
     while (<DIFF>) {
-        $numTextChunks += 1 if parseChunkRange($_);
         $patch .= $_;
     }
     close DIFF;
-    if (!$numTextChunks) {
-        # For moved/copied files without post changes SVN 1.9 or greater emits a diff with an empty
-        # body as opposed to emitting nothing as in earlier versions of SVN. For example, move file
-        # A.txt to B.txt then the diff of B.txt in SVN 1.9 or greater is:
-        #     Index: B.txt
-        #     ===================================================================
-        # Therefore we ignore emitting such a diff.
-        $patch = "";
-    }
+    $patch = fixSVNPatchForAdditionWithHistory($patch) if $patch && $isAdditionWithHistory;
     if (basename($file) eq "ChangeLog") {
         my $changeLogHash = fixChangeLogPatch($patch);
         $patch = $changeLogHash->{patch};   
