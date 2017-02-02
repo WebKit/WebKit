@@ -1,3 +1,21 @@
+2017-02-02  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r211571 and r211582.
+        https://bugs.webkit.org/show_bug.cgi?id=167751
+
+        This change caused API test WebKit1.MemoryPressureHandler to
+        fail with an assertion. (Requested by ryanhaddad on #webkit).
+
+        Reverted changesets:
+
+        "[Mac] In-process memory pressure monitor for WebContent
+        processes."
+        https://bugs.webkit.org/show_bug.cgi?id=167491
+        http://trac.webkit.org/changeset/211571
+
+        "Unreviewed attempt to fix the Windows build after r211571."
+        http://trac.webkit.org/changeset/211582
+
 2017-02-02  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix the Windows build after r211571.

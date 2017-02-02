@@ -261,15 +261,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         memoryPressureHandler.setLowMemoryHandler([] (Critical critical, Synchronous synchronous) {
             WebCore::releaseMemory(critical, synchronous);
         });
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101200
-        memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(true);
-        memoryPressureHandler.setMemoryKillCallback([] () {
-            WebCore::didExceedMemoryLimitAndFailedToRecover();
-        });
-        memoryPressureHandler.setProcessIsEligibleForMemoryKillCallback([] () {
-            return WebCore::processIsEligibleForMemoryKill();
-        });
-#endif
         memoryPressureHandler.install();
     }
 

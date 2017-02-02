@@ -69,9 +69,6 @@ public:
 
     PerformanceLogging& performanceLogging() const { return *m_performanceLogging; }
 
-    void didCompleteLoad();
-    MonotonicTime timeOfLastCompletedLoad() const { return m_timeOfLastCompletedLoad; }
-
 private:
     MainFrame(Page&, PageConfiguration&);
 
@@ -94,8 +91,6 @@ private:
 #endif
 
     std::unique_ptr<PerformanceLogging> m_performanceLogging;
-
-    MonotonicTime m_timeOfLastCompletedLoad;
 };
 
 } // namespace WebCore

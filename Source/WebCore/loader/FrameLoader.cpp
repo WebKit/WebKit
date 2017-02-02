@@ -1742,7 +1742,7 @@ void FrameLoader::setState(FrameState newState)
         if (m_documentLoader)
             m_documentLoader->stopRecordingResponses();
         if (m_frame.isMainFrame() && oldState != newState)
-            static_cast<MainFrame&>(m_frame).didCompleteLoad();
+            static_cast<MainFrame&>(m_frame).performanceLogging().didReachPointOfInterest(PerformanceLogging::MainFrameLoadCompleted);
     }
 }
 
