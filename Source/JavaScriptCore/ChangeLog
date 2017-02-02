@@ -1,3 +1,16 @@
+2017-02-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r211461.
+        https://bugs.webkit.org/show_bug.cgi?id=167721
+
+        Big regression on kraken (Requested by jfbastien on #webkit).
+
+        Reverted changeset:
+
+        "OSR entry: delay outer-loop compilation when at inner-loop"
+        https://bugs.webkit.org/show_bug.cgi?id=167149
+        http://trac.webkit.org/changeset/211461
+
 2017-02-01  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, fix unintended change.
