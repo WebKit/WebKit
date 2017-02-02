@@ -42,6 +42,47 @@ PASS typeof performance.getEntriesByName("test")[0].startTime === "number" is tr
 PASS typeof performance.getEntriesByName("test")[0].duration === "number" is true
 PASS performance.getEntriesByName("test", "not-real").length === 0 is true
 PASS performance.getEntriesByName("test", "mark").length === 1 is true
+
+Starting worker: resources/timeline-api.js
+[Worker] PerformanceEntry
+PASS [Worker] PerformanceEntry is defined.
+PASS [Worker] "name" in PerformanceEntry.prototype is true
+PASS [Worker] "entryType" in PerformanceEntry.prototype is true
+PASS [Worker] "startTime" in PerformanceEntry.prototype is true
+PASS [Worker] "duration" in PerformanceEntry.prototype is true
+PASS [Worker] new PerformanceEntry() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceEntry()').
+[Worker] 
+[Worker] Performance extensions
+PASS [Worker] Performance.prototype.getEntries is defined.
+PASS [Worker] Performance.prototype.getEntriesByType is defined.
+PASS [Worker] Performance.prototype.getEntriesByName is defined.
+PASS [Worker] performance.getEntries() instanceof Array is true
+PASS [Worker] performance.getEntries().length === 0 is true
+PASS [Worker] performance.mark("test"); did not throw exception.
+PASS [Worker] performance.getEntries().length === 1 is true
+PASS [Worker] performance.getEntries()[0] instanceof PerformanceEntry is true
+PASS [Worker] performance.getEntries()[0].name is "test"
+PASS [Worker] performance.getEntries()[0].entryType is "mark"
+PASS [Worker] typeof performance.getEntries()[0].startTime === "number" is true
+PASS [Worker] typeof performance.getEntries()[0].duration === "number" is true
+PASS [Worker] performance.getEntriesByType() threw exception TypeError: Not enough arguments.
+PASS [Worker] performance.getEntriesByType("not-real").length === 0 is true
+PASS [Worker] performance.getEntriesByType("mark").length === 1 is true
+PASS [Worker] performance.getEntriesByType("mark")[0] instanceof PerformanceEntry is true
+PASS [Worker] performance.getEntriesByType("mark")[0].name is "test"
+PASS [Worker] performance.getEntriesByType("mark")[0].entryType is "mark"
+PASS [Worker] typeof performance.getEntriesByType("mark")[0].startTime === "number" is true
+PASS [Worker] typeof performance.getEntriesByType("mark")[0].duration === "number" is true
+PASS [Worker] performance.getEntriesByName() threw exception TypeError: Not enough arguments.
+PASS [Worker] performance.getEntriesByName("not-real").length === 0 is true
+PASS [Worker] performance.getEntriesByName("test").length === 1 is true
+PASS [Worker] performance.getEntriesByName("test")[0] instanceof PerformanceEntry is true
+PASS [Worker] performance.getEntriesByName("test")[0].name is "test"
+PASS [Worker] performance.getEntriesByName("test")[0].entryType is "mark"
+PASS [Worker] typeof performance.getEntriesByName("test")[0].startTime === "number" is true
+PASS [Worker] typeof performance.getEntriesByName("test")[0].duration === "number" is true
+PASS [Worker] performance.getEntriesByName("test", "not-real").length === 0 is true
+PASS [Worker] performance.getEntriesByName("test", "mark").length === 1 is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -28,10 +28,12 @@
 
 #if ENABLE(WEB_TIMING)
 
+#include "Document.h"
 #include "ExceptionCode.h"
 #include "Performance.h"
 #include "PerformanceTiming.h"
 #include <array>
+#include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/dtoa/utils.h>
 
@@ -43,7 +45,8 @@ typedef unsigned long long (PerformanceTiming::*NavigationTimingFunction)() cons
 
 static NavigationTimingFunction restrictedMarkFunction(const String& markName)
 {
-    // FIXME: Update this list when moving to Navigation Timing Level 2.
+    ASSERT(isMainThread());
+
     using MapPair = std::pair<ASCIILiteral, NavigationTimingFunction>;
     static const std::array<MapPair, 21> pairs = { {
         MapPair { ASCIILiteral("navigationStart"), &PerformanceTiming::navigationStart },
@@ -97,8 +100,10 @@ static void clearPerformanceEntries(PerformanceEntryMap& performanceEntryMap, co
 
 ExceptionOr<Ref<PerformanceMark>> UserTiming::mark(const String& markName)
 {
-    if (restrictedMarkFunction(markName))
-        return Exception { SYNTAX_ERR };
+    if (is<Document>(m_performance.scriptExecutionContext())) {
+        if (restrictedMarkFunction(markName))
+            return Exception { SYNTAX_ERR };
+    }
 
     auto& performanceEntryList = m_marksMap.ensure(markName, [] { return Vector<RefPtr<PerformanceEntry>>(); }).iterator->value;
     auto entry = PerformanceMark::create(markName, m_performance.now());
@@ -116,17 +121,15 @@ ExceptionOr<double> UserTiming::findExistingMarkStartTime(const String& markName
     if (m_marksMap.contains(markName))
         return m_marksMap.get(markName).last()->startTime();
 
+    PerformanceTiming* timing = m_performance.timing();
+    if (!timing)
+        return 0.0;
+
     if (auto function = restrictedMarkFunction(markName)) {
-        if (PerformanceTiming* timing = m_performance.timing()) {
-            double value = static_cast<double>(((*timing).*(function))());
-            if (!value)
-                return Exception { INVALID_ACCESS_ERR };
-            return value - timing->navigationStart();
-        } else {
-            // FIXME: Support UserTiming in Workers.
-            ASSERT_NOT_REACHED();
-            return Exception { SYNTAX_ERR };
-        }
+        double value = static_cast<double>(((*timing).*(function))());
+        if (!value)
+            return Exception { INVALID_ACCESS_ERR };
+        return value - timing->navigationStart();
     }
 
     return Exception { SYNTAX_ERR };

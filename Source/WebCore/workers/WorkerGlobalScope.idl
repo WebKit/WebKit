@@ -62,4 +62,5 @@
 };
 
 WorkerGlobalScope implements GlobalCrypto;
+WorkerGlobalScope implements GlobalPerformance;
 WorkerGlobalScope implements WindowOrWorkerGlobalScope;

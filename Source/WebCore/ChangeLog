@@ -1,3 +1,82 @@
+2017-02-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Support Performance API (performance.now(), UserTiming) in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=167717
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests: performance-api/performance-mark-name.html
+               performance-api/performance-now-api.html
+               performance-api/performance-now-time-origin-in-worker.html
+               performance-api/user-timing-apis.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        New files.
+
+        * page/DOMWindow.idl:
+        * page/GlobalPerformance.idl:
+        * workers/WorkerGlobalScope.idl:
+        Add partial interface for performance attribute.
+
+        * page/Performance.idl:
+        * page/PerformanceEntry.idl:
+        * page/PerformanceMark.idl:
+        * page/PerformanceMeasure.idl:
+        * page/PerformanceObserver.idl:
+        * page/PerformanceObserverEntryList.idl:
+        Expose these to Workers.
+
+        * page/Performance.cpp:
+        (WebCore::Performance::Performance):
+        (WebCore::Performance::contextDestroyed):
+        * page/Performance.h:
+        Use the EventQueue variant that works with any ScriptExectionContext.
+
+        * page/PerformanceObserver.cpp:
+        (WebCore::PerformanceObserver::PerformanceObserver):
+        Get the Performance base in a Worker context.
+
+        * page/PerformanceUserTiming.cpp:
+        (WebCore::UserTiming::mark):
+        Only reject legacy special mark names in a Window, not a Worker.
+
+        (WebCore::UserTiming::findExistingMarkStartTime):
+        Simple implementation returns 0 as the start time in Workers. The spec
+        is currently imprecise here, but it does not have the unusual
+        PerformanceTiming behavior in a Window which is part of User Timing 1.
+
+        * workers/Worker.cpp:
+        (WebCore::Worker::create):
+        (WebCore::Worker::notifyFinished):
+        * workers/Worker.h:
+        Record the moment of Worker creation.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::performance):
+        * workers/WorkerGlobalScope.h:
+        Construct the Performance object with the moment of creation (timeOrigin).
+
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create):
+        (WebCore::DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread):
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope):
+        * workers/DedicatedWorkerThread.h:
+        * workers/WorkerGlobalScopeProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+        Pass the moment of creation (timeOrigin) through to WorkerGlobalScope creation.
+
 2017-02-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r211579.

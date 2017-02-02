@@ -45,7 +45,8 @@ PerformanceObserver::PerformanceObserver(ScriptExecutionContext& scriptExecution
         if (DOMWindow* window = document.domWindow())
             m_performance = window->performance();
     } else if (is<WorkerGlobalScope>(scriptExecutionContext)) {
-        // FIXME: Support Performance Timeline for Workers.
+        auto& workerGlobalScope = downcast<WorkerGlobalScope>(scriptExecutionContext);
+        m_performance = &workerGlobalScope.performance();
     } else
         ASSERT_NOT_REACHED();
 }

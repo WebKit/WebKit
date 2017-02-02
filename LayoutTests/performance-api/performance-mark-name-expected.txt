@@ -1,0 +1,55 @@
+Tests performance.mark name restrictions apply only in Window.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS performance.mark("navigationStart") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("unloadEventStart") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("unloadEventEnd") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("redirectStart") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("redirectEnd") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("fetchStart") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("domainLookupStart") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("domainLookupEnd") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("connectStart") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("connectEnd") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("secureConnectionStart") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("requestStart") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("responseStart") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("responseEnd") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("domLoading") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("domInteractive") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("domContentLoadedEventStart") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("domContentLoadedEventEnd") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("domComplete") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("loadEventStart") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("loadEventEnd") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("mark_name") did not throw exception.
+
+Starting worker: resources/mark-name.js
+PASS [Worker] performance.mark("navigationStart") did not throw exception.
+PASS [Worker] performance.mark("unloadEventStart") did not throw exception.
+PASS [Worker] performance.mark("unloadEventEnd") did not throw exception.
+PASS [Worker] performance.mark("redirectStart") did not throw exception.
+PASS [Worker] performance.mark("redirectEnd") did not throw exception.
+PASS [Worker] performance.mark("fetchStart") did not throw exception.
+PASS [Worker] performance.mark("domainLookupStart") did not throw exception.
+PASS [Worker] performance.mark("domainLookupEnd") did not throw exception.
+PASS [Worker] performance.mark("connectStart") did not throw exception.
+PASS [Worker] performance.mark("connectEnd") did not throw exception.
+PASS [Worker] performance.mark("secureConnectionStart") did not throw exception.
+PASS [Worker] performance.mark("requestStart") did not throw exception.
+PASS [Worker] performance.mark("responseStart") did not throw exception.
+PASS [Worker] performance.mark("responseEnd") did not throw exception.
+PASS [Worker] performance.mark("domLoading") did not throw exception.
+PASS [Worker] performance.mark("domInteractive") did not throw exception.
+PASS [Worker] performance.mark("domContentLoadedEventStart") did not throw exception.
+PASS [Worker] performance.mark("domContentLoadedEventEnd") did not throw exception.
+PASS [Worker] performance.mark("domComplete") did not throw exception.
+PASS [Worker] performance.mark("loadEventStart") did not throw exception.
+PASS [Worker] performance.mark("loadEventEnd") did not throw exception.
+PASS [Worker] performance.mark("mark_name") did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

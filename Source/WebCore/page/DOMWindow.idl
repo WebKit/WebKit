@@ -157,8 +157,6 @@
 
     [CallWith=ScriptState&CallerWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] void postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
 
-    [Conditional=WEB_TIMING, Replaceable] readonly attribute Performance performance;
-
     long requestAnimationFrame(RequestAnimationFrameCallback callback);
     void cancelAnimationFrame(long id);
     long webkitRequestAnimationFrame(RequestAnimationFrameCallback callback);
@@ -202,5 +200,6 @@
 
 DOMWindow implements GlobalCrypto;
 DOMWindow implements GlobalEventHandlers;
+DOMWindow implements GlobalPerformance;
 DOMWindow implements WindowEventHandlers;
 DOMWindow implements WindowOrWorkerGlobalScope;

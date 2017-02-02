@@ -39,6 +39,7 @@ namespace WebCore {
 
 class ContentSecurityPolicyResponseHeaders;
 class Crypto;
+class Performance;
 class ScheduledAction;
 class WorkerInspectorController;
 class WorkerLocation;
@@ -99,8 +100,12 @@ public:
 
     Crypto& crypto();
 
+#if ENABLE(WEB_TIMING)
+    Performance& performance() const;
+#endif
+
 protected:
-    WorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    WorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, double timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
 
@@ -169,6 +174,10 @@ private:
 
 #if ENABLE(WEB_SOCKETS)
     RefPtr<SocketProvider> m_socketProvider;
+#endif
+
+#if ENABLE(WEB_TIMING)
+    Ref<Performance> m_performance;
 #endif
 
     mutable RefPtr<Crypto> m_crypto;

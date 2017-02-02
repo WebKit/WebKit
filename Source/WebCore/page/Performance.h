@@ -90,6 +90,8 @@ public:
 private:
     Performance(ScriptExecutionContext&, double timeOrigin);
 
+    void contextDestroyed() override;
+
     EventTargetInterface eventTargetInterface() const final { return PerformanceEventTargetInterfaceType; }
 
     void refEventTarget() final { ref(); }
@@ -110,7 +112,7 @@ private:
 
     std::unique_ptr<UserTiming> m_userTiming;
 
-    GenericTaskQueue<Timer> m_performanceTimelineTaskQueue;
+    GenericTaskQueue<ScriptExecutionContext> m_performanceTimelineTaskQueue;
     ListHashSet<RefPtr<PerformanceObserver>> m_observers;
 };
 

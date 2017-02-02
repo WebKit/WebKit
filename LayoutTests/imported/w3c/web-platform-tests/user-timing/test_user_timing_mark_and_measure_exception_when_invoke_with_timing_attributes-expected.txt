@@ -5,5 +5,5 @@ This test validates exception scenarios of invoking mark() and measure() with ti
 
 PASS window.performance is defined 
 FAIL performance.mark and performance.measure should throw if used with timing attribute values assert_throws: function "function () { window.performance.measure(timingAttributes..." did not throw
-FAIL performance.mark and performance.measure should not throw if used with timing attribute values in workers Can't find variable: performance
+PASS performance.mark and performance.measure should not throw if used with timing attribute values in workers 
 

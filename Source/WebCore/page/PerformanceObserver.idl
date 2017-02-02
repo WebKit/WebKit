@@ -30,6 +30,7 @@
     Constructor(PerformanceObserverCallback callback),
     ConstructorCallWith=ScriptExecutionContext,
     EnabledAtRuntime=PerformanceTimeline,
+    Exposed=(Window,Worker),
     ImplementationLacksVTable,
 ] interface PerformanceObserver {
     [MayThrowException] void observe(PerformanceObserverInit options);

@@ -1,3 +1,43 @@
+2017-02-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Support Performance API (performance.now(), UserTiming) in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=167717
+
+        Reviewed by Ryosuke Niwa.
+
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+        Updated now that Performance classes are in Workers.
+
+        * performance-api/performance-now-api-expected.txt: Added.
+        * performance-api/performance-now-api.html: Added.
+        * performance-api/performance-now-time-origin-in-worker-expected.txt: Added.
+        * performance-api/performance-now-time-origin-in-worker.html: Added.
+        New tests to cover performance.now.
+
+        * performance-api/performance-mark-name-expected.txt: Added.
+        * performance-api/performance-mark-name.html: Added.
+        * performance-api/resources/mark-name.js: Added.
+        * performance-api/resources/user-timing-api.js: Added.
+        * performance-api/user-timing-apis-expected.txt: Added.
+        * performance-api/user-timing-apis.html: Added.
+        New tests to cover user-timing and performance.mark behavior.
+
+        * performance-api/performance-observer-api-expected.txt:
+        * performance-api/performance-observer-api.html:
+        * performance-api/performance-observer-basic-expected.txt:
+        * performance-api/performance-observer-basic.html:
+        * performance-api/performance-timeline-api-expected.txt:
+        * performance-api/performance-timeline-api.html:
+        * performance-api/resources/now-api.js: Added.
+        * performance-api/resources/observer-api.js: Copied from LayoutTests/performance-api/performance-observer-api.html.
+        * performance-api/resources/observer-basic.js: Copied from LayoutTests/performance-api/performance-observer-basic.html.
+        * performance-api/resources/time-origin-in-worker.js: Added.
+        * performance-api/resources/timeline-api.js: Copied from LayoutTests/performance-api/performance-timeline-api.html.
+        Update some of the existing tests to check in a Document and Worker.
+
+        * imported/w3c/web-platform-tests/user-timing/test_user_timing_mark_and_measure_exception_when_invoke_with_timing_attributes-expected.txt:
+        Minor progression.
+
 2017-02-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/shadow-dom/slotchange.html as flaky on macOS.

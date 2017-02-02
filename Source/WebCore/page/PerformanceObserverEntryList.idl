@@ -28,6 +28,7 @@
 [
     Conditional=WEB_TIMING,
     EnabledAtRuntime=PerformanceTimeline,
+    Exposed=(Window,Worker),
     ImplementationLacksVTable,
 ] interface PerformanceObserverEntryList {
     PerformanceEntryList getEntries();

@@ -54,12 +54,20 @@ namespace WebCore {
 Performance::Performance(ScriptExecutionContext& context, double timeOrigin)
     : ContextDestructionObserver(&context)
     , m_timeOrigin(timeOrigin)
+    , m_performanceTimelineTaskQueue(context)
 {
     ASSERT(m_timeOrigin);
 }
 
 Performance::~Performance()
 {
+}
+
+void Performance::contextDestroyed()
+{
+    m_performanceTimelineTaskQueue.close();
+
+    ContextDestructionObserver::contextDestroyed();
 }
 
 double Performance::now() const

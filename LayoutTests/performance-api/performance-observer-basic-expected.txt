@@ -46,6 +46,51 @@ PASS list.getEntriesByName("mark3", "not-real").length === 0 is true
 PASS list.getEntriesByName("mark3", "mark").length === 1 is true
 PASS list.getEntriesByName(null, "mark").length === 0 is true
 PASS list.getEntriesByName(undefined, "mark").length === 0 is true
+
+Starting worker: resources/observer-basic.js
+[Worker] Inside PerformanceObserver callback
+PASS [Worker] argumentsLength === 2 is true
+PASS [Worker] list instanceof PerformanceObserverEntryList is true
+PASS [Worker] obs instanceof PerformanceObserver is true
+PASS [Worker] obs === observer is true
+FAIL [Worker] thisObject instanceof PerformanceObserver should be true. Was false.
+FAIL [Worker] thisObject === observer should be true. Was false.
+[Worker] 
+[Worker] PerformanceObserverEntryList APIs
+PASS [Worker] list.getEntries() instanceof Array is true
+PASS [Worker] list.getEntries().length === 2 is true
+PASS [Worker] list.getEntries()[0] instanceof PerformanceEntry is true
+PASS [Worker] list.getEntries()[0].name is "mark3"
+PASS [Worker] list.getEntries()[1].name is "mark4"
+PASS [Worker] list.getEntries()[0].startTime <= list.getEntries()[1].startTime is true
+PASS [Worker] list.getEntriesByType() threw exception TypeError: Not enough arguments.
+PASS [Worker] list.getEntriesByType("not-real").length === 0 is true
+PASS [Worker] list.getEntriesByType("mark").length === 2 is true
+PASS [Worker] list.getEntriesByType("mark")[0] instanceof PerformanceEntry is true
+PASS [Worker] list.getEntriesByType("mark")[0].name is "mark3"
+PASS [Worker] list.getEntriesByType("mark")[1].name is "mark4"
+PASS [Worker] list.getEntriesByName() threw exception TypeError: Not enough arguments.
+PASS [Worker] list.getEntriesByName("not-real").length === 0 is true
+PASS [Worker] list.getEntriesByName("mark1").length === 0 is true
+PASS [Worker] list.getEntriesByName("mark3").length === 1 is true
+PASS [Worker] list.getEntriesByName("mark3")[0] instanceof PerformanceEntry is true
+PASS [Worker] list.getEntriesByName("mark3")[0].name is "mark3"
+PASS [Worker] list.getEntriesByName("mark4").length === 1 is true
+PASS [Worker] list.getEntriesByName("mark4")[0] instanceof PerformanceEntry is true
+PASS [Worker] list.getEntriesByName("mark4")[0].name is "mark4"
+PASS [Worker] list.getEntriesByName() threw exception TypeError: Not enough arguments.
+PASS [Worker] list.getEntriesByName("not-real").length === 0 is true
+PASS [Worker] list.getEntriesByName("mark1").length === 0 is true
+PASS [Worker] list.getEntriesByName("mark3").length === 1 is true
+PASS [Worker] list.getEntriesByName("mark3")[0] instanceof PerformanceEntry is true
+PASS [Worker] list.getEntriesByName("mark3")[0].name is "mark3"
+PASS [Worker] list.getEntriesByName("mark4").length === 1 is true
+PASS [Worker] list.getEntriesByName("mark4")[0] instanceof PerformanceEntry is true
+PASS [Worker] list.getEntriesByName("mark4")[0].name is "mark4"
+PASS [Worker] list.getEntriesByName("mark3", "not-real").length === 0 is true
+PASS [Worker] list.getEntriesByName("mark3", "mark").length === 1 is true
+PASS [Worker] list.getEntriesByName(null, "mark").length === 0 is true
+PASS [Worker] list.getEntriesByName(undefined, "mark").length === 0 is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

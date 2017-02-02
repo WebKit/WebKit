@@ -587,6 +587,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/DOMWindow.idl
     page/EventSource.idl
     page/GlobalCrypto.idl
+    page/GlobalPerformance.idl
     page/History.idl
     page/IntersectionObserver.idl
     page/IntersectionObserverCallback.idl
