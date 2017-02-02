@@ -20,7 +20,6 @@
 
     if (window.testRunner && window.accessibilityController) {
         jsTestIsAsync = true;
-        testRunner.waitUntilDone();
 
         document.getElementById("combo").focus();
         var combo = accessibilityController.accessibleElementById("combo");

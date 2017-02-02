@@ -26,14 +26,11 @@
     </style>
     <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
-        if (window.testRunner)
-            testRunner.waitUntilDone();
-
-          const expectedValues = [
+        const expectedValues = [
             // [animation-name, time, element-id, property, expected-value, tolerance]
             ["move", 0.5, "control", "left", 200, 10],
             ["move", 0.5, "test", "left", 200, 10],
-          ];
+        ];
 
         function setupTest()
         {

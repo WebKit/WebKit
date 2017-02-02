@@ -19,15 +19,13 @@
 <script>
 
     window.jsTestIsAsync = true;
+
     description("This tests that AXPress works on SVG elements");
 
     function svgClicked() {
         debug("SVG element WAS clicked with accessibility");
         finishJSTest();
     }
-
-    if (window.testRunner)
-        testRunner.waitUntilDone();
 
     if (window.accessibilityController) {
         var svg = accessibilityController.accessibleElementById("svg");

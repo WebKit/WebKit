@@ -6,28 +6,10 @@
     var successfullyParsed = false;
     window.jsTestIsAsync = true;
 
-    function tryToCrash() {
-        var div = document.getElementById("test");
-        div.style.webkitTransform = "translateY(1px)";
-        div.style.webkitTransition = "1s ease-in-out";
-        setTimeout(function() {
-            div.style.webkitTransform = "none";
-            div.style.webkitTransition = "none";
-            setTimeout(function() {
-                window.close();
-                window.opener.finishJSTest();
-            }, 0);
-        }, 0);
-    }
-
     function setup() {
         if (window.testRunner) {
-            if (location.href.indexOf("auxillary") != -1) {
-                setTimeout(tryToCrash, 0);
-            } else {
-                testRunner.setCanOpenWindows();
-                window.open("crash-on-removing-animation.html#auxillary");
-            }
+            testRunner.setCanOpenWindows();
+            window.open("resources/crash-on-removing-animation-window.html");
         } else {
             document.write("This test must be run in DRT/WKTR.");
         }

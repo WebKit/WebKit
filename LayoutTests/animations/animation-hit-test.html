@@ -74,10 +74,8 @@
     
         function startTest()
         {
-            if (window.testRunner) {
+            if (window.testRunner)
                 testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-            }
       
             document.getElementById("target").style.webkitAnimationName = "anim";
             waitForAnimationToStart(document.getElementById('target'), doTest);

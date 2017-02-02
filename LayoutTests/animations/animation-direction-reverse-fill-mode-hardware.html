@@ -43,10 +43,8 @@
     ];
     var result = "";
 
-    if (window.testRunner) {
+    if (window.testRunner)
         testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
 
     function animationEnded(event) {
         if (++animsFinished == numAnims) {

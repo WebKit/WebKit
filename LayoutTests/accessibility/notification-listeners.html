@@ -16,9 +16,6 @@
 description("This tests that a notification listener on an element only listens to that one element, and that a global notification listener listens to all notifications.");
 
 function runTest() {
-    if (window.testRunner)
-        testRunner.waitUntilDone();
-
     window.jsTestIsAsync = true;
 
     window.selectNotificationCount = 0;

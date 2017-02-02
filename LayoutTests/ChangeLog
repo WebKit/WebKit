@@ -1,3 +1,62 @@
+2017-02-02  David Kilzer  <ddkilzer@apple.com>
+
+        Clean up accessibility & animations tests to stop calling testRunner.waitUntilDone() twice
+        <https://webkit.org/b/167598>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * accessibility/frame-disconnect-textmarker-cache-crash.html:
+        * accessibility/loading-iframe-sends-notification.html:
+        * accessibility/mac/combobox-activedescendant-notifications.html:
+        * accessibility/mac/ordered-textmarker-crash.html:
+        * accessibility/mac/stale-textmarker-crash.html:
+        * accessibility/notification-listeners.html:
+        * accessibility/scroll-to-global-point-iframe-nested.html:
+        * accessibility/scroll-to-global-point-iframe.html:
+        * accessibility/scroll-to-make-visible-iframe.html:
+        * accessibility/svg-element-press.html:
+        - Remove call to testRunner.waitUntilDone() since
+          window.jsTestIsAsync is set to true, and thus waitUntilDone()
+          is called from either js-test.js or js-test-post.js.
+
+        * animations/animation-delay-changed.html:
+        * animations/change-keyframes-name.html:
+        * animations/font-variations/font-variation-settings-order.html:
+        * animations/font-variations/font-variation-settings-unlike.html:
+        * animations/font-variations/font-variation-settings.html:
+        * animations/longhand-timing-function.html:
+        * animations/transition-and-animation-3.html:
+        * animations/unanimated-style.html:
+        - Remove call to testRunner.waitUntilDone() since that's moved
+          into animation-test-helpers.js.
+
+        * animations/resources/animation-test-helpers.js:
+        (runAnimationTest): Call testRunner.waitUntilDone() when this
+        script resource is included instead of when runAnimationTest()
+        is called since runAnimationTest() expects it to be set anyway.
+
+        * animations/animation-direction-reverse-fill-mode-hardware.html:
+        * animations/animation-direction-reverse-fill-mode.html:
+        * animations/animation-hit-test-transform.html:
+        * animations/animation-hit-test.html:
+        * animations/animation-internals-api-multiple-keyframes.html:
+        * animations/animation-internals-api.html:
+        * animations/change-transform-style-during-animation.html:
+        * animations/keyframes-iteration-count-non-integer.html:
+        - Remove call to testRunner.waitUntilDone() since that now
+          happens when loading animation-test-helpers.js.  These tests
+          don't currently call runAnimationTest(), but they manage their
+          own state by calling testRunner.notifyDone() themselves.
+
+        * animations/crash-on-removing-animation.html:
+        * animations/resources/crash-on-removing-animation-window.html: Copied from LayoutTests/animations/crash-on-removing-animation.html.
+        - Split this test into a main resource and a window resource.
+          Previously testRunner.waitUntilDone() was being called twice
+          when js-test-post.js was loaded in the main window and then
+          loaded a second time when the window was opened.  The new
+          resource file doesn't load either js-test-pre.js or
+          js-test-post.js, avoiding the duplicate call.
+
 2017-02-02  Antti Koivisto  <antti@apple.com>
 
         Column progression wrong after enabling pagination on RTL document

@@ -59,7 +59,6 @@
     {
         if (window.testRunner) {
           testRunner.dumpAsText();
-          testRunner.waitUntilDone();
           var box = document.getElementById('box');
           if (internals.pauseAnimationAtTimeOnElement("bar", 0.5, box))
               document.getElementById("pre-result").innerHTML = "FAIL: animation is running";

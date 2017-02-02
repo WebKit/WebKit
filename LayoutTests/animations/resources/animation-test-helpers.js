@@ -533,6 +533,9 @@ function startTest(expected, startCallback, finishCallback)
 var result = "";
 var hasPauseAnimationAPI;
 
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
 function runAnimationTest(expected, startCallback, event, disablePauseAnimationAPI, doPixelTest, finishCallback)
 {
     hasPauseAnimationAPI = 'internals' in window;
@@ -542,7 +545,6 @@ function runAnimationTest(expected, startCallback, event, disablePauseAnimationA
     if (window.testRunner) {
         if (!doPixelTest)
             testRunner.dumpAsText();
-        testRunner.waitUntilDone();
     }
     
     if (!expected)
