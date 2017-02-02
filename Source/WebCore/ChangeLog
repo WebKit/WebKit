@@ -1,3 +1,11 @@
+2017-02-02  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix the Windows build after r211571.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::thresholdForPolicy):
+        (WebCore::policyForFootprint):
+
 2017-02-02  Brent Fulgham  <bfulgham@apple.com>
 
         Correct memory leak in MediaConstraints

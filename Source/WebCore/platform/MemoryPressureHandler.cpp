@@ -67,7 +67,7 @@ static const char* toString(MemoryUsagePolicy policy)
 }
 #endif
 
-static constexpr size_t thresholdForPolicy(MemoryUsagePolicy policy)
+static inline size_t thresholdForPolicy(MemoryUsagePolicy policy)
 {
     switch (policy) {
     case MemoryUsagePolicy::Conservative:
@@ -87,7 +87,7 @@ static constexpr size_t thresholdForPolicy(MemoryUsagePolicy policy)
     }
 }
 
-static constexpr MemoryUsagePolicy policyForFootprint(size_t footprint)
+static inline MemoryUsagePolicy policyForFootprint(size_t footprint)
 {
     if (footprint >= thresholdForPolicy(MemoryUsagePolicy::Panic))
         return MemoryUsagePolicy::Panic;
