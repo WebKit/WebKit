@@ -42,6 +42,7 @@ public:
     void restore(Page&);
     void clear();
 
+    Page& page() const { return m_page; }
     Document* document() const { return m_cachedMainFrame->document(); }
     DocumentLoader* documentLoader() const { return m_cachedMainFrame->documentLoader(); }
 
@@ -58,6 +59,7 @@ public:
     void markForContentsSizeChanged() { m_needsUpdateContentsSize = true; }
 
 private:
+    Page& m_page;
     double m_expirationTime;
     std::unique_ptr<CachedFrame> m_cachedMainFrame;
 #if ENABLE(VIDEO_TRACK)

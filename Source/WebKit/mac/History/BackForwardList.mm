@@ -225,8 +225,6 @@ void BackForwardList::setCurrent(unsigned newCurrent)
 
 void BackForwardList::close()
 {
-    for (auto& item : m_entries)
-        PageCache::singleton().remove(item);
     m_entries.clear();
     m_entryHash.clear();
     m_webView = nullptr;

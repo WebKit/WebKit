@@ -1,3 +1,38 @@
+2017-02-02  Chris Dumez  <cdumez@apple.com>
+
+        [Crash] com.apple.WebKit.WebContent at WebKit: WebKit::WebPage::fromCorePage()
+        https://bugs.webkit.org/show_bug.cgi?id=167738
+        <rdar://problem/30229990>
+
+        Reviewed by Andreas Kling.
+
+        Upon destruction of a Page, we destroy the BackForwardClient, which is supposed
+        to keep track of HistoryItems associated to this particular page and remove them
+        from the PageCache. Given the crash trace, the issue seems to be that some
+        HistoryItems associated with the Page sometimes linger in the PageCache *after*
+        the Page has been destroyed, which leads to crashes later on when pruning the
+        PageCache.
+
+        In order to make the process more robust, this patch refactors the code so that
+        the Page is now in charge of removing all its associated HistoryItems from the
+        PageCache instead of relying on the BackForwardClient. Also, instead of having
+        the Page keep track of which HistoryItems are associated with it (which is
+        error prone), we now scan all PageCache entries instead to find which ones are
+        associated with the Page. While this is in theory slower, this is much safer
+        and in practice not an issue because the PageCache usually has 3-5 entries.
+
+        No new tests, could not reproduce.
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        * history/CachedPage.h:
+        (WebCore::CachedPage::page):
+        * history/PageCache.cpp:
+        (WebCore::PageCache::removeAllItemsForPage):
+        * history/PageCache.h:
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+
 2017-02-02  Antti Koivisto  <antti@apple.com>
 
         Column progression wrong after enabling pagination on RTL document

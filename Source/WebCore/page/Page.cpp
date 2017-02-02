@@ -325,6 +325,7 @@ Page::~Page()
         m_scrollingCoordinator->pageDestroyed();
 
     backForward().close();
+    PageCache::singleton().removeAllItemsForPage(*this);
 
 #ifndef NDEBUG
     pageCounter.decrement();
