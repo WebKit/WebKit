@@ -42,7 +42,7 @@ CAAudioStreamDescription::CAAudioStreamDescription(const AudioStreamBasicDescrip
 {
 }
 
-CAAudioStreamDescription::CAAudioStreamDescription(double sampleRate, UInt32 numChannels, PCMFormat format, bool isInterleaved)
+CAAudioStreamDescription::CAAudioStreamDescription(double sampleRate, uint32_t numChannels, PCMFormat format, bool isInterleaved)
 {
     m_streamDescription.mFormatID = kAudioFormatLinearPCM;
     m_streamDescription.mSampleRate = sampleRate;
