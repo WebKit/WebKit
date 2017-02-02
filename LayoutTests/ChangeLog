@@ -1,3 +1,11 @@
+2017-02-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline compositing/geometry/fixed-in-composited.html for ios-simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/compositing/geometry/fixed-in-composited-expected.txt:
+
 2017-02-01  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] With visual viewports, a fixed bottom bar can be clipped out when the keyboard is visible
