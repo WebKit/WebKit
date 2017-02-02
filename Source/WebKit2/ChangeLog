@@ -1,3 +1,19 @@
+2017-02-02  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        In iOS, we should take background assertion when accessing localstorage databases.
+        https://bugs.webkit.org/show_bug.cgi?id=165478
+
+        Just like in WebKit1, when initializing a WKWebView, initialize the database transaction
+        tracker client. Also, we should set up the start and end background task blocks here. In
+        WebKit1, this is done inside UIKit.
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _setUpSQLiteDatabaseTrackerClient]): Set up the start/end background task blocks
+            and database transaction tracker client.
+
 2017-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the nightly open source build.

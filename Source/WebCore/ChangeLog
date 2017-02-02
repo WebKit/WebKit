@@ -1,3 +1,45 @@
+2017-02-02  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        In iOS, we should take background assertion when accessing localstorage databases.
+        https://bugs.webkit.org/show_bug.cgi?id=165478
+
+        Move WebSQLiteDatabaseTrackerClient from WebKitLegacy to WebCore so that it can be accessible from
+        WebKit1 and WebKit2. Previously, to avoid dependencies on UIKit, WebKitLegacy introduced several
+        global methods for UIKit to setup the start/end background task blocks on runtime (WebKitSetStartBackgroundTaskBlock,
+        WebKitSetInvalidWebBackgroundTaskIdentifier and WebKitSetEndBackgroundTaskBlock). Since we have to
+        move the background task handling to WebCore, to avoid adding WebCore dependencies on UIKit, this
+        patch introdues a new WebCore class WebBackgroundTaskController which holds the start/end background
+        task blocks. The existing WebKitSetStartBackgroundTaskBlock and WebKitSetEndBackgroundTaskBlock methods
+        in WebKit1 will use WebBackgroundTaskController to store the blocks set by UIKit. 
+
+        Reviewed by Brady Eidson.
+
+        No new test since this is code refactoring.
+
+        * WebCore.xcodeproj/project.pbxproj: Add a new class WebBackgroundTaskController to the project. Also move
+            WebSQLiteDatabaseTrackerClient from WebKitLegacy to WebCore.
+        * platform/ios/WebBackgroundTaskController.h: Use properties to hold the blocks for starting or ending background tasks.
+        * platform/ios/WebBackgroundTaskController.mm:
+        (+[WebBackgroundTaskController sharedController]):
+        (-[WebBackgroundTaskController dealloc]):
+        (-[WebBackgroundTaskController startBackgroundTaskWithExpirationHandler:]): Start a background task with a expiration handler;
+            to start the background task, we will use backgroundTaskStartBlock set up by UIKit.
+        (-[WebBackgroundTaskController endBackgroundTaskWithIdentifier:]): Call backgroundTaskEndBlack to end a background task.
+        * platform/ios/WebSQLiteDatabaseTrackerClient.h: Copied from Source/WebKit/ios/Storage/WebSQLiteDatabaseTrackerClient.h.
+        * platform/ios/WebSQLiteDatabaseTrackerClient.mm: Copied from Source/WebKit/ios/Storage/WebSQLiteDatabaseTrackerClient.mm.
+        (WebCore::WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient): Make WebSQLiteDatabaseTrackerClient a singleton.
+        (WebCore::WebSQLiteDatabaseTrackerClient::WebSQLiteDatabaseTrackerClient): 
+        (WebCore::WebSQLiteDatabaseTrackerClient::~WebSQLiteDatabaseTrackerClient):
+        (WebCore::WebSQLiteDatabaseTrackerClient::willBeginFirstTransaction): Use a utility class WebDatabaseTransactionBackgroundTaskController
+            to schedule database transaction background task.
+        (WebCore::WebSQLiteDatabaseTrackerClient::didFinishLastTransaction): Use WebDatabaseTransactionBackgroundTaskController to stop
+            databas transaction background task.
+        (transactionBackgroundTaskIdentifierLock: Moved from Source/WebKit/mac/Storage/WebDatabaseManager.mm.
+        (setTransactionBackgroundTaskIdentifier): Ditto.
+        (getTransactionBackgroundTaskIdentifier): Ditto.
+        (+[WebDatabaseTransactionBackgroundTaskController startBackgroundTask]): Ditto.
+        (+[WebDatabaseTransactionBackgroundTaskController endBackgroundTask]): Ditto.
+
 2017-02-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME] Implement MediaKeySession::update()

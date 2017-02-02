@@ -1011,10 +1011,14 @@
 		1CCDF5BD1990332400BCEBAD /* SVGToOTFFontConversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CCDF5BB1990332400BCEBAD /* SVGToOTFFontConversion.cpp */; };
 		1CCDF5BE1990332400BCEBAD /* SVGToOTFFontConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCDF5BC1990332400BCEBAD /* SVGToOTFFontConversion.h */; };
 		1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CFAE3220A6D6A3F0032593D /* libobjc.dylib */; };
+		1F36EA9C1E21BA1700621E25 /* WebBackgroundTaskController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F36EA9A1E21BA1700621E25 /* WebBackgroundTaskController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1F36EA9D1E21BA1700621E25 /* WebBackgroundTaskController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F36EA9B1E21BA1700621E25 /* WebBackgroundTaskController.mm */; };
 		1F3C3BEA135CAF3C00B8C1AC /* MediaControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F3C3BE8135CAF3C00B8C1AC /* MediaControls.cpp */; };
 		1F3C3BEB135CAF3C00B8C1AC /* MediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F3C3BE9135CAF3C00B8C1AC /* MediaControls.h */; };
+		1F4B419B1E2301C900AC037F /* WebSQLiteDatabaseTrackerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F8756B01E22BEEF0042C40D /* WebSQLiteDatabaseTrackerClient.mm */; };
 		1F72BF0A187FD4490009BCB3 /* TileControllerMemoryHandlerIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F72BF08187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.cpp */; };
 		1F72BF0B187FD45C0009BCB3 /* TileControllerMemoryHandlerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F72BF09187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1F8756B21E22C3350042C40D /* WebSQLiteDatabaseTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F8756B11E22BEEF0042C40D /* WebSQLiteDatabaseTrackerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1FAFBF1815A5FA6E00083A20 /* UTIUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1FAFBF1715A5FA5200083A20 /* UTIUtilities.mm */; };
 		1FAFBF1915A5FA7400083A20 /* UTIUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FAFBF1615A5FA5200083A20 /* UTIUtilities.h */; };
 		1FC40FB91655CCB60040F29E /* SubimageCacheWithTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FC40FB81655C5910040F29E /* SubimageCacheWithTimer.cpp */; };
@@ -8155,10 +8159,14 @@
 		1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebCore.xcconfig; sourceTree = "<group>"; };
 		1CDD45E60BA9C84600F90147 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
+		1F36EA9A1E21BA1700621E25 /* WebBackgroundTaskController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackgroundTaskController.h; sourceTree = "<group>"; };
+		1F36EA9B1E21BA1700621E25 /* WebBackgroundTaskController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebBackgroundTaskController.mm; sourceTree = "<group>"; };
 		1F3C3BE8135CAF3C00B8C1AC /* MediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControls.cpp; sourceTree = "<group>"; };
 		1F3C3BE9135CAF3C00B8C1AC /* MediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControls.h; sourceTree = "<group>"; };
 		1F72BF08187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TileControllerMemoryHandlerIOS.cpp; sourceTree = "<group>"; };
 		1F72BF09187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileControllerMemoryHandlerIOS.h; sourceTree = "<group>"; };
+		1F8756B01E22BEEF0042C40D /* WebSQLiteDatabaseTrackerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSQLiteDatabaseTrackerClient.mm; sourceTree = "<group>"; };
+		1F8756B11E22BEEF0042C40D /* WebSQLiteDatabaseTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSQLiteDatabaseTrackerClient.h; sourceTree = "<group>"; };
 		1FAFBF1615A5FA5200083A20 /* UTIUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTIUtilities.h; sourceTree = "<group>"; };
 		1FAFBF1715A5FA5200083A20 /* UTIUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UTIUtilities.mm; sourceTree = "<group>"; };
 		1FC40FB71655C5910040F29E /* SubimageCacheWithTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubimageCacheWithTimer.h; sourceTree = "<group>"; };
@@ -19938,6 +19946,8 @@
 				837B7D1F1DC3F54C00D051FC /* ValidationBubbleIOS.mm */,
 				CDA29A2C1CBF73FC00901CCF /* WebAVPlayerController.h */,
 				CDA29A2D1CBF73FC00901CCF /* WebAVPlayerController.mm */,
+				1F36EA9A1E21BA1700621E25 /* WebBackgroundTaskController.h */,
+				1F36EA9B1E21BA1700621E25 /* WebBackgroundTaskController.mm */,
 				31403797124BEA7F00AF40E4 /* WebCoreMotionManager.h */,
 				31403798124BEA7F00AF40E4 /* WebCoreMotionManager.mm */,
 				E45390380EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm */,
@@ -19947,6 +19957,8 @@
 				F482230E1E3869B80066FC79 /* WebItemProviderPasteboard.mm */,
 				CDA29A2E1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.h */,
 				CDA29A2F1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.mm */,
+				1F8756B01E22BEEF0042C40D /* WebSQLiteDatabaseTrackerClient.mm */,
+				1F8756B11E22BEEF0042C40D /* WebSQLiteDatabaseTrackerClient.h */,
 				3F42B31B1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h */,
 				3F42B31C1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm */,
 				3FBC4AF2189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h */,
@@ -25633,6 +25645,7 @@
 				D0BD4F5D1408850F006839B6 /* DictationCommandIOS.h in Headers */,
 				937FF3D51A1012D6008EBA31 /* DictionaryLookup.h in Headers */,
 				2D5646B01B8F8493003C4994 /* DictionaryPopupInfo.h in Headers */,
+				1F36EA9C1E21BA1700621E25 /* WebBackgroundTaskController.h in Headers */,
 				FDAF19991513D131008DB0C3 /* DirectConvolver.h in Headers */,
 				7EDAAFC919A2CCDC0034DFD1 /* DiskCacheMonitorCocoa.h in Headers */,
 				0FE5FBD31C3DD51E0007A2CA /* DisplayList.h in Headers */,
@@ -25727,6 +25740,7 @@
 				4F1534DE11B532EC0021FD86 /* EditingBehavior.h in Headers */,
 				4F1534E011B533020021FD86 /* EditingBehaviorTypes.h in Headers */,
 				3AC648B2129E146500C3EB25 /* EditingBoundary.h in Headers */,
+				1F8756B21E22C3350042C40D /* WebSQLiteDatabaseTrackerClient.h in Headers */,
 				9BAB6C6C12550631001626D4 /* EditingStyle.h in Headers */,
 				4B3043CD0AE0373B00A82647 /* Editor.h in Headers */,
 				1AF326790D78B9440068F0C4 /* EditorClient.h in Headers */,
@@ -30625,6 +30639,7 @@
 				B2FA3DD80AB75A6F000E5AC4 /* JSSVGPathSegLinetoVerticalRel.cpp in Sources */,
 				B2FA3DDA0AB75A6F000E5AC4 /* JSSVGPathSegList.cpp in Sources */,
 				B2FA3DDC0AB75A6F000E5AC4 /* JSSVGPathSegMovetoAbs.cpp in Sources */,
+				1F36EA9D1E21BA1700621E25 /* WebBackgroundTaskController.mm in Sources */,
 				B2FA3DDE0AB75A6F000E5AC4 /* JSSVGPathSegMovetoRel.cpp in Sources */,
 				B2FA3DE00AB75A6F000E5AC4 /* JSSVGPatternElement.cpp in Sources */,
 				8542A7960AE5C94200DF58DF /* JSSVGPoint.cpp in Sources */,
@@ -32148,6 +32163,7 @@
 				85217E020A5ECD4700DB8D00 /* XSLImportRule.cpp in Sources */,
 				93F19B0308245E59001E9ABC /* XSLStyleSheetLibxslt.cpp in Sources */,
 				E1F1E82F0C3C2BB9006DB391 /* XSLTExtensions.cpp in Sources */,
+				1F4B419B1E2301C900AC037F /* WebSQLiteDatabaseTrackerClient.mm in Sources */,
 				93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */,
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,

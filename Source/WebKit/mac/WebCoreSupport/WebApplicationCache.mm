@@ -33,9 +33,9 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
-#import "WebSQLiteDatabaseTrackerClient.h"
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
+#import <WebCore/WebSQLiteDatabaseTrackerClient.h>
 #endif
 
 using namespace WebCore;
@@ -54,7 +54,7 @@ static NSString *overrideBundleIdentifier;
     if (initialized)
         return;
 
-    SQLiteDatabaseTracker::setClient(WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient());
+    SQLiteDatabaseTracker::setClient(&WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient());
 
     ASSERT(!overrideBundleIdentifier);
     overrideBundleIdentifier = [bundleIdentifier copy];

@@ -37,6 +37,7 @@
 #import <WebCore/PathUtilities.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/Settings.h>
+#import <WebCore/WebBackgroundTaskController.h>
 #import <WebCore/WebCoreSystemInterface.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #import <wtf/spi/darwin/dyldSPI.h>
@@ -132,44 +133,19 @@ void WebKitSetBackgroundAndForegroundNotificationNames(NSString *didEnterBackgro
     // FIXME: Remove this function.
 }
 
-static WebBackgroundTaskIdentifier invalidTaskIdentifier = 0;
-static StartBackgroundTaskBlock startBackgroundTaskBlock = 0;
-static EndBackgroundTaskBlock endBackgroundTaskBlock = 0;
-
 void WebKitSetInvalidWebBackgroundTaskIdentifier(WebBackgroundTaskIdentifier taskIdentifier)
 {
-    invalidTaskIdentifier = taskIdentifier;
+    [[WebBackgroundTaskController sharedController] setInvalidBackgroundTaskIdentifier:taskIdentifier];
 }
 
 void WebKitSetStartBackgroundTaskBlock(StartBackgroundTaskBlock startBlock)
 {
-    Block_release(startBackgroundTaskBlock);
-    startBackgroundTaskBlock = Block_copy(startBlock);    
+    [[WebBackgroundTaskController sharedController] setBackgroundTaskStartBlock:startBlock];
 }
 
 void WebKitSetEndBackgroundTaskBlock(EndBackgroundTaskBlock endBlock)
 {
-    Block_release(endBackgroundTaskBlock);
-    endBackgroundTaskBlock = Block_copy(endBlock);    
-}
-
-WebBackgroundTaskIdentifier invalidWebBackgroundTaskIdentifier()
-{
-    return invalidTaskIdentifier;
-}
-
-WebBackgroundTaskIdentifier startBackgroundTask(VoidBlock expirationHandler)
-{
-    if (!startBackgroundTaskBlock)
-        return invalidTaskIdentifier;
-    return startBackgroundTaskBlock(expirationHandler);
-}
-
-void endBackgroundTask(WebBackgroundTaskIdentifier taskIdentifier)
-{
-    if (!endBackgroundTaskBlock)
-        return;
-    endBackgroundTaskBlock(taskIdentifier);
+    [[WebBackgroundTaskController sharedController] setBackgroundTaskEndBlock:endBlock];
 }
 
 CGPathRef WebKitCreatePathWithShrinkWrappedRects(NSArray* cgRects, CGFloat radius)

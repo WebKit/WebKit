@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/SQLiteDatabaseTrackerClient.h>
+#if PLATFORM(IOS)
 
-class WebSQLiteDatabaseTrackerClient : public WebCore::SQLiteDatabaseTrackerClient {
-public:
-    static WebSQLiteDatabaseTrackerClient* sharedWebSQLiteDatabaseTrackerClient();
+WEBCORE_EXPORT @interface WebBackgroundTaskController : NSObject
 
-    ~WebSQLiteDatabaseTrackerClient() override { }
+@property (nonatomic) NSUInteger invalidBackgroundTaskIdentifier;
+@property (nonatomic, copy) NSUInteger (^backgroundTaskStartBlock)(void (^)());
+@property (nonatomic, copy) void (^backgroundTaskEndBlock)(NSUInteger);
 
-    void willBeginFirstTransaction() override;
-    void didFinishLastTransaction() override;
++ (WebBackgroundTaskController *)sharedController;
 
-private:
-    WebSQLiteDatabaseTrackerClient() { }
-};
+- (NSUInteger)startBackgroundTaskWithExpirationHandler:(void (^)())handler;
+- (void)endBackgroundTaskWithIdentifier:(NSUInteger)identifier;
+
+@end
+
+#endif

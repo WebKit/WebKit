@@ -23,31 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
+#include "PlatformExportMacros.h"
+
 #if PLATFORM(IOS)
 
-#import "WebSQLiteDatabaseTrackerClient.h"
+#include "SQLiteDatabaseTrackerClient.h"
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Noncopyable.h>
 
-#import "WebDatabaseManagerInternal.h"
-#import "WebDatabaseManagerPrivate.h"
+namespace WebCore {
 
-#import <WebCore/SQLiteDatabaseTracker.h>
+class WebSQLiteDatabaseTrackerClient final : public SQLiteDatabaseTrackerClient {
+    WTF_MAKE_NONCOPYABLE(WebSQLiteDatabaseTrackerClient);
+public:
+    WEBCORE_EXPORT static WebSQLiteDatabaseTrackerClient& sharedWebSQLiteDatabaseTrackerClient();
 
-using namespace WebCore;
+    void willBeginFirstTransaction() override;
+    void didFinishLastTransaction() override;
 
-WebSQLiteDatabaseTrackerClient* WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient()
-{
-    static WebSQLiteDatabaseTrackerClient* sharedClient = new WebSQLiteDatabaseTrackerClient();
-    return sharedClient;
+private:
+    friend class NeverDestroyed<WebSQLiteDatabaseTrackerClient>;
+    WebSQLiteDatabaseTrackerClient();
+    virtual ~WebSQLiteDatabaseTrackerClient();
+};
+
 }
 
-void WebSQLiteDatabaseTrackerClient::willBeginFirstTransaction()
-{
-    [WebDatabaseManager willBeginFirstTransaction];
-}
-
-void WebSQLiteDatabaseTrackerClient::didFinishLastTransaction()
-{
-    [WebDatabaseManager didFinishLastTransaction];
-}
-
-#endif // PLATFORM(IOS)
+#endif

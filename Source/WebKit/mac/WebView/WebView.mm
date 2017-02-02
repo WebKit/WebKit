@@ -257,7 +257,6 @@
 #import "WebPlainWhiteView.h"
 #import "WebPluginController.h"
 #import "WebPolicyDelegatePrivate.h"
-#import "WebSQLiteDatabaseTrackerClient.h"
 #import "WebStorageManagerPrivate.h"
 #import "WebUIKitSupport.h"
 #import "WebVisiblePosition.h"
@@ -280,6 +279,7 @@
 #import <WebCore/WebCoreThreadMessage.h>
 #import <WebCore/WebCoreThreadRun.h>
 #import <WebCore/WebEvent.h>
+#import <WebCore/WebSQLiteDatabaseTrackerClient.h>
 #import <WebCore/WebVideoFullscreenControllerAVKit.h>
 #import <libkern/OSAtomic.h>
 #import <wtf/FastMalloc.h>
@@ -1314,7 +1314,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 #if PLATFORM(IOS)
         // Set the WebSQLiteDatabaseTrackerClient.
-        SQLiteDatabaseTracker::setClient(WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient());
+        SQLiteDatabaseTracker::setClient(&WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient());
 
         if ([standardPreferences databasesEnabled])
 #endif
