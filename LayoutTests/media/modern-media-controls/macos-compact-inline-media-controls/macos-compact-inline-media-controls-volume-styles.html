@@ -1,0 +1,39 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>MacOSCompactInlineMediaControls</code> computed styles.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSCompactInlineMediaControls({ width: 240, height: 300 });
+mediaControls.volumeSlider.parent.visible = true;
+
+let volumeSliderContainerStyle, volumeSliderStyle;
+scheduler.frameDidFire = function()
+{
+    document.body.appendChild(mediaControls.element);
+
+    volumeSliderContainerStyle = window.getComputedStyle(mediaControls.volumeSlider.parent.element);
+    shouldBeEqualToString("volumeSliderContainerStyle.position", "absolute");
+    shouldBeEqualToString("volumeSliderContainerStyle.top", "0px");
+    shouldBeEqualToString("volumeSliderContainerStyle.width", "21px");
+    shouldBeEqualToString("volumeSliderContainerStyle.height", "81px");
+    shouldBeEqualToString("volumeSliderContainerStyle.transform", "matrix(1, 0, 0, 1, -2, -81)");
+
+    volumeSliderStyle = window.getComputedStyle(mediaControls.volumeSlider.element);
+    shouldBeEqualToString("volumeSliderStyle.transform", "matrix(0.00000000000000006123233995736766, -1, 1, 0.00000000000000006123233995736766, 0, 0)");
+    shouldBeEqualToString("volumeSliderStyle.left", "-19.5px");
+    shouldBeEqualToString("volumeSliderStyle.top", "40px");
+
+    mediaControls.element.remove();
+
+    debug("");
+    finishMediaControlsTest();
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

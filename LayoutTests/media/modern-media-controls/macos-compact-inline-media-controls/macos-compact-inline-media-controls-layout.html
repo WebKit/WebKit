@@ -1,0 +1,41 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>MacOSCompactInlineMediaControls</code> layout.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSCompactInlineMediaControls({ width: 240, height: 25 });
+
+const iconButtons = [
+    mediaControls.playPauseButton,
+    mediaControls.skipBackButton,
+    mediaControls.muteButton,
+    mediaControls.fullscreenButton
+];
+
+// There is a 4-pixel difference in metrics between 1x and 2x due to the volume button having a different width.
+const is1x = window.devicePixelRatio == 1;
+const expectedTimeControlWidth = is1x ? 286 : 290;
+const expectedVolumeSliderContainerX = is1x ? 428 : 432;
+
+scheduler.frameDidFire = function()
+{
+    if (iconButtons.some(button => button.width == 0))
+        return;
+
+    shouldBeTrue("mediaControls.controlsBar.children[0] instanceof ButtonsContainer");
+    shouldBeTrue("mediaControls.controlsBar.children[1] instanceof ButtonsContainer");
+
+    shouldBe("mediaControls.controlsBar.children[0].children", "[mediaControls.playPauseButton, mediaControls.skipBackButton]");
+    shouldBe("mediaControls.controlsBar.children[1].children", "[mediaControls.muteButton, mediaControls.fullscreenButton]");
+
+    finishMediaControlsTest();
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

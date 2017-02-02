@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+const CompactModeMaxWidth = 241;
+
 class MediaController
 {
 
@@ -59,6 +61,10 @@ class MediaController
                 return traits | LayoutTraits.Fullscreen;
         } else if (this.media.webkitDisplayingFullscreen)
             return traits | LayoutTraits.Fullscreen;
+
+        if (this._controlsWidth() <= CompactModeMaxWidth)
+            return traits | LayoutTraits.Compact;
+
         return traits;
     }
 
@@ -77,9 +83,10 @@ class MediaController
 
     handleEvent(event)
     {
-        if (event.type === "resize" && event.currentTarget === this.shadowRoot)
+        if (event.type === "resize" && event.currentTarget === this.shadowRoot) {
             this._updateControlsSize();
-        else if (event.type === "click" && event.currentTarget === this.container)
+            this._updateControlsIfNeeded();
+        } else if (event.type === "click" && event.currentTarget === this.container)
             this._containerWasClicked(event);
         else if (event.currentTarget === this.media) {
             this._updateControlsIfNeeded();
@@ -117,7 +124,8 @@ class MediaController
             this.controls.controlsBar.autoHideDelay = this.shadowRoot.host.dataset.autoHideDelay;
 
         if (previousControls) {
-            this.controls.fadeIn();
+            if (this._shouldFadeBetweenControls(previousControls, this.controls))
+                this.controls.fadeIn();
             this.container.replaceChild(this.controls.element, previousControls.element);
             this.controls.usesLTRUserInterfaceLayoutDirection = previousControls.usesLTRUserInterfaceLayoutDirection;
         } else
@@ -130,10 +138,23 @@ class MediaController
         }, this);
     }
 
+    _shouldFadeBetweenControls(previousControls, newControls)
+    {
+        // We don't fade when toggling between the various macOS inline modes.
+        if (previousControls instanceof MacOSInlineMediaControls && newControls instanceof MacOSInlineMediaControls)
+            return false;
+        return true;
+    }
+
     _updateControlsSize()
     {
-        this.controls.width = Math.round(this.media.offsetWidth * this.controls.scaleFactor);
+        this.controls.width = this._controlsWidth();
         this.controls.height = Math.round(this.media.offsetHeight * this.controls.scaleFactor);
+    }
+
+    _controlsWidth()
+    {
+        return Math.round(this.media.offsetWidth * (this.controls ? this.controls.scaleFactor : 1));
     }
 
     _returnMediaLayerToInlineIfNeeded()
@@ -149,6 +170,8 @@ class MediaController
             return IOSInlineMediaControls;
         if (layoutTraits & LayoutTraits.Fullscreen)
             return MacOSFullscreenMediaControls;
+        if (layoutTraits & LayoutTraits.Compact)
+            return MacOSCompactInlineMediaControls;
         return MacOSInlineMediaControls;
     }
 

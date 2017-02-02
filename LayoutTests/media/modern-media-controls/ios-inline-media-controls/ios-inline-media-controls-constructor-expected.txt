@@ -15,14 +15,16 @@ PASS mediaControls.controlsBar.children[1] instanceof ButtonsContainer is true
 Left container
 PASS mediaControls.controlsBar.children[0].buttons is [mediaControls.playPauseButton, mediaControls.skipBackButton]
 PASS mediaControls.controlsBar.children[0].element.className is "buttons-container left"
-PASS mediaControls.controlsBar.children[0].padding is 24
-PASS mediaControls.controlsBar.children[0].margin is 24
+PASS mediaControls.controlsBar.children[0].leftMargin is 24
+PASS mediaControls.controlsBar.children[0].rightMargin is 24
+PASS mediaControls.controlsBar.children[0].buttonMargin is 24
 
 Right container
 PASS mediaControls.controlsBar.children[1].buttons is [mediaControls.airplayButton, mediaControls.pipButton, mediaControls.fullscreenButton]
 PASS mediaControls.controlsBar.children[1].element.className is "buttons-container right"
-PASS mediaControls.controlsBar.children[1].padding is 24
-PASS mediaControls.controlsBar.children[1].margin is 24
+PASS mediaControls.controlsBar.children[1].leftMargin is 24
+PASS mediaControls.controlsBar.children[1].rightMargin is 24
+PASS mediaControls.controlsBar.children[1].buttonMargin is 24
 
 PASS successfullyParsed is true
 

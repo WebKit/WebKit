@@ -17,14 +17,16 @@ PASS mediaControls.controlsBar.children[3] is mediaControls.timeControl
 Center container
 PASS mediaControls.controlsBar.children[1].buttons is [mediaControls.rewindButton, mediaControls.playPauseButton, mediaControls.forwardButton]
 PASS mediaControls.controlsBar.children[1].element.className is "buttons-container center"
-PASS mediaControls.controlsBar.children[1].padding is 27
-PASS mediaControls.controlsBar.children[1].margin is 27
+PASS mediaControls.controlsBar.children[1].leftMargin is 27
+PASS mediaControls.controlsBar.children[1].rightMargin is 27
+PASS mediaControls.controlsBar.children[1].buttonMargin is 27
 
 Right container
 PASS mediaControls.controlsBar.children[2].buttons is [mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]
 PASS mediaControls.controlsBar.children[2].element.className is "buttons-container right"
-PASS mediaControls.controlsBar.children[2].padding is 12
-PASS mediaControls.controlsBar.children[2].margin is 0
+PASS mediaControls.controlsBar.children[2].leftMargin is 12
+PASS mediaControls.controlsBar.children[2].rightMargin is 12
+PASS mediaControls.controlsBar.children[2].buttonMargin is 24
 
 PASS successfullyParsed is true
 

@@ -1,0 +1,41 @@
+Testing the MacOSCompactInlineMediaControls computed styles.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PlayPauseButton
+PASS rgba(style.backgroundColor).r is 255
+PASS rgba(style.backgroundColor).g is 255
+PASS rgba(style.backgroundColor).b is 255
+PASS rgba(style.backgroundColor).a is within 0.001 of 0.572
+PASS style.height is "25px"
+PASS style.webkitMaskPositionY is "6px"
+
+SkipBackButton
+PASS rgba(style.backgroundColor).r is 255
+PASS rgba(style.backgroundColor).g is 255
+PASS rgba(style.backgroundColor).b is 255
+PASS rgba(style.backgroundColor).a is within 0.001 of 0.572
+PASS style.height is "25px"
+PASS style.webkitMaskPositionY is "6px"
+
+MuteButton
+PASS rgba(style.backgroundColor).r is 255
+PASS rgba(style.backgroundColor).g is 255
+PASS rgba(style.backgroundColor).b is 255
+PASS rgba(style.backgroundColor).a is within 0.001 of 0.572
+PASS style.height is "25px"
+PASS style.webkitMaskPositionY is "6px"
+
+FullscreenButton
+PASS rgba(style.backgroundColor).r is 255
+PASS rgba(style.backgroundColor).g is 255
+PASS rgba(style.backgroundColor).b is 255
+PASS rgba(style.backgroundColor).a is within 0.001 of 0.572
+PASS style.height is "25px"
+PASS style.webkitMaskPositionY is "6.5px"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

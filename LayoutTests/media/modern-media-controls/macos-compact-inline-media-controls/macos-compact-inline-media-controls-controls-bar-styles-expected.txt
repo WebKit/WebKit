@@ -1,0 +1,23 @@
+Testing the MacOSCompactInlineMediaControls computed styles.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS style.left is "0px"
+PASS style.bottom is "0px"
+PASS style.width is "680px"
+PASS style.height is "25px"
+PASS bounds.left is 0
+PASS bounds.top is 275
+PASS bounds.width is 680
+PASS bounds.height is 25
+PASS rgba(style.backgroundColor).r is 30
+PASS rgba(style.backgroundColor).g is 30
+PASS rgba(style.backgroundColor).b is 30
+PASS rgba(style.backgroundColor).a is within 0.001 of 0.45
+PASS style.webkitBackdropFilter is "saturate(1.8) blur(20px)"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

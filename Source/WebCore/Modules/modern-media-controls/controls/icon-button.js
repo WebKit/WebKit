@@ -103,6 +103,8 @@ class IconButton extends Button
 
     _updateImage()
     {
+        this.needsLayout = true;
+
         const width = this._image.width / window.devicePixelRatio;
         const height = this._image.height / window.devicePixelRatio;
 
@@ -111,8 +113,6 @@ class IconButton extends Button
 
         this.width = width;
         this.height = height;
-
-        this.needsLayout = true;
 
         if (this.layoutDelegate)
             this.layoutDelegate.needsLayout = true;

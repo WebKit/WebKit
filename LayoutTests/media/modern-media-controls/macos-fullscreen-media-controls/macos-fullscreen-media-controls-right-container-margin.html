@@ -4,7 +4,7 @@
 <body>
 <script type="text/javascript">
 
-description("Testing the <code>MacOSFullscreenMediaControls</code> right container margin.");
+description("Testing the <code>MacOSFullscreenMediaControls</code> right container buttonMargin.");
 
 window.jsTestIsAsync = true;
 
@@ -18,17 +18,17 @@ scheduler.frameDidFire = function()
 
     if (numberOfFrames == 1) {
         debug("4 enabled buttons")
-        shouldBe("rightContainer.margin", "16");
+        shouldBe("rightContainer.buttonMargin", "16");
         debug("");
         mediaControls.tracksButton.enabled = false;
     } else if (numberOfFrames == 2) {
         debug("3 enabled buttons")
-        shouldBe("rightContainer.margin", "24");
+        shouldBe("rightContainer.buttonMargin", "24");
         mediaControls.pipButton.enabled = false;
         debug("");
     } else if (numberOfFrames == 3) {
         debug("2 enabled buttons")
-        shouldBe("rightContainer.margin", "24");
+        shouldBe("rightContainer.buttonMargin", "24");
         debug("");
         finishMediaControlsTest();
     }

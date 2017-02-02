@@ -1,3 +1,91 @@
+2017-02-02  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Provide a compact mode for when the controls are small
+        https://bugs.webkit.org/show_bug.cgi?id=167746
+        <rdar://problem/29565842>
+
+        Reviewed by Dean Jackson.
+
+        When the macOS inline media controls become too narrow to display both the volume and fullscreen
+        buttons in their right container (width < 242), we switch to a compact mode where the controls bar
+        is shorter and the buttons smaller.
+
+        To facilitate this, we provide a new subclass of MacOSInlineMediaControls called MacOSCompactInlineMediaControls
+        which changes some of the layout properties of the buttons to have shorter margins around buttons.
+
+        We also added a new "Compact" LayoutTrait and improved IconService to provide specific icons
+        for this mode for the buttons that can exist in compact mode. 
+
+        To correctly implement the design, we needed to add a way to provide different margins around the
+        left and right edges of the container, so the "padding" property is now split between "leftMargin"
+        and "rightMargin", and to make property naming cleaner, the "margin" property which specifies the
+        space between each button in a container is now called "buttonMargin". We also set the default
+        values for those properties to be 24 (instead of 0) which are the most widely used values, requiring
+        less customization.
+
+        Tests: media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-buttons-styles.html
+               media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-constructor.html
+               media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-controls-bar-styles.html
+               media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-layout.html
+               media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-volume-styles.html
+               media/modern-media-controls/media-controller/media-controller-toggle-compact-mode.html
+
+        * Modules/modern-media-controls/controls/buttons-container.js:
+        (ButtonsContainer.prototype.layout): Refactor the "margin" and "padding" properties into
+        "leftMargin", "rightMargin" and "buttonMargin".
+        * Modules/modern-media-controls/controls/icon-button.js:
+        (IconButton.prototype._updateImage): Fix a small bug that would prevent the image source
+        change to occur after changing the "iconName" property should the previous and new icons
+        share the same metrics, which is the case for the "play" and "pause" icons in compact mode.
+        * Modules/modern-media-controls/controls/icon-service.js: Add support for compact variants.
+        (const.iconService.new.IconService.prototype._fileNameAndPlatformForIconNameAndLayoutTraits):
+        (const.iconService.new.IconService):
+        * Modules/modern-media-controls/controls/ios-inline-media-controls.js: Adopt new margin defaults.
+        * Modules/modern-media-controls/controls/layout-item.js: Add the new "Compact" LayoutTrait.
+        * Modules/modern-media-controls/controls/macos-compact-inline-media-controls.css: Added.
+        (.media-controls.mac.inline.compact > .controls-bar):
+        (.media-controls.mac.inline.compact button.play-pause):
+        (.media-controls.mac.inline.compact button.skip-back):
+        (.media-controls.mac.inline.compact .scrubber.slider):
+        (.media-controls.mac.inline.compact button.mute):
+        (.media-controls.mac.inline.compact button.fullscreen):
+        (.media-controls.mac.inline.compact .time-label,):
+        (.media-controls.mac.inline.compact .volume-slider-container):
+        (.media-controls.mac.inline.compact .volume.slider):
+        (.media-controls.mac.inline.compact .scrubber.slider > input::-webkit-slider-thumb):
+        * Modules/modern-media-controls/controls/macos-compact-inline-media-controls.js: Added.
+        (MacOSCompactInlineMediaControls):
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js: Adopt new margin defaults.
+        (MacOSFullscreenMediaControls.prototype.layout):
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.js: Adopt new margin defaults
+        and make the _leftContainer and _rightContainer properties public such that the MacOSCompactInlineMediaControls
+        subclass may customize them without accessing a private property.
+        (MacOSInlineMediaControls.prototype.layout):
+        (MacOSInlineMediaControls.prototype.showTracksPanel):
+        * Modules/modern-media-controls/images/macOS/enter-fullscreen-compact@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/enter-fullscreen-compact@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/interval-skip-back-compact@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/interval-skip-back-compact@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/pause-compact@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/pause-compact@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/play-compact@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/play-compact@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/volume-compact@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/volume-compact@2x.png: Added.
+        * Modules/modern-media-controls/js-files: Add the new files so they are concatenated by the build script.
+        * Modules/modern-media-controls/media/media-controller.js: Toggle compact mode if controls
+        are below the 242px width threshold.
+        (MediaController.prototype.get layoutTraits):
+        (MediaController.prototype.handleEvent):
+        (MediaController.prototype._updateControlsIfNeeded):
+        (MediaController.prototype._shouldFadeBetweenControls):
+        (MediaController.prototype._updateControlsSize):
+        (MediaController.prototype._controlsWidth):
+        (MediaController.prototype._controlsClass):
+        (MediaController):
+        * WebCore.xcodeproj/project.pbxproj: Add new files and perform some cleanup so that the
+        project accurately lists all the existing project files and remove some older ones.
+
 2017-02-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r211571 and r211582.

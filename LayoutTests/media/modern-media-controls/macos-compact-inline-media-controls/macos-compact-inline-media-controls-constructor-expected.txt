@@ -1,11 +1,11 @@
-Testing the MacOSInlineMediaControls constructor.
+Testing the MacOSCompactInlineMediaControls constructor.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 PASS mediaControls.element.localName is "div"
-PASS mediaControls.element.className is "media-controls mac inline"
-PASS mediaControls.layoutTraits is LayoutTraits.macOS
+PASS mediaControls.element.className is "media-controls mac inline compact"
+PASS mediaControls.layoutTraits is LayoutTraits.macOS | LayoutTraits.Compact
 
 Controls bar
 PASS mediaControls.controlsBar.children.length is 3
@@ -16,16 +16,16 @@ PASS mediaControls.controlsBar.children[2] instanceof LayoutNode is true
 Left container
 PASS mediaControls.controlsBar.children[0].buttons is [mediaControls.playPauseButton, mediaControls.skipBackButton]
 PASS mediaControls.controlsBar.children[0].element.className is "buttons-container left"
-PASS mediaControls.controlsBar.children[0].leftMargin is 24
-PASS mediaControls.controlsBar.children[0].rightMargin is 24
-PASS mediaControls.controlsBar.children[0].buttonMargin is 24
+PASS mediaControls.controlsBar.children[0].leftMargin is 8
+PASS mediaControls.controlsBar.children[0].rightMargin is 12
+PASS mediaControls.controlsBar.children[0].buttonMargin is 12
 
 Right container
-PASS mediaControls.controlsBar.children[1].buttons is [mediaControls.muteButton, mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]
+PASS mediaControls.controlsBar.children[1].buttons is [mediaControls.muteButton, mediaControls.fullscreenButton]
 PASS mediaControls.controlsBar.children[1].element.className is "buttons-container right"
-PASS mediaControls.controlsBar.children[1].leftMargin is 24
-PASS mediaControls.controlsBar.children[1].rightMargin is 24
-PASS mediaControls.controlsBar.children[1].buttonMargin is 24
+PASS mediaControls.controlsBar.children[1].leftMargin is 12
+PASS mediaControls.controlsBar.children[1].rightMargin is 8
+PASS mediaControls.controlsBar.children[1].buttonMargin is 12
 
 Volume slider
 PASS mediaControls.controlsBar.children[2].element.className is "volume-slider-container"

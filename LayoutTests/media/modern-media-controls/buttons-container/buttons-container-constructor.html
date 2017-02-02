@@ -8,22 +8,25 @@ description("Testing the <code>ButtonsContainer</code> constructor.");
 const defaultContainer = new ButtonsContainer;
 shouldBeEqualToString("defaultContainer.element.localName", "div");
 shouldBeEqualToString("defaultContainer.element.className.trim()", "buttons-container");
-shouldBe("defaultContainer.margin", "0");
-shouldBe("defaultContainer.padding", "0");
+shouldBe("defaultContainer.buttonMargin", "24");
+shouldBe("defaultContainer.leftMargin", "24");
+shouldBe("defaultContainer.rightMargin", "24");
 shouldBe("defaultContainer.buttons", "[]");
 
 const buttons = [new Button, new Button];
 const containerWithParameters = new ButtonsContainer({
-    margin: 10,
-    padding: 20,
+    buttonMargin: 10,
+    leftMargin: 20,
+    rightMargin: 20,
     buttons: buttons,
     cssClassName: "foo"
 });
 shouldBeEqualToString("containerWithParameters.element.localName", "div");
 shouldBeTrue("containerWithParameters.element.classList.contains('buttons-container')");
 shouldBeTrue("containerWithParameters.element.classList.contains('foo')");
-shouldBe("containerWithParameters.margin", "10");
-shouldBe("containerWithParameters.padding", "20");
+shouldBe("containerWithParameters.buttonMargin", "10");
+shouldBe("containerWithParameters.leftMargin", "20");
+shouldBe("containerWithParameters.rightMargin", "20");
 shouldBe("containerWithParameters.buttons", "buttons");
 
 </script>

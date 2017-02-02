@@ -3,13 +3,13 @@
 <body>
 <script type="text/javascript">
 
-description("Testing the <code>MacOSInlineMediaControls</code> constructor.");
+description("Testing the <code>MacOSCompactInlineMediaControls</code> constructor.");
 
-const mediaControls = new MacOSInlineMediaControls;
+const mediaControls = new MacOSCompactInlineMediaControls;
 
 shouldBeEqualToString("mediaControls.element.localName", "div");
-shouldBeEqualToString("mediaControls.element.className", "media-controls mac inline");
-shouldBe("mediaControls.layoutTraits", "LayoutTraits.macOS");
+shouldBeEqualToString("mediaControls.element.className", "media-controls mac inline compact");
+shouldBe("mediaControls.layoutTraits", "LayoutTraits.macOS | LayoutTraits.Compact");
 
 debug("");
 debug("Controls bar");
@@ -22,17 +22,17 @@ debug("");
 debug("Left container");
 shouldBe("mediaControls.controlsBar.children[0].buttons", "[mediaControls.playPauseButton, mediaControls.skipBackButton]");
 shouldBeEqualToString("mediaControls.controlsBar.children[0].element.className", "buttons-container left");
-shouldBe("mediaControls.controlsBar.children[0].leftMargin", "24");
-shouldBe("mediaControls.controlsBar.children[0].rightMargin", "24");
-shouldBe("mediaControls.controlsBar.children[0].buttonMargin", "24");
+shouldBe("mediaControls.controlsBar.children[0].leftMargin", "8");
+shouldBe("mediaControls.controlsBar.children[0].rightMargin", "12");
+shouldBe("mediaControls.controlsBar.children[0].buttonMargin", "12");
 
 debug("");
 debug("Right container");
-shouldBe("mediaControls.controlsBar.children[1].buttons", "[mediaControls.muteButton, mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]");
+shouldBe("mediaControls.controlsBar.children[1].buttons", "[mediaControls.muteButton, mediaControls.fullscreenButton]");
 shouldBeEqualToString("mediaControls.controlsBar.children[1].element.className", "buttons-container right");
-shouldBe("mediaControls.controlsBar.children[1].leftMargin", "24");
-shouldBe("mediaControls.controlsBar.children[1].rightMargin", "24");
-shouldBe("mediaControls.controlsBar.children[1].buttonMargin", "24");
+shouldBe("mediaControls.controlsBar.children[1].leftMargin", "12");
+shouldBe("mediaControls.controlsBar.children[1].rightMargin", "8");
+shouldBe("mediaControls.controlsBar.children[1].buttonMargin", "12");
 
 debug("");
 debug("Volume slider");

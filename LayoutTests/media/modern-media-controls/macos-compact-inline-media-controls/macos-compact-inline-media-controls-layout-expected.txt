@@ -1,0 +1,13 @@
+Testing the MacOSCompactInlineMediaControls layout.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.controlsBar.children[0] instanceof ButtonsContainer is true
+PASS mediaControls.controlsBar.children[1] instanceof ButtonsContainer is true
+PASS mediaControls.controlsBar.children[0].children is [mediaControls.playPauseButton, mediaControls.skipBackButton]
+PASS mediaControls.controlsBar.children[1].children is [mediaControls.muteButton, mediaControls.fullscreenButton]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

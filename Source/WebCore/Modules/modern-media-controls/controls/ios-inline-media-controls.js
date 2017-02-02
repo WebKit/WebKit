@@ -37,16 +37,12 @@ class IOSInlineMediaControls extends MediaControls
 
         this._leftContainer = new ButtonsContainer({
             buttons: [this.playPauseButton, this.skipBackButton],
-            cssClassName: "left",
-            padding: 24,
-            margin: 24,
+            cssClassName: "left"
         });
 
         this._rightContainer = new ButtonsContainer({
             buttons: [this.airplayButton, this.pipButton, this.fullscreenButton],
-            cssClassName: "right",
-            padding: 24,
-            margin: 24
+            cssClassName: "right"
         });
 
         this.controlsBar.children = [this._leftContainer, this._rightContainer];

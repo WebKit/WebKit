@@ -1,0 +1,18 @@
+Testing the MacOSCompactInlineMediaControls computed styles.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS volumeSliderContainerStyle.position is "absolute"
+PASS volumeSliderContainerStyle.top is "0px"
+PASS volumeSliderContainerStyle.width is "21px"
+PASS volumeSliderContainerStyle.height is "81px"
+PASS volumeSliderContainerStyle.transform is "matrix(1, 0, 0, 1, -2, -81)"
+PASS volumeSliderStyle.transform is "matrix(0.00000000000000006123233995736766, -1, 1, 0.00000000000000006123233995736766, 0, 0)"
+PASS volumeSliderStyle.left is "-19.5px"
+PASS volumeSliderStyle.top is "40px"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,41 @@
+2017-02-02  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Provide a compact mode for when the controls are small
+        https://bugs.webkit.org/show_bug.cgi?id=167746
+        <rdar://problem/29565842>
+
+        Reviewed by Dean Jackson.
+
+        Add some new tests for the compact mode and update some tests after the ButtonsContainer
+        "padding" and "margin" properties refactoring.
+
+        * media/modern-media-controls/buttons-container/buttons-container-buttons-property.html:
+        * media/modern-media-controls/buttons-container/buttons-container-constructor-expected.txt:
+        * media/modern-media-controls/buttons-container/buttons-container-constructor.html:
+        * media/modern-media-controls/buttons-container/buttons-container-layout.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-constructor.html:
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-buttons-styles-expected.txt: Added.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-buttons-styles.html: Added.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-constructor-expected.txt: Added.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-constructor.html: Added.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-controls-bar-styles-expected.txt: Added.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-controls-bar-styles.html: Added.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-layout-expected.txt: Added.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-layout.html: Added.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-volume-styles-expected.txt: Added.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-volume-styles.html: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-right-container-margin-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-right-container-margin.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-constructor.html:
+        * media/modern-media-controls/media-controller/media-controller-toggle-compact-mode-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-toggle-compact-mode.html: Added.
+        * media/modern-media-controls/resources/media-controls-loader.js:
+        * platform/ios-simulator/TestExpectations:
+
 2017-02-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html as flaky.

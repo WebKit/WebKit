@@ -23,15 +23,17 @@ debug("");
 debug("Center container");
 shouldBe("mediaControls.controlsBar.children[1].buttons", "[mediaControls.rewindButton, mediaControls.playPauseButton, mediaControls.forwardButton]");
 shouldBeEqualToString("mediaControls.controlsBar.children[1].element.className", "buttons-container center");
-shouldBe("mediaControls.controlsBar.children[1].padding", "27");
-shouldBe("mediaControls.controlsBar.children[1].margin", "27");
+shouldBe("mediaControls.controlsBar.children[1].leftMargin", "27");
+shouldBe("mediaControls.controlsBar.children[1].rightMargin", "27");
+shouldBe("mediaControls.controlsBar.children[1].buttonMargin", "27");
 
 debug("");
 debug("Right container");
 shouldBe("mediaControls.controlsBar.children[2].buttons", "[mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]");
 shouldBeEqualToString("mediaControls.controlsBar.children[2].element.className", "buttons-container right");
-shouldBe("mediaControls.controlsBar.children[2].padding", "12");
-shouldBe("mediaControls.controlsBar.children[2].margin", "0");
+shouldBe("mediaControls.controlsBar.children[2].leftMargin", "12");
+shouldBe("mediaControls.controlsBar.children[2].rightMargin", "12");
+shouldBe("mediaControls.controlsBar.children[2].buttonMargin", "24");
 
 debug("");
 

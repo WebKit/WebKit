@@ -23,56 +23,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class ButtonsContainer extends LayoutNode
-{
+/* Controls bar */
 
-    constructor({ buttons = [], leftMargin = 24, rightMargin = 24, buttonMargin = 24, cssClassName = "" } = {})
-    {
-        super(`<div class="buttons-container ${cssClassName}">`);
+.media-controls.mac.inline.compact > .controls-bar {
+    height: 25px;
+}
 
-        this.buttons = buttons;
-        this.leftMargin = leftMargin;
-        this.rightMargin = rightMargin;
-        this.buttonMargin = buttonMargin;
-    }
+/* Controls placement */
 
-    // Public
+.media-controls.mac.inline.compact button.play-pause {
+    -webkit-mask-position-y: 6px;
+}
 
-    get buttons()
-    {
-        return this._buttons;
-    }
+.media-controls.mac.inline.compact button.skip-back {
+    -webkit-mask-position-y: 6px;
+}
 
-    set buttons(buttons)
-    {
-        if (!Array.isArray(buttons))
-            return;
+.media-controls.mac.inline.compact .scrubber.slider {
+    top: 12px;
+}
 
-        this._buttons = buttons;
-        this.needsLayout = true;
-    }
+.media-controls.mac.inline.compact button.mute {
+    -webkit-mask-position-y: 6px;
+}
 
-    layout()
-    {
-        super.layout();
+.media-controls.mac.inline.compact button.fullscreen {
+    -webkit-mask-position-y: 6.5px;
+}
 
-        const children = [];
-        let x = this.leftMargin;
+/* Labels */
 
-        this._buttons.forEach(button => {
-            if (!button.enabled || button.dropped)
-                return;
-            button.x = x;
-            x += button.width + this.buttonMargin;
-            children.push(button);
-        });
+.media-controls.mac.inline.compact .time-label,
+.media-controls.mac.inline.compact .status-label {
+    top: 5px;
+    font-size: 12px;
+}
 
-        if (children.length)
-            this.width = x - this.buttonMargin + this.rightMargin;
-        else
-            this.width = this.buttonMargin + this.rightMargin;
+/* Volume slider */
 
-        this.children = children;
-    }
+.media-controls.mac.inline.compact .volume-slider-container {
+    width: 21px;
+    transform: translateY(-100%) translateX(-2px);
+}
 
+.media-controls.mac.inline.compact .volume.slider {
+    left: -19.5px;
+}
+
+/* Scrubber */
+
+.media-controls.mac.inline.compact .scrubber.slider > input::-webkit-slider-thumb {
+    height: 15px;
 }

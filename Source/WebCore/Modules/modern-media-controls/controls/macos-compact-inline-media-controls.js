@@ -23,56 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class ButtonsContainer extends LayoutNode
+class MacOSCompactInlineMediaControls extends MacOSInlineMediaControls
 {
 
-    constructor({ buttons = [], leftMargin = 24, rightMargin = 24, buttonMargin = 24, cssClassName = "" } = {})
+    constructor(options = {})
     {
-        super(`<div class="buttons-container ${cssClassName}">`);
+        options.layoutTraits = LayoutTraits.macOS | LayoutTraits.Compact;
 
-        this.buttons = buttons;
-        this.leftMargin = leftMargin;
-        this.rightMargin = rightMargin;
-        this.buttonMargin = buttonMargin;
-    }
+        super(options);
 
-    // Public
+        this.element.classList.add("compact");
 
-    get buttons()
-    {
-        return this._buttons;
-    }
+        this.leftContainer.leftMargin = 8;
+        this.leftContainer.rightMargin = 12;
+        this.leftContainer.buttonMargin = 12;
 
-    set buttons(buttons)
-    {
-        if (!Array.isArray(buttons))
-            return;
-
-        this._buttons = buttons;
-        this.needsLayout = true;
-    }
-
-    layout()
-    {
-        super.layout();
-
-        const children = [];
-        let x = this.leftMargin;
-
-        this._buttons.forEach(button => {
-            if (!button.enabled || button.dropped)
-                return;
-            button.x = x;
-            x += button.width + this.buttonMargin;
-            children.push(button);
-        });
-
-        if (children.length)
-            this.width = x - this.buttonMargin + this.rightMargin;
-        else
-            this.width = this.buttonMargin + this.rightMargin;
-
-        this.children = children;
+        this.rightContainer.buttons = [this.muteButton, this.fullscreenButton];
+        this.rightContainer.leftMargin = 12;
+        this.rightContainer.rightMargin = 8;
+        this.rightContainer.buttonMargin = 12;
     }
 
 }

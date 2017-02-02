@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const MarginForThreeButtonsOrLess = 24;
-const MarginForFourButtons = 16;
-const MarginForFiveButtons = 12;
+const ButtonMarginForThreeButtonsOrLess = 24;
+const ButtonMarginForFourButtons = 16;
+const ButtonMarginForFiveButtons = 12;
 const FullscreenTimeControlWidth = 457;
 
 class MacOSFullscreenMediaControls extends MacOSMediaControls
@@ -49,14 +49,16 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
         this._centerContainer = new ButtonsContainer({
             buttons: [this.rewindButton, this.playPauseButton, this.forwardButton],
             cssClassName: "center",
-            padding: 27,
-            margin: 27
+            leftMargin: 27,
+            rightMargin: 27,
+            buttonMargin: 27
         });
 
         this._rightContainer = new ButtonsContainer({
             buttons: [this.airplayButton, this.pipButton, this.tracksButton, this.fullscreenButton],
             cssClassName: "right",
-            padding: 12
+            leftMargin: 12,
+            rightMargin: 12
         });
 
         this.controlsBar.children = [this.volumeSlider, this._centerContainer, this._rightContainer, this.timeControl];
@@ -98,13 +100,13 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
 
         const numberOfEnabledButtons = this._rightContainer.buttons.filter(button => button.enabled).length;
 
-        let margin = MarginForFiveButtons;
+        let buttonMargin = ButtonMarginForFiveButtons;
         if (numberOfEnabledButtons === 4)
-            margin = MarginForFourButtons;
+            buttonMargin = ButtonMarginForFourButtons;
         else if (numberOfEnabledButtons <= 3)
-            margin = MarginForThreeButtonsOrLess;
+            buttonMargin = ButtonMarginForThreeButtonsOrLess;
 
-        this._rightContainer.margin = margin;
+        this._rightContainer.buttonMargin = buttonMargin;
 
         this._centerContainer.layout();
         this._rightContainer.layout();

@@ -31,6 +31,7 @@ controls/media-controls.js
 controls/ios-inline-media-controls.js
 controls/macos-media-controls.js
 controls/macos-inline-media-controls.js
+controls/macos-compact-inline-media-controls.js
 controls/macos-fullscreen-media-controls.js
 controls/placard.js
 controls/airplay-placard.js

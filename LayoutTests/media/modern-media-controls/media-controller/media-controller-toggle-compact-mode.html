@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 600px; height: 240px;" controls autoplay></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing we toggle compact mode as we move past the threshold.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+let mediaControls;
+
+media.addEventListener("play", event => {
+    media.pause();
+    controlsResized();
+    shadowRoot.addEventListener("resize", controlsResized);
+});
+
+let numberOfResizeEvents = 0;
+function controlsResized(event)
+{
+    window.requestAnimationFrame(() => {
+        numberOfResizeEvents++;
+        mediaControls = shadowRoot.lastElementChild.lastElementChild
+
+        debug(`Controls width = ${mediaControls.style.width}`);
+        debug(`mediaControls.classList.contains("compact") = ${mediaControls.classList.contains("compact")}`);
+        debug("");
+
+        if (numberOfResizeEvents === 1)
+            window.requestAnimationFrame(() => media.style.width = "241px");
+        else if (numberOfResizeEvents === 2)
+            window.requestAnimationFrame(() => media.style.width = "242px");
+        else if (numberOfResizeEvents === 3) {
+            media.remove();
+            finishJSTest();
+        }
+    });
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -9,8 +9,9 @@ description("Testing <code>ButtonsContainer</code> buttons property.");
 window.jsTestIsAsync = true;
 
 const container = new ButtonsContainer({
-    margin: 10,
-    padding: 20
+    leftMargin: 20,
+    rightMargin: 20,
+    buttonMargin: 10
 });
 
 container.buttons = [new Button, new Button, new Button];
