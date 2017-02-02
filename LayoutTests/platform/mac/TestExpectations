@@ -1507,3 +1507,5 @@ webkit.org/b/162507 http/tests/media/hls/hls-video-resize.html [ Pass Failure ]
 webkit.org/b/162510 [ Debug ] fast/images/animated-gif-restored-from-bfcache.html [ Pass Failure ]
 
 webkit.org/b/167642 imported/w3c/web-platform-tests/shadow-dom/slotchange.html [ Pass Failure ]
+
+webkit.org/b/167757 [ Sierra Release ] workers/bomb.html [ Pass Timeout ]
