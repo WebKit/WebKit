@@ -760,7 +760,7 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
             WTF::dataLog("couldn't get a name");
         }
 #endif
-        return ASCIILiteral("(unknown12)");
+        return ASCIILiteral("(unknown)");
     }
     if (frameType == FrameType::Host)
         return ASCIILiteral("(host)");

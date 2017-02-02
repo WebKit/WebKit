@@ -1,5 +1,12 @@
 2017-02-01  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, fix unintended change.
+
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::displayName):
+
+2017-02-01  Keith Miller  <keith_miller@apple.com>
+
         The sampling profile should have an option to sample from C frames.
         https://bugs.webkit.org/show_bug.cgi?id=167614
 
