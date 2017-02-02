@@ -28,20 +28,15 @@
 
 #if ENABLE(GAMEPAD)
 
-#include "DocumentLoader.h"
-#include "Frame.h"
 #include "Gamepad.h"
 #include "GamepadManager.h"
 #include "GamepadProvider.h"
 #include "Navigator.h"
 #include "PlatformGamepad.h"
-#include <wtf/NeverDestroyed.h>
-#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
 NavigatorGamepad::NavigatorGamepad()
-    : m_navigationStart(std::numeric_limits<double>::infinity())
 {
     GamepadManager::singleton().registerNavigator(this);
 }
@@ -63,11 +58,6 @@ NavigatorGamepad* NavigatorGamepad::from(Navigator* navigator)
         auto newSupplement = std::make_unique<NavigatorGamepad>();
         supplement = newSupplement.get();
         provideTo(navigator, supplementName(), WTFMove(newSupplement));
-
-        if (Frame* frame = navigator->frame()) {
-            if (DocumentLoader* documentLoader = frame->loader().documentLoader())
-                supplement->m_navigationStart = documentLoader->timing().startTime();
-        }
     }
     return supplement;
 }
