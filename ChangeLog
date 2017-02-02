@@ -1,3 +1,9 @@
+2017-02-02  David Kilzer  <ddkilzer@apple.com>
+
+        Make the Makefile great again after r211570, r211572
+
+        * Makefile: Restore tabs and ending newline.
+
 2017-02-02  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed build fix after r211570
