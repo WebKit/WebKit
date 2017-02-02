@@ -168,7 +168,6 @@ namespace JSC {
 #if !ENABLE(JIT)
         CLoopStack m_cloopStack;
 #endif
-        int m_errorHandlingModeReentry;
         
 #if ENABLE(COMPUTED_GOTO_OPCODES)
         Opcode* m_opcodeTable; // Maps OpcodeID => Opcode for compiling

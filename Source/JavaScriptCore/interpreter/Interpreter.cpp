@@ -302,7 +302,6 @@ Interpreter::Interpreter(VM& vm)
 #if !ENABLE(JIT)
     , m_cloopStack(vm)
 #endif
-    , m_errorHandlingModeReentry(0)
 #if !ASSERT_DISABLED
     , m_initialized(false)
 #endif
