@@ -59,6 +59,7 @@ BEGIN {
         &escapeSubversionPath
         &exitStatus
         &fixChangeLogPatch
+        &fixSVNPatchForAdditionWithHistory
         &gitBranch
         &gitDirectory
         &gitTreeDirectory
