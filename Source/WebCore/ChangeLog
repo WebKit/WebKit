@@ -1,5 +1,24 @@
 2017-02-02  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Removed unused EventHandler members
+        https://bugs.webkit.org/show_bug.cgi?id=167723
+
+        Reviewed by Yusuke Suzuki.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleWheelEvent):
+        * page/EventHandler.h:
+        Remove unused members.
+
+        * editing/FrameSelection.cpp:
+        * html/HTMLTextAreaElement.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderSlider.cpp:
+        Remove unnecessary includes.
+
+2017-02-02  Joseph Pecoraro  <pecoraro@apple.com>
+
         Removed unused m_navigationStart from NavigatorGamepad
         https://bugs.webkit.org/show_bug.cgi?id=167722
 

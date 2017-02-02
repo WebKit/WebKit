@@ -35,7 +35,6 @@
 #include "Element.h"
 #include "ElementIterator.h"
 #include "Event.h"
-#include "EventHandler.h"
 #include "EventNames.h"
 #include "FloatQuad.h"
 #include "FocusController.h"

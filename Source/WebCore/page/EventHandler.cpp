@@ -450,7 +450,6 @@ void EventHandler::clear()
     m_originatingTouchPointTargetKey = 0;
 #endif
     m_maxMouseMovedDuration = 0;
-    m_baseEventType = PlatformEvent::NoType;
     m_didStartDrag = false;
 }
 
@@ -2694,7 +2693,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     // FIXME: It should not be necessary to do this mutation here.
     // Instead, the handlers should know convert vertical scrolls appropriately.
     PlatformWheelEvent adjustedEvent = event;
-    if (m_baseEventType == PlatformEvent::NoType && shouldTurnVerticalTicksIntoHorizontal(result, event))
+    if (shouldTurnVerticalTicksIntoHorizontal(result, event))
         adjustedEvent = event.copyTurningVerticalTicksIntoHorizontalTicks();
 
     platformRecordWheelEvent(adjustedEvent);

@@ -32,7 +32,6 @@
 #include "Editor.h"
 #include "ElementChildIterator.h"
 #include "Event.h"
-#include "EventHandler.h"
 #include "EventNames.h"
 #include "FormController.h"
 #include "FormDataList.h"

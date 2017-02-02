@@ -491,8 +491,6 @@ private:
     LayoutPoint m_dragStartPosition;
 #endif
 
-    bool m_panScrollButtonPressed { false };
-
     Timer m_hoverTimer;
 
 #if ENABLE(CURSOR_SUPPORT)
@@ -583,7 +581,6 @@ private:
 #endif
 
     double m_maxMouseMovedDuration { 0 };
-    PlatformEvent::Type m_baseEventType { PlatformEvent::NoType };
     bool m_didStartDrag { false };
     bool m_isHandlingWheelEvent { false };
 
