@@ -252,7 +252,7 @@ struct WKAutoCorrectionData {
 
 #if ENABLE(DATA_INTERACTION)
 - (void)_didPerformDataInteractionControllerOperation;
-- (void)_startDataInteractionWithImage:(RetainPtr<CGImageRef>)image atClientPosition:(CGPoint)clientPosition isLink:(BOOL)isLink;
+- (void)_startDataInteractionWithImage:(RetainPtr<CGImageRef>)image atClientPosition:(CGPoint)clientPosition anchorPoint:(CGPoint)anchorPoint isLink:(BOOL)isLink;
 #endif
 
 @end

@@ -67,6 +67,10 @@ typedef cairo_surface_t* DragImageRef;
 typedef void* DragImageRef;
 #endif
 
+#if PLATFORM(COCOA)
+static const float SelectionDragImagePadding = 15;
+#endif
+
 IntSize dragImageSize(DragImageRef);
 
 // These functions should be memory neutral, eg. if they return a newly allocated image,

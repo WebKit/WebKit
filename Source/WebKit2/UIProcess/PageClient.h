@@ -383,7 +383,7 @@ public:
 
 #if ENABLE(DATA_INTERACTION)
     virtual void didPerformDataInteractionControllerOperation() = 0;
-    virtual void startDataInteractionWithImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& image, bool isLink) = 0;
+    virtual void startDataInteractionWithImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& image, const WebCore::FloatPoint& anchorPoint, bool isLink) = 0;
 #endif
 };
 

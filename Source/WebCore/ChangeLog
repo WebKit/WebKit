@@ -1,3 +1,24 @@
+2017-02-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Drag images should be anchored to the mouse location
+        https://bugs.webkit.org/show_bug.cgi?id=167690
+        <rdar://problem/30295261>
+
+        Reviewed by Enrica Casucci.
+
+        Adds logic to compute the mouse anchor point. This is a point in the unit square indicating where the drag
+        origin is relative to the bounds of the drag image. There is no behavior change, since this anchor point is not
+        used by any client yet; this patch only computes and vends this information from WebCore.
+
+        * loader/EmptyClients.cpp:
+        * page/DragClient.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        (WebCore::DragController::doImageDrag):
+        (WebCore::DragController::doSystemDrag):
+        * page/DragController.h:
+        * platform/DragImage.h:
+
 2017-02-02  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Add classes to manage audio samples

@@ -57,7 +57,7 @@ DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
 }
 
 #if !PLATFORM(COCOA) && !PLATFORM(GTK)
-void WebDragClient::startDrag(DragImageRef, const IntPoint&, const IntPoint&, DataTransfer&, Frame&, bool)
+void WebDragClient::startDrag(DragImageRef, const IntPoint&, const IntPoint&, const FloatPoint&, DataTransfer&, Frame&, bool)
 {
 }
 #endif

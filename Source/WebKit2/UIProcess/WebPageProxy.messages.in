@@ -307,7 +307,7 @@ messages -> WebPageProxy {
     DidPerformDragControllerAction(uint64_t dragOperation, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted)
 #endif
 #if PLATFORM(COCOA) && ENABLE(DRAG_SUPPORT)
-    SetDragImage(WebCore::IntPoint clientPosition, WebKit::ShareableBitmap::Handle dragImage, bool linkDrag)
+    SetDragImage(WebCore::IntPoint clientPosition, WebKit::ShareableBitmap::Handle dragImage, WebCore::FloatPoint dragImageAnchor, bool linkDrag)
     SetPromisedDataForImage(String pasteboardName, WebKit::SharedMemory::Handle imageHandle, uint64_t imageSize, String filename, String extension, String title, String url, String visibleURL, WebKit::SharedMemory::Handle archiveHandle, uint64_t archiveSize)
 #if ENABLE(ATTACHMENT_ELEMENT)
     SetPromisedDataForAttachment(String pasteboardName, String filename, String extension, String title, String url, String visibleURL)

@@ -110,7 +110,7 @@ void WebDragClient::willPerformDragSourceAction(DragSourceAction action, const I
         const_cast<Pasteboard&>(dataTransfer.pasteboard()).setExternalDataObject(newDataObject.get());
 }
 
-void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, const IntPoint& dragPoint, DataTransfer& dataTransfer, Frame& frame, bool isLink)
+void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, const IntPoint& dragPoint, const FloatPoint&, DataTransfer& dataTransfer, Frame& frame, bool isLink)
 {
     //FIXME: Allow UIDelegate to override behaviour <rdar://problem/5015953>
 

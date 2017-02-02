@@ -269,7 +269,7 @@ void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& type
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
-void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& dragImageHandle, bool isLinkDrag)
+void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& dragImageHandle, const FloatPoint&, bool isLinkDrag)
 {
     if (auto dragImage = ShareableBitmap::create(dragImageHandle))
         m_pageClient.setDragImage(clientPosition, WTFMove(dragImage), isLinkDrag);
