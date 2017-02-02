@@ -184,7 +184,10 @@ static NSArray *_writableTypesForImageWithArchive (void)
 
 + (int)_web_setFindPasteboardString:(NSString *)string withOwner:(id)owner
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSPasteboard *findPasteboard = [NSPasteboard pasteboardWithName:NSFindPboard];
+#pragma clang diagnostic pop
     [findPasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:owner];
     [findPasteboard setString:string forType:NSStringPboardType];
     return [findPasteboard changeCount];
@@ -273,7 +276,10 @@ static CachedImage* imageFromElement(DOMElement *domElement)
                                    archive:(WebArchive *)archive
                                     source:(WebHTMLView *)source
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     ASSERT(self == [NSPasteboard pasteboardWithName:NSDragPboard]);
+#pragma clang diagnostic pop
 
     NSString *extension = @"";
     RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil]);

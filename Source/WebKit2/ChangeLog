@@ -1,3 +1,23 @@
+2017-02-02  Matthew Hanson  <matt_hanson@apple.com>
+
+        Merge r211438.
+
+    2017-01-31  Jessie Berlin  <jberlin@webkit.org>
+
+            Build fix.
+
+            * UIProcess/Cocoa/WebViewImpl.mm:
+            (WebKit::WebViewImpl::dragImageForView):
+            * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+            (-[WKPDFLayerControllerDelegate writeItemsToPasteboard:withTypes:]):
+            (WebKit::PDFPlugin::handleEditingCommand):
+            * WebProcess/Plugins/PDF/PDFPlugin.mm:
+            (-[WKPDFLayerControllerDelegate pdfLayerController:copyItems:withTypes:]):
+            (WebKit::PDFPlugin::handleEditingCommand):
+            * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+            (WebKit::WebDragClient::declareAndWriteAttachment):
+            (WebKit::WebDragClient::declareAndWriteDragImage):
+
 2017-01-28  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r211329.

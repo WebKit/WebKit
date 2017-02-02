@@ -1,3 +1,18 @@
+2017-02-02  Matthew Hanson  <matt_hanson@apple.com>
+
+        Merge r211438.
+
+    2017-01-31  Jessie Berlin  <jberlin@webkit.org>
+
+            Build fix.
+
+            * Misc/WebNSPasteboardExtras.mm:
+            (+[NSPasteboard _web_setFindPasteboardString:withOwner:]):
+            (-[NSPasteboard _web_declareAndWriteDragImageForElement:URL:title:archive:source:]):
+            * WebView/WebHTMLView.mm:
+            (-[WebHTMLView _fontAttributesFromFontPasteboard]):
+            (-[WebHTMLView copyFont:]):
+
 2017-02-01  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r211492. rdar://problem/30305390
