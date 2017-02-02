@@ -1,5 +1,12 @@
 2017-02-02  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
+        Unreviewed. Fix jhbuild dependencies build.
+
+        * gtk/patches/gst-plugins-good-0004-qtdemux-add-context-for-a-preferred-protection.patch:
+        Patch updated.
+
+2017-02-02  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
         [EME][GStreamer] Fixed decryptor selection
         https://bugs.webkit.org/show_bug.cgi?id=167588
 
