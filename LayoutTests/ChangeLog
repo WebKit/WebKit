@@ -1,3 +1,12 @@
+2017-02-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark imported/w3c/web-platform-tests/shadow-dom/slotchange.html as flaky on macOS.
+        https://bugs.webkit.org/show_bug.cgi?id=167652
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2017-02-02  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Provide a compact mode for when the controls are small
