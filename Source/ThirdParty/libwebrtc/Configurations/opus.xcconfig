@@ -1,0 +1,14 @@
+PRODUCT_NAME = opus;
+
+CLANG_WARN_BOOL_CONVERSION = YES;
+CLANG_WARN_ENUM_CONVERSION = YES;
+CLANG_WARN_INT_CONVERSION = YES;
+GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+COMBINE_HIDPI_IMAGES = NO;
+ENABLE_STRICT_OBJC_MSGSEND = YES;
+HEADER_SEARCH_PATHS = Source/third_party/opus/src/include Source/third_party/opus/src/celt Source/third_party/opus/src/silk Source/third_party/opus/src/silk/float Source/third_party/opus/src;
+INSTALL_PATH = /usr/local/lib;
+PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libwebrtc;
+USE_HEADERMAP = NO;
+WARNING_CFLAGS = -Wno-exit-time-destructors -Wno-implicit-function-declaration -Wno-incompatible-pointer-types
+GCC_PREPROCESSOR_DEFINITIONS = VAR_ARRAYS OPUS_BUILD OPUS_EXPORT= HAVE_LRINT HAVE_LRINTF OPUS_X86_MAY_HAVE_SSE2;

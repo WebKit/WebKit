@@ -1,0 +1,16 @@
+PRODUCT_NAME = webrtc;
+
+CLANG_WARN_BOOL_CONVERSION = YES;
+CLANG_WARN_ENUM_CONVERSION = YES;
+CLANG_WARN_INT_CONVERSION = YES;
+GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+COMBINE_HIDPI_IMAGES = NO;
+ENABLE_STRICT_OBJC_MSGSEND = YES;
+HEADER_SEARCH_PATHS = Source Source/third_party/jsoncpp/source/include Source/third_party/libsrtp/crypto/include Source/third_party/libsrtp/include Source/third_party/boringssl/src/include Source/third_party/libyuv/include Source/third_party/usrsctp/usrsctplib Source/third_party/usrsctp/usrsctplib/usrsctplib Source/webrtc/sdk/objc/Framework/Headers Source/webrtc/common_audio/signal_processing/include Source/webrtc/modules/audio_coding/codecs/isac/main/include Source/third_party/opus/src/celt Source/third_party/opus/src/include Source/third_party/opus/src/src;
+INSTALL_PATH = /usr/local/lib;
+PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libwebrtc;
+USE_HEADERMAP = NO;
+WARNING_CFLAGS = -Wno-exit-time-destructors -Wno-objc-property-no-attribute -Wno-objc-missing-super-calls;
+
+// FIXME: WEBRTC_CODEC_G722 was in project.json
+GCC_PREPROCESSOR_DEFINITIONS = WEBRTC_POSIX WEBRTC_MAC SSL_USE_OPENSSL FEATURE_ENABLE_SSL HAVE_SRTP=1 HAVE_OPENSSL_SSL_H=1 SCTP_PROCESS_LEVEL_LOCKS SCTP_SIMPLE_ALLOCATOR SCTP_USE_OPENSSL_SHA1 __Userspace__ HAVE_SA_LEN HAVE_SCONN_LEN __APPLE_USE_RFC_2292 __Userspace_os_Darwin NON_WINDOWS_DEFINE HAVE_WEBRTC_VIDEO HAVE_WEBRTC_VOICE WEBRTC_INTELLIGIBILITY_ENHANCER=0 WEBRTC_APM_DEBUG_DUMP=0 WEBRTC_NS_FLOAT WEBRTC_CODEC_ILBC WEBRTC_CODEC_OPUS WEBRTC_CODEC_ISAC WEBRTC_CODEC_RED RTC_DISABLE_VP9 RTC_DISABLE_VP8 HAVE_STDINT_H HAVE_STDLIB_H HAVE_UINT64_T OPENSSL HAVE_CONFIG_H;
