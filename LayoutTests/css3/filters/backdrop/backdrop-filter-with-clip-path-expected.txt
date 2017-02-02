@@ -1,0 +1,30 @@
+CONSOLE MESSAGE: line 4: Viewport argument value "200px" for key "width" was truncated to its numeric prefix.
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+layer at (8,8) size 200x200 scrollHeight 342
+  RenderBlock (positioned) {DIV} at (8,8) size 200x200
+    RenderText {#text} at (0,0) size 198x342
+      text run at (0,0) width 182: "Lorem ipsum dolor sit amet,"
+      text run at (0,18) width 172: "consectetur adipiscing elit."
+      text run at (0,36) width 175: "Vestibulum a nunc ultrices,"
+      text run at (0,54) width 176: "faucibus ligula ac, euismod"
+      text run at (0,72) width 160: "elit. Ut in vehicula enim."
+      text run at (0,90) width 174: "Suspendisse sodales auctor"
+      text run at (0,108) width 180: "nunc, sit amet vehicula velit"
+      text run at (0,126) width 173: "cursus vulputate. Nunc sed"
+      text run at (0,144) width 172: "ipsum vitae massa dapibus"
+      text run at (0,162) width 161: "sodales sit amet quis dui."
+      text run at (0,180) width 165: "Aenean sit amet interdum"
+      text run at (0,198) width 172: "arcu, et facilisis diam. Ut a"
+      text run at (0,216) width 180: "lacus eleifend, feugiat tellus"
+      text run at (0,234) width 167: "vel, molestie lorem. Nulla"
+      text run at (0,252) width 161: "pulvinar dapibus semper."
+      text run at (0,270) width 172: "Quisque mollis, neque non"
+      text run at (0,288) width 198: "luctus aliquam, ex risus lacinia"
+      text run at (0,306) width 192: "augue, vel eleifend augue erat"
+      text run at (0,324) width 62: "eget ante."
+layer at (50,50) size 100x100
+  RenderBlock (positioned) {DIV} at (50,50) size 100x100 [bgcolor=#FF00007F]
