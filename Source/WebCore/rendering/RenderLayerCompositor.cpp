@@ -2751,6 +2751,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
     if (!viewBounds.intersects(enclosingIntRect(absoluteBounds))) {
         if (viewportConstrainedNotCompositedReason)
             *viewportConstrainedNotCompositedReason = RenderLayer::NotCompositedForBoundsOutOfView;
+        LOG_WITH_STREAM(Compositing, stream << "Layer " << &layer << " bounds " << layerBounds << " outside visible rect " << viewBounds);
         return false;
     }
     
