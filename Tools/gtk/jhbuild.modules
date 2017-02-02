@@ -361,7 +361,9 @@
     <branch module="gstreamer/gstreamer-${version}.tar.xz" version="1.8.0"
             repo="gstreamer"
             hash="sha256:947a314a212b5d94985d89b43440dbe66b696e12bbdf9a2f78967b98d74abedc"
-            md5sum="6846d7289ec323c38c49b818171e955a"/>
+            md5sum="6846d7289ec323c38c49b818171e955a">
+      <patch file="gstreamer-0001-protection-added-function-to-filter-system-ids.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="gst-plugins-base"
@@ -397,6 +399,7 @@
       <patch file="gst-plugins-good-0001-rtpbin-pipeline-gets-an-EOS-when-any-rtpsources-byes.patch" strip="1"/>
       <patch file="gst-plugins-good-0002-rtpbin-avoid-generating-errors-when-rtcp-messages-ar.patch" strip="1"/>
       <patch file="gst-plugins-good-0003-rtpbin-receive-bundle-support.patch" strip="1"/>
+      <patch file="gst-plugins-good-0004-qtdemux-add-context-for-a-preferred-protection.patch" strip="1"/>
     </branch>
   </autotools>
 

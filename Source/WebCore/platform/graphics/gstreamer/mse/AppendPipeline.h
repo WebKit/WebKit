@@ -47,7 +47,7 @@ public:
     AppendPipeline(Ref<MediaSourceClientGStreamerMSE>, Ref<SourceBufferPrivateGStreamer>, MediaPlayerPrivateGStreamerMSE&);
     virtual ~AppendPipeline();
 
-    void handleElementMessage(GstMessage*);
+    void handleNeedContextSyncMessage(GstMessage*);
     void handleApplicationMessage(GstMessage*);
 
     gint id();
@@ -56,6 +56,9 @@ public:
 
     GstFlowReturn handleNewAppsinkSample(GstElement*);
     GstFlowReturn pushNewBuffer(GstBuffer*);
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    void dispatchDecryptionKey(GstBuffer*);
+#endif
 
     // Takes ownership of caps.
     void parseDemuxerSrcPadCaps(GstCaps*);
@@ -91,6 +94,9 @@ private:
     void handleAppsrcNeedDataReceived();
     void removeAppsrcDataLeavingProbe();
     void setAppsrcDataLeavingProbe();
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    void dispatchPendingDecryptionKey();
+#endif
 
 private:
     Ref<MediaSourceClientGStreamerMSE> m_mediaSourceClient;
@@ -146,6 +152,9 @@ private:
     RefPtr<WebCore::TrackPrivateBase> m_track;
 
     GRefPtr<GstBuffer> m_pendingBuffer;
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    GRefPtr<GstBuffer> m_pendingKey;
+#endif
 };
 
 } // namespace WebCore.

@@ -79,9 +79,10 @@ static GstPadProbeReturn appendPipelineDemuxerBlackHolePadProbe(GstPad*, GstPadP
 static GstFlowReturn appendPipelineAppsinkNewSample(GstElement*, AppendPipeline*);
 static void appendPipelineAppsinkEOS(GstElement*, AppendPipeline*);
 
-static void appendPipelineElementMessageCallback(GstBus*, GstMessage* message, AppendPipeline* appendPipeline)
+static void appendPipelineNeedContextMessageCallback(GstBus*, GstMessage* message, AppendPipeline* appendPipeline)
 {
-    appendPipeline->handleElementMessage(message);
+    GST_TRACE("received callback");
+    appendPipeline->handleNeedContextSyncMessage(message);
 }
 
 static void appendPipelineApplicationMessageCallback(GstBus*, GstMessage* message, AppendPipeline* appendPipeline)
@@ -113,7 +114,7 @@ AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceCli
     gst_bus_add_signal_watch(m_bus.get());
     gst_bus_enable_sync_message_emission(m_bus.get());
 
-    g_signal_connect(m_bus.get(), "sync-message::element", G_CALLBACK(appendPipelineElementMessageCallback), this);
+    g_signal_connect(m_bus.get(), "sync-message::need-context", G_CALLBACK(appendPipelineNeedContextMessageCallback), this);
     g_signal_connect(m_bus.get(), "message::application", G_CALLBACK(appendPipelineApplicationMessageCallback), this);
 
     // We assign the created instances here instead of adoptRef() because gst_bin_add_many()
@@ -213,6 +214,33 @@ AppendPipeline::~AppendPipeline()
     m_demuxerSrcPadCaps = nullptr;
 };
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+void AppendPipeline::dispatchPendingDecryptionKey()
+{
+    ASSERT(m_decryptor);
+    ASSERT(m_pendingKey);
+    ASSERT(m_appendState == KeyNegotiation);
+    GST_TRACE("dispatching key to append pipeline %p", this);
+    gst_element_send_event(m_pipeline.get(), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_OOB,
+        gst_structure_new("drm-cipher", "key", GST_TYPE_BUFFER, m_pendingKey.get(), nullptr)));
+    m_pendingKey.clear();
+    setAppendState(AppendState::Ongoing);
+}
+
+void AppendPipeline::dispatchDecryptionKey(GstBuffer* buffer)
+{
+    if (m_appendState == AppendState::KeyNegotiation) {
+        GST_TRACE("append pipeline %p in key negotiation", this);
+        m_pendingKey = buffer;
+        if (m_decryptor)
+            dispatchPendingDecryptionKey();
+        else
+            GST_TRACE("no decryptor yet, waiting for it");
+    } else
+        GST_TRACE("append pipeline %p not in key negotiation", this);
+}
+#endif
+
 void AppendPipeline::clearPlayerPrivate()
 {
     ASSERT(WTF::isMainThread());
@@ -240,12 +268,12 @@ void AppendPipeline::clearPlayerPrivate()
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
 }
 
-void AppendPipeline::handleElementMessage(GstMessage* message)
+void AppendPipeline::handleNeedContextSyncMessage(GstMessage* message)
 {
-    ASSERT(WTF::isMainThread());
-
-    const GstStructure* structure = gst_message_get_structure(message);
-    if (gst_structure_has_name(structure, "drm-key-needed"))
+    const gchar* contextType = nullptr;
+    gst_message_parse_context_type(message, &contextType);
+    GST_TRACE("context type: %s", contextType);
+    if (!g_strcmp0(contextType, "drm-preferred-decryption-system-id"))
         setAppendState(AppendPipeline::AppendState::KeyNegotiation);
 
     // MediaPlayerPrivateGStreamerBase will take care of setting up encryption.
@@ -938,6 +966,11 @@ void AppendPipeline::connectDemuxerSrcPadToAppsinkFromAnyThread(GstPad* demuxerS
 
             gst_element_sync_state_with_parent(m_appsink.get());
             gst_element_sync_state_with_parent(m_decryptor.get());
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+            if (m_pendingKey)
+                dispatchPendingDecryptionKey();
+#endif
         } else {
 #endif
             gst_pad_link(demuxerSrcPad, appsinkSinkPad.get());

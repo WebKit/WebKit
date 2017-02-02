@@ -1,3 +1,83 @@
+2017-02-02  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [EME][GStreamer] Fixed decryptor selection
+        https://bugs.webkit.org/show_bug.cgi?id=167588
+
+        Reviewed by Žan Doberšek.
+
+        GStreamer selected a decryptor automatically but we need to be
+        able to tell it which decryptor we want because one file can be
+        encrypted with more than one system and the one we want to use can
+        depend on what the user tells us.
+
+        Now when the demuxer is about to select the demuxer, it runs a
+        GstContext query with the events, which are forwarded through the
+        EME api to the application, which will answer the the
+        generateKeyRequest and then we can instruct the demuxer to select
+        the one we tell it, not the one that is selected automatically. If
+        the demuxer has already a preferred decryptor, the codepath will
+        be similar to the older one.
+
+        Something that is also fixed is the report of the keyneeded event,
+        which will contain all pssh boxes as requested by the spec.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Intercept
+        the event and handle it.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase):
+        Initialize the CDM session.
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        Unlock the protection condition just in case and set CDM to null.
+        (WebCore::extractEventsAndSystemsFromMessage): Access the events
+        and accepted key systems coming at the message from the demuxer.
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleSyncMessage):
+        Handle the protection event not as an element event but as a
+        context request. It also concatenates all the initdatas in case
+        there is more than one. The event is sent in the main thread and
+        the current one blocks until a timeout is hit or the
+        generateKeyRequest is called.
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleProtectionEvent):
+        Check if the event was already handled and if not, run the need
+        key event.
+        (WebCore::MediaPlayerPrivateGStreamerBase::receivedGenerateKeyRequest):
+        Notify the that the query arrived so that we can unlock the
+        demuxer thread.
+        (WebCore::keySystemIdToUuid): Translates ids to uuids, meaning
+        the ones coming from JS to the ones coming from the media engine.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        Attributes and methods.
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webkit_media_clear_key_decrypt_class_init):
+        (webKitMediaClearKeyDecryptorRequestDecryptionKey): Deleted.
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.h:
+        Added the ui and uuid.
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkitMediaCommonEncryptionDecryptSinkEventHandler): Do not rely
+        on the subclass, just forward the event to the pipeline inside a message.
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h:
+        Remove unused function signature.
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::appendPipelineNeedContextMessageCallback): Renamed from
+        appendPipelineElementMessageCallback.
+        (WebCore::AppendPipeline::AppendPipeline): Connect to the
+        need-context message instead of the element one.
+        (WebCore::AppendPipeline::dispatchPendingDecryptionKey):
+        Dispatches the drm-cypher message if there is one pending.
+        (WebCore::AppendPipeline::dispatchDecryptionKey): Dispatches the
+        drm-cypher.
+        (WebCore::AppendPipeline::handleNeedContextSyncMessage): Handles
+        the need-context event instead of the element one.
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsinkFromAnyThread):
+        Dispatches the key to the pipeline if there's any pending.
+        (WebCore::appendPipelineElementMessageCallback): Deleted.
+        (WebCore::AppendPipeline::handleElementMessage): Deleted.
+        * platform/graphics/gstreamer/mse/AppendPipeline.h: New methods
+        and attributes.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::dispatchDecryptionKey):
+        Use the dispatchDecryptionKey method of the AppendPipeline.
+
 2017-02-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Removed unused EventHandler members

@@ -1048,6 +1048,14 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                 m_player->client().requestInstallMissingPlugins(String::fromUTF8(detail.get()), String::fromUTF8(description.get()), *m_missingPluginsCallback);
             }
         }
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+        else if (gst_structure_has_name(structure, "drm-key-needed")) {
+            GST_DEBUG("drm-key-needed message from %s", GST_MESSAGE_SRC_NAME(message));
+            GRefPtr<GstEvent> event;
+            gst_structure_get(structure, "event", GST_TYPE_EVENT, &event.outPtr(), nullptr);
+            handleProtectionEvent(event.get());
+        }
+#endif
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
         else {
             GstMpegtsSection* section = gst_message_parse_mpegts_section(message);

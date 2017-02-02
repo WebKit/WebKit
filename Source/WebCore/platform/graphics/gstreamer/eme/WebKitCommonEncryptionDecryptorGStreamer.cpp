@@ -292,30 +292,19 @@ static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransf
 
     switch (GST_EVENT_TYPE(event)) {
     case GST_EVENT_PROTECTION: {
-        const char* systemId;
-        const char* origin;
-        GstBuffer* initDataBuffer;
+        const char* systemId = nullptr;
 
-        GST_DEBUG_OBJECT(self, "received protection event");
-        gst_event_parse_protection(event, &systemId, &initDataBuffer, &origin);
-        GST_DEBUG_OBJECT(self, "systemId: %s", systemId);
+        gst_event_parse_protection(event, &systemId, nullptr, nullptr);
+        GST_TRACE_OBJECT(self, "received protection event for %s", systemId);
 
-        if (!g_str_equal(systemId, klass->protectionSystemId)) {
-            gst_event_unref(event);
-            result = TRUE;
-            break;
+        if (!g_strcmp0(systemId, klass->protectionSystemId)) {
+            GST_DEBUG_OBJECT(self, "sending protection event to the pipeline");
+            gst_element_post_message(GST_ELEMENT(self),
+                gst_message_new_element(GST_OBJECT(self),
+                    gst_structure_new("drm-key-needed", "event", GST_TYPE_EVENT, event, nullptr)));
         }
 
-        // Keep the event ref around so that the parsed event data
-        // remains valid until the drm-key-need message has been sent.
-        priv->protectionEvent = adoptGRef(event);
-        RunLoop::main().dispatch([self, initDataBuffer] {
-            WebKitMediaCommonEncryptionDecryptClass* klass = WEBKIT_MEDIA_CENC_DECRYPT_GET_CLASS(self);
-            if (klass) {
-                klass->requestDecryptionKey(self, initDataBuffer);
-                self->priv->protectionEvent = nullptr;
-            }});
-
+        gst_event_unref(event);
         result = TRUE;
         break;
     }

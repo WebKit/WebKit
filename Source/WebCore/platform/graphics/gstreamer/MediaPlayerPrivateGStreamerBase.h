@@ -123,9 +123,11 @@ public:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void needKey(RefPtr<Uint8Array>);
-    void setCDMSession(CDMSession*);
-    void keyAdded();
+    void setCDMSession(CDMSession*) override;
+    void keyAdded() override;
     virtual void dispatchDecryptionKey(GstBuffer*);
+    void handleProtectionEvent(GstEvent*);
+    void receivedGenerateKeyRequest(const String&);
 #endif
 
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
@@ -138,6 +140,8 @@ public:
 
     void setVideoSourceOrientation(const ImageOrientation&);
     GstElement* pipeline() const { return m_pipeline.get(); }
+
+    virtual bool handleSyncMessage(GstMessage*);
 
 protected:
     MediaPlayerPrivateGStreamerBase(MediaPlayer*);
@@ -163,8 +167,6 @@ protected:
     virtual GstElement* audioSink() const { return 0; }
 
     void setPipeline(GstElement*);
-
-    virtual bool handleSyncMessage(GstMessage*);
 
     void triggerRepaint(GstSample*);
     void repaint();
@@ -229,8 +231,12 @@ protected:
 
     ImageOrientation m_videoSourceOrientation;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    std::unique_ptr<CDMSession> createSession(const String&, CDMSessionClient*);
+    std::unique_ptr<CDMSession> createSession(const String&, CDMSessionClient*) override;
     CDMSession* m_cdmSession;
+    Lock m_protectionMutex;
+    Condition m_protectionCondition;
+    String m_lastGenerateKeyRequestKeySystemUuid;
+    HashSet<uint32_t> m_handledProtectionEvents;
 #endif
 #if USE(GSTREAMER_GL)
     std::unique_ptr<VideoTextureCopierGStreamer> m_videoTextureCopier;

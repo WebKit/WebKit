@@ -1,0 +1,77 @@
+From 7772eb350591682b6a315c8a87a58131f731f1d4 Mon Sep 17 00:00:00 2001
+From: Xabier Rodriguez Calvar <calvaris@igalia.com>
+Date: Wed, 19 Oct 2016 16:44:16 +0200
+Subject: [PATCH] protection: added function to filter system ids
+
+gst_protection_filter_systems_by_available_decryptors takes an array of
+strings and returns a new array of strings filtered by the avaible
+decryptors for them so the ones you get are the ones that you should be
+able to decrypt.
+---
+ gst/gstprotection.c | 36 ++++++++++++++++++++++++++++++++++++
+ gst/gstprotection.h |  2 ++
+ 2 files changed, 38 insertions(+)
+
+diff --git a/gst/gstprotection.c b/gst/gstprotection.c
+index 8ee52ea..2d7e5e0 100644
+--- a/gst/gstprotection.c
++++ b/gst/gstprotection.c
+@@ -191,6 +191,42 @@ gst_protection_select_system (const gchar ** system_identifiers)
+   return retval;
+ }
+ 
++gchar **
++gst_protection_filter_systems_by_available_decryptors (const gchar **
++    system_identifiers)
++{
++  GList *decryptors, *walk;
++  gchar **retval;
++  guint i = 0, decryptors_number;
++
++  decryptors =
++      gst_element_factory_list_get_elements (GST_ELEMENT_FACTORY_TYPE_DECRYPTOR,
++      GST_RANK_MARGINAL);
++
++  decryptors_number = g_list_length (decryptors);
++  retval = g_new (gchar *, decryptors_number + 1);
++
++  GST_TRACE ("found %u decrytors", decryptors_number);
++
++  for (walk = decryptors; walk; walk = g_list_next (walk)) {
++    GstElementFactory *fact = (GstElementFactory *) walk->data;
++
++    const char *found_sys_id =
++        gst_protection_factory_check (fact, system_identifiers);
++    GST_TRACE ("factory %s is valid for %s", GST_OBJECT_NAME (fact),
++        found_sys_id);
++
++    if (found_sys_id) {
++      retval[i++] = g_strdup (found_sys_id);
++    }
++  }
++  retval[i] = NULL;
++
++  gst_plugin_feature_list_free (decryptors);
++
++  return retval;
++}
++
+ static const gchar *
+ gst_protection_factory_check (GstElementFactory * fact,
+     const gchar ** system_identifiers)
+diff --git a/gst/gstprotection.h b/gst/gstprotection.h
+index f2f54c4..95976c5 100644
+--- a/gst/gstprotection.h
++++ b/gst/gstprotection.h
+@@ -66,6 +66,8 @@ GstProtectionMeta *gst_buffer_add_protection_meta (GstBuffer * buffer,
+     GstStructure * info);
+ 
+ const gchar *gst_protection_select_system (const gchar ** system_identifiers);
++gchar ** gst_protection_filter_systems_by_available_decryptors (
++    const gchar ** system_identifiers);
+ 
+ G_END_DECLS
+ #endif /* __GST_PROTECTION_META_H__ */
+-- 
+2.10.2
+
