@@ -1,3 +1,12 @@
+2017-02-02  Antoine Quint  <graouts@apple.com>
+
+        LayoutTest media/modern-media-controls/buttons-container/buttons-container-buttons-property.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=167371
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-02-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip fast/visual-viewport/ios/bottom-bar-with-keyboard.html on ios-simulator.
