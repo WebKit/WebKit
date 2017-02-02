@@ -1,3 +1,19 @@
+2017-02-02  Megan Gardner  <megan_gardner@apple.com>
+
+        Don't attempt wide gammut on older OSes
+        https://bugs.webkit.org/show_bug.cgi?id=167754
+        <rdar://problem/29931587>
+
+        Reviewed by Tim Horton.
+
+        We need to guard our extended color checks the same way throughout the code, or we will attempt to set up
+        support for wide gamut partially, which causes crashes when using sharable bitmap.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertImageToBitmap):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2017-02-02  Enrica Casucci  <enrica@apple.com>
 
         WK2: cannot tap on candidate view with hardware keyboard.

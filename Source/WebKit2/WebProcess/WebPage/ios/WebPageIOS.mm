@@ -2488,7 +2488,9 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
                                     FloatSize bitmapSize = scaledSize.width() < image->size().width() ? scaledSize : image->size();
                                     // FIXME: Only select ExtendedColor on images known to need wide gamut
                                     ShareableBitmap::Flags flags = ShareableBitmap::SupportsAlpha;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
                                     flags |= screenSupportsExtendedColor() ? ShareableBitmap::SupportsExtendedColor : 0;
+#endif
                                     if (RefPtr<ShareableBitmap> sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), flags)) {
                                         auto graphicsContext = sharedBitmap->createGraphicsContext();
                                         graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()));

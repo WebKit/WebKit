@@ -62,8 +62,10 @@ namespace WebKit {
 static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const IntSize& size, Frame& frame)
 {
     ShareableBitmap::Flags flags = ShareableBitmap::SupportsAlpha;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     if (screenSupportsExtendedColor(frame.mainFrame().view()))
         flags |= ShareableBitmap::SupportsExtendedColor;
+#endif
     auto bitmap = ShareableBitmap::createShareable(size, flags);
     if (!bitmap)
         return nullptr;
