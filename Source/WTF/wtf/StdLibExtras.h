@@ -489,6 +489,7 @@ using WTF::isCompilationThread;
 using WTF::isPointerAligned;
 using WTF::isStatelessLambda;
 using WTF::is8ByteAligned;
+using WTF::roundUpToMultipleOf;
 using WTF::safeCast;
 using WTF::tryBinarySearch;
 

@@ -908,6 +908,8 @@ set(JavaScriptCore_SOURCES
     tools/FunctionWhitelist.cpp
     tools/JSDollarVM.cpp
     tools/JSDollarVMPrototype.cpp
+    tools/SigillCrashAnalyzer.cpp
+    tools/VMInspector.cpp
 
     wasm/JSWebAssembly.cpp
     wasm/WasmB3IRGenerator.cpp

@@ -399,6 +399,7 @@ typedef const char* optionString;
     \
     v(bool, useDollarVM, false, Restricted, "installs the $vm debugging tool in global objects") \
     v(optionString, functionOverrides, nullptr, Restricted, "file with debugging overrides for function bodies") \
+    v(bool, useSigillCrashAnalyzer, false, Configurable, "logs data about SIGILL crashes") \
     \
     v(unsigned, watchdog, 0, Normal, "watchdog timeout (0 = Disabled, N = a timeout period of N milliseconds)") \
     \
