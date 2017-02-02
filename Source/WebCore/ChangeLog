@@ -1,5 +1,28 @@
 2017-02-02  Matthew Hanson  <matt_hanson@apple.com>
 
+        Merge r211339. rdar://problem/29601646
+
+    2017-01-28  Antoine Quint  <graouts@apple.com>
+
+            [Modern Media Controls] REGRESSION: Video stops playing after going into Full Screen in media documents
+            https://bugs.webkit.org/show_bug.cgi?id=167552
+            <rdar://problem/29601646>
+
+            Reviewed by Eric Carlson.
+
+            In the case of media documents, there is a built-in behavior, implemented in MediaDocument::defaultEventHandler(),
+            that toggles playback when clicking or double-clicking the video. We disable this behavior by adding a "click" event
+            handler on the entire media shadow root and calling "preventDefault()".
+
+            Test: media/modern-media-controls/media-documents/click-on-video-should-not-pause.html
+
+            * Modules/modern-media-controls/media/media-controller.js:
+            (MediaController):
+            (MediaController.prototype.handleEvent):
+            (MediaController.prototype._containerWasClicked):
+
+2017-02-02  Matthew Hanson  <matt_hanson@apple.com>
+
         Merge r211438.
 
     2017-01-31  Jessie Berlin  <jberlin@webkit.org>

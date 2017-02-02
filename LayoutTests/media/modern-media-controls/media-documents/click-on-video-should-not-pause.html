@@ -1,0 +1,48 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<iframe src="../../content/test.mp4" style="position: absolute; top: 0; left: 0;"></iframe>
+<script type="text/javascript">
+
+description("Testing that clicking on a video in a media document does not pause it.");
+
+window.jsTestIsAsync = true;
+
+let video;
+(function runTestIfReady() {
+    const iframe = document.querySelector("iframe");
+    video = iframe.contentDocument.querySelector("video");
+
+    if (!video) {
+        setTimeout(runTestIfReady)
+        return;
+    }
+
+    if (!video.paused)
+        videoIsPlaying();
+    else
+        video.addEventListener("play", videoIsPlaying);    
+
+    function videoIsPlaying()
+    {
+        shouldBeFalse("video.paused");
+        
+        const bounds = video.getBoundingClientRect();
+        debug("");
+        debug("Clicking on video");
+        window.eventSender.mouseMoveTo(bounds.left + 10, bounds.top + 10);
+        window.eventSender.mouseDown();
+        window.eventSender.mouseUp();
+
+        shouldBeFalse("video.paused");
+
+        debug("");
+        iframe.remove();
+        finishJSTest();
+    }
+
+})();
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
