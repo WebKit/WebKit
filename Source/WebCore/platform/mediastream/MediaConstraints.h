@@ -713,7 +713,7 @@ public:
 private:
     class ConstraintHolder {
     public:
-        static ConstraintHolder create(const MediaConstraint& value) { return ConstraintHolder(value); }
+        static ConstraintHolder& create(const MediaConstraint& value) { return *new ConstraintHolder(value); }
 
         ~ConstraintHolder()
         {
