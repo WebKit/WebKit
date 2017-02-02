@@ -1,3 +1,10 @@
+2017-02-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed ios-simulator test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2017-02-02  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up css3/filters/backdrop/dynamic-with-clip-path.html
