@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Canon Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,7 @@
 
 #include "Test.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/URL.h>
 #include <wtf/MainThread.h>
 #include <wtf/StringExtras.h>
 
@@ -50,21 +52,39 @@ public:
         closeFile(handle); 
 
         m_tempEmptyFilePath = openTemporaryFile("tempEmptyTestFile", handle);
-        closeFile(handle); 
-    }
+        closeFile(handle);
+
+        m_spaceContainingFilePath = encodeWithURLEscapeSequences(openTemporaryFile("temp Empty Test File", handle));
+        closeFile(handle);
+
+        m_bangContainingFilePath = encodeWithURLEscapeSequences(openTemporaryFile("temp!Empty!Test!File", handle));
+        closeFile(handle);
+
+        m_quoteContainingFilePath = encodeWithURLEscapeSequences(openTemporaryFile("temp\"Empty\"TestFile", handle));
+        closeFile(handle);
+}
 
     void TearDown() override
     {
         deleteFile(m_tempFilePath);
         deleteFile(m_tempEmptyFilePath);
+        deleteFile(m_spaceContainingFilePath);
+        deleteFile(m_bangContainingFilePath);
+        deleteFile(m_quoteContainingFilePath);
     }
 
     const String& tempFilePath() { return m_tempFilePath; }
     const String& tempEmptyFilePath() { return m_tempEmptyFilePath; }
+    const String& spaceContainingFilePath() { return m_spaceContainingFilePath; }
+    const String& bangContainingFilePath() { return m_bangContainingFilePath; }
+    const String& quoteContainingFilePath() { return m_quoteContainingFilePath; }
 
 private:
     String m_tempFilePath;
     String m_tempEmptyFilePath;
+    String m_spaceContainingFilePath;
+    String m_bangContainingFilePath;
+    String m_quoteContainingFilePath;
 };
 
 TEST_F(FileSystemTest, MappingMissingFile)
@@ -91,6 +111,13 @@ TEST_F(FileSystemTest, MappingExistingEmptyFile)
     MappedFileData mappedFileData(tempEmptyFilePath(), success);
     EXPECT_TRUE(success);
     EXPECT_TRUE(!mappedFileData);
+}
+
+TEST_F(FileSystemTest, FilesHaveSameVolume)
+{
+    EXPECT_TRUE(filesHaveSameVolume(tempFilePath(), spaceContainingFilePath()));
+    EXPECT_TRUE(filesHaveSameVolume(spaceContainingFilePath(), bangContainingFilePath()));
+    EXPECT_TRUE(filesHaveSameVolume(bangContainingFilePath(), quoteContainingFilePath()));
 }
 
 }

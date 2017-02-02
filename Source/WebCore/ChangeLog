@@ -1,5 +1,28 @@
 2017-02-02  Matthew Hanson  <matt_hanson@apple.com>
 
+        Merge r211502. rdar://problem/30319184
+
+    2017-02-01  Brent Fulgham  <bfulgham@apple.com>
+
+            Correct "filesHaveSameVolume" predicate
+            https://bugs.webkit.org/show_bug.cgi?id=167696
+            <rdar://problem/30298722>
+
+            Reviewed by David Kilzer.
+
+            We are passing %-encoded strings to the underlying operating system's file system APIs.
+            This doesn't work. Instead, we need to present a decoded version of the file path
+            that matches what the system APIs expect.
+
+            Tested by new TestWebKitAPI Test.
+
+            * platform/FileSystem.cpp:
+            (WebCore::filesHaveSameVolume): Make sure the file paths we give to the underlying
+            operating system are not percent encoded.
+            * platform/FileSystem.h: Export 'filesHaveSameVolume' for use by testing system.
+
+2017-02-02  Matthew Hanson  <matt_hanson@apple.com>
+
         Merge r211495. rdar://problem/30106362
 
     2017-02-01  Jer Noble  <jer.noble@apple.com>

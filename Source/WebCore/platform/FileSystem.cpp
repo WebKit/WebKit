@@ -28,6 +28,7 @@
 #include "FileSystem.h"
 
 #include "ScopeGuard.h"
+#include "URL.h"
 #include <wtf/HexNumber.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -236,8 +237,8 @@ bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle& targ
     
 bool filesHaveSameVolume(const String& fileA, const String& fileB)
 {
-    auto fsRepFileA = fileSystemRepresentation(fileA);
-    auto fsRepFileB = fileSystemRepresentation(fileB);
+    auto fsRepFileA = fileSystemRepresentation(decodeURLEscapeSequences(fileA));
+    auto fsRepFileB = fileSystemRepresentation(decodeURLEscapeSequences(fileB));
     
     if (fsRepFileA.isNull() || fsRepFileB.isNull())
         return false;

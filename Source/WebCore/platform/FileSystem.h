@@ -194,7 +194,7 @@ bool unloadModule(PlatformModule);
 WEBCORE_EXPORT String encodeForFileName(const String&);
 String decodeFromFilename(const String&);
 
-bool filesHaveSameVolume(const String&, const String&);
+WEBCORE_EXPORT bool filesHaveSameVolume(const String&, const String&);
 
 #if USE(CF)
 RetainPtr<CFURLRef> pathAsURL(const String&);
