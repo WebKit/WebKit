@@ -419,7 +419,7 @@ static bool removingNodeRemovesPosition(Node& node, const Position& position)
 
 void DragCaretController::nodeWillBeRemoved(Node& node)
 {
-    if (!hasCaret() || !node.inDocument())
+    if (!hasCaret() || !node.isConnected())
         return;
 
     if (!removingNodeRemovesPosition(node, m_position.deepEquivalent()))
@@ -435,7 +435,7 @@ void FrameSelection::nodeWillBeRemoved(Node& node)
 {
     // There can't be a selection inside a fragment, so if a fragment's node is being removed,
     // the selection in the document that created the fragment needs no adjustment.
-    if (isNone() || !node.inDocument())
+    if (isNone() || !node.isConnected())
         return;
 
     respondToNodeModification(node, removingNodeRemovesPosition(node, m_selection.base()), removingNodeRemovesPosition(node, m_selection.extent()),
@@ -524,7 +524,7 @@ static void updatePositionAfterAdoptingTextReplacement(Position& position, Chara
 void FrameSelection::textWasReplaced(CharacterData* node, unsigned offset, unsigned oldLength, unsigned newLength)
 {
     // The fragment check is a performance optimization. See http://trac.webkit.org/changeset/30062.
-    if (isNone() || !node || !node->inDocument())
+    if (isNone() || !node || !node->isConnected())
         return;
 
     Position base = m_selection.base();

@@ -70,7 +70,7 @@ static void logDispatchedDOMEvent(const Event& event, bool eventIsUnrelated)
         LOG(WebReplay, "%-20s --->%s DOM event: type=%s, target=%u/node[%p] %s\n", "ReplayEvents",
             (eventIsUnrelated) ? "Unrelated" : "Dispatching",
             event.type().string().utf8().data(),
-            frameIndexFromDocument((node->inDocument()) ? &node->document() : node->ownerDocument()),
+            frameIndexFromDocument((node->isConnected()) ? &node->document() : node->ownerDocument()),
             node,
             node->nodeName().utf8().data());
     } else if (DOMWindow* window = target->toDOMWindow()) {
@@ -452,7 +452,7 @@ void ReplayController::willDispatchEvent(const Event& event, Frame* frame)
     Document* document = frame ? frame->document() : nullptr;
     // Fetch the document from the event target, because the target could be detached.
     if (Node* node = target->toNode())
-        document = node->inDocument() ? &node->document() : node->ownerDocument();
+        document = node->isConnected() ? &node->document() : node->ownerDocument();
     else if (DOMWindow* window = target->toDOMWindow())
         document = window->document();
 

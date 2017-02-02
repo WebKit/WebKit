@@ -39,7 +39,7 @@ RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& elem
 
 RenderTextControlMultiLine::~RenderTextControlMultiLine()
 {
-    if (textAreaElement().inDocument())
+    if (textAreaElement().isConnected())
         textAreaElement().rendererWillBeDestroyed();
 }
 

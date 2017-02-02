@@ -755,11 +755,11 @@ Node* HitTestResult::targetNode() const
     Node* node = innerNode();
     if (!node)
         return 0;
-    if (node->inDocument())
+    if (node->isConnected())
         return node;
 
     Element* element = node->parentElement();
-    if (element && element->inDocument())
+    if (element && element->isConnected())
         return element;
 
     return node;

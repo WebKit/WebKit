@@ -117,7 +117,7 @@ void Scope::clearResolver()
 
 Scope& Scope::forNode(Node& node)
 {
-    ASSERT(node.inDocument());
+    ASSERT(node.isConnected());
     auto* shadowRoot = node.containingShadowRoot();
     if (shadowRoot)
         return shadowRoot->styleScope();
@@ -192,7 +192,7 @@ void Scope::removePendingSheet(RemovePendingSheetNotificationType notification)
 
 void Scope::addStyleSheetCandidateNode(Node& node, bool createdByParser)
 {
-    if (!node.inDocument())
+    if (!node.isConnected())
         return;
     
     // Until the <body> exists, we have no choice but to compare document positions,

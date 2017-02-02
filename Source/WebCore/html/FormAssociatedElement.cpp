@@ -78,7 +78,7 @@ void FormAssociatedElement::insertedInto(ContainerNode& insertionPoint)
     if (m_form && element.rootElement() != m_form->rootElement())
         setForm(nullptr);
 
-    if (!insertionPoint.inDocument())
+    if (!insertionPoint.isConnected())
         return;
 
     if (element.hasAttributeWithoutSynchronization(formAttr))
@@ -86,7 +86,7 @@ void FormAssociatedElement::insertedInto(ContainerNode& insertionPoint)
 }
 
 // Compute the highest ancestor instead of calling Node::rootNode in removedFrom / formRemovedFromTree
-// since inDocument flag on some form associated elements may not have been updated yet.
+// since isConnected flag on some form associated elements may not have been updated yet.
 static Node* computeRootNode(Node& node)
 {
     Node* current = &node;
@@ -99,7 +99,7 @@ static Node* computeRootNode(Node& node)
 void FormAssociatedElement::removedFrom(ContainerNode& insertionPoint)
 {
     HTMLElement& element = asHTMLElement();
-    if (insertionPoint.inDocument() && element.hasAttributeWithoutSynchronization(formAttr))
+    if (insertionPoint.isConnected() && element.hasAttributeWithoutSynchronization(formAttr))
         m_formAttributeTargetObserver = nullptr;
     // If the form and element are both in the same tree, preserve the connection to the form.
     // Otherwise, null out our form and remove ourselves from the form's list of elements.
@@ -110,7 +110,7 @@ void FormAssociatedElement::removedFrom(ContainerNode& insertionPoint)
 HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* element, HTMLFormElement* currentAssociatedForm)
 {
     const AtomicString& formId(element->attributeWithoutSynchronization(formAttr));
-    if (!formId.isNull() && element->inDocument()) {
+    if (!formId.isNull() && element->isConnected()) {
         // The HTML5 spec says that the element should be associated with
         // the first element in the document to have an ID that equal to
         // the value of form attribute, so we put the result of
@@ -171,7 +171,7 @@ void FormAssociatedElement::resetFormOwner()
     HTMLFormElement* originalForm = m_form;
     setForm(findAssociatedForm(&asHTMLElement(), m_form));
     HTMLElement& element = asHTMLElement();
-    if (m_form && m_form != originalForm && m_form->inDocument())
+    if (m_form && m_form != originalForm && m_form->isConnected())
         element.document().didAssociateFormControl(&element);
 }
 
@@ -182,12 +182,12 @@ void FormAssociatedElement::formAttributeChanged()
         // The form attribute removed. We need to reset form owner here.
         HTMLFormElement* originalForm = m_form;
         setForm(HTMLFormElement::findClosestFormAncestor(element));
-        if (m_form && m_form != originalForm && m_form->inDocument())
+        if (m_form && m_form != originalForm && m_form->isConnected())
             element.document().didAssociateFormControl(&element);
         m_formAttributeTargetObserver = nullptr;
     } else {
         resetFormOwner();
-        if (element.inDocument())
+        if (element.isConnected())
             resetFormAttributeTargetObserver();
     }
 }

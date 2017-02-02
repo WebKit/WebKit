@@ -152,7 +152,7 @@ bool SVGTextPathElement::rendererIsNeeded(const RenderStyle& style)
 void SVGTextPathElement::buildPendingResource()
 {
     clearResourceReferences();
-    if (!inDocument())
+    if (!isConnected())
         return;
 
     String id;
@@ -187,7 +187,7 @@ void SVGTextPathElement::finishedInsertingSubtree()
 void SVGTextPathElement::removedFrom(ContainerNode& rootParent)
 {
     SVGTextContentElement::removedFrom(rootParent);
-    if (rootParent.inDocument())
+    if (rootParent.isConnected())
         clearResourceReferences();
 }
 

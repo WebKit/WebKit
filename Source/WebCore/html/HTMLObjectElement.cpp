@@ -127,7 +127,7 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicSt
     } else
         HTMLPlugInImageElement::parseAttribute(name, value);
 
-    if (!invalidateRenderer || !inDocument() || !renderer())
+    if (!invalidateRenderer || !isConnected() || !renderer())
         return;
 
     clearUseFallbackContent();
@@ -349,7 +349,7 @@ void HTMLObjectElement::removedFrom(ContainerNode& insertionPoint)
 void HTMLObjectElement::childrenChanged(const ChildChange& change)
 {
     updateDocNamedItem();
-    if (inDocument() && !useFallbackContent()) {
+    if (isConnected() && !useFallbackContent()) {
         setNeedsWidgetUpdate(true);
         invalidateStyleForSubtree();
     }
@@ -371,7 +371,7 @@ void HTMLObjectElement::renderFallbackContent()
     if (useFallbackContent())
         return;
     
-    if (!inDocument())
+    if (!isConnected())
         return;
 
     invalidateStyleAndRenderersForSubtree();
@@ -442,7 +442,7 @@ void HTMLObjectElement::updateDocNamedItem()
             isNamedItem = false;
         child = child->nextSibling();
     }
-    if (isNamedItem != wasNamedItem && inDocument() && !isInShadowTree() && is<HTMLDocument>(document())) {
+    if (isNamedItem != wasNamedItem && isConnected() && !isInShadowTree() && is<HTMLDocument>(document())) {
         HTMLDocument& document = downcast<HTMLDocument>(this->document());
 
         const AtomicString& id = getIdAttribute();

@@ -372,14 +372,14 @@ public:
     static ptrdiff_t treeScopeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_treeScope); }
 
     // Returns true if this node is associated with a document and is in its associated document's
-    // node tree, false otherwise.
-    bool inDocument() const 
+    // node tree, false otherwise (https://dom.spec.whatwg.org/#connected).
+    bool isConnected() const
     { 
-        return getFlag(InDocumentFlag);
+        return getFlag(IsConnectedFlag);
     }
     bool isInUserAgentShadowTree() const;
     bool isInShadowTree() const { return getFlag(IsInShadowTreeFlag); }
-    bool isInTreeScope() const { return getFlag(static_cast<NodeFlags>(InDocumentFlag | IsInShadowTreeFlag)); }
+    bool isInTreeScope() const { return getFlag(static_cast<NodeFlags>(IsConnectedFlag | IsInShadowTreeFlag)); }
 
     bool isDocumentTypeNode() const { return nodeType() == DOCUMENT_TYPE_NODE; }
     virtual bool childTypeAllowed(NodeType) const { return false; }
@@ -442,7 +442,7 @@ public:
     // dispatching.
     //
     // WebKit notifies this callback regardless if the subtree of the node is a document tree or a floating subtree.
-    // Implementation can determine the type of subtree by seeing insertionPoint->inDocument().
+    // Implementation can determine the type of subtree by seeing insertionPoint->isConnected().
     // For a performance reason, notifications are delivered only to ContainerNode subclasses if the insertionPoint is out of document.
     //
     // There is another callback named finishedInsertingSubtree(), which is called after all descendants are notified.
@@ -573,7 +573,7 @@ protected:
         IsHTMLFlag = 1 << 4,
         IsSVGFlag = 1 << 5,
         ChildNeedsStyleRecalcFlag = 1 << 7,
-        InDocumentFlag = 1 << 8,
+        IsConnectedFlag = 1 << 8,
         IsLinkFlag = 1 << 9,
         IsUserActionElement = 1 << 10,
         HasRareDataFlag = 1 << 11,
@@ -617,13 +617,13 @@ protected:
         CreateText = DefaultNodeFlags | IsTextFlag,
         CreateContainer = DefaultNodeFlags | IsContainerFlag, 
         CreateElement = CreateContainer | IsElementFlag, 
-        CreatePseudoElement =  CreateElement | InDocumentFlag,
+        CreatePseudoElement =  CreateElement | IsConnectedFlag,
         CreateShadowRoot = CreateContainer | IsDocumentFragmentFlag | IsInShadowTreeFlag,
         CreateDocumentFragment = CreateContainer | IsDocumentFragmentFlag,
         CreateStyledElement = CreateElement | IsStyledElementFlag, 
         CreateHTMLElement = CreateStyledElement | IsHTMLFlag,
         CreateSVGElement = CreateStyledElement | IsSVGFlag | HasCustomStyleResolveCallbacksFlag,
-        CreateDocument = CreateContainer | InDocumentFlag,
+        CreateDocument = CreateContainer | IsConnectedFlag,
         CreateEditingText = CreateText | IsEditingTextOrUndefinedCustomElementFlag,
         CreateMathMLElement = CreateStyledElement | IsMathMLFlag
     };
@@ -761,7 +761,7 @@ inline void* Node::opaqueRoot() const
 {
     // FIXME: Possible race?
     // https://bugs.webkit.org/show_bug.cgi?id=165713
-    if (inDocument())
+    if (isConnected())
         return &document();
     return opaqueRootSlow();
 }

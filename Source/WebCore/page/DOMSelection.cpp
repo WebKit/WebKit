@@ -392,7 +392,7 @@ bool DOMSelection::containsNode(Node& node, bool allowPartial) const
     auto selectedRange = selection.selection().toNormalizedRange();
 
     ContainerNode* parentNode = node.parentNode();
-    if (!parentNode || !parentNode->inDocument())
+    if (!parentNode || !parentNode->isConnected())
         return false;
     unsigned nodeIndex = node.computeNodeIndex();
 

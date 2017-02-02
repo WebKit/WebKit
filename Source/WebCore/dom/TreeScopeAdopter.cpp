@@ -109,7 +109,7 @@ inline void TreeScopeAdopter::updateTreeScope(Node& node) const
 
 inline void TreeScopeAdopter::moveNodeToNewDocument(Node& node, Document& oldDocument, Document& newDocument) const
 {
-    ASSERT(!node.inDocument() || &oldDocument != &newDocument);
+    ASSERT(!node.isConnected() || &oldDocument != &newDocument);
 
     newDocument.incrementReferencingNodeCount();
     oldDocument.decrementReferencingNodeCount();

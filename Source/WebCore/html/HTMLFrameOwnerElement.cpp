@@ -55,7 +55,7 @@ void HTMLFrameOwnerElement::setContentFrame(Frame* frame)
     ASSERT(!m_contentFrame || m_contentFrame->ownerElement() != this);
     ASSERT(frame);
     // Disconnected frames should not be allowed to load.
-    ASSERT(inDocument());
+    ASSERT(isConnected());
     m_contentFrame = frame;
 
     for (ContainerNode* node = this; node; node = node->parentOrShadowHostNode())

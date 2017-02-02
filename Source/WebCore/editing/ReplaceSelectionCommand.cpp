@@ -1120,7 +1120,7 @@ void ReplaceSelectionCommand::doApply()
     }
 
     // Mutation events (bug 22634) may have already removed the inserted content
-    if (!refNode->inDocument())
+    if (!refNode->isConnected())
         return;
 
     bool plainTextFragment = isPlainTextMarkup(refNode.get());
@@ -1132,7 +1132,7 @@ void ReplaceSelectionCommand::doApply()
         insertedNodes.respondToNodeInsertion(node.get());
 
         // Mutation events (bug 22634) may have already removed the inserted content
-        if (!node->inDocument())
+        if (!node->isConnected())
             return;
 
         refNode = node;
@@ -1147,7 +1147,7 @@ void ReplaceSelectionCommand::doApply()
         handleStyleSpans(insertedNodes);
 
     // Mutation events (bug 20161) may have already removed the inserted content
-    if (!insertedNodes.firstNodeInserted() || !insertedNodes.firstNodeInserted()->inDocument())
+    if (!insertedNodes.firstNodeInserted() || !insertedNodes.firstNodeInserted()->isConnected())
         return;
 
     VisiblePosition startOfInsertedContent = firstPositionInOrBeforeNode(insertedNodes.firstNodeInserted());
@@ -1203,7 +1203,7 @@ void ReplaceSelectionCommand::doApply()
         if (startOfParagraph(endOfInsertedContent) == startOfParagraphToMove) {
             insertNodeAt(HTMLBRElement::create(document()), endOfInsertedContent.deepEquivalent());
             // Mutation events (bug 22634) triggered by inserting the <br> might have removed the content we're about to move
-            if (!startOfParagraphToMove.deepEquivalent().anchorNode()->inDocument())
+            if (!startOfParagraphToMove.deepEquivalent().anchorNode()->isConnected())
                 return;
         }
 
@@ -1279,9 +1279,9 @@ RefPtr<DataTransfer> ReplaceSelectionCommand::inputEventDataTransfer() const
 
 bool ReplaceSelectionCommand::shouldRemoveEndBR(Node* endBR, const VisiblePosition& originalVisPosBeforeEndBR)
 {
-    if (!endBR || !endBR->inDocument())
+    if (!endBR || !endBR->isConnected())
         return false;
-        
+
     VisiblePosition visiblePos(positionBeforeNode(endBR));
     
     // Don't remove the br if nothing was inserted.

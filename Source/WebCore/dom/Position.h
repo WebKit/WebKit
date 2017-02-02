@@ -126,7 +126,7 @@ public:
 
     bool isNull() const { return !m_anchorNode; }
     bool isNotNull() const { return m_anchorNode; }
-    bool isOrphan() const { return m_anchorNode && !m_anchorNode->inDocument(); }
+    bool isOrphan() const { return m_anchorNode && !m_anchorNode->isConnected(); }
 
     Element* element() const;
 

@@ -196,7 +196,7 @@ Element* SelectorDataList::queryFirst(ContainerNode& rootNode) const
 
 static const CSSSelector* selectorForIdLookup(const ContainerNode& rootNode, const CSSSelector& firstSelector)
 {
-    if (!rootNode.inDocument())
+    if (!rootNode.isConnected())
         return nullptr;
     if (rootNode.document().inQuirksMode())
         return nullptr;
@@ -246,7 +246,7 @@ ALWAYS_INLINE void SelectorDataList::executeFastPathForIdSelector(const Containe
 
 static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector& firstSelector)
 {
-    if (!rootNode.inDocument())
+    if (!rootNode.isConnected())
         return rootNode;
     if (rootNode.document().inQuirksMode())
         return rootNode;

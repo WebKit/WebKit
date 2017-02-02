@@ -105,7 +105,7 @@ void SVGUseElement::parseAttribute(const QualifiedName& name, const AtomicString
 Node::InsertionNotificationRequest SVGUseElement::insertedInto(ContainerNode& rootParent)
 {
     SVGGraphicsElement::insertedInto(rootParent);
-    if (inDocument()) {
+    if (isConnected()) {
         SVGExternalResourcesRequired::insertedIntoDocument(this);
         invalidateShadowTree();
         updateExternalDocument();
@@ -229,7 +229,7 @@ void SVGUseElement::updateShadowTree()
     // FIXME: It's expensive to re-clone the entire tree every time. We should find a more efficient way to handle this.
     clearShadowTree();
 
-    if (isInShadowTree() || !inDocument())
+    if (isInShadowTree() || !isConnected())
         return;
 
     String targetID;
@@ -329,7 +329,7 @@ static void removeDisallowedElementsFromSubtree(SVGElement& subtree)
     // This function is used only on elements in subtrees that are not yet in documents, so
     // mutation events are not a factor; there are no event listeners to handle those events.
     // Assert that it's not in a document to make sure callers are still using it this way.
-    ASSERT(!subtree.inDocument());
+    ASSERT(!subtree.isConnected());
 
     Vector<Element*> disallowedElements;
     auto descendants = descendantsOfType<Element>(subtree);
@@ -409,7 +409,7 @@ SVGElement* SVGUseElement::findTarget(String* targetID) const
         return nullptr;
     auto& target = downcast<SVGElement>(*targetCandidate);
 
-    if (!target.inDocument() || isDisallowedElement(target))
+    if (!target.isConnected() || isDisallowedElement(target))
         return nullptr;
 
     // Reject any target that has already been cloned to create one of the ancestors of this element,
@@ -553,7 +553,7 @@ void SVGUseElement::finishParsingChildren()
 void SVGUseElement::updateExternalDocument()
 {
     URL externalDocumentURL;
-    if (inDocument() && isExternalURIReference(href(), document())) {
+    if (isConnected() && isExternalURIReference(href(), document())) {
         externalDocumentURL = document().completeURL(href());
         if (!externalDocumentURL.hasFragmentIdentifier())
             externalDocumentURL = URL();

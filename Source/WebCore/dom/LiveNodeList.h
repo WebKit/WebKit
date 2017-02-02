@@ -145,7 +145,7 @@ CachedLiveNodeList<NodeListType>::~CachedLiveNodeList()
 template <class NodeListType>
 inline ContainerNode& CachedLiveNodeList<NodeListType>::rootNode() const
 {
-    if (nodeList().isRootedAtDocument() && ownerNode().inDocument())
+    if (nodeList().isRootedAtDocument() && ownerNode().isConnected())
         return ownerNode().document();
 
     return ownerNode();

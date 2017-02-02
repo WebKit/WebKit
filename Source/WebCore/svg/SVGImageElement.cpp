@@ -192,7 +192,7 @@ void SVGImageElement::didAttachRenderers()
 Node::InsertionNotificationRequest SVGImageElement::insertedInto(ContainerNode& rootParent)
 {
     SVGGraphicsElement::insertedInto(rootParent);
-    if (!rootParent.inDocument())
+    if (!rootParent.isConnected())
         return InsertionDone;
     // Update image loader, as soon as we're living in the tree.
     // We can only resolve base URIs properly, after that!

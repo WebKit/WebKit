@@ -116,14 +116,14 @@ void InlineStyleSheetOwner::childrenChanged(Element& element)
 {
     if (m_isParsingChildren)
         return;
-    if (!element.inDocument())
+    if (!element.isConnected())
         return;
     createSheetFromTextContents(element);
 }
 
 void InlineStyleSheetOwner::finishParsingChildren(Element& element)
 {
-    if (element.inDocument())
+    if (element.isConnected())
         createSheetFromTextContents(element);
     m_isParsingChildren = false;
 }
@@ -153,7 +153,7 @@ inline bool isValidCSSContentType(Element& element, const AtomicString& type)
 
 void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 {
-    ASSERT(element.inDocument());
+    ASSERT(element.isConnected());
     Document& document = element.document();
     if (m_sheet) {
         if (m_sheet->isLoading() && m_styleScope)

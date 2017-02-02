@@ -74,7 +74,7 @@ using namespace HTMLNames;
 
 static inline bool isReachableFromDOM(Node* node, SlotVisitor& visitor)
 {
-    if (!node->inDocument()) {
+    if (!node->isConnected()) {
         if (is<Element>(*node)) {
             auto& element = downcast<Element>(*node);
 

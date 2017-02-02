@@ -536,7 +536,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
             }
         }
         
-        if (m_downstreamEnd.deprecatedNode() != startNode && !m_upstreamStart.deprecatedNode()->isDescendantOf(m_downstreamEnd.deprecatedNode()) && m_downstreamEnd.anchorNode()->inDocument() && m_downstreamEnd.deprecatedEditingOffset() >= caretMinOffset(*m_downstreamEnd.deprecatedNode())) {
+        if (m_downstreamEnd.deprecatedNode() != startNode && !m_upstreamStart.deprecatedNode()->isDescendantOf(m_downstreamEnd.deprecatedNode()) && m_downstreamEnd.anchorNode()->isConnected() && m_downstreamEnd.deprecatedEditingOffset() >= caretMinOffset(*m_downstreamEnd.deprecatedNode())) {
             if (m_downstreamEnd.atLastEditingPositionForNode() && !canHaveChildrenForEditing(*m_downstreamEnd.deprecatedNode())) {
                 // The node itself is fully selected, not just its contents.  Delete it.
                 removeNode(m_downstreamEnd.deprecatedNode());
@@ -553,7 +553,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 // know how many children to remove.
                 // FIXME: Make m_upstreamStart a position we update as we remove content, then we can
                 // always know which children to remove.
-                } else if (!(startNodeWasDescendantOfEndNode && !m_upstreamStart.anchorNode()->inDocument())) {
+                } else if (!(startNodeWasDescendantOfEndNode && !m_upstreamStart.anchorNode()->isConnected())) {
                     unsigned offset = 0;
                     if (m_upstreamStart.deprecatedNode()->isDescendantOf(m_downstreamEnd.deprecatedNode())) {
                         Node* n = m_upstreamStart.deprecatedNode();
@@ -605,9 +605,9 @@ void DeleteSelectionCommand::mergeParagraphs()
     ASSERT(!m_pruneStartBlockIfNecessary);
 
     // FIXME: Deletion should adjust selection endpoints as it removes nodes so that we never get into this state (4099839).
-    if (!m_downstreamEnd.anchorNode()->inDocument() || !m_upstreamStart.anchorNode()->inDocument())
+    if (!m_downstreamEnd.anchorNode()->isConnected() || !m_upstreamStart.anchorNode()->isConnected())
          return;
-         
+
     // FIXME: The deletion algorithm shouldn't let this happen.
     if (comparePositions(m_upstreamStart, m_downstreamEnd) > 0)
         return;
@@ -676,7 +676,7 @@ void DeleteSelectionCommand::mergeParagraphs()
 
 void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
 {
-    if (m_endTableRow && m_endTableRow->inDocument() && m_endTableRow != m_startTableRow) {
+    if (m_endTableRow && m_endTableRow->isConnected() && m_endTableRow != m_startTableRow) {
         Node* row = m_endTableRow->previousSibling();
         while (row && row != m_startTableRow) {
             RefPtr<Node> previousRow = row->previousSibling();
@@ -689,7 +689,7 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
     }
     
     // Remove empty rows after the start row.
-    if (m_startTableRow && m_startTableRow->inDocument() && m_startTableRow != m_endTableRow) {
+    if (m_startTableRow && m_startTableRow->isConnected() && m_startTableRow != m_endTableRow) {
         Node* row = m_startTableRow->nextSibling();
         while (row && row != m_endTableRow) {
             RefPtr<Node> nextRow = row->nextSibling();
@@ -698,8 +698,8 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
             row = nextRow.get();
         }
     }
-    
-    if (m_endTableRow && m_endTableRow->inDocument() && m_endTableRow != m_startTableRow)
+
+    if (m_endTableRow && m_endTableRow->isConnected() && m_endTableRow != m_startTableRow) {
         if (isTableRowEmpty(m_endTableRow.get())) {
             // Don't remove m_endTableRow if it's where we're putting the ending selection.
             if (!m_endingPosition.deprecatedNode()->isDescendantOf(*m_endTableRow)) {
@@ -709,6 +709,7 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
                 CompositeEditCommand::removeNode(m_endTableRow.get());
             }
         }
+    }
 }
 
 void DeleteSelectionCommand::calculateTypingStyleAfterDelete()

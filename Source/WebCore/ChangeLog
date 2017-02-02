@@ -1,3 +1,13 @@
+2017-02-02  Chris Dumez  <cdumez@apple.com>
+
+        Rename Node::inDocument() to isConnected()
+        https://bugs.webkit.org/show_bug.cgi?id=167743
+
+        Reviewed by Sam Weinig.
+
+        Rename Node::inDocument() to isConnected() to match the DOM specification more closely:
+        - https://dom.spec.whatwg.org/#connected
+
 2017-02-02  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Provide a compact mode for when the controls are small

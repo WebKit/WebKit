@@ -57,7 +57,7 @@ ProcessingInstruction::~ProcessingInstruction()
     if (m_cachedSheet)
         m_cachedSheet->removeClient(*this);
 
-    if (inDocument())
+    if (isConnected())
         document().styleScope().removeStyleSheetCandidateNode(*this);
 }
 
@@ -188,7 +188,7 @@ bool ProcessingInstruction::sheetLoaded()
 
 void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet)
 {
-    if (!inDocument()) {
+    if (!isConnected()) {
         ASSERT(!m_sheet);
         return;
     }
@@ -253,7 +253,7 @@ void ProcessingInstruction::addSubresourceAttributeURLs(ListHashSet<URL>& urls) 
 Node::InsertionNotificationRequest ProcessingInstruction::insertedInto(ContainerNode& insertionPoint)
 {
     CharacterData::insertedInto(insertionPoint);
-    if (!insertionPoint.inDocument())
+    if (!insertionPoint.isConnected())
         return InsertionDone;
     document().styleScope().addStyleSheetCandidateNode(*this, m_createdByParser);
     checkStyleSheet();
@@ -263,7 +263,7 @@ Node::InsertionNotificationRequest ProcessingInstruction::insertedInto(Container
 void ProcessingInstruction::removedFrom(ContainerNode& insertionPoint)
 {
     CharacterData::removedFrom(insertionPoint);
-    if (!insertionPoint.inDocument())
+    if (!insertionPoint.isConnected())
         return;
     
     document().styleScope().removeStyleSheetCandidateNode(*this);

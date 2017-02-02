@@ -701,7 +701,7 @@ inline Element* Node::parentElement() const
 
 inline const Element* Element::rootElement() const
 {
-    if (inDocument())
+    if (isConnected())
         return document().documentElement();
 
     const Element* highest = this;

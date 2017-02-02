@@ -1594,9 +1594,9 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
         return;
 
     Node* node = core(element);
-    if (!node->inDocument())
+    if (!node->isConnected())
         return;
-        
+
     frame->selection().selectRangeOnElement(range.location, range.length, *node);
 }
 

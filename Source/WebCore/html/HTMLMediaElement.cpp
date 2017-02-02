@@ -817,7 +817,7 @@ Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode&
     LOG(Media, "HTMLMediaElement::insertedInto(%p)", this);
 
     HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint.inDocument()) {
+    if (insertionPoint.isConnected()) {
         m_inActiveDocument = true;
 
 #if PLATFORM(IOS)
@@ -876,7 +876,7 @@ void HTMLMediaElement::removedFrom(ContainerNode& insertionPoint)
     LOG(Media, "HTMLMediaElement::removedFrom(%p)", this);
 
     m_inActiveDocument = false;
-    if (insertionPoint.inDocument()) {
+    if (insertionPoint.isConnected()) {
         // Pause asynchronously to let the operation that removed us finish, in case we get inserted back into a document.
         m_pauseAfterDetachedTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::pauseAfterDetachedTask, this));
     }
@@ -5847,7 +5847,7 @@ bool HTMLMediaElement::createMediaControls()
 
     ensureUserAgentShadowRoot().appendChild(mediaControls);
 
-    if (!controls() || !inDocument())
+    if (!controls() || !isConnected())
         mediaControls->hide();
 
     return true;
@@ -5872,12 +5872,12 @@ void HTMLMediaElement::configureMediaControls()
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    if (!requireControls || !inDocument() || !inActiveDocument())
+    if (!requireControls || !isConnected() || !inActiveDocument())
         return;
 
     ensureMediaControlsShadowRoot();
 #else
-    if (!requireControls || !inDocument() || !inActiveDocument()) {
+    if (!requireControls || !isConnected() || !inActiveDocument()) {
         if (hasMediaControls())
             mediaControls()->hide();
         return;

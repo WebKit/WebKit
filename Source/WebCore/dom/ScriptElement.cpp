@@ -74,7 +74,7 @@ ScriptElement::ScriptElement(Element& element, bool parserInserted, bool already
 
 bool ScriptElement::shouldCallFinishedInsertingSubtree(ContainerNode& insertionPoint)
 {
-    return insertionPoint.inDocument() && !m_parserInserted;
+    return insertionPoint.isConnected() && !m_parserInserted;
 }
 
 void ScriptElement::finishedInsertingSubtree()
@@ -85,7 +85,7 @@ void ScriptElement::finishedInsertingSubtree()
 
 void ScriptElement::childrenChanged()
 {
-    if (!m_parserInserted && m_element.inDocument())
+    if (!m_parserInserted && m_element.isConnected())
         prepareScript(); // FIXME: Provide a real starting line number here.
 }
 
@@ -193,7 +193,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     if (!hasSourceAttribute() && !m_element.firstChild())
         return false;
 
-    if (!m_element.inDocument())
+    if (!m_element.isConnected())
         return false;
 
     ScriptType scriptType = ScriptType::Classic;
@@ -285,7 +285,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
     Ref<Document> originalDocument(m_element.document());
     if (!m_element.dispatchBeforeLoadEvent(sourceURL))
         return false;
-    bool didEventListenerDisconnectThisElement = !m_element.inDocument() || &m_element.document() != originalDocument.ptr();
+    bool didEventListenerDisconnectThisElement = !m_element.isConnected() || &m_element.document() != originalDocument.ptr();
     if (didEventListenerDisconnectThisElement)
         return false;
 
@@ -325,7 +325,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         if (!m_element.dispatchBeforeLoadEvent(sourceURL))
             return false;
 
-        bool didEventListenerDisconnectThisElement = !m_element.inDocument() || &m_element.document() != originalDocument.ptr();
+        bool didEventListenerDisconnectThisElement = !m_element.isConnected() || &m_element.document() != originalDocument.ptr();
         if (didEventListenerDisconnectThisElement)
             return false;
 
@@ -433,7 +433,7 @@ void ScriptElement::executePendingScript(PendingScript& pendingScript)
 
 bool ScriptElement::ignoresLoadRequest() const
 {
-    return m_alreadyStarted || m_isExternalScript || m_parserInserted || !m_element.inDocument();
+    return m_alreadyStarted || m_isExternalScript || m_parserInserted || !m_element.isConnected();
 }
 
 bool ScriptElement::isScriptForEventSupported() const

@@ -168,7 +168,7 @@ Frame* SVGSVGElement::frameForCurrentScale() const
 {
     // The behavior of currentScale() is undefined when we're dealing with non-standalone SVG documents.
     // If the document is embedded, the scaling is handled by the host renderer.
-    if (!inDocument() || !isOutermostSVGSVGElement())
+    if (!isConnected() || !isOutermostSVGSVGElement())
         return nullptr;
     Frame* frame = document().frame();
     return frame && frame->isMainFrame() ? frame : nullptr;
@@ -466,7 +466,7 @@ RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& styl
 
 Node::InsertionNotificationRequest SVGSVGElement::insertedInto(ContainerNode& rootParent)
 {
-    if (rootParent.inDocument()) {
+    if (rootParent.isConnected()) {
         document().accessSVGExtensions().addTimeContainer(this);
 
         // Animations are started at the end of document parsing and after firing the load event,
@@ -480,7 +480,7 @@ Node::InsertionNotificationRequest SVGSVGElement::insertedInto(ContainerNode& ro
 
 void SVGSVGElement::removedFrom(ContainerNode& rootParent)
 {
-    if (rootParent.inDocument())
+    if (rootParent.isConnected())
         document().accessSVGExtensions().removeTimeContainer(this);
     SVGGraphicsElement::removedFrom(rootParent);
 }

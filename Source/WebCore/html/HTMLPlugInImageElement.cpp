@@ -262,7 +262,7 @@ void HTMLPlugInImageElement::finishParsingChildren()
     // HTMLObjectElement needs to delay widget updates until after all children are parsed,
     // For HTMLEmbedElement this delay is unnecessary, but there is no harm in doing the same.
     setNeedsWidgetUpdate(true);
-    if (inDocument())
+    if (isConnected())
         invalidateStyleForSubtree();
 }
 

@@ -63,7 +63,7 @@ void HTMLMetaElement::parseAttribute(const QualifiedName& name, const AtomicStri
 Node::InsertionNotificationRequest HTMLMetaElement::insertedInto(ContainerNode& insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint.inDocument())
+    if (insertionPoint.isConnected())
         process();
     return InsertionDone;
 }
@@ -71,7 +71,7 @@ Node::InsertionNotificationRequest HTMLMetaElement::insertedInto(ContainerNode& 
 void HTMLMetaElement::process()
 {
     // Changing a meta tag while it's not in the tree shouldn't have any effect on the document.
-    if (!inDocument())
+    if (!isConnected())
         return;
 
     const AtomicString& contentValue = attributeWithoutSynchronization(contentAttr);

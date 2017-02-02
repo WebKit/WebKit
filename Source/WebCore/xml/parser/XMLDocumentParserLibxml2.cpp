@@ -857,7 +857,7 @@ void XMLDocumentParser::endElementNs()
 
     // The element's parent may have already been removed from document.
     // Parsing continues in this case, but scripts aren't executed.
-    if (!element.inDocument()) {
+    if (!element.isConnected()) {
         popCurrentNode();
         return;
     }

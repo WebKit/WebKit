@@ -45,7 +45,7 @@ static void notifyDescendantInsertedIntoDocument(ContainerNode& insertionPoint, 
         // If we have been removed from the document during this loop, then
         // we don't want to tell the rest of our children that they've been
         // inserted into the document because they haven't.
-        if (node.inDocument() && child->parentNode() == &node)
+        if (node.isConnected() && child->parentNode() == &node)
             notifyNodeInsertedIntoDocument(insertionPoint, *child, postInsertionNotificationTargets);
     }
 
@@ -53,7 +53,7 @@ static void notifyDescendantInsertedIntoDocument(ContainerNode& insertionPoint, 
         return;
 
     if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot()) {
-        if (node.inDocument() && root->host() == &node)
+        if (node.isConnected() && root->host() == &node)
             notifyNodeInsertedIntoDocument(insertionPoint, *root, postInsertionNotificationTargets);
     }
 }
@@ -71,7 +71,7 @@ static void notifyDescendantInsertedIntoTree(ContainerNode& insertionPoint, Cont
 
 void notifyNodeInsertedIntoDocument(ContainerNode& insertionPoint, Node& node, NodeVector& postInsertionNotificationTargets)
 {
-    ASSERT(insertionPoint.inDocument());
+    ASSERT(insertionPoint.isConnected());
     if (node.insertedInto(insertionPoint) == Node::InsertionShouldCallFinishedInsertingSubtree)
         postInsertionNotificationTargets.append(node);
     if (is<ContainerNode>(node))
@@ -81,7 +81,7 @@ void notifyNodeInsertedIntoDocument(ContainerNode& insertionPoint, Node& node, N
 void notifyNodeInsertedIntoTree(ContainerNode& insertionPoint, ContainerNode& node, NodeVector& postInsertionNotificationTargets)
 {
     NoEventDispatchAssertion assertNoEventDispatch;
-    ASSERT(!insertionPoint.inDocument());
+    ASSERT(!insertionPoint.isConnected());
 
     if (node.insertedInto(insertionPoint) == Node::InsertionShouldCallFinishedInsertingSubtree)
         postInsertionNotificationTargets.append(node);
@@ -97,7 +97,7 @@ void notifyChildNodeInserted(ContainerNode& insertionPoint, Node& node, NodeVect
     Ref<Document> protectDocument(node.document());
     Ref<Node> protectNode(node);
 
-    if (insertionPoint.inDocument())
+    if (insertionPoint.isConnected())
         notifyNodeInsertedIntoDocument(insertionPoint, node, postInsertionNotificationTargets);
     else if (is<ContainerNode>(node))
         notifyNodeInsertedIntoTree(insertionPoint, downcast<ContainerNode>(node), postInsertionNotificationTargets);
@@ -105,7 +105,7 @@ void notifyChildNodeInserted(ContainerNode& insertionPoint, Node& node, NodeVect
 
 void notifyNodeRemovedFromDocument(ContainerNode& insertionPoint, Node& node)
 {
-    ASSERT(insertionPoint.inDocument());
+    ASSERT(insertionPoint.isConnected());
     node.removedFrom(insertionPoint);
 
     if (!is<ContainerNode>(node))
@@ -115,7 +115,7 @@ void notifyNodeRemovedFromDocument(ContainerNode& insertionPoint, Node& node)
         // If we have been added to the document during this loop, then we
         // don't want to tell the rest of our children that they've been
         // removed from the document because they haven't.
-        if (!node.inDocument() && child->parentNode() == &node)
+        if (!node.isConnected() && child->parentNode() == &node)
             notifyNodeRemovedFromDocument(insertionPoint, *child.get());
     }
 
@@ -126,7 +126,7 @@ void notifyNodeRemovedFromDocument(ContainerNode& insertionPoint, Node& node)
         node.document().setCSSTarget(nullptr);
 
     if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot()) {
-        if (!node.inDocument() && root->host() == &node)
+        if (!node.isConnected() && root->host() == &node)
             notifyNodeRemovedFromDocument(insertionPoint, *root.get());
     }
 }
@@ -134,7 +134,7 @@ void notifyNodeRemovedFromDocument(ContainerNode& insertionPoint, Node& node)
 void notifyNodeRemovedFromTree(ContainerNode& insertionPoint, ContainerNode& node)
 {
     NoEventDispatchAssertion assertNoEventDispatch;
-    ASSERT(!insertionPoint.inDocument());
+    ASSERT(!insertionPoint.isConnected());
 
     node.removedFrom(insertionPoint);
 
@@ -152,7 +152,7 @@ void notifyNodeRemovedFromTree(ContainerNode& insertionPoint, ContainerNode& nod
 
 void notifyChildNodeRemoved(ContainerNode& insertionPoint, Node& child)
 {
-    if (!child.inDocument()) {
+    if (!child.isConnected()) {
         if (is<ContainerNode>(child))
             notifyNodeRemovedFromTree(insertionPoint, downcast<ContainerNode>(child));
         return;

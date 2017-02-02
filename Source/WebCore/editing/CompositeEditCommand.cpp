@@ -572,7 +572,7 @@ void CompositeEditCommand::insertNodeAt(PassRefPtr<Node> insertChild, const Posi
         splitTextNode(downcast<Text>(refChild), offset);
 
         // Mutation events (bug 22634) from the text node insertion may have removed the refChild
-        if (!refChild->inDocument())
+        if (!refChild->isConnected())
             return;
         insertNodeBefore(insertChild, refChild);
     } else
@@ -648,7 +648,7 @@ HTMLElement* CompositeEditCommand::replaceElementWithSpanPreservingChildrenAndAt
     // Returning a raw pointer here is OK because the command is retained by
     // applyCommandToComposite (thus retaining the span), and the span is also
     // in the DOM tree, and thus alive whie it has a parent.
-    ASSERT(command->spanElement()->inDocument());
+    ASSERT(command->spanElement()->isConnected());
     return command->spanElement();
 }
 
@@ -1238,7 +1238,7 @@ void CompositeEditCommand::pushAnchorElementDown(Element& anchorElement)
     setEndingSelection(VisibleSelection::selectionFromContentsOfNode(&anchorElement));
     applyStyledElement(&anchorElement);
     // Clones of anchorElement have been pushed down, now remove it.
-    if (anchorElement.inDocument())
+    if (anchorElement.isConnected())
         removeNodePreservingChildren(&anchorElement);
 }
 
@@ -1485,9 +1485,9 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     frame().editor().clearMisspellingsAndBadGrammar(endingSelection());
     deleteSelection(false, false, false, false);
 
-    ASSERT(destination.deepEquivalent().anchorNode()->inDocument());
+    ASSERT(destination.deepEquivalent().anchorNode()->isConnected());
     cleanupAfterDeletion(destination);
-    ASSERT(destination.deepEquivalent().anchorNode()->inDocument());
+    ASSERT(destination.deepEquivalent().anchorNode()->isConnected());
 
     // Add a br if pruning an empty block level element caused a collapse. For example:
     // foo^

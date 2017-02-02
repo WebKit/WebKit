@@ -1,5 +1,20 @@
 2017-02-02  Chris Dumez  <cdumez@apple.com>
 
+        Rename Node::inDocument() to isConnected()
+        https://bugs.webkit.org/show_bug.cgi?id=167743
+
+        Reviewed by Sam Weinig.
+
+        Rename Node::inDocument() to isConnected() to match the DOM specification more closely:
+        - https://dom.spec.whatwg.org/#connected
+
+        * DOM/DOMNode.mm:
+        (-[DOMNode isConnected]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame selectNSRange:onElement:]):
+
+2017-02-02  Chris Dumez  <cdumez@apple.com>
+
         [Crash] com.apple.WebKit.WebContent at WebKit: WebKit::WebPage::fromCorePage()
         https://bugs.webkit.org/show_bug.cgi?id=167738
         <rdar://problem/30229990>

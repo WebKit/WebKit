@@ -755,7 +755,7 @@ struct InlineRunToApplyStyle {
 
     bool startAndEndAreStillInDocument()
     {
-        return start && end && start->inDocument() && end->inDocument();
+        return start && end && start->isConnected() && end->isConnected();
     }
 
     RefPtr<Node> start;
@@ -870,7 +870,7 @@ void ApplyStyleCommand::removeConflictingInlineStyleFromRun(EditingStyle* style,
 {
     ASSERT(runStart && runEnd);
     RefPtr<Node> next = runStart;
-    for (RefPtr<Node> node = next; node && node->inDocument() && node != pastEndNode; node = next) {
+    for (RefPtr<Node> node = next; node && node->isConnected() && node != pastEndNode; node = next) {
         if (editingIgnoresContent(*node)) {
             ASSERT(!node->contains(pastEndNode.get()));
             next = NodeTraversal::nextSkippingChildren(*node);
@@ -884,7 +884,7 @@ void ApplyStyleCommand::removeConflictingInlineStyleFromRun(EditingStyle* style,
         RefPtr<Node> nextSibling = node->nextSibling();
         RefPtr<ContainerNode> parent = node->parentNode();
         removeInlineStyleFromElement(style, downcast<HTMLElement>(node.get()), RemoveAlways);
-        if (!node->inDocument()) {
+        if (!node->isConnected()) {
             // FIXME: We might need to update the start and the end of current selection here but need a test.
             if (runStart == node)
                 runStart = previousSibling ? previousSibling->nextSibling() : parent->firstChild();
@@ -914,7 +914,7 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle* style, PassRe
     if (removeImplicitlyStyledElement(style, element.get(), mode, extractedStyle))
         removed = true;
 
-    if (!element->inDocument())
+    if (!element->isConnected())
         return removed;
 
     // If the node was converted to a span, the span may still contain relevant
@@ -931,7 +931,7 @@ void ApplyStyleCommand::replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&
         removeNodePreservingChildren(elem);
     else {
         HTMLElement* newSpanElement = replaceElementWithSpanPreservingChildrenAndAttributes(elem);
-        ASSERT(newSpanElement && newSpanElement->inDocument());
+        ASSERT(newSpanElement && newSpanElement->isConnected());
         elem = newSpanElement;
     }
 }
@@ -1097,8 +1097,8 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position& s
 {
     ASSERT(start.isNotNull());
     ASSERT(end.isNotNull());
-    ASSERT(start.anchorNode()->inDocument());
-    ASSERT(end.anchorNode()->inDocument());
+    ASSERT(start.anchorNode()->isConnected());
+    ASSERT(end.anchorNode()->isConnected());
     ASSERT(comparePositions(start, end) <= 0);
     // FIXME: We should assert that start/end are not in the middle of a text node.
 
@@ -1148,7 +1148,7 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position& s
             }
 
             removeInlineStyleFromElement(style, element.ptr(), RemoveIfNeeded, styleToPushDown.get());
-            if (!element->inDocument()) {
+            if (!element->isConnected()) {
                 if (s.deprecatedNode() == element.ptr()) {
                     // Since elem must have been fully selected, and it is at the start
                     // of the selection, it is clear we can set the new s offset to 0.
@@ -1401,7 +1401,7 @@ void ApplyStyleCommand::addBlockStyle(const StyleChange& styleChange, HTMLElemen
 
 void ApplyStyleCommand::addInlineStyleIfNeeded(EditingStyle* style, PassRefPtr<Node> passedStart, PassRefPtr<Node> passedEnd, EAddStyledElement addStyledElement)
 {
-    if (!passedStart || !passedEnd || !passedStart->inDocument() || !passedEnd->inDocument())
+    if (!passedStart || !passedEnd || !passedStart->isConnected() || !passedEnd->isConnected())
         return;
 
     RefPtr<Node> start = passedStart;
@@ -1430,8 +1430,8 @@ void ApplyStyleCommand::applyInlineStyleChange(PassRefPtr<Node> passedStart, Pas
 {
     RefPtr<Node> startNode = passedStart;
     RefPtr<Node> endNode = passedEnd;
-    ASSERT(startNode->inDocument());
-    ASSERT(endNode->inDocument());
+    ASSERT(startNode->isConnected());
+    ASSERT(endNode->isConnected());
 
     // Find appropriate font and span elements top-down.
     HTMLFontElement* fontContainer = nullptr;

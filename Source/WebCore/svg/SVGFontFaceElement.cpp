@@ -227,7 +227,7 @@ SVGFontElement* SVGFontFaceElement::associatedFontElement() const
 
 void SVGFontFaceElement::rebuildFontFace()
 {
-    if (!inDocument()) {
+    if (!isConnected()) {
         ASSERT(!m_fontElement);
         return;
     }
@@ -273,7 +273,7 @@ void SVGFontFaceElement::rebuildFontFace()
 Node::InsertionNotificationRequest SVGFontFaceElement::insertedInto(ContainerNode& rootParent)
 {
     SVGElement::insertedInto(rootParent);
-    if (!rootParent.inDocument()) {
+    if (!rootParent.isConnected()) {
         ASSERT(!m_fontElement);
         return InsertionDone;
     }
@@ -287,7 +287,7 @@ void SVGFontFaceElement::removedFrom(ContainerNode& rootParent)
 {
     SVGElement::removedFrom(rootParent);
 
-    if (rootParent.inDocument()) {
+    if (rootParent.isConnected()) {
         m_fontElement = nullptr;
         document().accessSVGExtensions().unregisterSVGFontFaceElement(this);
         m_fontFaceRule->mutableProperties().clear();

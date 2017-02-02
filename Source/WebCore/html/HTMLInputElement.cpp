@@ -923,7 +923,7 @@ void HTMLInputElement::setChecked(bool nowChecked, TextFieldEventBehavior eventB
     // unchecked to match other browsers. DOM is not a useful standard for this
     // because it says only to fire change events at "lose focus" time, which is
     // definitely wrong in practice for these types of elements.
-    if (eventBehavior != DispatchNoEvent && inDocument() && m_inputType->shouldSendChangeEventAfterCheckedChanged()) {
+    if (eventBehavior != DispatchNoEvent && isConnected() && m_inputType->shouldSendChangeEventAfterCheckedChanged()) {
         setTextAsOfLastFormControlChangeEvent(String());
         dispatchFormControlChangeEvent();
     }
@@ -1509,16 +1509,16 @@ Node::InsertionNotificationRequest HTMLInputElement::insertedInto(ContainerNode&
 void HTMLInputElement::finishedInsertingSubtree()
 {
     HTMLTextFormControlElement::finishedInsertingSubtree();
-    if (inDocument() && !form())
+    if (isConnected() && !form())
         addToRadioButtonGroup();
 }
 
 void HTMLInputElement::removedFrom(ContainerNode& insertionPoint)
 {
-    if (insertionPoint.inDocument() && !form())
+    if (insertionPoint.isConnected() && !form())
         removeFromRadioButtonGroup();
     HTMLTextFormControlElement::removedFrom(insertionPoint);
-    ASSERT(!inDocument());
+    ASSERT(!isConnected());
 #if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();
 #endif
@@ -1604,7 +1604,7 @@ HTMLDataListElement* HTMLInputElement::dataList() const
 
 void HTMLInputElement::resetListAttributeTargetObserver()
 {
-    if (inDocument())
+    if (isConnected())
         m_listAttributeTargetObserver = std::make_unique<ListAttributeTargetObserver>(attributeWithoutSynchronization(listAttr), this);
     else
         m_listAttributeTargetObserver = nullptr;
@@ -1870,7 +1870,7 @@ RadioButtonGroups* HTMLInputElement::radioButtonGroups() const
         return nullptr;
     if (auto* formElement = form())
         return &formElement->radioButtonGroups();
-    if (inDocument())
+    if (isConnected())
         return &document().formController().radioButtonGroups();
     return nullptr;
 }

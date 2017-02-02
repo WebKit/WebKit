@@ -2658,7 +2658,7 @@ void AXObjectCache::clearTextMarkerNodesInUse(Document* document)
     // Check each node to see if it's inside the document being deleted, of if it no longer belongs to a document.
     HashSet<Node*> nodesToDelete;
     for (const auto& node : m_textMarkerNodes) {
-        if (!node->inDocument() || &(node)->document() == document)
+        if (!node->isConnected() || &(node)->document() == document)
             nodesToDelete.add(node);
     }
     

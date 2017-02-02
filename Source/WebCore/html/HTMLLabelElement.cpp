@@ -71,7 +71,7 @@ LabelableElement* HTMLLabelElement::control() const
         }
         return nullptr;
     }
-    return inDocument() ? firstElementWithIdIfLabelable(treeScope(), controlId) : nullptr;
+    return isConnected() ? firstElementWithIdIfLabelable(treeScope(), controlId) : nullptr;
 }
 
 HTMLFormElement* HTMLLabelElement::form() const

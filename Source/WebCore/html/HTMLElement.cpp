@@ -514,7 +514,7 @@ ExceptionOr<void> HTMLElement::setInnerText(const String& text)
     // FIXME: Can the renderer be out of date here? Do we need to call updateStyleIfNeeded?
     // For example, for the contents of textarea elements that are display:none?
     auto* r = renderer();
-    if ((r && r->style().preserveNewline()) || (inDocument() && isTextControlInnerTextElement())) {
+    if ((r && r->style().preserveNewline()) || (isConnected() && isTextControlInnerTextElement())) {
         if (!text.contains('\r')) {
             replaceAllChildren(document().createTextNode(text));
             return { };

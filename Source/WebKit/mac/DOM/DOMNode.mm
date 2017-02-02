@@ -199,7 +199,7 @@ DOMNode *kit(Node* value)
 - (BOOL)isConnected
 {
     JSMainThreadNullState state;
-    return unwrap(*self).inDocument();
+    return unwrap(*self).isConnected();
 }
 
 - (DOMElement *)parentElement

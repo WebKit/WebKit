@@ -88,7 +88,7 @@
     boolean contains(Node? other);
 
     [EnabledAtRuntime=ShadowDOM] Node getRootNode(optional GetRootNodeOptions options);
-    [EnabledAtRuntime=ShadowDOM, ImplementedAs=inDocument] readonly attribute boolean isConnected;
+    [EnabledAtRuntime=ShadowDOM] readonly attribute boolean isConnected;
 
     readonly attribute Element parentElement;
 };

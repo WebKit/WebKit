@@ -53,7 +53,7 @@ Ref<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagName, Doc
 Node::InsertionNotificationRequest HTMLTitleElement::insertedInto(ContainerNode& insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
-    if (inDocument() && !isInShadowTree())
+    if (isConnected() && !isInShadowTree())
         document().titleElementAdded(*this);
     return InsertionDone;
 }
@@ -61,7 +61,7 @@ Node::InsertionNotificationRequest HTMLTitleElement::insertedInto(ContainerNode&
 void HTMLTitleElement::removedFrom(ContainerNode& insertionPoint)
 {
     HTMLElement::removedFrom(insertionPoint);
-    if (insertionPoint.inDocument() && !insertionPoint.isInShadowTree())
+    if (insertionPoint.isConnected() && !insertionPoint.isInShadowTree())
         document().titleElementRemoved(*this);
 }
 

@@ -263,7 +263,7 @@ ExceptionOr<short> Range::comparePoint(Node& refNode, unsigned offset) const
     if (checkNodeResult.hasException()) {
         // DOM4 spec requires us to check whether refNode and start container have the same root first
         // but we do it in the reverse order to avoid O(n) operation here in common case.
-        if (!refNode.inDocument() && !commonAncestorContainer(&refNode, &startContainer()))
+        if (!refNode.isConnected() && !commonAncestorContainer(&refNode, &startContainer()))
             return Exception { WRONG_DOCUMENT_ERR };
         return checkNodeResult.releaseException();
     }
@@ -292,7 +292,7 @@ ExceptionOr<Range::CompareResults> Range::compareNode(Node& refNode) const
     // This method returns 0, 1, 2, or 3 based on if the node is before, after,
     // before and after(surrounds), or inside the range, respectively
 
-    if (!refNode.inDocument()) {
+    if (!refNode.isConnected()) {
         // Firefox doesn't throw an exception for this case; it returns 0.
         return NODE_BEFORE;
     }
@@ -473,7 +473,7 @@ ExceptionOr<void> Range::deleteContents()
 
 ExceptionOr<bool> Range::intersectsNode(Node& refNode) const
 {
-    if (!refNode.inDocument() || &refNode.document() != &ownerDocument())
+    if (!refNode.isConnected() || &refNode.document() != &ownerDocument())
         return false;
 
     ContainerNode* parentNode = refNode.parentNode();

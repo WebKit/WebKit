@@ -151,7 +151,7 @@ void InsertLineBreakCommand::doApply()
             deleteInsignificantTextDownstream(endingPosition);
             ASSERT(!textNode.renderer() || textNode.renderer()->style().collapseWhiteSpace());
             // Deleting insignificant whitespace will remove textNode if it contains nothing but insignificant whitespace.
-            if (textNode.inDocument())
+            if (textNode.isConnected())
                 insertTextIntoNode(&textNode, 0, nonBreakingSpaceString());
             else {
                 RefPtr<Text> nbspNode = document().createTextNode(nonBreakingSpaceString());

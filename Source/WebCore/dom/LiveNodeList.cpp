@@ -44,7 +44,7 @@ LiveNodeList::~LiveNodeList()
 
 ContainerNode& LiveNodeList::rootNode() const
 {
-    if (isRootedAtDocument() && ownerNode().inDocument())
+    if (isRootedAtDocument() && ownerNode().isConnected())
         return ownerNode().document();
 
     return ownerNode();

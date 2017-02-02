@@ -111,7 +111,7 @@ protected:
 
 inline ContainerNode& HTMLCollection::rootNode() const
 {
-    if (isRootedAtDocument() && ownerNode().inDocument())
+    if (isRootedAtDocument() && ownerNode().isConnected())
         return ownerNode().document();
 
     return ownerNode();

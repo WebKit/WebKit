@@ -98,7 +98,7 @@ void SVGFEImageElement::requestImageResource()
 void SVGFEImageElement::buildPendingResource()
 {
     clearResourceReferences();
-    if (!inDocument())
+    if (!isConnected())
         return;
 
     String id;
@@ -164,13 +164,13 @@ void SVGFEImageElement::finishedInsertingSubtree()
 void SVGFEImageElement::removedFrom(ContainerNode& rootParent)
 {
     SVGFilterPrimitiveStandardAttributes::removedFrom(rootParent);
-    if (rootParent.inDocument())
+    if (rootParent.isConnected())
         clearResourceReferences();
 }
 
 void SVGFEImageElement::notifyFinished(CachedResource&)
 {
-    if (!inDocument())
+    if (!isConnected())
         return;
 
     Element* parent = parentElement();

@@ -59,7 +59,7 @@ ScriptRunner::~ScriptRunner()
 
 void ScriptRunner::queueScriptForExecution(ScriptElement& scriptElement, LoadableScript& loadableScript, ExecutionType executionType)
 {
-    ASSERT(scriptElement.element().inDocument());
+    ASSERT(scriptElement.element().isConnected());
 
     m_document.incrementLoadEventDelayCount();
 

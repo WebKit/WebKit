@@ -911,10 +911,10 @@ ExceptionOr<void> Node::checkSetPrefix(const AtomicString& prefix)
 bool Node::isDescendantOf(const Node& other) const
 {
     // Return true if other is an ancestor of this, otherwise false
-    if (!other.hasChildNodes() || inDocument() != other.inDocument())
+    if (!other.hasChildNodes() || isConnected() != other.isConnected())
         return false;
     if (other.isDocumentNode())
-        return &document() == &other && !isDocumentNode() && inDocument();
+        return &document() == &other && !isDocumentNode() && isConnected();
     for (const auto* ancestor = parentNode(); ancestor; ancestor = ancestor->parentNode()) {
         if (ancestor == &other)
             return true;
@@ -1220,9 +1220,9 @@ Node& Node::getRootNode(const GetRootNodeOptions& options) const
 
 Node::InsertionNotificationRequest Node::insertedInto(ContainerNode& insertionPoint)
 {
-    ASSERT(insertionPoint.inDocument() || isContainerNode());
-    if (insertionPoint.inDocument())
-        setFlag(InDocumentFlag);
+    ASSERT(insertionPoint.isConnected() || isContainerNode());
+    if (insertionPoint.isConnected())
+        setFlag(IsConnectedFlag);
     if (parentOrShadowHostNode()->isInShadowTree())
         setFlag(IsInShadowTreeFlag);
 
@@ -1233,9 +1233,9 @@ Node::InsertionNotificationRequest Node::insertedInto(ContainerNode& insertionPo
 
 void Node::removedFrom(ContainerNode& insertionPoint)
 {
-    ASSERT(insertionPoint.inDocument() || isContainerNode());
-    if (insertionPoint.inDocument())
-        clearFlag(InDocumentFlag);
+    ASSERT(insertionPoint.isConnected() || isContainerNode());
+    if (insertionPoint.isConnected())
+        clearFlag(IsConnectedFlag);
     if (isInShadowTree() && !treeScope().rootNode().isShadowRoot())
         clearFlag(IsInShadowTreeFlag);
 }
@@ -1598,8 +1598,8 @@ unsigned short Node::compareDocumentPosition(Node& otherNode)
 
     // If one node is in the document and the other is not, we must be disconnected.
     // If the nodes have different owning documents, they must be disconnected.  Note that we avoid
-    // comparing Attr nodes here, since they return false from inDocument() all the time (which seems like a bug).
-    if (start1->inDocument() != start2->inDocument() || &start1->treeScope() != &start2->treeScope())
+    // comparing Attr nodes here, since they return false from isConnected() all the time (which seems like a bug).
+    if (start1->isConnected() != start2->isConnected() || &start1->treeScope() != &start2->treeScope())
         return compareDetachedElementsPosition(*this, otherNode);
 
     // We need to find a common ancestor container, and then compare the indices of the two immediate children.
@@ -2397,7 +2397,7 @@ void Node::updateAncestorConnectedSubframeCountForInsertion() const
 
 bool Node::inRenderedDocument() const
 {
-    return inDocument() && document().hasLivingRenderTree();
+    return isConnected() && document().hasLivingRenderTree();
 }
 
 void* Node::opaqueRootSlow() const

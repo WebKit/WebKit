@@ -204,12 +204,12 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
     } else if (name == srcAttr || name == srcsetAttr || name == sizesAttr)
         selectImageSource();
     else if (name == usemapAttr) {
-        if (inDocument() && !m_parsedUsemap.isNull())
+        if (isConnected() && !m_parsedUsemap.isNull())
             document().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
         m_parsedUsemap = parseHTMLHashNameReference(value);
 
-        if (inDocument() && !m_parsedUsemap.isNull())
+        if (isConnected() && !m_parsedUsemap.isNull())
             document().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
     } else if (name == compositeAttr) {
         // FIXME: images don't support blend modes in their compositing attribute.
@@ -224,7 +224,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
     } else {
         if (name == nameAttr) {
             bool willHaveName = !value.isNull();
-            if (m_hadNameBeforeAttributeChanged != willHaveName && inDocument() && !isInShadowTree() && is<HTMLDocument>(document())) {
+            if (m_hadNameBeforeAttributeChanged != willHaveName && isConnected() && !isInShadowTree() && is<HTMLDocument>(document())) {
                 HTMLDocument& document = downcast<HTMLDocument>(this->document());
                 const AtomicString& id = getIdAttribute();
                 if (!id.isEmpty() && id != getNameAttribute()) {
@@ -313,7 +313,7 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode&
     // in callbacks back to this node.
     Node::InsertionNotificationRequest insertNotificationRequest = HTMLElement::insertedInto(insertionPoint);
 
-    if (insertionPoint.inDocument() && !m_parsedUsemap.isNull())
+    if (insertionPoint.isConnected() && !m_parsedUsemap.isNull())
         document().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
     if (is<HTMLPictureElement>(parentNode())) {
@@ -323,7 +323,7 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode&
 
     // If we have been inserted from a renderer-less document,
     // our loader may have not fetched the image, so do it now.
-    if (insertionPoint.inDocument() && !m_imageLoader.image())
+    if (insertionPoint.isConnected() && !m_imageLoader.image())
         m_imageLoader.updateFromElement();
 
     return insertNotificationRequest;
@@ -334,7 +334,7 @@ void HTMLImageElement::removedFrom(ContainerNode& insertionPoint)
     if (m_form)
         m_form->removeImgElement(this);
 
-    if (insertionPoint.inDocument() && !m_parsedUsemap.isNull())
+    if (insertionPoint.isConnected() && !m_parsedUsemap.isNull())
         document().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
     
     if (is<HTMLPictureElement>(parentNode()))

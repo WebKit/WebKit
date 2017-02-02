@@ -216,10 +216,10 @@ void IndentOutdentCommand::outdentRegion(const VisiblePosition& startOfSelection
         // outdentParagraph could move more than one paragraph if the paragraph
         // is in a list item. As a result, endAfterSelection and endOfNextParagraph
         // could refer to positions no longer in the document.
-        if (endAfterSelection.isNotNull() && !endAfterSelection.deepEquivalent().anchorNode()->inDocument())
+        if (endAfterSelection.isNotNull() && !endAfterSelection.deepEquivalent().anchorNode()->isConnected())
             break;
 
-        if (endOfNextParagraph.isNotNull() && !endOfNextParagraph.deepEquivalent().anchorNode()->inDocument()) {
+        if (endOfNextParagraph.isNotNull() && !endOfNextParagraph.deepEquivalent().anchorNode()->isConnected()) {
             endOfCurrentParagraph = endingSelection().end();
             endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
         }

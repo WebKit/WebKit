@@ -189,7 +189,7 @@ void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomicStri
 Node::InsertionNotificationRequest HTMLBodyElement::insertedInto(ContainerNode& insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
-    if (!insertionPoint.inDocument())
+    if (!insertionPoint.isConnected())
         return InsertionDone;
 
     // FIXME: It's surprising this is web compatible since it means a marginwidth and marginheight attribute can

@@ -251,8 +251,8 @@ static inline void removeCSSPropertyFromTarget(SVGElement& targetElement, CSSPro
 
 static inline void applyCSSPropertyToTargetAndInstances(SVGElement& targetElement, const QualifiedName& attributeName, const String& valueAsString)
 {
-    // FIXME: Do we really need to check both inDocument and !parentNode?
-    if (attributeName == anyQName() || !targetElement.inDocument() || !targetElement.parentNode())
+    // FIXME: Do we really need to check both isConnected and !parentNode?
+    if (attributeName == anyQName() || !targetElement.isConnected() || !targetElement.parentNode())
         return;
 
     CSSPropertyID id = cssPropertyID(attributeName.localName());
@@ -267,8 +267,8 @@ static inline void applyCSSPropertyToTargetAndInstances(SVGElement& targetElemen
 
 static inline void removeCSSPropertyFromTargetAndInstances(SVGElement& targetElement, const QualifiedName& attributeName)
 {
-    // FIXME: Do we really need to check both inDocument and !parentNode?
-    if (attributeName == anyQName() || !targetElement.inDocument() || !targetElement.parentNode())
+    // FIXME: Do we really need to check both isConnected and !parentNode?
+    if (attributeName == anyQName() || !targetElement.isConnected() || !targetElement.parentNode())
         return;
 
     CSSPropertyID id = cssPropertyID(attributeName.localName());
@@ -289,7 +289,7 @@ static inline void notifyTargetAboutAnimValChange(SVGElement& targetElement, con
 
 static inline void notifyTargetAndInstancesAboutAnimValChange(SVGElement& targetElement, const QualifiedName& attributeName)
 {
-    if (attributeName == anyQName() || !targetElement.inDocument() || !targetElement.parentNode())
+    if (attributeName == anyQName() || !targetElement.isConnected() || !targetElement.parentNode())
         return;
 
     SVGElement::InstanceUpdateBlocker blocker(targetElement);

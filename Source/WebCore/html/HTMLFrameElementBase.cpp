@@ -135,14 +135,14 @@ void HTMLFrameElementBase::setNameAndOpenURL()
 Node::InsertionNotificationRequest HTMLFrameElementBase::insertedInto(ContainerNode& insertionPoint)
 {
     HTMLFrameOwnerElement::insertedInto(insertionPoint);
-    if (insertionPoint.inDocument())
+    if (insertionPoint.isConnected())
         return InsertionShouldCallFinishedInsertingSubtree;
     return InsertionDone;
 }
 
 void HTMLFrameElementBase::finishedInsertingSubtree()
 {
-    if (!inDocument())
+    if (!isConnected())
         return;
 
     // DocumentFragments don't kick of any loads.
@@ -180,7 +180,7 @@ void HTMLFrameElementBase::setLocation(const String& str)
 
     m_URL = AtomicString(str);
 
-    if (inDocument())
+    if (isConnected())
         openURL(LockHistory::No, LockBackForwardList::No);
 }
 

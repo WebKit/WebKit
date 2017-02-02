@@ -759,11 +759,11 @@ void HTMLSelectElement::setRecalcListItems()
     m_activeSelectionAnchorIndex = -1;
     setOptionsChangedOnRenderer();
     invalidateStyleForSubtree();
-    if (!inDocument()) {
+    if (!isConnected()) {
         if (HTMLCollection* collection = cachedHTMLCollection(SelectOptions))
             collection->invalidateCache(document());
     }
-    if (!inDocument())
+    if (!isConnected())
         invalidateSelectedItems();
     if (auto* cache = document().existingAXObjectCache())
         cache->childrenChanged(this);

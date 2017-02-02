@@ -181,7 +181,7 @@ static Node* findRootNode(Node* node)
 {
     if (is<Attr>(*node))
         node = downcast<Attr>(*node).ownerElement();
-    if (node->inDocument())
+    if (node->isConnected())
         node = &node->document();
     else {
         while (Node* parent = node->parentNode())

@@ -128,7 +128,7 @@ bool HTMLFormElement::rendererIsNeeded(const RenderStyle& style)
 Node::InsertionNotificationRequest HTMLFormElement::insertedInto(ContainerNode& insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint.inDocument())
+    if (insertionPoint.isConnected())
         document().didAssociateFormControl(this);
     return InsertionDone;
 }
@@ -249,7 +249,7 @@ bool HTMLFormElement::validateInteractively()
 
     // Focus on the first focusable control and show a validation message.
     for (auto& control : unhandledInvalidControls) {
-        if (control->inDocument() && control->isFocusable()) {
+        if (control->isConnected() && control->isFocusable()) {
             control->focusAndShowValidationMessage();
             break;
         }
@@ -258,7 +258,7 @@ bool HTMLFormElement::validateInteractively()
     // Warn about all of unfocusable controls.
     if (document().frame()) {
         for (auto& control : unhandledInvalidControls) {
-            if (control->inDocument() && control->isFocusable())
+            if (control->isConnected() && control->isFocusable())
                 continue;
             String message = makeString("An invalid form control with name='", control->name(), "' is not focusable.");
             document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, message);

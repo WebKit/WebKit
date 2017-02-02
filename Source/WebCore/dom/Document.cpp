@@ -5579,7 +5579,7 @@ void Document::requestFullScreenForElement(Element* element, FullScreenCheckType
         // node document:
 
         // The context object is not in a document.
-        if (!element->inDocument())
+        if (!element->isConnected())
             break;
 
         // The context object's node document, or an ancestor browsing context's document does not have
@@ -5738,7 +5738,7 @@ void Document::webkitExitFullscreen()
         //    If doc's fullscreen element stack is non-empty and the element now at the top is either
         //    not in a document or its node document is not doc, repeat this substep.
         newTop = currentDoc->webkitFullscreenElement();
-        if (newTop && (!newTop->inDocument() || &newTop->document() != currentDoc))
+        if (newTop && (!newTop->isConnected() || &newTop->document() != currentDoc))
             continue;
 
         // 2. Queue a task to fire an event named fullscreenchange with its bubbles attribute set to true
@@ -5937,7 +5937,7 @@ void Document::dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>& queue, 
 
         // If the element was removed from our tree, also message the documentElement. Since we may
         // have a document hierarchy, check that node isn't in another document.
-        if (!node->inDocument())
+        if (!node->isConnected())
             queue.append(documentElement());
 
 #if ENABLE(VIDEO)
@@ -6961,7 +6961,7 @@ DOMSelection* Document::getSelection()
 
 void Document::didInsertInDocumentShadowRoot(ShadowRoot& shadowRoot)
 {
-    ASSERT(shadowRoot.inDocument());
+    ASSERT(shadowRoot.isConnected());
     ASSERT(!m_inDocumentShadowRoots.contains(&shadowRoot));
     m_inDocumentShadowRoots.add(&shadowRoot);
 }

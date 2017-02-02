@@ -199,7 +199,7 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
         return false;
     if (!element->hasAttributeWithoutSynchronization(autofocusAttr))
         return false;
-    if (!element->inDocument() || !element->document().renderView())
+    if (!element->isConnected() || !element->document().renderView())
         return false;
     if (element->document().isSandboxed(SandboxAutomaticFeatures)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
@@ -483,7 +483,7 @@ bool HTMLFormControlElement::checkValidity(Vector<RefPtr<HTMLFormControlElement>
     Ref<HTMLFormControlElement> protectedThis(*this);
     Ref<Document> originalDocument(document());
     bool needsDefaultAction = dispatchEvent(Event::create(eventNames().invalidEvent, false, true));
-    if (needsDefaultAction && unhandledInvalidControls && inDocument() && originalDocument.ptr() == &document())
+    if (needsDefaultAction && unhandledInvalidControls && isConnected() && originalDocument.ptr() == &document())
         unhandledInvalidControls->append(this);
     return false;
 }
@@ -501,7 +501,7 @@ bool HTMLFormControlElement::reportValidity()
     // has !renderer()->needsLayout() assertion.
     document().updateLayoutIgnorePendingStylesheets();
 
-    if (inDocument() && isFocusable()) {
+    if (isConnected() && isFocusable()) {
         focusAndShowValidationMessage();
         return false;
     }
