@@ -14,7 +14,7 @@ class OSXBrowserDriver(BrowserDriver):
     process_name = None
     platform = 'osx'
 
-    def prepare_env(self, device_id):
+    def prepare_env(self, config):
         self.close_browsers()
         from Quartz import CGWarpMouseCursorPosition
         CGWarpMouseCursorPosition((10, 0))

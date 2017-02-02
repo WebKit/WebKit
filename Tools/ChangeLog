@@ -1,3 +1,28 @@
+2017-02-01  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Make run-benchmark script supports 'config' key in test plan.
+        https://bugs.webkit.org/show_bug.cgi?id=167715
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support for 'config' key in test paln.
+        'config' key is a dictionary that specifies environment configurations while test is running.
+        Specifies orientation to be portrait in MotionMark benchmark.
+
+        * Scripts/webkitpy/benchmark_runner/README.md:
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__):
+        (BenchmarkRunner._run_benchmark):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver.py:
+        (BrowserDriver.prepare_env):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_browser_driver.py:
+        (LinuxBrowserDriver.prepare_env):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver.prepare_env):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.prepare_env):
+        * Scripts/webkitpy/benchmark_runner/data/plans/motionmark.plan:
+
 2017-02-01  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r210820): svn-create-patch does not emit property change only diff

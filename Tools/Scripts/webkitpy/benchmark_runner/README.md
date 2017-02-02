@@ -69,6 +69,9 @@ To create a plan, you may refer to Plans/jetstream.plan.
     "local_copy": "../../../../PerformanceTests/JetStream",
     "benchmark_patch": "data/patches/JetStream.patch",
     "entry_point": "JetStream/JetStream-1.0.1/index.html",
+    "config": {
+        "orientation": "portrait"
+    },
     "output_file": "jetstream.result"
 }
 ```
@@ -79,6 +82,7 @@ Plan is a json-formatted dictionary which contains following keys
 * **remote_archive**: (**OPTIONAL**) URL of the remote (http/https) ZIP file that contains the benchmark.
 * **benchmark_path**: (**OPTIONAL**) path of patch, a relative path to the root of this project ('benchmark_runner' directory)
 * **entry_point**: the relative url you want browser to launch (a relative path to the benchmark directory)
+* **config**: a dictionary that specifies the environment configurations for the test (e.g. orientation while the test is running)
 * **output_file**: specify the output file, this can be overwritten by specifying '--output-file' while invoking run-benchmark script
 
 ### How to import a benchmark

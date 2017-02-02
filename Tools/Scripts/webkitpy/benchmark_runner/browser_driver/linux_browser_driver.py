@@ -51,7 +51,7 @@ class LinuxBrowserDriver(BrowserDriver):
             raise ValueError('Cant find executable for browser {browser_name}. Searched list: {browser_process_list}'.format(
                               browser_name=self.browser_name, browser_process_list=self.process_search_list))
 
-    def prepare_env(self, device_id):
+    def prepare_env(self, config):
         self._browser_process = None
         self._browser_arguments = None
         self._temp_profiledir = tempfile.mkdtemp()

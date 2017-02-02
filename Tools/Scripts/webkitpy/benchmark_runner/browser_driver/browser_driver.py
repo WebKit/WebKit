@@ -10,7 +10,7 @@ class BrowserDriver(object):
     ___metaclass___ = ABCMeta
 
     @abstractmethod
-    def prepare_env(self, device_id):
+    def prepare_env(self, config):
         pass
 
     @abstractmethod

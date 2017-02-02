@@ -4,5 +4,8 @@
     "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/MotionMark/@r210459",
     "benchmark_patch": "data/patches/MotionMark.patch",
     "entry_point": "index.html",
+    "config": {
+        "orientation": "landscape"
+    },
     "output_file": "motionmark.result"
 }
