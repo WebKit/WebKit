@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,13 @@
 
 #pragma once
 
-#include "MemoryPressureHandler.h"
+#include <wtf/Optional.h>
 
-namespace WebCore {
+namespace WTF {
 
-WEBCORE_EXPORT void releaseMemory(Critical, Synchronous);
-void platformReleaseMemory(Critical);
-void jettisonExpensiveObjectsOnTopLevelNavigation();
-WEBCORE_EXPORT void registerMemoryReleaseNotifyCallbacks();
-WEBCORE_EXPORT void logMemoryStatisticsAtTimeOfDeath();
-WEBCORE_EXPORT NO_RETURN_DUE_TO_CRASH void didExceedMemoryLimitAndFailedToRecover();
-WEBCORE_EXPORT bool processIsEligibleForMemoryKill();
+WTF_EXPORT_PRIVATE std::optional<size_t> memoryFootprint();
 
-} // namespace WebCore
+}
+
+using WTF::memoryFootprint;
+

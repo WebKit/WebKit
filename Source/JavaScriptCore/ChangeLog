@@ -1,3 +1,20 @@
+2017-02-02  Andreas Kling  <akling@apple.com>
+
+        [Mac] In-process memory pressure monitor for WebContent processes.
+        <https://webkit.org/b/167491>
+        <rdar://problem/30116072>
+
+        Reviewed by Antti Koivisto.
+
+        Remove the sloppy "max live heap size" mechanism from JSC in favor of the new
+        WebCore-side memory footprint monitor.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::didExceedMaxLiveSize): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::setMaxLiveSize): Deleted.
+
 2017-02-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Removed unused m_errorHandlingModeReentry from Interpreter

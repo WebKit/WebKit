@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-static size_t vmPageSize()
+size_t vmPageSize()
 {
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     return vm_kernel_page_size;
