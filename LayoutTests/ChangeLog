@@ -1,5 +1,13 @@
 2017-02-02  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skip fast/visual-viewport/ios/bottom-bar-with-keyboard.html on ios-simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2017-02-02  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r211529.
 
         This change caused the test to fail on macOS.
