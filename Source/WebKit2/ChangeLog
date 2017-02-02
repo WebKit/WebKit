@@ -1,3 +1,13 @@
+2017-02-02  Dan Bernstein  <mitz@apple.com>
+
+        The Make Frameworks Symbolic Link build phase can end up creating a symlink inside the Frameworks subdirectory
+        https://bugs.webkit.org/show_bug.cgi?id=167745
+
+        Reviewed by Tim Horton.
+
+        * WebKit2.xcodeproj/project.pbxproj: Pass the -h option to ln(1) so that it will replace,
+          rather than follow, an existing symlink.
+
 2017-02-02  Andreas Kling  <akling@apple.com>
 
         [Mac] In-process memory pressure monitor for WebContent processes.
