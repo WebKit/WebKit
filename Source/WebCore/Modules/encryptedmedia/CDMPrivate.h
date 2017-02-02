@@ -54,6 +54,7 @@ public:
     virtual bool supportsServerCertificates() const = 0;
     virtual bool supportsSessions() const = 0;
     virtual bool supportsInitData(const AtomicString&, const SharedBuffer&) const = 0;
+    virtual RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const = 0;
 };
 
 }

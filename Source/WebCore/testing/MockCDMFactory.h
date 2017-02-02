@@ -113,6 +113,7 @@ private:
     bool supportsServerCertificates() const final;
     bool supportsSessions() const final;
     bool supportsInitData(const AtomicString&, const SharedBuffer&) const final;
+    RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const final;
 
     WeakPtr<MockCDMFactory> m_factory;
     WeakPtrFactory<MockCDM> m_weakPtrFactory;
@@ -128,6 +129,7 @@ private:
     SuccessValue setPersistentStateAllowed(bool) final;
     SuccessValue setServerCertificate(Ref<SharedBuffer>&&) final;
     void requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback) final;
+    void updateLicense(LicenseType, const SharedBuffer&, LicenseUpdateCallback) final;
 
     WeakPtr<MockCDM> m_cdm;
     bool m_distinctiveIdentifiersAllowed { true };

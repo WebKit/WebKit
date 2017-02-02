@@ -31,6 +31,7 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "ActiveDOMObject.h"
+#include "CDMInstance.h"
 #include "EventTarget.h"
 #include "GenericEventQueue.h"
 #include "GenericTaskQueue.h"
@@ -46,7 +47,6 @@ namespace WebCore {
 
 class BufferSource;
 class CDM;
-class CDMInstance;
 class MediaKeyStatusMap;
 class MediaKeys;
 class SharedBuffer;
@@ -72,6 +72,9 @@ public:
 private:
     MediaKeySession(ScriptExecutionContext&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstance>&&);
     void enqueueMessage(MediaKeyMessageType, const SharedBuffer&);
+    void updateKeyStatuses(CDMInstance::KeyStatusVector&&);
+    void updateExpiration(double);
+    void sessionClosed();
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return MediaKeySessionEventTargetInterfaceType; }

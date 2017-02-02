@@ -27,8 +27,11 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include <utility>
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -57,6 +60,28 @@ public:
 
     using LicenseCallback = Function<void(Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, SuccessValue succeeded)>;
     virtual void requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback) = 0;
+
+    enum class KeyStatus {
+        Usable,
+        Expired,
+        Released,
+        OutputRestricted,
+        OutputDownscaled,
+        StatusPending,
+        InternalError,
+    };
+
+    enum class MessageType {
+        LicenseRequest,
+        LicenseRenewal,
+        LicenseRelease,
+        IndividualizationRequest,
+    };
+
+    using KeyStatusVector = Vector<std::pair<Ref<SharedBuffer>, KeyStatus>>;
+    using Message = std::pair<MessageType, Ref<SharedBuffer>>;
+    using LicenseUpdateCallback = Function<void(bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, SuccessValue succeeded)>;
+    virtual void updateLicense(LicenseType, const SharedBuffer& response, LicenseUpdateCallback) = 0;
 };
 
 }

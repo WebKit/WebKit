@@ -1,3 +1,20 @@
+2017-02-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Implement MediaKeySession::update()
+        https://bugs.webkit.org/show_bug.cgi?id=167636
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add the mock-MediaKeySession-update.html test, cotaining a few cases that check
+        the basic operations of MediaKeySession::update(), focusing on proper promise
+        resolution and rejection based on the state of the object and the passed-in
+        response argument. Skip the test on all platforms for now.
+
+        * media/encrypted-media/mock-MediaKeySession-update-expected.txt: Added.
+        * media/encrypted-media/mock-MediaKeySession-update.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-02-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline compositing/geometry/fixed-in-composited.html for ios-simulator.

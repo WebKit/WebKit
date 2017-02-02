@@ -177,6 +177,20 @@ bool MockCDM::supportsInitData(const AtomicString& initDataType, const SharedBuf
     return true;
 }
 
+RefPtr<SharedBuffer> MockCDM::sanitizeResponse(const SharedBuffer& response) const
+{
+    if (!charactersAreAllASCII(reinterpret_cast<const LChar*>(response.data()), response.size()))
+        return nullptr;
+
+    Vector<String> responseArray;
+    String(response.data(), response.size()).split(ASCIILiteral(" "), responseArray);
+
+    if (!responseArray.contains(String(ASCIILiteral("valid-response"))))
+        return nullptr;
+
+    return response.copy();
+}
+
 MockCDMInstance::MockCDMInstance(WeakPtr<MockCDM> cdm)
     : m_cdm(cdm)
 {
@@ -254,6 +268,28 @@ void MockCDMInstance::requestLicense(LicenseType licenseType, const AtomicString
 
     CString license { "license" };
     callback(SharedBuffer::create(license.data(), license.length()), sessionID, false, SuccessValue::Succeeded);
+}
+
+void MockCDMInstance::updateLicense(LicenseType, const SharedBuffer& response, LicenseUpdateCallback callback)
+{
+    MockCDMFactory* factory = m_cdm ? m_cdm->factory() : nullptr;
+    if (!factory) {
+        callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed);
+        return;
+    }
+
+    Vector<String> responseVector;
+    String(response.data(), response.size()).split(ASCIILiteral(" "), responseVector);
+
+    if (responseVector.contains(String(ASCIILiteral("invalid-format")))) {
+        callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed);
+        return;
+    }
+
+    // FIXME: Session closure, key status, expiration and message handling should be implemented
+    // once the relevant algorithms are supported.
+
+    callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Succeeded);
 }
 
 }

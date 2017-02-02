@@ -1,0 +1,50 @@
+RUN(internals.initializeMockMediaSource())
+RUN(mock = internals.registerMockCDM())
+RUN(mock.supportedDataTypes = ["keyids"])
+RUN(capabilities.initDataTypes = ["keyids"])
+RUN(capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] )
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
+Promise resolved OK
+
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise resolved OK
+
+Using a non-callable MediaKeySession should reject.
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+EXPECTED (typeof mediaKeySession == 'object') OK
+RUN(promise = mediaKeySession.update(stringToUInt8Array("invalid-state")))
+Promise rejected correctly OK
+
+Using a zero-length response should reject.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise resolved OK
+RUN(promise = mediaKeySession.update(new Uint8Array(0)))
+Promise rejected correctly OK
+
+Using a non-sanitizable response should reject.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise resolved OK
+RUN(promise = mediaKeySession.update(stringToUInt8Array("invalid-response")))
+Promise rejected correctly OK
+
+Using a sanitizable response should resolve.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise resolved OK
+RUN(promise = mediaKeySession.update(stringToUInt8Array("valid-response")))
+Promise resolved OK
+
+Using a sanitizable response with invalid format should resolve.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise resolved OK
+RUN(promise = mediaKeySession.update(stringToUInt8Array("valid-response invalid-format")))
+Promise rejected correctly OK
+END OF TEST
+

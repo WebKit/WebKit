@@ -644,6 +644,13 @@ bool CDM::supportsInitData(const AtomicString& initDataType, const SharedBuffer&
     return m_private && m_private->supportsInitData(initDataType, initData);
 }
 
+RefPtr<SharedBuffer> CDM::sanitizeResponse(const SharedBuffer& response)
+{
+    if (!m_private)
+        return nullptr;
+    return m_private->sanitizeResponse(response);
+}
+
 }
 
 #endif

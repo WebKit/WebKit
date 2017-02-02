@@ -2982,6 +2982,7 @@ Bug(EFL) media/encrypted-media/encrypted-media-is-type-supported.html [ Failure 
 Bug(EFL) media/encrypted-media/encrypted-media-not-loaded.html [ Failure ]
 Bug(EFL) media/encrypted-media/encrypted-media-syntax.html [ Failure ]
 Bug(EFL) media/encrypted-media/mock-MediaKeySession-generateRequest.html [ Failure ]
+Bug(EFL) media/encrypted-media/mock-MediaKeySession-update.html [ Failure ]
 Bug(EFL) media/encrypted-media/mock-MediaKeySystemAccess.html [ Failure ]
 Bug(EFL) media/encrypted-media/mock-MediaKeys-createSession.html [ Failure ]
 Bug(EFL) media/encrypted-media/mock-MediaKeys-setServerCertificate.html [ Failure ]

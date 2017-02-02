@@ -1,3 +1,57 @@
+2017-02-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Implement MediaKeySession::update()
+        https://bugs.webkit.org/show_bug.cgi?id=167636
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement the MediaKeySession::update() method by following the steps as
+        they are described in the specification.
+
+        In order to sanitize the passed-in response data, CDM::sanitizeResponse()
+        is added. It passes the SharedBuffer object by reference to the CDMPrivate
+        interface implementor, which returns a SharedBuffer object containing
+        sanitized response data.
+
+        CDMInstance::updateLicense() virtual method is added to perform the license
+        update for some specific CDMInstance object. After the update the CDMInstance
+        invokes the callback that's passed to updateLicense(), providing information
+        about session being closed, changed keys or expiration value, any message
+        that has to be enqueued, and whether the update was successful.
+
+        After that callback is invoked, MediaKeySession::update() goes on to handle
+        all the provided information in a future task, finally resolving the promise
+        (or rejecting it beforehand in case of any failure during response handling
+        or license update).
+
+        Three algorithms that can be invoked from MediaKeySession::update() (key
+        status update, expiration update and session closure) will be implemented
+        separately. Placeholder methods are provided until then.
+
+        MockCDM::sanitizeResponse() and MockCDMInstance::updateLicense() are
+        implemented for testing purposes. For now only the response sanitization
+        and sanitized response format are checked there. Key status update,
+        expiration update and session closure should be tested once the
+        implementations for those algorithms are added.
+
+        Test: media/encrypted-media/mock-MediaKeySession-update.html
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::sanitizeResponse):
+        * Modules/encryptedmedia/CDM.h:
+        * Modules/encryptedmedia/CDMInstance.h:
+        * Modules/encryptedmedia/CDMPrivate.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::update):
+        (WebCore::MediaKeySession::updateKeyStatuses):
+        (WebCore::MediaKeySession::updateExpiration):
+        (WebCore::MediaKeySession::sessionClosed):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDM::sanitizeResponse):
+        (WebCore::MockCDMInstance::updateLicense):
+        * testing/MockCDMFactory.h:
+
 2017-02-01  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Update CARingBuffer class

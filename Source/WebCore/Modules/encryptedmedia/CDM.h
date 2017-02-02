@@ -80,6 +80,8 @@ public:
     RefPtr<SharedBuffer> sanitizeInitData(const AtomicString& initDataType, const SharedBuffer&);
     bool supportsInitData(const AtomicString& initDataType, const SharedBuffer&);
 
+    RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&);
+
 private:
     CDM(Document&, const String& keySystem);
 
