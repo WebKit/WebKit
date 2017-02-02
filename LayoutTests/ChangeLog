@@ -1,5 +1,14 @@
 2017-02-02  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=164041
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2017-02-02  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed ios-simulator test gardening.
 
         * platform/ios-simulator-wk2/TestExpectations:

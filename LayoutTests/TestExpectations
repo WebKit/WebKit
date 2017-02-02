@@ -1007,6 +1007,8 @@ webkit.org/b/166911 fast/dom/Window/window-properties-performance-resource-timin
 
 webkit.org/b/167428 fast/backgrounds/background-repeat-x-y-parse.html [ Failure ]
 
+webkit.org/b/1644041 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html [ Pass Failure ]
+
 ########################################
 ### START OF -disabled tests
 
