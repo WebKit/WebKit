@@ -3615,7 +3615,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (UIView *)automaticallySelectedOverlay
 {
-    return self;
+    return [self unscaledView];
 }
 
 - (UITextGranularity)selectionGranularity

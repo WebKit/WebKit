@@ -1,3 +1,18 @@
+2017-02-02  Enrica Casucci  <enrica@apple.com>
+
+        WK2: cannot tap on candidate view with hardware keyboard.
+        https://bugs.webkit.org/show_bug.cgi?id=167761
+        rdar://problem/28775395
+
+        Reviewed by Tim Horton.
+
+        The candidate view is a subview of the view returned by
+        automaticallySelectedOverlay and it should be the unscaled view
+        instead of the WKContentView.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView automaticallySelectedOverlay]):
+
 2017-02-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Drag images should be anchored to the mouse location
