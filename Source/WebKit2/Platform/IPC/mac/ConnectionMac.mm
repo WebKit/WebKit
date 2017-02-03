@@ -217,8 +217,8 @@ bool Connection::open()
     dispatch_source_set_event_handler(m_receiveSource, [connection] {
         connection->receiveSourceEventHandler();
     });
-    dispatch_source_set_cancel_handler(m_receiveSource, [connection] {
-        mach_port_mod_refs(mach_task_self(), connection->m_receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
+    dispatch_source_set_cancel_handler(m_receiveSource, [connection, receivePort = m_receivePort] {
+        mach_port_mod_refs(mach_task_self(), receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
     });
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
@@ -227,8 +227,8 @@ bool Connection::open()
         dispatch_source_set_event_handler(m_exceptionPortDataAvailableSource, [connection] {
             connection->exceptionSourceEventHandler();
         });
-        dispatch_source_set_cancel_handler(m_exceptionPortDataAvailableSource, [connection] {
-            mach_port_mod_refs(mach_task_self(), connection->m_exceptionPort, MACH_PORT_RIGHT_RECEIVE, -1);
+        dispatch_source_set_cancel_handler(m_exceptionPortDataAvailableSource, [connection, exceptionPort = m_exceptionPort] {
+            mach_port_mod_refs(mach_task_self(), exceptionPort, MACH_PORT_RIGHT_RECEIVE, -1);
         });
 
         auto encoder = std::make_unique<Encoder>("IPC", "SetExceptionPort", 0);
