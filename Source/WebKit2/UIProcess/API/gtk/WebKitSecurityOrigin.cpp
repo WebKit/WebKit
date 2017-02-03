@@ -161,7 +161,7 @@ void webkit_security_origin_unref(WebKitSecurityOrigin* origin)
  *
  * Gets the protocol of @origin, or %NULL if @origin is opaque.
  *
- * Returns (allow-none): The protocol of the #WebKitSecurityOrigin
+ * Returns: (allow-none): The protocol of the #WebKitSecurityOrigin
  *
  * Since: 2.16
  */
