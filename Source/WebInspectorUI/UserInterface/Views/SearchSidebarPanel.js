@@ -95,6 +95,17 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
 
         var updateEmptyContentPlaceholderTimeout = null;
 
+        function createTreeElementForMatchObject(matchObject, parentTreeElement)
+        {
+            let matchTreeElement = new WebInspector.SearchResultTreeElement(matchObject);
+            matchTreeElement.addEventListener(WebInspector.TreeElement.Event.DoubleClick, this._treeElementDoubleClick, this);
+
+            parentTreeElement.appendChild(matchTreeElement);
+
+            if (!this.contentTreeOutline.selectedTreeElement)
+                matchTreeElement.revealAndSelect(false, true);
+        }
+
         function updateEmptyContentPlaceholderSoon()
         {
             if (updateEmptyContentPlaceholderTimeout)
@@ -146,13 +157,10 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
 
                 for (var i = 0; i < resourceMatches.length; ++i) {
                     var match = resourceMatches[i];
-                    forEachMatch(searchQuery, match.lineContent, function(lineMatch, lastIndex) {
+                    forEachMatch(searchQuery, match.lineContent, (lineMatch, lastIndex) => {
                         var matchObject = new WebInspector.SourceCodeSearchMatchObject(resource, match.lineContent, searchQuery, new WebInspector.TextRange(match.lineNumber, lineMatch.index, match.lineNumber, lastIndex));
-                        var matchTreeElement = new WebInspector.SearchResultTreeElement(matchObject);
-                        resourceTreeElement.appendChild(matchTreeElement);
-                        if (!this.contentTreeOutline.selectedTreeElement)
-                            matchTreeElement.revealAndSelect(false, true);
-                    }.bind(this));
+                        createTreeElementForMatchObject.call(this, matchObject, resourceTreeElement);
+                    });
                 }
 
                 updateEmptyContentPlaceholder.call(this);
@@ -186,13 +194,10 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
 
                 for (var i = 0; i < scriptMatches.length; ++i) {
                     var match = scriptMatches[i];
-                    forEachMatch(searchQuery, match.lineContent, function(lineMatch, lastIndex) {
+                    forEachMatch(searchQuery, match.lineContent, (lineMatch, lastIndex) => {
                         var matchObject = new WebInspector.SourceCodeSearchMatchObject(script, match.lineContent, searchQuery, new WebInspector.TextRange(match.lineNumber, lineMatch.index, match.lineNumber, lastIndex));
-                        var matchTreeElement = new WebInspector.SearchResultTreeElement(matchObject);
-                        scriptTreeElement.appendChild(matchTreeElement);
-                        if (!this.contentTreeOutline.selectedTreeElement)
-                            matchTreeElement.revealAndSelect(false, true);
-                    }.bind(this));
+                        createTreeElementForMatchObject.call(this, matchObject, scriptTreeElement);
+                    });
                 }
 
                 updateEmptyContentPlaceholder.call(this);
@@ -243,22 +248,16 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
 
                     // Textual matches.
                     var didFindTextualMatch = false;
-                    forEachMatch(searchQuery, domNodeTitle, function(lineMatch, lastIndex) {
+                    forEachMatch(searchQuery, domNodeTitle, (lineMatch, lastIndex) => {
                         var matchObject = new WebInspector.DOMSearchMatchObject(resource, domNode, domNodeTitle, searchQuery, new WebInspector.TextRange(0, lineMatch.index, 0, lastIndex));
-                        var matchTreeElement = new WebInspector.SearchResultTreeElement(matchObject);
-                        resourceTreeElement.appendChild(matchTreeElement);
-                        if (!this.contentTreeOutline.selectedTreeElement)
-                            matchTreeElement.revealAndSelect(false, true);
+                        createTreeElementForMatchObject.call(this, matchObject, resourceTreeElement);
                         didFindTextualMatch = true;
-                    }.bind(this));
+                    });
 
                     // Non-textual matches are CSS Selector or XPath matches. In such cases, display the node entirely highlighted.
                     if (!didFindTextualMatch) {
                         var matchObject = new WebInspector.DOMSearchMatchObject(resource, domNode, domNodeTitle, domNodeTitle, new WebInspector.TextRange(0, 0, 0, domNodeTitle.length));
-                        var matchTreeElement = new WebInspector.SearchResultTreeElement(matchObject);
-                        resourceTreeElement.appendChild(matchTreeElement);
-                        if (!this.contentTreeOutline.selectedTreeElement)
-                            matchTreeElement.revealAndSelect(false, true);
+                        createTreeElementForMatchObject.call(this, matchObject, resourceTreeElement);
                     }
 
                     updateEmptyContentPlaceholder.call(this);
@@ -369,5 +368,18 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
             WebInspector.showMainFrameDOMTree(treeElement.representedObject.domNode);
         else if (treeElement.representedObject instanceof WebInspector.SourceCodeSearchMatchObject)
             WebInspector.showOriginalOrFormattedSourceCodeTextRange(treeElement.representedObject.sourceCodeTextRange);
+    }
+
+    _treeElementDoubleClick(event)
+    {
+        let treeElement = event.target;
+        if (!treeElement)
+            return;
+
+        const options = {ignoreSearchTab: true};
+        if (treeElement.representedObject instanceof WebInspector.DOMSearchMatchObject)
+            WebInspector.showMainFrameDOMTree(treeElement.representedObject.domNode, options);
+        else if (treeElement.representedObject instanceof WebInspector.SourceCodeSearchMatchObject)
+            WebInspector.showOriginalOrFormattedSourceCodeTextRange(treeElement.representedObject.sourceCodeTextRange, options);
     }
 };

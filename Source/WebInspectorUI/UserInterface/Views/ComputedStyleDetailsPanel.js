@@ -278,12 +278,12 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
 
     _goToRegionFlowArrowWasClicked()
     {
-        WebInspector.showContentFlowDOMTree(this._regionFlow);
+        WebInspector.showRepresentedObject(this._regionFlow);
     }
 
     _goToContentFlowArrowWasClicked()
     {
-        WebInspector.showContentFlowDOMTree(this._contentFlow, this.nodeStyles.node);
+        WebInspector.showRepresentedObject(this._contentFlow, {nodeToSelect: this.nodeStyles.node});
     }
 };
 

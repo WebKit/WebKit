@@ -107,11 +107,14 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         return null;
     }
 
-    bestTabContentViewForRepresentedObject(representedObject)
+    bestTabContentViewForRepresentedObject(representedObject, options = {})
     {
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
 
         for (var tabContentView of this._recentTabContentViews) {
+            if (options.ignoreSearchTab && tabContentView instanceof WebInspector.SearchTabContentView)
+                continue;
+
             if (tabContentView.canShowRepresentedObject(representedObject))
                 return tabContentView;
         }

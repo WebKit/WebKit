@@ -1,3 +1,51 @@
+2017-02-02  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: can't jump from Search Tab result to see resource in other tabs (Resource, Debugger, Network)
+        https://bugs.webkit.org/show_bug.cgi?id=167072
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.tabContentViewForRepresentedObject):
+        (WebInspector.showRepresentedObject):
+        (WebInspector.showMainFrameDOMTree):
+        (WebInspector.showSourceCodeForFrame):
+        (WebInspector.showSourceCode):
+        (WebInspector.showSourceCodeLocation):
+        (WebInspector.showOriginalUnformattedSourceCodeLocation):
+        (WebInspector.showOriginalOrFormattedSourceCodeLocation):
+        (WebInspector.showOriginalOrFormattedSourceCodeTextRange):
+        (WebInspector.showResourceRequest):
+        Rework parameters to add optional `options` dictionary that can be used to indicate
+        additional functionality.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser.prototype.bestTabContentViewForRepresentedObject):
+        Ignore instances of SearchTabContentView as it can display content views for all types of
+        searchable data.  Determined by a newly added optional `options` parameter.
+
+        * UserInterface/Base/Utilities.js:
+        (Object.shallowMerge):
+        Merges the keys of two objects into a new one.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel.prototype._goToRegionFlowArrowWasClicked):
+        (WebInspector.ComputedStyleDetailsPanel.prototype._goToContentFlowArrowWasClicked):
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.createTreeElementForMatchObject):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.resourceCallback):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.resourcesCallback):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.searchScripts.scriptCallback):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.searchScripts):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.domSearchResults):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch.domCallback):
+        (WebInspector.SearchSidebarPanel.prototype.performSearch):
+        (WebInspector.SearchSidebarPanel.prototype._treeElementDoubleClick):
+        * UserInterface/Views/TreeElement.js:
+        (WebInspector.TreeElement.treeElementDoubleClicked):
+        Add an event dispatch whenever a TreeElement is double clicked via the `dblclick` event.
+
 2017-02-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Web Inspector: Upgrade Esprima to the latest one to support dynamic import
