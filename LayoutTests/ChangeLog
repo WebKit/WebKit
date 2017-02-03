@@ -1,3 +1,49 @@
+2017-02-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Multiple HTTP tests fail with Apache 2.4.25
+        https://bugs.webkit.org/show_bug.cgi?id=167678
+        <rdar://problem/30060142>
+
+        Reviewed by Sam Weinig.
+
+        Newer versions of Apache have a security fix where they generate an internal server
+        error upon seeing an invalid HTTP header field. There is an opt-out configuration
+        option which didn't quite work in my testing, but regardless, we should only use
+        "nph-" CGIs for invalid responses. This is how Apache knows that it shouldn't
+        attempt to parse the response.
+
+        This also uncovered a test bug.
+
+        * http/tests/cache/disk-cache/resources/cache-test.js: (generateTestURL):
+        Without escaping, we were getting a broken response in attachment tests:
+           Content-Disposition: attachment
+            filename: "f.txt"
+        Note how ";" turned into a newline.
+
+        * http/tests/misc/non-utf8-header-name-expected.txt: Removed.
+        * http/tests/misc/non-utf8-header-name.php: Removed.
+        * http/tests/misc/nph-non-utf8-header-name-expected.txt: Copied from LayoutTests/http/tests/misc/non-utf8-header-name-expected.txt.
+        * http/tests/misc/nph-non-utf8-header-name.pl: Copied from LayoutTests/http/tests/misc/non-utf8-header-name.php.
+        * http/tests/preload/download_resources_from_invalid_headers.html:
+        * http/tests/preload/resources/invalid_resources_from_header.php: Removed.
+        * http/tests/preload/resources/nph-invalid_resources_from_header.pl: Copied from LayoutTests/http/tests/preload/resources/invalid_resources_from_header.php.
+        * http/tests/security/contentSecurityPolicy/directive-parsing-01.html:
+        * http/tests/security/contentSecurityPolicy/directive-parsing-02.html:
+        * http/tests/security/contentSecurityPolicy/directive-parsing-03.html:
+        * http/tests/security/contentSecurityPolicy/directive-parsing-04.html:
+        * http/tests/security/contentSecurityPolicy/directive-parsing-05.html:
+        * http/tests/security/contentSecurityPolicy/resources/echo-script-src.pl: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/multiple-iframe-test.js:
+        * http/tests/security/contentSecurityPolicy/resources/nph-echo-script-src.pl: Copied from LayoutTests/http/tests/security/contentSecurityPolicy/resources/echo-script-src.pl.
+        * http/tests/security/contentSecurityPolicy/script-loads-with-img-src.html:
+        * http/tests/security/contentSecurityPolicy/script-src-none.html:
+        * http/tests/security/contentSecurityPolicy/script-src-self-blocked-01.html:
+        * http/tests/security/contentSecurityPolicy/script-src-self-blocked-02.html:
+        * http/tests/security/contentSecurityPolicy/script-src-self-blocked-03.html:
+        * http/tests/security/contentSecurityPolicy/script-src-self.html:
+        * http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html:
+        Changed scripts that are used to generate invalid responses to "nph-" ones.
+
 2017-02-02  Chris Dumez  <cdumez@apple.com>
 
         Suspend SVG animations in hidden pages
