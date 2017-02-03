@@ -51,9 +51,9 @@ void InitializeWebKit2(ProcessType processType)
     InitWebCoreThreadSystemInterface();
 #endif
 
-    JSC::initializeThreading();
+    WTF::initializeThreading();
     WTF::initializeMainThread();
-    RunLoop::initializeMainRunLoop();
+    JSC::initializeThreading();
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
     WebCore::initializeLogChannelsIfNecessary();

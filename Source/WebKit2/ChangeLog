@@ -1,3 +1,20 @@
+2017-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r211486) [GTK] The MiniBrowser doesn't work anymore.
+        https://bugs.webkit.org/show_bug.cgi?id=167776
+
+        Reviewed by Yusuke Suzuki.
+
+        Since r211486 JSC::initializeThreading() also initializes the main run loop. It would be possible that RunLoop
+        need to know if it's the main one or not in its constructor, like the GLib impementation does, so we need to
+        ensure that WTF threading and MainThread are initialized before creating the main RunLoop. This is a quick fix
+        because the regression made impossible to load anything in a WebView, but I think we should review all the
+        initialize methods, what they do and how they are called in all the code.
+
+        * Shared/WebKit2Initialize.cpp:
+        (WebKit::InitializeWebKit2): Call WTF::initializeThreading() and WTF::initializeMainThread() before
+        JSC::initializeThreading() and do not call RunLoop::initializeMainRunLoop() because it's already called by JSC.
+
 2017-02-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] One more unreviewed speculative buildfix after r211403.
