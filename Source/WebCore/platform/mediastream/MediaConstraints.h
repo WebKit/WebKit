@@ -713,31 +713,53 @@ public:
 private:
     class ConstraintHolder {
     public:
-        static ConstraintHolder& create(const MediaConstraint& value) { return *new ConstraintHolder(value); }
+        static ConstraintHolder create(const MediaConstraint& value) { return ConstraintHolder(value); }
 
         ~ConstraintHolder()
         {
-            switch (dataType()) {
+            if (m_value.asRaw) {
+                switch (dataType()) {
+                case MediaConstraint::DataType::Integer:
+                    delete m_value.asInteger;
+                    break;
+                case MediaConstraint::DataType::Double:
+                    delete m_value.asDouble;
+                    break;
+                case MediaConstraint::DataType::Boolean:
+                    delete m_value.asBoolean;
+                    break;
+                case MediaConstraint::DataType::String:
+                    delete m_value.asString;
+                    break;
+                case MediaConstraint::DataType::None:
+                    ASSERT_NOT_REACHED();
+                    break;
+                }
+            }
+#ifndef NDEBUG
+            m_value.asRaw = reinterpret_cast<MediaConstraint*>(0xbbadbeef);
+#endif
+        }
+
+        ConstraintHolder(ConstraintHolder&& other)
+        {
+            switch (other.dataType()) {
             case MediaConstraint::DataType::Integer:
-                delete m_value.asInteger;
+                m_value.asInteger = std::exchange(other.m_value.asInteger, nullptr);
                 break;
             case MediaConstraint::DataType::Double:
-                delete m_value.asDouble;
+                m_value.asDouble = std::exchange(other.m_value.asDouble, nullptr);
                 break;
             case MediaConstraint::DataType::Boolean:
-                delete m_value.asBoolean;
+                m_value.asBoolean = std::exchange(other.m_value.asBoolean, nullptr);
                 break;
             case MediaConstraint::DataType::String:
-                delete m_value.asString;
+                m_value.asString = std::exchange(other.m_value.asString, nullptr);
                 break;
             case MediaConstraint::DataType::None:
                 ASSERT_NOT_REACHED();
                 break;
             }
-
-#ifndef NDEBUG
-            m_value.asRaw = reinterpret_cast<MediaConstraint*>(0xbbadbeef);
-#endif
         }
 
         MediaConstraint& constraint() const { return *m_value.asRaw; }

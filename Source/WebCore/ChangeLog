@@ -1,3 +1,24 @@
+2017-02-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct memory leak in MediaConstraints
+        https://bugs.webkit.org/show_bug.cgi?id=167744
+        <rdar://problem/30331444>
+
+        Reviewed by Anders Carlsson.
+
+        ConstraintHolder returns a reference to an object created by operator new. When the
+        returned value is assigned or stored in Vector or other containers we leak memory.
+        Instead, this value should just be returned as a regular object so that the return
+        value optimization can make sure memory is properly (and efficiently) used.
+
+        Tested by existing mediastream tests.
+
+        * platform/mediastream/MediaConstraints.h:
+        (WebCore::FlattenedConstraint::ConstraintHolder::create): Return by value.
+        (WebCore::FlattenedConstraint::ConstraintHolder::~ConstraintHolder): Don't attempt to
+        delete memory that was moved away.
+        (WebCore::FlattenedConstraint::ConstraintHolder::ConstraintHolder): Add Move constructor.
+
 2017-02-03  Chris Dumez  <cdumez@apple.com>
 
         Fix bad assertion under HTMLTreeBuilder::processStartTagForInBody()
