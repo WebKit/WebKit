@@ -1,0 +1,12 @@
+Testing the SkipBackSupport behavior with live broadcast.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS media.duration is Number.POSITIVE_INFINITY
+PASS mediaController.controls.skipBackButton.enabled is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
