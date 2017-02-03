@@ -1562,7 +1562,8 @@ void WebPageProxy::dispatchActivityStateChange()
         m_process->responsivenessTimer().stop();
 
 #if ENABLE(POINTER_LOCK)
-    if (((changed & ActivityState::IsVisible) && !isViewVisible()) || ((changed & ActivityState::WindowIsActive) && !m_pageClient.isViewWindowActive()))
+    if (((changed & ActivityState::IsVisible) && !isViewVisible()) || ((changed & ActivityState::WindowIsActive) && !m_pageClient.isViewWindowActive())
+        || ((changed & ActivityState::IsFocused) && !(m_activityState & ActivityState::IsFocused)))
         requestPointerUnlock();
 #endif
 
@@ -6771,7 +6772,8 @@ void WebPageProxy::requestPointerLock()
     ASSERT(!m_isPointerLockPending);
     ASSERT(!m_isPointerLocked);
     m_isPointerLockPending = true;
-    if (!isViewVisible()) {
+
+    if (!isViewVisible() || !(m_activityState & ActivityState::IsFocused)) {
         didDenyPointerLock();
         return;
     }

@@ -1,3 +1,17 @@
+2017-02-03  Jeremy Jones  <jeremyj@apple.com>
+
+        Require keyboard focus for pointer lock.
+        https://bugs.webkit.org/show_bug.cgi?id=167750
+
+        Reviewed by Tim Horton.
+
+        When keyboard focus leaves the page, end pointer lock
+        Prevent pointer lock when the page doesn't have keyboard focus.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        (WebKit::WebPageProxy::requestPointerLock):
+
 2017-02-03  Anders Carlsson  <andersca@apple.com>
 
         Stash away the ports - they will be nulled out before the cancel handlers are called
