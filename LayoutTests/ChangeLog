@@ -1,3 +1,24 @@
+2017-02-03  Jeremy Jones  <jeremyj@apple.com>
+
+        Pointer lock events should be delivered directly to the target element
+        https://bugs.webkit.org/show_bug.cgi?id=167134
+        rdar://problem/30268004
+
+        Reviewed by Dean Jackson.
+
+        The pointer-lock/mouse-event-delivery.html test is modified to explicitly move the mouse pointer to a valid
+        location before sending mouse actions. Without this, the test infrastructure doesn't know that the pointer
+        is over the web view and doesn't deliver events.
+
+        The pointer-lock/mouse-event-delivery.html is also modified to explicitly wait for the delivery of the 
+        wheel event before continuing with the test. This prevents flakeyness with the order the events are received.
+
+        Added code to test for wheel events.
+
+        * platform/mac/TestExpectations: enabled test.
+        * pointer-lock/mouse-event-delivery.html:
+        * pointer-lock/mouse-event-delivery-expected.txt:
+
 2017-02-03  Yoav Weiss  <yoav@yoav.ws>
 
         Avoid evicting link preload resources when parsing is done.
