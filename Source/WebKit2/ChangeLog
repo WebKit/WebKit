@@ -1,3 +1,17 @@
+2017-02-03  Anders Carlsson  <andersca@apple.com>
+
+        Revert toString behavior to what we had in the last version we shipped
+        https://bugs.webkit.org/show_bug.cgi?id=167814
+        rdar://problem/30344753
+
+        Reviewed by Tim Horton.
+
+        This is a speculative fix for a crash that we've seen on recent builds. It simply reverts the toString call back to
+        what we have in the last version of Safari we shipped.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::convertJSValueToNPVariant):
+
 2017-02-03  Chris Dumez  <cdumez@apple.com>
 
         Dismiss HTML form validation popover when pressing Escape key
