@@ -599,7 +599,9 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken&& token)
         m_tree.openElements().bodyElement().remove();
         m_tree.openElements().popUntil(m_tree.openElements().bodyElement());
         m_tree.openElements().popHTMLBodyElement();
-        ASSERT(&m_tree.openElements().top() == &m_tree.openElements().htmlElement());
+        // Note: in the fragment case the root is a DocumentFragment instead of a proper html element which is a quirk / optimization in WebKit.
+        ASSERT(!isParsingFragment() || is<DocumentFragment>(m_tree.openElements().topNode()));
+        ASSERT(isParsingFragment() || &m_tree.openElements().top() == &m_tree.openElements().htmlElement());
         m_tree.insertHTMLElement(WTFMove(token));
         m_insertionMode = InsertionMode::InFrameset;
         return;

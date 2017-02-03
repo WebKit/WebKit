@@ -1,3 +1,34 @@
+2017-02-03  Chris Dumez  <cdumez@apple.com>
+
+        Fix bad assertion under HTMLTreeBuilder::processStartTagForInBody()
+        https://bugs.webkit.org/show_bug.cgi?id=167799
+        <rdar://problem/30237241>
+
+        Reviewed by Brent Fulgham.
+
+        Fix bad assertion under HTMLTreeBuilder::processStartTagForInBody() that was
+        expecting the root element to be an <html> element when parsing a <frameset>.
+        While this assertion is true in theory and as per the specification, it does
+        not hold in WebKit when parsing a DocumentFragment. This is because WebKit
+        has an optimization causing us to have a DocumentFragment as root element
+        when parsing a fragment. See the following constructor:
+        "HTMLTreeBuilder(HTMLDocumentParser&, DocumentFragment&, Element&, ParserContentPolicy, const HTMLParserOptions&)"
+
+        which has the following code:
+        """
+        // https://html.spec.whatwg.org/multipage/syntax.html#parsing-html-fragments
+        // For efficiency, we skip step 5 ("Let root be a new html element with no attributes") and instead use the DocumentFragment as a root node.
+        m_tree.openElements().pushRootNode(HTMLStackItem::create(fragment));
+        """
+
+        Update the assertion to expect a DocumentFragment as root element when parsing
+        a fragment, and keep expecting an <html> element otherwise.
+
+        Test: fast/parser/fragment-with-frameset-crash.html
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+
 2017-02-03  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Skip back button is visible with a live broadcast video
