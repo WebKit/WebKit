@@ -93,7 +93,7 @@ OSStatus AudioSampleDataSource::setupConverter()
 
     OSStatus err = AudioConverterNew(&m_inputDescription->streamDescription(), &m_outputDescription->streamDescription(), &m_converter);
     if (err)
-        LOG_ERROR("AudioSampleDataSource::setupConverter(%p) - AudioConverterNew returned error %d (%.4s)", this, err, (char*)&err);
+        LOG_ERROR("AudioSampleDataSource::setupConverter(%p) - AudioConverterNew returned error %d (%.4s)", this, (int)err, (char*)&err);
 
     return err;
 
@@ -201,7 +201,7 @@ void AudioSampleDataSource::pushSamples(const AudioStreamBasicDescription& sampl
     CMBlockBufferRef buffer = nullptr;
     OSStatus err = CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer, nullptr, bufferList, bufferSize, kCFAllocatorSystemDefault, kCFAllocatorSystemDefault, kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, &buffer);
     if (err) {
-        LOG_ERROR("AudioSampleDataSource::pushSamples(%p) - CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer returned error %d (%.4s)", this, err, (char*)&err);
+        LOG_ERROR("AudioSampleDataSource::pushSamples(%p) - CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer returned error %d (%.4s)", this, (int)err, (char*)&err);
         return;
     }
 
