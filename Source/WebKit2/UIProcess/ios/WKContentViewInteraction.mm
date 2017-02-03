@@ -582,7 +582,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 
 #if ENABLE(DATA_INTERACTION)
     _dataInteractionGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_dataInteractionGestureRecognizer:)]);
-    [_dataInteractionGestureRecognizer setDelay:0.25];
+    [_dataInteractionGestureRecognizer setDelay:0.5];
     [_dataInteractionGestureRecognizer setDelegate:self];
     [_dataInteractionGestureRecognizer _setRequiresQuietImpulse:YES];
     [self addGestureRecognizer:_dataInteractionGestureRecognizer.get()];
@@ -850,9 +850,6 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 
 - (BOOL)resignFirstResponder
 {
-#if ENABLE(DATA_INTERACTION)
-    _dataInteractionState.shouldHandleLongPressAction = NO;
-#endif
     // FIXME: Maybe we should call resignFirstResponder on the superclass
     // and do nothing if the return value is NO.
 

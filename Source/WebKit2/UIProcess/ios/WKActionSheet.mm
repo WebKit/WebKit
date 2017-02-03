@@ -37,6 +37,7 @@
     BOOL _isRotating;
     BOOL _readyToPresentAfterRotation;
 
+    RetainPtr<UIViewController> _currentPresentingViewController;
     RetainPtr<UIViewController> _presentedViewControllerWhileRotating;
     RetainPtr<id <UIPopoverPresentationControllerDelegate>> _popoverPresentationControllerDelegateWhileRotating;
 }
@@ -99,14 +100,18 @@
     if (_popoverPresentationControllerDelegateWhileRotating)
         presentationController.delegate = _popoverPresentationControllerDelegateWhileRotating.get();
 
-    UIViewController *presentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:view];
-    [presentingViewController presentViewController:presentedViewController animated:YES completion:NULL];
+    _currentPresentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:view];
+    [_currentPresentingViewController presentViewController:presentedViewController animated:YES completion:nil];
 
     return YES;
 }
 
 - (void)doneWithSheet
 {
+    if (_currentPresentingViewController)
+        [_currentPresentingViewController dismissViewControllerAnimated:YES completion:nil];
+
+    _currentPresentingViewController = nil;
     _presentedViewControllerWhileRotating = nil;
     _popoverPresentationControllerDelegateWhileRotating = nil;
 
