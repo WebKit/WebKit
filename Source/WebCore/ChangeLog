@@ -1,3 +1,28 @@
+2017-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add initial implementation of resource usage overlay
+        https://bugs.webkit.org/show_bug.cgi?id=167731
+
+        Reviewed by Michael Catanzaro.
+
+        Add an implementation of ResourceUsageOverlay and ResourceUsageThread for Linux systems.
+
+        * PlatformGTK.cmake: Add new new files to compilation.
+        * page/Page.cpp:
+        (WebCore::Page::setResourceUsageOverlayVisible): Do not create the page overlay if accelerated compositing is
+        not enabled.
+        * page/ResourceUsageOverlay.h:
+        * page/linux/ResourceUsageOverlayLinux.cpp: Added.
+        (WebCore::cpuUsageString):
+        (WebCore::formatByteNumber):
+        (WebCore::gcTimerString):
+        (WebCore::ResourceUsageOverlay::platformInitialize):
+        (WebCore::ResourceUsageOverlay::platformDestroy):
+        * page/linux/ResourceUsageThreadLinux.cpp: Added.
+        (WebCore::cpuPeriod):
+        (WebCore::cpuUsage):
+        (WebCore::ResourceUsageThread::platformThreadBody):
+
 2017-02-03  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer] Store preloaded media in webkit's cache

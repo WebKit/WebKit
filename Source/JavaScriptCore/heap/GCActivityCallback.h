@@ -59,7 +59,7 @@ public:
 
     static bool s_shouldCreateGCTimer;
 
-#if USE(CF) || PLATFORM(EFL)
+#if USE(CF) || USE(GLIB)
     double nextFireTime() const { return m_nextFireTime; }
 #endif
 

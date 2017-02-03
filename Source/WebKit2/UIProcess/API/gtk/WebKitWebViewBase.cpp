@@ -683,6 +683,15 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
+#if ENABLE(DEVELOPER_MODE) && OS(LINUX)
+    if ((keyEvent->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) && keyEvent->keyval == GDK_KEY_G) {
+        auto& preferences = priv->pageProxy->preferences();
+        preferences.setResourceUsageOverlayVisible(!preferences.resourceUsageOverlayVisible());
+        priv->shouldForwardNextKeyEvent = FALSE;
+        return TRUE;
+    }
+#endif
+
     if (priv->authenticationDialog)
         return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_press_event(widget, keyEvent);
 

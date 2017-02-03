@@ -123,6 +123,7 @@ void GCActivityCallback::scheduleTimer(double newDelay)
         return;
 
     m_delay = newDelay;
+    m_nextFireTime = WTF::currentTime() + newDelay;
     if (!m_delay) {
         g_source_set_ready_time(m_timer.get(), 0);
         return;
@@ -141,6 +142,7 @@ void GCActivityCallback::scheduleTimer(double newDelay)
 void GCActivityCallback::cancelTimer()
 {
     m_delay = -1;
+    m_nextFireTime = 0;
     g_source_set_ready_time(m_timer.get(), -1);
 }
 #endif

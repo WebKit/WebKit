@@ -2146,7 +2146,7 @@ void Page::setResourceUsageOverlayVisible(bool visible)
         return;
     }
 
-    if (!m_resourceUsageOverlay)
+    if (!m_resourceUsageOverlay && m_settings->acceleratedCompositingEnabled())
         m_resourceUsageOverlay = std::make_unique<ResourceUsageOverlay>(*this);
 }
 #endif
