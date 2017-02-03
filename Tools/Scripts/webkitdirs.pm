@@ -846,11 +846,6 @@ sub setArchitecture
     $architecture = $passedArchitecture if $passedArchitecture;
 }
 
-sub skipSafariExecutableEntitlementChecks
-{
-    return `defaults read /Library/Preferences/org.webkit.BuildConfiguration SkipSafariExecutableEntitlementChecks 2>/dev/null` eq "1\n";
-}
-
 sub executableHasEntitlements
 {
     my $executablePath = shift;
@@ -864,9 +859,8 @@ sub safariPathFromSafariBundle
     die "Safari path is only relevant on Apple Mac platform\n" unless isAppleMacWebKit();
 
     my $safariPath = "$safariBundle/Contents/MacOS/Safari";
-    return $safariPath if skipSafariExecutableEntitlementChecks();
-
     my $safariForWebKitDevelopmentPath = "$safariBundle/Contents/MacOS/SafariForWebKitDevelopment";
+
     return $safariForWebKitDevelopmentPath if -f $safariForWebKitDevelopmentPath && executableHasEntitlements($safariPath);
 
     return $safariPath;

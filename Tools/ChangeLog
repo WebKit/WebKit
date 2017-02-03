@@ -1,3 +1,15 @@
+2017-02-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove check for SkipSafariExecutableEntitlementChecks
+        https://bugs.webkit.org/show_bug.cgi?id=167762
+        rdar://problem/22480673
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkitdirs.pm:
+        (safariPathFromSafariBundle):
+        (skipSafariExecutableEntitlementChecks): Deleted.
+
 2017-02-02  Jonathan Bedard  <jbedard@apple.com>
 
         Undefined subroutine in svn-create-patch
