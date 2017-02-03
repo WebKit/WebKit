@@ -205,7 +205,6 @@ public:
     // DOM Level 2 Style Interface
 
     WEBCORE_EXPORT Ref<CSSStyleDeclaration> getComputedStyle(Element&, const String& pseudoElt) const;
-    ExceptionOr<RefPtr<CSSStyleDeclaration>> getComputedStyle(Document&, const String& pseudoElt);
 
     // WebKit extensions
 

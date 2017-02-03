@@ -52,7 +52,6 @@ WEBCORE_EXPORT bool isSafari();
 bool isSolidStateNetworksDownloader();
 WEBCORE_EXPORT bool isVersions();
 WEBCORE_EXPORT bool isHRBlock();
-WEBCORE_EXPORT bool isAppStore();
 
 } // MacApplication
 

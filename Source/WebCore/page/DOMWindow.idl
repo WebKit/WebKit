@@ -137,9 +137,6 @@
 
     [NewObject] CSSStyleDeclaration getComputedStyle(Element element, optional DOMString? pseudoElement = null);
 
-    // FIXME: Drop the following overload of getComputedStyle once <rdar://problem/28020681> has been fixed.
-    [NewObject, MayThrowException] CSSStyleDeclaration? getComputedStyle(Document document, optional DOMString? pseudoElement = null);
-
     CSSRuleList getMatchedCSSRules(optional Element? element = null, optional DOMString? pseudoElement = null);
 
     [Replaceable] readonly attribute unrestricted double devicePixelRatio;

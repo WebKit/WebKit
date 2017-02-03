@@ -1457,18 +1457,6 @@ Ref<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element& element, const Str
     return CSSComputedStyleDeclaration::create(element, false, pseudoElt);
 }
 
-// FIXME: Drop this overload once <rdar://problem/28016778> has been fixed.
-ExceptionOr<RefPtr<CSSStyleDeclaration>> DOMWindow::getComputedStyle(Document&, const String&)
-{
-#if PLATFORM(MAC)
-    if (MacApplication::isAppStore()) {
-        printErrorMessage(ASCIILiteral("Passing a non-Element as first parameter to window.getComputedStyle() is invalid and always returns null"));
-        return nullptr;
-    }
-#endif
-    return Exception { TypeError };
-}
-
 RefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const String& pseudoElement, bool authorOnly) const
 {
     if (!isCurrentlyDisplayedInFrame())
