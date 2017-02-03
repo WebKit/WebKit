@@ -293,6 +293,8 @@ public:
     String platformUserAgent(const WebCore::URL&) const;
     WebCore::KeyboardUIMode keyboardUIMode();
 
+    const String& overrideContentSecurityPolicy() const { return m_overrideContentSecurityPolicy; }
+
     WebUndoStep* webUndoStep(uint64_t);
     void addWebUndoStep(uint64_t, WebUndoStep*);
     void removeWebEditCommand(uint64_t);
@@ -1542,6 +1544,8 @@ private:
 #endif
 
     WebCore::UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { WebCore::UserInterfaceLayoutDirection::LTR };
+
+    const String m_overrideContentSecurityPolicy;
 };
 
 } // namespace WebKit

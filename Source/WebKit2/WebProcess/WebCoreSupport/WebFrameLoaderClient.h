@@ -179,7 +179,9 @@ private:
     void setTitle(const WebCore::StringWithDirection&, const WebCore::URL&) final;
     
     String userAgent(const WebCore::URL&) final;
-    
+
+    String overrideContentSecurityPolicy() const final;
+
     void savePlatformDataToCachedFrame(WebCore::CachedFrame*) final;
     void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*) final;
 #if PLATFORM(IOS)

@@ -362,6 +362,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_userActivity("Process suppression disabled for page.")
     , m_userActivityHysteresis([this](HysteresisState) { updateUserActivity(); })
     , m_userInterfaceLayoutDirection(parameters.userInterfaceLayoutDirection)
+    , m_overrideContentSecurityPolicy { parameters.overrideContentSecurityPolicy }
 {
     ASSERT(m_pageID);
 

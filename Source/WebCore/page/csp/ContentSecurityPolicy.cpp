@@ -110,6 +110,8 @@ ContentSecurityPolicy::~ContentSecurityPolicy()
 
 void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other) 
 {
+    if (m_hasAPIPolicy)
+        return;
     ASSERT(m_policies.isEmpty());
     for (auto& policy : other->m_policies)
         didReceiveHeader(policy->header(), policy->headerType(), ContentSecurityPolicy::PolicyFrom::Inherited);
@@ -177,6 +179,14 @@ void ContentSecurityPolicy::didReceiveHeaders(const ContentSecurityPolicyRespons
 
 void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecurityPolicyHeaderType type, ContentSecurityPolicy::PolicyFrom policyFrom)
 {
+    if (m_hasAPIPolicy)
+        return;
+
+    if (policyFrom == PolicyFrom::API) {
+        ASSERT(m_policies.isEmpty());
+        m_hasAPIPolicy = true;
+    }
+
     // RFC2616, section 4.2 specifies that headers appearing multiple times can
     // be combined with a comma. Walk the header string, and parse each comma
     // separated chunk as a separate header.

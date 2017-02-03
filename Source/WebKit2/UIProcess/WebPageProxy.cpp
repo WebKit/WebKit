@@ -343,6 +343,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_websiteDataStore(m_configuration->websiteDataStore()->websiteDataStore())
     , m_mainFrame(nullptr)
     , m_userAgent(standardUserAgent())
+    , m_overrideContentSecurityPolicy { m_configuration->overrideContentSecurityPolicy() }
     , m_treatsSHA1CertificatesAsInsecure(m_configuration->treatsSHA1SignedCertificatesAsInsecure())
 #if ENABLE(FULLSCREEN_API)
     , m_fullscreenClient(std::make_unique<API::FullscreenClient>())
@@ -5571,6 +5572,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.shouldScaleViewToFitDocument = m_shouldScaleViewToFitDocument;
     parameters.userInterfaceLayoutDirection = m_pageClient.userInterfaceLayoutDirection();
     parameters.observedLayoutMilestones = m_observedLayoutMilestones;
+    parameters.overrideContentSecurityPolicy = m_overrideContentSecurityPolicy;
 
     return parameters;
 }

@@ -256,6 +256,8 @@ public:
     virtual void setTitle(const StringWithDirection&, const URL&) = 0;
 
     virtual String userAgent(const URL&) = 0;
+
+    virtual String overrideContentSecurityPolicy() const { return String(); }
     
     virtual void savePlatformDataToCachedFrame(CachedFrame*) = 0;
     virtual void transitionToCommittedFromCachedFrame(CachedFrame*) = 0;

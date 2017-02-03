@@ -1,3 +1,46 @@
+2017-02-03  Daniel Bates  <dabates@apple.com>
+
+        [Mac][WK2] Add SPI to override the Content Security Policy of a page
+        https://bugs.webkit.org/show_bug.cgi?id=167810
+        <rdar://problem/30102568>
+
+        Reviewed by Anders Carlsson.
+
+        Add SPI to WKWebViewConfiguration so that an embedding client can define a custom Content Security
+        Policy that overrides the Content Security Policy of any page loaded in the web view.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode): Encode instance variable overrideContentSecurityPolicy.
+        (WebKit::WebPageCreationParameters::decode): Decode instance variable overrideContentSecurityPolicy.
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy): Copy instance variable overrideContentSecurityPolicy.
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::overrideContentSecurityPolicy): Added.
+        (API::PageConfiguration::setOverrideContentSecurityPolicy): Added.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Copy overrideContentSecurityPolicy set on the WKWebViewConfiguration
+        object to the API::PageConfiguration object if non-nil.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):  Copy the instance variable overrideContentSecurityPolicy.
+        (-[WKWebViewConfiguration _overrideContentSecurityPolicy]): Added.
+        (-[WKWebViewConfiguration _setOverrideContentSecurityPolicy:]): Added.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h: Define SPI property _overrideContentSecurityPolicy.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Initialize m_overrideContentSecurityPolicy from the passed
+        page configuration.
+        (WebKit::WebPageProxy::creationParameters): Set WebPageCreationParameters::overrideContentSecurityPolicy
+        so that the WebPage object (in the WebProcess) will know the overridden Content Security Policy
+        to apply to the document.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::overrideContentSecurityPolicy): Added. Returns the custom Content
+        Security Policy to apply to a new document.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::overrideContentSecurityPolicy): Added.
+
 2017-02-03  Anders Carlsson  <andersca@apple.com>
 
         Revert toString behavior to what we had in the last version we shipped

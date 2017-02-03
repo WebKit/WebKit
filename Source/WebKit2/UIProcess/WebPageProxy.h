@@ -1663,6 +1663,7 @@ private:
     String m_applicationNameForUserAgent;
     String m_customUserAgent;
     String m_customTextEncodingName;
+    String m_overrideContentSecurityPolicy;
 
     bool m_treatsSHA1CertificatesAsInsecure;
 

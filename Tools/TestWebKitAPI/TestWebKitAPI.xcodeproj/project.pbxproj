@@ -539,6 +539,11 @@
 		CE3524FA1B1443890028A7C5 /* input-focus-blur.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CE3524F51B142BBB0028A7C5 /* input-focus-blur.html */; };
 		CEA6CF2819CCF69D0064F5A7 /* open-and-close-window.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */; };
 		CEBABD491B71687C0051210A /* should-open-external-schemes.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEBABD481B71687C0051210A /* should-open-external-schemes.html */; };
+		CEBCA12F1E3A660100C73293 /* OverrideContentSecurityPolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEBCA12E1E3A660100C73293 /* OverrideContentSecurityPolicy.mm */; };
+		CEBCA1381E3A807A00C73293 /* page-with-csp.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEBCA1351E3A803400C73293 /* page-with-csp.html */; };
+		CEBCA1391E3A807A00C73293 /* page-with-csp-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEBCA1341E3A803400C73293 /* page-with-csp-iframe.html */; };
+		CEBCA13A1E3A807A00C73293 /* page-without-csp.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEBCA1371E3A803400C73293 /* page-without-csp.html */; };
+		CEBCA13B1E3A807A00C73293 /* page-without-csp-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEBCA1361E3A803400C73293 /* page-without-csp-iframe.html */; };
 		E1220DCA155B28AA0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E1220DC9155B287D0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html */; };
 		E194E1BD177E53C7009C4D4E /* StopLoadingFromDidReceiveResponse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E194E1BC177E534A009C4D4E /* StopLoadingFromDidReceiveResponse.html */; };
 		F415086D1DA040C50044BE9B /* play-audio-on-click.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F415086C1DA040C10044BE9B /* play-audio-on-click.html */; };
@@ -746,6 +751,10 @@
 				290A9BB91735F63800D71BBC /* OpenNewWindow.html in Copy Resources */,
 				A1C4FB731BACD1CA003742D0 /* pages.pages in Copy Resources */,
 				A57A34F216AF6B2B00C2501F /* PageVisibilityStateWithWindowChanges.html in Copy Resources */,
+				CEBCA1381E3A807A00C73293 /* page-with-csp.html in Copy Resources */,
+				CEBCA1391E3A807A00C73293 /* page-with-csp-iframe.html in Copy Resources */,
+				CEBCA13A1E3A807A00C73293 /* page-without-csp.html in Copy Resources */,
+				CEBCA13B1E3A807A00C73293 /* page-without-csp-iframe.html in Copy Resources */,
 				F6FDDDD614241C6F004F1729 /* push-state.html in Copy Resources */,
 				52B8CF9815868D9100281053 /* SetDocumentURI.html in Copy Resources */,
 				CEBABD491B71687C0051210A /* should-open-external-schemes.html in Copy Resources */,
@@ -1331,6 +1340,11 @@
 		CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenAndCloseWindow.mm; sourceTree = "<group>"; };
 		CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "open-and-close-window.html"; sourceTree = "<group>"; };
 		CEBABD481B71687C0051210A /* should-open-external-schemes.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "should-open-external-schemes.html"; sourceTree = "<group>"; };
+		CEBCA12E1E3A660100C73293 /* OverrideContentSecurityPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OverrideContentSecurityPolicy.mm; sourceTree = "<group>"; };
+		CEBCA1341E3A803400C73293 /* page-with-csp-iframe.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "page-with-csp-iframe.html"; sourceTree = "<group>"; };
+		CEBCA1351E3A803400C73293 /* page-with-csp.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "page-with-csp.html"; sourceTree = "<group>"; };
+		CEBCA1361E3A803400C73293 /* page-without-csp-iframe.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "page-without-csp-iframe.html"; sourceTree = "<group>"; };
+		CEBCA1371E3A803400C73293 /* page-without-csp.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "page-without-csp.html"; sourceTree = "<group>"; };
 		DC69AA621CF77C6500C6272F /* ScopedLambda.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedLambda.cpp; sourceTree = "<group>"; };
 		E1220D9F155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCacheDisableWithinResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		E1220DC9155B287D0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MemoryCacheDisableWithinResourceLoadDelegate.html; sourceTree = "<group>"; };
@@ -1545,6 +1559,7 @@
 				A10F047C1E3AD29C00C95E19 /* NSFileManagerExtras.mm */,
 				37A22AA51DCAA27200AFBFC4 /* ObservedRenderingProgressEventsAfterCrash.mm */,
 				CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */,
+				CEBCA12E1E3A660100C73293 /* OverrideContentSecurityPolicy.mm */,
 				C95501BE19AD2FAF0049BE3E /* Preferences.mm */,
 				5798E2AF1CAF5C2800C5CBA0 /* ProvisionalURLNotChange.mm */,
 				A1C4FB6C1BACCE50003742D0 /* QuickLook.mm */,
@@ -1728,6 +1743,10 @@
 				46C519E31D35629600DAA51A /* LocalStorageNullEntries.localstorage */,
 				46C519E41D35629600DAA51A /* LocalStorageNullEntries.localstorage-shm */,
 				7CCB99221D3B44E7003922F6 /* open-multiple-external-url.html */,
+				CEBCA1351E3A803400C73293 /* page-with-csp.html */,
+				CEBCA1341E3A803400C73293 /* page-with-csp-iframe.html */,
+				CEBCA1371E3A803400C73293 /* page-without-csp.html */,
+				CEBCA1361E3A803400C73293 /* page-without-csp-iframe.html */,
 				F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */,
 				515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */,
 				51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */,
@@ -2648,6 +2667,7 @@
 				376C8C061D6E197C007D2BB9 /* FrameHandle.cpp in Sources */,
 				7CCE7F051A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutFrames.cpp in Sources */,
 				7CCE7F251A411AF600447C4C /* OpenAndCloseWindow.mm in Sources */,
+				CEBCA12F1E3A660100C73293 /* OverrideContentSecurityPolicy.mm in Sources */,
 				7CCB4DA91C83AE7300CC6918 /* PageGroup.cpp in Sources */,
 				5769C50B1D9B0002000847FB /* SerializedCryptoKeyWrap.mm in Sources */,
 				7CCE7F071A411AE600447C4C /* PageLoadBasic.cpp in Sources */,

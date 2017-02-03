@@ -74,6 +74,7 @@ public:
     void didCreateWindowShell(JSDOMWindowShell&) const;
 
     enum class PolicyFrom {
+        API,
         HTTPEquivMeta,
         HTTPHeader,
         Inherited,
@@ -210,6 +211,7 @@ private:
     bool m_overrideInlineStyleAllowed { false };
     bool m_isReportingEnabled { true };
     bool m_upgradeInsecureRequests { false };
+    bool m_hasAPIPolicy { false };
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineScripts;
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineStylesheets;
     HashSet<RefPtr<SecurityOrigin>> m_insecureNavigationRequestsToUpgrade;
