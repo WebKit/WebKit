@@ -44,6 +44,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
+#include <bytecode/CodeBlock.h>
 #include <heap/StrongInlines.h>
 #include <runtime/JSInternalPromiseDeferred.h>
 #include <runtime/Microtask.h>

@@ -1,3 +1,20 @@
+2017-02-03  Alberto Garcia  <berto@igalia.com>
+
+        JSDOMWindowBase.cpp doesn't build if the JIT is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=167785
+
+        Reviewed by Carlos Garcia Campos.
+
+        r211403 moved GetCallerGlobalObjectFunctor from JSDOMBinding.cpp
+        to JSDOMWindowBase.cpp, but forgot to include bytecode/CodeBlock.h
+        in the latter file.
+
+        This breaks the build if the JIT is disabled because the headers
+        that would include ClodeBlock.h indirectly are guarded by
+        ENABLE(JIT).
+
+        * bindings/js/JSDOMWindowBase.cpp:
+
 2017-02-02  Andreas Kling  <akling@apple.com>
 
         [Mac] In-process memory pressure monitor for WebContent processes AKA websam
