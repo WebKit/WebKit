@@ -1,3 +1,26 @@
+2017-02-02  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser: Fix parsing invalid IPv4 addresses with non-ASCII characters
+        https://bugs.webkit.org/show_bug.cgi?id=167773
+        <rdar://problem/30221102>
+
+        Reviewed by Ryosuke Niwa.
+
+        If an invalid IPv4 address contains the first syntaxViolation (difference between input and canonicalized URL),
+        an iterator is used to calculate how far we have parsed in the input string to copy all the syntax-violation-free
+        characters into a Vector. If a URL contains only ASCII that doesn't contain anything percent-encoded in the host,
+        there is a fast path to parse ASCII hosts.  All my existing invalid IPv4 tests followed this path.
+        If there is a non-ASCII character, we need to use an iterator to the original string instead of an iterator
+        to the string after converting the input string's host to ASCII.
+
+        Covered by a new API test which used to RELEASE_ASSERT.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parseIPv4Host):
+        (WebCore::URLParser::parseIPv6Host):
+        (WebCore::URLParser::parseHostAndPort):
+        * platform/URLParser.h:
+
 2017-02-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         CrashTracer: [USER] com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::URL::host const + 9

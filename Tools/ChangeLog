@@ -1,3 +1,14 @@
+2017-02-02  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser: Fix parsing invalid IPv4 addresses with non-ASCII characters
+        https://bugs.webkit.org/show_bug.cgi?id=167773
+        <rdar://problem/30221102>
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2017-02-02  Alexey Proskuryakov  <ap@apple.com>
 
         Remove check for SkipSafariExecutableEntitlementChecks

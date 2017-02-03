@@ -2214,11 +2214,9 @@ ALWAYS_INLINE static uint64_t pow256(size_t exponent)
     return values[exponent];
 }
 
-template<typename CharacterType>
-std::optional<URLParser::IPv4Address> URLParser::parseIPv4Host(CodePointIterator<CharacterType> iterator)
+template<typename CharacterTypeForSyntaxViolation, typename CharacterType>
+std::optional<URLParser::IPv4Address> URLParser::parseIPv4Host(const CodePointIterator<CharacterTypeForSyntaxViolation>& iteratorForSyntaxViolationPosition, CodePointIterator<CharacterType> iterator)
 {
-    auto hostBegin = iterator;
-
     Vector<uint32_t, 4> items;
     items.reserveInitialCapacity(4);
     bool didSeeSyntaxViolation = false;
@@ -2255,14 +2253,14 @@ std::optional<URLParser::IPv4Address> URLParser::parseIPv4Host(CodePointIterator
         return std::nullopt;
 
     if (didSeeSyntaxViolation)
-        syntaxViolation(hostBegin);
+        syntaxViolation(iteratorForSyntaxViolationPosition);
     for (auto item : items) {
         if (item > 255)
-            syntaxViolation(hostBegin);
+            syntaxViolation(iteratorForSyntaxViolationPosition);
     }
 
     if (UNLIKELY(items.size() != 4))
-        syntaxViolation(hostBegin);
+        syntaxViolation(iteratorForSyntaxViolationPosition);
 
     IPv4Address ipv4 = items.takeLast();
     for (size_t counter = 0; counter < items.size(); ++counter)
@@ -2329,7 +2327,7 @@ template<typename CharacterType>
 std::optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<CharacterType> c)
 {
     ASSERT(*c == '[');
-    auto hostBegin = c;
+    const auto hostBegin = c;
     advance(c, hostBegin);
     if (c.atEnd())
         return std::nullopt;
@@ -2634,7 +2632,7 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
             if (isInvalidDomainCharacter(*iterator))
                 return false;
         }
-        if (auto address = parseIPv4Host(CodePointIterator<CharacterType>(hostIterator, iterator))) {
+        if (auto address = parseIPv4Host(hostIterator, CodePointIterator<CharacterType>(hostIterator, iterator))) {
             serializeIPv4(address.value());
             m_url.m_hostEnd = currentPosition(iterator);
             if (iterator.atEnd()) {
@@ -2659,7 +2657,7 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
         return true;
     }
     
-    auto hostBegin = iterator;
+    const auto hostBegin = iterator;
     
     Vector<LChar, defaultInlineBufferSize> utf8Encoded;
     for (; !iterator.atEnd(); ++iterator) {
@@ -2692,7 +2690,7 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
     Vector<LChar, defaultInlineBufferSize>& asciiDomainValue = asciiDomain.value();
     const LChar* asciiDomainCharacters = asciiDomainValue.data();
 
-    if (auto address = parseIPv4Host(CodePointIterator<LChar>(asciiDomainValue.begin(), asciiDomainValue.end()))) {
+    if (auto address = parseIPv4Host(hostBegin, CodePointIterator<LChar>(asciiDomainValue.begin(), asciiDomainValue.end()))) {
         serializeIPv4(address.value());
         m_url.m_hostEnd = currentPosition(iterator);
         if (iterator.atEnd()) {
