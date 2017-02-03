@@ -1,5 +1,14 @@
 2017-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix the buidl after r211631.
+
+        I added the OS(LINUX) ifdef to the wrong file by mistake.
+
+        * page/ResourceUsageThread.h:
+        * page/linux/ResourceUsageThreadLinux.cpp:
+
+2017-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add initial implementation of resource usage overlay
         https://bugs.webkit.org/show_bug.cgi?id=167731
 

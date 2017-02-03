@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ResourceUsageThread.h"
 
-#if ENABLE(RESOURCE_USAGE)
+#if ENABLE(RESOURCE_USAGE) && OS(LINUX)
 
 #include "CurrentProcessMemoryStatus.h"
 #include <errno.h>
@@ -168,4 +168,4 @@ void ResourceUsageThread::platformThreadBody(JSC::VM* vm, ResourceUsageData& dat
 
 } // namespace WebCore
 
-#endif // ENABLE(RESOURCE_USAGE)
+#endif // ENABLE(RESOURCE_USAGE) && OS(LINUX)

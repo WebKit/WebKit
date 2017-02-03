@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(RESOURCE_USAGE) && OS(LINUX)
+#if ENABLE(RESOURCE_USAGE)
 
 #include "ResourceUsageData.h"
 #include <array>
@@ -87,4 +87,4 @@ void logFootprintComparison(const std::array<TagInfo, 256>&, const std::array<Ta
 
 } // namespace WebCore
 
-#endif // ENABLE(RESOURCE_USAGE) && OS(LINUX)
+#endif // ENABLE(RESOURCE_USAGE)
