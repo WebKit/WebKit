@@ -181,19 +181,6 @@ void Connection::platformInitialize(Identifier identifier)
     m_xpcConnection = identifier.xpcConnection;
 }
 
-template<typename Function>
-static dispatch_source_t createReceiveSource(mach_port_t receivePort, WorkQueue& workQueue, Function&& function)
-{
-    dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, receivePort, 0, workQueue.dispatchQueue());
-    dispatch_source_set_event_handler(source, function);
-
-    dispatch_source_set_cancel_handler(source, ^{
-        mach_port_mod_refs(mach_task_self(), receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
-    });
-
-    return source;
-}
-
 bool Connection::open()
 {
     if (m_isServer) {
@@ -225,16 +212,23 @@ bool Connection::open()
     // Change the message queue length for the receive port.
     setMachPortQueueLength(m_receivePort, MACH_PORT_QLIMIT_LARGE);
 
-    // Register the data available handler.
     RefPtr<Connection> connection(this);
-    m_receiveSource = createReceiveSource(m_receivePort, m_connectionQueue, [connection] {
+    m_receiveSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_receivePort, 0, m_connectionQueue->dispatchQueue());
+    dispatch_source_set_event_handler(m_receiveSource, [connection] {
         connection->receiveSourceEventHandler();
+    });
+    dispatch_source_set_cancel_handler(m_receiveSource, [connection] {
+        mach_port_mod_refs(mach_task_self(), connection->m_receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
     });
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
     if (m_exceptionPort) {
-        m_exceptionPortDataAvailableSource = createReceiveSource(m_exceptionPort, m_connectionQueue, [connection] {
+        m_exceptionPortDataAvailableSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_exceptionPort, 0, m_connectionQueue->dispatchQueue());
+        dispatch_source_set_event_handler(m_exceptionPortDataAvailableSource, [connection] {
             connection->exceptionSourceEventHandler();
+        });
+        dispatch_source_set_cancel_handler(m_exceptionPortDataAvailableSource, [connection] {
+            mach_port_mod_refs(mach_task_self(), connection->m_exceptionPort, MACH_PORT_RIGHT_RECEIVE, -1);
         });
 
         auto encoder = std::make_unique<Encoder>("IPC", "SetExceptionPort", 0);
