@@ -47,7 +47,7 @@ PASS Parsing: <:23> against <http://example.org/foo/bar>
 PASS Parsing: </:23> against <http://example.org/foo/bar> 
 PASS Parsing: <::> against <http://example.org/foo/bar> 
 PASS Parsing: <::23> against <http://example.org/foo/bar> 
-FAIL Parsing: <foo://> against <http://example.org/foo/bar> assert_equals: href expected "foo:///" but got "foo://"
+PASS Parsing: <foo://> against <http://example.org/foo/bar> 
 PASS Parsing: <http://a:b@c:29/d> against <http://example.org/foo/bar> 
 PASS Parsing: <http::@c:29> against <http://example.org/foo/bar> 
 PASS Parsing: <http://&a:foo(b]c@d:2/> against <http://example.org/foo/bar> 
@@ -265,6 +265,8 @@ PASS Parsing: <http://GOO​⁠﻿goo.com> against <http://other.com/>
 PASS Parsing: <http://www.foo。bar.com> against <http://other.com/> 
 PASS Parsing: <http://﷐zyx.com> against <http://other.com/> 
 PASS Parsing: <http://%ef%b7%90zyx.com> against <http://other.com/> 
+PASS Parsing: <https://�> against <about:blank> 
+PASS Parsing: <https://%EF%BF%BD> against <about:blank> 
 PASS Parsing: <http://Ｇｏ.com> against <http://other.com/> 
 PASS Parsing: <http://％４１.com> against <http://other.com/> 
 PASS Parsing: <http://%ef%bc%85%ef%bc%94%ef%bc%91.com> against <http://other.com/> 
@@ -328,9 +330,32 @@ PASS Parsing: <about:/../> against <about:blank>
 PASS Parsing: <data:/../> against <about:blank> 
 PASS Parsing: <javascript:/../> against <about:blank> 
 PASS Parsing: <mailto:/../> against <about:blank> 
-FAIL Parsing: <sc://ñ.test/> against <about:blank> assert_equals: href expected "sc://xn--ida.test/" but got "sc://%C3%B1.test/"
+PASS Parsing: <sc://ñ.test/> against <about:blank> 
+PASS Parsing: <sc://!"$&'()*+,-.;<=>^_`{|}~/> against <about:blank> 
+FAIL Parsing: <sc://\0/> against <about:blank> assert_throws: function "function () {
+          bURL(expected.input, expected.bas..." did not throw
+FAIL Parsing: <sc:// /> against <about:blank> assert_throws: function "function () {
+          bURL(expected.input, expected.bas..." did not throw
+FAIL Parsing: <sc://%/> against <about:blank> assert_throws: function "function () {
+          bURL(expected.input, expected.bas..." did not throw
+PASS Parsing: <sc://@/> against <about:blank> 
+PASS Parsing: <sc://te@s:t@/> against <about:blank> 
+PASS Parsing: <sc://:/> against <about:blank> 
+PASS Parsing: <sc://:12/> against <about:blank> 
+PASS Parsing: <sc://[/> against <about:blank> 
+FAIL Parsing: <sc://\/> against <about:blank> assert_throws: function "function () {
+          bURL(expected.input, expected.bas..." did not throw
+FAIL Parsing: <sc://]/> against <about:blank> assert_throws: function "function () {
+          bURL(expected.input, expected.bas..." did not throw
+PASS Parsing: <x> against <sc://ñ> 
 PASS Parsing: <sc:\../> against <about:blank> 
 PASS Parsing: <sc::a@example.net> against <about:blank> 
+PASS Parsing: <ftp://example.com%80/> against <about:blank> 
+PASS Parsing: <ftp://example.com%A0/> against <about:blank> 
+PASS Parsing: <https://example.com%80/> against <about:blank> 
+PASS Parsing: <https://example.com%A0/> against <about:blank> 
+PASS Parsing: <ftp://%e2%98%83> against <about:blank> 
+PASS Parsing: <https://%e2%98%83> against <about:blank> 
 PASS Parsing: <http://127.0.0.1:10100/relative_import.html> against <about:blank> 
 PASS Parsing: <http://facebook.com/?foo=%7B%22abc%22> against <about:blank> 
 PASS Parsing: <https://localhost:3000/jqueryui@1.2.3> against <about:blank> 
@@ -366,6 +391,8 @@ FAIL Parsing: <http://0xffffffff1> against <http://other.com/> assert_throws: fu
 FAIL Parsing: <http://256.256.256.256> against <http://other.com/> assert_throws: function "function () {
           bURL(expected.input, expected.bas..." did not throw
 PASS Parsing: <http://256.256.256.256.256> against <http://other.com/> 
+PASS Parsing: <file:///C%3A/> against <about:blank> 
+PASS Parsing: <file:///C%7C/> against <about:blank> 
 PASS Parsing: <pix/submit.gif> against <file:///C:/Users/Domenic/Dropbox/GitHub/tmpvar/jsdom/test/level2/html/files/anchor.html> 
 FAIL Parsing: <..> against <file:///C:/> assert_equals: href expected "file:///C:/" but got "file:///"
 PASS Parsing: <..> against <file:///> 
@@ -375,4 +402,30 @@ FAIL Parsing: <//d:/..> against <file:///C:/a/b> assert_equals: href expected "f
 PASS Parsing: <..> against <file:///ab:/> 
 PASS Parsing: <..> against <file:///1:/> 
 PASS Parsing: <http://[1:0::]> against <http://example.net/> 
+FAIL Parsing: <http://?> against <about:blank> assert_throws: function "function () {
+          bURL(expected.input, expected.bas..." did not throw
+FAIL Parsing: <http://#> against <about:blank> assert_throws: function "function () {
+          bURL(expected.input, expected.bas..." did not throw
+PASS Parsing: <sc://ñ> against <about:blank> 
+PASS Parsing: <sc://ñ?x> against <about:blank> 
+PASS Parsing: <sc://ñ#x> against <about:blank> 
+PASS Parsing: <#x> against <sc://ñ> 
+PASS Parsing: <?x> against <sc://ñ> 
+PASS Parsing: <sc://?> against <about:blank> 
+PASS Parsing: <sc://#> against <about:blank> 
+FAIL Parsing: <///> against <sc://x/> Type error
+FAIL Parsing: <////> against <sc://x/> Type error
+FAIL Parsing: <////x/> against <sc://x/> assert_equals: href expected "sc:////x/" but got "sc://x/"
+PASS Parsing: <tftp://foobar.com/someconfig;mode=netascii> against <about:blank> 
+PASS Parsing: <telnet://user:pass@foobar.com:23/> against <about:blank> 
+PASS Parsing: <ut2004://10.10.10.10:7777/Index.ut2> against <about:blank> 
+PASS Parsing: <redis://foo:bar@somehost:6379/0?baz=bam&qux=baz> against <about:blank> 
+PASS Parsing: <rsync://foo@host:911/sup> against <about:blank> 
+PASS Parsing: <git://github.com/foo/bar.git> against <about:blank> 
+PASS Parsing: <irc://myserver.com:6999/channel?passwd> against <about:blank> 
+PASS Parsing: <dns://fw.example.org:9999/foo.bar.org?type=TXT> against <about:blank> 
+PASS Parsing: <ldap://localhost:389/ou=People,o=JNDITutorial> against <about:blank> 
+PASS Parsing: <git+https://github.com/foo/bar> against <about:blank> 
+PASS Parsing: <urn:ietf:rfc:2648> against <about:blank> 
+PASS Parsing: <tag:joe@example.org,2001:foo/bar> against <about:blank> 
 

@@ -1,3 +1,30 @@
+2017-02-02  Alex Christensen  <achristensen@webkit.org>
+
+        Update URL web platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=167777
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-origin-expected.txt:
+        * web-platform-tests/url/a-element-origin-xhtml-expected.txt:
+        * web-platform-tests/url/a-element-origin-xhtml.xhtml:
+        * web-platform-tests/url/a-element-origin.html:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/a-element-xhtml.xhtml:
+        * web-platform-tests/url/a-element.html:
+        * web-platform-tests/url/setters_tests.json:
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/url-origin-expected.txt:
+        * web-platform-tests/url/url-setters-expected.txt:
+        * web-platform-tests/url/urlencoded-parser-expected.txt: Added.
+        * web-platform-tests/url/urlencoded-parser.html: Added.
+        * web-platform-tests/url/urlsearchparams-constructor-expected.txt:
+        * web-platform-tests/url/urlsearchparams-constructor.html:
+        * web-platform-tests/url/urlsearchparams-sort-expected.txt:
+        * web-platform-tests/url/urlsearchparams-sort.html:
+        * web-platform-tests/url/urltestdata.json:
+
 2017-02-02  Chris Dumez  <cdumez@apple.com>
 
         {}.toString.call(crossOriginWindow) should return "[object Object]"

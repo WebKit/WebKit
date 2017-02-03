@@ -245,8 +245,12 @@ PASS Origin parsing: <data:/../> against <about:blank>
 PASS Origin parsing: <javascript:/../> against <about:blank> 
 FAIL Origin parsing: <mailto:/../> against <about:blank> assert_equals: origin expected "null" but got "mailto://"
 FAIL Origin parsing: <sc://ñ.test/> against <about:blank> assert_equals: origin expected "null" but got "sc://%c3%b1.test"
+FAIL Origin parsing: <sc://!"$&'()*+,-.;<=>^_`{|}~/> against <about:blank> assert_equals: origin expected "null" but got "sc://%1f!\"$&'()*+,-.;<=>^_`{|}~"
+FAIL Origin parsing: <x> against <sc://ñ> assert_equals: origin expected "null" but got "sc://%c3%b1"
 FAIL Origin parsing: <sc:\../> against <about:blank> assert_equals: origin expected "null" but got "sc://"
 FAIL Origin parsing: <sc::a@example.net> against <about:blank> assert_equals: origin expected "null" but got "sc://"
+FAIL Origin parsing: <ftp://%e2%98%83> against <about:blank> assert_equals: origin expected "ftp://☃" but got "ftp://xn--n3h"
+FAIL Origin parsing: <https://%e2%98%83> against <about:blank> assert_equals: origin expected "https://☃" but got "https://xn--n3h"
 PASS Origin parsing: <http://127.0.0.1:10100/relative_import.html> against <about:blank> 
 PASS Origin parsing: <http://facebook.com/?foo=%7B%22abc%22> against <about:blank> 
 PASS Origin parsing: <https://localhost:3000/jqueryui@1.2.3> against <about:blank> 
@@ -273,4 +277,21 @@ PASS Origin parsing: <http://4294967295> against <http://other.com/>
 PASS Origin parsing: <http://0xffffffff> against <http://other.com/> 
 PASS Origin parsing: <http://256.256.256.256.256> against <http://other.com/> 
 PASS Origin parsing: <http://[1:0::]> against <http://example.net/> 
+FAIL Origin parsing: <sc://ñ> against <about:blank> assert_equals: origin expected "null" but got "sc://%c3%b1"
+FAIL Origin parsing: <sc://ñ?x> against <about:blank> assert_equals: origin expected "null" but got "sc://%c3%b1"
+FAIL Origin parsing: <sc://ñ#x> against <about:blank> assert_equals: origin expected "null" but got "sc://%c3%b1"
+FAIL Origin parsing: <#x> against <sc://ñ> assert_equals: origin expected "null" but got "sc://%c3%b1"
+FAIL Origin parsing: <?x> against <sc://ñ> assert_equals: origin expected "null" but got "sc://%c3%b1"
+FAIL Origin parsing: <tftp://foobar.com/someconfig;mode=netascii> against <about:blank> assert_equals: origin expected "null" but got "tftp://foobar.com"
+FAIL Origin parsing: <telnet://user:pass@foobar.com:23/> against <about:blank> assert_equals: origin expected "null" but got "telnet://foobar.com:23"
+FAIL Origin parsing: <ut2004://10.10.10.10:7777/Index.ut2> against <about:blank> assert_equals: origin expected "null" but got "ut2004://10.10.10.10:7777"
+FAIL Origin parsing: <redis://foo:bar@somehost:6379/0?baz=bam&qux=baz> against <about:blank> assert_equals: origin expected "null" but got "redis://somehost:6379"
+FAIL Origin parsing: <rsync://foo@host:911/sup> against <about:blank> assert_equals: origin expected "null" but got "rsync://host:911"
+FAIL Origin parsing: <git://github.com/foo/bar.git> against <about:blank> assert_equals: origin expected "null" but got "git://github.com"
+FAIL Origin parsing: <irc://myserver.com:6999/channel?passwd> against <about:blank> assert_equals: origin expected "null" but got "irc://myserver.com:6999"
+FAIL Origin parsing: <dns://fw.example.org:9999/foo.bar.org?type=TXT> against <about:blank> assert_equals: origin expected "null" but got "dns://fw.example.org:9999"
+FAIL Origin parsing: <ldap://localhost:389/ou=People,o=JNDITutorial> against <about:blank> assert_equals: origin expected "null" but got "ldap://localhost:389"
+FAIL Origin parsing: <git+https://github.com/foo/bar> against <about:blank> assert_equals: origin expected "null" but got "git+https://github.com"
+FAIL Origin parsing: <urn:ietf:rfc:2648> against <about:blank> assert_equals: origin expected "null" but got "urn://"
+FAIL Origin parsing: <tag:joe@example.org,2001:foo/bar> against <about:blank> assert_equals: origin expected "null" but got "tag://"
 
