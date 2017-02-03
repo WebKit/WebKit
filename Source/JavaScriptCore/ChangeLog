@@ -1,3 +1,9 @@
+2017-02-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed typo fix after r211630.
+
+        * CMakeLists.txt:
+
 2017-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add initial implementation of resource usage overlay
