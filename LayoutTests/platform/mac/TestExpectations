@@ -1471,8 +1471,6 @@ media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ S
 # This one always times out on the bots, cannot reproduce locally.
 webkit.org/b/165234 media/modern-media-controls/audio/audio-controls-buttons.html [ Skip ]
 
-webkit.org/b/165290 media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside.html [ Pass Timeout ]
-
 webkit.org/b/167263 media/modern-media-controls/media-controller/media-controller-auto-hide.html [ Pass Failure ]
 
 webkit.org/b/167275 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Pass Failure ]
