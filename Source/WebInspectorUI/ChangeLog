@@ -1,3 +1,13 @@
+2017-02-03  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add stroke-linecap property values to CSS autocompletion
+        https://bugs.webkit.org/show_bug.cgi?id=167778
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        Add autocompletion values for fill-rule and stroke-linecap.
+
 2017-02-02  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: can't jump from Search Tab result to see resource in other tabs (Resource, Debugger, Network)

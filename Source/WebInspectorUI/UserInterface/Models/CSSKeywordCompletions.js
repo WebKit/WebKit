@@ -170,6 +170,12 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "clear": [
         "none", "left", "right", "both"
     ],
+    "fill-rule": [
+        "nonzero", "evenodd"
+    ],
+    "stroke-linecap": [
+        "butt", "round", "square"
+    ],
     "stroke-linejoin": [
         "round", "miter", "bevel"
     ],
