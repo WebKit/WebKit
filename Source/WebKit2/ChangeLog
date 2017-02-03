@@ -1,5 +1,13 @@
 2017-02-03  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Mac][cmake] One more unreviewed speculative buildfix after r211403.
+        https://bugs.webkit.org/show_bug.cgi?id=165478
+
+        * UIProcess/API/Cocoa/WKWebView.mm: WebSQLiteDatabaseTrackerClient.h is an iOS specific
+        header in platform/ios directory which shouldn't and can't be included on non iOS build.
+
+2017-02-03  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Mac][cmake] Unreviewed speculative buildfix after r211403.
         https://bugs.webkit.org/show_bug.cgi?id=165478
 
