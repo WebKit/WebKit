@@ -95,6 +95,12 @@ void MainFrame::dropChildren()
         tree().removeChild(*child);
 }
 
+void MainFrame::didCompleteLoad()
+{
+    m_timeOfLastCompletedLoad = MonotonicTime::now();
+    performanceLogging().didReachPointOfInterest(PerformanceLogging::MainFrameLoadCompleted);
+}
+
 #if PLATFORM(MAC)
 ScrollLatchingState* MainFrame::latchingState()
 {

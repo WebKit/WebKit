@@ -1,3 +1,19 @@
+2017-02-02  Andreas Kling  <akling@apple.com>
+
+        [Mac] In-process memory pressure monitor for WebContent processes AKA websam
+        <https://webkit.org/b/167491>
+        <rdar://problem/30116072>
+
+        Reviewed by Antti Koivisto.
+
+        Add a WTF helper function for getting the current process's memory footprint.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/MemoryFootprint.cpp:
+        (WTF::memoryFootprint):
+        * wtf/MemoryFootprint.h:
+
 2017-02-02  Mark Lam  <mark.lam@apple.com>
 
         Add a SIGILL crash analyzer to make debugging SIGILLs easier.

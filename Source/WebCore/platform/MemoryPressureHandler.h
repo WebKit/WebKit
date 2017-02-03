@@ -34,15 +34,15 @@
 #include <wtf/Forward.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
+#include <wtf/RunLoop.h>
 
 #if PLATFORM(IOS)
 #include <wtf/Lock.h>
 #include <wtf/ThreadingPrimitives.h>
-#elif OS(LINUX)
-#include <wtf/RunLoop.h>
+#endif
+
 #if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
-#endif
 #endif
 
 namespace WebCore {
@@ -54,6 +54,13 @@ enum MemoryPressureReason {
     MemoryPressureReasonVMStatus = 1 << 1,
 };
 #endif
+
+enum class MemoryUsagePolicy {
+    Unrestricted, // Allocate as much as you want
+    Conservative, // Maybe you don't cache every single thing
+    Strict, // Time to start pinching pennies for real
+    Panic, // OH GOD WE'RE SINKING, THROW EVERYTHING OVERBOARD
+};
 
 enum class Critical { No, Yes };
 enum class Synchronous { No, Yes };
@@ -68,12 +75,24 @@ public:
 
     WEBCORE_EXPORT void install();
 
+    WEBCORE_EXPORT void setShouldUsePeriodicMemoryMonitor(bool);
+
+    void setMemoryKillCallback(WTF::Function<void()> function) { m_memoryKillCallback = WTFMove(function); }
+    void setProcessIsEligibleForMemoryKillCallback(WTF::Function<bool()> function) { m_processIsEligibleForMemoryKillCallback = WTFMove(function); }
+
     void setLowMemoryHandler(LowMemoryHandler&& handler)
     {
         m_lowMemoryHandler = WTFMove(handler);
     }
 
-    bool isUnderMemoryPressure() const { return m_underMemoryPressure || m_isSimulatingMemoryPressure; }
+    bool isUnderMemoryPressure() const
+    {
+        return m_underMemoryPressure
+#if PLATFORM(MAC)
+            || m_memoryUsagePolicy >= MemoryUsagePolicy::Strict
+#endif
+            || m_isSimulatingMemoryPressure;
+    }
     void setUnderMemoryPressure(bool b) { m_underMemoryPressure = b; }
 
 #if PLATFORM(IOS)
@@ -149,6 +168,9 @@ private:
     void respondToMemoryPressure(Critical, Synchronous = Synchronous::No);
     void platformReleaseMemory(Critical);
 
+    NO_RETURN_DUE_TO_CRASH void didExceedMemoryLimitAndFailedToRecover();
+    void measurementTimerFired();
+
 #if OS(LINUX)
     class EventFDPoller {
         WTF_MAKE_NONCOPYABLE(EventFDPoller); WTF_MAKE_FAST_ALLOCATED;
@@ -170,11 +192,15 @@ private:
 #endif
 
     bool m_installed { false };
-    time_t m_lastRespondTime { 0 };
     LowMemoryHandler m_lowMemoryHandler;
 
     std::atomic<bool> m_underMemoryPressure;
     bool m_isSimulatingMemoryPressure { false };
+
+    std::unique_ptr<RunLoop::Timer<MemoryPressureHandler>> m_measurementTimer;
+    MemoryUsagePolicy m_memoryUsagePolicy { MemoryUsagePolicy::Unrestricted };
+    WTF::Function<void()> m_memoryKillCallback;
+    WTF::Function<bool()> m_processIsEligibleForMemoryKillCallback;
 
 #if PLATFORM(IOS)
     // FIXME: Can we share more of this with OpenSource?

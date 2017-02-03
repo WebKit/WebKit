@@ -64,6 +64,7 @@ set(WTF_HEADERS
     MallocPtr.h
     MathExtras.h
     MediaTime.h
+    MemoryFootprint.h
     MessageQueue.h
     MetaAllocator.h
     MetaAllocatorHandle.h
@@ -204,6 +205,7 @@ set(WTF_SOURCES
     MD5.cpp
     MainThread.cpp
     MediaTime.cpp
+    MemoryFootprint.cpp
     MetaAllocator.cpp
     MonotonicTime.cpp
     NumberOfCores.cpp
