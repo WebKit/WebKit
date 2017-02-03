@@ -88,6 +88,7 @@
 #include "TextIterator.h"
 #include "UserGestureIndicator.h"
 #include "UserTypingGestureIndicator.h"
+#include "ValidationMessageClient.h"
 #include "VisibleUnits.h"
 #include "WheelEvent.h"
 #include "WheelEventDeltaFilter.h"
@@ -3099,6 +3100,13 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
         m_frame.page()->pointerLockController().requestPointerUnlockAndForceCursorVisible();
     }
 #endif
+
+    if (initialKeyEvent.type() == PlatformEvent::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE) {
+        if (auto* page = m_frame.page()) {
+            if (auto* validationMessageClient = page->validationMessageClient())
+                validationMessageClient->hideAnyValidationMessage();
+        }
+    }
 
 #if ENABLE(FULLSCREEN_API)
     if (m_frame.document()->webkitIsFullScreen()) {

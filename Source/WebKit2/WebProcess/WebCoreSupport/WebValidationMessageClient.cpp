@@ -74,6 +74,16 @@ void WebValidationMessageClient::hideValidationMessage(const Element& anchor)
     m_page.send(Messages::WebPageProxy::HideValidationMessage());
 }
 
+void WebValidationMessageClient::hideAnyValidationMessage()
+{
+    if (!m_currentAnchor)
+        return;
+
+    m_currentAnchor = nullptr;
+    m_currentAnchorRect = { };
+    m_page.send(Messages::WebPageProxy::HideValidationMessage());
+}
+
 bool WebValidationMessageClient::isValidationMessageVisible(const Element& anchor)
 {
     return m_currentAnchor == &anchor;

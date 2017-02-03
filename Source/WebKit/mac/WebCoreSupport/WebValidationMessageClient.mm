@@ -70,6 +70,16 @@ void WebValidationMessageClient::hideValidationMessage(const Element& anchor)
     [m_view hideFormValidationMessage];
 }
 
+void WebValidationMessageClient::hideAnyValidationMessage()
+{
+    if (!m_currentAnchor)
+        return;
+
+    m_currentAnchor = nullptr;
+    m_currentAnchorRect = { };
+    [m_view hideFormValidationMessage];
+}
+
 bool WebValidationMessageClient::isValidationMessageVisible(const Element& anchor)
 {
     return m_currentAnchor == &anchor;

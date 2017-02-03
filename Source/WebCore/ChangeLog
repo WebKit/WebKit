@@ -1,3 +1,20 @@
+2017-02-03  Chris Dumez  <cdumez@apple.com>
+
+        Dismiss HTML form validation popover when pressing Escape key
+        https://bugs.webkit.org/show_bug.cgi?id=167716
+        <rdar://problem/29872943>
+
+        Reviewed by Simon Fraser.
+
+        Dismiss any visible HTML form validation popover when pressing
+        the Escape key.
+
+        Test: fast/forms/validation-bubble-escape-key-dismiss.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+        * page/ValidationMessageClient.h:
+
 2017-02-03  Jeremy Jones  <jeremyj@apple.com>
 
         Pointer lock events should be delivered directly to the target element
