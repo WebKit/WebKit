@@ -142,10 +142,6 @@
 		073794FE19F5864E00E5A045 /* RTCNotifiersMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794F819F5864E00E5A045 /* RTCNotifiersMock.h */; };
 		07394EC81BAB2CCD00BE99CD /* MediaDevicesRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07394EC71BAB2CCD00BE99CD /* MediaDevicesRequest.cpp */; };
 		07394ECA1BAB2CD700BE99CD /* MediaDevicesRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		073B87661E4385AC0071C0EC /* AudioSampleBufferList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073B87621E43859D0071C0EC /* AudioSampleBufferList.cpp */; };
-		073B87671E4385AC0071C0EC /* AudioSampleBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87631E43859D0071C0EC /* AudioSampleBufferList.h */; };
-		073B87681E4385AC0071C0EC /* AudioSampleDataSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073B87641E43859D0071C0EC /* AudioSampleDataSource.cpp */; };
-		073B87691E4385AC0071C0EC /* AudioSampleDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87651E43859D0071C0EC /* AudioSampleDataSource.h */; };
 		073BE34017D17E01002BD431 /* JSNavigatorUserMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073BE33E17D17E01002BD431 /* JSNavigatorUserMedia.cpp */; };
 		073BE34117D17E01002BD431 /* JSNavigatorUserMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 073BE33F17D17E01002BD431 /* JSNavigatorUserMedia.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		073BE34E17D180B2002BD431 /* RTCSessionDescriptionDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221BAB17CF0AD400848E51 /* RTCSessionDescriptionDescriptor.cpp */; };
@@ -7240,10 +7236,6 @@
 		073B87561E40DCE50071C0EC /* AudioStreamDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioStreamDescription.h; sourceTree = "<group>"; };
 		073B87571E40DCFD0071C0EC /* CAAudioStreamDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CAAudioStreamDescription.cpp; sourceTree = "<group>"; };
 		073B87581E40DCFD0071C0EC /* CAAudioStreamDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAudioStreamDescription.h; sourceTree = "<group>"; };
-		073B87621E43859D0071C0EC /* AudioSampleBufferList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSampleBufferList.cpp; sourceTree = "<group>"; };
-		073B87631E43859D0071C0EC /* AudioSampleBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleBufferList.h; sourceTree = "<group>"; };
-		073B87641E43859D0071C0EC /* AudioSampleDataSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSampleDataSource.cpp; sourceTree = "<group>"; };
-		073B87651E43859D0071C0EC /* AudioSampleDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleDataSource.h; sourceTree = "<group>"; };
 		073BE33E17D17E01002BD431 /* JSNavigatorUserMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorUserMedia.cpp; sourceTree = "<group>"; };
 		073BE33F17D17E01002BD431 /* JSNavigatorUserMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorUserMedia.h; sourceTree = "<group>"; };
 		0744ECEB1E0C4AE5000D0944 /* MockRealtimeAudioSourceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockRealtimeAudioSourceMac.h; sourceTree = "<group>"; };
@@ -24868,6 +24860,7 @@
 		FD31604012B026A300C1A359 /* audio */ = {
 			isa = PBXGroup;
 			children = (
+				073B87561E40DCE50071C0EC /* AudioStreamDescription.h */,
 				CD669D651D232DF4004D1866 /* cocoa */,
 				CD0EEE0D14743E48003EAFA2 /* ios */,
 				FD3160B012B0270700C1A359 /* mac */,
@@ -24894,7 +24887,6 @@
 				CDA79821170A22DC00D45C55 /* AudioSession.h */,
 				FD31605312B026F700C1A359 /* AudioSourceProvider.h */,
 				FD62F52D145898D80094B0ED /* AudioSourceProviderClient.h */,
-				073B87561E40DCE50071C0EC /* AudioStreamDescription.h */,
 				FD31605412B026F700C1A359 /* AudioUtilities.cpp */,
 				FD31605512B026F700C1A359 /* AudioUtilities.h */,
 				FD31605612B026F700C1A359 /* Biquad.cpp */,
@@ -24961,10 +24953,6 @@
 		FD3160B012B0270700C1A359 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				073B87621E43859D0071C0EC /* AudioSampleBufferList.cpp */,
-				073B87631E43859D0071C0EC /* AudioSampleBufferList.h */,
-				073B87641E43859D0071C0EC /* AudioSampleDataSource.cpp */,
-				073B87651E43859D0071C0EC /* AudioSampleDataSource.h */,
 				FD3160B512B0272A00C1A359 /* AudioBusMac.mm */,
 				FD3160B612B0272A00C1A359 /* AudioDestinationMac.cpp */,
 				FD3160B712B0272A00C1A359 /* AudioDestinationMac.h */,
@@ -25529,7 +25517,6 @@
 				2D8FEBDD143E3EF70072502B /* CSSCrossfadeValue.h in Headers */,
 				AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */,
 				9444CBE41D8861990073A074 /* CSSCustomIdentValue.h in Headers */,
-				073B87691E4385AC0071C0EC /* AudioSampleDataSource.h in Headers */,
 				BC779E141BB215BB00CAA8BF /* CSSCustomPropertyValue.h in Headers */,
 				4A9CC81816BB9AC600EC645A /* CSSDefaultStyleSheets.h in Headers */,
 				94476BDB1DFCAC0300690E23 /* CSSDeferredParser.h in Headers */,
@@ -26711,7 +26698,6 @@
 				6C4C96DF1AD4483500363F64 /* JSReadableByteStreamController.h in Headers */,
 				7C4C96DD1AD4483500365A50 /* JSReadableStream.h in Headers */,
 				6C4C96DF1AD4483500365A50 /* JSReadableStreamDefaultController.h in Headers */,
-				073B87671E4385AC0071C0EC /* AudioSampleBufferList.h in Headers */,
 				7C4C96DF1AD4483500365A50 /* JSReadableStreamDefaultReader.h in Headers */,
 				4129DF861BB5B80C00322A16 /* JSReadableStreamPrivateConstructors.h in Headers */,
 				7E4C96DD1AD4483500365A51 /* JSReadableStreamSource.h in Headers */,
@@ -28398,6 +28384,7 @@
 				BE913D80181EF92400DCB09E /* TrackPrivateBase.h in Headers */,
 				FFAC30FE184FB145008C4F1E /* TrailingObjects.h in Headers */,
 				516071321BD8308B00DBC4F2 /* TransactionOperation.h in Headers */,
+				07C046C21E425022007201E7 /* AudioSampleDataSource.h in Headers */,
 				49E911C40EF86D47009D0CAF /* TransformationMatrix.h in Headers */,
 				FB484F4D171F821E00040755 /* TransformFunctions.h in Headers */,
 				49E911CE0EF86D47009D0CAF /* TransformOperation.h in Headers */,
@@ -29982,7 +29969,6 @@
 				51F798EF1BE880E7008AE491 /* IDBIndexInfo.cpp in Sources */,
 				51E269361DD3BD97006B6A58 /* IDBIterateCursorData.cpp in Sources */,
 				5185FC941BB4C4E80012898F /* IDBKey.cpp in Sources */,
-				073B87661E4385AC0071C0EC /* AudioSampleBufferList.cpp in Sources */,
 				5185FC961BB4C4E80012898F /* IDBKeyData.cpp in Sources */,
 				5185FC981BB4C4E80012898F /* IDBKeyPath.cpp in Sources */,
 				5185FC9A1BB4C4E80012898F /* IDBKeyRange.cpp in Sources */,
@@ -29991,7 +29977,6 @@
 				5160712E1BD8307800DBC4F2 /* IDBObjectStoreInfo.cpp in Sources */,
 				5185FCA31BB4C4E80012898F /* IDBOpenDBRequest.cpp in Sources */,
 				5185FCA81BB4C4E80012898F /* IDBRequest.cpp in Sources */,
-				073B87681E4385AC0071C0EC /* AudioSampleDataSource.cpp in Sources */,
 				514129981C6976900059E714 /* IDBRequestCompletionEvent.cpp in Sources */,
 				510A58F91BACC7F200C19282 /* IDBRequestData.cpp in Sources */,
 				5145B1091BC48E2E00E86219 /* IDBResourceIdentifier.cpp in Sources */,
@@ -30508,6 +30493,7 @@
 				E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */,
 				FDA15EB112B03EE1003A583A /* JSPannerNode.cpp in Sources */,
 				E51A81DF17298D7700BFCA61 /* JSPerformance.cpp in Sources */,
+				07C046C11E425022007201E7 /* AudioSampleDataSource.cpp in Sources */,
 				CB38FD511CCF938900592A3F /* JSPerformanceEntry.cpp in Sources */,
 				CB38FD571CD21E2A00592A3F /* JSPerformanceEntryCustom.cpp in Sources */,
 				A58C59D01E382EAC0047859C /* JSPerformanceMark.cpp in Sources */,
