@@ -300,6 +300,7 @@ fast/events/mouse-force-up.html [ Skip ]
 
 # testRunner.setPageVisibility is not implemented for iOS
 webkit.org/b/165799 fast/events/page-visibility-onvisibilitychange.html [ Skip ]
+webkit.org/b/165799 svg/animations/animations-paused-page-non-visible.html [ Skip ]
 
 # AutoFill button is not supported
 fast/forms/auto-fill-button/mouse-down-input-mouse-release-auto-fill-button.html

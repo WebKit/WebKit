@@ -81,6 +81,7 @@
 #include "RenderWidget.h"
 #include "ResourceUsageOverlay.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SVGDocumentExtensions.h"
 #include "SchemeRegistry.h"
 #include "ScriptController.h"
 #include "ScrollingCoordinator.h"
@@ -1531,6 +1532,24 @@ void Page::setIsVisible(bool isVisible)
         setActivityState((m_activityState & ~(ActivityState::IsVisible | ActivityState::IsVisibleOrOccluded)) | ActivityState::IsVisuallyIdle);
 }
 
+enum class SVGAnimationsState { Paused, Resumed };
+static inline void setSVGAnimationsState(Page& page, SVGAnimationsState state)
+{
+    for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* document = frame->document();
+        if (!document)
+            continue;
+
+        if (!document->svgExtensions())
+            continue;
+
+        if (state == SVGAnimationsState::Paused)
+            document->accessSVGExtensions().pauseAnimations();
+        else
+            document->accessSVGExtensions().unpauseAnimations();
+    }
+}
+
 void Page::setIsVisibleInternal(bool isVisible)
 {
     // FIXME: The visibility state should be stored on the top-level document.
@@ -1550,6 +1569,8 @@ void Page::setIsVisibleInternal(bool isVisible)
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
             mainFrame().animation().resumeAnimations();
 
+        setSVGAnimationsState(*this, SVGAnimationsState::Resumed);
+
         resumeAnimatingImages();
     }
 
@@ -1563,6 +1584,8 @@ void Page::setIsVisibleInternal(bool isVisible)
     if (!isVisible) {
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
             mainFrame().animation().suspendAnimations();
+
+        setSVGAnimationsState(*this, SVGAnimationsState::Paused);
 
 #if PLATFORM(IOS)
         suspendDeviceMotionAndOrientationUpdates();

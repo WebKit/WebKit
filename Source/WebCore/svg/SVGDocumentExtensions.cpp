@@ -102,12 +102,14 @@ void SVGDocumentExtensions::pauseAnimations()
 {
     for (auto& container : m_timeContainers)
         container->pauseAnimations();
+    m_areAnimationsPaused = true;
 }
 
 void SVGDocumentExtensions::unpauseAnimations()
 {
     for (auto& container : m_timeContainers)
         container->unpauseAnimations();
+    m_areAnimationsPaused = false;
 }
 
 void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements()

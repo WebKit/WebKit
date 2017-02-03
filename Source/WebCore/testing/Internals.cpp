@@ -113,6 +113,7 @@
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
 #include "ResourceLoadObserver.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGPathStringBuilder.h"
 #include "SchemeRegistry.h"
 #include "ScriptedAnimationController.h"
@@ -496,6 +497,18 @@ InternalSettings* Internals::settings() const
 unsigned Internals::workerThreadCount() const
 {
     return WorkerThread::workerThreadCount();
+}
+
+bool Internals::areSVGAnimationsPaused() const
+{
+    auto* document = contextDocument();
+    if (!document)
+        return false;
+
+    if (!document->svgExtensions())
+        return false;
+
+    return document->accessSVGExtensions().areAnimationsPaused();
 }
 
 String Internals::address(Node& node)

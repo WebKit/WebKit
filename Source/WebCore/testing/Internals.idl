@@ -246,6 +246,8 @@ enum EventThrottlingBehavior {
     readonly attribute InternalSettings settings;
     readonly attribute unsigned long workerThreadCount;
 
+    readonly attribute boolean areSVGAnimationsPaused;
+
     // Flags for layerTreeAsText.
     const unsigned short LAYER_TREE_INCLUDES_VISIBLE_RECTS = 1;
     const unsigned short LAYER_TREE_INCLUDES_TILE_CACHES = 2;
