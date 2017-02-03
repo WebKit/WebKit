@@ -26,6 +26,7 @@
 #include "DebugHeap.h"
 #include "BAssert.h"
 #include "BPlatform.h"
+#include <cstdlib>
 #include <thread>
 
 namespace bmalloc {
