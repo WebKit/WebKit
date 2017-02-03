@@ -1,3 +1,11 @@
+2017-02-02  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix after r211602
+        https://bugs.webkit.org/show_bug.cgi?id=167758
+
+        * Source/Makefile:
+        Don't build libwebrtc by default.  It's not used yet anyway.
+
 2017-02-02  David Kilzer  <ddkilzer@apple.com>
 
         Make the Makefile great again after r211570, r211572
