@@ -150,10 +150,11 @@ enum URLCharacterClass {
     QueryPercent = 0x8,
     SlashQuestionOrHash = 0x10,
     ValidScheme = 0x20,
+    ForbiddenHost = 0x40,
 };
 
 static const uint8_t characterClassTable[256] = {
-    UserInfo | Default | InvalidDomain | QueryPercent, // 0x0
+    UserInfo | Default | InvalidDomain | QueryPercent | ForbiddenHost, // 0x0
     UserInfo | Default | QueryPercent, // 0x1
     UserInfo | Default | QueryPercent, // 0x2
     UserInfo | Default | QueryPercent, // 0x3
@@ -162,11 +163,11 @@ static const uint8_t characterClassTable[256] = {
     UserInfo | Default | QueryPercent, // 0x6
     UserInfo | Default | QueryPercent, // 0x7
     UserInfo | Default | QueryPercent, // 0x8
-    UserInfo | Default | InvalidDomain | QueryPercent, // 0x9
-    UserInfo | Default | InvalidDomain | QueryPercent, // 0xA
+    UserInfo | Default | InvalidDomain | QueryPercent | ForbiddenHost, // 0x9
+    UserInfo | Default | InvalidDomain | QueryPercent | ForbiddenHost, // 0xA
     UserInfo | Default | QueryPercent, // 0xB
     UserInfo | Default | QueryPercent, // 0xC
-    UserInfo | Default | InvalidDomain | QueryPercent, // 0xD
+    UserInfo | Default | InvalidDomain | QueryPercent | ForbiddenHost, // 0xD
     UserInfo | Default | QueryPercent, // 0xE
     UserInfo | Default | QueryPercent, // 0xF
     UserInfo | Default | QueryPercent, // 0x10
@@ -185,12 +186,12 @@ static const uint8_t characterClassTable[256] = {
     UserInfo | Default | QueryPercent, // 0x1D
     UserInfo | Default | QueryPercent, // 0x1E
     UserInfo | Default | QueryPercent, // 0x1F
-    UserInfo | Default | InvalidDomain | QueryPercent, // ' '
+    UserInfo | Default | InvalidDomain | QueryPercent | ForbiddenHost, // ' '
     0, // '!'
     UserInfo | Default | QueryPercent, // '"'
-    UserInfo | Default | InvalidDomain | QueryPercent | SlashQuestionOrHash, // '#'
+    UserInfo | Default | InvalidDomain | QueryPercent | SlashQuestionOrHash | ForbiddenHost, // '#'
     0, // '$'
-    InvalidDomain, // '%'
+    InvalidDomain | ForbiddenHost, // '%'
     0, // '&'
     0, // '''
     0, // '('
@@ -200,7 +201,7 @@ static const uint8_t characterClassTable[256] = {
     0, // ','
     ValidScheme, // '-'
     ValidScheme, // '.'
-    UserInfo | InvalidDomain | SlashQuestionOrHash, // '/'
+    UserInfo | InvalidDomain | SlashQuestionOrHash | ForbiddenHost, // '/'
     ValidScheme, // '0'
     ValidScheme, // '1'
     ValidScheme, // '2'
@@ -211,13 +212,13 @@ static const uint8_t characterClassTable[256] = {
     ValidScheme, // '7'
     ValidScheme, // '8'
     ValidScheme, // '9'
-    UserInfo | InvalidDomain, // ':'
+    UserInfo | InvalidDomain | ForbiddenHost, // ':'
     UserInfo, // ';'
     UserInfo | Default | QueryPercent, // '<'
     UserInfo, // '='
     UserInfo | Default | QueryPercent, // '>'
-    UserInfo | Default | InvalidDomain | SlashQuestionOrHash, // '?'
-    UserInfo | InvalidDomain, // '@'
+    UserInfo | Default | InvalidDomain | SlashQuestionOrHash | ForbiddenHost, // '?'
+    UserInfo | InvalidDomain | ForbiddenHost, // '@'
     ValidScheme, // 'A'
     ValidScheme, // 'B'
     ValidScheme, // 'C'
@@ -244,9 +245,9 @@ static const uint8_t characterClassTable[256] = {
     ValidScheme, // 'X'
     ValidScheme, // 'Y'
     ValidScheme, // 'Z'
-    UserInfo | InvalidDomain, // '['
-    UserInfo | InvalidDomain | SlashQuestionOrHash, // '\\'
-    UserInfo | InvalidDomain, // ']'
+    UserInfo | InvalidDomain | ForbiddenHost, // '['
+    UserInfo | InvalidDomain | SlashQuestionOrHash | ForbiddenHost, // '\\'
+    UserInfo | InvalidDomain | ForbiddenHost, // ']'
     UserInfo, // '^'
     0, // '_'
     UserInfo | Default, // '`'
@@ -421,6 +422,7 @@ template<typename CharacterType> ALWAYS_INLINE static bool isInvalidDomainCharac
 template<typename CharacterType> ALWAYS_INLINE static bool isPercentOrNonASCII(CharacterType character) { return !isASCII(character) || character == '%'; }
 template<typename CharacterType> ALWAYS_INLINE static bool isSlashQuestionOrHash(CharacterType character) { return character <= '\\' && characterClassTable[character] & SlashQuestionOrHash; }
 template<typename CharacterType> ALWAYS_INLINE static bool isValidSchemeCharacter(CharacterType character) { return character <= 'z' && characterClassTable[character] & ValidScheme; }
+template<typename CharacterType> ALWAYS_INLINE static bool isForbiddenHostCodePoint(CharacterType character) { return character <= ']' && characterClassTable[character] & ForbiddenHost; }
 static bool shouldPercentEncodeQueryByte(uint8_t byte) { return characterClassTable[byte] & QueryPercent; }
 
 template<typename CharacterType, URLParser::ReportSyntaxViolation reportSyntaxViolation>
@@ -2612,6 +2614,8 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
             }
             if (*iterator == ':')
                 break;
+            if (UNLIKELY(isForbiddenHostCodePoint(*iterator)))
+                return false;
             utf8PercentEncode<isInSimpleEncodeSet>(iterator);
         }
         m_url.m_hostEnd = currentPosition(iterator);

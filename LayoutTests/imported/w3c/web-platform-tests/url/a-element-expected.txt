@@ -327,16 +327,16 @@ PASS Parsing: <javascript:/../> against <about:blank>
 PASS Parsing: <mailto:/../> against <about:blank> 
 PASS Parsing: <sc://ñ.test/> against <about:blank> 
 PASS Parsing: <sc://!"$&'()*+,-.;<=>^_`{|}~/> against <about:blank> 
-FAIL Parsing: <sc://\0/> against <about:blank> assert_unreached: Expected URL to fail parsing Reached unreachable code
-FAIL Parsing: <sc:// /> against <about:blank> assert_unreached: Expected URL to fail parsing Reached unreachable code
-FAIL Parsing: <sc://%/> against <about:blank> assert_unreached: Expected URL to fail parsing Reached unreachable code
+PASS Parsing: <sc://\0/> against <about:blank> 
+PASS Parsing: <sc:// /> against <about:blank> 
+PASS Parsing: <sc://%/> against <about:blank> 
 PASS Parsing: <sc://@/> against <about:blank> 
 PASS Parsing: <sc://te@s:t@/> against <about:blank> 
 PASS Parsing: <sc://:/> against <about:blank> 
 PASS Parsing: <sc://:12/> against <about:blank> 
 PASS Parsing: <sc://[/> against <about:blank> 
-FAIL Parsing: <sc://\/> against <about:blank> assert_unreached: Expected URL to fail parsing Reached unreachable code
-FAIL Parsing: <sc://]/> against <about:blank> assert_unreached: Expected URL to fail parsing Reached unreachable code
+PASS Parsing: <sc://\/> against <about:blank> 
+PASS Parsing: <sc://]/> against <about:blank> 
 PASS Parsing: <x> against <sc://ñ> 
 PASS Parsing: <sc:\../> against <about:blank> 
 PASS Parsing: <sc::a@example.net> against <about:blank> 
