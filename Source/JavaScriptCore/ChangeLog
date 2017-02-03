@@ -1,3 +1,10 @@
+2017-02-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [cmake] Unreviewed AArch64 buildfix after r211603.
+        https://bugs.webkit.org/show_bug.cgi?id=167714
+
+        * CMakeLists.txt:
+
 2017-02-02  Andreas Kling  <akling@apple.com>
 
         [Mac] In-process memory pressure monitor for WebContent processes AKA websam
