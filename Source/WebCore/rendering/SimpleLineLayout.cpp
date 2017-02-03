@@ -383,20 +383,23 @@ static float computeLineLeft(ETextAlign textAlign, float availableWidth, float c
     return 0;
 }
 
-static void revertRuns(Layout::RunVector& runs, unsigned length, float width)
+static void revertRuns(Layout::RunVector& runs, unsigned positionToRevertTo, float width)
 {
-    while (length) {
-        ASSERT(runs.size());
-        Run& lastRun = runs.last();
-        unsigned lastRunLength = lastRun.end - lastRun.start;
-        if (lastRunLength > length) {
+    while (runs.size()) {
+        auto& lastRun = runs.last();
+        if (lastRun.end <= positionToRevertTo)
+            break;
+        if (lastRun.start >= positionToRevertTo) {
+            // Revert this run completely.
+            width -= (lastRun.logicalRight - lastRun.logicalLeft);
+            runs.removeLast();
+        } else {
             lastRun.logicalRight -= width;
-            lastRun.end -= length;
+            width = 0;
+            lastRun.end = positionToRevertTo;
+            // Partial removal.
             break;
         }
-        length -= lastRunLength;
-        width -= (lastRun.logicalRight - lastRun.logicalLeft);
-        runs.removeLast();
     }
 }
 
@@ -517,7 +520,7 @@ public:
         }
         ASSERT(m_lastFragment.isValid());
         m_runsWidth -= m_uncompletedWidth;
-        revertRuns(runs, endPositionForCollapsedFragment(m_lastFragment) - endPositionForCollapsedFragment(m_lastCompleteFragment), m_uncompletedWidth);
+        revertRuns(runs, endPositionForCollapsedFragment(m_lastCompleteFragment), m_uncompletedWidth);
         m_uncompletedWidth = 0;
         ASSERT(m_lastCompleteFragment.isValid());
         return m_lastCompleteFragment;
@@ -527,8 +530,7 @@ public:
     {
         if (m_lastFragment.type() != TextFragmentIterator::TextFragment::Whitespace || m_lastFragment.end() == m_lastNonWhitespaceFragment.end())
             return;
-        unsigned trailingWhitespaceLength = endPositionForCollapsedFragment(m_lastFragment) - m_lastNonWhitespaceFragment.end();
-        revertRuns(runs, trailingWhitespaceLength, m_trailingWhitespaceWidth);
+        revertRuns(runs, m_lastNonWhitespaceFragment.end(), m_trailingWhitespaceWidth);
         m_runsWidth -= m_trailingWhitespaceWidth;
         m_lastFragment = m_lastNonWhitespaceFragment;
     }

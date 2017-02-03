@@ -1,3 +1,14 @@
+2017-02-03  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Removing adjacent trailing whitespace runs should not crash.
+        https://bugs.webkit.org/show_bug.cgi?id=167803
+        <rdar://problem/30337368>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/simple-line-layout-multiple-trailingwhitespace-crash-expected.txt: Added.
+        * fast/text/simple-line-layout-multiple-trailingwhitespace-crash.html: Added.
+
 2017-02-03  Chris Dumez  <cdumez@apple.com>
 
         Fix bad assertion under HTMLTreeBuilder::processStartTagForInBody()
