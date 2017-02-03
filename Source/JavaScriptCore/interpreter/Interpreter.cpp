@@ -727,11 +727,15 @@ static inline JSObject* checkedReturn(JSObject* returnValue)
     return returnValue;
 }
 
-JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, JSObject* thisObj)
+JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFrame, JSObject* thisObj)
 {
     JSScope* scope = thisObj->globalObject()->globalScope();
     VM& vm = *scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    ProgramExecutable* program = ProgramExecutable::create(callFrame, source);
+    ASSERT(throwScope.exception() || program);
+    RETURN_IF_EXCEPTION(throwScope, { });
 
     ASSERT(!throwScope.exception());
     ASSERT(!vm.isCollectorBusyOnCurrentThread());

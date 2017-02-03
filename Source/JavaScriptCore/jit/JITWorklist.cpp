@@ -36,9 +36,9 @@ namespace JSC {
 
 class JITWorklist::Plan : public ThreadSafeRefCounted<JITWorklist::Plan> {
 public:
-    Plan(CodeBlock* codeBlock)
+    Plan(CodeBlock* codeBlock, unsigned loopOSREntryBytecodeOffset)
         : m_codeBlock(codeBlock)
-        , m_jit(codeBlock->vm(), codeBlock)
+        , m_jit(codeBlock->vm(), codeBlock, loopOSREntryBytecodeOffset)
     {
         m_jit.doMainThreadPreparationBeforeCompile();
     }
@@ -83,9 +83,9 @@ public:
         return m_isFinishedCompiling;
     }
     
-    static void compileNow(CodeBlock* codeBlock)
+    static void compileNow(CodeBlock* codeBlock, unsigned loopOSREntryBytecodeOffset)
     {
-        Plan plan(codeBlock);
+        Plan plan(codeBlock, loopOSREntryBytecodeOffset);
         plan.compileInThread();
         plan.finalize();
     }
@@ -219,7 +219,7 @@ void JITWorklist::poll(VM& vm)
     finalizePlans(myPlans);
 }
 
-void JITWorklist::compileLater(CodeBlock* codeBlock)
+void JITWorklist::compileLater(CodeBlock* codeBlock, unsigned loopOSREntryBytecodeOffset)
 {
     DeferGC deferGC(codeBlock->vm()->heap);
     RELEASE_ASSERT(codeBlock->jitType() == JITCode::InterpreterThunk);
@@ -230,7 +230,7 @@ void JITWorklist::compileLater(CodeBlock* codeBlock)
     }
     
     if (!Options::useConcurrentJIT()) {
-        Plan::compileNow(codeBlock);
+        Plan::compileNow(codeBlock, loopOSREntryBytecodeOffset);
         return;
     }
     
@@ -244,7 +244,7 @@ void JITWorklist::compileLater(CodeBlock* codeBlock)
         
         if (m_numAvailableThreads) {
             m_planned.add(codeBlock);
-            RefPtr<Plan> plan = adoptRef(new Plan(codeBlock));
+            RefPtr<Plan> plan = adoptRef(new Plan(codeBlock, loopOSREntryBytecodeOffset));
             m_plans.append(plan);
             m_queue.append(plan);
             m_condition->notifyAll(locker);
@@ -268,10 +268,10 @@ void JITWorklist::compileLater(CodeBlock* codeBlock)
     // This works around the issue. If the concurrent JIT thread is convoyed, we revert to main
     // thread compiles. This is probably not as good as if we had multiple JIT threads. Maybe we
     // can do that someday.
-    Plan::compileNow(codeBlock);
+    Plan::compileNow(codeBlock, loopOSREntryBytecodeOffset);
 }
 
-void JITWorklist::compileNow(CodeBlock* codeBlock)
+void JITWorklist::compileNow(CodeBlock* codeBlock, unsigned loopOSREntryBytecodeOffset)
 {
     DeferGC deferGC(codeBlock->vm()->heap);
     if (codeBlock->jitType() != JITCode::InterpreterThunk)
@@ -298,7 +298,7 @@ void JITWorklist::compileNow(CodeBlock* codeBlock)
     codeBlock->resetJITData();
     
     // OK, just compile it.
-    JIT::compile(codeBlock->vm(), codeBlock, JITCompilationMustSucceed);
+    JIT::compile(codeBlock->vm(), codeBlock, JITCompilationMustSucceed, loopOSREntryBytecodeOffset);
     codeBlock->ownerScriptExecutable()->installCode(codeBlock);
 }
 

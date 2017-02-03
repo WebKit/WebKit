@@ -129,7 +129,7 @@ namespace JSC {
 
         bool isOpcode(Opcode);
 
-        JSValue execute(ProgramExecutable*, CallFrame*, JSObject* thisObj);
+        JSValue executeProgram(const SourceCode&, CallFrame*, JSObject* thisObj);
         JSValue executeCall(CallFrame*, JSObject* function, CallType, const CallData&, JSValue thisValue, const ArgList&);
         JSObject* executeConstruct(CallFrame*, JSObject* function, ConstructType, const ConstructData&, const ArgList&, JSValue newTarget);
         JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, JSScope*);
