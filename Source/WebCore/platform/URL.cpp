@@ -1377,7 +1377,7 @@ String URL::serialize(bool omitFragment) const
         }
     } else if (protocolIs("file"))
         urlBuilder.appendLiteral("//");
-    if (cannotBeABaseURL(*this))
+    if (WebCore::cannotBeABaseURL(*this))
         urlBuilder.append(m_string, m_portEnd, m_pathEnd - m_portEnd);
     else {
         urlBuilder.appendLiteral("/");
