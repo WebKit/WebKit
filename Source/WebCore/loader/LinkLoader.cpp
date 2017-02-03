@@ -180,6 +180,7 @@ std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const Lin
     resourceRequest.setIgnoreForRequestCount(true);
     CachedResourceRequest linkRequest(WTFMove(resourceRequest), CachedResourceLoader::defaultCachedResourceOptions(), CachedResource::defaultPriorityForResourceType(type.value()));
     linkRequest.setInitiator("link");
+    linkRequest.setIsLinkPreload();
 
     linkRequest.setAsPotentiallyCrossOrigin(crossOriginMode, document);
     CachedResourceHandle<CachedResource> cachedLinkResource = document.cachedResourceLoader().preload(type.value(), WTFMove(linkRequest));
@@ -203,6 +204,8 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
         auto resourceClient = preloadIfNeeded(relAttribute, href, document, as, crossOrigin, this, &m_client);
         if (resourceClient)
             m_preloadResourceClient = WTFMove(resourceClient);
+        else if (m_preloadResourceClient)
+            m_preloadResourceClient->clear();
     }
 
 #if ENABLE(LINK_PREFETCH)

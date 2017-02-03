@@ -5062,8 +5062,8 @@ void Document::finishedParsing()
     static const int timeToKeepSharedObjectPoolAliveAfterParsingFinishedInSeconds = 10;
     m_sharedObjectPoolClearTimer.startOneShot(timeToKeepSharedObjectPoolAliveAfterParsingFinishedInSeconds);
 
-    // Parser should have picked up all preloads by now
-    m_cachedResourceLoader->clearPreloads();
+    // Parser should have picked up all speculative preloads by now
+    m_cachedResourceLoader->clearPreloads(CachedResourceLoader::ClearPreloadsMode::ClearSpeculativePreloads);
 }
 
 void Document::clearSharedObjectPool()

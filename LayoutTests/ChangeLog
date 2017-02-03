@@ -1,3 +1,16 @@
+2017-02-03  Yoav Weiss  <yoav@yoav.ws>
+
+        Avoid evicting link preload resources when parsing is done.
+        https://bugs.webkit.org/show_bug.cgi?id=167415
+
+        Reviewed by Ryosuke Niwa.
+
+        * http/tests/preload/dynamic_remove_preload_href.html: Test passed before for the wrong reasons. Cache-busting in order for it to genuinely pass.
+        * http/tests/preload/not_delaying_window_onload_before_discovery.html: Test passed before for the wrong reasons. Cache-busting in order for it to genuinely pass.
+        * http/tests/preload/not_evicting_preload_at_onload-expected.txt: Added.
+        * http/tests/preload/not_evicting_preload_at_onload.html: Added.
+        * platform/mac/TestExpectations: Skipping http/tests/preload/dynamic_removing_preload.html due to https://bugs.webkit.org/show_bug.cgi?id=167792
+
 2017-02-03  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Removing adjacent trailing whitespace runs should not crash.

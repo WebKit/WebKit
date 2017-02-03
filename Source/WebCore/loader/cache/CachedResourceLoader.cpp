@@ -140,7 +140,7 @@ CachedResourceLoader::~CachedResourceLoader()
     m_documentLoader = nullptr;
     m_document = nullptr;
 
-    clearPreloads();
+    clearPreloads(ClearPreloadsMode::ClearAllPreloads);
     for (auto& resource : m_documentResources.values())
         resource->setOwningCachedResourceLoader(nullptr);
 
@@ -741,6 +741,9 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     if (request.allowsCaching())
         resource = memoryCache.resourceForRequest(request.resourceRequest(), sessionID());
 
+    if (resource && request.isLinkPreload() && !resource->isLinkPreload())
+        resource->setLinkPreload();
+
     logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::memoryCacheUsageKey(), resource ? DiagnosticLoggingKeys::inMemoryCacheKey() : DiagnosticLoggingKeys::notInMemoryCacheKey());
 
     RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get(), forPreload, defer);
@@ -1243,7 +1246,7 @@ bool CachedResourceLoader::isPreloaded(const String& urlString) const
     return false;
 }
 
-void CachedResourceLoader::clearPreloads()
+void CachedResourceLoader::clearPreloads(ClearPreloadsMode mode)
 {
 #if PRELOAD_DEBUG
     printPreloadStats();
@@ -1252,12 +1255,16 @@ void CachedResourceLoader::clearPreloads()
         return;
 
     for (auto* resource : *m_preloads) {
+        if (mode == ClearPreloadsMode::ClearSpeculativePreloads && resource->isLinkPreload())
+            continue;
         resource->decreasePreloadCount();
         bool deleted = resource->deleteIfPossible();
         if (!deleted && resource->preloadResult() == CachedResource::PreloadNotReferenced)
             MemoryCache::singleton().remove(*resource);
+        m_preloads->remove(resource);
     }
-    m_preloads = nullptr;
+    if (!m_preloads->size())
+        m_preloads = nullptr;
 }
 
 #if PRELOAD_DEBUG

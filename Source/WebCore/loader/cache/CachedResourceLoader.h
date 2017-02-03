@@ -128,7 +128,8 @@ public:
     int requestCount() const { return m_requestCount; }
 
     WEBCORE_EXPORT bool isPreloaded(const String& urlString) const;
-    void clearPreloads();
+    enum class ClearPreloadsMode { ClearSpeculativePreloads, ClearAllPreloads };
+    void clearPreloads(ClearPreloadsMode);
     CachedResourceHandle<CachedResource> preload(CachedResource::Type, CachedResourceRequest&&);
     void printPreloadStats();
 

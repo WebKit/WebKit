@@ -1,3 +1,43 @@
+2017-02-03  Yoav Weiss  <yoav@yoav.ws>
+
+        Avoid evicting link preload resources when parsing is done.
+        https://bugs.webkit.org/show_bug.cgi?id=167415
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently all preloads (speculative and link preload) are being cleared when the document has finished parsing.
+        When it comes to link preloads, it can result in resources being cleared before the page had a chance to use them. (e.g. resources
+        that are preloaded in order to be loaded through script after DOMContentLoaded)
+
+        This patch fixes that by marking link preload resources as such, so that they can be handled separately inside clearPreloads().
+        As this fix also exposed an issue with load cancelation with invalid hrefs (which tests were passing before due to the preloads
+        being cleared), said issue is also fixed by clearing previousely preloaded resources if an invalid link preload is later detected.
+
+        Test: http/tests/preload/not_evicting_preload_at_onload.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::finishedParsing): Only clear speculative preloads when parsing is finished.
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::preloadIfNeeded): Set request flag indicating link preload.
+        (WebCore::LinkLoader::loadLink): Clear previousely preloaded resource to cancel their load.
+        * loader/LinkPreloadResourceClients.h:
+        (WebCore::LinkPreloadResourceClient::clearResource): Call cancelLoad() when the client is cleared.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::isLinkPreload):
+        (WebCore::CachedResource::setLinkPreload):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource): Initialize m_isLinkPreload with the request's value.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::~CachedResourceLoader):
+        (WebCore::CachedResourceLoader::requestResource): Mirror the request link preload flag to the resource if it's fetched from cache.
+        (WebCore::CachedResourceLoader::clearPreloads): Add a "speculative only" mode, which doesn't clear link preloads.
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::CachedResourceRequest):
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore::CachedResourceRequest::isLinkPreload):
+        (WebCore::CachedResourceRequest::setIsLinkPreload):
+
 2017-02-03  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Removing adjacent trailing whitespace runs should not crash.

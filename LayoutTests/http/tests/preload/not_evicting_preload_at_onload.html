@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<script>
+    if (window.internals)
+        window.internals.settings.setResourceTimingEnabled(true);
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+</script>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+    // The rand value is necessary to cache-bust slow resources.
+    var imageURL = "http://127.0.0.1:8000/resources/slow-image.php?rand=" + Math.random();
+    function test() {
+        setTimeout(function() {
+            var entries = performance.getEntriesByName(imageURL).length;
+            shouldBe(entries.toString(), "1");
+
+            if (window.internals)
+                window.internals.settings.setResourceTimingEnabled(false);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    };
+    document.write("<link rel=preload href='" + imageURL + "' as=image>");
+</script>
+<body>
+<script>
+    window.addEventListener("load", function() {
+        var img = new Image();
+        img.onload = test;
+        img.src = imageURL;
+    });
+</script>
+</body>

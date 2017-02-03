@@ -121,6 +121,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, Sessi
     , m_responseTimestamp(std::chrono::system_clock::now())
     , m_fragmentIdentifierForRequest(request.releaseFragmentIdentifier())
     , m_origin(request.releaseOrigin())
+    , m_isLinkPreload(request.isLinkPreload())
     , m_type(type)
 {
     ASSERT(sessionID.isValid());
