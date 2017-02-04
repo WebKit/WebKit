@@ -1,3 +1,18 @@
+2017-02-03  Jeremy Jones  <jeremyj@apple.com>
+
+        WK1 mouse events are missing movementX and movementY for pointerlock.
+        https://bugs.webkit.org/show_bug.cgi?id=167775
+        rdar://problem/30343810
+
+        Reviewed by Alexey Proskuryakov.
+
+        Set kCGMouseEventDeltaX and kCGMouseEventDeltaY when synthesizing mouse move events.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseMoveToX:Y:]):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseMoveTo):
+
 2017-02-03  Simon Fraser  <simon.fraser@apple.com>
 
         Correctly set the "inWindow" flag for TileControllers that aren't the page tiles, and clarify "usingTiledBacking" logic

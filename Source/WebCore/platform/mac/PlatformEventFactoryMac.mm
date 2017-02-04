@@ -714,6 +714,9 @@ public:
         m_globalPosition = IntPoint(globalPointForEvent(event));
         m_button = mouseButtonForEvent(event);
         m_clickCount = clickCountForEvent(event);
+#if ENABLE(POINTER_LOCK)
+        m_movementDelta = IntPoint(event.deltaX, event.deltaY);
+#endif
 
         m_force = 0;
 #if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003

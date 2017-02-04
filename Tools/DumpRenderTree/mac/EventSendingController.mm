@@ -643,9 +643,9 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 
     NSView *view = [mainFrame webView];
 #if !PLATFORM(IOS)
-    lastMousePosition = [view convertPoint:NSMakePoint(x, [view frame].size.height - y) toView:nil];
+    NSPoint newMousePosition = [view convertPoint:NSMakePoint(x, [view frame].size.height - y) toView:nil];
     NSEvent *event = [NSEvent mouseEventWithType:(leftMouseButtonDown ? NSEventTypeLeftMouseDragged : NSEventTypeMouseMoved)
-                                        location:lastMousePosition 
+                                        location:newMousePosition
                                    modifierFlags:0 
                                        timestamp:[self currentEventTime]
                                     windowNumber:[[view window] windowNumber] 
@@ -653,6 +653,11 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                                      eventNumber:++eventNumber 
                                       clickCount:(leftMouseButtonDown ? clickCount : 0) 
                                         pressure:0.0];
+    CGEventRef cgEvent = event.CGEvent;
+    CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaX, newMousePosition.x - lastMousePosition.x);
+    CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaY, newMousePosition.y - lastMousePosition.y);
+    event = [NSEvent eventWithCGEvent:cgEvent];
+    lastMousePosition = newMousePosition;
 #else
     lastMousePosition = [view convertPoint:NSMakePoint(x, y) toView:nil];
     WebEvent *event = [[WebEvent alloc] initWithMouseEventType:WebEventMouseMoved

@@ -8,6 +8,9 @@ PASS document.pointerLockElement is targetdiv1
      With a lock in place send a wheel event.
 PASS event type: wheel, target: target1, received on: target1
 PASS event type: wheel, target: target1, received on: body
+     With a lock in place move the mouse.
+PASS event type: mousemove, movementX: 25, movementY: -30, target: target1, received on: target1
+PASS event type: mousemove, movementX: 25, movementY: -30, target: target1, received on: body
      With a lock in place send a click.
 PASS event type: mousedown, target: target1, received on: target1
 PASS event type: mousedown, target: target1, received on: body
