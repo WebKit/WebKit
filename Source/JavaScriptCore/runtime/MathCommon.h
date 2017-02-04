@@ -33,6 +33,7 @@ namespace JSC {
 const int32_t maxExponentForIntegerMathPow = 1000;
 double JIT_OPERATION operationMathPow(double x, double y) WTF_INTERNAL;
 int32_t JIT_OPERATION operationToInt32(double) WTF_INTERNAL;
+int32_t JIT_OPERATION operationToInt32SensibleSlow(double) WTF_INTERNAL;
 
 inline constexpr double maxSafeInteger()
 {

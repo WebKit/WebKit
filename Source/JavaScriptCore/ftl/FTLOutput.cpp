@@ -333,11 +333,6 @@ LValue Output::doubleLog(LValue value)
     return callWithoutSideEffects(B3::Double, logDouble, value);
 }
 
-bool Output::hasSensibleDoubleToInt()
-{
-    return optimizeForX86();
-}
-
 LValue Output::doubleToInt(LValue value)
 {
     PatchpointValue* result = patchpoint(Int32);

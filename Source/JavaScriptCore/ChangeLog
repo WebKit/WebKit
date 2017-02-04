@@ -1,3 +1,114 @@
+2017-02-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add operationToInt32SensibleSlow to optimize kraken pbkdf2 and sha256
+        https://bugs.webkit.org/show_bug.cgi?id=167736
+
+        Reviewed by Saam Barati.
+
+        Add a new function operationToInt32SensibleSlow. This function is only
+        called after x86 cvttss2si_rr is failed. This means that the
+        given double number never in range of int32 truncatable numbers.
+
+        As a result, exp in operationToInt32 always becomes >= 31. So
+        we can change the condition from `exp < 32` to `exp == 31`.
+        This makes missingOne constant. And it leads significantly good
+        code generation.
+
+        The original operationToInt32 code.
+
+            170:   66 48 0f 7e c1          movq   %xmm0,%rcx
+            175:   31 c0                   xor    %eax,%eax
+            177:   66 48 0f 7e c6          movq   %xmm0,%rsi
+            17c:   48 c1 f9 34             sar    $0x34,%rcx
+            180:   81 e1 ff 07 00 00       and    $0x7ff,%ecx
+            186:   8d 91 01 fc ff ff       lea    -0x3ff(%rcx),%edx
+            18c:   83 fa 53                cmp    $0x53,%edx
+            18f:   77 37                   ja     1c8 <_ZN3JSC16operationToInt32Ed+0x58>
+            191:   83 fa 34                cmp    $0x34,%edx
+            194:   7f 3a                   jg     1d0 <_ZN3JSC16operationToInt32Ed+0x60>
+            196:   b9 34 00 00 00          mov    $0x34,%ecx
+            19b:   66 48 0f 7e c7          movq   %xmm0,%rdi
+            1a0:   29 d1                   sub    %edx,%ecx
+            1a2:   48 d3 ff                sar    %cl,%rdi
+            1a5:   83 fa 1f                cmp    $0x1f,%edx
+            1a8:   89 f8                   mov    %edi,%eax
+            1aa:   7f 12                   jg     1be <_ZN3JSC16operationToInt32Ed+0x4e>
+            1ac:   89 d1                   mov    %edx,%ecx
+            1ae:   b8 01 00 00 00          mov    $0x1,%eax
+            1b3:   d3 e0                   shl    %cl,%eax
+            1b5:   89 c2                   mov    %eax,%edx
+            1b7:   8d 40 ff                lea    -0x1(%rax),%eax
+            1ba:   21 f8                   and    %edi,%eax
+            1bc:   01 d0                   add    %edx,%eax
+            1be:   89 c2                   mov    %eax,%edx
+            1c0:   f7 da                   neg    %edx
+            1c2:   48 85 f6                test   %rsi,%rsi
+            1c5:   0f 48 c2                cmovs  %edx,%eax
+            1c8:   f3 c3                   repz retq
+            1ca:   66 0f 1f 44 00 00       nopw   0x0(%rax,%rax,1)
+            1d0:   66 48 0f 7e c0          movq   %xmm0,%rax
+            1d5:   81 e9 33 04 00 00       sub    $0x433,%ecx
+            1db:   48 d3 e0                shl    %cl,%rax
+            1de:   eb de                   jmp    1be <_ZN3JSC16operationToInt32Ed+0x4e>
+
+        The operationToInt32SensibleSlow code.
+
+            1e0:   66 48 0f 7e c1          movq   %xmm0,%rcx
+            1e5:   66 48 0f 7e c2          movq   %xmm0,%rdx
+            1ea:   48 c1 f9 34             sar    $0x34,%rcx
+            1ee:   81 e1 ff 07 00 00       and    $0x7ff,%ecx
+            1f4:   8d b1 01 fc ff ff       lea    -0x3ff(%rcx),%esi
+            1fa:   83 fe 34                cmp    $0x34,%esi
+            1fd:   7e 21                   jle    220 <_ZN3JSC28operationToInt32SensibleSlowEd+0x40>
+            1ff:   66 48 0f 7e c0          movq   %xmm0,%rax
+            204:   81 e9 33 04 00 00       sub    $0x433,%ecx
+            20a:   48 d3 e0                shl    %cl,%rax
+            20d:   89 c1                   mov    %eax,%ecx
+            20f:   f7 d9                   neg    %ecx
+            211:   48 85 d2                test   %rdx,%rdx
+            214:   0f 48 c1                cmovs  %ecx,%eax
+            217:   c3                      retq
+            218:   0f 1f 84 00 00 00 00    nopl   0x0(%rax,%rax,1)
+            21f:   00
+            220:   66 48 0f 7e c0          movq   %xmm0,%rax
+            225:   b9 34 00 00 00          mov    $0x34,%ecx
+            22a:   29 f1                   sub    %esi,%ecx
+            22c:   48 d3 f8                sar    %cl,%rax
+            22f:   89 c1                   mov    %eax,%ecx
+            231:   81 c9 00 00 00 80       or     $0x80000000,%ecx
+            237:   83 fe 1f                cmp    $0x1f,%esi
+            23a:   0f 44 c1                cmove  %ecx,%eax
+            23d:   89 c1                   mov    %eax,%ecx
+            23f:   f7 d9                   neg    %ecx
+            241:   48 85 d2                test   %rdx,%rdx
+            244:   0f 48 c1                cmovs  %ecx,%eax
+            247:   c3                      retq
+            248:   0f 1f 84 00 00 00 00    nopl   0x0(%rax,%rax,1)
+            24f:   00
+
+        This improves kraken pbkdf2 by 10.8% and sha256 by 7.5%.
+
+                                                       baseline                  patched
+
+            stanford-crypto-pbkdf2                 153.195+-2.745      ^     138.204+-2.513         ^ definitely 1.1085x faster
+            stanford-crypto-sha256-iterative        49.047+-1.038      ^      45.610+-1.235         ^ definitely 1.0754x faster
+
+            <arithmetic>                           101.121+-1.379      ^      91.907+-1.500         ^ definitely 1.1003x faster
+
+        * assembler/CPU.h:
+        (JSC::hasSensibleDoubleToInt):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::doubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::sensibleDoubleToInt32):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::hasSensibleDoubleToInt): Deleted.
+        * ftl/FTLOutput.h:
+        * runtime/MathCommon.cpp:
+        (JSC::operationToInt32SensibleSlow):
+        * runtime/MathCommon.h:
+
 2017-02-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout of r211486, r211629.

@@ -1,3 +1,15 @@
+2017-02-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add operationToInt32SensibleSlow to optimize kraken pbkdf2 and sha256
+        https://bugs.webkit.org/show_bug.cgi?id=167736
+
+        Reviewed by Saam Barati.
+
+        * stress/to-int32-sensible.js: Added.
+        (shouldBe):
+        (toInt32):
+        (test):
+
 2017-02-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, remove loop

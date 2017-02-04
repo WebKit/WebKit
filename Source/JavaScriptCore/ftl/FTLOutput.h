@@ -193,7 +193,6 @@ public:
 
     LValue doubleLog(LValue);
 
-    static bool hasSensibleDoubleToInt();
     LValue doubleToInt(LValue);
     LValue doubleToUInt(LValue);
 

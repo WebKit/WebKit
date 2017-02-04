@@ -11591,7 +11591,7 @@ private:
     
     LValue doubleToInt32(LValue doubleValue)
     {
-        if (Output::hasSensibleDoubleToInt())
+        if (hasSensibleDoubleToInt())
             return sensibleDoubleToInt32(doubleValue);
         
         double limit = pow(2, 31) - 1;
@@ -11611,7 +11611,7 @@ private:
         
         LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
         ValueFromBlock slowResult = m_out.anchor(
-            m_out.call(Int32, m_out.operation(operationToInt32), doubleValue));
+            m_out.call(Int32, m_out.operation(operationToInt32SensibleSlow), doubleValue));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);

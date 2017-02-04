@@ -467,6 +467,71 @@ int32_t JIT_OPERATION operationToInt32(double value)
     return JSC::toInt32(value);
 }
 
+int32_t JIT_OPERATION operationToInt32SensibleSlow(double number)
+{
+    // This function is specialized `operationToInt32` for the slow case of
+    // the sensible double-to-int32 operation. It is available in x86.
+    //
+    // In the sensible double-to-int32, first we attempt to truncate the
+    // double value to int32 by using cvttsd2si_rr.
+    // According to the Intel's manual, cvttsd2si perform the following truncate
+    // operation.
+    //
+    // If src = NaN, +-Inf, or |(src)rz| > 0x7fffffff and (src)rz != 0x80000000,
+    // the result becomes 0x80000000. Otherwise, the operation succeeds.
+    // Note that ()rz is rouding towards zero.
+    //
+    // We call this slow case function when the above cvttsd2si fails. We check
+    // this condition by performing `result == 0x80000000`. So this function only
+    // accepts the following numbers.
+    //
+    //     NaN, +-Inf, |(src)rz| > 0x7fffffff.
+    //
+    // As a result, the exp of the double is always >= 31.
+    // This condition simplifies and speeds up the toInt32 implementation.
+    int64_t bits = WTF::bitwise_cast<int64_t>(number);
+    int32_t exp = (static_cast<int32_t>(bits >> 52) & 0x7ff) - 0x3ff;
+
+    // If exponent < 0 there will be no bits to the left of the decimal point
+    // after rounding; if the exponent is > 83 then no bits of precision can be
+    // left in the low 32-bit range of the result (IEEE-754 doubles have 52 bits
+    // of fractional precision).
+    // Note this case handles 0, -0, and all infinite, NaN, & denormal value.
+
+    // If exp < 0, truncate operation succeeds. So this function does not
+    // encounter that case. If exp > 83, it means exp >= 84. In that case,
+    // the following operation produces 0 for the result.
+    ASSERT(exp >= 0);
+
+    // Select the appropriate 32-bits from the floating point mantissa. If the
+    // exponent is 52 then the bits we need to select are already aligned to the
+    // lowest bits of the 64-bit integer representation of the number, no need
+    // to shift. If the exponent is greater than 52 we need to shift the value
+    // left by (exp - 52), if the value is less than 52 we need to shift right
+    // accordingly.
+    int32_t result = (exp > 52)
+        ? static_cast<int32_t>(bits << (exp - 52))
+        : static_cast<int32_t>(bits >> (52 - exp));
+
+    // IEEE-754 double precision values are stored omitting an implicit 1 before
+    // the decimal point; we need to reinsert this now. We may also the shifted
+    // invalid bits into the result that are not a part of the mantissa (the sign
+    // and exponent bits from the floatingpoint representation); mask these out.
+    //
+    // The important observation is that exp is always >= 31. So the above case
+    // is needed to be cared only when the exp == 31.
+    ASSERT(exp >= 31);
+    if (exp == 31) {
+        int32_t missingOne = 1 << exp;
+        result &= (missingOne - 1);
+        result += missingOne;
+    }
+
+    // If the input value was negative (we could test either 'number' or 'bits',
+    // but testing 'bits' is likely faster) invert the result appropriately.
+    return bits < 0 ? -result : result;
+}
+
 #if HAVE(ARM_IDIV_INSTRUCTIONS)
 static inline bool isStrictInt32(double value)
 {
