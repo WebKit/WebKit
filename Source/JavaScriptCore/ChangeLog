@@ -1,3 +1,68 @@
+2017-02-03  JF Bastien  <jfbastien@apple.com>
+
+        OSR entry: delay outer-loop compilation when at inner-loop
+        https://bugs.webkit.org/show_bug.cgi?id=167149
+
+        Reviewed by Filip Pizlo.
+
+        r211224 and r211461 were reverted because they caused massive
+        kraken/ai-astar regressions. This patch instead does the
+        minimally-disruptive change to fix the original bug as described
+        below, but omits extra tuning and refactoring which I had
+        before. I'll commit tuning and refactoring separately, if this
+        sticks. This patch is therefore very minimal, and layers carefully
+        on top of the complex spaghetti-logic. The only change it makes is
+        that it uses triggers to indicate to outer loops that they should
+        compile, which fixes the immediate bug and seems roughly perf
+        neutral (maybe a small gain on kraken sometimes, other times a
+        small regression as would be expected from slightly compiling
+        later). As opposed to r211461 this patch doesn't unconditionally
+        unset the trigger because it prevents further DFG executions from
+        entering. It therefore makes the trigger a tri-state enum class:
+        don't trigger, compilation done, start compilation. Only "start
+        compilation" gets reset to "don't trigger". "Compilation done"
+        does not (unless there's a problem compiling, then it gets set
+        back to "don't trigger").
+
+        As of https://bugs.webkit.org/show_bug.cgi?id=155217 OSR
+        compilation can be kicked off for an entry into an outer-loop,
+        while executing an inner-loop. This is desirable because often the
+        codegen from an inner-entry isn't as good as the codegen from an
+        outer-entry, but execution from an inner-loop is often pretty hot
+        and likely to kick off compilation. This approach provided nice
+        speedups on Kraken because we'd select to enter to the outer-loop
+        very reliably, which reduces variability (the inner-loop was
+        selected roughly 1/5 times from my unscientific measurements).
+
+        When compilation starts we take a snapshot of the JSValues at the
+        current execution state using OSR's recovery mechanism. These
+        values are passed to the compiler and are used as way to perform
+        type profiling, and could be used to observe cell types as well as
+        to perform predictions such as through constant propagation.
+
+        It's therefore desired to enter from the outer-loop when we can,
+        but we need to be executing from that location to capture the
+        right JSValues, otherwise we're confusing the compiler and giving
+        it inaccurate JSValues which can lead it to predict the wrong
+        things, leading to suboptimal code or recompilation due to
+        misprediction, or in super-corner-cases a crash.
+
+        DFG tier-up was added here:
+        https://bugs.webkit.org/show_bug.cgi?id=112838
+
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::ToFTLForOSREntryDeferredCompilationCallback):
+        (JSC::DFG::Ref<ToFTLForOSREntryDeferredCompilationCallback>ToFTLForOSREntryDeferredCompilationCallback::create):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete):
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.h:
+
 2017-02-03  Saam Barati  <sbarati@apple.com>
 
         When OSR entering to the baseline JIT from the LLInt for a ProgramCodeBlock we can skip compiling a lot of the program

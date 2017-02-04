@@ -60,7 +60,7 @@ JITCompiler::JITCompiler(Graph& dfg)
 #if ENABLE(FTL_JIT)
     m_jitCode->tierUpInLoopHierarchy = WTFMove(m_graph.m_plan.tierUpInLoopHierarchy);
     for (unsigned tierUpBytecode : m_graph.m_plan.tierUpAndOSREnterBytecodes)
-        m_jitCode->tierUpEntryTriggers.add(tierUpBytecode, 0);
+        m_jitCode->tierUpEntryTriggers.add(tierUpBytecode, JITCode::TriggerReason::DontTrigger);
 #endif
 }
 
