@@ -1,0 +1,37 @@
+High Resolution Time IDL tests
+
+
+FAIL Window interface: attribute performance assert_true: The prototype object must have a property "performance" expected true got false
+PASS WorkerGlobalScope interface: existence and properties of interface object 
+FAIL Performance interface: existence and properties of interface object undefined is not an object (evaluating 'this.array
+                     .members[this.base]
+                     .has_extended_attribute')
+PASS Performance interface object length 
+PASS Performance interface object name 
+FAIL Performance interface: existence and properties of interface prototype object undefined is not an object (evaluating 'this.array
+                         .members[inherit_interface]
+                         .has_extended_attribute')
+PASS Performance interface: existence and properties of interface prototype object's "constructor" property 
+PASS Performance interface: operation now() 
+PASS Performance must be primary interface of window.performance 
+FAIL Stringification of window.performance undefined is not an object (evaluating 'this.array.members[this.base].has_stringifier')
+PASS Performance interface: window.performance must inherit property "now" with the proper type (0) 
+typedef double DOMHighResTimeStamp;
+
+[Exposed=(Window,Worker)]
+interface Performance : EventTarget {
+    DOMHighResTimeStamp now();
+    serializer = {attribute};
+};
+
+[NoInterfaceObject,
+ Exposed=(Window,Worker)]
+interface GlobalPerformance {
+    [Replaceable]
+    readonly attribute Performance performance;
+};
+
+Window implements GlobalPerformance;
+
+WorkerGlobalScope implements GlobalPerformance;
+

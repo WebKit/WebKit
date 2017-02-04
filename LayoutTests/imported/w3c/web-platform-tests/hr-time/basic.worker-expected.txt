@@ -1,0 +1,5 @@
+
+PASS WorkerGlobalScope.performance.now() is a function 
+PASS WorkerGlobalScope.performance.now() returns a positive number 
+PASS WorkerGlobalScope.performance.now() difference is not negative 
+
