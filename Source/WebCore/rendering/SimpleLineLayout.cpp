@@ -136,38 +136,48 @@ enum class IncludeReasons { First , All };
     }
 #endif
 
+
+template <typename CharacterType> AvoidanceReasonFlags canUseForCharacter(CharacterType, bool textIsJustified, IncludeReasons);
+
+template<> AvoidanceReasonFlags canUseForCharacter(UChar character, bool textIsJustified, IncludeReasons includeReasons)
+{
+    AvoidanceReasonFlags reasons = { };
+    if (textIsJustified) {
+        // Include characters up to Latin Extended-B and some punctuation range when text is justified.
+        bool isLatinIncludingExtendedB = character <= 0x01FF;
+        bool isPunctuationRange = character >= 0x2010 && character <= 0x2027;
+        if (!(isLatinIncludingExtendedB || isPunctuationRange))
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasJustifiedNonLatinText, reasons, includeReasons);
+    }
+
+    UCharDirection direction = u_charDirection(character);
+    if (direction == U_RIGHT_TO_LEFT || direction == U_RIGHT_TO_LEFT_ARABIC
+        || direction == U_RIGHT_TO_LEFT_EMBEDDING || direction == U_RIGHT_TO_LEFT_OVERRIDE
+        || direction == U_LEFT_TO_RIGHT_EMBEDDING || direction == U_LEFT_TO_RIGHT_OVERRIDE
+        || direction == U_POP_DIRECTIONAL_FORMAT || direction == U_BOUNDARY_NEUTRAL)
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasDirectionCharacter, reasons, includeReasons);
+
+    return reasons;
+}
+
+template<> AvoidanceReasonFlags canUseForCharacter(LChar, bool, IncludeReasons)
+{
+    return { };
+}
+
 template <typename CharacterType>
 static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned length, const FontCascade& fontCascade, std::optional<float> lineHeightConstraint,
     bool textIsJustified, IncludeReasons includeReasons)
 {
     AvoidanceReasonFlags reasons = { };
     auto& primaryFont = fontCascade.primaryFont();
-    // FIXME: <textarea maxlength=0> generates empty text node.
-    if (!length)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsEmpty, reasons, includeReasons);
-
     for (unsigned i = 0; i < length; ++i) {
-        UChar character = text[i];
-        if (character == ' ')
+        auto character = text[i];
+        if (FontCascade::treatAsSpace(character))
             continue;
-
-        if (textIsJustified) {
-            // Include characters up to Latin Extended-B and some punctuation range when text is justified.
-            bool isLatinIncludingExtendedB = character <= 0x01FF;
-            bool isPunctuationRange = character >= 0x2010 && character <= 0x2027;
-            if (!(isLatinIncludingExtendedB || isPunctuationRange))
-                SET_REASON_AND_RETURN_IF_NEEDED(FlowHasJustifiedNonLatinText, reasons, includeReasons);
-        }
 
         if (character == softHyphen)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasSoftHyphen, reasons, includeReasons);
-
-        UCharDirection direction = u_charDirection(character);
-        if (direction == U_RIGHT_TO_LEFT || direction == U_RIGHT_TO_LEFT_ARABIC
-            || direction == U_RIGHT_TO_LEFT_EMBEDDING || direction == U_RIGHT_TO_LEFT_OVERRIDE
-            || direction == U_LEFT_TO_RIGHT_EMBEDDING || direction == U_LEFT_TO_RIGHT_OVERRIDE
-            || direction == U_POP_DIRECTIONAL_FORMAT || direction == U_BOUNDARY_NEUTRAL)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasDirectionCharacter, reasons, includeReasons);
 
         auto glyphData = fontCascade.glyphDataForCharacter(character, false);
         if (!glyphData.isValid() || glyphData.font != &primaryFont)
@@ -175,15 +185,19 @@ static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned le
 
         if (lineHeightConstraint && primaryFont.boundsForGlyph(glyphData.glyph).height() > *lineHeightConstraint)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowFontHasOverflowGlyph, reasons, includeReasons);
+
+        auto characterReasons = canUseForCharacter(character, textIsJustified, includeReasons);
+        if (characterReasons != NoReason)
+            SET_REASON_AND_RETURN_IF_NEEDED(characterReasons, reasons, includeReasons);
     }
     return reasons;
 }
 
-static AvoidanceReasonFlags canUseForText(const RenderText& textRenderer, const FontCascade& fontCascade, std::optional<float> lineHeightConstraint, bool textIsJustified, IncludeReasons includeReasons)
+static AvoidanceReasonFlags canUseForText(StringView text, const FontCascade& fontCascade, std::optional<float> lineHeightConstraint, bool textIsJustified, IncludeReasons includeReasons)
 {
-    if (textRenderer.is8Bit())
-        return canUseForText(textRenderer.characters8(), textRenderer.textLength(), fontCascade, lineHeightConstraint, false, includeReasons);
-    return canUseForText(textRenderer.characters16(), textRenderer.textLength(), fontCascade, lineHeightConstraint, textIsJustified, includeReasons);
+    if (text.is8Bit())
+        return canUseForText(text.characters8(), text.length(), fontCascade, lineHeightConstraint, textIsJustified, includeReasons);
+    return canUseForText(text.characters16(), text.length(), fontCascade, lineHeightConstraint, textIsJustified, includeReasons);
 }
 
 static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, IncludeReasons includeReasons)
@@ -199,6 +213,9 @@ static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, In
         lineHeightConstraint = lineHeightFromFlow(flow).toFloat();
     bool flowIsJustified = style.textAlign() == JUSTIFY;
     for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
+        // FIXME: Do not return until after checking all children.
+        if (!textRenderer.textLength())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsEmpty, reasons, includeReasons);
         if (textRenderer.isCombineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);
         if (textRenderer.isCounter())
@@ -212,7 +229,7 @@ static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, In
         if (!textRenderer.canUseSimpleFontCodePath())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasComplexFontCodePath, reasons, includeReasons);
 
-        auto textReasons = canUseForText(textRenderer, fontCascade, lineHeightConstraint, flowIsJustified, includeReasons);
+        auto textReasons = canUseForText(textRenderer.stringView(), fontCascade, lineHeightConstraint, flowIsJustified, includeReasons);
         if (textReasons != NoReason)
             SET_REASON_AND_RETURN_IF_NEEDED(textReasons, reasons, includeReasons);
     }
