@@ -54,7 +54,7 @@ class UserTiming;
 
 class Performance final : public RefCounted<Performance>, public ContextDestructionObserver, public EventTargetWithInlineData {
 public:
-    static Ref<Performance> create(ScriptExecutionContext& context, double timeOrigin) { return adoptRef(*new Performance(context, timeOrigin)); }
+    static Ref<Performance> create(ScriptExecutionContext& context, MonotonicTime timeOrigin) { return adoptRef(*new Performance(context, timeOrigin)); }
     ~Performance();
 
     double now() const;
@@ -80,7 +80,7 @@ public:
     void registerPerformanceObserver(PerformanceObserver&);
     void unregisterPerformanceObserver(PerformanceObserver&);
 
-    static double reduceTimeResolution(double seconds);
+    static Seconds reduceTimeResolution(Seconds);
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
@@ -88,7 +88,7 @@ public:
     using RefCounted::deref;
 
 private:
-    Performance(ScriptExecutionContext&, double timeOrigin);
+    Performance(ScriptExecutionContext&, MonotonicTime timeOrigin);
 
     void contextDestroyed() override;
 
@@ -108,7 +108,7 @@ private:
     Vector<RefPtr<PerformanceEntry>> m_resourceTimingBuffer;
     unsigned m_resourceTimingBufferSize { 150 };
 
-    double m_timeOrigin;
+    MonotonicTime m_timeOrigin;
 
     std::unique_ptr<UserTiming> m_userTiming;
 

@@ -33,8 +33,9 @@
 #if ENABLE(WEB_TIMING)
 
 #include "DOMWindowProperty.h"
-#include <wtf/RefCounted.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -76,7 +77,7 @@ private:
     DocumentLoader* documentLoader() const;
     LoadTiming* loadTiming() const;
     unsigned long long resourceLoadTimeRelativeToFetchStart(double) const;
-    unsigned long long monotonicTimeToIntegerMilliseconds(double) const;
+    unsigned long long monotonicTimeToIntegerMilliseconds(MonotonicTime) const;
 };
 
 } // namespace WebCore

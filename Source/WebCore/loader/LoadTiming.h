@@ -20,69 +20,69 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 #include <wtf/CurrentTime.h>
+#include <wtf/MonotonicTime.h>
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 
-class Frame;
 class URL;
 
 class LoadTiming {
 public:
-
-    double monotonicTimeToZeroBasedDocumentTime(double) const;
-    double monotonicTimeToPseudoWallTime(double) const;
+    Seconds secondsSinceStartTime(MonotonicTime) const;
+    WallTime monotonicTimeToPseudoWallTime(MonotonicTime) const;
 
     void markStartTime();
     void addRedirect(const URL& redirectingUrl, const URL& redirectedUrl);
 
     void markStartTimeAndFetchStart() { markStartTime(); m_fetchStart = m_startTime; }
 
-    void markUnloadEventStart() { m_unloadEventStart = monotonicallyIncreasingTime(); }
-    void markUnloadEventEnd() { m_unloadEventEnd = monotonicallyIncreasingTime(); }
-    void markRedirectStart() { m_redirectStart = monotonicallyIncreasingTime(); }
-    void markRedirectEnd() { m_redirectEnd = monotonicallyIncreasingTime(); }
-    void markFetchStart() { m_fetchStart = monotonicallyIncreasingTime(); }
-    void setResponseEnd(double monotonicTime) { m_responseEnd = monotonicTime; }
-    void markLoadEventStart() { m_loadEventStart = monotonicallyIncreasingTime(); }
-    void markLoadEventEnd() { m_loadEventEnd = monotonicallyIncreasingTime(); }
+    void markUnloadEventStart() { m_unloadEventStart = MonotonicTime::now(); }
+    void markUnloadEventEnd() { m_unloadEventEnd = MonotonicTime::now(); }
+    void markRedirectStart() { m_redirectStart = MonotonicTime::now(); }
+    void markRedirectEnd() { m_redirectEnd = MonotonicTime::now(); }
+    void markFetchStart() { m_fetchStart = MonotonicTime::now(); }
+    void setResponseEnd(MonotonicTime time) { m_responseEnd = time; }
+    void markLoadEventStart() { m_loadEventStart = MonotonicTime::now(); }
+    void markLoadEventEnd() { m_loadEventEnd = MonotonicTime::now(); }
 
     void setHasSameOriginAsPreviousDocument(bool value) { m_hasSameOriginAsPreviousDocument = value; }
 
-    double startTime() const { return m_startTime; }
-    double unloadEventStart() const { return m_unloadEventStart; }
-    double unloadEventEnd() const { return m_unloadEventEnd; }
-    double redirectStart() const { return m_redirectStart; }
-    double redirectEnd() const { return m_redirectEnd; }
+    MonotonicTime startTime() const { return m_startTime; }
+    MonotonicTime unloadEventStart() const { return m_unloadEventStart; }
+    MonotonicTime unloadEventEnd() const { return m_unloadEventEnd; }
+    MonotonicTime redirectStart() const { return m_redirectStart; }
+    MonotonicTime redirectEnd() const { return m_redirectEnd; }
+    MonotonicTime fetchStart() const { return m_fetchStart; }
+    MonotonicTime responseEnd() const { return m_responseEnd; }
+    MonotonicTime loadEventStart() const { return m_loadEventStart; }
+    MonotonicTime loadEventEnd() const { return m_loadEventEnd; }
     short redirectCount() const { return m_redirectCount; }
-    double fetchStart() const { return m_fetchStart; }
-    double responseEnd() const { return m_responseEnd; }
-    double loadEventStart() const { return m_loadEventStart; }
-    double loadEventEnd() const { return m_loadEventEnd; }
     bool hasCrossOriginRedirect() const { return m_hasCrossOriginRedirect; }
     bool hasSameOriginAsPreviousDocument() const { return m_hasSameOriginAsPreviousDocument; }
 
-    double referenceMonotonicTime() const { return m_referenceMonotonicTime; }
-    double referenceWallTime() const { return m_referenceWallTime; }
+    MonotonicTime referenceMonotonicTime() const { return m_referenceMonotonicTime; }
+    WallTime referenceWallTime() const { return m_referenceWallTime; }
 
 private:
-    double m_referenceMonotonicTime { 0.0 };
-    double m_referenceWallTime { 0.0 };
-    double m_startTime { 0.0 };
-    double m_unloadEventStart { 0.0 };
-    double m_unloadEventEnd { 0.0 };
-    double m_redirectStart { 0.0 };
-    double m_redirectEnd { 0.0 };
+    WallTime m_referenceWallTime;
+    MonotonicTime m_referenceMonotonicTime;
+    MonotonicTime m_startTime;
+    MonotonicTime m_unloadEventStart;
+    MonotonicTime m_unloadEventEnd;
+    MonotonicTime m_redirectStart;
+    MonotonicTime m_redirectEnd;
+    MonotonicTime m_fetchStart;
+    MonotonicTime m_responseEnd;
+    MonotonicTime m_loadEventStart;
+    MonotonicTime m_loadEventEnd;
     short m_redirectCount { 0 };
-    double m_fetchStart { 0.0 };
-    double m_responseEnd { 0.0 };
-    double m_loadEventStart { 0.0 };
-    double m_loadEventEnd { 0.0 };
     bool m_hasCrossOriginRedirect { false };
     bool m_hasSameOriginAsPreviousDocument { false };
 };

@@ -800,7 +800,7 @@ Performance* DOMWindow::performance() const
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_performance) {
-        double timeOrigin = document()->loader() ? document()->loader()->timing().referenceMonotonicTime() : monotonicallyIncreasingTime();
+        MonotonicTime timeOrigin = document()->loader() ? document()->loader()->timing().referenceMonotonicTime() : MonotonicTime::now();
         m_performance = Performance::create(*document(), timeOrigin);
     }
     return m_performance.get();

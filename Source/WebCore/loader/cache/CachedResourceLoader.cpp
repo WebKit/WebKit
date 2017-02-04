@@ -776,7 +776,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
             if (document() && RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
                 // FIXME (161170): The networkLoadTiming shouldn't be stored on the ResourceResponse.
                 resource->response().networkLoadTiming().reset();
-                loadTiming.setResponseEnd(monotonicallyIncreasingTime());
+                loadTiming.setResponseEnd(MonotonicTime::now());
                 m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request.initiatorName(), frame());
                 m_resourceTimingInfo.addResourceTiming(resource.get(), *document(), loadTiming);
             }

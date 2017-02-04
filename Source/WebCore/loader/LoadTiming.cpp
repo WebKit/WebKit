@@ -35,26 +35,28 @@
 
 namespace WebCore {
 
-double LoadTiming::monotonicTimeToZeroBasedDocumentTime(double monotonicTime) const
+Seconds LoadTiming::secondsSinceStartTime(MonotonicTime timeStamp) const
 {
-    if (!monotonicTime)
-        return 0.0;
-    return monotonicTime - m_referenceMonotonicTime;
+    if (!timeStamp)
+        return Seconds(0);
+
+    return timeStamp - m_referenceMonotonicTime;
 }
 
-double LoadTiming::monotonicTimeToPseudoWallTime(double monotonicTime) const
+WallTime LoadTiming::monotonicTimeToPseudoWallTime(MonotonicTime timeStamp) const
 {
-    if (!monotonicTime)
-        return 0.0;
-    return m_referenceWallTime + monotonicTime - m_referenceMonotonicTime;
+    if (!timeStamp)
+        return WallTime::fromRawSeconds(0);
+
+    return m_referenceWallTime + (timeStamp - m_referenceMonotonicTime);
 }
 
 void LoadTiming::markStartTime()
 {
     ASSERT(!m_startTime && !m_referenceMonotonicTime && !m_referenceWallTime);
 
-    m_startTime = m_referenceMonotonicTime = monotonicallyIncreasingTime();
-    m_referenceWallTime = currentTime();
+    m_referenceMonotonicTime = m_startTime = MonotonicTime::now();
+    m_referenceWallTime = WallTime::now();
 }
 
 void LoadTiming::addRedirect(const URL& redirectingUrl, const URL& redirectedUrl)
@@ -62,7 +64,7 @@ void LoadTiming::addRedirect(const URL& redirectingUrl, const URL& redirectedUrl
     m_redirectCount++;
     if (!m_redirectStart)
         m_redirectStart = m_fetchStart;
-    m_redirectEnd = m_fetchStart = monotonicallyIncreasingTime();
+    m_redirectEnd = m_fetchStart = MonotonicTime::now();
     // Check if the redirected url is allowed to access the redirecting url's timing information.
     Ref<SecurityOrigin> redirectedSecurityOrigin(SecurityOrigin::create(redirectedUrl));
     m_hasCrossOriginRedirect = !redirectedSecurityOrigin.get().canRequest(redirectingUrl);

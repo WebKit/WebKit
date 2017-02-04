@@ -394,11 +394,11 @@ void DocumentLoader::finishedLoading(double finishTime)
 
     maybeFinishLoadingMultipartContent();
 
-    double responseEndTime = finishTime;
+    MonotonicTime responseEndTime = MonotonicTime::fromRawSeconds(finishTime);
     if (!responseEndTime)
         responseEndTime = m_timeOfLastDataReceived;
     if (!responseEndTime)
-        responseEndTime = monotonicallyIncreasingTime();
+        responseEndTime = MonotonicTime::now();
     timing().setResponseEnd(responseEndTime);
 
     commitIfReady();
@@ -936,7 +936,7 @@ void DocumentLoader::dataReceived(const char* data, int length)
         frameLoader()->notifier().dispatchDidReceiveData(this, m_identifierForLoadWithoutResourceLoader, data, length, -1);
 
     m_applicationCacheHost->mainResourceDataReceived(data, length, -1, false);
-    m_timeOfLastDataReceived = monotonicallyIncreasingTime();
+    m_timeOfLastDataReceived = MonotonicTime::now();
 
     if (!isMultipartReplacingLoad())
         commitLoad(data, length);

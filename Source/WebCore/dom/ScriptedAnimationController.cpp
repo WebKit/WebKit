@@ -147,7 +147,7 @@ void ScriptedAnimationController::serviceScriptedAnimations(double timestamp)
     TraceScope tracingScope(RAFCallbackStart, RAFCallbackEnd);
 
     double highResNowMs = 1000 * timestamp;
-    double legacyHighResNowMs = 1000 * (timestamp + m_document->loader()->timing().referenceWallTime());
+    double legacyHighResNowMs = 1000 * (timestamp + m_document->loader()->timing().referenceWallTime().secondsSinceEpoch().seconds());
 
     // First, generate a list of callbacks to consider.  Callbacks registered from this point
     // on are considered only for the "next" frame, not this one.

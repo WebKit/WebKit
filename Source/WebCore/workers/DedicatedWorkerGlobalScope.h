@@ -48,7 +48,7 @@ class SerializedScriptValue;
 
 class DedicatedWorkerGlobalScope final : public WorkerGlobalScope {
 public:
-    static Ref<DedicatedWorkerGlobalScope> create(const URL&, const String& identifier, const String& userAgent, DedicatedWorkerThread&, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, double timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    static Ref<DedicatedWorkerGlobalScope> create(const URL&, const String& identifier, const String& userAgent, DedicatedWorkerThread&, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
     virtual ~DedicatedWorkerGlobalScope();
 
     ExceptionOr<void> postMessage(JSC::ExecState&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
@@ -58,7 +58,7 @@ public:
 private:
     using Base = WorkerGlobalScope;
 
-    DedicatedWorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, DedicatedWorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, double timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    DedicatedWorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, DedicatedWorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     bool isDedicatedWorkerGlobalScope() const final { return true; }
     ExceptionOr<void> importScripts(const Vector<String>& urls) final;

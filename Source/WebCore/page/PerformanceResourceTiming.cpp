@@ -45,12 +45,14 @@
 
 namespace WebCore {
 
-static double monotonicTimeToDOMHighResTimeStamp(double timeOrigin, double seconds)
+static double monotonicTimeToDOMHighResTimeStamp(MonotonicTime timeOrigin, MonotonicTime timeStamp)
 {
-    ASSERT(seconds >= 0.0);
-    if (!seconds || !timeOrigin)
+    ASSERT(timeStamp.secondsSinceEpoch().seconds() >= 0);
+    if (!timeStamp || !timeOrigin)
         return 0;
-    return Performance::reduceTimeResolution(seconds - timeOrigin) * 1000.0;
+
+    Seconds seconds = timeStamp - timeOrigin;
+    return Performance::reduceTimeResolution(seconds).milliseconds();
 }
 
 static bool passesTimingAllowCheck(const ResourceResponse& response, const SecurityOrigin& initiatorSecurityOrigin)
@@ -77,13 +79,13 @@ static bool passesTimingAllowCheck(const ResourceResponse& response, const Secur
     return false;
 }
 
-PerformanceResourceTiming::PerformanceResourceTiming(const AtomicString& initiatorType, const URL& originalURL, const ResourceResponse& response, const SecurityOrigin& initiatorSecurityOrigin, double timeOrigin, LoadTiming loadTiming)
+PerformanceResourceTiming::PerformanceResourceTiming(const AtomicString& initiatorType, const URL& originalURL, MonotonicTime timeOrigin, const ResourceResponse& response, const SecurityOrigin& initiatorSecurityOrigin, LoadTiming loadTiming)
     : PerformanceEntry(PerformanceEntry::Type::Resource, originalURL.string(), ASCIILiteral("resource"), monotonicTimeToDOMHighResTimeStamp(timeOrigin, loadTiming.startTime()), monotonicTimeToDOMHighResTimeStamp(timeOrigin, loadTiming.responseEnd()))
     , m_initiatorType(initiatorType)
+    , m_timeOrigin(timeOrigin)
     , m_timing(response.networkLoadTiming())
     , m_loadTiming(loadTiming)
     , m_shouldReportDetails(passesTimingAllowCheck(response, initiatorSecurityOrigin))
-    , m_timeOrigin(timeOrigin)
 {
 }
 
@@ -208,8 +210,9 @@ double PerformanceResourceTiming::networkLoadTimeToDOMHighResTimeStamp(double de
     if (!deltaMilliseconds)
         return 0.0;
 
-    double seconds = m_loadTiming.fetchStart() + (deltaMilliseconds / 1000.0);
-    return Performance::reduceTimeResolution(seconds - m_timeOrigin) * 1000.0;
+    MonotonicTime combined = m_loadTiming.fetchStart() + Seconds::fromMilliseconds(deltaMilliseconds);
+    Seconds delta = combined - m_timeOrigin;
+    return Performance::reduceTimeResolution(delta).milliseconds();
 }
 
 } // namespace WebCore

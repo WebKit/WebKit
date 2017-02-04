@@ -438,7 +438,7 @@ private:
     bool m_loadingMainResource { false };
     LoadTiming m_loadTiming;
 
-    double m_timeOfLastDataReceived { 0 };
+    MonotonicTime m_timeOfLastDataReceived;
     unsigned long m_identifierForLoadWithoutResourceLoader { 0 };
 
     DocumentLoaderTimer m_dataLoadTimer;

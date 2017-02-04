@@ -1,3 +1,115 @@
+2017-02-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Performance Timing: Convert WTF::MonotonicTime and WTF::Seconds
+        https://bugs.webkit.org/show_bug.cgi?id=167768
+
+        Reviewed by Geoffrey Garen.
+
+        The public APIs still return double (DOMHighResTimeStamp), which
+        is milliseconds since a time origin:
+        https://w3c.github.io/hr-time/#dom-domhighrestimestamp
+
+        * loader/LoadTiming.cpp:
+        (WebCore::LoadTiming::secondsSinceStartTime):
+        (WebCore::LoadTiming::monotonicTimeToPseudoWallTime):
+        (WebCore::LoadTiming::markStartTime):
+        (WebCore::LoadTiming::addRedirect):
+        (WebCore::LoadTiming::monotonicTimeToZeroBasedDocumentTime): Deleted.
+        * loader/LoadTiming.h:
+        (WebCore::LoadTiming::markUnloadEventStart):
+        (WebCore::LoadTiming::markUnloadEventEnd):
+        (WebCore::LoadTiming::markRedirectStart):
+        (WebCore::LoadTiming::markRedirectEnd):
+        (WebCore::LoadTiming::markFetchStart):
+        (WebCore::LoadTiming::setResponseEnd):
+        (WebCore::LoadTiming::markLoadEventStart):
+        (WebCore::LoadTiming::markLoadEventEnd):
+        (WebCore::LoadTiming::startTime):
+        (WebCore::LoadTiming::unloadEventStart):
+        (WebCore::LoadTiming::unloadEventEnd):
+        (WebCore::LoadTiming::redirectStart):
+        (WebCore::LoadTiming::redirectEnd):
+        (WebCore::LoadTiming::fetchStart):
+        (WebCore::LoadTiming::responseEnd):
+        (WebCore::LoadTiming::loadEventStart):
+        (WebCore::LoadTiming::loadEventEnd):
+        (WebCore::LoadTiming::redirectCount):
+        (WebCore::LoadTiming::referenceMonotonicTime):
+        (WebCore::LoadTiming::referenceWallTime):
+        Use MonotonicTime and WallTime for timestamps and references.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setReadyState):
+        (WebCore::Document::finishedParsing):
+        (WebCore::Document::monotonicTimestamp):
+        * dom/DocumentTiming.h:
+        (WebCore::DocumentTiming::DocumentTiming): Deleted.
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::serviceScriptedAnimations):
+        * inspector/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::buildObjectForTiming):
+        (WebCore::InspectorNetworkAgent::didFinishLoading):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::finishedLoading):
+        (WebCore::DocumentLoader::dataReceived):
+        * loader/DocumentLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFinishLoading):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::performance):
+        Use new types instead of raw doubles.
+
+        * page/Performance.cpp:
+        (WebCore::Performance::Performance):
+        (WebCore::Performance::now):
+        (WebCore::Performance::reduceTimeResolution):
+        (WebCore::Performance::addResourceTiming):
+        * page/Performance.h:
+        Do time arithmatic with WTF::Time classes.
+        This clarifies that we reduce our timestamps to 100us
+        resolution instead of the maximum 5us allowed by the spec.
+
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::monotonicTimeToDOMHighResTimeStamp):
+        (WebCore::PerformanceResourceTiming::PerformanceResourceTiming):
+        (WebCore::PerformanceResourceTiming::networkLoadTimeToDOMHighResTimeStamp):
+        * page/PerformanceResourceTiming.h:
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::resourceLoadTimeRelativeToFetchStart):
+        (WebCore::PerformanceTiming::monotonicTimeToIntegerMilliseconds):
+        (WebCore::toIntegerMilliseconds): Deleted.
+        * page/PerformanceTiming.h:
+        Do time arithmatic with WTF::Time classes.
+
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create):
+        (WebCore::DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread):
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope):
+        * workers/DedicatedWorkerThread.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerGlobalScopeProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        (WebCore::WorkerThread::WorkerThread):
+        * workers/WorkerThread.h:
+        Pass time origin as MonotonicTime.
+
+        * workers/Worker.cpp:
+        (WebCore::Worker::create):
+        (WebCore::Worker::notifyFinished):
+        * workers/Worker.h:
+        Rename creation timestamp member. This matches Document's m_documentCreationTime.
+
 2017-02-03  Jeremy Jones  <jeremyj@apple.com>
 
         WK1 mouse events are missing movementX and movementY for pointerlock.

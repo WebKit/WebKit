@@ -1219,15 +1219,15 @@ void Document::setReadyState(ReadyState readyState)
     switch (readyState) {
     case Loading:
         if (!m_documentTiming.domLoading)
-            m_documentTiming.domLoading = monotonicallyIncreasingTime();
+            m_documentTiming.domLoading = MonotonicTime::now();
         break;
     case Interactive:
         if (!m_documentTiming.domInteractive)
-            m_documentTiming.domInteractive = monotonicallyIncreasingTime();
+            m_documentTiming.domInteractive = MonotonicTime::now();
         break;
     case Complete:
         if (!m_documentTiming.domComplete)
-            m_documentTiming.domComplete = monotonicallyIncreasingTime();
+            m_documentTiming.domComplete = MonotonicTime::now();
         break;
     }
 #endif
@@ -5030,14 +5030,14 @@ void Document::finishedParsing()
 
 #if ENABLE(WEB_TIMING)
     if (!m_documentTiming.domContentLoadedEventStart)
-        m_documentTiming.domContentLoadedEventStart = monotonicallyIncreasingTime();
+        m_documentTiming.domContentLoadedEventStart = MonotonicTime::now();
 #endif
 
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, true, false));
 
 #if ENABLE(WEB_TIMING)
     if (!m_documentTiming.domContentLoadedEventEnd)
-        m_documentTiming.domContentLoadedEventEnd = monotonicallyIncreasingTime();
+        m_documentTiming.domContentLoadedEventEnd = MonotonicTime::now();
 #endif
 
     if (RefPtr<Frame> f = frame()) {
@@ -6055,7 +6055,10 @@ void Document::loadEventDelayTimerFired()
 double Document::monotonicTimestamp() const
 {
     auto* loader = this->loader();
-    return loader ? loader->timing().monotonicTimeToZeroBasedDocumentTime(monotonicallyIncreasingTime()) : 0;
+    if (!loader)
+        return 0;
+
+    return loader->timing().secondsSinceStartTime(MonotonicTime::now()).seconds();
 }
 
 int Document::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callback)

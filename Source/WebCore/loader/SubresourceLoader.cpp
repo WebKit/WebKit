@@ -535,7 +535,7 @@ void SubresourceLoader::didFinishLoading(double finishTime)
     // Mixing times from different processes can cause the finish time to be earlier than
     // the response received time due to inter-process communication lag.
     UNUSED_PARAM(finishTime);
-    double responseEndTime = monotonicallyIncreasingTime();
+    MonotonicTime responseEndTime = MonotonicTime::now();
     m_loadTiming.setResponseEnd(responseEndTime);
 
 #if ENABLE(WEB_TIMING)
@@ -546,14 +546,14 @@ void SubresourceLoader::didFinishLoading(double finishTime)
 #endif
 
     m_state = Finishing;
-    m_resource->setLoadFinishTime(responseEndTime); // FIXME: Users of the loadFinishTime should use the LoadTiming struct instead.
+    m_resource->setLoadFinishTime(responseEndTime.secondsSinceEpoch().seconds()); // FIXME: Users of the loadFinishTime should use the LoadTiming struct instead.
     m_resource->finishLoading(resourceData());
 
     if (wasCancelled())
         return;
     m_resource->finish();
     ASSERT(!reachedTerminalState());
-    didFinishLoadingOnePart(responseEndTime);
+    didFinishLoadingOnePart(responseEndTime.secondsSinceEpoch().seconds());
     notifyDone();
     if (reachedTerminalState())
         return;
