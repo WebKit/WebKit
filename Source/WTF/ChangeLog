@@ -1,3 +1,12 @@
+2017-02-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Fix huge ENABLE_RESOURCE_USAGE warning spam
+
+        Unreviewed. We shouldn't redefine ENABLE_RESOURCE_USAGE in Platform.h as
+        it's already defined in cmakeconfig.h.
+
+        * wtf/Platform.h:
+
 2017-02-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Performance Timing: Convert WTF::MonotonicTime and WTF::Seconds
