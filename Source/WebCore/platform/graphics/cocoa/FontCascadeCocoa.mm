@@ -148,7 +148,7 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CG
         CGAffineTransform rotateLeftTransform = CGAffineTransformMake(0, -1, 1, 0, 0, 0);
         CGAffineTransform textMatrix = CGContextGetTextMatrix(context);
         CGAffineTransform runMatrix = CGAffineTransformConcat(textMatrix, rotateLeftTransform);
-        CGContextSetTextMatrix(context, runMatrix);
+        ScopedTextMatrix savedMatrix(runMatrix, context);
 
         Vector<CGSize, 256> translations(count);
         CTFontGetVerticalTranslationsForGlyphs(platformData.ctFont(), glyphs, translations.data(), count);
