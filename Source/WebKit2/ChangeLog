@@ -1,3 +1,12 @@
+2017-02-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed rollout of r211486, r211629.
+
+        Original change is not ideal and is causing issues.
+
+        * Shared/WebKit2Initialize.cpp:
+        (WebKit::InitializeWebKit2):
+
 2017-02-03  Daniel Bates  <dabates@apple.com>
 
         [Mac][WK2] Add SPI to override the Content Security Policy of a page

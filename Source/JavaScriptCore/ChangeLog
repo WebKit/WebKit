@@ -1,3 +1,14 @@
+2017-02-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed rollout of r211486, r211629.
+
+        Original change is not ideal and is causing issues.
+
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::SendGarbageCollectionEventsTask::SendGarbageCollectionEventsTask):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+
 2017-02-03  JF Bastien  <jfbastien@apple.com>
 
         OSR entry: delay outer-loop compilation when at inner-loop
