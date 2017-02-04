@@ -106,7 +106,7 @@ enum AvoidanceReason_ : uint64_t {
     FlowTextIsRenderQuote                 = 1LLU  << 40,
     FlowTextIsTextFragment                = 1LLU  << 41,
     FlowTextIsSVGInlineText               = 1LLU  << 42,
-    FlowFontIsNotSimple                   = 1LLU  << 43,
+    FlowHasComplexFontCodePath            = 1LLU  << 43,
     FeatureIsDisabled                     = 1LLU  << 44,
     FlowHasNoParent                       = 1LLU  << 45,
     FlowHasNoChild                        = 1LLU  << 46,
@@ -209,8 +209,8 @@ static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, In
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsTextFragment, reasons, includeReasons);
         if (textRenderer.isSVGInlineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsSVGInlineText, reasons, includeReasons);
-        if (style.fontCascade().codePath(TextRun(textRenderer.text())) != FontCascade::Simple)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowFontIsNotSimple, reasons, includeReasons);
+        if (!textRenderer.canUseSimpleFontCodePath())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasComplexFontCodePath, reasons, includeReasons);
 
         auto textReasons = canUseForText(textRenderer, fontCascade, lineHeightConstraint, flowIsJustified, includeReasons);
         if (textReasons != NoReason)
@@ -1051,8 +1051,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case FlowTextIsSVGInlineText:
         stream << "unsupported SVGInlineText";
         break;
-    case FlowFontIsNotSimple:
-        stream << "complext font";
+    case FlowHasComplexFontCodePath:
+        stream << "text with complex font codepath";
         break;
     case FlowHasTextShadow:
         stream << "text-shadow";
