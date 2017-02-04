@@ -1254,17 +1254,21 @@ void CachedResourceLoader::clearPreloads(ClearPreloadsMode mode)
     if (!m_preloads)
         return;
 
+    std::unique_ptr<ListHashSet<CachedResource*>> remainingLinkPreloads;
     for (auto* resource : *m_preloads) {
-        if (mode == ClearPreloadsMode::ClearSpeculativePreloads && resource->isLinkPreload())
+        ASSERT(resource);
+        if (mode == ClearPreloadsMode::ClearSpeculativePreloads && resource->isLinkPreload()) {
+            if (!remainingLinkPreloads)
+                remainingLinkPreloads = std::make_unique<ListHashSet<CachedResource*>>();
+            remainingLinkPreloads->add(resource);
             continue;
+        }
         resource->decreasePreloadCount();
         bool deleted = resource->deleteIfPossible();
         if (!deleted && resource->preloadResult() == CachedResource::PreloadNotReferenced)
             MemoryCache::singleton().remove(*resource);
-        m_preloads->remove(resource);
     }
-    if (!m_preloads->size())
-        m_preloads = nullptr;
+    m_preloads = WTFMove(remainingLinkPreloads);
 }
 
 #if PRELOAD_DEBUG
