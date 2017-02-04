@@ -1,3 +1,18 @@
+2017-02-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove check for SkipSafariExecutableEntitlementChecks
+        https://bugs.webkit.org/show_bug.cgi?id=167762
+
+        Reviewed by Dan Bernstein.
+
+        Follow-up fix: don't break internal behavior.
+
+        * Scripts/webkitdirs.pm:
+        (safariPath):
+        (executableHasEntitlements): Deleted.
+        (safariPathFromSafariBundle): Deleted.
+        (installedSafariPath): Deleted.
+
 2017-02-03  Daniel Bates  <dabates@apple.com>
 
         [Mac][WK2] Add SPI to override the Content Security Policy of a page
