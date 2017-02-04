@@ -298,6 +298,14 @@ JSRetainPtr<JSStringRef> UIScriptController::accessibilitySpeakSelectionContent(
     return nullptr;
 }
 
+void UIScriptController::removeViewFromWindow(JSValueRef)
+{
+}
+
+void UIScriptController::addViewToWindow(JSValueRef)
+{
+}
+
 }
 
 #endif // PLATFORM(IOS)

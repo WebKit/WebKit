@@ -131,4 +131,40 @@ JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfac
 #endif
 }
 
+void UIScriptController::removeViewFromWindow(JSValueRef callback)
+{
+#if WK_API_ENABLED
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    auto* mainWebView = TestController::singleton().mainWebView();
+    mainWebView->removeFromWindow();
+
+    [mainWebView->platformView() _doAfterNextPresentationUpdate: ^ {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+#else
+    UNUSED_PARAM(callback);
+#endif
+}
+
+void UIScriptController::addViewToWindow(JSValueRef callback)
+{
+#if WK_API_ENABLED
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    auto* mainWebView = TestController::singleton().mainWebView();
+    mainWebView->addToWindow();
+
+    [mainWebView->platformView() _doAfterNextPresentationUpdate: ^ {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+#else
+    UNUSED_PARAM(callback);
+#endif
+}
+
 } // namespace WTR

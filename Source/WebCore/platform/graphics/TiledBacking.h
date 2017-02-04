@@ -97,6 +97,7 @@ public:
     virtual void prepopulateRect(const FloatRect&) = 0;
 
     virtual void setIsInWindow(bool) = 0;
+    virtual bool isInWindow() const = 0;
 
     enum {
         CoverageForVisibleArea = 0,

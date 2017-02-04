@@ -72,6 +72,7 @@ PASS Scrollable div did not receive wheel events.
       (tile cache coverage 0, 0 2008 x 2048)
       (tile size 512 x 512)
       (top left tile 0, 0 tiles grid 4 x 4)
+      (in window 1)
     )
   )
 )

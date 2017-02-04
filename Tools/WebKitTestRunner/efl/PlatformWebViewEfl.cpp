@@ -129,6 +129,14 @@ void PlatformWebView::removeChromeInputField()
 {
 }
 
+void PlatformWebView::addToWindow()
+{
+}
+
+void PlatformWebView::removeFromWindow()
+{
+}
+
 void PlatformWebView::makeWebViewFirstResponder()
 {
 }

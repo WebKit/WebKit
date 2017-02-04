@@ -252,6 +252,16 @@ void PlatformWebView::removeChromeInputField()
     }
 }
 
+void PlatformWebView::addToWindow()
+{
+    [[m_window contentView] addSubview:m_view];
+}
+
+void PlatformWebView::removeFromWindow()
+{
+    [m_view removeFromSuperview];
+}
+
 void PlatformWebView::makeWebViewFirstResponder()
 {
     [m_window makeFirstResponder:platformView()];

@@ -27,6 +27,7 @@ PASS Page did not receive wheel events.
       (tile cache coverage 0, 0 785 x 2048)
       (tile size 785 x 512)
       (top left tile 0, 0 tiles grid 1 x 4)
+      (in window 1)
     )
   )
 )

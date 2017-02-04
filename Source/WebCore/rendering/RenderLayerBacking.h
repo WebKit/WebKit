@@ -87,8 +87,8 @@ public:
     GraphicsLayer* graphicsLayer() const { return m_graphicsLayer.get(); }
 
     // Layer to clip children
-    bool hasClippingLayer() const { return (m_childContainmentLayer && !m_usingTiledCacheLayer); }
-    GraphicsLayer* clippingLayer() const { return !m_usingTiledCacheLayer ? m_childContainmentLayer.get() : nullptr; }
+    bool hasClippingLayer() const { return (m_childContainmentLayer && !m_isMainFrameLayerWithTiledBacking); }
+    GraphicsLayer* clippingLayer() const { return !m_isMainFrameLayerWithTiledBacking ? m_childContainmentLayer.get() : nullptr; }
 
     // Layer to get clipped by ancestor
     bool hasAncestorClippingLayer() const { return m_ancestorClippingLayer != nullptr; }
@@ -181,7 +181,8 @@ public:
     void positionOverflowControlsLayers();
     bool hasUnpositionedOverflowControlsLayers() const;
 
-    bool usingTiledBacking() const { return m_usingTiledCacheLayer; }
+    bool isMainFrameLayerWithTiledBacking() const { return m_isMainFrameLayerWithTiledBacking; }
+
     WEBCORE_EXPORT TiledBacking* tiledBacking() const;
     void adjustTiledBackingCoverage();
     void setTiledBackingHasMargins(bool hasExtendedBackgroundOnLeftAndRight, bool hasExtendedBackgroundOnTopAndBottom);
@@ -330,8 +331,8 @@ private:
 
     bool shouldClipCompositedBounds() const;
 
-    bool hasTiledBackingFlatteningLayer() const { return (m_childContainmentLayer && m_usingTiledCacheLayer); }
-    GraphicsLayer* tileCacheFlatteningLayer() const { return m_usingTiledCacheLayer ? m_childContainmentLayer.get() : nullptr; }
+    bool hasTiledBackingFlatteningLayer() const { return (m_childContainmentLayer && m_isMainFrameLayerWithTiledBacking); }
+    GraphicsLayer* tileCacheFlatteningLayer() const { return m_isMainFrameLayerWithTiledBacking ? m_childContainmentLayer.get() : nullptr; }
 
     void paintIntoLayer(const GraphicsLayer*, GraphicsContext&, const IntRect& paintDirtyRect, PaintBehavior, GraphicsLayerPaintingPhase);
 
@@ -363,22 +364,22 @@ private:
     std::unique_ptr<GraphicsLayer> m_scrollingLayer; // Only used if the layer is using composited scrolling.
     std::unique_ptr<GraphicsLayer> m_scrollingContentsLayer; // Only used if the layer is using composited scrolling.
 
-    ScrollingNodeID m_viewportConstrainedNodeID;
-    ScrollingNodeID m_scrollingNodeID;
-
     LayoutRect m_compositedBounds;
     LayoutSize m_subpixelOffsetFromRenderer; // This is the subpixel distance between the primary graphics layer and the associated renderer's bounds.
     LayoutSize m_compositedBoundsOffsetFromGraphicsLayer; // This is the subpixel distance between the primary graphics layer and the render layer bounds.
 
-    bool m_artificiallyInflatedBounds; // bounds had to be made non-zero to make transform-origin work
-    bool m_isMainFrameRenderViewLayer;
-    bool m_usingTiledCacheLayer;
-    bool m_requiresOwnBackingStore;
-    bool m_canCompositeFilters;
+    ScrollingNodeID m_viewportConstrainedNodeID { 0 };
+    ScrollingNodeID m_scrollingNodeID { 0 };
+
+    bool m_artificiallyInflatedBounds { false }; // bounds had to be made non-zero to make transform-origin work
+    bool m_isMainFrameRenderViewLayer { false };
+    bool m_isMainFrameLayerWithTiledBacking { false };
+    bool m_requiresOwnBackingStore { true };
+    bool m_canCompositeFilters { false };
 #if ENABLE(FILTERS_LEVEL_2)
-    bool m_canCompositeBackdropFilters;
+    bool m_canCompositeBackdropFilters { false };
 #endif
-    bool m_backgroundLayerPaintsFixedRootBackground;
+    bool m_backgroundLayerPaintsFixedRootBackground { false };
 };
 
 enum CanvasCompositingStrategy {

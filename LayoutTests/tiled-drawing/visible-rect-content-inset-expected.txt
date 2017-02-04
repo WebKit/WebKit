@@ -17,6 +17,7 @@ This test applies a content inset and then dumps the layer tree including visibl
       (tile cache coverage 0, 0 800 x 500)
       (tile size 800 x 512)
       (top left tile 0, 0 tiles grid 1 x 1)
+      (in window 1)
     )
   )
 )

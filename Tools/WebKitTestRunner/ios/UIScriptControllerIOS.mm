@@ -536,6 +536,16 @@ JSRetainPtr<JSStringRef> UIScriptController::scrollingTreeAsText() const
     return JSStringCreateWithCFString((CFStringRef)[webView _scrollingTreeAsText]);
 }
 
+void UIScriptController::removeViewFromWindow(JSValueRef callback)
+{
+    TestController::singleton().mainWebView()->removeFromWindow();
+}
+
+void UIScriptController::addViewToWindow(JSValueRef callback)
+{
+    TestController::singleton().mainWebView()->addToWindow();
+}
+
 void UIScriptController::platformSetDidStartFormControlInteractionCallback()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();

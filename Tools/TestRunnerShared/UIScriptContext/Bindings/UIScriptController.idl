@@ -26,6 +26,8 @@
 interface UIScriptController {
 
     void doAsyncTask(object callback); // Used to test the harness.
+    void uiScriptComplete(DOMString result);
+
     void doAfterPresentationUpdate(object callback); // Call the callback after sending a message to the WebProcess and receiving a subsequent update.
     void doAfterNextStablePresentationUpdate(object callback);
 
@@ -213,8 +215,11 @@ interface UIScriptController {
 
     readonly attribute DOMString scrollingTreeAsText;
 
-    void uiScriptComplete(DOMString result);
-
     void retrieveSpeakSelectionContent(object callback);
     readonly attribute DOMString accessibilitySpeakSelectionContent;
+
+    // Unparent and parent the web view, simulating, for example, tab switching.
+    void removeViewFromWindow(object callback);
+    void addViewToWindow(object callback);
+
 };

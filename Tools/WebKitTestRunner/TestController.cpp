@@ -753,6 +753,9 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
     WKTextCheckerContinuousSpellCheckingEnabledStateChanged(true);
 #endif
 
+    // Make sure the view is in the window (a test can unparent it).
+    m_mainWebView->addToWindow();
+
     // In the case that a test using the chrome input field failed, be sure to clean up for the next test.
     m_mainWebView->removeChromeInputField();
     m_mainWebView->focus();

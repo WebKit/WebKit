@@ -1,3 +1,45 @@
+2017-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Correctly set the "inWindow" flag for TileControllers that aren't the page tiles, and clarify "usingTiledBacking" logic
+        https://bugs.webkit.org/show_bug.cgi?id=167774
+
+        Reviewed by Tim Horton.
+
+        Implement UIScriptController removeViewFromWindow() and addViewToWindow(), and hook
+        up for Mac WK1 and WK2, and iOS WK2. It takes a callback because view state updates to the
+        web process are async, so the callback fires after the web process gets the new state.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::removeViewFromWindow):
+        (WTR::UIScriptController::addViewToWindow):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::removeViewFromWindow):
+        (WTR::UIScriptController::addViewToWindow):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::removeViewFromWindow):
+        (WTR::UIScriptController::addViewToWindow):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::removeFromWindow):
+        (WTR::PlatformWebView::addToWindow):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::removeViewFromWindow):
+        (WTR::UIScriptController::addViewToWindow):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::removeFromWindow):
+        (WTR::PlatformWebView::addToWindow):
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::removeViewFromWindow):
+        (WTR::UIScriptController::addViewToWindow):
+
 2017-02-03  Alexey Proskuryakov  <ap@apple.com>
 
         Remove check for SkipSafariExecutableEntitlementChecks
