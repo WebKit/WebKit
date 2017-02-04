@@ -1,3 +1,13 @@
+2017-02-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the key shortcut to enable resource usage overlay in GTK+.
+
+        The condition to check for CTRL and Shift modifiers is wrong, causing the overlay to be shown on Shit+G and
+        making it impossible to write a 'G'.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseKeyPressEvent):
+
 2017-02-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout of r211486, r211629.

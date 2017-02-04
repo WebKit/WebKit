@@ -684,7 +684,7 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
 #if ENABLE(DEVELOPER_MODE) && OS(LINUX)
-    if ((keyEvent->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) && keyEvent->keyval == GDK_KEY_G) {
+    if ((keyEvent->state & GDK_CONTROL_MASK) && (keyEvent->state & GDK_SHIFT_MASK) && keyEvent->keyval == GDK_KEY_G) {
         auto& preferences = priv->pageProxy->preferences();
         preferences.setResourceUsageOverlayVisible(!preferences.resourceUsageOverlayVisible());
         priv->shouldForwardNextKeyEvent = FALSE;
