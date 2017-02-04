@@ -1,3 +1,18 @@
+2017-02-04  Andreas Kling  <akling@apple.com>
+
+        Plug some leaks in TestController and UIScriptContext.
+        <https://webkit.org/b/167839>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix a couple of the leaks seen on the leaks bot.
+
+        * TestRunnerShared/UIScriptContext/UIScriptContext.cpp:
+        (UIScriptContext::runUIScript):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::handleCheckOfUserMediaPermissionForOrigin):
+        (WTR::TestController::decidePolicyForUserMediaPermissionRequestIfPossible):
+
 2017-02-03  Jeremy Jones  <jeremyj@apple.com>
 
         WK1 mouse events are missing movementX and movementY for pointerlock.

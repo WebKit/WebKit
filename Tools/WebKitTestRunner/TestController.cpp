@@ -1959,8 +1959,9 @@ void TestController::handleCheckOfUserMediaPermissionForOrigin(WKFrameRef frame,
 {
     auto originHash = userMediaOriginHash(userMediaDocumentOrigin, topLevelDocumentOrigin);
     auto salt = saltForOrigin(frame, originHash);
+    WKRetainPtr<WKStringRef> saltString = adoptWK(WKStringCreateWithUTF8CString(salt.utf8().data()));
 
-    WKUserMediaPermissionCheckSetUserMediaAccessInfo(checkRequest, WKStringCreateWithUTF8CString(salt.utf8().data()), settingsForOrigin(originHash).persistentPermission());
+    WKUserMediaPermissionCheckSetUserMediaAccessInfo(checkRequest, saltString.get(), settingsForOrigin(originHash).persistentPermission());
 }
 
 void TestController::handleUserMediaPermissionRequest(WKFrameRef frame, WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin, WKUserMediaPermissionRequestRef request)
@@ -2010,8 +2011,8 @@ void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
             continue;
         }
 
-        WKRetainPtr<WKArrayRef> audioDeviceUIDs = WKUserMediaPermissionRequestAudioDeviceUIDs(request);
-        WKRetainPtr<WKArrayRef> videoDeviceUIDs = WKUserMediaPermissionRequestVideoDeviceUIDs(request);
+        WKRetainPtr<WKArrayRef> audioDeviceUIDs = adoptWK(WKUserMediaPermissionRequestAudioDeviceUIDs(request));
+        WKRetainPtr<WKArrayRef> videoDeviceUIDs = adoptWK(WKUserMediaPermissionRequestVideoDeviceUIDs(request));
 
         if (!WKArrayGetSize(videoDeviceUIDs.get()) && !WKArrayGetSize(audioDeviceUIDs.get())) {
             WKUserMediaPermissionRequestDeny(request, kWKNoConstraints);
@@ -2022,13 +2023,13 @@ void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
         if (WKArrayGetSize(videoDeviceUIDs.get()))
             videoDeviceUID = reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(videoDeviceUIDs.get(), 0));
         else
-            videoDeviceUID = WKStringCreateWithUTF8CString("");
+            videoDeviceUID = adoptWK(WKStringCreateWithUTF8CString(""));
 
         WKRetainPtr<WKStringRef> audioDeviceUID;
         if (WKArrayGetSize(audioDeviceUIDs.get()))
             audioDeviceUID = reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(audioDeviceUIDs.get(), 0));
         else
-            audioDeviceUID = WKStringCreateWithUTF8CString("");
+            audioDeviceUID = adoptWK(WKStringCreateWithUTF8CString(""));
 
         WKUserMediaPermissionRequestAllow(request, audioDeviceUID.get(), videoDeviceUID.get());
     }
