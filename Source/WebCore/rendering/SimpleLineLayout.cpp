@@ -100,7 +100,7 @@ enum AvoidanceReason_ : uint64_t {
     FlowTextHasSoftHyphen                 = 1LLU  << 34,
     FlowTextHasDirectionCharacter         = 1LLU  << 35,
     FlowIsMissingPrimaryFont              = 1LLU  << 36,
-    FlowFontIsMissingGlyph                = 1LLU  << 37,
+    FlowPrimaryFontIsInsufficient         = 1LLU  << 37,
     FlowTextIsCombineText                 = 1LLU  << 38,
     FlowTextIsRenderCounter               = 1LLU  << 39,
     FlowTextIsRenderQuote                 = 1LLU  << 40,
@@ -137,10 +137,11 @@ enum class IncludeReasons { First , All };
 #endif
 
 template <typename CharacterType>
-static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned length, const Font& font, std::optional<float> lineHeightConstraint,
+static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned length, const FontCascade& fontCascade, std::optional<float> lineHeightConstraint,
     bool textIsJustified, IncludeReasons includeReasons)
 {
     AvoidanceReasonFlags reasons = { };
+    auto& primaryFont = fontCascade.primaryFont();
     // FIXME: <textarea maxlength=0> generates empty text node.
     if (!length)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsEmpty, reasons, includeReasons);
@@ -168,20 +169,21 @@ static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned le
             || direction == U_POP_DIRECTIONAL_FORMAT || direction == U_BOUNDARY_NEUTRAL)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasDirectionCharacter, reasons, includeReasons);
 
-        auto glyph = font.glyphForCharacter(character);
-        if (!glyph)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowFontIsMissingGlyph, reasons, includeReasons);
-        if (lineHeightConstraint && font.boundsForGlyph(glyph).height() > *lineHeightConstraint)
+        auto glyphData = fontCascade.glyphDataForCharacter(character, false);
+        if (!glyphData.isValid() || glyphData.font != &primaryFont)
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowPrimaryFontIsInsufficient, reasons, includeReasons);
+
+        if (lineHeightConstraint && primaryFont.boundsForGlyph(glyphData.glyph).height() > *lineHeightConstraint)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowFontHasOverflowGlyph, reasons, includeReasons);
     }
     return reasons;
 }
 
-static AvoidanceReasonFlags canUseForText(const RenderText& textRenderer, const Font& font, std::optional<float> lineHeightConstraint, bool textIsJustified, IncludeReasons includeReasons)
+static AvoidanceReasonFlags canUseForText(const RenderText& textRenderer, const FontCascade& fontCascade, std::optional<float> lineHeightConstraint, bool textIsJustified, IncludeReasons includeReasons)
 {
     if (textRenderer.is8Bit())
-        return canUseForText(textRenderer.characters8(), textRenderer.textLength(), font, lineHeightConstraint, false, includeReasons);
-    return canUseForText(textRenderer.characters16(), textRenderer.textLength(), font, lineHeightConstraint, textIsJustified, includeReasons);
+        return canUseForText(textRenderer.characters8(), textRenderer.textLength(), fontCascade, lineHeightConstraint, false, includeReasons);
+    return canUseForText(textRenderer.characters16(), textRenderer.textLength(), fontCascade, lineHeightConstraint, textIsJustified, includeReasons);
 }
 
 static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, IncludeReasons includeReasons)
@@ -189,8 +191,8 @@ static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, In
     AvoidanceReasonFlags reasons = { };
     // We assume that all lines have metrics based purely on the primary font.
     const auto& style = flow.style();
-    auto& primaryFont = style.fontCascade().primaryFont();
-    if (primaryFont.isLoading())
+    auto& fontCascade = style.fontCascade();
+    if (fontCascade.primaryFont().isLoading())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsMissingPrimaryFont, reasons, includeReasons);
     std::optional<float> lineHeightConstraint;
     if (style.lineBoxContain() & LineBoxContainGlyphs)
@@ -210,7 +212,7 @@ static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, In
         if (style.fontCascade().codePath(TextRun(textRenderer.text())) != FontCascade::Simple)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowFontIsNotSimple, reasons, includeReasons);
 
-        auto textReasons = canUseForText(textRenderer, primaryFont, lineHeightConstraint, flowIsJustified, includeReasons);
+        auto textReasons = canUseForText(textRenderer, fontCascade, lineHeightConstraint, flowIsJustified, includeReasons);
         if (textReasons != NoReason)
             SET_REASON_AND_RETURN_IF_NEEDED(textReasons, reasons, includeReasons);
     }
@@ -1031,8 +1033,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case FlowIsMissingPrimaryFont:
         stream << "missing primary font";
         break;
-    case FlowFontIsMissingGlyph:
-        stream << "missing glyph";
+    case FlowPrimaryFontIsInsufficient:
+        stream << "missing glyph or glyph needs another font";
         break;
     case FlowTextIsCombineText:
         stream << "text is combine";

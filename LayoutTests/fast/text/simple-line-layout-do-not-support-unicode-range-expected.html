@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Simple line layout can't work with insufficient primary font.</title>
+<style>
+@font-face {
+    font-family: Monaco;
+    unicode-range: U+0060-0080;
+    src: local(Times);
+}
+</style>
+<script>
+if (window.internals) {
+    internals.settings.setSimpleLineLayoutDebugBordersEnabled(true);
+    internals.settings.setSimpleLineLayoutEnabled(false);
+}
+</script>
+</head>
+<body>
+<p style="font-family: Monaco;">THIS SHOULD NOT HAVE GREEN simple line layout borders.</p>
+</body>
+</html>

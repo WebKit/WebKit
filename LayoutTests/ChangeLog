@@ -1,3 +1,13 @@
+2017-02-03  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Bail out from Simple Line Layout when the primary font is insufficient.
+        https://bugs.webkit.org/show_bug.cgi?id=167820
+
+        Reviewed by Myles C. Maxfield.
+
+        * fast/text/simple-line-layout-do-not-support-unicode-range-expected.html: Added.
+        * fast/text/simple-line-layout-do-not-support-unicode-range.html: Added.
+
 2017-02-03  Jer Noble  <jer.noble@apple.com>
 
         ASSERT in HTMLMediaElement::~HTMLMediaElement
