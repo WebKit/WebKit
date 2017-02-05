@@ -69,9 +69,13 @@ void MockPageOverlayClient::uninstallAllOverlays()
     }
 }
 
-String MockPageOverlayClient::layerTreeAsText(MainFrame& mainFrame)
+String MockPageOverlayClient::layerTreeAsText(MainFrame& mainFrame, LayerTreeFlags flags)
 {
-    return "View-relative:\n" + mainFrame.pageOverlayController().viewOverlayRootLayer().layerTreeAsText(LayerTreeAsTextIncludePageOverlayLayers) + "\n\nDocument-relative:\n" + mainFrame.pageOverlayController().documentOverlayRootLayer().layerTreeAsText(LayerTreeAsTextIncludePageOverlayLayers);
+    GraphicsLayer* viewOverlayRoot = mainFrame.pageOverlayController().viewOverlayRootLayer();
+    GraphicsLayer* documentOverlayRoot = mainFrame.pageOverlayController().documentOverlayRootLayer();
+    
+    return "View-relative:\n" + (viewOverlayRoot ? viewOverlayRoot->layerTreeAsText(flags | LayerTreeAsTextIncludePageOverlayLayers) : "(no view-relative overlay root)")
+        + "\n\nDocument-relative:\n" + (documentOverlayRoot ? documentOverlayRoot->layerTreeAsText(flags | LayerTreeAsTextIncludePageOverlayLayers) : "(no document-relative overlay root)");
 }
 
 void MockPageOverlayClient::willMoveToPage(PageOverlay&, Page*)

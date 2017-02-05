@@ -350,7 +350,6 @@ private:
     bool updateBacking(RenderLayer&, CompositingChangeRepaint shouldRepaint, BackingRequired = BackingRequired::Unknown);
 
     void clearBackingForLayerIncludingDescendants(RenderLayer&);
-    void setIsInWindowForLayerIncludingDescendants(RenderLayer&, bool isInWindow);
 
     // Repaint this and its child layers.
     void recursiveRepaintLayer(RenderLayer&);

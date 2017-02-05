@@ -445,7 +445,7 @@ enum EventThrottlingBehavior {
     [Conditional=VIDEO] boolean elementIsBlockingDisplaySleep(HTMLMediaElement element);
 
     [MayThrowException] MockPageOverlay installMockPageOverlay(PageOverlayType type);
-    [MayThrowException] DOMString pageOverlayLayerTreeAsText();
+    [MayThrowException] DOMString pageOverlayLayerTreeAsText(optional unsigned short flags = 0);
 
     void setPageMuted(DOMString mutedState);
     DOMString pageMediaState();

@@ -305,3 +305,5 @@ webkit.org/b/167347 media/modern-media-controls/airplay-button/airplay-button-on
 webkit.org/b/163598 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html [ Pass Timeout ]
 
 webkit.org/b/167127 pointer-lock/locked-element-removed-from-dom.html
+
+webkit.org/b/167857 pageoverlay/overlay-remove-reinsert-view.html [ Skip ]

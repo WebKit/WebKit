@@ -1,3 +1,13 @@
+2017-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up how GraphicsLayer's "inWindow" state is set, and fix some issues with Page Overlays
+        https://bugs.webkit.org/show_bug.cgi?id=167850
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::uiScriptDidComplete): Fix an assertion that fires for non-16-bit strings.
+
 2017-02-04  Andreas Kling  <akling@apple.com>
 
         Plug some leaks in TestController and UIScriptContext.

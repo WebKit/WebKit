@@ -364,6 +364,15 @@ void GraphicsLayer::noteDeviceOrPageScaleFactorChangedIncludingDescendants()
         childLayers[i]->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
+void GraphicsLayer::setIsInWindowIncludingDescendants(bool inWindow)
+{
+    if (usingTiledBacking())
+        tiledBacking()->setIsInWindow(inWindow);
+
+    for (auto* childLayer : children())
+        childLayer->setIsInWindowIncludingDescendants(inWindow);
+}
+
 void GraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
 {
     if (m_replicaLayer == layer)
@@ -680,7 +689,7 @@ static void dumpChildren(TextStream& ts, const Vector<GraphicsLayer*>& children,
 {
     totalChildCount += children.size();
     for (auto* child : children) {
-        if (!child->client().shouldSkipLayerInDump(child, behavior)) {
+        if ((behavior & LayerTreeAsTextDebug) || !child->client().shouldSkipLayerInDump(child, behavior)) {
             child->dumpLayer(ts, indent + 2, behavior);
             continue;
         }

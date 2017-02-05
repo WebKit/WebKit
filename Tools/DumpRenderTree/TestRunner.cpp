@@ -2431,7 +2431,7 @@ void TestRunner::callUIScriptCallback(unsigned callbackID, JSStringRef result)
 
 void TestRunner::uiScriptDidComplete(const String& result, unsigned callbackID)
 {
-    JSRetainPtr<JSStringRef> stringRef(Adopt, JSStringCreateWithCharacters(result.characters16(), result.length()));
+    JSRetainPtr<JSStringRef> stringRef(Adopt, JSStringCreateWithUTF8CString(result.utf8().data()));
     callUIScriptCallback(callbackID, stringRef.get());
 }
 

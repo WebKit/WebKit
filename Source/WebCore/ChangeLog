@@ -1,3 +1,61 @@
+2017-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up how GraphicsLayer's "inWindow" state is set, and fix some issues with Page Overlays
+        https://bugs.webkit.org/show_bug.cgi?id=167850
+
+        Reviewed by Tim Horton.
+        
+        RenderLayerCompositor::setIsInWindowForLayerIncludingDescendants() walked the RenderLayer
+        tree to set the GraphicsLayer's "inWindow" state. This had the problem of skipping non-primary
+        GraphicsLayers. We also never did this work for page overlay layers.
+
+        Fix by giving GraphicsLayers a recursive function that sets the inWindow state, and call that
+        from RenderLayerCompositor::setIsInWindow() and PageOverlayController.
+
+        PageOverlayController also needs to implement tiledBackingUsageChanged so that tiled backings
+        created dynamically get the correct in-window state.
+
+        Page overlays also had some serious issues in MiniBrowser, in that they disappeared on reload,
+        and on hide/show web view. This was because the overlay root layers were re-parented, but
+        addChild() for each overlay's layer wasn't called. Clean up by replacing willAttachRootLayer() followed
+        by viewOverlayRootLayer()/documentOverlayRootLayer() with single calls that set up the layers,
+        update the inWindow state, and return the layer.
+
+        Make it possible to dump tile caches in page overlay tests.
+
+        Make showGraphicsLayers() always dump page overlay layers (source of much confusion).
+
+        Test: pageoverlay/overlay-remove-reinsert-view.html
+
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::documentOverlayRootLayer):
+        (WebCore::PageOverlayController::viewOverlayRootLayer):
+        (WebCore::PageOverlayController::layerWithDocumentOverlays):
+        (WebCore::PageOverlayController::layerWithViewOverlays):
+        (WebCore::PageOverlayController::tiledBackingUsageChanged):
+        (WebCore::PageOverlayController::willAttachRootLayer): Deleted.
+        * page/PageOverlayController.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::setIsInWindowIncludingDescendants):
+        (WebCore::dumpChildren):
+        * platform/graphics/GraphicsLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::appendDocumentOverlayLayers):
+        (WebCore::RenderLayerCompositor::setIsInWindow):
+        (WebCore::RenderLayerCompositor::attachRootLayer):
+        (WebCore::RenderLayerCompositor::rootLayerAttachmentChanged):
+        (WebCore::RenderLayerCompositor::setIsInWindowForLayerIncludingDescendants): Deleted.
+        * rendering/RenderLayerCompositor.h:
+        * testing/Internals.cpp:
+        (WebCore::toLayerTreeFlags):
+        (WebCore::Internals::layerTreeAsText):
+        (WebCore::Internals::pageOverlayLayerTreeAsText):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/MockPageOverlayClient.cpp:
+        (WebCore::MockPageOverlayClient::layerTreeAsText):
+        * testing/MockPageOverlayClient.h:
+
 2017-02-05  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Use RenderText::canUseSimpleFontCodePath() only as a hint.

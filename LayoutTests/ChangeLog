@@ -1,3 +1,18 @@
+2017-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up how GraphicsLayer's "inWindow" state is set, and fix some issues with Page Overlays
+        https://bugs.webkit.org/show_bug.cgi?id=167850
+
+        Reviewed by Tim Horton.
+
+        * pageoverlay/overlay-large-document-expected.txt:
+        * pageoverlay/overlay-large-document-scrolled-expected.txt:
+        * pageoverlay/overlay-remove-reinsert-view-expected.txt: Added.
+        * pageoverlay/overlay-remove-reinsert-view.html: Added.
+        * platform/ios-simulator-wk2/pageoverlay/overlay-remove-reinsert-view-expected.txt: Added.
+        * platform/mac-wk1/pageoverlay/overlay-remove-reinsert-view-expected.txt: Added.
+        * tiled-drawing/tiled-backing-in-window-expected.txt:
+
 2017-02-05  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Use RenderText::canUseSimpleFontCodePath() only as a hint.
