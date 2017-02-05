@@ -1457,6 +1457,7 @@ webkit.org/b/165530 compositing/layer-creation/fixed-position-out-of-view-scaled
 
 # picture-in-picture is not supported prior to Sierra.
 [ ElCapitan ] media/modern-media-controls/pip-support [ Skip ]
+[ ElCapitan ] http/tests/media/modern-media-controls/pip-support [ Skip ]
 [ ElCapitan ] media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Skip ]
 [ ElCapitan ] media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 

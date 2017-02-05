@@ -35,25 +35,6 @@ class TracksSupport extends MediaControllerSupport
 
         this.mediaController.controls.tracksPanel.dataSource = this;
         this.mediaController.controls.tracksPanel.uiDelegate = this;
-
-        const media = mediaController.media;
-        for (let tracks of [media.audioTracks, media.textTracks]) {
-            for (let eventType of ["addtrack", "change", "removetrack"])
-                tracks.addEventListener(eventType, this);
-        }
-    }
-
-    // Public
-
-    destroy()
-    {
-        super.destroy();
-
-        const media = this.mediaController.media;
-        for (let tracks of [media.audioTracks, media.textTracks]) {
-            for (let eventType of ["addtrack", "change", "removetrack"])
-                tracks.removeEventListener(eventType, this);
-        }
     }
 
     // Protected
@@ -66,6 +47,11 @@ class TracksSupport extends MediaControllerSupport
     get mediaEvents()
     {
         return ["loadedmetadata"];
+    }
+
+    get tracksToMonitor()
+    {
+        return [this.mediaController.media.audioTracks, this.mediaController.media.textTracks];
     }
 
     buttonWasPressed(control)

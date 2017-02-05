@@ -41,6 +41,11 @@ class PiPSupport extends MediaControllerSupport
         return ["loadedmetadata", "error", "webkitpresentationmodechanged", "webkitcurrentplaybacktargetiswirelesschanged"];
     }
 
+    get tracksToMonitor()
+    {
+        return [this.mediaController.media.videoTracks];
+    }
+
     buttonWasPressed(control)
     {
         const media = this.mediaController.media;

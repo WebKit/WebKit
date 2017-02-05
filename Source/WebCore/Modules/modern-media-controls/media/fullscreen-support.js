@@ -32,21 +32,6 @@ class FullscreenSupport extends MediaControllerSupport
 
         if (mediaController.controls instanceof IOSInlineMediaControls)
             mediaController.controls.delegate = this;
-
-        const videoTracks = mediaController.media.videoTracks;
-        for (let eventType of ["change", "addtrack", "removetrack"])
-            videoTracks.addEventListener(eventType, this);
-    }
-
-    // Public
-
-    destroy()
-    {
-        super.destroy();
-
-        const videoTracks = this.mediaController.media.videoTracks;
-        for (let eventType of ["change", "addtrack", "removetrack"])
-            videoTracks.removeEventListener(eventType, this);
     }
 
     // Protected
@@ -59,6 +44,11 @@ class FullscreenSupport extends MediaControllerSupport
     get mediaEvents()
     {
         return ["loadedmetadata", "error"];
+    }
+
+    get tracksToMonitor()
+    {
+        return [this.mediaController.media.videoTracks];
     }
 
     buttonWasPressed(control)

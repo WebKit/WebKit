@@ -1,5 +1,19 @@
 2017-02-05  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] PiP button is not visible with a live broadcast video
+        https://bugs.webkit.org/show_bug.cgi?id=167794
+        <rdar://problem/30348790>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test to check that a live broadcast video shows the picture-in-picture button.
+
+        * http/tests/media/modern-media-controls/pip-support/pip-support-live-broadcast-expected.txt: Added.
+        * http/tests/media/modern-media-controls/pip-support/pip-support-live-broadcast.html: Added.
+        * platform/mac/TestExpectations:
+
+2017-02-05  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Time labels may wrap instead of displaying on a single line
         https://bugs.webkit.org/show_bug.cgi?id=167835
         <rdar://problem/30340534>

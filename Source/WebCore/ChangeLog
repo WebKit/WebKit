@@ -1,5 +1,46 @@
 2017-02-05  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] PiP button is not visible with a live broadcast video
+        https://bugs.webkit.org/show_bug.cgi?id=167794
+        <rdar://problem/30348790>
+
+        Reviewed by Dean Jackson.
+
+        We were only listening to the "loadedmetadata", "error", "webkitpresentationmodechanged"
+        and "webkitcurrentplaybacktargetiswirelesschanged" events to invalidate the enabled state
+        for the PiP button. We also need to check availability of video tracks, which we already
+        did for fullscreen, which is quite similar.
+        
+        So we now listen to "addtrack", "removetrack" and "change" events on the media.videoTracks
+        property, which correctly invalidates the PiP button when the first video track becomes
+        available or the last video track is removed.
+
+        Since a couple of other MediaControllerSupport subclasses (FullscreenSupport and TracksSupport)
+        would also listen to those events on various track types, we add a new "tracksToMonitor"
+        property on MediaControllerSupport which subclasses can override to provide a list of tracks
+        that should listen to those events. This removes the need for dedicated construction and
+        destruction time in MediaControllerSupport subclasses that need to listen to events on
+        tracks rather than the media itself.
+
+        Test: http/tests/media/modern-media-controls/pip-support/pip-support-live-broadcast.html
+
+        * Modules/modern-media-controls/media/fullscreen-support.js:
+        (FullscreenSupport):
+        (FullscreenSupport.prototype.get tracksToMonitor):
+        (FullscreenSupport.prototype.destroy): Deleted.
+        * Modules/modern-media-controls/media/media-controller-support.js:
+        (MediaControllerSupport):
+        (MediaControllerSupport.prototype.destroy):
+        (MediaControllerSupport.prototype.get tracksToMonitor):
+        * Modules/modern-media-controls/media/pip-support.js:
+        (PiPSupport.prototype.get tracksToMonitor):
+        * Modules/modern-media-controls/media/tracks-support.js:
+        (TracksSupport):
+        (TracksSupport.prototype.get tracksToMonitor):
+        (TracksSupport.prototype.destroy): Deleted.
+
+2017-02-05  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Time labels may wrap instead of displaying on a single line
         https://bugs.webkit.org/show_bug.cgi?id=167835
         <rdar://problem/30340534>

@@ -1,0 +1,31 @@
+<script src="../../../../../resources/js-test-pre.js"></script>
+<script src="/media-resources/modern-media-controls/resources/media-controls-loader.js"></script>
+<body>
+<video src="../../resources/hls/test-live.php" style="width: 800px;" autoplay></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the <code>PiPSupport</code> behavior with live broadcast.");
+
+const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+const media = document.querySelector("video");
+const mediaController = createControls(shadowRoot, media, null);
+
+if (window.internals)
+    window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+
+media.addEventListener("play", event => {
+    shouldBe("media.duration", "Number.POSITIVE_INFINITY");
+    shouldBeTrue("mediaController.controls.pipButton.enabled");
+
+    debug("");
+    shadowRoot.host.remove();
+    media.remove();
+    finishJSTest();
+});
+
+</script>
+<script src="../../../../../resources/js-test-post.js"></script>
+</body>
