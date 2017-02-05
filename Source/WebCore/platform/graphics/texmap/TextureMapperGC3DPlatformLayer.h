@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2011, 2012, 2017 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -17,31 +17,48 @@
  *  Boston, MA 02110-1301 USA
  */
 
-#ifndef GraphicsContext3DPrivate_h
-#define GraphicsContext3DPrivate_h
+#pragma once
 
-#include "GLContext.h"
+#if USE(TEXTURE_MAPPER) && !PLATFORM(EFL)
+
 #include "GraphicsContext3D.h"
 #include "PlatformLayer.h"
+#include "TextureMapperPlatformLayer.h"
+#include "TextureMapperPlatformLayerProxy.h"
 
 namespace WebCore {
 
 class BitmapTextureGL;
+class GLContext;
+class TextureMapperPlatformLayerProxy;
 
-class GraphicsContext3DPrivate {
+class TextureMapperGC3DPlatformLayer : public PlatformLayer {
 public:
-    GraphicsContext3DPrivate(GraphicsContext3D*, GraphicsContext3D::RenderStyle);
-    ~GraphicsContext3DPrivate();
+    TextureMapperGC3DPlatformLayer(GraphicsContext3D&, GraphicsContext3D::RenderStyle);
+    virtual ~TextureMapperGC3DPlatformLayer();
+
     bool makeContextCurrent();
     PlatformGraphicsContext3D platformContext();
-
     GraphicsContext3D::RenderStyle renderStyle() { return m_renderStyle; }
 
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    RefPtr<TextureMapperPlatformLayerProxy> proxy() const override;
+    void swapBuffersIfNeeded() override;
+#else
+    virtual void paintToTextureMapper(TextureMapper&, const FloatRect& target, const TransformationMatrix&, float opacity);
+#endif
+
 private:
+    GraphicsContext3D& m_context;
     std::unique_ptr<GLContext> m_glContext;
     GraphicsContext3D::RenderStyle m_renderStyle;
+
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
+    RefPtr<BitmapTextureGL> m_compositorTexture;
+#endif
 };
 
-}
+} // namespace WebCore
 
-#endif // GraphicsContext3DPrivate_h
+#endif // USE(TEXTURE_MAPPER) && !PLATFORM(EFL)

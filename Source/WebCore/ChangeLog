@@ -1,3 +1,51 @@
+2017-02-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move TextureMapper-specific logic out of GraphicsContext3DPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=167096
+
+        Reviewed by Alex Christensen.
+
+        Move the TextureMapper-specific functionality in GraphicsContext3DPrivate into a
+        separate class. The new TextureMapperGC3DPlatformLayer class inherits from the
+        class that's aliased to the PlatformLayer type, like GraphicsContext3DPrivate did
+        before.
+
+        In GraphicsContext3D, the new m_texmapLayer member variable of the
+        std::unique_ptr<TextureMapperGC3DPlatformLayer> type is used for configurations
+        that enable TextureMapper, largely the same way the GraphicsContext3DPrivate
+        object was used before. The remaining code in GraphicsContext3DPrivate is left
+        unchanged to keep it working for other ports.
+
+        No new tests -- no change in behavior.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate): Deleted.
+        (WebCore::GraphicsContext3DPrivate::proxy): Deleted.
+        (WebCore::GraphicsContext3DPrivate::swapBuffersIfNeeded): Deleted.
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper): Deleted.
+        * platform/graphics/GraphicsContext3DPrivate.h:
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformLayer):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::createForCurrentGLContext):
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.cpp: Copied from Source/WebCore/platform/graphics/GraphicsContext3DPrivate.cpp.
+        (WebCore::TextureMapperGC3DPlatformLayer::TextureMapperGC3DPlatformLayer):
+        (WebCore::TextureMapperGC3DPlatformLayer::~TextureMapperGC3DPlatformLayer):
+        (WebCore::TextureMapperGC3DPlatformLayer::makeContextCurrent):
+        (WebCore::TextureMapperGC3DPlatformLayer::platformContext):
+        (WebCore::TextureMapperGC3DPlatformLayer::proxy):
+        (WebCore::TextureMapperGC3DPlatformLayer::swapBuffersIfNeeded):
+        (WebCore::TextureMapperGC3DPlatformLayer::paintToTextureMapper):
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.h: Copied from Source/WebCore/platform/graphics/GraphicsContext3DPrivate.h.
+        (WebCore::TextureMapperGC3DPlatformLayer::renderStyle):
+
 2017-02-05  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Bail out from Simple Line Layout on surrogate pairs.

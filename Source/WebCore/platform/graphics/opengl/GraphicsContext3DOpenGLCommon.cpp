@@ -133,8 +133,13 @@ static uint64_t nameHashForShader(const char* name, size_t length)
 RefPtr<GraphicsContext3D> GraphicsContext3D::createForCurrentGLContext()
 {
     auto context = adoptRef(*new GraphicsContext3D({ }, 0, GraphicsContext3D::RenderToCurrentGLContext));
+#if USE(TEXTURE_MAPPER) && !PLATFORM(EFL)
+    if (!context->m_texmapLayer)
+        return nullptr;
+#else
     if (!context->m_private)
         return nullptr;
+#endif
     return WTFMove(context);
 }
 
