@@ -1,3 +1,21 @@
+2017-02-05  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Bail out from Simple Line Layout on surrogate pairs.
+        https://bugs.webkit.org/show_bug.cgi?id=167840
+        <rdar://problem/30364784>
+
+        Reviewed by Myles C. Maxfield.
+
+        Surrogate pairs require special line breaking logic. 
+
+        Test: fast/text/simple-line-layout-no-surrogate-pairs.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForCharacter):
+        (WebCore::SimpleLineLayout::canUseForText): Checking against special characters is faster than
+        checking against glyphs. Reverse their order. 
+        (WebCore::SimpleLineLayout::printReason):
+
 2017-02-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Static Analyzer: WebCoreNSURLExtras.mm: Potential leak of memory pointed to by 'allBytesBuffer'

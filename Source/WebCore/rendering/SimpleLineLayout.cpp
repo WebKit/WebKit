@@ -113,7 +113,8 @@ enum AvoidanceReason_ : uint64_t {
     FlowChildIsSelected                   = 1LLU  << 47,
     FlowHasHangingPunctuation             = 1LLU  << 48,
     FlowFontHasOverflowGlyph              = 1LLU  << 49,
-    EndOfReasons                          = 1LLU  << 50
+    FlowTextHasSurrogatePair              = 1LLU  << 50,
+    EndOfReasons                          = 1LLU  << 51
 };
 const unsigned NoReason = 0;
 
@@ -150,6 +151,9 @@ template<> AvoidanceReasonFlags canUseForCharacter(UChar character, bool textIsJ
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasJustifiedNonLatinText, reasons, includeReasons);
     }
 
+    if (U16_IS_SURROGATE(character))
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasSurrogatePair, reasons, includeReasons);
+    
     UCharDirection direction = u_charDirection(character);
     if (direction == U_RIGHT_TO_LEFT || direction == U_RIGHT_TO_LEFT_ARABIC
         || direction == U_RIGHT_TO_LEFT_EMBEDDING || direction == U_RIGHT_TO_LEFT_OVERRIDE
@@ -179,16 +183,16 @@ static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned le
         if (character == softHyphen)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasSoftHyphen, reasons, includeReasons);
 
+        auto characterReasons = canUseForCharacter(character, textIsJustified, includeReasons);
+        if (characterReasons != NoReason)
+            SET_REASON_AND_RETURN_IF_NEEDED(characterReasons, reasons, includeReasons);
+
         auto glyphData = fontCascade.glyphDataForCharacter(character, false);
         if (!glyphData.isValid() || glyphData.font != &primaryFont)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowPrimaryFontIsInsufficient, reasons, includeReasons);
 
         if (lineHeightConstraint && primaryFont.boundsForGlyph(glyphData.glyph).height() > *lineHeightConstraint)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowFontHasOverflowGlyph, reasons, includeReasons);
-
-        auto characterReasons = canUseForCharacter(character, textIsJustified, includeReasons);
-        if (characterReasons != NoReason)
-            SET_REASON_AND_RETURN_IF_NEEDED(characterReasons, reasons, includeReasons);
     }
     return reasons;
 }
@@ -1079,6 +1083,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case FlowFontHasOverflowGlyph:
         stream << "-webkit-line-box-contain: glyphs with overflowing text.";
+        break;
+    case FlowTextHasSurrogatePair:
+        stream << "surrogate pair";
         break;
     case FlowTextIsEmpty:
     case FlowHasNoChild:

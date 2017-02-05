@@ -1,3 +1,14 @@
+2017-02-05  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Bail out from Simple Line Layout on surrogate pairs.
+        https://bugs.webkit.org/show_bug.cgi?id=167840
+        <rdar://problem/30364784>
+
+        Reviewed by Myles C. Maxfield.
+
+        * fast/text/simple-line-layout-no-surrogate-pairs-expected.html: Added.
+        * fast/text/simple-line-layout-no-surrogate-pairs.html: Added.
+
 2017-02-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r204858): Synthetic bold text in vertical writing mode is rotated away from original text
