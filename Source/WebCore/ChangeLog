@@ -1,3 +1,21 @@
+2017-02-05  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Use RenderText::canUseSimpleFontCodePath() only as a hint.
+        https://bugs.webkit.org/show_bug.cgi?id=167853
+        <rdar://problem/30367302>
+
+        Reviewed by Simon Fraser.
+
+        Apparently RenderText::canUseSimpleFontCodePath() only checks if the string is qualified for
+        the simple font code path. However certain css properties could still force us to use the complex
+        path.
+        In most cases, we still do only one string traversal thanks to TextRun::setCharacterScanForCodePath(). 
+
+        Test: fast/text/simple-line-layout-simple-text-but-complex-font-path.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForFontAndText):
+
 2017-02-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Move TextureMapper-specific logic out of GraphicsContext3DPrivate
