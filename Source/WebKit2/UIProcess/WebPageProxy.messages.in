@@ -319,6 +319,7 @@ messages -> WebPageProxy {
 
 #if ENABLE(DATA_INTERACTION)
     DidPerformDataInteractionControllerOperation()
+    DidHandleStartDataInteractionRequest(bool started)
 #endif
 
 #if PLATFORM(COCOA)

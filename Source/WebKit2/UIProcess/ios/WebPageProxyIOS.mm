@@ -1121,6 +1121,11 @@ void WebPageProxy::didPerformDataInteractionControllerOperation()
     m_pageClient.didPerformDataInteractionControllerOperation();
 }
 
+void WebPageProxy::didHandleStartDataInteractionRequest(bool started)
+{
+    m_pageClient.didHandleStartDataInteractionRequest(started);
+}
+
 void WebPageProxy::requestStartDataInteraction(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition)
 {
     if (isValid())

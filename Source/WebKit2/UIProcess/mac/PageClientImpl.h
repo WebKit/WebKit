@@ -232,11 +232,6 @@ private:
     _WKRemoteObjectRegistry *remoteObjectRegistry() override;
 #endif
 
-#if ENABLE(DATA_INTERACTION)
-    void didPerformDataInteractionControllerOperation() override;
-    void startDataInteractionWithImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& image, const WebCore::FloatPoint& anchorPoint, bool isLink) override;
-#endif
-
     NSView *m_view;
     WKWebView *m_webView;
     WebViewImpl* m_impl { nullptr };

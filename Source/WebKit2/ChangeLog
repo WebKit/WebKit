@@ -1,3 +1,61 @@
+2017-02-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Data interaction on an image should make it stand out when presenting the action sheet
+        https://bugs.webkit.org/show_bug.cgi?id=167846
+        <rdar://problem/30363014>
+
+        Reviewed by Tim Horton.
+
+        Adds infrastructure to improve the behavior of data interaction for images. We make two changes to accomplish
+        this: first, add some plumbing to WebKit so the web process can tell the UI process when it is done handling a
+        request to start data interaction, so that the UI process is able to clean up UI-side state in the event that
+        the page prevented the default behavior.
+
+        Secondly, this patch tweaks the heuristic used to present action sheets as popovers. For image elements, if
+        there is sufficient space around the element, we will use the element rect as the target rect; otherwise, we
+        fall back to presenting the popover at the touch location.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didHandleStartDataInteractionRequest):
+        * UIProcess/ios/WKActionSheet.h:
+        * UIProcess/ios/WKActionSheet.mm:
+        (-[WKActionSheet presentSheet:]):
+
+        Added a presentation style parameter, used to specify whether or not WKActionSheet should present the popover
+        using the element rect as the target rect, or the touch location.
+
+        (-[WKActionSheet doneWithSheet]):
+        (-[WKActionSheet updateSheetPosition]):
+        (-[WKActionSheet presentSheet]): Deleted.
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant presentationRectForIndicatedElement]):
+
+        Returns the (inflated) bounds of the element that is currently being indicated.
+
+        (-[WKActionSheetAssistant showImageSheet]):
+        (-[WKActionSheetAssistant _presentationStyleForImageAtElementRect:]):
+        (-[WKActionSheetAssistant showLinkSheet]):
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didHandleStartDataInteractionRequest):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+
+        Remove unnecessary function declarations and implementations.
+
+        (WebKit::PageClientImpl::didPerformDataInteractionControllerOperation): Deleted.
+        (WebKit::PageClientImpl::startDataInteractionWithImage): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestStartDataInteraction):
+
+        Notify the UI process that the web process is done handling a data interaction request, specifying whether or
+        not the request was granted.
+
 2017-02-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the key shortcut to enable resource usage overlay in GTK+.
