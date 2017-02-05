@@ -879,8 +879,11 @@ NSData *dataForURLComponentType(NSURL *URL, CFURLComponentType componentType)
     CFRange range;
     if (componentType != completeURL) {
         range = CFURLGetByteRangeForComponent((CFURLRef)URL, componentType, NULL);
-        if (range.location == kCFNotFound)
+        if (range.location == kCFNotFound) {
+            if (staticAllBytesBuffer != allBytesBuffer)
+                free(allBytesBuffer);
             return nil;
+        }
     } else {
         range.location = 0;
         range.length = bytesFilled;

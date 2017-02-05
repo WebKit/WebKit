@@ -1,3 +1,18 @@
+2017-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Static Analyzer: WebCoreNSURLExtras.mm: Potential leak of memory pointed to by 'allBytesBuffer'
+        https://bugs.webkit.org/show_bug.cgi?id=167849
+
+        Reviewed by Sam Weinig.
+
+        Source/WebCore/platform/mac/WebCoreNSURLExtras.mm:883:20: warning: Potential leak of memory pointed to by 'allBytesBuffer'
+                    return nil;
+                           ^~~
+
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::dataForURLComponentType):
+        Free the potentially malloc'd buffer before the early return.
+
 2017-02-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix mistake in comment added in r211569.
