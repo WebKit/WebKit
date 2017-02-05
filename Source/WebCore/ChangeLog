@@ -1,3 +1,24 @@
+2017-02-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove unparentsOffscreenTiles logic in TileController
+        https://bugs.webkit.org/show_bug.cgi?id=167823
+
+        Reviewed by Tim Horton.
+
+        Give all TileGrids the "unparents offscreen tiles" behavior. This was enabled for
+        only the page tiles in WK2 on Mac and iOS, but there's no reason to not use it for
+        tiled composited layers also.
+
+        Also use more modern C++ idioms in a few places.
+
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::revalidateTiles):
+        (WebCore::TileGrid::ensureTilesForRect):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+
 2017-02-05  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] PiP button is not visible with a live broadcast video
