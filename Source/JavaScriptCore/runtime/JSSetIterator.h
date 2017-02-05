@@ -56,10 +56,8 @@ public:
         if (!prev)
             return nullptr;
         HashMapBucketType* bucket = m_iter->next();
-        while (bucket && bucket->deleted()) {
-            prev = bucket;
+        while (bucket && bucket->deleted())
             bucket = bucket->next();
-        }
         if (!bucket) {
             setIterator(exec->vm(), nullptr);
             return nullptr;

@@ -1,3 +1,22 @@
+2017-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Static Analyzer: Value stored to 'prev' is never read
+        https://bugs.webkit.org/show_bug.cgi?id=167844
+
+        Reviewed by Saam Barati.
+
+        Source/JavaScriptCore/runtime/JSMapIterator.h:60:13: warning: Value stored to 'prev' is never read
+                    prev = bucket;
+                    ^      ~~~~~~
+        Source/JavaScriptCore/runtime/JSSetIterator.h:60:13: warning: Value stored to 'prev' is never read
+                    prev = bucket;
+                    ^      ~~~~~~
+
+        * runtime/JSMapIterator.h:
+        (JSC::JSMapIterator::advanceIter):
+        * runtime/JSSetIterator.h:
+        (JSC::JSSetIterator::advanceIter):
+
 2017-02-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add operationToInt32SensibleSlow to optimize kraken pbkdf2 and sha256
