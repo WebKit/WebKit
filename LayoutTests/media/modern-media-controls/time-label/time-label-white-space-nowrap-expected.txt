@@ -1,0 +1,11 @@
+Testing that time labels inside media controls have 'white-space: nowrap'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS timeLabel.ownerDocument.defaultView.getComputedStyle(timeLabel).whiteSpace is "nowrap"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

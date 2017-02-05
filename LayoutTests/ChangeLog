@@ -1,3 +1,16 @@
+2017-02-05  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Time labels may wrap instead of displaying on a single line
+        https://bugs.webkit.org/show_bug.cgi?id=167835
+        <rdar://problem/30340534>
+
+        Reviewed by Dean Jackson.
+
+        New test that checks that time labels have "white-space: nowrap" applied.
+
+        * media/modern-media-controls/time-label/time-label-white-space-nowrap-expected.txt: Added.
+        * media/modern-media-controls/time-label/time-label-white-space-nowrap.html: Added.
+
 2017-02-04  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up how GraphicsLayer's "inWindow" state is set, and fix some issues with Page Overlays

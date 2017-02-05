@@ -54,6 +54,7 @@
     height: 100%;
     font-family: -apple-system;
     -webkit-user-select: none;
+    white-space: nowrap;
     cursor: default;
 }
 
