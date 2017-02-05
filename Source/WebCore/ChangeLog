@@ -1,3 +1,10 @@
+2017-02-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix mistake in comment added in r211569.
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::removeAllItemsForPage):
+
 2017-02-04  Yoav Weiss  <yoav@yoav.ws>
 
         Fix memory issues related to preload eviction.
