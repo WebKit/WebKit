@@ -1,5 +1,19 @@
 2017-02-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Static Analyzer: Value stored to 'recordedMachineThreads' during its initialization is never read
+        https://bugs.webkit.org/show_bug.cgi?id=167845
+
+        Reviewed by Saam Barati.
+
+        Source/JavaScriptCore/heap/MachineStackMarker.cpp:151:14: warning: Value stored to 'recordedMachineThreads' during its initialization is never read
+                auto recordedMachineThreads = m_set.take(machineThreads);
+                     ^~~~~~~~~~~~~~~~~~~~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::ActiveMachineThreadsManager::remove):
+
+2017-02-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Static Analyzer: Value stored to 'prev' is never read
         https://bugs.webkit.org/show_bug.cgi?id=167844
 

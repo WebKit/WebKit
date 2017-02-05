@@ -149,7 +149,7 @@ public:
     {
         LockHolder managerLock(m_lock);
         auto recordedMachineThreads = m_set.take(machineThreads);
-        RELEASE_ASSERT(recordedMachineThreads = machineThreads);
+        RELEASE_ASSERT(recordedMachineThreads == machineThreads);
     }
 
     bool contains(MachineThreads* machineThreads)
