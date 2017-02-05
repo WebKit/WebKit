@@ -39,17 +39,17 @@ public:
         TimedOut
     };
 
-    enum class LockToken { LockedValue };
+    typedef WTF::Locker<Lock> Locker;
 
     static VMInspector& instance();
 
     void add(VM*);
     void remove(VM*);
 
-    Expected<LockToken, Error> lock(Seconds timeout = Seconds::infinity());
+    Expected<Locker, Error> lock(Seconds timeout = Seconds::infinity());
 
-    Expected<bool, Error> isValidExecutableMemory(LockToken, void*);
-    Expected<CodeBlock*, Error> codeBlockForMachinePC(LockToken, void*);
+    Expected<bool, Error> isValidExecutableMemory(const Locker&, void*);
+    Expected<CodeBlock*, Error> codeBlockForMachinePC(const Locker&, void*);
 
 private:
     enum class FunctorStatus {

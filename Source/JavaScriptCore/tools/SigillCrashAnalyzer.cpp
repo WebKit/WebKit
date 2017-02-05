@@ -241,16 +241,16 @@ void SigillCrashAnalyzer::analyze(SignalContext& context)
 
         // Use a timeout period of 2 seconds. The client is about to crash, and we don't
         // want to turn the crash into a hang by re-trying the lock for too long.
-        auto expectedLockToken = inspector.lock(Seconds(2));
-        if (!expectedLockToken) {
-            ASSERT(expectedLockToken.error() == VMInspector::Error::TimedOut);
+        auto expectedLocker = inspector.lock(Seconds(2));
+        if (!expectedLocker) {
+            ASSERT(expectedLocker.error() == VMInspector::Error::TimedOut);
             log("ERROR: Unable to analyze SIGILL. Timed out while waiting to iterate VMs.");
             return;
         }
-        auto lockToken = expectedLockToken.value();
+        auto& locker = expectedLocker.value();
 
         void* pc = context.machinePC;
-        auto isInJITMemory = inspector.isValidExecutableMemory(lockToken, pc);
+        auto isInJITMemory = inspector.isValidExecutableMemory(locker, pc);
         if (!isInJITMemory) {
             log("ERROR: Timed out: not able to determine if pc %p is in valid JIT executable memory", pc);
             return;
@@ -274,7 +274,7 @@ void SigillCrashAnalyzer::analyze(SignalContext& context)
         log("instruction bits at pc %p is: 0x%08x", pc, wordAtPC);
 #endif
 
-        auto expectedCodeBlock = inspector.codeBlockForMachinePC(lockToken, pc);
+        auto expectedCodeBlock = inspector.codeBlockForMachinePC(locker, pc);
         if (!expectedCodeBlock) {
             if (expectedCodeBlock.error() == VMInspector::Error::TimedOut)
                 log("ERROR: Timed out: not able to determine if pc %p is in a valid CodeBlock", pc);

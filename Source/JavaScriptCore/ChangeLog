@@ -1,3 +1,25 @@
+2017-02-05  Mark Lam  <mark.lam@apple.com>
+
+        The VMInspector should use an RAII Locker.
+        https://bugs.webkit.org/show_bug.cgi?id=167854
+
+        Reviewed by Saam Barati.
+
+        Previously, VMInspector::lock() was returning an expected LockToken, and there's
+        no way to unlock it when we're done with it.  This was not a problem before
+        because the VMInspector had only one client, the SigillCrashAnalyzer, that
+        expected the process to crash due to a SIGILL shortly thereafter.
+
+        However, the VMInspector is useful as a debugging tool that we can apply in other
+        debugging tasks.  Fixing VMInspector::lock() to return an RAII locker will enable
+        other use cases.  Plus it's just bad form to be able to lock something and never
+        be able to unlock it.
+
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::SigillCrashAnalyzer::analyze):
+        * tools/VMInspector.cpp:
+        * tools/VMInspector.h:
+
 2017-02-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Static Analyzer: Value stored to 'recordedMachineThreads' during its initialization is never read

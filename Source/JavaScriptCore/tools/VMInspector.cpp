@@ -60,7 +60,7 @@ void VMInspector::remove(VM* vm)
     m_list.remove(vm);
 }
 
-auto VMInspector::lock(Seconds timeout) -> Expected<LockToken, Error>
+auto VMInspector::lock(Seconds timeout) -> Expected<Locker, Error>
 {
     // This function may be called from a signal handler (e.g. via visit()). Hence,
     // it should only use APIs that are safe to call from signal handlers. This is
@@ -69,19 +69,19 @@ auto VMInspector::lock(Seconds timeout) -> Expected<LockToken, Error>
     // We'll be doing sleep(1) between tries below. Hence, sleepPerRetry is 1.
     unsigned maxRetries = (timeout < Seconds::infinity()) ? timeout.value() : UINT_MAX;
 
-    bool locked = m_lock.tryLock();
+    Expected<Locker, Error> locker = Locker::tryLock(m_lock);
     unsigned tryCount = 0;
-    while (!locked && tryCount < maxRetries) {
+    while (!locker && tryCount < maxRetries) {
         // We want the version of sleep from unistd.h. Cast to disambiguate.
 #if !OS(WINDOWS)
         (static_cast<unsigned (*)(unsigned)>(sleep))(1);
 #endif
-        locked = m_lock.tryLock();
+        locker = Locker::tryLock(m_lock);
     }
 
-    if (!locked)
+    if (!locker)
         return makeUnexpected(Error::TimedOut);
-    return LockToken::LockedValue;
+    return locker;
 }
 
 #if ENABLE(JIT)
@@ -101,7 +101,7 @@ static bool ensureIsSafeToLock(Lock& lock)
 };
 #endif // ENABLE(JIT)
 
-auto VMInspector::isValidExecutableMemory(VMInspector::LockToken, void* machinePC) -> Expected<bool, Error>
+auto VMInspector::isValidExecutableMemory(const VMInspector::Locker&, void* machinePC) -> Expected<bool, Error>
 {
 #if ENABLE(JIT)
     bool found = false;
@@ -133,7 +133,7 @@ auto VMInspector::isValidExecutableMemory(VMInspector::LockToken, void* machineP
 #endif
 }
 
-auto VMInspector::codeBlockForMachinePC(VMInspector::LockToken, void* machinePC) -> Expected<CodeBlock*, Error>
+auto VMInspector::codeBlockForMachinePC(const VMInspector::Locker&, void* machinePC) -> Expected<CodeBlock*, Error>
 {
 #if ENABLE(JIT)
     CodeBlock* codeBlock = nullptr;
