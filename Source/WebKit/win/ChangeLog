@@ -1,5 +1,21 @@
 2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211584. rdar://problem/29994156
+
+    2017-02-02  Per Arne Vollan  <pvollan@apple.com>
+
+            [Win][HiDPI] Scale factor is applied twice in accelerated compositing mode.
+            https://bugs.webkit.org/show_bug.cgi?id=167732
+
+            Reviewed by Brent Fulgham.
+
+            Backing layer should not be scaled when CACFLayerSetContentsScale is used for scaling.
+
+            * WebView.cpp:
+            (WebView::setAcceleratedCompositing):
+
+2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211207. rdar://problem/30154036
 
     2017-01-26  Per Arne Vollan  <pvollan@apple.com>
