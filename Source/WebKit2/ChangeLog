@@ -1,5 +1,18 @@
 2017-02-06  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211666. rdar://problem/30167791
+
+    2017-02-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Unreviewed rollout of r211486, r211629.
+
+            Original change is not ideal and is causing issues.
+
+            * Shared/WebKit2Initialize.cpp:
+            (WebKit::InitializeWebKit2):
+
+2017-02-06  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211653. rdar://problem/29872943
 
     2017-02-03  Chris Dumez  <cdumez@apple.com>

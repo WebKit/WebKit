@@ -1,3 +1,18 @@
+2017-02-06  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211666. rdar://problem/30167791
+
+    2017-02-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Unreviewed rollout of r211486, r211629.
+
+            Original change is not ideal and is causing issues.
+
+            * inspector/agents/InspectorHeapAgent.cpp:
+            (Inspector::SendGarbageCollectionEventsTask::SendGarbageCollectionEventsTask):
+            * runtime/InitializeThreading.cpp:
+            (JSC::initializeThreading):
+
 2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r211630. rdar://problem/30318237
