@@ -21,9 +21,9 @@ media.addEventListener("webkitfullscreenchange", () => {
         mediaControls = shadowRoot.lastChild;
         window.requestAnimationFrame(() => {
             const bounds = mediaControls.querySelector(".controls-bar").getBoundingClientRect();
-            eventSender.mouseMoveTo(bounds.left + 10, bounds.top + 10);
+            eventSender.mouseMoveTo(bounds.left + 118, bounds.top + 10);
             eventSender.mouseDown();
-            eventSender.mouseMoveTo(bounds.left - 40, bounds.top - 90);
+            eventSender.mouseMoveTo(bounds.left + 68, bounds.top - 90);
             eventSender.mouseUp();
 
             window.requestAnimationFrame(() => {

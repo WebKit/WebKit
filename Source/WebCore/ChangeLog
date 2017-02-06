@@ -1,5 +1,53 @@
 2017-02-06  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Bring fullscreen controls up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=167875
+        <rdar://problem/29611222>
+
+        Reviewed by Eric Carlson.
+
+        We update the fullscreen PiP icon to have the correct size and add two new buttons
+        around the volume slider, "volume-down" to bring the volume to 0 and "volume-up"
+        to bring the volume to 1.
+
+        To accomodate the new volume buttons, we move the volume slider inside an additional
+        ButtonsContainer object, along with the two new buttons.
+
+        Tests: media/modern-media-controls/volume-down-support/volume-down-support.html
+               media/modern-media-controls/volume-up-support/volume-up-support.html
+
+        * Modules/modern-media-controls/controls/icon-service.js:
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css:
+        (.media-controls.mac.fullscreen button.volume-down):
+        (.media-controls.mac.fullscreen button.volume-up):
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        * Modules/modern-media-controls/controls/volume-down-button.js: Added.
+        (VolumeDownButton):
+        * Modules/modern-media-controls/controls/volume-slider.js:
+        (VolumeSlider):
+        * Modules/modern-media-controls/controls/volume-up-button.js: Added.
+        (VolumeUpButton):
+        * Modules/modern-media-controls/images/macOS/pip-in-fullscreen@1x.png:
+        * Modules/modern-media-controls/images/macOS/pip-in-fullscreen@2x.png:
+        * Modules/modern-media-controls/images/macOS/volume-down-fullscreen@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/volume-down-fullscreen@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/volume-up-fullscreen@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/volume-up-fullscreen@2x.png: Added.
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._updateControlsIfNeeded):
+        * Modules/modern-media-controls/media/volume-down-support.js: Added.
+        (VolumeDownSupport.prototype.get control):
+        (VolumeDownSupport.prototype.buttonWasPressed):
+        (VolumeDownSupport):
+        * Modules/modern-media-controls/media/volume-up-support.js: Added.
+        (VolumeUpSupport.prototype.get control):
+        (VolumeUpSupport.prototype.buttonWasPressed):
+        (VolumeUpSupport):
+        * WebCore.xcodeproj/project.pbxproj:
+
+2017-02-06  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Improve handling of <video> with only audio tracks
         https://bugs.webkit.org/show_bug.cgi?id=167836
         <rdar://problem/30255812>

@@ -10110,6 +10110,14 @@
 		715379FF146BD9D6008BD615 /* SVGPathData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathData.h; sourceTree = "<group>"; };
 		7157E3D11DC1EE4B0094550E /* scrubbing-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "scrubbing-support.js"; sourceTree = "<group>"; };
 		7157F061150B6564006EAABD /* SVGAnimatedTransformList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedTransformList.cpp; sourceTree = "<group>"; };
+		716C8DF11E48B269005BD0DA /* volume-down-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "volume-down-support.js"; sourceTree = "<group>"; };
+		716C8DF21E48B269005BD0DA /* volume-up-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "volume-up-support.js"; sourceTree = "<group>"; };
+		716C8DF31E48B284005BD0DA /* volume-down-button.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "volume-down-button.js"; sourceTree = "<group>"; };
+		716C8DF41E48B284005BD0DA /* volume-up-button.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "volume-up-button.js"; sourceTree = "<group>"; };
+		716C8DF51E48B2B5005BD0DA /* volume-down-fullscreen@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "volume-down-fullscreen@1x.png"; sourceTree = "<group>"; };
+		716C8DF61E48B2B5005BD0DA /* volume-down-fullscreen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "volume-down-fullscreen@2x.png"; sourceTree = "<group>"; };
+		716C8DF71E48B2B5005BD0DA /* volume-up-fullscreen@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "volume-up-fullscreen@1x.png"; sourceTree = "<group>"; };
+		716C8DF81E48B2B5005BD0DA /* volume-up-fullscreen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "volume-up-fullscreen@2x.png"; sourceTree = "<group>"; };
 		716FA0D81DB26591007323CC /* airplay-button.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "airplay-button.css"; sourceTree = "<group>"; };
 		716FA0D91DB26591007323CC /* airplay-button.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "airplay-button.js"; sourceTree = "<group>"; };
 		716FA0DA1DB26591007323CC /* airplay-placard.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "airplay-placard.js"; sourceTree = "<group>"; };
@@ -18394,8 +18402,10 @@
 				716FA0FE1DB26591007323CC /* tracks-button.js */,
 				7146DF8B1DEFC2ED0046F98B /* tracks-panel.css */,
 				7146DF8C1DEFC2ED0046F98B /* tracks-panel.js */,
+				716C8DF31E48B284005BD0DA /* volume-down-button.js */,
 				716FA0FF1DB26591007323CC /* volume-slider.css */,
 				716FA1001DB26591007323CC /* volume-slider.js */,
+				716C8DF41E48B284005BD0DA /* volume-up-button.js */,
 			);
 			name = controls;
 			path = "Modules/modern-media-controls/controls";
@@ -18423,7 +18433,9 @@
 				7177E2481DB80D2F00919A0B /* start-support.js */,
 				71B0460A1DD3C2EE00EE19CF /* status-support.js */,
 				71F936F71DD4F99B00922CC7 /* tracks-support.js */,
+				716C8DF11E48B269005BD0DA /* volume-down-support.js */,
 				717F90571DC40ED60006F520 /* volume-support.js */,
+				716C8DF21E48B269005BD0DA /* volume-up-support.js */,
 			);
 			path = media;
 			sourceTree = "<group>";
@@ -18541,8 +18553,12 @@
 				71D6AABD1DA4EAF700B23969 /* start@2x.png */,
 				717F61991E43D66500F37024 /* volume-compact@1x.png */,
 				717F619A1E43D66500F37024 /* volume-compact@2x.png */,
+				716C8DF51E48B2B5005BD0DA /* volume-down-fullscreen@1x.png */,
+				716C8DF61E48B2B5005BD0DA /* volume-down-fullscreen@2x.png */,
 				71D6AABE1DA4EAF700B23969 /* volume-mute@1x.png */,
 				71D6AABF1DA4EAF700B23969 /* volume-mute@2x.png */,
+				716C8DF71E48B2B5005BD0DA /* volume-up-fullscreen@1x.png */,
+				716C8DF81E48B2B5005BD0DA /* volume-up-fullscreen@2x.png */,
 				71D6AAC01DA4EAF700B23969 /* volume@1x.png */,
 				71D6AAC11DA4EAF700B23969 /* volume@2x.png */,
 			);

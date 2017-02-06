@@ -2796,6 +2796,8 @@ media/modern-media-controls/media-controller/media-controller-inline-to-fullscre
 media/modern-media-controls/seek-backward-support [ Skip ]
 media/modern-media-controls/seek-forward-support [ Skip ]
 media/modern-media-controls/start-support/start-support-fullscreen.html [ Skip ]
+media/modern-media-controls/volume-down-support [ Skip ]
+media/modern-media-controls/volume-up-support [ Skip ]
 
 # These tests are mouse-specific
 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html [ Skip ]

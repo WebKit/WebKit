@@ -57,6 +57,14 @@
     transform: scaleX(-1);
 }
 
+.media-controls.mac.fullscreen button.volume-down {
+    -webkit-mask-position-y: 18px;
+}
+
+.media-controls.mac.fullscreen button.volume-up {
+    -webkit-mask-position-y: 18px;
+}
+
 /* Button containers */
 
 .media-controls.mac.fullscreen .buttons-container {

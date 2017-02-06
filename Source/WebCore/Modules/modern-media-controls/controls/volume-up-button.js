@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class VolumeSlider extends Slider
+class VolumeUpButton extends IconButton
 {
-    
-    constructor()
+
+    constructor(layoutDelegate)
     {
-        super("volume");
-        this.enabled = true;
+        super({
+            cssClassName: "volume-up",
+            iconName: Icons.VolumeUp,
+            layoutDelegate
+        });
     }
 
 }

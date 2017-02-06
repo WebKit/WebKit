@@ -40,11 +40,21 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
         this.element.classList.add("fullscreen");
 
         // Set up fullscreen-specific buttons.
+        this.volumeDownButton = new VolumeDownButton(this);
+        this.volumeUpButton = new VolumeUpButton(this);
         this.rewindButton = new RewindButton(this);
         this.forwardButton = new ForwardButton(this);
         this.fullscreenButton.isFullscreen = true;
 
         this.volumeSlider.width = 60;
+
+        this._leftContainer = new ButtonsContainer({
+            buttons: [this.volumeDownButton, this.volumeSlider, this.volumeUpButton],
+            cssClassName: "left",
+            leftMargin: 12,
+            rightMargin: 0,
+            buttonMargin: 6
+        });
 
         this._centerContainer = new ButtonsContainer({
             buttons: [this.rewindButton, this.playPauseButton, this.forwardButton],
@@ -61,7 +71,7 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
             rightMargin: 12
         });
 
-        this.controlsBar.children = [this.volumeSlider, this._centerContainer, this._rightContainer, this.timeControl];
+        this.controlsBar.children = [this._leftContainer, this._centerContainer, this._rightContainer, this.timeControl];
 
         this.element.addEventListener("mousedown", this);
     }

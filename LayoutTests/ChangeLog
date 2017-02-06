@@ -1,5 +1,33 @@
 2017-02-06  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Bring fullscreen controls up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=167875
+        <rdar://problem/29611222>
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline some existing tests due to the addition of the volume-down and volume-up
+        buttons as well as the width change of the PiP icon and add a couple of new tests to
+        check the behavior of the volume-down and volume-up buttons.
+
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-volume-styles-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-volume-styles.html:
+        * media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html:
+        * media/modern-media-controls/volume-down-support/volume-down-support-expected.txt: Added.
+        * media/modern-media-controls/volume-down-support/volume-down-support.html: Added.
+        * media/modern-media-controls/volume-up-support/volume-up-support-expected.txt: Added.
+        * media/modern-media-controls/volume-up-support/volume-up-support.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
+2017-02-06  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Improve handling of <video> with only audio tracks
         https://bugs.webkit.org/show_bug.cgi?id=167836
         <rdar://problem/30255812>

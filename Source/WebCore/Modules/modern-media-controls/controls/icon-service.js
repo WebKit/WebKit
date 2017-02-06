@@ -41,10 +41,12 @@ const Icons = {
     Start           : "start",
     Tracks          : "media-selection",
     Volume          : "volume",
-    VolumeMuted     : "volume-mute"
+    VolumeDown      : "volume-down",
+    VolumeMuted     : "volume-mute",
+    VolumeUp        : "volume-up"
 };
 
-const IconsWithFullscreenVariants = [Icons.Airplay, Icons.Tracks, Icons.Pause, Icons.EnterPiP, Icons.Play];
+const IconsWithFullscreenVariants = [Icons.Airplay, Icons.Tracks, Icons.Pause, Icons.EnterPiP, Icons.Play, Icons.VolumeDown, Icons.VolumeUp];
 const IconsWithCompactVariants = [Icons.Play, Icons.Pause, Icons.SkipBack, Icons.Volume, Icons.VolumeMuted, Icons.EnterFullscreen];
 
 const iconService = new class IconService {

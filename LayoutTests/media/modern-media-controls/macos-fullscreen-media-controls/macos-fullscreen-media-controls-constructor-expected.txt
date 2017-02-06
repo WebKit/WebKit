@@ -9,10 +9,17 @@ PASS mediaControls.layoutTraits is LayoutTraits.macOS | LayoutTraits.Fullscreen
 
 Controls bar
 PASS mediaControls.controlsBar.children.length is 4
-PASS mediaControls.controlsBar.children[0] is mediaControls.volumeSlider
+PASS mediaControls.controlsBar.children[0] instanceof ButtonsContainer is true
 PASS mediaControls.controlsBar.children[1] instanceof ButtonsContainer is true
 PASS mediaControls.controlsBar.children[2] instanceof ButtonsContainer is true
 PASS mediaControls.controlsBar.children[3] is mediaControls.timeControl
+
+Left container
+PASS mediaControls.controlsBar.children[0].buttons is [mediaControls.volumeDownButton, mediaControls.volumeSlider, mediaControls.volumeUpButton]
+PASS mediaControls.controlsBar.children[0].element.className is "buttons-container left"
+PASS mediaControls.controlsBar.children[0].leftMargin is 12
+PASS mediaControls.controlsBar.children[0].rightMargin is 0
+PASS mediaControls.controlsBar.children[0].buttonMargin is 6
 
 Center container
 PASS mediaControls.controlsBar.children[1].buttons is [mediaControls.rewindButton, mediaControls.playPauseButton, mediaControls.forwardButton]

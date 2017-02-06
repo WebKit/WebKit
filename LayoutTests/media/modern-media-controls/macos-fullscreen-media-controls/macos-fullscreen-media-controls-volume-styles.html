@@ -9,12 +9,14 @@ description("Testing the <code>MacOSFullscreenMediaControls</code> computed styl
 window.jsTestIsAsync = true;
 
 const mediaControls = new MacOSFullscreenMediaControls;
+document.body.appendChild(mediaControls.element);
 
 scheduler.frameDidFire = function()
 {
-    document.body.appendChild(mediaControls.element);
+    if (!document.body.contains(mediaControls.volumeSlider.element))
+        return;
 
-    shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).left", "31px");
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).left", "30px");
     shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).top", "23px");
 
     mediaControls.element.remove();
