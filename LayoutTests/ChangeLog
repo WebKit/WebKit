@@ -1,3 +1,25 @@
+2017-02-06  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Improve handling of <video> with only audio tracks
+        https://bugs.webkit.org/show_bug.cgi?id=167836
+        <rdar://problem/30255812>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test to check that a <video> with a resource that only has audio tracks
+        does not auto-hide nor show the fullscreen button. We also rebaseline a few existing
+        tests for this change of behavior.
+
+        * fast/regions/inline-block-inside-anonymous-overflow-with-covered-controls-expected.html:
+        * fast/regions/inline-block-inside-anonymous-overflow-with-covered-controls.html:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-on-expected.txt:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-on.html:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-toggle-expected.txt:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-toggle.html:
+        * media/modern-media-controls/media-controller/media-controller-video-with-only-audio-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-video-with-only-audio.html: Added.
+        * media/modern-media-controls/time-label/time-label-white-space-nowrap.html:
+
 2017-02-05  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] PiP button is not visible with a live broadcast video

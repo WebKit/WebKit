@@ -14,12 +14,14 @@ document.querySelector("video").addEventListener("play", (event) => {
     const media = event.target;
     media.pause();
 
-    timeLabel = window.internals.shadowRoot(media).querySelector(".time-label");
-    shouldBeEqualToString("timeLabel.ownerDocument.defaultView.getComputedStyle(timeLabel).whiteSpace", "nowrap");
+    window.requestAnimationFrame(() => {
+        timeLabel = window.internals.shadowRoot(media).querySelector(".time-label");
+        shouldBeEqualToString("timeLabel.ownerDocument.defaultView.getComputedStyle(timeLabel).whiteSpace", "nowrap");
 
-    debug("");
-    media.remove();
-    finishJSTest();
+        debug("");
+        media.remove();
+        finishJSTest();
+    });
 });
 
 </script>
