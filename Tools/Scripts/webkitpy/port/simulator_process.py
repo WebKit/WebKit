@@ -59,7 +59,7 @@ class SimulatorProcess(ServerProcess):
     def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False, treat_no_data_as_crash=False, worker_number=None):
         self._bundle_id = port_obj.app_identifier_from_bundle(cmd[0])
         self._device = Simulator(port_obj.host).find_device_by_udid(port_obj.device_id_for_worker_number(worker_number))
-        if not self._device.install_app(cmd[0]):
+        if not self._device.install_app(cmd[0], env):
             raise RuntimeError('Failed to install app {} on simulator device {}'.format(cmd[0], self._device.udid))
         env['IPC_IDENTIFIER'] = self._bundle_id + '-' + self._device.udid
 
