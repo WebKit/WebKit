@@ -1,3 +1,19 @@
+2017-02-06  Chris Dumez  <cdumez@apple.com>
+
+        Align [[OwnPropertyKeys]] with the HTML specification for cross-origin Window / Location objects
+        https://bugs.webkit.org/show_bug.cgi?id=167647
+        <rdar://problem/30339489>
+
+        Reviewed by Sam Weinig.
+
+        Extend test coverage for [[OwnPropertyKeys]] for cross-origin Window / Location objects.
+
+        * http/tests/security/cross-frame-access-enumeration-expected.txt:
+        * http/tests/security/cross-frame-access-enumeration.html:
+        * http/tests/security/resources/cross-frame-iframe-for-enumeration-test.html:
+        * js/dom/getOwnPropertyDescriptor-expected.txt:
+        * js/resources/getOwnPropertyDescriptor.js:
+
 2017-02-06  Yoav Weiss  <yoav@yoav.ws>
 
         http/tests/preload/dynamic_removing_preload.html fails to test what it should

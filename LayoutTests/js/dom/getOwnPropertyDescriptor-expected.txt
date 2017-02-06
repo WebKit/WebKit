@@ -129,7 +129,7 @@ PASS Object.getOwnPropertyDescriptor(global, 0).value is global[0]
 PASS Object.getOwnPropertyDescriptor(global, 0).hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 0).hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 0).enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 0).configurable is false
+PASS Object.getOwnPropertyDescriptor(global, 0).configurable is true
 PASS Object.getOwnPropertyDescriptor(document.getElementsByTagName('div'), 0).value is document.getElementsByTagName('div')[0]
 PASS Object.getOwnPropertyDescriptor(document.getElementsByTagName('div'), 0).hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(document.getElementsByTagName('div'), 0).hasOwnProperty('set') is false

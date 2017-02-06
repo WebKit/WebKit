@@ -25,6 +25,7 @@
 #include "Frame.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
+#include "HTMLFrameOwnerElement.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
@@ -223,7 +224,7 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, 
     // (1) First, indexed properties.
     // These are also allowed cross-orgin, so come before the access check.
     if (frame && index < frame->tree().scopedChildCount()) {
-        slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, toJS(state, frame->tree().scopedChild(index)->document()->domWindow()));
+        slot.setValue(thisObject, ReadOnly | DontEnum, toJS(state, frame->tree().scopedChild(index)->document()->domWindow()));
         return true;
     }
 
@@ -324,9 +325,36 @@ void JSDOMWindow::getPropertyNames(JSObject* object, ExecState* exec, PropertyNa
     Base::getPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-static void addCrossOriginWindowPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
+static bool inScope(Frame& frame, TreeScope& scope)
 {
-    // https://html.spec.whatwg.org/#crossoriginproperties-(-o-)
+    auto* document = frame.document();
+    if (!document)
+        return false;
+    auto* owner = document->ownerElement();
+    return owner && &owner->treeScope() == &scope;
+}
+
+static void addScopedChildrenNames(ExecState& state, DOMWindow& window, PropertyNameArray& propertyNames)
+{
+    auto* document = window.document();
+    if (!document)
+        return;
+
+    auto* frame = document->frame();
+    if (!frame)
+        return;
+
+    for (auto* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (!inScope(*child, *document))
+            continue;
+        if (!child->tree().name().isEmpty())
+            propertyNames.add(Identifier::fromString(&state, child->tree().name()));
+    }
+}
+
+// https://html.spec.whatwg.org/#crossoriginproperties-(-o-)
+static void addCrossOriginPropertyNames(ExecState& state, DOMWindow& window, PropertyNameArray& propertyNames)
+{
     static const Identifier* const properties[] = {
         &state.propertyNames().blur, &state.propertyNames().close, &state.propertyNames().closed,
         &state.propertyNames().focus, &state.propertyNames().frames, &state.propertyNames().length,
@@ -336,14 +364,46 @@ static void addCrossOriginWindowPropertyNames(ExecState& state, PropertyNameArra
     };
     for (auto* property : properties)
         propertyNames.add(*property);
+
+    addScopedChildrenNames(state, window, propertyNames);
 }
 
+static void addScopedChildrenIndexes(ExecState& state, DOMWindow& window, PropertyNameArray& propertyNames)
+{
+    auto* document = window.document();
+    if (!document)
+        return;
+
+    auto* frame = document->frame();
+    if (!frame)
+        return;
+
+    unsigned scopedChildCount = frame->tree().scopedChildCount();
+    for (unsigned i = 0; i < scopedChildCount; ++i)
+        propertyNames.add(Identifier::from(&state, i));
+}
+
+// https://html.spec.whatwg.org/#crossoriginownpropertykeys-(-o-)
+static void addCrossOriginOwnPropertyNames(ExecState& state, DOMWindow& window, PropertyNameArray& propertyNames)
+{
+    addCrossOriginPropertyNames(state, window, propertyNames);
+
+    propertyNames.add(state.propertyNames().toStringTagSymbol);
+    propertyNames.add(state.propertyNames().hasInstanceSymbol);
+    propertyNames.add(state.propertyNames().isConcatSpreadableSymbol);
+}
+
+// https://html.spec.whatwg.org/#windowproxy-ownpropertykeys
 void JSDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
+
+    if (mode.includeDontEnumProperties())
+        addScopedChildrenIndexes(*exec, thisObject->wrapped(), propertyNames);
+
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), DoNotReportSecurityError)) {
         if (mode.includeDontEnumProperties())
-            addCrossOriginWindowPropertyNames(*exec, propertyNames);
+            addCrossOriginOwnPropertyNames(*exec, thisObject->wrapped(), propertyNames);
         return;
     }
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);

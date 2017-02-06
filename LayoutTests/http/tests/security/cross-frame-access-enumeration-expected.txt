@@ -11,8 +11,10 @@ PASS: Cross frame access by getting the property names of the window object was 
 PASS: Cross frame access by enumerating the Location object was denied.
 PASS: Cross frame access by getting the keys of the Location object was denied.
 PASS: Cross frame access by getting the property names of the Location object was denied.
-PASS: areArraysEqual(Object.getOwnPropertyNames(b_win).sort(), whitelistedWindowProperties.sort()) should be 'true' and is.
-PASS: areArraysEqual(Object.getOwnPropertyNames(b_win.location).sort(), whitelistedLocationProperties.sort()) should be 'true' and is.
+PASS: areArraysEqual(Object.getOwnPropertyNames(b_win), whitelistedWindowProperties) should be 'true' and is.
+PASS: areArraysEqual(Reflect.ownKeys(b_win), whitelistedWindowProperties.concat(whitelistedSymbols)) should be 'true' and is.
+PASS: areArraysEqual(Object.getOwnPropertyNames(b_win.location), whitelistedLocationProperties) should be 'true' and is.
+PASS: areArraysEqual(Reflect.ownKeys(b_win.location), whitelistedLocationProperties.concat(whitelistedSymbols)) should be 'true' and is.
 PASS: successfullyParsed should be 'true' and is.
 
 TEST COMPLETE

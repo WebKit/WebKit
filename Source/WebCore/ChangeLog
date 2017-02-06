@@ -1,3 +1,44 @@
+2017-02-06  Chris Dumez  <cdumez@apple.com>
+
+        Align [[OwnPropertyKeys]] with the HTML specification for cross-origin Window / Location objects
+        https://bugs.webkit.org/show_bug.cgi?id=167647
+        <rdar://problem/30339489>
+
+        Reviewed by Sam Weinig.
+
+        Align [[OwnPropertyKeys]] with the HTML specification for cross-origin Window / Location objects:
+        - https://html.spec.whatwg.org/#windowproxy-ownpropertykeys [1]
+        - https://html.spec.whatwg.org/#crossoriginownpropertykeys-(-o-) [2]
+        - https://html.spec.whatwg.org/#crossoriginproperties-(-o-) [3]
+
+        In particular, the following changes were made:
+        - Location:
+          - We now return the following symbols as well: @@toStringTag, @@hasInstance,
+            @@isConcatSpreadable as per [2].
+        - Window:
+          - We now return the following symbols as well: @@toStringTag, @@hasInstance,
+            @@isConcatSpreadable as per [2].
+          - We now return the indices of the child browsing contexts as per [1].
+          - We now return the names of the child browsing contexts as per [3].
+
+        No new tests, updated / rebaselined existing tests.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        Index properties should be configurable as per:
+        - https://html.spec.whatwg.org/#windowproxy-getownproperty (step 2.5)
+
+        (WebCore::inScope):
+        (WebCore::addScopedChildrenNames):
+        (WebCore::addCrossOriginPropertyNames):
+        (WebCore::addScopedChildrenIndexes):
+        (WebCore::addCrossOriginOwnPropertyNames):
+        (WebCore::JSDOMWindow::getOwnPropertyNames):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::addCrossOriginPropertyNames):
+        (WebCore::addCrossOriginOwnPropertyNames):
+        (WebCore::JSLocation::getOwnPropertyNames):
+
 2017-02-06  Yoav Weiss  <yoav@yoav.ws>
 
         http/tests/preload/dynamic_removing_preload.html fails to test what it should

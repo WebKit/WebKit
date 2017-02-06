@@ -85,10 +85,13 @@
             }
             log("PASS: Cross frame access by getting the property names of the Location object was denied.");
 
-            whitelistedWindowProperties = ['location', 'postMessage', 'window', 'frames', 'self', 'top', 'parent', 'opener', 'closed', 'close', 'blur', 'focus', 'length'];
+            whitelistedWindowProperties = ['0', '1', '2', 'blur', 'close', 'closed', 'focus', 'frames', 'length', 'location', 'opener', 'parent', 'postMessage', 'self', 'top', 'window', 'frameA', 'frameC'];
             whitelistedLocationProperties = ['href', 'replace'];
-            shouldBeTrue("areArraysEqual(Object.getOwnPropertyNames(b_win).sort(), whitelistedWindowProperties.sort())");
-            shouldBeTrue("areArraysEqual(Object.getOwnPropertyNames(b_win.location).sort(), whitelistedLocationProperties.sort())");
+            whitelistedSymbols = [Symbol.toStringTag, Symbol.hasInstance, Symbol.isConcatSpreadable];
+            shouldBeTrue("areArraysEqual(Object.getOwnPropertyNames(b_win), whitelistedWindowProperties)");
+            shouldBeTrue("areArraysEqual(Reflect.ownKeys(b_win), whitelistedWindowProperties.concat(whitelistedSymbols))");
+            shouldBeTrue("areArraysEqual(Object.getOwnPropertyNames(b_win.location), whitelistedLocationProperties)");
+            shouldBeTrue("areArraysEqual(Reflect.ownKeys(b_win.location), whitelistedLocationProperties.concat(whitelistedSymbols))");
         }
     </script>
 </head>

@@ -121,12 +121,22 @@ bool JSLocation::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned p
     return Base::deletePropertyByIndex(thisObject, exec, propertyName);
 }
 
-static void addCrossOriginLocationPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
+// https://html.spec.whatwg.org/#crossoriginproperties-(-o-)
+static void addCrossOriginPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
 {
-    // https://html.spec.whatwg.org/#crossoriginproperties-(-o-)
     static const Identifier* const properties[] = { &state.propertyNames().href, &state.propertyNames().replace };
     for (auto* property : properties)
         propertyNames.add(*property);
+}
+
+// https://html.spec.whatwg.org/#crossoriginownpropertykeys-(-o-)
+static void addCrossOriginOwnPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
+{
+    addCrossOriginPropertyNames(state, propertyNames);
+
+    propertyNames.add(state.propertyNames().toStringTagSymbol);
+    propertyNames.add(state.propertyNames().hasInstanceSymbol);
+    propertyNames.add(state.propertyNames().isConcatSpreadableSymbol);
 }
 
 void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
@@ -134,7 +144,7 @@ void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
     JSLocation* thisObject = jsCast<JSLocation*>(object);
     if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), DoNotReportSecurityError)) {
         if (mode.includeDontEnumProperties())
-            addCrossOriginLocationPropertyNames(*exec, propertyNames);
+            addCrossOriginOwnPropertyNames(*exec, propertyNames);
         return;
     }
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);

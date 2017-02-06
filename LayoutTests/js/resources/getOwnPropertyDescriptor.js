@@ -44,7 +44,7 @@ descriptorShouldBe("global", "'Infinity'", {writable: false, enumerable: false, 
 var globalWindowGetter = Object.getOwnPropertyDescriptor(global, 'window').get;
 descriptorShouldBe("global", "'window'", {get: 'globalWindowGetter', set: undefined, enumerable: true, configurable: false});
 descriptorShouldBe("global", "'XMLHttpRequest'", {writable: true, enumerable: false, configurable: true, value:"XMLHttpRequest"});
-descriptorShouldBe("global", "0", {writable: true, enumerable: false, configurable: false, value:"global[0]"});
+descriptorShouldBe("global", "0", {writable: true, enumerable: false, configurable: true, value:"global[0]"});
 descriptorShouldBe("document.getElementsByTagName('div')", "0", {writable: false, enumerable: true, configurable: true, value:"document.getElementsByTagName('div')[0]"});
 descriptorShouldBe("document.getElementsByClassName('pass')", "0", {writable: false, enumerable: true, configurable: true, value:"document.getElementsByClassName('pass')[0]"});
 var canvas = document.createElement("canvas");
