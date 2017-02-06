@@ -1,3 +1,30 @@
+2017-02-06  Anders Carlsson  <andersca@apple.com>
+
+        Crash child processes if they receive an invalid message
+        https://bugs.webkit.org/show_bug.cgi?id=167900
+
+        Reviewed by Dan Bernstein.
+
+        Previously, some processes would try to gracefully exit, others would just drop messages leading to weird bugs.
+        Instead, set app-specific crash information to the message that failed to be decoded, and then crash.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::didReceiveInvalidMessage): Deleted.
+        * DatabaseProcess/DatabaseProcess.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didReceiveInvalidMessage): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::didReceiveInvalidMessage): Deleted.
+        * PluginProcess/PluginProcess.h:
+        * Shared/ChildProcess.h:
+        * Shared/Cocoa/ChildProcessCocoa.mm: Added.
+        (WebKit::ChildProcess::didReceiveInvalidMessage):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveInvalidMessage): Deleted.
+        * WebProcess/WebProcess.h:
+
 2017-02-06  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Drop legacy WKBundlePageDiagnosticLoggingClient API

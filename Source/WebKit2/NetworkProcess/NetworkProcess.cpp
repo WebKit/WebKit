@@ -170,11 +170,6 @@ void NetworkProcess::didClose(IPC::Connection&)
     stopRunLoop();
 }
 
-void NetworkProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
-{
-    stopRunLoop();
-}
-
 void NetworkProcess::didCreateDownload()
 {
     disableTermination();
