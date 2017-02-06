@@ -3,8 +3,8 @@ To manually test this, drag the text in the first input into the second, then un
 
 Performing drag and drop
 (source): type=beforeinput, inputType=deleteByDrag, data=`null`
-(source): type=input, inputType=deleteByDrag, data=`null`
 (destination): type=beforeinput, inputType=insertFromDrop, data=`Input events!`
+(source): type=input, inputType=deleteByDrag, data=`null`
 (destination): type=input, inputType=insertFromDrop, data=`Input events!`
 
 Undoing drag and drop

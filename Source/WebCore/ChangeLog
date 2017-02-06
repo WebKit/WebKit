@@ -1,5 +1,30 @@
 2017-02-02  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211471. rdar://problem/30270210
+
+    2017-01-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Regression (Safari 10.1): Pressing Return in a contenteditable no longer inserts a line break under certain conditions
+            https://bugs.webkit.org/show_bug.cgi?id=167525
+            <rdar://problem/30270210>
+
+            Reviewed by Ryosuke Niwa.
+
+            Test: fast/events/input-events-insert-newlines-after-mutation.html
+
+            Reverts an unintended change made while refactoring code for input events that caused input events to be
+            dispatched immediately rather than on the scoped queue. Normally, input events are dispatched in
+            CompositeEditCommand::apply after the end of the scope, but TypingCommands may fire input events *from within*
+            the scope by calling typingAddedToOpenCommand.
+
+            Instead, TypingCommands should always dispatch events
+            synchronously after the end of the scoped queue in CompositeEditCommand::apply, but this is a riskier change
+            than we should currently allow, so we should revert to our old behavior for the time being.
+
+            * editing/Editor.cpp:
+
+2017-02-02  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211433. rdar://problem/30091558
 
     2017-01-31  Simon Fraser  <simon.fraser@apple.com>
