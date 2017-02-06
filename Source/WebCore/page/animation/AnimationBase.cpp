@@ -29,7 +29,7 @@
 #include "config.h"
 #include "AnimationBase.h"
 
-#include "AnimationControllerPrivate.h"
+#include "CSSAnimationControllerPrivate.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyAnimation.h"
 #include "CompositeAnimation.h"

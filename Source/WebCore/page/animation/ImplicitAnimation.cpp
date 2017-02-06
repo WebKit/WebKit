@@ -27,13 +27,13 @@
  */
 
 #include "config.h"
+#include "ImplicitAnimation.h"
 
-#include "AnimationControllerPrivate.h"
+#include "CSSAnimationControllerPrivate.h"
 #include "CSSPropertyAnimation.h"
 #include "CompositeAnimation.h"
 #include "EventNames.h"
 #include "GeometryUtilities.h"
-#include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
 #include "RenderBox.h"
 #include "StylePendingResources.h"

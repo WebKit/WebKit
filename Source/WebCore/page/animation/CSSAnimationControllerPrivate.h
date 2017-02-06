@@ -42,11 +42,11 @@ class Frame;
 
 enum SetChanged { DoNotCallSetChanged, CallSetChanged };
 
-class AnimationControllerPrivate {
+class CSSAnimationControllerPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit AnimationControllerPrivate(Frame&);
-    ~AnimationControllerPrivate();
+    explicit CSSAnimationControllerPrivate(Frame&);
+    ~CSSAnimationControllerPrivate();
 
     // Returns the time until the next animation needs to be serviced, or -1 if there are none.
     double updateAnimations(SetChanged callSetChanged = DoNotCallSetChanged);

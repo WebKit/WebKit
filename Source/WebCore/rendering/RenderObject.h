@@ -41,7 +41,7 @@
 namespace WebCore {
 
 class AffineTransform;
-class AnimationController;
+class CSSAnimationController;
 class Color;
 class Cursor;
 class Document;
@@ -771,7 +771,7 @@ public:
     
     void removeFromParent();
 
-    AnimationController& animation() const;
+    CSSAnimationController& animation() const;
 
     // Map points and quads through elements, potentially via 3d transforms. You should never need to call these directly; use
     // localToAbsolute/absoluteToLocal methods instead.
@@ -1016,7 +1016,7 @@ inline Page& RenderObject::page() const
     return *frame().page();
 }
 
-inline AnimationController& RenderObject::animation() const
+inline CSSAnimationController& RenderObject::animation() const
 {
     return frame().animation();
 }

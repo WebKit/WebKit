@@ -27,7 +27,7 @@
 
 #if PLATFORM(IOS)
 
-#import "AnimationController.h"
+#import "CSSAnimationController.h"
 #import "CommonVM.h"
 #import "DOMWindow.h"
 #import "Document.h"

@@ -1290,7 +1290,7 @@ class CSSPropertyAnimationWrapperMap {
 public:
     static CSSPropertyAnimationWrapperMap& singleton()
     {
-        // FIXME: This data is never destroyed. Maybe we should ref count it and toss it when the last AnimationController is destroyed?
+        // FIXME: This data is never destroyed. Maybe we should ref count it and toss it when the last CSSAnimationController is destroyed?
         static NeverDestroyed<CSSPropertyAnimationWrapperMap> map;
         return map;
     }

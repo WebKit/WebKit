@@ -30,9 +30,9 @@
 #include "config.h"
 #include "Frame.h"
 
-#include "AnimationController.h"
 #include "ApplyStyleCommand.h"
 #include "BackForwardController.h"
+#include "CSSAnimationController.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CachedCSSStyleSheet.h"
@@ -160,7 +160,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
     , m_script(std::make_unique<ScriptController>(*this))
     , m_editor(std::make_unique<Editor>(*this))
     , m_selection(std::make_unique<FrameSelection>(this))
-    , m_animationController(std::make_unique<AnimationController>(*this))
+    , m_animationController(std::make_unique<CSSAnimationController>(*this))
 #if PLATFORM(IOS)
     , m_overflowAutoScrollTimer(*this, &Frame::overflowAutoScrollTimerFired)
     , m_selectionChangeCallbacksDisabled(false)

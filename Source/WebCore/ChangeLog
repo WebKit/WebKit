@@ -1,3 +1,132 @@
+2017-02-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Rename AnimationController to CSSAnimationController
+        https://bugs.webkit.org/show_bug.cgi?id=167829
+
+        Reviewed by Simon Fraser.
+
+        AnimationController is a very generic name. The current function of this
+        class is CSS animation.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computeRenderStyleForProperty):
+        * dom/Document.cpp:
+        * history/CachedFrame.cpp:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/Frame.h:
+        (WebCore::Frame::animation):
+        * page/FrameView.cpp:
+        * page/Page.cpp:
+        * page/animation/AnimationBase.cpp:
+        * page/animation/CSSAnimationController.cpp: Renamed from Source/WebCore/page/animation/AnimationController.cpp.
+        (WebCore::AnimationPrivateUpdateBlock::AnimationPrivateUpdateBlock):
+        (WebCore::AnimationPrivateUpdateBlock::~AnimationPrivateUpdateBlock):
+        (WebCore::CSSAnimationControllerPrivate::CSSAnimationControllerPrivate):
+        (WebCore::CSSAnimationControllerPrivate::~CSSAnimationControllerPrivate):
+        (WebCore::CSSAnimationControllerPrivate::ensureCompositeAnimation):
+        (WebCore::CSSAnimationControllerPrivate::clear):
+        (WebCore::CSSAnimationControllerPrivate::updateAnimations):
+        (WebCore::CSSAnimationControllerPrivate::updateAnimationTimerForRenderer):
+        (WebCore::CSSAnimationControllerPrivate::updateAnimationTimer):
+        (WebCore::CSSAnimationControllerPrivate::updateStyleIfNeededDispatcherFired):
+        (WebCore::CSSAnimationControllerPrivate::fireEventsAndUpdateStyle):
+        (WebCore::CSSAnimationControllerPrivate::startUpdateStyleIfNeededDispatcher):
+        (WebCore::CSSAnimationControllerPrivate::addEventToDispatch):
+        (WebCore::CSSAnimationControllerPrivate::addElementChangeToDispatch):
+        (WebCore::CSSAnimationControllerPrivate::animationFrameCallbackFired):
+        (WebCore::CSSAnimationControllerPrivate::animationTimerFired):
+        (WebCore::CSSAnimationControllerPrivate::isRunningAnimationOnRenderer):
+        (WebCore::CSSAnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer):
+        (WebCore::CSSAnimationControllerPrivate::suspendAnimations):
+        (WebCore::CSSAnimationControllerPrivate::resumeAnimations):
+        (WebCore::CSSAnimationControllerPrivate::animationsAreSuspendedForDocument):
+        (WebCore::CSSAnimationControllerPrivate::detachFromDocument):
+        (WebCore::CSSAnimationControllerPrivate::suspendAnimationsForDocument):
+        (WebCore::CSSAnimationControllerPrivate::resumeAnimationsForDocument):
+        (WebCore::CSSAnimationControllerPrivate::startAnimationsIfNotSuspended):
+        (WebCore::CSSAnimationControllerPrivate::setAllowsNewAnimationsWhileSuspended):
+        (WebCore::CSSAnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::CSSAnimationControllerPrivate::pauseTransitionAtTime):
+        (WebCore::CSSAnimationControllerPrivate::beginAnimationUpdateTime):
+        (WebCore::CSSAnimationControllerPrivate::beginAnimationUpdate):
+        (WebCore::CSSAnimationControllerPrivate::endAnimationUpdate):
+        (WebCore::CSSAnimationControllerPrivate::receivedStartTimeResponse):
+        (WebCore::CSSAnimationControllerPrivate::getAnimatedStyleForRenderer):
+        (WebCore::CSSAnimationControllerPrivate::computeExtentOfAnimation):
+        (WebCore::CSSAnimationControllerPrivate::numberOfActiveAnimations):
+        (WebCore::CSSAnimationControllerPrivate::addToAnimationsWaitingForStyle):
+        (WebCore::CSSAnimationControllerPrivate::removeFromAnimationsWaitingForStyle):
+        (WebCore::CSSAnimationControllerPrivate::styleAvailable):
+        (WebCore::CSSAnimationControllerPrivate::addToAnimationsWaitingForStartTimeResponse):
+        (WebCore::CSSAnimationControllerPrivate::removeFromAnimationsWaitingForStartTimeResponse):
+        (WebCore::CSSAnimationControllerPrivate::startTimeResponse):
+        (WebCore::CSSAnimationControllerPrivate::animationWillBeRemoved):
+        (WebCore::CSSAnimationControllerPrivate::addToAnimationsDependentOnScroll):
+        (WebCore::CSSAnimationControllerPrivate::removeFromAnimationsDependentOnScroll):
+        (WebCore::CSSAnimationControllerPrivate::scrollWasUpdated):
+        (WebCore::CSSAnimationController::CSSAnimationController):
+        (WebCore::CSSAnimationController::~CSSAnimationController):
+        (WebCore::CSSAnimationController::cancelAnimations):
+        (WebCore::CSSAnimationController::updateAnimations):
+        (WebCore::CSSAnimationController::getAnimatedStyleForRenderer):
+        (WebCore::CSSAnimationController::computeExtentOfAnimation):
+        (WebCore::CSSAnimationController::notifyAnimationStarted):
+        (WebCore::CSSAnimationController::pauseAnimationAtTime):
+        (WebCore::CSSAnimationController::numberOfActiveAnimations):
+        (WebCore::CSSAnimationController::pauseTransitionAtTime):
+        (WebCore::CSSAnimationController::isRunningAnimationOnRenderer):
+        (WebCore::CSSAnimationController::isRunningAcceleratedAnimationOnRenderer):
+        (WebCore::CSSAnimationController::isSuspended):
+        (WebCore::CSSAnimationController::suspendAnimations):
+        (WebCore::CSSAnimationController::resumeAnimations):
+        (WebCore::CSSAnimationController::allowsNewAnimationsWhileSuspended):
+        (WebCore::CSSAnimationController::setAllowsNewAnimationsWhileSuspended):
+        (WebCore::CSSAnimationController::serviceAnimations):
+        (WebCore::CSSAnimationController::animationsAreSuspendedForDocument):
+        (WebCore::CSSAnimationController::detachFromDocument):
+        (WebCore::CSSAnimationController::suspendAnimationsForDocument):
+        (WebCore::CSSAnimationController::resumeAnimationsForDocument):
+        (WebCore::CSSAnimationController::startAnimationsIfNotSuspended):
+        (WebCore::CSSAnimationController::beginAnimationUpdate):
+        (WebCore::CSSAnimationController::endAnimationUpdate):
+        (WebCore::CSSAnimationController::supportsAcceleratedAnimationOfProperty):
+        (WebCore::CSSAnimationController::wantsScrollUpdates):
+        (WebCore::CSSAnimationController::scrollWasUpdated):
+        (WebCore::CSSAnimationController::hasAnimations):
+        * page/animation/CSSAnimationController.h: Renamed from Source/WebCore/page/animation/AnimationController.h.
+        (WebCore::AnimationUpdateBlock::AnimationUpdateBlock):
+        (WebCore::AnimationUpdateBlock::~AnimationUpdateBlock):
+        * page/animation/CSSAnimationControllerPrivate.h: Renamed from Source/WebCore/page/animation/AnimationControllerPrivate.h.
+        (WebCore::CSSAnimationControllerPrivate::hasAnimations):
+        (WebCore::CSSAnimationControllerPrivate::isSuspended):
+        (WebCore::CSSAnimationControllerPrivate::setBeginAnimationUpdateTime):
+        (WebCore::CSSAnimationControllerPrivate::allowsNewAnimationsWhileSuspended):
+        (WebCore::CSSAnimationControllerPrivate::wantsScrollUpdates):
+        (WebCore::CSSAnimationControllerPrivate::scrollPosition):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::singleton):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::CompositeAnimation):
+        * page/animation/CompositeAnimation.h:
+        (WebCore::CompositeAnimation::create):
+        (WebCore::CompositeAnimation::animationController):
+        * page/animation/ImplicitAnimation.cpp:
+        * page/animation/KeyframeAnimation.cpp:
+        * page/ios/FrameIOS.mm:
+        * platform/graphics/GraphicsLayer.h:
+        * rendering/RenderElement.h:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayerBacking.cpp:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation):
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::animation):
+        * testing/Internals.cpp:
+
 2017-02-06  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Use simplified text measuring when possible.

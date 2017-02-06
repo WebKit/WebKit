@@ -29,7 +29,7 @@
 #include "config.h"
 #include "KeyframeAnimation.h"
 
-#include "AnimationControllerPrivate.h"
+#include "CSSAnimationControllerPrivate.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "CompositeAnimation.h"

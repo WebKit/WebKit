@@ -29,9 +29,9 @@
 #include "Document.h"
 
 #include "AXObjectCache.h"
-#include "AnimationController.h"
 #include "Attr.h"
 #include "CDATASection.h"
+#include "CSSAnimationController.h"
 #include "CSSFontSelector.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"

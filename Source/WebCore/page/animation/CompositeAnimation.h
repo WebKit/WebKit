@@ -36,8 +36,8 @@
 
 namespace WebCore {
 
-class AnimationControllerPrivate;
-class AnimationController;
+class CSSAnimationControllerPrivate;
+class CSSAnimationController;
 class RenderElement;
 class RenderStyle;
 
@@ -46,7 +46,7 @@ class RenderStyle;
 class CompositeAnimation : public RefCounted<CompositeAnimation> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CompositeAnimation> create(AnimationControllerPrivate& animationController)
+    static Ref<CompositeAnimation> create(CSSAnimationControllerPrivate& animationController)
     {
         return adoptRef(*new CompositeAnimation(animationController));
     };
@@ -61,7 +61,7 @@ public:
 
     double timeToNextService() const;
     
-    AnimationControllerPrivate& animationController() const { return m_animationController; }
+    CSSAnimationControllerPrivate& animationController() const { return m_animationController; }
 
     void suspendAnimations();
     void resumeAnimations();
@@ -85,7 +85,7 @@ public:
 #endif
 
 private:
-    CompositeAnimation(AnimationControllerPrivate&);
+    CompositeAnimation(CSSAnimationControllerPrivate&);
 
     void updateTransitions(RenderElement*, const RenderStyle* currentStyle, const RenderStyle* targetStyle);
     void updateKeyframeAnimations(RenderElement*, const RenderStyle* currentStyle, const RenderStyle* targetStyle);
@@ -93,7 +93,7 @@ private:
     typedef HashMap<int, RefPtr<ImplicitAnimation>> CSSPropertyTransitionsMap;
     typedef HashMap<AtomicStringImpl*, RefPtr<KeyframeAnimation>> AnimationNameMap;
 
-    AnimationControllerPrivate& m_animationController;
+    CSSAnimationControllerPrivate& m_animationController;
     CSSPropertyTransitionsMap m_transitions;
     AnimationNameMap m_keyframeAnimations;
     Vector<AtomicStringImpl*> m_keyframeAnimationOrderMap;

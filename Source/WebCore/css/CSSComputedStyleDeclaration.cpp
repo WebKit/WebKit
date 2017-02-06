@@ -25,9 +25,9 @@
 #include "config.h"
 #include "CSSComputedStyleDeclaration.h"
 
-#include "AnimationController.h"
 #include "BasicShapeFunctions.h"
 #include "BasicShapes.h"
+#include "CSSAnimationController.h"
 #include "CSSAnimationTriggerScrollValue.h"
 #include "CSSAspectRatioValue.h"
 #include "CSSBasicShapes.h"
@@ -2408,7 +2408,7 @@ static inline const RenderStyle* computeRenderStyleForProperty(Element& element,
 {
     auto* renderer = element.renderer();
 
-    if (renderer && renderer->isComposited() && AnimationController::supportsAcceleratedAnimationOfProperty(propertyID)) {
+    if (renderer && renderer->isComposited() && CSSAnimationController::supportsAcceleratedAnimationOfProperty(propertyID)) {
         ownedStyle = renderer->animation().getAnimatedStyleForRenderer(*renderer);
         if (pseudoElementSpecifier && !element.isPseudoElement()) {
             // FIXME: This cached pseudo style will only exist if the animation has been run at least once.

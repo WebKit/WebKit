@@ -2028,7 +2028,7 @@ set(WebCore_SOURCES
     page/WorkerNavigator.cpp
 
     page/animation/AnimationBase.cpp
-    page/animation/AnimationController.cpp
+    page/animation/CSSAnimationController.cpp
     page/animation/CSSPropertyAnimation.cpp
     page/animation/CompositeAnimation.cpp
     page/animation/ImplicitAnimation.cpp

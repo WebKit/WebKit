@@ -24,10 +24,11 @@
  */
  
 #include "config.h"
-#include "CachedPage.h"
+#include "CachedFrame.h"
 
-#include "AnimationController.h"
+#include "CSSAnimationController.h"
 #include "CachedFramePlatformData.h"
+#include "CachedPage.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"

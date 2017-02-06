@@ -1,3 +1,13 @@
+2017-02-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Rename AnimationController to CSSAnimationController
+        https://bugs.webkit.org/show_bug.cgi?id=167829
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebFrame.mm:
+        * WebView/WebView.mm:
+
 2017-02-03  Chris Dumez  <cdumez@apple.com>
 
         Dismiss HTML form validation popover when pressing Escape key

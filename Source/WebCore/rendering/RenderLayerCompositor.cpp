@@ -27,7 +27,7 @@
 
 #include "RenderLayerCompositor.h"
 
-#include "AnimationController.h"
+#include "CSSAnimationController.h"
 #include "CanvasRenderingContext.h"
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
@@ -2548,7 +2548,7 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
         return false;
 
     const AnimationBase::RunningState activeAnimationState = AnimationBase::Running | AnimationBase::Paused;
-    AnimationController& animController = renderer.animation();
+    CSSAnimationController& animController = renderer.animation();
     return (animController.isRunningAnimationOnRenderer(renderer, CSSPropertyOpacity, activeAnimationState)
             && (inCompositingMode() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
             || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyFilter, activeAnimationState)

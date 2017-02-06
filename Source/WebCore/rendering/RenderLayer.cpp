@@ -44,8 +44,8 @@
 #include "config.h"
 #include "RenderLayer.h"
 
-#include "AnimationController.h"
 #include "BoxShape.h"
+#include "CSSAnimationController.h"
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
 #include "DebugPageOverlays.h"

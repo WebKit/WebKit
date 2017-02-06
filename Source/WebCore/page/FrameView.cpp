@@ -28,8 +28,8 @@
 #include "FrameView.h"
 
 #include "AXObjectCache.h"
-#include "AnimationController.h"
 #include "BackForwardController.h"
+#include "CSSAnimationController.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"

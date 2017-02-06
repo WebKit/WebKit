@@ -29,7 +29,7 @@
 #include "config.h"
 #include "CompositeAnimation.h"
 
-#include "AnimationControllerPrivate.h"
+#include "CSSAnimationControllerPrivate.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "ImplicitAnimation.h"
@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-CompositeAnimation::CompositeAnimation(AnimationControllerPrivate& animationController)
+CompositeAnimation::CompositeAnimation(CSSAnimationControllerPrivate& animationController)
     : m_animationController(animationController)
 {
     m_suspended = m_animationController.isSuspended() && !m_animationController.allowsNewAnimationsWhileSuspended();

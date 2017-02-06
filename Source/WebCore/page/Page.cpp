@@ -22,10 +22,10 @@
 
 #include "ActivityStateChangeObserver.h"
 #include "AlternativeTextClient.h"
-#include "AnimationController.h"
 #include "ApplicationCacheStorage.h"
 #include "BackForwardClient.h"
 #include "BackForwardController.h"
+#include "CSSAnimationController.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClientRectList.h"

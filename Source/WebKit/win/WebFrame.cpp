@@ -52,9 +52,9 @@
 #include "WebScriptWorld.h"
 #include "WebURLResponse.h"
 #include "WebView.h"
-#include <WebCore/AnimationController.h>
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
+#include <WebCore/CSSAnimationController.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>

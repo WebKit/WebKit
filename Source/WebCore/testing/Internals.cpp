@@ -29,11 +29,11 @@
 
 #include "AXObjectCache.h"
 #include "ActiveDOMCallbackMicrotask.h"
-#include "AnimationController.h"
 #include "ApplicationCacheStorage.h"
 #include "Autofill.h"
 #include "BackForwardController.h"
 #include "BitmapImage.h"
+#include "CSSAnimationController.h"
 #include "CSSKeyframesRule.h"
 #include "CSSMediaRule.h"
 #include "CSSStyleRule.h"

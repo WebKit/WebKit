@@ -60,7 +60,7 @@ class RegularExpression;
 
 namespace WebCore {
 
-class AnimationController;
+class CSSAnimationController;
 class Color;
 class Document;
 class Editor;
@@ -149,7 +149,7 @@ public:
     NavigationScheduler& navigationScheduler() const;
     FrameSelection& selection() const;
     FrameTree& tree() const;
-    AnimationController& animation() const;
+    CSSAnimationController& animation() const;
     ScriptController& script();
     
     WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
@@ -290,7 +290,7 @@ private:
     const std::unique_ptr<ScriptController> m_script;
     const std::unique_ptr<Editor> m_editor;
     const std::unique_ptr<FrameSelection> m_selection;
-    const std::unique_ptr<AnimationController> m_animationController;
+    const std::unique_ptr<CSSAnimationController> m_animationController;
 
 #if ENABLE(DATA_DETECTION)
     RetainPtr<NSArray> m_dataDetectionResults;
@@ -366,7 +366,7 @@ inline Editor& Frame::editor() const
     return *m_editor;
 }
 
-inline AnimationController& Frame::animation() const
+inline CSSAnimationController& Frame::animation() const
 {
     return *m_animationController;
 }

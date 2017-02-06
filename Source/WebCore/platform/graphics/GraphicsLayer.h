@@ -441,7 +441,7 @@ public:
     static String animationNameForTransition(AnimatedPropertyID);
     
     // Return true if the animation is handled by the compositing system. If this returns
-    // false, the animation will be run by AnimationController.
+    // false, the animation will be run by CSSAnimationController.
     // These methods handle both transitions and keyframe animations.
     virtual bool addAnimation(const KeyframeValueList&, const FloatSize& /*boxSize*/, const Animation*, const String& /*animationName*/, double /*timeOffset*/)  { return false; }
     virtual void pauseAnimation(const String& /*animationName*/, double /*timeOffset*/) { }

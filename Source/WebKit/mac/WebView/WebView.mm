@@ -121,10 +121,10 @@
 #import <JavaScriptCore/Exception.h>
 #import <JavaScriptCore/JSValueRef.h>
 #import <WebCore/AlternativeTextUIController.h>
-#import <WebCore/AnimationController.h>
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/BackForwardController.h>
 #import <WebCore/CFNetworkSPI.h>
+#import <WebCore/CSSAnimationController.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/DatabaseManager.h>

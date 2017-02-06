@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class AnimationControllerPrivate;
+class CSSAnimationControllerPrivate;
 class Document;
 class Element;
 class Frame;
@@ -42,11 +42,11 @@ class LayoutRect;
 class RenderElement;
 class RenderStyle;
 
-class AnimationController {
+class CSSAnimationController {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit AnimationController(Frame&);
-    ~AnimationController();
+    explicit CSSAnimationController(Frame&);
+    ~CSSAnimationController();
 
     void cancelAnimations(RenderElement&);
     bool updateAnimations(RenderElement&, const RenderStyle& newStyle, std::unique_ptr<RenderStyle>& animatedStyle);
@@ -94,12 +94,12 @@ public:
     bool hasAnimations() const;
 
 private:
-    const std::unique_ptr<AnimationControllerPrivate> m_data;
+    const std::unique_ptr<CSSAnimationControllerPrivate> m_data;
 };
 
 class AnimationUpdateBlock {
 public:
-    AnimationUpdateBlock(AnimationController* animationController)
+    AnimationUpdateBlock(CSSAnimationController* animationController)
         : m_animationController(animationController)
     {
         if (m_animationController)
@@ -112,7 +112,7 @@ public:
             m_animationController->endAnimationUpdate();
     }
     
-    AnimationController* m_animationController;
+    CSSAnimationController* m_animationController;
 };
 
 } // namespace WebCore

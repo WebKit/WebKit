@@ -27,7 +27,7 @@
 
 #include "RenderLayerBacking.h"
 
-#include "AnimationController.h"
+#include "CSSAnimationController.h"
 #include "CanvasRenderingContext.h"
 #include "CSSPropertyNames.h"
 #include "CachedImage.h"

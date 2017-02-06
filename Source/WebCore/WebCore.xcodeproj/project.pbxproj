@@ -427,7 +427,7 @@
 		0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F13163E16ED0CC80035CC04 /* PlatformCAFilters.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F13163D16ED0CC80035CC04 /* PlatformCAFilters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F13164016ED0CDE0035CC04 /* PlatformCAFiltersCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F13163F16ED0CDE0035CC04 /* PlatformCAFiltersCocoa.mm */; };
-		0F15DA8A0F3AAEE70000CE47 /* AnimationControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */; };
+		0F15DA8A0F3AAEE70000CE47 /* CSSAnimationControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15DA890F3AAEE70000CE47 /* CSSAnimationControllerPrivate.h */; };
 		0F15ED5B1B7EC7C500EDDFEB /* WillChangeData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F15ED591B7EC7C500EDDFEB /* WillChangeData.cpp */; };
 		0F15ED5C1B7EC7C500EDDFEB /* WillChangeData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15ED5A1B7EC7C500EDDFEB /* WillChangeData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F1774801378B772009DA76A /* ScrollAnimatorIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F17747E1378B771009DA76A /* ScrollAnimatorIOS.h */; };
@@ -1358,8 +1358,8 @@
 		316FE0740E6CCBEE00BF6088 /* JSCSSKeyframesRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE0700E6CCBEE00BF6088 /* JSCSSKeyframesRule.h */; };
 		316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE1070E6E1DA700BF6088 /* AnimationBase.cpp */; };
 		316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE1080E6E1DA700BF6088 /* AnimationBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		316FE1130E6E1DA700BF6088 /* AnimationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE1090E6E1DA700BF6088 /* AnimationController.cpp */; };
-		316FE1140E6E1DA700BF6088 /* AnimationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE10A0E6E1DA700BF6088 /* AnimationController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		316FE1130E6E1DA700BF6088 /* CSSAnimationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE1090E6E1DA700BF6088 /* CSSAnimationController.cpp */; };
+		316FE1140E6E1DA700BF6088 /* CSSAnimationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE10A0E6E1DA700BF6088 /* CSSAnimationController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		316FE1150E6E1DA700BF6088 /* CompositeAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE10B0E6E1DA700BF6088 /* CompositeAnimation.cpp */; };
 		316FE1160E6E1DA700BF6088 /* CompositeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE10C0E6E1DA700BF6088 /* CompositeAnimation.h */; };
 		316FE1170E6E1DA700BF6088 /* ImplicitAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE10D0E6E1DA700BF6088 /* ImplicitAnimation.cpp */; };
@@ -7495,7 +7495,7 @@
 		0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSelectionInfo.h; sourceTree = "<group>"; };
 		0F13163D16ED0CC80035CC04 /* PlatformCAFilters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCAFilters.h; sourceTree = "<group>"; };
 		0F13163F16ED0CDE0035CC04 /* PlatformCAFiltersCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformCAFiltersCocoa.mm; sourceTree = "<group>"; };
-		0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationControllerPrivate.h; sourceTree = "<group>"; };
+		0F15DA890F3AAEE70000CE47 /* CSSAnimationControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSAnimationControllerPrivate.h; sourceTree = "<group>"; };
 		0F15ED591B7EC7C500EDDFEB /* WillChangeData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillChangeData.cpp; sourceTree = "<group>"; };
 		0F15ED5A1B7EC7C500EDDFEB /* WillChangeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WillChangeData.h; sourceTree = "<group>"; };
 		0F17747E1378B771009DA76A /* ScrollAnimatorIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimatorIOS.h; sourceTree = "<group>"; };
@@ -8584,8 +8584,8 @@
 		316FE0920E6CCD7F00BF6088 /* CSSKeyframesRule.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSKeyframesRule.idl; sourceTree = "<group>"; };
 		316FE1070E6E1DA700BF6088 /* AnimationBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationBase.cpp; sourceTree = "<group>"; };
 		316FE1080E6E1DA700BF6088 /* AnimationBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationBase.h; sourceTree = "<group>"; };
-		316FE1090E6E1DA700BF6088 /* AnimationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationController.cpp; sourceTree = "<group>"; };
-		316FE10A0E6E1DA700BF6088 /* AnimationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationController.h; sourceTree = "<group>"; };
+		316FE1090E6E1DA700BF6088 /* CSSAnimationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSAnimationController.cpp; sourceTree = "<group>"; };
+		316FE10A0E6E1DA700BF6088 /* CSSAnimationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSAnimationController.h; sourceTree = "<group>"; };
 		316FE10B0E6E1DA700BF6088 /* CompositeAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompositeAnimation.cpp; sourceTree = "<group>"; };
 		316FE10C0E6E1DA700BF6088 /* CompositeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompositeAnimation.h; sourceTree = "<group>"; };
 		316FE10D0E6E1DA700BF6088 /* ImplicitAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImplicitAnimation.cpp; sourceTree = "<group>"; };
@@ -16657,9 +16657,9 @@
 			children = (
 				316FE1070E6E1DA700BF6088 /* AnimationBase.cpp */,
 				316FE1080E6E1DA700BF6088 /* AnimationBase.h */,
-				316FE1090E6E1DA700BF6088 /* AnimationController.cpp */,
-				316FE10A0E6E1DA700BF6088 /* AnimationController.h */,
-				0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */,
+				316FE1090E6E1DA700BF6088 /* CSSAnimationController.cpp */,
+				316FE10A0E6E1DA700BF6088 /* CSSAnimationController.h */,
+				0F15DA890F3AAEE70000CE47 /* CSSAnimationControllerPrivate.h */,
 				316FE10B0E6E1DA700BF6088 /* CompositeAnimation.cpp */,
 				316FE10C0E6E1DA700BF6088 /* CompositeAnimation.h */,
 				78D02BC3154A18DF00B62D05 /* CSSPropertyAnimation.cpp */,
@@ -25165,8 +25165,8 @@
 				490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */,
 				49E912AB0EFAC906009D0CAF /* Animation.h in Headers */,
 				316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */,
-				316FE1140E6E1DA700BF6088 /* AnimationController.h in Headers */,
-				0F15DA8A0F3AAEE70000CE47 /* AnimationControllerPrivate.h in Headers */,
+				316FE1140E6E1DA700BF6088 /* CSSAnimationController.h in Headers */,
+				0F15DA8A0F3AAEE70000CE47 /* CSSAnimationControllerPrivate.h in Headers */,
 				319848011A1D817B00A13318 /* AnimationEvent.h in Headers */,
 				49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */,
 				31DCD29D1AB4FBDE0072E817 /* AnimationTrigger.h in Headers */,
@@ -29129,7 +29129,7 @@
 				490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */,
 				49E912AA0EFAC906009D0CAF /* Animation.cpp in Sources */,
 				316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */,
-				316FE1130E6E1DA700BF6088 /* AnimationController.cpp in Sources */,
+				316FE1130E6E1DA700BF6088 /* CSSAnimationController.cpp in Sources */,
 				120DE3F11C86CCC600B6D4DD /* AnimationEffect.cpp in Sources */,
 				319848021A1D818100A13318 /* AnimationEvent.cpp in Sources */,
 				49E912AC0EFAC906009D0CAF /* AnimationList.cpp in Sources */,
