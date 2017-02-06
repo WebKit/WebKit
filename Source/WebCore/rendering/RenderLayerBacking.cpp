@@ -127,7 +127,7 @@ RenderLayerBacking::~RenderLayerBacking()
 
 void RenderLayerBacking::willDestroyLayer(const GraphicsLayer* layer)
 {
-    if (layer && layer->usingTiledBacking())
+    if (layer && layer->type() == GraphicsLayer::Type::Normal && layer->tiledBacking())
         compositor().layerTiledBackingUsageChanged(layer, false);
 }
 
@@ -2798,7 +2798,7 @@ CompositingLayerType RenderLayerBacking::compositingLayerType() const
         return MediaCompositingLayer;
 
     if (m_graphicsLayer->drawsContent())
-        return m_graphicsLayer->usingTiledBacking() ? TiledCompositingLayer : NormalCompositingLayer;
+        return m_graphicsLayer->tiledBacking() ? TiledCompositingLayer : NormalCompositingLayer;
     
     return ContainerCompositingLayer;
 }

@@ -117,7 +117,6 @@ GraphicsLayer::GraphicsLayer(Type type, GraphicsLayerClient& client)
     , m_contentsOpaque(false)
     , m_preserves3D(false)
     , m_backfaceVisibility(true)
-    , m_usingTiledBacking(false)
     , m_masksToBounds(false)
     , m_drawsContent(false)
     , m_contentsVisible(true)
@@ -366,8 +365,8 @@ void GraphicsLayer::noteDeviceOrPageScaleFactorChangedIncludingDescendants()
 
 void GraphicsLayer::setIsInWindowIncludingDescendants(bool inWindow)
 {
-    if (usingTiledBacking())
-        tiledBacking()->setIsInWindow(inWindow);
+    if (TiledBacking* tiledBacking = this->tiledBacking())
+        tiledBacking->setIsInWindow(inWindow);
 
     for (auto* childLayer : children())
         childLayer->setIsInWindowIncludingDescendants(inWindow);
@@ -455,7 +454,7 @@ void GraphicsLayer::getDebugBorderInfo(Color& color, float& width) const
     }
     
     if (drawsContent()) {
-        if (m_usingTiledBacking) {
+        if (tiledBacking()) {
             color = Color(255, 128, 0, 128); // tiled layer: orange
             return;
         }
@@ -741,9 +740,9 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
     }
 #endif
 
-    if (m_usingTiledBacking) {
+    if (type() == Type::Normal && tiledBacking()) {
         writeIndent(ts, indent + 1);
-        ts << "(usingTiledLayer " << m_usingTiledBacking << ")\n";
+        ts << "(usingTiledLayer 1)\n";
     }
 
     bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack = m_client.needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(*this);
