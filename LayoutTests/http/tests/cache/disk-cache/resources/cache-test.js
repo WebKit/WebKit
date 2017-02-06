@@ -42,7 +42,7 @@ function makeHeaderValue(value)
 
 function generateTestURL(test)
 {
-    var body = typeof test.body !== 'undefined' ? test.body : "";
+    var body = typeof test.body !== 'undefined' ? escape(test.body) : "";
     var expiresInFutureIn304 = typeof test.expiresInFutureIn304 !== 'undefined' ? test.expiresInFutureIn304 : false;
     var uniqueTestId = Math.floor((Math.random() * 1000000000000));
     var testURL = "resources/generate-response.cgi?body=" + body;
@@ -54,7 +54,7 @@ function generateTestURL(test)
     if (!test.responseHeaders || !test.responseHeaders["Content-Type"])
         testURL += "&Content-Type=text/plain";
     for (var header in test.responseHeaders)
-        testURL += '&' + header + '=' + makeHeaderValue(test.responseHeaders[header]);
+        testURL += '&' + header + '=' + escape(makeHeaderValue(test.responseHeaders[header]));
     return testURL;
 }
 

@@ -32,7 +32,7 @@ function testImpl(experimental, preescapedPolicy) {
     if (current[2].match(/^data:/) || current[2].match(/^https?:/))
         scriptToLoad = encodeURIComponent(current[2]);
 
-    iframe.src = baseURL + "resources/echo-script-src.pl?" +
+    iframe.src = baseURL + "resources/nph-echo-script-src.pl?" +
                  "experimental=" + (experimental ? "true" : "false") +
                  "&should_run=" + encodeURIComponent(current[0]) +
                  "&csp=" + policy + "&q=" + scriptToLoad;
