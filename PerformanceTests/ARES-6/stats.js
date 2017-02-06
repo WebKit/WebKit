@@ -91,15 +91,15 @@ class Stats {
         let result = this.result;
         
         if (!result.n)
-            return "...";
+            return `<span class="value">\&#10074;\&#10074;.\&#10074;\&#10074;</span><span class="units">ms</span>`;
         
         if (result.mean != result.mean)
             return "ERROR";
         
         if ("interval" in result)
-            return `${this._prefix}${result.mean.toFixed(2)} ms +- ${result.interval.toFixed(2)} ms`;
+            return `<span class="value">${this._prefix}${result.mean.toFixed(2)}</span><span class="margin"> &plusmn;${result.interval.toFixed(2)}</span><span class="units">ms</span>`;
 
-        return `${this._prefix}${result.mean.toFixed(2)} ms`;
+        return `<span class="value">${this._prefix}${result.mean.toFixed(2)}</span><span class="units">ms</span>`;
     }
     
     _update()

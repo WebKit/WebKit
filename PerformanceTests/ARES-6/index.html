@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="styles.css">    
+</head>
+<body>
+    <script>
+    window.onerror = function(message, url, lineNumber)
+    {
+        document.getElementById("error").innerHTML = "ERROR: " + url + ":" + lineNumber + ": " + message;
+    }
+
+    const isInBrowser = true;
+    </script>
+    <script src="driver.js"></script>
+    <script src="results.js"></script>
+    <script src="stats.js"></script>
+    
+    <header>
+        <h1 class="logo"><img src="ARES-6.svg" title="ARES-6" alt="ARES-6"></h1>
+        <button id="trigger" class="start">
+            <span id="status">Start</span>
+        </button>
+        <div id="error" class="error"></div>
+    </header>
+
+    <main>
+    
+    <p>ARES-6 measures the execution time of JavaScript's newest features. <a href="#about">Read more details &#9658;</a></p>
+
+    <div id="about" class="flip">
+    <div class="testing">
+            
+    <div class="overall">
+        <h2>Overall</h2>
+        <div class="score">
+            <span id="Geomean">
+                <span class="value">&#10074;&#10074;.&#10074;&#10074;</span><span class="units">ms</span>
+            </span>
+        </div>
+    </div>    
+    
+    <div class="tests">
+        
+        <div class="air test">
+            <div id="AirMessage" class="indicator">.</div>
+            <h2>Air</h2> 
+
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="AirFirstIteration">
+                    <span class="value">&#10074;&#10074;.&#10074;&#10074;</span><span class="units">ms</span>
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 2%</label>
+                <span id="AirAverageWorstCase">
+                    <span class="value">&#10074;&#10074;.&#10074;&#10074;</span><span class="units">ms</span>
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="AirSteadyState">
+                    <span class="value">&#10074;&#10074;.&#10074;&#10074;</span><span class="units">ms</span>
+                </span>
+            </div>
+            
+        </div>
+    
+        <div class="basic test">
+            <div id="BasicMessage" class="indicator">.</div>
+            <h2>Basic</h2> 
+            
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="BasicFirstIteration">
+                    <span class="value">&#10074;&#10074;.&#10074;&#10074;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 2%</label>
+                <span id="BasicAverageWorstCase">
+                    <span class="value">&#10074;&#10074;.&#10074;&#10074;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="BasicSteadyState">
+                    <span class="value">&#10074;&#10074;.&#10074;&#10074;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+            
+        </div>
+        
+    </div>
+    </div>
+    
+    <div class="about">
+        <h2>About</h2>
+        
+        <p>ARES-6 measures the execution time of JavaScript&#8217;s newest features, including symbols, for-of, arrow functions, Map/Set/WeakMap, let/const, classes, proxies, string interpolation, destructuring, default arguments, spread, tail calls, and generators.</p>
+
+        <p>Air is an ES2015 port of the <a href="https://webkit.org/blog/5852/introducing-the-b3-jit-compiler/">WebKit B3 JIT</a>&#8217;s <a href="https://trac.webkit.org/changeset/201783"><code>Air::allocateStack</code> phase</a>. This code is a heavy user of Map, Set, classes, spread, and for-of. The benchmark runs <code>allocateStack</code> on hot function bodies from other popular JavaScript benchmarks: <code>executeIteration</code> from Octane/Gameboy, <code>gaussianBlur</code> from Kraken, and <code>scanIdentifier</code> from Octane/Typescript. Because metacircularity, the benchmark also runs <code>allocateStack</code> on the largest hot function in Air.</p>
+
+        <p>Basic is an <a href="https://trac.webkit.org/changeset/202446">ES2015 implementation of the ECMA-55 BASIC standard</a>. BASIC was an interactive language from the start, so our implementation uses generator functions for the entire interpreter. When the BASIC program says <code>INPUT</code>, our interpreter says <code>yield</code>. This allows users of the interpreter to easily integrate it into a runloop. Basic also uses classes, Map, and WeakMap. The benchmark runs a handful of simple programs, the most complex of which finds prime numbers.</p>
+
+        <p>We like making JavaScript run faster, but we didn&#8217;t have any ES2015 code to optimize. ARES-6 is a collection of sample ES2015 code written by the WebKit JavaScript team, which we used to bootstrap our ES2015 optimization efforts.</p>
+        
+        <p><a href="#">&#9700; Return to Testing</a></p>
+    </div>
+
+    </div>
+    </main>
+    
+    <iframe id="magic" frameBorder=0></iframe>
+    <script src="air_benchmark.js"></script>
+    <script src="basic_benchmark.js"></script>
+    <script src="glue.js"></script>
+        
+</body>
+</html>

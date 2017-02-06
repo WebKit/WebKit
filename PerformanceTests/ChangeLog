@@ -1,3 +1,125 @@
+2017-02-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Change ES6SampleBench into ARES-6
+        https://bugs.webkit.org/show_bug.cgi?id=167863
+
+        Rubber stamped by Saam Barati.
+        
+        This imports changes that Jonathan Davis (jond@apple.com) made to ES6SampleBench to make it look
+        super awesome. Its now called ARES-6.
+
+        * ARES-6: Copied from PerformanceTests/ES6SampleBench.
+        * ARES-6/ARES-6.svg: Added.
+        * ARES-6/driver.js:
+        (Driver):
+        (Driver.prototype.readyTrigger):
+        (Driver.prototype.disableTrigger):
+        (Driver.prototype.start):
+        (Driver.prototype._updateIterations):
+        * ARES-6/glue.js:
+        * ARES-6/index.html:
+        * ARES-6/results.js:
+        (Results.prototype.reportRunning):
+        (Results.prototype.reportDone):
+        * ARES-6/stats.js:
+        (Stats.prototype.toString.return.span):
+        (Stats.prototype.toString.span.span):
+        (Stats.prototype.toString): Deleted.
+        * ARES-6/style.css: Removed.
+        * ARES-6/styles.css: Added.
+        (html):
+        (body):
+        (header,):
+        (p a):
+        (p a:hover):
+        (.flip):
+        (header):
+        (h2,):
+        (p):
+        (.about h2):
+        (.logo):
+        (.start):
+        (.start.ready):
+        (.start.ready:hover):
+        (.start:after):
+        (.start.ready .testrun):
+        (.tests):
+        (.test):
+        (.overall h2,):
+        (.test .indicator):
+        (.test .indicator.running):
+        (@keyframes test-running):
+        (100%):
+        (.score):
+        (.score label):
+        (.score .value):
+        (.score .units):
+        (.score .margin):
+        (.overall):
+        (.overall .score):
+        (.overall .margin):
+        (.testing, .about):
+        (.testing):
+        (.about):
+        (#about:target):
+        (@media only screen and (max-width: 784px)):
+        * ARES-6/swoop.svg: Added.
+        * ES6SampleBench: Removed.
+        * ES6SampleBench/Air: Removed.
+        * ES6SampleBench/Air/README.md: Removed.
+        * ES6SampleBench/Air/airjs-tests.yaml: Removed.
+        * ES6SampleBench/Air/all.js: Removed.
+        * ES6SampleBench/Air/allocate_stack.js: Removed.
+        * ES6SampleBench/Air/arg.js: Removed.
+        * ES6SampleBench/Air/basic_block.js: Removed.
+        * ES6SampleBench/Air/benchmark.js: Removed.
+        * ES6SampleBench/Air/code.js: Removed.
+        * ES6SampleBench/Air/custom.js: Removed.
+        * ES6SampleBench/Air/frequented_block.js: Removed.
+        * ES6SampleBench/Air/insertion_set.js: Removed.
+        * ES6SampleBench/Air/inst.js: Removed.
+        * ES6SampleBench/Air/liveness.js: Removed.
+        * ES6SampleBench/Air/make_dist.sh: Removed.
+        * ES6SampleBench/Air/opcode.js: Removed.
+        * ES6SampleBench/Air/payload-airjs-ACLj8C.js: Removed.
+        * ES6SampleBench/Air/payload-gbemu-executeIteration.js: Removed.
+        * ES6SampleBench/Air/payload-imaging-gaussian-blur-gaussianBlur.js: Removed.
+        * ES6SampleBench/Air/payload-typescript-scanIdentifier.js: Removed.
+        * ES6SampleBench/Air/reg.js: Removed.
+        * ES6SampleBench/Air/stack_slot.js: Removed.
+        * ES6SampleBench/Air/stress-test.js: Removed.
+        * ES6SampleBench/Air/strip-hash.rb: Removed.
+        * ES6SampleBench/Air/symbols.js: Removed.
+        * ES6SampleBench/Air/test.html: Removed.
+        * ES6SampleBench/Air/test.js: Removed.
+        * ES6SampleBench/Air/tmp.js: Removed.
+        * ES6SampleBench/Air/tmp_base.js: Removed.
+        * ES6SampleBench/Air/util.js: Removed.
+        * ES6SampleBench/Basic: Removed.
+        * ES6SampleBench/Basic/ast.js: Removed.
+        * ES6SampleBench/Basic/basic-tests.yaml: Removed.
+        * ES6SampleBench/Basic/basic.js: Removed.
+        * ES6SampleBench/Basic/benchmark.js: Removed.
+        * ES6SampleBench/Basic/caseless_map.js: Removed.
+        * ES6SampleBench/Basic/lexer.js: Removed.
+        * ES6SampleBench/Basic/number.js: Removed.
+        * ES6SampleBench/Basic/parser.js: Removed.
+        * ES6SampleBench/Basic/random.js: Removed.
+        * ES6SampleBench/Basic/state.js: Removed.
+        * ES6SampleBench/Basic/stress-test.js: Removed.
+        * ES6SampleBench/Basic/test.html: Removed.
+        * ES6SampleBench/Basic/test.js: Removed.
+        * ES6SampleBench/Basic/util.js: Removed.
+        * ES6SampleBench/air_benchmark.js: Removed.
+        * ES6SampleBench/basic_benchmark.js: Removed.
+        * ES6SampleBench/cli.js: Removed.
+        * ES6SampleBench/driver.js: Removed.
+        * ES6SampleBench/glue.js: Removed.
+        * ES6SampleBench/index.html: Removed.
+        * ES6SampleBench/results.js: Removed.
+        * ES6SampleBench/stats.js: Removed.
+        * ES6SampleBench/style.css: Removed.
+
 2017-02-05  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add performance test with varying string and font-size to minimize width-cache hit.

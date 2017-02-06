@@ -43,13 +43,13 @@ class Results {
     reportRunning()
     {
         if (isInBrowser)
-            this._benchmark.cells.message.innerHTML = "Running...";
+            this._benchmark.cells.message.classList.add('running');
     }
     
     reportDone()
     {
         if (isInBrowser)
-            this._benchmark.cells.message.innerHTML = "";
+            this._benchmark.cells.message.classList.remove('running');
     }
     
     reportResult(times)

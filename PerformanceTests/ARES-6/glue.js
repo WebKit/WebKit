@@ -25,8 +25,11 @@
 "use strict";
 
 const driver = new Driver(
+    isInBrowser ? document.getElementById("status") : null,
     isInBrowser ? document.getElementById("trigger") : null,
-    "driver.start(10)",
+    function() {
+        driver.start(10)
+    },
     isInBrowser ? document.getElementById("magic") : null,
     isInBrowser ? document.getElementById("Geomean") : null,
     "sampleBench");
@@ -37,3 +40,4 @@ function reportResult(...args) {
 
 driver.addBenchmark(AirBenchmarkRunner);
 driver.addBenchmark(BasicBenchmarkRunner);
+driver.readyTrigger();

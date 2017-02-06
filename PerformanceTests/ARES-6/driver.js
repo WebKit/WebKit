@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,10 @@
 "use strict";
 
 class Driver {
-    constructor(triggerCell, triggerLink, magicCell, summaryCell, key)
+    constructor(statusCell, triggerCell, triggerLink, magicCell, summaryCell, key)
     {
         this._benchmarks = new Map();
+        this._statusCell = statusCell;
         this._triggerCell = triggerCell;
         this._triggerLink = triggerLink;
         this._magicCell = magicCell;
@@ -43,10 +44,23 @@ class Driver {
         this._benchmarks.set(benchmark, new Results(benchmark));
     }
     
+    readyTrigger() 
+    {
+        this._triggerCell.addEventListener('click', this._triggerLink);
+        this._triggerCell.classList.add('ready');
+    }
+    
+    disableTrigger() 
+    {
+        this._triggerCell.removeEventListener('click', this._triggerLink);
+        this._triggerCell.classList.remove('ready');
+    }
+    
     start(numIterations)
     {
+        this.disableTrigger();
         this._updateIterations();
-        
+
         this._summary.reset();
         for (let [benchmark, results] of this._benchmarks)
             results.reset();
@@ -119,9 +133,9 @@ class Driver {
         if (!this._benchmark) {
             if (!this._numIterations) {
                 if (isInBrowser) {
-                    this._triggerCell.innerHTML =
-                        (this._hadErrors ? "Failures encountered!" : "Success!") +
-                        ` <a href="${this._triggerLink}">Restart Benchmark</a>`;
+                    this._statusCell.innerHTML =
+                        (this._hadErrors ? "Failures encountered!" : "Restart");
+                    this.readyTrigger();
                 } else
                     print(this._hadErrors ? "Failures encountered!" : "Success! Benchmark is now finished.");
                 return;
@@ -176,6 +190,6 @@ class Driver {
     _updateIterations()
     {
         if (isInBrowser)
-            this._triggerCell.innerHTML = "Running... (" + (this._numIterations + 1) + " to go)";
+            this._statusCell.innerHTML = "Running... " + (this._numIterations + 1) + " to go";
     }
 }

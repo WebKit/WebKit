@@ -28,7 +28,7 @@ We only recently completed our new JavaScript compiler, called
 backend, called
 [Air](https://webkit.org/docs/b3/assembly-intermediate-representation.html), is
 very CPU-intensive and uses a combination of object-oriented and functional
-idioms in C++. Additioally, it relies heavily on high speed maps and sets. It
+idioms in C++. Additionally, it relies heavily on high speed maps and sets. It
 goes so far as to use customized map/set implementations - even more so than
 the rest of WebKit. This makes Air a great candidate for ES6 benchmarking.
 Air.js is a faithful ES6 implementation of Air. It pulls no punches: just as
