@@ -1,3 +1,12 @@
+2017-02-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Change capitalization in platform name after r211735.
+
+        Unreviewed dashboard fix.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+
 2017-02-06  Alexey Proskuryakov  <ap@apple.com>
 
         Move the Leaks bot to Sierra

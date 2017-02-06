@@ -33,7 +33,7 @@ WebKitBuildbot = function()
         "Apple Sierra Debug WK2 (Tests)": {platform: Dashboard.Platform.macOSSierra, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple Sierra Release WK1 (Tests)": {platform: Dashboard.Platform.macOSSierra, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple Sierra Release WK2 (Tests)": {platform: Dashboard.Platform.macOSSierra, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
-        "Apple Sierra (Leaks)": {platform: Dashboard.Platform.MacOSSierra, debug: false, leaks: true},
+        "Apple Sierra (Leaks)": {platform: Dashboard.Platform.macOSSierra, debug: false, leaks: true},
         "Apple Sierra JSC": {platform: Dashboard.Platform.macOSSierra, heading: "JavaScript", combinedQueues: {
             "Apple Sierra 32-bit JSC (BuildAndTest)": {heading: "32-bit JSC (BuildAndTest)"},
             "Apple Sierra LLINT CLoop (BuildAndTest)": {heading: "LLINT CLoop (BuildAndTest)"},
