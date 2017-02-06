@@ -1,5 +1,16 @@
 2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211676. rdar://problem/30229990
+
+    2017-02-04  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, fix mistake in comment added in r211569.
+
+            * history/PageCache.cpp:
+            (WebCore::PageCache::removeAllItemsForPage):
+
+2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211569. rdar://problem/30229990
 
     2017-02-02  Chris Dumez  <cdumez@apple.com>

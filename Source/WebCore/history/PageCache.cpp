@@ -442,7 +442,7 @@ std::unique_ptr<CachedPage> PageCache::take(HistoryItem& item, Page* page)
 void PageCache::removeAllItemsForPage(Page& page)
 {
     for (auto it = m_items.begin(); it != m_items.end();) {
-        // Increment iterator first so it stays invalid after the removal.
+        // Increment iterator first so it stays valid after the removal.
         auto current = it;
         ++it;
         if (&(*current)->m_cachedPage->page() == &page) {
