@@ -134,6 +134,7 @@
 
 .tree-outline.dom li.parent {
     margin-left: -15px;
+    line-height: 13px;
 }
 
 .tree-outline.dom li .html-tag.close {
