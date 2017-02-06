@@ -1,3 +1,23 @@
+2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211504. rdar://problem/30301117
+
+    2017-02-01  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION(r205136): {}.toString.call(crossOriginWindow) should not throw
+            https://bugs.webkit.org/show_bug.cgi?id=167681
+            <rdar://problem/30301117>
+
+            Reviewed by Mark Lam.
+
+            Rebaseline W3C test now that we passing one more check. We're still failing
+            later because {}.toString.call(crossOriginWindow) returns "[object Window]"
+            instead of "[object Object]". I am planning to fix this in a follow-up.
+            This is not a regression since we were returning "[object Window]" before
+            r205136.
+
+            * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+
 2017-01-18  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r210860. rdar://problem/30080035

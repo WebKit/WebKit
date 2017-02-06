@@ -51,6 +51,11 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* state, PropertyName prope
     if (BindingSecurity::shouldAllowAccessToFrame(*state, *frame, message))
         return false;
 
+    if (propertyName == state->propertyNames().toStringTagSymbol || propertyName == state->propertyNames().hasInstanceSymbol || propertyName == state->propertyNames().isConcatSpreadableSymbol) {
+        slot.setUndefined();
+        return true;
+    }
+
     // We only allow access to Location.replace() cross origin.
     if (propertyName == state->propertyNames().replace) {
         slot.setCustom(this, ReadOnly | DontEnum, nonCachingStaticFunctionGetter<jsLocationInstanceFunctionReplace, 1>);
