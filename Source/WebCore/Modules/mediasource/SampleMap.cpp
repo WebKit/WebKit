@@ -142,13 +142,21 @@ PresentationOrderSampleMap::iterator PresentationOrderSampleMap::findSampleWithP
 
 PresentationOrderSampleMap::iterator PresentationOrderSampleMap::findSampleContainingPresentationTime(const MediaTime& time)
 {
-    auto range = std::equal_range(begin(), end(), time, SampleIsLessThanMediaTimeComparator<MapType>());
-    if (range.first == range.second)
+    // upper_bound will return the first sample whose presentation start time is greater than the search time.
+    // If this is the first sample, that means no sample in the map contains the requested time.
+    auto iter = m_samples.upper_bound(time);
+    if (iter == begin())
         return end();
-    return range.first;
+
+    // Look at the previous sample; does it contain the requested time?
+    --iter;
+    MediaSample& sample = *iter->second;
+    if (sample.presentationTime() + sample.duration() > time)
+        return iter;
+    return end();
 }
 
-PresentationOrderSampleMap::iterator PresentationOrderSampleMap::findSampleOnOrAfterPresentationTime(const MediaTime& time)
+PresentationOrderSampleMap::iterator PresentationOrderSampleMap::findSampleStartingOnOrAfterPresentationTime(const MediaTime& time)
 {
     return m_samples.lower_bound(time);
 }
@@ -168,7 +176,22 @@ PresentationOrderSampleMap::reverse_iterator PresentationOrderSampleMap::reverse
 
 PresentationOrderSampleMap::reverse_iterator PresentationOrderSampleMap::reverseFindSampleBeforePresentationTime(const MediaTime& time)
 {
-    return std::lower_bound(rbegin(), rend(), time, SampleIsGreaterThanMediaTimeComparator<MapType>());
+    if (m_samples.empty())
+        return rend();
+
+    // upper_bound will return the first sample whose presentation start time is greater than the search time.
+    auto found = m_samples.upper_bound(time);
+
+    // If no sample was found with a time greater than the search time, return the last sample.
+    if (found == end())
+        return rbegin();
+
+    // If the first sample has a time grater than the search time, no samples will have a presentation time before the search time.
+    if (found == begin())
+        return rend();
+
+    // Otherwise, return the sample immediately previous to the one found.
+    return --reverse_iterator(--found);
 }
 
 DecodeOrderSampleMap::reverse_iterator DecodeOrderSampleMap::reverseFindSampleWithDecodeKey(const KeyType& key)
@@ -203,7 +226,7 @@ DecodeOrderSampleMap::reverse_iterator DecodeOrderSampleMap::findSyncSamplePrior
 
 DecodeOrderSampleMap::iterator DecodeOrderSampleMap::findSyncSampleAfterPresentationTime(const MediaTime& time, const MediaTime& threshold)
 {
-    PresentationOrderSampleMap::iterator currentSamplePTS = m_presentationOrder.findSampleOnOrAfterPresentationTime(time);
+    PresentationOrderSampleMap::iterator currentSamplePTS = m_presentationOrder.findSampleStartingOnOrAfterPresentationTime(time);
     if (currentSamplePTS == m_presentationOrder.end())
         return end();
 
@@ -228,14 +251,24 @@ DecodeOrderSampleMap::iterator DecodeOrderSampleMap::findSyncSampleAfterDecodeIt
 
 PresentationOrderSampleMap::iterator_range PresentationOrderSampleMap::findSamplesBetweenPresentationTimes(const MediaTime& beginTime, const MediaTime& endTime)
 {
-    std::pair<MediaTime, MediaTime> range(beginTime, endTime);
-    return std::equal_range(begin(), end(), range, SamplePresentationTimeIsInsideRangeComparator());
+    // startTime is inclusive, so use lower_bound to include samples wich start exactly at startTime.
+    // endTime is not inclusive, so use lower_bound to exclude samples which start exactly at endTime.
+    auto lower_bound = m_samples.lower_bound(beginTime);
+    auto upper_bound = m_samples.lower_bound(endTime);
+    if (lower_bound == upper_bound)
+        return { end(), end() };
+    return { lower_bound, upper_bound };
 }
 
 PresentationOrderSampleMap::iterator_range PresentationOrderSampleMap::findSamplesWithinPresentationRange(const MediaTime& beginTime, const MediaTime& endTime)
 {
-    std::pair<MediaTime, MediaTime> range(beginTime, endTime);
-    return std::equal_range(begin(), end(), range, SamplePresentationTimeIsWithinRangeComparator());
+    // startTime is not inclusive, so use upper_bound to exclude samples which start exactly at startTime.
+    // endTime is inclusive, so use upper_bound to include samples which start exactly at endTime.
+    auto lower_bound = m_samples.upper_bound(beginTime);
+    auto upper_bound = m_samples.upper_bound(endTime);
+    if (lower_bound == upper_bound)
+        return { end(), end() };
+    return { lower_bound, upper_bound };
 }
 
 PresentationOrderSampleMap::iterator_range PresentationOrderSampleMap::findSamplesWithinPresentationRangeFromEnd(const MediaTime& beginTime, const MediaTime& endTime)

@@ -705,7 +705,7 @@ static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMa
                 additionalErasedRanges.add(previousSample.presentationTime() + previousSample.duration(), erasedStart);
         }
 
-        auto endIterator = trackBuffer.samples.presentationOrder().findSampleOnOrAfterPresentationTime(erasedEnd);
+        auto endIterator = trackBuffer.samples.presentationOrder().findSampleStartingOnOrAfterPresentationTime(erasedEnd);
         if (endIterator == trackBuffer.samples.presentationOrder().end())
             additionalErasedRanges.add(erasedEnd, MediaTime::positiveInfiniteTime());
         else {
@@ -775,7 +775,7 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
         else
             removePresentationEnd = trackBuffer.samples.presentationOrder().findSampleWithPresentationTime(removeDecodeEnd->second->presentationTime());
 
-        PresentationOrderSampleMap::iterator removePresentationStart = trackBuffer.samples.presentationOrder().findSampleOnOrAfterPresentationTime(start);
+        PresentationOrderSampleMap::iterator removePresentationStart = trackBuffer.samples.presentationOrder().findSampleStartingOnOrAfterPresentationTime(start);
         if (removePresentationStart == removePresentationEnd)
             continue;
 
@@ -1842,7 +1842,7 @@ void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, const AtomicS
     auto currentSamplePTSIterator = trackBuffer.samples.presentationOrder().findSampleContainingPresentationTime(time);
 
     if (currentSamplePTSIterator == trackBuffer.samples.presentationOrder().end())
-        currentSamplePTSIterator = trackBuffer.samples.presentationOrder().findSampleOnOrAfterPresentationTime(time);
+        currentSamplePTSIterator = trackBuffer.samples.presentationOrder().findSampleStartingOnOrAfterPresentationTime(time);
 
     if (currentSamplePTSIterator == trackBuffer.samples.presentationOrder().end()
         || (currentSamplePTSIterator->first - time) > MediaSource::currentTimeFudgeFactor())

@@ -85,6 +85,8 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime(1, 1) != MediaTime(2, 1), true);
     EXPECT_EQ(MediaTime(2, 1) == MediaTime(2, 1), true);
     EXPECT_EQ(MediaTime(2, 1) == MediaTime(4, 2), true);
+    EXPECT_TRUE((bool)MediaTime(1, 1));
+    EXPECT_TRUE(!MediaTime(0, 1));
 
     // Addition Operators
     EXPECT_EQ(MediaTime::positiveInfiniteTime() + MediaTime::positiveInfiniteTime(), MediaTime::positiveInfiniteTime());
@@ -158,8 +160,6 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(abs(MediaTime::invalidTime()), MediaTime::invalidTime());
     EXPECT_EQ(abs(MediaTime(1, 1)), MediaTime(1, 1));
     EXPECT_EQ(abs(MediaTime(-1, 1)), MediaTime(1, 1));
-    EXPECT_EQ(abs(MediaTime(-1, -1)), MediaTime(-1, -1));
-    EXPECT_EQ(abs(MediaTime(1, -1)), MediaTime(-1, -1));
 
     // Floating Point Functions
     EXPECT_EQ(MediaTime::createWithFloat(1.0f), MediaTime(1, 1));
@@ -200,14 +200,14 @@ TEST(WTF, MediaTime)
     // Overflow Behavior
     EXPECT_EQ(MediaTime::createWithFloat(pow(2.0f, 64.0f)), MediaTime::positiveInfiniteTime());
     EXPECT_EQ(MediaTime::createWithFloat(-pow(2.0f, 64.0f)), MediaTime::negativeInfiniteTime());
-    EXPECT_EQ(MediaTime::createWithFloat(pow(2.0f, 63.0f), 2).timeScale(), 1);
-    EXPECT_EQ(MediaTime::createWithFloat(pow(2.0f, 63.0f), 3).timeScale(), 1);
+    EXPECT_EQ(MediaTime::createWithFloat(pow(2.0f, 63.0f), 2).timeScale(), 1U);
+    EXPECT_EQ(MediaTime::createWithFloat(pow(2.0f, 63.0f), 3).timeScale(), 1U);
     EXPECT_EQ(MediaTime::createWithDouble(pow(2.0, 64.0)), MediaTime::positiveInfiniteTime());
     EXPECT_EQ(MediaTime::createWithDouble(-pow(2.0, 64.0)), MediaTime::negativeInfiniteTime());
-    EXPECT_EQ(MediaTime::createWithDouble(pow(2.0, 63.0), 2).timeScale(), 1);
-    EXPECT_EQ(MediaTime::createWithDouble(pow(2.0, 63.0), 3).timeScale(), 1);
-    EXPECT_EQ((MediaTime(numeric_limits<int64_t>::max(), 2) + MediaTime(numeric_limits<int64_t>::max(), 2)).timeScale(), 1);
-    EXPECT_EQ((MediaTime(numeric_limits<int64_t>::min(), 2) - MediaTime(numeric_limits<int64_t>::max(), 2)).timeScale(), 1);
+    EXPECT_EQ(MediaTime::createWithDouble(pow(2.0, 63.0), 2).timeScale(), 1U);
+    EXPECT_EQ(MediaTime::createWithDouble(pow(2.0, 63.0), 3).timeScale(), 1U);
+    EXPECT_EQ((MediaTime(numeric_limits<int64_t>::max(), 2) + MediaTime(numeric_limits<int64_t>::max(), 2)).timeScale(), 1U);
+    EXPECT_EQ((MediaTime(numeric_limits<int64_t>::min(), 2) - MediaTime(numeric_limits<int64_t>::max(), 2)).timeScale(), 1U);
     EXPECT_EQ(MediaTime(numeric_limits<int64_t>::max(), 1) + MediaTime(numeric_limits<int64_t>::max(), 1), MediaTime::positiveInfiniteTime());
     EXPECT_EQ(MediaTime(numeric_limits<int64_t>::min(), 1) + MediaTime(numeric_limits<int64_t>::min(), 1), MediaTime::negativeInfiniteTime());
     EXPECT_EQ(MediaTime(numeric_limits<int64_t>::min(), 1) - MediaTime(numeric_limits<int64_t>::max(), 1), MediaTime::negativeInfiniteTime());

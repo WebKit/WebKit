@@ -5929,7 +5929,7 @@
 		CDCFABBD18C0AF78006F8450 /* SelectionSubtreeRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCFABBB18C0AE31006F8450 /* SelectionSubtreeRoot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDCFABBE18C0AF84006F8450 /* SelectionSubtreeRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCFABBC18C0AF19006F8450 /* SelectionSubtreeRoot.cpp */; };
 		CDD7089618359F6F002B3DC6 /* SampleMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDD7089418359F6E002B3DC6 /* SampleMap.cpp */; };
-		CDD7089718359F6F002B3DC6 /* SampleMap.h in Headers */ = {isa = PBXBuildFile; fileRef = CDD7089518359F6F002B3DC6 /* SampleMap.h */; };
+		CDD7089718359F6F002B3DC6 /* SampleMap.h in Headers */ = {isa = PBXBuildFile; fileRef = CDD7089518359F6F002B3DC6 /* SampleMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDDC1E7A18A952F30027A9D4 /* MediaSourcePrivateClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDC1E7918A952F30027A9D4 /* MediaSourcePrivateClient.h */; };
 		CDDE02ED18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDDE02EB18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm */; };
 		CDDE02F018B5651300CF7FF1 /* CDMSessionAVStreamSession.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDDE02EF18B5651200CF7FF1 /* CDMSessionAVStreamSession.mm */; };

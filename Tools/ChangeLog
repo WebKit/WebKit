@@ -1,3 +1,22 @@
+2017-02-06  Jer Noble  <jer.noble@apple.com>
+
+        Playback stalls when a SourceBuffer append causes frame eviction
+        https://bugs.webkit.org/show_bug.cgi?id=167834
+
+        Reviewed by Eric Carlson.
+
+        Add new correctness tests for the Webcore::SampleMap class. Add additional subtests
+        for the WTF::MediaTime class.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/MediaTime.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/SampleMap.cpp: Added.
+        (WTF::operator<<):
+        (TestWebKitAPI::TestSample::create):
+        (TestWebKitAPI::TestSample::TestSample):
+        (TestWebKitAPI::TEST_F):
+
 2017-02-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Change capitalization in platform name after r211735.

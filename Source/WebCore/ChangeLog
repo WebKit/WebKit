@@ -1,3 +1,51 @@
+2017-02-06  Jer Noble  <jer.noble@apple.com>
+
+        Playback stalls when a SourceBuffer append causes frame eviction
+        https://bugs.webkit.org/show_bug.cgi?id=167834
+
+        Reviewed by Eric Carlson.
+
+        Test: PerformanceTests/Media/MSERemoveCodedFrames.html
+
+        Optimize searching through SampleMap by presentationTime.
+
+        Many of the methods exposed by PresentationOrderSampleMap used the bare  std::equal_range,
+        lower_bound, or upper_bound methods. Unlike those methods exposed on std::map, the bare
+        search methods perform a linear O(n) search, rather than a the binary O(log(n)) search used
+        by std::map. Rewrite those methods using the bare methods in terms of the std::map search
+        methods.
+
+        Drive-by fix: rename findSampleOnOrAfterPresentationTime to
+        findSampleStartingOnOrAfterPresentationTime to make the behavior of the method more
+        explicit.
+
+        * Modules/mediasource/SampleMap.cpp:
+        (WebCore::PresentationOrderSampleMap::findSampleContainingPresentationTime):
+        (WebCore::PresentationOrderSampleMap::findSampleStartingOnOrAfterPresentationTime):
+        (WebCore::PresentationOrderSampleMap::reverseFindSampleBeforePresentationTime):
+        (WebCore::DecodeOrderSampleMap::findSyncSampleAfterPresentationTime):
+        (WebCore::PresentationOrderSampleMap::findSamplesBetweenPresentationTimes):
+        (WebCore::PresentationOrderSampleMap::findSamplesWithinPresentationRange):
+        (WebCore::PresentationOrderSampleMap::findSampleOnOrAfterPresentationTime): Deleted.
+        * Modules/mediasource/SampleMap.h:
+        (WebCore::PresentationOrderSampleMap::begin):
+        (WebCore::PresentationOrderSampleMap::end):
+        (WebCore::PresentationOrderSampleMap::rbegin):
+        (WebCore::PresentationOrderSampleMap::rend):
+        (WebCore::DecodeOrderSampleMap::begin):
+        (WebCore::DecodeOrderSampleMap::end):
+        (WebCore::DecodeOrderSampleMap::rbegin):
+        (WebCore::DecodeOrderSampleMap::rend):
+        (WebCore::SampleMap::SampleMap):
+        (WebCore::SampleMap::sizeInBytes):
+        (WebCore::SampleMap::decodeOrder):
+        (WebCore::SampleMap::presentationOrder):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::removeSamplesFromTrackBuffer):
+        (WebCore::SourceBuffer::removeCodedFrames):
+        (WebCore::SourceBuffer::reenqueueMediaForTime):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-02-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Rename AnimationController to CSSAnimationController

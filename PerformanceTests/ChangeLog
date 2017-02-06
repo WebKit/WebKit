@@ -1,3 +1,30 @@
+2017-02-06  Jer Noble  <jer.noble@apple.com>
+
+        Playback stalls when a SourceBuffer append causes frame eviction
+        https://bugs.webkit.org/show_bug.cgi?id=167834
+
+        Reviewed by Eric Carlson.
+
+        Add an in-page performance test measuring the amount of time required
+        to append a large amount of media data to a SourceBuffer, and then to
+        completely remove that data 30s at a time.
+
+        Add a microbenchmark for MediaTime which measures the amount of time
+        required to create a 1M entry std::map and traverse the map 1M times.
+
+        * Media/MSERemoveCodedFrames.html: Added.
+        * Media/media-source-loader.js:
+        (MediaSourceLoader.prototype.get duration):
+        * MediaTime/Configurations/Base.xcconfig: Added.
+        * MediaTime/Configurations/DebugRelease.xcconfig: Added.
+        * MediaTime/Makefile: Added.
+        * MediaTime/MediaTime.xcodeproj/project.pbxproj: Added.
+        * MediaTime/main.cpp: Added.
+        (performTest):
+        (test):
+        (main):
+        * Skipped:
+
 2017-02-06  Saam Barati  <sbarati@apple.com>
 
         Make ARES-6 work from the CLI again
