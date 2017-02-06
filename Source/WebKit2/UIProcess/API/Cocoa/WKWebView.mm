@@ -96,7 +96,6 @@
 #import <WebCore/Settings.h>
 #import <WebCore/TextStream.h>
 #import <WebCore/ValidationBubble.h>
-#import <WebCore/WebBackgroundTaskController.h>
 #import <WebCore/WebSQLiteDatabaseTrackerClient.h>
 #import <WebCore/WritingMode.h>
 #import <wtf/HashMap.h>
@@ -124,6 +123,7 @@
 #import <WebCore/InspectorOverlay.h>
 #import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/ScrollableArea.h>
+#import <WebCore/WebBackgroundTaskController.h>
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
 #if __has_include(<AccessibilitySupport.h>)
