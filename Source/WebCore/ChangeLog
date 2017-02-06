@@ -1,5 +1,15 @@
 2017-02-06  Alex Christensen  <achristensen@webkit.org>
 
+        More build fixes after r211751
+        https://bugs.webkit.org/show_bug.cgi?id=166998
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::applyAuthenticationToRequest):
+        * platform/network/soup/SocketStreamHandleImplSoup.cpp:
+        (WebCore::SocketStreamHandleImpl::create):
+
+2017-02-06  Alex Christensen  <achristensen@webkit.org>
+
         Fix non-cocoa builds after r211751.
         https://bugs.webkit.org/show_bug.cgi?id=166998
 

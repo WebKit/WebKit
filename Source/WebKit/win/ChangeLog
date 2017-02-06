@@ -1,3 +1,11 @@
+2017-02-06  Alex Christensen  <achristensen@webkit.org>
+
+        More build fixes after r211751
+        https://bugs.webkit.org/show_bug.cgi?id=166998
+
+        * WebDownloadCFNet.cpp:
+        (WebDownload::didReceiveAuthenticationChallenge):
+
 2017-02-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Rename AnimationController to CSSAnimationController

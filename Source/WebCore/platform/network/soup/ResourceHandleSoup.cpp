@@ -209,7 +209,7 @@ static void applyAuthenticationToRequest(ResourceHandle* handle, ResourceRequest
 
     if (handle->shouldUseCredentialStorage()) {
         if (d->m_user.isEmpty() && d->m_pass.isEmpty())
-            d->m_initialCredential = CredentialStorage::defaultCredentialStorage().get(request.url());
+            d->m_initialCredential = CredentialStorage::defaultCredentialStorage().get(partition, request.url());
         else if (!redirect) {
             // If there is already a protection space known for the URL, update stored credentials
             // before sending a request. This makes it possible to implement logout by sending an
