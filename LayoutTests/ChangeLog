@@ -1,5 +1,13 @@
 2017-02-06  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skip media/audio-dealloc-crash.html on ios-simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2017-02-06  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r211722.
 
         This change introduced a LayoutTest failure on mac-wk2.
