@@ -69,7 +69,7 @@ public:
     };
     State state() const;
 
-    pid_t processIdentifier() const { return m_processLauncher->processIdentifier(); }
+    pid_t processIdentifier() const { return m_processLauncher ? m_processLauncher->processIdentifier() : 0; }
 
     bool canSendMessage() const { return state() != State::Terminated;}
     bool sendMessage(std::unique_ptr<IPC::Encoder>, OptionSet<IPC::SendOption>);
