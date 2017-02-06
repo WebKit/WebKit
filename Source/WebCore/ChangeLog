@@ -1,5 +1,25 @@
 2017-02-06  Alex Christensen  <achristensen@webkit.org>
 
+        Fix non-cocoa builds after r211751.
+        https://bugs.webkit.org/show_bug.cgi?id=166998
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+        (WebCore::ResourceHandle::willSendRequest):
+        (WebCore::ResourceHandle::tryHandlePasswordBasedAuthentication):
+        (WebCore::ResourceHandle::receivedCredential):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::applyAuthenticationToRequest):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::applyAuthenticationToRequest):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+
+2017-02-06  Alex Christensen  <achristensen@webkit.org>
+
         credentials should be partitioned by main document domain
         https://bugs.webkit.org/show_bug.cgi?id=166998
         rdar://problem/22901123

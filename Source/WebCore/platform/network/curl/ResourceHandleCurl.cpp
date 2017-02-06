@@ -179,13 +179,19 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
 void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
+#if ENABLE(CACHE_PARTITIONING)
+    String partition = firstRequest().cachePartition();
+#else
+    String partition = emptyString();
+#endif
+
     if (!d->m_user.isNull() && !d->m_pass.isNull()) {
         Credential credential(d->m_user, d->m_pass, CredentialPersistenceNone);
 
         URL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
             urlToStore = challenge.failureResponse().url();
-        CredentialStorage::defaultCredentialStorage().set(credential, challenge.protectionSpace(), urlToStore);
+        CredentialStorage::defaultCredentialStorage().set(partition, credential, challenge.protectionSpace(), urlToStore);
         
         String userpass = credential.user() + ":" + credential.password();
         curl_easy_setopt(d->m_handle, CURLOPT_USERPWD, userpass.utf8().data());
@@ -201,16 +207,16 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
             // The stored credential wasn't accepted, stop using it.
             // There is a race condition here, since a different credential might have already been stored by another ResourceHandle,
             // but the observable effect should be very minor, if any.
-            CredentialStorage::defaultCredentialStorage().remove(challenge.protectionSpace());
+            CredentialStorage::defaultCredentialStorage().remove(partition, challenge.protectionSpace());
         }
 
         if (!challenge.previousFailureCount()) {
-            Credential credential = CredentialStorage::defaultCredentialStorage().get(challenge.protectionSpace());
+            Credential credential = CredentialStorage::defaultCredentialStorage().get(partition, challenge.protectionSpace());
             if (!credential.isEmpty() && credential != d->m_initialCredential) {
                 ASSERT(credential.persistence() == CredentialPersistenceNone);
                 if (challenge.failureResponse().httpStatusCode() == 401) {
                     // Store the credential back, possibly adding it as a default for this directory.
-                    CredentialStorage::defaultCredentialStorage().set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
+                    CredentialStorage::defaultCredentialStorage().set(partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
                 String userpass = credential.user() + ":" + credential.password();
                 curl_easy_setopt(d->m_handle, CURLOPT_USERPWD, userpass.utf8().data());
@@ -235,10 +241,16 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         return;
     }
 
+#if ENABLE(CACHE_PARTITIONING)
+    String partition = firstRequest().cachePartition();
+#else
+    String partition = emptyString();
+#endif
+
     if (shouldUseCredentialStorage()) {
         if (challenge.failureResponse().httpStatusCode() == 401) {
             URL urlToStore = challenge.failureResponse().url();
-            CredentialStorage::defaultCredentialStorage().set(credential, challenge.protectionSpace(), urlToStore);
+            CredentialStorage::defaultCredentialStorage().set(partition, credential, challenge.protectionSpace(), urlToStore);
         }
     }
 

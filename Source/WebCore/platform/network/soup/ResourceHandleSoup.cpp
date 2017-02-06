@@ -201,6 +201,12 @@ static void applyAuthenticationToRequest(ResourceHandle* handle, ResourceRequest
     // m_user/m_pass are credentials given manually, for instance, by the arguments passed to XMLHttpRequest.open().
     ResourceHandleInternal* d = handle->getInternal();
 
+#if ENABLE(CACHE_PARTITIONING)
+    String partition = firstRequest().cachePartition();
+#else
+    String partition = emptyString();
+#endif
+
     if (handle->shouldUseCredentialStorage()) {
         if (d->m_user.isEmpty() && d->m_pass.isEmpty())
             d->m_initialCredential = CredentialStorage::defaultCredentialStorage().get(request.url());
@@ -209,7 +215,7 @@ static void applyAuthenticationToRequest(ResourceHandle* handle, ResourceRequest
             // before sending a request. This makes it possible to implement logout by sending an
             // XMLHttpRequest with known incorrect credentials, and aborting it immediately (so that
             // an authentication dialog doesn't pop up).
-            CredentialStorage::defaultCredentialStorage().set(Credential(d->m_user, d->m_pass, CredentialPersistenceNone), request.url());
+            CredentialStorage::defaultCredentialStorage().set(partition, Credential(d->m_user, d->m_pass, CredentialPersistenceNone), request.url());
         }
     }
 
@@ -823,6 +829,12 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
 {
     ASSERT(d->m_currentWebChallenge.isNull());
 
+#if ENABLE(CACHE_PARTITIONING)
+    String partition = firstRequest().cachePartition();
+#else
+    String partition = emptyString();
+#endif
+
     // FIXME: Per the specification, the user shouldn't be asked for credentials if there were incorrect ones provided explicitly.
     bool useCredentialStorage = shouldUseCredentialStorage();
     if (useCredentialStorage) {
@@ -830,17 +842,17 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
             // The stored credential wasn't accepted, stop using it. There is a race condition
             // here, since a different credential might have already been stored by another
             // ResourceHandle, but the observable effect should be very minor, if any.
-            CredentialStorage::defaultCredentialStorage().remove(challenge.protectionSpace());
+            CredentialStorage::defaultCredentialStorage().remove(partition, challenge.protectionSpace());
         }
 
         if (!challenge.previousFailureCount()) {
-            Credential credential = CredentialStorage::defaultCredentialStorage().get(challenge.protectionSpace());
+            Credential credential = CredentialStorage::defaultCredentialStorage().get(partition, challenge.protectionSpace());
             if (!credential.isEmpty() && credential != d->m_initialCredential) {
                 ASSERT(credential.persistence() == CredentialPersistenceNone);
 
                 // Store the credential back, possibly adding it as a default for this directory.
                 if (isAuthenticationFailureStatusCode(challenge.failureResponse().httpStatusCode()))
-                    CredentialStorage::defaultCredentialStorage().set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
+                    CredentialStorage::defaultCredentialStorage().set(partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
 
                 soup_auth_authenticate(challenge.soupAuth(), credential.user().utf8().data(), credential.password().utf8().data());
                 return;
@@ -887,13 +899,19 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         return;
     }
 
+#if ENABLE(CACHE_PARTITIONING)
+    String partition = firstRequest().cachePartition();
+#else
+    String partition = emptyString();
+#endif
+
     if (shouldUseCredentialStorage()) {
         // Eventually we will manage per-session credentials only internally or use some newly-exposed API from libsoup,
         // because once we authenticate via libsoup, there is no way to ignore it for a particular request. Right now,
         // we place the credentials in the store even though libsoup will never fire the authenticate signal again for
         // this protection space.
         if (credential.persistence() == CredentialPersistenceForSession || credential.persistence() == CredentialPersistencePermanent)
-            CredentialStorage::defaultCredentialStorage().set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
+            CredentialStorage::defaultCredentialStorage().set(partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
 
         if (credential.persistence() == CredentialPersistencePermanent) {
             d->m_credentialDataToSaveInPersistentStore.credential = credential;

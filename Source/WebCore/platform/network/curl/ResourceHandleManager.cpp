@@ -1041,17 +1041,23 @@ void ResourceHandleManager::applyAuthenticationToRequest(ResourceHandle* handle,
     // m_user/m_pass are credentials given manually, for instance, by the arguments passed to XMLHttpRequest.open().
     ResourceHandleInternal* d = handle->getInternal();
 
+#if ENABLE(CACHE_PARTITIONING)
+    String partition = handle->firstRequest().cachePartition();
+#else
+    String partition = emptyString();
+#endif
+
     if (handle->shouldUseCredentialStorage()) {
         if (d->m_user.isEmpty() && d->m_pass.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
             // try and reuse the credential preemptively, as allowed by RFC 2617.
-            d->m_initialCredential = CredentialStorage::defaultCredentialStorage().get(request.url());
+            d->m_initialCredential = CredentialStorage::defaultCredentialStorage().get(partition, request.url());
         } else {
             // If there is already a protection space known for the URL, update stored credentials
             // before sending a request. This makes it possible to implement logout by sending an
             // XMLHttpRequest with known incorrect credentials, and aborting it immediately (so that
             // an authentication dialog doesn't pop up).
-            CredentialStorage::defaultCredentialStorage().set(Credential(d->m_user, d->m_pass, CredentialPersistenceNone), request.url());
+            CredentialStorage::defaultCredentialStorage().set(partition, Credential(d->m_user, d->m_pass, CredentialPersistenceNone), request.url());
         }
     }
 
