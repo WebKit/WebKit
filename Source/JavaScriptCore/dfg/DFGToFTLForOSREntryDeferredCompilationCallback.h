@@ -27,6 +27,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "DFGJITCode.h"
 #include "DeferredCompilationCallback.h"
 #include <wtf/RefPtr.h>
 
@@ -38,18 +39,18 @@ namespace DFG {
 
 class ToFTLForOSREntryDeferredCompilationCallback : public DeferredCompilationCallback {
 protected:
-    ToFTLForOSREntryDeferredCompilationCallback(uint8_t* forcedOSREntryTrigger);
+    ToFTLForOSREntryDeferredCompilationCallback(JITCode::TriggerReason* forcedOSREntryTrigger);
 
 public:
     virtual ~ToFTLForOSREntryDeferredCompilationCallback();
 
-    static Ref<ToFTLForOSREntryDeferredCompilationCallback> create(uint8_t* forcedOSREntryTrigger);
+    static Ref<ToFTLForOSREntryDeferredCompilationCallback> create(JITCode::TriggerReason* forcedOSREntryTrigger);
     
     virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*, CodeBlock* profiledDFGCodeBlock);
     virtual void compilationDidComplete(CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationResult);
 
 private:
-    uint8_t* m_forcedOSREntryTrigger;
+    JITCode::TriggerReason* m_forcedOSREntryTrigger;
 };
 
 } } // namespace JSC::DFG

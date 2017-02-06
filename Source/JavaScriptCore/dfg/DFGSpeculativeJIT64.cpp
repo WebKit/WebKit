@@ -5781,7 +5781,9 @@ void SpeculativeJIT::compile(Node* node)
         unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex;
         auto triggerIterator = m_jit.jitCode()->tierUpEntryTriggers.find(bytecodeIndex);
         DFG_ASSERT(m_jit.graph(), node, triggerIterator != m_jit.jitCode()->tierUpEntryTriggers.end());
-        uint8_t* forceEntryTrigger = &(m_jit.jitCode()->tierUpEntryTriggers.find(bytecodeIndex)->value);
+        JITCode::TriggerReason* forceEntryTrigger = &(m_jit.jitCode()->tierUpEntryTriggers.find(bytecodeIndex)->value);
+        static_assert(!static_cast<uint8_t>(JITCode::TriggerReason::DontTrigger), "the JIT code assumes non-zero means 'enter'");
+        static_assert(sizeof(JITCode::TriggerReason) == 1, "branchTest8 assumes this size");
 
         MacroAssembler::Jump forceOSREntry = m_jit.branchTest8(MacroAssembler::NonZero, MacroAssembler::AbsoluteAddress(forceEntryTrigger));
         MacroAssembler::Jump overflowedCounter = m_jit.branchAdd32(
