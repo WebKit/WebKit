@@ -2220,6 +2220,9 @@ void Document::destroyRenderTree()
     ASSERT(hasLivingRenderTree());
     ASSERT(m_pageCacheState != InPageCache);
 
+    FrameView* frameView = frame()->document() == this ? frame()->view() : nullptr;
+    ASSERT(frameView || pageCacheState() == InPageCache);
+
     SetForScope<bool> change(m_renderTreeBeingDestroyed, true);
 
     if (this == &topDocument())
@@ -2227,7 +2230,7 @@ void Document::destroyRenderTree()
 
     documentWillBecomeInactive();
 
-    if (auto* frameView = view())
+    if (frameView)
         frameView->willDestroyRenderTree();
 
 #if ENABLE(FULLSCREEN_API)
@@ -2255,7 +2258,7 @@ void Document::destroyRenderTree()
     m_textAutoSizedNodes.clear();
 #endif
 
-    if (auto* frameView = view())
+    if (frameView)
         frameView->didDestroyRenderTree();
 }
 
