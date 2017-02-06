@@ -1,3 +1,11 @@
+2017-02-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix after r211697.
+        https://bugs.webkit.org/show_bug.cgi?id=167863
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests): Renamed ES6SampleBench to ARES-6.
+
 2017-02-04  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up how GraphicsLayer's "inWindow" state is set, and fix some issues with Page Overlays
