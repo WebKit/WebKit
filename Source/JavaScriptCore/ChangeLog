@@ -1,3 +1,17 @@
+2017-02-02  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211463. rdar://problem/30296879
+
+    2017-01-31  Filip Pizlo  <fpizlo@apple.com>
+
+            Make verifyEdge a RELEASE_ASSERT
+            <rdar://problem/30296879>
+
+            Rubber stamped by Saam Barati.
+
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2017-01-31  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r211385. rdar://problem/29738502
