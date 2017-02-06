@@ -1,0 +1,29 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>MacOSInlineMediaControls</code> computed styles for the start button.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
+mediaControls.showsStartButton = true;
+document.body.appendChild(mediaControls.element);
+
+let style;
+scheduler.frameDidFire = function()
+{
+    if (mediaControls.startButton.element.getBoundingClientRect().width == 0)
+        return;
+
+    shouldBeEqualToString("getComputedStyle(mediaControls.startButton.element.firstElementChild).webkitBackdropFilter", "saturate(1.8) blur(20px)");
+
+    mediaControls.element.remove();
+    finishMediaControlsTest();
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

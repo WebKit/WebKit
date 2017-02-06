@@ -1,0 +1,10 @@
+Testing the MacOSInlineMediaControls computed styles for the start button.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(mediaControls.startButton.element.firstElementChild).webkitBackdropFilter is "saturate(1.8) blur(20px)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

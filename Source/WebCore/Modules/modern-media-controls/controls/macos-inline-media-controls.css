@@ -57,6 +57,10 @@
     -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
 
+.media-controls.mac.inline > button.start > div {
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
 /* Controls placement */
 
 .media-controls.mac.inline button.play-pause {

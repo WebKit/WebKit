@@ -1,5 +1,18 @@
 2017-02-06  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Add a backdrop filter to the start button on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=167879
+        <rdar://problem/30375174>
+
+        Reviewed by Eric Carlson.
+
+        Add a new test that checks that the expected backdrop filter is applied to the start button on macOS.
+
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-start-button-style-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-start-button-style.html: Added.
+
+2017-02-06  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Bring fullscreen controls up to spec
         https://bugs.webkit.org/show_bug.cgi?id=167875
         <rdar://problem/29611222>
