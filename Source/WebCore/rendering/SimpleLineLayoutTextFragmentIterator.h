@@ -105,7 +105,7 @@ public:
     std::optional<unsigned> lastHyphenPosition(const TextFragmentIterator::TextFragment& run, unsigned beforeIndex) const;
 
     struct Style {
-        explicit Style(const RenderStyle&);
+        explicit Style(const RenderStyle&, bool useSimplifiedTextMeasuring);
 
         const FontCascade& font;
         ETextAlign textAlign;

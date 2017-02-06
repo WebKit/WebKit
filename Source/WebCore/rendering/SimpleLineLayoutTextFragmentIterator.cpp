@@ -34,7 +34,7 @@
 namespace WebCore {
 namespace SimpleLineLayout {
 
-TextFragmentIterator::Style::Style(const RenderStyle& style)
+TextFragmentIterator::Style::Style(const RenderStyle& style, bool useSimplifiedTextMeasuring)
     : font(style.fontCascade())
     , textAlign(style.textAlign())
     , collapseWhitespace(style.collapseWhiteSpace())
@@ -44,11 +44,11 @@ TextFragmentIterator::Style::Style(const RenderStyle& style)
     , breakFirstWordOnOverflow(breakAnyWordOnOverflow || (style.breakWords() && (wrapLines || preserveNewline)))
     , breakNBSP(wrapLines && style.nbspMode() == SPACE)
     , keepAllWordsForCJK(style.wordBreak() == KeepAllWordBreak)
-    , spaceWidth(font.width(TextRun(StringView(&space, 1))))
+    , spaceWidth(useSimplifiedTextMeasuring ? font.widthForSimpleText(StringView(&space, 1)) : font.width(TextRun(StringView(&space, 1))))
     , wordSpacing(font.wordSpacing())
     , tabWidth(collapseWhitespace ? 0 : style.tabSize())
     , shouldHyphenate(style.hyphens() == HyphensAuto && canHyphenate(style.locale()))
-    , hyphenStringWidth(shouldHyphenate ? font.width(TextRun(style.hyphenString())) : 0)
+    , hyphenStringWidth(shouldHyphenate ? (useSimplifiedTextMeasuring ? font.widthForSimpleText(style.hyphenString()) : font.width(TextRun(style.hyphenString()))) : 0)
     , hyphenLimitBefore(style.hyphenationLimitBefore() < 0 ? 2 : style.hyphenationLimitBefore())
     , hyphenLimitAfter(style.hyphenationLimitAfter() < 0 ? 2 : style.hyphenationLimitAfter())
     , locale(style.locale())
@@ -61,7 +61,7 @@ TextFragmentIterator::TextFragmentIterator(const RenderBlockFlow& flow)
     : m_flowContents(flow)
     , m_currentSegment(m_flowContents.begin())
     , m_lineBreakIterator(m_currentSegment->text, flow.style().locale())
-    , m_style(flow.style())
+    , m_style(flow.style(), m_currentSegment->canUseSimplifiedTextMeasuring)
 {
 }
 
@@ -247,10 +247,15 @@ float TextFragmentIterator::textWidth(unsigned from, unsigned to, float xPositio
     bool measureWithEndSpace = m_style.collapseWhitespace && segmentTo < segment.text.length() && segment.text[segmentTo] == ' ';
     if (measureWithEndSpace)
         ++segmentTo;
-    TextRun run(StringView(segment.text).substring(segmentFrom, segmentTo - segmentFrom), xPosition);
-    if (m_style.tabWidth)
-        run.setTabSize(true, m_style.tabWidth);
-    float width = m_style.font.width(run);
+    float width = 0;
+    if (segment.canUseSimplifiedTextMeasuring)
+        width = m_style.font.widthForSimpleText(StringView(segment.text).substring(segmentFrom, segmentTo - segmentFrom));
+    else {
+        TextRun run(StringView(segment.text).substring(segmentFrom, segmentTo - segmentFrom), xPosition);
+        if (m_style.tabWidth)
+            run.setTabSize(true, m_style.tabWidth);
+        width = m_style.font.width(run);
+    }
     if (measureWithEndSpace)
         width -= (m_style.spaceWidth + m_style.wordSpacing);
     return std::max<float>(0, width);

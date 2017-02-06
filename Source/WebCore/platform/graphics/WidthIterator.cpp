@@ -172,6 +172,7 @@ static bool characterMustDrawSomething(UChar32 character)
 template <typename TextIterator>
 inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuffer* glyphBuffer)
 {
+    // The core logic here needs to match SimpleLineLayout::widthForSimpleText()
     bool rtl = m_run.rtl();
     bool hasExtraSpacing = (m_font->letterSpacing() || m_font->wordSpacing() || m_expansion) && !m_run.spacingDisabled();
 

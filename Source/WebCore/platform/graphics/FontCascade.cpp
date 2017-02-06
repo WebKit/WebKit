@@ -33,6 +33,9 @@
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
+#if USE(CAIRO)
+#include <cairo.h>
+#endif
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
@@ -375,6 +378,37 @@ float FontCascade::width(const TextRun& run, HashSet<const Font*>* fallbackFonts
     if (cacheEntry && fallbackFonts->isEmpty())
         *cacheEntry = result;
     return result;
+}
+
+float FontCascade::widthForSimpleText(StringView text) const
+{
+    ASSERT(codePath(TextRun(text)) != FontCascade::Complex);
+    float* cacheEntry = m_fonts->widthCache().add(text, std::numeric_limits<float>::quiet_NaN());
+    if (cacheEntry && !std::isnan(*cacheEntry))
+        return *cacheEntry;
+
+    Vector<GlyphBufferGlyph, 16> glyphs;
+    Vector<GlyphBufferAdvance, 16> advances;
+    auto& font = primaryFont();
+    for (unsigned i = 0; i < text.length(); ++i) {
+        auto glyph = glyphDataForCharacter(text[i], false).glyph;
+#if USE(CAIRO)
+        cairo_glyph_t cairoGlyph;
+        cairoGlyph.index = glyph;
+        glyphs.append(cairoGlyph);
+#else
+        glyphs.append(glyph);
+#endif
+        advances.append(FloatSize(font.widthForGlyph(glyph), 0));
+    }
+    font.applyTransforms(&glyphs[0], &advances[0], glyphs.size(), enableKerning(), requiresShaping());
+    float runWidth = 0;
+    for (auto& advance : advances)
+        runWidth += advance.width();
+
+    if (cacheEntry)
+        *cacheEntry = runWidth;
+    return runWidth;
 }
 
 GlyphData FontCascade::glyphDataForCharacter(UChar32 c, bool mirror, FontVariant variant) const

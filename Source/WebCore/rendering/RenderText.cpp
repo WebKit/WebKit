@@ -257,6 +257,8 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     if (!oldStyle) {
         m_useBackslashAsYenSymbol = computeUseBackslashAsYenSymbol();
         needsResetText = m_useBackslashAsYenSymbol;
+        // It should really be computed in the c'tor, but during construction we don't have parent yet -and RenderText style == parent()->style()
+        m_canUseSimplifiedTextMeasuring = computeCanUseSimplifiedTextMeasuring();
     } else if (oldStyle->fontCascade().useBackslashAsYenSymbol() != newStyle.fontCascade().useBackslashAsYenSymbol()) {
         m_useBackslashAsYenSymbol = computeUseBackslashAsYenSymbol();
         needsResetText = true;
@@ -1179,7 +1181,8 @@ void RenderText::setRenderedText(const String& text)
 
     m_isAllASCII = m_text.containsOnlyASCII();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
-
+    m_canUseSimplifiedTextMeasuring = computeCanUseSimplifiedTextMeasuring();
+    
     if (m_text != originalText) {
         originalTextMap().set(this, originalText);
         m_originalTextDiffersFromRendered = true;
@@ -1219,6 +1222,29 @@ void RenderText::secureText(UChar maskingCharacter)
         characters[i] = maskingCharacter;
     if (characterToReveal)
         characters[revealedCharactersOffset] = characterToReveal;
+}
+
+bool RenderText::computeCanUseSimplifiedTextMeasuring() const
+{
+    if (!m_canUseSimpleFontCodePath)
+        return false;
+    
+    auto& font = style().fontCascade();
+    if (font.wordSpacing() || font.letterSpacing())
+        return false;
+
+    // Additional check on the font codepath.
+    TextRun run(m_text);
+    run.setCharacterScanForCodePath(false);
+    if (font.codePath(run) != FontCascade::Simple)
+        return false;
+
+    auto whitespaceIsCollapsed = style().collapseWhiteSpace();
+    for (unsigned i = 0; i < m_text.length(); ++i) {
+        if ((!whitespaceIsCollapsed && m_text[i] == '\t') || m_text[i] == noBreakSpace || m_text[i] >= HiraganaLetterSmallA)
+            return false;
+    }
+    return true;
 }
 
 void RenderText::setText(const String& text, bool force)

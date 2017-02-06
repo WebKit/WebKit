@@ -171,6 +171,8 @@ public:
     LayoutUnit topOfFirstText() const;
     
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
+    
+    bool canUseSimplifiedTextMeasuring() const { return m_canUseSimplifiedTextMeasuring; }
 
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
@@ -202,6 +204,7 @@ private:
     void secureText(UChar mask);
 
     LayoutRect collectSelectionRectsForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>*);
+    bool computeCanUseSimplifiedTextMeasuring() const;
 
     void node() const = delete;
     void container() const = delete; // Use parent() instead.
@@ -223,6 +226,7 @@ private:
     mutable unsigned m_knownToHaveNoOverflowAndNoFallbackFonts : 1;
     unsigned m_useBackslashAsYenSymbol : 1;
     unsigned m_originalTextDiffersFromRendered : 1;
+    unsigned m_canUseSimplifiedTextMeasuring : 1;
 
 #if ENABLE(TEXT_AUTOSIZING)
     // FIXME: This should probably be part of the text sizing structures in Document instead. That would save some memory.

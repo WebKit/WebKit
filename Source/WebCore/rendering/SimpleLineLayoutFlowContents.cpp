@@ -47,12 +47,13 @@ static Vector<FlowContents::Segment> initializeSegments(const RenderBlockFlow& f
         if (is<RenderText>(child)) {
             auto& textChild = downcast<RenderText>(child);
             unsigned textLength = textChild.text()->length();
-            segments.append(FlowContents::Segment { startPosition, startPosition + textLength, textChild.text(), textChild });
+            segments.append(FlowContents::Segment { startPosition, startPosition + textLength, textChild.text(),
+                textChild, textChild.canUseSimplifiedTextMeasuring() });
             startPosition += textLength;
             continue;
         }
         if (is<RenderLineBreak>(child)) {
-            segments.append(FlowContents::Segment { startPosition, startPosition, String(), child });
+            segments.append(FlowContents::Segment { startPosition, startPosition, String(), child, true });
             continue;
         }
         ASSERT_NOT_REACHED();

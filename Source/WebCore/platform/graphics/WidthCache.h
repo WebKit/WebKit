@@ -119,6 +119,21 @@ public:
     {
     }
 
+    float* add(StringView text, float entry)
+    {
+        if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
+            return nullptr;
+
+        if (static_cast<unsigned>(text.length()) > SmallStringKey::capacity())
+            return nullptr;
+
+        if (m_countdown > 0) {
+            --m_countdown;
+            return nullptr;
+        }
+        return addSlowCase(text, entry);
+    }
+
     float* add(const TextRun& run, float entry, bool hasKerningOrLigatures, bool hasWordSpacingOrLetterSpacing, GlyphOverflow* glyphOverflow)
     {
         if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
@@ -143,7 +158,7 @@ public:
             return 0;
         }
 
-        return addSlowCase(run, entry);
+        return addSlowCase(run.text(), entry);
     }
 
     void clear()
@@ -153,23 +168,24 @@ public:
     }
 
 private:
-    float* addSlowCase(const TextRun& run, float entry)
+
+    float* addSlowCase(StringView text, float entry)
     {
-        int length = run.length();
+        int length = text.length();
         bool isNewEntry;
-        float *value;
+        float* value;
         if (length == 1) {
-            SingleCharMap::AddResult addResult = m_singleCharMap.add(run[0], entry);
+            SingleCharMap::AddResult addResult = m_singleCharMap.fastAdd(text[0], entry);
             isNewEntry = addResult.isNewEntry;
             value = &addResult.iterator->value;
         } else {
             SmallStringKey smallStringKey;
-            if (run.is8Bit())
-                smallStringKey = SmallStringKey(run.characters8(), length);
+            if (text.is8Bit())
+                smallStringKey = SmallStringKey(text.characters8(), length);
             else
-                smallStringKey = SmallStringKey(run.characters16(), length);
+                smallStringKey = SmallStringKey(text.characters16(), length);
 
-            Map::AddResult addResult = m_map.add(smallStringKey, entry);
+            Map::AddResult addResult = m_map.fastAdd(smallStringKey, entry);
             isNewEntry = addResult.isNewEntry;
             value = &addResult.iterator->value;
         }

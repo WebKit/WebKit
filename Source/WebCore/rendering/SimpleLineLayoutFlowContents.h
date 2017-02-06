@@ -47,6 +47,7 @@ public:
         unsigned end;
         StringView text;
         const RenderObject& renderer;
+        bool canUseSimplifiedTextMeasuring;
     };
     const Segment& segmentForRun(unsigned start, unsigned end) const;
 
