@@ -2108,6 +2108,31 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         || (contentSize.height + contentInset.top + contentInset.bottom) > boundsSize.height;
 }
 
+- (CGRect)_contentBoundsExtendedForRubberbandingWithScale:(CGFloat)scaleFactor
+{
+    CGPoint contentOffset = [_scrollView contentOffset];
+    CGPoint boundedOffset = contentOffsetBoundedInValidRange(_scrollView.get(), contentOffset);
+
+    CGFloat horiontalRubberbandAmountInContentCoordinates = (contentOffset.x - boundedOffset.x) / scaleFactor;
+    CGFloat verticalRubberbandAmountInContentCoordinates = (contentOffset.y - boundedOffset.y) / scaleFactor;
+
+    CGRect extendedBounds = [_contentView bounds];
+
+    if (horiontalRubberbandAmountInContentCoordinates < 0) {
+        extendedBounds.origin.x += horiontalRubberbandAmountInContentCoordinates;
+        extendedBounds.size.width -= horiontalRubberbandAmountInContentCoordinates;
+    } else if (horiontalRubberbandAmountInContentCoordinates > 0)
+        extendedBounds.size.width += horiontalRubberbandAmountInContentCoordinates;
+
+    if (verticalRubberbandAmountInContentCoordinates < 0) {
+        extendedBounds.origin.y += verticalRubberbandAmountInContentCoordinates;
+        extendedBounds.size.height -= verticalRubberbandAmountInContentCoordinates;
+    } else if (verticalRubberbandAmountInContentCoordinates > 0)
+        extendedBounds.size.height += verticalRubberbandAmountInContentCoordinates;
+
+    return extendedBounds;
+}
+
 - (void)_updateContentRectsWithState:(BOOL)inStableState
 {
     if (![self usesStandardContentView]) {
@@ -2133,10 +2158,11 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     if (!_haveSetObscuredInsets)
         computedContentInsetUnadjustedForKeyboard.bottom -= _totalScrollViewBottomInsetAdjustmentForKeyboard;
 
+    CGFloat scaleFactor = contentZoomScale(self);
+
     CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, computedContentInsetUnadjustedForKeyboard);
     CGRect unobscuredRectInContentCoordinates = _frozenUnobscuredContentRect ? _frozenUnobscuredContentRect.value() : [self convertRect:unobscuredRect toView:_contentView.get()];
-
-    CGFloat scaleFactor = contentZoomScale(self);
+    unobscuredRectInContentCoordinates = CGRectIntersection(unobscuredRectInContentCoordinates, [self _contentBoundsExtendedForRubberbandingWithScale:scaleFactor]);
 
 #if ENABLE(CSS_SCROLL_SNAP) && ENABLE(ASYNC_SCROLLING)
     if (inStableState) {

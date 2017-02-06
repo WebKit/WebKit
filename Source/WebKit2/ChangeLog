@@ -1,5 +1,30 @@
 2017-02-02  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211541. rdar://problem/30100286
+
+    2017-02-01  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] With visual viewports, a fixed bottom bar can be clipped out when the keyboard is visible
+            https://bugs.webkit.org/show_bug.cgi?id=167710
+            rdar://problem/30100286
+
+            Reviewed by Wenson Hsieh.
+
+            The unobscuredRectInContentCoordinates passed to -didUpdateVisibleRect:... could project outside
+            of the bounds of the document, which is OK when rubber-banding, but not when we're in a stable state,
+            because that can cause fixed elements to get pushed outside the doc. This happened when the keyboard
+            triggered bottom content insets on the scroll view.
+
+            Fix by computing a rectangle which is the "allowed" bounds of fixed content, which is permitted
+            to extend outside the document bounds only when rubber-banding, and intersect unobscuredRectInContentCoordinates
+            with that rectangle.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _contentBoundsExtendedForRubberbandingWithScale:]):
+            (-[WKWebView _updateContentRectsWithState:]):
+
+2017-02-02  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211538. rdar://problem/30229620
 
     2017-02-01  Enrica Casucci  <enrica@apple.com>
