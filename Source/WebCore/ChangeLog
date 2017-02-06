@@ -1,3 +1,45 @@
+2017-02-06  Alex Christensen  <achristensen@webkit.org>
+
+        credentials should be partitioned by main document domain
+        https://bugs.webkit.org/show_bug.cgi?id=166998
+        rdar://problem/22901123
+
+        Reviewed by Brady Eidson.
+
+        Covered by http/tests/security/credentials-iframes.html
+        Also added http/tests/security/credentials-from-different-domains.html to verify existing behavior without iframes.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::connect):
+        * dom/Document.h:
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::domainForCachePartition):
+        Return emptyString instead of a null String because it is used as a key in a HashMap, and hashing null strings dereferences null.
+        * page/SocketProvider.cpp:
+        (WebCore::SocketProvider::createSocketStreamHandle):
+        * page/SocketProvider.h:
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::CredentialStorage::set):
+        (WebCore::CredentialStorage::get):
+        (WebCore::CredentialStorage::remove):
+        * platform/network/CredentialStorage.h:
+        Partition credentials.
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/cf/SocketStreamHandleImpl.h:
+        (WebCore::SocketStreamHandleImpl::create):
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::SocketStreamHandleImpl):
+        (WebCore::SocketStreamHandleImpl::getStoredCONNECTProxyCredentials):
+        * platform/network/curl/SocketStreamHandleImpl.h:
+        (WebCore::SocketStreamHandleImpl::create):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection):
+        (WebCore::ResourceHandle::willSendRequest):
+        (WebCore::ResourceHandle::tryHandlePasswordBasedAuthentication):
+        (WebCore::ResourceHandle::receivedCredential):
+        * platform/network/soup/SocketStreamHandleImpl.h:
+
 2017-02-06  Simon Fraser  <simon.fraser@apple.com>
 
         Safari pages are blank sometimes (missing tiles)

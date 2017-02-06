@@ -63,12 +63,12 @@ static String protectionSpaceMapKeyFromURL(const URL& url)
     return directoryURL;
 }
 
-void CredentialStorage::set(const Credential& credential, const ProtectionSpace& protectionSpace, const URL& url)
+void CredentialStorage::set(const String& partitionName, const Credential& credential, const ProtectionSpace& protectionSpace, const URL& url)
 {
     ASSERT(protectionSpace.isProxy() || protectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeClientCertificateRequested || url.protocolIsInHTTPFamily());
     ASSERT(protectionSpace.isProxy() || protectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeClientCertificateRequested || url.isValid());
 
-    m_protectionSpaceToCredentialMap.set(protectionSpace, credential);
+    m_protectionSpaceToCredentialMap.set(std::make_pair(partitionName, protectionSpace), credential);
 
 #if PLATFORM(IOS)
     if (protectionSpace.authenticationScheme() != ProtectionSpaceAuthenticationSchemeClientCertificateRequested)
@@ -86,14 +86,14 @@ void CredentialStorage::set(const Credential& credential, const ProtectionSpace&
     }
 }
 
-Credential CredentialStorage::get(const ProtectionSpace& protectionSpace)
+Credential CredentialStorage::get(const String& partitionName, const ProtectionSpace& protectionSpace)
 {
-    return m_protectionSpaceToCredentialMap.get(protectionSpace);
+    return m_protectionSpaceToCredentialMap.get(std::make_pair(partitionName, protectionSpace));
 }
 
-void CredentialStorage::remove(const ProtectionSpace& protectionSpace)
+void CredentialStorage::remove(const String& partitionName, const ProtectionSpace& protectionSpace)
 {
-    m_protectionSpaceToCredentialMap.remove(protectionSpace);
+    m_protectionSpaceToCredentialMap.remove(std::make_pair(partitionName, protectionSpace));
 }
 
 HashMap<String, ProtectionSpace>::iterator CredentialStorage::findDefaultProtectionSpaceForURL(const URL& url)
@@ -122,7 +122,7 @@ HashMap<String, ProtectionSpace>::iterator CredentialStorage::findDefaultProtect
     }
 }
 
-bool CredentialStorage::set(const Credential& credential, const URL& url)
+bool CredentialStorage::set(const String& partitionName, const Credential& credential, const URL& url)
 {
     ASSERT(url.protocolIsInHTTPFamily());
     ASSERT(url.isValid());
@@ -130,16 +130,16 @@ bool CredentialStorage::set(const Credential& credential, const URL& url)
     if (iter == m_pathToDefaultProtectionSpaceMap.end())
         return false;
     ASSERT(m_originsWithCredentials.contains(originStringFromURL(url)));
-    m_protectionSpaceToCredentialMap.set(iter->value, credential);
+    m_protectionSpaceToCredentialMap.set(std::make_pair(partitionName, iter->value), credential);
     return true;
 }
 
-Credential CredentialStorage::get(const URL& url)
+Credential CredentialStorage::get(const String& partitionName, const URL& url)
 {
     PathToDefaultProtectionSpaceMap::iterator iter = findDefaultProtectionSpaceForURL(url);
     if (iter == m_pathToDefaultProtectionSpaceMap.end())
         return Credential();
-    return m_protectionSpaceToCredentialMap.get(iter->value);
+    return m_protectionSpaceToCredentialMap.get(std::make_pair(partitionName, iter->value));
 }
 
 void CredentialStorage::clearCredentials()

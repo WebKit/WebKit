@@ -63,12 +63,13 @@ extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
 
 namespace WebCore {
 
-SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client, SessionID sessionID)
+SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client, SessionID sessionID, const String& credentialPartition)
     : SocketStreamHandle(url, client)
     , m_connectingSubstate(New)
     , m_connectionType(Unknown)
     , m_sentStoredCredentials(false)
     , m_sessionID(sessionID)
+    , m_credentialPartition(credentialPartition)
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, &m_client);
 
@@ -359,7 +360,7 @@ bool SocketStreamHandleImpl::getStoredCONNECTProxyCredentials(const ProtectionSp
     if (auto* storageSession = NetworkStorageSession::storageSession(m_sessionID)) {
         storedCredential = storageSession->credentialStorage().getFromPersistentStorage(protectionSpace);
         if (storedCredential.isEmpty())
-            storedCredential = storageSession->credentialStorage().get(protectionSpace);
+            storedCredential = storageSession->credentialStorage().get(m_credentialPartition, protectionSpace);
     }
 
     if (storedCredential.isEmpty())

@@ -117,6 +117,7 @@ public:
     virtual String suggestedFilename() const { return String(); }
     void setSuggestedFilename(const String& suggestedName) { m_suggestedFilename = suggestedName; }
     virtual bool allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge&) { return false; }
+    const String& partition() { return m_partition; }
 
 protected:
     NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentials, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
@@ -137,6 +138,7 @@ protected:
     DownloadID m_pendingDownloadID;
     String m_user;
     String m_password;
+    String m_partition;
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
     WebCore::Credential m_initialCredential;
 #endif

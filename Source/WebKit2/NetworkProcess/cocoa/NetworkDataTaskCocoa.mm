@@ -70,9 +70,9 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
         if (m_user.isEmpty() && m_password.isEmpty())
-            m_initialCredential = m_session->networkStorageSession().credentialStorage().get(url);
+            m_initialCredential = m_session->networkStorageSession().credentialStorage().get(m_partition, url);
         else
-            m_session->networkStorageSession().credentialStorage().set(WebCore::Credential(m_user, m_password, WebCore::CredentialPersistenceNone), url);
+            m_session->networkStorageSession().credentialStorage().set(m_partition, WebCore::Credential(m_user, m_password, WebCore::CredentialPersistenceNone), url);
 #endif
     }
 
@@ -195,7 +195,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.
         if (m_user.isEmpty() && m_password.isEmpty() && !redirectResponse.isNull()) {
-            auto credential = m_session->networkStorageSession().credentialStorage().get(request.url());
+            auto credential = m_session->networkStorageSession().credentialStorage().get(m_partition, request.url());
             if (!credential.isEmpty()) {
                 m_initialCredential = credential;
 
@@ -248,16 +248,16 @@ bool NetworkDataTaskCocoa::tryPasswordBasedAuthentication(const WebCore::Authent
             // The stored credential wasn't accepted, stop using it.
             // There is a race condition here, since a different credential might have already been stored by another ResourceHandle,
             // but the observable effect should be very minor, if any.
-            m_session->networkStorageSession().credentialStorage().remove(challenge.protectionSpace());
+            m_session->networkStorageSession().credentialStorage().remove(m_partition, challenge.protectionSpace());
         }
 
         if (!challenge.previousFailureCount()) {
-            auto credential = m_session->networkStorageSession().credentialStorage().get(challenge.protectionSpace());
+            auto credential = m_session->networkStorageSession().credentialStorage().get(m_partition, challenge.protectionSpace());
             if (!credential.isEmpty() && credential != m_initialCredential) {
                 ASSERT(credential.persistence() == WebCore::CredentialPersistenceNone);
                 if (challenge.failureResponse().httpStatusCode() == 401) {
                     // Store the credential back, possibly adding it as a default for this directory.
-                    m_session->networkStorageSession().credentialStorage().set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
+                    m_session->networkStorageSession().credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
                 completionHandler(AuthenticationChallengeDisposition::UseCredential, credential);
                 return true;

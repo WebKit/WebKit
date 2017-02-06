@@ -1,3 +1,28 @@
+2017-02-06  Alex Christensen  <achristensen@webkit.org>
+
+        credentials should be partitioned by main document domain
+        https://bugs.webkit.org/show_bug.cgi?id=166998
+        <rdar://problem/22901123>
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/security/credentials-from-different-domains-expected.txt: Added.
+        * http/tests/security/credentials-from-different-domains.html: Added.
+        * http/tests/security/credentials-iframes-expected.txt: Added.
+        * http/tests/security/credentials-iframes.html: Added.
+        * http/tests/security/resources/cors-basic-auth.php: Added.
+        * http/tests/security/resources/credentials-from-different-domains-continued-1.html: Added.
+        * http/tests/security/resources/credentials-from-different-domains-continued-2.html: Added.
+        * http/tests/security/resources/credentials-iframes-continued.html: Added.
+        * http/tests/security/resources/credentials-iframes-different-domain.html: Added.
+        * http/tests/security/resources/credentials-iframes-same-domain.html: Added.
+        * platform/mac-wk1/http: Added.
+        * platform/mac-wk1/http/security: Added.
+        * platform/mac-wk1/http/security/credentials-iframes-expected.txt: Added.
+        DumpRenderTree prints out the entire URL of the authentication challenge.
+        WebKitTestRunner only prints out the host and port.
+        Both results show the fact that no credentials were sent on the second request.
+
 2017-02-06  Simon Fraser  <simon.fraser@apple.com>
 
         Safari pages are blank sometimes (missing tiles)

@@ -45,7 +45,7 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandleImpl : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, SessionID sessionID) { return adoptRef(*new SocketStreamHandleImpl(url, client, sessionID)); }
+    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, SessionID sessionID, const String& credentialPartition) { return adoptRef(*new SocketStreamHandleImpl(url, client, sessionID, credentialPartition)); }
 
     virtual ~SocketStreamHandleImpl();
 
@@ -53,7 +53,7 @@ private:
     virtual std::optional<size_t> platformSend(const char* data, size_t length);
     virtual void platformClose();
 
-    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, SessionID);
+    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, SessionID, const String& credentialPartition);
     void createStreams();
     void scheduleStreams();
     void chooseProxy();
@@ -96,6 +96,7 @@ private:
 
     RetainPtr<CFURLRef> m_httpsURL; // ws(s): replaced with https:
     SessionID m_sessionID;
+    String m_credentialPartition;
 };
 
 } // namespace WebCore

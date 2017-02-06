@@ -399,7 +399,7 @@ void SecurityOrigin::grantStorageAccessFromFileURLsQuirk()
 String SecurityOrigin::domainForCachePartition() const
 {
     if (m_storageBlockingPolicy != BlockThirdPartyStorage)
-        return String();
+        return emptyString();
 
     if (isHTTPFamily())
         return host();
@@ -407,7 +407,7 @@ String SecurityOrigin::domainForCachePartition() const
     if (SchemeRegistry::shouldPartitionCacheForURLScheme(m_protocol))
         return host();
 
-    return String();
+    return emptyString();
 }
 #endif
 

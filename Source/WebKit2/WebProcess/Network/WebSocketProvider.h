@@ -33,7 +33,7 @@ class WebSocketProvider final : public WebCore::SocketProvider {
 public:
     static Ref<WebSocketProvider> create() { return adoptRef(*new WebSocketProvider); }
 #if ENABLE(WEB_SOCKETS)
-    Ref<WebCore::SocketStreamHandle> createSocketStreamHandle(const WebCore::URL&, WebCore::SocketStreamHandleClient&, WebCore::SessionID) final;
+    Ref<WebCore::SocketStreamHandle> createSocketStreamHandle(const WebCore::URL&, WebCore::SocketStreamHandleClient&, WebCore::SessionID, const String& credentialPartition) final;
 #endif
     virtual ~WebSocketProvider() { }
 };
