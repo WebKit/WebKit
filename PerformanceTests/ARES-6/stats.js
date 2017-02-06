@@ -90,16 +90,24 @@ class Stats {
     {
         let result = this.result;
         
-        if (!result.n)
-            return `<span class="value">\&#10074;\&#10074;.\&#10074;\&#10074;</span><span class="units">ms</span>`;
+        if (!result.n) {
+            if (isInBrowser)
+                return `<span class="value">\&#10074;\&#10074;.\&#10074;\&#10074;</span><span class="units">ms</span>`;
+            return `${this._prefix}--.--ms`;
+        }
         
         if (result.mean != result.mean)
             return "ERROR";
         
-        if ("interval" in result)
-            return `<span class="value">${this._prefix}${result.mean.toFixed(2)}</span><span class="margin"> &plusmn;${result.interval.toFixed(2)}</span><span class="units">ms</span>`;
+        if ("interval" in result) {
+            if (isInBrowser)
+                return `<span class="value">${this._prefix}${result.mean.toFixed(2)}</span><span class="margin"> &plusmn;${result.interval.toFixed(2)}</span><span class="units">ms</span>`;
+            return `${this._prefix}${result.mean.toFixed(2)} +- ${result.interval.toFixed(2)} ms`;
+        }
 
-        return `<span class="value">${this._prefix}${result.mean.toFixed(2)}</span><span class="units">ms</span>`;
+        if (isInBrowser)
+            return `<span class="value">${this._prefix}${result.mean.toFixed(2)}</span><span class="units">ms</span>`;
+        return `${this._prefix}${result.mean.toFixed(2)} ms`;
     }
     
     _update()

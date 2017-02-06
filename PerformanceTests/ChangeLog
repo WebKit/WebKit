@@ -1,3 +1,18 @@
+2017-02-06  Saam Barati  <sbarati@apple.com>
+
+        Make ARES-6 work from the CLI again
+        https://bugs.webkit.org/show_bug.cgi?id=167895
+
+        Reviewed by Michael Saboff.
+
+        * ARES-6/driver.js:
+        (Driver.prototype.readyTrigger):
+        (Driver.prototype.disableTrigger):
+        * ARES-6/stats.js:
+        (Stats.prototype.toString.span.span):
+        (Stats.prototype.toString.return.span):
+        (Stats.prototype.toString):
+
 2017-02-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip ARES-6 on performance bots

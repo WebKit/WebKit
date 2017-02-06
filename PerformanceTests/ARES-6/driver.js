@@ -46,14 +46,18 @@ class Driver {
     
     readyTrigger() 
     {
-        this._triggerCell.addEventListener('click', this._triggerLink);
-        this._triggerCell.classList.add('ready');
+        if (isInBrowser) {
+            this._triggerCell.addEventListener('click', this._triggerLink);
+            this._triggerCell.classList.add('ready');
+        }
     }
     
     disableTrigger() 
     {
-        this._triggerCell.removeEventListener('click', this._triggerLink);
-        this._triggerCell.classList.remove('ready');
+        if (isInBrowser) {
+            this._triggerCell.removeEventListener('click', this._triggerLink);
+            this._triggerCell.classList.remove('ready');
+        }
     }
     
     start(numIterations)
