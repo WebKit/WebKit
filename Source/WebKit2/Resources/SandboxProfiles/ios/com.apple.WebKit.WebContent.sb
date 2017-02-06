@@ -97,3 +97,7 @@
 (allow file-issue-extension (require-all
     (extension "com.apple.app-sandbox.read")
     (extension-class "com.apple.mediaserverd.read")))
+
+;; Allow CoreMedia to communicate with mediaserverd in order to implement custom media loading
+(allow mach-lookup
+    (global-name "com.apple.coremedia.customurlloader.xpc"))
