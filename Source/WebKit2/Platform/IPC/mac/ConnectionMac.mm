@@ -120,6 +120,7 @@ void Connection::platformInvalidate()
         }
 
         if (m_receivePort) {
+            mach_port_unguard(mach_task_self(), m_receivePort, reinterpret_cast<mach_port_context_t>(this));
             mach_port_mod_refs(mach_task_self(), m_receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
             m_receivePort = MACH_PORT_NULL;
         }
@@ -170,6 +171,8 @@ void Connection::platformInitialize(Identifier identifier)
     if (m_isServer) {
         m_receivePort = identifier.port;
         m_sendPort = MACH_PORT_NULL;
+
+        mach_port_guard(mach_task_self(), m_receivePort, reinterpret_cast<mach_port_context_t>(this), true);
     } else {
         m_receivePort = MACH_PORT_NULL;
         m_sendPort = identifier.port;
@@ -191,8 +194,8 @@ bool Connection::open()
         ASSERT(!m_receivePort);
         ASSERT(m_sendPort);
 
-        // Create the receive port.
         mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &m_receivePort);
+        mach_port_guard(mach_task_self(), m_receivePort, reinterpret_cast<mach_port_context_t>(this), true);
 
 #if PLATFORM(MAC)
         mach_port_set_attributes(mach_task_self(), m_receivePort, MACH_PORT_DENAP_RECEIVER, (mach_port_info_t)0, 0);
@@ -218,6 +221,7 @@ bool Connection::open()
         connection->receiveSourceEventHandler();
     });
     dispatch_source_set_cancel_handler(m_receiveSource, [connection, receivePort = m_receivePort] {
+        mach_port_unguard(mach_task_self(), receivePort, reinterpret_cast<mach_port_context_t>(connection.get()));
         mach_port_mod_refs(mach_task_self(), receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
     });
 
