@@ -1,3 +1,19 @@
+2017-02-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Static Analyzer: JSContext.mm: Incorrect decrement of the reference count of an object
+        https://bugs.webkit.org/show_bug.cgi?id=167848
+
+        Reviewed by Saam Barati.
+
+        Source/JavaScriptCore/API/JSContext.mm:87:5: warning: Incorrect decrement of the reference count of an object that is not owned at this point by the caller
+            [self.exceptionHandler release];
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        1 warning generated.
+
+        * API/JSContext.mm:
+        (-[JSContext dealloc]):
+        Use the ivar in dealloc instead of going through the getter.
+
 2017-02-05  Mark Lam  <mark.lam@apple.com>
 
         The VMInspector should use an RAII Locker.
