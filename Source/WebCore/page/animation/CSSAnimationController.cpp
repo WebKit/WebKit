@@ -48,7 +48,8 @@
 
 namespace WebCore {
 
-static const double cAnimationTimerDelay = 1.0 / 60;
+// Allow a little more than 60fps to make sure we can at least hit that frame rate.
+static const double cAnimationTimerDelay = 0.015;
 static const double cBeginAnimationUpdateTimeNotSet = -1;
 
 class AnimationPrivateUpdateBlock {

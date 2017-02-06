@@ -1,3 +1,17 @@
+2017-02-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Change the CSS animation timer a to be little more than 60fps to ensure we hit that frame rate
+        https://bugs.webkit.org/show_bug.cgi?id=167825
+
+        Reviewed by Simon Fraser.
+
+        The system timer fires little bit slower than 60fps. This might cause the
+        frame to be missed and hence it can lower the frame rate significantly. The
+        rAF timer was set to 15ms for the same reason. So set the repeated CSS
+        animation timer also to 15ms.
+
+        * page/animation/CSSAnimationController.cpp:
+
 2017-02-06  Jer Noble  <jer.noble@apple.com>
 
         Playback stalls when a SourceBuffer append causes frame eviction
