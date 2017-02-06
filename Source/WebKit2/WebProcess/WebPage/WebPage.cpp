@@ -728,11 +728,6 @@ void WebPage::initializeInjectedBundleFullScreenClient(WKBundlePageFullScreenCli
 }
 #endif
 
-void WebPage::initializeInjectedBundleDiagnosticLoggingClient(WKBundlePageDiagnosticLoggingClientBase* client)
-{
-    m_logDiagnosticMessageClient.initialize(client);
-}
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 RefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginElement, const Plugin::Parameters& parameters, String& newMIMEType)
@@ -1119,7 +1114,6 @@ void WebPage::close()
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenClient.initialize(0);
 #endif
-    m_logDiagnosticMessageClient.initialize(0);
 
     m_printContext = nullptr;
     m_mainFrame->coreFrame()->loader().detachFromParent();

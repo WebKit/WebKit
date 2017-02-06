@@ -1,3 +1,32 @@
+2017-02-06  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Drop legacy WKBundlePageDiagnosticLoggingClient API
+        https://bugs.webkit.org/show_bug.cgi?id=167883
+        <rdar://problem/30376695>
+
+        Reviewed by Sam Weinig.
+
+        Drop legacy WKBundlePageDiagnosticLoggingClient API as I am not aware of any remaining client.
+        All clients have now switched to the equivalent UIProcess-side API.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetDiagnosticLoggingClient): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageDiagnosticLoggingClient.h: Removed.
+        * WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.cpp: Removed.
+        * WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.h: Removed.
+        * WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp:
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessage):
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessageWithResult):
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessageWithValue):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::initializeInjectedBundleDiagnosticLoggingClient): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::injectedBundleUIClient):
+        (WebKit::WebPage::injectedBundleDiagnosticLoggingClient): Deleted.
+
 2017-02-06  Anders Carlsson  <andersca@apple.com>
 
         Null check the WebKit::RemoteObjectProxy object before calling it

@@ -50,8 +50,6 @@ void WebDiagnosticLoggingClient::logDiagnosticMessage(const String& message, con
     if (!shouldLogAfterSampling(shouldSample))
         return;
 
-    // FIXME: Remove this injected bundle API.
-    m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessage(&m_page, message, description);
     m_page.send(Messages::WebPageProxy::LogDiagnosticMessage(message, description, ShouldSample::No));
 }
 
@@ -62,8 +60,6 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithResult(const String& me
     if (!shouldLogAfterSampling(shouldSample))
         return;
 
-    // FIXME: Remove this injected bundle API.
-    m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessageWithResult(&m_page, message, description, result);
     m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithResult(message, description, result, ShouldSample::No));
 }
 
@@ -74,8 +70,6 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(const String& mes
     if (!shouldLogAfterSampling(shouldSample))
         return;
 
-    // FIXME: Remove this injected bundle API.
-    m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessageWithValue(&m_page, message, description, String::number(value, significantFigures));
     m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithValue(message, description, value, significantFigures, ShouldSample::No));
 }
 

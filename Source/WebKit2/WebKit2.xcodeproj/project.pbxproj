@@ -409,7 +409,6 @@
 		1AB474E2184D44800051B622 /* WKBundlePageFormClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB474E1184D44800051B622 /* WKBundlePageFormClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB474E4184D44980051B622 /* WKBundlePageContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB474E3184D44980051B622 /* WKBundlePageContextMenuClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB474E6184D44B40051B622 /* WKBundlePageFullScreenClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB474E5184D44B40051B622 /* WKBundlePageFullScreenClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1AB474E8184D44D00051B622 /* WKBundlePageDiagnosticLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB474E7184D44D00051B622 /* WKBundlePageDiagnosticLoggingClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB474EA184D45130051B622 /* WKBundlePagePolicyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB474E9184D45130051B622 /* WKBundlePagePolicyClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB7D4CA1288AAA700CFD08C /* DownloadProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */; };
 		1AB7D4CB1288AAA700CFD08C /* DownloadProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */; };
@@ -1839,7 +1838,6 @@
 		CD19A26E1A13E834008D650E /* WebDiagnosticLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD19A26A1A13E821008D650E /* WebDiagnosticLoggingClient.h */; };
 		CD5C66A0134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5C669E134B9D36004FE2A8 /* InjectedBundlePageFullScreenClient.cpp */; };
 		CD5C66A1134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5C669F134B9D37004FE2A8 /* InjectedBundlePageFullScreenClient.h */; };
-		CD67D30E15C08F9A00843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD67D30815C07BE000843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp */; };
 		CD6F75F4131B66D000D6B21E /* WebFullScreenManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA3E131A2E8A00EEDED2 /* WebFullScreenManagerProxy.cpp */; };
 		CD73BA47131ACC9A00EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA45131ACC8800EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp */; };
 		CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */; };
@@ -2521,7 +2519,6 @@
 		1AB474E1184D44800051B622 /* WKBundlePageFormClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePageFormClient.h; sourceTree = "<group>"; };
 		1AB474E3184D44980051B622 /* WKBundlePageContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePageContextMenuClient.h; sourceTree = "<group>"; };
 		1AB474E5184D44B40051B622 /* WKBundlePageFullScreenClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePageFullScreenClient.h; sourceTree = "<group>"; };
-		1AB474E7184D44D00051B622 /* WKBundlePageDiagnosticLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePageDiagnosticLoggingClient.h; sourceTree = "<group>"; };
 		1AB474E9184D45130051B622 /* WKBundlePagePolicyClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePagePolicyClient.h; sourceTree = "<group>"; };
 		1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxy.h; sourceTree = "<group>"; };
 		1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadProxy.cpp; sourceTree = "<group>"; };
@@ -4069,8 +4066,6 @@
 		CD19A26A1A13E821008D650E /* WebDiagnosticLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDiagnosticLoggingClient.h; sourceTree = "<group>"; };
 		CD5C669E134B9D36004FE2A8 /* InjectedBundlePageFullScreenClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageFullScreenClient.cpp; sourceTree = "<group>"; };
 		CD5C669F134B9D37004FE2A8 /* InjectedBundlePageFullScreenClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageFullScreenClient.h; sourceTree = "<group>"; };
-		CD67D30815C07BE000843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageDiagnosticLoggingClient.cpp; sourceTree = "<group>"; };
-		CD67D30915C07BE000843ADF /* InjectedBundlePageDiagnosticLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageDiagnosticLoggingClient.h; sourceTree = "<group>"; };
 		CD73BA37131A29FE00EEDED2 /* WebFullScreenManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebFullScreenManager.cpp; path = FullScreen/WebFullScreenManager.cpp; sourceTree = "<group>"; };
 		CD73BA38131A29FE00EEDED2 /* WebFullScreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFullScreenManager.h; path = FullScreen/WebFullScreenManager.h; sourceTree = "<group>"; };
 		CD73BA39131A29FE00EEDED2 /* WebFullScreenManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebFullScreenManager.messages.in; path = FullScreen/WebFullScreenManager.messages.in; sourceTree = "<group>"; };
@@ -6889,8 +6884,6 @@
 				BC8147D312F66D31007B2C32 /* InjectedBundleNavigationAction.h */,
 				512935E11288D97800A4B695 /* InjectedBundlePageContextMenuClient.cpp */,
 				512935E21288D97800A4B695 /* InjectedBundlePageContextMenuClient.h */,
-				CD67D30815C07BE000843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp */,
-				CD67D30915C07BE000843ADF /* InjectedBundlePageDiagnosticLoggingClient.h */,
 				E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */,
 				E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */,
 				BC14E107120B905E00826C0C /* InjectedBundlePageFormClient.cpp */,
@@ -6965,7 +6958,6 @@
 				7CF47FF417275B71008ACB91 /* WKBundlePageBanner.cpp */,
 				7CF47FF517275B71008ACB91 /* WKBundlePageBanner.h */,
 				1AB474E3184D44980051B622 /* WKBundlePageContextMenuClient.h */,
-				1AB474E7184D44D00051B622 /* WKBundlePageDiagnosticLoggingClient.h */,
 				1AB474DF184D446A0051B622 /* WKBundlePageEditorClient.h */,
 				1AB474E1184D44800051B622 /* WKBundlePageFormClient.h */,
 				1AB474E5184D44B40051B622 /* WKBundlePageFullScreenClient.h */,
@@ -8489,7 +8481,6 @@
 				7CF47FF717275B71008ACB91 /* WKBundlePageBanner.h in Headers */,
 				7CF47FFF17276AE3008ACB91 /* WKBundlePageBannerMac.h in Headers */,
 				1AB474E4184D44980051B622 /* WKBundlePageContextMenuClient.h in Headers */,
-				1AB474E8184D44D00051B622 /* WKBundlePageDiagnosticLoggingClient.h in Headers */,
 				1AB474E0184D446A0051B622 /* WKBundlePageEditorClient.h in Headers */,
 				1AB474E2184D44800051B622 /* WKBundlePageFormClient.h in Headers */,
 				1AB474E6184D44B40051B622 /* WKBundlePageFullScreenClient.h in Headers */,
@@ -9529,7 +9520,6 @@
 				BC8147D612F66D31007B2C32 /* InjectedBundleNavigationAction.cpp in Sources */,
 				BC4BEEAC120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp in Sources */,
 				512935E31288D97800A4B695 /* InjectedBundlePageContextMenuClient.cpp in Sources */,
-				CD67D30E15C08F9A00843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp in Sources */,
 				E1EE53E711F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp in Sources */,
 				BC14E109120B905E00826C0C /* InjectedBundlePageFormClient.cpp in Sources */,
 				CD5C66A0134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.cpp in Sources */,
