@@ -223,8 +223,16 @@ static uint64_t generateReplyIdentifier()
 
                 ~ReplyBlockCallChecker()
                 {
-                    if (!m_didCallReplyBlock)
-                        m_remoteObjectRegistry->_remoteObjectRegistry->sendUnusedReply(m_replyID);
+                    if (m_didCallReplyBlock)
+                        return;
+
+                    // FIXME: Instead of not sending anything when the remote object registry is null, we should
+                    // keep track of all reply block checkers and invalidate them (sending the unused reply message) in
+                    // -[_WKRemoteObjectRegistry _invalidate].
+                    if (!m_remoteObjectRegistry->_remoteObjectRegistry)
+                        return;
+
+                    m_remoteObjectRegistry->_remoteObjectRegistry->sendUnusedReply(m_replyID);
                 }
 
                 void didCallReplyBlock() { m_didCallReplyBlock = true; }
