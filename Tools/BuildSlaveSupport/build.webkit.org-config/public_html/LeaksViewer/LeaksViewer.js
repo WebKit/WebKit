@@ -120,7 +120,7 @@ var LeaksViewer = {
         document.getElementById("url-prompt-container").removeStyleClass("hidden");
         document.getElementById("url").focus();
         var loader = new RecentBuildsLoader(this._didLoadRecentBuilds.bind(this));
-        loader.start("Apple Yosemite (Leaks)", this._numberOfRecentBuildsToLoad);
+        loader.start("Apple Sierra (Leaks)", this._numberOfRecentBuildsToLoad);
     },
 
     _loadLeaksFromURL: function(url) {

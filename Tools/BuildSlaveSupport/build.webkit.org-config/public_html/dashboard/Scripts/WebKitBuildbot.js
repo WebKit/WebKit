@@ -33,6 +33,7 @@ WebKitBuildbot = function()
         "Apple Sierra Debug WK2 (Tests)": {platform: Dashboard.Platform.macOSSierra, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple Sierra Release WK1 (Tests)": {platform: Dashboard.Platform.macOSSierra, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple Sierra Release WK2 (Tests)": {platform: Dashboard.Platform.macOSSierra, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
+        "Apple Sierra (Leaks)": {platform: Dashboard.Platform.MacOSSierra, debug: false, leaks: true},
         "Apple Sierra JSC": {platform: Dashboard.Platform.macOSSierra, heading: "JavaScript", combinedQueues: {
             "Apple Sierra 32-bit JSC (BuildAndTest)": {heading: "32-bit JSC (BuildAndTest)"},
             "Apple Sierra LLINT CLoop (BuildAndTest)": {heading: "LLINT CLoop (BuildAndTest)"},
@@ -47,7 +48,6 @@ WebKitBuildbot = function()
         "Apple El Capitan Release WK1 (Tests)": {platform: Dashboard.Platform.MacOSXElCapitan, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple El Capitan Release WK2 (Tests)": {platform: Dashboard.Platform.MacOSXElCapitan, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple El Capitan Release WK2 (Perf)": {platform: Dashboard.Platform.MacOSXElCapitan, debug: false, performance: true, heading: "Performance"},
-        "Apple El Capitan (Leaks)": {platform: Dashboard.Platform.MacOSXElCapitan, debug: false, leaks: true},
         "Apple El Capitan JSC": {platform: Dashboard.Platform.MacOSXElCapitan, heading: "JavaScript", combinedQueues: {
             "Apple El Capitan 32-bit JSC (BuildAndTest)": {heading: "32-bit JSC (BuildAndTest)"},
             "Apple El Capitan LLINT CLoop (BuildAndTest)": {heading: "LLINT CLoop (BuildAndTest)"},

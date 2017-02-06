@@ -1,7 +1,6 @@
 {
     "slaves":     [ { "name": "test-slave", "platform": "*" },
 
-                    { "name": "bot121", "platform": "mac-elcapitan" },
                     { "name": "bot123", "platform": "mac-elcapitan" },
                     { "name": "bot126", "platform": "mac-elcapitan" },
                     { "name": "bot133", "platform": "mac-elcapitan" },
@@ -23,6 +22,7 @@
                     { "name": "bot419", "platform": "mac-elcapitan" },
 
                     { "name": "bot118", "platform": "mac-sierra" },
+                    { "name": "bot121", "platform": "mac-sierra" },
                     { "name": "bot122", "platform": "mac-sierra" },
                     { "name": "bot141", "platform": "mac-sierra" },
                     { "name": "bot143", "platform": "mac-sierra" },
@@ -98,7 +98,7 @@
                     },
                     { "name": "Apple Sierra Release (Build)", "type": "Build", "builddir": "sierra-release",
                       "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["sierra-release-tests-jsc", "sierra-release-tests-wk1", "sierra-release-tests-wk2"],
+                      "triggers": ["sierra-release-tests-jsc", "sierra-release-tests-wk1", "sierra-release-tests-wk2", "sierra-leaks"],
                       "slavenames": ["bot443", "bot699"]
                     },
                     { "name": "Apple Sierra Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "sierra-release-tests-wk1",
@@ -130,6 +130,11 @@
                     { "name": "Apple Sierra 32-bit JSC (BuildAndTest)", "type": "BuildAndTest32bitJSC", "builddir": "sierra-32bitJSC-debug",
                       "platform": "mac-sierra", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["bot187"]
+                    },
+                    { "name": "Apple Sierra (Leaks)", "type": "TestWebKit1Leaks", "builddir": "sierra-leaks",
+                      "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
+                      "slavenames": ["bot121"]
                     },
                     { "name": "Apple El Capitan Debug (Build)", "type": "Build", "builddir": "elcapitan-debug",
                       "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
@@ -165,7 +170,7 @@
                     },
                     { "name": "Apple El Capitan Release (Build)", "type": "Build", "builddir": "elcapitan-release",
                       "platform": "mac-elcapitan", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["elcapitan-release-tests-jsc", "elcapitan-release-tests-wk1", "elcapitan-release-tests-wk2", "elcapitan-release-perf", "elcapitan-leaks"],
+                      "triggers": ["elcapitan-release-tests-jsc", "elcapitan-release-tests-wk1", "elcapitan-release-tests-wk2", "elcapitan-release-perf"],
                       "slavenames": ["bot417", "bot418"]
                     },
                     { "name": "Apple El Capitan Release JSC (Tests)", "type": "TestJSC", "builddir": "elcapitan-release-tests-jsc",
@@ -186,11 +191,6 @@
                       "name": "Apple El Capitan Release WK2 (Perf)", "type": "DownloadAndPerfTest", "builddir": "elcapitan-release-perf-tests",
                       "platform": "mac-elcapitan", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot205"]
-                    },
-                    { "name": "Apple El Capitan (Leaks)", "type": "TestWebKit1Leaks", "builddir": "elcapitan-leaks",
-                      "platform": "mac-elcapitan", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
-                      "slavenames": ["bot121"]
                     },
                     { "name": "Apple El Capitan Release (32-bit Build)", "type": "Build", "builddir": "elcapitan-32bit-release",
                       "platform": "mac-elcapitan", "configuration": "release", "architectures": ["i386"],
@@ -377,8 +377,8 @@
                     { "type": "Triggerable", "name": "sierra-release-tests-jsc",
                       "builderNames": ["Apple Sierra Release JSC (Tests)"]
                     },
-                    { "type": "Triggerable", "name": "elcapitan-leaks",
-                      "builderNames": ["Apple El Capitan (Leaks)"]
+                    { "type": "Triggerable", "name": "sierra-leaks",
+                      "builderNames": ["Apple Sierra (Leaks)"]
                     },
                     { "type": "Triggerable", "name": "elcapitan-release-tests-jsc",
                       "builderNames": ["Apple El Capitan Release JSC (Tests)"]
