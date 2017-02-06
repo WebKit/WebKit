@@ -5133,6 +5133,10 @@ void Document::initSecurityContext()
     setSecurityOriginPolicy(SecurityOriginPolicy::create(isSandboxed(SandboxOrigin) ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url)));
     setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(*this));
 
+    String overrideContentSecurityPolicy = m_frame->loader().client().overrideContentSecurityPolicy();
+    if (!overrideContentSecurityPolicy.isNull())
+        contentSecurityPolicy()->didReceiveHeader(overrideContentSecurityPolicy, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::API);
+
 #if USE(QUICK_LOOK)
     if (shouldEnforceQuickLookSandbox())
         applyQuickLookSandbox();

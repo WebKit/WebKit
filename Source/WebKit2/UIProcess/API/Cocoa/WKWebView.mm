@@ -433,6 +433,9 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     pageConfiguration->setWebsiteDataStore([_configuration websiteDataStore]->_websiteDataStore.get());
     pageConfiguration->setTreatsSHA1SignedCertificatesAsInsecure([_configuration _treatsSHA1SignedCertificatesAsInsecure]);
 
+    if (NSString *overrideContentSecurityPolicy = configuration._overrideContentSecurityPolicy)
+        pageConfiguration->setOverrideContentSecurityPolicy(overrideContentSecurityPolicy);
+
     RefPtr<WebKit::WebPageGroup> pageGroup;
     NSString *groupIdentifier = configuration._groupIdentifier;
     if (groupIdentifier.length) {

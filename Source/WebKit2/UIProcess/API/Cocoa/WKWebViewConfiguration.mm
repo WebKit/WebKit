@@ -130,6 +130,8 @@ private:
     BOOL _applePayEnabled;
 #endif
     BOOL _needsStorageAccessFromFileURLsQuirk;
+
+    NSString *_overrideContentSecurityPolicy;
 }
 
 - (instancetype)init
@@ -318,6 +320,7 @@ private:
     configuration->_applePayEnabled = self->_applePayEnabled;
 #endif
     configuration->_needsStorageAccessFromFileURLsQuirk = self->_needsStorageAccessFromFileURLsQuirk;
+    configuration->_overrideContentSecurityPolicy = self->_overrideContentSecurityPolicy;
 
     return configuration;
 }
@@ -750,6 +753,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setNeedsStorageAccessFromFileURLsQuirk:(BOOL)needsLocalStorageQuirk
 {
     _needsStorageAccessFromFileURLsQuirk = needsLocalStorageQuirk;
+}
+
+- (NSString *)_overrideContentSecurityPolicy
+{
+    return _overrideContentSecurityPolicy;
+}
+
+- (void)_setOverrideContentSecurityPolicy:(NSString *)overrideContentSecurityPolicy
+{
+    _overrideContentSecurityPolicy = overrideContentSecurityPolicy;
 }
 
 @end

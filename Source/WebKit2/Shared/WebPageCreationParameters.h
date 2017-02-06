@@ -140,6 +140,8 @@ struct WebPageCreationParameters {
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection;
     WebCore::LayoutMilestones observedLayoutMilestones;
+
+    String overrideContentSecurityPolicy;
 };
 
 } // namespace WebKit

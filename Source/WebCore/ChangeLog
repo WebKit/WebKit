@@ -1,3 +1,32 @@
+2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211656. rdar://problem/30102568
+
+    2017-02-03  Daniel Bates  <dabates@apple.com>
+
+            [Mac][WK2] Add SPI to override the Content Security Policy of a page
+            https://bugs.webkit.org/show_bug.cgi?id=167810
+            <rdar://problem/30102568>
+
+            Reviewed by Anders Carlsson.
+
+            * dom/Document.cpp:
+            (WebCore::Document::initSecurityContext): Apply the embedding client's override Content Security
+            Policy to the document if one exists.
+            * loader/FrameLoaderClient.h: Add function overrideContentSecurityPolicy() that a FrameLoaderClient
+            can override to provide a custom Content Security Policy for a document (defaults: null string - no policy).
+            As its name implies, the policy returned by overrideContentSecurityPolicy() will define the Content
+            Security Policy for the document, overriding any subsequently received Content Security Policy for
+            the document.
+            * page/csp/ContentSecurityPolicy.cpp:
+            (WebCore::ContentSecurityPolicy::copyStateFrom): Only copy policies from the specified ContentSecurityPolicy
+            object if our policy was not specified by the embedding client.
+            (WebCore::ContentSecurityPolicy::didReceiveHeader): Set ContentSecurityPolicy::m_hasAPIPolicy to true
+            when we receive an API policy from the embedding client (ContentSecurityPolicy::PolicyFrom::API). An
+            API policy must be defined before a policy received from a document. Do not process a received header
+            if we already have an API policy as the API policy overrides all other policies.
+            * page/csp/ContentSecurityPolicy.h:
+
 2017-02-02  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r211541. rdar://problem/30100286

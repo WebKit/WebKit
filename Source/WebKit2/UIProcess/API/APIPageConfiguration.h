@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "WebPreferencesStore.h"
 #include <WebCore/SessionID.h>
+#include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 
 namespace WebKit {
@@ -98,6 +99,9 @@ public:
     bool isControlledByAutomation() const { return m_controlledByAutomation; }
     void setControlledByAutomation(bool controlledByAutomation) { m_controlledByAutomation = controlledByAutomation; }
 
+    const WTF::String& overrideContentSecurityPolicy() const { return m_overrideContentSecurityPolicy; }
+    void setOverrideContentSecurityPolicy(const WTF::String& overrideContentSecurityPolicy) { m_overrideContentSecurityPolicy = overrideContentSecurityPolicy; }
+
 private:
 
     RefPtr<WebKit::WebProcessPool> m_processPool;
@@ -120,6 +124,8 @@ private:
     bool m_initialCapitalizationEnabled = true;
     bool m_waitsForPaintAfterViewDidMoveToWindow = true;
     bool m_controlledByAutomation = false;
+
+    WTF::String m_overrideContentSecurityPolicy;
 };
 
 } // namespace API

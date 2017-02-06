@@ -89,6 +89,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldScaleViewToFitDocument;
     encoder.encodeEnum(userInterfaceLayoutDirection);
     encoder.encodeEnum(observedLayoutMilestones);
+    encoder << overrideContentSecurityPolicy;
 }
 
 bool WebPageCreationParameters::decode(IPC::Decoder& decoder, WebPageCreationParameters& parameters)
@@ -202,6 +203,9 @@ bool WebPageCreationParameters::decode(IPC::Decoder& decoder, WebPageCreationPar
     if (!decoder.decodeEnum(parameters.userInterfaceLayoutDirection))
         return false;
     if (!decoder.decodeEnum(parameters.observedLayoutMilestones))
+        return false;
+
+    if (!decoder.decode(parameters.overrideContentSecurityPolicy))
         return false;
 
     return true;

@@ -1287,6 +1287,15 @@ String WebFrameLoaderClient::userAgent(const URL& url)
     return webPage->userAgent(m_frame, url);
 }
 
+String WebFrameLoaderClient::overrideContentSecurityPolicy() const
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return String();
+
+    return webPage->overrideContentSecurityPolicy();
+}
+
 void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)
 {
     WebPage* webPage = m_frame->page();

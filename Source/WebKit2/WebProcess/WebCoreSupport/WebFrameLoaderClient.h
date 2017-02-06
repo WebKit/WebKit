@@ -182,6 +182,9 @@ private:
     
     void savePlatformDataToCachedFrame(WebCore::CachedFrame*) override;
     void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*) override;
+
+    String overrideContentSecurityPolicy() const final;
+
 #if PLATFORM(IOS)
     void didRestoreFrameHierarchyForCachedFrame() override;
 #endif

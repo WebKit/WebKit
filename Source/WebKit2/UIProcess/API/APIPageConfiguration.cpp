@@ -69,6 +69,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
 #endif
     copy->m_initialCapitalizationEnabled = this->m_initialCapitalizationEnabled;
     copy->m_controlledByAutomation = this->m_controlledByAutomation;
+    copy->m_overrideContentSecurityPolicy = this->m_overrideContentSecurityPolicy;
 
     return copy;
 }
