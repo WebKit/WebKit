@@ -89,6 +89,11 @@ public:
     double nextAnimationServiceTime() const;
 
 private:
+    enum ReleaseAtlasPolicy {
+        ReleaseInactive,
+        ReleaseUnused
+    };
+
     // GraphicsLayerClient
     void notifyAnimationStarted(const WebCore::GraphicsLayer*, const String&, double time) override;
     void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
@@ -124,8 +129,8 @@ private:
     void purgeBackingStores();
 
     void scheduleReleaseInactiveAtlases();
-
     void releaseInactiveAtlasesTimerFired();
+    void releaseAtlases(ReleaseAtlasPolicy);
 
     double timestamp() const;
 
