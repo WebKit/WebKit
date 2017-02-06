@@ -45,11 +45,6 @@ void WebKitSetInvalidWebBackgroundTaskIdentifier(WebBackgroundTaskIdentifier);
 void WebKitSetStartBackgroundTaskBlock(StartBackgroundTaskBlock);
 void WebKitSetEndBackgroundTaskBlock(EndBackgroundTaskBlock);
 
-// These methods are what WebKit uses to start/stop background tasks after UIKit has set things up.
-WebBackgroundTaskIdentifier invalidWebBackgroundTaskIdentifier();
-WebBackgroundTaskIdentifier startBackgroundTask(VoidBlock);
-void endBackgroundTask(WebBackgroundTaskIdentifier);
-
 // This method gives WebKit the notifications to listen to so it knows about app Suspend/Resume
 void WebKitSetBackgroundAndForegroundNotificationNames(NSString *, NSString *);
 

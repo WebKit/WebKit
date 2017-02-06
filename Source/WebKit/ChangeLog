@@ -1,3 +1,16 @@
+2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211551. rdar://problem/26685576
+
+    2017-02-02  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+            In iOS, we should take background assertion when accessing localstorage databases.
+            https://bugs.webkit.org/show_bug.cgi?id=165478
+
+            Reviewed by Brady Eidson.
+
+            * WebKit.xcodeproj/project.pbxproj: Moved WebSQLiteDatabaseTrackerClient to WebCore.
+
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r210359. rdar://problem/29882478

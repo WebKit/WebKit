@@ -27,13 +27,3 @@
  */
 
 #import "WebDatabaseManagerPrivate.h"
-
-#if PLATFORM(IOS)
-@interface WebDatabaseManager (WebDatabaseManagerInternal)
-+ (void)willBeginFirstTransaction;
-+ (void)didFinishLastTransaction;
-+ (void)startBackgroundTask;
-+ (void)endBackgroundTask;
-@end
-
-#endif

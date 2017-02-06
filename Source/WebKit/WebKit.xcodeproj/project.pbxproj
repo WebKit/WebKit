@@ -704,8 +704,6 @@
 		A10C1D3C18202FC50036883A /* WebNSStringExtrasIPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D2D18202FC50036883A /* WebNSStringExtrasIPhone.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10C1D3D18202FC50036883A /* WebUIKitSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D2E18202FC50036883A /* WebUIKitSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10C1D3E18202FC50036883A /* WebUIKitSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D2F18202FC50036883A /* WebUIKitSupport.mm */; };
-		A10C1D4218202FEF0036883A /* WebSQLiteDatabaseTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D4018202FEF0036883A /* WebSQLiteDatabaseTrackerClient.h */; };
-		A10C1D4318202FEF0036883A /* WebSQLiteDatabaseTrackerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D4118202FEF0036883A /* WebSQLiteDatabaseTrackerClient.mm */; };
 		A10C1D5F1820300E0036883A /* PopupMenuIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D451820300E0036883A /* PopupMenuIOS.h */; };
 		A10C1D601820300E0036883A /* PopupMenuIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D461820300E0036883A /* PopupMenuIOS.mm */; };
 		A10C1D611820300E0036883A /* SearchPopupMenuIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D471820300E0036883A /* SearchPopupMenuIOS.cpp */; };
@@ -1449,8 +1447,6 @@
 		A10C1D2D18202FC50036883A /* WebNSStringExtrasIPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNSStringExtrasIPhone.h; path = ios/Misc/WebNSStringExtrasIPhone.h; sourceTree = SOURCE_ROOT; };
 		A10C1D2E18202FC50036883A /* WebUIKitSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebUIKitSupport.h; path = ios/Misc/WebUIKitSupport.h; sourceTree = SOURCE_ROOT; };
 		A10C1D2F18202FC50036883A /* WebUIKitSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebUIKitSupport.mm; path = ios/Misc/WebUIKitSupport.mm; sourceTree = SOURCE_ROOT; };
-		A10C1D4018202FEF0036883A /* WebSQLiteDatabaseTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSQLiteDatabaseTrackerClient.h; path = ios/Storage/WebSQLiteDatabaseTrackerClient.h; sourceTree = SOURCE_ROOT; };
-		A10C1D4118202FEF0036883A /* WebSQLiteDatabaseTrackerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebSQLiteDatabaseTrackerClient.mm; path = ios/Storage/WebSQLiteDatabaseTrackerClient.mm; sourceTree = SOURCE_ROOT; };
 		A10C1D451820300E0036883A /* PopupMenuIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PopupMenuIOS.h; path = ios/WebCoreSupport/PopupMenuIOS.h; sourceTree = SOURCE_ROOT; };
 		A10C1D461820300E0036883A /* PopupMenuIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PopupMenuIOS.mm; path = ios/WebCoreSupport/PopupMenuIOS.mm; sourceTree = SOURCE_ROOT; };
 		A10C1D471820300E0036883A /* SearchPopupMenuIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SearchPopupMenuIOS.cpp; path = ios/WebCoreSupport/SearchPopupMenuIOS.cpp; sourceTree = SOURCE_ROOT; };
@@ -1890,7 +1886,6 @@
 		511F3FC30CECC7E200852565 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
-				A10C1D3F18202FDC0036883A /* ios */,
 				1A6B31241A51F3A900422975 /* StorageAreaImpl.cpp */,
 				1A6B31251A51F3A900422975 /* StorageAreaImpl.h */,
 				1A6B31261A51F3A900422975 /* StorageAreaSync.cpp */,
@@ -2135,15 +2130,6 @@
 				A10C1D2D18202FC50036883A /* WebNSStringExtrasIPhone.h */,
 				A10C1D2E18202FC50036883A /* WebUIKitSupport.h */,
 				A10C1D2F18202FC50036883A /* WebUIKitSupport.mm */,
-			);
-			name = ios;
-			sourceTree = "<group>";
-		};
-		A10C1D3F18202FDC0036883A /* ios */ = {
-			isa = PBXGroup;
-			children = (
-				A10C1D4018202FEF0036883A /* WebSQLiteDatabaseTrackerClient.h */,
-				A10C1D4118202FEF0036883A /* WebSQLiteDatabaseTrackerClient.mm */,
 			);
 			name = ios;
 			sourceTree = "<group>";
@@ -3180,7 +3166,6 @@
 				A10C1D741820300E0036883A /* WebSelectionRect.h in Headers */,
 				2DD632C219E5D1F0002E9C7B /* WebSelectionServiceController.h in Headers */,
 				2D25396618CE85C200270222 /* WebSharingServicePickerController.h in Headers */,
-				A10C1D4218202FEF0036883A /* WebSQLiteDatabaseTrackerClient.h in Headers */,
 				3AE15D5012DBDED4009323C8 /* WebStorageManagerInternal.h in Headers */,
 				3AB02B0012C132B200FBB694 /* WebStorageManagerPrivate.h in Headers */,
 				1A591D461A2E91BB000907C4 /* WebStorageNamespaceProvider.h in Headers */,
@@ -3697,7 +3682,6 @@
 				A10C1D751820300E0036883A /* WebSelectionRect.m in Sources */,
 				2DD632C319E5D1F0002E9C7B /* WebSelectionServiceController.mm in Sources */,
 				2D25396718CE85C200270222 /* WebSharingServicePickerController.mm in Sources */,
-				A10C1D4318202FEF0036883A /* WebSQLiteDatabaseTrackerClient.mm in Sources */,
 				3AB02AF612C1319B00FBB694 /* WebStorageManager.mm in Sources */,
 				1A591D451A2E91BB000907C4 /* WebStorageNamespaceProvider.cpp in Sources */,
 				3ABB3C7B1309C3B500E93D94 /* WebStorageTrackerClient.mm in Sources */,

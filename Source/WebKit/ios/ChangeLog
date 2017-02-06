@@ -1,3 +1,25 @@
+2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211551. rdar://problem/26685576
+
+    2017-02-02  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+            In iOS, we should take background assertion when accessing localstorage databases.
+            https://bugs.webkit.org/show_bug.cgi?id=165478
+
+            Move application background task handling code from WebKit to WebCore.
+
+            Reviewed by Brady Eidson.
+
+            * Misc/WebUIKitSupport.h: Remove several methods that only used internally for background
+                task handling. They are not needed in WebKit any more since background task handling
+                is moved to WebCore and wrapped in WebBackgroundTaskController class.
+            * Misc/WebUIKitSupport.mm:
+            (WebKitSetInvalidWebBackgroundTaskIdentifier): Instead of storing the value in a static global
+                variable, save it in WebBackgroundTaskController.
+            (WebKitSetStartBackgroundTaskBlock): Ditto.
+            (WebKitSetEndBackgroundTaskBlock): Ditto.
+
 2016-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Stop reinterpret_casting UBreakIterators to the undefined type TextBreakIterator

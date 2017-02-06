@@ -92,9 +92,12 @@
 #import <WebCore/NSTextFinderSPI.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/SQLiteDatabaseTracker.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TextStream.h>
 #import <WebCore/ValidationBubble.h>
+#import <WebCore/WebBackgroundTaskController.h>
+#import <WebCore/WebSQLiteDatabaseTrackerClient.h>
 #import <WebCore/WritingMode.h>
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
@@ -579,7 +582,32 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     _page->setFullscreenClient(std::make_unique<WebKit::FullscreenClient>(self));
 #endif
 
+#if PLATFORM(IOS)
+    [self _setUpSQLiteDatabaseTrackerClient];
+#endif
+
     pageToViewMap().add(_page.get(), self);
+}
+
+- (void)_setUpSQLiteDatabaseTrackerClient
+{
+#if PLATFORM(IOS)
+    WebBackgroundTaskController *controller = [WebBackgroundTaskController sharedController];
+    if (controller.backgroundTaskStartBlock)
+        return;
+
+    controller.backgroundTaskStartBlock = ^NSUInteger (void (^expirationHandler)())
+    {
+        return [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:expirationHandler];
+    };
+    controller.backgroundTaskEndBlock = ^(UIBackgroundTaskIdentifier taskIdentifier)
+    {
+        [[UIApplication sharedApplication] endBackgroundTask:taskIdentifier];
+    };
+    controller.invalidBackgroundTaskIdentifier = UIBackgroundTaskInvalid;
+
+    WebCore::SQLiteDatabaseTracker::setClient(&WebCore::WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient());
+#endif
 }
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
