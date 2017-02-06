@@ -57,6 +57,8 @@ public:
     CachedPage* get(HistoryItem&, Page*);
     std::unique_ptr<CachedPage> take(HistoryItem&, Page*);
 
+    void removeAllItemsForPage(Page&);
+
     unsigned pageCount() const { return m_items.size(); }
     WEBCORE_EXPORT unsigned frameCount() const;
 

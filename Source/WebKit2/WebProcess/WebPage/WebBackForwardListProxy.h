@@ -60,7 +60,6 @@ private:
     void close() override;
 
     WebPage* m_page;
-    HashSet<uint64_t> m_associatedItemIDs;
 };
 
 } // namespace WebKit

@@ -50,7 +50,8 @@ namespace WebCore {
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedPageCounter, ("CachedPage"));
 
 CachedPage::CachedPage(Page& page)
-    : m_expirationTime(monotonicallyIncreasingTime() + page.settings().backForwardCacheExpirationInterval())
+    : m_page(page)
+    , m_expirationTime(monotonicallyIncreasingTime() + page.settings().backForwardCacheExpirationInterval())
     , m_cachedMainFrame(std::make_unique<CachedFrame>(page.mainFrame()))
 {
 #ifndef NDEBUG

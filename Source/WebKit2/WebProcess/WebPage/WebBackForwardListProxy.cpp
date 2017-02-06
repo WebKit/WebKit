@@ -100,8 +100,6 @@ void WebBackForwardListProxy::addItemFromUIProcess(uint64_t itemID, Ref<HistoryI
     ASSERT(!historyItemToIDMap().contains(item.ptr()));
     ASSERT(!idToHistoryItemMap().contains(itemID));
 
-    m_associatedItemIDs.add(itemID);
-
     historyItemToIDMap().set<ItemAndPageID>(item.ptr(), { .itemID = itemID, .pageID = pageID });
     idToHistoryItemMap().set(itemID, item.ptr());
 }
@@ -153,8 +151,6 @@ void WebBackForwardListProxy::addItem(Ref<HistoryItem>&& item)
     uint64_t itemID = generateHistoryItemID();
 
     ASSERT(!idToHistoryItemMap().contains(itemID));
-
-    m_associatedItemIDs.add(itemID);
 
     historyItemToIDMap().set<ItemAndPageID>(item.ptr(), { .itemID = itemID, .pageID = m_page->pageID() });
     idToHistoryItemMap().set(itemID, item.ptr());
@@ -214,12 +210,6 @@ int WebBackForwardListProxy::forwardListCount()
 
 void WebBackForwardListProxy::close()
 {
-    for (auto& itemID : m_associatedItemIDs) {
-        if (HistoryItem* item = itemForID(itemID))
-            WebCore::PageCache::singleton().remove(*item);
-    }
-
-    m_associatedItemIDs.clear();
     m_page = nullptr;
 }
 
