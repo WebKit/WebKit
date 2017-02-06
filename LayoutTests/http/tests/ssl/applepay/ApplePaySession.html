@@ -112,7 +112,7 @@ function go() {
     logAndShouldThrow("request = validRequest(); request.lineItems = null;", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.lineItems = 7;", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.lineItems = { };", "new ApplePaySession(2, request)")
-    // FIXME: Should we allow an empty lineItems sequence?
+    logAndShouldNotThrow("request = validRequest(); request.lineItems = [{ label: 'label', type: 'pending' }];", "new ApplePaySession(2, request)")
     logAndShouldNotThrow("request = validRequest(); request.lineItems = [];", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.lineItems = [''];", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.lineItems = [null];", "new ApplePaySession(2, request)")

@@ -1,5 +1,31 @@
 2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211446. rdar://problem/30273885
+
+    2017-01-31  Anders Carlsson  <andersca@apple.com>
+
+            Apple Pay button does nothing on nytimes.com
+            https://bugs.webkit.org/show_bug.cgi?id=167664
+            rdar://problem/30273885
+
+            Reviewed by Sam Weinig.
+
+            Separate line item validation into convertAndValidateTotal and convertAndValidate. The former
+            works on totals (which require an amount), and the latter works on regular line items that do not require an amount
+            if the item type is "pending".
+
+            * Modules/applepay/ApplePaySession.cpp:
+            (WebCore::convertAndValidateTotal):
+            (WebCore::convertAndValidate):
+            Only check the amount if the type is not pending.
+
+            (WebCore::ApplePaySession::completeShippingMethodSelection):
+            (WebCore::ApplePaySession::completeShippingContactSelection):
+            (WebCore::ApplePaySession::completePaymentMethodSelection):
+            Call convertAndValidateTotal for totals.
+
+2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211455. rdar://problem/30241193
 
     2017-01-31  Chris Dumez  <cdumez@apple.com>
