@@ -77,6 +77,11 @@ ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char* threadN
 // Helpful for platforms where the thread name must be set from within the thread.
 void initializeCurrentThreadInternal(const char* threadName);
 
+#if HAVE(QOS_CLASSES)
+WTF_EXPORT_PRIVATE void setGlobalMaxQOSClass(qos_class_t);
+WTF_EXPORT_PRIVATE qos_class_t adjustedQOSClass(qos_class_t);
+#endif
+
 } // namespace WTF
 
 using WTF::ThreadIdentifier;
@@ -85,5 +90,10 @@ using WTF::currentThread;
 using WTF::changeThreadPriority;
 using WTF::detachThread;
 using WTF::waitForThreadCompletion;
+
+#if HAVE(QOS_CLASSES)
+using WTF::setGlobalMaxQOSClass;
+using WTF::adjustedQOSClass;
+#endif
 
 #endif // Threading_h

@@ -30,6 +30,10 @@
 #include <cmath>
 #include <cstring>
 
+#if HAVE(QOS_CLASSES)
+#include <bmalloc/bmalloc.h>
+#endif
+
 namespace WTF {
 
 struct NewThreadContext {
@@ -89,7 +93,7 @@ void setCurrentThreadIsUserInteractive(int relativePriority)
 #if HAVE(QOS_CLASSES)
     ASSERT(relativePriority <= 0);
     ASSERT(relativePriority >= QOS_MIN_RELATIVE_PRIORITY);
-    pthread_set_qos_class_self_np(QOS_CLASS_USER_INTERACTIVE, relativePriority);
+    pthread_set_qos_class_self_np(adjustedQOSClass(QOS_CLASS_USER_INTERACTIVE), relativePriority);
 #else
     UNUSED_PARAM(relativePriority);
 #endif
@@ -100,10 +104,27 @@ void setCurrentThreadIsUserInitiated(int relativePriority)
 #if HAVE(QOS_CLASSES)
     ASSERT(relativePriority <= 0);
     ASSERT(relativePriority >= QOS_MIN_RELATIVE_PRIORITY);
-    pthread_set_qos_class_self_np(QOS_CLASS_USER_INITIATED, relativePriority);
+    pthread_set_qos_class_self_np(adjustedQOSClass(QOS_CLASS_USER_INITIATED), relativePriority);
 #else
     UNUSED_PARAM(relativePriority);
 #endif
 }
+
+#if HAVE(QOS_CLASSES)
+static qos_class_t globalMaxQOSclass { QOS_CLASS_UNSPECIFIED };
+
+void setGlobalMaxQOSClass(qos_class_t maxClass)
+{
+    bmalloc::api::setScavengerThreadQOSClass(maxClass);
+    globalMaxQOSclass = maxClass;
+}
+
+qos_class_t adjustedQOSClass(qos_class_t originalClass)
+{
+    if (globalMaxQOSclass != QOS_CLASS_UNSPECIFIED)
+        return std::min(originalClass, globalMaxQOSclass);
+    return originalClass;
+}
+#endif
 
 } // namespace WTF

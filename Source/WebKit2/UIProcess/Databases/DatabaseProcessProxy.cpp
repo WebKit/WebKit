@@ -52,7 +52,8 @@ Ref<DatabaseProcessProxy> DatabaseProcessProxy::create(WebProcessPool* processPo
 }
 
 DatabaseProcessProxy::DatabaseProcessProxy(WebProcessPool* processPool)
-    : m_processPool(processPool)
+    : ChildProcessProxy(processPool->alwaysRunsAtBackgroundPriority())
+    , m_processPool(processPool)
     , m_numPendingConnectionRequests(0)
 {
     connect();

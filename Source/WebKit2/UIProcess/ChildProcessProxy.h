@@ -36,8 +36,10 @@ namespace WebKit {
 class ChildProcessProxy : ProcessLauncher::Client, public IPC::Connection::Client, public ThreadSafeRefCounted<ChildProcessProxy> {
     WTF_MAKE_NONCOPYABLE(ChildProcessProxy);
 
+protected:
+    explicit ChildProcessProxy(bool alwaysRunsAtBackgroundPriority = false);
+
 public:
-    ChildProcessProxy();
     virtual ~ChildProcessProxy();
 
     void connect();
@@ -93,6 +95,7 @@ private:
     RefPtr<ProcessLauncher> m_processLauncher;
     RefPtr<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
+    bool m_alwaysRunsAtBackgroundPriority { false };
 };
 
 template<typename T>

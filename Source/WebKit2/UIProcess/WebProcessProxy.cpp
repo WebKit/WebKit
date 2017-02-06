@@ -94,7 +94,8 @@ Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool)
 }
 
 WebProcessProxy::WebProcessProxy(WebProcessPool& processPool)
-    : m_responsivenessTimer(*this)
+    : ChildProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
+    , m_responsivenessTimer(*this)
     , m_processPool(processPool)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
@@ -921,11 +922,6 @@ void WebProcessProxy::sendProcessDidResume()
 {
     if (canSendMessage())
         send(Messages::WebProcess::ProcessDidResume(), 0);
-}
-
-bool WebProcessProxy::alwaysRunsAtBackgroundPriority()
-{
-    return m_processPool->alwaysRunsAtBackgroundPriority();
 }
 
 void WebProcessProxy::processReadyToSuspend()

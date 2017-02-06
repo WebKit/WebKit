@@ -67,6 +67,11 @@ public:
 
     void scavenge(std::unique_lock<StaticMutex>&, std::chrono::milliseconds sleepDuration);
 
+#if BOS(DARWIN)
+    qos_class_t takeRequestedScavengerThreadQOSClass() { return std::exchange(m_requestedScavengerThreadQOSClass, QOS_CLASS_UNSPECIFIED); }
+    void setScavengerThreadQOSClass(qos_class_t overrideClass) { m_requestedScavengerThreadQOSClass = overrideClass; }
+#endif
+
 private:
     struct LargeObjectHash {
         static unsigned hash(void* key)
@@ -118,6 +123,10 @@ private:
     Environment m_environment;
 
     VMHeap m_vmHeap;
+
+#if BOS(DARWIN)
+    qos_class_t m_requestedScavengerThreadQOSClass { QOS_CLASS_UNSPECIFIED };
+#endif
 };
 
 inline void Heap::allocateSmallBumpRanges(

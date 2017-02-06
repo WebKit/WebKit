@@ -101,6 +101,11 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     voucher_replace_default_voucher();
 #endif
 
+#if HAVE(QOS_CLASSES)
+    if (parameters.extraInitializationData.contains(ASCIILiteral("always-runs-at-background-priority")))
+        setGlobalMaxQOSClass(QOS_CLASS_UTILITY);
+#endif
+
     XPCServiceType::singleton().initialize(parameters);
 }
 
