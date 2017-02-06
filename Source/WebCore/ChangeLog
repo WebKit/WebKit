@@ -1,3 +1,20 @@
+2017-02-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Data interaction fails in Safari splitscreen mode when dropping into a contenteditable
+        https://bugs.webkit.org/show_bug.cgi?id=167862
+        <rdar://problem/30368405>
+
+        Reviewed by Tim Horton.
+
+        Adds a counter to WebItemProviderPasteboard that can incremented, decremented, and queried by clients.
+
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard init]):
+        (-[WebItemProviderPasteboard hasPendingOperation]):
+        (-[WebItemProviderPasteboard incrementPendingOperationCount]):
+        (-[WebItemProviderPasteboard decrementPendingOperationCount]):
+
 2017-02-05  Simon Fraser  <simon.fraser@apple.com>
 
         Remove unparentsOffscreenTiles logic in TileController

@@ -72,6 +72,7 @@ static BOOL isImageType(NSString *type)
 
 @property (nonatomic) NSInteger numberOfItems;
 @property (nonatomic) NSInteger changeCount;
+@property (nonatomic) NSInteger pendingOperationCount;
 
 @end
 
@@ -92,6 +93,7 @@ static BOOL isImageType(NSString *type)
     if (self = [super init]) {
         _itemProviders = [[NSArray alloc] init];
         _changeCount = 0;
+        _pendingOperationCount = 0;
     }
     return self;
 }
@@ -209,6 +211,21 @@ static BOOL isImageType(NSString *type)
 - (UIItemProvider *)itemProviderAtIndex:(NSInteger)index
 {
     return 0 <= index && index < (NSInteger)_itemProviders.count ? _itemProviders[index] : nil;
+}
+
+- (BOOL)hasPendingOperation
+{
+    return _pendingOperationCount;
+}
+
+- (void)incrementPendingOperationCount
+{
+    _pendingOperationCount++;
+}
+
+- (void)decrementPendingOperationCount
+{
+    _pendingOperationCount--;
 }
 
 @end

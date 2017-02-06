@@ -41,6 +41,10 @@ WEBCORE_EXPORT @interface WebItemProviderPasteboard : NSObject<AbstractPasteboar
 @property (readonly, nonatomic) NSInteger numberOfItems;
 @property (readonly, nonatomic) NSInteger changeCount;
 
+@property (readonly, nonatomic) BOOL hasPendingOperation;
+- (void)incrementPendingOperationCount;
+- (void)decrementPendingOperationCount;
+
 @end
 
 NS_ASSUME_NONNULL_END
