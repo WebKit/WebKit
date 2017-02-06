@@ -71,7 +71,6 @@ void ResourceUsageOverlay::initialize()
 #endif
 
     m_overlay->setFrame(initialRect);
-    m_overlay->setShouldIgnoreMouseEventsOutsideBounds(false);
     m_page.mainFrame().pageOverlayController().installPageOverlay(*m_overlay, PageOverlay::FadeMode::DoNotFade);
     platformInitialize();
 }
