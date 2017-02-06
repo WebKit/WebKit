@@ -1,3 +1,11 @@
+2017-02-06  Alex Christensen  <achristensen@webkit.org>
+
+        [WebRTC] Remove unneeded build directory accidentally checked in with libwebrtc source.
+
+        Reviewed by Youenn Fablet.
+
+        * third_party/usrsctp/build: Removed.
+
 2017-02-03  Alex Christensen  <achristensen@webkit.org>
 
         [WebRTC] Add more files to libwebrtc build
