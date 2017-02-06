@@ -125,7 +125,7 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
     auto pixelBuffer = pixelBufferFromCGImage(imageBuffer()->copyImage()->nativeImage().get());
     auto sampleBuffer = CMSampleBufferFromPixelBuffer(pixelBuffer.get());
     
-    mediaDataUpdated(MediaSampleAVFObjC::create(sampleBuffer.get()));
+    videoSampleAvailable(MediaSampleAVFObjC::create(sampleBuffer.get()));
 }
 
 } // namespace WebCore

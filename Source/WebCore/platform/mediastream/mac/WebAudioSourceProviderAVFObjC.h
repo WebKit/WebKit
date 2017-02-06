@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebAudioSourceProviderAVFObjC_h
-#define WebAudioSourceProviderAVFObjC_h
+#pragma once
 
 #if ENABLE(WEB_AUDIO) && ENABLE(MEDIA_STREAM)
 
 #include "AudioCaptureSourceProviderObjC.h"
 #include "AudioSourceObserverObjC.h"
 #include "AudioSourceProvider.h"
+#include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -68,16 +68,14 @@ private:
     std::unique_ptr<AudioStreamBasicDescription> m_outputDescription;
     std::unique_ptr<CARingBuffer> m_ringBuffer;
 
-    uint64_t m_writeAheadCount { 0 };
     uint64_t m_writeCount { 0 };
     uint64_t m_readCount { 0 };
     AudioSourceProviderClient* m_client { nullptr };
     AudioCaptureSourceProviderObjC* m_captureSource { nullptr };
+    Lock m_mutex;
     bool m_connected { false };
 };
     
 }
-
-#endif
 
 #endif

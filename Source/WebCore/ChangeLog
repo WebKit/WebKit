@@ -1,3 +1,115 @@
+2017-02-06  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream Mac] Stop using AVSampleBufferAudioRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=167821
+
+        Reviewed by Jer Noble.
+
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+
+        * platform/audio/mac/AudioSampleDataSource.cpp:
+        (WebCore::AudioSampleDataSource::pullSamplesInternal): Don't assume the first timestamp from the
+        render proc after a pause is zero.
+
+        Stop using an audio renderer for each audio track. No audio renderers means we don't need to use
+        an AVSampleBufferRenderSynchronizer.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (-[WebAVSampleBufferStatusChangeListener invalidate]): No more audio renderers.
+        (-[WebAVSampleBufferStatusChangeListener observeValueForKeyPath:ofObject:change:context:]): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC): Pause
+          audio tracks explicitly.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::audioSourceProvider): Remove the existing code,
+          it was incorrect and not thread safe.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::flushRenderers): No more audio renderers.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayer): No more render synchronizer.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::destroyLayer): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::play): Start each audio track.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::pause): Pause each audio track.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVolume): Pass the command to each audio track.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setMuted): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::streamTime): No more render synchronizer.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferUpdated): Don't handle audio samples.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateTracks): Update for audio track class change. No
+        more render synchronizer.
+        (-[WebAVSampleBufferStatusChangeListener beginObservingRenderer:]): Deleted.
+        (-[WebAVSampleBufferStatusChangeListener stopObservingRenderer:]): Deleted.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSample): Deleted.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForAudioData): Deleted.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::createAudioRenderer): Deleted.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::destroyAudioRenderer): Deleted.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::destroyAudioRenderers): Deleted.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::rendererStatusDidChange): Deleted.
+
+        * platform/mediastream/AudioTrackPrivateMediaStream.h:
+
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::MediaStreamTrackPrivate): add/removeObserver takes a reference,
+        not a pointer.
+        (WebCore::MediaStreamTrackPrivate::~MediaStreamTrackPrivate): Ditto.
+        (WebCore::MediaStreamTrackPrivate::videoSampleAvailable): Renamed from sourceHasMoreMediaData.
+        (WebCore::MediaStreamTrackPrivate::sourceHasMoreMediaData): Deleted.
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::addObserver): Take a reference, not a pointer.
+        (WebCore::RealtimeMediaSource::removeObserver): Ditto.
+        (WebCore::RealtimeMediaSource::videoSampleAvailable): Renamed from mediaDataUpdated.
+        (WebCore::RealtimeMediaSource::audioSamplesAvailable): New.
+        (WebCore::RealtimeMediaSource::stop): Drive-by cleanup.
+        (WebCore::RealtimeMediaSource::requestStop): Ditto.
+        (WebCore::RealtimeMediaSource::mediaDataUpdated): Deleted.
+        * platform/mediastream/RealtimeMediaSource.h:
+
+        * platform/mediastream/mac/AVAudioCaptureSource.h:
+        * platform/mediastream/mac/AVAudioCaptureSource.mm:
+        (WebCore::AVAudioCaptureSource::AVAudioCaptureSource):
+        (WebCore::AVAudioCaptureSource::addObserver):
+        (WebCore::AVAudioCaptureSource::shutdownCaptureSession):
+        (WebCore::AVAudioCaptureSource::captureOutputDidOutputSampleBufferFromConnection):
+        (WebCore::operator==): Deleted.
+        (WebCore::operator!=): Deleted.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::processNewFrame): Call videoSampleAvailable, not mediaDataUpdated.
+
+        Render audio with a CoreAudio output unit.
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp: Added.
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::AudioTrackPrivateMediaStreamCocoa):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::~AudioTrackPrivateMediaStreamCocoa):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::playInternal):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::play):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::pause):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::setVolume):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::setupAudioUnit):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::sourceStopped):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::render):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::inputProc):
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.h: Added.
+
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::alignTo16Bytes):
+        (WebCore::MockRealtimeAudioSourceMac::emitSampleBuffers):
+        (WebCore::MockRealtimeAudioSourceMac::reconfigure): Minor cleanup.
+        (WebCore::MockRealtimeAudioSourceMac::render): Ditto.
+
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::updateSampleBuffer): Call videoSampleAvailable, not mediaDataUpdated.
+
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::~WebAudioSourceProviderAVFObjC):
+        (WebCore::WebAudioSourceProviderAVFObjC::provideInput): Use a mutex. Get rid of m_writeAheadCount,
+        it is always 0.
+        (WebCore::WebAudioSourceProviderAVFObjC::prepare): Use a lock.
+        (WebCore::WebAudioSourceProviderAVFObjC::unprepare): Ditto.
+        (WebCore::WebAudioSourceProviderAVFObjC::process): Ditto.
+        * platform/mock/MockRealtimeAudioSource.h:
+        (WebCore::MockRealtimeAudioSource::renderInterval): Decrease the render interval.
+
 2017-02-06  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Add a backdrop filter to the start button on macOS

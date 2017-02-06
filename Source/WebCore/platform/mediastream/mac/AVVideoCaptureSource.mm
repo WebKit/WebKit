@@ -423,7 +423,7 @@ void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBu
     if (settingsChanged)
         settingsDidChange();
 
-    mediaDataUpdated(MediaSampleAVFObjC::create(m_buffer.get()));
+    videoSampleAvailable(MediaSampleAVFObjC::create(m_buffer.get()));
 }
 
 void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType*)

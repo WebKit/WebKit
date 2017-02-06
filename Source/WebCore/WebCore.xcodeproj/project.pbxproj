@@ -159,6 +159,7 @@
 		07638A9A1884487200E15A1B /* MediaSessionManagerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */; };
 		076970861463AD8700F502CF /* TextTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076970841463AD8700F502CF /* TextTrackList.cpp */; };
 		076970871463AD8700F502CF /* TextTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 076970851463AD8700F502CF /* TextTrackList.h */; };
+		076EC1331E44F56D00E5D813 /* AudioTrackPrivateMediaStreamCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076EC1321E44F2CB00E5D813 /* AudioTrackPrivateMediaStreamCocoa.cpp */; };
 		076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */; };
 		07707CB01E205EE300005BF7 /* AudioSourceObserverObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 07707CAF1E205EC400005BF7 /* AudioSourceObserverObjC.h */; };
 		077664FC183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 077664FA183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp */; };
@@ -284,7 +285,6 @@
 		07B7116F1D899E63009F0FFB /* CaptureDeviceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B7116C1D899E63009F0FFB /* CaptureDeviceManager.h */; };
 		07C046C31E42508B007201E7 /* CAAudioStreamDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073B87571E40DCFD0071C0EC /* CAAudioStreamDescription.cpp */; };
 		07C046C41E42508B007201E7 /* CAAudioStreamDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87581E40DCFD0071C0EC /* CAAudioStreamDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		07C046C71E425155007201E7 /* AudioTrackPrivateMediaStreamCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C046C51E42512F007201E7 /* AudioTrackPrivateMediaStreamCocoa.cpp */; };
 		07C046C81E425155007201E7 /* AudioTrackPrivateMediaStreamCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C046C61E42512F007201E7 /* AudioTrackPrivateMediaStreamCocoa.h */; };
 		07C046CB1E426413007201E7 /* AudioStreamDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87561E40DCE50071C0EC /* AudioStreamDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07C1C0E21BFB600100BD2256 /* MediaTrackSupportedConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C1C0E01BFB600100BD2256 /* MediaTrackSupportedConstraints.h */; };
@@ -7256,6 +7256,7 @@
 		07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSessionManagerIOS.mm; sourceTree = "<group>"; };
 		076970841463AD8700F502CF /* TextTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackList.cpp; sourceTree = "<group>"; };
 		076970851463AD8700F502CF /* TextTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackList.h; sourceTree = "<group>"; };
+		076EC1321E44F2CB00E5D813 /* AudioTrackPrivateMediaStreamCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioTrackPrivateMediaStreamCocoa.cpp; sourceTree = "<group>"; };
 		076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlayerPrivateAVFoundation.cpp; sourceTree = "<group>"; };
 		076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateAVFoundation.h; sourceTree = "<group>"; };
 		07707CAF1E205EC400005BF7 /* AudioSourceObserverObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSourceObserverObjC.h; sourceTree = "<group>"; };
@@ -7337,6 +7338,7 @@
 		07B7116A1D899E63009F0FFB /* CaptureDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaptureDevice.h; sourceTree = "<group>"; };
 		07B7116B1D899E63009F0FFB /* CaptureDeviceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CaptureDeviceManager.cpp; sourceTree = "<group>"; };
 		07B7116C1D899E63009F0FFB /* CaptureDeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaptureDeviceManager.h; sourceTree = "<group>"; };
+		07C046C61E42512F007201E7 /* AudioTrackPrivateMediaStreamCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioTrackPrivateMediaStreamCocoa.h; sourceTree = "<group>"; };
 		07C1C0E01BFB600100BD2256 /* MediaTrackSupportedConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTrackSupportedConstraints.h; sourceTree = "<group>"; };
 		07C1C0E11BFB600100BD2256 /* MediaTrackSupportedConstraints.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaTrackSupportedConstraints.idl; sourceTree = "<group>"; };
 		07C1C0E41BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeMediaSourceSupportedConstraints.h; sourceTree = "<group>"; };
@@ -15402,13 +15404,13 @@
 		0729B14D17CFCCA0004F1D60 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				076EC1321E44F2CB00E5D813 /* AudioTrackPrivateMediaStreamCocoa.cpp */,
 				5CDD83391E4324BB00621E92 /* RealtimeIncomingVideoSource.cpp */,
 				5CDD833A1E4324BB00621E92 /* RealtimeIncomingVideoSource.h */,
 				5CDD833B1E4324BB00621E92 /* RealtimeOutgoingVideoSource.cpp */,
 				5CDD833C1E4324BB00621E92 /* RealtimeOutgoingVideoSource.h */,
 				07707CB11E20649C00005BF7 /* AudioCaptureSourceProviderObjC.h */,
 				07707CAF1E205EC400005BF7 /* AudioSourceObserverObjC.h */,
-				07C046C51E42512F007201E7 /* AudioTrackPrivateMediaStreamCocoa.cpp */,
 				07C046C61E42512F007201E7 /* AudioTrackPrivateMediaStreamCocoa.h */,
 				070363D8181A1CDC00C074A5 /* AVAudioCaptureSource.h */,
 				070363D9181A1CDC00C074A5 /* AVAudioCaptureSource.mm */,
@@ -25245,6 +25247,7 @@
 				CDE3A85417F5FCE600C5BE20 /* AudioTrackPrivateAVF.h in Headers */,
 				CDE3A85817F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h in Headers */,
 				CD54A763180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.h in Headers */,
+				07C046C81E425155007201E7 /* AudioTrackPrivateMediaStreamCocoa.h in Headers */,
 				07D6A4F81BF2307D00174146 /* AudioTrackPrivateMediaStream.h in Headers */,
 				FD31608B12B026F700C1A359 /* AudioUtilities.h in Headers */,
 				7EE6846012D26E3800E79415 /* AuthenticationCF.h in Headers */,
@@ -31870,6 +31873,7 @@
 				7C39C3741DDBB8D300FEFB29 /* SVGTransformListValues.cpp in Sources */,
 				7CE58D571DD7D96D00128552 /* SVGTransformValue.cpp in Sources */,
 				B2227AE10D00BF220071B782 /* SVGTRefElement.cpp in Sources */,
+				076EC1331E44F56D00E5D813 /* AudioTrackPrivateMediaStreamCocoa.cpp in Sources */,
 				B2227AE40D00BF220071B782 /* SVGTSpanElement.cpp in Sources */,
 				B2227AE90D00BF220071B782 /* SVGURIReference.cpp in Sources */,
 				B2227AEC0D00BF220071B782 /* SVGUseElement.cpp in Sources */,
@@ -32119,7 +32123,6 @@
 				49C7B9E51042D32F0009D447 /* WebGLTexture.cpp in Sources */,
 				6F995A231A7078B100A735F4 /* WebGLTransformFeedback.cpp in Sources */,
 				0C3F1F5A10C8871200D72CE1 /* WebGLUniformLocation.cpp in Sources */,
-				07C046C71E425155007201E7 /* AudioTrackPrivateMediaStreamCocoa.cpp in Sources */,
 				6F995A251A7078B100A735F4 /* WebGLVertexArrayObject.cpp in Sources */,
 				6F222B761AB52D8A0094651A /* WebGLVertexArrayObjectBase.cpp in Sources */,
 				77A17A7712F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp in Sources */,

@@ -52,12 +52,12 @@ MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<RealtimeMediaSource>&& sour
     , m_isEnabled(true)
     , m_isEnded(false)
 {
-    m_source->addObserver(this);
+    m_source->addObserver(*this);
 }
 
 MediaStreamTrackPrivate::~MediaStreamTrackPrivate()
 {
-    m_source->removeObserver(this);
+    m_source->removeObserver(*this);
 }
 
 void MediaStreamTrackPrivate::addObserver(MediaStreamTrackPrivate::Observer& observer)
@@ -198,7 +198,7 @@ bool MediaStreamTrackPrivate::preventSourceFromStopping()
     return !m_isEnded;
 }
 
-void MediaStreamTrackPrivate::sourceHasMoreMediaData(MediaSample& mediaSample)
+void MediaStreamTrackPrivate::videoSampleAvailable(MediaSample& mediaSample)
 {
     mediaSample.setTrackID(id());
     for (auto& observer : m_observers)

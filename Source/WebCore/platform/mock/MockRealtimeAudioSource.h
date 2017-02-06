@@ -56,7 +56,7 @@ protected:
     virtual void render(double) { }
 
     double elapsedTime();
-    static int renderInterval() { return 125; }
+    static int renderInterval() { return 60; }
 
 private:
 

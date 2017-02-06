@@ -72,7 +72,7 @@ private:
 
     uint32_t m_maximiumFrameCount;
     uint32_t m_sampleRate { 44100 };
-    double m_bytesPerFrame { sizeof(Float32) };
+    uint64_t m_bytesEmitted { 0 };
 
     RetainPtr<CMFormatDescriptionRef> m_formatDescription;
     AudioStreamBasicDescription m_streamFormat;

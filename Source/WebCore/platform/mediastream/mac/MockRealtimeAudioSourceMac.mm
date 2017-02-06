@@ -32,6 +32,8 @@
 #import "MockRealtimeAudioSourceMac.h"
 
 #if ENABLE(MEDIA_STREAM)
+#import "AudioSampleBufferList.h"
+#import "CAAudioStreamDescription.h"
 #import "MediaConstraints.h"
 #import "MediaSampleAVFObjC.h"
 #import "NotImplemented.h"
@@ -48,6 +50,11 @@ SOFT_LINK_FRAMEWORK(AudioToolbox)
 SOFT_LINK(AudioToolbox, AudioConverterNew, OSStatus, (const AudioStreamBasicDescription* inSourceFormat, const AudioStreamBasicDescription* inDestinationFormat, AudioConverterRef* outAudioConverter), (inSourceFormat, inDestinationFormat, outAudioConverter))
 
 namespace WebCore {
+
+static inline size_t alignTo16Bytes(size_t size)
+{
+    return (size + 15) & ~15;
+}
 
 RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::create(const String& name, const MediaConstraints* constraints)
 {
@@ -92,7 +99,11 @@ void MockRealtimeAudioSourceMac::emitSampleBuffers(uint32_t frameCount)
 {
     ASSERT(m_formatDescription);
 
-    CMTime startTime = CMTimeMake(elapsedTime() * m_sampleRate, m_sampleRate);
+    CMTime startTime = CMTimeMake(m_bytesEmitted, m_sampleRate);
+    m_bytesEmitted += frameCount;
+
+    audioSamplesAvailable(toMediaTime(startTime), m_audioBufferList->mBuffers[0].mData, CAAudioStreamDescription(m_streamFormat), frameCount);
+
     CMSampleBufferRef sampleBuffer;
     OSStatus result = CMAudioSampleBufferCreateWithPacketDescriptions(nullptr, nullptr, true, nullptr, nullptr, m_formatDescription.get(), frameCount, startTime, nullptr, &sampleBuffer);
     ASSERT(sampleBuffer);
@@ -108,9 +119,7 @@ void MockRealtimeAudioSourceMac::emitSampleBuffers(uint32_t frameCount)
     result = CMSampleBufferSetDataReady(sampleBuffer);
     ASSERT(!result);
 
-    mediaDataUpdated(MediaSampleAVFObjC::create(sampleBuffer));
-
-    for (auto& observer : m_observers)
+    for (const auto& observer : m_observers)
         observer->process(m_formatDescription.get(), sampleBuffer);
 }
 
@@ -119,10 +128,24 @@ void MockRealtimeAudioSourceMac::reconfigure()
     m_maximiumFrameCount = WTF::roundUpToPowerOfTwo(renderInterval() / 1000. * m_sampleRate * 2);
     ASSERT(m_maximiumFrameCount);
 
+    const int bytesPerFloat = sizeof(Float32);
+    const int bitsPerByte = 8;
+    int channelCount = 1;
+    m_streamFormat = { };
+    m_streamFormat.mSampleRate = m_sampleRate;
+    m_streamFormat.mFormatID = kAudioFormatLinearPCM;
+    m_streamFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
+    m_streamFormat.mBytesPerPacket = bytesPerFloat * channelCount;
+    m_streamFormat.mFramesPerPacket = 1;
+    m_streamFormat.mBytesPerFrame = bytesPerFloat * channelCount;
+    m_streamFormat.mChannelsPerFrame = channelCount;
+    m_streamFormat.mBitsPerChannel = bitsPerByte * bytesPerFloat;
+
     // AudioBufferList is a variable-length struct, so create on the heap with a generic new() operator
     // with a custom size, and initialize the struct manually.
-    uint32_t bufferDataSize = m_bytesPerFrame * m_maximiumFrameCount;
-    uint32_t baseSize = offsetof(AudioBufferList, mBuffers) + sizeof(AudioBuffer);
+    uint32_t bufferDataSize = m_streamFormat.mBytesPerFrame * m_maximiumFrameCount;
+    uint32_t baseSize = AudioSampleBufferList::audioBufferListSizeForStream(m_streamFormat);
+
     uint64_t bufferListSize = baseSize + bufferDataSize;
     ASSERT(bufferListSize <= SIZE_MAX);
     if (bufferListSize > SIZE_MAX)
@@ -132,23 +155,8 @@ void MockRealtimeAudioSourceMac::reconfigure()
     m_audioBufferList = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_audioBufferListBufferSize)));
     memset(m_audioBufferList.get(), 0, m_audioBufferListBufferSize);
 
-    m_audioBufferList->mNumberBuffers = 1;
-    auto& buffer = m_audioBufferList->mBuffers[0];
-    buffer.mNumberChannels = 1;
-    buffer.mDataByteSize = bufferDataSize;
-    buffer.mData = reinterpret_cast<uint8_t*>(m_audioBufferList.get()) + baseSize;
-
-    const int bytesPerFloat = sizeof(Float32);
-    const int bitsPerByte = 8;
-    m_streamFormat = { };
-    m_streamFormat.mSampleRate = m_sampleRate;
-    m_streamFormat.mFormatID = kAudioFormatLinearPCM;
-    m_streamFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked | kAudioFormatFlagIsNonInterleaved;
-    m_streamFormat.mBytesPerPacket = bytesPerFloat;
-    m_streamFormat.mFramesPerPacket = 1;
-    m_streamFormat.mBytesPerFrame = bytesPerFloat;
-    m_streamFormat.mChannelsPerFrame = 1;
-    m_streamFormat.mBitsPerChannel = bitsPerByte * bytesPerFloat;
+    uint8_t* bufferData = reinterpret_cast<uint8_t*>(m_audioBufferList.get()) + baseSize;
+    AudioSampleBufferList::configureBufferListForStream(*m_audioBufferList.get(), m_streamFormat, bufferData, bufferDataSize);
 
     CMFormatDescriptionRef formatDescription;
     CMAudioFormatDescriptionCreate(NULL, &m_streamFormat, 0, NULL, 0, NULL, NULL, &formatDescription);
@@ -162,11 +170,12 @@ void MockRealtimeAudioSourceMac::render(double delta)
 {
     static double theta;
     static const double frequencies[] = { 1500., 500. };
+    static const double tau = 2 * M_PI;
 
     if (!m_audioBufferList)
         reconfigure();
 
-    uint32_t totalFrameCount = delta * m_sampleRate;
+    uint32_t totalFrameCount = alignTo16Bytes(delta * m_sampleRate);
     uint32_t frameCount = std::min(totalFrameCount, m_maximiumFrameCount);
     double elapsed = elapsedTime();
     while (frameCount) {
@@ -180,7 +189,7 @@ void MockRealtimeAudioSourceMac::render(double delta)
             case 0:
             case 14: {
                 int index = fmod(elapsed, 1) * 2;
-                increment = 2.0 * M_PI * frequencies[index] / m_sampleRate;
+                increment = tau * frequencies[index] / m_sampleRate;
                 silent = false;
                 break;
             }
@@ -193,10 +202,12 @@ void MockRealtimeAudioSourceMac::render(double delta)
                 continue;
             }
 
-            buffer[frame] = sin(theta) * 0.25;
-            theta += increment;
-            if (theta > 2.0 * M_PI)
-                theta -= 2.0 * M_PI;
+            float tone = sin(theta) * 0.25;
+            buffer[frame] = tone;
+
+                theta += increment;
+            if (theta > tau)
+                theta -= tau;
             elapsed += 1 / m_sampleRate;
         }
 

@@ -67,16 +67,16 @@ void RealtimeMediaSource::reset()
     m_remote = false;
 }
 
-void RealtimeMediaSource::addObserver(RealtimeMediaSource::Observer* observer)
+void RealtimeMediaSource::addObserver(RealtimeMediaSource::Observer& observer)
 {
-    m_observers.append(observer);
+    m_observers.append(&observer);
 }
 
-void RealtimeMediaSource::removeObserver(RealtimeMediaSource::Observer* observer)
+void RealtimeMediaSource::removeObserver(RealtimeMediaSource::Observer& observer)
 {
-    size_t pos = m_observers.find(observer);
-    if (pos != notFound)
-        m_observers.remove(pos);
+    m_observers.removeFirstMatching([&observer](auto* anObserver) {
+        return anObserver == &observer;
+    });
 
     if (!m_observers.size())
         stop();
@@ -112,10 +112,17 @@ void RealtimeMediaSource::settingsDidChange()
     });
 }
 
-void RealtimeMediaSource::mediaDataUpdated(MediaSample& mediaSample)
+void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample)
 {
-    for (auto& observer : m_observers)
-        observer->sourceHasMoreMediaData(mediaSample);
+    ASSERT(isMainThread());
+    for (const auto& observer : m_observers)
+        observer->videoSampleAvailable(mediaSample);
+}
+
+void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, void* audioData, const AudioStreamDescription& description, size_t numberOfFrames)
+{
+    for (const auto& observer : m_observers)
+        observer->audioSamplesAvailable(time, audioData, description, numberOfFrames);
 }
 
 bool RealtimeMediaSource::readonly() const
@@ -130,7 +137,7 @@ void RealtimeMediaSource::stop(Observer* callingObserver)
 
     m_stopped = true;
 
-    for (auto* observer : m_observers) {
+    for (const auto& observer : m_observers) {
         if (observer != callingObserver)
             observer->sourceStopped();
     }
@@ -143,7 +150,7 @@ void RealtimeMediaSource::requestStop(Observer* callingObserver)
     if (stopped())
         return;
 
-    for (auto* observer : m_observers) {
+    for (const auto& observer : m_observers) {
         if (observer->preventSourceFromStopping())
             return;
     }

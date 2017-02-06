@@ -45,7 +45,7 @@ typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
-class AudioTrackPrivateMediaStream;
+class AudioTrackPrivateMediaStreamCocoa;
 class AVVideoCaptureSource;
 class Clock;
 class MediaSourcePrivateClient;
@@ -53,10 +53,6 @@ class VideoTrackPrivateMediaStream;
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 class VideoFullscreenLayerManager;
-#endif
-
-#if __has_include(<AVFoundation/AVSampleBufferRenderSynchronizer.h>)
-#define USE_RENDER_SYNCHRONIZER 1
 #endif
 
 class MediaPlayerPrivateMediaStreamAVFObjC final : public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, private MediaStreamTrackPrivate::Observer {
@@ -81,7 +77,6 @@ public:
     void ensureLayer();
     void destroyLayer();
 
-    void rendererStatusDidChange(AVSampleBufferAudioRenderer*, NSNumber*);
     void layerStatusDidChange(AVSampleBufferDisplayLayer*, NSNumber*);
 
 private:
@@ -144,13 +139,6 @@ private:
     void flushAndRemoveVideoSampleBuffers();
     void requestNotificationWhenReadyForVideoData();
 
-    void enqueueAudioSample(MediaStreamTrackPrivate&, MediaSample&);
-    void createAudioRenderer(AtomicString);
-    void destroyAudioRenderer(AVSampleBufferAudioRenderer*);
-    void destroyAudioRenderer(AtomicString);
-    void destroyAudioRenderers();
-    void requestNotificationWhenReadyForAudioData(AtomicString);
-
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     bool metaDataAvailable() const { return m_mediaStreamPrivate && m_readyState >= MediaPlayer::HaveMetadata; }
@@ -210,9 +198,7 @@ private:
 
     MediaTime streamTime() const;
 
-#if USE(RENDER_SYNCHRONIZER)
     AudioSourceProvider* audioSourceProvider() final;
-#endif
 
     MediaPlayer* m_player { nullptr };
     WeakPtrFactory<MediaPlayerPrivateMediaStreamAVFObjC> m_weakPtrFactory;
@@ -222,22 +208,14 @@ private:
 
     RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
-#if USE(RENDER_SYNCHRONIZER)
-    HashMap<String, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
-    RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
-#else
     std::unique_ptr<Clock> m_clock;
-#endif
 
     MediaTime m_pausedTime;
     RetainPtr<CGImageRef> m_pausedImage;
 
-    HashMap<String, RefPtr<AudioTrackPrivateMediaStream>> m_audioTrackMap;
+    HashMap<String, RefPtr<AudioTrackPrivateMediaStreamCocoa>> m_audioTrackMap;
     HashMap<String, RefPtr<VideoTrackPrivateMediaStream>> m_videoTrackMap;
     PendingSampleQueue m_pendingVideoSampleQueue;
-#if USE(RENDER_SYNCHRONIZER)
-    PendingSampleQueue m_pendingAudioSampleQueue;
-#endif
 
     MediaPlayer::NetworkState m_networkState { MediaPlayer::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::HaveNothing };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +65,8 @@ WebAudioSourceProviderAVFObjC::WebAudioSourceProviderAVFObjC(AudioCaptureSourceP
 
 WebAudioSourceProviderAVFObjC::~WebAudioSourceProviderAVFObjC()
 {
+    std::lock_guard<Lock> lock(m_mutex);
+
     if (m_converter) {
         // FIXME: make and use a smart pointer for AudioConverter
         AudioConverterDispose(m_converter);
@@ -76,7 +78,8 @@ WebAudioSourceProviderAVFObjC::~WebAudioSourceProviderAVFObjC()
 
 void WebAudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProcess)
 {
-    if (!m_ringBuffer) {
+    std::unique_lock<Lock> lock(m_mutex, std::try_to_lock);
+    if (!lock.owns_lock() || !m_ringBuffer) {
         bus->zero();
         return;
     }
@@ -85,12 +88,12 @@ void WebAudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToP
     uint64_t endFrame = 0;
     m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
 
-    if (m_writeCount <= m_readCount + m_writeAheadCount) {
+    if (m_writeCount <= m_readCount) {
         bus->zero();
         return;
     }
 
-    uint64_t framesAvailable = endFrame - (m_readCount + m_writeAheadCount);
+    uint64_t framesAvailable = endFrame - m_readCount;
     if (framesAvailable < framesToProcess) {
         framesToProcess = static_cast<size_t>(framesAvailable);
         bus->zero();
@@ -136,6 +139,8 @@ void WebAudioSourceProviderAVFObjC::setClient(AudioSourceProviderClient* client)
 
 void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription* format)
 {
+    std::lock_guard<Lock> lock(m_mutex);
+
     LOG(Media, "WebAudioSourceProviderAVFObjC::prepare(%p)", this);
 
     m_inputDescription = std::make_unique<AudioStreamBasicDescription>(*format);
@@ -200,6 +205,8 @@ void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription* f
 
 void WebAudioSourceProviderAVFObjC::unprepare()
 {
+    std::lock_guard<Lock> lock(m_mutex);
+
     m_inputDescription = nullptr;
     m_outputDescription = nullptr;
     m_ringBuffer = nullptr;
@@ -214,6 +221,8 @@ void WebAudioSourceProviderAVFObjC::unprepare()
 
 void WebAudioSourceProviderAVFObjC::process(CMFormatDescriptionRef, CMSampleBufferRef sampleBuffer)
 {
+    std::lock_guard<Lock> lock(m_mutex);
+
     if (!m_ringBuffer)
         return;
 

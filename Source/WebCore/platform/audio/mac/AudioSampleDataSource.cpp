@@ -255,14 +255,13 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
         const double tenMS = .01;
         const double fiveMS = .005;
         double sampleRate = m_outputDescription->sampleRate();
+        m_outputSampleOffset = timeStamp + m_timeStamp;
         if (buffered > sampleRate * twentyMS)
-            m_outputSampleOffset = m_timeStamp - sampleRate * twentyMS;
+            m_outputSampleOffset -= sampleRate * twentyMS;
         else if (buffered > sampleRate * tenMS)
-            m_outputSampleOffset = m_timeStamp - sampleRate * tenMS;
+            m_outputSampleOffset -= sampleRate * tenMS;
         else if (buffered > sampleRate * fiveMS)
-            m_outputSampleOffset = m_timeStamp - sampleRate * fiveMS;
-        else
-            m_outputSampleOffset = m_timeStamp;
+            m_outputSampleOffset -= sampleRate * fiveMS;
 
         m_transitioningFromPaused = false;
     }

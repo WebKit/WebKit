@@ -30,8 +30,10 @@
 
 #include "AVMediaCaptureSource.h"
 #include "AudioCaptureSourceProviderObjC.h"
+#include "CAAudioStreamDescription.h"
 #include <wtf/Lock.h>
 
+typedef struct AudioBufferList AudioBufferList;
 typedef struct AudioStreamBasicDescription AudioStreamBasicDescription;
 typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 
@@ -64,9 +66,11 @@ private:
     AudioSourceProvider* audioSourceProvider() override;
 
     RetainPtr<AVCaptureConnection> m_audioConnection;
+    size_t m_listBufferSize { 0 };
+    std::unique_ptr<AudioBufferList> m_list;
 
     RefPtr<WebAudioSourceProviderAVFObjC> m_audioSourceProvider;
-    std::unique_ptr<AudioStreamBasicDescription> m_inputDescription;
+    std::unique_ptr<CAAudioStreamDescription> m_inputDescription;
     Vector<AudioSourceObserverObjC*> m_observers;
     Lock m_lock;
 };

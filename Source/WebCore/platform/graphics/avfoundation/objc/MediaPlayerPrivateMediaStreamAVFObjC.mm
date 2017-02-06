@@ -29,7 +29,7 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #import "AVFoundationSPI.h"
-#import "AudioTrackPrivateMediaStream.h"
+#import "AudioTrackPrivateMediaStreamCocoa.h"
 #import "Clock.h"
 #import "CoreMediaSoftLink.h"
 #import "GraphicsContext.h"
@@ -52,7 +52,6 @@
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
-SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferAudioRenderer)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferDisplayLayer)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferRenderSynchronizer)
 
@@ -67,15 +66,12 @@ using namespace WebCore;
 @interface WebAVSampleBufferStatusChangeListener : NSObject {
     MediaPlayerPrivateMediaStreamAVFObjC* _parent;
     Vector<RetainPtr<AVSampleBufferDisplayLayer>> _layers;
-    Vector<RetainPtr<AVSampleBufferAudioRenderer>> _renderers;
 }
 
 - (id)initWithParent:(MediaPlayerPrivateMediaStreamAVFObjC*)callback;
 - (void)invalidate;
 - (void)beginObservingLayer:(AVSampleBufferDisplayLayer *)layer;
 - (void)stopObservingLayer:(AVSampleBufferDisplayLayer *)layer;
-- (void)beginObservingRenderer:(AVSampleBufferAudioRenderer *)renderer;
-- (void)stopObservingRenderer:(AVSampleBufferAudioRenderer *)renderer;
 @end
 
 @implementation WebAVSampleBufferStatusChangeListener
@@ -101,10 +97,6 @@ using namespace WebCore;
         [layer removeObserver:self forKeyPath:@"status"];
     _layers.clear();
 
-    for (auto& renderer : _renderers)
-        [renderer removeObserver:self forKeyPath:@"status"];
-    _renderers.clear();
-
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     _parent = nullptr;
@@ -128,24 +120,6 @@ using namespace WebCore;
     _layers.remove(_layers.find(layer));
 }
 
-- (void)beginObservingRenderer:(AVSampleBufferAudioRenderer*)renderer
-{
-    ASSERT(_parent);
-    ASSERT(!_renderers.contains(renderer));
-
-    _renderers.append(renderer);
-    [renderer addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nullptr];
-}
-
-- (void)stopObservingRenderer:(AVSampleBufferAudioRenderer*)renderer
-{
-    ASSERT(_parent);
-    ASSERT(_renderers.contains(renderer));
-
-    [renderer removeObserver:self forKeyPath:@"status"];
-    _renderers.remove(_renderers.find(renderer));
-}
-
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     UNUSED_PARAM(context);
@@ -167,19 +141,6 @@ using namespace WebCore;
             protectedSelf->_parent->layerStatusDidChange(layer.get(), status.get());
         });
 
-    } else if ([object isKindOfClass:getAVSampleBufferAudioRendererClass()]) {
-        RetainPtr<AVSampleBufferAudioRenderer> renderer = (AVSampleBufferAudioRenderer *)object;
-        RetainPtr<NSNumber> status = [change valueForKey:NSKeyValueChangeNewKey];
-
-        ASSERT(_renderers.contains(renderer.get()));
-        ASSERT([keyPath isEqualToString:@"status"]);
-
-        callOnMainThread([protectedSelf = WTFMove(protectedSelf), renderer = WTFMove(renderer), status = WTFMove(status)] {
-            if (!protectedSelf->_parent)
-                return;
-
-            protectedSelf->_parent->rendererStatusDidChange(renderer.get(), status.get());
-        });
     } else
         ASSERT_NOT_REACHED();
 }
@@ -196,11 +157,7 @@ MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(Media
     : m_player(player)
     , m_weakPtrFactory(this)
     , m_statusChangeListener(adoptNS([[WebAVSampleBufferStatusChangeListener alloc] initWithParent:this]))
-#if USE(RENDER_SYNCHRONIZER)
-    , m_synchronizer(adoptNS([allocAVSampleBufferRenderSynchronizerInstance() init]))
-#else
     , m_clock(Clock::create())
-#endif
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     , m_videoFullscreenLayerManager(VideoFullscreenLayerManager::create())
 #endif
@@ -211,6 +168,9 @@ MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(Media
 MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
 {
     LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC(%p)", this);
+    for (const auto& track : m_audioTrackMap.values())
+        track->pause();
+
     if (m_mediaStreamPrivate) {
         m_mediaStreamPrivate->removeObserver(*this);
 
@@ -219,9 +179,6 @@ MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
     }
 
     destroyLayer();
-#if USE(RENDER_SYNCHRONIZER)
-    destroyAudioRenderers();
-#endif
 
     m_audioTrackMap.clear();
     m_videoTrackMap.clear();
@@ -315,33 +272,6 @@ MediaTime MediaPlayerPrivateMediaStreamAVFObjC::calculateTimelineOffset(const Me
     return timelineOffset;
 }
 
-#if USE(RENDER_SYNCHRONIZER)
-void MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSample(MediaStreamTrackPrivate& track, MediaSample& sample)
-{
-    ASSERT(m_audioTrackMap.contains(track.id()));
-    ASSERT(m_audioRenderers.contains(sample.trackID()));
-
-    auto audioTrack = m_audioTrackMap.get(track.id());
-    MediaTime timelineOffset = audioTrack->timelineOffset();
-    if (timelineOffset == MediaTime::invalidTime()) {
-        timelineOffset = calculateTimelineOffset(sample, rendererLatency);
-        audioTrack->setTimelineOffset(timelineOffset);
-        LOG(MediaCaptureSamples, "MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSample: timeline offset for track %s set to %s", track.id().utf8().data(), toString(timelineOffset).utf8().data());
-    }
-
-    updateSampleTimes(sample, timelineOffset, "MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSample");
-
-    auto renderer = m_audioRenderers.get(sample.trackID());
-    if (![renderer isReadyForMoreMediaData]) {
-        addSampleToPendingQueue(m_pendingAudioSampleQueue, sample);
-        requestNotificationWhenReadyForAudioData(sample.trackID());
-        return;
-    }
-
-    [renderer enqueueSampleBuffer:sample.platformSample().sample.cmSampleBuffer];
-}
-#endif
-
 void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPrivate& track, MediaSample& sample)
 {
     ASSERT(m_videoTrackMap.contains(track.id()));
@@ -400,100 +330,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForVideoD
     }];
 }
 
-#if USE(RENDER_SYNCHRONIZER)
-void MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForAudioData(AtomicString trackID)
-{
-    if (!m_audioRenderers.contains(trackID))
-        return;
-
-    auto renderer = m_audioRenderers.get(trackID);
-    [renderer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
-        [renderer stopRequestingMediaData];
-
-        auto audioTrack = m_audioTrackMap.get(trackID);
-        while (!m_pendingAudioSampleQueue.isEmpty()) {
-            if (![renderer isReadyForMoreMediaData]) {
-                requestNotificationWhenReadyForAudioData(trackID);
-                return;
-            }
-
-            auto sample = m_pendingAudioSampleQueue.takeFirst();
-            enqueueAudioSample(audioTrack->streamTrack(), sample.get());
-        }
-    }];
-}
-
-void MediaPlayerPrivateMediaStreamAVFObjC::createAudioRenderer(AtomicString trackID)
-{
-    ASSERT(!m_audioRenderers.contains(trackID));
-    auto renderer = adoptNS([allocAVSampleBufferAudioRendererInstance() init]);
-    [renderer setAudioTimePitchAlgorithm:(m_player->preservesPitch() ? AVAudioTimePitchAlgorithmSpectral : AVAudioTimePitchAlgorithmVarispeed)];
-    m_audioRenderers.set(trackID, renderer);
-    [m_synchronizer addRenderer:renderer.get()];
-    [m_statusChangeListener beginObservingRenderer:renderer.get()];
-    if (m_audioRenderers.size() == 1)
-        renderingModeChanged();
-}
-
-void MediaPlayerPrivateMediaStreamAVFObjC::destroyAudioRenderer(AVSampleBufferAudioRenderer* renderer)
-{
-    [m_statusChangeListener stopObservingRenderer:renderer];
-    [renderer flush];
-    [renderer stopRequestingMediaData];
-
-    CMTime now = CMTimebaseGetTime([m_synchronizer timebase]);
-    [m_synchronizer removeRenderer:renderer atTime:now withCompletionHandler:^(BOOL) { }];
-}
-
-void MediaPlayerPrivateMediaStreamAVFObjC::destroyAudioRenderer(AtomicString trackID)
-{
-    if (!m_audioRenderers.contains(trackID))
-        return;
-
-    destroyAudioRenderer(m_audioRenderers.get(trackID).get());
-    m_audioRenderers.remove(trackID);
-    if (!m_audioRenderers.size())
-        renderingModeChanged();
-}
-
-void MediaPlayerPrivateMediaStreamAVFObjC::destroyAudioRenderers()
-{
-    m_pendingAudioSampleQueue.clear();
-    for (auto& renderer : m_audioRenderers.values())
-        destroyAudioRenderer(renderer.get());
-    m_audioRenderers.clear();
-}
-
 AudioSourceProvider* MediaPlayerPrivateMediaStreamAVFObjC::audioSourceProvider()
 {
     // FIXME: This should return a mix of all audio tracks - https://bugs.webkit.org/show_bug.cgi?id=160305
-    for (const auto& track : m_audioTrackMap.values()) {
-        if (track->streamTrack().ended() || !track->streamTrack().enabled() || track->streamTrack().muted())
-            continue;
-
-        return track->streamTrack().audioSourceProvider();
-    }
     return nullptr;
-}
-#endif
-
-void MediaPlayerPrivateMediaStreamAVFObjC::rendererStatusDidChange(AVSampleBufferAudioRenderer* renderer, NSNumber* status)
-{
-#if USE(RENDER_SYNCHRONIZER)
-    String trackID;
-    for (auto& pair : m_audioRenderers) {
-        if (pair.value == renderer) {
-            trackID = pair.key;
-            break;
-        }
-    }
-    ASSERT(!trackID.isEmpty());
-    if (status.integerValue == AVQueuedSampleBufferRenderingStatusRendering)
-        m_audioTrackMap.get(trackID)->setTimelineOffset(MediaTime::invalidTime());
-#else
-    UNUSED_PARAM(renderer);
-    UNUSED_PARAM(status);
-#endif
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::layerStatusDidChange(AVSampleBufferDisplayLayer* layer, NSNumber* status)
@@ -513,11 +353,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::flushRenderers()
 {
     if (m_sampleBufferDisplayLayer)
         [m_sampleBufferDisplayLayer flush];
-
-#if USE(RENDER_SYNCHRONIZER)
-    for (auto& renderer : m_audioRenderers.values())
-        [renderer flush];
-#endif
 }
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::shouldEnqueueVideoSampleBuffer() const
@@ -549,10 +384,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayer()
     m_sampleBufferDisplayLayer.get().backgroundColor = cachedCGColor(Color::black);
     [m_statusChangeListener beginObservingLayer:m_sampleBufferDisplayLayer.get()];
 
-#if USE(RENDER_SYNCHRONIZER)
-    [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
-#endif
-
     renderingModeChanged();
     
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
@@ -570,13 +401,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayer()
         [m_statusChangeListener stopObservingLayer:m_sampleBufferDisplayLayer.get()];
         [m_sampleBufferDisplayLayer stopRequestingMediaData];
         [m_sampleBufferDisplayLayer flush];
-#if USE(RENDER_SYNCHRONIZER)
-        CMTime currentTime = CMTimebaseGetTime([m_synchronizer timebase]);
-        [m_synchronizer removeRenderer:m_sampleBufferDisplayLayer.get() atTime:currentTime withCompletionHandler:^(BOOL) {
-            // No-op.
-        }];
-        m_sampleBufferDisplayLayer = nullptr;
-#endif
     }
 
     renderingModeChanged();
@@ -700,13 +524,11 @@ void MediaPlayerPrivateMediaStreamAVFObjC::play()
         return;
 
     m_playing = true;
-#if USE(RENDER_SYNCHRONIZER)
-    if (!m_synchronizer.get().rate)
-        [m_synchronizer setRate:1 ]; // streamtime
-#else
     if (!m_clock->isRunning())
         m_clock->start();
-#endif
+
+    for (const auto& track : m_audioTrackMap.values())
+        track->play();
 
     m_haveEverPlayed = true;
     scheduleDeferredTask([this] {
@@ -724,6 +546,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::pause()
 
     m_pausedTime = currentMediaTime();
     m_playing = false;
+
+    for (const auto& track : m_audioTrackMap.values())
+        track->pause();
 
     updateDisplayMode();
     updatePausedImage();
@@ -743,11 +568,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVolume(float volume)
         return;
 
     m_volume = volume;
-
-#if USE(RENDER_SYNCHRONIZER)
-    for (auto& renderer : m_audioRenderers.values())
-        [renderer setVolume:volume];
-#endif
+    for (const auto& track : m_audioTrackMap.values())
+        track->setVolume(m_volume);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setMuted(bool muted)
@@ -758,11 +580,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setMuted(bool muted)
         return;
 
     m_muted = muted;
-    
-#if USE(RENDER_SYNCHRONIZER)
-    for (auto& renderer : m_audioRenderers.values())
-        [renderer setMuted:muted];
-#endif
 }
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::hasVideo() const
@@ -796,11 +613,7 @@ MediaTime MediaPlayerPrivateMediaStreamAVFObjC::currentMediaTime() const
 
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::streamTime() const
 {
-#if USE(RENDER_SYNCHRONIZER)
-    return toMediaTime(CMTimebaseGetTime([m_synchronizer timebase]));
-#else
     return MediaTime::createWithDouble(m_clock->currentTime());
-#endif
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivateMediaStreamAVFObjC::networkState() const
@@ -925,19 +738,11 @@ void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferUpdated(MediaStreamTrackP
     if (!m_playing || streamTime().toDouble() < 0)
         return;
 
-#if USE(RENDER_SYNCHRONIZER)
-    if (!CMTimebaseGetEffectiveRate([m_synchronizer timebase]))
-        return;
-#endif
-
     switch (track.type()) {
     case RealtimeMediaSource::None:
         // Do nothing.
         break;
     case RealtimeMediaSource::Audio:
-#if USE(RENDER_SYNCHRONIZER)
-        enqueueAudioSample(track, mediaSample);
-#endif
         break;
     case RealtimeMediaSource::Video:
         if (&track == m_activeVideoTrack.get())
@@ -1037,36 +842,23 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
 {
     MediaStreamTrackPrivateVector currentTracks = m_mediaStreamPrivate->tracks();
 
-    Function<void(RefPtr<AudioTrackPrivateMediaStream>, int, TrackState)>  setAudioTrackState = [this](auto track, int index, TrackState state)
+    Function<void(RefPtr<AudioTrackPrivateMediaStreamCocoa>, int, TrackState)>  setAudioTrackState = [this](auto track, int index, TrackState state)
     {
         switch (state) {
         case TrackState::Remove:
-            track->streamTrack().removeObserver(*this);
             m_player->removeAudioTrack(*track);
-#if USE(RENDER_SYNCHRONIZER)
-            destroyAudioRenderer(track->id());
-#endif
             break;
         case TrackState::Add:
-            track->streamTrack().addObserver(*this);
             m_player->addAudioTrack(*track);
-#if USE(RENDER_SYNCHRONIZER)
-            createAudioRenderer(track->id());
-#endif
             break;
         case TrackState::Configure:
             track->setTrackIndex(index);
             bool enabled = track->streamTrack().enabled() && !track->streamTrack().muted();
             track->setEnabled(enabled);
-#if USE(RENDER_SYNCHRONIZER)
-            auto renderer = m_audioRenderers.get(track->id());
-            ASSERT(renderer);
-            renderer.get().muted = !enabled;
-#endif
             break;
         }
     };
-    updateTracksOfType(m_audioTrackMap, RealtimeMediaSource::Audio, currentTracks, &AudioTrackPrivateMediaStream::create, setAudioTrackState);
+    updateTracksOfType(m_audioTrackMap, RealtimeMediaSource::Audio, currentTracks, &AudioTrackPrivateMediaStreamCocoa::create, setAudioTrackState);
 
     Function<void(RefPtr<VideoTrackPrivateMediaStream>, int, TrackState)> setVideoTrackState = [&](auto track, int index, TrackState state)
     {
