@@ -1,5 +1,19 @@
 2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211659. rdar://problem/28725791
+
+    2017-02-03  Jer Noble  <jer.noble@apple.com>
+
+            ASSERT in HTMLMediaElement::~HTMLMediaElement
+            https://bugs.webkit.org/show_bug.cgi?id=167818
+
+            Reviewed by Brent Fulgham.
+
+            * media/audio-dealloc-crash-expected.txt: Added.
+            * media/audio-dealloc-crash.html: Added.
+
+2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211446. rdar://problem/30273885
 
     2017-01-31  Anders Carlsson  <andersca@apple.com>

@@ -573,6 +573,8 @@ HTMLMediaElement::~HTMLMediaElement()
         m_player->invalidate();
         m_player = nullptr;
     }
+
+    m_mediaSession = nullptr;
     updatePlaybackControlsManager();
 }
 
