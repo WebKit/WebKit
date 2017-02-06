@@ -15,7 +15,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-exceptions.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-on-new-window.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/frame.html

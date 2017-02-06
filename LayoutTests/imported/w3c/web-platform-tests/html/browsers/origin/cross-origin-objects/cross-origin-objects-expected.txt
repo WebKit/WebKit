@@ -1,25 +1,46 @@
-CONSOLE MESSAGE: line 1380: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 1380: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 397: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 397: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
 
 PASS Basic sanity-checking 
+PASS Basic sanity-checking (exception type) 
 PASS Only whitelisted properties are accessible cross-origin 
+PASS Only whitelisted properties are accessible cross-origin (exception type) 
 PASS [[GetPrototypeOf]] should return null 
+PASS [[GetPrototypeOf]] should return null (exception type) 
 PASS [[SetPrototypeOf]] should throw 
+PASS [[SetPrototypeOf]] should throw (exception type) 
 PASS [[IsExtensible]] should return true for cross-origin objects 
+PASS [[IsExtensible]] should return true for cross-origin objects (exception type) 
 PASS [[PreventExtensions]] should throw for cross-origin objects 
+FAIL [[PreventExtensions]] should throw for cross-origin objects (exception type) assert_throws: preventExtensions on cross-origin Location should throw function "function () { Object.preventExtensions(C.location) }" threw object "SecurityError (DOM Exception 18): Blocked a frame with or..." ("SecurityError") expected object "TypeError" ("TypeError")
 PASS [[GetOwnProperty]] - Properties on cross-origin objects should be reported |own| 
+PASS [[GetOwnProperty]] - Properties on cross-origin objects should be reported |own| (exception type) 
 FAIL [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly assert_equals: property descriptor for 0 should be configurable expected true but got false
+FAIL [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly (exception type) assert_unreached: Main test failed Reached unreachable code
 PASS [[Delete]] Should throw on cross-origin objects 
+PASS [[Delete]] Should throw on cross-origin objects (exception type) 
 PASS [[DefineOwnProperty]] Should throw for cross-origin objects 
+PASS [[DefineOwnProperty]] Should throw for cross-origin objects (exception type) 
 PASS [[Enumerate]] should return an empty iterator 
+PASS [[Enumerate]] should return an empty iterator (exception type) 
 FAIL [[OwnPropertyKeys]] should return all properties from cross-origin objects assert_array_equals: Object.getOwnPropertyNames() gives the right answer for cross-origin Window lengths differ, expected 15 got 13
+FAIL [[OwnPropertyKeys]] should return all properties from cross-origin objects (exception type) assert_unreached: Main test failed Reached unreachable code
 FAIL [[OwnPropertyKeys]] should return the right symbol-named properties for cross-origin objects assert_array_equals: Object.getOwnPropertySymbols() should return the three symbol-named properties that are exposed on a cross-origin Window lengths differ, expected 3 got 0
+FAIL [[OwnPropertyKeys]] should return the right symbol-named properties for cross-origin objects (exception type) assert_unreached: Main test failed Reached unreachable code
 FAIL [[OwnPropertyKeys]] should place the symbols after the property names after the subframe indices assert_array_equals: Reflect.ownKeys should start with the indices exposed on the cross-origin window. property 0, expected "0" but got "blur"
+FAIL [[OwnPropertyKeys]] should place the symbols after the property names after the subframe indices (exception type) assert_unreached: Main test failed Reached unreachable code
 PASS A and B jointly observe the same identity for cross-origin Window and Location 
+PASS A and B jointly observe the same identity for cross-origin Window and Location (exception type) 
 PASS Cross-origin functions get local Function.prototype 
+PASS Cross-origin functions get local Function.prototype (exception type) 
 PASS Cross-origin Window accessors get local Function.prototype 
+PASS Cross-origin Window accessors get local Function.prototype (exception type) 
 PASS Same-origin observers get different functions for cross-origin objects 
+PASS Same-origin observers get different functions for cross-origin objects (exception type) 
 PASS Same-origin observers get different accessors for cross-origin Window 
+PASS Same-origin observers get different accessors for cross-origin Window (exception type) 
 PASS Same-origin observers get different accessors for cross-origin Location 
+PASS Same-origin observers get different accessors for cross-origin Location (exception type) 
 PASS {}.toString.call() does the right thing on cross-origin objects 
+PASS {}.toString.call() does the right thing on cross-origin objects (exception type) 
  

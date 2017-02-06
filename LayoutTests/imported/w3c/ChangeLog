@@ -1,3 +1,19 @@
+2017-02-06  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync html/browsers/origin/cross-origin-objects tests
+        https://bugs.webkit.org/show_bug.cgi?id=167881
+
+        Reviewed by Youenn Fablet.
+
+        Re-sync html/browsers/origin/cross-origin-objects tests from upstream a052787d.
+
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-exceptions-expected.txt: Removed.
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-exceptions.html: Removed.
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/frame.html:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/w3c-import.log:
+
 2017-02-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Import web-platform-tests/hr-time tests
