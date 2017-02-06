@@ -1,3 +1,11 @@
+2017-02-06  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WinCairo build after r211681
+        https://bugs.webkit.org/show_bug.cgi?id=167096
+
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.cpp:
+        Include some necessary GLES headers.
+
 2017-02-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Data interaction fails in Safari splitscreen mode when dropping into a contenteditable

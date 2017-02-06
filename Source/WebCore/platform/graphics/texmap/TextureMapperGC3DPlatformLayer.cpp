@@ -22,6 +22,11 @@
 
 #if USE(TEXTURE_MAPPER) && !PLATFORM(EFL)
 
+#if USE(OPENGL_ES_2)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#endif
+
 #include "BitmapTextureGL.h"
 #include "GLContext.h"
 #include "TextureMapperPlatformLayerBuffer.h"
