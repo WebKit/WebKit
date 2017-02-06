@@ -1,3 +1,20 @@
+2017-02-02  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211302. rdar://problem/23601055
+
+    2017-01-27  Jer Noble  <jer.noble@apple.com>
+
+            media/track/track-in-band-style.html is flaky
+            https://bugs.webkit.org/show_bug.cgi?id=167516
+
+            Reviewed by Eric Carlson.
+
+            Update the test to use 'cuechange' rather than a 200ms timer.
+
+            * media/track/track-in-band-style-expected.txt:
+            * media/track/track-in-band-style.html:
+            * platform/mac/TestExpectations:
+
 2017-01-31  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r211387. rdar://problem/29500273

@@ -34,8 +34,11 @@
                 function tracksChanged()
                 {
                     run("video.play()");
-                    setTimeout(function() { video.pause(); video.currentTime = 0.3; }, 1000);
-                    waitForEvent('seeked', function() { setTimeout(testCues, 200) });
+                    setTimeout(function() {
+                        video.pause();
+                        video.currentTime = 0.3;
+                        waitForEventOn(inbandTrack1, 'cuechange', testCues);
+                    }, 1000);
                 }
     
                 function canplaythrough()

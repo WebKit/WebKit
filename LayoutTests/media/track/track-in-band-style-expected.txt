@@ -10,7 +10,7 @@ EXPECTED (inbandTrack1.kind == 'captions') OK
 RUN(inbandTrack1.mode = 'showing')
 EVENT(change)
 RUN(video.play())
-EVENT(seeked)
+EVENT(cuechange)
 
 ** Test current cue colors
 EXPECTED (getComputedStyle(cueDisplayElement).color == 'rgb(255, 255, 255)') OK
