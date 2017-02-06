@@ -1,3 +1,14 @@
+2017-02-06  Yoav Weiss  <yoav@yoav.ws>
+
+        http/tests/preload/dynamic_removing_preload.html fails to test what it should
+        https://bugs.webkit.org/show_bug.cgi?id=167792
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations: Unskip dynamic_removing_preload.html
+        * http/tests/preload/dynamic_removing_preload-expected.txt:
+        * http/tests/preload/dynamic_removing_preload.html: Switch test to use ResourceTiming.
+
 2017-02-06  Alex Christensen  <achristensen@webkit.org>
 
         credentials should be partitioned by main document domain

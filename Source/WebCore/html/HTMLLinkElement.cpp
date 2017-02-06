@@ -320,6 +320,8 @@ void HTMLLinkElement::removedFrom(ContainerNode& insertionPoint)
     if (!insertionPoint.isConnected() || isConnected())
         return;
 
+    m_linkLoader.cancelLoad();
+
     if (m_sheet)
         clearSheet();
 

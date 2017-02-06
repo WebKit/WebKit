@@ -61,8 +61,10 @@ protected:
 
     void clearResource(CachedResourceClient& client)
     {
-        if (m_resource)
+        if (m_resource) {
+            m_resource->cancelLoad();
             m_resource->removeClient(client);
+        }
         m_resource = nullptr;
     }
 

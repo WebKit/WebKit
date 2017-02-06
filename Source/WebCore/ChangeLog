@@ -1,3 +1,24 @@
+2017-02-06  Yoav Weiss  <yoav@yoav.ws>
+
+        http/tests/preload/dynamic_removing_preload.html fails to test what it should
+        https://bugs.webkit.org/show_bug.cgi?id=167792
+
+        Reviewed by Ryosuke Niwa.
+
+        Cancel the link preload resource load when the link element is removed from the DOM.
+
+        No new tests, but unskipping an existing test: http/tests/preload/dynamic_removing_preload.html
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::removedFrom): Call m_linkLoader.cancelLoad().
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::cancelLoad): Clear m_preloadResourceClient.
+        * loader/LinkLoader.h:
+        * loader/LinkPreloadResourceClients.h:
+        (WebCore::LinkPreloadResourceClient::clearResource): Call m_resource->cancelLoad().
+        * loader/SubresourceLoader.cpp:
+        (WebCore::LinkPreloadResourceClient::didFinishLoading): Change ASSERT to exempt cancelled loads.
+
 2017-02-06  Alex Christensen  <achristensen@webkit.org>
 
         More build fixes after r211751

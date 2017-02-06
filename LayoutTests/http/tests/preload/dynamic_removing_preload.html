@@ -1,18 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script>
+    if (window.internals)
+        window.internals.settings.setResourceTimingEnabled(true);
+</script>
 <script src="/js-test-resources/js-test.js"></script>
 <body>
 <script>
     var link = document.createElement("link");
     link.as = "script";
     link.rel = "preload";
-    link.href = "../resources/dummy.js";
+    link.href = "../resources/slow-script.pl?delay=100";
     document.body.appendChild(link);
     document.body.removeChild(link);
+    var downloadedScript = false;
     window.addEventListener("load", function() {
-        shouldBeFalse("internals.isPreloaded('../resources/dummy.js');");
+        var entries = performance.getEntriesByType("resource");
+        for (var i = 0; i < entries.length; ++i) {
+            if (entries[i].name.indexOf("slow-script.pl?delay=100") != -1)
+                downloadedScript = true;
+        }
+        shouldBeFalse("downloadedScript");
     });
 </script>
-<script src="../resources/slow-script.pl?delay=200"></script>
+<script src="../resources/slow-script.pl?delay=300"></script>
 </body>

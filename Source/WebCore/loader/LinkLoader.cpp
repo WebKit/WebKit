@@ -190,6 +190,12 @@ std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const Lin
     return nullptr;
 }
 
+void LinkLoader::cancelLoad()
+{
+    if (m_preloadResourceClient)
+        m_preloadResourceClient->clear();
+}
+
 bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href, const String& as, const String& crossOrigin, Document& document)
 {
     if (relAttribute.isDNSPrefetch) {

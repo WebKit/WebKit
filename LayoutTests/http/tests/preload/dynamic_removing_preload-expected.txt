@@ -1,4 +1,4 @@
-PASS internals.isPreloaded('../resources/dummy.js'); is false
+PASS downloadedScript is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

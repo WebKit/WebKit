@@ -57,6 +57,7 @@ public:
 
     WeakPtr<LinkLoader> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
     void triggerEvents(const CachedResource&);
+    void cancelLoad();
 
 private:
     void notifyFinished(CachedResource&) override;
