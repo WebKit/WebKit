@@ -1,3 +1,16 @@
+2017-02-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r211722.
+
+        This change introduced a LayoutTest failure on mac-wk2.
+
+        Reverted changeset:
+
+        "[Modern Media Controls] Improve handling of <video> with only
+        audio tracks"
+        https://bugs.webkit.org/show_bug.cgi?id=167836
+        http://trac.webkit.org/changeset/211722
+
 2017-02-06  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Add a backdrop filter to the start button on macOS

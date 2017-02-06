@@ -13,10 +13,13 @@ const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "op
 const media = document.querySelector("video");
 const mediaController = createControls(shadowRoot, media, null);
 
+debug("Media has not begun loading yet");
+shouldBeFalse("mediaController.controls.controlsBar.visible");
+shouldBeFalse("mediaController.controls.startButton.visible");
+
 media.addEventListener("loadedmetadata", function() {
     debug("");
     debug("Media has loaded metadata");
-    shouldBe("media.videoTracks.length", "1");
     shouldBeTrue("mediaController.controls.controlsBar.visible");
     shouldBeTrue("mediaController.controls.startButton.visible");
     debug("");
