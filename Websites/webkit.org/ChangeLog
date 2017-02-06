@@ -1,3 +1,15 @@
+2017-02-06  Jon Davis  <jond@apple.com>
+
+        Add a survey to learn how people use WebKit Nightly builds
+        https://bugs.webkit.org/show_bug.cgi?id=167748
+
+        Reviewed by Joseph Pecoraro.
+
+        * wp-content/themes/webkit/functions.php:
+        * wp-content/themes/webkit/nightly-start.php:
+        * wp-content/themes/webkit/nightly-survey.php: Added.
+        * wp-content/themes/webkit/survey.json: Added.
+
 2017-01-28  Yoav Weiss  <yoav@yoav.ws>
 
         Add Link Preload as an off-by-default experimental feature menu item.

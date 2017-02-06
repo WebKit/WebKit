@@ -9,6 +9,11 @@ add_action( 'init', function () {
     register_nav_menu('sitemap', __( 'Site Map Page' ));
 } );
 
+add_action( 'wp_dashboard_setup', function () {
+    $SurveyWidget = new WebKit_Nightly_Survey();
+    $SurveyWidget->add_widget();
+});
+
 function modify_contact_methods($profile_fields) {
 
     // Add new fields
@@ -23,7 +28,7 @@ function modify_contact_methods($profile_fields) {
 function get_nightly_build ($type = 'builds') {
     if (!class_exists('SyncWebKitNightlyBuilds'))
         return false;
-    
+
     $WebKitBuilds = SyncWebKitNightlyBuilds::object();
     $build = $WebKitBuilds->latest($type);
     return $build;
@@ -36,7 +41,7 @@ function get_nightly_source () {
 function get_nightly_archives ($limit) {
     if (!class_exists('SyncWebKitNightlyBuilds'))
         return array();
-    
+
     $WebKitBuilds = SyncWebKitNightlyBuilds::object();
     $builds = $WebKitBuilds->records('builds', $limit);
     return (array)$builds;
@@ -147,7 +152,7 @@ add_action('the_post', function($post) {
     // Transform Markdown
     $Markdown = WPCom_Markdown::get_instance();
     $foreword = wp_unslash( $Markdown->transform($foreword) );
-    
+
     $post->post_content = '<div class="foreword">' . $foreword . '</div>' . $content;
     $pages = array($post->post_content);
 });
@@ -421,6 +426,145 @@ class Front_Page_Posts {
 
     public static function WP_Query() {
         return self::$wp_query;
+    }
+
+}
+
+class WebKit_Nightly_Survey {
+
+    const COOKIE_PREFIX = 'webkitnightlysurvey_';
+    const DATA_SETTING_NAME = 'webkit_nightly_survey_data';
+    const SURVEY_FILENAME = 'survey.json';
+
+    public function add_widget() {
+
+        wp_add_dashboard_widget(
+            'webkit_nightly_survey_results', // Widget slug
+            'WebKit Nightly Survey Results', // Title
+            array($this, 'display_widget')   // Display function
+        );
+
+        if (isset($_GET['wksurvey']) && $_GET['wksurvey'] == 'download')
+            $this->download() && exit;
+
+    }
+
+    public function display_widget() {
+        $data = get_option(self::DATA_SETTING_NAME);
+        $styles = "
+            <style>
+            .survey_table .question {
+                text-align: left;
+            }
+            .survey_table .score {
+                font-size: 15px;
+                min-width: 30px;
+                text-align: right;
+                vertical-align: top;
+                padding-right: 10px;
+            }
+            .survey_table .others {
+                font-style: italic;
+            }
+            </style>
+        ";
+
+        $response_limit = 10;
+        $table = '';
+        foreach ($data as $question => $responses) {
+            $question_row = '<tr><th colspan="2" class="question">' . $question . '</th></tr>';
+            $response_rows = '';
+            arsort($responses);
+            $response_count = 0;
+            $total_responses = count($responses);
+            foreach ($responses as $response => $votes) {
+                $response_rows .= '<tr><td class="score">' . intval($votes) . '</td><td class="response">' . stripslashes($response) . '</td></tr>';
+                if ( ++$response_count >= $response_limit && $response_count < $total_responses) {
+                    $response_rows .= '<tr><td class="score others">' . intval($total_responses - $response_limit) . '</td><td class="response others">more "other" responses</td></tr>';
+                    break;
+                }
+            }
+            $table .= $question_row . $response_rows;
+        }
+        echo $styles;
+        echo '<table class="survey_table">' . $table . '</table>';
+        echo '<p class="textright"><a class="button button-primary" href="' . add_query_arg('wksurvey','download',admin_url()) . '">Download Results as CSV</a></p>';
+    }
+
+    private function download() {
+        $data = get_option(self::DATA_SETTING_NAME);
+        $table = '';
+
+        header('Content-type: text/csv; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="webkit_nightly_survey.csv"');
+        header('Content-Description: Delivered by webkit.org');
+        header('Cache-Control: maxage=1');
+        header('Pragma: public');
+
+        foreach ($data as $question => $responses) {
+            $question_row = 'Score,' . $question . "\n";
+            $response_rows = '';
+            arsort($responses);
+            foreach ($responses as $response => $votes) {
+                $response_rows .= intval($votes) . ',' . stripslashes($response) . "\n";
+            }
+            $table .= $question_row . $response_rows . "\n";
+        }
+        echo $table;
+
+        exit;
+    }
+
+    public function process() {
+        if ( empty($_POST) ) return;
+
+        if ( ! wp_verify_nonce($_POST['_nonce'], self::SURVEY_FILENAME) )
+            wp_die('Invalid WebKit Nightly Survey submission.');
+
+        $score = $data = get_option(self::DATA_SETTING_NAME);
+        $Survey = self::survey();
+        foreach ($Survey as $id => $SurveyQuestion) {
+            if ( ! isset($score[ $SurveyQuestion->question ]) )
+                $score[ $SurveyQuestion->question ] = array();
+            $response = $_POST['questions'][ $id ];
+            $answer = empty($SurveyQuestion->responses[ $response ]) ? $response : $SurveyQuestion->responses[ $response ];
+            if ($answer == 'Other:')
+                $answer = $_POST['other'][ $id ];
+            $score[ $SurveyQuestion->question ][ $answer ]++;
+        }
+
+        if ($data === false) {
+            $deprecated = null;
+            $autoload = 'no';
+            add_option($option, $score, $deprecated, $autoload);
+        } else update_option($option, $score);
+
+        $httponly = false;
+        $secure = false;
+        setcookie(self::cookie_name(), 1, time() + YEAR_IN_SECONDS, '/', WP_HOST, $secure, $httponly );
+        $_COOKIE[ self::cookie_name() ] = 1;
+    }
+
+    public static function responded() {
+        return isset($_COOKIE[ self::cookie_name() ]);
+    }
+
+    private static function cookie_name() {
+        return self::COOKIE_PREFIX . COOKIEHASH;
+    }
+
+    public static function survey_file() {
+        return dirname(__FILE__) . '/' . self::SURVEY_FILENAME;
+    }
+
+    public static function form_nonce() {
+        return '<input type="hidden" name="_nonce" value="' . wp_create_nonce( self::SURVEY_FILENAME ) . '">';
+    }
+
+    public static function survey () {
+        $survey_json = file_get_contents(self::survey_file());
+        $Decoded = json_decode($survey_json);
+        return isset($Decoded->survey) ? $Decoded->survey : array();
     }
 
 }

@@ -89,13 +89,14 @@ header {
     width: calc(33.33% - 10px);
     border-radius: 0.3rem;
     padding: 1rem;
-    transition: opacity 300ms linear, background-color 500ms ease; /* ease-out-exponential */
+    transition: opacity 300ms linear, background-color 500ms ease, transform 300ms ease; /* ease-out-exponential */
     opacity: 0.5;
 }
 
 #nightly ul li:hover {
     background: rgba(255, 255, 255, 0.1);
     opacity: 1;
+    transform: scale(1.05);
 }
 
 #nightly ul li .icon {
@@ -136,6 +137,46 @@ header {
     list-style: none;
     padding-left: 0;
 }
+
+#nightly h3 {
+    position: relative;
+    width: 100%;
+    background-color: #202020;
+    color: #ffffff;
+    border-radius: 0.3rem;
+    padding: 3rem;
+    font-weight: 500;
+    font-size: 3rem;
+    text-align: left;
+    box-sizing: border-box;
+    transition: opacity 300ms ease, transform 300ms ease;
+}
+
+#nightly h3:hover {
+    transform: scale(1.05);
+}
+
+#nightly h3 .icon {
+    width: 7rem;
+    margin: 0rem 2rem;
+    display: block;
+    float: left;
+}
+
+#nightly h3 > a {
+    text-decoration: none;
+    display: block;
+    position: absolute;
+    font-size: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 0;
+    z-index: 1;
+}
+
+<?php if (WebKit_Nightly_Survey::responded()): ?>#nightly h3 { display: none; }<?php endif; ?>
 
 #icons-sprite {
     display: none;
