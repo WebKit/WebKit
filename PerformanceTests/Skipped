@@ -96,7 +96,7 @@ Dromaeo/jslib-modify-prototype.html
 # Still under development so skip it for now.
 MotionMark
 JSBench
-ES6SampleBench
+ARES-6
 
 # Used for iOS testing
 Animation/css-animation.html
