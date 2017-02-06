@@ -1,5 +1,16 @@
 2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211630. rdar://problem/30318237
+
+    2017-02-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+            [cmake] Unreviewed AArch64 buildfix after r211603.
+            https://bugs.webkit.org/show_bug.cgi?id=167714
+
+            * CMakeLists.txt:
+
+2017-02-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211658. rdar://problem/29144126
 
     2017-02-03  JF Bastien  <jfbastien@apple.com>
