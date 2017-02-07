@@ -1,5 +1,12 @@
 2017-02-07  Sam Weinig  <sam@webkit.org>
 
+        Update bindings tests results for additional include.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+
+2017-02-07  Sam Weinig  <sam@webkit.org>
+
         Try to fix the windows build.
 
         * bindings/js/JSDOMConvertNumbers.h:

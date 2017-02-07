@@ -30,6 +30,7 @@
 #include "JSDOMBindingCaller.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMConvertVariadic.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMIterator.h"
 #include "JSDOMPromise.h"
