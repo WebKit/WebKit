@@ -28,6 +28,7 @@
 #include "config.h"
 
 #if ENABLE(INDEXED_DATABASE)
+
 #include "IDBBindingUtilities.h"
 
 #include "IDBIndexInfo.h"
@@ -151,8 +152,11 @@ static RefPtr<IDBKey> createIDBKeyFromValue(ExecState& exec, JSValue value, Vect
     if (value.isString())
         return IDBKey::createString(asString(value)->value(&exec));
 
-    if (value.inherits(vm, DateInstance::info()) && !std::isnan(valueToDate(&exec, value)))
-        return IDBKey::createDate(valueToDate(&exec, value));
+    if (value.inherits(vm, DateInstance::info())) {
+        auto dateValue = valueToDate(exec, value);
+        if (!std::isnan(dateValue))
+            return IDBKey::createDate(dateValue);
+    }
 
     if (value.isObject()) {
         JSObject* object = asObject(value);
@@ -413,19 +417,6 @@ void generateIndexKeyForValue(ExecState& exec, const IDBIndexInfo& info, JSValue
         return;
 
     outKey = IndexKey(WTFMove(keyDatas));
-}
-
-JSValue toJS(ExecState& state, JSDOMGlobalObject& globalObject, const std::optional<IDBKeyPath>& keyPath)
-{
-    if (!keyPath)
-        return jsNull();
-
-    auto visitor = WTF::makeVisitor([&](const String& string) -> JSValue {
-        return toJS<IDLDOMString>(state, globalObject, string);
-    }, [&](const Vector<String>& vector) -> JSValue {
-        return toJS<IDLSequence<IDLDOMString>>(state, globalObject, vector);
-    });
-    return WTF::visit(visitor, keyPath.value());
 }
 
 } // namespace WebCore

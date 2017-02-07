@@ -2919,6 +2919,33 @@
 		7C7941E41C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */; };
 		7C7941E51C56C29300A4C58E /* DataDetectorsCoreSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */; };
 		7C83DE861D04CC5D00FEBCF3 /* SpringSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */; };
+		7C8E34AD1E4A33AF0054CE23 /* JSDOMConvertAny.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34921E4A338E0054CE23 /* JSDOMConvertAny.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34AE1E4A33AF0054CE23 /* JSDOMConvertBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34931E4A338E0054CE23 /* JSDOMConvertBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34AF1E4A33AF0054CE23 /* JSDOMConvertBoolean.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34941E4A338E0054CE23 /* JSDOMConvertBoolean.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34B01E4A33AF0054CE23 /* JSDOMConvertBufferSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34951E4A338E0054CE23 /* JSDOMConvertBufferSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34B11E4A33B00054CE23 /* JSDOMConvertCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34961E4A338E0054CE23 /* JSDOMConvertCallbacks.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34B21E4A33B00054CE23 /* JSDOMConvertDate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8E34971E4A338E0054CE23 /* JSDOMConvertDate.cpp */; };
+		7C8E34B31E4A33B00054CE23 /* JSDOMConvertDate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34981E4A338E0054CE23 /* JSDOMConvertDate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34B41E4A33B00054CE23 /* JSDOMConvertDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34991E4A338E0054CE23 /* JSDOMConvertDictionary.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34B51E4A33B00054CE23 /* JSDOMConvertEnumeration.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E349A1E4A338E0054CE23 /* JSDOMConvertEnumeration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34B61E4A33B00054CE23 /* JSDOMConvertEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E349B1E4A338E0054CE23 /* JSDOMConvertEventListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34B71E4A33B00054CE23 /* JSDOMConvertIndexedDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E349C1E4A338E0054CE23 /* JSDOMConvertIndexedDB.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34B81E4A33B00054CE23 /* JSDOMConvertInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E349D1E4A338E0054CE23 /* JSDOMConvertInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34B91E4A33B00054CE23 /* JSDOMConvertJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E349E1E4A338E0054CE23 /* JSDOMConvertJSON.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34BA1E4A33B00054CE23 /* JSDOMConvertNull.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E349F1E4A338E0054CE23 /* JSDOMConvertNull.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34BB1E4A33B00054CE23 /* JSDOMConvertNullable.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34A01E4A338E0054CE23 /* JSDOMConvertNullable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34BC1E4A33B00054CE23 /* JSDOMConvertNumbers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8E34A11E4A338E0054CE23 /* JSDOMConvertNumbers.cpp */; };
+		7C8E34BD1E4A33B00054CE23 /* JSDOMConvertNumbers.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34A21E4A338E0054CE23 /* JSDOMConvertNumbers.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34BE1E4A33B00054CE23 /* JSDOMConvertObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34A31E4A338E0054CE23 /* JSDOMConvertObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34BF1E4A33B00054CE23 /* JSDOMConvertRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34A41E4A338E0054CE23 /* JSDOMConvertRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34C01E4A33B00054CE23 /* JSDOMConvertSequences.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34A51E4A338E0054CE23 /* JSDOMConvertSequences.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34C11E4A33B00054CE23 /* JSDOMConvertSerializedScriptValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34A61E4A338E0054CE23 /* JSDOMConvertSerializedScriptValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34C21E4A33B00054CE23 /* JSDOMConvertStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8E34A71E4A338E0054CE23 /* JSDOMConvertStrings.cpp */; };
+		7C8E34C31E4A33B00054CE23 /* JSDOMConvertStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34A81E4A338E0054CE23 /* JSDOMConvertStrings.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34C41E4A33B00054CE23 /* JSDOMConvertUnion.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34A91E4A338E0054CE23 /* JSDOMConvertUnion.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34C51E4A33B00054CE23 /* JSDOMConvertVariadic.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34AA1E4A338E0054CE23 /* JSDOMConvertVariadic.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34C61E4A33B00054CE23 /* JSDOMConvertWebGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34AB1E4A338E0054CE23 /* JSDOMConvertWebGL.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C8E34C71E4A33B00054CE23 /* JSDOMConvertXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8E34AC1E4A338E0054CE23 /* JSDOMConvertXPathNSResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C8F22441DD3C2F600E92DA3 /* SVGAngleValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F22421DD3B3B900E92DA3 /* SVGAngleValue.cpp */; };
 		7C8F22471DD3D1CA00E92DA3 /* SVGPreserveAspectRatioValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8F22451DD3D1C500E92DA3 /* SVGPreserveAspectRatioValue.cpp */; };
 		7C93F3491AA6BA5E00A98BAB /* CompiledContentExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C93F3471AA6BA5E00A98BAB /* CompiledContentExtension.cpp */; };
@@ -10528,6 +10555,33 @@
 		7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsCoreSoftLink.mm; sourceTree = "<group>"; };
 		7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsCoreSoftLink.h; sourceTree = "<group>"; };
 		7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpringSolver.h; sourceTree = "<group>"; };
+		7C8E34921E4A338E0054CE23 /* JSDOMConvertAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertAny.h; sourceTree = "<group>"; };
+		7C8E34931E4A338E0054CE23 /* JSDOMConvertBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertBase.h; sourceTree = "<group>"; };
+		7C8E34941E4A338E0054CE23 /* JSDOMConvertBoolean.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertBoolean.h; sourceTree = "<group>"; };
+		7C8E34951E4A338E0054CE23 /* JSDOMConvertBufferSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertBufferSource.h; sourceTree = "<group>"; };
+		7C8E34961E4A338E0054CE23 /* JSDOMConvertCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertCallbacks.h; sourceTree = "<group>"; };
+		7C8E34971E4A338E0054CE23 /* JSDOMConvertDate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConvertDate.cpp; sourceTree = "<group>"; };
+		7C8E34981E4A338E0054CE23 /* JSDOMConvertDate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertDate.h; sourceTree = "<group>"; };
+		7C8E34991E4A338E0054CE23 /* JSDOMConvertDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertDictionary.h; sourceTree = "<group>"; };
+		7C8E349A1E4A338E0054CE23 /* JSDOMConvertEnumeration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertEnumeration.h; sourceTree = "<group>"; };
+		7C8E349B1E4A338E0054CE23 /* JSDOMConvertEventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertEventListener.h; sourceTree = "<group>"; };
+		7C8E349C1E4A338E0054CE23 /* JSDOMConvertIndexedDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertIndexedDB.h; sourceTree = "<group>"; };
+		7C8E349D1E4A338E0054CE23 /* JSDOMConvertInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertInterface.h; sourceTree = "<group>"; };
+		7C8E349E1E4A338E0054CE23 /* JSDOMConvertJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertJSON.h; sourceTree = "<group>"; };
+		7C8E349F1E4A338E0054CE23 /* JSDOMConvertNull.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertNull.h; sourceTree = "<group>"; };
+		7C8E34A01E4A338E0054CE23 /* JSDOMConvertNullable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertNullable.h; sourceTree = "<group>"; };
+		7C8E34A11E4A338E0054CE23 /* JSDOMConvertNumbers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConvertNumbers.cpp; sourceTree = "<group>"; };
+		7C8E34A21E4A338E0054CE23 /* JSDOMConvertNumbers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertNumbers.h; sourceTree = "<group>"; };
+		7C8E34A31E4A338E0054CE23 /* JSDOMConvertObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertObject.h; sourceTree = "<group>"; };
+		7C8E34A41E4A338E0054CE23 /* JSDOMConvertRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertRecord.h; sourceTree = "<group>"; };
+		7C8E34A51E4A338E0054CE23 /* JSDOMConvertSequences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertSequences.h; sourceTree = "<group>"; };
+		7C8E34A61E4A338E0054CE23 /* JSDOMConvertSerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertSerializedScriptValue.h; sourceTree = "<group>"; };
+		7C8E34A71E4A338E0054CE23 /* JSDOMConvertStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConvertStrings.cpp; sourceTree = "<group>"; };
+		7C8E34A81E4A338E0054CE23 /* JSDOMConvertStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertStrings.h; sourceTree = "<group>"; };
+		7C8E34A91E4A338E0054CE23 /* JSDOMConvertUnion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertUnion.h; sourceTree = "<group>"; };
+		7C8E34AA1E4A338E0054CE23 /* JSDOMConvertVariadic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertVariadic.h; sourceTree = "<group>"; };
+		7C8E34AB1E4A338E0054CE23 /* JSDOMConvertWebGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertWebGL.h; sourceTree = "<group>"; };
+		7C8E34AC1E4A338E0054CE23 /* JSDOMConvertXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertXPathNSResolver.h; sourceTree = "<group>"; };
 		7C8F22421DD3B3B900E92DA3 /* SVGAngleValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAngleValue.cpp; sourceTree = "<group>"; };
 		7C8F22431DD3B3B900E92DA3 /* SVGAngleValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAngleValue.h; sourceTree = "<group>"; };
 		7C8F22451DD3D1C500E92DA3 /* SVGPreserveAspectRatioValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPreserveAspectRatioValue.cpp; sourceTree = "<group>"; };
@@ -18674,6 +18728,41 @@
 			name = scripts;
 			sourceTree = "<group>";
 		};
+		7C8E34911E4A33730054CE23 /* Conversions */ = {
+			isa = PBXGroup;
+			children = (
+				930841331CDDB15500B0958C /* JSDOMConvert.h */,
+				7C8E34921E4A338E0054CE23 /* JSDOMConvertAny.h */,
+				7C8E34931E4A338E0054CE23 /* JSDOMConvertBase.h */,
+				7C8E34941E4A338E0054CE23 /* JSDOMConvertBoolean.h */,
+				7C8E34951E4A338E0054CE23 /* JSDOMConvertBufferSource.h */,
+				7C8E34961E4A338E0054CE23 /* JSDOMConvertCallbacks.h */,
+				7C8E34971E4A338E0054CE23 /* JSDOMConvertDate.cpp */,
+				7C8E34981E4A338E0054CE23 /* JSDOMConvertDate.h */,
+				7C8E34991E4A338E0054CE23 /* JSDOMConvertDictionary.h */,
+				7C8E349A1E4A338E0054CE23 /* JSDOMConvertEnumeration.h */,
+				7C8E349B1E4A338E0054CE23 /* JSDOMConvertEventListener.h */,
+				7C8E349C1E4A338E0054CE23 /* JSDOMConvertIndexedDB.h */,
+				7C8E349D1E4A338E0054CE23 /* JSDOMConvertInterface.h */,
+				7C8E349E1E4A338E0054CE23 /* JSDOMConvertJSON.h */,
+				7C8E349F1E4A338E0054CE23 /* JSDOMConvertNull.h */,
+				7C8E34A01E4A338E0054CE23 /* JSDOMConvertNullable.h */,
+				7C8E34A11E4A338E0054CE23 /* JSDOMConvertNumbers.cpp */,
+				7C8E34A21E4A338E0054CE23 /* JSDOMConvertNumbers.h */,
+				7C8E34A31E4A338E0054CE23 /* JSDOMConvertObject.h */,
+				7C8E34A41E4A338E0054CE23 /* JSDOMConvertRecord.h */,
+				7C8E34A51E4A338E0054CE23 /* JSDOMConvertSequences.h */,
+				7C8E34A61E4A338E0054CE23 /* JSDOMConvertSerializedScriptValue.h */,
+				7C8E34A71E4A338E0054CE23 /* JSDOMConvertStrings.cpp */,
+				7C8E34A81E4A338E0054CE23 /* JSDOMConvertStrings.h */,
+				7C8E34A91E4A338E0054CE23 /* JSDOMConvertUnion.h */,
+				7C8E34AA1E4A338E0054CE23 /* JSDOMConvertVariadic.h */,
+				7C8E34AB1E4A338E0054CE23 /* JSDOMConvertWebGL.h */,
+				7C8E34AC1E4A338E0054CE23 /* JSDOMConvertXPathNSResolver.h */,
+			);
+			name = Conversions;
+			sourceTree = "<group>";
+		};
 		7E4DE10B198B10810051CB02 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
@@ -22282,6 +22371,7 @@
 			children = (
 				BCCE58A71061E82F008FB35A /* Callback Objects */,
 				BCCE58B41061E925008FB35A /* Constructors */,
+				7C8E34911E4A33730054CE23 /* Conversions */,
 				BC4EDEF70C08F414007EDD49 /* Custom */,
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
 				2DFA488E1DB541C200362B99 /* BufferSource.h */,
@@ -22316,7 +22406,6 @@
 				7C45C9C91E3E8CD700AAB558 /* JSDOMBindingSecurity.h */,
 				7C45C9CD1E3E900B00AAB558 /* JSDOMConstructor.cpp */,
 				413C2C331BC29A7B0075204C /* JSDOMConstructor.h */,
-				930841331CDDB15500B0958C /* JSDOMConvert.h */,
 				7C45C9CC1E3E8F0800AAB558 /* JSDOMExceptionHandling.cpp */,
 				7C45C9C71E3E8AFF00AAB558 /* JSDOMExceptionHandling.h */,
 				E1C36CBC0EB08062007410BC /* JSDOMGlobalObject.cpp */,
@@ -25289,6 +25378,7 @@
 				379E61CA126CA5C400B63E8D /* BaseButtonInputType.h in Headers */,
 				379E61CC126CA5C400B63E8D /* BaseCheckableInputType.h in Headers */,
 				F5E0C65C1643C42C00D6CB69 /* BaseChooserOnlyDateAndTimeInputType.h in Headers */,
+				7C8E34C01E4A33B00054CE23 /* JSDOMConvertSequences.h in Headers */,
 				C33EE5C514FB49610002095A /* BaseClickableWithKeyInputType.h in Headers */,
 				F59C96001255B23F000623C0 /* BaseDateAndTimeInputType.h in Headers */,
 				F55B3DAE1251F12D003EF269 /* BaseTextInputType.h in Headers */,
@@ -25534,6 +25624,7 @@
 				E19AC3F51824DC7900349426 /* CryptoAlgorithmSHA512.h in Headers */,
 				E157A8E518173A3A009F821D /* CryptoKey.h in Headers */,
 				E125F84E1824289D00D84CD9 /* CryptoKeyAES.h in Headers */,
+				7C8E34B81E4A33B00054CE23 /* JSDOMConvertInterface.h in Headers */,
 				E125F85E182C2DF600D84CD9 /* CryptoKeyData.h in Headers */,
 				E125F864182C303A00D84CD9 /* CryptoKeyDataOctetSequence.h in Headers */,
 				E1C266DF18319F31003F8B33 /* CryptoKeyDataRSAComponents.h in Headers */,
@@ -25996,6 +26087,7 @@
 				516C62211950D48700337E75 /* GamepadEvent.h in Headers */,
 				51A9D9EA195B931F001B2B5C /* GamepadManager.h in Headers */,
 				515BE1921D54F5FB00DD7C68 /* GamepadProvider.h in Headers */,
+				7C8E34B31E4A33B00054CE23 /* JSDOMConvertDate.h in Headers */,
 				515BE1931D54F5FB00DD7C68 /* GamepadProviderClient.h in Headers */,
 				935C477509AC4D8E00A6AAB4 /* GapRects.h in Headers */,
 				1432E8470C51493800B1500F /* GCController.h in Headers */,
@@ -26345,6 +26437,7 @@
 				B27535740B053814002CE64F /* IntRect.h in Headers */,
 				A2B9217316C5CC420041DCD9 /* IntRectExtent.h in Headers */,
 				E134F5AB12EE343F004EC58D /* IntRectHash.h in Headers */,
+				7C8E34C61E4A33B00054CE23 /* JSDOMConvertWebGL.h in Headers */,
 				B27535750B053814002CE64F /* IntSize.h in Headers */,
 				B27535760B053814002CE64F /* IntSizeHash.h in Headers */,
 				CE12524D1A1A77DE00864480 /* IOPMLibSPI.h in Headers */,
@@ -26561,6 +26654,7 @@
 				76808B50159DADFA002B5233 /* JSHTMLDialogElement.h in Headers */,
 				1A85B1E70A1B240500D8C87C /* JSHTMLDirectoryElement.h in Headers */,
 				1A85B2B70A1B2AC700D8C87C /* JSHTMLDivElement.h in Headers */,
+				7C8E34C71E4A33B00054CE23 /* JSDOMConvertXPathNSResolver.h in Headers */,
 				1A85B1E90A1B240500D8C87C /* JSHTMLDListElement.h in Headers */,
 				1A494E350A12358B00FDAFC1 /* JSHTMLDocument.h in Headers */,
 				1A494BFB0A122F4400FDAFC1 /* JSHTMLElement.h in Headers */,
@@ -26595,6 +26689,7 @@
 				1A85B1EB0A1B240500D8C87C /* JSHTMLOListElement.h in Headers */,
 				A80E7E9B0A1A83E3007FB8C5 /* JSHTMLOptGroupElement.h in Headers */,
 				A80E7E990A1A83E3007FB8C5 /* JSHTMLOptionElement.h in Headers */,
+				7C8E34BD1E4A33B00054CE23 /* JSDOMConvertNumbers.h in Headers */,
 				448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */,
 				4AD0173D127E82860015035F /* JSHTMLOutputElement.h in Headers */,
 				1AE2ABA70A1CE90500B42B25 /* JSHTMLParagraphElement.h in Headers */,
@@ -26737,6 +26832,7 @@
 				B658FFA21522EF3A00DD5595 /* JSRadioNodeList.h in Headers */,
 				65DF320209D1CC60000BE325 /* JSRange.h in Headers */,
 				6C4C96DF1AD4483500363F64 /* JSReadableByteStreamController.h in Headers */,
+				7C8E34B41E4A33B00054CE23 /* JSDOMConvertDictionary.h in Headers */,
 				7C4C96DD1AD4483500365A50 /* JSReadableStream.h in Headers */,
 				6C4C96DF1AD4483500365A50 /* JSReadableStreamDefaultController.h in Headers */,
 				7C4C96DF1AD4483500365A50 /* JSReadableStreamDefaultReader.h in Headers */,
@@ -26895,6 +26991,7 @@
 				B2FA3DD10AB75A6F000E5AC4 /* JSSVGPathSegLinetoHorizontalAbs.h in Headers */,
 				B2FA3DD30AB75A6F000E5AC4 /* JSSVGPathSegLinetoHorizontalRel.h in Headers */,
 				B2FA3DD50AB75A6F000E5AC4 /* JSSVGPathSegLinetoRel.h in Headers */,
+				7C8E34AF1E4A33AF0054CE23 /* JSDOMConvertBoolean.h in Headers */,
 				B2FA3DD70AB75A6F000E5AC4 /* JSSVGPathSegLinetoVerticalAbs.h in Headers */,
 				B2FA3DD90AB75A6F000E5AC4 /* JSSVGPathSegLinetoVerticalRel.h in Headers */,
 				B2FA3DDB0AB75A6F000E5AC4 /* JSSVGPathSegList.h in Headers */,
@@ -26989,6 +27086,7 @@
 				0C45342810CDBBFA00869157 /* JSWebGLUniformLocation.h in Headers */,
 				6F995A3A1A70833700A735F4 /* JSWebGLVertexArrayObject.h in Headers */,
 				77EF62F412F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h in Headers */,
+				7C8E34C11E4A33B00054CE23 /* JSDOMConvertSerializedScriptValue.h in Headers */,
 				31C0FF3E0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h in Headers */,
 				498391400F1E767500C23782 /* JSWebKitCSSMatrix.h in Headers */,
 				8AD0A59514C88336000D83C5 /* JSWebKitCSSRegionRule.h in Headers */,
@@ -27013,6 +27111,7 @@
 				BCDFD4960E30592F009D10AD /* JSXMLHttpRequestUpload.h in Headers */,
 				1ACE53F70A8D19470022947D /* JSXMLSerializer.h in Headers */,
 				1A762C740A074F2600989F5B /* JSXPathEvaluator.h in Headers */,
+				7C8E34BB1E4A33B00054CE23 /* JSDOMConvertNullable.h in Headers */,
 				BC60DB4A0D2A3D1E00B9918F /* JSXPathException.h in Headers */,
 				1A762C760A074F2600989F5B /* JSXPathExpression.h in Headers */,
 				1A762C780A074F2600989F5B /* JSXPathNSResolver.h in Headers */,
@@ -27274,6 +27373,7 @@
 				D6E276B014637455001D280A /* MutationObserverRegistration.h in Headers */,
 				C6F08FBD1430FE8F00685849 /* MutationRecord.h in Headers */,
 				52B6C9C615E3F4DF00690B05 /* NamedFlowCollection.h in Headers */,
+				7C8E34B61E4A33B00054CE23 /* JSDOMConvertEventListener.h in Headers */,
 				314BE3A71B3103FB00141982 /* NamedImageGeneratedImage.h in Headers */,
 				A81872230977D3C0005826D9 /* NamedNodeMap.h in Headers */,
 				A818721E0977D3C0005826D9 /* NameNodeList.h in Headers */,
@@ -27460,6 +27560,7 @@
 				0F13163E16ED0CC80035CC04 /* PlatformCAFilters.h in Headers */,
 				499B3EC5128CCC4700E726C2 /* PlatformCALayer.h in Headers */,
 				493E5E0912D6420500020081 /* PlatformCALayerClient.h in Headers */,
+				7C8E34B71E4A33B00054CE23 /* JSDOMConvertIndexedDB.h in Headers */,
 				2D70BA1318074DDF0001908A /* PlatformCALayerCocoa.h in Headers */,
 				A14978711ABAF3A500CEF7E4 /* PlatformContentFilter.h in Headers */,
 				E1424C8A164B3B4E00F32D40 /* PlatformCookieJar.h in Headers */,
@@ -27468,7 +27569,9 @@
 				BCAA487014A052530088FAC4 /* PlatformEventFactoryMac.h in Headers */,
 				A723F77B1484CA4C008C6DBE /* PlatformExportMacros.h in Headers */,
 				515BE1951D54F5FB00DD7C68 /* PlatformGamepad.h in Headers */,
+				7C8E34B01E4A33AF0054CE23 /* JSDOMConvertBufferSource.h in Headers */,
 				935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */,
+				7C8E34AE1E4A33AF0054CE23 /* JSDOMConvertBase.h in Headers */,
 				0562F9611573F88F0031CA16 /* PlatformLayer.h in Headers */,
 				F544F78915CFB2A800AF33A8 /* PlatformLocale.h in Headers */,
 				CEEFCD7C19DB33DC003876D7 /* PlatformMediaResourceLoader.h in Headers */,
@@ -27778,6 +27881,7 @@
 				078E092117D14D1C00420AA1 /* RTCDTMFToneChangeEvent.h in Headers */,
 				078E092317D14D1C00420AA1 /* RTCIceCandidate.h in Headers */,
 				078E094017D16E1C00420AA1 /* RTCIceCandidateDescriptor.h in Headers */,
+				7C8E34BF1E4A33B00054CE23 /* JSDOMConvertRecord.h in Headers */,
 				078E092417D14D1C00420AA1 /* RTCIceCandidateEvent.h in Headers */,
 				07AB996B18DA3C010018771E /* RTCIceServer.h in Headers */,
 				073794FE19F5864E00E5A045 /* RTCNotifiersMock.h in Headers */,
@@ -27874,6 +27978,7 @@
 				7AAFE8D019CB8672000F56D8 /* ScrollLatchingState.h in Headers */,
 				F478755419983AFF0024A287 /* ScrollSnapAnimatorState.h in Headers */,
 				F46729281E0DE68500ACC3D8 /* ScrollSnapOffsetsInfo.h in Headers */,
+				7C8E34B11E4A33B00054CE23 /* JSDOMConvertCallbacks.h in Headers */,
 				83C5795D1DA5C301006FACA8 /* ScrollToOptions.h in Headers */,
 				93C09C860B0657AA005ABD4D /* ScrollTypes.h in Headers */,
 				BC6D6E2609AF943500F59759 /* ScrollView.h in Headers */,
@@ -28308,6 +28413,7 @@
 				B2227AD40D00BF220071B782 /* SVGTitleElement.h in Headers */,
 				1CCDF5BE1990332400BCEBAD /* SVGToOTFFontConversion.h in Headers */,
 				B2227AD70D00BF220071B782 /* SVGTransform.h in Headers */,
+				7C8E34AD1E4A33AF0054CE23 /* JSDOMConvertAny.h in Headers */,
 				B2227ADA0D00BF220071B782 /* SVGTransformable.h in Headers */,
 				B2227ADD0D00BF220071B782 /* SVGTransformDistance.h in Headers */,
 				B2227ADF0D00BF220071B782 /* SVGTransformList.h in Headers */,
@@ -28403,6 +28509,7 @@
 				E1FF57A30F01255B00891EBB /* ThreadGlobalData.h in Headers */,
 				51D7EFEA1BDE8F8C00E93E10 /* ThreadSafeDataBuffer.h in Headers */,
 				185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */,
+				7C8E34C41E4A33B00054CE23 /* JSDOMConvertUnion.h in Headers */,
 				7AA3A69A194A64E7001CBD24 /* TileController.h in Headers */,
 				1F72BF0B187FD45C0009BCB3 /* TileControllerMemoryHandlerIOS.h in Headers */,
 				7AA3A6A4194B5C22001CBD24 /* TileCoverageMap.h in Headers */,
@@ -28412,6 +28519,7 @@
 				F55B3DDC1251F12D003EF269 /* TimeInputType.h in Headers */,
 				7553CFE8108F473F00EA281E /* TimelineRecordFactory.h in Headers */,
 				9305B24D098F1B6B00C28855 /* Timer.h in Headers */,
+				7C8E34C31E4A33B00054CE23 /* JSDOMConvertStrings.h in Headers */,
 				E44613B00CD6331000FADA75 /* TimeRanges.h in Headers */,
 				2D7ED0AB1BAE99170043B3E5 /* TimerEventBasedMock.h in Headers */,
 				49E912AE0EFAC906009D0CAF /* TimingFunction.h in Headers */,
@@ -28457,6 +28565,7 @@
 				BCBD21AB0E417AD400A070F2 /* URLHash.h in Headers */,
 				F55B3DDE1251F12D003EF269 /* URLInputType.h in Headers */,
 				5C6E65431D5CEFBF00F7862E /* URLParser.h in Headers */,
+				7C8E34B51E4A33B00054CE23 /* JSDOMConvertEnumeration.h in Headers */,
 				7CC289DF1AA0FE5D009A9CE3 /* URLRegistry.h in Headers */,
 				93D437A21D57B3FE00AB85EA /* URLUtils.h in Headers */,
 				A72763BF16689BFB002FCACB /* UserActionElementSet.h in Headers */,
@@ -28534,6 +28643,7 @@
 				A56C5B9B189F34570082D13C /* WebConsoleAgent.h in Headers */,
 				419BE7591BC7F42B00E1C85B /* WebCoreBuiltinNames.h in Headers */,
 				2D3EF44A1917915C00034184 /* WebCoreCALayerExtras.h in Headers */,
+				7C8E34BE1E4A33B00054CE23 /* JSDOMConvertObject.h in Headers */,
 				515F79541CFCA3D500CCED93 /* WebCoreCrossThreadCopier.h in Headers */,
 				93F199A808245E59001E9ABC /* WebCoreFrameView.h in Headers */,
 				CDC69DDA16371FD4007C38DF /* WebCoreFullScreenPlaceholderView.h in Headers */,
@@ -28620,6 +28730,7 @@
 				7C48A6D1191C9D6500026674 /* WebKitNamespace.h in Headers */,
 				A5DEBDA416FB908700836FE0 /* WebKitPlaybackTargetAvailabilityEvent.h in Headers */,
 				494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */,
+				7C8E34C51E4A33B00054CE23 /* JSDOMConvertVariadic.h in Headers */,
 				5709E8CF1D413D9A003244AC /* WebKitSubtleCrypto.h in Headers */,
 				31C0FF250E4CEB6E007D6FE5 /* WebKitTransitionEvent.h in Headers */,
 				0FCF332F0F2B9A25004B6795 /* WebLayer.h in Headers */,
@@ -28717,6 +28828,7 @@
 				416E6FE81BBD12DF000A6053 /* WritableStreamInternalsBuiltins.h in Headers */,
 				9BAF3B2412C1A39800014BF1 /* WritingDirection.h in Headers */,
 				14476AA815DC4BB100305DB2 /* WritingMode.h in Headers */,
+				7C8E34BA1E4A33B00054CE23 /* JSDOMConvertNull.h in Headers */,
 				6565820209D1508D000E61D7 /* XLinkNames.h in Headers */,
 				830784B21C52EE2C00104D1D /* XMLDocument.h in Headers */,
 				00B9318813BA8DBA0035A948 /* XMLDocumentParser.h in Headers */,
@@ -28729,6 +28841,7 @@
 				BCDFD48E0E305290009D10AD /* XMLHttpRequestUpload.h in Headers */,
 				A833C80D0A2CF25600D57664 /* XMLNames.h in Headers */,
 				E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */,
+				7C8E34B91E4A33B00054CE23 /* JSDOMConvertJSON.h in Headers */,
 				1ACE53EB0A8D18E70022947D /* XMLSerializer.h in Headers */,
 				5905ADC01302F3CE00F116DF /* XMLTreeViewer.h in Headers */,
 				1AB7FC690A8B92EC00D9D37B /* XPathEvaluator.h in Headers */,
@@ -29485,6 +29598,7 @@
 				A80E6CF70A1989CA007FB8C5 /* CSSProperty.cpp in Sources */,
 				78D02BC5154A18DF00B62D05 /* CSSPropertyAnimation.cpp in Sources */,
 				1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */,
+				7C8E34B21E4A33B00054CE23 /* JSDOMConvertDate.cpp in Sources */,
 				946D37451D6D01D40077084F /* CSSPropertyParser.cpp in Sources */,
 				949C77041D6E39EA00C0DE4F /* CSSPropertyParserHelpers.cpp in Sources */,
 				82E3D8DE122EA0D1003AE5BC /* CSSPropertySourceData.cpp in Sources */,
@@ -29751,6 +29865,7 @@
 				9A528E8317D7F52F00AA9518 /* FloatingObjects.cpp in Sources */,
 				FE699871192087E7006936BD /* FloatingPointEnvironment.cpp in Sources */,
 				B27535680B053814002CE64F /* FloatPoint.cpp in Sources */,
+				7C8E34C21E4A33B00054CE23 /* JSDOMConvertStrings.cpp in Sources */,
 				B2E27C9F0B0F2B0900F17C7B /* FloatPoint3D.cpp in Sources */,
 				B27535590B053814002CE64F /* FloatPointCG.cpp in Sources */,
 				B27535780B053814002CE64F /* FloatPointMac.mm in Sources */,
@@ -31370,6 +31485,7 @@
 				BCE32B9E1517C22700F542EC /* RenderMultiColumnSet.cpp in Sources */,
 				BC1A7D9718FCB5B000421879 /* RenderMultiColumnSpannerPlaceholder.cpp in Sources */,
 				8AC822FC180FC03300FB64D5 /* RenderNamedFlowFragment.cpp in Sources */,
+				7C8E34BC1E4A33B00054CE23 /* JSDOMConvertNumbers.cpp in Sources */,
 				1A3FF9C315265359002288A1 /* RenderNamedFlowThread.cpp in Sources */,
 				BCEA487F097D93020094C9E4 /* RenderObject.cpp in Sources */,
 				A43BF59C1149292800C643CA /* RenderProgress.cpp in Sources */,

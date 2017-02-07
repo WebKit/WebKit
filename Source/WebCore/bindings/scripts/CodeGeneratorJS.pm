@@ -4681,7 +4681,7 @@ sub GenerateParametersCheck
         my $value = $name;
 
         if ($argument->isVariadic) {
-            AddToImplIncludes("JSDOMConvert.h", $conditional);
+            AddToImplIncludes("JSDOMConvertVariadic.h", $conditional);
             AddToImplIncludesForIDLType($type, $conditional);
         
             my $IDLType = GetIDLType($interface, $type);

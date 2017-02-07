@@ -26,8 +26,9 @@
 #include "config.h"
 #include "JSCrypto.h"
 
-#include "JSDOMBinding.h"
+#include "JSDOMConvertBufferSource.h"
 #include "JSDOMExceptionHandling.h"
+#include <heap/HeapInlines.h>
 #include <runtime/ArrayBufferView.h>
 #include <runtime/Error.h>
 #include <runtime/JSArrayBufferView.h>

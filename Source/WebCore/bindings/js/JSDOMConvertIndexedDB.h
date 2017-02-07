@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSCryptoOperationData.h"
+#pragma once
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(INDEXED_DATABASE)
 
-#include "JSDOMConvertBufferSource.h"
-#include <heap/HeapInlines.h>
-
-using namespace JSC;
+#include "IDBBindingUtilities.h"
+#include "IDLTypes.h"
+#include "JSDOMConvertBase.h"
 
 namespace WebCore {
 
-CryptoOperationData cryptoOperationDataFromJSValue(ExecState& state, ThrowScope& scope, JSValue value)
-{
-    VM& vm = state.vm();
-    if (auto* buffer = toUnsharedArrayBuffer(vm, value))
-        return { static_cast<uint8_t*>(buffer->data()), buffer->byteLength() };
+template<> struct JSConverter<IDLIDBKey> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
 
-    if (auto bufferView = toUnsharedArrayBufferView(vm, value))
-        return { static_cast<uint8_t*>(bufferView->baseAddress()), bufferView->byteLength() };
-
-    throwTypeError(&state, scope, ASCIILiteral("Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData"));
-    return { };
-}
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
+    {
+        return toJS(state, globalObject, std::forward<U>(value));
+    }
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif

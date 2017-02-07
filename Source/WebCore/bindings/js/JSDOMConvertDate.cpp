@@ -20,48 +20,30 @@
  */
 
 #include "config.h"
-#include "JSDOMBinding.h"
+#include "JSDOMConvertDate.h"
 
-#include "CommonVM.h"
+#include <heap/HeapInlines.h>
+#include <runtime/DateInstance.h>
+#include <runtime/JSCJSValueInlines.h>
+#include <runtime/JSGlobalObject.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-void addImpureProperty(const AtomicString& propertyName)
+// FIXME: This should get passed a global object rather than getting it out of the ExecState.
+JSValue jsDate(ExecState& state, double value)
 {
-    commonVM().addImpureProperty(propertyName);
+    return DateInstance::create(state.vm(), state.lexicalGlobalObject()->dateStructure(), value);
 }
 
-JSValue jsOwnedStringOrNull(ExecState* exec, const String& s)
+double valueToDate(ExecState& state, JSValue value)
 {
-    if (s.isNull())
-        return jsNull();
-    return jsOwnedString(exec, s);
-}
-
-JSValue jsStringOrUndefined(ExecState* exec, const String& s)
-{
-    if (s.isNull())
-        return jsUndefined();
-    return jsStringWithCache(exec, s);
-}
-
-bool hasIteratorMethod(JSC::ExecState& state, JSC::JSValue value)
-{
-    auto& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!value.isObject())
-        return false;
-
-    JSObject* object = JSC::asObject(value);
-    CallData callData;
-    CallType callType;
-    JSValue applyMethod = object->getMethod(&state, callData, callType, vm.propertyNames->iteratorSymbol, ASCIILiteral("Symbol.iterator property should be callable"));
-    RETURN_IF_EXCEPTION(scope, false);
-
-    return !applyMethod.isUndefined();
+    if (value.isNumber())
+        return value.asNumber();
+    if (!value.inherits(state.vm(), DateInstance::info()))
+        return std::numeric_limits<double>::quiet_NaN();
+    return static_cast<DateInstance*>(value.toObject(&state))->internalNumber();
 }
 
 } // namespace WebCore

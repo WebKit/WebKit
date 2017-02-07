@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSCryptoOperationData.h"
+#pragma once
 
-#if ENABLE(SUBTLE_CRYPTO)
-
-#include "JSDOMConvertBufferSource.h"
-#include <heap/HeapInlines.h>
-
-using namespace JSC;
+#include "IDLTypes.h"
+#include "JSDOMConvertBase.h"
+#include <runtime/JSONObject.h>
 
 namespace WebCore {
 
-CryptoOperationData cryptoOperationDataFromJSValue(ExecState& state, ThrowScope& scope, JSValue value)
-{
-    VM& vm = state.vm();
-    if (auto* buffer = toUnsharedArrayBuffer(vm, value))
-        return { static_cast<uint8_t*>(buffer->data()), buffer->byteLength() };
+template<> struct Converter<IDLJSON> : DefaultConverter<IDLJSON> {
+    static String convert(JSC::ExecState& state, JSC::JSValue value)
+    {
+        return JSC::JSONStringify(&state, value, 0);
+    }
+};
 
-    if (auto bufferView = toUnsharedArrayBufferView(vm, value))
-        return { static_cast<uint8_t*>(bufferView->baseAddress()), bufferView->byteLength() };
+template<> struct JSConverter<IDLJSON> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
 
-    throwTypeError(&state, scope, ASCIILiteral("Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData"));
-    return { };
-}
+    static JSC::JSValue convert(JSC::ExecState& state, const String& value)
+    {
+        return JSC::JSONParse(&state, value);
+    }
+};
 
 } // namespace WebCore
-
-#endif // ENABLE(SUBTLE_CRYPTO)

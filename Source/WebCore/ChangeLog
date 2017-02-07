@@ -1,5 +1,76 @@
 2017-02-07  Sam Weinig  <sam@webkit.org>
 
+        JSDOMConvert is too big. Split it up!
+        https://bugs.webkit.org/show_bug.cgi?id=167806
+
+        Rubber-stamped by Geoff Garen.
+
+        Split JSDOMConvert up roughly by IDL type. Some are grouped for convenience, e.g. all the
+        string types are together, all the numeric types are together. Also moved helpers from 
+        JSDOMBinding to their respective JSDOMConvertFoo header. For now, JSDOMConvert.h as an
+        umbrella of all the sub headers, but it will be removed, and the code generator taught
+        to include the right header in a subsequent patch.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        * bindings/js/IDBBindingUtilities.h:
+        Remove toJS that takes a std::optional<IDBKeyPath>, it was unused, and update date code
+        to only call valueToDate once, and pass things by reference.
+
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMBinding.h:
+        Move most of the conversion helpers into their respective JSDOMConvertFoo header.
+
+        * bindings/js/JSDOMConvert.h:
+        Leave for now, just has includes of all the broken out headers.
+
+        * bindings/js/JSDOMConvertAny.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertBase.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertBoolean.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertBufferSource.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertCallbacks.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertDate.cpp: Copied from Source/WebCore/bindings/js/JSDOMBinding.cpp.
+        * bindings/js/JSDOMConvertDate.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertDictionary.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertEnumeration.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertEventListener.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertIndexedDB.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertInterface.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertJSON.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertNull.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertNullable.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertNumbers.cpp: Copied from Source/WebCore/bindings/js/JSDOMBinding.cpp.
+        * bindings/js/JSDOMConvertNumbers.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertObject.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertRecord.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertSequences.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertSerializedScriptValue.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertStrings.cpp: Copied from Source/WebCore/bindings/js/JSDOMBinding.cpp.
+        * bindings/js/JSDOMConvertStrings.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertUnion.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertVariadic.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertWebGL.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+        * bindings/js/JSDOMConvertXPathNSResolver.h: Copied from Source/WebCore/bindings/js/JSDOMConvert.h.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        Add include of JSDOMConvertVariadic.h rather than JSDOMConvert.
+
+        * bindings/js/JSCryptoCustom.cpp:
+        * bindings/js/JSCryptoOperationData.cpp:
+        * bindings/js/JSImageDataCustom.cpp:
+        * bindings/js/ReadableStreamDefaultController.h:
+        * bindings/js/WebCoreTypedArrayController.cpp:
+        * html/canvas/WebGLAny.cpp:
+        * platform/mac/SerializedPlatformRepresentationMac.mm:
+        Add includes for specific JSDOMConvert header now that helpers have 
+        been moved their from JSDOMBinding.h
+
+2017-02-07  Sam Weinig  <sam@webkit.org>
+
         Remove unnecessary exports on inline functions. They were causing build failures
         with some compilers.
 

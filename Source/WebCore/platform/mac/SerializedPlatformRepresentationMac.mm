@@ -28,7 +28,7 @@
 #if ENABLE(VIDEO_TRACK) && ENABLE(DATACUE_VALUE)
 #include "SerializedPlatformRepresentationMac.h"
 
-#import "JSDOMBinding.h"
+#import "JSDOMConvertBufferSource.h"
 #import "SoftLinking.h"
 #import <AVFoundation/AVMetadataItem.h>
 #import <Foundation/NSString.h>
@@ -146,10 +146,10 @@ static JSValue *jsValueWithDataInContext(NSData *data, JSContext *context)
 {
     auto dataArray = ArrayBuffer::tryCreate([data bytes], [data length]);
 
-    JSC::ExecState* exec = toJS([context JSGlobalContextRef]);
-    JSC::JSValue array = toJS(exec, JSC::jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), dataArray.get());
+    auto* state = toJS([context JSGlobalContextRef]);
+    JSC::JSValue array = toJS(state, JSC::jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), dataArray.get());
 
-    return [JSValue valueWithJSValueRef:toRef(exec, array) inContext:context];
+    return [JSValue valueWithJSValueRef:toRef(state, array) inContext:context];
 }
 
 static JSValue *jsValueWithArrayInContext(NSArray *array, JSContext *context)

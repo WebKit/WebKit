@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebCoreTypedArrayController.h"
 
-#include "JSDOMBinding.h"
+#include "JSDOMConvertBufferSource.h"
 #include "JSDOMGlobalObject.h"
 #include <runtime/ArrayBuffer.h>
 #include <runtime/JSArrayBuffer.h>

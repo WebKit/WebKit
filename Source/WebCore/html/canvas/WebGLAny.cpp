@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "JSDOMBinding.h"
+#include "JSDOMConvert.h"
 #include "JSWebGLBuffer.h"
 #include "JSWebGLFramebuffer.h"
 #include "JSWebGLProgram.h"
