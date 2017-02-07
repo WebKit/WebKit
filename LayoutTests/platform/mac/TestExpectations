@@ -1485,8 +1485,6 @@ webkit.org/b/167396 media/modern-media-controls/media-controller/media-controlle
 
 webkit.org/b/167442 [ ElCapitan ] media/modern-media-controls/airplay-support/airplay-support.html [ Pass Timeout ]
 
-webkit.org/b/167461 media/modern-media-controls/layout-node/addChild.html [ Pass Timeout ]
-
 webkit.org/b/165874 [ Debug ] streams/pipe-to.html [ Pass Failure ]
 
 # New Encrypted Media API not enabled on Mac

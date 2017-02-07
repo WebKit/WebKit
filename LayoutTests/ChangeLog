@@ -1,5 +1,14 @@
 2017-02-07  Antoine Quint  <graouts@apple.com>
 
+        LayoutTest media/modern-media-controls/layout-node/addChild.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=167461
+
+        Unreviewed test gardening, this test is no longer flaky.
+
+        * platform/mac/TestExpectations:
+
+2017-02-07  Antoine Quint  <graouts@apple.com>
+
         [mac-wk1] LayoutTest media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=163598
 
