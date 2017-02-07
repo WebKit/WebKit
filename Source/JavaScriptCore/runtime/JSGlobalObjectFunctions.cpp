@@ -944,6 +944,11 @@ EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState* exec)
     RETURN_IF_EXCEPTION(catchScope, { });
 
     auto sourceOrigin = exec->callerSourceOrigin();
+    if (sourceOrigin.isNull()) {
+        promise->reject(exec, createError(exec, ASCIILiteral("Could not resolve the module specifier.")));
+        return JSValue::encode(promise->promise());
+    }
+
     RELEASE_ASSERT(exec->argumentCount() == 1);
     auto* specifier = exec->uncheckedArgument(0).toString(exec);
     if (Exception* exception = catchScope.exception()) {

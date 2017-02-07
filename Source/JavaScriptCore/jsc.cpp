@@ -1551,9 +1551,6 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
         return JSInternalPromiseDeferred::create(exec, globalObject)->reject(exec, error);
     };
 
-    if (sourceOrigin.isNull())
-        return rejectPromise(createError(exec, ASCIILiteral("Could not resolve the module specifier.")));
-
     auto referrer = sourceOrigin.string();
     auto moduleName = moduleNameValue->value(exec);
     if (UNLIKELY(scope.exception())) {

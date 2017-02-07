@@ -218,37 +218,22 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
     JSC::VM& vm = exec->vm();
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
 
-    // If SourceOrigin and/or CachedScriptFetcher is null, we import the module with the default fetcher.
-    // SourceOrigin can be null if the source code is not coupled with the script file.
-    // The examples,
-    //     1. The code evaluated by the inspector.
-    //     2. The other unusual code execution like the evaluation through the NPAPI.
-    //     3. The code from injected bundle's script.
-    //     4. The code from extension script.
-    URL baseURL;
-    RefPtr<JSC::ScriptFetcher> scriptFetcher;
-    if (sourceOrigin.isNull()) {
-        baseURL = m_document.baseURL();
-        scriptFetcher = CachedScriptFetcher::create(m_document.charset());
-    } else {
-        baseURL = URL(URL(), sourceOrigin.string());
-        if (!baseURL.isValid())
-            return rejectPromise(state, globalObject, TypeError, ASCIILiteral("Importer module key is not a Symbol or a String."));
+    // FIXME: setTimeout and setInterval with "string()" should propagate SourceOrigin.
+    // https://webkit.org/b/167097
+    ASSERT_WITH_MESSAGE(!sourceOrigin.isNull(), "If SourceOrigin is null, this function is not invoked.");
+    if (!sourceOrigin.fetcher())
+        return rejectPromise(state, globalObject, TypeError, ASCIILiteral("Could not use import operator in this context."));
 
-        if (sourceOrigin.fetcher())
-            scriptFetcher = sourceOrigin.fetcher();
-        else
-            scriptFetcher = CachedScriptFetcher::create(m_document.charset());
-    }
-    ASSERT(baseURL.isValid());
-    ASSERT(scriptFetcher);
+    URL baseURL(URL(), sourceOrigin.string());
+    if (!baseURL.isValid())
+        return rejectPromise(state, globalObject, TypeError, ASCIILiteral("Importer module key is not Symbol or String."));
 
     auto specifier = moduleName->value(exec);
     auto result = resolveModuleSpecifier(m_document, specifier, baseURL);
     if (!result)
         return rejectPromise(state, globalObject, TypeError, result.error());
 
-    return JSC::importModule(exec, JSC::Identifier::fromString(&vm, result->string()), JSC::JSScriptFetcher::create(vm, WTFMove(scriptFetcher) ));
+    return JSC::importModule(exec, JSC::Identifier::fromString(&vm, result->string()), JSC::JSScriptFetcher::create(vm, sourceOrigin.fetcher() ));
 }
 
 void ScriptModuleLoader::notifyFinished(CachedModuleScriptLoader& loader, RefPtr<DeferredPromise> promise)
