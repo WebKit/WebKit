@@ -1,3 +1,18 @@
+2017-02-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Move platform-independent parts of ComplexTextController out of mac/ subfolder
+        https://bugs.webkit.org/show_bug.cgi?id=167922
+
+        Reviewed by Jon Lee.
+
+        Just a mechanical git mv, and updating the Xcode projects.
+
+        No new tests because there is no behavior change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ComplexTextController.cpp: Renamed from Source/WebCore/platform/graphics/mac/ComplexTextController.cpp.
+        * platform/graphics/ComplexTextController.h: Renamed from Source/WebCore/platform/graphics/mac/ComplexTextController.h.
+
 2017-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Overlay scrolling with iframe-s broken
