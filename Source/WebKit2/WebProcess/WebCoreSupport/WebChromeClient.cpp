@@ -479,10 +479,13 @@ void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect)
 
     m_page->pageDidScroll();
 #if USE(COORDINATED_GRAPHICS)
-    m_page->drawingArea()->scroll(rect, IntSize());
-#else
-    m_page->drawingArea()->setNeedsDisplayInRect(rect);
+    FrameView* frameView = m_page->mainFrame()->view();
+    if (frameView && frameView->delegatesScrolling()) {
+        m_page->drawingArea()->scroll(rect, IntSize());
+        return;
+    }
 #endif
+    m_page->drawingArea()->setNeedsDisplayInRect(rect);
 }
 
 void WebChromeClient::scroll(const IntSize& scrollDelta, const IntRect& scrollRect, const IntRect& clipRect)
