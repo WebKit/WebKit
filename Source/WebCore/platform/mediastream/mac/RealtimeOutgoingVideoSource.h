@@ -70,7 +70,7 @@ private:
     void sourceStopped() final { }
     void sourceMutedChanged() final { }
     void sourceSettingsChanged() final { }
-    void sourceHasMoreMediaData(MediaSample&) final;
+    void videoSampleAvailable(MediaSample&) final;
 
     Vector<rtc::VideoSinkInterface<webrtc::VideoFrame>*> m_sinks;
     Ref<RealtimeMediaSource> m_videoSource;

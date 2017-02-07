@@ -41,7 +41,7 @@ namespace WebCore {
 RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<RealtimeMediaSource>&& videoSource)
     : m_videoSource(WTFMove(videoSource))
 {
-    m_videoSource->addObserver(this);
+    m_videoSource->addObserver(*this);
 }
 
 bool RealtimeOutgoingVideoSource::GetStats(Stats*)
@@ -61,7 +61,7 @@ void RealtimeOutgoingVideoSource::RemoveSink(rtc::VideoSinkInterface<webrtc::Vid
     m_sinks.removeFirst(sink);
 }
 
-void RealtimeOutgoingVideoSource::sourceHasMoreMediaData(MediaSample& sample)
+void RealtimeOutgoingVideoSource::videoSampleAvailable(MediaSample& sample)
 {
     if (!m_sinks.size())
         return;

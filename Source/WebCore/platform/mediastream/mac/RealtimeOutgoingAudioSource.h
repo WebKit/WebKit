@@ -44,12 +44,12 @@ namespace WebCore {
 class RealtimeOutgoingAudioSource final : public RefCounted<RealtimeOutgoingAudioSource>, public webrtc::AudioSourceInterface, private RealtimeMediaSource::Observer {
 public:
     static Ref<RealtimeOutgoingAudioSource> create(Ref<RealtimeMediaSource>&& audioSource) { return adoptRef(*new RealtimeOutgoingAudioSource(WTFMove(audioSource))); }
-    ~RealtimeOutgoingAudioSource() { m_audioSource->removeObserver(this); }
+    ~RealtimeOutgoingAudioSource() { m_audioSource->removeObserver(*this); }
 
     void setTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& track) { m_track = WTFMove(track); }
 
 private:
-    explicit RealtimeOutgoingAudioSource(Ref<RealtimeMediaSource>&& audioSource) : m_audioSource(WTFMove(audioSource)) { m_audioSource->addObserver(this); }
+    explicit RealtimeOutgoingAudioSource(Ref<RealtimeMediaSource>&& audioSource) : m_audioSource(WTFMove(audioSource)) { m_audioSource->addObserver(*this); }
 
     virtual void AddSink(webrtc::AudioTrackSinkInterface* sink) { m_sinks.append(sink); }
     virtual void RemoveSink(webrtc::AudioTrackSinkInterface* sink) { m_sinks.removeFirst(sink); }
@@ -66,7 +66,7 @@ private:
     void sourceMutedChanged() final { }
     void sourceSettingsChanged() final { }
     bool preventSourceFromStopping() final { return false; }
-    void sourceHasMoreMediaData(MediaSample&) final;
+    void audioSamplesAvailable(const MediaTime&, void*, const AudioStreamDescription&, size_t) final;
 
     void convertAndSendMonoSamples();
     void convertAndSendStereoSamples();

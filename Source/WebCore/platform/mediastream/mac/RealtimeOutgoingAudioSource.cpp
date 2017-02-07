@@ -31,12 +31,13 @@
 
 #if USE(LIBWEBRTC)
 
+#include "NotImplemented.h"
+
 namespace WebCore {
 
-void RealtimeOutgoingAudioSource::sourceHasMoreMediaData(MediaSample& mediaSample)
+void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime&, void*, const AudioStreamDescription&, size_t)
 {
-    // FIXME: Implement this.
-    UNUSED_PARAM(mediaSample);
+    notImplemented();
 }
 
 } // namespace WebCore

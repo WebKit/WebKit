@@ -147,7 +147,7 @@ void RealtimeIncomingVideoSource::processNewSample(CMSampleBufferRef sample, uns
         settingsDidChange();
     }
 
-    mediaDataUpdated(MediaSampleAVFObjC::create(sample));
+    videoSampleAvailable(MediaSampleAVFObjC::create(sample));
 }
 
 static inline void drawImage(ImageBuffer& imageBuffer, CGImageRef image, const FloatRect& rect)
