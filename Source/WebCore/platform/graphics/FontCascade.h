@@ -184,10 +184,8 @@ public:
     const Font& primaryFont() const;
     const FontRanges& fallbackRangesAt(unsigned) const;
     GlyphData glyphDataForCharacter(UChar32, bool mirror, FontVariant = AutoVariant) const;
-    
-#if PLATFORM(COCOA)
+
     const Font* fontForCombiningCharacterSequence(const UChar*, size_t length) const;
-#endif
 
     static bool isCJKIdeograph(UChar32);
     static bool isCJKIdeographOrSymbol(UChar32);

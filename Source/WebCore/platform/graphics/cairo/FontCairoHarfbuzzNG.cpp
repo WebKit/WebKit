@@ -52,11 +52,6 @@ float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsign
     return 0;
 }
 
-void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext& /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, unsigned /* from */, unsigned /* to */) const
-{
-    notImplemented();
-}
-
 bool FontCascade::canReturnFallbackFontsForComplexText()
 {
     return false;

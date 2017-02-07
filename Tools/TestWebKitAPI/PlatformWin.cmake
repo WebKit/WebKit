@@ -46,6 +46,7 @@ set(TestWebCoreLib_SOURCES
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/AffineTransform.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/CalculationValue.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/ComplexTextController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/CSSParser.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/FloatRect.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/FloatPoint.cpp

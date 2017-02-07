@@ -2169,6 +2169,7 @@ set(WebCore_SOURCES
 
     platform/graphics/BitmapImage.cpp
     platform/graphics/Color.cpp
+    platform/graphics/ComplexTextController.cpp
     platform/graphics/CrossfadeGeneratedImage.cpp
     platform/graphics/DisplayRefreshMonitorClient.cpp
     platform/graphics/ExtendedColor.cpp

@@ -86,6 +86,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/opentype/OpenTypeUtilities.cpp
 
     platform/graphics/win/ColorDirect2D.cpp
+    platform/graphics/win/ComplexTextControllerDirectWrite.cpp
     platform/graphics/win/DIBPixelData.cpp
     platform/graphics/win/FloatPointDirect2D.cpp
     platform/graphics/win/FloatRectDirect2D.cpp

@@ -531,17 +531,6 @@ float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsign
     return initialAdvance;
 }
 
-void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext& context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, unsigned from, unsigned to) const
-{
-    GlyphBuffer glyphBuffer;
-    float initialAdvance = getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer, ForTextEmphasis);
-
-    if (glyphBuffer.isEmpty())
-        return;
-
-    drawEmphasisMarks(context, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
-}
-
 float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ComplexTextController controller(*this, run, true, fallbackFonts);
@@ -560,6 +549,7 @@ int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bo
     return controller.offsetForPosition(x, includePartialGlyphs);
 }
 
+// FIXME: Use this on all ports.
 const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characters, size_t length) const
 {
     UChar32 baseCharacter;

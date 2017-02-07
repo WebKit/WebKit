@@ -431,25 +431,6 @@ GlyphData FontCascade::glyphDataForCharacter(UChar32 c, bool mirror, FontVariant
     return m_fonts->glyphDataForCharacter(c, m_fontDescription, variant);
 }
 
-#if !PLATFORM(COCOA)
-
-std::unique_ptr<TextLayout, TextLayoutDeleter> FontCascade::createLayout(RenderText&, float, bool) const
-{
-    return nullptr;
-}
-
-void TextLayoutDeleter::operator()(TextLayout*) const
-{
-}
-
-float FontCascade::width(TextLayout&, unsigned, unsigned, HashSet<const Font*>*)
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-#endif
-
 static const char* fontFamiliesWithInvalidCharWidth[] = {
     "American Typewriter",
     "Arial Hebrew",
@@ -1468,5 +1449,30 @@ int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, boo
     return offset;
 }
 
+#if !PLATFORM(COCOA)
+// FIXME: Unify this with the macOS and iOS implementation.
+const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characters, size_t length) const
+{
+    UChar32 baseCharacter;
+    size_t baseCharacterLength = 0;
+    U16_NEXT(characters, baseCharacterLength, length, baseCharacter);
+    GlyphData baseCharacterGlyphData = glyphDataForCharacter(baseCharacter, false, NormalVariant);
+
+    if (!baseCharacterGlyphData.glyph)
+        return nullptr;
+    return baseCharacterGlyphData.font;
+}
+#endif
+
+void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext& context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, unsigned from, unsigned to) const
+{
+    GlyphBuffer glyphBuffer;
+    float initialAdvance = getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer, ForTextEmphasis);
+
+    if (glyphBuffer.isEmpty())
+        return;
+
+    drawEmphasisMarks(context, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
+}
 
 }

@@ -292,17 +292,19 @@ const Font* Font::smallCapsFont(const FontDescription& fontDescription) const
     return m_derivedFontData->smallCaps.get();
 }
 
-#if PLATFORM(COCOA)
 const Font& Font::noSynthesizableFeaturesFont() const
 {
+#if PLATFORM(COCOA)
     if (!m_derivedFontData)
         m_derivedFontData = std::make_unique<DerivedFonts>(isCustomFont());
     if (!m_derivedFontData->noSynthesizableFeatures)
         m_derivedFontData->noSynthesizableFeatures = createFontWithoutSynthesizableFeatures();
     ASSERT(m_derivedFontData->noSynthesizableFeatures != this);
     return *m_derivedFontData->noSynthesizableFeatures;
-}
+#else
+    return *this;
 #endif
+}
 
 const Font* Font::emphasisMarkFont(const FontDescription& fontDescription) const
 {
@@ -504,5 +506,12 @@ void Font::removeFromSystemFallbackCache()
             characterMap.remove(key);
     }
 }
+
+#if !PLATFORM(COCOA)
+bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps, UChar32) const
+{
+    return false;
+}
+#endif
 
 } // namespace WebCore

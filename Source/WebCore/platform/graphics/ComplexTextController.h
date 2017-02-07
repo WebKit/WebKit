@@ -195,7 +195,9 @@ private:
     Vector<unsigned, 16> m_runIndices;
     Vector<unsigned, 16> m_glyphCountFromStartToIndex;
 
+#if PLATFORM(COCOA)
     Vector<RetainPtr<CTLineRef>> m_coreTextLines;
+#endif
 
     Vector<String> m_stringsFor8BitRuns;
 

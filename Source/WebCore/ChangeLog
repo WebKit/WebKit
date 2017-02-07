@@ -1,3 +1,53 @@
+2017-02-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Win] [GTK] [EFL] Compile (but don't use, yet) the platform-independent piece of ComplexTextController
+        https://bugs.webkit.org/show_bug.cgi?id=167927
+
+        Reviewed by Brent Fulgham.
+
+        This patch simply moves some functions around to enable the Win, GTK, and EFL ports to compile the
+        platform-independent pieces of ComplexTextController. Those parts of ComplexTextController have
+        some dependencies which were previously only available on the Cocoa ports; however, those
+        dependencies are easily created or moved from elsewhere. The next step is to populate the
+        ComplexTextController::collectComplexTextRunsForCharacters() function for DirectWrite and HarfBuzz.
+        Once that is done, UniscribeController and HarfBuzzShaper can be deleted.
+
+        Adds ComplexTextController TestWebKitAPI tests to the Win and GTK ports.
+
+        * CMakeLists.txt: Everyone can compile the platform-independent piece of ComplexTextController.
+        * PlatformEfl.cmake: Add the HarfBuzz-specific piece.
+        * PlatformGTK.cmake: Ditto.
+        * PlatformWin.cmake: Add the DirectWrite-specific piece.
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::TextLayoutDeleter::operator()): ComplexTextController shouldn't be enabled yet for Win,
+        GTK, or EFL.
+        (WebCore::FontCascade::createLayout): Ditto.
+        (WebCore::FontCascade::width): Ditto.
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun): Moved shared code to the shared
+        file.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::noSynthesizableFeaturesFont): Default implementation for other ports.
+        (WebCore::Font::variantCapsSupportsCharacterForSynthesis): Ditto.
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::fontForCombiningCharacterSequence): Ditto.
+        (WebCore::FontCascade::drawEmphasisMarksForComplexText): Ditto.
+        (WebCore::FontCascade::createLayout): Deleted. Moved to ComplexTextController.
+        (WebCore::TextLayoutDeleter::operator()): Deleted. Ditto.
+        * platform/graphics/FontCascade.h: fontForCombiningCharacterSequence() should exist on all ports.
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::FontCascade::drawEmphasisMarksForComplexText): Deleted. Shared among all ports.
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::drawEmphasisMarksForComplexText): Deleted. Ditto.
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp: Added.
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters): Empty implementation of
+        HarfBuzz-specific piece of ComplexTextController.
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm: Moved constructors to shared file.
+        * platform/graphics/win/ComplexTextControllerDirectWrite.cpp: Added.
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters): Empty implementation of
+        Direct Write-specific piece of ComplexTextController.
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::FontCascade::drawEmphasisMarksForComplexText): Deleted. Shared among all ports.
+
 2017-02-07  Alex Christensen  <achristensen@webkit.org>
 
         Revert r166597

@@ -92,19 +92,39 @@ private:
 
 void TextLayoutDeleter::operator()(TextLayout* layout) const
 {
+#if PLATFORM(COCOA)
     delete layout;
+#else
+    ASSERT_UNUSED(layout, !layout);
+#endif
 }
 
 std::unique_ptr<TextLayout, TextLayoutDeleter> FontCascade::createLayout(RenderText& text, float xPos, bool collapseWhiteSpace) const
 {
+#if PLATFORM(COCOA)
     if (!collapseWhiteSpace || !TextLayout::isNeeded(text, *this))
         return nullptr;
     return std::unique_ptr<TextLayout, TextLayoutDeleter>(new TextLayout(text, *this, xPos));
+#else
+    UNUSED_PARAM(text);
+    UNUSED_PARAM(xPos);
+    UNUSED_PARAM(collapseWhiteSpace);
+    return nullptr;
+#endif
 }
 
 float FontCascade::width(TextLayout& layout, unsigned from, unsigned len, HashSet<const Font*>* fallbackFonts)
 {
+#if PLATFORM(COCOA)
     return layout.width(from, len, fallbackFonts);
+#else
+    UNUSED_PARAM(layout);
+    UNUSED_PARAM(from);
+    UNUSED_PARAM(len);
+    UNUSED_PARAM(fallbackFonts);
+    ASSERT_NOT_REACHED();
+    return 0;
+#endif
 }
 
 void ComplexTextController::computeExpansionOpportunity()
@@ -703,7 +723,6 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         const CGGlyph* glyphs = complexTextRun.glyphs();
         const FloatSize* advances = complexTextRun.baseAdvances();
 
-        bool lastRun = runIndex + 1 == runCount;
         float spaceWidth = font.spaceWidth() - font.syntheticBoldOffset();
         const UChar* cp = complexTextRun.characters();
         FloatPoint glyphOrigin;
@@ -720,14 +739,6 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     isMonotonic = false;
             }
             UChar ch = *(cp + characterIndex);
-            bool lastGlyph = lastRun && i + 1 == glyphCount;
-            UChar nextCh;
-            if (lastGlyph)
-                nextCh = ' ';
-            else if (i + 1 < glyphCount)
-                nextCh = *(cp + complexTextRun.indexAt(i + 1));
-            else
-                nextCh = *(m_complexTextRuns[runIndex + 1]->characters() + m_complexTextRuns[runIndex + 1]->indexAt(0));
 
             bool treatAsSpace = FontCascade::treatAsSpace(ch);
             CGGlyph glyph = treatAsSpace ? font.spaceGlyph() : glyphs[i];
@@ -828,6 +839,53 @@ void ComplexTextController::adjustGlyphsAndAdvances()
     }
 
     m_totalWidth += widthSinceLastCommit;
+}
+
+// Missing glyphs run constructor. Core Text will not generate a run of missing glyphs, instead falling back on
+// glyphs from LastResort. We want to use the primary font's missing glyph in order to match the fast text code path.
+ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd, bool ltr)
+    : m_font(font)
+    , m_characters(characters)
+    , m_stringLength(stringLength)
+    , m_indexBegin(indexBegin)
+    , m_indexEnd(indexEnd)
+    , m_stringLocation(stringLocation)
+    , m_isLTR(ltr)
+{
+    auto runLengthInCodeUnits = m_indexEnd - m_indexBegin;
+    m_coreTextIndices.reserveInitialCapacity(runLengthInCodeUnits);
+    unsigned r = m_indexBegin;
+    while (r < m_indexEnd) {
+        m_coreTextIndices.uncheckedAppend(r);
+        UChar32 character;
+        U16_NEXT(m_characters, r, m_stringLength, character);
+    }
+    m_glyphCount = m_coreTextIndices.size();
+    if (!ltr) {
+        for (unsigned r = 0, end = m_glyphCount - 1; r < m_glyphCount / 2; ++r, --end)
+            std::swap(m_coreTextIndices[r], m_coreTextIndices[end]);
+    }
+
+    // Synthesize a run of missing glyphs.
+    m_glyphs.fill(0, m_glyphCount);
+    m_baseAdvances.fill(FloatSize(m_font.widthForGlyph(0), 0), m_glyphCount);
+}
+
+ComplexTextController::ComplexTextRun::ComplexTextRun(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd, bool ltr)
+    : m_baseAdvances(advances)
+    , m_glyphOrigins(origins)
+    , m_glyphs(glyphs)
+    , m_coreTextIndices(stringIndices)
+    , m_initialAdvance(initialAdvance)
+    , m_font(font)
+    , m_characters(characters)
+    , m_stringLength(stringLength)
+    , m_indexBegin(indexBegin)
+    , m_indexEnd(indexEnd)
+    , m_glyphCount(glyphs.size())
+    , m_stringLocation(stringLocation)
+    , m_isLTR(ltr)
+{
 }
 
 } // namespace WebCore

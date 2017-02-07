@@ -74,7 +74,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
     runs.append(WTFMove(run2));
     ComplexTextController controller(font, textRun, runs);
 
-    CGFloat totalWidth = 0;
+    float totalWidth = 0;
     for (size_t i = 1; i < advances.size(); ++i)
         totalWidth += advances[i].width();
     EXPECT_NEAR(controller.totalWidth(), spaceWidth + totalWidth, 0.0001);
@@ -123,7 +123,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
     runs.append(WTFMove(run));
     ComplexTextController controller(font, textRun, runs);
 
-    CGFloat totalWidth = 0;
+    float totalWidth = 0;
     for (size_t i = 1; i < advances.size(); ++i)
         totalWidth += advances[i].width();
     EXPECT_NEAR(controller.totalWidth(), totalWidth, 0.0001);
@@ -258,7 +258,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
     runs.append(WTFMove(run3));
     ComplexTextController controller(font, textRun, runs);
 
-    CGFloat totalWidth = 14.0397830018083 + 12.0 + 43.8119349005425;
+    float totalWidth = 14.0397830018083 + 12.0 + 43.8119349005425;
     EXPECT_NEAR(controller.totalWidth(), totalWidth, 0.0001);
     GlyphBuffer glyphBuffer;
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
@@ -298,7 +298,7 @@ TEST_F(ComplexTextControllerTest, LeadingExpansion)
     runs.append(WTFMove(run));
     ComplexTextController controller(font, textRun, runs);
 
-    CGFloat totalWidth = 100 + 24;
+    float totalWidth = 100 + 24;
     EXPECT_NEAR(controller.totalWidth(), totalWidth, 0.0001);
     GlyphBuffer glyphBuffer;
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);

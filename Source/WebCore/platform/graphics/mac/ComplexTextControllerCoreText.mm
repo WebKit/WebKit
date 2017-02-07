@@ -23,7 +23,6 @@
  */
 
 #include "config.h"
-
 #include "ComplexTextController.h"
 
 #include "CoreTextSPI.h"
@@ -163,54 +162,6 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
         for (unsigned i = 0; i < m_glyphCount; ++i)
             m_baseAdvances.uncheckedAppend(baseAdvances[i]);
     }
-}
-
-// Missing glyphs run constructor. Core Text will not generate a run of missing glyphs, instead falling back on
-// glyphs from LastResort. We want to use the primary font's missing glyph in order to match the fast text code path.
-ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd, bool ltr)
-    : m_font(font)
-    , m_characters(characters)
-    , m_stringLength(stringLength)
-    , m_indexBegin(indexBegin)
-    , m_indexEnd(indexEnd)
-    , m_stringLocation(stringLocation)
-    , m_isLTR(ltr)
-{
-    auto runLengthInCodeUnits = m_indexEnd - m_indexBegin;
-    m_coreTextIndices.reserveInitialCapacity(runLengthInCodeUnits);
-    unsigned r = m_indexBegin;
-    while (r < m_indexEnd) {
-        m_coreTextIndices.uncheckedAppend(r);
-        UChar32 character;
-        U16_NEXT(m_characters, r, m_stringLength, character);
-    }
-    m_glyphCount = m_coreTextIndices.size();
-    if (!ltr) {
-        for (unsigned r = 0, end = m_glyphCount - 1; r < m_glyphCount / 2; ++r, --end)
-            std::swap(m_coreTextIndices[r], m_coreTextIndices[end]);
-    }
-
-    // Synthesize a run of missing glyphs.
-    m_glyphs.fill(0, m_glyphCount);
-    m_baseAdvances.fill(FloatSize(m_font.widthForGlyph(0), 0), m_glyphCount);
-}
-
-
-ComplexTextController::ComplexTextRun::ComplexTextRun(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd, bool ltr)
-    : m_baseAdvances(advances)
-    , m_glyphOrigins(origins)
-    , m_glyphs(glyphs)
-    , m_coreTextIndices(stringIndices)
-    , m_initialAdvance(initialAdvance)
-    , m_font(font)
-    , m_characters(characters)
-    , m_stringLength(stringLength)
-    , m_indexBegin(indexBegin)
-    , m_indexEnd(indexEnd)
-    , m_glyphCount(glyphs.size())
-    , m_stringLocation(stringLocation)
-    , m_isLTR(ltr)
-{
 }
 
 struct ProviderInfo {

@@ -131,6 +131,7 @@ add_executable(TestWebCore
     ${test_main_SOURCES}
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/CSSParser.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/ComplexTextController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/FileSystem.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/GridPosition.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/HTMLParserIdioms.cpp
