@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WTFStringUtilities.h"
+#include <WebCore/FileSystem.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/URL.h>
 #include <wtf/MainThread.h>
@@ -37,7 +38,40 @@ class SecurityOriginTest : public testing::Test {
 public:
     void SetUp() final {
         WTF::initializeMainThread();
+
+        // create temp file
+        PlatformFileHandle handle;
+        m_tempFilePath = openTemporaryFile("tempTestFile", handle);
+        closeFile(handle);
+        
+        m_spaceContainingFilePath = openTemporaryFile("temp Empty Test File", handle);
+        closeFile(handle);
+        
+        m_bangContainingFilePath = openTemporaryFile("temp!Empty!Test!File", handle);
+        closeFile(handle);
+        
+        m_quoteContainingFilePath = openTemporaryFile("temp\"Empty\"TestFile", handle);
+        closeFile(handle);
     }
+
+    void TearDown() override
+    {
+        deleteFile(m_tempFilePath);
+        deleteFile(m_spaceContainingFilePath);
+        deleteFile(m_bangContainingFilePath);
+        deleteFile(m_quoteContainingFilePath);
+    }
+    
+    const String& tempFilePath() { return m_tempFilePath; }
+    const String& spaceContainingFilePath() { return m_spaceContainingFilePath; }
+    const String& bangContainingFilePath() { return m_bangContainingFilePath; }
+    const String& quoteContainingFilePath() { return m_quoteContainingFilePath; }
+    
+private:
+    String m_tempFilePath;
+    String m_spaceContainingFilePath;
+    String m_bangContainingFilePath;
+    String m_quoteContainingFilePath;
 };
 
 TEST_F(SecurityOriginTest, SecurityOriginConstructors)
@@ -82,6 +116,31 @@ TEST_F(SecurityOriginTest, SecurityOriginConstructors)
     EXPECT_TRUE(o1->isSameOriginAs(o4.get()));
     EXPECT_TRUE(o1->isSameOriginAs(o5.get()));
     EXPECT_TRUE(o1->isSameOriginAs(o6.get()));
+}
+
+TEST_F(SecurityOriginTest, SecurityOriginFileBasedConstructors)
+{
+    auto tempFileOrigin = SecurityOrigin::create(URL(URL(), "file:///" + tempFilePath()));
+    auto spaceContainingOrigin = SecurityOrigin::create(URL(URL(), "file:///" + spaceContainingFilePath()));
+    auto bangContainingOrigin = SecurityOrigin::create(URL(URL(), "file:///" + bangContainingFilePath()));
+    auto quoteContainingOrigin = SecurityOrigin::create(URL(URL(), "file:///" + quoteContainingFilePath()));
+    
+    EXPECT_EQ(String("file"), tempFileOrigin->protocol());
+    EXPECT_EQ(String("file"), spaceContainingOrigin->protocol());
+    EXPECT_EQ(String("file"), bangContainingOrigin->protocol());
+    EXPECT_EQ(String("file"), quoteContainingOrigin->protocol());
+
+    EXPECT_TRUE(tempFileOrigin->isSameOriginAs(spaceContainingOrigin.get()));
+    EXPECT_TRUE(tempFileOrigin->isSameOriginAs(bangContainingOrigin.get()));
+    EXPECT_TRUE(tempFileOrigin->isSameOriginAs(quoteContainingOrigin.get()));
+    
+    EXPECT_TRUE(tempFileOrigin->isSameSchemeHostPort(spaceContainingOrigin.get()));
+    EXPECT_TRUE(tempFileOrigin->isSameSchemeHostPort(bangContainingOrigin.get()));
+    EXPECT_TRUE(tempFileOrigin->isSameSchemeHostPort(quoteContainingOrigin.get()));
+
+    EXPECT_TRUE(tempFileOrigin->canAccess(spaceContainingOrigin.get()));
+    EXPECT_TRUE(tempFileOrigin->canAccess(bangContainingOrigin.get()));
+    EXPECT_TRUE(tempFileOrigin->canAccess(quoteContainingOrigin.get()));
 }
 
 } // namespace TestWebKitAPI
