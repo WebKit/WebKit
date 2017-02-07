@@ -87,6 +87,86 @@ test(function() {
         type: "bytes"
     });
 
+    assert_throws(new TypeError("Can only call ReadableByteStreamController.enqueue on instances of ReadableByteStreamController"),
+        function() { controller.enqueue.apply(rs, new Int8Array(1)); });
+}, "Calling enqueue() with a this object different from ReadableByteStreamController should throw a TypeError");
+
+test(function() {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    controller.enqueue(new Int8Array(2));
+    controller.close();
+
+    assert_throws(new TypeError("ReadableByteStreamController is requested to close"),
+        function() { controller.enqueue(new Int8Array(1)); });
+}, "Calling enqueue() when close has been requested but not yet performed should throw a TypeError");
+
+test(function() {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+    controller.close();
+
+    assert_throws(new TypeError("ReadableStream is not readable"),
+        function() {
+            controller.enqueue(new Int8Array(1));
+        });
+}, "Calling enqueue() when stream is not readable should throw a TypeError");
+
+test(function() {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    const invalidChunk = function() {};
+
+    assert_throws(new TypeError("Provided chunk is not an object"),
+        function() { controller.enqueue(invalidChunk); });
+}, "Calling enqueue() with a chunk that is not an object should trhow a TypeError");
+
+test(function() {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    const invalidChunk = {};
+
+    assert_throws(new TypeError("Provided chunk is not an object"),
+        function() { controller.enqueue(invalidChunk); });
+}, "Calling enqueue() with a chunk that is not an ArrayBufferView should throw a TypeError");
+
+test(function() {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
     assert_throws(new TypeError("ReadableStream is not readable"),
         function() {
             controller.close();
@@ -224,14 +304,55 @@ promise_test(function() {
         type: "bytes"
     });
 
-    controller.enqueue("test");
+    const buffer = new Uint8Array([3]);
+    controller.enqueue(buffer);
 
     return rs.getReader().read().then(
         function(res) {
-            assert_object_equals(res, {value: "test", done: false});
+            assert_object_equals(res, {value: buffer, done: false});
         }
     );
-}, "Calling read() after a chunk has been enqueued should result in obtaining said chunk");
+}, "Enqueuing a chunk, getting a reader and calling read should result in a promise resolved with said chunk");
+
+promise_test(function() {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    let promise = rs.getReader().read();
+    const buffer = new Uint8Array([1]);
+    controller.enqueue(buffer);
+    return promise.then(
+        function(res) {
+            assert_object_equals(res, {value: buffer, done: false});
+        }
+    );
+}, "Getting a reader, calling read and enqueuing a chunk should result in the read promise being resolved with said chunk");
+
+promise_test(function() {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    const reader = rs.getReader();
+    const buffer = new Uint8Array([1]);
+    controller.enqueue(buffer);
+    return reader.read().then(
+        function(res) {
+            assert_object_equals(res, {value: buffer, done: false});
+        }
+    );
+}, "Getting a reader, enqueuing a chunk and finally calling read should result in a promise resolved with said chunk");
 
 test(function() {
     let controller;

@@ -29,8 +29,22 @@ function enqueue(chunk)
 {
     "use strict";
 
-    //FIXME: Implement appropriate behavior.
-    @throwTypeError("ReadableByteStreamController enqueue() is not implemented");
+    if (!@isReadableByteStreamController(this))
+        throw @makeThisTypeError("ReadableByteStreamController", "enqueue");
+
+    if (this.@closeRequested)
+        @throwTypeError("ReadableByteStreamController is requested to close");
+
+    if (this.@controlledReadableStream.@state !== @streamReadable)
+        @throwTypeError("ReadableStream is not readable");
+
+    if (!@isObject(chunk))
+        @throwTypeError("Provided chunk is not an object");
+
+    if (!@ArrayBuffer.@isView(chunk))
+        @throwTypeError("Provided chunk is not an ArrayBuffer view");
+
+    return @readableByteStreamControllerEnqueue(this, chunk);
 }
 
 function error(error)

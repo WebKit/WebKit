@@ -1,3 +1,28 @@
+2017-02-07  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Implement ReadableByteStreamController enqueue()
+        https://bugs.webkit.org/show_bug.cgi?id=167786
+
+        Reviewed by Youenn Fablet.
+
+        Implemented ReadableByteStreamController enqueue() method. Also replaced
+        @queue by an Array instead of a dedicated queue object (said object is
+        useful for ReadableStreamDefaultController, but not for ReadableByteStreamController).
+
+        Added 8 tests to cover newly added code as well as code that was previously unreachable.
+
+        * Modules/streams/ReadableByteStreamController.js:
+        (enqueue): Implemented as defined by spec.
+        * Modules/streams/ReadableByteStreamInternals.js:
+        (privateInitializeReadableByteStreamController): Updated @queue.
+        (readableByteStreamControllerCancel): Updated @queue.
+        (readableByteStreamControllerError): Updated @queue.
+        (readableByteStreamControllerPull): Updated @queue.
+        (readableByteStreamControllerEnqueue): Added.
+        (readableByteStreamControllerEnqueueChunkToQueue): Added.
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamFulfillReadRequest): Added (used at different places).
+
 2017-02-07  Chris Dumez  <cdumez@apple.com>
 
         Object.preventExtensions() on a Location object should throw a TypeError

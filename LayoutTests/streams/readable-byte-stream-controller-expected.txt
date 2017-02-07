@@ -3,6 +3,11 @@ PASS Creating a ReadableStream with an underlyingSource with type property set t
 PASS ReadableByteStreamController instances should have the correct list of properties 
 PASS Calling error() with a this object different from ReadableByteStreamController should throw a TypeError 
 PASS Calling close() with a this object different from ReadableByteStreamController should throw a TypeError 
+PASS Calling enqueue() with a this object different from ReadableByteStreamController should throw a TypeError 
+PASS Calling enqueue() when close has been requested but not yet performed should throw a TypeError 
+PASS Calling enqueue() when stream is not readable should throw a TypeError 
+PASS Calling enqueue() with a chunk that is not an object should trhow a TypeError 
+PASS Calling enqueue() with a chunk that is not an ArrayBufferView should throw a TypeError 
 PASS Calling error() after calling close() should throw a TypeError 
 PASS Calling error() after calling error() should throw a TypeError 
 PASS Calling close() after calling close() should throw a TypeError 
@@ -11,7 +16,9 @@ PASS Calling read() on a reader associated to a controller that has been errored
 PASS Calling read() on a reader associated to a controller that has been closed should not be rejected 
 PASS Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is undefined) 
 FAIL Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is specified) Can't find private variable: @Uint8Array
-FAIL Calling read() after a chunk has been enqueued should result in obtaining said chunk ReadableByteStreamController enqueue() is not implemented
+PASS Enqueuing a chunk, getting a reader and calling read should result in a promise resolved with said chunk 
+PASS Getting a reader, calling read and enqueuing a chunk should result in the read promise being resolved with said chunk 
+PASS Getting a reader, enqueuing a chunk and finally calling read should result in a promise resolved with said chunk 
 PASS By default initial value of desiredSize should be 1 
 PASS Calling cancel() on a readable ReadableStream that is not locked to a reader should return a promise whose fulfillment handler returns undefined 
 PASS Test that pull is called once when a new ReadableStream is created with a ReadableByteStreamController 
@@ -21,6 +28,11 @@ PASS Creating a ReadableStream with an underlyingSource with type property set t
 PASS ReadableByteStreamController instances should have the correct list of properties 
 PASS Calling error() with a this object different from ReadableByteStreamController should throw a TypeError 
 PASS Calling close() with a this object different from ReadableByteStreamController should throw a TypeError 
+PASS Calling enqueue() with a this object different from ReadableByteStreamController should throw a TypeError 
+PASS Calling enqueue() when close has been requested but not yet performed should throw a TypeError 
+PASS Calling enqueue() when stream is not readable should throw a TypeError 
+PASS Calling enqueue() with a chunk that is not an object should trhow a TypeError 
+PASS Calling enqueue() with a chunk that is not an ArrayBufferView should throw a TypeError 
 PASS Calling error() after calling close() should throw a TypeError 
 PASS Calling error() after calling error() should throw a TypeError 
 PASS Calling close() after calling close() should throw a TypeError 
@@ -29,7 +41,9 @@ PASS Calling read() on a reader associated to a controller that has been errored
 PASS Calling read() on a reader associated to a controller that has been closed should not be rejected 
 PASS Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is undefined) 
 FAIL Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is specified) Can't find private variable: @Uint8Array
-FAIL Calling read() after a chunk has been enqueued should result in obtaining said chunk ReadableByteStreamController enqueue() is not implemented
+PASS Enqueuing a chunk, getting a reader and calling read should result in a promise resolved with said chunk 
+PASS Getting a reader, calling read and enqueuing a chunk should result in the read promise being resolved with said chunk 
+PASS Getting a reader, enqueuing a chunk and finally calling read should result in a promise resolved with said chunk 
 PASS By default initial value of desiredSize should be 1 
 PASS Calling cancel() on a readable ReadableStream that is not locked to a reader should return a promise whose fulfillment handler returns undefined 
 PASS Test that pull is called once when a new ReadableStream is created with a ReadableByteStreamController 

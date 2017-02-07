@@ -42,7 +42,7 @@ function privateInitializeReadableByteStreamController(stream, underlyingByteSou
     this.@pullAgain = false;
     this.@pulling = false;
     @readableByteStreamControllerClearPendingPullIntos(this);
-    this.@queue = @newQueue();
+    this.@queue = [];
     this.@totalQueuedBytes = 0;
     this.@started = false;
     this.@closeRequested = false;
@@ -103,7 +103,7 @@ function readableByteStreamControllerCancel(controller, reason)
 
     if (controller.@pendingPullIntos.length > 0)
         controller.@pendingPullIntos[0].bytesFilled = 0;
-    controller.@queue = @newQueue();
+    controller.@queue = [];
     controller.@totalQueuedBytes = 0;
     return @promiseInvokeOrNoop(controller.@underlyingByteSource, "cancel", [reason]);
 }
@@ -114,7 +114,7 @@ function readableByteStreamControllerError(controller, e)
 
     @assert(controller.@controlledReadableStream.@state === @streamReadable);
     @readableByteStreamControllerClearPendingPullIntos(controller);
-    controller.@queue = @newQueue();
+    controller.@queue = [];
     @readableStreamError(controller.@controlledReadableStream, e);
 }
 
@@ -189,7 +189,7 @@ function readableByteStreamControllerPull(controller)
 
     if (controller.@totalQueuedBytes > 0) {
         @assert(stream.@reader.@readRequests.length === 0);
-        const entry = @dequeueValue(controller.@queue);
+        const entry = controller.@queue.@shift();
         controller.@totalQueuedBytes -= entry.byteLength;
         @readableByteStreamControllerHandleQueueDrain(controller);
         let view;
@@ -270,4 +270,61 @@ function readableByteStreamControllerCallPullIfNeeded(controller)
         if (controller.@controlledReadableStream.@state === @streamReadable)
             @readableByteStreamControllerError(controller, error);
     });
+}
+
+function transferBufferToCurrentRealm(buffer)
+{
+    "use strict";
+
+    // FIXME: Determine what should be done here exactly (what is already existing in current
+    // codebase and what has to be added). According to spec, Transfer operation should be
+    // performed in order to transfer buffer to current realm. For the moment, simply return
+    // received buffer.
+    return buffer;
+}
+
+function readableByteStreamControllerEnqueue(controller, chunk)
+{
+    "use strict";
+
+    const stream = controller.@controlledReadableStream;
+    @assert(!controller.@closeRequested);
+    @assert(stream.@state === @streamReadable);
+    const buffer = chunk.buffer;
+    const byteOffset = chunk.byteOffset;
+    const byteLength = chunk.byteLength;
+    const transferredBuffer = @transferBufferToCurrentRealm(buffer);
+
+    if (@readableStreamHasDefaultReader(stream)) {
+        if (!stream.@reader.@readRequests.length)
+            @readableByteStreamControllerEnqueueChunkToQueue(controller, transferredBuffer, byteOffset, byteLength);
+        else {
+            @assert(!controller.@queue.length);
+            let transferredView = new @Uint8Array(transferredBuffer, byteOffset, byteLength);
+            @readableStreamFulfillReadRequest(stream, transferredView, false);
+        }
+        return;
+    }
+
+    if (@readableStreamHasBYOBReader(stream)) {
+        // FIXME: To be implemented once ReadableStreamBYOBReader has been implemented (for the moment,
+        // test cannot be true).
+        @throwTypeError("ReadableByteStreamController enqueue operation has no support for BYOB reader");
+        return;
+    }
+
+    @assert(!@isReadableStreamLocked(stream));
+    @readableByteStreamControllerEnqueueChunkToQueue(controller, transferredBuffer, byteOffset, byteLength);
+}
+
+function readableByteStreamControllerEnqueueChunkToQueue(controller, buffer, byteOffset, byteLength)
+{
+    "use strict";
+
+    controller.@queue.@push({
+        buffer: buffer,
+        byteOffset: byteOffset,
+        byteLength: byteLength
+    });
+    controller.@totalQueuedBytes += byteLength;
 }
