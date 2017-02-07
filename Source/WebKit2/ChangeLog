@@ -1,3 +1,9 @@
+2017-02-07  Sam Weinig  <sam@webkit.org>
+
+        Try to fix the EFL build.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+
 2017-02-07  Anders Carlsson  <andersca@apple.com>
 
         -[WKWebView encodeWithCoder:] needs to call super

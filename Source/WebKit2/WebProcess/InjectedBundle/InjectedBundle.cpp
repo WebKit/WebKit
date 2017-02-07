@@ -60,6 +60,7 @@
 #include <WebCore/GeolocationClient.h>
 #include <WebCore/GeolocationController.h>
 #include <WebCore/GeolocationPosition.h>
+#include <WebCore/JSDOMConvertBufferSource.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/JSNotification.h>
