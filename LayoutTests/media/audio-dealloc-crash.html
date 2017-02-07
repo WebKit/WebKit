@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=video-test.js></script>
+    <script src=../resources/gc.js></script>
+</head>
+<body>
+    <div>Creating and immediately destroying an Audio element should not crash.</div>
+    <script>
+    runWithKeyDown(() => {
+        document.body.innerHTML = '<audio></audio>';
+        document.body.childNodes[0].play();
+        document.body.innerHTML = '';
+        gc();
+        setTimeout(endTest, 100);
+    });
+    </script>
+</div>
+</body>
+</html>

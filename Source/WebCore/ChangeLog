@@ -1,3 +1,23 @@
+2017-02-07  Matthew Hanson  <matt_hanson@apple.com>
+
+        Merge r211659. rdar://problem/30386165
+
+    2017-02-03  Jer Noble  <jer.noble@apple.com>
+
+            ASSERT in HTMLMediaElement::~HTMLMediaElement
+            https://bugs.webkit.org/show_bug.cgi?id=167818
+
+            Reviewed by Brent Fulgham.
+
+            Test: media/audio-dealloc-crash.html
+
+            HTMLMediaElement's MediaElementSession can nominate the HTMLMediaElement itself
+            to become the playback controls session from inside the HTMLMediaElement destructor. Protect
+            against this by clearing out the session before calling updatePlaybackControlsManager().
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::~HTMLMediaElement):
+
 2017-02-02  Matthew Hanson  <matt_hanson@apple.com>
 
         Merge r211502. rdar://problem/30319184
