@@ -1,3 +1,32 @@
+2017-02-06  Youenn Fablet  <youennf@gmail.com>
+
+        Allow some schemes to opt-out of CORS
+        https://bugs.webkit.org/show_bug.cgi?id=167795
+
+        Reviewed by Alex Christensen.
+
+        Test: http/tests/security/bypassing-cors-checks-for-extension-urls.html
+
+        Adding the possibility to opt out of CORS for DocumentThreadableLoader clients (fetch and XHR).
+        This is made specific to the case of user extension URLs for pages running user scripts.
+        Introducing a boolean flag in Page for that purpose.
+        Introducing a helper routine in SchemeRegistry to centralize the various user script extension schemes.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScripts):
+        * page/Page.h:
+        (WebCore::Page::setAsRunningUserScripts):
+        (WebCore::Page::isRunningUserScripts):
+        * platform/SchemeRegistry.cpp:
+        (WebCore::SchemeRegistry::isUserExtensionScheme):
+        * platform/SchemeRegistry.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setAsRunningUserScripts):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-02-06  Chris Dumez  <cdumez@apple.com>
 
         Align [[OwnPropertyKeys]] with the HTML specification for cross-origin Window / Location objects

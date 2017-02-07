@@ -499,4 +499,6 @@ enum EventThrottlingBehavior {
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
     void setQuickLookPassword(DOMString password);
 #endif
+
+    [CallWith=Document] void setAsRunningUserScripts();
 };

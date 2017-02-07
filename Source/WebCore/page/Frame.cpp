@@ -710,8 +710,10 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
         if (script.injectedFrames() == InjectInTopFrameOnly && ownerElement())
             return;
 
-        if (script.injectionTime() == injectionTime && UserContentURLPattern::matchesPatterns(document->url(), script.whitelist(), script.blacklist()))
+        if (script.injectionTime() == injectionTime && UserContentURLPattern::matchesPatterns(document->url(), script.whitelist(), script.blacklist())) {
+            m_page->setAsRunningUserScripts();
             m_script->evaluateInWorld(ScriptSourceCode(script.source(), script.url()), world);
+        }
     });
 }
 

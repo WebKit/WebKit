@@ -526,6 +526,8 @@ public:
     void setQuickLookPassword(const String&);
 #endif
 
+    void setAsRunningUserScripts(Document&);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

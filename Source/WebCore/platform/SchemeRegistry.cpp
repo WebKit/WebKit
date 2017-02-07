@@ -357,4 +357,14 @@ bool SchemeRegistry::shouldPartitionCacheForURLScheme(const String& scheme)
 }
 #endif
 
+bool SchemeRegistry::isUserExtensionScheme(const String& scheme)
+{
+    UNUSED_PARAM(scheme);
+#if PLATFORM(MAC)
+    if (scheme == "safari-extension")
+        return true;
+#endif
+    return false;
+}
+
 } // namespace WebCore

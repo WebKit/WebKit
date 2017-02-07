@@ -3690,4 +3690,10 @@ void Internals::setQuickLookPassword(const String& password)
 }
 #endif
 
+void Internals::setAsRunningUserScripts(Document& document)
+{
+    if (document.page())
+        document.page()->setAsRunningUserScripts();
+}
+
 } // namespace WebCore

@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 19: XMLHttpRequest cannot load safari-extension://test1. Cross origin requests are only supported for HTTP.
+This test ensures that XHR/Fetch will bypass CORS for user extension URLS in case the page is running user scripts.
+
+
+PASS Bypassing CORS on synchronous XHR - should trigger a CORS error message 
+PASS Bypassing CORS on synchronous XHR - should not trigger a CORS error message 
+PASS Bypassing CORS on asynchronous fetch - should not trigger a CORS error message 
+

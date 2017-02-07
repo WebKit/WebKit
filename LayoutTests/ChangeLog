@@ -1,3 +1,13 @@
+2017-02-06  Youenn Fablet  <youennf@gmail.com>
+
+        Allow some schemes to opt-out of CORS
+        https://bugs.webkit.org/show_bug.cgi?id=167795
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/security/bypassing-cors-checks-for-extension-urls-expected.txt: Added.
+        * http/tests/security/bypassing-cors-checks-for-extension-urls.html: Added.
+
 2017-02-06  Chris Dumez  <cdumez@apple.com>
 
         Align [[OwnPropertyKeys]] with the HTML specification for cross-origin Window / Location objects
