@@ -90,6 +90,7 @@ public:
 
 #if USE(COORDINATED_GRAPHICS) && ENABLE(REQUEST_ANIMATION_FRAME)
     virtual void scheduleAnimation() = 0;
+    virtual void setIsDiscardable(bool) { };
 #endif
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)

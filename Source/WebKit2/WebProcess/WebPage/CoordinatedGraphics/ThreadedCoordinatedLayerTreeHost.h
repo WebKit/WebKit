@@ -33,6 +33,7 @@
 #include "CoordinatedLayerTreeHost.h"
 #include "SimpleViewportController.h"
 #include "ThreadedCompositor.h"
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 class GraphicsContext;
@@ -66,6 +67,8 @@ private:
     void forceRepaint() override;
     bool forceRepaintAsync(uint64_t callbackID) override { return false; }
 
+    void setIsDiscardable(bool) override;
+
 #if PLATFORM(GTK) && PLATFORM(X11) &&  !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     void setNativeSurfaceHandleForCompositing(uint64_t) override;
 #endif
@@ -98,12 +101,21 @@ private:
     void didFlushRootLayer(const WebCore::FloatRect&) override { }
     void commitSceneState(const WebCore::CoordinatedGraphicsState&) override;
 
+    enum class DiscardableSyncActions {
+        UpdateSize = 1 << 1,
+        UpdateViewport = 1 << 2,
+        UpdateScale = 1 << 3,
+        UpdateBackground = 1 << 4
+    };
+
     CompositorClient m_compositorClient;
     std::unique_ptr<AcceleratedSurface> m_surface;
     RefPtr<ThreadedCompositor> m_compositor;
     SimpleViewportController m_viewportController;
     float m_lastPageScaleFactor { 1 };
     WebCore::IntPoint m_lastScrollPosition;
+    bool m_isDiscardable { false };
+    OptionSet<DiscardableSyncActions> m_discardableSyncActions;
 };
 
 } // namespace WebKit

@@ -98,6 +98,9 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollDel
     if (scrollRect.isEmpty())
         return;
 
+    if (m_previousLayerTreeHost)
+        m_previousLayerTreeHost->scrollNonCompositedContents(scrollRect);
+
     if (!m_scrollRect.isEmpty() && scrollRect != m_scrollRect) {
         unsigned scrollArea = scrollRect.width() * scrollRect.height();
         unsigned currentScrollArea = m_scrollRect.width() * m_scrollRect.height();
@@ -164,6 +167,8 @@ void DrawingAreaImpl::mainFrameContentSizeChanged(const WebCore::IntSize& newSiz
 #if USE(COORDINATED_GRAPHICS_THREADED)
     if (m_layerTreeHost)
         m_layerTreeHost->contentsSizeChanged(newSize);
+    else if (m_previousLayerTreeHost)
+        m_previousLayerTreeHost->contentsSizeChanged(newSize);
 #else
     UNUSED_PARAM(newSize);
 #endif
@@ -289,15 +294,7 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     if (m_alwaysUseCompositing)
         return;
 
-    ASSERT(!m_layerTreeStateIsFrozen);
-
-    m_exitCompositingTimer.stop();
-    m_wantsToExitAcceleratedCompositingMode = false;
-
-    ASSERT(m_layerTreeHost);
-
-    m_layerTreeHost->invalidate();
-    m_layerTreeHost = nullptr;
+    AcceleratedDrawingArea::exitAcceleratedCompositingModeNow();
     m_dirtyRegion = m_webPage.bounds();
 
     if (m_inUpdateBackingStoreState)

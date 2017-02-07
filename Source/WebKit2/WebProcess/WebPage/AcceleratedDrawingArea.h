@@ -86,6 +86,8 @@ protected:
 
     void exitAcceleratedCompositingModeSoon();
     bool exitAcceleratedCompositingModePending() const { return m_exitCompositingTimer.isActive(); }
+    void exitAcceleratedCompositingModeNow();
+    void discardPreviousLayerTreeHost();
 
     virtual void suspendPainting();
     virtual void resumePainting();
@@ -127,6 +129,9 @@ protected:
 
     // The layer tree host that handles accelerated compositing.
     RefPtr<LayerTreeHost> m_layerTreeHost;
+
+    RefPtr<LayerTreeHost> m_previousLayerTreeHost;
+    RunLoop::Timer<AcceleratedDrawingArea> m_discardPreviousLayerTreeHostTimer;
 };
 
 } // namespace WebKit
