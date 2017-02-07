@@ -1,3 +1,13 @@
+2017-02-07  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r166597
+        https://bugs.webkit.org/show_bug.cgi?id=167951
+
+        Reviewed by Andreas Kling.
+
+        * platform/spi/cf/CFNetworkSPI.h:
+        Remove now-unused SPI declaration.
+
 2017-02-07  Sam Weinig  <sam@webkit.org>
 
         Try to fix the windows build.

@@ -128,7 +128,6 @@ private:
     void platformTerminate();
 
     void lowMemoryHandler(WebCore::Critical);
-    void platformLowMemoryHandler(WebCore::Critical);
 
     // ChildProcess
     void initializeProcess(const ChildProcessInitializationParameters&) override;
