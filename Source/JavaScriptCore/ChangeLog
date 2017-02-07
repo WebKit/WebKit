@@ -1,3 +1,14 @@
+2017-02-07  Matthew Hanson  <matt_hanson@apple.com>
+
+        Merge r211630. rdar://problem/30357032
+
+    2017-02-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+            [cmake] Unreviewed AArch64 buildfix after r211603.
+            https://bugs.webkit.org/show_bug.cgi?id=167714
+
+            * CMakeLists.txt:
+
 2017-01-26  Keith Miller  <keith_miller@apple.com>
 
         classInfo should take a VM so it is not materialized from the object on each call
