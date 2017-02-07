@@ -1,3 +1,16 @@
+2017-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Soup] WebKitSoupRequestInputStream can still leave requests unfinished after r211773
+        https://bugs.webkit.org/show_bug.cgi?id=167929
+
+        Reviewed by Michael Catanzaro.
+
+        The while loop to process the pending data requests was not a good idea, because having a new pending request
+        doesn't mean we have more data available, but that more data was requested.
+
+        * WebProcess/soup/WebKitSoupRequestInputStream.cpp:
+        (webkitSoupRequestInputStreamPendingReadAsyncComplete): Process only one request if needed.
+
 2017-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Soup] Long resources loaded by custom protocols sometimes never finish loading
