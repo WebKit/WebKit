@@ -61,6 +61,7 @@
 #include "TimelineRecordFactory.cpp"
 #include "WebConsoleAgent.cpp"
 #include "WebDebuggerAgent.cpp"
+#include "WebHeapAgent.cpp"
 #include "WebInjectedScriptHost.cpp"
 #include "WebInjectedScriptManager.cpp"
 #include "WorkerConsoleAgent.cpp"

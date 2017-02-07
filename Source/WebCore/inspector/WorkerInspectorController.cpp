@@ -29,6 +29,7 @@
 #include "CommandLineAPIHost.h"
 #include "InstrumentingAgents.h"
 #include "JSMainThreadExecState.h"
+#include "WebHeapAgent.h"
 #include "WebInjectedScriptHost.h"
 #include "WebInjectedScriptManager.h"
 #include "WorkerConsoleAgent.h"
@@ -42,7 +43,6 @@
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorFrontendRouter.h>
-#include <inspector/agents/InspectorHeapAgent.h>
 
 using namespace JSC;
 using namespace Inspector;
@@ -75,7 +75,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
         workerGlobalScope,
     };
 
-    auto heapAgent = std::make_unique<InspectorHeapAgent>(workerContext);
+    auto heapAgent = std::make_unique<WebHeapAgent>(workerContext);
 
     m_agents.append(std::make_unique<WorkerRuntimeAgent>(workerContext));
     m_agents.append(std::make_unique<WorkerDebuggerAgent>(workerContext));

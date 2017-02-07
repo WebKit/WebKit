@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,28 +25,31 @@
 
 #pragma once
 
-#include "InspectorWebAgentBase.h"
-#include "InstrumentingAgents.h"
-#include "WebHeapAgent.h"
+#include <inspector/agents/InspectorHeapAgent.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
+class SendGarbageCollectionEventsTask;
+struct GarbageCollectionData;
 typedef String ErrorString;
 
-class PageHeapAgent final : public WebHeapAgent {
-    WTF_MAKE_NONCOPYABLE(PageHeapAgent);
+class WebHeapAgent : public Inspector::InspectorHeapAgent {
+    WTF_MAKE_NONCOPYABLE(WebHeapAgent);
     WTF_MAKE_FAST_ALLOCATED;
+    friend class SendGarbageCollectionEventsTask;
 public:
-    PageHeapAgent(PageAgentContext&);
-    virtual ~PageHeapAgent() { }
+    WebHeapAgent(Inspector::AgentContext&);
+    virtual ~WebHeapAgent();
 
-    void enable(ErrorString&) override;
+protected:
     void disable(ErrorString&) override;
 
-    void mainFrameNavigated();
+    void dispatchGarbageCollectedEvent(Inspector::Protocol::Heap::GarbageCollection::Type, double startTime, double endTime) override;
 
-private:
-    InstrumentingAgents& m_instrumentingAgents;
+    void dispatchGarbageCollectionEventsAfterDelay(Vector<GarbageCollectionData>&& collections);
+
+    std::unique_ptr<SendGarbageCollectionEventsTask> m_sendGarbageCollectionEventsTask;
 };
 
 } // namespace WebCore

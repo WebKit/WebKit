@@ -1,5 +1,35 @@
 2017-02-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Do not use RunLoop when dispatching inspector GC event
+        https://bugs.webkit.org/show_bug.cgi?id=167683
+        <rdar://problem/30167791>
+
+        Reviewed by Brian Burg.
+
+        Move the RunLoop deferred implementation to WebCore. It is not needed
+        for JSContext inspection, and in JSContext inspection we are not
+        guarenteed a RunLoop to defer to.
+
+        * inspector/agents/InspectorHeapAgent.h:
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::InspectorHeapAgent):
+        (Inspector::InspectorHeapAgent::~InspectorHeapAgent):
+        (Inspector::InspectorHeapAgent::disable):
+        (Inspector::InspectorHeapAgent::didGarbageCollect):
+        (Inspector::SendGarbageCollectionEventsTask::SendGarbageCollectionEventsTask): Deleted.
+        (Inspector::SendGarbageCollectionEventsTask::addGarbageCollection): Deleted.
+        (Inspector::SendGarbageCollectionEventsTask::reset): Deleted.
+        (Inspector::SendGarbageCollectionEventsTask::timerFired): Deleted.
+
+        (Inspector::InspectorHeapAgent::dispatchGarbageCollectedEvent):
+        Make a virtual method so that WebCore implementations of this agent can choose
+        to dispatch this event asynchronously.
+
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        Remove unnecessary RunLoop include.
+
+2017-02-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Static Analyzer: JSContext.mm: Incorrect decrement of the reference count of an object
         https://bugs.webkit.org/show_bug.cgi?id=167848
 

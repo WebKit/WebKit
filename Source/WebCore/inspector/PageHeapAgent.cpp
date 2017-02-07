@@ -31,20 +31,20 @@ using namespace Inspector;
 namespace WebCore {
 
 PageHeapAgent::PageHeapAgent(PageAgentContext& context)
-    : InspectorHeapAgent(context)
+    : WebHeapAgent(context)
     , m_instrumentingAgents(context.instrumentingAgents)
 {
 }
 
 void PageHeapAgent::enable(ErrorString& errorString)
 {
-    InspectorHeapAgent::enable(errorString);
+    WebHeapAgent::enable(errorString);
     m_instrumentingAgents.setPageHeapAgent(this);
 }
 
 void PageHeapAgent::disable(ErrorString& errorString)
 {
-    InspectorHeapAgent::disable(errorString);
+    WebHeapAgent::disable(errorString);
     m_instrumentingAgents.setPageHeapAgent(nullptr);
 }
 

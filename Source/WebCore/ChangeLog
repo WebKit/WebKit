@@ -1,5 +1,44 @@
 2017-02-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Do not use RunLoop when dispatching inspector GC event
+        https://bugs.webkit.org/show_bug.cgi?id=167683
+        <rdar://problem/30167791>
+
+        Reviewed by Brian Burg.
+
+        Covered by existing tests.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        Add new file.
+
+        * inspector/PageHeapAgent.cpp:
+        (WebCore::PageHeapAgent::PageHeapAgent):
+        (WebCore::PageHeapAgent::enable):
+        (WebCore::PageHeapAgent::disable):
+        * inspector/PageHeapAgent.h:
+        Extend WebHeapAgent.
+
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        Use WebHeapAgent.
+
+        * inspector/WebHeapAgent.cpp: Added.
+        (WebCore::SendGarbageCollectionEventsTask::SendGarbageCollectionEventsTask):
+        (WebCore::SendGarbageCollectionEventsTask::addGarbageCollection):
+        (WebCore::SendGarbageCollectionEventsTask::reset):
+        (WebCore::SendGarbageCollectionEventsTask::timerFired):
+        (WebCore::WebHeapAgent::WebHeapAgent):
+        (WebCore::WebHeapAgent::~WebHeapAgent):
+        (WebCore::WebHeapAgent::disable):
+        (WebCore::WebHeapAgent::dispatchGarbageCollectedEvent):
+        (WebCore::WebHeapAgent::dispatchGarbageCollectionEventsAfterDelay):
+        * inspector/WebHeapAgent.h:
+        Move the defered event dispatch from InspectorHeapAgent here where a RunLoop is guarenteed.
+
+2017-02-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         ExtendedColor leaks seen on leaks bot
         https://bugs.webkit.org/show_bug.cgi?id=167912
 

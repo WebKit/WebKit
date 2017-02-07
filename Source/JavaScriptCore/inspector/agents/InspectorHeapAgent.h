@@ -36,7 +36,6 @@
 namespace Inspector {
 
 class InjectedScriptManager;
-class SendGarbageCollectionEventsTask;
 typedef String ErrorString;
 
 class JS_EXPORT_PRIVATE InspectorHeapAgent : public InspectorAgentBase, public HeapBackendDispatcherHandler, public JSC::HeapObserver {
@@ -65,6 +64,8 @@ public:
 protected:
     void clearHeapSnapshots();
 
+    virtual void dispatchGarbageCollectedEvent(Inspector::Protocol::Heap::GarbageCollection::Type, double startTime, double endTime);
+
 private:
     std::optional<JSC::HeapSnapshotNode> nodeForHeapObjectIdentifier(ErrorString&, unsigned heapObjectIdentifier);
 
@@ -72,8 +73,6 @@ private:
     std::unique_ptr<HeapFrontendDispatcher> m_frontendDispatcher;
     RefPtr<HeapBackendDispatcher> m_backendDispatcher;
     InspectorEnvironment& m_environment;
-
-    std::unique_ptr<SendGarbageCollectionEventsTask> m_sendGarbageCollectionEventsTask;
 
     bool m_enabled { false };
     bool m_tracking { false };
