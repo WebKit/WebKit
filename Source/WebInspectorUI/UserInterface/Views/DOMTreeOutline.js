@@ -155,10 +155,10 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
     update()
     {
-        var selectedNode = this.selectedTreeElement ? this.selectedTreeElement.representedObject : null;
-
         if (!this.rootDOMNode)
             return;
+
+        let selectedNode = this.selectedTreeElement ? this.selectedTreeElement.representedObject : null;
 
         this.removeChildren();
 

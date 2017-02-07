@@ -84,13 +84,6 @@ WebInspector.ElementsTabContentView = class ElementsTabContentView extends WebIn
         cookie.nodeToSelect = undefined;
     }
 
-    shown()
-    {
-        super.shown();
-
-        this._showDOMTreeContentView();
-    }
-
     closed()
     {
         super.closed();
