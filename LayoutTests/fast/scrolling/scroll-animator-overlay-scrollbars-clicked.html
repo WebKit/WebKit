@@ -1,0 +1,31 @@
+<html>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+  if (window.internals) {
+      window.internals.setUsesMockScrollAnimator(true);
+      window.internals.setUsesOverlayScrollbars(true);
+  }
+  if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
+  }
+  window.onload = function () {
+      if (window.eventSender) {
+          eventSender.mouseMoveTo(0, 0);
+          // Move to a position that is over the vertical scrollbar and the iframe.
+          eventSender.mouseMoveTo(window.innerWidth - 4, 100);
+          eventSender.mouseDown();
+          eventSender.mouseUp();
+          eventSender.mouseMoveTo(0, 0);
+      }
+      if (window.testRunner)
+          testRunner.notifyDone();
+  };
+</script>
+<script src="../../resources/js-test-post.js"></script>
+<body>
+  <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=165056">https://bugs.webkit.org/show_bug.cgi?id=165056</a>.</p>
+  <iframe width="1024" height="768" id="frame" src="data:text/html,<html></html>"></iframe>
+  <pre id="console"></pre>
+</body>
+</html>

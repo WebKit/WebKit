@@ -1,3 +1,17 @@
+2017-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Overlay scrolling with iframe-s broken
+        https://bugs.webkit.org/show_bug.cgi?id=165056
+
+        Reviewed by Antonio Gomes.
+
+        Add a new test to check that clicking on an overlay scrollbar works even it's over a subframe.
+
+        * fast/scrolling/scroll-animator-overlay-scrollbars-clicked-expected.txt: Added.
+        * fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2017-02-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate ComplexTextController to use platform-independent types

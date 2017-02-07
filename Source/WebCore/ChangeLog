@@ -1,3 +1,31 @@
+2017-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Overlay scrolling with iframe-s broken
+        https://bugs.webkit.org/show_bug.cgi?id=165056
+
+        Reviewed by Antonio Gomes.
+
+        Mouse press events for overlay scrollbars are ignored if there's a subframe under the scrollbar. This doesn't
+        happen with normal scrollbars, because the subframe is not really under the scrollbar, so events are always
+        correctly passed to the scrollbar. With overlay scrollbars, the hit test detects the scrollbar, but events are
+        always passed first to the subframe. Scrollbars are correctly updated on hover though, because
+        handleMouseMoveEvent checks the presence of scrollbars before checking for subframes and move events are
+        actually passed to both, the scrollbar and the subframe. Overlay scrollbars should always take precedence over
+        subframes to handle mouse press events, so we should check first if mouse is over a scrollbar and never pass the
+        event to a subframe in that case. Another problem is that the cursor is not updated either when the overlay
+        scrollbar is hovered and there's a subframe. This is because in handleMouseMoveEvent we pass the event to both
+        the scrollbar and subframe but we never update the cursor when a suframe was found. So, here again we need to make
+        an exception for scrollbars and upate the cursor when mouse is over the scrollbar even if a subframe was found.
+
+        Test: fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent): Move the scrollbar check before the subframe check.
+        (WebCore::EventHandler::handleMouseMoveEvent): Update the cursor when hovering a scrollbar even if a subframe
+        was found.
+        (WebCore::EventHandler::updateLastScrollbarUnderMouse): Use an enum instead of a boolean for setLast parameter.
+        * page/EventHandler.h:
+
 2017-02-06  Chris Dumez  <cdumez@apple.com>
 
         Symbols exposed on cross-origin Window / Location objects should be configurable
