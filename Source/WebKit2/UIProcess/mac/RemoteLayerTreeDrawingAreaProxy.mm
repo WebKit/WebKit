@@ -269,8 +269,8 @@ FloatPoint RemoteLayerTreeDrawingAreaProxy::indicatorLocation() const
 {
     if (m_webPageProxy.delegatesScrolling()) {
 #if PLATFORM(IOS)
-        FloatPoint tiledMapLocation = m_webPageProxy.unobscuredContentRect().location();
-        tiledMapLocation = tiledMapLocation.expandedTo(m_webPageProxy.exposedContentRect().location() + FloatSize(0, 60));
+        FloatPoint tiledMapLocation = m_webPageProxy.unobscuredContentRect().location().expandedTo(FloatPoint());
+        tiledMapLocation = tiledMapLocation.expandedTo(m_webPageProxy.exposedContentRect().location());
 
         float absoluteInset = indicatorInset / m_webPageProxy.displayedContentScale();
         tiledMapLocation += FloatSize(absoluteInset, absoluteInset);

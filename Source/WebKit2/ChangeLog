@@ -1,5 +1,17 @@
 2017-02-06  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WK2] Keep the tiled scrolling indicator on-screen when pinching
+        https://bugs.webkit.org/show_bug.cgi?id=167915
+
+        Reviewed by Tim Horton.
+        
+        Clamp the location to the larger of the location of .unobscuredContentRect() and 0,0.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::indicatorLocation):
+
+2017-02-06  Simon Fraser  <simon.fraser@apple.com>
+
         Tiled scrolling indicator gets doubled up on navigation
         https://bugs.webkit.org/show_bug.cgi?id=167909
 
