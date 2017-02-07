@@ -1,3 +1,23 @@
+2017-02-07  Sam Weinig  <sam@webkit.org>
+
+        Remove unnecessary exports on inline functions. They were causing build failures
+        with some compilers.
+
+        * Modules/mediasource/SampleMap.h:
+        (WebCore::PresentationOrderSampleMap::begin):
+        (WebCore::PresentationOrderSampleMap::end):
+        (WebCore::PresentationOrderSampleMap::rbegin):
+        (WebCore::PresentationOrderSampleMap::rend):
+        (WebCore::DecodeOrderSampleMap::begin):
+        (WebCore::DecodeOrderSampleMap::end):
+        (WebCore::DecodeOrderSampleMap::rbegin):
+        (WebCore::DecodeOrderSampleMap::rend):
+        (WebCore::SampleMap::sizeInBytes):
+        (WebCore::SampleMap::decodeOrder):
+        (WebCore::SampleMap::presentationOrder):
+        (WebCore::SampleMap::addRange):
+        (WebCore::SampleMap::SampleMap): Deleted.
+
 2017-02-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, manual roll out of r211777
