@@ -1,3 +1,33 @@
+2017-02-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Web Inspector: allow import() inside the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=167457
+
+        Reviewed by Ryosuke Niwa.
+
+        When evaluating `import("...")`, we need the caller's context to resolve
+        the module specifier correctly. For example, if `import("./cocoa.js")` is
+        evaluated in the script "drinks/hot.js", this module name is resolved to
+        "drinks/cocoa.js". If the same import operator is evaluated in the script
+        "menu/all.js", the module specifier becomes "menu/cocoa.js".
+
+        Previously we reject the import operator if the caller does not have such
+        a context. These context is SourceOrigin and its ScriptFetcher. While they
+        are offered in the script tag and other code evaluations, the inspector
+        console does not offer that. These class are offered in the WebCore side
+        and we should not touch these classes in the JSC's inspector code.
+
+        Now we relax the above restriction. If the above caller information is not
+        offered, we fallback to the default one. In the web page, we use the page's
+        URL as the caller's source origin. This allows us to evaluate the import
+        operator in the inspector console.
+
+        And as of r167698, the console recognizes `await import("...")` form. We use
+        this to test this `import()` in the console functionality.
+
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::importModule):
+
 2017-02-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move platform-independent parts of ComplexTextController out of mac/ subfolder

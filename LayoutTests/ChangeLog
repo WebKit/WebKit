@@ -1,3 +1,16 @@
+2017-02-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Web Inspector: allow import() inside the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=167457
+
+        Reviewed by Ryosuke Niwa.
+
+        * inspector/controller/resources/cappuccino.js: Added.
+        * inspector/controller/resources/cocoa.js: Added.
+        * inspector/controller/resources/drink.js: Added.
+        * inspector/controller/runtime-controller-expected.txt:
+        * inspector/controller/runtime-controller.html:
+
 2017-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Overlay scrolling with iframe-s broken
