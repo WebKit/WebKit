@@ -1,5 +1,13 @@
 2017-02-07  Alex Christensen  <achristensen@webkit.org>
 
+        Fix libwebrtc build after r211817
+        https://bugs.webkit.org/show_bug.cgi?id=167944
+
+        * Configurations/usrsctp.xcconfig:
+        Disable more warnings.
+
+2017-02-07  Alex Christensen  <achristensen@webkit.org>
+
         build usrsctp with Xcode
         https://bugs.webkit.org/show_bug.cgi?id=167944
 
