@@ -1,3 +1,28 @@
+2017-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] Stop creating the GLContext on demand the first time makeContextCurrent is called
+        https://bugs.webkit.org/show_bug.cgi?id=167496
+
+        Reviewed by Žan Doberšek.
+
+        This is causing problems with animations when entering AC mode on demand. What happens is that the threaded
+        compositor is created, then the animation is scheduled and during the first animation iteration the GLContext is
+        created, making the first frame of the animation quite slow. In my computer creating the GLContext takes 0.8
+        seconds. If the animation duration is less than the time it takes to create the GLContext, the animation ends
+        without iterating. This causing timeouts in the bots in tests like
+        animations/animation-iteration-event-destroy-renderer.html that expect webkitAnimationIteration events that
+        never fire.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::ThreadedCompositor): Create the GLContext right after the compositing thread is
+        created if we already have a native surface handle.
+        (WebKit::ThreadedCompositor::createGLContext): Helper to create the GLContext.
+        (WebKit::ThreadedCompositor::setNativeSurfaceHandleForCompositing): Create the GLContext when a native surface
+        handle is given.
+        (WebKit::ThreadedCompositor::makeContextCurrent): Deleted.
+        (WebKit::ThreadedCompositor::renderLayerTree): Make the context cunrrent directly here.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+
 2017-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Threaded Compositor] Update also the contents size when creating the threaded compositor
