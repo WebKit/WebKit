@@ -60,7 +60,8 @@ public:
         OpacityFilter    = 1L << 13,
         BlurFilter       = 1L << 14,
         AlphaBlur        = 1L << 15,
-        ContentTexture   = 1L << 16
+        ContentTexture   = 1L << 16,
+        ManualRepeat     = 1L << 17
     };
 
     typedef unsigned Options;
