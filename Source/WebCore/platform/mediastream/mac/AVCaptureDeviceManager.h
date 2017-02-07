@@ -42,16 +42,6 @@ OBJC_CLASS WebCoreAVCaptureDeviceManagerObserver;
 
 namespace WebCore {
 
-class AVCaptureSessionInfo : public CaptureSessionInfo {
-public:
-    AVCaptureSessionInfo(AVCaptureSession*);
-    bool supportsVideoSize(const String&) const final;
-    String bestSessionPresetForVideoDimensions(int width, int height) const final;
-
-private:
-    AVCaptureSession *m_platformSession;
-};
-
 class AVCaptureDeviceManager final : public CaptureDeviceManager {
     friend class NeverDestroyed<AVCaptureDeviceManager>;
 public:

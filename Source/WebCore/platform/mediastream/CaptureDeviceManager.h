@@ -36,20 +36,11 @@ struct CaptureDeviceInfo {
 public:
     String m_persistentDeviceID;
     String m_localizedName;
-    String m_groupID;
-
     String m_sourceId;
-
-    bool m_enabled { false };
+    String m_groupID { emptyString() };
+    bool m_enabled { true };
     RealtimeMediaSource::Type m_sourceType { RealtimeMediaSource::None };
     RealtimeMediaSourceSettings::VideoFacingMode m_position { RealtimeMediaSourceSettings::Unknown };
-};
-
-class CaptureSessionInfo {
-public:
-    virtual ~CaptureSessionInfo() { }
-    virtual bool supportsVideoSize(const String& /* videoSize */) const { return false; }
-    virtual String bestSessionPresetForVideoDimensions(int /* width */, int /* height */) const { return emptyString(); }
 };
 
 class CaptureDeviceManager {

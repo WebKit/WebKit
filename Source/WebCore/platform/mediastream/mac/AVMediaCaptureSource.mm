@@ -126,11 +126,10 @@ static dispatch_queue_t globaVideoCaptureSerialQueue()
 }
 
 AVMediaCaptureSource::AVMediaCaptureSource(AVCaptureDeviceTypedef* device, const AtomicString& id, RealtimeMediaSource::Type type)
-    : RealtimeMediaSource(id, type, emptyString())
+    : RealtimeMediaSource(id, type, device.localizedName)
     , m_objcObserver(adoptNS([[WebCoreAVMediaCaptureSourceObserver alloc] initWithCallback:this]))
     , m_device(device)
 {
-    setName(device.localizedName);
     setPersistentID(device.uniqueID);
     setMuted(true);
 }

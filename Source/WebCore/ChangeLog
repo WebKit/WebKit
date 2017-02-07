@@ -1,3 +1,25 @@
+2017-02-06  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream Mac] Remove some unused code
+        https://bugs.webkit.org/show_bug.cgi?id=167913
+
+        Reviewed by Jer Noble.
+
+        No new tests, no functional change.
+
+        * platform/mediastream/CaptureDeviceManager.h:
+        (WebCore::CaptureSessionInfo::~CaptureSessionInfo): Deleted.
+        (WebCore::CaptureSessionInfo::supportsVideoSize): Deleted.
+        (WebCore::CaptureSessionInfo::bestSessionPresetForVideoDimensions): Deleted.
+        * platform/mediastream/mac/AVCaptureDeviceManager.h:
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::AVCaptureDeviceManager::refreshCaptureDeviceList):
+        (WebCore::AVCaptureSessionInfo::AVCaptureSessionInfo): Deleted.
+        (WebCore::AVCaptureSessionInfo::supportsVideoSize): Deleted.
+        (WebCore::AVCaptureSessionInfo::bestSessionPresetForVideoDimensions): Deleted.
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::AVMediaCaptureSource):
+
 2017-02-06  Youenn Fablet  <youennf@gmail.com>
 
         Allow some schemes to opt-out of CORS

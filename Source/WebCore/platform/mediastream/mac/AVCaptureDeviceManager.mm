@@ -92,50 +92,6 @@ using namespace WebCore;
 
 namespace WebCore {
 
-AVCaptureSessionInfo::AVCaptureSessionInfo(AVCaptureSessionType *platformSession)
-    : m_platformSession(platformSession)
-{
-}
-
-bool AVCaptureSessionInfo::supportsVideoSize(const String& videoSize) const
-{
-    return [m_platformSession canSetSessionPreset:videoSize];
-}
-
-String AVCaptureSessionInfo::bestSessionPresetForVideoDimensions(int width, int height) const
-{
-    ASSERT(width >= 0);
-    ASSERT(height >= 0);
-
-    if (width > 1280 || height > 720) {
-        // FIXME: this restriction could be adjusted with the videoMaxScaleAndCropFactor property.
-        return emptyString();
-    }
-
-    if (width > 640 || height > 480) {
-        if (supportsVideoSize(AVCaptureSessionPreset1280x720))
-            return AVCaptureSessionPreset1280x720;
-
-        return emptyString();
-    }
-
-    if (width > 352 || height > 288) {
-        if (supportsVideoSize(AVCaptureSessionPreset640x480))
-            return AVCaptureSessionPreset640x480;
-
-        return emptyString();
-    }
-
-    if (supportsVideoSize(AVCaptureSessionPreset352x288))
-        return AVCaptureSessionPreset352x288;
-
-    if (supportsVideoSize(AVCaptureSessionPresetLow))
-        return AVCaptureSessionPresetLow;
-
-    return emptyString();
-}
-
-
 Vector<CaptureDeviceInfo>& AVCaptureDeviceManager::captureDeviceList()
 {
     if (!isAvailable())
@@ -172,13 +128,8 @@ void AVCaptureDeviceManager::refreshCaptureDeviceList()
 
         CaptureDeviceInfo captureDevice;
         if (!captureDeviceFromDeviceID(platformDevice.uniqueID, captureDevice)) {
-            // An AVCaptureDevice has a unique ID, but we can't use it for the source ID because:
-            // 1. if it provides both audio and video we will need to create two sources for it
-            // 2. the unique ID persists on one system across device connections, disconnections,
-            //    application restarts, and reboots, so it could be used to figerprint a user.
-            captureDevice.m_persistentDeviceID = platformDevice.uniqueID;
-            captureDevice.m_enabled = true;
-            captureDevice.m_localizedName = platformDevice.localizedName;
+            CaptureDeviceInfo captureDevice = { platformDevice.uniqueID, platformDevice.localizedName, createCanonicalUUIDString() };
+
             if ([platformDevice position] == AVCaptureDevicePositionFront)
                 captureDevice.m_position = RealtimeMediaSourceSettings::User;
             if ([platformDevice position] == AVCaptureDevicePositionBack)
@@ -191,7 +142,6 @@ void AVCaptureDeviceManager::refreshCaptureDeviceList()
 
             // FIXME: For a given device, the source ID should persist when visiting the same request origin,
             // but differ across different request origins.
-            captureDevice.m_sourceId = createCanonicalUUIDString();
             captureDevice.m_sourceType = hasVideo ? RealtimeMediaSource::Video : RealtimeMediaSource::Audio;
             if (hasVideo && hasAudio) {
                 // Add the audio component as a separate device.
