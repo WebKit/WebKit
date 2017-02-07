@@ -53,8 +53,9 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* state, PropertyName prope
     if (BindingSecurity::shouldAllowAccessToFrame(*state, *frame, message))
         return false;
 
+    // https://html.spec.whatwg.org/#crossorigingetownpropertyhelper-(-o,-p-)
     if (propertyName == state->propertyNames().toStringTagSymbol || propertyName == state->propertyNames().hasInstanceSymbol || propertyName == state->propertyNames().isConcatSpreadableSymbol) {
-        slot.setUndefined();
+        slot.setValue(this, ReadOnly | DontEnum, jsUndefined());
         return true;
     }
 

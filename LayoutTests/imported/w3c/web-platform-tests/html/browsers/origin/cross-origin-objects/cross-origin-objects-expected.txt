@@ -15,8 +15,8 @@ PASS [[PreventExtensions]] should throw for cross-origin objects
 FAIL [[PreventExtensions]] should throw for cross-origin objects (exception type) assert_throws: preventExtensions on cross-origin Location should throw function "function () { Object.preventExtensions(C.location) }" threw object "SecurityError (DOM Exception 18): Blocked a frame with or..." ("SecurityError") expected object "TypeError" ("TypeError")
 PASS [[GetOwnProperty]] - Properties on cross-origin objects should be reported |own| 
 PASS [[GetOwnProperty]] - Properties on cross-origin objects should be reported |own| (exception type) 
-FAIL [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly assert_equals: property descriptor for Symbol(Symbol.toStringTag) should be configurable expected true but got false
-FAIL [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly (exception type) assert_unreached: Main test failed Reached unreachable code
+PASS [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly 
+PASS [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly (exception type) 
 PASS [[Delete]] Should throw on cross-origin objects 
 PASS [[Delete]] Should throw on cross-origin objects (exception type) 
 PASS [[DefineOwnProperty]] Should throw for cross-origin objects 

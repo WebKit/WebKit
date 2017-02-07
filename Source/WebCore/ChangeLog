@@ -1,3 +1,22 @@
+2017-02-06  Chris Dumez  <cdumez@apple.com>
+
+        Symbols exposed on cross-origin Window / Location objects should be configurable
+        https://bugs.webkit.org/show_bug.cgi?id=167920
+
+        Reviewed by Ryosuke Niwa.
+
+        Symbols exposed on cross-origin Window / Location objects should be configurable:
+        - https://html.spec.whatwg.org/#crossorigingetownpropertyhelper-(-o,-p-) (Step 1)
+
+        Firefox behaves as per specification.
+
+        No new tests, rebaselined existing test.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::getOwnPropertySlotDelegate):
+
 2017-02-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Do not use RunLoop when dispatching inspector GC event

@@ -97,8 +97,9 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
         return true;
     }
 
+    // https://html.spec.whatwg.org/#crossorigingetownpropertyhelper-(-o,-p-)
     if (propertyName == exec->propertyNames().toStringTagSymbol || propertyName == exec->propertyNames().hasInstanceSymbol || propertyName == exec->propertyNames().isConcatSpreadableSymbol) {
-        slot.setUndefined();
+        slot.setValue(thisObject, ReadOnly | DontEnum, jsUndefined());
         return true;
     }
 

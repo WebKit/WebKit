@@ -1,5 +1,16 @@
 2017-02-06  Chris Dumez  <cdumez@apple.com>
 
+        Symbols exposed on cross-origin Window / Location objects should be configurable
+        https://bugs.webkit.org/show_bug.cgi?id=167920
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline web platform test now that more checks are passing.
+
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+
+2017-02-06  Chris Dumez  <cdumez@apple.com>
+
         Align [[OwnPropertyKeys]] with the HTML specification for cross-origin Window / Location objects
         https://bugs.webkit.org/show_bug.cgi?id=167647
         <rdar://problem/30339489>
