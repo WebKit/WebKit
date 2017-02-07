@@ -187,6 +187,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 
     [_menu addItem:experimentalFeaturesSubmenuItem];
     [experimentalFeaturesSubmenuItem release];
+    [experimentalFeaturesMenu release];
 #endif // WK_API_ENABLED
 
     [self _addHeaderWithTitle:@"WebKit1-only Settings"];
@@ -322,7 +323,10 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [alert addButtonWithTitle:@"Switch and Quit"];
     [alert addButtonWithTitle:@"Cancel"];
 
-    if ([alert runModal] != NSAlertFirstButtonReturn)
+    NSModalResponse response = [alert runModal];    
+    [alert release];
+
+    if (response != NSAlertFirstButtonReturn)
         return;
 
     [self _toggleBooleanDefault:PerWindowWebProcessesDisabledKey];

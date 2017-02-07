@@ -102,6 +102,7 @@
 
             [mutableInstalledContentExtensions addObject:identifier];
             [defaults setObject:mutableInstalledContentExtensions forKey:@"InstalledContentExtensions"];
+            [mutableInstalledContentExtensions release];
 
             [arrayController addObject:identifier];
 
@@ -131,6 +132,7 @@
         NSMutableArray *installedContentExtensions = [[defaults arrayForKey:@"InstalledContentExtensions"] mutableCopy];
         [installedContentExtensions removeObject:identifierToRemove];
         [defaults setObject:installedContentExtensions forKey:@"InstalledContentExtensions"];
+        [installedContentExtensions release];
 
         [arrayController removeObjectAtArrangedObjectIndex:index];
         BrowserAppDelegate* appDelegate = (BrowserAppDelegate *)[[NSApplication sharedApplication] delegate];

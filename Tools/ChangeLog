@@ -1,3 +1,20 @@
+2017-02-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Static Analyzer: Address some leaks in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=167897
+
+        Reviewed by Alexey Proskuryakov.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController sharingService:transitionImageForShareItem:contentRect:]):
+        * MiniBrowser/mac/ExtensionManagerWindowController.m:
+        (-[ExtensionManagerWindowController add:]):
+        (-[ExtensionManagerWindowController remove:]):
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController togglePerWindowWebProcessesDisabled:]):
+        Address obvious leaks caught by the static analyzer.
+
 2017-02-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate ComplexTextController to use platform-independent types

@@ -262,7 +262,7 @@ static CGRect coreGraphicsScreenRectForAppKitScreenRect(NSRect rect)
     NSImage *image = [[NSImage alloc] initWithCGImage:imageRef size:NSZeroSize];
     CGImageRelease(imageRef);
 
-    return image;
+    return [image autorelease];
 }
 
 - (nullable NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope
