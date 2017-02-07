@@ -503,6 +503,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 
     _page = [_contentView page];
     _page->setDeviceOrientation(deviceOrientation());
+    _page->setDrawsBackground(self.opaque);
 
     [_contentView layer].anchorPoint = CGPointZero;
     [_contentView setFrame:bounds];
@@ -969,6 +970,16 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)
+
+- (void)_populateArchivedSubviews:(NSMutableSet *)encodedViews
+{
+    [super _populateArchivedSubviews:encodedViews];
+
+    if (_scrollView)
+        [encodedViews removeObject:_scrollView.get()];
+    if (_customContentFixedOverlayView)
+        [encodedViews removeObject:_customContentFixedOverlayView.get()];
+}
 
 - (BOOL)_isBackground
 {
@@ -1821,6 +1832,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_contentView setOpaque:opaque];
 
     if (oldOpaque == opaque)
+        return;
+
+    if (!_page)
         return;
 
     _page->setDrawsBackground(opaque);

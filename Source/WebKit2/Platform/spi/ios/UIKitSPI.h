@@ -448,6 +448,7 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
 - (void)setFrameOrigin:(CGPoint)origin;
 - (void)setSize:(CGSize)size;
 @property (nonatomic, assign, setter=_setBackdropMaskViewFlags:) NSInteger _backdropMaskViewFlags;
+- (void)_populateArchivedSubviews:(NSMutableSet *)encodedViews;
 @end
 
 @interface UIWebSelectionView : UIView

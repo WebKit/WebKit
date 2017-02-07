@@ -1,3 +1,23 @@
+2017-02-07  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r211819): [ios-simulator] API tests Coding.WKWebView and Coding.WKWebView_SameConfiguration crashing
+        https://bugs.webkit.org/show_bug.cgi?id=167947
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Add SPI declaration.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        Make sure to call setDrawsBackground here.
+
+        (-[WKWebView _populateArchivedSubviews:]):
+        We don't want to archive the scroll view and the fixed overlay view.
+
+        (-[WKWebView setOpaque:]):
+        Return early if this is called before we have a page (like from -[UIView initWithCoder:]).
+
 2017-02-07  Alex Christensen  <achristensen@webkit.org>
 
         Revert r166597
