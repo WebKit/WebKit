@@ -1,3 +1,17 @@
+2017-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] Crash on WebCore::GLContext::version()
+        https://bugs.webkit.org/show_bug.cgi?id=167559
+
+        Reviewed by Michael Catanzaro.
+
+        This is happening because TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired() is fired after the
+        threaded compositor is deleted. CoordinatedGraphicsScene::purgeGLResources() should invalidate the proxies
+        before clearing the map.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::purgeGLResources):
+
 2017-01-30  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Scrolling iframes, doesn't redraw their content

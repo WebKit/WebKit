@@ -676,6 +676,8 @@ void CoordinatedGraphicsScene::purgeGLResources()
     m_surfaceBackingStores.clear();
 #endif
 #if USE(COORDINATED_GRAPHICS_THREADED)
+    for (auto& proxy : m_platformLayerProxies.values())
+        proxy->invalidate();
     m_platformLayerProxies.clear();
 #endif
     m_surfaces.clear();
