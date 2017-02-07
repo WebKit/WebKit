@@ -1,3 +1,22 @@
+2017-02-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Re-land r210095 (avoid a tile revalidation on scale change)
+        https://bugs.webkit.org/show_bug.cgi?id=167866
+
+        Reviewed by Tim Horton.
+        
+        r210095 was rolled out in r211230 but now that all TileControllers unparent
+        offscreen tiles, we can roll it back it.
+        
+        Also add more Tiling logging.
+
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::validationPolicyAsString):
+        (WebCore::TileGrid::setScale):
+        (WebCore::TileGrid::prepopulateRect):
+        (WebCore::TileGrid::revalidateTiles):
+        (WebCore::TileGrid::ensureTilesForRect):
+
 2017-02-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate ComplexTextController to use platform-independent types
