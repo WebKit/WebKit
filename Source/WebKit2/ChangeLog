@@ -1,3 +1,19 @@
+2017-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] ASSERTION FAILED: !m_layerTreeHost in DrawingAreaImpl::display()
+        https://bugs.webkit.org/show_bug.cgi?id=167548
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that non accelerated compositing forceRepaint implementation is doing a layout and then calling
+        display. The layout makes the drawing area enter in AC mode and display asserts that we have a layer tree
+        host. forceRepaint shouldn't do the layout because display already does that and it correctly handles the case
+        of entering AC mode during the layout. It shouldn't call setNeedsDisplay either, because that schedules a
+        display, but we are going to display synchronously.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::forceRepaint):
+
 2017-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Threaded Compositor] Stop creating the GLContext on demand the first time makeContextCurrent is called
