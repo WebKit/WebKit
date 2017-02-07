@@ -133,7 +133,8 @@ bool MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> 
 
     ASSERT(appendPipeline);
 
-    GstBuffer* buffer = gst_buffer_new_and_alloc(length);
+    void* bufferData = fastMalloc(length);
+    GstBuffer* buffer = gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), bufferData, length, 0, length, bufferData, fastFree);
     gst_buffer_fill(buffer, 0, data, length);
 
     return appendPipeline->pushNewBuffer(buffer) == GST_FLOW_OK;
