@@ -1,3 +1,16 @@
+2017-02-07  Matthew Hanson  <matt_hanson@apple.com>
+
+        Merge r211752. rdar://problem/30119091
+
+    2017-02-06  Jer Noble  <jer.noble@apple.com>
+
+            Update sandbox to allow CoreMedia to perform custom media loading.
+            https://bugs.webkit.org/show_bug.cgi?id=167700
+
+            Reviewed by Alexey Proskuryakov.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2017-02-02  Matthew Hanson  <matt_hanson@apple.com>
 
         Merge r211438.
