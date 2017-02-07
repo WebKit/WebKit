@@ -440,7 +440,8 @@ private:
     void updateSelectionForMouseDrag(const HitTestResult&);
 #endif
 
-    void updateLastScrollbarUnderMouse(Scrollbar*, bool);
+    enum class SetOrClearLastScrollbar { Clear, Set };
+    void updateLastScrollbarUnderMouse(Scrollbar*, SetOrClearLastScrollbar);
     
     void setFrameWasScrolledByUser();
 
