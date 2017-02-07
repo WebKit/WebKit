@@ -47,6 +47,7 @@ using namespace WebCore;
 namespace WebKit {
 
 static Optional<int> s_damageEventBase;
+static Optional<int> s_damageErrorBase;
 
 class XDamageNotifier {
     WTF_MAKE_NONCOPYABLE(XDamageNotifier);
@@ -105,7 +106,7 @@ private:
 std::unique_ptr<AcceleratedBackingStoreX11> AcceleratedBackingStoreX11::create(WebPageProxy& webPage)
 {
     auto& display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay());
-    if (!display.supportsXComposite() || !display.supportsXDamage(s_damageEventBase))
+    if (!display.supportsXComposite() || !display.supportsXDamage(s_damageEventBase, s_damageErrorBase))
         return nullptr;
     return std::unique_ptr<AcceleratedBackingStoreX11>(new AcceleratedBackingStoreX11(webPage));
 }
@@ -115,13 +116,19 @@ AcceleratedBackingStoreX11::AcceleratedBackingStoreX11(WebPageProxy& webPage)
 {
 }
 
+static inline unsigned char xDamageErrorCode(unsigned char errorCode)
+{
+    ASSERT(s_damageErrorBase);
+    return static_cast<unsigned>(s_damageErrorBase.value()) + errorCode;
+}
+
 AcceleratedBackingStoreX11::~AcceleratedBackingStoreX11()
 {
     if (!m_surface && !m_damage)
         return;
 
     Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
-    XErrorTrapper trapper(display, XErrorTrapper::Policy::Crash, { BadDrawable, BadDamage });
+    XErrorTrapper trapper(display, XErrorTrapper::Policy::Crash, { BadDrawable, xDamageErrorCode(BadDamage) });
     if (m_damage) {
         XDamageNotifier::singleton().remove(m_damage.get());
         m_damage.reset();
@@ -138,7 +145,7 @@ void AcceleratedBackingStoreX11::update(const LayerTreeContext& layerTreeContext
     Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
 
     if (m_surface) {
-        XErrorTrapper trapper(display, XErrorTrapper::Policy::Crash, { BadDrawable, BadDamage });
+        XErrorTrapper trapper(display, XErrorTrapper::Policy::Crash, { BadDrawable, xDamageErrorCode(BadDamage) });
         if (m_damage) {
             XDamageNotifier::singleton().remove(m_damage.get());
             m_damage.reset();
@@ -158,7 +165,7 @@ void AcceleratedBackingStoreX11::update(const LayerTreeContext& layerTreeContext
     float deviceScaleFactor = m_webPage.deviceScaleFactor();
     size.scale(deviceScaleFactor);
 
-    XErrorTrapper trapper(display, XErrorTrapper::Policy::Crash, { BadDrawable, BadDamage });
+    XErrorTrapper trapper(display, XErrorTrapper::Policy::Crash, { BadDrawable, xDamageErrorCode(BadDamage) });
     ASSERT(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native() == GDK_DISPLAY_XDISPLAY(gdk_display_get_default()));
     GdkVisual* visual = gdk_screen_get_rgba_visual(gdk_screen_get_default());
     if (!visual)

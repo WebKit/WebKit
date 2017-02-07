@@ -98,7 +98,8 @@ bool PlatformDisplayX11::supportsXComposite() const
     return m_supportsXComposite.value();
 }
 
-bool PlatformDisplayX11::supportsXDamage(Optional<int>& damageEventBase) const
+
+bool PlatformDisplayX11::supportsXDamage(Optional<int>& damageEventBase, Optional<int>& damageErrorBase) const
 {
     if (!m_supportsXDamage) {
         m_supportsXDamage = false;
@@ -106,13 +107,16 @@ bool PlatformDisplayX11::supportsXDamage(Optional<int>& damageEventBase) const
         if (m_display) {
             int eventBase, errorBase;
             m_supportsXDamage = XDamageQueryExtension(m_display, &eventBase, &errorBase);
-            if (m_supportsXDamage.value())
+            if (m_supportsXDamage.value()) {
                 m_damageEventBase = eventBase;
+                m_damageErrorBase = errorBase;
+            }
         }
 #endif
     }
 
     damageEventBase = m_damageEventBase;
+    damageErrorBase = m_damageErrorBase;
     return m_supportsXDamage.value();
 }
 
