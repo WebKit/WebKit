@@ -1,3 +1,56 @@
+2017-02-05  Mark Lam  <mark.lam@apple.com>
+
+        The SigillCrashAnalyzer should play nicer with client code that may install its own SIGILL handler.
+        https://bugs.webkit.org/show_bug.cgi?id=167858
+
+        Reviewed by Michael Saboff.
+
+        Here are the scenarios that may come up:
+
+        1. Client code did not install a SIGILL handler.
+           - In this case, once we're done analyzing the SIGILL, we can just restore the
+             default handler and return to let the OS do the default action i.e. capture
+             a core dump.
+
+        2. Client code installed a SIGILL handler before JSC does.
+           - In this case, we will see a non-null handler returned as the old signal
+             handler when we install ours.
+           - In our signal handler, after doing our crash analysis, we should invoke the
+             client handler to let it do its work.
+           - Our analyzer can also tell us if the SIGILL source is from JSC code in
+             general (right now, this would just mean JIT code).
+           - If the SIGILL source is not from JSC, we'll just let the client handler
+             decided how to proceed.  We assume that the client handler will do the right
+             thing (which is how the old behavior is before the SigillCrashAnalyzer was
+             introduced).
+           - If the SIGILL source is from JSC, then we know the SIGILL is an unrecoverable
+             condition.  Hence, after we have given the client handler a chance to run,
+             we should restore the default handler and let the OS capture a core dump.
+             This intentionally overrides whatever signal settings the client handler may
+             have set.
+
+        3. Client code installed a SIGILL handler after JSC does.
+           - In this case, we are dependent on the client handler to call our handler
+             after it does its work.  This is compatible with the old behavior before
+             SigillCrashAnalyzer was introduced.
+           - In our signal handler, if we determine that the SIGILL source is from JSC
+             code, then the SIGILL is not recoverable.  We should then restore the
+             default handler and get a core dump.
+           - If the SIGILL source is not from JSC, we check to see if there's a client
+             handler installed after us.
+           - If we detect a client handler installed after us, we defer judgement on what
+             to do to the client handler.  Since the client handler did not uninstall
+             itself, it must have considered itself to have recovered from the SIGILL.
+             We'll trust the client handler and take no restore action of our own (which
+             is compatible with old code behavior).
+           - If we detect no client handler and we have no previous handler, then we
+             should restore the default handler and get a core dump.
+
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::handleCrash):
+        (JSC::installCrashHandler):
+        (JSC::SigillCrashAnalyzer::analyze): Deleted.
+
 2017-02-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, manual roll out of r211777
