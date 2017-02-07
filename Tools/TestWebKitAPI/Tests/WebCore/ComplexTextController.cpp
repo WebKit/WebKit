@@ -55,20 +55,20 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
     auto spaceWidth = font.primaryFont().spaceWidth();
 
 #if USE_LAYOUT_SPECIFIC_ADVANCES
-    Vector<CGSize> advances = { CGSizeZero, CGSizeMake(21.640625, 0.0), CGSizeMake(42.3046875, 0.0), CGSizeMake(55.8984375, 0.0), CGSizeMake(22.34375, 0.0) };
-    Vector<CGPoint> origins = { CGPointMake(-15.15625, 18.046875), CGPointZero, CGPointZero, CGPointZero, CGPointZero };
+    Vector<FloatSize> advances = { FloatSize(), FloatSize(21.640625, 0.0), FloatSize(42.3046875, 0.0), FloatSize(55.8984375, 0.0), FloatSize(22.34375, 0.0) };
+    Vector<FloatPoint> origins = { FloatPoint(-15.15625, 18.046875), FloatPoint(), FloatPoint(), FloatPoint(), FloatPoint() };
 #else
-    Vector<CGSize> advances = { CGSizeMake(15.15625, -18.046875), CGSizeMake(21.640625, 0.0), CGSizeMake(42.3046875, 0.0), CGSizeMake(55.8984375, 0.0), CGSizeMake(22.34375, 0.0) };
-    Vector<CGPoint> origins = { };
+    Vector<FloatSize> advances = { FloatSize(15.15625, -18.046875), FloatSize(21.640625, 0.0), FloatSize(42.3046875, 0.0), FloatSize(55.8984375, 0.0), FloatSize(22.34375, 0.0) };
+    Vector<FloatPoint> origins = { };
 #endif
 
-    CGSize initialAdvance = CGSizeMake(-15.15625, 18.046875);
+    FloatSize initialAdvance = FloatSize(-15.15625, 18.046875);
 
     UChar characters[] = { 0x644, 0x637, 0x641, 0x627, 0x64b, 0x20 };
     size_t charactersLength = WTF_ARRAY_LENGTH(characters);
     TextRun textRun(StringView(characters, charactersLength));
-    auto run1 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(21.875, 0) }, { CGPointZero }, { 5 }, { 5 }, CGSizeZero, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(5, 1), false);
-    auto run2 = ComplexTextController::ComplexTextRun::createForTesting(advances, origins, { 193, 377, 447, 431, 458 }, { 4, 3, 2, 1, 0 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 5), false);
+    auto run1 = ComplexTextController::ComplexTextRun::create({ FloatSize(21.875, 0) }, { FloatPoint() }, { 5 }, { 5 }, FloatSize(), font.primaryFont(), characters, 0, charactersLength, 5, 6, false);
+    auto run2 = ComplexTextController::ComplexTextRun::create(advances, origins, { 193, 377, 447, 431, 458 }, { 4, 3, 2, 1, 0 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, 0, 5, false);
     Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
     runs.append(WTFMove(run1));
     runs.append(WTFMove(run2));
@@ -76,25 +76,25 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
 
     CGFloat totalWidth = 0;
     for (size_t i = 1; i < advances.size(); ++i)
-        totalWidth += advances[i].width;
+        totalWidth += advances[i].width();
     EXPECT_NEAR(controller.totalWidth(), spaceWidth + totalWidth, 0.0001);
     GlyphBuffer glyphBuffer;
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(1, &glyphBuffer);
-    EXPECT_NEAR(controller.runWidthSoFar(), advances[4].width, 0.0001);
+    EXPECT_NEAR(controller.runWidthSoFar(), advances[4].width(), 0.0001);
     controller.advance(6, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), spaceWidth + totalWidth, 0.0001);
     EXPECT_NEAR(glyphBuffer.initialAdvance().width(), 0, 0.0001);
     EXPECT_NEAR(glyphBuffer.initialAdvance().height(), 0, 0.0001);
     EXPECT_EQ(glyphBuffer.size(), 6U);
-    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), advances[4].width, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), advances[3].width, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(2).width(), advances[2].width, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(3).width(), advances[1].width, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(4).width(), -initialAdvance.width, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(5).width(), spaceWidth + initialAdvance.width, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), advances[4].width(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), advances[3].width(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(2).width(), advances[2].width(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(3).width(), advances[1].width(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(4).width(), -initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(5).width(), spaceWidth + initialAdvance.width(), 0.0001);
 }
 
 TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
@@ -106,44 +106,44 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
     font.update();
 
 #if USE_LAYOUT_SPECIFIC_ADVANCES
-    Vector<CGSize> advances = { CGSizeZero, CGSizeMake(21.640625, 0.0), CGSizeMake(42.3046875, 0.0), CGSizeMake(55.8984375, 0.0), CGSizeMake(22.34375, 0.0) };
-    Vector<CGPoint> origins = { CGPointMake(-15.15625, 18.046875), CGPointZero, CGPointZero, CGPointZero, CGPointZero };
+    Vector<FloatSize> advances = { FloatSize(), FloatSize(21.640625, 0.0), FloatSize(42.3046875, 0.0), FloatSize(55.8984375, 0.0), FloatSize(22.34375, 0.0) };
+    Vector<FloatPoint> origins = { FloatPoint(-15.15625, 18.046875), FloatPoint(), FloatPoint(), FloatPoint(), FloatPoint() };
 #else
-    Vector<CGSize> advances = { CGSizeMake(15.15625, -18.046875), CGSizeMake(21.640625, 0.0), CGSizeMake(42.3046875, 0.0), CGSizeMake(55.8984375, 0.0), CGSizeMake(22.34375, 0.0) };
-    Vector<CGPoint> origins = { };
+    Vector<FloatSize> advances = { FloatSize(15.15625, -18.046875), FloatSize(21.640625, 0.0), FloatSize(42.3046875, 0.0), FloatSize(55.8984375, 0.0), FloatSize(22.34375, 0.0) };
+    Vector<FloatPoint> origins = { };
 #endif
 
-    CGSize initialAdvance = CGSizeMake(-15.15625, 18.046875);
+    FloatSize initialAdvance = FloatSize(-15.15625, 18.046875);
 
     UChar characters[] = { 0x644, 0x637, 0x641, 0x627, 0x64b };
     size_t charactersLength = WTF_ARRAY_LENGTH(characters);
     TextRun textRun(StringView(characters, charactersLength));
-    auto run = ComplexTextController::ComplexTextRun::createForTesting(advances, origins, { 193, 377, 447, 431, 458 }, { 4, 3, 2, 1, 0 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 5), false);
+    auto run = ComplexTextController::ComplexTextRun::create(advances, origins, { 193, 377, 447, 431, 458 }, { 4, 3, 2, 1, 0 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, 0, 5, false);
     Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
     runs.append(WTFMove(run));
     ComplexTextController controller(font, textRun, runs);
 
     CGFloat totalWidth = 0;
     for (size_t i = 1; i < advances.size(); ++i)
-        totalWidth += advances[i].width;
+        totalWidth += advances[i].width();
     EXPECT_NEAR(controller.totalWidth(), totalWidth, 0.0001);
     GlyphBuffer glyphBuffer;
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(1, &glyphBuffer);
-    EXPECT_NEAR(controller.runWidthSoFar(), advances[4].width, 0.0001);
+    EXPECT_NEAR(controller.runWidthSoFar(), advances[4].width(), 0.0001);
     controller.advance(5, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), totalWidth, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), initialAdvance.width, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), initialAdvance.height, 0.0001);
+    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), initialAdvance.height(), 0.0001);
     EXPECT_EQ(glyphBuffer.size(), 5U);
-    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), advances[4].width, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), advances[3].width, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(2).width(), advances[2].width, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(3).width(), advances[1].width, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(4).width(), -initialAdvance.width, 0.0001);
-    EXPECT_NEAR(glyphBuffer.advanceAt(4).height(), initialAdvance.height, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), advances[4].width(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), advances[3].width(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(2).width(), advances[2].width(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(3).width(), advances[1].width(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(4).width(), -initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(4).height(), initialAdvance.height(), 0.0001);
 }
 
 TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
@@ -156,26 +156,26 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
     auto spaceWidth = font.primaryFont().spaceWidth();
 
 #if USE_LAYOUT_SPECIFIC_ADVANCES
-    Vector<CGSize> advances = { CGSizeMake(76.347656, 0.000000), CGSizeMake(0.000000, 0.000000) };
-    Vector<CGPoint> origins = { CGPointZero, CGPointMake(-23.281250, -8.398438) };
+    Vector<FloatSize> advances = { FloatSize(76.347656, 0.000000), FloatSize(0.000000, 0.000000) };
+    Vector<FloatPoint> origins = { FloatPoint(), FloatPoint(-23.281250, -8.398438) };
 #else
-    Vector<CGSize> advances = { CGSizeMake(53.066406, -8.398438), CGSizeMake(23.281250, 8.398438) };
-    Vector<CGPoint> origins = { };
+    Vector<FloatSize> advances = { FloatSize(53.066406, -8.398438), FloatSize(23.281250, 8.398438) };
+    Vector<FloatPoint> origins = { };
 #endif
 
-    CGSize initialAdvance = CGSizeMake(28.144531, 0);
+    FloatSize initialAdvance = FloatSize(28.144531, 0);
 
     UChar characters[] = { 0x20, 0x61, 0x20e3 };
     size_t charactersLength = WTF_ARRAY_LENGTH(characters);
     TextRun textRun(StringView(characters, charactersLength));
-    auto run1 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(spaceWidth, 0) }, { CGPointZero }, { 5 }, { 0 }, CGSizeZero, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 1), true);
-    auto run2 = ComplexTextController::ComplexTextRun::createForTesting(advances, origins, { 68, 1471 }, { 1, 2 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(1, 2), true);
+    auto run1 = ComplexTextController::ComplexTextRun::create({ FloatSize(spaceWidth, 0) }, { FloatPoint() }, { 5 }, { 0 }, FloatSize(), font.primaryFont(), characters, 0, charactersLength, 0, 1, true);
+    auto run2 = ComplexTextController::ComplexTextRun::create(advances, origins, { 68, 1471 }, { 1, 2 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, 1, 3, true);
     Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
     runs.append(WTFMove(run1));
     runs.append(WTFMove(run2));
     ComplexTextController controller(font, textRun, runs);
 
-    EXPECT_NEAR(controller.totalWidth(), spaceWidth + 76.347656 + initialAdvance.width, 0.0001);
+    EXPECT_NEAR(controller.totalWidth(), spaceWidth + 76.347656 + initialAdvance.width(), 0.0001);
     GlyphBuffer glyphBuffer;
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
@@ -183,13 +183,13 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
     controller.advance(1, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), spaceWidth, 0.0001);
     controller.advance(2, &glyphBuffer);
-    EXPECT_NEAR(controller.runWidthSoFar(), spaceWidth + advances[0].width + initialAdvance.width, 0.0001);
+    EXPECT_NEAR(controller.runWidthSoFar(), spaceWidth + advances[0].width() + initialAdvance.width(), 0.0001);
     controller.advance(3, &glyphBuffer);
-    EXPECT_NEAR(controller.runWidthSoFar(), spaceWidth + 76.347656 + initialAdvance.width, 0.0001);
+    EXPECT_NEAR(controller.runWidthSoFar(), spaceWidth + 76.347656 + initialAdvance.width(), 0.0001);
     EXPECT_NEAR(glyphBuffer.initialAdvance().width(), 0, 0.0001);
     EXPECT_NEAR(glyphBuffer.initialAdvance().height(), 0, 0.0001);
     EXPECT_EQ(glyphBuffer.size(), 3U);
-    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), spaceWidth + initialAdvance.width, 0.0001);
+    EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), spaceWidth + initialAdvance.width(), 0.0001);
     EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), 53.066406, 0.0001);
     EXPECT_NEAR(glyphBuffer.advanceAt(2).width(), 23.281250, 0.0001);
 }
@@ -203,34 +203,34 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInLTR)
     font.update();
 
 #if USE_LAYOUT_SPECIFIC_ADVANCES
-    Vector<CGSize> advances = { CGSizeMake(76.347656, 0.000000), CGSizeMake(0.000000, 0.000000) };
-    Vector<CGPoint> origins = { CGPointZero, CGPointMake(-23.281250, -8.398438) };
+    Vector<FloatSize> advances = { FloatSize(76.347656, 0.000000), FloatSize(0.000000, 0.000000) };
+    Vector<FloatPoint> origins = { FloatPoint(), FloatPoint(-23.281250, -8.398438) };
 #else
-    Vector<CGSize> advances = { CGSizeMake(53.066406, -8.398438), CGSizeMake(23.281250, 8.398438) };
-    Vector<CGPoint> origins = { };
+    Vector<FloatSize> advances = { FloatSize(53.066406, -8.398438), FloatSize(23.281250, 8.398438) };
+    Vector<FloatPoint> origins = { };
 #endif
 
-    CGSize initialAdvance = CGSizeMake(28.144531, 0);
+    FloatSize initialAdvance = FloatSize(28.144531, 0);
 
     UChar characters[] = { 0x61, 0x20e3 };
     size_t charactersLength = WTF_ARRAY_LENGTH(characters);
     TextRun textRun(StringView(characters, charactersLength));
-    auto run = ComplexTextController::ComplexTextRun::createForTesting(advances, origins, { 68, 1471 }, { 0, 1 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 2), true);
+    auto run = ComplexTextController::ComplexTextRun::create(advances, origins, { 68, 1471 }, { 0, 1 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, 0, 2, true);
     Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
     runs.append(WTFMove(run));
     ComplexTextController controller(font, textRun, runs);
 
-    EXPECT_NEAR(controller.totalWidth(), 76.347656 + initialAdvance.width, 0.0001);
+    EXPECT_NEAR(controller.totalWidth(), 76.347656 + initialAdvance.width(), 0.0001);
     GlyphBuffer glyphBuffer;
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(0, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), 0, 0.0001);
     controller.advance(1, &glyphBuffer);
-    EXPECT_NEAR(controller.runWidthSoFar(), advances[0].width + initialAdvance.width, 0.0001);
+    EXPECT_NEAR(controller.runWidthSoFar(), advances[0].width() + initialAdvance.width(), 0.0001);
     controller.advance(2, &glyphBuffer);
-    EXPECT_NEAR(controller.runWidthSoFar(), 76.347656 + initialAdvance.width, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), initialAdvance.width, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), initialAdvance.height, 0.0001);
+    EXPECT_NEAR(controller.runWidthSoFar(), 76.347656 + initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), initialAdvance.height(), 0.0001);
     EXPECT_EQ(glyphBuffer.size(), 2U);
     EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), 53.066406, 0.0001);
     EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), 23.281250, 0.0001);
@@ -244,14 +244,14 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
     FontCascade font(description);
     font.update();
 
-    CGSize initialAdvance = CGSizeMake(4.33996383363472, 12.368896925859);
+    FloatSize initialAdvance = FloatSize(4.33996383363472, 12.368896925859);
 
     UChar characters[] = { 0x633, 0x20, 0x627, 0x650 };
     size_t charactersLength = WTF_ARRAY_LENGTH(characters);
     TextRun textRun(StringView(characters, charactersLength));
-    auto run1 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(-4.33996383363472, -12.368896925859), CGSizeMake(14.0397830018083, 0) }, { }, { 884, 240 }, { 3, 2 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(2, 2), false);
-    auto run2 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(12.0, 0) }, { }, { 3 }, { 1 }, CGSizeZero, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(1, 1), false);
-    auto run3 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(43.8119349005425, 0) }, { }, { 276 }, { 0 }, CGSizeZero, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 1), false);
+    auto run1 = ComplexTextController::ComplexTextRun::create({ FloatSize(-4.33996383363472, -12.368896925859), FloatSize(14.0397830018083, 0) }, { }, { 884, 240 }, { 3, 2 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, 2, 4, false);
+    auto run2 = ComplexTextController::ComplexTextRun::create({ FloatSize(12.0, 0) }, { }, { 3 }, { 1 }, FloatSize(), font.primaryFont(), characters, 0, charactersLength, 1, 2, false);
+    auto run3 = ComplexTextController::ComplexTextRun::create({ FloatSize(43.8119349005425, 0) }, { }, { 276 }, { 0 }, FloatSize(), font.primaryFont(), characters, 0, charactersLength, 0, 1, false);
     Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
     runs.append(WTFMove(run1));
     runs.append(WTFMove(run2));
@@ -272,8 +272,8 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
     EXPECT_NEAR(controller.runWidthSoFar(), totalWidth, 0.0001);
     controller.advance(4, &glyphBuffer);
     EXPECT_NEAR(controller.runWidthSoFar(), totalWidth, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), initialAdvance.width, 0.0001);
-    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), initialAdvance.height, 0.0001);
+    EXPECT_NEAR(glyphBuffer.initialAdvance().width(), initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(glyphBuffer.initialAdvance().height(), initialAdvance.height(), 0.0001);
     EXPECT_EQ(glyphBuffer.size(), 4U);
     EXPECT_NEAR(glyphBuffer.advanceAt(0).width(), 43.8119349005425, 0.0001);
     EXPECT_NEAR(glyphBuffer.advanceAt(1).width(), 12.0, 0.0001);
@@ -293,7 +293,7 @@ TEST_F(ComplexTextControllerTest, LeadingExpansion)
     UChar characters[] = { 'a' };
     size_t charactersLength = WTF_ARRAY_LENGTH(characters);
     TextRun textRun(StringView(characters, charactersLength), 0, 100, ForceLeadingExpansion);
-    auto run = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(24, 0) }, { }, { 16 }, { 0 }, CGSizeZero, font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 1), true);
+    auto run = ComplexTextController::ComplexTextRun::create({ FloatSize(24, 0) }, { }, { 16 }, { 0 }, FloatSize(), font.primaryFont(), characters, 0, charactersLength, 0, 1, true);
     Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
     runs.append(WTFMove(run));
     ComplexTextController controller(font, textRun, runs);
@@ -323,8 +323,8 @@ TEST_F(ComplexTextControllerTest, VerticalAdvances)
     UChar characters[] = { 'a', 'b', 'c', 'd' };
     size_t charactersLength = WTF_ARRAY_LENGTH(characters);
     TextRun textRun(StringView(characters, charactersLength));
-    auto run1 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(0, 1), CGSizeMake(0, 2) }, { CGPointMake(0, 4), CGPointMake(0, 8) }, { 16, 17 }, { 0, 1 }, CGSizeMake(0, 16), font.primaryFont(), characters, 0, charactersLength, CFRangeMake(0, 2), true);
-    auto run2 = ComplexTextController::ComplexTextRun::createForTesting({ CGSizeMake(0, 32), CGSizeMake(0, 64) }, { CGPointMake(0, 128), CGPointMake(0, 256) }, { 18, 19 }, { 2, 3 }, CGSizeMake(0, 512), font.primaryFont(), characters, 0, charactersLength, CFRangeMake(2, 2), true);
+    auto run1 = ComplexTextController::ComplexTextRun::create({ FloatSize(0, 1), FloatSize(0, 2) }, { FloatPoint(0, 4), FloatPoint(0, 8) }, { 16, 17 }, { 0, 1 }, FloatSize(0, 16), font.primaryFont(), characters, 0, charactersLength, 0, 2, true);
+    auto run2 = ComplexTextController::ComplexTextRun::create({ FloatSize(0, 32), FloatSize(0, 64) }, { FloatPoint(0, 128), FloatPoint(0, 256) }, { 18, 19 }, { 2, 3 }, FloatSize(0, 512), font.primaryFont(), characters, 0, charactersLength, 2, 4, true);
     Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
     runs.append(WTFMove(run1));
     runs.append(WTFMove(run2));

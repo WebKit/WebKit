@@ -62,7 +62,12 @@ typedef Glyph GlyphBufferGlyph;
 struct GlyphBufferAdvance : CGSize {
 public:
     GlyphBufferAdvance() : CGSize(CGSizeZero) { }
-    GlyphBufferAdvance(CGSize size) : CGSize(size)
+    GlyphBufferAdvance(CGSize size)
+        : CGSize(size)
+    {
+    }
+    GlyphBufferAdvance(float width, float height)
+        : CGSize(CGSizeMake(width, height))
     {
     }
 

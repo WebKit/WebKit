@@ -22,9 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ComplexTextController_h
-#define ComplexTextController_h
+#pragma once
 
+#include "FloatPoint.h"
 #include "GlyphBuffer.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
@@ -38,10 +38,6 @@ typedef unsigned short CGGlyph;
 
 typedef const struct __CTRun * CTRunRef;
 typedef const struct __CTLine * CTLineRef;
-
-namespace WTF {
-template<> struct VectorTraits<CGPoint> : SimpleClassVectorTraits { };
-}
 
 namespace WebCore {
 
@@ -78,31 +74,31 @@ public:
 
     class ComplexTextRun : public RefCounted<ComplexTextRun> {
     public:
-        static Ref<ComplexTextRun> create(CTRunRef ctRun, const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange)
+        static Ref<ComplexTextRun> create(CTRunRef ctRun, const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd)
         {
-            return adoptRef(*new ComplexTextRun(ctRun, font, characters, stringLocation, stringLength, runRange));
+            return adoptRef(*new ComplexTextRun(ctRun, font, characters, stringLocation, stringLength, indexBegin, indexEnd));
         }
 
-        static Ref<ComplexTextRun> create(const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr)
+        static Ref<ComplexTextRun> create(const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd, bool ltr)
         {
-            return adoptRef(*new ComplexTextRun(font, characters, stringLocation, stringLength, ltr));
+            return adoptRef(*new ComplexTextRun(font, characters, stringLocation, stringLength, indexBegin, indexEnd, ltr));
         }
 
-        static Ref<ComplexTextRun> createForTesting(const Vector<CGSize>& advances, const Vector<CGPoint>& origins, const Vector<CGGlyph>& glyphs, const Vector<CFIndex>& stringIndices, CGSize initialAdvance, const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange, bool ltr)
+        static Ref<ComplexTextRun> create(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd, bool ltr)
         {
-            return adoptRef(*new ComplexTextRun(advances, origins, glyphs, stringIndices, initialAdvance, font, characters, stringLocation, stringLength, runRange, ltr));
+            return adoptRef(*new ComplexTextRun(advances, origins, glyphs, stringIndices, initialAdvance, font, characters, stringLocation, stringLength, indexBegin, indexEnd, ltr));
         }
 
         unsigned glyphCount() const { return m_glyphCount; }
         const Font& font() const { return m_font; }
         const UChar* characters() const { return m_characters; }
         unsigned stringLocation() const { return m_stringLocation; }
-        size_t stringLength() const { return m_stringLength; }
-        ALWAYS_INLINE CFIndex indexAt(size_t i) const;
-        CFIndex indexBegin() const { return m_indexBegin; }
-        CFIndex indexEnd() const { return m_indexEnd; }
-        CFIndex endOffsetAt(size_t i) const { ASSERT(!m_isMonotonic); return m_glyphEndOffsets[i]; }
-        const CGGlyph* glyphs() const { return m_glyphs; }
+        unsigned stringLength() const { return m_stringLength; }
+        ALWAYS_INLINE unsigned indexAt(unsigned) const;
+        unsigned indexBegin() const { return m_indexBegin; }
+        unsigned indexEnd() const { return m_indexEnd; }
+        unsigned endOffsetAt(unsigned i) const { ASSERT(!m_isMonotonic); return m_glyphEndOffsets[i]; }
+        const CGGlyph* glyphs() const { return m_glyphs.data(); }
 
         /*
          * This is the format of the information CoreText gives us about each run:
@@ -131,33 +127,30 @@ public:
          *                X--------------------------------------------------X--------------------------X--------------------------X
          * (text position ^)                (layout advance)                       (layout advance)           (layout advance)
          */
-        void growInitialAdvanceHorizontally(CGFloat delta) { m_initialAdvance.width += delta; }
-        CGSize initialAdvance() const { return m_initialAdvance; }
-        const CGSize* baseAdvances() const { return m_baseAdvances; }
-        const CGPoint* glyphOrigins() const { return m_glyphOrigins.size() == glyphCount() ? m_glyphOrigins.data() : nullptr; }
+        void growInitialAdvanceHorizontally(float delta) { m_initialAdvance.expand(delta, 0); }
+        FloatSize initialAdvance() const { return m_initialAdvance; }
+        const FloatSize* baseAdvances() const { return m_baseAdvances.data(); }
+        const FloatPoint* glyphOrigins() const { return m_glyphOrigins.size() == glyphCount() ? m_glyphOrigins.data() : nullptr; }
         bool isLTR() const { return m_isLTR; }
         bool isMonotonic() const { return m_isMonotonic; }
         void setIsNonMonotonic();
 
     private:
-        ComplexTextRun(CTRunRef, const Font&, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange);
-        ComplexTextRun(const Font&, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr);
-        WEBCORE_EXPORT ComplexTextRun(const Vector<CGSize>& advances, const Vector<CGPoint>& origins, const Vector<CGGlyph>& glyphs, const Vector<CFIndex>& stringIndices, CGSize initialAdvance, const Font&, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange, bool ltr);
+        ComplexTextRun(CTRunRef, const Font&, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd);
+        ComplexTextRun(const Font&, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd, bool ltr);
+        WEBCORE_EXPORT ComplexTextRun(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font&, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd, bool ltr);
 
-        Vector<CGSize, 64> m_baseAdvancesVector;
-        Vector<CGPoint, 64> m_glyphOrigins;
-        Vector<CGGlyph, 64> m_glyphsVector;
-        Vector<CFIndex, 64> m_glyphEndOffsets;
-        Vector<CFIndex, 64> m_coreTextIndicesVector;
-        CGSize m_initialAdvance;
+        Vector<FloatSize, 64> m_baseAdvances;
+        Vector<FloatPoint, 64> m_glyphOrigins;
+        Vector<CGGlyph, 64> m_glyphs;
+        Vector<unsigned, 64> m_glyphEndOffsets;
+        Vector<unsigned, 64> m_coreTextIndices;
+        FloatSize m_initialAdvance;
         const Font& m_font;
         const UChar* m_characters;
-        size_t m_stringLength;
-        const CFIndex* m_coreTextIndices;
-        const CGGlyph* m_glyphs;
-        const CGSize* m_baseAdvances;
-        CFIndex m_indexBegin;
-        CFIndex m_indexEnd;
+        unsigned m_stringLength;
+        unsigned m_indexBegin;
+        unsigned m_indexEnd;
         unsigned m_glyphCount;
         unsigned m_stringLocation;
         bool m_isLTR;
@@ -180,10 +173,10 @@ private:
 
     float runWidthSoFarFraction(unsigned glyphStartOffset, unsigned glyphEndOffset, unsigned oldCharacterInCurrentGlyph, GlyphIterationStyle) const;
 
-    CGPoint glyphOrigin(unsigned index) const { return index < m_glyphOrigins.size() ? m_glyphOrigins[index] : CGPointZero; }
+    FloatPoint glyphOrigin(unsigned index) const { return index < m_glyphOrigins.size() ? m_glyphOrigins[index] : FloatPoint(); }
 
-    Vector<CGSize, 256> m_adjustedBaseAdvances;
-    Vector<CGPoint, 256> m_glyphOrigins;
+    Vector<FloatSize, 256> m_adjustedBaseAdvances;
+    Vector<FloatPoint, 256> m_glyphOrigins;
     Vector<CGGlyph, 256> m_adjustedGlyphs;
 
     Vector<UChar, 256> m_smallCapsBuffer;
@@ -210,7 +203,7 @@ private:
 
     const FontCascade& m_font;
     const TextRun& m_run;
- 
+
     unsigned m_currentCharacter { 0 };
     unsigned m_end { 0 };
 
@@ -234,5 +227,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ComplexTextController_h

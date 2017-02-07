@@ -42,9 +42,8 @@
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 90000)
 SOFT_LINK_FRAMEWORK(CoreText);
-SOFT_LINK(CoreText, CTRunGetBaseAdvancesAndOrigins, void, (CTRunRef run, CFRange range, CGSize baseAdvances[], CGPoint origins[]), (run, range, baseAdvances, origins))
+SOFT_LINK(CoreText, CTRunGetBaseAdvancesAndOrigins, void, (CTRunRef run, CFRange range, FloatSize baseAdvances[], FloatPoint origins[]), (run, range, baseAdvances, origins))
 #endif
-
 
 // Note: CTFontDescriptorRefs can live forever in caches inside CoreText, so this object can too.
 @interface WebCascadeList : NSArray {
@@ -106,97 +105,108 @@ SOFT_LINK(CoreText, CTRunGetBaseAdvancesAndOrigins, void, (CTRunRef run, CFRange
 
 namespace WebCore {
 
-ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange)
+ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd)
     : m_initialAdvance(CTRunGetInitialAdvance(ctRun))
     , m_font(font)
     , m_characters(characters)
     , m_stringLength(stringLength)
-    , m_coreTextIndices(CTRunGetStringIndicesPtr(ctRun))
-    , m_glyphs(CTRunGetGlyphsPtr(ctRun))
-    , m_indexBegin(runRange.location)
-    , m_indexEnd(runRange.location + runRange.length)
+    , m_indexBegin(indexBegin)
+    , m_indexEnd(indexEnd)
     , m_glyphCount(CTRunGetGlyphCount(ctRun))
     , m_stringLocation(stringLocation)
     , m_isLTR(!(CTRunGetStatus(ctRun) & kCTRunStatusRightToLeft))
 {
-    if (!m_coreTextIndices) {
-        m_coreTextIndicesVector.grow(m_glyphCount);
-        CTRunGetStringIndices(ctRun, CFRangeMake(0, 0), m_coreTextIndicesVector.data());
-        m_coreTextIndices = m_coreTextIndicesVector.data();
+    const CFIndex* coreTextIndicesPtr = CTRunGetStringIndicesPtr(ctRun);
+    Vector<CFIndex> coreTextIndices;
+    if (!coreTextIndicesPtr) {
+        coreTextIndices.grow(m_glyphCount);
+        CTRunGetStringIndices(ctRun, CFRangeMake(0, 0), coreTextIndices.data());
+        coreTextIndicesPtr = coreTextIndices.data();
     }
+    m_coreTextIndices.reserveInitialCapacity(m_glyphCount);
+    for (unsigned i = 0; i < m_glyphCount; ++i)
+        m_coreTextIndices.uncheckedAppend(coreTextIndicesPtr[i]);
 
-    if (!m_glyphs) {
-        m_glyphsVector.grow(m_glyphCount);
-        CTRunGetGlyphs(ctRun, CFRangeMake(0, 0), m_glyphsVector.data());
-        m_glyphs = m_glyphsVector.data();
+    const CGGlyph* glyphsPtr = CTRunGetGlyphsPtr(ctRun);
+    Vector<CGGlyph> glyphs;
+    if (!glyphsPtr) {
+        glyphs.grow(m_glyphCount);
+        CTRunGetGlyphs(ctRun, CFRangeMake(0, 0), glyphs.data());
+        glyphsPtr = glyphs.data();
     }
+    m_glyphs.reserveInitialCapacity(m_glyphCount);
+    for (unsigned i = 0; i < m_glyphCount; ++i)
+        m_glyphs.uncheckedAppend(glyphsPtr[i]);
 
 #if USE_LAYOUT_SPECIFIC_ADVANCES
     if (CTRunGetStatus(ctRun) & kCTRunStatusHasOrigins) {
-        m_baseAdvancesVector.grow(m_glyphCount);
-        m_glyphOrigins.grow(m_glyphCount);
-        CTRunGetBaseAdvancesAndOrigins(ctRun, CFRangeMake(0, 0), m_baseAdvancesVector.data(), m_glyphOrigins.data());
-        m_baseAdvances = m_baseAdvancesVector.data();
+        Vector<CGSize> baseAdvances(m_glyphCount);
+        Vector<CGPoint> glyphOrigins(m_glyphCount);
+        CTRunGetBaseAdvancesAndOrigins(ctRun, CFRangeMake(0, 0), baseAdvances.data(), glyphOrigins.data());
+        m_baseAdvances.reserveInitialCapacity(m_glyphCount);
+        m_glyphOrigins.reserveInitialCapacity(m_glyphCount);
+        for (unsigned i = 0; i < m_glyphCount; ++i) {
+            m_baseAdvances.uncheckedAppend(baseAdvances[i]);
+            m_glyphOrigins.uncheckedAppend(glyphOrigins[i]);
+        }
     } else
 #endif
     {
-        m_baseAdvances = CTRunGetAdvancesPtr(ctRun);
-        if (!m_baseAdvances) {
-            m_baseAdvancesVector.grow(m_glyphCount);
-            CTRunGetAdvances(ctRun, CFRangeMake(0, 0), m_baseAdvancesVector.data());
-            m_baseAdvances = m_baseAdvancesVector.data();
+        const CGSize* baseAdvances = CTRunGetAdvancesPtr(ctRun);
+        Vector<CGSize> baseAdvancesVector;
+        if (!baseAdvances) {
+            baseAdvancesVector.grow(m_glyphCount);
+            CTRunGetAdvances(ctRun, CFRangeMake(0, 0), baseAdvancesVector.data());
+            baseAdvances = baseAdvancesVector.data();
         }
+        m_baseAdvances.reserveInitialCapacity(m_glyphCount);
+        for (unsigned i = 0; i < m_glyphCount; ++i)
+            m_baseAdvances.uncheckedAppend(baseAdvances[i]);
     }
 }
 
 // Missing glyphs run constructor. Core Text will not generate a run of missing glyphs, instead falling back on
 // glyphs from LastResort. We want to use the primary font's missing glyph in order to match the fast text code path.
-ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr)
-    : m_initialAdvance(CGSizeZero)
-    , m_font(font)
+ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd, bool ltr)
+    : m_font(font)
     , m_characters(characters)
     , m_stringLength(stringLength)
-    , m_indexBegin(0)
-    , m_indexEnd(stringLength)
+    , m_indexBegin(indexBegin)
+    , m_indexEnd(indexEnd)
     , m_stringLocation(stringLocation)
     , m_isLTR(ltr)
 {
-    m_coreTextIndicesVector.reserveInitialCapacity(m_stringLength);
-    unsigned r = 0;
-    while (r < m_stringLength) {
-        m_coreTextIndicesVector.uncheckedAppend(r);
+    auto runLengthInCodeUnits = m_indexEnd - m_indexBegin;
+    m_coreTextIndices.reserveInitialCapacity(runLengthInCodeUnits);
+    unsigned r = m_indexBegin;
+    while (r < m_indexEnd) {
+        m_coreTextIndices.uncheckedAppend(r);
         UChar32 character;
         U16_NEXT(m_characters, r, m_stringLength, character);
     }
-    m_glyphCount = m_coreTextIndicesVector.size();
+    m_glyphCount = m_coreTextIndices.size();
     if (!ltr) {
         for (unsigned r = 0, end = m_glyphCount - 1; r < m_glyphCount / 2; ++r, --end)
-            std::swap(m_coreTextIndicesVector[r], m_coreTextIndicesVector[end]);
+            std::swap(m_coreTextIndices[r], m_coreTextIndices[end]);
     }
-    m_coreTextIndices = m_coreTextIndicesVector.data();
 
     // Synthesize a run of missing glyphs.
-    m_glyphsVector.fill(0, m_glyphCount);
-    m_glyphs = m_glyphsVector.data();
-    m_baseAdvancesVector.fill(CGSizeMake(m_font.widthForGlyph(0), 0), m_glyphCount);
-    m_baseAdvances = m_baseAdvancesVector.data();
+    m_glyphs.fill(0, m_glyphCount);
+    m_baseAdvances.fill(FloatSize(m_font.widthForGlyph(0), 0), m_glyphCount);
 }
 
 
-ComplexTextController::ComplexTextRun::ComplexTextRun(const Vector<CGSize>& advances, const Vector<CGPoint>& origins, const Vector<CGGlyph>& glyphs, const Vector<CFIndex>& stringIndices, CGSize initialAdvance, const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange, bool ltr)
-    : m_baseAdvancesVector(advances)
+ComplexTextController::ComplexTextRun::ComplexTextRun(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd, bool ltr)
+    : m_baseAdvances(advances)
     , m_glyphOrigins(origins)
-    , m_glyphsVector(glyphs)
-    , m_coreTextIndicesVector(stringIndices)
+    , m_glyphs(glyphs)
+    , m_coreTextIndices(stringIndices)
     , m_initialAdvance(initialAdvance)
     , m_font(font)
     , m_characters(characters)
     , m_stringLength(stringLength)
-    , m_coreTextIndices(m_coreTextIndicesVector.data())
-    , m_glyphs(m_glyphsVector.data())
-    , m_baseAdvances(m_baseAdvancesVector.data())
-    , m_indexBegin(runRange.location)
-    , m_indexEnd(runRange.location + runRange.length)
+    , m_indexBegin(indexBegin)
+    , m_indexEnd(indexEnd)
     , m_glyphCount(glyphs.size())
     , m_stringLocation(stringLocation)
     , m_isLTR(ltr)
@@ -229,7 +239,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
 {
     if (!font) {
         // Create a run of missing glyphs from the primary font.
-        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation, length, m_run.ltr()));
+        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation, length, 0, length, m_run.ltr()));
         return;
     }
 
@@ -313,7 +323,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
                     // NSFontRenderingMode.
                     RetainPtr<CFStringRef> fontName = adoptCF(CTFontCopyPostScriptName(runCTFont));
                     if (CFEqual(fontName.get(), CFSTR("LastResort"))) {
-                        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation + runRange.location, runRange.length, m_run.ltr()));
+                        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation, length, runRange.location, runRange.location + runRange.length, m_run.ltr()));
                         continue;
                     }
                     auto& fontCache = FontCache::singleton();
@@ -332,7 +342,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         if (m_fallbackFonts && runFont != &m_font.primaryFont())
             m_fallbackFonts->add(font);
 
-        m_complexTextRuns.append(ComplexTextRun::create(ctRun, *runFont, cp, stringLocation, length, runRange));
+        m_complexTextRuns.append(ComplexTextRun::create(ctRun, *runFont, cp, stringLocation, length, runRange.location, runRange.location + runRange.length));
     }
 }
 

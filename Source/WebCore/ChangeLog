@@ -1,3 +1,45 @@
+2017-02-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Migrate ComplexTextController to use platform-independent types
+        https://bugs.webkit.org/show_bug.cgi?id=167833
+
+        Reviewed by Brent Fulgham.
+
+        ComplexTextController will eventually be used on all ports to perform complex text layout.
+        This is a mechanical patch which migrates the shared parts of ComplexTextController away from
+        using CoreGraphics and CoreFoundation types in favor of WebCore/platform types. Eventually,
+        ComplexTextController will get moved to PAL but there is a layering violation (TextLayout) to
+        fix first.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBufferAdvance::GlyphBufferAdvance):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::offsetForPosition):
+        (WebCore::advanceByCombiningCharacterSequence):
+        (WebCore::ComplexTextController::ComplexTextRun::indexAt):
+        (WebCore::ComplexTextController::ComplexTextRun::setIsNonMonotonic):
+        (WebCore::ComplexTextController::advance):
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * platform/graphics/mac/ComplexTextController.h:
+        (WebCore::ComplexTextController::ComplexTextRun::create):
+        (WebCore::ComplexTextController::ComplexTextRun::stringLength):
+        (WebCore::ComplexTextController::ComplexTextRun::indexBegin):
+        (WebCore::ComplexTextController::ComplexTextRun::indexEnd):
+        (WebCore::ComplexTextController::ComplexTextRun::endOffsetAt):
+        (WebCore::ComplexTextController::ComplexTextRun::glyphs):
+        (WebCore::ComplexTextController::ComplexTextRun::growInitialAdvanceHorizontally):
+        (WebCore::ComplexTextController::ComplexTextRun::initialAdvance):
+        (WebCore::ComplexTextController::ComplexTextRun::baseAdvances):
+        (WebCore::ComplexTextController::ComplexTextRun::glyphOrigins):
+        (WebCore::ComplexTextController::glyphOrigin):
+        (WebCore::ComplexTextController::ComplexTextRun::createForTesting): Deleted.
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (SOFT_LINK):
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+
 2017-02-06  Brent Fulgham  <bfulgham@apple.com>
 
         Correct File Path Handling in SecurityOrigin and FileSystem
