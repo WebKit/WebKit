@@ -1,3 +1,12 @@
+2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ debug build after r211365.
+
+        Remove invalid assert.
+
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::exitAcceleratedCompositingModeNow):
+
 2017-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Stop forcing accelerated compositing by default
