@@ -1,3 +1,16 @@
+2017-02-07  Mark Lam  <mark.lam@apple.com>
+
+        SigillCrashAnalyzer::analyze() should use a do-while loop instead of a lambda.
+        https://bugs.webkit.org/show_bug.cgi?id=167950
+
+        Reviewed by Michael Saboff.
+
+        Lambdas aren't free (apparently, the compiler isn't able to detect that the
+        lambda does not escape and can be inlined completely).  So, use a do-while loop
+        instead since we don't really need a lambda here.
+
+        * tools/SigillCrashAnalyzer.cpp:
+
 2017-02-05  Mark Lam  <mark.lam@apple.com>
 
         The SigillCrashAnalyzer should play nicer with client code that may install its own SIGILL handler.

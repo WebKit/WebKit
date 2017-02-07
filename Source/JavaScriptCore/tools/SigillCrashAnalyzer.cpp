@@ -271,7 +271,7 @@ auto SigillCrashAnalyzer::analyze(SignalContext& context) -> CrashSource
     CrashSource crashSource = CrashSource::Unknown;
     log("BEGIN SIGILL analysis");
 
-    [&] () {
+    do {
         // First, dump the signal context info so that we'll at least have the same info
         // that the default crash handler would given us in case this crash analyzer
         // itself crashes.
@@ -285,7 +285,7 @@ auto SigillCrashAnalyzer::analyze(SignalContext& context) -> CrashSource
         if (!expectedLocker) {
             ASSERT(expectedLocker.error() == VMInspector::Error::TimedOut);
             log("ERROR: Unable to analyze SIGILL. Timed out while waiting to iterate VMs.");
-            return;
+            break;
         }
         auto& locker = expectedLocker.value();
 
@@ -293,12 +293,12 @@ auto SigillCrashAnalyzer::analyze(SignalContext& context) -> CrashSource
         auto isInJITMemory = inspector.isValidExecutableMemory(locker, pc);
         if (!isInJITMemory) {
             log("ERROR: Timed out: not able to determine if pc %p is in valid JIT executable memory", pc);
-            return;
+            break;
         }
         if (!isInJITMemory.value()) {
             log("pc %p is NOT in valid JIT executable memory", pc);
             crashSource = CrashSource::Other;
-            return;
+            break;
         }
         log("pc %p is in valid JIT executable memory", pc);
         crashSource = CrashSource::JavaScriptCore;
@@ -307,7 +307,7 @@ auto SigillCrashAnalyzer::analyze(SignalContext& context) -> CrashSource
         size_t pcAsSize = reinterpret_cast<size_t>(pc);
         if (pcAsSize != roundUpToMultipleOf<sizeof(uint32_t)>(pcAsSize)) {
             log("pc %p is NOT properly aligned", pc);
-            return;
+            break;
         }
 
         // We know it's safe to read the word at the PC because we're handling a SIGILL.
@@ -322,18 +322,18 @@ auto SigillCrashAnalyzer::analyze(SignalContext& context) -> CrashSource
                 log("ERROR: Timed out: not able to determine if pc %p is in a valid CodeBlock", pc);
             else
                 log("The current thread does not own any VM JSLock");
-            return;
+            break;
         }
         CodeBlock* codeBlock = expectedCodeBlock.value();
         if (!codeBlock) {
             log("machine PC %p does not belong to any CodeBlock in the currently entered VM", pc);
-            return;
+            break;
         }
 
         log("pc %p belongs to CodeBlock %p of type %s", pc, codeBlock, JITCode::typeName(codeBlock->jitType()));
 
         dumpCodeBlock(codeBlock, pc);
-    } ();
+    } while (false);
 
     log("END SIGILL analysis");
     return crashSource;
