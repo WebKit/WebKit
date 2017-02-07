@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -184,6 +184,7 @@ struct WKAutoCorrectionData {
     BOOL _isExpectingFastSingleTapCommit;
     BOOL _showDebugTapHighlightsForFastClicking;
 
+    BOOL _becomingFirstResponder;
     BOOL _resigningFirstResponder;
     BOOL _needsDeferredEndScrollingSelectionUpdate;
 
@@ -212,6 +213,10 @@ struct WKAutoCorrectionData {
 - (void)cleanupInteraction;
 
 - (void)scrollViewWillStartPanOrPinchGesture;
+
+- (BOOL)canBecomeFirstResponderForWebView;
+- (BOOL)becomeFirstResponderForWebView;
+- (BOOL)resignFirstResponderForWebView;
 
 #if ENABLE(TOUCH_EVENTS)
 - (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsDefault;

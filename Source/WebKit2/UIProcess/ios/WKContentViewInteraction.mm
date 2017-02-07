@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,6 +80,7 @@
 #import <WebCore/WebEvent.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WK2 should not include WebKit headers!
 #import <wtf/RetainPtr.h>
+#import <wtf/SetForScope.h>
 
 #if ENABLE(DATA_INTERACTION)
 #import <WebCore/PlatformPasteboard.h>
@@ -830,6 +831,11 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 
 - (BOOL)canBecomeFirstResponder
 {
+    return _becomingFirstResponder;
+}
+
+- (BOOL)canBecomeFirstResponderForWebView
+{
     if (_resigningFirstResponder)
         return NO;
     // We might want to return something else
@@ -839,9 +845,19 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 
 - (BOOL)becomeFirstResponder
 {
+    return [_webView becomeFirstResponder];
+}
+
+- (BOOL)becomeFirstResponderForWebView
+{
     if (_resigningFirstResponder)
         return NO;
-    BOOL didBecomeFirstResponder = [super becomeFirstResponder];
+
+    BOOL didBecomeFirstResponder;
+    {
+        SetForScope<BOOL> becomingFirstResponder { _becomingFirstResponder, YES };
+        didBecomeFirstResponder = [super becomeFirstResponder];
+    }
     if (didBecomeFirstResponder)
         [_textSelectionAssistant activateSelection];
 
@@ -849,6 +865,11 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 }
 
 - (BOOL)resignFirstResponder
+{
+    return [_webView resignFirstResponder];
+}
+
+- (BOOL)resignFirstResponderForWebView
 {
     // FIXME: Maybe we should call resignFirstResponder on the superclass
     // and do nothing if the return value is NO.

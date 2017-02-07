@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1013,14 +1013,27 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 
 - (BOOL)becomeFirstResponder
 {
-    return [self._currentContentView becomeFirstResponder] || [super becomeFirstResponder];
+    UIView *currentContentView = self._currentContentView;
+    if (currentContentView == _contentView && [_contentView superview])
+        return [_contentView becomeFirstResponderForWebView] || [super becomeFirstResponder];
+
+    return [currentContentView becomeFirstResponder] || [super becomeFirstResponder];
 }
 
 - (BOOL)canBecomeFirstResponder
 {
-    if (self._currentContentView == _contentView && [_contentView isResigningFirstResponder])
-        return NO;
+    if (self._currentContentView == _contentView)
+        return [_contentView canBecomeFirstResponderForWebView];
+
     return YES;
+}
+
+- (BOOL)resignFirstResponder
+{
+    if ([_contentView isFirstResponder])
+        return [_contentView resignFirstResponderForWebView];
+
+    return [super resignFirstResponder];
 }
 
 static inline CGFloat floorToDevicePixel(CGFloat input, float deviceScaleFactor)
@@ -1089,8 +1102,11 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
         [self addSubview:_customContentFixedOverlayView.get()];
     }
 
-    if (self.isFirstResponder && self._currentContentView.canBecomeFirstResponder)
-        [self._currentContentView becomeFirstResponder];
+    if (self.isFirstResponder) {
+        UIView *currentContentView = self._currentContentView;
+        if (currentContentView == _contentView ? [_contentView canBecomeFirstResponderForWebView] : currentContentView.canBecomeFirstResponder)
+            [currentContentView becomeFirstResponder];
+    }
 }
 
 - (void)_didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:(const String&)suggestedFilename data:(NSData *)data

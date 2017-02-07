@@ -1,3 +1,41 @@
+2017-02-06  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] -[WKWebView becomeFirstResponder] and -[WKWebView resignFirstResponder] don’t get called when non-programmatic first responder changes happen
+        https://bugs.webkit.org/show_bug.cgi?id=167898
+
+        Reviewed by Tim Horton.
+
+        Made WKContentView’s -becomeFirstResponder and -resignFirstResponder forward to the
+        WKWebView, giving subclasses an opportunity to override these methods. Changed the WKWebView
+        implementations to call back into WKContentView methods that actually do the work.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView becomeFirstResponder]): If the current content view is a WKContentView, call
+          -becomeFirstResponderForWebView. Added a check that the content view has a superview to
+          get the right behavior when this is called during the transition from not having to having
+          a custom content view.
+        (-[WKWebView canBecomeFirstResponder]): If the current content view is a WKContentView, call
+          -canBecomeFirstResponderForWebView.
+        (-[WKWebView resignFirstResponder]): If the current content view is a WKContentView, call
+          -resignFirstResponderForWebView.
+        (-[WKWebView _setHasCustomContentView:loadedMIMEType:]): If the new content view is a
+          WKContentView, use -canBecomeFirstResponderForWebView.
+
+        * UIProcess/ios/WKContentViewInteraction.h: Added _becomingFirstResponder ivar.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canBecomeFirstResponder]): Return _becomingFirstResponder. Normally this is
+          NO, so code that hit-tests then walks up the view hierarchy to select a first responder
+          will continue to the WKWebView. But we need to return YES around the call to super’s
+          -becomeFirstResponder in -becomeFirstResponderForWebView.
+        (-[WKContentView canBecomeFirstResponderForWebView]): Moved the old
+          -becomeFirstResponderForWebView implementation here.
+        (-[WKContentView becomeFirstResponder]): Forward to the WKWebView.
+        (-[WKContentView becomeFirstResponderForWebView]): Moved the old -becomeFirstResponder
+          implementation here, setting _becomingFirstResponder to YES around the call to super.
+        (-[WKContentView resignFirstResponder]): Forward to the WKWebView.
+        (-[WKContentView resignFirstResponderForWebView]): Moved the old -resignFirstResponder
+          implementation here.
+
 2017-02-06  Simon Fraser  <simon.fraser@apple.com>
 
         Remove assertion in WebViewImpl::performKeyEquivalent()
