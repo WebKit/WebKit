@@ -1,3 +1,25 @@
+2017-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Soup] Long resources loaded by custom protocols sometimes never finish loading
+        https://bugs.webkit.org/show_bug.cgi?id=167890
+
+        Reviewed by Michael Catanzaro.
+
+        It's another bug that has appeared in WebKitSoupRequestInputStream after moving the custom protocols handling to
+        the main thread. The problem is that webkitSoupRequestInputStreamPendingReadAsyncComplete invalidates
+        pendingAsyncRead after calling webkitSoupRequestInputStreamReadAsyncResultComplete, but in some cases
+        webkitSoupRequestInputStreamReadAsyncResultComplete completes the task in the same run loop iteration. In that
+        case webkitSoupRequestInputStreamReadAsync is called again creating a new AsyncReadData that is destroyed right
+        after webkitSoupRequestInputStreamReadAsyncResultComplete returns.
+
+        * WebProcess/soup/WebKitSoupRequestInputStream.cpp:
+        (AsyncReadData::AsyncReadData): Use an rvalue reference for the task.
+        (webkitSoupRequestInputStreamPendingReadAsyncComplete): Use WTFMove to ensure pendingAsyncRead is cleared before
+        webkitSoupRequestInputStreamReadAsyncResultComplete is called, and continue processing pending requests if there
+        are new ones after webkitSoupRequestInputStreamReadAsyncResultComplete.
+        (webkitSoupRequestInputStreamReadAsync): Use WTFMove to transfer the task to AsyncReadData.
+        (webkitSoupRequestInputStreamDidFailWithError): Use WTFMove to ensure pendingAsyncRead is cleared.
+
 2017-02-06  Dan Bernstein  <mitz@apple.com>
 
         [iOS] -[WKWebView becomeFirstResponder] and -[WKWebView resignFirstResponder] don’t get called when non-programmatic first responder changes happen
