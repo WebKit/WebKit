@@ -386,12 +386,35 @@ String CaptionUserPreferencesMediaAF::colorPropertyCSS(CSSPropertyID id, const C
     return builder.toString();
 }
 
+String CaptionUserPreferencesMediaAF::strokeWidth() const
+{
+    static NeverDestroyed<const String> strokeWidthDefault(ASCIILiteral(" .03em "));
+    
+    if (!MACaptionFontAttributeStrokeWidth && !canLoad_MediaAccessibility_MACaptionFontAttributeStrokeWidth())
+        return strokeWidthDefault;
+    
+    MACaptionAppearanceBehavior behavior;
+
+    auto font = adoptCF(MACaptionAppearanceCopyFontDescriptorForStyle(kMACaptionAppearanceDomainUser, &behavior, kMACaptionAppearanceFontStyleDefault));
+    if (!font)
+        return strokeWidthDefault;
+    
+    auto strokeWidthAttribute = adoptCF(CTFontDescriptorCopyAttribute(font.get(), MACaptionFontAttributeStrokeWidth));
+    if (!strokeWidthAttribute)
+        return strokeWidthDefault;
+    
+    int strokeWidth = 0;
+    if (!CFNumberGetValue(static_cast<CFNumberRef>(strokeWidthAttribute.get()), kCFNumberIntType, &strokeWidth))
+        return strokeWidthDefault;
+
+    return String::format(" %dpx ", strokeWidth);
+}
+
 String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
 {
     static NeverDestroyed<const String> edgeStyleRaised(ASCIILiteral(" -.05em -.05em 0 "));
     static NeverDestroyed<const String> edgeStyleDepressed(ASCIILiteral(" .05em .05em 0 "));
     static NeverDestroyed<const String> edgeStyleDropShadow(ASCIILiteral(" .075em .075em 0 "));
-    static NeverDestroyed<const String> edgeStyleUniform(ASCIILiteral(" .03em "));
 
     bool unused;
     Color color = captionsTextColor(unused);
@@ -413,8 +436,8 @@ String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
     case kMACaptionAppearanceTextEdgeStyleDropShadow:
         return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleDropShadow, color, behavior == kMACaptionAppearanceBehaviorUseValue);
     case kMACaptionAppearanceTextEdgeStyleUniform:
-        return cssPropertyWithTextEdgeColor(CSSPropertyWebkitTextStroke, edgeStyleUniform, color, behavior == kMACaptionAppearanceBehaviorUseValue);
-            
+        return cssPropertyWithTextEdgeColor(CSSPropertyWebkitTextStroke, strokeWidth(), color, behavior == kMACaptionAppearanceBehaviorUseValue);
+    
     default:
         ASSERT_NOT_REACHED();
         break;

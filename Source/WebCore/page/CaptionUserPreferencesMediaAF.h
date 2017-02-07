@@ -81,6 +81,7 @@ private:
     String captionsDefaultFontCSS() const;
     Color captionsEdgeColorForTextColor(const Color&) const;
     String windowRoundedCornerRadiusCSS() const;
+    String strokeWidth() const;
     String captionsTextEdgeCSS() const;
     String cssPropertyWithTextEdgeColor(CSSPropertyID, const String&, const Color&, bool) const;
     String colorPropertyCSS(CSSPropertyID, const Color&, bool) const;
