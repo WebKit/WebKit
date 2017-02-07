@@ -1,3 +1,15 @@
+2017-02-07  Chris Dumez  <cdumez@apple.com>
+
+        Object.preventExtensions() on a Location object should throw a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=167917
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline test now that more checks are passing.
+
+        * http/tests/security/preventExtensions-window-location-expected.txt:
+        * http/tests/security/preventExtensions-window-location.html:
+
 2017-02-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Web Inspector: allow import() inside the inspector

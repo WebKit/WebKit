@@ -181,14 +181,12 @@ JSValue JSLocation::getPrototype(JSObject* object, ExecState* exec)
     return Base::getPrototype(object, exec);
 }
 
-bool JSLocation::preventExtensions(JSObject* object, ExecState* exec)
+bool JSLocation::preventExtensions(JSObject*, ExecState* exec)
 {
-    JSLocation* thisObject = jsCast<JSLocation*>(object);
-    if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), ThrowSecurityError))
-        return false;
-    // FIXME: The specification says to return false in the same origin case as well but other browsers have
-    // not implemented this yet.
-    return Base::preventExtensions(object, exec);
+    auto scope = DECLARE_THROW_SCOPE(exec->vm());
+
+    throwTypeError(exec, scope, ASCIILiteral("Cannot prevent extensions on this object"));
+    return false;
 }
 
 String JSLocation::toStringName(const JSObject* object, ExecState* exec)

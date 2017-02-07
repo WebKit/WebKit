@@ -12,7 +12,7 @@ PASS [[SetPrototypeOf]] should throw (exception type)
 PASS [[IsExtensible]] should return true for cross-origin objects 
 PASS [[IsExtensible]] should return true for cross-origin objects (exception type) 
 PASS [[PreventExtensions]] should throw for cross-origin objects 
-FAIL [[PreventExtensions]] should throw for cross-origin objects (exception type) assert_throws: preventExtensions on cross-origin Location should throw function "function () { Object.preventExtensions(C.location) }" threw object "SecurityError (DOM Exception 18): Blocked a frame with or..." ("SecurityError") expected object "TypeError" ("TypeError")
+PASS [[PreventExtensions]] should throw for cross-origin objects (exception type) 
 PASS [[GetOwnProperty]] - Properties on cross-origin objects should be reported |own| 
 PASS [[GetOwnProperty]] - Properties on cross-origin objects should be reported |own| (exception type) 
 PASS [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly 
