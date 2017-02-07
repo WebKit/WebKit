@@ -74,7 +74,7 @@ void NetworkRTCProvider::createUDPSocket(uint64_t identifier, const String& addr
 
     callOnRTCNetworkThread([this, identifier, socketAddress, minPort, maxPort]() {
         std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateUdpSocket(socketAddress, minPort, maxPort));
-        addSocket(identifier, std::make_unique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket)));
+        addSocket(identifier, std::make_unique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), LibWebRTCSocketClient::Type::UDP));
     });
 }
 
@@ -85,7 +85,7 @@ void NetworkRTCProvider::createServerTCPSocket(uint64_t identifier, const String
 
     callOnRTCNetworkThread([this, identifier, socketAddress, minPort, maxPort, options]() {
         std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateServerTcpSocket(socketAddress, minPort, maxPort, options));
-        addSocket(identifier, std::make_unique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket)));
+        addSocket(identifier, std::make_unique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), LibWebRTCSocketClient::Type::ServerTCP));
     });
 }
 
@@ -99,7 +99,7 @@ void NetworkRTCProvider::createClientTCPSocket(uint64_t identifier, const String
 
     callOnRTCNetworkThread([this, identifier, socketLocalAddress, socketRemoteAddress, options]() {
         std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateClientTcpSocket(socketLocalAddress, socketRemoteAddress, { }, { }, options));
-        addSocket(identifier, std::make_unique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket)));
+        addSocket(identifier, std::make_unique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), LibWebRTCSocketClient::Type::ClientTCP));
     });
 }
 

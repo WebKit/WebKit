@@ -37,7 +37,7 @@
 
 namespace WebKit {
 
-LibWebRTCSocketClient::LibWebRTCSocketClient(uint64_t identifier, NetworkRTCProvider& rtcProvider, std::unique_ptr<rtc::AsyncPacketSocket>&& socket)
+LibWebRTCSocketClient::LibWebRTCSocketClient(uint64_t identifier, NetworkRTCProvider& rtcProvider, std::unique_ptr<rtc::AsyncPacketSocket>&& socket, Type type)
     : m_identifier(identifier)
     , m_rtcProvider(rtcProvider)
     , m_socket(WTFMove(socket))
@@ -51,9 +51,14 @@ LibWebRTCSocketClient::LibWebRTCSocketClient(uint64_t identifier, NetworkRTCProv
 
     m_socket->SignalReadPacket.connect(this, &LibWebRTCSocketClient::signalReadPacket);
     m_socket->SignalSentPacket.connect(this, &LibWebRTCSocketClient::signalSentPacket);
-    m_socket->SignalAddressReady.connect(this, &LibWebRTCSocketClient::signalAddressReady);
     m_socket->SignalConnect.connect(this, &LibWebRTCSocketClient::signalConnect);
     m_socket->SignalClose.connect(this, &LibWebRTCSocketClient::signalClose);
+
+    if (type == Type::ClientTCP) {
+        m_socket->SignalAddressReady.connect(this, &LibWebRTCSocketClient::signalAddressReady);
+        return;
+    }
+    signalAddressReady();
 }
 
 void LibWebRTCSocketClient::sendTo(const WebCore::SharedBuffer& buffer, const rtc::SocketAddress& socketAddress, const rtc::PacketOptions& options)
@@ -96,6 +101,11 @@ void LibWebRTCSocketClient::signalAddressReady(rtc::AsyncPacketSocket*, const rt
         auto addressString = address.ToString();
         connection.send(Messages::WebRTCSocket::SignalAddressReady(String(addressString.data(), addressString.length())), identifier);
     });
+}
+
+void LibWebRTCSocketClient::signalAddressReady()
+{
+    signalAddressReady(m_socket.get(), m_socket->GetLocalAddress());
 }
 
 void LibWebRTCSocketClient::signalConnect(rtc::AsyncPacketSocket*)

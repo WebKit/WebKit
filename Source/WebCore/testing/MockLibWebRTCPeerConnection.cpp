@@ -92,8 +92,12 @@ MockLibWebRTCPeerConnectionFactory::MockLibWebRTCPeerConnectionFactory(LibWebRTC
     : m_provider(provider)
     , m_testCase(WTFMove(testCase))
 {
-    if (m_testCase == "TwoRealPeerConnections" && m_provider)
+    if (m_testCase == "TwoRealPeerConnections" && m_provider) {
         m_numberOfRealPeerConnections = 2;
+        return;
+    }
+    if (m_testCase == "OneRealPeerConnection" && m_provider)
+        m_numberOfRealPeerConnections = 1;
 }
 
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> MockLibWebRTCPeerConnectionFactory::CreatePeerConnection(const webrtc::PeerConnectionInterface::RTCConfiguration&, std::unique_ptr<cricket::PortAllocator>, std::unique_ptr<rtc::RTCCertificateGeneratorInterface>, webrtc::PeerConnectionObserver* observer)

@@ -54,13 +54,6 @@ LibWebRTCSocket::LibWebRTCSocket(LibWebRTCSocketFactory& factory, uint64_t ident
     , m_remoteAddress(remoteAddress)
 {
     memset(&m_options, 1, MAX_SOCKET_OPTION);
-
-    if (type == Type::ClientTCP)
-        return;
-
-    WebRTCSocket::signalOnNetworkThread(m_factory, m_identifier, [](LibWebRTCSocket& socket) {
-        socket.signalAddressReady();
-    });
 }
 
 LibWebRTCSocket::~LibWebRTCSocket()
@@ -78,18 +71,10 @@ rtc::SocketAddress LibWebRTCSocket::GetRemoteAddress() const
     return m_remoteAddress;
 }
 
-void LibWebRTCSocket::signalAddressReady()
-{
-    ASSERT(m_type != Type::ClientTCP);
-    m_state = STATE_BOUND;
-    SignalAddressReady(this, m_localAddress);
-}
-
 void LibWebRTCSocket::signalAddressReady(const String& address)
 {
-    ASSERT(m_type == Type::ClientTCP);
     m_localAddress.FromString(address.utf8().data());
-    m_state = STATE_CONNECTED;
+    m_state = (m_type == Type::ClientTCP) ? STATE_CONNECTED : STATE_BOUND;
     SignalAddressReady(this, m_localAddress);
 }
 

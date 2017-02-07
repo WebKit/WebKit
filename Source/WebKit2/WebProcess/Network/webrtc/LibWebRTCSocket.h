@@ -68,7 +68,6 @@ private:
     void signalReadPacket(const WebCore::SharedBuffer&, rtc::SocketAddress&&, int64_t);
     void signalSentPacket(int, int64_t);
     void signalAddressReady(const String&);
-    void signalAddressReady();
     void signalConnect();
     void signalClose(int);
 

@@ -1,3 +1,28 @@
+2017-02-07  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] LibWebRTC WK2 network stack is not providing correct ports for ICE candidates
+        https://bugs.webkit.org/show_bug.cgi?id=167939
+
+        Reviewed by Sam Weinig.
+
+        AddressReady signalling was done by the WebProcess for UDP and ServerTCP as real async sockets in those case do
+        not send it. But the WebProcess does not have information on the port, as it is assigned by the socket factory
+        which is in the network process.
+
+        Fixed that bug by signalling AddressReady in the network process for UDP, ServerTCP and ClientTCP.
+
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.cpp:
+        (WebKit::LibWebRTCSocketClient::LibWebRTCSocketClient):
+        (WebKit::LibWebRTCSocketClient::signalAddressReady):
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createUDPSocket):
+        (WebKit::NetworkRTCProvider::createServerTCPSocket):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        * WebProcess/Network/webrtc/LibWebRTCSocket.cpp:
+        (WebKit::LibWebRTCSocket::LibWebRTCSocket):
+        (WebKit::LibWebRTCSocket::signalAddressReady):
+
 2017-02-07  Sam Weinig  <sam@webkit.org>
 
         Try to fix the EFL build.
