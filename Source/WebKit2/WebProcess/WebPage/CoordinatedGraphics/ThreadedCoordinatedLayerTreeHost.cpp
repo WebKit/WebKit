@@ -55,6 +55,12 @@ ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage& webP
     , m_surface(AcceleratedSurface::create(webPage))
     , m_viewportController(webPage.size())
 {
+    if (FrameView* frameView = m_webPage.mainFrameView()) {
+        auto contentsSize = frameView->contentsSize();
+        if (!contentsSize.isEmpty())
+            m_viewportController.didChangeContentsSize(contentsSize);
+    }
+
     IntSize scaledSize(m_webPage.size());
     scaledSize.scale(m_webPage.deviceScaleFactor());
     float scaleFactor = m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor();

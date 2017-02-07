@@ -1,3 +1,18 @@
+2017-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] Update also the contents size when creating the threaded compositor
+        https://bugs.webkit.org/show_bug.cgi?id=167452
+
+        Reviewed by Žan Doberšek.
+
+        In r210954 we ensured that the threaded compositor and the viewport controller were created with the initial web
+        page size. If we don't update the contents size, the visible rectangle will be empty and tiles won't be created
+        until contentsSizeDidChange is called. It's even possible, when entering AC mode on demand, that we create the
+        layer tree host after the contents size changed, in which case nothing is rendered unless we resize the window.
+
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost):
+
 2017-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] UIProcess from WebKitGtk+ 2.15.x SIGSEGVs because of X Error BadDamage in WebKit::AcceleratedBackingStoreX11::update(WebKit::LayerTreeContext const&) () at Source/WebKit2/UIProcess/gtk/AcceleratedBackingStoreX11.cpp:145
