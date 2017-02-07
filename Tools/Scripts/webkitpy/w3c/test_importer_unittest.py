@@ -178,11 +178,12 @@ class TestImporterTest(unittest.TestCase):
         "import_options": []
      }
 ]''',
-            '/mock-checkout/LayoutTests/imported/w3c/resources/ImportExpectations': '''
-web-platform-tests/dir-to-skip [ Skip ]
-web-platform-tests/dir-to-skip/dir-to-import [ Pass ]
-web-platform-tests/dir-to-skip/file-to-import.html [ Pass ]
-''',
+            '/mock-checkout/LayoutTests/imported/w3c/resources/import-expectations.json': '''
+[
+["web-platform-tests/dir-to-skip", "skip"],
+["web-platform-tests/dir-to-skip/dir-to-import", "import"],
+["web-platform-tests/dir-to-skip/file-to-import.html", "import"]
+]''',
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/test-to-skip.html': 'to be skipped',
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/dir-to-import/test-to-import.html': 'to be imported',
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/dir-to-not-import/test-to-not-import.html': 'to be skipped',

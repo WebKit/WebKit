@@ -32,7 +32,6 @@ import logging
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.layout_tests.models.test_expectations import TestExpectationParser
 from webkitpy.common.checkout.scm.git import Git
 
 _log = logging.getLogger(__name__)
@@ -72,7 +71,7 @@ class TestDownloader(object):
 
         if not self._options.import_all:
             webkit_finder = WebKitFinder(self._filesystem)
-            import_expectations_path = webkit_finder.path_from_webkit_base('LayoutTests', 'imported', 'w3c', 'resources', 'ImportExpectations')
+            import_expectations_path = webkit_finder.path_from_webkit_base('LayoutTests', 'imported', 'w3c', 'resources', 'import-expectations.json')
             self._init_paths_from_expectations(import_expectations_path)
 
     def git(self, test_repository):
@@ -96,12 +95,14 @@ class TestDownloader(object):
         if not self._filesystem.isfile(file_path):
             _log.warning('Unable to read import expectation file: %s' % file_path)
             return
-        parser = TestExpectationParser(self._host.port_factory.get(), (), False)
-        for line in parser.parse(file_path, self._filesystem.read_text_file(file_path)):
-            if 'SKIP' in line.modifiers:
-                self.paths_to_skip.append(line.name)
-            elif 'PASS' in line.expectations:
-                self.paths_to_import.append(line.name)
+        import_lines = json.loads(self._filesystem.read_text_file(file_path))
+        for line in import_lines:
+            if line[1] == 'skip':
+                self.paths_to_skip.append(line[0])
+            elif line[1] == 'import':
+                self.paths_to_import.append(line[0])
+            else:
+                _log.warning('Problem reading import lines ' + line[0])
 
     def _add_test_suite_paths(self, test_paths, directory, webkit_path):
         for name in self._filesystem.listdir(directory):

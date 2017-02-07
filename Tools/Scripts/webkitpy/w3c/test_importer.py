@@ -143,7 +143,7 @@ def parse_args(args):
     parser.add_argument('--no-fetch', action='store_false', dest='fetch', default=True,
          help='Do not fetch the repositories. By default, repositories are fetched if a source directory is not provided')
     parser.add_argument('--import-all', action='store_true', default=False,
-         help='Ignore the ImportExpectations file. All tests will be imported. This option only applies when tests are downloaded from W3C repository')
+         help='Ignore the import-expectations.json file. All tests will be imported. This option only applies when tests are downloaded from W3C repository')
 
     parser.add_argument('--clean-dest-dir', action='store_true', dest='clean_destination_directory', default=False,
          help='Clean destination directory. All files in the destination directory will be deleted except for WebKit specific files (test expectations, .gitignore...) before new tests import. Dangling test expectations (expectation file that is no longer related to a test) are removed after tests import.')
