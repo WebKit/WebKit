@@ -1,5 +1,19 @@
 2017-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [Threaded Compositor] Crash when deleting the compositor run loop
+        https://bugs.webkit.org/show_bug.cgi?id=167545
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that we are releasing the WorkQueue before the update timer that keeps a reference to the run
+        loop, destroyed by the WorkQueue. So, invalidate the WorkQueue in the next run loop iteration to ensure it
+        happens after the CompositingRunLoop destructor.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::CompositingRunLoop::~CompositingRunLoop):
+
+2017-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] ASSERTION FAILED: !m_layerTreeHost in DrawingAreaImpl::display()
         https://bugs.webkit.org/show_bug.cgi?id=167548
 
