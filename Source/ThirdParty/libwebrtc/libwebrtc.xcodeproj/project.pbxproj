@@ -674,6 +674,64 @@
 		5C4B4D7F1E4323D4002651C8 /* scale_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D531E4323D4002651C8 /* scale_common.cc */; };
 		5C4B4D851E4323D4002651C8 /* scale.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D591E4323D4002651C8 /* scale.cc */; };
 		5C4B4D861E4323D4002651C8 /* video_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D5A1E4323D4002651C8 /* video_common.cc */; };
+		5C60245F1E494DB80088F0B2 /* user_atomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4ACB1E42C9D6002651C8 /* user_atomic.h */; };
+		5C6024601E494DB80088F0B2 /* user_environment.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4ACC1E42C9D6002651C8 /* user_environment.c */; };
+		5C6024611E494DB80088F0B2 /* user_environment.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4ACD1E42C9D6002651C8 /* user_environment.h */; };
+		5C6024621E494DB80088F0B2 /* user_inpcb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4ACE1E42C9D6002651C8 /* user_inpcb.h */; };
+		5C6024631E494DB80088F0B2 /* user_ip6_var.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AD01E42C9D6002651C8 /* user_ip6_var.h */; };
+		5C6024641E494DB80088F0B2 /* user_ip_icmp.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4ACF1E42C9D6002651C8 /* user_ip_icmp.h */; };
+		5C6024651E494DB80088F0B2 /* user_malloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AD11E42C9D6002651C8 /* user_malloc.h */; };
+		5C6024661E494DB80088F0B2 /* user_mbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AD21E42C9D6002651C8 /* user_mbuf.c */; };
+		5C6024671E494DB80088F0B2 /* user_mbuf.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AD31E42C9D6002651C8 /* user_mbuf.h */; };
+		5C6024681E494DB80088F0B2 /* user_queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AD41E42C9D6002651C8 /* user_queue.h */; };
+		5C6024691E494DB80088F0B2 /* user_recv_thread.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AD51E42C9D6002651C8 /* user_recv_thread.c */; };
+		5C60246A1E494DB80088F0B2 /* user_recv_thread.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AD61E42C9D6002651C8 /* user_recv_thread.h */; };
+		5C60246B1E494DB80088F0B2 /* user_route.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AD71E42C9D6002651C8 /* user_route.h */; };
+		5C60246C1E494DB80088F0B2 /* user_socketvar.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AD91E42C9D6002651C8 /* user_socketvar.h */; };
+		5C60246D1E494DB80088F0B2 /* user_uma.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4ADA1E42C9D6002651C8 /* user_uma.h */; };
+		5C60246E1E494DB80088F0B2 /* usrsctp.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4ADB1E42C9D6002651C8 /* usrsctp.h */; };
+		5C60246F1E4950A00088F0B2 /* sctp.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B151E42C9EF002651C8 /* sctp.h */; };
+		5C6024701E4950A00088F0B2 /* sctp_asconf.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AEE1E42C9EF002651C8 /* sctp_asconf.c */; };
+		5C6024711E4950A00088F0B2 /* sctp_asconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AEF1E42C9EF002651C8 /* sctp_asconf.h */; };
+		5C6024721E4950A00088F0B2 /* sctp_auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AF01E42C9EF002651C8 /* sctp_auth.c */; };
+		5C6024731E4950A00088F0B2 /* sctp_auth.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AF11E42C9EF002651C8 /* sctp_auth.h */; };
+		5C6024741E4950A00088F0B2 /* sctp_bsd_addr.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AF21E42C9EF002651C8 /* sctp_bsd_addr.c */; };
+		5C6024751E4950A00088F0B2 /* sctp_bsd_addr.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AF31E42C9EF002651C8 /* sctp_bsd_addr.h */; };
+		5C6024761E4950A00088F0B2 /* sctp_callout.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AF41E42C9EF002651C8 /* sctp_callout.c */; };
+		5C6024771E4950A00088F0B2 /* sctp_callout.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AF51E42C9EF002651C8 /* sctp_callout.h */; };
+		5C6024781E4950A00088F0B2 /* sctp_cc_functions.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AF61E42C9EF002651C8 /* sctp_cc_functions.c */; };
+		5C6024791E4950A00088F0B2 /* sctp_constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AF71E42C9EF002651C8 /* sctp_constants.h */; };
+		5C60247A1E4950A00088F0B2 /* sctp_crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AF81E42C9EF002651C8 /* sctp_crc32.c */; };
+		5C60247B1E4950A00088F0B2 /* sctp_crc32.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AF91E42C9EF002651C8 /* sctp_crc32.h */; };
+		5C60247C1E4950A00088F0B2 /* sctp_header.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AFA1E42C9EF002651C8 /* sctp_header.h */; };
+		5C60247D1E4950A00088F0B2 /* sctp_indata.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AFC1E42C9EF002651C8 /* sctp_indata.h */; };
+		5C60247E1E4950A00088F0B2 /* sctp_input.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4AFD1E42C9EF002651C8 /* sctp_input.c */; };
+		5C60247F1E4950A00088F0B2 /* sctp_input.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AFE1E42C9EF002651C8 /* sctp_input.h */; };
+		5C6024801E4950A00088F0B2 /* sctp_lock_userspace.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4AFF1E42C9EF002651C8 /* sctp_lock_userspace.h */; };
+		5C6024811E4950A00088F0B2 /* sctp_os.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B011E42C9EF002651C8 /* sctp_os.h */; };
+		5C6024821E4950A00088F0B2 /* sctp_os_userspace.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B001E42C9EF002651C8 /* sctp_os_userspace.h */; };
+		5C6024831E4950A00088F0B2 /* sctp_output.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B021E42C9EF002651C8 /* sctp_output.c */; };
+		5C6024841E4950A00088F0B2 /* sctp_output.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B031E42C9EF002651C8 /* sctp_output.h */; };
+		5C6024861E4950A00088F0B2 /* sctp_pcb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B051E42C9EF002651C8 /* sctp_pcb.h */; };
+		5C6024871E4950A00088F0B2 /* sctp_peeloff.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B061E42C9EF002651C8 /* sctp_peeloff.c */; };
+		5C6024881E4950A00088F0B2 /* sctp_peeloff.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B071E42C9EF002651C8 /* sctp_peeloff.h */; };
+		5C6024891E4950A00088F0B2 /* sctp_process_lock.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B081E42C9EF002651C8 /* sctp_process_lock.h */; };
+		5C60248A1E4950A00088F0B2 /* sctp_sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B091E42C9EF002651C8 /* sctp_sha1.c */; };
+		5C60248B1E4950A00088F0B2 /* sctp_sha1.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B0A1E42C9EF002651C8 /* sctp_sha1.h */; };
+		5C60248C1E4950A00088F0B2 /* sctp_ss_functions.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B0B1E42C9EF002651C8 /* sctp_ss_functions.c */; };
+		5C60248D1E4950A00088F0B2 /* sctp_structs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B0C1E42C9EF002651C8 /* sctp_structs.h */; };
+		5C60248E1E4950A00088F0B2 /* sctp_sysctl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B0D1E42C9EF002651C8 /* sctp_sysctl.c */; };
+		5C60248F1E4950A00088F0B2 /* sctp_sysctl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B0E1E42C9EF002651C8 /* sctp_sysctl.h */; };
+		5C6024901E4950A00088F0B2 /* sctp_timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B0F1E42C9EF002651C8 /* sctp_timer.c */; };
+		5C6024911E4950A00088F0B2 /* sctp_timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B101E42C9EF002651C8 /* sctp_timer.h */; };
+		5C6024921E4950A00088F0B2 /* sctp_uio.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B111E42C9EF002651C8 /* sctp_uio.h */; };
+		5C6024931E4950A00088F0B2 /* sctp_usrreq.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B131E42C9EF002651C8 /* sctp_usrreq.c */; };
+		5C6024941E4950A00088F0B2 /* sctp_var.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B141E42C9EF002651C8 /* sctp_var.h */; };
+		5C6024951E4950A00088F0B2 /* sctputil.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B161E42C9EF002651C8 /* sctputil.c */; };
+		5C6024961E4950A00088F0B2 /* sctputil.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B171E42C9EF002651C8 /* sctputil.h */; };
+		5C6024971E4950A50088F0B2 /* sctp6_usrreq.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B431E42CA00002651C8 /* sctp6_usrreq.c */; };
+		5C6024981E4950A50088F0B2 /* sctp6_var.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B441E42CA00002651C8 /* sctp6_var.h */; };
+		5C6024991E4951610088F0B2 /* sctp_pcb.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B041E42C9EF002651C8 /* sctp_pcb.c */; };
 		5C63F5CC1E414811002CA531 /* scoped_ref_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F4221E414810002CA531 /* scoped_ref_ptr.h */; };
 		5C63F66B1E415F9B002CA531 /* thread.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C63F6691E415F9B002CA531 /* thread.cc */; };
 		5C63F66C1E415F9B002CA531 /* thread.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F66A1E415F9B002CA531 /* thread.h */; };
@@ -8895,6 +8953,44 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C60247B1E4950A00088F0B2 /* sctp_crc32.h in Headers */,
+				5C6024921E4950A00088F0B2 /* sctp_uio.h in Headers */,
+				5C60245F1E494DB80088F0B2 /* user_atomic.h in Headers */,
+				5C60246B1E494DB80088F0B2 /* user_route.h in Headers */,
+				5C6024641E494DB80088F0B2 /* user_ip_icmp.h in Headers */,
+				5C6024771E4950A00088F0B2 /* sctp_callout.h in Headers */,
+				5C6024671E494DB80088F0B2 /* user_mbuf.h in Headers */,
+				5C6024631E494DB80088F0B2 /* user_ip6_var.h in Headers */,
+				5C60247D1E4950A00088F0B2 /* sctp_indata.h in Headers */,
+				5C6024751E4950A00088F0B2 /* sctp_bsd_addr.h in Headers */,
+				5C6024651E494DB80088F0B2 /* user_malloc.h in Headers */,
+				5C6024881E4950A00088F0B2 /* sctp_peeloff.h in Headers */,
+				5C60247C1E4950A00088F0B2 /* sctp_header.h in Headers */,
+				5C60246A1E494DB80088F0B2 /* user_recv_thread.h in Headers */,
+				5C6024961E4950A00088F0B2 /* sctputil.h in Headers */,
+				5C6024841E4950A00088F0B2 /* sctp_output.h in Headers */,
+				5C6024791E4950A00088F0B2 /* sctp_constants.h in Headers */,
+				5C6024981E4950A50088F0B2 /* sctp6_var.h in Headers */,
+				5C6024891E4950A00088F0B2 /* sctp_process_lock.h in Headers */,
+				5C60246C1E494DB80088F0B2 /* user_socketvar.h in Headers */,
+				5C6024681E494DB80088F0B2 /* user_queue.h in Headers */,
+				5C60246E1E494DB80088F0B2 /* usrsctp.h in Headers */,
+				5C60248B1E4950A00088F0B2 /* sctp_sha1.h in Headers */,
+				5C6024711E4950A00088F0B2 /* sctp_asconf.h in Headers */,
+				5C6024941E4950A00088F0B2 /* sctp_var.h in Headers */,
+				5C60248D1E4950A00088F0B2 /* sctp_structs.h in Headers */,
+				5C60246D1E494DB80088F0B2 /* user_uma.h in Headers */,
+				5C6024821E4950A00088F0B2 /* sctp_os_userspace.h in Headers */,
+				5C6024731E4950A00088F0B2 /* sctp_auth.h in Headers */,
+				5C6024811E4950A00088F0B2 /* sctp_os.h in Headers */,
+				5C6024911E4950A00088F0B2 /* sctp_timer.h in Headers */,
+				5C6024861E4950A00088F0B2 /* sctp_pcb.h in Headers */,
+				5C6024611E494DB80088F0B2 /* user_environment.h in Headers */,
+				5C60248F1E4950A00088F0B2 /* sctp_sysctl.h in Headers */,
+				5C60247F1E4950A00088F0B2 /* sctp_input.h in Headers */,
+				5C60246F1E4950A00088F0B2 /* sctp.h in Headers */,
+				5C6024621E494DB80088F0B2 /* user_inpcb.h in Headers */,
+				5C6024801E4950A00088F0B2 /* sctp_lock_userspace.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10053,6 +10149,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C6024971E4950A50088F0B2 /* sctp6_usrreq.c in Sources */,
+				5C6024991E4951610088F0B2 /* sctp_pcb.c in Sources */,
+				5C6024661E494DB80088F0B2 /* user_mbuf.c in Sources */,
+				5C6024701E4950A00088F0B2 /* sctp_asconf.c in Sources */,
+				5C6024691E494DB80088F0B2 /* user_recv_thread.c in Sources */,
+				5C6024951E4950A00088F0B2 /* sctputil.c in Sources */,
+				5C6024931E4950A00088F0B2 /* sctp_usrreq.c in Sources */,
+				5C60247A1E4950A00088F0B2 /* sctp_crc32.c in Sources */,
+				5C60247E1E4950A00088F0B2 /* sctp_input.c in Sources */,
+				5C6024781E4950A00088F0B2 /* sctp_cc_functions.c in Sources */,
+				5C6024721E4950A00088F0B2 /* sctp_auth.c in Sources */,
+				5C6024741E4950A00088F0B2 /* sctp_bsd_addr.c in Sources */,
+				5C6024761E4950A00088F0B2 /* sctp_callout.c in Sources */,
+				5C6024901E4950A00088F0B2 /* sctp_timer.c in Sources */,
+				5C60248E1E4950A00088F0B2 /* sctp_sysctl.c in Sources */,
+				5C60248C1E4950A00088F0B2 /* sctp_ss_functions.c in Sources */,
+				5C60248A1E4950A00088F0B2 /* sctp_sha1.c in Sources */,
+				5C6024871E4950A00088F0B2 /* sctp_peeloff.c in Sources */,
+				5C6024601E494DB80088F0B2 /* user_environment.c in Sources */,
+				5C6024831E4950A00088F0B2 /* sctp_output.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11501,7 +11617,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */;
 			buildSettings = {
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -11510,7 +11625,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */;
 			buildSettings = {
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -11519,7 +11633,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */;
 			buildSettings = {
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
