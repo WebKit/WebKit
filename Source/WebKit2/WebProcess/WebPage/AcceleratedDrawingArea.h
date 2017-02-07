@@ -73,6 +73,14 @@ protected:
 
     void layerHostDidFlushLayers() override;
 
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override;
+#endif
+
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+    void deviceOrPageScaleFactorChanged() override;
+#endif
+
     // IPC message handlers.
     void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset) override;
 

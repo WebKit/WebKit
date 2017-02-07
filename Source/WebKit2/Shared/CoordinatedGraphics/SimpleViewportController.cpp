@@ -57,7 +57,7 @@ void SimpleViewportController::didChangeContentsSize(const IntSize& newSize)
     }
 }
 
-void SimpleViewportController::didChangeViewportAttributes(const ViewportAttributes& newAttributes)
+void SimpleViewportController::didChangeViewportAttributes(ViewportAttributes&& newAttributes)
 {
     if (newAttributes.layoutSize.isEmpty()) {
         resetViewportToDefaultState();
@@ -66,7 +66,7 @@ void SimpleViewportController::didChangeViewportAttributes(const ViewportAttribu
 
     m_hasViewportAttribute = true;
 
-    m_rawAttributes = newAttributes;
+    m_rawAttributes = WTFMove(newAttributes);
     m_allowsUserScaling = m_rawAttributes.userScalable;
     m_initiallyFitToViewport = m_rawAttributes.initialScale < 0;
 
