@@ -175,7 +175,7 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContex
 
 void DrawingAreaProxyImpl::discardBackingStoreSoon()
 {
-    if (!m_isBackingStoreDiscardable || m_discardBackingStoreTimer.isActive())
+    if (!m_backingStore || !m_isBackingStoreDiscardable || m_discardBackingStoreTimer.isActive())
         return;
 
     // We'll wait this many seconds after the last paint before throwing away our backing store to save memory.
@@ -187,6 +187,8 @@ void DrawingAreaProxyImpl::discardBackingStoreSoon()
 
 void DrawingAreaProxyImpl::discardBackingStore()
 {
+    if (!m_backingStore)
+        return;
     m_backingStore = nullptr;
     backingStoreStateDidChange(DoNotRespondImmediately);
 }
