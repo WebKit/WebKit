@@ -1,3 +1,14 @@
+2017-02-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ExtendedColor leaks seen on leaks bot
+        https://bugs.webkit.org/show_bug.cgi?id=167912
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::operator=):
+        Before overwriting m_colorData, we must deref the extended color inside it.
+
 2017-02-06  Simon Fraser  <simon.fraser@apple.com>
 
         Re-land r210095 (avoid a tile revalidation on scale change)

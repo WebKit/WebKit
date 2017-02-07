@@ -333,6 +333,9 @@ Color& Color::operator=(Color&& other)
     if (*this == other)
         return *this;
 
+    if (isExtended())
+        m_colorData.extendedColor->deref();
+
     m_colorData = other.m_colorData;
     other.m_colorData.rgbaAndFlags = invalidRGBAColor;
 
