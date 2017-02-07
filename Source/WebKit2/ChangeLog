@@ -1,3 +1,18 @@
+2017-01-25  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] The inspector is broken when AC support is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=165237
+
+        Reviewed by Carlos Garcia Campos.
+
+        WebInspector must not use PageOverlays or GraphicsLayers when AC is not avaialable.
+
+        No new tests added.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::highlight):
+        (WebKit::WebInspectorClient::showPaintRect):
+
 2017-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Threaded Compositor] Initialize the threaded compositor with the current size

@@ -33,6 +33,7 @@
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
+#include <WebCore/Settings.h>
 #include <wtf/CurrentTime.h>
 
 #if PLATFORM(IOS)
@@ -105,6 +106,9 @@ void WebInspectorClient::didResizeMainFrame(Frame*)
 
 void WebInspectorClient::highlight()
 {
+    if (!m_page->corePage()->settings().acceleratedCompositingEnabled())
+        return;
+
 #if !PLATFORM(IOS)
     if (!m_highlightOverlay) {
         auto highlightOverlay = PageOverlay::create(*this);
@@ -134,6 +138,9 @@ void WebInspectorClient::hideHighlight()
 
 void WebInspectorClient::showPaintRect(const FloatRect& rect)
 {
+    if (!m_page->corePage()->settings().acceleratedCompositingEnabled())
+        return;
+
     if (!m_paintRectOverlay) {
         m_paintRectOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
         m_page->mainFrame()->pageOverlayController().installPageOverlay(m_paintRectOverlay, PageOverlay::FadeMode::DoNotFade);

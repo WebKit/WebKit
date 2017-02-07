@@ -209,6 +209,13 @@ void PageOverlayController::willAttachRootLayer()
         updateOverlayGeometry(*overlayAndLayer.key, *overlayAndLayer.value);
 }
 
+void PageOverlayController::willDetachRootLayer()
+{
+    m_documentOverlayRootLayer = nullptr;
+    m_viewOverlayRootLayer = nullptr;
+    m_initialized = false;
+}
+
 void PageOverlayController::didChangeViewSize()
 {
     for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
