@@ -88,7 +88,7 @@ public:
 
     virtual void setConfiguration(MediaEndpointConfiguration&&) = 0;
 
-    virtual void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) = 0;
+    virtual void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&) = 0;
 
     virtual Vector<RefPtr<MediaStream>> getRemoteStreams() const = 0;
 

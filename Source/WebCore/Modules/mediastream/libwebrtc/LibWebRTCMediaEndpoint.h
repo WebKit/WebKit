@@ -65,13 +65,12 @@ public:
     void doSetRemoteDescription(RTCSessionDescription&);
     void doCreateOffer();
     void doCreateAnswer();
-    void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&);
+    void getStats(MediaStreamTrack*, const DeferredPromise&);
     std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String&, const RTCDataChannelInit&);
-
-    void storeIceCandidate(std::unique_ptr<webrtc::IceCandidateInterface>&& candidate) { m_pendingCandidates.append(WTFMove(candidate)); }
-    void addPendingIceCandidates();
+    bool addIceCandidate(webrtc::IceCandidateInterface& candidate) { return m_backend->AddIceCandidate(&candidate); }
 
     void stop();
+    bool isStopped() const { return !m_backend; }
 
 private:
     LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend&, LibWebRTCProvider&);
@@ -95,8 +94,6 @@ private:
     void setRemoteSessionDescriptionFailed(const std::string&);
     void addStream(webrtc::MediaStreamInterface&);
     void addDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface>&&);
-
-    bool isStopped() const { return !m_backend; }
 
     int AddRef() const { ref(); return static_cast<int>(refCount()); }
     int Release() const { deref(); return static_cast<int>(refCount()); }
@@ -143,19 +140,20 @@ private:
         LibWebRTCMediaEndpoint& m_endpoint;
     };
 
-    class StatsCollector final : public RefCounted<StatsCollector>, public webrtc::RTCStatsCollectorCallback {
+    class StatsCollector final : public webrtc::RTCStatsCollectorCallback {
     public:
-        static Ref<StatsCollector> create(LibWebRTCMediaEndpoint& endpoint, PeerConnection::StatsPromise&& promise, MediaStreamTrack* track) { return adoptRef(* new StatsCollector(endpoint, WTFMove(promise), track)); }
+        static rtc::scoped_refptr<StatsCollector> create(LibWebRTCMediaEndpoint& endpoint, const DeferredPromise& promise, MediaStreamTrack* track) { return new StatsCollector(endpoint, promise, track); }
+
+        int AddRef() const { return m_endpoint.AddRef(); }
+        int Release() const { return m_endpoint.Release(); }
+
     private:
-        StatsCollector(LibWebRTCMediaEndpoint&, PeerConnection::StatsPromise&&, MediaStreamTrack*);
+        StatsCollector(LibWebRTCMediaEndpoint&, const DeferredPromise&, MediaStreamTrack*);
 
         void OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>&) final;
 
-        int AddRef() const final { ref(); return static_cast<int>(refCount()); }
-        int Release() const final { deref(); return static_cast<int>(refCount()); }
-
         LibWebRTCMediaEndpoint& m_endpoint;
-        PeerConnection::StatsPromise m_promise;
+        const DeferredPromise& m_promise;
         String m_id;
     };
 
@@ -167,11 +165,6 @@ private:
     SetRemoteSessionDescriptionObserver m_setRemoteSessionDescriptionObserver;
 
     bool m_isInitiator { false };
-
-    Vector<std::unique_ptr<webrtc::IceCandidateInterface>> m_pendingCandidates;
-    Vector<Ref<RealtimeOutgoingAudioSource>> m_audioSources;
-    Vector<Ref<RealtimeOutgoingVideoSource>> m_videoSources;
-    Vector<Ref<StatsCollector>> m_statsCollectors;
 };
 
 } // namespace WebCore

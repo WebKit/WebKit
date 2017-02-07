@@ -102,12 +102,6 @@ void LibWebRTCMediaEndpoint::doSetRemoteDescription(RTCSessionDescription& descr
     m_backend->SetRemoteDescription(&m_setRemoteSessionDescriptionObserver, sessionDescription.release());
 }
 
-void LibWebRTCMediaEndpoint::addPendingIceCandidates()
-{
-    while (m_pendingCandidates.size())
-        m_backend->AddIceCandidate(m_pendingCandidates.takeLast().release());
-}
-
 static inline std::string streamId(RTCPeerConnection& connection)
 {
     auto& senders = connection.getSenders();
@@ -139,11 +133,13 @@ void LibWebRTCMediaEndpoint::doCreateOffer()
                     auto trackSource = RealtimeOutgoingAudioSource::create(source);
                     auto rtcTrack = peerConnectionFactory().CreateAudioTrack(track->id().utf8().data(), trackSource.ptr());
                     trackSource->setTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>(rtcTrack));
-                    m_audioSources.append(WTFMove(trackSource));
+                    m_peerConnectionBackend.addAudioSource(WTFMove(trackSource));
                     stream->AddTrack(WTFMove(rtcTrack));
                 } else {
-                    m_videoSources.append(RealtimeOutgoingVideoSource::create(source));
-                    stream->AddTrack(peerConnectionFactory().CreateVideoTrack(track->id().utf8().data(), m_videoSources.last().ptr()));
+                    auto videoSource = RealtimeOutgoingVideoSource::create(source);
+                    auto videoTrack = peerConnectionFactory().CreateVideoTrack(track->id().utf8().data(), videoSource.ptr());
+                    m_peerConnectionBackend.addVideoSource(WTFMove(videoSource));
+                    stream->AddTrack(WTFMove(videoTrack));
                 }
             }
         }
@@ -169,11 +165,13 @@ void LibWebRTCMediaEndpoint::doCreateAnswer()
                     auto trackSource = RealtimeOutgoingAudioSource::create(source);
                     auto rtcTrack = peerConnectionFactory().CreateAudioTrack(track->id().utf8().data(), trackSource.ptr());
                     trackSource->setTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>(rtcTrack));
-                    m_audioSources.append(WTFMove(trackSource));
+                    m_peerConnectionBackend.addAudioSource(WTFMove(trackSource));
                     stream->AddTrack(WTFMove(rtcTrack));
                 } else {
-                    m_videoSources.append(RealtimeOutgoingVideoSource::create(source));
-                    stream->AddTrack(peerConnectionFactory().CreateVideoTrack(track->id().utf8().data(), m_videoSources.last().ptr()));
+                    auto videoSource = RealtimeOutgoingVideoSource::create(source);
+                    auto videoTrack = peerConnectionFactory().CreateVideoTrack(track->id().utf8().data(), videoSource.ptr());
+                    m_peerConnectionBackend.addVideoSource(WTFMove(videoSource));
+                    stream->AddTrack(WTFMove(videoTrack));
                 }
             }
         }
@@ -182,16 +180,14 @@ void LibWebRTCMediaEndpoint::doCreateAnswer()
     m_backend->CreateAnswer(&m_createSessionDescriptionObserver, nullptr);
 }
 
-void LibWebRTCMediaEndpoint::getStats(MediaStreamTrack* track, PeerConnection::StatsPromise&& promise)
+void LibWebRTCMediaEndpoint::getStats(MediaStreamTrack* track, const DeferredPromise& promise)
 {
-    auto collector = StatsCollector::create(*this, WTFMove(promise), track);
-    m_backend->GetStats(collector.ptr());
-    m_statsCollectors.append(WTFMove(collector));
+    m_backend->GetStats(StatsCollector::create(*this, promise, track).get());
 }
 
-LibWebRTCMediaEndpoint::StatsCollector::StatsCollector(LibWebRTCMediaEndpoint& endpoint, PeerConnection::StatsPromise&& promise, MediaStreamTrack* track)
+LibWebRTCMediaEndpoint::StatsCollector::StatsCollector(LibWebRTCMediaEndpoint& endpoint, const DeferredPromise& promise, MediaStreamTrack* track)
     : m_endpoint(endpoint)
-    , m_promise(WTFMove(promise))
+    , m_promise(promise)
 {
     if (track)
         m_id = track->id();
@@ -199,14 +195,14 @@ LibWebRTCMediaEndpoint::StatsCollector::StatsCollector(LibWebRTCMediaEndpoint& e
 
 void LibWebRTCMediaEndpoint::StatsCollector::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& report)
 {
-    callOnMainThread([this, report, protector = makeRef(m_endpoint)] {
+    callOnMainThread([protectedThis = rtc::scoped_refptr<LibWebRTCMediaEndpoint::StatsCollector>(this), report] {
+        if (protectedThis->m_endpoint.isStopped())
+            return;
+
         // FIXME: Fulfill promise with the report
         UNUSED_PARAM(report);
-        m_promise.reject(TypeError, ASCIILiteral("Stats API is not yet implemented"));
 
-        m_endpoint.m_statsCollectors.removeFirstMatching([this](const Ref<StatsCollector>& collector) {
-            return this == collector.ptr();
-        });
+        protectedThis->m_endpoint.m_peerConnectionBackend.iceCandidateFailed(protectedThis->m_promise, Exception { TypeError, ASCIILiteral("Stats API is not yet implemented") });
     });
 }
 

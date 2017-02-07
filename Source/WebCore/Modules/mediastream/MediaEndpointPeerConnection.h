@@ -57,7 +57,7 @@ private:
 
     void setConfiguration(MediaEndpointConfiguration&&) final;
 
-    void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) final;
+    void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&) final;
 
     Vector<RefPtr<MediaStream>> getRemoteStreams() const final;
 

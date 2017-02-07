@@ -29,6 +29,7 @@
 
 #include "Document.h"
 #include "IceCandidate.h"
+#include "JSRTCStatsResponse.h"
 #include "LibWebRTCDataChannelHandler.h"
 #include "LibWebRTCMediaEndpoint.h"
 #include "MediaEndpointConfiguration.h"
@@ -62,6 +63,10 @@ LibWebRTCPeerConnectionBackend::LibWebRTCPeerConnectionBackend(RTCPeerConnection
 {
 }
 
+LibWebRTCPeerConnectionBackend::~LibWebRTCPeerConnectionBackend()
+{
+}
+
 static webrtc::PeerConnectionInterface::RTCConfiguration configurationFromMediaEndpointConfiguration(MediaEndpointConfiguration&& configuration)
 {
     webrtc::PeerConnectionInterface::RTCConfiguration rtcConfiguration(webrtc::PeerConnectionInterface::RTCConfigurationType::kAggressive);
@@ -91,17 +96,38 @@ void LibWebRTCPeerConnectionBackend::setConfiguration(MediaEndpointConfiguration
     m_endpoint->backend().SetConfiguration(configurationFromMediaEndpointConfiguration(WTFMove(configuration)));
 }
 
-void LibWebRTCPeerConnectionBackend::getStats(MediaStreamTrack* track, PeerConnection::StatsPromise&& promise)
+void LibWebRTCPeerConnectionBackend::getStats(MediaStreamTrack* track, Ref<DeferredPromise>&& promise)
 {
-    m_endpoint->getStats(track, WTFMove(promise));
+    if (m_endpoint->isStopped())
+        return;
+
+    auto& statsPromise = promise.get();
+    m_statsPromises.add(&statsPromise, WTFMove(promise));
+    m_endpoint->getStats(track, statsPromise);
+}
+
+void LibWebRTCPeerConnectionBackend::iceCandidateSucceeded(const DeferredPromise& promise, Ref<RTCStatsResponse>&& response)
+{
+    auto statsPromise = m_statsPromises.take(&promise);
+    ASSERT(statsPromise);
+    statsPromise.value()->resolve<IDLInterface<RTCStatsResponse>>(WTFMove(response));
+}
+
+void LibWebRTCPeerConnectionBackend::iceCandidateFailed(const DeferredPromise& promise, Exception&& exception)
+{
+    auto statsPromise = m_statsPromises.take(&promise);
+    ASSERT(statsPromise);
+    statsPromise.value()->reject(WTFMove(exception));
 }
 
 void LibWebRTCPeerConnectionBackend::doSetLocalDescription(RTCSessionDescription& description)
 {
     m_endpoint->doSetLocalDescription(description);
     if (!m_isLocalDescriptionSet) {
-        if (m_isRemoteDescriptionSet)
-            m_endpoint->addPendingIceCandidates();
+        if (m_isRemoteDescriptionSet) {
+            while (m_pendingCandidates.size())
+                m_endpoint->addIceCandidate(*m_pendingCandidates.takeLast().release());
+        }
         m_isLocalDescriptionSet = true;
     }
 }
@@ -110,8 +136,10 @@ void LibWebRTCPeerConnectionBackend::doSetRemoteDescription(RTCSessionDescriptio
 {
     m_endpoint->doSetRemoteDescription(description);
     if (!m_isRemoteDescriptionSet) {
-        if (m_isLocalDescriptionSet)
-            m_endpoint->addPendingIceCandidates();
+        if (m_isLocalDescriptionSet) {
+            while (m_pendingCandidates.size())
+                m_endpoint->addIceCandidate(*m_pendingCandidates.takeLast().release());
+        }
         m_isRemoteDescriptionSet = true;
     }
 }
@@ -154,13 +182,23 @@ void LibWebRTCPeerConnectionBackend::doAddIceCandidate(RTCIceCandidate& candidat
 
     // libwebrtc does not like that ice candidates are set before the description.
     if (!m_isLocalDescriptionSet || !m_isRemoteDescriptionSet)
-        m_endpoint->storeIceCandidate(WTFMove(rtcCandidate));
-    else if (!m_endpoint->backend().AddIceCandidate(rtcCandidate.get())) {
+        m_pendingCandidates.append(WTFMove(rtcCandidate));
+    else if (!m_endpoint->addIceCandidate(*rtcCandidate.get())) {
         ASSERT_NOT_REACHED();
         addIceCandidateFailed(Exception { OperationError, ASCIILiteral("Failed to apply the received candidate") });
         return;
     }
     addIceCandidateSucceeded();
+}
+
+void LibWebRTCPeerConnectionBackend::addAudioSource(Ref<RealtimeOutgoingAudioSource>&& source)
+{
+    m_audioSources.append(WTFMove(source));
+}
+
+void LibWebRTCPeerConnectionBackend::addVideoSource(Ref<RealtimeOutgoingVideoSource>&& source)
+{
+    m_videoSources.append(WTFMove(source));
 }
 
 void LibWebRTCPeerConnectionBackend::markAsNeedingNegotiation()

@@ -382,7 +382,7 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
     return { };
 }
 
-void RTCPeerConnection::getStats(MediaStreamTrack* selector, PeerConnection::StatsPromise&& promise)
+void RTCPeerConnection::getStats(MediaStreamTrack* selector, Ref<DeferredPromise>&& promise)
 {
     m_backend->getStats(selector, WTFMove(promise));
 }

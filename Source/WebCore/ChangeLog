@@ -1,3 +1,55 @@
+2017-02-07  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] LibWebRTCEndpoint should not own objects that should be destroyed on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=167816
+
+        Reviewed by Alex Christensen.
+
+        Tests: webrtc/libwebrtc/release-while-creating-offer.html
+               webrtc/libwebrtc/release-while-getting-stats.html
+               webrtc/libwebrtc/release-while-setting-local-description.html
+
+        Moving AV sources, stats promises, ICE candidates from LibWebRTCEndpoint to LibWebRTCPeerConnectionBackend.
+        This allows ensuring these are destroyed in the main thread.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::getStats):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::getStats):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::doCreateOffer):
+        (WebCore::LibWebRTCMediaEndpoint::doCreateAnswer):
+        (WebCore::LibWebRTCMediaEndpoint::getStats):
+        (WebCore::LibWebRTCMediaEndpoint::StatsCollector::StatsCollector):
+        (WebCore::LibWebRTCMediaEndpoint::StatsCollector::OnStatsDelivered):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        (WebCore::LibWebRTCMediaEndpoint::addIceCandidate):
+        (WebCore::LibWebRTCMediaEndpoint::isStopped):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::~LibWebRTCPeerConnectionBackend):
+        (WebCore::LibWebRTCPeerConnectionBackend::getStats):
+        (WebCore::LibWebRTCPeerConnectionBackend::iceCandidateSucceeded):
+        (WebCore::LibWebRTCPeerConnectionBackend::iceCandidateFailed):
+        (WebCore::LibWebRTCPeerConnectionBackend::doSetLocalDescription):
+        (WebCore::LibWebRTCPeerConnectionBackend::doSetRemoteDescription):
+        (WebCore::LibWebRTCPeerConnectionBackend::doAddIceCandidate):
+        (WebCore::LibWebRTCPeerConnectionBackend::addAudioSource):
+        (WebCore::LibWebRTCPeerConnectionBackend::addVideoSource):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * testing/MockLibWebRTCPeerConnection.cpp:
+        (WebCore::MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileCreatingOffer::MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileCreatingOffer):
+        (WebCore::releaseInNetworkThread):
+        (WebCore::MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileCreatingOffer::CreateOffer):
+        (WebCore::MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileGettingStats::MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileGettingStats):
+        (WebCore::MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileGettingStats::GetStats):
+        (WebCore::MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileSettingDescription::MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileSettingDescription):
+        (WebCore::MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileSettingDescription::SetLocalDescription):
+        (WebCore::MockLibWebRTCPeerConnectionFactory::CreatePeerConnection):
+        * testing/MockLibWebRTCPeerConnection.h:
+
 2017-02-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Win] [GTK] [EFL] Compile (but don't use, yet) the platform-independent piece of ComplexTextController

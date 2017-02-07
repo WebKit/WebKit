@@ -27,16 +27,24 @@
 #if USE(LIBWEBRTC)
 
 #include "PeerConnectionBackend.h"
+#include <wtf/HashMap.h>
+
+namespace webrtc {
+class IceCandidateInterface;
+}
 
 namespace WebCore {
 
 class LibWebRTCMediaEndpoint;
 class RTCRtpReceiver;
 class RTCSessionDescription;
+class RealtimeOutgoingAudioSource;
+class RealtimeOutgoingVideoSource;
 
 class LibWebRTCPeerConnectionBackend final : public PeerConnectionBackend {
 public:
     explicit LibWebRTCPeerConnectionBackend(RTCPeerConnection&);
+    ~LibWebRTCPeerConnectionBackend();
 
 private:
     void doCreateOffer(RTCOfferOptions&&) final;
@@ -47,7 +55,7 @@ private:
     void doStop() final;
     std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) final;
     void setConfiguration(MediaEndpointConfiguration&&) final;
-    void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) final;
+    void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&) final;
     Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) final;
 
     // FIXME: API to implement for real
@@ -58,7 +66,6 @@ private:
     RefPtr<RTCSessionDescription> remoteDescription() const final { return nullptr; }
     RefPtr<RTCSessionDescription> currentRemoteDescription() const final { return nullptr; }
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const final { return nullptr; }
-
 
     Vector<RefPtr<MediaStream>> getRemoteStreams() const final { return { }; }
 
@@ -72,11 +79,21 @@ private:
 
     friend LibWebRTCMediaEndpoint;
     RTCPeerConnection& connection() { return m_peerConnection; }
+    void addAudioSource(Ref<RealtimeOutgoingAudioSource>&&);
+    void addVideoSource(Ref<RealtimeOutgoingVideoSource>&&);
+
+    void iceCandidateSucceeded(const DeferredPromise&, Ref<RTCStatsResponse>&&);
+    void iceCandidateFailed(const DeferredPromise&, Exception&&);
 
 private:
     Ref<LibWebRTCMediaEndpoint> m_endpoint;
     bool m_isLocalDescriptionSet { false };
     bool m_isRemoteDescriptionSet { false };
+
+    Vector<std::unique_ptr<webrtc::IceCandidateInterface>> m_pendingCandidates;
+    Vector<Ref<RealtimeOutgoingAudioSource>> m_audioSources;
+    Vector<Ref<RealtimeOutgoingVideoSource>> m_videoSources;
+    HashMap<const DeferredPromise*, Ref<DeferredPromise>> m_statsPromises;
 };
 
 } // namespace WebCore

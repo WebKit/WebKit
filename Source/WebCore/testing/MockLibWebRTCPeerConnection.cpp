@@ -32,6 +32,7 @@
 #include <sstream>
 #include <webrtc/api/mediastream.h>
 #include <wtf/Function.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
@@ -68,7 +69,6 @@ void MockLibWebRTCPeerConnectionForIceCandidates::gotLocalDescription()
     });
 }
 
-
 class MockLibWebRTCPeerConnectionForIceConnectionState : public MockLibWebRTCPeerConnection {
 public:
     explicit MockLibWebRTCPeerConnectionForIceConnectionState(webrtc::PeerConnectionObserver& observer) : MockLibWebRTCPeerConnection(observer) { }
@@ -87,6 +87,52 @@ void MockLibWebRTCPeerConnectionForIceConnectionState::gotLocalDescription()
     m_observer.OnIceConnectionChange(kIceConnectionDisconnected);
     m_observer.OnIceConnectionChange(kIceConnectionNew);
 }
+
+template<typename U> static inline void releaseInNetworkThread(MockLibWebRTCPeerConnection& mock, U& observer)
+{
+    mock.AddRef();
+    observer.AddRef();
+    callOnMainThread([&mock, &observer] {
+        callOnWebRTCNetworkThread([&mock, &observer]() {
+            observer.Release();
+            mock.Release();
+        });
+    });
+}
+
+class MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileCreatingOffer : public MockLibWebRTCPeerConnection {
+public:
+    explicit MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileCreatingOffer(webrtc::PeerConnectionObserver& observer) : MockLibWebRTCPeerConnection(observer) { }
+    virtual ~MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileCreatingOffer() = default;
+
+private:
+    void CreateOffer(webrtc::CreateSessionDescriptionObserver* observer, const webrtc::MediaConstraintsInterface*) final { releaseInNetworkThread(*this, *observer); }
+};
+
+class MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileGettingStats : public MockLibWebRTCPeerConnection {
+public:
+    explicit MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileGettingStats(webrtc::PeerConnectionObserver& observer) : MockLibWebRTCPeerConnection(observer) { }
+    virtual ~MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileGettingStats() = default;
+
+private:
+    bool GetStats(webrtc::StatsObserver*, webrtc::MediaStreamTrackInterface*, StatsOutputLevel) final;
+};
+
+bool MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileGettingStats::GetStats(webrtc::StatsObserver* observer, webrtc::MediaStreamTrackInterface*, StatsOutputLevel)
+{
+    releaseInNetworkThread(*this, *observer);
+    return true;
+}
+
+class MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileSettingDescription : public MockLibWebRTCPeerConnection {
+public:
+    explicit MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileSettingDescription(webrtc::PeerConnectionObserver& observer) : MockLibWebRTCPeerConnection(observer) { }
+    virtual ~MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileSettingDescription() = default;
+
+private:
+    void SetLocalDescription(webrtc::SetSessionDescriptionObserver* observer, webrtc::SessionDescriptionInterface*) final { releaseInNetworkThread(*this, *observer); }
+};
+
 
 MockLibWebRTCPeerConnectionFactory::MockLibWebRTCPeerConnectionFactory(LibWebRTCProvider* provider, String&& testCase)
     : m_provider(provider)
@@ -115,6 +161,15 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> MockLibWebRTCPeerConnectionF
 
     if (m_testCase == "ICEConnectionState")
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceConnectionState>(*observer);
+
+    if (m_testCase == "LibWebRTCReleasingWhileCreatingOffer")
+        return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileCreatingOffer>(*observer);
+
+    if (m_testCase == "LibWebRTCReleasingWhileGettingStats")
+        return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileGettingStats>(*observer);
+
+    if (m_testCase == "LibWebRTCReleasingWhileSettingDescription")
+        return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileSettingDescription>(*observer);
 
     return new rtc::RefCountedObject<MockLibWebRTCPeerConnection>(*observer);
 }

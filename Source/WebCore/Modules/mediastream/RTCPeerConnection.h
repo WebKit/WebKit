@@ -106,7 +106,7 @@ public:
     const RTCConfiguration& getConfiguration() const { return m_configuration; }
     ExceptionOr<void> setConfiguration(RTCConfiguration&&);
 
-    void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&);
+    void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&);
 
     ExceptionOr<Ref<RTCDataChannel>> createDataChannel(ScriptExecutionContext&, String&&, RTCDataChannelInit&&);
 

@@ -666,11 +666,11 @@ void MediaEndpointPeerConnection::addIceCandidateTask(RTCIceCandidate& rtcCandid
     addIceCandidateSucceeded();
 }
 
-void MediaEndpointPeerConnection::getStats(MediaStreamTrack*, PeerConnection::StatsPromise&& promise)
+void MediaEndpointPeerConnection::getStats(MediaStreamTrack*, Ref<DeferredPromise>&& promise)
 {
     notImplemented();
 
-    promise.reject(NOT_SUPPORTED_ERR);
+    promise->reject(NOT_SUPPORTED_ERR);
 }
 
 Vector<RefPtr<MediaStream>> MediaEndpointPeerConnection::getRemoteStreams() const
