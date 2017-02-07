@@ -711,6 +711,7 @@ void MediaPlayerPrivateGStreamerBase::repaint()
     if (m_renderingCanBeAccelerated && client()) {
         client()->setPlatformLayerNeedsDisplay();
 #if USE(GSTREAMER_GL)
+        LockHolder lock(m_drawMutex);
         m_drawCondition.notifyOne();
 #endif
         return;
@@ -720,6 +721,7 @@ void MediaPlayerPrivateGStreamerBase::repaint()
     m_player->repaint();
 
 #if USE(GSTREAMER_GL) || USE(COORDINATED_GRAPHICS_THREADED)
+    LockHolder lock(m_drawMutex);
     m_drawCondition.notifyOne();
 #endif
 }

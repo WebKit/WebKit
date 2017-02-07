@@ -1,3 +1,15 @@
+2017-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] Deadlock when media player is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=167861
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that we are calling notifyOne() for the draw mutex without taking the lock.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::repaint):
+
 2017-02-07  Zan Dobersek  <zdobersek@igalia.com>
 
         MediaSourceClientGStreamerMSE: wrap FastMalloc-ed memory into pipeline-bound GstBuffers
