@@ -1,5 +1,18 @@
 2017-02-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove assertion in WebViewImpl::performKeyEquivalent()
+
+        Reviewed by Wenson Hsieh.
+
+        The assertion ASSERT(event == [NSApp currentEvent]) fires when using certain key combinations
+        in MiniBrowser's location field (e.g. Option-Shift-Arrow to select). The assertion is not correct,
+        so remove it.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::performKeyEquivalent):
+
+2017-02-06  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] Keep the tiled scrolling indicator on-screen when pinching
         https://bugs.webkit.org/show_bug.cgi?id=167915
 

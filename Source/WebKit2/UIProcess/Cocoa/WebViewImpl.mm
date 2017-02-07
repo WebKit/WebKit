@@ -4638,8 +4638,6 @@ bool WebViewImpl::performKeyEquivalent(NSEvent *event)
         return [m_view _web_superPerformKeyEquivalent:event];
     }
 
-    ASSERT(event == [NSApp currentEvent]);
-
     disableComplexTextInputIfNecessary();
 
     // Pass key combos through WebCore if there is a key binding available for
