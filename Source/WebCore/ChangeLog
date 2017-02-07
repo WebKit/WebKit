@@ -1,3 +1,43 @@
+2017-02-07  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Handle media durations of an hour or more gracefully
+        https://bugs.webkit.org/show_bug.cgi?id=167882
+        <rdar://problem/29601260>
+
+        Reviewed by Eric Carlson.
+
+        We add a new "labelsMayDisplayTimesOverAnHour" to TimeControl so that time labels
+        to the left and right of the scrubber may have extra room to display to account for
+        the extra "xx:" characters that may appear. We don't lay the time out dynamically
+        such that we don't see layout jumps as the times shown in the labels go around
+        the hour mark.
+
+        We also refactor the ElapsedTimeSupport and RemainingTimeSupport in a single
+        TimeLabelsSupport class which updates both elapsed and remaining time labels
+        and sets the "labelsMayDisplayTimesOverAnHour" on the TimeControl should a
+        "durationchange" happen to make the media duration reach or go past the hour mark.
+
+        Tests: http/tests/media/modern-media-controls/time-labels-support/long-time.html
+               media/modern-media-controls/time-control/time-control-labels-may-display-times-over-an-hour.html
+               media/modern-media-controls/time-labels-support/elapsed-time.html
+               media/modern-media-controls/time-labels-support/remaining-time.html
+
+        * Modules/modern-media-controls/controls/time-control.js:
+        (TimeControl.prototype.get labelsMayDisplayTimesOverAnHour):
+        (TimeControl.prototype.set labelsMayDisplayTimesOverAnHour):
+        (TimeControl.prototype.set width):
+        * Modules/modern-media-controls/controls/time-label.css:
+        (.time-label):
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/elapsed-time-support.js: Removed.
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._updateControlsIfNeeded):
+        * Modules/modern-media-controls/media/time-labels-support.js: Renamed from Source/WebCore/Modules/modern-media-controls/media/remaining-time-support.js.
+        (TimeLabelsSupport.prototype.get control):
+        (TimeLabelsSupport.prototype.syncControl):
+        (TimeLabelsSupport):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-02-06  Per Arne Vollan  <pvollan@apple.com>
 
         Read stroke width of subtitles from MediaAccessibility framework.

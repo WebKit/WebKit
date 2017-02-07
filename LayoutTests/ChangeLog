@@ -1,5 +1,24 @@
 2017-02-07  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Handle media durations of an hour or more gracefully
+        https://bugs.webkit.org/show_bug.cgi?id=167882
+        <rdar://problem/29601260>
+
+        Reviewed by Eric Carlson.
+
+        Add new tests to check that we correctly handle times at or past the hour mark.
+
+        * http/tests/media/modern-media-controls/time-labels-support/long-time-expected.txt: Added.
+        * http/tests/media/modern-media-controls/time-labels-support/long-time.html: Added.
+        * media/modern-media-controls/time-control/time-control-labels-may-display-times-over-an-hour-expected.txt: Added.
+        * media/modern-media-controls/time-control/time-control-labels-may-display-times-over-an-hour.html: Added.
+        * media/modern-media-controls/time-labels-support/elapsed-time-expected.txt: Renamed from LayoutTests/media/modern-media-controls/elapsed-time-support/elapsed-time-support-expected.txt.
+        * media/modern-media-controls/time-labels-support/elapsed-time.html: Renamed from LayoutTests/media/modern-media-controls/elapsed-time-support/elapsed-time-support.html.
+        * media/modern-media-controls/time-labels-support/remaining-time-expected.txt: Renamed from LayoutTests/media/modern-media-controls/remaining-time-support/remaining-time-support-expected.txt.
+        * media/modern-media-controls/time-labels-support/remaining-time.html: Renamed from LayoutTests/media/modern-media-controls/remaining-time-support/remaining-time-support.html.
+
+2017-02-07  Antoine Quint  <graouts@apple.com>
+
         LayoutTet media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=167275
 

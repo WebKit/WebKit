@@ -25,9 +25,10 @@
 
 const MinimumScrubberWidth = 168;
 const ElapsedTimeLabelLeftMargin = -2;
-const ElapsedTimeLabelWidth = 45;
+const ElapsedTimeLabelWidth = 40;
 const RemainingTimeLabelWidth = 49;
-const RemainingTimeLabelLeftMargin = 5;
+const AdditionalTimeLabelWidthOverAnHour = 22;
+const ScrubberMargin = 5;
 
 class TimeControl extends LayoutItem
 {
@@ -43,9 +44,25 @@ class TimeControl extends LayoutItem
         this.remainingTimeLabel = new TimeLabel;
 
         this.children = [this.elapsedTimeLabel, this.scrubber, this.remainingTimeLabel];
+
+        this._labelsMayDisplayTimesOverAnHour = false;
     }
 
     // Public
+
+    get labelsMayDisplayTimesOverAnHour()
+    {
+        return this._labelsMayDisplayTimesOverAnHour;
+    }
+
+    set labelsMayDisplayTimesOverAnHour(flag)
+    {
+        if (this._labelsMayDisplayTimesOverAnHour === flag)
+            return;
+
+        this._labelsMayDisplayTimesOverAnHour = flag;
+        this.layout();
+    }
 
     get width()
     {
@@ -56,10 +73,15 @@ class TimeControl extends LayoutItem
     {
         super.width = width;
 
+        const extraWidth = this._labelsMayDisplayTimesOverAnHour ? AdditionalTimeLabelWidthOverAnHour : 0;
+        const elapsedTimeLabelWidth = ElapsedTimeLabelWidth + extraWidth;
+        const remainingTimeLabelWidth = RemainingTimeLabelWidth + extraWidth;
+
         this.elapsedTimeLabel.x = ElapsedTimeLabelLeftMargin;
-        this.scrubber.x = this.elapsedTimeLabel.x + ElapsedTimeLabelWidth;
-        this.scrubber.width = this._width - ElapsedTimeLabelWidth - RemainingTimeLabelWidth;
-        this.remainingTimeLabel.x = this.scrubber.x + this.scrubber.width + RemainingTimeLabelLeftMargin;
+        this.elapsedTimeLabel.width = elapsedTimeLabelWidth;
+        this.scrubber.x = this.elapsedTimeLabel.x + elapsedTimeLabelWidth + ScrubberMargin;
+        this.scrubber.width = this._width - elapsedTimeLabelWidth - ScrubberMargin - remainingTimeLabelWidth;
+        this.remainingTimeLabel.x = this.scrubber.x + this.scrubber.width + ScrubberMargin;
     }
 
     get isSufficientlyWide()

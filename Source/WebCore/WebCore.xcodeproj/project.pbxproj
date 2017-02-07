@@ -10080,8 +10080,6 @@
 		6F995A301A70833700A735F4 /* JSWebGLVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLVertexArrayObject.h; sourceTree = "<group>"; };
 		6FAD4A561A9D0FAE009F7D3C /* OpenGLESSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenGLESSPI.h; sourceTree = "<group>"; };
 		709A01FD1E3D0BCC006B0D4C /* ModuleFetchFailureKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleFetchFailureKind.h; sourceTree = "<group>"; };
-		71004B9A1DC1109300A52A38 /* elapsed-time-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "elapsed-time-support.js"; sourceTree = "<group>"; };
-		71004B9B1DC1109300A52A38 /* remaining-time-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "remaining-time-support.js"; sourceTree = "<group>"; };
 		71004B9D1DC1398800A52A38 /* playback-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "playback-support.js"; sourceTree = "<group>"; };
 		710FA74B1DEE576D004C715E /* controls-bar.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "controls-bar.js"; sourceTree = "<group>"; };
 		710FA74C1DEE577E004C715E /* controls-visibility-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "controls-visibility-support.js"; sourceTree = "<group>"; };
@@ -10188,6 +10186,7 @@
 		718675461DF101C60033D7F3 /* seek-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "seek-support.js"; sourceTree = "<group>"; };
 		718C7F561DD385C500B733C8 /* status-label.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "status-label.css"; sourceTree = "<group>"; };
 		718C7F571DD385C500B733C8 /* status-label.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "status-label.js"; sourceTree = "<group>"; };
+		71909BF41E4906A70057F99D /* time-labels-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "time-labels-support.js"; sourceTree = "<group>"; };
 		71A1B6071DEE5A820073BCFB /* English */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = English; path = "English.lproj/modern-media-controls-localized-strings.js"; sourceTree = SOURCE_ROOT; };
 		71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathUtilities.cpp; sourceTree = "<group>"; };
 		71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathUtilities.h; sourceTree = "<group>"; };
@@ -18426,7 +18425,6 @@
 			children = (
 				717F90581DC4BB600006F520 /* airplay-support.js */,
 				710FA74C1DEE577E004C715E /* controls-visibility-support.js */,
-				71004B9A1DC1109300A52A38 /* elapsed-time-support.js */,
 				714131471DC9D6AF00336107 /* fullscreen-support.js */,
 				7177E2461DB80D2F00919A0B /* media-controller-support.js */,
 				71D02D921DB55C4E00DD5CF5 /* media-controller.js */,
@@ -18434,7 +18432,6 @@
 				7130141D1DC9C08600CA3A88 /* pip-support.js */,
 				711FB0751DC7688F00C4C708 /* placard-support.js */,
 				71004B9D1DC1398800A52A38 /* playback-support.js */,
-				71004B9B1DC1109300A52A38 /* remaining-time-support.js */,
 				7157E3D11DC1EE4B0094550E /* scrubbing-support.js */,
 				718675441DF101C60033D7F3 /* seek-backward-support.js */,
 				718675451DF101C60033D7F3 /* seek-forward-support.js */,
@@ -18442,6 +18439,7 @@
 				71D2554F1DB900020004D76B /* skip-back-support.js */,
 				7177E2481DB80D2F00919A0B /* start-support.js */,
 				71B0460A1DD3C2EE00EE19CF /* status-support.js */,
+				71909BF41E4906A70057F99D /* time-labels-support.js */,
 				71F936F71DD4F99B00922CC7 /* tracks-support.js */,
 				716C8DF11E48B269005BD0DA /* volume-down-support.js */,
 				717F90571DC40ED60006F520 /* volume-support.js */,

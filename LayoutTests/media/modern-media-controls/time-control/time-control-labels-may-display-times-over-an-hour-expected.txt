@@ -1,0 +1,20 @@
+Testing the TimeControl class property labelsMayDisplayTimesOverAnHour.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing default value
+PASS timeControl.labelsMayDisplayTimesOverAnHour is false
+
+Setting timeControl.labelsMayDisplayTimesOverAnHour = true
+PASS timeControl.labelsMayDisplayTimesOverAnHour is true
+
+PASS timeControl.elapsedTimeLabel.x is -2
+PASS timeControl.scrubber.x is 65
+PASS timeControl.scrubber.width is 362
+PASS timeControl.remainingTimeLabel.x is 432
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

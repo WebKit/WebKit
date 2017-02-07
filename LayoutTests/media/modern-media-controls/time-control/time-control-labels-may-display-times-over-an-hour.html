@@ -1,0 +1,30 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>TimeControl</code> class property labelsMayDisplayTimesOverAnHour.");
+
+const timeControl = new TimeControl;
+
+debug("Testing default value");
+shouldBeFalse("timeControl.labelsMayDisplayTimesOverAnHour");
+
+debug("");
+debug("Setting timeControl.labelsMayDisplayTimesOverAnHour = true");
+timeControl.labelsMayDisplayTimesOverAnHour = true;
+shouldBeTrue("timeControl.labelsMayDisplayTimesOverAnHour");
+
+timeControl.width = 500;
+debug("");
+shouldBe("timeControl.elapsedTimeLabel.x", "-2");
+shouldBe("timeControl.scrubber.x", "65");
+shouldBe("timeControl.scrubber.width", "362");
+shouldBe("timeControl.remainingTimeLabel.x", "432");
+
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

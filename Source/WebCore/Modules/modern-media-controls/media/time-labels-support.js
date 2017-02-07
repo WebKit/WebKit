@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class RemainingTimeSupport extends MediaControllerSupport
+class TimeLabelsSupport extends MediaControllerSupport
 {
 
     // Protected
 
     get control()
     {
-        return this.mediaController.controls.timeControl.remainingTimeLabel;
+        return this.mediaController.controls.timeControl;
     }
 
     get mediaEvents()
@@ -44,7 +44,9 @@ class RemainingTimeSupport extends MediaControllerSupport
         if (isNaN(media.duration))
             return;
 
-        this.control.value = media.currentTime - media.duration;
+        this.control.elapsedTimeLabel.value = media.currentTime;
+        this.control.remainingTimeLabel.value = media.currentTime - media.duration;
+        this.control.labelsMayDisplayTimesOverAnHour = media.duration >= (60 * 60);
     }
 
 }

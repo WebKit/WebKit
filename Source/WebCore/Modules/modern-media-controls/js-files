@@ -42,13 +42,11 @@ controls/pip-placard.js
 media/media-controller-support.js
 media/airplay-support.js
 media/controls-visibility-support.js
-media/elapsed-time-support.js
 media/fullscreen-support.js
 media/mute-support.js
 media/pip-support.js
 media/placard-support.js
 media/playback-support.js
-media/remaining-time-support.js
 media/scrubbing-support.js
 media/seek-support.js
 media/seek-backward-support.js
@@ -56,6 +54,7 @@ media/seek-forward-support.js
 media/skip-back-support.js
 media/start-support.js
 media/status-support.js
+media/time-labels-support.js
 media/tracks-support.js
 media/volume-down-support.js
 media/volume-support.js
