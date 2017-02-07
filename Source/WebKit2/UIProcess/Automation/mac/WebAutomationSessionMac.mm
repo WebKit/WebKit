@@ -214,9 +214,9 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     NSWindow *window = page.platformWindow();
     NSInteger windowNumber = window.windowNumber;
 
-    NSEventType downEventType;
-    NSEventType dragEventType;
-    NSEventType upEventType;
+    NSEventType downEventType = (NSEventType)0;
+    NSEventType dragEventType = (NSEventType)0;
+    NSEventType upEventType = (NSEventType)0;
     switch (button) {
     case Inspector::Protocol::Automation::MouseButton::None:
         downEventType = upEventType = dragEventType = NSEventTypeMouseMoved;
@@ -243,24 +243,35 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
 
     switch (interaction) {
     case Inspector::Protocol::Automation::MouseInteraction::Move:
+        ASSERT(dragEventType);
         [eventsToBeSent addObject:[NSEvent mouseEventWithType:dragEventType location:windowPosition modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:0 pressure:0.0f]];
         break;
     case Inspector::Protocol::Automation::MouseInteraction::Down:
+        ASSERT(downEventType);
+
         // Hard-code the click count to one, since clients don't expect successive simulated
         // down/up events to be potentially counted as a double click event.
         [eventsToBeSent addObject:[NSEvent mouseEventWithType:downEventType location:windowPosition modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:1 pressure:WebCore::ForceAtClick]];
         break;
     case Inspector::Protocol::Automation::MouseInteraction::Up:
+        ASSERT(upEventType);
+
         // Hard-code the click count to one, since clients don't expect successive simulated
         // down/up events to be potentially counted as a double click event.
         [eventsToBeSent addObject:[NSEvent mouseEventWithType:upEventType location:windowPosition modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:1 pressure:0.0f]];
         break;
     case Inspector::Protocol::Automation::MouseInteraction::SingleClick:
+        ASSERT(upEventType);
+        ASSERT(downEventType);
+
         // Send separate down and up events. WebCore will see this as a single-click event.
         [eventsToBeSent addObject:[NSEvent mouseEventWithType:downEventType location:windowPosition modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:1 pressure:WebCore::ForceAtClick]];
         [eventsToBeSent addObject:[NSEvent mouseEventWithType:upEventType location:windowPosition modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:1 pressure:0.0f]];
         break;
     case Inspector::Protocol::Automation::MouseInteraction::DoubleClick:
+        ASSERT(upEventType);
+        ASSERT(downEventType);
+
         // Send multiple down and up events with proper click count.
         // WebCore will see this as a single-click event then double-click event.
         [eventsToBeSent addObject:[NSEvent mouseEventWithType:downEventType location:windowPosition modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:1 pressure:WebCore::ForceAtClick]];
