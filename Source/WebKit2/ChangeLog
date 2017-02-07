@@ -1,3 +1,15 @@
+2017-02-07  Anders Carlsson  <andersca@apple.com>
+
+        -[WKWebView encodeWithCoder:] needs to call super
+        https://bugs.webkit.org/show_bug.cgi?id=167945
+        rdar://problem/29777668
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView encodeWithCoder:]):
+        Call super.
+
 2017-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Soup] WebKitSoupRequestInputStream can still leave requests unfinished after r211773
