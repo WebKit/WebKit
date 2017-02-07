@@ -1,3 +1,9 @@
+2017-02-07  Tim Horton  <timothy_horton@apple.com>
+
+        Remove accidentally-added (in r211409) patch reject file
+
+        * bindings/scripts/test/JS/JSTestSerialization.cpp.rej: Removed.
+
 2017-02-07  Sam Weinig  <sam@webkit.org>
 
         JSDOMConvert is too big. Split it up!
