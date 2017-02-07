@@ -1,5 +1,18 @@
 2017-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [Threaded Compositor] Crash when detaching the CoordinatedGraphicsScene
+        https://bugs.webkit.org/show_bug.cgi?id=167547
+
+        Reviewed by Michael Catanzaro.
+
+        It seems that commitSceneState() can be called after the CoordinatedGraphicsScene has been detached.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::commitSceneState): Return early if scene has been detached.
+        (WebKit::CoordinatedGraphicsScene::detach): Take the render queue lock before clearing the render queue.
+
+2017-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [Threaded Compositor] Crash when deleting the compositor run loop
         https://bugs.webkit.org/show_bug.cgi?id=167545
 
