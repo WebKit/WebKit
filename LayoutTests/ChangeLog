@@ -1,3 +1,14 @@
+2017-02-07  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: gradient editor should allow switching the units of the 'angle' parameter
+        https://bugs.webkit.org/show_bug.cgi?id=166938
+
+        Reviewed by Brian Burg.
+
+        * inspector/model/gradient-expected.txt: Added.
+        * inspector/model/gradient.html: Added.
+        New tests for WebInspector.Gradient.
+
 2017-02-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html as flaky.

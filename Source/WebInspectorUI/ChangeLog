@@ -1,3 +1,39 @@
+2017-02-07  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: gradient editor should allow switching the units of the 'angle' parameter
+        https://bugs.webkit.org/show_bug.cgi?id=166938
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Test.html:
+        Add WebInspector.Gradient for new model object tests.
+
+        * UserInterface/Models/Gradient.js:
+        (WebInspector.Gradient.fromString):
+        (WebInspector.LinearGradient):
+        (WebInspector.LinearGradient.fromComponents):
+        (WebInspector.LinearGradient.prototype.set angleValue):
+        (WebInspector.LinearGradient.prototype.get angleValue):
+        (WebInspector.LinearGradient.prototype.set angleUnits):
+        (WebInspector.LinearGradient.prototype.get angleUnits):
+        (WebInspector.LinearGradient.prototype.copy):
+        (WebInspector.LinearGradient.prototype.toString):
+        (WebInspector.LinearGradient.prototype._angleValueForUnits):
+        Rework part of WebInspector.LinearGradient to support units other than "deg".
+
+        * UserInterface/Views/GradientEditor.css:
+        (.gradient-editor > .gradient-angle > input[type="range"]):
+        (.gradient-editor > .gradient-angle > input[type="number"]):
+
+        * UserInterface/Views/GradientEditor.js:
+        (WebInspector.GradientEditor):
+        (WebInspector.GradientEditor.prototype.set gradient):
+        (WebInspector.GradientEditor.prototype._gradientTypeChanged):
+        (WebInspector.GradientEditor.prototype._angleValueChanged):
+        (WebInspector.GradientEditor.prototype._angleUnitsChanged):
+        (WebInspector.GradientEditor.prototype._angleChanged): Deleted.
+        Add <select> for each unit type that will change the units of the gradient.
+
 2017-02-07  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: DOMTreeOutline becomes collapsed after switching back to Elements tab

@@ -1,0 +1,71 @@
+Tests for the WebInspector.Gradient model object.
+
+
+== Running test suite: WebInspector.Gradient
+-- Running test case: WebInspector.Gradient.fromString
+PASS: 'linear-gradient(red, blue)' is valid
+PASS: 'linear-gradient(red, blue)' is the expected subclass 'LinearGradient'
+PASS: 'linear-gradient(0deg, red, blue)' is valid
+PASS: 'linear-gradient(0deg, red, blue)' is the expected subclass 'LinearGradient'
+PASS: 'linear-gradient(to top, red, blue)' is valid
+PASS: 'linear-gradient(to top, red, blue)' is the expected subclass 'LinearGradient'
+PASS: 'linear-gradient(to top, red, green 50%, blue)' is valid
+PASS: 'linear-gradient(to top, red, green 50%, blue)' is the expected subclass 'LinearGradient'
+PASS: 'repeating-linear-gradient(0deg, red, blue)' is valid
+PASS: 'repeating-linear-gradient(0deg, red, blue)' is the expected subclass 'LinearGradient'
+PASS: 'radial-gradient(red, blue)' is valid
+PASS: 'radial-gradient(red, blue)' is the expected subclass 'RadialGradient'
+PASS: 'radial-gradient(0deg, red, blue)' is valid
+PASS: 'radial-gradient(0deg, red, blue)' is the expected subclass 'RadialGradient'
+PASS: 'radial-gradient(ellipse, red, blue)' is valid
+PASS: 'radial-gradient(ellipse, red, blue)' is the expected subclass 'RadialGradient'
+PASS: 'radial-gradient(ellipse, red, green 50%, blue)' is valid
+PASS: 'radial-gradient(ellipse, red, green 50%, blue)' is the expected subclass 'RadialGradient'
+PASS: 'repeating-radial-gradient(red, blue)' is valid
+PASS: 'repeating-radial-gradient(red, blue)' is the expected subclass 'RadialGradient'
+
+PASS: 'bad' is not valid
+PASS: 'linear-gradient' is not valid
+PASS: 'linear-gradient()' is not valid
+PASS: 'linear-gradient(0, red)' is not valid
+PASS: 'linear-gradient(0, red, blue)' is not valid
+PASS: 'linear-gradient(to, red, blue)' is not valid
+PASS: 'linear-gradient(0deg, red, blue' is not valid
+PASS: 'linear-gradient(0deg, red, blue,)' is not valid
+PASS: 'radial-gradient' is not valid
+PASS: 'radial-gradient()' is not valid
+PASS: 'radial-gradient(red, blue' is not valid
+PASS: 'radial-gradient(red, blue,)' is not valid
+
+-- Running test case: WebInspector.Gradient.prototype.toString
+PASS: 'linear-gradient(0deg, red, blue)' is valid
+PASS: toString() output matches 'linear-gradient(to top, red, blue)'
+PASS: 'linear-gradient(to top, red, blue)' is valid
+PASS: toString() output matches 'linear-gradient(to top, red, blue)'
+PASS: 'linear-gradient(30deg, red, blue)' is valid
+PASS: toString() output matches 'linear-gradient(30deg, red, blue)'
+PASS: 'repeating-linear-gradient(red, blue)' is valid
+PASS: toString() output matches 'repeating-linear-gradient(red, blue)'
+PASS: 'radial-gradient(red, blue)' is valid
+PASS: toString() output matches 'radial-gradient(red, blue)'
+PASS: 'radial-gradient(30deg, red, blue)' is valid
+PASS: toString() output matches 'radial-gradient(30deg, red, blue)'
+PASS: 'radial-gradient(ellipse, red, blue)' is valid
+PASS: toString() output matches 'radial-gradient(ellipse, red, blue)'
+PASS: 'repeating-radial-gradient(red, blue)' is valid
+PASS: toString() output matches 'repeating-radial-gradient(red, blue)'
+
+-- Running test case: WebInspector.LinearGradient.prototype.set angleUnits
+PASS: Gradient has angle value of '180'
+PASS: Gradient has angle units of 'deg'
+PASS: toString() returns the same value regardless of angle units
+PASS: Gradient has angle value of '3.14'
+PASS: Gradient has angle units of 'rad'
+PASS: toString() returns the same value regardless of angle units
+PASS: Gradient has angle value of '200'
+PASS: Gradient has angle units of 'grad'
+PASS: toString() returns the same value regardless of angle units
+PASS: Gradient has angle value of '0.5'
+PASS: Gradient has angle units of 'turn'
+PASS: toString() returns the same value regardless of angle units
+
