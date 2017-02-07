@@ -1779,7 +1779,7 @@ sub fixSVNPatchForAdditionWithHistory($)
         return "";
     }
     splice(@lines, 0, 2) if $lines[2] =~ /$svnDiffStartRegEx/;
-    return join($lineEnding, @lines);
+    return join($lineEnding, @lines) . "\n"; # patch(1) expects an extra trailing newline.
 }
 
 # If possible, returns a ChangeLog patch equivalent to the given one,

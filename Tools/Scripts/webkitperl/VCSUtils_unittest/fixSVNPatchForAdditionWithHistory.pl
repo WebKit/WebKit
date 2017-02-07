@@ -282,7 +282,7 @@ foreach my $testCase (@testCaseHashRefs) {
     my $testNameStart = "fixSVNPatchForAdditionWithHistory(): $testCase->{diffName}: comparing";
 
     my $got = VCSUtils::fixSVNPatchForAdditionWithHistory($testCase->{inputText});
-    chomp(my $expectedReturn = $testCase->{expectedReturn});
+    my $expectedReturn = $testCase->{expectedReturn};
  
     is_deeply($got, $expectedReturn, "$testNameStart return value.");
 }
