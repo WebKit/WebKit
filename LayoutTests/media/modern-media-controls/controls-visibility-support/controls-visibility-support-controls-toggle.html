@@ -35,13 +35,10 @@ new MutationObserver(() => {
     }
 }).observe(media, { attributes: true, attributeFilter: ["controls"] });
 
-debug("Media has not begun loading yet");
-shouldBeFalse("mediaController.controls.controlsBar.visible");
-shouldBeFalse("mediaController.controls.startButton.visible");
-
 media.addEventListener("loadedmetadata", function() {
     debug("");
     debug("Media has loaded metadata");
+    shouldBe("media.videoTracks.length", "1");
     shouldBeTrue("mediaController.controls.controlsBar.visible");
     shouldBeTrue("mediaController.controls.startButton.visible");
 
