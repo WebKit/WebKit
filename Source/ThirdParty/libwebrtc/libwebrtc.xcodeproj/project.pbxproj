@@ -2145,7 +2145,6 @@
 		5CDD8D281E43C79C00621E92 /* pitch_sse.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8D161E43C76400621E92 /* pitch_sse.c */; };
 		5CDD8D291E43C79C00621E92 /* pitch_sse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8D171E43C76400621E92 /* pitch_sse.h */; };
 		5CDD8D2A1E43C79C00621E92 /* pitch_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8D181E43C76400621E92 /* pitch_sse2.c */; };
-		5CDD8D2B1E43C79C00621E92 /* pitch_sse4_1.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8D191E43C76400621E92 /* pitch_sse4_1.c */; };
 		5CDD8D2C1E43C79C00621E92 /* x86_celt_map.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8D1A1E43C76400621E92 /* x86_celt_map.c */; };
 		5CDD8D2D1E43C79C00621E92 /* x86cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8D1B1E43C76400621E92 /* x86cpu.c */; };
 		5CDD8D2E1E43C79C00621E92 /* x86cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8D1C1E43C76400621E92 /* x86cpu.h */; };
@@ -2468,6 +2467,20 @@
 		5CDD907F1E43D15C00621E92 /* mock_nonlinear_beamformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD906F1E43D15C00621E92 /* mock_nonlinear_beamformer.h */; };
 		5CDD90821E43D15C00621E92 /* nonlinear_beamformer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90721E43D15C00621E92 /* nonlinear_beamformer.cc */; };
 		5CDD90831E43D15C00621E92 /* nonlinear_beamformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD90731E43D15C00621E92 /* nonlinear_beamformer.h */; };
+		5CFD53601E4BA34B00482908 /* helpers_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD535F1E4BA34B00482908 /* helpers_ios.mm */; };
+		5CFD536C1E4BA4DC00482908 /* RTCAudioSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53631E4BA4DC00482908 /* RTCAudioSession.h */; };
+		5CFD536D1E4BA4DC00482908 /* RTCAudioSession.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53641E4BA4DC00482908 /* RTCAudioSession.mm */; };
+		5CFD536E1E4BA4DC00482908 /* RTCAudioSession+Configuration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53651E4BA4DC00482908 /* RTCAudioSession+Configuration.mm */; };
+		5CFD536F1E4BA4DC00482908 /* RTCAudioSession+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53661E4BA4DC00482908 /* RTCAudioSession+Private.h */; };
+		5CFD53701E4BA4DC00482908 /* RTCAudioSessionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53671E4BA4DC00482908 /* RTCAudioSessionConfiguration.h */; };
+		5CFD53711E4BA4DC00482908 /* RTCAudioSessionConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53681E4BA4DC00482908 /* RTCAudioSessionConfiguration.m */; };
+		5CFD53721E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53691E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.h */; };
+		5CFD53731E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD536A1E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.mm */; };
+		5CFD537C1E4BA4F500482908 /* audio_device_ios.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53751E4BA4F500482908 /* audio_device_ios.h */; };
+		5CFD537D1E4BA4F500482908 /* audio_device_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53761E4BA4F500482908 /* audio_device_ios.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		5CFD53801E4BA4F500482908 /* audio_session_observer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53791E4BA4F500482908 /* audio_session_observer.h */; };
+		5CFD53811E4BA4F500482908 /* voice_processing_audio_unit.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD537A1E4BA4F500482908 /* voice_processing_audio_unit.h */; };
+		5CFD53821E4BA4F500482908 /* voice_processing_audio_unit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD537B1E4BA4F500482908 /* voice_processing_audio_unit.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -4863,7 +4876,6 @@
 		5CDD8D161E43C76400621E92 /* pitch_sse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pitch_sse.c; path = x86/pitch_sse.c; sourceTree = "<group>"; };
 		5CDD8D171E43C76400621E92 /* pitch_sse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pitch_sse.h; path = x86/pitch_sse.h; sourceTree = "<group>"; };
 		5CDD8D181E43C76400621E92 /* pitch_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pitch_sse2.c; path = x86/pitch_sse2.c; sourceTree = "<group>"; };
-		5CDD8D191E43C76400621E92 /* pitch_sse4_1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pitch_sse4_1.c; path = x86/pitch_sse4_1.c; sourceTree = "<group>"; };
 		5CDD8D1A1E43C76400621E92 /* x86_celt_map.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = x86_celt_map.c; path = x86/x86_celt_map.c; sourceTree = "<group>"; };
 		5CDD8D1B1E43C76400621E92 /* x86cpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = x86cpu.c; path = x86/x86cpu.c; sourceTree = "<group>"; };
 		5CDD8D1C1E43C76400621E92 /* x86cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = x86cpu.h; path = x86/x86cpu.h; sourceTree = "<group>"; };
@@ -5158,6 +5170,20 @@
 		5CDD90AB1E43D52900621E92 /* aes_icm_ossl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = aes_icm_ossl.c; path = cipher/aes_icm_ossl.c; sourceTree = "<group>"; };
 		5CDD90AC1E43D52900621E92 /* cipher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cipher.c; path = cipher/cipher.c; sourceTree = "<group>"; };
 		5CDD90AD1E43D52900621E92 /* null_cipher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = null_cipher.c; path = cipher/null_cipher.c; sourceTree = "<group>"; };
+		5CFD535F1E4BA34B00482908 /* helpers_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = helpers_ios.mm; sourceTree = "<group>"; };
+		5CFD53631E4BA4DC00482908 /* RTCAudioSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCAudioSession.h; sourceTree = "<group>"; };
+		5CFD53641E4BA4DC00482908 /* RTCAudioSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RTCAudioSession.mm; sourceTree = "<group>"; };
+		5CFD53651E4BA4DC00482908 /* RTCAudioSession+Configuration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "RTCAudioSession+Configuration.mm"; sourceTree = "<group>"; };
+		5CFD53661E4BA4DC00482908 /* RTCAudioSession+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RTCAudioSession+Private.h"; sourceTree = "<group>"; };
+		5CFD53671E4BA4DC00482908 /* RTCAudioSessionConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCAudioSessionConfiguration.h; sourceTree = "<group>"; };
+		5CFD53681E4BA4DC00482908 /* RTCAudioSessionConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RTCAudioSessionConfiguration.m; sourceTree = "<group>"; };
+		5CFD53691E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCAudioSessionDelegateAdapter.h; sourceTree = "<group>"; };
+		5CFD536A1E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RTCAudioSessionDelegateAdapter.mm; sourceTree = "<group>"; };
+		5CFD53751E4BA4F500482908 /* audio_device_ios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_device_ios.h; sourceTree = "<group>"; };
+		5CFD53761E4BA4F500482908 /* audio_device_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = audio_device_ios.mm; sourceTree = "<group>"; };
+		5CFD53791E4BA4F500482908 /* audio_session_observer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_session_observer.h; sourceTree = "<group>"; };
+		5CFD537A1E4BA4F500482908 /* voice_processing_audio_unit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = voice_processing_audio_unit.h; sourceTree = "<group>"; };
+		5CFD537B1E4BA4F500482908 /* voice_processing_audio_unit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = voice_processing_audio_unit.mm; sourceTree = "<group>"; };
 		5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libwebrtc.xcconfig; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -5220,10 +5246,10 @@
 		5C0885111E4A99C200403995 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				5C0885121E4A99D200403995 /* aes_gcm_ossl.h */,
-				5C0885131E4A99D200403995 /* aes_icm_ossl.h */,
-				5C0885141E4A99D200403995 /* aes_icm.h */,
 				5C0885151E4A99D200403995 /* aes.h */,
+				5C0885121E4A99D200403995 /* aes_gcm_ossl.h */,
+				5C0885141E4A99D200403995 /* aes_icm.h */,
+				5C0885131E4A99D200403995 /* aes_icm_ossl.h */,
 				5C0885161E4A99D200403995 /* alloc.h */,
 				5C0885171E4A99D200403995 /* auth.h */,
 				5C0885181E4A99D200403995 /* cipher.h */,
@@ -5246,6 +5272,7 @@
 			isa = PBXGroup;
 			children = (
 				5C11A0161E45756C004F0987 /* dummy */,
+				5CFD53611E4BA36100482908 /* ios */,
 				5C11A0061E457431004F0987 /* mac */,
 				5C119FF01E457400004F0987 /* audio_device_buffer.cc */,
 				5C119FF11E457400004F0987 /* audio_device_buffer.h */,
@@ -5288,10 +5315,10 @@
 			children = (
 				5C11A0171E457578004F0987 /* audio_device_dummy.cc */,
 				5C11A0181E457578004F0987 /* audio_device_dummy.h */,
-				5C11A0191E457578004F0987 /* file_audio_device_factory.cc */,
-				5C11A01A1E457578004F0987 /* file_audio_device_factory.h */,
 				5C11A01B1E457578004F0987 /* file_audio_device.cc */,
 				5C11A01C1E457578004F0987 /* file_audio_device.h */,
+				5C11A0191E457578004F0987 /* file_audio_device_factory.cc */,
+				5C11A01A1E457578004F0987 /* file_audio_device_factory.h */,
 			);
 			name = dummy;
 			sourceTree = "<group>";
@@ -6286,8 +6313,6 @@
 		5C4B4AED1E42C9E3002651C8 /* netinet */ = {
 			isa = PBXGroup;
 			children = (
-				414D71181E4AEB110023E526 /* sctp_userspace.c */,
-				414D71151E4AEACD0023E526 /* sctp_indata.c */,
 				5C4B4B151E42C9EF002651C8 /* sctp.h */,
 				5C4B4AEE1E42C9EF002651C8 /* sctp_asconf.c */,
 				5C4B4AEF1E42C9EF002651C8 /* sctp_asconf.h */,
@@ -6302,6 +6327,7 @@
 				5C4B4AF81E42C9EF002651C8 /* sctp_crc32.c */,
 				5C4B4AF91E42C9EF002651C8 /* sctp_crc32.h */,
 				5C4B4AFA1E42C9EF002651C8 /* sctp_header.h */,
+				414D71151E4AEACD0023E526 /* sctp_indata.c */,
 				5C4B4AFC1E42C9EF002651C8 /* sctp_indata.h */,
 				5C4B4AFD1E42C9EF002651C8 /* sctp_input.c */,
 				5C4B4AFE1E42C9EF002651C8 /* sctp_input.h */,
@@ -6324,6 +6350,7 @@
 				5C4B4B0F1E42C9EF002651C8 /* sctp_timer.c */,
 				5C4B4B101E42C9EF002651C8 /* sctp_timer.h */,
 				5C4B4B111E42C9EF002651C8 /* sctp_uio.h */,
+				414D71181E4AEB110023E526 /* sctp_userspace.c */,
 				5C4B4B131E42C9EF002651C8 /* sctp_usrreq.c */,
 				5C4B4B141E42C9EF002651C8 /* sctp_var.h */,
 				5C4B4B161E42C9EF002651C8 /* sctputil.c */,
@@ -6922,9 +6949,9 @@
 		5C63F8CB1E416CC3002CA531 /* third_party */ = {
 			isa = PBXGroup;
 			children = (
-				5CDD90841E43D30300621E92 /* libsrtp */,
 				5C63FC631E4184C0002CA531 /* boringssl */,
 				5C63F8CC1E416CEB002CA531 /* jsoncpp */,
+				5CDD90841E43D30300621E92 /* libsrtp */,
 				5C4B4D2D1E4323AA002651C8 /* libyuv */,
 				5C4B4A901E42C4C8002651C8 /* opus */,
 				5C4B4AC81E42C980002651C8 /* usrsctp */,
@@ -7304,9 +7331,9 @@
 		5CDD83681E4399E400621E92 /* modules */ = {
 			isa = PBXGroup;
 			children = (
-				5C119FEF1E4573CA004F0987 /* audio_device */,
 				5CDD84051E439AF200621E92 /* audio_coding */,
 				5CDD87E71E43BDC400621E92 /* audio_conference_mixer */,
+				5C119FEF1E4573CA004F0987 /* audio_device */,
 				5CDD84881E43AEC900621E92 /* audio_processing */,
 				5CDD90511E43D10400621E92 /* bitrate_controller */,
 				5CDD8FA61E43CCE100621E92 /* congestion_controller */,
@@ -7582,6 +7609,7 @@
 				5CDD84CF1E43B04D00621E92 /* coder.h */,
 				5CDD84D11E43B04D00621E92 /* file_player.cc */,
 				5CDD84D21E43B04D00621E92 /* file_recorder.cc */,
+				5CFD535F1E4BA34B00482908 /* helpers_ios.mm */,
 				5CDD84D81E43B04D00621E92 /* process_thread_impl.cc */,
 				5CDD84D91E43B04D00621E92 /* process_thread_impl.h */,
 			);
@@ -8624,7 +8652,6 @@
 				5CDD8D161E43C76400621E92 /* pitch_sse.c */,
 				5CDD8D171E43C76400621E92 /* pitch_sse.h */,
 				5CDD8D181E43C76400621E92 /* pitch_sse2.c */,
-				5CDD8D191E43C76400621E92 /* pitch_sse4_1.c */,
 				5CDD8D1A1E43C76400621E92 /* x86_celt_map.c */,
 				5CDD8D1B1E43C76400621E92 /* x86cpu.c */,
 				5CDD8D1C1E43C76400621E92 /* x86cpu.h */,
@@ -9036,11 +9063,11 @@
 		5CDD908B1E43D4A700621E92 /* crypto */ = {
 			isa = PBXGroup;
 			children = (
-				5C0885111E4A99C200403995 /* include */,
-				5CDD90961E43D4F600621E92 /* math */,
-				5CDD90951E43D4F000621E92 /* kernel */,
-				5CDD90941E43D4ED00621E92 /* hash */,
 				5CDD90931E43D4E400621E92 /* cipher */,
+				5CDD90941E43D4ED00621E92 /* hash */,
+				5C0885111E4A99C200403995 /* include */,
+				5CDD90951E43D4F000621E92 /* kernel */,
+				5CDD90961E43D4F600621E92 /* math */,
 				5CDD908C1E43D4C200621E92 /* replay */,
 			);
 			path = crypto;
@@ -9097,18 +9124,46 @@
 			name = math;
 			sourceTree = "<group>";
 		};
+		5CFD53611E4BA36100482908 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				5CFD53621E4BA4C600482908 /* objc */,
+				5CFD53751E4BA4F500482908 /* audio_device_ios.h */,
+				5CFD53761E4BA4F500482908 /* audio_device_ios.mm */,
+				5CFD53791E4BA4F500482908 /* audio_session_observer.h */,
+				5CFD537A1E4BA4F500482908 /* voice_processing_audio_unit.h */,
+				5CFD537B1E4BA4F500482908 /* voice_processing_audio_unit.mm */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
+		5CFD53621E4BA4C600482908 /* objc */ = {
+			isa = PBXGroup;
+			children = (
+				5CFD53651E4BA4DC00482908 /* RTCAudioSession+Configuration.mm */,
+				5CFD53661E4BA4DC00482908 /* RTCAudioSession+Private.h */,
+				5CFD53631E4BA4DC00482908 /* RTCAudioSession.h */,
+				5CFD53641E4BA4DC00482908 /* RTCAudioSession.mm */,
+				5CFD53671E4BA4DC00482908 /* RTCAudioSessionConfiguration.h */,
+				5CFD53681E4BA4DC00482908 /* RTCAudioSessionConfiguration.m */,
+				5CFD53691E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.h */,
+				5CFD536A1E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.mm */,
+			);
+			path = objc;
+			sourceTree = "<group>";
+		};
 		5D7C59C41208C68B001C873E /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				5C0885361E4AA38900403995 /* libwebrtcpcrtc.xcconfig */,
-				5C0884891E4A978C00403995 /* libsrtp.xcconfig */,
-				5C08848A1E4A978C00403995 /* libyuv.xcconfig */,
-				5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */,
 				5D7C59C61208C68B001C873E /* Base.xcconfig */,
 				5C4B43B01E42877A002651C8 /* boringssl.xcconfig */,
 				5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */,
+				5C0884891E4A978C00403995 /* libsrtp.xcconfig */,
 				5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */,
+				5C0885361E4AA38900403995 /* libwebrtcpcrtc.xcconfig */,
+				5C08848A1E4A978C00403995 /* libyuv.xcconfig */,
 				5C4B4A8F1E42C431002651C8 /* opus.xcconfig */,
+				5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -9137,11 +9192,11 @@
 			children = (
 				5C63FC601E418411002CA531 /* libboringssl.a */,
 				5C4B4A8E1E42C336002651C8 /* libopus.a */,
-				FB39D0D11200F0E300088E69 /* libwebrtc.a */,
-				5C11A12D1E4577E1004F0987 /* libusrsctp.a */,
 				5C0884D11E4A97E300403995 /* libsrtp.a */,
-				5C0884DE1E4A980100403995 /* libyuv.a */,
+				5C11A12D1E4577E1004F0987 /* libusrsctp.a */,
+				FB39D0D11200F0E300088E69 /* libwebrtc.a */,
 				5C088C0B1E4AA3B100403995 /* libwebrtcpcrtc.a */,
+				5C0884DE1E4A980100403995 /* libyuv.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -9167,17 +9222,17 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C088C1D1E4AA44400403995 /* mediasession.h in Headers */,
-				5C088C211E4AA44400403995 /* srtpfilter.h in Headers */,
-				5C088C1F1E4AA44400403995 /* rtcpmuxfilter.h in Headers */,
-				5C088C131E4AA44400403995 /* channel.h in Headers */,
-				5C088C111E4AA44400403995 /* bundlefilter.h in Headers */,
-				5C088C191E4AA44400403995 /* externalhmac.h in Headers */,
-				5C088C221E4AA44400403995 /* voicechannel.h in Headers */,
-				5C088C171E4AA44400403995 /* currentspeakermonitor.h in Headers */,
-				5C088C151E4AA44400403995 /* channelmanager.h in Headers */,
-				5C088C1B1E4AA44400403995 /* mediamonitor.h in Headers */,
 				5C088C0F1E4AA44400403995 /* audiomonitor.h in Headers */,
+				5C088C111E4AA44400403995 /* bundlefilter.h in Headers */,
+				5C088C131E4AA44400403995 /* channel.h in Headers */,
+				5C088C151E4AA44400403995 /* channelmanager.h in Headers */,
+				5C088C171E4AA44400403995 /* currentspeakermonitor.h in Headers */,
+				5C088C191E4AA44400403995 /* externalhmac.h in Headers */,
+				5C088C1B1E4AA44400403995 /* mediamonitor.h in Headers */,
+				5C088C1D1E4AA44400403995 /* mediasession.h in Headers */,
+				5C088C1F1E4AA44400403995 /* rtcpmuxfilter.h in Headers */,
+				5C088C211E4AA44400403995 /* srtpfilter.h in Headers */,
+				5C088C221E4AA44400403995 /* voicechannel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9185,44 +9240,44 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C60247B1E4950A00088F0B2 /* sctp_crc32.h in Headers */,
-				5C6024921E4950A00088F0B2 /* sctp_uio.h in Headers */,
-				5C60245F1E494DB80088F0B2 /* user_atomic.h in Headers */,
-				5C60246B1E494DB80088F0B2 /* user_route.h in Headers */,
-				5C6024641E494DB80088F0B2 /* user_ip_icmp.h in Headers */,
-				5C6024771E4950A00088F0B2 /* sctp_callout.h in Headers */,
-				5C6024671E494DB80088F0B2 /* user_mbuf.h in Headers */,
-				5C6024631E494DB80088F0B2 /* user_ip6_var.h in Headers */,
-				5C60247D1E4950A00088F0B2 /* sctp_indata.h in Headers */,
-				5C6024751E4950A00088F0B2 /* sctp_bsd_addr.h in Headers */,
-				5C6024651E494DB80088F0B2 /* user_malloc.h in Headers */,
-				5C6024881E4950A00088F0B2 /* sctp_peeloff.h in Headers */,
-				5C60247C1E4950A00088F0B2 /* sctp_header.h in Headers */,
-				5C60246A1E494DB80088F0B2 /* user_recv_thread.h in Headers */,
-				5C6024961E4950A00088F0B2 /* sctputil.h in Headers */,
-				5C6024841E4950A00088F0B2 /* sctp_output.h in Headers */,
-				5C6024791E4950A00088F0B2 /* sctp_constants.h in Headers */,
-				5C6024981E4950A50088F0B2 /* sctp6_var.h in Headers */,
-				5C6024891E4950A00088F0B2 /* sctp_process_lock.h in Headers */,
-				5C60246C1E494DB80088F0B2 /* user_socketvar.h in Headers */,
-				5C6024681E494DB80088F0B2 /* user_queue.h in Headers */,
-				5C60246E1E494DB80088F0B2 /* usrsctp.h in Headers */,
-				5C60248B1E4950A00088F0B2 /* sctp_sha1.h in Headers */,
-				5C6024711E4950A00088F0B2 /* sctp_asconf.h in Headers */,
-				5C6024941E4950A00088F0B2 /* sctp_var.h in Headers */,
-				5C60248D1E4950A00088F0B2 /* sctp_structs.h in Headers */,
-				5C60246D1E494DB80088F0B2 /* user_uma.h in Headers */,
-				5C6024821E4950A00088F0B2 /* sctp_os_userspace.h in Headers */,
-				5C6024731E4950A00088F0B2 /* sctp_auth.h in Headers */,
-				5C6024811E4950A00088F0B2 /* sctp_os.h in Headers */,
-				5C6024911E4950A00088F0B2 /* sctp_timer.h in Headers */,
-				5C6024861E4950A00088F0B2 /* sctp_pcb.h in Headers */,
-				5C6024611E494DB80088F0B2 /* user_environment.h in Headers */,
-				5C60248F1E4950A00088F0B2 /* sctp_sysctl.h in Headers */,
-				5C60247F1E4950A00088F0B2 /* sctp_input.h in Headers */,
 				5C60246F1E4950A00088F0B2 /* sctp.h in Headers */,
-				5C6024621E494DB80088F0B2 /* user_inpcb.h in Headers */,
+				5C6024981E4950A50088F0B2 /* sctp6_var.h in Headers */,
+				5C6024711E4950A00088F0B2 /* sctp_asconf.h in Headers */,
+				5C6024731E4950A00088F0B2 /* sctp_auth.h in Headers */,
+				5C6024751E4950A00088F0B2 /* sctp_bsd_addr.h in Headers */,
+				5C6024771E4950A00088F0B2 /* sctp_callout.h in Headers */,
+				5C6024791E4950A00088F0B2 /* sctp_constants.h in Headers */,
+				5C60247B1E4950A00088F0B2 /* sctp_crc32.h in Headers */,
+				5C60247C1E4950A00088F0B2 /* sctp_header.h in Headers */,
+				5C60247D1E4950A00088F0B2 /* sctp_indata.h in Headers */,
+				5C60247F1E4950A00088F0B2 /* sctp_input.h in Headers */,
 				5C6024801E4950A00088F0B2 /* sctp_lock_userspace.h in Headers */,
+				5C6024811E4950A00088F0B2 /* sctp_os.h in Headers */,
+				5C6024821E4950A00088F0B2 /* sctp_os_userspace.h in Headers */,
+				5C6024841E4950A00088F0B2 /* sctp_output.h in Headers */,
+				5C6024861E4950A00088F0B2 /* sctp_pcb.h in Headers */,
+				5C6024881E4950A00088F0B2 /* sctp_peeloff.h in Headers */,
+				5C6024891E4950A00088F0B2 /* sctp_process_lock.h in Headers */,
+				5C60248B1E4950A00088F0B2 /* sctp_sha1.h in Headers */,
+				5C60248D1E4950A00088F0B2 /* sctp_structs.h in Headers */,
+				5C60248F1E4950A00088F0B2 /* sctp_sysctl.h in Headers */,
+				5C6024911E4950A00088F0B2 /* sctp_timer.h in Headers */,
+				5C6024921E4950A00088F0B2 /* sctp_uio.h in Headers */,
+				5C6024941E4950A00088F0B2 /* sctp_var.h in Headers */,
+				5C6024961E4950A00088F0B2 /* sctputil.h in Headers */,
+				5C60245F1E494DB80088F0B2 /* user_atomic.h in Headers */,
+				5C6024611E494DB80088F0B2 /* user_environment.h in Headers */,
+				5C6024621E494DB80088F0B2 /* user_inpcb.h in Headers */,
+				5C6024631E494DB80088F0B2 /* user_ip6_var.h in Headers */,
+				5C6024641E494DB80088F0B2 /* user_ip_icmp.h in Headers */,
+				5C6024651E494DB80088F0B2 /* user_malloc.h in Headers */,
+				5C6024671E494DB80088F0B2 /* user_mbuf.h in Headers */,
+				5C6024681E494DB80088F0B2 /* user_queue.h in Headers */,
+				5C60246A1E494DB80088F0B2 /* user_recv_thread.h in Headers */,
+				5C60246B1E494DB80088F0B2 /* user_route.h in Headers */,
+				5C60246C1E494DB80088F0B2 /* user_socketvar.h in Headers */,
+				5C60246D1E494DB80088F0B2 /* user_uma.h in Headers */,
+				5C60246E1E494DB80088F0B2 /* usrsctp.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9340,7 +9395,6 @@
 				5CDD8B6D1E43C2B500621E92 /* abs_quant.h in Headers */,
 				5CDD8B6B1E43C2B500621E92 /* abs_quant_loop.h in Headers */,
 				5CDD89F91E43BFB300621E92 /* accelerate.h in Headers */,
-				5C0885251E4A99D200403995 /* aes_icm_ossl.h in Headers */,
 				5CDD85041E43B1EA00621E92 /* acm_codec_database.h in Headers */,
 				5CDD85051E43B1EA00621E92 /* acm_common_defs.h in Headers */,
 				5CDD850A1E43B1EA00621E92 /* acm_receiver.h in Headers */,
@@ -9352,9 +9406,14 @@
 				5CDD86BF1E43B9C200621E92 /* aec_resampler.h in Headers */,
 				5CDD85E81E43B81000621E92 /* aecm_core.h in Headers */,
 				5CDD85E91E43B81000621E92 /* aecm_defines.h in Headers */,
+				5C0885271E4A99D200403995 /* aes.h in Headers */,
+				5C0885241E4A99D200403995 /* aes_gcm_ossl.h in Headers */,
+				5C0885261E4A99D200403995 /* aes_icm.h in Headers */,
+				5C0885251E4A99D200403995 /* aes_icm_ossl.h in Headers */,
 				5CDD87021E43BA7500621E92 /* agc.h in Headers */,
 				5CDD87001E43BA7500621E92 /* agc_manager_direct.h in Headers */,
 				5CDD8FD21E43CD6600621E92 /* aimd_rate_control.h in Headers */,
+				5C0885281E4A99D200403995 /* alloc.h in Headers */,
 				5CDD8F9F1E43CCBE00621E92 /* alr_detector.h in Headers */,
 				5CDD86ED1E43BA6D00621E92 /* analog_agc.h in Headers */,
 				5CDD87E61E43BDA100621E92 /* apm_data_dumper.h in Headers */,
@@ -9387,6 +9446,13 @@
 				5CDD8C091E43C34600621E92 /* audio_decoder_isac_t_impl.h in Headers */,
 				5CDD8C611E43C60900621E92 /* audio_decoder_opus.h in Headers */,
 				5CDD8FFD1E43CE3A00621E92 /* audio_decoder_pcm16b.h in Headers */,
+				5C119FFC1E457400004F0987 /* audio_device_buffer.h in Headers */,
+				5C119FFD1E457400004F0987 /* audio_device_config.h in Headers */,
+				5C11A01E1E457578004F0987 /* audio_device_dummy.h in Headers */,
+				5C119FFF1E457400004F0987 /* audio_device_generic.h in Headers */,
+				5C11A0011E457400004F0987 /* audio_device_impl.h in Headers */,
+				5CFD537C1E4BA4F500482908 /* audio_device_ios.h in Headers */,
+				5C11A00C1E457448004F0987 /* audio_device_mac.h in Headers */,
 				5CDD84181E439B2900621E92 /* audio_encoder.h in Headers */,
 				5CDD8CA81E43C6F700621E92 /* audio_encoder_cng.h in Headers */,
 				5CDD8FF41E43CDF400621E92 /* audio_encoder_copy_red.h in Headers */,
@@ -9394,12 +9460,12 @@
 				5CDD8C0C1E43C34600621E92 /* audio_encoder_isac_t.h in Headers */,
 				5CDD8C0B1E43C34600621E92 /* audio_encoder_isac_t_impl.h in Headers */,
 				5CDD8C641E43C60900621E92 /* audio_encoder_opus.h in Headers */,
-				5C119FFD1E457400004F0987 /* audio_device_config.h in Headers */,
 				5CDD8FFF1E43CE3A00621E92 /* audio_encoder_pcm16b.h in Headers */,
 				5CDD841C1E439B2900621E92 /* audio_format.h in Headers */,
 				5CDD841A1E439B2900621E92 /* audio_format_conversion.h in Headers */,
 				5CDD87F41E43BDED00621E92 /* audio_frame_manipulator.h in Headers */,
 				5CDD8A901E43C00F00621E92 /* audio_loop.h in Headers */,
+				5C11A00E1E457448004F0987 /* audio_mixer_manager_mac.h in Headers */,
 				5CDD8A021E43BFB300621E92 /* audio_multi_vector.h in Headers */,
 				5CDD8F7A1E43CBE000621E92 /* audio_network_adaptor_impl.h in Headers */,
 				5CDD8FEA1E43CDCA00621E92 /* audio_processing.h in Headers */,
@@ -9409,15 +9475,16 @@
 				5C4B4C5D1E431F9C002651C8 /* audio_ring_buffer.h in Headers */,
 				5CDD8AD01E43C23900621E92 /* audio_send_stream.h in Headers */,
 				5CDD8C4E1E43C58E00621E92 /* audio_send_stream.h in Headers */,
+				5CFD53801E4BA4F500482908 /* audio_session_observer.h in Headers */,
 				5CDD8C4F1E43C58E00621E92 /* audio_sink.h in Headers */,
 				5CDD8A921E43C00F00621E92 /* audio_sink.h in Headers */,
 				5CDD8AD31E43C23900621E92 /* audio_state.h in Headers */,
 				5CDD8C501E43C58E00621E92 /* audio_state.h in Headers */,
 				5CDD8A051E43BFB300621E92 /* audio_vector.h in Headers */,
-				5C119FFF1E457400004F0987 /* audio_device_generic.h in Headers */,
 				5C4B48D91E42C1E3002651C8 /* audiosource.h in Headers */,
 				5C63F9371E41737B002CA531 /* audiotrack.h in Headers */,
 				5CDD8B731E43C2B500621E92 /* augmented_cb_corr.h in Headers */,
+				5C0885291E4A99D200403995 /* auth.h in Headers */,
 				5C63F7B41E416288002CA531 /* autodetectproxy.h in Headers */,
 				5C63F8DA1E416D53002CA531 /* autolink.h in Headers */,
 				5C4B4BB51E431C90002651C8 /* avfoundationvideocapturer.h in Headers */,
@@ -9466,13 +9533,11 @@
 				5CDD845C1E43AE2900621E92 /* channel_proxy.h in Headers */,
 				5CDD8B851E43C2B500621E92 /* chebyshev.h in Headers */,
 				5C63F7C41E416288002CA531 /* checks.h in Headers */,
+				5C08852A1E4A99D200403995 /* cipher.h in Headers */,
 				5CDD86A21E43B99400621E92 /* circular_buffer.h in Headers */,
 				5C4B48DC1E42C1E3002651C8 /* codec.h in Headers */,
 				5CDD87B01E43BC0500621E92 /* codec.h in Headers */,
-				5C0885261E4A99D200403995 /* aes_icm.h in Headers */,
 				5CDD83C71E439A6F00621E92 /* codec_database.h in Headers */,
-				5C11A0131E4574C5004F0987 /* pa_memorybarrier.h in Headers */,
-				5C11A0221E457578004F0987 /* file_audio_device.h in Headers */,
 				5CDD85161E43B1EA00621E92 /* codec_manager.h in Headers */,
 				5CDD83C91E439A6F00621E92 /* codec_timer.h in Headers */,
 				5CDD84DD1E43B04D00621E92 /* coder.h in Headers */,
@@ -9501,15 +9566,17 @@
 				5C63F7C91E416288002CA531 /* copyonwritebuffer.h in Headers */,
 				5CDD907B1E43D15C00621E92 /* covariance_matrix_generator.h in Headers */,
 				5CDD87B21E43BC0500621E92 /* crc.h in Headers */,
-				5C0885281E4A99D200403995 /* alloc.h in Headers */,
 				5C63F7CC1E416288002CA531 /* crc32.h in Headers */,
 				5CDD8B8C1E43C2B500621E92 /* create_augmented_vec.h in Headers */,
 				5C63F7CE1E416288002CA531 /* criticalsection.h in Headers */,
 				5CDD8A101E43BFB300621E92 /* cross_correlation.h in Headers */,
+				5C08852B1E4A99D200403995 /* crypto_kernel.h in Headers */,
+				5C08852C1E4A99D200403995 /* crypto_types.h in Headers */,
 				5C4B48DD1E42C1E3002651C8 /* cryptoparams.h in Headers */,
 				5C63F7D01E416288002CA531 /* cryptstring.h in Headers */,
 				5C63F9391E41737B002CA531 /* datachannel.h in Headers */,
 				5C63F93A1E41737B002CA531 /* datachannelinterface.h in Headers */,
+				5C08852D1E4A99D200403995 /* datatypes.h in Headers */,
 				5CDD8C871E43C66000621E92 /* daubechies_8_wavelet_coeffs.h in Headers */,
 				5C63F7D31E416288002CA531 /* dbus.h in Headers */,
 				5CDD8F881E43CBE000621E92 /* debug_dump_writer.h in Headers */,
@@ -9562,6 +9629,7 @@
 				5CDD8B9F1E43C2B500621E92 /* enhancer.h in Headers */,
 				5CDD8B9D1E43C2B500621E92 /* enhancer_interface.h in Headers */,
 				5CDD87B91E43BC0500621E92 /* entropy_coding.h in Headers */,
+				5C08852E1E4A99D200403995 /* err.h in Headers */,
 				5C63F7DB1E416288002CA531 /* event.h in Headers */,
 				5C4B4CCF1E4320A9002651C8 /* event_timer_posix.h in Headers */,
 				5C63F7D91E416288002CA531 /* event_tracer.h in Headers */,
@@ -9592,13 +9660,15 @@
 				5CDD87BB1E43BC0500621E92 /* fft.h in Headers */,
 				5C4B4C671E431F9C002651C8 /* fft4g.h in Headers */,
 				5C63F7E51E416288002CA531 /* file.h in Headers */,
+				5C11A0221E457578004F0987 /* file_audio_device.h in Headers */,
+				5C11A0201E457578004F0987 /* file_audio_device_factory.h in Headers */,
 				5CDD8C8C1E43C66000621E92 /* file_utils.h in Headers */,
-				5C08852D1E4A99D200403995 /* datatypes.h in Headers */,
 				5C63F7E71E416288002CA531 /* filerotatingstream.h in Headers */,
 				5C63F7EA1E416288002CA531 /* fileutils.h in Headers */,
 				5C63F7E81E416288002CA531 /* fileutils_mock.h in Headers */,
 				5CDD87BE1E43BC0500621E92 /* filterbank_tables.h in Headers */,
 				5CDD8BA11E43C2B500621E92 /* filtered_cb_vecs.h in Headers */,
+				5C11A0041E457400004F0987 /* fine_audio_buffer.h in Headers */,
 				5CDD89511E43BF3A00621E92 /* fir.h in Headers */,
 				5C4B4C6E1E431F9C002651C8 /* fir_filter.h in Headers */,
 				5C4B4C6B1E431F9C002651C8 /* fir_filter_sse.h in Headers */,
@@ -9610,7 +9680,6 @@
 				5C63F7EF1E416288002CA531 /* format_macros.h in Headers */,
 				5CDD88891E43BE3C00621E92 /* forward_error_correction.h in Headers */,
 				5CDD88871E43BE3C00621E92 /* forward_error_correction_internal.h in Headers */,
-				5C11A01E1E457578004F0987 /* audio_device_dummy.h in Headers */,
 				5C63F8DD1E416D53002CA531 /* forwards.h in Headers */,
 				5CDD83D01E439A6F00621E92 /* frame_buffer.h in Headers */,
 				5CDD83D21E439A6F00621E92 /* frame_buffer2.h in Headers */,
@@ -9628,7 +9697,6 @@
 				5CDD8BA71E43C2B500621E92 /* gain_quant.h in Headers */,
 				5CDD90231E43CEDE00621E92 /* gain_selector.h in Headers */,
 				5CDD83D61E439A6F00621E92 /* generic_decoder.h in Headers */,
-				5C08852A1E4A99D200403995 /* cipher.h in Headers */,
 				5CDD83D81E439A6F00621E92 /* generic_encoder.h in Headers */,
 				5CDD8BA91E43C2B500621E92 /* get_cd_vec.h in Headers */,
 				5CDD8BAB1E43C2B500621E92 /* get_lsp_poly.h in Headers */,
@@ -9656,7 +9724,6 @@
 				5C63F8001E416288002CA531 /* httpserver.h in Headers */,
 				5C4B48E41E42C1E3002651C8 /* hybriddataengine.h in Headers */,
 				5C63F8041E416288002CA531 /* ifaddrs-android.h in Headers */,
-				5C11A0041E457400004F0987 /* fine_audio_buffer.h in Headers */,
 				5C63F8021E416288002CA531 /* ifaddrs_converter.h in Headers */,
 				5C63F8051E416288002CA531 /* ignore_wundef.h in Headers */,
 				5CDD8BB41E43C2B500621E92 /* ilbc.h in Headers */,
@@ -9665,12 +9732,12 @@
 				5CDD8BBA1E43C2B500621E92 /* init_decode.h in Headers */,
 				5CDD8BBC1E43C2B500621E92 /* init_encode.h in Headers */,
 				5CDD8A9B1E43C00F00621E92 /* input_audio_file.h in Headers */,
+				5C08852F1E4A99D200403995 /* integers.h in Headers */,
 				5CDD8FD61E43CD6600621E92 /* inter_arrival.h in Headers */,
 				5CDD83DE1E439A6F00621E92 /* inter_frame_delay.h in Headers */,
 				5CDD83DF1E439A6F00621E92 /* internal_defines.h in Headers */,
 				5CDD8BC01E43C2B500621E92 /* interpolate.h in Headers */,
 				5CDD8BBE1E43C2B500621E92 /* interpolate_samples.h in Headers */,
-				5C0885331E4A99D200403995 /* rdb.h in Headers */,
 				5C63F8071E416288002CA531 /* ipaddress.h in Headers */,
 				5CDD87C11E43BC0500621E92 /* isac_float_type.h in Headers */,
 				5CDD837C1E439A3500621E92 /* ivf_file_writer.h in Headers */,
@@ -9683,6 +9750,7 @@
 				5C63F8091E416288002CA531 /* json.h in Headers */,
 				5C63F8DE1E416D53002CA531 /* json.h in Headers */,
 				5C63F80A1E416288002CA531 /* keep_ref_until_done.h in Headers */,
+				5C0885301E4A99D200403995 /* key.h in Headers */,
 				5C4B4C711E431F9C002651C8 /* lapped_transform.h in Headers */,
 				5CDD84201E439B2900621E92 /* legacy_encoded_audio_frame.h in Headers */,
 				5CDD90281E43CEDE00621E92 /* level_controller.h in Headers */,
@@ -9717,7 +9785,6 @@
 				5C63F81D1E416288002CA531 /* md5.h in Headers */,
 				5C63F81F1E416288002CA531 /* md5digest.h in Headers */,
 				5CDD86A51E43B99400621E92 /* mean_variance_estimator.h in Headers */,
-				5C0885321E4A99D200403995 /* null_cipher.h in Headers */,
 				5CDD876C1E43BB3000621E92 /* media_file.h in Headers */,
 				5CDD87671E43BB3000621E92 /* media_file_defines.h in Headers */,
 				5CDD87691E43BB3000621E92 /* media_file_impl.h in Headers */,
@@ -9727,7 +9794,6 @@
 				5C4B48E51E42C1E3002651C8 /* mediachannel.h in Headers */,
 				5C4B48E71E42C1E3002651C8 /* mediaconstants.h in Headers */,
 				5C63F9491E41737B002CA531 /* mediaconstraintsinterface.h in Headers */,
-				5C0885291E4A99D200403995 /* auth.h in Headers */,
 				5C63F94B1E41737B002CA531 /* mediacontroller.h in Headers */,
 				5C4B48E91E42C1E3002651C8 /* mediaengine.h in Headers */,
 				5C63F94D1E41737B002CA531 /* mediastream.h in Headers */,
@@ -9743,6 +9809,7 @@
 				5C63F8231E416288002CA531 /* messagehandler.h in Headers */,
 				5C63F8251E416288002CA531 /* messagequeue.h in Headers */,
 				5CDD87071E43BA7500621E92 /* mock_agc.h in Headers */,
+				5C11A0051E457400004F0987 /* mock_audio_device_buffer.h in Headers */,
 				5CDD8FED1E43CDCA00621E92 /* mock_audio_processing.h in Headers */,
 				5CDD907F1E43D15C00621E92 /* mock_nonlinear_beamformer.h in Headers */,
 				5C63F8261E416288002CA531 /* mod_ops.h in Headers */,
@@ -9754,10 +9821,8 @@
 				5CDD83E91E439A6F00621E92 /* nack_fec_tables.h in Headers */,
 				5CDD83EB1E439A6F00621E92 /* nack_module.h in Headers */,
 				5CDD8A331E43BFB300621E92 /* nack_tracker.h in Headers */,
-				5C11A00E1E457448004F0987 /* audio_mixer_manager_mac.h in Headers */,
 				5C63F8291E416288002CA531 /* natserver.h in Headers */,
 				5C63F82B1E416288002CA531 /* natsocketfactory.h in Headers */,
-				5C11A0201E457578004F0987 /* file_audio_device_factory.h in Headers */,
 				5C63F82D1E416288002CA531 /* nattypes.h in Headers */,
 				5CDD8BD21E43C2B500621E92 /* nearest_neighbor.h in Headers */,
 				5CDD8A371E43BFB300621E92 /* neteq_impl.h in Headers */,
@@ -9778,10 +9843,11 @@
 				5CDD86A81E43B99400621E92 /* normalized_covariance_estimator.h in Headers */,
 				5C63F9541E41737B002CA531 /* notifier.h in Headers */,
 				5CDD86011E43B84E00621E92 /* ns_core.h in Headers */,
-				5C08852B1E4A99D200403995 /* crypto_kernel.h in Headers */,
 				5C4B4BBE1E431C90002651C8 /* NSString+StdString.h in Headers */,
 				5CDD86061E43B84E00621E92 /* nsx_core.h in Headers */,
 				5CDD86071E43B84E00621E92 /* nsx_defines.h in Headers */,
+				5C0885311E4A99D200403995 /* null_auth.h in Headers */,
+				5C0885321E4A99D200403995 /* null_cipher.h in Headers */,
 				5C63F8361E416288002CA531 /* nullsocketserver.h in Headers */,
 				5C63F8371E416288002CA531 /* onetimeevent.h in Headers */,
 				5CDD86951E43B93900621E92 /* ooura_fft.h in Headers */,
@@ -9804,8 +9870,9 @@
 				5CDD85A51E43B5C000621E92 /* overuse_frame_detector.h in Headers */,
 				5C63F9EE1E4174F6002CA531 /* p2pconstants.h in Headers */,
 				5C63F9F01E4174F6002CA531 /* p2ptransport.h in Headers */,
-				5C11A0051E457400004F0987 /* mock_audio_device_buffer.h in Headers */,
 				5C63F9F31E4174F6002CA531 /* p2ptransportchannel.h in Headers */,
+				5C11A0131E4574C5004F0987 /* pa_memorybarrier.h in Headers */,
+				5C11A0151E4574C5004F0987 /* pa_ringbuffer.h in Headers */,
 				5CDD8FA31E43CCBE00621E92 /* paced_sender.h in Headers */,
 				5CDD8BD41E43C2B500621E92 /* pack_bits.h in Headers */,
 				5CDD83EF1E439A6F00621E92 /* packet.h in Headers */,
@@ -9827,13 +9894,11 @@
 				5C63F9581E41737B002CA531 /* peerconnectionfactory.h in Headers */,
 				5C63F9591E41737B002CA531 /* peerconnectionfactoryproxy.h in Headers */,
 				5C63F95A1E41737B002CA531 /* peerconnectioninterface.h in Headers */,
-				5C08852E1E4A99D200403995 /* err.h in Headers */,
 				5C63F95B1E41737B002CA531 /* peerconnectionproxy.h in Headers */,
 				5CDD83F11E439A6F00621E92 /* percentile_filter.h in Headers */,
 				5C63F8491E416288002CA531 /* physicalsocketserver.h in Headers */,
 				5CDD872E1E43BABE00621E92 /* pitch_based_vad.h in Headers */,
 				5CDD87D11E43BC0500621E92 /* pitch_estimator.h in Headers */,
-				5C08852C1E4A99D200403995 /* crypto_types.h in Headers */,
 				5CDD87D41E43BC0600621E92 /* pitch_gain_tables.h in Headers */,
 				5CDD87311E43BABE00621E92 /* pitch_internal.h in Headers */,
 				5CDD87D61E43BC0600621E92 /* pitch_lag_tables.h in Headers */,
@@ -9873,6 +9938,8 @@
 				5C63F85C1E416288002CA531 /* rate_statistics.h in Headers */,
 				5C63F85E1E416288002CA531 /* ratelimiter.h in Headers */,
 				5C63F8601E416288002CA531 /* ratetracker.h in Headers */,
+				5C0885331E4A99D200403995 /* rdb.h in Headers */,
+				5C0885341E4A99D200403995 /* rdbx.h in Headers */,
 				5C63F8DF1E416D53002CA531 /* reader.h in Headers */,
 				5C4B4C781E431F9C002651C8 /* real_fourier.h in Headers */,
 				5C4B4C731E431F9C002651C8 /* real_fourier_ooura.h in Headers */,
@@ -9907,6 +9974,10 @@
 				5CDD896B1E43BF3A00621E92 /* rrtr.h in Headers */,
 				5CDD904C1E43CF6100621E92 /* rtc_event_log.h in Headers */,
 				5CDD90451E43CF6100621E92 /* rtc_event_log_helper_thread.h in Headers */,
+				5CFD536F1E4BA4DC00482908 /* RTCAudioSession+Private.h in Headers */,
+				5CFD536C1E4BA4DC00482908 /* RTCAudioSession.h in Headers */,
+				5CFD53701E4BA4DC00482908 /* RTCAudioSessionConfiguration.h in Headers */,
+				5CFD53721E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.h in Headers */,
 				5C4B4BC11E431C90002651C8 /* RTCAudioSource+Private.h in Headers */,
 				5C4B4BC31E431C90002651C8 /* RTCAudioTrack+Private.h in Headers */,
 				5C4B4BC51E431C90002651C8 /* RTCAVFoundationVideoSource+Private.h in Headers */,
@@ -9916,7 +9987,6 @@
 				5C4B4BCA1E431C90002651C8 /* RTCDataChannel+Private.h in Headers */,
 				5C4B4BCC1E431C90002651C8 /* RTCDataChannelConfiguration+Private.h in Headers */,
 				5C4B4BCE1E431C90002651C8 /* RTCDispatcher+Private.h in Headers */,
-				5C08852F1E4A99D200403995 /* integers.h in Headers */,
 				5C4B4BD41E431C90002651C8 /* RTCIceCandidate+Private.h in Headers */,
 				5C4B4BD61E431C90002651C8 /* RTCIceServer+Private.h in Headers */,
 				5C4B4BD81E431C90002651C8 /* RTCLegacyStatsReport+Private.h in Headers */,
@@ -9928,7 +9998,6 @@
 				5C4B4BE71E431C90002651C8 /* RTCOpenGLDefines.h in Headers */,
 				5C4B4BE81E431C90002651C8 /* RTCOpenGLVideoRenderer.h in Headers */,
 				5CDD8A501E43BFB300621E92 /* rtcp.h in Headers */,
-				5C0885311E4A99D200403995 /* null_auth.h in Headers */,
 				5CDD88981E43BE3C00621E92 /* rtcp_packet.h in Headers */,
 				5CDD889B1E43BE3C00621E92 /* rtcp_receiver.h in Headers */,
 				5CDD889E1E43BE3C00621E92 /* rtcp_sender.h in Headers */,
@@ -9987,7 +10056,6 @@
 				5C4B48F21E42C1E3002651C8 /* rtputils.h in Headers */,
 				5CDD83F91E439A6F00621E92 /* rtt_filter.h in Headers */,
 				5C4B4CDF1E4320A9002651C8 /* rw_lock_posix.h in Headers */,
-				5C119FFC1E457400004F0987 /* audio_device_buffer.h in Headers */,
 				5C63F8681E416288002CA531 /* safe_compare.h in Headers */,
 				5C63F86A1E416288002CA531 /* safe_conversions.h in Headers */,
 				5C63F8691E416288002CA531 /* safe_conversions_impl.h in Headers */,
@@ -10013,7 +10081,6 @@
 				5CDD87D71E43BC0600621E92 /* settings.h in Headers */,
 				5C63F8741E416288002CA531 /* sha1digest.h in Headers */,
 				5CDD84661E43AE2900621E92 /* shared_data.h in Headers */,
-				5C0885241E4A99D200403995 /* aes_gcm_ossl.h in Headers */,
 				5C63F8761E416288002CA531 /* sharedexclusivelock.h in Headers */,
 				5CDD90321E43CEDE00621E92 /* signal_classifier.h in Headers */,
 				5C63F8781E416288002CA531 /* signalthread.h in Headers */,
@@ -10022,7 +10089,6 @@
 				5C63F87C1E416288002CA531 /* sigslottester.h in Headers */,
 				5CDD8BDC1E43C2B500621E92 /* simple_interpolate_lsf.h in Headers */,
 				5CDD8BDE1E43C2B500621E92 /* simple_lpc_analysis.h in Headers */,
-				5C11A0151E4574C5004F0987 /* pa_ringbuffer.h in Headers */,
 				5CDD8BE01E43C2B500621E92 /* simple_lsf_dequant.h in Headers */,
 				5CDD8BE21E43C2B500621E92 /* simple_lsf_quant.h in Headers */,
 				5C4B48871E42C1BA002651C8 /* simulcast.h in Headers */,
@@ -10032,7 +10098,6 @@
 				5CDD89761E43BF3A00621E92 /* sli.h in Headers */,
 				5CDD8BE61E43C2B500621E92 /* smooth.h in Headers */,
 				5CDD8BE41E43C2B500621E92 /* smooth_out_data.h in Headers */,
-				5C0885351E4A99D200403995 /* stat.h in Headers */,
 				5CDD8F941E43CBE000621E92 /* smoothing_filter.h in Headers */,
 				5C63F87F1E416288002CA531 /* socket.h in Headers */,
 				5C63F8811E416288002CA531 /* socketadapters.h in Headers */,
@@ -10048,7 +10113,6 @@
 				5CDD87D91E43BC0600621E92 /* spectrum_ar_model_tables.h in Headers */,
 				5CDD8BEA1E43C2B500621E92 /* split_vq.h in Headers */,
 				5CDD84C21E43AF1300621E92 /* splitting_filter.h in Headers */,
-				5C0885271E4A99D200403995 /* aes.h in Headers */,
 				5CDD83601E43257200621E92 /* sps_parser.h in Headers */,
 				5CDD83631E43257200621E92 /* sps_vui_rewriter.h in Headers */,
 				5C63F88D1E416288002CA531 /* ssladapter.h in Headers */,
@@ -10060,6 +10124,7 @@
 				5C63F8971E416288002CA531 /* sslstreamadapter.h in Headers */,
 				5CDD88D81E43BE3D00621E92 /* ssrc_database.h in Headers */,
 				5CDD87371E43BABE00621E92 /* standalone_vad.h in Headers */,
+				5C0885351E4A99D200403995 /* stat.h in Headers */,
 				5CDD8BEC1E43C2B500621E92 /* state_construct.h in Headers */,
 				5CDD8BEE1E43C2B500621E92 /* state_search.h in Headers */,
 				5CDD84681E43AE2900621E92 /* statistics.h in Headers */,
@@ -10072,7 +10137,6 @@
 				5C63F9741E41737B002CA531 /* streamcollection.h in Headers */,
 				5C4B48F51E42C1E3002651C8 /* streamparams.h in Headers */,
 				5C63F89B1E416288002CA531 /* stringencode.h in Headers */,
-				5C0885301E4A99D200403995 /* key.h in Headers */,
 				5C63F89D1E416288002CA531 /* stringutils.h in Headers */,
 				5CDD87DA1E43BC0600621E92 /* structs.h in Headers */,
 				5C63FA0C1E4174F6002CA531 /* stun.h in Headers */,
@@ -10123,7 +10187,6 @@
 				5C63F8BF1E416288002CA531 /* transformadapter.h in Headers */,
 				5CDD8C921E43C66000621E92 /* transient_detector.h in Headers */,
 				5CDD8C961E43C66000621E92 /* transient_suppressor.h in Headers */,
-				5C11A00C1E457448004F0987 /* audio_device_mac.h in Headers */,
 				5CDD846A1E43AE2900621E92 /* transmit_mixer.h in Headers */,
 				5C63FA1E1E4174F6002CA531 /* transport.h in Headers */,
 				5C6CDD4F1E413598009754E3 /* transport.h in Headers */,
@@ -10177,7 +10240,6 @@
 				5C4B48FD1E42C1E3002651C8 /* videoadapter.h in Headers */,
 				5C4B49001E42C1E3002651C8 /* videobroadcaster.h in Headers */,
 				5C4B49031E42C1E3002651C8 /* videocapturer.h in Headers */,
-				5C0885341E4A99D200403995 /* rdbx.h in Headers */,
 				5C4B49041E42C1E3002651C8 /* videocapturerfactory.h in Headers */,
 				5C63F9781E41737B002CA531 /* videocapturertracksource.h in Headers */,
 				5C4B49071E42C1E3002651C8 /* videocommon.h in Headers */,
@@ -10196,7 +10258,6 @@
 				5CDD846E1E43AE2900621E92 /* voe_audio_processing_impl.h in Headers */,
 				5CDD84701E43AE2900621E92 /* voe_base_impl.h in Headers */,
 				5CDD84721E43AE2900621E92 /* voe_codec_impl.h in Headers */,
-				5C11A0011E457400004F0987 /* audio_device_impl.h in Headers */,
 				5CDD84741E43AE2900621E92 /* voe_external_media_impl.h in Headers */,
 				5CDD84761E43AE2900621E92 /* voe_file_impl.h in Headers */,
 				5CDD84781E43AE2900621E92 /* voe_hardware_impl.h in Headers */,
@@ -10211,6 +10272,7 @@
 				5CDD84831E43AE2900621E92 /* voice_engine_defines.h in Headers */,
 				5CDD84871E43AE2900621E92 /* voice_engine_impl.h in Headers */,
 				5CDD87421E43BABE00621E92 /* voice_gmm_tables.h in Headers */,
+				5CFD53811E4BA4F500482908 /* voice_processing_audio_unit.h in Headers */,
 				5CDD89871E43BF3A00621E92 /* voip_metric.h in Headers */,
 				5CDD83861E439A3500621E92 /* vp8_header_parser.h in Headers */,
 				5CDD88EA1E43BE3D00621E92 /* vp8_partition_aggregator.h in Headers */,
@@ -10454,24 +10516,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C0885001E4A986D00403995 /* srtp.c in Sources */,
-				5C08850D1E4A988900403995 /* null_cipher.c in Sources */,
-				5C0885091E4A988300403995 /* null_auth.c in Sources */,
 				5C08850A1E4A988900403995 /* aes_gcm_ossl.c in Sources */,
-				5C0885011E4A987600403995 /* datatypes.c in Sources */,
 				5C08850B1E4A988900403995 /* aes_icm_ossl.c in Sources */,
-				5C0885071E4A988300403995 /* auth.c in Sources */,
-				5C0884FF1E4A986D00403995 /* ekt.c in Sources */,
-				5C0885041E4A987C00403995 /* crypto_kernel.c in Sources */,
-				5C0885081E4A988300403995 /* hmac_ossl.c in Sources */,
-				5C08850F1E4A989000403995 /* rdbx.c in Sources */,
 				5C0885031E4A987C00403995 /* alloc.c in Sources */,
-				5C0885021E4A987600403995 /* stat.c in Sources */,
-				5C0885051E4A987C00403995 /* err.c in Sources */,
+				5C0885071E4A988300403995 /* auth.c in Sources */,
 				5C08850C1E4A988900403995 /* cipher.c in Sources */,
-				5C08850E1E4A989000403995 /* rdb.c in Sources */,
-				5C0885101E4A989000403995 /* ut_sim.c in Sources */,
+				5C0885041E4A987C00403995 /* crypto_kernel.c in Sources */,
+				5C0885011E4A987600403995 /* datatypes.c in Sources */,
+				5C0884FF1E4A986D00403995 /* ekt.c in Sources */,
+				5C0885051E4A987C00403995 /* err.c in Sources */,
+				5C0885081E4A988300403995 /* hmac_ossl.c in Sources */,
 				5C0885061E4A987C00403995 /* key.c in Sources */,
+				5C0885091E4A988300403995 /* null_auth.c in Sources */,
+				5C08850D1E4A988900403995 /* null_cipher.c in Sources */,
+				5C08850E1E4A989000403995 /* rdb.c in Sources */,
+				5C08850F1E4A989000403995 /* rdbx.c in Sources */,
+				5C0885001E4A986D00403995 /* srtp.c in Sources */,
+				5C0885021E4A987600403995 /* stat.c in Sources */,
+				5C0885101E4A989000403995 /* ut_sim.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10479,34 +10541,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C0884F81E4A986000403995 /* row_gcc.cc in Sources */,
-				5C0884F11E4A986000403995 /* rotate.cc in Sources */,
-				5C0884FE1E4A986000403995 /* video_common.cc in Sources */,
-				5C0884EE1E4A986000403995 /* mjpeg_decoder.cc in Sources */,
-				5C0884F51E4A986000403995 /* rotate_gcc.cc in Sources */,
-				5C0884F01E4A986000403995 /* planar_functions.cc in Sources */,
-				5C0884E91E4A986000403995 /* convert_from_argb.cc in Sources */,
-				5C0884FD1E4A986000403995 /* scale_gcc.cc in Sources */,
-				5C0884F61E4A986000403995 /* row_any.cc in Sources */,
-				5C0884FA1E4A986000403995 /* scale_any.cc in Sources */,
-				5C0884F31E4A986000403995 /* rotate_argb.cc in Sources */,
-				5C0884EA1E4A986000403995 /* convert_jpeg.cc in Sources */,
-				5C0884E71E4A986000403995 /* convert_argb.cc in Sources */,
-				5C0884FC1E4A986000403995 /* scale_common.cc in Sources */,
-				5C0884F41E4A986000403995 /* rotate_common.cc in Sources */,
-				5C0884F71E4A986000403995 /* row_common.cc in Sources */,
-				5C0884FB1E4A986000403995 /* scale_argb.cc in Sources */,
-				5C0884E41E4A986000403995 /* compare_common.cc in Sources */,
-				5C0884F21E4A986000403995 /* rotate_any.cc in Sources */,
-				5C0884EF1E4A986000403995 /* mjpeg_validate.cc in Sources */,
-				5C0884E51E4A986000403995 /* compare_gcc.cc in Sources */,
-				5C0884EC1E4A986000403995 /* convert_to_i420.cc in Sources */,
 				5C0884E31E4A986000403995 /* compare.cc in Sources */,
-				5C0884F91E4A986000403995 /* scale.cc in Sources */,
+				5C0884E41E4A986000403995 /* compare_common.cc in Sources */,
+				5C0884E51E4A986000403995 /* compare_gcc.cc in Sources */,
 				5C0884E61E4A986000403995 /* convert.cc in Sources */,
-				5C0884ED1E4A986000403995 /* cpu_id.cc in Sources */,
+				5C0884E71E4A986000403995 /* convert_argb.cc in Sources */,
 				5C0884E81E4A986000403995 /* convert_from.cc in Sources */,
+				5C0884E91E4A986000403995 /* convert_from_argb.cc in Sources */,
+				5C0884EA1E4A986000403995 /* convert_jpeg.cc in Sources */,
 				5C0884EB1E4A986000403995 /* convert_to_argb.cc in Sources */,
+				5C0884EC1E4A986000403995 /* convert_to_i420.cc in Sources */,
+				5C0884ED1E4A986000403995 /* cpu_id.cc in Sources */,
+				5C0884EE1E4A986000403995 /* mjpeg_decoder.cc in Sources */,
+				5C0884EF1E4A986000403995 /* mjpeg_validate.cc in Sources */,
+				5C0884F01E4A986000403995 /* planar_functions.cc in Sources */,
+				5C0884F11E4A986000403995 /* rotate.cc in Sources */,
+				5C0884F21E4A986000403995 /* rotate_any.cc in Sources */,
+				5C0884F31E4A986000403995 /* rotate_argb.cc in Sources */,
+				5C0884F41E4A986000403995 /* rotate_common.cc in Sources */,
+				5C0884F51E4A986000403995 /* rotate_gcc.cc in Sources */,
+				5C0884F61E4A986000403995 /* row_any.cc in Sources */,
+				5C0884F71E4A986000403995 /* row_common.cc in Sources */,
+				5C0884F81E4A986000403995 /* row_gcc.cc in Sources */,
+				5C0884F91E4A986000403995 /* scale.cc in Sources */,
+				5C0884FA1E4A986000403995 /* scale_any.cc in Sources */,
+				5C0884FB1E4A986000403995 /* scale_argb.cc in Sources */,
+				5C0884FC1E4A986000403995 /* scale_common.cc in Sources */,
+				5C0884FD1E4A986000403995 /* scale_gcc.cc in Sources */,
+				5C0884FE1E4A986000403995 /* video_common.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10514,16 +10576,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C088C1E1E4AA44400403995 /* rtcpmuxfilter.cc in Sources */,
-				5C088C121E4AA44400403995 /* channel.cc in Sources */,
-				5C088C181E4AA44400403995 /* externalhmac.cc in Sources */,
-				5C088C141E4AA44400403995 /* channelmanager.cc in Sources */,
 				5C088C0E1E4AA44400403995 /* audiomonitor.cc in Sources */,
-				5C088C161E4AA44400403995 /* currentspeakermonitor.cc in Sources */,
-				5C088C201E4AA44400403995 /* srtpfilter.cc in Sources */,
 				5C088C101E4AA44400403995 /* bundlefilter.cc in Sources */,
+				5C088C121E4AA44400403995 /* channel.cc in Sources */,
+				5C088C141E4AA44400403995 /* channelmanager.cc in Sources */,
+				5C088C161E4AA44400403995 /* currentspeakermonitor.cc in Sources */,
+				5C088C181E4AA44400403995 /* externalhmac.cc in Sources */,
 				5C088C1A1E4AA44400403995 /* mediamonitor.cc in Sources */,
 				5C088C1C1E4AA44400403995 /* mediasession.cc in Sources */,
+				5C088C1E1E4AA44400403995 /* rtcpmuxfilter.cc in Sources */,
+				5C088C201E4AA44400403995 /* srtpfilter.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10531,29 +10593,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				414D71141E4AE98C0023E526 /* user_socket.c in Sources */,
 				5C6024971E4950A50088F0B2 /* sctp6_usrreq.c in Sources */,
-				5C6024991E4951610088F0B2 /* sctp_pcb.c in Sources */,
-				414D71191E4AEB110023E526 /* sctp_userspace.c in Sources */,
-				5C6024661E494DB80088F0B2 /* user_mbuf.c in Sources */,
 				5C6024701E4950A00088F0B2 /* sctp_asconf.c in Sources */,
-				5C6024691E494DB80088F0B2 /* user_recv_thread.c in Sources */,
-				414D71171E4AEAFB0023E526 /* sctp_indata.c in Sources */,
-				5C6024951E4950A00088F0B2 /* sctputil.c in Sources */,
-				5C6024931E4950A00088F0B2 /* sctp_usrreq.c in Sources */,
-				5C60247A1E4950A00088F0B2 /* sctp_crc32.c in Sources */,
-				5C60247E1E4950A00088F0B2 /* sctp_input.c in Sources */,
-				5C6024781E4950A00088F0B2 /* sctp_cc_functions.c in Sources */,
 				5C6024721E4950A00088F0B2 /* sctp_auth.c in Sources */,
 				5C6024741E4950A00088F0B2 /* sctp_bsd_addr.c in Sources */,
 				5C6024761E4950A00088F0B2 /* sctp_callout.c in Sources */,
-				5C6024901E4950A00088F0B2 /* sctp_timer.c in Sources */,
-				5C60248E1E4950A00088F0B2 /* sctp_sysctl.c in Sources */,
-				5C60248C1E4950A00088F0B2 /* sctp_ss_functions.c in Sources */,
-				5C60248A1E4950A00088F0B2 /* sctp_sha1.c in Sources */,
-				5C6024871E4950A00088F0B2 /* sctp_peeloff.c in Sources */,
-				5C6024601E494DB80088F0B2 /* user_environment.c in Sources */,
+				5C6024781E4950A00088F0B2 /* sctp_cc_functions.c in Sources */,
+				5C60247A1E4950A00088F0B2 /* sctp_crc32.c in Sources */,
+				414D71171E4AEAFB0023E526 /* sctp_indata.c in Sources */,
+				5C60247E1E4950A00088F0B2 /* sctp_input.c in Sources */,
 				5C6024831E4950A00088F0B2 /* sctp_output.c in Sources */,
+				5C6024991E4951610088F0B2 /* sctp_pcb.c in Sources */,
+				5C6024871E4950A00088F0B2 /* sctp_peeloff.c in Sources */,
+				5C60248A1E4950A00088F0B2 /* sctp_sha1.c in Sources */,
+				5C60248C1E4950A00088F0B2 /* sctp_ss_functions.c in Sources */,
+				5C60248E1E4950A00088F0B2 /* sctp_sysctl.c in Sources */,
+				5C6024901E4950A00088F0B2 /* sctp_timer.c in Sources */,
+				414D71191E4AEB110023E526 /* sctp_userspace.c in Sources */,
+				5C6024931E4950A00088F0B2 /* sctp_usrreq.c in Sources */,
+				5C6024951E4950A00088F0B2 /* sctputil.c in Sources */,
+				5C6024601E494DB80088F0B2 /* user_environment.c in Sources */,
+				5C6024661E494DB80088F0B2 /* user_mbuf.c in Sources */,
+				5C6024691E494DB80088F0B2 /* user_recv_thread.c in Sources */,
+				414D71141E4AE98C0023E526 /* user_socket.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10672,7 +10734,6 @@
 				5CDD8E721E43C80C00621E92 /* pitch_est_tables.c in Sources */,
 				5CDD8D281E43C79C00621E92 /* pitch_sse.c in Sources */,
 				5CDD8D2A1E43C79C00621E92 /* pitch_sse2.c in Sources */,
-				5CDD8D2B1E43C79C00621E92 /* pitch_sse4_1.c in Sources */,
 				5CDD8E731E43C80C00621E92 /* PLC.c in Sources */,
 				5CDD8F4A1E43CB1E00621E92 /* prefilter_FIX.c in Sources */,
 				5CDD8EF51E43C9F600621E92 /* prefilter_FLP.c in Sources */,
@@ -11141,6 +11202,12 @@
 				5CDD87AB1E43BC0500621E92 /* audio_decoder_isac.cc in Sources */,
 				5CDD8C601E43C60900621E92 /* audio_decoder_opus.cc in Sources */,
 				5CDD8FFC1E43CE3A00621E92 /* audio_decoder_pcm16b.cc in Sources */,
+				5C119FFB1E457400004F0987 /* audio_device_buffer.cc in Sources */,
+				5C11A01D1E457578004F0987 /* audio_device_dummy.cc in Sources */,
+				5C119FFE1E457400004F0987 /* audio_device_generic.cc in Sources */,
+				5C11A0001E457400004F0987 /* audio_device_impl.cc in Sources */,
+				5CFD537D1E4BA4F500482908 /* audio_device_ios.mm in Sources */,
+				5C11A00B1E457448004F0987 /* audio_device_mac.cc in Sources */,
 				5CDD84171E439B2900621E92 /* audio_encoder.cc in Sources */,
 				5CDD8CA71E43C6F700621E92 /* audio_encoder_cng.cc in Sources */,
 				5CDD8FF31E43CDF400621E92 /* audio_encoder_copy_red.cc in Sources */,
@@ -11153,6 +11220,7 @@
 				5CDD87F31E43BDED00621E92 /* audio_frame_manipulator.cc in Sources */,
 				5CDD84DB1E43B04D00621E92 /* audio_frame_operations.cc in Sources */,
 				5CDD8A8F1E43C00F00621E92 /* audio_loop.cc in Sources */,
+				5C11A00D1E457448004F0987 /* audio_mixer_manager_mac.cc in Sources */,
 				5CDD8A011E43BFB300621E92 /* audio_multi_vector.cc in Sources */,
 				5CDD8F7B1E43CBE000621E92 /* audio_network_adaptor.cc in Sources */,
 				5CDD8F791E43CBE000621E92 /* audio_network_adaptor_impl.cc in Sources */,
@@ -11228,7 +11296,6 @@
 				5CDD86471E43B8B500621E92 /* complex_fft.c in Sources */,
 				5CDD89441E43BF3A00621E92 /* compound_packet.cc in Sources */,
 				5CDD8FEB1E43CDCA00621E92 /* config.cc in Sources */,
-				5C11A00D1E457448004F0987 /* audio_mixer_manager_mac.cc in Sources */,
 				5C6CDD4D1E413598009754E3 /* config.cc in Sources */,
 				5CDD8FB21E43CD0700621E92 /* congestion_controller.cc in Sources */,
 				5CDD8A931E43C00F00621E92 /* constant_pcm_packet_source.cc in Sources */,
@@ -11315,6 +11382,8 @@
 				5C4B4C661E431F9C002651C8 /* fft4g.c in Sources */,
 				5C4B4CD31E4320A9002651C8 /* field_trial_default.cc in Sources */,
 				5C63F7E41E416288002CA531 /* file.cc in Sources */,
+				5C11A0211E457578004F0987 /* file_audio_device.cc in Sources */,
+				5C11A01F1E457578004F0987 /* file_audio_device_factory.cc in Sources */,
 				5C4B4CD41E4320A9002651C8 /* file_impl.cc in Sources */,
 				5CDD84DF1E43B04D00621E92 /* file_player.cc in Sources */,
 				5C63F7E31E416288002CA531 /* file_posix.cc in Sources */,
@@ -11329,6 +11398,7 @@
 				5CDD87BD1E43BC0500621E92 /* filterbank_tables.c in Sources */,
 				5CDD87BF1E43BC0500621E92 /* filterbanks.c in Sources */,
 				5CDD8BA01E43C2B500621E92 /* filtered_cb_vecs.c in Sources */,
+				5C11A0031E457400004F0987 /* fine_audio_buffer.cc in Sources */,
 				5CDD89501E43BF3A00621E92 /* fir.cc in Sources */,
 				5C4B4C6D1E431F9C002651C8 /* fir_filter.cc in Sources */,
 				5C4B4C6A1E431F9C002651C8 /* fir_filter_sse.cc in Sources */,
@@ -11369,6 +11439,7 @@
 				5C4B4BBA1E431C90002651C8 /* h264_video_toolbox_encoder.mm in Sources */,
 				5C4B4BBC1E431C90002651C8 /* h264_video_toolbox_nalu.cc in Sources */,
 				5C63F7F41E416288002CA531 /* helpers.cc in Sources */,
+				5CFD53601E4BA34B00482908 /* helpers_ios.mm in Sources */,
 				5CDD84B61E43AF1300621E92 /* high_pass_filter_impl.cc in Sources */,
 				5CDD83DB1E439A6F00621E92 /* histogram.cc in Sources */,
 				5CDD8BAE1E43C2B500621E92 /* hp_input.c in Sources */,
@@ -11427,7 +11498,6 @@
 				5CDD865B1E43B8B500621E92 /* lpc_to_refl_coef.c in Sources */,
 				5CDD8BC31E43C2B500621E92 /* lsf_check.c in Sources */,
 				5CDD8BC51E43C2B500621E92 /* lsf_interpolate_to_poly_dec.c in Sources */,
-				5C11A0001E457400004F0987 /* audio_device_impl.cc in Sources */,
 				5CDD8BC71E43C2B500621E92 /* lsf_interpolate_to_poly_enc.c in Sources */,
 				5CDD8BC91E43C2B500621E92 /* lsf_to_lsp.c in Sources */,
 				5CDD8BCB1E43C2B500621E92 /* lsf_to_poly.c in Sources */,
@@ -11437,7 +11507,6 @@
 				5CDD90031E43CE9700621E92 /* macifaddrs_converter.cc in Sources */,
 				5C63F8171E416288002CA531 /* macutils.cc in Sources */,
 				5C63F8191E416288002CA531 /* macwindowpicker.cc in Sources */,
-				5C11A01D1E457578004F0987 /* audio_device_dummy.cc in Sources */,
 				5C63F81C1E416288002CA531 /* md5.cc in Sources */,
 				5C63F81E1E416288002CA531 /* md5digest.cc in Sources */,
 				5CDD86A41E43B99400621E92 /* mean_variance_estimator.cc in Sources */,
@@ -11503,6 +11572,7 @@
 				5C63F9ED1E4174F6002CA531 /* p2pconstants.cc in Sources */,
 				5C63F9EF1E4174F6002CA531 /* p2ptransport.cc in Sources */,
 				5C63F9F21E4174F6002CA531 /* p2ptransportchannel.cc in Sources */,
+				5C11A0141E4574C5004F0987 /* pa_ringbuffer.c in Sources */,
 				5CDD8FA21E43CCBE00621E92 /* paced_sender.cc in Sources */,
 				5CDD8BD31E43C2B500621E92 /* pack_bits.c in Sources */,
 				5CDD8A421E43BFB300621E92 /* packet.cc in Sources */,
@@ -11545,7 +11615,6 @@
 				5CDD84E51E43B04D00621E92 /* process_thread_impl.cc in Sources */,
 				5CDD835C1E43257200621E92 /* profile_level_id.cc in Sources */,
 				5CDD83F21E439A6F00621E92 /* protection_bitrate_calculator.cc in Sources */,
-				5C11A00B1E457448004F0987 /* audio_device_mac.cc in Sources */,
 				5C63F84F1E416288002CA531 /* proxydetect.cc in Sources */,
 				5C63F8511E416288002CA531 /* proxyinfo.cc in Sources */,
 				5C63F8531E416288002CA531 /* proxyserver.cc in Sources */,
@@ -11570,7 +11639,6 @@
 				5CDD88911E43BE3C00621E92 /* receive_statistics_impl.cc in Sources */,
 				5CDD85AA1E43B5C000621E92 /* receive_statistics_proxy.cc in Sources */,
 				5CDD83F41E439A6F00621E92 /* receiver.cc in Sources */,
-				5C11A01F1E457578004F0987 /* file_audio_device_factory.cc in Sources */,
 				5CDD895E1E43BF3A00621E92 /* receiver_report.cc in Sources */,
 				5CDD8A4D1E43BFB300621E92 /* red_payload_splitter.cc in Sources */,
 				5CDD8BD91E43C2B500621E92 /* refiner.c in Sources */,
@@ -11582,7 +11650,6 @@
 				5CDD8FDD1E43CD6600621E92 /* remote_bitrate_estimator_single_stream.cc in Sources */,
 				5CDD8FE11E43CD6600621E92 /* remote_estimator_proxy.cc in Sources */,
 				5CDD88951E43BE3C00621E92 /* remote_ntp_time_estimator.cc in Sources */,
-				5C11A0141E4574C5004F0987 /* pa_ringbuffer.c in Sources */,
 				5C63F9621E41737B002CA531 /* remoteaudiosource.cc in Sources */,
 				5CDD85181E43B1EA00621E92 /* rent_a_codec.cc in Sources */,
 				5CDD89641E43BF3A00621E92 /* report_block.cc in Sources */,
@@ -11590,7 +11657,6 @@
 				5CDD86691E43B8B500621E92 /* resample.c in Sources */,
 				5CDD86631E43B8B500621E92 /* resample_48khz.c in Sources */,
 				5CDD86671E43B8B500621E92 /* resample_by_2.c in Sources */,
-				5C11A0031E457400004F0987 /* fine_audio_buffer.cc in Sources */,
 				5CDD86641E43B8B500621E92 /* resample_by_2_internal.c in Sources */,
 				5CDD86681E43B8B500621E92 /* resample_fractional.c in Sources */,
 				5CDD8AB11E43C00F00621E92 /* resample_input_audio_file.cc in Sources */,
@@ -11602,6 +11668,10 @@
 				5CDD896A1E43BF3A00621E92 /* rrtr.cc in Sources */,
 				5CDD904B1E43CF6100621E92 /* rtc_event_log.cc in Sources */,
 				5CDD90441E43CF6100621E92 /* rtc_event_log_helper_thread.cc in Sources */,
+				5CFD536E1E4BA4DC00482908 /* RTCAudioSession+Configuration.mm in Sources */,
+				5CFD536D1E4BA4DC00482908 /* RTCAudioSession.mm in Sources */,
+				5CFD53711E4BA4DC00482908 /* RTCAudioSessionConfiguration.m in Sources */,
+				5CFD53731E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.mm in Sources */,
 				5C4B4BC01E431C90002651C8 /* RTCAudioSource.mm in Sources */,
 				5C4B4BC21E431C90002651C8 /* RTCAudioTrack.mm in Sources */,
 				5C4B4BC41E431C90002651C8 /* RTCAVFoundationVideoSource.mm in Sources */,
@@ -11644,7 +11714,6 @@
 				5C63FA781E417AED002CA531 /* rtcstats.cc in Sources */,
 				5C63FA771E417AED002CA531 /* rtcstats_objects.cc in Sources */,
 				5C63F9641E41737B002CA531 /* rtcstatscollector.cc in Sources */,
-				5C119FFE1E457400004F0987 /* audio_device_generic.cc in Sources */,
 				5C63FA791E417AED002CA531 /* rtcstatsreport.cc in Sources */,
 				5C4B4C001E431C90002651C8 /* RTCTracing.mm in Sources */,
 				5C4B4C021E431C90002651C8 /* RTCUIApplication.mm in Sources */,
@@ -11653,7 +11722,6 @@
 				5C4B4C081E431C90002651C8 /* RTCVideoSource.mm in Sources */,
 				5C4B4C0A1E431C90002651C8 /* RTCVideoTrack.mm in Sources */,
 				5CDD8AB61E43C00F00621E92 /* rtp_file_source.cc in Sources */,
-				5C11A0211E457578004F0987 /* file_audio_device.cc in Sources */,
 				5CDD88B01E43BE3C00621E92 /* rtp_format.cc in Sources */,
 				5CDD88A41E43BE3C00621E92 /* rtp_format_h264.cc in Sources */,
 				5CDD88A61E43BE3C00621E92 /* rtp_format_video_generic.cc in Sources */,
@@ -11665,7 +11733,6 @@
 				5CDD88B51E43BE3C00621E92 /* rtp_header_extensions.cc in Sources */,
 				5CDD88B71E43BE3C00621E92 /* rtp_header_parser.cc in Sources */,
 				5CDD88BE1E43BE3D00621E92 /* rtp_packet.cc in Sources */,
-				5C119FFB1E457400004F0987 /* audio_device_buffer.cc in Sources */,
 				5CDD88B91E43BE3D00621E92 /* rtp_packet_history.cc in Sources */,
 				5CDD88C11E43BE3D00621E92 /* rtp_payload_registry.cc in Sources */,
 				5CDD88C21E43BE3D00621E92 /* rtp_receiver_audio.cc in Sources */,
@@ -11871,6 +11938,7 @@
 				5CDD87401E43BABE00621E92 /* voice_activity_detector.cc in Sources */,
 				5CDD84C71E43AF1300621E92 /* voice_detection_impl.cc in Sources */,
 				5CDD84861E43AE2900621E92 /* voice_engine_impl.cc in Sources */,
+				5CFD53821E4BA4F500482908 /* voice_processing_audio_unit.mm in Sources */,
 				5CDD89861E43BF3A00621E92 /* voip_metric.cc in Sources */,
 				5CDD83851E439A3500621E92 /* vp8_header_parser.cc in Sources */,
 				5CDD8C441E43C46C00621E92 /* vp8_noop.cc in Sources */,

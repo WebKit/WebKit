@@ -1,3 +1,20 @@
+2017-02-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix iOS libwebrtc build
+        https://bugs.webkit.org/show_bug.cgi?id=168004
+
+        Reviewed by Youenn Fablet.
+
+        We might still need to add some neon files.
+
+        * Configurations/libwebrtc.xcconfig:
+        * Configurations/libwebrtcpcrtc.xcconfig:
+        * Configurations/opus.xcconfig:
+        Don't build sse-specific files for iOS.
+        * libwebrtc.xcodeproj/project.pbxproj:
+        Don't include the sse4 optimization for now.
+        We can add the optimization for CPUs that support it later.
+
 2017-02-08  Youenn Fablet  <youennf@gmail.com>
 
         [WebRTC] Fix libwebrtc build system
