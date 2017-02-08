@@ -6,7 +6,8 @@ CLANG_WARN_INT_CONVERSION = YES;
 GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 COMBINE_HIDPI_IMAGES = NO;
 ENABLE_STRICT_OBJC_MSGSEND = YES;
-HEADER_SEARCH_PATHS = Source Source/third_party/jsoncpp/source/include Source/third_party/libsrtp/crypto/include Source/third_party/libsrtp/include Source/third_party/boringssl/src/include Source/third_party/libyuv/include Source/third_party/usrsctp/usrsctplib Source/third_party/usrsctp/usrsctplib/usrsctplib Source/webrtc/sdk/objc/Framework/Headers Source/webrtc/common_audio/signal_processing/include Source/webrtc/modules/audio_coding/codecs/isac/main/include Source/third_party/opus/src/celt Source/third_party/opus/src/include Source/third_party/opus/src/src Source/webrtc/modules/audio_device/mac;
+HEADER_SEARCH_PATHS = Source/ Source/third_party/libyuv/include/ Source/third_party/libsrtp/include/ Source/third_party/libsrtp/config/ Source/third_party/boringssl/src/include/ Source/third_party/libsrtp/ Source/third_party/libsrtp/crypto/include/
+
 INSTALL_PATH = /usr/local/lib;
 PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libwebrtc;
 USE_HEADERMAP = NO;
