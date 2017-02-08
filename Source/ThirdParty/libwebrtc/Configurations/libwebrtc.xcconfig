@@ -21,4 +21,4 @@ GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) WEBRTC_IOS;
 
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = *_sse.cc *_sse2.cc macutils.cc macwindowpicker.cc audio_device_mac.cc;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = macutils.cc macwindowpicker.cc audio_device_mac.cc;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = audio_device_ios.mm voice_processing_audio_unit.mm RTCAudioSessionConfiguration.m RTCAudioSessionDelegateAdapter.mm RTCAudioSession.mm RTCAudioSession+Configuration.mm;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = audio_device_ios.mm voice_processing_audio_unit.mm audio_device_not_implemented_ios.mm RTCAudioSessionConfiguration.m RTCAudioSessionDelegateAdapter.mm RTCAudioSession.mm RTCAudioSession+Configuration.mm;

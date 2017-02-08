@@ -2482,6 +2482,14 @@
 		5CFD53811E4BA4F500482908 /* voice_processing_audio_unit.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD537A1E4BA4F500482908 /* voice_processing_audio_unit.h */; };
 		5CFD53821E4BA4F500482908 /* voice_processing_audio_unit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD537B1E4BA4F500482908 /* voice_processing_audio_unit.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		5CFD53841E4BBD8D00482908 /* audio_device_not_implemented_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53831E4BBD8D00482908 /* audio_device_not_implemented_ios.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		5CFD538D1E4BD3A300482908 /* compare_neon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53851E4BD3A300482908 /* compare_neon.cc */; };
+		5CFD538E1E4BD3A300482908 /* compare_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53861E4BD3A300482908 /* compare_neon64.cc */; };
+		5CFD538F1E4BD3A300482908 /* rotate_neon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53871E4BD3A300482908 /* rotate_neon.cc */; };
+		5CFD53901E4BD3A300482908 /* rotate_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53881E4BD3A300482908 /* rotate_neon64.cc */; };
+		5CFD53911E4BD3A300482908 /* row_neon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53891E4BD3A300482908 /* row_neon.cc */; };
+		5CFD53921E4BD3A300482908 /* row_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538A1E4BD3A300482908 /* row_neon64.cc */; };
+		5CFD53931E4BD3A300482908 /* scale_neon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538B1E4BD3A300482908 /* scale_neon.cc */; };
+		5CFD53941E4BD3A300482908 /* scale_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538C1E4BD3A300482908 /* scale_neon64.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -5186,6 +5194,14 @@
 		5CFD537A1E4BA4F500482908 /* voice_processing_audio_unit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = voice_processing_audio_unit.h; sourceTree = "<group>"; };
 		5CFD537B1E4BA4F500482908 /* voice_processing_audio_unit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = voice_processing_audio_unit.mm; sourceTree = "<group>"; };
 		5CFD53831E4BBD8D00482908 /* audio_device_not_implemented_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = audio_device_not_implemented_ios.mm; sourceTree = "<group>"; };
+		5CFD53851E4BD3A300482908 /* compare_neon.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = compare_neon.cc; path = source/compare_neon.cc; sourceTree = "<group>"; };
+		5CFD53861E4BD3A300482908 /* compare_neon64.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = compare_neon64.cc; path = source/compare_neon64.cc; sourceTree = "<group>"; };
+		5CFD53871E4BD3A300482908 /* rotate_neon.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rotate_neon.cc; path = source/rotate_neon.cc; sourceTree = "<group>"; };
+		5CFD53881E4BD3A300482908 /* rotate_neon64.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rotate_neon64.cc; path = source/rotate_neon64.cc; sourceTree = "<group>"; };
+		5CFD53891E4BD3A300482908 /* row_neon.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = row_neon.cc; path = source/row_neon.cc; sourceTree = "<group>"; };
+		5CFD538A1E4BD3A300482908 /* row_neon64.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = row_neon64.cc; path = source/row_neon64.cc; sourceTree = "<group>"; };
+		5CFD538B1E4BD3A300482908 /* scale_neon.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scale_neon.cc; path = source/scale_neon.cc; sourceTree = "<group>"; };
+		5CFD538C1E4BD3A300482908 /* scale_neon64.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scale_neon64.cc; path = source/scale_neon64.cc; sourceTree = "<group>"; };
 		5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libwebrtc.xcconfig; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -6618,6 +6634,8 @@
 				5C4B4D341E4323D4002651C8 /* compare.cc */,
 				5C4B4D2F1E4323D4002651C8 /* compare_common.cc */,
 				5CDD84211E439BCB00621E92 /* compare_gcc.cc */,
+				5CFD53851E4BD3A300482908 /* compare_neon.cc */,
+				5CFD53861E4BD3A300482908 /* compare_neon64.cc */,
 				5C4B4D3B1E4323D4002651C8 /* convert.cc */,
 				5C4B4D351E4323D4002651C8 /* convert_argb.cc */,
 				5C4B4D371E4323D4002651C8 /* convert_from.cc */,
@@ -6634,14 +6652,20 @@
 				5C4B4D411E4323D4002651C8 /* rotate_argb.cc */,
 				5C4B4D421E4323D4002651C8 /* rotate_common.cc */,
 				5CDD84221E439BCB00621E92 /* rotate_gcc.cc */,
+				5CFD53871E4BD3A300482908 /* rotate_neon.cc */,
+				5CFD53881E4BD3A300482908 /* rotate_neon64.cc */,
 				5C4B4D491E4323D4002651C8 /* row_any.cc */,
 				5C4B4D4A1E4323D4002651C8 /* row_common.cc */,
 				5CDD84231E439BCB00621E92 /* row_gcc.cc */,
+				5CFD53891E4BD3A300482908 /* row_neon.cc */,
+				5CFD538A1E4BD3A300482908 /* row_neon64.cc */,
 				5C4B4D591E4323D4002651C8 /* scale.cc */,
 				5C4B4D511E4323D4002651C8 /* scale_any.cc */,
 				5C4B4D521E4323D4002651C8 /* scale_argb.cc */,
 				5C4B4D531E4323D4002651C8 /* scale_common.cc */,
 				5CDD84241E439BCB00621E92 /* scale_gcc.cc */,
+				5CFD538B1E4BD3A300482908 /* scale_neon.cc */,
+				5CFD538C1E4BD3A300482908 /* scale_neon64.cc */,
 				5C4B4D5A1E4323D4002651C8 /* video_common.cc */,
 			);
 			name = source;
@@ -11296,6 +11320,8 @@
 				5CDD89411E43BF3A00621E92 /* common_header.cc in Sources */,
 				5C6CDD4B1E413598009754E3 /* common_types.cc in Sources */,
 				5CDD8B861E43C2B500621E92 /* comp_corr.c in Sources */,
+				5CFD538D1E4BD3A300482908 /* compare_neon.cc in Sources */,
+				5CFD538E1E4BD3A300482908 /* compare_neon64.cc in Sources */,
 				5CDD86441E43B8B500621E92 /* complex_bit_reverse.c in Sources */,
 				5CDD86471E43B8B500621E92 /* complex_fft.c in Sources */,
 				5CDD89441E43BF3A00621E92 /* compound_packet.cc in Sources */,
@@ -11668,6 +11694,10 @@
 				5CDD84BD1E43AF1300621E92 /* residual_echo_detector.cc in Sources */,
 				5C4B4C7A1E431F9C002651C8 /* ring_buffer.c in Sources */,
 				5CDD84BF1E43AF1300621E92 /* rms_level.cc in Sources */,
+				5CFD538F1E4BD3A300482908 /* rotate_neon.cc in Sources */,
+				5CFD53901E4BD3A300482908 /* rotate_neon64.cc in Sources */,
+				5CFD53911E4BD3A300482908 /* row_neon.cc in Sources */,
+				5CFD53921E4BD3A300482908 /* row_neon64.cc in Sources */,
 				5CDD89671E43BF3A00621E92 /* rpsi.cc in Sources */,
 				5CDD896A1E43BF3A00621E92 /* rrtr.cc in Sources */,
 				5CDD904B1E43CF6100621E92 /* rtc_event_log.cc in Sources */,
@@ -11762,6 +11792,8 @@
 				5C4B4CE41E4320A9002651C8 /* rw_lock.cc in Sources */,
 				5C4B4CDE1E4320A9002651C8 /* rw_lock_posix.cc in Sources */,
 				5CDD902F1E43CEDE00621E92 /* saturating_gain_estimator.cc in Sources */,
+				5CFD53931E4BD3A300482908 /* scale_neon.cc in Sources */,
+				5CFD53941E4BD3A300482908 /* scale_neon64.cc in Sources */,
 				5C63F86D1E416288002CA531 /* scoped_autorelease_pool.mm in Sources */,
 				5C4B484F1E42C1AF002651C8 /* sctpdataengine.cc in Sources */,
 				5C63F96D1E41737B002CA531 /* sctputils.cc in Sources */,
