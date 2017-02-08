@@ -1,3 +1,15 @@
+2017-02-08  Brady Eidson  <beidson@apple.com>
+
+        Opt-out iBooks from synchronous willSendRequest on iOS.
+        <rdar://problem/30129966> and https://bugs.webkit.org/show_bug.cgi?id=168006
+
+        Reviewed by Brent Fulgham.
+
+        No new tests (Not a testable behavior change at this time).
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::synchronousWillSendRequestEnabled): iBooks never gets synchronous willSendRequest:
+
 2017-02-08  Sam Weinig  <sam@webkit.org>
 
         Split JSDOMConstructor.h/cpp up by class
