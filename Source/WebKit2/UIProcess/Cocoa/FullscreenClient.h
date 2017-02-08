@@ -33,14 +33,14 @@
 #import "WeakObjCPtr.h"
 #import <wtf/RetainPtr.h>
 
-@class WKWebView;
+@class NSView;
 @protocol _WKFullscreenDelegate;
 
 namespace WebKit {
 
 class FullscreenClient : public API::FullscreenClient {
 public:
-    explicit FullscreenClient(WKWebView *);
+    explicit FullscreenClient(NSView *);
     ~FullscreenClient() { };
 
     RetainPtr<id<_WKFullscreenDelegate>> delegate();
@@ -52,7 +52,7 @@ public:
     void didExitFullscreen(WebPageProxy*) override;
 
 private:
-    WKWebView *m_webView;
+    NSView *m_webView;
     WeakObjCPtr<id <_WKFullscreenDelegate> > m_delegate;
 
     struct {

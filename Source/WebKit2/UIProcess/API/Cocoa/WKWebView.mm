@@ -557,10 +557,6 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 
     _iconLoadingDelegate = std::make_unique<WebKit::IconLoadingDelegate>(self);
 
-#if ENABLE(FULLSCREEN_API)
-    _page->setFullscreenClient(std::make_unique<WebKit::FullscreenClient>(self));
-#endif
-
 #if PLATFORM(IOS)
     [self _setUpSQLiteDatabaseTrackerClient];
 #endif

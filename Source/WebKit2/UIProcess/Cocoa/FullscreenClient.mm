@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-FullscreenClient::FullscreenClient(WKWebView *webView)
+FullscreenClient::FullscreenClient(NSView *webView)
     : m_webView(webView)
 {
 }
