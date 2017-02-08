@@ -21,6 +21,70 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		5C0884E31E4A986000403995 /* compare.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D341E4323D4002651C8 /* compare.cc */; };
+		5C0884E41E4A986000403995 /* compare_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D2F1E4323D4002651C8 /* compare_common.cc */; };
+		5C0884E51E4A986000403995 /* compare_gcc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD84211E439BCB00621E92 /* compare_gcc.cc */; };
+		5C0884E61E4A986000403995 /* convert.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D3B1E4323D4002651C8 /* convert.cc */; };
+		5C0884E71E4A986000403995 /* convert_argb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D351E4323D4002651C8 /* convert_argb.cc */; };
+		5C0884E81E4A986000403995 /* convert_from.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D371E4323D4002651C8 /* convert_from.cc */; };
+		5C0884E91E4A986000403995 /* convert_from_argb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D361E4323D4002651C8 /* convert_from_argb.cc */; };
+		5C0884EA1E4A986000403995 /* convert_jpeg.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D381E4323D4002651C8 /* convert_jpeg.cc */; };
+		5C0884EB1E4A986000403995 /* convert_to_argb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D391E4323D4002651C8 /* convert_to_argb.cc */; };
+		5C0884EC1E4A986000403995 /* convert_to_i420.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D3A1E4323D4002651C8 /* convert_to_i420.cc */; };
+		5C0884ED1E4A986000403995 /* cpu_id.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D3C1E4323D4002651C8 /* cpu_id.cc */; };
+		5C0884EE1E4A986000403995 /* mjpeg_decoder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D3D1E4323D4002651C8 /* mjpeg_decoder.cc */; };
+		5C0884EF1E4A986000403995 /* mjpeg_validate.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D3E1E4323D4002651C8 /* mjpeg_validate.cc */; };
+		5C0884F01E4A986000403995 /* planar_functions.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D3F1E4323D4002651C8 /* planar_functions.cc */; };
+		5C0884F11E4A986000403995 /* rotate.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D481E4323D4002651C8 /* rotate.cc */; };
+		5C0884F21E4A986000403995 /* rotate_any.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D401E4323D4002651C8 /* rotate_any.cc */; };
+		5C0884F31E4A986000403995 /* rotate_argb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D411E4323D4002651C8 /* rotate_argb.cc */; };
+		5C0884F41E4A986000403995 /* rotate_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D421E4323D4002651C8 /* rotate_common.cc */; };
+		5C0884F51E4A986000403995 /* rotate_gcc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD84221E439BCB00621E92 /* rotate_gcc.cc */; };
+		5C0884F61E4A986000403995 /* row_any.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D491E4323D4002651C8 /* row_any.cc */; };
+		5C0884F71E4A986000403995 /* row_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D4A1E4323D4002651C8 /* row_common.cc */; };
+		5C0884F81E4A986000403995 /* row_gcc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD84231E439BCB00621E92 /* row_gcc.cc */; };
+		5C0884F91E4A986000403995 /* scale.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D591E4323D4002651C8 /* scale.cc */; };
+		5C0884FA1E4A986000403995 /* scale_any.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D511E4323D4002651C8 /* scale_any.cc */; };
+		5C0884FB1E4A986000403995 /* scale_argb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D521E4323D4002651C8 /* scale_argb.cc */; };
+		5C0884FC1E4A986000403995 /* scale_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D531E4323D4002651C8 /* scale_common.cc */; };
+		5C0884FD1E4A986000403995 /* scale_gcc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD84241E439BCB00621E92 /* scale_gcc.cc */; };
+		5C0884FE1E4A986000403995 /* video_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D5A1E4323D4002651C8 /* video_common.cc */; };
+		5C0884FF1E4A986D00403995 /* ekt.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90871E43D33800621E92 /* ekt.c */; };
+		5C0885001E4A986D00403995 /* srtp.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90881E43D33800621E92 /* srtp.c */; };
+		5C0885011E4A987600403995 /* datatypes.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90981E43D50900621E92 /* datatypes.c */; };
+		5C0885021E4A987600403995 /* stat.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90991E43D50900621E92 /* stat.c */; };
+		5C0885031E4A987C00403995 /* alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD909C1E43D51100621E92 /* alloc.c */; };
+		5C0885041E4A987C00403995 /* crypto_kernel.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD909D1E43D51100621E92 /* crypto_kernel.c */; };
+		5C0885051E4A987C00403995 /* err.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD909E1E43D51100621E92 /* err.c */; };
+		5C0885061E4A987C00403995 /* key.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD909F1E43D51100621E92 /* key.c */; };
+		5C0885071E4A988300403995 /* auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90A41E43D51B00621E92 /* auth.c */; };
+		5C0885081E4A988300403995 /* hmac_ossl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90A51E43D51B00621E92 /* hmac_ossl.c */; };
+		5C0885091E4A988300403995 /* null_auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90A61E43D51B00621E92 /* null_auth.c */; };
+		5C08850A1E4A988900403995 /* aes_gcm_ossl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90AA1E43D52900621E92 /* aes_gcm_ossl.c */; };
+		5C08850B1E4A988900403995 /* aes_icm_ossl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90AB1E43D52900621E92 /* aes_icm_ossl.c */; };
+		5C08850C1E4A988900403995 /* cipher.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90AC1E43D52900621E92 /* cipher.c */; };
+		5C08850D1E4A988900403995 /* null_cipher.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90AD1E43D52900621E92 /* null_cipher.c */; };
+		5C08850E1E4A989000403995 /* rdb.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD908D1E43D4CC00621E92 /* rdb.c */; };
+		5C08850F1E4A989000403995 /* rdbx.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD908E1E43D4CC00621E92 /* rdbx.c */; };
+		5C0885101E4A989000403995 /* ut_sim.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD908F1E43D4CC00621E92 /* ut_sim.c */; };
+		5C0885241E4A99D200403995 /* aes_gcm_ossl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885121E4A99D200403995 /* aes_gcm_ossl.h */; };
+		5C0885251E4A99D200403995 /* aes_icm_ossl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885131E4A99D200403995 /* aes_icm_ossl.h */; };
+		5C0885261E4A99D200403995 /* aes_icm.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885141E4A99D200403995 /* aes_icm.h */; };
+		5C0885271E4A99D200403995 /* aes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885151E4A99D200403995 /* aes.h */; };
+		5C0885281E4A99D200403995 /* alloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885161E4A99D200403995 /* alloc.h */; };
+		5C0885291E4A99D200403995 /* auth.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885171E4A99D200403995 /* auth.h */; };
+		5C08852A1E4A99D200403995 /* cipher.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885181E4A99D200403995 /* cipher.h */; };
+		5C08852B1E4A99D200403995 /* crypto_kernel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885191E4A99D200403995 /* crypto_kernel.h */; };
+		5C08852C1E4A99D200403995 /* crypto_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C08851A1E4A99D200403995 /* crypto_types.h */; };
+		5C08852D1E4A99D200403995 /* datatypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C08851B1E4A99D200403995 /* datatypes.h */; };
+		5C08852E1E4A99D200403995 /* err.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C08851C1E4A99D200403995 /* err.h */; };
+		5C08852F1E4A99D200403995 /* integers.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C08851D1E4A99D200403995 /* integers.h */; };
+		5C0885301E4A99D200403995 /* key.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C08851E1E4A99D200403995 /* key.h */; };
+		5C0885311E4A99D200403995 /* null_auth.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C08851F1E4A99D200403995 /* null_auth.h */; };
+		5C0885321E4A99D200403995 /* null_cipher.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885201E4A99D200403995 /* null_cipher.h */; };
+		5C0885331E4A99D200403995 /* rdb.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885211E4A99D200403995 /* rdb.h */; };
+		5C0885341E4A99D200403995 /* rdbx.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885221E4A99D200403995 /* rdbx.h */; };
+		5C0885351E4A99D200403995 /* stat.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885231E4A99D200403995 /* stat.h */; };
 		5C119FFB1E457400004F0987 /* audio_device_buffer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C119FF01E457400004F0987 /* audio_device_buffer.cc */; };
 		5C119FFC1E457400004F0987 /* audio_device_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C119FF11E457400004F0987 /* audio_device_buffer.h */; };
 		5C119FFD1E457400004F0987 /* audio_device_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C119FF21E457400004F0987 /* audio_device_config.h */; };
@@ -650,30 +714,6 @@
 		5C4B4D0A1E4322F6002651C8 /* basicportallocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4D061E4322F6002651C8 /* basicportallocator.h */; };
 		5C4B4D0B1E4322F6002651C8 /* socketmonitor.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D071E4322F6002651C8 /* socketmonitor.cc */; };
 		5C4B4D0C1E4322F6002651C8 /* socketmonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4D081E4322F6002651C8 /* socketmonitor.h */; };
-		5C4B4D5B1E4323D4002651C8 /* compare_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D2F1E4323D4002651C8 /* compare_common.cc */; };
-		5C4B4D601E4323D4002651C8 /* compare.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D341E4323D4002651C8 /* compare.cc */; };
-		5C4B4D611E4323D4002651C8 /* convert_argb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D351E4323D4002651C8 /* convert_argb.cc */; };
-		5C4B4D621E4323D4002651C8 /* convert_from_argb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D361E4323D4002651C8 /* convert_from_argb.cc */; };
-		5C4B4D631E4323D4002651C8 /* convert_from.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D371E4323D4002651C8 /* convert_from.cc */; };
-		5C4B4D641E4323D4002651C8 /* convert_jpeg.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D381E4323D4002651C8 /* convert_jpeg.cc */; };
-		5C4B4D651E4323D4002651C8 /* convert_to_argb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D391E4323D4002651C8 /* convert_to_argb.cc */; };
-		5C4B4D661E4323D4002651C8 /* convert_to_i420.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D3A1E4323D4002651C8 /* convert_to_i420.cc */; };
-		5C4B4D671E4323D4002651C8 /* convert.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D3B1E4323D4002651C8 /* convert.cc */; };
-		5C4B4D681E4323D4002651C8 /* cpu_id.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D3C1E4323D4002651C8 /* cpu_id.cc */; };
-		5C4B4D691E4323D4002651C8 /* mjpeg_decoder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D3D1E4323D4002651C8 /* mjpeg_decoder.cc */; };
-		5C4B4D6A1E4323D4002651C8 /* mjpeg_validate.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D3E1E4323D4002651C8 /* mjpeg_validate.cc */; };
-		5C4B4D6B1E4323D4002651C8 /* planar_functions.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D3F1E4323D4002651C8 /* planar_functions.cc */; };
-		5C4B4D6C1E4323D4002651C8 /* rotate_any.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D401E4323D4002651C8 /* rotate_any.cc */; };
-		5C4B4D6D1E4323D4002651C8 /* rotate_argb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D411E4323D4002651C8 /* rotate_argb.cc */; };
-		5C4B4D6E1E4323D4002651C8 /* rotate_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D421E4323D4002651C8 /* rotate_common.cc */; };
-		5C4B4D741E4323D4002651C8 /* rotate.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D481E4323D4002651C8 /* rotate.cc */; };
-		5C4B4D751E4323D4002651C8 /* row_any.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D491E4323D4002651C8 /* row_any.cc */; };
-		5C4B4D761E4323D4002651C8 /* row_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D4A1E4323D4002651C8 /* row_common.cc */; };
-		5C4B4D7D1E4323D4002651C8 /* scale_any.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D511E4323D4002651C8 /* scale_any.cc */; };
-		5C4B4D7E1E4323D4002651C8 /* scale_argb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D521E4323D4002651C8 /* scale_argb.cc */; };
-		5C4B4D7F1E4323D4002651C8 /* scale_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D531E4323D4002651C8 /* scale_common.cc */; };
-		5C4B4D851E4323D4002651C8 /* scale.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D591E4323D4002651C8 /* scale.cc */; };
-		5C4B4D861E4323D4002651C8 /* video_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D5A1E4323D4002651C8 /* video_common.cc */; };
 		5C60245F1E494DB80088F0B2 /* user_atomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4ACB1E42C9D6002651C8 /* user_atomic.h */; };
 		5C6024601E494DB80088F0B2 /* user_environment.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4ACC1E42C9D6002651C8 /* user_environment.c */; };
 		5C6024611E494DB80088F0B2 /* user_environment.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4ACD1E42C9D6002651C8 /* user_environment.h */; };
@@ -1314,10 +1354,6 @@
 		5CDD841E1E439B2900621E92 /* builtin_audio_decoder_factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD84111E439B2900621E92 /* builtin_audio_decoder_factory.h */; };
 		5CDD841F1E439B2900621E92 /* legacy_encoded_audio_frame.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD84121E439B2900621E92 /* legacy_encoded_audio_frame.cc */; };
 		5CDD84201E439B2900621E92 /* legacy_encoded_audio_frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD84131E439B2900621E92 /* legacy_encoded_audio_frame.h */; };
-		5CDD84251E439BCB00621E92 /* compare_gcc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD84211E439BCB00621E92 /* compare_gcc.cc */; };
-		5CDD84261E439BCB00621E92 /* rotate_gcc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD84221E439BCB00621E92 /* rotate_gcc.cc */; };
-		5CDD84271E439BCB00621E92 /* row_gcc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD84231E439BCB00621E92 /* row_gcc.cc */; };
-		5CDD84281E439BCB00621E92 /* scale_gcc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD84241E439BCB00621E92 /* scale_gcc.cc */; };
 		5CDD84591E43AE2900621E92 /* channel_manager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD842A1E43AE2900621E92 /* channel_manager.cc */; };
 		5CDD845A1E43AE2900621E92 /* channel_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD842B1E43AE2900621E92 /* channel_manager.h */; };
 		5CDD845B1E43AE2900621E92 /* channel_proxy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD842C1E43AE2900621E92 /* channel_proxy.cc */; };
@@ -2429,27 +2465,37 @@
 		5CDD907F1E43D15C00621E92 /* mock_nonlinear_beamformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD906F1E43D15C00621E92 /* mock_nonlinear_beamformer.h */; };
 		5CDD90821E43D15C00621E92 /* nonlinear_beamformer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90721E43D15C00621E92 /* nonlinear_beamformer.cc */; };
 		5CDD90831E43D15C00621E92 /* nonlinear_beamformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD90731E43D15C00621E92 /* nonlinear_beamformer.h */; };
-		5CDD90891E43D33800621E92 /* ekt.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90871E43D33800621E92 /* ekt.c */; };
-		5CDD908A1E43D33800621E92 /* srtp.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90881E43D33800621E92 /* srtp.c */; };
-		5CDD90901E43D4CC00621E92 /* rdb.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD908D1E43D4CC00621E92 /* rdb.c */; };
-		5CDD90911E43D4CC00621E92 /* rdbx.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD908E1E43D4CC00621E92 /* rdbx.c */; };
-		5CDD90921E43D4CC00621E92 /* ut_sim.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD908F1E43D4CC00621E92 /* ut_sim.c */; };
-		5CDD909A1E43D50900621E92 /* datatypes.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90981E43D50900621E92 /* datatypes.c */; };
-		5CDD909B1E43D50900621E92 /* stat.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90991E43D50900621E92 /* stat.c */; };
-		5CDD90A01E43D51100621E92 /* alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD909C1E43D51100621E92 /* alloc.c */; };
-		5CDD90A11E43D51100621E92 /* crypto_kernel.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD909D1E43D51100621E92 /* crypto_kernel.c */; };
-		5CDD90A21E43D51100621E92 /* err.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD909E1E43D51100621E92 /* err.c */; };
-		5CDD90A31E43D51100621E92 /* key.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD909F1E43D51100621E92 /* key.c */; };
-		5CDD90A71E43D51B00621E92 /* auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90A41E43D51B00621E92 /* auth.c */; };
-		5CDD90A81E43D51B00621E92 /* hmac_ossl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90A51E43D51B00621E92 /* hmac_ossl.c */; };
-		5CDD90A91E43D51B00621E92 /* null_auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90A61E43D51B00621E92 /* null_auth.c */; };
-		5CDD90AE1E43D52900621E92 /* aes_gcm_ossl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90AA1E43D52900621E92 /* aes_gcm_ossl.c */; };
-		5CDD90AF1E43D52900621E92 /* aes_icm_ossl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90AB1E43D52900621E92 /* aes_icm_ossl.c */; };
-		5CDD90B01E43D52900621E92 /* cipher.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90AC1E43D52900621E92 /* cipher.c */; };
-		5CDD90B11E43D52900621E92 /* null_cipher.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90AD1E43D52900621E92 /* null_cipher.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5C08848D1E4A97E300403995 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C63F6611E414AB6002CA531;
+			remoteInfo = "Copy webrtc headers";
+		};
+		5C0884D41E4A980100403995 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C63F6611E414AB6002CA531;
+			remoteInfo = "Copy webrtc headers";
+		};
+		5C0884DF1E4A982000403995 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C08848B1E4A97E300403995;
+			remoteInfo = libsrtp;
+		};
+		5C0884E11E4A982000403995 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C0884D21E4A980100403995;
+			remoteInfo = libyuv;
+		};
 		5C11A0361E4577E1004F0987 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
@@ -2520,6 +2566,42 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		5C0884CB1E4A97E300403995 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = "$(INSTALL_PATH_PREFIX)/usr/local/OpenSourceVersions";
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5C0884CC1E4A97E300403995 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = "$(INSTALL_PATH_PREFIX)/usr/local/OpenSourceLicenses";
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5C0884D81E4A980100403995 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = "$(INSTALL_PATH_PREFIX)/usr/local/OpenSourceVersions";
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5C0884D91E4A980100403995 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = "$(INSTALL_PATH_PREFIX)/usr/local/OpenSourceLicenses";
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		5C11A1271E4577E1004F0987 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
@@ -2577,6 +2659,28 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5C0884891E4A978C00403995 /* libsrtp.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libsrtp.xcconfig; sourceTree = "<group>"; };
+		5C08848A1E4A978C00403995 /* libyuv.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libyuv.xcconfig; sourceTree = "<group>"; };
+		5C0884D11E4A97E300403995 /* liblibsrtp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibsrtp.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C0884DE1E4A980100403995 /* liblibyuv.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibyuv.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C0885121E4A99D200403995 /* aes_gcm_ossl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes_gcm_ossl.h; sourceTree = "<group>"; };
+		5C0885131E4A99D200403995 /* aes_icm_ossl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes_icm_ossl.h; sourceTree = "<group>"; };
+		5C0885141E4A99D200403995 /* aes_icm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes_icm.h; sourceTree = "<group>"; };
+		5C0885151E4A99D200403995 /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes.h; sourceTree = "<group>"; };
+		5C0885161E4A99D200403995 /* alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alloc.h; sourceTree = "<group>"; };
+		5C0885171E4A99D200403995 /* auth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = auth.h; sourceTree = "<group>"; };
+		5C0885181E4A99D200403995 /* cipher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cipher.h; sourceTree = "<group>"; };
+		5C0885191E4A99D200403995 /* crypto_kernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_kernel.h; sourceTree = "<group>"; };
+		5C08851A1E4A99D200403995 /* crypto_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_types.h; sourceTree = "<group>"; };
+		5C08851B1E4A99D200403995 /* datatypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = datatypes.h; sourceTree = "<group>"; };
+		5C08851C1E4A99D200403995 /* err.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = err.h; sourceTree = "<group>"; };
+		5C08851D1E4A99D200403995 /* integers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = integers.h; sourceTree = "<group>"; };
+		5C08851E1E4A99D200403995 /* key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = key.h; sourceTree = "<group>"; };
+		5C08851F1E4A99D200403995 /* null_auth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = null_auth.h; sourceTree = "<group>"; };
+		5C0885201E4A99D200403995 /* null_cipher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = null_cipher.h; sourceTree = "<group>"; };
+		5C0885211E4A99D200403995 /* rdb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rdb.h; sourceTree = "<group>"; };
+		5C0885221E4A99D200403995 /* rdbx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rdbx.h; sourceTree = "<group>"; };
+		5C0885231E4A99D200403995 /* stat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stat.h; sourceTree = "<group>"; };
 		5C119FF01E457400004F0987 /* audio_device_buffer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = audio_device_buffer.cc; sourceTree = "<group>"; };
 		5C119FF11E457400004F0987 /* audio_device_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_device_buffer.h; sourceTree = "<group>"; };
 		5C119FF21E457400004F0987 /* audio_device_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_device_config.h; sourceTree = "<group>"; };
@@ -5021,6 +5125,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5C0884CA1E4A97E300403995 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C0884D71E4A980100403995 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5C11A1261E4577E1004F0987 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -5052,6 +5170,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5C0885111E4A99C200403995 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				5C0885121E4A99D200403995 /* aes_gcm_ossl.h */,
+				5C0885131E4A99D200403995 /* aes_icm_ossl.h */,
+				5C0885141E4A99D200403995 /* aes_icm.h */,
+				5C0885151E4A99D200403995 /* aes.h */,
+				5C0885161E4A99D200403995 /* alloc.h */,
+				5C0885171E4A99D200403995 /* auth.h */,
+				5C0885181E4A99D200403995 /* cipher.h */,
+				5C0885191E4A99D200403995 /* crypto_kernel.h */,
+				5C08851A1E4A99D200403995 /* crypto_types.h */,
+				5C08851B1E4A99D200403995 /* datatypes.h */,
+				5C08851C1E4A99D200403995 /* err.h */,
+				5C08851D1E4A99D200403995 /* integers.h */,
+				5C08851E1E4A99D200403995 /* key.h */,
+				5C08851F1E4A99D200403995 /* null_auth.h */,
+				5C0885201E4A99D200403995 /* null_cipher.h */,
+				5C0885211E4A99D200403995 /* rdb.h */,
+				5C0885221E4A99D200403995 /* rdbx.h */,
+				5C0885231E4A99D200403995 /* stat.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
 		5C119FEF1E4573CA004F0987 /* audio_device */ = {
 			isa = PBXGroup;
 			children = (
@@ -8843,6 +8986,7 @@
 		5CDD908B1E43D4A700621E92 /* crypto */ = {
 			isa = PBXGroup;
 			children = (
+				5C0885111E4A99C200403995 /* include */,
 				5CDD90961E43D4F600621E92 /* math */,
 				5CDD90951E43D4F000621E92 /* kernel */,
 				5CDD90941E43D4ED00621E92 /* hash */,
@@ -8906,6 +9050,8 @@
 		5D7C59C41208C68B001C873E /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				5C0884891E4A978C00403995 /* libsrtp.xcconfig */,
+				5C08848A1E4A978C00403995 /* libyuv.xcconfig */,
 				5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */,
 				5D7C59C61208C68B001C873E /* Base.xcconfig */,
 				5C4B43B01E42877A002651C8 /* boringssl.xcconfig */,
@@ -8942,6 +9088,8 @@
 				5C4B4A8E1E42C336002651C8 /* libopus.a */,
 				FB39D0D11200F0E300088E69 /* libwebrtc.a */,
 				5C11A12D1E4577E1004F0987 /* libusrsctp.a */,
+				5C0884D11E4A97E300403995 /* liblibsrtp.a */,
+				5C0884DE1E4A980100403995 /* liblibyuv.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -8949,6 +9097,20 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		5C08848E1E4A97E300403995 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C0884D51E4A980100403995 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5C11A0371E4577E1004F0987 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -9108,6 +9270,7 @@
 				5CDD8B6D1E43C2B500621E92 /* abs_quant.h in Headers */,
 				5CDD8B6B1E43C2B500621E92 /* abs_quant_loop.h in Headers */,
 				5CDD89F91E43BFB300621E92 /* accelerate.h in Headers */,
+				5C0885251E4A99D200403995 /* aes_icm_ossl.h in Headers */,
 				5CDD85041E43B1EA00621E92 /* acm_codec_database.h in Headers */,
 				5CDD85051E43B1EA00621E92 /* acm_common_defs.h in Headers */,
 				5CDD850A1E43B1EA00621E92 /* acm_receiver.h in Headers */,
@@ -9240,6 +9403,7 @@
 				5CDD86A21E43B99400621E92 /* circular_buffer.h in Headers */,
 				5C4B48DC1E42C1E3002651C8 /* codec.h in Headers */,
 				5CDD87B01E43BC0500621E92 /* codec.h in Headers */,
+				5C0885261E4A99D200403995 /* aes_icm.h in Headers */,
 				5CDD83C71E439A6F00621E92 /* codec_database.h in Headers */,
 				5C11A0131E4574C5004F0987 /* pa_memorybarrier.h in Headers */,
 				5C11A0221E457578004F0987 /* file_audio_device.h in Headers */,
@@ -9271,6 +9435,7 @@
 				5C63F7C91E416288002CA531 /* copyonwritebuffer.h in Headers */,
 				5CDD907B1E43D15C00621E92 /* covariance_matrix_generator.h in Headers */,
 				5CDD87B21E43BC0500621E92 /* crc.h in Headers */,
+				5C0885281E4A99D200403995 /* alloc.h in Headers */,
 				5C63F7CC1E416288002CA531 /* crc32.h in Headers */,
 				5CDD8B8C1E43C2B500621E92 /* create_augmented_vec.h in Headers */,
 				5C63F7CE1E416288002CA531 /* criticalsection.h in Headers */,
@@ -9364,6 +9529,7 @@
 				5C4B4C671E431F9C002651C8 /* fft4g.h in Headers */,
 				5C63F7E51E416288002CA531 /* file.h in Headers */,
 				5CDD8C8C1E43C66000621E92 /* file_utils.h in Headers */,
+				5C08852D1E4A99D200403995 /* datatypes.h in Headers */,
 				5C63F7E71E416288002CA531 /* filerotatingstream.h in Headers */,
 				5C63F7EA1E416288002CA531 /* fileutils.h in Headers */,
 				5C63F7E81E416288002CA531 /* fileutils_mock.h in Headers */,
@@ -9398,6 +9564,7 @@
 				5CDD8BA71E43C2B500621E92 /* gain_quant.h in Headers */,
 				5CDD90231E43CEDE00621E92 /* gain_selector.h in Headers */,
 				5CDD83D61E439A6F00621E92 /* generic_decoder.h in Headers */,
+				5C08852A1E4A99D200403995 /* cipher.h in Headers */,
 				5CDD83D81E439A6F00621E92 /* generic_encoder.h in Headers */,
 				5CDD8BA91E43C2B500621E92 /* get_cd_vec.h in Headers */,
 				5CDD8BAB1E43C2B500621E92 /* get_lsp_poly.h in Headers */,
@@ -9439,6 +9606,7 @@
 				5CDD83DF1E439A6F00621E92 /* internal_defines.h in Headers */,
 				5CDD8BC01E43C2B500621E92 /* interpolate.h in Headers */,
 				5CDD8BBE1E43C2B500621E92 /* interpolate_samples.h in Headers */,
+				5C0885331E4A99D200403995 /* rdb.h in Headers */,
 				5C63F8071E416288002CA531 /* ipaddress.h in Headers */,
 				5CDD87C11E43BC0500621E92 /* isac_float_type.h in Headers */,
 				5CDD837C1E439A3500621E92 /* ivf_file_writer.h in Headers */,
@@ -9485,6 +9653,7 @@
 				5C63F81D1E416288002CA531 /* md5.h in Headers */,
 				5C63F81F1E416288002CA531 /* md5digest.h in Headers */,
 				5CDD86A51E43B99400621E92 /* mean_variance_estimator.h in Headers */,
+				5C0885321E4A99D200403995 /* null_cipher.h in Headers */,
 				5CDD876C1E43BB3000621E92 /* media_file.h in Headers */,
 				5CDD87671E43BB3000621E92 /* media_file_defines.h in Headers */,
 				5CDD87691E43BB3000621E92 /* media_file_impl.h in Headers */,
@@ -9494,6 +9663,7 @@
 				5C4B48E51E42C1E3002651C8 /* mediachannel.h in Headers */,
 				5C4B48E71E42C1E3002651C8 /* mediaconstants.h in Headers */,
 				5C63F9491E41737B002CA531 /* mediaconstraintsinterface.h in Headers */,
+				5C0885291E4A99D200403995 /* auth.h in Headers */,
 				5C63F94B1E41737B002CA531 /* mediacontroller.h in Headers */,
 				5C4B48E91E42C1E3002651C8 /* mediaengine.h in Headers */,
 				5C63FA681E41761F002CA531 /* mediamonitor.h in Headers */,
@@ -9546,6 +9716,7 @@
 				5CDD86A81E43B99400621E92 /* normalized_covariance_estimator.h in Headers */,
 				5C63F9541E41737B002CA531 /* notifier.h in Headers */,
 				5CDD86011E43B84E00621E92 /* ns_core.h in Headers */,
+				5C08852B1E4A99D200403995 /* crypto_kernel.h in Headers */,
 				5C4B4BBE1E431C90002651C8 /* NSString+StdString.h in Headers */,
 				5CDD86061E43B84E00621E92 /* nsx_core.h in Headers */,
 				5CDD86071E43B84E00621E92 /* nsx_defines.h in Headers */,
@@ -9594,11 +9765,13 @@
 				5C63F9581E41737B002CA531 /* peerconnectionfactory.h in Headers */,
 				5C63F9591E41737B002CA531 /* peerconnectionfactoryproxy.h in Headers */,
 				5C63F95A1E41737B002CA531 /* peerconnectioninterface.h in Headers */,
+				5C08852E1E4A99D200403995 /* err.h in Headers */,
 				5C63F95B1E41737B002CA531 /* peerconnectionproxy.h in Headers */,
 				5CDD83F11E439A6F00621E92 /* percentile_filter.h in Headers */,
 				5C63F8491E416288002CA531 /* physicalsocketserver.h in Headers */,
 				5CDD872E1E43BABE00621E92 /* pitch_based_vad.h in Headers */,
 				5CDD87D11E43BC0500621E92 /* pitch_estimator.h in Headers */,
+				5C08852C1E4A99D200403995 /* crypto_types.h in Headers */,
 				5CDD87D41E43BC0600621E92 /* pitch_gain_tables.h in Headers */,
 				5CDD87311E43BABE00621E92 /* pitch_internal.h in Headers */,
 				5CDD87D61E43BC0600621E92 /* pitch_lag_tables.h in Headers */,
@@ -9681,6 +9854,7 @@
 				5C4B4BCA1E431C90002651C8 /* RTCDataChannel+Private.h in Headers */,
 				5C4B4BCC1E431C90002651C8 /* RTCDataChannelConfiguration+Private.h in Headers */,
 				5C4B4BCE1E431C90002651C8 /* RTCDispatcher+Private.h in Headers */,
+				5C08852F1E4A99D200403995 /* integers.h in Headers */,
 				5C4B4BD41E431C90002651C8 /* RTCIceCandidate+Private.h in Headers */,
 				5C4B4BD61E431C90002651C8 /* RTCIceServer+Private.h in Headers */,
 				5C4B4BD81E431C90002651C8 /* RTCLegacyStatsReport+Private.h in Headers */,
@@ -9692,6 +9866,7 @@
 				5C4B4BE71E431C90002651C8 /* RTCOpenGLDefines.h in Headers */,
 				5C4B4BE81E431C90002651C8 /* RTCOpenGLVideoRenderer.h in Headers */,
 				5CDD8A501E43BFB300621E92 /* rtcp.h in Headers */,
+				5C0885311E4A99D200403995 /* null_auth.h in Headers */,
 				5CDD88981E43BE3C00621E92 /* rtcp_packet.h in Headers */,
 				5CDD889B1E43BE3C00621E92 /* rtcp_receiver.h in Headers */,
 				5CDD889E1E43BE3C00621E92 /* rtcp_sender.h in Headers */,
@@ -9777,6 +9952,7 @@
 				5CDD87D71E43BC0600621E92 /* settings.h in Headers */,
 				5C63F8741E416288002CA531 /* sha1digest.h in Headers */,
 				5CDD84661E43AE2900621E92 /* shared_data.h in Headers */,
+				5C0885241E4A99D200403995 /* aes_gcm_ossl.h in Headers */,
 				5C63F8761E416288002CA531 /* sharedexclusivelock.h in Headers */,
 				5CDD90321E43CEDE00621E92 /* signal_classifier.h in Headers */,
 				5C63F8781E416288002CA531 /* signalthread.h in Headers */,
@@ -9795,6 +9971,7 @@
 				5CDD89761E43BF3A00621E92 /* sli.h in Headers */,
 				5CDD8BE61E43C2B500621E92 /* smooth.h in Headers */,
 				5CDD8BE41E43C2B500621E92 /* smooth_out_data.h in Headers */,
+				5C0885351E4A99D200403995 /* stat.h in Headers */,
 				5CDD8F941E43CBE000621E92 /* smoothing_filter.h in Headers */,
 				5C63F87F1E416288002CA531 /* socket.h in Headers */,
 				5C63F8811E416288002CA531 /* socketadapters.h in Headers */,
@@ -9810,6 +9987,7 @@
 				5CDD87D91E43BC0600621E92 /* spectrum_ar_model_tables.h in Headers */,
 				5CDD8BEA1E43C2B500621E92 /* split_vq.h in Headers */,
 				5CDD84C21E43AF1300621E92 /* splitting_filter.h in Headers */,
+				5C0885271E4A99D200403995 /* aes.h in Headers */,
 				5CDD83601E43257200621E92 /* sps_parser.h in Headers */,
 				5CDD83631E43257200621E92 /* sps_vui_rewriter.h in Headers */,
 				5C63FA711E41761F002CA531 /* srtpfilter.h in Headers */,
@@ -9834,6 +10012,7 @@
 				5C63F9741E41737B002CA531 /* streamcollection.h in Headers */,
 				5C4B48F51E42C1E3002651C8 /* streamparams.h in Headers */,
 				5C63F89B1E416288002CA531 /* stringencode.h in Headers */,
+				5C0885301E4A99D200403995 /* key.h in Headers */,
 				5C63F89D1E416288002CA531 /* stringutils.h in Headers */,
 				5CDD87DA1E43BC0600621E92 /* structs.h in Headers */,
 				5C63FA0C1E4174F6002CA531 /* stun.h in Headers */,
@@ -9938,6 +10117,7 @@
 				5C4B48FD1E42C1E3002651C8 /* videoadapter.h in Headers */,
 				5C4B49001E42C1E3002651C8 /* videobroadcaster.h in Headers */,
 				5C4B49031E42C1E3002651C8 /* videocapturer.h in Headers */,
+				5C0885341E4A99D200403995 /* rdbx.h in Headers */,
 				5C4B49041E42C1E3002651C8 /* videocapturerfactory.h in Headers */,
 				5C63F9781E41737B002CA531 /* videocapturertracksource.h in Headers */,
 				5C4B49071E42C1E3002651C8 /* videocommon.h in Headers */,
@@ -10007,6 +10187,46 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		5C08848B1E4A97E300403995 /* libsrtp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5C0884CD1E4A97E300403995 /* Build configuration list for PBXNativeTarget "libsrtp" */;
+			buildPhases = (
+				5C08848E1E4A97E300403995 /* Headers */,
+				5C0884B51E4A97E300403995 /* Sources */,
+				5C0884CA1E4A97E300403995 /* Frameworks */,
+				5C0884CB1E4A97E300403995 /* CopyFiles */,
+				5C0884CC1E4A97E300403995 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5C08848C1E4A97E300403995 /* PBXTargetDependency */,
+			);
+			name = libsrtp;
+			productName = boringssl;
+			productReference = 5C0884D11E4A97E300403995 /* liblibsrtp.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		5C0884D21E4A980100403995 /* libyuv */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5C0884DA1E4A980100403995 /* Build configuration list for PBXNativeTarget "libyuv" */;
+			buildPhases = (
+				5C0884D51E4A980100403995 /* Headers */,
+				5C0884D61E4A980100403995 /* Sources */,
+				5C0884D71E4A980100403995 /* Frameworks */,
+				5C0884D81E4A980100403995 /* CopyFiles */,
+				5C0884D91E4A980100403995 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5C0884D31E4A980100403995 /* PBXTargetDependency */,
+			);
+			name = libyuv;
+			productName = boringssl;
+			productReference = 5C0884DE1E4A980100403995 /* liblibyuv.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		5C11A0341E4577E1004F0987 /* usrsctp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5C11A1291E4577E1004F0987 /* Build configuration list for PBXNativeTarget "usrsctp" */;
@@ -10080,6 +10300,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				5C0884E01E4A982000403995 /* PBXTargetDependency */,
+				5C0884E21E4A982000403995 /* PBXTargetDependency */,
 				5C11A13F1E45783A004F0987 /* PBXTargetDependency */,
 				5C4B4AC71E42C58B002651C8 /* PBXTargetDependency */,
 				5C63FC621E418449002CA531 /* PBXTargetDependency */,
@@ -10124,6 +10346,8 @@
 				5C63FA7A1E418411002CA531 /* boringssl */,
 				5C4B490E1E42C336002651C8 /* opus */,
 				5C11A0341E4577E1004F0987 /* usrsctp */,
+				5C08848B1E4A97E300403995 /* libsrtp */,
+				5C0884D21E4A980100403995 /* libyuv */,
 			);
 		};
 /* End PBXProject section */
@@ -10145,6 +10369,66 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5C0884B51E4A97E300403995 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C0885001E4A986D00403995 /* srtp.c in Sources */,
+				5C08850D1E4A988900403995 /* null_cipher.c in Sources */,
+				5C0885091E4A988300403995 /* null_auth.c in Sources */,
+				5C08850A1E4A988900403995 /* aes_gcm_ossl.c in Sources */,
+				5C0885011E4A987600403995 /* datatypes.c in Sources */,
+				5C08850B1E4A988900403995 /* aes_icm_ossl.c in Sources */,
+				5C0885071E4A988300403995 /* auth.c in Sources */,
+				5C0884FF1E4A986D00403995 /* ekt.c in Sources */,
+				5C0885041E4A987C00403995 /* crypto_kernel.c in Sources */,
+				5C0885081E4A988300403995 /* hmac_ossl.c in Sources */,
+				5C08850F1E4A989000403995 /* rdbx.c in Sources */,
+				5C0885031E4A987C00403995 /* alloc.c in Sources */,
+				5C0885021E4A987600403995 /* stat.c in Sources */,
+				5C0885051E4A987C00403995 /* err.c in Sources */,
+				5C08850C1E4A988900403995 /* cipher.c in Sources */,
+				5C08850E1E4A989000403995 /* rdb.c in Sources */,
+				5C0885101E4A989000403995 /* ut_sim.c in Sources */,
+				5C0885061E4A987C00403995 /* key.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C0884D61E4A980100403995 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C0884F81E4A986000403995 /* row_gcc.cc in Sources */,
+				5C0884F11E4A986000403995 /* rotate.cc in Sources */,
+				5C0884FE1E4A986000403995 /* video_common.cc in Sources */,
+				5C0884EE1E4A986000403995 /* mjpeg_decoder.cc in Sources */,
+				5C0884F51E4A986000403995 /* rotate_gcc.cc in Sources */,
+				5C0884F01E4A986000403995 /* planar_functions.cc in Sources */,
+				5C0884E91E4A986000403995 /* convert_from_argb.cc in Sources */,
+				5C0884FD1E4A986000403995 /* scale_gcc.cc in Sources */,
+				5C0884F61E4A986000403995 /* row_any.cc in Sources */,
+				5C0884FA1E4A986000403995 /* scale_any.cc in Sources */,
+				5C0884F31E4A986000403995 /* rotate_argb.cc in Sources */,
+				5C0884EA1E4A986000403995 /* convert_jpeg.cc in Sources */,
+				5C0884E71E4A986000403995 /* convert_argb.cc in Sources */,
+				5C0884FC1E4A986000403995 /* scale_common.cc in Sources */,
+				5C0884F41E4A986000403995 /* rotate_common.cc in Sources */,
+				5C0884F71E4A986000403995 /* row_common.cc in Sources */,
+				5C0884FB1E4A986000403995 /* scale_argb.cc in Sources */,
+				5C0884E41E4A986000403995 /* compare_common.cc in Sources */,
+				5C0884F21E4A986000403995 /* rotate_any.cc in Sources */,
+				5C0884EF1E4A986000403995 /* mjpeg_validate.cc in Sources */,
+				5C0884E51E4A986000403995 /* compare_gcc.cc in Sources */,
+				5C0884EC1E4A986000403995 /* convert_to_i420.cc in Sources */,
+				5C0884E31E4A986000403995 /* compare.cc in Sources */,
+				5C0884F91E4A986000403995 /* scale.cc in Sources */,
+				5C0884E61E4A986000403995 /* convert.cc in Sources */,
+				5C0884ED1E4A986000403995 /* cpu_id.cc in Sources */,
+				5C0884E81E4A986000403995 /* convert_from.cc in Sources */,
+				5C0884EB1E4A986000403995 /* convert_to_argb.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5C11A0771E4577E1004F0987 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -10723,7 +11007,6 @@
 				5CDD86BE1E43B9C200621E92 /* aec_resampler.cc in Sources */,
 				5CDD85E71E43B81000621E92 /* aecm_core.cc in Sources */,
 				5CDD85E41E43B81000621E92 /* aecm_core_c.cc in Sources */,
-				5CDD90B01E43D52900621E92 /* cipher.c in Sources */,
 				5CDD87011E43BA7500621E92 /* agc.cc in Sources */,
 				5CDD86FF1E43BA7500621E92 /* agc_manager_direct.cc in Sources */,
 				5CDD8FD11E43CD6600621E92 /* aimd_rate_control.cc in Sources */,
@@ -10759,7 +11042,6 @@
 				5CDD8FFC1E43CE3A00621E92 /* audio_decoder_pcm16b.cc in Sources */,
 				5CDD84171E439B2900621E92 /* audio_encoder.cc in Sources */,
 				5CDD8CA71E43C6F700621E92 /* audio_encoder_cng.cc in Sources */,
-				5CDD909A1E43D50900621E92 /* datatypes.c in Sources */,
 				5CDD8FF31E43CDF400621E92 /* audio_encoder_copy_red.cc in Sources */,
 				5CDD8B701E43C2B500621E92 /* audio_encoder_ilbc.cc in Sources */,
 				5CDD87AD1E43BC0500621E92 /* audio_encoder_isac.cc in Sources */,
@@ -10794,7 +11076,6 @@
 				5CDD87AE1E43BC0500621E92 /* bandwidth_estimator.c in Sources */,
 				5C63F7B51E416288002CA531 /* base64.cc in Sources */,
 				5C63F9E21E4174F6002CA531 /* basicpacketsocketfactory.cc in Sources */,
-				5CDD90A11E43D51100621E92 /* crypto_kernel.c in Sources */,
 				5C4B4D091E4322F6002651C8 /* basicportallocator.cc in Sources */,
 				5CDD901C1E43CEDE00621E92 /* biquad_filter.cc in Sources */,
 				5C63F7B91E416288002CA531 /* bitbuffer.cc in Sources */,
@@ -10846,9 +11127,6 @@
 				5CDD89411E43BF3A00621E92 /* common_header.cc in Sources */,
 				5C6CDD4B1E413598009754E3 /* common_types.cc in Sources */,
 				5CDD8B861E43C2B500621E92 /* comp_corr.c in Sources */,
-				5C4B4D601E4323D4002651C8 /* compare.cc in Sources */,
-				5C4B4D5B1E4323D4002651C8 /* compare_common.cc in Sources */,
-				5CDD84251E439BCB00621E92 /* compare_gcc.cc in Sources */,
 				5CDD86441E43B8B500621E92 /* complex_bit_reverse.c in Sources */,
 				5CDD86471E43B8B500621E92 /* complex_fft.c in Sources */,
 				5CDD89441E43BF3A00621E92 /* compound_packet.cc in Sources */,
@@ -10860,19 +11138,11 @@
 				5CDD8B891E43C2B500621E92 /* constants.c in Sources */,
 				5CDD8F851E43CBE000621E92 /* controller.cc in Sources */,
 				5CDD8F831E43CBE000621E92 /* controller_manager.cc in Sources */,
-				5C4B4D671E4323D4002651C8 /* convert.cc in Sources */,
-				5C4B4D611E4323D4002651C8 /* convert_argb.cc in Sources */,
-				5C4B4D631E4323D4002651C8 /* convert_from.cc in Sources */,
-				5C4B4D621E4323D4002651C8 /* convert_from_argb.cc in Sources */,
-				5C4B4D641E4323D4002651C8 /* convert_jpeg.cc in Sources */,
-				5C4B4D651E4323D4002651C8 /* convert_to_argb.cc in Sources */,
-				5C4B4D661E4323D4002651C8 /* convert_to_i420.cc in Sources */,
 				5CDD86481E43B8B500621E92 /* copy_set_operations.c in Sources */,
 				5C63F7C81E416288002CA531 /* copyonwritebuffer.cc in Sources */,
 				5C4B4C1A1E431F75002651C8 /* corevideo_frame_buffer.cc in Sources */,
 				5CDD907A1E43D15C00621E92 /* covariance_matrix_generator.cc in Sources */,
 				5C4B4CCA1E4320A9002651C8 /* cpu_features.cc in Sources */,
-				5C4B4D681E4323D4002651C8 /* cpu_id.cc in Sources */,
 				5C4B4CCB1E4320A9002651C8 /* cpu_info.cc in Sources */,
 				5CDD87B11E43BC0500621E92 /* crc.c in Sources */,
 				5C63F7CB1E416288002CA531 /* crc32.cc in Sources */,
@@ -10904,7 +11174,6 @@
 				5C63F7D51E416288002CA531 /* diskcache.cc in Sources */,
 				5CDD864C1E43B8B500621E92 /* division_operations.c in Sources */,
 				5CDD89471E43BF3A00621E92 /* dlrr.cc in Sources */,
-				5CDD90891E43D33800621E92 /* ekt.c in Sources */,
 				5CDD8B941E43C2B500621E92 /* do_plc.c in Sources */,
 				5CDD864D1E43B8B500621E92 /* dot_product_with_scale.c in Sources */,
 				5CDD901E1E43CEDE00621E92 /* down_sampler.cc in Sources */,
@@ -10932,7 +11201,6 @@
 				5CDD8B9A1E43C2B500621E92 /* enh_upsample.c in Sources */,
 				5CDD8B9E1E43C2B500621E92 /* enhancer.c in Sources */,
 				5CDD8B9C1E43C2B500621E92 /* enhancer_interface.c in Sources */,
-				5CDD90A71E43D51B00621E92 /* auth.c in Sources */,
 				5CDD87B81E43BC0500621E92 /* entropy_coding.c in Sources */,
 				5C4B4CD21E4320A9002651C8 /* event.cc in Sources */,
 				5C63F7DA1E416288002CA531 /* event.cc in Sources */,
@@ -10988,7 +11256,6 @@
 				5CDD84B41E43AF1300621E92 /* gain_control_impl.cc in Sources */,
 				5CDD8BA41E43C2B500621E92 /* gain_dequant.c in Sources */,
 				5CDD8BA61E43C2B500621E92 /* gain_quant.c in Sources */,
-				5CDD90921E43D4CC00621E92 /* ut_sim.c in Sources */,
 				5CDD90221E43CEDE00621E92 /* gain_selector.cc in Sources */,
 				5CDD83D51E439A6F00621E92 /* generic_decoder.cc in Sources */,
 				5CDD83D71E439A6F00621E92 /* generic_encoder.cc in Sources */,
@@ -11065,7 +11332,6 @@
 				5CDD865B1E43B8B500621E92 /* lpc_to_refl_coef.c in Sources */,
 				5CDD8BC31E43C2B500621E92 /* lsf_check.c in Sources */,
 				5CDD8BC51E43C2B500621E92 /* lsf_interpolate_to_poly_dec.c in Sources */,
-				5CDD90AF1E43D52900621E92 /* aes_icm_ossl.c in Sources */,
 				5C11A0001E457400004F0987 /* audio_device_impl.cc in Sources */,
 				5CDD8BC71E43C2B500621E92 /* lsf_interpolate_to_poly_enc.c in Sources */,
 				5CDD8BC91E43C2B500621E92 /* lsf_to_lsp.c in Sources */,
@@ -11098,8 +11364,6 @@
 				5C63F8241E416288002CA531 /* messagequeue.cc in Sources */,
 				5C4B4CD91E4320A9002651C8 /* metrics_default.cc in Sources */,
 				5CDD865E1E43B8B500621E92 /* min_max_operations.c in Sources */,
-				5C4B4D691E4323D4002651C8 /* mjpeg_decoder.cc in Sources */,
-				5C4B4D6A1E4323D4002651C8 /* mjpeg_validate.cc in Sources */,
 				5CDD84611E43AE2900621E92 /* monitor_module.cc in Sources */,
 				5CDD837D1E439A3500621E92 /* moving_average.cc in Sources */,
 				5CDD8C8E1E43C66000621E92 /* moving_moments.cc in Sources */,
@@ -11136,7 +11400,6 @@
 				5C63F83B1E416288002CA531 /* openssldigest.cc in Sources */,
 				5C63F83D1E416288002CA531 /* opensslidentity.cc in Sources */,
 				5C63F83F1E416288002CA531 /* opensslstreamadapter.cc in Sources */,
-				5CDD908A1E43D33800621E92 /* srtp.c in Sources */,
 				5C63F8421E416288002CA531 /* optional.cc in Sources */,
 				5C63F8441E416288002CA531 /* optionsfile.cc in Sources */,
 				5CDD8C671E43C60900621E92 /* opus_interface.c in Sources */,
@@ -11155,7 +11418,6 @@
 				5CDD8A401E43BFB300621E92 /* packet_buffer.cc in Sources */,
 				5CDD83EC1E439A6F00621E92 /* packet_buffer.cc in Sources */,
 				5CDD888C1E43BE3C00621E92 /* packet_loss_stats.cc in Sources */,
-				5CDD90AE1E43D52900621E92 /* aes_gcm_ossl.c in Sources */,
 				5CDD8FA41E43CCBE00621E92 /* packet_router.cc in Sources */,
 				5CDD8AAC1E43C00F00621E92 /* packet_source.cc in Sources */,
 				5C63F8461E416288002CA531 /* pathutils.cc in Sources */,
@@ -11173,7 +11435,6 @@
 				5CDD87D31E43BC0500621E92 /* pitch_gain_tables.c in Sources */,
 				5CDD87301E43BABE00621E92 /* pitch_internal.cc in Sources */,
 				5CDD87D51E43BC0600621E92 /* pitch_lag_tables.c in Sources */,
-				5C4B4D6B1E4323D4002651C8 /* planar_functions.cc in Sources */,
 				5C63F84A1E416288002CA531 /* platform_file.cc in Sources */,
 				5C63F84D1E416288002CA531 /* platform_thread.cc in Sources */,
 				5CDD888F1E43BE3C00621E92 /* playout_delay_oracle.cc in Sources */,
@@ -11209,7 +11470,6 @@
 				5C63F8591E416288002CA531 /* rate_limiter.cc in Sources */,
 				5C63F85B1E416288002CA531 /* rate_statistics.cc in Sources */,
 				5C63F85D1E416288002CA531 /* ratelimiter.cc in Sources */,
-				5CDD90A81E43D51B00621E92 /* hmac_ossl.c in Sources */,
 				5C63F85F1E416288002CA531 /* ratetracker.cc in Sources */,
 				5CDD86611E43B8B500621E92 /* real_fft.c in Sources */,
 				5C4B4C771E431F9C002651C8 /* real_fourier.cc in Sources */,
@@ -11221,7 +11481,6 @@
 				5CDD895E1E43BF3A00621E92 /* receiver_report.cc in Sources */,
 				5CDD8A4D1E43BFB300621E92 /* red_payload_splitter.cc in Sources */,
 				5CDD8BD91E43C2B500621E92 /* refiner.c in Sources */,
-				5CDD90911E43D4CC00621E92 /* rdbx.c in Sources */,
 				5CDD86621E43B8B500621E92 /* refl_coef_to_lpc.c in Sources */,
 				5C63FA011E4174F6002CA531 /* relayport.cc in Sources */,
 				5C63FA041E4174F6002CA531 /* relayserver.cc in Sources */,
@@ -11246,15 +11505,6 @@
 				5CDD84BD1E43AF1300621E92 /* residual_echo_detector.cc in Sources */,
 				5C4B4C7A1E431F9C002651C8 /* ring_buffer.c in Sources */,
 				5CDD84BF1E43AF1300621E92 /* rms_level.cc in Sources */,
-				5C4B4D741E4323D4002651C8 /* rotate.cc in Sources */,
-				5C4B4D6C1E4323D4002651C8 /* rotate_any.cc in Sources */,
-				5C4B4D6D1E4323D4002651C8 /* rotate_argb.cc in Sources */,
-				5C4B4D6E1E4323D4002651C8 /* rotate_common.cc in Sources */,
-				5CDD84261E439BCB00621E92 /* rotate_gcc.cc in Sources */,
-				5C4B4D751E4323D4002651C8 /* row_any.cc in Sources */,
-				5C4B4D761E4323D4002651C8 /* row_common.cc in Sources */,
-				5CDD90A91E43D51B00621E92 /* null_auth.c in Sources */,
-				5CDD84271E439BCB00621E92 /* row_gcc.cc in Sources */,
 				5CDD89671E43BF3A00621E92 /* rpsi.cc in Sources */,
 				5CDD896A1E43BF3A00621E92 /* rrtr.cc in Sources */,
 				5CDD904B1E43CF6100621E92 /* rtc_event_log.cc in Sources */,
@@ -11332,7 +11582,6 @@
 				5CDD88C81E43BE3D00621E92 /* rtp_receiver_video.cc in Sources */,
 				5CDD88CC1E43BE3D00621E92 /* rtp_rtcp_impl.cc in Sources */,
 				5CDD88D31E43BE3D00621E92 /* rtp_sender.cc in Sources */,
-				5CDD90B11E43D52900621E92 /* null_cipher.c in Sources */,
 				5CDD88CE1E43BE3D00621E92 /* rtp_sender_audio.cc in Sources */,
 				5CDD88D11E43BE3D00621E92 /* rtp_sender_video.cc in Sources */,
 				5CDD85B01E43B5C000621E92 /* rtp_stream_receiver.cc in Sources */,
@@ -11343,7 +11592,6 @@
 				5C4B48EB1E42C1E3002651C8 /* rtpdataengine.cc in Sources */,
 				5C4B48EE1E42C1E3002651C8 /* rtpdump.cc in Sources */,
 				5CDD896C1E43BF3A00621E92 /* rtpfb.cc in Sources */,
-				5CDD90A21E43D51100621E92 /* err.c in Sources */,
 				5C63F9671E41737B002CA531 /* rtpreceiver.cc in Sources */,
 				5C63F96A1E41737B002CA531 /* rtpsender.cc in Sources */,
 				5C4B48F11E42C1E3002651C8 /* rtputils.cc in Sources */,
@@ -11351,18 +11599,11 @@
 				5C4B4CE41E4320A9002651C8 /* rw_lock.cc in Sources */,
 				5C4B4CDE1E4320A9002651C8 /* rw_lock_posix.cc in Sources */,
 				5CDD902F1E43CEDE00621E92 /* saturating_gain_estimator.cc in Sources */,
-				5C4B4D851E4323D4002651C8 /* scale.cc in Sources */,
-				5C4B4D7D1E4323D4002651C8 /* scale_any.cc in Sources */,
-				5C4B4D7E1E4323D4002651C8 /* scale_argb.cc in Sources */,
-				5CDD90901E43D4CC00621E92 /* rdb.c in Sources */,
-				5C4B4D7F1E4323D4002651C8 /* scale_common.cc in Sources */,
-				5CDD84281E439BCB00621E92 /* scale_gcc.cc in Sources */,
 				5C63F86D1E416288002CA531 /* scoped_autorelease_pool.mm in Sources */,
 				5C4B484F1E42C1AF002651C8 /* sctpdataengine.cc in Sources */,
 				5C63F96D1E41737B002CA531 /* sctputils.cc in Sources */,
 				5CDD896F1E43BF3A00621E92 /* sdes.cc in Sources */,
 				5CDD85B61E43B5C000621E92 /* send_delay_stats.cc in Sources */,
-				5CDD909B1E43D50900621E92 /* stat.c in Sources */,
 				5CDD90611E43D11200621E92 /* send_side_bandwidth_estimation.cc in Sources */,
 				5CDD85B91E43B5C000621E92 /* send_statistics_proxy.cc in Sources */,
 				5CDD8FE31E43CD6600621E92 /* send_time_history.cc in Sources */,
@@ -11391,7 +11632,6 @@
 				5CDD8BE51E43C2B500621E92 /* smooth.c in Sources */,
 				5CDD8BE31E43C2B500621E92 /* smooth_out_data.c in Sources */,
 				5CDD8F931E43CBE000621E92 /* smoothing_filter.cc in Sources */,
-				5CDD90A01E43D51100621E92 /* alloc.c in Sources */,
 				5C63F8801E416288002CA531 /* socketadapters.cc in Sources */,
 				5C63F8821E416288002CA531 /* socketaddress.cc in Sources */,
 				5C63F8841E416288002CA531 /* socketaddresspair.cc in Sources */,
@@ -11503,11 +11743,9 @@
 				5CDD86DF1E43BA2800621E92 /* vad_sp.c in Sources */,
 				5CDD86741E43B8B500621E92 /* vector_scaling_operations.c in Sources */,
 				5CDD84011E439A6F00621E92 /* video_coding_impl.cc in Sources */,
-				5C4B4D861E4323D4002651C8 /* video_common.cc in Sources */,
 				5CDD85C41E43B5C000621E92 /* video_decoder.cc in Sources */,
 				5CDD85C61E43B5C000621E92 /* video_encoder.cc in Sources */,
 				5C4B4C1F1E431F75002651C8 /* video_frame.cc in Sources */,
-				5CDD90A31E43D51100621E92 /* key.c in Sources */,
 				5C4B4C1E1E431F75002651C8 /* video_frame_buffer.cc in Sources */,
 				5CDD85CA1E43B5C000621E92 /* video_receive_stream.cc in Sources */,
 				5CDD84031E439A6F00621E92 /* video_receiver.cc in Sources */,
@@ -11575,6 +11813,26 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5C08848C1E4A97E300403995 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C63F6611E414AB6002CA531 /* Copy webrtc headers */;
+			targetProxy = 5C08848D1E4A97E300403995 /* PBXContainerItemProxy */;
+		};
+		5C0884D31E4A980100403995 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C63F6611E414AB6002CA531 /* Copy webrtc headers */;
+			targetProxy = 5C0884D41E4A980100403995 /* PBXContainerItemProxy */;
+		};
+		5C0884E01E4A982000403995 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C08848B1E4A97E300403995 /* libsrtp */;
+			targetProxy = 5C0884DF1E4A982000403995 /* PBXContainerItemProxy */;
+		};
+		5C0884E21E4A982000403995 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C0884D21E4A980100403995 /* libyuv */;
+			targetProxy = 5C0884E11E4A982000403995 /* PBXContainerItemProxy */;
+		};
 		5C11A0351E4577E1004F0987 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5C63F6611E414AB6002CA531 /* Copy webrtc headers */;
@@ -11613,6 +11871,54 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		5C0884CE1E4A97E300403995 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C0884891E4A978C00403995 /* libsrtp.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5C0884CF1E4A97E300403995 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C0884891E4A978C00403995 /* libsrtp.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5C0884D01E4A97E300403995 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C0884891E4A978C00403995 /* libsrtp.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		5C0884DB1E4A980100403995 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C08848A1E4A978C00403995 /* libyuv.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5C0884DC1E4A980100403995 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C08848A1E4A978C00403995 /* libyuv.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5C0884DD1E4A980100403995 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C08848A1E4A978C00403995 /* libyuv.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 		5C11A12A1E4577E1004F0987 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */;
@@ -11760,6 +12066,26 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5C0884CD1E4A97E300403995 /* Build configuration list for PBXNativeTarget "libsrtp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C0884CE1E4A97E300403995 /* Debug */,
+				5C0884CF1E4A97E300403995 /* Release */,
+				5C0884D01E4A97E300403995 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		5C0884DA1E4A980100403995 /* Build configuration list for PBXNativeTarget "libyuv" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C0884DB1E4A980100403995 /* Debug */,
+				5C0884DC1E4A980100403995 /* Release */,
+				5C0884DD1E4A980100403995 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
 		5C11A1291E4577E1004F0987 /* Build configuration list for PBXNativeTarget "usrsctp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

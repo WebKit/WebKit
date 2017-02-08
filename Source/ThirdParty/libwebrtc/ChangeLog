@@ -1,5 +1,17 @@
 2017-02-07  Alex Christensen  <achristensen@webkit.org>
 
+        [libwebrtc] Move libsrtp and libyuv to own Xcode targets
+        https://bugs.webkit.org/show_bug.cgi?id=167966
+
+        Reviewed by Youenn Fablet.
+
+        * Configurations/libsrtp.xcconfig: Added.
+        * Configurations/libyuv.xcconfig: Added.
+        * Configurations/usrsctp.xcconfig:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2017-02-07  Alex Christensen  <achristensen@webkit.org>
+
         Fix libwebrtc build after r211817
         https://bugs.webkit.org/show_bug.cgi?id=167944
 
