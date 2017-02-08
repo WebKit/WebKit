@@ -1,3 +1,20 @@
+2017-02-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Soup] Deadlock in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=167876
+
+        Reviewed by Michael Catanzaro.
+
+        WebKitSoupRequestInputStream uses a read lock. What is happening is that webkitSoupRequestInputStreamAddData
+        takes the lock, and it calls webkitSoupRequestInputStreamPendingReadAsyncComplete with the lock help. That
+        causes webkitSoupRequestInputStreamReadAsync to be called again to read the next chunk, but in the same run loop
+        operation. We don't really need the read lock because both webkitSoupRequestInputStreamAddData and
+        webkitSoupRequestInputStreamReadAsync shoudl always be called from the main thread.
+
+        * WebProcess/soup/WebKitSoupRequestInputStream.cpp:
+        (webkitSoupRequestInputStreamReadAsync): Remove the read lock and assert if called from a secondary thread.
+        (webkitSoupRequestInputStreamAddData): Ditto.
+
 2017-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Network process crash in WebKit::CustomProtocolManagerImpl::didFailWithError
