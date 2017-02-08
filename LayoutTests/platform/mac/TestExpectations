@@ -1494,6 +1494,7 @@ media/encrypted-media/mock-MediaKeys-setServerCertificate.html [ Skip ]
 media/encrypted-media/mock-MediaKeys-createSession.html [ Skip ]
 media/encrypted-media/mock-MediaKeySession-close.html [ Skip ]
 media/encrypted-media/mock-MediaKeySession-generateRequest.html [ Skip ]
+media/encrypted-media/mock-MediaKeySession-remove.html [ Skip ]
 media/encrypted-media/mock-MediaKeySession-update.html [ Skip ]
 
 webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-diffferent-options.html [ Pass Failure ]

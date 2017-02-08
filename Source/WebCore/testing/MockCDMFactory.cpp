@@ -72,6 +72,15 @@ void MockCDMFactory::addKeysToSessionWithID(const String& id, Vector<Ref<SharedB
         value.append(WTFMove(key));
 }
 
+Vector<Ref<SharedBuffer>> MockCDMFactory::removeKeysFromSessionWithID(const String& id)
+{
+    auto it = m_sessions.find(id);
+    if (it == m_sessions.end())
+        return { };
+
+    return WTFMove(it->value);
+}
+
 void MockCDMFactory::setSupportedDataTypes(Vector<String>&& types)
 {
     m_supportedDataTypes.clear();
@@ -299,6 +308,24 @@ void MockCDMInstance::closeSession(const String& sessionID, CloseSessionCallback
 
     factory->removeSessionWithID(sessionID);
     callback();
+}
+
+void MockCDMInstance::removeSessionData(const String& id, LicenseType, RemoveSessionDataCallback callback)
+{
+    MockCDMFactory* factory = m_cdm ? m_cdm->factory() : nullptr;
+    if (!factory) {
+        callback({ }, std::nullopt, SuccessValue::Failed);
+        return;
+    }
+
+    auto keys = factory->removeKeysFromSessionWithID(id);
+    KeyStatusVector keyStatusVector;
+    keyStatusVector.reserveInitialCapacity(keys.size());
+    for (auto& key : keys)
+        keyStatusVector.uncheckedAppend({ WTFMove(key), KeyStatus::Released });
+
+    CString message { "remove-message" };
+    callback(WTFMove(keyStatusVector), SharedBuffer::create(message.data(), message.length()), SuccessValue::Succeeded);
 }
 
 }

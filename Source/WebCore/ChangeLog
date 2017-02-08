@@ -1,5 +1,42 @@
 2017-02-08  Zan Dobersek  <zdobersek@igalia.com>
 
+        [EME] Implement MediaKeySession::remove()
+        https://bugs.webkit.org/show_bug.cgi?id=167870
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement MediaKeySession::remove() as outlined in the specification.
+
+        The CDMInstance::removeSessionData() virtual method is added. CDMInstance
+        implementors should remove any session data stored for the session that's
+        represented by the passed-in session ID and session type.
+
+        Once the session data is removed, the passed-in callback should be invoked
+        by the CDMInstance object so that MediaKeySession can immediately queue a
+        task in which it updates key statuses and expiration, reject the promise if
+        the data removal failed, or enqueue any license-release message and finally
+        successfully resolve the promise.
+
+        MockCDMFactory gains the removeKeysFromSessionWithID() method that purges
+        the keys for a given session ID. The method is called from
+        MockCDMInstance::removeSessionData() implementation, which passes the
+        removed keys to the RemoveSessionDataCallback, along with a license-release
+        message that is checked in the tests. The key removal itself isn't tested
+        yet because the MediaKeySession's `update key statuses` algorithm isn't
+        implemented yet.
+
+        Test: media/encrypted-media/mock-MediaKeySession-remove.html
+
+        * Modules/encryptedmedia/CDMInstance.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::remove):
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMFactory::removeKeysFromSessionWithID):
+        (WebCore::MockCDMInstance::removeSessionData):
+        * testing/MockCDMFactory.h:
+
+2017-02-08  Zan Dobersek  <zdobersek@igalia.com>
+
         [EME] Implement MediaKeySession::close()
         https://bugs.webkit.org/show_bug.cgi?id=167869
 

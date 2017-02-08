@@ -400,9 +400,70 @@ void MediaKeySession::close(Ref<DeferredPromise>&& promise)
     // 6. Return promise.
 }
 
-void MediaKeySession::remove(Ref<DeferredPromise>&&)
+void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
 {
-    notImplemented();
+    // https://w3c.github.io/encrypted-media/#dom-mediakeysession-remove
+    // W3C Editor's Draft 09 November 2016
+
+    // 1. If this object is closed, return a promise rejected with an InvalidStateError.
+    // 2. If this object's callable value is false, return a promise rejected with an InvalidStateError.
+    if (m_closed || !m_callable) {
+        promise->reject(INVALID_STATE_ERR);
+        return;
+    }
+
+    // 3. Let promise be a new promise.
+    // 4. Run the following steps in parallel:
+    m_taskQueue.enqueueTask([this, promise = WTFMove(promise)] () mutable {
+        // 4.1. Let cdm be the CDM instance represented by this object's cdm instance value.
+        // 4.2. Let message be null.
+        // 4.3. Let message type be null.
+
+        // 4.4. Use the cdm to execute the following steps:
+        m_instance->removeSessionData(m_sessionId, m_sessionType, [this, weakThis = m_weakPtrFactory.createWeakPtr(), promise = WTFMove(promise)] (CDMInstance::KeyStatusVector&& keys, std::optional<Ref<SharedBuffer>>&& message, CDMInstance::SuccessValue succeeded) mutable {
+            if (!weakThis)
+                return;
+
+            // 4.4.1. If any license(s) and/or key(s) are associated with the session:
+            //   4.4.1.1. Destroy the license(s) and/or key(s) associated with the session.
+            //   4.4.1.2. Follow the steps for the value of this object's session type from the following list:
+            //     ↳ "temporary"
+            //       4.4.1.2.1.1 Continue with the following steps.
+            //     ↳ "persistent-license"
+            //       4.4.1.2.2.1. Let record of license destruction be a record of license destruction for the license represented by this object.
+            //       4.4.1.2.2.2. Store the record of license destruction.
+            //       4.4.1.2.2.3. Let message be a message containing or reflecting the record of license destruction.
+            //     ↳ "persistent-usage-record"
+            //       4.4.1.2.3.1. Store this object's record of key usage.
+            //       4.4.1.2.3.2. Let message be a message containing or reflecting this object's record of key usage.
+            // NOTE: Step 4.4.1. should be implemented in CDMInstance.
+
+            // 4.5. Queue a task to run the following steps:
+            m_taskQueue.enqueueTask([this, keys = WTFMove(keys), message = WTFMove(message), succeeded, promise = WTFMove(promise)] () mutable {
+                // 4.5.1. Run the Update Key Statuses algorithm on the session, providing all key ID(s) in the session along with the "released" MediaKeyStatus value for each.
+                updateKeyStatuses(WTFMove(keys));
+
+                // 4.5.2. Run the Update Expiration algorithm on the session, providing NaN.
+                updateExpiration(std::numeric_limits<double>::quiet_NaN());
+
+                // 4.5.3. If any of the preceding steps failed, reject promise with a new DOMException whose name is the appropriate error name.
+                if (succeeded == CDMInstance::SuccessValue::Failed) {
+                    promise->reject(NOT_SUPPORTED_ERR);
+                    return;
+                }
+
+                // 4.5.4. Let message type be "license-release".
+                // 4.5.5. If message is not null, run the Queue a "message" Event algorithm on the session, providing message type and message.
+                if (message)
+                    enqueueMessage(MediaKeyMessageType::LicenseRelease, *message);
+
+                // 4.5.6. Resolve promise.
+                promise->resolve();
+            });
+        });
+    });
+
+    // 5. Return promise.
 }
 
 void MediaKeySession::enqueueMessage(MediaKeyMessageType messageType, const SharedBuffer& message)

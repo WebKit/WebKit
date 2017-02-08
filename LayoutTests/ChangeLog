@@ -1,5 +1,26 @@
 2017-02-08  Zan Dobersek  <zdobersek@igalia.com>
 
+        [EME] Implement MediaKeySession::remove()
+        https://bugs.webkit.org/show_bug.cgi?id=167870
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add the mock-MediaKeySession-remove.html test that tests the functionality
+        of the MediaKeySession::remove() implementation. The test checks that the
+        calls to that method properly resolve or reject the returned promise,
+        depending on the object state. Another test checks the message that's
+        queued upon a successful removal.
+
+        Additional tests will be added later once MediaKeySession properly
+        implements the close() method and key status updates.
+
+        * media/encrypted-media/mock-MediaKeySession-remove-expected.txt: Added.
+        * media/encrypted-media/mock-MediaKeySession-remove.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-02-08  Zan Dobersek  <zdobersek@igalia.com>
+
         [EME] Implement MediaKeySession::close()
         https://bugs.webkit.org/show_bug.cgi?id=167869
 

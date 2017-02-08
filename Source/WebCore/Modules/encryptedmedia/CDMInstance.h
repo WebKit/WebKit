@@ -69,6 +69,9 @@ public:
 
     using CloseSessionCallback = Function<void()>;
     virtual void closeSession(const String& sessionId, CloseSessionCallback) = 0;
+
+    using RemoveSessionDataCallback = Function<void(KeyStatusVector&&, std::optional<Ref<SharedBuffer>>&&, SuccessValue)>;
+    virtual void removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback) = 0;
 };
 
 }
