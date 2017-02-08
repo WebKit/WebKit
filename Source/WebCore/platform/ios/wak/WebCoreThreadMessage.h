@@ -47,7 +47,6 @@ extern "C" {
 
 // Register a class for deallocation on the WebThread
 WEBCORE_EXPORT void WebCoreObjCDeallocOnWebThread(Class cls);
-void WebCoreObjCDeallocWithWebThreadLock(Class cls);
 
 // Asynchronous from main thread to web thread.
 WEBCORE_EXPORT void WebThreadAdoptAndRelease(id obj);

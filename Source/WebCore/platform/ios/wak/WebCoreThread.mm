@@ -139,6 +139,7 @@ WEBCORE_EXPORT volatile bool webThreadShouldYield;
 
 static pthread_mutex_t WebCoreReleaseLock;
 static void WebCoreObjCDeallocOnWebThreadImpl(id self, SEL _cmd);
+static void WebCoreObjCDeallocWithWebThreadLock(Class cls);
 static void WebCoreObjCDeallocWithWebThreadLockImpl(id self, SEL _cmd);
 
 static NSMutableArray *sAsyncDelegates = nil;

@@ -1,5 +1,15 @@
 2017-02-08  Aakash Jain  <aakash_jain@apple.com>
 
+        Remove WebCoreObjCDeallocWithWebThreadLock from header file
+        https://bugs.webkit.org/show_bug.cgi?id=167987
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/ios/wak/WebCoreThread.mm: Added WebCoreObjCDeallocWithWebThreadLock.
+        * platform/ios/wak/WebCoreThreadMessage.h: Removed WebCoreObjCDeallocWithWebThreadLock.
+
+2017-02-08  Aakash Jain  <aakash_jain@apple.com>
+
         Move WKMouseInRect to WAKView.mm
         https://bugs.webkit.org/show_bug.cgi?id=167989
 
