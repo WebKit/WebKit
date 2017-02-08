@@ -66,6 +66,9 @@ public:
     using Message = std::pair<MessageType, Ref<SharedBuffer>>;
     using LicenseUpdateCallback = Function<void(bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, SuccessValue succeeded)>;
     virtual void updateLicense(LicenseType, const SharedBuffer& response, LicenseUpdateCallback) = 0;
+
+    using CloseSessionCallback = Function<void()>;
+    virtual void closeSession(const String& sessionId, CloseSessionCallback) = 0;
 };
 
 }

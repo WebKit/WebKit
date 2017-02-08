@@ -289,6 +289,18 @@ void MockCDMInstance::updateLicense(LicenseType, const SharedBuffer& response, L
     callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Succeeded);
 }
 
+void MockCDMInstance::closeSession(const String& sessionID, CloseSessionCallback callback)
+{
+    MockCDMFactory* factory = m_cdm ? m_cdm->factory() : nullptr;
+    if (!factory) {
+        callback();
+        return;
+    }
+
+    factory->removeSessionWithID(sessionID);
+    callback();
+}
+
 }
 
 #endif

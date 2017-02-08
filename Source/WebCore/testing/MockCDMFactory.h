@@ -130,6 +130,7 @@ private:
     SuccessValue setServerCertificate(Ref<SharedBuffer>&&) final;
     void requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback) final;
     void updateLicense(LicenseType, const SharedBuffer&, LicenseUpdateCallback) final;
+    void closeSession(const String&, CloseSessionCallback) final;
 
     WeakPtr<MockCDM> m_cdm;
     bool m_distinctiveIdentifiersAllowed { true };

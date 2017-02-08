@@ -359,9 +359,45 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
     // 7. Return promise.
 }
 
-void MediaKeySession::close(Ref<DeferredPromise>&&)
+void MediaKeySession::close(Ref<DeferredPromise>&& promise)
 {
-    notImplemented();
+    // https://w3c.github.io/encrypted-media/#dom-mediakeysession-close
+    // W3C Editor's Draft 09 November 2016
+
+    // 1. Let session be the associated MediaKeySession object.
+    // 2. If session is closed, return a resolved promise.
+    if (m_closed) {
+        promise->resolve();
+        return;
+    }
+
+    // 3. If session's callable value is false, return a promise rejected with an InvalidStateError.
+    if (!m_callable) {
+        promise->reject(INVALID_STATE_ERR);
+        return;
+    }
+
+    // 4. Let promise be a new promise.
+    // 5. Run the following steps in parallel:
+    m_taskQueue.enqueueTask([this, promise = WTFMove(promise)] () mutable {
+        // 5.1. Let cdm be the CDM instance represented by session's cdm instance value.
+        // 5.2. Use cdm to close the key session associated with session.
+        m_instance->closeSession(m_sessionId, [this, weakThis = m_weakPtrFactory.createWeakPtr(), promise = WTFMove(promise)] () mutable {
+            if (!weakThis)
+                return;
+
+            // 5.3. Queue a task to run the following steps:
+            m_taskQueue.enqueueTask([this, promise = WTFMove(promise)] () mutable {
+                // 5.3.1. Run the Session Closed algorithm on the session.
+                sessionClosed();
+
+                // 5.3.2. Resolve promise.
+                promise->resolve();
+            });
+        });
+    });
+
+    // 6. Return promise.
 }
 
 void MediaKeySession::remove(Ref<DeferredPromise>&&)

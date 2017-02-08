@@ -1,0 +1,44 @@
+RUN(internals.initializeMockMediaSource())
+RUN(mock = internals.registerMockCDM())
+RUN(mock.supportedDataTypes = ["keyids"])
+RUN(capabilities.initDataTypes = ["keyids"])
+RUN(capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] )
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
+Promise resolved OK
+
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise resolved OK
+
+Closing a non-callable MediaKeySession should reject.
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+EXPECTED (typeof mediaKeySession == 'object') OK
+RUN(promise = mediaKeySession.close())
+Promise rejected correctly OK
+
+Closing a failed MediaKeySession should reject.
+RUN(kids = JSON.stringify({ invalid: "invalid" }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids)))
+Promise rejected correctly OK
+RUN(promise = mediaKeySession.close())
+Promise rejected correctly OK
+
+Closing a valid MediaKeySession should resolve.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids)))
+Promise resolved OK
+RUN(promise = mediaKeySession.close())
+Promise resolved OK
+
+Closing a closed MediaKeySession should resolve.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids)))
+Promise resolved OK
+RUN(promise = mediaKeySession.close())
+Promise resolved OK
+RUN(promise = mediaKeySession.close())
+Promise resolved OK
+END OF TEST
+

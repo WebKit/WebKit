@@ -1,5 +1,38 @@
 2017-02-08  Zan Dobersek  <zdobersek@igalia.com>
 
+        [EME] Implement MediaKeySession::close()
+        https://bugs.webkit.org/show_bug.cgi?id=167869
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement MediaKeySession::close() as outlined in the specification.
+
+        The CDMInstance::closeSession() virtual method, when called, should
+        close the session that's represented by the passed-in session ID on
+        the CDMInstance implementor object. That's the same session ID that
+        the CDMInstance object passes to the MediaKeySession class through
+        the callback that's provided to the updateLicense call.
+
+        The CloseSessionCallback, passed to CDMInstance::closeSession(),
+        should be invoked by the CDMInstance implementor once the session
+        is closed. When that is invoked, another task is queued for the
+        MediaKeySession object that runs the `session closed` algorithm
+        and resolves the promise.
+
+        MockCDMInstance::closeSession() is defined to remove the session
+        from the MockCDMFactory object and invoke the CloseSessionCallback.
+
+        Test: media/encrypted-media/mock-MediaKeySession-close.html
+
+        * Modules/encryptedmedia/CDMInstance.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::close):
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMInstance::closeSession):
+        * testing/MockCDMFactory.h:
+
+2017-02-08  Zan Dobersek  <zdobersek@igalia.com>
+
         [EME] Alias CDMInstance enums to the specification-defined enums
         https://bugs.webkit.org/show_bug.cgi?id=167896
 

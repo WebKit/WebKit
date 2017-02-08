@@ -1,3 +1,20 @@
+2017-02-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Implement MediaKeySession::close()
+        https://bugs.webkit.org/show_bug.cgi?id=167869
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add the mock-MediaKeySession-close.html test case which checks proper
+        behavior of MediaKeySession::close(), specifically that under specific
+        conditions the promise returned by that method is properly resolved or
+        rejected. The test is skipped on all platforms for now.
+
+        * media/encrypted-media/mock-MediaKeySession-close-expected.txt: Added.
+        * media/encrypted-media/mock-MediaKeySession-close.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-02-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebContent process repeatedly jetsams on BuzzFeed's Another Round page
