@@ -1,5 +1,18 @@
 2017-02-08  Aakash Jain  <aakash_jain@apple.com>
 
+        Move WKMouseInRect to WAKView.mm
+        https://bugs.webkit.org/show_bug.cgi?id=167989
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/ios/wak/WAKAppKitStubs.h: Removed WKMouseInRect.
+        * platform/ios/wak/WAKAppKitStubs.m:
+        (WKMouseInRect): Deleted.
+        * platform/ios/wak/WAKView.mm: 
+        (-[WAKView mouse:inRect:]): Added the logic of WKMouseInRect here instead of separate function call.
+
+2017-02-08  Aakash Jain  <aakash_jain@apple.com>
+
         Remove unused method WebCore::PluginData::pluginNameForMimeType
         https://bugs.webkit.org/show_bug.cgi?id=167986
 

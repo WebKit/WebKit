@@ -673,7 +673,9 @@ static CGInterpolationQuality toCGInterpolationQuality(WebCore::InterpolationQua
 
 - (BOOL)mouse:(NSPoint)aPoint inRect:(NSRect)aRect 
 { 
-    return WKMouseInRect (aPoint, aRect);
+    return aPoint.x >= aRect.origin.x
+        && aPoint.x < (aRect.origin.x + aRect.size.width)
+        && aPoint.y >= aRect.origin.y && aPoint.y < (aRect.origin.y + aRect.size.height);
 }
 
 - (BOOL)needsPanelToBecomeKey

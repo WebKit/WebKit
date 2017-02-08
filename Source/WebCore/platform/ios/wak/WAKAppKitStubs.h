@@ -209,16 +209,6 @@ WEBCORE_EXPORT @interface NSCursor : NSObject
 + (void)setHiddenUntilMouseMoves:(BOOL)flag;
 @end
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-BOOL WKMouseInRect(CGPoint aPoint, CGRect aRect);
-
-#ifdef __cplusplus
-}
-#endif
-
 #endif // TARGET_OS_IPHONE
 
 #endif // WAKAppKitStubs_h

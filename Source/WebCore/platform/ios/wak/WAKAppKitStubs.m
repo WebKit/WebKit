@@ -30,13 +30,6 @@
 
 id NSApp = nil;
 
-BOOL WKMouseInRect(CGPoint aPoint, CGRect aRect) 
-{
-    return aPoint.x >= aRect.origin.x &&
-        aPoint.x < (aRect.origin.x + aRect.size.width) &&
-        aPoint.y >= aRect.origin.y && aPoint.y < (aRect.origin.y + aRect.size.height);
-}
-
 @implementation NSCursor
 + (void)setHiddenUntilMouseMoves:(BOOL)flag
 {
