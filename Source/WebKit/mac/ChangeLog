@@ -1,3 +1,12 @@
+2017-02-08  Aakash Jain  <aakash_jain@apple.com>
+
+        Don't re-export WKUtilities.h from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=167977
+
+        Reviewed by Alexey Proskuryakov.
+
+        * MigrateHeaders.make: Removed WKUtilities.h
+
 2017-02-06  Alex Christensen  <achristensen@webkit.org>
 
         credentials should be partitioned by main document domain
