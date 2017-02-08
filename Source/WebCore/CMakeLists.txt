@@ -1107,7 +1107,9 @@ set(WebCore_SOURCES
     bindings/js/JSCustomXPathNSResolver.cpp
     bindings/js/JSDOMBinding.cpp
     bindings/js/JSDOMBindingSecurity.cpp
-    bindings/js/JSDOMConstructor.cpp
+    bindings/js/JSDOMBuiltinConstructorBase.cpp
+    bindings/js/JSDOMConstructorBase.cpp
+    bindings/js/JSDOMConstructorWithDocument.cpp
     bindings/js/JSDOMExceptionHandling.cpp
     bindings/js/JSDOMGlobalObject.cpp
     bindings/js/JSDOMGlobalObjectTask.cpp

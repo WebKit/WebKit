@@ -22,8 +22,7 @@
 
 #if ENABLE(READABLE_STREAM_API)
 
-#include "JSDOMBinding.h"
-#include "JSDOMConstructor.h"
+#include "JSDOMBuiltinConstructor.h"
 #include "JSReadableByteStreamController.h"
 #include "JSReadableStream.h"
 #include "JSReadableStreamDefaultController.h"
@@ -31,6 +30,7 @@
 #include "ReadableByteStreamInternalsBuiltins.h"
 #include "ReadableStreamInternalsBuiltins.h"
 #include "WebCoreJSClientData.h"
+#include <runtime/JSCInlines.h>
 
 using namespace JSC;
 
@@ -71,11 +71,11 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStreamDefaultReader(ExecState& e
 }
 
 // Private JS ReadableStreamDefaultReader and ReadableStreamDefaultController constructors.
-using JSBuiltinReadableStreamDefaultReaderPrivateConstructor = JSBuiltinConstructor<JSReadableStreamDefaultReader>;
-using JSBuiltinReadableStreamDefaultControllerPrivateConstructor =  JSBuiltinConstructor<JSReadableStreamDefaultController>;
+using JSBuiltinReadableStreamDefaultReaderPrivateConstructor = JSDOMBuiltinConstructor<JSReadableStreamDefaultReader>;
+using JSBuiltinReadableStreamDefaultControllerPrivateConstructor = JSDOMBuiltinConstructor<JSReadableStreamDefaultController>;
 #if ENABLE(READABLE_BYTE_STREAM_API)
 // Private JS ReadableByteStreamController constructor.
-using JSBuiltinReadableByteStreamControllerPrivateConstructor = JSBuiltinConstructor<JSReadableByteStreamController>;
+using JSBuiltinReadableByteStreamControllerPrivateConstructor = JSDOMBuiltinConstructor<JSReadableByteStreamController>;
 #endif
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSBuiltinReadableStreamDefaultReaderPrivateConstructor);

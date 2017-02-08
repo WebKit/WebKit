@@ -33,7 +33,7 @@
 #include "JSMutationObserver.h"
 
 #include "ExceptionCode.h"
-#include "JSDOMConstructor.h"
+#include "JSDOMConstructorBase.h"
 #include "JSMutationCallback.h"
 #include "JSNodeCustom.h"
 #include "MutationObserver.h"
@@ -57,7 +57,7 @@ EncodedJSValue JSC_HOST_CALL constructJSMutationObserver(ExecState& exec)
     if (!object || object->methodTable()->getCallData(object, callData) == CallType::None)
         return throwArgumentTypeError(exec, scope, 0, "callback", "MutationObserver", nullptr, "MutationCallback");
 
-    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec.jsCallee());
+    auto* jsConstructor = jsCast<JSDOMConstructorBase*>(exec.jsCallee());
     auto callback = JSMutationCallback::create(object, jsConstructor->globalObject());
     JSObject* jsObserver = asObject(toJSNewlyCreated(&exec, jsConstructor->globalObject(), MutationObserver::create(WTFMove(callback))));
     PrivateName propertyName;

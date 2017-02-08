@@ -19,15 +19,16 @@
 
 #pragma once
 
-#include "JSDOMConstructorBase.h"
+#include "JSDOMConstructorWithDocument.h"
 
 namespace WebCore {
 
-template<typename JSClass> class JSDOMConstructor : public JSDOMConstructorBase {
+// FIMXE: Why can't named constructors be used with workers?
+template<typename JSClass> class JSDOMNamedConstructor : public JSDOMConstructorWithDocument {
 public:
-    using Base = JSDOMConstructorBase;
+    using Base = JSDOMConstructorWithDocument;
 
-    static JSDOMConstructor* create(JSC::VM&, JSC::Structure*, JSDOMGlobalObject&);
+    static JSDOMNamedConstructor* create(JSC::VM&, JSC::Structure*, JSDOMGlobalObject&);
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue prototype);
 
     DECLARE_INFO;
@@ -36,9 +37,9 @@ public:
     static JSC::JSValue prototypeForStructure(JSC::VM&, const JSDOMGlobalObject&);
 
 private:
-    JSDOMConstructor(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
+    JSDOMNamedConstructor(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
         : Base(structure, globalObject)
-    {
+    { 
     }
 
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
@@ -50,30 +51,29 @@ private:
     static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::ExecState*);
 };
 
-template<typename JSClass> inline JSDOMConstructor<JSClass>* JSDOMConstructor<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
+template<typename JSClass> inline JSDOMNamedConstructor<JSClass>* JSDOMNamedConstructor<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
 {
-    JSDOMConstructor* constructor = new (NotNull, JSC::allocateCell<JSDOMConstructor>(vm.heap)) JSDOMConstructor(structure, globalObject);
+    JSDOMNamedConstructor* constructor = new (NotNull, JSC::allocateCell<JSDOMNamedConstructor>(vm.heap)) JSDOMNamedConstructor(structure, globalObject);
     constructor->finishCreation(vm, globalObject);
     return constructor;
 }
 
-template<typename JSClass> inline JSC::Structure* JSDOMConstructor<JSClass>::createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
+template<typename JSClass> inline JSC::Structure* JSDOMNamedConstructor<JSClass>::createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
 {
     return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
 }
 
-template<typename JSClass> inline void JSDOMConstructor<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
+template<typename JSClass> inline void JSDOMNamedConstructor<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
 {
-    Base::finishCreation(vm);
+    Base::finishCreation(globalObject);
     ASSERT(inherits(vm, info()));
     initializeProperties(vm, globalObject);
 }
 
-template<typename JSClass> inline JSC::ConstructType JSDOMConstructor<JSClass>::getConstructData(JSC::JSCell*, JSC::ConstructData& constructData)
+template<typename JSClass> inline JSC::ConstructType JSDOMNamedConstructor<JSClass>::getConstructData(JSC::JSCell*, JSC::ConstructData& constructData)
 {
     constructData.native.function = construct;
     return JSC::ConstructType::Host;
 }
-
 
 } // namespace WebCore

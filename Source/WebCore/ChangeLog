@@ -1,3 +1,61 @@
+2017-02-08  Sam Weinig  <sam@webkit.org>
+
+        Split JSDOMConstructor.h/cpp up by class
+        https://bugs.webkit.org/show_bug.cgi?id=167958
+
+        Reviewed by Tim Horton.
+
+        Splits JSDOMConstructor up by class.
+        - Renames DOMConstructorObject to JSDOMConstructorBase.
+        - Renames DOMConstructorWithDocument to JSDOMConstructorWithDocument.
+        - Renames DOMConstructorJSBuiltinObject to JSDOMBuiltinConstructorBase.
+        - Renames JSBuiltinConstructor to JSDOMBuiltinConstructor.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Add new files.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::propertyNameToString): Deleted.
+        (WebCore::propertyNameToAtomicString): Deleted.
+        * bindings/js/JSDOMBuiltinConstructor.h: Copied from Source/WebCore/bindings/js/JSDOMConstructor.h.
+        * bindings/js/JSDOMBuiltinConstructorBase.cpp: Copied from Source/WebCore/bindings/js/JSDOMConstructor.cpp.
+        * bindings/js/JSDOMBuiltinConstructorBase.h: Copied from Source/WebCore/bindings/js/JSDOMConstructor.h.
+        * bindings/js/JSDOMConstructor.cpp: Removed.
+        * bindings/js/JSDOMConstructor.h: Remove all classes other than JSDOMConstructor.
+        * bindings/js/JSDOMConstructorBase.cpp: Copied from Source/WebCore/bindings/js/JSDOMConstructor.cpp.
+        * bindings/js/JSDOMConstructorBase.h: Copied from Source/WebCore/bindings/js/JSDOMConstructor.h.
+        * bindings/js/JSDOMConstructorNotConstructable.h: Copied from Source/WebCore/bindings/js/JSDOMConstructor.h.
+        * bindings/js/JSDOMConstructorWithDocument.cpp: Copied from Source/WebCore/bindings/js/JSDOMConstructor.cpp.
+        * bindings/js/JSDOMConstructorWithDocument.h: Copied from Source/WebCore/bindings/js/JSDOMConstructor.h.
+        * bindings/js/JSDOMNamedConstructor.h: Copied from Source/WebCore/bindings/js/JSDOMConstructor.h.
+
+        * bindings/js/JSDOMConvertStrings.h:
+        (WebCore::propertyNameToString):
+        (WebCore::propertyNameToAtomicString):
+        Move these here from JSDOMBinding.
+
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::constructJSHTMLElement):
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::constructJSMutationObserver):
+        * bindings/js/JSReadableStreamPrivateConstructors.cpp:
+        * bindings/js/JSStorageCustom.cpp:
+        * bindings/js/JSUserMessageHandlersNamespaceCustom.cpp:
+        (WebCore::JSUserMessageHandlersNamespace::getOwnPropertySlotDelegate):
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::constructJSWorker):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetConstructorTemplateClassName):
+        (GenerateConstructorDeclaration):
+        Update includes/names.
+
+        * dom/StaticRange.cpp:
+        (WebCore::StaticRange::~StaticRange):
+        * dom/StaticRange.h:
+        Add out-of-line destructor, so Node.h does not have to be included.
+
 2017-02-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Initialize the main RunLoop in iOS WebKitLegacy

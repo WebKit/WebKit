@@ -23,7 +23,7 @@
 
 #include "JSDOMBinding.h"
 #include "JSDOMBindingCaller.h"
-#include "JSDOMConstructor.h"
+#include "JSDOMBuiltinConstructor.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWrapperCache.h"
 #include "TestJSBuiltinConstructorBuiltins.h"
@@ -72,7 +72,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-using JSTestJSBuiltinConstructorConstructor = JSBuiltinConstructor<JSTestJSBuiltinConstructor>;
+using JSTestJSBuiltinConstructorConstructor = JSDOMBuiltinConstructor<JSTestJSBuiltinConstructor>;
 
 template<> JSValue JSTestJSBuiltinConstructorConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {

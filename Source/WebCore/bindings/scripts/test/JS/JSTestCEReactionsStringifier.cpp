@@ -24,7 +24,7 @@
 #include "CustomElementReactionQueue.h"
 #include "JSDOMBinding.h"
 #include "JSDOMBindingCaller.h"
-#include "JSDOMConstructor.h"
+#include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWrapperCache.h"

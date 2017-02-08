@@ -57,17 +57,6 @@ JSC::JSValue jsOwnedStringOrNull(JSC::ExecState*, const String&);
 
 WEBCORE_EXPORT bool hasIteratorMethod(JSC::ExecState&, JSC::JSValue);
 
-inline String propertyNameToString(JSC::PropertyName propertyName)
-{
-    ASSERT(!propertyName.isSymbol());
-    return propertyName.uid() ? propertyName.uid() : propertyName.publicName();
-}
-
-inline AtomicString propertyNameToAtomicString(JSC::PropertyName propertyName)
-{
-    return AtomicString(propertyName.uid() ? propertyName.uid() : propertyName.publicName());
-}
-
 template<JSC::NativeFunction nativeFunction, int length> JSC::EncodedJSValue nonCachingStaticFunctionGetter(JSC::ExecState* exec, JSC::EncodedJSValue, JSC::PropertyName propertyName)
 {
     return JSC::JSValue::encode(JSC::JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), length, propertyName.publicName(), nativeFunction));

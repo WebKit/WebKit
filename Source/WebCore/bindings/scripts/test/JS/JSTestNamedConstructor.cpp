@@ -23,9 +23,10 @@
 
 #include "JSDOMBinding.h"
 #include "JSDOMBindingCaller.h"
-#include "JSDOMConstructor.h"
+#include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMNamedConstructor.h"
 #include "JSDOMWrapperCache.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>

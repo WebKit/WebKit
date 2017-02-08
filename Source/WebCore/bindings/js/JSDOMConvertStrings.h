@@ -45,6 +45,17 @@ WEBCORE_EXPORT String valueToByteString(JSC::ExecState&, JSC::JSValue);
 WEBCORE_EXPORT String identifierToUSVString(JSC::ExecState&, const JSC::Identifier&);
 WEBCORE_EXPORT String valueToUSVString(JSC::ExecState&, JSC::JSValue);
 
+inline String propertyNameToString(JSC::PropertyName propertyName)
+{
+    ASSERT(!propertyName.isSymbol());
+    return propertyName.uid() ? propertyName.uid() : propertyName.publicName();
+}
+
+inline AtomicString propertyNameToAtomicString(JSC::PropertyName propertyName)
+{
+    return AtomicString(propertyName.uid() ? propertyName.uid() : propertyName.publicName());
+}
+
 // MARK: -
 // MARK: String types
 

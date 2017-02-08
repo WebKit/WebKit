@@ -6012,7 +6012,7 @@ sub GetConstructorTemplateClassName
     my $interface = shift;
     return "JSDOMConstructorNotConstructable" if $interface->extendedAttributes->{NamedConstructor};
     return "JSDOMConstructorNotConstructable" unless IsConstructable($interface);
-    return "JSBuiltinConstructor" if IsJSBuiltinConstructor($interface);
+    return "JSDOMBuiltinConstructor" if IsJSBuiltinConstructor($interface);
     return "JSDOMConstructor";
 }
 
@@ -6024,7 +6024,8 @@ sub GenerateConstructorDeclaration
     my $constructorClassName = "${className}Constructor";
     my $templateClassName = GetConstructorTemplateClassName($interface);
 
-    $implIncludes{"JSDOMConstructor.h"} = 1;
+    AddToImplIncludes("${templateClassName}.h");
+    AddToImplIncludes("JSDOMNamedConstructor.h") if $interface->extendedAttributes->{NamedConstructor};
 
     push(@$outputArray, "using $constructorClassName = $templateClassName<$className>;\n");
     push(@$outputArray, "using JS${interfaceName}NamedConstructor = JSDOMNamedConstructor<$className>;\n") if $interface->extendedAttributes->{NamedConstructor};

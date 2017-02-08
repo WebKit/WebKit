@@ -24,7 +24,7 @@
 
 #include "JSTestCallbackInterface.h"
 
-#include "JSDOMConstructor.h"
+#include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvert.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMStringList.h"

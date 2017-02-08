@@ -28,28 +28,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DOMConstructorObject);
-STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DOMConstructorWithDocument);
-    
-void callFunctionWithCurrentArguments(JSC::ExecState& state, JSC::JSObject& thisObject, JSC::JSFunction& function)
-{
-    JSC::CallData callData;
-    JSC::CallType callType = JSC::getCallData(&function, callData);
-    ASSERT(callType != CallType::None);
-
-    JSC::MarkedArgumentBuffer arguments;
-    for (unsigned i = 0; i < state.argumentCount(); ++i)
-        arguments.append(state.uncheckedArgument(i));
-    JSC::call(&state, &function, callType, callData, &thisObject, arguments);
-}
-
-void DOMConstructorJSBuiltinObject::visitChildren(JSC::JSCell* cell, JSC::SlotVisitor& visitor)
-{
-    auto* thisObject = jsCast<DOMConstructorJSBuiltinObject*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_initializeFunction);
-}
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDOMConstructorBase);
 
 static EncodedJSValue JSC_HOST_CALL callThrowTypeError(ExecState* exec)
 {
@@ -59,7 +38,7 @@ static EncodedJSValue JSC_HOST_CALL callThrowTypeError(ExecState* exec)
     return JSValue::encode(jsNull());
 }
 
-CallType DOMConstructorObject::getCallData(JSCell*, CallData& callData)
+CallType JSDOMConstructorBase::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callThrowTypeError;
     return CallType::Host;

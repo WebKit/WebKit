@@ -28,7 +28,8 @@
 #include "JSWorker.h"
 
 #include "Document.h"
-#include "JSDOMConstructor.h"
+#include "JSDOMConstructorBase.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWindowCustom.h"
@@ -44,14 +45,14 @@ EncodedJSValue JSC_HOST_CALL constructJSWorker(ExecState& state)
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(jsCast<DOMConstructorObject*>(state.jsCallee()));
-    ASSERT(jsCast<DOMConstructorObject*>(state.jsCallee())->globalObject());
-    auto& globalObject = *jsCast<DOMConstructorObject*>(state.jsCallee())->globalObject();
+    ASSERT(jsCast<JSDOMConstructorBase*>(state.jsCallee()));
+    ASSERT(jsCast<JSDOMConstructorBase*>(state.jsCallee())->globalObject());
+    auto& globalObject = *jsCast<JSDOMConstructorBase*>(state.jsCallee())->globalObject();
 
     if (!state.argumentCount())
         return throwVMError(&state, scope, createNotEnoughArgumentsError(&state));
 
-    String scriptURL = state.uncheckedArgument(0).toWTFString(&state);
+    auto scriptURL = convert<IDLDOMString>(state, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // See section 4.8.2 step 14 of WebWorkers for why this is the lexicalGlobalObject.

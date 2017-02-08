@@ -20,14 +20,15 @@
 #pragma once
 
 #include "JSDOMConstructorBase.h"
+#include "JSDOMExceptionHandling.h"
 
 namespace WebCore {
 
-template<typename JSClass> class JSDOMConstructor : public JSDOMConstructorBase {
+template<typename JSClass> class JSDOMConstructorNotConstructable : public JSDOMConstructorBase {
 public:
     using Base = JSDOMConstructorBase;
 
-    static JSDOMConstructor* create(JSC::VM&, JSC::Structure*, JSDOMGlobalObject&);
+    static JSDOMConstructorNotConstructable* create(JSC::VM&, JSC::Structure*, JSDOMGlobalObject&);
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue prototype);
 
     DECLARE_INFO;
@@ -36,44 +37,48 @@ public:
     static JSC::JSValue prototypeForStructure(JSC::VM&, const JSDOMGlobalObject&);
 
 private:
-    JSDOMConstructor(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
+    JSDOMConstructorNotConstructable(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
         : Base(structure, globalObject)
     {
     }
 
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
-    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 
     // Usually defined for each specialization class.
     void initializeProperties(JSC::VM&, JSDOMGlobalObject&) { }
-    // Must be defined for each specialization class.
-    static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::ExecState*);
+
+    static JSC::EncodedJSValue JSC_HOST_CALL callThrowTypeError(JSC::ExecState* exec)
+    {
+        JSC::VM& vm = exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        JSC::throwTypeError(exec, scope, ASCIILiteral("Illegal constructor"));
+        return JSC::JSValue::encode(JSC::jsNull());
+    }
+
+    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData& callData)
+    {
+        callData.native.function = callThrowTypeError;
+        return JSC::CallType::Host;
+    }
 };
 
-template<typename JSClass> inline JSDOMConstructor<JSClass>* JSDOMConstructor<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
+template<typename JSClass> inline JSDOMConstructorNotConstructable<JSClass>* JSDOMConstructorNotConstructable<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
 {
-    JSDOMConstructor* constructor = new (NotNull, JSC::allocateCell<JSDOMConstructor>(vm.heap)) JSDOMConstructor(structure, globalObject);
+    JSDOMConstructorNotConstructable* constructor = new (NotNull, JSC::allocateCell<JSDOMConstructorNotConstructable>(vm.heap)) JSDOMConstructorNotConstructable(structure, globalObject);
     constructor->finishCreation(vm, globalObject);
     return constructor;
 }
 
-template<typename JSClass> inline JSC::Structure* JSDOMConstructor<JSClass>::createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
+template<typename JSClass> inline JSC::Structure* JSDOMConstructorNotConstructable<JSClass>::createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
 {
     return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
 }
 
-template<typename JSClass> inline void JSDOMConstructor<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
+template<typename JSClass> inline void JSDOMConstructorNotConstructable<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     initializeProperties(vm, globalObject);
 }
-
-template<typename JSClass> inline JSC::ConstructType JSDOMConstructor<JSClass>::getConstructData(JSC::JSCell*, JSC::ConstructData& constructData)
-{
-    constructData.native.function = construct;
-    return JSC::ConstructType::Host;
-}
-
 
 } // namespace WebCore
