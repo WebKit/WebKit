@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKContentObservation_h
-#define WKContentObservation_h
+#ifndef WKContentObservationInternal_h
+#define WKContentObservationInternal_h
 
 #if TARGET_OS_IPHONE
+
+#import "WKContentObservation.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef enum
-{
-    WKContentNoChange               = 0,
-    WKContentVisibilityChange       = 2,
-    WKContentIndeterminateChange    = 1
-}   WKContentChange;
-
-WEBCORE_EXPORT void WKStopObservingContentChanges(void);
-WEBCORE_EXPORT void WKBeginObservingContentChanges(bool allowsIntedeterminateChanges);
-
-WEBCORE_EXPORT WKContentChange WKObservedContentChange(void);
-
-WEBCORE_EXPORT int WebThreadCountOfObservedContentModifiers(void);
-WEBCORE_EXPORT void WebThreadClearObservedContentModifiers(void);
+bool WKObservingContentChanges(void);
+void WKSetObservedContentChange(WKContentChange aChange);
+bool WebThreadContainsObservedContentModifier(void * aContentModifier);
+void WebThreadAddObservedContentModifier(void * aContentModifier);
+void WebThreadRemoveObservedContentModifier(void * aContentModifier);
 
 #ifdef __cplusplus
 }
@@ -53,4 +46,4 @@ WEBCORE_EXPORT void WebThreadClearObservedContentModifiers(void);
 
 #endif // TARGET_OS_IPHONE
 
-#endif // WKContentObservation_h
+#endif // WKContentObservationInternal_h

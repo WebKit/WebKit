@@ -47,6 +47,7 @@
 #include "ChromeClient.h"
 #include "Frame.h"
 #include "WKContentObservation.h"
+#include "WKContentObservationInternal.h"
 #endif
 
 namespace WebCore {

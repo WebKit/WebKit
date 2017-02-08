@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WKContentObservation.h"
+#include "WKContentObservationInternal.h"
 
 #if PLATFORM(IOS)
 

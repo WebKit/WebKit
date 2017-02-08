@@ -1,3 +1,18 @@
+2017-02-08  Aakash Jain  <aakash_jain@apple.com>
+
+        Move private methods from WKContentObservation.h to a separate header file
+        https://bugs.webkit.org/show_bug.cgi?id=167998
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCore.xcodeproj/project.pbxproj: Added WKContentObservationInternal.h
+        * platform/ios/wak/WKContentObservationInternal.h: Added.
+        * platform/ios/wak/WKContentObservation.h: Moved methods to WKContentObservationInternal.h
+        * platform/ios/wak/WKContentObservation.cpp: Included new header file.
+        * page/DOMTimer.cpp: Same.
+        * page/DOMWindow.cpp: Same.
+        * style/RenderTreeUpdater.cpp: Same.
+
 2017-02-08  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection constructor can take null as input

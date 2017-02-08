@@ -142,6 +142,7 @@
 
 #if PLATFORM(IOS)
 #include "WKContentObservation.h"
+#include "WKContentObservationInternal.h"
 #endif
 
 using namespace Inspector;
