@@ -61,4 +61,12 @@ void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithValue(WebPageProxy*
     m_client.logDiagnosticMessageWithValue(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), toAPI(value.impl()), m_client.base.clientInfo);
 }
 
+void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(WebPageProxy* page, const String& message, const String& description)
+{
+    if (!m_client.logDiagnosticMessageWithEnhancedPrivacy)
+        return;
+
+    m_client.logDiagnosticMessageWithEnhancedPrivacy(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), m_client.base.clientInfo);
+}
+
 } // namespace WebKit

@@ -42,6 +42,7 @@ public:
     virtual void logDiagnosticMessage(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description) { UNUSED_PARAM(message); UNUSED_PARAM(description); }
     virtual void logDiagnosticMessageWithResult(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, WebCore::DiagnosticLoggingResultType) { UNUSED_PARAM(message); UNUSED_PARAM(description); }
     virtual void logDiagnosticMessageWithValue(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, const WTF::String& value) { UNUSED_PARAM(message); UNUSED_PARAM(description); UNUSED_PARAM(value); }
+    virtual void logDiagnosticMessageWithEnhancedPrivacy(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description) { UNUSED_PARAM(message); UNUSED_PARAM(description); }
 };
 
 } // namespace API

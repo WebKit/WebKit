@@ -343,6 +343,11 @@ String DiagnosticLoggingKeys::documentLoaderStoppingKey()
     return ASCIILiteral("documentLoaderStopping");
 }
 
+String DiagnosticLoggingKeys::domainVisitedKey()
+{
+    return ASCIILiteral("DomainVisited");
+}
+
 String DiagnosticLoggingKeys::cannotSuspendActiveDOMObjectsKey()
 {
     return ASCIILiteral("cannotSuspendActiveDOMObjects");

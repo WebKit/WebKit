@@ -36,6 +36,7 @@ extern "C" {
 typedef void (*WKPageLogDiagnosticMessageCallback)(WKPageRef page, WKStringRef message, WKStringRef description, const void* clientInfo);
 typedef void (*WKPageLogDiagnosticMessageWithResultCallback)(WKPageRef page, WKStringRef message, WKStringRef description, WKDiagnosticLoggingResultType result, const void* clientInfo);
 typedef void (*WKPageLogDiagnosticMessageWithValueCallback)(WKPageRef page, WKStringRef message, WKStringRef description, WKStringRef value, const void* clientInfo);
+typedef void (*WKPageLogDiagnosticMessageWithEnhancedPrivacyCallback)(WKPageRef page, WKStringRef message, WKStringRef description, const void* clientInfo);
 
 typedef struct WKPageDiagnosticLoggingClientBase {
     int                                                                version;
@@ -50,6 +51,18 @@ typedef struct WKPageDiagnosticLoggingClientV0 {
     WKPageLogDiagnosticMessageWithResultCallback                       logDiagnosticMessageWithResult;
     WKPageLogDiagnosticMessageWithValueCallback                        logDiagnosticMessageWithValue;
 } WKPageDiagnosticLoggingClientV0;
+
+typedef struct WKPageDiagnosticLoggingClientV1 {
+    WKPageDiagnosticLoggingClientBase                                  base;
+
+    // Version 0.
+    WKPageLogDiagnosticMessageCallback                                 logDiagnosticMessage;
+    WKPageLogDiagnosticMessageWithResultCallback                       logDiagnosticMessageWithResult;
+    WKPageLogDiagnosticMessageWithValueCallback                        logDiagnosticMessageWithValue;
+
+    // Version 1.
+    WKPageLogDiagnosticMessageWithEnhancedPrivacyCallback              logDiagnosticMessageWithEnhancedPrivacy;
+} WKPageDiagnosticLoggingClientV1;
 
 #ifdef __cplusplus
 }

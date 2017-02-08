@@ -50,6 +50,7 @@ void DiagnosticLoggingClient::setDelegate(id <_WKDiagnosticLoggingDelegate> dele
     m_delegateMethods.webviewLogDiagnosticMessage = [delegate respondsToSelector:@selector(_webView:logDiagnosticMessage:description:)];
     m_delegateMethods.webviewLogDiagnosticMessageWithResult = [delegate respondsToSelector:@selector(_webView:logDiagnosticMessageWithResult:description:result:)];
     m_delegateMethods.webviewLogDiagnosticMessageWithValue = [delegate respondsToSelector:@selector(_webView:logDiagnosticMessageWithValue:description:value:)];
+    m_delegateMethods.webviewLogDiagnosticMessageWithEnhancedPrivacy = [delegate respondsToSelector:@selector(_webView:logDiagnosticMessageWithEnhancedPrivacy:description:)];
 }
 
 void DiagnosticLoggingClient::logDiagnosticMessage(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description)
@@ -80,6 +81,12 @@ void DiagnosticLoggingClient::logDiagnosticMessageWithValue(WebKit::WebPageProxy
 {
     if (m_delegateMethods.webviewLogDiagnosticMessageWithValue)
         [m_delegate.get() _webView:m_webView logDiagnosticMessageWithValue:message description:description value:value];
+}
+
+void DiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description)
+{
+    if (m_delegateMethods.webviewLogDiagnosticMessageWithEnhancedPrivacy)
+        [m_delegate.get() _webView:m_webView logDiagnosticMessageWithEnhancedPrivacy:message description:description];
 }
 
 } // namespace WebKit

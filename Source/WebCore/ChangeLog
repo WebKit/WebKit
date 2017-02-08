@@ -1,3 +1,24 @@
+2017-02-08  Chris Dumez  <cdumez@apple.com>
+
+        Add support for enhanced privacy diagnostic logging
+        https://bugs.webkit.org/show_bug.cgi?id=167948
+        <rdar://problem/30385112>
+
+        Reviewed by Antti Koivisto.
+
+        Add new logDiagnosticMessageWithEnhancedPrivacy() method to DiagnosticLoggingClient
+        that is used for enhanced privacy logging. Start using this new API to log domains
+        that are visited.
+
+        * loader/EmptyClients.cpp:
+        * loader/FrameLoader.cpp:
+        (WebCore::logNavigation):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        * page/DiagnosticLoggingClient.h:
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::domainVisitedKey):
+        * page/DiagnosticLoggingKeys.h:
+
 2017-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] Critical warnings when media player is destroyed

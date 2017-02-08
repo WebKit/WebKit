@@ -40,6 +40,7 @@ public:
     virtual void logDiagnosticMessage(const String& message, const String& description, ShouldSample) = 0;
     virtual void logDiagnosticMessageWithResult(const String& message, const String& description, DiagnosticLoggingResultType, ShouldSample) = 0;
     virtual void logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, ShouldSample) = 0;
+    virtual void logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, ShouldSample) = 0;
 
     static bool shouldLogAfterSampling(ShouldSample);
 
