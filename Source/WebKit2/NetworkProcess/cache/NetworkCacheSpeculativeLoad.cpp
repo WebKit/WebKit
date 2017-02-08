@@ -67,11 +67,23 @@ SpeculativeLoad::~SpeculativeLoad()
     ASSERT(!m_networkLoad);
 }
 
-void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
+void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
-    LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Speculative revalidation for %s hit a redirect, aborting the load.", redirectResponse.url().string().utf8().data());
-    // We drop speculative revalidations if they redirect for now as we would need to notify WebCore of such redirects.
-    abort();
+    LOG(NetworkCacheSpeculativePreloading, "Speculative redirect %s -> %s", request.url().string().utf8().data(), redirectRequest.url().string().utf8().data());
+
+    m_cacheEntry = NetworkCache::singleton().storeRedirect(request, redirectResponse, redirectRequest);
+    // Create a synthetic cache entry if we can't store.
+    if (!m_cacheEntry)
+        m_cacheEntry = NetworkCache::singleton().makeRedirectEntry(request, redirectResponse, redirectRequest);
+
+    auto load = WTFMove(m_networkLoad);
+
+    // Don't follow the redirect. The redirect target will be registered for speculative load when it is loaded.
+    didComplete();
+
+    // This causes call to didFailLoading().
+    if (load)
+        load->continueWillSendRequest({ });
 }
 
 auto SpeculativeLoad::didReceiveResponse(ResourceResponse&& receivedResponse) -> ShouldContinueDidReceiveResponse
@@ -106,8 +118,10 @@ void SpeculativeLoad::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedE
 
 void SpeculativeLoad::didFinishLoading(double finishTime)
 {
+    if (m_didComplete)
+        return;
     if (!m_cacheEntry && m_bufferedDataForCache) {
-        m_cacheEntry = NetworkCache::singleton().store(m_originalRequest, m_response, WTFMove(m_bufferedDataForCache), [](auto& mappedBody) { });
+        m_cacheEntry = NetworkCache::singleton().store(m_originalRequest, m_response, m_bufferedDataForCache.copyRef(), [](auto& mappedBody) { });
         // Create a synthetic cache entry if we can't store.
         if (!m_cacheEntry && m_response.httpStatusCode() == 200)
             m_cacheEntry = NetworkCache::singleton().makeEntry(m_originalRequest, m_response, WTFMove(m_bufferedDataForCache));
@@ -125,17 +139,10 @@ void SpeculativeLoad::canAuthenticateAgainstProtectionSpaceAsync(const WebCore::
 
 void SpeculativeLoad::didFailLoading(const ResourceError&)
 {
+    if (m_didComplete)
+        return;
     m_cacheEntry = nullptr;
 
-    didComplete();
-}
-
-void SpeculativeLoad::abort()
-{
-    if (m_networkLoad)
-        m_networkLoad->cancel();
-
-    m_cacheEntry = nullptr;
     didComplete();
 }
 
@@ -143,6 +150,9 @@ void SpeculativeLoad::didComplete()
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
+    if (m_didComplete)
+        return;
+    m_didComplete = true;
     m_networkLoad = nullptr;
 
     // Make sure speculatively revalidated resources do not get validated by the NetworkResourceLoader again.
