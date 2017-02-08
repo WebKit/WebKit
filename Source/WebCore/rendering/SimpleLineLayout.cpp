@@ -76,7 +76,7 @@ enum AvoidanceReason_ : uint64_t {
     FlowHasUnsupportedFloat               = 1LLU  << 10,
     FlowHasUnsupportedUnderlineDecoration = 1LLU  << 11,
     FlowHasJustifiedNonLatinText          = 1LLU  << 12,
-    FlowHasOverflowVisible                = 1LLU  << 13,
+    FlowHasOverflowNotVisible             = 1LLU  << 13,
     FlowHasWebKitNBSPMode                 = 1LLU  << 14,
     FlowIsNotLTR                          = 1LLU  << 15,
     FlowHasLineBoxContainProperty         = 1LLU  << 16,
@@ -256,7 +256,7 @@ static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, IncludeReas
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedUnderlineDecoration, reasons, includeReasons);
     // Non-visible overflow should be pretty easy to support.
     if (style.overflowX() != OVISIBLE || style.overflowY() != OVISIBLE)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowVisible, reasons, includeReasons);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowNotVisible, reasons, includeReasons);
     if (!style.isLeftToRightDirection())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotLTR, reasons, includeReasons);
     if (!(style.lineBoxContain() & LineBoxContainBlock))
@@ -995,8 +995,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case FlowHasJustifiedNonLatinText:
         stream << "text-align: justify with non-latin text";
         break;
-    case FlowHasOverflowVisible:
-        stream << "overflow: visible";
+    case FlowHasOverflowNotVisible:
+        stream << "overflow: hidden | scroll | auto";
         break;
     case FlowHasWebKitNBSPMode:
         stream << "-webkit-nbsp-mode: space";

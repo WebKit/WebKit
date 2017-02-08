@@ -1,3 +1,16 @@
+2017-02-08  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Fix printReason for unsupported overflow values.
+        https://bugs.webkit.org/show_bug.cgi?id=168000
+
+        Reviewed by Simon Fraser.
+
+        Not testable.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        (WebCore::SimpleLineLayout::printReason):
+
 2017-02-08  Aakash Jain  <aakash_jain@apple.com>
 
         Remove WebCoreObjCDeallocWithWebThreadLock from header file
