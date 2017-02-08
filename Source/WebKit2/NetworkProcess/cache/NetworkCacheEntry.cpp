@@ -54,10 +54,10 @@ Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, const We
     , m_varyingRequestHeaders(varyingRequestHeaders)
 {
     ASSERT(m_key.type() == "Resource");
-    // Redirect body is not needed even if exists.
 
-    m_redirectRequest = std::make_unique<WebCore::ResourceRequest>();
+    m_redirectRequest.emplace();
     m_redirectRequest->setAsIsolatedCopy(redirectRequest);
+    // Redirect body is not needed even if exists.
     m_redirectRequest->setHTTPBody(nullptr);
 }
 
@@ -66,6 +66,7 @@ Entry::Entry(const Entry& other)
     , m_timeStamp(other.m_timeStamp)
     , m_response(other.m_response)
     , m_varyingRequestHeaders(other.m_varyingRequestHeaders)
+    , m_redirectRequest(other.m_redirectRequest)
     , m_buffer(other.m_buffer)
     , m_sourceStorageRecord(other.m_sourceStorageRecord)
 {
@@ -129,7 +130,7 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
         return nullptr;
 
     if (isRedirect) {
-        entry->m_redirectRequest = std::make_unique<WebCore::ResourceRequest>();
+        entry->m_redirectRequest.emplace();
         if (!entry->m_redirectRequest->decodeWithoutPlatformData(decoder))
             return nullptr;
     }

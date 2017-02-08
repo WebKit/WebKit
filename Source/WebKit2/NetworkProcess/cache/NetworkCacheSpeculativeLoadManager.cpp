@@ -345,7 +345,9 @@ bool SpeculativeLoadManager::canRetrieve(const Key& storageKey, const WebCore::R
 void SpeculativeLoadManager::retrieve(const Key& storageKey, RetrieveCompletionHandler&& completionHandler)
 {
     if (auto preloadedEntry = m_preloadedEntries.take(storageKey)) {
-        completionHandler(preloadedEntry->takeCacheEntry());
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), cacheEntry = preloadedEntry->takeCacheEntry()] () mutable {
+            completionHandler(WTFMove(cacheEntry));
+        });
         return;
     }
     ASSERT(m_pendingPreloads.contains(storageKey));

@@ -1,3 +1,54 @@
+2017-02-08  Antti Koivisto  <antti@apple.com>
+
+        Allow speculative redirects
+        https://bugs.webkit.org/show_bug.cgi?id=167982
+
+        Reviewed by Andreas Kling.
+
+        If speculative loader hits a redirect it will drop it on the floor. We should use it instead.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        (WebKit::NetworkResourceLoader::dispatchWillSendRequestForCacheEntry):
+
+            Reset m_isWaitingContinueWillSendRequestForCachedRedirect bit immediately.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::makeRedirectEntry):
+
+            Factor to a function.
+
+        (WebKit::NetworkCache::Cache::storeRedirect):
+        * NetworkProcess/cache/NetworkCache.h:
+        (WebKit::NetworkCache::Cache::speculativeLoadManager):
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::Entry):
+
+            Use std::optional instead std::unique_ptr for the redirect request.
+
+        (WebKit::NetworkCache::Entry::decodeStorageRecord):
+        * NetworkProcess/cache/NetworkCacheEntry.h:
+        (WebKit::NetworkCache::Entry::redirectRequest):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::willSendRedirectedRequest):
+
+            Make a cache entry for speculative redirect.
+            Redirect is not actually performed, the target resource will have a separate
+            speculative entry.
+
+        (WebKit::NetworkCache::SpeculativeLoad::didFinishLoading):
+        (WebKit::NetworkCache::SpeculativeLoad::didFailLoading):
+        (WebKit::NetworkCache::SpeculativeLoad::didComplete):
+
+            Protect against multiple completions.
+
+        (WebKit::NetworkCache::SpeculativeLoad::abort): Deleted.
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieve):
+
+            Make successful retrieves asynchronous to avoid re-entrancy problems.
+
 2017-02-08  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; FullscreenClient only avaialble on 32-bit builds.
