@@ -1,3 +1,15 @@
+2017-02-08  Youenn Fablet  <youenn@apple.com>
+
+        GUM is crashing in Debug mode when access is granted/denied for a page that is gone
+        https://bugs.webkit.org/show_bug.cgi?id=168003
+
+        Reviewed by Eric Carlson.
+
+        Removing the assertion since manager can be null and case is coevered by the if statement behind it.
+
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::deny):
+
 2017-02-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r211869.

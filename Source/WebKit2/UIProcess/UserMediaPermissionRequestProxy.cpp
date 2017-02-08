@@ -53,7 +53,6 @@ void UserMediaPermissionRequestProxy::allow(const String& audioDeviceUID, const 
 
 void UserMediaPermissionRequestProxy::deny(UserMediaAccessDenialReason reason)
 {
-    ASSERT(m_manager);
     if (!m_manager)
         return;
 
