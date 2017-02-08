@@ -1,5 +1,18 @@
 2017-02-07  Alex Christensen  <achristensen@webkit.org>
 
+        Move webrtc/pc to own Xcode target
+        https://bugs.webkit.org/show_bug.cgi?id=167970
+
+        Reviewed by Youenn Fablet.
+
+        It needs to include different directories than the rest of libwebrtc.
+        Also moved some target names so liblibsrtp.a is changed to libsrtp.a, etc.
+
+        * Configurations/libwebrtcpcrtc.xcconfig: Added.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2017-02-07  Alex Christensen  <achristensen@webkit.org>
+
         [libwebrtc] Move libsrtp and libyuv to own Xcode targets
         https://bugs.webkit.org/show_bug.cgi?id=167966
 
