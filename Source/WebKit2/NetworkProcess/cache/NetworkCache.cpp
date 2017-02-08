@@ -395,11 +395,6 @@ std::unique_ptr<Entry> Cache::makeEntry(const WebCore::ResourceRequest& request,
     return std::make_unique<Entry>(makeCacheKey(request), response, WTFMove(responseData), WebCore::collectVaryingRequestHeaders(request, response));
 }
 
-std::unique_ptr<Entry> Cache::makeRedirectEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest)
-{
-    return std::make_unique<Entry>(makeCacheKey(request), response, redirectRequest, WebCore::collectVaryingRequestHeaders(request, response));
-}
-
 std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, Function<void (MappedBody&)>&& completionHandler)
 {
     ASSERT(isEnabled());
@@ -459,7 +454,8 @@ std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& requ
         return nullptr;
     }
 
-    auto cacheEntry = makeRedirectEntry(request, response, redirectRequest);
+    std::unique_ptr<Entry> cacheEntry = std::make_unique<Entry>(makeCacheKey(request), response, redirectRequest, WebCore::collectVaryingRequestHeaders(request, response));
+
     auto record = cacheEntry->encodeAsStorageRecord();
 
     m_storage->store(record, nullptr);

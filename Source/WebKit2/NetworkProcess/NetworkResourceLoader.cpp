@@ -476,8 +476,6 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
 
 #if ENABLE(NETWORK_CACHE)
     if (m_isWaitingContinueWillSendRequestForCachedRedirect) {
-        m_isWaitingContinueWillSendRequestForCachedRedirect = false;
-
         LOG(NetworkCache, "(NetworkProcess) Retrieving cached redirect");
 
         if (canUseCachedRedirect(newRequest))
@@ -485,6 +483,7 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
         else
             startNetworkLoad(newRequest);
 
+        m_isWaitingContinueWillSendRequestForCachedRedirect = false;
         return;
     }
 #endif
@@ -644,8 +643,6 @@ void NetworkResourceLoader::validateCacheEntry(std::unique_ptr<NetworkCache::Ent
 void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
 {
     ASSERT(entry->redirectRequest());
-    ASSERT(!m_isWaitingContinueWillSendRequestForCachedRedirect);
-
     LOG(NetworkCache, "(NetworkProcess) Executing cached redirect");
 
     ++m_redirectCount;

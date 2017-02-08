@@ -64,6 +64,7 @@ private:
     void didFinishLoading(double finishTime) override;
     void didFailLoading(const WebCore::ResourceError&) override;
 
+    void abort();
     void didComplete();
 
     GlobalFrameID m_frameID;
@@ -76,7 +77,6 @@ private:
 
     RefPtr<WebCore::SharedBuffer> m_bufferedDataForCache;
     std::unique_ptr<NetworkCache::Entry> m_cacheEntry;
-    bool m_didComplete { false };
 };
 
 } // namespace NetworkCache

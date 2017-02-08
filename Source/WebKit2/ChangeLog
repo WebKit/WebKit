@@ -1,3 +1,15 @@
+2017-02-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r211869.
+
+        This change caused assertion failures on macOS WK2.
+
+        Reverted changeset:
+
+        "Allow speculative redirects"
+        https://bugs.webkit.org/show_bug.cgi?id=167982
+        http://trac.webkit.org/changeset/211869
+
 2017-02-08  Eric Carlson  <eric.carlson@apple.com>
 
         Add WebRTC as an off-by-default experimental feature menu item.
