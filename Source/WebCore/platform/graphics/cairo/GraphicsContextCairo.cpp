@@ -70,8 +70,9 @@ namespace WebCore {
 // A helper which quickly fills a rectangle with a simple color fill.
 static inline void fillRectWithColor(cairo_t* cr, const FloatRect& rect, const Color& color)
 {
-    if (!color.alpha() && cairo_get_operator(cr) == CAIRO_OPERATOR_OVER)
+    if (!color.isVisible() && cairo_get_operator(cr) == CAIRO_OPERATOR_OVER)
         return;
+
     setSourceRGBAFromColor(cr, color);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_fill(cr);
@@ -387,7 +388,7 @@ void GraphicsContext::drawEllipse(const FloatRect& rect)
     cairo_arc(cr, 0., 0., 1., 0., 2 * piFloat);
     cairo_restore(cr);
 
-    if (fillColor().alpha()) {
+    if (fillColor().isVisible()) {
         setSourceRGBAFromColor(cr, fillColor());
         cairo_fill_preserve(cr);
     }

@@ -41,10 +41,12 @@ Color::Color(const GdkRGBA& c)
 
 Color::operator GdkRGBA() const
 {
+    if (isExtended())
+        return { asExtended().red(), asExtended().green(), asExtended().blue(), asExtended().alpha() };
+
     double red, green, blue, alpha;
     getRGBA(red, green, blue, alpha);
-    GdkRGBA rgba = { red, green, blue, alpha };
-    return rgba;
+    return { red, green, blue, alpha };
 }
 #endif
 

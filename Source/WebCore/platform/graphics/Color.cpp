@@ -616,15 +616,16 @@ Color colorFromPremultipliedARGB(RGBA32 pixelColor)
 
 RGBA32 premultipliedARGBFromColor(const Color& color)
 {
-    unsigned pixelColor;
+    if (color.isOpaque()) {
+        if (color.isExtended())
+            return makeRGB(color.asExtended().red() * 255, color.asExtended().green() * 255, color.asExtended().blue() * 255);
+        return color.rgb();
+    }
 
-    unsigned alpha = color.alpha();
-    if (alpha < 255)
-        pixelColor = makePremultipliedRGBA(color.red(), color.green(), color.blue(), alpha);
-    else
-        pixelColor = color.rgb();
+    if (color.isExtended())
+        return makePremultipliedRGBA(color.asExtended().red() * 255, color.asExtended().green() * 255, color.asExtended().blue() * 255, color.asExtended().alpha() * 255);
 
-    return pixelColor;
+    return makePremultipliedRGBA(color.red(), color.green(), color.blue(), color.alpha());
 }
 
 Color blend(const Color& from, const Color& to, double progress, bool blendPremultiplied)

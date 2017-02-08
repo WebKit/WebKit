@@ -66,9 +66,13 @@ void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)
 
 void setSourceRGBAFromColor(cairo_t* context, const Color& color)
 {
-    float red, green, blue, alpha;
-    color.getRGBA(red, green, blue, alpha);
-    cairo_set_source_rgba(context, red, green, blue, alpha);
+    if (color.isExtended())
+        cairo_set_source_rgba(context, color.asExtended().red(), color.asExtended().green(), color.asExtended().blue(), color.asExtended().alpha());
+    else {
+        float red, green, blue, alpha;
+        color.getRGBA(red, green, blue, alpha);
+        cairo_set_source_rgba(context, red, green, blue, alpha);
+    }
 }
 
 void appendPathToCairoContext(cairo_t* to, cairo_t* from)

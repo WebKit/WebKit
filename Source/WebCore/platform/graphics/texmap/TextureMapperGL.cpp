@@ -246,9 +246,15 @@ void TextureMapperGL::drawNumber(int number, const Color& color, const FloatPoin
     cairo_surface_t* surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
     cairo_t* cr = cairo_create(surface);
 
-    float r, g, b, a;
-    color.getRGBA(r, g, b, a);
-    cairo_set_source_rgba(cr, b, g, r, a); // Since we won't swap R+B when uploading a texture, paint with the swapped R+B color.
+    // Since we won't swap R+B when uploading a texture, paint with the swapped R+B color.
+    if (color.isExtended())
+        cairo_set_source_rgba(cr, color.asExtended().blue(), color.asExtended().green(), color.asExtended().red(), color.asExtended().alpha());
+    else {
+        float r, g, b, a;
+        color.getRGBA(r, g, b, a);
+        cairo_set_source_rgba(cr, b, g, r, a);
+    }
+
     cairo_rectangle(cr, 0, 0, width, height);
     cairo_fill(cr);
 

@@ -1,3 +1,32 @@
+2017-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Handle extended colors in cairo and texture mapper backends
+        https://bugs.webkit.org/show_bug.cgi?id=167943
+
+        Reviewed by Michael Catanzaro.
+
+        Fixes: css3/color/backgrounds-and-borders.html
+               css3/color/box-shadows.html
+               css3/color/canvas.html
+               css3/color/composited-solid-backgrounds.html
+               css3/color/text.html
+
+        * platform/graphics/Color.cpp:
+        (WebCore::premultipliedARGBFromColor): Handle the case of color being extended.
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::setSourceRGBAFromColor): Ditto.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::fillRectWithColor): Use isVisible() instead of alpha().
+        (WebCore::GraphicsContext::drawEllipse): Ditto.
+        * platform/graphics/gtk/ColorGtk.cpp:
+        (WebCore::Color::operator GdkRGBA): Handle the case of color being extended.
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawNumber): Ditto.
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::blendWithOpacity): Ditto.
+        (WebCore::TextureMapperLayer::paintSelf): Use isVisible() instead of alpha().
+        (WebCore::TextureMapperLayer::computeOverlapRegions): Ditto.
+
 2017-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WebItemProviderPasteboard should use -registerLoadHandlersToItemProvider: when creating a new UIItemProvider
