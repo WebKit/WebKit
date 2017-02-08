@@ -1,3 +1,52 @@
+2017-02-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add kUTTypeUTF8PlainText and kUTTypeJPEG to the list of compatible content types in DragData
+        https://bugs.webkit.org/show_bug.cgi?id=167942
+        <rdar://problem/30315079>
+
+        Reviewed by Tim Horton.
+
+        Adds a new test case that simulates dragging from a source that only vends JPEG images or UTF8 plaintext into a
+        contenteditable area. An image element and the plain text content, respectively, should be inserted into the
+        contenteditable in these cases.
+
+        The DragSource and DragInfo are used to mock dragging into the WebView. There is no reliance on using mouse
+        events in this test, since we call the dragging delegate methods (draggingEntered:, draggingUpdated:, and
+        performDragOperation:) directly.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/DragAndDropPasteboardTests.mm: Added.
+        (+[FrameLoadCompletionListener listenerWithCompletionBlock:]):
+        (-[FrameLoadCompletionListener initWithCompletionBlock:]):
+        (-[FrameLoadCompletionListener webView:didFinishLoadForFrame:]):
+        (-[DragSource draggingSourceOperationMaskForLocal:]):
+        (-[DragInfo initWithImage:offset:pasteboard:source:destinationWindow:]):
+        (-[DragInfo lastMousePosition]):
+        (-[DragInfo setLastMousePosition:]):
+        (-[DragInfo draggingDestinationWindow]):
+        (-[DragInfo draggingSourceOperationMask]):
+        (-[DragInfo draggingLocation]):
+        (-[DragInfo draggedImageLocation]):
+        (-[DragInfo draggedImage]):
+        (-[DragInfo draggingPasteboard]):
+        (-[DragInfo draggingSource]):
+        (-[DragInfo draggingSequenceNumber]):
+        (-[DragInfo slideDraggedImageTo:]):
+        (-[DragInfo namesOfPromisedFilesDroppedAtDestination:]):
+        (-[DragInfo draggingFormation]):
+        (-[DragInfo setDraggingFormation:]):
+        (-[DragInfo animatesToDestination]):
+        (-[DragInfo setAnimatesToDestination:]):
+        (-[DragInfo numberOfValidItemsForDrop]):
+        (-[DragInfo setNumberOfValidItemsForDrop:]):
+        (-[DragInfo enumerateDraggingItemsWithOptions:forView:classes:searchOptions:usingBlock:]):
+        (-[DragInfo springLoadingHighlight]):
+        (-[DragInfo resetSpringLoading]):
+        (TestWebKitAPI::getTestImage):
+        (TestWebKitAPI::webViewAfterPerformingDragOperation):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/full-page-contenteditable.html: Added.
+
 2017-02-08  Jer Noble  <jer.noble@apple.com>
 
         Move FullscreenClient creation into WebViewImpl, for use in (deprecated) WKView.
