@@ -42,6 +42,7 @@
 #import <runtime/JSLock.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
+#import <wtf/RunLoop.h>
 #import <wtf/Threading.h>
 #import <wtf/text/AtomicString.h>
 
@@ -710,6 +711,8 @@ static void StartWebThread()
 
     // Initialize AtomicString on the main thread.
     WTF::AtomicString::init();
+
+    RunLoop::initializeMainRunLoop();
 
     // register class for WebThread deallocation
     WebCoreObjCDeallocOnWebThread([WAKWindow class]);
