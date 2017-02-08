@@ -105,7 +105,6 @@ template <> void derefGPtr<GstCaps>(GstCaps* ptr)
 
 template <> GRefPtr<GstContext> adoptGRef(GstContext* ptr)
 {
-    ASSERT(!g_object_is_floating(ptr));
     return GRefPtr<GstContext>(ptr, GRefPtrAdopt);
 }
 
