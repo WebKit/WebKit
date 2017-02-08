@@ -24,7 +24,6 @@
 #include "CustomProtocolManagerImpl.h"
 #include "CustomProtocolManagerMessages.h"
 #include "NetworkProcessCreationParameters.h"
-#include "WebProcessCreationParameters.h"
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {
@@ -36,14 +35,9 @@ const char* CustomProtocolManager::supplementName()
 
 CustomProtocolManager::CustomProtocolManager(ChildProcess* childProcess)
     : m_childProcess(childProcess)
-    , m_messageQueue(WorkQueue::create("com.apple.WebKit.CustomProtocolManager"))
     , m_impl(std::make_unique<CustomProtocolManagerImpl>(childProcess))
 {
-}
-
-void CustomProtocolManager::initializeConnection(IPC::Connection* connection)
-{
-    connection->addWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName(), m_messageQueue.get(), this);
+    m_childProcess->addMessageReceiver(Messages::CustomProtocolManager::messageReceiverName(), *this);
 }
 
 void CustomProtocolManager::initialize(const NetworkProcessCreationParameters& parameters)

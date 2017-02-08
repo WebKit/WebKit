@@ -27,6 +27,7 @@
 #define CustomProtocolManager_h
 
 #include "Connection.h"
+#include "MessageReceiver.h"
 #include "NetworkProcessSupplement.h"
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
@@ -59,7 +60,13 @@ namespace WebKit {
 class ChildProcess;
 struct NetworkProcessCreationParameters;
 
-class CustomProtocolManager : public NetworkProcessSupplement, public IPC::Connection::WorkQueueMessageReceiver {
+class CustomProtocolManager : public NetworkProcessSupplement
+#if PLATFORM(COCOA)
+    , public IPC::Connection::WorkQueueMessageReceiver {
+#endif
+#if USE(SOUP)
+    , public IPC::MessageReceiver {
+#endif
     WTF_MAKE_NONCOPYABLE(CustomProtocolManager);
 public:
     explicit CustomProtocolManager(ChildProcess*);
@@ -81,14 +88,16 @@ public:
 #endif
 
 private:
+#if PLATFORM(COCOA)
     // ChildProcessSupplement
     void initializeConnection(IPC::Connection*) override;
-
-    // NetworkProcessSupplement
-    void initialize(const NetworkProcessCreationParameters&) override;
+#endif
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+
+    // NetworkProcessSupplement
+    void initialize(const NetworkProcessCreationParameters&) override;
 
     void didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError&);
     void didLoadData(uint64_t customProtocolID, const IPC::DataReference&);
@@ -97,9 +106,9 @@ private:
     void wasRedirectedToRequest(uint64_t customProtocolID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
 
     ChildProcess* m_childProcess;
-    RefPtr<WorkQueue> m_messageQueue;
 
 #if PLATFORM(COCOA)
+    RefPtr<WorkQueue> m_messageQueue;
     HashSet<String, ASCIICaseInsensitiveHash> m_registeredSchemes;
     Lock m_registeredSchemesMutex;
 

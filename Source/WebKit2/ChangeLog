@@ -1,3 +1,24 @@
+2017-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Network process crash in WebKit::CustomProtocolManagerImpl::didFailWithError
+        https://bugs.webkit.org/show_bug.cgi?id=165082
+
+        CustomProtocolManager uses a Workqueue to receive the IPC messages since r149194. Then we added the Soup
+        implementation adopting that approach, but without making our implementation thread safe. The crash happens
+        because the CustomProtocolManager implementation is used by two threads at the same time, the main thread
+        because of a ping load (probably caused by an image load in the unload handler, I haven't been able to reproduce
+        the crash) and the work queue thread. I'm not sure if the reasons to make CustomProtocolManager use a WorkQueue
+        are still valid for Mac, but I don't think they are for Soup. CustomProtocolManager is now only used in the
+        network process and sync loads don't use any nested run loop, they are just an IPC sync message. So this patch
+        makes CustomProtocolManager a normal message receiver again for Soup to ensure messages are handled in the main
+        thread as expected by the Soup implementation.
+
+        * NetworkProcess/CustomProtocols/CustomProtocolManager.h:
+        (WebKit::CustomProtocolManager::childProcess): Remove WorkQueue initialization.
+        * NetworkProcess/CustomProtocols/soup/CustomProtocolManagerSoup.cpp:
+        (WebKit::CustomProtocolManager::CustomProtocolManager): Register the message receiver.
+        (WebKit::CustomProtocolManager::initializeConnection): Deleted.
+
 2017-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ debug build after r211365.
