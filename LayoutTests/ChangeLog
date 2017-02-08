@@ -1,5 +1,19 @@
 2017-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Test fast/forms/select-empty-option-height.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=167985
+
+        Reviewed by Michael Catanzaro.
+
+        This seems to be a problem with the differences in scroll step or the size of the items in the list. The thing
+        is that 10 attempts with an scroll amount of 10 is not enough in the GTk+ port to scroll the list to the desired
+        point. Either increasing the scroll amount or the maximum attempts would fix the test. Increasing the scroll
+        amount would break the test in other ports so better use a higher number of maximum attempts.
+
+        * fast/forms/listbox-respects-padding-bottom.html:
+
+2017-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Skip animations/font-variations/ tests.
 
         They are marked as ImageOnlyFailure, but are actually failing now. I think it's better to simply skip all font
