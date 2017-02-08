@@ -1,5 +1,13 @@
 2017-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Skip more tests that require drag and drop.
+
+        It's not supported by WTR. See bug #157179.
+
+        * platform/gtk/TestExpectations:
+
+2017-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Add platform specific results for drag-select-when-zoomed tests.
 
         It's quite difficult that those tests can generate common results in all ports, because the scale factor will
