@@ -249,10 +249,7 @@ void MockCDMInstance::requestLicense(LicenseType licenseType, const AtomicString
         return;
     }
 
-    if ((licenseType == LicenseType::Temporary && !factory->supportedSessionTypes().contains(MediaKeySessionType::Temporary))
-        || (licenseType == LicenseType::Persistable && !factory->supportedSessionTypes().contains(MediaKeySessionType::PersistentLicense))
-        || (licenseType == LicenseType::UsageRecord && !factory->supportedSessionTypes().contains(MediaKeySessionType::PersistentUsageRecord))
-        || !factory->supportedDataTypes().contains(initDataType)) {
+    if (!factory->supportedSessionTypes().contains(licenseType) || !factory->supportedDataTypes().contains(initDataType)) {
         callback(SharedBuffer::create(), emptyString(), false, SuccessValue::Failed);
         return;
     }

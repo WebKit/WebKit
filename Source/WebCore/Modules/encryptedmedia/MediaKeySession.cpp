@@ -165,37 +165,25 @@ void MediaKeySession::generateRequest(const AtomicString& initDataType, const Bu
         }
 
         // 10.9.2 Follow the steps for the value of session type from the following list:
-        CDMInstance::LicenseType requestedLicenseType;
-        switch (m_sessionType) {
-        case MediaKeySessionType::Temporary:
-            // ↳ "temporary"
-            // Let requested license type be a temporary non-persistable license.
-            requestedLicenseType = CDMInstance::LicenseType::Temporary;
-            break;
-        case MediaKeySessionType::PersistentLicense:
-            // ↳ "persistent-license"
-            // Let requested license type be a persistable license.
-            requestedLicenseType = CDMInstance::LicenseType::Persistable;
-            break;
-        case MediaKeySessionType::PersistentUsageRecord:
-            // ↳ "persistent-usage-record"
-            // 1. Initialize this object's record of key usage as follows.
-            //    Set the list of key IDs known to the session to an empty list.
+        //   ↳ "temporary"
+        //     Let requested license type be a temporary non-persistable license.
+        //   ↳ "persistent-license"
+        //     Let requested license type be a persistable license.
+        //   ↳ "persistent-usage-record"
+        //     1. Initialize this object's record of key usage as follows.
+        //        Set the list of key IDs known to the session to an empty list.
+        //        Set the first decrypt time to null.
+        //        Set the latest decrypt time to null.
+        //     2. Let requested license type be a non-persistable license that will
+        //        persist a record of key usage.
+
+        if (m_sessionType == MediaKeySessionType::PersistentUsageRecord) {
             m_recordOfKeyUsage.clear();
-
-            //    Set the first decrypt time to null.
             m_firstDecryptTime = 0;
-
-            //    Set the latest decrypt time to null.
             m_latestDecryptTime = 0;
-
-            // 2. Let requested license type be a non-persistable license that will
-            //    persist a record of key usage.
-            requestedLicenseType = CDMInstance::LicenseType::UsageRecord;
-            break;
         }
 
-        m_instance->requestLicense(requestedLicenseType, initDataType, WTFMove(initData), [this, weakThis = m_weakPtrFactory.createWeakPtr(), promise = WTFMove(promise)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstance::SuccessValue succeeded) mutable {
+        m_instance->requestLicense(m_sessionType, initDataType, WTFMove(initData), [this, weakThis = m_weakPtrFactory.createWeakPtr(), promise = WTFMove(promise)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstance::SuccessValue succeeded) mutable {
             if (!weakThis)
                 return;
 
@@ -277,25 +265,12 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
             return;
         }
 
-        CDMInstance::LicenseType licenseType;
-        switch (m_sessionType) {
-        case MediaKeySessionType::Temporary:
-            licenseType = CDMInstance::LicenseType::Temporary;
-            break;
-        case MediaKeySessionType::PersistentLicense:
-            licenseType = CDMInstance::LicenseType::Persistable;
-            break;
-        case MediaKeySessionType::PersistentUsageRecord:
-            licenseType = CDMInstance::LicenseType::UsageRecord;
-            break;
-        };
-
         // 6.3. Let message be null.
         // 6.4. Let message type be null.
         // 6.5. Let session closed be false.
         // 6.6. Let cdm be the CDM instance represented by this object's cdm instance value.
         // 6.7. Use the cdm to execute the following steps:
-        m_instance->updateLicense(licenseType, *sanitizedResponse, [this, weakThis = m_weakPtrFactory.createWeakPtr(), promise = WTFMove(promise)] (bool sessionWasClosed, std::optional<CDMInstance::KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<CDMInstance::Message>&& message, CDMInstance::SuccessValue succeeded) mutable {
+        m_instance->updateLicense(m_sessionType, *sanitizedResponse, [this, weakThis = m_weakPtrFactory.createWeakPtr(), promise = WTFMove(promise)] (bool sessionWasClosed, std::optional<CDMInstance::KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<CDMInstance::Message>&& message, CDMInstance::SuccessValue succeeded) mutable {
             if (!weakThis)
                 return;
 

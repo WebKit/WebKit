@@ -27,6 +27,9 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "MediaKeyMessageType.h"
+#include "MediaKeySessionType.h"
+#include "MediaKeyStatus.h"
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
@@ -47,36 +50,17 @@ public:
         Succeeded,
     };
 
+    using LicenseType = MediaKeySessionType;
+    using KeyStatus = MediaKeyStatus;
+    using MessageType = MediaKeyMessageType;
+
     virtual SuccessValue initializeWithConfiguration(const MediaKeySystemConfiguration&) = 0;
     virtual SuccessValue setDistinctiveIdentifiersAllowed(bool) = 0;
     virtual SuccessValue setPersistentStateAllowed(bool) = 0;
     virtual SuccessValue setServerCertificate(Ref<SharedBuffer>&&) = 0;
 
-    enum class LicenseType {
-        Temporary,
-        Persistable,
-        UsageRecord,
-    };
-
     using LicenseCallback = Function<void(Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, SuccessValue succeeded)>;
     virtual void requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback) = 0;
-
-    enum class KeyStatus {
-        Usable,
-        Expired,
-        Released,
-        OutputRestricted,
-        OutputDownscaled,
-        StatusPending,
-        InternalError,
-    };
-
-    enum class MessageType {
-        LicenseRequest,
-        LicenseRenewal,
-        LicenseRelease,
-        IndividualizationRequest,
-    };
 
     using KeyStatusVector = Vector<std::pair<Ref<SharedBuffer>, KeyStatus>>;
     using Message = std::pair<MessageType, Ref<SharedBuffer>>;

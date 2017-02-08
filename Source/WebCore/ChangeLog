@@ -1,3 +1,26 @@
+2017-02-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Alias CDMInstance enums to the specification-defined enums
+        https://bugs.webkit.org/show_bug.cgi?id=167896
+
+        Reviewed by Sam Weinig.
+
+        Simplify the enums in the CDMInstance class by simply aliasing them
+        to the EME specification-defined enums. CDMInstance::KeyStatus and
+        CDMInstance::MessageType were already direct copies of the
+        MediaKeyStatus and MediaKeyMessageType enums, while the
+        CDMInstance::LicenseType had the members as MediaKeySessionType,
+        but with slightly different names.
+
+        No changes in behavior.
+
+        * Modules/encryptedmedia/CDMInstance.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::generateRequest):
+        (WebCore::MediaKeySession::update):
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMInstance::requestLicense):
+
 2017-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r210740): [GTK] 2.15 broke embedded videos in GNOME's yelp app
