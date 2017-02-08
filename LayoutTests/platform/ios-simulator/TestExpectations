@@ -380,6 +380,9 @@ fast/scrolling/rtl-scrollbars-position-fixed.html [ Skip ]
 fast/scrolling/rtl-scrollbars-text-selection-scrolled.html [ Skip ]
 fast/scrolling/rtl-scrollbars-text-selection.html [ Skip ]
 
+# This is specific to extensions on macOS
+webkit.org/b/167795 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ]
+
 ###
 # Known failures
 ##
