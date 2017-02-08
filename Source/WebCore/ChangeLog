@@ -1,3 +1,19 @@
+2017-02-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        getIntersectionList always returns empty NodeList until layout is complete
+        https://bugs.webkit.org/show_bug.cgi?id=81423
+
+        Reviewed by Simon Fraser.
+
+        Layout needs to be forced before trying to figure out which SVGElements
+        intersect with a given SVGRect. We do the same thing in the DOM API
+        Element::getBoundingClientRect().
+
+        Test: svg/custom/intersection-list-before-layout.html
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getIntersectionList):
+
 2017-02-08  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Implement reduced and tight padding modes

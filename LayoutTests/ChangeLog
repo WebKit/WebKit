@@ -1,3 +1,13 @@
+2017-02-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        getIntersectionList always returns empty NodeList until layout is complete
+        https://bugs.webkit.org/show_bug.cgi?id=81423
+
+        Reviewed by Simon Fraser.
+
+        * svg/custom/intersection-list-before-layout-expected.txt: Added.
+        * svg/custom/intersection-list-before-layout.html: Added.
+
 2017-02-08  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Implement reduced and tight padding modes
