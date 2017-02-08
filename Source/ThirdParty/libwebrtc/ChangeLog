@@ -1,3 +1,27 @@
+2017-02-07  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] usrsctp (libwebrtc third party library) is not compiling
+        https://bugs.webkit.org/show_bug.cgi?id=167969
+
+        Reviewed by Alex Christensen.
+
+        Also removing .gitignore files in libwebrtc directory.
+
+        * Source/.gitignore: Removed.
+        * Source/third_party/boringssl/src/.gitignore: Removed.
+        * Source/third_party/gflags/src/.gitignore: Removed.
+        * Source/third_party/jsoncpp/source/.gitignore: Removed.
+        * Source/third_party/libyuv/.gitignore: Removed.
+        * Source/third_party/protobuf/.gitignore: Removed.
+        * Source/third_party/protobuf/csharp/.gitignore: Removed.
+        * Source/third_party/protobuf/ruby/.gitignore: Removed.
+        * Source/third_party/usrsctp/usrsctplib/.gitignore: Removed.
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c:
+        (sctp_process_cookie_existing):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c:
+        * Source/tools/.gitignore: Removed.
+        * Source/webrtc/.gitignore: Removed.
+
 2017-02-07  Alex Christensen  <achristensen@webkit.org>
 
         Move webrtc/pc to own Xcode target

@@ -1729,12 +1729,13 @@ sctp_process_cookie_existing(struct mbuf *m, int iphlen, int offset,
 				 * since we did not send a HB make sure we
 				 * don't double things
 				 */
+                struct timeval time_entered;
 				net->hb_responded = 1;
 				net->RTO = sctp_calculate_rto(stcb, asoc, net,
-							      &cookie->time_entered,
+							      &time_entered,
 							      sctp_align_unsafe_makecopy,
 							      SCTP_RTT_FROM_NON_DATA);
-
+                cookie->time_entered = time_entered;
 				if (stcb->asoc.sctp_autoclose_ticks &&
 				    (sctp_is_feature_on(inp, SCTP_PCB_FLAGS_AUTOCLOSE))) {
 					sctp_timer_start(SCTP_TIMER_TYPE_AUTOCLOSE,
@@ -2481,10 +2482,12 @@ sctp_process_cookie_new(struct mbuf *m, int iphlen, int offset,
 	}
 	(void)SCTP_GETTIME_TIMEVAL(&stcb->asoc.time_entered);
 	if ((netp != NULL) && (*netp != NULL)) {
+        struct timeval time_entered;
 		/* calculate the RTT and set the encaps port */
 		(*netp)->RTO = sctp_calculate_rto(stcb, asoc, *netp,
-						  &cookie->time_entered, sctp_align_unsafe_makecopy,
+						  &time_entered, sctp_align_unsafe_makecopy,
 						  SCTP_RTT_FROM_NON_DATA);
+        cookie->time_entered = time_entered;
 	}
 	/* respond with a COOKIE-ACK */
 	sctp_send_cookie_ack(stcb);

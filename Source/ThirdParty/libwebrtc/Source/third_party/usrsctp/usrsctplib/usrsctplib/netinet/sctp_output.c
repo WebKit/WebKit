@@ -6004,9 +6004,10 @@ sctp_send_initiate_ack(struct sctp_inpcb *inp, struct sctp_tcb *stcb,
 	 */
 	memset(&stc, 0, sizeof(struct sctp_state_cookie));
 
+    struct timeval time_entered;
 	/* the time I built cookie */
-	(void)SCTP_GETTIME_TIMEVAL(&stc.time_entered);
-
+	(void)SCTP_GETTIME_TIMEVAL(&time_entered);
+    stc.time_entered = time_entered;
 	/* populate any tie tags */
 	if (asoc != NULL) {
 		/* unlock before tag selections */
