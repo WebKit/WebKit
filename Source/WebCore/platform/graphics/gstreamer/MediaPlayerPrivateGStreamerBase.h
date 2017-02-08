@@ -105,6 +105,8 @@ public:
     unsigned audioDecodedByteCount() const override;
     unsigned videoDecodedByteCount() const override;
 
+    void acceleratedRenderingStateChanged() override;
+
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
     PlatformLayer* platformLayer() const override { return const_cast<MediaPlayerPrivateGStreamerBase*>(this); }
 #if PLATFORM(WIN_CAIRO)

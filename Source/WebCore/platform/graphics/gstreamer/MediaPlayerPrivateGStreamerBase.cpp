@@ -613,6 +613,11 @@ void MediaPlayerPrivateGStreamerBase::muteChangedCallback(MediaPlayerPrivateGStr
     player->m_notifier.notify(MainThreadNotification::MuteChanged, [player] { player->notifyPlayerOfMute(); });
 }
 
+void MediaPlayerPrivateGStreamerBase::acceleratedRenderingStateChanged()
+{
+    m_renderingCanBeAccelerated = m_player && m_player->client().mediaPlayerAcceleratedCompositingEnabled() && m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player);
+}
+
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 void MediaPlayerPrivateGStreamerBase::updateTexture(BitmapTextureGL& texture, GstVideoInfo& videoInfo)
 {
@@ -1105,8 +1110,7 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
 
 GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink()
 {
-    m_renderingCanBeAccelerated = supportsAcceleratedRendering() && m_player->client().mediaPlayerAcceleratedCompositingEnabled()
-        && m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player);
+    acceleratedRenderingStateChanged();
 
 #if USE(GSTREAMER_GL)
     if (m_renderingCanBeAccelerated)
