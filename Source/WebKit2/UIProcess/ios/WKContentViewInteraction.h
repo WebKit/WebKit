@@ -226,6 +226,9 @@ struct WKAutoCorrectionData {
 - (void)_reanalyze:(id)sender;
 - (void)_share:(id)sender;
 - (void)_showTextStyleOptions:(id)sender;
+- (void)_promptForReplace:(id)sender;
+- (void)_transliterateChinese:(id)sender;
+- (void)replace:(id)sender;
 
 #if ENABLE(TOUCH_EVENTS)
 - (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsDefault;
