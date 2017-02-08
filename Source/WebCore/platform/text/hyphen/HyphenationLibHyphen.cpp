@@ -247,7 +247,11 @@ size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomicStr
     char* hyphenArrayData = hyphenArray.data();
 
     String lowercaseLocaleIdentifier = AtomicString(localeIdentifier.string().convertToASCIILowercase());
-    ASSERT(availableLocales().contains(lowercaseLocaleIdentifier));
+
+    // Web content may specify strings for locales which do not exist or that we do not have.
+    if (!availableLocales().contains(lowercaseLocaleIdentifier))
+        return 0;
+
     for (const auto& dictionaryPath : availableLocales().get(lowercaseLocaleIdentifier)) {
         RefPtr<HyphenationDictionary> dictionary = WTF::TinyLRUCachePolicy<AtomicString, RefPtr<HyphenationDictionary>>::cache().get(AtomicString(dictionaryPath));
 
