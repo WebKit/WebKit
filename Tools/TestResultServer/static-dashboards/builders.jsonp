@@ -6,11 +6,11 @@ LOAD_BUILDBOT_DATA([
         "tests": {
             "layout-tests": {
                 "builders": [
-                    "Apple El Capitan (Leaks)", 
                     "Apple El Capitan Debug WK1 (Tests)", 
                     "Apple El Capitan Debug WK2 (Tests)", 
                     "Apple El Capitan Release WK1 (Tests)", 
                     "Apple El Capitan Release WK2 (Tests)", 
+                    "Apple Sierra (Leaks)", 
                     "Apple Sierra Debug WK1 (Tests)", 
                     "Apple Sierra Debug WK2 (Tests)", 
                     "Apple Sierra Release WK1 (Tests)", 
