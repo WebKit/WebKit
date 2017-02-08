@@ -63,10 +63,8 @@ static void webkitSoupRequestInputStreamReadAsyncResultComplete(GTask* task, voi
 
 static void webkitSoupRequestInputStreamPendingReadAsyncComplete(WebKitSoupRequestInputStream* stream)
 {
-    while (stream->priv->pendingAsyncRead) {
-        auto data = WTFMove(stream->priv->pendingAsyncRead);
+    if (auto data = WTFMove(stream->priv->pendingAsyncRead))
         webkitSoupRequestInputStreamReadAsyncResultComplete(data->task.get(), data->buffer, data->count);
-    }
 }
 
 static bool webkitSoupRequestInputStreamHasDataToRead(WebKitSoupRequestInputStream* stream)
