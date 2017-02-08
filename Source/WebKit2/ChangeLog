@@ -1,5 +1,12 @@
 2017-02-08  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed build fix; FullscreenClient only avaialble on 32-bit builds.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::WebViewImpl):
+
+2017-02-08  Jer Noble  <jer.noble@apple.com>
+
         Move FullscreenClient creation into WebViewImpl, for use in (deprecated) WKView.
         https://bugs.webkit.org/show_bug.cgi?id=168007
 
