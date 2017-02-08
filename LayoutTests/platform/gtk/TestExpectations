@@ -2744,6 +2744,16 @@ webkit.org/b/163985 fast/dom/Window/webkitConvertPoint.html [ Failure ]
 
 webkit.org/b/163987 fast/dom/Window/window-lookup-precedence.html [ Failure ]
 
+webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/basic/error-after-response.html [ Failure ]
+webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-worker.html [ Failure ]
+webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.html [ Failure ]
+webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.html [ Failure ]
+webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-worker.html [ Failure ]
+webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin.html [ Failure ]
+webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-worker.html [ Failure ]
+webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.html [ Failure ]
+webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
