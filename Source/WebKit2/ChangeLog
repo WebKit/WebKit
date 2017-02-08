@@ -1,3 +1,18 @@
+2017-02-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Add WebRTC as an off-by-default experimental feature menu item.
+        https://bugs.webkit.org/show_bug.cgi?id=167972
+        <rdar://problem/30293429>
+
+        Reviewed by Jon Lee.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::setPeerConnectionAndMediaStreamEnabled): We need to enable/disable
+        peer connection and media stream preferences at the same time, so special case them.
+        (WebKit::WebPreferences::setEnabledForFeature):
+        * UIProcess/WebPreferences.h:
+
 2017-02-08  Chris Dumez  <cdumez@apple.com>
 
         Add support for enhanced privacy diagnostic logging
