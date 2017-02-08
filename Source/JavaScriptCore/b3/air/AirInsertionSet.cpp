@@ -33,12 +33,6 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-void InsertionSet::insertInsts(size_t index, const Vector<Inst>& insts)
-{
-    for (const Inst& inst : insts)
-        insertInst(index, inst);
-}
-
 void InsertionSet::insertInsts(size_t index, Vector<Inst>&& insts)
 {
     for (Inst& inst : insts)

@@ -1,3 +1,33 @@
+2017-02-08  Saam Barati  <sbarati@apple.com>
+
+        Air IRC might spill a terminal that produces a value after the terminal
+        https://bugs.webkit.org/show_bug.cgi?id=167919
+        <rdar://problem/29754721>
+
+        Reviewed by Filip Pizlo.
+
+        IRC may spill a value-producing terminal (a patchpoint can be a value-producing terminal).
+        It used to do this by placing the spill *after* the terminal. This produces an invalid
+        graph because no instructions are allowed after the terminal.
+        
+        I fixed this bug by having a cleanup pass over the IR after IRC is done.
+        The pass detects this problem, and fixes it by moving the spill into the
+        successors. However, it is careful to detect when the edge to the
+        successor is a critical edge. If the value-producing patchpoint is
+        the only predecessor of the successor, it just moves the spill
+        code to the beginning of the successor. Otherwise, it's a critical
+        edge and it breaks it by adding a block that does the spilling then
+        jumps to the successor.
+
+        * b3/air/AirInsertionSet.cpp:
+        * b3/air/AirInsertionSet.h:
+        (JSC::B3::Air::InsertionSet::insertInsts):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testTerminalPatchpointThatNeedsToBeSpilled):
+        (JSC::B3::testTerminalPatchpointThatNeedsToBeSpilled2):
+        (JSC::B3::run):
+
 2017-02-07  Mark Lam  <mark.lam@apple.com>
 
         SigillCrashAnalyzer::analyze() should use a do-while loop instead of a lambda.
