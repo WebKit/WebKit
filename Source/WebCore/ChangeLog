@@ -1,3 +1,35 @@
+2017-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebItemProviderPasteboard should use -registerLoadHandlersToItemProvider: when creating a new UIItemProvider
+        https://bugs.webkit.org/show_bug.cgi?id=167918
+        <rdar://problem/30382347>
+
+        Reviewed by Tim Horton.
+
+        Adopts SPI in WebItemProviderPasteboard for object types that the platform knows how to serialize. Since we use
+        -createObjectOfClass: to initialize data when reading off of the pasteboard, we need to match the format that
+        objects conforming to UIItemProviderReading will expect. Thus, for all given objects that conform to
+        UIItemProviderWriting, we have them register themselves to the item provider.
+
+        We register other UTI types due to the fact that PlatformPasteboardIOS does not care about the specific
+        pasteboard used. This should not be necessary, however, since data written to the WebItemProviderPasteboard
+        should never need to be read by an actual UIPasteboard. This will be refactored in a future patch to add a
+        special type of WebItemProviderPasteboard-aware PlatformPasteboard.
+
+        Also fixes some reference counting issues in WebItemProviderPasteboard by changing the array of _itemProviders
+        to be a RetainPtr.
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard init]):
+        (-[WebItemProviderPasteboard pasteboardTypes]):
+        (-[WebItemProviderPasteboard itemProviders]):
+        (-[WebItemProviderPasteboard setItemProviders:]):
+        (-[WebItemProviderPasteboard numberOfItems]):
+        (-[WebItemProviderPasteboard setItems:]):
+        (-[WebItemProviderPasteboard valuesForPasteboardType:inItemSet:]):
+        (-[WebItemProviderPasteboard itemProviderAtIndex:]):
+        (-[WebItemProviderPasteboard dealloc]): Deleted.
+
 2017-02-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebContent process repeatedly jetsams on BuzzFeed's Another Round page

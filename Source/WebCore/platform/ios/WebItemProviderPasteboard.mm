@@ -34,6 +34,8 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
+#import <UIKit/UIItemProviderWriting.h>
+#import <wtf/RetainPtr.h>
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIColor)
@@ -76,7 +78,9 @@ static BOOL isImageType(NSString *type)
 
 @end
 
-@implementation WebItemProviderPasteboard
+@implementation WebItemProviderPasteboard {
+    RetainPtr<NSArray> _itemProviders;
+}
 
 + (instancetype)sharedInstance
 {
@@ -91,25 +95,24 @@ static BOOL isImageType(NSString *type)
 - (instancetype)init
 {
     if (self = [super init]) {
-        _itemProviders = [[NSArray alloc] init];
+        _itemProviders = adoptNS([[NSArray alloc] init]);
         _changeCount = 0;
         _pendingOperationCount = 0;
     }
     return self;
 }
 
-- (void)dealloc
-{
-    [super dealloc];
-    [_itemProviders release];
-}
-
 - (NSArray<NSString *> *)pasteboardTypes
 {
     NSMutableSet<NSString *> *allTypes = [NSMutableSet set];
-    for (UIItemProvider *provider in _itemProviders)
+    for (UIItemProvider *provider in _itemProviders.get())
         [allTypes addObjectsFromArray:provider.registeredTypeIdentifiers];
     return allTypes.allObjects;
+}
+
+- (NSArray<UIItemProvider *> *)itemProviders
+{
+    return _itemProviders.get();
 }
 
 - (void)setItemProviders:(NSArray<UIItemProvider *> *)itemProviders
@@ -117,30 +120,47 @@ static BOOL isImageType(NSString *type)
     itemProviders = itemProviders ?: [NSArray array];
     if (_itemProviders == itemProviders || [_itemProviders isEqualToArray:itemProviders])
         return;
-    _itemProviders = [itemProviders copy];
+
+    _itemProviders = itemProviders;
     _changeCount++;
 }
 
 - (NSInteger)numberOfItems
 {
-    return _itemProviders.count;
+    return [_itemProviders count];
 }
 
 - (void)setItems:(NSArray *)items
 {
-    NSMutableArray *providers = [[NSMutableArray alloc] init];
+    NSMutableArray *providers = [NSMutableArray array];
     for (NSDictionary *item in items) {
         if (!item.count)
             continue;
-        UIItemProvider *itemProvider = [[getUIItemProviderClass() alloc] init];
-        for (NSString *typeIdentifier in item) {
+        RetainPtr<UIItemProvider> itemProvider = adoptNS([[getUIItemProviderClass() alloc] init]);
+        RetainPtr<NSMutableDictionary> itemRepresentationsCopy = adoptNS([item mutableCopy]);
+        // First, let the platform write all the default object types it can recognize, such as NSString and NSURL.
+        for (NSString *typeIdentifier in [itemRepresentationsCopy allKeys]) {
+            id representingObject = [itemRepresentationsCopy objectForKey:typeIdentifier];
+            if (![representingObject conformsToProtocol:@protocol(UIItemProviderWriting)])
+                continue;
+
+            id <UIItemProviderWriting> objectToWrite = (id <UIItemProviderWriting>)representingObject;
+            if (![objectToWrite.writableTypeIdentifiersForItemProvider containsObject:typeIdentifier])
+                continue;
+
+            [itemRepresentationsCopy removeObjectForKey:typeIdentifier];
+            [objectToWrite registerLoadHandlersToItemProvider:itemProvider.get()];
+        }
+
+        // Secondly, WebKit uses some custom type representations and/or type identifiers, so we need to write these as well.
+        for (NSString *typeIdentifier in itemRepresentationsCopy.get()) {
             [itemProvider registerDataRepresentationForTypeIdentifier:typeIdentifier options:nil loadHandler:^NSProgress *(UIItemProviderDataLoadCompletionBlock completionBlock)
             {
-                completionBlock(item[typeIdentifier], nil);
+                completionBlock([itemRepresentationsCopy objectForKey:typeIdentifier], nil);
                 return [NSProgress discreteProgressWithTotalUnitCount:100];
             }];
         }
-        [providers addObject:itemProvider];
+        [providers addObject:itemProvider.get()];
     }
     _changeCount++;
     _itemProviders = providers;
@@ -174,7 +194,7 @@ static BOOL isImageType(NSString *type)
         if (isColorType(pasteboardType) && [self _tryToCreateAndAppendObjectOfClass:[getUIColorClass() class] toArray:values usingProvider:provider])
             return;
 
-        if (isImageType(pasteboardType) && [self _tryToCreateAndAppendObjectOfClass:[NSString class] toArray:values usingProvider:provider])
+        if (isImageType(pasteboardType) && [self _tryToCreateAndAppendObjectOfClass:[getUIImageClass() class] toArray:values usingProvider:provider])
             return;
 
         if (isURLType(pasteboardType) && [self _tryToCreateAndAppendObjectOfClass:[NSURL class] toArray:values usingProvider:provider])
@@ -210,7 +230,7 @@ static BOOL isImageType(NSString *type)
 
 - (UIItemProvider *)itemProviderAtIndex:(NSInteger)index
 {
-    return 0 <= index && index < (NSInteger)_itemProviders.count ? _itemProviders[index] : nil;
+    return 0 <= index && index < (NSInteger)[_itemProviders count] ? [_itemProviders objectAtIndex:index] : nil;
 }
 
 - (BOOL)hasPendingOperation
