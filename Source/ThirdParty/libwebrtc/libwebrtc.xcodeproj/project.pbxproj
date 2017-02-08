@@ -21,6 +21,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		414D71141E4AE98C0023E526 /* user_socket.c in Sources */ = {isa = PBXBuildFile; fileRef = 414D71121E4AE9820023E526 /* user_socket.c */; };
+		414D71171E4AEAFB0023E526 /* sctp_indata.c in Sources */ = {isa = PBXBuildFile; fileRef = 414D71151E4AEACD0023E526 /* sctp_indata.c */; };
+		414D71191E4AEB110023E526 /* sctp_userspace.c in Sources */ = {isa = PBXBuildFile; fileRef = 414D71181E4AEB110023E526 /* sctp_userspace.c */; };
 		5C0884E31E4A986000403995 /* compare.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D341E4323D4002651C8 /* compare.cc */; };
 		5C0884E41E4A986000403995 /* compare_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D2F1E4323D4002651C8 /* compare_common.cc */; };
 		5C0884E51E4A986000403995 /* compare_gcc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD84211E439BCB00621E92 /* compare_gcc.cc */; };
@@ -2691,6 +2694,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		414D71121E4AE9820023E526 /* user_socket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = user_socket.c; sourceTree = "<group>"; };
+		414D71151E4AEACD0023E526 /* sctp_indata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sctp_indata.c; path = netinet/sctp_indata.c; sourceTree = "<group>"; };
+		414D71181E4AEB110023E526 /* sctp_userspace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sctp_userspace.c; path = netinet/sctp_userspace.c; sourceTree = "<group>"; };
 		5C0884891E4A978C00403995 /* libsrtp.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libsrtp.xcconfig; sourceTree = "<group>"; };
 		5C08848A1E4A978C00403995 /* libyuv.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libyuv.xcconfig; sourceTree = "<group>"; };
 		5C0884D11E4A97E300403995 /* libsrtp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsrtp.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6261,6 +6267,7 @@
 				5C4B4AD51E42C9D6002651C8 /* user_recv_thread.c */,
 				5C4B4AD61E42C9D6002651C8 /* user_recv_thread.h */,
 				5C4B4AD71E42C9D6002651C8 /* user_route.h */,
+				414D71121E4AE9820023E526 /* user_socket.c */,
 				5C4B4AD91E42C9D6002651C8 /* user_socketvar.h */,
 				5C4B4ADA1E42C9D6002651C8 /* user_uma.h */,
 				5C4B4ADB1E42C9D6002651C8 /* usrsctp.h */,
@@ -6279,6 +6286,8 @@
 		5C4B4AED1E42C9E3002651C8 /* netinet */ = {
 			isa = PBXGroup;
 			children = (
+				414D71181E4AEB110023E526 /* sctp_userspace.c */,
+				414D71151E4AEACD0023E526 /* sctp_indata.c */,
 				5C4B4B151E42C9EF002651C8 /* sctp.h */,
 				5C4B4AEE1E42C9EF002651C8 /* sctp_asconf.c */,
 				5C4B4AEF1E42C9EF002651C8 /* sctp_asconf.h */,
@@ -10522,11 +10531,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				414D71141E4AE98C0023E526 /* user_socket.c in Sources */,
 				5C6024971E4950A50088F0B2 /* sctp6_usrreq.c in Sources */,
 				5C6024991E4951610088F0B2 /* sctp_pcb.c in Sources */,
+				414D71191E4AEB110023E526 /* sctp_userspace.c in Sources */,
 				5C6024661E494DB80088F0B2 /* user_mbuf.c in Sources */,
 				5C6024701E4950A00088F0B2 /* sctp_asconf.c in Sources */,
 				5C6024691E494DB80088F0B2 /* user_recv_thread.c in Sources */,
+				414D71171E4AEAFB0023E526 /* sctp_indata.c in Sources */,
 				5C6024951E4950A00088F0B2 /* sctputil.c in Sources */,
 				5C6024931E4950A00088F0B2 /* sctp_usrreq.c in Sources */,
 				5C60247A1E4950A00088F0B2 /* sctp_crc32.c in Sources */,
