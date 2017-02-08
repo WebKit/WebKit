@@ -1,0 +1,48 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing <code>IconButton</code> while changing layout traits.");
+
+const layoutDelegate = {};
+
+const iconButton = new IconButton({ layoutDelegate });
+
+debug("");
+debug("Setting macOS inline layout traits and setting play icon");
+layoutDelegate.layoutTraits = LayoutTraits.macOS;
+iconButton.iconName = Icons.Pause;
+
+let numberOfFrames = 0;
+
+scheduler.frameDidFire = function()
+{
+    numberOfFrames++;
+
+    if (numberOfFrames === 1) {
+        shouldBeTrue('iconButton.element.style.webkitMaskImage.includes("macOS/pause")');
+        shouldBeEqualToString("iconButton.element.style.width", "22px");
+        shouldBeEqualToString("iconButton.element.style.height", "24px");
+        shouldBeEqualToString("iconButton.element.style.webkitMaskSize", "22px 24px");
+
+        debug("");
+        debug("Setting macOS inline and compact layout traits and notifying of a layout traits change");
+        layoutDelegate.layoutTraits = LayoutTraits.macOS | LayoutTraits.Compact;
+        iconButton.layoutTraitsDidChange();
+    } else if (numberOfFrames === 2) {
+        shouldBeTrue('iconButton.element.style.webkitMaskImage.includes("macOS/pause-compact")');
+        shouldBeEqualToString("iconButton.element.style.width", "11px");
+        shouldBeEqualToString("iconButton.element.style.height", "13px");
+        shouldBeEqualToString("iconButton.element.style.webkitMaskSize", "11px 13px");
+
+        finishMediaControlsTest();
+    } 
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

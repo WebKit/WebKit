@@ -24,6 +24,8 @@
  */
 
 const CompactModeMaxWidth = 241;
+const ReducedPaddingMaxWidth = 300;
+const AudioTightPaddingMaxWidth = 400;
 
 class MediaController
 {
@@ -47,6 +49,9 @@ class MediaController
 
         shadowRoot.addEventListener("resize", this);
 
+        media.videoTracks.addEventListener("addtrack", this);
+        media.videoTracks.addEventListener("removetrack", this);
+
         if (media.webkitSupportsPresentationMode)
             media.addEventListener("webkitpresentationmodechanged", this);
         else
@@ -62,8 +67,16 @@ class MediaController
         } else if (this.media.webkitDisplayingFullscreen)
             return traits | LayoutTraits.Fullscreen;
 
-        if (this._controlsWidth() <= CompactModeMaxWidth)
+        const controlsWidth = this._controlsWidth();
+        if (controlsWidth <= CompactModeMaxWidth)
             return traits | LayoutTraits.Compact;
+
+        const isAudio = this.media instanceof HTMLAudioElement || this.media.videoTracks.length === 0;
+        if (isAudio && controlsWidth <= AudioTightPaddingMaxWidth)
+            return traits | LayoutTraits.TightPadding;
+
+        if (!isAudio && controlsWidth <= ReducedPaddingMaxWidth)
+            return traits | LayoutTraits.ReducedPadding;
 
         return traits;
     }
@@ -83,10 +96,11 @@ class MediaController
 
     handleEvent(event)
     {
-        if (event.type === "resize" && event.currentTarget === this.shadowRoot) {
-            this._updateControlsSize();
+        if (event instanceof TrackEvent && event.currentTarget === this.media.videoTracks)
             this._updateControlsIfNeeded();
-        } else if (event.type === "click" && event.currentTarget === this.container)
+        else if (event.type === "resize" && event.currentTarget === this.shadowRoot)
+            this._updateControlsIfNeeded();
+        else if (event.type === "click" && event.currentTarget === this.container)
             this._containerWasClicked(event);
         else if (event.currentTarget === this.media) {
             this._updateControlsIfNeeded();
@@ -106,10 +120,14 @@ class MediaController
 
     _updateControlsIfNeeded()
     {
+        const layoutTraits = this.layoutTraits;
         const previousControls = this.controls;
-        const ControlsClass = this._controlsClass();
-        if (previousControls && previousControls.constructor === ControlsClass)
+        const ControlsClass = this._controlsClassForLayoutTraits(layoutTraits);
+        if (previousControls && previousControls.constructor === ControlsClass) {
+            this.controls.layoutTraits = layoutTraits;
+            this._updateControlsSize();
             return;
+        }
 
         // Before we reset the .controls property, we need to destroy the previous
         // supporting objects so we don't leak.
@@ -124,26 +142,18 @@ class MediaController
             this.controls.controlsBar.autoHideDelay = this.shadowRoot.host.dataset.autoHideDelay;
 
         if (previousControls) {
-            if (this._shouldFadeBetweenControls(previousControls, this.controls))
-                this.controls.fadeIn();
+            this.controls.fadeIn();
             this.container.replaceChild(this.controls.element, previousControls.element);
             this.controls.usesLTRUserInterfaceLayoutDirection = previousControls.usesLTRUserInterfaceLayoutDirection;
         } else
             this.container.appendChild(this.controls.element);        
 
+        this.controls.layoutTraits = layoutTraits;
         this._updateControlsSize();
 
         this._supportingObjects = [AirplaySupport, ControlsVisibilitySupport, FullscreenSupport, MuteSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, StartSupport, StatusSupport, TimeLabelsSupport, TracksSupport, VolumeSupport, VolumeDownSupport, VolumeUpSupport].map(SupportClass => {
             return new SupportClass(this);
         }, this);
-    }
-
-    _shouldFadeBetweenControls(previousControls, newControls)
-    {
-        // We don't fade when toggling between the various macOS inline modes.
-        if (previousControls instanceof MacOSInlineMediaControls && newControls instanceof MacOSInlineMediaControls)
-            return false;
-        return true;
     }
 
     _updateControlsSize()
@@ -163,15 +173,12 @@ class MediaController
             window.requestAnimationFrame(() => this.host.setPreparedToReturnVideoLayerToInline(this.media.webkitPresentationMode !== PiPMode));
     }
 
-    _controlsClass()
+    _controlsClassForLayoutTraits(layoutTraits)
     {
-        const layoutTraits = this.layoutTraits;
         if (layoutTraits & LayoutTraits.iOS)
             return IOSInlineMediaControls;
         if (layoutTraits & LayoutTraits.Fullscreen)
             return MacOSFullscreenMediaControls;
-        if (layoutTraits & LayoutTraits.Compact)
-            return MacOSCompactInlineMediaControls;
         return MacOSInlineMediaControls;
     }
 

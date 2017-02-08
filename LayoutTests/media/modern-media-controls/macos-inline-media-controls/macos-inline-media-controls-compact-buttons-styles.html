@@ -4,11 +4,12 @@
 <body>
 <script type="text/javascript">
 
-description("Testing the <code>MacOSCompactInlineMediaControls</code> computed styles.");
+description("Testing the <code>MacOSInlineMediaControls</code> computed styles in compact mode.");
 
 window.jsTestIsAsync = true;
 
-const mediaControls = new MacOSCompactInlineMediaControls({ width: 240, height: 300 });
+const mediaControls = new MacOSInlineMediaControls({ width: 240 });
+mediaControls.layoutTraits = LayoutTraits.macOS | LayoutTraits.Compact;
 
 const buttonPositions = [
     [mediaControls.playPauseButton, 6],
@@ -28,7 +29,6 @@ scheduler.frameDidFire = function()
     for (let [button, y] of buttonPositions) {
         style = window.getComputedStyle(button.element);
         debug(button.constructor.name);
-        shouldBeEqualToRGBAColor("style.backgroundColor", "rgba(255, 255, 255, 0.572)");
         shouldBeEqualToString("style.height", "25px");
         shouldBeEqualToString("style.webkitMaskPositionY", `${y}px`);
         debug("");

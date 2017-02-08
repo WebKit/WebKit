@@ -36,6 +36,7 @@ class IconButton extends Button
 
         this._image = null;
         this._iconName = "";
+        this._iconLayoutTraits = LayoutTraits.Unknown;
 
         if (!!iconName)
             this.iconName = iconName;
@@ -53,17 +54,7 @@ class IconButton extends Button
         if (this._iconName === iconName)
             return;
 
-        if (this._image)
-            this._image.removeEventListener("load", this);
-
-        this._image = iconService.imageForIconNameAndLayoutTraits(iconName, this.layoutTraits);
-
-        this._iconName = iconName;
-
-        if (this._image.complete)
-            this._updateImage();
-        else
-            this._image.addEventListener("load", this);
+        this._loadImage(iconName);
     }
 
     get on()
@@ -73,6 +64,12 @@ class IconButton extends Button
 
     set on(flag) {
         this.element.classList.toggle("on", flag);
+    }
+
+    layoutTraitsDidChange()
+    {
+        if (this._iconLayoutTraits !== this.layoutTraits)
+            this._loadImage(this._iconName);
     }
 
     // Protected
@@ -94,6 +91,22 @@ class IconButton extends Button
     }
 
     // Private
+
+    _loadImage(iconName)
+    {
+        if (this._image)
+            this._image.removeEventListener("load", this);
+
+        this._iconLayoutTraits = this.layoutTraits;
+        this._image = iconService.imageForIconNameAndLayoutTraits(iconName, this._iconLayoutTraits);
+
+        this._iconName = iconName;
+
+        if (this._image.complete)
+            this._updateImage();
+        else
+            this._image.addEventListener("load", this);
+    }
 
     _imageDidLoad()
     {

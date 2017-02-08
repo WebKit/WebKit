@@ -10195,7 +10195,6 @@
 		7177E2481DB80D2F00919A0B /* start-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "start-support.js"; sourceTree = "<group>"; };
 		717F618B1E43D61A00F37024 /* controls-bar.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "controls-bar.css"; sourceTree = "<group>"; };
 		717F618C1E43D61A00F37024 /* macos-compact-inline-media-controls.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "macos-compact-inline-media-controls.css"; sourceTree = "<group>"; };
-		717F618D1E43D61A00F37024 /* macos-compact-inline-media-controls.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "macos-compact-inline-media-controls.js"; sourceTree = "<group>"; };
 		717F618E1E43D61A00F37024 /* text-tracks.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "text-tracks.css"; sourceTree = "<group>"; };
 		717F618F1E43D66500F37024 /* enter-fullscreen-compact@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "enter-fullscreen-compact@1x.png"; sourceTree = "<group>"; };
 		717F61901E43D66500F37024 /* enter-fullscreen-compact@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "enter-fullscreen-compact@2x.png"; sourceTree = "<group>"; };
@@ -18446,7 +18445,6 @@
 				716FA0E51DB26591007323CC /* layout-item.js */,
 				716FA0E61DB26591007323CC /* layout-node.js */,
 				717F618C1E43D61A00F37024 /* macos-compact-inline-media-controls.css */,
-				717F618D1E43D61A00F37024 /* macos-compact-inline-media-controls.js */,
 				712157C01DCCCA0700AA7A92 /* macos-fullscreen-media-controls.css */,
 				712157C11DCCCA0700AA7A92 /* macos-fullscreen-media-controls.js */,
 				716FA0E71DB26591007323CC /* macos-inline-media-controls.css */,

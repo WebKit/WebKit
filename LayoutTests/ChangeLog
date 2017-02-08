@@ -1,3 +1,44 @@
+2017-02-08  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Implement reduced and tight padding modes
+        https://bugs.webkit.org/show_bug.cgi?id=167933
+        <rdar://problem/30396994>
+
+        Reviewed by Dean Jackson.
+
+        We rewrite the previously-written tests for "compact" mode and add some new tests for
+        "reduced padding" and "tight padding" modes as well as new support in IconButton to
+        update the icon based on a change of layout traits.
+
+        * media/modern-media-controls/icon-button/icon-button-change-layout-traits-expected.txt: Added.
+        * media/modern-media-controls/icon-button/icon-button-change-layout-traits.html: Added.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-buttons-styles-expected.txt: Removed.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-constructor-expected.txt: Removed.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-constructor.html: Removed.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-controls-bar-styles-expected.txt: Removed.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-controls-bar-styles.html: Removed.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-layout-expected.txt: Removed.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-layout.html: Removed.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-volume-styles-expected.txt: Removed.
+        * media/modern-media-controls/macos-compact-inline-media-controls/macos-compact-inline-media-controls-volume-styles.html: Removed.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-buttons-styles-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-buttons-styles.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-controls-bar-styles-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-controls-bar-styles.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-reduced-padding-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-reduced-padding.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-tight-padding-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-tight-padding.html: Added.
+        * media/modern-media-controls/media-controller/media-controller-compact-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-compact.html: Added.
+        * media/modern-media-controls/media-controller/media-controller-reduced-padding-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-reduced-padding.html: Added.
+        * media/modern-media-controls/media-controller/media-controller-tight-padding-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-tight-padding.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2017-02-08  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection constructor can take null as input

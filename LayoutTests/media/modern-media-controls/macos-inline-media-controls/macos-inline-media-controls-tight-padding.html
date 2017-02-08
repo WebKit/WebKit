@@ -1,0 +1,22 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing <code>MacOSInlineMediaControls</code> with tight padding.");
+
+const mediaControls = new MacOSInlineMediaControls({ width: 400 });
+mediaControls.layoutTraits = LayoutTraits.macOS | LayoutTraits.TightPadding;
+
+shouldBe("mediaControls.leftContainer.leftMargin", "12");
+shouldBe("mediaControls.leftContainer.rightMargin ", "12");
+shouldBe("mediaControls.leftContainer.buttonMargin", "12");
+shouldBe("mediaControls.rightContainer.leftMargin ", "12");
+shouldBe("mediaControls.rightContainer.rightMargin", "12");
+shouldBe("mediaControls.rightContainer.buttonMargin ", "12");
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

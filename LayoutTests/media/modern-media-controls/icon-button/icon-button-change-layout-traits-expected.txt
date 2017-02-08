@@ -1,0 +1,21 @@
+Testing IconButton while changing layout traits.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Setting macOS inline layout traits and setting play icon
+PASS iconButton.element.style.webkitMaskImage.includes("macOS/pause") is true
+PASS iconButton.element.style.width is "22px"
+PASS iconButton.element.style.height is "24px"
+PASS iconButton.element.style.webkitMaskSize is "22px 24px"
+
+Setting macOS inline and compact layout traits and notifying of a layout traits change
+PASS iconButton.element.style.webkitMaskImage.includes("macOS/pause-compact") is true
+PASS iconButton.element.style.width is "11px"
+PASS iconButton.element.style.height is "13px"
+PASS iconButton.element.style.webkitMaskSize is "11px 13px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

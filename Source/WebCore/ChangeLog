@@ -1,3 +1,74 @@
+2017-02-08  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Implement reduced and tight padding modes
+        https://bugs.webkit.org/show_bug.cgi?id=167933
+        <rdar://problem/30396994>
+
+        Reviewed by Dean Jackson.
+
+        The design specs for modern media controls mandate the following for inline media controls:
+
+            - controls at or below 300pt width use a 12pt left margin for the left buttons container,
+            and a 12pt right margin for the right buttons container, and 16pth button margin inside
+            both containers ("reduced padding mode").
+
+            - when dropping at or below 120pt width, controls use an 8pt left margin for
+            the left buttons container, and an 8pt right margin for the right buttons container, and
+            12pt button margin inside both containers and a shorter bar (25pt) ("compact mode").
+
+            - in the case of audio controls, at 400pt or less, controls switch to 12pt margins and
+            button margins for both buttons containers ("tight padding mode").
+
+        The "compact" mode was already implemented as a dedicated MacOSInlineMediaControls subclass.
+        Since we now have a more generic need to vary the metrics used for inline media controls on
+        macOS, we add new features to MacOSInlineMediaControls to support varying metrics based on
+        the controls' "layoutTraits" property.
+
+        So MediaController is changed such that it knows to use the new TightPadding and ReducedPadding
+        layout traits based on the conditions defined above, and _updateControlsIfNeeded() is changed
+        to set the "layoutTraits" property on the controls whenever called, which in our case is most
+        relevantly a "resize" event on the shadow root or a TrackEvent on the video tracks (to determine
+        when we're possibly changing between a video and audio file).
+
+        As a result, the "layoutTraits" setter is called on MacOSInlineMediaControls, which updates
+        the metrics for the various buttons containers, but also notifies the buttons contained
+        within that layout traits may have changed, since some buttons support a "compact" appearance
+        that is shorter and require a different image file. To that end, IconButton has been updated
+        so that it may be notified of a layout traits change through a new layoutTraitsDidChange()
+        method, that checks whether the current layout traits differ from those last used when loading
+        the icon.
+
+        Tests: media/modern-media-controls/icon-button/icon-button-change-layout-traits.html
+               media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-buttons-styles.html
+               media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-controls-bar-styles.html
+               media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact.html
+               media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-reduced-padding.html
+               media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-tight-padding.html
+               media/modern-media-controls/media-controller/media-controller-compact.html
+               media/modern-media-controls/media-controller/media-controller-reduced-padding.html
+               media/modern-media-controls/media-controller/media-controller-tight-padding.html
+
+        * Modules/modern-media-controls/controls/icon-button.js:
+        (IconButton.prototype.set iconName):
+        (IconButton.prototype.layoutTraitsDidChange):
+        (IconButton.prototype._loadImage):
+        * Modules/modern-media-controls/controls/layout-item.js:
+        * Modules/modern-media-controls/controls/macos-compact-inline-media-controls.js: Removed.
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.js:
+        (MacOSInlineMediaControls.prototype.get layoutTraits):
+        (MacOSInlineMediaControls.prototype.set layoutTraits):
+        (MacOSInlineMediaControls.prototype._matchLayoutTraits):
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        (MediaController.prototype.get layoutTraits):
+        (MediaController.prototype.handleEvent):
+        (MediaController.prototype._updateControlsIfNeeded):
+        (MediaController.prototype._controlsClassForLayoutTraits):
+        (MediaController.prototype._shouldFadeBetweenControls): Deleted.
+        (MediaController.prototype._controlsClass): Deleted.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-02-08  Aakash Jain  <aakash_jain@apple.com>
 
         Move private methods from WKGraphics.h to a separate header file

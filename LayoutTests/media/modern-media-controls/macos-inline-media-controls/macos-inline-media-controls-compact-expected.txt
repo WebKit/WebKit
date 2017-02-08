@@ -1,0 +1,18 @@
+Testing MacOSInlineMediaControls in compact mode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.element.classList.contains('compact') is true
+PASS mediaControls.rightContainer.buttons is [mediaControls.muteButton, mediaControls.fullscreenButton]
+PASS mediaControls.leftContainer.leftMargin is 8
+PASS mediaControls.leftContainer.rightMargin is 12
+PASS mediaControls.leftContainer.buttonMargin is 12
+PASS mediaControls.rightContainer.leftMargin is 12
+PASS mediaControls.rightContainer.rightMargin is 8
+PASS mediaControls.rightContainer.buttonMargin is 12
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
