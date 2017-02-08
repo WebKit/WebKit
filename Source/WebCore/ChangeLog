@@ -1,3 +1,19 @@
+2017-02-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Remove legacy Navigator.webkitGetUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=168016
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, existing tests updated.
+
+        * WebCore.xcodeproj/project.pbxproj: NavigatorUserMedia.
+        * DerivedSources.make: Ditto.
+        * CMakeLists.txt: Ditto.
+        * Modules/mediastream/NavigatorUserMedia.idl: Removed.
+        * Modules/mediastream/NavigatorUserMedia.js: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-02-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add kUTTypeUTF8PlainText and kUTTypeJPEG to the list of compatible content types in DragData

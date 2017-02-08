@@ -16,19 +16,19 @@ function denyPermission() {
 
 var error;
 var options = {audio: true, video: true};
-navigator.webkitGetUserMedia(options, function(stream) {
-    testFailed('Success callback invoked unexpectedly');
-    finishJSTest();
-}, function(e) {
-    if (permissionSet) {
-        error = e;
-        shouldBeEqualToString('error.name', 'NotAllowedError');
+navigator.mediaDevices.getUserMedia(options)
+    .then(stream => {
+        testFailed('Success callback invoked unexpectedly');
         finishJSTest();
-        return;
-    }
-    testFailed('Error callback invoked unexpectedly');
-    finishJSTest();
-});
+    })
+    .catch(err => {
+        if (permissionSet) {
+            error = err;
+            shouldBeEqualToString('error.name', 'NotAllowedError');
+        } else
+            testFailed('Error callback invoked unexpectedly');
+        finishJSTest();
+    });
 
 window.setTimeout(denyPermission, 100);
 </script>

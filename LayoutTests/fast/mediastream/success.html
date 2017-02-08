@@ -14,12 +14,14 @@ else
     debug('This test can not be run without the testRunner');
 
 var options = {audio: true, video: true};
-navigator.webkitGetUserMedia(options, function(stream) {
-    finishJSTest();
-}, function(e) {
-    testFailed('Error callback invoked unexpectedly');
-    finishJSTest();
-});
+navigator.mediaDevices.getUserMedia(options)
+    .then(stream => {
+        finishJSTest();
+    })
+    .catch(err => {
+        testFailed('Error callback invoked unexpectedly');
+        finishJSTest();
+    });
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
