@@ -1,3 +1,17 @@
+2017-02-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r211873.
+        https://bugs.webkit.org/show_bug.cgi?id=168001
+
+        It's in jhbuild for consistent layout tests (Requested by
+        mcatanzaro on #webkit).
+
+        Reverted changeset:
+
+        "[GTK] Add icu packages to Tools/gtk/install-dependencies"
+        https://bugs.webkit.org/show_bug.cgi?id=167993
+        http://trac.webkit.org/changeset/211873
+
 2017-02-08  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Add icu packages to Tools/gtk/install-dependencies

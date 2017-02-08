@@ -117,7 +117,6 @@ function installDependenciesWithApt {
         libgstreamer-plugins-base1.0-dev \
         libgudev-1.0-dev \
         libhyphen-dev \
-        libicu-dev \
         libjpeg-dev \
         libmpg123-dev \
         libnotify-dev \
@@ -240,7 +239,6 @@ function installDependenciesWithPacman {
         gst-plugins-base-libs \
         gzip \
         hyphen \
-        icu \
         libtool \
         m4 \
         make \
@@ -391,7 +389,6 @@ function installDependenciesWithDnf {
         libedit-devel \
         libgcrypt-devel \
         libgudev1-devel \
-        libicu-devel \
         libjpeg-turbo-devel \
         libnotify-devel \
         libpng-devel \
