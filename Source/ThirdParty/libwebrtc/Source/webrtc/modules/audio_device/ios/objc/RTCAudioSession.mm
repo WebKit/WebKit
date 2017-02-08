@@ -21,14 +21,14 @@
 #import "webrtc/modules/audio_device/ios/objc/RTCAudioSession+Private.h"
 #import "webrtc/modules/audio_device/ios/objc/RTCAudioSessionConfiguration.h"
 
-NSString * const kRTCAudioSessionErrorDomain = @"org.webrtc.RTCAudioSession";
+NSString * const kRTCAudioSessionErrorDomain = @"org.webrtc.WebRTCAudioSession";
 NSInteger const kRTCAudioSessionErrorLockRequired = -1;
 NSInteger const kRTCAudioSessionErrorConfiguration = -2;
 
 // This class needs to be thread-safe because it is accessed from many threads.
 // TODO(tkchin): Consider more granular locking. We're not expecting a lot of
 // lock contention so coarse locks should be fine for now.
-@implementation RTCAudioSession {
+@implementation WebRTCAudioSession {
   rtc::CriticalSection _crit;
   AVAudioSession *_session;
   volatile int _activationCount;
@@ -46,7 +46,7 @@ NSInteger const kRTCAudioSessionErrorConfiguration = -2;
 
 + (instancetype)sharedInstance {
   static dispatch_once_t onceToken;
-  static RTCAudioSession *sharedInstance = nil;
+  static WebRTCAudioSession *sharedInstance = nil;
   dispatch_once(&onceToken, ^{
     sharedInstance = [[self alloc] init];
   });
@@ -96,7 +96,7 @@ NSInteger const kRTCAudioSessionErrorConfiguration = -2;
 
 - (NSString *)description {
   NSString *format =
-      @"RTCAudioSession: {\n"
+      @"WebRTCAudioSession: {\n"
        "  category: %@\n"
        "  categoryOptions: %ld\n"
        "  mode: %@\n"
@@ -166,7 +166,7 @@ NSInteger const kRTCAudioSessionErrorConfiguration = -2;
 }
 
 // TODO(tkchin): Check for duplicates.
-- (void)addDelegate:(id<RTCAudioSessionDelegate>)delegate {
+- (void)addDelegate:(id<WebRTCAudioSessionDelegate>)delegate {
   if (!delegate) {
     return;
   }
@@ -176,7 +176,7 @@ NSInteger const kRTCAudioSessionErrorConfiguration = -2;
   }
 }
 
-- (void)removeDelegate:(id<RTCAudioSessionDelegate>)delegate {
+- (void)removeDelegate:(id<WebRTCAudioSessionDelegate>)delegate {
   if (!delegate) {
     return;
   }
@@ -563,7 +563,7 @@ NSInteger const kRTCAudioSessionErrorConfiguration = -2;
   return error;
 }
 
-- (std::vector<__weak id<RTCAudioSessionDelegate> >)delegates {
+- (std::vector<__weak id<WebRTCAudioSessionDelegate> >)delegates {
   @synchronized(self) {
     // Note: this returns a copy.
     return _delegates;
@@ -571,7 +571,7 @@ NSInteger const kRTCAudioSessionErrorConfiguration = -2;
 }
 
 // TODO(tkchin): check for duplicates.
-- (void)pushDelegate:(id<RTCAudioSessionDelegate>)delegate {
+- (void)pushDelegate:(id<WebRTCAudioSessionDelegate>)delegate {
   @synchronized(self) {
     _delegates.insert(_delegates.begin(), delegate);
   }
@@ -629,7 +629,7 @@ NSInteger const kRTCAudioSessionErrorConfiguration = -2;
   // acquire lock if it hasn't already been called.
   if (!self.isLocked) {
     if (outError) {
-      *outError = [RTCAudioSession lockError];
+      *outError = [WebRTCAudioSession lockError];
     }
     return NO;
   }
@@ -672,8 +672,8 @@ NSInteger const kRTCAudioSessionErrorConfiguration = -2;
   // Configure the AVAudioSession and activate it.
   // Provide an error even if there isn't one so we can log it.
   NSError *error = nil;
-  RTCAudioSessionConfiguration *webRTCConfig =
-      [RTCAudioSessionConfiguration webRTCConfiguration];
+  WebRTCAudioSessionConfiguration *webRTCConfig =
+      [WebRTCAudioSessionConfiguration webRTCConfiguration];
   if (![self setConfiguration:webRTCConfig active:YES error:&error]) {
     RTCLogError(@"Failed to set WebRTC audio configuration: %@",
                 error.localizedDescription);

@@ -14,7 +14,7 @@
 
 #import "WebRTC/RTCLogging.h"
 
-@implementation RTCAudioSessionDelegateAdapter {
+@implementation WebRTCAudioSessionDelegateAdapter {
   webrtc::AudioSessionObserver *_observer;
 }
 
@@ -26,18 +26,18 @@
   return self;
 }
 
-#pragma mark - RTCAudioSessionDelegate
+#pragma mark - WebRTCAudioSessionDelegate
 
-- (void)audioSessionDidBeginInterruption:(RTCAudioSession *)session {
+- (void)audioSessionDidBeginInterruption:(WebRTCAudioSession *)session {
   _observer->OnInterruptionBegin();
 }
 
-- (void)audioSessionDidEndInterruption:(RTCAudioSession *)session
+- (void)audioSessionDidEndInterruption:(WebRTCAudioSession *)session
                    shouldResumeSession:(BOOL)shouldResumeSession {
   _observer->OnInterruptionEnd();
 }
 
-- (void)audioSessionDidChangeRoute:(RTCAudioSession *)session
+- (void)audioSessionDidChangeRoute:(WebRTCAudioSession *)session
            reason:(AVAudioSessionRouteChangeReason)reason
     previousRoute:(AVAudioSessionRouteDescription *)previousRoute {
   switch (reason) {
@@ -64,21 +64,21 @@
   }
 }
 
-- (void)audioSessionMediaServicesWereLost:(RTCAudioSession *)session {
+- (void)audioSessionMediaServicesWereLost:(WebRTCAudioSession *)session {
 }
 
-- (void)audioSessionMediaServicesWereReset:(RTCAudioSession *)session {
+- (void)audioSessionMediaServicesWereReset:(WebRTCAudioSession *)session {
 }
 
-- (void)audioSession:(RTCAudioSession *)session
+- (void)audioSession:(WebRTCAudioSession *)session
     didChangeCanPlayOrRecord:(BOOL)canPlayOrRecord {
   _observer->OnCanPlayOrRecordChange(canPlayOrRecord);
 }
 
-- (void)audioSessionDidStartPlayOrRecord:(RTCAudioSession *)session {
+- (void)audioSessionDidStartPlayOrRecord:(WebRTCAudioSession *)session {
 }
 
-- (void)audioSessionDidStopPlayOrRecord:(RTCAudioSession *)session {
+- (void)audioSessionDidStopPlayOrRecord:(WebRTCAudioSession *)session {
 }
 
 @end

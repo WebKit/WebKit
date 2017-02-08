@@ -20,7 +20,7 @@
 #include "webrtc/modules/audio_device/ios/audio_session_observer.h"
 #include "webrtc/modules/audio_device/ios/voice_processing_audio_unit.h"
 
-RTC_FWD_DECL_OBJC_CLASS(RTCAudioSessionDelegateAdapter);
+RTC_FWD_DECL_OBJC_CLASS(WebRTCAudioSessionDelegateAdapter);
 
 namespace webrtc {
 
@@ -288,7 +288,7 @@ class AudioDeviceIOS : public AudioDeviceGeneric,
   bool is_interrupted_;
 
   // Audio interruption observer instance.
-  RTCAudioSessionDelegateAdapter* audio_session_observer_;
+  WebRTCAudioSessionDelegateAdapter* audio_session_observer_;
 
   // Set to true if we've activated the audio session.
   bool has_configured_session_;

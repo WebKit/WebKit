@@ -52,9 +52,9 @@ const double kRTCAudioSessionHighPerformanceIOBufferDuration = 0.01;
 // TODO(henrika): monitor this size and determine if it should be modified.
 const double kRTCAudioSessionLowComplexityIOBufferDuration = 0.06;
 
-static RTCAudioSessionConfiguration *gWebRTCConfiguration = nil;
+static WebRTCAudioSessionConfiguration *gWebRTCConfiguration = nil;
 
-@implementation RTCAudioSessionConfiguration
+@implementation WebRTCAudioSessionConfiguration
 
 @synthesize category = _category;
 @synthesize categoryOptions = _categoryOptions;
@@ -106,9 +106,9 @@ static RTCAudioSessionConfiguration *gWebRTCConfiguration = nil;
 }
 
 + (instancetype)currentConfiguration {
-  RTCAudioSession *session = [RTCAudioSession sharedInstance];
-  RTCAudioSessionConfiguration *config =
-      [[RTCAudioSessionConfiguration alloc] init];
+  WebRTCAudioSession *session = [WebRTCAudioSession sharedInstance];
+  WebRTCAudioSessionConfiguration *config =
+      [[WebRTCAudioSessionConfiguration alloc] init];
   config.category = session.category;
   config.categoryOptions = session.categoryOptions;
   config.mode = session.mode;
@@ -121,11 +121,11 @@ static RTCAudioSessionConfiguration *gWebRTCConfiguration = nil;
 
 + (instancetype)webRTCConfiguration {
   @synchronized(self) {
-    return (RTCAudioSessionConfiguration *)gWebRTCConfiguration;
+    return (WebRTCAudioSessionConfiguration *)gWebRTCConfiguration;
   }
 }
 
-+ (void)setWebRTCConfiguration:(RTCAudioSessionConfiguration *)configuration {
++ (void)setWebRTCConfiguration:(WebRTCAudioSessionConfiguration *)configuration {
   @synchronized(self) {
     gWebRTCConfiguration = configuration;
   }

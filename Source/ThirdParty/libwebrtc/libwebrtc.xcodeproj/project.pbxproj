@@ -2469,18 +2469,19 @@
 		5CDD90831E43D15C00621E92 /* nonlinear_beamformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD90731E43D15C00621E92 /* nonlinear_beamformer.h */; };
 		5CFD53601E4BA34B00482908 /* helpers_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD535F1E4BA34B00482908 /* helpers_ios.mm */; };
 		5CFD536C1E4BA4DC00482908 /* RTCAudioSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53631E4BA4DC00482908 /* RTCAudioSession.h */; };
-		5CFD536D1E4BA4DC00482908 /* RTCAudioSession.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53641E4BA4DC00482908 /* RTCAudioSession.mm */; };
-		5CFD536E1E4BA4DC00482908 /* RTCAudioSession+Configuration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53651E4BA4DC00482908 /* RTCAudioSession+Configuration.mm */; };
+		5CFD536D1E4BA4DC00482908 /* RTCAudioSession.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53641E4BA4DC00482908 /* RTCAudioSession.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		5CFD536E1E4BA4DC00482908 /* RTCAudioSession+Configuration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53651E4BA4DC00482908 /* RTCAudioSession+Configuration.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		5CFD536F1E4BA4DC00482908 /* RTCAudioSession+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53661E4BA4DC00482908 /* RTCAudioSession+Private.h */; };
 		5CFD53701E4BA4DC00482908 /* RTCAudioSessionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53671E4BA4DC00482908 /* RTCAudioSessionConfiguration.h */; };
-		5CFD53711E4BA4DC00482908 /* RTCAudioSessionConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53681E4BA4DC00482908 /* RTCAudioSessionConfiguration.m */; };
+		5CFD53711E4BA4DC00482908 /* RTCAudioSessionConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53681E4BA4DC00482908 /* RTCAudioSessionConfiguration.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		5CFD53721E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53691E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.h */; };
-		5CFD53731E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD536A1E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.mm */; };
+		5CFD53731E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD536A1E4BA4DC00482908 /* RTCAudioSessionDelegateAdapter.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		5CFD537C1E4BA4F500482908 /* audio_device_ios.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53751E4BA4F500482908 /* audio_device_ios.h */; };
 		5CFD537D1E4BA4F500482908 /* audio_device_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53761E4BA4F500482908 /* audio_device_ios.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		5CFD53801E4BA4F500482908 /* audio_session_observer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53791E4BA4F500482908 /* audio_session_observer.h */; };
 		5CFD53811E4BA4F500482908 /* voice_processing_audio_unit.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD537A1E4BA4F500482908 /* voice_processing_audio_unit.h */; };
-		5CFD53821E4BA4F500482908 /* voice_processing_audio_unit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD537B1E4BA4F500482908 /* voice_processing_audio_unit.mm */; };
+		5CFD53821E4BA4F500482908 /* voice_processing_audio_unit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD537B1E4BA4F500482908 /* voice_processing_audio_unit.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		5CFD53841E4BBD8D00482908 /* audio_device_not_implemented_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53831E4BBD8D00482908 /* audio_device_not_implemented_ios.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -5184,6 +5185,7 @@
 		5CFD53791E4BA4F500482908 /* audio_session_observer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_session_observer.h; sourceTree = "<group>"; };
 		5CFD537A1E4BA4F500482908 /* voice_processing_audio_unit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = voice_processing_audio_unit.h; sourceTree = "<group>"; };
 		5CFD537B1E4BA4F500482908 /* voice_processing_audio_unit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = voice_processing_audio_unit.mm; sourceTree = "<group>"; };
+		5CFD53831E4BBD8D00482908 /* audio_device_not_implemented_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = audio_device_not_implemented_ios.mm; sourceTree = "<group>"; };
 		5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libwebrtc.xcconfig; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -9130,6 +9132,7 @@
 				5CFD53621E4BA4C600482908 /* objc */,
 				5CFD53751E4BA4F500482908 /* audio_device_ios.h */,
 				5CFD53761E4BA4F500482908 /* audio_device_ios.mm */,
+				5CFD53831E4BBD8D00482908 /* audio_device_not_implemented_ios.mm */,
 				5CFD53791E4BA4F500482908 /* audio_session_observer.h */,
 				5CFD537A1E4BA4F500482908 /* voice_processing_audio_unit.h */,
 				5CFD537B1E4BA4F500482908 /* voice_processing_audio_unit.mm */,
@@ -11208,6 +11211,7 @@
 				5C11A0001E457400004F0987 /* audio_device_impl.cc in Sources */,
 				5CFD537D1E4BA4F500482908 /* audio_device_ios.mm in Sources */,
 				5C11A00B1E457448004F0987 /* audio_device_mac.cc in Sources */,
+				5CFD53841E4BBD8D00482908 /* audio_device_not_implemented_ios.mm in Sources */,
 				5CDD84171E439B2900621E92 /* audio_encoder.cc in Sources */,
 				5CDD8CA71E43C6F700621E92 /* audio_encoder_cng.cc in Sources */,
 				5CDD8FF31E43CDF400621E92 /* audio_encoder_copy_red.cc in Sources */,

@@ -104,7 +104,7 @@ AudioDeviceIOS::AudioDeviceIOS()
   LOGI() << "ctor" << ios::GetCurrentThreadDescription();
   thread_ = rtc::Thread::Current();
   audio_session_observer_ =
-      [[RTCAudioSessionDelegateAdapter alloc] initWithObserver:this];
+      [[WebRTCAudioSessionDelegateAdapter alloc] initWithObserver:this];
 }
 
 AudioDeviceIOS::~AudioDeviceIOS() {
@@ -134,8 +134,8 @@ AudioDeviceGeneric::InitStatus AudioDeviceIOS::Init() {
   // here. They have not been set and confirmed yet since configureForWebRTC
   // is not called until audio is about to start. However, it makes sense to
   // store the parameters now and then verify at a later stage.
-  RTCAudioSessionConfiguration* config =
-      [RTCAudioSessionConfiguration webRTCConfiguration];
+  WebRTCAudioSessionConfiguration* config =
+      [WebRTCAudioSessionConfiguration webRTCConfiguration];
   playout_parameters_.reset(config.sampleRate,
                             config.outputNumberOfChannels);
   record_parameters_.reset(config.sampleRate,
@@ -267,7 +267,7 @@ int32_t AudioDeviceIOS::StopRecording() {
 int32_t AudioDeviceIOS::SetLoudspeakerStatus(bool enable) {
   LOGI() << "SetLoudspeakerStatus(" << enable << ")";
 
-  RTCAudioSession* session = [RTCAudioSession sharedInstance];
+  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
   [session lockForConfiguration];
   NSString* category = session.category;
   AVAudioSessionCategoryOptions options = session.categoryOptions;
@@ -294,7 +294,7 @@ int32_t AudioDeviceIOS::SetLoudspeakerStatus(bool enable) {
 
 int32_t AudioDeviceIOS::GetLoudspeakerStatus(bool& enabled) const {
   LOGI() << "GetLoudspeakerStatus";
-  RTCAudioSession* session = [RTCAudioSession sharedInstance];
+  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
   AVAudioSessionCategoryOptions options = session.categoryOptions;
   enabled = options & AVAudioSessionCategoryOptionDefaultToSpeaker;
   return 0;
@@ -368,7 +368,7 @@ OSStatus AudioDeviceIOS::OnDeliverRecordedData(
                   static_cast<unsigned int>(frames_per_buffer),
                   static_cast<unsigned int>(num_frames));
 
-    RTCAudioSession *session = [RTCAudioSession sharedInstance];
+    WebRTCAudioSession *session = [WebRTCAudioSession sharedInstance];
     RTCLogWarning(@"Session:\n %@", session);
     return result;
   }
@@ -485,13 +485,13 @@ void AudioDeviceIOS::HandleInterruptionEnd() {
 
   is_interrupted_ = false;
   RTCLog(@"Interruption ended. Updating audio unit state.");
-  UpdateAudioUnit([RTCAudioSession sharedInstance].canPlayOrRecord);
+  UpdateAudioUnit([WebRTCAudioSession sharedInstance].canPlayOrRecord);
 }
 
 void AudioDeviceIOS::HandleValidRouteChange() {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
 
-  RTCAudioSession* session = [RTCAudioSession sharedInstance];
+  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
   RTCLog(@"%@", session);
   HandleSampleRateChange(session.sampleRate);
 }
@@ -521,7 +521,7 @@ void AudioDeviceIOS::HandleSampleRateChange(float sample_rate) {
 
   // The audio unit is already initialized or started.
   // Check to see if the sample rate or buffer size has changed.
-  RTCAudioSession* session = [RTCAudioSession sharedInstance];
+  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
   const double session_sample_rate = session.sampleRate;
   const NSTimeInterval session_buffer_duration = session.IOBufferDuration;
   const size_t session_frames_per_buffer =
@@ -591,7 +591,7 @@ void AudioDeviceIOS::UpdateAudioDeviceBuffer() {
 void AudioDeviceIOS::SetupAudioBuffersForActiveAudioSession() {
   LOGI() << "SetupAudioBuffersForActiveAudioSession";
   // Verify the current values once the audio session has been activated.
-  RTCAudioSession* session = [RTCAudioSession sharedInstance];
+  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
   double sample_rate = session.sampleRate;
   NSTimeInterval io_buffer_duration = session.IOBufferDuration;
   RTCLog(@"%@", session);
@@ -600,8 +600,8 @@ void AudioDeviceIOS::SetupAudioBuffersForActiveAudioSession() {
   // hardware sample rate but continue and use the non-ideal sample rate after
   // reinitializing the audio parameters. Most BT headsets only support 8kHz or
   // 16kHz.
-  RTCAudioSessionConfiguration* webRTCConfig =
-      [RTCAudioSessionConfiguration webRTCConfiguration];
+  WebRTCAudioSessionConfiguration* webRTCConfig =
+      [WebRTCAudioSessionConfiguration webRTCConfiguration];
   if (sample_rate != webRTCConfig.sampleRate) {
     LOG(LS_WARNING) << "Unable to set the preferred sample rate";
   }
@@ -731,7 +731,7 @@ void AudioDeviceIOS::UpdateAudioUnit(bool can_play_or_record) {
   if (should_start_audio_unit) {
     RTCLog(@"Starting audio unit for UpdateAudioUnit");
     // Log session settings before trying to start audio streaming.
-    RTCAudioSession* session = [RTCAudioSession sharedInstance];
+    WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
     RTCLog(@"%@", session);
     if (!audio_unit_->Start()) {
       RTCLogError(@"Failed to start audio unit.");
@@ -761,7 +761,7 @@ void AudioDeviceIOS::ConfigureAudioSession() {
     RTCLogWarning(@"Audio session already configured.");
     return;
   }
-  RTCAudioSession* session = [RTCAudioSession sharedInstance];
+  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
   [session lockForConfiguration];
   [session configureWebRTCSession:nil];
   [session unlockForConfiguration];
@@ -776,7 +776,7 @@ void AudioDeviceIOS::UnconfigureAudioSession() {
     RTCLogWarning(@"Audio session already unconfigured.");
     return;
   }
-  RTCAudioSession* session = [RTCAudioSession sharedInstance];
+  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
   [session lockForConfiguration];
   [session unconfigureWebRTCSession:nil];
   [session unlockForConfiguration];
@@ -792,7 +792,7 @@ bool AudioDeviceIOS::InitPlayOrRecord() {
     return false;
   }
 
-  RTCAudioSession* session = [RTCAudioSession sharedInstance];
+  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
   // Subscribe to audio session events.
   [session pushDelegate:audio_session_observer_];
 
@@ -829,7 +829,7 @@ void AudioDeviceIOS::ShutdownPlayOrRecord() {
   audio_unit_.reset();
 
   // Remove audio session notification observers.
-  RTCAudioSession* session = [RTCAudioSession sharedInstance];
+  WebRTCAudioSession* session = [WebRTCAudioSession sharedInstance];
   [session removeDelegate:audio_session_observer_];
 
   // All I/O should be stopped or paused prior to deactivating the audio

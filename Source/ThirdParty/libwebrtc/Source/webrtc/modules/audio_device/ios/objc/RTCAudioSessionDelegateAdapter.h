@@ -17,7 +17,7 @@ class AudioSessionObserver;
 /** Adapter that forwards RTCAudioSessionDelegate calls to the appropriate
  *  methods on the AudioSessionObserver.
  */
-@interface RTCAudioSessionDelegateAdapter : NSObject <RTCAudioSessionDelegate>
+@interface WebRTCAudioSessionDelegateAdapter : NSObject <WebRTCAudioSessionDelegate>
 
 - (instancetype)init NS_UNAVAILABLE;
 
