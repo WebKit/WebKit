@@ -587,7 +587,7 @@ private:
 
     FloatSize m_pixelAlignmentOffset;
 
-    LayerChangeFlags m_uncommittedChanges { 0 };
+    LayerChangeFlags m_uncommittedChanges { CoverageRectChanged };
     bool m_isCommittingChanges { false };
 };
 
