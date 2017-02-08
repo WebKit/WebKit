@@ -1,3 +1,16 @@
+2017-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] Critical warnings when media player is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=167981
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        It can happen that the source doesn't have a parent when we try to disconnect the element-added signal.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::sourceChanged):
+
 2017-02-08  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Reduce TiledBackingStore tile coverage when on memory pressure state

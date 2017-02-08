@@ -200,7 +200,7 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
         m_mediaLocations = 0;
     }
 
-    if (WEBKIT_IS_WEB_SRC(m_source.get()))
+    if (WEBKIT_IS_WEB_SRC(m_source.get()) && GST_OBJECT_PARENT(m_source.get()))
         g_signal_handlers_disconnect_by_func(GST_ELEMENT_PARENT(m_source.get()), reinterpret_cast<gpointer>(uriDecodeBinElementAddedCallback), this);
 
     if (m_autoAudioSink)
@@ -1411,7 +1411,7 @@ void MediaPlayerPrivateGStreamer::purgeOldDownloadFiles(const char* downloadFile
 
 void MediaPlayerPrivateGStreamer::sourceChanged()
 {
-    if (WEBKIT_IS_WEB_SRC(m_source.get()))
+    if (WEBKIT_IS_WEB_SRC(m_source.get()) && GST_OBJECT_PARENT(m_source.get()))
         g_signal_handlers_disconnect_by_func(GST_ELEMENT_PARENT(m_source.get()), reinterpret_cast<gpointer>(uriDecodeBinElementAddedCallback), this);
 
     m_source.clear();
