@@ -1,3 +1,15 @@
+2017-02-08  Youenn Fablet  <youenn@apple.com>
+
+        RTCPeerConnection constructor can take null as input
+        https://bugs.webkit.org/show_bug.cgi?id=167992
+
+        Reviewed by Chris Dumez.
+
+        Covered by updated and rebased tests.
+
+        * fast/mediastream/RTCPeerConnection-expected.txt:
+        * fast/mediastream/RTCPeerConnection.html:
+
 2017-02-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Mark several imported w3c fetch API tests as failing.

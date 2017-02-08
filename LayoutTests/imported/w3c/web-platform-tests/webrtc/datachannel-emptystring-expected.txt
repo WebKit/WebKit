@@ -1,5 +1,9 @@
 
-FAIL Can send empty strings across a WebRTC data channel. RTCPeerConnection argument must be a valid dictionary
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Can send empty strings across a WebRTC data channel. Test timed out
 Messages exchanged
 
+Sent: [empty string]
+Sent: "done"
 

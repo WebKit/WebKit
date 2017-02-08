@@ -1,7 +1,7 @@
 
 PASS RTCPeerConnection.length 
 PASS new RTCPeerConnection() 
-FAIL new RTCPeerConnection(null) RTCPeerConnection argument must be a valid dictionary
+PASS new RTCPeerConnection(null) 
 PASS new RTCPeerConnection(undefined) 
 PASS new RTCPeerConnection({}) 
 PASS new RTCPeerConnection({ iceServers: null }) 

@@ -34,7 +34,7 @@ function initializeRTCPeerConnection(configuration)
 {
     "use strict";
 
-    if (configuration === @undefined)
+    if (configuration == null)
         configuration = {};
     else if (!@isObject(configuration))
         @throwTypeError("RTCPeerConnection argument must be a valid dictionary");

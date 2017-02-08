@@ -7,7 +7,7 @@
         <script>
             description("Tests the RTCPeerConnection constructor.");
 
-            shouldThrow("new RTCPeerConnection(null);");
+            shouldNotThrow("new RTCPeerConnection(null);");
             shouldThrow("new RTCPeerConnection('');");
             shouldNotThrow("new RTCPeerConnection({});");
             shouldNotThrow("new RTCPeerConnection({iceServers:[]});");
