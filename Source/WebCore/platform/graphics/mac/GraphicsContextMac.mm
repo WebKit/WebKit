@@ -37,6 +37,7 @@
 #if PLATFORM(IOS)
 #import "Color.h"
 #import "WKGraphics.h"
+#import "WKGraphicsInternal.h"
 #endif
 
 #if !PLATFORM(IOS)

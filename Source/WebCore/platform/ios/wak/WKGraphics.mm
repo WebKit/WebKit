@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "WKGraphics.h"
+#import "WKGraphicsInternal.h"
 
 #if PLATFORM(IOS)
 

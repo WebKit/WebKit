@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKGraphics_h
-#define WKGraphics_h
+#pragma once
 
 #if TARGET_OS_IPHONE
 
 #import <CoreGraphics/CoreGraphics.h>
 
+typedef int WKCompositeOperation;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WEBCORE_EXPORT CGContextRef WKGetCurrentGraphicsContext(void);
-WEBCORE_EXPORT void WKSetCurrentGraphicsContext(CGContextRef);
-
-WEBCORE_EXPORT void WKRectFill(CGContextRef, CGRect aRect);
+void WKRectFillUsingOperation(CGContextRef, CGRect, WKCompositeOperation);
+CGImageRef WKGraphicsCreateImageFromBundleWithName(const char *image_file);
+CGPatternRef WKCreatePatternFromCGImage(CGImageRef imageRef);
+void WKSetPattern(CGContextRef context, CGPatternRef pattern, bool fill, bool stroke);
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif // TARGET_OS_IPHONE
-
-#endif // WKGraphics_h
