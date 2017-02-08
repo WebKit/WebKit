@@ -22,6 +22,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "GraphicsContext.h"
+#include "MemoryPressureHandler.h"
 #include "TiledBackingStoreClient.h"
 #include <wtf/CheckedArithmetic.h>
 
@@ -59,10 +60,11 @@ void TiledBackingStore::createTilesIfNeeded(const IntRect& unscaledVisibleRect, 
 {
     IntRect scaledContentsRect = mapFromContents(contentsRect);
     IntRect visibleRect = mapFromContents(unscaledVisibleRect);
+    float coverAreaMultiplier = MemoryPressureHandler::singleton().isUnderMemoryPressure() ? 1.0f : 2.0f;
 
-    bool didChange = m_trajectoryVector != m_pendingTrajectoryVector || m_visibleRect != visibleRect || m_rect != scaledContentsRect;
+    bool didChange = m_trajectoryVector != m_pendingTrajectoryVector || m_visibleRect != visibleRect || m_rect != scaledContentsRect || m_coverAreaMultiplier != coverAreaMultiplier;
     if (didChange || m_pendingTileCreation)
-        createTiles(visibleRect, scaledContentsRect);
+        createTiles(visibleRect, scaledContentsRect, coverAreaMultiplier);
 }
 
 void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
@@ -143,13 +145,14 @@ bool TiledBackingStore::visibleAreaIsCovered() const
     return coverageRatio(intersection(m_visibleRect, m_rect)) == 1.0f;
 }
 
-void TiledBackingStore::createTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect)
+void TiledBackingStore::createTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect, float coverAreaMultiplier)
 {
     // Update our backing store geometry.
     const IntRect previousRect = m_rect;
     m_rect = scaledContentsRect;
     m_trajectoryVector = m_pendingTrajectoryVector;
     m_visibleRect = visibleRect;
+    m_coverAreaMultiplier = coverAreaMultiplier;
 
     if (m_rect.isEmpty()) {
         setCoverRect(IntRect());

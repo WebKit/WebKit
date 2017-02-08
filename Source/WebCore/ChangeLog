@@ -1,3 +1,20 @@
+2017-02-08  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Reduce TiledBackingStore tile coverage when on memory pressure state
+        https://bugs.webkit.org/show_bug.cgi?id=167980
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use a smaller coverAreaMultiplier in the TiledBackingStore when in memory pressure situation, to reduce
+        the amount of tiles created.
+
+        No new tests.
+
+        * platform/graphics/texmap/coordinated/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::createTilesIfNeeded):
+        (WebCore::TiledBackingStore::createTiles):
+        * platform/graphics/texmap/coordinated/TiledBackingStore.h:
+
 2017-02-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME] Implement MediaKeySession::remove()
