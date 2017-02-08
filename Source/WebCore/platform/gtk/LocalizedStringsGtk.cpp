@@ -756,91 +756,91 @@ String localizedMediaTimeDescription(float time)
 
 String validationMessageValueMissingText()
 {
-    return String::fromUTF8(_("value missing"));
+    return String::fromUTF8(_("Fill out this field"));
 }
 
 String validationMessageValueMissingForCheckboxText()
 {
-    notImplemented();
-    return validationMessageValueMissingText();
+    return String::fromUTF8(_("Select this checkbox"));
 }
 
 String validationMessageValueMissingForFileText()
 {
-    notImplemented();
-    return validationMessageValueMissingText();
+    return String::fromUTF8(_("Select a file"));
 }
 
 String validationMessageValueMissingForMultipleFileText()
 {
-    notImplemented();
-    return validationMessageValueMissingText();
+    return validationMessageValueMissingForFileText();
 }
 
 String validationMessageValueMissingForRadioText()
 {
-    notImplemented();
-    return validationMessageValueMissingText();
+    return String::fromUTF8(_("Select one of these options"));
 }
 
 String validationMessageValueMissingForSelectText()
 {
-    notImplemented();
-    return validationMessageValueMissingText();
+    return String::fromUTF8(_("Select an item in the list"));
 }
 
 String validationMessageTypeMismatchText()
 {
-    notImplemented();
-    return String::fromUTF8(_("type mismatch"));
+    return String::fromUTF8(_("Invalid value"));
 }
 
 String validationMessageTypeMismatchForEmailText()
 {
-    notImplemented();
-    return validationMessageTypeMismatchText();
+    return String::fromUTF8(_("Enter an email address"));
 }
 
 String validationMessageTypeMismatchForMultipleEmailText()
 {
-    notImplemented();
-    return validationMessageTypeMismatchText();
+    return validationMessageTypeMismatchForEmailText();
 }
 
 String validationMessageTypeMismatchForURLText()
 {
-    notImplemented();
-    return validationMessageTypeMismatchText();
+    return String::fromUTF8(_("Enter a URL"));
 }
 
 String validationMessagePatternMismatchText()
 {
-    return String::fromUTF8(_("pattern mismatch"));
+    return String::fromUTF8(_("Match the requested format"));
 }
 
-String validationMessageTooShortText(int, int)
+String validationMessageTooShortText(int, int minLength)
 {
-    return String::fromUTF8(_("too short"));
+    GUniquePtr<char> string(g_strdup_printf(ngettext("Use at least one character", "Use at least %d characters", minLength), minLength));
+    return String::fromUTF8(string.get());
 }
 
-String validationMessageTooLongText(int, int)
+String validationMessageTooLongText(int, int maxLength)
 {
-    return String::fromUTF8(_("too long"));
+    GUniquePtr<char> string(g_strdup_printf(ngettext("Use no more than one character", "Use no more than %d characters", maxLength), maxLength));
+    return String::fromUTF8(string.get());
 }
 
-String validationMessageRangeUnderflowText(const String&)
+String validationMessageRangeUnderflowText(const String& minimum)
 {
-    return String::fromUTF8(_("range underflow"));
+    GUniquePtr<char> string(g_strdup_printf(_("Value must be greater than or equal to %s"), minimum.utf8().data()));
+    return String::fromUTF8(string.get());
 }
 
-String validationMessageRangeOverflowText(const String&)
+String validationMessageRangeOverflowText(const String& maximum)
 {
-    return String::fromUTF8(_("range overflow"));
+    GUniquePtr<char> string(g_strdup_printf(_("Value must be less than or equal to %s"), maximum.utf8().data()));
+    return String::fromUTF8(string.get());
 }
 
 String validationMessageStepMismatchText(const String&, const String&)
 {
-    return String::fromUTF8(_("step mismatch"));
+    return String::fromUTF8(_("Enter a valid value"));
+}
+
+String validationMessageBadInputForNumberText()
+{
+    return String::fromUTF8(_("Enter a number"));
 }
 
 String unacceptableTLSCertificate()
@@ -851,12 +851,6 @@ String unacceptableTLSCertificate()
 String localizedString(const char* key)
 {
     return String::fromUTF8(key, strlen(key));
-}
-
-String validationMessageBadInputForNumberText()
-{
-    notImplemented();
-    return validationMessageTypeMismatchText();
 }
 
 #if ENABLE(VIDEO_TRACK)
