@@ -27,6 +27,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include "FileSystem.h"
 #include "GStreamerUtilities.h"
 #include "URL.h"
 #include "MIMETypeRegistry.h"
@@ -36,6 +37,7 @@
 #include "SecurityOrigin.h"
 #include "TimeRanges.h"
 #include "WebKitWebSourceGStreamer.h"
+#include <glib.h>
 #include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
 #include <limits>
@@ -194,6 +196,9 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
         gst_structure_free(m_mediaLocations);
         m_mediaLocations = 0;
     }
+
+    if (WEBKIT_IS_WEB_SRC(m_source.get()) && GST_OBJECT_PARENT(m_source.get()))
+        g_signal_handlers_disconnect_by_func(GST_ELEMENT_PARENT(m_source.get()), reinterpret_cast<gpointer>(uriDecodeBinElementAddedCallback), this);
 
     if (m_autoAudioSink)
         g_signal_handlers_disconnect_by_func(G_OBJECT(m_autoAudioSink.get()),
@@ -1303,13 +1308,75 @@ void MediaPlayerPrivateGStreamer::sourceChangedCallback(MediaPlayerPrivateGStrea
     player->sourceChanged();
 }
 
+void MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback(GstBin* bin, GstElement* element, MediaPlayerPrivateGStreamer* player)
+{
+    if (g_strcmp0(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(G_OBJECT(element))), "GstDownloadBuffer"))
+        return;
+
+    player->m_downloadBuffer = element;
+    g_signal_handlers_disconnect_by_func(bin, reinterpret_cast<gpointer>(uriDecodeBinElementAddedCallback), player);
+    g_signal_connect_swapped(element, "notify::temp-location", G_CALLBACK(downloadBufferFileCreatedCallback), player);
+
+    GUniqueOutPtr<char> oldDownloadTemplate;
+    g_object_get(element, "temp-template", &oldDownloadTemplate.outPtr(), nullptr);
+
+    GUniquePtr<char> newDownloadTemplate(g_build_filename(G_DIR_SEPARATOR_S, "var", "tmp", "WebKit-Media-XXXXXX", nullptr));
+    g_object_set(element, "temp-template", newDownloadTemplate.get(), nullptr);
+    GST_TRACE("Reconfigured file download template from '%s' to '%s'", oldDownloadTemplate.get(), newDownloadTemplate.get());
+
+    player->purgeOldDownloadFiles(oldDownloadTemplate.get());
+}
+
+void MediaPlayerPrivateGStreamer::downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer* player)
+{
+    ASSERT(player->m_downloadBuffer);
+
+    g_signal_handlers_disconnect_by_func(player->m_downloadBuffer.get(), reinterpret_cast<gpointer>(downloadBufferFileCreatedCallback), player);
+
+    GUniqueOutPtr<char> downloadFile;
+    g_object_get(player->m_downloadBuffer.get(), "temp-location", &downloadFile.outPtr(), nullptr);
+    player->m_downloadBuffer = nullptr;
+
+    if (UNLIKELY(!deleteFile(downloadFile.get()))) {
+        GST_WARNING("Couldn't unlink media temporary file %s after creation", downloadFile.get());
+        return;
+    }
+
+    GST_TRACE("Unlinked media temporary file %s after creation", downloadFile.get());
+}
+
+void MediaPlayerPrivateGStreamer::purgeOldDownloadFiles(const char* downloadFileTemplate)
+{
+    if (!downloadFileTemplate)
+        return;
+
+    GUniquePtr<char> templatePath(g_path_get_dirname(downloadFileTemplate));
+    GUniquePtr<char> templateFile(g_path_get_basename(downloadFileTemplate));
+    String templatePattern = String(templateFile.get()).replace("X", "?");
+
+    for (auto& filePath : listDirectory(templatePath.get(), templatePattern)) {
+        if (UNLIKELY(!deleteFile(filePath))) {
+            GST_WARNING("Couldn't unlink legacy media temporary file: %s", filePath.utf8().data());
+            continue;
+        }
+
+        GST_TRACE("Unlinked legacy media temporary file: %s", filePath.utf8().data());
+    }
+}
+
 void MediaPlayerPrivateGStreamer::sourceChanged()
 {
+    if (WEBKIT_IS_WEB_SRC(m_source.get()) && GST_OBJECT_PARENT(m_source.get()))
+        g_signal_handlers_disconnect_by_func(GST_ELEMENT_PARENT(m_source.get()), reinterpret_cast<gpointer>(uriDecodeBinElementAddedCallback), this);
+
     m_source.clear();
     g_object_get(m_pipeline.get(), "source", &m_source.outPtr(), nullptr);
 
-    if (WEBKIT_IS_WEB_SRC(m_source.get()))
+    if (WEBKIT_IS_WEB_SRC(m_source.get())) {
         webKitWebSrcSetMediaPlayer(WEBKIT_WEB_SRC(m_source.get()), m_player);
+        g_signal_connect(GST_ELEMENT_PARENT(m_source.get()), "element-added", G_CALLBACK(uriDecodeBinElementAddedCallback), this);
+    }
+
 #if ENABLE(MEDIA_SOURCE)
     if (m_mediaSource && WEBKIT_IS_MEDIA_SRC(m_source.get())) {
         MediaSourceGStreamer::open(m_mediaSource.get(), WEBKIT_MEDIA_SRC(m_source.get()));

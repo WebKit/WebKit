@@ -170,6 +170,10 @@ private:
     MediaTime totalFrameDelay() override { return MediaTime::zeroTime(); }
 #endif
 
+    void purgeOldDownloadFiles(const char*);
+    static void uriDecodeBinElementAddedCallback(GstBin*, GstElement*, MediaPlayerPrivateGStreamer*);
+    static void downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer*);
+
     void readyTimerFired();
 
     void notifyPlayerOfVideo();
@@ -238,6 +242,7 @@ private:
 #endif
     GstState m_requestedState;
     GRefPtr<GstElement> m_autoAudioSink;
+    GRefPtr<GstElement> m_downloadBuffer;
     RefPtr<MediaPlayerRequestInstallMissingPluginsCallback> m_missingPluginsCallback;
 #if ENABLE(VIDEO_TRACK)
     Vector<RefPtr<AudioTrackPrivateGStreamer>> m_audioTracks;
