@@ -1,3 +1,26 @@
+2017-02-08  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] WKWebView doesn’t have implementations of UIResponderStandardEditActions that can be overridden
+        https://bugs.webkit.org/show_bug.cgi?id=167974
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+          Gave each of the actions in FOR_EACH_WKCONTENTVIEW_ACTION an implementation that sends it
+          to the WKContentView if we’re using one.
+        (-[WKWebView canPerformAction:withSender:]): Override and for each of the actions in
+          FOR_EACH_WKCONTENTVIEW_ACTION, forward to
+          -[WKContentView canPerformActionForWebView:withSender:] if we’re using a WKContentView,
+          otherwise returning NO.
+
+        * UIProcess/ios/WKContentViewInteraction.h: Declared -canPerformActionForWebView:withSender:
+          and several internal methods we override.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformAction:withSender:]): Now returns NO so that the target for any
+          action is the WKWebView.
+        (-[WKContentView canPerformActionForWebView:withSender:]): Moved the logic previously in
+          -canPerformAction:withSender: to here.
+
 2017-02-08  Antti Koivisto  <antti@apple.com>
 
         Allow speculative redirects

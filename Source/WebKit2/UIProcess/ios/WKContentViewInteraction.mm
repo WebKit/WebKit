@@ -1995,6 +1995,11 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
+    return NO;
+}
+
+- (BOOL)canPerformActionForWebView:(SEL)action withSender:(id)sender
+{
     BOOL hasWebSelection = _webSelectionAssistant && !CGRectIsEmpty(_webSelectionAssistant.get().selectionFrame);
 
     if (action == @selector(_arrowKey:))
