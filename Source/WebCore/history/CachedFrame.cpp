@@ -137,10 +137,6 @@ CachedFrame::CachedFrame(Frame& frame)
     ASSERT(m_document);
     ASSERT(m_documentLoader);
     ASSERT(m_view);
-
-    // Custom scrollbar renderers will get reattached when the document comes out of the page cache
-    m_view->detachCustomScrollbars();
-
     ASSERT(m_document->pageCacheState() == Document::InPageCache);
 
     // Create the CachedFrames for all Frames in the FrameTree.

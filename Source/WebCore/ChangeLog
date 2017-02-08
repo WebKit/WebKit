@@ -1,3 +1,16 @@
+2017-02-08  Andreas Kling  <akling@apple.com>
+
+        No need for CachedFrame to detach custom scrollbars.
+        <https://webkit.org/b/167995>
+
+        Reviewed by Sam Weinig.
+
+        Custom scrollbars have already been torn down with the rest of the render tree
+        by the time we're creating a CachedFrame.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+
 2017-02-08  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Fix printReason for unsupported overflow values.
