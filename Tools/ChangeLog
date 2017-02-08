@@ -1,3 +1,12 @@
+2017-02-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Replace a bot that has an incorrect configuration.
+        https://bugs.webkit.org/show_bug.cgi?id=167747
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2017-02-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Win] [GTK] [EFL] Compile (but don't use, yet) the platform-independent piece of ComplexTextController
