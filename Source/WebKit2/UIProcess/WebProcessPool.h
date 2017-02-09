@@ -210,9 +210,7 @@ public:
     void registerURLSchemeAsNoAccess(const String&);
     void registerURLSchemeAsDisplayIsolated(const String&);
     void registerURLSchemeAsCORSEnabled(const String&);
-#if ENABLE(CACHE_PARTITIONING)
     void registerURLSchemeAsCachePartitioned(const String&);
-#endif
 
     VisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
 
@@ -499,9 +497,7 @@ private:
     HashSet<String> m_schemesToRegisterAsDisplayIsolated;
     HashSet<String> m_schemesToRegisterAsCORSEnabled;
     HashSet<String> m_schemesToRegisterAsAlwaysRevalidated;
-#if ENABLE(CACHE_PARTITIONING)
     HashSet<String> m_schemesToRegisterAsCachePartitioned;
-#endif
 
     bool m_alwaysUsesComplexTextCodePath;
     bool m_shouldUseFontSmoothing;

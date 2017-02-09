@@ -91,9 +91,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << urlSchemesRegisteredAsDisplayIsolated;
     encoder << urlSchemesRegisteredAsCORSEnabled;
     encoder << urlSchemesRegisteredAsAlwaysRevalidated;
-#if ENABLE(CACHE_PARTITIONING)
     encoder << urlSchemesRegisteredAsCachePartitioned;
-#endif
     encoder.encodeEnum(cacheModel);
     encoder << shouldAlwaysUseComplexTextCodePath;
     encoder << shouldEnableMemoryPressureReliefLogging;
@@ -221,10 +219,8 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     if (!decoder.decode(parameters.urlSchemesRegisteredAsAlwaysRevalidated))
         return false;
-#if ENABLE(CACHE_PARTITIONING)
     if (!decoder.decode(parameters.urlSchemesRegisteredAsCachePartitioned))
         return false;
-#endif
     if (!decoder.decodeEnum(parameters.cacheModel))
         return false;
     if (!decoder.decode(parameters.shouldAlwaysUseComplexTextCodePath))

@@ -201,11 +201,7 @@ static void applyAuthenticationToRequest(ResourceHandle* handle, ResourceRequest
     // m_user/m_pass are credentials given manually, for instance, by the arguments passed to XMLHttpRequest.open().
     ResourceHandleInternal* d = handle->getInternal();
 
-#if ENABLE(CACHE_PARTITIONING)
-    String partition = firstRequest().cachePartition();
-#else
-    String partition = emptyString();
-#endif
+    String partition = request.cachePartition();
 
     if (handle->shouldUseCredentialStorage()) {
         if (d->m_user.isEmpty() && d->m_pass.isEmpty())
@@ -829,11 +825,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
 {
     ASSERT(d->m_currentWebChallenge.isNull());
 
-#if ENABLE(CACHE_PARTITIONING)
     String partition = firstRequest().cachePartition();
-#else
-    String partition = emptyString();
-#endif
 
     // FIXME: Per the specification, the user shouldn't be asked for credentials if there were incorrect ones provided explicitly.
     bool useCredentialStorage = shouldUseCredentialStorage();
@@ -899,11 +891,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         return;
     }
 
-#if ENABLE(CACHE_PARTITIONING)
     String partition = firstRequest().cachePartition();
-#else
-    String partition = emptyString();
-#endif
 
     if (shouldUseCredentialStorage()) {
         // Eventually we will manage per-session credentials only internally or use some newly-exposed API from libsoup,

@@ -137,11 +137,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
         firstRequest().setURL(urlWithCredentials);
     }
 
-#if ENABLE(CACHE_PARTITIONING)
     String partition = firstRequest().cachePartition();
-#else
-    String partition = emptyString();
-#endif
 
     // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication,
     // try and reuse the credential preemptively, as allowed by RFC 2617.
@@ -306,11 +302,7 @@ ResourceRequest ResourceHandle::willSendRequest(ResourceRequest&& request, Resou
     d->m_lastHTTPMethod = request.httpMethod();
     request.removeCredentials();
 
-#if ENABLE(CACHE_PARTITIONING)
     String partition = firstRequest().cachePartition();
-#else
-    String partition = emptyString();
-#endif
 
     if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url())) {
         // The network layer might carry over some headers from the original request that
@@ -395,11 +387,7 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
     if (!challenge.protectionSpace().isPasswordBased())
         return false;
 
-#if ENABLE(CACHE_PARTITIONING)
     String partition = firstRequest().cachePartition();
-#else
-    String partition = emptyString();
-#endif
 
     if (!d->m_user.isNull() && !d->m_pass.isNull()) {
         RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(CFURLCredentialCreate(kCFAllocatorDefault, d->m_user.createCFString().get(), d->m_pass.createCFString().get(), 0, kCFURLCredentialPersistenceNone));
@@ -490,13 +478,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         if (challenge.failureResponse().httpStatusCode() == 401)
             urlToStore = challenge.failureResponse().url(); 
 
-#if ENABLE(CACHE_PARTITIONING)
-        String partition = firstRequest().cachePartition();
-#else
-        String partition = emptyString();
-#endif
-
-        d->m_context->storageSession().credentialStorage().set(partition, webCredential, challenge.protectionSpace(), urlToStore);
+        d->m_context->storageSession().credentialStorage().set(firstRequest().cachePartition(), webCredential, challenge.protectionSpace(), urlToStore);
 
         if (d->m_connection) {
 #if PLATFORM(COCOA)

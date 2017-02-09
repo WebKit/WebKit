@@ -572,17 +572,12 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
     send(Messages::WebResourceLoader::DidReceiveResponse(entry->response(), needsContinueDidReceiveResponseMessage));
 
     if (entry->sourceStorageRecord().bodyHash && !m_parameters.derivedCachedDataTypesToRetrieve.isEmpty()) {
-#if ENABLE(CACHE_PARTITIONING)
-        String partition = originalRequest().cachePartition();
-#else
-        String partition;
-#endif
         auto bodyHash = *entry->sourceStorageRecord().bodyHash;
         auto* entryPtr = entry.release();
         auto retrieveCount = m_parameters.derivedCachedDataTypesToRetrieve.size();
 
         for (auto& type : m_parameters.derivedCachedDataTypesToRetrieve) {
-            NetworkCache::DataKey key { partition, type, bodyHash };
+            NetworkCache::DataKey key { originalRequest().cachePartition(), type, bodyHash };
             NetworkCache::singleton().retrieveData(key, [loader = makeRef(*this), entryPtr, type, retrieveCount] (const uint8_t* data, size_t size) mutable {
                 loader->m_retrievedDerivedDataCount++;
                 bool retrievedAll = loader->m_retrievedDerivedDataCount == retrieveCount;

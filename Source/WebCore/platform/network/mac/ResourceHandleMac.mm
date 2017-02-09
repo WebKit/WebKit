@@ -151,12 +151,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         if (d->m_user.isEmpty() && d->m_pass.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
             // try and reuse the credential preemptively, as allowed by RFC 2617.
-#if ENABLE(CACHE_PARTITIONING)
-            String partition = firstRequest().cachePartition();
-#else
-            String partition = emptyString();
-#endif
-            d->m_initialCredential = d->m_context->storageSession().credentialStorage().get(partition, firstRequest().url());
+            d->m_initialCredential = d->m_context->storageSession().credentialStorage().get(firstRequest().cachePartition(), firstRequest().url());
         } else {
             // If there is already a protection space known for the URL, update stored credentials before sending a request.
             // This makes it possible to implement logout by sending an XMLHttpRequest with known incorrect credentials, and aborting it immediately

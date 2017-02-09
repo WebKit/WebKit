@@ -114,9 +114,7 @@ public:
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
     ResourceRequest& resourceRequest() { return m_resourceRequest; }
     const URL& url() const { return m_resourceRequest.url();}
-#if ENABLE(CACHE_PARTITIONING)
     const String& cachePartition() const { return m_resourceRequest.cachePartition(); }
-#endif
     SessionID sessionID() const { return m_sessionID; }
     Type type() const { return m_type; }
 

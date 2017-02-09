@@ -179,11 +179,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
 void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
-#if ENABLE(CACHE_PARTITIONING)
     String partition = firstRequest().cachePartition();
-#else
-    String partition = emptyString();
-#endif
 
     if (!d->m_user.isNull() && !d->m_pass.isNull()) {
         Credential credential(d->m_user, d->m_pass, CredentialPersistenceNone);
@@ -241,11 +237,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         return;
     }
 
-#if ENABLE(CACHE_PARTITIONING)
     String partition = firstRequest().cachePartition();
-#else
-    String partition = emptyString();
-#endif
 
     if (shouldUseCredentialStorage()) {
         if (challenge.failureResponse().httpStatusCode() == 401) {

@@ -148,13 +148,11 @@ void ResourceRequest::doUpdateResourceRequest()
             m_responseContentDispositionEncodingFallbackArray.uncheckedAppend(CFStringConvertEncodingToIANACharSetName(encoding));
     }
 
-#if ENABLE(CACHE_PARTITIONING)
     if (m_nsRequest) {
         NSString* cachePartition = [NSURLProtocol propertyForKey:(NSString *)wkCachePartitionKey() inRequest:m_nsRequest.get()];
         if (cachePartition)
             m_cachePartition = cachePartition;
     }
-#endif
 }
 
 void ResourceRequest::doUpdateResourceHTTPBody()
@@ -218,13 +216,11 @@ void ResourceRequest::doUpdatePlatformRequest()
     }
     [nsRequest setContentDispositionEncodingFallbackArray:encodingFallbacks];
 
-#if ENABLE(CACHE_PARTITIONING)
     String partition = cachePartition();
     if (!partition.isNull() && !partition.isEmpty()) {
         NSString *partitionValue = [NSString stringWithUTF8String:partition.utf8().data()];
         [NSURLProtocol setProperty:partitionValue forKey:(NSString *)wkCachePartitionKey() inRequest:nsRequest];
     }
-#endif
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
     if (m_url.isLocalFile()) {

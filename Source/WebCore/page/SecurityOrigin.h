@@ -138,9 +138,7 @@ public:
     void grantStorageAccessFromFileURLsQuirk();
     bool needsStorageAccessFromFileURLsQuirk() const { return m_needsStorageAccessFromFileURLsQuirk; }
 
-#if ENABLE(CACHE_PARTITIONING)
     WEBCORE_EXPORT String domainForCachePartition() const;
-#endif
 
     bool canAccessDatabase(const SecurityOrigin& topOrigin) const { return canAccessStorage(&topOrigin); };
     bool canAccessSessionStorage(const SecurityOrigin& topOrigin) const { return canAccessStorage(&topOrigin, AlwaysAllowFromThirdParty); }

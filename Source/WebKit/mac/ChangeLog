@@ -1,3 +1,16 @@
+2017-02-09  Antti Koivisto  <antti@apple.com>
+
+        Remove most cases of #if ENABLE(CACHE_PARTITIONING)
+        https://bugs.webkit.org/show_bug.cgi?id=167990
+
+        Reviewed by Sam Weinig.
+
+        * Misc/WebCache.mm:
+        (+[WebCache addImageToCache:forURL:forFrame:]):
+        (+[WebCache removeImageFromCacheForURL:forFrame:]):
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2017-02-07  Alexey Proskuryakov  <ap@apple.com>
 
         Don't migrate WebKit DOM headers in MigrateHeaders.make

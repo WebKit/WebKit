@@ -94,11 +94,9 @@ public:
     WEBCORE_EXPORT static void registerURLSchemeAsAlwaysRevalidated(const String&);
     static bool shouldAlwaysRevalidateURLScheme(const String&);
 
-#if ENABLE(CACHE_PARTITIONING)
     // Schemes whose requests should be partitioned in the cache
     WEBCORE_EXPORT static void registerURLSchemeAsCachePartitioned(const String& scheme);
     static bool shouldPartitionCacheForURLScheme(const String& scheme);
-#endif
 
     static bool isUserExtensionScheme(const String& scheme);
 };

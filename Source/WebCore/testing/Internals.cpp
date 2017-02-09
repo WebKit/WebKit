@@ -563,9 +563,8 @@ bool Internals::isLoadingFromMemoryCache(const String& url)
         return false;
 
     ResourceRequest request(contextDocument()->completeURL(url));
-#if ENABLE(CACHE_PARTITIONING)
     request.setDomainForCachePartition(contextDocument()->topOrigin().domainForCachePartition());
-#endif
+    
     CachedResource* resource = MemoryCache::singleton().resourceForRequest(request, contextDocument()->page()->sessionID());
     return resource && resource->status() == CachedResource::Cached;
 }

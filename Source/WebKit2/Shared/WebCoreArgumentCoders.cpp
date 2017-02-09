@@ -979,10 +979,7 @@ bool ArgumentCoder<Cursor>::decode(Decoder& decoder, Cursor& cursor)
 
 void ArgumentCoder<ResourceRequest>::encode(Encoder& encoder, const ResourceRequest& resourceRequest)
 {
-#if ENABLE(CACHE_PARTITIONING)
     encoder << resourceRequest.cachePartition();
-#endif
-
     encoder << resourceRequest.hiddenFromInspector();
 
     if (resourceRequest.encodingRequiresPlatformData()) {
@@ -996,12 +993,10 @@ void ArgumentCoder<ResourceRequest>::encode(Encoder& encoder, const ResourceRequ
 
 bool ArgumentCoder<ResourceRequest>::decode(Decoder& decoder, ResourceRequest& resourceRequest)
 {
-#if ENABLE(CACHE_PARTITIONING)
     String cachePartition;
     if (!decoder.decode(cachePartition))
         return false;
     resourceRequest.setCachePartition(cachePartition);
-#endif
 
     bool isHiddenFromInspector;
     if (!decoder.decode(isHiddenFromInspector))

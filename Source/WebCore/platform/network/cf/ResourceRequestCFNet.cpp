@@ -361,32 +361,6 @@ void ResourceRequest::setHTTPPipeliningEnabled(bool flag)
     s_httpPipeliningEnabled = flag;
 }
 
-#if ENABLE(CACHE_PARTITIONING)
-String ResourceRequest::partitionName(const String& domain)
-{
-    if (domain.isNull())
-        return emptyString();
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    String highLevel = topPrivatelyControlledDomain(domain);
-    if (highLevel.isNull())
-        return emptyString();
-    return highLevel;
-#else
-    return domain;
-#endif
-}
-#endif
-
-void ResourceRequest::doPlatformSetAsIsolatedCopy(const ResourceRequest& other)
-{
-#if ENABLE(CACHE_PARTITIONING)
-    m_cachePartition = other.m_cachePartition.isolatedCopy();
-#else
-    UNUSED_PARAM(other);
-#endif
-}
-
-
 // FIXME: It is confusing that this function both sets connection count and determines maximum request count at network layer. This can and should be done separately.
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {

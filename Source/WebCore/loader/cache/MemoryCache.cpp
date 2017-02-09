@@ -115,11 +115,8 @@ bool MemoryCache::add(CachedResource& resource)
 
     ASSERT(WTF::isMainThread());
 
-#if ENABLE(CACHE_PARTITIONING)
     auto key = std::make_pair(resource.url(), resource.cachePartition());
-#else
-    auto& key = resource.url();
-#endif
+
     ensureSessionResourceMap(resource.sessionID()).set(key, &resource);
     resource.setInCache(true);
     
@@ -144,11 +141,8 @@ void MemoryCache::revalidationSucceeded(CachedResource& revalidatingResource, co
     remove(revalidatingResource);
 
     auto& resources = ensureSessionResourceMap(resource.sessionID());
-#if ENABLE(CACHE_PARTITIONING)
     auto key = std::make_pair(resource.url(), resource.cachePartition());
-#else
-    auto& key = resource.url();
-#endif
+
     ASSERT(!resources.get(key));
     resources.set(key, &resource);
     resource.setInCache(true);
@@ -189,11 +183,7 @@ CachedResource* MemoryCache::resourceForRequestImpl(const ResourceRequest& reque
     ASSERT(WTF::isMainThread());
     URL url = removeFragmentIdentifierIfNeeded(request.url());
 
-#if ENABLE(CACHE_PARTITIONING)
     auto key = std::make_pair(url, request.cachePartition());
-#else
-    auto& key = url;
-#endif
     return resources.get(key);
 }
 
@@ -232,9 +222,8 @@ bool MemoryCache::addImageToCache(NativeImagePtr&& image, const URL& url, const 
 
     cachedImage->addClient(dummyCachedImageClient());
     cachedImage->setDecodedSize(bitmapImage->decodedSize());
-#if ENABLE(CACHE_PARTITIONING)
     cachedImage->resourceRequest().setDomainForCachePartition(domainForCachePartition);
-#endif
+
     return add(*cachedImage.release());
 }
 
@@ -244,12 +233,8 @@ void MemoryCache::removeImageFromCache(const URL& url, const String& domainForCa
     if (!resources)
         return;
 
-#if ENABLE(CACHE_PARTITIONING)
     auto key = std::make_pair(url, ResourceRequest::partitionName(domainForCachePartition));
-#else
-    UNUSED_PARAM(domainForCachePartition);
-    auto& key = url;
-#endif
+
     CachedResource* resource = resources->get(key);
     if (!resource)
         return;
@@ -439,11 +424,8 @@ void MemoryCache::remove(CachedResource& resource)
     // The resource may have already been removed by someone other than our caller,
     // who needed a fresh copy for a reload. See <http://bugs.webkit.org/show_bug.cgi?id=12479#c6>.
     if (auto* resources = sessionResourceMap(resource.sessionID())) {
-#if ENABLE(CACHE_PARTITIONING)
         auto key = std::make_pair(resource.url(), resource.cachePartition());
-#else
-        auto& key = resource.url();
-#endif
+
         if (resource.inCache()) {
             // Remove resource from the resource map.
             resources->remove(key);
@@ -527,21 +509,17 @@ void MemoryCache::resourceAccessed(CachedResource& resource)
 
 void MemoryCache::removeResourcesWithOrigin(SecurityOrigin& origin)
 {
-#if ENABLE(CACHE_PARTITIONING)
     String originPartition = ResourceRequest::partitionName(origin.host());
-#endif
 
     Vector<CachedResource*> resourcesWithOrigin;
     for (auto& resources : m_sessionResources.values()) {
         for (auto& keyValue : *resources) {
             auto& resource = *keyValue.value;
-#if ENABLE(CACHE_PARTITIONING)
             auto& partitionName = keyValue.key.second;
             if (partitionName == originPartition) {
                 resourcesWithOrigin.append(&resource);
                 continue;
             }
-#endif
             RefPtr<SecurityOrigin> resourceOrigin = SecurityOrigin::create(resource.url());
             if (resourceOrigin->equal(&origin))
                 resourcesWithOrigin.append(&resource);
@@ -558,25 +536,19 @@ void MemoryCache::removeResourcesWithOrigins(SessionID sessionID, const HashSet<
     if (!resourceMap)
         return;
 
-#if ENABLE(CACHE_PARTITIONING)
     HashSet<String> originPartitions;
 
     for (auto& origin : origins)
         originPartitions.add(ResourceRequest::partitionName(origin->host()));
-#endif
 
     Vector<CachedResource*> resourcesToRemove;
     for (auto& keyValuePair : *resourceMap) {
         auto& resource = *keyValuePair.value;
-
-#if ENABLE(CACHE_PARTITIONING)
         auto& partitionName = keyValuePair.key.second;
         if (originPartitions.contains(partitionName)) {
             resourcesToRemove.append(&resource);
             continue;
         }
-#endif
-
         if (origins.contains(SecurityOrigin::create(resource.url()).ptr()))
             resourcesToRemove.append(&resource);
     }
@@ -587,19 +559,14 @@ void MemoryCache::removeResourcesWithOrigins(SessionID sessionID, const HashSet<
 
 void MemoryCache::getOriginsWithCache(SecurityOriginSet& origins)
 {
-#if ENABLE(CACHE_PARTITIONING)
-    static NeverDestroyed<String> httpString("http");
-#endif
     for (auto& resources : m_sessionResources.values()) {
         for (auto& keyValue : *resources) {
             auto& resource = *keyValue.value;
-#if ENABLE(CACHE_PARTITIONING)
             auto& partitionName = keyValue.key.second;
             if (!partitionName.isEmpty())
-                origins.add(SecurityOrigin::create(httpString, partitionName, 0));
+                origins.add(SecurityOrigin::create(ASCIILiteral("http"), partitionName, 0));
             else
-#endif
-            origins.add(SecurityOrigin::create(resource.url()));
+                origins.add(SecurityOrigin::create(resource.url()));
         }
     }
 }
@@ -612,13 +579,11 @@ HashSet<RefPtr<SecurityOrigin>> MemoryCache::originsWithCache(SessionID sessionI
     if (it != m_sessionResources.end()) {
         for (auto& keyValue : *it->value) {
             auto& resource = *keyValue.value;
-#if ENABLE(CACHE_PARTITIONING)
             auto& partitionName = keyValue.key.second;
             if (!partitionName.isEmpty())
                 origins.add(SecurityOrigin::create("http", partitionName, 0));
             else
-#endif
-            origins.add(SecurityOrigin::create(resource.url()));
+                origins.add(SecurityOrigin::create(resource.url()));
         }
     }
 

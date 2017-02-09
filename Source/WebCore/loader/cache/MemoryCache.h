@@ -168,11 +168,7 @@ public:
     WEBCORE_EXPORT void pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestroyDecodedDataForAllLiveResources = false);
 
 private:
-#if ENABLE(CACHE_PARTITIONING)
     typedef HashMap<std::pair<URL, String /* partitionName */>, CachedResource*> CachedResourceMap;
-#else
-    typedef HashMap<URL, CachedResource*> CachedResourceMap;
-#endif
     typedef ListHashSet<CachedResource*> LRUList;
 
     MemoryCache();

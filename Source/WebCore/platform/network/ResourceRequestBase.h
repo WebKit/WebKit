@@ -136,6 +136,11 @@ public:
     WEBCORE_EXPORT ResourceLoadPriority priority() const;
     WEBCORE_EXPORT void setPriority(ResourceLoadPriority);
 
+    WEBCORE_EXPORT static String partitionName(const String& domain);
+    const String& cachePartition() const { return m_cachePartition; }
+    WEBCORE_EXPORT void setCachePartition(const String&);
+    void setDomainForCachePartition(const String& domain) { setCachePartition(partitionName(domain)); }
+
     WEBCORE_EXPORT bool isConditional() const;
     WEBCORE_EXPORT void makeUnconditional();
 
@@ -237,6 +242,7 @@ protected:
     ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
     Requester m_requester { Requester::Unspecified };
     String m_initiatorIdentifier;
+    String m_cachePartition { emptyString() };
 
 private:
     const ResourceRequest& asResourceRequest() const;

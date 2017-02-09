@@ -113,9 +113,7 @@ CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
 bool (*wkIsPublicSuffix)(NSString *host);
 #endif
 
-#if ENABLE(CACHE_PARTITIONING)
 CFStringRef (*wkCachePartitionKey)(void);
-#endif
 
 int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
 NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);

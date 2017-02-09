@@ -124,9 +124,7 @@ void InitWebCoreSystemInterface(void)
     INIT(IsPublicSuffix);
 #endif
 
-#if ENABLE(CACHE_PARTITIONING)
     INIT(CachePartitionKey);
-#endif
 
     INIT(ExernalDeviceTypeForPlayer);
     INIT(ExernalDeviceDisplayNameForPlayer);

@@ -1041,11 +1041,7 @@ void ResourceHandleManager::applyAuthenticationToRequest(ResourceHandle* handle,
     // m_user/m_pass are credentials given manually, for instance, by the arguments passed to XMLHttpRequest.open().
     ResourceHandleInternal* d = handle->getInternal();
 
-#if ENABLE(CACHE_PARTITIONING)
     String partition = handle->firstRequest().cachePartition();
-#else
-    String partition = emptyString();
-#endif
 
     if (handle->shouldUseCredentialStorage()) {
         if (d->m_user.isEmpty() && d->m_pass.isEmpty()) {

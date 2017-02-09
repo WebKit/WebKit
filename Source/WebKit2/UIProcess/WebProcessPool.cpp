@@ -187,10 +187,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     for (auto& scheme : m_configuration->alwaysRevalidatedURLSchemes())
         m_schemesToRegisterAsAlwaysRevalidated.add(scheme);
 
-#if ENABLE(CACHE_PARTITIONING)
     for (const auto& urlScheme : m_configuration->cachePartitionedURLSchemes())
         m_schemesToRegisterAsCachePartitioned.add(urlScheme);
-#endif
 
     platformInitialize();
 
@@ -596,9 +594,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     copyToVector(m_schemesToRegisterAsDisplayIsolated, parameters.urlSchemesRegisteredAsDisplayIsolated);
     copyToVector(m_schemesToRegisterAsCORSEnabled, parameters.urlSchemesRegisteredAsCORSEnabled);
     copyToVector(m_schemesToRegisterAsAlwaysRevalidated, parameters.urlSchemesRegisteredAsAlwaysRevalidated);
-#if ENABLE(CACHE_PARTITIONING)
     copyToVector(m_schemesToRegisterAsCachePartitioned, parameters.urlSchemesRegisteredAsCachePartitioned);
-#endif
 
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
     parameters.shouldUseFontSmoothing = m_shouldUseFontSmoothing;
@@ -1004,13 +1000,11 @@ void WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(con
         processPool->unregisterSchemeForCustomProtocol(urlScheme);
 }
 
-#if ENABLE(CACHE_PARTITIONING)
 void WebProcessPool::registerURLSchemeAsCachePartitioned(const String& urlScheme)
 {
     m_schemesToRegisterAsCachePartitioned.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsCachePartitioned(urlScheme));
 }
-#endif
 
 void WebProcessPool::setCacheModel(CacheModel cacheModel)
 {

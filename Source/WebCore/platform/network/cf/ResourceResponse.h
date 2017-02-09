@@ -103,8 +103,6 @@ private:
     String platformSuggestedFilename() const;
     CertificateInfo platformCertificateInfo() const;
 
-    void doPlatformSetAsIsolatedCopy(const ResourceResponse&) const;
-
 #if PLATFORM(COCOA)
     void initNSURLResponse() const;
 #endif

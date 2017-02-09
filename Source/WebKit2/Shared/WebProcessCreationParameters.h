@@ -100,9 +100,7 @@ struct WebProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsDisplayIsolated;
     Vector<String> urlSchemesRegisteredAsCORSEnabled;
     Vector<String> urlSchemesRegisteredAsAlwaysRevalidated;
-#if ENABLE(CACHE_PARTITIONING)
     Vector<String> urlSchemesRegisteredAsCachePartitioned;
-#endif
 
     CacheModel cacheModel;
 

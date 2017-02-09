@@ -129,12 +129,10 @@ void CachedResourceRequest::upgradeInsecureRequestIfNeeded(Document& document)
     upgradeInsecureResourceRequestIfNeeded(m_resourceRequest, document);
 }
 
-#if ENABLE(CACHE_PARTITIONING)
 void CachedResourceRequest::setDomainForCachePartition(Document& document)
 {
     m_resourceRequest.setDomainForCachePartition(document.topOrigin().domainForCachePartition());
 }
-#endif
 
 static inline String acceptHeaderValueFromType(CachedResource::Type type)
 {

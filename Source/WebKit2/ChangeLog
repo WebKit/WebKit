@@ -1,3 +1,38 @@
+2017-02-09  Antti Koivisto  <antti@apple.com>
+
+        Remove most cases of #if ENABLE(CACHE_PARTITIONING)
+        https://bugs.webkit.org/show_bug.cgi?id=167990
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::makeCacheKey):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::constructRevalidationRequest):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceRequest>::encode):
+        (IPC::ArgumentCoder<ResourceRequest>::decode):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextRegisterURLSchemeAsCachePartitioned):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_hiddenPageThrottlingTimer):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::registerURLSchemeAsCachePartitioned):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::registerURLSchemeAsCachePartitioned):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2017-02-08  Simon Fraser  <simon.fraser@apple.com>
 
         Put names on more UIViews for ease of debugging

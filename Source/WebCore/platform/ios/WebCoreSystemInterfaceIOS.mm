@@ -66,9 +66,7 @@ WEBCORE_EXPORT CFStringRef(*wkCaptionAppearanceGetSettingsChangedNotification)(v
 WEBCORE_EXPORT bool (*wkIsPublicSuffix)(NSString *host);
 #endif
 
-#if ENABLE(CACHE_PARTITIONING)
 WEBCORE_EXPORT CFStringRef (*wkCachePartitionKey)(void);
-#endif
 
 WEBCORE_EXPORT int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
 WEBCORE_EXPORT NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);

@@ -217,10 +217,8 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestCSSStyleS
 
 CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSStyleSheet(CachedResourceRequest&& request)
 {
-#if ENABLE(CACHE_PARTITIONING)
     ASSERT(document());
     request.setDomainForCachePartition(*document());
-#endif
 
     auto& memoryCache = MemoryCache::singleton();
     if (request.allowsCaching()) {
@@ -733,10 +731,8 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
 
     // See if we can use an existing resource from the cache.
     CachedResourceHandle<CachedResource> resource;
-#if ENABLE(CACHE_PARTITIONING)
     if (document())
         request.setDomainForCachePartition(*document());
-#endif
 
     if (request.allowsCaching())
         resource = memoryCache.resourceForRequest(request.resourceRequest(), sessionID());

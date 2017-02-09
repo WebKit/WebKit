@@ -395,7 +395,6 @@ void SecurityOrigin::grantStorageAccessFromFileURLsQuirk()
     m_needsStorageAccessFromFileURLsQuirk = true;
 }
 
-#if ENABLE(CACHE_PARTITIONING)
 String SecurityOrigin::domainForCachePartition() const
 {
     if (m_storageBlockingPolicy != BlockThirdPartyStorage)
@@ -409,7 +408,6 @@ String SecurityOrigin::domainForCachePartition() const
 
     return emptyString();
 }
-#endif
 
 void SecurityOrigin::enforceFilePathSeparation()
 {

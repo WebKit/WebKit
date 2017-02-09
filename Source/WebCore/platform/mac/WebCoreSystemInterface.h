@@ -235,9 +235,7 @@ extern CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
 extern bool (*wkIsPublicSuffix)(NSString *host);
 #endif
 
-#if ENABLE(CACHE_PARTITIONING)
 extern CFStringRef (*wkCachePartitionKey)(void);
-#endif
 
 typedef enum {
     wkExternalPlaybackTypeNone,

@@ -89,12 +89,10 @@ static inline ResourceRequest constructRevalidationRequest(const Key& key, const
     ResourceRequest revalidationRequest(key.identifier());
     revalidationRequest.setHTTPHeaderFields(subResourceInfo.requestHeaders());
     revalidationRequest.setFirstPartyForCookies(subResourceInfo.firstPartyForCookies());
-#if ENABLE(CACHE_PARTITIONING)
     if (!key.partition().isEmpty())
         revalidationRequest.setCachePartition(key.partition());
-#endif
     ASSERT_WITH_MESSAGE(key.range().isEmpty(), "range is not supported");
-
+    
     revalidationRequest.makeUnconditional();
     if (entry) {
         String eTag = entry->response().httpHeaderField(HTTPHeaderName::ETag);

@@ -337,10 +337,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     for (auto& scheme : parameters.urlSchemesRegisteredAsAlwaysRevalidated)
         registerURLSchemeAsAlwaysRevalidated(scheme);
 
-#if ENABLE(CACHE_PARTITIONING)
     for (auto& scheme : parameters.urlSchemesRegisteredAsCachePartitioned)
         registerURLSchemeAsCachePartitioned(scheme);
-#endif
 
     setDefaultRequestTimeoutInterval(parameters.defaultRequestTimeoutInterval);
 
@@ -462,12 +460,10 @@ void WebProcess::registerURLSchemeAsAlwaysRevalidated(const String& urlScheme) c
     SchemeRegistry::registerURLSchemeAsAlwaysRevalidated(urlScheme);
 }
 
-#if ENABLE(CACHE_PARTITIONING)
 void WebProcess::registerURLSchemeAsCachePartitioned(const String& urlScheme) const
 {
     SchemeRegistry::registerURLSchemeAsCachePartitioned(urlScheme);
 }
-#endif
 
 void WebProcess::setDefaultRequestTimeoutInterval(double timeoutInterval)
 {
