@@ -66,7 +66,7 @@ private:
     void sourceMutedChanged() final { }
     void sourceSettingsChanged() final { }
     bool preventSourceFromStopping() final { return false; }
-    void audioSamplesAvailable(const MediaTime&, void*, const AudioStreamDescription&, size_t) final;
+    void audioSamplesAvailable(const MediaTime&, PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 
     void convertAndSendMonoSamples();
     void convertAndSendStereoSamples();

@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "CARingBuffer.h"
+#include "WebAudioBufferList.h"
 #include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
@@ -44,7 +45,6 @@ public:
 
     ~AudioSampleBufferList();
 
-    static void configureBufferListForStream(AudioBufferList&, const CAAudioStreamDescription&, uint8_t*, size_t);
     static inline size_t audioBufferListSizeForStream(const CAAudioStreamDescription&);
 
     static void applyGain(AudioBufferList&, float, AudioStreamDescription::PCMFormat);
@@ -60,7 +60,7 @@ public:
     OSStatus copyTo(AudioBufferList&, size_t count = SIZE_MAX);
 
     const AudioStreamBasicDescription& streamDescription() const { return m_internalFormat->streamDescription(); }
-    AudioBufferList& bufferList() const { return *m_bufferList.get(); }
+    WebAudioBufferList& bufferList() const { return *m_bufferList; }
 
     uint32_t sampleCapacity() const { return m_sampleCapacity; }
     uint32_t sampleCount() const { return m_sampleCount; }
@@ -93,7 +93,7 @@ protected:
     size_t m_sampleCapacity { 0 };
     size_t m_maxBufferSizePerChannel { 0 };
     size_t m_bufferListBaseSize { 0 };
-    std::unique_ptr<AudioBufferList> m_bufferList;
+    std::unique_ptr<WebAudioBufferList> m_bufferList;
 };
 
 inline size_t AudioSampleBufferList::audioBufferListSizeForStream(const CAAudioStreamDescription& description)

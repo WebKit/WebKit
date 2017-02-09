@@ -193,10 +193,6 @@ void AVAudioCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
     const AudioStreamBasicDescription* streamDescription = CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription);
     if (!m_inputDescription || *m_inputDescription != *streamDescription) {
         m_inputDescription = std::make_unique<CAAudioStreamDescription>(*streamDescription);
-        m_listBufferSize = AudioSampleBufferList::audioBufferListSizeForStream(*m_inputDescription.get());
-        m_list = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize)));
-        memset(m_list.get(), 0, m_listBufferSize);
-        m_list->mNumberBuffers = m_inputDescription->numberOfChannelStreams();
 
         if (!m_observers.isEmpty()) {
             for (auto& observer : m_observers)
@@ -204,13 +200,8 @@ void AVAudioCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
         }
     }
 
-    CMItemCount frameCount = CMSampleBufferGetNumSamples(sampleBuffer);
-    CMBlockBufferRef buffer = nil;
-    OSStatus err = CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer, nullptr, m_list.get(), m_listBufferSize, kCFAllocatorSystemDefault, kCFAllocatorSystemDefault, kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, &buffer);
-    if (!err)
-        audioSamplesAvailable(toMediaTime(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)), m_list->mBuffers[0].mData, CAAudioStreamDescription(*streamDescription), frameCount);
-    else
-        LOG_ERROR("AVAudioCaptureSource::captureOutputDidOutputSampleBufferFromConnection(%p) - CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer returned error %d (%.4s)", this, (int)err, (char*)&err);
+    m_list = std::make_unique<WebAudioBufferList>(*m_inputDescription, sampleBuffer);
+    audioSamplesAvailable(toMediaTime(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)), *m_list, CAAudioStreamDescription(*streamDescription), CMSampleBufferGetNumSamples(sampleBuffer));
 
     if (m_observers.isEmpty())
         return;

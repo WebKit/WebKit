@@ -1,3 +1,69 @@
+2017-02-09  Jer Noble  <jer.noble@apple.com>
+
+        Configure MockRealtimeAudioSourceMac to generate stereo audio
+        https://bugs.webkit.org/show_bug.cgi?id=168027
+
+        Reviewed by Eric Carlson.
+
+        Update MockRealtimeAudioSourceMac to generate stereo audio.
+
+        First, because the pattern of creating a AudioBufferList structure (with all it's quirks and
+        weird requirements) was repeated multiple places, add a new wrapper around ABL called
+        WebAudioBufferList which takes care of correctly initializing the ABL structure and manages
+        the lifetime of its data members.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/PlatformAudioData.h: Added.
+        (WebCore::PlatformAudioData::kind):
+        * platform/audio/WebAudioBufferList.cpp: Added.
+        (WebCore::WebAudioBufferList::WebAudioBufferList):
+        (WebCore::WebAudioBufferList::buffers):
+        (WebCore::WebAudioBufferList::bufferCount):
+        (WebCore::WebAudioBufferList::buffer):
+        * platform/audio/WebAudioBufferList.h: Added.
+        (WebCore::WebAudioBufferList::list):
+        (WebCore::WebAudioBufferList::operator AudioBufferList&):
+        (WebCore::WebAudioBufferList::kind):
+        (isType):
+
+        Then update existing code to work in terms of WebAudioBufferList:
+
+        * platform/audio/mac/AudioSampleBufferList.cpp:
+        (WebCore::AudioSampleBufferList::AudioSampleBufferList):
+        (WebCore::AudioSampleBufferList::mixFrom):
+        (WebCore::AudioSampleBufferList::copyFrom):
+        (WebCore::AudioSampleBufferList::copyTo):
+        (WebCore::AudioSampleBufferList::reset):
+        (WebCore::AudioSampleBufferList::configureBufferListForStream): Deleted.
+        * platform/audio/mac/AudioSampleBufferList.h:
+        (WebCore::AudioSampleBufferList::bufferList):
+        * platform/audio/mac/AudioSampleDataSource.cpp:
+        (WebCore::AudioSampleDataSource::pushSamples):
+        * platform/audio/mac/AudioSampleDataSource.h:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::audioSamplesAvailable):
+        * platform/mediastream/RealtimeMediaSource.h:
+        (WebCore::RealtimeMediaSource::Observer::audioSamplesAvailable):
+        * platform/mediastream/mac/AVAudioCaptureSource.h:
+        * platform/mediastream/mac/AVAudioCaptureSource.mm:
+        (WebCore::AVAudioCaptureSource::captureOutputDidOutputSampleBufferFromConnection):
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable):
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.h:
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::audioSamplesAvailable):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.h:
+
+        Finally, actually update MockRealtimeAudioSource to emit stereo samples. Importantly, set
+        the correct values for the m_streamFormat; mBytesPerFrame and mBytesPerPacket are not
+        multiplied by the channelCount. When generating audio, write to both channels of data.
+
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSourceMac::emitSampleBuffers):
+        (WebCore::MockRealtimeAudioSourceMac::reconfigure):
+        (WebCore::MockRealtimeAudioSourceMac::render):
+
 2017-02-09  Antti Koivisto  <antti@apple.com>
 
         Nullptr crash under styleForFirstLetter

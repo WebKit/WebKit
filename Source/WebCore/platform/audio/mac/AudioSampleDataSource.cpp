@@ -152,7 +152,7 @@ void AudioSampleDataSource::pushSamplesInternal(AudioBufferList& bufferList, con
         if (err)
             return;
 
-        sampleBufferList = &m_scratchBuffer->bufferList();
+        sampleBufferList = m_scratchBuffer->bufferList().list();
     } else
         sampleBufferList = &bufferList;
 
@@ -192,34 +192,16 @@ void AudioSampleDataSource::pushSamples(const AudioStreamBasicDescription& sampl
 
     ASSERT_UNUSED(sampleDescription, *m_inputDescription == sampleDescription);
     ASSERT(m_ringBuffer);
-
-    size_t bufferSize = AudioSampleBufferList::audioBufferListSizeForStream(*m_inputDescription.get());
-    uint8_t bufferData[bufferSize];
-    AudioBufferList* bufferList = reinterpret_cast<AudioBufferList*>(bufferData);
-    bufferList->mNumberBuffers = m_inputDescription->numberOfInterleavedChannels();
-
-    CMBlockBufferRef buffer = nullptr;
-    OSStatus err = CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer, nullptr, bufferList, bufferSize, kCFAllocatorSystemDefault, kCFAllocatorSystemDefault, kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, &buffer);
-    if (err) {
-        LOG_ERROR("AudioSampleDataSource::pushSamples(%p) - CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer returned error %d (%.4s)", this, (int)err, (char*)&err);
-        return;
-    }
-
-    pushSamplesInternal(*bufferList, toMediaTime(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)), CMSampleBufferGetNumSamples(sampleBuffer));
+    
+    WebAudioBufferList list(*m_inputDescription, sampleBuffer);
+    pushSamplesInternal(list, toMediaTime(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)), CMSampleBufferGetNumSamples(sampleBuffer));
 }
 
-void AudioSampleDataSource::pushSamples(const AudioStreamBasicDescription& sampleDescription, const MediaTime& sampleTime, void* audioData, size_t sampleCount)
+void AudioSampleDataSource::pushSamples(const MediaTime& sampleTime, PlatformAudioData& audioData, size_t sampleCount)
 {
     std::unique_lock<Lock> lock(m_lock, std::try_to_lock);
-    ASSERT(*m_inputDescription == sampleDescription);
-
-    CAAudioStreamDescription description(sampleDescription);
-    size_t bufferSize = AudioSampleBufferList::audioBufferListSizeForStream(description);
-    uint8_t bufferData[bufferSize];
-    AudioBufferList* bufferList = reinterpret_cast<AudioBufferList*>(bufferData);
-
-    AudioSampleBufferList::configureBufferListForStream(*bufferList, description, reinterpret_cast<uint8_t*>(audioData), sampleCount);
-    pushSamplesInternal(*bufferList, sampleTime, sampleCount);
+    ASSERT(is<WebAudioBufferList>(audioData));
+    pushSamplesInternal(downcast<WebAudioBufferList>(audioData), sampleTime, sampleCount);
 }
 
 bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t& sampleCount, uint64_t timeStamp, double /*hostTime*/, PullMode mode)

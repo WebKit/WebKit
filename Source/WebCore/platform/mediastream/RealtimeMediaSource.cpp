@@ -119,7 +119,7 @@ void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample)
         observer->videoSampleAvailable(mediaSample);
 }
 
-void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, void* audioData, const AudioStreamDescription& description, size_t numberOfFrames)
+void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)
 {
     for (const auto& observer : m_observers)
         observer->audioSamplesAvailable(time, audioData, description, numberOfFrames);

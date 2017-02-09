@@ -52,7 +52,7 @@ public:
     OSStatus setInputFormat(const CAAudioStreamDescription&);
     OSStatus setOutputFormat(const CAAudioStreamDescription&);
 
-    void pushSamples(const AudioStreamBasicDescription&, const MediaTime&, void*, size_t);
+    void pushSamples(const MediaTime&, PlatformAudioData&, size_t);
     void pushSamples(const AudioStreamBasicDescription&, CMSampleBufferRef);
 
     enum PullMode { Copy, Mix };

@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime&, void*, const AudioStreamDescription&, size_t)
+void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime&, PlatformAudioData&, const AudioStreamDescription&, size_t)
 {
     notImplemented();
 }

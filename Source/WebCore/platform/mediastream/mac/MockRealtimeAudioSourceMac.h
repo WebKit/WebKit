@@ -38,12 +38,12 @@
 #include <CoreAudio/CoreAudioTypes.h>
 
 OBJC_CLASS AVAudioPCMBuffer;
-typedef struct AudioBufferList AudioBufferList;
 typedef struct OpaqueCMClock* CMClockRef;
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 
 namespace WebCore {
 
+class WebAudioBufferList;
 class WebAudioSourceProviderAVFObjC;
 
 class MockRealtimeAudioSourceMac final : public MockRealtimeAudioSource, public AudioCaptureSourceProviderObjC {
@@ -68,7 +68,7 @@ private:
     AudioSourceProvider* audioSourceProvider() final;
 
     size_t m_audioBufferListBufferSize { 0 };
-    std::unique_ptr<AudioBufferList> m_audioBufferList;
+    std::unique_ptr<WebAudioBufferList> m_audioBufferList;
 
     uint32_t m_maximiumFrameCount;
     uint32_t m_sampleRate { 44100 };

@@ -178,7 +178,7 @@ OSStatus AudioTrackPrivateMediaStreamCocoa::setupAudioUnit()
     return err;
 }
 
-void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& sampleTime, void* audioData, const AudioStreamDescription& description, size_t sampleCount)
+void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& sampleTime, PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
 {
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
 
@@ -215,7 +215,7 @@ void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& s
         m_dataSource->setVolume(m_volume);
     }
 
-    m_dataSource->pushSamples(m_inputDescription->streamDescription(), sampleTime, audioData, sampleCount);
+    m_dataSource->pushSamples(sampleTime, audioData, sampleCount);
 
     if (m_autoPlay)
         playInternal();

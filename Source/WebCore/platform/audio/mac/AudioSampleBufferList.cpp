@@ -47,24 +47,9 @@ AudioSampleBufferList::AudioSampleBufferList(const CAAudioStreamDescription& for
     m_internalFormat = std::make_unique<CAAudioStreamDescription>(format);
 
     m_sampleCapacity = maximumSampleCount;
-    m_sampleCount = 0;
     m_maxBufferSizePerChannel = maximumSampleCount * format.bytesPerFrame() / format.numberOfChannelStreams();
 
     ASSERT(format.sampleRate() >= 0);
-
-    size_t bufferSize = format.numberOfChannelStreams() * m_maxBufferSizePerChannel;
-    ASSERT(bufferSize <= SIZE_MAX);
-    if (bufferSize > SIZE_MAX)
-        return;
-
-    m_bufferListBaseSize = audioBufferListSizeForStream(format);
-    ASSERT(m_bufferListBaseSize <= SIZE_MAX);
-    if (m_bufferListBaseSize > SIZE_MAX)
-        return;
-
-    size_t allocSize = m_bufferListBaseSize + bufferSize;
-    m_bufferList = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (allocSize)));
-
     reset();
 }
 
@@ -138,29 +123,29 @@ OSStatus AudioSampleBufferList::mixFrom(const AudioSampleBufferList& source, siz
 
     m_sampleCount = frameCount;
 
-    AudioBufferList& sourceBuffer = source.bufferList();
-    for (uint32_t i = 0; i < m_bufferList->mNumberBuffers; i++) {
+    WebAudioBufferList& sourceBuffer = source.bufferList();
+    for (uint32_t i = 0; i < m_bufferList->bufferCount(); i++) {
         switch (m_internalFormat->format()) {
         case AudioStreamDescription::Int16: {
-            int16_t* destination = static_cast<int16_t*>(m_bufferList->mBuffers[i].mData);
-            int16_t* source = static_cast<int16_t*>(sourceBuffer.mBuffers[i].mData);
+            int16_t* destination = static_cast<int16_t*>(m_bufferList->buffer(i)->mData);
+            int16_t* source = static_cast<int16_t*>(sourceBuffer.buffer(i)->mData);
             for (size_t i = 0; i < frameCount; i++)
                 destination[i] += source[i];
             break;
         }
         case AudioStreamDescription::Int32: {
-            int32_t* destination = static_cast<int32_t*>(m_bufferList->mBuffers[i].mData);
-            vDSP_vaddi(destination, 1, reinterpret_cast<int32_t*>(sourceBuffer.mBuffers[i].mData), 1, destination, 1, frameCount);
+            int32_t* destination = static_cast<int32_t*>(m_bufferList->buffer(i)->mData);
+            vDSP_vaddi(destination, 1, reinterpret_cast<int32_t*>(sourceBuffer.buffer(i)->mData), 1, destination, 1, frameCount);
             break;
         }
         case AudioStreamDescription::Float32: {
-            float* destination = static_cast<float*>(m_bufferList->mBuffers[i].mData);
-            vDSP_vadd(destination, 1, reinterpret_cast<float*>(sourceBuffer.mBuffers[i].mData), 1, destination, 1, frameCount);
+            float* destination = static_cast<float*>(m_bufferList->buffer(i)->mData);
+            vDSP_vadd(destination, 1, reinterpret_cast<float*>(sourceBuffer.buffer(i)->mData), 1, destination, 1, frameCount);
             break;
         }
         case AudioStreamDescription::Float64: {
-            double* destination = static_cast<double*>(m_bufferList->mBuffers[i].mData);
-            vDSP_vaddD(destination, 1, reinterpret_cast<double*>(sourceBuffer.mBuffers[i].mData), 1, destination, 1, frameCount);
+            double* destination = static_cast<double*>(m_bufferList->buffer(i)->mData);
+            vDSP_vaddD(destination, 1, reinterpret_cast<double*>(sourceBuffer.buffer(i)->mData), 1, destination, 1, frameCount);
             break;
         }
         case AudioStreamDescription::None:
@@ -187,9 +172,9 @@ OSStatus AudioSampleBufferList::copyFrom(const AudioSampleBufferList& source, si
 
     m_sampleCount = frameCount;
 
-    for (uint32_t i = 0; i < m_bufferList->mNumberBuffers; i++) {
-        uint8_t* sourceData = static_cast<uint8_t*>(source.bufferList().mBuffers[i].mData);
-        uint8_t* destination = static_cast<uint8_t*>(m_bufferList->mBuffers[i].mData);
+    for (uint32_t i = 0; i < m_bufferList->bufferCount(); i++) {
+        uint8_t* sourceData = static_cast<uint8_t*>(source.bufferList().buffer(i)->mData);
+        uint8_t* destination = static_cast<uint8_t*>(m_bufferList->buffer(i)->mData);
         memcpy(destination, sourceData, frameCount * m_internalFormat->bytesPerPacket());
     }
 
@@ -200,11 +185,11 @@ OSStatus AudioSampleBufferList::copyTo(AudioBufferList& buffer, size_t frameCoun
 {
     if (frameCount > m_sampleCount)
         return kAudio_ParamError;
-    if (buffer.mNumberBuffers > m_bufferList->mNumberBuffers)
+    if (buffer.mNumberBuffers > m_bufferList->bufferCount())
         return kAudio_ParamError;
 
     for (uint32_t i = 0; i < buffer.mNumberBuffers; i++) {
-        uint8_t* sourceData = static_cast<uint8_t*>(m_bufferList->mBuffers[i].mData);
+        uint8_t* sourceData = static_cast<uint8_t*>(m_bufferList->buffer(i)->mData);
         uint8_t* destination = static_cast<uint8_t*>(buffer.mBuffers[i].mData);
         memcpy(destination, sourceData, frameCount * m_internalFormat->bytesPerPacket());
     }
@@ -218,15 +203,7 @@ void AudioSampleBufferList::reset()
     m_timestamp = 0;
     m_hostTime = -1;
 
-    uint8_t* data = reinterpret_cast<uint8_t*>(m_bufferList.get()) + m_bufferListBaseSize;
-    m_bufferList->mNumberBuffers = m_internalFormat->numberOfChannelStreams();
-    for (uint32_t i = 0; i < m_bufferList->mNumberBuffers; ++i) {
-        auto& buffer = m_bufferList->mBuffers[i];
-        buffer.mData = data;
-        buffer.mDataByteSize = m_maxBufferSizePerChannel;
-        buffer.mNumberChannels = m_internalFormat->numberOfInterleavedChannels();
-        data = data + m_maxBufferSizePerChannel;
-    }
+    m_bufferList = std::make_unique<WebAudioBufferList>(*m_internalFormat, m_maxBufferSizePerChannel);
 }
 
 void AudioSampleBufferList::zero()
@@ -277,22 +254,20 @@ OSStatus AudioSampleBufferList::copyFrom(AudioBufferList& source, AudioConverter
     m_converterInputBytesPerPacket = inputFormat.mBytesPerPacket;
     m_converterInputBuffer = &source;
 
-    auto* outputData = m_bufferList.get();
-
 #if !LOG_DISABLED
     AudioStreamBasicDescription outputFormat;
     propertyDataSize = sizeof(outputFormat);
     AudioConverterGetProperty(converter, kAudioConverterCurrentOutputStreamDescription, &propertyDataSize, &outputFormat);
 
-    ASSERT(outputFormat.mChannelsPerFrame == outputData->mNumberBuffers);
-    for (uint32_t i = 0; i < outputData->mNumberBuffers; ++i) {
-        ASSERT(outputData->mBuffers[i].mData);
-        ASSERT(outputData->mBuffers[i].mDataByteSize);
+    ASSERT(outputFormat.mChannelsPerFrame == m_bufferList->bufferCount());
+    for (uint32_t i = 0; i < m_bufferList->bufferCount(); ++i) {
+        ASSERT(m_bufferList->buffer(i)->mData);
+        ASSERT(m_bufferList->buffer(i)->mDataByteSize);
     }
 #endif
 
     UInt32 samplesConverted = static_cast<UInt32>(m_sampleCapacity);
-    OSStatus err = AudioConverterFillComplexBuffer(converter, audioConverterCallback, this, &samplesConverted, outputData, nullptr);
+    OSStatus err = AudioConverterFillComplexBuffer(converter, audioConverterCallback, this, &samplesConverted, m_bufferList->list(), nullptr);
     if (err) {
         LOG_ERROR("AudioSampleBufferList::copyFrom(%p) AudioConverterFillComplexBuffer returned error %d (%.4s)", this, (int)err, (char*)&err);
         m_sampleCount = std::min(m_sampleCapacity, static_cast<size_t>(samplesConverted));
@@ -312,27 +287,11 @@ OSStatus AudioSampleBufferList::copyFrom(AudioSampleBufferList& source, AudioCon
 OSStatus AudioSampleBufferList::copyFrom(CARingBuffer& ringBuffer, size_t sampleCount, uint64_t startFrame, CARingBuffer::FetchMode mode)
 {
     reset();
-    if (ringBuffer.fetch(&bufferList(), sampleCount, startFrame, mode) != CARingBuffer::Ok)
+    if (ringBuffer.fetch(bufferList().list(), sampleCount, startFrame, mode) != CARingBuffer::Ok)
         return kAudio_ParamError;
 
     m_sampleCount = sampleCount;
     return 0;
-}
-
-void AudioSampleBufferList::configureBufferListForStream(AudioBufferList& bufferList, const CAAudioStreamDescription& format, uint8_t* bufferData, size_t sampleCount)
-{
-    size_t bufferCount = format.numberOfChannelStreams();
-    size_t channelCount = format.numberOfInterleavedChannels();
-    size_t bytesPerChannel = sampleCount * format.bytesPerFrame();
-
-    bufferList.mNumberBuffers = bufferCount;
-    for (unsigned i = 0; i < bufferCount; ++i) {
-        bufferList.mBuffers[i].mNumberChannels = channelCount;
-        bufferList.mBuffers[i].mDataByteSize = bytesPerChannel;
-        bufferList.mBuffers[i].mData = bufferData;
-        if (bufferData)
-            bufferData = bufferData + bytesPerChannel;
-    }
 }
 
 } // namespace WebCore
