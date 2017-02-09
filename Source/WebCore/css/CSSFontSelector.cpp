@@ -262,10 +262,10 @@ void CSSFontSelector::fontCacheInvalidated()
 
 static const AtomicString& resolveGenericFamily(Document* document, const FontDescription& fontDescription, const AtomicString& familyName)
 {
-    if (!document || !document->frame())
+    if (!document)
         return familyName;
 
-    const Settings& settings = document->frame()->settings();
+    const Settings& settings = document->settings();
 
     UScriptCode script = fontDescription.script();
     if (familyName == serifFamily)

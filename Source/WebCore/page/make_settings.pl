@@ -251,7 +251,7 @@ sub printGetterAndSetter($$$$)
         print $file "    $type $settingName() const { return m_$settingName; } \\\n";
         print $file "    $webcoreExport void $setterFunctionName($type $settingName)";
     } else {
-        print $file "    const $type& $settingName() { return m_$settingName; } \\\n";
+        print $file "    const $type& $settingName() const { return m_$settingName; } \\\n";
         print $file "    $webcoreExport void $setterFunctionName(const $type& $settingName)";
     }
     if ($setNeedsStyleRecalcInAllFrames) {

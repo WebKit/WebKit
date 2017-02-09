@@ -1152,8 +1152,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
 
         // When using caret browsing, we want to be able to move the focus
         // out of the select element when user hits a left or right arrow key.
-        const Frame* frame = document().frame();
-        if (frame && frame->settings().caretBrowsingEnabled()) {
+        if (document().settings().caretBrowsingEnabled()) {
             if (keyIdentifier == "Left" || keyIdentifier == "Right")
                 return;
         }

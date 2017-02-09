@@ -256,8 +256,8 @@ bool ContentSecurityPolicy::urlMatchesSelf(const URL& url) const
 
 bool ContentSecurityPolicy::allowContentSecurityPolicySourceStarToMatchAnyProtocol() const
 {
-    if (Settings* settings = is<Document>(m_scriptExecutionContext) ? &downcast<Document>(*m_scriptExecutionContext).settings() : nullptr)
-        return settings->allowContentSecurityPolicySourceStarToMatchAnyProtocol();
+    if (is<Document>(m_scriptExecutionContext))
+        return downcast<Document>(*m_scriptExecutionContext).settings().allowContentSecurityPolicySourceStarToMatchAnyProtocol();
     return false;
 }
 

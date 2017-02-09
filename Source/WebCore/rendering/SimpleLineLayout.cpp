@@ -1178,8 +1178,8 @@ static void collectNonEmptyLeafRenderBlockFlowsForCurrentPage(HashSet<const Rend
 
 void toggleSimpleLineLayout()
 {
-    for (const auto* document : Document::allDocuments()) {
-        auto& settings = document->settings();
+    for (auto* document : Document::allDocuments()) {
+        auto& settings = document->mutableSettings();
         settings.setSimpleLineLayoutEnabled(!settings.simpleLineLayoutEnabled());
     }
 }

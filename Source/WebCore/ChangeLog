@@ -1,3 +1,45 @@
+2017-02-09  Andreas Kling  <akling@apple.com>
+
+        Document::settings() should return a const Settings&.
+        <https://webkit.org/b/168061>
+
+        Reviewed by Geoffrey Garen.
+
+        - Make Document::settings() return a const reference.
+        - Added Document::mutableSettings() for all your non-const needs.
+        - Fixed up settings generator to produce const getters.
+        - Simplify a few settings() call sites that exposed themselves.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::shouldDiscloseApplePayCapability):
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::canCallGetUserMedia):
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::appendSources):
+        * css/CSSFontSelector.cpp:
+        (WebCore::resolveGenericFamily):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::settings):
+        * dom/Document.h:
+        (WebCore::Document::settings):
+        (WebCore::Document::mutableSettings):
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::createTemplateDocumentData):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::shouldEnableWebGL):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::rendererIsNeeded):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::updateDuringParsing):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowContentSecurityPolicySourceStarToMatchAnyProtocol):
+        * page/make_settings.pl:
+        (printGetterAndSetter):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::toggleSimpleLineLayout):
+
 2017-02-09  Jer Noble  <jer.noble@apple.com>
 
         Make passing PlatformAudioData in audioSamplesAvaliable const-correct.

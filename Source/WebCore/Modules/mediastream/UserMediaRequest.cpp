@@ -101,7 +101,7 @@ static bool isSecure(DocumentLoader& documentLoader)
 
 static bool canCallGetUserMedia(Document& document, String& errorMessage)
 {
-    bool requiresSecureConnection = document.frame()->settings().mediaCaptureRequiresSecureConnection();
+    bool requiresSecureConnection = document.settings().mediaCaptureRequiresSecureConnection();
     if (requiresSecureConnection && !isSecure(*document.loader())) {
         errorMessage = "Trying to call getUserMedia from an insecure document.";
         return false;

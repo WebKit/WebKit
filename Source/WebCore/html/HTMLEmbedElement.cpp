@@ -208,7 +208,7 @@ bool HTMLEmbedElement::rendererIsNeeded(const RenderStyle& style)
 
 #if ENABLE(DASHBOARD_SUPPORT)
     // Workaround for <rdar://problem/6642221>.
-    if (document().frame()->settings().usesDashboardBackwardCompatibilityMode())
+    if (document().settings().usesDashboardBackwardCompatibilityMode())
         return true;
 #endif
 

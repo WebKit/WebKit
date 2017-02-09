@@ -510,7 +510,8 @@ public:
 
     WEBCORE_EXPORT FrameView* view() const; // can be NULL
     WEBCORE_EXPORT Page* page() const; // can be NULL
-    Settings& settings() const { return m_settings.get(); }
+    const Settings& settings() const { return m_settings.get(); }
+    Settings& mutableSettings() { return m_settings.get(); }
 
     float deviceScaleFactor() const;
 

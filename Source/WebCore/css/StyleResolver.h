@@ -150,7 +150,7 @@ public:
     const Element* element() { return m_state.element(); }
     Document& document() { return m_document; }
     const Document& document() const { return m_document; }
-    Settings& settings() { return m_document.settings(); }
+    const Settings& settings() const { return m_document.settings(); }
 
     void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&);
 

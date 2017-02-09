@@ -242,7 +242,7 @@ static bool requiresAcceleratedCompositingForWebGL()
 #endif
 
 }
-static bool shouldEnableWebGL(Settings& settings)
+static bool shouldEnableWebGL(const Settings& settings)
 {
     if (!settings.webGLEnabled())
         return false;

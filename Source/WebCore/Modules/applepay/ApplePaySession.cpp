@@ -466,7 +466,7 @@ static bool shouldDiscloseApplePayCapability(Document& document)
     if (!page || page->usesEphemeralSession())
         return false;
 
-    return document.frame()->settings().applePayCapabilityDisclosureAllowed();
+    return document.settings().applePayCapabilityDisclosureAllowed();
 }
 
 ExceptionOr<bool> ApplePaySession::canMakePayments(ScriptExecutionContext& scriptExecutionContext)
