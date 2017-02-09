@@ -1041,7 +1041,7 @@ ExceptionOr<Ref<Node>> Document::adoptNode(Node& source)
         auto result = source.remove();
         if (result.hasException())
             return result.releaseException();
-        ASSERT_WITH_SECURITY_IMPLICATION(!source.inDocument());
+        ASSERT_WITH_SECURITY_IMPLICATION(!source.isConnected());
         ASSERT_WITH_SECURITY_IMPLICATION(!source.parentNode());
     }
 

@@ -1,3 +1,10 @@
+2017-02-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r211965.
+
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode): inDocument -> isConnected
+
 2017-02-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Adopting a child node of a script element can run script
