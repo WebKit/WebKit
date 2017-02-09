@@ -5280,7 +5280,7 @@ void SpeculativeJIT::compile(Node* node)
         moveTrueTo(resultPayloadGPR);
         MacroAssembler::Jump done = m_jit.jump();
 
-        addSlowPathGenerator(slowPathCall(slowCases, this, operationHasIndexedProperty, JSValueRegs(resultTagGPR, resultPayloadGPR), baseGPR, indexGPR));
+        addSlowPathGenerator(slowPathCall(slowCases, this, operationHasIndexedProperty, JSValueRegs(resultTagGPR, resultPayloadGPR), baseGPR, indexGPR, static_cast<int32_t>(node->internalMethodType())));
         
         done.link(&m_jit);
         booleanResult(resultPayloadGPR, node);

@@ -8039,12 +8039,12 @@ private:
     
     void compileIn()
     {
-        DFG_ASSERT(m_graph, m_node, m_node->child2().useKind() == CellUse);
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == CellUse);
 
         Node* node = m_node;
-        Edge base = node->child2();
+        Edge base = node->child1();
         LValue cell = lowCell(base);
-        if (JSString* string = node->child1()->dynamicCastConstant<JSString*>(vm())) {
+        if (JSString* string = node->child2()->dynamicCastConstant<JSString*>(vm())) {
             if (string->tryGetValueImpl() && string->tryGetValueImpl()->isAtomic()) {
                 UniquedStringImpl* str = bitwise_cast<UniquedStringImpl*>(string->tryGetValueImpl());
                 B3::PatchpointValue* patchpoint = m_out.patchpoint(Int64);
@@ -8116,7 +8116,7 @@ private:
             }
         } 
 
-        setJSValue(vmCall(Int64, m_out.operation(operationGenericIn), m_callFrame, cell, lowJSValue(m_node->child1())));
+        setJSValue(vmCall(Int64, m_out.operation(operationGenericIn), m_callFrame, cell, lowJSValue(m_node->child2())));
     }
 
     void compileHasOwnProperty()
@@ -8351,6 +8351,7 @@ private:
             LValue base = lowCell(m_node->child1());
             LValue index = lowInt32(m_node->child2());
             LValue storage = lowStorage(m_node->child3());
+            LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
 
             IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
@@ -8376,7 +8377,7 @@ private:
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(m_out.equal(
                 m_out.constInt64(JSValue::encode(jsBoolean(true))), 
-                vmCall(Int64, m_out.operation(operationHasIndexedProperty), m_callFrame, base, index)));
+                vmCall(Int64, m_out.operation(operationHasIndexedProperty), m_callFrame, base, index, internalMethodType)));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -8387,6 +8388,7 @@ private:
             LValue base = lowCell(m_node->child1());
             LValue index = lowInt32(m_node->child2());
             LValue storage = lowStorage(m_node->child3());
+            LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
             
             IndexedAbstractHeap& heap = m_heaps.indexedDoubleProperties;
             
@@ -8411,7 +8413,7 @@ private:
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(m_out.equal(
                 m_out.constInt64(JSValue::encode(jsBoolean(true))), 
-                vmCall(Int64, m_out.operation(operationHasIndexedProperty), m_callFrame, base, index)));
+                vmCall(Int64, m_out.operation(operationHasIndexedProperty), m_callFrame, base, index, internalMethodType)));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);

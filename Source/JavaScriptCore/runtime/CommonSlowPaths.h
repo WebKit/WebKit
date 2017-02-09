@@ -71,7 +71,7 @@ ALWAYS_INLINE int arityCheckFor(ExecState* exec, VM& vm, CodeSpecializationKind 
     return paddedStackSpace;
 }
 
-inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
+inline bool opIn(ExecState* exec, JSValue baseVal, JSValue propName, ArrayProfile* arrayProfile = nullptr)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -81,6 +81,8 @@ inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
     }
 
     JSObject* baseObj = asObject(baseVal);
+    if (arrayProfile)
+        arrayProfile->observeStructure(baseObj->structure(vm));
 
     uint32_t i;
     if (propName.getUInt32(i)) {

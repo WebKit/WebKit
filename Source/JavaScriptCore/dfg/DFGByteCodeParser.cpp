@@ -5481,8 +5481,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_in: {
+            ArrayMode arrayMode = getArrayMode(currentInstruction[OPCODE_LENGTH(op_in) - 1].u.arrayProfile);
             set(VirtualRegister(currentInstruction[1].u.operand),
-                addToGraph(In, get(VirtualRegister(currentInstruction[2].u.operand)), get(VirtualRegister(currentInstruction[3].u.operand))));
+                addToGraph(In, OpInfo(arrayMode.asWord()), get(VirtualRegister(currentInstruction[2].u.operand)), get(VirtualRegister(currentInstruction[3].u.operand))));
             NEXT_OPCODE(op_in);
         }
 
@@ -5511,7 +5512,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
             ArrayMode arrayMode = getArrayMode(currentInstruction[4].u.arrayProfile, Array::Read);
             Node* property = get(VirtualRegister(currentInstruction[3].u.operand));
-            Node* hasIterableProperty = addToGraph(HasIndexedProperty, OpInfo(arrayMode.asWord()), base, property);
+            Node* hasIterableProperty = addToGraph(HasIndexedProperty, OpInfo(arrayMode.asWord()), OpInfo(static_cast<uint32_t>(PropertySlot::InternalMethodType::GetOwnProperty)), base, property);
             set(VirtualRegister(currentInstruction[1].u.operand), hasIterableProperty);
             NEXT_OPCODE(op_has_indexed_property);
         }

@@ -1391,7 +1391,7 @@ _llint_op_is_function:
 _llint_op_in:
     traceExecution()
     callOpcodeSlowPath(_slow_path_in)
-    dispatch(4)
+    dispatch(5)
 
 
 _llint_op_try_get_by_id:

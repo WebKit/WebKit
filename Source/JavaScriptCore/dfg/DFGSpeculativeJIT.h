@@ -1539,6 +1539,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(J_JITOperation_ECZZ operation, GPRReg result, GPRReg arg1, GPRReg arg2, int32_t constant)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImm32(constant));
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(J_JITOperation_ESsiCI operation, GPRReg result, StructureStubInfo* stubInfo, GPRReg arg1, const UniquedStringImpl* uid)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(stubInfo), arg1, TrustedImmPtr(uid));
@@ -2072,6 +2077,11 @@ public:
     JITCompiler::Call callOperation(J_JITOperation_ECZ operation, JSValueRegs result, GPRReg arg1, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
+        return appendCallSetResult(operation, result.payloadGPR(), result.tagGPR());
+    }
+    JITCompiler::Call callOperation(J_JITOperation_ECZZ operation, JSValueRegs result, GPRReg arg1, GPRReg arg2, int32_t constant)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImm32(constant));
         return appendCallSetResult(operation, result.payloadGPR(), result.tagGPR());
     }
     JITCompiler::Call callOperation(J_JITOperation_EJscC operation, JSValueRegs result, GPRReg arg1, JSCell* cell)

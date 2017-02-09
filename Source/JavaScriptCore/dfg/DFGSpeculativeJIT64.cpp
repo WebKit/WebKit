@@ -5476,7 +5476,7 @@ void SpeculativeJIT::compile(Node* node)
         }
         }
 
-        addSlowPathGenerator(slowPathCall(slowCases, this, operationHasIndexedProperty, resultGPR, baseGPR, indexGPR));
+        addSlowPathGenerator(slowPathCall(slowCases, this, operationHasIndexedProperty, resultGPR, baseGPR, indexGPR, static_cast<int32_t>(node->internalMethodType())));
         
         jsValueResult(resultGPR, node, DataFormatJSBoolean);
         break;

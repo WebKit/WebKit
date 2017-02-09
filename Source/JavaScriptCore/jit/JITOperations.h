@@ -131,6 +131,7 @@ typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_ECC)(ExecState*, JSCell*, 
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_ECI)(ExecState*, JSCell*, UniquedStringImpl*);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_ECJ)(ExecState*, JSCell*, EncodedJSValue);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_ECZ)(ExecState*, JSCell*, int32_t);
+typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_ECZZ)(ExecState*, JSCell*, int32_t, int32_t);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EDA)(ExecState*, double, JSArray*);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EE)(ExecState*, ExecState*);
 typedef EncodedJSValue (JIT_OPERATION *J_JITOperation_EGReoJ)(ExecState*, JSGlobalObject*, RegExpObject*, EncodedJSValue);
@@ -435,7 +436,7 @@ int32_t JIT_OPERATION operationCheckIfExceptionIsUncatchableAndNotifyProfiler(Ex
 int32_t JIT_OPERATION operationInstanceOfCustom(ExecState*, EncodedJSValue encodedValue, JSObject* constructor, EncodedJSValue encodedHasInstance) WTF_INTERNAL;
 
 EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState*, EncodedJSValue, JSCell*);
-EncodedJSValue JIT_OPERATION operationHasIndexedProperty(ExecState*, JSCell*, int32_t);
+EncodedJSValue JIT_OPERATION operationHasIndexedProperty(ExecState*, JSCell*, int32_t, int32_t);
 JSCell* JIT_OPERATION operationGetPropertyEnumerator(ExecState*, JSCell*);
 EncodedJSValue JIT_OPERATION operationNextEnumeratorPname(ExecState*, JSCell*, int32_t);
 JSCell* JIT_OPERATION operationToIndexString(ExecState*, int32_t);

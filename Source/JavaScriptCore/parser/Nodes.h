@@ -1152,6 +1152,9 @@ namespace JSC {
     class InNode : public ThrowableBinaryOpNode {
     public:
         InNode(const JSTokenLocation&, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
+
+    private:
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
 
     class EqualNode : public BinaryOpNode {

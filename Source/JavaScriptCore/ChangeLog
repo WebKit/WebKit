@@ -1,3 +1,57 @@
+2017-02-08  Keith Miller  <keith_miller@apple.com>
+
+        [JSC] op_in should have ArrayProfile
+        https://bugs.webkit.org/show_bug.cgi?id=164581
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds an ArrayProfile to the op_in bytecode. In the
+        DFG, if we see that we the key is an int32 we will convert the In
+        DFG node to a HasIndexedProperty node instead.
+
+        This patch also flips the two arguments of op_in and the In node
+        to reflect the other property lookup bytecodes.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::finishCreation):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitIn):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitIn): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::InNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::convertToHasIndexedProperty):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasArrayMode):
+        (JSC::DFG::Node::hasInternalMethodType):
+        (JSC::DFG::Node::internalMethodType):
+        (JSC::DFG::Node::setInternalMethodType):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIn):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileIn):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasIndexedProperty):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/Nodes.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::opIn):
+
 2017-02-08  Saam Barati  <sbarati@apple.com>
 
         Air IRC might spill a terminal that produces a value after the terminal

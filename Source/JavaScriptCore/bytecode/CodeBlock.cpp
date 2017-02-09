@@ -1105,6 +1105,7 @@ void CodeBlock::dumpBytecode(
         }
         case op_in: {
             printBinaryOp(out, exec, location, it, "in");
+            dumpArrayProfiling(out, it, hasPrintedProfiling);
             break;
         }
         case op_try_get_by_id: {
@@ -2095,12 +2096,9 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             linkValueProfile(i, opLength);
             break;
         }
-        case op_put_by_val: {
-            int arrayProfileIndex = pc[opLength - 1].u.operand;
-            m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
-            instructions[i + opLength - 1] = &m_arrayProfiles[arrayProfileIndex];
-            break;
-        }
+
+        case op_in:
+        case op_put_by_val:
         case op_put_by_val_direct: {
             int arrayProfileIndex = pc[opLength - 1].u.operand;
             m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);

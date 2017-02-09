@@ -1788,6 +1788,7 @@ public:
         switch (op()) {
         case GetIndexedPropertyStorage:
         case GetArrayLength:
+        case In:
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias:
@@ -2419,6 +2420,23 @@ public:
     const DOMJIT::Signature* signature()
     {
         return m_opInfo.as<const DOMJIT::Signature*>();
+    }
+
+    bool hasInternalMethodType() const
+    {
+        return op() == HasIndexedProperty;
+    }
+
+    PropertySlot::InternalMethodType internalMethodType() const
+    {
+        ASSERT(hasInternalMethodType());
+        return static_cast<PropertySlot::InternalMethodType>(m_opInfo2.as<uint32_t>());
+    }
+
+    void setInternalMethodType(PropertySlot::InternalMethodType type)
+    {
+        ASSERT(hasInternalMethodType());
+        m_opInfo2 = static_cast<uint32_t>(type);
     }
 
     Node* replacement() const

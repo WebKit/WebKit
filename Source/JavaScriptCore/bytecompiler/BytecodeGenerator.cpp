@@ -2571,6 +2571,17 @@ RegisterID* BytecodeGenerator::emitInstanceOfCustom(RegisterID* dst, RegisterID*
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitIn(RegisterID* dst, RegisterID* property, RegisterID* base)
+{
+    UnlinkedArrayProfile arrayProfile = newArrayProfile();
+    emitOpcode(op_in);
+    instructions().append(dst->index());
+    instructions().append(base->index());
+    instructions().append(property->index());
+    instructions().append(arrayProfile);
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitTryGetById(RegisterID* dst, RegisterID* base, const Identifier& property)
 {
     ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties are not supported with tryGetById.");

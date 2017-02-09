@@ -2042,6 +2042,17 @@ RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterI
     return dstReg.get();
 }
 
+// ------------------------------ InNode ----------------------------
+
+RegisterID* InNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    RefPtr<RegisterID> key = generator.emitNodeForLeftHandSide(m_expr1, m_rightHasAssignments, m_expr2->isPure(generator));
+    RefPtr<RegisterID> base = generator.emitNode(m_expr2);
+    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
+    return generator.emitIn(generator.finalDestination(dst, key.get()), key.get(), base.get());
+}
+
+
 // ------------------------------ LogicalOpNode ----------------------------
 
 RegisterID* LogicalOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)

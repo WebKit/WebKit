@@ -40,6 +40,7 @@
 #include "ExceptionFuzz.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
+#include "ICStats.h"
 #include "Interpreter.h"
 #include "IteratorOperations.h"
 #include "JIT.h"
@@ -620,7 +621,7 @@ SLOW_PATH_DECL(slow_path_is_function)
 SLOW_PATH_DECL(slow_path_in)
 {
     BEGIN();
-    RETURN(jsBoolean(CommonSlowPaths::opIn(exec, OP_C(2).jsValue(), OP_C(3).jsValue())));
+    RETURN(jsBoolean(CommonSlowPaths::opIn(exec, OP_C(2).jsValue(), OP_C(3).jsValue(), pc[4].u.arrayProfile)));
 }
 
 SLOW_PATH_DECL(slow_path_del_by_val)
