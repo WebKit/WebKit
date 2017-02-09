@@ -164,7 +164,22 @@ static BOOL SetFormatForCaptureDevice(AVCaptureDevice *device,
 // because other webrtc objects own cricket::VideoCapturer, which is not
 // ref counted. To prevent bad behavior we do not expose this class directly.
 @interface RTCAVFoundationVideoCapturerInternal : NSObject
-    <AVCaptureVideoDataOutputSampleBufferDelegate>
+    <AVCaptureVideoDataOutputSampleBufferDelegate> {
+  // Keep pointers to inputs for convenience.
+  AVCaptureDeviceInput *_frontCameraInput;
+  AVCaptureDeviceInput *_backCameraInput;
+  AVCaptureVideoDataOutput *_videoDataOutput;
+  // The cricket::VideoCapturer that owns this class. Should never be NULL.
+  webrtc::AVFoundationVideoCapturer *_capturer;
+  webrtc::VideoRotation _rotation;
+  BOOL _hasRetriedOnFatalError;
+  BOOL _isRunning;
+  BOOL _hasStarted;
+  rtc::CriticalSection _crit;
+  AVCaptureSession *_captureSession;
+  dispatch_queue_t _frameQueue;
+  BOOL _useBackCamera;
+}
 
 @property(nonatomic, readonly) AVCaptureSession *captureSession;
 @property(nonatomic, readonly) dispatch_queue_t frameQueue;
@@ -189,19 +204,7 @@ static BOOL SetFormatForCaptureDevice(AVCaptureDevice *device,
 
 @end
 
-@implementation RTCAVFoundationVideoCapturerInternal {
-  // Keep pointers to inputs for convenience.
-  AVCaptureDeviceInput *_frontCameraInput;
-  AVCaptureDeviceInput *_backCameraInput;
-  AVCaptureVideoDataOutput *_videoDataOutput;
-  // The cricket::VideoCapturer that owns this class. Should never be NULL.
-  webrtc::AVFoundationVideoCapturer *_capturer;
-  webrtc::VideoRotation _rotation;
-  BOOL _hasRetriedOnFatalError;
-  BOOL _isRunning;
-  BOOL _hasStarted;
-  rtc::CriticalSection _crit;
-}
+@implementation RTCAVFoundationVideoCapturerInternal
 
 @synthesize captureSession = _captureSession;
 @synthesize frameQueue = _frameQueue;

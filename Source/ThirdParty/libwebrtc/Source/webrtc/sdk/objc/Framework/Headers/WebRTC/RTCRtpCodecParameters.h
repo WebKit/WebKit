@@ -33,7 +33,12 @@ RTC_EXTERN const NSString * const kRTCH264CodecMimeType;
 
 /** Defined in http://w3c.github.io/webrtc-pc/#idl-def-RTCRtpCodecParameters */
 RTC_EXPORT
-@interface RTCRtpCodecParameters : NSObject
+@interface RTCRtpCodecParameters : NSObject {
+    int _payloadType;
+    NSString *_mimeType;
+    int _clockRate;
+    int _channels;
+}
 
 /** The RTP payload type. */
 @property(nonatomic, assign) int payloadType;

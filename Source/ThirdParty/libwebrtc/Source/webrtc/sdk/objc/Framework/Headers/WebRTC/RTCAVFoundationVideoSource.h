@@ -15,6 +15,10 @@
 @class RTCMediaConstraints;
 @class RTCPeerConnectionFactory;
 
+namespace webrtc {
+class AVFoundationVideoCapturer;
+}
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -25,7 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
  * counted video source interface.
  */
 RTC_EXPORT
-@interface RTCAVFoundationVideoSource : RTCVideoSource
+@interface RTCAVFoundationVideoSource : RTCVideoSource {
+  webrtc::AVFoundationVideoCapturer *_capturer;
+}
 
 - (instancetype)init NS_UNAVAILABLE;
 

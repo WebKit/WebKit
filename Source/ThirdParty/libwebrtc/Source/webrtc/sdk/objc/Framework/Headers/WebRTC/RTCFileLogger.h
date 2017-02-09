@@ -11,6 +11,8 @@
 #import <Foundation/Foundation.h>
 
 #import <WebRTC/RTCMacros.h>
+#import <memory>
+#import "webrtc/base/logsinks.h"
 
 typedef NS_ENUM(NSUInteger, RTCFileLoggerSeverity) {
   RTCFileLoggerSeverityVerbose,
@@ -34,7 +36,15 @@ NS_ASSUME_NONNULL_BEGIN
 // For kRTCFileLoggerTypeApp, the oldest log is overwritten.
 // This class is not threadsafe.
 RTC_EXPORT
-@interface RTCFileLogger : NSObject
+@interface RTCFileLogger : NSObject {
+  BOOL _hasStarted;
+  NSString *_dirPath;
+  NSUInteger _maxFileSize;
+  std::unique_ptr<rtc::FileRotatingLogSink> _logSink;
+  RTCFileLoggerSeverity _severity;
+  RTCFileLoggerRotationType _rotationType;
+  BOOL _shouldDisableBuffering;
+}
 
 // The severity level to capture. The default is kRTCFileLoggerSeverityInfo.
 @property(nonatomic, assign) RTCFileLoggerSeverity severity;

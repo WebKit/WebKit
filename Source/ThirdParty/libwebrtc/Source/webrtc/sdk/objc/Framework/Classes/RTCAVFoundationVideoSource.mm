@@ -14,9 +14,7 @@
 #import "RTCPeerConnectionFactory+Private.h"
 #import "RTCVideoSource+Private.h"
 
-@implementation RTCAVFoundationVideoSource {
-  webrtc::AVFoundationVideoCapturer *_capturer;
-}
+@implementation RTCAVFoundationVideoSource
 
 - (instancetype)initWithFactory:(RTCPeerConnectionFactory *)factory
                     constraints:(RTCMediaConstraints *)constraints {

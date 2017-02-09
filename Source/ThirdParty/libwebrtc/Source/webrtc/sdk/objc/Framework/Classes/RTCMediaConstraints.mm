@@ -62,10 +62,7 @@ MediaConstraints::GetOptional() const {
 }  // namespace webrtc
 
 
-@implementation RTCMediaConstraints {
-  NSDictionary<NSString *, NSString *> *_mandatory;
-  NSDictionary<NSString *, NSString *> *_optional;
-}
+@implementation RTCMediaConstraints
 
 - (instancetype)initWithMandatoryConstraints:
     (NSDictionary<NSString *, NSString *> *)mandatory

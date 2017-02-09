@@ -17,9 +17,7 @@
 
 #include "webrtc/api/mediastreaminterface.h"
 
-@implementation RTCRtpReceiver {
-  rtc::scoped_refptr<webrtc::RtpReceiverInterface> _nativeRtpReceiver;
-}
+@implementation RTCRtpReceiver
 
 - (NSString *)receiverId {
   return [NSString stringForStdString:_nativeRtpReceiver->id()];

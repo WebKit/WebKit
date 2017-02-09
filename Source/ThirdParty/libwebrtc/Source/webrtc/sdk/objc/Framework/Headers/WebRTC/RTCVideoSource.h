@@ -13,10 +13,16 @@
 #import <WebRTC/RTCMacros.h>
 #import <WebRTC/RTCMediaSource.h>
 
+namespace webrtc {
+class VideoTrackSourceInterface;
+}
+
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
-@interface RTCVideoSource : RTCMediaSource
+@interface RTCVideoSource : RTCMediaSource {
+  rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> _nativeVideoSource;
+}
 
 - (instancetype)init NS_UNAVAILABLE;
 

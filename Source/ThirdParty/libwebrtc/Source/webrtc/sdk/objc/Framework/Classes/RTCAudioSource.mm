@@ -12,9 +12,7 @@
 
 #include "webrtc/base/checks.h"
 
-@implementation RTCAudioSource {
-  rtc::scoped_refptr<webrtc::AudioSourceInterface> _nativeAudioSource;
-}
+@implementation RTCAudioSource
 
 - (instancetype)initWithNativeAudioSource:
     (rtc::scoped_refptr<webrtc::AudioSourceInterface>)nativeAudioSource {

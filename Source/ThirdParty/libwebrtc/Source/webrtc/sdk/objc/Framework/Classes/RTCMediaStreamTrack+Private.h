@@ -12,11 +12,6 @@
 
 #include "webrtc/api/mediastreaminterface.h"
 
-typedef NS_ENUM(NSInteger, RTCMediaStreamTrackType) {
-  RTCMediaStreamTrackTypeAudio,
-  RTCMediaStreamTrackTypeVideo,
-};
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RTCMediaStreamTrack ()

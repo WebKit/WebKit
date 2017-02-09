@@ -17,10 +17,7 @@ NSString * const kRTCMediaStreamTrackKindAudio =
 NSString * const kRTCMediaStreamTrackKindVideo =
     @(webrtc::MediaStreamTrackInterface::kVideoKind);
 
-@implementation RTCMediaStreamTrack {
-  rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> _nativeTrack;
-  RTCMediaStreamTrackType _type;
-}
+@implementation RTCMediaStreamTrack
 
 - (NSString *)kind {
   return [NSString stringForStdString:_nativeTrack->kind()];

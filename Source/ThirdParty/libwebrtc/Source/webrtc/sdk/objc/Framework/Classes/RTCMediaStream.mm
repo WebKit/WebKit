@@ -18,11 +18,7 @@
 #import "RTCPeerConnectionFactory+Private.h"
 #import "RTCVideoTrack+Private.h"
 
-@implementation RTCMediaStream {
-  NSMutableArray *_audioTracks;
-  NSMutableArray *_videoTracks;
-  rtc::scoped_refptr<webrtc::MediaStreamInterface> _nativeMediaStream;
-}
+@implementation RTCMediaStream
 
 - (instancetype)initWithFactory:(RTCPeerConnectionFactory *)factory
                        streamId:(NSString *)streamId {

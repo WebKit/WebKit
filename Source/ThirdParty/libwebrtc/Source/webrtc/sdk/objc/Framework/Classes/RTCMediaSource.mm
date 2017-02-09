@@ -12,9 +12,7 @@
 
 #include "webrtc/base/checks.h"
 
-@implementation RTCMediaSource {
-  RTCMediaSourceType _type;
-}
+@implementation RTCMediaSource
 
 @synthesize nativeMediaSource = _nativeMediaSource;
 

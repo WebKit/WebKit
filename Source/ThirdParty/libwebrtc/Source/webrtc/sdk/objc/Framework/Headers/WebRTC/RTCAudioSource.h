@@ -13,10 +13,18 @@
 #import <WebRTC/RTCMacros.h>
 #import <WebRTC/RTCMediaSource.h>
 
+#import "webrtc/base/scoped_ref_ptr.h"
+
+namespace webrtc {
+class AudioSourceInterface;
+}
+
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
-@interface RTCAudioSource : RTCMediaSource
+@interface RTCAudioSource : RTCMediaSource {
+  rtc::scoped_refptr<webrtc::AudioSourceInterface> _nativeAudioSource;
+}
 
 - (instancetype)init NS_UNAVAILABLE;
 

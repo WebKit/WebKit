@@ -12,6 +12,12 @@
 
 #import <WebRTC/RTCMacros.h>
 
+#import "webrtc/base/scoped_ref_ptr.h"
+
+namespace webrtc {
+class MediaSourceInterface;
+}
+
 typedef NS_ENUM(NSInteger, RTCSourceState) {
   RTCSourceStateInitializing,
   RTCSourceStateLive,
@@ -19,10 +25,18 @@ typedef NS_ENUM(NSInteger, RTCSourceState) {
   RTCSourceStateMuted,
 };
 
+typedef NS_ENUM(NSInteger, RTCMediaSourceType) {
+  RTCMediaSourceTypeAudio,
+  RTCMediaSourceTypeVideo,
+};
+
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
-@interface RTCMediaSource : NSObject
+@interface RTCMediaSource : NSObject {
+  RTCMediaSourceType _type;
+  rtc::scoped_refptr<webrtc::MediaSourceInterface> _nativeMediaSource;
+}
 
 /** The current state of the RTCMediaSource. */
 @property(nonatomic, readonly) RTCSourceState state;

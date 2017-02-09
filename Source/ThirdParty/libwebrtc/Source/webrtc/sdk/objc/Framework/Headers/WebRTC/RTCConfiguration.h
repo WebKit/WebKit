@@ -65,7 +65,22 @@ typedef NS_ENUM(NSInteger, RTCEncryptionKeyType) {
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
-@interface RTCConfiguration : NSObject
+@interface RTCConfiguration : NSObject {
+    NSArray<RTCIceServer *> *_iceServers;
+    RTCIceTransportPolicy _iceTransportPolicy;
+    RTCBundlePolicy _bundlePolicy;
+    RTCRtcpMuxPolicy _rtcpMuxPolicy;
+    RTCTcpCandidatePolicy _tcpCandidatePolicy;
+    RTCCandidateNetworkPolicy _candidateNetworkPolicy;
+    RTCContinualGatheringPolicy _continualGatheringPolicy;
+    int _audioJitterBufferMaxPackets;
+    int _iceConnectionReceivingTimeout;
+    int _iceBackupCandidatePairPingInterval;
+    RTCEncryptionKeyType _keyType;
+    int _iceCandidatePoolSize;
+    BOOL _shouldPruneTurnPorts;
+    BOOL _shouldPresumeWritableWhenFullyRelayed;
+}
 
 /** An array of Ice Servers available to be used by ICE. */
 @property(nonatomic, copy) NSArray<RTCIceServer *> *iceServers;

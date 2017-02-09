@@ -14,6 +14,10 @@
 #import <WebRTC/RTCMediaStreamTrack.h>
 #import <WebRTC/RTCRtpParameters.h>
 
+namespace webrtc {
+class RtpReceiverInterface;
+}
+
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
@@ -41,7 +45,9 @@ RTC_EXPORT
 @end
 
 RTC_EXPORT
-@interface RTCRtpReceiver : NSObject <RTCRtpReceiver>
+@interface RTCRtpReceiver : NSObject <RTCRtpReceiver> {
+  rtc::scoped_refptr<webrtc::RtpReceiverInterface> _nativeRtpReceiver;
+}
 
 - (instancetype)init NS_UNAVAILABLE;
 

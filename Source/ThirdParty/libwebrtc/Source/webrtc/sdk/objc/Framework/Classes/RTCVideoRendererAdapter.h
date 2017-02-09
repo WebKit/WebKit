@@ -10,6 +10,14 @@
 
 #import <Foundation/Foundation.h>
 
+#import <memory>
+
+namespace webrtc {
+class VideoRendererAdapter;
+}
+
+@protocol RTCVideoRenderer;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /*
@@ -18,7 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
  * adapter adapts calls made to that interface to the RTCVideoRenderer supplied
  * during construction.
  */
-@interface RTCVideoRendererAdapter : NSObject
+@interface RTCVideoRendererAdapter : NSObject {
+  std::unique_ptr<webrtc::VideoRendererAdapter> _adapter;
+  id<RTCVideoRenderer> _videoRenderer;
+}
 
 - (instancetype)init NS_UNAVAILABLE;
 

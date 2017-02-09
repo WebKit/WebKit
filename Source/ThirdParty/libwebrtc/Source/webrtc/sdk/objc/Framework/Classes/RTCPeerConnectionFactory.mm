@@ -23,12 +23,7 @@
 
 #include "videotoolboxvideocodecfactory.h"
 
-@implementation RTCPeerConnectionFactory {
-  std::unique_ptr<rtc::Thread> _networkThread;
-  std::unique_ptr<rtc::Thread> _workerThread;
-  std::unique_ptr<rtc::Thread> _signalingThread;
-  BOOL _hasStartedAecDump;
-}
+@implementation RTCPeerConnectionFactory
 
 @synthesize nativeFactory = _nativeFactory;
 

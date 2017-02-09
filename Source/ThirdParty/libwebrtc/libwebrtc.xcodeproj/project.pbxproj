@@ -2490,6 +2490,45 @@
 		5CFD53921E4BD3A300482908 /* row_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538A1E4BD3A300482908 /* row_neon64.cc */; };
 		5CFD53931E4BD3A300482908 /* scale_neon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538B1E4BD3A300482908 /* scale_neon.cc */; };
 		5CFD53941E4BD3A300482908 /* scale_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538C1E4BD3A300482908 /* scale_neon64.cc */; };
+		5CFD54641E4C55D200482908 /* RTCAudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD543D1E4C55D200482908 /* RTCAudioSource.h */; };
+		5CFD54651E4C55D200482908 /* RTCAudioTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD543E1E4C55D200482908 /* RTCAudioTrack.h */; };
+		5CFD54661E4C55D200482908 /* RTCAVFoundationVideoSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD543F1E4C55D200482908 /* RTCAVFoundationVideoSource.h */; };
+		5CFD54671E4C55D200482908 /* RTCCameraPreviewView.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54401E4C55D200482908 /* RTCCameraPreviewView.h */; };
+		5CFD54681E4C55D200482908 /* RTCConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54411E4C55D200482908 /* RTCConfiguration.h */; };
+		5CFD54691E4C55D200482908 /* RTCDataChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54421E4C55D200482908 /* RTCDataChannel.h */; };
+		5CFD546A1E4C55D200482908 /* RTCDataChannelConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54431E4C55D200482908 /* RTCDataChannelConfiguration.h */; };
+		5CFD546B1E4C55D200482908 /* RTCDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54441E4C55D200482908 /* RTCDispatcher.h */; };
+		5CFD546C1E4C55D200482908 /* RTCEAGLVideoView.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54451E4C55D200482908 /* RTCEAGLVideoView.h */; };
+		5CFD546D1E4C55D200482908 /* RTCFieldTrials.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54461E4C55D200482908 /* RTCFieldTrials.h */; };
+		5CFD546E1E4C55D200482908 /* RTCFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54471E4C55D200482908 /* RTCFileLogger.h */; };
+		5CFD546F1E4C55D200482908 /* RTCIceCandidate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54481E4C55D200482908 /* RTCIceCandidate.h */; };
+		5CFD54701E4C55D200482908 /* RTCIceServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54491E4C55D200482908 /* RTCIceServer.h */; };
+		5CFD54711E4C55D200482908 /* RTCLegacyStatsReport.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD544A1E4C55D200482908 /* RTCLegacyStatsReport.h */; };
+		5CFD54721E4C55D200482908 /* RTCLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD544B1E4C55D200482908 /* RTCLogging.h */; };
+		5CFD54731E4C55D200482908 /* RTCMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD544C1E4C55D200482908 /* RTCMacros.h */; };
+		5CFD54741E4C55D200482908 /* RTCMediaConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD544D1E4C55D200482908 /* RTCMediaConstraints.h */; };
+		5CFD54751E4C55D200482908 /* RTCMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD544E1E4C55D200482908 /* RTCMediaSource.h */; };
+		5CFD54761E4C55D200482908 /* RTCMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD544F1E4C55D200482908 /* RTCMediaStream.h */; };
+		5CFD54771E4C55D200482908 /* RTCMediaStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54501E4C55D200482908 /* RTCMediaStreamTrack.h */; };
+		5CFD54781E4C55D200482908 /* RTCMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54511E4C55D200482908 /* RTCMetrics.h */; };
+		5CFD54791E4C55D200482908 /* RTCMetricsSampleInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54521E4C55D200482908 /* RTCMetricsSampleInfo.h */; };
+		5CFD547A1E4C55D200482908 /* RTCNSGLVideoView.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54531E4C55D200482908 /* RTCNSGLVideoView.h */; };
+		5CFD547B1E4C55D300482908 /* RTCPeerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54541E4C55D200482908 /* RTCPeerConnection.h */; };
+		5CFD547C1E4C55D300482908 /* RTCPeerConnectionFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54551E4C55D200482908 /* RTCPeerConnectionFactory.h */; };
+		5CFD547D1E4C55D300482908 /* RTCRtpCodecParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54561E4C55D200482908 /* RTCRtpCodecParameters.h */; };
+		5CFD547E1E4C55D300482908 /* RTCRtpEncodingParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54571E4C55D200482908 /* RTCRtpEncodingParameters.h */; };
+		5CFD547F1E4C55D300482908 /* RTCRtpParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54581E4C55D200482908 /* RTCRtpParameters.h */; };
+		5CFD54801E4C55D300482908 /* RTCRtpReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54591E4C55D200482908 /* RTCRtpReceiver.h */; };
+		5CFD54811E4C55D300482908 /* RTCRtpSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD545A1E4C55D200482908 /* RTCRtpSender.h */; };
+		5CFD54821E4C55D300482908 /* RTCSessionDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD545B1E4C55D200482908 /* RTCSessionDescription.h */; };
+		5CFD54831E4C55D300482908 /* RTCSSLAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD545C1E4C55D200482908 /* RTCSSLAdapter.h */; };
+		5CFD54841E4C55D300482908 /* RTCTracing.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD545D1E4C55D200482908 /* RTCTracing.h */; };
+		5CFD54851E4C55D300482908 /* RTCVideoFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD545E1E4C55D200482908 /* RTCVideoFrame.h */; };
+		5CFD54861E4C55D300482908 /* RTCVideoRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD545F1E4C55D200482908 /* RTCVideoRenderer.h */; };
+		5CFD54871E4C55D300482908 /* RTCVideoSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54601E4C55D200482908 /* RTCVideoSource.h */; };
+		5CFD54881E4C55D300482908 /* RTCVideoTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54611E4C55D200482908 /* RTCVideoTrack.h */; };
+		5CFD54891E4C55D300482908 /* UIDevice+RTCDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54621E4C55D200482908 /* UIDevice+RTCDevice.h */; };
+		5CFD548A1E4C55D300482908 /* WebRTC.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD54631E4C55D200482908 /* WebRTC.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -5202,6 +5241,45 @@
 		5CFD538A1E4BD3A300482908 /* row_neon64.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = row_neon64.cc; path = source/row_neon64.cc; sourceTree = "<group>"; };
 		5CFD538B1E4BD3A300482908 /* scale_neon.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scale_neon.cc; path = source/scale_neon.cc; sourceTree = "<group>"; };
 		5CFD538C1E4BD3A300482908 /* scale_neon64.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scale_neon64.cc; path = source/scale_neon64.cc; sourceTree = "<group>"; };
+		5CFD543D1E4C55D200482908 /* RTCAudioSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCAudioSource.h; sourceTree = "<group>"; };
+		5CFD543E1E4C55D200482908 /* RTCAudioTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCAudioTrack.h; sourceTree = "<group>"; };
+		5CFD543F1E4C55D200482908 /* RTCAVFoundationVideoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCAVFoundationVideoSource.h; sourceTree = "<group>"; };
+		5CFD54401E4C55D200482908 /* RTCCameraPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCCameraPreviewView.h; sourceTree = "<group>"; };
+		5CFD54411E4C55D200482908 /* RTCConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCConfiguration.h; sourceTree = "<group>"; };
+		5CFD54421E4C55D200482908 /* RTCDataChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannel.h; sourceTree = "<group>"; };
+		5CFD54431E4C55D200482908 /* RTCDataChannelConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelConfiguration.h; sourceTree = "<group>"; };
+		5CFD54441E4C55D200482908 /* RTCDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDispatcher.h; sourceTree = "<group>"; };
+		5CFD54451E4C55D200482908 /* RTCEAGLVideoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCEAGLVideoView.h; sourceTree = "<group>"; };
+		5CFD54461E4C55D200482908 /* RTCFieldTrials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCFieldTrials.h; sourceTree = "<group>"; };
+		5CFD54471E4C55D200482908 /* RTCFileLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCFileLogger.h; sourceTree = "<group>"; };
+		5CFD54481E4C55D200482908 /* RTCIceCandidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceCandidate.h; sourceTree = "<group>"; };
+		5CFD54491E4C55D200482908 /* RTCIceServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceServer.h; sourceTree = "<group>"; };
+		5CFD544A1E4C55D200482908 /* RTCLegacyStatsReport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCLegacyStatsReport.h; sourceTree = "<group>"; };
+		5CFD544B1E4C55D200482908 /* RTCLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCLogging.h; sourceTree = "<group>"; };
+		5CFD544C1E4C55D200482908 /* RTCMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCMacros.h; sourceTree = "<group>"; };
+		5CFD544D1E4C55D200482908 /* RTCMediaConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCMediaConstraints.h; sourceTree = "<group>"; };
+		5CFD544E1E4C55D200482908 /* RTCMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCMediaSource.h; sourceTree = "<group>"; };
+		5CFD544F1E4C55D200482908 /* RTCMediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCMediaStream.h; sourceTree = "<group>"; };
+		5CFD54501E4C55D200482908 /* RTCMediaStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCMediaStreamTrack.h; sourceTree = "<group>"; };
+		5CFD54511E4C55D200482908 /* RTCMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCMetrics.h; sourceTree = "<group>"; };
+		5CFD54521E4C55D200482908 /* RTCMetricsSampleInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCMetricsSampleInfo.h; sourceTree = "<group>"; };
+		5CFD54531E4C55D200482908 /* RTCNSGLVideoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNSGLVideoView.h; sourceTree = "<group>"; };
+		5CFD54541E4C55D200482908 /* RTCPeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnection.h; sourceTree = "<group>"; };
+		5CFD54551E4C55D200482908 /* RTCPeerConnectionFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnectionFactory.h; sourceTree = "<group>"; };
+		5CFD54561E4C55D200482908 /* RTCRtpCodecParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpCodecParameters.h; sourceTree = "<group>"; };
+		5CFD54571E4C55D200482908 /* RTCRtpEncodingParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpEncodingParameters.h; sourceTree = "<group>"; };
+		5CFD54581E4C55D200482908 /* RTCRtpParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpParameters.h; sourceTree = "<group>"; };
+		5CFD54591E4C55D200482908 /* RTCRtpReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpReceiver.h; sourceTree = "<group>"; };
+		5CFD545A1E4C55D200482908 /* RTCRtpSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpSender.h; sourceTree = "<group>"; };
+		5CFD545B1E4C55D200482908 /* RTCSessionDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCSessionDescription.h; sourceTree = "<group>"; };
+		5CFD545C1E4C55D200482908 /* RTCSSLAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCSSLAdapter.h; sourceTree = "<group>"; };
+		5CFD545D1E4C55D200482908 /* RTCTracing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCTracing.h; sourceTree = "<group>"; };
+		5CFD545E1E4C55D200482908 /* RTCVideoFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCVideoFrame.h; sourceTree = "<group>"; };
+		5CFD545F1E4C55D200482908 /* RTCVideoRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCVideoRenderer.h; sourceTree = "<group>"; };
+		5CFD54601E4C55D200482908 /* RTCVideoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCVideoSource.h; sourceTree = "<group>"; };
+		5CFD54611E4C55D200482908 /* RTCVideoTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCVideoTrack.h; sourceTree = "<group>"; };
+		5CFD54621E4C55D200482908 /* UIDevice+RTCDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+RTCDevice.h"; sourceTree = "<group>"; };
+		5CFD54631E4C55D200482908 /* WebRTC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebRTC.h; sourceTree = "<group>"; };
 		5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libwebrtc.xcconfig; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -6405,6 +6483,7 @@
 		5C4B4B591E431C55002651C8 /* Framework */ = {
 			isa = PBXGroup;
 			children = (
+				5CFD543B1E4C559E00482908 /* Headers */,
 				5C4B4B5A1E431C63002651C8 /* Classes */,
 			);
 			name = Framework;
@@ -9179,6 +9258,61 @@
 			path = objc;
 			sourceTree = "<group>";
 		};
+		5CFD543B1E4C559E00482908 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				5CFD543C1E4C55BF00482908 /* WebRTC */,
+			);
+			name = Headers;
+			path = sdk/objc/Framework/Headers;
+			sourceTree = "<group>";
+		};
+		5CFD543C1E4C55BF00482908 /* WebRTC */ = {
+			isa = PBXGroup;
+			children = (
+				5CFD543D1E4C55D200482908 /* RTCAudioSource.h */,
+				5CFD543E1E4C55D200482908 /* RTCAudioTrack.h */,
+				5CFD543F1E4C55D200482908 /* RTCAVFoundationVideoSource.h */,
+				5CFD54401E4C55D200482908 /* RTCCameraPreviewView.h */,
+				5CFD54411E4C55D200482908 /* RTCConfiguration.h */,
+				5CFD54421E4C55D200482908 /* RTCDataChannel.h */,
+				5CFD54431E4C55D200482908 /* RTCDataChannelConfiguration.h */,
+				5CFD54441E4C55D200482908 /* RTCDispatcher.h */,
+				5CFD54451E4C55D200482908 /* RTCEAGLVideoView.h */,
+				5CFD54461E4C55D200482908 /* RTCFieldTrials.h */,
+				5CFD54471E4C55D200482908 /* RTCFileLogger.h */,
+				5CFD54481E4C55D200482908 /* RTCIceCandidate.h */,
+				5CFD54491E4C55D200482908 /* RTCIceServer.h */,
+				5CFD544A1E4C55D200482908 /* RTCLegacyStatsReport.h */,
+				5CFD544B1E4C55D200482908 /* RTCLogging.h */,
+				5CFD544C1E4C55D200482908 /* RTCMacros.h */,
+				5CFD544D1E4C55D200482908 /* RTCMediaConstraints.h */,
+				5CFD544E1E4C55D200482908 /* RTCMediaSource.h */,
+				5CFD544F1E4C55D200482908 /* RTCMediaStream.h */,
+				5CFD54501E4C55D200482908 /* RTCMediaStreamTrack.h */,
+				5CFD54511E4C55D200482908 /* RTCMetrics.h */,
+				5CFD54521E4C55D200482908 /* RTCMetricsSampleInfo.h */,
+				5CFD54531E4C55D200482908 /* RTCNSGLVideoView.h */,
+				5CFD54541E4C55D200482908 /* RTCPeerConnection.h */,
+				5CFD54551E4C55D200482908 /* RTCPeerConnectionFactory.h */,
+				5CFD54561E4C55D200482908 /* RTCRtpCodecParameters.h */,
+				5CFD54571E4C55D200482908 /* RTCRtpEncodingParameters.h */,
+				5CFD54581E4C55D200482908 /* RTCRtpParameters.h */,
+				5CFD54591E4C55D200482908 /* RTCRtpReceiver.h */,
+				5CFD545A1E4C55D200482908 /* RTCRtpSender.h */,
+				5CFD545B1E4C55D200482908 /* RTCSessionDescription.h */,
+				5CFD545C1E4C55D200482908 /* RTCSSLAdapter.h */,
+				5CFD545D1E4C55D200482908 /* RTCTracing.h */,
+				5CFD545E1E4C55D200482908 /* RTCVideoFrame.h */,
+				5CFD545F1E4C55D200482908 /* RTCVideoRenderer.h */,
+				5CFD54601E4C55D200482908 /* RTCVideoSource.h */,
+				5CFD54611E4C55D200482908 /* RTCVideoTrack.h */,
+				5CFD54621E4C55D200482908 /* UIDevice+RTCDevice.h */,
+				5CFD54631E4C55D200482908 /* WebRTC.h */,
+			);
+			path = WebRTC;
+			sourceTree = "<group>";
+		};
 		5D7C59C41208C68B001C873E /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
@@ -9431,6 +9565,7 @@
 				5CDD86BD1E43B9C200621E92 /* aec_core.h in Headers */,
 				5CDD86BA1E43B9C200621E92 /* aec_core_optimized_methods.h in Headers */,
 				5CDD86BF1E43B9C200621E92 /* aec_resampler.h in Headers */,
+				5CFD547A1E4C55D200482908 /* RTCNSGLVideoView.h in Headers */,
 				5CDD85E81E43B81000621E92 /* aecm_core.h in Headers */,
 				5CDD85E91E43B81000621E92 /* aecm_defines.h in Headers */,
 				5C0885271E4A99D200403995 /* aes.h in Headers */,
@@ -9455,6 +9590,8 @@
 				5C63F6871E41619E002CA531 /* asyncinvoker.h in Headers */,
 				5C63F6891E41619E002CA531 /* asyncpacketsocket.h in Headers */,
 				5C63F68B1E41619E002CA531 /* asyncresolverinterface.h in Headers */,
+				5CFD54841E4C55D300482908 /* RTCTracing.h in Headers */,
+				5CFD54701E4C55D200482908 /* RTCIceServer.h in Headers */,
 				5C63F68D1E41619E002CA531 /* asyncsocket.h in Headers */,
 				5C63F9E11E4174F6002CA531 /* asyncstuntcpsocket.h in Headers */,
 				5C63F68F1E41619E002CA531 /* asynctcpsocket.h in Headers */,
@@ -9475,6 +9612,7 @@
 				5CDD8FFD1E43CE3A00621E92 /* audio_decoder_pcm16b.h in Headers */,
 				5C119FFC1E457400004F0987 /* audio_device_buffer.h in Headers */,
 				5C119FFD1E457400004F0987 /* audio_device_config.h in Headers */,
+				5CFD54731E4C55D200482908 /* RTCMacros.h in Headers */,
 				5C11A01E1E457578004F0987 /* audio_device_dummy.h in Headers */,
 				5C119FFF1E457400004F0987 /* audio_device_generic.h in Headers */,
 				5C11A0011E457400004F0987 /* audio_device_impl.h in Headers */,
@@ -9482,6 +9620,7 @@
 				5C11A00C1E457448004F0987 /* audio_device_mac.h in Headers */,
 				5CDD84181E439B2900621E92 /* audio_encoder.h in Headers */,
 				5CDD8CA81E43C6F700621E92 /* audio_encoder_cng.h in Headers */,
+				5CFD54671E4C55D200482908 /* RTCCameraPreviewView.h in Headers */,
 				5CDD8FF41E43CDF400621E92 /* audio_encoder_copy_red.h in Headers */,
 				5CDD8B711E43C2B500621E92 /* audio_encoder_ilbc.h in Headers */,
 				5CDD8C0C1E43C34600621E92 /* audio_encoder_isac_t.h in Headers */,
@@ -9534,6 +9673,7 @@
 				5C63F7BC1E416288002CA531 /* buffer.h in Headers */,
 				5CDD8A0B1E43BFB300621E92 /* buffer_level_filter.h in Headers */,
 				5C63F7BE1E416288002CA531 /* bufferqueue.h in Headers */,
+				5CFD547C1E4C55D300482908 /* RTCPeerConnectionFactory.h in Headers */,
 				5CDD841E1E439B2900621E92 /* builtin_audio_decoder_factory.h in Headers */,
 				5CDD8B751E43C2B500621E92 /* bw_expand.h in Headers */,
 				5CDD893F1E43BF3A00621E92 /* bye.h in Headers */,
@@ -9547,6 +9687,7 @@
 				5C63F9E41E4174F6002CA531 /* candidate.h in Headers */,
 				5C63F9E51E4174F6002CA531 /* candidatepairinterface.h in Headers */,
 				5CDD8B771E43C2B500621E92 /* cb_construct.h in Headers */,
+				5CFD54721E4C55D200482908 /* RTCLogging.h in Headers */,
 				5CDD8B7D1E43C2B500621E92 /* cb_mem_energy.h in Headers */,
 				5CDD8B791E43C2B500621E92 /* cb_mem_energy_augmentation.h in Headers */,
 				5CDD8B7B1E43C2B500621E92 /* cb_mem_energy_calc.h in Headers */,
@@ -9620,6 +9761,7 @@
 				5CDD8B931E43C2B500621E92 /* defines.h in Headers */,
 				5CDD8FB61E43CD0700621E92 /* delay_based_bwe.h in Headers */,
 				5CDD868E1E43B93900621E92 /* delay_estimator.h in Headers */,
+				5CFD54851E4C55D300482908 /* RTCVideoFrame.h in Headers */,
 				5CDD86891E43B93900621E92 /* delay_estimator_internal.h in Headers */,
 				5CDD868C1E43B93900621E92 /* delay_estimator_wrapper.h in Headers */,
 				5CDD8A1E1E43BFB300621E92 /* delay_manager.h in Headers */,
@@ -9645,6 +9787,7 @@
 				5CDD86C21E43B9C200621E92 /* echo_cancellation.h in Headers */,
 				5CDD84AF1E43AF1300621E92 /* echo_cancellation_impl.h in Headers */,
 				5CDD85EB1E43B81000621E92 /* echo_control_mobile.h in Headers */,
+				5CFD54661E4C55D200482908 /* RTCAVFoundationVideoSource.h in Headers */,
 				5CDD84B11E43AF1300621E92 /* echo_control_mobile_impl.h in Headers */,
 				5CDD8B971E43C2B500621E92 /* encode.h in Headers */,
 				5CDD87B61E43BC0500621E92 /* encode_lpc_swb.h in Headers */,
@@ -9680,6 +9823,7 @@
 				5C4B48E31E42C1E3002651C8 /* fakevideorenderer.h in Headers */,
 				5C63F8DC1E416D53002CA531 /* features.h in Headers */,
 				5CDD8F8E1E43CBE000621E92 /* fec_controller.h in Headers */,
+				5CFD546B1E4C55D200482908 /* RTCDispatcher.h in Headers */,
 				5CDD88791E43BE3C00621E92 /* fec_private_tables_bursty.h in Headers */,
 				5CDD887A1E43BE3C00621E92 /* fec_private_tables_random.h in Headers */,
 				5CDD83CE1E439A6F00621E92 /* fec_tables_xor.h in Headers */,
@@ -9701,6 +9845,7 @@
 				5C4B4C6B1E431F9C002651C8 /* fir_filter_sse.h in Headers */,
 				5C63F7EC1E416288002CA531 /* firewallsocketserver.h in Headers */,
 				5C63F7EE1E416288002CA531 /* flags.h in Headers */,
+				5CFD54751E4C55D200482908 /* RTCMediaSource.h in Headers */,
 				5CDD887F1E43BE3C00621E92 /* flexfec_header_reader_writer.h in Headers */,
 				5CDD8C511E43C58E00621E92 /* flexfec_receive_stream.h in Headers */,
 				5CDD85371E43B39C00621E92 /* flexfec_receive_stream.h in Headers */,
@@ -9744,6 +9889,7 @@
 				5CDD8BAF1E43C2B500621E92 /* hp_input.h in Headers */,
 				5CDD8BB11E43C2B500621E92 /* hp_output.h in Headers */,
 				5C63F7F71E416288002CA531 /* httpbase.h in Headers */,
+				5CFD546F1E4C55D200482908 /* RTCIceCandidate.h in Headers */,
 				5C63F7F91E416288002CA531 /* httpclient.h in Headers */,
 				5C63F7FA1E416288002CA531 /* httpcommon-inl.h in Headers */,
 				5C63F7FC1E416288002CA531 /* httpcommon.h in Headers */,
@@ -9752,6 +9898,7 @@
 				5C4B48E41E42C1E3002651C8 /* hybriddataengine.h in Headers */,
 				5C63F8041E416288002CA531 /* ifaddrs-android.h in Headers */,
 				5C63F8021E416288002CA531 /* ifaddrs_converter.h in Headers */,
+				5CFD54821E4C55D300482908 /* RTCSessionDescription.h in Headers */,
 				5C63F8051E416288002CA531 /* ignore_wundef.h in Headers */,
 				5CDD8BB41E43C2B500621E92 /* ilbc.h in Headers */,
 				5CDD8BB61E43C2B500621E92 /* index_conv_dec.h in Headers */,
@@ -9775,6 +9922,7 @@
 				5C63F9431E41737B002CA531 /* jsepicecandidate.h in Headers */,
 				5C63F9451E41737B002CA531 /* jsepsessiondescription.h in Headers */,
 				5C63F8091E416288002CA531 /* json.h in Headers */,
+				5CFD54711E4C55D200482908 /* RTCLegacyStatsReport.h in Headers */,
 				5C63F8DE1E416D53002CA531 /* json.h in Headers */,
 				5C63F80A1E416288002CA531 /* keep_ref_until_done.h in Headers */,
 				5C0885301E4A99D200403995 /* key.h in Headers */,
@@ -9782,6 +9930,7 @@
 				5CDD84201E439B2900621E92 /* legacy_encoded_audio_frame.h in Headers */,
 				5CDD90281E43CEDE00621E92 /* level_controller.h in Headers */,
 				5CDD90251E43CEDE00621E92 /* level_controller_constants.h in Headers */,
+				5CFD548A1E4C55D300482908 /* WebRTC.h in Headers */,
 				5CDD84B91E43AF1300621E92 /* level_estimator_impl.h in Headers */,
 				5CDD84601E43AE2900621E92 /* level_indicator.h in Headers */,
 				5C63F80B1E416288002CA531 /* linked_ptr.h in Headers */,
@@ -9798,6 +9947,7 @@
 				5CDD87CC1E43BC0500621E92 /* lpc_shape_swb16_tables.h in Headers */,
 				5CDD87CE1E43BC0500621E92 /* lpc_tables.h in Headers */,
 				5CDD8BC41E43C2B500621E92 /* lsf_check.h in Headers */,
+				5CFD54801E4C55D300482908 /* RTCRtpReceiver.h in Headers */,
 				5CDD8BC61E43C2B500621E92 /* lsf_interpolate_to_poly_dec.h in Headers */,
 				5CDD8BC81E43C2B500621E92 /* lsf_interpolate_to_poly_enc.h in Headers */,
 				5CDD8BCA1E43C2B500621E92 /* lsf_to_lsp.h in Headers */,
@@ -9807,12 +9957,14 @@
 				5C63F8161E416288002CA531 /* macconversion.h in Headers */,
 				5C63F8181E416288002CA531 /* macutils.h in Headers */,
 				5C63F81A1E416288002CA531 /* macwindowpicker.h in Headers */,
+				5CFD54691E4C55D200482908 /* RTCDataChannel.h in Headers */,
 				5C63F81B1E416288002CA531 /* mathutils.h in Headers */,
 				5CDD907E1E43D15C00621E92 /* matrix.h in Headers */,
 				5C63F81D1E416288002CA531 /* md5.h in Headers */,
 				5C63F81F1E416288002CA531 /* md5digest.h in Headers */,
 				5CDD86A51E43B99400621E92 /* mean_variance_estimator.h in Headers */,
 				5CDD876C1E43BB3000621E92 /* media_file.h in Headers */,
+				5CFD54681E4C55D200482908 /* RTCConfiguration.h in Headers */,
 				5CDD87671E43BB3000621E92 /* media_file_defines.h in Headers */,
 				5CDD87691E43BB3000621E92 /* media_file_impl.h in Headers */,
 				5CDD876B1E43BB3000621E92 /* media_file_utility.h in Headers */,
@@ -9840,6 +9992,7 @@
 				5CDD8FED1E43CDCA00621E92 /* mock_audio_processing.h in Headers */,
 				5CDD907F1E43D15C00621E92 /* mock_nonlinear_beamformer.h in Headers */,
 				5C63F8261E416288002CA531 /* mod_ops.h in Headers */,
+				5CFD54651E4C55D200482908 /* RTCAudioTrack.h in Headers */,
 				5CDD84621E43AE2900621E92 /* monitor_module.h in Headers */,
 				5CDD837E1E439A3500621E92 /* moving_average.h in Headers */,
 				5CDD8C8F1E43C66000621E92 /* moving_moments.h in Headers */,
@@ -9871,6 +10024,7 @@
 				5C63F9541E41737B002CA531 /* notifier.h in Headers */,
 				5CDD86011E43B84E00621E92 /* ns_core.h in Headers */,
 				5C4B4BBE1E431C90002651C8 /* NSString+StdString.h in Headers */,
+				5CFD54881E4C55D300482908 /* RTCVideoTrack.h in Headers */,
 				5CDD86061E43B84E00621E92 /* nsx_core.h in Headers */,
 				5CDD86071E43B84E00621E92 /* nsx_defines.h in Headers */,
 				5C0885311E4A99D200403995 /* null_auth.h in Headers */,
@@ -9889,6 +10043,7 @@
 				5CDD8C661E43C60900621E92 /* opus_inst.h in Headers */,
 				5CDD8C681E43C60900621E92 /* opus_interface.h in Headers */,
 				5CDD87CF1E43BC0500621E92 /* os_specific_inline.h in Headers */,
+				5CFD54791E4C55D200482908 /* RTCMetricsSampleInfo.h in Headers */,
 				5CDD8AAA1E43C00F00621E92 /* output_audio_file.h in Headers */,
 				5CDD84641E43AE2900621E92 /* output_mixer.h in Headers */,
 				5CDD8AAB1E43C00F00621E92 /* output_wav_file.h in Headers */,
@@ -9899,6 +10054,7 @@
 				5C63F9F01E4174F6002CA531 /* p2ptransport.h in Headers */,
 				5C63F9F31E4174F6002CA531 /* p2ptransportchannel.h in Headers */,
 				5C11A0131E4574C5004F0987 /* pa_memorybarrier.h in Headers */,
+				5CFD547B1E4C55D300482908 /* RTCPeerConnection.h in Headers */,
 				5C11A0151E4574C5004F0987 /* pa_ringbuffer.h in Headers */,
 				5CDD8FA31E43CCBE00621E92 /* paced_sender.h in Headers */,
 				5CDD8BD41E43C2B500621E92 /* pack_bits.h in Headers */,
@@ -9937,6 +10093,7 @@
 				5CDD87341E43BABE00621E92 /* pole_zero_filter.h in Headers */,
 				5CDD8BD61E43C2B500621E92 /* poly_to_lsf.h in Headers */,
 				5CDD8BD81E43C2B500621E92 /* poly_to_lsp.h in Headers */,
+				5CFD54641E4C55D200482908 /* RTCAudioSource.h in Headers */,
 				5C63F9F81E4174F6002CA531 /* port.h in Headers */,
 				5C63F9FB1E4174F6002CA531 /* portallocator.h in Headers */,
 				5C63F9FC1E4174F6002CA531 /* portinterface.h in Headers */,
@@ -9945,6 +10102,7 @@
 				5CDD8A481E43BFB300621E92 /* preemptive_expand.h in Headers */,
 				5CDD8FB81E43CD0700621E92 /* probe_bitrate_estimator.h in Headers */,
 				5CDD8FBA1E43CD0700621E92 /* probe_controller.h in Headers */,
+				5CFD54781E4C55D200482908 /* RTCMetrics.h in Headers */,
 				5CDD84E61E43B04D00621E92 /* process_thread_impl.h in Headers */,
 				5CDD835D1E43257200621E92 /* profile_level_id.h in Headers */,
 				5CDD83F31E439A6F00621E92 /* protection_bitrate_calculator.h in Headers */,
@@ -9960,10 +10118,12 @@
 				5C63F8561E416288002CA531 /* race_checker.h in Headers */,
 				5C63F8581E416288002CA531 /* random.h in Headers */,
 				5CDD8A4B1E43BFB300621E92 /* random_vector.h in Headers */,
+				5CFD54891E4C55D300482908 /* UIDevice+RTCDevice.h in Headers */,
 				5CDD895C1E43BF3A00621E92 /* rapid_resync_request.h in Headers */,
 				5C63F85A1E416288002CA531 /* rate_limiter.h in Headers */,
 				5C63F85C1E416288002CA531 /* rate_statistics.h in Headers */,
 				5C63F85E1E416288002CA531 /* ratelimiter.h in Headers */,
+				5CFD54811E4C55D300482908 /* RTCRtpSender.h in Headers */,
 				5C63F8601E416288002CA531 /* ratetracker.h in Headers */,
 				5C0885331E4A99D200403995 /* rdb.h in Headers */,
 				5C0885341E4A99D200403995 /* rdbx.h in Headers */,
@@ -9990,6 +10150,8 @@
 				5CDD89651E43BF3A00621E92 /* report_block.h in Headers */,
 				5CDD85AF1E43B5C000621E92 /* report_block_stats.h in Headers */,
 				5CDD86651E43B8B500621E92 /* resample_by_2_internal.h in Headers */,
+				5CFD547F1E4C55D300482908 /* RTCRtpParameters.h in Headers */,
+				5CFD54861E4C55D300482908 /* RTCVideoRenderer.h in Headers */,
 				5CDD8AB21E43C00F00621E92 /* resample_input_audio_file.h in Headers */,
 				5CDD84BE1E43AF1300621E92 /* residual_echo_detector.h in Headers */,
 				5C4B4C7B1E431F9C002651C8 /* ring_buffer.h in Headers */,
@@ -10041,6 +10203,7 @@
 				5C4B4BFC1E431C90002651C8 /* RTCShader.h in Headers */,
 				5C63F9651E41737B002CA531 /* rtcstatscollector.h in Headers */,
 				5C4B4C011E431C90002651C8 /* RTCUIApplication.h in Headers */,
+				5CFD546C1E4C55D200482908 /* RTCEAGLVideoView.h in Headers */,
 				5C4B4C041E431C90002651C8 /* RTCVideoFrame+Private.h in Headers */,
 				5C4B4C071E431C90002651C8 /* RTCVideoRendererAdapter+Private.h in Headers */,
 				5C4B4C051E431C90002651C8 /* RTCVideoRendererAdapter.h in Headers */,
@@ -10081,6 +10244,7 @@
 				5C63F96B1E41737B002CA531 /* rtpsender.h in Headers */,
 				5C63F96C1E41737B002CA531 /* rtpsenderinterface.h in Headers */,
 				5C4B48F21E42C1E3002651C8 /* rtputils.h in Headers */,
+				5CFD54831E4C55D300482908 /* RTCSSLAdapter.h in Headers */,
 				5CDD83F91E439A6F00621E92 /* rtt_filter.h in Headers */,
 				5C4B4CDF1E4320A9002651C8 /* rw_lock_posix.h in Headers */,
 				5C63F8681E416288002CA531 /* safe_compare.h in Headers */,
@@ -10121,6 +10285,7 @@
 				5C4B48871E42C1BA002651C8 /* simulcast.h in Headers */,
 				5CDD83841E439A3500621E92 /* simulcast_rate_allocator.h in Headers */,
 				5CDD875D1E43BAF500621E92 /* sinc_resampler.h in Headers */,
+				5CFD54871E4C55D300482908 /* RTCVideoSource.h in Headers */,
 				5CDD875F1E43BAF500621E92 /* sinusoidal_linear_chirp_source.h in Headers */,
 				5CDD89761E43BF3A00621E92 /* sli.h in Headers */,
 				5CDD8BE61E43C2B500621E92 /* smooth.h in Headers */,
@@ -10138,6 +10303,7 @@
 				5CDD8BE81E43C2B500621E92 /* sort_sq.h in Headers */,
 				5C4B4C7E1E431F9C002651C8 /* sparse_fir_filter.h in Headers */,
 				5CDD87D91E43BC0600621E92 /* spectrum_ar_model_tables.h in Headers */,
+				5CFD546A1E4C55D200482908 /* RTCDataChannelConfiguration.h in Headers */,
 				5CDD8BEA1E43C2B500621E92 /* split_vq.h in Headers */,
 				5CDD84C21E43AF1300621E92 /* splitting_filter.h in Headers */,
 				5CDD83601E43257200621E92 /* sps_parser.h in Headers */,
@@ -10155,7 +10321,9 @@
 				5CDD8BEC1E43C2B500621E92 /* state_construct.h in Headers */,
 				5CDD8BEE1E43C2B500621E92 /* state_search.h in Headers */,
 				5CDD84681E43AE2900621E92 /* statistics.h in Headers */,
+				5CFD54771E4C55D200482908 /* RTCMediaStreamTrack.h in Headers */,
 				5CDD8A521E43BFB300621E92 /* statistics_calculator.h in Headers */,
+				5CFD546D1E4C55D200482908 /* RTCFieldTrials.h in Headers */,
 				5CDD85BD1E43B5C000621E92 /* stats_counter.h in Headers */,
 				5C63F9711E41737B002CA531 /* statscollector.h in Headers */,
 				5C63F9731E41737B002CA531 /* statstypes.h in Headers */,
@@ -10190,8 +10358,11 @@
 				5C63FA1B1E4174F6002CA531 /* testturnserver.h in Headers */,
 				5C63F8B21E416288002CA531 /* testutils.h in Headers */,
 				5C63F66C1E415F9B002CA531 /* thread.h in Headers */,
+				5CFD546E1E4C55D200482908 /* RTCFileLogger.h in Headers */,
 				5C63F8B31E416288002CA531 /* thread_annotations.h in Headers */,
 				5C63F8B61E416288002CA531 /* thread_checker.h in Headers */,
+				5CFD54741E4C55D200482908 /* RTCMediaConstraints.h in Headers */,
+				5CFD54761E4C55D200482908 /* RTCMediaStream.h in Headers */,
 				5C63F8B51E416288002CA531 /* thread_checker_impl.h in Headers */,
 				5CDD84C41E43AF1300621E92 /* three_band_filter_bank.h in Headers */,
 				5CDD8A581E43BFB300621E92 /* tick_timer.h in Headers */,
@@ -10240,6 +10411,7 @@
 				5CDD88E51E43BE3D00621E92 /* ulpfec_receiver_impl.h in Headers */,
 				5C63F9751E41737B002CA531 /* umametrics.h in Headers */,
 				5C63F8C31E416288002CA531 /* unixfilesystem.h in Headers */,
+				5CFD547D1E4C55D300482908 /* RTCRtpCodecParameters.h in Headers */,
 				5CDD8BF21E43C2B500621E92 /* unpack_bits.h in Headers */,
 				5C63F8C51E416288002CA531 /* urlencode.h in Headers */,
 				5CDD87091E43BA7500621E92 /* utility.h in Headers */,
@@ -10267,6 +10439,7 @@
 				5C4B48FD1E42C1E3002651C8 /* videoadapter.h in Headers */,
 				5C4B49001E42C1E3002651C8 /* videobroadcaster.h in Headers */,
 				5C4B49031E42C1E3002651C8 /* videocapturer.h in Headers */,
+				5CFD547E1E4C55D300482908 /* RTCRtpEncodingParameters.h in Headers */,
 				5C4B49041E42C1E3002651C8 /* videocapturerfactory.h in Headers */,
 				5C63F9781E41737B002CA531 /* videocapturertracksource.h in Headers */,
 				5C4B49071E42C1E3002651C8 /* videocommon.h in Headers */,

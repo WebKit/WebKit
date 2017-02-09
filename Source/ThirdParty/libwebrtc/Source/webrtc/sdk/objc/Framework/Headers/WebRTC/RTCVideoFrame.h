@@ -13,11 +13,23 @@
 
 #import <WebRTC/RTCMacros.h>
 
+#import "webrtc/base/scoped_ref_ptr.h"
+#import "webrtc/common_video/rotation.h"
+
+namespace webrtc {
+class VideoFrameBuffer;
+}
+
 NS_ASSUME_NONNULL_BEGIN
 
 // RTCVideoFrame is an ObjectiveC version of webrtc::VideoFrame.
 RTC_EXPORT
-@interface RTCVideoFrame : NSObject
+@interface RTCVideoFrame : NSObject {
+  rtc::scoped_refptr<webrtc::VideoFrameBuffer> _videoBuffer;
+  webrtc::VideoRotation _rotation;
+  int64_t _timeStampNs;
+  rtc::scoped_refptr<webrtc::VideoFrameBuffer> _i420Buffer;
+}
 
 /** Width without rotation applied. */
 @property(nonatomic, readonly) size_t width;

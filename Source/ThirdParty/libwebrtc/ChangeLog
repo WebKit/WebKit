@@ -1,5 +1,65 @@
 2017-02-09  Alex Christensen  <achristensen@webkit.org>
 
+        Fix i386 libwebrtc build
+        https://bugs.webkit.org/show_bug.cgi?id=168038
+
+        Reviewed by Geoffrey Garen.
+
+        Unfortunately, 32-bit ObjC can't use all the coolest new features of ObjC.
+        Fortunately, we can move things around a bit to become valid old ObjC.
+
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCAVFoundationVideoSource.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCAudioSource.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCFileLogger.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCI420Shader.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCMediaConstraints.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCMediaSource+Private.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCMediaSource.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCMediaStream.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCMediaStreamTrack+Private.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCMediaStreamTrack.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCOpenGLVideoRenderer.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCOpenGLVideoRenderer.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCPeerConnectionFactory.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCRtpReceiver.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCRtpSender.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCShader.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCVideoFrame.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCVideoRendererAdapter.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCVideoRendererAdapter.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCVideoSource.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCVideoTrack.mm:
+        * Source/webrtc/sdk/objc/Framework/Classes/avfoundationvideocapturer.mm:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAVFoundationVideoSource.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSource.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioTrack.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCConfiguration.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCDataChannelConfiguration.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCFileLogger.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIceCandidate.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCIceServer.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCLegacyStatsReport.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaConstraints.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaSource.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaStream.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMediaStreamTrack.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCMetricsSampleInfo.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCPeerConnectionFactory.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpCodecParameters.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpEncodingParameters.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpParameters.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpReceiver.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCRtpSender.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCSessionDescription.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrame.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoSource.h:
+        * Source/webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoTrack.h:
+        Make code compile for i386.
+        * libwebrtc.xcodeproj/project.pbxproj:
+        Added missing headers so Xcode can search them.
+
+2017-02-09  Alex Christensen  <achristensen@webkit.org>
+
         Remove svn:executable property from headers.
 
         * Source/webrtc/base/sigslottester.h: Removed property svn:executable.

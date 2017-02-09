@@ -13,12 +13,7 @@
 #import "RTCShader+Private.h"
 #import "WebRTC/RTCVideoFrame.h"
 
-@implementation RTCOpenGLVideoRenderer {
-  GlContextType *_context;
-  BOOL _isInitialized;
-  id<RTCShader> _i420Shader;
-  id<RTCShader> _nv12Shader;
-}
+@implementation RTCOpenGLVideoRenderer
 
 @synthesize lastDrawnFrame = _lastDrawnFrame;
 

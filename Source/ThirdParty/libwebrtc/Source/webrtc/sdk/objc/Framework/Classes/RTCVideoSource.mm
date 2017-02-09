@@ -12,9 +12,7 @@
 
 #include "webrtc/base/checks.h"
 
-@implementation RTCVideoSource {
-  rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> _nativeVideoSource;
-}
+@implementation RTCVideoSource
 
 - (instancetype)initWithNativeVideoSource:
     (rtc::scoped_refptr<webrtc::VideoTrackSourceInterface>)nativeVideoSource {

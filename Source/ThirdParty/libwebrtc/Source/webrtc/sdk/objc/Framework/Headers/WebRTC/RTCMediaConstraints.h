@@ -28,7 +28,10 @@ RTC_EXTERN NSString * const kRTCMediaConstraintsValueTrue;
 RTC_EXTERN NSString * const kRTCMediaConstraintsValueFalse;
 
 RTC_EXPORT
-@interface RTCMediaConstraints : NSObject
+@interface RTCMediaConstraints : NSObject {
+  NSDictionary<NSString *, NSString *> *_mandatory;
+  NSDictionary<NSString *, NSString *> *_optional;
+}
 
 - (instancetype)init NS_UNAVAILABLE;
 

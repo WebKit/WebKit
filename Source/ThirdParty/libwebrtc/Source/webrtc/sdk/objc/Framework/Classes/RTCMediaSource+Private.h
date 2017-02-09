@@ -14,11 +14,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSInteger, RTCMediaSourceType) {
-  RTCMediaSourceTypeAudio,
-  RTCMediaSourceTypeVideo,
-};
-
 @interface RTCMediaSource ()
 
 @property(nonatomic, readonly)

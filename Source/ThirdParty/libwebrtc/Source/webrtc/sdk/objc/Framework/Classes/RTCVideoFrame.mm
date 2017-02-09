@@ -14,12 +14,7 @@
 
 #include "webrtc/common_video/rotation.h"
 
-@implementation RTCVideoFrame {
-  rtc::scoped_refptr<webrtc::VideoFrameBuffer> _videoBuffer;
-  webrtc::VideoRotation _rotation;
-  int64_t _timeStampNs;
-  rtc::scoped_refptr<webrtc::VideoFrameBuffer> _i420Buffer;
-}
+@implementation RTCVideoFrame
 
 - (size_t)width {
   return _videoBuffer->width();

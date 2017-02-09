@@ -15,7 +15,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
-@interface RTCIceServer : NSObject
+@interface RTCIceServer : NSObject {
+  NSArray<NSString *> *_urlStrings;
+  NSString *_username;
+  NSString *_credential;
+}
 
 /** URI(s) for this server represented as NSStrings. */
 @property(nonatomic, readonly) NSArray<NSString *> *urlStrings;

@@ -47,9 +47,7 @@ class VideoRendererAdapter
 };
 }
 
-@implementation RTCVideoRendererAdapter {
-  std::unique_ptr<webrtc::VideoRendererAdapter> _adapter;
-}
+@implementation RTCVideoRendererAdapter
 
 @synthesize videoRenderer = _videoRenderer;
 

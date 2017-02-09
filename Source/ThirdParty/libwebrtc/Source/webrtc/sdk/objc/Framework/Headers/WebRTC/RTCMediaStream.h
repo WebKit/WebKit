@@ -12,6 +12,12 @@
 
 #import <WebRTC/RTCMacros.h>
 
+#import "webrtc/base/scoped_ref_ptr.h"
+
+namespace webrtc {
+class MediaStreamInterface;
+}
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class RTCAudioTrack;
@@ -19,7 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
 @class RTCVideoTrack;
 
 RTC_EXPORT
-@interface RTCMediaStream : NSObject
+@interface RTCMediaStream : NSObject {
+  NSMutableArray *_audioTracks;
+  NSMutableArray *_videoTracks;
+  rtc::scoped_refptr<webrtc::MediaStreamInterface> _nativeMediaStream;
+}
 
 /** The audio tracks in this stream. */
 @property(nonatomic, strong, readonly) NSArray<RTCAudioTrack *> *audioTracks;
