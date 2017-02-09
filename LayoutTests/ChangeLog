@@ -1,5 +1,20 @@
 2017-02-09  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Playing an <audio> element on iOS makes the controls disappear
+        https://bugs.webkit.org/show_bug.cgi?id=168047
+        <rdar://problem/30441939>
+
+        Reviewed by Eric Carlson.
+
+        Add a new iOS-specific test that checks the TapGestureRecognizer is only enabled when
+        fadesToIdle is true.
+
+        * media/modern-media-controls/media-controller/media-controller-ios-only-enable-tap-gesture-recognizer-with-fades-when-idle-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-ios-only-enable-tap-gesture-recognizer-with-fades-when-idle.html: Added.
+        * platform/mac/TestExpectations:
+
+2017-02-09  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] <audio> element does not show any background on iOS
         https://bugs.webkit.org/show_bug.cgi?id=168046
         <rdar://problem/30441872>

@@ -1,5 +1,23 @@
 2017-02-09  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Playing an <audio> element on iOS makes the controls disappear
+        https://bugs.webkit.org/show_bug.cgi?id=168047
+        <rdar://problem/30441939>
+
+        Reviewed by Eric Carlson.
+
+        The controls bar auto-hide behavior is disabled for <audio> elements, but on iOS we have
+        a TapGestureRecognizer to identify when controls are tapped to toggle controls visibility.
+        This gesture recognizer would be on at all times, but it should only be enabled when
+        fadesToIdle is set to true.
+
+        Test: media/modern-media-controls/media-controller/media-controller-ios-only-enable-tap-gesture-recognizer-with-fades-when-idle.html
+
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        (ControlsBar.prototype.set fadesWhileIdle):
+
+2017-02-09  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] <audio> element does not show any background on iOS
         https://bugs.webkit.org/show_bug.cgi?id=168046
         <rdar://problem/30441872>

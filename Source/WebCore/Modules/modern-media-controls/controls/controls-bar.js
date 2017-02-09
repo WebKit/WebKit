@@ -33,13 +33,13 @@ class ControlsBar extends LayoutNode
         this._translation = new DOMPoint;
         this._mediaControls = mediaControls;
 
+        if (GestureRecognizer.SupportsTouches)
+            this._tapGestureRecognizer = new TapGestureRecognizer(this._mediaControls.element, this);
+
         this.autoHideDelay = ControlsBar.DefaultAutoHideDelay;
 
         this.fadesWhileIdle = false;
         this.userInteractionEnabled = true;
-
-        if (GestureRecognizer.SupportsTouches)
-            this._tapGestureRecognizer = new TapGestureRecognizer(this._mediaControls.element, this);
     }
 
     // Public
@@ -84,7 +84,9 @@ class ControlsBar extends LayoutNode
 
         this._fadesWhileIdle = flag;
 
-        if (!GestureRecognizer.SupportsTouches) {
+        if (GestureRecognizer.SupportsTouches)
+            this._tapGestureRecognizer.enabled = flag;
+        else {
             if (flag) {
                 this._mediaControls.element.addEventListener("mousemove", this);
                 this._mediaControls.element.addEventListener("mouseleave", this);
