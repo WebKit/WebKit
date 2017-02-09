@@ -29,7 +29,7 @@ class StatusLabel extends LayoutItem
     constructor(layoutDelegate)
     {
         super({
-            element: `<div class="status-label">`,
+            element: `<div class="status-label"></div>`,
             layoutDelegate
         });
 

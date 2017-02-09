@@ -28,7 +28,7 @@ class TimeLabel extends LayoutNode
 
     constructor()
     {
-        super(`<div class="time-label">`);
+        super(`<div class="time-label"></div>`);
 
         this.value = 0;
     }

@@ -1,3 +1,27 @@
+2017-02-09  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Controls fail to instantiate in an XHTML document
+        https://bugs.webkit.org/show_bug.cgi?id=168045
+        <rdar://problem/30290095>
+
+        Reviewed by Eric Carlson.
+
+        Always use valid HTML and XHTML strings when creating HTML elements.
+
+        Test: media/modern-media-controls/media-controller/media-controller-in-xhtml.xhtml
+
+        * Modules/modern-media-controls/controls/button.js:
+        (Button):
+        * Modules/modern-media-controls/controls/buttons-container.js:
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.js:
+        * Modules/modern-media-controls/controls/media-controls.js:
+        * Modules/modern-media-controls/controls/slider.js:
+        * Modules/modern-media-controls/controls/status-label.js:
+        * Modules/modern-media-controls/controls/time-control.js:
+        * Modules/modern-media-controls/controls/time-label.js:
+        * Modules/modern-media-controls/controls/tracks-panel.js:
+
 2017-02-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix typo in comment

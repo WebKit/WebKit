@@ -29,7 +29,7 @@ class Button extends LayoutItem
     constructor(layoutDelegate)
     {
         super({
-            element: "<button>",
+            element: "<button />",
             layoutDelegate
         });
 

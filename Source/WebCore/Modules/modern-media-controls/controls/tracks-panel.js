@@ -4,7 +4,7 @@ class TracksPanel extends LayoutNode
 
     constructor()
     {
-        super(`<div class="tracks-panel">`);
+        super(`<div class="tracks-panel"></div>`);
         this._rightX = 0;
         this._bottomY = 0;
     }

@@ -28,11 +28,11 @@ class Slider extends LayoutNode
 
     constructor(cssClassName = "")
     {
-        super(`<div class="slider ${cssClassName}">`);
+        super(`<div class="slider ${cssClassName}"></div>`);
 
-        this._fill = new LayoutNode(`<div class="fill">`);
+        this._fill = new LayoutNode(`<div class="fill"></div>`);
 
-        this._input = new LayoutNode(`<input type="range" min="0" max="1" step="0.001">`);
+        this._input = new LayoutNode(`<input type="range" min="0" max="1" step="0.001" />`);
         this._input.element.addEventListener("change", this);
         this._input.element.addEventListener("input", this);
 

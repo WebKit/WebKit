@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Testing media controls in XHTML</title>
+<meta http-equiv="content-type" content="application/xhtml+xml; charset=iso-8859-1" />
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<video src="../../content/test.mp4" controls="true"></video>
+<script type="text/javascript">
+description("Testing that media controls are correctly created in an XHTML document.");
+shouldBeTrue("window.internals.shadowRoot(document.querySelector('video')).querySelector('.media-controls') instanceof HTMLDivElement");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

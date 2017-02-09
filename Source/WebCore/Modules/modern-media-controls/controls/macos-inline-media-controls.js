@@ -43,7 +43,7 @@ class MacOSInlineMediaControls extends MacOSMediaControls
 
         this._matchLayoutTraits();
 
-        this._volumeSliderContainer = new LayoutNode(`<div class="volume-slider-container">`);
+        this._volumeSliderContainer = new LayoutNode(`<div class="volume-slider-container"></div>`);
         this._volumeSliderContainer.children = [this.volumeSlider];
         this._volumeSliderContainer.visible = false;
         this.volumeSlider.width = 60;

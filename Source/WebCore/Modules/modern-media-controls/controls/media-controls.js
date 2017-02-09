@@ -28,7 +28,7 @@ class MediaControls extends LayoutNode
 
     constructor({ width = 300, height = 150, layoutTraits = LayoutTraits.Unknown } = {})
     {
-        super(`<div class="media-controls">`);
+        super(`<div class="media-controls"></div>`);
 
         this._scaleFactor = 1;
 

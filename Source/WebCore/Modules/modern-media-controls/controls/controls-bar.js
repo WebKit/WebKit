@@ -28,7 +28,7 @@ class ControlsBar extends LayoutNode
 
     constructor(mediaControls)
     {
-        super(`<div class="controls-bar">`);
+        super(`<div class="controls-bar"></div>`);
 
         this._translation = new DOMPoint;
         this._mediaControls = mediaControls;

@@ -36,7 +36,7 @@ class TimeControl extends LayoutItem
     constructor()
     {
         super({
-            element: `<div class="time-control">`
+            element: `<div class="time-control"></div>`
         });
 
         this.elapsedTimeLabel = new TimeLabel;
