@@ -1,3 +1,14 @@
+2016-11-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Neutered ArrayBuffers are not properly serialized
+        https://bugs.webkit.org/show_bug.cgi?id=164647
+        <rdar://problem/29213490>
+
+        Reviewed by David Kilzer.
+
+        * fast/canvas/neutered-imagedata-expected.txt: Added.
+        * fast/canvas/neutered-imagedata.html: Added.
+
 2016-11-16  Brent Fulgham  <bfulgham@apple.com>
 
         Clear track client when removing a track
