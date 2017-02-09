@@ -146,8 +146,6 @@
 		073B87671E4385AC0071C0EC /* AudioSampleBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87631E43859D0071C0EC /* AudioSampleBufferList.h */; };
 		073B87681E4385AC0071C0EC /* AudioSampleDataSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073B87641E43859D0071C0EC /* AudioSampleDataSource.cpp */; };
 		073B87691E4385AC0071C0EC /* AudioSampleDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87651E43859D0071C0EC /* AudioSampleDataSource.h */; };
-		073BE34017D17E01002BD431 /* JSNavigatorUserMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073BE33E17D17E01002BD431 /* JSNavigatorUserMedia.cpp */; };
-		073BE34117D17E01002BD431 /* JSNavigatorUserMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 073BE33F17D17E01002BD431 /* JSNavigatorUserMedia.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		073BE34E17D180B2002BD431 /* RTCSessionDescriptionDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221BAB17CF0AD400848E51 /* RTCSessionDescriptionDescriptor.cpp */; };
 		073BE34F17D18183002BD431 /* RTCIceCandidateDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221BA617CF0AD400848E51 /* RTCIceCandidateDescriptor.cpp */; };
 		0744ECED1E0C4E30000D0944 /* MockRealtimeAudioSourceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0744ECEC1E0C4AE5000D0944 /* MockRealtimeAudioSourceMac.mm */; };
@@ -7185,7 +7183,6 @@
 		07221B5717CEC32700848E51 /* MediaStreamTrackEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamTrackEvent.cpp; sourceTree = "<group>"; };
 		07221B5817CEC32700848E51 /* MediaStreamTrackEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamTrackEvent.h; sourceTree = "<group>"; };
 		07221B5917CEC32700848E51 /* MediaStreamTrackEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamTrackEvent.idl; sourceTree = "<group>"; };
-		07221B5C17CEC32700848E51 /* NavigatorUserMedia.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorUserMedia.idl; sourceTree = "<group>"; };
 		07221B6317CEC32700848E51 /* RTCDataChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCDataChannel.cpp; sourceTree = "<group>"; };
 		07221B6417CEC32700848E51 /* RTCDataChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannel.h; sourceTree = "<group>"; };
 		07221B6517CEC32700848E51 /* RTCDataChannel.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCDataChannel.idl; sourceTree = "<group>"; };
@@ -7278,8 +7275,6 @@
 		073B87631E43859D0071C0EC /* AudioSampleBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleBufferList.h; sourceTree = "<group>"; };
 		073B87641E43859D0071C0EC /* AudioSampleDataSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSampleDataSource.cpp; sourceTree = "<group>"; };
 		073B87651E43859D0071C0EC /* AudioSampleDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleDataSource.h; sourceTree = "<group>"; };
-		073BE33E17D17E01002BD431 /* JSNavigatorUserMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorUserMedia.cpp; sourceTree = "<group>"; };
-		073BE33F17D17E01002BD431 /* JSNavigatorUserMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorUserMedia.h; sourceTree = "<group>"; };
 		0744ECEB1E0C4AE5000D0944 /* MockRealtimeAudioSourceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockRealtimeAudioSourceMac.h; sourceTree = "<group>"; };
 		0744ECEC1E0C4AE5000D0944 /* MockRealtimeAudioSourceMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MockRealtimeAudioSourceMac.mm; sourceTree = "<group>"; };
 		074E82B818A69F0E007EF54C /* PlatformTimeRanges.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformTimeRanges.cpp; sourceTree = "<group>"; };
@@ -8862,7 +8857,6 @@
 		419BC2DC1685329900D64D6D /* VisitedLinkState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkState.cpp; sourceTree = "<group>"; };
 		419BC2DD1685329900D64D6D /* VisitedLinkState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkState.h; sourceTree = "<group>"; };
 		419BE7521BC7F3DB00E1C85B /* WebCoreBuiltinNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreBuiltinNames.h; sourceTree = "<group>"; };
-		419BE75A1BCBD3ED00E1C85B /* NavigatorUserMedia.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = NavigatorUserMedia.js; sourceTree = "<group>"; };
 		419FAFAD1ABABCD5005B828B /* ReadableStreamDefaultReader.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStreamDefaultReader.idl; sourceTree = "<group>"; };
 		41A023ED1A39DB7900F722CF /* ReadableStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStream.idl; sourceTree = "<group>"; };
 		41A023ED1A39DB7900F722DF /* WritableStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WritableStream.idl; sourceTree = "<group>"; };
@@ -15349,8 +15343,6 @@
 				5EA725CA1ACABCB500EAD17B /* NavigatorMediaDevices.cpp */,
 				5EA725CB1ACABCB500EAD17B /* NavigatorMediaDevices.h */,
 				5EA725CC1ACABCB500EAD17B /* NavigatorMediaDevices.idl */,
-				07221B5C17CEC32700848E51 /* NavigatorUserMedia.idl */,
-				419BE75A1BCBD3ED00E1C85B /* NavigatorUserMedia.js */,
 				0704A4051D6DE9F10086DCDB /* OverconstrainedError.h */,
 				0704A4031D6DE9F10086DCDB /* OverconstrainedError.idl */,
 				072A703E1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h */,
@@ -15578,8 +15570,6 @@
 				932CC0D11DFFD667004C0F9F /* JSMediaTrackConstraints.h */,
 				0787C4671BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.cpp */,
 				0787C4681BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h */,
-				073BE33E17D17E01002BD431 /* JSNavigatorUserMedia.cpp */,
-				073BE33F17D17E01002BD431 /* JSNavigatorUserMedia.h */,
 				0704A4091D6DFC690086DCDB /* JSOverconstrainedError.cpp */,
 				0704A40A1D6DFC690086DCDB /* JSOverconstrainedError.h */,
 				0704A4131D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.cpp */,
@@ -26806,7 +26796,6 @@
 				C6F08FCA1431000D00685849 /* JSMutationRecord.h in Headers */,
 				BCD9C2C10C17B69E005C90A2 /* JSNamedNodeMap.h in Headers */,
 				A9D247F80D757E3400FDF959 /* JSNavigator.h in Headers */,
-				073BE34117D17E01002BD431 /* JSNavigatorUserMedia.h in Headers */,
 				BC9439C3116CF4940048C750 /* JSNodeCustom.h in Headers */,
 				14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */,
 				1A750D8E0A90E521000FF215 /* JSNodeIterator.h in Headers */,
@@ -30648,7 +30637,6 @@
 				C6F08FC91431000D00685849 /* JSMutationRecord.cpp in Sources */,
 				BCD9C2C00C17B69E005C90A2 /* JSNamedNodeMap.cpp in Sources */,
 				A9D247F70D757E3400FDF959 /* JSNavigator.cpp in Sources */,
-				073BE34017D17E01002BD431 /* JSNavigatorUserMedia.cpp in Sources */,
 				14DC0D3709FED073007B0235 /* JSNode.cpp in Sources */,
 				BCD9C2640C17AA67005C90A2 /* JSNodeCustom.cpp in Sources */,
 				E3150EA61DA7219000194012 /* JSNodeDOMJIT.cpp in Sources */,

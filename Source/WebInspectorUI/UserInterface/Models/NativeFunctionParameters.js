@@ -1161,21 +1161,6 @@ WebInspector.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 
-    Navigator: {
-        webkitGetUserMedia: "options, successCallback, errorCallback",
-        __proto__: null,
-    },
-
-    NavigatorUserMediaErrorCallback: {
-        handleEvent: "error",
-        __proto__: null,
-    },
-
-    NavigatorUserMediaSuccessCallback: {
-        handleEvent: "stream",
-        __proto__: null,
-    },
-
     NodeFilter: {
         acceptNode: "[n]",
         __proto__: null,

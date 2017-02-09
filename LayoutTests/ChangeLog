@@ -1,3 +1,26 @@
+2017-02-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Remove legacy Navigator.webkitGetUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=168016
+
+        Reviewed by Youenn Fablet.
+
+        Update valid tests to use navigator.mediaDevices.getUserMedia. Remove tests
+        specific to Navigator.webkitGetUserMedia.
+
+        * fast/mediastream/RTCPeerConnection-AddRemoveStream.html:
+        * fast/mediastream/argument-types.html: Removed.
+        * fast/mediastream/delayed-permission-allowed.html:
+        * fast/mediastream/delayed-permission-denied.html:
+        * fast/mediastream/enabled-expected.txt:
+        * fast/mediastream/error.html:
+        * fast/mediastream/getusermedia.html: Removed.
+        * fast/mediastream/script-tests/argument-types.js: Removed..
+        * fast/mediastream/script-tests/enabled.js:
+        (hasGetUserMediaProperty):
+        * fast/mediastream/success.html:
+        * fast/mediastream/webkitGetUserMedia-shadowing-then.html: Removed.
+
 2017-02-08  Chris Dumez  <cdumez@apple.com>
 
         Use smaller tiles in windows that are not active to facilitate App Napping
