@@ -1009,6 +1009,9 @@ webkit.org/b/167428 fast/backgrounds/background-repeat-x-y-parse.html [ Failure 
 
 webkit.org/b/1644041 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html [ Pass Failure ]
 
+webkit.org/b/168066 performance-api/performance-now-api.html [ Pass Failure ]
+webkit.org/b/168005 performance-api/performance-now-time-origin-in-worker.html [ Pass Failure ]
+
 ########################################
 ### START OF -disabled tests
 

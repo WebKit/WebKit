@@ -1,5 +1,13 @@
 2017-02-09  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark two performance-api tests as flaky.
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2017-02-09  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skip media/modern-media-controls/media-controller/media-controller-ios-only-enable-tap-gesture-recognizer-with-fades-when-idle.html.
 
         Unreviewed test gardening.
