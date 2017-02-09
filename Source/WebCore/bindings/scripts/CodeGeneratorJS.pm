@@ -1232,8 +1232,12 @@ sub GenerateHeader
             $structureFlags{"JSC::GetOwnPropertySlotIsImpureForPropertyAbsence"} = 1;
         }
     }
+
     if ($interface->extendedAttributes->{"NewImpurePropertyFiresWatchpoints"}) {
         $structureFlags{"JSC::NewImpurePropertyFiresWatchpoints"} = 1;
+    }
+    if ($interface->extendedAttributes->{"IsImmutablePrototypeExoticObject"}) {
+        $structureFlags{"JSC::IsImmutablePrototypeExoticObject"} = 1;
     }
     if ($interface->extendedAttributes->{"CustomCall"}) {
         $structureFlags{"JSC::TypeOfShouldCallGetCallData"} = 1;
@@ -5187,6 +5191,8 @@ sub GeneratePrototypeDeclaration
         push(@$outputArray, "\n");
         push(@$outputArray, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, const JSC::PropertyDescriptor&, bool shouldThrow);\n");
     }
+
+    $structureFlags{"JSC::IsImmutablePrototypeExoticObject"} = 1 if $interface->extendedAttributes->{IsImmutablePrototypeExoticObjectOnPrototype};
 
     # structure flags
     if (%structureFlags) {

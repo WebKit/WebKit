@@ -224,11 +224,11 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(ExecState* exec)
 
     JSValue objectValue = exec->argument(0);
     if (objectValue.isUndefinedOrNull())
-        return throwVMTypeError(exec, scope);
+        return throwVMTypeError(exec, scope, ASCIILiteral("Cannot set prototype of undefined or null"));
 
     JSValue protoValue = exec->argument(1);
     if (!protoValue.isObject() && !protoValue.isNull())
-        return throwVMTypeError(exec, scope);
+        return throwVMTypeError(exec, scope, ASCIILiteral("Prototype value can only be an object or null"));
 
     JSObject* object = objectValue.toObject(exec);
     if (exec->hadException())

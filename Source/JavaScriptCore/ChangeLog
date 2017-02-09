@@ -1,3 +1,30 @@
+2016-12-06  Mark Lam  <mark.lam@apple.com>
+
+        Introduce the concept of Immutable Prototype Exotic Objects to comply with the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=165227
+        <rdar://problem/29442665>
+
+        Reviewed by Saam Barati.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        - This is where we check for immutable prototype exotic objects and refuse to set
+          the prototype if needed.
+          See https://tc39.github.io/ecma262/#sec-immutable-prototype-exotic-objects.
+
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::isImmutablePrototypeExoticObject):
+        * runtime/Structure.h:
+        - Add flag for declaring immutable prototype exotic objects.
+
+        * runtime/ObjectPrototype.h:
+        - Declare that Object.prototype is an immutable prototype exotic object.
+          See https://tc39.github.io/ecma262/#sec-properties-of-the-object-prototype-object.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorSetPrototypeOf):
+        - Use better error messages.
+
 2016-11-30  Mark Lam  <mark.lam@apple.com>
 
         Proxy is not allowed in the global prototype chain.

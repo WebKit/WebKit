@@ -30,87 +30,87 @@ PASS Object.setPrototypeOf(value, {}) is value
 PASS Object.getPrototypeOf(value) is (value).__proto__
 
 Non-Coercible value
-PASS Object.setPrototypeOf(undefined, {}) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(null, {}) threw exception TypeError: Type error.
+PASS Object.setPrototypeOf(undefined, {}) threw exception TypeError: Cannot set prototype of undefined or null.
+PASS Object.setPrototypeOf(null, {}) threw exception TypeError: Cannot set prototype of undefined or null.
 
 Non-Object/Null proto
 object (Function)
-PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, true) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, false) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Type error.
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
 object (Function2)
-PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, true) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, false) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Type error.
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
 object (Object)
-PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, true) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, false) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Type error.
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
 object (Object2)
-PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, true) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, false) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Type error.
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
 object (RegExp)
-PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, true) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, false) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Type error.
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
 object (Array)
-PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, true) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, false) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Type error.
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
 object (Error)
-PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, true) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, false) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Type error.
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
 object (Date)
-PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, true) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, false) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Type error.
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
 object (Number)
-PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, true) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, false) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Type error.
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
 object (Boolean)
-PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, true) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, false) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Type error.
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
 object (String)
-PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, true) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, false) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Type error.
-PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Type error.
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
 
 Object and object proto
 object (Function) proto (Function)

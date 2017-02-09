@@ -103,4 +103,4 @@ try {
     thrown = e;
 }
 Object.prototype.__proto__ = null;
-shouldBe(String(thrown), `Error: NG`);
+shouldBe(String(thrown), `TypeError: Cannot set prototype of immutable prototype object`);

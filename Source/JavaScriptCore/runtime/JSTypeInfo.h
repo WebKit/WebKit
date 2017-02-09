@@ -52,6 +52,7 @@ static const unsigned GetOwnPropertySlotIsImpure = 1 << 11;
 static const unsigned NewImpurePropertyFiresWatchpoints = 1 << 12;
 static const unsigned IsEnvironmentRecord = 1 << 13;
 static const unsigned GetOwnPropertySlotIsImpureForPropertyAbsence = 1 << 14;
+static const unsigned IsImmutablePrototypeExoticObject = 1 << 15;
 
 class TypeInfo {
 public:
@@ -93,6 +94,7 @@ public:
     bool getOwnPropertySlotIsImpureForPropertyAbsence() const { return isSetOnFlags2(GetOwnPropertySlotIsImpureForPropertyAbsence); }
     bool newImpurePropertyFiresWatchpoints() const { return isSetOnFlags2(NewImpurePropertyFiresWatchpoints); }
     bool isEnvironmentRecord() const { return isSetOnFlags2(IsEnvironmentRecord); }
+    bool isImmutablePrototypeExoticObject() const { return isSetOnFlags2(IsImmutablePrototypeExoticObject); }
 
     static ptrdiff_t flagsOffset()
     {

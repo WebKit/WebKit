@@ -219,6 +219,11 @@ public:
             && typeInfo().newImpurePropertyFiresWatchpoints();
     }
 
+    bool isImmutablePrototypeExoticObject()
+    {
+        return typeInfo().isImmutablePrototypeExoticObject();
+    }
+
     // We use SlowPath in GetByIdStatus for structures that may get new impure properties later to prevent
     // DFG from inlining property accesses since structures don't transition when a new impure property appears.
     bool takesSlowPathInDFGForImpureProperty()

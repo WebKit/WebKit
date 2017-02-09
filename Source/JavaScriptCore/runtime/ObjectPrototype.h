@@ -28,6 +28,7 @@ namespace JSC {
 class ObjectPrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | IsImmutablePrototypeExoticObject;
 
     static ObjectPrototype* create(VM&, JSGlobalObject*, Structure*);
 

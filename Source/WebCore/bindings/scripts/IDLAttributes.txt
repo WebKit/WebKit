@@ -75,6 +75,8 @@ ImplementationReturnType=*
 ImplicitThis
 InitializedByEventConstructor
 InterfaceName=*
+IsImmutablePrototypeExoticObject
+IsImmutablePrototypeExoticObjectOnPrototype
 IsWeakCallback
 JSBuiltin
 JSBuiltinConstructor
