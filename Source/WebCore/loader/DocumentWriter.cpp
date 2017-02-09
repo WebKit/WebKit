@@ -75,7 +75,7 @@ void DocumentWriter::replaceDocument(const String& source, Document* ownerDocume
     m_frame->loader().stopAllLoaders();
 
     // If we are in the midst of changing the frame's document, don't execute script
-    // that modifes the document further:
+    // that modifies the document further:
     if (m_frame->documentIsBeingReplaced())
         return;
 

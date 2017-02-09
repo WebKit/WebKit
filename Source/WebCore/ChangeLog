@@ -1,3 +1,10 @@
+2017-02-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix typo in comment
+
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::replaceDocument):
+
 2017-02-09  Andreas Kling  <akling@apple.com>
 
         Disallow accelerated rendering for ginormous 2D canvases.
