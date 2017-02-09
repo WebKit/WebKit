@@ -133,8 +133,6 @@ private:
 
     void mapLanguageAttributeToLocale(const AtomicString&, MutableStyleProperties&);
 
-    ExceptionOr<Ref<DocumentFragment>> textToFragment(const String&);
-
     void dirAttributeChanged(const AtomicString&);
     void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
     void adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChangeType);

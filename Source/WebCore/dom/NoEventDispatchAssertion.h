@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "ContainerNode.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -53,35 +54,58 @@ public:
 #endif
     }
 
-    static bool isEventDispatchForbidden()
+    static bool isEventAllowedInMainThread()
     {
 #if ASSERT_DISABLED
-        return false;
+        return true;
 #else
-        return isMainThread() && s_count;
+        return !isMainThread() || !s_count;
 #endif
     }
 
-    static unsigned dropTemporarily()
+    static bool isEventDispatchAllowedInSubtree(Node& node)
     {
-#if ASSERT_DISABLED
-        return 0;
-#else
-        unsigned count = s_count;
-        s_count = 0;
-        return count;
-#endif
+        return isEventAllowedInMainThread() || EventAllowedScope::isAllowedNode(node);
     }
 
-    static void restoreDropped(unsigned count)
-    {
-#if ASSERT_DISABLED
-        UNUSED_PARAM(count);
+#if !ASSERT_DISABLED
+    class EventAllowedScope {
+    public:
+        explicit EventAllowedScope(ContainerNode& userAgentContentRoot)
+            : m_eventAllowedTreeRoot(userAgentContentRoot)
+            , m_previousScope(s_currentScope)
+        {
+            s_currentScope = this;
+        }
+
+        ~EventAllowedScope()
+        {
+            s_currentScope = m_previousScope;
+        }
+
+        static bool isAllowedNode(Node& node)
+        {
+            return s_currentScope && s_currentScope->isAllowedNodeInternal(node);
+        }
+
+    private:
+        bool isAllowedNodeInternal(Node& node)
+        {
+            return m_eventAllowedTreeRoot->contains(&node) || (m_previousScope && m_previousScope->isAllowedNodeInternal(node));
+        }
+
+        Ref<ContainerNode> m_eventAllowedTreeRoot;
+
+        EventAllowedScope* m_previousScope;
+        static EventAllowedScope* s_currentScope;
+    };
 #else
-        ASSERT(!s_count);
-        s_count = count;
+    class EventAllowedScope {
+    public:
+        explicit EventAllowedScope(ContainerNode&) { }
+        static bool isAllowedNode(Node&) { return true; }
+    };
 #endif
-    }
 
 #if !ASSERT_DISABLED
 private:

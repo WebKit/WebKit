@@ -27,6 +27,7 @@
 #include "ContainerNodeAlgorithms.h"
 
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLTextAreaElement.h"
 #include "InspectorInstrumentation.h"
 #include "NoEventDispatchAssertion.h"
 #include "ShadowRoot.h"
@@ -90,7 +91,7 @@ void notifyNodeInsertedIntoTree(ContainerNode& insertionPoint, ContainerNode& no
 
 void notifyChildNodeInserted(ContainerNode& insertionPoint, Node& node, NodeVector& postInsertionNotificationTargets)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventDispatchAllowedInSubtree(insertionPoint));
 
     InspectorInstrumentation::didInsertDOMNode(node.document(), node);
 

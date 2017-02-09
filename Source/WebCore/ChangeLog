@@ -1,3 +1,110 @@
+2017-02-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Adopting a child node of a script element can run script
+        https://bugs.webkit.org/show_bug.cgi?id=167318
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by ScriptElement::childrenChanged indiscriminately running the script.
+        Do this only if some node has been inserted as spec'ed:
+
+        https://html.spec.whatwg.org/multipage/scripting.html#script-processing-model
+        "The script element is connected and a node or document fragment is inserted into
+        the script element, after any script elements inserted at that time."
+
+        Split NonContentsChildChanged into NonContentsChildInserted and NonContentsChildRemoved to disambiguate
+        non-contents child such as text and element being removed or inserted. New behavior matches that of
+        Gecko and Chrome as well as the latest HTML5 specification.
+
+        Also deploy NoEventDispatchAssertion in more places. Unfortunately, this results in some DOM trees
+        internal to WebKit to be mutated while there is NoEventDispatchAssertion in the stack. Added a new RAII
+        object "EventAllowedScope" to temporarily disable this assertion within such a tree. CachedSVGFont's
+        ensureCustomFontData used to completely disable this assertion but we no longer have to do this either.
+
+        To clarify the new semantics, renamed isEventDispatchForbidden to isEventAllowedInMainThread with
+        the negated boolean value, and added a new variant isEventDispatchAllowedInSubtree, which checks
+        isEventDispatchForbidden() is true or if the node was one of an internal DOM node or its descendent
+        held by EventAllowedScope.
+
+        Inspired by https://chromium.googlesource.com/chromium/src/+/604e798ec6ee30f44d57a5c4a44ce3dab3a871ed
+
+        Tests: fast/html/script-must-not-run-when-child-is-adopted.html
+               fast/html/script-must-not-run-when-child-is-removed.html
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::notifyParentAfterChange): Added NoEventDispatchAssertion.
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore): Added NoEventDispatchAssertion around TreeScope's adoptIfNeeded
+        and insertBeforeCommon as done elsewhere.
+        (WebCore::ContainerNode::appendChildCommon): Added NoEventDispatchAssertion.
+        (WebCore::ContainerNode::changeForChildInsertion): Use NonContentsChildInserted here.
+        (WebCore::ContainerNode::notifyChildRemoved): Added NoEventDispatchAssertion.
+        (WebCore::ContainerNode::replaceChild): Moved adoptIfNeeded into NoEventDispatchAssertion.
+        (WebCore::ContainerNode::removeChild): Added NoEventDispatchAssertion.
+        (WebCore::ContainerNode::parserRemoveChild): Added NoEventDispatchAssertion.
+        (WebCore::ContainerNode::removeChildren): Call childrenChanged in NoEventDispatchAssertion.
+        (WebCore::ContainerNode::appendChildWithoutPreInsertionValidityCheck): Moved adoptIfNeeded into
+        NoEventDispatchAssertion.
+        (WebCore::dispatchChildInsertionEvents): Check the forbidden-ness more precisely.
+        (WebCore::dispatchChildRemovalEvents): Ditto.
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::ChildChange::isInsertion): Added.
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::notifyChildNodeInserted): Check the forbidden-ness more precisely. Here, we check against
+        insertionPoint since EventAllowedScope checks against the root node.
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode): Assert the node to be adopted has not been inserted back, or else
+        remove() had resulted in an exception before calling TreeScope::adoptIfNeeded.
+        * dom/Element.cpp:
+        (WebCore::Element::childrenChanged):
+        * dom/NoEventDispatchAssertion.h:
+        (WebCore::NoEventDispatchAssertion::isEventDispatchForbidden): Added a new variant that takes a node.
+        If this node is a descendent of a node "marked as safe" by EventAllowedScope, then we don't consider
+        the event dispatch to be forbidden.
+        (WebCore::NoEventDispatchAssertion::dropTemporarily): Deleted.
+        (WebCore::NoEventDispatchAssertion::restoreDropped): Deleted.
+        (WebCore::NoEventDispatchAssertion::EventAllowedScope): Added. A RAII object which marks descendants of
+        a given node as "safe" for the purpose of checking isEventDispatchForbidden.
+        (WebCore::NoEventDispatchAssertion::EventAllowedScope::EventAllowedScope): Added. There can be a chain
+        of EventAllowedScope objects in the stack. s_currentScope points to the most recently instantiated
+        RAII object, and each instance remembers prior instance. 
+        (WebCore::NoEventDispatchAssertion::EventAllowedScope::~EventAllowedScope): Added.
+        (WebCore::NoEventDispatchAssertion::EventAllowedScope::isAllowedNode): Added. Returns true if the given
+        node is a descendent of any node held by instances of EventAllowedScope.
+        (WebCore::NoEventDispatchAssertion::EventAllowedScope::isAllowedNodeInternal): Added. A helper function
+        for isAllowedNode.
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchSubtreeModifiedEvent): Check the forbidden-ness more precisely.
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::childrenChanged): Only prepare the script if we've inserted nodes.
+        (WebCore::ScriptElement::executeClassicScript): Assert isEventDispatchForbidden is false since running
+        arbitrary author scripts can, indeed, result dispatch any events.
+        * dom/ScriptElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::textToFragment): Made this a static local function and not return an exception since there
+        is no way appendChild called in this function can throw an exception.
+        (WebCore::HTMLElement::setInnerText): Create EventAllowedScope for the fragment. It's called called by
+        HTMLTextAreaElement's childrenChanged to update its UA shadow tree, and it's dispatching as event on
+        a new fragment can't execute arbitrary scripts since it has never been exposed to author scripts.
+        Because of the precise-ness of this check, this does not disable the assertion for "this" element.
+        HTMLTextFormControlElement::setInnerTextValue explicitly creates another EventAllowedScope to mark
+        the shadow tree into which the fragment is inserted safe.
+        (WebCore::HTMLElement::setOuterText):
+        * html/HTMLElement.h:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::childrenChanged):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setInnerTextValue): See above (setInnerText).
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::createCueRenderingTree): Create EventAllowedScope for the cloned fragment here since
+        the VTT tree is never exposed to author scripts.
+        (WebCore::VTTCue::updateDisplayTree): Ditto.
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::ensureCustomFontData): Use EventAllowedScope to disable assertions only on
+        the new SVG document we just created instead of disabling for all DOM trees.
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::childrenChanged):
+
 2017-02-09  Andreas Kling  <akling@apple.com>
 
         Document should always have a Settings.

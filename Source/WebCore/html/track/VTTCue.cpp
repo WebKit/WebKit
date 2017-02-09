@@ -42,6 +42,7 @@
 #include "HTMLDivElement.h"
 #include "HTMLSpanElement.h"
 #include "Logging.h"
+#include "NoEventDispatchAssertion.h"
 #include "NodeTraversal.h"
 #include "RenderVTTCue.h"
 #include "Text.h"
@@ -524,6 +525,10 @@ RefPtr<DocumentFragment> VTTCue::createCueRenderingTree()
         return nullptr;
 
     auto clonedFragment = DocumentFragment::create(ownerDocument());
+
+    // The cloned fragment is never exposed to author scripts so it's safe to dispatch events here.
+    NoEventDispatchAssertion::EventAllowedScope noEventDispatchAssertionDisabledForScope(clonedFragment);
+
     m_webVTTNodeTree->cloneChildNodes(clonedFragment);
     return WTFMove(clonedFragment);
 }
@@ -779,6 +784,9 @@ void VTTCue::updateDisplayTree(const MediaTime& movieTime)
     if (!track()->isRendered())
         return;
 
+    // Mutating the VTT contents is safe because it's never exposed to author scripts.
+    NoEventDispatchAssertion::EventAllowedScope allowedScopeForCueHighlightBox(*m_cueHighlightBox);
+
     // Clear the contents of the set.
     m_cueHighlightBox->removeChildren();
 
@@ -786,6 +794,8 @@ void VTTCue::updateDisplayTree(const MediaTime& movieTime)
     RefPtr<DocumentFragment> referenceTree = createCueRenderingTree();
     if (!referenceTree)
         return;
+
+    NoEventDispatchAssertion::EventAllowedScope allowedScopeForReferenceTree(*referenceTree);
 
     markFutureAndPastNodes(referenceTree.get(), startMediaTime(), movieTime);
     m_cueHighlightBox->appendChild(*referenceTree);

@@ -87,7 +87,7 @@ void SVGScriptElement::finishedInsertingSubtree()
 void SVGScriptElement::childrenChanged(const ChildChange& change)
 {
     SVGElement::childrenChanged(change);
-    ScriptElement::childrenChanged();
+    ScriptElement::childrenChanged(change);
 }
 
 bool SVGScriptElement::isURLAttribute(const Attribute& attribute) const

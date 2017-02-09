@@ -23,6 +23,7 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "ContainerNode.h"
 #include "LoadableScript.h"
 #include "LoadableScriptClient.h"
 #include "Timer.h"
@@ -84,7 +85,7 @@ protected:
     // Helper functions used by our parent classes.
     bool shouldCallFinishedInsertingSubtree(ContainerNode&);
     void finishedInsertingSubtree();
-    void childrenChanged();
+    void childrenChanged(const ContainerNode::ChildChange&);
     void handleSourceAttribute(const String& sourceURL);
     void handleAsyncAttribute();
 

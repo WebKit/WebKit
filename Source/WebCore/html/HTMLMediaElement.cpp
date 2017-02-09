@@ -1284,7 +1284,7 @@ void HTMLMediaElement::loadInternal()
     // Some of the code paths below this function dispatch the BeforeLoad event. This ASSERT helps
     // us catch those bugs more quickly without needing all the branches to align to actually
     // trigger the event.
-    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT(NoEventDispatchAssertion::isEventAllowedInMainThread());
 
     // If we can't start a load right away, start it later.
     if (!m_mediaSession->pageAllowsDataLoading(*this)) {

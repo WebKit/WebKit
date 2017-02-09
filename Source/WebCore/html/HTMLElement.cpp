@@ -434,12 +434,14 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& 
         setAttributeEventListener(eventName, name, value);
 }
 
-ExceptionOr<Ref<DocumentFragment>> HTMLElement::textToFragment(const String& text)
+static Ref<DocumentFragment> textToFragment(Document& document, const String& text)
 {
-    auto fragment = DocumentFragment::create(document());
+    auto fragment = DocumentFragment::create(document);
+
+    // It's safe to dispatch events on the new fragment since author scripts have no access to it yet.
+    NoEventDispatchAssertion::EventAllowedScope allowedScope(fragment);
 
     for (unsigned start = 0, length = text.length(); start < length; ) {
-
         // Find next line break.
         UChar c = 0;
         unsigned i;
@@ -449,17 +451,11 @@ ExceptionOr<Ref<DocumentFragment>> HTMLElement::textToFragment(const String& tex
                 break;
         }
 
-        auto appendResult = fragment->appendChild(Text::create(document(), text.substring(start, i - start)));
-        if (appendResult.hasException())
-            return appendResult.releaseException();
-
+        fragment->appendChild(Text::create(document, text.substring(start, i - start)));
         if (i == length)
             break;
 
-        appendResult = fragment->appendChild(HTMLBRElement::create(document()));
-        if (appendResult.hasException())
-            return appendResult.releaseException();
-
+        fragment->appendChild(HTMLBRElement::create(document));
         // Make sure \r\n doesn't result in two line breaks.
         if (c == '\r' && i + 1 < length && text[i + 1] == '\n')
             ++i;
@@ -467,7 +463,7 @@ ExceptionOr<Ref<DocumentFragment>> HTMLElement::textToFragment(const String& tex
         start = i + 1; // Character after line break.
     }
 
-    return WTFMove(fragment);
+    return fragment;
 }
 
 // Returns the conforming 'dir' value associated with the state the attribute is in (in its canonical case), if any,
@@ -527,11 +523,11 @@ ExceptionOr<void> HTMLElement::setInnerText(const String& text)
     }
 
     // Add text nodes and <br> elements.
-    auto fragment = textToFragment(text);
-    if (fragment.hasException())
-        return fragment.releaseException();
+    auto fragment = textToFragment(document(), text);
     // FIXME: This should use replaceAllChildren() once it accepts DocumentFragments as input.
-    return replaceChildrenWithFragment(*this, fragment.releaseReturnValue());
+    // It's safe to dispatch events on the new fragment since author scripts have no access to it yet.
+    NoEventDispatchAssertion::EventAllowedScope allowedScope(fragment.get());
+    return replaceChildrenWithFragment(*this, WTFMove(fragment));
 }
 
 ExceptionOr<void> HTMLElement::setOuterText(const String& text)
@@ -545,12 +541,9 @@ ExceptionOr<void> HTMLElement::setOuterText(const String& text)
     RefPtr<Node> newChild;
 
     // Convert text to fragment with <br> tags instead of linebreaks if needed.
-    if (text.contains('\r') || text.contains('\n')) {
-        auto result = textToFragment(text);
-        if (result.hasException())
-            return result.releaseException();
-        newChild = result.releaseReturnValue();
-    } else
+    if (text.contains('\r') || text.contains('\n'))
+        newChild = textToFragment(document(), text);
+    else
         newChild = Text::create(document(), text);
 
     if (!parentNode())

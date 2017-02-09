@@ -30,6 +30,7 @@
 #include "MutationEvent.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
+#include "NoEventDispatchAssertion.h"
 #include "ProcessingInstruction.h"
 #include "RenderText.h"
 #include "StyleInheritedData.h"
@@ -207,6 +208,8 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
 
 void CharacterData::notifyParentAfterChange(ContainerNode::ChildChangeSource source)
 {
+    NoEventDispatchAssertion assertNoEventDispatch;
+
     document().incDOMTreeVersion();
 
     if (!parentNode())

@@ -69,17 +69,20 @@ FontPlatformData CachedSVGFont::platformDataFromCustomData(const FontDescription
 bool CachedSVGFont::ensureCustomFontData(const AtomicString& remoteURI)
 {
     if (!m_externalSVGDocument && !errorOccurred() && !isLoading() && m_data) {
-        // We may get here during render tree updates when events are forbidden.
-        // Frameless document can't run scripts or call back to the client so this is safe.
-        auto count = NoEventDispatchAssertion::dropTemporarily();
+        bool sawError = false;
+        {
+            // We may get here during render tree updates when events are forbidden.
+            // Frameless document can't run scripts or call back to the client so this is safe.
+            m_externalSVGDocument = SVGDocument::create(nullptr, URL());
+            auto decoder = TextResourceDecoder::create("application/xml");
 
-        m_externalSVGDocument = SVGDocument::create(nullptr, URL());
-        RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("application/xml");
-        m_externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->data(), m_data->size()));
+            NoEventDispatchAssertion::EventAllowedScope allowedScope(*m_externalSVGDocument);
 
-        NoEventDispatchAssertion::restoreDropped(count);
+            m_externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->data(), m_data->size()));
+            sawError = decoder->sawError();
+        }
 
-        if (decoder->sawError())
+        if (sawError)
             m_externalSVGDocument = nullptr;
         if (m_externalSVGDocument)
             maybeInitializeExternalSVGFontElement(remoteURI);
