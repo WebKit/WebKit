@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2016 Apple Inc. All rights reserved.
  *  Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -135,7 +135,8 @@ public:
 
     const String* sourceURL() const { return m_sourceURL; } // 0 if we are not evaluating any script
 
-    void clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoPageCache);
+    void clearWindowShellsNotMatchingDOMWindow(DOMWindow*, bool goingIntoPageCache);
+    void setDOMWindowForWindowShell(DOMWindow*);
     void updateDocument();
 
     void namedItemAdded(HTMLDocument*, const AtomicString&) { }

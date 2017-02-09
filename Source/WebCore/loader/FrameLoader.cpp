@@ -604,7 +604,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
     if (clearWindowProperties) {
         InspectorInstrumentation::frameWindowDiscarded(&m_frame, m_frame.document()->domWindow());
         m_frame.document()->domWindow()->resetUnlessSuspendedForDocumentSuspension();
-        m_frame.script().clearWindowShell(newDocument->domWindow(), m_frame.document()->inPageCache());
+        m_frame.script().clearWindowShellsNotMatchingDOMWindow(newDocument->domWindow(), m_frame.document()->inPageCache());
     }
 
     m_frame.selection().prepareForDestruction();
@@ -621,6 +621,9 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
     m_frame.setDocument(nullptr);
 
     subframeLoader().clear();
+
+    if (clearWindowProperties)
+        m_frame.script().setDOMWindowForWindowShell(newDocument->domWindow());
 
     if (clearScriptObjects)
         m_frame.script().clearScriptObjects();

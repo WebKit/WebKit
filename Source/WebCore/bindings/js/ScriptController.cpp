@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -196,43 +196,53 @@ void ScriptController::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
     static_cast<JSVMClientData*>(JSDOMWindow::commonVM().clientData)->getAllWorlds(worlds);
 }
 
-void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoPageCache)
+void ScriptController::clearWindowShellsNotMatchingDOMWindow(DOMWindow* newDOMWindow, bool goingIntoPageCache)
 {
     if (m_windowShells.isEmpty())
         return;
 
     JSLockHolder lock(JSDOMWindowBase::commonVM());
 
-    Vector<JSC::Strong<JSDOMWindowShell>> windowShells = this->windowShells();
-    for (size_t i = 0; i < windowShells.size(); ++i) {
-        JSDOMWindowShell* windowShell = windowShells[i].get();
-
+    for (auto& windowShell : windowShells()) {
         if (&windowShell->window()->wrapped() == newDOMWindow)
             continue;
 
         // Clear the debugger and console from the current window before setting the new window.
-        attachDebugger(windowShell, nullptr);
+        attachDebugger(windowShell.get(), nullptr);
         windowShell->window()->setConsoleClient(nullptr);
-
         windowShell->window()->willRemoveFromWindowShell();
-        windowShell->setWindow(newDOMWindow);
-
-        // An m_cacheableBindingRootObject persists between page navigations
-        // so needs to know about the new JSDOMWindow.
-        if (m_cacheableBindingRootObject)
-            m_cacheableBindingRootObject->updateGlobalObject(windowShell->window());
-
-        if (Page* page = m_frame.page()) {
-            attachDebugger(windowShell, page->debugger());
-            windowShell->window()->setProfileGroup(page->group().identifier());
-            windowShell->window()->setConsoleClient(&page->console());
-        }
     }
 
     // It's likely that resetting our windows created a lot of garbage, unless
     // it went in a back/forward cache.
     if (!goingIntoPageCache)
         collectGarbageAfterWindowShellDestruction();
+}
+
+void ScriptController::setDOMWindowForWindowShell(DOMWindow* newDOMWindow)
+{
+    if (m_windowShells.isEmpty())
+        return;
+    
+    JSLockHolder lock(JSDOMWindowBase::commonVM());
+    
+    for (auto& windowShell : windowShells()) {
+        if (&windowShell->window()->wrapped() == newDOMWindow)
+            continue;
+        
+        windowShell->setWindow(newDOMWindow);
+        
+        // An m_cacheableBindingRootObject persists between page navigations
+        // so needs to know about the new JSDOMWindow.
+        if (m_cacheableBindingRootObject)
+            m_cacheableBindingRootObject->updateGlobalObject(windowShell->window());
+
+        if (Page* page = m_frame.page()) {
+            attachDebugger(windowShell.get(), page->debugger());
+            windowShell->window()->setProfileGroup(page->group().identifier());
+            windowShell->window()->setConsoleClient(&page->console());
+        }
+    }
 }
 
 JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld& world)
