@@ -2,6 +2,7 @@
 <html>
     <head>
         <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
     </head>
     <body>
         <script>
@@ -20,7 +21,9 @@
             function getUserMedia(dictionary, callback)
             {
                 try {
-                    navigator.webkitGetUserMedia(dictionary, callback, error);
+                    navigator.mediaDevices.getUserMedia(dictionary)
+                        .then(callback)
+                        .catch(error);
                 } catch (e) {
                     testFailed('webkitGetUserMedia threw exception :' + e);
                     finishJSTest();

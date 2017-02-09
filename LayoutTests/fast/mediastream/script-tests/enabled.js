@@ -3,15 +3,22 @@ description("Tests that navigator.webkitGetUserMedia is present.");
 function hasGetUserMediaProperty()
 {
     for (var property in navigator) {
-        if (property == "webkitGetUserMedia")
-            return true;
+        if (property == "mediaDevices") {
+            var devices = navigator[property];
+            for (property in devices) {
+                if (property == "getUserMedia")
+                    return true;
+            }
+        }
     }
     return false;
 }
 
-shouldBeTrue("typeof navigator.webkitGetUserMedia == 'function'");
+shouldBeTrue("typeof navigator.mediaDevices == 'object'");
+shouldBeTrue("typeof navigator.mediaDevices.getUserMedia == 'function'");
 shouldBeTrue("hasGetUserMediaProperty()");
-shouldBeTrue("'webkitGetUserMedia' in navigator");
-shouldBeFalse("navigator.hasOwnProperty('webkitGetUserMedia')");
+shouldBeTrue("'mediaDevices' in navigator");
+shouldBeTrue("'getUserMedia' in navigator.mediaDevices");
+shouldBeFalse("navigator.hasOwnProperty('mediaDevices')");
 
 window.jsTestIsAsync = false;

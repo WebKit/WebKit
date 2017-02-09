@@ -17,26 +17,30 @@ var error;
 var options = {audio: true, video: true};
 function onIframeLoaded() {
     iframeNavigator = iframe.contentWindow.navigator;
-    iframeNavigator.webkitGetUserMedia(options, function(stream) {
-        testFailed('Success callback invoked unexpectedly');
-        finishJSTest();
-    }, function(e) {
-        error = e;
-        shouldBeEqualToString('error.name', 'NotAllowedError');
-        debug('');
-        iframe.src = 'data:text/html,This frame should be visible when the test completes';
-    });
+    iframeNavigator.mediaDevices.getUserMedia(options)
+        .then(stream => {
+            testFailed('Success callback invoked unexpectedly');
+            finishJSTest();
+        })
+        .catch(err => {
+            error = err;
+            shouldBeEqualToString('error.name', 'NotAllowedError');
+            debug('');
+            iframe.src = 'data:text/html,This frame should be visible when the test completes';
+        });
 }
 
 function onIframeUnloaded() {
     // Make another request, with permission already denied.
-    iframeNavigator.webkitGetUserMedia(options, function(stream) {
-        testFailed('Success callback invoked unexpectedly');
-        finishJSTest();
-    }, function(e) {
-        testFailed('Error callback invoked unexpectedly');
-        finishJSTest();
-    });
+    iframeNavigator.mediaDevices.getUserMedia(options)
+        .then(stream => {
+            testFailed('Success callback invoked unexpectedly');
+            finishJSTest();
+        })
+        .catch(err => {
+            testFailed('Error callback invoked unexpectedly');
+            finishJSTest();
+        });
     setTimeout(function() {
         testPassed('No callbacks invoked');
         finishJSTest();

@@ -18,13 +18,15 @@ function onIframeLoaded() {
 
 function onIframeUnloaded() {
     var options = {audio: true, video: true};
-    iframeNavigator.webkitGetUserMedia(options, function (stream) {
-        testFailed('Success callback invoked unexpectedly');
-        finishJSTest();
-    }, function(e) {
-        testFailed('Error callback invoked unexpectedly');
-        finishJSTest();
-    });
+    iframeNavigator.mediaDevices.getUserMedia(options)
+        .then(stream => {
+            testFailed('Success callback invoked unexpectedly');
+            finishJSTest();
+        })
+        .catch(err => {
+            testFailed('Error callback invoked unexpectedly');
+            finishJSTest();
+        });
 
     setTimeout(function() {
         testPassed('No callbacks invoked');

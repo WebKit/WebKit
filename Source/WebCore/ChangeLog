@@ -1,3 +1,20 @@
+2017-02-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Remove legacy Navigator.webkitGetUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=168016
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, existing tests updated.
+
+        * WebCore.xcodeproj/project.pbxproj: NavigatorUserMedia.
+        * DerivedSources.make: Ditto.
+        * CMakeLists.txt: Ditto.
+        * Modules/mediastream/NavigatorUserMedia.idl: Removed.
+        * Modules/mediastream/NavigatorUserMedia.js: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Navigator.idl: Add some whitespace to force derived sources to be rebuild correctly.
+
 2017-02-09  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Tapping the skip back button on iOS inline media controls make the controls disappear

@@ -21,17 +21,19 @@ var options = {audio: true, video: true};
 function onSecondIframeLoaded() {
     setTimeout(finishTest, 100);
 
-    iframeNavigator.webkitGetUserMedia(options, function(stream) {
-        testFailed('Success callback invoked unexpectedly');
-        finishJSTest();
-    }, function(e) {
-        testFailed('Error callback invoked unexpectedly');
-        finishJSTest();
-    });
+    iframeNavigator.mediaDevices.getUserMedia(options)
+        .then(stream => {
+            testFailed('Success callback invoked unexpectedly');
+            finishJSTest();
+        })
+        .catch(err => {
+            testFailed('Error callback invoked unexpectedly');
+            finishJSTest();
+        });
 }
 
 function finishTest() {
-    debug('webkitGetUserMedia called on object with disconnected Frame.');
+    debug('getUserMedia called on object with disconnected Frame.');
     finishJSTest();
 }
 
