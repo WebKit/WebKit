@@ -1,3 +1,12 @@
+2017-02-09  Alex Christensen  <achristensen@webkit.org>
+
+        Build libwebrtc on bots without using it yet
+        https://bugs.webkit.org/show_bug.cgi?id=168062
+
+        Reviewed by Brent Fulgham.
+
+        * Makefile:
+
 2017-01-23  Timothy Hatcher  <timothy@hatcher.name>
 
         gtest fails to link on Linux due to missing -lpthread
