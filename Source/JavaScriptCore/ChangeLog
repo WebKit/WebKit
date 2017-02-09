@@ -1,3 +1,14 @@
+2016-11-30  Mark Lam  <mark.lam@apple.com>
+
+        Proxy is not allowed in the global prototype chain.
+        https://bugs.webkit.org/show_bug.cgi?id=165205
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        - We'll now throw a TypeError if we detect a Proxy in the global prototype chain.
+
 2016-10-27  Mark Lam  <mark.lam@apple.com>
 
         JSFunction::put() should not allow caching of lazily reified properties.

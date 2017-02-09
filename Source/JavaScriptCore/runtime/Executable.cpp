@@ -587,6 +587,15 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
     RELEASE_ASSERT(globalObject);
     ASSERT(&globalObject->vm() == &vm);
 
+    JSValue nextPrototype = globalObject->getPrototypeDirect();
+    while (nextPrototype && nextPrototype.isObject()) {
+        if (UNLIKELY(asObject(nextPrototype)->type() == ProxyObjectType)) {
+            ExecState* exec = globalObject->globalExec();
+            return createTypeError(exec, ASCIILiteral("Proxy is not allowed in the global prototype chain."));
+        }
+        nextPrototype = asObject(nextPrototype)->getPrototypeDirect();
+    }
+
     JSObject* exception = 0;
     UnlinkedProgramCodeBlock* unlinkedCodeBlock = globalObject->createProgramCodeBlock(callFrame, this, &exception);
     if (exception)
@@ -678,7 +687,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
             RELEASE_ASSERT(offsetForAssert == offset);
         }
     }
-    return 0;
+    return nullptr;
 }
 
 void ProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)

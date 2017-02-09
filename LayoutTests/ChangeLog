@@ -1,3 +1,13 @@
+2016-11-30  Mark Lam  <mark.lam@apple.com>
+
+        Proxy is not allowed in the global prototype chain.
+        https://bugs.webkit.org/show_bug.cgi?id=165205
+
+        Reviewed by Geoffrey Garen.
+
+        * js/dom/proxy-is-not-allowed-in-global-prototype-chain-expected.txt: Added.
+        * js/dom/proxy-is-not-allowed-in-global-prototype-chain.html: Added.
+
 2016-11-14  Brent Fulgham  <bfulgham@apple.com>
 
         Correct handling of changing input type

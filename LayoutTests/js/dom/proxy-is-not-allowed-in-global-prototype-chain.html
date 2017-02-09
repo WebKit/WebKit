@@ -1,0 +1,30 @@
+<pre id="console"></pre>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onerror = function(e) {
+	log("onerror saw " + e);
+}
+
+try {
+    var proto = window.__proto__.__proto__.__proto__;
+    proto.__proto__ = new Proxy(proto.__proto__, {
+        has(target, prop) {
+            log("FAIL: proxy saw " + prop);
+        }
+    });
+
+} catch (e) {
+    log("Caught: " + e);
+    log(e.stack);
+}
+
+function log(s)
+{
+    document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
+}
+</script>
+
+<script>var undefined_variable</script>
