@@ -1,3 +1,24 @@
+2017-02-09  Chris Dumez  <cdumez@apple.com>
+
+        Object.getPrototypeOf(NodeFilter) should be Function.prototype, not Object.prototype
+        https://bugs.webkit.org/show_bug.cgi?id=167964
+
+        Reviewed by Youenn Fablet.
+
+        Object.getPrototypeOf(NodeFilter) should be Function.prototype, not Object.prototype
+        after the following WebIDL spec change:
+        - https://github.com/heycam/webidl/issues/96
+
+        This aligns our behavior with other browsers as the spec has been updated to match
+        the majority.
+
+        No new tests, rebaselined existing test.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorHelperMethods):
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        (WebCore::JSTestCallbackInterfaceConstructor::prototypeForStructure):
+
 2017-02-09  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] scroll with transparent background not repainted after scrollY >= 32768

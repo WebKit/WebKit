@@ -1,3 +1,15 @@
+2017-02-09  Chris Dumez  <cdumez@apple.com>
+
+        Object.getPrototypeOf(NodeFilter) should be Function.prototype, not Object.prototype
+        https://bugs.webkit.org/show_bug.cgi?id=167964
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline existing tests now that output differs a bit.
+
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        * platform/mac/fast/dom/Window/window-lookup-precedence-expected.txt:
+
 2017-02-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, fix module test that has a meaningless onload handler

@@ -72,7 +72,7 @@ ALERT: PASS: window.HTMLTitleElement should be 'function HTMLTitleElement() {   
 ALERT: PASS: window.HTMLUListElement should be 'function HTMLUListElement() {    [native code]}' and is.
 ALERT: PASS: window.MutationEvent should be 'function MutationEvent() {    [native code]}' and is.
 ALERT: PASS: window.Node should be 'function Node() {    [native code]}' and is.
-ALERT: PASS: window.NodeFilter should be '[object Function]' and is.
+ALERT: PASS: window.NodeFilter should be 'function NodeFilter() {    [native code]}' and is.
 ALERT: PASS: window.ProcessingInstruction should be 'function ProcessingInstruction() {    [native code]}' and is.
 ALERT: PASS: window.Range should be 'function Range() {    [native code]}' and is.
 ALERT: PASS: window.RangeError should be 'function RangeError() {    [native code]}' and is.
