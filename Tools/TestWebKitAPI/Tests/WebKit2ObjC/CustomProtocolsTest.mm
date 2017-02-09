@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,11 +32,13 @@
 #import "PlatformUtilities.h"
 #import "TestBrowsingContextLoadDelegate.h"
 #import "TestProtocol.h"
+#import <WebKit/WKContextPrivate.h>
+#import <WebKit/WKProcessGroupPrivate.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED && PLATFORM(MAC)
 
-static bool testFinished = false;
+static bool testFinished;
 
 @interface CustomProtocolsLoadDelegate : NSObject <WKBrowsingContextLoadDelegate>
 @end
@@ -66,21 +68,68 @@ static bool testFinished = false;
 
 @end
 
+static WKProcessGroup *processGroup()
+{
+    static WKProcessGroup *processGroup = [[WKProcessGroup alloc] init];
+    return processGroup;
+}
+
+@interface CloseWhileStartingProtocol : TestProtocol
+@end
+
+@implementation CloseWhileStartingProtocol
+
+- (void)startLoading
+{
+    dispatch_async(dispatch_get_main_queue(), ^ {
+        WKContextClientV0 client;
+        memset(&client, 0, sizeof(client));
+        client.base.clientInfo = self;
+        client.networkProcessDidCrash = [](WKContextRef context, const void* clientInfo) {
+            auto protocol = (CloseWhileStartingProtocol *)clientInfo;
+            [protocol.client URLProtocol:protocol didFailWithError:[NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:nil]];
+        };
+        WKContextSetClient([processGroup() _contextRef], &client.base);
+
+        kill(WKContextGetNetworkProcessIdentifier([processGroup() _contextRef]), SIGKILL);
+        [self.client URLProtocol:self didFailWithError:[NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:nil]];
+    });
+}
+
+- (void)stopLoading
+{
+    dispatch_async(dispatch_get_main_queue(), ^ {
+        testFinished = true;
+    });
+}
+
+@end
+
 namespace TestWebKitAPI {
 
-TEST(WebKit2CustomProtocolsTest, MainResource)
+static void runTest()
 {
-    [TestProtocol registerWithScheme:@"http"];
-
-    RetainPtr<WKProcessGroup> processGroup = adoptNS([[WKProcessGroup alloc] init]);
     RetainPtr<WKBrowsingContextGroup> browsingContextGroup = adoptNS([[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"]);
-    RetainPtr<WKView> wkView = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup.get() browsingContextGroup:browsingContextGroup.get()]);
+    RetainPtr<WKView> wkView = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup() browsingContextGroup:browsingContextGroup.get()]);
     RetainPtr<CustomProtocolsLoadDelegate> loadDelegate = adoptNS([[CustomProtocolsLoadDelegate alloc] init]);
     [wkView browsingContextController].loadDelegate = loadDelegate.get();
     [[wkView browsingContextController] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@://redirect?test", [TestProtocol scheme]]]]];
 
     Util::run(&testFinished);
+}
+
+TEST(WebKit2CustomProtocolsTest, MainResource)
+{
+    [TestProtocol registerWithScheme:@"http"];
+    runTest();
     [TestProtocol unregister];
+}
+
+TEST(WebKit2CustomProtocolsTest, CloseDuringCustomProtocolLoad)
+{
+    [CloseWhileStartingProtocol registerWithScheme:@"http"];
+    runTest();
+    [CloseWhileStartingProtocol unregister];
 }
 
 } // namespace TestWebKitAPI
