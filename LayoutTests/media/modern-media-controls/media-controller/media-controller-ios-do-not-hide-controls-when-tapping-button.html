@@ -1,0 +1,25 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<body>
+<video src="../../content/test.mp4" style="width: 300px; position: absolute; left: 0; top: 0;" type="video/mp4" playsinline muted autoplay controls></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that tapping on the skip back button while playing on iOS does not fade the controls.");
+
+const media = document.querySelector("video");
+
+media.addEventListener("play", event => {
+    pressOnElement(window.internals.shadowRoot(media).querySelector("button.skip-back"), () => {
+        window.requestAnimationFrame(() => {
+            shouldBeFalse("window.internals.shadowRoot(media).querySelector('.controls-bar').classList.contains('faded')");
+            finishJSTest();
+        });
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -176,8 +176,16 @@ class ControlsBar extends LayoutNode
         if (this.faded)
             this.faded = false;
         else {
+            let ancestor = this.element.parentNode;
+            while (ancestor && !(ancestor instanceof ShadowRoot))
+                ancestor = ancestor.parentNode;
+
+            const shadowRoot = ancestor;
+            if (!shadowRoot)
+                return;
+
             const tapLocation = recognizer.locationInClient();
-            const tappedElement = document.elementFromPoint(tapLocation.x, tapLocation.y);
+            const tappedElement = shadowRoot.elementFromPoint(tapLocation.x, tapLocation.y);
             if (!this.element.contains(tappedElement))
                 this.faded = true;
         }

@@ -1,3 +1,22 @@
+2017-02-09  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Tapping the skip back button on iOS inline media controls make the controls disappear
+        https://bugs.webkit.org/show_bug.cgi?id=168049
+        <rdar://problem/30442660>
+
+        Reviewed by Eric Carlson.
+
+        Calling elementAtPoint() on the Document will not return an element in the ShadowRoot,
+        we need to call it on the ShadowRoot. So we now iterate over ancestors of the controls
+        bar to find the ShadowRoot, if any, and check whether the tapped element is contained
+        within the controls bar. We only fade the controls bar out if the tapped element is
+        outside of the controls bar hierarchy.
+
+        Test: media/modern-media-controls/media-controller/media-controller-ios-do-not-hide-controls-when-tapping-button.html
+
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        (ControlsBar.prototype.gestureRecognizerStateDidChange):
+
 2017-02-09  Jer Noble  <jer.noble@apple.com>
 
         Configure MockRealtimeAudioSourceMac to generate stereo audio
