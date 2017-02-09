@@ -327,4 +327,9 @@ private:
 
 } // namespace WebCore
 
+#define SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+static bool isType(const WebCore::InputType& input) { return input.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif

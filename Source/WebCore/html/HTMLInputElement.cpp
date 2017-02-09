@@ -1436,9 +1436,13 @@ void HTMLInputElement::addSearchResult()
 
 void HTMLInputElement::onSearch()
 {
-    ASSERT(isSearchField());
+    // The type of the input element could have changed during event handling. If we are no longer
+    // a search field, don't try to do search things.
+    if (!isSearchField())
+        return;
+
     if (m_inputType)
-        static_cast<SearchInputType*>(m_inputType.get())->stopSearchEventTimer();
+        downcast<SearchInputType>(*m_inputType.get()).stopSearchEventTimer();
     dispatchEvent(Event::create(eventNames().searchEvent, true, false));
 }
 

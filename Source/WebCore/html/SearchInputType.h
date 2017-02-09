@@ -72,4 +72,6 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(SearchInputType, isSearchField())
+
 #endif // SearchInputType_h
