@@ -1511,3 +1511,5 @@ webkit.org/b/162510 [ Debug ] fast/images/animated-gif-restored-from-bfcache.htm
 webkit.org/b/167642 imported/w3c/web-platform-tests/shadow-dom/slotchange.html [ Pass Failure ]
 
 webkit.org/b/167757 [ Sierra Release ] workers/bomb.html [ Pass Timeout ]
+
+webkit.org/b/167749 http/tests/media/track-in-band-hls-metadata-crash.html [ Pass Timeout ]
