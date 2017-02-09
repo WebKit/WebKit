@@ -977,6 +977,9 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
         }
     }
 
+    if (!dragImage)
+        return;
+
     dragImageOffset = mouseDownPoint + scaledOrigin;
     doSystemDrag(dragImage, dragImageOffset, dragOrigin, dataTransfer, frame, false);
 
