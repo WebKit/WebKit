@@ -1,3 +1,12 @@
+2017-02-09  Brady Eidson  <beidson@apple.com>
+
+        Transition "WebKit Library Version" checks to SDK version checks.
+        <rdar://problem/30313696> and https://bugs.webkit.org/show_bug.cgi?id=168056
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/spi/darwin/dyldSPI.h: Add entries for the iOS 10.3, macOS 10.11, and macOS 10.12.4 SDKs.
+
 2017-02-06  Jer Noble  <jer.noble@apple.com>
 
         Playback stalls when a SourceBuffer append causes frame eviction

@@ -67,7 +67,7 @@ static bool shouldThrowExceptionForDuplicateCompletionHandlerCall()
     static bool shouldThrowException;
     static std::once_flag once;
     std::call_once(once, [] {
-        shouldThrowException = linkedOnOrAfter(LibraryVersion::FirstWithExceptionsForDuplicateCompletionHandlerCalls);
+        shouldThrowException = linkedOnOrAfter(SDKVersion::FirstWithExceptionsForDuplicateCompletionHandlerCalls);
     });
     return shouldThrowException;
 }

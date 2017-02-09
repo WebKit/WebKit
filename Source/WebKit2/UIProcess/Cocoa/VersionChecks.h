@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,21 +25,44 @@
 
 #pragma once
 
+#import <wtf/spi/darwin/dyldSPI.h>
+
 namespace WebKit {
 
+enum class SDKVersion : uint32_t {
+#if PLATFORM(IOS)
+    FirstWithNetworkCache = DYLD_IOS_VERSION_9_0,
+    FirstWithMediaTypesRequiringUserActionForPlayback = DYLD_IOS_VERSION_10_0,
+    FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_IOS_VERSION_10_3,
+#elif PLATFORM(MAC)
+    FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
+    FirstWithMediaTypesRequiringUserActionForPlayback = DYLD_MACOSX_VERSION_10_12,
+    FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_12_4,
+#endif
+};
+
+bool linkedOnOrAfter(SDKVersion);
+
 /*
-    Version numbers are based on the 'current library version' specified in the WebKit build rules.
+    During ToT WebKit development is is not always possible to use an SDK version, so we instead use 
+    WebKit Library Version numbering.
+
+    This technique has a big drawback; The check will fail if the application doesn't directly link
+    against WebKit (e.g., It links to a different framework which links to WebKit).
+
+    Once a new WebKit Library Version is released in an SDK, all linkedOnOrAfter checks should be moved
+    from LibraryVersions to SDKVersions.
+
+    Library version numbers are based on the 'current library version' specified in the WebKit build rules.
     All of these methods return or take version numbers with each part shifted to the left 2 bytes.
     For example the version 1.2.3 is returned as 0x00010203 and version 200.3.5 is returned as 0x00C80305
     A version of -1 is returned if the main executable did not link against WebKit.
 
-    Please use the current WebKit version number, available in WebKit2/Configurations/Version.xcconfig,
+    Use the current WebKit version number, available in WebKit2/Configurations/Version.xcconfig,
     when adding a new version constant.
 */
+
 enum class LibraryVersion {
-    FirstWithNetworkCache = 0x02590116, // 601.1.22
-    FirstWithMediaTypesRequiringUserActionForPlayback = 0x025A0121, // 602.1.33
-    FirstWithExceptionsForDuplicateCompletionHandlerCalls = 0x025B0111, // 603.1.17
 };
 
 bool linkedOnOrAfter(LibraryVersion);

@@ -145,7 +145,7 @@ private:
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _allowsInlineMediaPlaybackAfterFullscreen = !_allowsInlineMediaPlayback;
     _mediaDataLoadsAutomatically = NO;
-    if (linkedOnOrAfter(WebKit::LibraryVersion::FirstWithMediaTypesRequiringUserActionForPlayback))
+    if (linkedOnOrAfter(WebKit::SDKVersion::FirstWithMediaTypesRequiringUserActionForPlayback))
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAudio;
     else
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
