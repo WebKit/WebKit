@@ -82,6 +82,7 @@
 #define WebAutomaticSpellingCorrectionEnabled @"WebAutomaticSpellingCorrectionEnabled"
 #define WebKitDOMPasteAllowedPreferenceKey @"WebKitDOMPasteAllowedPreferenceKey"
 #define WebKitUsesPageCachePreferenceKey @"WebKitUsesPageCachePreferenceKey"
+#define WebKitAllowsPageCacheWithWindowOpenerKey @"WebKitAllowsPageCacheWithWindowOpenerKey"
 #define WebKitPageCacheSupportsPluginsPreferenceKey @"WebKitPageCacheSupportsPluginsPreferenceKey"
 #define WebKitFTPDirectoryTemplatePath @"WebKitFTPDirectoryTemplatePath"
 #define WebKitForceFTPDirectoryListings @"WebKitForceFTPDirectoryListings"

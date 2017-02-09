@@ -623,6 +623,16 @@ bool WKPreferencesGetPageCacheEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->usesPageCache();
 }
 
+void WKPreferencesSetAllowsPageCacheWithWindowOpener(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setAllowsPageCacheWithWindowOpener(enabled);
+}
+
+bool WKPreferencesGetAllowsPageCacheWithWindowOpener(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->allowsPageCacheWithWindowOpener();
+}
+
 void WKPreferencesSetPageCacheSupportsPlugins(WKPreferencesRef preferencesRef, bool pageCacheSupportsPlugins)
 {
     toImpl(preferencesRef)->setPageCacheSupportsPlugins(pageCacheSupportsPlugins);

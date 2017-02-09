@@ -279,3 +279,5 @@ treatIPAddressAsDomain initial=false
 
 # Runtime-enabled features
 visualViewportEnabled initial=false
+
+allowsPageCacheWithWindowOpener initial=false

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<iframe src="about:blank"></iframe>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (!window.sessionStorage.page_cache_window_iframe_removed_test_started)
+        return;
+
+    delete window.sessionStorage.page_cache_window_iframe_removed_test_started;
+
+    setTimeout(function() {
+        window.opener.finishJSTest();
+    }, 0);
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+}, false);
+
+window.addEventListener('load', function() {
+    setTimeout(function() {
+         window.opener.removeFrameInChild();
+        // Force a back navigation back to this page.
+        window.sessionStorage.page_cache_window_iframe_removed_test_started = true;
+        window.location.href = "page-cache-helper.html";
+    }, 0);
+}, false);
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

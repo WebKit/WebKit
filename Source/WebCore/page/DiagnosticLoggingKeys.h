@@ -52,6 +52,8 @@ public:
     WEBCORE_EXPORT static String entryWronglyNotWarmedUpKey();
     static String expiredKey();
     static String fontKey();
+    static String hasCalledWindowOpenKey();
+    static String hasOpenerKey();
     static String hasPluginsKey();
     static String httpsNoStoreKey();
     static String imageKey();

@@ -847,6 +847,23 @@ bool Document::hasManifest() const
     return documentElement() && documentElement()->hasTagName(htmlTag) && documentElement()->hasAttributeWithoutSynchronization(manifestAttr);
 }
 
+bool Document::hasEverCalledWindowOpen() const
+{
+    auto& topDocument = this->topDocument();
+    if (&topDocument == this)
+        return m_hasEverCalledWindowOpen;
+    return topDocument.hasEverCalledWindowOpen();
+}
+
+void Document::markHasCalledWindowOpen()
+{
+    auto& topDocument = this->topDocument();
+    if (&topDocument == this)
+        m_hasEverCalledWindowOpen = true;
+    else
+        topDocument.markHasCalledWindowOpen();
+}
+
 DocumentType* Document::doctype() const
 {
     for (Node* node = firstChild(); node; node = node->nextSibling()) {

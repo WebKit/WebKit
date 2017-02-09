@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (!window.sessionStorage.page_cache_window_opener_test_started)
+        return;
+
+    delete window.sessionStorage.page_cache_window_opener_test_started;
+
+    if (event.persisted)
+        window.opener.testFailed("Page did enter and was restored from the page cache");
+    else
+        window.opener.testPassed("Page was not restored from page cache");
+
+    window.opener.finishJSTest();
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (event.persisted) {
+        window.opener.testFailed("Page entered the page cache.");
+        window.opener.finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        // Force a back navigation back to this page.
+        window.sessionStorage.page_cache_window_opener_test_started = true;
+        window.location.href = "page-cache-helper.html";
+    }, 0);
+}, false);
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -225,6 +225,7 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     macro(WebKitPageCacheSupportsPluginsPreferenceKey, PageCacheSupportsPlugins, pageCacheSupportsPlugins) \
     macro(WebKitPluginsEnabled, PluginsEnabled, pluginsEnabled) \
     macro(WebKitUsesPageCachePreferenceKey, UsesPageCache, usesPageCache) \
+    macro(WebKitAllowsPageCacheWithWindowOpenerKey, AllowsPageCacheWithWindowOpener, allowsPageCacheWithWindowOpener) \
     macro(WebKitWebAudioEnabled, WebAudioEnabled, webAudioEnabled) \
     macro(WebKitWebGLEnabled, WebGLEnabled, webGLEnabled) \
     macro(WebKitXSSAuditorEnabled, XSSAuditorEnabled, xssAuditorEnabled) \

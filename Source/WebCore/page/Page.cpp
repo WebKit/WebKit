@@ -436,6 +436,17 @@ void Page::setOpenedByDOM()
     m_openedByDOM = true;
 }
 
+bool Page::openedByWindowOpen() const
+{
+    auto* document = m_mainFrame->document();
+    if (!document)
+        return false;
+    auto* window = document->domWindow();
+    if (!window)
+        return false;
+    return window->opener();
+}
+
 void Page::goToItem(HistoryItem& item, FrameLoadType type)
 {
     // stopAllLoaders may end up running onload handlers, which could cause further history traversals that may lead to the passed in HistoryItem
