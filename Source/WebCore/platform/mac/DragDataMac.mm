@@ -204,8 +204,10 @@ bool DragData::containsCompatibleContent() const
         || types.contains(urlPasteboardType())
         || types.contains(rtfdPasteboardType())
         || types.contains(rtfPasteboardType())
+        || types.contains(String(kUTTypeUTF8PlainText))
         || types.contains(stringPasteboardType())
         || types.contains(colorPasteboardType())
+        || types.contains(String(kUTTypeJPEG))
         || types.contains(String(kUTTypePNG));
 }
 
