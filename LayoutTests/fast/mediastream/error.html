@@ -15,16 +15,14 @@ else
 
 var error;
 var options = {audio:false, video:true};
-navigator.mediaDevices.getUserMedia(options)
-    .then(stream => {
-        testFailed('Success callback invoked unexpectedly');
-        finishJSTest();
-    })
-    .catch(err => {
-        error = err;
-        shouldBeEqualToString('error.name', 'NotAllowedError');
-        finishJSTest();
-    });
+navigator.webkitGetUserMedia(options, function(stream) {
+    testFailed('Success callback invoked unexpectedly');
+    finishJSTest();
+}, function(e) {
+    error = e;
+    shouldBeEqualToString('error.name', 'NotAllowedError');
+    finishJSTest();
+});
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

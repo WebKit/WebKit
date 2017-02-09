@@ -15,19 +15,17 @@ function allowPermission() {
 }
 
 var options = {audio: true, video: true};
-navigator.mediaDevices.getUserMedia(options)
-    .then(stream => {
-       if (permissionSet) {
-            testPassed('Success callback invoked');
-            finishJSTest();
-            return;
-        }
-        testFailed('Success callback invoked unexpectedly');
-    })
-    .catch(err => {
-        testFailed('Error callback invoked unexpectedly');
+navigator.webkitGetUserMedia(options, function(stream) {
+   if (permissionSet) {
+        testPassed('Success callback invoked');
         finishJSTest();
-    });
+        return;
+    }
+    testFailed('Success callback invoked unexpectedly');
+}, function(e) {
+    testFailed('Error callback invoked unexpectedly');
+    finishJSTest();
+});
 
 window.setTimeout(allowPermission, 100);
 </script>
