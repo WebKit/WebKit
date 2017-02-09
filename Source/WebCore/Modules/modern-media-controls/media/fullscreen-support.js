@@ -69,7 +69,7 @@ class FullscreenSupport extends MediaControllerSupport
     {
         const control = this.control;
         const media = this.mediaController.media;
-        control.enabled = media.webkitSupportsFullscreen && media.videoTracks.length > 0;
+        control.enabled = media.webkitSupportsFullscreen;
         control.isFullScreen = media.webkitDisplayingFullscreen;
     }
 
