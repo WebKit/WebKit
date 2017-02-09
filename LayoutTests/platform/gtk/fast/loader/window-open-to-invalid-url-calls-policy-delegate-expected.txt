@@ -1,4 +1,0 @@
-Policy delegate: attempt to load http://A=a&B=b with navigation type 'other'
-Tests that we call the navigation policy delegate when opening a new window to an invalid URL.
-
-Note, this test must be run in DumpRenderTree.

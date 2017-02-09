@@ -1,3 +1,17 @@
+2017-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Update tests that pass now with the URLParser enabled.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/loader/redirect-to-invalid-url-using-javascript-calls-policy-delegate-expected.txt: Removed.
+        * platform/gtk/fast/loader/redirect-to-invalid-url-using-meta-refresh-calls-policy-delegate-expected.txt: Removed.
+        * platform/gtk/fast/loader/url-parse-1-expected.txt: Removed.
+        * platform/gtk/fast/loader/window-open-to-invalid-url-calls-policy-delegate-expected.txt: Removed.
+        * platform/gtk/fast/url/invalid-idn-expected.txt: Removed.
+        * platform/gtk/fast/url/segments-userinfo-vs-host-expected.txt: Removed.
+        * platform/gtk/fast/url/tab-and-newline-stripping-expected.txt: Removed.
+        * platform/gtk/fast/url/url-credentials-escaping-expected.txt: Removed.
+
 2017-02-09  Andreas Kling  <akling@apple.com>
 
         Disallow accelerated rendering for ginormous 2D canvases.
