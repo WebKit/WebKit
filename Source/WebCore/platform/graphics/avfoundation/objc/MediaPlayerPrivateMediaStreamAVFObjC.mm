@@ -341,7 +341,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::layerStatusDidChange(AVSampleBufferDi
     if (status.integerValue != AVQueuedSampleBufferRenderingStatusRendering)
         return;
 
-    if (layer != m_sampleBufferDisplayLayer || !m_activeVideoTrack)
+    if (!m_sampleBufferDisplayLayer || !m_activeVideoTrack || layer != m_sampleBufferDisplayLayer)
         return;
 
     auto track = m_videoTrackMap.get(m_activeVideoTrack->id());
