@@ -32,7 +32,7 @@ printHelpAndExitForRunAndDebugWebKitAppIfNeeded();
 
 setConfiguration();
 
-if (!isAppleMacWebKit()) {
+if (!isAppleCocoaWebKit()) {
     exit 1;
 }
 

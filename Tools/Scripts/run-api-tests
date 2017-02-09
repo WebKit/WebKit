@@ -134,7 +134,7 @@ exit runTestsBySuite(@testsToRun);
 
 sub isSupportedPlatform()
 {
-    return isAppleMacWebKit() || isAppleWinWebKit();
+    return isAppleCocoaWebKit() || isAppleWinWebKit();
 }
 
 sub dumpTestsBySuite(\@)
@@ -206,7 +206,7 @@ sub runTest($$)
     my @commonArguments = ($testToToolMap{$test}, $gtestArg, @ARGV);
     if (willUseIOSSimulatorSDK()) {
         $pid = open3($childIn, $childOut, $childErr, qw(xcrun --sdk iphonesimulator simctl spawn), $simulatorDevice->{UDID}, @commonArguments) or die "Failed to run test: $test.";
-    } elsif (isAppleMacWebKit() && architecture()) {
+    } elsif (isAppleCocoaWebKit() && architecture()) {
         $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), archCommandLineArgumentsForRestrictedEnvironmentVariables(), @commonArguments) or die "Failed to run test: $test.";
     } else {
         $pid = open3($childIn, $childOut, $childErr, @commonArguments) or die "Failed to run test: $test.";
@@ -283,7 +283,7 @@ sub listAllTests()
         my @commonArguments = ($testTool, "--gtest_list_tests");
         if (isIOSWebKit()) {
             $pid = open3($childIn, $childOut, $childErr, qw(xcrun --sdk iphonesimulator simctl spawn), $simulatorDevice->{UDID}, @commonArguments) or die "Failed to build list of tests!";
-        } elsif (isAppleMacWebKit() && architecture()) {
+        } elsif (isAppleCocoaWebKit() && architecture()) {
             $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), archCommandLineArgumentsForRestrictedEnvironmentVariables(), @commonArguments) or die "Failed to build list of tests!";
         } else {
             $pid = open3($childIn, $childOut, $childErr, @commonArguments) or die "Failed to build list of tests!";
@@ -370,7 +370,7 @@ sub buildTestTool()
 
 sub prepareEnvironmentForRunningTestTool()
 {
-    return unless isAppleMacWebKit();
+    return unless isAppleCocoaWebKit();
 
     if (willUseIOSSimulatorSDK()) {
         my %simulatorENV;

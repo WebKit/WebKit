@@ -61,7 +61,7 @@ chdirWebKit();
 # Build
 
 my $result;
-if (isAppleMacWebKit()) {
+if (isAppleCocoaWebKit()) {
     chdir "Source/ThirdParty/gtest";
     buildXCodeProject("xcode/gtest", $clean, XcodeOptions(), @ARGV);
     chdir "../../../Tools/TestWebKitAPI" or die;

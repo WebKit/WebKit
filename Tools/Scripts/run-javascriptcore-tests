@@ -56,7 +56,7 @@ my $memoryLimited;
 
 my $buildJSC = 1;
 
-my $runTestAPI = isAppleMacWebKit() || isAppleWinWebKit() || isWinCairo();
+my $runTestAPI = isAppleCocoaWebKit() || isAppleWinWebKit() || isWinCairo();
 
 my $runJSCStress = 1;
 my $runJITStressTests = 1;

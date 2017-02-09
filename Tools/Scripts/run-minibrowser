@@ -52,7 +52,7 @@ if (isGtk() || isEfl()) {
     @jhbuildWrapper = wrapperPrefixIfNeeded();
     print "Starting MiniBrowser.\n";
     exec @jhbuildWrapper, $launcherPath, @ARGV or die;
-} elsif (isAppleMacWebKit()) {
+} elsif (isAppleCocoaWebKit()) {
     printHelpAndExitForRunAndDebugWebKitAppIfNeeded();
     exit exitStatus(runMiniBrowser());
 } else {

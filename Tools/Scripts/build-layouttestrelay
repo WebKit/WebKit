@@ -59,7 +59,7 @@ chdir "Tools/LayoutTestRelay" or die;
 # FIXME: This tool is only useful when building WebKit for iOS Simulator. For now,
 #        to avoid breaking some Apple Internal tools we support calling this script
 #        without --ios-simulator so long as we are building on a Mac.
-if (isAppleMacWebKit() && !willUseIOSDeviceSDK()) {
+if (isAppleCocoaWebKit() && !willUseIOSDeviceSDK()) {
     # FIXME: Changing SDK at this point results in an inconsistent webkitdirs state.
     # We should make it so that webkitdirs functions never see the wrong SDK.
     setXcodeSDK(undef); # Force use of Mac SDK if --ios-simulator was passed

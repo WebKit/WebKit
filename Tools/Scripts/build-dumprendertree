@@ -64,7 +64,7 @@ chdirWebKit();
 chdir File::Spec->catdir("Tools", "DumpRenderTree") or die;
 
 my $result;
-if (isAppleMacWebKit()) {
+if (isAppleCocoaWebKit()) {
     $result = buildXCodeProject("DumpRenderTree", $clean, XcodeOptions(), @ARGV);
 } elsif (isGtk() || isEfl() || isAnyWindows()) {
     # Gtk, EFL, and Windows build everything in one shot. No need to build anything here.

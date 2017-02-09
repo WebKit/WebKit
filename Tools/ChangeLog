@@ -1,5 +1,53 @@
 2017-02-09  Alex Christensen  <achristensen@webkit.org>
 
+        Rename isAppleMacWebKit to isAppleCocoaWebKit
+        https://bugs.webkit.org/show_bug.cgi?id=168075
+
+        Reviewed by Geoffrey Garen.
+
+        It returns true for Mac and iOS.  "isAppleMacWebKit" is confusing and wrong.
+
+        * Scripts/build-api-tests:
+        * Scripts/build-dumprendertree:
+        * Scripts/build-jsc:
+        (buildMyProject):
+        * Scripts/build-layouttestrelay:
+        * Scripts/build-webkit:
+        * Scripts/build-webkittestrunner:
+        * Scripts/run-api-tests:
+        (isSupportedPlatform):
+        (runTest):
+        (listAllTests):
+        (prepareEnvironmentForRunningTestTool):
+        * Scripts/run-content-extension-tester:
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-minibrowser:
+        * Scripts/show-pretty-diff:
+        * Scripts/webkitdirs.pm:
+        (determineBaseProductDir):
+        (determineArchitecture):
+        (determinePassedArchitecture):
+        (safariPath):
+        (builtDylibPathForName):
+        (checkFrameworks):
+        (isAppleWebKit):
+        (isAppleCocoaWebKit):
+        (determineNmPath):
+        (launcherName):
+        (wrapperPrefixIfNeeded):
+        (isCMakeBuild):
+        (mobileSafariBundle):
+        (debugSafari):
+        (runSafari):
+        (runMiniBrowser):
+        (debugMiniBrowser):
+        (runWebKitTestRunner):
+        (debugWebKitTestRunner):
+        (isAppleMacWebKit): Deleted.
+        * Scripts/webkitperl/FeatureList.pm:
+
+2017-02-09  Alex Christensen  <achristensen@webkit.org>
+
         Revert r211991
         https://bugs.webkit.org/show_bug.cgi?id=168062
 

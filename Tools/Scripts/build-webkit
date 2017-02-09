@@ -148,7 +148,7 @@ my @projects = ("Source/JavaScriptCore", "Source/WebCore", "Source/WebKit");
 # Build WTF as a separate static library on ports which support it.
 splice @projects, 0, 0, "Source/WTF" if isAppleWebKit() or isWinCairo();
 
-splice @projects, 0, 0, "Source/bmalloc" if isAppleMacWebKit();
+splice @projects, 0, 0, "Source/bmalloc" if isAppleCocoaWebKit();
 
 # Ports using CMake will check if directories exist in the CMake configuration.
 if (!isCMakeBuild()) {
@@ -165,7 +165,7 @@ if ((isAppleWebKit() || isWinCairo()) && !-d "WebKitLibraries") {
 
 my @options = ();
 
-if (isAppleMacWebKit()) {
+if (isAppleCocoaWebKit()) {
     push @options, XcodeOptions();
     sub option($$$)
     {
@@ -269,7 +269,7 @@ if (isAppleWinWebKit() || isWinCairo()) {
         }
         exit exitStatus($result);
     }
-} elsif (isAppleMacWebKit() && !isCMakeBuild()) {
+} elsif (isAppleCocoaWebKit() && !isCMakeBuild()) {
     # Build, and abort if the build fails.
     for my $dir (@projects) {
         chdir $dir or die;

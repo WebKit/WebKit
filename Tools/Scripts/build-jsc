@@ -45,7 +45,7 @@ my $shouldRunStaticAnalyzer = 0;
 my $minimal = 0;
 my $coverageSupport = 0;
 my $showHelp = 0;
-my $ftlJIT = int(isAppleMacWebKit() && !willUseIOSSimulatorSDK() || isX86_64() && (isGtk() || isEfl() || isJSCOnly()));
+my $ftlJIT = int(isAppleCocoaWebKit() && !willUseIOSSimulatorSDK() || isX86_64() && (isGtk() || isEfl() || isJSCOnly()));
 my $forceCLoop = 0;
 my $cli = 0;
 my $makeArgs = "";
@@ -148,7 +148,7 @@ if (isCMakeBuild()) {
     exit exitStatus(0);
 }
 
-if (isAppleMacWebKit()) {
+if (isAppleCocoaWebKit()) {
     push @options, ($forceCLoop ? "ENABLE_JIT=ENABLE_JIT=0" : "ENABLE_JIT=ENABLE_JIT");
     push @options, ($ftlJIT ? "ENABLE_FTL_JIT=ENABLE_FTL_JIT" : "ENABLE_FTL_JIT=ENABLE_FTL_JIT=0");
 
@@ -179,7 +179,7 @@ sub buildMyProject
     my ($projectDirectory, $projectName) = @_;
     my $result;
     chdir $projectDirectory or die "Can't find $projectName directory to build from";
-    if (isAppleMacWebKit()) {
+    if (isAppleCocoaWebKit()) {
         $result = system "sh", "-c", ('xcodebuild -project ' . $projectName . '.xcodeproj "$@" | grep -v setenv && exit ${PIPESTATUS[0]}'), "xcodebuild",  @options, @ARGV, @additionalSupportOptions;
     } elsif (isAppleWinWebKit() || isWinCairo()) {
         # WTF is a part of JavaScriptCore.sln because jsc.exe wouldn't start otherwise.
@@ -228,6 +228,6 @@ if (!isAppleWinWebKit() && !isWinCairo()) {
 }
 buildMyProject("Source/WTF", "WTF");
 buildMyProject("Source/JavaScriptCore", "JavaScriptCore");
-if (isAppleMacWebKit() && $cli) {
+if (isAppleCocoaWebKit() && $cli) {
     buildMyProject("Tools/jsc-cli", "jsc-cli");
 }

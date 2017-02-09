@@ -66,7 +66,7 @@ my $prettyPatchTool = sourceDir() . "/Websites/bugs.webkit.org/PrettyPatch/prett
 my $pathToPrettify = "ruby -I " . sourceDir() . "/Websites/bugs.webkit.org/PrettyPatch/ " . sourceDir() . "/Websites/bugs.webkit.org/PrettyPatch/prettify.rb";
 system "$pathToPrettify " . quotemeta($inputPath) . " > $prettydiffPath";
 
-if (isAppleMacWebKit()) {
+if (isAppleCocoaWebKit()) {
     system "open", $prettydiffPath;
 } elsif (isCygwin()) {
     system "cygstart",$prettydiffPath;
