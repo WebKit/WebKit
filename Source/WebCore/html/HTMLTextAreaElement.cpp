@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2008, 2010, 2014, 2016 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
@@ -30,6 +30,7 @@
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "Editor.h"
+#include "ElementChildIterator.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -322,7 +323,11 @@ String HTMLTextAreaElement::sanitizeUserInputValue(const String& proposedValue, 
 
 TextControlInnerTextElement* HTMLTextAreaElement::innerTextElement() const
 {
-    return downcast<TextControlInnerTextElement>(userAgentShadowRoot()->firstChild());
+    ShadowRoot* root = userAgentShadowRoot();
+    if (!root)
+        return nullptr;
+    
+    return childrenOfType<TextControlInnerTextElement>(*root).first();
 }
 
 void HTMLTextAreaElement::rendererWillBeDestroyed()

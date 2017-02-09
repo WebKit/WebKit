@@ -38,6 +38,7 @@
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
 #include "Color.h"
+#include "ElementChildIterator.h"
 #include "HTMLDataListElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
@@ -204,7 +205,14 @@ void ColorInputType::updateColorSwatch()
 HTMLElement* ColorInputType::shadowColorSwatch() const
 {
     ShadowRoot* shadow = element().userAgentShadowRoot();
-    return shadow ? downcast<HTMLElement>(shadow->firstChild()->firstChild()) : nullptr;
+    if (!shadow)
+        return nullptr;
+
+    auto wrapper = childrenOfType<HTMLDivElement>(*shadow).first();
+    if (!wrapper)
+        return nullptr;
+
+    return childrenOfType<HTMLDivElement>(*wrapper).first();
 }
 
 IntRect ColorInputType::elementRectRelativeToRootView() const
