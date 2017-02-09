@@ -347,6 +347,31 @@ WebInspector.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingCo
         // We have a new hovered token.
         var tokenInfo = this._previousTokenInfo = this._getTokenInfoForPosition(position);
 
+        if (/\bmeta\b/.test(token.type)) {
+            let nextTokenPosition = Object.shallowCopy(position);
+            nextTokenPosition.ch = tokenInfo.token.end + 1;
+
+            let nextToken = this._codeMirror.getTokenAt(nextTokenPosition);
+            if (nextToken && nextToken.type && !/\bmeta\b/.test(nextToken.type)) {
+                console.assert(tokenInfo.token.end === nextToken.start);
+
+                tokenInfo.token.type = nextToken.type;
+                tokenInfo.token.string = tokenInfo.token.string + nextToken.string;
+                tokenInfo.token.end = nextToken.end;
+            }
+        } else {
+            let previousTokenPosition = Object.shallowCopy(position);
+            previousTokenPosition.ch = tokenInfo.token.start - 1;
+
+            let previousToken = this._codeMirror.getTokenAt(previousTokenPosition);
+            if (previousToken && previousToken.type && /\bmeta\b/.test(previousToken.type)) {
+                console.assert(tokenInfo.token.start === previousToken.end);
+
+                tokenInfo.token.string = previousToken.string + tokenInfo.token.string;
+                tokenInfo.token.start = previousToken.start;
+            }
+        }
+
         if (this._tokenHoverTimer)
             clearTimeout(this._tokenHoverTimer);
 
