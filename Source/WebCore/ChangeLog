@@ -1,5 +1,23 @@
 2017-02-08  Matthew Hanson  <matt_hanson@apple.com>
 
+        Merge r211453. rdar://problem/30294240
+
+    2017-01-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            WebItemProviderPasteboard should be robust when UIItemProvider fails to initialize an object
+            https://bugs.webkit.org/show_bug.cgi?id=167663
+            <rdar://problem/30294240>
+
+            Reviewed by Tim Horton.
+
+            Adds a nil check for the result of -createObjectOfClass:error:.
+
+            * platform/ios/WebItemProviderPasteboard.mm:
+            (-[WebItemProviderPasteboard valuesForPasteboardType:inItemSet:]):
+            (-[WebItemProviderPasteboard _tryToCreateAndAppendObjectOfClass:toArray:usingProvider:]):
+
+2017-02-08  Matthew Hanson  <matt_hanson@apple.com>
+
         Merge r211377. rdar://problem/30267849
 
     2017-01-30  Wenson Hsieh  <wenson_hsieh@apple.com>
