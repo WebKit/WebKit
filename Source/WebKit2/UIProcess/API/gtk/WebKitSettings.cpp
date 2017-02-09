@@ -1215,7 +1215,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * there is an element they might be trying to reach towards the right, and if
      * there are multiple elements, which element they probably wants.
      *
-     * Since: 2.3
+     * Since: 2.4
      */
     g_object_class_install_property(gObjectClass,
         PROP_ENABLE_SPATIAL_NAVIGATION,

@@ -1,3 +1,12 @@
+2017-02-09  Tomas Popela  <tpopela@redhat.com>
+
+        Unreviewed. Fix gtk-doc warning
+
+        html/WebKitSettings.html:4435: warning: no link for: 'api-index-2.3' -> (2.3).
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkit_settings_class_init):
+
 2017-02-09  Antti Koivisto  <antti@apple.com>
 
         Remove most cases of #if ENABLE(CACHE_PARTITIONING)
