@@ -616,3 +616,5 @@ webkit.org/b/167653 http/tests/contentextensions/block-everything-unless-domain.
 webkit.org/b/167206 [ Sierra Release ] mathml/opentype/large-operators-displaystyle-dynamic.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/168065 inspector/unit-tests/heap-snapshot.html [ Pass Failure Timeout ]
+
+webkit.org/b/167538 [ Sierra ] fast/css-grid-layout/grid-simplified-layout-positioned.html [ Pass ImageOnlyFailure ]
