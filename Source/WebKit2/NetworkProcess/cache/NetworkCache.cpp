@@ -208,45 +208,6 @@ static RetrieveDecision makeRetrieveDecision(const WebCore::ResourceRequest& req
     return RetrieveDecision::Yes;
 }
 
-// http://tools.ietf.org/html/rfc7231#page-48
-static bool isStatusCodeCacheableByDefault(int statusCode)
-{
-    switch (statusCode) {
-    case 200: // OK
-    case 203: // Non-Authoritative Information
-    case 204: // No Content
-    case 206: // Partial Content
-    case 300: // Multiple Choices
-    case 301: // Moved Permanently
-    case 404: // Not Found
-    case 405: // Method Not Allowed
-    case 410: // Gone
-    case 414: // URI Too Long
-    case 501: // Not Implemented
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool isStatusCodePotentiallyCacheable(int statusCode)
-{
-    switch (statusCode) {
-    case 201: // Created
-    case 202: // Accepted
-    case 205: // Reset Content
-    case 302: // Found
-    case 303: // See Other
-    case 307: // Temporary redirect
-    case 403: // Forbidden
-    case 406: // Not Acceptable
-    case 415: // Unsupported Media Type
-        return true;
-    default:
-        return false;
-    }
-}
-
 static bool isMediaMIMEType(const String& mimeType)
 {
     if (mimeType.startsWith("video/", /*caseSensitive*/ false))
@@ -271,10 +232,10 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     if (response.cacheControlContainsNoStore())
         return StoreDecision::NoDueToNoStoreResponse;
 
-    if (!isStatusCodeCacheableByDefault(response.httpStatusCode())) {
+    if (!WebCore::isStatusCodeCacheableByDefault(response.httpStatusCode())) {
         // http://tools.ietf.org/html/rfc7234#section-4.3.2
         bool hasExpirationHeaders = response.expires() || response.cacheControlMaxAge();
-        bool expirationHeadersAllowCaching = isStatusCodePotentiallyCacheable(response.httpStatusCode()) && hasExpirationHeaders;
+        bool expirationHeadersAllowCaching = WebCore::isStatusCodePotentiallyCacheable(response.httpStatusCode()) && hasExpirationHeaders;
         if (!expirationHeadersAllowCaching)
             return StoreDecision::NoDueToHTTPStatusCode;
     }

@@ -1,3 +1,25 @@
+2017-02-09  Antti Koivisto  <antti@apple.com>
+
+        Use all cacheable speculatively loaded responses
+        https://bugs.webkit.org/show_bug.cgi?id=168052
+
+        Reviewed by Andreas Kling.
+
+        We currently only allow 200 responses. There is no reason not to use speculative responses
+        that have other cacheable status codes. This is helpful for 204s and 404s.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeStoreDecision):
+        (WebKit::NetworkCache::isStatusCodeCacheableByDefault): Deleted.
+        (WebKit::NetworkCache::isStatusCodePotentiallyCacheable): Deleted.
+
+            Move to CacheValidation.h/cpp
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::didFinishLoading):
+
+            Allow all cacheable-by-default responses.
+
 2017-02-09  Tomas Popela  <tpopela@redhat.com>
 
         Unreviewed. Fix gtk-doc warning

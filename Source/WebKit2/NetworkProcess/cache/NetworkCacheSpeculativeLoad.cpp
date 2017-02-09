@@ -123,7 +123,7 @@ void SpeculativeLoad::didFinishLoading(double finishTime)
     if (!m_cacheEntry && m_bufferedDataForCache) {
         m_cacheEntry = NetworkCache::singleton().store(m_originalRequest, m_response, m_bufferedDataForCache.copyRef(), [](auto& mappedBody) { });
         // Create a synthetic cache entry if we can't store.
-        if (!m_cacheEntry && m_response.httpStatusCode() == 200)
+        if (!m_cacheEntry && isStatusCodeCacheableByDefault(m_response.httpStatusCode()))
             m_cacheEntry = NetworkCache::singleton().makeEntry(m_originalRequest, m_response, WTFMove(m_bufferedDataForCache));
     }
 

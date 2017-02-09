@@ -73,6 +73,9 @@ WEBCORE_EXPORT CacheControlDirectives parseCacheControlDirectives(const HTTPHead
 WEBCORE_EXPORT Vector<std::pair<String, String>> collectVaryingRequestHeaders(const ResourceRequest&, const ResourceResponse&, SessionID = SessionID::defaultSessionID());
 WEBCORE_EXPORT bool verifyVaryingRequestHeaders(const Vector<std::pair<String, String>>& varyingRequestHeaders, const ResourceRequest&, SessionID = SessionID::defaultSessionID());
 
+WEBCORE_EXPORT bool isStatusCodeCacheableByDefault(int statusCode);
+WEBCORE_EXPORT bool isStatusCodePotentiallyCacheable(int statusCode);
+
 }
 
 #endif

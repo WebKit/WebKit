@@ -380,4 +380,43 @@ bool verifyVaryingRequestHeaders(const Vector<std::pair<String, String>>& varyin
     return true;
 }
 
+// http://tools.ietf.org/html/rfc7231#page-48
+bool isStatusCodeCacheableByDefault(int statusCode)
+{
+    switch (statusCode) {
+    case 200: // OK
+    case 203: // Non-Authoritative Information
+    case 204: // No Content
+    case 206: // Partial Content
+    case 300: // Multiple Choices
+    case 301: // Moved Permanently
+    case 404: // Not Found
+    case 405: // Method Not Allowed
+    case 410: // Gone
+    case 414: // URI Too Long
+    case 501: // Not Implemented
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool isStatusCodePotentiallyCacheable(int statusCode)
+{
+    switch (statusCode) {
+    case 201: // Created
+    case 202: // Accepted
+    case 205: // Reset Content
+    case 302: // Found
+    case 303: // See Other
+    case 307: // Temporary redirect
+    case 403: // Forbidden
+    case 406: // Not Acceptable
+    case 415: // Unsupported Media Type
+        return true;
+    default:
+        return false;
+    }
+}
+
 }
