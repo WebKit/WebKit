@@ -1,5 +1,5 @@
 
 FAIL document.open in XHTML assert_throws: document.open in XHTML should throw an INVALID_STATE_ERR  function "function () {
     document.open();
-  }" threw object "TypeError: document.open is not a function. (In 'document..." that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+  }" threw object "TypeError: document.open is not a function. (In 'document.open()', 'document.open' is undefined)" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
 

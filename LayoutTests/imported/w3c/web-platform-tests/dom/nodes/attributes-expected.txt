@@ -40,10 +40,10 @@ PASS Attribute loses its owner when removed
 PASS Basic functionality of getAttributeNode/getAttributeNodeNS 
 PASS Basic functionality of setAttributeNode 
 PASS Basic functionality of setAttributeNodeNS 
-FAIL If attr’s element is neither null nor element, throw an InUseAttributeError. Test bug: unrecognized DOMException code "INUSE_ATTRIBUTE_ERR" passed to assert_throws()
+PASS If attr’s element is neither null nor element, throw an InUseAttributeError. 
 PASS Replacing an attr by itself 
 PASS Basic functionality of removeAttributeNode 
-FAIL setAttributeNode on bound attribute should throw InUseAttributeError Test bug: unrecognized DOMException code "INUSE_ATTRIBUTE_ERR" passed to assert_throws()
+PASS setAttributeNode on bound attribute should throw InUseAttributeError 
 PASS setAttributeNode, if it fires mutation events, should fire one with the new node when resetting an existing attribute 
 PASS setAttributeNode, if it fires mutation events, should fire one with the new node when resetting an existing attribute (outer shell) 
 PASS setAttributeNode called with an Attr that has the same name as an existing one should not change attribute order 

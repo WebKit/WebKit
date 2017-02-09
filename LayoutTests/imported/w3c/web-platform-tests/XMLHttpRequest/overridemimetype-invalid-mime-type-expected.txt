@@ -1,3 +1,3 @@
 
-FAIL XMLHttpRequest: overrideMimeType() in unsent state, invalid MIME types assert_throws: function "function () { client.overrideMimeType('text\\plain;charse..." did not throw
+FAIL XMLHttpRequest: overrideMimeType() in unsent state, invalid MIME types assert_throws: function "function () { client.overrideMimeType('text\\plain;charset=Shift-JIS'); }" did not throw
 

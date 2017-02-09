@@ -20,9 +20,9 @@ PASS createDocument test: null,"ெfoo",null,"INVALID_CHARACTER_ERR"
 PASS createDocument test: null,"}foo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: null,"f}oo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: null,"foo}",null,"INVALID_CHARACTER_ERR" 
-PASS createDocument test: null,"￿foo",null,"INVALID_CHARACTER_ERR" 
-PASS createDocument test: null,"f￿oo",null,"INVALID_CHARACTER_ERR" 
-PASS createDocument test: null,"foo￿",null,"INVALID_CHARACTER_ERR" 
+PASS createDocument test: null,"\ufffffoo",null,"INVALID_CHARACTER_ERR" 
+PASS createDocument test: null,"f\uffffoo",null,"INVALID_CHARACTER_ERR" 
+PASS createDocument test: null,"foo\uffff",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: null,"<foo",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: null,"foo>",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: null,"<foo>",null,"INVALID_CHARACTER_ERR" 
@@ -104,12 +104,12 @@ PASS createDocument test: characterSet aliases for "http://example.com/","f:oo",
 PASS createDocument test: "http://example.com/","f:o:o",null,"NAMESPACE_ERR" 
 PASS createDocument test: "http://example.com/","foo:",null,"NAMESPACE_ERR" 
 PASS createDocument test: "http://example.com/","f::oo",null,"NAMESPACE_ERR" 
-FAIL createDocument test: "http://example.com/","a:0",null,"NAMESPACE_ERR" assert_throws: function "function () { document.implementation.createDocument(name..." threw object "InvalidCharacterError (DOM Exception 5): The string conta..." that is not a DOMException NAMESPACE_ERR: property "code" is equal to 5, expected 14
+FAIL createDocument test: "http://example.com/","a:0",null,"NAMESPACE_ERR" assert_throws: function "function () { document.implementation.createDocument(namespace, qualifiedName, doctype) }" threw object "InvalidCharacterError (DOM Exception 5): The string contains invalid characters." that is not a DOMException NAMESPACE_ERR: property "code" is equal to 5, expected 14
 PASS createDocument test: "http://example.com/","0:a",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://example.com/","a:_",null,null 
 PASS createDocument test: metadata for "http://example.com/","a:_",null 
 PASS createDocument test: characterSet aliases for "http://example.com/","a:_",null 
-FAIL createDocument test: "http://example.com/","a:ெ",null,"NAMESPACE_ERR" assert_throws: function "function () { document.implementation.createDocument(name..." threw object "InvalidCharacterError (DOM Exception 5): The string conta..." that is not a DOMException NAMESPACE_ERR: property "code" is equal to 5, expected 14
+FAIL createDocument test: "http://example.com/","a:ெ",null,"NAMESPACE_ERR" assert_throws: function "function () { document.implementation.createDocument(namespace, qualifiedName, doctype) }" threw object "InvalidCharacterError (DOM Exception 5): The string contains invalid characters." that is not a DOMException NAMESPACE_ERR: property "code" is equal to 5, expected 14
 PASS createDocument test: "http://example.com/","ெ:a",null,"INVALID_CHARACTER_ERR" 
 PASS createDocument test: "http://example.com/","a:aெ",null,null 
 PASS createDocument test: metadata for "http://example.com/","a:aெ",null 

@@ -1,5 +1,5 @@
 
-PASS XMLHttpRequest: The send() method: POSTing to URL that redirects (301) 
+FAIL XMLHttpRequest: The send() method: POSTing to URL that redirects (301) assert_true: One progress event should fire on xhr.upload when readyState is 1 expected true got false
 PASS XMLHttpRequest: The send() method: POSTing to URL that redirects (302) 
 PASS XMLHttpRequest: The send() method: POSTing to URL that redirects (303) 
 PASS XMLHttpRequest: The send() method: POSTing to URL that redirects (307) 

@@ -1,10 +1,4 @@
 /config.json
-/resources/
-/.resources.url
-/resources/webidl2/
-/resources/.webidl2.url
-/resources/webidl2/test/widlproc/
-/resources/webidl2/test/.widlproc.url
 /tools/
 /.tools.url
 /tools/html5lib/

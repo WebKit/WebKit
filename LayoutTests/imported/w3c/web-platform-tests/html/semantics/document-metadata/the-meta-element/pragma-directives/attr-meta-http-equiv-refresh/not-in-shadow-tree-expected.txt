@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 2422: Error: assert_unreached: Got more than 1 load event Reached unreachable code
+CONSOLE MESSAGE: line 2451: Error: assert_unreached: Got more than 1 load event Reached unreachable code
 
 FAIL Meta refresh only applies while in the document tree, not in a shadow tree Error: assert_unreached: Got more than 1 load event Reached unreachable code
 

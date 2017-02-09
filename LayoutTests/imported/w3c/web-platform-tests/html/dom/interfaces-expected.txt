@@ -1,10 +1,10 @@
-CONSOLE MESSAGE: line 236: callback not yet supported
-CONSOLE MESSAGE: line 236: callback not yet supported
-CONSOLE MESSAGE: line 236: callback not yet supported
-CONSOLE MESSAGE: line 236: callback not yet supported
-CONSOLE MESSAGE: line 236: callback not yet supported
-CONSOLE MESSAGE: line 236: callback not yet supported
-CONSOLE MESSAGE: line 236: callback not yet supported
+CONSOLE MESSAGE: line 251: callback not yet supported
+CONSOLE MESSAGE: line 251: callback not yet supported
+CONSOLE MESSAGE: line 251: callback not yet supported
+CONSOLE MESSAGE: line 251: callback not yet supported
+CONSOLE MESSAGE: line 251: callback not yet supported
+CONSOLE MESSAGE: line 251: callback not yet supported
+CONSOLE MESSAGE: line 251: callback not yet supported
 HTML IDL tests
 
 

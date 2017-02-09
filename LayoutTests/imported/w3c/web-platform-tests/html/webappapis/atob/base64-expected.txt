@@ -280,8 +280,8 @@ PASS btoa("ÿ") == "/w=="
 PASS btoa("Ā") must raise INVALID_CHARACTER_ERR 
 PASS btoa("ā") must raise INVALID_CHARACTER_ERR 
 PASS btoa("✐") must raise INVALID_CHARACTER_ERR 
-PASS btoa("￾") must raise INVALID_CHARACTER_ERR 
-PASS btoa("￿") must raise INVALID_CHARACTER_ERR 
+PASS btoa("\ufffe") must raise INVALID_CHARACTER_ERR 
+PASS btoa("\uffff") must raise INVALID_CHARACTER_ERR 
 PASS btoa("𐀀") must raise INVALID_CHARACTER_ERR 
 PASS btoa(first 256 code points concatenated) 
 PASS atob("") == "" 

@@ -1,4 +1,5 @@
 
 FAIL XMLHttpRequest: open() resolving URLs (multi-Window; 2; evil) assert_throws: open() when associated document's IFRAME is removed function "function () { 
-            client.open("GET", "folder.txt..." did not throw
+            client.open("GET", "folder.txt") 
+          }" did not throw
 

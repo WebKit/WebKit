@@ -3,13 +3,13 @@ PASS Empty string integrity
 PASS SHA-256 integrity 
 PASS SHA-384 integrity 
 PASS SHA-512 integrity 
-FAIL Invalid integrity assert_unreached: Should have rejected. Reached unreachable code
+FAIL Invalid integrity assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Multiple integrities: valid stronger than invalid 
-FAIL Multiple integrities: invalid stronger than valid assert_unreached: Should have rejected. Reached unreachable code
+FAIL Multiple integrities: invalid stronger than valid assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Multiple integrities: invalid as strong as valid 
 PASS Multiple integrities: both are valid 
-FAIL Multiple integrities: both are invalid assert_unreached: Should have rejected. Reached unreachable code
+FAIL Multiple integrities: both are invalid assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS CORS empty integrity 
 PASS CORS SHA-512 integrity 
-FAIL CORS invalid integrity assert_unreached: Should have rejected. Reached unreachable code
+FAIL CORS invalid integrity assert_unreached: Should have rejected: undefined Reached unreachable code
 

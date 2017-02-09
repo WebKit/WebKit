@@ -2,10 +2,12 @@
 FAIL dialog element: showModal() assert_false: expected false got undefined
 FAIL showModal() on a <dialog> that already has an open attribute throws an InvalidStateError exception assert_throws: function "function () {
       d2.showModal();
-      this.add_cleanu..." threw object "TypeError: d2.showModal is not a function. (In 'd2.showMo..." that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+      this.add_cleanup(function() { d2.close(); });
+    }" threw object "TypeError: d2.showModal is not a function. (In 'd2.showModal()', 'd2.showModal' is undefined)" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
 FAIL showModal() on a <dialog> not in a Document throws an InvalidStateError exception assert_throws: function "function () {
       d.showModal();
-      this.add_cleanup..." threw object "TypeError: d.showModal is not a function. (In 'd.showModa..." that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+      this.add_cleanup(function() { d.close(); });
+    }" threw object "TypeError: d.showModal is not a function. (In 'd.showModal()', 'd.showModal' is undefined)" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
 FAIL when opening multiple dialogs, only the newest one is non-inert assert_false: expected false got undefined
 FAIL opening dialog without focusable children assert_false: expected false got undefined
 FAIL opening dialog with multiple focusable children assert_false: expected false got undefined

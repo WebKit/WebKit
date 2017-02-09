@@ -7,5 +7,5 @@ PASS Read URLSearchParams response's body as readableStream
 PASS Read array buffer response's body as readableStream 
 FAIL Read form data response's body as readableStream promise_test: Unhandled rejection with value: object "TypeError: not implemented"
 PASS Getting an error Response stream 
-PASS Getting a redirect Response stream 
+FAIL Getting a redirect Response stream assert_not_equals: got disallowed value undefined
 

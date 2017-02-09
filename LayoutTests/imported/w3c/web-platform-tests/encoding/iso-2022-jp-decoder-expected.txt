@@ -1,8 +1,8 @@
 
-FAIL iso-2022-jp decoder: Error ESC assert_equals: expected "�$" but got "�"
+FAIL iso-2022-jp decoder: Error ESC assert_equals: expected "\ufffd$" but got "\ufffd"
 PASS iso-2022-jp decoder: Error ESC, character 
-FAIL iso-2022-jp decoder: ASCII ESC, character assert_equals: expected "�P" but got "P"
-FAIL iso-2022-jp decoder: Double ASCII ESC, character assert_equals: expected "��P" but got "�P"
+FAIL iso-2022-jp decoder: ASCII ESC, character assert_equals: expected "\ufffdP" but got "P"
+FAIL iso-2022-jp decoder: Double ASCII ESC, character assert_equals: expected "\ufffd\ufffdP" but got "\ufffdP"
 PASS iso-2022-jp decoder: character, ASCII ESC, character 
 PASS iso-2022-jp decoder: characters 
 PASS iso-2022-jp decoder: SO / SI 
@@ -14,7 +14,7 @@ PASS iso-2022-jp decoder: Katakana ESC, multibyte ESC, character
 PASS iso-2022-jp decoder: Katakana ESC, error ESC, character 
 PASS iso-2022-jp decoder: Katakana ESC, error ESC #2, character 
 PASS iso-2022-jp decoder: Katakana ESC, character, Katakana ESC, character 
-FAIL iso-2022-jp decoder: Katakana ESC, SO / SI assert_equals: expected "����" but got "\r��\x10"
+FAIL iso-2022-jp decoder: Katakana ESC, SO / SI assert_equals: expected "\ufffd\ufffd\ufffd\ufffd" but got "\r\ufffd\ufffd\x10"
 PASS iso-2022-jp decoder: Multibyte ESC, character 
 PASS iso-2022-jp decoder: Multibyte ESC #2, character 
 PASS iso-2022-jp decoder: Multibyte ESC, error ESC, character 
@@ -26,7 +26,7 @@ PASS iso-2022-jp decoder: Multibyte ESC, single byte, multibyte ESC, character
 PASS iso-2022-jp decoder: Multibyte ESC, lead error byte 
 PASS iso-2022-jp decoder: Multibyte ESC, trail error byte 
 PASS iso-2022-jp decoder: character, error ESC 
-FAIL iso-2022-jp decoder: character, error ESC #2 assert_equals: expected "P�$" but got "P�"
+FAIL iso-2022-jp decoder: character, error ESC #2 assert_equals: expected "P\ufffd$" but got "P\ufffd"
 PASS iso-2022-jp decoder: character, error ESC #3 
 PASS iso-2022-jp decoder: character, ASCII ESC 
 PASS iso-2022-jp decoder: character, Roman ESC 

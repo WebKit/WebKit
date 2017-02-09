@@ -1,3 +1,15 @@
+2017-02-08  Chris Dumez  <cdumez@apple.com>
+
+        Update web-platform-tests resources
+        https://bugs.webkit.org/show_bug.cgi?id=168026
+
+        Reviewed by Youenn Fablet.
+
+        Stop copying testharness.js from resources/ to web-platform-tests/resources.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer._copy_webkit_test_files):
+
 2017-02-08  Andy Estes  <aestes@apple.com>
 
         Custom protocols should not continue loading after a network process crash

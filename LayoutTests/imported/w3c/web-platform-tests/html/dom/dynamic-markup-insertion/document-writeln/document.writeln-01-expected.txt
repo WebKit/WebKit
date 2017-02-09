@@ -1,4 +1,5 @@
 
 FAIL document.writeln in XHTML assert_throws: document.writeln in XHTML should throw an INVALID_STATE_ERR  function "function () {
-    document.writeln("Failure: document.wri..." threw object "TypeError: document.writeln is not a function. (In 'docum..." that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+    document.writeln("Failure: document.writeln actually worked");
+  }" threw object "TypeError: document.writeln is not a function. (In 'document.writeln("Failure: document.writeln actually worked")', 'document.writeln' is undefined)" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
 

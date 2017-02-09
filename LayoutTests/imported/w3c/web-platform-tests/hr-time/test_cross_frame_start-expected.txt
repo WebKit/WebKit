@@ -6,6 +6,6 @@ This test validates the values of the window.performance.now() are based on the 
 PASS Setup the frame 
 PASS parent performance.now() > 0 
 PASS child performance.now() > 0 
-FAIL Child created at least 1 second after parent assert_true: expected true got false
-FAIL Child and parent time bases are correct assert_true: Child and parent's now()s have different bases (skewed more than 1 second) expected true got false
+PASS Child created at least 1 second after parent 
+PASS Child and parent time bases are correct 
 

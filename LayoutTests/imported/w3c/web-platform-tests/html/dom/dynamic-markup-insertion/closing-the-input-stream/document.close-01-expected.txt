@@ -1,5 +1,5 @@
 
 FAIL document.close in XHTML assert_throws: document.close in XHTML should throw an INVALID_STATE_ERR  function "function () {
     document.close();
-  }" threw object "TypeError: document.close is not a function. (In 'documen..." that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+  }" threw object "TypeError: document.close is not a function. (In 'document.close()', 'document.close' is undefined)" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
 

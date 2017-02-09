@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 236: callback not yet supported
+CONSOLE MESSAGE: line 251: callback not yet supported
 idlharness test
 
 This test validates the WebIDL included in the Timing control for script-based animations specification.

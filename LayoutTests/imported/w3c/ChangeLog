@@ -1,3 +1,178 @@
+2017-02-08  Chris Dumez  <cdumez@apple.com>
+
+        Update web-platform-tests resources
+        https://bugs.webkit.org/show_bug.cgi?id=168026
+
+        Reviewed by Youenn Fablet.
+
+        * resources/web-platform-tests-modules.json:
+        * resources/web-platform-tests-modules/darobin/webidl2.js/archive/bd216bcd5596d60734450adc938155deab1e1a80.tar.gz: Removed.
+        * resources/web-platform-tests-modules/dontcallmedom/widlproc/archive/4ef8dde69c0ba3d0167bccfa2775eea7f0d6c7fe.tar.gz: Removed.
+        * resources/web-platform-tests-modules/w3c/testharness.js/archive/873f9680aff66553f84d38f21a038c4534cc2789.tar.gz: Removed.
+        * web-platform-tests/.gitignore:
+        * web-platform-tests/XMLHttpRequest/interfaces-expected.txt:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/fetch/api/headers/headers-idl-expected.txt:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/webappapis/animation-frames/idlharness-expected.txt:
+        * web-platform-tests/resources/LICENSE: Added.
+        * web-platform-tests/resources/idlharness.js: Added.
+        (constValue):
+        (minOverloadLength):
+        (throwOrReject):
+        (awaitNCallbacks):
+        (return.fround):
+        (fround):
+        (self.IdlArray):
+        (IdlArray.prototype.add_idls):
+        (IdlArray.prototype.add_untested_idls):
+        (IdlArray.prototype.internal_add_idls):
+        (IdlArray.prototype.add_objects):
+        (IdlArray.prototype.prevent_multiple_testing):
+        (IdlArray.prototype.recursively_get_implements):
+        (exposed_in):
+        (IdlArray.prototype.test):
+        (IdlArray.prototype.assert_type_is):
+        (IdlObject):
+        (IdlObject.prototype.test):
+        (IdlObject.prototype.has_extended_attribute):
+        (IdlInterface):
+        (IdlInterface.prototype.is_callback):
+        (IdlInterface.prototype.has_constants):
+        (IdlInterface.prototype.is_global):
+        (IdlInterface.prototype.test):
+        (IdlInterface.prototype.test_self):
+        (IdlInterface.prototype.test_member_const):
+        (IdlInterface.prototype.test_member_attribute):
+        (IdlInterface.prototype.test_member_operation):
+        (IdlInterface.prototype.do_member_operation_asserts):
+        (IdlInterface.prototype.add_iterable_members):
+        (IdlInterface.prototype.test_member_iterable):
+        (IdlInterface.prototype.test_member_stringifier):
+        (IdlInterface.prototype.test_members):
+        (IdlInterface.prototype.test_object):
+        (IdlInterface.prototype.test_primary_interface_of):
+        (IdlInterface.prototype.test_interface_of):
+        (IdlInterface.prototype.has_stringifier):
+        (IdlInterface.prototype.do_interface_attribute_asserts):
+        (IdlInterfaceMember):
+        (create_suitable_object):
+        (IdlEnum):
+        (IdlTypedef):
+        * web-platform-tests/resources/readme.md: Added.
+        * web-platform-tests/resources/testharness.js: Added.
+        (WindowTestEnvironment):
+        (WindowTestEnvironment.prototype._dispatch):
+        (WindowTestEnvironment.prototype._forEach_windows):
+        (WindowTestEnvironment.prototype.on_tests_ready):
+        (WindowTestEnvironment.prototype.setup_messages):
+        (WindowTestEnvironment.prototype.next_default_test_name):
+        (WindowTestEnvironment.prototype.on_new_harness_properties):
+        (WindowTestEnvironment.prototype.add_on_loaded_callback):
+        (WindowTestEnvironment.prototype.test_timeout):
+        (WindowTestEnvironment.prototype.global_scope):
+        (WorkerTestEnvironment):
+        (WorkerTestEnvironment.prototype._dispatch):
+        (WorkerTestEnvironment.prototype._add_message_port):
+        (WorkerTestEnvironment.prototype.next_default_test_name):
+        (WorkerTestEnvironment.prototype.on_new_harness_properties):
+        (WorkerTestEnvironment.prototype.on_tests_ready):
+        (WorkerTestEnvironment.prototype.add_on_loaded_callback):
+        (WorkerTestEnvironment.prototype.test_timeout):
+        (WorkerTestEnvironment.prototype.global_scope):
+        (DedicatedWorkerTestEnvironment):
+        (DedicatedWorkerTestEnvironment.prototype.on_tests_ready):
+        (SharedWorkerTestEnvironment):
+        (SharedWorkerTestEnvironment.prototype.on_tests_ready):
+        (ServiceWorkerTestEnvironment):
+        (ServiceWorkerTestEnvironment.prototype.add_on_loaded_callback):
+        (create_test_environment):
+        (is_shared_worker):
+        (is_service_worker):
+        (test):
+        (async_test):
+        (promise_test):
+        (this.wait_for):
+        (EventWatcher):
+        (setup):
+        (done):
+        (generate_tests):
+        (step_timeout):
+        (truncate):
+        (is_node):
+        (format_value):
+        * web-platform-tests/resources/webidl2/LICENSE: Added.
+        * web-platform-tests/resources/webidl2/README.md: Added.
+        * web-platform-tests/resources/webidl2/lib/webidl2.js: Added.
+        (tokenise):
+        (WebIDLParseError):
+        (WebIDLParseError.prototype.toString):
+        (error):
+        (consume):
+        (ws):
+        (all_ws):
+        (integer_type):
+        (float_type):
+        (primitive_type):
+        (const_value):
+        (type_suffix):
+        (single_type):
+        (union_type):
+        (type):
+        (argument):
+        (argument_list):
+        (type_pair):
+        (simple_extended_attr):
+        (extended_attrs):
+        (default_):
+        (const_):
+        (inheritance):
+        (operation_rest):
+        (callback):
+        (attribute):
+        (return_type):
+        (operation):
+        (identifiers):
+        (serialiser):
+        (iterable_type):
+        (readonly_iterable_type):
+        (iterable):
+        (interface_):
+        (partial):
+        (dictionary):
+        (exception):
+        (enum_):
+        (parse):
+        * web-platform-tests/resources/webidl2/lib/writer.js: Added.
+        (noop):
+        (literal):
+        (wsPea):
+        (wsTPea):
+        (lineComment):
+        (multilineComment):
+        (type):
+        (const_value):
+        (argument):
+        (args):
+        (make_ext_at):
+        (extended_attributes):
+        (operation):
+        (attribute):
+        (interface_):
+        (dictionary):
+        (field):
+        (exception):
+        (const_):
+        (typedef):
+        (implements_):
+        (callback):
+        (enum_):
+        (dispatch):
+        (iterate):
+        (write):
+        (obj.write):
+        * web-platform-tests/url/interfaces-expected.txt:
+
 2017-02-08  Sam Weinig  <sam@webkit.org>
 
         REGRESSION (r193286): Promise chain no longer prevent UI refresh

@@ -9,6 +9,16 @@ PASS Headers interface: operation delete(ByteString)
 PASS Headers interface: operation get(ByteString) 
 PASS Headers interface: operation has(ByteString) 
 PASS Headers interface: operation set(ByteString,ByteString) 
+FAIL Testing Symbol.iterator property of iterable interface Headers assert_equals: @@iterator function does not have the right name expected "entries" but got "[Symbol.Iterator]"
+FAIL Testing pair iterable interface Headers assert_equals: entries method is not the same as @@iterator expected function "function entries() {
+    [native code]
+}" but got function "function [Symbol.Iterator]() {
+    [native code]
+}"
+PASS Headers interface: operation entries() 
+PASS Headers interface: operation keys() 
+PASS Headers interface: operation values() 
+PASS Headers interface: operation forEach(function,any) 
 PASS Headers must be primary interface of new Headers() 
 PASS Stringification of new Headers() 
 PASS Headers interface: new Headers() must inherit property "append" with the proper type (0) 
@@ -21,4 +31,9 @@ PASS Headers interface: new Headers() must inherit property "has" with the prope
 PASS Headers interface: calling has(ByteString) on new Headers() with too few arguments must throw TypeError 
 PASS Headers interface: new Headers() must inherit property "set" with the proper type (4) 
 PASS Headers interface: calling set(ByteString,ByteString) on new Headers() with too few arguments must throw TypeError 
+PASS Headers interface: new Headers() must inherit property "entries" with the proper type (6) 
+PASS Headers interface: new Headers() must inherit property "keys" with the proper type (7) 
+PASS Headers interface: new Headers() must inherit property "values" with the proper type (8) 
+PASS Headers interface: new Headers() must inherit property "forEach" with the proper type (9) 
+PASS Headers interface: calling forEach(function,any) on new Headers() with too few arguments must throw TypeError 
 

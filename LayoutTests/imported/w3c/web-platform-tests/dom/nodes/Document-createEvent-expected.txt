@@ -108,7 +108,8 @@ PASS createEvent('keyboardevent') should be initialized correctly.
 PASS KEYBOARDEVENT should be an alias for KeyboardEvent. 
 PASS createEvent('KEYBOARDEVENT') should be initialized correctly. 
 FAIL Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "KeyboardEvents" assert_throws: function "function () {
-          var evt = document.createEvent(pl..." did not throw
+          var evt = document.createEvent(plural);
+        }" did not throw
 PASS MessageEvent should be an alias for MessageEvent. 
 PASS createEvent('MessageEvent') should be initialized correctly. 
 PASS messageevent should be an alias for MessageEvent. 
@@ -274,9 +275,11 @@ PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "M
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "MouseScrollEvent" 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "MouseScrollEvents" 
 FAIL Should throw NOT_SUPPORTED_ERR for non-legacy event interface "MutationEvent" assert_throws: function "function () {
-        var evt = document.createEvent(even..." did not throw
+        var evt = document.createEvent(eventInterface);
+      }" did not throw
 FAIL Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "MutationEvents" assert_throws: function "function () {
-        var evt = document.createEvent(even..." did not throw
+        var evt = document.createEvent(eventInterface + "s");
+      }" did not throw
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "NotificationEvent" 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "NotificationEvents" 
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "NotifyPaintEvent" 
@@ -312,7 +315,8 @@ PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "R
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "SVGEvent" 
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "SVGZoomEvent" 
 FAIL Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "SVGZoomEvents" assert_throws: function "function () {
-        var evt = document.createEvent(even..." did not throw
+        var evt = document.createEvent(eventInterface + "s");
+      }" did not throw
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "ScrollAreaEvent" 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "ScrollAreaEvents" 
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "SecurityPolicyViolationEvent" 

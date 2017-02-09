@@ -1,5 +1,6 @@
 
 FAIL document.open should redirect to window.open when called with three arguments assert_unreached: The call should be redirected to the real window.open Reached unreachable code
 FAIL document.open should throw when it has no window and is called with three arguments assert_throws: function "function () {
-    doc.open("/resources/testharness.js", "..." did not throw
+    doc.open("/resources/testharness.js", "", "");
+  }" did not throw
 
