@@ -66,10 +66,8 @@ void PageOverlayController::createRootLayersIfNeeded()
 
     m_documentOverlayRootLayer = GraphicsLayer::create(m_mainFrame.page()->chrome().client().graphicsLayerFactory(), *this);
     m_viewOverlayRootLayer = GraphicsLayer::create(m_mainFrame.page()->chrome().client().graphicsLayerFactory(), *this);
-#ifndef NDEBUG
-    m_documentOverlayRootLayer->setName("Page Overlay container (document-relative)");
-    m_viewOverlayRootLayer->setName("Page Overlay container (view-relative)");
-#endif
+    m_documentOverlayRootLayer->setName("Document overlay Container");
+    m_viewOverlayRootLayer->setName("View overlay container");
 }
 
 GraphicsLayer* PageOverlayController::documentOverlayRootLayer() const
@@ -149,9 +147,7 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
     std::unique_ptr<GraphicsLayer> layer = GraphicsLayer::create(m_mainFrame.page()->chrome().client().graphicsLayerFactory(), *this);
     layer->setAnchorPoint(FloatPoint3D());
     layer->setBackgroundColor(overlay.backgroundColor());
-#ifndef NDEBUG
-    layer->setName("Page Overlay content");
-#endif
+    layer->setName("Overlay content");
 
     updateSettingsForLayer(*layer);
 

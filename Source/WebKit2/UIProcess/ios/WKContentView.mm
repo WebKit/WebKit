@@ -203,15 +203,14 @@ private:
     WebProcessPool::statistics().wkViewCount++;
 
     _rootContentView = adoptNS([[UIView alloc] init]);
+    [_rootContentView layer].name = @"RootContent";
     [_rootContentView layer].masksToBounds = NO;
     [_rootContentView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 
     _fixedClippingView = adoptNS([[UIView alloc] init]);
+    [_fixedClippingView layer].name = @"FixedClipping";
     [_fixedClippingView layer].masksToBounds = YES;
     [_fixedClippingView layer].anchorPoint = CGPointZero;
-#ifndef NDEBUG
-    [[_fixedClippingView layer] setName:@"Fixed clipping"];
-#endif
 
     [self addSubview:_fixedClippingView.get()];
     [_fixedClippingView addSubview:_rootContentView.get()];

@@ -187,6 +187,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
 
     RetainPtr<UIViewController> snapshotViewController = adoptNS([[UIViewController alloc] init]);
     m_snapshotView = adoptNS([[UIView alloc] initWithFrame:liveSwipeViewFrame]);
+    [m_snapshotView layer].name = @"SwipeSnapshot";
 
     RetainPtr<UIColor> backgroundColor = [UIColor whiteColor];
     if (ViewSnapshot* snapshot = targetItem->snapshot()) {
@@ -206,7 +207,10 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     [snapshotViewController setView:m_snapshotView.get()];
 
     m_transitionContainerView = adoptNS([[UIView alloc] initWithFrame:liveSwipeViewFrame]);
+    [m_transitionContainerView layer].name = @"SwipeTransitionContainer";
     m_liveSwipeViewClippingView = adoptNS([[UIView alloc] initWithFrame:liveSwipeViewFrame]);
+    [m_liveSwipeViewClippingView layer].name = @"LiveSwipeViewClipping";
+
     [m_liveSwipeViewClippingView setClipsToBounds:YES];
 
     [m_liveSwipeView.superview insertSubview:m_transitionContainerView.get() belowSubview:m_liveSwipeView];

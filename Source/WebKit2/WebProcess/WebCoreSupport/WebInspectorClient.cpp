@@ -151,6 +151,7 @@ void WebInspectorClient::showPaintRect(const FloatRect& rect)
 
     std::unique_ptr<GraphicsLayer> paintLayer = GraphicsLayer::create(m_page->drawingArea()->graphicsLayerFactory(), *m_paintIndicatorLayerClient);
     
+    paintLayer->setName("paint rect");
     paintLayer->setAnchorPoint(FloatPoint3D());
     paintLayer->setPosition(rect.location());
     paintLayer->setSize(rect.size());
