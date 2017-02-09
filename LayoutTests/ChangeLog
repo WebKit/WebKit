@@ -1,3 +1,9 @@
+2017-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Add expectations for more tests that require drag and drop.
+
+        * platform/gtk/TestExpectations:
+
 2017-02-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline emoji tests for ios-simulator.
