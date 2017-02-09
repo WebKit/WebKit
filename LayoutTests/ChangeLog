@@ -1,3 +1,14 @@
+2017-02-08  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION (r193286): Promise chain no longer prevent UI refresh
+        <rdar://problem/28062149>
+        https://bugs.webkit.org/show_bug.cgi?id=161291
+
+        Reviewed by Geoffrey Garen.
+
+        * js/dom/Promise.html:
+        Add a new subtest that ensures the ordering of multiple thenables and a setTimeout.
+
 2017-02-08  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Remove legacy Navigator.webkitGetUserMedia

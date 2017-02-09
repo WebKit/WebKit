@@ -484,6 +484,18 @@ function promiseResolveNestedPromise() {
   });
 }
 
+function promiseSetTimeoutOrdering() {
+    var orderNumber = 0;
+    orderNumber++;
+
+    Promise.resolve(null)
+        .then(function(v) { is(orderNumber++, 1, "Called first."); setTimeout(function() { is(orderNumber++, 6, "Called last."); runTest(); }, 0); return v; })
+        .then(function(v) { is(orderNumber++, 2, "Called second."); return v })
+        .then(function(v) { is(orderNumber++, 3, "Called third."); return v })
+        .then(function(v) { is(orderNumber++, 4, "Called fourth."); return v })
+        .then(function(v) { is(orderNumber++, 5, "Called fifth."); return v; })
+}
+
 var tests = [
   promiseResolve, 
   promiseReject,
@@ -512,6 +524,7 @@ var tests = [
   promiseThenNullResolveFunction,
   promiseCatchNoArg,
   promiseRejectNoHandler,
+  promiseSetTimeoutOrdering,
 ];
 
 function runTest() {

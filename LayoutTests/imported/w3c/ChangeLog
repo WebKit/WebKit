@@ -1,3 +1,16 @@
+2017-02-08  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION (r193286): Promise chain no longer prevent UI refresh
+        <rdar://problem/28062149>
+        https://bugs.webkit.org/show_bug.cgi?id=161291
+
+        Reviewed by Geoffrey Garen.
+
+        * web-platform-tests/custom-elements/adopted-callback-expected.txt:
+        * web-platform-tests/custom-elements/upgrading-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/event-loops/microtask_after_script-expected.txt:
+        Update results for improved promise support.
+
 2017-02-08  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection constructor can take null as input
