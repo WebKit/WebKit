@@ -24,16 +24,10 @@
  */
 
 
-#import <WebKitLegacy/DOMObject.h>
+#import <WebKitLegacy/DOMTokenList.h>
 
-@class NSString;
+namespace WebCore {
+class DOMTokenList;
+}
 
-WEBKIT_CLASS_AVAILABLE_MAC(9876_5)
-@interface DOMDOMTokenList : DOMObject
-@property (readonly) unsigned length;
-@property (copy) NSString *value;
-
-- (NSString *)item:(unsigned)index;
-- (BOOL)contains:(NSString *)token;
-- (BOOL)toggle:(NSString *)token force:(BOOL)force;
-@end
+DOMTokenList *kit(WebCore::DOMTokenList*);

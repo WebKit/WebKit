@@ -1,3 +1,15 @@
+2017-02-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Don't migrate WebKit DOM headers in MigrateHeaders.make
+        https://bugs.webkit.org/show_bug.cgi?id=167608
+
+        Reviewed by Darin Adler.
+
+        Stop migrating DOM headers that are now in WebKit.
+
+        * WebKit.xcodeproj/project.pbxproj: Marked DOM headers as private, so that Xcode
+        takes care of making them available as SPI.
+
 2017-02-02  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         In iOS, we should take background assertion when accessing localstorage databases.

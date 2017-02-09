@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "DOMDOMImplementationInternal.h"
+#import "DOMImplementationInternal.h"
 
 #import "DOMCSSStyleSheetInternal.h"
 #import "DOMDocumentInternal.h"

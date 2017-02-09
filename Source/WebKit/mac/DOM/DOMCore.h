@@ -35,7 +35,7 @@
 #import <WebKitLegacy/DOMEntity.h>
 #import <WebKitLegacy/DOMEntityReference.h>
 #import <WebKitLegacy/DOMException.h>
-#import <WebKitLegacy/DOMDOMImplementation.h>
+#import <WebKitLegacy/DOMImplementation.h>
 #import <WebKitLegacy/DOMNamedNodeMap.h>
 #import <WebKitLegacy/DOMNode.h>
 #import <WebKitLegacy/DOMNodeList.h>

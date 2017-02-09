@@ -23,10 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKitLegacy/DOMDOMImplementation.h>
 
-namespace WebCore {
-class DOMImplementation;
-}
+#import <WebKitLegacy/DOMObject.h>
 
-DOMImplementation *kit(WebCore::DOMImplementation*);
+@class NSString;
+
+WEBKIT_CLASS_AVAILABLE_MAC(9876_5)
+@interface DOMTokenList : DOMObject
+@property (readonly) unsigned length;
+@property (copy) NSString *value;
+
+- (NSString *)item:(unsigned)index;
+- (BOOL)contains:(NSString *)token;
+- (BOOL)toggle:(NSString *)token force:(BOOL)force;
+@end

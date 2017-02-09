@@ -25,9 +25,9 @@
 
 #import "DOMHTMLAnchorElement.h"
 
-#import "DOMDOMTokenListInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMPrivate.h"
+#import "DOMTokenListInternal.h"
 #import <WebCore/DOMTokenList.h>
 #import "ExceptionHandlers.h"
 #import <WebCore/HTMLAnchorElement.h>
@@ -200,7 +200,7 @@
     return [self _getURLAttribute:@"href"];
 }
 
-- (DOMDOMTokenList *)relList
+- (DOMTokenList *)relList
 {
     WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->relList()));

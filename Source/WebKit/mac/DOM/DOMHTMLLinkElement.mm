@@ -25,10 +25,10 @@
 
 #import "DOMHTMLLinkElementInternal.h"
 
-#import "DOMDOMTokenListInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMPrivate.h"
 #import "DOMStyleSheetInternal.h"
+#import "DOMTokenListInternal.h"
 #import <WebCore/DOMTokenList.h>
 #import "ExceptionHandlers.h"
 #import <WebCore/HTMLLinkElement.h>
@@ -188,7 +188,7 @@
     return [self _getURLAttribute:@"href"];
 }
 
-- (DOMDOMTokenList *)relList
+- (DOMTokenList *)relList
 {
     WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->relList()));

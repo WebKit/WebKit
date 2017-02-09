@@ -31,145 +31,6 @@ PRIVATE_HEADERS_DIR = $(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)
 
 .PHONY : all
 all : \
-    $(PRIVATE_HEADERS_DIR)/DOM.h \
-    $(PRIVATE_HEADERS_DIR)/DOMAbstractView.h \
-    $(PRIVATE_HEADERS_DIR)/DOMAttr.h \
-    $(PRIVATE_HEADERS_DIR)/DOMBlob.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCDATASection.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSS.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSCharsetRule.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSFontFaceRule.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSImportRule.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSMediaRule.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSPageRule.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSPrimitiveValue.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSRule.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSRuleList.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSStyleDeclaration.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSStyleRule.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSStyleSheet.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSUnknownRule.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSValue.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCSSValueList.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCharacterData.h \
-    $(PRIVATE_HEADERS_DIR)/DOMComment.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCore.h \
-    $(PRIVATE_HEADERS_DIR)/DOMCounter.h \
-    $(PRIVATE_HEADERS_DIR)/DOMDocument.h \
-    $(PRIVATE_HEADERS_DIR)/DOMDocumentFragment.h \
-    $(PRIVATE_HEADERS_DIR)/DOMDocumentFragmentPrivate.h \
-    $(PRIVATE_HEADERS_DIR)/DOMDocumentPrivate.h \
-    $(PRIVATE_HEADERS_DIR)/DOMDocumentType.h \
-    $(PRIVATE_HEADERS_DIR)/DOMElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMEntity.h \
-    $(PRIVATE_HEADERS_DIR)/DOMEntityReference.h \
-    $(PRIVATE_HEADERS_DIR)/DOMEvent.h \
-    $(PRIVATE_HEADERS_DIR)/DOMEventException.h \
-    $(PRIVATE_HEADERS_DIR)/DOMEventListener.h \
-    $(PRIVATE_HEADERS_DIR)/DOMEventTarget.h \
-    $(PRIVATE_HEADERS_DIR)/DOMEvents.h \
-    $(PRIVATE_HEADERS_DIR)/DOMException.h \
-    $(PRIVATE_HEADERS_DIR)/DOMExtensions.h \
-    $(PRIVATE_HEADERS_DIR)/DOMFile.h \
-    $(PRIVATE_HEADERS_DIR)/DOMFileList.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTML.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLAnchorElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLAppletElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLAreaElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLBRElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLBaseElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLBaseFontElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLBodyElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLButtonElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLCollection.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLDListElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLDirectoryElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLDivElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLDocument.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLEmbedElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLFieldSetElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLFontElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLFormElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLFrameElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLFrameSetElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLHRElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLHeadElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLHeadingElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLHtmlElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLIFrameElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLImageElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLInputElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLInputElementPrivate.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLLIElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLLabelElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLLegendElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLLinkElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLMapElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLMarqueeElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLMediaElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLMenuElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLMetaElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLModElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLOListElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLObjectElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLOptGroupElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLOptionElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLOptionsCollection.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLParagraphElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLParamElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLPreElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLQuoteElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLScriptElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLSelectElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLStyleElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLTableCaptionElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLTableCellElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLTableColElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLTableElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLTableRowElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLTableSectionElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLTextAreaElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLTitleElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLUListElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLVideoElement.h \
-    $(PRIVATE_HEADERS_DIR)/DOMImplementation.h \
-    $(PRIVATE_HEADERS_DIR)/DOMKeyboardEvent.h \
-    $(PRIVATE_HEADERS_DIR)/DOMMediaError.h \
-    $(PRIVATE_HEADERS_DIR)/DOMMediaList.h \
-    $(PRIVATE_HEADERS_DIR)/DOMMouseEvent.h \
-    $(PRIVATE_HEADERS_DIR)/DOMMutationEvent.h \
-    $(PRIVATE_HEADERS_DIR)/DOMNamedNodeMap.h \
-    $(PRIVATE_HEADERS_DIR)/DOMNode.h \
-    $(PRIVATE_HEADERS_DIR)/DOMNodePrivate.h \
-    $(PRIVATE_HEADERS_DIR)/DOMNodeFilter.h \
-    $(PRIVATE_HEADERS_DIR)/DOMNodeIterator.h \
-    $(PRIVATE_HEADERS_DIR)/DOMNodeList.h \
-    $(PRIVATE_HEADERS_DIR)/DOMObject.h \
-    $(PRIVATE_HEADERS_DIR)/DOMOverflowEvent.h \
-    $(PRIVATE_HEADERS_DIR)/DOMPrivate.h \
-    $(PRIVATE_HEADERS_DIR)/DOMProcessingInstruction.h \
-    $(PRIVATE_HEADERS_DIR)/DOMProgressEvent.h \
-    $(PRIVATE_HEADERS_DIR)/DOMRGBColor.h \
-    $(PRIVATE_HEADERS_DIR)/DOMRange.h \
-    $(PRIVATE_HEADERS_DIR)/DOMRangeException.h \
-    $(PRIVATE_HEADERS_DIR)/DOMRanges.h \
-    $(PRIVATE_HEADERS_DIR)/DOMRect.h \
-    $(PRIVATE_HEADERS_DIR)/DOMStyleSheet.h \
-    $(PRIVATE_HEADERS_DIR)/DOMStyleSheetList.h \
-    $(PRIVATE_HEADERS_DIR)/DOMStylesheets.h \
-    $(PRIVATE_HEADERS_DIR)/DOMText.h \
-    $(PRIVATE_HEADERS_DIR)/DOMTimeRanges.h \
-    $(PRIVATE_HEADERS_DIR)/DOMTraversal.h \
-    $(PRIVATE_HEADERS_DIR)/DOMTreeWalker.h \
-    $(PRIVATE_HEADERS_DIR)/DOMUIEvent.h \
-    $(PRIVATE_HEADERS_DIR)/DOMViews.h \
-    $(PRIVATE_HEADERS_DIR)/DOMWheelEvent.h \
-    $(PRIVATE_HEADERS_DIR)/DOMXPath.h \
-    $(PRIVATE_HEADERS_DIR)/DOMXPathException.h \
-    $(PRIVATE_HEADERS_DIR)/DOMXPathExpression.h \
-    $(PRIVATE_HEADERS_DIR)/DOMXPathNSResolver.h \
-    $(PRIVATE_HEADERS_DIR)/DOMXPathResult.h \
     $(PRIVATE_HEADERS_DIR)/WebKitAvailability.h \
     $(PRIVATE_HEADERS_DIR)/WebScriptObject.h \
 #
@@ -181,13 +42,10 @@ all : \
     $(PRIVATE_HEADERS_DIR)/npruntime.h \
     $(PRIVATE_HEADERS_DIR)/nptypes.h \
 #
-
 endif
 
 ifneq ($(PLATFORM_NAME), macosx)
 all : \
-    $(PRIVATE_HEADERS_DIR)/DOMHTMLTextAreaElementPrivate.h \
-    $(PRIVATE_HEADERS_DIR)/DOMUIKitExtensions.h \
     $(PRIVATE_HEADERS_DIR)/KeyEventCodesIOS.h \
     $(PRIVATE_HEADERS_DIR)/ScrollTypes.h \
     $(PRIVATE_HEADERS_DIR)/SystemMemory.h \
@@ -204,7 +62,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/WebCoreThreadRun.h \
     $(PRIVATE_HEADERS_DIR)/WebEvent.h \
 #
-
 endif
 
 ifeq ($(findstring ENABLE_IOS_TOUCH_EVENTS, $(FEATURE_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
@@ -212,11 +69,8 @@ all : \
     $(PRIVATE_HEADERS_DIR)/WebEventRegion.h
 endif
 
-WEBCORE_HEADER_REPLACE_RULES = -e 's/<WebCore\//<WebKitLegacy\//' -e s/DOMDOMImplementation/DOMImplementation/ -e "s/(^ *)WEBCORE_EXPORT /\1/"
+WEBCORE_HEADER_REPLACE_RULES = -e 's/<WebCore\//<WebKitLegacy\//' -e "s/(^ *)WEBCORE_EXPORT /\1/"
 WEBCORE_HEADER_MIGRATE_CMD = sed -E $(WEBCORE_HEADER_REPLACE_RULES) $< > $@
-
-$(PRIVATE_HEADERS_DIR)/DOM% : DOMDOM% MigrateHeaders.make
-	$(WEBCORE_HEADER_MIGRATE_CMD)
 
 $(PRIVATE_HEADERS_DIR)/% : % MigrateHeaders.make
 	$(WEBCORE_HEADER_MIGRATE_CMD)

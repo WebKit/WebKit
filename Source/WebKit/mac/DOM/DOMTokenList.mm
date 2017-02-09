@@ -24,7 +24,7 @@
  */
 
 
-#import "DOMDOMTokenListInternal.h"
+#import "DOMTokenListInternal.h"
 
 #import "DOMInternal.h"
 #import "DOMNodeInternal.h"
@@ -39,11 +39,11 @@
 
 #define IMPL reinterpret_cast<WebCore::DOMTokenList*>(_internal)
 
-@implementation DOMDOMTokenList
+@implementation DOMTokenList
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainThread([DOMDOMTokenList class], self))
+    if (WebCoreObjCScheduleDeallocateOnMainThread([DOMTokenList class], self))
         return;
 
     if (_internal)
@@ -90,14 +90,14 @@
 @end
 
 
-DOMDOMTokenList *kit(WebCore::DOMTokenList* value)
+DOMTokenList *kit(WebCore::DOMTokenList* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
-    if (DOMDOMTokenList *wrapper = getDOMWrapper(value))
+    if (DOMTokenList *wrapper = getDOMWrapper(value))
         return [[wrapper retain] autorelease];
-    DOMDOMTokenList *wrapper = [[DOMDOMTokenList alloc] _init];
+    DOMTokenList *wrapper = [[DOMTokenList alloc] _init];
     wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(value);
     value->ref();
     addDOMWrapper(wrapper, value);
