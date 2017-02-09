@@ -1,0 +1,12 @@
+Testing that we show a gray background for iOS audio elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.querySelector('.controls-bar') instanceof HTMLDivElement became true
+PASS getComputedStyle(mediaControls.querySelector('.controls-bar'), ':before').webkitAppearance is "none"
+PASS getComputedStyle(mediaControls.querySelector('.controls-bar'), ':before').backgroundColor is "rgb(212, 212, 212)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

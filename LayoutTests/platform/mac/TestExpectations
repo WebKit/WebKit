@@ -1461,12 +1461,13 @@ webkit.org/b/165530 compositing/layer-creation/fixed-position-out-of-view-scaled
 [ ElCapitan ] media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Skip ]
 [ ElCapitan ] media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 
-# iPad-specific tests
+# iOS or iPad-specific tests
 media/modern-media-controls/fullscreen-support/ipad/fullscreen-support-tap.html [ Skip ]
 media/modern-media-controls/pip-support/ipad/pip-support-enabled.html [ Skip ]
 media/modern-media-controls/pip-support/ipad/pip-support-tap.html [ Skip ]
 media/modern-media-controls/placard-support/ipad/placard-support-pip.html [ Skip ]
 media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ Skip ]
+media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-audio-background.html [ Skip ]
 
 # This one always times out on the bots, cannot reproduce locally.
 webkit.org/b/165234 media/modern-media-controls/audio/audio-controls-buttons.html [ Skip ]
