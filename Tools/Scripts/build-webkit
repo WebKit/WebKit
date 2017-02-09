@@ -179,8 +179,8 @@ if (isAppleMacWebKit()) {
         push @options, $option unless $option eq "";
     }
 
-    # ANGLE must come before WebCore
-    splice @projects, 0, 0, "Source/ThirdParty/ANGLE";
+    # ANGLE and libwebrtc must come before WebCore
+    splice @projects, 0, 0, ("Source/ThirdParty/ANGLE", "Source/ThirdParty/libwebrtc");
 
     push @projects, ("Source/WebKit2");
 

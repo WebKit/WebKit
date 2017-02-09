@@ -1,3 +1,13 @@
+2017-02-09  Alex Christensen  <achristensen@webkit.org>
+
+        Build libwebrtc on bots without using it yet
+        ​https://bugs.webkit.org/show_bug.cgi?id=168062
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/build-webkit:
+        Build libwebrtc on Mac when we build ANGLE.
+
 2017-02-09  Youenn Fablet  <youenn@apple.com>
 
         Improve W3C importer command line options
