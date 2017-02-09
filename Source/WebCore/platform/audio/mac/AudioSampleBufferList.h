@@ -51,7 +51,7 @@ public:
     void applyGain(float);
 
     OSStatus copyFrom(const AudioSampleBufferList&, size_t count = SIZE_MAX);
-    OSStatus copyFrom(AudioBufferList&, AudioConverterRef);
+    OSStatus copyFrom(const AudioBufferList&, AudioConverterRef);
     OSStatus copyFrom(AudioSampleBufferList&, AudioConverterRef);
     OSStatus copyFrom(CARingBuffer&, size_t frameCount, uint64_t startFrame, CARingBuffer::FetchMode);
 
@@ -83,8 +83,7 @@ protected:
 
     std::unique_ptr<CAAudioStreamDescription> m_internalFormat;
 
-    AudioSampleBufferList* m_converterInputBuffer2 { nullptr };
-    AudioBufferList* m_converterInputBuffer { nullptr };
+    const AudioBufferList* m_converterInputBuffer { nullptr };
     uint32_t m_converterInputBytesPerPacket { 0 };
 
     uint64_t m_timestamp { 0 };

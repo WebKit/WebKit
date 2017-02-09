@@ -52,7 +52,7 @@ public:
     OSStatus setInputFormat(const CAAudioStreamDescription&);
     OSStatus setOutputFormat(const CAAudioStreamDescription&);
 
-    void pushSamples(const MediaTime&, PlatformAudioData&, size_t);
+    void pushSamples(const MediaTime&, const PlatformAudioData&, size_t);
     void pushSamples(const AudioStreamBasicDescription&, CMSampleBufferRef);
 
     enum PullMode { Copy, Mix };
@@ -73,7 +73,7 @@ protected:
     OSStatus setupConverter();
     bool pullSamplesInternal(AudioBufferList&, size_t&, uint64_t, double, PullMode);
 
-    void pushSamplesInternal(AudioBufferList&, const MediaTime&, size_t frameCount);
+    void pushSamplesInternal(const AudioBufferList&, const MediaTime&, size_t frameCount);
 
     std::unique_ptr<CAAudioStreamDescription> m_inputDescription;
     std::unique_ptr<CAAudioStreamDescription> m_outputDescription;

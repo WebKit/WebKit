@@ -32,6 +32,7 @@
 #include "VectorMath.h"
 #include <Accelerate/Accelerate.h>
 #include <AudioToolbox/AudioConverter.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -244,7 +245,7 @@ OSStatus AudioSampleBufferList::audioConverterCallback(AudioConverterRef, UInt32
     return static_cast<AudioSampleBufferList*>(inRefCon)->convertInput(ioNumberDataPackets, ioData);
 }
 
-OSStatus AudioSampleBufferList::copyFrom(AudioBufferList& source, AudioConverterRef converter)
+OSStatus AudioSampleBufferList::copyFrom(const AudioBufferList& source, AudioConverterRef converter)
 {
     reset();
 
@@ -252,7 +253,7 @@ OSStatus AudioSampleBufferList::copyFrom(AudioBufferList& source, AudioConverter
     UInt32 propertyDataSize = sizeof(inputFormat);
     AudioConverterGetProperty(converter, kAudioConverterCurrentInputStreamDescription, &propertyDataSize, &inputFormat);
     m_converterInputBytesPerPacket = inputFormat.mBytesPerPacket;
-    m_converterInputBuffer = &source;
+    SetForScope<const AudioBufferList*> scopedInputBuffer(m_converterInputBuffer, &source);
 
 #if !LOG_DISABLED
     AudioStreamBasicDescription outputFormat;

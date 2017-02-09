@@ -78,7 +78,7 @@ public:
         virtual void videoSampleAvailable(MediaSample&) { }
 
         // May be called on a background thread.
-        virtual void audioSamplesAvailable(const MediaTime&, PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) { }
+        virtual void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) { }
     };
 
     virtual ~RealtimeMediaSource() { }
@@ -110,7 +110,7 @@ public:
     virtual void settingsDidChange();
 
     void videoSampleAvailable(MediaSample&);
-    void audioSamplesAvailable(const MediaTime&, PlatformAudioData&, const AudioStreamDescription&, size_t);
+    void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
     
     bool stopped() const { return m_stopped; }
 

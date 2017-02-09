@@ -178,7 +178,7 @@ OSStatus AudioTrackPrivateMediaStreamCocoa::setupAudioUnit()
     return err;
 }
 
-void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& sampleTime, PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
+void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& sampleTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
 {
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
 

@@ -66,7 +66,7 @@ private:
     void sourceMutedChanged()  final { }
     void sourceSettingsChanged() final { }
     bool preventSourceFromStopping() final { return false; }
-    void audioSamplesAvailable(const MediaTime&, PlatformAudioData&, const AudioStreamDescription&, size_t) final;
+    void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 
     static OSStatus inputProc(void*, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 inBusNumber, UInt32 numberOfFrames, AudioBufferList*);
     OSStatus render(UInt32 sampleCount, AudioBufferList&, UInt32 inBusNumber, const AudioTimeStamp&, AudioUnitRenderActionFlags&);

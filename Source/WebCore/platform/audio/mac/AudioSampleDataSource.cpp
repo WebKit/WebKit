@@ -141,11 +141,11 @@ MediaTime AudioSampleDataSource::hostTime() const
     return MediaTime::createWithDouble(mach_absolute_time() * frequency);
 }
 
-void AudioSampleDataSource::pushSamplesInternal(AudioBufferList& bufferList, const MediaTime& presentationTime, size_t sampleCount)
+void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferList, const MediaTime& presentationTime, size_t sampleCount)
 {
     ASSERT(m_lock.isHeld());
 
-    AudioBufferList* sampleBufferList;
+    const AudioBufferList* sampleBufferList;
     if (m_converter) {
         m_scratchBuffer->reset();
         OSStatus err = m_scratchBuffer->copyFrom(bufferList, m_converter);
@@ -197,7 +197,7 @@ void AudioSampleDataSource::pushSamples(const AudioStreamBasicDescription& sampl
     pushSamplesInternal(list, toMediaTime(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)), CMSampleBufferGetNumSamples(sampleBuffer));
 }
 
-void AudioSampleDataSource::pushSamples(const MediaTime& sampleTime, PlatformAudioData& audioData, size_t sampleCount)
+void AudioSampleDataSource::pushSamples(const MediaTime& sampleTime, const PlatformAudioData& audioData, size_t sampleCount)
 {
     std::unique_lock<Lock> lock(m_lock, std::try_to_lock);
     ASSERT(is<WebAudioBufferList>(audioData));

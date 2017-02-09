@@ -1,5 +1,36 @@
 2017-02-09  Jer Noble  <jer.noble@apple.com>
 
+        Make passing PlatformAudioData in audioSamplesAvaliable const-correct.
+        https://bugs.webkit.org/show_bug.cgi?id=168051
+
+        Reviewed by Eric Carlson.
+
+        Modify all the functions which take a (conceptually) read-only audio buffer const-correct.
+
+        Drive-by fix: AudioSampleBufferList::copyFrom() set a ivar pointer to the passed in
+        AudioBufferList. Ensure that the ivar is reset when copyFrom() returns by using a
+        SetForScope.
+
+        * platform/audio/mac/AudioSampleBufferList.cpp:
+        (WebCore::AudioSampleBufferList::copyFrom):
+        * platform/audio/mac/AudioSampleBufferList.h:
+        * platform/audio/mac/AudioSampleDataSource.cpp:
+        (WebCore::AudioSampleDataSource::pushSamplesInternal):
+        (WebCore::AudioSampleDataSource::pushSamples):
+        * platform/audio/mac/AudioSampleDataSource.h:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::audioSamplesAvailable):
+        * platform/mediastream/RealtimeMediaSource.h:
+        (WebCore::RealtimeMediaSource::Observer::audioSamplesAvailable):
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable):
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.h:
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::audioSamplesAvailable):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.h:
+
+2017-02-09  Jer Noble  <jer.noble@apple.com>
+
         Fix some logging statements in MediaPlayerPrivateMediaStreamAVFObjC
         https://bugs.webkit.org/show_bug.cgi?id=168063
 
