@@ -72,11 +72,13 @@ class TestImporterTest(unittest.TestCase):
         return options
 
     def test_import_dir_with_no_tests_and_no_hg(self):
+        FAKE_FILES.update(FAKE_REPOSITORY)
+
         host = MockHost()
         host.executive = MockExecutive2(exception=OSError())
         host.filesystem = MockFileSystem(files=FAKE_FILES)
 
-        importer = TestImporter(host, FAKE_SOURCE_DIR, self._parse_options(['-n', '-d', 'w3c', '-t', FAKE_TEST_PATH]))
+        importer = TestImporter(host, FAKE_TEST_PATH, self._parse_options(['-n', '-d', 'w3c', '-s', FAKE_SOURCE_DIR]))
 
         oc = OutputCapture()
         oc.capture_output()
@@ -86,11 +88,13 @@ class TestImporterTest(unittest.TestCase):
             oc.restore_output()
 
     def test_import_dir_with_no_tests(self):
+        FAKE_FILES.update(FAKE_REPOSITORY)
+
         host = MockHost()
         host.executive = MockExecutive2(exception=ScriptError("abort: no repository found in '/Volumes/Source/src/wk/Tools/Scripts/webkitpy/w3c' (.hg not found)!"))
         host.filesystem = MockFileSystem(files=FAKE_FILES)
 
-        importer = TestImporter(host, FAKE_SOURCE_DIR, self._parse_options(['-n', '-d', 'w3c', '-t', FAKE_TEST_PATH]))
+        importer = TestImporter(host, FAKE_TEST_PATH, self._parse_options(['-n', '-d', 'w3c', '-s', FAKE_SOURCE_DIR]))
         oc = OutputCapture()
         oc.capture_output()
         try:
@@ -103,11 +107,12 @@ class TestImporterTest(unittest.TestCase):
             '/tests/csswg/test1/__init__.py': '',
             '/tests/csswg/test2/__init__.py': 'NOTEMPTY',
         }
+        FAKE_FILES.update(FAKE_REPOSITORY)
 
         host = MockHost()
         host.filesystem = MockFileSystem(files=FAKE_FILES)
 
-        importer = TestImporter(host, FAKE_SOURCE_DIR, self._parse_options(['-n', '-d', 'w3c', '-t', '/tests/csswg']))
+        importer = TestImporter(host, ['test1', 'test2'], self._parse_options(['-n', '-d', 'w3c', '-s', FAKE_SOURCE_DIR]))
         importer.do_import()
 
         self.assertTrue(host.filesystem.exists("/mock-checkout/LayoutTests/w3c/test1/__init__.py"))

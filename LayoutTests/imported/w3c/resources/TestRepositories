@@ -1,7 +1,7 @@
 [
     {
         "name": "csswg-test",
-        "url": "https://github.com/w3c/csswg-test.git", 
+        "url": "https://github.com/w3c/csswg-test.git",
         "revision": "b2daa426addd5ccb8e9ce1c5d800f9d82603f1ec",
         "paths_to_skip": [
             "support",
@@ -30,6 +30,6 @@
             "config.default.json",
             "serve.py"
         ],
-        "import_options": ["generate_git_submodules_description", "generate_gitignore", "generate_init_py"]
+        "import_options": ["generate_init_py"]
     }
 ]

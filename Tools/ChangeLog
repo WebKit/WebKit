@@ -1,3 +1,25 @@
+2017-02-09  Youenn Fablet  <youenn@apple.com>
+
+        Improve W3C importer command line options
+        https://bugs.webkit.org/show_bug.cgi?id=167448
+
+        Reviewed by Ryosuke Niwa.
+
+        Making the list of test paths to import the main arguments of the script.
+        Allow passing the source directory to import as a -s option.
+        Adding a warning when given test paths are skipped by default in ImportExpectations.
+
+        Making link conversion off by default when importing from a specific directory since this script is mostly used with web-platform-tests.
+        Link conversion rules do not change when imported tests are downloaded by the script.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (main):
+        (parse_args):
+        (TestImporter.__init__):
+        (TestImporter.do_import):
+        (TestImporter):
+        (TestImporter.check_imported_expectations):
+
 2017-02-08  Chris Dumez  <cdumez@apple.com>
 
         Update web-platform-tests resources

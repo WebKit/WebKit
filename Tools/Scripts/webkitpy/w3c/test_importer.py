@@ -77,7 +77,6 @@ import argparse
 import json
 import logging
 import mimetypes
-import sys
 
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
@@ -92,15 +91,11 @@ _log = logging.getLogger(__name__)
 
 
 def main(_argv, _stdout, _stderr):
-    options, args = parse_args(_argv)
-    import_dir = args[0] if args else None
-    filesystem = FileSystem()
-    if import_dir and not filesystem.exists(import_dir):
-        sys.exit('Source directory %s not found!' % import_dir)
+    options, test_paths = parse_args(_argv)
 
     configure_logging()
 
-    test_importer = TestImporter(Host(), import_dir, options)
+    test_importer = TestImporter(Host(), test_paths, options)
     test_importer.do_import()
 
 
@@ -121,7 +116,11 @@ def configure_logging():
 
 
 def parse_args(args):
-    parser = argparse.ArgumentParser(prog='import-w3c-tests [w3c_test_source_directory]')
+    description = """
+To import a web-platform-tests test suite named xyz, use: 'import-w3c-tests web-platform-tests/xyz'.
+To import a csswg-test test suite named abc, use 'import-w3c-tests csswg-test/abc'.
+To import a web-platform-tests/csswg-test test suite from a specific folder, use 'import-w3c-tests web-platform-tests/xyz -s my-folder-containing-web-platform-tests-folder'"""
+    parser = argparse.ArgumentParser(prog='import-w3c-tests [web-platform-tests/test-suite-name...]', description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-n', '--no-overwrite', dest='overwrite', action='store_false', default=True,
         help='Flag to prevent duplicate test files from overwriting existing tests. By default, they will be overwritten')
@@ -134,9 +133,8 @@ def parse_args(args):
     parser.add_argument('-d', '--dest-dir', dest='destination', default=fs.join('imported', 'w3c'),
         help='Import into a specified directory relative to the LayoutTests root. By default, imports into imported/w3c')
 
-    list_of_repositories = ' or '.join([test_repository['name'] for test_repository in TestDownloader.load_test_repositories()])
-    parser.add_argument('-t', '--test-path', action='append', dest='test_paths', default=[],
-         help='Import only tests in the supplied subdirectory of the source directory. Can be supplied multiple times to give multiple paths. For tests directly cloned from W3C repositories, use ' + list_of_repositories + ' prefixes to filter specific tests')
+    parser.add_argument('-s', '--src-dir', dest='source', default=None,
+        help='Import from a specific folder which contains web-platform-tests and/or csswg-test folders. If not provided, the script will clone the necessary repositories.')
 
     parser.add_argument('-v', '--verbose', action='store_true', default=False,
          help='Print maximal log')
@@ -149,17 +147,16 @@ def parse_args(args):
          help='Clean destination directory. All files in the destination directory will be deleted except for WebKit specific files (test expectations, .gitignore...) before new tests import. Dangling test expectations (expectation file that is no longer related to a test) are removed after tests import.')
 
     options, args = parser.parse_known_args(args)
-    if len(args) > 1:
-        parser.error('Incorrect number of arguments')
     return options, args
 
 
 class TestImporter(object):
 
-    def __init__(self, host, source_directory, options):
+    def __init__(self, host, test_paths, options):
         self.host = host
-        self.source_directory = source_directory
+        self.source_directory = options.source
         self.options = options
+        self.test_paths = test_paths if test_paths else []
 
         self.filesystem = self.host.filesystem
 
@@ -177,7 +174,7 @@ class TestImporter(object):
         self._potential_test_resource_files = []
 
         self.import_list = []
-        self._importing_downloaded_tests = source_directory is None
+        self._importing_downloaded_tests = self.source_directory is None
 
         self._test_resource_files_json_path = self.filesystem.join(self.layout_tests_w3c_path, "resources", "resource-files.json")
         self._test_resource_files = json.loads(self.filesystem.read_text_file(self._test_resource_files_json_path)) if self.filesystem.exists(self._test_resource_files_json_path) else None
@@ -197,9 +194,9 @@ class TestImporter(object):
             self.source_directory = self.filesystem.join(self.tests_download_path, 'to-be-imported')
             self.filesystem.maybe_make_directory(self.tests_download_path)
             self.filesystem.maybe_make_directory(self.source_directory)
-            self.test_downloader().download_tests(self.source_directory, self.options.test_paths)
+            self.test_downloader().download_tests(self.source_directory, self.test_paths)
 
-        test_paths = self.options.test_paths if self.options.test_paths else [test_repository['name'] for test_repository in self.test_downloader().test_repositories]
+        test_paths = self.test_paths if self.test_paths else [test_repository['name'] for test_repository in self.test_downloader().test_repositories]
         for test_path in test_paths:
             self.find_importable_tests(self.filesystem.join(self.source_directory, test_path))
 
@@ -215,6 +212,12 @@ class TestImporter(object):
 
         if self._importing_downloaded_tests:
             self.generate_git_submodules_description_for_all_repositories()
+
+        self.check_imported_expectations()
+
+    def check_imported_expectations(self):
+        for path in [path for path in self.test_paths if path in self.test_downloader().paths_to_skip]:
+            _log.warn('Please update LayoutTests/imported/w3c/resources/ImportExpectations to automate importing of ' + path)
 
     def generate_git_submodules_description_for_all_repositories(self):
         for test_repository in self._test_downloader.test_repositories:
