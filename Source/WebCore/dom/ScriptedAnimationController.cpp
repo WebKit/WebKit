@@ -67,7 +67,7 @@ ScriptedAnimationController::~ScriptedAnimationController()
 
 bool ScriptedAnimationController::requestAnimationFrameEnabled() const
 {
-    return m_document && (!m_document->settings() || m_document->settings()->requestAnimationFrameEnabled());
+    return m_document && m_document->settings().requestAnimationFrameEnabled();
 }
 
 void ScriptedAnimationController::suspend()

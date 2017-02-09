@@ -181,14 +181,10 @@ bool HTMLAppletElement::canEmbedJava() const
     if (document().isSandboxed(SandboxPlugins))
         return false;
 
-    Settings* settings = document().settings();
-    if (!settings)
+    if (!document().settings().isJavaEnabled())
         return false;
 
-    if (!settings->isJavaEnabled())
-        return false;
-
-    if (document().securityOrigin().isLocal() && !settings->isJavaEnabledForLocalFiles())
+    if (document().securityOrigin().isLocal() && !document().settings().isJavaEnabledForLocalFiles())
         return false;
 
     return true;

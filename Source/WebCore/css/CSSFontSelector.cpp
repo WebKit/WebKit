@@ -369,10 +369,7 @@ size_t CSSFontSelector::fallbackFontCount()
     if (!m_document)
         return 0;
 
-    if (Settings* settings = m_document->settings())
-        return settings->fontFallbackPrefersPictographs() ? 1 : 0;
-
-    return 0;
+    return m_document->settings().fontFallbackPrefersPictographs() ? 1 : 0;
 }
 
 RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescription, size_t index)
@@ -382,11 +379,10 @@ RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescript
     if (!m_document)
         return nullptr;
 
-    Settings* settings = m_document->settings();
-    if (!settings || !settings->fontFallbackPrefersPictographs())
+    if (!m_document->settings().fontFallbackPrefersPictographs())
         return nullptr;
 
-    return FontCache::singleton().fontForFamily(fontDescription, settings->pictographFontFamily());
+    return FontCache::singleton().fontForFamily(fontDescription, m_document->settings().pictographFontFamily());
 }
 
 }

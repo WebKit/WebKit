@@ -878,8 +878,7 @@ inline void StyleBuilderCustom::applyValueFontFamily(StyleResolver& styleResolve
         } else {
             switch (contentValue.valueID()) {
             case CSSValueWebkitBody:
-                if (Settings* settings = styleResolver.document().settings())
-                    family = settings->standardFontFamily();
+                family = styleResolver.settings().standardFontFamily();
                 break;
             case CSSValueSerif:
                 family = serifFamily;

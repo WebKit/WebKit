@@ -201,9 +201,7 @@ void HTMLAnchorElement::defaultEventHandler(Event& event)
 void HTMLAnchorElement::setActive(bool down, bool pause)
 {
     if (hasEditableStyle()) {
-        EditableLinkBehavior editableLinkBehavior = EditableLinkDefaultBehavior;
-        if (Settings* settings = document().settings())
-            editableLinkBehavior = settings->editableLinkBehavior();
+        EditableLinkBehavior editableLinkBehavior = document().settings().editableLinkBehavior();
             
         switch (editableLinkBehavior) {
             default:
@@ -353,7 +351,10 @@ bool HTMLAnchorElement::isLiveLink() const
 
 void HTMLAnchorElement::sendPings(const URL& destinationURL)
 {
-    if (!hasAttributeWithoutSynchronization(pingAttr) || !document().settings() || !document().settings()->hyperlinkAuditingEnabled())
+    if (!document().frame())
+        return;
+
+    if (!hasAttributeWithoutSynchronization(pingAttr) || !document().settings().hyperlinkAuditingEnabled())
         return;
 
     SpaceSplitString pingURLs(attributeWithoutSynchronization(pingAttr), false);
@@ -405,11 +406,7 @@ bool HTMLAnchorElement::treatLinkAsLiveForEventType(EventType eventType) const
     if (!hasEditableStyle())
         return true;
 
-    Settings* settings = document().settings();
-    if (!settings)
-        return true;
-
-    switch (settings->editableLinkBehavior()) {
+    switch (document().settings().editableLinkBehavior()) {
     case EditableLinkDefaultBehavior:
     case EditableLinkAlwaysLive:
         return true;

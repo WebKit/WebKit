@@ -57,7 +57,7 @@ typedef Ref<PluginReplacement> (*CreatePluginReplacement)(HTMLPlugInElement&, co
 typedef bool (*PluginReplacementSupportsType)(const String&);
 typedef bool (*PluginReplacementSupportsFileExtension)(const String&);
 typedef bool (*PluginReplacementSupportsURL)(const URL&);
-typedef bool (*PluginReplacementEnabledForSettings)(const Settings*);
+typedef bool (*PluginReplacementEnabledForSettings)(const Settings&);
 
 class ReplacementPlugin {
 public:
@@ -83,7 +83,7 @@ public:
     bool supportsType(const String& mimeType) const { return m_supportsType(mimeType); }
     bool supportsFileExtension(const String& extension) const { return m_supportsFileExtension(extension); }
     bool supportsURL(const URL& url) const { return m_supportsURL(url); }
-    bool isEnabledBySettings(const Settings* settings) const { return m_isEnabledBySettings(settings); };
+    bool isEnabledBySettings(const Settings& settings) const { return m_isEnabledBySettings(settings); };
 
 private:
     CreatePluginReplacement m_constructor;

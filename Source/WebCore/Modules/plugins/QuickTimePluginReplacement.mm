@@ -115,9 +115,9 @@ bool QuickTimePluginReplacement::supportsFileExtension(const String& extension)
     return extensionSet.get().contains(extension);
 }
 
-bool QuickTimePluginReplacement::isEnabledBySettings(const Settings* settings)
+bool QuickTimePluginReplacement::isEnabledBySettings(const Settings& settings)
 {
-    return settings->quickTimePluginReplacementEnabled();
+    return settings.quickTimePluginReplacementEnabled();
 }
 
 QuickTimePluginReplacement::QuickTimePluginReplacement(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)

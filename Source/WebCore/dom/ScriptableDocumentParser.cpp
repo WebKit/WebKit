@@ -39,7 +39,7 @@ ScriptableDocumentParser::ScriptableDocumentParser(Document& document, ParserCon
     if (!pluginContentIsAllowed(m_parserContentPolicy))
         m_parserContentPolicy = allowPluginContent(m_parserContentPolicy);
 
-    if (scriptingContentIsAllowed(m_parserContentPolicy) && (document.settings() && !document.settings()->scriptMarkupEnabled()))
+    if (scriptingContentIsAllowed(m_parserContentPolicy) && !document.settings().scriptMarkupEnabled())
         m_parserContentPolicy = disallowScriptingContent(m_parserContentPolicy);
 }
 

@@ -1,3 +1,151 @@
+2017-02-09  Andreas Kling  <akling@apple.com>
+
+        Document should always have a Settings.
+        <https://webkit.org/b/120172>
+
+        Reviewed by Antti Koivisto.
+
+        Since a Document can't move between Frames, and it's either frameless
+        or partnered with a Frame provided at construction time, we know that
+        it will never need to switch between different Settings objects either.
+
+        Give Document a Ref<Settings> that contains either the Frame's Settings
+        or a default-constructed Settings object if frameless.
+        Document::settings() is promoted to a reference getter.
+
+        The bulk of this patch is removing now-unnecessary null checks.
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::mediaKeysStorageDirectory):
+        * Modules/plugins/PluginReplacement.h:
+        (WebCore::ReplacementPlugin::isEnabledBySettings):
+        * Modules/plugins/QuickTimePluginReplacement.h:
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::isEnabledBySettings):
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::YouTubePluginReplacement::isEnabledBySettings):
+        * Modules/plugins/YouTubePluginReplacement.h:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::constructCommon):
+        * bindings/js/CachedScriptFetcher.cpp:
+        (WebCore::CachedScriptFetcher::requestScriptWithCache):
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::appendSources):
+        (WebCore::CSSFontFace::webFontsShouldAlwaysFallBack):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::fallbackFontCount):
+        (WebCore::CSSFontSelector::fallbackFontAt):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertResize):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueFontFamily):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::defaultStyleForElement):
+        (WebCore::StyleResolver::adjustRenderStyle):
+        (WebCore::StyleResolver::checkForGenericFamilyChange):
+        (WebCore::StyleResolver::initializeFontStyle):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::settings):
+        (WebCore::StyleResolver::documentSettings): Deleted.
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::setReadyState):
+        (WebCore::Document::setVisualUpdatesAllowed):
+        (WebCore::Document::defaultCharsetForLegacyBindings):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::minimumLayoutDelay):
+        (WebCore::Document::setDomain):
+        (WebCore::Document::audioPlaybackRequiresUserGesture):
+        (WebCore::Document::videoPlaybackRequiresUserGesture):
+        (WebCore::Document::storageBlockingStateDidChange):
+        (WebCore::Document::isTelephoneNumberParsingEnabled):
+        (WebCore::Document::initSecurityContext):
+        (WebCore::Document::initDNSPrefetch):
+        (WebCore::Document::getCachedLocale):
+        (WebCore::Document::shouldEnforceContentDispositionAttachmentSandbox):
+        (WebCore::Document::settings): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::settings):
+        * dom/Element.cpp:
+        (WebCore::subpixelMetricsEnabled):
+        * dom/ExtensionStyleSheets.cpp:
+        (WebCore::ExtensionStyleSheets::pageUserSheet):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::dispatchErrorEvent):
+        * dom/ScriptableDocumentParser.cpp:
+        (WebCore::ScriptableDocumentParser::ScriptableDocumentParser):
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::requestAnimationFrameEnabled):
+        * dom/make_names.pl:
+        (printConstructorInterior):
+        * editing/Editor.cpp:
+        * editing/markup.cpp:
+        (WebCore::createMarkupInternal):
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::createTemplateDocumentData):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::setActive):
+        (WebCore::HTMLAnchorElement::sendPings):
+        (WebCore::HTMLAnchorElement::treatLinkAsLiveForEventType):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::canEmbedJava):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext2d):
+        (WebCore::shouldEnableWebGL):
+        (WebCore::HTMLCanvasElement::shouldAccelerate):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submitImplicitly):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::setLocation):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::updateImageControls):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::sourceURI):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setupDateTimeChooserParameters):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::mediaPlayerMediaKeysStorageDirectory):
+        (WebCore::HTMLMediaElement::mediaPlayerAcceleratedCompositingEnabled):
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        (WebCore::HTMLMediaElement::mediaPlayerNeedsSiteSpecificHacks):
+        (WebCore::HTMLMediaElement::mediaPlayerNetworkInterfaceName):
+        (WebCore::HTMLMediaElement::setMediaControlsDependOnPageScaleFactor):
+        (WebCore::HTMLMediaElement::doesHaveAttribute):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::HTMLVideoElement):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::wirelessVideoPlaybackDisabled):
+        (WebCore::MediaElementSession::requiresFullscreenForVideoPlayback):
+        (WebCore::MediaElementSession::allowsAutomaticMediaDataLoading):
+        (WebCore::MediaElementSession::allowsPictureInPicture):
+        (WebCore::MediaElementSession::maximumMediaSourceBufferSize):
+        * html/parser/HTMLParserOptions.cpp:
+        (WebCore::HTMLParserOptions::HTMLParserOptions):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLink):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowContentSecurityPolicySourceStarToMatchAnyProtocol):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::toggleSimpleLineLayout):
+        * style/StyleFontSizeFunctions.cpp:
+        (WebCore::Style::computedFontSizeFromSpecifiedSize):
+        (WebCore::Style::fontSizeForKeyword):
+        (WebCore::Style::legacyFontSizeForPixelSize):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::collectActiveStyleSheets):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::usesDashboardBackwardCompatibilityMode):
+
 2017-02-09  Antti Koivisto  <antti@apple.com>
 
         Use all cacheable speculatively loaded responses

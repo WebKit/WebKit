@@ -46,8 +46,7 @@ CachedResourceHandle<CachedScript> CachedScriptFetcher::requestModuleScript(Docu
 
 CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(Document& document, const URL& sourceURL, const String& crossOriginMode) const
 {
-    auto* settings = document.settings();
-    if (settings && !settings->isScriptEnabled())
+    if (!document.settings().isScriptEnabled())
         return nullptr;
 
     ASSERT(document.contentSecurityPolicy());

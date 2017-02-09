@@ -440,6 +440,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_touchEventsChangedTimer(*this, &Document::touchEventsChangedTimerFired)
 #endif
     , m_referencingNodeCount(0)
+    , m_settings(frame ? Ref<Settings>(frame->settings()) : Settings::create(nullptr))
     , m_hasNodesWithPlaceholderStyle(false)
     , m_needsNotifyRemoveAllPendingStylesheet(false)
     , m_ignorePendingStylesheets(false)
@@ -1235,13 +1236,13 @@ void Document::setReadyState(ReadyState readyState)
     m_readyState = readyState;
     dispatchEvent(Event::create(eventNames().readystatechangeEvent, false, false));
     
-    if (settings() && settings()->suppressesIncrementalRendering())
+    if (settings().suppressesIncrementalRendering())
         setVisualUpdatesAllowed(readyState);
 }
 
 void Document::setVisualUpdatesAllowed(ReadyState readyState)
 {
-    ASSERT(settings() && settings()->suppressesIncrementalRendering());
+    ASSERT(settings().suppressesIncrementalRendering());
     switch (readyState) {
     case Loading:
         ASSERT(!m_visualUpdatesSuppressionTimer.isActive());
@@ -1275,7 +1276,7 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
     if (visualUpdatesAllowed)
         m_visualUpdatesSuppressionTimer.stop();
     else
-        m_visualUpdatesSuppressionTimer.startOneShot(settings()->incrementalRenderingSuppressionTimeoutInSeconds());
+        m_visualUpdatesSuppressionTimer.startOneShot(settings().incrementalRenderingSuppressionTimeoutInSeconds());
 
     if (!visualUpdatesAllowed)
         return;
@@ -1334,9 +1335,9 @@ String Document::characterSetWithUTF8Fallback() const
 
 String Document::defaultCharsetForLegacyBindings() const
 {
-    if (Settings* settings = this->settings())
-        return settings->defaultTextEncodingName();
-    return UTF8Encoding().domName();
+    if (!frame())
+        UTF8Encoding().domName();
+    return settings().defaultTextEncodingName();
 }
 
 void Document::setCharset(const String& charset)
@@ -1699,11 +1700,6 @@ Page* Document::page() const
     return m_frame ? m_frame->page() : nullptr;
 }
 
-Settings* Document::settings() const
-{
-    return m_frame ? &m_frame->settings() : nullptr;
-}
-
 Ref<Range> Document::createRange()
 {
     return Range::create(*this);
@@ -1811,10 +1807,8 @@ void Document::recalcStyle(Style::Change change)
 
             // Inserting the pictograph font at the end of the font fallback list is done by the
             // font selector, so set a font selector if needed.
-            if (Settings* settings = this->settings()) {
-                if (settings->fontFallbackPrefersPictographs())
-                    documentStyle.fontCascade().update(&fontSelector());
-            }
+            if (settings().fontFallbackPrefersPictographs())
+                documentStyle.fontCascade().update(&fontSelector());
 
             auto documentChange = Style::determineChange(documentStyle, m_renderView->style());
             if (documentChange != Style::NoChange)
@@ -2704,7 +2698,7 @@ void Document::implicitClose()
     // fires. This will improve onload scores, and other browsers do it.
     // If they wanna cheat, we can too. -dwh
 
-    if (frame()->navigationScheduler().locationChangePending() && timeSinceDocumentCreation() < settings()->layoutInterval()) {
+    if (frame()->navigationScheduler().locationChangePending() && timeSinceDocumentCreation() < settings().layoutInterval()) {
         // Just bail out. Before or during the onload we were shifted to another page.
         // The old i-Bench suite does this. When this happens don't bother painting or laying out.        
         m_processingLoadEvent = false;
@@ -2787,10 +2781,10 @@ Seconds Document::minimumLayoutDelay()
         return 0_s;
     
     auto elapsed = timeSinceDocumentCreation();
-    m_overMinimumLayoutThreshold = elapsed > settings()->layoutInterval();
+    m_overMinimumLayoutThreshold = elapsed > settings().layoutInterval();
 
     // We'll want to schedule the timer to fire at the minimum layout threshold.
-    return std::max(0_s, settings()->layoutInterval() - elapsed);
+    return std::max(0_s, settings().layoutInterval() - elapsed);
 }
 
 Seconds Document::timeSinceDocumentCreation() const
@@ -4332,7 +4326,7 @@ ExceptionOr<void> Document::setDomain(const String& newDomain)
     if (newLength >= oldLength)
         return Exception { SECURITY_ERR };
 
-    auto ipAddressSetting = settings() && settings()->treatIPAddressAsDomain() ? OriginAccessEntry::TreatIPAddressAsDomain : OriginAccessEntry::TreatIPAddressAsIPAddress;
+    auto ipAddressSetting = settings().treatIPAddressAsDomain() ? OriginAccessEntry::TreatIPAddressAsDomain : OriginAccessEntry::TreatIPAddressAsIPAddress;
     OriginAccessEntry accessEntry { securityOrigin().protocol(), newDomain, OriginAccessEntry::AllowSubdomains, ipAddressSetting };
     if (!accessEntry.matchesOrigin(securityOrigin()))
         return Exception { SECURITY_ERR };
@@ -4674,8 +4668,7 @@ bool Document::audioPlaybackRequiresUserGesture() const
             return policy == AutoplayPolicy::AllowWithoutSound || policy == AutoplayPolicy::Deny;
     }
 
-    Settings* settings = this->settings();
-    return settings && settings->audioPlaybackRequiresUserGesture();
+    return settings().audioPlaybackRequiresUserGesture();
 }
 
 bool Document::videoPlaybackRequiresUserGesture() const
@@ -4687,14 +4680,12 @@ bool Document::videoPlaybackRequiresUserGesture() const
             return policy == AutoplayPolicy::Deny;
     }
 
-    Settings* settings = this->settings();
-    return settings && settings->videoPlaybackRequiresUserGesture();
+    return settings().videoPlaybackRequiresUserGesture();
 }
 
 void Document::storageBlockingStateDidChange()
 {
-    if (Settings* settings = this->settings())
-        securityOrigin().setStorageBlockingPolicy(settings->storageBlockingPolicy());
+    securityOrigin().setStorageBlockingPolicy(settings().storageBlockingPolicy());
 }
 
 void Document::privateBrowsingStateDidChange() 
@@ -5078,8 +5069,7 @@ void Document::clearSharedObjectPool()
 
 bool Document::isTelephoneNumberParsingEnabled() const
 {
-    Settings* settings = this->settings();
-    return settings && settings->telephoneNumberParsingEnabled() && m_isTelephoneNumberParsingAllowed;
+    return settings().telephoneNumberParsingEnabled() && m_isTelephoneNumberParsingAllowed;
 }
 
 void Document::setIsTelephoneNumberParsingAllowed(bool isTelephoneNumberParsingAllowed)
@@ -5171,26 +5161,24 @@ void Document::initSecurityContext()
         enforceSandboxFlags(SandboxScripts | SandboxPlugins);
     }
 
-    if (Settings* settings = this->settings()) {
-        if (settings->needsStorageAccessFromFileURLsQuirk())
-            securityOrigin().grantStorageAccessFromFileURLsQuirk();
-        if (!settings->webSecurityEnabled()) {
-            // Web security is turned off. We should let this document access every other document. This is used primary by testing
-            // harnesses for web sites.
+    if (settings().needsStorageAccessFromFileURLsQuirk())
+        securityOrigin().grantStorageAccessFromFileURLsQuirk();
+    if (!settings().webSecurityEnabled()) {
+        // Web security is turned off. We should let this document access every other document. This is used primary by testing
+        // harnesses for web sites.
+        securityOrigin().grantUniversalAccess();
+    } else if (securityOrigin().isLocal()) {
+        if (settings().allowUniversalAccessFromFileURLs() || m_frame->loader().client().shouldForceUniversalAccessFromLocalURL(m_url)) {
+            // Some clients want local URLs to have universal access, but that setting is dangerous for other clients.
             securityOrigin().grantUniversalAccess();
-        } else if (securityOrigin().isLocal()) {
-            if (settings->allowUniversalAccessFromFileURLs() || m_frame->loader().client().shouldForceUniversalAccessFromLocalURL(m_url)) {
-                // Some clients want local URLs to have universal access, but that setting is dangerous for other clients.
-                securityOrigin().grantUniversalAccess();
-            } else if (!settings->allowFileAccessFromFileURLs()) {
-                // Some clients want local URLs to have even tighter restrictions by default, and not be able to access other local files.
-                // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
-                // still can have other privileges that can be remembered, thereby not making them unique origins.
-                securityOrigin().enforceFilePathSeparation();
-            }
+        } else if (!settings().allowFileAccessFromFileURLs()) {
+            // Some clients want local URLs to have even tighter restrictions by default, and not be able to access other local files.
+            // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
+            // still can have other privileges that can be remembered, thereby not making them unique origins.
+            securityOrigin().enforceFilePathSeparation();
         }
-        securityOrigin().setStorageBlockingPolicy(settings->storageBlockingPolicy());
     }
+    securityOrigin().setStorageBlockingPolicy(settings().storageBlockingPolicy());
 
     Document* parentDocument = ownerElement() ? &ownerElement()->document() : nullptr;
     if (parentDocument && m_frame->loader().shouldTreatURLAsSrcdocDocument(url())) {
@@ -5369,10 +5357,8 @@ void Document::clearAutoSizedNodes()
 
 void Document::initDNSPrefetch()
 {
-    Settings* settings = this->settings();
-
     m_haveExplicitlyDisabledDNSPrefetch = false;
-    m_isDNSPrefetchEnabled = settings && settings->dnsPrefetchingEnabled() && securityOrigin().protocol() == "http";
+    m_isDNSPrefetchEnabled = settings().dnsPrefetchingEnabled() && securityOrigin().protocol() == "http";
 
     // Inherit DNS prefetch opt-out from parent frame    
     if (Document* parent = parentDocument()) {
@@ -6623,7 +6609,7 @@ bool Document::haveStylesheetsLoaded() const
 Locale& Document::getCachedLocale(const AtomicString& locale)
 {
     AtomicString localeKey = locale;
-    if (locale.isEmpty() || !settings() || !settings()->langAttributeAwareFormControlUIEnabled())
+    if (locale.isEmpty() || !settings().langAttributeAwareFormControlUIEnabled())
         localeKey = defaultLanguage();
     LocaleIdentifierToLocaleMap::AddResult result = m_localeCache.add(localeKey, nullptr);
     if (result.isNewEntry)
@@ -6917,7 +6903,7 @@ bool Document::shouldEnforceContentDispositionAttachmentSandbox() const
     if (m_isSynthesized)
         return false;
 
-    bool contentDispositionAttachmentSandboxEnabled = settings() && settings()->contentDispositionAttachmentSandboxEnabled();
+    bool contentDispositionAttachmentSandboxEnabled = settings().contentDispositionAttachmentSandboxEnabled();
     bool responseIsAttachment = false;
     if (DocumentLoader* documentLoader = m_frame ? m_frame->loader().activeDocumentLoader() : nullptr)
         responseIsAttachment = documentLoader->response().isAttachment();

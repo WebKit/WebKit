@@ -953,7 +953,7 @@ void MediaControlFullscreenButtonElement::defaultEventHandler(Event& event)
         // allows apps which embed a WebView to retain the existing full screen
         // video implementation without requiring them to implement their own full
         // screen behavior.
-        if (document().settings() && document().settings()->fullScreenEnabled()) {
+        if (document().settings().fullScreenEnabled()) {
             if (document().webkitIsFullScreen() && document().webkitCurrentFullScreenElement() == parentMediaElement(this))
                 document().webkitCancelFullScreen();
             else

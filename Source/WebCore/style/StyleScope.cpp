@@ -231,7 +231,7 @@ void Scope::removeStyleSheetCandidateNode(Node& node)
 
 void Scope::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& sheets)
 {
-    if (m_document.settings() && !m_document.settings()->authorAndUserStylesEnabled())
+    if (!m_document.settings().authorAndUserStylesEnabled())
         return;
 
     for (auto& node : m_styleSheetCandidateNodes) {

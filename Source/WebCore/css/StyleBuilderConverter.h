@@ -558,10 +558,9 @@ inline EResize StyleBuilderConverter::convertResize(StyleResolver& styleResolver
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     EResize resize = RESIZE_NONE;
-    if (primitiveValue.valueID() == CSSValueAuto) {
-        if (Settings* settings = styleResolver.document().settings())
-            resize = settings->textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
-    } else
+    if (primitiveValue.valueID() == CSSValueAuto)
+        resize = styleResolver.settings().textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
+    else
         resize = primitiveValue;
 
     return resize;

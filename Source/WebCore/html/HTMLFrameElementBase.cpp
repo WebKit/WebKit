@@ -174,8 +174,7 @@ URL HTMLFrameElementBase::location() const
 
 void HTMLFrameElementBase::setLocation(const String& str)
 {
-    Settings* settings = document().settings();
-    if (settings && settings->needsAcrobatFrameReloadingQuirk() && m_URL == str)
+    if (document().settings().needsAcrobatFrameReloadingQuirk() && m_URL == str)
         return;
 
     m_URL = AtomicString(str);

@@ -150,7 +150,7 @@ public:
     const Element* element() { return m_state.element(); }
     Document& document() { return m_document; }
     const Document& document() const { return m_document; }
-    Settings* documentSettings() { return m_document.settings(); }
+    Settings& settings() { return m_document.settings(); }
 
     void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&);
 
@@ -184,7 +184,7 @@ public:
     void applyPropertyToCurrentStyle(CSSPropertyID, CSSValue*);
 
     void updateFont();
-    void initializeFontStyle(Settings*);
+    void initializeFontStyle();
 
     void setFontSize(FontCascadeDescription&, float size);
 

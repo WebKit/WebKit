@@ -452,12 +452,11 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureToControlControlsManager);
     m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePlaybackToControlControlsManager);
 
-    Settings* settings = document.settings();
 #if PLATFORM(IOS)
     m_sendProgressEvents = false;
 #endif
 
-    if (settings && settings->invisibleAutoplayNotPermitted())
+    if (document.settings().invisibleAutoplayNotPermitted())
         m_mediaSession->addBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted);
 
     if (document.ownerElement() || !document.isMediaDocument()) {
@@ -466,7 +465,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 
         if (shouldVideoPlaybackRequireUserGesture) {
             m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForVideoRateChange);
-            if (settings && settings->requiresUserGestureToLoadVideo())
+            if (document.settings().requiresUserGestureToLoadVideo())
                 m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForLoad);
         }
 
@@ -478,15 +477,15 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
             m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureToShowPlaybackTargetPicker);
 #endif
 
-        if (!settings || !settings->mediaDataLoadsAutomatically())
+        if (!document.settings().mediaDataLoadsAutomatically())
             m_mediaSession->addBehaviorRestriction(MediaElementSession::AutoPreloadingNotPermitted);
 
-        if (settings && settings->mainContentUserGestureOverrideEnabled())
+        if (document.settings().mainContentUserGestureOverrideEnabled())
             m_mediaSession->addBehaviorRestriction(MediaElementSession::OverrideUserGestureRequirementForMainContent);
     }
 
 #if PLATFORM(IOS)
-    if (settings && !settings->videoPlaybackRequiresUserGesture() && !settings->audioPlaybackRequiresUserGesture()) {
+    if (!document.settings().videoPlaybackRequiresUserGesture() && !document.settings().audioPlaybackRequiresUserGesture()) {
         // Relax RequireUserGestureForFullscreen when videoPlaybackRequiresUserGesture and audioPlaybackRequiresUserGesture is not set:
         m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequireUserGestureForFullscreen);
     }
@@ -2438,11 +2437,7 @@ bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array* initData)
 
 String HTMLMediaElement::mediaPlayerMediaKeysStorageDirectory() const
 {
-    Settings* settings = document().settings();
-    if (!settings)
-        return emptyString();
-
-    String storageDirectory = settings->mediaKeysStorageDirectory();
+    String storageDirectory = document().settings().mediaKeysStorageDirectory();
     if (storageDirectory.isEmpty())
         return emptyString();
 
@@ -4578,7 +4573,7 @@ void HTMLMediaElement::mediaPlayerRenderingModeChanged(MediaPlayer*)
 
 bool HTMLMediaElement::mediaPlayerAcceleratedCompositingEnabled()
 {
-    return document().settings() && document().settings()->acceleratedCompositingEnabled();
+    return document().settings().acceleratedCompositingEnabled();
 }
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
@@ -5431,7 +5426,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
         return;
 
 #if ENABLE(FULLSCREEN_API)
-    if (document().settings()->fullScreenEnabled()) {
+    if (document().settings().fullScreenEnabled()) {
         if (mode == VideoFullscreenModeStandard) {
             document().requestFullScreenForElement(this, Document::ExemptIFrameAllowFullScreenRequirement);
             return;
@@ -5470,7 +5465,7 @@ void HTMLMediaElement::exitFullscreen()
     LOG(Media, "HTMLMediaElement::exitFullscreen(%p)", this);
 
 #if ENABLE(FULLSCREEN_API)
-    if (document().settings() && document().settings()->fullScreenEnabled() && document().webkitCurrentFullScreenElement() == this) {
+    if (document().settings().fullScreenEnabled() && document().webkitCurrentFullScreenElement() == this) {
         if (document().webkitIsFullScreen())
             document().webkitCancelFullScreen();
         return;
@@ -5490,7 +5485,7 @@ void HTMLMediaElement::exitFullscreen()
         return;
 
     if (!paused() && m_mediaSession->requiresFullscreenForVideoPlayback(*this)) {
-        if (!document().settings() || !document().settings()->allowsInlineMediaPlaybackAfterFullscreen() || isVideoTooSmallForInlinePlayback())
+        if (!document().settings().allowsInlineMediaPlaybackAfterFullscreen() || isVideoTooSmallForInlinePlayback())
             pauseInternal();
         else {
             // Allow inline playback, but set 'playsinline' so pausing and starting again (e.g. when scrubbing) won't go back to fullscreen.
@@ -6310,8 +6305,7 @@ Vector<RefPtr<PlatformTextTrack>> HTMLMediaElement::outOfBandTrackSources()
 
 bool HTMLMediaElement::mediaPlayerNeedsSiteSpecificHacks() const
 {
-    Settings* settings = document().settings();
-    return settings && settings->needsSiteSpecificQuirks();
+    return document().settings().needsSiteSpecificQuirks();
 }
 
 String HTMLMediaElement::mediaPlayerDocumentHost() const
@@ -6453,11 +6447,7 @@ Vector<String> HTMLMediaElement::mediaPlayerPreferredAudioCharacteristics() cons
 #if PLATFORM(IOS)
 String HTMLMediaElement::mediaPlayerNetworkInterfaceName() const
 {
-    Settings* settings = document().settings();
-    if (!settings)
-        return emptyString();
-
-    return settings->networkInterfaceName();
+    return document().settings().networkInterfaceName();
 }
 
 bool HTMLMediaElement::mediaPlayerGetRawCookies(const URL& url, Vector<Cookie>& cookies) const
@@ -6702,8 +6692,7 @@ void HTMLMediaElement::setMediaControlsDependOnPageScaleFactor(bool dependsOnPag
 {
     LOG(Media, "MediaElement::setMediaControlsDependPageScaleFactor(%p) = %s", this, boolString(dependsOnPageScale));
 
-    Settings* settings = document().settings();
-    if (settings && settings->mediaControlsScaleWithPageZoom()) {
+    if (document().settings().mediaControlsScaleWithPageZoom()) {
         LOG(Media, "MediaElement::setMediaControlsDependPageScaleFactor(%p) forced to false by Settings value", this);
         m_mediaControlsDependOnPageScaleFactor = false;
         return;
@@ -7055,10 +7044,8 @@ bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute, AtomicSt
     if (elementValue.isNull())
         return false;
     
-    if (Settings* settings = document().settings()) {
-        if (attributeName == HTMLNames::x_itunes_inherit_uri_query_componentAttr && !settings->enableInheritURIQueryComponent())
-            return false;
-    }
+    if (attributeName == HTMLNames::x_itunes_inherit_uri_query_componentAttr && !document().settings().enableInheritURIQueryComponent())
+        return false;
 
     if (value)
         *value = elementValue;

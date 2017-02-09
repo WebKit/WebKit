@@ -2035,8 +2035,7 @@ bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters&
     parameters.maximum = maximum();
     parameters.required = isRequired();
 
-    Settings* settings = document().settings();
-    if (!settings || !settings->langAttributeAwareFormControlUIEnabled())
+    if (!document().settings().langAttributeAwareFormControlUIEnabled())
         parameters.locale = defaultLanguage();
     else {
         AtomicString computedLocale = computeInheritedLanguage();

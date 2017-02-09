@@ -598,7 +598,7 @@ static String createMarkupInternal(Document& document, const Range& range, Vecto
     Node* specialCommonAncestor = highestAncestorToWrapMarkup(&range, shouldAnnotate);
 
     bool needsPositionStyleConversion = body && fullySelectedRoot == body
-        && document.settings() && document.settings()->shouldConvertPositionStyleOnCopy();
+        && document.settings().shouldConvertPositionStyleOnCopy();
     StyledMarkupAccumulator accumulator(nodes, shouldResolveURLs, shouldAnnotate, &range, needsPositionStyleConversion, specialCommonAncestor);
     Node* pastEnd = range.pastLastNode();
 

@@ -223,11 +223,7 @@ String WebKitMediaKeySession::mediaKeysStorageDirectory() const
     if (!document)
         return emptyString();
 
-    auto* settings = document->settings();
-    if (!settings)
-        return emptyString();
-
-    auto storageDirectory = settings->mediaKeysStorageDirectory();
+    auto storageDirectory = document->settings().mediaKeysStorageDirectory();
     if (storageDirectory.isEmpty())
         return emptyString();
 

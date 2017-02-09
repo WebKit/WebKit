@@ -73,7 +73,7 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Do
         fontFaceElement = item.svgFontFaceElement();
 #endif
         if (!item.isLocal()) {
-            Settings* settings = document ? document->settings() : nullptr;
+            Settings* settings = document ? &document->settings() : nullptr;
             bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled());
             if (allowDownloading && item.isSupportedFormat() && document) {
                 if (CachedFont* cachedFont = item.cachedFont(document, foundSVGFont, isInitiatingElementInUserAgentShadowTree))
@@ -517,7 +517,7 @@ void CSSFontFace::fontLoaded(CSSFontFaceSource&)
 
 bool CSSFontFace::webFontsShouldAlwaysFallBack() const
 {
-    return m_fontSelector && m_fontSelector->document() && m_fontSelector->document()->settings() && m_fontSelector->document()->settings()->webFontsAlwaysFallBack();
+    return m_fontSelector && m_fontSelector->document() && m_fontSelector->document()->settings().webFontsAlwaysFallBack();
 }
 
 size_t CSSFontFace::pump()

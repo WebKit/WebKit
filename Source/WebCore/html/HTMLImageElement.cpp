@@ -582,8 +582,7 @@ void HTMLImageElement::updateImageControls()
     if (isInShadowTree())
         return;
 
-    Settings* settings = document().settings();
-    if (!settings || !settings->imageControlsEnabled())
+    if (!document().settings().imageControlsEnabled())
         return;
 
     bool hasControls = hasImageControls();

@@ -60,8 +60,7 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
 {
     ASSERT(hasTagName(videoTag));
     setHasCustomStyleResolveCallbacks();
-    if (document.settings())
-        m_defaultPosterURL = document.settings()->defaultVideoPosterURL();
+    m_defaultPosterURL = document.settings().defaultVideoPosterURL();
 }
 
 Ref<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)

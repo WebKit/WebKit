@@ -204,8 +204,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext2d(const String& type)
     if (!m_context) {
         bool usesDashboardCompatibilityMode = false;
 #if ENABLE(DASHBOARD_SUPPORT)
-        if (Settings* settings = document().settings())
-            usesDashboardCompatibilityMode = settings->usesDashboardBackwardCompatibilityMode();
+        usesDashboardCompatibilityMode = document().settings().usesDashboardBackwardCompatibilityMode();
 #endif
 
         // Make sure we don't use more pixel memory than the system can support.
@@ -243,18 +242,15 @@ static bool requiresAcceleratedCompositingForWebGL()
 #endif
 
 }
-static bool shouldEnableWebGL(Settings* settings)
+static bool shouldEnableWebGL(Settings& settings)
 {
-    if (!settings)
-        return false;
-
-    if (!settings->webGLEnabled())
+    if (!settings.webGLEnabled())
         return false;
 
     if (!requiresAcceleratedCompositingForWebGL())
         return true;
 
-    return settings->acceleratedCompositingEnabled();
+    return settings.acceleratedCompositingEnabled();
 }
 
 bool HTMLCanvasElement::is3dType(const String& type)
@@ -540,9 +536,7 @@ SecurityOrigin* HTMLCanvasElement::securityOrigin() const
 
 bool HTMLCanvasElement::shouldAccelerate(const IntSize& size) const
 {
-    if (!document().settings())
-        return false;
-    auto& settings = *document().settings();
+    auto& settings = document().settings();
 
     auto area = size.area<RecordOverflow>();
     if (area.hasOverflowed())

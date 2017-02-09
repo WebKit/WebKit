@@ -795,7 +795,7 @@ enum LegacyCSSOMElementMetricsRoundingStrategy { Round, Floor };
 
 static bool subpixelMetricsEnabled(const Document& document)
 {
-    return document.settings() && document.settings()->subpixelCSSOMElementMetricsEnabled();
+    return document.settings().subpixelCSSOMElementMetricsEnabled();
 }
 
 static double convertToNonSubpixelValueIfNeeded(double value, const Document& document, LegacyCSSOMElementMetricsRoundingStrategy roundStrategy = Round)

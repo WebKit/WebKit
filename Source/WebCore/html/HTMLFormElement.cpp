@@ -214,8 +214,7 @@ void HTMLFormElement::submitImplicitly(Event& event, bool fromImplicitSubmission
         return;
 
     // Older iOS apps using WebViews expect the behavior of auto submitting multi-input forms.
-    Settings* settings = document().settings();
-    if (fromImplicitSubmissionTrigger && (submissionTriggerCount == 1 || (settings && settings->allowMultiElementImplicitSubmission())))
+    if (fromImplicitSubmissionTrigger && (submissionTriggerCount == 1 || document().settings().allowMultiElementImplicitSubmission()))
         prepareForSubmission(event);
 }
 

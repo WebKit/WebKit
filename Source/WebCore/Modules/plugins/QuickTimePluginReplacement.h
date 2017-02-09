@@ -49,7 +49,7 @@ private:
     static bool supportsMimeType(const String&);
     static bool supportsFileExtension(const String&);
     static bool supportsURL(const URL&) { return true; }
-    static bool isEnabledBySettings(const Settings*);
+    static bool isEnabledBySettings(const Settings&);
 
     bool installReplacement(ShadowRoot&) final;
     JSC::JSObject* scriptObject() final { return m_scriptObject; }

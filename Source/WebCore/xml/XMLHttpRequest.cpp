@@ -145,8 +145,7 @@ bool XMLHttpRequest::usesDashboardBackwardCompatibilityMode() const
 {
     if (scriptExecutionContext()->isWorkerGlobalScope())
         return false;
-    Settings* settings = document()->settings();
-    return settings && settings->usesDashboardBackwardCompatibilityMode();
+    return document()->settings().usesDashboardBackwardCompatibilityMode();
 }
 
 #endif

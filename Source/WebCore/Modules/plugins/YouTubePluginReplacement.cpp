@@ -346,9 +346,9 @@ bool YouTubePluginReplacement::supportsURL(const URL& url)
     return isYouTubeURL(url);
 }
 
-bool YouTubePluginReplacement::isEnabledBySettings(const Settings* settings)
+bool YouTubePluginReplacement::isEnabledBySettings(const Settings& settings)
 {
-    return settings->youTubeFlashPluginReplacementEnabled();
+    return settings.youTubeFlashPluginReplacementEnabled();
 }
     
 }

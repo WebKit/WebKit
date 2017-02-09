@@ -510,7 +510,7 @@ public:
 
     WEBCORE_EXPORT FrameView* view() const; // can be NULL
     WEBCORE_EXPORT Page* page() const; // can be NULL
-    WEBCORE_EXPORT Settings* settings() const; // can be NULL
+    Settings& settings() const { return m_settings.get(); }
 
     float deviceScaleFactor() const;
 
@@ -1382,6 +1382,8 @@ private:
     bool shouldEnforceHTTP09Sandbox() const;
 
     unsigned m_referencingNodeCount;
+
+    const Ref<Settings> m_settings;
 
     std::unique_ptr<StyleResolver> m_userAgentShadowTreeStyleResolver;
     bool m_hasNodesWithPlaceholderStyle;
