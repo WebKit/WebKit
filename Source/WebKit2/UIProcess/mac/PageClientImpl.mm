@@ -881,7 +881,7 @@ void PageClientImpl::didPerformDataInteractionControllerOperation()
     // FIXME: Implement me.
 }
 
-void PageClientImpl::startDataInteractionWithImage(const IntPoint&, const ShareableBitmap::Handle&, bool)
+void PageClientImpl::startDataInteractionWithImage(const IntPoint&, const ShareableBitmap::Handle&, const FloatPoint&, bool)
 {
     // FIXME: Implement me.
 }
