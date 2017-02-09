@@ -671,6 +671,15 @@ webkit.org/b/153833 fast/shadow-dom/touch-event-ios.html [ Skip ]
 webkit.org/b/153833 fast/events/before-input-prevent-insert-replacement.html [ Skip ]
 webkit.org/b/153833 fast/events/input-event-insert-replacement.html [ Skip ]
 
+# Skip tests requiring UIScriptController::zoomToScale
+webkit.org/b/168050 fast/visual-viewport/rtl-zoomed-rects.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/zoomed-fixed-header-and-footer.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/zoomed-fixed.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/zoomed-rects.html [ Skip ]
+webkit.org/b/168050 fast/zooming/client-rect-in-fixed-zoomed.html [ Skip ]
+webkit.org/b/168050 fast/zooming/uiscript-zooming.html [ Skip ]
+
 # Skip tests expecting native HTML form validation popover
 webkit.org/b/167579 fast/forms/validation-bubble-disappears-when-input-detached.html [ Skip ]
 webkit.org/b/167579 fast/forms/validation-bubble-disappears-when-input-moved.html [ Skip ]
