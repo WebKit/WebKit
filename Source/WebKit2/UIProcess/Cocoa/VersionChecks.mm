@@ -55,9 +55,4 @@ bool linkedOnOrAfter(LibraryVersion version)
     return linkedVersion >= static_cast<int>(version);
 }
 
-bool linkedOnOrAfter(SDKVersion version)
-{
-    return dyld_get_program_sdk_version() >= static_cast<uint32_t>(version);
-}
-
 }
