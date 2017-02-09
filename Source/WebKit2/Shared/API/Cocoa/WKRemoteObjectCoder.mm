@@ -213,6 +213,13 @@ static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocati
 
                 encodeToObjectStream(encoder, [NSValue valueWithRange:value]);
                 break;
+            } else if (!strcmp(type, @encode(CGSize))) {
+                CGSize value;
+                [invocation getArgument:&value atIndex:i];
+
+                encodeToObjectStream(encoder, @(value.width));
+                encodeToObjectStream(encoder, @(value.height));
+                break;
             }
             FALLTHROUGH;
 
@@ -553,6 +560,12 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
         case '{':
             if (!strcmp(type, @encode(NSRange))) {
                 NSRange value = [decodeObjectFromObjectStream(decoder, { [NSValue class] }) rangeValue];
+                [invocation setArgument:&value atIndex:i];
+                break;
+            } else if (!strcmp(type, @encode(CGSize))) {
+                CGSize value;
+                value.width = [decodeObjectFromObjectStream(decoder, { [NSNumber class] }) doubleValue];
+                value.height = [decodeObjectFromObjectStream(decoder, { [NSNumber class] }) doubleValue];
                 [invocation setArgument:&value atIndex:i];
                 break;
             }

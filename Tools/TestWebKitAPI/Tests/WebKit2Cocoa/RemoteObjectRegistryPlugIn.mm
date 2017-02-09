@@ -81,6 +81,11 @@
     completionHandler(range.location, range.length);
 }
 
+- (void)takeSize:(CGSize)size completionHandler:(void (^)(CGFloat width, CGFloat height))completionHandler
+{
+    completionHandler(size.width, size.height);
+}
+
 - (void)doNotCallCompletionHandler:(void (^)())completionHandler
 {
 }
