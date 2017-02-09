@@ -28,6 +28,11 @@
 #import <UIKit/UIAlertController.h>
 #import <UIKit/UIPopoverController.h>
 
+typedef NS_ENUM(NSInteger, WKActionSheetPresentationStyle) {
+    WKActionSheetPresentAtTouchLocation,
+    WKActionSheetPresentAtElementRect
+};
+
 @protocol WKActionSheetDelegate;
 @class WKContentView;
 
@@ -36,7 +41,7 @@
 @property (nonatomic, assign) id <WKActionSheetDelegate> sheetDelegate;
 @property (nonatomic) UIPopoverArrowDirection arrowDirections;
 - (void)doneWithSheet;
-- (BOOL)presentSheet;
+- (BOOL)presentSheet:(WKActionSheetPresentationStyle)style;
 - (BOOL)presentSheetFromRect:(CGRect)presentationRect;
 - (void)updateSheetPosition;
 @end
@@ -45,6 +50,7 @@
 @required
 - (UIView *)hostViewForSheet;
 - (CGRect)initialPresentationRectInHostViewForSheet;
+- (CGRect)presentationRectForIndicatedElement;
 - (CGRect)presentationRectInHostViewForSheet;
 - (void)updatePositionInformation;
 @end

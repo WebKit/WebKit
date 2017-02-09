@@ -152,6 +152,18 @@ static LSAppLink *appLinkForURL(NSURL *url)
     return [self superviewForSheet];
 }
 
+- (CGRect)presentationRectForIndicatedElement
+{
+    UIView *view = [self superviewForSheet];
+    auto delegate = _delegate.get();
+    if (!view || !delegate)
+        return CGRectZero;
+
+    static const CGFloat presentationElementRectPadding = 15;
+    auto elementBounds = [delegate positionInformationForActionSheetAssistant:self].bounds;
+    return CGRectInset([view convertRect:elementBounds fromView:_view], -presentationElementRectPadding, -presentationElementRectPadding);
+}
+
 - (CGRect)initialPresentationRectInHostViewForSheet
 {
     UIView *view = [self superviewForSheet];
@@ -293,7 +305,8 @@ static LSAppLink *appLinkForURL(NSURL *url)
     const auto& positionInformation = [delegate positionInformationForActionSheetAssistant:self];
 
     NSURL *targetURL = [NSURL _web_URLWithWTFString:positionInformation.url];
-    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:positionInformation.request.point title:positionInformation.title ID:positionInformation.idAttribute rect:positionInformation.bounds image:positionInformation.image.get()]);
+    auto elementBounds = positionInformation.bounds;
+    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:positionInformation.request.point title:positionInformation.title ID:positionInformation.idAttribute rect:elementBounds image:positionInformation.image.get()]);
     if ([delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()])
         return;
     auto defaultActions = [self defaultActionsForImageSheet:elementInfo.get()];
@@ -309,8 +322,28 @@ static LSAppLink *appLinkForURL(NSURL *url)
 
     _elementInfo = WTFMove(elementInfo);
 
-    if (![_interactionSheet presentSheet])
+    if (![_interactionSheet presentSheet:[self _presentationStyleForImageAtElementRect:elementBounds]])
         [self cleanupSheet];
+}
+
+- (WKActionSheetPresentationStyle)_presentationStyleForImageAtElementRect:(CGRect)elementRect
+{
+    auto apparentElementRect = [_view convertRect:elementRect toView:_view.window];
+    auto windowRect = _view.window.bounds;
+    apparentElementRect = CGRectIntersection(apparentElementRect, windowRect);
+
+    auto leftInset = CGRectGetMinX(apparentElementRect) - CGRectGetMinX(windowRect);
+    auto topInset = CGRectGetMinY(apparentElementRect) - CGRectGetMinY(windowRect);
+    auto rightInset = CGRectGetMaxX(windowRect) - CGRectGetMaxX(apparentElementRect);
+    auto bottomInset = CGRectGetMaxY(windowRect) - CGRectGetMaxY(apparentElementRect);
+
+    // If at least this much of the window is available for the popover to draw in, then target the element rect when presenting the action menu popover.
+    // Otherwise, there is not enough space to position the popover around the element, so revert to using the touch location instead.
+    static const CGFloat minimumAvailableWidthOrHeightRatio = 0.4;
+    if (std::max(leftInset, rightInset) > minimumAvailableWidthOrHeightRatio * CGRectGetWidth(windowRect) || std::max(topInset, bottomInset) > minimumAvailableWidthOrHeightRatio * CGRectGetHeight(windowRect))
+        return WKActionSheetPresentAtElementRect;
+
+    return WKActionSheetPresentAtTouchLocation;
 }
 
 - (void)_appendOpenActionsForURL:(NSURL *)url actions:(NSMutableArray *)defaultActions elementInfo:(_WKActivatedElementInfo *)elementInfo
@@ -428,7 +461,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
 
     _elementInfo = WTFMove(elementInfo);
 
-    if (![_interactionSheet presentSheet])
+    if (![_interactionSheet presentSheet:WKActionSheetPresentAtTouchLocation])
         [self cleanupSheet];
 }
 
@@ -494,7 +527,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     if (elementActions.count <= 1)
         _interactionSheet.get().arrowDirections = UIPopoverArrowDirectionUp | UIPopoverArrowDirectionDown;
 
-    if (![_interactionSheet presentSheet])
+    if (![_interactionSheet presentSheet:WKActionSheetPresentAtTouchLocation])
         [self cleanupSheet];
 }
 

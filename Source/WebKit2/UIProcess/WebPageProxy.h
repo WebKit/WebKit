@@ -547,6 +547,7 @@ public:
     void setIsScrollingOrZooming(bool);
 #if ENABLE(DATA_INTERACTION)
     void didPerformDataInteractionControllerOperation();
+    void didHandleStartDataInteractionRequest(bool started);
     void requestStartDataInteraction(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
 #endif
 #endif

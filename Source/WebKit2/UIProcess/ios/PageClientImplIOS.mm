@@ -768,6 +768,11 @@ void PageClientImpl::didPerformDataInteractionControllerOperation()
     [m_contentView _didPerformDataInteractionControllerOperation];
 }
 
+void PageClientImpl::didHandleStartDataInteractionRequest(bool started)
+{
+    [m_contentView _didHandleStartDataInteractionRequest:started];
+}
+
 void PageClientImpl::startDataInteractionWithImage(const IntPoint& clientPosition, const ShareableBitmap::Handle& image, const FloatPoint& anchorPoint, bool isLink)
 {
     [m_contentView _startDataInteractionWithImage:ShareableBitmap::create(image)->makeCGImageCopy() atClientPosition:CGPointMake(clientPosition.x(), clientPosition.y()) anchorPoint:anchorPoint isLink:isLink];

@@ -623,7 +623,8 @@ void WebPage::handleTap(const IntPoint& point, uint64_t lastLayerTreeTransaction
 #if ENABLE(DATA_INTERACTION)
 void WebPage::requestStartDataInteraction(const IntPoint& clientPosition, const IntPoint& globalPosition)
 {
-    m_page->mainFrame().eventHandler().tryToBeginDataInteractionAtPoint(clientPosition, globalPosition);
+    bool didStart = m_page->mainFrame().eventHandler().tryToBeginDataInteractionAtPoint(clientPosition, globalPosition);
+    send(Messages::WebPageProxy::DidHandleStartDataInteractionRequest(didStart));
 }
 #endif
 
