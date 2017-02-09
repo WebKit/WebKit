@@ -1,5 +1,13 @@
 2017-02-09  Alex Christensen  <achristensen@webkit.org>
 
+        Fix iOS libwebrtc build after r211960
+        https://bugs.webkit.org/show_bug.cgi?id=168038
+
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCOpenGLVideoRenderer.h:
+        GlContextType declaration needs to be platform specific here like it is in RTCOpenGLDefines.h
+
+2017-02-09  Alex Christensen  <achristensen@webkit.org>
+
         Fix i386 libwebrtc build
         https://bugs.webkit.org/show_bug.cgi?id=168038
 

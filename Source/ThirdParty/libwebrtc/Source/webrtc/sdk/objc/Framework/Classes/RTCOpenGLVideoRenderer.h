@@ -20,8 +20,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RTCVideoFrame;
+#if TARGET_OS_IPHONE
+@class EAGLContext;
+typedef EAGLContext GlContextType;
+#else
 @class NSOpenGLContext;
 typedef NSOpenGLContext GlContextType;
+#endif
 @protocol RTCShader;
 
 // RTCOpenGLVideoRenderer issues appropriate OpenGL commands to draw a frame to
