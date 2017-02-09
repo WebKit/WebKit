@@ -156,7 +156,9 @@ namespace WebCore {
         WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
         WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
 
-    // ======== All public functions below this point are candidates to move out of Frame into another class. ========
+        bool documentIsBeingReplaced() const { return m_documentIsBeingReplaced; }
+
+        // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 
         void injectUserScripts(UserScriptInjectionTime);
         
@@ -319,6 +321,7 @@ namespace WebCore {
 
         int m_activeDOMObjectsAndAnimationsSuspendedCount;
         bool m_mainFrameWasDestroyed { false };
+        bool m_documentIsBeingReplaced { false };
 
     protected:
         std::unique_ptr<EventHandler> m_eventHandler;
