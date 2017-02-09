@@ -1,3 +1,16 @@
+2016-11-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Clear track client when removing a track
+        https://bugs.webkit.org/show_bug.cgi?id=164842
+        <rdar://problem/29213621>
+
+        Reviewed by Eric Carlson.
+
+        * media/track/audio-track-add-remove-expected.txt: Added.
+        * media/track/audio-track-add-remove.html: Added.
+        * media/track/video-track-add-remove-expected.txt: Added.
+        * media/track/video-track-add-remove.html: Added.
+
 2016-12-22  Daniel Bates  <dabates@apple.com>
 
         Bypass pop-up blocker from cross-origin or sandboxed frame
