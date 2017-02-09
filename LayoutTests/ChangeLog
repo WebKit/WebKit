@@ -1,3 +1,12 @@
+2017-02-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline emoji tests for ios-simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/editing/deleting/delete-emoji-expected.txt:
+        * platform/ios-simulator/fast/text/emoji-expected.txt:
+
 2017-02-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r211912.
