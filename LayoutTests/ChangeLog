@@ -1,3 +1,14 @@
+2016-12-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Side effects while restting form elements
+        https://bugs.webkit.org/show_bug.cgi?id=165959
+        <rdar://problem/29705967>
+
+        Reviewed by Anders Carlsson.
+
+        * fast/html/form-mutate-expected.txt: Added.
+        * fast/html/form-mutate.html: Added.
+
 2016-12-06  Mark Lam  <mark.lam@apple.com>
 
         Introduce the concept of Immutable Prototype Exotic Objects to comply with the spec.

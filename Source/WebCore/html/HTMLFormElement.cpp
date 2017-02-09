@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2010, 2012-2016 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -51,6 +51,7 @@
 #include "Settings.h"
 #include <limits>
 #include <wtf/Ref.h>
+#include <wtf/TemporaryChange.h>
 
 namespace WebCore {
 
@@ -58,13 +59,6 @@ using namespace HTMLNames;
 
 HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
-    , m_associatedElementsBeforeIndex(0)
-    , m_associatedElementsAfterIndex(0)
-    , m_wasUserSubmitted(false)
-    , m_isSubmittingOrPreparingForSubmission(false)
-    , m_shouldSubmit(false)
-    , m_isInResetFunction(false)
-    , m_wasDemoted(false)
 #if ENABLE(REQUEST_AUTOCOMPLETE)
     , m_requestAutocompletetimer(*this, &HTMLFormElement::requestAutocompleteTimerFired)
 #endif
@@ -374,19 +368,30 @@ void HTMLFormElement::reset()
     if (m_isInResetFunction || !frame)
         return;
 
-    m_isInResetFunction = true;
+    Ref<HTMLFormElement> protectedThis(*this);
 
-    if (!dispatchEvent(Event::create(eventNames().resetEvent, true, true))) {
-        m_isInResetFunction = false;
+    TemporaryChange<bool> isInResetFunctionRestorer(m_isInResetFunction, true);
+
+    if (!dispatchEvent(Event::create(eventNames().resetEvent, true, true)))
         return;
-    }
 
-    for (auto& associatedElement : m_associatedElements) {
-        if (is<HTMLFormControlElement>(*associatedElement))
-            downcast<HTMLFormControlElement>(*associatedElement).reset();
-    }
+    resetAssociatedFormControlElements();
+}
 
-    m_isInResetFunction = false;
+void HTMLFormElement::resetAssociatedFormControlElements()
+{
+    // Event handling can cause associated elements to be added or deleted while iterating
+    // over this collection. Protect these elements until we are done notifying them of
+    // the reset operation.
+    Vector<Ref<HTMLFormControlElement>> associatedFormControlElements;
+    associatedFormControlElements.reserveInitialCapacity(m_associatedElements.size());
+    for (auto* element : m_associatedElements) {
+        if (is<HTMLFormControlElement>(element))
+            associatedFormControlElements.uncheckedAppend(*downcast<HTMLFormControlElement>(element));
+    }
+    
+    for (auto& associatedFormControlElement : associatedFormControlElements)
+        associatedFormControlElement->reset();
 }
 
 #if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
@@ -859,10 +864,9 @@ void HTMLFormElement::resumeFromDocumentSuspension()
 {
     ASSERT(!shouldAutocomplete());
 
-    for (auto& associatedElement : m_associatedElements) {
-        if (is<HTMLFormControlElement>(*associatedElement))
-            downcast<HTMLFormControlElement>(*associatedElement).reset();
-    }
+    Ref<HTMLFormElement> protectedThis(*this);
+
+    resetAssociatedFormControlElements();
 }
 
 void HTMLFormElement::didMoveToNewDocument(Document* oldDocument)
