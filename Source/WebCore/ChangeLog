@@ -1,3 +1,15 @@
+2017-02-09  Jer Noble  <jer.noble@apple.com>
+
+        Fix some logging statements in MediaPlayerPrivateMediaStreamAVFObjC
+        https://bugs.webkit.org/show_bug.cgi?id=168063
+
+        Reviewed by Eric Carlson.
+
+        Make the format string match the types passed in (i.e., floats, not strings).
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateSampleTimes):
+
 2017-02-09  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream Mac] Handle NULL m_sampleBufferDisplayLayer

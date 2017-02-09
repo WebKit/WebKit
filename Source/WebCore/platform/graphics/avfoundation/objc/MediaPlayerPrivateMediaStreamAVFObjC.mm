@@ -252,9 +252,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateSampleTimes(MediaSample& sample
     if (delta < 0)
         LOG(Media, "%s(%p): *NOTE* audio sample at time %s is %f seconds late", loggingPrefix, this, toString(now).utf8().data(), -delta);
     else if (delta < .01)
-        LOG(Media, "%s(%p): *NOTE* audio sample at time %s is only %s seconds early", loggingPrefix, this, toString(now).utf8().data(), delta);
+        LOG(Media, "%s(%p): *NOTE* audio sample at time %s is only %f seconds early", loggingPrefix, this, toString(now).utf8().data(), delta);
     else if (delta > .3)
-        LOG(Media, "%s(%p): *NOTE* audio sample at time %s is %s seconds early!", loggingPrefix, this, toString(now).utf8().data(), delta);
+        LOG(Media, "%s(%p): *NOTE* audio sample at time %s is %f seconds early!", loggingPrefix, this, toString(now).utf8().data(), delta);
 #else
     UNUSED_PARAM(loggingPrefix);
 #endif
