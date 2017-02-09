@@ -1,3 +1,14 @@
+2017-02-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Web Bluetooth as Not Considering
+        https://bugs.webkit.org/show_bug.cgi?id=168042
+
+        Reviewed by Yusuke Suzuki.
+
+        Add Web Bluetooth as a feature not being considered to be implemented in WebKit.
+
+        * features.json:
+
 2017-02-08  Simon Fraser  <simon.fraser@apple.com>
 
         Put names on more UIViews for ease of debugging

@@ -1030,6 +1030,15 @@
         "keywords": ["visual viewport", "viewport", "viewportapi"]
     },
     {
+        "name": "Web Bluetooth",
+        "status": {
+            "status": "Not Considering"
+        },
+        "url": "https://webbluetoothcg.github.io/web-bluetooth/",
+        "keywords": ["bluetooth"],
+        "description": "An API to discover and communicate with devices over the Bluetooth."
+    },
+    {
         "name": "requestIdleCallback",
         "status": {
             "status": "Under Consideration"
