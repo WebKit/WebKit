@@ -1,5 +1,28 @@
 2017-02-08  Matthew Hanson  <matt_hanson@apple.com>
 
+        Merge r211643. rdar://problem/30334861
+
+    2017-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            WKActionSheet should dismiss with animation when done with the sheet
+            https://bugs.webkit.org/show_bug.cgi?id=167804
+            <rdar://problem/30334861>
+
+            Reviewed by Tim Horton.
+
+            Currently, we do not dismiss the action menu when -doneWithSheet is invoked. While this is okay when the menu is
+            dismissed via tap (since it will be dismissed as default behavior by the popover controller) we need to manually
+            dismiss it if we are trying to programmatically dismiss the action sheet/menu.
+
+            * UIProcess/ios/WKActionSheet.mm:
+            (-[WKActionSheet presentSheetFromRect:]):
+            (-[WKActionSheet doneWithSheet]):
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView setupInteraction]):
+            (-[WKContentView resignFirstResponder]):
+
+2017-02-08  Matthew Hanson  <matt_hanson@apple.com>
+
         Merge r211597. rdar://problem/30295261
 
     2017-02-02  Wenson Hsieh  <wenson_hsieh@apple.com>
