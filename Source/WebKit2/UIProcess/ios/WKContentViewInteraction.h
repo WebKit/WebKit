@@ -118,6 +118,9 @@ struct WKAutoCorrectionData {
     RetainPtr<UITapGestureRecognizer> _twoFingerDoubleTapGestureRecognizer;
     RetainPtr<UITapGestureRecognizer> _twoFingerSingleTapGestureRecognizer;
     RetainPtr<WKInspectorNodeSearchGestureRecognizer> _inspectorNodeSearchGestureRecognizer;
+#if ENABLE(DATA_INTERACTION)
+    RetainPtr<UILongPressGestureRecognizer> _dataInteractionGestureRecognizer;
+#endif
 
     RetainPtr<UIWKTextInteractionAssistant> _textSelectionAssistant;
     RetainPtr<UIWKSelectionAssistant> _webSelectionAssistant;
@@ -185,10 +188,7 @@ struct WKAutoCorrectionData {
     BOOL _needsDeferredEndScrollingSelectionUpdate;
 
 #if ENABLE(DATA_INTERACTION)
-    RetainPtr<UILongPressGestureRecognizer> _dataInteractionGestureRecognizer;
-    RetainPtr<UIImage> _currentDataInteractionImage;
-    CGPoint _currentDataInteractionOrigin;
-    BOOL _shouldHandleLongPressActionAfterDataInteraction;
+    WebKit::WKDataInteractionState _dataInteractionState;
 #endif
 }
 
