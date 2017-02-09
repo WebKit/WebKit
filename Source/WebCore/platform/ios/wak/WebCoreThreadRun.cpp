@@ -167,11 +167,6 @@ void WebThreadRun(void (^task)())
     _WebThreadRun(task, false);
 }
 
-void WebThreadRunSync(void (^task)())
-{
-    _WebThreadRun(task, true);
-}
-    
 void WebThreadInitRunQueue()
 {
     ASSERT(!runQueue);
