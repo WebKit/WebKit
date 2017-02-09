@@ -1,3 +1,32 @@
+2017-02-09  Andreas Kling  <akling@apple.com>
+
+        Disallow accelerated rendering for ginormous 2D canvases.
+        <https://webkit.org/b/167968>
+        <rdar://problem/30119483>
+
+        Reviewed by Antti Koivisto.
+
+        Add a "maximumAccelerated2dCanvasSize" setting that defaults to 5120x2880
+        which is the 5K resolution for 16:9.
+
+        Also added a way to include the "accelerates drawing" flag in layer tree dumps.
+
+        Test: compositing/canvas/accelerated-canvas-compositing-size-limit.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::shouldAccelerate):
+        * page/Frame.h:
+        * page/Settings.in:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties):
+        * platform/graphics/GraphicsLayerClient.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        * testing/Internals.cpp:
+        (WebCore::toLayerTreeFlags):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-02-09  Antti Koivisto  <antti@apple.com>
 
         Remove most cases of #if ENABLE(CACHE_PARTITIONING)

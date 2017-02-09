@@ -2044,6 +2044,8 @@ static LayerTreeFlags toLayerTreeFlags(unsigned short flags)
         layerTreeFlags |= LayerTreeFlagsIncludePaintingPhases;
     if (flags & Internals::LAYER_TREE_INCLUDES_CONTENT_LAYERS)
         layerTreeFlags |= LayerTreeFlagsIncludeContentLayers;
+    if (flags & Internals::LAYER_TREE_INCLUDES_ACCELERATES_DRAWING)
+        layerTreeFlags |= LayerTreeFlagsIncludeAcceleratesDrawing;
 
     return layerTreeFlags;
 }

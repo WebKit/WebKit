@@ -783,6 +783,11 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
         ts << "(backgroundColor " << m_backgroundColor.nameForRenderTreeAsText() << ")\n";
     }
 
+    if (behavior & LayerTreeAsTextIncludeAcceleratesDrawing && m_acceleratesDrawing) {
+        writeIndent(ts, indent + 1);
+        ts << "(acceleratesDrawing " << m_acceleratesDrawing << ")\n";
+    }
+
     if (!m_transform.isIdentity()) {
         writeIndent(ts, indent + 1);
         ts << "(transform ";

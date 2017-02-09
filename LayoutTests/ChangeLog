@@ -1,3 +1,18 @@
+2017-02-09  Andreas Kling  <akling@apple.com>
+
+        Disallow accelerated rendering for ginormous 2D canvases.
+        <https://webkit.org/b/167968>
+        <rdar://problem/30119483>
+
+        Reviewed by Antti Koivisto.
+
+        Add a simple test that documents the fact that we no longer accelerate canvases
+        larger than 5120x2880.
+
+        * compositing/canvas/accelerated-canvas-compositing-size-limit-expected.txt: Added.
+        * compositing/canvas/accelerated-canvas-compositing-size-limit.html: Added.
+        * platform/ios-simulator/compositing/canvas/accelerated-canvas-compositing-size-limit-expected.txt: Added.
+
 2017-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Add expectations for more tests that require drag and drop.

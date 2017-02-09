@@ -262,7 +262,8 @@ public:
         LAYER_TREE_INCLUDES_TILE_CACHES = 2,
         LAYER_TREE_INCLUDES_REPAINT_RECTS = 4,
         LAYER_TREE_INCLUDES_PAINTING_PHASES = 8,
-        LAYER_TREE_INCLUDES_CONTENT_LAYERS = 16
+        LAYER_TREE_INCLUDES_CONTENT_LAYERS = 16,
+        LAYER_TREE_INCLUDES_ACCELERATES_DRAWING = 32,
     };
     ExceptionOr<String> layerTreeAsText(Document&, unsigned short flags) const;
     ExceptionOr<String> repaintRectsAsText() const;

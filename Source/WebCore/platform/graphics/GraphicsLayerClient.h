@@ -72,6 +72,7 @@ enum LayerTreeAsTextBehaviorFlags {
     LayerTreeAsTextIncludePaintingPhases        = 1 << 4,
     LayerTreeAsTextIncludeContentLayers         = 1 << 5,
     LayerTreeAsTextIncludePageOverlayLayers     = 1 << 6,
+    LayerTreeAsTextIncludeAcceleratesDrawing    = 1 << 7,
 };
 typedef unsigned LayerTreeAsTextBehavior;
 
