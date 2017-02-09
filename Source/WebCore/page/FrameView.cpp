@@ -3259,6 +3259,9 @@ void FrameView::performPostLayoutTasks()
     viewportContentsChanged();
 
     updateScrollSnapState();
+
+    if (AXObjectCache* cache = frame().document()->existingAXObjectCache())
+        cache->performDeferredIsIgnoredChange();
 }
 
 IntSize FrameView::sizeForResizeEvent() const

@@ -1,3 +1,14 @@
+2016-12-16  Zalan Bujtas  <zalan@apple.com>
+
+        Defer certain accessibility callbacks until after layout is finished.
+        https://bugs.webkit.org/show_bug.cgi?id=165861
+        rdar://problem/29646301
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/accessibility-crash-with-dynamic-inline-content-expected.txt: Added.
+        * accessibility/accessibility-crash-with-dynamic-inline-content.html: Added.
+
 2016-12-18  Brent Fulgham  <bfulgham@apple.com>
 
         Side effects while restting form elements

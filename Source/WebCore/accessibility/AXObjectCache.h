@@ -44,6 +44,7 @@ class Document;
 class HTMLAreaElement;
 class Node;
 class Page;
+class RenderBlock;
 class RenderObject;
 class ScrollView;
 class VisiblePosition;
@@ -324,6 +325,8 @@ public:
 #if PLATFORM(MAC)
     static void setShouldRepostNotificationsForTests(bool value);
 #endif
+    void recomputeDeferredIsIgnored(RenderBlock& renderer);
+    void performDeferredIsIgnoredChange();
 
 protected:
     void postPlatformNotification(AccessibilityObject*, AXNotification);
@@ -422,6 +425,7 @@ private:
 
     AXTextStateChangeIntent m_textSelectionIntent;
     bool m_isSynchronizingSelection { false };
+    ListHashSet<RenderBlock*> m_deferredIsIgnoredChangeList;
 };
 
 class AXAttributeCacheEnabler
