@@ -1,3 +1,13 @@
+2017-02-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip media/modern-media-controls/media-controller/media-controller-ios-only-enable-tap-gesture-recognizer-with-fades-when-idle.html.
+
+        Unreviewed test gardening.
+
+        This test relies on touch events.
+
+        * platform/ios-simulator/TestExpectations:
+
 2017-02-09  Chris Dumez  <cdumez@apple.com>
 
         Object.getPrototypeOf(NodeFilter) should be Function.prototype, not Object.prototype
