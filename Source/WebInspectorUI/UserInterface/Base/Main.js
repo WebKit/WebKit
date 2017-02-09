@@ -765,6 +765,9 @@ WebInspector.updateDockedState = function(side)
     this._ignoreToolbarModeDidChangeEvents = false;
 
     this._updateDockNavigationItems();
+
+    if (!this.dockedConfigurationSupportsSplitContentBrowser() && this.isShowingSplitConsole())
+        this.hideSplitConsole();
 };
 
 WebInspector.updateVisibilityState = function(visible)
