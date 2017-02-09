@@ -162,6 +162,10 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
 void PlatformWebView::setWindowIsKey(bool isKey)
 {
     m_windowIsKey = isKey;
+    if (m_windowIsKey)
+        [m_window makeKeyWindow];
+    else
+        [m_window resignKeyWindow];
 }
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height, WebViewSizingMode sizingMode)

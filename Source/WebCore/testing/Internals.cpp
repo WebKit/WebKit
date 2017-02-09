@@ -394,6 +394,8 @@ void Internals::resetToConsistentState(Page& page)
 #if USE(COORDINATED_GRAPHICS)
         mainFrameView->setFixedVisibleContentRect(IntRect());
 #endif
+        if (auto* backing = mainFrameView->tiledBacking())
+            backing->setTileSizeUpdateDelayDisabledForTesting(false);
     }
 
     WebCore::clearDefaultPortForProtocolMapForTesting();
@@ -720,6 +722,20 @@ void Internals::clearPageCache()
 unsigned Internals::pageCacheSize() const
 {
     return PageCache::singleton().pageCount();
+}
+
+void Internals::disableTileSizeUpdateDelay()
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame())
+        return;
+
+    auto* view = document->frame()->view();
+    if (!view)
+        return;
+
+    if (auto* backing = view->tiledBacking())
+        backing->setTileSizeUpdateDelayDisabledForTesting(true);
 }
 
 Node* Internals::treeScopeRootNode(Node& node)

@@ -1,5 +1,20 @@
 2017-02-08  Chris Dumez  <cdumez@apple.com>
 
+        Use smaller tiles in windows that are not active to facilitate App Napping
+        https://bugs.webkit.org/show_bug.cgi?id=167997
+        <rdar://problem/30358835>
+
+        Reviewed by Simon Fraser.
+
+        Add layout test coverage.
+
+        * compositing/tiling/non-active-window-tiles-size-expected.txt: Added.
+        * compositing/tiling/non-active-window-tiles-size.html: Added.
+        * platform/ios-simulator-wk2/compositing/tiling/non-active-window-tiles-size-expected.txt: Added.
+        * platform/mac-wk1/compositing/tiling/non-active-window-tiles-size-expected.txt: Added.
+
+2017-02-08  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r211907.
 
         Broke the build

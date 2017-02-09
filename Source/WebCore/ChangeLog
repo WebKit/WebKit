@@ -1,5 +1,41 @@
 2017-02-08  Chris Dumez  <cdumez@apple.com>
 
+        Use smaller tiles in windows that are not active to facilitate App Napping
+        https://bugs.webkit.org/show_bug.cgi?id=167997
+        <rdar://problem/30358835>
+
+        Reviewed by Simon Fraser.
+
+        Use smaller / non-adaptative tiles in windows that are not active to facilitate
+        App Napping after <https://trac.webkit.org/r197594>.
+
+        Test: compositing/tiling/non-active-window-tiles-size.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::contentsResized):
+        (WebCore::FrameView::addedOrRemovedScrollbar):
+        (WebCore::FrameView::computeScrollability):
+        (WebCore::FrameView::updateTiledBackingAdaptiveSizing):
+        (WebCore::FrameView::unobscuredContentSizeChanged):
+        (WebCore::FrameView::setViewExposedRect):
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::setActivityState):
+        (WebCore::Page::isWindowActive):
+        * page/Page.h:
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::setTileSizeUpdateDelayDisabledForTesting):
+        (WebCore::TileController::notePendingTileSizeChange):
+        * platform/graphics/ca/TileController.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::disableTileSizeUpdateDelay):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2017-02-08  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r211907.
 
         Broke the build

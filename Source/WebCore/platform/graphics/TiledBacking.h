@@ -85,6 +85,8 @@ public:
     virtual void setTopContentInset(float) = 0;
 
     virtual void setVelocity(const VelocityData&) = 0;
+
+    virtual void setTileSizeUpdateDelayDisabledForTesting(bool) = 0;
     
     enum {
         NotScrollable           = 0,

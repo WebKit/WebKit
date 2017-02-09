@@ -111,6 +111,8 @@ public:
     void clearPageCache();
     unsigned pageCacheSize() const;
 
+    void disableTileSizeUpdateDelay();
+
     Ref<CSSComputedStyleDeclaration> computedStyleIncludingVisitedInfo(Element&) const;
 
     Node* ensureUserAgentShadowRoot(Element& host);

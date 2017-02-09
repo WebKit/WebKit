@@ -309,6 +309,11 @@ void TileController::setTileDebugBorderColor(Color borderColor)
     tileGrid().updateTileLayerProperties();
 }
 
+void TileController::setTileSizeUpdateDelayDisabledForTesting(bool value)
+{
+    m_isTileSizeUpdateDelayDisabledForTesting = value;
+}
+
 IntRect TileController::boundsForSize(const FloatSize& size) const
 {
     IntPoint boundsOriginIncludingMargin(-leftMarginWidth(), -topMarginHeight());
@@ -487,7 +492,10 @@ void TileController::didEndLiveResize()
 
 void TileController::notePendingTileSizeChange()
 {
-    m_tileSizeChangeTimer.restart();
+    if (m_isTileSizeUpdateDelayDisabledForTesting)
+        tileSizeChangeTimerFired();
+    else
+        m_tileSizeChangeTimer.restart();
 }
 
 void TileController::tileSizeChangeTimerFired()

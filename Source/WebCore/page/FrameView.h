@@ -33,6 +33,7 @@
 #include "PaintPhase.h"
 #include "RenderPtr.h"
 #include "ScrollView.h"
+#include "TiledBacking.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -534,7 +535,8 @@ public:
 
     WEBCORE_EXPORT void availableContentSizeChanged(AvailableSizeChangeReason) final;
 
-    void adjustTiledBackingScrollability();
+    void updateTiledBackingAdaptiveSizing();
+    TiledBacking::Scrollability computeScrollability() const;
 
     void addPaintPendingMilestones(LayoutMilestones);
     void firePaintRelatedMilestonesIfNeeded();

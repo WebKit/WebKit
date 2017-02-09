@@ -1505,6 +1505,10 @@ void Page::setActivityState(ActivityState::Flags activityState)
         setIsInWindowInternal(activityState & ActivityState::IsInWindow);
     if (changed & ActivityState::IsVisuallyIdle)
         setIsVisuallyIdleInternal(activityState & ActivityState::IsVisuallyIdle);
+    if (changed & ActivityState::WindowIsActive) {
+        if (auto* view = m_mainFrame->view())
+            view->updateTiledBackingAdaptiveSizing();
+    }
 
     if (changed & (ActivityState::IsVisible | ActivityState::IsVisuallyIdle | ActivityState::IsAudible | ActivityState::IsLoading))
         updateTimerThrottlingState();
@@ -1522,6 +1526,11 @@ void Page::setActivityState(ActivityState::Flags activityState)
 bool Page::isVisibleAndActive() const
 {
     return (m_activityState & ActivityState::IsVisible) && (m_activityState & ActivityState::WindowIsActive);
+}
+
+bool Page::isWindowActive() const
+{
+    return m_activityState & ActivityState::WindowIsActive;
 }
 
 void Page::setIsVisible(bool isVisible)
