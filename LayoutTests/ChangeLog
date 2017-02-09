@@ -1,3 +1,14 @@
+2017-02-08  Youenn Fablet  <youennf@gmail.com>
+
+        HTML Link elements should load data URLs as same origin
+        https://bugs.webkit.org/show_bug.cgi?id=168032
+        <rdar://problem/30275036>
+
+        Reviewed by Alex Christensen.
+
+        * fast/dom/data-url-css-link-element-cors-active-expected.txt: Added.
+        * fast/dom/data-url-css-link-element-cors-active.html: Added.
+
 2017-02-08  Sam Weinig  <sam@webkit.org>
 
         REGRESSION (r193286): Promise chain no longer prevent UI refresh
