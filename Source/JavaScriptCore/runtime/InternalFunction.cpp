@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004, 2007-2008, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2007-2008, 2016-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -105,6 +105,7 @@ Structure* InternalFunction::createSubclassStructure(ExecState* exec, JSValue ne
     if (newTarget && newTarget != exec->jsCallee()) {
         // newTarget may be an InternalFunction if we were called from Reflect.construct.
         JSFunction* targetFunction = jsDynamicCast<JSFunction*>(vm, newTarget);
+        JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
 
         if (LIKELY(targetFunction)) {
             Structure* structure = targetFunction->rareData(vm)->internalFunctionAllocationStructure();
@@ -115,14 +116,14 @@ Structure* InternalFunction::createSubclassStructure(ExecState* exec, JSValue ne
             JSValue prototypeValue = newTarget.get(exec, exec->propertyNames().prototype);
             RETURN_IF_EXCEPTION(scope, nullptr);
             if (JSObject* prototype = jsDynamicCast<JSObject*>(vm, prototypeValue))
-                return targetFunction->rareData(vm)->createInternalFunctionAllocationStructureFromBase(vm, prototype, baseClass);
+                return targetFunction->rareData(vm)->createInternalFunctionAllocationStructureFromBase(vm, lexicalGlobalObject, prototype, baseClass);
         } else {
             JSValue prototypeValue = newTarget.get(exec, exec->propertyNames().prototype);
             RETURN_IF_EXCEPTION(scope, nullptr);
             if (JSObject* prototype = jsDynamicCast<JSObject*>(vm, prototypeValue)) {
                 // This only happens if someone Reflect.constructs our builtin constructor with another builtin constructor as the new.target.
                 // Thus, we don't care about the cost of looking up the structure from our hash table every time.
-                return vm.prototypeMap.emptyStructureForPrototypeFromBaseStructure(prototype, baseClass);
+                return vm.prototypeMap.emptyStructureForPrototypeFromBaseStructure(lexicalGlobalObject, prototype, baseClass);
             }
         }
     }

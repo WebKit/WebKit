@@ -1,3 +1,48 @@
+2017-02-09  Mark Lam  <mark.lam@apple.com>
+
+        Constructed object's global object should be the global object of the constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=167121
+        <rdar://problem/30054759>
+
+        Reviewed by Filip Pizlo and Geoffrey Garen.
+
+        The realm (i.e. globalObject) of any object should be the same as the constructor
+        that instantiated the object.  Changed PrototypeMap::createEmptyStructure() to
+        be passed the correct globalObject to use instead of assuming it's the same one
+        as the prototype object.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/InternalFunctionAllocationProfile.h:
+        (JSC::InternalFunctionAllocationProfile::createAllocationStructureFromBase):
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfile::initialize):
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::initializeObjectAllocationProfile):
+        * runtime/FunctionRareData.h:
+        (JSC::FunctionRareData::createInternalFunctionAllocationStructureFromBase):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructure):
+        * runtime/IteratorOperations.cpp:
+        (JSC::createIteratorResultObjectStructure):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::getBoundFunctionStructure):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::allocateAndInitializeRareData):
+        (JSC::JSFunction::initializeRareData):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::setTarget):
+        * runtime/ObjectConstructor.h:
+        (JSC::constructEmptyObject):
+        * runtime/PrototypeMap.cpp:
+        (JSC::PrototypeMap::createEmptyStructure):
+        (JSC::PrototypeMap::emptyStructureForPrototypeFromBaseStructure):
+        (JSC::PrototypeMap::emptyObjectStructureForPrototype):
+        (JSC::PrototypeMap::clearEmptyObjectStructureForPrototype):
+        * runtime/PrototypeMap.h:
+
 2017-02-09  Keith Miller  <keith_miller@apple.com>
 
         We should not allow Function.caller to be used on native functions

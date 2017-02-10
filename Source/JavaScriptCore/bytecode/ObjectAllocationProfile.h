@@ -48,7 +48,7 @@ public:
 
     bool isNull() { return !m_structure; }
 
-    void initialize(VM& vm, JSCell* owner, JSObject* prototype, unsigned inferredInlineCapacity)
+    void initialize(VM& vm, JSGlobalObject* globalObject, JSCell* owner, JSObject* prototype, unsigned inferredInlineCapacity)
     {
         ASSERT(!m_allocator);
         ASSERT(!m_structure);
@@ -92,7 +92,7 @@ public:
                 inlineCapacity = JSFinalObject::maxInlineCapacity();
         }
 
-        Structure* structure = vm.prototypeMap.emptyObjectStructureForPrototype(prototype, inlineCapacity);
+        Structure* structure = vm.prototypeMap.emptyObjectStructureForPrototype(globalObject, prototype, inlineCapacity);
 
         // Ensure that if another thread sees the structure, it will see it properly created
         WTF::storeStoreFence();
