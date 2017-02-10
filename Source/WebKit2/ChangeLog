@@ -1,3 +1,33 @@
+2017-02-09  Brady Eidson  <beidson@apple.com>
+
+        Transition "WebKit Library Version" checks to SDK version checks.
+        <rdar://problem/30313696> and https://bugs.webkit.org/show_bug.cgi?id=168056
+
+        Reviewed by Geoffrey Garen.
+
+        When doing linkedOnOrAfter checks, relying solely on the WebKit library version number is error prone,
+        since apps may not link against WebKit directly and therefore the linked WebKit is unknown.
+        
+        We should first prefer a version check on the SDK that the app was built with.
+        
+        If that check fails, we can fallback to the linked WebKit library version number if it exists.
+
+        * Shared/Cocoa/CompletionHandlerCallChecker.mm:
+        (WebKit::shouldThrowExceptionForDuplicateCompletionHandlerCall):
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+
+        For each "linked-on-or-after" feature, include both the WebKit library version and SDK version:
+        * UIProcess/Cocoa/VersionChecks.h:
+        (WebKit::linkedOnOrAfter):
+        * UIProcess/Cocoa/VersionChecks.mm:
+        (WebKit::linkedOnOrAfter):
+        (WebKit::linkTimeVersion): Deleted.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::isNetworkCacheEnabled):
+
 2017-02-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r211980 and r211987.
