@@ -1,5 +1,13 @@
 2017-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline fast/table/ tests.
+
+        * platform/gtk/fast/table/border-collapsing/004-vertical-expected.png:
+        * platform/gtk/fast/table/border-collapsing/004-vertical-expected.txt:
+        * platform/gtk/fast/table/border-collapsing/cached-change-cell-border-width-expected.txt:
+
+2017-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Update expectations of CSS shapes duplicated tests.
 
         * platform/gtk/TestExpectations:
