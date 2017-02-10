@@ -287,6 +287,8 @@ static inline PassRefPtr<StyleImage> crossfadeBlend(const AnimationBase*, StyleC
         return fromStyleImage;
     if (progress == 1)
         return toStyleImage;
+    if (!fromStyleImage->cachedImage() || !toStyleImage->cachedImage())
+        return toStyleImage;
 
     auto fromImageValue = CSSImageValue::create(*fromStyleImage->cachedImage());
     auto toImageValue = CSSImageValue::create(*toStyleImage->cachedImage());
