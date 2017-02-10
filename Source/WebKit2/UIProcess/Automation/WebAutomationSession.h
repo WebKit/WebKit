@@ -167,7 +167,7 @@ private:
     // Simulates key presses to produce the codepoints in a string. One or more code points are delivered atomically at grapheme cluster boundaries.
     void platformSimulateKeySequence(WebPageProxy&, const String&);
     // Get base64 encoded PNG data from a bitmap.
-    String platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&);
+    std::optional<String> platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&);
 
 #if PLATFORM(MAC)
     void sendSynthesizedEventsToPage(WebPageProxy&, NSArray *eventsToSend);

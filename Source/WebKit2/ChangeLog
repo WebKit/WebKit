@@ -1,3 +1,21 @@
+2017-02-10  Brian Burg  <bburg@apple.com>
+
+        Web Automation: fail gracefully when a screenshot cannot be encoded as base64
+        https://bugs.webkit.org/show_bug.cgi?id=168095
+        <rdar://problem/30297427>
+
+        Reviewed by Joseph Pecoraro.
+
+        Convert platformGetBase64EncodedPNGData to return a std::optional<String>.
+        Return nullopt if we can't create a screenshot or convert it to base64.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::didTakeScreenshot):
+        (WebKit::WebAutomationSession::platformGetBase64EncodedPNGData):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/cocoa/WebAutomationSessionCocoa.mm:
+        (WebKit::WebAutomationSession::platformGetBase64EncodedPNGData):
+
 2017-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build with threaded compositor disabled.

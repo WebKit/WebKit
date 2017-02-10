@@ -37,19 +37,22 @@ using namespace WebCore;
 
 namespace WebKit {
 
-String WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& imageDataHandle)
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& imageDataHandle)
 {
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(imageDataHandle, SharedMemory::Protection::ReadOnly);
+    if (!bitmap)
+        return std::nullopt;
+
     RetainPtr<CGImageRef> cgImage = bitmap->makeCGImage();
     RetainPtr<NSMutableData> imageData = adoptNS([[NSMutableData alloc] init]);
     RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData((CFMutableDataRef)imageData.get(), kUTTypePNG, 1, 0));
     if (!destination)
-        return String();
+        return std::nullopt;
 
     CGImageDestinationAddImage(destination.get(), cgImage.get(), 0);
     CGImageDestinationFinalize(destination.get());
 
-    return [imageData base64EncodedStringWithOptions:0];
+    return String([imageData base64EncodedStringWithOptions:0]);
 }
 
 } // namespace WebKit

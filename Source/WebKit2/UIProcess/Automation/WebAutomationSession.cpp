@@ -916,13 +916,13 @@ void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, const Shareabl
         return;
     }
 
-    String base64EncodedData = platformGetBase64EncodedPNGData(imageDataHandle);
-    if (base64EncodedData.isEmpty()) {
+    std::optional<String> base64EncodedData = platformGetBase64EncodedPNGData(imageDataHandle);
+    if (!base64EncodedData) {
         callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError));
         return;
     }
 
-    callback->sendSuccess(base64EncodedData);
+    callback->sendSuccess(base64EncodedData.value());
 }
 
 // Platform-dependent Implementation Stubs.
@@ -942,7 +942,7 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy&, const Stri
 #endif // !PLATFORM(MAC)
 
 #if !PLATFORM(COCOA)
-String WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&)
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&)
 {
     return String();
 }
