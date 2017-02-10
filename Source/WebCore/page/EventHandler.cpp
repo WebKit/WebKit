@@ -1632,13 +1632,6 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
         return true;
     }
 
-#if ENABLE(POINTER_LOCK)
-    if (m_frame.page()->pointerLockController().isLocked()) {
-        m_frame.page()->pointerLockController().dispatchLockedMouseEvent(platformMouseEvent, eventNames().mousedownEvent);
-        return true;
-    }
-#endif
-
     if (m_frame.mainFrame().pageOverlayController().handleMouseEvent(platformMouseEvent))
         return true;
 
@@ -1779,13 +1772,6 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
 
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document());
 
-#if ENABLE(POINTER_LOCK)
-    if (m_frame.page()->pointerLockController().isLocked()) {
-        m_frame.page()->pointerLockController().dispatchLockedMouseEvent(platformMouseEvent, eventNames().mouseupEvent);
-        return true;
-    }
-#endif
-
     // We get this instead of a second mouse-up 
     m_mousePressed = false;
     setLastKnownMousePosition(platformMouseEvent);
@@ -1880,14 +1866,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
 
     Ref<Frame> protectedFrame(m_frame);
     RefPtr<FrameView> protector(m_frame.view());
-
-#if ENABLE(POINTER_LOCK)
-    if (m_frame.page()->pointerLockController().isLocked()) {
-        m_frame.page()->pointerLockController().dispatchLockedMouseEvent(platformMouseEvent, eventNames().mousemoveEvent);
-        return true;
-    }
-#endif
-
+    
     setLastKnownMousePosition(platformMouseEvent);
 
     if (m_hoverTimer.isActive())
@@ -2026,13 +2005,6 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
 
     m_frame.selection().setCaretBlinkingSuspended(false);
 
-#if ENABLE(POINTER_LOCK)
-    if (m_frame.page()->pointerLockController().isLocked()) {
-        m_frame.page()->pointerLockController().dispatchLockedMouseEvent(platformMouseEvent, eventNames().mouseupEvent);
-        return true;
-    }
-#endif
-
     if (m_frame.mainFrame().pageOverlayController().handleMouseEvent(platformMouseEvent))
         return true;
 
@@ -2110,17 +2082,6 @@ bool EventHandler::handleMouseForceEvent(const PlatformMouseEvent& event)
 {
     Ref<Frame> protectedFrame(m_frame);
     RefPtr<FrameView> protector(m_frame.view());
-
-#if ENABLE(POINTER_LOCK)
-    if (m_frame.page()->pointerLockController().isLocked()) {
-        m_frame.page()->pointerLockController().dispatchLockedMouseEvent(event, eventNames().webkitmouseforcechangedEvent);
-        if (event.type() == PlatformEvent::MouseForceDown)
-            m_frame.page()->pointerLockController().dispatchLockedMouseEvent(event, eventNames().webkitmouseforcedownEvent);
-        if (event.type() == PlatformEvent::MouseForceUp)
-            m_frame.page()->pointerLockController().dispatchLockedMouseEvent(event, eventNames().webkitmouseforceupEvent);
-        return true;
-    }
-#endif
 
     setLastKnownMousePosition(event);
 
@@ -2725,13 +2686,6 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     FrameView* view = m_frame.view();
     if (!view)
         return false;
-
-#if ENABLE(POINTER_LOCK)
-    if (m_frame.page()->pointerLockController().isLocked()) {
-        m_frame.page()->pointerLockController().dispatchLockedWheelEvent(event);
-        return true;
-    }
-#endif
 
     m_isHandlingWheelEvent = true;
     setFrameWasScrolledByUser();

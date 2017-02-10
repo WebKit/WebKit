@@ -49,17 +49,6 @@
             // doNextStep() called by onpointerlockchange handler.
         },
         function () {
-            debug("     With a lock in place send a wheel event.")
-            targetdiv1.onwheel = eventExpected;
-            targetdiv2.onwheel = eventNotExpected;
-            document.body.onwheel = eventExpected;
-            if (window.eventSender) {
-                window.eventSender.mouseMoveTo(20,20);
-                window.eventSender.leapForward(1000);
-                window.eventSender.mouseScrollBy(0,10);
-            }
-            doNextStep();
-        },
         function () {
             debug("     With a lock in place move the mouse.")
             targetdiv1.onmousemove = eventDeltaExpectedThenNextStep;
@@ -89,17 +78,6 @@
             targetdiv2.requestPointerLock();
             expectedTargetToBeLockedString = "targetdiv2";
             // doNextStep() called by onpointerlockchange handler.
-        },
-        function () {
-            debug("     With a lock in place send a wheel event.")
-            targetdiv1.onwheel = eventNotExpected;
-            targetdiv2.onwheel = eventExpected;
-            document.body.onwheel = eventExpected;
-            if (window.eventSender) {
-                window.eventSender.leapForward(1000);
-                window.eventSender.mouseScrollBy(0,10);
-            }
-            doNextStep();
         },
         function () {
             debug("     With a lock in place send a click.")

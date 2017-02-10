@@ -1,3 +1,17 @@
+2017-02-10  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211375. rdar://problem/30268004
+
+    2017-01-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed, rollout r211235 Pointer lock events should be delivered directly to the target element.
+
+            The LayoutTest for this change is frequently failing.
+
+            * platform/mac/TestExpectations:
+            * pointer-lock/mouse-event-delivery-expected.txt:
+            * pointer-lock/mouse-event-delivery.html:
+
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
         Roll out r209845. rdar://problem/30114564

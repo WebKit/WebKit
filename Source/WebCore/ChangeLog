@@ -1,3 +1,25 @@
+2017-02-10  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211375. rdar://problem/30268004
+
+    2017-01-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed, rollout r211235 Pointer lock events should be delivered directly to the target element.
+
+            The LayoutTest for this change is frequently failing.
+
+            * page/EventHandler.cpp:
+            (WebCore::EventHandler::handleMousePressEvent):
+            (WebCore::EventHandler::handleMouseDoubleClickEvent):
+            (WebCore::EventHandler::handleMouseMoveEvent):
+            (WebCore::EventHandler::handleMouseReleaseEvent):
+            (WebCore::EventHandler::handleMouseForceEvent):
+            (WebCore::EventHandler::handleWheelEvent):
+            * page/PointerLockController.cpp:
+            (WebCore::PointerLockController::isLocked): Deleted.
+            (WebCore::PointerLockController::dispatchLockedWheelEvent): Deleted.
+            * page/PointerLockController.h:
+
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r212029. rdar://problem/30376972

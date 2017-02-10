@@ -281,6 +281,7 @@ fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 # Pointer Lock can only check some of the API at the moment.
 pointer-lock/bug90391-move-then-window-open-crash.html
 pointer-lock/locked-element-iframe-removed-from-dom.html
+pointer-lock/mouse-event-delivery.html
 pointer-lock/pointerlockchange-event-on-lock-lost.html
 pointer-lock/pointerlockchange-pointerlockerror-events.html
 pointer-lock/pointerlockelement-null-when-pending.html
