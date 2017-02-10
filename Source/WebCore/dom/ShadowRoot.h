@@ -77,7 +77,7 @@ public:
     void didRemoveAllChildrenOfShadowHost();
     void didChangeDefaultSlot();
     void hostChildElementDidChange(const Element&);
-    void hostChildElementDidChangeSlotAttribute(const AtomicString& oldValue, const AtomicString& newValue);
+    void hostChildElementDidChangeSlotAttribute(Element&, const AtomicString& oldValue, const AtomicString& newValue);
 
     const Vector<Node*>* assignedNodesForSlot(const HTMLSlotElement&);
 

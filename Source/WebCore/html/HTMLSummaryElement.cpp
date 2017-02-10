@@ -32,15 +32,26 @@
 #include "PlatformMouseEvent.h"
 #include "RenderBlockFlow.h"
 #include "ShadowRoot.h"
+#include "SlotAssignment.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
+class SummarySlotElement final : public SlotAssignment {
+private:
+    void hostChildElementDidChange(const Element&, ShadowRoot& shadowRoot) override
+    {
+        didChangeSlot(SlotAssignment::defaultSlotName(), shadowRoot);
+    }
+
+    const AtomicString& slotNameForHostChild(const Node&) const override { return SlotAssignment::defaultSlotName(); }
+};
+
 Ref<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document& document)
 {
     Ref<HTMLSummaryElement> summary = adoptRef(*new HTMLSummaryElement(tagName, document));
-    summary->addShadowRoot(ShadowRoot::create(document, ShadowRootMode::UserAgent));
+    summary->addShadowRoot(ShadowRoot::create(document, std::make_unique<SummarySlotElement>()));
     return summary;
 }
 
