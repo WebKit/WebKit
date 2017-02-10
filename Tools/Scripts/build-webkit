@@ -180,7 +180,8 @@ if (isAppleCocoaWebKit()) {
     }
 
     # ANGLE and libwebrtc must come before WebCore
-    splice @projects, 0, 0, ("Source/ThirdParty/ANGLE", "Source/ThirdParty/libwebrtc");
+    splice @projects, 0, 0, ("Source/ThirdParty/ANGLE");
+    if (not architecture() eq "i386") { splice @projects, 0, 0, ("Source/ThirdParty/libwebrtc"); }
 
     push @projects, ("Source/WebKit2");
 

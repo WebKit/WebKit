@@ -1,3 +1,10 @@
+2017-02-10  Alex Christensen  <achristensen@webkit.org>
+
+        Fix 32-bit build on El Capitan.
+
+        * Scripts/build-webkit:
+        Don't build i386 libwebrtc.
+
 2017-02-09  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r212040.
