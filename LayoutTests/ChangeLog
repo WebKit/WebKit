@@ -1,3 +1,14 @@
+2017-02-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Handle synchronous layout when setting a selection range
+        https://bugs.webkit.org/show_bug.cgi?id=167092
+        <rdar://problem/30041640>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/forms/input-type-change-during-selection-expected.txt: Added.
+        * fast/forms/input-type-change-during-selection.html: Added.
+
 2017-02-09  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, fix test for new .caller with native code caller semantics.

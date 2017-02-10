@@ -1,0 +1,9 @@
+Check that manipulating input type while focusing is handled. Passes if we do not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  
