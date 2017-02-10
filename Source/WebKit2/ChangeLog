@@ -1,5 +1,11 @@
 2017-02-09  Alex Christensen  <achristensen@webkit.org>
 
+        Fix libwebrtc build on case-sensitive file systems.
+
+        * WebProcess/Network/webrtc/WebRTCMonitor.cpp:
+
+2017-02-09  Alex Christensen  <achristensen@webkit.org>
+
         Fix CMake build.
 
         * PlatformMac.cmake:
