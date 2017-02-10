@@ -1,5 +1,30 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211835. rdar://problem/27439617
+
+    2017-02-07  Alex Christensen  <achristensen@webkit.org>
+
+            Revert r166597
+            https://bugs.webkit.org/show_bug.cgi?id=167951
+
+            Reviewed by Andreas Kling.
+
+            CFURLConnectionInvalidateConnectionCache is not commonly called and is likely causing
+            CFNetwork to be in a strange state when using NSURLSession and invalidating the connection
+            cache during authentication, especially server trust evaluation.  Right now we only call
+            it when handling memory pressure, and it isn't worth getting into such a strange state
+            in a poorly tested situation. See rdar://problem/27439617
+
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::lowMemoryHandler):
+            (WebKit::NetworkProcess::initializeSandbox):
+            (WebKit::NetworkProcess::platformLowMemoryHandler): Deleted.
+            * NetworkProcess/NetworkProcess.h:
+            * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+            (WebKit::NetworkProcess::platformLowMemoryHandler): Deleted.
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211747. rdar://problem/30183825
 
     2017-02-06  Anders Carlsson  <andersca@apple.com>

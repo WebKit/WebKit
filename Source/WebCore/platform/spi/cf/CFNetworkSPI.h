@@ -148,8 +148,6 @@ void _CFCachedURLResponseSetBecameFileBackedCallBackBlock(CFCachedURLResponseRef
 #endif
 #endif // PLATFORM(COCOA)
 
-void CFURLConnectionInvalidateConnectionCache();
-
 extern CFStringRef const kCFHTTPCookieLocalFileDomain;
 extern const CFStringRef kCFURLRequestAllowAllPOSTCaching;
 

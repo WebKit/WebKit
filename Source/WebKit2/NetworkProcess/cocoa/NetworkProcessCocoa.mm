@@ -43,11 +43,6 @@
 
 namespace WebKit {
 
-void NetworkProcess::platformLowMemoryHandler(WebCore::Critical)
-{
-    CFURLConnectionInvalidateConnectionCache();
-}
-
 static void initializeNetworkSettings()
 {
     static const unsigned preferredConnectionCount = 6;

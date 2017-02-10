@@ -195,7 +195,6 @@ void NetworkProcess::lowMemoryHandler(Critical critical)
     if (m_suppressMemoryPressureHandler)
         return;
 
-    platformLowMemoryHandler(critical);
     WTF::releaseFastMallocFreeMemory();
 }
 
@@ -653,10 +652,6 @@ void NetworkProcess::initializeProcessName(const ChildProcessInitializationParam
 }
 
 void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&)
-{
-}
-
-void NetworkProcess::platformLowMemoryHandler(Critical)
 {
 }
 #endif
