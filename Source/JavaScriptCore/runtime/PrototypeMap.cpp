@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,9 +54,9 @@ void PrototypeMap::addPrototype(JSObject* object)
     // used as a prototype.
 }
 
-inline Structure* PrototypeMap::createEmptyStructure(JSObject* prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
+inline Structure* PrototypeMap::createEmptyStructure(JSGlobalObject* globalObject, JSObject* prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
 {
-    auto key = std::make_pair(prototype, std::make_pair(inlineCapacity, classInfo));
+    auto key = std::make_pair(prototype, std::make_pair(inlineCapacity, std::make_pair(classInfo, globalObject)));
     if (Structure* structure = m_structures.get(key)) {
         ASSERT(isPrototype(prototype));
         return structure;
@@ -64,29 +64,29 @@ inline Structure* PrototypeMap::createEmptyStructure(JSObject* prototype, const 
 
     addPrototype(prototype);
     Structure* structure = Structure::create(
-        prototype->globalObject()->vm(), prototype->globalObject(), prototype, typeInfo, classInfo, indexingType, inlineCapacity);
+        globalObject->vm(), globalObject, prototype, typeInfo, classInfo, indexingType, inlineCapacity);
     m_structures.set(key, Weak<Structure>(structure));
     return structure;
 }
 
-Structure* PrototypeMap::emptyStructureForPrototypeFromBaseStructure(JSObject* prototype, Structure* baseStructure)
+Structure* PrototypeMap::emptyStructureForPrototypeFromBaseStructure(JSGlobalObject* globalObject, JSObject* prototype, Structure* baseStructure)
 {
     // We currently do not have inline capacity static analysis for subclasses and all internal function constructors have a default inline capacity of 0.
     IndexingType indexingType = baseStructure->indexingType();
     if (prototype->structure()->anyObjectInChainMayInterceptIndexedAccesses() && hasIndexedProperties(indexingType))
         indexingType = (indexingType & ~IndexingShapeMask) | SlowPutArrayStorageShape;
 
-    return createEmptyStructure(prototype, baseStructure->typeInfo(), baseStructure->classInfo(), indexingType, 0);
+    return createEmptyStructure(globalObject, prototype, baseStructure->typeInfo(), baseStructure->classInfo(), indexingType, 0);
 }
 
-Structure* PrototypeMap::emptyObjectStructureForPrototype(JSObject* prototype, unsigned inlineCapacity)
+Structure* PrototypeMap::emptyObjectStructureForPrototype(JSGlobalObject* globalObject, JSObject* prototype, unsigned inlineCapacity)
 {
-    return createEmptyStructure(prototype, JSFinalObject::typeInfo(), JSFinalObject::info(), JSFinalObject::defaultIndexingType, inlineCapacity);
+    return createEmptyStructure(globalObject, prototype, JSFinalObject::typeInfo(), JSFinalObject::info(), JSFinalObject::defaultIndexingType, inlineCapacity);
 }
 
-void PrototypeMap::clearEmptyObjectStructureForPrototype(JSObject* object, unsigned inlineCapacity)
+void PrototypeMap::clearEmptyObjectStructureForPrototype(JSGlobalObject* globalObject, JSObject* object, unsigned inlineCapacity)
 {
-    m_structures.remove(std::make_pair(object, std::make_pair(inlineCapacity, JSFinalObject::info())));
+    m_structures.remove(std::make_pair(object, std::make_pair(inlineCapacity, std::make_pair(JSFinalObject::info(), globalObject))));
 }
 
 } // namespace JSC

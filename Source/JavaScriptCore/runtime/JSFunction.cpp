@@ -134,10 +134,11 @@ FunctionRareData* JSFunction::allocateAndInitializeRareData(ExecState* exec, siz
     ASSERT(!m_rareData);
     VM& vm = exec->vm();
     JSObject* prototype = jsDynamicCast<JSObject*>(get(exec, vm.propertyNames->prototype));
+    JSGlobalObject* globalObject = this->globalObject(vm);
     if (!prototype)
-        prototype = globalObject(vm)->objectPrototype();
+        prototype = globalObject->objectPrototype();
     FunctionRareData* rareData = FunctionRareData::create(vm);
-    rareData->initializeObjectAllocationProfile(vm, prototype, inlineCapacity);
+    rareData->initializeObjectAllocationProfile(vm, globalObject, prototype, inlineCapacity);
 
     // A DFG compilation thread may be trying to read the rare data
     // We want to ensure that it sees it properly allocated
@@ -152,9 +153,10 @@ FunctionRareData* JSFunction::initializeRareData(ExecState* exec, size_t inlineC
     ASSERT(!!m_rareData);
     VM& vm = exec->vm();
     JSObject* prototype = jsDynamicCast<JSObject*>(get(exec, vm.propertyNames->prototype));
+    JSGlobalObject* globalObject = this->globalObject(vm);
     if (!prototype)
-        prototype = globalObject(vm)->objectPrototype();
-    m_rareData->initializeObjectAllocationProfile(vm, prototype, inlineCapacity);
+        prototype = globalObject->objectPrototype();
+    m_rareData->initializeObjectAllocationProfile(vm, globalObject, prototype, inlineCapacity);
     return m_rareData.get();
 }
 
