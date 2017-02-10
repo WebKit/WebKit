@@ -1,5 +1,22 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211622. rdar://problem/30116072
+
+    2017-02-02  Andreas Kling  <akling@apple.com>
+
+            [Mac] In-process memory pressure monitor for WebContent processes AKA websam
+            <https://webkit.org/b/167491>
+            <rdar://problem/30116072>
+
+            Reviewed by Antti Koivisto.
+
+            Enable the in-process memory monitor for WebContent processes on macOS 10.12+
+
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::initializeWebProcess):
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211254. rdar://problem/30188490
 
     2017-01-26  Chris Dumez  <cdumez@apple.com>

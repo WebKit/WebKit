@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,46 +20,31 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "CommonVM.h"
+#include "MemoryFootprint.h"
 
-#include "ScriptController.h"
-#include "Settings.h"
-#include "WebCoreJSClientData.h"
-#include <heap/HeapInlines.h>
-#include <runtime/VM.h>
-#include <wtf/MainThread.h>
-
-using namespace JSC;
-
-namespace WebCore {
-
-VM* g_commonVMOrNull;
-
-VM& commonVMSlow()
-{
-    ASSERT(isMainThread());
-    ASSERT(!g_commonVMOrNull);
-    
-    ScriptController::initializeThreading();
-    g_commonVMOrNull = &VM::createLeaked(LargeHeap).leakRef();
-    g_commonVMOrNull->heap.acquireAccess(); // At any time, we may do things that affect the GC.
-#if !PLATFORM(IOS)
-    g_commonVMOrNull->setExclusiveThread(std::this_thread::get_id());
-#else
-    g_commonVMOrNull->heap.setRunLoop(WebThreadRunLoop());
-    g_commonVMOrNull->heap.machineThreads().addCurrentThread();
+#if PLATFORM(COCOA)
+#include <mach/mach.h>
+#include <mach/task_info.h>
 #endif
-    
-    g_commonVMOrNull->setGlobalConstRedeclarationShouldThrow(Settings::globalConstRedeclarationShouldThrow());
-    
-    JSVMClientData::initNormalWorld(g_commonVMOrNull);
-    
-    return *g_commonVMOrNull;
+
+namespace WTF {
+
+std::optional<size_t> memoryFootprint()
+{
+#if PLATFORM(COCOA)
+    task_vm_info_data_t vmInfo;
+    mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
+    kern_return_t result = task_info(mach_task_self(), TASK_VM_INFO, (task_info_t) &vmInfo, &count);
+    if (result != KERN_SUCCESS)
+        return std::nullopt;
+    return static_cast<size_t>(vmInfo.phys_footprint);
+#else
+    return std::nullopt;
+#endif
 }
 
-} // namespace WebCore
-
+}

@@ -1,5 +1,26 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211622. rdar://problem/30116072
+
+    2017-02-02  Andreas Kling  <akling@apple.com>
+
+            [Mac] In-process memory pressure monitor for WebContent processes AKA websam
+            <https://webkit.org/b/167491>
+            <rdar://problem/30116072>
+
+            Reviewed by Antti Koivisto.
+
+            Remove the sloppy "max live heap size" mechanism from JSC in favor of the new
+            WebCore-side memory footprint monitor.
+
+            * heap/Heap.cpp:
+            (JSC::Heap::updateAllocationLimits):
+            (JSC::Heap::didExceedMaxLiveSize): Deleted.
+            * heap/Heap.h:
+            (JSC::Heap::setMaxLiveSize): Deleted.
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211896. rdar://problem/29754721
 
     2017-02-08  Saam Barati  <sbarati@apple.com>

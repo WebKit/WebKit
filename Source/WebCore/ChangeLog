@@ -1,5 +1,74 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211622. rdar://problem/30116072
+
+    2017-02-02  Andreas Kling  <akling@apple.com>
+
+            [Mac] In-process memory pressure monitor for WebContent processes AKA websam
+            <https://webkit.org/b/167491>
+            <rdar://problem/30116072>
+
+            Reviewed by Antti Koivisto.
+
+            Add a new timer-based memory pressure monitor that checks the process memory
+            footprint every 30 seconds and reacts to changes by setting a MemoryUsagePolicy.
+
+            There are four MemoryUsagePolicy values:
+
+                - Unrestricted (below 1GB)
+                - Conservative (above 1GB)
+                - Strict (above 2GB)
+                - Panic (above 4GB, or 3GB if 32-bit)
+
+            For Strict and above, the old-style "isUnderMemoryPressure()" API will return true.
+
+            Transitioning to a higher policy will cause memory pressure handlers to run:
+
+            At Strict, we run the "non-critical" memory pressure handler, then carry on.
+
+            At Panic, we run the "critical" memory pressure handler. If that fails to recover
+            enough memory to bring us back below 4GB, we may kill the process:
+
+            A process is eligible to get killed for using too much memory if:
+
+                - It's not visible on screen (i.e it's a background tab.)
+                - It's not playing audio.
+                - It has not performed a main frame navigation in the last hour.
+
+            Before killing the process, an exit-time callback will run. This patch installs such
+            a callback that prints out some time-of-death statistics about C++ and JavaScript memory
+            usage to hopefully help understand what was soaking up all the memory.
+
+            * bindings/js/CommonVM.cpp:
+            (WebCore::commonVMSlow):
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::setState):
+            * page/MainFrame.cpp:
+            (WebCore::MainFrame::didCompleteLoad):
+            * page/MainFrame.h:
+            * page/MemoryRelease.cpp:
+            (WebCore::pageCount):
+            (WebCore::logMemoryStatisticsAtTimeOfDeath):
+            (WebCore::didExceedMemoryLimitAndFailedToRecover):
+            (WebCore::processIsEligibleForMemoryKill):
+            * page/MemoryRelease.h:
+            * page/ResourceUsageThread.h:
+            * page/cocoa/ResourceUsageThreadCocoa.mm:
+            (WebCore::vmPageSize):
+            * platform/MemoryPressureHandler.cpp:
+            (WebCore::MemoryPressureHandler::MemoryPressureHandler):
+            (WebCore::MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor):
+            (WebCore::toString):
+            (WebCore::thresholdForPolicy):
+            (WebCore::policyForFootprint):
+            (WebCore::MemoryPressureHandler::measurementTimerFired):
+            * platform/MemoryPressureHandler.h:
+            (WebCore::MemoryPressureHandler::setMemoryKillCallback):
+            (WebCore::MemoryPressureHandler::setProcessIsEligibleForMemoryKillCallback):
+            (WebCore::MemoryPressureHandler::isUnderMemoryPressure):
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211621. rdar://problem/30221102
 
     2017-02-02  Alex Christensen  <achristensen@webkit.org>

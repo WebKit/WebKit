@@ -29,12 +29,15 @@
 #include "CSSValuePool.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "CommonVM.h"
 #include "Document.h"
 #include "FontCache.h"
 #include "GCController.h"
 #include "HTMLMediaElement.h"
 #include "InlineStyleSheetOwner.h"
 #include "InspectorInstrumentation.h"
+#include "Logging.h"
+#include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "PageCache.h"
@@ -43,6 +46,10 @@
 #include "StyledElement.h"
 #include "WorkerThread.h"
 #include <wtf/FastMalloc.h>
+
+#if PLATFORM(COCOA)
+#include "ResourceUsageThread.h"
+#endif
 
 namespace WebCore {
 
@@ -125,6 +132,88 @@ void releaseMemory(Critical critical, Synchronous synchronous)
         InspectorInstrumentation::didHandleMemoryPressure(page, critical);
     });
 #endif
+}
+
+#if !RELEASE_LOG_DISABLED
+static unsigned pageCount()
+{
+    unsigned count = 0;
+    Page::forEachPage([&] (Page& page) {
+        if (!page.isUtilityPage())
+            ++count;
+    });
+    return count;
+}
+#endif
+
+void logMemoryStatisticsAtTimeOfDeath()
+{
+#if !RELEASE_LOG_DISABLED
+#if PLATFORM(COCOA)
+    auto pageSize = vmPageSize();
+    auto pages = pagesPerVMTag();
+
+    RELEASE_LOG(MemoryPressure, "Dirty memory per VM tag at time of death:");
+    for (unsigned i = 0; i < 256; ++i) {
+        size_t dirty = pages[i].dirty * pageSize;
+        if (!dirty)
+            continue;
+        String tagName = displayNameForVMTag(i);
+        if (!tagName)
+            tagName = String::format("Tag %u", i);
+        RELEASE_LOG(MemoryPressure, "%16s: %lu MB", tagName.latin1().data(), dirty / MB);
+    }
+#endif
+
+    auto& vm = commonVM();
+    RELEASE_LOG(MemoryPressure, "Memory usage statistics at time of death:");
+    RELEASE_LOG(MemoryPressure, "GC heap size: %zu", vm.heap.size());
+    RELEASE_LOG(MemoryPressure, "GC heap extra memory size: %zu", vm.heap.extraMemorySize());
+#if ENABLE(RESOURCE_USAGE)
+    RELEASE_LOG(MemoryPressure, "GC heap external memory: %zu", vm.heap.externalMemorySize());
+#endif
+    RELEASE_LOG(MemoryPressure, "Global object count: %zu", vm.heap.globalObjectCount());
+
+    RELEASE_LOG(MemoryPressure, "Page count: %u", pageCount());
+    RELEASE_LOG(MemoryPressure, "Document count: %u", Document::allDocuments().size());
+    RELEASE_LOG(MemoryPressure, "Live JavaScript objects:");
+    for (auto& it : *vm.heap.objectTypeCounts())
+        RELEASE_LOG(MemoryPressure, "  %s: %d", it.key, it.value);
+#endif
+}
+
+void didExceedMemoryLimitAndFailedToRecover()
+{
+    RELEASE_LOG(MemoryPressure, "Crashing non-visible process due to excessive memory usage + inability to free up memory below panic threshold.");
+    logMemoryStatisticsAtTimeOfDeath();
+    CRASH();
+}
+
+bool processIsEligibleForMemoryKill()
+{
+    bool hasVisiblePages = false;
+    bool hasAudiblePages = false;
+    bool hasMainFrameNavigatedInTheLastHour = false;
+
+    auto now = MonotonicTime::now();
+    Page::forEachPage([&] (Page& page) {
+        if (page.isUtilityPage())
+            return;
+        if (page.isVisible())
+            hasVisiblePages = true;
+        if (page.activityState() & ActivityState::IsAudible)
+            hasAudiblePages = true;
+        if (auto timeOfLastCompletedLoad = page.mainFrame().timeOfLastCompletedLoad()) {
+            if (now - timeOfLastCompletedLoad <= Seconds::fromMinutes(60))
+                hasMainFrameNavigatedInTheLastHour = true;
+        }
+    });
+
+    bool eligible = !hasVisiblePages && !hasAudiblePages && !hasMainFrameNavigatedInTheLastHour;
+    if (!eligible)
+        RELEASE_LOG(MemoryPressure, "Process not eligible for panic memory kill. Reasons: hasVisiblePages=%u, hasAudiblePages=%u, hasMainFrameNavigatedInTheLastHour=%u", hasVisiblePages, hasAudiblePages, hasMainFrameNavigatedInTheLastHour);
+
+    return eligible;
 }
 
 #if !PLATFORM(COCOA)
