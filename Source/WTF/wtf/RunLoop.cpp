@@ -50,6 +50,9 @@ private:
 
 void RunLoop::initializeMainRunLoop()
 {
+#if OS(DARWIN)
+    ASSERT(pthread_main_np());
+#endif
     if (s_mainRunLoop)
         return;
     s_mainRunLoop = &RunLoop::current();

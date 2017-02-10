@@ -1,3 +1,16 @@
+2017-02-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix misleading comment in RunLoop.h
+        https://bugs.webkit.org/show_bug.cgi?id=167832
+
+        Reviewed by Sam Weinig.
+
+        * wtf/RunLoop.h:
+        Mac initialization used to force using CFRunLoopGetMain(). Now however it just
+        uses RunLoop::current which uses CFRunLoopGetCurrent(). So this comment that
+        it can be done on any thread is misleading and can lead to incorrect behavior
+        if it is actually done on a non-main thread on Mac.
+
 2017-02-09  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r212040.
