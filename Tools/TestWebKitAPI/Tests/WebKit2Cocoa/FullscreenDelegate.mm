@@ -28,7 +28,10 @@
 #if WK_API_ENABLED && PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
+#import "PlatformWebView.h"
+#import <WebKit/WKPagePrivateMac.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFullscreenDelegate.h>
@@ -40,6 +43,11 @@ static bool receivedWillEnterFullscreenMessage;
 static bool receivedDidEnterFullscreenMessage;
 static bool receivedWillExitFullscreenMessage;
 static bool receivedDidExitFullscreenMessage;
+
+static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
+{
+    receivedLoadedMessage = true;
+}
 
 @interface FullscreenDelegateMessageHandler : NSObject <WKScriptMessageHandler, _WKFullscreenDelegate>
 @end
@@ -104,6 +112,40 @@ TEST(Fullscreen, Delegate)
     TestWebKitAPI::Util::run(&receivedDidExitFullscreenMessage);
 
     ASSERT_FALSE([webView _isInFullscreen]);
+}
+
+TEST(Fullscreen, WKViewDelegate)
+{
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
+    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("FullscreenDelegate").get()));
+    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
+    WKPreferencesSetFullScreenEnabled(preferences, true);
+
+    PlatformWebView webView(context.get(), pageGroup.get());
+
+    RetainPtr<FullscreenDelegateMessageHandler> handler = adoptNS([[FullscreenDelegateMessageHandler alloc] init]);
+    WKPageSetFullscreenDelegate(webView.page(), handler.get());
+
+    WKPageLoaderClientV0 loaderClient;
+    memset(&loaderClient, 0 , sizeof(loaderClient));
+
+    loaderClient.base.version = 0;
+    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+
+    receivedLoadedMessage = false;
+    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("FullscreenDelegate", "html"));
+    WKPageLoadURL(webView.page(), url.get());
+
+    TestWebKitAPI::Util::run(&receivedLoadedMessage);
+
+    webView.simulateButtonClick(kWKEventMouseButtonLeftButton, 5, 5, 0);
+    TestWebKitAPI::Util::run(&receivedWillEnterFullscreenMessage);
+    TestWebKitAPI::Util::run(&receivedDidEnterFullscreenMessage);
+
+    webView.simulateButtonClick(kWKEventMouseButtonLeftButton, 5, 5, 0);
+    TestWebKitAPI::Util::run(&receivedWillExitFullscreenMessage);
+    TestWebKitAPI::Util::run(&receivedDidExitFullscreenMessage);
 }
 
 } // namespace TestWebKitAPI

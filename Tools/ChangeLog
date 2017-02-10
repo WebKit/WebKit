@@ -1,5 +1,20 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211891. rdar://problem/30423806
+
+    2017-02-08  Jer Noble  <jer.noble@apple.com>
+
+            Move FullscreenClient creation into WebViewImpl, for use in (deprecated) WKView.
+            https://bugs.webkit.org/show_bug.cgi?id=168007
+
+            Reviewed by Alex Christensen.
+
+            * TestWebKitAPI/Tests/WebKit2Cocoa/FullscreenDelegate.mm:
+            (didFinishLoadForFrame):
+            (TestWebKitAPI::TEST):
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211746. rdar://problem/30107622
 
     2017-02-06  Jer Noble  <jer.noble@apple.com>

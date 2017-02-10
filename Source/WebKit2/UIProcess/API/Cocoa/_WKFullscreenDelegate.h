@@ -31,10 +31,10 @@
 
 @optional
 
-- (void)_webViewWillEnterFullscreen:(WKWebView *)webView;
-- (void)_webViewDidEnterFullscreen:(WKWebView *)webView;
-- (void)_webViewWillExitFullscreen:(WKWebView *)webView;
-- (void)_webViewDidExitFullscreen:(WKWebView *)webView;
+- (void)_webViewWillEnterFullscreen:(NSView *)webView;
+- (void)_webViewDidEnterFullscreen:(NSView *)webView;
+- (void)_webViewWillExitFullscreen:(NSView *)webView;
+- (void)_webViewDidExitFullscreen:(NSView *)webView;
 
 @end
 
