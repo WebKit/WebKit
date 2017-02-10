@@ -63,7 +63,7 @@ FormAssociatedElement::~FormAssociatedElement()
 void FormAssociatedElement::didMoveToNewDocument(Document&)
 {
     HTMLElement& element = asHTMLElement();
-    if (element.hasAttributeWithoutSynchronization(formAttr) && element.inDocument())
+    if (element.hasAttributeWithoutSynchronization(formAttr) && element.isConnected())
         resetFormAttributeTargetObserver();
 }
 
@@ -266,7 +266,7 @@ void FormAssociatedElement::setCustomValidity(const String& error)
 
 void FormAssociatedElement::resetFormAttributeTargetObserver()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(asHTMLElement().inDocument());
+    ASSERT_WITH_SECURITY_IMPLICATION(asHTMLElement().isConnected());
     m_formAttributeTargetObserver = std::make_unique<FormAttributeTargetObserver>(asHTMLElement().attributeWithoutSynchronization(formAttr), *this);
 }
 

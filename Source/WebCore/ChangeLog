@@ -1,3 +1,15 @@
+2017-02-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r212025.
+
+        inDocument -> isConnected
+
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::didMoveToNewDocument):
+        (WebCore::FormAssociatedElement::resetFormAttributeTargetObserver):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formElementIndex):
+
 2017-02-09  Chris Dumez  <cdumez@apple.com>
 
         Make sure Event keeps its current target element alive
