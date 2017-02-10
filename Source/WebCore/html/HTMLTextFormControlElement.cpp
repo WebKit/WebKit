@@ -40,6 +40,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "Logging.h"
+#include "NoEventDispatchAssertion.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderTextControlSingleLine.h"
@@ -557,10 +558,16 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
                 cache->postNotification(this, AXObjectCache::AXValueChanged, TargetObservableParent);
         }
 #endif
-        innerText->setInnerText(value);
 
-        if (value.endsWith('\n') || value.endsWith('\r'))
-            innerText->appendChild(HTMLBRElement::create(document()));
+        {
+            // Events dispatched on the inner text element cannot execute arbitrary author scripts.
+            NoEventDispatchAssertion::EventAllowedScope allowedScope(*userAgentShadowRoot());
+
+            innerText->setInnerText(value);
+
+            if (value.endsWith('\n') || value.endsWith('\r'))
+                innerText->appendChild(HTMLBRElement::create(document()));
+        }
 
 #if HAVE(ACCESSIBILITY) && PLATFORM(COCOA)
         if (textIsChanged && renderer()) {

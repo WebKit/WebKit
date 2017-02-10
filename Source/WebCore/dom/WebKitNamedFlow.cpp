@@ -212,7 +212,7 @@ void WebKitNamedFlow::setRenderer(RenderNamedFlowThread* parentFlowThread)
 
 void WebKitNamedFlow::dispatchRegionOversetChangeEvent()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventAllowedInMainThread());
     
     // If the flow is in the "NULL" state the event should not be dispatched any more.
     if (flowState() == FlowStateNull)

@@ -42,6 +42,7 @@
 #include "LoadableModuleScript.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
+#include "NoEventDispatchAssertion.h"
 #include "PendingScript.h"
 #include "SVGNames.h"
 #include "SVGScriptElement.h"
@@ -87,9 +88,9 @@ void ScriptElement::finishedInsertingSubtree()
     prepareScript(); // FIXME: Provide a real starting line number here.
 }
 
-void ScriptElement::childrenChanged()
+void ScriptElement::childrenChanged(const ContainerNode::ChildChange& childChange)
 {
-    if (!m_parserInserted && m_element.inDocument())
+    if (!m_parserInserted && childChange.isInsertion() && m_element.inDocument())
         prepareScript(); // FIXME: Provide a real starting line number here.
 }
 
@@ -395,6 +396,7 @@ CachedResourceHandle<CachedScript> ScriptElement::requestScriptWithCache(const U
 
 void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventAllowedInMainThread());
     ASSERT(m_alreadyStarted);
 
     if (sourceCode.isEmpty())

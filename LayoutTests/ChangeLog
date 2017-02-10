@@ -1,5 +1,24 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211965. rdar://problem/30149422
+
+    2017-02-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Adopting a child node of a script element can run script
+            https://bugs.webkit.org/show_bug.cgi?id=167318
+
+            Reviewed by Darin Adler.
+
+            Added regression tests for adopting or removing a child node of a script element.
+            The script must not run when nodes are adopted or removed.
+
+            * fast/html/script-must-not-run-when-child-is-adopted-expected.txt: Added.
+            * fast/html/script-must-not-run-when-child-is-adopted.html: Added.
+            * fast/html/script-must-not-run-when-child-is-removed-expected.txt: Added.
+            * fast/html/script-must-not-run-when-child-is-removed.html: Added.
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211968. rdar://problem/28062149
 
     2017-02-09  Yusuke Suzuki  <utatane.tea@gmail.com>
