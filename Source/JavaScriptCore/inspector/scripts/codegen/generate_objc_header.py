@@ -30,7 +30,7 @@ import string
 from string import Template
 
 from generator import Generator, ucfirst
-from models import ObjectType, EnumType
+from models import ObjectType, EnumType, Platforms
 from objc_generator import ObjCGenerator, join_type_and_name
 from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
@@ -73,6 +73,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
         sections.append(self.generate_license())
         sections.append(Template(ObjCTemplates.HeaderPrelude).substitute(None, **header_args))
         sections.append('\n'.join(filter(None, map(self._generate_forward_declarations, type_domains))))
+        sections.append(self._generate_enum_for_platforms())
         sections.append('\n'.join(filter(None, map(self._generate_enums, type_domains))))
         sections.append('\n'.join(filter(None, map(self._generate_types, type_domains))))
 
@@ -133,6 +134,11 @@ class ObjCHeaderGenerator(ObjCGenerator):
                 add_newline(lines)
                 lines.append(self._generate_type_interface(domain, declaration))
         return '\n'.join(lines)
+
+    def _generate_enum_for_platforms(self):
+        objc_enum_name = '%sPlatform' % self.objc_prefix()
+        enum_values = [platform.name for platform in Platforms]
+        return self._generate_enum(objc_enum_name, enum_values)
 
     def _generate_anonymous_enum_for_declaration(self, domain, declaration):
         objc_enum_name = self.objc_enum_name_for_anonymous_enum_declaration(declaration)

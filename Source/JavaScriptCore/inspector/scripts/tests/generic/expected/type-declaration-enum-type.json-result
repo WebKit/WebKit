@@ -749,6 +749,13 @@ using namespace Inspector;
 
 
 
+typedef NS_ENUM(NSInteger, TestProtocolPlatform) {
+    TestProtocolPlatformAll,
+    TestProtocolPlatformGeneric,
+    TestProtocolPlatformIOS,
+    TestProtocolPlatformMacOS,
+};
+
 
 typedef NS_ENUM(NSInteger, TestProtocolRuntimeFarmAnimals) {
     TestProtocolRuntimeFarmAnimalsPigs,
@@ -852,6 +859,35 @@ namespace Inspector {
 
 template<typename ObjCEnumType>
 ObjCEnumType fromProtocolString(const String& value);
+
+inline String toProtocolString(TestProtocolPlatform value)
+{
+    switch(value) {
+    case TestProtocolPlatformAll:
+        return ASCIILiteral("all");
+    case TestProtocolPlatformGeneric:
+        return ASCIILiteral("generic");
+    case TestProtocolPlatformIOS:
+        return ASCIILiteral("ios");
+    case TestProtocolPlatformMacOS:
+        return ASCIILiteral("macos");
+    }
+}
+
+template<>
+inline TestProtocolPlatform fromProtocolString(const String& value)
+{
+    if (value == "all")
+        return TestProtocolPlatformAll;
+    if (value == "generic")
+        return TestProtocolPlatformGeneric;
+    if (value == "ios")
+        return TestProtocolPlatformIOS;
+    if (value == "macos")
+        return TestProtocolPlatformMacOS;
+    ASSERT_NOT_REACHED();
+    return TestProtocolPlatformAll;
+}
 
 
 inline String toProtocolString(TestProtocolRuntimeFarmAnimals value)

@@ -38,7 +38,8 @@ log = logging.getLogger('global')
 def ucfirst(str):
     return str[:1].upper() + str[1:]
 
-_ALWAYS_UPPERCASED_ENUM_VALUE_SUBSTRINGS = set(['API', 'CSS', 'DOM', 'HTML', 'JIT', 'XHR', 'XML'])
+_ALWAYS_SPECIALCASED_ENUM_VALUE_SUBSTRINGS = set(['API', 'CSS', 'DOM', 'HTML', 'JIT', 'XHR', 'XML', 'IOS', 'MacOS'])
+_ALWAYS_SPECIALCASED_ENUM_VALUE_LOOKUP_TABLE = dict([(s.upper(), s) for s in _ALWAYS_SPECIALCASED_ENUM_VALUE_SUBSTRINGS])
 
 # These objects are built manually by creating and setting InspectorValues.
 # Before sending these over the protocol, their shapes are checked against the specification.
@@ -238,10 +239,10 @@ class Generator:
 
     @staticmethod
     def stylized_name_for_enum_value(enum_value):
-        regex = '(%s)' % "|".join(_ALWAYS_UPPERCASED_ENUM_VALUE_SUBSTRINGS)
+        regex = '(%s)' % "|".join(_ALWAYS_SPECIALCASED_ENUM_VALUE_SUBSTRINGS)
 
         def replaceCallback(match):
-            return match.group(1).upper()
+            return _ALWAYS_SPECIALCASED_ENUM_VALUE_LOOKUP_TABLE[match.group(1).upper()]
 
         # Split on hyphen, introduce camelcase, and force uppercasing of acronyms.
         subwords = map(ucfirst, enum_value.split('-'))

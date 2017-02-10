@@ -132,11 +132,17 @@ class Platform:
 
 
 class Platforms:
-    All = Platform("All")
+    All = Platform("all")
     Generic = Platform("generic")
-    iOS = Platform("iOS")
-    macOS = Platform("macOS")
+    iOS = Platform("ios")
+    macOS = Platform("macos")
 
+    # Allow iteration over all platforms. See <http://stackoverflow.com/questions/5434400/>.
+    class __metaclass__(type):
+        def __iter__(self):
+            for attr in dir(Platforms):
+                if not attr.startswith("__"):
+                    yield getattr(Platforms, attr)
 
 class TypeReference:
     def __init__(self, type_kind, referenced_type_name, enum_values, array_items):

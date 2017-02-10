@@ -30,7 +30,7 @@ import string
 from string import Template
 
 from generator import Generator
-from models import EnumType, Frameworks
+from models import EnumType, Frameworks, Platforms
 from objc_generator import ObjCGenerator
 from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
@@ -69,6 +69,7 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
         sections.append(self.generate_license())
         sections.append(Template(ObjCTemplates.TypeConversionsHeaderPrelude).substitute(None, **header_args))
         sections.append(Template(ObjCTemplates.TypeConversionsHeaderStandard).substitute(None))
+        sections.append(self._generate_enum_conversion_for_platforms())
         sections.extend(map(self._generate_enum_conversion_functions, domains))
         sections.append(Template(ObjCTemplates.TypeConversionsHeaderPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
@@ -106,6 +107,14 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
                     lines.append(self._generate_anonymous_enum_conversion_for_parameter(domain, event.event_name, parameter))
 
         return '\n'.join(lines)
+
+    def _generate_enum_conversion_for_platforms(self):
+        objc_enum_name = '%sPlatform' % self.objc_prefix()
+        enum_values = [platform.name for platform in Platforms]
+        lines = []
+        lines.append(self._generate_enum_objc_to_protocol_string(objc_enum_name, enum_values))
+        lines.append(self._generate_enum_from_protocol_string(objc_enum_name, enum_values))
+        return '\n\n'.join(lines)
 
     def _generate_anonymous_enum_conversion_for_declaration(self, domain, declaration):
         objc_enum_name = self.objc_enum_name_for_anonymous_enum_declaration(declaration)

@@ -1,3 +1,58 @@
+2017-02-10  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: generate an NS_ENUM containing platforms supported by the protocol code generator
+        https://bugs.webkit.org/show_bug.cgi?id=168019
+        <rdar://problem/28718990>
+
+        Reviewed by Joseph Pecoraro.
+
+        It's useful to have an symbolic value (not a string) for each of the supported platform values.
+        Generate this once per protocol for the Objective-C bindings. Covered by existing tests.
+
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator.generate_output):
+        (ObjCHeaderGenerator._generate_enum_for_platforms):
+        Create an NS_ENUM for Platform values in Platforms.
+
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_header.py:
+        (ObjCProtocolTypeConversionsHeaderGenerator.generate_output):
+        (ObjCProtocolTypeConversionsHeaderGenerator._generate_enum_conversion_for_platforms):
+        Add type conversion/parsing methods for the newly added enum.
+
+        * inspector/scripts/codegen/generator.py:
+        (Generator.stylized_name_for_enum_value):
+        (Generator.stylized_name_for_enum_value.replaceCallback):
+        Support arbitrary special-cased substrings in enums, not just all-caps. Add 'IOS' and 'MacOS'.
+
+        * inspector/scripts/codegen/models.py:
+        (Platforms):
+        Use lower-case string values for platform names, to avoid guesswork.
+
+        (Platforms.__metaclass__):
+        (Platforms.__metaclass__.__iter__):
+        Make it possible to iterate over Platform instances of Platforms.
+
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/domain-availability.json-result:
+        * inspector/scripts/tests/generic/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/generic/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/generic/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+        * inspector/scripts/tests/generic/expected/worker-supported-domains.json-result:
+        * inspector/scripts/tests/ios/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result:
+        Rebaseline results.
+
 2017-02-09  Filip Pizlo  <fpizlo@apple.com>
 
         SharedArrayBuffer does not need to be in the transfer list
