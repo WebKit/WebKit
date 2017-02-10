@@ -2140,11 +2140,6 @@
 		5CDD8CA81E43C6F700621E92 /* audio_encoder_cng.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8CA01E43C6F700621E92 /* audio_encoder_cng.h */; };
 		5CDD8CAA1E43C6F700621E92 /* webrtc_cng.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8CA41E43C6F700621E92 /* webrtc_cng.cc */; };
 		5CDD8CAB1E43C6F700621E92 /* webrtc_cng.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8CA51E43C6F700621E92 /* webrtc_cng.h */; };
-		5CDD8D261E43C79C00621E92 /* celt_lpc_sse.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8D141E43C76400621E92 /* celt_lpc_sse.c */; };
-		5CDD8D271E43C79C00621E92 /* celt_lpc_sse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8D151E43C76400621E92 /* celt_lpc_sse.h */; };
-		5CDD8D281E43C79C00621E92 /* pitch_sse.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8D161E43C76400621E92 /* pitch_sse.c */; };
-		5CDD8D291E43C79C00621E92 /* pitch_sse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8D171E43C76400621E92 /* pitch_sse.h */; };
-		5CDD8D2A1E43C79C00621E92 /* pitch_sse2.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8D181E43C76400621E92 /* pitch_sse2.c */; };
 		5CDD8D2C1E43C79C00621E92 /* x86_celt_map.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8D1A1E43C76400621E92 /* x86_celt_map.c */; };
 		5CDD8D2D1E43C79C00621E92 /* x86cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8D1B1E43C76400621E92 /* x86cpu.c */; };
 		5CDD8D2E1E43C79C00621E92 /* x86cpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8D1C1E43C76400621E92 /* x86cpu.h */; };
@@ -4916,11 +4911,6 @@
 		5CDD8CDD1E43C75200621E92 /* static_modes_float.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = static_modes_float.h; sourceTree = "<group>"; };
 		5CDD8CDF1E43C75200621E92 /* vq.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vq.c; sourceTree = "<group>"; };
 		5CDD8CE01E43C75200621E92 /* vq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vq.h; sourceTree = "<group>"; };
-		5CDD8D141E43C76400621E92 /* celt_lpc_sse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = celt_lpc_sse.c; path = x86/celt_lpc_sse.c; sourceTree = "<group>"; };
-		5CDD8D151E43C76400621E92 /* celt_lpc_sse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = celt_lpc_sse.h; path = x86/celt_lpc_sse.h; sourceTree = "<group>"; };
-		5CDD8D161E43C76400621E92 /* pitch_sse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pitch_sse.c; path = x86/pitch_sse.c; sourceTree = "<group>"; };
-		5CDD8D171E43C76400621E92 /* pitch_sse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pitch_sse.h; path = x86/pitch_sse.h; sourceTree = "<group>"; };
-		5CDD8D181E43C76400621E92 /* pitch_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pitch_sse2.c; path = x86/pitch_sse2.c; sourceTree = "<group>"; };
 		5CDD8D1A1E43C76400621E92 /* x86_celt_map.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = x86_celt_map.c; path = x86/x86_celt_map.c; sourceTree = "<group>"; };
 		5CDD8D1B1E43C76400621E92 /* x86cpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = x86cpu.c; path = x86/x86cpu.c; sourceTree = "<group>"; };
 		5CDD8D1C1E43C76400621E92 /* x86cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = x86cpu.h; path = x86/x86cpu.h; sourceTree = "<group>"; };
@@ -8746,11 +8736,6 @@
 		5CDD8D131E43C75500621E92 /* x86 */ = {
 			isa = PBXGroup;
 			children = (
-				5CDD8D141E43C76400621E92 /* celt_lpc_sse.c */,
-				5CDD8D151E43C76400621E92 /* celt_lpc_sse.h */,
-				5CDD8D161E43C76400621E92 /* pitch_sse.c */,
-				5CDD8D171E43C76400621E92 /* pitch_sse.h */,
-				5CDD8D181E43C76400621E92 /* pitch_sse2.c */,
 				5CDD8D1A1E43C76400621E92 /* x86_celt_map.c */,
 				5CDD8D1B1E43C76400621E92 /* x86cpu.c */,
 				5CDD8D1C1E43C76400621E92 /* x86cpu.h */,
@@ -9444,7 +9429,6 @@
 				5CDD8D321E43C79C00621E92 /* bands.h in Headers */,
 				5CDD8D381E43C79C00621E92 /* celt.h in Headers */,
 				5CDD8D361E43C79C00621E92 /* celt_lpc.h in Headers */,
-				5CDD8D271E43C79C00621E92 /* celt_lpc_sse.h in Headers */,
 				5CDD8E461E43C80C00621E92 /* control.h in Headers */,
 				5CDD8D391E43C79C00621E92 /* cpu_support.h in Headers */,
 				5CDD8D3B1E43C79C00621E92 /* cwrs.h in Headers */,
@@ -9478,7 +9462,6 @@
 				5CDD8D511E43C79C00621E92 /* os_support.h in Headers */,
 				5CDD8D531E43C79C00621E92 /* pitch.h in Headers */,
 				5CDD8E711E43C80C00621E92 /* pitch_est_defines.h in Headers */,
-				5CDD8D291E43C79C00621E92 /* pitch_sse.h in Headers */,
 				5CDD8E741E43C80C00621E92 /* PLC.h in Headers */,
 				5CDD8D551E43C79C00621E92 /* quant_bands.h in Headers */,
 				5CDD8D571E43C79C00621E92 /* rate.h in Headers */,
@@ -10832,7 +10815,6 @@
 				5CDD8D331E43C79C00621E92 /* celt_decoder.c in Sources */,
 				5CDD8D341E43C79C00621E92 /* celt_encoder.c in Sources */,
 				5CDD8D351E43C79C00621E92 /* celt_lpc.c in Sources */,
-				5CDD8D261E43C79C00621E92 /* celt_lpc_sse.c in Sources */,
 				5CDD8E401E43C80C00621E92 /* check_control_input.c in Sources */,
 				5CDD8E411E43C80C00621E92 /* CNG.c in Sources */,
 				5CDD8E421E43C80C00621E92 /* code_signs.c in Sources */,
@@ -10921,8 +10903,6 @@
 				5CDD8F491E43CB1E00621E92 /* pitch_analysis_core_FIX.c in Sources */,
 				5CDD8EF41E43C9F600621E92 /* pitch_analysis_core_FLP.c in Sources */,
 				5CDD8E721E43C80C00621E92 /* pitch_est_tables.c in Sources */,
-				5CDD8D281E43C79C00621E92 /* pitch_sse.c in Sources */,
-				5CDD8D2A1E43C79C00621E92 /* pitch_sse2.c in Sources */,
 				5CDD8E731E43C80C00621E92 /* PLC.c in Sources */,
 				5CDD8F4A1E43CB1E00621E92 /* prefilter_FIX.c in Sources */,
 				5CDD8EF51E43C9F600621E92 /* prefilter_FLP.c in Sources */,
