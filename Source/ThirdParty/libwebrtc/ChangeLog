@@ -1,3 +1,29 @@
+2017-02-10  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Activate libwebrtc G711/G722 audio codecs
+        https://bugs.webkit.org/show_bug.cgi?id=168123
+
+        Reviewed by Alex Christensen.
+
+        Adding G711/G722 missing codec files.
+        Activating use of these in the build system.
+
+        * Configurations/libwebrtc.xcconfig:
+        * Source/webrtc/modules/audio_coding/codecs/g711/g711.c: Added.
+        (ulaw_to_alaw):
+        * Source/webrtc/modules/audio_coding/codecs/g711/g711.h: Added.
+        * Source/webrtc/modules/audio_coding/codecs/g722/audio_decoder_g722.cc: Added.
+        * Source/webrtc/modules/audio_coding/codecs/g722/audio_decoder_g722.h: Added.
+        * Source/webrtc/modules/audio_coding/codecs/g722/audio_encoder_g722.cc: Added.
+        * Source/webrtc/modules/audio_coding/codecs/g722/audio_encoder_g722.h: Added.
+        * Source/webrtc/modules/audio_coding/codecs/g722/g722_decode.c: Added.
+        * Source/webrtc/modules/audio_coding/codecs/g722/g722_enc_dec.h: Added.
+        * Source/webrtc/modules/audio_coding/codecs/g722/g722_encode.c: Added.
+        * Source/webrtc/modules/audio_coding/codecs/g722/g722_interface.c: Added.
+        * Source/webrtc/modules/audio_coding/codecs/g722/g722_interface.h: Added.
+        * Source/webrtc/modules/audio_coding/codecs/g722/test/testG722.cc: Added.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2017-02-10  Alex Christensen  <achristensen@webkit.org>
 
         Fix ASAN build.
