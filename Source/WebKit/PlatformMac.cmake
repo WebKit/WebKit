@@ -60,8 +60,6 @@ list(APPEND WebKit_SOURCES
     mac/DOM/DOMCSSValue.mm
     mac/DOM/DOMCSSValueList.mm
     mac/DOM/DOMCustomXPathNSResolver.mm
-    mac/DOM/DOMDOMImplementation.mm
-    mac/DOM/DOMDOMTokenList.mm
     mac/DOM/DOMDocument.mm
     mac/DOM/DOMDocumentFragment.mm
     mac/DOM/DOMDocumentType.mm
@@ -133,6 +131,7 @@ list(APPEND WebKit_SOURCES
     mac/DOM/DOMHTMLUListElement.mm
     mac/DOM/DOMHTMLVideoElement.mm
     mac/DOM/DOMInternal.mm
+    mac/DOM/DOMImplementation.mm
     mac/DOM/DOMKeyboardEvent.mm
     mac/DOM/DOMMediaError.mm
     mac/DOM/DOMMediaList.mm
@@ -154,6 +153,7 @@ list(APPEND WebKit_SOURCES
     mac/DOM/DOMText.mm
     mac/DOM/DOMTextEvent.mm
     mac/DOM/DOMTimeRanges.mm
+    mac/DOM/DOMTokenList.mm
     mac/DOM/DOMTreeWalker.mm
     mac/DOM/DOMUIEvent.mm
     mac/DOM/DOMUIKitExtensions.mm

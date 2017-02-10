@@ -422,7 +422,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cv/VideoTextureCopierCV.cpp
 
     platform/graphics/mac/ColorMac.mm
-    platform/graphics/mac/ComplexTextController.cpp
     platform/graphics/mac/ComplexTextControllerCoreText.mm
     platform/graphics/mac/DisplayRefreshMonitorMac.cpp
     platform/graphics/mac/FloatPointMac.mm

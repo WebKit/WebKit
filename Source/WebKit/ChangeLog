@@ -1,3 +1,9 @@
+2017-02-09  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * PlatformMac.cmake:
+
 2017-02-07  Alexey Proskuryakov  <ap@apple.com>
 
         Don't migrate WebKit DOM headers in MigrateHeaders.make

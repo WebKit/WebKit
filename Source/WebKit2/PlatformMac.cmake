@@ -98,6 +98,7 @@ list(APPEND WebKit2_SOURCES
 
     Shared/Cocoa/APIDataCocoa.mm
     Shared/Cocoa/APIObject.mm
+    Shared/Cocoa/ChildProcessCocoa.mm
     Shared/Cocoa/CompletionHandlerCallChecker.mm
     Shared/Cocoa/DataDetectionResult.mm
     Shared/Cocoa/LoadParametersCocoa.mm
