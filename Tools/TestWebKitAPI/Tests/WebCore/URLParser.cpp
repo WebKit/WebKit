@@ -1264,6 +1264,7 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("http://[1234::ab@]");
     shouldFail("http://[1234::ab~]");
     shouldFail("http://[2001::1");
+    shouldFail("http://4:b\xE1");
     shouldFail("http://[1:2:3:4:5:6:7:8~]/");
     shouldFail("http://[a:b:c:d:e:f:g:127.0.0.1]");
     shouldFail("http://[a:b:c:d:e:f:g:h:127.0.0.1]");

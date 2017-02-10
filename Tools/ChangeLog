@@ -1,5 +1,20 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211621. rdar://problem/30221102
+
+    2017-02-02  Alex Christensen  <achristensen@webkit.org>
+
+            URLParser: Fix parsing invalid IPv4 addresses with non-ASCII characters
+            https://bugs.webkit.org/show_bug.cgi?id=167773
+            <rdar://problem/30221102>
+
+            Reviewed by Ryosuke Niwa.
+
+            * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+            (TestWebKitAPI::TEST_F):
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211254. rdar://problem/30188490
 
     2017-01-26  Chris Dumez  <cdumez@apple.com>
