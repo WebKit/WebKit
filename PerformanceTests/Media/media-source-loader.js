@@ -87,7 +87,9 @@ class MediaSourceLoader {
 
     get duration()
     {
-        return this._manifest ? this._manifest.duration : 0
+        if (!this._manifest)
+            return 0;
+        return this._manifest.media.reduce((duration, media) => { return duration + media.duration }, 0);
     }
 
     get initSegment()
