@@ -1,5 +1,53 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212019. rdar://problem/30128133
+
+    2017-02-09  Mark Lam  <mark.lam@apple.com>
+
+            Fix max length check in ArrayPrototype.js' concatSlowPath().
+            https://bugs.webkit.org/show_bug.cgi?id=167270
+            <rdar://problem/30128133>
+
+            Reviewed by Filip Pizlo.
+
+            1. Fixed concatSlowPath() to ensure that the result array length does not exceed
+               @MAX_ARRAY_INDEX.  The old code was checking against @MAX_SAFE_INTEGER in some
+               cases, but this is overly permissive.
+
+            2. Changed concatSlowPath() to throw a RangeError instead of a TypeError to be
+               consistent with the C++ runtime functions in JSArray.cpp.
+
+            3. Changed the RangeError message in concatSlowPath() and JSArray.cpp to "Length
+               exceeded the maximum array length" when the error is that the result length
+               exceeds MAX_ARRAY_INDEX.  We do this for 2 reasons:
+               a. "Length exceeded the maximum array length" is more informative than
+                  "Invalid array length".
+               b. We want to use the same string consistently for the same error.
+
+               There are still 2 places in JSArray.cpp that still throws a RangeError with
+               message "Invalid array length".  In those cases, the error is not necessarily
+               due to the result length exceeding MAX_ARRAY_INDEX, but is due to attempting to
+               set a length value that is not an integer that fits in MAX_ARRAY_INDEX e.g.
+               an attempt to set a fractional length value.  Hence, "Invalid array length" is
+               appropriate for those cases.
+
+            4. Fixed JSArray::appendMemcpy() to handle overflows when computing the result
+               array length.
+
+            * builtins/ArrayPrototype.js:
+            (concatSlowPath):
+            * bytecode/BytecodeIntrinsicRegistry.cpp:
+            (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+            * bytecode/BytecodeIntrinsicRegistry.h:
+            * runtime/ArrayPrototype.cpp:
+            (JSC::concatAppendOne):
+            (JSC::arrayProtoPrivateFuncAppendMemcpy):
+            * runtime/JSArray.cpp:
+            (JSC::JSArray::appendMemcpy):
+            (JSC::JSArray::push):
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212015. rdar://problem/30054759
 
     2017-02-09  Mark Lam  <mark.lam@apple.com>

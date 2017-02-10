@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007-2009, 2011, 2013, 2015-2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007-2009, 2011, 2013, 2015-2017 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -1216,8 +1216,10 @@ static EncodedJSValue concatAppendOne(ExecState* exec, VM& vm, JSArray* first, J
         return JSValue::encode(throwOutOfMemoryError(exec, scope));
 
     bool success = result->appendMemcpy(exec, vm, 0, first);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    ASSERT(!success || !scope.exception());
     if (!success) {
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
         bool success = moveElements(exec, vm, result, 0, first, firstArraySize);
         ASSERT(!scope.exception() == success);
         if (UNLIKELY(!success))
@@ -1311,14 +1313,18 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncAppendMemcpy(ExecState* exec)
     ASSERT(exec->argumentCount() == 3);
 
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSArray* resultArray = jsCast<JSArray*>(exec->uncheckedArgument(0));
     JSArray* otherArray = jsCast<JSArray*>(exec->uncheckedArgument(1));
     JSValue startValue = exec->uncheckedArgument(2);
     ASSERT(startValue.isAnyInt() && startValue.asAnyInt() >= 0 && startValue.asAnyInt() <= std::numeric_limits<unsigned>::max());
     unsigned startIndex = static_cast<unsigned>(startValue.asAnyInt());
-    if (!resultArray->appendMemcpy(exec, vm, startIndex, otherArray))
+    bool success = resultArray->appendMemcpy(exec, vm, startIndex, otherArray);
+    ASSERT(!success || !scope.exception());
+    if (!success) {
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         moveElements(exec, vm, resultArray, startIndex, otherArray, otherArray->length());
-
+    }
     return JSValue::encode(jsUndefined());
 }
 
