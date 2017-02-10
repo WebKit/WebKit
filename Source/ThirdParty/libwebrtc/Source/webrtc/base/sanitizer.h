@@ -42,7 +42,7 @@
 #define RTC_NO_SANITIZE(what)
 #endif
 
-#if !RTC_HAS_ASAN
+#if !RTC_HAS_ASAN || !RTC_HAS_MSAN
 #define SANITIZER_UNUSED3(x, y, z)  (void)&(x); \
   (void)&(y); \
   (void)&(z)

@@ -1,3 +1,10 @@
+2017-02-10  Alex Christensen  <achristensen@webkit.org>
+
+        Fix ASAN build.
+
+        * Source/webrtc/base/sanitizer.h:
+        SANITIZER_UNUSED3 wasn't defined if we are using address_sanitizer but not memory_sanitizer.
+
 2017-02-09  Alex Christensen  <achristensen@webkit.org>
 
         Fix El Capitan build.
