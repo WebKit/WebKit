@@ -66,7 +66,7 @@ public:
     void setSupportsAlpha(bool);
 
 private:
-    void createTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect);
+    void createTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect, float coverAreaMultiplier);
     void computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const;
 
     bool resizeEdgeTiles();
