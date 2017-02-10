@@ -336,8 +336,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1AFFEF831860EEFB00DA465E /* MiniBrowserBundle.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "";
-				WRAPPER_EXTENSION = wkbundle;
 			};
 			name = Debug;
 		};
@@ -345,8 +343,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1AFFEF831860EEFB00DA465E /* MiniBrowserBundle.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "";
-				WRAPPER_EXTENSION = wkbundle;
 			};
 			name = Release;
 		};

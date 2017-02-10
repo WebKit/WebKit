@@ -1,3 +1,18 @@
+2017-02-10  Andy Estes  <aestes@apple.com>
+
+        Move two MiniBrowserBundle settings out of the .pbxproj
+        https://bugs.webkit.org/show_bug.cgi?id=168106
+
+        Reviewed by Tim Horton.
+
+        INFOPLIST_FILE was specified in MiniBrowserBundle.xcconfig but overridden to "" in
+        the project file. This removes the project file override.
+
+        WRAPPER_EXTENSION was moved from the project file to MiniBrowserBundle.xcconfig.
+
+        * MiniBrowser/Configurations/MiniBrowserBundle.xcconfig:
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+
 2017-02-10  Alex Christensen  <achristensen@webkit.org>
 
         Fix 32-and-64-bit build on El Capitan.
