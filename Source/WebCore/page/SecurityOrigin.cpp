@@ -114,7 +114,7 @@ SecurityOrigin::SecurityOrigin(const URL& url)
     m_canLoadLocalResources = isLocal();
 
     if (m_canLoadLocalResources)
-        m_filePath = url.path(); // In case enforceFilePathSeparation() is called.
+        m_filePath = url.fileSystemPath(); // In case enforceFilePathSeparation() is called.
 }
 
 SecurityOrigin::SecurityOrigin()
@@ -305,7 +305,7 @@ bool SecurityOrigin::canDisplay(const URL& url) const
         return true;
 
 #if !PLATFORM(IOS)
-    if (m_protocol == "file" && url.isLocalFile() && !filesHaveSameVolume(m_filePath, url.path()))
+    if (m_protocol == "file" && url.isLocalFile() && !filesHaveSameVolume(m_filePath, url.fileSystemPath()))
         return false;
 #endif
 

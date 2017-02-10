@@ -1,5 +1,31 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211763. rdar://problem/30380075
+
+    2017-02-06  Brent Fulgham  <bfulgham@apple.com>
+
+            Correct File Path Handling in SecurityOrigin and FileSystem
+            https://bugs.webkit.org/show_bug.cgi?id=167894
+            <rdar://problem/30380080>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Roll out the URL decoding being done in the FileSystem class (added in Bug 167894), and instead ensure that
+            SecurityOrigin properly handles file URLs, and only passes valid file strings to the FileSystem interface.
+
+            Tested by FileSystemTests and SecurityOriginTests in TestWebKitAPI.
+
+            * page/SecurityOrigin.cpp:
+            (WebCore::SecurityOrigin::SecurityOrigin): Initialize m_filePath using the url's fileSystemPath, not
+            the %-encoded 'path' property.
+            (WebCore::SecurityOrigin::canDisplay): Pass the 'fileSystemPath' to 'filesHaveSameVolume', rather than
+            the %-encoded 'path' property.
+            * page/SecurityOrigin.h:
+            * platform/FileSystem.cpp:
+            (WebCore::filesHaveSameVolume): Do not use 'decodeURLEscapeSequences' in 'filesHaveSameVolume'.
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211382. rdar://problem/29738514
 
     2017-01-30  Myles C. Maxfield  <mmaxfield@apple.com>

@@ -28,7 +28,6 @@
 
 #include "Test.h"
 #include <WebCore/FileSystem.h>
-#include <WebCore/URL.h>
 #include <wtf/MainThread.h>
 #include <wtf/StringExtras.h>
 
@@ -54,15 +53,15 @@ public:
         m_tempEmptyFilePath = openTemporaryFile("tempEmptyTestFile", handle);
         closeFile(handle);
 
-        m_spaceContainingFilePath = encodeWithURLEscapeSequences(openTemporaryFile("temp Empty Test File", handle));
+        m_spaceContainingFilePath = openTemporaryFile("temp Empty Test File", handle);
         closeFile(handle);
 
-        m_bangContainingFilePath = encodeWithURLEscapeSequences(openTemporaryFile("temp!Empty!Test!File", handle));
+        m_bangContainingFilePath = openTemporaryFile("temp!Empty!Test!File", handle);
         closeFile(handle);
 
-        m_quoteContainingFilePath = encodeWithURLEscapeSequences(openTemporaryFile("temp\"Empty\"TestFile", handle));
+        m_quoteContainingFilePath = openTemporaryFile("temp\"Empty\"TestFile", handle);
         closeFile(handle);
-}
+    }
 
     void TearDown() override
     {
