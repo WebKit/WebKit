@@ -47,6 +47,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "NoEventDispatchAssertion.h"
 #include "TextEncoding.h"
 #include <wtf/CurrentTime.h>
 
@@ -204,18 +205,23 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement* form, const Attribut
     Vector<std::pair<String, String>> formValues;
 
     bool containsPasswordData = false;
-    for (auto& control : form->associatedElements()) {
-        HTMLElement& element = control->asHTMLElement();
-        if (!element.isDisabledFormControl())
-            control->appendFormData(*domFormData, isMultiPartForm);
-        if (is<HTMLInputElement>(element)) {
-            HTMLInputElement& input = downcast<HTMLInputElement>(element);
-            if (input.isTextField()) {
-                formValues.append(std::pair<String, String>(input.name().string(), input.value()));
-                input.addSearchResult();
+    {
+        NoEventDispatchAssertion noEventDispatchAssertion;
+
+        for (auto& control : form->associatedElements()) {
+            auto& element = control->asHTMLElement();
+            if (!element.isDisabledFormControl())
+                control->appendFormData(*domFormData, isMultiPartForm);
+            if (is<HTMLInputElement>(element)) {
+                auto& input = downcast<HTMLInputElement>(element);
+                if (input.isTextField()) {
+                    // formValues.append({ input.name().string(), input.value() });
+                    formValues.append(std::pair<String, String>(input.name().string(), input.value()));
+                    input.addSearchResult();
+                }
+                if (input.isPasswordField() && !input.value().isEmpty())
+                    containsPasswordData = true;
             }
-            if (input.isPasswordField() && !input.value().isEmpty())
-                containsPasswordData = true;
         }
     }
 
