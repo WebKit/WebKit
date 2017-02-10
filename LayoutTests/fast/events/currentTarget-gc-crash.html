@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+function f1() {
+    var iframe = document.getElementById("iframe");
+    iframe.srcdoc = "x";
+    window.frames.event = window.event;
+    gc();
+}
+function f2() {
+    var h = new XMLHttpRequest();
+    h.onreadystatechange = f1;
+    h.open("foo", "1");
+    var e = window.event;
+    e.initEvent("1", true, true);
+    try {
+        e.currentTarget.click();
+    } catch(e) { }
+    setTimeout(finishJSTest, 100);
+}
+</script>
+</head>
+<body onload="f1()">
+<script>
+description("This test passes if it does not crash");
+jsTestIsAsync = true;
+</script>
+<iframe id="iframe" onload="f2()"></iframe>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

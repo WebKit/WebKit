@@ -86,8 +86,8 @@ public:
     EventTarget* target() const { return m_target.get(); }
     void setTarget(RefPtr<EventTarget>&&);
 
-    EventTarget* currentTarget() const { return m_currentTarget; }
-    void setCurrentTarget(EventTarget* currentTarget) { m_currentTarget = currentTarget; }
+    EventTarget* currentTarget() const { return m_currentTarget.get(); }
+    void setCurrentTarget(EventTarget*);
 
     unsigned short eventPhase() const { return m_eventPhase; }
     void setEventPhase(unsigned short eventPhase) { m_eventPhase = eventPhase; }
@@ -192,7 +192,7 @@ private:
     bool m_isExecutingPassiveEventListener { false };
 
     unsigned short m_eventPhase { 0 };
-    EventTarget* m_currentTarget { nullptr };
+    RefPtr<EventTarget> m_currentTarget;
     const EventPath* m_eventPath { nullptr };
     RefPtr<EventTarget> m_target;
     DOMTimeStamp m_createTime;
