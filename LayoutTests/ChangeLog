@@ -1,5 +1,14 @@
 2017-02-10  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark compositing/masks/solid-color-masked.html as failing on ios-simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=168054
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2017-02-10  Ryan Haddad  <ryanhaddad@apple.com>
+
         Add platform specific expected.txt  file for fast/text/mark-matches-overflow-clip.html after r212113.
 
         Unreviewed test gardening.
