@@ -1,3 +1,33 @@
+2017-02-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLConstructionSiteTask::Insert should never be called on a node with a parent
+        https://bugs.webkit.org/show_bug.cgi?id=168099
+
+        Reviewed by Sam Weinig.
+
+        insertAlreadyParsedChild always use HTMLConstructionSiteTask::InsertAlreadyParsedChild instead
+        of using HTMLConstructionSiteTask::Insert when fostering a child.
+
+        Also combine the step to take all children and re-parenting into a single task instead of
+        separately issuing TakeAllChildren and Reparent tasks.
+
+        No new tests since this is a refactoring.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::insert): Now asserts that the child node never have a parent.
+        (WebCore::executeInsertAlreadyParsedChildTask): Moved the code to remove the parent here.
+        (WebCore::executeTakeAllChildrenAndReparentTask): Renamed from executeTakeAllChildrenTask
+        now that this function also does the reparenting.
+        (WebCore::executeTask):
+        (WebCore::HTMLConstructionSite::reparent): Removed the variant only used with takeAllChildren.
+        (WebCore::HTMLConstructionSite::insertAlreadyParsedChild): Always use InsertAlreadyParsedChild
+        instead of calling fosterParent which uses Insert when fostering parents.
+        (WebCore::HTMLConstructionSite::takeAllChildrenAndReparent): Renamed from takeAllChildren.
+        * html/parser/HTMLConstructionSite.h:
+        (WebCore::HTMLConstructionSiteTask:Operation):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+
 2017-02-10  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Make intercap property values serialize correctly
