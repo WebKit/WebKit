@@ -124,7 +124,12 @@ ResourceHandle::~ResourceHandle()
 #if PLATFORM(IOS)
 static bool synchronousWillSendRequestEnabled()
 {
+#if PLATFORM(IOS)
+    static bool disabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDisableSynchronousWillSendRequestPreferenceKey"] || IOSApplication::isIBooks();
+#else
     static bool disabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDisableSynchronousWillSendRequestPreferenceKey"];
+#endif
+
     return !disabled;
 }
 #endif
