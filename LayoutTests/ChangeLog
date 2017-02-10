@@ -1,5 +1,18 @@
 2017-02-09  Chris Dumez  <cdumez@apple.com>
 
+        Crash under FormSubmission::create()
+        https://bugs.webkit.org/show_bug.cgi?id=167200
+        <rdar://problem/30096323>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * fast/forms/formsubmission-appendFormData-crash-expected.txt: Added.
+        * fast/forms/formsubmission-appendFormData-crash.html: Added.
+
+2017-02-09  Chris Dumez  <cdumez@apple.com>
+
         Crash under HTMLFormElement::registerFormElement()
         https://bugs.webkit.org/show_bug.cgi?id=167162
 
