@@ -1,3 +1,9 @@
+2017-02-09  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, fix test for new .caller with native code caller semantics.
+
+        * js/dom/function-dot-arguments-and-caller.html:
+
 2017-02-09  Mark Lam  <mark.lam@apple.com>
 
         Constructed object's global object should be the global object of the constructor.
