@@ -201,7 +201,7 @@ void AudioSampleDataSource::pushSamples(const MediaTime& sampleTime, const Platf
 {
     std::unique_lock<Lock> lock(m_lock, std::try_to_lock);
     ASSERT(is<WebAudioBufferList>(audioData));
-    pushSamplesInternal(downcast<WebAudioBufferList>(audioData), sampleTime, sampleCount);
+    pushSamplesInternal(*downcast<WebAudioBufferList>(audioData).list(), sampleTime, sampleCount);
 }
 
 bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t& sampleCount, uint64_t timeStamp, double /*hostTime*/, PullMode mode)
@@ -283,6 +283,32 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
     if (m_scratchBuffer->copyTo(buffer, sampleCount))
         AudioSampleBufferList::zeroABL(buffer, sampleCount);
 
+    return true;
+}
+
+bool AudioSampleDataSource::pullAvalaibleSamplesAsChunks(AudioBufferList& buffer, size_t sampleCountPerChunk, uint64_t timeStamp, Function<void()>&& consumeFilledBuffer)
+{
+    std::unique_lock<Lock> lock(m_lock, std::try_to_lock);
+    if (!lock.owns_lock() || !m_ringBuffer)
+        return false;
+
+    ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
+    if (buffer.mNumberBuffers != m_ringBuffer->channelCount())
+        return false;
+
+    uint64_t startFrame = 0;
+    uint64_t endFrame = 0;
+    m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
+    if (timeStamp < startFrame)
+        return false;
+
+    startFrame = timeStamp;
+    while (endFrame - startFrame >= sampleCountPerChunk) {
+        if (m_ringBuffer->fetch(&buffer, sampleCountPerChunk, startFrame, CARingBuffer::Copy))
+            return false;
+        consumeFilledBuffer();
+        startFrame += sampleCountPerChunk;
+    }
     return true;
 }
 

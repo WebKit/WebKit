@@ -30,6 +30,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "AudioSampleDataSource.h"
 #include "LibWebRTCMacros.h"
 #include "RealtimeMediaSource.h"
 #include <webrtc/api/mediastreaminterface.h>
@@ -49,7 +50,7 @@ public:
     void setTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& track) { m_track = WTFMove(track); }
 
 private:
-    explicit RealtimeOutgoingAudioSource(Ref<RealtimeMediaSource>&& audioSource) : m_audioSource(WTFMove(audioSource)) { m_audioSource->addObserver(*this); }
+    explicit RealtimeOutgoingAudioSource(Ref<RealtimeMediaSource>&&);
 
     virtual void AddSink(webrtc::AudioTrackSinkInterface* sink) { m_sinks.append(sink); }
     virtual void RemoveSink(webrtc::AudioTrackSinkInterface* sink) { m_sinks.removeFirst(sink); }
@@ -63,17 +64,22 @@ private:
 
     // RealtimeMediaSource::Observer API
     void sourceStopped() final { }
-    void sourceMutedChanged() final { }
+    void sourceMutedChanged() final;
     void sourceSettingsChanged() final { }
     bool preventSourceFromStopping() final { return false; }
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 
-    void convertAndSendMonoSamples();
-    void convertAndSendStereoSamples();
+    void pullAudioData();
 
     Vector<webrtc::AudioTrackSinkInterface*> m_sinks;
     Ref<RealtimeMediaSource> m_audioSource;
     rtc::scoped_refptr<webrtc::AudioTrackInterface> m_track;
+    Ref<AudioSampleDataSource> m_sampleConverter;
+    CAAudioStreamDescription m_inputStreamDescription;
+
+    Vector<uint16_t> m_audioBuffer;
+    uint64_t m_startFrame { 0 };
+    bool m_isMuted { false };
 };
 
 } // namespace WebCore

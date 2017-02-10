@@ -64,6 +64,7 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, u
 
     for (uint32_t buffer = 0; buffer < m_list->mNumberBuffers; ++buffer) {
         m_list->mBuffers[buffer].mData = data;
+        m_list->mBuffers[buffer].mDataByteSize = bytesPerBuffer;
         data += bytesPerBuffer;
     }
 }

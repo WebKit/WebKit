@@ -59,6 +59,8 @@ public:
     bool pullSamples(AudioSampleBufferList&, size_t, uint64_t, double, PullMode);
     bool pullSamples(AudioBufferList&, size_t, uint64_t, double, PullMode);
 
+    bool pullAvalaibleSamplesAsChunks(AudioBufferList&, size_t frameCount, uint64_t timeStamp, Function<void()>&&);
+
     void setPaused(bool);
 
     void setVolume(float volume) { m_volume = volume; }

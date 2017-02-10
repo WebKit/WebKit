@@ -260,7 +260,7 @@ OSStatus AudioSampleBufferList::copyFrom(const AudioBufferList& source, AudioCon
     propertyDataSize = sizeof(outputFormat);
     AudioConverterGetProperty(converter, kAudioConverterCurrentOutputStreamDescription, &propertyDataSize, &outputFormat);
 
-    ASSERT(outputFormat.mChannelsPerFrame == m_bufferList->bufferCount());
+    ASSERT(CAAudioStreamDescription(outputFormat).numberOfChannelStreams() == m_bufferList->bufferCount());
     for (uint32_t i = 0; i < m_bufferList->bufferCount(); ++i) {
         ASSERT(m_bufferList->buffer(i)->mData);
         ASSERT(m_bufferList->buffer(i)->mDataByteSize);

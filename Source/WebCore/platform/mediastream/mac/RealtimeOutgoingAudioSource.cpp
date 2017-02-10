@@ -31,13 +31,66 @@
 
 #if USE(LIBWEBRTC)
 
-#include "NotImplemented.h"
+#include "CAAudioStreamDescription.h"
+#include "LibWebRTCAudioFormat.h"
+#include "LibWebRTCUtils.h"
 
 namespace WebCore {
 
-void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)
+static inline AudioStreamBasicDescription libwebrtcAudioFormat(size_t channelCount)
 {
-    notImplemented();
+    AudioStreamBasicDescription streamFormat;
+    FillOutASBDForLPCM(streamFormat, LibWebRTCAudioFormat::sampleRate, channelCount, LibWebRTCAudioFormat::sampleSize, LibWebRTCAudioFormat::sampleSize, LibWebRTCAudioFormat::isFloat, LibWebRTCAudioFormat::isBigEndian, LibWebRTCAudioFormat::isNonInterleaved);
+    return streamFormat;
+}
+
+RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<RealtimeMediaSource>&& audioSource)
+    : m_audioSource(WTFMove(audioSource))
+    , m_sampleConverter(AudioSampleDataSource::create(LibWebRTCAudioFormat::sampleRate * 2))
+{
+    m_audioSource->addObserver(*this);
+}
+
+void RealtimeOutgoingAudioSource::sourceMutedChanged()
+{
+    m_isMuted = m_audioSource->muted();
+}
+
+void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& streamDescription, size_t sampleCount)
+{
+    if (m_inputStreamDescription != streamDescription) {
+        m_inputStreamDescription = toCAAudioStreamDescription(streamDescription);
+        auto status  = m_sampleConverter->setInputFormat(m_inputStreamDescription);
+        ASSERT_UNUSED(status, !status);
+
+        status = m_sampleConverter->setOutputFormat(libwebrtcAudioFormat(streamDescription.numberOfChannels()));
+        ASSERT(!status);
+    }
+    m_sampleConverter->pushSamples(time, audioData, sampleCount);
+
+    callOnWebRTCSignalingThread([protectedThis = makeRef(*this)] {
+        protectedThis->pullAudioData();
+    });
+}
+
+void RealtimeOutgoingAudioSource::pullAudioData()
+{
+    size_t bufferSize = LibWebRTCAudioFormat::chunkSampleCount * LibWebRTCAudioFormat::sampleByteSize * m_inputStreamDescription.numberOfChannels();
+    m_audioBuffer.reserveCapacity(bufferSize);
+
+    AudioBufferList bufferList;
+    bufferList.mNumberBuffers = 1;
+    bufferList.mBuffers[0].mNumberChannels = m_inputStreamDescription.numberOfChannels();
+    bufferList.mBuffers[0].mDataByteSize = bufferSize;
+    bufferList.mBuffers[0].mData = m_audioBuffer.data();
+
+    m_sampleConverter->pullAvalaibleSamplesAsChunks(bufferList, LibWebRTCAudioFormat::chunkSampleCount, m_startFrame, [this] {
+        m_startFrame += LibWebRTCAudioFormat::chunkSampleCount;
+        if (m_isMuted)
+            return;
+        for (auto sink : m_sinks)
+            sink->OnData(m_audioBuffer.data(), LibWebRTCAudioFormat::sampleSize, LibWebRTCAudioFormat::sampleRate, m_inputStreamDescription.numberOfChannels(), LibWebRTCAudioFormat::chunkSampleCount);
+    });
 }
 
 } // namespace WebCore

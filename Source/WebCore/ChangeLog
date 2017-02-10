@@ -1,3 +1,36 @@
+2017-02-10  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Implement Outgoing libwebrtc audio source support
+        https://bugs.webkit.org/show_bug.cgi?id=168118
+
+        Reviewed by Eric Carlson.
+
+        No new automated tests as we need the audio rendering to work to test the whole loop.
+
+        Using an AudioSampleDataSource to convert the captured data to libwebrtc expected format.
+        Capturing and pushing data happens in the capture thread.
+        Pulling of converted data happens in libwebrtc thread.
+
+        Introducing LibWebRTCAudioFormat.h to centralize libwbebrtc expected audio format.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/WebAudioBufferList.cpp:
+        (WebCore::WebAudioBufferList::WebAudioBufferList): Missing initialization leads to assertion failure.
+        * platform/audio/mac/AudioSampleBufferList.cpp:
+        (WebCore::AudioSampleBufferList::copyFrom): In case of interleaved channels, there is one buffer but two channels.
+        * platform/audio/mac/AudioSampleDataSource.cpp:
+        (WebCore::AudioSampleDataSource::pushSamples):
+        (WebCore::AudioSampleDataSource::pullAvalaibleSamplesAsChunks):
+        * platform/audio/mac/AudioSampleDataSource.h:
+        * platform/mediastream/libwebrtc/LibWebRTCAudioFormat.h: Added.
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::libwebrtcAudioFormat):
+        (WebCore::RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource):
+        (WebCore::RealtimeOutgoingAudioSource::sourceMutedChanged):
+        (WebCore::RealtimeOutgoingAudioSource::audioSamplesAvailable):
+        (WebCore::RealtimeOutgoingAudioSource::pullAudioData):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.h:
+
 2017-02-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLConstructionSiteTask::Insert should never be called on a node with a parent
