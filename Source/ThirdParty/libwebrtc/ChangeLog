@@ -7,6 +7,13 @@
 
 2017-02-09  Alex Christensen  <achristensen@webkit.org>
 
+        Fix El Capitan build.
+
+        * libwebrtc.xcodeproj/project.pbxproj:
+        Remove more SSE4 code.
+
+2017-02-09  Alex Christensen  <achristensen@webkit.org>
+
         Fix iOS and El Capitan builds of libwebrtc.
 
         * Configurations/libwebrtc.xcconfig:

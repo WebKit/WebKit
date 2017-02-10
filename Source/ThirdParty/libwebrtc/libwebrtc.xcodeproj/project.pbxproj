@@ -2190,8 +2190,6 @@
 		5CDD8D5B1E43C79C00621E92 /* vq.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8CDF1E43C75200621E92 /* vq.c */; };
 		5CDD8D5C1E43C79C00621E92 /* vq.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8CE01E43C75200621E92 /* vq.h */; };
 		5CDD8E331E43C80C00621E92 /* main_sse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8E251E43C7EC00621E92 /* main_sse.h */; };
-		5CDD8E361E43C80C00621E92 /* SigProc_FIX_sse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8E281E43C7EC00621E92 /* SigProc_FIX_sse.h */; };
-		5CDD8E371E43C80C00621E92 /* VAD_sse.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8E291E43C7EC00621E92 /* VAD_sse.c */; };
 		5CDD8E391E43C80C00621E92 /* x86_silk_map.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8E2B1E43C7EC00621E92 /* x86_silk_map.c */; };
 		5CDD8E3A1E43C80C00621E92 /* A2NLSF.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8D5E1E43C7D900621E92 /* A2NLSF.c */; };
 		5CDD8E3B1E43C80C00621E92 /* ana_filt_bank_1.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8D5F1E43C7D900621E92 /* ana_filt_bank_1.c */; };
@@ -5012,8 +5010,6 @@
 		5CDD8DC11E43C7D900621E92 /* VAD.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = VAD.c; path = silk/VAD.c; sourceTree = "<group>"; };
 		5CDD8DC21E43C7D900621E92 /* VQ_WMat_EC.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = VQ_WMat_EC.c; path = silk/VQ_WMat_EC.c; sourceTree = "<group>"; };
 		5CDD8E251E43C7EC00621E92 /* main_sse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = main_sse.h; path = silk/x86/main_sse.h; sourceTree = "<group>"; };
-		5CDD8E281E43C7EC00621E92 /* SigProc_FIX_sse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SigProc_FIX_sse.h; path = silk/x86/SigProc_FIX_sse.h; sourceTree = "<group>"; };
-		5CDD8E291E43C7EC00621E92 /* VAD_sse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = VAD_sse.c; path = silk/x86/VAD_sse.c; sourceTree = "<group>"; };
 		5CDD8E2B1E43C7EC00621E92 /* x86_silk_map.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = x86_silk_map.c; path = silk/x86/x86_silk_map.c; sourceTree = "<group>"; };
 		5CDD8E9C1E43C9C100621E92 /* apply_sine_window_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = apply_sine_window_FLP.c; path = silk/float/apply_sine_window_FLP.c; sourceTree = "<group>"; };
 		5CDD8E9D1E43C9C100621E92 /* autocorrelation_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = autocorrelation_FLP.c; path = silk/float/autocorrelation_FLP.c; sourceTree = "<group>"; };
@@ -8854,8 +8850,6 @@
 			isa = PBXGroup;
 			children = (
 				5CDD8E251E43C7EC00621E92 /* main_sse.h */,
-				5CDD8E281E43C7EC00621E92 /* SigProc_FIX_sse.h */,
-				5CDD8E291E43C7EC00621E92 /* VAD_sse.c */,
 				5CDD8E2B1E43C7EC00621E92 /* x86_silk_map.c */,
 			);
 			name = x86;
@@ -9469,7 +9463,6 @@
 				5CDD8E7F1E43C80C00621E92 /* resampler_rom.h in Headers */,
 				5CDD8E801E43C80C00621E92 /* resampler_structs.h in Headers */,
 				5CDD8E841E43C80C00621E92 /* SigProc_FIX.h in Headers */,
-				5CDD8E361E43C80C00621E92 /* SigProc_FIX_sse.h in Headers */,
 				5CDD8EFC1E43C9F600621E92 /* SigProc_FLP.h in Headers */,
 				5CDD8D581E43C79C00621E92 /* stack_alloc.h in Headers */,
 				5CDD8D591E43C79C00621E92 /* static_modes_fixed.h in Headers */,
@@ -10954,7 +10947,6 @@
 				5CDD8E941E43C80C00621E92 /* tables_pitch_lag.c in Sources */,
 				5CDD8E951E43C80C00621E92 /* tables_pulses_per_block.c in Sources */,
 				5CDD8E991E43C80C00621E92 /* VAD.c in Sources */,
-				5CDD8E371E43C80C00621E92 /* VAD_sse.c in Sources */,
 				5CDD8F531E43CB1E00621E92 /* vector_ops_FIX.c in Sources */,
 				5CDD8D5B1E43C79C00621E92 /* vq.c in Sources */,
 				5CDD8E9A1E43C80C00621E92 /* VQ_WMat_EC.c in Sources */,
