@@ -56,4 +56,4 @@ PASS Inserting a custom element into a shadow tree in an HTML document fetched b
 PASS Inserting the shadow host of a custom element into an HTML document fetched by XHR must enqueue and invoke adoptedCallback 
 PASS Moving the shadow host of a custom element from the owner document into an HTML document fetched by XHR must enqueue and invoke adoptedCallback 
 PASS Inserting a custom element into a detached shadow tree that belongs to an HTML document fetched by XHR must enqueue and invoke adoptedCallback 
- 
+

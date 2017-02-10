@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: line 1: TypeError: Module specifier does not start with "/", "./", or "../".
-CONSOLE MESSAGE: line 1: TypeError: Module specifier does not start with "/", "./", or "../".
-CONSOLE MESSAGE: line 1: TypeError: Module specifier does not start with "/", "./", or "../".
+CONSOLE MESSAGE: TypeError: Module specifier does not start with "/", "./", or "../".
+CONSOLE MESSAGE: TypeError: Module specifier does not start with "/", "./", or "../".
+CONSOLE MESSAGE: TypeError: Module specifier does not start with "/", "./", or "../".
 Test script.onerror will be fired when the incorrect relative specifier is specified.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
