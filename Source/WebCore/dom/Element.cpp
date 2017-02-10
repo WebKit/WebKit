@@ -1743,6 +1743,9 @@ ShadowRoot* Element::shadowRoot() const
 void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 {
     ASSERT(!shadowRoot());
+    
+    if (renderer())
+        RenderTreeUpdater::tearDownRenderers(*this);
 
     ShadowRoot& shadowRoot = newShadowRoot;
     ensureElementRareData().setShadowRoot(WTFMove(newShadowRoot));
