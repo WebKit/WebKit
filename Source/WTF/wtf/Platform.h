@@ -1222,8 +1222,4 @@
 #endif
 #endif /* PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201 && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 */
 
-#if PLATFORM(COCOA)
-#define USE_LIBWEBRTC 1
-#endif
-
 #endif /* WTF_Platform_h */
