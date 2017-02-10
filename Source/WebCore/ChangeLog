@@ -1,3 +1,10 @@
+2017-02-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix.
+
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode): isConnected -> inDocument.
+
 2017-02-10  Matthew Hanson  <matthew_hanson@apple.com>
 
         Rollout r212118. rdar://problem/30096323
