@@ -1,3 +1,14 @@
+2017-02-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Import imported/w3c/web-platform-tests/WebCryptoAPI tests
+        https://bugs.webkit.org/show_bug.cgi?id=165723
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        Skip superset/unsupported tests and mark slow tests as Slow.
+        * tests-options.json:
+
 2017-02-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark compositing/masks/solid-color-masked.html as failing on ios-simulator.

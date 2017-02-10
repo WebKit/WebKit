@@ -925,10 +925,21 @@ workers/bomb-with-v8.html [ Skip ]
 # WebCryptoAPI tests that take too long to complete, need to scale down. webkit.org/b/159638
 imported/w3c/WebCryptoAPI/generateKey/test_successes_RSA-OAEP.html [ Skip ]
 imported/w3c/WebCryptoAPI/generateKey/test_successes_RSASSA-PKCS1-v1_5.html [ Slow ]
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.worker.html [ Slow ]
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.worker.html [ Slow ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.worker.html [ Slow ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.html [ Slow ]
+
+# WebCryptoAPI tests that we haven't fully supported yet
+imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.html [ Skip ]
 
 # WebCryptoAPI superset tests
 imported/w3c/WebCryptoAPI/generateKey/test_failures.html [ Skip ]
 imported/w3c/WebCryptoAPI/generateKey/test_successes.html [ Skip ]
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures.html [ Skip ]
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes.html [ Skip ]
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.worker.html [ Skip ]
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures.worker.html [ Skip ]
 
 editing/deleting/delete-emoji.html [ Slow ]
 

@@ -38,6 +38,120 @@
     "imported/w3c/web-platform-tests/IndexedDB/writer-starvation.htm": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_bits.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_keys.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/digest/test_digest.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_ctr.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_gcm.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_rsa_oaep.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_aes-cbc.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_aes-ctr.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-CBC.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-CTR.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-GCM.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_AES-KW.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDH.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDSA.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_HMAC.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-OAEP.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-PSS.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSASSA-PKCS1-v1_5.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-CBC.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-CTR.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-GCM.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_AES-KW.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDH.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDSA.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_HMAC.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-OAEP.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-PSS.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSASSA-PKCS1-v1_5.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_hmac.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pkcs.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/XMLHttpRequest/progress-events-response-data-gzip.htm": [
         "slow"
     ],

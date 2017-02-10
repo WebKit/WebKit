@@ -61,7 +61,7 @@
 ["web-platform-tests/DOM-parsing", "skip"],
 ["web-platform-tests/FileAPI", "skip"],
 ["web-platform-tests/IndexedDB", "import"],
-["web-platform-tests/WebCryptoAPI", "skip"],
+["web-platform-tests/WebCryptoAPI", "import"],
 ["web-platform-tests/WebIDL", "import"],
 ["web-platform-tests/WebIDL/invalid", "skip"],
 ["web-platform-tests/WebIDL/valid", "skip"],
