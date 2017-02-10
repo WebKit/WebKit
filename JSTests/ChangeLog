@@ -1,3 +1,14 @@
+2017-02-09  Mark Lam  <mark.lam@apple.com>
+
+        Fix max length check in ArrayPrototype.js' concatSlowPath().
+        https://bugs.webkit.org/show_bug.cgi?id=167270
+        <rdar://problem/30128133>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/array-prototype-concat-of-long-spliced-arrays.js: Added.
+        * stress/array-prototype-concat-of-long-spliced-arrays2.js: Added.
+
 2017-02-09  Keith Miller  <keith_miller@apple.com>
 
         We should not allow Function.caller to be used on native functions
