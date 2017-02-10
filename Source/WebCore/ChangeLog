@@ -1,5 +1,16 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211966. rdar://problem/30149422
+
+    2017-02-09  Brent Fulgham  <bfulgham@apple.com>
+
+            Unreviewed build fix after r211965.
+
+            * dom/Document.cpp:
+            (WebCore::Document::adoptNode): inDocument -> isConnected
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211965. rdar://problem/30149422
 
     2017-02-09  Ryosuke Niwa  <rniwa@webkit.org>
