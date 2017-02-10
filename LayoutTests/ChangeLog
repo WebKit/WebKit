@@ -1,3 +1,13 @@
+2017-02-09  Antti Koivisto  <antti@apple.com>
+
+        Tear down existing renderers when adding a shadow root.
+        https://bugs.webkit.org/show_bug.cgi?id=167117
+
+        Reviewed by Andreas Kling.
+
+        * fast/shadow-dom/attach-shadow-teardown-expected.txt: Added.
+        * fast/shadow-dom/attach-shadow-teardown.html: Added.
+
 2017-02-09  Brent Fulgham  <bfulgham@apple.com>
 
         Handle synchronous layout when setting a selection range
