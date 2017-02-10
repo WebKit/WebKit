@@ -1,5 +1,24 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211957. rdar://problem/30029354
+
+    2017-02-09  Antti Koivisto  <antti@apple.com>
+
+            Nullptr crash under styleForFirstLetter
+            https://bugs.webkit.org/show_bug.cgi?id=167756
+            rdar://problem/30029354
+
+            Reviewed by Zalan Bujtas.
+
+            Don't know how we get here. Paper over the crash.
+
+            * rendering/RenderBlock.cpp:
+            (WebCore::styleForFirstLetter):
+
+                Use parent first line style if we compute null style for the first letter renderer.
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211949. rdar://problem/30119483
 
     2017-02-09  Andreas Kling  <akling@apple.com>
