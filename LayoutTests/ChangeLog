@@ -1,5 +1,21 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212025. rdar://problem/30076615
+
+    2017-02-09  Chris Dumez  <cdumez@apple.com>
+
+            Crash under HTMLFormElement::registerFormElement()
+            https://bugs.webkit.org/show_bug.cgi?id=167162
+
+            Reviewed by Ryosuke Niwa.
+
+            Add layout test coverage.
+
+            * fast/forms/registerFormElement-crash-expected.txt: Added.
+            * fast/forms/registerFormElement-crash.html: Added.
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212024. rdar://problem/30051227
 
     2017-02-09  Antti Koivisto  <antti@apple.com>
