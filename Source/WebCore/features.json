@@ -345,6 +345,45 @@
         "description": "An API that can be used to understand the visibility and position of DOM elements relative to a containing element or to the top-level viewport."
     },
     {
+        "name": "Navigation Timing Level 1",
+        "status": {
+            "status": "Done"
+        },
+        "url": "https://www.w3.org/TR/navigation-timing/",
+        "keywords": ["performance", "navigation timing"],
+        "description": "An API that exposes page load measurements to the page."
+    },
+    {
+        "name": "Navigation Timing Level 2",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": false
+        },
+        "url": "https://w3c.github.io/navigation-timing/",
+        "keywords": ["performance", "navigation timing"],
+        "description": "An API that exposes page load measurements to the page and adds entries to the performance timeline.",
+        "contact": {
+            "name": "Joseph Pecoraro",
+            "email": "joepeck@webkit.org",
+            "twitter": "@JosephPecoraro"
+        }
+    },
+    {
+        "name": "Performance Observer",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": false
+        },
+        "url": "https://w3c.github.io/performance-timeline/",
+        "keywords": ["performance", "performance observer", "performance timeline"],
+        "description": "An API to observe performance timeline entries at idle times.",
+        "contact": {
+            "name": "Joseph Pecoraro",
+            "email": "joepeck@webkit.org",
+            "twitter": "@JosephPecoraro"
+        }
+    },
+    {
         "name": "Pointer Lock",
         "status": {
             "status": "In Development",
@@ -372,19 +411,19 @@
         }
     },
     {
-        "name": "Resource Timing",
+        "name": "Resource Timing Level 2",
         "status": {
             "status": "In Development",
             "enabled-by-default": false
         },
-        "url": "http://www.w3.org/TR/resource-timing/",
+        "url": "https://w3c.github.io/resource-timing/",
         "webkit-url": "https://webkit.org/b/61138",
-        "keywords": ["resourcetiming","resource timing","rsrc"],
-        "description": "Provides detailed timing information to JavaScript for sub-resources loaded by the page.",
+        "keywords": ["performance", "resourcetiming", "resource timing", "rsrc"],
+        "description": "An API to that provides detailed timing information for resource loads.",
         "contact": {
-            "name": "Jonathan Davis",
-            "email": "web-evangelist@apple.com",
-            "twitter": "@jonathandavis"
+            "name": "Joseph Pecoraro",
+            "email": "joepeck@webkit.org",
+            "twitter": "@JosephPecoraro"
         }
     },
     {
@@ -409,13 +448,13 @@
         "category": "webapps"
     },
     {
-        "name": "User Timing",
+        "name": "User Timing Level 2",
         "status": {
             "status": "In Development",
             "enabled-by-default": false
         },
-        "url": "http://www.w3.org/TR/user-timing/",
-        "keywords": ["usertiming","user timing"],
+        "url": "https://w3c.github.io/user-timing/",
+        "keywords": ["performance", "usertiming", "user timing"],
         "description": "Provides high precision timestamp marking APIs.",
         "contact": {
             "name": "Jonathan Davis",
