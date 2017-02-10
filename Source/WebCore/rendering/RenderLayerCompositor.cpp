@@ -1831,6 +1831,8 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
         layerTreeBehavior |= LayerTreeAsTextIncludePaintingPhases;
     if (flags & LayerTreeFlagsIncludeContentLayers)
         layerTreeBehavior |= LayerTreeAsTextIncludeContentLayers;
+    if (flags & LayerTreeFlagsIncludeAcceleratesDrawing)
+        layerTreeBehavior |= LayerTreeAsTextIncludeAcceleratesDrawing;
 
     // We skip dumping the scroll and clip layers to keep layerTreeAsText output
     // similar between platforms.

@@ -543,19 +543,27 @@ SecurityOrigin* HTMLCanvasElement::securityOrigin() const
 
 bool HTMLCanvasElement::shouldAccelerate(const IntSize& size) const
 {
+    if (!document().settings())
+        return false;
+    auto& settings = *document().settings();
+
+    auto area = size.area<RecordOverflow>();
+    if (area.hasOverflowed())
+        return false;
+
+    if (area > settings.maximumAccelerated2dCanvasSize())
+        return false;
+
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    UNUSED_PARAM(size);
-    return document().settings() && document().settings()->canvasUsesAcceleratedDrawing();
+    return settings.canvasUsesAcceleratedDrawing();
 #elif ENABLE(ACCELERATED_2D_CANVAS)
     if (m_context && !m_context->is2d())
         return false;
 
-    Settings* settings = document().settings();
-    if (!settings || !settings->accelerated2dCanvasEnabled())
+    if (!settings.accelerated2dCanvasEnabled())
         return false;
 
-    // Do not use acceleration for small canvas.
-    if (size.width() * size.height() < settings->minimumAccelerated2dCanvasSize())
+    if (area < settings.minimumAccelerated2dCanvasSize())
         return false;
 
     return true;

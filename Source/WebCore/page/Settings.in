@@ -25,6 +25,8 @@ validationMessageTimerMagnification type=int, initial=50
 # draw canvas in software.
 minimumAccelerated2dCanvasSize type=int, initial=257*256
 
+maximumAccelerated2dCanvasSize type=unsigned, initial=5120*2880
+
 layoutFallbackWidth type=int, initial=980
 deviceWidth type=int, initial=0
 deviceHeight type=int, initial=0

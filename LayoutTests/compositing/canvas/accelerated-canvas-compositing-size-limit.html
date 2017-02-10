@@ -1,0 +1,40 @@
+<!DOCTYPE html><html>
+<head>
+<style>
+canvas {
+    -webkit-transform: translateZ(0);
+}
+</style>
+<script>
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+
+    function doTest() {
+        var canvases = document.getElementsByTagName("canvas");
+        for (var i = 0; i < canvases.length; ++i) {
+            var c = canvases[i];
+            var ctx = c.getContext('2d');
+            if (!ctx)
+                continue;
+            ctx.fillStyle = 'rgba(255,0,0,1)';
+            ctx.fillRect(0,0,c.width, c.height);
+        }
+        if (window.testRunner) {
+            document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_ACCELERATES_DRAWING);
+            testRunner.notifyDone();
+        }
+    }
+
+    window.addEventListener('load', doTest, false);
+</script>
+</head>
+<body>
+<p>Verifies that 2D canvases with higher than 5120x2880 resolution don't create accelerated backing stores.</p>
+<canvas id="c1" width="512" height="288"></canvas>
+<canvas id="c2" width="5120" height="2880"></canvas>
+<canvas id="c3" width="5200" height="2900"></canvas>
+<pre id="layers">Layer tree goes here in DRT</pre>
+</body>
+</html>

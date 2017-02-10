@@ -105,7 +105,8 @@ enum {
     LayerTreeFlagsIncludeTileCaches = 1 << 2,
     LayerTreeFlagsIncludeRepaintRects = 1 << 3,
     LayerTreeFlagsIncludePaintingPhases = 1 << 4,
-    LayerTreeFlagsIncludeContentLayers = 1 << 5
+    LayerTreeFlagsIncludeContentLayers = 1 << 5,
+    LayerTreeFlagsIncludeAcceleratesDrawing = 1 << 6,
 };
 typedef unsigned LayerTreeFlags;
 

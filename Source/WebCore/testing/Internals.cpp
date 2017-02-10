@@ -1989,6 +1989,8 @@ ExceptionOr<String> Internals::layerTreeAsText(Document& document, unsigned shor
         layerTreeFlags |= LayerTreeFlagsIncludePaintingPhases;
     if (flags & LAYER_TREE_INCLUDES_CONTENT_LAYERS)
         layerTreeFlags |= LayerTreeFlagsIncludeContentLayers;
+    if (flags & LAYER_TREE_INCLUDES_ACCELERATES_DRAWING)
+        layerTreeFlags |= LayerTreeFlagsIncludeAcceleratesDrawing;
 
     return document.frame()->layerTreeAsText(layerTreeFlags);
 }
