@@ -90,11 +90,6 @@ void DatabaseProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decode
     }
 }
 
-void DatabaseProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
-{
-    stopRunLoop();
-}
-
 #if ENABLE(INDEXED_DATABASE)
 IDBServer::IDBServer& DatabaseProcess::idbServer()
 {

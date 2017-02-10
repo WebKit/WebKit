@@ -121,10 +121,6 @@ void PluginProcess::didClose(IPC::Connection&)
     stopRunLoop();
 }
 
-void PluginProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
-{
-}
-
 void PluginProcess::initializePluginProcess(PluginProcessCreationParameters&& parameters)
 {
     ASSERT(!m_pluginModule);

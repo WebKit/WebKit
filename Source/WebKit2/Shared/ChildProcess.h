@@ -108,6 +108,9 @@ private:
     IPC::Connection* messageSenderConnection() override;
     uint64_t messageSenderDestinationID() override;
 
+    // IPC::Connection::Client.
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) final;
+
     void shutDown();
 
     void terminationTimerFired();
