@@ -62,6 +62,8 @@ static inline __attribute__((format_arg(3))) WebLocalizedStringType WebLocalized
 
 #define LOCALIZABLE_STRINGS_BUNDLE(F) LOCALIZABLE_STRINGS_BUNDLE_HELPER(F)
 #define LOCALIZABLE_STRINGS_BUNDLE_HELPER(F) F ## LocalizableStringsBundle
+
+__attribute__((visibility("hidden")))
 extern WebLocalizableStringsBundle LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME);
 
 #define UI_STRING(string, comment) WebLocalizedStringWithValue(&LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME), string, string)

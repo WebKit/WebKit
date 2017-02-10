@@ -1,5 +1,15 @@
 2017-02-10  Aakash Jain  <aakash_jain@apple.com>
 
+        cleanup WebLocalizableStrings.
+        https://bugs.webkit.org/show_bug.cgi?id=168078
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Misc/WebLocalizableStrings.h: Make visibility hidden for WebLocalizableStringsBundle 
+        as it's for each framework's own consumption, and never needs to be exported.
+
+2017-02-10  Aakash Jain  <aakash_jain@apple.com>
+
         WebResourceLoadDelegatePrivate.h cannot be imported standalone
         https://bugs.webkit.org/show_bug.cgi?id=168096
 
