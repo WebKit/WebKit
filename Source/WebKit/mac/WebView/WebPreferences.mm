@@ -478,6 +478,7 @@ public:
         [NSNumber numberWithBool:NO],   WebKitDOMPasteAllowedPreferenceKey,
 #endif
         [NSNumber numberWithBool:YES],  WebKitUsesPageCachePreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitAllowsPageCacheWithWindowOpenerKey,
         [NSNumber numberWithInt:cacheModelForMainBundle()], WebKitCacheModelPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitPageCacheSupportsPluginsPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitDeveloperExtrasEnabledPreferenceKey,
@@ -2429,6 +2430,16 @@ static NSString *classIBCreatorID = nil;
 {
     [self _setBoolValue:flag forKey:WebKitPageCacheSupportsPluginsPreferenceKey];
 
+}
+
+- (BOOL)allowsPageCacheWithWindowOpener
+{
+    return [self _boolValueForKey:WebKitAllowsPageCacheWithWindowOpenerKey];
+}
+
+- (void)setAllowsPageCacheWithWindowOpener:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAllowsPageCacheWithWindowOpenerKey];
 }
 
 #if PLATFORM(IOS)

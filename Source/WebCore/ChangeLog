@@ -1,3 +1,51 @@
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211254. rdar://problem/30188490
+
+    2017-01-26  Chris Dumez  <cdumez@apple.com>
+
+            Crash when navigating back to a page in PacheCache when one of its frames has been removed
+            https://bugs.webkit.org/show_bug.cgi?id=167421
+            <rdar://problem/30188490>
+
+            Reviewed by Darin Adler.
+
+            Disallow page caching of a page if:
+            1. The main window has an opener (i.e. it was opened via window.open)
+            2. It has ever used window.open()
+
+            This is because allowing page caching in this case would allow such
+            windows to script each other even after one of them entered Page
+            Cache. Allowing this is dangerous and easily causes crashes.
+
+            This is a short term workaround until we find a better solution to
+            the problem. One issue is this workaround is that navigating back
+            to a page that has an opener or used window.open() will not longer
+            get the page from PageCache. As a result, state may be lost upon
+            navigating back. However, we never guarantee that pages get page
+            cached, and Chrome does not have a PageCache.
+
+            Tests: fast/history/page-cache-after-window-open.html
+                   fast/history/page-cache-back-navigation-crash.html
+                   fast/history/page-cache-with-opener.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::hasEverCalledWindowOpen):
+            (WebCore::Document::markHasCalledWindowOpen):
+            * dom/Document.h:
+            * history/PageCache.cpp:
+            (WebCore::canCachePage):
+            * page/DOMWindow.cpp:
+            (WebCore::DOMWindow::createWindow):
+            * page/DiagnosticLoggingKeys.cpp:
+            (WebCore::DiagnosticLoggingKeys::hasCalledWindowOpenKey):
+            (WebCore::DiagnosticLoggingKeys::hasOpenerKey):
+            * page/DiagnosticLoggingKeys.h:
+            * page/Page.cpp:
+            (WebCore::Page::openedByWindowOpen):
+            * page/Page.h:
+            * page/Settings.in:
+
 2017-02-06  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r211653. rdar://problem/29872943

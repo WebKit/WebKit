@@ -10,6 +10,7 @@ jsTestIsAsync = true;
 if (window.testRunner) {
     testRunner.setCanOpenWindows();
     testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.overridePreference("WebKitAllowsPageCacheWithWindowOpenerKey", 1);
 }
 
 // Window we will be controlling.

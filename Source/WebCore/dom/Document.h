@@ -375,6 +375,9 @@ public:
     WEBCORE_EXPORT bool hasFocus() const;
 
     bool hasManifest() const;
+
+    bool hasEverCalledWindowOpen() const;
+    void markHasCalledWindowOpen();
     
     WEBCORE_EXPORT ExceptionOr<Ref<Element>> createElementForBindings(const AtomicString& tagName);
     WEBCORE_EXPORT Ref<DocumentFragment> createDocumentFragment();
@@ -1490,6 +1493,7 @@ private:
     bool m_bParsing;
 
     Timer m_styleRecalcTimer;
+    bool m_hasEverCalledWindowOpen { false };
     bool m_pendingStyleRecalcShouldForce;
     bool m_inStyleRecalc;
     bool m_closeAfterStyleRecalc;
