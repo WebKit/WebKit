@@ -2195,11 +2195,8 @@
 		5CDD8D5B1E43C79C00621E92 /* vq.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8CDF1E43C75200621E92 /* vq.c */; };
 		5CDD8D5C1E43C79C00621E92 /* vq.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8CE01E43C75200621E92 /* vq.h */; };
 		5CDD8E331E43C80C00621E92 /* main_sse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8E251E43C7EC00621E92 /* main_sse.h */; };
-		5CDD8E341E43C80C00621E92 /* NSQ_del_dec_sse.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8E261E43C7EC00621E92 /* NSQ_del_dec_sse.c */; };
-		5CDD8E351E43C80C00621E92 /* NSQ_sse.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8E271E43C7EC00621E92 /* NSQ_sse.c */; };
 		5CDD8E361E43C80C00621E92 /* SigProc_FIX_sse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD8E281E43C7EC00621E92 /* SigProc_FIX_sse.h */; };
 		5CDD8E371E43C80C00621E92 /* VAD_sse.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8E291E43C7EC00621E92 /* VAD_sse.c */; };
-		5CDD8E381E43C80C00621E92 /* VQ_WMat_EC_sse.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8E2A1E43C7EC00621E92 /* VQ_WMat_EC_sse.c */; };
 		5CDD8E391E43C80C00621E92 /* x86_silk_map.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8E2B1E43C7EC00621E92 /* x86_silk_map.c */; };
 		5CDD8E3A1E43C80C00621E92 /* A2NLSF.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8D5E1E43C7D900621E92 /* A2NLSF.c */; };
 		5CDD8E3B1E43C80C00621E92 /* ana_filt_bank_1.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD8D5F1E43C7D900621E92 /* ana_filt_bank_1.c */; };
@@ -5025,11 +5022,8 @@
 		5CDD8DC11E43C7D900621E92 /* VAD.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = VAD.c; path = silk/VAD.c; sourceTree = "<group>"; };
 		5CDD8DC21E43C7D900621E92 /* VQ_WMat_EC.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = VQ_WMat_EC.c; path = silk/VQ_WMat_EC.c; sourceTree = "<group>"; };
 		5CDD8E251E43C7EC00621E92 /* main_sse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = main_sse.h; path = silk/x86/main_sse.h; sourceTree = "<group>"; };
-		5CDD8E261E43C7EC00621E92 /* NSQ_del_dec_sse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NSQ_del_dec_sse.c; path = silk/x86/NSQ_del_dec_sse.c; sourceTree = "<group>"; };
-		5CDD8E271E43C7EC00621E92 /* NSQ_sse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NSQ_sse.c; path = silk/x86/NSQ_sse.c; sourceTree = "<group>"; };
 		5CDD8E281E43C7EC00621E92 /* SigProc_FIX_sse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SigProc_FIX_sse.h; path = silk/x86/SigProc_FIX_sse.h; sourceTree = "<group>"; };
 		5CDD8E291E43C7EC00621E92 /* VAD_sse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = VAD_sse.c; path = silk/x86/VAD_sse.c; sourceTree = "<group>"; };
-		5CDD8E2A1E43C7EC00621E92 /* VQ_WMat_EC_sse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = VQ_WMat_EC_sse.c; path = silk/x86/VQ_WMat_EC_sse.c; sourceTree = "<group>"; };
 		5CDD8E2B1E43C7EC00621E92 /* x86_silk_map.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = x86_silk_map.c; path = silk/x86/x86_silk_map.c; sourceTree = "<group>"; };
 		5CDD8E9C1E43C9C100621E92 /* apply_sine_window_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = apply_sine_window_FLP.c; path = silk/float/apply_sine_window_FLP.c; sourceTree = "<group>"; };
 		5CDD8E9D1E43C9C100621E92 /* autocorrelation_FLP.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = autocorrelation_FLP.c; path = silk/float/autocorrelation_FLP.c; sourceTree = "<group>"; };
@@ -8875,11 +8869,8 @@
 			isa = PBXGroup;
 			children = (
 				5CDD8E251E43C7EC00621E92 /* main_sse.h */,
-				5CDD8E261E43C7EC00621E92 /* NSQ_del_dec_sse.c */,
-				5CDD8E271E43C7EC00621E92 /* NSQ_sse.c */,
 				5CDD8E281E43C7EC00621E92 /* SigProc_FIX_sse.h */,
 				5CDD8E291E43C7EC00621E92 /* VAD_sse.c */,
-				5CDD8E2A1E43C7EC00621E92 /* VQ_WMat_EC_sse.c */,
 				5CDD8E2B1E43C7EC00621E92 /* x86_silk_map.c */,
 			);
 			name = x86;
@@ -10918,8 +10909,6 @@
 				5CDD8EF31E43C9F600621E92 /* noise_shape_analysis_FLP.c in Sources */,
 				5CDD8E6F1E43C80C00621E92 /* NSQ.c in Sources */,
 				5CDD8E6E1E43C80C00621E92 /* NSQ_del_dec.c in Sources */,
-				5CDD8E341E43C80C00621E92 /* NSQ_del_dec_sse.c in Sources */,
-				5CDD8E351E43C80C00621E92 /* NSQ_sse.c in Sources */,
 				5C4B4AC21E42C574002651C8 /* opus.c in Sources */,
 				5C4B4ABA1E42C574002651C8 /* opus_compare.c in Sources */,
 				5C4B4ABB1E42C574002651C8 /* opus_decoder.c in Sources */,
@@ -10989,7 +10978,6 @@
 				5CDD8F531E43CB1E00621E92 /* vector_ops_FIX.c in Sources */,
 				5CDD8D5B1E43C79C00621E92 /* vq.c in Sources */,
 				5CDD8E9A1E43C80C00621E92 /* VQ_WMat_EC.c in Sources */,
-				5CDD8E381E43C80C00621E92 /* VQ_WMat_EC_sse.c in Sources */,
 				5CDD8F541E43CB1E00621E92 /* warped_autocorrelation_FIX.c in Sources */,
 				5CDD8F001E43C9F600621E92 /* warped_autocorrelation_FLP.c in Sources */,
 				5CDD8F011E43C9F600621E92 /* wrappers_FLP.c in Sources */,
