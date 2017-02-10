@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -13199,6 +13199,166 @@ void testBranchBitAndImmFusion(
     CHECK(terminal.args[2].kind() == Air::Arg::BitImm || terminal.args[2].kind() == Air::Arg::BitImm64);
 }
 
+void testTerminalPatchpointThatNeedsToBeSpilled()
+{
+    // This is a unit test for how FTL's heap allocation fast paths behave.
+    Procedure proc;
+    
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* success = proc.addBlock();
+    BasicBlock* slowPath = proc.addBlock();
+    
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+    patchpoint->effects.terminal = true;
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    
+    root->appendSuccessor(success);
+    root->appendSuccessor(FrequentedBlock(slowPath, FrequencyClass::Rare));
+    
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.move(CCallHelpers::TrustedImm32(42), params[0].gpr());
+            
+            CCallHelpers::Jump jumpToSuccess;
+            if (!params.fallsThroughToSuccessor(0))
+                jumpToSuccess = jit.jump();
+            
+            Vector<Box<CCallHelpers::Label>> labels = params.successorLabels();
+            
+            params.addLatePath(
+                [=] (CCallHelpers& jit) {
+                    if (jumpToSuccess.isSet())
+                        jumpToSuccess.linkTo(*labels[0], &jit);
+                });
+        });
+    
+    Vector<Value*> args;
+    {
+        RegisterSet fillAllGPRsSet = RegisterSet::allGPRs();
+        fillAllGPRsSet.exclude(RegisterSet::stackRegisters());
+        fillAllGPRsSet.exclude(RegisterSet::reservedHardwareRegisters());
+
+        for (unsigned i = 0; i < fillAllGPRsSet.numberOfSetRegisters(); i++)
+            args.append(success->appendNew<Const32Value>(proc, Origin(), i));
+    }
+
+    {
+        // Now force all values into every available register.
+        PatchpointValue* p = success->appendNew<PatchpointValue>(proc, Void, Origin());
+        for (Value* v : args)
+            p->append(v, ValueRep::SomeRegister);
+        p->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+    }
+
+    {
+        // Now require the original patchpoint to be materialized into a register.
+        PatchpointValue* p = success->appendNew<PatchpointValue>(proc, Void, Origin());
+        p->append(patchpoint, ValueRep::SomeRegister);
+        p->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+    }
+
+    success->appendNew<Value>(proc, Return, Origin(), success->appendNew<Const32Value>(proc, Origin(), 10));
+    
+    slowPath->appendNew<Value>(proc, Return, Origin(), slowPath->appendNew<Const32Value>(proc, Origin(), 20));
+    
+    auto code = compile(proc);
+    CHECK_EQ(invoke<int>(*code), 10);
+}
+
+void testTerminalPatchpointThatNeedsToBeSpilled2()
+{
+    // This is a unit test for how FTL's heap allocation fast paths behave.
+    Procedure proc;
+    
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* one = proc.addBlock();
+    BasicBlock* success = proc.addBlock();
+    BasicBlock* slowPath = proc.addBlock();
+
+    Value* arg = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+
+    root->appendNew<Value>(
+        proc, Branch, Origin(), arg);
+    root->appendSuccessor(one);
+    root->appendSuccessor(FrequentedBlock(slowPath, FrequencyClass::Rare));
+    
+    PatchpointValue* patchpoint = one->appendNew<PatchpointValue>(proc, Int32, Origin());
+    patchpoint->effects.terminal = true;
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    
+    one->appendSuccessor(success);
+    one->appendSuccessor(FrequentedBlock(slowPath, FrequencyClass::Rare));
+    
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.move(CCallHelpers::TrustedImm32(666), params[0].gpr());
+            auto goToFastPath = jit.branch32(CCallHelpers::Equal, params[1].gpr(), CCallHelpers::TrustedImm32(42));
+            auto jumpToSlow = jit.jump();
+            
+            // Make sure the asserts here pass.
+            params.fallsThroughToSuccessor(0);
+            params.fallsThroughToSuccessor(1);
+
+            Vector<Box<CCallHelpers::Label>> labels = params.successorLabels();
+            
+            params.addLatePath(
+                [=] (CCallHelpers& jit) {
+                    goToFastPath.linkTo(*labels[0], &jit);
+                    jumpToSlow.linkTo(*labels[1], &jit);
+                });
+        });
+    
+    Vector<Value*> args;
+    {
+        RegisterSet fillAllGPRsSet = RegisterSet::allGPRs();
+        fillAllGPRsSet.exclude(RegisterSet::stackRegisters());
+        fillAllGPRsSet.exclude(RegisterSet::reservedHardwareRegisters());
+
+        for (unsigned i = 0; i < fillAllGPRsSet.numberOfSetRegisters(); i++)
+            args.append(success->appendNew<Const32Value>(proc, Origin(), i));
+    }
+
+    {
+        // Now force all values into every available register.
+        PatchpointValue* p = success->appendNew<PatchpointValue>(proc, Void, Origin());
+        for (Value* v : args)
+            p->append(v, ValueRep::SomeRegister);
+        p->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+    }
+
+    {
+        // Now require the original patchpoint to be materialized into a register.
+        PatchpointValue* p = success->appendNew<PatchpointValue>(proc, Void, Origin());
+        p->append(patchpoint, ValueRep::SomeRegister);
+        p->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+    }
+
+    success->appendNew<Value>(proc, Return, Origin(), patchpoint);
+    
+    slowPath->appendNew<Value>(proc, Return, Origin(), arg);
+    
+    auto original1 = Options::maxB3TailDupBlockSize();
+    auto original2 = Options::maxB3TailDupBlockSuccessors();
+
+    // Tail duplication will break the critical edge we're trying to test because it
+    // will clone the slowPath block for both edges to it!
+    Options::maxB3TailDupBlockSize() = 0;
+    Options::maxB3TailDupBlockSuccessors() = 0;
+
+    auto code = compile(proc);
+    CHECK_EQ(invoke<int>(*code, 1), 1);
+    CHECK_EQ(invoke<int>(*code, 0), 0);
+    CHECK_EQ(invoke<int>(*code, 42), 666);
+
+    Options::maxB3TailDupBlockSize() = original1;
+    Options::maxB3TailDupBlockSuccessors() = original2;
+}
+
 void testPatchpointTerminalReturnValue(bool successIsRare)
 {
     // This is a unit test for how FTL's heap allocation fast paths behave.
@@ -14082,6 +14242,10 @@ void run(const char* filter)
     auto shouldRun = [&] (const char* testName) -> bool {
         return !filter || !!strcasestr(testName, filter);
     };
+
+    // We run this test first because it fiddles with some
+    // JSC options.
+    testTerminalPatchpointThatNeedsToBeSpilled2();
 
     RUN(test42());
     RUN(testLoad42());
@@ -15458,6 +15622,7 @@ void run(const char* filter)
     RUN(testSomeEarlyRegister());
     RUN(testPatchpointTerminalReturnValue(true));
     RUN(testPatchpointTerminalReturnValue(false));
+    RUN(testTerminalPatchpointThatNeedsToBeSpilled());
 
     RUN(testMemoryFence());
     RUN(testStoreFence());
