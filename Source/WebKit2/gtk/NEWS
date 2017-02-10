@@ -1,4 +1,25 @@
 ==================
+WebKitGTK+  2.14.4
+==================
+
+What's new in WebKitGTK+ 2.14.4?
+
+  - Make accelerating compositing mode on-demand again. By default it will only be used for websites
+    that require it, saving a lot of memory on websites that don't need it.
+  - Fix rendering issues in long documents with transparent background.
+  - Release unused UpdateAtlas and reduce the tile coverage on memory pressure.
+  - The media backend now stores preloaded media in /var/tmp instead of user cache dir.
+  - Make inspector work again when accelerated compositing support is disabled.
+  - Fix a deadlock when the media player is destroyed.
+  - Fix network process crashes when loading custom URI schemes.
+  - Fix overlay scrollbars that are over a subframe.
+  - Fix a crash in GraphicsContext3D::drawArrays when using OpenGL 3.2 core profile.
+  - Fix BadDamage X errors happening when resizing the WebView.
+  - Fix several crashes and rendering issues.
+  - Security fixes: CVE-2017-2365, CVE-2017-2366, CVE-2017-2373, CVE-2017-2363, CVE-2017-2362, CVE-2017-2350,
+    CVE-2017-2350, CVE-2017-2354, CVE-2017-2355, CVE-2017-2356, CVE-2017-2371, CVE-2017-2364, CVE-2017-2369.
+
+==================
 WebKitGTK+  2.14.3
 ==================
 

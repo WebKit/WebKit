@@ -1,3 +1,9 @@
+2017-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.14.4 release.
+
+        * gtk/NEWS: Add release notes for 2.14.4.
+
 2017-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build with threaded compositor disabled.
