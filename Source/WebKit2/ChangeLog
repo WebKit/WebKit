@@ -1,5 +1,16 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211893. rdar://problem/30423806
+
+    2017-02-08  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix; FullscreenClient only avaialble on 32-bit builds.
+
+            * UIProcess/Cocoa/WebViewImpl.mm:
+            (WebKit::WebViewImpl::WebViewImpl):
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211891. rdar://problem/30423806
 
     2017-02-08  Jer Noble  <jer.noble@apple.com>

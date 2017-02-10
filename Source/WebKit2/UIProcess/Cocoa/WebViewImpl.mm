@@ -1277,7 +1277,7 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
     // Explicitly set the layer contents placement so AppKit will make sure that our layer has masksToBounds set to YES.
     m_view.layerContentsPlacement = NSViewLayerContentsPlacementTopLeft;
 
-#if ENABLE(FULLSCREEN_API)
+#if ENABLE(FULLSCREEN_API) && WK_API_ENABLED
     m_page->setFullscreenClient(std::make_unique<WebKit::FullscreenClient>((WKWebView *)m_view));
 #endif
 
