@@ -1,9 +1,9 @@
 CONSOLE MESSAGE: line 43: The language contains a null character and is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 64: The language ' foo 
 ' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1380: The language ' foo 
+CONSOLE MESSAGE: line 1409: The language ' foo 
 ' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1380: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1409: The language contains a null character and is not a valid BCP 47 language tag.
 
 PASS HTMLTrackElement.srclang missing value 
 PASS HTMLTrackElement.srclang empty string content attribute 

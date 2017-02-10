@@ -389,7 +389,7 @@ policies and contribution forms [3].
         self.addEventListener("connect",
                 function(message_event) {
                     this_obj._add_message_port(message_event.source);
-                });
+                }, false);
     }
     SharedWorkerTestEnvironment.prototype = Object.create(WorkerTestEnvironment.prototype);
 
@@ -430,7 +430,7 @@ policies and contribution forms [3].
                             this_obj._add_message_port(event.source);
                         }
                     }
-                });
+                }, false);
 
         // The oninstall event is received after the service worker script and
         // all imported scripts have been fetched and executed. It's the
@@ -471,6 +471,11 @@ policies and contribution forms [3].
             self instanceof ServiceWorkerGlobalScope) {
             return new ServiceWorkerTestEnvironment();
         }
+        if ('WorkerGlobalScope' in self &&
+            self instanceof WorkerGlobalScope) {
+            return new DedicatedWorkerTestEnvironment();
+        }
+
         throw new Error("Unsupported test environment");
     }
 
@@ -518,14 +523,18 @@ policies and contribution forms [3].
     function promise_test(func, name, properties) {
         var test = async_test(name, properties);
         // If there is no promise tests queue make one.
-        test.step(function() {
-            if (!tests.promise_tests) {
-                tests.promise_tests = Promise.resolve();
-            }
-        });
+        if (!tests.promise_tests) {
+            tests.promise_tests = Promise.resolve();
+        }
         tests.promise_tests = tests.promise_tests.then(function() {
-            return Promise.resolve(test.step(func, test, test))
-                .then(
+            var donePromise = new Promise(function(resolve) {
+                test.add_cleanup(resolve);
+            });
+            var promise = test.step(func, test, test);
+            test.step(function() {
+                assert_not_equals(promise, undefined);
+            });
+            Promise.resolve(promise).then(
                     function() {
                         test.done();
                     })
@@ -537,12 +546,13 @@ policies and contribution forms [3].
                         assert(false, "promise_test", null,
                                "Unhandled rejection with value: ${value}", {value:value});
                     }));
+            return donePromise;
         });
     }
 
-    function promise_rejects(test, expected, promise) {
-        return promise.then(test.unreached_func("Should have rejected.")).catch(function(e) {
-            assert_throws(expected, function() { throw e });
+    function promise_rejects(test, expected, promise, description) {
+        return promise.then(test.unreached_func("Should have rejected: " + description)).catch(function(e) {
+            assert_throws(expected, function() { throw e }, description);
         });
     }
 
@@ -579,7 +589,7 @@ policies and contribution forms [3].
         });
 
         for (var i = 0; i < eventTypes.length; i++) {
-            watchedNode.addEventListener(eventTypes[i], eventHandler);
+            watchedNode.addEventListener(eventTypes[i], eventHandler, false);
         }
 
         /**
@@ -604,7 +614,7 @@ policies and contribution forms [3].
 
         function stop_watching() {
             for (var i = 0; i < eventTypes.length; i++) {
-                watchedNode.removeEventListener(eventTypes[i], eventHandler);
+                watchedNode.removeEventListener(eventTypes[i], eventHandler, false);
             }
         };
 
@@ -697,10 +707,17 @@ policies and contribution forms [3].
         // instanceof doesn't work if the node is from another window (like an
         // iframe's contentWindow):
         // http://www.w3.org/Bugs/Public/show_bug.cgi?id=12295
-        if ("nodeType" in object &&
-            "nodeName" in object &&
-            "nodeValue" in object &&
-            "childNodes" in object) {
+        try {
+            var has_node_properties = ("nodeType" in object &&
+                                       "nodeName" in object &&
+                                       "nodeValue" in object &&
+                                       "childNodes" in object);
+        } catch (e) {
+            // We're probably cross-origin, which means we aren't a node
+            return false;
+        }
+
+        if (has_node_properties) {
             try {
                 object.nodeType;
             } catch (e) {
@@ -712,6 +729,44 @@ policies and contribution forms [3].
         }
         return false;
     }
+
+    var replacements = {
+        "0": "0",
+        "1": "x01",
+        "2": "x02",
+        "3": "x03",
+        "4": "x04",
+        "5": "x05",
+        "6": "x06",
+        "7": "x07",
+        "8": "b",
+        "9": "t",
+        "10": "n",
+        "11": "v",
+        "12": "f",
+        "13": "r",
+        "14": "x0e",
+        "15": "x0f",
+        "16": "x10",
+        "17": "x11",
+        "18": "x12",
+        "19": "x13",
+        "20": "x14",
+        "21": "x15",
+        "22": "x16",
+        "23": "x17",
+        "24": "x18",
+        "25": "x19",
+        "26": "x1a",
+        "27": "x1b",
+        "28": "x1c",
+        "29": "x1d",
+        "30": "x1e",
+        "31": "x1f",
+        "0xfffd": "ufffd",
+        "0xfffe": "ufffe",
+        "0xffff": "uffff",
+    };
 
     /*
      * Convert a value to a nice, human-readable string
@@ -734,43 +789,9 @@ policies and contribution forms [3].
         switch (typeof val) {
         case "string":
             val = val.replace("\\", "\\\\");
-            for (var i = 0; i < 32; i++) {
-                var replace = "\\";
-                switch (i) {
-                case 0: replace += "0"; break;
-                case 1: replace += "x01"; break;
-                case 2: replace += "x02"; break;
-                case 3: replace += "x03"; break;
-                case 4: replace += "x04"; break;
-                case 5: replace += "x05"; break;
-                case 6: replace += "x06"; break;
-                case 7: replace += "x07"; break;
-                case 8: replace += "b"; break;
-                case 9: replace += "t"; break;
-                case 10: replace += "n"; break;
-                case 11: replace += "v"; break;
-                case 12: replace += "f"; break;
-                case 13: replace += "r"; break;
-                case 14: replace += "x0e"; break;
-                case 15: replace += "x0f"; break;
-                case 16: replace += "x10"; break;
-                case 17: replace += "x11"; break;
-                case 18: replace += "x12"; break;
-                case 19: replace += "x13"; break;
-                case 20: replace += "x14"; break;
-                case 21: replace += "x15"; break;
-                case 22: replace += "x16"; break;
-                case 23: replace += "x17"; break;
-                case 24: replace += "x18"; break;
-                case 25: replace += "x19"; break;
-                case 26: replace += "x1a"; break;
-                case 27: replace += "x1b"; break;
-                case 28: replace += "x1c"; break;
-                case 29: replace += "x1d"; break;
-                case 30: replace += "x1e"; break;
-                case 31: replace += "x1f"; break;
-                }
-                val = val.replace(RegExp(String.fromCharCode(i), "g"), replace);
+            for (var p in replacements) {
+                var replace = "\\" + replacements[p];
+                val = val.replace(RegExp(String.fromCharCode(p), "g"), replace);
             }
             return '"' + val.replace(/"/g, '\\"') + '"';
         case "boolean":
@@ -818,7 +839,12 @@ policies and contribution forms [3].
 
         /* falls through */
         default:
-            return typeof val + ' "' + truncate(String(val), 60) + '"';
+            try {
+                return typeof val + ' "' + truncate(String(val), 1000) + '"';
+            } catch(e) {
+                return ("[stringifying object threw " + String(e) +
+                        " with type " + String(typeof e) + "]");
+            }
         }
     }
     expose(format_value, "format_value");
@@ -1176,6 +1202,7 @@ policies and contribution forms [3].
                 NO_MODIFICATION_ALLOWED_ERR: 'NoModificationAllowedError',
                 NOT_FOUND_ERR: 'NotFoundError',
                 NOT_SUPPORTED_ERR: 'NotSupportedError',
+                INUSE_ATTRIBUTE_ERR: 'InUseAttributeError',
                 INVALID_STATE_ERR: 'InvalidStateError',
                 SYNTAX_ERR: 'SyntaxError',
                 INVALID_MODIFICATION_ERR: 'InvalidModificationError',
@@ -1202,6 +1229,7 @@ policies and contribution forms [3].
                 NoModificationAllowedError: 7,
                 NotFoundError: 8,
                 NotSupportedError: 9,
+                InUseAttributeError: 10,
                 InvalidStateError: 11,
                 SyntaxError: 12,
                 InvalidModificationError: 13,
@@ -1226,6 +1254,7 @@ policies and contribution forms [3].
                 ReadOnlyError: 0,
                 VersionError: 0,
                 OperationError: 0,
+                NotAllowedError: 0
             };
 
             if (!(name in name_code_map)) {
@@ -1436,7 +1465,7 @@ policies and contribution forms [3].
         var args = Array.prototype.slice.call(arguments, 2);
         return setTimeout(this.step_func(function() {
             return f.apply(test_this, args);
-        }, timeout * tests.timeout_multiplier));
+        }), timeout * tests.timeout_multiplier);
     }
 
     Test.prototype.add_cleanup = function(callback) {
@@ -2442,11 +2471,20 @@ policies and contribution forms [3].
             }
         }
 
+        // 'Error.stack' is not supported in all browsers/versions
+        if (!stack) {
+            return "(Stack trace unavailable)";
+        }
+
         var lines = stack.split("\n");
 
         // Create a pattern to match stack frames originating within testharness.js.  These include the
         // script URL, followed by the line/col (e.g., '/resources/testharness.js:120:21').
-        var re = new RegExp((get_script_url() || "\\btestharness.js") + ":\\d+:\\d+");
+        // Escape the URL per http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
+        // in case it contains RegExp characters.
+        var script_url = get_script_url();
+        var re_text = script_url ? script_url.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') : "\\btestharness.js";
+        var re = new RegExp(re_text + ":\\d+:\\d+");
 
         // Some browsers include a preamble that specifies the type of the error object.  Skip this by
         // advancing until we find the first stack frame originating from testharness.js.
@@ -2634,7 +2672,7 @@ policies and contribution forms [3].
 
     var tests = new Tests();
 
-    addEventListener("error", function(e) {
+    var error_handler = function(e) {
         if (tests.file_is_test) {
             var test = tests.tests[0];
             if (test.phase >= test.phases.HAS_RESULT) {
@@ -2649,7 +2687,10 @@ policies and contribution forms [3].
             tests.status.message = e.message;
             tests.status.stack = e.stack;
         }
-    });
+    };
+
+    addEventListener("error", error_handler, false);
+    addEventListener("unhandledrejection", function(e){ error_handler(e.reason); }, false);
 
     test_environment.on_tests_ready();
 

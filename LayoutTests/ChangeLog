@@ -1,3 +1,28 @@
+2017-02-10  Chris Dumez  <cdumez@apple.com>
+
+        Update LayoutTests/resources/testharness.js
+        https://bugs.webkit.org/show_bug.cgi?id=168100
+
+        Reviewed by Youenn Fablet.
+
+        Update LayoutTests/resources/testharness.js to match the web-platform-tests
+        one landed in r211930.
+
+        * media/track/w3c/interfaces/HTMLTrackElement/srclang-expected.txt:
+        * media/track/w3c/interfaces/TextTrack/language-expected.txt:
+        * resources/testharness.js:
+        (SharedWorkerTestEnvironment):
+        (ServiceWorkerTestEnvironment):
+        (create_test_environment):
+        (promise_test):
+        (EventWatcher):
+        (is_node):
+        (format_value):
+        * streams/shadowing-Promise-expected.txt:
+        * streams/shadowing-Promise.html:
+        * streams/streams-public-array-api-expected.txt: Added.
+        * streams/streams-public-array-api.html: Added.
+
 2017-02-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip some very slow WebCryptoAPI tests.
