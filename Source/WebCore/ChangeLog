@@ -1,3 +1,22 @@
+2017-02-09  Philip Rogers  <pdr@google.com>
+
+        SVG clip-path references can clip out later content
+        https://bugs.webkit.org/show_bug.cgi?id=164181
+
+        Reviewed by Said Abou-Hallawa.
+
+        RenderSVGResourceClipper can modify the GraphicsContext state (through the path-only
+        clipping codepath) so we need to ensure RenderLayer::setupClipPath saves the context
+        and its caller restores it back so later content is not clipped as well.
+
+        This patch is based on a chromium patch by fs@opera.com:
+        https://chromium.googlesource.com/chromium/src/+/b3f7e7d2c4afb3c7e5c7eb438ff5933cbe2109b3
+
+        Test: css3/masking/clip-path-reference-restore.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupClipPath): Add a GC save and return true to restore. Also switch to downcast instead of static_cast.
+
 2017-02-09  Filip Pizlo  <fpizlo@apple.com>
 
         SharedArrayBuffer does not need to be in the transfer list
