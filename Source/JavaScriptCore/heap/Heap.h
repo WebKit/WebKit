@@ -225,6 +225,7 @@ public:
     
     template<typename Functor> void forEachProtectedCell(const Functor&);
     template<typename Functor> void forEachCodeBlock(const Functor&);
+    template<typename Functor> void forEachCodeBlockIgnoringJITPlans(const Functor&);
 
     HandleSet* handleSet() { return &m_handleSet; }
     HandleStack* handleStack() { return &m_handleStack; }
@@ -470,6 +471,7 @@ private:
     size_t threadBytesVisited();
     
     void forEachCodeBlockImpl(const ScopedLambda<bool(CodeBlock*)>&);
+    void forEachCodeBlockIgnoringJITPlansImpl(const ScopedLambda<bool(CodeBlock*)>&);
     
     void setMutatorShouldBeFenced(bool value);
     

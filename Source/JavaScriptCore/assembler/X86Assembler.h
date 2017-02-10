@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -259,6 +259,7 @@ private:
     } OneByteOpcodeID;
 
     typedef enum {
+        OP2_UD2             = 0xB,
         OP2_MOVSD_VsdWsd    = 0x10,
         OP2_MOVSD_WsdVsd    = 0x11,
         OP2_MOVSS_VsdWsd    = 0x10,
@@ -679,6 +680,12 @@ public:
         m_formatter.oneByteOp64(OP_GROUP5_Ev, GROUP1_OP_OR, dst);
     }
 #endif // CPU(X86_64)
+
+    // Only used for testing purposes.
+    void illegalInstruction()
+    {
+        m_formatter.twoByteOp(OP2_UD2);
+    }
 
     void inc_r(RegisterID dst)
     {

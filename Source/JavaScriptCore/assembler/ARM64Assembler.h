@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1070,6 +1070,12 @@ public:
     ALWAYS_INLINE void hlt(uint16_t imm)
     {
         insn(excepnGeneration(ExcepnOp_HALT, imm, 0));
+    }
+
+    // Only used for testing purposes.
+    void illegalInstruction()
+    {
+        insn(0x0);
     }
 
     template<int datasize>

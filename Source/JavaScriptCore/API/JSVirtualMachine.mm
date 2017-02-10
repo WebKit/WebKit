@@ -34,6 +34,7 @@
 #import "JSVirtualMachine.h"
 #import "JSVirtualMachineInternal.h"
 #import "JSWrapperMap.h"
+#import "SigillCrashAnalyzer.h"
 #import "SlotVisitorInlines.h"
 #import <mutex>
 #import <wtf/Lock.h>
@@ -223,6 +224,11 @@ static id getInternalObjcObject(id object)
         [m_externalObjectGraph removeObjectForKey:owner];
         [m_externalRememberedSet removeObjectForKey:owner];
     }
+}
+
+- (void)enableSigillCrashAnalyzer
+{
+    JSC::enableSigillCrashAnalyzer();
 }
 
 @end

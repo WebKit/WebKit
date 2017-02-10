@@ -100,6 +100,7 @@
 #include "TypeProfilerLog.h"
 #include "UnlinkedCodeBlock.h"
 #include "VMEntryScope.h"
+#include "VMInspector.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
 #include "WeakMapData.h"
@@ -344,10 +345,14 @@ VM::VM(VMType vmType, HeapType heapType)
         Watchdog& watchdog = ensureWatchdog();
         watchdog.setTimeLimit(timeoutMillis);
     }
+
+    VMInspector::instance().add(this);
 }
 
 VM::~VM()
 {
+    VMInspector::instance().remove(this);
+
     // Never GC, ever again.
     heap.incrementDeferralDepth();
 

@@ -2024,6 +2024,11 @@ void Heap::forEachCodeBlockImpl(const ScopedLambda<bool(CodeBlock*)>& func)
     return m_codeBlocks->iterate(func);
 }
 
+void Heap::forEachCodeBlockIgnoringJITPlansImpl(const ScopedLambda<bool(CodeBlock*)>& func)
+{
+    return m_codeBlocks->iterate(func);
+}
+
 void Heap::writeBarrierSlowPath(const JSCell* from)
 {
     if (UNLIKELY(mutatorShouldBeFenced())) {

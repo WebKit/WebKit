@@ -2319,6 +2319,11 @@
 		FE20CE9D15F04A9500DF3430 /* LLIntCLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */; };
 		FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE2E6A7B1D6EA62C0060F896 /* ThrowScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2E6A7A1D6EA5FE0060F896 /* ThrowScope.cpp */; };
+		FE3022D21E3D73A500BAC493 /* SigillCrashAnalyzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3022D01E3D739600BAC493 /* SigillCrashAnalyzer.cpp */; };
+		FE3022D31E3D73A500BAC493 /* SigillCrashAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D11E3D739600BAC493 /* SigillCrashAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE3022D61E42857300BAC493 /* VMInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3022D41E42856700BAC493 /* VMInspector.cpp */; };
+		FE3022D71E42857300BAC493 /* VMInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D51E42856700BAC493 /* VMInspector.h */; };
+		FE3022D91E43C93400BAC493 /* JSVirtualMachinePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D81E43C85500BAC493 /* JSVirtualMachinePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE318FDF1CAC982700DFCC54 /* ECMAScriptSpecInternalFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE318FDD1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.cpp */; };
 		FE318FE01CAC982F00DFCC54 /* ECMAScriptSpecInternalFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE318FDE1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.h */; };
 		FE3422121D6B81C30032BE88 /* ThrowScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3422111D6B818C0032BE88 /* ThrowScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4845,6 +4850,11 @@
 		FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntCLoop.cpp; path = llint/LLIntCLoop.cpp; sourceTree = "<group>"; };
 		FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntCLoop.h; path = llint/LLIntCLoop.h; sourceTree = "<group>"; };
 		FE2E6A7A1D6EA5FE0060F896 /* ThrowScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThrowScope.cpp; sourceTree = "<group>"; };
+		FE3022D01E3D739600BAC493 /* SigillCrashAnalyzer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SigillCrashAnalyzer.cpp; sourceTree = "<group>"; };
+		FE3022D11E3D739600BAC493 /* SigillCrashAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SigillCrashAnalyzer.h; sourceTree = "<group>"; };
+		FE3022D41E42856700BAC493 /* VMInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMInspector.cpp; sourceTree = "<group>"; };
+		FE3022D51E42856700BAC493 /* VMInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInspector.h; sourceTree = "<group>"; };
+		FE3022D81E43C85500BAC493 /* JSVirtualMachinePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVirtualMachinePrivate.h; sourceTree = "<group>"; };
 		FE318FDD1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ECMAScriptSpecInternalFunctions.cpp; sourceTree = "<group>"; };
 		FE318FDE1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECMAScriptSpecInternalFunctions.h; sourceTree = "<group>"; };
 		FE3422111D6B818C0032BE88 /* ThrowScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThrowScope.h; sourceTree = "<group>"; };
@@ -5897,6 +5907,7 @@
 				86E3C60F167BAB87006D760A /* JSVirtualMachine.h */,
 				86E3C610167BAB87006D760A /* JSVirtualMachine.mm */,
 				86E3C611167BAB87006D760A /* JSVirtualMachineInternal.h */,
+				FE3022D81E43C85500BAC493 /* JSVirtualMachinePrivate.h */,
 				A7482E37116A697B003B0712 /* JSWeakObjectMapRefInternal.h */,
 				A7482B7A1166CDEA003B0712 /* JSWeakObjectMapRefPrivate.cpp */,
 				A7482B791166CDEA003B0712 /* JSWeakObjectMapRefPrivate.h */,
@@ -6773,8 +6784,12 @@
 				FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */,
 				FE384EE31ADDB7AD0055DE2C /* JSDollarVMPrototype.cpp */,
 				FE384EE41ADDB7AD0055DE2C /* JSDollarVMPrototype.h */,
+				FE3022D01E3D739600BAC493 /* SigillCrashAnalyzer.cpp */,
+				FE3022D11E3D739600BAC493 /* SigillCrashAnalyzer.h */,
 				86B5822C14D22F5F00A9C306 /* ProfileTreeNode.h */,
 				86B5826A14D35D5100A9C306 /* TieredMMapArray.h */,
+				FE3022D41E42856700BAC493 /* VMInspector.cpp */,
+				FE3022D51E42856700BAC493 /* VMInspector.h */,
 			);
 			path = tools;
 			sourceTree = "<group>";
@@ -8254,7 +8269,6 @@
 				0F2FCCFF18A60070001A27F8 /* DFGThreadData.h in Headers */,
 				0FC097A2146B28CC00CF2442 /* DFGThunks.h in Headers */,
 				0FD8A32817D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.h in Headers */,
-				ADFF2F701E319DE3001EA54E /* DFGTierUpEntryTrigger.h in Headers */,
 				0FD8A32A17D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h in Headers */,
 				0FD8A32C17D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h in Headers */,
 				0FE7211E193B9C590031F6ED /* DFGTransition.h in Headers */,
@@ -8396,6 +8410,7 @@
 				0F86A26F1D6F7B3300CB0C92 /* GCTypeMap.h in Headers */,
 				9959E9311BD18272001AA413 /* generate-combined-inspector-json.py in Headers */,
 				C4703CC0192844960013FBEA /* generate-inspector-protocol-bindings.py in Headers */,
+				FE3022D91E43C93400BAC493 /* JSVirtualMachinePrivate.h in Headers */,
 				99DA00AF1BD5994E00F4575C /* generate-js-builtins.py in Headers */,
 				A5EA70EC19F5B3EA0098F5EC /* generate_cpp_alternate_backend_dispatcher_header.py in Headers */,
 				A5EF9B141A1D43F600702E90 /* generate_cpp_backend_dispatcher_header.py in Headers */,
@@ -8749,6 +8764,7 @@
 				FE3913561B794F8F00EDAF71 /* LiveObjectList.h in Headers */,
 				70DE9A091BE7D69E005D89D9 /* LLIntAssembly.h in Headers */,
 				0F0FC45A14BD15F500B81154 /* LLIntCallLinkInfo.h in Headers */,
+				FE3022D31E3D73A500BAC493 /* SigillCrashAnalyzer.h in Headers */,
 				FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */,
 				0F4680CA14BBB16C00BFE272 /* LLIntCommon.h in Headers */,
 				0F4680D314BBD16700BFE272 /* LLIntData.h in Headers */,
@@ -8809,6 +8825,7 @@
 				A79D3ED9C5064DD0A8466A3A /* ModuleScopeData.h in Headers */,
 				0F1FB3991E1F65FB00A9BE50 /* MutatorScheduler.h in Headers */,
 				0FA762071DB9243300B7A2FD /* MutatorState.h in Headers */,
+				FE3022D71E42857300BAC493 /* VMInspector.h in Headers */,
 				BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */,
 				BC02E9130E1839DB000F9297 /* NativeErrorPrototype.h in Headers */,
 				147341D01DC02DB400AA29BA /* NativeExecutable.h in Headers */,
@@ -9676,6 +9693,7 @@
 				0F9630391D4192C6005609D9 /* AllocatorAttributes.cpp in Sources */,
 				147F39BD107EC37600427A48 /* ArgList.cpp in Sources */,
 				79A228351D35D71E00D8E067 /* ArithProfile.cpp in Sources */,
+				FE3022D61E42857300BAC493 /* VMInspector.cpp in Sources */,
 				0F743BAA16B88249009F9277 /* ARM64Disassembler.cpp in Sources */,
 				86D3B2C310156BDE002865E7 /* ARMAssembler.cpp in Sources */,
 				65C02850171795E200351E35 /* ARMv7Disassembler.cpp in Sources */,
@@ -10370,6 +10388,7 @@
 				79B00CBE1C6AB07E0088C65D /* ProxyObject.cpp in Sources */,
 				79160DBD1C8E3EC8008C085A /* ProxyRevoke.cpp in Sources */,
 				0F15CD221BA5F9860031FFD3 /* PutByIdFlags.cpp in Sources */,
+				FE3022D21E3D73A500BAC493 /* SigillCrashAnalyzer.cpp in Sources */,
 				0F9332A314CA7DD70085F3C6 /* PutByIdStatus.cpp in Sources */,
 				0F93B4A918B92C4D00178A3F /* PutByIdVariant.cpp in Sources */,
 				0FF60AC316740F8800029779 /* ReduceWhitespace.cpp in Sources */,

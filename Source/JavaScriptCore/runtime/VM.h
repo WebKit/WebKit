@@ -60,6 +60,7 @@
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/DateMath.h>
 #include <wtf/Deque.h>
+#include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -235,7 +236,7 @@ struct ScratchBuffer {
 #pragma warning(pop)
 #endif
 
-class VM : public ThreadSafeRefCounted<VM> {
+class VM : public ThreadSafeRefCounted<VM>, public DoublyLinkedListNode<VM> {
 public:
     // WebCore has a one-to-one mapping of threads to VMs;
     // either create() or createLeaked() should only be called once
@@ -766,11 +767,15 @@ private:
     std::unique_ptr<ShadowChicken> m_shadowChicken;
     std::unique_ptr<BytecodeIntrinsicRegistry> m_bytecodeIntrinsicRegistry;
 
+    VM* m_prev; // Required by DoublyLinkedListNode.
+    VM* m_next; // Required by DoublyLinkedListNode.
+
     // Friends for exception checking purpose only.
     friend class Heap;
     friend class CatchScope;
     friend class ExceptionScope;
     friend class ThrowScope;
+    friend class WTF::DoublyLinkedListNode<VM>;
 };
 
 #if ENABLE(GC_VALIDATION)
