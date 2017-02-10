@@ -1,5 +1,25 @@
 2017-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline several fast/text/ tests.
+
+        * fast/text/mark-matches-overflow-clip-expected.txt:
+        * platform/gtk/fast/text/crash-complex-text-surrogate-expected.txt:
+        * platform/gtk/fast/text/hyphenate-first-word-expected.png:
+        * platform/gtk/fast/text/hyphenate-first-word-expected.txt:
+        * platform/gtk/fast/text/hyphenate-limit-lines-expected.png:
+        * platform/gtk/fast/text/hyphenate-limit-lines-expected.txt:
+        * platform/gtk/fast/text/hyphens-expected.png:
+        * platform/gtk/fast/text/hyphens-expected.txt:
+        * platform/gtk/fast/text/international/text-combine-image-test-expected.png:
+        * platform/gtk/fast/text/international/text-combine-image-test-expected.txt:
+        * platform/gtk/fast/text/international/thai-line-breaks-expected.png:
+        * platform/gtk/fast/text/international/thai-line-breaks-expected.txt:
+        * platform/gtk/fast/text/orientation-sideways-expected.png:
+        * platform/gtk/fast/text/orientation-sideways-expected.txt:
+        * platform/gtk/fast/text/whitespace/023-expected.txt:
+
+2017-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline fast/table/ tests.
 
         * platform/gtk/fast/table/border-collapsing/004-vertical-expected.png:
