@@ -41,11 +41,11 @@ const size_t defaultMaximumBytesCached = 1024 * 1024 * 64;
 // they can't be immediately returned when requested (but will be freed up in the future).
 const size_t maximumInUseBytes = defaultMaximumBytesCached / 2;
 
-#define ENABLE_IOSURFACE_POOL_STATISTICS false
+#define ENABLE_IOSURFACE_POOL_STATISTICS 0
 #if ENABLE_IOSURFACE_POOL_STATISTICS
-#define DUMP_POOL_STATISTICS() do { showPoolStatistics(); } while (0);
+#define DUMP_POOL_STATISTICS(reason) do { showPoolStatistics(reason); } while (0);
 #else
-#define DUMP_POOL_STATISTICS() ((void)0)
+#define DUMP_POOL_STATISTICS(reason) ((void)0)
 #endif
 
 namespace WebCore {
@@ -112,7 +112,7 @@ std::unique_ptr<IOSurface> IOSurfacePool::takeSurface(IntSize size, CGColorSpace
     CachedSurfaceMap::iterator mapIter = m_cachedSurfaces.find(size);
 
     if (mapIter == m_cachedSurfaces.end()) {
-        DUMP_POOL_STATISTICS();
+        DUMP_POOL_STATISTICS("takeSurface - none with matching size");
         return nullptr;
     }
 
@@ -134,7 +134,7 @@ std::unique_ptr<IOSurface> IOSurfacePool::takeSurface(IntSize size, CGColorSpace
 
         surface->setIsVolatile(false);
 
-        DUMP_POOL_STATISTICS();
+        DUMP_POOL_STATISTICS("takeSurface - taking");
         return surface;
     }
 
@@ -151,11 +151,11 @@ std::unique_ptr<IOSurface> IOSurfacePool::takeSurface(IntSize size, CGColorSpace
 
         surface->setIsVolatile(false);
 
-        DUMP_POOL_STATISTICS();
+        DUMP_POOL_STATISTICS("takeSurface - taking in-use");
         return surface;
     }
 
-    DUMP_POOL_STATISTICS();
+    DUMP_POOL_STATISTICS("takeSurface - failing");
     return nullptr;
 }
 
@@ -184,12 +184,12 @@ void IOSurfacePool::addSurface(std::unique_ptr<IOSurface> surface)
     if (surfaceIsInUse) {
         m_inUseSurfaces.prepend(WTFMove(surface));
         scheduleCollectionTimer();
-        DUMP_POOL_STATISTICS();
+        DUMP_POOL_STATISTICS("addSurface - in-use");
         return;
     }
 
     insertSurfaceIntoPool(WTFMove(surface));
-    DUMP_POOL_STATISTICS();
+    DUMP_POOL_STATISTICS("addSurface");
 }
 
 void IOSurfacePool::insertSurfaceIntoPool(std::unique_ptr<IOSurface> surface)
@@ -240,8 +240,11 @@ void IOSurfacePool::tryEvictOldestCachedSurface()
 
 void IOSurfacePool::evict(size_t additionalSize)
 {
+    DUMP_POOL_STATISTICS("before evict");
+
     if (additionalSize >= m_maximumBytesCached) {
         discardAllSurfaces();
+        DUMP_POOL_STATISTICS("after evict all");
         return;
     }
 
@@ -261,6 +264,8 @@ void IOSurfacePool::evict(size_t additionalSize)
 
     while (m_inUseBytesCached > maximumInUseBytes || m_bytesCached > targetSize)
         tryEvictInUseSurface();
+
+    DUMP_POOL_STATISTICS("after evict");
 }
 
 void IOSurfacePool::collectInUseSurfaces()
@@ -310,7 +315,7 @@ void IOSurfacePool::collectionTimerFired()
         m_collectionTimer.stop();
 
     platformGarbageCollectNow();
-    DUMP_POOL_STATISTICS();
+    DUMP_POOL_STATISTICS("collectionTimerFired");
 }
 
 void IOSurfacePool::scheduleCollectionTimer()
@@ -331,10 +336,10 @@ void IOSurfacePool::discardAllSurfaces()
     platformGarbageCollectNow();
 }
 
-void IOSurfacePool::showPoolStatistics()
+void IOSurfacePool::showPoolStatistics(const char* reason)
 {
 #if ENABLE_IOSURFACE_POOL_STATISTICS
-    WTFLogAlways("IOSurfacePool Statistics\n");
+    WTFLogAlways("IOSurfacePool Statistics: %s\n", reason);
     unsigned totalSurfaces = 0;
     size_t totalSize = 0;
     size_t totalPurgeableSize = 0;
@@ -356,7 +361,7 @@ void IOSurfacePool::showPoolStatistics()
         totalSize += queueSize;
         totalPurgeableSize += queuePurgeableSize;
 
-        WTFLogAlways("   %d x %d: %zu surfaces for %zd KB (%zd KB purgeable)", keyAndSurfaces.key.width(), keyAndSurfaces.key.height(), keyAndSurfaces.value.size(), queueSize / 1024, queuePurgeableSize / 1024);
+        WTFLogAlways("   %d x %d: %zu surfaces for %.2f MB (%.2f MB purgeable)", keyAndSurfaces.key.width(), keyAndSurfaces.key.height(), keyAndSurfaces.value.size(), queueSize / (1024.0 * 1024.0), queuePurgeableSize / (1024.0 * 1024.0));
     }
 
     size_t inUseSize = 0;
@@ -366,13 +371,15 @@ void IOSurfacePool::showPoolStatistics()
     }
 
     totalSize += inUseSize;
-    WTFLogAlways("   IN USE: %zu surfaces for %zd KB", m_inUseSurfaces.size(), inUseSize / 1024);
+    WTFLogAlways("   IN USE: %zu surfaces for %.2f MB", m_inUseSurfaces.size(), inUseSize / (1024.0 * 1024.0));
 
     // FIXME: Should move consistency checks elsewhere, and always perform them in debug builds.
     ASSERT(m_bytesCached == totalSize);
     ASSERT(m_bytesCached <= m_maximumBytesCached);
 
-    WTFLogAlways("   TOTAL: %d surfaces for %zd KB (%zd KB purgeable)\n", totalSurfaces, totalSize / 1024, totalPurgeableSize / 1024);
+    WTFLogAlways("   TOTAL: %d surfaces for %.2f MB (%.2f MB purgeable)\n", totalSurfaces, totalSize / (1024.0 * 1024.0), totalPurgeableSize / (1024.0 * 1024.0));
+#else
+    UNUSED_PARAM(reason);
 #endif
 }
 

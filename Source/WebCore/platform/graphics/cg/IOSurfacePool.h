@@ -53,8 +53,6 @@ public:
 
     WEBCORE_EXPORT void setPoolSize(size_t);
 
-    void showPoolStatistics();
-
 private:
     IOSurfacePool();
 
@@ -91,6 +89,8 @@ private:
     bool markOlderSurfacesPurgeable();
 
     void platformGarbageCollectNow();
+
+    void showPoolStatistics(const char*);
 
     Timer m_collectionTimer;
     CachedSurfaceMap m_cachedSurfaces;
