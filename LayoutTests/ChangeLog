@@ -1,5 +1,19 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212024. rdar://problem/30051227
+
+    2017-02-09  Antti Koivisto  <antti@apple.com>
+
+            Tear down existing renderers when adding a shadow root.
+            https://bugs.webkit.org/show_bug.cgi?id=167117
+
+            Reviewed by Andreas Kling.
+
+            * fast/shadow-dom/attach-shadow-teardown-expected.txt: Added.
+            * fast/shadow-dom/attach-shadow-teardown.html: Added.
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212023. rdar://problem/30041640
 
     2017-02-09  Brent Fulgham  <bfulgham@apple.com>
