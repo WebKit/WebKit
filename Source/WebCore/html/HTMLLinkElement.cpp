@@ -267,14 +267,16 @@ void HTMLLinkElement::process()
         std::optional<ResourceLoadPriority> priority;
         if (!isActive)
             priority = ResourceLoadPriority::VeryLow;
-        CachedResourceRequest request(url, CachedResourceLoader::defaultCachedResourceOptions(), priority, WTFMove(charset));
+
+        ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+        options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+        CachedResourceRequest request(url, options, priority, WTFMove(charset));
+
+        if (document().contentSecurityPolicy()->allowStyleWithNonce(attributeWithoutSynchronization(HTMLNames::nonceAttr)))
+            options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
+
         request.setInitiator(this);
 
-        if (document().contentSecurityPolicy()->allowStyleWithNonce(attributeWithoutSynchronization(HTMLNames::nonceAttr))) {
-            ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
-            options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
-            request.setOptions(options);
-        }
         request.setAsPotentiallyCrossOrigin(crossOrigin(), document());
 
         m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(WTFMove(request));
