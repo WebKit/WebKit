@@ -1,5 +1,27 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212023. rdar://problem/30041640
+
+    2017-02-09  Brent Fulgham  <bfulgham@apple.com>
+
+            Handle synchronous layout when setting a selection range
+            https://bugs.webkit.org/show_bug.cgi?id=167092
+            <rdar://problem/30041640>
+
+            Reviewed by Antti Koivisto.
+
+            The 'innerTextElement' of a form control can change during layout due
+            to arbitrary JavaScript executing. Handle the case where the inner text
+            element has changed so that current render box height is while setting
+            a selection range.
+
+            Test: fast/forms/input-type-change-during-selection.html
+
+            * html/HTMLTextFormControlElement.cpp:
+            (WebCore::HTMLTextFormControlElement::setSelectionRange):
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211999. rdar://problem/29930443
 
     2017-02-09  Brent Fulgham  <bfulgham@apple.com>
