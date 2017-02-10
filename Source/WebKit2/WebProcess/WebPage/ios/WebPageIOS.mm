@@ -1160,7 +1160,7 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         break;
     }
     if (range)
-        frame.selection().setSelectedRange(range.get(), position.affinity(), true);
+        frame.selection().setSelectedRange(range.get(), position.affinity(), true, UserTriggered);
 
     send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, static_cast<uint32_t>(flags), callbackID));
 }
@@ -1613,7 +1613,7 @@ PassRefPtr<WebCore::Range> WebPage::changeBlockSelection(const IntPoint& point, 
 
     if (newRange) {
         m_currentBlockSelection = newRange;
-        frame.selection().setSelectedRange(newRange.get(), VP_DEFAULT_AFFINITY, true);
+        frame.selection().setSelectedRange(newRange.get(), VP_DEFAULT_AFFINITY, true, UserTriggered);
     }
 
     computeExpandAndShrinkThresholdsForHandle(point, handlePosition, growThreshold, shrinkThreshold);
@@ -1737,13 +1737,13 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, uint32_t touches
         break;
     }
     if (range && flags != IsBlockSelection)
-        frame.selection().setSelectedRange(range.get(), position.affinity(), true);
+        frame.selection().setSelectedRange(range.get(), position.affinity(), true, UserTriggered);
 
     send(Messages::WebPageProxy::TouchesCallback(point, touches, flags, callbackID));
     if (range && flags == IsBlockSelection) {
         // We just switched to block selection therefore we need to compute the thresholds.
         m_currentBlockSelection = range;
-        frame.selection().setSelectedRange(range.get(), position.affinity(), true);
+        frame.selection().setSelectedRange(range.get(), position.affinity(), true, UserTriggered);
         
         float growThreshold = 0;
         float shrinkThreshold = 0;
@@ -1763,7 +1763,7 @@ void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore:
             range = Range::create(*frame.document(), fromPosition, toPosition);
         else
             range = Range::create(*frame.document(), toPosition, fromPosition);
-        frame.selection().setSelectedRange(range.get(), fromPosition.affinity(), true);
+        frame.selection().setSelectedRange(range.get(), fromPosition.affinity(), true, UserTriggered);
     }
 
     // We can use the same callback for the gestures with one point.
@@ -1778,7 +1778,7 @@ void WebPage::extendSelection(uint32_t granularity)
         return;
 
     VisiblePosition position = frame.selection().selection().start();
-    frame.selection().setSelectedRange(wordRangeFromPosition(position).get(), position.affinity(), true);
+    frame.selection().setSelectedRange(wordRangeFromPosition(position).get(), position.affinity(), true, UserTriggered);
 }
 
 void WebPage::selectWordBackward()
@@ -1790,7 +1790,7 @@ void WebPage::selectWordBackward()
     VisiblePosition position = frame.selection().selection().start();
     VisiblePosition startPosition = positionOfNextBoundaryOfGranularity(position, WordGranularity, DirectionBackward);
     if (startPosition.isNotNull() && startPosition != position)
-        frame.selection().setSelectedRange(Range::create(*frame.document(), startPosition, position).ptr(), position.affinity(), true);
+        frame.selection().setSelectedRange(Range::create(*frame.document(), startPosition, position).ptr(), position.affinity(), true, UserTriggered);
 }
 
 void WebPage::moveSelectionByOffset(int32_t offset, uint64_t callbackID)
@@ -1808,7 +1808,7 @@ void WebPage::moveSelectionByOffset(int32_t offset, uint64_t callbackID)
             break;
     }
     if (position.isNotNull() && startPosition != position)
-        frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), position.affinity(), true);
+        frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), position.affinity(), true, UserTriggered);
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
@@ -1903,7 +1903,7 @@ void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, bool isInter
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode);
     
     if (position.isNotNull())
-        frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), position.affinity(), true);
+        frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), position.affinity(), true, UserTriggered);
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
@@ -1915,7 +1915,7 @@ void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& poi
     if (position.isNotNull()) {
         position = positionOfNextBoundaryOfGranularity(position, static_cast<WebCore::TextGranularity>(granularity), static_cast<SelectionDirection>(direction));
         if (position.isNotNull())
-            frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), UPSTREAM, true);
+            frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), UPSTREAM, true, UserTriggered);
     }
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
@@ -1929,7 +1929,7 @@ void WebPage::moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_
         VisiblePosition position = (isForward) ? frame.selection().selection().visibleEnd() : frame.selection().selection().visibleStart();
         position = positionOfNextBoundaryOfGranularity(position, static_cast<WebCore::TextGranularity>(granularity), static_cast<SelectionDirection>(direction));
         if (position.isNotNull())
-            frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), isForward? UPSTREAM : DOWNSTREAM, true);
+            frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), isForward? UPSTREAM : DOWNSTREAM, true, UserTriggered);
     }
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
@@ -1986,7 +1986,7 @@ void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, u
     }
 
     if (range)
-        frame.selection().setSelectedRange(range.get(), UPSTREAM, true);
+        frame.selection().setSelectedRange(range.get(), UPSTREAM, true, UserTriggered);
     m_initialSelection = range;
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
@@ -2021,7 +2021,7 @@ void WebPage::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&
         range = Range::create(*frame.document(), selectionStart, selectionEnd);
     
     if (range)
-        frame.selection().setSelectedRange(range.get(), UPSTREAM, true);
+        frame.selection().setSelectedRange(range.get(), UPSTREAM, true, UserTriggered);
     
     send(Messages::WebPageProxy::UnsignedCallback(selectionStart == m_initialSelection->startPosition(), callbackID));
 }
@@ -2064,7 +2064,7 @@ void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, boo
         range = Range::create(*frame.document(), selectionStart, selectionEnd);
 
     if (range)
-        frame.selection().setSelectedRange(range.get(), UPSTREAM, true);
+        frame.selection().setSelectedRange(range.get(), UPSTREAM, true, UserTriggered);
 
     send(Messages::WebPageProxy::UnsignedCallback(m_selectionAnchor == Start, callbackID));
 }

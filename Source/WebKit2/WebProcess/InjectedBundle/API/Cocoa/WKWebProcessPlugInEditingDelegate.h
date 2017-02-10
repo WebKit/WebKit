@@ -30,6 +30,12 @@
 #import <WebKit/WKWebProcessPlugInBrowserContextController.h>
 #import <WebKit/WKWebProcessPlugInRangeHandle.h>
 
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
+#else
+#import <AppKit/AppKit.h>
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, WKEditorInsertAction) {
@@ -44,6 +50,11 @@ WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @optional
 
 - (BOOL)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller shouldInsertText:(NSString *)text replacingRange:(WKWebProcessPlugInRangeHandle *)range givenAction:(WKEditorInsertAction)action;
+#if TARGET_OS_IPHONE
+- (BOOL)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller shouldChangeSelectedRange:(WKDOMRange *)currentRange toRange:(WKDOMRange *)proposedRange affinity:(UITextStorageDirection)selectionAffinity stillSelecting:(BOOL)stillSelecting;
+#else
+- (BOOL)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller shouldChangeSelectedRange:(WKDOMRange *)currentRange toRange:(WKDOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)stillSelecting;
+#endif
 - (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller willWriteRangeToPasteboard:(WKWebProcessPlugInRangeHandle *)range;
 - (NSDictionary<NSString *, NSData *> *)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller pasteboardDataForRange:(WKWebProcessPlugInRangeHandle *)range;
 - (void)_webProcessPlugInBrowserContextControllerDidWriteToPasteboard:(WKWebProcessPlugInBrowserContextController *)controller;

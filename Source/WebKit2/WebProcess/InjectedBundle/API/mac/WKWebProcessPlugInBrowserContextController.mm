@@ -606,6 +606,22 @@ static inline WKEditorInsertAction toWK(EditorInsertAction action)
             return [m_controller->_editingDelegate.get() _webProcessPlugInBrowserContextController:m_controller shouldInsertText:String(text) replacingRange:wrapper(*InjectedBundleRangeHandle::getOrCreate(rangeToReplace)) givenAction:toWK(action)];
         }
 
+        bool shouldChangeSelectedRange(WebPage&, Range* fromRange, Range* toRange, EAffinity affinity, bool stillSelecting) final
+        {
+            if (!m_delegateMethods.shouldChangeSelectedRange)
+                return true;
+
+            auto apiFromRange = fromRange ? adoptNS([[WKDOMRange alloc] _initWithImpl:fromRange]) : nil;
+            auto apiToRange = toRange ? adoptNS([[WKDOMRange alloc] _initWithImpl:toRange]) : nil;
+#if PLATFORM(IOS)
+            UITextStorageDirection apiAffinity = affinity == UPSTREAM ? UITextStorageDirectionBackward : UITextStorageDirectionForward;
+#else
+            NSSelectionAffinity apiAffinity = affinity == UPSTREAM ? NSSelectionAffinityUpstream : NSSelectionAffinityDownstream;
+#endif
+
+            return [m_controller->_editingDelegate.get() _webProcessPlugInBrowserContextController:m_controller shouldChangeSelectedRange:apiFromRange.get() toRange:apiToRange.get() affinity:apiAffinity stillSelecting:stillSelecting];
+        }
+
         void willWriteToPasteboard(WebKit::WebPage&, WebCore::Range* range) final
         {
             if (!m_delegateMethods.willWriteToPasteboard)
@@ -638,6 +654,7 @@ static inline WKEditorInsertAction toWK(EditorInsertAction action)
         const struct DelegateMethods {
             DelegateMethods(RetainPtr<id <WKWebProcessPlugInEditingDelegate>> delegate)
                 : shouldInsertText([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:shouldInsertText:replacingRange:givenAction:)])
+                , shouldChangeSelectedRange([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:shouldChangeSelectedRange:toRange:affinity:stillSelecting:)])
                 , willWriteToPasteboard([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:willWriteRangeToPasteboard:)])
                 , getPasteboardDataForRange([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:pasteboardDataForRange:)])
                 , didWriteToPasteboard([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextControllerDidWriteToPasteboard:)])
@@ -645,6 +662,7 @@ static inline WKEditorInsertAction toWK(EditorInsertAction action)
             }
 
             bool shouldInsertText;
+            bool shouldChangeSelectedRange;
             bool willWriteToPasteboard;
             bool getPasteboardDataForRange;
             bool didWriteToPasteboard;

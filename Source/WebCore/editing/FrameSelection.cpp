@@ -1943,7 +1943,7 @@ void FrameSelection::selectAll()
     }
 }
 
-bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool closeTyping)
+bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool closeTyping, EUserTriggered userTriggered)
 {
     if (!range)
         return false;
@@ -1956,6 +1956,14 @@ bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool clo
     if (newSelection.isNone())
         return false;
 #endif
+
+    if (userTriggered == UserTriggered) {
+        FrameSelection trialFrameSelection;
+        trialFrameSelection.setSelection(newSelection, ClearTypingStyle | (closeTyping ? CloseTyping : 0));
+
+        if (!shouldChangeSelection(trialFrameSelection.selection()))
+            return false;
+    }
 
     setSelection(newSelection, ClearTypingStyle | (closeTyping ? CloseTyping : 0));
     return true;

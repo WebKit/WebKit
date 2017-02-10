@@ -1,3 +1,32 @@
+2017-02-10  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Add shouldChangeSelectedRange to WKWebProcessPlugInEditingDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=168097
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInEditingDelegate.h:
+          Declared new delegate method.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setEditingDelegate:]): Dispatch new delegate
+          method.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture): Pass UserTriggered whan calling
+          WebCore::Frame::Selection::setSelectedRange, so that the delegate is consulted.
+        (WebKit::WebPage::changeBlockSelection): Ditto.
+        (WebKit::WebPage::updateSelectionWithTouches): Ditto.
+        (WebKit::WebPage::selectWithTwoTouches): Ditto.
+        (WebKit::WebPage::extendSelection): Ditto.
+        (WebKit::WebPage::selectWordBackward): Ditto,
+        (WebKit::WebPage::moveSelectionByOffset): Ditto.
+        (WebKit::WebPage::selectPositionAtPoint): Ditto.
+        (WebKit::WebPage::selectPositionAtBoundaryWithDirection): Ditto.
+        (WebKit::WebPage::moveSelectionAtBoundaryWithDirection): Ditto.
+        (WebKit::WebPage::selectTextWithGranularityAtPoint): Ditto.
+        (WebKit::WebPage::updateSelectionWithExtentPointAndBoundary): Ditto.
+        (WebKit::WebPage::updateSelectionWithExtentPoint): Ditto.
+
 2017-02-10  Brady Eidson  <beidson@apple.com>
 
         Replace all WebKit Library Version checks in WK2 with SDK version checks.

@@ -145,7 +145,7 @@ public:
 
     const VisibleSelection& selection() const { return m_selection; }
     WEBCORE_EXPORT void setSelection(const VisibleSelection&, SetSelectionOptions = defaultSetSelectionOptions(), AXTextStateChangeIntent = AXTextStateChangeIntent(), CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity);
-    WEBCORE_EXPORT bool setSelectedRange(Range*, EAffinity, bool closeTyping);
+    WEBCORE_EXPORT bool setSelectedRange(Range*, EAffinity, bool closeTyping, EUserTriggered = NotUserTriggered);
     WEBCORE_EXPORT void selectAll();
     WEBCORE_EXPORT void clear();
     void prepareForDestruction();
