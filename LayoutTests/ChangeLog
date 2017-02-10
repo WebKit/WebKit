@@ -1,3 +1,12 @@
+2017-02-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add platform specific expected.txt  file for fast/text/mark-matches-overflow-clip.html after r212113.
+
+        Unreviewed test gardening.
+
+        * fast/text/mark-matches-overflow-clip-expected.txt:
+        * platform/gtk/fast/text/mark-matches-overflow-clip-expected.txt: Copied from LayoutTests/fast/text/mark-matches-overflow-clip-expected.txt.
+
 2017-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Rebaseline several fast/text/ tests.
