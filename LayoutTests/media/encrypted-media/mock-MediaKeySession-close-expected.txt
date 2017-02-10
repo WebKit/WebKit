@@ -31,6 +31,26 @@ Promise resolved OK
 RUN(promise = mediaKeySession.close())
 Promise resolved OK
 
+Closing a valid MediaKeySession should resolve the "closed" promise.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids)))
+Promise resolved OK
+RUN(promise = mediaKeySession.close())
+Promise resolved OK
+Promise resolved OK
+"closed" promise correctly resolved.
+
+Already closed MediaKeySession should resolve the "closed" promise immediately.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids)))
+Promise resolved OK
+RUN(promise = mediaKeySession.close())
+Promise resolved OK
+Promise resolved OK
+"closed" promise correctly resolved.
+
 Closing a closed MediaKeySession should resolve.
 RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
 RUN(mediaKeySession = mediaKeys.createSession("temporary"))
@@ -40,5 +60,21 @@ RUN(promise = mediaKeySession.close())
 Promise resolved OK
 RUN(promise = mediaKeySession.close())
 Promise resolved OK
+
+Operating on a closed MediaKeySession should resolve for close(), reject otherwise.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids)))
+Promise resolved OK
+RUN(promise = mediaKeySession.close())
+Promise resolved OK
+RUN(promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids)))
+Promise rejected correctly OK
+RUN(promise = mediaKeySession.update(encoder.encode("some-data")))
+Promise rejected correctly OK
+RUN(promise = mediaKeySession.close())
+Promise resolved OK
+RUN(promise = mediaKeySession.remove())
+Promise rejected correctly OK
 END OF TEST
 

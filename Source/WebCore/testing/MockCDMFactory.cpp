@@ -349,6 +349,11 @@ void MockCDMInstance::removeSessionData(const String& id, LicenseType, RemoveSes
     callback(WTFMove(keyStatusVector), SharedBuffer::create(message.data(), message.length()), SuccessValue::Succeeded);
 }
 
+void MockCDMInstance::storeRecordOfKeyUsage(const String&)
+{
+    // FIXME: This should be implemented along with the support for persistent-usage-record sessions.
+}
+
 }
 
 #endif

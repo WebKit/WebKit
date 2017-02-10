@@ -70,6 +70,9 @@ public:
     void close(Ref<DeferredPromise>&&);
     void remove(Ref<DeferredPromise>&&);
 
+    using ClosedPromise = DOMPromise<void>;
+    void registerClosedPromise(ClosedPromise&&);
+
     const Vector<std::pair<Ref<SharedBuffer>, MediaKeyStatus>>& statuses() const { return m_statuses; }
 
 private:
@@ -93,6 +96,7 @@ private:
 
     String m_sessionId;
     double m_expiration;
+    std::optional<ClosedPromise> m_closedPromise;
     Ref<MediaKeyStatusMap> m_keyStatuses;
     bool m_closed { false };
     bool m_uninitialized { true };

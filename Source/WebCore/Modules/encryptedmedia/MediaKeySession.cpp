@@ -469,6 +469,16 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
     // 5. Return promise.
 }
 
+void MediaKeySession::registerClosedPromise(ClosedPromise&& promise)
+{
+    ASSERT(!m_closedPromise);
+    if (m_closed) {
+        promise.resolve();
+        return;
+    }
+    m_closedPromise = WTFMove(promise);
+}
+
 void MediaKeySession::enqueueMessage(MediaKeyMessageType messageType, const SharedBuffer& message)
 {
     // 6.4.1 Queue a "message" Event
@@ -536,7 +546,30 @@ void MediaKeySession::updateExpiration(double)
 
 void MediaKeySession::sessionClosed()
 {
-    notImplemented();
+    // https://w3c.github.io/encrypted-media/#session-closed
+    // W3C Editor's Draft 09 November 2016
+
+    // 1. Let session be the associated MediaKeySession object.
+    // 2. If session's session type is "persistent-usage-record", execute the following steps in parallel:
+    if (m_sessionType == MediaKeySessionType::PersistentUsageRecord) {
+        // 2.1. Let cdm be the CDM instance represented by session's cdm instance value.
+        // 2.2. Use cdm to store session's record of key usage, if it exists.
+        m_instance->storeRecordOfKeyUsage(m_sessionId);
+    }
+
+    // 3. Run the Update Key Statuses algorithm on the session, providing an empty sequence.
+    updateKeyStatuses({ });
+
+    // 4. Run the Update Expiration algorithm on the session, providing NaN.
+    updateExpiration(std::numeric_limits<double>::quiet_NaN());
+
+    // Let's consider the session closed before any promise on the 'closed' attribute is resolved.
+    m_closed = true;
+
+    // 5. Let promise be the closed attribute of the session.
+    // 6. Resolve promise.
+    if (m_closedPromise)
+        m_closedPromise->resolve();
 }
 
 bool MediaKeySession::hasPendingActivity() const

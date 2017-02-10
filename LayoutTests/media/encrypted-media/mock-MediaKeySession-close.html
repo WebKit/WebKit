@@ -87,6 +87,38 @@
         },
 
         function() {
+            consoleWrite('Closing a valid MediaKeySession should resolve the "closed" promise.')
+            run('kids = JSON.stringify({ kids: [ "MTIzNDU=" ] })');
+            run('mediaKeySession = mediaKeys.createSession("temporary")');
+            run('promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids))');
+            shouldResolve(promise).then(function() {
+                shouldResolve(mediaKeySession.closed).then(function() {
+                    consoleWrite('"closed" promise correctly resolved.');
+                    next();
+                }, next);
+
+                run('promise = mediaKeySession.close()');
+                shouldResolve(promise);
+            }, next);
+        },
+
+        function() {
+            consoleWrite('Already closed MediaKeySession should resolve the "closed" promise immediately.');
+            run('kids = JSON.stringify({ kids: [ "MTIzNDU=" ] })');
+            run('mediaKeySession = mediaKeys.createSession("temporary")');
+            run('promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids))');
+            shouldResolve(promise).then(function() {
+                run('promise = mediaKeySession.close()');
+                shouldResolve(promise).then(function() {
+                    shouldResolve(mediaKeySession.closed).then(function () {
+                        consoleWrite('"closed" promise correctly resolved.');
+                        next();
+                    }, next);
+                }, next);
+            }, next);
+        },
+
+        function() {
             consoleWrite('Closing a closed MediaKeySession should resolve.')
             run('kids = JSON.stringify({ kids: [ "MTIzNDU=" ] })');
             run('mediaKeySession = mediaKeys.createSession("temporary")');
@@ -96,6 +128,29 @@
                 shouldResolve(promise).then(function() {
                     run('promise = mediaKeySession.close()');
                     shouldResolve(promise).then(next, next);
+                }, next);
+            }, next);
+        },
+
+        function() {
+            consoleWrite('Operating on a closed MediaKeySession should resolve for close(), reject otherwise.')
+            run('kids = JSON.stringify({ kids: [ "MTIzNDU=" ] })');
+            run('mediaKeySession = mediaKeys.createSession("temporary")');
+            run('promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids))');
+            shouldResolve(promise).then(function() {
+                run('promise = mediaKeySession.close()');
+                shouldResolve(promise).then(function() {
+                    run('promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids))');
+                    shouldReject(promise).then(function() {
+                        run('promise = mediaKeySession.update(encoder.encode("some-data"))');
+                        shouldReject(promise).then(function() {
+                            run('promise = mediaKeySession.close()');
+                            shouldResolve(promise).then(function() {
+                                run('promise = mediaKeySession.remove()');
+                                shouldReject(promise).then(next, next);
+                            }, next);
+                        }, next);
+                    }, next);
                 }, next);
             }, next);
         },

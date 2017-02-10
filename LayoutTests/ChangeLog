@@ -1,5 +1,21 @@
 2017-02-10  Zan Dobersek  <zdobersek@igalia.com>
 
+        [EME] Implement MediaKeySession::sessionClosed()
+        https://bugs.webkit.org/show_bug.cgi?id=168039
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Enhance the mock-MediaKeySession-close.html test by adding test cases
+        covering the dispatch of the promise that's accessible through the
+        'closed' attribute and covering the session closure status, making
+        sure that various operations properly resolve or reject after the
+        session object was closed.
+
+        * media/encrypted-media/mock-MediaKeySession-close-expected.txt:
+        * media/encrypted-media/mock-MediaKeySession-close.html:
+
+2017-02-10  Zan Dobersek  <zdobersek@igalia.com>
+
         [EME] Implement MediaKeySession::updateKeyStatuses(), MediaKeyStatusMap
         https://bugs.webkit.org/show_bug.cgi?id=167888
 

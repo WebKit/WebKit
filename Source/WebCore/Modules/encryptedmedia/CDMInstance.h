@@ -72,6 +72,8 @@ public:
 
     using RemoveSessionDataCallback = Function<void(KeyStatusVector&&, std::optional<Ref<SharedBuffer>>&&, SuccessValue)>;
     virtual void removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback) = 0;
+
+    virtual void storeRecordOfKeyUsage(const String& sessionId) = 0;
 };
 
 }

@@ -134,6 +134,7 @@ private:
     void updateLicense(const String&, LicenseType, const SharedBuffer&, LicenseUpdateCallback) final;
     void closeSession(const String&, CloseSessionCallback) final;
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback) final;
+    void storeRecordOfKeyUsage(const String&) final;
 
     WeakPtr<MockCDM> m_cdm;
     bool m_distinctiveIdentifiersAllowed { true };

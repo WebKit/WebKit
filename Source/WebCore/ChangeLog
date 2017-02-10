@@ -1,5 +1,43 @@
 2017-02-10  Zan Dobersek  <zdobersek@igalia.com>
 
+        [EME] Implement MediaKeySession::sessionClosed()
+        https://bugs.webkit.org/show_bug.cgi?id=168039
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement the 'session closed' algorithm for MediaKeySession by
+        following the specified steps. After this algorithm is run, the
+        session should be considered closed, which we track via the m_closed
+        member variable on the class. This is set to true before the promise
+        that's accessible through the 'closed' attribute is resolved.
+
+        Because the algorithm requires the CDM instance to store any record
+        of key usage when the session's type is 'persistent-usage-record', the
+        storeRecordOfKeyUsage() virtual method is added to the CDMInstance
+        interface. MockCDMInstance implementation is left unimplemented for now.
+
+        JSMediaKeySession::closed() accessor now has a custom implementation
+        that creates a deferred promise for that object if there's none yet, and
+        shares it with the wrapped class through the registerClosedPromise()
+        method, storing a reference to the promise in the m_closedPromise
+        member variable, or resolving the promise immediately if the session was
+        already closed.
+
+        Test cases added to media/encrypted-media/mock-MediaKeySession-close.html.
+
+        * Modules/encryptedmedia/CDMInstance.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::registerClosedPromise):
+        (WebCore::MediaKeySession::sessionClosed):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * bindings/js/JSMediaKeySessionCustom.cpp:
+        (WebCore::JSMediaKeySession::closed):
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMInstance::storeRecordOfKeyUsage):
+        * testing/MockCDMFactory.h:
+
+2017-02-10  Zan Dobersek  <zdobersek@igalia.com>
+
         [EME] Implement MediaKeySession::updateKeyStatuses(), MediaKeyStatusMap
         https://bugs.webkit.org/show_bug.cgi?id=167888
 
