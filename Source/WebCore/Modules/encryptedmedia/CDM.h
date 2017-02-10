@@ -82,6 +82,8 @@ public:
 
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&);
 
+    std::optional<String> sanitizeSessionId(const String& sessionId);
+
 private:
     CDM(Document&, const String& keySystem);
 

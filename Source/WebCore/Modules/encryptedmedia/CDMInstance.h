@@ -67,6 +67,17 @@ public:
     using LicenseUpdateCallback = Function<void(bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, SuccessValue succeeded)>;
     virtual void updateLicense(const String& sessionId, LicenseType, const SharedBuffer& response, LicenseUpdateCallback) = 0;
 
+    enum class SessionLoadFailure {
+        None,
+        NoSessionData,
+        MismatchedSessionType,
+        QuotaExceeded,
+        Other,
+    };
+
+    using LoadSessionCallback = Function<void(std::optional<KeyStatusVector>&&, std::optional<double>&&, std::optional<Message>&&, SuccessValue, SessionLoadFailure)>;
+    virtual void loadSession(LicenseType, const String& sessionId, const String& origin, LoadSessionCallback) = 0;
+
     using CloseSessionCallback = Function<void()>;
     virtual void closeSession(const String& sessionId, CloseSessionCallback) = 0;
 

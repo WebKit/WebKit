@@ -1,5 +1,26 @@
 2017-02-10  Zan Dobersek  <zdobersek@igalia.com>
 
+        [EME] Implement MediaKeySession::load()
+        https://bugs.webkit.org/show_bug.cgi?id=168041
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add the mock-MediaKeySession-load.html test, testing the basic behavior
+        of the MediaKeySession::load() implementation. Invalid session IDs and
+        session types are tested to ensure the returned promise is rejected.
+        A simplistic test case also tests that for a valid session ID and
+        session type, the basic MockCDM implementation correctly 'loads' the
+        specified session and provides the 'license-renewal' message in return.
+        More tests should be added as the EME implementation advances and the
+        MockCDM implementations improve to cover additional cases.
+
+        * media/encrypted-media/mock-MediaKeySession-load-expected.txt: Added.
+        * media/encrypted-media/mock-MediaKeySession-load.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-02-10  Zan Dobersek  <zdobersek@igalia.com>
+
         [EME] Implement MediaKeySession::sessionClosed()
         https://bugs.webkit.org/show_bug.cgi?id=168039
 

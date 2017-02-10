@@ -1,5 +1,52 @@
 2017-02-10  Zan Dobersek  <zdobersek@igalia.com>
 
+        [EME] Implement MediaKeySession::load()
+        https://bugs.webkit.org/show_bug.cgi?id=168041
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement the MediaKeySession::load() method, tracing the steps as they
+        are defined in the EME specification. The only exception is step 8.3,
+        which requires additional facility that tracks currently open sessions
+        and provides information whether for a given session ID there's already
+        a MediaKeySession that's not yet been closed.
+
+        Session ID sanitization is done through the CDM::sanitizeSessionId()
+        method, which relays the task to the CDMPrivate implementation.
+
+        The CDMInstance::loadSession() virtual method is called with the session
+        type, sanitized ID, the Document's origin (in string form) and the
+        callback that's invoked upon completion of the task. The callback
+        checks whether the operation was successful, or examines the reason for
+        the load failure in case it wasn't, rejecting the promise in the latter
+        case either immediately or in the following task at the latest.
+
+        When the load was successful, the optional known keys, expiration time
+        and message are handled appropriately, and the promise is resolved.
+
+        MockCDM::sanitizeSessionId() implementation only treats
+        'valid-loaded-session' as a valid session ID.
+        MockCDMInstance::loadSession() implementation is kept slim for now, only
+        providing the 'license-renewal' message when invoking the passed-in
+        callback. Known keys and expiration time will also be tested once the
+        relevant MediaKeySession algorithms are implemented.
+
+        Test: media/encrypted-media/mock-MediaKeySession-load.html
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::sanitizeSessionId):
+        * Modules/encryptedmedia/CDM.h:
+        * Modules/encryptedmedia/CDMInstance.h:
+        * Modules/encryptedmedia/CDMPrivate.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::load):
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDM::sanitizeSessionId):
+        (WebCore::MockCDMInstance::loadSession):
+        * testing/MockCDMFactory.h:
+
+2017-02-10  Zan Dobersek  <zdobersek@igalia.com>
+
         [EME] Implement MediaKeySession::sessionClosed()
         https://bugs.webkit.org/show_bug.cgi?id=168039
 

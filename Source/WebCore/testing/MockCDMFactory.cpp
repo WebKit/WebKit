@@ -208,6 +208,13 @@ RefPtr<SharedBuffer> MockCDM::sanitizeResponse(const SharedBuffer& response) con
     return response.copy();
 }
 
+std::optional<String> MockCDM::sanitizeSessionId(const String& sessionId) const
+{
+    if (equalLettersIgnoringASCIICase(sessionId, "valid-loaded-session"))
+        return sessionId;
+    return std::nullopt;
+}
+
 MockCDMInstance::MockCDMInstance(WeakPtr<MockCDM> cdm)
     : m_cdm(cdm)
 {
@@ -317,6 +324,22 @@ void MockCDMInstance::updateLicense(const String& sessionID, LicenseType, const 
     // once the relevant algorithms are supported.
 
     callback(false, WTFMove(changedKeys), std::nullopt, std::nullopt, SuccessValue::Succeeded);
+}
+
+void MockCDMInstance::loadSession(LicenseType, const String&, const String&, LoadSessionCallback callback)
+{
+    MockCDMFactory* factory = m_cdm ? m_cdm->factory() : nullptr;
+    if (!factory) {
+        callback(std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed, SessionLoadFailure::Other);
+        return;
+    }
+
+    // FIXME: Key status and expiration handling should be implemented once the relevant algorithms are supported.
+
+    CString messageData { "session loaded" };
+    Message message { MessageType::LicenseRenewal, SharedBuffer::create(messageData.data(), messageData.length()) };
+
+    callback(std::nullopt, std::nullopt, WTFMove(message), SuccessValue::Succeeded, SessionLoadFailure::None);
 }
 
 void MockCDMInstance::closeSession(const String& sessionID, CloseSessionCallback callback)

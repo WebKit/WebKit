@@ -1497,6 +1497,7 @@ media/encrypted-media/mock-MediaKeys-setServerCertificate.html [ Skip ]
 media/encrypted-media/mock-MediaKeys-createSession.html [ Skip ]
 media/encrypted-media/mock-MediaKeySession-close.html [ Skip ]
 media/encrypted-media/mock-MediaKeySession-generateRequest.html [ Skip ]
+media/encrypted-media/mock-MediaKeySession-load.html [ Skip ]
 media/encrypted-media/mock-MediaKeySession-remove.html [ Skip ]
 media/encrypted-media/mock-MediaKeySession-update.html [ Skip ]
 

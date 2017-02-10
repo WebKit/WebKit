@@ -651,6 +651,13 @@ RefPtr<SharedBuffer> CDM::sanitizeResponse(const SharedBuffer& response)
     return m_private->sanitizeResponse(response);
 }
 
+std::optional<String> CDM::sanitizeSessionId(const String& sessionId)
+{
+    if (!m_private)
+        return std::nullopt;
+    return m_private->sanitizeSessionId(sessionId);
+}
+
 }
 
 #endif
