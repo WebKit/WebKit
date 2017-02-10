@@ -84,6 +84,8 @@ public:
     FloatRect coverageRect() const override { return m_coverageRect; }
     std::optional<FloatRect> layoutViewportRect() const { return m_layoutViewportRect; }
 
+    void setTileSizeUpdateDelayDisabledForTesting(bool) final;
+
     unsigned blankPixelCount() const;
     static unsigned blankPixelCountForTiles(const PlatformLayerList&, const FloatRect&, const IntPoint&);
 
@@ -222,6 +224,7 @@ private:
     bool m_hasTilesWithTemporaryScaleFactor { false }; // Used to make low-res tiles when zooming.
     bool m_inLiveResize { false };
     mutable bool m_tileSizeLocked { false };
+    bool m_isTileSizeUpdateDelayDisabledForTesting { false };
 
     Color m_tileDebugBorderColor;
     float m_tileDebugBorderWidth { 0 };

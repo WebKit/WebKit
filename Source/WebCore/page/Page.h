@@ -362,6 +362,7 @@ public:
     WEBCORE_EXPORT void setActivityState(ActivityState::Flags);
     ActivityState::Flags activityState() const { return m_activityState; }
 
+    bool isWindowActive() const;
     bool isVisibleAndActive() const;
     WEBCORE_EXPORT void setIsVisible(bool);
     WEBCORE_EXPORT void setIsPrerender();

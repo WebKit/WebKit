@@ -506,4 +506,6 @@ enum EventThrottlingBehavior {
     sequence<DOMString> accessKeyModifiers();
 
     [CallWith=Document] void setAsRunningUserScripts();
+
+    void disableTileSizeUpdateDelay();
 };
