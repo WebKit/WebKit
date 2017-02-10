@@ -414,7 +414,6 @@ private:
         WebCore::FloatSize(obscuredInset),
         zoomScale,
         isStableState,
-        _sizeChangedSinceLastVisibleContentRectUpdate,
         isChangingObscuredInsetsInteractively,
         _webView._allowsViewportShrinkToFit,
         enclosedInScrollableAncestorView,
@@ -429,7 +428,6 @@ private:
     bool wasStableState = _page->inStableState();
     _page->updateVisibleContentRects(visibleContentRectUpdateInfo);
 
-    _sizeChangedSinceLastVisibleContentRectUpdate = NO;
 
     FloatRect fixedPositionRect = _page->computeCustomFixedPositionRect(_page->unobscuredContentRect(), _page->unobscuredContentRectRespectingInputViewBounds(), _page->customFixedPositionRect(), zoomScale, WebPageProxy::UnobscuredRectConstraint::Unconstrained, scrollingCoordinator->visualViewportEnabled());
     scrollingCoordinator->viewportChangedViaDelegatedScrolling(scrollingCoordinator->rootScrollingNodeID(), fixedPositionRect, zoomScale);

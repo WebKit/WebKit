@@ -47,7 +47,6 @@ void VisibleContentRectUpdateInfo::encode(IPC::Encoder& encoder) const
     encoder << m_verticalVelocity;
     encoder << m_scaleChangeRate;
     encoder << m_inStableState;
-    encoder << m_isFirstUpdateForNewViewSize;
     encoder << m_isChangingObscuredInsetsInteractively;
     encoder << m_allowShrinkToFit;
     encoder << m_enclosedInScrollableAncestorView;
@@ -78,8 +77,6 @@ bool VisibleContentRectUpdateInfo::decode(IPC::Decoder& decoder, VisibleContentR
     if (!decoder.decode(result.m_scaleChangeRate))
         return false;
     if (!decoder.decode(result.m_inStableState))
-        return false;
-    if (!decoder.decode(result.m_isFirstUpdateForNewViewSize))
         return false;
     if (!decoder.decode(result.m_isChangingObscuredInsetsInteractively))
         return false;
@@ -115,7 +112,6 @@ TextStream& operator<<(TextStream& ts, const VisibleContentRectUpdateInfo& info)
 
     ts.dumpProperty("scale", info.scale());
     ts.dumpProperty("inStableState", info.inStableState());
-    ts.dumpProperty("isFirstUpdateForNewViewSize", info.isFirstUpdateForNewViewSize());
     if (info.isChangingObscuredInsetsInteractively())
         ts.dumpProperty("isChangingObscuredInsetsInteractively", info.isChangingObscuredInsetsInteractively());
     if (info.enclosedInScrollableAncestorView())

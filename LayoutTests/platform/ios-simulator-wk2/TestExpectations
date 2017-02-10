@@ -1812,6 +1812,10 @@ webkit.org/b/155201 storage/domstorage/events/basic-body-attribute.html [ Pass F
 # Forcing always allow user scalable is not supported on certain OS version.
 webkit.org/b/155056 fast/viewport/ios/force-always-user-scalable.html [ Skip ]
 
+webkit.org/b/153110 fast/viewport/ios/width-is-device-width-overflowing.html [ Pass Failure ]
+webkit.org/b/153110 fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden.html [ Pass Failure ]
+webkit.org/b/153110 fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall.html [ Pass Failure ]
+
 webkit.org/b/155501 animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
 
 webkit.org/b/155495 compositing/visible-rect/animated-from-none.html [ Pass Failure ]

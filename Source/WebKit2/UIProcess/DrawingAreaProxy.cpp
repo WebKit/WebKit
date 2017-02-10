@@ -55,16 +55,15 @@ DrawingAreaProxy::~DrawingAreaProxy()
     m_webPageProxy.process().removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_webPageProxy.pageID());
 }
 
-bool DrawingAreaProxy::setSize(const IntSize& size, const IntSize& layerPosition, const IntSize& scrollOffset)
+void DrawingAreaProxy::setSize(const IntSize& size, const IntSize& layerPosition, const IntSize& scrollOffset)
 { 
     if (m_size == size && m_layerPosition == layerPosition && scrollOffset.isZero())
-        return false;
+        return;
 
     m_size = size;
     m_layerPosition = layerPosition;
     m_scrollOffset += scrollOffset;
     sizeDidChange();
-    return true;
 }
 
 #if PLATFORM(COCOA)

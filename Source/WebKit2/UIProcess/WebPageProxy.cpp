@@ -347,6 +347,16 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 #if ENABLE(FULLSCREEN_API)
     , m_fullscreenClient(std::make_unique<API::FullscreenClient>())
 #endif
+#if PLATFORM(IOS)
+    , m_hasReceivedLayerTreeTransactionAfterDidCommitLoad(true)
+    , m_firstLayerTreeTransactionIdAfterDidCommitLoad(0)
+    , m_deviceOrientation(0)
+    , m_dynamicViewportSizeUpdateWaitingForTarget(false)
+    , m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit(false)
+    , m_dynamicViewportSizeUpdateLayerTreeTransactionID(0)
+    , m_layerTreeTransactionIdAtLastTouchStart(0)
+    , m_hasNetworkRequestsOnSuspended(false)
+#endif
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
     , m_activityState(ActivityState::NoFlags)
