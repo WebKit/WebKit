@@ -342,6 +342,14 @@
         "NetworkCache": {
             "filename": r"Source/WebKit2/NetworkProcess/cache/",
         },
+        "WebCryptoAPI": {
+            "filename": r"Source/WebCore/crypto/"
+                        r"|Source/WebCore/bindings/js/.*Crypto.*"
+                        r"|Source/WebCore/page/.*Crypto.*"
+                        r"|Source/WebCore/PAL/pal/crypto/"
+                        r"|LayoutTests/crypto/"
+                        r"|LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -411,6 +419,7 @@
         "XSS": [ "dbates@webkit.org" ],
         "webkitperl": [ "dbates@webkit.org" ],
         "webkitpy": [ "glenn@skynav.com" ],
+        "WebCryptoAPI": [ "jiewen_tan@apple.com" ],
     },
     "MESSAGE_RULES": {
         "GtkWebKit2PublicAPI": [ "Thanks for the patch. If this patch contains new public API "

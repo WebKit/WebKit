@@ -1,3 +1,12 @@
+2017-02-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Add WebCryptoAPI to watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=168138
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2017-02-10  Brady Eidson  <beidson@apple.com>
 
         Replace all WebKit Library Version checks in WK2 with SDK version checks.
