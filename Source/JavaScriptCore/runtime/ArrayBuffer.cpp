@@ -284,6 +284,17 @@ void ArrayBuffer::setSharingMode(ArrayBufferSharingMode newSharingMode)
     makeShared();
 }
 
+bool ArrayBuffer::shareWith(ArrayBufferContents& result)
+{
+    if (!m_contents.m_data || !isShared()) {
+        result.m_data = nullptr;
+        return false;
+    }
+    
+    m_contents.shareWith(result);
+    return true;
+}
+
 bool ArrayBuffer::transferTo(VM& vm, ArrayBufferContents& result)
 {
     Ref<ArrayBuffer> protect(*this);

@@ -168,7 +168,7 @@ RefPtr<SerializedScriptValue> MessageEvent::trySerializeData(ExecState* exec)
     ASSERT(!m_dataAsScriptValue.hasNoValue());
     
     if (!m_dataAsSerializedScriptValue && !m_triedToSerialize) {
-        m_dataAsSerializedScriptValue = SerializedScriptValue::create(*exec, m_dataAsScriptValue.jsValue(), NonThrowing);
+        m_dataAsSerializedScriptValue = SerializedScriptValue::create(*exec, m_dataAsScriptValue.jsValue(), SerializationErrorMode::NonThrowing);
         m_triedToSerialize = true;
     }
     

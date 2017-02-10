@@ -70,7 +70,7 @@ RefPtr<SerializedScriptValue> PopStateEvent::trySerializeState(JSC::ExecState& e
     ASSERT(!m_state.hasNoValue());
     
     if (!m_serializedState && !m_triedToSerialize) {
-        m_serializedState = SerializedScriptValue::create(executionState, m_state.jsValue(), NonThrowing);
+        m_serializedState = SerializedScriptValue::create(executionState, m_state.jsValue(), SerializationErrorMode::NonThrowing);
         m_triedToSerialize = true;
     }
     

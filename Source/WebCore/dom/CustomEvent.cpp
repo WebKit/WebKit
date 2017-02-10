@@ -60,7 +60,7 @@ void CustomEvent::initCustomEvent(JSC::ExecState& state, const AtomicString& typ
 RefPtr<SerializedScriptValue> CustomEvent::trySerializeDetail(JSC::ExecState& state)
 {
     if (!m_triedToSerialize) {
-        m_serializedDetail = SerializedScriptValue::create(state, m_detail, NonThrowing);
+        m_serializedDetail = SerializedScriptValue::create(state, m_detail, SerializationErrorMode::NonThrowing);
         m_triedToSerialize = true;
     }
     return m_serializedDetail;

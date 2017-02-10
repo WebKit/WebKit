@@ -1,3 +1,18 @@
+2017-02-09  Filip Pizlo  <fpizlo@apple.com>
+
+        SharedArrayBuffer does not need to be in the transfer list
+        https://bugs.webkit.org/show_bug.cgi?id=168079
+
+        Reviewed by Geoffrey Garen and Keith Miller.
+        
+        Exposes a simple shareWith() API for when you know you want to share the contents of
+        a shared buffer. Also a useful explicit operator bool.
+
+        * runtime/ArrayBuffer.cpp:
+        (JSC::ArrayBuffer::shareWith):
+        * runtime/ArrayBuffer.h:
+        (JSC::ArrayBufferContents::operator bool):
+
 2017-02-09  Mark Lam  <mark.lam@apple.com>
 
         B3::Procedure::deleteOrphans() should neutralize upsilons with dead phis.
