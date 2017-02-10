@@ -79,6 +79,9 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& identifier, c
 #if !ENABLE(WEB_SOCKETS)
     UNUSED_PARAM(socketProvider);
 #endif
+#if !ENABLE(WEB_TIMING)
+    UNUSED_PARAM(timeOrigin);
+#endif
 
     auto origin = SecurityOrigin::create(url);
     if (m_topOrigin->hasUniversalAccess())

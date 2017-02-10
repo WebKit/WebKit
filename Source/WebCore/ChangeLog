@@ -1,3 +1,13 @@
+2017-02-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(WEB_TIMING) build
+        https://bugs.webkit.org/show_bug.cgi?id=168113
+
+        Reviewed by Alex Christensen.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+
 2017-02-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Update features.json for Performance Timing APIs
