@@ -1,5 +1,29 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212021. rdar://problem/30149432
+
+    2017-02-09  Saam Barati  <sbarati@apple.com>
+
+            Sloppy mode: We don't properly hoist functions names "arguments" when we have a non-simple parameter list
+            https://bugs.webkit.org/show_bug.cgi?id=167319
+            <rdar://problem/30149432>
+
+            Reviewed by Mark Lam.
+
+            When hoisting a function inside sloppy mode, we were assuming all "var"s are inside
+            what we call the "var" SymbolTableEntry. This was almost true, execpt for "arguments",
+            which has sufficiently weird behavior. "arguments" can be visible to the default
+            parameter expressions inside a function, therefore can't go inside the "var"
+            SymbolTableEntry since the parameter SymbolTableEntry comes before the "var"
+            SymbolTableEntry in the scope chain.  Therefore, if we hoist a function named
+            "arguments", then we must also look for that variable inside the parameter scope
+            stack entry.
+
+            * bytecompiler/BytecodeGenerator.cpp:
+            (JSC::BytecodeGenerator::hoistSloppyModeFunctionIfNecessary):
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212019. rdar://problem/30128133
 
     2017-02-09  Mark Lam  <mark.lam@apple.com>
