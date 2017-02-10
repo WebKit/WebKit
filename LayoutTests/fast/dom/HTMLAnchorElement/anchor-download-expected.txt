@@ -1,4 +1,4 @@
 Download started.
-Downloading URL with suggested filename "unknown"
+Downloading URL with suggested filename "unknown.html"
 Download completed.
 Blob URL

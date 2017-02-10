@@ -37,6 +37,7 @@
 #include "WebProcessPool.h"
 #include "WebProtectionSpace.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -91,7 +92,7 @@ void DownloadProxy::processDidClose()
     m_processPool->downloadClient().processDidCrash(m_processPool.get(), this);
 }
 
-void DownloadProxy::didStart(const ResourceRequest& request, const AtomicString& suggestedFilename)
+void DownloadProxy::didStart(const ResourceRequest& request, const String& suggestedFilename)
 {
     m_request = request;
     m_suggestedFilename = suggestedFilename;
@@ -193,17 +194,14 @@ void DownloadProxy::decideDestinationWithSuggestedFilenameAsync(DownloadID downl
 
 #if !USE(NETWORK_SESSION)
 
-void DownloadProxy::decideDestinationWithSuggestedFilename(const String& filename, String& destination, bool& allowOverwrite, SandboxExtension::Handle& sandboxExtensionHandle)
+void DownloadProxy::decideDestinationWithSuggestedFilename(const String& filename, const String& mimeType, String& destination, bool& allowOverwrite, SandboxExtension::Handle& sandboxExtensionHandle)
 {
     allowOverwrite = false;
 
     if (!m_processPool)
         return;
 
-    String suggestedFilename = filename;
-    if (!m_suggestedFilename.isNull())
-        suggestedFilename = m_suggestedFilename;
-    
+    String suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(m_suggestedFilename.isNull() ? filename : m_suggestedFilename, mimeType);
     destination = m_processPool->downloadClient().decideDestinationWithSuggestedFilename(m_processPool.get(), this, suggestedFilename, allowOverwrite);
 
     if (!destination.isNull())

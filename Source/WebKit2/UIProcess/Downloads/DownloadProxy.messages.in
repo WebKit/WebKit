@@ -35,7 +35,7 @@ messages -> DownloadProxy {
     DidReceiveData(uint64_t length)
     ShouldDecodeSourceDataOfMIMEType(String mimeType) -> (bool result)
 #if !USE(NETWORK_SESSION)
-    DecideDestinationWithSuggestedFilename(String filename) -> (String destination, bool allowOverwrite, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    DecideDestinationWithSuggestedFilename(String filename, String mimeType) -> (String destination, bool allowOverwrite, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
 #endif
     DidCreateDestination(String path)
     DidFinish()

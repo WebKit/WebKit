@@ -161,6 +161,7 @@ void Download::didReceiveResponse(const ResourceResponse& response)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Created (id = %" PRIu64 ")", downloadID().downloadID());
 
+    m_responseMIMEType = response.mimeType();
     send(Messages::DownloadProxy::DidReceiveResponse(response));
 }
 
@@ -177,7 +178,7 @@ String Download::decideDestinationWithSuggestedFilename(const String& filename, 
 {
     String destination;
     SandboxExtension::Handle sandboxExtensionHandle;
-    if (!sendSync(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(filename), Messages::DownloadProxy::DecideDestinationWithSuggestedFilename::Reply(destination, allowOverwrite, sandboxExtensionHandle)))
+    if (!sendSync(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(filename, m_responseMIMEType), Messages::DownloadProxy::DecideDestinationWithSuggestedFilename::Reply(destination, allowOverwrite, sandboxExtensionHandle)))
         return String();
 
     m_sandboxExtension = SandboxExtension::create(sandboxExtensionHandle);

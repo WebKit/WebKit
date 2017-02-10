@@ -31,7 +31,9 @@
 #include "DataReference.h"
 #include "Download.h"
 #include "WebErrors.h"
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/ResourceError.h>
+#include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 
 namespace WebKit {
@@ -46,7 +48,8 @@ BlobDownloadClient::BlobDownloadClient(Download& download)
 void BlobDownloadClient::didReceiveResponseAsync(ResourceHandle*, ResourceResponse&& response)
 {
     m_download.didReceiveResponse(WTFMove(response));
-    m_download.decideDestinationWithSuggestedFilenameAsync(m_download.suggestedName().isEmpty() ? "unknown" : m_download.suggestedName());
+    String suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(m_download.suggestedName().isEmpty() ? ASCIILiteral("unknown") : m_download.suggestedName(), response.mimeType());
+    m_download.decideDestinationWithSuggestedFilenameAsync(suggestedFilename);
 }
 
 void BlobDownloadClient::didDecideDownloadDestination(const String& destinationPath, bool allowOverwrite)

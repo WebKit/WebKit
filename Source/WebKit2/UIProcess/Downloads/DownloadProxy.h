@@ -77,7 +77,7 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
     // Message handlers.
-    void didStart(const WebCore::ResourceRequest&, const AtomicString& suggestedFilename);
+    void didStart(const WebCore::ResourceRequest&, const String& suggestedFilename);
     void didReceiveAuthenticationChallenge(const WebCore::AuthenticationChallenge&, uint64_t challengeID);
     void didReceiveResponse(const WebCore::ResourceResponse&);
     void didReceiveData(uint64_t length);
@@ -92,7 +92,7 @@ private:
 #endif
     void willSendRequest(const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse& redirectResponse);
 #else
-    void decideDestinationWithSuggestedFilename(const String& filename, String& destination, bool& allowOverwrite, SandboxExtension::Handle& sandboxExtensionHandle);
+    void decideDestinationWithSuggestedFilename(const String& filename, const String& mimeType, String& destination, bool& allowOverwrite, SandboxExtension::Handle& sandboxExtensionHandle);
 #endif
     void decideDestinationWithSuggestedFilenameAsync(DownloadID, const String& suggestedFilename);
 
@@ -102,7 +102,7 @@ private:
 
     RefPtr<API::Data> m_resumeData;
     WebCore::ResourceRequest m_request;
-    AtomicString m_suggestedFilename;
+    String m_suggestedFilename;
 };
 
 } // namespace WebKit

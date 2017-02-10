@@ -146,6 +146,7 @@ private:
     WebCore::SessionID m_sessionID;
 #else // USE(NETWORK_SESSION)
     WebCore::ResourceRequest m_request;
+    String m_responseMIMEType;
 #if PLATFORM(COCOA)
     RetainPtr<NSURLDownload> m_nsURLDownload;
     RetainPtr<WKDownloadAsDelegate> m_delegate;

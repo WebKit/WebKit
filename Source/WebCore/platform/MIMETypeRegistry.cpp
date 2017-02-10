@@ -788,4 +788,13 @@ String MIMETypeRegistry::getNormalizedMIMEType(const String& mimeType)
 
 #endif
 
+#if !PLATFORM(COCOA)
+
+String MIMETypeRegistry::appendFileExtensionIfNecessary(const String& filename, const String&)
+{
+    return filename;
+}
+
+#endif
+
 } // namespace WebCore
