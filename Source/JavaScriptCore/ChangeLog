@@ -1,3 +1,19 @@
+2017-02-10  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: payload initializers for ObjC protocol types handles special-cased property names incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=168141
+
+        Reviewed by Joseph Pecoraro.
+
+        The generated code erroneously uses the ObjC variable name as the payload key,
+        rather than the raw type member name. For example, 'identifier' would be used instead of 'id'.
+
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator._generate_init_method_for_payload):
+
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+        Rebaseline an affected test.
+
 2017-02-10  Mark Lam  <mark.lam@apple.com>
 
         StructureStubInfo::considerCaching() should write barrier its owner CodeBlock when buffering a new Structure.

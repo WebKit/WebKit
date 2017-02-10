@@ -128,10 +128,13 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
         lines.append('')
 
         for member in declaration.type_members:
-            var_name = ObjCGenerator.identifier_to_objc_identifier(member.member_name)
-            if not member.is_optional:
-                lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"%s"], @"%s");' % (var_name, var_name))
+            member_name = member.member_name
             conversion_expression = self.payload_to_objc_expression_for_member(declaration, member)
+
+            if not member.is_optional:
+                lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"%s"], @"%s");' % (member_name, member_name))
+
+            var_name = ObjCGenerator.identifier_to_objc_identifier(member_name)
             lines.append('    self.%s = %s;' % (var_name, conversion_expression))
             lines.append('')
 

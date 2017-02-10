@@ -1463,7 +1463,7 @@ using namespace Inspector;
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"animals"], @"animals");
     self.animals = fromProtocolString<TestProtocolTestCastedAnimals>(payload[@"animals"]);
 
-    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"identifier"], @"identifier");
+    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"id"], @"id");
     self.identifier = [payload[@"id"] integerValue];
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"tree"], @"tree");
