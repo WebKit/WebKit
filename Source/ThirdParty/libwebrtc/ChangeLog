@@ -1,5 +1,17 @@
 2017-02-09  Alex Christensen  <achristensen@webkit.org>
 
+        Fix warnings in libwebrtc build
+        https://bugs.webkit.org/show_bug.cgi?id=168088
+
+        Reviewed by Youenn Fablet.
+
+        * Source/third_party/opus/src/src/opus_decoder.c:
+        Silence a warning.  Debug builds of opus can be slow.  No big deal.
+        * libwebrtc.xcodeproj/project.pbxproj:
+        More sdk files need ARC.
+
+2017-02-09  Alex Christensen  <achristensen@webkit.org>
+
         Fix iOS libwebrtc build after r211960
         https://bugs.webkit.org/show_bug.cgi?id=168038
 
