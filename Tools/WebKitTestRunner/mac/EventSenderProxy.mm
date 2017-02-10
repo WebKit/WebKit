@@ -600,12 +600,10 @@ void EventSenderProxy::startAndCancelMouseForceClick()
 void EventSenderProxy::mouseMoveTo(double x, double y)
 {
     NSView *view = m_testController->mainWebView()->platformView();
-    NSPoint position = [view convertPoint:NSMakePoint(x, y) toView:nil];
-    m_position.x = position.x;
-    m_position.y = position.y;
+    NSPoint newMousePosition = [view convertPoint:NSMakePoint(x, y) toView:nil];
     bool isDrag = m_leftMouseButtonDown;
     NSEvent *event = [NSEvent mouseEventWithType:(isDrag ? NSEventTypeLeftMouseDragged : NSEventTypeMouseMoved)
-                                        location:position
+                                        location:newMousePosition
                                    modifierFlags:0 
                                        timestamp:absoluteTimeForEventTime(currentEventTime())
                                     windowNumber:view.window.windowNumber
@@ -613,6 +611,13 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
                                      eventNumber:++eventNumber 
                                       clickCount:(m_leftMouseButtonDown ? m_clickCount : 0) 
                                         pressure:0];
+
+    CGEventRef cgEvent = event.CGEvent;
+    CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaX, newMousePosition.x - m_position.x);
+    CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaY, newMousePosition.y - m_position.y);
+    event = [NSEvent eventWithCGEvent:cgEvent];
+    m_position.x = newMousePosition.x;
+    m_position.y = newMousePosition.y;
 
     NSPoint windowLocation = event.locationInWindow;
     // Always target drags at the WKWebView to allow for drag-scrolling outside the view.

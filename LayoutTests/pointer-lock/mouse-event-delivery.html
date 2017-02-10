@@ -34,6 +34,13 @@
     function eventExpected(e) {
       testPassed("event type: " + e.type + ", target: " + e.target.id + ", received on: " + e.currentTarget.id);
     }
+    function eventDeltaExpected(e) {
+      testPassed("event type: " + e.type + ", movementX: " + e.movementX + ", movementY: " + e.movementY + ", target: " + e.target.id + ", received on: " + e.currentTarget.id);
+    }
+    function eventDeltaExpectedThenNextStep(e) {
+      testPassed("event type: " + e.type + ", movementX: " + e.movementX + ", movementY: " + e.movementY + ", target: " + e.target.id + ", received on: " + e.currentTarget.id);
+      doNextStep();
+    }
 
     todo = [
         function () {
@@ -54,7 +61,20 @@
             doNextStep();
         },
         function () {
+            debug("     With a lock in place move the mouse.")
+            targetdiv1.onmousemove = eventDeltaExpectedThenNextStep;
+            targetdiv2.onmousemove = eventNotExpected;
+            document.body.onmousemove = eventDeltaExpected;
+            if (window.eventSender) {
+                window.eventSender.mouseMoveTo(45,50);
+            }
+        },
+        function () {
             debug("     With a lock in place send a click.")
+            targetdiv1.onmousemove = null;
+            targetdiv2.onmousemove = null;
+            document.body.onmousemove = null;
+
             targetdiv1.onmousedown = eventExpected;
             targetdiv2.onmousedown = eventNotExpected;
             document.body.onmousedown = eventExpected;
