@@ -509,9 +509,7 @@ bool HTMLObjectElement::appendFormData(FormDataList& encoding, bool)
     if (name().isEmpty())
         return false;
 
-    // Use PluginLoadingPolicy::DoNotLoad here or it would fire JS events synchronously
-    // which would not be safe here.
-    auto* widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
+    Widget* widget = pluginWidget();
     if (!is<PluginViewBase>(widget))
         return false;
     String value;
