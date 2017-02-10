@@ -1,5 +1,24 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211382. rdar://problem/29738514
+
+    2017-01-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Correct spacing regression on inter-element complex path shaping on some fonts
+            https://bugs.webkit.org/show_bug.cgi?id=166013
+
+            Reviewed by Simon Fraser.
+
+            Unskip existing tests and make some new tests:
+            - Testing complex text with no origins
+            - Testing initial expansions
+            - Testing the sign of vertical advances
+
+            * TestWebKitAPI/Tests/WebCore/ComplexTextController.cpp:
+            (TestWebKitAPI::TEST_F):
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211915. rdar://problem/27607520
 
     2017-02-08  Andy Estes  <aestes@apple.com>

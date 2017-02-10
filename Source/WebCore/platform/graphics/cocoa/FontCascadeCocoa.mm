@@ -497,7 +497,7 @@ void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRe
     float afterWidth = controller.runWidthSoFar();
 
     if (run.rtl())
-        selectionRect.move(controller.totalWidth() - afterWidth + controller.leadingExpansion(), 0);
+        selectionRect.move(controller.totalWidth() - afterWidth, 0);
     else
         selectionRect.move(beforeWidth, 0);
     selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
@@ -508,20 +508,25 @@ float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsign
     float initialAdvance;
 
     ComplexTextController controller(*this, run, false, 0, forTextEmphasis);
-    controller.advance(from);
-    float beforeWidth = controller.runWidthSoFar();
+    GlyphBuffer dummyGlyphBuffer;
+    controller.advance(from, &dummyGlyphBuffer);
     controller.advance(to, &glyphBuffer);
 
     if (glyphBuffer.isEmpty())
         return 0;
 
-    float afterWidth = controller.runWidthSoFar();
-
     if (run.rtl()) {
-        initialAdvance = controller.totalWidth() - afterWidth + controller.leadingExpansion();
+        // Exploit the fact that the sum of the paint advances is equal to
+        // the sum of the layout advances.
+        initialAdvance = controller.totalWidth();
+        for (unsigned i = 0; i < glyphBuffer.size(); ++i)
+            initialAdvance -= glyphBuffer.advanceAt(i).width();
         glyphBuffer.reverse(0, glyphBuffer.size());
-    } else
-        initialAdvance = beforeWidth;
+    } else {
+        initialAdvance = dummyGlyphBuffer.initialAdvance().width();
+        for (unsigned i = 0; i < dummyGlyphBuffer.size(); ++i)
+            initialAdvance += dummyGlyphBuffer.advanceAt(i).width();
+    }
 
     return initialAdvance;
 }

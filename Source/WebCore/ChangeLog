@@ -1,5 +1,84 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211382. rdar://problem/29738514
+
+    2017-01-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Correct spacing regression on inter-element complex path shaping on some fonts
+            https://bugs.webkit.org/show_bug.cgi?id=166013
+
+            Reviewed by Simon Fraser.
+
+            This patch brings the implementation of ComplexTextController in-line with the
+            design at https://trac.webkit.org/wiki/ComplexTextController. Previously,
+            ComplexTextController had a few problems:
+            - The total width computed by ComplexTextController didn't match the width if
+            you iterated over the entire string and added up the advances
+            - FontCascade::getGlyphsAndAdvancesForComplexText() tried to compensate for
+            the above by construing the concepts of paint advances as distinct from layout
+            advances
+            - Initial advances were considered part of layout sometimes and part of painting
+            other times, depending on which function reports the information
+            - For RTL runs, the wrong origin was added to the initial advance, and the origin
+            should have been subtracted instead of added
+
+            This patch exhaustively updates every function in ComplexTextController to be
+            consistent with the design linked to above. This design solves all of these
+            problems.
+
+            Tests: ComplexTextControllerTest.InitialAdvanceWithLeftRunInRTL
+                   ComplexTextControllerTest.InitialAdvanceInRTL
+                   ComplexTextControllerTest.InitialAdvanceWithLeftRunInLTR
+                   ComplexTextControllerTest.InitialAdvanceInLTR
+                   ComplexTextControllerTest.InitialAdvanceInRTLNoOrigins
+                   ComplexTextControllerTest.LeadingExpansion
+                   ComplexTextControllerTest.VerticalAdvances
+
+            * platform/graphics/GlyphBuffer.h:
+            (WebCore::GlyphBuffer::setLeadingExpansion): Deleted. No longer necessary.
+            (WebCore::GlyphBuffer::leadingExpansion): Deleted. Ditto.
+            * platform/graphics/cocoa/FontCascadeCocoa.mm:
+            (WebCore::FontCascade::adjustSelectionRectForComplexText): Removed use of
+            unnecessary leadingExpansion().
+            (WebCore::FontCascade::getGlyphsAndAdvancesForComplexText): This function needs
+            to compute paint advances, which means that it can't base this information off
+            of layout advances. This function uses the trick mentioned at the end of the
+            above link to compute the paint offset of an arbitrary glyph in the middle of
+            an RTL run.
+            * platform/graphics/mac/ComplexTextController.cpp:
+            (WebCore::ComplexTextController::computeExpansionOpportunity): Refactored for
+            testing.
+            (WebCore::ComplexTextController::ComplexTextController): Ditto.
+            (WebCore::ComplexTextController::finishConstruction): Ditto.
+            (WebCore::ComplexTextController::offsetForPosition): This function operates on
+            layout advances, and the initial layout advance is already added into the
+            m_adjustedBaseAdvances vector by adjustGlyphsAndAdvances(). Therefore, there is
+            no need to add it again here.
+            (WebCore::ComplexTextController::advance): This function had completely busted
+            logic about the relationship between initial advances and the first origin in
+            each run. Because of the fortunate choice of only representing layout advances
+            in m_adjustedBaseAdvances, this entire block can be removed and the raw paint
+            initial advance can be reported to the GlyphBuffer. Later in the function, we
+            have to update the logic about how to compute a paint advance given a layout
+            advance and some origins. In particular, there are two tricky pieces here: 1.
+            The layout advance for the first glyph is equal to (initial advance - first
+            origin + first Core Text advance, so computing the paint offset must cancel out
+            the initial layout offset, and 2. the last paint advance in a run must actually
+            end up at the position of the first glyph in the next run, so the next run's
+            initial advance must be queried.
+            (WebCore::ComplexTextController::adjustGlyphsAndAdvances): Previously, we
+            represented an initial advance of a successive run by just adding it to the
+            previous run's last advance. However, this is incompatible with the new model
+            presented in the link above, so we remove this section. We also have to add in
+            the logic that the layout advance for the first glyph is equal to the formula
+            presented above.
+            * platform/graphics/mac/ComplexTextController.h:
+            (WebCore::ComplexTextController::ComplexTextRun::initialAdvance): Adjust comment
+            to reflect reality.
+            (WebCore::ComplexTextController::leadingExpansion): Deleted.
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211957. rdar://problem/30029354
 
     2017-02-09  Antti Koivisto  <antti@apple.com>
