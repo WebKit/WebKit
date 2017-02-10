@@ -125,6 +125,9 @@ private:
     BOOL _initialCapitalizationEnabled;
     BOOL _waitsForPaintAfterViewDidMoveToWindow;
     BOOL _controlledByAutomation;
+#if ENABLE(MEDIA_STREAM)
+    BOOL _mediaStreamEnabled;
+#endif
 
 #if ENABLE(APPLE_PAY)
     BOOL _applePayEnabled;
@@ -293,6 +296,9 @@ private:
     configuration->_initialCapitalizationEnabled = self->_initialCapitalizationEnabled;
     configuration->_waitsForPaintAfterViewDidMoveToWindow = self->_waitsForPaintAfterViewDidMoveToWindow;
     configuration->_controlledByAutomation = self->_controlledByAutomation;
+#if ENABLE(MEDIA_STREAM)
+    configuration->_mediaStreamEnabled = self->_mediaStreamEnabled;
+#endif
 
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
@@ -684,6 +690,22 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setControlledByAutomation:(BOOL)controlledByAutomation
 {
     _controlledByAutomation = controlledByAutomation;
+}
+
+- (BOOL)_mediaStreamEnabled
+{
+#if ENABLE(MEDIA_STREAM)
+    return _mediaStreamEnabled;
+#else
+    return NO;
+#endif
+}
+
+- (void)_setMediaStreamEnabled:(BOOL)enabled
+{
+#if ENABLE(MEDIA_STREAM)
+    _mediaStreamEnabled = enabled;
+#endif
 }
 
 #if PLATFORM(MAC)

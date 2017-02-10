@@ -1,3 +1,19 @@
+2017-02-10  Andrew Gold  <agold@apple.com>
+
+        Add mediaStreamEnabled property to WKPreferences for Cocoa.
+        https://bugs.webkit.org/show_bug.cgi?id=168080
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Sets the pageConfiguration's mediaStreamEnabled preference value.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]): Copies the mediaStreamEnabled property.
+        (-[WKWebViewConfiguration _mediaStreamEnabled]): Gets the mediaStreamEnabled property.
+        (-[WKWebViewConfiguration _setMediaStreamEnabled:]): Sets the mediaStreamEnabled property.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+
 2017-02-10  Olivier Blin  <olivier.blin@softathome.com>
 
         WebProcess: remove unused m_inDidClose

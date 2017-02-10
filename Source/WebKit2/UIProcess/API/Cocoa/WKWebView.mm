@@ -433,6 +433,9 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::shouldConvertPositionStyleOnCopyKey(), WebKit::WebPreferencesStore::Value(!![_configuration _convertsPositionStyleOnCopy]));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::httpEquivEnabledKey(), WebKit::WebPreferencesStore::Value(!![_configuration _allowsMetaRefresh]));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::allowUniversalAccessFromFileURLsKey(), WebKit::WebPreferencesStore::Value(!![_configuration _allowUniversalAccessFromFileURLs]));
+#if ENABLE(MEDIA_STREAM)
+    pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::mediaStreamEnabledKey(), WebKit::WebPreferencesStore::Value(!![_configuration _mediaStreamEnabled]));
+#endif
     pageConfiguration->setInitialCapitalizationEnabled([_configuration _initialCapitalizationEnabled]);
     pageConfiguration->setWaitsForPaintAfterViewDidMoveToWindow([_configuration _waitsForPaintAfterViewDidMoveToWindow]);
     pageConfiguration->setControlledByAutomation([_configuration _isControlledByAutomation]);
