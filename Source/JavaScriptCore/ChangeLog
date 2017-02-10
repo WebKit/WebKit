@@ -1,5 +1,52 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211642. rdar://problem/29542720
+
+    2017-02-03  Saam Barati  <sbarati@apple.com>
+
+            When OSR entering to the baseline JIT from the LLInt for a ProgramCodeBlock we can skip compiling a lot of the program
+            https://bugs.webkit.org/show_bug.cgi?id=167725
+            <rdar://problem/30339082>
+
+            Reviewed by Michael Saboff.
+
+            We often want to baseline compile ProgramCode once we hit a loop in the LLInt.
+            However, some programs execute a non-trivial amount of code before the loop.
+            This code can never be executed again because ProgramCodeBlocks never run more
+            than once. We're wasting time and memory by compiling code that is unreachable
+            from the OSR entry destination. This patch fixes this by only compiling code
+            that is reachable from the OSR entry destination.
+
+            This is a speedup on Kraken/ai-astar for devices with limited CPUs (I've been
+            testing on devices with 2 CPUs). On ai-astar, we were spending 50-100ms compiling
+            a huge ProgramCodeBlock in the baseline JIT where the majority of the code
+            would never execute. If this compilation was kicked off on the main thread,
+            then we'd be stalled for a long time. If it were started on the baseline JITs
+            background compilation thread, we'd still waste 50-100ms in that thread, causing
+            all other baseline compilations to happen on the main thread.
+
+            * interpreter/Interpreter.cpp:
+            (JSC::Interpreter::executeProgram):
+            * interpreter/Interpreter.h:
+            * jit/JIT.cpp:
+            (JSC::JIT::JIT):
+            (JSC::JIT::privateCompileMainPass):
+            * jit/JIT.h:
+            (JSC::JIT::compile):
+            * jit/JITWorklist.cpp:
+            (JSC::JITWorklist::Plan::Plan):
+            (JSC::JITWorklist::Plan::compileNow):
+            (JSC::JITWorklist::compileLater):
+            (JSC::JITWorklist::compileNow):
+            * jit/JITWorklist.h:
+            * llint/LLIntSlowPaths.cpp:
+            (JSC::LLInt::jitCompileAndSetHeuristics):
+            (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+            * runtime/Completion.cpp:
+            (JSC::evaluate):
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211603. rdar://problem/30318237
 
     2017-02-02  Mark Lam  <mark.lam@apple.com>

@@ -191,7 +191,7 @@ namespace JSC {
         static const int patchPutByIdDefaultOffset = 256;
 
     public:
-        JIT(VM*, CodeBlock* = 0);
+        JIT(VM*, CodeBlock* = 0, unsigned loopOSREntryBytecodeOffset = 0);
         ~JIT();
 
         void compileWithoutLinking(JITCompilationEffort);
@@ -199,9 +199,9 @@ namespace JSC {
 
         void doMainThreadPreparationBeforeCompile();
         
-        static CompilationResult compile(VM* vm, CodeBlock* codeBlock, JITCompilationEffort effort)
+        static CompilationResult compile(VM* vm, CodeBlock* codeBlock, JITCompilationEffort effort, unsigned bytecodeOffset = 0)
         {
-            return JIT(vm, codeBlock).privateCompile(effort);
+            return JIT(vm, codeBlock, bytecodeOffset).privateCompile(effort);
         }
         
         static void compileGetByVal(VM* vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
@@ -966,6 +966,7 @@ namespace JSC {
         bool m_canBeOptimized;
         bool m_canBeOptimizedOrInlined;
         bool m_shouldEmitProfiling;
+        unsigned m_loopOSREntryBytecodeOffset { 0 };
     } JIT_CLASS_ALIGNMENT;
 
 } // namespace JSC

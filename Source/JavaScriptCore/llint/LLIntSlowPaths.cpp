@@ -321,7 +321,7 @@ inline bool shouldJIT(ExecState* exec, CodeBlock* codeBlock)
 }
 
 // Returns true if we should try to OSR.
-inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
+inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec, unsigned loopOSREntryBytecodeOffset = 0)
 {
     VM& vm = exec->vm();
     DeferGCForAWhile deferGC(vm.heap); // My callers don't set top callframe, so we don't want to GC here at all.
@@ -345,7 +345,7 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
         return true;
     }
     case JITCode::InterpreterThunk: {
-        JITWorklist::instance()->compileLater(codeBlock);
+        JITWorklist::instance()->compileLater(codeBlock, loopOSREntryBytecodeOffset);
         return codeBlock->jitType() == JITCode::BaselineJIT;
     }
     default:
@@ -421,12 +421,14 @@ LLINT_SLOW_PATH_DECL(loop_osr)
             codeBlock->llintExecuteCounter(), "\n");
     }
     
+    unsigned loopOSREntryBytecodeOffset = pc - codeBlock->instructions().begin();
+
     if (!shouldJIT(exec, codeBlock)) {
         codeBlock->dontJITAnytimeSoon();
         LLINT_RETURN_TWO(0, 0);
     }
     
-    if (!jitCompileAndSetHeuristics(codeBlock, exec))
+    if (!jitCompileAndSetHeuristics(codeBlock, exec, loopOSREntryBytecodeOffset))
         LLINT_RETURN_TWO(0, 0);
     
     CODEBLOCK_LOG_EVENT(codeBlock, "osrEntry", ("at bc#", pc - codeBlock->instructions().begin()));

@@ -96,18 +96,10 @@ JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, N
 
     CodeProfiling profile(source);
 
-    ProgramExecutable* program = ProgramExecutable::create(exec, source);
-    ASSERT(scope.exception() || program);
-    if (!program) {
-        returnedException = scope.exception();
-        scope.clearException();
-        return jsUndefined();
-    }
-
     if (!thisValue || thisValue.isUndefinedOrNull())
         thisValue = exec->vmEntryGlobalObject();
     JSObject* thisObj = jsCast<JSObject*>(thisValue.toThis(exec, NotStrictMode));
-    JSValue result = exec->interpreter()->execute(program, exec, thisObj);
+    JSValue result = exec->interpreter()->executeProgram(source, exec, thisObj);
 
     if (scope.exception()) {
         returnedException = scope.exception();

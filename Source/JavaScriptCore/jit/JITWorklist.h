@@ -53,9 +53,9 @@ public:
     bool completeAllForVM(VM&); // Return true if any JIT work happened.
     void poll(VM&);
     
-    void compileLater(CodeBlock*);
+    void compileLater(CodeBlock*, unsigned loopOSREntryBytecodeOffset = 0);
     
-    void compileNow(CodeBlock*);
+    void compileNow(CodeBlock*, unsigned loopOSREntryBytecodeOffset = 0);
     
     static JITWorklist* instance();
     
