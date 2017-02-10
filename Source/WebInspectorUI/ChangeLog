@@ -1,3 +1,18 @@
+2017-02-10  Matt Baker  <mattbaker@apple.com>
+
+        REGRESSION (r211829): Web Inspector: Elements tab is blank when added after page load
+        https://bugs.webkit.org/show_bug.cgi?id=168142
+
+        Reviewed by Brian Burg.
+
+        The Elements tab can be shown in two ways: by adding the Elements tab
+        from the "New Tab" tab, or via Inspect Element. In both cases we should
+        be checking that the ContentView exists, and create it if needed.
+
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WebInspector.ElementsTabContentView.prototype.showRepresentedObject):
+        (WebInspector.ElementsTabContentView.prototype.shown):
+
 2017-02-09  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: changing dock side from windowed to bottom should cause split console to collapse on Timeline and Network tabs
