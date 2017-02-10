@@ -168,7 +168,7 @@ void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue valu
     }
 
     if (value.isString()) {
-        NPString npString = createNPString(asString(value)->value(exec).utf8());
+        NPString npString = createNPString(value.toString(exec)->value(exec).utf8());
         STRINGN_TO_NPVARIANT(npString.UTF8Characters, npString.UTF8Length, variant);
         return;
     }
