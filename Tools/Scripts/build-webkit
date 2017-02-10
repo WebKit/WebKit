@@ -73,7 +73,7 @@ push @ARGV, split(/ /, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'})
 foreach (@ARGV) {
     if ($_ eq '--minimal') {
         $minimal = 1;
-    } elsif ($_ eq 'ARCHS=i386') {
+    } elsif ($_ =~ /ARCHS.*i386/) {
         $archsi386 = 1;
     }
 }

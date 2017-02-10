@@ -1,5 +1,14 @@
 2017-02-10  Alex Christensen  <achristensen@webkit.org>
 
+        Fix 32-and-64-bit build on El Capitan.
+
+        * Scripts/build-webkit:
+        Somebody's building with something like this:
+        build-webkit ARCHS="i386 x86_64"
+        We want this to also not build libwebrtc for now.
+
+2017-02-10  Alex Christensen  <achristensen@webkit.org>
+
         Fix 32-bit build on El Capitan.
 
         * Scripts/build-webkit:
