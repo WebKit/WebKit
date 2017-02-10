@@ -430,3 +430,15 @@ macro(PROCESS_ALLINONE_FILE _file_list _all_in_one_file _result_file_list _no_co
     endforeach ()
 
 endmacro()
+
+# Helper macros for debugging CMake problems.
+macro(WEBKIT_DEBUG_DUMP_COMMANDS)
+    set(CMAKE_VERBOSE_MAKEFILE ON)
+endmacro()
+
+macro(WEBKIT_DEBUG_DUMP_VARIABLES)
+    set_cmake_property(_variableNames VARIABLES)
+    foreach (_variableName ${_variableNames})
+       message(STATUS "${_variableName}=${${_variableName}}")
+    endforeach ()
+endmacro()
