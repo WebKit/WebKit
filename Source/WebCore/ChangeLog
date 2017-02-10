@@ -1,5 +1,28 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211613. rdar://problem/30132707
+
+    2017-02-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            CrashTracer: [USER] com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::URL::host const + 9
+            https://bugs.webkit.org/show_bug.cgi?id=167766
+            <rdar://problem/30132707>
+
+            Reviewed by Chris Dumez.
+
+            The mainframe's document pointer may be null when tearing down a page upon navigation to a page that is in the
+            page cache. If this triggers a GC sweep, we will attempt to reload touch bar media controls, which (as a part of
+            the media controller heuristic) checks the mainframe's document URL to see if quirks should be enabled. This
+            assumes that the mainframe's document exists, which is not a safe assumption if page navigation is occurring. As
+            such, we need a null check for the mainframe's document in needsPlaybackControlsManagerQuirk().
+
+            No test, as we were unable to reproduce this crash.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::needsPlaybackControlsManagerQuirk):
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211564. rdar://problem/29012252
 
     2017-02-02  Antti Koivisto  <antti@apple.com>

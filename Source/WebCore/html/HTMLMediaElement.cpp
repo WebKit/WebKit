@@ -583,7 +583,11 @@ static bool needsPlaybackControlsManagerQuirk(Page& page)
     if (!page.settings().needsSiteSpecificQuirks())
         return false;
 
-    String host = page.mainFrame().document()->url().host();
+    auto* document = page.mainFrame().document();
+    if (!document)
+        return false;
+
+    String host = document->url().host();
     return equalLettersIgnoringASCIICase(host, "netflix.com") || host.endsWithIgnoringASCIICase(".netflix.com");
 }
 
