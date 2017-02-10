@@ -2397,6 +2397,16 @@ webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/inset/shape-outsi
 webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-014.html [ ImageOnlyFailure ]
 webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-015.html [ ImageOnlyFailure ]
 
+webkit.org/b/136065 imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-margin-001.html [ Failure ]
+webkit.org/b/136065 imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-004.html [ Failure ]
+webkit.org/b/136065 imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-circle-005.html [ Failure ]
+webkit.org/b/136065 imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-004.html [ Failure ]
+webkit.org/b/136065 imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
+webkit.org/b/136065 imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-inset-003.html [ Failure ]
+webkit.org/b/136065 imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
+webkit.org/b/136065 imported/w3c/csswg-test/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
+webkit.org/b/136065 imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
+
 # The backing store is cleared when page cached in GTK
 webkit.org/b/135348 compositing/iframes/page-cache-layer-tree.html [ Skip ]
 

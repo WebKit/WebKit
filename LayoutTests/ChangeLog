@@ -1,3 +1,9 @@
+2017-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Update expectations of CSS shapes duplicated tests.
+
+        * platform/gtk/TestExpectations:
+
 2017-02-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME] Implement MediaKeySession::load()
