@@ -352,8 +352,6 @@ private:
     RefPtr<ViewUpdateDispatcher> m_viewUpdateDispatcher;
 #endif
 
-    bool m_inDidClose { false };
-
     HashMap<WebCore::SessionID, HashMap<unsigned, double>> m_plugInAutoStartOriginHashes;
     HashSet<String> m_plugInAutoStartOrigins;
 

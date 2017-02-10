@@ -645,8 +645,6 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
 void WebProcess::didClose(IPC::Connection&)
 {
 #ifndef NDEBUG
-    m_inDidClose = true;
-
     // Close all the live pages.
     Vector<RefPtr<WebPage>> pages;
     copyValuesToVector(m_pageMap, pages);
