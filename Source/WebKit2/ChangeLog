@@ -1,3 +1,11 @@
+2017-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build with threaded compositor disabled.
+
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::enterAcceleratedCompositingMode):
+        (WebKit::AcceleratedDrawingArea::exitAcceleratedCompositingModeNow):
+
 2017-02-06  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][EFL] Release unused UpdateAtlas when in memory pressure situation
