@@ -3518,7 +3518,8 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
         case RootLayerAttachedViaEnclosingFrame: {
             // The layer will get hooked up via RenderLayerBacking::updateConfiguration()
             // for the frame's renderer in the parent document.
-            m_renderView.document().ownerElement()->scheduleinvalidateStyleAndLayerComposition();
+            if (auto* ownerElement = m_renderView.document().ownerElement())
+                ownerElement->scheduleinvalidateStyleAndLayerComposition();
             break;
         }
     }
