@@ -34,6 +34,18 @@ int main(int argc, char** argv)
 
     [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"TestWebKitAPI"];
 
+    // Set a user default for TestWebKitAPI to bypass all linked-on-or-after checks in WebKit
+    NSMutableDictionary *argumentDomain = [[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] mutableCopy];
+    if (!argumentDomain)
+        argumentDomain = [[NSMutableDictionary alloc] init];
+    
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [NSNumber numberWithBool:YES],    @"WebKitLinkedOnOrAfterEverything",
+                          nil];
+
+    [argumentDomain addEntriesFromDictionary:dict];
+    [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain forName:NSArgumentDomain];
+
     [NSApplication sharedApplication];
     _BeginEventReceiptOnThread(); // Makes window visibility notifications work (and possibly more).
 

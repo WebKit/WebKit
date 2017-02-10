@@ -27,5 +27,7 @@
 
 int main(int argc, char *argv[])
 {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitLinkedOnOrAfterEverything"];
+
     return NSApplicationMain(argc,  (const char **) argv);
 }

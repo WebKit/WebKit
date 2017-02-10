@@ -1,3 +1,29 @@
+2017-02-10  Brady Eidson  <beidson@apple.com>
+
+        Replace all WebKit Library Version checks in WK2 with SDK version checks.
+        https://bugs.webkit.org/show_bug.cgi?id=168124
+
+        Reviewed by Geoffrey Garen.
+
+        This change gets rid of WebKit Library Version checks and replaces them with SDK version checks.
+        
+        To allow our tools to still be able to test new behaviors even when built against older SDKs,
+        it also opts them into an SPI default to have "linkedOnOrAfter()" always return true.
+        
+        * Shared/Cocoa/CompletionHandlerCallChecker.mm:
+        (WebKit::shouldThrowExceptionForDuplicateCompletionHandlerCall):
+        
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        
+        * UIProcess/Cocoa/VersionChecks.h:
+        (WebKit::linkedOnOrAfter): Deleted.
+        * UIProcess/Cocoa/VersionChecks.mm:
+        (WebKit::linkedOnOrAfter):
+        
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::isNetworkCacheEnabled):
+
 2017-02-10  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: generate an NS_ENUM containing platforms supported by the protocol code generator
