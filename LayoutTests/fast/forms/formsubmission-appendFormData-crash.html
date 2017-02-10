@@ -12,10 +12,8 @@ function runTest() {
     input.autofocus = true;
     output.appendChild(input);
     form.submit();
-    setTimeout(function() {
     if (window.testRunner)
         testRunner.notifyDone();
-    }, 0);
 }
 
 function focushandler() {

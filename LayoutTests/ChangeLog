@@ -1,3 +1,16 @@
+2017-02-10  Chris Dumez  <cdumez@apple.com>
+
+        fast/forms/formsubmission-appendFormData-crash.html times out on WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=168133
+
+        Reviewed by Brent Fulgham.
+
+        Call testRunner.notifyDone() synchronously instead of doing it in a
+        setTimeout(). The test no longer times out on WK1 and still reproduces
+        the original bug.
+
+        * fast/forms/formsubmission-appendFormData-crash.html:
+
 2017-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         LayoutTest workers/sab/postMessage-clones.html is a flaky failure
