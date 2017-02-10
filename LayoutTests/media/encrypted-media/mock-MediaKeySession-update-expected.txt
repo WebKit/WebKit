@@ -12,13 +12,13 @@ Promise resolved OK
 Using a non-callable MediaKeySession should reject.
 RUN(mediaKeySession = mediaKeys.createSession("temporary"))
 EXPECTED (typeof mediaKeySession == 'object') OK
-RUN(promise = mediaKeySession.update(stringToUInt8Array("invalid-state")))
+RUN(promise = mediaKeySession.update(encoder.encode("invalid-state")))
 Promise rejected correctly OK
 
 Using a zero-length response should reject.
 RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
 RUN(mediaKeySession = mediaKeys.createSession("temporary"))
-RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
+RUN(promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids)))
 Promise resolved OK
 RUN(promise = mediaKeySession.update(new Uint8Array(0)))
 Promise rejected correctly OK
@@ -26,25 +26,101 @@ Promise rejected correctly OK
 Using a non-sanitizable response should reject.
 RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
 RUN(mediaKeySession = mediaKeys.createSession("temporary"))
-RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
+RUN(promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids)))
 Promise resolved OK
-RUN(promise = mediaKeySession.update(stringToUInt8Array("invalid-response")))
+RUN(promise = mediaKeySession.update(encoder.encode("invalid-response")))
 Promise rejected correctly OK
 
 Using a sanitizable response should resolve.
 RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
 RUN(mediaKeySession = mediaKeys.createSession("temporary"))
-RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
+RUN(promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids)))
 Promise resolved OK
-RUN(promise = mediaKeySession.update(stringToUInt8Array("valid-response")))
+RUN(promise = mediaKeySession.update(encoder.encode("valid-response")))
 Promise resolved OK
 
 Using a sanitizable response with invalid format should resolve.
 RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
 RUN(mediaKeySession = mediaKeys.createSession("temporary"))
-RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
+RUN(promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids)))
 Promise resolved OK
-RUN(promise = mediaKeySession.update(stringToUInt8Array("valid-response invalid-format")))
+RUN(promise = mediaKeySession.update(encoder.encode("valid-response invalid-format")))
 Promise rejected correctly OK
+
+A valid MediaKeySession properly dispatches keystatuseschange event.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=", "Njc4OTA=" ] }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids)))
+Promise resolved OK
+RUN(promise = mediaKeySession.update(encoder.encode("valid-response keys-changed")))
+EXPECTED (mediaKeySession.keyStatuses.size == '2') OK
+EXPECTED (mediaKeySession.keyStatuses.has(encoder.encode("12345")) == 'true') OK
+EXPECTED (mediaKeySession.keyStatuses.get(encoder.encode("12345")) == 'usable') OK
+EXPECTED (mediaKeySession.keyStatuses.has(encoder.encode("67890")) == 'true') OK
+EXPECTED (mediaKeySession.keyStatuses.get(encoder.encode("67890")) == 'usable') OK
+EXPECTED (mediaKeySession.keyStatuses.has(encoder.encode("invalid")) == 'false') OK
+EXPECTED (mediaKeySession.keyStatuses.get(encoder.encode("invalid")) == 'undefined') OK
+EXPECTED (iteratorArray.length == '2') OK
+EXPECTED (iteratorArray[0][0].length == '5') OK
+EXPECTED (iteratorArray[0][0][0] == '49') OK
+EXPECTED (iteratorArray[0][0][1] == '50') OK
+EXPECTED (iteratorArray[0][0][2] == '51') OK
+EXPECTED (iteratorArray[0][0][3] == '52') OK
+EXPECTED (iteratorArray[0][0][4] == '53') OK
+EXPECTED (iteratorArray[0][1] == 'usable') OK
+EXPECTED (iteratorArray[1][0].length == '5') OK
+EXPECTED (iteratorArray[1][0][0] == '54') OK
+EXPECTED (iteratorArray[1][0][1] == '55') OK
+EXPECTED (iteratorArray[1][0][2] == '56') OK
+EXPECTED (iteratorArray[1][0][3] == '57') OK
+EXPECTED (iteratorArray[1][0][4] == '48') OK
+EXPECTED (iteratorArray[1][1] == 'usable') OK
+EXPECTED (iteratorArray.length == '2') OK
+EXPECTED (iteratorArray[0].length == '5') OK
+EXPECTED (iteratorArray[0][0] == '49') OK
+EXPECTED (iteratorArray[0][1] == '50') OK
+EXPECTED (iteratorArray[0][2] == '51') OK
+EXPECTED (iteratorArray[0][3] == '52') OK
+EXPECTED (iteratorArray[0][4] == '53') OK
+EXPECTED (iteratorArray[1].length == '5') OK
+EXPECTED (iteratorArray[1][0] == '54') OK
+EXPECTED (iteratorArray[1][1] == '55') OK
+EXPECTED (iteratorArray[1][2] == '56') OK
+EXPECTED (iteratorArray[1][3] == '57') OK
+EXPECTED (iteratorArray[1][4] == '48') OK
+EXPECTED (iteratorArray.length == '2') OK
+EXPECTED (iteratorArray[0] == 'usable') OK
+EXPECTED (iteratorArray[1] == 'usable') OK
+EXPECTED (iteratorArray.length == '2') OK
+EXPECTED (iteratorArray[0].key.length == '5') OK
+EXPECTED (iteratorArray[0].key[0] == '49') OK
+EXPECTED (iteratorArray[0].key[1] == '50') OK
+EXPECTED (iteratorArray[0].key[2] == '51') OK
+EXPECTED (iteratorArray[0].key[3] == '52') OK
+EXPECTED (iteratorArray[0].key[4] == '53') OK
+EXPECTED (iteratorArray[0].value == 'usable') OK
+EXPECTED (iteratorArray[1].key.length == '5') OK
+EXPECTED (iteratorArray[1].key[0] == '54') OK
+EXPECTED (iteratorArray[1].key[1] == '55') OK
+EXPECTED (iteratorArray[1].key[2] == '56') OK
+EXPECTED (iteratorArray[1].key[3] == '57') OK
+EXPECTED (iteratorArray[1].key[4] == '48') OK
+EXPECTED (iteratorArray[1].value == 'usable') OK
+EXPECTED (iteratorArray.length == '2') OK
+EXPECTED (iteratorArray[0].key.length == '5') OK
+EXPECTED (iteratorArray[0].key[0] == '49') OK
+EXPECTED (iteratorArray[0].key[1] == '50') OK
+EXPECTED (iteratorArray[0].key[2] == '51') OK
+EXPECTED (iteratorArray[0].key[3] == '52') OK
+EXPECTED (iteratorArray[0].key[4] == '53') OK
+EXPECTED (iteratorArray[0].value == 'usable') OK
+EXPECTED (iteratorArray[1].key.length == '5') OK
+EXPECTED (iteratorArray[1].key[0] == '54') OK
+EXPECTED (iteratorArray[1].key[1] == '55') OK
+EXPECTED (iteratorArray[1].key[2] == '56') OK
+EXPECTED (iteratorArray[1].key[3] == '57') OK
+EXPECTED (iteratorArray[1].key[4] == '48') OK
+EXPECTED (iteratorArray[1].value == 'usable') OK
+Promise resolved OK
 END OF TEST
 

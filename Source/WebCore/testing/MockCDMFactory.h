@@ -72,6 +72,7 @@ public:
     bool hasSessionWithID(const String& id) { return m_sessions.contains(id); }
     void removeSessionWithID(const String& id) { m_sessions.remove(id); }
     void addKeysToSessionWithID(const String& id, Vector<Ref<SharedBuffer>>&&);
+    std::optional<const Vector<Ref<SharedBuffer>>&> keysForSessionWithID(const String& id) const;
     Vector<Ref<SharedBuffer>> removeKeysFromSessionWithID(const String& id);
 
 private:
@@ -130,7 +131,7 @@ private:
     SuccessValue setPersistentStateAllowed(bool) final;
     SuccessValue setServerCertificate(Ref<SharedBuffer>&&) final;
     void requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback) final;
-    void updateLicense(LicenseType, const SharedBuffer&, LicenseUpdateCallback) final;
+    void updateLicense(const String&, LicenseType, const SharedBuffer&, LicenseUpdateCallback) final;
     void closeSession(const String&, CloseSessionCallback) final;
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback) final;
 

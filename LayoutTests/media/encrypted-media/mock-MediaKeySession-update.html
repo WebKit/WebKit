@@ -10,6 +10,8 @@
     var mediaKeySession;
     var capabilities = {};
     var kids;
+    var iteratorArray;
+    var encoder = new TextEncoder();
 
     function doTest()
     {
@@ -49,14 +51,6 @@
         next();
     }
 
-    function stringToUInt8Array(str)
-    {
-       var array = new Uint8Array(str.length);
-       for (var i=0; i<str.length; i++)
-            array[i] = str.charCodeAt(i);
-       return array;
-    }
-
     tests = [
         function() {
             run('promise = mediaKeySystemAccess.createMediaKeys()');
@@ -67,7 +61,7 @@
             consoleWrite('Using a non-callable MediaKeySession should reject.');
             run('mediaKeySession = mediaKeys.createSession("temporary")');
             testExpected('typeof mediaKeySession', 'object');
-            run('promise = mediaKeySession.update(stringToUInt8Array("invalid-state"))');
+            run('promise = mediaKeySession.update(encoder.encode("invalid-state"))');
             shouldReject(promise).then(next, next);
         },
 
@@ -75,7 +69,7 @@
             consoleWrite('Using a zero-length response should reject.');
             run('kids = JSON.stringify({ kids: [ "MTIzNDU=" ] })');
             run('mediaKeySession = mediaKeys.createSession("temporary")');
-            run('promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids))');
+            run('promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids))');
             shouldResolve(promise).then(function() {
                 run('promise = mediaKeySession.update(new Uint8Array(0))');
                 shouldReject(promise).then(next, next);
@@ -86,9 +80,9 @@
             consoleWrite('Using a non-sanitizable response should reject.');
             run('kids = JSON.stringify({ kids: [ "MTIzNDU=" ] })');
             run('mediaKeySession = mediaKeys.createSession("temporary")');
-            run('promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids))');
+            run('promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids))');
             shouldResolve(promise).then(function() {
-                run('promise = mediaKeySession.update(stringToUInt8Array("invalid-response"))');
+                run('promise = mediaKeySession.update(encoder.encode("invalid-response"))');
                 shouldReject(promise).then(next, next);
             }, next);
         },
@@ -97,9 +91,9 @@
             consoleWrite('Using a sanitizable response should resolve.');
             run('kids = JSON.stringify({ kids: [ "MTIzNDU=" ] })');
             run('mediaKeySession = mediaKeys.createSession("temporary")');
-            run('promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids))');
+            run('promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids))');
             shouldResolve(promise).then(function() {
-                run('promise = mediaKeySession.update(stringToUInt8Array("valid-response"))');
+                run('promise = mediaKeySession.update(encoder.encode("valid-response"))');
                 shouldResolve(promise).then(next, next);
             }, next);
         },
@@ -108,10 +102,71 @@
             consoleWrite('Using a sanitizable response with invalid format should resolve.');
             run('kids = JSON.stringify({ kids: [ "MTIzNDU=" ] })');
             run('mediaKeySession = mediaKeys.createSession("temporary")');
-            run('promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids))');
+            run('promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids))');
             shouldResolve(promise).then(function() {
-                run('promise = mediaKeySession.update(stringToUInt8Array("valid-response invalid-format"))');
+                run('promise = mediaKeySession.update(encoder.encode("valid-response invalid-format"))');
                 shouldReject(promise).then(next, next);
+            }, next);
+        },
+
+        function() {
+            consoleWrite('A valid MediaKeySession properly dispatches keystatuseschange event.');
+            run('kids = JSON.stringify({ kids: [ "MTIzNDU=", "Njc4OTA=" ] })');
+            run('mediaKeySession = mediaKeys.createSession("temporary")');
+            run('promise = mediaKeySession.generateRequest("keyids", encoder.encode(kids))');
+            shouldResolve(promise).then(function() {
+                run('promise = mediaKeySession.update(encoder.encode("valid-response keys-changed"))');
+                mediaKeySession.addEventListener('keystatuseschange', function(event) {
+                    testExpected('mediaKeySession.keyStatuses.size', 2);
+                    testExpected('mediaKeySession.keyStatuses.has(encoder.encode("12345"))', true);
+                    testExpected('mediaKeySession.keyStatuses.get(encoder.encode("12345"))', 'usable');
+                    testExpected('mediaKeySession.keyStatuses.has(encoder.encode("67890"))', true);
+                    testExpected('mediaKeySession.keyStatuses.get(encoder.encode("67890"))', 'usable');
+                    testExpected('mediaKeySession.keyStatuses.has(encoder.encode("invalid"))', false);
+                    testExpected('mediaKeySession.keyStatuses.get(encoder.encode("invalid"))', undefined);
+
+                    iteratorArray = [];
+                    for (var pair of mediaKeySession.keyStatuses)
+                        iteratorArray.push([ new Uint8Array(pair[0]), pair[1] ]);
+                    testExpected('iteratorArray.length', 2);
+                    testArraysEqual('iteratorArray[0][0]', encoder.encode('12345'));
+                    testExpected('iteratorArray[0][1]', 'usable');
+                    testArraysEqual('iteratorArray[1][0]', encoder.encode('67890'));
+                    testExpected('iteratorArray[1][1]', 'usable');
+
+                    iteratorArray = [];
+                    for (var key of mediaKeySession.keyStatuses.keys())
+                        iteratorArray.push(new Uint8Array(key));
+                    testExpected('iteratorArray.length', 2);
+                    testArraysEqual('iteratorArray[0]', encoder.encode('12345'));
+                    testArraysEqual('iteratorArray[1]', encoder.encode('67890'));
+
+                    iteratorArray = [];
+                    for (var value of mediaKeySession.keyStatuses.values())
+                        iteratorArray.push(value);
+                    testArraysEqual('iteratorArray', [ 'usable', 'usable' ]);
+
+                    iteratorArray = [];
+                    for (var entry of mediaKeySession.keyStatuses.entries())
+                        iteratorArray.push({ key: new Uint8Array(entry[0]), value: entry[1] });
+                    testExpected('iteratorArray.length', 2);
+                    testArraysEqual('iteratorArray[0].key', encoder.encode('12345'));
+                    testExpected('iteratorArray[0].value', 'usable');
+                    testArraysEqual('iteratorArray[1].key', encoder.encode('67890'));
+                    testExpected('iteratorArray[1].value', 'usable');
+
+                    iteratorArray = [];
+                    mediaKeySession.keyStatuses.forEach(function(value, key) {
+                        iteratorArray.push({ key: new Uint8Array(key), value: value });
+                    });
+                    testExpected('iteratorArray.length', 2);
+                    testArraysEqual('iteratorArray[0].key', encoder.encode('12345'));
+                    testExpected('iteratorArray[0].value', 'usable');
+                    testArraysEqual('iteratorArray[1].key', encoder.encode('67890'));
+                    testExpected('iteratorArray[1].value', 'usable');
+
+                    shouldResolve(promise).then(next, next);
+                }, false);
             }, next);
         },
     ];

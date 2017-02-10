@@ -1,3 +1,69 @@
+2017-02-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Implement MediaKeySession::updateKeyStatuses(), MediaKeyStatusMap
+        https://bugs.webkit.org/show_bug.cgi?id=167888
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement MediaKeySession::updateKeyStatuses(), transforming the passed-in
+        KeyStatusVector into a Vector mapping the key IDs to MediaKeyStatus values.
+        A keystatuseschange event is fired on the MediaKeySession object afterwards.
+        The queueing of the task that runs the 'attemp to resume playback' on the
+        related HTMLMediaElement objects isn't done yet since that algorithm isn't
+        implemented yet.
+
+        The statuses Vector is stored on the MediaKeySession object. That Vector is
+        then exposed through the MediaKeyStatusMap object, each such object being
+        unique to one MediaKeySession object. The implementation of MediaKeyStatusMap
+        thus keeps a reference to the session object as long as that object is alive,
+        and queries the MediaKeySession::statuses() getter to access the Vector that
+        contains status information for all the key IDs.
+
+        MediaKeyStatusMap::Iterator object keeps a reference to the MediaKeyStatusMap
+        object and accesses the statuses by indexing into the status Vector of the
+        related MediaKeySession object.
+
+        CDMInstance::updateLicense() now accepts the session ID string as the first
+        argument, making it possible to specify which session should be updated.
+
+        MockCDMFactory::keysForSessionWithID() returns an optional reference to the
+        Vector value in the session map that lists all the key IDs that are being
+        stored for that session.
+
+        MockCDMInstance::updateLicense() now detects the 'keys-changed' entry in the
+        passed-in response data, and upon detecting that constructs a KeyStatusVector
+        object containing all the keys for that session. KeyStatus::Usable is returned
+        for each object at the moment, but this should be adjustable in the future
+        through additional parameters passed through the response data. The Vector
+        object is then passed to the callback and is then passed to the 'update key
+        statuses' algorithm in MediaKeySession.
+
+        Covered by a test case in media/encrypted-media/mock-MediaKeySession-update.html.
+
+        * Modules/encryptedmedia/CDMInstance.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::MediaKeySession):
+        (WebCore::MediaKeySession::~MediaKeySession):
+        (WebCore::MediaKeySession::update):
+        (WebCore::MediaKeySession::updateKeyStatuses):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeyStatusMap.cpp:
+        (WebCore::MediaKeyStatusMap::MediaKeyStatusMap):
+        (WebCore::MediaKeyStatusMap::detachSession):
+        (WebCore::MediaKeyStatusMap::size):
+        (WebCore::keyIdsMatch):
+        (WebCore::MediaKeyStatusMap::has):
+        (WebCore::MediaKeyStatusMap::get):
+        (WebCore::MediaKeyStatusMap::Iterator::Iterator):
+        (WebCore::MediaKeyStatusMap::Iterator::next):
+        * Modules/encryptedmedia/MediaKeyStatusMap.h:
+        (WebCore::MediaKeyStatusMap::create):
+        * Modules/encryptedmedia/MediaKeyStatusMap.idl:
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMFactory::keysForSessionWithID):
+        (WebCore::MockCDMInstance::updateLicense):
+        * testing/MockCDMFactory.h:
+
 2017-02-09  Simon Fraser  <simon.fraser@apple.com>
 
         Improve IOSurfacePool logging

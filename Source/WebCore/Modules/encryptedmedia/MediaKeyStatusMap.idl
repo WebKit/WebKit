@@ -43,5 +43,5 @@ enum MediaKeyStatus {
     iterable<BufferSource, MediaKeyStatus>;
     readonly attribute unsigned long size;
     boolean has(BufferSource keyId);
-    any get(BufferSource keyId);
+    [CallWith=ScriptState] any get(BufferSource keyId);
 };

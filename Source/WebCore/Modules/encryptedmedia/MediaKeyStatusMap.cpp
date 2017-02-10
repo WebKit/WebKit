@@ -31,39 +31,80 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "NotImplemented.h"
+#include "JSMediaKeyStatusMap.h"
+#include "MediaKeySession.h"
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
-MediaKeyStatusMap::MediaKeyStatusMap() = default;
+MediaKeyStatusMap::MediaKeyStatusMap(const MediaKeySession& session)
+    : m_session(&session)
+{
+}
 
 MediaKeyStatusMap::~MediaKeyStatusMap() = default;
 
+void MediaKeyStatusMap::detachSession()
+{
+    m_session = nullptr;
+}
+
 unsigned long MediaKeyStatusMap::size()
 {
-    notImplemented();
-    return 0;
+    if (!m_session)
+        return 0;
+    return m_session->statuses().size();
 }
 
-bool MediaKeyStatusMap::has(const BufferSource&)
+static bool keyIdsMatch(const SharedBuffer& a, const BufferSource& b)
 {
-    notImplemented();
-    return false;
+    auto length = a.size();
+    if (!length || length != b.length())
+        return false;
+    return !std::memcmp(a.data(), b.data(), length);
 }
 
-JSC::JSValue MediaKeyStatusMap::get(const BufferSource&)
+bool MediaKeyStatusMap::has(const BufferSource& keyId)
 {
-    notImplemented();
-    return JSC::jsUndefined();
+    if (!m_session)
+        return false;
+
+    auto& statuses = m_session->statuses();
+    return std::any_of(statuses.begin(), statuses.end(),
+        [&keyId] (auto& it) { return keyIdsMatch(it.first, keyId); });
 }
 
-MediaKeyStatusMap::Iterator::Iterator(MediaKeyStatusMap&)
+JSC::JSValue MediaKeyStatusMap::get(JSC::ExecState& state, const BufferSource& keyId)
+{
+    if (!m_session)
+        return JSC::jsUndefined();
+
+    auto& statuses = m_session->statuses();
+    auto it = std::find_if(statuses.begin(), statuses.end(),
+        [&keyId] (auto& it) { return keyIdsMatch(it.first, keyId); });
+
+    if (it == statuses.end())
+        return JSC::jsUndefined();
+    return convertEnumerationToJS(state, it->second);
+}
+
+MediaKeyStatusMap::Iterator::Iterator(MediaKeyStatusMap& map)
+    : m_map(map)
 {
 }
 
 std::optional<WTF::KeyValuePair<BufferSource::VariantType, MediaKeyStatus>> MediaKeyStatusMap::Iterator::next()
 {
-    return std::nullopt;
+    if (!m_map->m_session)
+        return std::nullopt;
+
+    auto& statuses = m_map->m_session->statuses();
+    if (m_index >= statuses.size())
+        return std::nullopt;
+
+    auto& pair = statuses[m_index++];
+    auto buffer = ArrayBuffer::create(pair.first->data(), pair.first->size());
+    return WTF::KeyValuePair<BufferSource::VariantType, MediaKeyStatus> { RefPtr<ArrayBuffer>(WTFMove(buffer)), pair.second };
 }
 
 } // namespace WebCore

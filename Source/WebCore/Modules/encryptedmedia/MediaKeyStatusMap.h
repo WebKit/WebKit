@@ -33,37 +33,47 @@
 #include "BufferSource.h"
 #include "MediaKeyStatus.h"
 #include <runtime/JSCJSValueInlines.h>
-#include <wtf/HashTraits.h>
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class MediaKeySession;
+class SharedBuffer;
+
 class MediaKeyStatusMap : public RefCounted<MediaKeyStatusMap> {
 public:
     using Status = MediaKeyStatus;
 
-    static Ref<MediaKeyStatusMap> create()
+    static Ref<MediaKeyStatusMap> create(const MediaKeySession& session)
     {
-        return adoptRef(*new MediaKeyStatusMap);
+        return adoptRef(*new MediaKeyStatusMap(session));
     }
 
     virtual ~MediaKeyStatusMap();
 
+    void detachSession();
+
     unsigned long size();
     bool has(const BufferSource&);
-    JSC::JSValue get(const BufferSource&);
+    JSC::JSValue get(JSC::ExecState&, const BufferSource&);
 
     class Iterator {
     public:
         explicit Iterator(MediaKeyStatusMap&);
         std::optional<WTF::KeyValuePair<BufferSource::VariantType, MediaKeyStatus>> next();
+
+    private:
+        Ref<MediaKeyStatusMap> m_map;
+        size_t m_index { 0 };
     };
     Iterator createIterator() { return Iterator(*this); }
 
 private:
-    MediaKeyStatusMap();
+    MediaKeyStatusMap(const MediaKeySession&);
+
+    const MediaKeySession* m_session;
 };
 
 } // namespace WebCore

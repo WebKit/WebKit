@@ -1,3 +1,18 @@
+2017-02-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Implement MediaKeySession::updateKeyStatuses(), MediaKeyStatusMap
+        https://bugs.webkit.org/show_bug.cgi?id=167888
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add another test case to the mock-MediaKeySession-update.html test that
+        ensures the keystatuseschange event is fired on the MediaKeySession object
+        and that the status of the keys is properly reported through the
+        MediaKeyStatusMap object associated with this MediaKeySession.
+
+        * media/encrypted-media/mock-MediaKeySession-update-expected.txt:
+        * media/encrypted-media/mock-MediaKeySession-update.html:
+
 2017-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations of tests using CSS3 Text each-line and hanging indent.

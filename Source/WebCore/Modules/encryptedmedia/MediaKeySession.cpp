@@ -53,7 +53,7 @@ Ref<MediaKeySession> MediaKeySession::create(ScriptExecutionContext& context, Me
 MediaKeySession::MediaKeySession(ScriptExecutionContext& context, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
     : ActiveDOMObject(&context)
     , m_expiration(std::numeric_limits<double>::quiet_NaN())
-    , m_keyStatuses(MediaKeyStatusMap::create())
+    , m_keyStatuses(MediaKeyStatusMap::create(*this))
     , m_useDistinctiveIdentifier(useDistinctiveIdentifier)
     , m_sessionType(sessionType)
     , m_implementation(WTFMove(implementation))
@@ -84,7 +84,10 @@ MediaKeySession::MediaKeySession(ScriptExecutionContext& context, MediaKeySessio
     UNUSED_PARAM(m_uninitialized);
 }
 
-MediaKeySession::~MediaKeySession() = default;
+MediaKeySession::~MediaKeySession()
+{
+    m_keyStatuses->detachSession();
+}
 
 const String& MediaKeySession::sessionId() const
 {
@@ -270,7 +273,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
         // 6.5. Let session closed be false.
         // 6.6. Let cdm be the CDM instance represented by this object's cdm instance value.
         // 6.7. Use the cdm to execute the following steps:
-        m_instance->updateLicense(m_sessionType, *sanitizedResponse, [this, weakThis = m_weakPtrFactory.createWeakPtr(), promise = WTFMove(promise)] (bool sessionWasClosed, std::optional<CDMInstance::KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<CDMInstance::Message>&& message, CDMInstance::SuccessValue succeeded) mutable {
+        m_instance->updateLicense(m_sessionId, m_sessionType, *sanitizedResponse, [this, weakThis = m_weakPtrFactory.createWeakPtr(), promise = WTFMove(promise)] (bool sessionWasClosed, std::optional<CDMInstance::KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<CDMInstance::Message>&& message, CDMInstance::SuccessValue succeeded) mutable {
             if (!weakThis)
                 return;
 
@@ -481,9 +484,49 @@ void MediaKeySession::enqueueMessage(MediaKeyMessageType messageType, const Shar
     m_eventQueue.enqueueEvent(WTFMove(messageEvent));
 }
 
-void MediaKeySession::updateKeyStatuses(CDMInstance::KeyStatusVector&&)
+void MediaKeySession::updateKeyStatuses(CDMInstance::KeyStatusVector&& inputStatuses)
 {
-    notImplemented();
+    // https://w3c.github.io/encrypted-media/#update-key-statuses
+    // W3C Editor's Draft 09 November 2016
+
+    // 1. Let the session be the associated MediaKeySession object.
+    // 2. Let the input statuses be the sequence of pairs key ID and associated MediaKeyStatus pairs.
+    // 3. Let the statuses be session's keyStatuses attribute.
+    // 4. Run the following steps to replace the contents of statuses:
+    //   4.1. Empty statuses.
+    //   4.2. For each pair in input statuses.
+    //     4.2.1. Let pair be the pair.
+    //     4.2.2. Insert an entry for pair's key ID into statuses with the value of pair's MediaKeyStatus value.
+
+    static auto toMediaKeyStatus = [] (CDMInstance::KeyStatus status) -> MediaKeyStatus {
+        switch (status) {
+        case CDMInstance::KeyStatus::Usable:
+            return MediaKeyStatus::Usable;
+        case CDMInstance::KeyStatus::Expired:
+            return MediaKeyStatus::Expired;
+        case CDMInstance::KeyStatus::Released:
+            return MediaKeyStatus::Released;
+        case CDMInstance::KeyStatus::OutputRestricted:
+            return MediaKeyStatus::OutputRestricted;
+        case CDMInstance::KeyStatus::OutputDownscaled:
+            return MediaKeyStatus::OutputDownscaled;
+        case CDMInstance::KeyStatus::StatusPending:
+            return MediaKeyStatus::StatusPending;
+        case CDMInstance::KeyStatus::InternalError:
+            return MediaKeyStatus::InternalError;
+        };
+    };
+
+    m_statuses.clear();
+    m_statuses.reserveCapacity(inputStatuses.size());
+    for (auto& status : inputStatuses)
+        m_statuses.uncheckedAppend({ WTFMove(status.first), toMediaKeyStatus(status.second) });
+
+    // 5. Queue a task to fire a simple event named keystatuseschange at the session.
+    m_eventQueue.enqueueEvent(Event::create(eventNames().keystatuseschangeEvent, false, false));
+
+    // 6. Queue a task to run the Attempt to Resume Playback If Necessary algorithm on each of the media element(s) whose mediaKeys attribute is the MediaKeys object that created the session.
+    // FIXME: Implement.
 }
 
 void MediaKeySession::updateExpiration(double)

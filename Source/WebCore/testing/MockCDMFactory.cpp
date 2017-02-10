@@ -81,6 +81,14 @@ Vector<Ref<SharedBuffer>> MockCDMFactory::removeKeysFromSessionWithID(const Stri
     return WTFMove(it->value);
 }
 
+std::optional<const Vector<Ref<SharedBuffer>>&> MockCDMFactory::keysForSessionWithID(const String& id) const
+{
+    auto it = m_sessions.find(id);
+    if (it == m_sessions.end())
+        return std::nullopt;
+    return it->value;
+}
+
 void MockCDMFactory::setSupportedDataTypes(Vector<String>&& types)
 {
     m_supportedDataTypes.clear();
@@ -276,7 +284,7 @@ void MockCDMInstance::requestLicense(LicenseType licenseType, const AtomicString
     callback(SharedBuffer::create(license.data(), license.length()), sessionID, false, SuccessValue::Succeeded);
 }
 
-void MockCDMInstance::updateLicense(LicenseType, const SharedBuffer& response, LicenseUpdateCallback callback)
+void MockCDMInstance::updateLicense(const String& sessionID, LicenseType, const SharedBuffer& response, LicenseUpdateCallback callback)
 {
     MockCDMFactory* factory = m_cdm ? m_cdm->factory() : nullptr;
     if (!factory) {
@@ -292,10 +300,23 @@ void MockCDMInstance::updateLicense(LicenseType, const SharedBuffer& response, L
         return;
     }
 
-    // FIXME: Session closure, key status, expiration and message handling should be implemented
+    std::optional<KeyStatusVector> changedKeys;
+    if (responseVector.contains(String(ASCIILiteral("keys-changed")))) {
+        std::optional<const Vector<Ref<SharedBuffer>>&> keys = factory->keysForSessionWithID(sessionID);
+        if (keys) {
+            KeyStatusVector keyStatusVector;
+            keyStatusVector.reserveInitialCapacity(keys->size());
+            for (auto& key : *keys)
+                keyStatusVector.uncheckedAppend({ key.copyRef(), KeyStatus::Usable });
+
+            changedKeys = WTFMove(keyStatusVector);
+        }
+    }
+
+    // FIXME: Session closure, expiration and message handling should be implemented
     // once the relevant algorithms are supported.
 
-    callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Succeeded);
+    callback(false, WTFMove(changedKeys), std::nullopt, std::nullopt, SuccessValue::Succeeded);
 }
 
 void MockCDMInstance::closeSession(const String& sessionID, CloseSessionCallback callback)
