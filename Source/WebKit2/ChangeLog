@@ -1,5 +1,27 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211736. rdar://problem/30229358
+
+    2017-02-06  Anders Carlsson  <andersca@apple.com>
+
+            Null check the WebKit::RemoteObjectProxy object before calling it
+            https://bugs.webkit.org/show_bug.cgi?id=167891
+            rdar://problem/30229358
+
+            Reviewed by Tim Horton.
+
+            If a _WKRemoteObjectRegistry invocation reply block outlives its underlying WebKit::RemoteObjectProxy object,
+            we'll crash trying to send an unused reply to it. Work around this crash by adding a null check before calling
+            sendUnusedReply.
+
+            While this fixes the crash it will lead to leaks in the process that holds on to the reply block. A more long term fix
+            would be to manage the reply block checkers and call sendUnusedReply when invalidating the _WKRemoteObjectRegistry.
+
+            * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+            (-[_WKRemoteObjectRegistry _invokeMethod:]):
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211655. rdar://problem/30344753
 
     2017-02-03  Anders Carlsson  <andersca@apple.com>
