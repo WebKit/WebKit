@@ -18,7 +18,7 @@ testImageRendering('crisp-edges', 'crisp-edges');
 testImageRendering('pixelated', 'pixelated');
 testImageRendering('-webkit-crisp-edges', 'crisp-edges');
 testImageRendering('-webkit-optimize-contrast', 'crisp-edges');
-testImageRendering('optimizespeed', 'optimizespeed');
-testImageRendering('optimizequality', 'optimizequality');
+testImageRendering('optimizeSpeed', 'optimizeSpeed');
+testImageRendering('optimizeQuality', 'optimizeQuality');
 
 successfullyParsed = true;

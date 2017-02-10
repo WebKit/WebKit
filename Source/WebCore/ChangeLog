@@ -1,5 +1,43 @@
 2017-02-10  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212131. rdar://problem/30271744
+
+    2017-02-10  Dave Hyatt  <hyatt@apple.com>
+
+            [CSS Parser] Make intercap property values serialize correctly
+            https://bugs.webkit.org/show_bug.cgi?id=168073
+
+            Reviewed by Zalan Bujtas.
+
+            Fix CSS value keywords to preserve case when the value contains capital
+            letters. Examples include optimizeSpeed, translateX, scaleY, etc.
+
+            * css/CSSPrimitiveValueMappings.h:
+            (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+            (WebCore::CSSPrimitiveValue::operator EPointerEvents):
+            (WebCore::CSSPrimitiveValue::operator TextRenderingMode):
+            (WebCore::CSSPrimitiveValue::operator EImageRendering):
+            (WebCore::CSSPrimitiveValue::operator EColorInterpolation):
+            (WebCore::CSSPrimitiveValue::operator EColorRendering):
+            (WebCore::CSSPrimitiveValue::operator EShapeRendering):
+            * css/MediaQueryEvaluator.cpp:
+            (WebCore::colorGamutEvaluate):
+            * css/SVGCSSValueKeywords.in:
+            * css/TransformFunctions.cpp:
+            (WebCore::transformOperationType):
+            (WebCore::transformsForValue):
+            * css/makevalues.pl:
+            * css/parser/CSSParserFastPaths.cpp:
+            (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+            (WebCore::parseTransformTranslateArguments):
+            (WebCore::parseSimpleTransformValue):
+            * css/parser/CSSPropertyParser.cpp:
+            (WebCore::consumeTransformValue):
+            * css/parser/CSSPropertyParserHelpers.cpp:
+            (WebCore::CSSPropertyParserHelpers::parseColorFunctionParameters):
+
+2017-02-10  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211910. rdar://problem/30358835
 
     2017-02-08  Chris Dumez  <cdumez@apple.com>

@@ -51,39 +51,39 @@ static TransformOperation::OperationType transformOperationType(CSSValueID type)
     switch (type) {
     case CSSValueScale:
         return TransformOperation::SCALE;
-    case CSSValueScalex:
+    case CSSValueScaleX:
         return TransformOperation::SCALE_X;
-    case CSSValueScaley:
+    case CSSValueScaleY:
         return TransformOperation::SCALE_Y;
-    case CSSValueScalez:
+    case CSSValueScaleZ:
         return TransformOperation::SCALE_Z;
     case CSSValueScale3d:
         return TransformOperation::SCALE_3D;
     case CSSValueTranslate:
         return TransformOperation::TRANSLATE;
-    case CSSValueTranslatex:
+    case CSSValueTranslateX:
         return TransformOperation::TRANSLATE_X;
-    case CSSValueTranslatey:
+    case CSSValueTranslateY:
         return TransformOperation::TRANSLATE_Y;
-    case CSSValueTranslatez:
+    case CSSValueTranslateZ:
         return TransformOperation::TRANSLATE_Z;
     case CSSValueTranslate3d:
         return TransformOperation::TRANSLATE_3D;
     case CSSValueRotate:
         return TransformOperation::ROTATE;
-    case CSSValueRotatex:
+    case CSSValueRotateX:
         return TransformOperation::ROTATE_X;
-    case CSSValueRotatey:
+    case CSSValueRotateY:
         return TransformOperation::ROTATE_Y;
-    case CSSValueRotatez:
+    case CSSValueRotateZ:
         return TransformOperation::ROTATE_Z;
     case CSSValueRotate3d:
         return TransformOperation::ROTATE_3D;
     case CSSValueSkew:
         return TransformOperation::SKEW;
-    case CSSValueSkewx:
+    case CSSValueSkewX:
         return TransformOperation::SKEW_X;
-    case CSSValueSkewy:
+    case CSSValueSkewY:
         return TransformOperation::SKEW_Y;
     case CSSValueMatrix:
         return TransformOperation::MATRIX;
@@ -132,15 +132,15 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
 
         switch (transformValue.name()) {
         case CSSValueScale:
-        case CSSValueScalex:
-        case CSSValueScaley: {
+        case CSSValueScaleX:
+        case CSSValueScaleY: {
             double sx = 1.0;
             double sy = 1.0;
-            if (transformValue.name() == CSSValueScaley)
+            if (transformValue.name() == CSSValueScaleY)
                 sy = firstValue.doubleValue();
             else {
                 sx = firstValue.doubleValue();
-                if (transformValue.name() != CSSValueScalex) {
+                if (transformValue.name() != CSSValueScaleX) {
                     if (transformValue.length() > 1) {
                         auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
                         sy = secondValue.doubleValue();
@@ -151,18 +151,18 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             operations.operations().append(ScaleTransformOperation::create(sx, sy, 1.0, transformOperationType(transformValue.name())));
             break;
         }
-        case CSSValueScalez:
+        case CSSValueScaleZ:
         case CSSValueScale3d: {
             double sx = 1.0;
             double sy = 1.0;
             double sz = 1.0;
-            if (transformValue.name() == CSSValueScalez)
+            if (transformValue.name() == CSSValueScaleZ)
                 sz = firstValue.doubleValue();
-            else if (transformValue.name() == CSSValueScaley)
+            else if (transformValue.name() == CSSValueScaleY)
                 sy = firstValue.doubleValue();
             else {
                 sx = firstValue.doubleValue();
-                if (transformValue.name() != CSSValueScalex) {
+                if (transformValue.name() != CSSValueScaleX) {
                     if (transformValue.length() > 2) {
                         auto& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
                         sz = thirdValue.doubleValue();
@@ -178,15 +178,15 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             break;
         }
         case CSSValueTranslate:
-        case CSSValueTranslatex:
-        case CSSValueTranslatey: {
+        case CSSValueTranslateX:
+        case CSSValueTranslateY: {
             Length tx = Length(0, Fixed);
             Length ty = Length(0, Fixed);
-            if (transformValue.name() == CSSValueTranslatey)
+            if (transformValue.name() == CSSValueTranslateY)
                 ty = convertToFloatLength(&firstValue, conversionData);
             else {
                 tx = convertToFloatLength(&firstValue, conversionData);
-                if (transformValue.name() != CSSValueTranslatex) {
+                if (transformValue.name() != CSSValueTranslateX) {
                     if (transformValue.length() > 1) {
                         auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
                         ty = convertToFloatLength(&secondValue, conversionData);
@@ -200,18 +200,18 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             operations.operations().append(TranslateTransformOperation::create(tx, ty, Length(0, Fixed), transformOperationType(transformValue.name())));
             break;
         }
-        case CSSValueTranslatez:
+        case CSSValueTranslateZ:
         case CSSValueTranslate3d: {
             Length tx = Length(0, Fixed);
             Length ty = Length(0, Fixed);
             Length tz = Length(0, Fixed);
-            if (transformValue.name() == CSSValueTranslatez)
+            if (transformValue.name() == CSSValueTranslateZ)
                 tz = convertToFloatLength(&firstValue, conversionData);
-            else if (transformValue.name() == CSSValueTranslatey)
+            else if (transformValue.name() == CSSValueTranslateY)
                 ty = convertToFloatLength(&firstValue, conversionData);
             else {
                 tx = convertToFloatLength(&firstValue, conversionData);
-                if (transformValue.name() != CSSValueTranslatex) {
+                if (transformValue.name() != CSSValueTranslateX) {
                     if (transformValue.length() > 2) {
                         auto& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
                         tz = convertToFloatLength(&thirdValue, conversionData);
@@ -234,17 +234,17 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             operations.operations().append(RotateTransformOperation::create(0, 0, 1, angle, transformOperationType(transformValue.name())));
             break;
         }
-        case CSSValueRotatex:
-        case CSSValueRotatey:
-        case CSSValueRotatez: {
+        case CSSValueRotateX:
+        case CSSValueRotateY:
+        case CSSValueRotateZ: {
             double x = 0;
             double y = 0;
             double z = 0;
             double angle = firstValue.computeDegrees();
 
-            if (transformValue.name() == CSSValueRotatex)
+            if (transformValue.name() == CSSValueRotateX)
                 x = 1;
-            else if (transformValue.name() == CSSValueRotatey)
+            else if (transformValue.name() == CSSValueRotateY)
                 y = 1;
             else
                 z = 1;
@@ -265,12 +265,12 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             break;
         }
         case CSSValueSkew:
-        case CSSValueSkewx:
-        case CSSValueSkewy: {
+        case CSSValueSkewX:
+        case CSSValueSkewY: {
             double angleX = 0;
             double angleY = 0;
             double angle = firstValue.computeDegrees();
-            if (transformValue.name() == CSSValueSkewy)
+            if (transformValue.name() == CSSValueSkewY)
                 angleY = angle;
             else {
                 angleX = angle;

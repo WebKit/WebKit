@@ -1,5 +1,28 @@
 2017-02-10  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212131. rdar://problem/30271744
+
+    2017-02-10  Dave Hyatt  <hyatt@apple.com>
+
+            [CSS Parser] Make intercap property values serialize correctly
+            https://bugs.webkit.org/show_bug.cgi?id=168073
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/css/getComputedStyle/computed-style-expected.txt:
+            * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+            * fast/css/image-rendering-parsing-expected.txt:
+            * fast/css/parsing-text-rendering-expected.txt:
+            * fast/css/resources/parsing-text-rendering.js:
+            * fast/css/script-tests/image-rendering-parsing.js:
+            * svg/css/getComputedStyle-basic-expected.txt:
+            * svg/css/script-tests/shape-rendering-parsing.js:
+            * svg/css/shape-rendering-parsing-expected.txt:
+            * transforms/2d/transform-value-types-expected.txt:
+            * transforms/2d/transform-value-types.html:
+
+2017-02-10  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211910. rdar://problem/30358835
 
     2017-02-08  Chris Dumez  <cdumez@apple.com>

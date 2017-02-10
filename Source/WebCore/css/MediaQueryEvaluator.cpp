@@ -256,7 +256,7 @@ static bool colorGamutEvaluate(CSSValue* value, const CSSToLengthConversionData&
         return true;
 
     switch (downcast<CSSPrimitiveValue>(*value).valueID()) {
-    case CSSValueSrgb:
+    case CSSValueSRGB:
         return true;
     case CSSValueP3:
         // FIXME: For the moment we just assume any "extended color" display is at least as good as P3.
