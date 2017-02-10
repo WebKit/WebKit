@@ -99,6 +99,8 @@ public:
     WEBCORE_EXPORT static void registerURLSchemeAsCachePartitioned(const String& scheme);
     static bool shouldPartitionCacheForURLScheme(const String& scheme);
 #endif
+
+    static bool isUserExtensionScheme(const String& scheme);
 };
 
 } // namespace WebCore

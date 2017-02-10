@@ -503,4 +503,6 @@ enum EventThrottlingBehavior {
     [Conditional=POINTER_LOCK] boolean pageHasPointerLock();
 
     sequence<DOMString> accessKeyModifiers();
+
+    [CallWith=Document] void setAsRunningUserScripts();
 };

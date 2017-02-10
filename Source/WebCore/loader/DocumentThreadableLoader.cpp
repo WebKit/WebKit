@@ -110,6 +110,11 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     if (m_async && m_options.mode == FetchOptions::Mode::Cors)
         m_originalHeaders = request.httpHeaderFields();
 
+    if (document.page() && document.page()->isRunningUserScripts() && SchemeRegistry::isUserExtensionScheme(request.url().protocol().toStringWithoutCopying())) {
+        m_options.mode = FetchOptions::Mode::NoCors;
+        m_options.filteringPolicy = ResponseFilteringPolicy::Disable;
+    }
+
     // As per step 11 of https://fetch.spec.whatwg.org/#main-fetch, data scheme (if same-origin data-URL flag is set) and about scheme are considered same-origin.
     if (request.url().protocolIsData())
         m_sameOriginRequest = options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set;

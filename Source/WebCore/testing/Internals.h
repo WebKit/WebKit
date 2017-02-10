@@ -530,6 +530,8 @@ public:
 
     Vector<String> accessKeyModifiers() const;
 
+    void setAsRunningUserScripts(Document&);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;
