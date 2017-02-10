@@ -1,5 +1,15 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212020. rdar://problem/29939864
+
+    2017-02-09  Keith Miller  <keith_miller@apple.com>
+
+            Unreviewed, fix test for new .caller with native code caller semantics.
+
+            * js/dom/function-dot-arguments-and-caller.html:
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212015. rdar://problem/30054759
 
     2017-02-09  Mark Lam  <mark.lam@apple.com>

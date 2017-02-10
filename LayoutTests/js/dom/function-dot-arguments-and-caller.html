@@ -80,7 +80,7 @@ eval('(function () { }).arguments instanceof Object ? "FAIL" : "PASS"'),
 eval('(function f() { return f.caller instanceof Object ? "FAIL" : "PASS"; })()'),
 
 (function f() {
-    return String({ toString: function g() { return g.caller instanceof Object ? "PASS" : "FAIL"; } });
+    return String({ toString: function g() { return g.caller instanceof Object ? "FAIL" : "PASS"; } });
 })(),
 
 (function f() {
