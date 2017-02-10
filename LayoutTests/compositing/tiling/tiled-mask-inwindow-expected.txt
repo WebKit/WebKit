@@ -1,0 +1,99 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (tile cache coverage 0, 0 800 x 600)
+      (tile size 800 x 600)
+      (top left tile 0, 0 tiles grid 1 x 1)
+      (in window 1)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 404.00 304.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (bounds 400.00 300.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 2802.00 302.00)
+                  (usingTiledLayer 1)
+                  (contentsOpaque 1)
+                  (drawsContent 1)
+                  (mask layer)
+                    (GraphicsLayer
+                      (bounds 2802.00 302.00)
+                      (usingTiledLayer 1)
+                      (drawsContent 1)
+                      (tile cache coverage 0, 0 512 x 302)
+                      (tile size 512 x 512)
+                      (top left tile 0, 0 tiles grid 1 x 1)
+                      (in window 1)
+                    )
+                  (tile cache coverage 0, 0 512 x 302)
+                  (tile size 512 x 512)
+                  (top left tile 0, 0 tiles grid 1 x 1)
+                  (in window 1)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 1101.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 1101.00)
+      (contentsOpaque 1)
+      (tile cache coverage 0, 0 785 x 600)
+      (tile size 800 x 600)
+      (top left tile 0, 0 tiles grid 1 x 1)
+      (in window 0)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 404.00 304.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (bounds 400.00 300.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 2802.00 302.00)
+                  (usingTiledLayer 1)
+                  (contentsOpaque 1)
+                  (drawsContent 1)
+                  (mask layer)
+                    (GraphicsLayer
+                      (bounds 2802.00 302.00)
+                      (usingTiledLayer 1)
+                      (drawsContent 1)
+                      (tile cache coverage 0, 0 512 x 302)
+                      (tile size 512 x 512)
+                      (top left tile 0, 0 tiles grid 1 x 1)
+                      (in window 0)
+                    )
+                  (tile cache coverage 0, 0 512 x 302)
+                  (tile size 512 x 512)
+                  (top left tile 0, 0 tiles grid 1 x 1)
+                  (in window 0)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

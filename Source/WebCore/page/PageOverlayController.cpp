@@ -103,7 +103,9 @@ GraphicsLayer& PageOverlayController::layerWithDocumentOverlays()
             continue;
 
         GraphicsLayer& layer = *overlayAndLayer.value;
-        layer.setIsInWindowIncludingDescendants(inWindow);
+        GraphicsLayer::traverse(layer, [inWindow](GraphicsLayer& layer) {
+            layer.setIsInWindow(inWindow);
+        });
         updateOverlayGeometry(overlay, layer);
         
         if (!layer.parent())
@@ -125,7 +127,9 @@ GraphicsLayer& PageOverlayController::layerWithViewOverlays()
             continue;
 
         GraphicsLayer& layer = *overlayAndLayer.value;
-        layer.setIsInWindowIncludingDescendants(inWindow);
+        GraphicsLayer::traverse(layer, [inWindow](GraphicsLayer& layer) {
+            layer.setIsInWindow(inWindow);
+        });
         updateOverlayGeometry(overlay, layer);
         
         if (!layer.parent())

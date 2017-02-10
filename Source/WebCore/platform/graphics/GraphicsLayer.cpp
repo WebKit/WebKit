@@ -363,13 +363,10 @@ void GraphicsLayer::noteDeviceOrPageScaleFactorChangedIncludingDescendants()
         childLayers[i]->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
-void GraphicsLayer::setIsInWindowIncludingDescendants(bool inWindow)
+void GraphicsLayer::setIsInWindow(bool inWindow)
 {
     if (TiledBacking* tiledBacking = this->tiledBacking())
         tiledBacking->setIsInWindow(inWindow);
-
-    for (auto* childLayer : children())
-        childLayer->setIsInWindowIncludingDescendants(inWindow);
 }
 
 void GraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
@@ -378,7 +375,7 @@ void GraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
         return;
 
     if (m_replicaLayer)
-        m_replicaLayer->setReplicatedLayer(0);
+        m_replicaLayer->setReplicatedLayer(nullptr);
 
     if (layer)
         layer->setReplicatedLayer(this);
@@ -666,6 +663,20 @@ void GraphicsLayer::addRepaintRect(const FloatRect& repaintRect)
         Vector<FloatRect>& repaintRects = repaintIt->value;
         repaintRects.append(largestRepaintRect);
     }
+}
+
+void GraphicsLayer::traverse(GraphicsLayer& layer, std::function<void (GraphicsLayer&)> traversalFunc)
+{
+    traversalFunc(layer);
+
+    for (auto* childLayer : layer.children())
+        traverse(*childLayer, traversalFunc);
+
+    if (auto* replicaLayer = layer.replicaLayer())
+        traverse(*replicaLayer, traversalFunc);
+
+    if (auto* maskLayer = layer.maskLayer())
+        traverse(*maskLayer, traversalFunc);
 }
 
 void GraphicsLayer::dumpLayer(TextStream& ts, int indent, LayerTreeAsTextBehavior behavior) const

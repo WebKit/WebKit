@@ -1,3 +1,19 @@
+2017-02-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Make sure the "inwindow" flag propagates to TiledBackings for masks and reflections
+        https://bugs.webkit.org/show_bug.cgi?id=168127
+        rdar://problem/30467120
+
+        Reviewed by Tim Horton.
+
+        Reparent the web view before we try to fetch it via:
+            [[[window contentView] subviews] objectAtIndex:0];
+        which would throw an exception if the test unparented it.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+        (runTest):
+
 2017-02-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Resource Timing] Enable Resource Timing by default in Tests
