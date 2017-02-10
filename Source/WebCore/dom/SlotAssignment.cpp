@@ -133,13 +133,15 @@ void SlotAssignment::didChangeSlot(const AtomicString& slotAttrValue, ShadowRoot
     auto it = m_slots.find(slotName);
     if (it == m_slots.end())
         return;
+    
+    it->value->assignedNodes.clear();
+    m_slotAssignmentsIsValid = false;
 
     HTMLSlotElement* slotElement = findFirstSlotElement(*it->value, shadowRoot);
     if (!slotElement)
         return;
 
     shadowRoot.host()->invalidateStyleAndRenderersForSubtree();
-    m_slotAssignmentsIsValid = false;
 
     if (shadowRoot.mode() == ShadowRootMode::UserAgent)
         return;

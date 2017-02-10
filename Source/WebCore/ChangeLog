@@ -1,3 +1,18 @@
+2017-02-09  Antti Koivisto  <antti@apple.com>
+
+        Details element doesn't work correctly when mutating content between closing and opening
+        https://bugs.webkit.org/show_bug.cgi?id=167310
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests: fast/html/details-close-modify-open.html
+               fast/shadow-dom/slot-remove-mutate-add.html
+
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::didChangeSlot):
+
+            Always reset the slot assignment when content is mutated.
+
 2017-02-09  Chris Dumez  <cdumez@apple.com>
 
         Crash under FormSubmission::create()
