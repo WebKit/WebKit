@@ -1,5 +1,22 @@
 2017-02-10  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212026. rdar://problem/30096323
+
+    2017-02-09  Chris Dumez  <cdumez@apple.com>
+
+            Crash under FormSubmission::create()
+            https://bugs.webkit.org/show_bug.cgi?id=167200
+            <rdar://problem/30096323>
+
+            Reviewed by Darin Adler.
+
+            Add layout test coverage.
+
+            * fast/forms/formsubmission-appendFormData-crash-expected.txt: Added.
+            * fast/forms/formsubmission-appendFormData-crash.html: Added.
+
+2017-02-10  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211495. rdar://problem/30106362
 
     2017-02-01  Jer Noble  <jer.noble@apple.com>

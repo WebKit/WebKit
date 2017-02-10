@@ -1,5 +1,39 @@
 2017-02-10  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212026. rdar://problem/30096323
+
+    2017-02-09  Chris Dumez  <cdumez@apple.com>
+
+            Crash under FormSubmission::create()
+            https://bugs.webkit.org/show_bug.cgi?id=167200
+            <rdar://problem/30096323>
+
+            Reviewed by Darin Adler.
+
+            The issue is that FormSubmission::create() was iterating over
+            form.associatedElements() as was calling Element::appendFormData()
+            in the loop. HTMLObjectElement::appendFormData() was calling
+            pluginWidget(PluginLoadingPolicy::Load) which causes a synchronous
+            layout and can fire events (such as focus event) synchronously.
+            Firing those events synchronously allows the JS to modify the
+            form.associatedElements() vector we are currently iterating on.
+
+            To avoid this issue, we now call pluginWidget(PluginLoadingPolicy::DoNotLoad)
+            in HTMLObjectElement::appendFormData() as we are not allowed to fire
+            synchronous events at this point. I also added a security assertion
+            in FormSubmission::create() to catch cases where we fire JS events
+            while iterating over the form associated elements to more easily
+            notice these things in the future.
+
+            Test: fast/forms/formsubmission-appendFormData-crash.html
+
+            * html/HTMLObjectElement.cpp:
+            (WebCore::HTMLObjectElement::appendFormData):
+            * loader/FormSubmission.cpp:
+            (WebCore::FormSubmission::create):
+
+2017-02-10  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211495. rdar://problem/30106362
 
     2017-02-01  Jer Noble  <jer.noble@apple.com>
