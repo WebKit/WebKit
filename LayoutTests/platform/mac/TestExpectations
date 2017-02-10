@@ -1445,8 +1445,6 @@ webkit.org/b/116621 fast/replaced/preferred-widths.html [ Pass Failure ]
 
 webkit.org/b/164277 fast/preloader/image-srcset.html [ Pass Failure ]
 
-webkit.org/b/161650 http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Pass Failure ]
-
 webkit.org/b/166038 http/tests/inspector/network/fetch-network-data.html [ Pass Timeout ]
 webkit.org/b/164033 http/tests/inspector/network/xhr-request-data-encoded-correctly.html [ Pass Timeout ]
 

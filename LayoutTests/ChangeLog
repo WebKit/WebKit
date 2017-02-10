@@ -1,3 +1,16 @@
+2017-02-09  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: LayoutTest http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=161650
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make sure we clear the memory cache before trigerring new loads as this
+        test is meant to cover the disk cache.
+
+        * http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html:
+        * platform/mac/TestExpectations:
+
 2017-02-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark inspector/model/remote-object-weak-collection.html as a flaky timeout.
