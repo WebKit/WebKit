@@ -39,6 +39,8 @@
     }
     function eventDeltaExpectedThenNextStep(e) {
       testPassed("event type: " + e.type + ", movementX: " + e.movementX + ", movementY: " + e.movementY + ", target: " + e.target.id + ", received on: " + e.currentTarget.id);
+    function eventExpectedThenNextStep(e) {
+      testPassed("event type: " + e.type + ", target: " + e.target.id + ", received on: " + e.currentTarget.id);
       doNextStep();
     }
 
@@ -49,13 +51,23 @@
             // doNextStep() called by onpointerlockchange handler.
         },
         function () {
-        function () {
             debug("     With a lock in place move the mouse.")
             targetdiv1.onmousemove = eventDeltaExpectedThenNextStep;
             targetdiv2.onmousemove = eventNotExpected;
             document.body.onmousemove = eventDeltaExpected;
             if (window.eventSender) {
                 window.eventSender.mouseMoveTo(45,50);
+            }
+        },
+        function () {
+            debug("     With a lock in place send a wheel event.")
+            targetdiv1.onwheel = eventExpectedThenNextStep;
+            targetdiv2.onwheel = eventNotExpected;
+            document.body.onwheel = eventExpected;
+            if (window.eventSender) {
+                window.eventSender.mouseMoveTo(20,20);
+                window.eventSender.leapForward(1000);
+                window.eventSender.mouseScrollBy(0,10);
             }
         },
         function () {
@@ -78,6 +90,17 @@
             targetdiv2.requestPointerLock();
             expectedTargetToBeLockedString = "targetdiv2";
             // doNextStep() called by onpointerlockchange handler.
+        },
+        function () {
+            debug("     With a lock in place send a wheel event.")
+            targetdiv1.onwheel = eventNotExpected;
+            targetdiv2.onwheel = eventExpected;
+            document.body.onwheel = eventExpected;
+            if (window.eventSender) {
+                window.eventSender.leapForward(1000);
+                window.eventSender.mouseScrollBy(0,10);
+            }
+            doNextStep();
         },
         function () {
             debug("     With a lock in place send a click.")
