@@ -212,7 +212,7 @@ linearRGB
 // CSS_PROP_SHAPE_RENDERING
 //auto
 //optimizeSpeed
-crispEdges
+crispedges
 //geometricPrecision
 
 // CSS_PROP_STROKE

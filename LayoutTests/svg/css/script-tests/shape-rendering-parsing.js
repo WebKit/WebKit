@@ -14,10 +14,10 @@ group.setAttribute("shape-rendering", "crispedges");
 shouldBeEqualToString("document.defaultView.getComputedStyle(group, null).shapeRendering", "crispedges");
 
 group.setAttribute("shape-rendering", "optimizeSpeed");
-shouldBeEqualToString("document.defaultView.getComputedStyle(group, null).shapeRendering", "optimizespeed");
+shouldBeEqualToString("document.defaultView.getComputedStyle(group, null).shapeRendering", "optimizeSpeed");
 
 group.setAttribute("shape-rendering", "geometricPrecision");
-shouldBeEqualToString("document.defaultView.getComputedStyle(group, null).shapeRendering", "geometricprecision");
+shouldBeEqualToString("document.defaultView.getComputedStyle(group, null).shapeRendering", "geometricPrecision");
 
 var successfullyParsed = true;
 

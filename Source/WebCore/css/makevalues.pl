@@ -40,6 +40,8 @@ my %namesHash;
 my @duplicates = ();
 
 my @names = ();
+my @lower_names = ();
+
 foreach (@NAMES) {
   next if (m/(^\s*$)/);
   next if (/^#/);
@@ -47,13 +49,13 @@ foreach (@NAMES) {
   # Input may use a different EOL sequence than $/, so avoid chomp.
   $_ =~ s/[\r\n]+$//g;
   # CSS values need to be lower case.
-  $_ = lc $_;
   if (exists $namesHash{$_}) {
     push @duplicates, $_;
   } else {
     $namesHash{$_} = 1;
   }
   push @names, $_;
+  push @lower_names, lc $_;
 }
 
 if (@duplicates > 0) {
@@ -92,10 +94,10 @@ struct Value;
 %%
 EOF
 
-foreach my $name (@names) {
-  my $id = $name;
+for my $i (0 .. $#names) {
+  my $id = $names[$i];
   $id =~ s/(^[^-])|-(.)/uc($1||$2)/ge;
-  print GPERF $name . ", CSSValue" . $id . "\n";
+  print GPERF $lower_names[$i] . ", CSSValue" . $id . "\n";
 }
 
 print GPERF << "EOF";
