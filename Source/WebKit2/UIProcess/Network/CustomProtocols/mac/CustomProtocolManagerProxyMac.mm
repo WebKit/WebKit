@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +49,7 @@ using namespace WebKit;
     NSURLConnection *_urlConnection;
 }
 - (id)initWithCustomProtocolManagerProxy:(CustomProtocolManagerProxy*)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request connection:(Connection *)connection;
+- (void)customProtocolManagerProxyDestroyed;
 @end
 
 @implementation WKCustomProtocolLoader
@@ -82,6 +83,13 @@ using namespace WebKit;
     [_urlConnection cancel];
     [_urlConnection release];
     [super dealloc];
+}
+
+- (void)customProtocolManagerProxyDestroyed
+{
+    ASSERT(_customProtocolManagerProxy);
+    _customProtocolManagerProxy = nullptr;
+    [_urlConnection cancel];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -139,6 +147,8 @@ CustomProtocolManagerProxy::CustomProtocolManagerProxy(ChildProcessProxy* childP
 
 CustomProtocolManagerProxy::~CustomProtocolManagerProxy()
 {
+    for (auto& loader : m_loaderMap)
+        [loader.value customProtocolManagerProxyDestroyed];
     m_childProcessProxy->removeMessageReceiver(Messages::CustomProtocolManagerProxy::messageReceiverName());
 }
 

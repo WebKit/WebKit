@@ -1,5 +1,32 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211915. rdar://problem/27607520
+
+    2017-02-08  Andy Estes  <aestes@apple.com>
+
+            Custom protocols should not continue loading after a network process crash
+            https://bugs.webkit.org/show_bug.cgi?id=168028
+            <rdar://problem/27607520>
+
+            Reviewed by Brady Eidson.
+
+            WKCustomProtocolLoaders are meant to be owned by CustomProtocolManagerProxy and have their
+            loads cancelled when CustomProtocolManagerProxy is destroyed. However, WKCustomProtocolLoader
+            creates a NSURLConnection for which it is the client, so NSURLConnection retains it for the
+            duration of the load.
+
+            These loaders should be explicitly cancelled when their CustomProtocolManagerProxy is destroyed.
+
+            New API test: WebKit2CustomProtocolsTest.CloseDuringCustomProtocolLoad
+
+            * UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm:
+            (-[WKCustomProtocolLoader customProtocolManagerProxyDestroyed]): Added. Cancels the
+            _urlConnection and sets _customProtocolManagerProxy to nullptr.
+            (WebKit::CustomProtocolManagerProxy::~CustomProtocolManagerProxy):
+            Called -customProtocolManagerProxyDestroyed on every loader in m_loaderMap.
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211893. rdar://problem/30423806
 
     2017-02-08  Jer Noble  <jer.noble@apple.com>
