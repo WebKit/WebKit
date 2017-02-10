@@ -200,6 +200,11 @@ void Event::setTarget(RefPtr<EventTarget>&& target)
         receivedTarget();
 }
 
+void Event::setCurrentTarget(EventTarget* currentTarget)
+{
+    m_currentTarget = currentTarget;
+}
+
 Vector<EventTarget*> Event::composedPath() const
 {
     if (!m_eventPath)

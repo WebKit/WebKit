@@ -1,5 +1,27 @@
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212029. rdar://problem/30376972
+
+    2017-02-09  Chris Dumez  <cdumez@apple.com>
+
+            Make sure Event keeps its current target element alive
+            https://bugs.webkit.org/show_bug.cgi?id=167885
+            <rdar://problem/30376972>
+
+            Reviewed by Brent Fulgham.
+
+            Make sure Event keeps its current target element alive to avoid
+            crashes if it is accessed by JS after it has been garbage collected.
+
+            Test: fast/events/currentTarget-gc-crash.html
+
+            * dom/Event.cpp:
+            (WebCore::Event::setCurrentTarget):
+            * dom/Event.h:
+            (WebCore::Event::currentTarget):
+
+2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212028. rdar://problem/30234133
 
     2017-02-09  Ryosuke Niwa  <rniwa@webkit.org>
