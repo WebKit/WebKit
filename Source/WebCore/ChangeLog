@@ -1,3 +1,53 @@
+2017-02-09  Chris Dumez  <cdumez@apple.com>
+
+        Crash under HTMLFormElement::registerFormElement()
+        https://bugs.webkit.org/show_bug.cgi?id=167162
+
+        Reviewed by Ryosuke Niwa.
+
+        didMoveToNewDocument() was re-registering FormAttributeTargetObserver
+        even if the element's inDocument was not set yet. As a result, it was
+        possible for FormAssociatedElement::resetFormOwner() to be called
+        when the element was in the tree but with its inDocument still being
+        false (because insertedInto() has not been called yet). This could
+        end up calling HTMLFormElement::registerFormElement() even though
+        the element is still recognized as detached. This is an issue because
+        HTMLFormElement::m_associatedElements's order and its corresponding
+        indexes (m_associatedElementsBeforeIndex / m_associatedElementsAfterIndex)
+        rely on the position of the element with regards to the form element
+        (before / inside / after).
+
+        To address the issue, we now only register the FormAttributeTargetObserver
+        in didMoveToNewDocument() if the inDocument flag is set to true. This
+        is similar to what is done at other call sites of
+        resetFormAttributeTargetObserver(). We also ignore the form content
+        attribute in HTMLFormElement::formElementIndex() if the element is
+        not connected.
+
+        As per the HTML specification [1], the form content attribute is only
+        taken if the element is connected (i.e. inDocument flag is true).
+
+        Note that FormAssociatedElement::findAssociatedForm() was already
+        ignoring the form content attribute if the element is disconnected.
+
+        [1] https://html.spec.whatwg.org/#reset-the-form-owner (step 3)
+
+        Test: fast/forms/registerFormElement-crash.html
+
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::didMoveToNewDocument):
+        Only call resetFormAttributeTargetObserver() if inDocument flag is set,
+        similarly to what is done at other call sites.
+
+        (WebCore::FormAssociatedElement::resetFormAttributeTargetObserver):
+        Add an assertion to make sure no one call this method on an element that
+        is not connected.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formElementIndex):
+        Ignore the form content attribute if the element is not connected, as
+        per the HTML specification [1].
+
 2017-02-09  Antti Koivisto  <antti@apple.com>
 
         Tear down existing renderers when adding a shadow root.
