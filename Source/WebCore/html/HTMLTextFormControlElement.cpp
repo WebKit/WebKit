@@ -295,7 +295,12 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
     if (!hasFocus && innerText) {
         // FIXME: Removing this synchronous layout requires fixing <https://webkit.org/b/128797>
         document().updateLayoutIgnorePendingStylesheets();
-        if (RenderElement* rendererTextControl = renderer()) {
+
+        // Double-check the state of innerTextElement after the layout.
+        innerText = innerTextElement();
+        auto* rendererTextControl = renderer();
+
+        if (innerText && rendererTextControl) {
             if (rendererTextControl->style().visibility() == HIDDEN || !innerText->renderBox()->height()) {
                 cacheSelection(start, end, direction);
                 return;
