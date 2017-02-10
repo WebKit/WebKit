@@ -1326,7 +1326,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
         else if (name == HTMLNames::slotAttr) {
             if (auto* parent = parentElement()) {
                 if (auto* shadowRoot = parent->shadowRoot())
-                    shadowRoot->hostChildElementDidChangeSlotAttribute(oldValue, newValue);
+                    shadowRoot->hostChildElementDidChangeSlotAttribute(*this, oldValue, newValue);
             }
         }
     }

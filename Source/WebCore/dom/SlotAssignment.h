@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RenderTreeUpdater.h"
 #include "ShadowRoot.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -113,12 +114,13 @@ inline void ShadowRoot::hostChildElementDidChange(const Element& childElement)
         m_slotAssignment->hostChildElementDidChange(childElement, *this);
 }
 
-inline void ShadowRoot::hostChildElementDidChangeSlotAttribute(const AtomicString& oldValue, const AtomicString& newValue)
+inline void ShadowRoot::hostChildElementDidChangeSlotAttribute(Element& element, const AtomicString& oldValue, const AtomicString& newValue)
 {
-    if (m_slotAssignment) {
-        m_slotAssignment->didChangeSlot(oldValue, *this);
-        m_slotAssignment->didChangeSlot(newValue, *this);
-    }
+    if (!m_slotAssignment)
+        return;
+    m_slotAssignment->didChangeSlot(oldValue, *this);
+    m_slotAssignment->didChangeSlot(newValue, *this);
+    RenderTreeUpdater::tearDownRenderers(element);
 }
 
 } // namespace WebCore
