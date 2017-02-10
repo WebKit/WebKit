@@ -1,5 +1,14 @@
 2017-02-09  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark inspector/worker/resources-in-worker.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=168091
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2017-02-09  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark inspector/debugger/breakpoint-columns.html as a flaky timeout.
         https://bugs.webkit.org/show_bug.cgi?id=168090
 
