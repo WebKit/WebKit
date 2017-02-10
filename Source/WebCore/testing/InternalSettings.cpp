@@ -94,7 +94,6 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_forcedColorsAreInvertedAccessibilityValue(settings.forcedColorsAreInvertedAccessibilityValue())
     , m_forcedDisplayIsMonochromeAccessibilityValue(settings.forcedDisplayIsMonochromeAccessibilityValue())
     , m_forcedPrefersReducedMotionAccessibilityValue(settings.forcedPrefersReducedMotionAccessibilityValue())
-    , m_resourceTimingEnabled(RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     , m_indexedDBWorkersEnabled(RuntimeEnabledFeatures::sharedFeatures().indexedDBWorkersEnabled())
 #endif
@@ -182,7 +181,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setForcedPrefersReducedMotionAccessibilityValue(m_forcedPrefersReducedMotionAccessibilityValue);
     Settings::setAllowsAnySSLCertificate(false);
 
-    RuntimeEnabledFeatures::sharedFeatures().setResourceTimingEnabled(m_resourceTimingEnabled);
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     RuntimeEnabledFeatures::sharedFeatures().setIndexedDBWorkersEnabled(m_indexedDBWorkersEnabled);
 #endif
@@ -671,11 +669,6 @@ ExceptionOr<void> InternalSettings::setInlineMediaPlaybackRequiresPlaysInlineAtt
         return Exception { INVALID_ACCESS_ERR };
     settings().setInlineMediaPlaybackRequiresPlaysInlineAttribute(requires);
     return { };
-}
-
-void InternalSettings::setResourceTimingEnabled(bool enabled)
-{
-    RuntimeEnabledFeatures::sharedFeatures().setResourceTimingEnabled(enabled);
 }
 
 void InternalSettings::setIndexedDBWorkersEnabled(bool enabled)

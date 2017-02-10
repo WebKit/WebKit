@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <script>
-    if (window.internals)
-        window.internals.settings.setResourceTimingEnabled(true);
     if (window.testRunner) {
         testRunner.dumpAsText()
         testRunner.waitUntilDone();
@@ -16,8 +14,6 @@
             var entries = performance.getEntriesByName(imageURL).length;
             shouldBe(entries.toString(), "1");
 
-            if (window.internals)
-                window.internals.settings.setResourceTimingEnabled(false);
             if (window.testRunner)
                 testRunner.notifyDone();
         }, 0);

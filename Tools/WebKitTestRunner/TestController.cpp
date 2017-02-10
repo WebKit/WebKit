@@ -697,6 +697,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     // FIXME: We should be testing the default.
     WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage);
 
+    WKPreferencesSetResourceTimingEnabled(preferences, true);
+
     WKPreferencesSetMediaPlaybackAllowsInline(preferences, true);
     WKPreferencesSetInlineMediaPlaybackRequiresPlaysInlineAttribute(preferences, false);
 

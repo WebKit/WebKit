@@ -225,3 +225,4 @@
 #define WebKitAttachmentElementEnabledPreferenceKey @"WebKitAttachmentElementEnabled"
 #define WebKitIntersectionObserverEnabledPreferenceKey @"WebKitIntersectionObserverEnabled"
 #define WebKitUserTimingEnabledPreferenceKey @"WebKitUserTimingEnabled"
+#define WebKitResourceTimingEnabledPreferenceKey @"WebKitResourceTimingEnabled"

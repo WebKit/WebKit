@@ -309,6 +309,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitUserTimingEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitResourceTimingEnabledPreferenceKey), kCFBooleanFalse);
+
     CFDictionaryAddValue(defaults, CFSTR(WebKitLinkPreloadEnabledPreferenceKey), kCFBooleanFalse);
 
     defaultSettings = defaults;
@@ -2055,5 +2057,19 @@ HRESULT WebPreferences::userTimingEnabled(_Out_ BOOL* enabled)
     if (!enabled)
         return E_POINTER;
     *enabled = boolValueForKey(WebKitUserTimingEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setResourceTimingEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitResourceTimingEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::resourceTimingEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitResourceTimingEnabledPreferenceKey);
     return S_OK;
 }

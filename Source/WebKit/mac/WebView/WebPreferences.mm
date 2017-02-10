@@ -652,6 +652,7 @@ public:
         @NO, WebKitIntersectionObserverEnabledPreferenceKey,
 #endif
         @NO, WebKitUserTimingEnabledPreferenceKey,
+        @NO, WebKitResourceTimingEnabledPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS)
@@ -2943,6 +2944,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setUserTimingEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitUserTimingEnabledPreferenceKey];
+}
+
+- (BOOL)resourceTimingEnabled
+{
+    return [self _boolValueForKey:WebKitResourceTimingEnabledPreferenceKey];
+}
+
+- (void)setResourceTimingEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitResourceTimingEnabledPreferenceKey];
 }
 
 #if PLATFORM(IOS)

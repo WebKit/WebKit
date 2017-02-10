@@ -3,8 +3,6 @@
 <script src="../../js-test-resources/js-test-pre.js"></script>
 <script>
     window.jsTestIsAsync = true;
-    if (window.internals)
-        window.internals.settings.setResourceTimingEnabled(true);
 </script>
 </head>
 <body>
@@ -26,8 +24,6 @@ window.addEventListener("load", function() {
     var integerMultipleOfResolution = (t1 - t0) / expectedResolutionMilliseconds;
     shouldBeNearZeroOrOne = integerMultipleOfResolution % 1;
     shouldBe("shouldBeNearZeroOrOne < 1e-10 || Math.abs(shouldBeNearZeroOrOne - 1) < 1e-10", "true");
-    if (window.internals)
-        window.internals.settings.setResourceTimingEnabled(false);
     finishJSTest();
 });
 </script>

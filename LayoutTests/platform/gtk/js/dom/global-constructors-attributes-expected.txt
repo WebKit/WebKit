@@ -1168,6 +1168,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'PerformanceObserverEntryList').has
 PASS Object.getOwnPropertyDescriptor(global, 'PerformanceObserverEntryList').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'PerformanceObserverEntryList').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'PerformanceObserverEntryList').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'PerformanceResourceTiming').value is PerformanceResourceTiming
+PASS Object.getOwnPropertyDescriptor(global, 'PerformanceResourceTiming').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'PerformanceResourceTiming').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'PerformanceResourceTiming').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'PerformanceResourceTiming').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'PerformanceTiming').value is PerformanceTiming
 PASS Object.getOwnPropertyDescriptor(global, 'PerformanceTiming').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'PerformanceTiming').hasOwnProperty('set') is false

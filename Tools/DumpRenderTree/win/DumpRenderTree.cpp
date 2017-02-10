@@ -879,6 +879,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     prefsPrivate4->setShadowDOMEnabled(TRUE);
     prefsPrivate4->setCustomElementsEnabled(TRUE);
     prefsPrivate4->setModernMediaControlsEnabled(FALSE);
+    prefsPrivate4->setResourceTimingEnabled(TRUE);
     prefsPrivate4->setLinkPreloadEnabled(TRUE);
 
     setAlwaysAcceptCookies(false);

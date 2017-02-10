@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script>
-    if (window.internals)
-        window.internals.settings.setResourceTimingEnabled(true);
-</script>
 <script src="/js-test-resources/js-test.js"></script>
 <body>
 <script>
@@ -23,8 +19,6 @@
                 downloadedImage = true;
         }
         shouldBeFalse("downloadedImage");
-        if (window.internals)
-            window.internals.settings.setResourceTimingEnabled(false);
     });
 </script>
 </body>

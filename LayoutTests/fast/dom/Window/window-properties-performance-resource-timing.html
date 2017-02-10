@@ -6,9 +6,6 @@
 if (window.testRunner)
     testRunner.dumpAsText();
 
-if (window.internals)
-    internals.settings.setResourceTimingEnabled(true);
-    
 var logBuffer = [];
 function log(s)
 {
@@ -99,6 +96,4 @@ logValue('window.performance.navigation');
 window.performance = 'performance is replaceable';
 logValue('window.performance');
 flushLog();
-if (window.internals)
-    internals.settings.setResourceTimingEnabled(false);
 </script>

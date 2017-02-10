@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
 <script>
-    if (window.internals)
-        internals.settings.setResourceTimingEnabled(true);
     if (window.testRunner) {
         testRunner.dumpAsText()
         testRunner.waitUntilDone();
@@ -27,8 +25,6 @@
             }
         };
         shouldBe("foundResources", "1");
-        if (window.internals)
-            window.internals.settings.setResourceTimingEnabled(false);
         if (window.testRunner)
             testRunner.notifyDone();
     };

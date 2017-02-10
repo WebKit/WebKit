@@ -181,4 +181,6 @@
 
 #define WebKitUserTimingEnabledPreferenceKey "WebKitUserTimingEnabled"
 
+#define WebKitResourceTimingEnabledPreferenceKey "WebKitResourceTimingEnabled"
+
 #define WebKitLinkPreloadEnabledPreferenceKey "WebKitLinkPreloadEnabled"

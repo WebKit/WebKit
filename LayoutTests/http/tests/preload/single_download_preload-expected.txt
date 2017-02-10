@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 19: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: line 15: <link rel=preload> must have a valid `as` value
  
 
 PASS Makes sure that preloaded resources are not downloaded again when used 

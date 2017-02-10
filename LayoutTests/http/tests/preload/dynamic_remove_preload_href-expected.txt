@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 18: <link rel=preload> has an invalid `href` value
+CONSOLE MESSAGE: line 14: <link rel=preload> has an invalid `href` value
 PASS downloadedImage is false
 PASS successfullyParsed is true
 

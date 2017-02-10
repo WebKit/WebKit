@@ -87,8 +87,4 @@ if (self.testRunner) {
             testRunner.notifyDone();
         }, 0);
     });
-
-    if (window.internals) {
-        internals.settings.setResourceTimingEnabled(true);
-    }
 }

@@ -49,9 +49,12 @@ void ResourceTimingInformation::addResourceTiming(CachedResource* resource, Docu
             Document* initiatorDocument = &document;
             if (resource->type() == CachedResource::MainResource)
                 initiatorDocument = document.parentDocument();
-            ASSERT(initiatorDocument);
-            ASSERT(initiatorDocument->domWindow());
-            ASSERT(initiatorDocument->domWindow()->performance());
+            if (!initiatorDocument)
+                return;
+            if (!initiatorDocument->domWindow())
+                return;
+            if (!initiatorDocument->domWindow()->performance())
+                return;
             const InitiatorInfo& info = initiatorIt->value;
             initiatorDocument->domWindow()->performance()->addResourceTiming(info.name, resource->resourceRequest().url(), resource->response(), loadTiming);
             initiatorIt->value.added = Added;

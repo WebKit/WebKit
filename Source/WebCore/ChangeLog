@@ -1,3 +1,20 @@
+2017-02-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Resource Timing] Enable Resource Timing by default in Tests
+        https://bugs.webkit.org/show_bug.cgi?id=168145
+
+        Reviewed by Ryosuke Niwa.
+
+        * loader/ResourceTimingInformation.cpp:
+        (WebCore::ResourceTimingInformation::addResourceTiming):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setResourceTimingEnabled): Deleted.
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        No longer needed for tests.
+
 2017-02-10  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Add shouldChangeSelectedRange to WKWebProcessPlugInEditingDelegate

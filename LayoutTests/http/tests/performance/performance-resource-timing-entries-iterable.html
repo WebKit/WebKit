@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
 <script>
-    if (window.internals)
-        internals.settings.setResourceTimingEnabled(true);
     function resolve(path) {
         var a = document.createElement("a");
         a.href = path;
@@ -26,8 +24,6 @@
         shouldBeDefined("resources[0]");
         entryTypes = resources.map((entry) => entry.entryType);
         shouldBeEqualToString("entryTypes[0]", "resource");
-        if (window.internals)
-            window.internals.settings.setResourceTimingEnabled(false);
         finishJSTest();
     });
 </script>

@@ -1,3 +1,37 @@
+2017-02-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Resource Timing] Enable Resource Timing by default in Tests
+        https://bugs.webkit.org/show_bug.cgi?id=168145
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/Window/window-properties-performance-resource-timing.html:
+        * http/tests/misc/resource-timing-resolution.html:
+        * http/tests/performance/performance-resource-timing-cached-entries-expected.txt:
+        * http/tests/performance/performance-resource-timing-cached-entries.html:
+        * http/tests/performance/performance-resource-timing-entries-iterable.html:
+        * http/tests/performance/performance-resource-timing-entries.html:
+        * http/tests/performance/performance-resource-timing-initiator-css.html:
+        * http/tests/performance/performance-resource-timing-initiator-no-override.html:
+        * http/tests/performance/performance-resource-timing-xhr-single-entry.html:
+        * http/tests/preload/dynamic_remove_preload_href-expected.txt:
+        * http/tests/preload/dynamic_remove_preload_href.html:
+        * http/tests/preload/dynamic_removing_preload.html:
+        * http/tests/preload/not_evicting_preload_at_onload.html:
+        * http/tests/preload/single_download_preload-expected.txt:
+        * http/tests/preload/single_download_preload.html:
+        * resources/testharnessreport.js:
+        Eliminate the internals setResourceTimingEnabled way to toggle a runtime feature.
+
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-elcapitan/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+        Update results when ResourceTiming is enabled.
+
 2017-02-10  Chris Dumez  <cdumez@apple.com>
 
         Update LayoutTests/resources/testharness.js

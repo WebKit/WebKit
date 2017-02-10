@@ -110,7 +110,6 @@ public:
     void setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue);
 
     // RuntimeEnabledFeatures.
-    static void setResourceTimingEnabled(bool);
     static void setIndexedDBWorkersEnabled(bool);
     static void setCSSGridLayoutEnabled(bool);
     static void setWebGL2Enabled(bool);
@@ -187,7 +186,6 @@ private:
         Settings::ForcedAccessibilityValue m_forcedPrefersReducedMotionAccessibilityValue;
 
         // Runtime enabled settings.
-        bool m_resourceTimingEnabled;
         bool m_indexedDBWorkersEnabled;
         bool m_cssGridLayoutEnabled;
         bool m_webGL2Enabled;

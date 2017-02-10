@@ -1,3 +1,18 @@
+2017-02-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Resource Timing] Enable Resource Timing by default in Tests
+        https://bugs.webkit.org/show_bug.cgi?id=168145
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetResourceTimingEnabled):
+        (WKPreferencesGetResourceTimingEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2017-02-10  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Add shouldChangeSelectedRange to WKWebProcessPlugInEditingDelegate

@@ -1017,6 +1017,8 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setMediaStreamEnabled:YES];
     [preferences setPeerConnectionEnabled:YES];
 
+    [preferences setResourceTimingEnabled:YES];
+
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 }
