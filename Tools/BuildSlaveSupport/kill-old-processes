@@ -90,7 +90,6 @@ def main():
         "xcodebuild",
         # FIXME: Consider moving iOS-specific tasks to their own list.
         "Simulator",
-        "LayoutTestRelay"
     ]
 
     taskToKillUnix = [

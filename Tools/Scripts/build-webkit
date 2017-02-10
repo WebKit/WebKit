@@ -200,10 +200,6 @@ if (isAppleCocoaWebKit()) {
         push @copyLibrariesArgs, productDir();
         print(join(" ", @copyLibrariesArgs) . "\n");
         (system(@copyLibrariesArgs) == 0) or die;
-
-        if (willUseIOSSimulatorSDK()) {
-            (system("perl", "Tools/Scripts/build-layouttestrelay", argumentsForConfiguration()) == 0) or die;
-        }
     }
 
     # Build Tools needed for Apple ports

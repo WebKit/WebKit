@@ -165,29 +165,9 @@ def dirContainsdwo(directory):
 def archiveBuiltProduct(configuration, platform, fullPlatform):
     assert platform in ('mac', 'win', 'gtk', 'efl', 'ios')
 
-    if fullPlatform.startswith('ios-simulator'):
-        # We need to include in the archive the Mac tool, LayoutTestRelay, to run layout tests in the iOS simulator.
-        combinedDirectory = os.path.join(_topLevelBuildDirectory, 'combined-mac-and-ios')
-        removeDirectoryIfExists(combinedDirectory)
-        os.makedirs(combinedDirectory)
-
-        if subprocess.call(['/bin/cp', '-pR', _configurationBuildDirectory, combinedDirectory]):
-            return 1
-
-        macBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, 'mac')
-        destinationDirectory = os.path.join(combinedDirectory, os.path.relpath(macBuildDirectory, _topLevelBuildDirectory))
-        os.makedirs(destinationDirectory)
-        for filename in ['LayoutTestRelay', 'LayoutTestRelay.dSYM']:
-            sourceFile = os.path.join(macBuildDirectory, filename)
-            if not os.path.exists(sourceFile):
-                continue
-            if subprocess.call(['/bin/cp', '-pR', sourceFile, destinationDirectory]):
-                return 1
-
-        if createZip(combinedDirectory, configuration):
-            return 1
-        shutil.rmtree(combinedDirectory)
-    elif platform in ('mac', 'ios'):
+    # FIXME: ImageDiff should be built with the host SDK, <rdar://problem/30266038>.
+    # An approach similar to the one used for LayoutTestRelay in r190515 should be imlemented.
+    if platform in ('mac', 'ios'):
         return createZip(_configurationBuildDirectory, configuration, embedParentDirectoryNameOnDarwin=True)
     elif platform == 'win':
         # FIXME: We shouldn't hardcode the assumption of a 32-bit build. See <https://bugs.webkit.org/show_bug.cgi?id=149715>.
