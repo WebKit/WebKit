@@ -217,5 +217,36 @@ DragImageRef createDragImageForLink(URL&, const String&, FontRenderingMode)
 }
 #endif
 
+DragImage::DragImage()
+    : m_dragImageRef { nullptr }
+{
+}
+
+DragImage::DragImage(DragImageRef dragImageRef)
+    : m_dragImageRef { dragImageRef }
+{
+}
+
+DragImage::DragImage(DragImage&& other)
+    : m_dragImageRef { std::exchange(other.m_dragImageRef, nullptr) }
+{
+}
+
+DragImage& DragImage::operator=(DragImage&& other)
+{
+    if (m_dragImageRef)
+        deleteDragImage(m_dragImageRef);
+
+    m_dragImageRef = std::exchange(other.m_dragImageRef, nullptr);
+
+    return *this;
+}
+
+DragImage::~DragImage()
+{
+    if (m_dragImageRef)
+        deleteDragImage(m_dragImageRef);
+}
+
 } // namespace WebCore
 

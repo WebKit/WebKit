@@ -62,7 +62,7 @@ public:
     void writePasteboard(const Pasteboard&) final { }
 
 #if ENABLE(DRAG_SUPPORT)
-    void setDragImage(DragImageRef, const IntPoint&) final { }
+    void setDragImage(DragImage, const IntPoint&) final { }
 #endif
 
 private:
