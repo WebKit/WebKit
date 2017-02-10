@@ -352,10 +352,7 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
     FloatRect coverageRect = m_controller.coverageRect();
     IntRect bounds = m_controller.bounds();
 
-    LOG_WITH_STREAM(Tiling, stream << "TileGrid " << this << " revalidateTiles: bounds " << bounds << " coverageRect" << coverageRect << " validation: " << validationPolicyAsString(validationPolicy));
-
-    if (coverageRect.isEmpty() || bounds.isEmpty())
-        return;
+    LOG_WITH_STREAM(Tiling, stream << "TileGrid " << this << " (controller " << &m_controller << ") revalidateTiles: bounds " << bounds << " coverageRect" << coverageRect << " validation: " << validationPolicyAsString(validationPolicy));
 
     FloatRect scaledRect(coverageRect);
     scaledRect.scale(m_scale);

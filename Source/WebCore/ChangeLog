@@ -1,3 +1,22 @@
+2017-02-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Tiled layers are sometimes left with some tiles when outside the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=168104
+        rdar://problem/30459055
+
+        Reviewed by Tim Horton.
+
+        When the coverage rect of a TiledBacking goes from a non-empty rect to an empty rect, we
+        shouldn't just early return from TileGrid::revalidateTiles(), otherwise we are left with some
+        tiles. Run through the function as normal, which will remove all the tiles for an empty coverage rect.
+        
+        Minor logging changes.
+
+        Test: tiled-drawing/tile-coverage-iframe-to-zero-coverage.html
+
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::revalidateTiles):
+
 2017-02-10  Zalan Bujtas  <zalan@apple.com>
 
         Mail hangs when removing multiple rows from large table.

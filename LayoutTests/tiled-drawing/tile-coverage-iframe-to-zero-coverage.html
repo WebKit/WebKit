@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+        iframe {
+            height: 400px;
+            width: 800px;
+            border: 5px solid black;
+            box-shadow: 0 0 5px black;
+            padding: 20px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function doTest()
+        {
+            setTimeout(function() {
+                window.scrollTo(0, 3000);
+                if (window.internals) {
+                    document.getElementById('layers').innerText = internals.layerTreeAsText(document,
+                        internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+                }
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<iframe scrolling="no" srcdoc="<div style='width: 2500px; height: 200px; background-color: silver; will-change: transform'>Stuff here</div>"></iframe>
+<pre id="layers">Layer tree goes here</p>
+</body>
+</html>
