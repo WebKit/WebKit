@@ -334,12 +334,16 @@ void AcceleratedDrawingArea::enterAcceleratedCompositingMode(GraphicsLayer* grap
 
     ASSERT(!m_layerTreeHost);
     if (m_previousLayerTreeHost) {
+#if USE(COORDINATED_GRAPHICS)
         m_layerTreeHost = WTFMove(m_previousLayerTreeHost);
         m_layerTreeHost->setIsDiscardable(false);
         if (!m_isPaintingSuspended)
             m_layerTreeHost->resumeRendering();
         if (!m_layerTreeStateIsFrozen)
             m_layerTreeHost->setLayerFlushSchedulingEnabled(true);
+#else
+        ASSERT_NOT_REACHED();
+#endif
     } else {
         m_layerTreeHost = LayerTreeHost::create(m_webPage);
 
@@ -377,12 +381,16 @@ void AcceleratedDrawingArea::exitAcceleratedCompositingModeNow()
     m_exitCompositingTimer.stop();
     m_wantsToExitAcceleratedCompositingMode = false;
 
+#if USE(COORDINATED_GRAPHICS)
     ASSERT(m_layerTreeHost);
     m_previousLayerTreeHost = WTFMove(m_layerTreeHost);
     m_previousLayerTreeHost->setIsDiscardable(true);
     m_previousLayerTreeHost->pauseRendering();
     m_previousLayerTreeHost->setLayerFlushSchedulingEnabled(false);
     m_discardPreviousLayerTreeHostTimer.startOneShot(5);
+#else
+    m_layerTreeHost = nullptr;
+#endif
 }
 
 void AcceleratedDrawingArea::discardPreviousLayerTreeHost()
