@@ -1,3 +1,13 @@
+2017-02-09  Keith Miller  <keith_miller@apple.com>
+
+        We should not allow Function.caller to be used on native functions
+        https://bugs.webkit.org/show_bug.cgi?id=165628
+
+        Reviewed by Mark Lam.
+
+        * stress/caller-native-code.js: Added.
+        (f):
+
 2017-02-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add operationToInt32SensibleSlow to optimize kraken pbkdf2 and sha256
