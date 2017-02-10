@@ -1,5 +1,16 @@
 2017-02-10  Alex Christensen  <achristensen@webkit.org>
 
+        Fix iOS libwebrtc build after r212127
+        https://bugs.webkit.org/show_bug.cgi?id=168134
+
+        * libwebrtc.xcodeproj/project.pbxproj:
+        I got a little carried away removing -fobjc-arc.  These files need it.
+        It was originally added in r211902 and these files are in the 
+        EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] list in libwebrtc.xcconfig
+        so adding this flag won't break the 32-bit El Capitan build.
+
+2017-02-10  Alex Christensen  <achristensen@webkit.org>
+
         Remove unnecessary automatic reference counting in libwebrtc
         https://bugs.webkit.org/show_bug.cgi?id=168134
 
