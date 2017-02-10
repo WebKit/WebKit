@@ -1,3 +1,12 @@
+2017-02-10  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unnecessary automatic reference counting in libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=168134
+
+        Reviewed by Youenn Fablet.
+
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2017-02-10  Youenn Fablet  <youennf@gmail.com>
 
         [WebRTC] Activate libwebrtc G711/G722 audio codecs
