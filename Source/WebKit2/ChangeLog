@@ -1,3 +1,18 @@
+2017-02-06  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][EFL] Release unused UpdateAtlas when in memory pressure situation
+        https://bugs.webkit.org/show_bug.cgi?id=167872
+
+        Reviewed by Carlos Garcia Campos.
+
+        In a memory pressure situation, release all the unused UpdateAtlas as soon as possible, instead
+        of waiting 3 seconds before releasing them.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::releaseInactiveAtlasesTimerFired):
+        (WebKit::CompositingCoordinator::releaseAtlases):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+
 2017-01-26  Chris Dumez  <cdumez@apple.com>
 
         Crash when navigating back to a page in PacheCache when one of its frames has been removed
