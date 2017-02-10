@@ -168,6 +168,11 @@
         });
       }, "Testing empty Request Content-Type header");
 
+      test(function() {
+        var request = new Request("", {"headers" : undefined, "body" : "this is my plate", "method" : "POST"});
+        assert_equals(request.headers.get("Content-Type"), "text/plain;charset=UTF-8");
+      }, "Passing undefined headers to Request constructor should not throw");
+
     </script>
   </body>
 </html>
