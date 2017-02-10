@@ -62,6 +62,7 @@ my $onlyWebKitProject = 0;
 my $coverageSupport = 0;
 my $shouldRunStaticAnalyzer = 0;
 my $startTime = time();
+my $archsi386 = 0;
 
 my @features = getFeatureOptionList();
 
@@ -72,6 +73,8 @@ push @ARGV, split(/ /, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'})
 foreach (@ARGV) {
     if ($_ eq '--minimal') {
         $minimal = 1;
+    } elsif ($_ eq 'ARCHS=i386') {
+        $archsi386 = 1;
     }
 }
 
@@ -181,7 +184,7 @@ if (isAppleCocoaWebKit()) {
 
     # ANGLE and libwebrtc must come before WebCore
     splice @projects, 0, 0, ("Source/ThirdParty/ANGLE");
-    if (not architecture() eq "i386") { splice @projects, 0, 0, ("Source/ThirdParty/libwebrtc"); }
+    if (not architecture() eq "i386" and not $archsi386) { splice @projects, 0, 0, ("Source/ThirdParty/libwebrtc"); }
 
     push @projects, ("Source/WebKit2");
 
