@@ -1,5 +1,30 @@
 2017-02-10  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: ContentViewContainer can have redundant back-forward entries after ContentView close
+        https://bugs.webkit.org/show_bug.cgi?id=168105
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/BackForwardEntry.js:
+        (WebInspector.BackForwardEntry.prototype.isEqual):
+        Make check for equal ContentView/cookie reusable.
+
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype.showContentView):
+        Use BackForwardEntry.prototype.isEqual.
+        (WebInspector.ContentViewContainer.prototype.replaceContentView):
+        (WebInspector.ContentViewContainer.prototype.closeContentView):
+        Clean-up the BackForwardEntry list after changes that can cause
+        identical entries to become adjacent.
+
+        (WebInspector.ContentViewContainer.prototype._removeIdenticalAdjacentBackForwardEntries):
+        Remove consecutive entries with the same ContentView and cookie.
+        (WebInspector.ContentViewContainer):
+        (WebInspector.ContentViewContainer.closeAllContentViewsOfPrototype): Deleted.
+        Drive-by cleanup: removed dead code.
+
+2017-02-10  Matt Baker  <mattbaker@apple.com>
+
         REGRESSION (r211829): Web Inspector: Elements tab is blank when added after page load
         https://bugs.webkit.org/show_bug.cgi?id=168142
 

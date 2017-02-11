@@ -97,6 +97,13 @@ WebInspector.BackForwardEntry = class BackForwardEntry extends WebInspector.Obje
         this._saveScrollPositions();
     }
 
+    isEqual(other)
+    {
+        if (!other)
+            return false;
+        return this._contentView === other._contentView && Object.shallowEqual(this._cookie, other._cookie);
+    }
+
     // Private
 
     _restoreFromCookie()
