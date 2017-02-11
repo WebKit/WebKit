@@ -327,13 +327,13 @@ webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyF
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/mock-media-source.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout ]
-webkit.org/b/79203 fast/mediastream/MediaStreamTrack-onended.html [ Timeout ]
-webkit.org/b/79203 fast/mediastream/MediaStreamTrack.html [ Timeout ]
+webkit.org/b/79203 fast/mediastream/MediaStreamTrack-onended.html [ Failure ]
+webkit.org/b/79203 fast/mediastream/MediaStreamTrack.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-dtmf.html [ Timeout ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-events.html [ Timeout ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-events.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Timeout ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-statsSelector.html [ Timeout ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Failure ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-statsSelector.html [ Failure ]
 webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Failure ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-remove-tracks.html [ Failure ]
@@ -1275,8 +1275,6 @@ webkit.org/b/136066 animations/state-at-end-event.html [ Crash Pass ]
 
 webkit.org/b/136070 fast/forms/label/label-becomes-visible-while-clicking-on-label.html [ Failure Pass ]
 
-webkit.org/b/136580 media/context-menu-actions.html [ Timeout Pass ]
-
 webkit.org/b/136581 editing/pasteboard/drag-drop-dead-frame.html [ Failure Timeout Pass ]
 
 webkit.org/b/139359 inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Failure Pass Timeout ]
@@ -1624,7 +1622,7 @@ webkit.org/b/147518 inspector/dom [ Skip ]
 webkit.org/b/147518 inspector/model [ Skip ]
 webkit.org/b/147518 inspector/timeline [ Skip ]
 
-webkit.org/b/139362 inspector/css/pseudo-element-matches.html [ Timeout ]
+webkit.org/b/139362 inspector/css/pseudo-element-matches.html [ Failure ]
 webkit.org/b/139362 inspector/css/selector-specificity.html [ Timeout Pass ]
 webkit.org/b/147229 inspector/css/modify-rule-selector.html [ Skip ] # Timeout
 
@@ -1667,8 +1665,6 @@ webkit.org/b/145053 http/tests/xmlhttprequest/origin-exact-matching.html [ Timeo
 webkit.org/b/145168 media/track/track-cue-inline-assertion-crash.html [ Timeout Pass ]
 webkit.org/b/145169 media/track/track-css-user-override.html [ Timeout Pass ]
 webkit.org/b/145171 fast/events/tabindex-focus-blur-all.html [ Timeout Pass ]
-
-webkit.org/b/145260 media/audio-playback-restriction-play.html  [ Timeout Pass ]
 
 # This tests timeout since the upgrade of GTK to 3.16 and Cairo to 1.14 on the JHBuild
 webkit.org/b/146731 fast/events/touch/tap-highlight-color.html [ Timeout ]
@@ -2766,6 +2762,8 @@ webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-
 webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-worker.html [ Failure ]
 webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.html [ Failure ]
 webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html [ Failure ]
+
+webkit.org/b/145260 media/audio-playback-restriction-play.html  [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
