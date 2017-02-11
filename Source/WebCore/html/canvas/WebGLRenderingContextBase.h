@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBGL)
+
 #include "ActiveDOMObject.h"
 #include "CanvasRenderingContext.h"
 #include "GraphicsContext3D.h"
@@ -836,3 +838,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::WebGLRenderingContextBase, is3d())
+
+#endif
