@@ -1,3 +1,16 @@
+2017-02-11  Simon Fraser  <simon.fraser@apple.com>
+
+        MiniBrowser WK1 fails to update URL for within-page navigations
+        https://bugs.webkit.org/show_bug.cgi?id=168173
+
+        Reviewed by Tim Horton.
+        
+        Implement -webView:didChangeLocationWithinPageForFrame: so that clicking on named
+        anchors updates the URL field.
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController webView:didChangeLocationWithinPageForFrame:]):
+
 2017-02-10  John Wilander  <wilander@apple.com>
 
         Updates to Resource Load Statistics: Get the right website data store and introduce timeout for user interaction
