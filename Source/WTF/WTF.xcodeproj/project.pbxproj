@@ -93,7 +93,7 @@
 		1469419C16EAB10A0024E146 /* AutodrainedPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1469419A16EAB10A0024E146 /* AutodrainedPool.h */; };
 		1469419D16EAB10A0024E146 /* AutodrainedPoolMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1469419B16EAB10A0024E146 /* AutodrainedPoolMac.mm */; };
 		149EF16316BBFE0D000A4331 /* TriState.h in Headers */ = {isa = PBXBuildFile; fileRef = 149EF16216BBFE0D000A4331 /* TriState.h */; settings = {ATTRIBUTES = (); }; };
-		14E785E81DFB330100209BD1 /* OrdinalNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E785E71DFB330100209BD1 /* OrdinalNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14E785E81DFB330100209BD1 /* OrdinalNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E785E71DFB330100209BD1 /* OrdinalNumber.h */; };
 		14F3B0F715E45E4600210069 /* SaturatedArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */; settings = {ATTRIBUTES = (); }; };
 		1A1D8B9C173186CE00141DA4 /* FunctionDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1D8B9B173186CE00141DA4 /* FunctionDispatcher.h */; };
 		1A1D8B9E1731879800141DA4 /* FunctionDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D8B9D1731879800141DA4 /* FunctionDispatcher.cpp */; };
@@ -337,7 +337,7 @@
 		A8A47487151A825B004123FF /* WTFThreadData.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4737B151A825B004123FF /* WTFThreadData.h */; };
 		A8A4748C151A8264004123FF /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4748B151A8264004123FF /* config.h */; };
 		AD7C434B1DD2A4A70026888B /* Expected.h in Headers */ = {isa = PBXBuildFile; fileRef = AD7C434A1DD2A4A70026888B /* Expected.h */; };
-		ADF2CE661E39F106006889DB /* MemoryFootprint.h in Headers */ = {isa = PBXBuildFile; fileRef = ADF2CE641E39F106006889DB /* MemoryFootprint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		ADF2CE661E39F106006889DB /* MemoryFootprint.h in Headers */ = {isa = PBXBuildFile; fileRef = ADF2CE641E39F106006889DB /* MemoryFootprint.h */; };
 		ADF2CE671E39F106006889DB /* MemoryFootprint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADF2CE651E39F106006889DB /* MemoryFootprint.cpp */; };
 		B38FD7BD168953E80065C969 /* FeatureDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = B38FD7BC168953E80065C969 /* FeatureDefines.h */; };
 		C4F8A93719C65EB400B2B15D /* Stopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = C4F8A93619C65EB400B2B15D /* Stopwatch.h */; };
@@ -1453,6 +1453,7 @@
 				A8A473E8151A825B004123FF /* MathExtras.h in Headers */,
 				A8A473EA151A825B004123FF /* MD5.h in Headers */,
 				CD5497AD15857D0300B5BC30 /* MediaTime.h in Headers */,
+				ADF2CE661E39F106006889DB /* MemoryFootprint.h in Headers */,
 				A8A473EB151A825B004123FF /* MessageQueue.h in Headers */,
 				A8A473ED151A825B004123FF /* MetaAllocator.h in Headers */,
 				A8A473EE151A825B004123FF /* MetaAllocatorHandle.h in Headers */,
@@ -1500,7 +1501,6 @@
 				A8A4741C151A825B004123FF /* RefPtr.h in Headers */,
 				A8A4741E151A825B004123FF /* RetainPtr.h in Headers */,
 				2CDED0F418115C85004DBA70 /* RunLoop.h in Headers */,
-				ADF2CE661E39F106006889DB /* MemoryFootprint.h in Headers */,
 				1469419216EAAF6D0024E146 /* RunLoopTimer.h in Headers */,
 				A5098B001C169E0700087797 /* SandboxSPI.h in Headers */,
 				14F3B0F715E45E4600210069 /* SaturatedArithmetic.h in Headers */,
