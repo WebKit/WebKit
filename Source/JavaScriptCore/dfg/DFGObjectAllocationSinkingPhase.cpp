@@ -1087,6 +1087,7 @@ private:
         m_materializationToEscapee.clear();
         m_materializationSiteToMaterializations.clear();
         m_materializationSiteToRecoveries.clear();
+        m_materializationSiteToHints.clear();
 
         // Logically we wish to consider every allocation and sink
         // it. However, it is probably not profitable to sink an
@@ -1242,16 +1243,35 @@ private:
             return;
 
         // First collect the hints that will be needed when the node
-        // we materialize is still stored into other unescaped sink candidates
-        Vector<PromotedHeapLocation> hints;
+        // we materialize is still stored into other unescaped sink candidates.
+        // The way to interpret this vector is:
+        //
+        // PromotedHeapLocation(NotEscapedAllocation, field) = identifierAllocation
+        //
+        // e.g:
+        // PromotedHeapLocation(@PhantomNewFunction, FunctionActivationPLoc) = IdentifierOf(@MaterializeCreateActivation)
+        // or:
+        // PromotedHeapLocation(@PhantomCreateActivation, ClosureVarPLoc(x)) = IdentifierOf(@NewFunction)
+        //
+        // When the rhs of the `=` is to be materialized at this `where` point in the program
+        // and IdentifierOf(Materialization) is the original sunken allocation of the materialization.
+        //
+        // The reason we need to collect all the `identifiers` here is that
+        // we may materialize multiple versions of the allocation along control
+        // flow edges. We will PutHint these values along those edges. However,
+        // we also need to PutHint them when we join and have a Phi of the allocations.
+        Vector<std::pair<PromotedHeapLocation, Node*>> hints;
         for (const auto& entry : m_heap.allocations()) {
             if (escapees.contains(entry.key))
                 continue;
 
             for (const auto& field : entry.value.fields()) {
                 ASSERT(m_sinkCandidates.contains(entry.key) || !escapees.contains(field.value));
-                if (escapees.contains(field.value))
-                    hints.append(PromotedHeapLocation(entry.key, field.key));
+                auto iter = escapees.find(field.value);
+                if (iter != escapees.end()) {
+                    ASSERT(m_sinkCandidates.contains(field.value));
+                    hints.append(std::make_pair(PromotedHeapLocation(entry.key, field.key), field.value));
+                }
             }
         }
 
@@ -1430,10 +1450,8 @@ private:
 
         // The hints need to be after the "real" recoveries so that we
         // don't hint not-yet-complete objects
-        if (!hints.isEmpty()) {
-            m_materializationSiteToRecoveries.add(
-                where, Vector<PromotedHeapLocation>()).iterator->value.appendVector(hints);
-        }
+        m_materializationSiteToHints.add(
+            where, Vector<std::pair<PromotedHeapLocation, Node*>>()).iterator->value.appendVector(hints);
     }
 
     Node* createMaterialization(const Allocation& allocation, Node* where)
@@ -1547,6 +1565,9 @@ private:
         HashMap<FrozenValue*, Node*> lazyMapping;
         if (!m_bottom)
             m_bottom = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, jsNumber(1927));
+
+        Vector<HashSet<PromotedHeapLocation>> hintsForPhi(m_sinkCandidates.size());
+
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             m_heap = m_heapAtHead[block];
 
@@ -1566,6 +1587,31 @@ private:
                 for (Node* materialization : m_materializationSiteToMaterializations.get(node)) {
                     Node* escapee = m_materializationToEscapee.get(materialization);
                     m_allocationSSA.newDef(m_nodeToVariable.get(escapee), block, materialization);
+                }
+
+                for (std::pair<PromotedHeapLocation, Node*> pair : m_materializationSiteToHints.get(node)) {
+                    PromotedHeapLocation location = pair.first;
+                    Node* identifier = pair.second;
+                    // We're materializing `identifier` at this point, and the unmaterialized
+                    // version is inside `location`. We track which SSA variable this belongs
+                    // to in case we also need a PutHint for the Phi.
+                    if (UNLIKELY(validationEnabled())) {
+                        RELEASE_ASSERT(m_sinkCandidates.contains(location.base()));
+                        RELEASE_ASSERT(m_sinkCandidates.contains(identifier));
+
+                        bool found = false;
+                        for (Node* materialization : m_materializationSiteToMaterializations.get(node)) {
+                            // We're materializing `identifier` here. This asserts that this is indeed the case.
+                            if (m_materializationToEscapee.get(materialization) == identifier) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        RELEASE_ASSERT(found);
+                    }
+
+                    SSACalculator::Variable* variable = m_nodeToVariable.get(identifier);
+                    hintsForPhi[variable->index()].add(location);
                 }
 
                 if (m_sinkCandidates.contains(node))
@@ -1683,6 +1729,12 @@ private:
                 insertOSRHintsForUpdate(
                     0, block->at(0)->origin, canExit,
                     availabilityCalculator.m_availability, identifier, phiDef->value());
+
+                for (PromotedHeapLocation location : hintsForPhi[variable->index()]) {
+                    m_insertionSet.insert(0,
+                        location.createHint(m_graph, block->at(0)->origin.withInvalidExit(), phiDef->value()));
+                    m_localMapping.set(location, phiDef->value());
+                }
             }
 
             if (verbose) {
@@ -1722,6 +1774,8 @@ private:
 
                 for (PromotedHeapLocation location : m_materializationSiteToRecoveries.get(node))
                     m_insertionSet.insert(nodeIndex, createRecovery(block, location, node, canExit));
+                for (std::pair<PromotedHeapLocation, Node*> pair : m_materializationSiteToHints.get(node))
+                    m_insertionSet.insert(nodeIndex, createRecovery(block, pair.first, node, canExit));
 
                 // We need to put the OSR hints after the recoveries,
                 // because we only want the hints once the object is
@@ -2209,6 +2263,7 @@ private:
     HashMap<Node*, Node*> m_materializationToEscapee;
     HashMap<Node*, Vector<Node*>> m_materializationSiteToMaterializations;
     HashMap<Node*, Vector<PromotedHeapLocation>> m_materializationSiteToRecoveries;
+    HashMap<Node*, Vector<std::pair<PromotedHeapLocation, Node*>>> m_materializationSiteToHints;
 
     HashMap<Node*, Vector<PromotedHeapLocation>> m_locationsForAllocation;
 

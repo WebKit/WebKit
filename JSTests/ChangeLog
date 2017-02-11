@@ -1,3 +1,20 @@
+2017-02-10  Saam Barati  <sbarati@apple.com>
+
+        Object allocation sinking phase doesn't properly handle control flow when emitting a PutHint of a materialized object into a PromotedHeapLocation of a still sunken object
+        https://bugs.webkit.org/show_bug.cgi?id=168140
+        <rdar://problem/30205880>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/allocation-sinking-puthint-control-flow.js: Added.
+        (e):
+        (bar):
+        (let.y):
+        (else.let.y):
+        (baz):
+        (foo):
+        (catch):
+
 2017-02-09  Mark Lam  <mark.lam@apple.com>
 
         B3::Procedure::deleteOrphans() should neutralize upsilons with dead phis.
