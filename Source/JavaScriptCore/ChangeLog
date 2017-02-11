@@ -1,3 +1,61 @@
+2017-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebInspector: refactor RemoteInspector to move cocoa specific code to their own files
+        https://bugs.webkit.org/show_bug.cgi?id=166681
+
+        Reviewed by Michael Catanzaro.
+
+        Move RemoteConnectionToTarget.mm and RemoteInspector.mm to a cocoa directory renamed with a Cocoa prefix,
+        because those are now the cocoa implementation of RemoteConnectionToTarget and RemoteInspector. The
+        cross-platform parts of RemoteInspector have been moced to a new RemoteInspector.cpp file. Also moved to cocoa
+        directory RemoteInspectorXPCConnection.h and RemoteInspectorXPCConnection.mm keeping the same name. Other than
+        that there aren't important code changes, only some cocoa specific types like NSString used in common headers,
+        and some other platform ifdefs needed. This is in preparation for adding a remote inspector implementation for
+        the GTK+ port.
+
+        * API/JSRemoteInspector.cpp:
+        (JSRemoteInspectorSetParentProcessInformation): Add PLATFORM(COCOA) to the ifdef.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * PlatformMac.cmake:
+        * inspector/remote/RemoteConnectionToTarget.h: Add platform ifdefs for cocoa specific parts and change
+        sendMessageToTarget to receive a WTF String instead of an NSString.
+        * inspector/remote/RemoteControllableTarget.h: Add platform ifdefs for CF specific parts.
+        * inspector/remote/RemoteInspectionTarget.h:
+        * inspector/remote/RemoteInspector.cpp: Added.
+        (Inspector::RemoteInspector::startDisabled):
+        (Inspector::RemoteInspector::nextAvailableTargetIdentifier):
+        (Inspector::RemoteInspector::registerTarget):
+        (Inspector::RemoteInspector::unregisterTarget):
+        (Inspector::RemoteInspector::updateTarget):
+        (Inspector::RemoteInspector::updateClientCapabilities):
+        (Inspector::RemoteInspector::setRemoteInspectorClient):
+        (Inspector::RemoteInspector::setupFailed):
+        (Inspector::RemoteInspector::setupCompleted):
+        (Inspector::RemoteInspector::waitingForAutomaticInspection):
+        (Inspector::RemoteInspector::clientCapabilitiesDidChange):
+        (Inspector::RemoteInspector::stop):
+        (Inspector::RemoteInspector::listingForTarget):
+        (Inspector::RemoteInspector::updateHasActiveDebugSession):
+        * inspector/remote/RemoteInspector.h: Add platform ifdefs for cocoa specific parts. Also add TargetListing
+        typedef to define platform specific types for the listings without more ifdefs.
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm: Renamed from Source/JavaScriptCore/inspector/remote/RemoteConnectionToTarget.mm.
+        (Inspector::RemoteTargetInitializeGlobalQueue):
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::close):
+        (Inspector::RemoteConnectionToTarget::sendMessageToTarget):
+        (Inspector::RemoteConnectionToTarget::setupRunLoop):
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm: Renamed from Source/JavaScriptCore/inspector/remote/RemoteInspector.mm.
+        (Inspector::canAccessWebInspectorMachPort):
+        (Inspector::RemoteInspector::singleton):
+        (Inspector::RemoteInspector::updateAutomaticInspectionCandidate):
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::pushListingsSoon):
+        (Inspector::RemoteInspector::receivedIndicateMessage):
+        (Inspector::RemoteInspector::receivedProxyApplicationSetupMessage):
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.h: Renamed from Source/JavaScriptCore/inspector/remote/RemoteInspectorXPCConnection.h.
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.mm: Renamed from Source/JavaScriptCore/inspector/remote/RemoteInspectorXPCConnection.mm.
+        (Inspector::RemoteInspectorXPCConnection::closeFromMessage):
+
 2017-02-10  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: payload initializers for ObjC protocol types handles special-cased property names incorrectly

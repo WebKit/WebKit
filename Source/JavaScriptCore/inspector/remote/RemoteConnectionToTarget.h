@@ -27,67 +27,82 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#import "InspectorFrontendChannel.h"
-#import "RemoteConnectionToTarget.h"
-#import "RemoteInspector.h"
-#import <mutex>
-#import <wtf/BlockPtr.h>
-#import <wtf/Lock.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/ThreadSafeRefCounted.h>
+#include "InspectorFrontendChannel.h"
+#include <wtf/Lock.h>
+#include <wtf/ThreadSafeRefCounted.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/BlockPtr.h>
+#include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSString;
+#endif
 
 namespace Inspector {
 
+class RemoteControllableTarget;
+
+#if PLATFORM(COCOA)
 typedef Vector<BlockPtr<void ()>> RemoteTargetQueue;
+#endif
 
 class RemoteConnectionToTarget final : public ThreadSafeRefCounted<RemoteConnectionToTarget>, public FrontendChannel {
 public:
-    RemoteConnectionToTarget(RemoteControllableTarget*, NSString *connectionIdentifier, NSString *destination);
+#if PLATFORM(COCOA)
+    RemoteConnectionToTarget(RemoteControllableTarget*, NSString* connectionIdentifier, NSString* destination);
+#endif
     virtual ~RemoteConnectionToTarget();
 
     // Main API.
     bool setup(bool isAutomaticInspection = false, bool automaticallyPause = false);
-    void sendMessageToTarget(NSString *);
+    void sendMessageToTarget(const String&);
     void close();
     void targetClosed();
 
     std::optional<unsigned> targetIdentifier() const;
+#if PLATFORM(COCOA)
     NSString *connectionIdentifier() const;
     NSString *destination() const;
 
     Lock& queueMutex() { return m_queueMutex; }
     const RemoteTargetQueue& queue() const { return m_queue; }
     void clearQueue() { m_queue.clear(); }
+#endif
 
     // FrontendChannel overrides.
     ConnectionType connectionType() const override { return ConnectionType::Remote; }
     void sendMessageToFrontend(const String&) override;
 
 private:
+#if PLATFORM(COCOA)
     void dispatchAsyncOnTarget(void (^block)());
 
     void setupRunLoop();
     void teardownRunLoop();
     void queueTaskOnPrivateRunLoop(void (^block)());
+#endif
 
     // This connection from the RemoteInspector singleton to the InspectionTarget
     // can be used on multiple threads. So any access to the target
     // itself must take this mutex to ensure m_target is valid.
     Lock m_targetMutex;
 
+#if PLATFORM(COCOA)
     // If a target has a specific run loop it wants to evaluate on
     // we setup our run loop sources on that specific run loop.
     RetainPtr<CFRunLoopRef> m_runLoop;
     RetainPtr<CFRunLoopSourceRef> m_runLoopSource;
     RemoteTargetQueue m_queue;
     Lock m_queueMutex;
+#endif
 
     RemoteControllableTarget* m_target { nullptr };
+    bool m_connected { false };
+
+#if PLATFORM(COCOA)
     RetainPtr<NSString> m_connectionIdentifier;
     RetainPtr<NSString> m_destination;
-    bool m_connected { false };
+#endif
 };
 
 } // namespace Inspector

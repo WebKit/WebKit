@@ -41,8 +41,10 @@ public:
     bool remoteDebuggingAllowed() const { return m_allowed; }
     void setRemoteDebuggingAllowed(bool);
 
+#if USE(CF)
     CFRunLoopRef targetRunLoop() override { return m_runLoop.get(); }
     void setTargetRunLoop(CFRunLoopRef runLoop) { m_runLoop = runLoop; }
+#endif
 
     virtual String name() const { return String(); } // JavaScript and Web
     virtual String url() const { return String(); } // Web
@@ -59,7 +61,9 @@ public:
     bool remoteControlAllowed() const override;
 private:
     bool m_allowed {false};
+#if USE(CF)
     RetainPtr<CFRunLoopRef> m_runLoop;
+#endif
 };
 
 } // namespace Inspector
