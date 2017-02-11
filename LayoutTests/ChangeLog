@@ -1,5 +1,11 @@
 2017-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Updated expectations of several WebCryptoAPI tests that are failing.
+
+        * platform/gtk/TestExpectations:
+
+2017-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Mark tests using drag and drop as crashing in Wayland.
 
         * platform/gtk-wayland/TestExpectations:
