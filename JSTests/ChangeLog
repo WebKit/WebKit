@@ -1,3 +1,17 @@
+2017-02-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Implement (Shared)ArrayBuffer.prototype.byteLength
+        https://bugs.webkit.org/show_bug.cgi?id=166476
+
+        Reviewed by Saam Barati.
+
+        * ChakraCore/test/typedarray/arraybufferType.baseline-jsc:
+        * stress/array-buffer-byte-length.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (Symbol):
+        * stress/reflect-set.js:
+
 2017-02-10  Saam Barati  <sbarati@apple.com>
 
         Object allocation sinking phase doesn't properly handle control flow when emitting a PutHint of a materialized object into a PromotedHeapLocation of a still sunken object

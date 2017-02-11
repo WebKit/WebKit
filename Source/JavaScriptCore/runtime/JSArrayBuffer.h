@@ -30,10 +30,10 @@
 
 namespace JSC {
 
-class JSArrayBuffer : public JSNonFinalObject {
+class JSArrayBuffer final : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetPropertyNames | OverridesGetOwnPropertySlot;
+    using Base = JSNonFinalObject;
+    static const unsigned StructureFlags = Base::StructureFlags;
     
 protected:
     JSArrayBuffer(VM&, Structure*, PassRefPtr<ArrayBuffer>);
@@ -56,14 +56,7 @@ public:
     static ArrayBuffer* toWrapped(VM&, JSValue);
     
 protected:
-
     static size_t estimatedSize(JSCell*);
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-    
-    static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
 private:
     ArrayBuffer* m_impl;

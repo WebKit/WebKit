@@ -490,10 +490,10 @@ var symbol = Symbol();
     var object = new ArrayBuffer(64);
     shouldBe(Reflect.defineProperty(object, 'byteLength', {
         writable: false
-    }), false);
-    shouldBe(Reflect.get(object, 'byteLength'), 64);
+    }), true);
+    shouldBe(Reflect.get(object, 'byteLength'), undefined);
     shouldBe(Reflect.set(object, 'byteLength', 20), false);
-    shouldBe(Reflect.get(object, 'byteLength'), 64);
+    shouldBe(Reflect.get(object, 'byteLength'), undefined);
 
     var object = new ArrayBuffer(64);
     shouldBe(Reflect.defineProperty(object, 'hello', {

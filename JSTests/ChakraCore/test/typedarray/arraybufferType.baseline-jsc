@@ -7,6 +7,7 @@ foo = 20
 bar = 42
 20
 slice
+byteLength
 constructor
 aaa
 foo
@@ -17,6 +18,7 @@ aaa = 20
 foo = 20
 bar = 42
 slice
+byteLength
 constructor
 aaa
 foo
