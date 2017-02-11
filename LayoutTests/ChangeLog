@@ -1,3 +1,9 @@
+2017-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Mark resource load stats tests as crashing.
+
+        * platform/gtk/TestExpectations:
+
 2017-02-11  Chris Dumez  <cdumez@apple.com>
 
         Implement URL's toJSON()
