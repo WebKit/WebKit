@@ -1022,6 +1022,10 @@ webkit.org/b/1644041 imported/w3c/web-platform-tests/html/semantics/interactive-
 webkit.org/b/168066 performance-api/performance-now-api.html [ Pass Failure ]
 webkit.org/b/168005 performance-api/performance-now-time-origin-in-worker.html [ Pass Failure ]
 
+fast/history/page-cache-after-window-open.html [ Skip ]
+fast/history/page-cache-back-navigation-crash.html [ Skip ]
+fast/history/page-cache-with-opener.html [ Skip ]
+
 ########################################
 ### START OF -disabled tests
 
