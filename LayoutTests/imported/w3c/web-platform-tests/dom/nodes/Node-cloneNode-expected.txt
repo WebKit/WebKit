@@ -129,7 +129,7 @@ PASS createElementNS HTML
 PASS createElementNS non-HTML 
 PASS createProcessingInstruction 
 PASS implementation.createDocumentType 
-FAIL implementation.createDocument assert_equals: expected "null" but got "http_localhost_8800"
+FAIL implementation.createDocument assert_equals: expected "null" but got "http://localhost:8800"
 PASS implementation.createHTMLDocument 
 PASS node with children 
 

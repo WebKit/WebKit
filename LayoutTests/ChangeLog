@@ -1,3 +1,26 @@
+2017-02-10  Chris Dumez  <cdumez@apple.com>
+
+        document.origin doesn't match spec
+        https://bugs.webkit.org/show_bug.cgi?id=168022
+
+        Reviewed by Sam Weinig.
+
+        * http/tests/media/media-stream/enumerate-devices-source-id-persistent.html:
+        Fix test that was passing only because the document.origin would never match the
+        expected string:
+        - Move idCounts to the global scope has the handler function is called 3 times
+          and we need to properly update the same idCounts object in all 3 calls.
+        - Fix initialization of idCounts to start at 1, not 0. Otherwise, idCounts[uniqueID]
+          is 0 instead of 1.
+        - Use a Map instead of an array since the ids are UUID strings, not integers.
+        - Fix check for non-unique ids, was idCounts[deviceId] == 1 instead of
+         idCounts[deviceId] != 1.
+
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/form-upgrade.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/iframe-upgrade.https.html:
+        * http/tests/ssl/iframe-upgrade.https.html:
+        Update / rebaseline now that document.origin has the right format.
+
 2017-02-10  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r211845): [ios-simulator] LayoutTest compositing/masks/solid-color-masked.html is a flaky failure

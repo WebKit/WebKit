@@ -17,7 +17,7 @@ async_test(t => {
 
     window.addEventListener('message', t.step_func(e => {
         if (e.source == iframe.contentWindow) {
-            assert_equals(e.data.origin, "https_127.0.0.1_8443");
+            assert_equals("https://127.0.0.1:8443", e.data.origin);
             t.done();
         }
     }));
@@ -31,7 +31,7 @@ async_test(t => {
 
     window.addEventListener('message', t.step_func(e => {
         if (e.source == iframe.contentWindow) {
-            assert_equals(e.data.origin, "https_localhost_8443");
+            assert_equals("https://localhost:8443", e.data.origin);
             t.done();
         }
     }));
@@ -46,7 +46,7 @@ async_test(t => {
 
     window.addEventListener('message', t.step_func(e => {
         if (e.source == iframe.contentWindow) {
-            assert_equals(e.data.origin, "http_localhost_8000");
+            assert_equals("http://localhost:8000", e.data.origin);
             t.done();
         }
     }));
