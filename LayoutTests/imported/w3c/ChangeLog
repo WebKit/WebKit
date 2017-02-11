@@ -1,3 +1,19 @@
+2017-02-11  Chris Dumez  <cdumez@apple.com>
+
+        Implement URL's toJSON()
+        https://bugs.webkit.org/show_bug.cgi?id=167979
+
+        Reviewed by Sam Weinig.
+
+        Re-sync URL tests from upstream to gain test coverage for
+        URL's toJSON().
+
+        * web-platform-tests/url/interfaces-expected.txt:
+        * web-platform-tests/url/interfaces.html:
+        * web-platform-tests/url/url-tojson-expected.txt: Added.
+        * web-platform-tests/url/url-tojson.html: Added.
+        * web-platform-tests/url/w3c-import.log:
+
 2017-02-10  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Cleanup XMLHttpRequest's bindings

@@ -36,6 +36,7 @@ public:
     void setHref(const String& url) { static_cast<T*>(this)->setHref(url); }
 
     String toString() const;
+    String toJSON() const;
 
     String origin() const;
 
@@ -69,6 +70,12 @@ public:
 
 template <typename T>
 String URLUtils<T>::toString() const
+{
+    return href().string();
+}
+
+template <typename T>
+String URLUtils<T>::toJSON() const
 {
     return href().string();
 }

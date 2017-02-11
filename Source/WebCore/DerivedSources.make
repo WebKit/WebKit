@@ -495,7 +495,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/TextMetrics.idl \
     $(WebCore)/html/TimeRanges.idl \
     $(WebCore)/html/URLSearchParams.idl \
-    $(WebCore)/html/URLUtils.idl \
     $(WebCore)/html/ValidityState.idl \
     $(WebCore)/html/VoidCallback.idl \
     $(WebCore)/html/WebKitMediaKeyError.idl \

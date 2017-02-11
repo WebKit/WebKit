@@ -7,7 +7,7 @@ PASS URL interface object name
 PASS URL interface: existence and properties of interface prototype object 
 PASS URL interface: existence and properties of interface prototype object's "constructor" property 
 PASS URL interface: attribute href 
-FAIL URL interface: stringifier assert_true: property is not enumerable expected true got false
+PASS URL interface: stringifier 
 PASS URL interface: attribute origin 
 PASS URL interface: attribute protocol 
 PASS URL interface: attribute username 
@@ -19,6 +19,7 @@ PASS URL interface: attribute pathname
 PASS URL interface: attribute search 
 PASS URL interface: attribute searchParams 
 PASS URL interface: attribute hash 
+PASS URL interface: operation toJSON() 
 PASS URL must be primary interface of new URL("http://foo") 
 PASS Stringification of new URL("http://foo") 
 PASS URL interface: new URL("http://foo") must inherit property "href" with the proper type (0) 
@@ -33,6 +34,7 @@ PASS URL interface: new URL("http://foo") must inherit property "pathname" with 
 PASS URL interface: new URL("http://foo") must inherit property "search" with the proper type (9) 
 PASS URL interface: new URL("http://foo") must inherit property "searchParams" with the proper type (10) 
 PASS URL interface: new URL("http://foo") must inherit property "hash" with the proper type (11) 
+PASS URL interface: new URL("http://foo") must inherit property "toJSON" with the proper type (12) 
 PASS URLSearchParams interface: existence and properties of interface object 
 PASS URLSearchParams interface object length 
 PASS URLSearchParams interface object name 

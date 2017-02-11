@@ -1,3 +1,33 @@
+2017-02-11  Chris Dumez  <cdumez@apple.com>
+
+        Implement URL's toJSON()
+        https://bugs.webkit.org/show_bug.cgi?id=167979
+
+        Reviewed by Sam Weinig.
+
+        Implement URL's toJSON() as per:
+        - https://url.spec.whatwg.org/#dom-url-tojson
+
+        This is already supported by Firefox.
+
+        Also, drop URLUtils.idl as it is no longer in the specification.
+        Merge its content to DOMURL.idl as per the URL specification.
+
+        Finally, mark href attribute as stringifier and drop the toString()
+        operation to match the specification. This fixes a bug where our
+        toString property was not enumerable but should have been.
+
+        Tests: fast/url/url-tojson.html
+               imported/w3c/web-platform-tests/url/url-tojson.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/DOMURL.idl:
+        * html/URLUtils.h:
+        (WebCore::URLUtils<T>::toJSON):
+        * html/URLUtils.idl: Removed.
+
 2017-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][EFL] Implement MIMETypeRegistry::getPreferredExtensionForMIMEType

@@ -9812,7 +9812,6 @@
 		5C4304AF191AC908000E2BC0 /* EXTShaderTextureLOD.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EXTShaderTextureLOD.idl; sourceTree = "<group>"; };
 		5C4304B3191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEXTShaderTextureLOD.cpp; sourceTree = "<group>"; };
 		5C4304B4191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTShaderTextureLOD.h; sourceTree = "<group>"; };
-		5C5381AE1D8791CA00E2EBE6 /* URLUtils.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = URLUtils.idl; sourceTree = "<group>"; };
 		5C5381AF1D8793E000E2EBE6 /* URLSearchParams.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = URLSearchParams.idl; sourceTree = "<group>"; };
 		5C5381B01D87D45700E2EBE6 /* URLSearchParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLSearchParams.cpp; sourceTree = "<group>"; };
 		5C5381B11D87D45700E2EBE6 /* URLSearchParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLSearchParams.h; sourceTree = "<group>"; };
@@ -19519,7 +19518,6 @@
 				5C5381B11D87D45700E2EBE6 /* URLSearchParams.h */,
 				5C5381AF1D8793E000E2EBE6 /* URLSearchParams.idl */,
 				656B9DCA189DE10000BB842C /* URLUtils.h */,
-				5C5381AE1D8791CA00E2EBE6 /* URLUtils.idl */,
 				F5A154251279534D00D0B0C0 /* ValidationMessage.cpp */,
 				F5A154261279534D00D0B0C0 /* ValidationMessage.h */,
 				15C7708A100D3C6A005BA267 /* ValidityState.h */,

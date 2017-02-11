@@ -30,6 +30,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/url-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/url/url-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/url/url-setters.html
+/LayoutTests/imported/w3c/web-platform-tests/url/url-tojson.html 
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-append.html
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-delete.html

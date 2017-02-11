@@ -36,8 +36,22 @@
     ImplementationLacksVTable,
     ExportMacro=WEBCORE_EXPORT,
 ] interface DOMURL {
+    [SetterMayThrowException, URL] stringifier attribute USVString href;
+    readonly attribute USVString origin;
+    attribute USVString protocol;
+    attribute USVString username;
+    attribute USVString password;
+    attribute USVString host;
+    attribute USVString hostname;
+    attribute USVString port;
+    attribute USVString pathname;
+    attribute USVString hash;
+    attribute USVString search;
+    [CachedAttribute] readonly attribute URLSearchParams searchParams;
+
+    USVString toJSON();
+
+    // https://w3c.github.io/FileAPI/#creating-revoking.
     [CallWith=ScriptExecutionContext] static DOMString createObjectURL(Blob blob);
     [CallWith=ScriptExecutionContext] static void revokeObjectURL(DOMString url);
 };
-
-DOMURL implements URLUtils;

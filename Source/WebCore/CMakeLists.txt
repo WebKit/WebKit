@@ -564,7 +564,6 @@ set(WebCore_NON_SVG_IDL_FILES
     html/TextMetrics.idl
     html/TimeRanges.idl
     html/URLSearchParams.idl
-    html/URLUtils.idl
     html/ValidityState.idl
     html/VoidCallback.idl
 
