@@ -271,7 +271,7 @@ bool Pasteboard::canSmartReplace()
 }
 
 #if ENABLE(DRAG_SUPPORT)
-void Pasteboard::setDragImage(DragImage, const IntPoint&)
+void Pasteboard::setDragImage(DragImageRef, const IntPoint&)
 {
 }
 #endif

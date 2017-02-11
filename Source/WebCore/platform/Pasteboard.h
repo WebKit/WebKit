@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef Pasteboard_h
+#define Pasteboard_h
 
 #include "DragImage.h"
 #include "URL.h"
@@ -181,7 +182,7 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForDragAndDrop();
     WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForDragAndDrop(const DragData&);
 
-    virtual void setDragImage(DragImage, const IntPoint& hotSpot);
+    virtual void setDragImage(DragImageRef, const IntPoint& hotSpot);
 #endif
 
 #if PLATFORM(WIN)
@@ -261,3 +262,5 @@ inline Pasteboard::~Pasteboard()
 #endif
 
 } // namespace WebCore
+
+#endif // Pasteboard_h

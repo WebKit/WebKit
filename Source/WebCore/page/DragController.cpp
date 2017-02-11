@@ -772,13 +772,11 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     else
         sourceContainsHitNode = state.source->containsIncludingShadowDOM(hitTestResult.innerNode());
 
-    if (!sourceContainsHitNode) {
+    if (!sourceContainsHitNode)
         // The original node being dragged isn't under the drag origin anymore... maybe it was
         // hidden or moved out from under the cursor. Regardless, we don't want to start a drag on
         // something that's not actually under the drag origin.
         return false;
-    }
-
     URL linkURL = hitTestResult.absoluteLinkURL();
     URL imageURL = hitTestResult.absoluteImageURL();
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -791,7 +789,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     m_draggingImageURL = URL();
     m_sourceDragOperation = srcOp;
 
-    DragImage dragImage;
+    DragImageRef dragImage = nullptr;
     IntPoint dragLoc(0, 0);
     IntPoint dragImageOffset(0, 0);
 
@@ -799,7 +797,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
     DataTransfer& dataTransfer = *state.dataTransfer;
     if (state.type == DragSourceActionDHTML)
-        dragImage = DragImage { dataTransfer.createDragImage(dragImageOffset) };
+        dragImage = dataTransfer.createDragImage(dragImageOffset);
     if (state.type == DragSourceActionSelection || !imageURL.isEmpty() || !linkURL.isEmpty())
         // Selection, image, and link drags receive a default set of allowed drag operations that
         // follows from:
@@ -852,7 +850,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         }
         m_client.willPerformDragSourceAction(DragSourceActionSelection, dragOrigin, dataTransfer);
         if (!dragImage) {
-            dragImage = DragImage { dissolveDragImageToFraction(createDragImageForSelection(src), DragImageAlpha) };
+            dragImage = dissolveDragImageToFraction(createDragImageForSelection(src), DragImageAlpha);
             dragLoc = dragLocForSelectionDrag(src);
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
@@ -860,7 +858,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         if (!dragImage)
             return false;
 
-        doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, dragImageBounds, dataTransfer, src, false);
+        doSystemDrag(dragImage, dragLoc, dragOrigin, dragImageBounds, dataTransfer, src, false);
     } else if (!src.document()->securityOrigin().canDisplay(linkURL)) {
         src.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to drag local resource: " + linkURL.stringCenterEllipsizedToLength());
         startedDrag = false;
@@ -883,7 +881,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             doImageDrag(element, dragOrigin, hitTestResult.imageRect(), dataTransfer, src, m_dragOffset);
         } else {
             // DHTML defined drag image
-            doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, { }, dataTransfer, src, false);
+            doSystemDrag(dragImage, dragLoc, dragOrigin, { }, dataTransfer, src, false);
         }
     } else if (!linkURL.isEmpty() && (m_dragSourceAction & DragSourceActionLink)) {
         if (!dataTransfer.pasteboard().hasData()) {
@@ -912,14 +910,14 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
         m_client.willPerformDragSourceAction(DragSourceActionLink, dragOrigin, dataTransfer);
         if (!dragImage) {
-            dragImage = DragImage { createDragImageForLink(linkURL, hitTestResult.textContent(), src.settings().fontRenderingMode()) };
-            IntSize size = dragImageSize(dragImage.get());
+            dragImage = createDragImageForLink(linkURL, hitTestResult.textContent(), src.settings().fontRenderingMode());
+            IntSize size = dragImageSize(dragImage);
             m_dragOffset = IntPoint(-size.width() / 2, -LinkDragBorderInset);
             dragLoc = IntPoint(mouseDraggedPoint.x() + m_dragOffset.x(), mouseDraggedPoint.y() + m_dragOffset.y());
             // Later code expects the drag image to be scaled by device's scale factor.
-            dragImage = DragImage { scaleDragImage(dragImage.get(), FloatSize(m_page.deviceScaleFactor(), m_page.deviceScaleFactor())) };
+            dragImage = scaleDragImage(dragImage, FloatSize(m_page.deviceScaleFactor(), m_page.deviceScaleFactor()));
         }
-        doSystemDrag(WTFMove(dragImage), dragLoc, mouseDraggedPoint, { }, dataTransfer, src, true);
+        doSystemDrag(dragImage, dragLoc, mouseDraggedPoint, { }, dataTransfer, src, true);
 #if ENABLE(ATTACHMENT_ELEMENT)
     } else if (!attachmentURL.isEmpty() && (m_dragSourceAction & DragSourceActionAttachment)) {
         if (!dataTransfer.pasteboard().hasData()) {
@@ -931,17 +929,17 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         m_client.willPerformDragSourceAction(DragSourceActionAttachment, dragOrigin, dataTransfer);
         
         if (!dragImage) {
-            dragImage = DragImage { dissolveDragImageToFraction(createDragImageForSelection(src), DragImageAlpha) };
+            dragImage = dissolveDragImageToFraction(createDragImageForSelection(src), DragImageAlpha);
             dragLoc = dragLocForSelectionDrag(src);
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
-        doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, { }, dataTransfer, src, false);
+        doSystemDrag(dragImage, dragLoc, dragOrigin, { }, dataTransfer, src, false);
 #endif
     } else if (state.type == DragSourceActionDHTML) {
         if (dragImage) {
             ASSERT(m_dragSourceAction & DragSourceActionDHTML);
             m_client.willPerformDragSourceAction(DragSourceActionDHTML, dragOrigin, dataTransfer);
-            doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, { }, dataTransfer, src, false);
+            doSystemDrag(dragImage, dragLoc, dragOrigin, { }, dataTransfer, src, false);
         } else
             startedDrag = false;
     } else {
@@ -950,13 +948,15 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         startedDrag = false;
     }
 
+    if (dragImage)
+        deleteDragImage(dragImage);
     return startedDrag;
 }
 
 void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, const IntRect& layoutRect, DataTransfer& dataTransfer, Frame& frame, IntPoint& dragImageOffset)
 {
     IntPoint mouseDownPoint = dragOrigin;
-    DragImage dragImage;
+    DragImageRef dragImage = nullptr;
     IntPoint scaledOrigin;
 
     if (!element.renderer())
@@ -966,13 +966,13 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
 
     Image* image = getImage(element);
     if (image && image->size().height() * image->size().width() <= MaxOriginalImageArea
-        && (dragImage = DragImage { createDragImageFromImage(image, element.renderer() ? orientationDescription : ImageOrientationDescription()) })) {
+        && (dragImage = createDragImageFromImage(image, element.renderer() ? orientationDescription : ImageOrientationDescription()))) {
 
-        dragImage = DragImage { fitDragImageToMaxSize(dragImage.get(), layoutRect.size(), maxDragImageSize()) };
-        IntSize fittedSize = dragImageSize(dragImage.get());
+        dragImage = fitDragImageToMaxSize(dragImage, layoutRect.size(), maxDragImageSize());
+        IntSize fittedSize = dragImageSize(dragImage);
 
-        dragImage = DragImage { scaleDragImage(dragImage.get(), FloatSize(m_page.deviceScaleFactor(), m_page.deviceScaleFactor())) };
-        dragImage = DragImage { dissolveDragImageToFraction(dragImage.get(), DragImageAlpha) };
+        dragImage = scaleDragImage(dragImage, FloatSize(m_page.deviceScaleFactor(), m_page.deviceScaleFactor()));
+        dragImage = dissolveDragImageToFraction(dragImage, DragImageAlpha);
 
         // Properly orient the drag image and orient it differently if it's smaller than the original.
         float scale = fittedSize.width() / (float)layoutRect.width();
@@ -986,9 +986,9 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
         scaledOrigin = IntPoint((int)(dx + 0.5), (int)(dy + 0.5));
     } else {
         if (CachedImage* cachedImage = getCachedImage(element)) {
-            dragImage = DragImage { createDragImageIconForCachedImageFilename(cachedImage->response().suggestedFilename()) };
+            dragImage = createDragImageIconForCachedImageFilename(cachedImage->response().suggestedFilename());
             if (dragImage)
-                scaledOrigin = IntPoint(DragIconRightInset - dragImageSize(dragImage.get()).width(), DragIconBottomInset);
+                scaledOrigin = IntPoint(DragIconRightInset - dragImageSize(dragImage).width(), DragIconBottomInset);
         }
     }
 
@@ -996,10 +996,12 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
         return;
 
     dragImageOffset = mouseDownPoint + scaledOrigin;
-    doSystemDrag(WTFMove(dragImage), dragImageOffset, dragOrigin, element.boundsInRootViewSpace(), dataTransfer, frame, false);
+    doSystemDrag(dragImage, dragImageOffset, dragOrigin, element.boundsInRootViewSpace(), dataTransfer, frame, false);
+
+    deleteDragImage(dragImage);
 }
 
-void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, const IntPoint& eventPos, const IntRect& dragImageBounds, DataTransfer& dataTransfer, Frame& frame, bool forLink)
+void DragController::doSystemDrag(DragImageRef image, const IntPoint& dragLoc, const IntPoint& eventPos, const IntRect& dragImageBounds, DataTransfer& dataTransfer, Frame& frame, bool forLink)
 {
     FloatPoint dragImageAnchor = { 0.5, 0.5 };
     if (!dragImageBounds.isEmpty()) {
@@ -1012,7 +1014,7 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
     // Protect this frame and view, as a load may occur mid drag and attempt to unload this frame
     Ref<MainFrame> frameProtector(m_page.mainFrame());
     RefPtr<FrameView> viewProtector = frameProtector->view();
-    m_client.startDrag(image.get(), viewProtector->rootViewToContents(frame.view()->contentsToRootView(dragLoc)), viewProtector->rootViewToContents(frame.view()->contentsToRootView(eventPos)), dragImageAnchor, dataTransfer, frameProtector.get(), forLink);
+    m_client.startDrag(image, viewProtector->rootViewToContents(frame.view()->contentsToRootView(dragLoc)), viewProtector->rootViewToContents(frame.view()->contentsToRootView(eventPos)), dragImageAnchor, dataTransfer, frameProtector.get(), forLink);
     // DragClient::startDrag can cause our Page to dispear, deallocating |this|.
     if (!frameProtector->page())
         return;

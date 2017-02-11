@@ -112,7 +112,7 @@ namespace WebCore {
         void mouseMovedIntoDocument(Document*);
 
         void doImageDrag(Element&, const IntPoint&, const IntRect&, DataTransfer&, Frame&, IntPoint&);
-        void doSystemDrag(DragImage, const IntPoint&, const IntPoint&, const IntRect& dragImageBounds, DataTransfer&, Frame&, bool forLink);
+        void doSystemDrag(DragImageRef, const IntPoint&, const IntPoint&, const IntRect& dragImageBounds, DataTransfer&, Frame&, bool forLink);
         void cleanupAfterSystemDrag();
         void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String& label);
 #if ENABLE(ATTACHMENT_ELEMENT)

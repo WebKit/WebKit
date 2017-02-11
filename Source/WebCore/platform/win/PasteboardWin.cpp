@@ -409,7 +409,7 @@ void Pasteboard::writeString(const String& type, const String& data)
 }
 
 #if ENABLE(DRAG_SUPPORT)
-void Pasteboard::setDragImage(DragImage, const IntPoint&)
+void Pasteboard::setDragImage(DragImageRef, const IntPoint&)
 {
     // Do nothing in Windows.
 }

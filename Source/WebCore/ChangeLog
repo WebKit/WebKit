@@ -1,3 +1,23 @@
+2017-02-10  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r212154, r212154, and r212156.
+        https://bugs.webkit.org/show_bug.cgi?id=168156
+
+        broke internal builds (Requested by smfr on #webkit).
+
+        Reverted changesets:
+
+        "Add a DragImage class that wraps a DragImageRef"
+        https://bugs.webkit.org/show_bug.cgi?id=168131
+        http://trac.webkit.org/changeset/212154
+
+        "Add a DragImage class that wraps a DragImageRef"
+        https://bugs.webkit.org/show_bug.cgi?id=168131
+        http://trac.webkit.org/changeset/212154
+
+        "Try to fix the iOS and Windows builds."
+        http://trac.webkit.org/changeset/212156
+
 2017-02-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(WEBGL) build

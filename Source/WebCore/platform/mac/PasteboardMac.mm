@@ -663,7 +663,7 @@ Vector<String> Pasteboard::readFilenames()
 }
 
 #if ENABLE(DRAG_SUPPORT)
-void Pasteboard::setDragImage(DragImage image, const IntPoint& location)
+void Pasteboard::setDragImage(DragImageRef image, const IntPoint& location)
 {
     // Don't allow setting the drag image if someone kept a pasteboard and is trying to set the image too late.
     if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
@@ -671,7 +671,7 @@ void Pasteboard::setDragImage(DragImage image, const IntPoint& location)
 
     // Dashboard wants to be able to set the drag image during dragging, but Cocoa does not allow this.
     // Instead we must drop down to the CoreGraphics API.
-    wkSetDragImage(image.get().get(), location);
+    wkSetDragImage(image.get(), location);
 
     // Hack: We must post an event to wake up the NSDragManager, which is sitting in a nextEvent call
     // up the stack from us because the CoreFoundation drag manager does not use the run loop by itself.
