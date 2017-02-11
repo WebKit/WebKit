@@ -71,19 +71,4 @@ bool MIMETypeRegistry::isApplicationPluginMIMEType(const String& MIMEType)
     return false;
 }
 
-String MIMETypeRegistry::appendFileExtensionIfNecessary(const String& filename, const String& mimeType)
-{
-    if (filename.isEmpty())
-        return emptyString();
-
-    if (filename.reverseFind('.') != notFound)
-        return filename;
-
-    String preferredExtension = getPreferredExtensionForMIMEType(mimeType);
-    if (preferredExtension.isEmpty())
-        return filename;
-
-    return filename + "." + preferredExtension;
-}
-
 }

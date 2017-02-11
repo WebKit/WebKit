@@ -39,8 +39,8 @@ static const ExtensionMap extensionMap [] = {
     { "bmp", "image/bmp" },
     { "css", "text/css" },
     { "gif", "image/gif" },
-    { "htm", "text/html" },
     { "html", "text/html" },
+    { "htm", "text/html" },
     { "ico", "image/x-icon" },
     { "jpeg", "image/jpeg" },
     { "jpg", "image/jpeg" },
@@ -72,6 +72,15 @@ String MIMETypeRegistry::getMIMETypeForExtension(const String& extension)
 bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
 {
     return false;
+}
+
+String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& mimeType)
+{
+    for (auto& entry : extensionMap) {
+        if (equalIgnoringASCIICase(mimeType, entry.mimeType))
+            return entry.extension;
+    }
+    return emptyString();
 }
 
 }

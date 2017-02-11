@@ -86,4 +86,13 @@ bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
     return false;
 }
 
+String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& mimeType)
+{
+    for (auto& entry : extensionMap) {
+        if (equalIgnoringASCIICase(mimeType, entry.mimeType))
+            return entry.extension;
+    }
+    return emptyString();
+}
+
 }
