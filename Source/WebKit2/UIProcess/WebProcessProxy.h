@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,6 +120,7 @@ public:
     void fetchWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, Function<void(WebsiteData)> completionHandler);
     void deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince, Function<void()> completionHandler);
     void deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, Function<void()> completionHandler);
+    static void deleteWebsiteDataForTopPrivatelyOwnedDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType>, Vector<String>& topPrivatelyOwnedDomains, bool shouldNotifyPages, std::function<void()> completionHandler);
 
     void enableSuddenTermination();
     void disableSuddenTermination();

@@ -1,3 +1,51 @@
+2017-02-10  John Wilander  <wilander@apple.com>
+
+        Updates to Resource Load Statistics: Get the right website data store and introduce timeout for user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=167474
+        <rdar://problem/24681808>
+        <rdar://problem/24703286>
+        <rdar://problem/30290270>
+
+        This patch adds test infrastructure to allow testing 
+        of the various rules in place for data records removal.
+
+        Reviewed by Andy Estes.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+            Callback mechanism to tell pages that a website data store
+            scan has happened.
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsPrevalentResource):
+        (WTR::TestRunner::isStatisticsPrevalentResource):
+        (WTR::TestRunner::setStatisticsHasHadUserInteraction):
+        (WTR::TestRunner::isStatisticsHasHadUserInteraction):
+        (WTR::TestRunner::setStatisticsTimeToLiveUserInteraction):
+        (WTR::TestRunner::installStatisticsDidModifyDataRecordsCallback):
+        (WTR::TestRunner::statisticsDidModifyDataRecordsCallback):
+        (WTR::TestRunner::statisticsFireDataModificationHandler):
+        (WTR::TestRunner::setStatisticsNotifyPagesWhenDataRecordsWereScanned):
+        (WTR::TestRunner::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WTR::TestRunner::setStatisticsMinimumTimeBetweeenDataRecordsRemoval):
+        (WTR::TestRunner::statisticsResetToConsistentState):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setStatisticsPrevalentResource):
+        (WTR::TestController::isStatisticsPrevalentResource):
+        (WTR::TestController::setStatisticsHasHadUserInteraction):
+        (WTR::TestController::isStatisticsHasHadUserInteraction):
+        (WTR::TestController::setStatisticsTimeToLiveUserInteraction):
+        (WTR::TestController::statisticsFireDataModificationHandler):
+        (WTR::TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned):
+        (WTR::TestController::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WTR::TestController::setStatisticsMinimumTimeBetweeenDataRecordsRemoval):
+        (WTR::TestController::statisticsResetToConsistentState):
+        * WebKitTestRunner/TestController.h:
+            These are all configuration and test functions.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2017-02-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r182916) run-perf-tests never timeouts

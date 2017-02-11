@@ -64,6 +64,7 @@ http/tests/quicklook [ Skip ]
 # These tests are WebKit2-only
 http/tests/appcache/decide-navigation-policy-after-delay.html [ Skip ]
 http/tests/misc/will-send-request-with-client-provided-http-body.html [ Skip ]
+http/tests/loading/resourceLoadStatistics/ [ Skip ]
 
 # Only Mac and iOS have an implementation of UIScriptController::doAsyncTask().
 fast/harness/uiscriptcontroller [ Skip ]

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,7 @@
 #include <WebKit/WKPluginInformation.h>
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKProtectionSpace.h>
+#include <WebKit/WKResourceLoadStatisticsManager.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSecurityOriginRef.h>
 #include <WebKit/WKTextChecker.h>
@@ -2207,6 +2208,55 @@ void TestController::setIgnoresViewportScaleLimits(bool ignoresViewportScaleLimi
     WKPageSetIgnoresViewportScaleLimits(m_mainWebView->page(), ignoresViewportScaleLimits);
 }
 
+void TestController::setStatisticsPrevalentResource(WKStringRef hostName, bool value)
+{
+    WKResourceLoadStatisticsManagerSetPrevalentResource(hostName, value);
+}
+
+bool TestController::isStatisticsPrevalentResource(WKStringRef hostName)
+{
+    return WKResourceLoadStatisticsManagerIsPrevalentResource(hostName);
+}
+
+void TestController::setStatisticsHasHadUserInteraction(WKStringRef hostName, bool value)
+{
+    WKResourceLoadStatisticsManagerSetHasHadUserInteraction(hostName, value);
+}
+
+bool TestController::isStatisticsHasHadUserInteraction(WKStringRef hostName)
+{
+    return WKResourceLoadStatisticsManagerIsHasHadUserInteraction(hostName);
+}
+
+void TestController::setStatisticsTimeToLiveUserInteraction(double seconds)
+{
+    WKResourceLoadStatisticsManagerSetTimeToLiveUserInteraction(seconds);
+}
+
+void TestController::statisticsFireDataModificationHandler()
+{
+    WKResourceLoadStatisticsManagerFireDataModificationHandler();
+}
+    
+void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)
+{
+    WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned(value);
+}
+    
+void TestController::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)
+{
+    WKResourceLoadStatisticsManagerSetShouldClassifyResourcesBeforeDataRecordsRemoval(value);
+}
+
+void TestController::setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double seconds)
+{
+    WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval(seconds);
+}
+void TestController::statisticsResetToConsistentState()
+{
+    WKResourceLoadStatisticsManagerResetToConsistentState();
+}
+    
 #if !PLATFORM(COCOA)
 void TestController::platformWillRunTest(const TestInvocation&)
 {

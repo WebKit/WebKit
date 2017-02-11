@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,15 +42,25 @@
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "URL.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
+// One day in seconds.
+static auto timestampResolution = 86400;
+
 ResourceLoadObserver& ResourceLoadObserver::sharedObserver()
 {
     static NeverDestroyed<ResourceLoadObserver> resourceLoadObserver;
     return resourceLoadObserver;
+}
+
+RefPtr<ResourceLoadStatisticsStore> ResourceLoadObserver::statisticsStore()
+{
+    ASSERT(m_store);
+    return m_store;
 }
 
 void ResourceLoadObserver::setStatisticsStore(Ref<ResourceLoadStatisticsStore>&& store)
@@ -278,7 +288,12 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
         m_store->fireDataModificationHandler();
 }
 
-void ResourceLoadObserver::logUserInteraction(const Document& document)
+static double reduceTimeResolutionToOneDay(double seconds)
+{
+    return std::floor(seconds / timestampResolution) * timestampResolution;
+}
+
+void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Document& document)
 {
     ASSERT(document.page());
 
@@ -286,15 +301,90 @@ void ResourceLoadObserver::logUserInteraction(const Document& document)
         return;
 
     auto& url = document.url();
+    if (url.isBlankURL() || url.isEmpty())
+        return;
 
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    double newTimestamp = reduceTimeResolutionToOneDay(WTF::currentTime());
+    if (newTimestamp == statistics.mostRecentUserInteraction)
+        return;
+
+    statistics.hadUserInteraction = true;
+    statistics.mostRecentUserInteraction = newTimestamp;
+    m_store->fireDataModificationHandler();
+}
+
+void ResourceLoadObserver::logUserInteraction(const URL& url)
+{
     if (url.isBlankURL() || url.isEmpty())
         return;
 
     auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
     statistics.hadUserInteraction = true;
-    m_store->fireDataModificationHandler();
+    statistics.mostRecentUserInteraction = WTF::currentTime();
+}
+
+void ResourceLoadObserver::clearUserInteraction(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    
+    statistics.hadUserInteraction = false;
+    statistics.mostRecentUserInteraction = 0;
+}
+
+bool ResourceLoadObserver::hasHadUserInteraction(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return false;
+
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    
+    return m_store->hasHadRecentUserInteraction(statistics);
+}
+
+void ResourceLoadObserver::setPrevalentResource(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    
+    statistics.isPrevalentResource = true;
+}
+
+bool ResourceLoadObserver::isPrevalentResource(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return false;
+
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    
+    return statistics.isPrevalentResource;
 }
     
+void ResourceLoadObserver::clearPrevalentResource(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    
+    statistics.isPrevalentResource = false;
+}
+
+void ResourceLoadObserver::setTimeToLiveUserInteraction(double seconds)
+{
+    m_store->setTimeToLiveUserInteraction(seconds);
+}
+
+void ResourceLoadObserver::fireDataModificationHandler()
+{
+    m_store->fireDataModificationHandler();
+}
+
 String ResourceLoadObserver::primaryDomain(const URL& url)
 {
     String primaryDomain;

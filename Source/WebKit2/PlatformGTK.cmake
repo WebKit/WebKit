@@ -88,9 +88,12 @@ list(APPEND WebKit2_SOURCES
     UIProcess/DefaultUndoController.cpp
     UIProcess/DrawingAreaProxyImpl.cpp
     UIProcess/LegacySessionStateCodingNone.cpp
+    UIProcess/WebResourceLoadStatisticsManager.cpp
     UIProcess/WebResourceLoadStatisticsStore.cpp
     UIProcess/WebTextChecker.cpp
     UIProcess/WebTextCheckerClient.cpp
+
+    UIProcess/API/C/WKResourceLoadStatisticsManager.cpp
 
     UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
 

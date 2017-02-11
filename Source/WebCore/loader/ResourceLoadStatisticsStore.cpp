@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,11 +33,14 @@
 #include "ResourceLoadStatistics.h"
 #include "SharedBuffer.h"
 #include "URL.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-static const auto statisticsModelVersion = 2;
+static const auto statisticsModelVersion = 3;
+// 30 days in seconds
+static auto timeToLiveUserInteraction = 2592000;
 
 Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create()
 {
@@ -144,17 +147,40 @@ void ResourceLoadStatisticsStore::fireDataModificationHandler()
         m_dataAddedHandler();
 }
 
+void ResourceLoadStatisticsStore::setTimeToLiveUserInteraction(double seconds)
+{
+    if (seconds >= 0)
+        timeToLiveUserInteraction = seconds;
+}
+
 void ResourceLoadStatisticsStore::processStatistics(std::function<void(ResourceLoadStatistics&)>&& processFunction)
 {
     for (auto& resourceStatistic : m_resourceStatisticsMap.values())
         processFunction(resourceStatistic);
 }
 
+bool ResourceLoadStatisticsStore::hasHadRecentUserInteraction(ResourceLoadStatistics& resourceStatistic)
+{
+    if (!resourceStatistic.hadUserInteraction)
+        return false;
+
+    if (currentTime() > resourceStatistic.mostRecentUserInteraction + timeToLiveUserInteraction) {
+        // Drop privacy sensitive data because we no longer need it.
+        // Set timestamp to 0.0 so that statistics merge will know
+        // it has been reset as opposed to its default -1.
+        resourceStatistic.mostRecentUserInteraction = 0;
+        resourceStatistic.hadUserInteraction = false;
+        return false;
+    }
+
+    return true;
+}
+
 Vector<String> ResourceLoadStatisticsStore::prevalentResourceDomainsWithoutUserInteraction()
 {
     Vector<String> prevalentResources;
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
-        if (resourceStatistic.isPrevalentResource && !resourceStatistic.hadUserInteraction)
+        if (resourceStatistic.isPrevalentResource && !hasHadRecentUserInteraction(resourceStatistic))
             prevalentResources.append(resourceStatistic.highLevelDomain);
     }
     return prevalentResources;

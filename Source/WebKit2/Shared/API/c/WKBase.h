@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -127,6 +127,7 @@ typedef const struct OpaqueWKPageRunBeforeUnloadConfirmPanelResultListener* WKPa
 typedef const struct OpaqueWKPageRunJavaScriptAlertResultListener* WKPageRunJavaScriptAlertResultListenerRef;
 typedef const struct OpaqueWKPageRunJavaScriptConfirmResultListener* WKPageRunJavaScriptConfirmResultListenerRef;
 typedef const struct OpaqueWKPageRunJavaScriptPromptResultListener* WKPageRunJavaScriptPromptResultListenerRef;
+typedef const struct OpaqueWKResourceLoadStatisticsManager* WKResourceLoadStatisticsManagerRef;
 typedef const struct OpaqueWKTextChecker* WKTextCheckerRef;
 typedef const struct OpaqueWKSession* WKSessionRef;
 typedef const struct OpaqueWKSessionState* WKSessionStateRef;

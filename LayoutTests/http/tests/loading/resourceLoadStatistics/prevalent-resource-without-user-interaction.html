@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tests for Prevalent Resource Without User Interaction</title>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    const hostUnderTest = "127.0.0.1:8000";
+    const statisticsUrl = "http://" + hostUnderTest + "/temp";
+    function runTestRunnerTest() {
+        if (document.cookie !== "")
+            testFailed("document.cookie not empty.");
+        const cookie = "testCookie=testValue";
+        document.cookie = cookie + "; max-age=100;";
+        if (document.cookie !== cookie)
+            testFailed("document.cookie did not get set.");
+
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, true);
+        if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+            testFailed("Host did not get set as prevalent resource.");
+
+        testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, false);
+        if (testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+            testFailed("Host did not get cleared of user interaction.");
+
+        testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
+            if (document.cookie !== "")
+                testFailed("Cookie not deleted: " + document.cookie);
+            else
+                testPassed("Cookie deleted.");
+            testRunner.statisticsResetToConsistentState();
+            testRunner.notifyDone();
+        });
+        testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
+        testRunner.setStatisticsMinimumTimeBetweeenDataRecordsRemoval(0);
+        testRunner.statisticsFireDataModificationHandler();
+    }
+
+    if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
+        testRunner.waitUntilDone();
+        internals.setResourceLoadStatisticsEnabled(true);
+        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+        runTestRunnerTest();
+    }
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -147,6 +147,17 @@ public:
     void setIgnoresViewportScaleLimits(bool);
 
     void setShouldDownloadUndisplayableMIMETypes(bool value) { m_shouldDownloadUndisplayableMIMETypes = value; }
+
+    void setStatisticsPrevalentResource(WKStringRef hostName, bool value);
+    bool isStatisticsPrevalentResource(WKStringRef hostName);
+    void setStatisticsHasHadUserInteraction(WKStringRef hostName, bool value);
+    bool isStatisticsHasHadUserInteraction(WKStringRef hostName);
+    void setStatisticsTimeToLiveUserInteraction(double seconds);
+    void statisticsFireDataModificationHandler();
+    void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
+    void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
+    void setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double);
+    void statisticsResetToConsistentState();
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);

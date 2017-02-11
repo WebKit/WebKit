@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2247,6 +2247,8 @@ void ArgumentCoder<ResourceLoadStatistics>::encode(Encoder& encoder, const WebCo
     
     // User interaction
     encoder << statistics.hadUserInteraction;
+    encoder << statistics.mostRecentUserInteraction;
+    encoder << statistics.grandfathered;
     
     // Top frame stats
     encoder << statistics.topFrameHasBeenNavigatedToBefore;
@@ -2277,6 +2279,7 @@ void ArgumentCoder<ResourceLoadStatistics>::encode(Encoder& encoder, const WebCo
     // Prevalent Resource
     encoder << statistics.redirectedToOtherPrevalentResourceOrigins;
     encoder << statistics.isPrevalentResource;
+    encoder << statistics.dataRecordsRemoved;
 }
 
 bool ArgumentCoder<ResourceLoadStatistics>::decode(Decoder& decoder, WebCore::ResourceLoadStatistics& statistics)
@@ -2286,6 +2289,12 @@ bool ArgumentCoder<ResourceLoadStatistics>::decode(Decoder& decoder, WebCore::Re
     
     // User interaction
     if (!decoder.decode(statistics.hadUserInteraction))
+        return false;
+
+    if (!decoder.decode(statistics.mostRecentUserInteraction))
+        return false;
+
+    if (!decoder.decode(statistics.grandfathered))
         return false;
     
     // Top frame stats
@@ -2357,7 +2366,10 @@ bool ArgumentCoder<ResourceLoadStatistics>::decode(Decoder& decoder, WebCore::Re
     
     if (!decoder.decode(statistics.isPrevalentResource))
         return false;
-    
+
+    if (!decoder.decode(statistics.dataRecordsRemoved))
+        return false;
+
     return true;
 }
 

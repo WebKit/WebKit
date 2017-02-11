@@ -6356,10 +6356,8 @@ Document::RegionFixedPair Document::absoluteRegionForEventTargets(const EventTar
 
 void Document::updateLastHandledUserGestureTimestamp()
 {
-    if (!m_lastHandledUserGestureTimestamp)
-        ResourceLoadObserver::sharedObserver().logUserInteraction(*this);
-
     m_lastHandledUserGestureTimestamp = monotonicallyIncreasingTime();
+    ResourceLoadObserver::sharedObserver().logUserInteractionWithReducedTimeResolution(*this);
 }
 
 void Document::startTrackingStyleRecalcs()

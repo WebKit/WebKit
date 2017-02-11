@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -246,4 +246,17 @@ interface TestRunner {
     void setMockGamepadButtonValue(unsigned long index, unsigned long buttonIndex, double value);
     void connectMockGamepad(unsigned long index);
     void disconnectMockGamepad(unsigned long index);
+
+    // Resource Load Statistics
+    void installStatisticsDidModifyDataRecordsCallback(object callback);
+    void setStatisticsPrevalentResource(DOMString hostName, boolean value);
+    boolean isStatisticsPrevalentResource(DOMString hostName);
+    void setStatisticsHasHadUserInteraction(DOMString hostName, boolean value);
+    boolean isStatisticsHasHadUserInteraction(DOMString hostName);
+    void setStatisticsTimeToLiveUserInteraction(double seconds);
+    void statisticsFireDataModificationHandler();
+    void setStatisticsNotifyPagesWhenDataRecordsWereScanned(boolean value);
+    void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(boolean value);
+    void setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double seconds);
+    void statisticsResetToConsistentState();
 };

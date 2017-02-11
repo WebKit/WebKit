@@ -1146,6 +1146,10 @@
 		6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */; };
 		659C551E130006410025C0C2 /* InjectedBundlePageResourceLoadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */; };
 		65B86F1E12F11DE300B7DD8A /* WKBundleInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6BE9699C1E43B3FF008B7483 /* WKResourceLoadStatisticsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BE9699B1E43B3FF008B7483 /* WKResourceLoadStatisticsManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6BE9699E1E43B41D008B7483 /* WKResourceLoadStatisticsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BE9699D1E43B41D008B7483 /* WKResourceLoadStatisticsManager.cpp */; };
+		6BE969A01E43B86E008B7483 /* WebResourceLoadStatisticsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BE9699F1E43B86E008B7483 /* WebResourceLoadStatisticsManager.h */; };
+		6BE969A21E43B8A4008B7483 /* WebResourceLoadStatisticsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BE969A11E43B8A4008B7483 /* WebResourceLoadStatisticsManager.cpp */; };
 		6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		728E86F11795188C0087879E /* WebColorPickerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 728E86EF1795188C0087879E /* WebColorPickerMac.h */; };
 		728E86F21795188C0087879E /* WebColorPickerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 728E86F01795188C0087879E /* WebColorPickerMac.mm */; };
@@ -3329,6 +3333,10 @@
 		6546A82A13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageResourceLoadClient.h; sourceTree = "<group>"; };
 		65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleInspector.cpp; sourceTree = "<group>"; };
 		65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleInspector.h; sourceTree = "<group>"; };
+		6BE9699B1E43B3FF008B7483 /* WKResourceLoadStatisticsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKResourceLoadStatisticsManager.h; sourceTree = "<group>"; };
+		6BE9699D1E43B41D008B7483 /* WKResourceLoadStatisticsManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKResourceLoadStatisticsManager.cpp; sourceTree = "<group>"; };
+		6BE9699F1E43B86E008B7483 /* WebResourceLoadStatisticsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceLoadStatisticsManager.h; sourceTree = "<group>"; };
+		6BE969A11E43B8A4008B7483 /* WebResourceLoadStatisticsManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoadStatisticsManager.cpp; sourceTree = "<group>"; };
 		6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebProcess.sb.in; path = WebProcess/com.apple.WebProcess.sb.in; sourceTree = "<group>"; };
 		6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKInspectorPrivateMac.h; path = mac/WKInspectorPrivateMac.h; sourceTree = "<group>"; };
 		728E86EF1795188C0087879E /* WebColorPickerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPickerMac.h; sourceTree = "<group>"; };
@@ -6534,6 +6542,8 @@
 				BC111B0D112F5E4F00337BAB /* WebProcessProxy.cpp */,
 				BC032DCF10F4389F0058C15A /* WebProcessProxy.h */,
 				BCEE7AB312817095009827DA /* WebProcessProxy.messages.in */,
+				6BE9699F1E43B86E008B7483 /* WebResourceLoadStatisticsManager.h */,
+				6BE969A11E43B8A4008B7483 /* WebResourceLoadStatisticsManager.cpp */,
 				7A9CD8C01C77984900D9F6C7 /* WebResourceLoadStatisticsStore.cpp */,
 				7A9CD8C11C77984900D9F6C7 /* WebResourceLoadStatisticsStore.h */,
 				7A9CD8C21C779AD600D9F6C7 /* WebResourceLoadStatisticsStore.messages.in */,
@@ -6722,6 +6732,8 @@
 				518ACAE912AEE6BB00B04B83 /* WKProtectionSpaceTypes.h */,
 				33367638130C99DC006C9DE2 /* WKResourceCacheManager.cpp */,
 				33367639130C99DC006C9DE2 /* WKResourceCacheManager.h */,
+				6BE9699D1E43B41D008B7483 /* WKResourceLoadStatisticsManager.cpp */,
+				6BE9699B1E43B3FF008B7483 /* WKResourceLoadStatisticsManager.h */,
 				1ADE46B01954EC61000F7985 /* WKSessionStateRef.cpp */,
 				1ADE46B11954EC61000F7985 /* WKSessionStateRef.h */,
 				314888FE1D91B11D00377042 /* WKTextChecker.cpp */,
@@ -8574,6 +8586,7 @@
 				9321D58A1A38F196008052BE /* WKImmediateActionTypes.h in Headers */,
 				1C8E293912761E5B00BC7BD0 /* WKInspector.h in Headers */,
 				0F3C725B196F604E00AEDD0C /* WKInspectorHighlightView.h in Headers */,
+				6BE969A01E43B86E008B7483 /* WebResourceLoadStatisticsManager.h in Headers */,
 				A54293A4195A43DA002782C7 /* WKInspectorNodeSearchGestureRecognizer.h in Headers */,
 				6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */,
 				51A9E10B1315CD18009E7031 /* WKKeyValueStorageManager.h in Headers */,
@@ -8758,6 +8771,7 @@
 				1A3CC16718906ACF001E6ED8 /* WKWebView.h in Headers */,
 				1ADF591B1890528E0043C145 /* WKWebViewConfiguration.h in Headers */,
 				2D7AAFD618C956AF00A7ACD4 /* WKWebViewConfigurationInternal.h in Headers */,
+				6BE9699C1E43B3FF008B7483 /* WKResourceLoadStatisticsManager.h in Headers */,
 				1AC1415118AC47EE006C602C /* WKWebViewConfigurationPrivate.h in Headers */,
 				41DC459C1E3DBB2800B11F51 /* LibWebRTCSocketClient.h in Headers */,
 				2D7AAFD318C8640600A7ACD4 /* WKWebViewContentProvider.h in Headers */,
@@ -9978,6 +9992,7 @@
 				3760881E150413E900FC82C7 /* WebRenderObject.cpp in Sources */,
 				510AFFB916542048001BA05E /* WebResourceLoader.cpp in Sources */,
 				51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */,
+                                6BE969A21E43B8A4008B7483 /* WebResourceLoadStatisticsManager.cpp in Sources */,
 				51F060E11654318500F3281C /* WebRTCSocketMessageReceiver.cpp in Sources */,
 				51F060E11654318500F3282C /* WebRTCResolverMessageReceiver.cpp in Sources */,
 				51F060E11654318500F3281D /* NetworkRTCSocketMessageReceiver.cpp in Sources */,
@@ -10168,6 +10183,7 @@
 				37948408150C4B9700E52CE9 /* WKRenderLayer.cpp in Sources */,
 				37608822150414F700FC82C7 /* WKRenderObject.cpp in Sources */,
 				3336763A130C99DC006C9DE2 /* WKResourceCacheManager.cpp in Sources */,
+                                6BE9699E1E43B41D008B7483 /* WKResourceLoadStatisticsManager.cpp in Sources */,
 				1A7E377818E4A4FE003D0FFF /* WKScriptMessage.mm in Sources */,
 				0FCB4E5518BBE044000FCFC9 /* WKScrollView.mm in Sources */,
 				51CD1C661B34B9DC00142CA5 /* WKSecurityOrigin.mm in Sources */,

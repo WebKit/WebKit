@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -198,6 +198,53 @@ void WebProcessProxy::shutDown()
 WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
 {
     return globalPageMap().get(pageID);
+}
+
+void WebProcessProxy::deleteWebsiteDataForTopPrivatelyOwnedDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<String>& topPrivatelyOwnedDomains, bool shouldNotifyPage, std::function<void()> completionHandler)
+{
+    struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
+        explicit CallbackAggregator(std::function<void()> completionHandler)
+            : completionHandler(WTFMove(completionHandler))
+        {
+        }
+        
+        void addPendingCallback()
+        {
+            ++pendingCallbacks;
+        }
+        
+        void removePendingCallback()
+        {
+            ASSERT(pendingCallbacks);
+            --pendingCallbacks;
+            
+            callIfNeeded();
+        }
+        
+        void callIfNeeded()
+        {
+            if (!pendingCallbacks)
+                completionHandler();
+        }
+        
+        unsigned pendingCallbacks = 0;
+        std::function<void()> completionHandler;
+    };
+    
+    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
+
+    for (auto& page : globalPageMap()) {
+        if (!page.value->websiteDataStore().isPersistent())
+            continue;
+        callbackAggregator->addPendingCallback();
+        page.value->websiteDataStore().removeDataForTopPrivatelyOwnedDomains(dataTypes, { }, topPrivatelyOwnedDomains, [callbackAggregator, shouldNotifyPage, page]() {
+            if (shouldNotifyPage)
+                page.value->postMessageToInjectedBundle("WebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished", nullptr);
+            WTF::RunLoop::main().dispatch([callbackAggregator] {
+                callbackAggregator->removePendingCallback();
+            });
+        });
+    }
 }
 
 Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)

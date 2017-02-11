@@ -51,6 +51,9 @@ class WebProcessProxy;
 class WebResourceLoadStatisticsStore : public IPC::Connection::WorkQueueMessageReceiver {
 public:
     static Ref<WebResourceLoadStatisticsStore> create(const String&);
+    static void setNotifyPagesWhenDataRecordsWereScanned(bool);
+    static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
+    static void setMinimumTimeBetweeenDataRecordsRemoval(double);
     virtual ~WebResourceLoadStatisticsStore();
     
     void setResourceLoadStatisticsEnabled(bool);
@@ -65,13 +68,13 @@ public:
 
     void readDataFromDiskIfNeeded();
 
-    void mergeStatistics(const Vector<WebCore::ResourceLoadStatistics>&);
-
-    WebCore::ResourceLoadStatisticsStore& coreStore() { return m_resourceStatisticsStore.get(); }
-    const WebCore::ResourceLoadStatisticsStore& coreStore() const { return m_resourceStatisticsStore.get(); }
+    WebCore::ResourceLoadStatisticsStore& coreStore() { return m_resourceLoadStatisticsStore.get(); }
+    const WebCore::ResourceLoadStatisticsStore& coreStore() const { return m_resourceLoadStatisticsStore.get(); }
 
 private:
     explicit WebResourceLoadStatisticsStore(const String&);
+
+    void processStatisticsAndDataRecords();
 
     bool hasPrevalentResourceCharacteristics(const WebCore::ResourceLoadStatistics&);
     void classifyResource(WebCore::ResourceLoadStatistics&);
@@ -85,7 +88,7 @@ private:
     void writeEncoderToDisk(WebCore::KeyedEncoder&, const String& label) const;
     std::unique_ptr<WebCore::KeyedDecoder> createDecoderFromDisk(const String& label) const;
 
-    Ref<WebCore::ResourceLoadStatisticsStore> m_resourceStatisticsStore;
+    Ref<WebCore::ResourceLoadStatisticsStore> m_resourceLoadStatisticsStore;
     Ref<WTF::WorkQueue> m_statisticsQueue;
     String m_storagePath;
     bool m_resourceLoadStatisticsEnabled { false };

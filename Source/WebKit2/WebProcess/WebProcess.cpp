@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -168,7 +168,7 @@ WebProcess::WebProcess()
 #if PLATFORM(IOS)
     , m_webSQLiteDatabaseTracker(*this)
 #endif
-    , m_resourceLoadStatisticsStorage(WebCore::ResourceLoadStatisticsStore::create())
+    , m_resourceLoadStatisticsStore(WebCore::ResourceLoadStatisticsStore::create())
 {
     // Initialize our platform strategies.
     WebPlatformStrategies::initialize();
@@ -190,8 +190,8 @@ WebProcess::WebProcess()
 
     m_plugInAutoStartOriginHashes.add(SessionID::defaultSessionID(), HashMap<unsigned, double>());
 
-    ResourceLoadObserver::sharedObserver().setStatisticsStore(m_resourceLoadStatisticsStorage.copyRef());
-    m_resourceLoadStatisticsStorage->setNotificationCallback([this] {
+    ResourceLoadObserver::sharedObserver().setStatisticsStore(m_resourceLoadStatisticsStore.copyRef());
+    m_resourceLoadStatisticsStore->setNotificationCallback([this] {
         if (m_statisticsChangedTimer.isActive())
             return;
         m_statisticsChangedTimer.startOneShot(std::chrono::seconds(5));
@@ -1389,10 +1389,10 @@ void WebProcess::nonVisibleProcessCleanupTimerFired()
 
 void WebProcess::statisticsChangedTimerFired()
 {
-    if (m_resourceLoadStatisticsStorage->isEmpty())
+    if (m_resourceLoadStatisticsStore->isEmpty())
         return;
 
-    parentProcessConnection()->send(Messages::WebResourceLoadStatisticsStore::ResourceLoadStatisticsUpdated(m_resourceLoadStatisticsStorage->takeStatistics()), 0);
+    parentProcessConnection()->send(Messages::WebResourceLoadStatisticsStore::ResourceLoadStatisticsUpdated(m_resourceLoadStatisticsStore->takeStatistics()), 0);
 }
 
 void WebProcess::setResourceLoadStatisticsEnabled(bool enabled)

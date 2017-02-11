@@ -1,3 +1,29 @@
+2017-02-10  John Wilander  <wilander@apple.com>
+
+        Updates to Resource Load Statistics: Get the right website data store and introduce timeout for user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=167474
+        <rdar://problem/24681808>
+        <rdar://problem/24703286>
+        <rdar://problem/30290270>
+
+        Reviewed by Andy Estes.
+
+        * TestExpectations:
+            Marked as general skip (see WK2 expectations below).
+        * http/tests/loading/resourceLoadStatistics: Added.
+        * http/tests/loading/resourceLoadStatistics/non-prevalent-resource-with-user-interaction-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html: Added.
+        * http/tests/loading/resourceLoadStatistics/non-prevalent-resource-without-user-interaction-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/non-prevalent-resource-without-user-interaction.html: Added.
+        * http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html: Added.
+        * http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction.html: Added.
+        * http/tests/loading/resourceLoadStatistics/prevalent-resource-without-user-interaction-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/prevalent-resource-without-user-interaction.html: Added.
+        * platform/wk2/TestExpectations:
+            Marked as valid for WebKit2 only.
+
 2017-02-10  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Cleanup XMLHttpRequest's bindings

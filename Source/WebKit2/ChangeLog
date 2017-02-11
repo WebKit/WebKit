@@ -1,3 +1,130 @@
+2017-02-10  John Wilander  <wilander@apple.com>
+
+        Updates to Resource Load Statistics: Get the right website data store and introduce timeout for user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=167474
+        <rdar://problem/24681808>
+        <rdar://problem/24703286>
+        <rdar://problem/30290270>
+
+        This patch does the following:
+        1. Gets the right website data store. API::WebsiteDataStore::defaultDataStore()
+            does not provide the right data store.
+        2. Introduces timeout for user interaction. A domain needs interaction every 30
+            days to stay in that category.
+        3. Adds grandfathered to the statistics model in preparation for grandfathering of
+            existing data records.
+        4. Adds test infrastructure to allow testing of the various rules in place for
+            data records removal.
+        5. Fixes various smaller bugs that were found as part of setting up the tests.
+        6. Regresses the data records removal counting. We need to come up with a thread
+            safe way of gathering removal statistics from more than one data store now
+            that we potentially interact with multiple stores.
+        7. Adds a first set of layout tests for resource load statistics.
+
+        Reviewed by Andy Estes.
+
+        * PlatformEfl.cmake:
+            Added UIProcess/WebResourceLoadStatisticsManager.cpp and
+            UIProcess/API/C/WKResourceLoadStatisticsManager.cpp.
+        * PlatformGTK.cmake:
+            Added UIProcess/WebResourceLoadStatisticsManager.cpp and
+            UIProcess/API/C/WKResourceLoadStatisticsManager.cpp.
+        * PlatformMac.cmake:
+            Added UIProcess/WebResourceLoadStatisticsManager.cpp and
+            UIProcess/API/C/WKResourceLoadStatisticsManager.cpp.
+        * Shared/API/APIObject.h:
+            Adds WebResourceLoadStatisticsManager to the Type enum.
+        * Shared/API/c/WKBase.h:
+            Typedef of WKResourceLoadStatisticsManagerRef.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::encode):
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::decode):
+            Adds support for statistics mostRecentUserInteraction, grandfathered, and
+            dataRecordsRemoved.
+        * UIProcess/API/C/WKAPICast.h:
+            Adds API mapping between WKResourceLoadStatisticsManagerRef and 
+            WebResourceLoadStatisticsManager.
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.cpp: Added.
+        (WKResourceLoadStatisticsManagerGetTypeID):
+        (WKResourceLoadStatisticsManagerSetPrevalentResource):
+        (WKResourceLoadStatisticsManagerIsPrevalentResource):
+        (WKResourceLoadStatisticsManagerSetHasHadUserInteraction):
+        (WKResourceLoadStatisticsManagerIsHasHadUserInteraction):
+        (WKResourceLoadStatisticsManagerSetTimeToLiveUserInteraction):
+        (WKResourceLoadStatisticsManagerFireDataModificationHandler):
+        (WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned):
+        (WKResourceLoadStatisticsManagerSetShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval):
+        (WKResourceLoadStatisticsManagerResetToConsistentState):
+            API level bridge to WebResourceLoadStatisticsManager functions.
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.h: Added.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::deleteWebsiteDataForTopPrivatelyOwnedDomainsInAllPersistentDataStores):
+            A way to delete website data in persistent store(s) configured by the 
+            embedding client. API::WebsiteDataStore::defaultDataStore() does not 
+            do this which caused us to skip session storage.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebResourceLoadStatisticsManager.cpp: Added.
+        (WebKit::WebResourceLoadStatisticsManager::setPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsManager::isPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsManager::setHasHadUserInteraction):
+        (WebKit::WebResourceLoadStatisticsManager::hasHadUserInteraction):
+        (WebKit::WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction):
+        (WebKit::WebResourceLoadStatisticsManager::fireDataModificationHandler):
+        (WebKit::WebResourceLoadStatisticsManager::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::WebResourceLoadStatisticsManager::setShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WebKit::WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval):
+        (WebKit::WebResourceLoadStatisticsManager::resetToConsistentState):
+            Static functions to manage the state and behavior of the UI process' 
+            resource load statistics store.
+        * UIProcess/WebResourceLoadStatisticsManager.h: Added.
+        (WebKit::WebResourceLoadStatisticsManager::create):
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+            An effect of a member variable rename. See header file comment below.
+        (WebKit::WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WebKit::WebResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval):
+            Three static functions for controlling the behavior of the store.
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+            Changes:
+            1. Covers all data record types.
+            2. Allows data removal when m_lastTimeDataRecordsWereRemoved is not set.
+            3. Moves the heavy lifting to WebsiteDataStore (see below).
+            4. No longer counts removed data regressions.
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+            See next comment.
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+            WebResourceLoadStatisticsStore::processStatisticsAndDataRecords() is 
+            broken out of WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated
+            to allow for statistics processing without prior classification.
+            Tests need to set statistics and a run of the classifier may
+            reset the data.
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver):
+            Sets the notification callback which calls 
+            WebResourceLoadStatisticsStore::processStatisticsAndDataRecords().
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        (WebKit::WebResourceLoadStatisticsStore::coreStore):
+            Renamed m_resourceStatisticsStore to m_resourceLoadStatisticsStore to
+            harmonize with other naming.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataForTopPrivatelyOwnedDomains):
+            This is now where matching is made between prevalent resources
+            and data records. This function is used by 
+            WebsiteDataStore::removeDataForTopPrivatelyOwnedDomains().
+        (WebKit::WebsiteDataStore::removeDataForTopPrivatelyOwnedDomains):
+            The function WebResourceLoadStatisticsStore::removeDataRecords()
+            calls to get data records removed in all persistent stores.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::m_resourceLoadStatisticsStore):
+        (WebKit::WebProcess::statisticsChangedTimerFired):
+        (WebKit::m_resourceLoadStatisticsStorage): Deleted.
+            Renamed m_resourceLoadStatisticsStorage to m_resourceLoadStatisticsStore 
+            to harmonize with other naming.
+        * WebProcess/WebProcess.h:
+
 2017-02-10  Simon Fraser  <simon.fraser@apple.com>
 
         Zero out some WKWebView state in the case of a web content crash

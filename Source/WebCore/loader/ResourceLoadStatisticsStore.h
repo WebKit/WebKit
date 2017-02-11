@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,9 +59,11 @@ public:
     WEBCORE_EXPORT void setNotificationCallback(std::function<void()> handler);
 
     void fireDataModificationHandler();
+    void setTimeToLiveUserInteraction(double seconds);
 
     WEBCORE_EXPORT void processStatistics(std::function<void(ResourceLoadStatistics&)>&&);
 
+    WEBCORE_EXPORT bool hasHadRecentUserInteraction(ResourceLoadStatistics&);
     WEBCORE_EXPORT Vector<String> prevalentResourceDomainsWithoutUserInteraction();
     WEBCORE_EXPORT void updateStatisticsForRemovedDataRecords(const Vector<String>& prevalentResourceDomains);
 private:

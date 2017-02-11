@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -263,6 +263,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     if (WKStringIsEqualToUTF8CString(messageName, "WorkQueueProcessedCallback")) {
         if (!topLoadingFrame() && !m_testRunner->waitToDump())
             InjectedBundle::page()->dump();
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "WebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished")) {
+        m_testRunner->statisticsDidModifyDataRecordsCallback();
         return;
     }
 

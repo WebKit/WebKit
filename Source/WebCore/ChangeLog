@@ -1,3 +1,75 @@
+2017-02-10  John Wilander  <wilander@apple.com>
+
+        Updates to Resource Load Statistics: Get the right website data store and introduce timeout for user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=167474
+        <rdar://problem/24681808>
+        <rdar://problem/24703286>
+        <rdar://problem/30290270>
+
+        This patch does the following:
+        1. Gets the right website data store. API::WebsiteDataStore::defaultDataStore()
+            does not provide the right data store.
+        2. Introduces timeout for user interaction. A domain needs interaction every 30
+            days to stay in that category.
+        3. Adds grandfathered to the statistics model in preparation for grandfathering of
+            existing data records.
+        4. Adds test infrastructure to allow testing of the various rules in place for
+            data records removal.
+        5. Fixes various smaller bugs that were found as part of setting up the tests.
+        6. Regresses the data records removal counting. We need to come up with a thread
+            safe way of gathering removal statistics from more than one data store now
+            that we potentially interact with multiple stores.
+        7. Adds a first set of layout tests for resource load statistics.
+
+        Reviewed by Andy Estes.
+
+        Tests: http/tests/loading/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html
+               http/tests/loading/resourceLoadStatistics/non-prevalent-resource-without-user-interaction.html
+               http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html
+               http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction.html
+               http/tests/loading/resourceLoadStatistics/prevalent-resource-without-user-interaction.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLastHandledUserGestureTimestamp):
+            This now calls ResourceLoadObserver::logUserInteraction() every time since
+            we want to keep track of the most recent user interaction.
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::statisticsStore):
+            New getter used by WebResourceLoadStatisticsManager::resetToConsistentState().
+        (WebCore::reduceTimeResolutionToOneDay):
+            Convenience function.
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+            Reduces time resolution for privacy reasons.
+        (WebCore::ResourceLoadObserver::logUserInteraction):
+        (WebCore::ResourceLoadObserver::clearUserInteraction):
+        (WebCore::ResourceLoadObserver::hasHadUserInteraction):
+        (WebCore::ResourceLoadObserver::setPrevalentResource):
+        (WebCore::ResourceLoadObserver::isPrevalentResource):
+        (WebCore::ResourceLoadObserver::clearPrevalentResource):
+        (WebCore::ResourceLoadObserver::setTimeToLiveUserInteraction):
+        (WebCore::ResourceLoadObserver::fireDataModificationHandler):
+            New functions that allow WebKitTestRunner to stage exact
+            statistics, fire the handler, and test the outcome.
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::encode):
+        (WebCore::ResourceLoadStatistics::decode):
+        (WebCore::ResourceLoadStatistics::toString):
+        (WebCore::ResourceLoadStatistics::merge):
+            Support for statistics mostRecentUserInteraction, grandfathered, and
+            dataRecordsRemoved.
+        * loader/ResourceLoadStatistics.h:
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::setTimeToLiveUserInteraction):
+            New function that allows WebKitTestRunner to test 
+            aging out of user interaction.
+        (WebCore::ResourceLoadStatisticsStore::hasHadRecentUserInteraction):
+            Now takes into account the timestamp and ages
+            out user interaction.
+        (WebCore::ResourceLoadStatisticsStore::prevalentResourceDomainsWithoutUserInteraction):
+            Now makes use of ResourceLoadStatisticsStore::hasHadRecentUserInteraction().
+        * loader/ResourceLoadStatisticsStore.h:
+
 2017-02-10  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Cleanup XMLHttpRequest's bindings

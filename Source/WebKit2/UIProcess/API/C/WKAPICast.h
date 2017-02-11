@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -107,6 +107,7 @@ class WebProcessPool;
 class WebProtectionSpace;
 class WebRenderLayer;
 class WebRenderObject;
+class WebResourceLoadStatisticsManager;
 class WebTextChecker;
 class WebUserContentControllerProxy;
 class WebVibrationProxy;
@@ -156,6 +157,7 @@ WK_ADD_API_MAPPING(WKPreferencesRef, WebPreferences)
 WK_ADD_API_MAPPING(WKProtectionSpaceRef, WebProtectionSpace)
 WK_ADD_API_MAPPING(WKRenderLayerRef, WebRenderLayer)
 WK_ADD_API_MAPPING(WKRenderObjectRef, WebRenderObject)
+WK_ADD_API_MAPPING(WKResourceLoadStatisticsManagerRef, WebResourceLoadStatisticsManager)
 WK_ADD_API_MAPPING(WKSessionStateRef, API::SessionState)
 WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
 WK_ADD_API_MAPPING(WKUserContentControllerRef, WebUserContentControllerProxy)

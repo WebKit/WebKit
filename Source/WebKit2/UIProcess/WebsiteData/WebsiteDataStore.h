@@ -84,8 +84,10 @@ public:
     static void cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage);
 
     void fetchData(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, std::function<void (Vector<WebsiteDataRecord>)> completionHandler);
+    void fetchDataForTopPrivatelyOwnedDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, const Vector<String>& topPrivatelyOwnedDomains, std::function<void(Vector<WebsiteDataRecord>)> completionHandler);
     void removeData(OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
     void removeData(OptionSet<WebsiteDataType>, const Vector<WebsiteDataRecord>&, std::function<void ()> completionHandler);
+    void removeDataForTopPrivatelyOwnedDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, const Vector<String>& topPrivatelyOwnedDomains, std::function<void()> completionHandler);
 
     StorageManager* storageManager() { return m_storageManager.get(); }
 

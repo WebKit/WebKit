@@ -473,6 +473,35 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
     callbackAggregator->callIfNeeded();
 }
 
+void WebsiteDataStore::fetchDataForTopPrivatelyOwnedDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyOwnedDomains, std::function<void(Vector<WebsiteDataRecord>)> completionHandler)
+{
+    fetchData(dataTypes, fetchOptions, [topPrivatelyOwnedDomains, completionHandler, this](auto existingDataRecords) {
+        Vector<WebsiteDataRecord> matchingDataRecords;
+        Vector<String> domainsWithDataRecords;
+        for (auto& dataRecord : existingDataRecords) {
+            bool dataRecordAdded;
+            for (auto& dataRecordOriginData : dataRecord.origins) {
+                dataRecordAdded = false;
+                String dataRecordHost = dataRecordOriginData.securityOrigin().get().host();
+                for (auto& topPrivatelyOwnedDomain : topPrivatelyOwnedDomains) {
+                    if (dataRecordHost.endsWithIgnoringASCIICase(topPrivatelyOwnedDomain)) {
+                        auto suffixStart = dataRecordHost.length() - topPrivatelyOwnedDomain.length();
+                        if (!suffixStart || dataRecordHost[suffixStart - 1] == '.') {
+                            matchingDataRecords.append(dataRecord);
+                            domainsWithDataRecords.append(topPrivatelyOwnedDomain);
+                            dataRecordAdded = true;
+                            break;
+                        }
+                    }
+                }
+                if (dataRecordAdded)
+                    break;
+            }
+        }
+        completionHandler(matchingDataRecords);
+    });
+}
+    
 static ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
 {
     ProcessAccessType processAccessType = ProcessAccessType::None;
@@ -996,6 +1025,15 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
+}
+
+void WebsiteDataStore::removeDataForTopPrivatelyOwnedDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyOwnedDomains, std::function<void()> completionHandler)
+{
+    fetchDataForTopPrivatelyOwnedDomains(dataTypes, fetchOptions, topPrivatelyOwnedDomains, [dataTypes, completionHandler, this](auto websiteDataRecords) {
+        this->removeData(dataTypes, websiteDataRecords, [completionHandler]() {
+            completionHandler();
+        });
+    });
 }
 
 void WebsiteDataStore::webPageWasAdded(WebPageProxy& webPageProxy)

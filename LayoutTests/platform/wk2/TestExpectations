@@ -698,6 +698,9 @@ http/tests/misc/will-send-request-with-client-provided-http-body.html [ Pass ]
 # bug 162281
 imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.html [ Failure ]
 
+# Resource Load Statistics are only supported in WebKit2
+http/tests/loading/resourceLoadStatistics/ [ Pass ]
+
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
 
