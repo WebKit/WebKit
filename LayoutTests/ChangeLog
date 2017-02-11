@@ -1,3 +1,9 @@
+2017-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Skip CSS image-orientation and image-resolution tests.
+
+        * platform/gtk/TestExpectations:
+
 2017-02-10  John Wilander  <wilander@apple.com>
 
         Updates to Resource Load Statistics: Get the right website data store and introduce timeout for user interaction
