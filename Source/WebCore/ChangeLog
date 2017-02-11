@@ -1,5 +1,14 @@
 2017-02-10  Daniel Bates  <dabates@apple.com>
 
+        Attempt to fix the build following <https://trac.webkit.org/changeset/212173>
+        (https://bugs.webkit.org/show_bug.cgi?id=166774)
+
+        * dom/Document.cpp:
+        (WebCore::Document::detachFromCachedFrame): Use ASSER_UNUSED() instead of ASSERT() since
+        the parameter cachedFrame is unused in non-debug build.
+
+2017-02-10  Daniel Bates  <dabates@apple.com>
+
         Detach frame from document when entering page cache
         https://bugs.webkit.org/show_bug.cgi?id=166774
         <rdar://problem/29904368>
