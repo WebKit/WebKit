@@ -1,5 +1,45 @@
 2017-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline several tests.
+
+        * platform/gtk/fast/css/font_property_normal-expected.png:
+        * platform/gtk/fast/css/font_property_normal-expected.txt:
+        * platform/gtk/fast/dynamic/text-combine-expected.png:
+        * platform/gtk/fast/dynamic/text-combine-expected.txt:
+        * platform/gtk/fast/forms/select-empty-option-height-expected.png:
+        * platform/gtk/fast/forms/select-empty-option-height-expected.txt:
+        * platform/gtk/fast/forms/select-writing-direction-natural-expected.png:
+        * platform/gtk/fast/forms/select-writing-direction-natural-expected.txt:
+        * platform/gtk/fast/forms/validation-message-appearance-expected.png:
+        * platform/gtk/fast/forms/validation-message-appearance-expected.txt:
+        * platform/gtk/fast/images/icon-decoding-expected.png:
+        * platform/gtk/fast/images/icon-decoding-expected.txt: Added.
+        * platform/gtk/fast/inline/continuation-outlines-with-layers-expected.png:
+        * platform/gtk/fast/inline/continuation-outlines-with-layers-expected.txt:
+        * platform/gtk/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt:
+        * platform/gtk/fast/layers/video-layer-expected.png:
+        * platform/gtk/fast/layers/video-layer-expected.txt:
+        * platform/gtk/fast/repaint/4776765-expected.txt: Added.
+        * platform/gtk/fast/repaint/focus-ring-repaint-expected.txt: Added.
+        * platform/gtk/fast/repaint/zoomed-fixed-background-expected.txt: Added.
+        * platform/gtk/fast/scrolling/page-cache-back-overflow-scroll-restore-expected.txt: Added.
+        * platform/gtk/http/tests/plugins/plugin-javascript-access-expected.txt:
+        * platform/gtk/http/tests/security/contentSecurityPolicy/sandbox-empty-in-http-header-inherited-by-subframe-expected.txt: Added.
+        * platform/gtk/inspector/css/get-system-fonts-expected.txt:
+        * platform/gtk/plugins/plugin-javascript-access-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/text-align-06-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/text-align-06-b-expected.txt: Added.
+        * platform/gtk/svg/batik/text/verticalText-expected.png:
+        * platform/gtk/svg/batik/text/verticalText-expected.txt: Added.
+        * platform/gtk/svg/batik/text/verticalTextOnPath-expected.png:
+        * platform/gtk/svg/batik/text/verticalTextOnPath-expected.txt: Added.
+        * platform/gtk/svg/text/text-align-06-b-expected.png:
+        * platform/gtk/svg/text/text-align-06-b-expected.txt: Added.
+        * platform/gtk/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/gtk/tables/mozilla/bugs/bug4427-expected.txt:
+
+2017-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Remove more platform specific results.
 
         * platform/gtk/fast/media/w3c/test_media_queries-expected.txt: Removed.

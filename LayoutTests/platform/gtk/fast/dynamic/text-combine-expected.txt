@@ -9,11 +9,11 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (33,0) size 26x584
         RenderText {#text} at (0,0) size 26x287
           text run at (0,0) width 287: "\x{5E0C}\x{8584}\x{5316}\x{5F8C}\x{306E}1\x{682A}\x{5F53}\x{308A}\x{5229}\x{76CA}\x{304C}"
-        RenderInline {SPAN} at (0,0) size 26x54
-          RenderCombineText {#text} at (0,287) size 26x54
-            text run at (0,287) width 54: "3.667"
-        RenderText {#text} at (0,341) size 26x150
-          text run at (0,341) width 150: "\x{30C9}\x{30EB}\x{3067}\x{3057}\x{305F}\x{3002}"
+        RenderInline {SPAN} at (0,0) size 26x24
+          RenderCombineText {#text} at (0,287) size 26x24
+            text run at (0,287) width 24: "\x{FFFC}"
+        RenderText {#text} at (0,311) size 26x150
+          text run at (0,311) width 150: "\x{30C9}\x{30EB}\x{3067}\x{3057}\x{305F}\x{3002}"
       RenderBlock {DIV} at (59,0) size 26x584
         RenderText {#text} at (0,0) size 26x287
           text run at (0,0) width 287: "\x{5E0C}\x{8584}\x{5316}\x{5F8C}\x{306E}1\x{682A}\x{5F53}\x{308A}\x{5229}\x{76CA}\x{304C}"

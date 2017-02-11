@@ -16,13 +16,7 @@ layer at (0,0) size 800x600
             text run at (0,17) width 525: "use \"natural\" directionality to match the items in the popup menu"
         RenderText {#text} at (525,17) size 5x17
           text run at (525,17) width 5: "."
-      RenderBlock {P} at (0,50) size 784x34
-        RenderText {#text} at (0,0) size 767x34
-          text run at (0,0) width 650: "In all of the popup buttons below, the letter A should be on the left and the letter "
-          text run at (650,0) width 10 RTL: "\x{5D0}"
-          text run at (660,0) width 107: " should be on"
-          text run at (0,17) width 73: "the right."
-      RenderBlock {DIV} at (0,100) size 784x62
+      RenderBlock {DIV} at (0,50) size 784x62
         RenderBlock {DIV} at (0,0) size 784x31
           RenderMenuList {SELECT} at (0,2) size 70x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock (anonymous) at (1,1) size 68x25
@@ -81,7 +75,7 @@ layer at (0,0) size 800x600
                 text run at (4,4) width 16: "(A"
                 text run at (20,4) width 10 RTL: "\x{5D0}"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,162) size 784x62
+      RenderBlock {DIV} at (0,112) size 784x62
         RenderBlock {DIV} at (0,0) size 784x31
           RenderMenuList {SELECT} at (225,2) size 70x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock (anonymous) at (1,1) size 68x25
