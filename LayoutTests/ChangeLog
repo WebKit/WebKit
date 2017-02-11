@@ -1,5 +1,14 @@
 2017-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Remove more platform specific results.
+
+        * platform/gtk/fast/media/w3c/test_media_queries-expected.txt: Removed.
+        * platform/gtk/http/tests/eventsource/eventsource-cors-non-http-expected.txt: Removed.
+        * platform/gtk/http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/failure-expected.txt: Removed.
+
+2017-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Update platform specific results for fast/css-generated-content/malformed-url.html and fast/events/mouse-cursor-image-set.html
 
         Remove platform specific results of fast/css-generated-content/malformed-url.html and add platform specific
