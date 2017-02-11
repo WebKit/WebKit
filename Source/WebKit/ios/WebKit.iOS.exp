@@ -1,9 +1,15 @@
+.objc_class_name_WAKWindow
+.objc_class_name_WebEvent
 .objc_class_name_WebGeolocationProviderIOS
 .objc_class_name_WebMIMETypeRegistry
 .objc_class_name_WebPDFView
 .objc_class_name_WebPDFViewPlaceholder
 .objc_class_name_WebPluginController
+.objc_class_name_WebScriptObject
 .objc_class_name_WebSelectionRect
+.objc_class_name_WebUndefined
+.objc_class_name_WAKView
+_WAKViewFrameSizeDidChangeNotification
 _WebDatabaseOriginsDidChangeNotification
 _WebKitCreatePathWithShrinkWrappedRects
 _WebKitGetLastLineBreakInBuffer
@@ -20,6 +26,22 @@ _WebOpenPanelConfigurationMimeTypesKey
 _WebOpenPanelConfigurationMediaCaptureTypeKey
 _WebQuickLookFileNameKey
 _WebQuickLookUTIKey
+_WebThreadCallDelegateAsync
+_WebThreadCallDelegate
+_WebThreadIsCurrent
+_WebThreadIsEnabled
+_WebThreadIsLocked
+_WebThreadLock
+_WebThreadLockFromAnyThread
+_WebThreadLockPopModal
+_WebThreadLockPushModal
+_WebThreadMakeNSInvocation
+_WebThreadNotCurrent
+_WebThreadRun
+_WebThreadRunOnMainThread
+_WebThreadUnlock
+_WebThreadUnlockFromAnyThread
+_WebThreadUnlockGuardForMail
 _WebViewportHeightKey
 _WebViewportInitialScaleKey
 _WebViewportMaximumScaleKey
@@ -27,6 +49,8 @@ _WebViewportMinimumScaleKey
 _WebViewportUserScalableKey
 _WebViewportShrinkToFitKey
 _WebViewportWidthKey
+_WKGetCurrentGraphicsContext
+_WKSetCurrentGraphicsContext
 
 # So that we can use the MemoryMeasure class in MobileSafari
 __ZN6WebKit13MemoryMeasure10taskMemoryEv

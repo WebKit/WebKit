@@ -1,3 +1,14 @@
+2017-02-10  Aakash Jain  <aakash_jain@apple.com>
+
+        WebKitLegacy doesn't re-export various symbols from WebCore required by clients
+        https://bugs.webkit.org/show_bug.cgi?id=168158
+        <rdar://problem/24527933>
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit.iOS.exp: Exporting various symbols which are required by clients. This 
+        would enable clients to stop linking against WebCore and instead link against WebKit.
+
 2017-02-02  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         In iOS, we should take background assertion when accessing localstorage databases.
