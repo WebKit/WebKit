@@ -1,3 +1,21 @@
+2017-02-10  Tim Horton  <timothy_horton@apple.com>
+
+        Infinite UI process hang under ensurePositionInformationIsUpToDate
+        https://bugs.webkit.org/show_bug.cgi?id=168154
+        <rdar://problem/30428673>
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/InteractionDeadlockAfterCrash.mm: Added.
+        (recursiveFindHighlightLongPressRecognizer):
+        (TEST):
+        Add a somewhat nasty test that does an async interaction information update, but
+        kills the Web process before it arrives, and then does a sync interaction
+        information update, which will wait for the oustanding async interaction
+        information update if we still think it's coming. Before the patch, this
+        test times out with the UI process stuck under ensurePositionInformationIsUpToDate.
+
 2017-02-10  Simon Fraser  <simon.fraser@apple.com>
 
         Make sure the "inwindow" flag propagates to TiledBackings for masks and reflections

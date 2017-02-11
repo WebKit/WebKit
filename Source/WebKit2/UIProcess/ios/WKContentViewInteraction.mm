@@ -632,6 +632,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [_formInputSession invalidate];
     _formInputSession = nil;
     [_highlightView removeFromSuperview];
+    _outstandingPositionInformationRequest = std::nullopt;
 
     if (_interactionViewsContainerView) {
         [self.layer removeObserver:self forKeyPath:@"transform"];
