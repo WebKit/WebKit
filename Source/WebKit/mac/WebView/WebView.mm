@@ -2671,7 +2671,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setTextDirectionSubmenuInclusionBehavior(core([preferences textDirectionSubmenuInclusionBehavior]));
     settings.setDOMPasteAllowed([preferences isDOMPasteAllowed]);
     settings.setUsesPageCache([self usesPageCache]);
-    settings.setAllowsPageCacheWithWindowOpener([preferences allowsPageCacheWithWindowOpener]);
     settings.setPageCacheSupportsPlugins([preferences pageCacheSupportsPlugins]);
     settings.setBackForwardCacheExpirationInterval([preferences _backForwardCacheExpirationInterval]);
 

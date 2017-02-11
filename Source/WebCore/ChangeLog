@@ -1,3 +1,66 @@
+2017-02-10  Daniel Bates  <dabates@apple.com>
+
+        Detach frame from document when entering page cache
+        https://bugs.webkit.org/show_bug.cgi?id=166774
+        <rdar://problem/29904368>
+
+        Reviewed by Chris Dumez.
+
+        When a page enters the page cache it is unnecessary for it to hold a reference to its
+        associated frame because subsequent interactions with the page do not need to make use
+        of it. Once a page exits the page cache we associate it with its frame.
+
+        * dom/Document.cpp:
+        (WebCore::Document::frameDestroyed): Update comment to reflect the renaming of disconnectFromFrame().
+        (WebCore::Document::attachToCachedFrame): Added.
+        (WebCore::Document::detachFromCachedFrame): Added.
+        (WebCore::Document::prepareForDestruction): Only call CSSAnimationController::detachFromDocument() if
+        we have a frame. Substitute detachFromFrame() for disconnectFromFrame() as the latter was renamed to
+        the former.
+        (WebCore::Document::hasEverCalledWindowOpen): Deleted.
+        (WebCore::Document::markHasCalledWindowOpen): Deleted.
+        (WebCore::Document::disconnectFromFrame): Renamed to detachFromFrame.
+        * dom/Document.h:
+        (WebCore::Document::detachFromFrame): Renamed; formerly named disconnectFromFrame(). Changed
+        visibility from public to private and made this function inline.
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::pruneDetachedChildFrames): Remove cached child frames that were
+        removed from the page when it was in the page cache as there is no need to restore such frames.
+        (WebCore::CachedFrameBase::restore): Call pruneDetachedChildFrames() before restoring the
+        frame tree.
+        (WebCore::CachedFrame::CachedFrame): Detach from the frame.
+        (WebCore::CachedFrame::open): Assert that we have a document and re-attach the frame.
+        (WebCore::CachedFrame::destroy): Update assertion as this function should only be called for a
+        frameless document. Only detach the FrameView, DocumentLoader, and Page when the cached frame is for
+        subframe and is associated with a Page object. Call CSSAnimationController::detachFromDocument() to
+        detach the animation controller from the document as it is being destroyed. We have to do this here
+        because the document does not have a frame. And Document::prepareForDestruction() only calls
+        CSSAnimationController::detachFromDocument() if the document has a frame.
+        * history/CachedFrame.h:
+        * history/PageCache.cpp:
+        (WebCore::canCachePage): Remove logic that prevents caching of a page that called window.open()
+        or has an opener as it is feasible to keep such pages in the page cache.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::finishedInsertingSubtree): Fix style nit.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::frameDetached): Only stop all loaders and stop active DOM objects if the
+        page is not in- or about to enter- the page cache. A page in the page cache has finished loading
+        and its active DOM objects are suspended. Also fix style nit in comment.
+        (WebCore::FrameLoader::detachFromParent): Only stop all loaders if the page is not in- or about to
+        enter- the page cache. A page in the page cache has finished loading. Also added a comment to explain
+        that we protect the frame because stopAllLoaders() can cause the frame to be deallocated.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow): Remove logic to call markHasCalledWindowOpen() as this
+        function will be removed.
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::hasCalledWindowOpenKey): Deleted.
+        (WebCore::DiagnosticLoggingKeys::hasOpenerKey): Deleted.
+        * page/DiagnosticLoggingKeys.h:
+        * page/Page.cpp:
+        (WebCore::Page::openedByWindowOpen): Deleted.
+        * page/Page.h:
+        * page/Settings.in: Remove setting allowsPageCacheWithWindowOpener.
+
 2017-02-10  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r211845): [ios-simulator] LayoutTest compositing/masks/solid-color-masked.html is a flaky failure

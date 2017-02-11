@@ -2985,7 +2985,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
     settings.setLocalFileContentSniffingEnabled(store.getBoolValueForKey(WebPreferencesKey::localFileContentSniffingEnabledKey()));
     settings.setUsesPageCache(store.getBoolValueForKey(WebPreferencesKey::usesPageCacheKey()));
-    settings.setAllowsPageCacheWithWindowOpener(store.getBoolValueForKey(WebPreferencesKey::allowsPageCacheWithWindowOpenerKey()));
     settings.setPageCacheSupportsPlugins(store.getBoolValueForKey(WebPreferencesKey::pageCacheSupportsPluginsKey()));
     settings.setAuthorAndUserStylesEnabled(store.getBoolValueForKey(WebPreferencesKey::authorAndUserStylesEnabledKey()));
     settings.setPaginateDuringLayoutEnabled(store.getBoolValueForKey(WebPreferencesKey::paginateDuringLayoutEnabledKey()));

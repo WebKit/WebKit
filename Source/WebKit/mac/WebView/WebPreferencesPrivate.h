@@ -298,9 +298,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (NSString *)pictographFontFamily;
 - (void)setPictographFontFamily:(NSString *)family;
 
-- (BOOL)allowsPageCacheWithWindowOpener;
-- (void)setAllowsPageCacheWithWindowOpener:(BOOL)flag;
-
 - (BOOL)pageCacheSupportsPlugins;
 - (void)setPageCacheSupportsPlugins:(BOOL)flag;
 

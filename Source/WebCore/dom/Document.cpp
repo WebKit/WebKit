@@ -36,6 +36,7 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
+#include "CachedFrame.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -834,23 +835,6 @@ DOMImplementation& Document::implementation()
 bool Document::hasManifest() const
 {
     return documentElement() && documentElement()->hasTagName(htmlTag) && documentElement()->hasAttributeWithoutSynchronization(manifestAttr);
-}
-
-bool Document::hasEverCalledWindowOpen() const
-{
-    auto& topDocument = this->topDocument();
-    if (&topDocument == this)
-        return m_hasEverCalledWindowOpen;
-    return topDocument.hasEverCalledWindowOpen();
-}
-
-void Document::markHasCalledWindowOpen()
-{
-    auto& topDocument = this->topDocument();
-    if (&topDocument == this)
-        m_hasEverCalledWindowOpen = true;
-    else
-        topDocument.markHasCalledWindowOpen();
 }
 
 DocumentType* Document::doctype() const
@@ -2190,16 +2174,28 @@ void Document::didBecomeCurrentDocumentInFrame()
     }
 }
 
-void Document::disconnectFromFrame()
-{
-    observeFrame(nullptr);
-}
-
 void Document::frameDestroyed()
 {
-    // disconnectFromFrame() must be called before destroying the Frame.
+    // detachFromFrame() must be called before destroying the Frame.
     ASSERT_WITH_SECURITY_IMPLICATION(!m_frame);
     FrameDestructionObserver::frameDestroyed();
+}
+
+void Document::attachToCachedFrame(CachedFrameBase& cachedFrame)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(cachedFrame.document() == this);
+    ASSERT(cachedFrame.view());
+    ASSERT(m_pageCacheState == Document::InPageCache);
+    observeFrame(&cachedFrame.view()->frame());
+}
+
+void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(cachedFrame.document() == this);
+    ASSERT(cachedFrame.view());
+    ASSERT(m_frame == &cachedFrame.view()->frame());
+    ASSERT(m_pageCacheState == Document::InPageCache);
+    detachFromFrame();
 }
 
 void Document::destroyRenderTree()
@@ -2259,7 +2255,8 @@ void Document::prepareForDestruction()
     if (m_hasPreparedForDestruction)
         return;
 
-    m_frame->animation().detachFromDocument(this);
+    if (m_frame)
+        m_frame->animation().detachFromDocument(this);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     clearTouchEventHandlersAndListeners();
@@ -2324,7 +2321,7 @@ void Document::prepareForDestruction()
     }
 #endif
 
-    disconnectFromFrame();
+    detachFromFrame();
 
     m_hasPreparedForDestruction = true;
 }
