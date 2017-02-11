@@ -66,6 +66,9 @@ class PerfTestsRunner(object):
             self._host = Host()
             self._port = self._host.port_factory.get(self._options.platform, self._options)
 
+        # Timeouts are controlled by the Python Driver, so DRT/WTR runs with no-timeout.
+        self._options.additional_drt_flag.append('--no-timeout')
+
         # The GTK+ and EFL ports only supports WebKit2, so they always use WKTR.
         if self._port.name().startswith("gtk") or self._port.name().startswith("efl"):
             self._options.webkit_test_runner = True
@@ -100,6 +103,8 @@ class PerfTestsRunner(object):
                 help="Path to the directory under which build files are kept (should not include configuration)"),
             optparse.make_option("--time-out-ms", default=600 * 1000,
                 help="Set the timeout for each test"),
+            optparse.make_option("--no-timeout", action="store_true", default=False,
+                help="Disable test timeouts"),
             optparse.make_option("--no-results", action="store_false", dest="generate_results", default=True,
                 help="Do no generate results JSON and results page."),
             optparse.make_option("--output-json-path", action='callback', callback=_expand_path, type="str",
@@ -375,7 +380,8 @@ class PerfTestsRunner(object):
         for i, test in enumerate(tests):
             _log.info('Running %s (%d of %d)' % (test.test_name(), i + 1, len(tests)))
             start_time = time.time()
-            metrics = test.run(self._options.time_out_ms)
+            metrics = test.run(self._options.time_out_ms, self._options.no_timeout)
+
             if metrics:
                 self._results += metrics
             else:

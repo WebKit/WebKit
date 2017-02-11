@@ -122,12 +122,12 @@ class PerfTest(object):
     def prepare(self, time_out_ms):
         return True
 
-    def _create_driver(self):
-        return self._port.create_driver(worker_number=0, no_timeout=True)
+    def _create_driver(self, no_timeout):
+        return self._port.create_driver(worker_number=0, no_timeout=no_timeout)
 
-    def run(self, time_out_ms):
+    def run(self, time_out_ms, no_timeout=False):
         for _ in xrange(self._test_runner_count):
-            driver = self._create_driver()
+            driver = self._create_driver(no_timeout)
             try:
                 if not self._run_with_driver(driver, time_out_ms):
                     return None

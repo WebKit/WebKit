@@ -55,6 +55,10 @@ class MainTest(unittest.TestCase):
         runner._host.filesystem.maybe_make_directory(dirname)
         runner._host.filesystem.files[runner._host.filesystem.join(dirname, filename)] = content
 
+    def test_drt_notimeout(self):
+        runner, port = self.create_runner()
+        self.assertEqual(runner._options.additional_drt_flag, ['--no-timeout'])
+
     def test_collect_tests(self):
         runner, port = self.create_runner()
         self._add_file(runner, 'inspector', 'a_file.html', 'a content')
@@ -116,11 +120,13 @@ class MainTest(unittest.TestCase):
         options, args = PerfTestsRunner._parse_args([])
         self.assertTrue(options.build)
         self.assertEqual(options.time_out_ms, 600 * 1000)
+        self.assertEqual(options.additional_drt_flag, [])
         self.assertTrue(options.generate_results)
         self.assertTrue(options.show_results)
         self.assertTrue(options.use_skipped_list)
         self.assertEqual(options.repeat, 1)
         self.assertEqual(options.test_runner_count, -1)
+        self.assertEqual(options.no_timeout, False)
 
     def test_parse_args(self):
         runner, port = self.create_runner()
@@ -139,7 +145,8 @@ class MainTest(unittest.TestCase):
                 '--additional-drt-flag=--awesomesauce',
                 '--repeat=5',
                 '--test-runner-count=5',
-                '--debug'])
+                '--debug',
+                '--no-timeout'])
         self.assertTrue(options.build)
         self.assertEqual(options.build_directory, 'folder42')
         self.assertEqual(options.platform, 'platform42')
@@ -155,6 +162,7 @@ class MainTest(unittest.TestCase):
         self.assertEqual(options.additional_drt_flag, ['--enable-threaded-parser', '--awesomesauce'])
         self.assertEqual(options.repeat, 5)
         self.assertEqual(options.test_runner_count, 5)
+        self.assertEqual(options.no_timeout, True)
 
     def test_upload_json(self):
         runner, port = self.create_runner()

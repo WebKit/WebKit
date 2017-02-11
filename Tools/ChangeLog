@@ -1,3 +1,30 @@
+2017-02-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r182916) run-perf-tests never timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=167626
+
+        Reviewed by Ryosuke Niwa.
+
+        The --time-out-ms value (defaults to 600 seconds) of run-perf-tests
+        was beeing ignored because the driver was created with no_timeout=True
+        unconditionally.
+        This adds a new parameter --no-timeout (disabled by default), that
+        allows to use the driver with the expected timeout values.
+        It also passes --no-timeout to DRT/WTR to ensure that timeouts
+        are always controlled by the Python Driver.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest._create_driver): Only disable timeout if --no-timeout is passed.
+        (PerfTest.run): Disabling timeout should be done when the Driver is created.
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner.__init__): Ensure --no-timeout is passed to DRT/WTR
+        (PerfTestsRunner._parse_args): Add a --no-timeout parameter.
+        (_run_tests_set): Pass the no-timeout parameter.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.test_drt_notimeout): Test --no-timeout is passed to DRT/WTR
+        (MainTest.test_default_args): Test default values for additional_drt_flag and no_timeout.
+        (MainTest.test_parse_args): Test that the argument no-timeout.
+
 2017-02-10  Daniel Bates  <dabates@apple.com>
 
         Detach frame from document when entering page cache
