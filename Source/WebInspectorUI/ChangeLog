@@ -1,5 +1,77 @@
 2017-02-10  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Debugger sidebar panel should not have multiple tree selections
+        https://bugs.webkit.org/show_bug.cgi?id=166000
+        <rdar://problem/29721988>
+
+        Reviewed by Timothy Hatcher.
+
+        The method for synchronizing tree element selection across a sidebar's
+        tree outlines fails for selections made during startup, because it depends
+        on events which are being suppressed.
+
+        This adds a new class, TreeOutlineGroup, which restricts tree element selection
+        inside a group of tree outlines by receiving messages directly from TreeElement.
+
+        * UserInterface/Main.html:
+        Add file for TreeOutlineGroup class.
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WebInspector.ContentBrowserTabContentView.prototype._revealAndSelectRepresentedObject):
+        (WebInspector.ContentBrowserTabContentView):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        Update `createContentTreeOutline` calls for new signature.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel):
+        Replace _visibleContentTreeOutlines with a TreeOutlineGroup, which
+        contains the single-selection behavior previously handled by the sidebar.
+
+        (WebInspector.NavigationSidebarPanel.prototype.get contentTreeOutlines):
+        (WebInspector.NavigationSidebarPanel.prototype.get hasSelectedElement):
+        Implement using the sidebar's tree outline group.
+        (WebInspector.NavigationSidebarPanel.prototype.createContentTreeOutline):
+        Remove first parameter, which is always true.
+        (WebInspector.NavigationSidebarPanel.prototype.treeElementForRepresentedObject):
+        (WebInspector.NavigationSidebarPanel.prototype.saveStateToCookie):
+        (WebInspector.NavigationSidebarPanel.prototype.pruneStaleResourceTreeElements):
+        (WebInspector.NavigationSidebarPanel.prototype._checkForEmptyFilterResults):
+        (WebInspector.NavigationSidebarPanel.prototype._updateFilter):
+        (WebInspector.NavigationSidebarPanel.prototype._checkOutlinesForPendingViewStateCookie):
+        (WebInspector.NavigationSidebarPanel.prototype.set contentTreeOutline): Deleted.
+        Remove unused setter.
+        (WebInspector.NavigationSidebarPanel.prototype.get visibleContentTreeOutlines): Deleted.
+        Renamed to contentTreeOutlines.
+        (WebInspector.NavigationSidebarPanel.prototype._contentTreeOutlineDidFocus): Deleted.
+        No longer needed.
+        (WebInspector.NavigationSidebarPanel.prototype._contentTreeOutlineTreeSelectionDidChange): Deleted.
+        Selection across trees handled by the tree outline group.
+
+        * UserInterface/Views/TreeElement.js:
+        (WebInspector.TreeElement.prototype.select):
+        Inform the element's tree outline group (if any), of the selection changed.
+
+        * UserInterface/Views/TreeOutlineGroup.js: Added.
+        (WebInspector.TreeOutlineGroup):
+        (WebInspector.TreeOutlineGroup.groupForTreeOutline):
+        (WebInspector.TreeOutlineGroup.prototype.get selectedTreeElement):
+        (WebInspector.TreeOutlineGroup.prototype.itemAdded):
+        Associate tree outline with the group and wrap tree elements. If the
+        incoming tree outline has a selection, deselect the group's currently
+        selected tree element.
+
+        (WebInspector.TreeOutlineGroup.prototype.itemRemoved):
+        Disassociate the tree outline from the group.
+        (WebInspector.TreeOutlineGroup.prototype.didSelectTreeElement):
+        Called by TreeElement when it becomes selected.
+        (WebInspector.TreeOutlineGroup.prototype._removeConflictingTreeSelections):
+        Deselect any selected items in all tree outlines belonging to the group,
+        except for the specified item.
+
+2017-02-10  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: ContentViewContainer can have redundant back-forward entries after ContentView close
         https://bugs.webkit.org/show_bug.cgi?id=168105
 

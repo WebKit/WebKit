@@ -166,7 +166,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (DebuggerAgent.setPauseOnAssertions)
             this._breakpointsContentTreeOutline.appendChild(this._assertionsBreakpointTreeElement);
 
-        this._scriptsContentTreeOutline = this.createContentTreeOutline(true);
+        this._scriptsContentTreeOutline = this.createContentTreeOutline();
         this._scriptsContentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
         let scriptsRow = new WebInspector.DetailsSectionRow;
@@ -176,9 +176,8 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._scriptsSection = new WebInspector.DetailsSection("scripts", WebInspector.UIString("Sources"), [scriptsGroup]);
         this.contentView.element.appendChild(this._scriptsSection.element);
 
-        const dontHideByDefault = true;
         const suppressFiltering = true;
-        this._callStackTreeOutline = this.createContentTreeOutline(dontHideByDefault, suppressFiltering);
+        this._callStackTreeOutline = this.createContentTreeOutline(suppressFiltering);
         this._callStackTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
         this._mainTargetTreeElement = new WebInspector.ThreadTreeElement(WebInspector.mainTarget);
@@ -883,10 +882,11 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         case WebInspector.DebuggerManager.PauseReason.Breakpoint:
             console.assert(pauseData, "Expected breakpoint identifier, but found none.");
             if (pauseData && pauseData.breakpointId) {
-                let breakpoint = WebInspector.debuggerManager.breakpointForIdentifier(pauseData.breakpointId);
-                this._pauseReasonTreeOutline = this.createContentTreeOutline(true, true);
+                const suppressFiltering = true;
+                this._pauseReasonTreeOutline = this.createContentTreeOutline(suppressFiltering);
                 this._pauseReasonTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
+                let breakpoint = WebInspector.debuggerManager.breakpointForIdentifier(pauseData.breakpointId);
                 let breakpointTreeElement = new WebInspector.BreakpointTreeElement(breakpoint, WebInspector.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName, WebInspector.UIString("Triggered Breakpoint"));
                 let breakpointDetailsSection = new WebInspector.DetailsSectionRow;
                 this._pauseReasonTreeOutline.appendChild(breakpointTreeElement);

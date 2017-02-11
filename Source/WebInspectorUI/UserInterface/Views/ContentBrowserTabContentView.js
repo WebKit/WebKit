@@ -254,7 +254,7 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
             // If a tree outline is processing a selection currently then we can assume the selection does not
             // need to be changed. This is needed to allow breakpoint and call frame tree elements to be selected
             // without jumping back to selecting the resource tree element.
-            for (let contentTreeOutline of this.navigationSidebarPanel.visibleContentTreeOutlines) {
+            for (let contentTreeOutline of this.navigationSidebarPanel.contentTreeOutlines) {
                 if (contentTreeOutline.processingSelectionChange)
                     return;
             }

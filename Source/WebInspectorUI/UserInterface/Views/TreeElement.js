@@ -511,6 +511,12 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
         }
 
         treeOutline.processingSelectionChange = false;
+
+        let treeOutlineGroup = WebInspector.TreeOutlineGroup.groupForTreeOutline(treeOutline);
+        if (!treeOutlineGroup)
+            return;
+
+        treeOutlineGroup.didSelectTreeElement(this);
     }
 
     revealAndSelect(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect)
