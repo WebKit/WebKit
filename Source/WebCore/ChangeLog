@@ -1,3 +1,33 @@
+2017-02-10  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Cleanup XMLHttpRequest's bindings
+        https://bugs.webkit.org/show_bug.cgi?id=168067
+
+        Reviewed by Chris Dumez.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsOwnedStringOrNull): Deleted.
+        * bindings/js/JSDOMBinding.h:
+        Remove jsOwnedStringOrNull and inline it into it's one use
+        in JSXMLHttpRequestCustom.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::responseText):
+        (WebCore::SendFunctor::SendFunctor): Deleted.
+        (WebCore::SendFunctor::line): Deleted.
+        (WebCore::SendFunctor::column): Deleted.
+        (WebCore::SendFunctor::url): Deleted.
+        (WebCore::SendFunctor::operator()): Deleted.
+        (WebCore::JSXMLHttpRequest::send): Deleted.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        * xml/XMLHttpRequest.h:
+        Remove custom send, replacing it with a single send implementation that
+        takes a variant.
+
+        * xml/XMLHttpRequest.idl:
+        Cleanup the IDL to better match the spec. Update correct types where trivial.
+
 2017-02-10  Chris Dumez  <cdumez@apple.com>
 
         document.origin doesn't match spec

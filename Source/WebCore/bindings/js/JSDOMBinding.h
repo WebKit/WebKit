@@ -51,10 +51,6 @@ void addImpureProperty(const AtomicString&);
 
 JSC::JSValue jsStringOrUndefined(JSC::ExecState*, const String&); // undefined if the string is null
 
-// See JavaScriptCore for explanation: Should be used for any string that is already owned by another
-// object, to let the engine know that collecting the JSString wrapper is unlikely to save memory.
-JSC::JSValue jsOwnedStringOrNull(JSC::ExecState*, const String&);
-
 WEBCORE_EXPORT bool hasIteratorMethod(JSC::ExecState&, JSC::JSValue);
 
 template<JSC::NativeFunction nativeFunction, int length> JSC::EncodedJSValue nonCachingStaticFunctionGetter(JSC::ExecState* exec, JSC::EncodedJSValue, JSC::PropertyName propertyName)

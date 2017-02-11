@@ -26,13 +26,16 @@
 #include "FormData.h"
 #include "ResourceResponse.h"
 #include "ThreadableLoaderClient.h"
+#include "URL.h"
 #include "XMLHttpRequestEventTarget.h"
 #include "XMLHttpRequestProgressEventThrottle.h"
+#include <wtf/Variant.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 class ArrayBuffer;
 class ArrayBufferView;
+class ExecState;
 }
 
 namespace WebCore {
@@ -65,6 +68,8 @@ public:
     EventTargetInterface eventTargetInterface() const override { return XMLHttpRequestEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
+    using SendTypes = Variant<RefPtr<Document>, RefPtr<Blob>, RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<DOMFormData>, String>;
+
     const URL& url() const { return m_url; }
     String statusText() const;
     int status() const;
@@ -74,12 +79,7 @@ public:
     ExceptionOr<void> open(const String& method, const String& url);
     ExceptionOr<void> open(const String& method, const URL&, bool async);
     ExceptionOr<void> open(const String& method, const String&, bool async, const String& user, const String& password);
-    ExceptionOr<void> send(Document&);
-    ExceptionOr<void> send(const String& = { });
-    ExceptionOr<void> send(Blob&);
-    ExceptionOr<void> send(DOMFormData&);
-    ExceptionOr<void> send(JSC::ArrayBuffer&);
-    ExceptionOr<void> send(JSC::ArrayBufferView&);
+    ExceptionOr<void> send(JSC::ExecState&, std::optional<SendTypes>&&);
     void abort();
     ExceptionOr<void> setRequestHeader(const String& name, const String& value);
     ExceptionOr<void> overrideMimeType(const String& override);
@@ -154,6 +154,12 @@ private:
     bool responseIsXML() const;
 
     std::optional<ExceptionOr<void>> prepareToSend();
+    ExceptionOr<void> send(Document&);
+    ExceptionOr<void> send(const String& = { });
+    ExceptionOr<void> send(Blob&);
+    ExceptionOr<void> send(DOMFormData&);
+    ExceptionOr<void> send(JSC::ArrayBuffer&);
+    ExceptionOr<void> send(JSC::ArrayBufferView&);
     ExceptionOr<void> sendBytesData(const void*, size_t);
 
     void changeState(State);

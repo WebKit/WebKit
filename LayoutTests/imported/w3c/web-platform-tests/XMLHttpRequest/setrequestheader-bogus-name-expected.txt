@@ -68,6 +68,6 @@ PASS setRequestHeader should throw with header name "\x1c".
 PASS setRequestHeader should throw with header name "\x1d". 
 PASS setRequestHeader should throw with header name "\x1e". 
 PASS setRequestHeader should throw with header name "\x1f". 
-FAIL setRequestHeader should throw with header name "ﾃｽﾄ". assert_throws: function "function () { client.setRequestHeader(name, 'x-value') }" threw object "SyntaxError (DOM Exception 12): The string did not match the expected pattern." ("SyntaxError") expected object "TypeError" ("TypeError")
-FAIL setRequestHeader should throw with header name "X-ﾃｽﾄ". assert_throws: function "function () { client.setRequestHeader(name, 'x-value') }" threw object "SyntaxError (DOM Exception 12): The string did not match the expected pattern." ("SyntaxError") expected object "TypeError" ("TypeError")
+PASS setRequestHeader should throw with header name "ﾃｽﾄ". 
+PASS setRequestHeader should throw with header name "X-ﾃｽﾄ". 
 

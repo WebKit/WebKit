@@ -54,6 +54,7 @@
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
+#include <interpreter/StackVisitor.h>
 #include <mutex>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
@@ -496,6 +497,72 @@ std::optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
 
     m_error = false;
     return std::nullopt;
+}
+
+namespace {
+
+// FIXME: This should be abstracted out, so that any IDL function can be passed the line/column/url tuple.
+
+// FIXME: This should probably use ShadowChicken so that we get the right frame even when it did a tail call.
+// https://bugs.webkit.org/show_bug.cgi?id=155688
+
+class SendFunctor {
+public:
+    SendFunctor() = default;
+
+    unsigned line() const { return m_line; }
+    unsigned column() const { return m_column; }
+    String url() const { return m_url; }
+
+    JSC::StackVisitor::Status operator()(JSC::StackVisitor& visitor) const
+    {
+        if (!m_hasSkippedFirstFrame) {
+            m_hasSkippedFirstFrame = true;
+            return JSC::StackVisitor::Continue;
+        }
+
+        unsigned line = 0;
+        unsigned column = 0;
+        visitor->computeLineAndColumn(line, column);
+        m_line = line;
+        m_column = column;
+        m_url = visitor->sourceURL();
+        return JSC::StackVisitor::Done;
+    }
+
+private:
+    mutable bool m_hasSkippedFirstFrame { false };
+    mutable unsigned m_line { 0 };
+    mutable unsigned m_column { 0 };
+    mutable String m_url;
+};
+
+}
+
+ExceptionOr<void> XMLHttpRequest::send(JSC::ExecState& state, std::optional<SendTypes>&& sendType)
+{
+    InspectorInstrumentation::willSendXMLHttpRequest(scriptExecutionContext(), url());
+
+    ExceptionOr<void> result;
+    if (!sendType)
+        result = send();
+    else {
+        result = WTF::switchOn(sendType.value(),
+            [this] (const RefPtr<Document>& document) -> ExceptionOr<void> { return send(*document); },
+            [this] (const RefPtr<Blob>& blob) -> ExceptionOr<void> { return send(*blob); },
+            [this] (const RefPtr<JSC::ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> { return send(*arrayBufferView); },
+            [this] (const RefPtr<JSC::ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> { return send(*arrayBuffer); },
+            [this] (const RefPtr<DOMFormData>& formData) -> ExceptionOr<void> { return send(*formData); },
+            [this] (const String& string) -> ExceptionOr<void> { return send(string); }
+        );
+    }
+
+    SendFunctor functor;
+    state.iterate(functor);
+    setLastSendLineAndColumnNumber(functor.line(), functor.column());
+    setLastSendURL(functor.url());
+
+    return result;
 }
 
 ExceptionOr<void> XMLHttpRequest::send(Document& document)

@@ -33,13 +33,6 @@ void addImpureProperty(const AtomicString& propertyName)
     commonVM().addImpureProperty(propertyName);
 }
 
-JSValue jsOwnedStringOrNull(ExecState* exec, const String& s)
-{
-    if (s.isNull())
-        return jsNull();
-    return jsOwnedString(exec, s);
-}
-
 JSValue jsStringOrUndefined(ExecState* exec, const String& s)
 {
     if (s.isNull())
