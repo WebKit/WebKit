@@ -1,3 +1,16 @@
+2017-02-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Zero out some WKWebView state in the case of a web content crash
+        https://bugs.webkit.org/show_bug.cgi?id=168157
+
+        Reviewed by Tim Horton.
+
+        Reset some bits of state in WKWebView when the web content process crashes, in
+        to try to avoid states that might cause the web view to stay blank.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processDidExit]):
+
 2017-02-10  Daniel Bates  <dabates@apple.com>
 
         Detach frame from document when entering page cache

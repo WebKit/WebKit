@@ -1302,6 +1302,13 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _scrollViewBackgroundColor = WebCore::Color();
     _delayUpdateVisibleContentRects = NO;
     _hadDelayedUpdateVisibleContentRects = NO;
+
+    _frozenVisibleContentRect = std::nullopt;
+    _frozenUnobscuredContentRect = std::nullopt;
+
+    _firstPaintAfterCommitLoadTransactionID = 0;
+    _firstTransactionIDAfterPageRestore = 0;
+    _resizeAnimationTransformTransactionID = std::nullopt;
 }
 
 - (void)_didCommitLoadForMainFrame
