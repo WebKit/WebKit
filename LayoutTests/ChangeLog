@@ -1,3 +1,15 @@
+2017-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Update platform specific results for fast/css-generated-content/malformed-url.html and fast/events/mouse-cursor-image-set.html
+
+        Remove platform specific results of fast/css-generated-content/malformed-url.html and add platform specific
+        results for fast/events/mouse-cursor-image-set.html, because this test fails only for the missing scale due to
+        MOUSE_CURSOR_SCALE not implemented in GTK+ port.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css-generated-content/malformed-url-expected.txt: Removed.
+        * platform/gtk/fast/events/mouse-cursor-image-set-expected.txt: Added.
+
 2017-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Skip CSS image-orientation and image-resolution tests.
