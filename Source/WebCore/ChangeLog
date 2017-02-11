@@ -1,3 +1,12 @@
+2017-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update imageTitle translatable string.
+
+        To match mac port. Fixes fast/images/imageDocument-title.html.
+
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::imageTitle):
+
 2017-02-10  John Wilander  <wilander@apple.com>
 
         Updates to Resource Load Statistics: Get the right website data store and introduce timeout for user interaction

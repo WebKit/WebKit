@@ -612,7 +612,7 @@ String unknownFileSizeText()
 
 String imageTitle(const String& filename, const IntSize& size)
 {
-    GUniquePtr<gchar> string(g_strdup_printf(C_("Title string for images", "%s  (%dx%d pixels)"),
+    GUniquePtr<gchar> string(g_strdup_printf(C_("window title for a standalone image (uses multiplication symbol, not x)", "%s %d×%d pixels"),
         filename.utf8().data(), size.width(), size.height()));
 
     return String::fromUTF8(string.get());
