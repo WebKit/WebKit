@@ -28,6 +28,7 @@
 #include "IDLTypes.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConvertBase.h"
+#include <runtime/IteratorOperations.h>
 
 namespace WebCore {
 
@@ -183,7 +184,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                     //            sequence of that type from V and method.        
                     constexpr bool hasSequenceType = numberOfSequenceTypes != 0;
                     if (hasSequenceType) {
-                        bool hasIterator = hasIteratorMethod(state, value);
+                        bool hasIterator = JSC::hasIteratorMethod(state, value);
                         RETURN_IF_EXCEPTION(scope, ReturnType());
                         if (hasIterator)
                             return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, SequenceType, hasSequenceType>::convert(state, value).value());
@@ -196,7 +197,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                     //            frozen array of that type from V and method.
                     constexpr bool hasFrozenArrayType = numberOfFrozenArrayTypes != 0;
                     if (hasFrozenArrayType) {
-                        bool hasIterator = hasIteratorMethod(state, value);
+                        bool hasIterator = JSC::hasIteratorMethod(state, value);
                         RETURN_IF_EXCEPTION(scope, ReturnType());
                         if (hasIterator)
                             return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, FrozenArrayType, hasFrozenArrayType>::convert(state, value).value());

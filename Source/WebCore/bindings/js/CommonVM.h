@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 namespace JSC {
 class VM;
 }
@@ -41,6 +43,8 @@ inline JSC::VM& commonVM()
         return *result;
     return commonVMSlow();
 }
+
+void addImpureProperty(const AtomicString&);
 
 } // namespace WebCore
 

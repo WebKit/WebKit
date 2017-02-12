@@ -46,6 +46,8 @@ template<typename> class Strong;
 namespace WebCore {
 
 class IDBKey;
+class IDBKeyData;
+class IDBValue;
 template<typename> class DOMPromise;
 
 template<typename T>
@@ -200,6 +202,8 @@ template<typename T> struct IDLEventListener : IDLWrapper<T> { };
 template<typename T> struct IDLXPathNSResolver : IDLWrapper<T> { };
 
 struct IDLIDBKey : IDLWrapper<IDBKey> { };
+struct IDLIDBKeyData : IDLWrapper<IDBKeyData> { };
+struct IDLIDBValue : IDLWrapper<IDBValue> { };
 
 #if ENABLE(WEBGL)
 struct IDLWebGLAny : IDLType<WebGLAny> { };

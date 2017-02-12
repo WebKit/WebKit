@@ -345,9 +345,11 @@ void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
 
     auto& vm = context->vm();
 
-    m_currentKey = { vm, idbKeyDataToScriptValue(*exec, getResult.keyData()) };
+    // FIXME: This conversion should be done lazily, when script needs the JSValues, so that global object
+    // of the IDBCursor wrapper can be used, rather than the lexicalGlobalObject.
+    m_currentKey = { vm, toJS(*exec, *exec->lexicalGlobalObject(), getResult.keyData().maybeCreateIDBKey().get()) };
     m_currentKeyData = getResult.keyData();
-    m_currentPrimaryKey = { vm, idbKeyDataToScriptValue(*exec, getResult.primaryKeyData()) };
+    m_currentPrimaryKey = { vm, toJS(*exec, *exec->lexicalGlobalObject(), getResult.primaryKeyData().maybeCreateIDBKey().get()) };
     m_currentPrimaryKeyData = getResult.primaryKeyData();
 
     if (isKeyCursorWithValue())

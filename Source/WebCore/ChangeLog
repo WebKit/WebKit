@@ -1,3 +1,67 @@
+2017-02-11  Sam Weinig  <sam@webkit.org>
+
+        Remove the remaining functions out of JSDOMBinding
+        https://bugs.webkit.org/show_bug.cgi?id=168179
+
+        Reviewed by Darin Adler.
+
+        Move utility functions into more appropriate locations.
+        - Move hasIteratorMethod to runtime/IteratorOperations.h
+        - Move nonCachingStaticFunctionGetter to runtime/Lookup.h
+        - Move addImpureProperty to CommonVM
+
+        Remove toJS overload that took a Vector<T>. Replace it's usage
+        with toJS<IDLSequence<T>> usage. To make this work, added two
+        new types, IDLIDBKeyData and IDLIDBValue.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::setGetResult):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::setResult):
+        (WebCore::IDBRequest::setResultToStructuredClone):
+        Adopt JSDOMConvert infrastructure for conversions using new types.
+
+        * bindings/IDLTypes.h:
+        * bindings/js/JSDOMConvertIndexedDB.h:
+        (WebCore::JSConverter<IDLIDBKeyData>::convert):
+        (WebCore::JSConverter<IDLIDBValue>::convert):
+        Add new types for IDBKeyData and IDBValue.
+
+        * bindings/js/CommonVM.cpp:
+        (WebCore::addImpureProperty):
+        * bindings/js/CommonVM.h:
+        Move addImpureProperty here from JSDOMBinding.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::idbKeyDataToScriptValue): Deleted.
+        * bindings/js/IDBBindingUtilities.h:
+        Remove unused idbKeyDataToScriptValue, and group like functions
+        together.
+
+        * bindings/js/JSDOMBinding.cpp: Removed.
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::nonCachingStaticFunctionGetter): Deleted.
+        (WebCore::toJS): Deleted.
+        Move/remove functions.
+
+        * bindings/js/JSDOMConvertUnion.h:
+        Update for move of hasIteratorMethod to runtime/IteratorOperations.h
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        * bindings/js/JSLocationCustom.cpp:
+        Update for move of nonCachingStaticFunctionGetter to runtime/Lookup.h
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        Remove unneeded include of runtime/IteratorOperations.h
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateOverloadedFunctionOrConstructor):
+        Include runtime/IteratorOperations when needing to distinguish a sequence.
+
+        * html/HTMLDocument.cpp:
+        Replace include of JSDOMBinding.h with CommonVM.h for addImpureProperty.
+
 2017-02-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Handle caps lock indicator in event modifiers

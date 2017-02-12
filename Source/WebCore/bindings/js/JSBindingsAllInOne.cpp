@@ -44,7 +44,6 @@
 #include "JSCustomEventCustom.cpp"
 #include "JSSQLStatementErrorCallbackCustom.cpp"
 #include "JSCustomXPathNSResolver.cpp"
-#include "JSDOMBinding.cpp"
 #include "JSDOMBindingSecurity.cpp"
 #include "JSDOMBuiltinConstructorBase.cpp"
 #include "JSDOMConstructorBase.cpp"

@@ -364,11 +364,13 @@ void IDBRequest::setResult(const IDBKeyData& keyData)
     if (!context)
         return;
 
-    auto* exec = context->execState();
-    if (!exec)
+    auto* state = context->execState();
+    if (!state)
         return;
 
-    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), idbKeyDataToScriptValue(*exec, keyData) } };
+    // FIXME: This conversion should be done lazily, when script needs the JSValues, so that global object
+    // of the IDBRequest wrapper can be used, rather than the lexicalGlobalObject.
+    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), toJS<IDLIDBKeyData>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), keyData) } };
 }
 
 void IDBRequest::setResult(const Vector<IDBKeyData>& keyDatas)
@@ -383,9 +385,10 @@ void IDBRequest::setResult(const Vector<IDBKeyData>& keyDatas)
     if (!state)
         return;
 
-
+    // FIXME: This conversion should be done lazily, when script needs the JSValues, so that global object
+    // of the IDBRequest wrapper can be used, rather than the lexicalGlobalObject.
     Locker<JSLock> locker(context->vm().apiLock());
-    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), toJS(state, jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), keyDatas) } };
+    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), toJS<IDLSequence<IDLIDBKeyData>>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), keyDatas) } };
 }
 
 void IDBRequest::setResult(const Vector<IDBValue>& values)
@@ -396,12 +399,14 @@ void IDBRequest::setResult(const Vector<IDBValue>& values)
     if (!context)
         return;
 
-    auto* exec = context->execState();
-    if (!exec)
+    auto* state = context->execState();
+    if (!state)
         return;
 
+    // FIXME: This conversion should be done lazily, when script needs the JSValues, so that global object
+    // of the IDBRequest wrapper can be used, rather than the lexicalGlobalObject.
     Locker<JSLock> locker(context->vm().apiLock());
-    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), toJS(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), values) } };
+    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), toJS<IDLSequence<IDLIDBValue>>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), values) } };
 }
 
 void IDBRequest::setResult(uint64_t number)
@@ -412,7 +417,7 @@ void IDBRequest::setResult(uint64_t number)
     if (!context)
         return;
 
-    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), JSC::jsNumber(number) } };
+    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), toJS<IDLUnrestrictedDouble>(number) } };
 }
 
 void IDBRequest::setResultToStructuredClone(const IDBValue& value)
@@ -425,11 +430,13 @@ void IDBRequest::setResultToStructuredClone(const IDBValue& value)
     if (!context)
         return;
 
-    auto* exec = context->execState();
-    if (!exec)
+    auto* state = context->execState();
+    if (!state)
         return;
 
-    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), deserializeIDBValueToJSValue(*exec, value) } };
+    // FIXME: This conversion should be done lazily, when script needs the JSValues, so that global object
+    // of the IDBRequest wrapper can be used, rather than the lexicalGlobalObject.
+    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), toJS<IDLIDBValue>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), value) } };
 }
 
 void IDBRequest::setResultToUndefined()

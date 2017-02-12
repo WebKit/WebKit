@@ -44,6 +44,28 @@ template<> struct JSConverter<IDLIDBKey> {
     }
 };
 
+template<> struct JSConverter<IDLIDBKeyData> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
+    {
+        return toJS(&state, &globalObject, std::forward<U>(value));
+    }
+};
+
+template<> struct JSConverter<IDLIDBValue> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
+    {
+        return toJS(&state, &globalObject, std::forward<U>(value));
+    }
+};
+
 } // namespace WebCore
 
 #endif

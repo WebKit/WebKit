@@ -42,6 +42,7 @@ JS_EXPORT_PRIVATE JSObject* createIteratorResultObject(ExecState*, JSValue, bool
 
 Structure* createIteratorResultObjectStructure(VM&, JSGlobalObject&);
 
+JS_EXPORT_PRIVATE bool hasIteratorMethod(ExecState&, JSValue);
 JS_EXPORT_PRIVATE JSValue iteratorForIterable(ExecState*, JSValue iterable);
 
 template <typename CallBackType>

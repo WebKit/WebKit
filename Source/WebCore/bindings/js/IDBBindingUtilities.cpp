@@ -367,12 +367,6 @@ Ref<IDBKey> scriptValueToIDBKey(ExecState& exec, const JSValue& scriptValue)
     return createIDBKeyFromValue(exec, scriptValue);
 }
 
-JSC::JSValue idbKeyDataToScriptValue(JSC::ExecState& exec, const IDBKeyData& keyData)
-{
-    RefPtr<IDBKey> key = keyData.maybeCreateIDBKey();
-    return toJS(exec, *exec.lexicalGlobalObject(), key.get());
-}
-
 JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, const IDBKeyData& keyData)
 {
     ASSERT(state);

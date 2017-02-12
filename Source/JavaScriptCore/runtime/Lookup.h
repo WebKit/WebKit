@@ -387,4 +387,9 @@ inline void reifyStaticProperties(VM& vm, const HashTableValue (&values)[numberO
     }
 }
 
+template<NativeFunction nativeFunction, int length> EncodedJSValue nonCachingStaticFunctionGetter(ExecState* state, EncodedJSValue, PropertyName propertyName)
+{
+    return JSValue::encode(JSFunction::create(state->vm(), state->lexicalGlobalObject(), length, propertyName.publicName(), nativeFunction));
+}
+
 } // namespace JSC

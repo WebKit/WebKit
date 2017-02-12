@@ -28,6 +28,7 @@
 #include "JSDOMExceptionHandling.h"
 #include "RuntimeApplicationChecks.h"
 #include <runtime/JSFunction.h>
+#include <runtime/Lookup.h>
 
 using namespace JSC;
 

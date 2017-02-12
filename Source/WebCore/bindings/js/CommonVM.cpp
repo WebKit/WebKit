@@ -32,6 +32,7 @@
 #include <heap/HeapInlines.h>
 #include <runtime/VM.h>
 #include <wtf/MainThread.h>
+#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 
@@ -59,6 +60,11 @@ VM& commonVMSlow()
     JSVMClientData::initNormalWorld(g_commonVMOrNull);
     
     return *g_commonVMOrNull;
+}
+
+void addImpureProperty(const AtomicString& propertyName)
+{
+    commonVM().addImpureProperty(propertyName);
 }
 
 } // namespace WebCore

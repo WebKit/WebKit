@@ -39,6 +39,7 @@
 #include "ScheduledAction.h"
 #include "Settings.h"
 #include <runtime/JSCInlines.h>
+#include <runtime/Lookup.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 #include "JSWebKitNamespace.h"

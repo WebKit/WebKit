@@ -23,6 +23,8 @@
 
 #pragma once
 
+// FIXME: Remove this header.
+
 #include "ExceptionOr.h"
 #include "JSDOMWrapperCache.h"
 #include <cstddef>
@@ -40,34 +42,3 @@
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 #include <wtf/Vector.h>
-
-namespace JSC {
-class JSFunction;
-}
-
-namespace WebCore {
-
-void addImpureProperty(const AtomicString&);
-
-WEBCORE_EXPORT bool hasIteratorMethod(JSC::ExecState&, JSC::JSValue);
-
-template<JSC::NativeFunction nativeFunction, int length> JSC::EncodedJSValue nonCachingStaticFunctionGetter(JSC::ExecState* exec, JSC::EncodedJSValue, JSC::PropertyName propertyName)
-{
-    return JSC::JSValue::encode(JSC::JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), length, propertyName.publicName(), nativeFunction));
-}
-
-template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<T>& vector)
-{
-    JSC::VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSC::JSArray* array = constructEmptyArray(exec, nullptr, vector.size());
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    for (size_t i = 0; i < vector.size(); ++i) {
-        array->putDirectIndex(exec, i, toJS(exec, globalObject, vector[i]));
-        RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    }
-    return array;
-}
-
-} // namespace WebCore
