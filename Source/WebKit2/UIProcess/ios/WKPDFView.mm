@@ -281,6 +281,15 @@ static void detachViewForPage(PDFPageInfo& page)
         [self _ensureViewForPage:pageInfo];
     }
 
+    if (!_centerPageNumber && _pages.size()) {
+        if (CGRectGetMinY(_pages.first().frame) > CGRectGetMaxY(targetRectForCenterPage))
+            _centerPageNumber = 1;
+        else {
+            ASSERT(CGRectGetMaxY(_pages.last().frame) < CGRectGetMinY(targetRectForCenterPage));
+            _centerPageNumber = _pages.size();
+        }
+    }
+
     [self _updatePageNumberIndicator];
 }
 

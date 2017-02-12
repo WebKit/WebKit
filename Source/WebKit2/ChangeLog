@@ -1,3 +1,21 @@
+2017-02-12  Andy Estes  <aestes@apple.com>
+
+        [iOS] PDF page number indicator can show "0 of n" on short pages
+        https://bugs.webkit.org/show_bug.cgi?id=168185
+
+        Reviewed by Tim Horton.
+
+        When viewing a PDF with a last page that is shorter than the frame height, it's possible
+        (thanks to rubber-banding) to scroll down until the page no longer intersects the rect we
+        use to determine the center page. When this happens, the page number indicator displays
+        "0 of n".
+
+        Fix this by handling cases where the first page starts below the center page rect or the
+        last page ends above it.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _revalidateViews]):
+
 2017-02-11  Alex Christensen  <achristensen@webkit.org>
 
         Fix crashes after [NSURLSession invalidateAndCancel]
