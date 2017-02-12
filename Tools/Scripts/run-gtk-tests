@@ -72,6 +72,7 @@ class TestRunner:
         SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/usermedia-permission-requests", "Test times out", 158257),
         SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/audio-usermedia-permission-request", "Test times out", 158257),
         SkippedTest("WebKit2Gtk/TestCookieManager", "/webkit2/WebKitCookieManager/persistent-storage", "Test is flaky", 134580),
+        SkippedTest("WebKit2Gtk/TestPrinting", "/webkit2/WebKitPrintOperation/custom-widget", "Test is flaky", 168196),
         SkippedTest("WebKit2Gtk/TestWebViewEditor", "/webkit2/WebKitWebView/editable/editable", "Test hits an assertion in Debug builds", 151654, "Debug"),
         SkippedTest("WebKit2Gtk/TestWebViewEditor", "/webkit2/WebKitWebView/editable/editable", "Same test, hits release assertion too", 161608),
         SkippedTest("WebKit2Gtk/TestWebViewEditor", "/webkit2/WebKitWebView/cut-copy-paste/non-editable", "Test hits assertion", 161608),

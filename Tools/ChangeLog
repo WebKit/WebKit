@@ -1,5 +1,12 @@
 2017-02-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed, skip flaky WebKitPrintOperation/custom-widget test
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
+2017-02-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, skip flaky form-controls-associated-signal test
 
         * Scripts/run-gtk-tests:
