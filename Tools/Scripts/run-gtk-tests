@@ -78,6 +78,7 @@ class TestRunner:
         SkippedTest("WebKit2Gtk/TestWebViewEditor", "/webkit2/WebKitWebView/cut-copy-paste/editable", "Test hits assertion", 161608),
         SkippedTest("WebKit2Gtk/TestWebViewEditor", "/webkit2/WebKitWebView/select-all/non-editable", "Test hits assertion", 161608),
         SkippedTest("WebKit2Gtk/TestWebViewEditor", "/webkit2/WebKitWebView/select-all/editable", "Test hits assertion", 161608),
+        SkippedTest("WebKit2Gtk/TestWebExtensions", "/webkit2/WebKitWebExtension/form-controls-associated-signal", "Test is flaky", 168194),
         SkippedTest("WebKit2Gtk/TestWebExtensions", "/webkit2/WebKitWebView/install-missing-plugins-permission-request", "Test times out", 147822),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.MouseMoveAfterCrash", "Test is flaky", 85066),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutForImages", "Test is flaky", 85066),
