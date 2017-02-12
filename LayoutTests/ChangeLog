@@ -1,3 +1,15 @@
+2017-02-11  Andreas Kling  <akling@apple.com>
+
+        LayoutTest fast/scrolling/page-cache-back-overflow-scroll-restore.html is a flaky failure
+        <https://webkit.org/b/168084>
+
+        Reviewed by Michael Catanzaro.
+
+        Wait for a scroll event before triggering a navigation. This removes the flakiness.
+        Also use element.scrollTop to scroll the overflow:scroll element instead of eventSender.
+
+        * fast/scrolling/page-cache-back-overflow-scroll-restore.html:
+
 2017-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Mark resource load stats tests as crashing.

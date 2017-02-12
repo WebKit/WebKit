@@ -25,6 +25,12 @@ testRunner.dumpAsText();
 testRunner.waitUntilDone();
 testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 
+var testDiv = document.getElementById("puffin");
+
+testDiv.addEventListener("scroll", function(event) {
+    location.href = 'data:text/html,<script>alert("Going back.");history.back();</' + 'script>';
+});
+
 window.addEventListener("pageshow", function(event) {
     if (event.persisted) {
         document.getElementById("tree").innerText = window.internals.elementRenderTreeAsText(document.getElementById("puffin"));
@@ -33,11 +39,6 @@ window.addEventListener("pageshow", function(event) {
 }, false);
 
 window.addEventListener("load", function() {
-    setTimeout(function() {
-        eventSender.mouseMoveTo(10, 10);
-        eventSender.mouseScrollBy(0, -100);
-
-        setTimeout(function() {location.href = 'data:text/html,<script>alert("Going back.");history.back();</' + 'script>';}, 0);
-    }, 0);
+    testDiv.scrollTop = 100;
 });
 </script>
