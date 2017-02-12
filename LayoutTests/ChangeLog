@@ -1,3 +1,13 @@
+2017-02-11  Youenn Fablet  <youennf@gmail.com>
+
+        Refresh WPT tests up to 06c6c52e05e05483d3c844168a417ee27a554eb7
+        https://bugs.webkit.org/show_bug.cgi?id=168175
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations: Marking some tests as failing/skipping.
+        * tests-options.json:
+
 2017-02-11  Sam Weinig  <sam@webkit.org>
 
         Remove custom bindings for XSLTProcessor.idl

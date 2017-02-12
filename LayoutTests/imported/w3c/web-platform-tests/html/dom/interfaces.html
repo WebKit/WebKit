@@ -577,12 +577,7 @@ interface CSSStyleSheet : StyleSheet {
 typedef sequence<StyleSheet> StyleSheetList;
 
 partial interface Document {
-  readonly attribute StyleSheetList styleSheets;
-           attribute DOMString? selectedStyleSheetSet;
-  readonly attribute DOMString? lastStyleSheetSet;
-  readonly attribute DOMString? preferredStyleSheetSet;
-  readonly attribute DOMStringList styleSheetSets;
-  void enableStyleSheetsForSet(DOMString? name);
+  [SameObject] readonly attribute StyleSheetList styleSheets;
 };
 
 [NoInterfaceObject] interface LinkStyle {
@@ -1322,6 +1317,7 @@ interface MediaError {
   const unsigned short MEDIA_ERR_DECODE = 3;
   const unsigned short MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
   readonly attribute unsigned short code;
+  readonly attribute DOMString message;
 };
 
 interface AudioTrackList : EventTarget {
@@ -1609,7 +1605,6 @@ interface HTMLButtonElement : HTMLElement {
            attribute DOMString name;
            attribute DOMString type;
            attribute DOMString value;
-           attribute HTMLMenuElement? menu;
 
   readonly attribute boolean willValidate;
   readonly attribute ValidityState validity;
@@ -1837,14 +1832,19 @@ interface HTMLDialogElement : HTMLElement {
   void close(optional DOMString returnValue);
 };
 
+[HTMLConstructor]
 interface HTMLScriptElement : HTMLElement {
-           attribute DOMString src;
-           attribute DOMString type;
-           attribute DOMString charset;
-           attribute boolean async;
-           attribute boolean defer;
-           attribute DOMString? crossOrigin;
-           attribute DOMString text;
+  [CEReactions] attribute USVString src;
+  [CEReactions] attribute DOMString type;
+  [CEReactions] attribute boolean noModule;
+  [CEReactions] attribute DOMString charset;
+  [CEReactions] attribute boolean async;
+  [CEReactions] attribute boolean defer;
+  [CEReactions] attribute DOMString? crossOrigin;
+  [CEReactions] attribute DOMString text;
+  [CEReactions] attribute DOMString nonce;
+  [CEReactions] attribute DOMString integrity;
+
 
   // also has obsolete members
 };

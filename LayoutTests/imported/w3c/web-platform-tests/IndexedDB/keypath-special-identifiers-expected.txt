@@ -1,0 +1,9 @@
+
+PASS Type: String, identifier: length 
+PASS Type: Array, identifier: length 
+PASS Type: Blob, identifier: size 
+PASS Type: Blob, identifier: type 
+PASS Type: File, identifier: name 
+FAIL Type: File, identifier: lastModified assert_equals: Property should be used as key expected 0 but got 1
+FAIL Type: File, identifier: lastModifiedDate The data provided does not meet requirements.
+

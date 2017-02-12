@@ -15,7 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/streams/resources/recording-streams.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/resources/rs-test-templates.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/resources/rs-utils.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/resources/test-initializer.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/resources/test-utils.js

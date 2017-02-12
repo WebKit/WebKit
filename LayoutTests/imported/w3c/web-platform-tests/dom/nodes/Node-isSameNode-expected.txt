@@ -1,7 +1,7 @@
 
 PASS doctypes should be comapred on reference 
-PASS elements should be compared on reference 
-PASS elements should be compared on reference 
+PASS elements should be compared on reference (namespaced element) 
+PASS elements should be compared on reference (namespaced attribute) 
 PASS processing instructions should be compared on reference 
 PASS text nodes should be compared on reference 
 PASS comments should be compared on reference 

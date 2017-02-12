@@ -13,7 +13,7 @@ FAIL Invalid value: hour > 23. Value should be empty assert_equals: expected "" 
 FAIL Invalid value: minute > 59. Value should be empty assert_equals: expected "" but got "00:60:00.000"
 FAIL Invalid value: second > 59. Value should be empty assert_equals: expected "" but got "00:00:60.000"
 PASS Value >= min attribute 
-FAIL Value < min attribute assert_equals: expected "12:00:00.001" but got "12:00:00.000"
+PASS Value < min attribute 
 PASS Value <= max attribute 
-FAIL Value > max attribute assert_equals: expected "12:00:00.000" but got "12:00:00.001"
+PASS Value > max attribute 
 

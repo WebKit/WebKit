@@ -12,17 +12,17 @@ PASS window.performance is defined
 PASS window.performance.getEntriesByName("measure_nav_start_no_end")[0].name == "measure_nav_start_no_end" 
 PASS window.performance.getEntriesByName("measure_nav_start_no_end")[0].startTime is correct 
 PASS window.performance.getEntriesByName("measure_nav_start_no_end")[0].entryType == "measure" 
-PASS window.performance.getEntriesByName("measure_nav_start_no_end")[0].duration is aproximately correct (up to 20ms difference allowed) 
+PASS window.performance.getEntriesByName("measure_nav_start_no_end")[0].duration is approximately correct (up to 20ms difference allowed) 
 PASS window.performance.getEntriesByName("measure_nav_start_mark_end")[0].name == "measure_nav_start_mark_end" 
 PASS window.performance.getEntriesByName("measure_nav_start_mark_end")[0].startTime is correct 
 PASS window.performance.getEntriesByName("measure_nav_start_mark_end")[0].entryType == "measure" 
-PASS window.performance.getEntriesByName("measure_nav_start_mark_end")[0].duration is aproximately correct (up to 20ms difference allowed) 
+PASS window.performance.getEntriesByName("measure_nav_start_mark_end")[0].duration is approximately correct (up to 20ms difference allowed) 
 PASS window.performance.getEntriesByName("measure_mark_start_nav_end")[0].name == "measure_mark_start_nav_end" 
 PASS window.performance.getEntriesByName("measure_mark_start_nav_end")[0].startTime is correct 
 PASS window.performance.getEntriesByName("measure_mark_start_nav_end")[0].entryType == "measure" 
-PASS window.performance.getEntriesByName("measure_mark_start_nav_end")[0].duration is aproximately correct (up to 20ms difference allowed) 
+PASS window.performance.getEntriesByName("measure_mark_start_nav_end")[0].duration is approximately correct (up to 20ms difference allowed) 
 PASS window.performance.getEntriesByName("measure_nav_start_nav_end")[0].name == "measure_nav_start_nav_end" 
 PASS window.performance.getEntriesByName("measure_nav_start_nav_end")[0].startTime is correct 
 PASS window.performance.getEntriesByName("measure_nav_start_nav_end")[0].entryType == "measure" 
-PASS window.performance.getEntriesByName("measure_nav_start_nav_end")[0].duration is aproximately correct (up to 20ms difference allowed) 
+PASS window.performance.getEntriesByName("measure_nav_start_nav_end")[0].duration is approximately correct (up to 20ms difference allowed) 
 

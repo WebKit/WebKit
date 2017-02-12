@@ -1,0 +1,8 @@
+
+PASS IDBDatabase.createObjectStore exception order: InvalidStateError vs. TransactionInactiveError 
+PASS IDBDatabase.createObjectStore exception order: TransactionInactiveError vs. SyntaxError 
+FAIL IDBDatabase.createObjectStore exception order: SyntaxError vs. ConstraintError assert_throws: "Invalid key path" check (SyntaxError) should precede "duplicate store name" check (ConstraintError) function "() => {
+      db.createObjectStore('s', {keyPath: 'not a valid key path'});
+    }" threw object "ConstraintError (DOM IDBDatabase Exception): Failed to execute 'createObjectStore' on 'IDBDatabase': An object store with the specified name already exists." that is not a DOMException SyntaxError: property "code" is equal to 0, expected 12
+PASS IDBDatabase.createObjectStore exception order: ConstraintError vs. InvalidAccessError 
+

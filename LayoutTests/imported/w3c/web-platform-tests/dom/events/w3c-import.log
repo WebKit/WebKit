@@ -52,9 +52,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-incumbent-global-subframe-1.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-incumbent-global-subframe-2.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-incumbent-global-subsubframe.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-invoke-legacy.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListenerOptions-capture.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-addEventListener.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-returnvalue.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-removeEventListener.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/events/ProgressEvent.html

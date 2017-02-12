@@ -23,7 +23,7 @@ PASS [INPUT in DATE status] validity.valid must be false if validity.stepMismatc
 PASS [INPUT in DATE status] validity.valid must be false if validity.valueMissing is true 
 PASS [INPUT in MONTH status] validity.valid must be false if validity.rangeOverflow is true 
 PASS [INPUT in MONTH status] validity.valid must be false if validity.rangeUnderflow is true 
-FAIL [INPUT in MONTH status] validity.valid must be false if validity.stepMismatch is true assert_false: The validity.valid should be false. expected false got true
+PASS [INPUT in MONTH status] validity.valid must be false if validity.stepMismatch is true 
 PASS [INPUT in MONTH status] validity.valid must be false if validity.valueMissing is true 
 PASS [INPUT in WEEK status] validity.valid must be false if validity.rangeOverflow is true 
 PASS [INPUT in WEEK status] validity.valid must be false if validity.rangeUnderflow is true 

@@ -16,6 +16,9 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/contains.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-usv-form.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-usv.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-echo.py
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/getactionurl.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/submit-entity-body.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encoded.html

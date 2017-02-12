@@ -15,6 +15,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values-normalize.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-casing.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-combine.html

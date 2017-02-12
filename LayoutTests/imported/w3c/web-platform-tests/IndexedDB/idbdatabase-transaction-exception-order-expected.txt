@@ -1,0 +1,7 @@
+
+PASS IDBDatabase.transaction exception order: InvalidStateError vs. NotFoundError 
+PASS IDBDatabase.transaction exception order: InvalidStateError vs. InvalidAccessError 
+FAIL IDBDatabase.transaction exception order: NotFoundError vs. InvalidAccessError assert_throws: "No such store" check (NotFoundError) should precede "invalid mode" check (InvalidAccessError) function "() => {
+      db.transaction('no-such-store', 'versionchange');
+    }" threw object "TypeError: Type error" that is not a DOMException NotFoundError: property "code" is equal to undefined, expected 8
+

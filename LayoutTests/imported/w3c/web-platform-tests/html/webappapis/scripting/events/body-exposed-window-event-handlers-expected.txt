@@ -1,0 +1,83 @@
+Blocked access to external URL https://code.jquery.com/jquery-1.10.2.js
+
+PASS Return null when getting the load event handler of a windowless body 
+PASS Ignore setting of load window event handlers on windowless body 
+PASS Return null when getting the resize event handler of a windowless body 
+PASS Ignore setting of resize window event handlers on windowless body 
+PASS Return null when getting the blur event handler of a windowless body 
+PASS Ignore setting of blur window event handlers on windowless body 
+PASS Return null when getting the focus event handler of a windowless body 
+PASS Ignore setting of focus window event handlers on windowless body 
+PASS Return null when getting the scroll event handler of a windowless body 
+PASS Ignore setting of scroll window event handlers on windowless body 
+FAIL Return null when getting the afterprint event handler of a windowless body assert_equals: expected (object) null but got (undefined) undefined
+FAIL Ignore setting of afterprint window event handlers on windowless body assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+FAIL Return null when getting the beforeprint event handler of a windowless body assert_equals: expected (object) null but got (undefined) undefined
+FAIL Ignore setting of beforeprint window event handlers on windowless body assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+PASS Return null when getting the beforeunload event handler of a windowless body 
+PASS Ignore setting of beforeunload window event handlers on windowless body 
+PASS Return null when getting the hashchange event handler of a windowless body 
+PASS Ignore setting of hashchange window event handlers on windowless body 
+PASS Return null when getting the languagechange event handler of a windowless body 
+PASS Ignore setting of languagechange window event handlers on windowless body 
+PASS Return null when getting the message event handler of a windowless body 
+PASS Ignore setting of message window event handlers on windowless body 
+PASS Return null when getting the offline event handler of a windowless body 
+PASS Ignore setting of offline window event handlers on windowless body 
+PASS Return null when getting the online event handler of a windowless body 
+PASS Ignore setting of online window event handlers on windowless body 
+PASS Return null when getting the pagehide event handler of a windowless body 
+PASS Ignore setting of pagehide window event handlers on windowless body 
+PASS Return null when getting the pageshow event handler of a windowless body 
+PASS Ignore setting of pageshow window event handlers on windowless body 
+PASS Return null when getting the popstate event handler of a windowless body 
+PASS Ignore setting of popstate window event handlers on windowless body 
+FAIL Return null when getting the rejectionhandled event handler of a windowless body assert_equals: expected (object) null but got (undefined) undefined
+FAIL Ignore setting of rejectionhandled window event handlers on windowless body assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+PASS Return null when getting the storage event handler of a windowless body 
+PASS Ignore setting of storage window event handlers on windowless body 
+FAIL Return null when getting the unhandledrejection event handler of a windowless body assert_equals: expected (object) null but got (undefined) undefined
+FAIL Ignore setting of unhandledrejection window event handlers on windowless body assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+PASS Return null when getting the unload event handler of a windowless body 
+PASS Ignore setting of unload window event handlers on windowless body 
+PASS Return null when getting the load event handler of a windowless frameset 
+PASS Ignore setting of load window event handlers on windowless frameset 
+PASS Return null when getting the resize event handler of a windowless frameset 
+PASS Ignore setting of resize window event handlers on windowless frameset 
+PASS Return null when getting the blur event handler of a windowless frameset 
+PASS Ignore setting of blur window event handlers on windowless frameset 
+PASS Return null when getting the focus event handler of a windowless frameset 
+PASS Ignore setting of focus window event handlers on windowless frameset 
+PASS Return null when getting the scroll event handler of a windowless frameset 
+PASS Ignore setting of scroll window event handlers on windowless frameset 
+FAIL Return null when getting the afterprint event handler of a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
+FAIL Ignore setting of afterprint window event handlers on windowless frameset assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+FAIL Return null when getting the beforeprint event handler of a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
+FAIL Ignore setting of beforeprint window event handlers on windowless frameset assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+PASS Return null when getting the beforeunload event handler of a windowless frameset 
+PASS Ignore setting of beforeunload window event handlers on windowless frameset 
+PASS Return null when getting the hashchange event handler of a windowless frameset 
+PASS Ignore setting of hashchange window event handlers on windowless frameset 
+PASS Return null when getting the languagechange event handler of a windowless frameset 
+PASS Ignore setting of languagechange window event handlers on windowless frameset 
+PASS Return null when getting the message event handler of a windowless frameset 
+PASS Ignore setting of message window event handlers on windowless frameset 
+PASS Return null when getting the offline event handler of a windowless frameset 
+PASS Ignore setting of offline window event handlers on windowless frameset 
+PASS Return null when getting the online event handler of a windowless frameset 
+PASS Ignore setting of online window event handlers on windowless frameset 
+PASS Return null when getting the pagehide event handler of a windowless frameset 
+PASS Ignore setting of pagehide window event handlers on windowless frameset 
+PASS Return null when getting the pageshow event handler of a windowless frameset 
+PASS Ignore setting of pageshow window event handlers on windowless frameset 
+PASS Return null when getting the popstate event handler of a windowless frameset 
+PASS Ignore setting of popstate window event handlers on windowless frameset 
+FAIL Return null when getting the rejectionhandled event handler of a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
+FAIL Ignore setting of rejectionhandled window event handlers on windowless frameset assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+PASS Return null when getting the storage event handler of a windowless frameset 
+PASS Ignore setting of storage window event handlers on windowless frameset 
+FAIL Return null when getting the unhandledrejection event handler of a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
+FAIL Ignore setting of unhandledrejection window event handlers on windowless frameset assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+PASS Return null when getting the unload event handler of a windowless frameset 
+PASS Ignore setting of unload window event handlers on windowless frameset 
+

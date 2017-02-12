@@ -422,6 +422,12 @@
     "imported/w3c/web-platform-tests/encrypted-media/drm-temporary-license-type.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/fetch/api/headers/header-values-normalize.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/fetch/api/headers/header-values.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-worker.html": [
         "slow"
     ],

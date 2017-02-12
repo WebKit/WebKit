@@ -15,4 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/cocoa-module.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/cross-origin.py
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/exports-cocoa.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/set-script-executed.js

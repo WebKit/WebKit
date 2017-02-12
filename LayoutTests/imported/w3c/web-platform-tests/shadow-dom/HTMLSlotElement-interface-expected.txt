@@ -10,11 +10,11 @@ PASS assignedNodes({"flattened":true}) must return the list of assigned nodes wh
 PASS assignedNodes() must update when slot and name attributes are modified 
 PASS assignedNodes({"flattened":false}) must update when slot and name attributes are modified 
 PASS assignedNodes({"flattened":true}) must update when slot and name attributes are modified 
-PASS assignedNodes must update when a default slot is introduced dynamically by a slot rename 
-PASS assignedNodes must update when a default slot is introduced dynamically by a slot rename 
-PASS assignedNodes must update when a default slot is introduced dynamically by a slot rename 
-PASS assignedNodes must update when slot elements are inserted or removed 
-PASS assignedNodes must update when slot elements are inserted or removed 
-PASS assignedNodes must update when slot elements are inserted or removed 
+PASS assignedNodes() must update when a default slot is introduced dynamically by a slot rename 
+PASS assignedNodes({"flattened":false}) must update when a default slot is introduced dynamically by a slot rename 
+PASS assignedNodes({"flattened":true}) must update when a default slot is introduced dynamically by a slot rename 
+PASS assignedNodes() must update when slot elements are inserted or removed 
+PASS assignedNodes({"flattened":false}) must update when slot elements are inserted or removed 
+PASS assignedNodes({"flattened":true}) must update when slot elements are inserted or removed 
 PASS assignedNodes({flatten: true}) must return the distributed nodes, and assignedNodes() and assignedNodes({flatten: false}) must returned the assigned nodes 
 

@@ -12,8 +12,8 @@ PASS Response interface: attribute status
 PASS Response interface: attribute ok 
 PASS Response interface: attribute statusText 
 PASS Response interface: attribute headers 
-PASS Response interface: attribute body 
 PASS Response interface: operation clone() 
+PASS Response interface: attribute body 
 PASS Response interface: attribute bodyUsed 
 PASS Response interface: operation arrayBuffer() 
 PASS Response interface: operation blob() 
@@ -31,8 +31,8 @@ PASS Response interface: new Response() must inherit property "status" with the 
 PASS Response interface: new Response() must inherit property "ok" with the proper type (5) 
 PASS Response interface: new Response() must inherit property "statusText" with the proper type (6) 
 PASS Response interface: new Response() must inherit property "headers" with the proper type (7) 
-PASS Response interface: new Response() must inherit property "body" with the proper type (8) 
-PASS Response interface: new Response() must inherit property "clone" with the proper type (9) 
+PASS Response interface: new Response() must inherit property "clone" with the proper type (8) 
+PASS Response interface: new Response() must inherit property "body" with the proper type (9) 
 PASS Response interface: new Response() must inherit property "bodyUsed" with the proper type (10) 
 PASS Response interface: new Response() must inherit property "arrayBuffer" with the proper type (11) 
 PASS Response interface: new Response() must inherit property "blob" with the proper type (12) 

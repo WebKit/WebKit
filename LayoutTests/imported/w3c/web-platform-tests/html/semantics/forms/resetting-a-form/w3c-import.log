@@ -16,4 +16,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/resetting-a-form/reset-event.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/resetting-a-form/reset-form-event-realm-support.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/resetting-a-form/reset-form-event-realm.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/resetting-a-form/reset-form.html

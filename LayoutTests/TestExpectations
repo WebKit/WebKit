@@ -856,6 +856,9 @@ storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
 # In debug builds, runs too slowly for the test timeout.
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm [ Failure ]
 
+# Test is crashing
+imported/w3c/web-platform-tests/IndexedDB/keypath-exceptions.htm [ Skip ]
+
 # SQLite backend tests that timeout
 storage/indexeddb/modern/transaction-scheduler-1.html [ Skip ]
 storage/indexeddb/modern/transaction-scheduler-2.html [ Skip ]
@@ -1018,7 +1021,13 @@ webkit.org/b/166911 fast/dom/Window/window-properties-performance-resource-timin
 
 webkit.org/b/167428 fast/backgrounds/background-repeat-x-y-parse.html [ Failure ]
 
-webkit.org/b/1644041 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html [ Pass Failure ]
+webkit.org/b/168175 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-skip-no-boxes.html [ ImageOnlyFailure ]
+webkit.org/b/168175 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-menu.html [ ImageOnlyFailure ]
+webkit.org/b/168175 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html [ Pass Failure ]
+webkit.org/b/168175 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/same-url.html [ Pass Failure ]
+webkit.org/b/168175 imported/w3c/web-platform-tests/html/browsers/offline/browser-state/navigator_online_online.html [ Pass Failure ]
+webkit.org/b/168175 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Timeout Pass ]
 
 webkit.org/b/168066 performance-api/performance-now-api.html [ Pass Failure ]
 webkit.org/b/168005 performance-api/performance-now-time-origin-in-worker.html [ Pass Failure ]

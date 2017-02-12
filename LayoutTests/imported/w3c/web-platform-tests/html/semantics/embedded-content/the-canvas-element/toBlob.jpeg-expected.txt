@@ -1,8 +1,5 @@
-toBlob.jpeg
-toBlob with image/jpeg returns a JPEG Blob
-Actual output:
 
-FAIL toBlob with image/jpeg returns a JPEG Blob canvas.toBlob is not a function. (In 'canvas.toBlob(function(data){
-  _assertSame(data.type, "image/jpeg", "data.type", "\"image/jpeg\"");
-}, 'image/jpeg')', 'canvas.toBlob' is undefined)
+FAIL toBlob with image/jpeg returns a JPEG Blob canvas.toBlob is not a function. (In 'canvas.toBlob(this.step_func_done(function(data) {
+            assert_equals(data.type, "image/jpeg");
+        }), 'image/jpeg')', 'canvas.toBlob' is undefined)
 

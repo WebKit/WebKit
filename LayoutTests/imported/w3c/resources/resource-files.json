@@ -32,6 +32,7 @@
         "web-platform-tests/fetch/api/response/multi-globals/relevant/relevant.html",
         "web-platform-tests/html/browsers/browsing-the-web/history-traversal/001-1.html",
         "web-platform-tests/html/browsers/browsing-the-web/history-traversal/001-2.html",
+        "web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name-0.html",
         "web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name-1.html",
         "web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name-2.html",
         "web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name-3.html",
@@ -58,6 +59,10 @@
         "web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/click.html",
         "web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/empty_fragment_iframe.html",
         "web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/href.html",
+        "web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation-unload-form-submit-1.html",
+        "web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation-unload-form-submit-2.html",
+        "web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation-unload-same-origin-fragment-1.html",
+        "web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation-unload-same-origin-fragment-2.html",
         "web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation_unload_data_url-1.html",
         "web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation_unload_same_origin-1.html",
         "web-platform-tests/html/browsers/browsing-the-web/unloading-documents/base.html",
@@ -189,6 +194,7 @@
         "web-platform-tests/html/browsers/windows/support-post-to-opener.html",
         "web-platform-tests/html/browsers/windows/support-window-name-echo.html",
         "web-platform-tests/html/browsers/windows/targeting-multiple-cross-origin-manual.sub.html",
+        "web-platform-tests/html/dom/dynamic-markup-insertion/document-write/empty.html",
         "web-platform-tests/html/dom/dynamic-markup-insertion/document-write/nested-document-write-1.html",
         "web-platform-tests/html/dom/dynamic-markup-insertion/document-write/nested-document-write-2.html",
         "web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/004-1.html",
@@ -222,6 +228,8 @@
         "web-platform-tests/html/semantics/embedded-content/the-object-element/test1.html",
         "web-platform-tests/html/semantics/embedded-content/the-object-element/test2.html",
         "web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/dirname-ltr-iframe.html",
+        "web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-usv-form.html",
+        "web-platform-tests/html/semantics/forms/resetting-a-form/reset-form-event-realm-support.html",
         "web-platform-tests/html/semantics/forms/the-button-element/button-activate-frame.html",
         "web-platform-tests/html/semantics/scripting-1/the-script-element/script-not-executed-after-shutdown-child.html",
         "web-platform-tests/html/semantics/scripting-1/the-script-element/support/script-onerror-insertion-point-1-helper.html",
@@ -243,6 +251,7 @@
         "web-platform-tests/html/webappapis/scripting/events/onerroreventhandler-frame.html",
         "web-platform-tests/mathml/relations/html5-tree/unique-identifier-1-iframe.html",
         "web-platform-tests/resource-timing/iframe-setdomain.sub.html",
+        "web-platform-tests/test_keys_wdspec.html",
         "web-platform-tests/upgrade-insecure-requests/support/post-origin-to-parent.html"
     ]
 }

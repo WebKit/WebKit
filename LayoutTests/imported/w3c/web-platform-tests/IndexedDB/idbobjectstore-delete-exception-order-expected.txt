@@ -1,0 +1,5 @@
+
+PASS IDBObjectStore.delete exception order: InvalidStateError vs. TransactionInactiveError 
+PASS IDBObjectStore.delete exception order: TransactionInactiveError vs. ReadOnlyError 
+FAIL IDBObjectStore.delete exception order: ReadOnlyError vs. DataError assert_throws: "read only" check (ReadOnlyError) should precede key/data check (DataError) function "() => { store.delete({}); }" threw object "DataError (DOM IDBDatabase Exception): Failed to execute 'delete' on 'IDBObjectStore': The parameter is not a valid key." that is not a DOMException ReadOnlyError: property "name" is equal to "DataError", expected "ReadOnlyError"
+

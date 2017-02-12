@@ -4,14 +4,14 @@ Input Range
 PASS range type support on input element 
 PASS min attribute support on input element 
 PASS max attribute support on input element 
-FAIL Illegal value of min attribute assert_equals: expected "0" but got "ab"
-FAIL Illegal value of max attribute assert_equals: expected "100" but got "f"
+PASS Illegal value of min attribute 
+PASS Illegal value of max attribute 
 PASS Converting an illegal string to the default value 
-FAIL Converting an illegal string to the default step assert_equals: expected "1" but got "xyz"
+PASS Illegal value of step attribute 
 PASS the value is set to min when a smaller value than min attribute is given 
 PASS the value is set to max when a larger value than max attribute is given 
-FAIL default value of min attribute in input type=range assert_equals: expected "0" but got ""
-FAIL default value of max attribute in input type=range assert_equals: expected "100" but got ""
+PASS default value of min attribute in input type=range 
+PASS default value of max attribute in input type=range 
 PASS default value when min and max attributes are given (= min plus half the difference between min and max) 
 PASS default value with step control when both min and max attributes are given 
 FAIL default value when both min and max attributes are given, while min > max assert_equals: expected "2" but got "51"

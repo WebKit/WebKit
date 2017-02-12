@@ -30,4 +30,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/serve
 /LayoutTests/imported/w3c/web-platform-tests/serve.py
 /LayoutTests/imported/w3c/web-platform-tests/server-side.md
+/LayoutTests/imported/w3c/web-platform-tests/test_keys_wdspec.html
 /LayoutTests/imported/w3c/web-platform-tests/update-built-tests.sh

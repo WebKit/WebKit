@@ -11,10 +11,10 @@ PASS Firing an event at D1 with relatedNode at B1a with open mode shadow trees
 PASS Firing an event at D1 with relatedNode at B1a with closed mode shadow trees 
 PASS Firing an event at B1a with relatedNode at A1a with open mode shadow trees 
 PASS Firing an event at B1a with relatedNode at A1a with closed mode shadow trees 
-PASS Firing an event at B1a with relatedNode at A1a with open mode shadow trees 
-PASS Firing an event at B1a with relatedNode at A1a with closed mode shadow trees 
-PASS Firing an event at B1a with relatedNode at A1a with open mode shadow trees 
-PASS Firing an event at B1a with relatedNode at A1a with closed mode shadow trees 
-PASS Firing an event at B1a with relatedNode at A1a with open mode shadow trees 
-PASS Firing an event at B1a with relatedNode at A1a with closed mode shadow trees 
+PASS Firing an event at A1a with relatedNode at B1a with open mode shadow trees 
+PASS Firing an event at A1a with relatedNode at B1a with closed mode shadow trees 
+PASS Firing an event at B1a with relatedNode at A1a (detached) with open mode shadow trees 
+PASS Firing an event at B1a with relatedNode at A1a (detached) with closed mode shadow trees 
+PASS Firing an event at A1a with relatedNode at B1a (detached) with open mode shadow trees 
+PASS Firing an event at A1a with relatedNode at B1a (detached) with closed mode shadow trees 
 

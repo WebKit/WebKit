@@ -1,4 +1,4 @@
-Date & Time Inputs
+Date and Time Inputs
 
 
 FAIL date type support on input element assert_equals: expected "date" but got "text"
@@ -15,13 +15,13 @@ PASS [time] The max attribute must have a value that is a valid global date and 
 PASS [time] The step attribute must be expressed in seconds 
 PASS [time] stepUp method support on input 'time' element 
 PASS [time] stepDown method support on input 'time' element 
-FAIL datetime type support on input element assert_equals: expected "datetime" but got "text"
-PASS [datetime] The must be a valid global date and time string 
-PASS [datetime] The min attribute must have a value that is a valid global date and time string 
-PASS [datetime] The max attribute must have a value that is a valid global date and time string 
-PASS [datetime] The step attribute must be expressed in seconds 
-PASS [datetime] stepUp method support on input 'datetime' element 
-PASS [datetime] stepDown method support on input 'datetime' element 
+FAIL datetime-local type support on input element assert_equals: expected "datetime-local" but got "text"
+PASS [datetime-local] The must be a valid local date and time string 
+PASS [datetime-local] The min attribute must have a value that is a valid local date and time string 
+PASS [datetime-local] The max attribute must have a value that is a valid local date and time string 
+PASS [datetime-local] The step attribute must be expressed in seconds 
+PASS [datetime-local] stepUp method support on input 'datetime-local' element 
+PASS [datetime-local] stepDown method support on input 'datetime-local' element 
 FAIL month type support on input element assert_equals: expected "month" but got "text"
 PASS [month] The value must be a value that is a valid global date and time string 
 PASS [month] The min attribute must have a value that is a valid global date and time string 

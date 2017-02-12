@@ -1,0 +1,7 @@
+
+PASS Piping through a duck-typed pass-through transform stream should work 
+FAIL Piping through a transform errored on the writable end does not cause an unhandled promise rejection c.error is not a function. (In 'c.error(new Error('this rejection should not be reported as unhandled'))', 'c.error' is undefined)
+PASS pipeThrough generically calls pipeTo with the appropriate args 
+PASS pipeThrough can handle calling a pipeTo that returns a non-promise object 
+PASS pipeThrough can handle calling a pipeTo that returns a non-promise thenable object 
+

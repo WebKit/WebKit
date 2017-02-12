@@ -15,6 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/body-exposed-window-event-handlers.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/body-onload.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-body-window.html
@@ -23,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-onresize.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-spec-example.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/eventhandler-cancellation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/inline-event-handler-ordering.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-late.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-once.html

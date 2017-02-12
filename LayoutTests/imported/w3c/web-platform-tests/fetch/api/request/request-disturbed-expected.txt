@@ -1,8 +1,10 @@
 
+FAIL Request's body: initial state assert_equals: body's default value is null expected (object) null but got (undefined) undefined
 PASS Request without body cannot be disturbed 
 PASS Check cloning a disturbed request 
 PASS Check creating a new request from a disturbed request 
-PASS Input request used for creating new request became disturbed 
+FAIL Input request used for creating new request became disturbed assert_not_equals: body should not be undefined got disallowed value undefined
+FAIL Input request used for creating new request became disturbed even if body is not used assert_true: bodyUsed is true when request is disturbed expected true got false
 PASS Check consuming a disturbed request 
 PASS Request construction failure should not set "bodyUsed" 
 

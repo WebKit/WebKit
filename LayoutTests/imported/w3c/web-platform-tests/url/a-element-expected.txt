@@ -77,6 +77,10 @@ PASS Parsing: <ftp:/example.com/> against <http://example.org/foo/bar>
 PASS Parsing: <https:/example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <madeupscheme:/example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <file:/example.com/> against <http://example.org/foo/bar> 
+FAIL Parsing: <file://example:1/> against <about:blank> assert_unreached: Expected URL to fail parsing Reached unreachable code
+PASS Parsing: <file://example:test/> against <about:blank> 
+PASS Parsing: <file://example%/> against <about:blank> 
+PASS Parsing: <file://[example]/> against <about:blank> 
 PASS Parsing: <ftps:/example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <gopher:/example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <ws:/example.com/> against <http://example.org/foo/bar> 
@@ -329,7 +333,7 @@ PASS Parsing: <sc://ñ.test/> against <about:blank>
 PASS Parsing: <sc://!"$&'()*+,-.;<=>^_`{|}~/> against <about:blank> 
 PASS Parsing: <sc://\0/> against <about:blank> 
 PASS Parsing: <sc:// /> against <about:blank> 
-PASS Parsing: <sc://%/> against <about:blank> 
+FAIL Parsing: <sc://%/> against <about:blank> assert_equals: protocol expected "sc:" but got ":"
 PASS Parsing: <sc://@/> against <about:blank> 
 PASS Parsing: <sc://te@s:t@/> against <about:blank> 
 PASS Parsing: <sc://:/> against <about:blank> 
@@ -386,6 +390,9 @@ FAIL Parsing: <//d:> against <file:///C:/a/b> assert_equals: href expected "file
 FAIL Parsing: <//d:/..> against <file:///C:/a/b> assert_equals: href expected "file:///d:/" but got "file:///"
 PASS Parsing: <..> against <file:///ab:/> 
 PASS Parsing: <..> against <file:///1:/> 
+PASS Parsing: <file:> against <about:blank> 
+PASS Parsing: <file:?q=v> against <about:blank> 
+PASS Parsing: <file:#frag> against <about:blank> 
 PASS Parsing: <http://[1:0::]> against <http://example.net/> 
 FAIL Parsing: <http://?> against <about:blank> assert_unreached: Expected URL to fail parsing Reached unreachable code
 FAIL Parsing: <http://#> against <about:blank> assert_unreached: Expected URL to fail parsing Reached unreachable code
@@ -411,4 +418,10 @@ PASS Parsing: <ldap://localhost:389/ou=People,o=JNDITutorial> against <about:bla
 PASS Parsing: <git+https://github.com/foo/bar> against <about:blank> 
 PASS Parsing: <urn:ietf:rfc:2648> against <about:blank> 
 PASS Parsing: <tag:joe@example.org,2001:foo/bar> against <about:blank> 
+FAIL Parsing: <non-special://%E2%80%A0/> against <about:blank> assert_equals: protocol expected "non-special:" but got ":"
+FAIL Parsing: <non-special://H%4fSt/path> against <about:blank> assert_equals: protocol expected "non-special:" but got ":"
+PASS Parsing: <non-special://[1:2:0:0:5:0:0:0]/> against <about:blank> 
+PASS Parsing: <non-special://[1:2:0:0:0:0:0:3]/> against <about:blank> 
+PASS Parsing: <non-special://[1:2::3]:80/> against <about:blank> 
+PASS Parsing: <non-special://[:80/> against <about:blank> 
 

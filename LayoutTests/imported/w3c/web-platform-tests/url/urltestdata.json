@@ -1020,6 +1020,26 @@
     "hash": ""
   },
   {
+    "input": "file://example:1/",
+    "base": "about:blank",
+    "failure": true
+  },
+  {
+    "input": "file://example:test/",
+    "base": "about:blank",
+    "failure": true
+  },
+  {
+    "input": "file://example%/",
+    "base": "about:blank",
+    "failure": true
+  },
+  {
+    "input": "file://[example]/",
+    "base": "about:blank",
+    "failure": true
+  },
+  {
     "input": "ftps:/example.com/",
     "base": "http://example.org/foo/bar",
     "href": "ftps:/example.com/",
@@ -4311,7 +4331,16 @@
   {
     "input": "sc://%/",
     "base": "about:blank",
-    "failure": true
+    "href": "sc://%/",
+    "protocol": "sc:",
+    "username": "",
+    "password": "",
+    "host": "%",
+    "hostname": "%",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
   },
   {
     "input": "sc://@/",
@@ -4593,7 +4622,7 @@
     "port": "",
     "pathname": "/baz",
     "search": "?qux",
-    "searchParams": "",
+    "searchParams": "qux=",
     "hash": "#foo%08bar"
   },
   "# IPv4 parsing (via https://github.com/nodejs/node/pull/10317)",
@@ -4909,6 +4938,49 @@
     "pathname": "/",
     "search": "",
     "hash": ""
+  },
+  "# file URLs without base URL by Rimas Misevičius",
+  {
+    "input": "file:",
+    "base": "about:blank",
+    "href": "file:///",
+    "protocol": "file:",
+    "username": "",
+    "password": "",
+    "host": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "input": "file:?q=v",
+    "base": "about:blank",
+    "href": "file:///?q=v",
+    "protocol": "file:",
+    "username": "",
+    "password": "",
+    "host": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "/",
+    "search": "?q=v",
+    "hash": ""
+  },
+  {
+    "input": "file:#frag",
+    "base": "about:blank",
+    "href": "file:///#frag",
+    "protocol": "file:",
+    "username": "",
+    "password": "",
+    "host": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": "#frag"
   },
   "# IPv6 trailing zeros test",
   {
@@ -5262,5 +5334,82 @@
     "pathname": "joe@example.org,2001:foo/bar",
     "search": "",
     "hash": ""
+  },
+  "# percent encoded hosts in non-special-URLs",
+  {
+    "input": "non-special://%E2%80%A0/",
+    "base": "about:blank",
+    "href": "non-special://%E2%80%A0/",
+    "protocol": "non-special:",
+    "username": "",
+    "password": "",
+    "host": "%E2%80%A0",
+    "hostname": "%E2%80%A0",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "input": "non-special://H%4fSt/path",
+    "base": "about:blank",
+    "href": "non-special://H%4fSt/path",
+    "protocol": "non-special:",
+    "username": "",
+    "password": "",
+    "host": "H%4fSt",
+    "hostname": "H%4fSt",
+    "port": "",
+    "pathname": "/path",
+    "search": "",
+    "hash": ""
+  },
+  "# IPv6 in non-special-URLs",
+  {
+    "input": "non-special://[1:2:0:0:5:0:0:0]/",
+    "base": "about:blank",
+    "href": "non-special://[1:2:0:0:5::]/",
+    "protocol": "non-special:",
+    "username": "",
+    "password": "",
+    "host": "[1:2:0:0:5::]",
+    "hostname": "[1:2:0:0:5::]",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "input": "non-special://[1:2:0:0:0:0:0:3]/",
+    "base": "about:blank",
+    "href": "non-special://[1:2::3]/",
+    "protocol": "non-special:",
+    "username": "",
+    "password": "",
+    "host": "[1:2::3]",
+    "hostname": "[1:2::3]",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "input": "non-special://[1:2::3]:80/",
+    "base": "about:blank",
+    "href": "non-special://[1:2::3]:80/",
+    "protocol": "non-special:",
+    "username": "",
+    "password": "",
+    "host": "[1:2::3]:80",
+    "hostname": "[1:2::3]",
+    "port": "80",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "input": "non-special://[:80/",
+    "base": "about:blank",
+    "failure": true
   }
 ]

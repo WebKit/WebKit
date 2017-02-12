@@ -20,12 +20,12 @@ PASS value = -0
 PASS  value = Infinity 
 PASS value = -Infinity 
 PASS value = NaN 
-FAIL value = 2^53+1 assert_equals: expected "9007199254740992" but got "9007199254740993"
+PASS value = 2^53+1 
 PASS value >= Number.MAX_VALUE 
 PASS value = 1e 
-FAIL value = +1 assert_equals: expected "1" but got ""
+PASS value = +1 
 PASS value = '+' 
 PASS value = '-' 
-FAIL value with a leading whitespace assert_equals: expected "1" but got ""
-FAIL value = 1trailing junk assert_equals: expected "1" but got ""
+PASS value with a leading whitespace 
+PASS value = 1trailing junk 
 

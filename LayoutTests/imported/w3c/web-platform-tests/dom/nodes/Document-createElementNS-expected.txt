@@ -260,9 +260,6 @@ PASS createElementNS test in XHTML document: "http://example.com/","a-b:c",null
 PASS createElementNS test in HTML document: "http://example.com/","xml",null 
 PASS createElementNS test in XML document: "http://example.com/","xml",null 
 PASS createElementNS test in XHTML document: "http://example.com/","xml",null 
-PASS createElementNS test in HTML document: "http://example.com/","xmlns","NAMESPACE_ERR" 
-PASS createElementNS test in XML document: "http://example.com/","xmlns","NAMESPACE_ERR" 
-PASS createElementNS test in XHTML document: "http://example.com/","xmlns","NAMESPACE_ERR" 
 PASS createElementNS test in HTML document: "http://example.com/","XMLNS",null 
 PASS createElementNS test in XML document: "http://example.com/","XMLNS",null 
 PASS createElementNS test in XHTML document: "http://example.com/","XMLNS",null 
@@ -536,15 +533,9 @@ PASS createElementNS test in XHTML document: "foo:","xmlfoo:bar",null
 PASS createElementNS test in HTML document: "","","INVALID_CHARACTER_ERR" 
 PASS createElementNS test in XML document: "","","INVALID_CHARACTER_ERR" 
 PASS createElementNS test in XHTML document: "","","INVALID_CHARACTER_ERR" 
-PASS createElementNS test in HTML document: null,null,null 
-PASS createElementNS test in XML document: null,null,null 
-PASS createElementNS test in XHTML document: null,null,null 
 PASS createElementNS test in HTML document: null,"","INVALID_CHARACTER_ERR" 
 PASS createElementNS test in XML document: null,"","INVALID_CHARACTER_ERR" 
 PASS createElementNS test in XHTML document: null,"","INVALID_CHARACTER_ERR" 
-PASS createElementNS test in HTML document: undefined,null,null 
-PASS createElementNS test in XML document: undefined,null,null 
-PASS createElementNS test in XHTML document: undefined,null,null 
 PASS createElementNS test in HTML document: undefined,"","INVALID_CHARACTER_ERR" 
 PASS createElementNS test in XML document: undefined,"","INVALID_CHARACTER_ERR" 
 PASS createElementNS test in XHTML document: undefined,"","INVALID_CHARACTER_ERR" 

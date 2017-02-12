@@ -10,12 +10,17 @@ var miscElements = {
   script: {
     src: "url",
     type: "string",
+    noModule: "boolean",
     charset: "string",
     // TODO: async attribute (complicated).
     defer: "boolean",
     crossOrigin: {type: "enum", keywords: ["anonymous", "use-credentials"], nonCanon:{"": "anonymous"}, isNullable: true, defaultVal: null, invalidVal: "anonymous"},
     nonce: "string",
     integrity: "string",
+
+    // Obsolete
+    event: "string",
+    htmlFor: {type: "string", domAttrName: "for"},
   },
   noscript: {},
 
@@ -36,8 +41,8 @@ var miscElements = {
   summary: {},
   menu: {
     // Conforming
-    //TODO: check that missing value default is popup if parent's type is popup
-    type: {type: "enum", keywords:["popup", "toolbar"], defaultVal: "toolbar"},
+    //TODO: check that missing value default is context if parent's type is context
+    type: {type: "enum", keywords:["context", "toolbar"], defaultVal: "toolbar"},
     label: "string",
 
     // Obsolete

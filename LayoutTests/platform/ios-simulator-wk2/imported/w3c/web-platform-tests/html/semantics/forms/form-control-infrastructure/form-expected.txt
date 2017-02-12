@@ -11,8 +11,6 @@ PASS label-form.form
 PASS label-form-form2.form 
 PASS label-with-control.form 
 PASS label-for.form 
-FAIL label-with-progress.form assert_equals: Sanity check: label.control.form expected (object) null but got (undefined) undefined
-FAIL label-with-meter.form assert_equals: Sanity check: label.control.form expected (object) null but got (undefined) undefined
 PASS label-for-control-form-in-form.form 
 PASS label-for-control-form.form 
 PASS label-in-table.form 
@@ -40,10 +38,6 @@ label-form-form2
 label-with-control 
 
 label-for 
-
-label-with-progress 
-
-label-with-meter 
 
  label-for-control-form-in-form
 

@@ -7,7 +7,7 @@ PASS input setSelectionRange return void
 PASS input setSelectionRange(0,1) 
 PASS input setSelectionRange(0,input.value.length+1) 
 PASS input setSelectionRange(input.value.length+1,input.value.length+1) 
-PASS input setSelectionRange(input.value.length+1,input.value.length+1) 
+PASS input setSelectionRange(input.value.length+1,1) 
 PASS input setSelectionRange(2,2) 
 PASS input setSelectionRange(2,1) 
 PASS input direction of setSelectionRange(0,1,"backward") 

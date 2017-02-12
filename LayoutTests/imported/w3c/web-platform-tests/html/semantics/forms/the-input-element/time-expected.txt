@@ -23,12 +23,12 @@ FAIL stepUp on step value hour   The object is in an invalid state.
 FAIL stepDown on step value hour  The object is in an invalid state.
 FAIL stepUp on step value second  The object is in an invalid state.
 FAIL stepDown on step value second  The object is in an invalid state.
-FAIL stepUp on step value miri second  The object is in an invalid state.
-FAIL stepDown on step value miri second  The object is in an invalid state.
-FAIL stepUp argment 2 times The object is in an invalid state.
-FAIL stepDown argment 2 times The object is in an invalid state.
+FAIL stepUp on step value with fractional seconds The object is in an invalid state.
+FAIL stepDown on step value with fractional seconds The object is in an invalid state.
+FAIL stepUp argument 2 times The object is in an invalid state.
+FAIL stepDown argument 2 times The object is in an invalid state.
 FAIL stepUp stop because it exceeds the maximum value The object is in an invalid state.
-FAIL stepDown Stop so lower than the minimum value The object is in an invalid state.
+FAIL stepDown stop so lower than the minimum value The object is in an invalid state.
 FAIL stop at border on stepUp The object is in an invalid state.
 FAIL stop at border on stepDown The object is in an invalid state.
 FAIL  empty value of stepUp The object is in an invalid state.

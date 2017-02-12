@@ -79,6 +79,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-write/051.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-write/document.write-01.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-write/document.write-02.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-write/empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-write/iframe_001.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-write/iframe_002.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-write/iframe_003.html
@@ -107,3 +108,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-write/script_011.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-write/script_012.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-write/script_013.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/document-write/write-active-document.html

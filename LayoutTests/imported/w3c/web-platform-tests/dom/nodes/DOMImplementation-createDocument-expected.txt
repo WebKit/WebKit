@@ -153,7 +153,6 @@ PASS createDocument test: characterSet aliases for "http://example.com/","a-b:c"
 PASS createDocument test: "http://example.com/","xml",null,null 
 PASS createDocument test: metadata for "http://example.com/","xml",null 
 PASS createDocument test: characterSet aliases for "http://example.com/","xml",null 
-PASS createDocument test: "http://example.com/","xmlns",null,"NAMESPACE_ERR" 
 PASS createDocument test: "http://example.com/","XMLNS",null,null 
 PASS createDocument test: metadata for "http://example.com/","XMLNS",null 
 PASS createDocument test: characterSet aliases for "http://example.com/","XMLNS",null 
@@ -303,9 +302,6 @@ PASS createDocument test: "foo:","xmlfoo:bar",null,null
 PASS createDocument test: metadata for "foo:","xmlfoo:bar",null 
 PASS createDocument test: characterSet aliases for "foo:","xmlfoo:bar",null 
 PASS createDocument test: null,null,false,object "TypeError" 
-PASS createDocument test: null,null,null,null 
-PASS createDocument test: metadata for null,null,null 
-PASS createDocument test: characterSet aliases for null,null,null 
 PASS createDocument test: null,"",null,null 
 PASS createDocument test: metadata for null,"",null 
 PASS createDocument test: characterSet aliases for null,"",null 

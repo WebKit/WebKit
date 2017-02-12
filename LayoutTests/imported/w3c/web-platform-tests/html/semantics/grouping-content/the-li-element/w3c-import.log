@@ -35,8 +35,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-skip-no-boxes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-ul-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-ul.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-no-list-owner-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-no-list-owner.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-not-being-rendered-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-not-being-rendered.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li.html

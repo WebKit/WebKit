@@ -10,7 +10,6 @@ PASS remove on DOMTokenList must enqueue an attributeChanged reaction even when 
 PASS remove on DOMTokenList must not enqueue an attributeChanged reaction when removing a value from an unobserved attribute 
 PASS toggle on DOMTokenList must enqueue an attributeChanged reaction when adding a value to an attribute 
 PASS toggle on DOMTokenList must enqueue an attributeChanged reaction when removing a value from an attribute 
-PASS remove on DOMTokenList must not enqueue an attributeChanged reaction when removing a value from an unobserved attribute 
 PASS replace on DOMTokenList must enqueue an attributeChanged reaction when replacing a value in an attribute 
 PASS replace on DOMTokenList must not enqueue an attributeChanged reaction when the token to replace does not exist in the attribute 
 PASS replace on DOMTokenList must not enqueue an attributeChanged reaction when replacing a value in an unobserved attribute 

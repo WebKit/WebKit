@@ -64,6 +64,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-special-characters.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-unsent-opened-state.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/headers-normalize-response.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/interfaces.html
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/open-after-abort.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/open-after-setrequestheader.htm

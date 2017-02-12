@@ -9,7 +9,7 @@ FAIL Invalid value: no '-' (U+002D) assert_equals: expected "" but got "2014W52"
 FAIL Invalid value: yearless week assert_equals: expected "" but got "-W52"
 FAIL Invalid value: yearless week and no '-' (U+002D) assert_equals: expected "" but got "W52"
 PASS Value >= min attribute 
-FAIL Value < min attribute assert_equals: expected "2014-W02" but got "2014-W01"
+PASS Value < min attribute 
 PASS Value <= max attribute 
-FAIL Value > max attribute assert_equals: expected "2014-W11" but got "2014-W12"
+PASS Value > max attribute 
 

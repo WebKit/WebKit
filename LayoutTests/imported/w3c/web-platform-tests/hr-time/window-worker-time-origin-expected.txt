@@ -1,0 +1,7 @@
+Description
+
+This test validates that a Worker's time origin is its moment of creation and differs from its spawner's.
+
+
+PASS Worker time origin is approximately its creation time 
+

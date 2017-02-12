@@ -1,7 +1,7 @@
-The Web Platform Tests Project [![IRC chat](https://goo.gl/6nCIks)](http://irc.w3.org/?channels=testing)
+The web-platform-tests Project [![IRC chat](https://goo.gl/6nCIks)](http://irc.w3.org/?channels=testing)
 ==============================
 
-The Web Platform Tests Project is a W3C-coordinated attempt to build a
+The web-platform-tests Project is a W3C-coordinated attempt to build a
 cross-browser testsuite for the Web-platform stack.  However, for mainly
 historic reasons, the CSS WG testsuite is in a separate repository,
 [csswg-test](https://github.com/w3c/csswg-test). Writing tests in a way
@@ -38,6 +38,9 @@ following entries are required:
 127.0.0.1   xn--lve-6lad.web-platform.test
 0.0.0.0     nonexistent-origin.web-platform.test
 ```
+
+If you are behind a proxy, you also need to make sure the domains above are
+excluded from your proxy lookups.
 
 Because web-platform-tests uses git submodules, you must ensure that
 these are up to date. In the root of your checkout, run:
@@ -111,7 +114,7 @@ Test Runner
 ===========
 
 There is a test runner that is designed to provide a
-convenient way to run the web-platform tests in-browser. It will run
+convenient way to run the web-platform-tests in-browser. It will run
 testharness.js tests automatically but requires manual work for
 reftests and manual tests.
 

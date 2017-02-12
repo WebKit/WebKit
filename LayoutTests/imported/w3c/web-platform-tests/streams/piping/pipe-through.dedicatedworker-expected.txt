@@ -1,0 +1,7 @@
+
+FAIL Piping through a duck-typed pass-through transform stream should work Can't find variable: WritableStream
+FAIL Piping through a transform errored on the writable end does not cause an unhandled promise rejection Can't find variable: WritableStream
+PASS pipeThrough generically calls pipeTo with the appropriate args 
+PASS pipeThrough can handle calling a pipeTo that returns a non-promise object 
+PASS pipeThrough can handle calling a pipeTo that returns a non-promise thenable object 
+

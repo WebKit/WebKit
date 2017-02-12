@@ -15,6 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-stringifier.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a.text-getter-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a.text-setter-01.html

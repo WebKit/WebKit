@@ -1,0 +1,4 @@
+Download started.
+Downloading URL with suggested filename "foo.html"
+Download completed.
+

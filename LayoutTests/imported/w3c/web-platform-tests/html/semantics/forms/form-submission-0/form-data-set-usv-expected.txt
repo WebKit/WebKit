@@ -1,0 +1,4 @@
+
+
+FAIL Submitting a form data set that contains unpaired surrogates must convert to Unicode scalar values assert_equals: expected "69 6e 70 75 74 31 ef bf bd 3d 69 6e 70 75 74 31 ef bf bd 0d 0a 69 6e 70 75 74 32 ef bf bd 3d 69 6e 70 75 74 32 ef bf bd 0d 0a 69 6e 70 75 74 33 ef bf bd 3d 69 6e 70 75 74 33 ef bf bd 0d 0a 69 6e 70 75 74 34 ef bf bd 3d 69 6e 70 75 74 34 ef bf bd 0d 0a" but got "69 6e 70 75 74 31 ed b0 81 3d 69 6e 70 75 74 31 ed b0 81 0d 0a 69 6e 70 75 74 32 ed b0 81 3d 69 6e 70 75 74 32 ed b0 81 0d 0a 69 6e 70 75 74 33 ed b0 81 3d 69 6e 70 75 74 33 ed b0 81 0d 0a 69 6e 70 75 74 34 ed b0 81 3d 69 6e 70 75 74 34 ed b0 81"
+

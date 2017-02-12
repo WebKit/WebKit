@@ -1,4 +1,4 @@
 frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
 
-FAIL Same-origin navigation started from unload handler assert_equals: expected "001-3" but got "001-2"
+PASS Same-origin navigation started from unload handler 
 

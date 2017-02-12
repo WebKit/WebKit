@@ -17,6 +17,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/linktypes/alternate-css-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/linktypes/alternate-css.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/linktypes/alternate-import.css
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/linktypes/alternate.css
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/linktypes/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/linktypes/original-id.json

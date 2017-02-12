@@ -1,3 +1,3 @@
 
-FAIL DOMTokenList iteration: keys, values, etc. assert_array_equals: lengths differ, expected 3 got 2
+PASS DOMTokenList iteration: keys, values, etc. 
 

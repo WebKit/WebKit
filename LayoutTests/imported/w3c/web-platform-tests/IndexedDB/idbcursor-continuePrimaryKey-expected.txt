@@ -1,0 +1,3 @@
+
+PASS IndexedDB: IDBCursor method continuePrimaryKey() 
+

@@ -1,3 +1,697 @@
+2017-02-11  Youenn Fablet  <youennf@gmail.com>
+
+        Refresh WPT tests up to 06c6c52e05e05483d3c844168a417ee27a554eb7
+        https://bugs.webkit.org/show_bug.cgi?id=168175
+
+        Reviewed by Sam Weinig.
+
+        * resources/TestRepositories:
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/IndexedDB/OWNERS:
+        * web-platform-tests/IndexedDB/bindings-inject-key-expected.txt: Added.
+        * web-platform-tests/IndexedDB/bindings-inject-key.html: Added.
+        * web-platform-tests/IndexedDB/clone-before-keypath-eval-expected.txt: Added.
+        * web-platform-tests/IndexedDB/clone-before-keypath-eval.html: Added.
+        * web-platform-tests/IndexedDB/delete-request-queue-expected.txt: Added.
+        * web-platform-tests/IndexedDB/delete-request-queue.html: Added.
+        * web-platform-tests/IndexedDB/error-attributes-expected.txt: Added.
+        * web-platform-tests/IndexedDB/error-attributes.html: Added.
+        * web-platform-tests/IndexedDB/idb-binary-key-detached-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idb-binary-key-detached.htm: Added.
+        * web-platform-tests/IndexedDB/idb-binary-key-roundtrip-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idb-binary-key-roundtrip.htm: Added.
+        * web-platform-tests/IndexedDB/idbcursor-advance-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbcursor-advance-exception-order.html: Added.
+        * web-platform-tests/IndexedDB/idbcursor-continue-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbcursor-continue-exception-order.htm: Added.
+        * web-platform-tests/IndexedDB/idbcursor-continuePrimaryKey-exceptions-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbcursor-continuePrimaryKey-exceptions.htm: Added.
+        * web-platform-tests/IndexedDB/idbcursor-continuePrimaryKey-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbcursor-continuePrimaryKey.htm: Added.
+        * web-platform-tests/IndexedDB/idbcursor-delete-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbcursor-delete-exception-order.htm: Added.
+        * web-platform-tests/IndexedDB/idbcursor-update-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbcursor-update-exception-order.htm: Added.
+        * web-platform-tests/IndexedDB/idbdatabase-createObjectStore-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbdatabase-createObjectStore-exception-order.htm: Added.
+        * web-platform-tests/IndexedDB/idbdatabase-deleteObjectStore-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbdatabase-deleteObjectStore-exception-order.htm: Added.
+        * web-platform-tests/IndexedDB/idbdatabase-transaction-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbdatabase-transaction-exception-order.html: Added.
+        * web-platform-tests/IndexedDB/idbindex-getAll-enforcerange-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbindex-getAll-enforcerange.html: Added.
+        * web-platform-tests/IndexedDB/idbindex-getAllKeys-enforcerange-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbindex-getAllKeys-enforcerange.html: Added.
+        * web-platform-tests/IndexedDB/idbindex-query-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbindex-query-exception-order.html: Added.
+        * web-platform-tests/IndexedDB/idbkeyrange-includes-expected.txt:
+        * web-platform-tests/IndexedDB/idbkeyrange-includes.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore-add-put-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-add-put-exception-order.html: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-clear-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-clear-exception-order.html: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-delete-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-delete-exception-order.html: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-deleteIndex-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-deleteIndex-exception-order.html: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-getAll-enforcerange-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-getAll-enforcerange.html: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-getAllKeys-enforcerange-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-getAllKeys-enforcerange.html: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-query-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-query-exception-order.html: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore_getKey-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore_getKey.html: Added.
+        * web-platform-tests/IndexedDB/idbrequest-onupgradeneeded-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbrequest-onupgradeneeded.htm: Added.
+        * web-platform-tests/IndexedDB/idbtransaction-objectStore-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbtransaction-objectStore-exception-order.html: Added.
+        * web-platform-tests/IndexedDB/idbversionchangeevent.htm:
+        * web-platform-tests/IndexedDB/key-conversion-exceptions-expected.txt: Added.
+        * web-platform-tests/IndexedDB/key-conversion-exceptions.htm: Added.
+        * web-platform-tests/IndexedDB/keypath-exceptions-expected.txt: Added.
+        * web-platform-tests/IndexedDB/keypath-exceptions.htm: Added.
+        * web-platform-tests/IndexedDB/keypath-special-identifiers-expected.txt: Added.
+        * web-platform-tests/IndexedDB/keypath-special-identifiers.htm: Added.
+        * web-platform-tests/IndexedDB/open-request-queue-expected.txt: Added.
+        * web-platform-tests/IndexedDB/open-request-queue.html: Added.
+        * web-platform-tests/IndexedDB/support.js:
+        (auto_fail):
+        (createdb_for_multiple_tests):
+        (assert_key_equals):
+        (indexeddb_test):
+        * web-platform-tests/IndexedDB/w3c-import.log:
+        * web-platform-tests/README.md:
+        * web-platform-tests/XMLHttpRequest/abort-during-done.htm:
+        * web-platform-tests/XMLHttpRequest/historical-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/historical.html: Added.
+        * web-platform-tests/XMLHttpRequest/resources/corsenabled.py:
+        (main):
+        * web-platform-tests/XMLHttpRequest/response-method-expected.txt:
+        * web-platform-tests/XMLHttpRequest/responsexml-document-properties-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-redirect-post-upload-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-redirect-to-cors.htm:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-bogus-value-expected.txt:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-bogus-value.htm:
+        * web-platform-tests/XMLHttpRequest/w3c-import.log:
+        * web-platform-tests/check_stability.py:
+        (do_delayed_imports):
+        (setup_logging):
+        (setup_action_filter.as):
+        (setup_action_filter.LogActionFilter):
+        (setup_action_filter.LogActionFilter.__init__):
+        (setup_action_filter.LogActionFilter.__call__):
+        (TravisFold):
+        (TravisFold.__init__):
+        (TravisFold.__enter__):
+        (TravisFold.__exit__):
+        (FilteredIO):
+        (FilteredIO.__init__):
+        (FilteredIO.__getattr__):
+        (FilteredIO.disable):
+        (FilteredIO.write):
+        (replace_streams):
+        (replace_streams.on_write):
+        (Browser):
+        (Browser.install):
+        (Browser.install_webdriver):
+        (Browser.version):
+        (Browser.wptrunner_args):
+        (Firefox):
+        (Firefox.install):
+        (Firefox._latest_geckodriver_version):
+        (Firefox.install_webdriver):
+        (Firefox.version):
+        (Firefox.wptrunner_args):
+        (Chrome):
+        (Chrome.install):
+        (Chrome.install_webdriver):
+        (Chrome.version):
+        (Chrome.wptrunner_args):
+        (get):
+        (call):
+        (get_git_cmd):
+        (seekable):
+        (untar):
+        (unzip):
+        (pwd):
+        (fetch_wpt_master):
+        (get_sha1):
+        (build_manifest):
+        (install_wptrunner):
+        (get_files_changed):
+        (get_affected_testfiles):
+        (wptrunner_args):
+        (setup_log_handler.as):
+        (setup_log_handler.LogHandler):
+        (is_inconsistent):
+        (err_string):
+        (process_results):
+        (format_comment_title):
+        (markdown_adjust):
+        (table):
+        (write_inconsistent):
+        (write_results):
+        (get_parser):
+        (main):
+        * web-platform-tests/ci_built_diff.sh:
+        * web-platform-tests/ci_stability.sh:
+        * web-platform-tests/common/OWNERS:
+        * web-platform-tests/custom-elements/reactions/DOMTokenList-expected.txt:
+        * web-platform-tests/custom-elements/reactions/DOMTokenList.html:
+        * web-platform-tests/dom/events/EventListener-invoke-legacy-expected.txt: Added.
+        * web-platform-tests/dom/events/EventListener-invoke-legacy.html: Added.
+        * web-platform-tests/dom/events/w3c-import.log:
+        * web-platform-tests/dom/lists/DOMTokenList-iteration-expected.txt:
+        * web-platform-tests/dom/lists/DOMTokenList-iteration.html:
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument-expected.txt:
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument.html:
+        * web-platform-tests/dom/nodes/Document-createElementNS-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createElementNS.html:
+        * web-platform-tests/dom/nodes/Document-createElementNS.js:
+        * web-platform-tests/dom/nodes/Node-isSameNode-expected.txt:
+        * web-platform-tests/dom/nodes/Node-isSameNode.html:
+        * web-platform-tests/dom/nodes/NodeList-Iterable-expected.txt:
+        * web-platform-tests/dom/nodes/NodeList-Iterable.html:
+        * web-platform-tests/dom/ranges/Range-selectNode-expected.txt:
+        * web-platform-tests/dom/ranges/Range-selectNode.html:
+        * web-platform-tests/encrypted-media/content/video_512x288_h264-360k_multikey_key1_dashinit.mp4: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight.js:
+        (corsPreflight):
+        * web-platform-tests/fetch/api/headers/header-values-expected.txt: Added.
+        * web-platform-tests/fetch/api/headers/header-values-normalize-expected.txt: Added.
+        * web-platform-tests/fetch/api/headers/header-values-normalize.html: Added.
+        * web-platform-tests/fetch/api/headers/header-values.html: Added.
+        * web-platform-tests/fetch/api/headers/w3c-import.log:
+        * web-platform-tests/fetch/api/policies/referrer-origin-expected.txt:
+        * web-platform-tests/fetch/api/policies/referrer-origin-worker-expected.txt:
+        * web-platform-tests/fetch/api/policies/referrer-origin.js:
+        (promise_test):
+        * web-platform-tests/fetch/api/request/request-cache-default-conditional-expected.txt:
+        * web-platform-tests/fetch/api/request/request-cache-default-conditional.html:
+        * web-platform-tests/fetch/api/request/request-cache-only-if-cached-expected.txt:
+        * web-platform-tests/fetch/api/request/request-disturbed-expected.txt:
+        * web-platform-tests/fetch/api/request/request-disturbed.html:
+        * web-platform-tests/fetch/api/request/request-error-expected.txt:
+        * web-platform-tests/fetch/api/request/request-error.html:
+        * web-platform-tests/fetch/api/request/request-idl-expected.txt:
+        * web-platform-tests/fetch/api/request/request-idl.html:
+        * web-platform-tests/fetch/api/request/request-init-001.sub-expected.txt:
+        * web-platform-tests/fetch/api/request/request-init-001.sub.html:
+        * web-platform-tests/fetch/api/resources/preflight.py:
+        (main):
+        * web-platform-tests/fetch/api/response/response-idl-expected.txt:
+        * web-platform-tests/fetch/api/response/response-idl.html:
+        * web-platform-tests/fonts/OWNERS: Added.
+        * web-platform-tests/fonts/w3c-import.log:
+        * web-platform-tests/hr-time/idlharness-expected.txt:
+        * web-platform-tests/hr-time/idlharness.html:
+        * web-platform-tests/hr-time/w3c-import.log:
+        * web-platform-tests/hr-time/window-worker-time-origin-expected.txt: Added.
+        * web-platform-tests/hr-time/window-worker-time-origin.html: Added.
+        * web-platform-tests/html/OWNERS:
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name-0.html: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name_cross_origin.html:
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/same-url-expected.txt: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/same-url.html: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/w3c-import.log:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation-unload-form-submit-1.html: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation-unload-form-submit-2.html: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation-unload-form-submit-expected.txt: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation-unload-form-submit.html: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation-unload-same-origin-fragment-1.html: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation-unload-same-origin-fragment-2.html: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation-unload-same-origin-fragment-expected.txt: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation-unload-same-origin-fragment.html: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation_unload_same_origin-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation_unload_same_origin.html:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/w3c-import.log:
+        * web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-image-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-image.html:
+        * web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html:
+        * web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/w3c-import.log:
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/prompt/w3c-import.log:
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/unload/w3c-import.log:
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/w3c-import.log:
+        * web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-expected.txt:
+        * web-platform-tests/html/browsers/offline/browser-state/navigator_online_online-expected.txt:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/frame.html:
+        * web-platform-tests/html/browsers/windows/browsing-context-names/w3c-import.log:
+        * web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement.sub-expected.txt:
+        * web-platform-tests/html/browsers/windows/nested-browsing-contexts/w3c-import.log:
+        * web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.sub-expected.txt:
+        * web-platform-tests/html/dom/dynamic-markup-insertion/document-write/empty.html: Added.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/document-write/w3c-import.log:
+        * web-platform-tests/html/dom/dynamic-markup-insertion/document-write/write-active-document-expected.txt: Added.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/document-write/write-active-document.html: Added.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/010-expected.txt:
+        * web-platform-tests/html/dom/elements-forms.js:
+        * web-platform-tests/html/dom/elements-misc.js:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces.html:
+        * web-platform-tests/html/dom/reflection-misc-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/image-maps/contains.json:
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.parse.whitespace.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.jpeg-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.jpeg.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.png-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.png.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-synchronously-discard-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-synchronously-discard.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/not-rendered-dimension-getter-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/not-rendered-dimension-getter.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate.html:
+        * web-platform-tests/html/semantics/forms/form-control-infrastructure/form-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-control-infrastructure/form.html:
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-usv-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-usv-form.html: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-usv.html: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-echo.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/forms/form-submission-0/url-encoded-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-0/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/resetting-a-form/reset-form-event-realm-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/resetting-a-form/reset-form-event-realm-support.html: Added.
+        * web-platform-tests/html/semantics/forms/resetting-a-form/reset-form-event-realm.html: Added.
+        * web-platform-tests/html/semantics/forms/resetting-a-form/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-textarea-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-textarea.html:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html:
+        * web-platform-tests/html/semantics/forms/the-button-element/button-menu-historical-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-button-element/button-menu-historical.html: Added.
+        * web-platform-tests/html/semantics/forms/the-button-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-fieldset-element/disabled-001.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/date-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/date.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/datetime-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/datetime.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/number-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/number.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/range-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/range.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/selection.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/time-2-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/time-2.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/time-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/time.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/week-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/week.html:
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-menu-expected.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-menu.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-skip-no-boxes-expected.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-skip-no-boxes.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/w3c-import.log:
+        * web-platform-tests/html/semantics/links/linktypes/alternate-import.css: Added.
+        (body):
+        * web-platform-tests/html/semantics/links/linktypes/alternate.css:
+        (@import url("alternate-import.css");):
+        * web-platform-tests/html/semantics/links/linktypes/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-reflect-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-reflect.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-set-on-async-classic-script-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-set-on-async-classic-script.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-set-on-external-module-script-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-set-on-external-module-script.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-set-on-inline-classic-scripts-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-set-on-inline-classic-scripts.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-set-on-inline-module-script-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-set-on-inline-module-script.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-set-on-synchronously-loaded-classic-scripts-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/nomodule-set-on-synchronously-loaded-classic-scripts.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/resources/cocoa-module.js: Added.
+        (export.default.Cocoa.prototype.taste):
+        (export.default.Cocoa):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/resources/exports-cocoa.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/resources/set-script-executed.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/resources/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/w3c-import.log:
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/caption-methods-expected.txt:
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/caption-methods.html:
+        * web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-expected.txt: Added.
+        * web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html: Added.
+        * web-platform-tests/html/semantics/text-level-semantics/the-a-element/w3c-import.log:
+        * web-platform-tests/html/syntax/OWNERS: Added.
+        * web-platform-tests/html/syntax/w3c-import.log:
+        * web-platform-tests/html/webappapis/scripting/events/body-exposed-window-event-handlers-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/body-exposed-window-event-handlers.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/eventhandler-cancellation-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/eventhandler-cancellation.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/w3c-import.log:
+        * web-platform-tests/images/OWNERS:
+        * web-platform-tests/lint.whitelist:
+        * web-platform-tests/media-source/mediasource-duration-expected.txt:
+        * web-platform-tests/resource-timing/resource-timing-expected.txt:
+        * web-platform-tests/shadow-dom/HTMLSlotElement-interface-expected.txt:
+        * web-platform-tests/shadow-dom/HTMLSlotElement-interface.html:
+        * web-platform-tests/shadow-dom/event-inside-slotted-node-expected.txt:
+        * web-platform-tests/shadow-dom/event-inside-slotted-node.html:
+        * web-platform-tests/shadow-dom/event-with-related-target-expected.txt:
+        * web-platform-tests/shadow-dom/event-with-related-target.html:
+        * web-platform-tests/streams/OWNERS:
+        * web-platform-tests/streams/README.md: Added.
+        * web-platform-tests/streams/byte-length-queuing-strategy-expected.txt:
+        * web-platform-tests/streams/byte-length-queuing-strategy.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/byte-length-queuing-strategy.dedicatedworker.html: Added.
+        * web-platform-tests/streams/byte-length-queuing-strategy.html: Added.
+        * web-platform-tests/streams/byte-length-queuing-strategy.https-expected.txt: Removed.
+        * web-platform-tests/streams/byte-length-queuing-strategy.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/byte-length-queuing-strategy.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-underlying-sources.https.html.
+        * web-platform-tests/streams/byte-length-queuing-strategy.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/byte-length-queuing-strategy.sharedworker.html: Added.
+        * web-platform-tests/streams/count-queuing-strategy-expected.txt:
+        * web-platform-tests/streams/count-queuing-strategy.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/count-queuing-strategy.dedicatedworker.html: Added.
+        * web-platform-tests/streams/count-queuing-strategy.html: Added.
+        * web-platform-tests/streams/count-queuing-strategy.https-expected.txt: Removed.
+        * web-platform-tests/streams/count-queuing-strategy.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/count-queuing-strategy.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/count-queuing-strategy.https.html.
+        * web-platform-tests/streams/count-queuing-strategy.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/count-queuing-strategy.sharedworker.html: Added.
+        * web-platform-tests/streams/generate-test-wrappers.js: Added.
+        (const.arg.of.process.argv.slice):
+        (generateWrapper):
+        * web-platform-tests/streams/piping/close-propagation-backward-expected.txt: Added.
+        * web-platform-tests/streams/piping/close-propagation-backward.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/close-propagation-backward.dedicatedworker.html: Added.
+        * web-platform-tests/streams/piping/close-propagation-backward.html: Added.
+        * web-platform-tests/streams/piping/close-propagation-backward.js: Added.
+        (promise_test):
+        (promise_test.t.const.rs.recordingReadableStream.cancel):
+        (promise_test.t.string_appeared_here.then):
+        (string_appeared_here.promise_test):
+        (Symbol):
+        (promise_test.t.then):
+        * web-platform-tests/streams/piping/close-propagation-backward.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/piping/close-propagation-backward.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/count-queuing-strategy.https.html.
+        * web-platform-tests/streams/piping/close-propagation-backward.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/close-propagation-backward.sharedworker.html: Added.
+        * web-platform-tests/streams/piping/close-propagation-forward-expected.txt: Added.
+        * web-platform-tests/streams/piping/close-propagation-forward.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/close-propagation-forward.dedicatedworker.html: Added.
+        * web-platform-tests/streams/piping/close-propagation-forward.html: Added.
+        * web-platform-tests/streams/piping/close-propagation-forward.js: Added.
+        (promise_test):
+        (promise_test.t.const.rs.recordingReadableStream.start):
+        (promise_test.t.const.ws.recordingWritableStream.close):
+        (promise_test.t.string_appeared_here.then):
+        (string_appeared_here.promise_test):
+        (Symbol):
+        (promise_test.t.return.pipePromise.then):
+        (promise_test.t.setTimeout):
+        * web-platform-tests/streams/piping/close-propagation-forward.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/piping/close-propagation-forward.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/count-queuing-strategy.https.html.
+        * web-platform-tests/streams/piping/close-propagation-forward.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/close-propagation-forward.sharedworker.html: Added.
+        * web-platform-tests/streams/piping/error-propagation-backward-expected.txt: Added.
+        * web-platform-tests/streams/piping/error-propagation-backward.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/error-propagation-backward.dedicatedworker.html: Added.
+        * web-platform-tests/streams/piping/error-propagation-backward.html: Added.
+        * web-platform-tests/streams/piping/error-propagation-backward.js: Added.
+        (promise_test.t.const.ws.recordingWritableStream.start):
+        (promise_test.t.string_appeared_here.then):
+        (promise_test.t.const.ws.recordingWritableStream.write):
+        (promise_test.t.const.rs.recordingReadableStream.cancel):
+        (string_appeared_here.promise_test.t.const.ws.recordingWritableStream.write):
+        (string_appeared_here.promise_test.t.string_appeared_here.then):
+        (Symbol):
+        (promise_test.t.const.rs.recordingReadableStream.start):
+        (promise_test.t.return.pipePromise.then):
+        (promise_test):
+        (promise_test.t.then):
+        (promise_test.t.return.writeCalledPromise.then):
+        * web-platform-tests/streams/piping/error-propagation-backward.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/piping/error-propagation-backward.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/count-queuing-strategy.https.html.
+        * web-platform-tests/streams/piping/error-propagation-backward.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/error-propagation-backward.sharedworker.html: Added.
+        * web-platform-tests/streams/piping/error-propagation-forward-expected.txt: Added.
+        * web-platform-tests/streams/piping/error-propagation-forward.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/error-propagation-forward.dedicatedworker.html: Added.
+        * web-platform-tests/streams/piping/error-propagation-forward.html: Added.
+        * web-platform-tests/streams/piping/error-propagation-forward.js: Added.
+        (promise_test.t.const.rs.recordingReadableStream.start):
+        (promise_test.t.string_appeared_here.then):
+        (promise_test.t.const.ws.recordingWritableStream.abort):
+        (string_appeared_here.promise_test.t.const.rs.recordingReadableStream.start):
+        (string_appeared_here.promise_test.t.string_appeared_here.then):
+        (Symbol):
+        (promise_test.t.return.pipePromise.then):
+        (promise_test.t.setTimeout):
+        (promise_test.t.const.ws.recordingWritableStream.write):
+        (promise_test.t.rs.pipeTo.ws.then):
+        (promise_test.t.return.writeCalledPromise.then):
+        (promise_test.t.then):
+        * web-platform-tests/streams/piping/error-propagation-forward.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/piping/error-propagation-forward.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-underlying-sources.https.html.
+        * web-platform-tests/streams/piping/error-propagation-forward.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/error-propagation-forward.sharedworker.html: Added.
+        * web-platform-tests/streams/piping/flow-control-expected.txt: Added.
+        * web-platform-tests/streams/piping/flow-control.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/flow-control.dedicatedworker.html: Added.
+        * web-platform-tests/streams/piping/flow-control.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/cancel.https.html.
+        * web-platform-tests/streams/piping/flow-control.js: Added.
+        (promise_test.t.const.rs.recordingReadableStream.start):
+        (promise_test.t.return.flushAsyncEvents.then):
+        (promise_test.t.string_appeared_here.then):
+        (promise_test):
+        (promise_test.const.rs.recordingReadableStream.):
+        * web-platform-tests/streams/piping/flow-control.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/piping/flow-control.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.https.html.
+        * web-platform-tests/streams/piping/flow-control.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/flow-control.sharedworker.html: Added.
+        * web-platform-tests/streams/piping/general-expected.txt: Added.
+        * web-platform-tests/streams/piping/general.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/general.dedicatedworker.html: Added.
+        * web-platform-tests/streams/piping/general.html: Added.
+        * web-platform-tests/streams/piping/general.js: Added.
+        (test):
+        (promise_test):
+        (promise_test.t.rs.pipeTo.ws.then):
+        (false.promise_test.t.const.rs.new.ReadableStream.pull):
+        (false.promise_test.t.return.rs.pipeTo.new.WritableStream):
+        (false.promise_test.t.const.ws.new.WritableStream.write):
+        * web-platform-tests/streams/piping/general.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/piping/general.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.https.html.
+        * web-platform-tests/streams/piping/general.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/general.sharedworker.html: Added.
+        * web-platform-tests/streams/piping/multiple-propagation-expected.txt: Added.
+        * web-platform-tests/streams/piping/multiple-propagation.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/multiple-propagation.dedicatedworker.html: Added.
+        * web-platform-tests/streams/piping/multiple-propagation.html: Added.
+        * web-platform-tests/streams/piping/multiple-propagation.js: Added.
+        (promise_test.t.const.rs.recordingReadableStream.start):
+        (promise_test.t.const.ws.recordingWritableStream.start):
+        (promise_test.t.string_appeared_here.then):
+        (promise_test):
+        * web-platform-tests/streams/piping/multiple-propagation.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/piping/multiple-propagation.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.https.html.
+        * web-platform-tests/streams/piping/multiple-propagation.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/multiple-propagation.sharedworker.html: Added.
+        * web-platform-tests/streams/piping/pipe-through-expected.txt: Added.
+        * web-platform-tests/streams/piping/pipe-through.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/pipe-through.dedicatedworker.html: Added.
+        * web-platform-tests/streams/piping/pipe-through.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/pipe-through.https.html.
+        * web-platform-tests/streams/piping/pipe-through.js: Added.
+        (duckTypedPassThroughTransform):
+        (promise_test):
+        (promise_test.t.const.transform.writable.new.WritableStream.start):
+        (test):
+        * web-platform-tests/streams/piping/pipe-through.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/piping/pipe-through.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.https.html.
+        * web-platform-tests/streams/piping/pipe-through.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/pipe-through.sharedworker.html: Added.
+        * web-platform-tests/streams/piping/transform-streams-expected.txt: Added.
+        * web-platform-tests/streams/piping/transform-streams.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/transform-streams.dedicatedworker.html: Added.
+        * web-platform-tests/streams/piping/transform-streams.html: Added.
+        * web-platform-tests/streams/piping/transform-streams.js: Added.
+        (promise_test):
+        * web-platform-tests/streams/piping/transform-streams.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/piping/transform-streams.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.https.html.
+        * web-platform-tests/streams/piping/transform-streams.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/piping/transform-streams.sharedworker.html: Added.
+        * web-platform-tests/streams/piping/w3c-import.log: Added.
+        * web-platform-tests/streams/readable-byte-streams/general-expected.txt: Added.
+        * web-platform-tests/streams/readable-byte-streams/general.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-byte-streams/general.dedicatedworker.html: Added.
+        * web-platform-tests/streams/readable-byte-streams/general.html: Added.
+        * web-platform-tests/streams/readable-byte-streams/general.js: Added.
+        (test):
+        (promise_test):
+        (promise_test.t.const.stream.new.ReadableStream.start):
+        (promise_test.t.return.reader.closed.then):
+        (promise_test.t.string_appeared_here.then):
+        (extractViewInfo):
+        (promise_test.t.const.stream.new.ReadableStream.cancel):
+        (promise_test.t.pump):
+        (promise_test.t.const.stream.new.ReadableStream.pull):
+        * web-platform-tests/streams/readable-byte-streams/general.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-byte-streams/general.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.https.html.
+        * web-platform-tests/streams/readable-byte-streams/general.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-byte-streams/general.sharedworker.html: Added.
+        * web-platform-tests/streams/readable-byte-streams/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/w3c-import.log.
+        * web-platform-tests/streams/readable-streams/bad-strategies-expected.txt:
+        * web-platform-tests/streams/readable-streams/bad-strategies.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/bad-strategies.dedicatedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/bad-strategies.html: Added.
+        * web-platform-tests/streams/readable-streams/bad-strategies.https-expected.txt: Removed.
+        * web-platform-tests/streams/readable-streams/bad-strategies.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/bad-strategies.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.https.html.
+        * web-platform-tests/streams/readable-streams/bad-strategies.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/bad-strategies.sharedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources-expected.txt:
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.dedicatedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.html: Added.
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.https-expected.txt: Removed.
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.js:
+        (promise_test.t.const.rs.new.ReadableStream.pull):
+        (promise_test.t.return.Promise.resolve.then):
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/count-queuing-strategy.https.html.
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.sharedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/brand-checks-expected.txt:
+        * web-platform-tests/streams/readable-streams/brand-checks.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/brand-checks.dedicatedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/brand-checks.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/brand-checks.https.html.
+        * web-platform-tests/streams/readable-streams/brand-checks.https-expected.txt: Removed.
+        * web-platform-tests/streams/readable-streams/brand-checks.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/brand-checks.serviceworker.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/readable-stream-reader.https.html.
+        * web-platform-tests/streams/readable-streams/brand-checks.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/brand-checks.sharedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/cancel-expected.txt:
+        * web-platform-tests/streams/readable-streams/cancel.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/cancel.dedicatedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/cancel.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/cancel.https.html.
+        * web-platform-tests/streams/readable-streams/cancel.https-expected.txt: Removed.
+        * web-platform-tests/streams/readable-streams/cancel.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/cancel.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.https.html.
+        * web-platform-tests/streams/readable-streams/cancel.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/cancel.sharedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration-expected.txt:
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.dedicatedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.html: Added.
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.https-expected.txt: Removed.
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.https.html: Removed.
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.https.html.
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.sharedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/garbage-collection-expected.txt:
+        * web-platform-tests/streams/readable-streams/garbage-collection.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/garbage-collection.dedicatedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/garbage-collection.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.https.html.
+        * web-platform-tests/streams/readable-streams/garbage-collection.https-expected.txt: Removed.
+        * web-platform-tests/streams/readable-streams/garbage-collection.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/garbage-collection.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.https.html.
+        * web-platform-tests/streams/readable-streams/garbage-collection.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/garbage-collection.sharedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/general-expected.txt:
+        * web-platform-tests/streams/readable-streams/general.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/general.dedicatedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/general.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/general.https.html.
+        * web-platform-tests/streams/readable-streams/general.https-expected.txt: Removed.
+        * web-platform-tests/streams/readable-streams/general.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/general.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.https.html.
+        * web-platform-tests/streams/readable-streams/general.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/general.sharedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/pipe-through-expected.txt:
+        * web-platform-tests/streams/readable-streams/pipe-through.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/pipe-through.dedicatedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/pipe-through.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/pipe-through.https.html.
+        * web-platform-tests/streams/readable-streams/pipe-through.https-expected.txt: Removed.
+        * web-platform-tests/streams/readable-streams/pipe-through.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/pipe-through.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.https.html.
+        * web-platform-tests/streams/readable-streams/pipe-through.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/pipe-through.sharedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader-expected.txt:
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.dedicatedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.html: Added.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.https-expected.txt: Removed.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-underlying-sources.https.html.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/readable-stream-reader.sharedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/tee-expected.txt:
+        * web-platform-tests/streams/readable-streams/tee.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/tee.dedicatedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/tee.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/tee.https.html.
+        * web-platform-tests/streams/readable-streams/tee.https-expected.txt: Removed.
+        * web-platform-tests/streams/readable-streams/tee.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/tee.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.https.html.
+        * web-platform-tests/streams/readable-streams/tee.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/tee.sharedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/templated-expected.txt:
+        * web-platform-tests/streams/readable-streams/templated.dedicatedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/templated.dedicatedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/templated.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/templated.https.html.
+        * web-platform-tests/streams/readable-streams/templated.https-expected.txt: Removed.
+        * web-platform-tests/streams/readable-streams/templated.serviceworker.https-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/templated.serviceworker.https.html: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.https.html.
+        * web-platform-tests/streams/readable-streams/templated.sharedworker-expected.txt: Added.
+        * web-platform-tests/streams/readable-streams/templated.sharedworker.html: Added.
+        * web-platform-tests/streams/readable-streams/w3c-import.log:
+        * web-platform-tests/streams/resources/recording-streams.js: Added.
+        (self.recordingReadableStream):
+        (self.recordingWritableStream):
+        * web-platform-tests/streams/resources/rs-test-templates.js:
+        (self.templatedRSEmpty):
+        (self.templatedRSClosed):
+        (self.templatedRSErrored):
+        (self.templatedRSErroredSyncOnly):
+        (self.templatedRSEmptyReader):
+        (self.templatedRSClosedReader):
+        (self.templatedRSErroredReader):
+        (self.templatedRSTwoChunksOpenReader):
+        (self.templatedRSTwoChunksClosedReader):
+        * web-platform-tests/streams/resources/test-initializer.js: Removed.
+        * web-platform-tests/streams/resources/test-utils.js:
+        (self.methodRejects):
+        * web-platform-tests/streams/resources/w3c-import.log:
+        * web-platform-tests/streams/w3c-import.log:
+        * web-platform-tests/test_keys_wdspec.html: Added.
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-origin-xhtml.xhtml:
+        * web-platform-tests/url/a-element-origin.html:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/a-element-xhtml.xhtml:
+        * web-platform-tests/url/a-element.html:
+        * web-platform-tests/url/interfaces-expected.txt:
+        * web-platform-tests/url/setters_tests.json:
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/url-setters-expected.txt:
+        * web-platform-tests/url/url-tojson-expected.txt:
+        * web-platform-tests/url/urltestdata.json:
+        * web-platform-tests/url/w3c-import.log:
+        * web-platform-tests/user-timing/resources/webperftestharness.js:
+        (has_required_interfaces):
+        * web-platform-tests/user-timing/test_user_timing_clear_marks.html:
+        * web-platform-tests/user-timing/test_user_timing_clear_measures.html:
+        * web-platform-tests/user-timing/test_user_timing_mark.html:
+        * web-platform-tests/user-timing/test_user_timing_mark_exceptions.html:
+        * web-platform-tests/user-timing/test_user_timing_measure.html:
+        * web-platform-tests/user-timing/test_user_timing_measure_exceptions.html:
+        * web-platform-tests/user-timing/test_user_timing_measure_navigation_timing-expected.txt:
+        * web-platform-tests/user-timing/test_user_timing_measure_navigation_timing.html:
+        * web-platform-tests/w3c-import.log:
+        * web-platform-tests/webrtc/datachannel-emptystring-expected.txt:
+        * web-platform-tests/webrtc/no-media-call-expected.txt:
+        * web-platform-tests/webrtc/promises-call-expected.txt:
+
 2017-02-11  Chris Dumez  <cdumez@apple.com>
 
         Implement URL's toJSON()

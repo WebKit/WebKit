@@ -1,6 +1,6 @@
 
 PASS Test seek starts on duration truncation below currentTime 
-PASS Test appendBuffer completes previous seek to truncated duration 
+FAIL Test appendBuffer completes previous seek to truncated duration assert_true: mediaElement.seeking while seeking to truncatedDuration expected true got false
 PASS Test endOfStream completes previous seek to truncated duration 
 PASS Test setting same duration multiple times does not fire duplicate durationchange 
 PASS Test setting the duration to less than the highest starting presentation timestamp will throw 

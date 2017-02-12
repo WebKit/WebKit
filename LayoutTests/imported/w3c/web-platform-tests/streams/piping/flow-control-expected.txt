@@ -1,0 +1,6 @@
+
+FAIL Piping from a non-empty ReadableStream into a WritableStream that does not desire chunks promise_test: Unhandled rejection with value: object "TypeError: ws.controller.error is not a function. (In 'ws.controller.error(error1)', 'ws.controller.error' is undefined)"
+FAIL Piping from a non-empty ReadableStream into a WritableStream that does not desire chunks, but then does ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Piping from an empty ReadableStream into a WritableStream that does not desire chunks, but then the readable stream becomes non-empty and the writable stream starts desiring chunks ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL Piping to a WritableStream that does not consume the writes fast enough exerts backpressure on the ReadableStream assert_array_equals: at t = 225 ms, the desiredSize at the last enqueue (200 ms) must have been 0 property 1, expected 0 but got 1
+
