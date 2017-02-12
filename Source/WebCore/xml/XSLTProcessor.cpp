@@ -141,6 +141,9 @@ RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node* sourceNode, Do
 
 void XSLTProcessor::setParameter(const String& /*namespaceURI*/, const String& localName, const String& value)
 {
+    if (localName.isNull() || value.isNull())
+        return;
+
     // FIXME: namespace support?
     // should make a QualifiedName here but we'd have to expose the impl
     m_parameters.set(localName, value);
@@ -148,6 +151,9 @@ void XSLTProcessor::setParameter(const String& /*namespaceURI*/, const String& l
 
 String XSLTProcessor::getParameter(const String& /*namespaceURI*/, const String& localName) const
 {
+    if (localName.isNull())
+        return { };
+
     // FIXME: namespace support?
     // should make a QualifiedName here but we'd have to expose the impl
     return m_parameters.get(localName);
@@ -155,6 +161,9 @@ String XSLTProcessor::getParameter(const String& /*namespaceURI*/, const String&
 
 void XSLTProcessor::removeParameter(const String& /*namespaceURI*/, const String& localName)
 {
+    if (localName.isNull())
+        return;
+
     // FIXME: namespace support?
     m_parameters.remove(localName);
 }

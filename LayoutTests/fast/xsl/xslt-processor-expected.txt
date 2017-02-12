@@ -89,7 +89,7 @@ Success
 5.0 Value getParameter(in DOMString namespaceURI, in DOMString localName):
 
 5.1 pass getParameter an undefined name:
-****Failure**** (expected exception, instead got result: "undefined")
+****Failure**** (expected exception, instead got result: "null")
 5.2 pass getParameter a name which has not been set:
 Success
 5.3 verify getParameter actually gets (and set sets):

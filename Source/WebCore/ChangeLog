@@ -1,3 +1,31 @@
+2017-02-11  Sam Weinig  <sam@webkit.org>
+
+        Remove custom bindings for XSLTProcessor.idl
+        https://bugs.webkit.org/show_bug.cgi?id=168174
+
+        Reviewed by Andreas Kling.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSXSLTProcessorCustom.cpp: Removed.
+        Remove file.
+ 
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsStringOrUndefined): Deleted.
+        * bindings/js/JSDOMBinding.h:
+        Remove now unused jsStringOrUndefined.
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::setParameter):
+        (WebCore::XSLTProcessor::getParameter):
+        (WebCore::XSLTProcessor::removeParameter):
+        * xml/XSLTProcessor.idl:
+        Replace custom bindings bindings with early returns. One subtle difference
+        between the custom bindings and this, is that getParameter will return 
+        jsNull() rather than jsUndefined() for null String returns. This matches
+        all other bindings.
+
 2017-02-11  Olivier Blin  <olivier.blin@softathome.com>
 
         [GStreamer][MSE][EME] Fix decryptor assignment

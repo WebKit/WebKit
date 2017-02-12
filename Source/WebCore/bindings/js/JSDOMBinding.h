@@ -49,8 +49,6 @@ namespace WebCore {
 
 void addImpureProperty(const AtomicString&);
 
-JSC::JSValue jsStringOrUndefined(JSC::ExecState*, const String&); // undefined if the string is null
-
 WEBCORE_EXPORT bool hasIteratorMethod(JSC::ExecState&, JSC::JSValue);
 
 template<JSC::NativeFunction nativeFunction, int length> JSC::EncodedJSValue nonCachingStaticFunctionGetter(JSC::ExecState* exec, JSC::EncodedJSValue, JSC::PropertyName propertyName)

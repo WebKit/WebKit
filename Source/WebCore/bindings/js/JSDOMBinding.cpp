@@ -33,13 +33,6 @@ void addImpureProperty(const AtomicString& propertyName)
     commonVM().addImpureProperty(propertyName);
 }
 
-JSValue jsStringOrUndefined(ExecState* exec, const String& s)
-{
-    if (s.isNull())
-        return jsUndefined();
-    return jsStringWithCache(exec, s);
-}
-
 bool hasIteratorMethod(JSC::ExecState& state, JSC::JSValue value)
 {
     auto& vm = state.vm();

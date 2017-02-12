@@ -117,7 +117,6 @@
 #include "JSXMLHttpRequestCustom.cpp"
 #include "JSXPathNSResolverCustom.cpp"
 #include "JSXPathResultCustom.cpp"
-#include "JSXSLTProcessorCustom.cpp"
 #include "ScheduledAction.cpp"
 #include "ScriptCachedFrameData.cpp"
 #include "ScriptController.cpp"
