@@ -1,3 +1,23 @@
+2017-02-11  Olivier Blin  <olivier.blin@softathome.com>
+
+        [GStreamer][MSE][EME] Fix decryptor assignment
+        https://bugs.webkit.org/show_bug.cgi?id=168122
+
+        Reviewed by Michael Catanzaro.
+
+        The new decryptor is a floating reference so we should not use the
+        adopt GRefPtr constructor, but use the regular assignment operator
+        that will sink the object (clear the floating flag).
+
+        This fixes assertions in debug build.
+
+        See previous pipeline fix in r210851 and WPE commit
+        06020b18831e1c0eead34e2c1a5a4b7d026c227d.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::parseDemuxerSrcPadCaps):
+        Do not use adoptGRef(), it prevented the object from being sunk.
+
 2017-02-11  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid a redundant scroll to 0,0 when navigating back to a url with no fragment
