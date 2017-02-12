@@ -3796,13 +3796,13 @@ Element* Document::focusNavigationStartingNode(FocusDirection direction) const
     return node->parentOrShadowHostElement();
 }
 
-void Document::setCSSTarget(Element* n)
+void Document::setCSSTarget(Element* targetNode)
 {
     if (m_cssTarget)
         m_cssTarget->invalidateStyleForSubtree();
-    m_cssTarget = n;
-    if (n)
-        n->invalidateStyleForSubtree();
+    m_cssTarget = targetNode;
+    if (targetNode)
+        targetNode->invalidateStyleForSubtree();
 }
 
 void Document::registerNodeListForInvalidation(LiveNodeList& list)

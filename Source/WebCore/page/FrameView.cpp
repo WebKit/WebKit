@@ -2335,8 +2335,10 @@ bool FrameView::scrollToFragment(const URL& url)
     // OTOH If CSS target was set previously, we want to set it to 0, recalc
     // and possibly repaint because :target pseudo class may have been
     // set (see bug 11321).
-    if (!url.hasFragmentIdentifier() && !frame().document()->cssTarget())
+    if (!url.hasFragmentIdentifier()) {
+        frame().document()->setCSSTarget(nullptr);
         return false;
+    }
 
     String fragmentIdentifier = url.fragmentIdentifier();
     if (scrollToAnchor(fragmentIdentifier))
@@ -2373,7 +2375,7 @@ bool FrameView::scrollToAnchor(const String& name)
                 return true;
         }
     }
-  
+
     // Implement the rule that "" and "top" both mean top of page as in other browsers.
     if (!anchorElement && !(name.isEmpty() || equalLettersIgnoringASCIICase(name, "top")))
         return false;

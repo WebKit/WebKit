@@ -1,3 +1,27 @@
+2017-02-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid a redundant scroll to 0,0 when navigating back to a url with no fragment
+        https://bugs.webkit.org/show_bug.cgi?id=168177
+
+        Reviewed by Sam Weinig.
+
+        FrameView::scrollToFragment() is called from FrameLoader::scrollToFragmentWithParentBoundary()
+        when navigating within the page. If the URL had no fragment identifier, this code would
+        call into FrameView::scrollToAnchor() with an empty name, where maintainScrollPositionAtAnchor()
+        used the document as the anchor, thus scrolling to 0,0. Later, history().restoreScrollPositionAndViewState()
+        the restores the scroll position from history.
+        
+        This scroll to 0,0 happened to be not visible to the page because of scroll event
+        coalescing, but it makes implementation of history.scrollRestoration harder, so avoid it
+        by just returning early from FrameView::scrollToFragment() if there is no fragment,
+        making sure to clear the document's CSSTarget.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setCSSTarget):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToFragment):
+        (WebCore::FrameView::scrollToAnchor):
+
 2017-02-11  Chris Dumez  <cdumez@apple.com>
 
         Implement URL's toJSON()
