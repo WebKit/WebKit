@@ -27,8 +27,9 @@
 
 #include "config.h"
 #include "PlatformWheelEvent.h"
-#include "Scrollbar.h"
 
+#include "PlatformKeyboardEvent.h"
+#include "Scrollbar.h"
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 #include <wtf/CurrentTime.h>
@@ -51,6 +52,8 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
         m_modifiers |= Modifier::AltKey;
     if (event->state & GDK_META_MASK)
         m_modifiers |= Modifier::MetaKey;
+    if (PlatformKeyboardEvent::modifiersContainCapsLock(event->state))
+        m_modifiers |= PlatformEvent::Modifier::CapsLockKey;
 
     m_deltaX = 0;
     m_deltaY = 0;

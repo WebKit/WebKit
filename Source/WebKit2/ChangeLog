@@ -1,3 +1,19 @@
+2017-02-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Handle caps lock indicator in event modifiers
+        https://bugs.webkit.org/show_bug.cgi?id=168186
+
+        Reviewed by Michael Catanzaro.
+
+        Use PlatformKeyboardEvent::modifiersContainCapsLock() to check if modifiers contain the caps lock and add
+        Modifiers::CapsLockKey in that case.
+
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::modifiersForEvent):
+        * UIProcess/API/gtk/WebKitPrivate.cpp:
+        (wkEventModifiersToGdkModifiers):
+        (toGdkModifiers):
+
 2017-02-12  Andy Estes  <aestes@apple.com>
 
         [iOS] PDF page number indicator can show "0 of n" on short pages

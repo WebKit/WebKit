@@ -122,6 +122,8 @@ static guint webkitModifiersToGDKModifiers(WKEventModifiers wkModifiers)
         modifiers |= GDK_MOD1_MASK;
     if (wkModifiers & kWKEventModifiersMetaKey)
         modifiers |= GDK_META_MASK;
+    if (wkModifiers & kWKEventModifiersCapsLockKey)
+        modifiers |= GDK_LOCK_MASK;
 
     return modifiers;
 }

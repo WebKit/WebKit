@@ -1,5 +1,17 @@
 2017-02-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Handle caps lock indicator in event modifiers
+        https://bugs.webkit.org/show_bug.cgi?id=168186
+
+        Reviewed by Michael Catanzaro.
+
+        Add platform specific results for fast/events/special-key-events-in-input-text.html. This patch fixes the caps
+        lock key case, but we still have different results in the PrintScreen case.
+
+        * platform/gtk/fast/events/special-key-events-in-input-text-expected.txt: Added.
+
+2017-02-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline some test and update expectations.
 
         * platform/gtk/TestExpectations:

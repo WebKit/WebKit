@@ -27,9 +27,9 @@
 #include "config.h"
 #include "PlatformMouseEvent.h"
 
-#include <wtf/Assertions.h>
-
+#include "PlatformKeyboardEvent.h"
 #include <gdk/gdk.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
@@ -50,6 +50,8 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventButton* event)
         m_modifiers |= PlatformEvent::Modifier::AltKey;
     if (event->state & GDK_META_MASK)
         m_modifiers |= PlatformEvent::Modifier::MetaKey;
+    if (PlatformKeyboardEvent::modifiersContainCapsLock(event->state))
+        m_modifiers |= PlatformEvent::Modifier::CapsLockKey;
 
     switch (event->type) {
     case GDK_BUTTON_PRESS:
@@ -94,6 +96,8 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventMotion* motion)
         m_modifiers |= PlatformEvent::Modifier::AltKey;
     if (motion->state & GDK_META_MASK)
         m_modifiers |= PlatformEvent::Modifier::MetaKey;
+    if (PlatformKeyboardEvent::modifiersContainCapsLock(motion->state))
+        m_modifiers |= PlatformEvent::Modifier::CapsLockKey;
 
     switch (motion->type) {
     case GDK_MOTION_NOTIFY:

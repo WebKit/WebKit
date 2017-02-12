@@ -63,6 +63,8 @@ static inline WebEvent::Modifiers modifiersForEvent(const GdkEvent* event)
         modifiers |= WebEvent::AltKey;
     if (state & GDK_META_MASK)
         modifiers |= WebEvent::MetaKey;
+    if (PlatformKeyboardEvent::modifiersContainCapsLock(state))
+        modifiers |= WebEvent::CapsLockKey;
 
     return static_cast<WebEvent::Modifiers>(modifiers);
 }

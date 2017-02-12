@@ -36,6 +36,8 @@ unsigned wkEventModifiersToGdkModifiers(WKEventModifiers wkModifiers)
         modifiers |= GDK_MOD1_MASK;
     if (wkModifiers & kWKEventModifiersMetaKey)
         modifiers |= GDK_META_MASK;
+    if (wkModifiers & kWKEventModifiersCapsLockKey)
+        modifiers |= GDK_LOCK_MASK;
     return modifiers;
 }
 
@@ -50,6 +52,8 @@ unsigned toGdkModifiers(WebKit::WebEvent::Modifiers wkModifiers)
         modifiers |= GDK_MOD1_MASK;
     if (wkModifiers & WebKit::WebEvent::Modifiers::MetaKey)
         modifiers |= GDK_META_MASK;
+    if (wkModifiers & WebKit::WebEvent::Modifiers::CapsLockKey)
+        modifiers |= GDK_LOCK_MASK;
     return modifiers;
 }
 

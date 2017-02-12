@@ -1252,6 +1252,8 @@ static OptionSet<PlatformEvent::Modifier> modifiersForGdkKeyEvent(GdkEventKey* e
         modifiers |= PlatformEvent::Modifier::AltKey;
     if (event->state & GDK_META_MASK)
         modifiers |= PlatformEvent::Modifier::MetaKey;
+    if (event->state & GDK_LOCK_MASK)
+        modifiers |= PlatformEvent::Modifier::CapsLockKey;
     return modifiers;
 }
 
@@ -1313,6 +1315,25 @@ void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKe
     ctrlKey = state & GDK_CONTROL_MASK;
     altKey = state & GDK_MOD1_MASK;
     metaKey = state & GDK_META_MASK;
+}
+
+bool PlatformKeyboardEvent::modifiersContainCapsLock(unsigned modifier)
+{
+    if (!(modifier & GDK_LOCK_MASK))
+        return false;
+
+    // In X11 GDK_LOCK_MASK could be CapsLock or ShiftLock, depending on the modifier mapping of the X server.
+    // What GTK+ does in the X11 backend is checking if there is a key bound to GDK_KEY_Caps_Lock, so we do
+    // the same here. This will also return true in Wayland if there's a caps lock key, so it's not worth it
+    // checking the actual display here.
+    static bool lockMaskIsCapsLock = false;
+    static bool initialized = false;
+    if (!initialized) {
+        GUniqueOutPtr<GdkKeymapKey> keys;
+        int entriesCount;
+        lockMaskIsCapsLock = gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), GDK_KEY_Caps_Lock, &keys.outPtr(), &entriesCount) && entriesCount;
+    }
+    return lockMaskIsCapsLock;
 }
 
 }

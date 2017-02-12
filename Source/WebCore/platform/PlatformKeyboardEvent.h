@@ -166,6 +166,7 @@ namespace WebCore {
         static String keyIdentifierForGdkKeyCode(unsigned);
         static int windowsKeyCodeForGdkKeyCode(unsigned);
         static String singleCharacterString(unsigned);
+        static bool modifiersContainCapsLock(unsigned);
 #endif
 
 #if PLATFORM(EFL)
