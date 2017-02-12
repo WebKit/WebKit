@@ -308,6 +308,7 @@ typedef enum {
 @property (nonatomic, readonly, getter=_isAnimatingScroll) BOOL isAnimatingScroll;
 @property (nonatomic) CGFloat horizontalScrollDecelerationFactor;
 @property (nonatomic) CGFloat verticalScrollDecelerationFactor;
+@property (nonatomic, readonly) BOOL _isInterruptingDeceleration;
 @end
 
 @interface NSString (UIKitDetails)
@@ -521,6 +522,8 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch;
 - (void)showDictionaryFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
 - (void)showShareSheetFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
+- (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
+- (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
 @property (nonatomic, readonly) UILongPressGestureRecognizer *selectionLongPressRecognizer;
 @end
 
@@ -558,12 +561,17 @@ typedef NS_ENUM(NSInteger, UIWKHandlePosition) {
 @interface UIWKTextInteractionAssistant : UITextInteractionAssistant <UIResponderStandardEditActions>
 @end
 
-@interface UIWKTextInteractionAssistant (UIWKTextInteractionAssistantDetails)
+@interface UIWKTextInteractionAssistant ()
 - (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(UIWKSelectionFlags)flags;
 - (void)showDictionaryFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
 - (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch;
 - (void)showTextStyleOptions;
 - (void)hideTextStyleOptions;
+- (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
+- (void)showShareSheetFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
+- (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
+- (void)scheduleReplacementsForText:(NSString *)text;
+- (void)scheduleChineseTransliterationForText:(NSString *)text;
 
 @property (nonatomic, readonly, assign) UILongPressGestureRecognizer *loupeGesture;
 @property (nonatomic, readonly, assign) UITapGestureRecognizer *singleTapGesture;

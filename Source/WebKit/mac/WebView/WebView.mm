@@ -506,10 +506,6 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 - (void)_preferencesChanged:(WebPreferences *)preferences;
 - (void)_updateScreenScaleFromWindow;
 @end
-
-@interface NSURLCache (WebPrivate)
-- (CFURLCacheRef)_CFURLCache;
-@end
 #endif
 
 #if !PLATFORM(IOS)
@@ -3331,7 +3327,7 @@ static inline IMP getMethod(id o, SEL s)
     Document* document = core([frame DOMDocument]);
     if (Element* element = document ? document->webkitCurrentFullScreenElement() : 0) {
         SEL selector = @selector(webView:closeFullScreenWithListener:);
-        if (_private->UIDelegate && [_private->UIDelegate respondsToSelector:selector]) {
+        if ([_private->UIDelegate respondsToSelector:selector]) {
             WebKitFullScreenListener *listener = [[WebKitFullScreenListener alloc] initWithElement:element];
             CallUIDelegate(self, selector, listener);
             [listener release];
@@ -8583,7 +8579,7 @@ static WebFrameView *containingFrameView(NSView *view)
 #if PLATFORM(IOS)
     nsurlCacheMemoryCapacity = std::max(nsurlCacheMemoryCapacity, [nsurlCache memoryCapacity]);
     CFURLCacheRef cfCache;
-    if ([nsurlCache respondsToSelector:@selector(_CFURLCache)] && (cfCache = [nsurlCache _CFURLCache]))
+    if ((cfCache = [nsurlCache _CFURLCache]))
         CFURLCacheSetMemoryCapacity(cfCache, nsurlCacheMemoryCapacity);
     else
         [nsurlCache setMemoryCapacity:nsurlCacheMemoryCapacity];

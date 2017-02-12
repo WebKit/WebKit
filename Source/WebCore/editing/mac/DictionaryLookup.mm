@@ -221,18 +221,16 @@ static PlatformAnimationController showPopupOrCreateAnimationController(bool cre
         textIndicatorInstallationCallback(textIndicator.get());
         [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
 
-        if ([getLULookupDefinitionModuleClass() respondsToSelector:@selector(showDefinitionForTerm:relativeToRect:ofView:options:)]) {
-            FloatRect firstTextRectInViewCoordinates = textIndicator.get().textRectsInBoundingRectCoordinates()[0];
-            FloatRect textBoundingRectInViewCoordinates = textIndicator.get().textBoundingRectInRootViewCoordinates();
-            if (rootViewToViewConversionCallback)
-                textBoundingRectInViewCoordinates = rootViewToViewConversionCallback(textBoundingRectInViewCoordinates);
-            firstTextRectInViewCoordinates.moveBy(textBoundingRectInViewCoordinates.location());
-            if (createAnimationController)
-                return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
+        FloatRect firstTextRectInViewCoordinates = textIndicator.get().textRectsInBoundingRectCoordinates()[0];
+        FloatRect textBoundingRectInViewCoordinates = textIndicator.get().textBoundingRectInRootViewCoordinates();
+        if (rootViewToViewConversionCallback)
+            textBoundingRectInViewCoordinates = rootViewToViewConversionCallback(textBoundingRectInViewCoordinates);
+        firstTextRectInViewCoordinates.moveBy(textBoundingRectInViewCoordinates.location());
+        if (createAnimationController)
+            return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
 
-            [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
-            return nil;
-        }
+        [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
+        return nil;
     }
 
     NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;

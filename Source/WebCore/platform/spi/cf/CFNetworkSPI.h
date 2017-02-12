@@ -83,6 +83,11 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 #endif
 
 #if defined(__OBJC__)
+@interface NSURLCache ()
+-(instancetype)_initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity relativePath:(NSString *)path;
+- (CFURLCacheRef)_CFURLCache;
+@end
+
 @interface NSURLRequest ()
 + (NSArray *)allowsSpecificHTTPSCertificateForHost:(NSString *)host;
 + (void)setAllowsSpecificHTTPSCertificate:(NSArray *)allow forHost:(NSString *)host;
@@ -189,15 +194,6 @@ CFURLResponseRef CFURLResponseCreateWithHTTPResponse(CFAllocatorRef, CFURLRef, C
 #endif // !PLATFORM(WIN)
 
 WTF_EXTERN_C_END
-
-// FIXME: We should only forward declare this SPI when building for iOS without the Apple Internal SDK.
-// As a workaround for <rdar://problem/19025016>, we must forward declare this SPI regardless of whether
-// we are building with the Apple Internal SDK.
-#if defined(__OBJC__) && PLATFORM(IOS)
-@interface NSURLCache ()
--(id)_initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity relativePath:(NSString *)path;
-@end
-#endif
 
 #if defined(__OBJC__) && !USE(APPLE_INTERNAL_SDK)
 enum : NSUInteger {

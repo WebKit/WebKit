@@ -97,8 +97,7 @@ static CGSize _scaleSizeWithinSize(CGSize source, CGSize destination)
     NSMutableArray<UIViewControllerPreviewAction *> *previewActions = [NSMutableArray array];
     for (_WKElementAction *imageAction in _imageActions.get()) {
         UIViewControllerPreviewAction *previewAction = [UIViewControllerPreviewAction actionWithTitle:imageAction.title handler:^(UIViewControllerPreviewAction *action, UIViewController *previewViewController) {
-            if ([imageAction respondsToSelector:@selector(runActionWithElementInfo:)])
-                [imageAction runActionWithElementInfo:_activatedElementInfo.get()];
+            [imageAction runActionWithElementInfo:_activatedElementInfo.get()];
         }];
 
         [previewActions addObject:previewAction];

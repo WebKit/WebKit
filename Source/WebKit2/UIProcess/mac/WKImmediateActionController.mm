@@ -401,10 +401,8 @@ using namespace WebKit;
 
     actionContext.altMode = YES;
     actionContext.immediate = YES;
-    if ([[getDDActionsManagerClass() sharedManager] respondsToSelector:@selector(hasActionsForResult:actionContext:)]) {
-        if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:actionContext.mainResult actionContext:actionContext])
-            return nil;
-    }
+    if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:actionContext.mainResult actionContext:actionContext])
+        return nil;
 
     RefPtr<WebPageProxy> page = _page;
     PageOverlay::PageOverlayID overlayID = _hitTestResultData.detectedDataOriginatingPageOverlay;

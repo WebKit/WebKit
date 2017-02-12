@@ -43,9 +43,7 @@ namespace WebKit {
 
 NSString *menuItemTitleForTelephoneNumberGroup()
 {
-    if ([getTUCallClass() respondsToSelector:@selector(supplementalDialTelephonyCallString)])
-        return [getTUCallClass() supplementalDialTelephonyCallString];
-    return WEB_UI_STRING("Call Using iPhone:", "menu item title for phone number");
+    return [getTUCallClass() supplementalDialTelephonyCallString];
 }
 
 NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)

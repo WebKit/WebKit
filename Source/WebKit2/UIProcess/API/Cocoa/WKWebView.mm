@@ -142,7 +142,6 @@ CFStringRef kAXSAllowForceWebScalingEnabledNotification;
 @interface UIScrollView (UIScrollViewInternal)
 - (void)_adjustForAutomaticKeyboardInfo:(NSDictionary*)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;
 - (BOOL)_isScrollingToTop;
-- (BOOL)_isInterruptingDeceleration;
 - (CGPoint)_animatedTargetOffset;
 @end
 
@@ -2181,8 +2180,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         isStableState = ![self _scrollViewIsRubberBanding];
 
     // FIXME: this can be made static after we stop supporting iOS 8.x.
-    if (isStableState && [scrollView respondsToSelector:@selector(_isInterruptingDeceleration)])
-        isStableState = ![scrollView performSelector:@selector(_isInterruptingDeceleration)];
+    if (isStableState)
+        isStableState = !scrollView._isInterruptingDeceleration;
 
     if (NSNumber *stableOverride = self._stableStateOverride)
         isStableState = stableOverride.boolValue;

@@ -59,10 +59,6 @@ SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
 SOFT_LINK(TCC, TCCAccessPreflight, TCCAccessPreflightResult, (CFStringRef service, CFDictionaryRef options), (service, options))
 SOFT_LINK_CONSTANT(TCC, kTCCServicePhotos, CFStringRef)
 
-@interface DDDetectionController (StagingToRemove)
-- (NSArray *)actionsForURL:(NSURL *)url identifier:(NSString *)identifier selectedText:(NSString *)selectedText results:(NSArray *)results context:(NSDictionary *)context;
-@end
-
 using namespace WebKit;
 
 #if HAVE(APP_LINKS)
@@ -480,29 +476,25 @@ static LSAppLink *appLinkForURL(NSURL *url)
         return;
 
     DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];
-    NSArray *dataDetectorsActions = nil;
-    if ([controller respondsToSelector:@selector(actionsForURL:identifier:selectedText:results:context:)]) {
-        NSDictionary *context = nil;
-        NSString *textAtSelection = nil;
-        RetainPtr<NSMutableDictionary> extendedContext;
+    NSDictionary *context = nil;
+    NSString *textAtSelection = nil;
+    RetainPtr<NSMutableDictionary> extendedContext;
 
-        if ([delegate respondsToSelector:@selector(dataDetectionContextForActionSheetAssistant:)])
-            context = [delegate dataDetectionContextForActionSheetAssistant:self];
-        if ([delegate respondsToSelector:@selector(selectedTextForActionSheetAssistant:)])
-            textAtSelection = [delegate selectedTextForActionSheetAssistant:self];
-        if (!positionInformation.textBefore.isEmpty() || !positionInformation.textAfter.isEmpty()) {
-            extendedContext = adoptNS([@{
-                getkDataDetectorsLeadingText() : positionInformation.textBefore,
-                getkDataDetectorsTrailingText() : positionInformation.textAfter,
-            } mutableCopy]);
-            
-            if (context)
-                [extendedContext addEntriesFromDictionary:context];
-            context = extendedContext.get();
-        }
-        dataDetectorsActions = [controller actionsForURL:targetURL identifier:positionInformation.dataDetectorIdentifier selectedText:textAtSelection results:positionInformation.dataDetectorResults.get() context:context];
-    } else
-        dataDetectorsActions = [controller actionsForAnchor:nil url:targetURL forFrame:nil];
+    if ([delegate respondsToSelector:@selector(dataDetectionContextForActionSheetAssistant:)])
+        context = [delegate dataDetectionContextForActionSheetAssistant:self];
+    if ([delegate respondsToSelector:@selector(selectedTextForActionSheetAssistant:)])
+        textAtSelection = [delegate selectedTextForActionSheetAssistant:self];
+    if (!positionInformation.textBefore.isEmpty() || !positionInformation.textAfter.isEmpty()) {
+        extendedContext = adoptNS([@{
+            getkDataDetectorsLeadingText() : positionInformation.textBefore,
+            getkDataDetectorsTrailingText() : positionInformation.textAfter,
+        } mutableCopy]);
+        
+        if (context)
+            [extendedContext addEntriesFromDictionary:context];
+        context = extendedContext.get();
+    }
+    NSArray *dataDetectorsActions = [controller actionsForURL:targetURL identifier:positionInformation.dataDetectorIdentifier selectedText:textAtSelection results:positionInformation.dataDetectorResults.get() context:context];
     if ([dataDetectorsActions count] == 0)
         return;
 

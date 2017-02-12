@@ -227,13 +227,6 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
 void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler)
 {
     auto passLibrary = adoptNS([allocPKPassLibraryInstance() init]);
-    if (![passLibrary respondsToSelector:@selector(openPaymentSetupForMerchantIdentifier:domain:completion:)]) {
-        RunLoop::main().dispatch([completionHandler] {
-            completionHandler(false);
-        });
-        return;
-    }
-
     [passLibrary openPaymentSetupForMerchantIdentifier:merchantIdentifier domain:domainName completion:[completionHandler](BOOL result) {
         RunLoop::main().dispatch([completionHandler, result] {
             completionHandler(result);

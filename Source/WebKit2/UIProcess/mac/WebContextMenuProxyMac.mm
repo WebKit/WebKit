@@ -266,9 +266,6 @@ void WebContextMenuProxyMac::clearServicesMenu()
 
 RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem()
 {
-    if (![[NSMenuItem class] respondsToSelector:@selector(standardShareMenuItemWithItems:)])
-        return nil;
-
     const WebHitTestResultData& hitTestData = m_context.webHitTestResultData();
 
     auto items = adoptNS([[NSMutableArray alloc] init]);

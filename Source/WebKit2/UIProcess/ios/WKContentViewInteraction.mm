@@ -239,28 +239,6 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 - (void)scheduleReanalysis;
 @end
 
-@interface UITextInteractionAssistant (StagingToRemove)
-- (void)scheduleReplacementsForText:(NSString *)text;
-- (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
-- (void)scheduleChineseTransliterationForText:(NSString *)text;
-- (void)showShareSheetFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
-- (void)lookup:(NSString *)textWithContext fromRect:(CGRect)presentationRect;
-- (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
-@end
-
-@interface UIWKSelectionAssistant (StagingToRemove)
-- (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
-- (void)lookup:(NSString *)textWithContext fromRect:(CGRect)presentationRect;
-- (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
-@end
-
-@interface UIKeyboardImpl (StagingToRemove)
-- (void)didHandleWebKeyEvent;
-- (void)didHandleWebKeyEvent:(WebIOSEvent *)event;
-- (void)deleteFromInputWithFlags:(NSUInteger)flags;
-- (void)addInputString:(NSString *)string withFlags:(NSUInteger)flags withInputManagerHint:(NSString *)hint;
-@end
-
 @interface UIView (UIViewInternalHack)
 + (BOOL)_addCompletion:(void(^)(BOOL))completion;
 @end
@@ -271,10 +249,6 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 @property (strong, nonatomic, readonly) UIGestureRecognizer *presentationSecondaryGestureRecognizer;
 @end
 #endif
-
-@interface DDDetectionController (StagingToRemove)
-- (DDResultRef)resultForURL:(NSURL *)url identifier:(NSString *)identifier selectedText:(NSString *)selectedText results:(NSArray *)results context:(NSDictionary *)context extendedContext:(NSDictionary **)extendedContext;
-@end
 
 @interface WKFocusedElementInfo : NSObject <_WKFocusedElementInfo>
 - (instancetype)initWithAssistedNodeInformation:(const AssistedNodeInformation&)information isUserInitiated:(BOOL)isUserInitiated;
@@ -1879,15 +1853,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         
         String selectionContext = textBefore + selectedText + textAfter;
         if (view->_textSelectionAssistant) {
-            if ([view->_textSelectionAssistant respondsToSelector:@selector(lookup:withRange:fromRect:)])
-                [view->_textSelectionAssistant lookup:selectionContext withRange:NSMakeRange(textBefore.length(), selectedText.length()) fromRect:presentationRect];
-            else
-                [view->_textSelectionAssistant lookup:selectedText fromRect:presentationRect];
+            [view->_textSelectionAssistant lookup:selectionContext withRange:NSMakeRange(textBefore.length(), selectedText.length()) fromRect:presentationRect];
         } else {
-            if ([view->_webSelectionAssistant respondsToSelector:@selector(lookup:withRange:fromRect:)])
-                [view->_webSelectionAssistant lookup:selectionContext withRange:NSMakeRange(textBefore.length(), selectedText.length()) fromRect:presentationRect];
-            else
-                [view->_webSelectionAssistant lookup:selectedText fromRect:presentationRect];
+            [view->_webSelectionAssistant lookup:selectionContext withRange:NSMakeRange(textBefore.length(), selectedText.length()) fromRect:presentationRect];
         }
     });
 }
@@ -1903,18 +1871,18 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
         CGRect presentationRect = view->_page->editorState().postLayoutData().selectionRects[0].rect();
 
-        if (view->_textSelectionAssistant && [view->_textSelectionAssistant respondsToSelector:@selector(showShareSheetFor:fromRect:)])
+        if (view->_textSelectionAssistant)
             [view->_textSelectionAssistant showShareSheetFor:string fromRect:presentationRect];
-        else if (view->_webSelectionAssistant && [view->_webSelectionAssistant respondsToSelector:@selector(showShareSheetFor:fromRect:)])
+        else if (view->_webSelectionAssistant)
             [view->_webSelectionAssistant showShareSheetFor:string fromRect:presentationRect];
     });
 }
 
 - (void)_addShortcut:(id)sender
 {
-    if (_textSelectionAssistant && [_textSelectionAssistant respondsToSelector:@selector(showTextServiceFor:fromRect:)])
+    if (_textSelectionAssistant)
         [_textSelectionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().postLayoutData().selectionRects[0].rect()];
-    else if (_webSelectionAssistant && [_webSelectionAssistant respondsToSelector:@selector(showTextServiceFor:fromRect:)])
+    else if (_webSelectionAssistant)
         [_webSelectionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().postLayoutData().selectionRects[0].rect()];
 }
 
@@ -1944,14 +1912,12 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if (wordAtSelection.isEmpty())
         return;
 
-    if ([_textSelectionAssistant respondsToSelector:@selector(scheduleReplacementsForText:)])
-        [_textSelectionAssistant scheduleReplacementsForText:wordAtSelection];
+    [_textSelectionAssistant scheduleReplacementsForText:wordAtSelection];
 }
 
 - (void)_transliterateChinese:(id)sender
 {
-    if ([_textSelectionAssistant respondsToSelector:@selector(scheduleChineseTransliterationForText:)])
-        [_textSelectionAssistant scheduleChineseTransliterationForText:_page->editorState().postLayoutData().wordAtSelection];
+    [_textSelectionAssistant scheduleChineseTransliterationForText:_page->editorState().postLayoutData().wordAtSelection];
 }
 
 - (void)_reanalyze:(id)sender
@@ -3385,14 +3351,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         return;
     }
         
-    if (event.type == WebEventKeyDown) {
-        // FIXME: This is only for staging purposes.
-        if ([[UIKeyboardImpl sharedInstance] respondsToSelector:@selector(didHandleWebKeyEvent:)])
-            [[UIKeyboardImpl sharedInstance] didHandleWebKeyEvent:event];
-        else
-            [[UIKeyboardImpl sharedInstance] didHandleWebKeyEvent];
-    }
-
     // If we aren't interacting with editable content, we still need to call [super _handleKeyUIEvent:]
     // so that keyboard repeat will work correctly. If we are interacting with editable content,
     // we already did so in _handleKeyUIEvent.
@@ -3506,21 +3464,14 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     case kWebBackspaceKey:
     case kWebDeleteKey:
         if (contentEditable) {
-            // FIXME: remove deleteFromInput once UIKit adopts deleteFromInputWithFlags
-            if ([keyboard respondsToSelector:@selector(deleteFromInputWithFlags:)])
-                [keyboard deleteFromInputWithFlags:event.keyboardFlags];
-            else
-                [keyboard deleteFromInput];
+            [keyboard deleteFromInputWithFlags:event.keyboardFlags];
             return YES;
         }
         break;
 
     case kWebSpaceKey:
         if (contentEditable && isCharEvent) {
-            if ([keyboard respondsToSelector:@selector(addInputString:withFlags:withInputManagerHint:)])
-                [keyboard addInputString:event.characters withFlags:event.keyboardFlags withInputManagerHint:event.inputManagerHint];
-            else
-                [keyboard addInputString:event.characters withFlags:event.keyboardFlags];
+            [keyboard addInputString:event.characters withFlags:event.keyboardFlags withInputManagerHint:event.inputManagerHint];
             return YES;
         }
         break;
@@ -3540,10 +3491,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
     default:
         if (contentEditable && isCharEvent) {
-            if ([keyboard respondsToSelector:@selector(addInputString:withFlags:withInputManagerHint:)])
-                [keyboard addInputString:event.characters withFlags:event.keyboardFlags withInputManagerHint:event.inputManagerHint];
-            else
-                [keyboard addInputString:event.characters withFlags:event.keyboardFlags];
+            [keyboard addInputString:event.characters withFlags:event.keyboardFlags withInputManagerHint:event.inputManagerHint];
             return YES;
         }
         break;
@@ -4208,25 +4156,23 @@ static bool isAssistableInputType(InputType type)
                 context = [uiDelegate _dataDetectionContextForWebView:_webView];
 
             DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];
-            if ([controller respondsToSelector:@selector(resultForURL:identifier:selectedText:results:context:extendedContext:)]) {
-                NSDictionary *newContext = nil;
-                RetainPtr<NSMutableDictionary> extendedContext;
-                DDResultRef ddResult = [controller resultForURL:dataForPreview[UIPreviewDataLink] identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() context:context extendedContext:&newContext];
-                if (ddResult)
-                    dataForPreview[UIPreviewDataDDResult] = (__bridge id)ddResult;
-                if (!_positionInformation.textBefore.isEmpty() || !_positionInformation.textAfter.isEmpty()) {
-                    extendedContext = adoptNS([@{
-                        getkDataDetectorsLeadingText() : _positionInformation.textBefore,
-                        getkDataDetectorsTrailingText() : _positionInformation.textAfter,
-                    } mutableCopy]);
-                    
-                    if (newContext)
-                        [extendedContext addEntriesFromDictionary:newContext];
-                    newContext = extendedContext.get();
-                }
+            NSDictionary *newContext = nil;
+            RetainPtr<NSMutableDictionary> extendedContext;
+            DDResultRef ddResult = [controller resultForURL:dataForPreview[UIPreviewDataLink] identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() context:context extendedContext:&newContext];
+            if (ddResult)
+                dataForPreview[UIPreviewDataDDResult] = (__bridge id)ddResult;
+            if (!_positionInformation.textBefore.isEmpty() || !_positionInformation.textAfter.isEmpty()) {
+                extendedContext = adoptNS([@{
+                    getkDataDetectorsLeadingText() : _positionInformation.textBefore,
+                    getkDataDetectorsTrailingText() : _positionInformation.textAfter,
+                } mutableCopy]);
+                
                 if (newContext)
-                    dataForPreview[UIPreviewDataDDContext] = newContext;
+                    [extendedContext addEntriesFromDictionary:newContext];
+                newContext = extendedContext.get();
             }
+            if (newContext)
+                dataForPreview[UIPreviewDataDDContext] = newContext;
         }
     } else if (canShowImagePreview) {
         *type = UIPreviewItemTypeImage;

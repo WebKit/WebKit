@@ -3112,11 +3112,8 @@ void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
     if (m_view.window.isKeyWindow || hasActiveImmediateAction) {
         WebCore::DictionaryLookup::hidePopup();
 
-        if (DataDetectorsLibrary()) {
-            DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
-            if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
-                [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
-        }
+        if (DataDetectorsLibrary())
+            [[getDDActionsManagerClass() sharedManager] requestBubbleClosureUnanchorOnFailure:YES];
     }
 
     clearTextIndicatorWithAnimation(WebCore::TextIndicatorWindowDismissalAnimation::FadeOut);

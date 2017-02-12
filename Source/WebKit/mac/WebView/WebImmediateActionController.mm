@@ -128,8 +128,7 @@ using namespace WebCore;
         return;
 
     DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
-    if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
-        [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
+    [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
 
     if (_currentActionContext && _hasActivatedActionContext) {
         _hasActivatedActionContext = NO;
@@ -439,10 +438,8 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 
     [actionContext setAltMode:YES];
     [actionContext setImmediate:YES];
-    if ([[getDDActionsManagerClass() sharedManager] respondsToSelector:@selector(hasActionsForResult:actionContext:)]) {
-        if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:[actionContext mainResult] actionContext:actionContext.get()])
-            return nil;
-    }
+    if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:[actionContext mainResult] actionContext:actionContext.get()])
+        return nil;
 
     auto indicator = TextIndicator::createWithRange(*detectedDataRange, TextIndicatorOptionDefault, TextIndicatorPresentationTransition::FadeIn);
 

@@ -105,15 +105,12 @@ CGColorSpaceRef LayerHostingContext::colorSpace() const
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 void LayerHostingContext::setColorMatchUntaggedContent(bool colorMatchUntaggedContent)
 {
-    if ([m_context respondsToSelector:@selector(setColorMatchUntaggedContent:)])
-        [m_context setColorMatchUntaggedContent:colorMatchUntaggedContent];
+    [m_context setColorMatchUntaggedContent:colorMatchUntaggedContent];
 }
 
 bool LayerHostingContext::colorMatchUntaggedContent() const
 {
-    if ([m_context respondsToSelector:@selector(colorMatchUntaggedContent)])
-        return [m_context colorMatchUntaggedContent];
-    return false;
+    return [m_context colorMatchUntaggedContent];
 }
 #endif
 

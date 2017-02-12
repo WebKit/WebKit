@@ -180,10 +180,6 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 void ChildProcess::setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier)
 {
-    // FIXME: Remove the runtime check when it's not needed (soon).
-    if (![NSHTTPCookieStorage respondsToSelector:@selector(_setSharedHTTPCookieStorage:)])
-        return;
-
     RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFDataCreate(kCFAllocatorDefault, identifier.data(), identifier.size()));
     RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage = adoptCF(CFHTTPCookieStorageCreateFromIdentifyingData(kCFAllocatorDefault, cookieStorageData.get()));
     [NSHTTPCookieStorage _setSharedHTTPCookieStorage:adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:uiProcessCookieStorage.get()]).get()];

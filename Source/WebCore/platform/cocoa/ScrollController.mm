@@ -41,31 +41,6 @@
 
 #if ENABLE(RUBBER_BANDING) || ENABLE(CSS_SCROLL_SNAP)
 
-#if PLATFORM(MAC)
-static NSTimeInterval systemUptime()
-{
-    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(systemUptime)])
-        return [[NSProcessInfo processInfo] systemUptime];
-
-    // Get how long system has been up. Found by looking getting "boottime" from the kernel.
-    static struct timeval boottime = {0, 0};
-    if (!boottime.tv_sec) {
-        int mib[2] = {CTL_KERN, KERN_BOOTTIME};
-        size_t size = sizeof(boottime);
-        if (-1 == sysctl(mib, 2, &boottime, &size, 0, 0))
-            boottime.tv_sec = 0;
-    }
-    struct timeval now;
-    if (boottime.tv_sec && -1 != gettimeofday(&now, 0)) {
-        struct timeval uptime;
-        timersub(&now, &boottime, &uptime);
-        NSTimeInterval result = uptime.tv_sec + (uptime.tv_usec / 1E+6);
-        return result;
-    }
-    return 0;
-}
-#endif
-
 namespace WebCore {
 
 #if ENABLE(RUBBER_BANDING)
@@ -427,7 +402,7 @@ void ScrollController::stopSnapRubberbandTimer()
 
 void ScrollController::snapRubberBand()
 {
-    CFTimeInterval timeDelta = systemUptime() - m_lastMomentumScrollTimestamp;
+    CFTimeInterval timeDelta = [NSProcessInfo processInfo].systemUptime - m_lastMomentumScrollTimestamp;
     if (m_lastMomentumScrollTimestamp && timeDelta >= scrollVelocityZeroingTimeout)
         m_momentumVelocity = FloatSize();
 

@@ -73,15 +73,11 @@ typedef void (^NEFilterSourceDecisionHandler)(NEFilterSourceStatus, NSDictionary
 - (void)receivedData:(NSData *)data decisionHandler:(NEFilterSourceDecisionHandler)decisionHandler;
 - (void)finishedLoadingWithDecisionHandler:(NEFilterSourceDecisionHandler)decisionHandler;
 - (void)remediateWithDecisionHandler:(NEFilterSourceDecisionHandler)decisionHandler;
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+@property (copy) NSString *sourceAppIdentifier;
+#endif
 @end
 
 #endif
 
 #endif // !USE(APPLE_INTERNAL_SDK)
-
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
-// FIXME: Confine this to the !USE(APPLE_INTERNAL_SDK) section once this is defined in an SDK (<rdar://problem/29147174>).
-@interface NEFilterSource (WKStaging)
-@property (copy) NSString *sourceAppBundleID;
-@end
-#endif

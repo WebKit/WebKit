@@ -757,8 +757,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     m_videoFullscreenLayerManager->setVideoLayer(m_videoLayer.get(), defaultSize);
 
 #if PLATFORM(IOS)
-    if ([m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
-        [m_videoLayer setPIPModeEnabled:(player()->fullscreenMode() & MediaPlayer::VideoFullscreenModePictureInPicture)];
+    [m_videoLayer setPIPModeEnabled:(player()->fullscreenMode() & MediaPlayer::VideoFullscreenModePictureInPicture)];
 #endif
 #else
     [m_videoLayer setFrame:CGRectMake(0, 0, defaultSize.width(), defaultSize.height())];
@@ -1257,8 +1256,7 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity(MediaPlayer::
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode mode)
 {
 #if PLATFORM(IOS)
-    if (m_videoLayer && [m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
-        [m_videoLayer setPIPModeEnabled:(mode & MediaPlayer::VideoFullscreenModePictureInPicture)];
+    [m_videoLayer setPIPModeEnabled:(mode & MediaPlayer::VideoFullscreenModePictureInPicture)];
     updateDisableExternalPlayback();
 #else
     UNUSED_PARAM(mode);
@@ -2244,7 +2242,7 @@ bool MediaPlayerPrivateAVFoundationObjC::didPassCORSAccessCheck() const
         return false;
 
     WebCoreNSURLSession *session = (WebCoreNSURLSession *)resourceLoader.URLSession;
-    if ([session respondsToSelector:@selector(didPassCORSAccessChecks)])
+    if ([session isKindOfClass:[WebCoreNSURLSession class]])
         return session.didPassCORSAccessChecks;
 #endif
     return false;
@@ -3199,8 +3197,7 @@ URL MediaPlayerPrivateAVFoundationObjC::resolvedURL() const
 void MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep(bool flag)
 {
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
-    if (m_avPlayer && [m_avPlayer respondsToSelector:@selector(_setPreventsSleepDuringVideoPlayback:)])
-        [m_avPlayer _setPreventsSleepDuringVideoPlayback:flag];
+    [m_avPlayer _setPreventsSleepDuringVideoPlayback:flag];
 #else
     UNUSED_PARAM(flag);
 #endif

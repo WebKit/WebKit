@@ -1,3 +1,29 @@
+2017-02-12  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Some -respondsToSelector: checks are unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=168183
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController applicationDidResignActive:]): Removed check whether NSWindow
+          responds to -isOnActiveSpace.
+        (-[WebFullScreenController exitFullScreen]): Ditto.
+        (-[WebFullScreenController _updateMenuAndDockForFullScreen]): Removed check whether
+          NSApplication responds to -setPresentationOptions.
+
+        * WebView/WebHTMLView.mm:
+        (createShareMenuItem): Removed unnecessary -respondsToSelector: check.
+        (-[WebHTMLView otherMouseDown:]): Ditto.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _clearImmediateActionState]): Ditto.
+        (-[WebImmediateActionController _animationControllerForDataDetectedText]): Ditto.
+
+        * WebView/WebView.mm:
+        (-[WebView _didStartProvisionalLoadForFrame:]): Removed redundant nil check.
+        (+[WebView _setCacheModel:]): Removed unnecessary -respondsToSelector: check.
+
 2017-02-10  Daniel Bates  <dabates@apple.com>
 
         Detach frame from document when entering page cache

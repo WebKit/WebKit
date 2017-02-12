@@ -127,9 +127,6 @@
 /* Option in segmented control for inserting a bulleted list in text editing */
 "Bulleted list" = "Bulleted list";
 
-/* menu item title for phone number */
-"Call Using iPhone:" = "Call Using iPhone:";
-
 /* Title for Cancel button label in button bar */
 "Cancel button label in button bar" = "Cancel";
 

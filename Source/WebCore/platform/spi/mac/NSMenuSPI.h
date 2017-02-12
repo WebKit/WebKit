@@ -27,25 +27,28 @@
 
 #if PLATFORM(MAC)
 
-// FIXME: We should just include the appropriate internal headers.
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <AppKit/NSMenu_Private.h>
+
+#else
 
 typedef NS_ENUM(NSInteger, NSMenuType) {
     NSMenuTypeNone = 0,
     NSMenuTypeContextMenu,
 };
 
-@interface NSMenu (Private)
+@interface NSMenu ()
 + (NSMenuType)menuTypeForEvent:(NSEvent *)event;
 @end
 
 @class QLPreviewMenuItem;
 
-@interface NSMenuItem (Private)
+@interface NSMenuItem () <NSUserInterfaceItemIdentification>
 + (QLPreviewMenuItem *)standardQuickLookMenuItem;
 + (NSMenuItem *)standardShareMenuItemWithItems:(NSArray *)items;
 @end
 
-@interface NSMenuItem () <NSUserInterfaceItemIdentification>
-@end
+#endif
 
 #endif

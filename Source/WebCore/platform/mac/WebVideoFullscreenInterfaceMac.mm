@@ -170,16 +170,14 @@ enum class PIPState {
 {
     _playing = isPlaying && playbackRate;
 
-    if ([_pipViewController respondsToSelector:@selector(setPlaying:)])
-        [_pipViewController setPlaying:_playing];
+    [_pipViewController setPlaying:_playing];
 }
 
 - (void)setVideoDimensions:(NSSize)videoDimensions
 {
     _videoDimensions = videoDimensions;
 
-    if ([_pipViewController respondsToSelector:@selector(setAspectRatio:)])
-        [_pipViewController setAspectRatio:_videoDimensions];
+    [_pipViewController setAspectRatio:_videoDimensions];
 }
 
 - (void)setUpPIPForVideoView:(NSView *)videoView withFrame:(NSRect)frame inWindow:(NSWindow *)window
@@ -190,10 +188,8 @@ enum class PIPState {
 
     _pipViewController = adoptNS([[getPIPViewControllerClass() alloc] init]);
     [_pipViewController setDelegate:self];
-    if ([_pipViewController respondsToSelector:@selector(setUserCanResize:)])
-        [_pipViewController setUserCanResize:YES];
-    if ([_pipViewController respondsToSelector:@selector(setPlaying:)])
-        [_pipViewController setPlaying:_playing];
+    [_pipViewController setUserCanResize:YES];
+    [_pipViewController setPlaying:_playing];
     [self setVideoDimensions:NSEqualSizes(_videoDimensions, NSZeroSize) ? frame.size : _videoDimensions];
     if (_webVideoFullscreenInterfaceMac && _webVideoFullscreenInterfaceMac->webVideoFullscreenModel())
         _webVideoFullscreenInterfaceMac->webVideoFullscreenModel()->setVideoLayerGravity(WebVideoFullscreenModel::VideoGravityResizeAspectFill);

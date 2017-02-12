@@ -116,12 +116,9 @@ void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& loc
 
     LOG(Media, "MediaPlaybackTargetPickerMac::showPlaybackTargetPicker - checkActiveRoute = %i", (int)checkActiveRoute);
 
-    AVOutputDeviceMenuControllerType *picker = devicePicker();
-    if (![picker respondsToSelector:@selector(showMenuForRect:appearanceName:allowReselectionOfSelectedOutputDevice:)])
-        return;
-
     m_showingMenu = true;
-    if ([picker showMenuForRect:location appearanceName:NSAppearanceNameVibrantLight allowReselectionOfSelectedOutputDevice:!checkActiveRoute]) {
+
+    if ([devicePicker() showMenuForRect:location appearanceName:NSAppearanceNameVibrantLight allowReselectionOfSelectedOutputDevice:!checkActiveRoute]) {
         if (!checkActiveRoute)
             currentDeviceDidChange();
     }

@@ -219,16 +219,13 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 - (void)applicationDidResignActive:(NSNotification*)notification
 {   
     UNUSED_PARAM(notification);
-    // Check to see if the fullscreenWindow is on the active space; this function is available
-    // on 10.6 and later, so default to YES if the function is not available:
     NSWindow* fullscreenWindow = [self fullscreenWindow];
-    BOOL isOnActiveSpace = ([fullscreenWindow respondsToSelector:@selector(isOnActiveSpace)] ? [fullscreenWindow isOnActiveSpace] : YES);
 
     // Replicate the QuickTime Player (X) behavior when losing active application status:
     // Is the fullscreen screen the main screen? (Note: this covers the case where only a 
     // single screen is available.)  Is the fullscreen screen on the current space? IFF so, 
     // then exit fullscreen mode.    
-    if ([fullscreenWindow screen] == [[NSScreen screens] objectAtIndex:0] && isOnActiveSpace)
+    if (fullscreenWindow.screen == [NSScreen screens][0] && fullscreenWindow.onActiveSpace)
          [self requestExitFullscreenWithAnimation:NO];
 }
          
@@ -353,10 +350,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
             options |= NSApplicationPresentationAutoHideDock;
     }
 
-    if ([NSApp respondsToSelector:@selector(setPresentationOptions:)])
-        [NSApp setPresentationOptions:options];
-    else
-        SetSystemUIMode(_isEndingFullscreen ? kUIModeNormal : kUIModeAllHidden, 0);
+    NSApp.presentationOptions = options;
 }
 
 - (void)updatePowerAssertions

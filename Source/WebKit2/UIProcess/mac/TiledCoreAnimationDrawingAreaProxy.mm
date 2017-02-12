@@ -177,8 +177,7 @@ MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
     // Invalidate the fence if a synchronous message arrives while it's installed,
     // because we won't be able to reply during the fence-wait.
     uint64_t callbackID = m_webPageProxy.process().connection()->installIncomingSyncMessageCallback([rootLayerContext] {
-        if ([rootLayerContext respondsToSelector:@selector(invalidateFences)])
-            [rootLayerContext invalidateFences];
+        [rootLayerContext invalidateFences];
     });
     RefPtr<WebPageProxy> retainedPage = &m_webPageProxy;
     [CATransaction addCommitHandler:[callbackID, retainedPage] {

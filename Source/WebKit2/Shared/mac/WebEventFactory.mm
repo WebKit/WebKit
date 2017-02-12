@@ -328,16 +328,7 @@ static inline WebEvent::Modifiers modifiersForEvent(NSEvent *event)
 
 static int typeForEvent(NSEvent *event)
 {
-    if ([NSMenu respondsToSelector:@selector(menuTypeForEvent:)])
-        return static_cast<int>([NSMenu menuTypeForEvent:event]);
-    
-    if (mouseButtonForEvent(event) == WebMouseEvent::RightButton)
-        return static_cast<int>(NSMenuTypeContextMenu);
-    
-    if (mouseButtonForEvent(event) == WebMouseEvent::LeftButton && (modifiersForEvent(event) & WebEvent::ControlKey))
-        return static_cast<int>(NSMenuTypeContextMenu);
-    
-    return static_cast<int>(NSMenuTypeNone);
+    return static_cast<int>([NSMenu menuTypeForEvent:event]);
 }
 
 bool WebEventFactory::shouldBeHandledAsContextClick(const WebCore::PlatformMouseEvent& event)

@@ -1,3 +1,82 @@
+2017-02-12  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Some -respondsToSelector: checks are unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=168183
+
+        Reviewed by Tim Horton.
+
+        * English.lproj/Localizable.strings: Removed a string that’s no longer needed after the
+          change to WebKit2/Platform/mac/MenuUtilities.mm.
+
+        * editing/mac/DictionaryLookup.mm:
+        (WebCore::showPopupOrCreateAnimationController): Removed check whether
+          LULookupDefinitionModule responds to +showDefinitionForTerm:relativeToRect:ofView:options:.
+
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::initialize): Changed to use
+          -[NEFilterSource setSourceAppIdentifier:], without checking, instead of
+          -setSourceAppBundleID:, which does not exist.
+
+        * platform/cocoa/ScrollController.mm:
+        (systemUptime): Deleted.
+        (WebCore::ScrollController::snapRubberBand): Use -[NSProcessInfo systemUptime] directly.
+
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker): Remove unnecessary check.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::didPassCORSAccessCheck): Replaced
+          -respondsToSelector: check with -isKindOfClass: check corresponding to the above cast.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep): Removed unnecessary
+          check.
+
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManager.mm:
+        (WebCore::VideoFullscreenLayerManager::setVideoFullscreenLayer): Removed unnecessary checks.
+
+        * platform/graphics/mac/WebGLLayer.mm:
+        (-[WebGLLayer initWithGraphicsContext3D:]): Ditto.
+
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::typeForEvent): Removed check whether NSMenu responds to +menuTypeForEvent: and
+          all code to handle that case that it doesn’t.
+
+        * platform/mac/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController applicationDidResignActive:]): Removed check whether
+          NSWindow responds to -isOnActiveSpace.
+        (-[WebVideoFullscreenController updateMenuAndDockForFullscreen]): Removed check whether
+          NSApplication responds to -setPresentationOptions:
+
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (-[WebVideoFullscreenInterfaceMacObjC updateIsPlaying:newPlaybackRate:]): Removed
+          unnecessary -respondsToSelector: check.
+        (-[WebVideoFullscreenInterfaceMacObjC setVideoDimensions:]): Ditto.
+        (-[WebVideoFullscreenInterfaceMacObjC setUpPIPForVideoView:withFrame:inWindow:]): Ditto.
+
+        * platform/spi/cf/CFNetworkSPI.h: Moved declarations of
+          -[NSURLCache _initWithMemoryCapacity:diskCapacity:relativePath:] and
+          -[NSURLCache _CFURLCache] to the !USE(APPLE_INTERNAL_SDK) section.
+
+        * platform/spi/cocoa/NEFilterSourceSPI.h: Added declaration of NEFilterSource’
+          sourceAppIdentifier property to the !USE(APPLE_INTERNAL_SDK) section and deleted
+          unconditional declaration of sourceAppBundleID property, which doesn’t exist.
+
+        * platform/spi/cocoa/QuartzCoreSPI.h: Removed redundant declarations.
+
+        * platform/spi/ios/DataDetectorsUISPI.h: Moved declarations of DDDetectionController methods
+          from WebKit2/UIProcess/ios/{WKActionSheetAssistant,WKContentViewInteraction}.mm to here.
+          Removed an unused declaration.
+
+        * platform/spi/mac/LookupSPI.h: Moved redundant declarations into the
+          !USE(APPLE_INTERNAL_SDK) section.
+
+        * platform/spi/mac/NSMenuSPI.h: Changed to import NSMenu_Private.h when using the
+          Apple internal SDK. Cleaned up the declarations for the other case.
+
+        * platform/spi/mac/TUCallSPI.h: Changed to import TUCall_Strings.h when use the Apple
+          internal SDK.
+
 2017-02-11  Sam Weinig  <sam@webkit.org>
 
         Remove the remaining functions out of JSDOMBinding
