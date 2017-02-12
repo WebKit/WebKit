@@ -1,3 +1,36 @@
+2017-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Fix crashes after [NSURLSession invalidateAndCancel]
+        https://bugs.webkit.org/show_bug.cgi?id=168181
+        <rdar://problem/29813868>
+
+        Reviewed by Brady Eidson.
+
+        When we call NetworkSessionCocoa::invalidateAndCancel, we intend for the session to immediately
+        become invalid and stop doing things. [NSURLSession invalidateAndCancel] asynchronously cancels
+        everything and then calls the delegate's didBecomeInvalidWithError, so before this change there
+        is a time when we have torn down the session with SessionTracker::destroySession but we can still
+        get a delegate callback which assumes the session and its NetworkStorageSession exists.  If we
+        get any delegate callbacks after a NetworkSession has been invalidated, we will want to ignore them.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate sessionInvalidated]):
+        (-[WKNetworkSessionDelegate URLSession:didBecomeInvalidWithError:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:]):
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveData:]):
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didFinishDownloadingToURL:]):
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:]):
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]):
+        The pointer to the NetworkSessionCocoa can now be null. We need to check it.
+        (WebKit::NetworkSessionCocoa::invalidateAndCancel):
+        Synchronously remove the connection between the delegates and the NetworkSessionCocoa.
+
 2017-02-10  John Wilander  <wilander@apple.com>
 
         Updates to Resource Load Statistics: Get the right website data store and introduce timeout for user interaction
