@@ -839,7 +839,10 @@ void NetworkDataTaskSoup::download()
         return;
     }
 
-    m_downloadDestinationFile = adoptGRef(g_file_new_for_uri(m_pendingDownloadLocation.utf8().data()));
+    if (g_path_is_absolute(m_pendingDownloadLocation.utf8().data()))
+        m_downloadDestinationFile = adoptGRef(g_file_new_for_path(m_pendingDownloadLocation.utf8().data()));
+    else
+        m_downloadDestinationFile = adoptGRef(g_file_new_for_uri(m_pendingDownloadLocation.utf8().data()));
     GRefPtr<GFileOutputStream> outputStream;
     GUniqueOutPtr<GError> error;
     if (m_allowOverwriteDownload)
@@ -851,8 +854,9 @@ void NetworkDataTaskSoup::download()
         return;
     }
 
-    String intermediateURI = m_pendingDownloadLocation + ".wkdownload";
-    m_downloadIntermediateFile = adoptGRef(g_file_new_for_uri(intermediateURI.utf8().data()));
+    GUniquePtr<char> downloadDestinationURI(g_file_get_uri(m_downloadDestinationFile.get()));
+    GUniquePtr<char> intermediateURI(g_strdup_printf("%s.wkdownload", downloadDestinationURI.get()));
+    m_downloadIntermediateFile = adoptGRef(g_file_new_for_uri(intermediateURI.get()));
     outputStream = adoptGRef(g_file_replace(m_downloadIntermediateFile.get(), 0, TRUE, G_FILE_CREATE_NONE, 0, &error.outPtr()));
     if (!outputStream) {
         didFailDownload(platformDownloadDestinationError(m_response, error->message));
@@ -864,7 +868,7 @@ void NetworkDataTaskSoup::download()
     auto download = std::make_unique<Download>(downloadManager, m_pendingDownloadID, *this, m_session->sessionID(), suggestedFilename());
     auto* downloadPtr = download.get();
     downloadManager.dataTaskBecameDownloadTask(m_pendingDownloadID, WTFMove(download));
-    downloadPtr->didCreateDestination(m_pendingDownloadLocation);
+    downloadPtr->didCreateDestination(String::fromUTF8(downloadDestinationURI.get()));
 
     ASSERT(!m_client);
     read();

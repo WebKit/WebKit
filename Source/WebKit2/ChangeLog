@@ -1,5 +1,23 @@
 2017-02-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Downloads fail when the given destination is not a URI
+        https://bugs.webkit.org/show_bug.cgi?id=168187
+
+        Reviewed by Michael Catanzaro.
+
+        It always expects a uri, and fails if a local path is given.
+
+        Fixes: http/tests/download/anchor-download-no-extension.html
+               http/tests/download/area-download.html
+               http/tests/security/anchor-download-allow-data.html
+               http/tests/security/anchor-download-allow-sameorigin.html
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::download): Use g_file_new_for_path() if the pending destination is a path instead
+        of a URI.
+
+2017-02-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Handle caps lock indicator in event modifiers
         https://bugs.webkit.org/show_bug.cgi?id=168186
 
