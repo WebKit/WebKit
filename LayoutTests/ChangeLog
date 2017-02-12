@@ -1,3 +1,13 @@
+2017-02-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline some test and update expectations.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/events/focus-label-legend-elements-with-tab-expected.txt: Added.
+        * platform/gtk/fast/events/touch/document-create-touch-expected.txt: Added.
+        * platform/gtk/fast/repaint/block-inputrange-repaint-expected.txt: Added.
+        * platform/gtk/http/tests/dom/document-attributes-null-handling-expected.txt: Added.
+
 2017-02-11  Youenn Fablet  <youennf@gmail.com>
 
         Refresh WPT tests up to 06c6c52e05e05483d3c844168a417ee27a554eb7

@@ -474,6 +474,7 @@ webkit.org/b/109570 media/track/w3c [ Skip ]
 
 # Tests in the gesture folder exercise IOS-specific code, non appliable to GTK+
 fast/events/touch/gesture [ Skip ]
+fast/shadow-dom/touch-event-on-text-assigned-to-slot.html [ Skip ]
 
 # These tests rely on touch event grouping, which X11/GTK+ doesn't do by design
 webkit.org/b/128172 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
@@ -499,6 +500,7 @@ webkit.org/b/131347 fast/borders/hidpi-simple-hairline-border-painting.html [ Im
 webkit.org/b/131347 fast/forms/hidpi-textfield-background-bleeding.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/hidpi/clip-text-in-hidpi.html [ Failure Pass Missing ]
 webkit.org/b/131347 fast/hidpi/filters-morphology.html [ ImageOnlyFailure Pass Crash ]
+webkit.org/b/131347 fast/hidpi/hidpi-3x-device-pixel-ratio.html [ Failure ]
 webkit.org/b/131347 fast/hidpi/image-set-background-dynamic.html [ Failure Pass Missing ]
 webkit.org/b/131347 fast/hidpi/image-set-border-image-dynamic.html [ Failure Pass Missing ]
 webkit.org/b/131347 fast/hidpi/image-srcset-png-canvas.html [ ImageOnlyFailure Pass ]
@@ -794,6 +796,13 @@ webkit.org/b/89052 fast/css/image-orientation [ Skip ]
 
 # CSS image-resolution is not yet enabled.
 webkit.org/b/85262 fast/css/image-resolution [ Skip ]
+
+# LEGACY_ENCRYPTED_MEDIA is disabled
+fast/events/webkit-media-key-events-constructor.html [ Skip ]
+
+# eventSender.callAfterScrollingCompletes doesn't work.
+webkit.org/b/168189 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Failure ]
+webkit.org/b/168189 fast/scrolling/scroll-container-horizontally.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -2770,6 +2779,19 @@ webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-
 webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html [ Failure ]
 
 webkit.org/b/145260 media/audio-playback-restriction-play.html  [ Failure ]
+
+webkit.org/b/168188 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
+
+webkit.org/b/168164 fast/picture/viewport-resize.html [ Failure ]
+
+webkit.org/b/168190 fast/spatial-navigation/snav-input.html [ Failure ]
+webkit.org/b/168190 fast/spatial-navigation/snav-textarea.html [ Failure ]
+
+webkit.org/b/168191 fast/text/system-font-weight-italic.html [ Failure ]
+webkit.org/b/168191 fast/text/system-font-weight.html [ Failure ]
+webkit.org/b/168191 fast/text/trak-optimizeLegibility.html [ Failure ]
+
+webkit.org/b/168192 http/tests/media/hls/video-duration-accessibility.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

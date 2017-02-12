@@ -1,0 +1,25 @@
+Test null handling of several Document attributes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* cookie attribute
+PASS document.cookie is ""
+document.cookie = 'key=value'
+PASS document.cookie is "key=value"
+document.cookie = null
+FAIL document.cookie should be key=value; null=. Was key=value; null.
+
+* title attribute
+PASS document.title is ""
+document.title = null
+PASS document.title is "null"
+
+* domain attribute
+PASS document.domain is "127.0.0.1"
+PASS document.domain = null threw exception SecurityError (DOM Exception 18): The operation is insecure..
+PASS document.domain is "127.0.0.1"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
