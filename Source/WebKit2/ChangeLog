@@ -1,3 +1,12 @@
+2017-02-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unreviewed, minor documentation improvements
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkit_web_page_class_init):
+
 2017-02-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Downloads fail when the given destination is not a URI

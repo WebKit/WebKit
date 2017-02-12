@@ -1580,8 +1580,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @event: the #GdkEvent that triggered the context menu
      * @hit_test_result: a #WebKitHitTestResult
      *
-     * Emmited when a context menu is about to be displayed to give the application
-     * a chance to customize the proposed menu, prevent the menu from being displayed
+     * Emitted when a context menu is about to be displayed to give the application
+     * a chance to customize the proposed menu, prevent the menu from being displayed,
      * or build its own context menu.
      * <itemizedlist>
      * <listitem><para>
@@ -2907,7 +2907,7 @@ gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
  * @user_data: (closure): the data to pass to callback function
  *
- * Asynchronously execute the given editing command.
+ * Asynchronously check if it is possible to execute the given editing command.
  *
  * When the operation is finished, @callback will be called. You can then call
  * webkit_web_view_can_execute_editing_command_finish() to get the result of the operation.
