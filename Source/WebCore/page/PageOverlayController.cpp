@@ -275,7 +275,8 @@ void PageOverlayController::didChangeSettings()
 
 void PageOverlayController::didChangeDeviceScaleFactor()
 {
-    createRootLayersIfNeeded();
+    if (!m_initialized)
+        return;
 
     m_documentOverlayRootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
     m_viewOverlayRootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();

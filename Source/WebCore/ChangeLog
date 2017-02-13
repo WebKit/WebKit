@@ -1,3 +1,22 @@
+2017-02-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Non-accelerated drawing is broken with HiDPI
+        https://bugs.webkit.org/show_bug.cgi?id=168128
+
+        Reviewed by Michael Catanzaro.
+
+        When device scale factor changes, the page notifies the page overlay controller about it. Then overlay root
+        layers are created to be notified about the device scale factor. That causes us to enter in accelerated
+        compositing mode, because the graphics layer factory is called. But the render layer compositor doesn't really
+        enter in accelerated mode, because there aren't page overlays, the accelerated mode is not forced and the website
+        doesn't require acceleration either. This leaves our drawing area in an inconsistent state, it thinks it's in AC
+        mode because it has a layer tree host, but without a root layer attached, so nothing is rendered. The page
+        overlay controller doesn't need to create the layers when device scale factor changes, when an overlay is
+        installed, layers will be created with the current device scale factor anyway.
+
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::didChangeDeviceScaleFactor): Return early if not initialized yet.
+
 2017-02-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r210845) Build broken with ENABLE_MHTML disabled
