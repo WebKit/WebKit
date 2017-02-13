@@ -1,3 +1,16 @@
+2017-02-13  Matt Baker  <mattbaker@apple.com>
+
+        REGRESSION(r188138): Web Inspector: cannot edit next/previous DOM attribute by using tab/shift-tab
+        https://bugs.webkit.org/show_bug.cgi?id=168120
+        <rdar://problem/30466065>
+
+        Reviewed by Joseph Pecoraro.
+
+        DOMTreeElement's attribute editing committed handler shouldn't early return
+        when a `moveDirection` has been specified.
+
+        * UserInterface/Views/DOMTreeElement.js:
+
 2017-02-12  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Assertion failed: !this._items.has(item) (at Collection.js:50)
