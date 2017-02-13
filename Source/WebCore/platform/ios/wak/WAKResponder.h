@@ -33,7 +33,7 @@
 
 @class WebEvent;
 
-@interface WAKResponder : NSObject
+WEBCORE_EXPORT @interface WAKResponder : NSObject
 {
 
 }

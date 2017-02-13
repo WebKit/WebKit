@@ -1,3 +1,12 @@
+2017-02-13  Aakash Jain  <aakash_jain@apple.com>
+
+        WAKResponder should be exported from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=168245
+
+        Reviewed by Dan Bernstein.
+
+        * platform/ios/wak/WAKResponder.h:
+
 2017-02-13  Simon Fraser  <simon.fraser@apple.com>
 
         Log to the History Channel in a few more places
