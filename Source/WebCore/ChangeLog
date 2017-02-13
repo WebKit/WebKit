@@ -1,3 +1,13 @@
+2017-02-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r210845) Build broken with ENABLE_MHTML disabled
+        https://bugs.webkit.org/show_bug.cgi?id=167771
+
+        Reviewed by Daniel Bates.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitData):
+
 2017-02-12  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix USE(APPLE_INTERNAL_SDK) builds after r212211.
