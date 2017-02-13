@@ -28,6 +28,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <Foundation/Foundation.h>
 #import <TelephonyUtilities/TelephonyUtilities.h>
 #import <TelephonyUtilities/TUCall_Strings.h>
 

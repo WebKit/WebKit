@@ -8,6 +8,12 @@
 
         Tried to fix USE(APPLE_INTERNAL_SDK) builds after r212211.
 
+        * platform/spi/mac/TUCallSPI.h:
+
+2017-02-12  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix USE(APPLE_INTERNAL_SDK) builds after r212211.
+
         * platform/spi/mac/NSMenuSPI.h: Replaced declaration of deprecated method with its current
           equivalent.
 
