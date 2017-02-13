@@ -34,6 +34,7 @@
 #include "FrameLoaderClient.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "Logging.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "ScriptController.h"
@@ -106,6 +107,8 @@ void History::forward(Document& document)
 
 void History::go(int distance)
 {
+    LOG(History, "History %p go(%d) frame %p (main frame %d)", this, distance, m_frame, m_frame ? m_frame->isMainFrame() : false);
+
     if (!m_frame)
         return;
 
@@ -114,6 +117,8 @@ void History::go(int distance)
 
 void History::go(Document& document, int distance)
 {
+    LOG(History, "History %p go(%d) in document %p frame %p (main frame %d)", this, distance, &document, m_frame, m_frame ? m_frame->isMainFrame() : false);
+
     if (!m_frame)
         return;
 

@@ -159,7 +159,7 @@ void HistoryController::restoreScrollPositionAndViewState()
     if (view && !view->wasScrolledByUser()) {
         Page* page = m_frame.page();
         auto desiredScrollPosition = m_currentItem->scrollPosition();
-
+        LOG(Scrolling, "HistoryController::restoreScrollPositionAndViewState scrolling to %d,%d", desiredScrollPosition.x(), desiredScrollPosition.y());
         if (page && m_frame.isMainFrame() && m_currentItem->pageScaleFactor())
             page->setPageScaleFactor(m_currentItem->pageScaleFactor() * page->viewScaleFactor(), desiredScrollPosition);
         else
@@ -349,7 +349,7 @@ void HistoryController::updateForBackForwardNavigation()
 
 void HistoryController::updateForReload()
 {
-    LOG(History, "HistoryController %p updateForBackForwardNavigation: Updating History for reload in frame %p (main frame %d) %s", this, &m_frame, m_frame.isMainFrame(), m_frame.loader().documentLoader() ? m_frame.loader().documentLoader()->url().string().utf8().data() : "");
+    LOG(History, "HistoryController %p updateForReload: Updating History for reload in frame %p (main frame %d) %s", this, &m_frame, m_frame.isMainFrame(), m_frame.loader().documentLoader() ? m_frame.loader().documentLoader()->url().string().utf8().data() : "");
 
     if (m_currentItem) {
         PageCache::singleton().remove(*m_currentItem);

@@ -46,6 +46,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HistoryItem.h"
 #include "InspectorInstrumentation.h"
+#include "Logging.h"
 #include "Page.h"
 #include "ScriptController.h"
 #include "UserGestureIndicator.h"
@@ -462,6 +463,7 @@ void NavigationScheduler::scheduleRefresh(Document& initiatingDocument)
 
 void NavigationScheduler::scheduleHistoryNavigation(int steps)
 {
+    LOG(History, "NavigationScheduler %p scheduleHistoryNavigation(%d) - shouldSchedule %d", this, steps, shouldScheduleNavigation());
     if (!shouldScheduleNavigation())
         return;
 
@@ -495,6 +497,8 @@ void NavigationScheduler::timerFired()
     Ref<Frame> protect(m_frame);
 
     std::unique_ptr<ScheduledNavigation> redirect = WTFMove(m_redirect);
+    LOG(History, "NavigationScheduler %p timerFired - firing redirect %p", this, redirect.get());
+
     redirect->fire(m_frame);
     InspectorInstrumentation::frameClearedScheduledNavigation(m_frame);
 }
@@ -545,6 +549,8 @@ void NavigationScheduler::startTimer()
 
 void NavigationScheduler::cancel(bool newLoadInProgress)
 {
+    LOG(History, "NavigationScheduler %p cancel(newLoadInProgress=%d)", this, newLoadInProgress);
+
     if (m_timer.isActive())
         InspectorInstrumentation::frameClearedScheduledNavigation(m_frame);
     m_timer.stop();
