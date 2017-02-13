@@ -1,3 +1,9 @@
+2017-02-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix another docs typo.
+
+        * UIProcess/API/gtk/WebKitEditingCommands.h:
+
 2017-02-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Improve documentation of webkit_context_menu_set_user_data()

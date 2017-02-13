@@ -109,7 +109,7 @@ G_BEGIN_DECLS
 /**
  * WEBKIT_EDITING_COMMAND_CREATE_LINK:
  *
- * The create link command. Creates a link elment thst is inserted at
+ * The create link command. Creates a link elment that is inserted at
  * the current cursor position. If there's a selection, the selected text
  * will be used as the link text, otherwise the URL itself will be used.
  * It receives the link URL as argument. This command should be executed
