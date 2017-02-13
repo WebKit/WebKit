@@ -126,7 +126,7 @@ public:
 static const char* selectedSpanHTMLFormat =
     "<html><body contentEditable=\"%s\">"
     "<span id=\"mainspan\">All work and no play <span id=\"subspan\">make Jack a dull</span> boy.</span>"
-    "<script>document.getSelection().collapse();\n"
+    "<script>document.getSelection().removeAllRanges();\n"
     "document.getSelection().selectAllChildren(document.getElementById('subspan'));\n"
     "</script></body></html>";
 
