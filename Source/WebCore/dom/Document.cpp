@@ -2206,7 +2206,6 @@ void Document::destroyRenderTree()
     ASSERT(page());
 
     FrameView* frameView = frame()->document() == this ? frame()->view() : nullptr;
-    ASSERT(frameView || pageCacheState() == InPageCache);
 
     // Prevent Widget tree changes from committing until the RenderView is dead and gone.
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;

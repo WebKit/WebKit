@@ -1,3 +1,20 @@
+2017-02-13  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r211455): ASSERTION FAILED: frameView || pageCacheState() == InPageCache in com.apple.WebCore: WebCore::Document::destroyRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=168237
+        <rdar://problem/30494165>
+
+        Reviewed by Gavin Barraclough.
+
+        Drop bad assertion under document::destroyRenderTree() that was introduced in r211455.
+        The assertion seemed like a good idea but the issue is that CachedFrame::destroy()
+        reset's the document's pageCacheState before calling Document::prepareForDestruction().
+
+        No new tests, this fixes assertion hits on our bots.
+
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree):
+
 2017-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update custom line breaking iterators to the latest version of Unicode
