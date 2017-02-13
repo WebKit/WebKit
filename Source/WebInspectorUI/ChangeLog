@@ -1,3 +1,19 @@
+2017-02-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Assertion failed: !this._items.has(item) (at Collection.js:50)
+        https://bugs.webkit.org/show_bug.cgi?id=168212
+
+        Reviewed by Joseph Pecoraro.
+
+        When turning on DebugUI, WebKit-internal scripts were being added to the
+        Collection that is the represented object for the Extra Scripts folder.
+        This was not balanced out by removing the scripts when DebugUI is turned
+        off, so switching DebugUI on and off several times hit a multiple-add assertion.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasRemoved):
+        Remove the script from its Collection if applicable.
+
 2017-02-10  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Debugger sidebar panel should not have multiple tree selections
