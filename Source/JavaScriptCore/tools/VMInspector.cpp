@@ -84,6 +84,7 @@ auto VMInspector::lock(Seconds timeout) -> Expected<LockToken, Error>
     return LockToken::LockedValue;
 }
 
+#if ENABLE(JIT)
 static bool ensureIsSafeToLock(Lock& lock)
 {
     unsigned maxRetries = 2;
@@ -98,9 +99,11 @@ static bool ensureIsSafeToLock(Lock& lock)
     }
     return false;
 };
+#endif // ENABLE(JIT)
 
 auto VMInspector::isValidExecutableMemory(VMInspector::LockToken, void* machinePC) -> Expected<bool, Error>
 {
+#if ENABLE(JIT)
     bool found = false;
     bool hasTimeout = false;
     iterate([&] (VM& vm) -> FunctorStatus {
@@ -124,10 +127,15 @@ auto VMInspector::isValidExecutableMemory(VMInspector::LockToken, void* machineP
     if (!found && hasTimeout)
         return makeUnexpected(Error::TimedOut);
     return found;
+#else
+    UNUSED_PARAM(machinePC);
+    return false;
+#endif
 }
 
 auto VMInspector::codeBlockForMachinePC(VMInspector::LockToken, void* machinePC) -> Expected<CodeBlock*, Error>
 {
+#if ENABLE(JIT)
     CodeBlock* codeBlock = nullptr;
     bool hasTimeout = false;
     iterate([&] (VM& vm) {
@@ -178,6 +186,10 @@ auto VMInspector::codeBlockForMachinePC(VMInspector::LockToken, void* machinePC)
     if (!codeBlock && hasTimeout)
         return makeUnexpected(Error::TimedOut);
     return codeBlock;
+#else
+    UNUSED_PARAM(machinePC);
+    return nullptr;
+#endif
 }
 
 } // namespace JSC
