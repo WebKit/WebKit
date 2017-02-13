@@ -36,6 +36,12 @@
 
 namespace WebCore {
 
+void deleteDragImage(RetainPtr<CGImageRef>)
+{
+    // Since this is a RetainPtr, there's nothing additional we need to do to
+    // delete it. It will be released when it falls out of scope.
+}
+
 // FIXME: fix signature of dragImageSize() to avoid copying the argument.
 IntSize dragImageSize(RetainPtr<CGImageRef> image)
 {
