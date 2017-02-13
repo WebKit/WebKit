@@ -1,3 +1,14 @@
+2017-02-13  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream Mac] Video capture needs access to /Library/CoreMediaIO/Plug-Ins/DAL/
+        https://bugs.webkit.org/show_bug.cgi?id=168244
+        <rdar://problem/30461158>
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Grant read-access to the video capture
+        plug-in directory when enabling video capture.
+
 2017-02-13  Antti Koivisto  <antti@apple.com>
 
         Disable mmap'd cache files if container is class A
