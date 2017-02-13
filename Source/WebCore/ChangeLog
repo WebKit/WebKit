@@ -1,5 +1,24 @@
 2017-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        REGRESSION (r179497): Crash inside setAttributeNode
+        https://bugs.webkit.org/show_bug.cgi?id=168161
+        <rdar://problem/30451581>
+
+        Reviewed by Andreas Kling.
+
+        The bug was caused by setAttributeNode calling setAttributeInternal with the same element data as the one used
+        to call removeAttributeInternal despite of the fact removeAttributeInternal could have invoked arbitrary scripts
+        and mutated element's m_elementData.
+
+        Fixed the bug by calling with setAttributeInternal with the result of new invocation of ensureUniqueElementData().
+
+        Test: fast/dom/Attr/make-unique-element-data-while-replacing-attr.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeNode):
+
+2017-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         Rebaseline bindings tests after r212207.
 
         * bindings/scripts/test/JS/JSTestObj.cpp:

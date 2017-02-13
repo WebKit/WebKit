@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+
+description('Test making the element data unique while replacing an Attr node.');
+
+let element = document.createElement('div');
+element.setAttribute('foo', 'bar');
+
+let oldAttr = document.createAttributeNS('http://www.w3.org/XML/1998/namespace', 'width');
+oldAttr.value = 'a';
+element.setAttributeNode(oldAttr);
+
+element.addEventListener('DOMSubtreeModified', () => { element.cloneNode(); }, true);
+
+let newAttr = document.createAttributeNS('http://www.w3.org/1999/xhtml','width');
+newAttr.value = 'b';
+element.setAttributeNode(newAttr);
+
+shouldBeEqualToString('element.getAttribute("width")', 'b');
+
+</script>		
+</body>
+</html>
