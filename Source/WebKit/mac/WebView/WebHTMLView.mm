@@ -3897,7 +3897,7 @@ static RetainPtr<NSMenuItem> createShareMenuItem(const HitTestResult& hitTestRes
     if (![items count])
         return nil;
 
-    return [NSMenuItem standardShareMenuItemWithItems:items.get()];
+    return [NSMenuItem standardShareMenuItemForItems:items.get()];
 }
 
 static RetainPtr<NSMutableArray> createMenuItems(const HitTestResult&, const Vector<ContextMenuItem>&);
