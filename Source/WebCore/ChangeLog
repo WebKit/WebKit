@@ -1,3 +1,10 @@
+2017-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rebaseline bindings tests after r212207.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+
 2017-02-12  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Some -respondsToSelector: checks are unnecessary

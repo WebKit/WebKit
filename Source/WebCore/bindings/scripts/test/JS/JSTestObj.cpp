@@ -65,6 +65,7 @@
 #include <inspector/ScriptCallStackFactory.h>
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
+#include <runtime/IteratorOperations.h>
 #include <runtime/JSArray.h>
 #include <runtime/JSString.h>
 #include <runtime/ObjectConstructor.h>

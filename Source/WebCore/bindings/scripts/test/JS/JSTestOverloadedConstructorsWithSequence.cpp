@@ -29,6 +29,7 @@
 #include "JSDOMWrapperCache.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
+#include <runtime/IteratorOperations.h>
 #include <runtime/JSArray.h>
 #include <wtf/GetPtr.h>
 
