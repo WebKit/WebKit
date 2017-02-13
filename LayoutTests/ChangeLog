@@ -1,3 +1,13 @@
+2017-02-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        TestExpectations gardening for imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2017-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         parserRemoveChild should unload subframes
