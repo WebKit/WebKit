@@ -1036,6 +1036,8 @@ fast/history/page-cache-after-window-open.html [ Skip ]
 fast/history/page-cache-back-navigation-crash.html [ Skip ]
 fast/history/page-cache-with-opener.html [ Skip ]
 
+webkit.org/b/168238 [ Debug ] imported/w3c/web-platform-tests/dom/events/EventListener-invoke-legacy.html [ Pass Failure ]
+
 ########################################
 ### START OF -disabled tests
 
