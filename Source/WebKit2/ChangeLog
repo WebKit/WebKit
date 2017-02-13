@@ -1,5 +1,12 @@
 2017-02-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Unreviewed, add missing precondition check
+
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebEditor.cpp:
+        (webkit_web_editor_get_page):
+
+2017-02-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, fix another docs typo.
 
         * UIProcess/API/gtk/WebKitEditingCommands.h:

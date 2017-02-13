@@ -120,5 +120,7 @@ WebKitWebEditor* webkitWebEditorCreate(WebKitWebPage* webPage)
  */
 WebKitWebPage* webkit_web_editor_get_page(WebKitWebEditor* editor)
 {
+    g_return_val_if_fail(WEBKIT_IS_WEB_EDITOR(editor), nullptr);
+
     return editor->priv->webPage;
 }
