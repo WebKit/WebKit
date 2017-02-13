@@ -33,10 +33,10 @@ enum class SDKVersion : uint32_t {
 #if PLATFORM(IOS)
     FirstWithNetworkCache = DYLD_IOS_VERSION_9_0,
     FirstWithMediaTypesRequiringUserActionForPlayback = DYLD_IOS_VERSION_10_0,
-    FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_IOS_VERSION_10_3,
+    FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_IOS_VERSION_11_0,
 #elif PLATFORM(MAC)
     FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
-    FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_12_4,
+    FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_13,
 #endif
 };
 
