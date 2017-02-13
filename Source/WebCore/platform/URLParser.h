@@ -98,7 +98,7 @@ private:
     template<typename CharacterType> Vector<LChar, defaultInlineBufferSize> percentDecode(const LChar*, size_t, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
     static Vector<LChar, defaultInlineBufferSize> percentDecode(const LChar*, size_t);
     static std::optional<String> formURLDecode(StringView input);
-    static bool hasInvalidDomainCharacter(const Vector<LChar, defaultInlineBufferSize>&);
+    static bool hasForbiddenHostCodePoint(const Vector<LChar, defaultInlineBufferSize>&);
     void percentEncodeByte(uint8_t);
     void appendToASCIIBuffer(UChar32);
     void appendToASCIIBuffer(const char*, size_t);

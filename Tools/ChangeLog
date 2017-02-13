@@ -1,3 +1,13 @@
+2017-02-13  Alex Christensen  <achristensen@webkit.org>
+
+        Percent should be allowed in non-special URL hosts
+        https://bugs.webkit.org/show_bug.cgi?id=168255
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2017-02-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Nwtr unexpectedly passes mismatch ref test if the hashes doesn't match but no diff
