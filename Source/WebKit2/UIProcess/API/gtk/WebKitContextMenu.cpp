@@ -333,6 +333,7 @@ void webkit_context_menu_remove_all(WebKitContextMenu* menu)
  * Sets user data to @menu.
  * This function can be used from a Web Process extension to set user data
  * that can be retrieved from the UI Process using webkit_context_menu_get_user_data().
+ * If the @user_data #GVariant is floating, it is consumed.
  *
  * Since: 2.8
  */
