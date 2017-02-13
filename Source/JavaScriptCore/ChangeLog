@@ -1,3 +1,9 @@
+2017-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        C loop build fix attempt after r212207.
+
+        * runtime/Lookup.h:
+
 2017-02-11  Sam Weinig  <sam@webkit.org>
 
         Remove the remaining functions out of JSDOMBinding

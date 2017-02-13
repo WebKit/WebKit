@@ -28,6 +28,7 @@
 #include "Identifier.h"
 #include "IdentifierInlines.h"
 #include "Intrinsic.h"
+#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "LazyProperty.h"
 #include "PropertySlot.h"
