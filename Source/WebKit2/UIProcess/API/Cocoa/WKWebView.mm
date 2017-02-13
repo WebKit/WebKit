@@ -86,6 +86,7 @@
 #import "_WKInputDelegate.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
+#import "_WKTestingDelegate.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
 #import <WebCore/GraphicsContextCG.h>
@@ -286,6 +287,8 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
     RetainPtr<WKTextFinderClient> _textFinderClient;
 #endif
+
+    id<_WKTestingDelegate> _testingDelegate;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -4874,6 +4877,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 #endif
 }
 
+- (id<_WKTestingDelegate>)_testingDelegate
+{
+    return _testingDelegate;
+}
+
+- (void)_setTestingDelegate:(id<_WKTestingDelegate>)testingDelegate
+{
+    _testingDelegate = testingDelegate;
+}
+
 #if PLATFORM(IOS)
 
 - (CGRect)_contentVisibleRect
@@ -5096,6 +5109,72 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (void)_disableBackForwardSnapshotVolatilityForTesting
 {
     WebKit::ViewSnapshotStore::singleton().setDisableSnapshotVolatilityForTesting(true);
+}
+
+
+- (void)_simulateDataInteractionGestureRecognized
+{
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateDataInteractionGestureRecognized:_testingDelegate.dataInteractionGestureRecognizer];
+#endif
+}
+
+- (void)_simulateDataInteractionEntered:(id)info
+{
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateDataInteractionEntered:info];
+#endif
+}
+
+- (void)_simulateDataInteractionUpdated:(id)info
+{
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateDataInteractionUpdated:info];
+#endif
+}
+
+- (void)_simulateDataInteractionPerformOperation:(id)info
+{
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateDataInteractionPerformOperation:info];
+#endif
+}
+
+- (void)_simulateDataInteractionEnded:(id)info
+{
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateDataInteractionEnded:info];
+#endif
+}
+
+- (void)_simulateDataInteractionSessionDidEnd:(id)session withOperation:(NSUInteger)operation
+{
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateDataInteractionSessionDidEnd:session withOperation:operation];
+#endif
+}
+
+- (void)_simulateFailedDataInteractionWithIndex:(NSInteger)sourceIndex
+{
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateFailedDataInteractionWithIndex:sourceIndex];
+#endif
+}
+
+- (void)_simulateWillBeginDataInteractionWithIndex:(NSInteger)sourceIndex withSession:(id)session
+{
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateWillBeginDataInteractionWithIndex:sourceIndex withSession:session];
+#endif
+}
+
+- (NSArray *)_simulatedItemsForDataInteractionWithIndex:(NSInteger)sourceIndex
+{
+#if ENABLE(DATA_INTERACTION)
+    return [_contentView _simulatedItemsForDataInteractionWithIndex:sourceIndex];
+#else
+    return @[ ];
+#endif
 }
 
 @end

@@ -1,3 +1,51 @@
+2017-02-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Add test infrastructure and unit tests for data interaction
+        https://bugs.webkit.org/show_bug.cgi?id=168159
+        <rdar://problem/30477634>
+
+        Reviewed by Tim Horton.
+
+        Adds support at the WebKit2 layer for testing data interaction. Introduces the _WKTestingDelegate, which a
+        protocol which can specified for a WKWebView and used to install mock objects and simulate the state of the
+        platform. By default, this delegate is nil, which results in normal behavior. For data interaction, we are able
+        to specify a mock data interaction gesture recognizer for use by the WKContentView to simulate firing a long
+        press and subsequent movement. This gesture recognizer is used in place of the regular data interaction gesture
+        recognizer, and allows for TestWebKitAPI to drive interaction without actually sending events through the
+        UIApplication. The _WKTestingDelegate also contains optional method hooks which are invoked at key points in
+        time when performing a data interaction gesture.
+
+        Since all methods of the testing delegate are optional, the testing delegate can be easily extended to support
+        testing for other features -- the idea is that leaving all but the relevant methods in the protocol
+        unimplemented will result in default behavior for everything other than those methods, so a client need only
+        implement and add WebKit2 hooks for a few methods to support testing for a new feature.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _testingDelegate]):
+        (-[WKWebView _setTestingDelegate:]):
+
+        Specify the testing delegate to use for this WKWebView (see above for more details).
+
+        (-[WKWebView _simulateDataInteractionGestureRecognized]):
+        (-[WKWebView _simulateDataInteractionEntered:]):
+        (-[WKWebView _simulateDataInteractionUpdated:]):
+        (-[WKWebView _simulateDataInteractionPerformOperation:]):
+        (-[WKWebView _simulateDataInteractionEnded:]):
+        (-[WKWebView _simulateDataInteractionSessionDidEnd:withOperation:]):
+        (-[WKWebView _simulateFailedDataInteractionWithIndex:]):
+        (-[WKWebView _simulateWillBeginDataInteractionWithIndex:withSession:]):
+        (-[WKWebView _simulatedItemsForDataInteractionWithIndex:]):
+
+        Used by TestWebKitAPI to drive data interaction tests. See DataInteractionTests.mm.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKTestingDelegate.h: Added.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView _dataInteractionGestureRecognizer]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-02-13  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream Mac] Video capture needs access to /Library/CoreMediaIO/Plug-Ins/DAL/

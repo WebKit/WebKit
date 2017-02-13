@@ -68,6 +68,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @protocol _WKIconLoadingDelegate;
 @protocol _WKInputDelegate;
 @protocol _WKFullscreenDelegate;
+@protocol _WKTestingDelegate;
 
 @interface WKWebView (WKPrivate)
 
@@ -276,6 +277,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @interface WKWebView (WKTesting)
 
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, weak, setter=_setTestingDelegate:) id<_WKTestingDelegate> _testingDelegate WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 
@@ -302,6 +304,16 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @property (nonatomic, readonly) NSString *_scrollingTreeAsText WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) NSNumber *_stableStateOverride WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
+- (void)_simulateDataInteractionGestureRecognized WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateDataInteractionEntered:(id)info WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateDataInteractionUpdated:(id)info WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateDataInteractionPerformOperation:(id)info WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateDataInteractionEnded:(id)info WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateDataInteractionSessionDidEnd:(id)session withOperation:(NSUInteger)operation WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateFailedDataInteractionWithIndex:(NSInteger)sourceIndex WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateWillBeginDataInteractionWithIndex:(NSInteger)sourceIndex withSession:(id)session WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (NSArray *)_simulatedItemsForDataInteractionWithIndex:(NSInteger)sourceIndex WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 #endif // TARGET_OS_IPHONE
 

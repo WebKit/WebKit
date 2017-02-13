@@ -59,6 +59,7 @@
 #import "_WKFocusedElementInfo.h"
 #import "_WKFormInputSession.h"
 #import "_WKInputDelegate.h"
+#import "_WKTestingDelegate.h"
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
 #import <MobileCoreServices/UTCoreTypes.h>
@@ -557,7 +558,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [self _createAndConfigureLongPressGestureRecognizer];
 
 #if ENABLE(DATA_INTERACTION)
-    _dataInteractionGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_dataInteractionGestureRecognizer:)]);
+    _dataInteractionGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_dataInteractionGestureRecognized:)]);
     [_dataInteractionGestureRecognizer setDelay:0.5];
     [_dataInteractionGestureRecognizer setDelegate:self];
     [_dataInteractionGestureRecognizer _setRequiresQuietImpulse:YES];
@@ -1465,6 +1466,14 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return NO;
 
     return _positionInformation.hasDataInteractionAtPosition;
+}
+
+- (UILongPressGestureRecognizer *)_dataInteractionGestureRecognizer
+{
+    if ([_webView._testingDelegate respondsToSelector:@selector(dataInteractionGestureRecognizer)])
+        return _webView._testingDelegate.dataInteractionGestureRecognizer;
+
+    return _dataInteractionGestureRecognizer.get();
 }
 
 #endif

@@ -1,3 +1,56 @@
+2017-02-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Add test infrastructure and unit tests for data interaction
+        https://bugs.webkit.org/show_bug.cgi?id=168159
+        <rdar://problem/30477634>
+
+        Reviewed by Tim Horton.
+
+        Uses the testing delegate introduced in WebKit2 to override the gesture recognizer used to initiate data
+        interaction. Instead of being driven by UIKit, the DataInteractionSimulator drives this overridden gesture
+        recognizer by making the WKContentView call its dataInteractionGestureRecognized method. To simulate an actual
+        gesture being performed, we fire the gesture recognizer (or call the data interaction delegate methods, if the
+        gesture has already been recognized) at regular intervals over the course of the test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/autofocus-contenteditable.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/image-and-contenteditable.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/image-and-textarea.html: Added.
+
+        New test pages for data interaction.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm: Added.
+        (TestWebKitAPI::runTestsExpectingToObserveEvents):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView stringByEvaluatingJavaScript:]):
+        * TestWebKitAPI/ios/DataInteractionSimulator.h: Added.
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm: Added.
+        (-[MockLongPressGestureRecognizer initWithWindow:]):
+        (-[MockLongPressGestureRecognizer locationInView:]):
+        (-[MockLongPressGestureRecognizer state]):
+        (-[MockLongPressGestureRecognizer numberOfTouches]):
+        (-[DataInteractionSimulator initWithWebView:startLocation:endLocation:]):
+        (-[DataInteractionSimulator dealloc]):
+        (-[DataInteractionSimulator run]):
+
+        Performs a data interaction gesture from the start location to the end location with linear interpolation. For
+        now, the timestep and progress per tick are 30ms and 3.33%, respectively, which means that tests should complete
+        in a little under 1 second, though this can be easily changed to be configurable in the future if needed.
+
+        (-[DataInteractionSimulator _advanceProgress]):
+
+        Fired periodically to drive the data interaction gesture. Schedules a call of itself until the test is
+        completed, and calls _finishDataInteraction when progress is at 1.
+
+        (-[DataInteractionSimulator _finishDataInteraction]):
+        (-[DataInteractionSimulator _currentLocation]):
+        (-[DataInteractionSimulator _scheduleAdvanceProgress]):
+        (-[DataInteractionSimulator _recognizeGestureAtLocation:withState:]):
+        (-[DataInteractionSimulator dataInteractionGestureRecognizer]):
+        (-[DataInteractionSimulator webViewDidPerformDataInteractionControllerOperation:]):
+        (-[DataInteractionSimulator webView:beginDataInteractionWithSourceIndex:gestureRecognizer:]):
+
 2017-02-13  Alex Christensen  <achristensen@webkit.org>
 
         Percent should be allowed in non-special URL hosts

@@ -271,6 +271,15 @@ struct WKAutoCorrectionData {
 - (void)_didPerformDataInteractionControllerOperation;
 - (void)_didHandleStartDataInteractionRequest:(BOOL)started;
 - (void)_startDataInteractionWithImage:(RetainPtr<CGImageRef>)image atClientPosition:(CGPoint)clientPosition anchorPoint:(CGPoint)anchorPoint isLink:(BOOL)isLink;
+- (void)_simulateDataInteractionGestureRecognized:(UILongPressGestureRecognizer *)gestureRecognizer WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateDataInteractionEntered:(id)info WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateDataInteractionUpdated:(id)info WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateDataInteractionPerformOperation:(id)info WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateDataInteractionEnded:(id)info WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateDataInteractionSessionDidEnd:(id)session withOperation:(NSUInteger)operation WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateFailedDataInteractionWithIndex:(NSInteger)sourceIndex WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateWillBeginDataInteractionWithIndex:(NSInteger)sourceIndex withSession:(id)session WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (NSArray *)_simulatedItemsForDataInteractionWithIndex:(NSInteger)sourceIndex WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #endif
 
 @end

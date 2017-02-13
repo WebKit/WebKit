@@ -215,13 +215,13 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     __block NSString *evalResult = nil;
     [self evaluateJavaScript:script completionHandler:^(id result, NSError *error)
     {
-        evalResult = [NSString stringWithFormat:@"%@", result];
+        evalResult = [[NSString alloc] initWithFormat:@"%@", result];
         isWaitingForJavaScript = true;
         EXPECT_TRUE(!error);
     }];
 
     TestWebKitAPI::Util::run(&isWaitingForJavaScript);
-    return evalResult;
+    return [evalResult autorelease];
 }
 
 - (void)waitForMessage:(NSString *)message
