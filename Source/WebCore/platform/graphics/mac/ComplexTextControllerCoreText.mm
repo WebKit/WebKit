@@ -41,7 +41,7 @@
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 90000)
 SOFT_LINK_FRAMEWORK(CoreText);
-SOFT_LINK(CoreText, CTRunGetBaseAdvancesAndOrigins, void, (CTRunRef run, CFRange range, FloatSize baseAdvances[], FloatPoint origins[]), (run, range, baseAdvances, origins))
+SOFT_LINK(CoreText, CTRunGetBaseAdvancesAndOrigins, void, (CTRunRef run, CFRange range, CGSize baseAdvances[], CGPoint origins[]), (run, range, baseAdvances, origins))
 #endif
 
 // Note: CTFontDescriptorRefs can live forever in caches inside CoreText, so this object can too.
