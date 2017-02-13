@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "MediaQueryExp.h"
+#include "MediaQueryExpression.h"
 
 #include "CSSAspectRatioValue.h"
 #include "CSSParser.h"

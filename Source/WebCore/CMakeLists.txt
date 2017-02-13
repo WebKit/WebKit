@@ -1323,7 +1323,7 @@ set(WebCore_SOURCES
     css/MediaList.cpp
     css/MediaQuery.cpp
     css/MediaQueryEvaluator.cpp
-    css/MediaQueryExp.cpp
+    css/MediaQueryExpression.cpp
     css/MediaQueryList.cpp
     css/MediaQueryMatcher.cpp
     css/PageRuleCollector.cpp

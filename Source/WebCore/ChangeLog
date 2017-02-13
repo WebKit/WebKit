@@ -1,3 +1,23 @@
+2017-02-13  Sam Weinig  <sam@webkit.org>
+
+        Rename MediaQueryExp.h/cpp to MediaQueryExpression.h/cpp
+        https://bugs.webkit.org/show_bug.cgi?id=168249
+
+        Reviewed by Dean Jackson.
+
+        Fix a FIXME and rename MediaQueryExp.h/cpp to match the class it contains, MediaQueryExpression.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSAllInOne.cpp:
+        * css/MediaQuery.h:
+        * css/MediaQueryEvaluator.h:
+        * css/MediaQueryExp.cpp: Removed.
+        * css/MediaQueryExp.h: Removed.
+        * css/MediaQueryExpression.cpp: Copied from Source/WebCore/css/MediaQueryExp.cpp.
+        * css/MediaQueryExpression.h: Copied from Source/WebCore/css/MediaQueryExp.h.
+        * css/parser/MediaQueryParser.h:
+
 2017-02-13  Aakash Jain  <aakash_jain@apple.com>
 
         WAKResponder should be exported from WebCore

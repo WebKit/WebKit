@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-// FIXME: Rename the file to match this class's name.
 class MediaQueryExpression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
