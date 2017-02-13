@@ -331,12 +331,12 @@ class SingleTestRunner(object):
         if not reference_driver_output.image_hash and not actual_driver_output.image_hash:
             failures.append(test_failures.FailureReftestNoImagesGenerated(reference_filename))
         elif mismatch:
-            if reference_driver_output.image_hash == actual_driver_output.image_hash:
+            if reference_driver_output.image_hash != actual_driver_output.image_hash:
                 diff_result = self._port.diff_image(reference_driver_output.image, actual_driver_output.image, tolerance=0)
                 if not diff_result[0]:
                     failures.append(test_failures.FailureReftestMismatchDidNotOccur(reference_filename))
-                else:
-                    _log.warning("  %s -> ref test hashes matched but diff failed" % self._test_name)
+            else:
+                failures.append(test_failures.FailureReftestMismatchDidNotOccur(reference_filename))
 
         elif reference_driver_output.image_hash != actual_driver_output.image_hash:
             diff_result = self._port.diff_image(reference_driver_output.image, actual_driver_output.image, tolerance=0)

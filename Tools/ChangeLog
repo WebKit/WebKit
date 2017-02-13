@@ -1,3 +1,20 @@
+2017-02-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Nwtr unexpectedly passes mismatch ref test if the hashes doesn't match but no diff
+        https://bugs.webkit.org/show_bug.cgi?id=168221
+
+        Reviewed by Ryosuke Niwa.
+
+        There is a logic error in comparing mismatch ref test images. In
+        mismatch ref tests, it should be failed if two images has no diff.
+        But, if the hashes are different, nwtr unexpectedly pass the
+        mismatch ref test.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._compare_output_with_reference): Fail the
+        mismatch ref test if hashes of two images are equal. Invoke
+        ImageDiff if the hashes don't match.
+
 2017-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update custom line breaking iterators to the latest version of Unicode
