@@ -624,3 +624,5 @@ webkit.org/b/167538 [ Sierra ] fast/css-grid-layout/grid-simplified-layout-posit
 webkit.org/b/167965 pointer-lock/mouse-event-delivery.html [ Pass Failure ]
 
 webkit.org/b/168235 [ Debug ] imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Pass Failure ]
+
+webkit.org/b/168085 tiled-drawing/scrolling/latched-to-deleted-node.html [ Pass Failure ]
