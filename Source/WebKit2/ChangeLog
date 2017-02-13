@@ -1,3 +1,35 @@
+2017-02-13  Antti Koivisto  <antti@apple.com>
+
+        Disable mmap'd cache files if container is class A
+        https://bugs.webkit.org/show_bug.cgi?id=168241
+        <rdar://problem/23676252>
+
+        Reviewed by JF Bastien and Chris Dumez.
+
+        If the mmap'd cache file gets evicted and the device is locked,
+        then WebContent won't be able to bring the file back in under
+        class A, causing SIGBUS.
+
+        In those circumstances, don't use mmap'd files.
+
+        * NetworkProcess/cache/NetworkCache.h:
+        (WebKit::NetworkCache::Cache::canUseSharedMemoryForBodyData):
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::initializeShareableResourceHandleFromStorageRecord):
+
+            Don't initialize the shareable resource handle for the map if forbidden.
+
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+        (WebKit::NetworkCache::canUseSharedMemoryForPath):
+
+            Query the system for the protection status of the cache path.
+
+        * NetworkProcess/cache/NetworkCacheFileSystem.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::Storage):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::canUseSharedMemoryForBodyData):
+
 2017-02-13  Youenn Fablet  <youennf@gmail.com>
 
         [WebRTC] libwebrtc socket factory is not assigning the right socket type

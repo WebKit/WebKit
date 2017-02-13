@@ -28,12 +28,19 @@
 
 #if ENABLE(NETWORK_CACHE)
 
+#include "Logging.h"
 #include <WebCore/FileSystem.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include <wtf/Assertions.h>
 #include <wtf/Function.h>
 #include <wtf/text/CString.h>
+
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#include <sys/attr.h>
+#include <unistd.h>
+#endif
 
 #if USE(SOUP)
 #include <gio/gio.h>
@@ -124,6 +131,37 @@ void updateFileModificationTimeIfNeeded(const String& path)
     }
     // This really updates both the access time and the modification time.
     utimes(WebCore::fileSystemRepresentation(path).data(), nullptr);
+}
+
+bool canUseSharedMemoryForPath(const String& path)
+{
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+    struct {
+        uint32_t length;
+        uint32_t protectionClass;
+    } attrBuffer;
+
+    attrlist attrList = { };
+    attrList.bitmapcount = ATTR_BIT_MAP_COUNT;
+    attrList.commonattr = ATTR_CMN_DATA_PROTECT_FLAGS;
+    int32_t error = getattrlist(WebCore::fileSystemRepresentation(path).data(), &attrList, &attrBuffer, sizeof(attrBuffer), FSOPT_NOFOLLOW);
+    if (error) {
+        RELEASE_LOG_ERROR(Network, "Unable to get cache directory protection class, disabling use of shared mapped memory");
+        return false;
+    }
+
+    // For stricter protection classes shared maps could disappear when device is locked.
+    const uint32_t fileProtectionCompleteUntilFirstUserAuthentication = 3;
+    bool isSafe = attrBuffer.protectionClass >= fileProtectionCompleteUntilFirstUserAuthentication;
+
+    if (!isSafe)
+        RELEASE_LOG(Network, "Disallowing use of shared mapped memory due to container protection class %u", attrBuffer.protectionClass);
+
+    return isSafe;
+#else
+    UNUSED_PARAM(path);
+    return true;
+#endif
 }
 
 }

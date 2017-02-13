@@ -130,6 +130,7 @@ public:
     void dumpContentsToFile();
 
     String recordsPath() const;
+    bool canUseSharedMemoryForBodyData() const { return m_storage && m_storage->canUseSharedMemoryForBodyData(); }
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     SpeculativeLoadManager* speculativeLoadManager() { return m_speculativeLoadManager.get(); }

@@ -100,6 +100,8 @@ public:
 
     const Salt& salt() const { return m_salt; }
 
+    bool canUseSharedMemoryForBodyData() const { return m_canUseSharedMemoryForBodyData; }
+
     ~Storage();
 
 private:
@@ -145,6 +147,8 @@ private:
     const String m_recordsPath;
 
     const Salt m_salt;
+
+    const bool m_canUseSharedMemoryForBodyData;
 
     size_t m_capacity { std::numeric_limits<size_t>::max() };
     size_t m_approximateRecordsSize { 0 };
