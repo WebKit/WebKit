@@ -506,6 +506,9 @@
 		C0ADBE9612FCA79B00D2C129 /* simple-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C0ADBE8412FCA6B600D2C129 /* simple-form.html */; };
 		C0BD669F131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */; };
 		C0C5D3C61459912900A802A6 /* GetBackingScaleFactor_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */; };
+		C25CCA061E51380B0026CB8A /* LineBreaking.mm in Sources */ = {isa = PBXBuildFile; fileRef = C25CCA051E51380B0026CB8A /* LineBreaking.mm */; };
+		C25CCA0B1E5140C10026CB8A /* LineBreaking.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C25CCA0A1E513F490026CB8A /* LineBreaking.html */; };
+		C25CCA0D1E5141840026CB8A /* AllAhem.svg in Copy Resources */ = {isa = PBXBuildFile; fileRef = C25CCA0C1E5140E50026CB8A /* AllAhem.svg */; };
 		C2CF975A16CEC7140054E99D /* JSContextBackForwardCache2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C2CF975916CEC69E0054E99D /* JSContextBackForwardCache2.html */; };
 		C2CF975B16CEC71B0054E99D /* JSContextBackForwardCache1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C2CF975816CEC69E0054E99D /* JSContextBackForwardCache1.html */; };
 		C5101C4F176B8D9200EE9B15 /* findRanges.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C5101C4E176B8BB900EE9B15 /* findRanges.html */; };
@@ -625,6 +628,8 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				C25CCA0D1E5141840026CB8A /* AllAhem.svg in Copy Resources */,
+				C25CCA0B1E5140C10026CB8A /* LineBreaking.html in Copy Resources */,
 				F47728991E4AE3C1007ABF6A /* full-page-contenteditable.html in Copy Resources */,
 				C99B675F1E39736F00FC6C80 /* no-autoplay-with-controls.html in Copy Resources */,
 				C99B675D1E39722000FC6C80 /* js-play-with-controls.html in Copy Resources */,
@@ -1099,7 +1104,7 @@
 		7C83E0261D0A5B8D00FEBCF3 /* TestWTF.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWTF.xcconfig; sourceTree = "<group>"; };
 		7C83E0271D0A5B8D00FEBCF3 /* TestWTFLibrary.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWTFLibrary.xcconfig; sourceTree = "<group>"; };
 		7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libWTF.a; path = ../../../../../Builds/Debug/libWTF.a; sourceTree = "<group>"; };
-		7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		7C83E0361D0A5F7000FEBCF3 /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
 		7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = UtilitiesCocoa.mm; path = cocoa/UtilitiesCocoa.mm; sourceTree = "<group>"; };
 		7C882E031C80C624006BF731 /* UserContentWorld.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserContentWorld.mm; sourceTree = "<group>"; };
@@ -1293,6 +1298,9 @@
 		C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResponsivenessTimerDoesntFireEarly_Bundle.cpp; sourceTree = "<group>"; };
 		C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor.mm; sourceTree = "<group>"; };
 		C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor_Bundle.mm; sourceTree = "<group>"; };
+		C25CCA051E51380B0026CB8A /* LineBreaking.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LineBreaking.mm; path = ../WebCore/LineBreaking.mm; sourceTree = "<group>"; };
+		C25CCA0A1E513F490026CB8A /* LineBreaking.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = LineBreaking.html; sourceTree = "<group>"; };
+		C25CCA0C1E5140E50026CB8A /* AllAhem.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AllAhem.svg; sourceTree = "<group>"; };
 		C2CF975816CEC69E0054E99D /* JSContextBackForwardCache1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = JSContextBackForwardCache1.html; sourceTree = "<group>"; };
 		C2CF975916CEC69E0054E99D /* JSContextBackForwardCache2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = JSContextBackForwardCache2.html; sourceTree = "<group>"; };
 		C2EB2DD116CAC7AC009B52EE /* WebViewDidCreateJavaScriptContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewDidCreateJavaScriptContext.mm; sourceTree = "<group>"; };
@@ -1414,6 +1422,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C83E03F1D0A61A000FEBCF3 /* libicucore.dylib in Frameworks */,
 				7A010BCD1D877C0D00EDE72A /* QuartzCore.framework in Frameworks */,
 				7A010BCB1D877C0500EDE72A /* CoreGraphics.framework in Frameworks */,
 			);
@@ -1523,6 +1532,7 @@
 			isa = PBXGroup;
 			children = (
 				A16F66B81C40E9E100BD4D24 /* Resources */,
+				C25CCA051E51380B0026CB8A /* LineBreaking.mm */,
 				7CEFA9641AC0B9E200B910FD /* _WKUserContentExtensionStore.mm */,
 				A1DF74301C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm */,
 				2DE71AFD1D49C0BD00904094 /* AnimatedResize.mm */,
@@ -1762,6 +1772,8 @@
 				515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */,
 				51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */,
 				51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */,
+				C25CCA0A1E513F490026CB8A /* LineBreaking.html */,
+				C25CCA0C1E5140E50026CB8A /* AllAhem.svg */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -2752,6 +2764,7 @@
 				7CCE7EDE1A411A9200447C4C /* URL.cpp in Sources */,
 				7CCE7EB01A411A4400447C4C /* URLExtras.mm in Sources */,
 				07492B3B1DF8B14C00633DE1 /* EnumerateMediaDevices.cpp in Sources */,
+				C25CCA061E51380B0026CB8A /* LineBreaking.mm in Sources */,
 				7A6A2C701DCCFA8C00C0D085 /* LocalStorageQuirkTest.mm in Sources */,
 				2DFF7B6D1DA487AF00814614 /* SnapshotStore.mm in Sources */,
 				5C6E65441D5CEFD400F7862E /* URLParser.cpp in Sources */,

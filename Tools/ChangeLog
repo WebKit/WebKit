@@ -1,3 +1,21 @@
+2017-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update custom line breaking iterators to the latest version of Unicode
+        https://bugs.webkit.org/show_bug.cgi?id=168182
+
+        Reviewed by Zalan Bujtas.
+
+        Treat the system's ICU as the source of truth to compare breaking positions against.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/LineBreaking.mm: Added.
+        (generateJavaScriptForTest):
+        (breakingLocationsFromICU):
+        (testAFewStrings):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AllAhem.svg: Renamed from LayoutTests/css3/line-break/resources/AllAhem.svg.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LineBreaking.html: Added.
+
 2017-02-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Several failing WebViewEditor API tests

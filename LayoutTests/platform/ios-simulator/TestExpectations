@@ -2335,13 +2335,6 @@ webkit.org/b/148806 imported/w3c/css/css-multicol-1/multicol-shorthand-001.xht [
 webkit.org/b/148806 imported/w3c/css/css-multicol-1/multicol-span-all-block-sibling-003.xht [ ImageOnlyFailure ]
 webkit.org/b/148806 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nested-firstchild-001.xht [ ImageOnlyFailure ]
 
-# Flaky tests ( these tests were affected by https://bugs.webkit.org/show_bug.cgi?id=149320 )
-
-css3/line-break/line-break-loose-centered.html [ ImageOnlyFailure Pass ]
-css3/line-break/line-break-loose-postfixes.html [ ImageOnlyFailure Pass ]
-css3/line-break/line-break-loose-sound-marks.html [ ImageOnlyFailure Pass ]
-css3/line-break/line-break-normal-sound-marks.html [ ImageOnlyFailure Pass ]
-
 # Enable "aria-current" test for iOS
 webkit.org/b/149297 accessibility/aria-current.html [ Pass ]
 

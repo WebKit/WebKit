@@ -1,3 +1,29 @@
+2017-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update custom line breaking iterators to the latest version of Unicode
+        https://bugs.webkit.org/show_bug.cgi?id=168182
+
+        Reviewed by Zalan Bujtas.
+
+        ICU 55.1 supports loose / normal / strict line breaking rules. The oldest platform we ship
+        on has a version of ICU >= that one. Therefore, we don't need to compile our own rules;
+        we can just use ICU's rules.
+
+        * wtf/text/LineBreakIteratorPoolICU.h:
+        (WTF::LineBreakIteratorPool::makeLocaleWithBreakKeyword):
+        (WTF::LineBreakIteratorPool::take):
+        * wtf/text/TextBreakIterator.cpp:
+        (WTF::acquireLineBreakIterator):
+        (WTF::openLineBreakIterator):
+        (WTF::mapLineIteratorModeToRules): Deleted.
+        (WTF::isCJKLocale): Deleted.
+        * wtf/text/TextBreakIterator.h:
+        (WTF::LazyLineBreakIterator::LazyLineBreakIterator):
+        (WTF::LazyLineBreakIterator::mode):
+        (WTF::LazyLineBreakIterator::get):
+        (WTF::LazyLineBreakIterator::resetStringAndReleaseIterator):
+        (WTF::LazyLineBreakIterator::isLooseCJKMode): Deleted.
+
 2017-02-10  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] WTF installs extra copies of two headers outside /usr/local/include/wtf

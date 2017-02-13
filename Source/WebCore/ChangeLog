@@ -1,3 +1,35 @@
+2017-02-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update custom line breaking iterators to the latest version of Unicode
+        https://bugs.webkit.org/show_bug.cgi?id=168182
+
+        Reviewed by Zalan Bujtas.
+
+        Clean up our breaking code to be more descriptive about the difference between
+        line-break: auto vs line-break: loose | normal | strict. The only difference is
+        that we have some hardcoded tables to speed up character iteration for
+        line-break: auto.
+
+        Tests: TestWebKitAPI WebKit2.LineBreaking
+
+        * rendering/BreakLines.h:
+        (WebCore::nextBreakablePosition):
+        (WebCore::nextBreakablePositionIgnoringNBSP):
+        (WebCore::nextBreakablePositionWithoutShortcut):
+        (WebCore::nextBreakablePositionIgnoringNBSPWithoutShortcut):
+        (WebCore::isBreakable):
+        (WebCore::nextBreakablePositionNonLoosely): Deleted.
+        (WebCore::nextBreakablePositionLoosely): Deleted.
+        (WebCore::nextBreakablePositionLoose): Deleted.
+        (WebCore::nextBreakablePositionIgnoringNBSPLoose): Deleted.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::nextBreakablePositionInSegment):
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+        (WebCore::BreakingContext::optimalLineBreakLocationForTrailingWord):
+
 2017-02-13  Youenn Fablet  <youenn@apple.com>
 
         Remove @getUserMedia identifier

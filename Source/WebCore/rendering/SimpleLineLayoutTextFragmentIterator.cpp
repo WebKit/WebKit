@@ -127,15 +127,15 @@ static inline unsigned nextBreakablePositionInSegment(LazyLineBreakIterator& lin
         return nextBreakablePositionKeepingAllWordsIgnoringNBSP(lineBreakIterator, startPosition);
     }
 
-    if (lineBreakIterator.isLooseCJKMode()) {
+    if (lineBreakIterator.mode() == LineBreakIteratorMode::Default) {
         if (breakNBSP)
-            return nextBreakablePositionLoose(lineBreakIterator, startPosition);
-        return nextBreakablePositionIgnoringNBSPLoose(lineBreakIterator, startPosition);
+            return WebCore::nextBreakablePosition(lineBreakIterator, startPosition);
+        return nextBreakablePositionIgnoringNBSP(lineBreakIterator, startPosition);
     }
-        
+
     if (breakNBSP)
-        return WebCore::nextBreakablePosition(lineBreakIterator, startPosition);
-    return nextBreakablePositionIgnoringNBSP(lineBreakIterator, startPosition);
+        return nextBreakablePositionWithoutShortcut(lineBreakIterator, startPosition);
+    return nextBreakablePositionIgnoringNBSPWithoutShortcut(lineBreakIterator, startPosition);
 }
 
 unsigned TextFragmentIterator::nextBreakablePosition(const FlowContents::Segment& segment, unsigned startPosition)

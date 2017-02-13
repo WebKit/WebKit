@@ -797,7 +797,8 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     const FontCascade& font = style.fontCascade(); // FIXME: This ignores first-line.
     float wordSpacing = font.wordSpacing();
     unsigned len = textLength();
-    LazyLineBreakIterator breakIterator(m_text, style.locale(), mapLineBreakToIteratorMode(style.lineBreak()));
+    auto iteratorMode = mapLineBreakToIteratorMode(style.lineBreak());
+    LazyLineBreakIterator breakIterator(m_text, style.locale(), iteratorMode);
     bool needsWordSpacing = false;
     bool ignoringSpaces = false;
     bool isSpace = false;
@@ -834,7 +835,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     // word-break, but we support it as though it means break-all.
     bool breakAll = (style.wordBreak() == BreakAllWordBreak || style.wordBreak() == BreakWordBreak) && style.autoWrap();
     bool keepAllWords = style.wordBreak() == KeepAllWordBreak;
-    bool isLooseCJKMode = breakIterator.isLooseCJKMode();
+    bool canUseLineBreakShortcut = iteratorMode == LineBreakIteratorMode::Default;
 
     for (unsigned i = 0; i < len; i++) {
         UChar c = uncheckedCharacterAt(i);
@@ -880,7 +881,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             continue;
         }
 
-        bool hasBreak = breakAll || isBreakable(breakIterator, i, nextBreakable, breakNBSP, isLooseCJKMode, keepAllWords);
+        bool hasBreak = breakAll || isBreakable(breakIterator, i, nextBreakable, breakNBSP, canUseLineBreakShortcut, keepAllWords);
         bool betweenWords = true;
         unsigned j = i;
         while (c != '\n' && !isSpaceAccordingToStyle(c, style) && c != '\t' && (c != softHyphen || style.hyphens() == HyphensNone)) {
@@ -888,7 +889,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             if (j == len)
                 break;
             c = uncheckedCharacterAt(j);
-            if (isBreakable(breakIterator, j, nextBreakable, breakNBSP, isLooseCJKMode, keepAllWords) && characterAt(j - 1) != softHyphen)
+            if (isBreakable(breakIterator, j, nextBreakable, breakNBSP, canUseLineBreakShortcut, keepAllWords) && characterAt(j - 1) != softHyphen)
                 break;
             if (breakAll) {
                 betweenWords = false;

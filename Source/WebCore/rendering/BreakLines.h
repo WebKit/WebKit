@@ -40,6 +40,11 @@ enum class NonBreakingSpaceBehavior {
     TreatNonBreakingSpaceAsBreak,
 };
 
+enum class CanUseShortcut {
+    Yes,
+    No
+};
+
 template<NonBreakingSpaceBehavior nonBreakingSpaceBehavior>
 static inline bool isBreakableSpace(UChar character)
 {
@@ -82,8 +87,8 @@ inline bool needsLineBreakIterator(UChar character)
 }
 
 // When in non-loose mode, we can use the ASCII shortcut table.
-template<typename CharacterType, NonBreakingSpaceBehavior nonBreakingSpaceBehavior>
-inline unsigned nextBreakablePositionNonLoosely(LazyLineBreakIterator& lazyBreakIterator, const CharacterType* string, unsigned length, unsigned startPosition)
+template<typename CharacterType, NonBreakingSpaceBehavior nonBreakingSpaceBehavior, CanUseShortcut canUseShortcut>
+inline unsigned nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, const CharacterType* string, unsigned length, unsigned startPosition)
 {
     std::optional<unsigned> nextBreak;
 
@@ -93,12 +98,10 @@ inline unsigned nextBreakablePositionNonLoosely(LazyLineBreakIterator& lazyBreak
     for (unsigned i = startPosition; i < length; i++) {
         CharacterType character = string[i];
 
-        // Non-loose mode, so use ASCII shortcut (shouldBreakAfter) if not breakable space.
-        if (isBreakableSpace<nonBreakingSpaceBehavior>(character) || shouldBreakAfter(lastLastCharacter, lastCharacter, character))
+        if (isBreakableSpace<nonBreakingSpaceBehavior>(character) || (canUseShortcut == CanUseShortcut::Yes && shouldBreakAfter(lastLastCharacter, lastCharacter, character)))
             return i;
 
-        // Non-loose mode, so conditionally use break iterator.
-        if (needsLineBreakIterator<nonBreakingSpaceBehavior>(character) || needsLineBreakIterator<nonBreakingSpaceBehavior>(lastCharacter)) {
+        if (canUseShortcut == CanUseShortcut::No || needsLineBreakIterator<nonBreakingSpaceBehavior>(character) || needsLineBreakIterator<nonBreakingSpaceBehavior>(lastCharacter)) {
             if (!nextBreak || nextBreak.value() < i) {
                 // Don't break if positioned at start of primary context and there is no prior context.
                 if (i || priorContextLength) {
@@ -120,50 +123,6 @@ inline unsigned nextBreakablePositionNonLoosely(LazyLineBreakIterator& lazyBreak
         }
 
         lastLastCharacter = lastCharacter;
-        lastCharacter = character;
-    }
-
-    return length;
-}
-
-// When in loose mode, we can't use the ASCII shortcut table since loose mode allows "$100" to break after '$' in content marked as CJK.
-// N.B. It should be possible to combine the following with the non-loose version above by adding a LooseBehavior template parameter;
-// however, when doing this, a 10% performance regression appeared on chromium-win (https://bugs.webkit.org/show_bug.cgi?id=89235#c112).
-template<typename CharacterType, NonBreakingSpaceBehavior nonBreakingSpaceBehavior>
-static inline unsigned nextBreakablePositionLoosely(LazyLineBreakIterator& lazyBreakIterator, const CharacterType* string, unsigned length, unsigned startPosition)
-{
-    std::optional<unsigned> nextBreak;
-
-    CharacterType lastCharacter = startPosition > 0 ? string[startPosition - 1] : static_cast<CharacterType>(lazyBreakIterator.lastCharacter());
-    unsigned priorContextLength = lazyBreakIterator.priorContextLength();
-    for (unsigned i = startPosition; i < length; i++) {
-        CharacterType character = string[i];
-
-        // Always loose mode, so don't use ASCII shortcut (shouldBreakAfter).
-        if (isBreakableSpace<nonBreakingSpaceBehavior>(character))
-            return i;
-
-        // Always use line break iterator in loose mode.
-        if (!nextBreak || nextBreak.value() < i) {
-            // Don't break if positioned at start of primary context and there is no prior context.
-            if (i || priorContextLength) {
-                UBreakIterator* breakIterator = lazyBreakIterator.get(priorContextLength);
-                if (breakIterator) {
-                    ASSERT(i + priorContextLength >= 1);
-                    int candidate = ubrk_following(breakIterator, i + priorContextLength - 1);
-                    if (candidate == UBRK_DONE)
-                        nextBreak = std::nullopt;
-                    else {
-                        unsigned result = candidate;
-                        ASSERT(result > priorContextLength);
-                        nextBreak = result - priorContextLength;
-                    }
-                }
-            }
-        }
-        if (i == nextBreak && !isBreakableSpace<nonBreakingSpaceBehavior>(lastCharacter))
-            return i;
-
         lastCharacter = character;
     }
 
@@ -200,35 +159,35 @@ inline unsigned nextBreakablePosition(LazyLineBreakIterator& iterator, unsigned 
 {
     auto stringView = iterator.stringView();
     if (stringView.is8Bit())
-        return nextBreakablePositionNonLoosely<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak>(iterator, stringView.characters8(), stringView.length(), startPosition);
-    return nextBreakablePositionNonLoosely<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak>(iterator, stringView.characters16(), stringView.length(), startPosition);
+        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::Yes>(iterator, stringView.characters8(), stringView.length(), startPosition);
+    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::Yes>(iterator, stringView.characters16(), stringView.length(), startPosition);
 }
 
 inline unsigned nextBreakablePositionIgnoringNBSP(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition)
 {
     auto stringView = lazyBreakIterator.stringView();
     if (stringView.is8Bit())
-        return nextBreakablePositionNonLoosely<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace>(lazyBreakIterator, stringView.characters8(), stringView.length(), startPosition);
-    return nextBreakablePositionNonLoosely<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace>(lazyBreakIterator, stringView.characters16(), stringView.length(), startPosition);
+        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::Yes>(lazyBreakIterator, stringView.characters8(), stringView.length(), startPosition);
+    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::Yes>(lazyBreakIterator, stringView.characters16(), stringView.length(), startPosition);
 }
 
-inline unsigned nextBreakablePositionLoose(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition)
+inline unsigned nextBreakablePositionWithoutShortcut(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition)
 {
     auto stringView = lazyBreakIterator.stringView();
     if (stringView.is8Bit())
-        return nextBreakablePositionLoosely<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak>(lazyBreakIterator, stringView.characters8(), stringView.length(), startPosition);
-    return nextBreakablePositionLoosely<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak>(lazyBreakIterator, stringView.characters16(), stringView.length(), startPosition);
+        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::No>(lazyBreakIterator, stringView.characters8(), stringView.length(), startPosition);
+    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::No>(lazyBreakIterator, stringView.characters16(), stringView.length(), startPosition);
 }
 
-inline unsigned nextBreakablePositionIgnoringNBSPLoose(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition)
+inline unsigned nextBreakablePositionIgnoringNBSPWithoutShortcut(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition)
 {
     auto stringView = lazyBreakIterator.stringView();
     if (stringView.is8Bit())
-        return nextBreakablePositionLoosely<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace>(lazyBreakIterator, stringView.characters8(), stringView.length(), startPosition);
-    return nextBreakablePositionLoosely<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace>(lazyBreakIterator, stringView.characters16(), stringView.length(), startPosition);
+        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::No>(lazyBreakIterator, stringView.characters8(), stringView.length(), startPosition);
+    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::No>(lazyBreakIterator, stringView.characters16(), stringView.length(), startPosition);
 }
 
-inline bool isBreakable(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition, std::optional<unsigned>& nextBreakable, bool breakNBSP, bool isLooseMode, bool keepAllWords)
+inline bool isBreakable(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition, std::optional<unsigned>& nextBreakable, bool breakNBSP, bool canUseShortcut, bool keepAllWords)
 {
     if (nextBreakable && nextBreakable.value() >= startPosition)
         return startPosition == nextBreakable;
@@ -238,11 +197,11 @@ inline bool isBreakable(LazyLineBreakIterator& lazyBreakIterator, unsigned start
             nextBreakable = nextBreakablePositionKeepingAllWords(lazyBreakIterator, startPosition);
         else
             nextBreakable = nextBreakablePositionKeepingAllWordsIgnoringNBSP(lazyBreakIterator, startPosition);
-    } else if (isLooseMode) {
+    } else if (!canUseShortcut) {
         if (breakNBSP)
-            nextBreakable = nextBreakablePositionLoose(lazyBreakIterator, startPosition);
+            nextBreakable = nextBreakablePositionWithoutShortcut(lazyBreakIterator, startPosition);
         else
-            nextBreakable = nextBreakablePositionIgnoringNBSPLoose(lazyBreakIterator, startPosition);
+            nextBreakable = nextBreakablePositionIgnoringNBSPWithoutShortcut(lazyBreakIterator, startPosition);
     } else {
         if (breakNBSP)
             nextBreakable = nextBreakablePosition(lazyBreakIterator, startPosition);

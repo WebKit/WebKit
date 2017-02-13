@@ -38,14 +38,12 @@ WTF_EXPORT_PRIVATE UBreakIterator* cursorMovementIterator(StringView);
 WTF_EXPORT_PRIVATE UBreakIterator* wordBreakIterator(StringView);
 WTF_EXPORT_PRIVATE UBreakIterator* sentenceBreakIterator(StringView);
 
-WTF_EXPORT_PRIVATE UBreakIterator* acquireLineBreakIterator(StringView, const AtomicString& locale, const UChar* priorContext, unsigned priorContextLength, LineBreakIteratorMode, bool isCJK);
+WTF_EXPORT_PRIVATE UBreakIterator* acquireLineBreakIterator(StringView, const AtomicString& locale, const UChar* priorContext, unsigned priorContextLength, LineBreakIteratorMode);
 WTF_EXPORT_PRIVATE void releaseLineBreakIterator(UBreakIterator*);
-UBreakIterator* openLineBreakIterator(const AtomicString& locale, LineBreakIteratorMode, bool isCJK);
+UBreakIterator* openLineBreakIterator(const AtomicString& locale);
 void closeLineBreakIterator(UBreakIterator*&);
 
 WTF_EXPORT_PRIVATE bool isWordTextBreak(UBreakIterator*);
-
-WTF_EXPORT_PRIVATE bool isCJKLocale(const AtomicString&);
 
 class LazyLineBreakIterator {
 public:
@@ -58,7 +56,6 @@ public:
         : m_stringView(stringView)
         , m_locale(locale)
         , m_mode(mode)
-        , m_isCJK(isCJKLocale(locale))
     {
         resetPriorContext();
     }
@@ -70,7 +67,7 @@ public:
     }
 
     StringView stringView() const { return m_stringView; }
-    bool isLooseCJKMode() const { return m_isCJK && m_mode == LineBreakIteratorMode::Loose; }
+    LineBreakIteratorMode mode() const { return m_mode; }
 
     UChar lastCharacter() const
     {
@@ -125,7 +122,7 @@ public:
         ASSERT(priorContextLength <= priorContextCapacity);
         const UChar* priorContext = priorContextLength ? &m_priorContext[priorContextCapacity - priorContextLength] : 0;
         if (!m_iterator) {
-            m_iterator = acquireLineBreakIterator(m_stringView, m_locale, priorContext, priorContextLength, m_mode, m_isCJK);
+            m_iterator = acquireLineBreakIterator(m_stringView, m_locale, priorContext, priorContextLength, m_mode);
             m_cachedPriorContext = priorContext;
             m_cachedPriorContextLength = priorContextLength;
         } else if (priorContext != m_cachedPriorContext || priorContextLength != m_cachedPriorContextLength) {
@@ -144,7 +141,6 @@ public:
         m_iterator = nullptr;
         m_cachedPriorContext = nullptr;
         m_mode = mode;
-        m_isCJK = isCJKLocale(locale);
         m_cachedPriorContextLength = 0;
     }
 
@@ -157,7 +153,6 @@ private:
     LineBreakIteratorMode m_mode { LineBreakIteratorMode::Default };
     unsigned m_cachedPriorContextLength { 0 };
     UChar m_priorContext[priorContextCapacity];
-    bool m_isCJK { false };
 };
 
 // Iterates over "extended grapheme clusters", as defined in UAX #29.

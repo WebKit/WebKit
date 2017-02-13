@@ -26,6 +26,7 @@
 #pragma once
 
 #include "TextBreakIterator.h"
+#include <unicode/uloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSpecific.h>
@@ -46,21 +47,46 @@ public:
 
     static AtomicString makeLocaleWithBreakKeyword(const AtomicString& locale, LineBreakIteratorMode mode)
     {
+        // The uloc functions model locales as char*, so we have to downconvert our AtomicString.
+        auto utf8Locale = locale.string().utf8();
+        if (!utf8Locale.length())
+            return locale;
+        Vector<char> scratchBuffer(utf8Locale.length() + 11, 0);
+        memcpy(scratchBuffer.data(), utf8Locale.data(), utf8Locale.length());
+
+        const char* keywordValue = nullptr;
         switch (mode) {
         case LineBreakIteratorMode::Default:
-            return locale;
+            // nullptr will cause any existing values to be removed.
+            break;
         case LineBreakIteratorMode::Loose:
-            return makeString(locale, "@break=loose");
+            keywordValue = "loose";
+            break;
         case LineBreakIteratorMode::Normal:
-            return makeString(locale, "@break=normal");
+            keywordValue = "normal";
+            break;
         case LineBreakIteratorMode::Strict:
-            return makeString(locale, "@break=strict");
+            keywordValue = "strict";
+            break;
         }
-        ASSERT_NOT_REACHED();
+
+        UErrorCode status = U_ZERO_ERROR;
+        int32_t lengthNeeded = uloc_setKeywordValue("lb", keywordValue, scratchBuffer.data(), scratchBuffer.size(), &status);
+        if (U_SUCCESS(status))
+            return AtomicString::fromUTF8(scratchBuffer.data(), lengthNeeded);
+        if (status == U_BUFFER_OVERFLOW_ERROR) {
+            scratchBuffer.grow(lengthNeeded + 1);
+            memset(scratchBuffer.data() + utf8Locale.length(), 0, scratchBuffer.size() - utf8Locale.length());
+            status = U_ZERO_ERROR;
+            int32_t lengthNeeded2 = uloc_setKeywordValue("lb", keywordValue, scratchBuffer.data(), scratchBuffer.size(), &status);
+            if (!U_SUCCESS(status) || lengthNeeded != lengthNeeded2)
+                return locale;
+            return AtomicString::fromUTF8(scratchBuffer.data(), lengthNeeded);
+        }
         return locale;
     }
 
-    UBreakIterator* take(const AtomicString& locale, LineBreakIteratorMode mode, bool isCJK)
+    UBreakIterator* take(const AtomicString& locale, LineBreakIteratorMode mode)
     {
         auto localeWithOptionalBreakKeyword = makeLocaleWithBreakKeyword(locale, mode);
 
@@ -74,7 +100,7 @@ public:
         }
 
         if (!iterator) {
-            iterator = openLineBreakIterator(localeWithOptionalBreakKeyword, mode, isCJK);
+            iterator = openLineBreakIterator(localeWithOptionalBreakKeyword);
             if (!iterator)
                 return nullptr;
         }

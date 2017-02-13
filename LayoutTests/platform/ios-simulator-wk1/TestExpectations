@@ -673,7 +673,6 @@ css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html
 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
 css3/filters/backdrop/backdrop-filter-with-clip-path.html [ ImageOnlyFailure ]
 css3/flexbox/content-height-with-scrollbars.html [ ImageOnlyFailure ]
-css3/line-break/line-break-auto-centered-2.html [ ImageOnlyFailure ]
 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]
 
 # CSS tests that pass:
