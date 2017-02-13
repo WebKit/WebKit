@@ -1,3 +1,12 @@
+2017-02-13  Zalan Bujtas <zalan@apple.com>
+
+        Simple line layout: Add performance test with text-rendering: optimizeSpeed
+        https://bugs.webkit.org/show_bug.cgi?id=168248
+
+        Reviewed by Simon Fraser.
+
+        * Layout/simple-line-layout-with-varying-content-and-optimized-speed.html: Added.
+
 2017-02-10  Zalan Bujtas  <zalan@apple.com>
 
         Mail hangs when removing multiple rows from large table.
