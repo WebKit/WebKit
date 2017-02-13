@@ -283,11 +283,11 @@ void DataTransfer::updateDragImage()
         return;
 
     IntPoint computedHotSpot;
-    DragImageRef computedImage = createDragImage(computedHotSpot);
+    auto computedImage = DragImage { createDragImage(computedHotSpot) };
     if (!computedImage)
         return;
 
-    m_pasteboard->setDragImage(computedImage, computedHotSpot);
+    m_pasteboard->setDragImage(WTFMove(computedImage), computedHotSpot);
 }
 
 #if !PLATFORM(MAC)
