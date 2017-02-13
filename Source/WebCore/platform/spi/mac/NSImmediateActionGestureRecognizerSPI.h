@@ -22,12 +22,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef NSImmediateActionGestureRecognizerSPI_h
-#define NSImmediateActionGestureRecognizerSPI_h
 
 #import <AppKit/NSGestureRecognizer.h>
 
-// FIXME: This header should include system headers when possible.
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <AppKit/NSImmediateActionGestureRecognizer_Private.h>
+
+#else
 
 @class NSImmediateActionGestureRecognizer;
 
