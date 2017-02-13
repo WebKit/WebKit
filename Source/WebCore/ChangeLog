@@ -1,5 +1,43 @@
 2017-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        parserRemoveChild should unload subframes
+        https://bugs.webkit.org/show_bug.cgi?id=168151
+
+        Reviewed by Darin Adler.
+
+        Fix the bug that the adoption agency algorithm does not unload subframes as it disconnects nodes.
+
+        Also moved calls to nodeWillBeRemoved inside NoEventDispatchAssertion to expand on r211965.
+
+        Tests: fast/parser/adoption-agency-clear-focus-range.html
+               fast/parser/adoption-agency-unload-iframe-1.html
+               fast/parser/adoption-agency-unload-iframe-2.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::takeAllChildrenFrom): Rewritten using idioms used in removeChildren and parserAppendChild.
+
+        Disconnect all subframes first since this can synchronously dispatch an unload event. Then update DOM ranges,
+        the focused element, and other states in the document.
+
+        Second, use the regular removeBetween, notifyChildNodeRemoved, childrenChanged sequence of calls to disconnect nodes
+        instead of a single call to removeDetachedChildren to properly disconnect child nodes since those nodes may have
+        already come live due to execution of synchronous scripts prior to the adoption agency algorithm has run, or in
+        response to the unload event we just dispatched.
+
+        Third, append these nodes using parserAppendChild to avoid dispatching mutation events.
+
+        (WebCore::willRemoveChild): Removed the call to nodeWillBeRemoved. It's now called within NoEventDispatchAssertion
+        in each call site of willRemoveChild and willRemoveChildren.
+        (WebCore::willRemoveChildren): Ditto.
+        (WebCore::ContainerNode::removeChild): Call nodeWillBeRemoved inside NoEventDispatchAssertion.
+        (WebCore::ContainerNode::replaceAllChildren): Call nodeWillBeRemoved inside NoEventDispatchAssertion.
+        (WebCore::ContainerNode::parserRemoveChild): Disconnect subframes and update document's states.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::executeTakeAllChildrenAndReparentTask): Add a release assert that new parent does not already have a parent. 
+
+2017-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION (r179497): Crash inside setAttributeNode
         https://bugs.webkit.org/show_bug.cgi?id=168161
         <rdar://problem/30451581>
