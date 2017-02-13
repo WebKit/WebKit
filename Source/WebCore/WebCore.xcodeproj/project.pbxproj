@@ -3989,7 +3989,6 @@
 		A14832CA187F678000DA63A6 /* WebCoreThreadMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A148329C187F508700DA63A6 /* WebCoreThreadMessage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14832CB187F67B400DA63A6 /* WebCoreThreadRun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A148329D187F508700DA63A6 /* WebCoreThreadRun.cpp */; };
 		A14832CC187F67C400DA63A6 /* WebCoreThreadRun.h in Headers */ = {isa = PBXBuildFile; fileRef = A148329E187F508700DA63A6 /* WebCoreThreadRun.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A14832CD187F682E00DA63A6 /* WebCoreThreadSafe.h in Headers */ = {isa = PBXBuildFile; fileRef = A148329F187F508700DA63A6 /* WebCoreThreadSafe.h */; };
 		A14832CE187F683400DA63A6 /* WebCoreThreadSystemInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14832A0187F508700DA63A6 /* WebCoreThreadSystemInterface.cpp */; };
 		A14832CF187F684700DA63A6 /* WebCoreThreadSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = A14832A1187F508700DA63A6 /* WebCoreThreadSystemInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A149786E1ABAF33800CEF7E4 /* ContentFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A149786C1ABAF33800CEF7E4 /* ContentFilter.cpp */; };
@@ -11785,7 +11784,6 @@
 		A148329C187F508700DA63A6 /* WebCoreThreadMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreThreadMessage.h; sourceTree = "<group>"; };
 		A148329D187F508700DA63A6 /* WebCoreThreadRun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreThreadRun.cpp; sourceTree = "<group>"; };
 		A148329E187F508700DA63A6 /* WebCoreThreadRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreThreadRun.h; sourceTree = "<group>"; };
-		A148329F187F508700DA63A6 /* WebCoreThreadSafe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreThreadSafe.h; sourceTree = "<group>"; };
 		A14832A0187F508700DA63A6 /* WebCoreThreadSystemInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreThreadSystemInterface.cpp; sourceTree = "<group>"; };
 		A14832A1187F508700DA63A6 /* WebCoreThreadSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreThreadSystemInterface.h; sourceTree = "<group>"; };
 		A14832A2187F508700DA63A6 /* WKContentObservation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKContentObservation.cpp; sourceTree = "<group>"; };
@@ -20001,7 +19999,6 @@
 				A148329C187F508700DA63A6 /* WebCoreThreadMessage.h */,
 				A148329D187F508700DA63A6 /* WebCoreThreadRun.cpp */,
 				A148329E187F508700DA63A6 /* WebCoreThreadRun.h */,
-				A148329F187F508700DA63A6 /* WebCoreThreadSafe.h */,
 				A14832A0187F508700DA63A6 /* WebCoreThreadSystemInterface.cpp */,
 				A14832A1187F508700DA63A6 /* WebCoreThreadSystemInterface.h */,
 				A14832A2187F508700DA63A6 /* WKContentObservation.cpp */,
@@ -28683,7 +28680,6 @@
 				A14832C9187F676B00DA63A6 /* WebCoreThreadInternal.h in Headers */,
 				A14832CA187F678000DA63A6 /* WebCoreThreadMessage.h in Headers */,
 				A14832CC187F67C400DA63A6 /* WebCoreThreadRun.h in Headers */,
-				A14832CD187F682E00DA63A6 /* WebCoreThreadSafe.h in Headers */,
 				A14832CF187F684700DA63A6 /* WebCoreThreadSystemInterface.h in Headers */,
 				0F099D0917B968A100FF84B9 /* WebCoreTypedArrayController.h in Headers */,
 				37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */,
