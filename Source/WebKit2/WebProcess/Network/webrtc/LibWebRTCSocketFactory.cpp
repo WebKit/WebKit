@@ -61,7 +61,7 @@ rtc::AsyncPacketSocket* LibWebRTCSocketFactory::CreateServerTcpSocket(const rtc:
 
 rtc::AsyncPacketSocket* LibWebRTCSocketFactory::CreateUdpSocket(const rtc::SocketAddress& socketAddress, uint16_t minPort, uint16_t maxPort)
 {
-    auto socket = std::make_unique<LibWebRTCSocket>(*this, ++s_uniqueSocketIdentifier, LibWebRTCSocket::Type::ServerTCP, socketAddress, rtc::SocketAddress());
+    auto socket = std::make_unique<LibWebRTCSocket>(*this, ++s_uniqueSocketIdentifier, LibWebRTCSocket::Type::UDP, socketAddress, rtc::SocketAddress());
     m_sockets.set(socket->identifier(), socket.get());
 
     auto identifier = socket->identifier();
@@ -78,7 +78,7 @@ rtc::AsyncPacketSocket* LibWebRTCSocketFactory::CreateUdpSocket(const rtc::Socke
 
 rtc::AsyncPacketSocket* LibWebRTCSocketFactory::CreateClientTcpSocket(const rtc::SocketAddress& localSocketAddress, const rtc::SocketAddress& remoteSocketAddress, const rtc::ProxyInfo&, const std::string&, int options)
 {
-    auto socket = std::make_unique<LibWebRTCSocket>(*this, ++s_uniqueSocketIdentifier, LibWebRTCSocket::Type::ServerTCP, localSocketAddress, remoteSocketAddress);
+    auto socket = std::make_unique<LibWebRTCSocket>(*this, ++s_uniqueSocketIdentifier, LibWebRTCSocket::Type::ClientTCP, localSocketAddress, remoteSocketAddress);
     socket->setState(LibWebRTCSocket::STATE_CONNECTING);
     m_sockets.set(socket->identifier(), socket.get());
 

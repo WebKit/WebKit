@@ -1,3 +1,14 @@
+2017-02-13  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] libwebrtc socket factory is not assigning the right socket type
+        https://bugs.webkit.org/show_bug.cgi?id=168233
+
+        Reviewed by Brent Fulgham.
+
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::CreateUdpSocket):
+        (WebKit::LibWebRTCSocketFactory::CreateClientTcpSocket):
+
 2017-02-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed, add missing precondition check
