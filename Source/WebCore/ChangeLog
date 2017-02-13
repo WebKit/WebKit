@@ -1,3 +1,15 @@
+2017-02-13  Youenn Fablet  <youenn@apple.com>
+
+        Remove @getUserMedia identifier
+        https://bugs.webkit.org/show_bug.cgi?id=168216
+
+        Reviewed by Sam Weinig.
+
+        No change of behavior.
+
+        * Modules/mediastream/MediaDevices.idl:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2017-02-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Non-accelerated drawing is broken with HiDPI
