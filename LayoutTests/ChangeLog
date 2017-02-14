@@ -1,3 +1,13 @@
+2017-02-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix typo in performance-observer-callback-mutate.html
+        https://bugs.webkit.org/show_bug.cgi?id=168294
+
+        Reviewed by Ryosuke Niwa.
+
+        * performance-api/performance-observer-callback-mutate-expected.txt:
+        * performance-api/performance-observer-callback-mutate.html:
+
 2017-02-13  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: Update volume and scrubbing slider to match HI designs

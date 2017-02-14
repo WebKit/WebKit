@@ -84,7 +84,7 @@ let observer = new PerformanceObserver((list) => {
 });
 
 function updateObserver(entryTypes) {
-    debug("Observering: " + JSON.stringify(entryTypes));
+    debug("Observing: " + JSON.stringify(entryTypes));
     observer.observe({entryTypes});
 }
 
