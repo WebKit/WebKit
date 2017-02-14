@@ -38,10 +38,10 @@ void RTCSetMinDebugLogLevel(RTCLoggingSeverity severity) {
 
 NSString* RTCFileName(const char* file_path) {
   NSString* ns_file_path =
-      [[NSString alloc] initWithBytesNoCopy:const_cast<char*>(file_path)
+      [[[NSString alloc] initWithBytesNoCopy:const_cast<char*>(file_path)
                                      length:strlen(file_path)
                                    encoding:NSUTF8StringEncoding
-                               freeWhenDone:NO];
+                               freeWhenDone:NO] autorelease];
   return ns_file_path.lastPathComponent;
 }
 

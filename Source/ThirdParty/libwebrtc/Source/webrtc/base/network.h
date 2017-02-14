@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "webrtc/base/basictypes.h"
+#include "webrtc/base/export.h"
 #include "webrtc/base/ipaddress.h"
 #include "webrtc/base/networkmonitor.h"
 #include "webrtc/base/messagehandler.h"
@@ -135,7 +136,7 @@ class NetworkManager : public DefaultLocalAddressProvider {
 };
 
 // Base class for NetworkManager implementations.
-class NetworkManagerBase : public NetworkManager {
+class WEBRTC_EXPORT NetworkManagerBase : public NetworkManager {
  public:
   NetworkManagerBase();
   ~NetworkManagerBase() override;
@@ -200,7 +201,7 @@ class NetworkManagerBase : public NetworkManager {
 
 // Basic implementation of the NetworkManager interface that gets list
 // of networks using OS APIs.
-class BasicNetworkManager : public NetworkManagerBase,
+class WEBRTC_EXPORT BasicNetworkManager : public NetworkManagerBase,
                             public MessageHandler,
                             public sigslot::has_slots<> {
  public:
@@ -276,7 +277,7 @@ class BasicNetworkManager : public NetworkManagerBase,
 };
 
 // Represents a Unix-type network interface, with a name and single address.
-class Network {
+class WEBRTC_EXPORT Network {
  public:
   Network(const std::string& name,
           const std::string& description,

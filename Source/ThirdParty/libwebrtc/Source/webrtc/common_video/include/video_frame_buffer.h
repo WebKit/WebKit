@@ -16,6 +16,7 @@
 #include <memory>
 
 #include "webrtc/base/callback.h"
+#include "webrtc/base/export.h"
 #include "webrtc/base/refcount.h"
 #include "webrtc/base/scoped_ref_ptr.h"
 #include "webrtc/common_video/rotation.h"
@@ -56,7 +57,7 @@ class VideoFrameBuffer : public rtc::RefCountInterface {
 };
 
 // Plain I420 buffer in standard memory.
-class I420Buffer : public VideoFrameBuffer {
+class WEBRTC_EXPORT I420Buffer : public VideoFrameBuffer {
  public:
   I420Buffer(int width, int height);
   I420Buffer(int width, int height, int stride_y, int stride_u, int stride_v);

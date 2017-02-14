@@ -1,5 +1,132 @@
 2017-02-14  Alex Christensen  <achristensen@webkit.org>
 
+        Make libwebrtc.dylib
+        https://bugs.webkit.org/show_bug.cgi?id=168335
+
+        Reviewed by Dan Bernstein.
+
+        We were building libwebrtc as a static library, which would prevent us from weak linking with it.
+        We need to explicitly export what we use from WebCore or WebKit2, and RTCLogging.mm now needs to
+        be built on Mac, so we make it not automatically reference counted to make it work on 32-bit El Capitan.
+
+        * Configurations/libwebrtc.xcconfig:
+        * Source/webrtc/api/jsep.h:
+        * Source/webrtc/api/mediastream.h:
+        * Source/webrtc/api/notifier.h:
+        (webrtc::Notifier::Notifier): Deleted.
+        (webrtc::Notifier::RegisterObserver): Deleted.
+        (webrtc::Notifier::UnregisterObserver): Deleted.
+        (webrtc::Notifier::FireOnChanged): Deleted.
+        * Source/webrtc/api/peerconnectioninterface.h:
+        * Source/webrtc/base/asyncpacketsocket.h:
+        * Source/webrtc/base/asyncresolverinterface.h:
+        (rtc::AsyncResolverInterface::address): Deleted.
+        * Source/webrtc/base/copyonwritebuffer.h:
+        (rtc::CopyOnWriteBuffer::CopyOnWriteBuffer): Deleted.
+        (rtc::CopyOnWriteBuffer::data): Deleted.
+        (rtc::CopyOnWriteBuffer::cdata): Deleted.
+        (rtc::CopyOnWriteBuffer::size): Deleted.
+        (rtc::CopyOnWriteBuffer::capacity): Deleted.
+        (rtc::CopyOnWriteBuffer::operator=): Deleted.
+        (rtc::CopyOnWriteBuffer::operator!=): Deleted.
+        (rtc::CopyOnWriteBuffer::operator[]): Deleted.
+        (rtc::CopyOnWriteBuffer::SetData): Deleted.
+        (rtc::CopyOnWriteBuffer::AppendData): Deleted.
+        (rtc::CopyOnWriteBuffer::swap): Deleted.
+        (rtc::CopyOnWriteBuffer::IsConsistent): Deleted.
+        * Source/webrtc/base/event.h:
+        * Source/webrtc/base/export.h: Added.
+        * Source/webrtc/base/helpers.h:
+        * Source/webrtc/base/ipaddress.h:
+        (rtc::IPAddress::IPAddress): Deleted.
+        (rtc::IPAddress::~IPAddress): Deleted.
+        (rtc::IPAddress::operator=): Deleted.
+        (rtc::IPAddress::family): Deleted.
+        * Source/webrtc/base/location.h:
+        (rtc::Location::function_name): Deleted.
+        (rtc::Location::file_and_line): Deleted.
+        * Source/webrtc/base/messagehandler.h:
+        (rtc::MessageHandler::MessageHandler): Deleted.
+        * Source/webrtc/base/network.h:
+        (rtc::NetworkManagerBase::ipv6_enabled): Deleted.
+        (rtc::NetworkManagerBase::set_ipv6_enabled): Deleted.
+        (rtc::NetworkManagerBase::set_max_ipv6_networks): Deleted.
+        (rtc::NetworkManagerBase::max_ipv6_networks): Deleted.
+        (rtc::NetworkManagerBase::set_enumeration_permission): Deleted.
+        (rtc::BasicNetworkManager::started): Deleted.
+        (rtc::BasicNetworkManager::set_network_ignore_list): Deleted.
+        (rtc::BasicNetworkManager::set_ignore_non_default_routes): Deleted.
+        (rtc::Network::default_local_address_provider): Deleted.
+        (rtc::Network::set_default_local_address_provider): Deleted.
+        (rtc::Network::name): Deleted.
+        (rtc::Network::description): Deleted.
+        (rtc::Network::prefix): Deleted.
+        (rtc::Network::prefix_length): Deleted.
+        (rtc::Network::key): Deleted.
+        (rtc::Network::ip): Deleted.
+        (rtc::Network::AddIP): Deleted.
+        (rtc::Network::GetIPs): Deleted.
+        (rtc::Network::ClearIPs): Deleted.
+        (rtc::Network::scope_id): Deleted.
+        (rtc::Network::set_scope_id): Deleted.
+        (rtc::Network::ignored): Deleted.
+        (rtc::Network::set_ignored): Deleted.
+        (rtc::Network::type): Deleted.
+        (rtc::Network::set_type): Deleted.
+        (rtc::Network::GetCost): Deleted.
+        (rtc::Network::id): Deleted.
+        (rtc::Network::set_id): Deleted.
+        (rtc::Network::preference): Deleted.
+        (rtc::Network::set_preference): Deleted.
+        (rtc::Network::active): Deleted.
+        (rtc::Network::set_active): Deleted.
+        * Source/webrtc/base/proxyinfo.h:
+        * Source/webrtc/base/refcountedobject.h:
+        (rtc::RefCountedObject::RefCountedObject): Deleted.
+        (rtc::RefCountedObject::AddRef): Deleted.
+        (rtc::RefCountedObject::Release): Deleted.
+        (rtc::RefCountedObject::HasOneRef): Deleted.
+        (rtc::RefCountedObject::~RefCountedObject): Deleted.
+        * Source/webrtc/base/socketaddress.h:
+        (rtc::SocketAddress::hostname): Deleted.
+        (rtc::SocketAddress::family): Deleted.
+        (rtc::SocketAddress::scope_id): Deleted.
+        (rtc::SocketAddress::SetScopeID): Deleted.
+        (rtc::SocketAddress::operator !=): Deleted.
+        * Source/webrtc/base/thread.h:
+        * Source/webrtc/common_types.h:
+        * Source/webrtc/common_video/include/video_frame_buffer.h:
+        (webrtc::I420Buffer::Copy): Deleted.
+        (webrtc::I420Buffer::CropAndScaleFrom): Deleted.
+        (webrtc::I420Buffer::ScaleFrom): Deleted.
+        * Source/webrtc/common_video/libyuv/include/webrtc_libyuv.h:
+        * Source/webrtc/p2p/base/basicpacketsocketfactory.h:
+        * Source/webrtc/p2p/client/basicportallocator.h:
+        (cricket::BasicPortAllocator::network_ignore_mask): Deleted.
+        (cricket::BasicPortAllocator::network_manager): Deleted.
+        (cricket::BasicPortAllocator::socket_factory): Deleted.
+        * Source/webrtc/sdk/objc/Framework/Classes/RTCLogging.mm:
+        (RTCFileName):
+        * Source/webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.h:
+        * Source/webrtc/video_frame.h:
+        (webrtc::VideoFrame::timestamp_us): Deleted.
+        (webrtc::VideoFrame::set_timestamp_us): Deleted.
+        (webrtc::VideoFrame::set_timestamp): Deleted.
+        (webrtc::VideoFrame::timestamp): Deleted.
+        (webrtc::VideoFrame::transport_frame_id): Deleted.
+        (webrtc::VideoFrame::set_ntp_time_ms): Deleted.
+        (webrtc::VideoFrame::ntp_time_ms): Deleted.
+        (webrtc::VideoFrame::rotation): Deleted.
+        (webrtc::VideoFrame::set_rotation): Deleted.
+        (webrtc::VideoFrame::set_render_time_ms): Deleted.
+        (webrtc::VideoFrame::render_time_ms): Deleted.
+        (webrtc::VideoFrame::is_texture): Deleted.
+        * build: Added.
+        * build/Debug: Added.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2017-02-14  Alex Christensen  <achristensen@webkit.org>
+
         Remove android-specific files from ThirdParty/libwebrtc
         https://bugs.webkit.org/show_bug.cgi?id=168272
 

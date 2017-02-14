@@ -16,13 +16,14 @@
 #include <vector>
 
 #include "webrtc/p2p/base/portallocator.h"
+#include "webrtc/base/export.h"
 #include "webrtc/base/messagequeue.h"
 #include "webrtc/base/network.h"
 #include "webrtc/base/thread.h"
 
 namespace cricket {
 
-class BasicPortAllocator : public PortAllocator {
+class WEBRTC_EXPORT BasicPortAllocator : public PortAllocator {
  public:
   BasicPortAllocator(rtc::NetworkManager* network_manager,
                      rtc::PacketSocketFactory* socket_factory);
