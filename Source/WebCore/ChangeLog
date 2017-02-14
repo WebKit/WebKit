@@ -1,3 +1,19 @@
+2017-02-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Call WKDestroyRenderingResources() on iOS when tabs are backgrounded
+        https://bugs.webkit.org/show_bug.cgi?id=168261
+        rdar://problem/30481079
+
+        Reviewed by Tim Horton.
+
+        Add CABackingStoreCollectBlocking() to QuartzCoreSPI.h, and fix files in WebCore
+        that do a framework include.
+
+        * platform/graphics/cocoa/TextTrackRepresentationCocoa.mm:
+        * platform/graphics/cocoa/WebActionDisablingCALayerDelegate.h:
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+        * platform/spi/mac/NSViewSPI.h:
+
 2017-02-13  Youenn Fablet  <youenn@apple.com>
 
         ASSERTION FAILED: !m_bodyLoader

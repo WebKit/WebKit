@@ -25,7 +25,7 @@
 
 #if USE(APPKIT)
 
-#import <WebCore/QuartzCoreSPI.h>
+#import "QuartzCoreSPI.h"
 
 @interface NSView () <CALayerDelegate>
 @end
