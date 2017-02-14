@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+using WebGLPowerPreference = GraphicsContext3DPowerPreference;
 using WebGLContextAttributes = GraphicsContext3DAttributes;
 
 } // namespace WebCore

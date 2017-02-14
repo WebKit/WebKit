@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GraphicsContext3DAttributes.h"
 #include <wtf/Function.h>
 #include <wtf/RefCounter.h>
 
@@ -39,7 +40,7 @@ public:
     using WebGLContextCounter = RefCounter<WebGLContextCounterType>;
     using Token = WebGLContextCounter::Token;
 
-    Token token(bool preferLowPower);
+    Token token(GraphicsContext3DPowerPreference);
 
 private:
     void updateWebGLState();
