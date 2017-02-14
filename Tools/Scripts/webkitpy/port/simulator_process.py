@@ -130,5 +130,9 @@ class SimulatorProcess(ServerProcess):
         self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr)
 
     def stop(self, timeout_secs=3.0):
-        os.kill(self._pid, signal.SIGTERM)
+        try:
+            os.kill(self._pid, signal.SIGTERM)
+        except OSError as err:
+            assert err.errno == errno.ESRCH
+            pass
         super(SimulatorProcess, self).stop(timeout_secs)
