@@ -505,7 +505,7 @@ public:
         [NSNumber numberWithBool:NO],   WebKitShowRepaintCounterPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitWebGLEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitForceSoftwareWebGLRenderingPreferenceKey,
-        [NSNumber numberWithBool:YES],   WebKitPreferLowPowerWebGLRenderingPreferenceKey,
+        [NSNumber numberWithBool:YES],   WebKitForceWebGLUsesLowPowerPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAccelerated2dCanvasEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitResourceLoadStatisticsEnabledPreferenceKey,
@@ -2043,14 +2043,14 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:forced forKey:WebKitForceSoftwareWebGLRenderingPreferenceKey];
 }
 
-- (BOOL)preferLowPowerWebGLRendering
+- (BOOL)forceLowPowerGPUForWebGL
 {
-    return [self _boolValueForKey:WebKitPreferLowPowerWebGLRenderingPreferenceKey];
+    return [self _boolValueForKey:WebKitForceWebGLUsesLowPowerPreferenceKey];
 }
 
-- (void)setPreferLowPowerWebGLRendering:(BOOL)preferLowPower
+- (void)setForceWebGLUsesLowPower:(BOOL)forceLowPower
 {
-    [self _setBoolValue:preferLowPower forKey:WebKitPreferLowPowerWebGLRenderingPreferenceKey];
+    [self _setBoolValue:forceLowPower forKey:WebKitForceWebGLUsesLowPowerPreferenceKey];
 }
 
 - (BOOL)accelerated2dCanvasEnabled

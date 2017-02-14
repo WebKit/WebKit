@@ -251,8 +251,8 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)forceSoftwareWebGLRendering;
 - (void)setForceSoftwareWebGLRendering:(BOOL)forced;
 
-- (BOOL)preferLowPowerWebGLRendering;
-- (void)setPreferLowPowerWebGLRendering:(BOOL)preferLowPower;
+- (BOOL)forceLowPowerGPUForWebGL;
+- (void)setForceWebGLUsesLowPower:(BOOL)forceLowPower;
 
 - (BOOL)accelerated2dCanvasEnabled;
 - (void)setAccelerated2dCanvasEnabled:(BOOL)enabled;
