@@ -64,6 +64,11 @@ if (!window.InspectorFrontendHost) {
             this._windowVisible = false;
         },
 
+        userInterfaceLayoutDirection: function()
+        {
+            return "ltr";
+        },
+
         requestSetDockSide: function(side)
         {
             InspectorFrontendAPI.setDockSide(side);

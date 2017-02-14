@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -194,6 +194,14 @@ float InspectorFrontendHost::zoomFactor()
         return m_frontendPage->mainFrame().pageZoomFactor();
 
     return 1.0;
+}
+
+String InspectorFrontendHost::userInterfaceLayoutDirection()
+{
+    if (m_client && m_client->userInterfaceLayoutDirection() == UserInterfaceLayoutDirection::RTL)
+        return ASCIILiteral("rtl");
+
+    return ASCIILiteral("ltr");
 }
 
 void InspectorFrontendHost::setAttachedWindowHeight(unsigned height)

@@ -112,6 +112,11 @@ void RemoteWebInspectorUI::moveWindowBy(float x, float y)
     m_page.corePage()->chrome().setWindowRect(frameRect);
 }
 
+WebCore::UserInterfaceLayoutDirection RemoteWebInspectorUI::userInterfaceLayoutDirection() const
+{
+    return m_page.corePage()->userInterfaceLayoutDirection();
+}
+
 void RemoteWebInspectorUI::bringToFront()
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::BringToFront(), m_page.pageID());

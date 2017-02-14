@@ -1,3 +1,26 @@
+2017-02-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: expose system user interface layout direction through InspectorFrontendHost
+        https://bugs.webkit.org/show_bug.cgi?id=168209
+        <rdar://problem/11573736>
+
+        Reviewed by Joseph Pecoraro.
+
+        Forward the UserInterfaceLayoutDirection of the inspector page. If the WebKit client has
+        properly set the UI directionality from system settings in PageClient, this will get inherited
+        automatically by the Inspector's WebPage instance.
+
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::userInterfaceLayoutDirection):
+        * inspector/InspectorFrontendClientLocal.h:
+
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::userInterfaceLayoutDirection):
+        Expose the directionality to the frontend as "ltr" or "rtl" strings.
+
 2017-02-13  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Do not measure runs with trailing whitespace when kerning and ligatures are off.

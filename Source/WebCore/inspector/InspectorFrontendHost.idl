@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
@@ -41,6 +41,8 @@
 
     void setZoomFactor(unrestricted float zoom);
     float zoomFactor();
+
+    DOMString userInterfaceLayoutDirection();
 
     void requestSetDockSide(DOMString side);
 

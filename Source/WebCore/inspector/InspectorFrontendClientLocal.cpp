@@ -169,6 +169,11 @@ void InspectorFrontendClientLocal::frontendLoaded()
     m_evaluateOnLoad.clear();
 }
 
+UserInterfaceLayoutDirection InspectorFrontendClientLocal::userInterfaceLayoutDirection() const
+{
+    return m_frontendPage->userInterfaceLayoutDirection();
+}
+
 void InspectorFrontendClientLocal::requestSetDockSide(DockSide dockSide)
 {
     if (dockSide == DockSide::Undocked) {

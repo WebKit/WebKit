@@ -58,6 +58,8 @@ public:
     String backendCommandsURL() override { return m_backendCommandsURL; }
     String debuggableType() override { return m_debuggableType; }
 
+    WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() const override;
+
     void bringToFront() override;
     void closeWindow() override;
 

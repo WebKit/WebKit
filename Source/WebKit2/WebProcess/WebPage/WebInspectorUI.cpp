@@ -138,6 +138,11 @@ void WebInspectorUI::closeWindow()
     m_underTest = false;
 }
 
+WebCore::UserInterfaceLayoutDirection WebInspectorUI::userInterfaceLayoutDirection() const
+{
+    return m_page.corePage()->userInterfaceLayoutDirection();
+}
+
 void WebInspectorUI::requestSetDockSide(DockSide side)
 {
     auto& webProcess = WebProcess::singleton();

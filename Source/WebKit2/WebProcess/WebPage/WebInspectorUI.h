@@ -90,6 +90,8 @@ public:
     void bringToFront() override;
     void closeWindow() override;
 
+    WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() const override;
+
     void requestSetDockSide(DockSide) override;
     void changeAttachedWindowHeight(unsigned) override;
     void changeAttachedWindowWidth(unsigned) override;

@@ -64,6 +64,8 @@ public:
     void startWindowDrag() override { }
     WEBCORE_EXPORT void moveWindowBy(float x, float y) final;
 
+    WEBCORE_EXPORT UserInterfaceLayoutDirection userInterfaceLayoutDirection() const final;
+
     WEBCORE_EXPORT void requestSetDockSide(DockSide) final;
     WEBCORE_EXPORT void changeAttachedWindowHeight(unsigned) final;
     WEBCORE_EXPORT void changeAttachedWindowWidth(unsigned) final;
