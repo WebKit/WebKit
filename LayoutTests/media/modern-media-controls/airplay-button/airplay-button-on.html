@@ -15,12 +15,12 @@ airplayButton.on = true;
 
 document.body.appendChild(airplayButton.element);
 
-scheduler.frameDidFire = function()
-{
-    shouldBeTrue('airplayButton.element.classList.contains("on")');
+shouldBecomeEqual('airplayButton.element.classList.contains("on")', "true", () => {
     debug(`window.getComputedStyle(airplayButton.element).backgroundColor = ${window.getComputedStyle(airplayButton.element).backgroundColor}`);
+
+    airplayButton.element.remove();
     finishMediaControlsTest();
-};
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
