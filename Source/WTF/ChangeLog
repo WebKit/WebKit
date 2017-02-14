@@ -1,3 +1,15 @@
+2017-02-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        The current frame of an image should not deleted if another frame is asynchronously being decoded
+        https://bugs.webkit.org/show_bug.cgi?id=167618
+
+        Reviewed by Simon Fraser.
+
+        Add ASSERT_IMPLIES() which should fire when a condition is true but the
+        assertion is false.
+
+        * wtf/Assertions.h:
+
 2017-02-13  Brady Eidson  <beidson@apple.com>
 
         Followup to: Replace all WebKit Library Version checks in WK2 with SDK version checks.

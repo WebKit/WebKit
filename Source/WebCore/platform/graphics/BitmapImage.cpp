@@ -65,13 +65,34 @@ BitmapImage::~BitmapImage()
 
 void BitmapImage::destroyDecodedData(bool destroyAll)
 {
-    m_source.destroyDecodedData(data(), destroyAll, m_currentFrame);
+    if (!destroyAll)
+        m_source.destroyDecodedDataBeforeFrame(m_currentFrame);
+    else if (m_source.hasDecodingQueue())
+        m_source.destroyAllDecodedDataExcludeFrame(m_currentFrame);
+    else
+        m_source.destroyAllDecodedData();
+
+    // There's no need to throw away the decoder unless we're explicitly asked
+    // to destroy all of the frames.
+    if (!destroyAll || m_source.hasDecodingQueue())
+        m_source.clearFrameBufferCache(m_currentFrame);
+    else
+        m_source.clear(data());
+
     invalidatePlatformData();
 }
 
 void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
 {
-    m_source.destroyDecodedDataIfNecessary(data(), destroyAll, m_currentFrame);
+    // If we have decoded frames but there is no encoded data, we shouldn't destroy
+    // the decoded image since we won't be able to reconstruct it later.
+    if (!data() && frameCount())
+        return;
+
+    if (m_source.decodedSize() < LargeAnimationCutoff)
+        return;
+
+    destroyDecodedData(destroyAll);
 }
 
 bool BitmapImage::dataChanged(bool allDataReceived)
@@ -157,6 +178,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
     m_currentSubsamplingLevel = allowSubsampling() ? m_source.subsamplingLevelForScale(scale) : SubsamplingLevel::Default;
     LOG(Images, "BitmapImage %p draw - subsamplingLevel %d at scale %.4f", this, static_cast<int>(m_currentSubsamplingLevel), scale);
 
+    ASSERT_IMPLIES(result == StartAnimationResult::DecodingActive, m_source.frameHasValidNativeImageAtIndex(m_currentFrame, m_currentSubsamplingLevel));
     auto image = frameImageAtIndex(m_currentFrame, m_currentSubsamplingLevel, &context);
     if (!image) // If it's too early we won't have an image yet.
         return;

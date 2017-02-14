@@ -70,29 +70,19 @@ ImageFrameCache::~ImageFrameCache()
     ASSERT(!hasDecodingQueue());
 }
 
-void ImageFrameCache::destroyDecodedData(bool destroyAll, size_t count)
+void ImageFrameCache::destroyDecodedData(size_t frameCount, size_t excludeFrame)
 {
-    if (destroyAll)
-        count = m_frames.size();
-    
     unsigned decodedSize = 0;
-    for (size_t i = 0; i <  count; ++i)
-        decodedSize += m_frames[i].clearImage();
+
+    ASSERT(frameCount <= m_frames.size());
+
+    for (size_t index = 0; index < frameCount; ++index) {
+        if (index == excludeFrame)
+            continue;
+        decodedSize += m_frames[index++].clearImage();
+    }
 
     decodedSizeReset(decodedSize);
-}
-
-bool ImageFrameCache::destroyDecodedDataIfNecessary(bool destroyAll, size_t count)
-{
-    unsigned decodedSize = 0;
-    for (auto& frame : m_frames)
-        decodedSize += frame.frameBytes();
-    
-    if (decodedSize < LargeAnimationCutoff)
-        return false;
-    
-    destroyDecodedData(destroyAll, count);
-    return true;
 }
 
 void ImageFrameCache::destroyIncompleteDecodedData()

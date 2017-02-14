@@ -68,38 +68,11 @@ void ImageSource::clearFrameBufferCache(size_t clearBeforeFrame)
     m_decoder->clearFrameBufferCache(clearBeforeFrame);
 }
 
-void ImageSource::clear(bool destroyAll, size_t count, SharedBuffer* data)
+void ImageSource::clear(SharedBuffer* data)
 {
-    // There's no need to throw away the decoder unless we're explicitly asked
-    // to destroy all of the frames.
-    if (!destroyAll || m_frameCache->hasDecodingQueue()) {
-        clearFrameBufferCache(count);
-        return;
-    }
-
     m_decoder = nullptr;
     m_frameCache->setDecoder(nullptr);
     setData(data, isAllDataReceived());
-}
-
-void ImageSource::destroyDecodedData(SharedBuffer* data, bool destroyAll, size_t count)
-{
-    m_frameCache->destroyDecodedData(destroyAll, count);
-    clear(destroyAll, count, data);
-}
-
-bool ImageSource::destroyDecodedDataIfNecessary(SharedBuffer* data, bool destroyAll, size_t count)
-{
-    // If we have decoded frames but there is no encoded data, we shouldn't destroy
-    // the decoded image since we won't be able to reconstruct it later.
-    if (!data && m_frameCache->frameCount())
-        return false;
-
-    if (!m_frameCache->destroyDecodedDataIfNecessary(destroyAll, count))
-        return false;
-
-    clear(destroyAll, count, data);
-    return true;
 }
 
 bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)

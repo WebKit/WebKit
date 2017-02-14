@@ -59,8 +59,9 @@ public:
     ImageDecoder* decoder() const { return m_decoder; }
 
     unsigned decodedSize() const { return m_decodedSize; }
-    void destroyDecodedData(bool destroyAll = true, size_t count = 0);
-    bool destroyDecodedDataIfNecessary(bool destroyAll = true, size_t count = 0);
+    void destroyAllDecodedData() { destroyDecodedData(frameCount(), frameCount()); }
+    void destroyAllDecodedDataExcludeFrame(size_t excludeFrame) { destroyDecodedData(frameCount(), excludeFrame); }
+    void destroyDecodedDataBeforeFrame(size_t beforeFrame) { destroyDecodedData(beforeFrame, beforeFrame); }
     void destroyIncompleteDecodedData();
 
     void growFrames();
@@ -112,6 +113,7 @@ private:
     T frameMetadataAtIndex(size_t index, SubsamplingLevel = SubsamplingLevel::Undefinded, ImageFrame::Caching = ImageFrame::Caching::Empty, std::optional<T>* = nullptr);
 
     bool isDecoderAvailable() const { return m_decoder; }
+    void destroyDecodedData(size_t frameCount, size_t excludeFrame);
     void decodedSizeChanged(long long decodedSize);
     void didDecodeProperties(unsigned decodedPropertiesSize);
     void decodedSizeIncreased(unsigned decodedSize);
@@ -127,13 +129,6 @@ private:
     Ref<WorkQueue> decodingQueue();
 
     const ImageFrame& frameAtIndex(size_t, SubsamplingLevel, ImageFrame::Caching);
-
-    // Animated images over a certain size are considered large enough that we'll only hang on to one frame at a time.
-#if !PLATFORM(IOS)
-    static const unsigned LargeAnimationCutoff = 5242880;
-#else
-    static const unsigned LargeAnimationCutoff = 2097152;
-#endif
 
     Image* m_image { nullptr };
     ImageDecoder* m_decoder { nullptr };
