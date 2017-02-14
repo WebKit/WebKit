@@ -62,6 +62,7 @@
                     { "name": "bot501", "platform": "win" },
 
                     { "name": "wincairo-1", "platform": "wincairo" },
+                    { "name": "wincairo-2", "platform": "wincairo" },
 
                     { "name": "gtk-linux-slave-1", "platform": "gtk" },
                     { "name": "gtk-linux-slave-2", "platform": "gtk" },
@@ -306,7 +307,7 @@
                     {
                       "name": "WinCairo 64-Bit Release", "type": "Build", "builddir": "win-cairo-release",
                       "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["wincairo-1"]
+                      "slavenames": ["wincairo-1", "wincairo-2"]
                     },
                     {
                       "name": "EFL Linux 64-bit Release WK2", "type": "BuildAndTest", "builddir": "efl-linux-64-release-wk2",
