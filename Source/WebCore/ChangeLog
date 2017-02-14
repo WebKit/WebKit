@@ -1,3 +1,25 @@
+2017-02-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] add navigator.getUserMedia for compatibility with legacy content
+        https://bugs.webkit.org/show_bug.cgi?id=168324
+        <rdar://problem/30513125>
+
+        Reviewed by Youenn Fablet.
+
+        Tests: fast/mediastream/argument-types.html
+               fast/mediastream/getusermedia.html
+               fast/mediastream/webkitGetUserMedia-shadowing-then.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/mediastream/MediaDevices.idl:
+        * Modules/mediastream/NavigatorUserMedia.idl: Added.
+        * Modules/mediastream/NavigatorUserMedia.js: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * page/Navigator.idl:
+
 2017-02-14  Chris Dumez  <cdumez@apple.com>
 
         Fallback to legacy type only when event is trusted

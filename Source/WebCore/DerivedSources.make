@@ -162,6 +162,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/mediastream/MediaTrackConstraints.idl \
     $(WebCore)/Modules/mediastream/MediaTrackSupportedConstraints.idl \
     $(WebCore)/Modules/mediastream/NavigatorMediaDevices.idl \
+    $(WebCore)/Modules/mediastream/NavigatorUserMedia.idl \
     $(WebCore)/Modules/mediastream/OverconstrainedError.idl \
     $(WebCore)/Modules/mediastream/OverconstrainedErrorEvent.idl \
     $(WebCore)/Modules/mediastream/RTCConfiguration.idl \
@@ -1341,6 +1342,7 @@ WebCore_BUILTINS_SOURCES = \
     $(WebCore)/Modules/fetch/FetchRequest.js \
     $(WebCore)/Modules/fetch/FetchResponse.js \
     ${WebCore}/Modules/fetch/WorkerGlobalScopeFetch.js \
+    $(WebCore)/Modules/mediastream/NavigatorUserMedia.js \
     $(WebCore)/Modules/mediastream/RTCPeerConnection.js \
     $(WebCore)/Modules/mediastream/RTCPeerConnectionInternals.js \
     $(WebCore)/Modules/streams/ByteLengthQueuingStrategy.js \

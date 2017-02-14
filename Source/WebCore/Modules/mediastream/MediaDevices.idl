@@ -34,7 +34,7 @@
 ] interface MediaDevices {
     MediaTrackSupportedConstraints getSupportedConstraints();
 
-    Promise<MediaStream> getUserMedia(optional MediaStreamConstraints constraints);
+    [PrivateIdentifier, PublicIdentifier] Promise<MediaStream> getUserMedia(optional MediaStreamConstraints constraints);
     Promise<sequence<MediaDeviceInfo>> enumerateDevices();
 };
 
