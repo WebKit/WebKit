@@ -1,10 +1,10 @@
 
 PASS Listener of transitionend 
-FAIL Legacy listener of transitionend assert_unreached: listener of webkitTransitionEnd should not be invoked again Reached unreachable code
+PASS Legacy listener of transitionend 
 PASS Listener of animationend 
-FAIL Legacy listener of animationend assert_unreached: listener of webkitAnimationEnd should not be invoked again Reached unreachable code
+PASS Legacy listener of animationend 
 PASS Listener of animationiteration 
-FAIL Legacy listener of animationiteration assert_unreached: listener of webkitAnimationIteration should not be invoked again Reached unreachable code
+PASS Legacy listener of animationiteration 
 PASS Listener of animationstart 
-FAIL Legacy listener of animationstart assert_unreached: listener of webkitAnimationStart should not be invoked again Reached unreachable code
+PASS Legacy listener of animationstart 
 

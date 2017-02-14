@@ -1,3 +1,21 @@
+2017-02-14  Chris Dumez  <cdumez@apple.com>
+
+        Fallback to legacy type only when event is trusted
+        https://bugs.webkit.org/show_bug.cgi?id=168301
+
+        Reviewed by Ryosuke Niwa.
+
+        Fallback to legacy type only when event is trusted as per a recent
+        DOM specification change:
+        - https://github.com/whatwg/dom/issues/404
+        - https://github.com/whatwg/dom/pull/406
+
+        No new tests, rebaselined existing test.
+
+        * dom/EventTarget.cpp:
+        (WebCore::legacyType):
+        (WebCore::EventTarget::fireEventListeners):
+
 2017-02-13  Dean Jackson  <dino@apple.com>
 
         Rename preferLowPowerToHighPerformance to powerPreference
