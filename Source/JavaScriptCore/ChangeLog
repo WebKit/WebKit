@@ -1,3 +1,17 @@
+2017-02-13  Michael Saboff  <msaboff@apple.com>
+
+        asyncDisassembly crashes on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=168259
+
+        Reviewed by Filip Pizlo.
+
+        Eliminated the dumping of  the disassembly for the JIT write thunk.
+        Not only does it fix the crash, but given the nature of the JIT
+        write thunk, we probably don't want to disassemble it anyway.
+        
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::jitWriteThunkGenerator):
+
 2017-02-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         C loop build fix attempt after r212207.

@@ -269,7 +269,12 @@ private:
         jit.ret();
 
         LinkBuffer linkBuffer(jit, stubBase, stubSize);
-        return FINALIZE_CODE(linkBuffer, ("Bulletproof JIT write thunk"));
+        // We don't use FINALIZE_CODE() for two reasons.
+        // The first is that we don't want the writeable address, as disassembled instructions,
+        // to appear in the console or anywhere in memory, via the PrintStream buffer.
+        // The second is we can't guarantee that the code is readable when using the
+        // asyncDisassembly option as our caller will set our pages execute only.
+        return linkBuffer.finalizeCodeWithoutDisassembly();
     }
 #else // CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
     static void genericWriteToJITRegion(off_t offset, const void* data, size_t dataSize)
