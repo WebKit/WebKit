@@ -1,3 +1,11 @@
+2017-02-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline media/modern-media-controls/airplay-button/airplay-button-on.html for ios-simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/media/modern-media-controls/airplay-button/airplay-button-on-expected.txt:
+
 2017-02-14  Jer Noble  <jer.noble@apple.com>
 
         Video elements with MediaSource objects set by srcObject are not cleared when srcObject is set to null

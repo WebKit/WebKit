@@ -3,7 +3,7 @@ Testing the AirplayButton class.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS airplayButton.element.classList.contains("on") is true
+PASS airplayButton.element.classList.contains("on") became true
 window.getComputedStyle(airplayButton.element).backgroundColor = rgb(0, 122, 255)
 PASS successfullyParsed is true
 
