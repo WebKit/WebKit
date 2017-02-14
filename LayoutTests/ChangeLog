@@ -1,3 +1,13 @@
+2017-02-13  Karim H  <karim@karhm.com>
+
+        Added the BSTR roles tag test for Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=165545
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/win/bstr-elements-role-expected.txt: Added.
+        * accessibility/win/bstr-elements-role.html: Added.
+
 2017-02-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         The current frame of an image should not deleted if another frame is asynchronously being decoded

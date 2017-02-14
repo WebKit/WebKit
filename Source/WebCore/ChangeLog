@@ -1,3 +1,15 @@
+2017-02-13  Karim H  <karim@karhm.com>
+
+        Added the other missing BSTR roles tag names.
+        https://bugs.webkit.org/show_bug.cgi?id=165545
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/win/bstr-elements-role.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::shouldReturnTagNameAsRoleForMSAA):
+
 2017-02-13  Youenn Fablet  <youennf@gmail.com>
 
         [WebRTC] Creating RTCPeerConnection with libwebrtc backend is crashing on rwt

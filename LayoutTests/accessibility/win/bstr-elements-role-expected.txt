@@ -1,0 +1,62 @@
+abbr
+
+acronym
+
+blockquote
+
+dd
+
+dl
+
+dt
+
+form
+
+frame
+
+h1
+
+h2
+
+h3
+
+h4
+
+h5
+
+h6
+
+iframe
+
+q
+
+tbody
+
+tfoot
+
+thead
+
+This test verifies that on Windows, the following elements: abbr, acronym, blockquote, dd, dl, dt, form, frame, h1, h2, h3, h4, h5, h6, iframe, q, tbody, tfoot, thead return their tag name for their 'role' property.
+
+Bug 165545 - WebCore::AccessibilityRenderObject add the other tag names that should be returned as the role
+
+PASS e.role is "AXRole: ABBR"
+PASS e.role is "AXRole: ACRONYM"
+PASS e.role is "AXRole: BLOCKQUOTE"
+PASS e.role is "AXRole: DD"
+PASS e.role is "AXRole: DL"
+PASS e.role is "AXRole: DT"                
+PASS e.role is "AXRole: FORM"
+PASS e.role is "AXRole: FRAME"
+PASS e.role is "AXRole: H1"
+PASS e.role is "AXRole: H2"
+PASS e.role is "AXRole: H3"
+PASS e.role is "AXRole: H4"
+PASS e.role is "AXRole: H5"
+PASS e.role is "AXRole: H6"
+PASS e.role is "AXRole: IFRAME"
+PASS e.role is "AXRole: Q"
+PASS e.role is "AXRole: TBODY"
+PASS e.role is "AXRole: TFOOT"
+PASS e.role is "AXRole: THEAD"
+

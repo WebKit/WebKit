@@ -1,0 +1,105 @@
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+        </script>
+    </head>
+    <body id="body">
+        <abbr>abbr</abbr>
+        <acronym>acronym</acronym>
+        <blockquote>blockquote</blockquote>
+        <dd>dd</dd>
+        <dl>dl</dl>
+        <dt>dt</dt>
+        <form>form</form>
+        <frame>frame</frame>
+        <h1>h1</h1>
+        <h2>h2</h2>
+        <h3>h3</h3>
+        <h4>h4</h4>
+        <h5>h5</h5>
+        <h6>h6</h6>
+        <iframe>iframe</iframe>
+        <q>q</q>
+        <tbody>tbody</tbody>
+        <tfoot>tfoot</tfoot>
+        <thead>thead</thead>
+    
+
+        <p>
+            This test verifies that on Windows, the following elements: <b>abbr, acronym, blockquote, dd, dl, dt, form, frame, h1, h2, h3, h4, h5, h6,
+            iframe, q, tbody, tfoot, thead</b> return their
+            tag name for their 'role' property.
+            <br><br>
+            <a href="https://bugs.webkit.org/show_bug.cgi?id=165545">WebCore::AccessibilityRenderObject add the other tag names that should be returned as the role</a>
+        </p>
+
+        <p id="console"></p>
+
+        <script>
+            if (window.accessibilityController) {
+                document.getElementById("body").focus();
+
+                var e = accessibilityController.focusedElement.childAtIndex(0);
+                shouldBe('e.role', '"AXRole: ABBR"');
+
+                e = accessibilityController.focusedElement.childAtIndex(1);
+                shouldBe('e.role', '"AXRole: ACRONYM"');
+
+                e = accessibilityController.focusedElement.childAtIndex(2);
+                shouldBe('e.role', '"AXRole: BLOCKQUOTE"');
+
+                e = accessibilityController.focusedElement.childAtIndex(3);
+                shouldBe('e.role', '"AXRole: DD"');
+
+                e = accessibilityController.focusedElement.childAtIndex(4);
+                shouldBe('e.role', '"AXRole: DL"');
+
+                e = accessibilityController.focusedElement.childAtIndex(5);
+                shouldBe('e.role', '"AXRole: DT"');
+                
+                e = accessibilityController.focusedElement.childAtIndex(6);
+                shouldBe('e.role', '"AXRole: FORM"');
+
+                e = accessibilityController.focusedElement.childAtIndex(7);
+                shouldBe('e.role', '"AXRole: FRAME"');
+
+                e = accessibilityController.focusedElement.childAtIndex(8);
+                shouldBe('e.role', '"AXRole: H1"');
+
+                e = accessibilityController.focusedElement.childAtIndex(9);
+                shouldBe('e.role', '"AXRole: H2"');
+
+                e = accessibilityController.focusedElement.childAtIndex(10);
+                shouldBe('e.role', '"AXRole: H3"');
+
+                e = accessibilityController.focusedElement.childAtIndex(11);
+                shouldBe('e.role', '"AXRole: H4"');
+                
+                e = accessibilityController.focusedElement.childAtIndex(12);
+                shouldBe('e.role', '"AXRole: H5"');
+
+                e = accessibilityController.focusedElement.childAtIndex(13);
+                shouldBe('e.role', '"AXRole: H6"');
+
+                e = accessibilityController.focusedElement.childAtIndex(14);
+                shouldBe('e.role', '"AXRole: IFRAME"');
+                
+                e = accessibilityController.focusedElement.childAtIndex(15);
+                shouldBe('e.role', '"AXRole: Q"');
+                
+                e = accessibilityController.focusedElement.childAtIndex(16);
+                shouldBe('e.role', '"AXRole: TBODY"');
+                
+                e = accessibilityController.focusedElement.childAtIndex(17);
+                shouldBe('e.role', '"AXRole: TFOOT"');
+                
+                e = accessibilityController.focusedElement.childAtIndex(18);
+                shouldBe('e.role', '"AXRole: THEAD"');
+            }
+        </script>
+    </body>
+</html>

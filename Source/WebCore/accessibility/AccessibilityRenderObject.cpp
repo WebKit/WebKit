@@ -3566,12 +3566,16 @@ String AccessibilityRenderObject::nameForMSAA() const
 
 static bool shouldReturnTagNameAsRoleForMSAA(const Element& element)
 {
-    // See "document structure",
-    // https://wiki.mozilla.org/Accessibility/AT-Windows-API
-    // FIXME: Add the other tag names that should be returned as the role.
-    return element.hasTagName(h1Tag) || element.hasTagName(h2Tag) 
+    return element.hasTagName(abbrTag) || element.hasTagName(acronymTag)
+        || element.hasTagName(blockquoteTag) || element.hasTagName(ddTag)
+        || element.hasTagName(dlTag) || element.hasTagName(dtTag)
+        || element.hasTagName(formTag) || element.hasTagName(frameTag)
+        || element.hasTagName(h1Tag) || element.hasTagName(h2Tag)
         || element.hasTagName(h3Tag) || element.hasTagName(h4Tag)
-        || element.hasTagName(h5Tag) || element.hasTagName(h6Tag);
+        || element.hasTagName(h5Tag) || element.hasTagName(h6Tag)
+        || element.hasTagName(iframeTag) || element.hasTagName(qTag)
+        || element.hasTagName(tbodyTag) || element.hasTagName(tfootTag)
+        || element.hasTagName(theadTag);
 }
 
 String AccessibilityRenderObject::stringRoleForMSAA() const
