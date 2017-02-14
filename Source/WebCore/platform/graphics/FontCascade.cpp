@@ -389,9 +389,15 @@ float FontCascade::widthForSimpleText(StringView text) const
 
     Vector<GlyphBufferGlyph, 16> glyphs;
     Vector<GlyphBufferAdvance, 16> advances;
+    bool hasKerningOrLigatures = enableKerning() || requiresShaping();
+    float runWidth = 0;
     auto& font = primaryFont();
     for (unsigned i = 0; i < text.length(); ++i) {
         auto glyph = glyphDataForCharacter(text[i], false).glyph;
+        auto glyphWidth = font.widthForGlyph(glyph);
+        runWidth += glyphWidth;
+        if (!hasKerningOrLigatures)
+            continue;
 #if USE(CAIRO)
         cairo_glyph_t cairoGlyph;
         cairoGlyph.index = glyph;
@@ -399,12 +405,14 @@ float FontCascade::widthForSimpleText(StringView text) const
 #else
         glyphs.append(glyph);
 #endif
-        advances.append(FloatSize(font.widthForGlyph(glyph), 0));
+        advances.append(FloatSize(glyphWidth, 0));
     }
-    font.applyTransforms(&glyphs[0], &advances[0], glyphs.size(), enableKerning(), requiresShaping());
-    float runWidth = 0;
-    for (auto& advance : advances)
-        runWidth += advance.width();
+    if (hasKerningOrLigatures) {
+        font.applyTransforms(&glyphs[0], &advances[0], glyphs.size(), enableKerning(), requiresShaping());
+        runWidth = 0;
+        for (auto& advance : advances)
+            runWidth += advance.width();
+    }
 
     if (cacheEntry)
         *cacheEntry = runWidth;
