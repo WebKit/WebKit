@@ -1,3 +1,29 @@
+2017-02-14  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Implement description getters for libwebrtc RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=168234
+
+        Reviewed by Alex Christensen.
+
+        Allows passing W3C webrtc tests.
+
+        Implementing localDescription/remoteDescription using libwebrtc backend.
+        current and pending description getters are made the same as local/remote getters for the moment.
+        This should be fixed when upgrading to latest libwebrtc revision.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::toSessionDescriptionType):
+        (WebCore::fromSessionDescriptionType):
+        (WebCore::fromSessionDescription):
+        (WebCore::LibWebRTCMediaEndpoint::localDescription):
+        (WebCore::LibWebRTCMediaEndpoint::remoteDescription):
+        (WebCore::LibWebRTCMediaEndpoint::doSetLocalDescription):
+        (WebCore::LibWebRTCMediaEndpoint::doSetRemoteDescription):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::localDescription):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+
 2017-02-14  Jeremy Jones  <jeremyj@apple.com>
 
         When playing inline after fullscreen, set a flag instead of adding attribute plays inline, and use in requiresFullscreenForVideoPlayback.

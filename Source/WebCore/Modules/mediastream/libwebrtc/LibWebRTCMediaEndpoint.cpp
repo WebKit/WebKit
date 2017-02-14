@@ -76,6 +76,41 @@ static inline const char* sessionDescriptionType(RTCSessionDescription::SdpType 
     }
 }
 
+static inline RTCSessionDescription::SdpType fromSessionDescriptionType(const webrtc::SessionDescriptionInterface& description)
+{
+    auto type = description.type();
+    if (type == webrtc::SessionDescriptionInterface::kOffer)
+        return RTCSessionDescription::SdpType::Offer;
+    if (type == webrtc::SessionDescriptionInterface::kAnswer)
+        return RTCSessionDescription::SdpType::Answer;
+    ASSERT(type == webrtc::SessionDescriptionInterface::kPrAnswer);
+    return RTCSessionDescription::SdpType::Pranswer;
+}
+
+static inline RefPtr<RTCSessionDescription> fromSessionDescription(const webrtc::SessionDescriptionInterface* description)
+{
+    if (!description)
+        return nullptr;
+
+    std::string sdp;
+    description->ToString(&sdp);
+    String sdpString(sdp.data(), sdp.size());
+
+    return RTCSessionDescription::create(fromSessionDescriptionType(*description), WTFMove(sdpString));
+}
+
+RefPtr<RTCSessionDescription> LibWebRTCMediaEndpoint::localDescription() const
+{
+    // FIXME: We might want to create a new object only if the session actually changed.
+    return fromSessionDescription(m_backend->local_description());
+}
+
+RefPtr<RTCSessionDescription> LibWebRTCMediaEndpoint::remoteDescription() const
+{
+    // FIXME: We might want to create a new object only if the session actually changed.
+    return fromSessionDescription(m_backend->remote_description());
+}
+
 void LibWebRTCMediaEndpoint::doSetLocalDescription(RTCSessionDescription& description)
 {
     webrtc::SdpParseError error;

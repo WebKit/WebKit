@@ -58,19 +58,17 @@ private:
     void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&) final;
     Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) final;
 
+    RefPtr<RTCSessionDescription> localDescription() const final;
+    RefPtr<RTCSessionDescription> currentLocalDescription() const final { return localDescription(); }
+    RefPtr<RTCSessionDescription> pendingLocalDescription() const final { return localDescription(); }
+
+    RefPtr<RTCSessionDescription> remoteDescription() const final;
+    RefPtr<RTCSessionDescription> currentRemoteDescription() const final { return remoteDescription(); }
+    RefPtr<RTCSessionDescription> pendingRemoteDescription() const final { return remoteDescription(); }
+
     // FIXME: API to implement for real
-    RefPtr<RTCSessionDescription> localDescription() const final { return nullptr; }
-    RefPtr<RTCSessionDescription> currentLocalDescription() const final { return nullptr; }
-    RefPtr<RTCSessionDescription> pendingLocalDescription() const final { return nullptr; }
-
-    RefPtr<RTCSessionDescription> remoteDescription() const final { return nullptr; }
-    RefPtr<RTCSessionDescription> currentRemoteDescription() const final { return nullptr; }
-    RefPtr<RTCSessionDescription> pendingRemoteDescription() const final { return nullptr; }
-
     Vector<RefPtr<MediaStream>> getRemoteStreams() const final { return { }; }
-
     void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) final { }
-
     bool isNegotiationNeeded() const final { return false; }
     void markAsNeedingNegotiation() final;
     void clearNegotiationNeededState() final { }

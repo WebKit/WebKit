@@ -72,6 +72,9 @@ public:
     void stop();
     bool isStopped() const { return !m_backend; }
 
+    RefPtr<RTCSessionDescription> localDescription() const;
+    RefPtr<RTCSessionDescription> remoteDescription() const;
+
 private:
     LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend&, LibWebRTCProvider&);
 

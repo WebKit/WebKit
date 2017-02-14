@@ -221,6 +221,16 @@ std::unique_ptr<RTCDataChannelHandler> LibWebRTCPeerConnectionBackend::createDat
     return m_endpoint->createDataChannel(label, options);
 }
 
+RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::localDescription() const
+{
+    return m_endpoint->localDescription();
+}
+
+RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::remoteDescription() const
+{
+    return m_endpoint->remoteDescription();
+}
+
 } // namespace WebCore
 
 #endif // USE(LIBWEBRTC)
