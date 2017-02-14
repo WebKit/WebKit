@@ -813,8 +813,6 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         m_dragOffset = dragImageOffset;
     }
 
-    bool startedDrag = true; // optimism - we almost always manage to start the drag
-
     ASSERT(state.source);
     Element& element = *state.source;
 
@@ -823,7 +821,6 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     if (state.type == DragSourceActionSelection) {
         if (!dataTransfer.pasteboard().hasData()) {
             // FIXME: This entire block is almost identical to the code in Editor::copy, and the code should be shared.
-
             RefPtr<Range> selectionRange = src.selection().toNormalizedRange();
             ASSERT(selectionRange);
 
@@ -861,10 +858,15 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             return false;
 
         doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, dragImageBounds, dataTransfer, src, false);
-    } else if (!src.document()->securityOrigin().canDisplay(linkURL)) {
+        return true;
+    }
+
+    if (!src.document()->securityOrigin().canDisplay(linkURL)) {
         src.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to drag local resource: " + linkURL.stringCenterEllipsizedToLength());
-        startedDrag = false;
-    } else if (!imageURL.isEmpty() && image && !image->isNull() && (m_dragSourceAction & DragSourceActionImage)) {
+        return false;
+    }
+
+    if (!imageURL.isEmpty() && image && !image->isNull() && (m_dragSourceAction & DragSourceActionImage)) {
         // We shouldn't be starting a drag for an image that can't provide an extension.
         // This is an early detection for problems encountered later upon drop.
         ASSERT(!image->filenameExtension().isEmpty());
@@ -885,7 +887,10 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             // DHTML defined drag image
             doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, { }, dataTransfer, src, false);
         }
-    } else if (!linkURL.isEmpty() && (m_dragSourceAction & DragSourceActionLink)) {
+        return true;
+    }
+
+    if (!linkURL.isEmpty() && (m_dragSourceAction & DragSourceActionLink)) {
         if (!dataTransfer.pasteboard().hasData()) {
             // Simplify whitespace so the title put on the dataTransfer resembles what the user sees
             // on the web page. This includes replacing newlines with spaces.
@@ -920,8 +925,12 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             dragImage = DragImage { scaleDragImage(dragImage.get(), FloatSize(m_page.deviceScaleFactor(), m_page.deviceScaleFactor())) };
         }
         doSystemDrag(WTFMove(dragImage), dragLoc, mouseDraggedPoint, { }, dataTransfer, src, true);
+
+        return true;
+    }
+
 #if ENABLE(ATTACHMENT_ELEMENT)
-    } else if (!attachmentURL.isEmpty() && (m_dragSourceAction & DragSourceActionAttachment)) {
+    if (!attachmentURL.isEmpty() && (m_dragSourceAction & DragSourceActionAttachment)) {
         if (!dataTransfer.pasteboard().hasData()) {
             m_draggingAttachmentURL = attachmentURL;
             selectElement(element);
@@ -936,21 +945,18 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
         doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, { }, dataTransfer, src, false);
+        return true;
+    }
 #endif
-    } else if (state.type == DragSourceActionDHTML) {
-        if (dragImage) {
-            ASSERT(m_dragSourceAction & DragSourceActionDHTML);
-            m_client.willPerformDragSourceAction(DragSourceActionDHTML, dragOrigin, dataTransfer);
-            doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, { }, dataTransfer, src, false);
-        } else
-            startedDrag = false;
-    } else {
-        // draggableElement() determined an image or link node was draggable, but it turns out the
-        // image or link had no URL, so there is nothing to drag.
-        startedDrag = false;
+
+    if (state.type == DragSourceActionDHTML && dragImage) {
+        ASSERT(m_dragSourceAction & DragSourceActionDHTML);
+        m_client.willPerformDragSourceAction(DragSourceActionDHTML, dragOrigin, dataTransfer);
+        doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, { }, dataTransfer, src, false);
+        return true;
     }
 
-    return startedDrag;
+    return false;
 }
 
 void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, const IntRect& layoutRect, DataTransfer& dataTransfer, Frame& frame, IntPoint& dragImageOffset)
