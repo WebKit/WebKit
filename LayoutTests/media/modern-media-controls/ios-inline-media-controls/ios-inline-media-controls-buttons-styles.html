@@ -9,6 +9,7 @@ description("Testing the <code>IOSInlineMediaControls</code> computed styles.");
 window.jsTestIsAsync = true;
 
 const mediaControls = new IOSInlineMediaControls({ width: 680, height: 300 });
+document.body.appendChild(mediaControls.element);
 
 const buttonPositions = [
     [mediaControls.playPauseButton, 12],
@@ -19,25 +20,22 @@ const buttonPositions = [
 ];
 
 let style;
-scheduler.frameDidFire = function()
-{
-    document.body.appendChild(mediaControls.element);
+shouldBecomeEqual("buttonPositions.some(buttonPosition => buttonPosition[0].element.style.width == '')", "false", () => {
+    requestAnimationFrame(() => {
+        for (let [button, y] of buttonPositions) {
+            debug("");
+            style = window.getComputedStyle(button.element);
+            debug(button.constructor.name);
+            shouldBeEqualToRGBAColor("style.backgroundColor", "rgb(0, 0, 0)");
+            shouldBeEqualToString("style.height", "50px");
+            shouldBeEqualToString("style.webkitMaskPositionY", `${y}px`);
+        }
 
-    if (buttonPositions.some(buttonPosition => buttonPosition[0].width == 0))
-        return;
-
-    for (let [button, y] of buttonPositions) {
-        style = window.getComputedStyle(button.element);
-        debug(button.constructor.name);
-        shouldBeEqualToRGBAColor("style.backgroundColor", "rgb(0, 0, 0)");
-        shouldBeEqualToString("style.height", "50px");
-        shouldBeEqualToString("style.webkitMaskPositionY", `${y}px`);
         debug("");
-    }
-
-    mediaControls.element.remove();
-    finishMediaControlsTest();
-};
+        mediaControls.element.remove();
+        finishMediaControlsTest();
+    });
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
