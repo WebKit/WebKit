@@ -1,3 +1,12 @@
+2017-02-13  Alexey Proskuryakov  <ap@apple.com>
+
+        WebKit shouldn't re-export ScrollTypes.h and WebCoreFrameView.h
+        https://bugs.webkit.org/show_bug.cgi?id=168282
+
+        Reviewed by Dan Bernstein.
+
+        * MigrateHeaders.make:
+
 2017-02-12  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix USE(APPLE_INTERNAL_SDK) builds after r212211.
