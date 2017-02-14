@@ -992,11 +992,6 @@ WebThreadContext *WebThreadCurrentContext(void)
     return CurrentThreadContext();
 }
 
-bool WebThreadContextIsCurrent(void)
-{   
-    return WebThreadCurrentContext() == webThreadContext;
-}
-
 void WebThreadSetDelegateSourceRunLoopMode(CFStringRef mode)
 {
     ASSERT(!webThreadStarted);
