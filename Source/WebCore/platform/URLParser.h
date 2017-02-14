@@ -27,6 +27,7 @@
 
 #include "TextEncoding.h"
 #include "URL.h"
+#include <wtf/Expected.h>
 #include <wtf/Forward.h>
 
 struct UIDNA;
@@ -110,8 +111,10 @@ private:
 
     using IPv4Address = uint32_t;
     void serializeIPv4(IPv4Address);
-    template<typename CharacterTypeForSyntaxViolation, typename CharacterType> std::optional<IPv4Address> parseIPv4Host(const CodePointIterator<CharacterTypeForSyntaxViolation>&, CodePointIterator<CharacterType>);
-    template<typename CharacterType> std::optional<uint32_t> parseIPv4Piece(CodePointIterator<CharacterType>&, bool& syntaxViolation);
+    enum class IPv4ParsingError;
+    enum class IPv4PieceParsingError;
+    template<typename CharacterTypeForSyntaxViolation, typename CharacterType> Expected<IPv4Address, IPv4ParsingError> parseIPv4Host(const CodePointIterator<CharacterTypeForSyntaxViolation>&, CodePointIterator<CharacterType>);
+    template<typename CharacterType> Expected<uint32_t, URLParser::IPv4PieceParsingError> parseIPv4Piece(CodePointIterator<CharacterType>&, bool& syntaxViolation);
     using IPv6Address = std::array<uint16_t, 8>;
     template<typename CharacterType> std::optional<IPv6Address> parseIPv6Host(CodePointIterator<CharacterType>);
     template<typename CharacterType> std::optional<uint32_t> parseIPv4PieceInsideIPv6(CodePointIterator<CharacterType>&);

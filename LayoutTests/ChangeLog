@@ -1,3 +1,12 @@
+2017-02-13  Alex Christensen  <achristensen@webkit.org>
+
+        URLs with an invalid IPv4 address should be invalid
+        https://bugs.webkit.org/show_bug.cgi?id=168260
+
+        Reviewed by Tim Horton.
+
+        * fetch/fetch-url-serialization-expected.txt:
+
 2017-02-13  Karim H  <karim@karhm.com>
 
         Added the BSTR roles tag test for Windows.

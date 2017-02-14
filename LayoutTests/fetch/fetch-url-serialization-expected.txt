@@ -264,7 +264,7 @@ PASS Testing Request url 'http://%25' with base 'http://other.com/'
 PASS Testing Request url 'http://hello%00' with base 'http://other.com/' 
 PASS Testing Request url 'http://%30%78%63%30%2e%30%32%35%30.01' with base 'http://other.com/' 
 PASS Testing Request url 'http://%30%78%63%30%2e%30%32%35%30.01%2e' with base 'http://other.com/' 
-FAIL Testing Request url 'http://192.168.0.257' with base 'http://other.com/' assert_throws: function "function () {  new Request(url.input); }" did not throw
+PASS Testing Request url 'http://192.168.0.257' with base 'http://other.com/' 
 PASS Testing Request url 'http://%3g%78%63%30%2e%30%32%35%30%2E.01' with base 'http://other.com/' 
 PASS Testing Request url 'http://192.168.0.1 hello' with base 'http://other.com/' 
 PASS Testing Request url 'http://０Ｘｃ０．０２５０．０１' with base 'http://other.com/' 

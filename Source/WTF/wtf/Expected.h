@@ -315,7 +315,7 @@ public:
     constexpr const ValueType& value() const & { return base::has ? base::s.val : (ExpectedDetail::Throw(), base::s.val); }
     RELAXED_CONSTEXPR ValueType& value() & { return base::has ? base::s.val : (ExpectedDetail::Throw(), base::s.val); }
     constexpr const ValueType&& value() const && { return base::has ? base::s.val : (ExpectedDetail::Throw(), base::s.val); }
-    RELAXED_CONSTEXPR ValueType&& value() && { return base::has ? base::s.val : (ExpectedDetail::Throw(), base::s.val); }
+    RELAXED_CONSTEXPR ValueType&& value() && { return WTFMove(base::has ? base::s.val : (ExpectedDetail::Throw(), base::s.val)); }
     constexpr const ErrorType& error() const & { return !base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err); }
     ErrorType& error() & { return !base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err); }
     RELAXED_CONSTEXPR ErrorType&& error() && { return !base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err); }

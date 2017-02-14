@@ -493,11 +493,22 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://\t//\\///user:@webkit.org:99?foo", {"http", "user", "", "webkit.org", 99, "/", "foo", "", "http://user@webkit.org:99/?foo"});
     checkURL("http:/\\user:@webkit.org:99?foo", {"http", "user", "", "webkit.org", 99, "/", "foo", "", "http://user@webkit.org:99/?foo"});
     checkURL("http://127.0.0.1", {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"});
-    checkURL("http://127.0.0.1.", {"http", "", "", "127.0.0.1.", 0, "/", "", "", "http://127.0.0.1./"});
-    checkURL("http://127.0.0.1./", {"http", "", "", "127.0.0.1.", 0, "/", "", "", "http://127.0.0.1./"});
-    checkURL("http://0x100.0/", {"http", "", "", "0x100.0", 0, "/", "", "", "http://0x100.0/"});
-    checkURL("http://0.0.0x100.0/", {"http", "", "", "0.0.0x100.0", 0, "/", "", "", "http://0.0.0x100.0/"});
-    checkURL("http://0.0.0.0x100/", {"http", "", "", "0.0.0.0x100", 0, "/", "", "", "http://0.0.0.0x100/"});
+    checkURLDifferences("http://127.0.0.1.",
+        {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"},
+        {"http", "", "", "127.0.0.1.", 0, "/", "", "", "http://127.0.0.1./"});
+    checkURLDifferences("http://127.0.0.1./",
+        {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"},
+        {"http", "", "", "127.0.0.1.", 0, "/", "", "", "http://127.0.0.1./"});
+    checkURL("http://127.0.0.1../", {"http", "", "", "127.0.0.1..", 0, "/", "", "", "http://127.0.0.1../"});
+    checkURLDifferences("http://0x100.0/",
+        {"", "", "", "", 0, "", "", "", "http://0x100.0/"},
+        {"http", "", "", "0x100.0", 0, "/", "", "", "http://0x100.0/"});
+    checkURLDifferences("http://0.0.0x100.0/",
+        {"", "", "", "", 0, "", "", "", "http://0.0.0x100.0/"},
+        {"http", "", "", "0.0.0x100.0", 0, "/", "", "", "http://0.0.0x100.0/"});
+    checkURLDifferences("http://0.0.0.0x100/",
+        {"", "", "", "", 0, "", "", "", "http://0.0.0.0x100/"},
+        {"http", "", "", "0.0.0.0x100", 0, "/", "", "", "http://0.0.0.0x100/"});
     checkURL("http://host:123?", {"http", "", "", "host", 123, "/", "", "", "http://host:123/?"});
     checkURL("http://host:123?query", {"http", "", "", "host", 123, "/", "query", "", "http://host:123/?query"});
     checkURL("http://host:123#", {"http", "", "", "host", 123, "/", "", "", "http://host:123/#"});

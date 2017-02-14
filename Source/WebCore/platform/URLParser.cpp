@@ -2130,8 +2130,13 @@ void URLParser::serializeIPv6(URLParser::IPv6Address address)
     appendToASCIIBuffer(']');
 }
 
+enum class URLParser::IPv4PieceParsingError {
+    Failure,
+    Overflow,
+};
+
 template<typename CharacterType>
-std::optional<uint32_t> URLParser::parseIPv4Piece(CodePointIterator<CharacterType>& iterator, bool& didSeeSyntaxViolation)
+Expected<uint32_t, URLParser::IPv4PieceParsingError> URLParser::parseIPv4Piece(CodePointIterator<CharacterType>& iterator, bool& didSeeSyntaxViolation)
 {
     enum class State : uint8_t {
         UnknownBase,
@@ -2143,7 +2148,7 @@ std::optional<uint32_t> URLParser::parseIPv4Piece(CodePointIterator<CharacterTyp
     State state = State::UnknownBase;
     Checked<uint32_t, RecordOverflow> value = 0;
     if (!iterator.atEnd() && *iterator == '.')
-        return std::nullopt;
+        return makeUnexpected(IPv4PieceParsingError::Failure);
     while (!iterator.atEnd()) {
         if (isTabOrNewline(*iterator)) {
             didSeeSyntaxViolation = true;
@@ -2174,31 +2179,31 @@ std::optional<uint32_t> URLParser::parseIPv4Piece(CodePointIterator<CharacterTyp
             break;
         case State::Decimal:
             if (!isASCIIDigit(*iterator))
-                return std::nullopt;
+                return makeUnexpected(IPv4PieceParsingError::Failure);
             value *= 10;
             value += *iterator - '0';
             if (UNLIKELY(value.hasOverflowed()))
-                return std::nullopt;
+                return makeUnexpected(IPv4PieceParsingError::Overflow);
             ++iterator;
             break;
         case State::Octal:
             ASSERT(didSeeSyntaxViolation);
             if (*iterator < '0' || *iterator > '7')
-                return std::nullopt;
+                return makeUnexpected(IPv4PieceParsingError::Failure);
             value *= 8;
             value += *iterator - '0';
             if (UNLIKELY(value.hasOverflowed()))
-                return std::nullopt;
+                return makeUnexpected(IPv4PieceParsingError::Overflow);
             ++iterator;
             break;
         case State::Hex:
             ASSERT(didSeeSyntaxViolation);
             if (!isASCIIHexDigit(*iterator))
-                return std::nullopt;
+                return makeUnexpected(IPv4PieceParsingError::Failure);
             value *= 16;
             value += toASCIIHexValue(*iterator);
             if (UNLIKELY(value.hasOverflowed()))
-                return std::nullopt;
+                return makeUnexpected(IPv4PieceParsingError::Overflow);
             ++iterator;
             break;
         }
@@ -2214,12 +2219,18 @@ ALWAYS_INLINE static uint64_t pow256(size_t exponent)
     return values[exponent];
 }
 
+enum class URLParser::IPv4ParsingError {
+    Failure,
+    NotIPv4,
+};
+
 template<typename CharacterTypeForSyntaxViolation, typename CharacterType>
-std::optional<URLParser::IPv4Address> URLParser::parseIPv4Host(const CodePointIterator<CharacterTypeForSyntaxViolation>& iteratorForSyntaxViolationPosition, CodePointIterator<CharacterType> iterator)
+Expected<URLParser::IPv4Address, URLParser::IPv4ParsingError> URLParser::parseIPv4Host(const CodePointIterator<CharacterTypeForSyntaxViolation>& iteratorForSyntaxViolationPosition, CodePointIterator<CharacterType> iterator)
 {
-    Vector<uint32_t, 4> items;
-    items.reserveInitialCapacity(4);
+    Vector<Expected<uint32_t, URLParser::IPv4PieceParsingError>, 4> items;
     bool didSeeSyntaxViolation = false;
+    if (!iterator.atEnd() && *iterator == '.')
+        return makeUnexpected(IPv4ParsingError::NotIPv4);
     while (!iterator.atEnd()) {
         if (isTabOrNewline(*iterator)) {
             didSeeSyntaxViolation = true;
@@ -2227,44 +2238,48 @@ std::optional<URLParser::IPv4Address> URLParser::parseIPv4Host(const CodePointIt
             continue;
         }
         if (items.size() >= 4)
-            return std::nullopt;
-        if (auto item = parseIPv4Piece(iterator, didSeeSyntaxViolation))
-            items.append(item.value());
-        else
-            return std::nullopt;
-        if (!iterator.atEnd()) {
-            if (items.size() >= 4)
-                return std::nullopt;
-            if (*iterator == '.')
-                ++iterator;
-            else
-                return std::nullopt;
+            return makeUnexpected(IPv4ParsingError::NotIPv4);
+        items.append(parseIPv4Piece(iterator, didSeeSyntaxViolation));
+        if (!iterator.atEnd() && *iterator == '.') {
+            ++iterator;
+            if (iterator.atEnd())
+                syntaxViolation(iteratorForSyntaxViolationPosition);
+            else if (*iterator == '.')
+                return makeUnexpected(IPv4ParsingError::NotIPv4);
         }
     }
     if (!iterator.atEnd() || !items.size() || items.size() > 4)
-        return std::nullopt;
+        return makeUnexpected(IPv4ParsingError::NotIPv4);
+    for (const auto& item : items) {
+        if (!item.hasValue() && item.error() == IPv4PieceParsingError::Failure)
+            return makeUnexpected(IPv4ParsingError::NotIPv4);
+    }
+    for (const auto& item : items) {
+        if (!item.hasValue() && item.error() == IPv4PieceParsingError::Overflow)
+            return makeUnexpected(IPv4ParsingError::Failure);
+    }
     if (items.size() > 1) {
         for (size_t i = 0; i < items.size() - 1; i++) {
-            if (items[i] > 255)
-                return std::nullopt;
+            if (items[i].value() > 255)
+                return makeUnexpected(IPv4ParsingError::Failure);
         }
     }
-    if (items[items.size() - 1] >= pow256(5 - items.size()))
-        return std::nullopt;
+    if (items[items.size() - 1].value() >= pow256(5 - items.size()))
+        return makeUnexpected(IPv4ParsingError::Failure);
 
     if (didSeeSyntaxViolation)
         syntaxViolation(iteratorForSyntaxViolationPosition);
-    for (auto item : items) {
-        if (item > 255)
+    for (const auto& item : items) {
+        if (item.value() > 255)
             syntaxViolation(iteratorForSyntaxViolationPosition);
     }
 
     if (UNLIKELY(items.size() != 4))
         syntaxViolation(iteratorForSyntaxViolationPosition);
 
-    IPv4Address ipv4 = items.takeLast();
+    IPv4Address ipv4 = items.takeLast().value();
     for (size_t counter = 0; counter < items.size(); ++counter)
-        ipv4 += items[counter] * pow256(3 - counter);
+        ipv4 += items[counter].value() * pow256(3 - counter);
     return ipv4;
 }
 
@@ -2634,7 +2649,8 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
             if (isForbiddenHostCodePoint(*iterator))
                 return false;
         }
-        if (auto address = parseIPv4Host(hostIterator, CodePointIterator<CharacterType>(hostIterator, iterator))) {
+        auto address = parseIPv4Host(hostIterator, CodePointIterator<CharacterType>(hostIterator, iterator));
+        if (address) {
             serializeIPv4(address.value());
             m_url.m_hostEnd = currentPosition(iterator);
             if (iterator.atEnd()) {
@@ -2643,6 +2659,8 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
             }
             return parsePort(iterator);
         }
+        if (address.error() == IPv4ParsingError::Failure)
+            return false;
         for (; hostIterator != iterator; ++hostIterator) {
             if (UNLIKELY(isTabOrNewline(*hostIterator))) {
                 syntaxViolation(hostIterator);
@@ -2692,7 +2710,8 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
     Vector<LChar, defaultInlineBufferSize>& asciiDomainValue = asciiDomain.value();
     const LChar* asciiDomainCharacters = asciiDomainValue.data();
 
-    if (auto address = parseIPv4Host(hostBegin, CodePointIterator<LChar>(asciiDomainValue.begin(), asciiDomainValue.end()))) {
+    auto address = parseIPv4Host(hostBegin, CodePointIterator<LChar>(asciiDomainValue.begin(), asciiDomainValue.end()));
+    if (address) {
         serializeIPv4(address.value());
         m_url.m_hostEnd = currentPosition(iterator);
         if (iterator.atEnd()) {
@@ -2701,6 +2720,8 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
         }
         return parsePort(iterator);
     }
+    if (address.error() == IPv4ParsingError::Failure)
+        return false;
 
     appendToASCIIBuffer(asciiDomainCharacters, asciiDomainValue.size());
     m_url.m_hostEnd = currentPosition(iterator);

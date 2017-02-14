@@ -278,7 +278,7 @@ PASS Parsing: <http://%25> against <http://other.com/>
 PASS Parsing: <http://hello%00> against <http://other.com/> 
 PASS Parsing: <http://%30%78%63%30%2e%30%32%35%30.01> against <http://other.com/> 
 PASS Parsing: <http://%30%78%63%30%2e%30%32%35%30.01%2e> against <http://other.com/> 
-FAIL Parsing: <http://192.168.0.257> against <http://other.com/> assert_unreached: Expected URL to fail parsing Reached unreachable code
+PASS Parsing: <http://192.168.0.257> against <http://other.com/> 
 PASS Parsing: <http://%3g%78%63%30%2e%30%32%35%30%2E.01> against <http://other.com/> 
 PASS Parsing: <http://192.168.0.1 hello> against <http://other.com/> 
 PASS Parsing: <http://０Ｘｃ０．０２５０．０１> against <http://other.com/> 
@@ -372,13 +372,13 @@ PASS Parsing: <http://256> against <http://other.com/>
 PASS Parsing: <http://256.com> against <http://other.com/> 
 PASS Parsing: <http://999999999> against <http://other.com/> 
 PASS Parsing: <http://999999999.com> against <http://other.com/> 
-FAIL Parsing: <http://10000000000> against <http://other.com/> assert_unreached: Expected URL to fail parsing Reached unreachable code
+PASS Parsing: <http://10000000000> against <http://other.com/> 
 PASS Parsing: <http://10000000000.com> against <http://other.com/> 
 PASS Parsing: <http://4294967295> against <http://other.com/> 
-FAIL Parsing: <http://4294967296> against <http://other.com/> assert_unreached: Expected URL to fail parsing Reached unreachable code
+PASS Parsing: <http://4294967296> against <http://other.com/> 
 PASS Parsing: <http://0xffffffff> against <http://other.com/> 
-FAIL Parsing: <http://0xffffffff1> against <http://other.com/> assert_unreached: Expected URL to fail parsing Reached unreachable code
-FAIL Parsing: <http://256.256.256.256> against <http://other.com/> assert_unreached: Expected URL to fail parsing Reached unreachable code
+PASS Parsing: <http://0xffffffff1> against <http://other.com/> 
+PASS Parsing: <http://256.256.256.256> against <http://other.com/> 
 PASS Parsing: <http://256.256.256.256.256> against <http://other.com/> 
 PASS Parsing: <file:///C%3A/> against <about:blank> 
 PASS Parsing: <file:///C%7C/> against <about:blank> 
