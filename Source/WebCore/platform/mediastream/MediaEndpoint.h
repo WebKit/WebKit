@@ -33,6 +33,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "MediaEndpointConfiguration.h"
+#include "PeerConnectionBackend.h"
 #include "RealtimeMediaSource.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
@@ -42,6 +43,7 @@ namespace WebCore {
 class MediaEndpoint;
 class MediaEndpointClient;
 class MediaEndpointSessionConfiguration;
+class MediaStreamTrack;
 class RTCDataChannelHandler;
 class RealtimeMediaSource;
 
@@ -87,6 +89,8 @@ public:
     virtual void stop() = 0;
 
     virtual void emulatePlatformEvent(const String&) { };
+
+    virtual void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&& promise) { promise.reject(NOT_SUPPORTED_ERR); }
 };
 
 class MediaEndpointClient {

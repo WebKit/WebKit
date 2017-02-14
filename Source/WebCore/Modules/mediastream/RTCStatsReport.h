@@ -24,38 +24,17 @@
 
 #pragma once
 
-#include "ScriptWrappable.h"
-#include <wtf/HashMap.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class RTCStatsReport : public RefCounted<RTCStatsReport>, public ScriptWrappable {
+class RTCStatsReport : public RefCounted<RTCStatsReport> {
 public:
-    static Ref<RTCStatsReport> create(const String& id, const String& type, double timestamp);
-
-    double timestamp() const { return m_timestamp; }
-    String id() { return m_id; }
-    String type() { return m_type; }
-    String stat(const String& name) { return m_stats.get(name); }
-    Vector<String> names() const;
-
-    // DEPRECATED
-    RTCStatsReport& local();
-    // DEPRECATED
-    RTCStatsReport& remote();
-
-    void addStatistic(const String& name, const String& value);
+    static Ref<RTCStatsReport> create() { return adoptRef(*new RTCStatsReport); }
 
 private:
-    RTCStatsReport(const String& id, const String& type, double timestamp);
-
-    String m_id;
-    String m_type;
-    double m_timestamp;
-    HashMap<String, String> m_stats;
+    RTCStatsReport() = default;
 };
 
 } // namespace WebCore

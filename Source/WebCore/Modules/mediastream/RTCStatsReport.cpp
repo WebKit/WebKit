@@ -24,49 +24,11 @@
  */
 
 #include "config.h"
+#include "RTCStatsReport.h"
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCStatsReport.h"
-
-#include <wtf/text/StringHash.h>
-
 namespace WebCore {
-
-Ref<RTCStatsReport> RTCStatsReport::create(const String& id, const String& type, double timestamp)
-{
-    return adoptRef(*new RTCStatsReport(id, type, timestamp));
-}
-
-RTCStatsReport::RTCStatsReport(const String& id, const String& type, double timestamp)
-    : m_id(id)
-    , m_type(type)
-    , m_timestamp(timestamp)
-{
-}
-
-Vector<String> RTCStatsReport::names() const
-{
-    Vector<String> result;
-    for (auto& stat : m_stats.keys())
-        result.append(stat);
-    return result;
-}
-
-RTCStatsReport& RTCStatsReport::local()
-{
-    return *this;
-}
-
-RTCStatsReport& RTCStatsReport::remote()
-{
-    return *this;
-}
-
-void RTCStatsReport::addStatistic(const String& name, const String& value)
-{
-    m_stats.add(name, value);
-}
 
 } // namespace WebCore
 

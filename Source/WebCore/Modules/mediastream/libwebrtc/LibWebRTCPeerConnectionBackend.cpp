@@ -29,7 +29,7 @@
 
 #include "Document.h"
 #include "IceCandidate.h"
-#include "JSRTCStatsResponse.h"
+#include "JSRTCStatsReport.h"
 #include "LibWebRTCDataChannelHandler.h"
 #include "LibWebRTCMediaEndpoint.h"
 #include "MediaEndpointConfiguration.h"
@@ -106,14 +106,14 @@ void LibWebRTCPeerConnectionBackend::getStats(MediaStreamTrack* track, Ref<Defer
     m_endpoint->getStats(track, statsPromise);
 }
 
-void LibWebRTCPeerConnectionBackend::iceCandidateSucceeded(const DeferredPromise& promise, Ref<RTCStatsResponse>&& response)
+void LibWebRTCPeerConnectionBackend::getStatsSucceeded(const DeferredPromise& promise, Ref<RTCStatsReport>&& report)
 {
     auto statsPromise = m_statsPromises.take(&promise);
     ASSERT(statsPromise);
-    statsPromise.value()->resolve<IDLInterface<RTCStatsResponse>>(WTFMove(response));
+    statsPromise.value()->resolve<IDLInterface<RTCStatsReport>>(WTFMove(report));
 }
 
-void LibWebRTCPeerConnectionBackend::iceCandidateFailed(const DeferredPromise& promise, Exception&& exception)
+void LibWebRTCPeerConnectionBackend::getStatsFailed(const DeferredPromise& promise, Exception&& exception)
 {
     auto statsPromise = m_statsPromises.take(&promise);
     ASSERT(statsPromise);

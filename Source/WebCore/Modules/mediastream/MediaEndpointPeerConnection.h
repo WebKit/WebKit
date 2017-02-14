@@ -44,7 +44,7 @@ class SDPProcessor;
 
 class MediaEndpointPeerConnection final : public PeerConnectionBackend, public MediaEndpointClient {
 public:
-    explicit MediaEndpointPeerConnection(RTCPeerConnection&);
+    WEBCORE_EXPORT explicit MediaEndpointPeerConnection(RTCPeerConnection&);
 
 private:
     RefPtr<RTCSessionDescription> localDescription() const final;

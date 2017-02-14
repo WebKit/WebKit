@@ -1,3 +1,45 @@
+2017-02-14  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Remove obsolete WebRTC stats API
+        https://bugs.webkit.org/show_bug.cgi?id=167910
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior as removed constructs are not functional.
+        Removing RTCStatsResponse which no longer exists and made RTCStatsReport an empty container for now.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::getStats):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::getStats):
+        * Modules/mediastream/RTCStatsReport.cpp:
+        (WebCore::RTCStatsReport::create): Deleted.
+        (WebCore::RTCStatsReport::RTCStatsReport): Deleted.
+        (WebCore::RTCStatsReport::names): Deleted.
+        (WebCore::RTCStatsReport::local): Deleted.
+        (WebCore::RTCStatsReport::remote): Deleted.
+        (WebCore::RTCStatsReport::addStatistic): Deleted.
+        * Modules/mediastream/RTCStatsReport.h:
+        (WebCore::RTCStatsReport::create):
+        (WebCore::RTCStatsReport::timestamp): Deleted.
+        (WebCore::RTCStatsReport::id): Deleted.
+        (WebCore::RTCStatsReport::type): Deleted.
+        (WebCore::RTCStatsReport::stat): Deleted.
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/mediastream/RTCStatsResponse.cpp: Removed.
+        * Modules/mediastream/RTCStatsResponse.h: Removed.
+        * Modules/mediastream/RTCStatsResponse.idl: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/MediaEndpoint.h:
+        (WebCore::MediaEndpoint::getStats):
+        * platform/mediastream/RTCStatsRequest.h: Removed.
+        * platform/mediastream/RTCStatsResponseBase.h: Removed.
+
 2017-02-14  Karim H  <karim@karhm.com>
 
         Removed unused methods of WebCore::FileStream

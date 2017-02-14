@@ -46,7 +46,7 @@ class RTCPeerConnection;
 class RTCRtpReceiver;
 class RTCRtpSender;
 class RTCSessionDescription;
-class RTCStatsResponse;
+class RTCStatsReport;
 
 struct MediaEndpointConfiguration;
 struct RTCAnswerOptions;
@@ -55,7 +55,7 @@ struct RTCOfferOptions;
 
 namespace PeerConnection {
 using SessionDescriptionPromise = DOMPromise<IDLInterface<RTCSessionDescription>>;
-using StatsPromise = DOMPromise<IDLInterface<RTCStatsResponse>>;
+using StatsPromise = DOMPromise<IDLInterface<RTCStatsReport>>;
 }
 
 using CreatePeerConnectionBackend = std::unique_ptr<PeerConnectionBackend> (*)(RTCPeerConnection&);

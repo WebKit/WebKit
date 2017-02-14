@@ -27,13 +27,6 @@
     Conditional=WEB_RTC,
     ImplementationLacksVTable,
 ] interface RTCStatsReport {
-    readonly attribute Date timestamp;
-    readonly attribute DOMString id;
-    readonly attribute DOMString type;
-    DOMString stat(DOMString name);
-    sequence<DOMString> names();
-
-    // DEPRECATED - fake for old RTCStatsElement object.
-    readonly attribute RTCStatsReport local;
-    readonly attribute RTCStatsReport remote;
+    // FIXME: Make it setlike
+    //readonly maplike<DOMString, object>;
 };

@@ -402,7 +402,6 @@
 #include "JSRTCRtpSender.cpp"
 #include "JSRTCSessionDescription.cpp"
 #include "JSRTCStatsReport.cpp"
-#include "JSRTCStatsResponse.cpp"
 #include "JSRTCTrackEvent.cpp"
 #include "JSScreen.cpp"
 #include "JSScriptProcessorNode.cpp"

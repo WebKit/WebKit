@@ -38,6 +38,7 @@ namespace WebCore {
 class LibWebRTCMediaEndpoint;
 class RTCRtpReceiver;
 class RTCSessionDescription;
+class RTCstatsReport;
 class RealtimeOutgoingAudioSource;
 class RealtimeOutgoingVideoSource;
 
@@ -80,8 +81,8 @@ private:
     void addAudioSource(Ref<RealtimeOutgoingAudioSource>&&);
     void addVideoSource(Ref<RealtimeOutgoingVideoSource>&&);
 
-    void iceCandidateSucceeded(const DeferredPromise&, Ref<RTCStatsResponse>&&);
-    void iceCandidateFailed(const DeferredPromise&, Exception&&);
+    void getStatsSucceeded(const DeferredPromise&, Ref<RTCStatsReport>&&);
+    void getStatsFailed(const DeferredPromise&, Exception&&);
 
 private:
     Ref<LibWebRTCMediaEndpoint> m_endpoint;
