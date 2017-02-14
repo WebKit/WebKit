@@ -161,7 +161,7 @@ static double progressTimeStep = 0.03;
 {
     CGFloat distanceX = _endLocation.x - _startLocation.x;
     CGFloat distanceY = _endLocation.y - _startLocation.y;
-    return { _startLocation.x + _gestureProgress * distanceX, _startLocation.y + _gestureProgress * distanceY };
+    return CGPointMake(_startLocation.x + _gestureProgress * distanceX, _startLocation.y + _gestureProgress * distanceY);
 }
 
 - (void)_scheduleAdvanceProgress
