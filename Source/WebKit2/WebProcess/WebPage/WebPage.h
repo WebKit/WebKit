@@ -751,6 +751,7 @@ public:
 
     void willStartDrag() { ASSERT(!m_isStartingDrag); m_isStartingDrag = true; }
     void didStartDrag() { ASSERT(m_isStartingDrag); m_isStartingDrag = false; }
+    void dragCancelled() { m_isStartingDrag = false; }
 #endif // ENABLE(DRAG_SUPPORT)
 
     void beginPrinting(uint64_t frameID, const PrintInfo&);

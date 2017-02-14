@@ -247,6 +247,7 @@ messages -> WebPage LegacyReceiver {
 #if ENABLE(DRAG_SUPPORT)
     DidStartDrag()
     DragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation)
+    DragCancelled()
 #endif
 
 #if ENABLE(DATA_INTERACTION)
