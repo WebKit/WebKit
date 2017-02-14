@@ -1,3 +1,15 @@
+2017-02-14  Brady Eidson  <beidson@apple.com>
+
+        Speculative fix for: Crash in DocumentThreadableLoader::redirectReceived.
+        <rdar://problem/29899473> and https://bugs.webkit.org/show_bug.cgi?id=168337
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests (Unable to find a reproduction).
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+
 2017-02-14  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Remove obsolete WebRTC stats API

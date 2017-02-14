@@ -366,6 +366,8 @@ void DocumentThreadableLoader::preflightFailure(unsigned long identifier, const 
 
 void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCheckPolicy securityCheck)
 {
+    Ref<DocumentThreadableLoader> protectedThis(*this);
+
     // Any credential should have been removed from the cross-site requests.
     const URL& requestURL = request.url();
     m_options.securityCheck = securityCheck;
@@ -387,6 +389,11 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         newRequest.setOrigin(securityOrigin());
 
         ASSERT(!m_resource);
+        if (m_resource) {
+            CachedResourceHandle<CachedRawResource> resource = std::exchange(m_resource, nullptr);
+            resource->removeClient(*this);
+        }
+
         // We create an URL here as the request will be moved in requestRawResource
         URL requestUrl = newRequest.resourceRequest().url();
         m_resource = m_document.cachedResourceLoader().requestRawResource(WTFMove(newRequest));
