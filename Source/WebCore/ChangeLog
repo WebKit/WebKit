@@ -1,3 +1,21 @@
+2017-02-14  Karim H  <karim@karhm.com>
+
+        Removed unused methods of WebCore::FileStream
+        https://bugs.webkit.org/show_bug.cgi?id=168025
+
+        Reviewed by Michael Catanzaro.
+
+        * fileapi/AsyncFileStream.cpp:
+        (WebCore::AsyncFileStream::openForWrite): Deleted.
+        (WebCore::AsyncFileStream::write): Deleted.
+        (WebCore::AsyncFileStream::truncate): Deleted.
+        * fileapi/AsyncFileStream.h:
+        * platform/FileStream.cpp:
+        (WebCore::FileStream::openForWrite): Deleted.
+        (WebCore::FileStream::write): Deleted.
+        (WebCore::FileStream::truncate): Deleted.
+        * platform/FileStream.h:
+
 2017-02-14  Chris Dumez  <cdumez@apple.com>
 
         HTML Form Validation bubble should take minimum font size setting into consideration

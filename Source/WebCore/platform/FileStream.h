@@ -51,10 +51,6 @@ public:
     // Returns true on success. False otherwise.
     bool openForRead(const String& path, long long offset, long long length);
 
-    // Opens a file for writing.
-    // Returns true on success. False otherwise.
-    bool openForWrite(const String& path);
-
     // Closes the file.
     void close();
 
@@ -62,14 +58,6 @@ public:
     // Returns number of bytes being read on success. -1 otherwise.
     // If 0 is returned, it means that the reading is completed.
     int read(char* buffer, int length);
-
-    // Writes a blob to the file.
-    // Returns number of bytes being written on success. -1 otherwise.
-    int write(const URL& blobURL, long long position, int length);
-
-    // Truncates the file to the specified position.
-    // Returns true on success. False otherwise.
-    bool truncate(long long position);
 
 private:
     PlatformFileHandle m_handle;

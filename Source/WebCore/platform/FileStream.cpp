@@ -90,12 +90,6 @@ bool FileStream::openForRead(const String& path, long long offset, long long len
     return true;
 }
 
-bool FileStream::openForWrite(const String&)
-{
-    // FIXME: to be implemented.
-    return false;
-}
-
 void FileStream::close()
 {
     if (isHandleValid(m_handle)) {
@@ -120,18 +114,6 @@ int FileStream::read(char* buffer, int bufferSize)
         m_bytesProcessed += bytesRead;
 
     return bytesRead;
-}
-
-int FileStream::write(const URL&, long long, int)
-{
-    // FIXME: to be implemented.
-    return -1;
-}
-
-bool FileStream::truncate(long long)
-{
-    // FIXME: to be implemented.
-    return false;
 }
 
 } // namespace WebCore
