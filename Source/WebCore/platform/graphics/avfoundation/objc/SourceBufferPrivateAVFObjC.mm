@@ -48,6 +48,7 @@
 #import <AVFoundation/AVAssetTrack.h>
 #import <QuartzCore/CALayer.h>
 #import <objc/runtime.h>
+#import <runtime/TypedArrayInlines.h>
 #import <wtf/text/AtomicString.h>
 #import <wtf/text/CString.h>
 #import <wtf/BlockObjCExceptions.h>
