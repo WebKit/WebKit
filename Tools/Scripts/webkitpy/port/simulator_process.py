@@ -135,4 +135,4 @@ class SimulatorProcess(ServerProcess):
         except OSError as err:
             assert err.errno == errno.ESRCH
             pass
-        super(SimulatorProcess, self).stop(timeout_secs)
+        return super(SimulatorProcess, self).stop(timeout_secs)
