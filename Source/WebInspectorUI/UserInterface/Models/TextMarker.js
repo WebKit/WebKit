@@ -85,4 +85,5 @@ WebInspector.TextMarker.Type = {
     Plain: "text-marker-type-plain",
     CubicBezier: "text-marker-type-cubic-bezier",
     Spring: "text-marker-type-spring",
+    Variable: "text-marker-type-variable",
 };

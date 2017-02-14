@@ -61,9 +61,9 @@ function createCodeMirrorTextMarkers(type, pattern, matchFunction, codeMirror, r
                 continue;
             }
 
-            var valueString = match[0];
-            var value = WebInspector[type].fromString(valueString);
-            if (!value) {
+            let valueString = match[1];
+            let value = WebInspector[type] ? WebInspector[type].fromString(valueString) : null;
+            if (WebInspector[type] && !value) {
                 match = pattern.exec(lineContent);
                 continue;
             }
@@ -200,4 +200,10 @@ function createCodeMirrorSpringTextMarkers(codeMirror, range, callback)
 {
     const springRegex = /(spring\([^)]+\))/g;
     return createCodeMirrorTextMarkers("Spring", springRegex, null, codeMirror, range, callback);
+}
+
+function createCodeMirrorVariableTextMarkers(codeMirror, range, callback)
+{
+    const variableRegex = /var\((--[\w-]+)\)/g;
+    return createCodeMirrorTextMarkers("Variable", variableRegex, null, codeMirror, range, callback);
 }

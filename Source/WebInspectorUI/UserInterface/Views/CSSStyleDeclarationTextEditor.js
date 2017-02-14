@@ -895,6 +895,18 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                 let swatch = new WebInspector.InlineSwatch(WebInspector.InlineSwatch.Type.Spring, spring, this._codeMirror.getOption("readOnly"));
                 createSwatch.call(this, swatch, marker, spring, springString);
             });
+
+            // Look for CSS variables and add swatches in front of them.
+            createCodeMirrorVariableTextMarkers(this._codeMirror, range, (marker, variable, variableString) => {
+                const dontCreateIfMissing = true;
+                let variableProperty = this._style.nodeStyles.computedStyle.propertyForName(variableString, dontCreateIfMissing);
+                if (!variableProperty)
+                    return;
+
+                let trimmedValue = variableProperty.value.trim();
+                let swatch = new WebInspector.InlineSwatch(WebInspector.InlineSwatch.Type.Variable, trimmedValue, this._codeMirror.getOption("readOnly"));
+                createSwatch.call(this, swatch, marker, variableProperty, trimmedValue);
+            });
         }
 
         if (nonatomic)

@@ -47,16 +47,20 @@
     content: url(../Images/CubicBezier.svg);
 }
 
-.inline-swatch:matches(.bezier, .spring) {
+.inline-swatch.variable {
+    content: url(../Images/CSSVariable.svg);
+}
+
+.inline-swatch:matches(.bezier, .spring, .variable) {
     margin-right: 2px;
     background: none;
 }
 
-.inline-swatch:matches(.bezier, .spring):hover {
+.inline-swatch:matches(.bezier, .spring, .variable):hover {
     filter: brightness(0.9);
 }
 
-.inline-swatch:matches(.bezier, .spring):active {
+.inline-swatch:matches(.bezier, .spring, .variable):active {
     filter: brightness(0.8);
 }
 
@@ -92,3 +96,18 @@
     display: none;
 }
 
+.inline-swatch-variable-popover {
+    display: flex;
+    align-items: center;
+    min-height: 24px;
+    padding-top: 0.5px;
+}
+
+.inline-swatch-variable-popover .CodeMirror {
+    height: auto;
+    background-color: transparent;
+}
+
+.inline-swatch-variable-popover .CodeMirror pre {
+    padding: 0 3px;
+}

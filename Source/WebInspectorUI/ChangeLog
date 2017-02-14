@@ -1,3 +1,41 @@
+2017-02-13  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: provide a way to show current value of CSS variables in style rules
+        https://bugs.webkit.org/show_bug.cgi?id=168172
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Images/CSSVariable.svg: Added.
+
+        * UserInterface/Models/TextMarker.js:
+        (WebInspector.TextMarker.Type):
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor._createInlineSwatches.update):
+
+        * UserInterface/Views/CodeMirrorTextMarkers.js:
+        (createCodeMirrorTextMarkers):
+        (createCodeMirrorVariableTextMarkers):
+
+        * UserInterface/Views/InlineSwatch.css:
+        (.inline-swatch.variable):
+        (.inline-swatch:matches(.bezier, .spring, .variable)):
+        (.inline-swatch:matches(.bezier, .spring, .variable):hover):
+        (.inline-swatch:matches(.bezier, .spring, .variable):active):
+        (.inline-swatch-variable-popover):
+        (.inline-swatch-variable-popover .CodeMirror):
+        (.inline-swatch-variable-popover .CodeMirror pre):
+        (.inline-swatch:matches(.bezier, .spring):hover): Deleted.
+        (.inline-swatch:matches(.bezier, .spring):active): Deleted.
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WebInspector.InlineSwatch):
+        (WebInspector.InlineSwatch.prototype._fallbackValue):
+        (WebInspector.InlineSwatch.prototype._swatchElementClicked):
+        (WebInspector.InlineSwatch.prototype._valueEditorValueDidChange):
+        (WebInspector.InlineSwatch.Type):
+
 2017-02-13  Matt Baker  <mattbaker@apple.com>
 
         REGRESSION(r188138): Web Inspector: cannot edit next/previous DOM attribute by using tab/shift-tab

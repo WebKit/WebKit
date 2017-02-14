@@ -828,6 +828,7 @@ localizedStrings["Variables"] = "Variables";
 localizedStrings["Variants"] = "Variants";
 localizedStrings["Version"] = "Version";
 localizedStrings["Vertical"] = "Vertical";
+localizedStrings["View variable value"] = "View variable value";
 localizedStrings["Visibility"] = "Visibility";
 localizedStrings["Visible"] = "Visible";
 localizedStrings["Waiting to be upgraded"] = "Waiting to be upgraded";
