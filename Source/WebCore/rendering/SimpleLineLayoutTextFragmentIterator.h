@@ -109,6 +109,7 @@ public:
 
         const FontCascade& font;
         ETextAlign textAlign;
+        bool hasKerningOrLigatures;
         bool collapseWhitespace;
         bool preserveNewline;
         bool wrapLines;
