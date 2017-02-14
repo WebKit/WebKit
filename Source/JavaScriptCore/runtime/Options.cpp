@@ -434,6 +434,12 @@ static void recomputeDependentOptions()
     else
         fastSetMaxSingleAllocationSize(std::numeric_limits<size_t>::max());
 #endif
+
+    if (Options::useZombieMode()) {
+        Options::sweepSynchronously() = true;
+        Options::scribbleFreeCells() = true;
+    }
+
     if (Options::useSigillCrashAnalyzer())
         enableSigillCrashAnalyzer();
 }

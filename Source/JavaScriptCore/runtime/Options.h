@@ -342,8 +342,9 @@ typedef const char* optionString;
     v(bool, forceWeakRandomSeed, false, Normal, nullptr) \
     v(unsigned, forcedWeakRandomSeed, 0, Normal, nullptr) \
     \
-    v(bool, useZombieMode, false, Normal, "debugging option to scribble over dead objects with 0xdeadbeef") \
+    v(bool, useZombieMode, false, Normal, "debugging option to scribble over dead objects with 0xbadbeef0") \
     v(bool, useImmortalObjects, false, Normal, "debugging option to keep all objects alive forever") \
+    v(bool, sweepSynchronously, false, Normal, "debugging option to sweep all dead objects synchronously at GC end before resuming mutator") \
     v(bool, dumpObjectStatistics, false, Normal, nullptr) \
     v(unsigned, maxSingleAllocationSize, 0, Configurable, "debugging option to limit individual allocations to a max size (0 = limit not set, N = limit size in bytes)") \
     \
