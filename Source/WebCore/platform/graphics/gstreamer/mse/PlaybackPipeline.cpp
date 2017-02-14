@@ -40,6 +40,9 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/AtomicString.h>
 
+GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
+#define GST_CAT_DEFAULT webkit_mse_debug
+
 static Stream* getStreamByTrackId(WebKitMediaSrc*, AtomicString);
 static Stream* getStreamBySourceBufferPrivate(WebKitMediaSrc*, WebCore::SourceBufferPrivateGStreamer*);
 

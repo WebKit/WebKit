@@ -52,6 +52,12 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
+GST_DEBUG_CATEGORY_STATIC(webkit_media_src_debug);
+#define GST_CAT_DEFAULT webkit_media_src_debug
+
+#define webkit_media_src_parent_class parent_class
+#define WEBKIT_MEDIA_SRC_CATEGORY_INIT GST_DEBUG_CATEGORY_INIT(webkit_media_src_debug, "webkitmediasrc", 0, "websrc element");
+
 static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src_%u", GST_PAD_SRC,
     GST_PAD_SOMETIMES, GST_STATIC_CAPS_ANY);
 
@@ -186,11 +192,6 @@ static Stream* getStreamByAppsrc(WebKitMediaSrc* source, GstElement* appsrc)
     return nullptr;
 }
 
-GST_DEBUG_CATEGORY_STATIC(webkit_media_src_debug);
-#define GST_CAT_DEFAULT webkit_media_src_debug
-
-#define webkit_media_src_parent_class parent_class
-#define WEBKIT_MEDIA_SRC_CATEGORY_INIT GST_DEBUG_CATEGORY_INIT(webkit_media_src_debug, "webkitmediasrc", 0, "websrc element");
 G_DEFINE_TYPE_WITH_CODE(WebKitMediaSrc, webkit_media_src, GST_TYPE_BIN,
     G_IMPLEMENT_INTERFACE(GST_TYPE_URI_HANDLER, webKitMediaSrcUriHandlerInit);
     WEBKIT_MEDIA_SRC_CATEGORY_INIT);

@@ -24,6 +24,10 @@
 #include "AppendPipeline.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
 #include "WebKitMediaSourceGStreamer.h"
+#include <gst/gst.h>
+
+GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
+#define GST_CAT_DEFAULT webkit_mse_debug
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
 

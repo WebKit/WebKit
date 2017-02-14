@@ -1,3 +1,22 @@
+2017-02-14  Vanessa Chipirrás Navalón  <vchipirras@igalia.com>
+
+        [GStreamer][MSE] Some GStreamer log messages are generated with the 'default' category
+        https://bugs.webkit.org/show_bug.cgi?id=168015
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The elements AppendPipeline, PlaybackPipeline, MediaSourceClientGstreamerMSE do not have
+        a defined Gstreamer log category, then the webkitmse category has been added to them.
+        WebKitMediaSourceGstreamer has its own category but was not declared at the beginning of
+        the .cpp file.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp: Added webkitmse category.
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        Added webkitmse category and gst header.
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp: Added webkitmse category.
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        Added webkitmediasrc category.
+
 2017-02-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         CookieManager only works with the default session

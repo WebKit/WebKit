@@ -41,6 +41,9 @@
 #include <wtf/Condition.h>
 #include <wtf/glib/GLibUtilities.h>
 
+GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
+#define GST_CAT_DEFAULT webkit_mse_debug
+
 namespace WebCore {
 
 static const char* dumpAppendState(AppendPipeline::AppendState appendState)
