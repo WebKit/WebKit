@@ -4,8 +4,16 @@
 <div id="container"></div>
 <style type="text/css" media="screen">
 
-#container {
+body {
+    margin: 0;
+}
+
+body > * {
     position: absolute;
+}
+
+#container {
+    position: relative;
     top: 0;
     left: 0;
     width: 800px;
@@ -24,19 +32,16 @@ const centerContainer = mediaControls.controlsBar.children[2];
 const rightContainer = mediaControls.controlsBar.children[3];
 const buttons = centerContainer.buttons.concat(rightContainer.buttons);
 
-let centerContainerBounds, rightContainerBounds;
-scheduler.frameDidFire = function()
-{
-    if (buttons.some(button => button.width == 0))
-        return;
+document.getElementById("container").appendChild(mediaControls.element);
 
+let centerContainerBounds, rightContainerBounds;
+shouldBecomeEqual("buttons.some(button => button.element.style.width == '')", "false", () => {
     // All buttons have been loaded, we wait for the next tick to ensure
     // that their CSS properties have also been committed.
     window.requestAnimationFrame(() => {
-        document.getElementById("container").appendChild(mediaControls.element);
-
         centerContainerBounds = centerContainer.element.getBoundingClientRect();
 
+        debug("");
         shouldBe("centerContainerBounds.left", "311");
         shouldBe("centerContainerBounds.top", "500");
         shouldBe("centerContainerBounds.width", "178");
@@ -53,9 +58,7 @@ scheduler.frameDidFire = function()
         mediaControls.element.remove();
         finishJSTest();
     });
-
-    scheduler.frameDidFire = null;
-};
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
