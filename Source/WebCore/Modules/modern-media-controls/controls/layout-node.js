@@ -23,7 +23,7 @@ class LayoutNode
         this._width = 0;
         this._height = 0;
         this._visible = true;
-    
+
         this._needsLayout = false;
         this._dirtyProperties = new Set;
 
@@ -128,7 +128,7 @@ class LayoutNode
     {
         while (this._children.length)
             this.removeChild(this._children[0]);
-        
+
         for (let child of children)
             this.addChild(child);
     }
@@ -268,7 +268,7 @@ class LayoutNode
         for (let i = this.children.length - 1; i >= 0; --i) {
             let child = this.children[i];
             let childElement = child.element;
-        
+
             if (child._pendingDOMManipulation === LayoutNode.DOMManipulation.Addition) {
                 element.insertBefore(childElement, nextChildElement);
                 child._pendingDOMManipulation = LayoutNode.DOMManipulation.None;

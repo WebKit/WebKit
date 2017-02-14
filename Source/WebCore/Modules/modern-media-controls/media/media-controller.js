@@ -146,7 +146,7 @@ class MediaController
             this.container.replaceChild(this.controls.element, previousControls.element);
             this.controls.usesLTRUserInterfaceLayoutDirection = previousControls.usesLTRUserInterfaceLayoutDirection;
         } else
-            this.container.appendChild(this.controls.element);        
+            this.container.appendChild(this.controls.element);
 
         this.controls.layoutTraits = layoutTraits;
         this._updateControlsSize();

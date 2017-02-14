@@ -45,7 +45,7 @@ class TracksPanel extends LayoutNode
         this.element.addEventListener("transitionend", this);
 
         // Ensure a transition will indeed happen by starting it only on the next frame.
-        window.requestAnimationFrame(() => { this.element.classList.add("fade-out") });
+        window.requestAnimationFrame(() => { this.element.classList.add("fade-out"); });
     }
 
     get bottomY()
@@ -135,13 +135,13 @@ class TracksPanel extends LayoutNode
         const children = [];
 
         this._trackNodes = [];
-        
+
         const dataSource = this.dataSource;
         if (!dataSource)
             return children;
-        
+
         const numberOfSections = dataSource.tracksPanelNumberOfSections();
-        if (numberOfSections == 0)
+        if (numberOfSections === 0)
             return children;
 
         for (let sectionIndex = 0; sectionIndex < numberOfSections; ++sectionIndex) {
@@ -152,13 +152,13 @@ class TracksPanel extends LayoutNode
             let numberOfTracks = dataSource.tracksPanelNumberOfTracksInSection(sectionIndex);
             for (let trackIndex = 0; trackIndex < numberOfTracks; ++trackIndex) {
                 let trackTitle = dataSource.tracksPanelTitleForTrackInSection(trackIndex, sectionIndex);
-                let trackSelected = dataSource.tracksPanelIsTrackInSectionSelected(trackIndex, sectionIndex)
+                let trackSelected = dataSource.tracksPanelIsTrackInSectionSelected(trackIndex, sectionIndex);
                 let trackNode = tracksListNode.addChild(new TrackNode(trackIndex, sectionIndex, trackTitle, trackSelected, this));
                 this._trackNodes.push(trackNode);
             }
             children.push(sectionNode);
         }
-        
+
         return children;
     }
 

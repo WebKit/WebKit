@@ -52,7 +52,7 @@ class ControlsBar extends LayoutNode
     set translation(point)
     {
         if (this._translation.x === point.x && this._translation.y === point.y)
-            return
+            return;
 
         this._translation = new DOMPoint(point.x, point.y);
         this.markDirtyProperty("translation");

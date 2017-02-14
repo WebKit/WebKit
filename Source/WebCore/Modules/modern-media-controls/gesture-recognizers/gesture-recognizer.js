@@ -60,7 +60,7 @@ class GestureRecognizer
     {
         return this._enabled;
     }
-    
+
     set enabled(enabled)
     {
         if (this._enabled === enabled)
@@ -299,14 +299,14 @@ class GestureRecognizer
             if (event.type === GestureRecognizer.Events.TouchEnd)
                 this._targetTouches = [];
             else
-                this._targetTouches = [event]
+                this._targetTouches = [event];
             return;
         }
 
         if (!(event instanceof TouchEvent))
             return;
 
-        // With a touchstart event, event.targetTouches is accurate so 
+        // With a touchstart event, event.targetTouches is accurate so
         // we simply add all of those.
         if (event.type === GestureRecognizer.Events.TouchStart) {
             this._targetTouches = [];
@@ -352,7 +352,7 @@ class GestureRecognizer
         this.modifierKeys.meta = event.metaKey;
         this.modifierKeys.shift = event.shiftKey;
     }
-    
+
 }
 
 GestureRecognizer.SupportsTouches = "createTouch" in document;

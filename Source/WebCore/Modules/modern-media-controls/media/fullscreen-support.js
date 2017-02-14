@@ -64,7 +64,7 @@ class FullscreenSupport extends MediaControllerSupport
     {
         this.mediaController.media.webkitEnterFullscreen();
     }
-    
+
     syncControl()
     {
         const control = this.control;

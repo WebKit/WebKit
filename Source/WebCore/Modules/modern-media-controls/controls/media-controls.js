@@ -44,7 +44,7 @@ class MediaControls extends LayoutNode
         this.pipButton = new PiPButton(this);
         this.fullscreenButton = new FullscreenButton(this);
 
-        this.statusLabel = new StatusLabel(this)
+        this.statusLabel = new StatusLabel(this);
         this.timeControl = new TimeControl(this);
 
         this.controlsBar = new ControlsBar(this);
@@ -67,7 +67,7 @@ class MediaControls extends LayoutNode
     {
         if (this._showsStartButton === flag)
             return;
-       
+
         this._showsStartButton = flag;
         this._invalidateChildren();
     }
@@ -86,12 +86,12 @@ class MediaControls extends LayoutNode
     {
         return this._scaleFactor;
     }
-    
+
     set scaleFactor(scaleFactor)
     {
         if (this._scaleFactor === scaleFactor)
             return;
-    
+
         this._scaleFactor = scaleFactor;
         this.markDirtyProperty("scaleFactor");
     }

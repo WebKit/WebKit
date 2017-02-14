@@ -46,7 +46,7 @@ class PinchGestureRecognizer extends GestureRecognizer
                 return;
             }
 
-            // We can only start tracking touches with 2 fingers. 
+            // We can only start tracking touches with 2 fingers.
             if (this.numberOfTouches !== 2)
                 return;
 
@@ -193,7 +193,7 @@ class PinchGestureRecognizer extends GestureRecognizer
     {
         console.assert(this.numberOfTouches === 2);
 
-        const firstTouch = this._targetTouches[0]
+        const firstTouch = this._targetTouches[0];
         const firstTouchPoint = new DOMPoint(firstTouch.pageX, firstTouch.pageY);
 
         const secondTouch = this._targetTouches[1];

@@ -53,4 +53,3 @@ class StatusSupport extends MediaControllerSupport
     }
 
 }
- 

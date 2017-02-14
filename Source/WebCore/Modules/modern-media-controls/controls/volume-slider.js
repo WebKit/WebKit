@@ -25,7 +25,7 @@
 
 class VolumeSlider extends Slider
 {
-    
+
     constructor()
     {
         super("volume");

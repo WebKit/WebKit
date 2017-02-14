@@ -32,7 +32,7 @@ class FullscreenButton extends IconButton
             cssClassName: "fullscreen",
             layoutDelegate
         });
-        
+
         this.iconName = this.layoutTraits & LayoutTraits.Fullscreen ? Icons.ExitFullscreen : Icons.EnterFullscreen;
     }
 

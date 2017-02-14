@@ -47,7 +47,7 @@ const scheduler = new class
 
         this._layout();
         this._frameID = -1;
-        this._requestFrameIfNeeded();   
+        this._requestFrameIfNeeded();
 
         if (typeof scheduler.frameDidFire === "function")
             scheduler.frameDidFire();
@@ -63,4 +63,4 @@ const scheduler = new class
             callback();
     }
 
-}
+};

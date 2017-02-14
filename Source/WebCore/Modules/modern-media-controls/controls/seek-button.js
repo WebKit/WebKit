@@ -52,7 +52,7 @@ class SeekButton extends IconButton
         const mediaControls = this.parentOfType(MediaControls);
         if (!mediaControls)
             return;
-            
+
         this._mouseupTarget = mediaControls.element;
         this._mouseupTarget.addEventListener("mouseup", this, true);
         this._notifyDelegateOfPressingState(true);

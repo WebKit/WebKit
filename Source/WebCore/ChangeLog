@@ -1,3 +1,27 @@
+2017-02-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Address ESLint warnings in modern-media-controls
+        https://bugs.webkit.org/show_bug.cgi?id=168224
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        * Modules/modern-media-controls/controls/fullscreen-button.js:
+        * Modules/modern-media-controls/controls/layout-node.js:
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        * Modules/modern-media-controls/controls/media-controls.js:
+        * Modules/modern-media-controls/controls/scheduler.js:
+        * Modules/modern-media-controls/controls/seek-button.js:
+        * Modules/modern-media-controls/controls/tracks-panel.js:
+        * Modules/modern-media-controls/controls/volume-slider.js:
+        * Modules/modern-media-controls/gesture-recognizers/gesture-recognizer.js:
+        * Modules/modern-media-controls/gesture-recognizers/pinch.js:
+        * Modules/modern-media-controls/media/fullscreen-support.js:
+        * Modules/modern-media-controls/media/media-controller.js:
+        * Modules/modern-media-controls/media/placard-support.js:
+        * Modules/modern-media-controls/media/status-support.js:
+        Address pedantic warnings.
+
 2017-02-13  Dan Bernstein  <mitz@apple.com>
 
         Restored changes from r212210 in a way that does not break the build.

@@ -149,7 +149,7 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
             this.controlsBar.translation.x + currentDragPoint.x - this._lastDragPoint.x,
             this.controlsBar.translation.y + currentDragPoint.y - this._lastDragPoint.y
         );
-        
+
         this._lastDragPoint = currentDragPoint;
     }
 
