@@ -1,3 +1,17 @@
+2017-02-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r212237.
+        https://bugs.webkit.org/show_bug.cgi?id=168298
+
+        This was a wrong fix (Requested by rniwa on #webkit).
+
+        Reverted changeset:
+
+        "Nwtr unexpectedly passes mismatch ref test if the hashes
+        doesn't match but no diff"
+        https://bugs.webkit.org/show_bug.cgi?id=168221
+        http://trac.webkit.org/changeset/212237
+
 2017-02-13  Alex Christensen  <achristensen@webkit.org>
 
         URLs with an invalid IPv4 address should be invalid
