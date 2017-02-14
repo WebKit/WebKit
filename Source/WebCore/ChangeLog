@@ -1,3 +1,21 @@
+2017-02-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Make DragImageRef a RefPtr instead of a plain pointer
+        https://bugs.webkit.org/show_bug.cgi?id=168296
+
+        Reviewed by Sergio Villar Senin.
+
+        Use RefPtr<cairo_surface_t> as DragImageRef for GTK+ port to avoid memory leaks.
+
+        * platform/DragImage.h:
+        * platform/gtk/DragImageGtk.cpp:
+        (WebCore::dragImageSize):
+        (WebCore::deleteDragImage):
+        (WebCore::scaleDragImage):
+        (WebCore::dissolveDragImageToFraction):
+        (WebCore::createDragImageFromImage):
+        (WebCore::createDragImageIconForCachedImageFilename):
+
 2017-02-14  Vanessa Chipirrás Navalón  <vchipirras@igalia.com>
 
         [GStreamer][MSE] Some GStreamer log messages are generated with the 'default' category

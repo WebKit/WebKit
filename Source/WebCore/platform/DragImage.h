@@ -40,7 +40,7 @@ OBJC_CLASS NSImage;
 #elif PLATFORM(WIN)
 typedef struct HBITMAP__* HBITMAP;
 #elif PLATFORM(GTK)
-typedef struct _cairo_surface cairo_surface_t;
+#include "RefPtrCairo.h"
 #endif
 
 // We need to #define YOffset as it needs to be shared with WebKit
@@ -62,7 +62,7 @@ typedef RetainPtr<NSImage> DragImageRef;
 #elif PLATFORM(WIN)
 typedef HBITMAP DragImageRef;
 #elif PLATFORM(GTK)
-typedef cairo_surface_t* DragImageRef;
+typedef RefPtr<cairo_surface_t> DragImageRef;
 #elif PLATFORM(EFL)
 typedef void* DragImageRef;
 #endif
