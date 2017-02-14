@@ -1,3 +1,23 @@
+2017-02-13  Filip Pizlo  <fpizlo@apple.com>
+
+        worker.postMessage should throw a TypeError if a SharedArrayBuffer is in the transfer list
+        https://bugs.webkit.org/show_bug.cgi?id=168277
+
+        Reviewed by Mark Lam.
+        
+        Add a test of the new behavior, and remove tests for the old behavior.
+        
+        Most of the SharedArrayBuffer tests use the new style, where the buffer is not in the
+        transfer list, and the tests being removed are clones of the no-transfer tests. So, we
+        aren't losing any coverage.
+
+        * workers/sab/null-worker.js: Added.
+        * workers/sab/postMessage-transfer-type-error-expected.txt: Added.
+        * workers/sab/postMessage-transfer-type-error.html: Added.
+        * workers/sab/sab-creator-transfer.js: Removed. (Sibling: sab-creator-no-transfer.js)
+        * workers/sab/sent-from-worker-transfer.html: Removed. (Sibling: sent-from-worker-no-transfer.html)
+        * workers/sab/simple.html: Removed. (Sibling: no-transfer.html)
+
 2017-02-14  Antoine Quint  <graouts@apple.com>
 
         [mac-wk1] LayoutTest media/modern-media-controls/airplay-button/airplay-button-on.html is a flaky timeout

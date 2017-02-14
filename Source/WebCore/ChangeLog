@@ -1,3 +1,17 @@
+2017-02-13  Filip Pizlo  <fpizlo@apple.com>
+
+        worker.postMessage should throw a TypeError if a SharedArrayBuffer is in the transfer list
+        https://bugs.webkit.org/show_bug.cgi?id=168277
+
+        Reviewed by Mark Lam.
+
+        Test: workers/sab/postMessage-transfer-type-error.html
+        
+        This is a simple spec compliance change. The title says it all.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::create):
+
 2017-02-14  Zan Dobersek  <zdobersek@igalia.com>
 
         HTMLMediaElement: WebKitMediaKeys member name should be prefixed

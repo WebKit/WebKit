@@ -2797,8 +2797,8 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(ExecState&
         if (auto arrayBuffer = toPossiblySharedArrayBuffer(vm, transferable.get())) {
             if (arrayBuffer->isNeutered())
                 return Exception { DATA_CLONE_ERR };
-            if (arrayBuffer->isShared() && context != SerializationContext::WorkerPostMessage)
-                return Exception { DATA_CLONE_ERR };
+            if (arrayBuffer->isShared())
+                return Exception { TypeError };
             arrayBuffers.append(WTFMove(arrayBuffer));
             continue;
         }
