@@ -1,3 +1,17 @@
+2017-02-14  Jeremy Jones  <jeremyj@apple.com>
+
+        When playing inline after fullscreen, set a flag instead of adding attribute plays inline, and use in requiresFullscreenForVideoPlayback.
+        https://bugs.webkit.org/show_bug.cgi?id=167815
+        rdar://problem/27685077
+
+        Reviewed by Jer Noble.
+
+        Add a new test that tests inline after fullscreen behavior of looping video.
+
+        * media/media-fullscreen-loop-inline-expected.txt: Added.
+        * media/media-fullscreen-loop-inline.html: Added.
+        * platform/mac-wk2/TestExpectations: Skipped on webkit2.
+
 2017-02-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline media/modern-media-controls/airplay-button/airplay-button-on.html for ios-simulator.

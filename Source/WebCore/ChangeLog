@@ -1,3 +1,25 @@
+2017-02-14  Jeremy Jones  <jeremyj@apple.com>
+
+        When playing inline after fullscreen, set a flag instead of adding attribute plays inline, and use in requiresFullscreenForVideoPlayback.
+        https://bugs.webkit.org/show_bug.cgi?id=167815
+        rdar://problem/27685077
+
+        Reviewed by Jer Noble.
+
+        Test: media/media-fullscreen-loop-inline.html
+
+        When video is allowed to play inline after fullscreen. Looped video causes play state to update, which can send video back to fullscreen when
+        allowsInline is false. This change will set a new flag when allowsInlineMediaPlaybackAfterFullscreen allows inline playback that can be tested
+        in requiresFullscreenForVideoPlayback to prevent sending video back into fullscreen when video loops.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::isTemporarilyAllowingInlinePlaybackAfterFullscreen): Added.
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::requiresFullscreenForVideoPlayback):
+
 2017-02-14  Jer Noble  <jer.noble@apple.com>
 
         Video elements with MediaSource objects set by srcObject are not cleared when srcObject is set to null
