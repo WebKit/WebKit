@@ -87,6 +87,7 @@ public:
     void selectFormAccessoryPickerRow(long);
     
     JSObjectRef contentsOfUserInterfaceItem(JSStringRef) const;
+    void overridePreference(JSStringRef preference, JSStringRef value);
     
     void scrollToOffset(long x, long y);
 

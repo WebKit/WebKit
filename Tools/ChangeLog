@@ -1,3 +1,33 @@
+2017-02-14  Chris Dumez  <cdumez@apple.com>
+
+        HTML Form Validation bubble should take minimum font size setting into consideration
+        https://bugs.webkit.org/show_bug.cgi?id=168271
+        <rdar://problem/29869869>
+
+        Reviewed by Simon Fraser.
+
+        Extend UIScriptController's contentsOfUserInterfaceItem() to also return the
+        font size of the validation bubble.
+
+        Add an overridePreference() method to UIScriptController. This is currently
+        used to override the value of the minimumFontSize setting. testRunner's
+        overridePreference() is not usable on WK2 because it does not update the
+        value of the preference on the UIProcess side.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::overridePreference):
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::overridePreference):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::overridePreference):
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::contentsOfUserInterfaceItem):
+        (WTR::UIScriptController::overridePreference):
+
 2017-02-14  Florian Bruhin  <git@the-compiler.org>
 
         Use a set instead of a list for tests when parsing expectations

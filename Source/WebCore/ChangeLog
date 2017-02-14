@@ -1,3 +1,27 @@
+2017-02-14  Chris Dumez  <cdumez@apple.com>
+
+        HTML Form Validation bubble should take minimum font size setting into consideration
+        https://bugs.webkit.org/show_bug.cgi?id=168271
+        <rdar://problem/29869869>
+
+        Reviewed by Simon Fraser.
+
+        HTML Form Validation bubble should take minimum font size setting into consideration
+        for better accessibility.
+
+        Test: fast/forms/validation-message-minimum-font-size.html
+
+        * platform/ValidationBubble.h:
+        (WebCore::ValidationBubble::create):
+        (WebCore::ValidationBubble::fontSize):
+        * platform/ios/ValidationBubbleIOS.mm:
+        (WebCore::ValidationBubble::ValidationBubble):
+        * platform/mac/ValidationBubbleMac.mm:
+        (WebCore::ValidationBubble::ValidationBubble):
+        Update the ValidationBubble constructor to take in Settings. For now, there is a
+        single setting that is the minimum font size and that is taken into account when
+        setting the font size of the validation bubble text.
+
 2017-02-14  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] add navigator.getUserMedia for compatibility with legacy content

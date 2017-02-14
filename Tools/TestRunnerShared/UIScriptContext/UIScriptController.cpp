@@ -397,6 +397,10 @@ void UIScriptController::addViewToWindow(JSValueRef)
 {
 }
 
+void UIScriptController::overridePreference(JSStringRef, JSStringRef)
+{
+}
+
 #endif // !PLATFORM(COCOA)
 
 #if !PLATFORM(MAC)

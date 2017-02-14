@@ -159,6 +159,10 @@ JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfac
     return nullptr;
 }
 
+void UIScriptController::overridePreference(JSStringRef preferenceRef, JSStringRef valueRef)
+{
+}
+
 static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoint contentOffset)
 {
     UIEdgeInsets contentInsets = scrollView.contentInset;

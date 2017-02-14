@@ -131,6 +131,22 @@ JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfac
 #endif
 }
 
+void UIScriptController::overridePreference(JSStringRef preferenceRef, JSStringRef valueRef)
+{
+#if WK_API_ENABLED
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    WKPreferences *preferences = webView.configuration.preferences;
+
+    String preference = toWTFString(toWK(preferenceRef));
+    String value = toWTFString(toWK(valueRef));
+    if (preference == "WebKitMinimumFontSize")
+        preferences.minimumFontSize = value.toDouble();
+#else
+    UNUSED_PARAM(preferenceRef);
+    UNUSED_PARAM(valueRef);
+#endif
+}
+
 void UIScriptController::removeViewFromWindow(JSValueRef callback)
 {
 #if WK_API_ENABLED

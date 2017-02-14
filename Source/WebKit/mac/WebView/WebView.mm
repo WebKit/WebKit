@@ -4341,7 +4341,8 @@ static inline IMP getMethod(id o, SEL s)
     if ([userInterfaceItem isEqualToString:@"validationBubble"]) {
         auto* validationBubble = _private->formValidationBubble.get();
         String message = validationBubble ? validationBubble->message() : emptyString();
-        return @{ userInterfaceItem: @{ @"message": (NSString *)message } };
+        double fontSize = validationBubble ? validationBubble->fontSize() : 0;
+        return @{ userInterfaceItem: @{ @"message": (NSString *)message, @"fontSize": [NSNumber numberWithDouble:fontSize] } };
     }
 
     return nil;
@@ -9326,7 +9327,8 @@ bool LayerFlushController::flushLayers()
 {
     // FIXME: We should enable this on iOS as well.
 #if PLATFORM(MAC)
-    _private->formValidationBubble = ValidationBubble::create(self, message);
+    double minimumFontSize = _private->page ? _private->page->settings().minimumFontSize() : 0;
+    _private->formValidationBubble = ValidationBubble::create(self, message, { minimumFontSize });
     _private->formValidationBubble->showRelativeTo(enclosingIntRect([self _convertRectFromRootView:anchorRect]));
 #else
     UNUSED_PARAM(message);

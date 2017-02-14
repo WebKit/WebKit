@@ -94,6 +94,15 @@ JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfac
 #endif
 }
 
+void UIScriptController::overridePreference(JSStringRef preferenceRef, JSStringRef valueRef)
+{
+    WebPreferences *preferences = mainFrame.webView.preferences;
+
+    RetainPtr<CFStringRef> value = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, valueRef));
+    if (JSStringIsEqualToUTF8CString(preferenceRef, "WebKitMinimumFontSize"))
+        preferences.minimumFontSize = [(NSString *)value.get() doubleValue];
+}
+
 void UIScriptController::removeViewFromWindow(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);

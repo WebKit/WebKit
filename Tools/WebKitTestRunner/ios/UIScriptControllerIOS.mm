@@ -651,6 +651,17 @@ void UIScriptController::platformClearAllCallbacks()
     webView.didEndScrollingCallback = nil;
 }
 
+void UIScriptController::overridePreference(JSStringRef preferenceRef, JSStringRef valueRef)
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    WKPreferences *preferences = webView.configuration.preferences;
+
+    String preference = toWTFString(toWK(preferenceRef));
+    String value = toWTFString(toWK(valueRef));
+    if (preference == "WebKitMinimumFontSize")
+        preferences.minimumFontSize = value.toDouble();
+}
+
 }
 
 #endif // PLATFORM(IOS)

@@ -222,4 +222,5 @@ interface UIScriptController {
     void removeViewFromWindow(object callback);
     void addViewToWindow(object callback);
 
+    void overridePreference(DOMString preference, DOMString value);
 };

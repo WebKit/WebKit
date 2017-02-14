@@ -97,7 +97,7 @@ static const CGFloat horizontalPadding = 17;
 static const CGFloat verticalPadding = 9;
 static const CGFloat maxLabelWidth = 300;
 
-ValidationBubble::ValidationBubble(UIView* view, const String& message)
+ValidationBubble::ValidationBubble(UIView* view, const String& message, const Settings& settings)
     : m_view(view)
     , m_message(message)
 {
@@ -110,7 +110,8 @@ ValidationBubble::ValidationBubble(UIView* view, const String& message)
 
     RetainPtr<UILabel> label = adoptNS([[getUILabelClass() alloc] initWithFrame:CGRectZero]);
     [label setText:message];
-    [label setFont:[getUIFontClass() systemFontOfSize:14.0]];
+    m_fontSize = std::max(settings.minimumFontSize, 14.0);
+    [label setFont:[getUIFontClass() systemFontOfSize:m_fontSize]];
     [label setLineBreakMode:NSLineBreakByTruncatingTail];
     [label setNumberOfLines:4];
     [popoverView addSubview:label.get()];
