@@ -30,7 +30,7 @@
 
 #include "LibWebRTCResolver.h"
 #include "LibWebRTCSocketFactory.h"
-#include <WebCore/LibWebRTCUtils.h>
+#include <WebCore/LibWebRTCProvider.h>
 #include <wtf/Function.h>
 
 namespace WebKit {
@@ -51,7 +51,7 @@ void WebRTCResolver::setResolvedAddress(const Vector<RTCNetwork::IPAddress>& add
     for (auto& address : addresses)
         rtcAddresses.uncheckedAppend(address.value);
     
-    WebCore::callOnWebRTCNetworkThread([&factory, identifier, rtcAddresses = WTFMove(rtcAddresses)]() {
+    WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([&factory, identifier, rtcAddresses = WTFMove(rtcAddresses)]() {
         auto* resolver = factory.resolver(identifier);
         if (!resolver)
             return;
@@ -63,7 +63,7 @@ void WebRTCResolver::resolvedAddressError(int error)
 {
     auto identifier = m_identifier;
     auto& factory = m_socketFactory;
-    WebCore::callOnWebRTCNetworkThread([&factory, identifier, error]() {
+    WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([&factory, identifier, error]() {
         auto* resolver = factory.resolver(identifier);
         if (!resolver)
             return;

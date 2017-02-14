@@ -191,10 +191,10 @@ private:
 
 class MockLibWebRTCPeerConnectionFactory : public webrtc::PeerConnectionFactoryInterface {
 public:
-    static rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> create(LibWebRTCProvider* provider, String&& testCase) { return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionFactory>(provider, WTFMove(testCase)); }
+    static rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> create(String&& testCase) { return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionFactory>(WTFMove(testCase)); }
 
 protected:
-    MockLibWebRTCPeerConnectionFactory(LibWebRTCProvider*, String&&);
+    MockLibWebRTCPeerConnectionFactory(String&&);
 
 private:
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> CreatePeerConnection(const webrtc::PeerConnectionInterface::RTCConfiguration&, const webrtc::MediaConstraintsInterface*, std::unique_ptr<cricket::PortAllocator>, std::unique_ptr<rtc::RTCCertificateGeneratorInterface>, webrtc::PeerConnectionObserver*) final { return nullptr; }
@@ -220,7 +220,6 @@ private:
     void StopRtcEventLog() final { }
 
 private:
-    LibWebRTCProvider* m_provider { nullptr };
     String m_testCase;
     unsigned m_numberOfRealPeerConnections { 0 };
 };

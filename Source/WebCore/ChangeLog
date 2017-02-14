@@ -1,3 +1,43 @@
+2017-02-13  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Creating RTCPeerConnection with libwebrtc backend is crashing on rwt
+        https://bugs.webkit.org/show_bug.cgi?id=168250
+
+        Reviewed by Alex Christensen.
+
+        Covered by webrtc tests in LayoutTests and in web-platform-tests.
+        Making mock peer connection factory keep a ref of the real libwebrtc peer connection factory.
+        That way, it can create real libwebrtc backends whenever requested by tests.
+
+        Moving LibWebRTCUtils.h routines as static LibWebRTCProvider methods.
+        In the future, we should make them no longer static.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::doCreateOffer):
+        (WebCore::LibWebRTCMediaEndpoint::doCreateAnswer):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp: Renamed from Source/WebCore/platform/mediastream/libwebrtc/LibWebRTCUtils.cpp.
+        (WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread):
+        (WebCore::LibWebRTCProvider::callOnWebRTCSignalingThread):
+        (WebCore::LibWebRTCProvider::factory):
+        (WebCore::LibWebRTCProvider::setPeerConnectionFactory):
+        (WebCore::createActualPeerConnection):
+        (WebCore::LibWebRTCProvider::createPeerConnection):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * platform/mediastream/libwebrtc/LibWebRTCUtils.h: Removed.
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::audioSamplesAvailable):
+        * testing/Internals.cpp:
+        * testing/MockLibWebRTCPeerConnection.cpp:
+        (WebCore::useMockRTCPeerConnectionFactory):
+        (WebCore::MockLibWebRTCPeerConnectionForIceCandidates::gotLocalDescription):
+        (WebCore::releaseInNetworkThread):
+        (WebCore::MockLibWebRTCPeerConnection::SetLocalDescription):
+        (WebCore::MockLibWebRTCPeerConnection::SetRemoteDescription):
+        (WebCore::MockLibWebRTCPeerConnection::CreateOffer):
+        (WebCore::MockLibWebRTCPeerConnection::CreateAnswer):
+
 2017-02-13  Anders Carlsson  <andersca@apple.com>
 
         Simplify DragController::startDrag

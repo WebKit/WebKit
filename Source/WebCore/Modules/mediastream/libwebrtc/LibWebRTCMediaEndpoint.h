@@ -26,7 +26,7 @@
 
 #if USE(LIBWEBRTC)
 
-#include "LibWebRTCUtils.h"
+#include "LibWebRTCProvider.h"
 #include "PeerConnectionBackend.h"
 #include "RealtimeOutgoingAudioSource.h"
 #include "RealtimeOutgoingVideoSource.h"

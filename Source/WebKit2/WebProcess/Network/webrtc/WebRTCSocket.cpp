@@ -40,7 +40,7 @@ namespace WebKit {
 void WebRTCSocket::signalOnNetworkThread(LibWebRTCSocketFactory& factory, uint64_t identifier, Function<void(LibWebRTCSocket&)>&& callback)
 {
     // factory is staying valid during the process lifetime.
-    WebCore::callOnWebRTCNetworkThread([&factory, identifier, callback = WTFMove(callback)]() {
+    WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([&factory, identifier, callback = WTFMove(callback)]() {
         auto* socket = factory.socket(identifier);
         if (!socket)
             return;

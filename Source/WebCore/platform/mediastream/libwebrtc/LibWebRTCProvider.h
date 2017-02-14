@@ -25,20 +25,44 @@
 
 #pragma once
 
+#include "LibWebRTCMacros.h"
+#include <wtf/Forward.h>
+
 #if USE(LIBWEBRTC)
-#include "LibWebRTCUtils.h"
+
 #include <webrtc/api/peerconnectioninterface.h>
+#include <webrtc/base/scoped_ref_ptr.h>
+
+namespace rtc {
+class NetworkManager;
+class PacketSocketFactory;
+}
+
+namespace webrtc {
+class PeerConnectionFactoryInterface;
+}
 #endif
 
 namespace WebCore {
 
 class WEBCORE_EXPORT LibWebRTCProvider {
 public:
-#if USE(LIBWEBRTC)
-    virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver& observer) { return WebCore::createPeerConnection(observer); };
-#endif
+    LibWebRTCProvider() = default;
     virtual ~LibWebRTCProvider() = default;
 
+#if USE(LIBWEBRTC)
+    WEBCORE_EXPORT virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&);
+
+    // FIXME: Make these methods not static.
+    static WEBCORE_EXPORT void callOnWebRTCNetworkThread(Function<void()>&&);
+    static WEBCORE_EXPORT void callOnWebRTCSignalingThread(Function<void()>&&);
+    static WEBCORE_EXPORT webrtc::PeerConnectionFactoryInterface& factory();
+    // Used for mock testing
+    static void setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&&);
+
+protected:
+    WEBCORE_EXPORT rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::NetworkManager&, rtc::PacketSocketFactory&);
+#endif
 };
 
 } // namespace WebCore

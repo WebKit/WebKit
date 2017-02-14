@@ -33,7 +33,7 @@
 
 #include "CAAudioStreamDescription.h"
 #include "LibWebRTCAudioFormat.h"
-#include "LibWebRTCUtils.h"
+#include "LibWebRTCProvider.h"
 
 namespace WebCore {
 
@@ -68,7 +68,7 @@ void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime& time, c
     }
     m_sampleConverter->pushSamples(time, audioData, sampleCount);
 
-    callOnWebRTCSignalingThread([protectedThis = makeRef(*this)] {
+    LibWebRTCProvider::callOnWebRTCSignalingThread([protectedThis = makeRef(*this)] {
         protectedThis->pullAudioData();
     });
 }

@@ -86,7 +86,6 @@
 #include "InternalSettings.h"
 #include "Language.h"
 #include "LibWebRTCProvider.h"
-#include "LibWebRTCUtils.h"
 #include "MainFrame.h"
 #include "MallocStatistics.h"
 #include "MediaPlayer.h"

@@ -29,14 +29,13 @@
 #if USE(LIBWEBRTC)
 
 #include "WebProcess.h"
-#include <WebCore/LibWebRTCUtils.h>
 #include <webrtc/api/peerconnectionfactory.h>
 
 namespace WebKit {
 
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer)
 {
-    return WebCore::createPeerConnection(observer, WebProcess::singleton().libWebRTCNetwork().monitor(), WebProcess::singleton().libWebRTCNetwork().socketFactory());
+    return WebCore::LibWebRTCProvider::createPeerConnection(observer, WebProcess::singleton().libWebRTCNetwork().monitor(), WebProcess::singleton().libWebRTCNetwork().socketFactory());
 }
 
 } // namespace WebKit
