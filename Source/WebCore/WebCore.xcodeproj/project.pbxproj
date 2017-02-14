@@ -417,7 +417,7 @@
 		0C45342810CDBBFA00869157 /* JSWebGLUniformLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C45342610CDBBFA00869157 /* JSWebGLUniformLocation.h */; };
 		0E7058EE1BC5BC190045A507 /* SearchPopupMenuCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E7058ED1BC5BC190045A507 /* SearchPopupMenuCocoa.mm */; };
 		0E7058F41BC5CEDA0045A507 /* SearchPopupMenuCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E7058F31BC5CCD70045A507 /* SearchPopupMenuCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F03C0741884695E00A5F8CA /* SystemMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F03C0731884695E00A5F8CA /* SystemMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F03C0741884695E00A5F8CA /* SystemMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F03C0731884695E00A5F8CA /* SystemMemory.h */; };
 		0F03C0751884805500A5F8CA /* InspectorOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C522D4A15B478B2009B7C95 /* InspectorOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F09087F1444FDB200028917 /* ScrollbarTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */; };
 		0F099D0817B968A100FF84B9 /* WebCoreTypedArrayController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F099D0617B968A100FF84B9 /* WebCoreTypedArrayController.cpp */; };

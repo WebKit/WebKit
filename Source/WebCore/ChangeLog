@@ -1,3 +1,12 @@
+2017-02-14  Alexey Proskuryakov  <ap@apple.com>
+
+        WebCore shouldn't export SystemMemory.h
+        https://bugs.webkit.org/show_bug.cgi?id=168285
+
+        Reviewed by Alex Christensen.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-02-13  Filip Pizlo  <fpizlo@apple.com>
 
         worker.postMessage should throw a TypeError if a SharedArrayBuffer is in the transfer list

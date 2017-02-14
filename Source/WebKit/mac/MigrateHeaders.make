@@ -47,7 +47,6 @@ endif
 ifneq ($(PLATFORM_NAME), macosx)
 all : \
     $(PRIVATE_HEADERS_DIR)/KeyEventCodesIOS.h \
-    $(PRIVATE_HEADERS_DIR)/SystemMemory.h \
     $(PRIVATE_HEADERS_DIR)/WAKAppKitStubs.h \
     $(PRIVATE_HEADERS_DIR)/WAKResponder.h \
     $(PRIVATE_HEADERS_DIR)/WAKView.h \

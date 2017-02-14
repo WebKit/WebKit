@@ -1,3 +1,12 @@
+2017-02-14  Alexey Proskuryakov  <ap@apple.com>
+
+        WebCore shouldn't export SystemMemory.h
+        https://bugs.webkit.org/show_bug.cgi?id=168285
+
+        Reviewed by Alex Christensen.
+
+        * MigrateHeaders.make: And WebKit shouldn't re-export it.
+
 2017-02-13  Alexey Proskuryakov  <ap@apple.com>
 
         WebKit shouldn't re-export ScrollTypes.h and WebCoreFrameView.h
