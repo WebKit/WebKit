@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 1: TypeError: 'text/plain' is not a valid JavaScript MIME type.
+Test module rejects scripts with no mime type.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Module is not executed yet.
+Module rejects a script with no mime type.
+PASS window.scriptsSuccessfullyLoaded is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

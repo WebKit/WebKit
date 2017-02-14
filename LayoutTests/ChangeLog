@@ -1,3 +1,11 @@
+2017-02-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Add platform specific resuls for http/tests/security/module-no-mime-type.html.
+
+        libsoup sniffer correctly guesses the perl MIME type as text/plain which is still an invalid JavaScript MIME type.
+
+        * platform/gtk/http/tests/security/module-no-mime-type-expected.txt: Added.
+
 2017-02-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix typo in performance-observer-callback-mutate.html
