@@ -1,3 +1,12 @@
+2017-02-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=168336
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-02-14  Chris Dumez  <cdumez@apple.com>
 
         HTML Form Validation bubble should take minimum font size setting into consideration
