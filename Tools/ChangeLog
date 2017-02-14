@@ -1,3 +1,19 @@
+2017-02-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] build-webkit should print the cmake command executed
+        https://bugs.webkit.org/show_bug.cgi?id=168318
+
+        Reviewed by Michael Catanzaro.
+
+        Run the cmake commands to configure or start the build through
+        a wrapper that prints the command before executing it.
+
+        * Scripts/webkitdirs.pm:
+        (systemVerbose):
+        (generateBuildSystemFromCMakeProject):
+        (buildCMakeGeneratedProject):
+        (cleanCMakeGeneratedProject):
+
 2017-02-14  Jonathan Bedard  <jbedard@apple.com>
 
         run-webkit-tests for iOS Simulator always complains that stopping WebKitTestRunnerApp.app times out

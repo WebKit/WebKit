@@ -287,6 +287,11 @@ sub determineBaseProductDir
     }
 }
 
+sub systemVerbose {
+    print "+ @_\n";
+    return system(@_);
+}
+
 sub setBaseProductDir($)
 {
     ($baseProductDir) = @_;
@@ -1967,7 +1972,7 @@ sub generateBuildSystemFromCMakeProject
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
     # parsed for shell metacharacters.
     my $wrapper = join(" ", wrapperPrefixIfNeeded()) . " ";
-    my $returnCode = system($wrapper . "cmake @args");
+    my $returnCode = systemVerbose($wrapper . "cmake @args");
 
     chdir($originalWorkingDirectory);
     return $returnCode;
@@ -2001,7 +2006,7 @@ sub buildCMakeGeneratedProject($)
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
     # parsed for shell metacharacters. In particular, $makeArgs may contain such metacharacters.
     my $wrapper = join(" ", wrapperPrefixIfNeeded()) . " ";
-    return system($wrapper . "$command @args");
+    return systemVerbose($wrapper . "$command @args");
 }
 
 sub cleanCMakeGeneratedProject()
@@ -2009,7 +2014,7 @@ sub cleanCMakeGeneratedProject()
     my $config = configuration();
     my $buildPath = File::Spec->catdir(baseProductDir(), $config);
     if (-d $buildPath) {
-        return system("cmake", "--build", $buildPath, "--config", $config, "--target", "clean");
+        return systemVerbose("cmake", "--build", $buildPath, "--config", $config, "--target", "clean");
     }
     return 0;
 }
