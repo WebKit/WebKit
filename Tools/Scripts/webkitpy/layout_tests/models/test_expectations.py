@@ -81,7 +81,10 @@ class TestExpectationParser(object):
     def __init__(self, port, full_test_list, allow_rebaseline_modifier):
         self._port = port
         self._test_configuration_converter = TestConfigurationConverter(set(port.all_test_configurations()), port.configuration_specifier_macros())
-        self._full_test_list = full_test_list
+        if full_test_list is None:
+            self._full_test_list = None
+        else:
+            self._full_test_list = set(full_test_list)
         self._allow_rebaseline_modifier = allow_rebaseline_modifier
 
     def parse(self, filename, expectations_string):
@@ -189,11 +192,6 @@ class TestExpectationParser(object):
     def _collect_matching_tests(self, expectation_line):
         """Convert the test specification to an absolute, normalized
         path and make sure directories end with the OS path separator."""
-        # FIXME: full_test_list can quickly contain a big amount of
-        # elements. We should consider at some point to use a more
-        # efficient structure instead of a list. Maybe a dictionary of
-        # lists to represent the tree of tests, leaves being test
-        # files and nodes being categories.
 
         if not self._full_test_list:
             expectation_line.matching_tests = [expectation_line.path]
