@@ -1,3 +1,9 @@
+2017-02-13  Dan Bernstein  <mitz@apple.com>
+
+        Restored changes from r212210 in a way that does not break the build.
+
+        * platform/spi/mac/TUCallSPI.h:
+
 2017-02-13  Zalan Bujtas  <zalan@apple.com>
 
         FontCascade::widthForSimpleText should skip applyTransforms() when kerning and ligatures are off.
