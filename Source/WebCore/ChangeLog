@@ -1,3 +1,30 @@
+2017-02-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        CookieManager only works with the default session
+        https://bugs.webkit.org/show_bug.cgi?id=168229
+
+        Reviewed by Alex Christensen.
+
+        Update cookie observer API to use a std::function instead of a function pointer and make it work with multiple
+        sessions in the backends that support it.
+
+        * platform/network/CookieStorage.h:
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        (WebCore::cookieChangeCallbackMap):
+        (WebCore::notifyCookiesChanged):
+        (WebCore::startObservingCookieChanges):
+        (WebCore::stopObservingCookieChanges):
+        * platform/network/mac/CookieStorageMac.mm:
+        (-[WebCookieStorageObjCAdapter startListeningForCookieChangeNotificationsWithCallback:]):
+        (-[WebCookieStorageObjCAdapter stopListeningForCookieChangeNotifications]):
+        (WebCore::startObservingCookieChanges):
+        (WebCore::stopObservingCookieChanges):
+        * platform/network/soup/CookieStorageSoup.cpp:
+        (WebCore::cookieChangeCallbackMap):
+        (WebCore::soupCookiesChanged):
+        (WebCore::startObservingCookieChanges):
+        (WebCore::stopObservingCookieChanges):
+
 2017-02-13  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: Update volume and scrubbing slider to match HI designs

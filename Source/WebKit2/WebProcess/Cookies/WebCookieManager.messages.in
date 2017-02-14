@@ -24,17 +24,17 @@
  */
  
  messages -> WebCookieManager {
-    void GetHostnamesWithCookies(uint64_t callbackID)
-    void DeleteCookiesForHostname(String hostname)
-    void DeleteAllCookies()
-    void DeleteAllCookiesModifiedSince(std::chrono::system_clock::time_point time)
-    void AddCookie(struct WebCore::Cookie cookie, String hostname)
+    void GetHostnamesWithCookies(WebCore::SessionID sessionID, uint64_t callbackID)
+    void DeleteCookiesForHostname(WebCore::SessionID sessionID, String hostname)
+    void DeleteAllCookies(WebCore::SessionID sessionID)
+    void DeleteAllCookiesModifiedSince(WebCore::SessionID sessionID, std::chrono::system_clock::time_point time)
+    void AddCookie(WebCore::SessionID sessionID, struct WebCore::Cookie cookie, String hostname)
 
     void SetHTTPCookieAcceptPolicy(uint32_t policy)
     void GetHTTPCookieAcceptPolicy(uint64_t callbackID)
     
-    void StartObservingCookieChanges()
-    void StopObservingCookieChanges()
+    void StartObservingCookieChanges(WebCore::SessionID sessionID)
+    void StopObservingCookieChanges(WebCore::SessionID sessionID)
 
 #if USE(SOUP)
     SetCookiePersistentStorage(String storagePath, uint32_t storageType)

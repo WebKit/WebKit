@@ -55,7 +55,7 @@ enum {
 struct _WebKitCookieManagerPrivate {
     ~_WebKitCookieManagerPrivate()
     {
-        webCookieManager->stopObservingCookieChanges();
+        webCookieManager->stopObservingCookieChanges(WebCore::SessionID::defaultSessionID());
     }
 
     RefPtr<WebCookieManagerProxy> webCookieManager;
@@ -145,7 +145,7 @@ WebKitCookieManager* webkitCookieManagerCreate(WebCookieManagerProxy* webCookieM
         cookiesDidChange
     };
     WKCookieManagerSetClient(toAPI(webCookieManager), &wkCookieManagerClient.base);
-    manager->priv->webCookieManager->startObservingCookieChanges();
+    manager->priv->webCookieManager->startObservingCookieChanges(WebCore::SessionID::defaultSessionID());
 
     return manager;
 }
@@ -169,9 +169,9 @@ void webkit_cookie_manager_set_persistent_storage(WebKitCookieManager* manager, 
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
     g_return_if_fail(filename);
 
-    manager->priv->webCookieManager->stopObservingCookieChanges();
+    manager->priv->webCookieManager->stopObservingCookieChanges(WebCore::SessionID::defaultSessionID());
     manager->priv->webCookieManager->setCookiePersistentStorage(String::fromUTF8(filename), toSoupCookiePersistentStorageType(storage));
-    manager->priv->webCookieManager->startObservingCookieChanges();
+    manager->priv->webCookieManager->startObservingCookieChanges(WebCore::SessionID::defaultSessionID());
 }
 
 /**
@@ -269,7 +269,7 @@ void webkit_cookie_manager_get_domains_with_cookies(WebKitCookieManager* manager
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
     GTask* task = g_task_new(manager, cancellable, callback, userData);
-    manager->priv->webCookieManager->getHostnamesWithCookies(toGenericCallbackFunction(task, webkitCookieManagerGetDomainsWithCookiesCallback));
+    manager->priv->webCookieManager->getHostnamesWithCookies(WebCore::SessionID::defaultSessionID(), toGenericCallbackFunction(task, webkitCookieManagerGetDomainsWithCookiesCallback));
 }
 
 /**
@@ -305,7 +305,7 @@ void webkit_cookie_manager_delete_cookies_for_domain(WebKitCookieManager* manage
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
     g_return_if_fail(domain);
 
-    manager->priv->webCookieManager->deleteCookiesForHostname(String::fromUTF8(domain));
+    manager->priv->webCookieManager->deleteCookiesForHostname(WebCore::SessionID::defaultSessionID(), String::fromUTF8(domain));
 }
 
 /**
@@ -318,5 +318,5 @@ void webkit_cookie_manager_delete_all_cookies(WebKitCookieManager* manager)
 {
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
-    manager->priv->webCookieManager->deleteAllCookies();
+    manager->priv->webCookieManager->deleteAllCookies(WebCore::SessionID::defaultSessionID());
 }

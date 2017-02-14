@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "NetworkProcessSupplement.h"
 #include "WebProcessSupplement.h"
+#include <WebCore/SessionID.h>
 #include <stdint.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -62,22 +63,18 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void getHostnamesWithCookies(uint64_t callbackID);
-    void deleteCookiesForHostname(const String&);
-    void deleteAllCookies();
-    void deleteAllCookiesModifiedSince(std::chrono::system_clock::time_point);
-    void addCookie(const WebCore::Cookie&, const String& hostname);
+    void getHostnamesWithCookies(WebCore::SessionID, uint64_t callbackID);
+    void deleteCookiesForHostname(WebCore::SessionID, const String&);
+    void deleteAllCookies(WebCore::SessionID);
+    void deleteAllCookiesModifiedSince(WebCore::SessionID, std::chrono::system_clock::time_point);
+    void addCookie(WebCore::SessionID, const WebCore::Cookie&, const String& hostname);
 
     void platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
     void getHTTPCookieAcceptPolicy(uint64_t callbackID);
     HTTPCookieAcceptPolicy platformGetHTTPCookieAcceptPolicy();
 
-    void startObservingCookieChanges();
-    void stopObservingCookieChanges();
-
-    static void cookiesDidChange();
-    void dispatchCookiesDidChange();
-
+    void startObservingCookieChanges(WebCore::SessionID);
+    void stopObservingCookieChanges(WebCore::SessionID);
 
     ChildProcess* m_process;
 };

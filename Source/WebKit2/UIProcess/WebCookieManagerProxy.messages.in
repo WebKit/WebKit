@@ -24,5 +24,5 @@ messages -> WebCookieManagerProxy {
     DidGetHostnamesWithCookies(Vector<String> hostnames, uint64_t callbackID);
     DidGetHTTPCookieAcceptPolicy(uint32_t policy, uint64_t callbackID);
     
-    CookiesDidChange()
+    CookiesDidChange(WebCore::SessionID sessionID)
 }

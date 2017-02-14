@@ -31,11 +31,11 @@
 using namespace WebCore;
 
 @interface WebCookieStorageObjCAdapter : NSObject {
-    CookieChangeCallbackPtr m_cookieChangeCallback;
+    std::function<void ()> m_cookieChangeCallback;
 }
 -(void)notifyCookiesChangedOnMainThread;
 -(void)cookiesChangedNotificationHandler:(NSNotification *)notification;
--(void)startListeningForCookieChangeNotificationsWithCallback:(CookieChangeCallbackPtr)callback;
+-(void)startListeningForCookieChangeNotificationsWithCallback:(std::function<void ()>&&)callback;
 -(void)stopListeningForCookieChangeNotifications;
 @end
 
@@ -53,17 +53,17 @@ using namespace WebCore;
     [self performSelectorOnMainThread:@selector(notifyCookiesChangedOnMainThread) withObject:nil waitUntilDone:FALSE];
 }
 
--(void)startListeningForCookieChangeNotificationsWithCallback:(CookieChangeCallbackPtr)callback
+-(void)startListeningForCookieChangeNotificationsWithCallback:(std::function<void ()>&&)callback
 {
     ASSERT(!m_cookieChangeCallback);
-    m_cookieChangeCallback = callback;
+    m_cookieChangeCallback = WTFMove(callback);
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cookiesChangedNotificationHandler:) name:NSHTTPCookieManagerCookiesChangedNotification object:[NSHTTPCookieStorage sharedHTTPCookieStorage]];
 }
 
 -(void)stopListeningForCookieChangeNotifications
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSHTTPCookieManagerCookiesChangedNotification object:nil];
-    m_cookieChangeCallback = 0;
+    m_cookieChangeCallback = nullptr;
 }
 
 @end
@@ -72,14 +72,14 @@ namespace WebCore {
 
 static WebCookieStorageObjCAdapter *cookieStorageAdapter;
 
-void startObservingCookieChanges(CookieChangeCallbackPtr callback)
+void startObservingCookieChanges(const NetworkStorageSession&, std::function<void ()>&& callback)
 {
     if (!cookieStorageAdapter)
         cookieStorageAdapter = [[WebCookieStorageObjCAdapter alloc] init];
-    [cookieStorageAdapter startListeningForCookieChangeNotificationsWithCallback:callback];
+    [cookieStorageAdapter startListeningForCookieChangeNotificationsWithCallback:WTFMove(callback)];
 }
 
-void stopObservingCookieChanges()
+void stopObservingCookieChanges(const NetworkStorageSession&)
 {
     // cookieStorageAdapter can be nil here, if the WebProcess crashed and was restarted between
     // when startObservingCookieChanges was called, and stopObservingCookieChanges is currently being called.

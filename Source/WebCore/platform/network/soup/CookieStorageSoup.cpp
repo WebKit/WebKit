@@ -23,30 +23,37 @@
 
 #include "NetworkStorageSession.h"
 #include <libsoup/soup.h>
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-static CookieChangeCallbackPtr cookieChangeCallback;
+static HashMap<SoupCookieJar*, std::function<void ()>>& cookieChangeCallbackMap()
+{
+    static NeverDestroyed<HashMap<SoupCookieJar*, std::function<void ()>>> map;
+    return map;
+}
 
 static void soupCookiesChanged(SoupCookieJar* jar)
 {
-    if (jar != NetworkStorageSession::defaultStorageSession().cookieStorage())
-        return;
-    cookieChangeCallback();
+    if (auto callback = cookieChangeCallbackMap().get(jar))
+        callback();
 }
 
-void startObservingCookieChanges(CookieChangeCallbackPtr callback)
+void startObservingCookieChanges(const NetworkStorageSession& storageSession, std::function<void ()>&& callback)
 {
-    ASSERT(!cookieChangeCallback);
-    cookieChangeCallback = callback;
-
-    g_signal_connect(NetworkStorageSession::defaultStorageSession().cookieStorage(), "changed", G_CALLBACK(soupCookiesChanged), 0);
+    auto* jar = storageSession.cookieStorage();
+    ASSERT(!cookieChangeCallbackMap().contains(jar));
+    cookieChangeCallbackMap().add(jar, WTFMove(callback));
+    g_signal_connect(jar, "changed", G_CALLBACK(soupCookiesChanged), nullptr);
 }
 
-void stopObservingCookieChanges()
+void stopObservingCookieChanges(const NetworkStorageSession& storageSession)
 {
-    g_signal_handlers_disconnect_by_func(NetworkStorageSession::defaultStorageSession().cookieStorage(), reinterpret_cast<void*>(soupCookiesChanged), nullptr);
-    cookieChangeCallback = nullptr;
+    auto* jar = storageSession.cookieStorage();
+    ASSERT(cookieChangeCallbackMap().contains(jar));
+    cookieChangeCallbackMap().remove(jar);
+    g_signal_handlers_disconnect_by_func(jar, reinterpret_cast<void*>(soupCookiesChanged), nullptr);
 }
 
 }
