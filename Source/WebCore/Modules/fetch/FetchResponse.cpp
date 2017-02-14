@@ -106,9 +106,6 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
     }
     auto response = adoptRef(*new FetchResponse(context, FetchBody::loadingBody(), FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
 
-    // Setting pending activity until BodyLoader didFail or didSucceed callback is called.
-    response->setPendingActivity(response.ptr());
-
     response->m_bodyLoader.emplace(response.get(), WTFMove(promise));
     if (!response->m_bodyLoader->start(context, request))
         response->m_bodyLoader = std::nullopt;
@@ -131,9 +128,10 @@ void FetchResponse::BodyLoader::didSucceed()
         m_response.closeStream();
 #endif
 
-    if (m_loader->isStarted())
+    if (m_loader->isStarted()) {
+        Ref<FetchResponse> protector(m_response);
         m_response.m_bodyLoader = std::nullopt;
-    m_response.unsetPendingActivity(&m_response);
+    }
 }
 
 void FetchResponse::BodyLoader::didFail()
@@ -151,16 +149,22 @@ void FetchResponse::BodyLoader::didFail()
 #endif
 
     // Check whether didFail is called as part of FetchLoader::start.
-    if (m_loader->isStarted())
+    if (m_loader->isStarted()) {
+        Ref<FetchResponse> protector(m_response);
         m_response.m_bodyLoader = std::nullopt;
-
-    m_response.unsetPendingActivity(&m_response);
+    }
 }
 
 FetchResponse::BodyLoader::BodyLoader(FetchResponse& response, FetchPromise&& promise)
     : m_response(response)
     , m_promise(WTFMove(promise))
 {
+    m_response.setPendingActivity(&m_response);
+}
+
+FetchResponse::BodyLoader::~BodyLoader()
+{
+    m_response.unsetPendingActivity(&m_response);
 }
 
 void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resourceResponse)
@@ -341,7 +345,7 @@ void FetchResponse::stop()
     FetchBodyOwner::stop();
     if (m_bodyLoader) {
         m_bodyLoader->stop();
-        ASSERT(!m_bodyLoader);
+        m_bodyLoader = std::nullopt;
     }
 }
 

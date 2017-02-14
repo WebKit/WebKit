@@ -100,6 +100,7 @@ private:
     class BodyLoader final : public FetchLoaderClient {
     public:
         BodyLoader(FetchResponse&, FetchPromise&&);
+        ~BodyLoader();
 
         bool start(ScriptExecutionContext&, const FetchRequest&);
         void stop();
