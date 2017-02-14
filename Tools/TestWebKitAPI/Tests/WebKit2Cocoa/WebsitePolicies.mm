@@ -158,7 +158,7 @@ TEST(WebKit2, WebsitePoliciesContentBlockersEnabled)
 }
 
 @interface AutoplayPoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
-@property (nonatomic) _WKWebsiteAutoplayPolicy autoplayPolicy;
+@property (nonatomic, copy) _WKWebsiteAutoplayPolicy(^autoplayPolicyForURL)(NSURL *);
 @end
 
 @implementation AutoplayPoliciesDelegate
@@ -173,7 +173,8 @@ TEST(WebKit2, WebsitePoliciesContentBlockersEnabled)
 - (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
 {
     _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
-    websitePolicies.autoplayPolicy = _autoplayPolicy;
+    if (_autoplayPolicyForURL)
+        websitePolicies.autoplayPolicy = _autoplayPolicyForURL(navigationAction.request.URL);
     decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
 }
 
@@ -195,26 +196,54 @@ TEST(WebKit2, WebsitePoliciesAutoplayEnabled)
     NSURLRequest *requestWithAudio = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     NSURLRequest *requestWithoutAudio = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-no-audio-check" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     
-    [delegate setAutoplayPolicy:_WKWebsiteAutoplayPolicyAllowWithoutSound];
+    [delegate setAutoplayPolicyForURL:^(NSURL *) {
+        return _WKWebsiteAutoplayPolicyAllowWithoutSound;
+    }];
     [webView loadRequest:requestWithAudio];
     [webView waitForMessage:@"did-not-play"];
 
     [webView loadRequest:requestWithoutAudio];
     [webView waitForMessage:@"autoplayed"];
 
-    [delegate setAutoplayPolicy:_WKWebsiteAutoplayPolicyDeny];
+    [delegate setAutoplayPolicyForURL:^(NSURL *) {
+        return _WKWebsiteAutoplayPolicyDeny;
+    }];
     [webView loadRequest:requestWithAudio];
     [webView waitForMessage:@"did-not-play"];
 
     [webView loadRequest:requestWithoutAudio];
     [webView waitForMessage:@"did-not-play"];
 
-    [delegate setAutoplayPolicy:_WKWebsiteAutoplayPolicyAllow];
+    [delegate setAutoplayPolicyForURL:^(NSURL *) {
+        return _WKWebsiteAutoplayPolicyAllow;
+    }];
     [webView loadRequest:requestWithAudio];
     [webView waitForMessage:@"autoplayed"];
 
     [webView loadRequest:requestWithoutAudio];
     [webView waitForMessage:@"autoplayed"];
+
+    NSURLRequest *requestWithAudioInIFrame = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check-in-iframe" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    // If the top-level document allows autoplay, any iframes should also autoplay.
+    [delegate setAutoplayPolicyForURL:^(NSURL *url) {
+        if ([url.lastPathComponent isEqualToString:@"autoplay-check-in-iframe.html"])
+            return _WKWebsiteAutoplayPolicyAllow;
+        return _WKWebsiteAutoplayPolicyDeny;
+    }];
+
+    [webView loadRequest:requestWithAudioInIFrame];
+    [webView waitForMessage:@"autoplayed"];
+
+    // If the top-level document disallows autoplay, any iframes should also not autoplay.
+    [delegate setAutoplayPolicyForURL:^(NSURL *url) {
+        if ([url.lastPathComponent isEqualToString:@"autoplay-check-in-iframe.html"])
+            return _WKWebsiteAutoplayPolicyDeny;
+        return _WKWebsiteAutoplayPolicyAllow;
+    }];
+
+    [webView loadRequest:requestWithAudioInIFrame];
+    [webView waitForMessage:@"did-not-play"];
 }
 
 #if PLATFORM(MAC)
@@ -230,7 +259,9 @@ TEST(WebKit2, DISABLED_WebsitePoliciesPlayAfterPreventedAutoplay)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 336, 276) configuration:configuration.get()]);
 
     auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
-    [delegate setAutoplayPolicy:_WKWebsiteAutoplayPolicyDeny];
+    [delegate setAutoplayPolicyForURL:^(NSURL *) {
+        return _WKWebsiteAutoplayPolicyDeny;
+    }];
     [webView setNavigationDelegate:delegate.get()];
 
     WKPageUIClientV9 uiClient;

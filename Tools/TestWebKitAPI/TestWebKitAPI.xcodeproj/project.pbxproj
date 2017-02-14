@@ -521,6 +521,8 @@
 		C99B675C1E39721A00FC6C80 /* autoplay-with-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C99B675A1E3971FC00FC6C80 /* autoplay-with-controls.html */; };
 		C99B675D1E39722000FC6C80 /* js-play-with-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C99B675B1E3971FC00FC6C80 /* js-play-with-controls.html */; };
 		C99B675F1E39736F00FC6C80 /* no-autoplay-with-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C99B675E1E39735C00FC6C80 /* no-autoplay-with-controls.html */; };
+		C9C60E651E53A9DC006DA181 /* autoplay-check-frame.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9C60E631E53A9BA006DA181 /* autoplay-check-frame.html */; };
+		C9C60E661E53A9DC006DA181 /* autoplay-check-in-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9C60E641E53A9BA006DA181 /* autoplay-check-in-iframe.html */; };
 		CD321B041E3A85FA00EB21C8 /* video-with-muted-audio-and-webaudio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD321B031E3A84B700EB21C8 /* video-with-muted-audio-and-webaudio.html */; };
 		CD59F53419E9110D00CF1835 /* file-with-mse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53219E910AA00CF1835 /* file-with-mse.html */; };
 		CD59F53519E9110D00CF1835 /* test-mse.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53319E910BC00CF1835 /* test-mse.mp4 */; };
@@ -638,6 +640,8 @@
 				F45B960C1E50708800CFAC5D /* autofocus-contenteditable.html in Copy Resources */,
 				F4F93F341E4E918D00E33E2E /* image-and-textarea.html in Copy Resources */,
 				F4D4F3BC1E4E511F00BB2767 /* image-and-contenteditable.html in Copy Resources */,
+				C9C60E651E53A9DC006DA181 /* autoplay-check-frame.html in Copy Resources */,
+				C9C60E661E53A9DC006DA181 /* autoplay-check-in-iframe.html in Copy Resources */,
 				F47728991E4AE3C1007ABF6A /* full-page-contenteditable.html in Copy Resources */,
 				C99B675F1E39736F00FC6C80 /* no-autoplay-with-controls.html in Copy Resources */,
 				C99B675D1E39722000FC6C80 /* js-play-with-controls.html in Copy Resources */,
@@ -1327,6 +1331,8 @@
 		C99B675A1E3971FC00FC6C80 /* autoplay-with-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplay-with-controls.html"; sourceTree = "<group>"; };
 		C99B675B1E3971FC00FC6C80 /* js-play-with-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "js-play-with-controls.html"; sourceTree = "<group>"; };
 		C99B675E1E39735C00FC6C80 /* no-autoplay-with-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "no-autoplay-with-controls.html"; sourceTree = "<group>"; };
+		C9C60E631E53A9BA006DA181 /* autoplay-check-frame.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplay-check-frame.html"; sourceTree = "<group>"; };
+		C9C60E641E53A9BA006DA181 /* autoplay-check-in-iframe.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplay-check-in-iframe.html"; sourceTree = "<group>"; };
 		CD225C071C45A69200140761 /* ParsedContentRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentRange.cpp; sourceTree = "<group>"; };
 		CD321B031E3A84B700EB21C8 /* video-with-muted-audio-and-webaudio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "video-with-muted-audio-and-webaudio.html"; sourceTree = "<group>"; };
 		CD5393C71757BA9700C07123 /* MD5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MD5.cpp; sourceTree = "<group>"; };
@@ -2050,6 +2056,8 @@
 				93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */,
 				F6B7BE9617469B7E008A3445 /* associate-form-controls.html */,
 				76E182DE15475A8300F1FADD /* auto-submitting-form.html */,
+				C9C60E631E53A9BA006DA181 /* autoplay-check-frame.html */,
+				C9C60E641E53A9BA006DA181 /* autoplay-check-in-iframe.html */,
 				C95984F21E36BC55002C0D45 /* autoplay-check.html */,
 				C95984F31E36BC55002C0D45 /* autoplay-no-audio-check.html */,
 				C99B675A1E3971FC00FC6C80 /* autoplay-with-controls.html */,
