@@ -1,3 +1,9 @@
+2017-02-14  Tomas Popela  <tpopela@redhat.com>
+
+        Unreviewed, fix documentation typo
+
+        * UIProcess/API/gtk/WebKitEditingCommands.h:
+
 2017-02-12  Brian Burg  <bburg@apple.com>
 
         Web Inspector: expose system user interface layout direction through InspectorFrontendHost
