@@ -7,7 +7,7 @@ PASS forwardButton.element.localName is "button"
 PASS forwardButton.element.classList.contains("icon") is true
 PASS forwardButton.element.classList.contains("forward") is true
 PASS forwardButton.iconName is "forward"
-PASS forwardButton.element.style.webkitMaskImage.includes("macOS/forward@") is true
+PASS forwardButton.element.style.webkitMaskImage.includes("macOS/forward@") became true
 PASS successfullyParsed is true
 
 TEST COMPLETE

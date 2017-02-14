@@ -305,8 +305,6 @@ media/track/track-cue-rendering-horizontal.html [ Pass Crash ]
 media/accessibility-closed-captions-has-aria-owns.html [ Pass Crash ]
 media/track/track-cues-enter-exit.html [ Pass Crash ]
 
-webkit.org/b/168265 media/modern-media-controls/forward-button/forward-button.html [ Pass Timeout ]
-
 webkit.org/b/167127 pointer-lock/locked-element-removed-from-dom.html
 
 webkit.org/b/167857 pageoverlay/overlay-remove-reinsert-view.html [ Skip ]

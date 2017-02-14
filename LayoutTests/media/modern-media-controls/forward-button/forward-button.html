@@ -8,8 +8,6 @@ window.jsTestIsAsync = true;
 
 description("Testing the <code>ForwardButton</code> class.");
 
-iconService.directoryPath = "../../../../Source/WebCore/Modules/modern-media-controls/images";
-
 const forwardButton = new ForwardButton({ layoutTraits: LayoutTraits.macOS });
 
 shouldBeEqualToString("forwardButton.element.localName", "button");
@@ -17,14 +15,7 @@ shouldBeTrue('forwardButton.element.classList.contains("icon")');
 shouldBeTrue('forwardButton.element.classList.contains("forward")');
 shouldBeEqualToString("forwardButton.iconName", `${Icons.Forward}`);
 
-scheduler.frameDidFire = function()
-{
-    if (forwardButton.width == 0)
-        return;
-
-    shouldBeTrue('forwardButton.element.style.webkitMaskImage.includes("macOS/forward@")');
-    finishMediaControlsTest();
-};
+shouldBecomeEqual('forwardButton.element.style.webkitMaskImage.includes("macOS/forward@")', "true", finishMediaControlsTest);
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
