@@ -1,5 +1,20 @@
 2017-02-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Allow to use stored credentials also for downloads started by DownloadManager::startDownload
+        https://bugs.webkit.org/show_bug.cgi?id=167584
+
+        Reviewed by Michael Catanzaro.
+
+        Cliking on a link that triggers a download works on an already HTTP authenticated site works, but right clicking
+        and downloading from the context menu shows the HTTP auth dialog again. This is because PendingDownload uses
+        DoNotAllowStoredCredentials unconditionally. We want to allow using cached credentials at least for
+        non-ephemeral sessions.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+
+2017-02-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Make DragImageRef a RefPtr instead of a plain pointer
         https://bugs.webkit.org/show_bug.cgi?id=168296
 
