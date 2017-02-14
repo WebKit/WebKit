@@ -457,7 +457,8 @@ static void testDownloadRemoteFile(DownloadTest* test, gconstpointer)
 
     g_assert(webkit_download_get_destination(download.get()));
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), ==, 1);
-    test->checkDestinationAndDeleteFile(download.get(), kServerSuggestedFilename);
+    GUniquePtr<char> expectedFilename(g_strdup_printf("%s.pdf", kServerSuggestedFilename));
+    test->checkDestinationAndDeleteFile(download.get(), expectedFilename.get());
 }
 
 static void testDownloadRemoteFileError(DownloadErrorTest* test, gconstpointer)
@@ -666,7 +667,8 @@ static void testDownloadMIMEType(DownloadTest* test, gconstpointer)
 
     g_assert(webkit_download_get_destination(download.get()));
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), ==, 1);
-    test->checkDestinationAndDeleteFile(download.get(), kServerSuggestedFilename);
+    GUniquePtr<char> expectedFilename(g_strdup_printf("%s.pdf", kServerSuggestedFilename));
+    test->checkDestinationAndDeleteFile(download.get(), expectedFilename.get());
 }
 
 static gboolean contextMenuCallback(WebKitWebView* webView, WebKitContextMenu* contextMenu, GdkEvent*, WebKitHitTestResult* hitTestResult, WebViewDownloadTest* test)
