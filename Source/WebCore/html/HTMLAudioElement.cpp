@@ -50,10 +50,8 @@ Ref<HTMLAudioElement> HTMLAudioElement::createForJSConstructor(Document& documen
 {
     Ref<HTMLAudioElement> audio = adoptRef(*new HTMLAudioElement(audioTag, document, false));
     audio->setPreload("auto");
-    if (!src.isNull()) {
+    if (!src.isNull())
         audio->setSrc(src);
-        audio->scheduleDelayedAction(HTMLMediaElement::LoadMediaResource);
-    }
     audio->suspendIfNeeded();
     return audio;
 }

@@ -63,7 +63,6 @@
                 shouldBe('video.videoWidth', 'mediaStream.getVideoTracks()[0].getSettings().width');
                 shouldBe('video.videoHeight', 'mediaStream.getVideoTracks()[0].getSettings().height');
                 shouldBe('video.src.indexOf("blob:")', '0');
-                shouldBe('video.srcObject', 'mediaStream');
                 
                 debug("");
                 shouldBe('video.videoTracks.length', '1');

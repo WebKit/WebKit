@@ -1,3 +1,17 @@
+2017-02-14  Jer Noble  <jer.noble@apple.com>
+
+        Video elements with MediaSource objects set by srcObject are not cleared when srcObject is set to null
+        https://bugs.webkit.org/show_bug.cgi?id=168268
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStream-MediaElement-setObject-null-expected.txt: Added.
+        * fast/mediastream/MediaStream-MediaElement-setObject-null.html: Added.
+        * fast/mediastream/MediaStream-video-element-expected.txt:
+        * fast/mediastream/MediaStream-video-element-track-stop-expected.txt:
+        * fast/mediastream/MediaStream-video-element-track-stop.html:
+        * fast/mediastream/MediaStream-video-element.html:
+
 2017-02-14  Antoine Quint  <graouts@apple.com>
 
         [mac-wk1] LayoutTest media/modern-media-controls/forward-button/forward-button.html is a flaky timeout

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/getUserMedia-helper.js"></script>
+<script>
+var video;
+var stream;
+
+function setStream(stream)
+{
+    window.stream = stream;
+	shouldNotThrow('video.srcObject = stream');
+    video.addEventListener('loadedmetadata', loadedMetadata);
+}
+
+function loadedMetadata(event)
+{
+    shouldBe('video.duration', 'Number.POSITIVE_INFINITY');
+    video.play().then(clearStream());
+}
+
+function clearStream()
+{
+    video.addEventListener('abort', abort);
+	shouldNotThrow('video.srcObject = null');
+}
+
+function abort()
+{
+    shouldBe('video.duration', 'Number.NaN');
+    finishJSTest();
+}
+
+function runTest()
+{
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    video = document.querySelector('#video');
+    navigator.mediaDevices.getUserMedia({ video: { }, audio: true })
+        .then(setStream)
+        .catch(defaultRejectOrCatch);
+}
+
+window.addEventListener('load', runTest);
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<video id="video"></video>
+</body>
+</html>

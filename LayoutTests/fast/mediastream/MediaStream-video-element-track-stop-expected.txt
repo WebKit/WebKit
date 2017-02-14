@@ -25,7 +25,6 @@ PASS video.ended is false
 PASS video.videoWidth is mediaStream.getVideoTracks()[0].getSettings().width
 PASS video.videoHeight is mediaStream.getVideoTracks()[0].getSettings().height
 PASS video.src.indexOf("blob:") is 0
-PASS video.srcObject is mediaStream
 
 PASS video.videoTracks.length is 1
 PASS video.videoTracks.selectedIndex is 0

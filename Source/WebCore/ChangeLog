@@ -1,3 +1,56 @@
+2017-02-14  Jer Noble  <jer.noble@apple.com>
+
+        Video elements with MediaSource objects set by srcObject are not cleared when srcObject is set to null
+        https://bugs.webkit.org/show_bug.cgi?id=168268
+
+        Reviewed by Eric Carlson.
+
+        Test: fast/mediastream/MediaStream-MediaElement-setObject-null.html
+
+        Make the setSrcObject() operation compliant with the HTML spec. Since the specification defines
+        srcObject in terms of either a MediaSource, MediaStream, or Blob object, add the variant typedef
+        to HTMLMediaElement and move the definition out of the Modules/mediastream extension IDL and into
+        HTMLMediaElement.idl. Then bring the "media elements load" and "resource selection" algorithms up
+        to their most recent definitions in the HTML5 spec.
+
+        Drive-by fix: Allow the (admittedly weird) single-element-union type in IDL.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/mediastream/HTMLMediaElementMediaStream.cpp: Removed.
+        * Modules/mediastream/HTMLMediaElementMediaStream.h: Removed.
+        * Modules/mediastream/HTMLMediaElementMediaStream.idl: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/IDLParser.pm:
+        (parseUnionType):
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::createForJSConstructor):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::actionName):
+        (WebCore::HTMLMediaElement::parseAttribute):
+        (WebCore::HTMLMediaElement::insertedInto):
+        (WebCore::HTMLMediaElement::scheduleDelayedAction):
+        (WebCore::HTMLMediaElement::scheduleNextSourceChild):
+        (WebCore::HTMLMediaElement::pendingActionTimerFired):
+        (WebCore::HTMLMediaElement::setSrcObject):
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::selectMediaResource):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::pauseInternal):
+        (WebCore::HTMLMediaElement::sourceWasAdded):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        (WebCore::HTMLMediaElement::resume):
+        (WebCore::HTMLMediaElement::mediaCanStart):
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        (WebCore::HTMLMediaElement::loadInternal): Deleted.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::srcObject):
+        * html/HTMLMediaElement.idl:
+        * platform/ContentType.h:
+
 2017-02-14  Aakash Jain  <aakash_jain@apple.com>
 
         Remove unused WebThreadContextIsCurrent method from WebCoreThread.h

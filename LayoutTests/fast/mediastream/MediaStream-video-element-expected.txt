@@ -24,7 +24,6 @@ video.pause()
 PASS video.videoWidth is mediaStream.getVideoTracks()[0].getSettings().width
 PASS video.videoHeight is mediaStream.getVideoTracks()[0].getSettings().height
 PASS video.src.indexOf("blob:") is 0
-PASS video.srcObject is mediaStream
 
 **** check video tracks ****
 PASS video.videoTracks.length is 1

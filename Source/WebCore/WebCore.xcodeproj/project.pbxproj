@@ -162,7 +162,6 @@
 		07707CB01E205EE300005BF7 /* AudioSourceObserverObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 07707CAF1E205EC400005BF7 /* AudioSourceObserverObjC.h */; };
 		077664FC183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 077664FA183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp */; };
 		077664FD183E6B5C00133B92 /* JSQuickTimePluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 077664FB183E6B5C00133B92 /* JSQuickTimePluginReplacement.h */; };
-		0779BF0D18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0779BF0A18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp */; };
 		0779BF0E18453168000B6AE7 /* HTMLMediaElementMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 0779BF0B18453168000B6AE7 /* HTMLMediaElementMediaStream.h */; };
 		077AF14018F4AE400001ED61 /* SerializedPlatformRepresentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 077AF13E18F4AE400001ED61 /* SerializedPlatformRepresentation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077AF14318F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 077AF14118F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.h */; };
@@ -7290,7 +7289,6 @@
 		07707CB11E20649C00005BF7 /* AudioCaptureSourceProviderObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioCaptureSourceProviderObjC.h; sourceTree = "<group>"; };
 		077664FA183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSQuickTimePluginReplacement.cpp; sourceTree = "<group>"; };
 		077664FB183E6B5C00133B92 /* JSQuickTimePluginReplacement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSQuickTimePluginReplacement.h; sourceTree = "<group>"; };
-		0779BF0A18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLMediaElementMediaStream.cpp; sourceTree = "<group>"; };
 		0779BF0B18453168000B6AE7 /* HTMLMediaElementMediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLMediaElementMediaStream.h; sourceTree = "<group>"; };
 		0779BF0C18453168000B6AE7 /* HTMLMediaElementMediaStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMediaElementMediaStream.idl; sourceTree = "<group>"; };
 		077AF13E18F4AE400001ED61 /* SerializedPlatformRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedPlatformRepresentation.h; sourceTree = "<group>"; };
@@ -15297,7 +15295,6 @@
 				073794EE19EE364200E5A045 /* DOMURLMediaStream.idl */,
 				93A806111E03B51C008A1F26 /* DoubleRange.h */,
 				93A806121E03B51C008A1F26 /* DoubleRange.idl */,
-				0779BF0A18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp */,
 				0779BF0B18453168000B6AE7 /* HTMLMediaElementMediaStream.h */,
 				0779BF0C18453168000B6AE7 /* HTMLMediaElementMediaStream.idl */,
 				93A806131E03B51C008A1F26 /* LongRange.h */,
@@ -30044,7 +30041,6 @@
 				A8EA7CAC0A192B9C00A8EF5F /* HTMLMarqueeElement.cpp in Sources */,
 				E44613A40CD6331000FADA75 /* HTMLMediaElement.cpp in Sources */,
 				C968B2E81B1E778100EF1F81 /* HTMLMediaElementMediaSession.cpp in Sources */,
-				0779BF0D18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp in Sources */,
 				A8EA79F80A1916DF00A8EF5F /* HTMLMenuElement.cpp in Sources */,
 				2BE8E2C912A58A0100FAD550 /* HTMLMetaCharsetParser.cpp in Sources */,
 				A871DC270A15205700B12A68 /* HTMLMetaElement.cpp in Sources */,

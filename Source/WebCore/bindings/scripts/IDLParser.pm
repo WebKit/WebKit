@@ -2018,10 +2018,6 @@ sub parseUnionType
         $self->assertTokenValue($self->getToken(), "(", __LINE__);
         
         push(@{$unionType->subtypes}, $self->parseUnionMemberType());
-        
-        $self->assertTokenValue($self->getToken(), "or", __LINE__);
-        
-        push(@{$unionType->subtypes}, $self->parseUnionMemberType());
         push(@{$unionType->subtypes}, $self->parseUnionMemberTypes());
         
         $self->assertTokenValue($self->getToken(), ")", __LINE__);

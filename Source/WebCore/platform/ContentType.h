@@ -34,6 +34,7 @@ namespace WebCore {
     class ContentType {
     public:
         explicit ContentType(const String& type);
+        ContentType() = default;
 
         String parameter(const String& parameterName) const;
         String type() const;
