@@ -250,7 +250,7 @@ public:
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    WebKitMediaKeys* webkitKeys() const { return m_mediaKeys.get(); }
+    WebKitMediaKeys* webkitKeys() const { return m_webKitMediaKeys.get(); }
     void webkitSetMediaKeys(WebKitMediaKeys*);
 
     void keyAdded();
@@ -1013,7 +1013,7 @@ private:
     friend class TrackDisplayUpdateScope;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RefPtr<WebKitMediaKeys> m_mediaKeys;
+    RefPtr<WebKitMediaKeys> m_webKitMediaKeys;
 #endif
 
     std::unique_ptr<MediaElementSession> m_mediaSession;

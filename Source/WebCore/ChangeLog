@@ -1,3 +1,21 @@
+2017-02-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        HTMLMediaElement: WebKitMediaKeys member name should be prefixed
+        https://bugs.webkit.org/show_bug.cgi?id=168297
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Rename the LEGACY_ENCRYPTED_MEDIA m_mediaKeys variable to m_webkitMediaKeys
+        so that it contains the legacy prefix, just like the API. This will make
+        room for the MediaKeys member variable that will be implemented under
+        the ENCRYPTED_MEDIA guards.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerCachedKeyForKeyId):
+        (WebCore::HTMLMediaElement::webkitSetMediaKeys):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::webkitKeys):
+
 2017-02-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Make DragImageRef a RefPtr instead of a plain pointer

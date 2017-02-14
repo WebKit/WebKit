@@ -2417,7 +2417,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 RefPtr<ArrayBuffer> HTMLMediaElement::mediaPlayerCachedKeyForKeyId(const String& keyId) const
 {
-    return m_mediaKeys ? m_mediaKeys->cachedKeyForKeyId(keyId) : nullptr;
+    return m_webKitMediaKeys ? m_webKitMediaKeys->cachedKeyForKeyId(keyId) : nullptr;
 }
 
 bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array* initData)
@@ -2446,14 +2446,14 @@ String HTMLMediaElement::mediaPlayerMediaKeysStorageDirectory() const
 
 void HTMLMediaElement::webkitSetMediaKeys(WebKitMediaKeys* mediaKeys)
 {
-    if (m_mediaKeys == mediaKeys)
+    if (m_webKitMediaKeys == mediaKeys)
         return;
 
-    if (m_mediaKeys)
-        m_mediaKeys->setMediaElement(nullptr);
-    m_mediaKeys = mediaKeys;
-    if (m_mediaKeys)
-        m_mediaKeys->setMediaElement(this);
+    if (m_webKitMediaKeys)
+        m_webKitMediaKeys->setMediaElement(nullptr);
+    m_webKitMediaKeys = mediaKeys;
+    if (m_webKitMediaKeys)
+        m_webKitMediaKeys->setMediaElement(this);
 }
 
 void HTMLMediaElement::keyAdded()
