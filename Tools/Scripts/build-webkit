@@ -52,6 +52,7 @@ chdirWebKit();
 
 my $showHelp = 0;
 my $clean = 0;
+my $defaultCMakeFeatures = 0;
 my $minimal = 0;
 my $installHeaders;
 my $installLibs;
@@ -104,6 +105,7 @@ Usage: $programName [options] [options to pass to build system]
   --cmakeargs=<arguments>           One or more optional CMake flags (e.g. --cmakeargs="-DFOO=bar -DCMAKE_PREFIX_PATH=/usr/local")
 
   --minimal                         No optional features, unless explicitly enabled
+  --default-cmake-features          Use the default CMake features enabled for the port (CMake based ports)
 
   --only-webkit                     Build only the WebKit project
 
@@ -121,6 +123,7 @@ my %options = (
     'only-webkit' => \$onlyWebKitProject,
     'coverage' => \$coverageSupport,
     'analyze' => \$shouldRunStaticAnalyzer,
+    'default-cmake-features' => \$defaultCMakeFeatures,
 );
 
 # Build usage text and options list from features
@@ -306,11 +309,13 @@ exit 0;
 sub cMakeArgsFromFeatures()
 {
     my @args;
-    foreach (@features) {
-        my $featureName = $_->{define};
-        if ($featureName) {
-            my $featureEnabled = ${$_->{value}} ? "ON" : "OFF";
-            push @args, "-D$featureName=$featureEnabled";
+    if (!$defaultCMakeFeatures) {
+        foreach (@features) {
+            my $featureName = $_->{define};
+            if ($featureName) {
+                my $featureEnabled = ${$_->{value}} ? "ON" : "OFF";
+                push @args, "-D$featureName=$featureEnabled";
+            }
         }
     }
     return @args;
