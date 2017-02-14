@@ -220,11 +220,6 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 
 
 #if !PLATFORM(IOS)
-- (BOOL)webView:(WebView *)webView shouldBeginDragForElement:(NSDictionary *)element dragImage:(NSImage *)dragImage mouseDownEvent:(NSEvent *)mouseDownEvent mouseDraggedEvent:(NSEvent *)mouseDraggedEvent
-{
-    return YES;
-}
-
 - (NSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     return WebDragDestinationActionAny;
