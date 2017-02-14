@@ -307,7 +307,6 @@ media/track/track-cues-enter-exit.html [ Pass Crash ]
 
 webkit.org/b/167347 media/modern-media-controls/airplay-button/airplay-button-on.html [ Pass Timeout ]
 webkit.org/b/168265 media/modern-media-controls/forward-button/forward-button.html [ Pass Timeout ]
-webkit.org/b/168074 [ ElCapitan ] media/modern-media-controls/layout-node/addChild.html [ Pass Timeout ]
 
 webkit.org/b/167127 pointer-lock/locked-element-removed-from-dom.html
 
