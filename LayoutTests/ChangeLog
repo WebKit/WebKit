@@ -1,3 +1,72 @@
+2017-02-13  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] WebInspector should indicate webkitSubtle is deprecated
+        https://bugs.webkit.org/show_bug.cgi?id=165913
+        <rdar://problem/30477222>
+
+        Reviewed by Joseph Pecoraro.
+
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent.html:
+        Change webkitSubtle to subtle.
+        * crypto/webkitSubtle/aes-cbc-192-encrypt-decrypt-expected.txt:
+        * crypto/webkitSubtle/aes-cbc-256-encrypt-decrypt-expected.txt:
+        * crypto/webkitSubtle/aes-cbc-encrypt-decrypt-expected.txt:
+        * crypto/webkitSubtle/aes-cbc-encrypt-decrypt-with-padding-expected.txt:
+        * crypto/webkitSubtle/aes-cbc-generate-key-expected.txt:
+        * crypto/webkitSubtle/aes-cbc-import-jwk-expected.txt:
+        * crypto/webkitSubtle/aes-cbc-invalid-length-expected.txt:
+        * crypto/webkitSubtle/aes-cbc-unwrap-failure-expected.txt:
+        * crypto/webkitSubtle/aes-cbc-unwrap-rsa-expected.txt:
+        * crypto/webkitSubtle/aes-cbc-wrap-rsa-expected.txt:
+        * crypto/webkitSubtle/aes-cbc-wrap-rsa-non-extractable-expected.txt:
+        * crypto/webkitSubtle/aes-cbc-wrong-key-class-expected.txt:
+        * crypto/webkitSubtle/aes-export-key-expected.txt:
+        * crypto/webkitSubtle/aes-kw-key-manipulation-expected.txt:
+        * crypto/webkitSubtle/aes-kw-wrap-unwrap-aes-expected.txt:
+        * crypto/webkitSubtle/aes-postMessage-expected.txt:
+        * crypto/webkitSubtle/argument-conversion-expected.txt:
+        * crypto/webkitSubtle/array-buffer-view-offset-expected.txt:
+        * crypto/webkitSubtle/gc-2-expected.txt:
+        * crypto/webkitSubtle/gc-expected.txt:
+        * crypto/webkitSubtle/hmac-check-algorithm-expected.txt:
+        * crypto/webkitSubtle/hmac-export-key-expected.txt:
+        * crypto/webkitSubtle/hmac-generate-key-expected.txt:
+        * crypto/webkitSubtle/hmac-import-jwk-expected.txt:
+        * crypto/webkitSubtle/hmac-postMessage-expected.txt:
+        * crypto/webkitSubtle/hmac-sign-verify-empty-key-expected.txt:
+        * crypto/webkitSubtle/hmac-sign-verify-expected.txt:
+        * crypto/webkitSubtle/import-jwk-expected.txt:
+        * crypto/webkitSubtle/jwk-export-use-values-expected.txt:
+        * crypto/webkitSubtle/jwk-import-use-values-expected.txt:
+        * crypto/webkitSubtle/rsa-export-generated-keys-expected.txt:
+        * crypto/webkitSubtle/rsa-export-key-expected.txt:
+        * crypto/webkitSubtle/rsa-export-private-key-expected.txt:
+        * crypto/webkitSubtle/rsa-indexeddb-expected.txt:
+        * crypto/webkitSubtle/rsa-indexeddb-non-exportable-expected.txt:
+        * crypto/webkitSubtle/rsa-indexeddb-non-exportable-private-expected.txt:
+        * crypto/webkitSubtle/rsa-indexeddb-private-expected.txt:
+        * crypto/webkitSubtle/rsa-oaep-generate-non-extractable-key-expected.txt:
+        * crypto/webkitSubtle/rsa-oaep-key-manipulation-expected.txt:
+        * crypto/webkitSubtle/rsa-oaep-plaintext-length-expected.txt:
+        * crypto/webkitSubtle/rsa-oaep-wrap-unwrap-aes-expected.txt:
+        * crypto/webkitSubtle/rsa-postMessage-expected.txt:
+        * crypto/webkitSubtle/rsaes-pkcs1-v1_5-decrypt-expected.txt:
+        * crypto/webkitSubtle/rsaes-pkcs1-v1_5-wrap-unwrap-aes-expected.txt:
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-generate-key-expected.txt:
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent-expected.txt:
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-import-jwk-expected.txt:
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-import-jwk-small-key-expected.txt:
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-sign-verify-expected.txt:
+        * crypto/webkitSubtle/sha-1-expected.txt:
+        * crypto/webkitSubtle/sha-224-expected.txt:
+        * crypto/webkitSubtle/sha-256-expected.txt:
+        * crypto/webkitSubtle/sha-384-expected.txt:
+        * crypto/webkitSubtle/sha-512-expected.txt:
+        * crypto/webkitSubtle/unimplemented-unwrap-crash-expected.txt:
+        * crypto/webkitSubtle/unwrapKey-check-usage-expected.txt:
+        * crypto/webkitSubtle/wrapKey-check-usage-expected.txt:
+        * fast/dom/Window/property-access-on-cached-window-after-frame-removed-expected.txt:
+
 2017-02-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/layout-node/addChild.html as flaky on El Capitan WK1.

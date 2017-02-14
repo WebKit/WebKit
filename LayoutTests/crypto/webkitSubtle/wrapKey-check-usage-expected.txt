@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 28: WebKitSubtleCrypto is deprecated. Please use SubtleCrypto instead.
 CONSOLE MESSAGE: line 1: Key usages do not include 'wrapKey'
 Verify that usage is respected in wrapKey operation.
 

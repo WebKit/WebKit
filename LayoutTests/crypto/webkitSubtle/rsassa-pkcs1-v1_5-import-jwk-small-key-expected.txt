@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 616: WebKitSubtleCrypto is deprecated. Please use SubtleCrypto instead.
 A key of size 2048 bits or larger MUST be used with RS256, RS384, RS512 JWK algorithms.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

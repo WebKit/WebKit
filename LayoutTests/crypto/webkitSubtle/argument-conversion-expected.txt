@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 1: WebKitSubtleCrypto is deprecated. Please use SubtleCrypto instead.
 Test crypto.webkitSubtle argument conversion
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

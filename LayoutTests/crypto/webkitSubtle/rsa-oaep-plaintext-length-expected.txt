@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 40: WebKitSubtleCrypto is deprecated. Please use SubtleCrypto instead.
 Test what happens when trying to encrypt a too large plain text with RSA-OAEP.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

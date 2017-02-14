@@ -23,7 +23,7 @@ var algorithmKeyGen = {
 var extractable = true;
 
 debug("Generating a key pair...");
-crypto.webkitSubtle.generateKey(algorithmKeyGen, extractable, ["sign", "verify"]).then(function(result) {
+crypto.subtle.generateKey(algorithmKeyGen, extractable, ["sign", "verify"]).then(function(result) {
     keyPair = result;
     shouldBe("keyPair.toString()", "'[object Object]'");
     shouldBe("keyPair.publicKey.type", "'public'");

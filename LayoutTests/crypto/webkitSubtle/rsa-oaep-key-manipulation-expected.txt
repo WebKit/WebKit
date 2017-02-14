@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 25: WebKitSubtleCrypto is deprecated. Please use SubtleCrypto instead.
 Test generating, importing and exporting RSA keys for RSA-OAEP. Test that they can't be used with another algorithm.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

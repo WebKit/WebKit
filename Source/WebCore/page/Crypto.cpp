@@ -74,8 +74,10 @@ ExceptionOr<WebKitSubtleCrypto&> Crypto::webkitSubtle()
     if (!isMainThread())
         return Exception { NOT_SUPPORTED_ERR };
 
-    if (!m_webkitSubtle)
+    if (!m_webkitSubtle) {
         m_webkitSubtle = WebKitSubtleCrypto::create(*downcast<Document>(scriptExecutionContext()));
+        scriptExecutionContext()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, ASCIILiteral("WebKitSubtleCrypto is deprecated. Please use SubtleCrypto instead."));
+    }
 
     return *m_webkitSubtle;
 }

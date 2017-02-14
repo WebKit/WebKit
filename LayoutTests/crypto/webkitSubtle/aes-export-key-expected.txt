@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 616: WebKitSubtleCrypto is deprecated. Please use SubtleCrypto instead.
 Test exporting an AES key.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

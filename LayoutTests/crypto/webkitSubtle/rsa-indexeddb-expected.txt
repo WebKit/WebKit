@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 18: WebKitSubtleCrypto is deprecated. Please use SubtleCrypto instead.
 Test storing a private RSA key in IndexedDB, and retrieving it.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

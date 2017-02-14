@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 26: WebKitSubtleCrypto is deprecated. Please use SubtleCrypto instead.
 Test sending crypto keys via postMessage.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

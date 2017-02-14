@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 25: WebKitSubtleCrypto is deprecated. Please use SubtleCrypto instead.
 Test that even when non-extractability is requested, the public key is still extractable.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
