@@ -36,6 +36,7 @@
 #include "WebErrors.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/HTTPParsers.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SoupNetworkSession.h>
@@ -325,6 +326,8 @@ void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
         if (m_shouldContentSniff == SniffContent && m_soupMessage->status_code != SOUP_STATUS_NOT_MODIFIED)
             m_response.setSniffedContentType(soup_request_get_content_type(m_soupRequest.get()));
         m_response.updateFromSoupMessage(m_soupMessage.get());
+        if (m_response.mimeType().isEmpty() && m_soupMessage->status_code != SOUP_STATUS_NOT_MODIFIED)
+            m_response.setMimeType(MIMETypeRegistry::getMIMETypeForPath(m_response.url().path()));
 
         if (shouldStartHTTPRedirection()) {
             m_inputStream = WTFMove(inputStream);
@@ -346,6 +349,8 @@ void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
         m_response.setMimeType(extractMIMETypeFromMediaType(contentType));
         m_response.setTextEncodingName(extractCharsetFromMediaType(contentType));
         m_response.setExpectedContentLength(soup_request_get_content_length(m_soupRequest.get()));
+        if (m_response.mimeType().isEmpty())
+            m_response.setMimeType(MIMETypeRegistry::getMIMETypeForPath(m_response.url().path()));
 
         m_inputStream = WTFMove(inputStream);
     }
