@@ -23,14 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
 #import "SoftLinking.h"
 #import <objc/runtime.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-
-#import <TelephonyUtilities/TelephonyUtilities.h>
-
-#else
 
 @interface TUCall : NSObject
 @end
@@ -39,7 +35,7 @@
 + (NSString *)supplementalDialTelephonyCallString;
 @end
 
-#endif
-
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TelephonyUtilities)
 SOFT_LINK_CLASS(TelephonyUtilities, TUCall)
+
+#endif
