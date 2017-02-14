@@ -56,6 +56,8 @@ public:
     
     bool hasDebugIndicator() const { return !!m_debugIndicatorLayerTreeHost; }
 
+    bool isAlwaysOnLoggingAllowed() const;
+
 private:
     void sizeDidChange() override;
     void deviceScaleFactorDidChange() override;

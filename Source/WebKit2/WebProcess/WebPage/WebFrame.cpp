@@ -149,16 +149,8 @@ Ref<WebFrame> WebFrame::create(std::unique_ptr<WebFrameLoaderClient> frameLoader
 }
 
 WebFrame::WebFrame(std::unique_ptr<WebFrameLoaderClient> frameLoaderClient)
-    : m_coreFrame(0)
-    , m_policyListenerID(0)
-    , m_policyFunction(0)
-    , m_policyDownloadID(0)
-    , m_frameLoaderClient(WTFMove(frameLoaderClient))
-    , m_loadListener(0)
+    : m_frameLoaderClient(WTFMove(frameLoaderClient))
     , m_frameID(generateFrameID())
-#if PLATFORM(IOS)
-    , m_firstLayerTreeTransactionIDAfterDidCommitLoad(0)
-#endif
 {
     m_frameLoaderClient->setWebFrame(this);
     WebProcess::singleton().addWebFrame(m_frameID, this);
