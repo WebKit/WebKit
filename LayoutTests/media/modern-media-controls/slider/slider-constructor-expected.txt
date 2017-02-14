@@ -6,8 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS slider.element.localName is "div"
 PASS slider.element.className.trim() is "slider"
 PASS slider.children.length is 2
-PASS slider.children[0].element.localName is "div"
-PASS slider.children[0].element.className is "fill"
+PASS slider.children[0].element.localName is "canvas"
 PASS slider.children[1].element.localName is "input"
 PASS slider.children[1].element.type is "range"
 PASS slider.children[1].element.min is "0"

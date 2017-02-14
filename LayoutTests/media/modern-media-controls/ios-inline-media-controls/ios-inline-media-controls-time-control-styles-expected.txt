@@ -3,7 +3,7 @@ Testing the IOSOSInlineMediaControls computed styles.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS window.getComputedStyle(mediaControls.timeControl.scrubber.element).top is "23px"
+PASS window.getComputedStyle(mediaControls.timeControl.scrubber.element).top is "13px"
 PASS window.getComputedStyle(mediaControls.timeControl.elapsedTimeLabel.element).top is "14.5px"
 PASS window.getComputedStyle(mediaControls.timeControl.remainingTimeLabel.element).top is "14.5px"
 

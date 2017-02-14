@@ -8,29 +8,29 @@ PASS mediaControls.element.className is "media-controls mac inline"
 PASS mediaControls.layoutTraits is LayoutTraits.macOS
 
 Controls bar
-PASS mediaControls.controlsBar.children.length is 3
-PASS mediaControls.controlsBar.children[0] instanceof ButtonsContainer is true
+PASS mediaControls.controlsBar.children.length is 4
 PASS mediaControls.controlsBar.children[1] instanceof ButtonsContainer is true
-PASS mediaControls.controlsBar.children[2] instanceof LayoutNode is true
+PASS mediaControls.controlsBar.children[2] instanceof ButtonsContainer is true
+PASS mediaControls.controlsBar.children[3] instanceof LayoutNode is true
 
 Left container
-PASS mediaControls.controlsBar.children[0].buttons is [mediaControls.playPauseButton, mediaControls.skipBackButton]
-PASS mediaControls.controlsBar.children[0].element.className is "buttons-container left"
-PASS mediaControls.controlsBar.children[0].leftMargin is 24
-PASS mediaControls.controlsBar.children[0].rightMargin is 24
-PASS mediaControls.controlsBar.children[0].buttonMargin is 24
-
-Right container
-PASS mediaControls.controlsBar.children[1].buttons is [mediaControls.muteButton, mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]
-PASS mediaControls.controlsBar.children[1].element.className is "buttons-container right"
+PASS mediaControls.controlsBar.children[1].buttons is [mediaControls.playPauseButton, mediaControls.skipBackButton]
+PASS mediaControls.controlsBar.children[1].element.className is "buttons-container left"
 PASS mediaControls.controlsBar.children[1].leftMargin is 24
 PASS mediaControls.controlsBar.children[1].rightMargin is 24
 PASS mediaControls.controlsBar.children[1].buttonMargin is 24
 
+Right container
+PASS mediaControls.controlsBar.children[2].buttons is [mediaControls.muteButton, mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]
+PASS mediaControls.controlsBar.children[2].element.className is "buttons-container right"
+PASS mediaControls.controlsBar.children[2].leftMargin is 24
+PASS mediaControls.controlsBar.children[2].rightMargin is 24
+PASS mediaControls.controlsBar.children[2].buttonMargin is 24
+
 Volume slider
-PASS mediaControls.controlsBar.children[2].element.className is "volume-slider-container"
-PASS mediaControls.controlsBar.children[2].children is [mediaControls.volumeSlider]
-PASS mediaControls.controlsBar.children[2].visible is false
+PASS mediaControls.controlsBar.children[3].element.className is "volume-slider-container"
+PASS mediaControls.controlsBar.children[3].children.slice(-1) is [mediaControls.volumeSlider]
+PASS mediaControls.controlsBar.children[3].visible is false
 PASS mediaControls.volumeSlider.width is 60
 
 PASS successfullyParsed is true

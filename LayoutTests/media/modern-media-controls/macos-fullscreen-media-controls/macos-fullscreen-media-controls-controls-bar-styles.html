@@ -33,15 +33,11 @@ scheduler.frameDidFire = function()
     shouldBeEqualToString("style.bottom", "25px");
     shouldBeEqualToString("style.width", "468px");
     shouldBeEqualToString("style.height", "75px");
-    shouldBeEqualToString("style.borderRadius", "8px");
 
     shouldBe("bounds.left", "166");
     shouldBe("bounds.top", "500");
     shouldBe("bounds.width", "468");
     shouldBe("bounds.height", "75");
-
-    shouldBeEqualToRGBAColor("style.backgroundColor", "rgba(30, 30, 30, 0.45)");
-    shouldBeEqualToString("style.webkitBackdropFilter", "saturate(1.8) blur(20px)");
 
     mediaControls.element.remove();
 

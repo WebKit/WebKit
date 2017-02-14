@@ -5,6 +5,7 @@ class TracksPanel extends LayoutNode
     constructor()
     {
         super(`<div class="tracks-panel"></div>`);
+        this._backgroundTint = new BackgroundTint;
         this._rightX = 0;
         this._bottomY = 0;
     }
@@ -132,7 +133,7 @@ class TracksPanel extends LayoutNode
 
     _childrenFromDataSource()
     {
-        const children = [];
+        const children = [this._backgroundTint];
 
         this._trackNodes = [];
 
@@ -145,7 +146,7 @@ class TracksPanel extends LayoutNode
             return children;
 
         for (let sectionIndex = 0; sectionIndex < numberOfSections; ++sectionIndex) {
-            let sectionNode = new LayoutNode(`<div class="tracks-panel-section"></div>`);
+            let sectionNode = new LayoutNode(`<section></section>`);
             sectionNode.addChild(new LayoutNode(`<h3>${dataSource.tracksPanelTitleForSection(sectionIndex)}</h3>`));
 
             let tracksListNode = sectionNode.addChild(new LayoutNode(`<ul></ul>`));

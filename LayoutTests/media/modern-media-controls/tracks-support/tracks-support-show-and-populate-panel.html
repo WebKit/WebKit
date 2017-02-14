@@ -33,7 +33,7 @@ function clickOnTracksButton()
 
 function listContentsOfTracksPanel()
 {
-    for (let section of shadowRoot.lastChild.querySelectorAll(".tracks-panel-section")) {
+    for (let section of shadowRoot.lastChild.querySelectorAll("section")) {
         debug(section.querySelector("h3").textContent);
         for (let item of section.querySelectorAll("li"))
             debug("  " + item.textContent);

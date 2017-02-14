@@ -36,26 +36,7 @@
     position: absolute;
 }
 
-.media-controls.mac.inline button {
-    background-color: rgba(255, 255, 255, 0.572);
-}
-
-.media-controls.mac.inline button:active {
-    background-color: white;
-}
-
-.media-controls.mac.inline > .controls-bar button {
-    height: 100% !important;
-}
-
-/* Blurred backgrounds */
-
-.media-controls.mac.inline > .controls-bar,
-.media-controls.mac.inline .volume-slider-container:before {
-    /* FIXME: we want to use the real System Dark treatment here, see <rdar://problem/19993961> */
-    background-color: rgba(30, 30, 30, 0.45);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-}
+/* Start button blur */
 
 .media-controls.mac.inline > button.start > div {
     -webkit-backdrop-filter: saturate(180%) blur(20px);
@@ -72,7 +53,7 @@
 }
 
 .media-controls.mac.inline .scrubber.slider {
-    top: 23px;
+    top: 13px;
 }
 
 .media-controls.mac.inline button.mute {
@@ -107,28 +88,27 @@
 .media-controls.mac.inline .volume-slider-container {
     position: absolute;
 
-    top: 0px;
-    width: 31px;
-    height: 81px;
-    transform: translateY(-100%);
+    bottom: 50px;
+    width: 81px;
+    height: 31px;
+    transform: rotate(-90deg) translate(25px, -25px);
 }
 
-.media-controls.mac.inline .volume-slider-container:before {
-    content: "";
-
-    position: absolute;
+.media-controls.mac.inline .volume-slider-container > .background-tint {
     top: 0;
-    left: 0;
+    left: 1px;
     right: 0;
-    bottom: 1px;
+    bottom: 0px;
+    width: auto;
+}
 
-    border-radius: 4px 4px 0 0;
+.media-controls.mac.inline .volume-slider-container > .background-tint > div {
+    border-radius: 0 4px 4px 0;
 }
 
 .media-controls.mac.inline .volume.slider {
-    transform: rotate(-90deg);
-    left: -15px;
-    top: 40px;
+    left: 11px;
+    top: 10px;
 }
 
 /* Tracks Panel */

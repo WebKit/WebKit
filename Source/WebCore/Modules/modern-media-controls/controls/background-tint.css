@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-button.airplay.on {
-    background-color: -apple-wireless-playback-target-active !important;
-    mix-blend-mode: normal !important;
+.background-tint {
+    pointer-events: none;
+}
+
+.background-tint,
+.background-tint > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.background-tint > .blur {
+    /* FIXME: we want to use the real System Dark treatment here, see <rdar://problem/19993961> */
+    background-color: rgba(30, 30, 30, 0.45);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+.background-tint > .tint {
+    background-color: rgb(41, 41, 41);
+    mix-blend-mode: lighten;
 }

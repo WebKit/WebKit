@@ -1,0 +1,35 @@
+Testing the BackgroundTint class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Container
+PASS container.localName is "div"
+PASS container.className is "background-tint"
+PASS getComputedStyle(container).pointerEvents is "none"
+
+Blur
+PASS blur.localName is "div"
+PASS blur.className is "blur"
+PASS getComputedStyle(blur).position is "absolute"
+PASS getComputedStyle(blur).left is "0px"
+PASS getComputedStyle(blur).top is "0px"
+PASS getComputedStyle(blur).width is "100px"
+PASS getComputedStyle(blur).height is "100px"
+PASS getComputedStyle(blur).backgroundColor is "rgba(30, 30, 30, 0.45098)"
+PASS getComputedStyle(blur).webkitBackdropFilter is "saturate(1.8) blur(20px)"
+
+Tint
+PASS tint.localName is "div"
+PASS tint.className is "tint"
+PASS getComputedStyle(tint).position is "absolute"
+PASS getComputedStyle(tint).left is "0px"
+PASS getComputedStyle(tint).top is "0px"
+PASS getComputedStyle(tint).width is "100px"
+PASS getComputedStyle(tint).height is "100px"
+PASS getComputedStyle(tint).backgroundColor is "rgb(41, 41, 41)"
+PASS getComputedStyle(tint).mixBlendMode is "lighten"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

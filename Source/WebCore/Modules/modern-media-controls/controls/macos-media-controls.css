@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-button.airplay.on {
-    background-color: -apple-wireless-playback-target-active !important;
-    mix-blend-mode: normal !important;
+/* Buttons in controls bar */
+
+.media-controls.mac button:active {
+    background-color: white;
+}
+
+.media-controls.mac > .controls-bar button {
+    height: 100% !important;
+    background-color: rgba(255, 255, 255, 0.45);
+    mix-blend-mode: plus-lighter;
+}
+
+.media-controls.mac > .controls-bar .time-label {
+    color: rgba(255, 255, 255, 0.45);
+    mix-blend-mode: plus-lighter;
+}
+
+.media-controls.mac > .controls-bar .slider > canvas {
+    mix-blend-mode: plus-lighter;
+}
+
+.media-controls.mac > .controls-bar .slider > input::-webkit-slider-thumb {
+    width: 3px !important;
+    height: 100% !important;
+    -webkit-appearance: none !important;
 }

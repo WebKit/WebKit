@@ -5,49 +5,47 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS tracksPanel.presented is true
 PASS tracksPanel.parent is container
-PASS tracksPanel.children.length is numberOfSections
+PASS tracksPanel.children.length is numberOfSections + 1
 
 Hierarchy for section #0
-PASS tracksPanel.children[0].element.localName is "div"
-PASS tracksPanel.children[0].element.className is "tracks-panel-section"
-PASS tracksPanel.children[0].children.length is 2
-PASS tracksPanel.children[0].children[0].element.localName is "h3"
-PASS tracksPanel.children[0].children[0].element.textContent is "Title #0"
-PASS tracksPanel.children[0].children[1].element.localName is "ul"
-PASS tracksPanel.children[0].children[1].children.length is 3
-PASS tracksPanel.children[0].children[1].children[trackIndex].element.localName is "li"
-PASS tracksPanel.children[0].children[1].children[trackIndex].element.className is ""
-PASS tracksPanel.children[0].children[1].children[trackIndex].element.textContent is "Track 0x0"
-PASS tracksPanel.children[0].children[1].children[trackIndex].element.localName is "li"
-PASS tracksPanel.children[0].children[1].children[trackIndex].element.className is "selected"
-PASS tracksPanel.children[0].children[1].children[trackIndex].element.textContent is "Track 0x1"
-PASS tracksPanel.children[0].children[1].children[trackIndex].element.localName is "li"
-PASS tracksPanel.children[0].children[1].children[trackIndex].element.className is ""
-PASS tracksPanel.children[0].children[1].children[trackIndex].element.textContent is "Track 0x2"
-
-Hierarchy for section #1
-PASS tracksPanel.children[1].element.localName is "div"
-PASS tracksPanel.children[1].element.className is "tracks-panel-section"
+PASS tracksPanel.children[1].element.localName is "section"
 PASS tracksPanel.children[1].children.length is 2
 PASS tracksPanel.children[1].children[0].element.localName is "h3"
-PASS tracksPanel.children[1].children[0].element.textContent is "Title #1"
+PASS tracksPanel.children[1].children[0].element.textContent is "Title #0"
 PASS tracksPanel.children[1].children[1].element.localName is "ul"
-PASS tracksPanel.children[1].children[1].children.length is 5
+PASS tracksPanel.children[1].children[1].children.length is 3
 PASS tracksPanel.children[1].children[1].children[trackIndex].element.localName is "li"
 PASS tracksPanel.children[1].children[1].children[trackIndex].element.className is ""
-PASS tracksPanel.children[1].children[1].children[trackIndex].element.textContent is "Track 1x0"
-PASS tracksPanel.children[1].children[1].children[trackIndex].element.localName is "li"
-PASS tracksPanel.children[1].children[1].children[trackIndex].element.className is ""
-PASS tracksPanel.children[1].children[1].children[trackIndex].element.textContent is "Track 1x1"
-PASS tracksPanel.children[1].children[1].children[trackIndex].element.localName is "li"
-PASS tracksPanel.children[1].children[1].children[trackIndex].element.className is ""
-PASS tracksPanel.children[1].children[1].children[trackIndex].element.textContent is "Track 1x2"
+PASS tracksPanel.children[1].children[1].children[trackIndex].element.textContent is "Track 0x0"
 PASS tracksPanel.children[1].children[1].children[trackIndex].element.localName is "li"
 PASS tracksPanel.children[1].children[1].children[trackIndex].element.className is "selected"
-PASS tracksPanel.children[1].children[1].children[trackIndex].element.textContent is "Track 1x3"
+PASS tracksPanel.children[1].children[1].children[trackIndex].element.textContent is "Track 0x1"
 PASS tracksPanel.children[1].children[1].children[trackIndex].element.localName is "li"
 PASS tracksPanel.children[1].children[1].children[trackIndex].element.className is ""
-PASS tracksPanel.children[1].children[1].children[trackIndex].element.textContent is "Track 1x4"
+PASS tracksPanel.children[1].children[1].children[trackIndex].element.textContent is "Track 0x2"
+
+Hierarchy for section #1
+PASS tracksPanel.children[2].element.localName is "section"
+PASS tracksPanel.children[2].children.length is 2
+PASS tracksPanel.children[2].children[0].element.localName is "h3"
+PASS tracksPanel.children[2].children[0].element.textContent is "Title #1"
+PASS tracksPanel.children[2].children[1].element.localName is "ul"
+PASS tracksPanel.children[2].children[1].children.length is 5
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.localName is "li"
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.className is ""
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.textContent is "Track 1x0"
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.localName is "li"
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.className is ""
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.textContent is "Track 1x1"
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.localName is "li"
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.className is ""
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.textContent is "Track 1x2"
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.localName is "li"
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.className is "selected"
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.textContent is "Track 1x3"
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.localName is "li"
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.className is ""
+PASS tracksPanel.children[2].children[1].children[trackIndex].element.textContent is "Track 1x4"
 
 PASS successfullyParsed is true
 

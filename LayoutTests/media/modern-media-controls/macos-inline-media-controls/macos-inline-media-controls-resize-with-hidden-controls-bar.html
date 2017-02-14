@@ -10,8 +10,8 @@ window.jsTestIsAsync = true;
 
 const mediaControls = new MacOSInlineMediaControls({ width: 600 });
 
-const leftContainer = mediaControls.controlsBar.children[0];
-const rightContainer = mediaControls.controlsBar.children[1];
+const leftContainer = mediaControls.controlsBar.children[1];
+const rightContainer = mediaControls.controlsBar.children[2];
 const buttons = leftContainer.buttons.concat(rightContainer.buttons);
 
 let numberOfFrames = 0;

@@ -1,9 +1,6 @@
-<link rel="stylesheet" href="../../../../Source/WebCore/Modules/modern-media-controls/controls/slider.css" type="text/css" media="screen">
 <script src="../../../resources/js-test-pre.js"></script>
 <script src="../resources/media-controls-utils.js" type="text/javascript"></script>
-<script src="../../../../Source/WebCore/Modules/modern-media-controls/controls/scheduler.js" type="text/javascript"></script>
-<script src="../../../../Source/WebCore/Modules/modern-media-controls/controls/layout-node.js" type="text/javascript"></script>
-<script src="../../../../Source/WebCore/Modules/modern-media-controls/controls/slider.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
 <body>
 <script type="text/javascript">
 
@@ -13,6 +10,7 @@ window.jsTestIsAsync = true;
 
 const slider = new Slider;
 slider.width = 200;
+slider.height = 25;
 
 let containerStyle, fillStyle, inputStyle;
 scheduler.frameDidFire = function()
@@ -21,29 +19,24 @@ scheduler.frameDidFire = function()
 
     containerStyle = window.getComputedStyle(slider.element);
     shouldBeEqualToString("containerStyle.position", "absolute");
-    shouldBeEqualToString("containerStyle.height", "3px");
-    shouldBeEqualToRGBAColor("containerStyle.backgroundColor", "rgba(255, 255, 255, 0.185)");
-    shouldBeEqualToString("containerStyle.borderRadius", "1.5px");
 
-    fillStyle = window.getComputedStyle(slider.children[0].element);
-    shouldBeEqualToString("fillStyle.position", "absolute");
-    shouldBeEqualToString("fillStyle.top", "0px");
-    shouldBeEqualToString("fillStyle.left", "0px");
-    shouldBeEqualToString("fillStyle.height", "3px");
-    shouldBeEqualToString("fillStyle.borderRadius", "1.5px 0px 0px 1.5px");
-    shouldBeEqualToRGBAColor("fillStyle.backgroundColor", "rgba(255, 255, 255, 0.255)");
-    shouldBeEqualToString("fillStyle.pointerEvents", "none");
+    canvasStyle = window.getComputedStyle(slider.children[0].element);
+    shouldBeEqualToString("canvasStyle.position", "absolute");
+    shouldBeEqualToString("canvasStyle.top", "0px");
+    shouldBeEqualToString("canvasStyle.left", "0px");
+    shouldBeEqualToString("canvasStyle.width", "200px");
+    shouldBeEqualToString("canvasStyle.height", "25px");
+    shouldBeEqualToString("canvasStyle.pointerEvents", "none");
 
     inputStyle = window.getComputedStyle(slider.children[1].element);
     shouldBeEqualToString("inputStyle.position", "absolute");
     shouldBeEqualToString("inputStyle.top", "0px");
     shouldBeEqualToString("inputStyle.left", "0px");
-    shouldBeEqualToString("inputStyle.height", "3px");
+    shouldBeEqualToString("inputStyle.width", "200px");
+    shouldBeEqualToString("inputStyle.height", "25px");
+    shouldBeEqualToString("inputStyle.margin", "0px");
     shouldBeEqualToString("inputStyle.webkitAppearance", "none");
     shouldBeEqualToString("inputStyle.backgroundColor", "rgba(0, 0, 0, 0)");
-    shouldBeEqualToString("inputStyle.width", "200px");
-    shouldBeEqualToString("inputStyle.borderRadius", "1.5px");
-    shouldBeEqualToString("inputStyle.margin", "0px");
 
     finishMediaControlsTest();
 }

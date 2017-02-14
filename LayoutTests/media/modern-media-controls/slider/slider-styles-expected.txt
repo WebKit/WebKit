@@ -4,31 +4,20 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS containerStyle.position is "absolute"
-PASS containerStyle.height is "3px"
-PASS rgba(containerStyle.backgroundColor).r is 255
-PASS rgba(containerStyle.backgroundColor).g is 255
-PASS rgba(containerStyle.backgroundColor).b is 255
-PASS rgba(containerStyle.backgroundColor).a is within 0.001 of 0.185
-PASS containerStyle.borderRadius is "1.5px"
-PASS fillStyle.position is "absolute"
-PASS fillStyle.top is "0px"
-PASS fillStyle.left is "0px"
-PASS fillStyle.height is "3px"
-PASS fillStyle.borderRadius is "1.5px 0px 0px 1.5px"
-PASS rgba(fillStyle.backgroundColor).r is 255
-PASS rgba(fillStyle.backgroundColor).g is 255
-PASS rgba(fillStyle.backgroundColor).b is 255
-PASS rgba(fillStyle.backgroundColor).a is within 0.001 of 0.255
-PASS fillStyle.pointerEvents is "none"
+PASS canvasStyle.position is "absolute"
+PASS canvasStyle.top is "0px"
+PASS canvasStyle.left is "0px"
+PASS canvasStyle.width is "200px"
+PASS canvasStyle.height is "25px"
+PASS canvasStyle.pointerEvents is "none"
 PASS inputStyle.position is "absolute"
 PASS inputStyle.top is "0px"
 PASS inputStyle.left is "0px"
-PASS inputStyle.height is "3px"
+PASS inputStyle.width is "200px"
+PASS inputStyle.height is "25px"
+PASS inputStyle.margin is "0px"
 PASS inputStyle.webkitAppearance is "none"
 PASS inputStyle.backgroundColor is "rgba(0, 0, 0, 0)"
-PASS inputStyle.width is "200px"
-PASS inputStyle.borderRadius is "1.5px"
-PASS inputStyle.margin is "0px"
 PASS successfullyParsed is true
 
 TEST COMPLETE

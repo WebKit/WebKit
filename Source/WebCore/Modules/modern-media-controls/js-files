@@ -5,6 +5,7 @@ controls/scheduler.js
 controls/layout-node.js
 controls/layout-item.js
 controls/icon-service.js
+controls/background-tint.js
 controls/time-control.js
 controls/time-label.js
 controls/slider.js

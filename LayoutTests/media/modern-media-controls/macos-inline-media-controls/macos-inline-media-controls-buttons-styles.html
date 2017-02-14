@@ -31,7 +31,7 @@ scheduler.frameDidFire = function()
     for (let [button, y] of buttonPositions) {
         style = window.getComputedStyle(button.element);
         debug(button.constructor.name);
-        shouldBeEqualToRGBAColor("style.backgroundColor", "rgba(255, 255, 255, 0.572)");
+        shouldBeEqualToRGBAColor("style.backgroundColor", "rgba(255, 255, 255, 0.45)");
         shouldBeEqualToString("style.height", "50px");
         shouldBeEqualToString("style.webkitMaskPositionY", `${y}px`);
         debug("");

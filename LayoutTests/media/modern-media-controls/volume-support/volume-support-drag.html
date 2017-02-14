@@ -62,7 +62,7 @@ scheduler.frameDidFire = function() {
         debug("");
         debug("We initiated a volume slider drag, the media should no longer be muted and the volume set");
         shouldBeFalse("media.muted");
-        shouldBe("media.volume", "0.51");
+        shouldBe("media.volume", "0.5");
 
         for (let i = 1; i <= iterations; ++i)
             eventSender.mouseMoveTo(bounds.left + bounds.width / 2, dragStartY + i * Math.sign(delta));

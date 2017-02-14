@@ -71,7 +71,7 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
             rightMargin: 12
         });
 
-        this.controlsBar.children = [this._leftContainer, this._centerContainer, this._rightContainer, this.timeControl];
+        this.controlsBar.children = [new BackgroundTint, this._leftContainer, this._centerContainer, this._rightContainer, this.timeControl];
 
         this.element.addEventListener("mousedown", this);
     }

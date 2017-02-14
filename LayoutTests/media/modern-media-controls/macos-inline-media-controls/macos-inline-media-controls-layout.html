@@ -30,16 +30,17 @@ scheduler.frameDidFire = function()
     if (iconButtons.some(button => button.width == 0))
         return;
 
-    shouldBeTrue("mediaControls.controlsBar.children[0] instanceof ButtonsContainer");
-    shouldBeTrue("mediaControls.controlsBar.children[1] instanceof LayoutNode");
-    shouldBeTrue("mediaControls.controlsBar.children[2] instanceof ButtonsContainer");
+    shouldBeTrue("mediaControls.controlsBar.children[0] instanceof BackgroundTint");
+    shouldBeTrue("mediaControls.controlsBar.children[1] instanceof ButtonsContainer");
+    shouldBeTrue("mediaControls.controlsBar.children[2] instanceof TimeControl");
+    shouldBeTrue("mediaControls.controlsBar.children[3] instanceof ButtonsContainer");
 
     shouldBe("mediaControls.timeControl.x", "118");
 
     shouldBeTrue("mediaControls.timeControl.width == expectedTimeControlWidth");
 
-    shouldBe("mediaControls.controlsBar.children[0].children", "[mediaControls.playPauseButton, mediaControls.skipBackButton]");
-    shouldBe("mediaControls.controlsBar.children[2].children", "[mediaControls.muteButton, mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]");
+    shouldBe("mediaControls.controlsBar.children[1].children", "[mediaControls.playPauseButton, mediaControls.skipBackButton]");
+    shouldBe("mediaControls.controlsBar.children[3].children", "[mediaControls.muteButton, mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]");
 
     shouldBeTrue("mediaControls.volumeSlider.parent.x == expectedVolumeSliderContainerX");
 

@@ -1,3 +1,149 @@
+2017-02-13  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: Update volume and scrubbing slider to match HI designs
+        https://bugs.webkit.org/show_bug.cgi?id=168170
+        <rdar://problem/28095266>
+
+        Reviewed by Dean Jackson.
+
+        We bring the designs of the control's background materials, scrubber and
+        volume slider up to spec.
+
+        The first important set of changes is that, on macOS, the materials and colors
+        were incorrect. Buttons and time labels now set a mix-blend-mode to correctly
+        appear vibrant against the media, and the controls bar, volume container
+        and tracks menu now use a new BackgroundTint node to correctly apply both
+        a backdrop-filter and blended tint above it.
+
+        The second important set of changes is the rendering of the sliders. Up to now
+        we would simply style the <input type="range"> track and thumb, applying solid
+        fills and strokes. We now draw sliders in two ways depending on the platform.
+        
+        On macOS, we draw the whole slider with a <canvas> element with "mix-blend-mode"
+        set to "plus-lighter". On iOS, we draw the track as a <div> with "mix-blend-mode"
+        set to "plus-darker" and draw the fill (up to the thumb) in the <canvas> with
+        no blend mode to obtain a pure white color, finally the thumb is rendered by the
+        <input> element. We couldn't draw the pure white color with the track in the
+        same <canvas> due to the "plus-darker" blend mode.
+
+        Test: media/modern-media-controls/background-tint/background-tint.html
+
+        * Modules/modern-media-controls/controls/airplay-button.css:
+        (button.airplay.on):
+        * Modules/modern-media-controls/controls/background-tint.css: Added.
+        (.background-tint):
+        (.background-tint,):
+        (.background-tint > .blur):
+        (.background-tint > .tint):
+        * Modules/modern-media-controls/controls/background-tint.js: Added.
+        (BackgroundTint):
+        * Modules/modern-media-controls/controls/ios-inline-media-controls.css:
+        (.media-controls.ios.inline .scrubber.slider):
+        (.media-controls.ios.inline .scrubber.slider > div):
+        (.media-controls.ios.inline .scrubber.slider > input::-webkit-slider-thumb):
+        (.media-controls.ios.inline .scrubber.slider > .fill): Deleted.
+        * Modules/modern-media-controls/controls/macos-compact-inline-media-controls.css:
+        (.media-controls.mac.inline.compact .volume-slider-container):
+        (.media-controls.mac.inline.compact .volume.slider):
+        (.media-controls.mac.inline.compact .scrubber.slider > input::-webkit-slider-thumb): Deleted.
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css:
+        (.media-controls.mac.fullscreen > .controls-bar):
+        (.media-controls.mac.fullscreen > .controls-bar > .background-tint > div):
+        (.media-controls.mac.fullscreen .volume.slider):
+        (.media-controls.mac.fullscreen button.volume-up):
+        (.media-controls.mac.fullscreen button.rewind):
+        (.media-controls.mac.fullscreen button.forward):
+        (.media-controls.mac.fullscreen .buttons-container.right button):
+        (.media-controls.mac.fullscreen .scrubber):
+        (.media-controls.mac.fullscreen > .controls-bar button): Deleted.
+        (.media-controls.mac.fullscreen button.airplay): Deleted.
+        (.media-controls.mac.fullscreen button.aspect-ratio): Deleted.
+        (.media-controls.mac.fullscreen button.pip): Deleted.
+        (.media-controls.mac.fullscreen button.tracks): Deleted.
+        (.media-controls.mac.fullscreen button.fullscreen): Deleted.
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.css:
+        (.media-controls.mac.inline .scrubber.slider):
+        (.media-controls.mac.inline .volume-slider-container):
+        (.media-controls.mac.inline .volume-slider-container > .background-tint):
+        (.media-controls.mac.inline .volume-slider-container > .background-tint > div):
+        (.media-controls.mac.inline .volume.slider):
+        (.media-controls.mac.inline button): Deleted.
+        (.media-controls.mac.inline button:active): Deleted.
+        (.media-controls.mac.inline > .controls-bar button): Deleted.
+        (.media-controls.mac.inline > .controls-bar,): Deleted.
+        (.media-controls.mac.inline .volume-slider-container:before): Deleted.
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.js:
+        (MacOSInlineMediaControls.prototype.layout):
+        * Modules/modern-media-controls/controls/macos-media-controls.css: Added.
+        (.media-controls.mac button:active):
+        (.media-controls.mac > .controls-bar button):
+        (.media-controls.mac > .controls-bar .time-label):
+        (.media-controls.mac > .controls-bar .slider > canvas):
+        (.media-controls.mac > .controls-bar .slider > input::-webkit-slider-thumb):
+        * Modules/modern-media-controls/controls/scrubber.css: Removed.
+        * Modules/modern-media-controls/controls/scrubber.js:
+        (Scrubber):
+        (Scrubber.prototype.get buffered):
+        (Scrubber.prototype.set buffered):
+        (Scrubber.prototype.draw):
+        (Scrubber.prototype._drawMacOS):
+        (Scrubber.prototype._drawiOS):
+        * Modules/modern-media-controls/controls/slider.css:
+        (.slider):
+        (.slider > canvas,):
+        (.slider > canvas):
+        (.slider > input):
+        (.slider > input,): Deleted.
+        (.slider > .fill): Deleted.
+        (.slider > input::-webkit-slider-thumb): Deleted.
+        * Modules/modern-media-controls/controls/slider.js:
+        (Slider.prototype.set value):
+        (Slider.prototype.set width):
+        (Slider.prototype.commitProperty):
+        (Slider.prototype.layout):
+        (Slider.prototype.draw):
+        (Slider.prototype._handleInputEvent):
+        (Slider.prototype._handleChangeEvent):
+        (addRoundedRect):
+        (Slider.prototype._updateFill): Deleted.
+        * Modules/modern-media-controls/controls/start-button.css:
+        (button.start):
+        * Modules/modern-media-controls/controls/time-control.js:
+        * Modules/modern-media-controls/controls/time-label.css:
+        (.time-label):
+        * Modules/modern-media-controls/controls/tracks-panel.css:
+        (.tracks-panel):
+        (.tracks-panel > .background-tint > div):
+        (.tracks-panel > section):
+        (.tracks-panel > section:first-of-type):
+        (.tracks-panel > section > h3):
+        (.tracks-panel > section > ul):
+        (.tracks-panel > section > ul > li):
+        (.tracks-panel > section > ul > li:focus):
+        (.tracks-panel > section > ul > li.selected:before):
+        (.tracks-panel > section > ul > li.animated):
+        (.tracks-panel-section): Deleted.
+        (.tracks-panel-section:first-of-type): Deleted.
+        (.tracks-panel-section > h3): Deleted.
+        (.tracks-panel-section > ul): Deleted.
+        (.tracks-panel-section > ul > li): Deleted.
+        (.tracks-panel-section > ul > li:focus): Deleted.
+        (.tracks-panel-section > ul > li.selected:before): Deleted.
+        (.tracks-panel-section > ul > li.animated): Deleted.
+        * Modules/modern-media-controls/controls/tracks-panel.js:
+        (TracksPanel.prototype._childrenFromDataSource):
+        (TracksPanel.prototype._childrenFromDataSource.): Deleted.
+        * Modules/modern-media-controls/controls/volume-slider.js:
+        (VolumeSlider):
+        (VolumeSlider.prototype.handleEvent):
+        (VolumeSlider.prototype.draw):
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/scrubbing-support.js:
+        (ScrubbingSupport.prototype.get mediaEvents):
+        (ScrubbingSupport.prototype.syncControl):
+        (ScrubbingSupport):
+
 2017-02-13  Alex Christensen  <achristensen@webkit.org>
 
         URLs with an invalid IPv4 address should be invalid

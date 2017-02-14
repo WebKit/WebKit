@@ -3,7 +3,7 @@ Testing the VolumeSupport behavior when clicking the volume slider.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS media.volume is 0.51
+PASS media.volume is 0.5
 PASS successfullyParsed is true
 
 TEST COMPLETE

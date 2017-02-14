@@ -62,16 +62,10 @@
 /* Volume slider */
 
 .media-controls.mac.inline.compact .volume-slider-container {
-    width: 21px;
-    transform: translateY(-100%) translateX(-2px);
+    height: 21px;
+    transform: rotate(-90deg) translate(5px, -33px);
 }
 
 .media-controls.mac.inline.compact .volume.slider {
-    left: -19.5px;
-}
-
-/* Scrubber */
-
-.media-controls.mac.inline.compact .scrubber.slider > input::-webkit-slider-thumb {
-    height: 15px;
+    top: 5px;
 }

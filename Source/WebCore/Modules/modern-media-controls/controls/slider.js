@@ -23,14 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Slider extends LayoutNode
+class Slider extends LayoutItem
 {
 
-    constructor(cssClassName = "")
+    constructor({ layoutDelegate = null, cssClassName = "" } = {})
     {
-        super(`<div class="slider ${cssClassName}"></div>`);
+        super({
+            element: `<div class="slider ${cssClassName}"></div>`,
+            layoutDelegate
+        });
 
-        this._fill = new LayoutNode(`<div class="fill"></div>`);
+        this._canvas = new LayoutNode(`<canvas></canvas>`);
 
         this._input = new LayoutNode(`<input type="range" min="0" max="1" step="0.001" />`);
         this._input.element.addEventListener("change", this);
@@ -38,7 +41,7 @@ class Slider extends LayoutNode
 
         this.value = 0;
 
-        this.children = [this._fill, this._input];
+        this.children = [this._canvas, this._input];
     }
 
     // Public
@@ -57,7 +60,7 @@ class Slider extends LayoutNode
 
         this._value = value;
         this.markDirtyProperty("value");
-        this._updateFill();
+        this.needsLayout = true;
     }
 
     get width()
@@ -68,7 +71,7 @@ class Slider extends LayoutNode
     set width(width)
     {
         super.width = width;
-        this._updateFill();
+        this.needsLayout = true;
     }
 
     // Protected
@@ -87,11 +90,30 @@ class Slider extends LayoutNode
 
     commitProperty(propertyName)
     {
-        if (propertyName === "value") {
+        switch (propertyName) {
+        case "value":
             this._input.element.value = this._value;
             delete this._value;
-        } else
+            break;
+        case "width":
+            this._canvas.element.width = this.width * window.devicePixelRatio;
+        case "height":
+            this._canvas.element.height = this.height * window.devicePixelRatio;
+        default :
             super.commitProperty(propertyName);
+            break;
+        }
+    }
+
+    layout()
+    {
+        super.layout();
+        this.draw(this._canvas.element.getContext("2d"));
+    }
+
+    draw(ctx)
+    {
+        // Implemented by subclasses.
     }
 
     // Private
@@ -104,7 +126,7 @@ class Slider extends LayoutNode
         if (this.uiDelegate && typeof this.uiDelegate.controlValueDidChange === "function")
             this.uiDelegate.controlValueDidChange(this);
 
-        this._updateFill();
+        this.needsLayout = true;
     }
 
     _handleChangeEvent()
@@ -113,12 +135,18 @@ class Slider extends LayoutNode
         if (this.uiDelegate && typeof this.uiDelegate.controlValueDidStopChanging === "function")
             this.uiDelegate.controlValueDidStopChanging(this);
 
-        this._updateFill();
+        this.needsLayout = true;
     }
 
-    _updateFill()
-    {
-        this._fill.width = Math.ceil(this.value * this.width);
-    }
+}
 
+function addRoundedRect(ctx, x, y, width, height, radius) {
+    ctx.moveTo(x + radius, y);
+    ctx.arcTo(x + width, y, x + width, y + radius, radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.arcTo(x + width, y + height, x + width - radius, y + height, radius);
+    ctx.lineTo(x + radius, y + height);
+    ctx.arcTo(x, y + height, x, y + height - radius, radius);
+    ctx.lineTo(x, y + radius);
+    ctx.arcTo(x, y, x + radius, y, radius);
 }

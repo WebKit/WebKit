@@ -30,7 +30,7 @@ button.start {
     width: 70px;
     height: 70px;
 
-    background: transparent !important;
+    background-color: transparent !important;
 
     transform: translate3d(-50%, -50%, 0);
 }

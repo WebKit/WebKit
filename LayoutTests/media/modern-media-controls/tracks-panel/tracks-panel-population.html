@@ -43,23 +43,22 @@ tracksPanel.presentInParent(container);
 
 shouldBeTrue("tracksPanel.presented");
 shouldBe("tracksPanel.parent", "container");
-shouldBe("tracksPanel.children.length", "numberOfSections");
+shouldBe("tracksPanel.children.length", "numberOfSections + 1");
 
 let sectionIndex, trackIndex;
 for (sectionIndex = 0; sectionIndex < numberOfSections; ++sectionIndex) {
     debug("");
     debug(`Hierarchy for section #${sectionIndex}`);
-    shouldBeEqualToString(`tracksPanel.children[${sectionIndex}].element.localName`, "div");
-    shouldBeEqualToString(`tracksPanel.children[${sectionIndex}].element.className`, "tracks-panel-section");
-    shouldBe(`tracksPanel.children[${sectionIndex}].children.length`, "2");
-    shouldBeEqualToString(`tracksPanel.children[${sectionIndex}].children[0].element.localName`, "h3");
-    shouldBeEqualToString(`tracksPanel.children[${sectionIndex}].children[0].element.textContent`, tracksPanel.dataSource.tracksPanelTitleForSection(sectionIndex));
-    shouldBeEqualToString(`tracksPanel.children[${sectionIndex}].children[1].element.localName`, "ul");
-    shouldBe(`tracksPanel.children[${sectionIndex}].children[1].children.length`, `${numberOfTracksInSection[sectionIndex]}`);
+    shouldBeEqualToString(`tracksPanel.children[${sectionIndex + 1}].element.localName`, "section");
+    shouldBe(`tracksPanel.children[${sectionIndex + 1}].children.length`, "2");
+    shouldBeEqualToString(`tracksPanel.children[${sectionIndex + 1}].children[0].element.localName`, "h3");
+    shouldBeEqualToString(`tracksPanel.children[${sectionIndex + 1}].children[0].element.textContent`, tracksPanel.dataSource.tracksPanelTitleForSection(sectionIndex));
+    shouldBeEqualToString(`tracksPanel.children[${sectionIndex + 1}].children[1].element.localName`, "ul");
+    shouldBe(`tracksPanel.children[${sectionIndex + 1}].children[1].children.length`, `${numberOfTracksInSection[sectionIndex]}`);
     for (trackIndex = 0; trackIndex < numberOfTracksInSection[sectionIndex]; ++trackIndex) {
-        shouldBeEqualToString(`tracksPanel.children[${sectionIndex}].children[1].children[trackIndex].element.localName`, "li");
-        shouldBeEqualToString(`tracksPanel.children[${sectionIndex}].children[1].children[trackIndex].element.className`, selectedTracks.some(selectedTrack => selectedTrack[0] === sectionIndex && selectedTrack[1] === trackIndex) ? "selected" : "");
-        shouldBeEqualToString(`tracksPanel.children[${sectionIndex}].children[1].children[trackIndex].element.textContent`, tracksPanel.dataSource.tracksPanelTitleForTrackInSection(trackIndex, sectionIndex));
+        shouldBeEqualToString(`tracksPanel.children[${sectionIndex + 1}].children[1].children[trackIndex].element.localName`, "li");
+        shouldBeEqualToString(`tracksPanel.children[${sectionIndex + 1}].children[1].children[trackIndex].element.className`, selectedTracks.some(selectedTrack => selectedTrack[0] === sectionIndex && selectedTrack[1] === trackIndex) ? "selected" : "");
+        shouldBeEqualToString(`tracksPanel.children[${sectionIndex + 1}].children[1].children[trackIndex].element.textContent`, tracksPanel.dataSource.tracksPanelTitleForTrackInSection(trackIndex, sectionIndex));
     }
 }
 

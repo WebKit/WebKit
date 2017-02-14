@@ -55,7 +55,7 @@ scheduler.frameDidFire = function() {
 mediaController.controls.showsStartButton = false;
 
 media.addEventListener("volumechange", () => {
-    shouldBe("media.volume", "0.51");
+    shouldBe("media.volume", "0.5");
     container.remove();
     media.remove();
     finishJSTest();

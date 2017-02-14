@@ -33,14 +33,15 @@ const ScrubberMargin = 5;
 class TimeControl extends LayoutItem
 {
 
-    constructor()
+    constructor(layoutDelegate)
     {
         super({
-            element: `<div class="time-control"></div>`
+            element: `<div class="time-control"></div>`,
+            layoutDelegate
         });
 
         this.elapsedTimeLabel = new TimeLabel;
-        this.scrubber = new Scrubber;
+        this.scrubber = new Scrubber(layoutDelegate);
         this.remainingTimeLabel = new TimeLabel;
 
         this.children = [this.elapsedTimeLabel, this.scrubber, this.remainingTimeLabel];

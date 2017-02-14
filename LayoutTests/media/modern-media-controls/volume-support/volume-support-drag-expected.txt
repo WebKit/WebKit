@@ -11,7 +11,7 @@ PASS media.muted is true
 
 We initiated a volume slider drag, the media should no longer be muted and the volume set
 PASS media.muted is false
-PASS media.volume is 0.51
+PASS media.volume is 0.5
 
 We finished dragging to set the volume to 1
 PASS media.volume is 1

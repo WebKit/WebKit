@@ -11,19 +11,13 @@ window.jsTestIsAsync = true;
 const mediaControls = new MacOSFullscreenMediaControls;
 document.body.appendChild(mediaControls.element);
 
-scheduler.frameDidFire = function()
-{
-    if (!document.body.contains(mediaControls.volumeSlider.element))
-        return;
-
-    shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).left", "30px");
-    shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).top", "23px");
-
+shouldBecomeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).left", "30px", () => {
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).top", "19px");
     mediaControls.element.remove();
 
     debug("");
     finishMediaControlsTest();
-};
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

@@ -20,8 +20,8 @@ description("Testing the <code>MacOSFullscreenMediaControls</code> computed styl
 window.jsTestIsAsync = true;
 
 const mediaControls = new MacOSFullscreenMediaControls;
-const centerContainer = mediaControls.controlsBar.children[1];
-const rightContainer = mediaControls.controlsBar.children[2];
+const centerContainer = mediaControls.controlsBar.children[2];
+const rightContainer = mediaControls.controlsBar.children[3];
 const buttons = centerContainer.buttons.concat(rightContainer.buttons);
 
 let centerContainerBounds, rightContainerBounds;

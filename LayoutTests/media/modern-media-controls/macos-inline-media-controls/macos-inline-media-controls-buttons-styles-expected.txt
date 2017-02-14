@@ -7,7 +7,7 @@ PlayPauseButton
 PASS rgba(style.backgroundColor).r is 255
 PASS rgba(style.backgroundColor).g is 255
 PASS rgba(style.backgroundColor).b is 255
-PASS rgba(style.backgroundColor).a is within 0.001 of 0.572
+PASS rgba(style.backgroundColor).a is within 0.001 of 0.45
 PASS style.height is "50px"
 PASS style.webkitMaskPositionY is "12px"
 
@@ -15,7 +15,7 @@ SkipBackButton
 PASS rgba(style.backgroundColor).r is 255
 PASS rgba(style.backgroundColor).g is 255
 PASS rgba(style.backgroundColor).b is 255
-PASS rgba(style.backgroundColor).a is within 0.001 of 0.572
+PASS rgba(style.backgroundColor).a is within 0.001 of 0.45
 PASS style.height is "50px"
 PASS style.webkitMaskPositionY is "10px"
 
@@ -23,7 +23,7 @@ MuteButton
 PASS rgba(style.backgroundColor).r is 255
 PASS rgba(style.backgroundColor).g is 255
 PASS rgba(style.backgroundColor).b is 255
-PASS rgba(style.backgroundColor).a is within 0.001 of 0.572
+PASS rgba(style.backgroundColor).a is within 0.001 of 0.45
 PASS style.height is "50px"
 PASS style.webkitMaskPositionY is "10px"
 
@@ -31,7 +31,7 @@ AirplayButton
 PASS rgba(style.backgroundColor).r is 255
 PASS rgba(style.backgroundColor).g is 255
 PASS rgba(style.backgroundColor).b is 255
-PASS rgba(style.backgroundColor).a is within 0.001 of 0.572
+PASS rgba(style.backgroundColor).a is within 0.001 of 0.45
 PASS style.height is "50px"
 PASS style.webkitMaskPositionY is "13px"
 
@@ -39,7 +39,7 @@ PiPButton
 PASS rgba(style.backgroundColor).r is 255
 PASS rgba(style.backgroundColor).g is 255
 PASS rgba(style.backgroundColor).b is 255
-PASS rgba(style.backgroundColor).a is within 0.001 of 0.572
+PASS rgba(style.backgroundColor).a is within 0.001 of 0.45
 PASS style.height is "50px"
 PASS style.webkitMaskPositionY is "13px"
 
@@ -47,7 +47,7 @@ TracksButton
 PASS rgba(style.backgroundColor).r is 255
 PASS rgba(style.backgroundColor).g is 255
 PASS rgba(style.backgroundColor).b is 255
-PASS rgba(style.backgroundColor).a is within 0.001 of 0.572
+PASS rgba(style.backgroundColor).a is within 0.001 of 0.45
 PASS style.height is "50px"
 PASS style.webkitMaskPositionY is "15px"
 
@@ -55,7 +55,7 @@ FullscreenButton
 PASS rgba(style.backgroundColor).r is 255
 PASS rgba(style.backgroundColor).g is 255
 PASS rgba(style.backgroundColor).b is 255
-PASS rgba(style.backgroundColor).a is within 0.001 of 0.572
+PASS rgba(style.backgroundColor).a is within 0.001 of 0.45
 PASS style.height is "50px"
 PASS style.webkitMaskPositionY is "13px"
 

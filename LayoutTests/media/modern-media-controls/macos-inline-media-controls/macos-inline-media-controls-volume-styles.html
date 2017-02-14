@@ -18,15 +18,14 @@ scheduler.frameDidFire = function()
 
     volumeSliderContainerStyle = window.getComputedStyle(mediaControls.volumeSlider.parent.element);
     shouldBeEqualToString("volumeSliderContainerStyle.position", "absolute");
-    shouldBeEqualToString("volumeSliderContainerStyle.top", "0px");
-    shouldBeEqualToString("volumeSliderContainerStyle.width", "31px");
-    shouldBeEqualToString("volumeSliderContainerStyle.height", "81px");
-    shouldBeEqualToString("volumeSliderContainerStyle.transform", "matrix(1, 0, 0, 1, 0, -81)");
+    shouldBeEqualToString("volumeSliderContainerStyle.bottom", "50px");
+    shouldBeEqualToString("volumeSliderContainerStyle.width", "81px");
+    shouldBeEqualToString("volumeSliderContainerStyle.height", "31px");
+    shouldBeEqualToString("volumeSliderContainerStyle.transform", "matrix(0.00000000000000006123233995736766, -1, 1, 0.00000000000000006123233995736766, -25, -25)");
 
     volumeSliderStyle = window.getComputedStyle(mediaControls.volumeSlider.element);
-    shouldBeEqualToString("volumeSliderStyle.transform", "matrix(0.00000000000000006123233995736766, -1, 1, 0.00000000000000006123233995736766, 0, 0)");
-    shouldBeEqualToString("volumeSliderStyle.left", "-15px");
-    shouldBeEqualToString("volumeSliderStyle.top", "40px");
+    shouldBeEqualToString("volumeSliderStyle.left", "11px");
+    shouldBeEqualToString("volumeSliderStyle.top", "10px");
 
     mediaControls.element.remove();
 

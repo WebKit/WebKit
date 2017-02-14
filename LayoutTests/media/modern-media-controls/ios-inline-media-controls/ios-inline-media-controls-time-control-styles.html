@@ -14,7 +14,7 @@ scheduler.frameDidFire = function()
 {
     document.body.appendChild(mediaControls.element);
 
-    shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.scrubber.element).top", "23px");
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.scrubber.element).top", "13px");
     shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.elapsedTimeLabel.element).top", "14.5px");
     shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.remainingTimeLabel.element).top", "14.5px");
     debug("");

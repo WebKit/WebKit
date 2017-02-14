@@ -7,26 +7,26 @@ PASS slider.value is 0
 
 Now we'll drag to the slider thumb from 10px to 30px within the slider's bounds
 controlValueWillStartChanging
-controlValueDidChange, value = 0.029
-controlValueDidChange, value = 0.034
-controlValueDidChange, value = 0.04
-controlValueDidChange, value = 0.045
-controlValueDidChange, value = 0.05
-controlValueDidChange, value = 0.056
-controlValueDidChange, value = 0.061
-controlValueDidChange, value = 0.066
-controlValueDidChange, value = 0.071
-controlValueDidChange, value = 0.077
-controlValueDidChange, value = 0.082
-controlValueDidChange, value = 0.087
-controlValueDidChange, value = 0.093
-controlValueDidChange, value = 0.098
-controlValueDidChange, value = 0.103
-controlValueDidChange, value = 0.108
-controlValueDidChange, value = 0.114
-controlValueDidChange, value = 0.119
-controlValueDidChange, value = 0.124
-controlValueDidChange, value = 0.13
+controlValueDidChange, value = 0.019
+controlValueDidChange, value = 0.024
+controlValueDidChange, value = 0.03
+controlValueDidChange, value = 0.035
+controlValueDidChange, value = 0.041
+controlValueDidChange, value = 0.046
+controlValueDidChange, value = 0.051
+controlValueDidChange, value = 0.057
+controlValueDidChange, value = 0.062
+controlValueDidChange, value = 0.068
+controlValueDidChange, value = 0.073
+controlValueDidChange, value = 0.078
+controlValueDidChange, value = 0.084
+controlValueDidChange, value = 0.089
+controlValueDidChange, value = 0.095
+controlValueDidChange, value = 0.1
+controlValueDidChange, value = 0.105
+controlValueDidChange, value = 0.111
+controlValueDidChange, value = 0.116
+controlValueDidChange, value = 0.122
 controlValueDidStopChanging
 PASS successfullyParsed is true
 

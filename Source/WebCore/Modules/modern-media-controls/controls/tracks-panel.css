@@ -26,10 +26,10 @@
 .tracks-panel {
     position: absolute;
     display: inline-block;
+}
+
+.tracks-panel > .background-tint > div {
     border-radius: 7px;
-    /* FIXME: we want to use the real System Dark treatment here, see <rdar://problem/19993961> */
-    background-color: rgba(30, 30, 30, 0.45);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
 
 .tracks-panel * {
@@ -43,39 +43,40 @@
     opacity: 0;
 }
 
-.tracks-panel-section {
+.tracks-panel > section {
     border-top: 2px solid rgb(104, 104, 104);
+    will-change: transform;
 }
 
-.tracks-panel-section:first-of-type {
+.tracks-panel > section:first-of-type {
     border-top: 0;
 }
 
-.tracks-panel-section > h3 {
+.tracks-panel > section > h3 {
     color: rgb(150, 150, 150);
     padding: 5px 20px 1px 21px;
     margin: 0;
 }
 
-.tracks-panel-section > ul {
+.tracks-panel > section > ul {
     list-style-type: none;
     margin-top: 0;
     padding: 0;
 }
 
-.tracks-panel-section > ul > li {
+.tracks-panel > section > ul > li {
     position: relative;
     padding: 1px 20px 1px 33px;
     color: white;
 }
 
-.tracks-panel-section > ul > li:focus {
+.tracks-panel > section > ul > li:focus {
     background-color: rgba(26, 68, 243, 0.6);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     outline: none;
 }
 
-.tracks-panel-section > ul > li.selected:before {
+.tracks-panel > section > ul > li.selected:before {
     position: absolute;
     top: 3px;
     left: 12px;
@@ -84,7 +85,7 @@
     content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><polygon fill="white" points="252.301,4.477 126.667,194.104 43.358,108.3 6.868,161.408 132.515,290.814 297.732,49.926"/></svg>');
 }
 
-.tracks-panel-section > ul > li.animated {
+.tracks-panel > section > ul > li.animated {
     animation-name: tracks-panel-item-selection;
     animation-duration: 150ms;
     animation-timing-function: step-end;

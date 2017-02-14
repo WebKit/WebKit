@@ -13,32 +13,32 @@ shouldBe("mediaControls.layoutTraits", "LayoutTraits.macOS");
 
 debug("");
 debug("Controls bar");
-shouldBe("mediaControls.controlsBar.children.length", "3");
-shouldBeTrue("mediaControls.controlsBar.children[0] instanceof ButtonsContainer");
+shouldBe("mediaControls.controlsBar.children.length", "4");
 shouldBeTrue("mediaControls.controlsBar.children[1] instanceof ButtonsContainer");
-shouldBeTrue("mediaControls.controlsBar.children[2] instanceof LayoutNode");
+shouldBeTrue("mediaControls.controlsBar.children[2] instanceof ButtonsContainer");
+shouldBeTrue("mediaControls.controlsBar.children[3] instanceof LayoutNode");
 
 debug("");
 debug("Left container");
-shouldBe("mediaControls.controlsBar.children[0].buttons", "[mediaControls.playPauseButton, mediaControls.skipBackButton]");
-shouldBeEqualToString("mediaControls.controlsBar.children[0].element.className", "buttons-container left");
-shouldBe("mediaControls.controlsBar.children[0].leftMargin", "24");
-shouldBe("mediaControls.controlsBar.children[0].rightMargin", "24");
-shouldBe("mediaControls.controlsBar.children[0].buttonMargin", "24");
-
-debug("");
-debug("Right container");
-shouldBe("mediaControls.controlsBar.children[1].buttons", "[mediaControls.muteButton, mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]");
-shouldBeEqualToString("mediaControls.controlsBar.children[1].element.className", "buttons-container right");
+shouldBe("mediaControls.controlsBar.children[1].buttons", "[mediaControls.playPauseButton, mediaControls.skipBackButton]");
+shouldBeEqualToString("mediaControls.controlsBar.children[1].element.className", "buttons-container left");
 shouldBe("mediaControls.controlsBar.children[1].leftMargin", "24");
 shouldBe("mediaControls.controlsBar.children[1].rightMargin", "24");
 shouldBe("mediaControls.controlsBar.children[1].buttonMargin", "24");
 
 debug("");
+debug("Right container");
+shouldBe("mediaControls.controlsBar.children[2].buttons", "[mediaControls.muteButton, mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]");
+shouldBeEqualToString("mediaControls.controlsBar.children[2].element.className", "buttons-container right");
+shouldBe("mediaControls.controlsBar.children[2].leftMargin", "24");
+shouldBe("mediaControls.controlsBar.children[2].rightMargin", "24");
+shouldBe("mediaControls.controlsBar.children[2].buttonMargin", "24");
+
+debug("");
 debug("Volume slider");
-shouldBeEqualToString("mediaControls.controlsBar.children[2].element.className", "volume-slider-container");
-shouldBe("mediaControls.controlsBar.children[2].children", "[mediaControls.volumeSlider]");
-shouldBeFalse("mediaControls.controlsBar.children[2].visible");
+shouldBeEqualToString("mediaControls.controlsBar.children[3].element.className", "volume-slider-container");
+shouldBe("mediaControls.controlsBar.children[3].children.slice(-1)", "[mediaControls.volumeSlider]");
+shouldBeFalse("mediaControls.controlsBar.children[3].visible");
 shouldBe("mediaControls.volumeSlider.width", "60");
 
 debug("");

@@ -26,9 +26,131 @@
 class Scrubber extends Slider
 {
 
-    constructor()
+    constructor(layoutDelegate)
     {
-        super("scrubber");
+        super({
+            cssClassName: "scrubber",
+            layoutDelegate
+        });
+
+         this.height = 23;
+
+        // Add the element used to draw the track on iOS.
+        if (this.layoutTraits & LayoutTraits.iOS)
+            this.addChild(new LayoutNode(`<div></div>`), 0);
+
+        this._buffered = 0;
+    }
+
+    // Public
+
+    get buffered()
+    {
+        return this._buffered;
+    }
+
+    set buffered(buffered)
+    {
+        if (this._buffered === buffered)
+            return;
+
+        this._buffered = buffered;
+        this.needsLayout = true;
+    }
+
+    // Protected
+
+    draw(ctx)
+    {
+        const width = this.width;
+        const height = this.height;
+
+        if (!this.width || !this.height)
+            return;
+
+        const dpr = window.devicePixelRatio;
+
+        ctx.save();
+        ctx.scale(dpr, dpr);
+        ctx.clearRect(0, 0, width, height);
+
+        const layoutTraits = this.layoutTraits;
+        if (layoutTraits & LayoutTraits.macOS)
+            this._drawMacOS(ctx, width, height);
+        else if (layoutTraits & LayoutTraits.iOS)
+            this._drawiOS(ctx, width, height);
+
+        ctx.restore();
+    }
+
+    _drawMacOS(ctx, width, height)
+    {
+        const trackHeight = 3;
+        const trackY = (height - trackHeight) / 2;
+        const scrubberWidth = 4;
+        const scrubberHeight = height;
+        const borderSize = 2;
+        const scrubberPosition = Math.max(0, Math.min(width - scrubberWidth, Math.round(width * this.value)));
+
+        // Draw background.
+        ctx.save();
+        ctx.beginPath();
+        addRoundedRect(ctx, 0, trackY, width, trackHeight, trackHeight / 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.fillStyle = "rgb(20, 20, 20)";
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+
+        // Buffered.
+        ctx.save();
+        ctx.beginPath();
+        addRoundedRect(ctx, 0, trackY, width, trackHeight, trackHeight / 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.fillStyle = "rgb(39, 39, 39)";
+        ctx.fillRect(0, 0, width * this._buffered, height);
+        ctx.restore();
+
+        // Draw played section.
+        ctx.save();
+        ctx.beginPath();
+        addRoundedRect(ctx, 0, trackY, width, trackHeight, trackHeight / 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.fillStyle = "rgb(84, 84, 84)";
+        ctx.fillRect(0, 0, width * this.value, height);
+        ctx.restore();
+
+        // Draw the scrubber.
+        ctx.save();
+        ctx.clearRect(scrubberPosition - 1, 0, scrubberWidth + borderSize, height, 0);
+        ctx.beginPath();
+        addRoundedRect(ctx, scrubberPosition, 0, scrubberWidth, scrubberHeight, 1);
+        ctx.closePath();
+        ctx.clip();
+        ctx.fillStyle = "rgb(138, 138, 138)";
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+    }
+
+    _drawiOS(ctx, width, height)
+    {
+        const trackHeight = 3;
+        const trackY = (height - trackHeight) / 2;
+        const scrubberWidth = 15;
+        const leftPadding = 2;
+        const rightPadding = 2;
+        const trackWidth = this.width - leftPadding - rightPadding - scrubberWidth;
+
+        // Draw played section.
+        ctx.save();
+        ctx.beginPath();
+        addRoundedRect(ctx, leftPadding, trackY, scrubberWidth / 2 + trackWidth * this.value, trackHeight, trackHeight / 2);
+        ctx.closePath();
+        ctx.fillStyle = "white";
+        ctx.fill();
+        ctx.restore();
     }
 
 }

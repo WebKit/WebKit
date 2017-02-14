@@ -43,8 +43,10 @@ class MacOSInlineMediaControls extends MacOSMediaControls
 
         this._matchLayoutTraits();
 
+        this._backgroundTint = new BackgroundTint;
+
         this._volumeSliderContainer = new LayoutNode(`<div class="volume-slider-container"></div>`);
-        this._volumeSliderContainer.children = [this.volumeSlider];
+        this._volumeSliderContainer.children = [new BackgroundTint, this.volumeSlider];
         this._volumeSliderContainer.visible = false;
         this.volumeSlider.width = 60;
 
@@ -53,7 +55,7 @@ class MacOSInlineMediaControls extends MacOSMediaControls
         this.muteButton.element.addEventListener("mouseleave", this);
         this._volumeSliderContainer.element.addEventListener("mouseleave", this);
 
-        this.controlsBar.children = [this.leftContainer, this.rightContainer, this._volumeSliderContainer];
+        this.controlsBar.children = [this._backgroundTint, this.leftContainer, this.rightContainer, this._volumeSliderContainer];
     }
 
     // Public
@@ -86,7 +88,7 @@ class MacOSInlineMediaControls extends MacOSMediaControls
         this.rightContainer.layout();
 
         const middleContainer = !!this.statusLabel.text ? this.statusLabel : this.timeControl;
-        this.controlsBar.children = [this.leftContainer, middleContainer, this.rightContainer, this._volumeSliderContainer];
+        this.controlsBar.children = [this._backgroundTint, this.leftContainer, middleContainer, this.rightContainer, this._volumeSliderContainer];
 
         if (middleContainer === this.timeControl)
             this.timeControl.width = this.width - this.leftContainer.width - this.rightContainer.width;

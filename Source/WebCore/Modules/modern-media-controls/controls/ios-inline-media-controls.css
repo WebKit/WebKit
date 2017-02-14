@@ -82,10 +82,6 @@
     -webkit-mask-position-y: 10px;
 }
 
-.media-controls.ios.inline .scrubber.slider {
-    top: 23px;
-}
-
 .media-controls.ios.inline button.airplay {
     -webkit-mask-position-y: 13px;
 }
@@ -108,11 +104,18 @@
 /* Scrubber */
 
 .media-controls.ios.inline .scrubber.slider {
-    background-color: black;
+    top: 13px;
 }
 
-.media-controls.ios.inline .scrubber.slider > .fill {
-    background-color: white;
+.media-controls.ios.inline .scrubber.slider > div {
+    position: absolute;
+    top: 10px;
+    left: 2px;
+    right: 2px;
+    height: 3px;
+    border-radius: 1.5px;
+    background-color: rgba(0, 0, 0, 0.55);
+    mix-blend-mode: plus-darker;
 }
 
 .media-controls.ios.inline .scrubber.slider > input::-webkit-slider-thumb {
@@ -125,7 +128,5 @@
     background-color: transparent;
     box-shadow: none;
     border: none;
+    -webkit-appearance: none !important;
 }
-
-
-

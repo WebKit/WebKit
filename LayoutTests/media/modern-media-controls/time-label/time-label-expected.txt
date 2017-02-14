@@ -9,10 +9,6 @@ PASS timeLabel.element.className is "time-label"
 PASS style.position is "absolute"
 PASS style.fontFamily is "-apple-system-monospaced-numbers"
 PASS style.fontSize is "14px"
-PASS rgba(style.color).r is 255
-PASS rgba(style.color).g is 255
-PASS rgba(style.color).b is 255
-PASS rgba(style.color).a is within 0.001 of 0.572
 PASS timeLabel.element.textContent is "00:01"
 PASS timeLabelWithNegativeValue.element.textContent is "-01:01"
 PASS timeLabelWithHours.element.textContent is "01:01:01"

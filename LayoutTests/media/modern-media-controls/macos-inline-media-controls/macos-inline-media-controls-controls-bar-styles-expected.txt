@@ -11,12 +11,7 @@ PASS bounds.left is 0
 PASS bounds.top is 250
 PASS bounds.width is 680
 PASS bounds.height is 50
-PASS rgba(style.backgroundColor).r is 30
-PASS rgba(style.backgroundColor).g is 30
-PASS rgba(style.backgroundColor).b is 30
-PASS rgba(style.backgroundColor).a is within 0.001 of 0.45
-PASS style.webkitBackdropFilter is "saturate(1.8) blur(20px)"
-undefined
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

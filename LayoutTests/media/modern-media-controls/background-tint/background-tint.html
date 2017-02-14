@@ -1,0 +1,55 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<style type="text/css" media="screen">
+    
+.background-tint {
+    width: 100px;
+    height: 100px;
+}
+    
+</style>
+<script type="text/javascript">
+    
+description("Testing the <code>BackgroundTint</code> class.");
+
+const backgroundTint = new BackgroundTint;
+
+debug("Container");
+const container = document.body.appendChild(backgroundTint.element);
+shouldBeEqualToString("container.localName", "div");
+shouldBeEqualToString("container.className", "background-tint");
+shouldBeEqualToString("getComputedStyle(container).pointerEvents", "none");
+
+debug("");
+debug("Blur");
+const blur = container.firstElementChild;
+shouldBeEqualToString("blur.localName", "div");
+shouldBeEqualToString("blur.className", "blur");
+shouldBeEqualToString("getComputedStyle(blur).position", "absolute");
+shouldBeEqualToString("getComputedStyle(blur).left", "0px");
+shouldBeEqualToString("getComputedStyle(blur).top", "0px");
+shouldBeEqualToString("getComputedStyle(blur).width", "100px");
+shouldBeEqualToString("getComputedStyle(blur).height", "100px");
+shouldBeEqualToString("getComputedStyle(blur).backgroundColor", "rgba(30, 30, 30, 0.45098)");
+shouldBeEqualToString("getComputedStyle(blur).webkitBackdropFilter", "saturate(1.8) blur(20px)");
+
+debug("");
+debug("Tint");
+const tint = container.lastElementChild;
+shouldBeEqualToString("tint.localName", "div");
+shouldBeEqualToString("tint.className", "tint");
+shouldBeEqualToString("getComputedStyle(tint).position", "absolute");
+shouldBeEqualToString("getComputedStyle(tint).left", "0px");
+shouldBeEqualToString("getComputedStyle(tint).top", "0px");
+shouldBeEqualToString("getComputedStyle(tint).width", "100px");
+shouldBeEqualToString("getComputedStyle(tint).height", "100px");
+shouldBeEqualToString("getComputedStyle(tint).backgroundColor", "rgb(41, 41, 41)");
+shouldBeEqualToString("getComputedStyle(tint).mixBlendMode", "lighten");
+
+container.remove();
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

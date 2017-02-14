@@ -6,16 +6,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS style.bottom is "25px"
 PASS style.width is "468px"
 PASS style.height is "75px"
-PASS style.borderRadius is "8px"
 PASS bounds.left is 166
 PASS bounds.top is 500
 PASS bounds.width is 468
 PASS bounds.height is 75
-PASS rgba(style.backgroundColor).r is 30
-PASS rgba(style.backgroundColor).g is 30
-PASS rgba(style.backgroundColor).b is 30
-PASS rgba(style.backgroundColor).a is within 0.001 of 0.45
-PASS style.webkitBackdropFilter is "saturate(1.8) blur(20px)"
 
 PASS successfullyParsed is true
 

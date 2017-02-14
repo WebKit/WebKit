@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.scrubber.slider > input::-webkit-slider-thumb {
-    width: 4px;
-    height: 23px;
-    border-radius: 2px;
+class BackgroundTint extends LayoutNode
+{
+
+    constructor()
+    {
+        super(`<div class="background-tint"><div class="blur"></div><div class="tint"></div></div>`);
+    }
+
 }
