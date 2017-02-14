@@ -840,8 +840,6 @@
 		5C63F8001E416288002CA531 /* httpserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F6E51E416287002CA531 /* httpserver.h */; };
 		5C63F8011E416288002CA531 /* ifaddrs_converter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C63F6E61E416287002CA531 /* ifaddrs_converter.cc */; };
 		5C63F8021E416288002CA531 /* ifaddrs_converter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F6E71E416287002CA531 /* ifaddrs_converter.h */; };
-		5C63F8031E416288002CA531 /* ifaddrs-android.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C63F6E81E416287002CA531 /* ifaddrs-android.cc */; };
-		5C63F8041E416288002CA531 /* ifaddrs-android.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F6E91E416287002CA531 /* ifaddrs-android.h */; };
 		5C63F8051E416288002CA531 /* ignore_wundef.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F6EA1E416287002CA531 /* ignore_wundef.h */; };
 		5C63F8061E416288002CA531 /* ipaddress.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C63F6EB1E416287002CA531 /* ipaddress.cc */; };
 		5C63F8071E416288002CA531 /* ipaddress.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F6EC1E416287002CA531 /* ipaddress.h */; };
@@ -3481,8 +3479,6 @@
 		5C63F6E51E416287002CA531 /* httpserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = httpserver.h; sourceTree = "<group>"; };
 		5C63F6E61E416287002CA531 /* ifaddrs_converter.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ifaddrs_converter.cc; sourceTree = "<group>"; };
 		5C63F6E71E416287002CA531 /* ifaddrs_converter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ifaddrs_converter.h; sourceTree = "<group>"; };
-		5C63F6E81E416287002CA531 /* ifaddrs-android.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "ifaddrs-android.cc"; sourceTree = "<group>"; };
-		5C63F6E91E416287002CA531 /* ifaddrs-android.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ifaddrs-android.h"; sourceTree = "<group>"; };
 		5C63F6EA1E416287002CA531 /* ignore_wundef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ignore_wundef.h; sourceTree = "<group>"; };
 		5C63F6EB1E416287002CA531 /* ipaddress.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ipaddress.cc; sourceTree = "<group>"; };
 		5C63F6EC1E416287002CA531 /* ipaddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ipaddress.h; sourceTree = "<group>"; };
@@ -6685,8 +6681,6 @@
 				5C63F6E31E416287002CA531 /* httprequest.h */,
 				5C63F6E41E416287002CA531 /* httpserver.cc */,
 				5C63F6E51E416287002CA531 /* httpserver.h */,
-				5C63F6E81E416287002CA531 /* ifaddrs-android.cc */,
-				5C63F6E91E416287002CA531 /* ifaddrs-android.h */,
 				5C63F6E61E416287002CA531 /* ifaddrs_converter.cc */,
 				5C63F6E71E416287002CA531 /* ifaddrs_converter.h */,
 				5C63F6EA1E416287002CA531 /* ignore_wundef.h */,
@@ -9716,7 +9710,6 @@
 				5C63F7FE1E416288002CA531 /* httprequest.h in Headers */,
 				5C63F8001E416288002CA531 /* httpserver.h in Headers */,
 				5C4B48E41E42C1E3002651C8 /* hybriddataengine.h in Headers */,
-				5C63F8041E416288002CA531 /* ifaddrs-android.h in Headers */,
 				5C63F8021E416288002CA531 /* ifaddrs_converter.h in Headers */,
 				5C63F8051E416288002CA531 /* ignore_wundef.h in Headers */,
 				5CDD8BB41E43C2B500621E92 /* ilbc.h in Headers */,
@@ -11455,7 +11448,6 @@
 				5C63F7FF1E416288002CA531 /* httpserver.cc in Sources */,
 				5CDD90501E43D0E900621E92 /* i420.cc in Sources */,
 				5C4B4C1B1E431F75002651C8 /* i420_buffer_pool.cc in Sources */,
-				5C63F8031E416288002CA531 /* ifaddrs-android.cc in Sources */,
 				5C63F8011E416288002CA531 /* ifaddrs_converter.cc in Sources */,
 				5CDD8BB31E43C2B500621E92 /* ilbc.c in Sources */,
 				5CDD86591E43B8B500621E92 /* ilbc_specific_functions.c in Sources */,
