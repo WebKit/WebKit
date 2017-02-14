@@ -309,9 +309,6 @@ class Device(object):
             raise RuntimeError('Failed to find process id for {}: {}'.format(bundle_id, output))
         return int(match.group('pid'))
 
-    def terminate_app(self, bundle_id):
-        return not self._host.executive.run_command(['xcrun', 'simctl', 'terminate', self.udid, bundle_id], return_exit_code=True)
-
     def __eq__(self, other):
         return self.udid == other.udid
 

@@ -129,6 +129,6 @@ class SimulatorProcess(ServerProcess):
 
         self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr)
 
-    def _kill(self):
-        self._device.terminate_app(self._bundle_id)
-        super(SimulatorProcess, self)._kill()
+    def stop(self, timeout_secs=3.0):
+        os.kill(self._pid, signal.SIGTERM)
+        super(SimulatorProcess, self).stop(timeout_secs)

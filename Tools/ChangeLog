@@ -1,3 +1,17 @@
+2017-02-14  Jonathan Bedard  <jbedard@apple.com>
+
+        run-webkit-tests for iOS Simulator always complains that stopping WebKitTestRunnerApp.app times out
+        https://bugs.webkit.org/show_bug.cgi?id=168150
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.stop): Close app before calling ServerProcess's stop.
+        (SimulatorProcess._kill): Move closing of app into stop().
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Device.launch_app):
+        (Device.terminate_app): Deleted.
+
 2017-02-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r212192): [GTK] Broke downloads API tests
