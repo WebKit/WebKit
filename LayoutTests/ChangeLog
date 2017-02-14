@@ -1,3 +1,12 @@
+2017-02-14  Alex Christensen  <achristensen@webkit.org>
+
+        Rebase URL test after r212279.
+        https://bugs.webkit.org/show_bug.cgi?id=168260
+
+        * fast/url/ipv4-expected.txt:
+        http://0X12C0a80001/ is an invalid IPv4 address, so parsing should fail.
+        This matches Chrome and the URL specification.
+
 2017-02-14  Antoine Quint  <graouts@apple.com>
 
         LayoutTest media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles.html is a flaky failure

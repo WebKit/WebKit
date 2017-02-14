@@ -20,7 +20,7 @@ PASS canonicalize('http://192.0x00A80001/') is 'http://192.168.0.1/'
 PASS canonicalize('http://0xc0.052000001/') is 'http://192.168.0.1/'
 PASS canonicalize('http://192.168.1/') is 'http://192.168.0.1/'
 PASS canonicalize('http://192.168.0.0.1/') is 'http://192.168.0.0.1/'
-FAIL canonicalize('http://192.168.0.1./') should be http://192.168.0.1/. Was http://192.168.0.1./.
+PASS canonicalize('http://192.168.0.1./') is 'http://192.168.0.1/'
 PASS canonicalize('http://192.168.0.1. hello/') is 'http://192.168.0.1. hello/'
 PASS canonicalize('http://192.168.0.1../') is 'http://192.168.0.1../'
 PASS canonicalize('http://192.168..1/') is 'http://192.168..1/'
@@ -46,7 +46,7 @@ PASS canonicalize('http://276.256.0xf1a2.077777/') is 'http://276.256.0xf1a2.077
 PASS canonicalize('http://192.168.0.257/') is 'http://192.168.0.257/'
 PASS canonicalize('http://192.168.0xa20001/') is 'http://192.168.0xa20001/'
 PASS canonicalize('http://192.015052000001/') is 'http://192.015052000001/'
-PASS canonicalize('http://0X12C0a80001/') is 'http://0x12c0a80001/'
+FAIL canonicalize('http://0X12C0a80001/') should be http://0x12c0a80001/. Was http://0X12C0a80001/.
 PASS canonicalize('http://276.1.2/') is 'http://276.1.2/'
 PASS canonicalize('http://192.168.0.1 hello/') is 'http://192.168.0.1 hello/'
 PASS canonicalize('http://0000000000000300.0x00000000000000fF.00000000000000001/') is 'http://192.255.0.1/'
