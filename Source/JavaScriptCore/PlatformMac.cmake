@@ -10,13 +10,10 @@ list(APPEND JavaScriptCore_SOURCES
     API/ObjCCallbackFunction.mm
 
     inspector/remote/RemoteAutomationTarget.cpp
+    inspector/remote/RemoteConnectionToTarget.mm
     inspector/remote/RemoteControllableTarget.cpp
     inspector/remote/RemoteInspectionTarget.cpp
-    inspector/remote/RemoteInspector.cpp
-
-    inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm
-    inspector/remote/cocoa/RemoteInspectorCocoa.mm
-    inspector/remote/cocoa/RemoteInspectorXPCConnection.mm
+    inspector/remote/RemoteInspector.mm
 )
 add_definitions(-DSTATICALLY_LINKED_WITH_WTF -D__STDC_WANT_LIB_EXT1__)
 
@@ -28,7 +25,6 @@ list(APPEND JavaScriptCore_LIBRARIES
 list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
     ${JAVASCRIPTCORE_DIR}/disassembler/udis86
     ${JAVASCRIPTCORE_DIR}/icu
-    ${JAVASCRIPTCORE_DIR}/inspector/remote/cocoa
 )
 
 set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")

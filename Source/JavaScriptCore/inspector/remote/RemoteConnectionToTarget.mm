@@ -31,7 +31,6 @@
 #import "EventLoop.h"
 #import "RemoteAutomationTarget.h"
 #import "RemoteInspectionTarget.h"
-#import "RemoteInspector.h"
 #import <dispatch/dispatch.h>
 #import <wtf/Optional.h>
 
@@ -82,7 +81,7 @@ static void RemoteTargetInitializeGlobalQueue()
     dispatch_once(&pred, ^{
         rwiQueue = new RemoteTargetQueue;
 
-        CFRunLoopSourceContext runLoopSourceContext = { 0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, RemoteTargetHandleRunSourceGlobal };
+        CFRunLoopSourceContext runLoopSourceContext = {0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, RemoteTargetHandleRunSourceGlobal};
         rwiRunLoopSource = CFRunLoopSourceCreate(kCFAllocatorDefault, 1, &runLoopSourceContext);
 
         // Add to the default run loop mode for default handling, and the JSContext remote inspector run loop mode when paused.
@@ -210,7 +209,7 @@ void RemoteConnectionToTarget::close()
     });
 }
 
-void RemoteConnectionToTarget::sendMessageToTarget(const String& message)
+void RemoteConnectionToTarget::sendMessageToTarget(NSString *message)
 {
     ref();
     dispatchAsyncOnTarget(^{
@@ -247,7 +246,7 @@ void RemoteConnectionToTarget::setupRunLoop()
 
     m_runLoop = targetRunLoop;
 
-    CFRunLoopSourceContext runLoopSourceContext = { 0, this, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, RemoteTargetHandleRunSourceWithInfo };
+    CFRunLoopSourceContext runLoopSourceContext = {0, this, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, RemoteTargetHandleRunSourceWithInfo};
     m_runLoopSource = adoptCF(CFRunLoopSourceCreate(kCFAllocatorDefault, 1, &runLoopSourceContext));
 
     CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopDefaultMode);

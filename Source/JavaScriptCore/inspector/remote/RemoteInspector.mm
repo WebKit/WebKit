@@ -47,7 +47,7 @@ namespace Inspector {
 
 static bool canAccessWebInspectorMachPort()
 {
-    return !sandbox_check(getpid(), "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT), WIRXPCMachPortName);
+    return sandbox_check(getpid(), "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT), WIRXPCMachPortName) == 0;
 }
 
 static bool globalAutomaticInspectionState()
@@ -59,6 +59,13 @@ static bool globalAutomaticInspectionState()
     uint64_t automaticInspectionEnabled = 0;
     notify_get_state(token, &automaticInspectionEnabled);
     return automaticInspectionEnabled == 1;
+}
+
+bool RemoteInspector::startEnabled = true;
+
+void RemoteInspector::startDisabled()
+{
+    RemoteInspector::startEnabled = false;
 }
 
 RemoteInspector& RemoteInspector::singleton()
@@ -92,6 +99,85 @@ RemoteInspector& RemoteInspector::singleton()
 RemoteInspector::RemoteInspector()
     : m_xpcQueue(dispatch_queue_create("com.apple.JavaScriptCore.remote-inspector-xpc", DISPATCH_QUEUE_SERIAL))
 {
+}
+
+unsigned RemoteInspector::nextAvailableTargetIdentifier()
+{
+    unsigned nextValidTargetIdentifier;
+    do {
+        nextValidTargetIdentifier = m_nextAvailableTargetIdentifier++;
+    } while (!nextValidTargetIdentifier || nextValidTargetIdentifier == std::numeric_limits<unsigned>::max() || m_targetMap.contains(nextValidTargetIdentifier));
+    return nextValidTargetIdentifier;
+}
+
+void RemoteInspector::registerTarget(RemoteControllableTarget* target)
+{
+    ASSERT_ARG(target, target);
+
+    std::lock_guard<Lock> lock(m_mutex);
+
+    unsigned targetIdentifier = nextAvailableTargetIdentifier();
+    target->setTargetIdentifier(targetIdentifier);
+
+    {
+        auto result = m_targetMap.set(targetIdentifier, target);
+        ASSERT_UNUSED(result, result.isNewEntry);
+    }
+
+    // If remote control is not allowed, a null listing is returned.
+    if (RetainPtr<NSDictionary> targetListing = listingForTarget(*target)) {
+        auto result = m_targetListingMap.set(targetIdentifier, targetListing);
+        ASSERT_UNUSED(result, result.isNewEntry);
+    }
+
+    pushListingsSoon();
+}
+
+void RemoteInspector::unregisterTarget(RemoteControllableTarget* target)
+{
+    ASSERT_ARG(target, target);
+
+    std::lock_guard<Lock> lock(m_mutex);
+
+    unsigned targetIdentifier = target->targetIdentifier();
+    if (!targetIdentifier)
+        return;
+
+    bool wasRemoved = m_targetMap.remove(targetIdentifier);
+    ASSERT_UNUSED(wasRemoved, wasRemoved);
+
+    // The listing may never have been added if remote control isn't allowed.
+    m_targetListingMap.remove(targetIdentifier);
+
+    if (auto connectionToTarget = m_targetConnectionMap.take(targetIdentifier))
+        connectionToTarget->targetClosed();
+
+    pushListingsSoon();
+}
+
+void RemoteInspector::updateTarget(RemoteControllableTarget* target)
+{
+    ASSERT_ARG(target, target);
+
+    std::lock_guard<Lock> lock(m_mutex);
+
+    unsigned targetIdentifier = target->targetIdentifier();
+    if (!targetIdentifier)
+        return;
+
+    {
+        auto result = m_targetMap.set(targetIdentifier, target);
+        ASSERT_UNUSED(result, !result.isNewEntry);
+    }
+
+    // If the target has just allowed remote control, then the listing won't exist yet.
+    // If the target has no identifier remove the old listing.
+    if (RetainPtr<NSDictionary> targetListing = listingForTarget(*target))
+        m_targetListingMap.set(targetIdentifier, targetListing);
+    else
+        m_targetListingMap.remove(targetIdentifier);
+
+    pushListingsSoon();
 }
 
 void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget* target)
@@ -163,6 +249,38 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
     }
 }
 
+void RemoteInspector::updateClientCapabilities()
+{
+    ASSERT(isMainThread());
+
+    std::lock_guard<Lock> lock(m_mutex);
+
+    if (!m_client)
+        m_clientCapabilities = std::nullopt;
+    else {
+        RemoteInspector::Client::Capabilities updatedCapabilities = {
+            m_client->remoteAutomationAllowed() // remoteAutomationAllowed
+        };
+
+        m_clientCapabilities = updatedCapabilities;
+    }
+}
+
+void RemoteInspector::setRemoteInspectorClient(RemoteInspector::Client* client)
+{
+    ASSERT_ARG(client, client);
+    ASSERT(!m_client);
+
+    {
+        std::lock_guard<Lock> lock(m_mutex);
+        m_client = client;
+    }
+
+    // Send an updated listing that includes whether the client allows remote automation.
+    updateClientCapabilities();
+    pushListingsSoon();
+}
+
 void RemoteInspector::sendAutomaticInspectionCandidateMessage()
 {
     ASSERT(m_enabled);
@@ -195,6 +313,40 @@ void RemoteInspector::sendMessageToRemote(unsigned targetIdentifier, const Strin
     m_relayConnection->sendMessage(WIRRawDataMessage, userInfo);
 }
 
+void RemoteInspector::setupFailed(unsigned targetIdentifier)
+{
+    std::lock_guard<Lock> lock(m_mutex);
+
+    m_targetConnectionMap.remove(targetIdentifier);
+
+    if (targetIdentifier == m_automaticInspectionCandidateTargetIdentifier)
+        m_automaticInspectionPaused = false;
+
+    updateHasActiveDebugSession();
+    updateTargetListing(targetIdentifier);
+    pushListingsSoon();
+}
+
+void RemoteInspector::setupCompleted(unsigned targetIdentifier)
+{
+    std::lock_guard<Lock> lock(m_mutex);
+
+    if (targetIdentifier == m_automaticInspectionCandidateTargetIdentifier)
+        m_automaticInspectionPaused = false;
+}
+
+bool RemoteInspector::waitingForAutomaticInspection(unsigned)
+{
+    // We don't take the lock to check this because we assume it will be checked repeatedly.
+    return m_automaticInspectionPaused;
+}
+
+void RemoteInspector::clientCapabilitiesDidChange()
+{
+    updateClientCapabilities();
+    pushListingsSoon();
+}
+
 void RemoteInspector::start()
 {
     std::lock_guard<Lock> lock(m_mutex);
@@ -215,6 +367,13 @@ void RemoteInspector::start()
     });
 
     notify_post(WIRServiceAvailabilityCheckNotification);
+}
+
+void RemoteInspector::stop()
+{
+    std::lock_guard<Lock> lock(m_mutex);
+
+    stopInternal(StopSource::API);
 }
 
 void RemoteInspector::stopInternal(StopSource source)
@@ -353,6 +512,17 @@ void RemoteInspector::xpcConnectionUnhandledMessage(RemoteInspectorXPCConnection
 
 #pragma mark - Listings
 
+RetainPtr<NSDictionary> RemoteInspector::listingForTarget(const RemoteControllableTarget& target) const
+{
+    if (is<RemoteInspectionTarget>(target))
+        return listingForInspectionTarget(downcast<RemoteInspectionTarget>(target));
+    if (is<RemoteAutomationTarget>(target))
+        return listingForAutomationTarget(downcast<RemoteAutomationTarget>(target));
+
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
 RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const RemoteInspectionTarget& target) const
 {
     // Must collect target information on the WebThread, Main, or Worker thread since RemoteTargets are
@@ -463,6 +633,20 @@ void RemoteInspector::updateTargetListing(const RemoteControllableTarget& target
         return;
 
     m_targetListingMap.set(target.targetIdentifier(), targetListing);
+}
+
+#pragma mark - Active Debugger Sessions
+
+void RemoteInspector::updateHasActiveDebugSession()
+{
+    bool hasActiveDebuggerSession = !m_targetConnectionMap.isEmpty();
+    if (hasActiveDebuggerSession == m_hasActiveDebugSession)
+        return;
+
+    m_hasActiveDebugSession = hasActiveDebuggerSession;
+
+    // FIXME: Expose some way to access this state in an embedder.
+    // Legacy iOS WebKit 1 had a notification. This will need to be smarter with WebKit2.
 }
 
 #pragma mark - Received XPC Messages
