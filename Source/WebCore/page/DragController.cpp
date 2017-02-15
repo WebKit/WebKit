@@ -921,8 +921,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             IntSize size = dragImageSize(dragImage.get());
             m_dragOffset = IntPoint(-size.width() / 2, -LinkDragBorderInset);
             dragLoc = IntPoint(mouseDraggedPoint.x() + m_dragOffset.x(), mouseDraggedPoint.y() + m_dragOffset.y());
-            // Later code expects the drag image to be scaled by device's scale factor.
-            dragImage = DragImage { scaleDragImage(dragImage.get(), FloatSize(m_page.deviceScaleFactor(), m_page.deviceScaleFactor())) };
+            dragImage = DragImage { platformAdjustDragImageForDeviceScaleFactor(dragImage.get(), m_page.deviceScaleFactor()) };
         }
         doSystemDrag(WTFMove(dragImage), dragLoc, mouseDraggedPoint, { }, dataTransfer, src, true);
 
@@ -977,7 +976,7 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
         dragImage = DragImage { fitDragImageToMaxSize(dragImage.get(), layoutRect.size(), maxDragImageSize()) };
         IntSize fittedSize = dragImageSize(dragImage.get());
 
-        dragImage = DragImage { scaleDragImage(dragImage.get(), FloatSize(m_page.deviceScaleFactor(), m_page.deviceScaleFactor())) };
+        dragImage = DragImage { platformAdjustDragImageForDeviceScaleFactor(dragImage.get(), m_page.deviceScaleFactor()) };
         dragImage = DragImage { dissolveDragImageToFraction(dragImage.get(), DragImageAlpha) };
 
         // Properly orient the drag image and orient it differently if it's smaller than the original.
@@ -1008,7 +1007,9 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
 void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, const IntPoint& eventPos, const IntRect& dragImageBounds, DataTransfer& dataTransfer, Frame& frame, bool forLink)
 {
     FloatPoint dragImageAnchor = { 0.5, 0.5 };
-    if (!dragImageBounds.isEmpty()) {
+    if (forLink)
+        dragImageAnchor.setY(1);
+    else if (!dragImageBounds.isEmpty()) {
         dragImageAnchor.setX((eventPos.x() - dragImageBounds.x()) / (float)dragImageBounds.width());
         dragImageAnchor.setY((eventPos.y() - dragImageBounds.y()) / (float)dragImageBounds.height());
     }

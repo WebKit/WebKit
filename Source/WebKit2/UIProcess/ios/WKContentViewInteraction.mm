@@ -1458,12 +1458,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     InteractionInformationRequest request(roundedIntPoint(point));
     [self ensurePositionInformationIsUpToDate:request];
 
-    if (_positionInformation.isImage)
+    if (_positionInformation.isImage || _positionInformation.isLink)
         return YES;
-
-    // FIXME: Add support for links.
-    if (_positionInformation.isLink)
-        return NO;
 
     return _positionInformation.hasDataInteractionAtPosition;
 }
@@ -1757,6 +1753,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _hasValidPositionInformation = YES;
     if (_actionSheetAssistant)
         [_actionSheetAssistant updateSheetPosition];
+
+#if ENABLE(DATA_INTERACTION)
+    [self _updateDataInteractionPreviewSnapshotIfPossible];
+#endif
 }
 
 - (void)_willStartScrollingOrZooming
@@ -3957,6 +3957,7 @@ static bool isAssistableInputType(InputType type)
     // FIXME: This should be more asynchronous, since we control the presentation of the action sheet.
     InteractionInformationRequest request(_positionInformation.request.point);
     request.includeSnapshot = true;
+    request.includeLinkIndicator = assistant.needsLinkIndicator;
     [self ensurePositionInformationIsUpToDate:request];
 
     return _positionInformation;
@@ -3967,6 +3968,7 @@ static bool isAssistableInputType(InputType type)
     _hasValidPositionInformation = NO;
     InteractionInformationRequest request(_positionInformation.request.point);
     request.includeSnapshot = true;
+    request.includeLinkIndicator = assistant.needsLinkIndicator;
 
     [self requestAsynchronousPositionInformationUpdate:request];
 }

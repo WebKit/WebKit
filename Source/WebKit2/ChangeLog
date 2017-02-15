@@ -1,3 +1,60 @@
+2017-02-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Support data interaction on links
+        https://bugs.webkit.org/show_bug.cgi?id=168331
+        <rdar://problem/30200837>
+
+        Reviewed by Tim Horton.
+
+        Adds support for data interaction on links at the client layer for WebKit2. This involves several changes,
+        detailed in the per-method changes below:
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+
+        Add adjustedPointForNodeRespondingToClickEvents (the request point, adjusted to take nodeRespondingToClickEvents
+        into account) to InteractionInformationAtPosition. The web process sends this adjusted point over to the UI
+        process so that the UI process will be able to begin a data interaction at the adjusted point rather than the
+        request point, which is necessary for small clickable (and data-interactive) elements such as links.
+
+        * UIProcess/ios/WKActionSheet.h:
+        * UIProcess/ios/WKActionSheet.mm:
+        (-[WKActionSheet presentSheet:]):
+        (-[WKActionSheet _presentationRectForStyle:]):
+        (-[WKActionSheet updateSheetPosition]):
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant presentationRectForElementUsingClosestIndicatedRect]):
+        (-[WKActionSheetAssistant presentationRectForIndicatedElement]):
+        (-[WKActionSheetAssistant showImageSheet]):
+        (-[WKActionSheetAssistant _shouldPresentAtTouchLocationForElementRect:]):
+        (-[WKActionSheetAssistant needsLinkIndicator]):
+        (-[WKActionSheetAssistant showLinkSheet]):
+        (-[WKActionSheetAssistant cleanupSheet]):
+        (-[WKActionSheetAssistant _presentationStyleForImageAtElementRect:]): Deleted.
+
+        Add support for the WKActionSheetPresentAtClosestIndicatorRect style of presenting an action sheet. When
+        showing the action sheet for a link and there is space along the margins to show a popover in the first place,
+        we will now target the popover rect to the bounding rect of the set of adjacent (or nearly-adjacent) element
+        rects closest to the user's touch location. This covers cases where the link is split into multiple rects due to
+        a line break, when the link is on multiple lines with a jagged rect per line, and when both of the above are
+        true.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView pointIsInDataInteractionContent:]):
+        (-[WKContentView _positionInformationDidChange:]):
+        (-[WKContentView positionInformationForActionSheetAssistant:]):
+        (-[WKContentView updatePositionInformationForActionSheetAssistant:]):
+
+        Include link indicator data in the position information request if needed. As the FIXME suggests, this can be
+        improved by asynchronously presenting the action sheet assistant after the request returns, and is something we
+        should address in the future.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2017-02-14  Jason Rinn  <jrinn@apple.com>
 
         Add new WKWebKit Cocoa API for getContentsAsString.

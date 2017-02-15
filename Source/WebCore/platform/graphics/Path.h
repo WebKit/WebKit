@@ -122,7 +122,7 @@ namespace WebCore {
         // fastBoundingRect() should equal or contain boundingRect(); boundingRect()
         // should perfectly bound the points within the path.
         FloatRect boundingRect() const;
-        FloatRect fastBoundingRect() const;
+        WEBCORE_EXPORT FloatRect fastBoundingRect() const;
         FloatRect strokeBoundingRect(StrokeStyleApplier* = 0) const;
 
         float length() const;

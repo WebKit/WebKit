@@ -63,6 +63,7 @@ struct InteractionInformationAtPosition;
 
 @interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate, DDDetectionControllerInteractionDelegate>
 @property (nonatomic, weak) id <WKActionSheetAssistantDelegate> delegate;
+@property (nonatomic) BOOL needsLinkIndicator;
 - (id)initWithView:(UIView *)view;
 - (void)showLinkSheet;
 - (void)showImageSheet;

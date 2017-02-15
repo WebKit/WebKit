@@ -89,6 +89,32 @@ TEST(DataInteractionTests, ContentEditableToContentEditable)
     });
 }
 
+TEST(DataInteractionTests, LinkToInput)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    runTestsExpectingToObserveEvents(webView.get(), @[ DataInteractionEnterEventName, DataInteractionOverEventName, DataInteractionPerformOperationEventName ], ^() {
+        [webView synchronouslyLoadTestPageNamed:@"link-and-input"];
+
+        RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get() startLocation:CGPointMake(100, 100) endLocation:CGPointMake(100, 300)]);
+        [dataInteractionSimulator run];
+
+        EXPECT_WK_STREQ("https://www.daringfireball.net/", [webView stringByEvaluatingJavaScript:@"editor.value"].UTF8String);
+    });
+}
+
+TEST(DataInteractionTests, BackgroundImageLinkToInput)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    runTestsExpectingToObserveEvents(webView.get(), @[ DataInteractionEnterEventName, DataInteractionOverEventName, DataInteractionPerformOperationEventName ], ^() {
+        [webView synchronouslyLoadTestPageNamed:@"background-image-link-and-input"];
+
+        RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get() startLocation:CGPointMake(100, 100) endLocation:CGPointMake(100, 300)]);
+        [dataInteractionSimulator run];
+
+        EXPECT_WK_STREQ("https://www.daringfireball.net/", [webView stringByEvaluatingJavaScript:@"editor.value"].UTF8String);
+    });
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(DATA_INTERACTION)

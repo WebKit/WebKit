@@ -55,6 +55,7 @@ struct InteractionInformationAtPosition {
 #if ENABLE(DATA_DETECTION)
     bool isDataDetectorLink { false };
 #endif
+    WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
     String url;
     String imageURL;
     String title;

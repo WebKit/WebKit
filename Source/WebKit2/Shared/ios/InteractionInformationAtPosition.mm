@@ -54,6 +54,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     encoder << isAttachment;
     encoder << isAnimatedImage;
     encoder << isElement;
+    encoder << adjustedPointForNodeRespondingToClickEvents;
     encoder << url;
     encoder << imageURL;
     encoder << title;
@@ -117,6 +118,9 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
         return false;
     
     if (!decoder.decode(result.isElement))
+        return false;
+
+    if (!decoder.decode(result.adjustedPointForNodeRespondingToClickEvents))
         return false;
 
     if (!decoder.decode(result.url))

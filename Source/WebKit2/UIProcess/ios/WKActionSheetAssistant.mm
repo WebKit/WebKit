@@ -41,6 +41,7 @@
 #import "_WKElementActionInternal.h"
 #import <UIKit/UIView.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/PathUtilities.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <wtf/text/WTFString.h>
@@ -88,6 +89,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     RetainPtr<WKActionSheet> _interactionSheet;
     RetainPtr<_WKActivatedElementInfo> _elementInfo;
     UIView *_view;
+    BOOL _needsLinkIndicator;
 }
 
 - (id <WKActionSheetAssistantDelegate>)delegate
@@ -148,6 +150,38 @@ static LSAppLink *appLinkForURL(NSURL *url)
     return [self superviewForSheet];
 }
 
+static const CGFloat presentationElementRectPadding = 15;
+
+- (CGRect)presentationRectForElementUsingClosestIndicatedRect
+{
+    UIView *view = [self superviewForSheet];
+    auto delegate = _delegate.get();
+    if (!view || !delegate)
+        return CGRectZero;
+
+    auto info = [delegate positionInformationForActionSheetAssistant:self];
+    auto indicator = info.linkIndicator;
+    if (indicator.textRectsInBoundingRectCoordinates.isEmpty())
+        return CGRectZero;
+
+    WebCore::FloatPoint touchLocation = info.request.point;
+    WebCore::FloatPoint linkElementLocation = indicator.textBoundingRectInRootViewCoordinates.location();
+    Vector<WebCore::FloatRect> indicatedRects;
+    for (auto rect : indicator.textRectsInBoundingRectCoordinates) {
+        rect.inflate(2);
+        rect.moveBy(linkElementLocation);
+        indicatedRects.append(rect);
+    }
+
+    for (auto path : WebCore::PathUtilities::pathsWithShrinkWrappedRects(indicatedRects, 0)) {
+        auto boundingRect = path.fastBoundingRect();
+        if (boundingRect.contains(touchLocation))
+            return CGRectInset([view convertRect:(CGRect)boundingRect fromView:_view], -presentationElementRectPadding, -presentationElementRectPadding);
+    }
+
+    return CGRectZero;
+}
+
 - (CGRect)presentationRectForIndicatedElement
 {
     UIView *view = [self superviewForSheet];
@@ -155,7 +189,6 @@ static LSAppLink *appLinkForURL(NSURL *url)
     if (!view || !delegate)
         return CGRectZero;
 
-    static const CGFloat presentationElementRectPadding = 15;
     auto elementBounds = [delegate positionInformationForActionSheetAssistant:self].bounds;
     return CGRectInset([view convertRect:elementBounds fromView:_view], -presentationElementRectPadding, -presentationElementRectPadding);
 }
@@ -318,11 +351,11 @@ static LSAppLink *appLinkForURL(NSURL *url)
 
     _elementInfo = WTFMove(elementInfo);
 
-    if (![_interactionSheet presentSheet:[self _presentationStyleForImageAtElementRect:elementBounds]])
+    if (![_interactionSheet presentSheet:[self _shouldPresentAtTouchLocationForElementRect:elementBounds] ? WKActionSheetPresentAtTouchLocation : WKActionSheetPresentAtElementRect])
         [self cleanupSheet];
 }
 
-- (WKActionSheetPresentationStyle)_presentationStyleForImageAtElementRect:(CGRect)elementRect
+- (BOOL)_shouldPresentAtTouchLocationForElementRect:(CGRect)elementRect
 {
     auto apparentElementRect = [_view convertRect:elementRect toView:_view.window];
     auto windowRect = _view.window.bounds;
@@ -336,10 +369,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     // If at least this much of the window is available for the popover to draw in, then target the element rect when presenting the action menu popover.
     // Otherwise, there is not enough space to position the popover around the element, so revert to using the touch location instead.
     static const CGFloat minimumAvailableWidthOrHeightRatio = 0.4;
-    if (std::max(leftInset, rightInset) > minimumAvailableWidthOrHeightRatio * CGRectGetWidth(windowRect) || std::max(topInset, bottomInset) > minimumAvailableWidthOrHeightRatio * CGRectGetHeight(windowRect))
-        return WKActionSheetPresentAtElementRect;
-
-    return WKActionSheetPresentAtTouchLocation;
+    return std::max(leftInset, rightInset) <= minimumAvailableWidthOrHeightRatio * CGRectGetWidth(windowRect) && std::max(topInset, bottomInset) <= minimumAvailableWidthOrHeightRatio * CGRectGetHeight(windowRect);
 }
 
 - (void)_appendOpenActionsForURL:(NSURL *)url actions:(NSMutableArray *)defaultActions elementInfo:(_WKActivatedElementInfo *)elementInfo
@@ -426,6 +456,11 @@ static LSAppLink *appLinkForURL(NSURL *url)
     return defaultActions;
 }
 
+- (BOOL)needsLinkIndicator
+{
+    return _needsLinkIndicator;
+}
+
 - (void)showLinkSheet
 {
     ASSERT(!_elementInfo);
@@ -434,30 +469,39 @@ static LSAppLink *appLinkForURL(NSURL *url)
     if (!delegate)
         return;
 
+    _needsLinkIndicator = YES;
     const auto& positionInformation = [delegate positionInformationForActionSheetAssistant:self];
 
     NSURL *targetURL = [NSURL _web_URLWithWTFString:positionInformation.url];
-    if (!targetURL)
+    if (!targetURL) {
+        _needsLinkIndicator = NO;
         return;
+    }
 
     auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL location:positionInformation.request.point title:positionInformation.title ID:positionInformation.idAttribute rect:positionInformation.bounds image:positionInformation.image.get()]);
-    if ([delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()])
+    if ([delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()]) {
+        _needsLinkIndicator = NO;
         return;
+    }
 
     auto defaultActions = [self defaultActionsForLinkSheet:elementInfo.get()];
 
     RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTFMove(defaultActions)];
 
-    if (![actions count])
+    if (![actions count]) {
+        _needsLinkIndicator = NO;
         return;
+    }
 
     [self _createSheetWithElementActions:actions.get() showLinkTitle:YES];
-    if (!_interactionSheet)
+    if (!_interactionSheet) {
+        _needsLinkIndicator = NO;
         return;
+    }
 
     _elementInfo = WTFMove(elementInfo);
 
-    if (![_interactionSheet presentSheet:WKActionSheetPresentAtTouchLocation])
+    if (![_interactionSheet presentSheet:[self _shouldPresentAtTouchLocationForElementRect:positionInformation.bounds] ? WKActionSheetPresentAtTouchLocation : WKActionSheetPresentAtClosestIndicatorRect])
         [self cleanupSheet];
 }
 
@@ -533,6 +577,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     [_interactionSheet setSheetDelegate:nil];
     _interactionSheet = nil;
     _elementInfo = nil;
+    _needsLinkIndicator = NO;
 }
 
 @end

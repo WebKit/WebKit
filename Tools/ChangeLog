@@ -1,3 +1,20 @@
+2017-02-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Support data interaction on links
+        https://bugs.webkit.org/show_bug.cgi?id=168331
+        <rdar://problem/30200837>
+
+        Reviewed by Tim Horton.
+
+        Adds 2 unit tests checking that data interaction from a link (with or without a background image) into an
+        editable area results in the link URL being inserted.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/background-image-link-and-input.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/link-and-input.html: Added.
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
 2017-02-14  Jason Rinn  <jrinn@apple.com>
 
         Add a test for new WebKit Cocoa API, _getContentsAsString.

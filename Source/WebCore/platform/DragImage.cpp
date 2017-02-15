@@ -210,6 +210,14 @@ DragImageRef createDragImageForImage(Frame& frame, Node& node, IntRect& imageRec
     return createDragImageFromSnapshot(snapshotNode(frame, node), &node);
 }
 
+#if !ENABLE(DATA_INTERACTION)
+DragImageRef platformAdjustDragImageForDeviceScaleFactor(DragImageRef image, float deviceScaleFactor)
+{
+    // Later code expects the drag image to be scaled by device's scale factor.
+    return scaleDragImage(image, { deviceScaleFactor, deviceScaleFactor });
+}
+#endif
+
 #if !PLATFORM(COCOA) && !PLATFORM(WIN)
 DragImageRef createDragImageForLink(URL&, const String&, FontRenderingMode)
 {

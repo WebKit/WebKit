@@ -76,13 +76,24 @@
     // Calculate the presentation rect just before showing.
     CGRect presentationRect = CGRectZero;
     if (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPhone) {
-        presentationRect = style == WKActionSheetPresentAtElementRect ? [_sheetDelegate presentationRectForIndicatedElement] : [_sheetDelegate initialPresentationRectInHostViewForSheet];
+        presentationRect = [self _presentationRectForStyle:style];
         if (CGRectIsEmpty(presentationRect))
             return NO;
     }
 
     _currentPresentationStyle = style;
     return [self presentSheetFromRect:presentationRect];
+}
+
+- (CGRect)_presentationRectForStyle:(WKActionSheetPresentationStyle)style
+{
+    if (style == WKActionSheetPresentAtElementRect)
+        return [_sheetDelegate presentationRectForIndicatedElement];
+
+    if (style == WKActionSheetPresentAtClosestIndicatorRect)
+        return [_sheetDelegate presentationRectForElementUsingClosestIndicatedRect];
+
+    return [_sheetDelegate initialPresentationRectInHostViewForSheet];
 }
 
 - (BOOL)presentSheetFromRect:(CGRect)presentationRect
@@ -196,7 +207,7 @@
     if (_isRotating || !_readyToPresentAfterRotation || isBeingPresented)
         return;
 
-    CGRect presentationRect = _currentPresentationStyle == WKActionSheetPresentAtElementRect ? [_sheetDelegate presentationRectForIndicatedElement] : [_sheetDelegate initialPresentationRectInHostViewForSheet];
+    CGRect presentationRect = [self _presentationRectForStyle:_currentPresentationStyle];
     BOOL wasPresentedViewControllerModal = [_presentedViewControllerWhileRotating isModalInPopover];
 
     if (!CGRectIsEmpty(presentationRect) || wasPresentedViewControllerModal) {
