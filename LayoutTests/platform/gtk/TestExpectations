@@ -804,6 +804,9 @@ fast/events/webkit-media-key-events-constructor.html [ Skip ]
 webkit.org/b/168189 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Failure ]
 webkit.org/b/168189 fast/scrolling/scroll-container-horizontally.html [ Failure ]
 
+# Requires CACHE_PARTITIONING or an alternative implementation
+webkit.org/b/168366 http/tests/security/credentials-iframes.html
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
