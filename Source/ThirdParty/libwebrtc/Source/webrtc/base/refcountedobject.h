@@ -13,11 +13,12 @@
 #include <utility>
 
 #include "webrtc/base/atomicops.h"
+#include "webrtc/base/export.h"
 
 namespace rtc {
 
 template <class T>
-class RefCountedObject : public T {
+class WEBRTC_EXPORT RefCountedObject : public T {
  public:
   RefCountedObject() {}
 

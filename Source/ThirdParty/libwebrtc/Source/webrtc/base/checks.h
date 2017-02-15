@@ -11,6 +11,7 @@
 #ifndef WEBRTC_BASE_CHECKS_H_
 #define WEBRTC_BASE_CHECKS_H_
 
+#include "webrtc/base/export.h"
 #include "webrtc/typedefs.h"
 
 // If you for some reson need to know if DCHECKs are on, test the value of
@@ -210,7 +211,7 @@ DEFINE_RTC_CHECK_OP_IMPL(Gt)
 #endif
 
 // This is identical to LogMessageVoidify but in name.
-class FatalMessageVoidify {
+class WEBRTC_EXPORT FatalMessageVoidify {
  public:
   FatalMessageVoidify() { }
   // This has to be an operator with a precedence lower than << but

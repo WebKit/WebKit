@@ -41,6 +41,18 @@
 		414D71141E4AE98C0023E526 /* user_socket.c in Sources */ = {isa = PBXBuildFile; fileRef = 414D71121E4AE9820023E526 /* user_socket.c */; };
 		414D71171E4AEAFB0023E526 /* sctp_indata.c in Sources */ = {isa = PBXBuildFile; fileRef = 414D71151E4AEACD0023E526 /* sctp_indata.c */; };
 		414D71191E4AEB110023E526 /* sctp_userspace.c in Sources */ = {isa = PBXBuildFile; fileRef = 414D71181E4AEB110023E526 /* sctp_userspace.c */; };
+		5C0073031E5513E70042215A /* libboringssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C63FC601E418411002CA531 /* libboringssl.a */; };
+		5C0073041E5513E70042215A /* libopus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C4B4A8E1E42C336002651C8 /* libopus.a */; };
+		5C0073051E5513E70042215A /* libsrtp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0884D11E4A97E300403995 /* libsrtp.a */; };
+		5C0073061E5513E70042215A /* libusrsctp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C11A12D1E4577E1004F0987 /* libusrsctp.a */; };
+		5C0073071E5513E70042215A /* libwebrtcpcrtc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C088C0B1E4AA3B100403995 /* libwebrtcpcrtc.a */; };
+		5C0073081E5513E70042215A /* libyuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0884DE1E4A980100403995 /* libyuv.a */; };
+		5C00730E1E5513E70042215A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0073091E5513E70042215A /* AudioToolbox.framework */; };
+		5C00730F1E5513E70042215A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C00730A1E5513E70042215A /* AVFoundation.framework */; };
+		5C0073101E5513E70042215A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C00730B1E5513E70042215A /* CoreAudio.framework */; };
+		5C0073111E5513E70042215A /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C00730C1E5513E70042215A /* CoreMedia.framework */; };
+		5C0073121E5513E70042215A /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C00730D1E5513E70042215A /* CoreVideo.framework */; };
+		5C0073141E5514020042215A /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0073131E5514020042215A /* VideoToolbox.framework */; };
 		5C0884E31E4A986000403995 /* compare.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D341E4323D4002651C8 /* compare.cc */; };
 		5C0884E41E4A986000403995 /* compare_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D2F1E4323D4002651C8 /* compare_common.cc */; };
 		5C0884E51E4A986000403995 /* compare_gcc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD84211E439BCB00621E92 /* compare_gcc.cc */; };
@@ -1398,7 +1410,6 @@
 		5CDD85341E43B39C00621E92 /* call.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD85221E43B39C00621E92 /* call.cc */; };
 		5CDD85361E43B39C00621E92 /* flexfec_receive_stream.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD85251E43B39C00621E92 /* flexfec_receive_stream.cc */; };
 		5CDD85371E43B39C00621E92 /* flexfec_receive_stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD85261E43B39C00621E92 /* flexfec_receive_stream.h */; };
-		5CDD853B1E43B39C00621E92 /* transport_adapter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD852B1E43B39C00621E92 /* transport_adapter.cc */; };
 		5CDD853C1E43B39C00621E92 /* transport_adapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD852C1E43B39C00621E92 /* transport_adapter.h */; };
 		5CDD85581E43B42B00621E92 /* h264.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD854B1E43B42B00621E92 /* h264.cc */; };
 		5CDD859C1E43B5C000621E92 /* call_stats.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD855C1E43B5C000621E92 /* call_stats.cc */; };
@@ -2407,7 +2418,7 @@
 		5CFD53921E4BD3A300482908 /* row_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538A1E4BD3A300482908 /* row_neon64.cc */; };
 		5CFD53931E4BD3A300482908 /* scale_neon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538B1E4BD3A300482908 /* scale_neon.cc */; };
 		5CFD53941E4BD3A300482908 /* scale_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538C1E4BD3A300482908 /* scale_neon64.cc */; };
-		5CFD54911E4E650700482908 /* RTCLogging.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD54901E4E650700482908 /* RTCLogging.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		5CFD54911E4E650700482908 /* RTCLogging.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD54901E4E650700482908 /* RTCLogging.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2654,6 +2665,12 @@
 		414D71121E4AE9820023E526 /* user_socket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = user_socket.c; sourceTree = "<group>"; };
 		414D71151E4AEACD0023E526 /* sctp_indata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sctp_indata.c; path = netinet/sctp_indata.c; sourceTree = "<group>"; };
 		414D71181E4AEB110023E526 /* sctp_userspace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sctp_userspace.c; path = netinet/sctp_userspace.c; sourceTree = "<group>"; };
+		5C0073091E5513E70042215A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		5C00730A1E5513E70042215A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		5C00730B1E5513E70042215A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		5C00730C1E5513E70042215A /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		5C00730D1E5513E70042215A /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		5C0073131E5514020042215A /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		5C0884891E4A978C00403995 /* libsrtp.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libsrtp.xcconfig; sourceTree = "<group>"; };
 		5C08848A1E4A978C00403995 /* libyuv.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libyuv.xcconfig; sourceTree = "<group>"; };
 		5C0884D11E4A97E300403995 /* libsrtp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsrtp.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5050,7 +5067,7 @@
 		5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libwebrtc.xcconfig; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
-		FB39D0D11200F0E300088E69 /* libwebrtc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libwebrtc.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB39D0D11200F0E300088E69 /* libwebrtc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libwebrtc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5100,6 +5117,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C0073141E5514020042215A /* VideoToolbox.framework in Frameworks */,
+				5C00730E1E5513E70042215A /* AudioToolbox.framework in Frameworks */,
+				5C00730F1E5513E70042215A /* AVFoundation.framework in Frameworks */,
+				5C0073101E5513E70042215A /* CoreAudio.framework in Frameworks */,
+				5C0073111E5513E70042215A /* CoreMedia.framework in Frameworks */,
+				5C0073121E5513E70042215A /* CoreVideo.framework in Frameworks */,
+				5C0073031E5513E70042215A /* libboringssl.a in Frameworks */,
+				5C0073041E5513E70042215A /* libopus.a in Frameworks */,
+				5C0073051E5513E70042215A /* libsrtp.a in Frameworks */,
+				5C0073061E5513E70042215A /* libusrsctp.a in Frameworks */,
+				5C0073071E5513E70042215A /* libwebrtcpcrtc.a in Frameworks */,
+				5C0073081E5513E70042215A /* libyuv.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7127,6 +7156,12 @@
 		5CB3048A1DE4143400D2C405 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5C0073131E5514020042215A /* VideoToolbox.framework */,
+				5C0073091E5513E70042215A /* AudioToolbox.framework */,
+				5C00730A1E5513E70042215A /* AVFoundation.framework */,
+				5C00730B1E5513E70042215A /* CoreAudio.framework */,
+				5C00730C1E5513E70042215A /* CoreMedia.framework */,
+				5C00730D1E5513E70042215A /* CoreVideo.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -9001,7 +9036,7 @@
 				5C4B4A8E1E42C336002651C8 /* libopus.a */,
 				5C0884D11E4A97E300403995 /* libsrtp.a */,
 				5C11A12D1E4577E1004F0987 /* libusrsctp.a */,
-				FB39D0D11200F0E300088E69 /* libwebrtc.a */,
+				FB39D0D11200F0E300088E69 /* libwebrtc.dylib */,
 				5C088C0B1E4AA3B100403995 /* libwebrtcpcrtc.a */,
 				5C0884DE1E4A980100403995 /* libyuv.a */,
 			);
@@ -10222,8 +10257,8 @@
 			);
 			name = libwebrtc;
 			productName = libwebrtc;
-			productReference = FB39D0D11200F0E300088E69 /* libwebrtc.a */;
-			productType = "com.apple.product-type.library.static";
+			productReference = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
 
@@ -11605,7 +11640,6 @@
 				5CDD84691E43AE2900621E92 /* transmit_mixer.cc in Sources */,
 				5C63FA1D1E4174F6002CA531 /* transport.cc in Sources */,
 				5CDD85C11E43B5C000621E92 /* transport_adapter.cc in Sources */,
-				5CDD853B1E43B39C00621E92 /* transport_adapter.cc in Sources */,
 				5CDD89831E43BF3A00621E92 /* transport_feedback.cc in Sources */,
 				5CDD8FBB1E43CD0700621E92 /* transport_feedback_adapter.cc in Sources */,
 				5C63FA1F1E4174F6002CA531 /* transportchannel.cc in Sources */,

@@ -15,12 +15,13 @@
 
 #include "webrtc/api/mediastreaminterface.h"
 #include "webrtc/base/common.h"
+#include "webrtc/base/export.h"
 
 namespace webrtc {
 
 // Implement a template version of a notifier.
 template <class T>
-class Notifier : public T {
+class WEBRTC_EXPORT Notifier : public T {
  public:
   Notifier() {
   }
