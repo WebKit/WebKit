@@ -1,3 +1,23 @@
+2017-02-15  Chris Dumez  <cdumez@apple.com>
+
+        Expose Symbol.toPrimitive / valueOf on Location instances
+        https://bugs.webkit.org/show_bug.cgi?id=168295
+
+        Reviewed by Geoffrey Garen, Keith Miller and Mark Lam.
+
+        Expose Symbol.toPrimitive / valueOf on Location instances as per:
+        - https://html.spec.whatwg.org/#the-location-interface
+
+        Firefox and Chrome already comply with the specification.
+
+        Tests: fast/dom/location-valueOf-after-object-prototype-update.html
+               fast/dom/location-valueOf-after-object-prototype-update2.html
+               imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-symbol-toprimitive.html
+               imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-valueof.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+
 2017-02-15  Aakash Jain  <aakash_jain@apple.com>
 
         Remove WebIOSEvent interface

@@ -3429,6 +3429,11 @@ sub GenerateImplementation
         push(@implContent, "    ASSERT(inherits(vm, info()));\n\n");
     }
 
+    if ($interfaceName eq "Location") {
+        push(@implContent, "    putDirect(vm, vm.propertyNames->valueOf, globalObject()->objectProtoValueOfFunction(), DontDelete | ReadOnly | DontEnum);\n");
+        push(@implContent, "    putDirect(vm, vm.propertyNames->toPrimitiveSymbol, jsUndefined(), DontDelete | ReadOnly | DontEnum);\n");
+    }
+
     # Support for RuntimeEnabled attributes on instances.
     foreach my $attribute (@{$interface->attributes}) {
         next unless NeedsRuntimeCheck($attribute);

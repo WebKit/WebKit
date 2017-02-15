@@ -1,3 +1,18 @@
+2017-02-15  Chris Dumez  <cdumez@apple.com>
+
+        Expose Symbol.toPrimitive / valueOf on Location instances
+        https://bugs.webkit.org/show_bug.cgi?id=168295
+
+        Reviewed by Geoffrey Garen, Keith Miller and Mark Lam.
+
+        Add test coverage for cases where the Object prototype has been updated before
+        the Location object is constructed.
+
+        * fast/dom/location-valueOf-after-object-prototype-update-expected.txt: Added.
+        * fast/dom/location-valueOf-after-object-prototype-update.html: Added.
+        * fast/dom/location-valueOf-after-object-prototype-update2-expected.txt: Added.
+        * fast/dom/location-valueOf-after-object-prototype-update2.html: Added.
+
 2017-02-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/media-controller/media-controller-resize.html as flaky.

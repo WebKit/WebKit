@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests the value of location.valueOf after Object.prototype.valueOf has been deleted.");
+
+var objectProtoValueOf = Object.prototype.valueOf;
+delete Object.prototype.valueOf;
+shouldBe("location.valueOf", "objectProtoValueOf");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
