@@ -3812,6 +3812,20 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     });
 }
 
+- (void)_getContentsAsStringWithCompletionHandler:(void (^)(NSString *, NSError *))completionHandler
+{
+    auto handler = makeBlockPtr(completionHandler);
+
+    _page->getContentsAsString([handler](String string, WebKit::CallbackBase::Error error) {
+        if (error != WebKit::CallbackBase::Error::None) {
+            // FIXME: Pipe a proper error in from the WebPageProxy.
+            RetainPtr<NSError> error = adoptNS([[NSError alloc] init]);
+            handler(nil, error.get());
+        } else
+            handler(string, nil);
+    });
+}
+
 - (_WKPaginationMode)_paginationMode
 {
     switch (_page->paginationMode()) {

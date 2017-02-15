@@ -1,3 +1,15 @@
+2017-02-14  Jason Rinn  <jrinn@apple.com>
+
+        Add new WKWebKit Cocoa API for getContentsAsString.
+        https://bugs.webkit.org/show_bug.cgi?id=168147
+        <rdar://problem/30502539>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _getContentsAsStringWithCompletionHandler:]): New API for getContentsAsString.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2017-02-14  Chris Dumez  <cdumez@apple.com>
 
         HTML Form Validation bubble should take minimum font size setting into consideration

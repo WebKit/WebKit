@@ -1,3 +1,15 @@
+2017-02-14  Jason Rinn  <jrinn@apple.com>
+
+        Add a test for new WebKit Cocoa API, _getContentsAsString.
+        https://bugs.webkit.org/show_bug.cgi?id=168147
+        <rdar://problem/30502539>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKWebViewGetContents.mm: Added.
+        (TEST):
+
 2017-02-14  Matt Rajca  <mrajca@apple.com>
 
         Website policies: iframes should respect the autoplay policy of the top-level document
