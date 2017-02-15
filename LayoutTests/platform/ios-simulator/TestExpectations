@@ -2866,3 +2866,6 @@ webkit.org/b/168054 compositing/masks/solid-color-masked.html [ ImageOnlyFailure
 
 webkit.org/b/168215 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Skip ]
 webkit.org/b/168215 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html [ Skip ]
+
+# rdar://problem/23643423
+[ Debug ] fast/frames/exponential-frames.html [ Skip ]

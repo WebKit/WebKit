@@ -1,5 +1,13 @@
 2017-02-15  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skip fast/frames/exponential-frames.html on ios-simulator
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2017-02-15  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skip fast/frames/exponential-frames.html.
 
         Unreviewed test gardening.
