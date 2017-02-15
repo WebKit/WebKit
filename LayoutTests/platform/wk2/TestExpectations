@@ -698,8 +698,13 @@ http/tests/misc/will-send-request-with-client-provided-http-body.html [ Pass ]
 # bug 162281
 imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.html [ Failure ]
 
-# Resource Load Statistics are only supported in WebKit2
-http/tests/loading/resourceLoadStatistics/ [ Pass ]
+# Resource Load Statistics are only supported in WebKit2.
+# Marking first five as timeout until <https://bugs.webkit.org/show_bug.cgi?id=168262> is fixed.
+http/tests/loading/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html [ Pass Timeout ]
+http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction.html [ Pass Timeout ]
+http/tests/loading/resourceLoadStatistics/non-prevalent-resource-without-user-interaction.html [ Pass Timeout ]
+http/tests/loading/resourceLoadStatistics/prevalent-resource-without-user-interaction.html [ Pass Timeout ]
+http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html [ Pass Timeout ]
 
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
