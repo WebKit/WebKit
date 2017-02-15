@@ -28,7 +28,13 @@
 #include "CSSFontFace.h"
 #include "CSSPropertyNames.h"
 #include "JSDOMPromise.h"
+#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
+
+namespace JSC {
+class ArrayBuffer;
+class ArrayBufferView;
+}
 
 namespace WebCore {
 
@@ -42,7 +48,9 @@ public:
         String variant;
         String featureSettings;
     };
-    static ExceptionOr<Ref<FontFace>> create(JSC::ExecState&, Document&, const String& family, JSC::JSValue source, const Descriptors&);
+    
+    using Source = Variant<String, RefPtr<JSC::ArrayBuffer>, RefPtr<JSC::ArrayBufferView>>;
+    static ExceptionOr<Ref<FontFace>> create(Document&, const String& family, Source&&, const Descriptors&);
     static Ref<FontFace> create(CSSFontFace&);
     virtual ~FontFace();
 

@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (ArrayBuffer or ArrayBufferView) BinaryData;
+
 enum FontFaceLoadStatus {
     "unloaded",
     "loading",
@@ -40,9 +42,9 @@ dictionary FontFaceDescriptors {
 };
 
 [
-    ConstructorCallWith=Document&ScriptState,
+    ConstructorCallWith=Document,
     ConstructorMayThrowException,
-    Constructor(DOMString family, any source, optional FontFaceDescriptors descriptors)
+    Constructor(DOMString family, (DOMString or BinaryData) source, optional FontFaceDescriptors descriptors)
 ] interface FontFace {
     [SetterMayThrowException] attribute DOMString family;
     [SetterMayThrowException] attribute DOMString style;

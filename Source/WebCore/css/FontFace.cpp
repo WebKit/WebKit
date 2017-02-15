@@ -36,6 +36,9 @@
 #include "FontVariantBuilder.h"
 #include "JSFontFace.h"
 #include "StyleProperties.h"
+#include <runtime/ArrayBuffer.h>
+#include <runtime/ArrayBufferView.h>
+#include <runtime/JSCInlines.h>
 
 namespace WebCore {
 
@@ -46,9 +49,8 @@ static bool populateFontFaceWithArrayBuffer(CSSFontFace& fontFace, Ref<JSC::Arra
     return false;
 }
 
-ExceptionOr<Ref<FontFace>> FontFace::create(JSC::ExecState& state, Document& document, const String& family, JSC::JSValue source, const Descriptors& descriptors)
+ExceptionOr<Ref<FontFace>> FontFace::create(Document& document, const String& family, Source&& source, const Descriptors& descriptors)
 {
-    JSC::VM& vm = state.vm();
     auto result = adoptRef(*new FontFace(document.fontSelector()));
 
     bool dataRequiresAsynchronousLoading = true;
@@ -57,17 +59,27 @@ ExceptionOr<Ref<FontFace>> FontFace::create(JSC::ExecState& state, Document& doc
     if (setFamilyResult.hasException())
         return setFamilyResult.releaseException();
 
-    if (source.isString()) {
-        auto value = FontFace::parseString(asString(source)->value(&state), CSSPropertySrc);
-        if (!is<CSSValueList>(value.get()))
-            return Exception { SYNTAX_ERR };
-        CSSFontFace::appendSources(result->backing(), downcast<CSSValueList>(*value), &document, false);
-    } else if (auto arrayBufferView = toUnsharedArrayBufferView(vm, source))
-        dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
-    else if (auto arrayBuffer = toUnsharedArrayBuffer(vm, source)) {
-        auto arrayBufferView = JSC::Uint8Array::create(arrayBuffer, 0, arrayBuffer->byteLength());
-        dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
-    }
+    auto sourceConversionResult = WTF::switchOn(source,
+        [&] (String& string) -> ExceptionOr<void> {
+            auto value = FontFace::parseString(string, CSSPropertySrc);
+            if (!is<CSSValueList>(value.get()))
+                return Exception { SYNTAX_ERR };
+            CSSFontFace::appendSources(result->backing(), downcast<CSSValueList>(*value), &document, false);
+            return { };
+        },
+        [&] (RefPtr<ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> {
+            dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
+            return { };
+        },
+        [&] (RefPtr<ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> {
+            auto arrayBufferView = JSC::Uint8Array::create(arrayBuffer, 0, arrayBuffer->byteLength());
+            dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
+            return { };
+        }
+    );
+
+    if (sourceConversionResult.hasException())
+        return sourceConversionResult.releaseException();
 
     // These ternaries match the default strings inside the FontFaceDescriptors dictionary inside FontFace.idl.
     auto setStyleResult = result->setStyle(descriptors.style.isEmpty() ? ASCIILiteral("normal") : descriptors.style);

@@ -55,14 +55,17 @@ shouldBeEqualToString("everything.variant", "stacked-fractions");
 everything.featureSettings = "'smcp'";
 shouldBeEqualToString("everything.featureSettings", "'smcp' 1");
 
-/*shouldNotThrow("new FontFace('family_name', 'url(\\'asdf\\')', {})");
+shouldNotThrow("new FontFace('family_name', 'url(\\'asdf\\')', {})");
 var newArrayBuffer = new ArrayBuffer(100);
 shouldNotThrow("new FontFace('family_name', newArrayBuffer, {})");
 shouldNotThrow("new FontFace('family_name', new DataView(newArrayBuffer), {})");
 shouldNotThrow("new FontFace('family_name', new Uint8Array(newArrayBuffer), {})");
 shouldThrow("new FontFace('family_name', 5, {})");
 shouldThrow("new FontFace('family_name', {}, {})");
-shouldThrow("new FontFace('family_name', new Array(), {})");*/
+shouldThrow("new FontFace('family_name', new Array(), {})");
+shouldThrow("new FontFace('family_name', { toString: function() { return 5; } }, {})");
+shouldThrow("new FontFace('family_name', { toString: function() { throw \"Error\"; } }, {})");
+shouldBeEqualToString("new FontFace('family_name', { toString: function() { return \"url(\'asdf\')\"; } }, {}).family", "family_name");
 
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).status", "unloaded");
 

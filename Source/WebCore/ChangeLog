@@ -1,3 +1,19 @@
+2017-02-15  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom conversion from FontFace code by using a Variant
+        https://bugs.webkit.org/show_bug.cgi?id=168384
+
+        Reviewed by Alex Christensen.
+
+        Match the font face spec and use a union rather than any in the FontFace constructor.
+
+        Test: Added additional cases to fast/text/font-face-javascript.html.
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create):
+        * css/FontFace.h:
+        * css/FontFace.idl:
+
 2017-02-15  Jer Noble  <jer.noble@apple.com>
 
         Disabled Media Sources should render black/silence
