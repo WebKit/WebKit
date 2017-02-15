@@ -1008,7 +1008,7 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
 void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, const IntPoint& eventPos, const IntRect& dragImageBounds, DataTransfer& dataTransfer, Frame& frame, DragSourceAction dragSourceAction)
 {
     FloatPoint dragImageAnchor = { 0.5, 0.5 };
-    if (forLink)
+    if (dragSourceAction == DragSourceActionLink)
         dragImageAnchor.setY(1);
     else if (!dragImageBounds.isEmpty()) {
         dragImageAnchor.setX((eventPos.x() - dragImageBounds.x()) / (float)dragImageBounds.width());
