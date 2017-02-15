@@ -57,6 +57,8 @@ public:
 
     void scheduleinvalidateStyleAndLayerComposition();
 
+    virtual bool isURLAllowed(const URL&) const { return true; }
+
 protected:
     HTMLFrameOwnerElement(const QualifiedName& tagName, Document&);
     void setSandboxFlags(SandboxFlags);

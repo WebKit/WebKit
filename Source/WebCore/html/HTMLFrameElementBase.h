@@ -48,6 +48,8 @@ public:
 
     bool canContainRangeEndPoint() const final { return false; }
 
+    bool isURLAllowed(const URL&) const override;
+
 protected:
     HTMLFrameElementBase(const QualifiedName&, Document&);
 

@@ -182,6 +182,10 @@ void HTMLEmbedElement::updateWidget(CreatePlugins createPlugins)
     if (!renderer()) // Do not load the plugin if beforeload removed this element or its renderer.
         return;
 
+    // beforeLoad could have changed the document. Make sure the URL is still safe to load.
+    if (!allowedToLoadFrameURL(m_url))
+        return;
+
     // FIXME: beforeLoad could have detached the renderer!  Just like in the <object> case above.
     requestObject(m_url, m_serviceType, paramNames, paramValues);
 }
