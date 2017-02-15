@@ -60,6 +60,11 @@ WebInspector.ElementsTabContentView = class ElementsTabContentView extends WebIn
         return WebInspector.ElementsTabContentView.Type;
     }
 
+    get supportsSplitContentBrowser()
+    {
+        return true;
+    }
+
     canShowRepresentedObject(representedObject)
     {
         return representedObject instanceof WebInspector.DOMTree;

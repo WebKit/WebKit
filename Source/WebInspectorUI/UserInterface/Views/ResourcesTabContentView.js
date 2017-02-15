@@ -54,6 +54,11 @@ WebInspector.ResourcesTabContentView = class ResourcesTabContentView extends Web
         return WebInspector.ResourcesTabContentView.Type;
     }
 
+    get supportsSplitContentBrowser()
+    {
+        return true;
+    }
+
     canShowRepresentedObject(representedObject)
     {
         return representedObject instanceof WebInspector.Frame

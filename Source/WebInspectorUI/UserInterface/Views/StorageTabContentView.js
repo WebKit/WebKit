@@ -54,6 +54,11 @@ WebInspector.StorageTabContentView = class StorageTabContentView extends WebInsp
         return WebInspector.StorageTabContentView.Type;
     }
 
+    get supportsSplitContentBrowser()
+    {
+        return true;
+    }
+
     canShowRepresentedObject(representedObject)
     {
         return representedObject instanceof WebInspector.DOMStorageObject || representedObject instanceof WebInspector.CookieStorageObject ||

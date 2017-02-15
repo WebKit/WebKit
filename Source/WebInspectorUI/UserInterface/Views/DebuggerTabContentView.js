@@ -49,6 +49,11 @@ WebInspector.DebuggerTabContentView = class DebuggerTabContentView extends WebIn
         return WebInspector.DebuggerTabContentView.Type;
     }
 
+    get supportsSplitContentBrowser()
+    {
+        return true;
+    }
+
     canShowRepresentedObject(representedObject)
     {
         if (representedObject instanceof WebInspector.Script)

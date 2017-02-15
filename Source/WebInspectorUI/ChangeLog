@@ -1,3 +1,23 @@
+2017-02-15  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Split console should be allowed when docked bottom on Elements/Resources/Debugger/Storage tabs
+        https://bugs.webkit.org/show_bug.cgi?id=168385
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.updateDockedState):
+        If the new docked configuration does not support the split console, hide it.
+
+        * UserInterface/Views/DebuggerTabContentView.js:
+        (WebInspector.DebuggerTabContentView.prototype.get supportsSplitContentBrowser):
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WebInspector.ElementsTabContentView.prototype.get supportsSplitContentBrowser):
+        * UserInterface/Views/ResourcesTabContentView.js:
+        (WebInspector.ResourcesTabContentView.prototype.get supportsSplitContentBrowser):
+        * UserInterface/Views/StorageTabContentView.js:
+        (WebInspector.StorageTabContentView.prototype.get supportsSplitContentBrowser):
+
 2017-02-14  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: adjust padding of dashboard icons
