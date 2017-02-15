@@ -12,9 +12,8 @@
 #define WEBRTC_BASE_PROXYINFO_H__
 
 #include <string>
-#include "webrtc/base/cryptstring.h"
-#include "webrtc/base/export.h"
 #include "webrtc/base/socketaddress.h"
+#include "webrtc/base/cryptstring.h"
 
 namespace rtc {
 
@@ -26,7 +25,7 @@ enum ProxyType {
 };
 const char * ProxyToString(ProxyType proxy);
 
-struct WEBRTC_EXPORT ProxyInfo {
+struct ProxyInfo {
   ProxyType type;
   SocketAddress address;
   std::string autoconfig_url;

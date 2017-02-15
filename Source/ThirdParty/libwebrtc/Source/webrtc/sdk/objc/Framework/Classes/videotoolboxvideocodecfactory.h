@@ -11,13 +11,12 @@
 #ifndef WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEOTOOLBOXVIDEOCODECFACTORY_H_
 #define WEBRTC_SDK_OBJC_FRAMEWORK_CLASSES_VIDEOTOOLBOXVIDEOCODECFACTORY_H_
 
-#include "webrtc/base/export.h"
 #include "webrtc/media/engine/webrtcvideoencoderfactory.h"
 #include "webrtc/media/engine/webrtcvideodecoderfactory.h"
 
 namespace webrtc {
 
-class WEBRTC_EXPORT VideoToolboxVideoEncoderFactory
+class VideoToolboxVideoEncoderFactory
     : public cricket::WebRtcVideoEncoderFactory {
  public:
   VideoToolboxVideoEncoderFactory();
@@ -32,7 +31,7 @@ class WEBRTC_EXPORT VideoToolboxVideoEncoderFactory
   std::vector<cricket::VideoCodec> supported_codecs_;
 };
 
-class WEBRTC_EXPORT VideoToolboxVideoDecoderFactory
+class VideoToolboxVideoDecoderFactory
     : public cricket::WebRtcVideoDecoderFactory {
  public:
   VideoToolboxVideoDecoderFactory();

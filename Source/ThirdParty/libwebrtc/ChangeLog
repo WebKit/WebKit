@@ -1,3 +1,15 @@
+2017-02-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r212326.
+
+        This change broke certain build configurations.
+
+        Reverted changeset:
+
+        "Make libwebrtc.dylib"
+        https://bugs.webkit.org/show_bug.cgi?id=168335
+        http://trac.webkit.org/changeset/212326
+
 2017-02-14  Alex Christensen  <achristensen@webkit.org>
 
         Make libwebrtc.dylib

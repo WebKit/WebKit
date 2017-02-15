@@ -17,7 +17,6 @@
 #include <vector>
 
 #include "webrtc/base/basictypes.h"
-#include "webrtc/base/export.h"
 #include "webrtc/base/refcount.h"
 
 namespace cricket {
@@ -56,7 +55,7 @@ class IceCandidateInterface {
 // Creates a IceCandidateInterface based on SDP string.
 // Returns NULL if the sdp string can't be parsed.
 // |error| can be NULL if doesn't care about the failure reason.
-WEBRTC_EXPORT IceCandidateInterface* CreateIceCandidate(const std::string& sdp_mid,
+IceCandidateInterface* CreateIceCandidate(const std::string& sdp_mid,
                                           int sdp_mline_index,
                                           const std::string& sdp,
                                           SdpParseError* error);
@@ -113,7 +112,7 @@ class SessionDescriptionInterface {
 // Creates a SessionDescriptionInterface based on SDP string and the type.
 // Returns NULL if the sdp string can't be parsed or the type is unsupported.
 // |error| can be NULL if doesn't care about the failure reason.
-WEBRTC_EXPORT SessionDescriptionInterface* CreateSessionDescription(const std::string& type,
+SessionDescriptionInterface* CreateSessionDescription(const std::string& type,
                                                       const std::string& sdp,
                                                       SdpParseError* error);
 

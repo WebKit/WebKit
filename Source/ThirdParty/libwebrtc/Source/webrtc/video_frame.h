@@ -11,7 +11,6 @@
 #ifndef WEBRTC_VIDEO_FRAME_H_
 #define WEBRTC_VIDEO_FRAME_H_
 
-#include "webrtc/base/export.h"
 #include "webrtc/base/scoped_ref_ptr.h"
 #include "webrtc/base/timeutils.h"
 #include "webrtc/common_types.h"
@@ -21,7 +20,7 @@
 
 namespace webrtc {
 
-class WEBRTC_EXPORT VideoFrame {
+class VideoFrame {
  public:
   // TODO(nisse): Deprecated. Using the default constructor violates the
   // reasonable assumption that video_frame_buffer() returns a valid buffer.

@@ -93,7 +93,7 @@ class Runnable {
 
 // WARNING! SUBCLASSES MUST CALL Stop() IN THEIR DESTRUCTORS!  See ~Thread().
 
-class LOCKABLE WEBRTC_EXPORT Thread : public MessageQueue {
+class LOCKABLE Thread : public MessageQueue {
  public:
   // Create a new Thread and optionally assign it to the passed SocketServer.
   Thread();

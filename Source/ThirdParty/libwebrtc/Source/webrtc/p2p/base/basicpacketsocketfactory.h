@@ -11,7 +11,6 @@
 #ifndef WEBRTC_P2P_BASE_BASICPACKETSOCKETFACTORY_H_
 #define WEBRTC_P2P_BASE_BASICPACKETSOCKETFACTORY_H_
 
-#include "webrtc/base/export.h"
 #include "webrtc/p2p/base/packetsocketfactory.h"
 
 namespace rtc {
@@ -20,7 +19,7 @@ class AsyncSocket;
 class SocketFactory;
 class Thread;
 
-class WEBRTC_EXPORT BasicPacketSocketFactory : public PacketSocketFactory {
+class BasicPacketSocketFactory : public PacketSocketFactory {
  public:
   BasicPacketSocketFactory();
   explicit BasicPacketSocketFactory(Thread* thread);

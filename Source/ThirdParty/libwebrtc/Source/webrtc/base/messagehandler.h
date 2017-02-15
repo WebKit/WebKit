@@ -15,7 +15,6 @@
 #include <utility>
 
 #include "webrtc/base/constructormagic.h"
-#include "webrtc/base/export.h"
 
 namespace rtc {
 
@@ -23,7 +22,7 @@ struct Message;
 
 // Messages get dispatched to a MessageHandler
 
-class WEBRTC_EXPORT MessageHandler {
+class MessageHandler {
  public:
   virtual ~MessageHandler();
   virtual void OnMessage(Message* msg) = 0;

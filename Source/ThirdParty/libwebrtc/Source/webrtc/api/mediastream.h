@@ -18,11 +18,10 @@
 
 #include "webrtc/api/mediastreaminterface.h"
 #include "webrtc/api/notifier.h"
-#include "webrtc/base/export.h"
 
 namespace webrtc {
 
-class WEBRTC_EXPORT MediaStream : public Notifier<MediaStreamInterface> {
+class MediaStream : public Notifier<MediaStreamInterface> {
  public:
   static rtc::scoped_refptr<MediaStream> Create(const std::string& label);
 

@@ -65,7 +65,6 @@
 #include "webrtc/api/rtpsenderinterface.h"
 #include "webrtc/api/statstypes.h"
 #include "webrtc/api/umametrics.h"
-#include "webrtc/base/export.h"
 #include "webrtc/base/fileutils.h"
 #include "webrtc/base/network.h"
 #include "webrtc/base/rtccertificate.h"
@@ -740,7 +739,7 @@ CreatePeerConnectionFactory();
 //
 // If non-null, ownership of |default_adm|, |encoder_factory| and
 // |decoder_factory| are transferred to the returned factory.
-WEBRTC_EXPORT rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
+rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
     rtc::Thread* network_thread,
     rtc::Thread* worker_thread,
     rtc::Thread* signaling_thread,

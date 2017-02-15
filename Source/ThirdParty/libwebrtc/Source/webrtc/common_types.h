@@ -27,12 +27,10 @@
 #pragma warning(disable : 4351)
 #endif
 
-#if defined(WIN32)
 #if defined(WEBRTC_EXPORT)
 #define WEBRTC_DLLEXPORT _declspec(dllexport)
 #elif defined(WEBRTC_DLL)
 #define WEBRTC_DLLEXPORT _declspec(dllimport)
-#endif
 #else
 #define WEBRTC_DLLEXPORT
 #endif

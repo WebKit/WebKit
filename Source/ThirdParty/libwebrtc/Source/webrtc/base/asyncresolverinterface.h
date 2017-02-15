@@ -11,14 +11,13 @@
 #ifndef WEBRTC_BASE_ASYNCRESOLVERINTERFACE_H_
 #define WEBRTC_BASE_ASYNCRESOLVERINTERFACE_H_
 
-#include "webrtc/base/export.h"
 #include "webrtc/base/sigslot.h"
 #include "webrtc/base/socketaddress.h"
 
 namespace rtc {
 
 // This interface defines the methods to resolve the address asynchronously.
-class WEBRTC_EXPORT AsyncResolverInterface {
+class AsyncResolverInterface {
  public:
   AsyncResolverInterface();
   virtual ~AsyncResolverInterface();

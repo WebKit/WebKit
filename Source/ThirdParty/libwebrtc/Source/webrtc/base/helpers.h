@@ -13,7 +13,6 @@
 
 #include <string>
 #include "webrtc/base/basictypes.h"
-#include "webrtc/base/export.h"
 
 namespace rtc {
 
@@ -26,7 +25,7 @@ bool InitRandom(const char* seed, size_t len);
 
 // Generates a (cryptographically) random string of the given length.
 // We generate base64 values so that they will be printable.
-WEBRTC_EXPORT std::string CreateRandomString(size_t length);
+std::string CreateRandomString(size_t length);
 
 // Generates a (cryptographically) random string of the given length.
 // We generate base64 values so that they will be printable.

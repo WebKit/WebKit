@@ -13,7 +13,6 @@
 
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/dscp.h"
-#include "webrtc/base/export.h"
 #include "webrtc/base/sigslot.h"
 #include "webrtc/base/socket.h"
 #include "webrtc/base/timeutils.h"
@@ -23,7 +22,7 @@ namespace rtc {
 // This structure holds the info needed to update the packet send time header
 // extension, including the information needed to update the authentication tag
 // after changing the value.
-struct WEBRTC_EXPORT PacketTimeUpdateParams {
+struct PacketTimeUpdateParams {
   PacketTimeUpdateParams();
   ~PacketTimeUpdateParams();
 
@@ -66,7 +65,7 @@ inline PacketTime CreatePacketTime(int64_t not_before) {
 
 // Provides the ability to receive packets asynchronously. Sends are not
 // buffered since it is acceptable to drop packets under high load.
-class WEBRTC_EXPORT AsyncPacketSocket : public sigslot::has_slots<> {
+class AsyncPacketSocket : public sigslot::has_slots<> {
  public:
   enum State {
     STATE_CLOSED,

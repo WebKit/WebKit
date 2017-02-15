@@ -16,13 +16,12 @@
 
 #include "webrtc/base/buffer.h"
 #include "webrtc/base/checks.h"
-#include "webrtc/base/export.h"
 #include "webrtc/base/refcount.h"
 #include "webrtc/base/scoped_ref_ptr.h"
 
 namespace rtc {
 
-class WEBRTC_EXPORT CopyOnWriteBuffer {
+class CopyOnWriteBuffer {
  public:
   // An empty buffer.
   CopyOnWriteBuffer();

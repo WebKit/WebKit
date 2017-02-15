@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <vector>
 
-#include "webrtc/base/export.h"
 #include "webrtc/common_types.h"  // RawVideoTypes.
 #include "webrtc/common_video/rotation.h"
 #include "webrtc/typedefs.h"
@@ -101,7 +100,7 @@ int ExtractBuffer(const VideoFrame& input_frame, size_t size, uint8_t* buffer);
 // calls pass |src_video_type| == kI420, and should use libyuv::I420Copy. The
 // only exception at the time of this writing is
 // VideoCaptureImpl::IncomingFrame, which still needs libyuv::ConvertToI420.
-WEBRTC_EXPORT int ConvertToI420(VideoType src_video_type,
+int ConvertToI420(VideoType src_video_type,
                   const uint8_t* src_frame,
                   int crop_x,
                   int crop_y,

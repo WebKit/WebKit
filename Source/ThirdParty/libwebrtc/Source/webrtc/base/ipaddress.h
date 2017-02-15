@@ -27,7 +27,6 @@
 
 #include "webrtc/base/basictypes.h"
 #include "webrtc/base/byteorder.h"
-#include "webrtc/base/export.h"
 #if defined(WEBRTC_WIN)
 #include "webrtc/base/win32.h"
 #endif
@@ -48,7 +47,7 @@ enum IPv6AddressFlag {
 };
 
 // Version-agnostic IP address class, wraps a union of in_addr and in6_addr.
-class WEBRTC_EXPORT IPAddress {
+class IPAddress {
  public:
   IPAddress() : family_(AF_UNSPEC) {
     ::memset(&u_, 0, sizeof(u_));

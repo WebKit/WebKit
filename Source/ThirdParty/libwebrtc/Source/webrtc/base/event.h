@@ -20,11 +20,10 @@
 #endif
 
 #include "webrtc/base/basictypes.h"
-#include "webrtc/base/export.h"
 
 namespace rtc {
 
-class WEBRTC_EXPORT Event {
+class Event {
  public:
   static const int kForever = -1;
 

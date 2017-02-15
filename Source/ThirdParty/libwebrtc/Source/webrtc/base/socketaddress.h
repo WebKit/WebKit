@@ -25,7 +25,7 @@ struct sockaddr_storage;
 namespace rtc {
 
 // Records an IP address and port.
-class WEBRTC_EXPORT SocketAddress {
+class SocketAddress {
  public:
   // Creates a nil address.
   SocketAddress();
