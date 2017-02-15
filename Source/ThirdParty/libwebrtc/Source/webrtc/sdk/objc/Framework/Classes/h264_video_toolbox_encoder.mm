@@ -390,7 +390,7 @@ int H264VideoToolboxEncoder::Encode(
   if (!callback_ || !compression_session_) {
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
   }
-#if defined(WEBRTC_IOS)
+#if defined(WEBRTC_IOS) && !defined(WEBRTC_WEBKIT_BUILD)
   if (!RTCIsUIApplicationActive()) {
     // Ignore all encode requests when app isn't active. In this state, the
     // hardware encoder has been invalidated by the OS.

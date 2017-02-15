@@ -1,3 +1,21 @@
+2017-02-15  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Remove libwebrtc ObjectiveC files that use UIKit
+        https://bugs.webkit.org/show_bug.cgi?id=168392
+
+        Reviewed by Alex Christensen.
+
+        Removing default AudioDeviceModule as WebKit is providing its own.
+        Removing checks for active application in H264 codec as WebKit should be made responsible for that.
+        Removing no longer needed ObjectiveC files.
+
+        * Configurations/libwebrtc.xcconfig:
+        * Configurations/libwebrtcpcrtc.xcconfig:
+        * Source/webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_decoder.cc:
+        * Source/webrtc/sdk/objc/Framework/Classes/h264_video_toolbox_encoder.mm:
+        (webrtc::H264VideoToolboxEncoder::Encode):
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2017-02-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r212326.
