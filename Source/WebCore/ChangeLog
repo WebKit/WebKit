@@ -1,5 +1,32 @@
 2017-02-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GStreamer] Implement MediaPlayerPrivate::hasSingleSecurityOrigin()
+        https://bugs.webkit.org/show_bug.cgi?id=168322
+
+        Reviewed by Žan Doberšek.
+
+        It currently returns true unconditionally. Add resolved-location property to WebKitWebSourceGStreamer to track
+        the resolved url returned by the server and use that from MediaPlayerPrivate to check if there was a cross
+        origin redirection.
+
+        Fixes: http/tests/security/canvas-remote-read-remote-video-redirect.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::hasSingleSecurityOrigin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcFinalize):
+        (webKitWebSrcGetProperty):
+        (webKitWebSrcStart):
+        (webKitWebSrcQueryWithParent):
+        (webKitWebSrcGetUri):
+        (webKitWebSrcSetUri):
+        (StreamingClient::handleResponseReceived):
+        (ResourceHandleStreamingClient::wasBlocked):
+        (ResourceHandleStreamingClient::cannotShowURL):
+
+2017-02-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed, rolling out r211967.
 
         Caused rendering issues in HiDPI

@@ -132,7 +132,8 @@ enum MainThreadSourceNotification {
 struct _WebKitWebSrcPrivate {
     GstAppSrc* appsrc;
     GstPad* srcpad;
-    gchar* uri;
+    CString originalURI;
+    CString resolvedURI;
     bool keepAlive;
     GUniquePtr<GstStructure> extraHeaders;
     bool compress;
@@ -162,6 +163,7 @@ struct _WebKitWebSrcPrivate {
 enum {
     PROP_0,
     PROP_LOCATION,
+    PROP_RESOLVED_LOCATION,
     PROP_KEEP_ALIVE,
     PROP_EXTRA_HEADERS,
     PROP_COMPRESS,
@@ -230,13 +232,13 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
 
     /* Allows setting the uri using the 'location' property, which is used
      * for example by gst_element_make_from_uri() */
-    g_object_class_install_property(oklass,
-                                    PROP_LOCATION,
-                                    g_param_spec_string("location",
-                                                        "location",
-                                                        "Location to read from",
-                                                        0,
-                                                        (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+    g_object_class_install_property(oklass, PROP_LOCATION,
+        g_param_spec_string("location", "location", "Location to read from",
+            nullptr, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+    g_object_class_install_property(oklass, PROP_RESOLVED_LOCATION,
+        g_param_spec_string("resolved-location", "Resolved location", "The location resolved by the server",
+            nullptr, static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
 
     g_object_class_install_property(oklass, PROP_KEEP_ALIVE,
         g_param_spec_boolean("keep-alive", "keep-alive", "Use HTTP persistent connections",
@@ -324,10 +326,8 @@ static void webKitWebSrcDispose(GObject* object)
 
 static void webKitWebSrcFinalize(GObject* object)
 {
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(object);
-    WebKitWebSrcPrivate* priv = src->priv;
+    WebKitWebSrcPrivate* priv = WEBKIT_WEB_SRC(object)->priv;
 
-    g_free(priv->uri);
     priv->~WebKitWebSrcPrivate();
 
     GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
@@ -369,7 +369,10 @@ static void webKitWebSrcGetProperty(GObject* object, guint propID, GValue* value
     WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
     switch (propID) {
     case PROP_LOCATION:
-        g_value_set_string(value, priv->uri);
+        g_value_set_string(value, priv->originalURI.data());
+        break;
+    case PROP_RESOLVED_LOCATION:
+        g_value_set_string(value, priv->resolvedURI.data());
         break;
     case PROP_KEEP_ALIVE:
         g_value_set_boolean(value, priv->keepAlive);
@@ -503,7 +506,7 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     priv->didPassAccessControlCheck = false;
 
-    if (!priv->uri) {
+    if (priv->originalURI.isNull()) {
         GST_ERROR_OBJECT(src, "No URI provided");
         locker.unlock();
         webKitWebSrcStop(src);
@@ -512,8 +515,8 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     ASSERT(!priv->client);
 
-    GST_DEBUG_OBJECT(src, "Fetching %s", priv->uri);
-    URL url = URL(URL(), priv->uri);
+    GST_DEBUG_OBJECT(src, "Fetching %s", priv->originalURI.data());
+    URL url = URL(URL(), priv->originalURI.data());
 
     ResourceRequest request(url);
     request.setAllowCookies(true);
@@ -667,7 +670,7 @@ static gboolean webKitWebSrcQueryWithParent(GstPad* pad, GstObject* parent, GstQ
     }
     case GST_QUERY_URI: {
         WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
-        gst_query_set_uri(query, src->priv->uri);
+        gst_query_set_uri(query, src->priv->originalURI.data());
         result = TRUE;
         break;
     }
@@ -717,7 +720,7 @@ static gchar* webKitWebSrcGetUri(GstURIHandler* handler)
     gchar* ret;
 
     WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
-    ret = g_strdup(src->priv->uri);
+    ret = g_strdup(src->priv->originalURI.data());
     return ret;
 }
 
@@ -733,9 +736,7 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri, GEr
 
     WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
 
-    g_free(priv->uri);
-    priv->uri = 0;
-
+    priv->originalURI = CString();
     if (!uri)
         return TRUE;
 
@@ -745,7 +746,7 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri, GEr
         return FALSE;
     }
 
-    priv->uri = g_strdup(url.string().utf8().data());
+    priv->originalURI = url.string().utf8();
     return TRUE;
 }
 
@@ -888,6 +889,8 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
     WebKitWebSrcPrivate* priv = src->priv;
 
     GST_DEBUG_OBJECT(src, "Received response: %d", response.httpStatusCode());
+
+    priv->resolvedURI = response.url().string().utf8();
 
     if (response.httpStatusCode() >= 400) {
         GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Received %d HTTP error code", response.httpStatusCode()), (nullptr));
@@ -1191,7 +1194,7 @@ void ResourceHandleStreamingClient::wasBlocked(ResourceHandle*)
     GST_ERROR_OBJECT(src, "Request was blocked");
 
     WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
-    uri.reset(g_strdup(src->priv->uri));
+    uri.reset(g_strdup(src->priv->originalURI.data()));
     locker.unlock();
 
     GST_ELEMENT_ERROR(src, RESOURCE, OPEN_READ, ("Access to \"%s\" was blocked", uri.get()), (0));
@@ -1205,7 +1208,7 @@ void ResourceHandleStreamingClient::cannotShowURL(ResourceHandle*)
     GST_ERROR_OBJECT(src, "Cannot show URL");
 
     WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
-    uri.reset(g_strdup(src->priv->uri));
+    uri.reset(g_strdup(src->priv->originalURI.data()));
     locker.unlock();
 
     GST_ELEMENT_ERROR(src, RESOURCE, OPEN_READ, ("Can't show \"%s\"", uri.get()), (0));

@@ -1423,6 +1423,23 @@ void MediaPlayerPrivateGStreamer::sourceChanged()
     }
 }
 
+bool MediaPlayerPrivateGStreamer::hasSingleSecurityOrigin() const
+{
+    if (!WEBKIT_IS_WEB_SRC(m_source.get()))
+        return false;
+
+    GUniqueOutPtr<char> originalURI, resolvedURI;
+    g_object_get(m_source.get(), "location", &originalURI.outPtr(), "resolved-location", &resolvedURI.outPtr(), nullptr);
+    if (!originalURI || !resolvedURI)
+        return false;
+    if (!g_strcmp0(originalURI.get(), resolvedURI.get()))
+        return true;
+
+    Ref<SecurityOrigin> resolvedOrigin(SecurityOrigin::createFromString(String::fromUTF8(resolvedURI.get())));
+    Ref<SecurityOrigin> requestedOrigin(SecurityOrigin::createFromString(String::fromUTF8(originalURI.get())));
+    return resolvedOrigin->isSameSchemeHostPort(requestedOrigin.get());
+}
+
 void MediaPlayerPrivateGStreamer::cancelLoad()
 {
     if (m_networkState < MediaPlayer::Loading || m_networkState == MediaPlayer::Loaded)
