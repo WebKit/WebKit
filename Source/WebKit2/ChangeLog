@@ -1,3 +1,21 @@
+2017-02-15  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r183937): Fullscreen Exit animation missing mask
+        https://bugs.webkit.org/show_bug.cgi?id=168360
+
+        Reviewed by Eric Carlson.
+
+        In r183937, the fullscreen window's clip layer has it's mask removed when the enter
+        fullscreen animation completes, allowing low-power video playback mode to be entered. But
+        this breaks the exit fullscreen animaiton, which assumes a mask is present. Abstract the
+        mask creation code out into a static helper method, and use it at the beginning of the exit
+        fullscreen animation to re-create the mask before adding animations to it.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (createMask):
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]):
+        (-[WKFullScreenWindowController _startExitFullScreenAnimationWithDuration:]):
+
 2017-02-15  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r212169.
