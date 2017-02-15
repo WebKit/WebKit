@@ -110,7 +110,7 @@ void WebDragClient::willPerformDragSourceAction(DragSourceAction action, const I
         const_cast<Pasteboard&>(dataTransfer.pasteboard()).setExternalDataObject(newDataObject.get());
 }
 
-void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, const IntPoint& dragPoint, const FloatPoint&, DataTransfer& dataTransfer, Frame& frame, bool isLink)
+void WebDragClient::startDrag(DragImage image, const IntPoint& imageOrigin, const IntPoint& dragPoint, const FloatPoint&, DataTransfer& dataTransfer, Frame& frame, DragSourceAction dragSourceAction)
 {
     //FIXME: Allow UIDelegate to override behaviour <rdar://problem/5015953>
 
@@ -129,7 +129,7 @@ void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, c
             if(SUCCEEDED(CoCreateInstance(CLSID_DragDropHelper, 0, CLSCTX_INPROC_SERVER,
                 IID_IDragSourceHelper,(LPVOID*)&helper))) {
                 BITMAP b;
-                GetObject(image, sizeof(BITMAP), &b);
+                GetObject(image.get(), sizeof(BITMAP), &b);
                 SHDRAGIMAGE sdi;
                 sdi.sizeDragImage.cx = b.bmWidth;
                 sdi.sizeDragImage.cy = b.bmHeight;
@@ -137,7 +137,7 @@ void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, c
                 sdi.hbmpDragImage = image;
                 sdi.ptOffset.x = dragPoint.x() - imageOrigin.x();
                 sdi.ptOffset.y = dragPoint.y() - imageOrigin.y();
-                if (isLink)
+                if (dragSourceAction == DragSourceActionLink)
                     sdi.ptOffset.y = b.bmHeight - sdi.ptOffset.y;
 
                 helper->InitializeFromBitmap(&sdi, dataObject.get());

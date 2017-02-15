@@ -1,3 +1,16 @@
+2017-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Modernize DragClient::startDrag somewhat
+        https://bugs.webkit.org/show_bug.cgi?id=168379
+
+        Reviewed by Tim Horton.
+
+        Update for WebCore changes.
+
+        * WebCoreSupport/WebDragClient.h:
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::startDrag):
+
 2017-02-14  Dean Jackson  <dino@apple.com>
 
         Rename preferLowPowerWebGLRendering setting to forceWebGLUsesLowPower

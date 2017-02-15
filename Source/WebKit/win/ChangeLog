@@ -1,3 +1,15 @@
+2017-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Modernize DragClient::startDrag somewhat
+        https://bugs.webkit.org/show_bug.cgi?id=168379
+
+        Reviewed by Tim Horton.
+
+        Update for WebCore changes.
+
+        * WebCoreSupport/WebDragClient.cpp:
+        (WebDragClient::startDrag):
+
 2017-02-10  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the WinCairo 64-Bit Release build following <https://trac.webkit.org/changeset/212173>

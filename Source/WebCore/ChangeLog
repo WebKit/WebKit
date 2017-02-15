@@ -1,3 +1,21 @@
+2017-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Modernize DragClient::startDrag somewhat
+        https://bugs.webkit.org/show_bug.cgi?id=168379
+
+        Reviewed by Tim Horton.
+
+        Change DragClient::startDrag to take a DragImage instead of a DragImageRef, and to pass along the source action
+        instead of whether it's a link or not.
+
+        * loader/EmptyClients.cpp:
+        * page/DragClient.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        (WebCore::DragController::doImageDrag):
+        (WebCore::DragController::doSystemDrag):
+        * page/DragController.h:
+
 2017-02-15  Chris Dumez  <cdumez@apple.com>
 
         Expose Symbol.toPrimitive / valueOf on Location instances
