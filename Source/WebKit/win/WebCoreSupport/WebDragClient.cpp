@@ -134,7 +134,7 @@ void WebDragClient::startDrag(DragImage image, const IntPoint& imageOrigin, cons
                 sdi.sizeDragImage.cx = b.bmWidth;
                 sdi.sizeDragImage.cy = b.bmHeight;
                 sdi.crColorKey = 0xffffffff;
-                sdi.hbmpDragImage = image;
+                sdi.hbmpDragImage = image.get();
                 sdi.ptOffset.x = dragPoint.x() - imageOrigin.x();
                 sdi.ptOffset.y = dragPoint.y() - imageOrigin.y();
                 if (dragSourceAction == DragSourceActionLink)

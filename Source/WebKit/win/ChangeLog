@@ -1,5 +1,12 @@
 2017-02-15  Anders Carlsson  <andersca@apple.com>
 
+        Another attempt at fixing the Windows build.
+
+        * WebCoreSupport/WebDragClient.cpp:
+        (WebDragClient::startDrag):
+
+2017-02-15  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the Windows build.
 
         * WebCoreSupport/WebDragClient.h:
