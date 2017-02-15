@@ -1,3 +1,19 @@
+2017-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] Several tests are timing out after r212349
+        https://bugs.webkit.org/show_bug.cgi?id=168359
+
+        Reviewed by Žan Doberšek.
+
+        This is because they are failing the cross origin check. Those tests are not using WebKitWebSrc, but
+        GstFileSrc. I didn't consider the case of source not being a WebKitWebSrc.
+
+        Fixes several timeout instroduced in r212349.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::hasSingleSecurityOrigin): Split the source check in two. First check if
+        it's nullptr, and return false. Then check if it's a WebKitWebSrc and return true if it isn't.
+
 2017-02-14  Brent Fulgham  <bfulgham@apple.com>
 
         Revalidate URL after events that could trigger navigations

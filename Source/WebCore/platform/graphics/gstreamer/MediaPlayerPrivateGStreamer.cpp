@@ -1425,8 +1425,11 @@ void MediaPlayerPrivateGStreamer::sourceChanged()
 
 bool MediaPlayerPrivateGStreamer::hasSingleSecurityOrigin() const
 {
-    if (!WEBKIT_IS_WEB_SRC(m_source.get()))
+    if (!m_source)
         return false;
+
+    if (!WEBKIT_IS_WEB_SRC(m_source.get()))
+        return true;
 
     GUniqueOutPtr<char> originalURI, resolvedURI;
     g_object_get(m_source.get(), "location", &originalURI.outPtr(), "resolved-location", &resolvedURI.outPtr(), nullptr);
