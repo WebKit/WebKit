@@ -1759,6 +1759,12 @@ webkit.org/b/163781 media/muted-video-is-playing-audio.html [ Timeout ]
 
 webkit.org/b/163850 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-move-within-document.html [ Timeout ]
 
+webkit.org/b/168373 http/tests/media/track-in-band-hls-metadata-crash.html [ Timeout ]
+webkit.org/b/168373 media/media-fullscreen-loop-inline.html [ Timeout ]
+webkit.org/b/168373 media/media-source/media-source-error-crash.html [ Timeout ]
+webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
+webkit.org/b/168373 media/video-multiple-concurrent-playback.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2807,6 +2813,20 @@ webkit.org/b/168191 fast/text/system-font-weight.html [ Failure ]
 webkit.org/b/168191 fast/text/trak-optimizeLegibility.html [ Failure ]
 
 webkit.org/b/168192 http/tests/media/hls/video-duration-accessibility.html [ Failure ]
+
+webkit.org/b/168369 accessibility/gtk/text-at-offset-textarea.html [ Failure ]
+webkit.org/b/168369 accessibility/gtk/text-at-offset-textinput.html [ Failure ]
+webkit.org/b/168370 accessibility/hidden-th-still-column-header.html [ Failure ]
+webkit.org/b/168370 accessibility/selected-text-range-aria-elements.html [ Failure ]
+
+webkit.org/b/168373 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Failure ]
+webkit.org/b/168373 fast/mediastream/RTCPeerConnection-more-media-to-negotiate.html [ Failure ]
+webkit.org/b/168373 fullscreen/video-controls-rtl.html [ Failure ]
+webkit.org/b/168373 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplaythrough.html [ Failure ]
+webkit.org/b/168373 media/media-preload-no-delay-loadevent.html [ Failure ]
+webkit.org/b/168373 media/track/track-datacue.html [ Failure ]
+webkit.org/b/168373 media/video-background-playback.html [ Failure ]
+webkit.org/b/168373 media/video-concurrent-playback.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

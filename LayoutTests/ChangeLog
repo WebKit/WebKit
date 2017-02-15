@@ -1,5 +1,11 @@
 2017-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Mark a11y and media tests currently failing.
+
+        * platform/gtk/TestExpectations:
+
+2017-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Skip tests that need DASHBOARD_SUPPORT enabled.
 
         * platform/gtk/TestExpectations:
