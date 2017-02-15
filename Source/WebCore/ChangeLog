@@ -1,3 +1,20 @@
+2017-02-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] MediaKeys::setServerCertificate() must resolve with 'false' when certificates aren't supported
+        https://bugs.webkit.org/show_bug.cgi?id=168362
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        In MediaKeys::setServerCertificate(), when the CDM implementation
+        doesn't support server certificates, it should resolve the promise
+        with the 'false' value, as mandated by the specification, and not
+        reject it.
+
+        A test case in mock-MediaKeys-setServerCertificate.html is updated.
+
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::setServerCertificate):
+
 2017-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION (r206014): HTTPHeaderMap does not consistently use comma without space to separate values of header fields

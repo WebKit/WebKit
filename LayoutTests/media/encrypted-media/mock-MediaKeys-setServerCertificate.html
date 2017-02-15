@@ -79,7 +79,10 @@
         function() {
             run('mock.supportsServerCertificates = false');
             run('promise = mediaKeys.setServerCertificate(stringToUInt8Array("valid"))');
-            shouldReject(promise).then(next, next);
+            shouldResolve(promise).then(function(result) {
+                testExpected(result, false);
+                next();
+            }, next);
         },
     ];
     </script>

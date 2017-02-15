@@ -78,7 +78,7 @@ void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<
     // 1. If the Key System implementation represented by this object's cdm implementation value does not support
     //    server certificates, return a promise resolved with false.
     if (!m_implementation->supportsServerCertificates()) {
-        promise->reject(false);
+        promise->resolve<IDLBoolean>(false);
         return;
     }
 
