@@ -1,3 +1,22 @@
+2017-02-15  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][MSE][EME] Handle protection event also at decryptor level
+        https://bugs.webkit.org/show_bug.cgi?id=168316
+
+        Reviewed by Žan Doberšek.
+
+        So far in MSE pipeline we were handling the encryption events
+        only when they arrived at the demuxer but this won't work in any
+        kind of key renegotiation as the event will never arrive. Now we
+        connect to the element messages, check for the drm id and send it
+        to the private player for processing.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::appendPipelineElementMessageCallback):
+        (WebCore::AppendPipeline::AppendPipeline):
+        (WebCore::AppendPipeline::handleElementMessage):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+
 2017-02-15  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME] MediaKeys::setServerCertificate() must resolve with 'false' when certificates aren't supported
