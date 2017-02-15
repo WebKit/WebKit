@@ -1,5 +1,11 @@
 2017-02-15  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the Windows build.
+
+        * WebCoreSupport/WebDragClient.h:
+
+2017-02-15  Anders Carlsson  <andersca@apple.com>
+
         Modernize DragClient::startDrag somewhat
         https://bugs.webkit.org/show_bug.cgi?id=168379
 
