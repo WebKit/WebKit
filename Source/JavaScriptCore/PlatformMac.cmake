@@ -13,7 +13,6 @@ list(APPEND JavaScriptCore_SOURCES
     inspector/remote/RemoteControllableTarget.cpp
     inspector/remote/RemoteInspectionTarget.cpp
     inspector/remote/RemoteInspector.cpp
-    inspector/remote/RemoteInspectorXPCConnection.mm
 
     inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm
     inspector/remote/cocoa/RemoteInspectorCocoa.mm
