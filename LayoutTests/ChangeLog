@@ -1,5 +1,11 @@
 2017-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Mark several IndexedDB tests as crashing.
+
+        * platform/gtk/TestExpectations:
+
+2017-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline http/tests/security/video-cross-origin-accessfailure.html.
 
         * http/tests/security/video-cross-origin-accessfailure-expected.txt:

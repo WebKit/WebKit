@@ -907,6 +907,10 @@ webkit.org/b/168171 http/tests/loading/resourceLoadStatistics/prevalent-resource
 webkit.org/b/168171 http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction.html [ Crash ]
 webkit.org/b/168171 http/tests/loading/resourceLoadStatistics/prevalent-resource-without-user-interaction.html [ Crash ]
 
+webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating.html [ Crash ]
+webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating_index.html [ Crash ]
+webkit.org/b/167576 storage/indexeddb/modern/index-3-private.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
