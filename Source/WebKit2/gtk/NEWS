@@ -1,4 +1,14 @@
 ==================
+WebKitGTK+  2.14.5
+==================
+
+What's new in WebKitGTK+ 2.14.5?
+
+  - Fix rendering of non-accelerated contents with HiDPI.
+  - Revert the fix for rendering issues in long documents with transparent background because it caused
+    issues in HiDPI.
+
+==================
 WebKitGTK+  2.14.4
 ==================
 
