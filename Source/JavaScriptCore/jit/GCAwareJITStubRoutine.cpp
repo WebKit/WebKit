@@ -132,7 +132,7 @@ void GCAwareJITStubRoutineWithExceptionHandler::observeZeroRefCount()
 }
 
 
-PassRefPtr<JITStubRoutine> createJITStubRoutine(
+Ref<JITStubRoutine> createJITStubRoutine(
     const MacroAssemblerCodeRef& code,
     VM& vm,
     const JSCell* owner,
@@ -142,17 +142,17 @@ PassRefPtr<JITStubRoutine> createJITStubRoutine(
     CallSiteIndex exceptionHandlerCallSiteIndex)
 {
     if (!makesCalls)
-        return adoptRef(new JITStubRoutine(code));
+        return adoptRef(*new JITStubRoutine(code));
     
     if (codeBlockForExceptionHandlers) {
         RELEASE_ASSERT(JITCode::isOptimizingJIT(codeBlockForExceptionHandlers->jitType()));
-        return adoptRef(new GCAwareJITStubRoutineWithExceptionHandler(code, vm, owner, cells, codeBlockForExceptionHandlers, exceptionHandlerCallSiteIndex));
+        return adoptRef(*new GCAwareJITStubRoutineWithExceptionHandler(code, vm, owner, cells, codeBlockForExceptionHandlers, exceptionHandlerCallSiteIndex));
     }
 
     if (cells.isEmpty())
-        return adoptRef(new GCAwareJITStubRoutine(code, vm));
+        return adoptRef(*new GCAwareJITStubRoutine(code, vm));
     
-    return adoptRef(new MarkingGCAwareJITStubRoutine(code, vm, owner, cells));
+    return adoptRef(*new MarkingGCAwareJITStubRoutine(code, vm, owner, cells));
 }
 
 } // namespace JSC

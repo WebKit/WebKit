@@ -34,7 +34,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/text/WTFString.h>
@@ -52,7 +51,7 @@ public:
     Bytecodes* ensureBytecodesFor(CodeBlock*);
     void notifyDestruction(CodeBlock*);
     
-    void addCompilation(CodeBlock*, PassRefPtr<Compilation>);
+    void addCompilation(CodeBlock*, Ref<Compilation>&&);
     
     // Converts the database to a JavaScript object that is suitable for JSON stringification.
     // Note that it's probably a good idea to use an ExecState* associated with a global
@@ -85,8 +84,8 @@ private:
     VM& m_vm;
     SegmentedVector<Bytecodes> m_bytecodes;
     HashMap<CodeBlock*, Bytecodes*> m_bytecodesMap;
-    Vector<RefPtr<Compilation>> m_compilations;
-    HashMap<CodeBlock*, RefPtr<Compilation>> m_compilationMap;
+    Vector<Ref<Compilation>> m_compilations;
+    HashMap<CodeBlock*, Ref<Compilation>> m_compilationMap;
     Vector<Event> m_events;
     bool m_shouldSaveAtExit;
     CString m_atExitSaveFilename;

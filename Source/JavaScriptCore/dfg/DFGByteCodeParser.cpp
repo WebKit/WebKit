@@ -1629,7 +1629,7 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
     ASSERT(lastBlock->terminal());
 
     // Need to create a new basic block for the continuation at the caller.
-    RefPtr<BasicBlock> block = adoptRef(new BasicBlock(nextOffset, m_numArguments, m_numLocals, 1));
+    Ref<BasicBlock> block = adoptRef(*new BasicBlock(nextOffset, m_numArguments, m_numLocals, 1));
 
     // Link the early returns to the basic block we're about to create.
     for (size_t i = 0; i < inlineStackEntry.m_unlinkedBlocks.size(); ++i) {
@@ -1640,22 +1640,22 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
         Node* node = blockToLink->terminal();
         ASSERT(node->op() == Jump);
         ASSERT(!node->targetBlock());
-        node->targetBlock() = block.get();
+        node->targetBlock() = block.ptr();
         inlineStackEntry.m_unlinkedBlocks[i].m_needsEarlyReturnLinking = false;
         if (verbose)
             dataLog("Marking ", RawPointer(blockToLink), " as linked (jumps to return)\n");
         blockToLink->didLink();
     }
     
-    m_currentBlock = block.get();
+    m_currentBlock = block.ptr();
     ASSERT(m_inlineStackTop->m_caller->m_blockLinkingTargets.isEmpty() || m_inlineStackTop->m_caller->m_blockLinkingTargets.last()->bytecodeBegin < nextOffset);
     if (verbose)
-        dataLog("Adding unlinked block ", RawPointer(block.get()), " (many returns)\n");
+        dataLog("Adding unlinked block ", RawPointer(block.ptr()), " (many returns)\n");
     if (callerLinkability == CallerDoesNormalLinking) {
-        m_inlineStackTop->m_caller->m_unlinkedBlocks.append(UnlinkedBlock(block.get()));
-        m_inlineStackTop->m_caller->m_blockLinkingTargets.append(block.get());
+        m_inlineStackTop->m_caller->m_unlinkedBlocks.append(UnlinkedBlock(block.ptr()));
+        m_inlineStackTop->m_caller->m_blockLinkingTargets.append(block.ptr());
     }
-    m_graph.appendBlock(block);
+    m_graph.appendBlock(WTFMove(block));
     prepareToParseBlock();
 }
 
@@ -2002,9 +2002,9 @@ bool ByteCodeParser::handleInlining(
     
     for (unsigned i = 0; i < callLinkStatus.size(); ++i) {
         m_currentIndex = oldOffset;
-        RefPtr<BasicBlock> block = adoptRef(new BasicBlock(UINT_MAX, m_numArguments, m_numLocals, 1));
-        m_currentBlock = block.get();
-        m_graph.appendBlock(block);
+        Ref<BasicBlock> block = adoptRef(*new BasicBlock(UINT_MAX, m_numArguments, m_numLocals, 1));
+        m_currentBlock = block.ptr();
+        m_graph.appendBlock(block.copyRef());
         prepareToParseBlock();
         
         Node* myCallTargetNode = getDirect(calleeReg);
@@ -2017,9 +2017,9 @@ bool ByteCodeParser::handleInlining(
         if (!inliningResult) {
             // That failed so we let the block die. Nothing interesting should have been added to
             // the block. We also give up on inlining any of the (less frequent) callees.
-            ASSERT(m_currentBlock == block.get());
-            ASSERT(m_graph.m_blocks.last() == block);
-            m_graph.killBlockAndItsContents(block.get());
+            ASSERT(m_currentBlock == block.ptr());
+            ASSERT(m_graph.m_blocks.last() == block.ptr());
+            m_graph.killBlockAndItsContents(block.ptr());
             m_graph.m_blocks.removeLast();
             
             // The fact that inlining failed means we need a slow path.
@@ -2034,7 +2034,7 @@ bool ByteCodeParser::handleInlining(
             ASSERT(allAreClosureCalls);
             thingToCaseOn = callLinkStatus[i].executable();
         }
-        data.cases.append(SwitchCase(m_graph.freeze(thingToCaseOn), block.get()));
+        data.cases.append(SwitchCase(m_graph.freeze(thingToCaseOn), block.ptr()));
         m_currentIndex = nextOffset;
         m_exitOK = true;
         processSetLocalQueue(); // This only comes into play for intrinsics, since normal inlined code will leave an empty queue.
@@ -2052,17 +2052,17 @@ bool ByteCodeParser::handleInlining(
             dataLog("Finished inlining ", callLinkStatus[i], " at ", currentCodeOrigin(), ".\n");
     }
     
-    RefPtr<BasicBlock> slowPathBlock = adoptRef(
-        new BasicBlock(UINT_MAX, m_numArguments, m_numLocals, 1));
+    Ref<BasicBlock> slowPathBlock = adoptRef(
+        *new BasicBlock(UINT_MAX, m_numArguments, m_numLocals, 1));
     m_currentIndex = oldOffset;
     m_exitOK = true;
-    data.fallThrough = BranchTarget(slowPathBlock.get());
-    m_graph.appendBlock(slowPathBlock);
+    data.fallThrough = BranchTarget(slowPathBlock.ptr());
+    m_graph.appendBlock(slowPathBlock.copyRef());
     if (verbose)
-        dataLog("Marking ", RawPointer(slowPathBlock.get()), " as linked (slow path block)\n");
+        dataLog("Marking ", RawPointer(slowPathBlock.ptr()), " as linked (slow path block)\n");
     slowPathBlock->didLink();
     prepareToParseBlock();
-    m_currentBlock = slowPathBlock.get();
+    m_currentBlock = slowPathBlock.ptr();
     Node* myCallTargetNode = getDirect(calleeReg);
     if (couldTakeSlowPath) {
         addCall(
@@ -2086,17 +2086,17 @@ bool ByteCodeParser::handleInlining(
         landingBlocks.append(m_currentBlock);
     }
     
-    RefPtr<BasicBlock> continuationBlock = adoptRef(
-        new BasicBlock(UINT_MAX, m_numArguments, m_numLocals, 1));
-    m_graph.appendBlock(continuationBlock);
+    Ref<BasicBlock> continuationBlock = adoptRef(
+        *new BasicBlock(UINT_MAX, m_numArguments, m_numLocals, 1));
+    m_graph.appendBlock(continuationBlock.copyRef());
     if (verbose)
-        dataLog("Adding unlinked block ", RawPointer(continuationBlock.get()), " (continuation)\n");
-    m_inlineStackTop->m_unlinkedBlocks.append(UnlinkedBlock(continuationBlock.get()));
+        dataLog("Adding unlinked block ", RawPointer(continuationBlock.ptr()), " (continuation)\n");
+    m_inlineStackTop->m_unlinkedBlocks.append(UnlinkedBlock(continuationBlock.ptr()));
     prepareToParseBlock();
-    m_currentBlock = continuationBlock.get();
+    m_currentBlock = continuationBlock.ptr();
     
     for (unsigned i = landingBlocks.size(); i--;)
-        landingBlocks[i]->terminal()->targetBlock() = continuationBlock.get();
+        landingBlocks[i]->terminal()->targetBlock() = continuationBlock.ptr();
     
     m_currentIndex = oldOffset;
     m_exitOK = true;
@@ -5817,8 +5817,8 @@ void ByteCodeParser::parseCodeBlock()
                     m_currentBlock = m_graph.lastBlock();
                     m_currentBlock->bytecodeBegin = m_currentIndex;
                 } else {
-                    RefPtr<BasicBlock> block = adoptRef(new BasicBlock(m_currentIndex, m_numArguments, m_numLocals, 1));
-                    m_currentBlock = block.get();
+                    Ref<BasicBlock> block = adoptRef(*new BasicBlock(m_currentIndex, m_numArguments, m_numLocals, 1));
+                    m_currentBlock = block.ptr();
                     // This assertion checks two things:
                     // 1) If the bytecodeBegin is greater than currentIndex, then something has gone
                     //    horribly wrong. So, we're probably generating incorrect code.
@@ -5831,12 +5831,12 @@ void ByteCodeParser::parseCodeBlock()
                         ASSERT_UNUSED(
                             lastBegin, lastBegin == UINT_MAX || lastBegin < m_currentIndex);
                     }
-                    m_inlineStackTop->m_unlinkedBlocks.append(UnlinkedBlock(block.get()));
-                    m_inlineStackTop->m_blockLinkingTargets.append(block.get());
+                    m_inlineStackTop->m_unlinkedBlocks.append(UnlinkedBlock(block.ptr()));
+                    m_inlineStackTop->m_blockLinkingTargets.append(block.ptr());
                     // The first block is definitely an OSR target.
                     if (!m_graph.numBlocks())
                         block->isOSRTarget = true;
-                    m_graph.appendBlock(block);
+                    m_graph.appendBlock(WTFMove(block));
                     prepareToParseBlock();
                 }
             }

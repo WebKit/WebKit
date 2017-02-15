@@ -167,9 +167,10 @@ bool gatherDebuggerParseData(VM& vm, const SourceCode& source, DebuggerParseData
 
 bool gatherDebuggerParseDataForSource(VM& vm, SourceProvider* provider, DebuggerParseData& debuggerParseData)
 {
+    ASSERT(provider);
     int startLine = provider->startPosition().m_line.oneBasedInt();
     int startColumn = provider->startPosition().m_column.oneBasedInt();
-    SourceCode completeSource(provider, startLine, startColumn);
+    SourceCode completeSource(*provider, startLine, startColumn);
 
     switch (provider->sourceType()) {
     case SourceProviderSourceType::Program:

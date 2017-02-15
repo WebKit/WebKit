@@ -50,7 +50,7 @@ public:
     
     static Ref<Worklist> create(CString worklistName, unsigned numberOfThreads, int relativePriority = 0);
     
-    void enqueue(PassRefPtr<Plan>);
+    void enqueue(Ref<Plan>&&);
     
     // This is equivalent to:
     // worklist->waitUntilAllPlansForVMAreReady(vm);

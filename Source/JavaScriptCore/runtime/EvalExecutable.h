@@ -43,7 +43,7 @@ public:
         return m_evalCodeBlock.get();
     }
 
-    PassRefPtr<JITCode> generatedJITCode()
+    Ref<JITCode> generatedJITCode()
     {
         return generatedJITCodeForCall();
     }

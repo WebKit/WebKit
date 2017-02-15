@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-std::pair<TypeLocation*, bool> TypeLocationCache::getTypeLocation(GlobalVariableID globalVariableID, intptr_t sourceID, unsigned start, unsigned end, PassRefPtr<TypeSet> globalTypeSet, VM* vm)
+std::pair<TypeLocation*, bool> TypeLocationCache::getTypeLocation(GlobalVariableID globalVariableID, intptr_t sourceID, unsigned start, unsigned end, RefPtr<TypeSet>&& globalTypeSet, VM* vm)
 {
     LocationKey key;
     key.m_globalVariableID = globalVariableID;
@@ -48,7 +48,7 @@ std::pair<TypeLocation*, bool> TypeLocationCache::getTypeLocation(GlobalVariable
         location->m_sourceID = sourceID;
         location->m_divotStart = start;
         location->m_divotEnd = end;
-        location->m_globalTypeSet = globalTypeSet;
+        location->m_globalTypeSet = WTFMove(globalTypeSet);
 
         m_locationMap[key] = location;
         isNewLocation = true;

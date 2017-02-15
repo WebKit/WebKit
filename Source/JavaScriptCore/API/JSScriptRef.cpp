@@ -41,7 +41,7 @@ using namespace JSC;
 
 struct OpaqueJSScript : public SourceProvider {
 public:
-    static WTF::RefPtr<OpaqueJSScript> create(VM& vm, const SourceOrigin& sourceOrigin, const String& url, int startingLineNumber, const String& source)
+    static WTF::Ref<OpaqueJSScript> create(VM& vm, const SourceOrigin& sourceOrigin, const String& url, int startingLineNumber, const String& source)
     {
         return WTF::adoptRef(*new OpaqueJSScript(vm, sourceOrigin, url, startingLineNumber, source));
     }
@@ -97,7 +97,7 @@ JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef context
     auto result = OpaqueJSScript::create(vm, SourceOrigin { sourceURLString }, sourceURLString, startingLineNumber, String(StringImpl::createFromLiteral(source, length)));
 
     ParserError error;
-    if (!parseScript(vm, SourceCode(result), error)) {
+    if (!parseScript(vm, SourceCode(result.copyRef()), error)) {
         if (errorMessage)
             *errorMessage = OpaqueJSString::create(error.message()).leakRef();
         if (errorLine)
@@ -105,7 +105,7 @@ JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef context
         return nullptr;
     }
 
-    return result.leakRef();
+    return &result.leakRef();
 }
 
 JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef url, int startingLineNumber, JSStringRef source, JSStringRef* errorMessage, int* errorLine)
@@ -119,7 +119,7 @@ JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef
     auto result = OpaqueJSScript::create(vm, SourceOrigin { sourceURLString }, sourceURLString, startingLineNumber, source->string());
 
     ParserError error;
-    if (!parseScript(vm, SourceCode(result), error)) {
+    if (!parseScript(vm, SourceCode(result.copyRef()), error)) {
         if (errorMessage)
             *errorMessage = OpaqueJSString::create(error.message()).leakRef();
         if (errorLine)
@@ -127,7 +127,7 @@ JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef
         return nullptr;
     }
 
-    return result.leakRef();
+    return &result.leakRef();
 }
 
 void JSScriptRetain(JSScriptRef script)
@@ -152,7 +152,7 @@ JSValueRef JSScriptEvaluate(JSContextRef context, JSScriptRef script, JSValueRef
     }
     NakedPtr<Exception> internalException;
     JSValue thisValue = thisValueRef ? toJS(exec, thisValueRef) : jsUndefined();
-    JSValue result = evaluate(exec, SourceCode(script), thisValue, internalException);
+    JSValue result = evaluate(exec, SourceCode(*script), thisValue, internalException);
     if (internalException) {
         if (exception)
             *exception = toRef(exec, internalException->value());

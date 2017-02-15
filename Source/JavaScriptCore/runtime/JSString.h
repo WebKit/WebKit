@@ -97,10 +97,10 @@ public:
     static const unsigned MaxLength = std::numeric_limits<int32_t>::max();
     
 private:
-    JSString(VM& vm, PassRefPtr<StringImpl> value)
+    JSString(VM& vm, Ref<StringImpl>&& value)
         : JSCell(vm, vm.stringStructure.get())
         , m_flags(0)
-        , m_value(RefPtr<StringImpl>(value))
+        , m_value(WTFMove(value))
     {
     }
 
@@ -136,20 +136,18 @@ protected:
     }
 
 public:
-    static JSString* create(VM& vm, PassRefPtr<StringImpl> value)
+    static JSString* create(VM& vm, Ref<StringImpl>&& value)
     {
-        ASSERT(value);
         unsigned length = value->length();
         size_t cost = value->cost();
-        JSString* newString = new (NotNull, allocateCell<JSString>(vm.heap)) JSString(vm, value);
+        JSString* newString = new (NotNull, allocateCell<JSString>(vm.heap)) JSString(vm, WTFMove(value));
         newString->finishCreation(vm, length, cost);
         return newString;
     }
-    static JSString* createHasOtherOwner(VM& vm, PassRefPtr<StringImpl> value)
+    static JSString* createHasOtherOwner(VM& vm, Ref<StringImpl>&& value)
     {
-        ASSERT(value);
         size_t length = value->length();
-        JSString* newString = new (NotNull, allocateCell<JSString>(vm.heap)) JSString(vm, value);
+        JSString* newString = new (NotNull, allocateCell<JSString>(vm.heap)) JSString(vm, WTFMove(value));
         newString->finishCreation(vm, length);
         return newString;
     }
@@ -506,19 +504,19 @@ ALWAYS_INLINE JSString* jsSingleCharacterString(VM* vm, UChar c)
 {
     if (c <= maxSingleCharacterString)
         return vm->smallStrings.singleCharacterString(c);
-    return JSString::create(*vm, String(&c, 1).impl());
+    return JSString::create(*vm, StringImpl::create(&c, 1));
 }
 
 inline JSString* jsNontrivialString(VM* vm, const String& s)
 {
     ASSERT(s.length() > 1);
-    return JSString::create(*vm, s.impl());
+    return JSString::create(*vm, *s.impl());
 }
 
 inline JSString* jsNontrivialString(VM* vm, String&& s)
 {
     ASSERT(s.length() > 1);
-    return JSString::create(*vm, s.releaseImpl());
+    return JSString::create(*vm, s.releaseImpl().releaseNonNull());
 }
 
 ALWAYS_INLINE Identifier JSString::toIdentifier(ExecState* exec) const
@@ -572,7 +570,7 @@ inline JSString* jsString(VM* vm, const String& s)
         if (c <= maxSingleCharacterString)
             return vm->smallStrings.singleCharacterString(c);
     }
-    return JSString::create(*vm, s.impl());
+    return JSString::create(*vm, *s.impl());
 }
 
 inline JSString* jsSubstring(VM& vm, ExecState* exec, JSString* s, unsigned offset, unsigned length)
@@ -634,7 +632,7 @@ inline JSString* jsOwnedString(VM* vm, const String& s)
         if (c <= maxSingleCharacterString)
             return vm->smallStrings.singleCharacterString(c);
     }
-    return JSString::createHasOtherOwner(*vm, s.impl());
+    return JSString::createHasOtherOwner(*vm, *s.impl());
 }
 
 inline JSRopeString* jsStringBuilder(VM* vm)

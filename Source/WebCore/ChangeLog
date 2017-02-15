@@ -1,3 +1,18 @@
+2017-02-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop PassRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=168320
+
+        Reviewed by Saam Barati.
+
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        Use Ref and pass it to SourceCode.
+
+        * replay/ReplayController.cpp:
+        (WebCore::ReplayController::frameNavigated):
+        Pass reference.
+
 2017-02-15  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][MSE][EME] Handle protection event also at decryptor level

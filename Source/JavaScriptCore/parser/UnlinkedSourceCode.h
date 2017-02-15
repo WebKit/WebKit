@@ -47,15 +47,22 @@ namespace JSC {
         {
         }
 
-        UnlinkedSourceCode(PassRefPtr<SourceProvider> provider)
-            : m_provider(provider)
+        UnlinkedSourceCode(Ref<SourceProvider>&& provider)
+            : m_provider(WTFMove(provider))
             , m_startOffset(0)
             , m_endOffset(m_provider->source().length())
         {
         }
 
-        UnlinkedSourceCode(PassRefPtr<SourceProvider> provider, int startOffset, int endOffset)
-            : m_provider(provider)
+        UnlinkedSourceCode(Ref<SourceProvider>&& provider, int startOffset, int endOffset)
+            : m_provider(WTFMove(provider))
+            , m_startOffset(startOffset)
+            , m_endOffset(endOffset)
+        {
+        }
+
+        UnlinkedSourceCode(RefPtr<SourceProvider>&& provider, int startOffset, int endOffset)
+            : m_provider(WTFMove(provider))
             , m_startOffset(startOffset)
             , m_endOffset(endOffset)
         {
@@ -91,6 +98,8 @@ namespace JSC {
         int length() const { return m_endOffset - m_startOffset; }
 
     protected:
+        // FIXME: Make it Ref<SourceProvidier>.
+        // https://bugs.webkit.org/show_bug.cgi?id=168325
         RefPtr<SourceProvider> m_provider;
         int m_startOffset;
         int m_endOffset;

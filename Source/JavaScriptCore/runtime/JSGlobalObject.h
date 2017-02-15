@@ -44,7 +44,6 @@
 #include <JavaScriptCore/JSBase.h>
 #include <array>
 #include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
 
 struct OpaqueJSClass;
 struct OpaqueJSClassContextData;
@@ -379,7 +378,7 @@ public:
     VM& m_vm;
 
 #if ENABLE(WEB_REPLAY)
-    RefPtr<InputCursor> m_inputCursor;
+    Ref<InputCursor> m_inputCursor;
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -617,8 +616,8 @@ public:
     JS_EXPORT_PRIVATE bool remoteDebuggingEnabled() const;
 
 #if ENABLE(WEB_REPLAY)
-    JS_EXPORT_PRIVATE void setInputCursor(PassRefPtr<InputCursor>);
-    InputCursor& inputCursor() const { return *m_inputCursor; }
+    JS_EXPORT_PRIVATE void setInputCursor(Ref<InputCursor>&&);
+    InputCursor& inputCursor() const { return m_inputCursor.get(); }
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)

@@ -82,8 +82,8 @@ void TypeProfilerLog::processLogEntries(const String& reason)
         TypeLocation* location = entry->location;
         location->m_lastSeenType = type;
         if (location->m_globalTypeSet)
-            location->m_globalTypeSet->addTypeInformation(type, shape, structure);
-        location->m_instructionTypeSet->addTypeInformation(type, shape, structure);
+            location->m_globalTypeSet->addTypeInformation(type, shape.copyRef(), structure);
+        location->m_instructionTypeSet->addTypeInformation(type, WTFMove(shape), structure);
 
         entry++;
     }

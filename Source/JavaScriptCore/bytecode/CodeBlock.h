@@ -118,7 +118,7 @@ public:
 
 protected:
     CodeBlock(VM*, Structure*, CopyParsedBlockTag, CodeBlock& other);
-    CodeBlock(VM*, Structure*, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*, PassRefPtr<SourceProvider>, unsigned sourceOffset, unsigned firstLineColumnOffset);
+    CodeBlock(VM*, Structure*, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*, RefPtr<SourceProvider>&&, unsigned sourceOffset, unsigned firstLineColumnOffset);
 
     void finishCreation(VM&, CopyParsedBlockTag, CodeBlock& other);
     void finishCreation(VM&, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*);
@@ -312,15 +312,15 @@ public:
     // Exactly equivalent to codeBlock->ownerExecutable()->newReplacementCodeBlockFor(codeBlock->specializationKind())
     CodeBlock* newReplacement();
     
-    void setJITCode(PassRefPtr<JITCode> code)
+    void setJITCode(Ref<JITCode>&& code)
     {
         ASSERT(heap()->isDeferred());
         heap()->reportExtraMemoryAllocated(code->size());
         ConcurrentJSLocker locker(m_lock);
         WTF::storeStoreFence(); // This is probably not needed because the lock will also do something similar, but it's good to be paranoid.
-        m_jitCode = code;
+        m_jitCode = WTFMove(code);
     }
-    PassRefPtr<JITCode> jitCode() { return m_jitCode; }
+    RefPtr<JITCode> jitCode() { return m_jitCode; }
     static ptrdiff_t jitCodeOffset() { return OBJECT_OFFSETOF(CodeBlock, m_jitCode); }
     JITCode::JITType jitType() const
     {

@@ -549,8 +549,8 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrins
     UNUSED_PARAM(intrinsic);
 #endif // ENABLE(JIT)
     return NativeExecutable::create(*this,
-        adoptRef(new NativeJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_call_trampoline), JITCode::HostCallThunk)), function,
-        adoptRef(new NativeJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_construct_trampoline), JITCode::HostCallThunk)), constructor,
+        adoptRef(*new NativeJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_call_trampoline), JITCode::HostCallThunk)), function,
+        adoptRef(*new NativeJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_construct_trampoline), JITCode::HostCallThunk)), constructor,
         NoIntrinsic, signature, name);
 }
 
@@ -868,9 +868,9 @@ void VM::dumpTypeProfilerData()
     typeProfiler()->dumpTypeProfilerData(*this);
 }
 
-void VM::queueMicrotask(JSGlobalObject* globalObject, PassRefPtr<Microtask> task)
+void VM::queueMicrotask(JSGlobalObject* globalObject, Ref<Microtask>&& task)
 {
-    m_microtaskQueue.append(std::make_unique<QueuedTask>(*this, globalObject, task));
+    m_microtaskQueue.append(std::make_unique<QueuedTask>(*this, globalObject, WTFMove(task)));
 }
 
 void VM::drainMicrotasks()

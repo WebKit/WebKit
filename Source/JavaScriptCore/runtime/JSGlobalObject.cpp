@@ -1362,18 +1362,15 @@ bool JSGlobalObject::remoteDebuggingEnabled() const
 }
 
 #if ENABLE(WEB_REPLAY)
-void JSGlobalObject::setInputCursor(PassRefPtr<InputCursor> prpCursor)
+void JSGlobalObject::setInputCursor(Ref<InputCursor>&& cursor)
 {
-    m_inputCursor = prpCursor;
-    ASSERT(m_inputCursor);
-
-    InputCursor& cursor = inputCursor();
+    m_inputCursor = WTFMove(cursor);
     // Save or set the random seed. This performed here rather than the constructor
     // to avoid threading the input cursor through all the abstraction layers.
-    if (cursor.isCapturing())
-        cursor.appendInput<SetRandomSeed>(m_weakRandom.seed());
-    else if (cursor.isReplaying()) {
-        if (SetRandomSeed* input = cursor.fetchInput<SetRandomSeed>())
+    if (m_inputCursor->isCapturing())
+        m_inputCursor->appendInput<SetRandomSeed>(m_weakRandom.seed());
+    else if (m_inputCursor->isReplaying()) {
+        if (SetRandomSeed* input = m_inputCursor->fetchInput<SetRandomSeed>())
             m_weakRandom.setSeed(static_cast<unsigned>(input->randomSeed()));
     }
 }

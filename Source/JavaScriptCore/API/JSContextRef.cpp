@@ -133,12 +133,12 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
 {
     initializeThreading();
 
-    RefPtr<VM> vm = group ? PassRefPtr<VM>(toJS(group)) : VM::createContextGroup();
+    Ref<VM> vm = group ? Ref<VM>(*toJS(group)) : VM::createContextGroup();
 
-    JSLockHolder locker(vm.get());
+    JSLockHolder locker(vm.ptr());
 
     if (!globalObjectClass) {
-        JSGlobalObject* globalObject = JSGlobalObject::create(*vm, JSGlobalObject::createStructure(*vm, jsNull()));
+        JSGlobalObject* globalObject = JSGlobalObject::create(vm.get(), JSGlobalObject::createStructure(vm.get(), jsNull()));
 #if ENABLE(REMOTE_INSPECTOR)
         if (JSRemoteInspectorGetInspectionEnabledByDefault())
             globalObject->setRemoteDebuggingEnabled(true);
@@ -146,12 +146,12 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
         return JSGlobalContextRetain(toGlobalRef(globalObject->globalExec()));
     }
 
-    JSGlobalObject* globalObject = JSCallbackObject<JSGlobalObject>::create(*vm, globalObjectClass, JSCallbackObject<JSGlobalObject>::createStructure(*vm, 0, jsNull()));
+    JSGlobalObject* globalObject = JSCallbackObject<JSGlobalObject>::create(vm.get(), globalObjectClass, JSCallbackObject<JSGlobalObject>::createStructure(vm.get(), 0, jsNull()));
     ExecState* exec = globalObject->globalExec();
     JSValue prototype = globalObjectClass->prototype(exec);
     if (!prototype)
         prototype = jsNull();
-    globalObject->resetPrototype(*vm, prototype);
+    globalObject->resetPrototype(vm.get(), prototype);
 #if ENABLE(REMOTE_INSPECTOR)
     if (JSRemoteInspectorGetInspectionEnabledByDefault())
         globalObject->setRemoteDebuggingEnabled(true);

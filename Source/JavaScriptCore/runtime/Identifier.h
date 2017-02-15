@@ -218,7 +218,7 @@ Ref<StringImpl> Identifier::add(VM* vm, const T* s, int length)
     if (length == 1) {
         T c = s[0];
         if (canUseSingleCharacterString(c))
-            return *vm->smallStrings.singleCharacterStringRep(c);
+            return vm->smallStrings.singleCharacterStringRep(c);
     }
     if (!length)
         return *StringImpl::empty();

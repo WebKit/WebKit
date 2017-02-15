@@ -50,7 +50,7 @@ LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithoutDisassembly()
     
     ASSERT(m_didAllocate);
     if (m_executableMemory)
-        return CodeRef(m_executableMemory);
+        return CodeRef(*m_executableMemory);
     
     return CodeRef::createSelfManagedCodeRef(MacroAssemblerCodePtr(m_code));
 }

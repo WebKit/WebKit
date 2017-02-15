@@ -192,15 +192,15 @@ class QueuedTask {
 public:
     void run();
 
-    QueuedTask(VM& vm, JSGlobalObject* globalObject, PassRefPtr<Microtask> microtask)
+    QueuedTask(VM& vm, JSGlobalObject* globalObject, Ref<Microtask>&& microtask)
         : m_globalObject(vm, globalObject)
-        , m_microtask(microtask)
+        , m_microtask(WTFMove(microtask))
     {
     }
 
 private:
     Strong<JSGlobalObject> m_globalObject;
-    RefPtr<Microtask> m_microtask;
+    Ref<Microtask> m_microtask;
 };
 
 class ConservativeRoots;
@@ -659,7 +659,7 @@ public:
     bool enableControlFlowProfiler();
     bool disableControlFlowProfiler();
 
-    JS_EXPORT_PRIVATE void queueMicrotask(JSGlobalObject*, PassRefPtr<Microtask>);
+    JS_EXPORT_PRIVATE void queueMicrotask(JSGlobalObject*, Ref<Microtask>&&);
     JS_EXPORT_PRIVATE void drainMicrotasks();
     void setGlobalConstRedeclarationShouldThrow(bool globalConstRedeclarationThrow) { m_globalConstRedeclarationShouldThrow = globalConstRedeclarationThrow; }
     ALWAYS_INLINE bool globalConstRedeclarationShouldThrow() const { return m_globalConstRedeclarationShouldThrow; }

@@ -41,7 +41,7 @@ public:
     ~BlockInsertionSet();
     
     void insert(const BlockInsertion&);
-    void insert(size_t index, PassRefPtr<BasicBlock>);
+    void insert(size_t index, Ref<BasicBlock>&&);
     BasicBlock* insert(size_t index, float executionCount);
     BasicBlock* insertBefore(BasicBlock* before, float executionCount);
 

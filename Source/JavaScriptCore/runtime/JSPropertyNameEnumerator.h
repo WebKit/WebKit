@@ -38,7 +38,7 @@ public:
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     static JSPropertyNameEnumerator* create(VM&);
-    static JSPropertyNameEnumerator* create(VM&, Structure*, uint32_t, uint32_t, PropertyNameArray&);
+    static JSPropertyNameEnumerator* create(VM&, Structure*, uint32_t, uint32_t, PropertyNameArray&&);
 
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
@@ -85,7 +85,7 @@ public:
 
 private:
     JSPropertyNameEnumerator(VM&, StructureID, uint32_t);
-    void finishCreation(VM&, uint32_t, uint32_t, PassRefPtr<PropertyNameArrayData>);
+    void finishCreation(VM&, uint32_t, uint32_t, RefPtr<PropertyNameArrayData>&&);
 
     Vector<WriteBarrier<JSString>> m_propertyNames;
     StructureID m_cachedStructureID;
@@ -135,7 +135,7 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(ExecState* exec, JSObjec
 
     normalizePrototypeChain(exec, structure);
 
-    enumerator = JSPropertyNameEnumerator::create(vm, structure, indexedLength, numberStructureProperties, propertyNames);
+    enumerator = JSPropertyNameEnumerator::create(vm, structure, indexedLength, numberStructureProperties, WTFMove(propertyNames));
     enumerator->setCachedPrototypeChain(vm, structure->prototypeChain(exec));
     if (!indexedLength && structure->canCachePropertyNameEnumerator())
         structure->setCachedPropertyNameEnumerator(vm, enumerator);

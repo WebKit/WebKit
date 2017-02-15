@@ -829,7 +829,7 @@ CompilationResult JIT::link()
     if (m_compilation) {
         if (Options::disassembleBaselineForProfiler())
             m_disassembler->reportToProfiler(m_compilation.get(), patchBuffer);
-        m_vm->m_perBytecodeProfiler->addCompilation(m_codeBlock, m_compilation);
+        m_vm->m_perBytecodeProfiler->addCompilation(m_codeBlock, *m_compilation);
     }
 
     if (m_pcToCodeOriginMapBuilder.didBuildMapping())
@@ -845,7 +845,7 @@ CompilationResult JIT::link()
 
     m_codeBlock->shrinkToFit(CodeBlock::LateShrink);
     m_codeBlock->setJITCode(
-        adoptRef(new DirectJITCode(result, withArityCheck, JITCode::BaselineJIT)));
+        adoptRef(*new DirectJITCode(result, withArityCheck, JITCode::BaselineJIT)));
 
 #if ENABLE(JIT_VERBOSE)
     dataLogF("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start(), result.executableMemory()->end());

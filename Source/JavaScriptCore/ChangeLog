@@ -1,3 +1,307 @@
+2017-02-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop PassRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=168320
+
+        Reviewed by Saam Barati.
+
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreateInGroup):
+        Use Ref<VM> from the factory function.
+
+        * API/JSScriptRef.cpp:
+        (OpaqueJSScript::create):
+        Return Ref<> instead.
+
+        * API/tests/JSONParseTest.cpp:
+        (testJSONParse):
+        Use Ref<VM>.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithoutDisassembly):
+        Use reference since we already perform null check.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodeRef::MacroAssemblerCodeRef):
+        Take Ref<>&& instead of PassRefPtr<>.
+
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::setStub):
+        (JSC::CallLinkInfo::setSlowStub):
+        Take Ref<>&& instead of PassRefPtr<>.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        Take RefPtr<SourceProvider>. Currently, the SourceProvider would be nullptr.
+        We will change it to Ref<SourceProvider> in https://bugs.webkit.org/show_bug.cgi?id=168325.
+
+        (JSC::CodeBlock::finishCreation):
+        Take Ref<TypeSet>&&.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode):
+        Take Ref<>&& instead.
+
+        (JSC::CodeBlock::jitCode):
+        Return RefPtr<> instead.
+
+        * bytecode/EvalCodeBlock.h:
+        (JSC::EvalCodeBlock::create):
+        Take RefPtr<>&& instead since SourceProvider woule be nullptr.
+
+        (JSC::EvalCodeBlock::EvalCodeBlock):
+        * bytecode/FunctionCodeBlock.h:
+        (JSC::FunctionCodeBlock::create):
+        (JSC::FunctionCodeBlock::FunctionCodeBlock):
+        Take RefPtr<>&& instead since SourceProvider woule be nullptr.
+
+        * bytecode/GlobalCodeBlock.h:
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        Take RefPtr<>&& instead since SourceProvider woule be nullptr.
+
+        * bytecode/ModuleProgramCodeBlock.h:
+        (JSC::ModuleProgramCodeBlock::create):
+        (JSC::ModuleProgramCodeBlock::ModuleProgramCodeBlock):
+        Take RefPtr<>&& instead since SourceProvider woule be nullptr.
+
+        * bytecode/ProgramCodeBlock.h:
+        (JSC::ProgramCodeBlock::create):
+        (JSC::ProgramCodeBlock::ProgramCodeBlock):
+        Take RefPtr<>&& instead since SourceProvider woule be nullptr.
+
+        * debugger/DebuggerParseData.cpp:
+        (JSC::gatherDebuggerParseDataForSource):
+        Ensure the provider is not nullptr. It is OK because we already
+        touch `provider->xxx` values.
+
+        * dfg/DFGBlockInsertionSet.cpp:
+        (JSC::DFG::BlockInsertionSet::insert):
+        Take Ref<>&& instead.
+
+        * dfg/DFGBlockInsertionSet.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        Pass Ref<>&& to appendBlock.
+
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        (JSC::DFG::compile):
+        Pass Ref<Plan>&&. And take Ref<>&& callback.
+
+        * dfg/DFGDriver.h:
+        * dfg/DFGGraph.h:
+        appendBlock takes Ref<>&&.
+
+        (JSC::DFG::Graph::appendBlock):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::jitCode):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::JITFinalizer):
+        Take Ref<JITCode>&&.
+
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        (JSC::DFG::JITFinalizer::finalizeCommon):
+        Pass compilation reference since we already perform null check.
+
+        * dfg/DFGJITFinalizer.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::enqueue):
+        Take Ref<Plan>&&.
+
+        * dfg/DFGWorklist.h:
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        Dereference and pass jitCode & compilation references.
+
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::createJITStubRoutine):
+        Return Ref<> instead.
+
+        * jit/GCAwareJITStubRoutine.h:
+        (JSC::createJITStubRoutine):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        Pass compilation reference since we already perform null check.
+
+        * jit/JITStubRoutine.h:
+        (JSC::JITStubRoutine::asCodePtr):
+        Take Ref<>&& instead. And this drops unnecessary null check.
+
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+        Pass Ref<> to NativeExecutable::create.
+
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setModuleProgramEntrypoint):
+        Use Ref<>&& instead.
+
+        * parser/SourceCode.h:
+        (JSC::SourceCode::SourceCode):
+        (JSC::SourceCode::subExpression):
+        Add constructors taking Ref<>&&.
+        We still have constructors that take RefPtr<>&&.
+        We will change it to Ref<SourceProvider>&& in https://bugs.webkit.org/show_bug.cgi?id=168325.
+
+        * parser/UnlinkedSourceCode.h:
+        (JSC::UnlinkedSourceCode::UnlinkedSourceCode):
+        Add constructors taking Ref<>&&.
+        We still have constructors that take RefPtr<>&&.
+        We will change it to Ref<SourceProvider>&& in https://bugs.webkit.org/show_bug.cgi?id=168325.
+
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::addCompilation):
+        Take Ref<Compilation>&&.
+
+        * profiler/ProfilerDatabase.h:
+        Change data structures to hold Ref<> instead of RefPtr<>.
+
+        * runtime/EvalExecutable.h:
+        (JSC::EvalExecutable::generatedJITCode):
+        Return Ref<> instead.
+
+        * runtime/ExecutableBase.h:
+        (JSC::ExecutableBase::generatedJITCodeForCall):
+        (JSC::ExecutableBase::generatedJITCodeForConstruct):
+        (JSC::ExecutableBase::generatedJITCodeFor):
+        Return Ref<> instead.
+
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add):
+        (JSC::Identifier::add8):
+        * runtime/Identifier.h:
+        (JSC::Identifier::add):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::setInputCursor):
+        And take Ref<> in this method.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::inputCursor):
+        Change m_inputCursor from RefPtr<> to Ref<>.
+
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::create):
+        (JSC::JSPropertyNameEnumerator::finishCreation):
+        Take Ref<PropertyNameArray>&&.
+
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::propertyNameEnumerator):
+        * runtime/JSString.h:
+        (JSC::JSString::JSString):
+        Take Ref<StringImpl>&& since we do not allow nullptr in this constructor.
+
+        (JSC::JSString::create):
+        (JSC::JSString::createHasOtherOwner):
+        Take Ref<StringImpl>&& in these factory functions. And drop unnecessary assertions.
+
+        (JSC::jsSingleCharacterString):
+        Use StringImpl::create() which returns Ref<>.
+
+        (JSC::jsNontrivialString):
+        Dereference impl() since we ensure that `s.length() > 1`.
+
+        (JSC::jsString):
+        Use releaseNonNull() since we ensure that `s.length() > 1`.
+
+        (JSC::jsOwnedString):
+        Use releaseNonNull() since we ensure that `s.length() > 1`.
+
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/NativeExecutable.cpp:
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::finishCreation):
+        Take Ref<JITCode>&&.
+
+        * runtime/NativeExecutable.h:
+        * runtime/ProgramExecutable.h:
+        Return Ref<JITCode>.
+
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::releaseData):
+        (JSC::PropertyNameArray::setData): Deleted.
+        This is not used.
+
+        * runtime/RegExpKey.h:
+        (JSC::RegExpKey::RegExpKey):
+        Take RefPtr<>&&.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStringsStorage::rep):
+        Return StringImpl& since m_reps is already initialized in the constructor.
+
+        (JSC::SmallStrings::createEmptyString):
+        Dereference StringImpl::empty().
+
+        (JSC::SmallStrings::createSingleCharacterString):
+        Use StringImpl&.
+
+        (JSC::SmallStrings::singleCharacterStringRep):
+        Return StringImpl&.
+
+        (JSC::SmallStrings::initialize):
+        Use AtomicStringImpl::add instead.
+
+        * runtime/SmallStrings.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::toStructureShape):
+        Return Ref<>.
+
+        * runtime/Structure.h:
+        * runtime/TypeLocationCache.cpp:
+        (JSC::TypeLocationCache::getTypeLocation):
+        Take RefPtr<TypeSet>&&.
+
+        * runtime/TypeLocationCache.h:
+        * runtime/TypeProfilerLog.cpp:
+        Pass Ref<>&&.
+
+        (JSC::TypeProfilerLog::processLogEntries):
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::addTypeInformation):
+        Take RefPtr<>&& since it can be nullptr.
+        And clean up "not found" code.
+
+        (JSC::TypeSet::allStructureRepresentations):
+        Use range based iteration.
+
+        (JSC::StructureShape::leastCommonAncestor):
+        We found that this method accidentally takes `const Vector<>` instead of `const Vector<>&`.
+        And internally, we just use raw pointers since these StructureShapes are owned by the m_proto trees which starts from the given Vector<>.
+
+        (JSC::StructureShape::hasSamePrototypeChain):
+        Take const reference instead. And use raw pointers internally.
+
+        (JSC::StructureShape::merge):
+        Take Ref<>&&.
+
+        * runtime/TypeSet.h:
+        (JSC::StructureShape::setProto):
+        Take Ref<>&&.
+
+        * runtime/VM.cpp:
+        (JSC::VM::getHostFunction):
+        Pass Ref<>&&.
+
+        (JSC::VM::queueMicrotask):
+        Take and pass Ref<>&&.
+
+        * runtime/VM.h:
+        (JSC::QueuedTask::QueuedTask):
+        Take Ref<>&&.
+
+        * tools/FunctionOverrides.cpp:
+        (JSC::initializeOverrideInfo):
+        We need this change due to Ref<>&& and RefPtr<>&& ambiguity of SourceCode constructors.
+        Once SourceCode is fixed to only take Ref<>&&, this change is unnecessary.
+
 2017-02-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac][cmake] Unreviewed trivial buildfix after r212169.

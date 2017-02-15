@@ -37,9 +37,9 @@
 
 namespace JSC { namespace DFG {
 
-JITFinalizer::JITFinalizer(Plan& plan, PassRefPtr<JITCode> jitCode, std::unique_ptr<LinkBuffer> linkBuffer, MacroAssemblerCodePtr withArityCheck)
+JITFinalizer::JITFinalizer(Plan& plan, Ref<JITCode>&& jitCode, std::unique_ptr<LinkBuffer> linkBuffer, MacroAssemblerCodePtr withArityCheck)
     : Finalizer(plan)
-    , m_jitCode(jitCode)
+    , m_jitCode(WTFMove(jitCode))
     , m_linkBuffer(WTFMove(linkBuffer))
     , m_withArityCheck(withArityCheck)
 {
@@ -60,7 +60,7 @@ bool JITFinalizer::finalize()
         FINALIZE_DFG_CODE(*m_linkBuffer, ("DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::DFGJIT)).data())),
         MacroAssemblerCodePtr());
     
-    m_plan.codeBlock->setJITCode(m_jitCode);
+    m_plan.codeBlock->setJITCode(m_jitCode.copyRef());
     
     finalizeCommon();
     
@@ -73,7 +73,7 @@ bool JITFinalizer::finalizeFunction()
     m_jitCode->initializeCodeRef(
         FINALIZE_DFG_CODE(*m_linkBuffer, ("DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::DFGJIT)).data())),
         m_withArityCheck);
-    m_plan.codeBlock->setJITCode(m_jitCode);
+    m_plan.codeBlock->setJITCode(m_jitCode.copyRef());
     
     finalizeCommon();
     
@@ -91,7 +91,7 @@ void JITFinalizer::finalizeCommon()
 #endif // ENABLE(FTL_JIT)
     
     if (m_plan.compilation)
-        m_plan.vm->m_perBytecodeProfiler->addCompilation(m_plan.codeBlock, m_plan.compilation);
+        m_plan.vm->m_perBytecodeProfiler->addCompilation(m_plan.codeBlock, *m_plan.compilation);
     
     if (!m_plan.willTryToTierUp)
         m_plan.codeBlock->baselineVersion()->m_didFailFTLCompilation = true;

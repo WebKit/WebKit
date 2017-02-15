@@ -81,10 +81,10 @@ bool JITFinalizer::finalizeFunction()
             dumpDisassembly, *entrypointLinkBuffer,
             ("FTL entrypoint thunk for %s with B3 generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data(), function)));
     
-    m_plan.codeBlock->setJITCode(jitCode);
+    m_plan.codeBlock->setJITCode(*jitCode);
 
     if (m_plan.compilation)
-        m_plan.vm->m_perBytecodeProfiler->addCompilation(m_plan.codeBlock, m_plan.compilation);
+        m_plan.vm->m_perBytecodeProfiler->addCompilation(m_plan.codeBlock, *m_plan.compilation);
     
     return true;
 }

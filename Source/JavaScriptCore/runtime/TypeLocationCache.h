@@ -56,7 +56,7 @@ public:
         unsigned m_end;
     };
 
-    std::pair<TypeLocation*, bool> getTypeLocation(GlobalVariableID, intptr_t, unsigned start, unsigned end, PassRefPtr<TypeSet>, VM*);
+    std::pair<TypeLocation*, bool> getTypeLocation(GlobalVariableID, intptr_t, unsigned start, unsigned end, RefPtr<TypeSet>&&, VM*);
 private:     
     typedef std::unordered_map<LocationKey, TypeLocation*, HashMethod<LocationKey>> LocationMap;
     LocationMap m_locationMap;

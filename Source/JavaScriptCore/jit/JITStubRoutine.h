@@ -70,11 +70,8 @@ public:
     // the churn.
     const MacroAssemblerCodeRef& code() const { return m_code; }
     
-    static MacroAssemblerCodePtr asCodePtr(PassRefPtr<JITStubRoutine> stubRoutine)
+    static MacroAssemblerCodePtr asCodePtr(Ref<JITStubRoutine>&& stubRoutine)
     {
-        if (!stubRoutine)
-            return MacroAssemblerCodePtr();
-        
         MacroAssemblerCodePtr result = stubRoutine->code().code();
         ASSERT(!!result);
         return result;

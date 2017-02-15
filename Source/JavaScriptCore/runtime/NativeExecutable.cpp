@@ -40,11 +40,11 @@ namespace JSC {
 
 const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase::s_info, 0, CREATE_METHOD_TABLE(NativeExecutable) };
 
-NativeExecutable* NativeExecutable::create(VM& vm, PassRefPtr<JITCode> callThunk, NativeFunction function, PassRefPtr<JITCode> constructThunk, NativeFunction constructor, Intrinsic intrinsic, const DOMJIT::Signature* signature, const String& name)
+NativeExecutable* NativeExecutable::create(VM& vm, Ref<JITCode>&& callThunk, NativeFunction function, Ref<JITCode>&& constructThunk, NativeFunction constructor, Intrinsic intrinsic, const DOMJIT::Signature* signature, const String& name)
 {
     NativeExecutable* executable;
     executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor, intrinsic, signature);
-    executable->finishCreation(vm, callThunk, constructThunk, name);
+    executable->finishCreation(vm, WTFMove(callThunk), WTFMove(constructThunk), name);
     return executable;
 }
 
@@ -58,11 +58,11 @@ Structure* NativeExecutable::createStructure(VM& vm, JSGlobalObject* globalObjec
     return Structure::create(vm, globalObject, proto, TypeInfo(CellType, StructureFlags), info());
 }
 
-void NativeExecutable::finishCreation(VM& vm, PassRefPtr<JITCode> callThunk, PassRefPtr<JITCode> constructThunk, const String& name)
+void NativeExecutable::finishCreation(VM& vm, Ref<JITCode>&& callThunk, Ref<JITCode>&& constructThunk, const String& name)
 {
     Base::finishCreation(vm);
-    m_jitCodeForCall = callThunk;
-    m_jitCodeForConstruct = constructThunk;
+    m_jitCodeForCall = WTFMove(callThunk);
+    m_jitCodeForConstruct = WTFMove(constructThunk);
     m_jitCodeForCallWithArityCheck = m_jitCodeForCall->addressForCall(MustCheckArity);
     m_jitCodeForConstructWithArityCheck = m_jitCodeForConstruct->addressForCall(MustCheckArity);
     m_name = name;

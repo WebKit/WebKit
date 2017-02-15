@@ -39,7 +39,7 @@ public:
     typedef ExecutableBase Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static NativeExecutable* create(VM&, PassRefPtr<JITCode> callThunk, NativeFunction function, PassRefPtr<JITCode> constructThunk, NativeFunction constructor, Intrinsic, const DOMJIT::Signature*, const String& name);
+    static NativeExecutable* create(VM&, Ref<JITCode>&& callThunk, NativeFunction function, Ref<JITCode>&& constructThunk, NativeFunction constructor, Intrinsic, const DOMJIT::Signature*, const String& name);
 
     static void destroy(JSCell*);
 
@@ -79,7 +79,7 @@ public:
     }
 
 protected:
-    void finishCreation(VM&, PassRefPtr<JITCode> callThunk, PassRefPtr<JITCode> constructThunk, const String& name);
+    void finishCreation(VM&, Ref<JITCode>&& callThunk, Ref<JITCode>&& constructThunk, const String& name);
 
 private:
     friend class ExecutableBase;

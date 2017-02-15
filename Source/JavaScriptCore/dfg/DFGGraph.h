@@ -442,10 +442,10 @@ public:
     BasicBlock* block(BlockIndex blockIndex) const { return m_blocks[blockIndex].get(); }
     BasicBlock* lastBlock() const { return block(numBlocks() - 1); }
 
-    void appendBlock(PassRefPtr<BasicBlock> basicBlock)
+    void appendBlock(Ref<BasicBlock>&& basicBlock)
     {
         basicBlock->index = m_blocks.size();
-        m_blocks.append(basicBlock);
+        m_blocks.append(WTFMove(basicBlock));
     }
     
     void killBlock(BlockIndex blockIndex)

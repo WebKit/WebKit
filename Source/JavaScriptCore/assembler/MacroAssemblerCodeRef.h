@@ -27,7 +27,6 @@
 
 #include "ExecutableAllocator.h"
 #include <wtf/DataLog.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
@@ -354,9 +353,9 @@ public:
     {
     }
 
-    MacroAssemblerCodeRef(PassRefPtr<ExecutableMemoryHandle> executableMemory)
+    MacroAssemblerCodeRef(Ref<ExecutableMemoryHandle>&& executableMemory)
         : m_codePtr(executableMemory->start())
-        , m_executableMemory(executableMemory)
+        , m_executableMemory(WTFMove(executableMemory))
     {
         ASSERT(m_executableMemory->isManaged());
         ASSERT(m_executableMemory->start());

@@ -44,7 +44,7 @@ public:
         return m_moduleProgramCodeBlock.get();
     }
 
-    PassRefPtr<JITCode> generatedJITCode()
+    Ref<JITCode> generatedJITCode()
     {
         return generatedJITCodeForCall();
     }

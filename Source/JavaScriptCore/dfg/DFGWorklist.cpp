@@ -223,17 +223,16 @@ bool Worklist::isActiveForVM(VM& vm) const
     return false;
 }
 
-void Worklist::enqueue(PassRefPtr<Plan> passedPlan)
+void Worklist::enqueue(Ref<Plan>&& plan)
 {
-    RefPtr<Plan> plan = passedPlan;
     LockHolder locker(*m_lock);
     if (Options::verboseCompilationQueue()) {
         dump(locker, WTF::dataFile());
         dataLog(": Enqueueing plan to optimize ", plan->key(), "\n");
     }
     ASSERT(m_plans.find(plan->key()) == m_plans.end());
-    m_plans.add(plan->key(), plan);
-    m_queue.append(plan);
+    m_plans.add(plan->key(), plan.copyRef());
+    m_queue.append(WTFMove(plan));
     m_planEnqueued->notifyOne(locker);
 }
 

@@ -45,6 +45,6 @@ JS_EXPORT_PRIVATE unsigned getNumCompilations();
 CompilationResult compile(
     VM&, CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationMode,
     unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues,
-    PassRefPtr<DeferredCompilationCallback>);
+    Ref<DeferredCompilationCallback>&&);
 
 } } // namespace JSC::DFG
