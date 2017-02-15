@@ -89,8 +89,6 @@ struct WebProcessCreationParameters {
 #endif
     String mediaKeyStorageDirectory;
 
-    bool shouldUseTestingNetworkSession;
-
     Vector<String> urlSchemesRegisteredAsEmptyDocument;
     Vector<String> urlSchemesRegisteredAsSecure;
     Vector<String> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
@@ -102,48 +100,51 @@ struct WebProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsAlwaysRevalidated;
     Vector<String> urlSchemesRegisteredAsCachePartitioned;
 
-    CacheModel cacheModel;
-
-    bool shouldAlwaysUseComplexTextCodePath;
-    bool shouldEnableMemoryPressureReliefLogging;
-    bool shouldSuppressMemoryPressureHandler { false };
-    bool shouldUseFontSmoothing;
-    bool resourceLoadStatisticsEnabled { false };
-    bool urlParserEnabled { false };
-
     Vector<String> fontWhitelist;
-
-    bool iconDatabaseEnabled;
-
-    double terminationTimeout;
-
     Vector<String> languages;
 
+    CacheModel cacheModel;
+
+    double defaultRequestTimeoutInterval { INT_MAX };
+
+    bool shouldUseTestingNetworkSession { false };
+    bool shouldAlwaysUseComplexTextCodePath { false };
+    bool shouldEnableMemoryPressureReliefLogging { false };
+    bool shouldSuppressMemoryPressureHandler { false };
+    bool shouldUseFontSmoothing { true };
+    bool resourceLoadStatisticsEnabled { false };
+    bool urlParserEnabled { false };
+    bool iconDatabaseEnabled { false };
+    bool fullKeyboardAccessEnabled { false };
+    bool memoryCacheDisabled { false };
+
+#if ENABLE(SERVICE_CONTROLS)
+    bool hasImageServices { false };
+    bool hasSelectionServices { false };
+    bool hasRichContentServices { false };
+#endif
+
+    double terminationTimeout { 0 };
+
     TextCheckerState textCheckerState;
-
-    bool fullKeyboardAccessEnabled;
-
-    double defaultRequestTimeoutInterval;
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     String uiProcessBundleIdentifier;
 #endif
 
 #if PLATFORM(COCOA)
-    pid_t presenterApplicationPid;
-
-    bool accessibilityEnhancedUserInterfaceEnabled;
+    pid_t presenterApplicationPid { 0 };
 
     WebCore::MachSendRight acceleratedCompositingPort;
 
     String uiProcessBundleResourcePath;
     SandboxExtension::Handle uiProcessBundleResourcePathExtensionHandle;
 
-    bool shouldEnableJIT;
-    bool shouldEnableFTLJIT;
+    bool shouldEnableJIT { false };
+    bool shouldEnableFTLJIT { false };
+    bool accessibilityEnhancedUserInterfaceEnabled { false };
     
     RefPtr<API::Data> bundleParameterData;
-
 #endif // PLATFORM(COCOA)
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
@@ -152,14 +153,6 @@ struct WebProcessCreationParameters {
 
     HashMap<WebCore::SessionID, HashMap<unsigned, double>> plugInAutoStartOriginHashes;
     Vector<String> plugInAutoStartOrigins;
-
-    bool memoryCacheDisabled;
-
-#if ENABLE(SERVICE_CONTROLS)
-    bool hasImageServices;
-    bool hasSelectionServices;
-    bool hasRichContentServices;
-#endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     HashMap<String, HashMap<String, HashMap<String, uint8_t>>> pluginLoadClientPolicies;
