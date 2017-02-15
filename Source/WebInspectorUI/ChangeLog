@@ -1,3 +1,22 @@
+2017-02-14  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RTL: adjust padding of dashboard icons
+        https://bugs.webkit.org/show_bug.cgi?id=168340
+
+        Reviewed by Matt Baker.
+
+        Extract the direction-dependent padding into a "local" variable.
+        Use two rules to apply it to whichever is the leading side.
+
+        While we tend to use leading/trailing in Apple layout technologies,
+        I think the CSS logical properties specification sticks to using
+        -start and -end, so let's use that nomenclature where we can.
+
+        * UserInterface/Views/DefaultDashboardView.css:
+        (.toolbar .dashboard.default > .item > div):
+        (body[dir=ltr] .toolbar .dashboard.default > .item > div):
+        (body[dir=rtl] .toolbar .dashboard.default > .item > div):
+
 2017-02-14  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] add navigator.getUserMedia for compatibility with legacy content

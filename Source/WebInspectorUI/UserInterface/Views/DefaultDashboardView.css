@@ -93,7 +93,15 @@ body.javascript .toolbar .dashboard.default > :matches(.resourcesCount, .resourc
     flex: 1;
 
     color: hsla(0, 0%, 0%, 0.2);
-    padding-left: 2px;
+    --dashboard-item-padding-start: 2px;
+}
+
+body[dir=ltr] .toolbar .dashboard.default > .item > div {
+    padding-left: var(--dashboard-item-padding-start);
+}
+
+body[dir=rtl] .toolbar .dashboard.default > .item > div {
+    padding-right: var(--dashboard-item-padding-start);
 }
 
 .toolbar .dashboard.default > .item.enabled > div {
