@@ -1,3 +1,18 @@
+2017-02-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Editing history scripts should not add the contenteditable attribute or override key events
+        https://bugs.webkit.org/show_bug.cgi?id=168389
+        <rdar://problem/30529945>
+
+        Reviewed by Dan Bernstein.
+
+        Clients that hook into editing history tracking should handle setting the contenteditable attribute on the body
+        rather than have the script add it to the body. Additionally, this script should NOT be overriding any keydown
+        events. These were initially added for compatibility with a test harness early on, and should have been removed
+        earlier.
+
+        * Scripts/DumpEditingHistory.js:
+
 2017-02-15  Jer Noble  <jer.noble@apple.com>
 
         Pass "RequiresCustomURLLoading" in AVURLAsset options dictionary

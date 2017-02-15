@@ -41,7 +41,6 @@
         lastKnownSelectionState = newSelectionState;
     }
 
-    document.body.setAttribute("contenteditable", true);
     document.body.addEventListener("focus", () => {
         if (initialized)
             return;
@@ -58,6 +57,7 @@
         document.addEventListener("selectionchange", () => {
             appendSelectionUpdateIfNecessary();
         });
+
         document.addEventListener("beforeinput", event => {
             appendDOMUpdatesFromRecords(mutationObserver.takeRecords());
             beginProcessingTopLevelUpdate();
@@ -68,17 +68,6 @@
             let eventData = event.dataTransfer ? event.dataTransfer.getData("text/html") : event.data;
             lastKnownSelectionState = null;
             endProcessingTopLevelUpdate(new EditingHistory.InputEventUpdate(globalNodeMap, currentChildUpdates, event.inputType, eventData, event.timeStamp));
-        });
-
-        document.addEventListener("keydown", event => {
-            if (event.key !== "s" || !event.metaKey)
-                return;
-
-            let fakeLink = document.createElement("a");
-            fakeLink.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(EditingHistory.getEditingHistoryAsJSONString()));
-            fakeLink.setAttribute("download", "record.json");
-            fakeLink.click();
-            event.preventDefault();
         });
 
         mutationObserver.observe(document, {
