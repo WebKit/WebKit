@@ -201,28 +201,8 @@ void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSiz
     cairo_pattern_t* pattern = cairo_pattern_create_for_surface(image);
     cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
 
-    // Cairo cannot convert a cairo_matrix to a Pixman's matrix if any of its components is bigger than maximum int size of Pixman.
-    // With this condition, Cairo gives up to draw given pattern entirely. To workaround this problem, we reduce the coordinate
-    // space by translating CTM and destRect.
-    cairo_matrix_t ctm;
-    cairo_get_matrix(cr, &ctm);
-    double dx = 0, dy = 0;
-    cairo_matrix_transform_point(&ctm, &dx, &dy);
-    double xScale = 1, yScale = 1;
-    cairo_matrix_transform_distance(&ctm, &xScale, &yScale);
-
-    dx = std::trunc(-dx / tileRect.width()) * tileRect.width() / xScale;
-    dy = std::trunc(-dy / tileRect.height()) * tileRect.height() / yScale;
-    cairo_translate(cr, dx, dy);
-
-    FloatRect adjustedDestRect(destRect);
-    adjustedDestRect.move(-dx, -dy);
-
-    // Again, we need to reduce the coordinate of the transformation matrix we are using for the pattern.
     cairo_matrix_t patternMatrix = cairo_matrix_t(patternTransform);
-    dx = phase.x() - std::trunc(phase.x() / tileRect.width()) * tileRect.width();
-    dy = phase.y() - std::trunc(phase.y() / tileRect.height()) * tileRect.height();
-    cairo_matrix_t phaseMatrix = {1, 0, 0, 1, dx + tileRect.x() * patternTransform.a(), dy + tileRect.y() * patternTransform.d()};
+    cairo_matrix_t phaseMatrix = {1, 0, 0, 1, phase.x() + tileRect.x() * patternTransform.a(), phase.y() + tileRect.y() * patternTransform.d()};
     cairo_matrix_t combined;
     cairo_matrix_multiply(&combined, &patternMatrix, &phaseMatrix);
     cairo_matrix_invert(&combined);
@@ -231,7 +211,7 @@ void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSiz
     cairo_set_operator(cr, op);
     cairo_set_source(cr, pattern);
     cairo_pattern_destroy(pattern);
-    cairo_rectangle(cr, adjustedDestRect.x(), adjustedDestRect.y(), adjustedDestRect.width(), adjustedDestRect.height());
+    cairo_rectangle(cr, destRect.x(), destRect.y(), destRect.width(), destRect.height());
     cairo_fill(cr);
 
     cairo_restore(cr);
