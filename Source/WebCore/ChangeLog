@@ -1,3 +1,43 @@
+2017-02-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [WebIDL] Improve serializer = { inherit }
+        https://bugs.webkit.org/show_bug.cgi?id=168293
+
+        Reviewed by Youenn Fablet.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        Expose a serialize() method on the interface.
+
+        (GenerateSerializerFunction):
+        (GenerateSerializerAttributesForInterface): Deleted.
+        Subclasses that have `serializer = { inherit }` can use
+        their parent's serialize() method to get the initial object.
+        We can now collapse everything back into a single function
+        because we only generate code for our own attributes.
+
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNode::serialize):
+        (WebCore::jsTestNodePrototypeFunctionToJSONCaller):
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::serialize):
+        (WebCore::jsTestObjPrototypeFunctionToJSONCaller):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        (WebCore::JSTestSerialization::serialize):
+        (WebCore::jsTestSerializationPrototypeFunctionToJSONCaller):
+        * bindings/scripts/test/JS/JSTestSerialization.h:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        (WebCore::JSTestSerializationInherit::serialize):
+        (WebCore::jsTestSerializationInheritPrototypeFunctionToJSONCaller):
+        * bindings/scripts/test/JS/JSTestSerializationInherit.h:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        (WebCore::JSTestSerializationInheritFinal::serialize):
+        (WebCore::jsTestSerializationInheritFinalPrototypeFunctionToJSONCaller):
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.h:
+        Updated results.
+
 2017-02-14  Aakash Jain  <aakash_jain@apple.com>
 
         Move methods from WebCoreThread.h to WebCoreThreadInternal.h

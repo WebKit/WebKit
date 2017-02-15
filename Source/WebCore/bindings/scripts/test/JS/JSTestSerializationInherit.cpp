@@ -201,36 +201,21 @@ JSValue JSTestSerializationInherit::getConstructor(VM& vm, const JSGlobalObject*
     return getDOMConstructor<JSTestSerializationInheritConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-static inline EncodedJSValue jsTestSerializationInheritPrototypeFunctionToJSONCaller(ExecState* state, JSTestSerializationInherit* thisObject, JSC::ThrowScope& throwScope)
+JSC::JSObject* JSTestSerializationInherit::serialize(ExecState* state, JSTestSerializationInherit* thisObject, ThrowScope& throwScope)
 {
     auto& vm = state->vm();
-    auto* result = constructEmptyObject(state);
-
-    auto firstStringAttributeValue = jsTestSerializationFirstStringAttributeGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
-    result->putDirect(vm, Identifier::fromString(&vm, "firstStringAttribute"), firstStringAttributeValue);
-
-    auto secondLongAttributeValue = jsTestSerializationSecondLongAttributeGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
-    result->putDirect(vm, Identifier::fromString(&vm, "secondLongAttribute"), secondLongAttributeValue);
-
-    auto fourthUnrestrictedDoubleAttributeValue = jsTestSerializationFourthUnrestrictedDoubleAttributeGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
-    result->putDirect(vm, Identifier::fromString(&vm, "fourthUnrestrictedDoubleAttribute"), fourthUnrestrictedDoubleAttributeValue);
-
-    auto fifthLongAttributeValue = jsTestSerializationFifthLongAttributeGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
-    result->putDirect(vm, Identifier::fromString(&vm, "fifthLongAttribute"), fifthLongAttributeValue);
-
-    auto sixthTypedefAttributeValue = jsTestSerializationSixthTypedefAttributeGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
-    result->putDirect(vm, Identifier::fromString(&vm, "sixthTypedefAttribute"), sixthTypedefAttributeValue);
+    auto* result = JSTestSerialization::serialize(state, thisObject, throwScope);
 
     auto inheritLongAttributeValue = jsTestSerializationInheritInheritLongAttributeGetter(*state, *thisObject, throwScope);
     ASSERT(!throwScope.exception());
     result->putDirect(vm, Identifier::fromString(&vm, "inheritLongAttribute"), inheritLongAttributeValue);
 
-    return JSValue::encode(result);
+    return result;
+}
+
+static inline EncodedJSValue jsTestSerializationInheritPrototypeFunctionToJSONCaller(ExecState* state, JSTestSerializationInherit* thisObject, JSC::ThrowScope& throwScope)
+{
+    return JSValue::encode(JSTestSerializationInherit::serialize(state, thisObject, throwScope));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestSerializationInheritPrototypeFunctionToJSON(ExecState* state)

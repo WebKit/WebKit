@@ -400,7 +400,7 @@ JSValue JSTestSerialization::getConstructor(VM& vm, const JSGlobalObject* global
     return getDOMConstructor<JSTestSerializationConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-static inline EncodedJSValue jsTestSerializationPrototypeFunctionToJSONCaller(ExecState* state, JSTestSerialization* thisObject, JSC::ThrowScope& throwScope)
+JSC::JSObject* JSTestSerialization::serialize(ExecState* state, JSTestSerialization* thisObject, ThrowScope& throwScope)
 {
     auto& vm = state->vm();
     auto* result = constructEmptyObject(state);
@@ -425,7 +425,12 @@ static inline EncodedJSValue jsTestSerializationPrototypeFunctionToJSONCaller(Ex
     ASSERT(!throwScope.exception());
     result->putDirect(vm, Identifier::fromString(&vm, "sixthTypedefAttribute"), sixthTypedefAttributeValue);
 
-    return JSValue::encode(result);
+    return result;
+}
+
+static inline EncodedJSValue jsTestSerializationPrototypeFunctionToJSONCaller(ExecState* state, JSTestSerialization* thisObject, JSC::ThrowScope& throwScope)
+{
+    return JSValue::encode(JSTestSerialization::serialize(state, thisObject, throwScope));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestSerializationPrototypeFunctionToJSON(ExecState* state)
