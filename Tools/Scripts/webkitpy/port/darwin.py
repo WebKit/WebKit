@@ -101,7 +101,7 @@ class DarwinPort(ApplePort):
         return crash_log.find_all_logs(include_errors=True, newer_than=newer_than)
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, time_fn=None, sleep_fn=None, wait_for_log=True):
-        return None
+        return super(DarwinPort, self)._get_crash_log(name, pid, stdout, stderr, newer_than)
 
     def look_for_new_crash_logs(self, crashed_processes, start_time):
         """Since crash logs can take a long time to be written out if the system is
