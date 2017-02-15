@@ -23,6 +23,7 @@
 import logging
 import os
 
+from webkitpy.common.memoized import memoized
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.port.apple import ApplePort
@@ -174,6 +175,7 @@ class DarwinPort(ApplePort):
             _log.warn("xcrun failed; falling back to '%s'." % fallback)
             return fallback
 
+    @memoized
     def app_identifier_from_bundle(self, app_bundle):
         plist_path = self._filesystem.join(app_bundle, 'Info.plist')
         if not self._filesystem.exists(plist_path):
