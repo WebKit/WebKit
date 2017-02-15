@@ -631,3 +631,5 @@ webkit.org/b/168235 [ Debug ] imported/w3c/web-platform-tests/html/semantics/tex
 webkit.org/b/168085 tiled-drawing/scrolling/latched-to-deleted-node.html [ Pass Failure ]
 
 webkit.org/b/168336 [ Debug ] imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.html [ Pass Timeout ]
+
+webkit.org/b/168089 [ Release ] animations/trigger-container-scroll-empty.html [ Pass Failure ]
