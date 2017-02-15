@@ -1524,3 +1524,5 @@ webkit.org/b/168087 media/video-zoom.html [ Pass Failure ]
 
 # rdar://problem/23643423
 [ Debug ] fast/frames/exponential-frames.html [ Crash ]
+
+webkit.org/b/167975 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-removed.html [ Pass Failure ]
