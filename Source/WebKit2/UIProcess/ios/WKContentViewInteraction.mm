@@ -3340,18 +3340,18 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     [self handleKeyWebEvent:webEvent];    
 }
 
-- (void)handleKeyWebEvent:(WebIOSEvent *)theEvent
+- (void)handleKeyWebEvent:(::WebEvent *)theEvent
 {
     _page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent));
 }
 
-- (void)handleKeyWebEvent:(WebIOSEvent *)theEvent withCompletionHandler:(void (^)(WebIOSEvent *theEvent, BOOL wasHandled))completionHandler
+- (void)handleKeyWebEvent:(::WebEvent *)theEvent withCompletionHandler:(void (^)(::WebEvent *theEvent, BOOL wasHandled))completionHandler
 {
     _keyWebEventHandler = [completionHandler copy];
     _page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent));
 }
 
-- (void)_didHandleKeyEvent:(WebIOSEvent *)event eventWasHandled:(BOOL)eventWasHandled
+- (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled
 {
     if (_keyWebEventHandler) {
         _keyWebEventHandler(event, eventWasHandled);
@@ -3380,7 +3380,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     _uiEventBeingResent = nil;
 }
 
-- (std::optional<FloatPoint>)_scrollOffsetForEvent:(WebIOSEvent *)event
+- (std::optional<FloatPoint>)_scrollOffsetForEvent:(::WebEvent *)event
 {
     static const unsigned kWebSpaceKey = 0x20;
 
@@ -3444,7 +3444,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return std::nullopt;
 }
 
-- (BOOL)_interpretKeyEvent:(WebIOSEvent *)event isCharEvent:(BOOL)isCharEvent
+- (BOOL)_interpretKeyEvent:(::WebEvent *)event isCharEvent:(BOOL)isCharEvent
 {
     static const unsigned kWebEnterKey = 0x0003;
     static const unsigned kWebBackspaceKey = 0x0008;

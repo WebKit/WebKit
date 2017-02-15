@@ -1900,7 +1900,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.setStatusText(toAPI(page), toAPI(text.impl()), m_client.base.clientInfo);
         }
 
-        void mouseDidMoveOverElement(WebPageProxy* page, const WebHitTestResultData& data, WebEvent::Modifiers modifiers, API::Object* userData) override
+        void mouseDidMoveOverElement(WebPageProxy* page, const WebHitTestResultData& data, WebKit::WebEvent::Modifiers modifiers, API::Object* userData) override
         {
             if (!m_client.mouseDidMoveOverElement && !m_client.mouseDidMoveOverElement_deprecatedForUseWithV0)
                 return;

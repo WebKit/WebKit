@@ -33,7 +33,7 @@
 
 class WebIOSEventFactory {
 public:
-    static WebKit::WebKeyboardEvent createWebKeyboardEvent(WebIOSEvent *event);
+    static WebKit::WebKeyboardEvent createWebKeyboardEvent(::WebEvent *event);
 };
 
 #endif // PLATFORM(IOS)

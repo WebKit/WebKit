@@ -185,8 +185,5 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
 
 @end
 
-@interface WebIOSEvent : WebEvent
-@end
-
 #endif // TARGET_OS_IPHONE
 #endif // WebEventIOS_h

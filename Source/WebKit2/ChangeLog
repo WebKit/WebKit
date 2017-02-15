@@ -1,3 +1,18 @@
+2017-02-15  Aakash Jain  <aakash_jain@apple.com>
+
+        Remove WebIOSEvent interface
+        https://bugs.webkit.org/show_bug.cgi?id=168368
+
+        Reviewed by Tim Horton.
+
+        * Shared/NativeWebKeyboardEvent.h: Using WebEvent from WebCore instead of WebIOSEvent.
+        * Shared/ios/NativeWebKeyboardEventIOS.mm: Ditto.
+        * Shared/ios/WebIOSEventFactory.h: Ditto.
+        * Shared/ios/WebIOSEventFactory.mm: Ditto.
+        * UIProcess/ios/WKContentViewInteraction.h: Ditto.
+        * UIProcess/ios/WKContentViewInteraction.mm: Ditto.
+        * UIProcess/API/C/WKPage.cpp: Using WebEvent from WebKit.
+
 2017-02-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Update cookie manager API to properly work with ephemeral sessions

@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(WebIOSEvent *event)
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(::WebEvent *event)
     : WebKeyboardEvent(WebIOSEventFactory::createWebKeyboardEvent(event))
     , m_nativeEvent(event)
 {

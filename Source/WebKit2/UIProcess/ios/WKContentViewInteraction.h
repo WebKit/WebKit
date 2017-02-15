@@ -69,7 +69,7 @@ class WebPageProxy;
 @class WKActionSheetAssistant;
 @class WKFormInputSession;
 @class WKInspectorNodeSearchGestureRecognizer;
-@class WebIOSEvent;
+@class WebEvent;
 @class _UIHighlightView;
 @class _UIWebHighlightLongPressGestureRecognizer;
 
@@ -78,7 +78,7 @@ typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *auto
 typedef void (^UIWKDictationContextHandler)(NSString *selectedText, NSString *beforeText, NSString *afterText);
 typedef void (^UIWKSelectionCompletionHandler)(void);
 typedef void (^UIWKSelectionWithDirectionCompletionHandler)(BOOL selectionEndIsMoving);
-typedef void (^UIWKKeyWebEventCompletionHandler)(WebIOSEvent *theEvent, BOOL wasHandled);
+typedef void (^UIWKKeyWebEventCompletionHandler)(::WebEvent *theEvent, BOOL wasHandled);
 
 namespace WebKit {
 
@@ -243,7 +243,7 @@ struct WKAutoCorrectionData {
 - (void)_stopAssistingNode;
 - (void)_selectionChanged;
 - (void)_updateChangedSelection;
-- (BOOL)_interpretKeyEvent:(WebIOSEvent *)theEvent isCharEvent:(BOOL)isCharEvent;
+- (BOOL)_interpretKeyEvent:(::WebEvent *)theEvent isCharEvent:(BOOL)isCharEvent;
 - (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info;
 - (void)_attemptClickAtLocation:(CGPoint)location;
 - (void)_willStartScrollingOrZooming;
@@ -255,7 +255,7 @@ struct WKAutoCorrectionData {
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const WebCore::IntRect&)elementRect;
 - (void)_showRunOpenPanel:(API::OpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
 - (void)accessoryDone;
-- (void)_didHandleKeyEvent:(WebIOSEvent *)event eventWasHandled:(BOOL)eventWasHandled;
+- (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled;
 - (Vector<WebKit::OptionItem>&) assistedNodeSelectOptions;
 - (void)_enableInspectorNodeSearch;
 - (void)_disableInspectorNodeSearch;

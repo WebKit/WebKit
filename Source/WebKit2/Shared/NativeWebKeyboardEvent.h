@@ -52,7 +52,7 @@ typedef union _GdkEvent GdkEvent;
 
 #if PLATFORM(IOS)
 #include <wtf/RetainPtr.h>
-OBJC_CLASS WebIOSEvent;
+OBJC_CLASS WebEvent;
 #endif
 
 namespace WebKit {
@@ -68,7 +68,7 @@ public:
     NativeWebKeyboardEvent(const Evas_Event_Key_Down*, bool);
     NativeWebKeyboardEvent(const Evas_Event_Key_Up*);
 #elif PLATFORM(IOS)
-    NativeWebKeyboardEvent(WebIOSEvent *);
+    NativeWebKeyboardEvent(::WebEvent *);
 #endif
 
 #if USE(APPKIT)
@@ -81,7 +81,7 @@ public:
     const void* nativeEvent() const { return m_nativeEvent; }
     bool isFiltered() const { return m_isFiltered; }
 #elif PLATFORM(IOS)
-    WebIOSEvent* nativeEvent() const { return m_nativeEvent.get(); }
+    ::WebEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #endif
 
 private:
@@ -95,7 +95,7 @@ private:
     const void* m_nativeEvent;
     bool m_isFiltered;
 #elif PLATFORM(IOS)
-    RetainPtr<WebIOSEvent> m_nativeEvent;
+    RetainPtr<::WebEvent> m_nativeEvent;
 #endif
 };
 
