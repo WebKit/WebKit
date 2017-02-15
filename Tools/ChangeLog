@@ -1,3 +1,20 @@
+2017-02-15  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Form Validation Bubble should be sensitive to Dynamic Type
+        https://bugs.webkit.org/show_bug.cgi?id=168291
+        <rdar://problem/30508593>
+
+        Reviewed by Tim Horton.
+
+        Drop overridePreference() implementation in iOS's UIScriptController
+        as it was only used for the minimum font size setting and this setting
+        is not exposed on iOS.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::overridePreference):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+
 2017-02-15  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Memoize app_identifier_from_bundle for efficiency, call parent class for _get_crash_log

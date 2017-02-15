@@ -2841,6 +2841,9 @@ media/modern-media-controls/media-controller/media-controller-reduced-padding.ht
 media/modern-media-controls/media-controller/media-controller-tight-padding.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-toggle-compact-mode.html [ Skip ]
 
+# Form validation popover does not obey minimum font size setting on iOS but Dynamic Type instead.
+fast/forms/validation-message-minimum-font-size.html [ Skip ]
+
 # New Encrypted Media API not enabled on iOS
 media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]
 

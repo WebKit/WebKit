@@ -40,6 +40,7 @@ SOFT_LINK_CLASS(UIKit, UIPopoverPresentationController);
 SOFT_LINK_CLASS(UIKit, UITapGestureRecognizer);
 SOFT_LINK_CLASS(UIKit, UIView);
 SOFT_LINK_CLASS(UIKit, UIViewController);
+SOFT_LINK_CONSTANT(UIKit, UIFontTextStyleCallout, UIFontTextStyle);
 
 @interface WebValidationBubbleTapRecognizer : NSObject
 @end
@@ -97,7 +98,7 @@ static const CGFloat horizontalPadding = 17;
 static const CGFloat verticalPadding = 9;
 static const CGFloat maxLabelWidth = 300;
 
-ValidationBubble::ValidationBubble(UIView* view, const String& message, const Settings& settings)
+ValidationBubble::ValidationBubble(UIView* view, const String& message, const Settings&)
     : m_view(view)
     , m_message(message)
 {
@@ -110,8 +111,8 @@ ValidationBubble::ValidationBubble(UIView* view, const String& message, const Se
 
     RetainPtr<UILabel> label = adoptNS([[getUILabelClass() alloc] initWithFrame:CGRectZero]);
     [label setText:message];
-    m_fontSize = std::max(settings.minimumFontSize, 14.0);
-    [label setFont:[getUIFontClass() systemFontOfSize:m_fontSize]];
+    [label setFont:[getUIFontClass() preferredFontForTextStyle:getUIFontTextStyleCallout()]];
+    m_fontSize = [[label font] pointSize];
     [label setLineBreakMode:NSLineBreakByTruncatingTail];
     [label setNumberOfLines:4];
     [popoverView addSubview:label.get()];
