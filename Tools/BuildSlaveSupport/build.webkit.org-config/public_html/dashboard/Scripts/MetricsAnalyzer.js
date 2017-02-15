@@ -92,7 +92,6 @@ Analyzer.prototype = {
             if (this._queues[i].platform === queue.platform && this._queues[i].architecture === queue.architecture && this._queues[i].debug === queue.debug)
                 return this._queues[i];
         }
-        // Efl bot both builds and tests, but is registered as tester.
         return queue;
     },
 

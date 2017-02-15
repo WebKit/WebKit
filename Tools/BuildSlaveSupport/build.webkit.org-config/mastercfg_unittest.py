@@ -406,9 +406,6 @@ expected_build_steps = {
     'Apple iOS 10 Simulator Debug WK1 (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'download-built-product', 'extract-built-product', 'layout-test', 'run-api-tests', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generator-tests', 'archive-test-results', 'upload', 'MasterShellCommand'],
     'Apple iOS 10 Simulator Debug WK2 (Tests)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'download-built-product', 'extract-built-product', 'layout-test', 'run-api-tests', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generator-tests', 'archive-test-results', 'upload', 'MasterShellCommand'],
 
-    'EFL Linux 64-bit Release WK2' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'compile-webkit', 'jscore-test', 'layout-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generator-tests', 'archive-test-results', 'upload', 'MasterShellCommand', 'API tests'],
-    'EFL Linux 64-bit Release WK2 (Perf)' : ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'compile-webkit', 'perf-test'],
-
     'JSCOnly Linux ARMv7 Thumb2 Release' : ['configure build', 'wait-for-svn-server', 'svn', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'jscore-test'],
     'JSCOnly Linux ARMv7 Traditional Release' : ['configure build', 'wait-for-svn-server', 'svn', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'jscore-test'],
     'JSCOnly Linux AArch64 Release' : ['configure build', 'wait-for-svn-server', 'svn', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'jscore-test'],

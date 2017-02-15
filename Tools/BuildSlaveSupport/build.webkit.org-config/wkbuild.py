@@ -46,7 +46,6 @@ def _should_file_trigger_build(target_platform, file):
         ("ManualTests", []),
         ("Tools/BuildSlaveSupport/build.webkit.org-config/public_html", []),
         ("Websites", []),
-        ("efl", []),
         ("opengl", []),
         ("opentype", []),
         ("openvg", []),

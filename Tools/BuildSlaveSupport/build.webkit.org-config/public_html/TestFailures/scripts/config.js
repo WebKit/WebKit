@@ -83,27 +83,6 @@ config.kPlatforms = {
             return builderName.indexOf('GTK') != -1;
         },
     },
-    'efl' : {
-        label : 'EFL',
-        buildConsoleURL: 'https://build.webkit.org',
-        layoutTestResultsURL: 'https://build.webkit.org/results',
-        waterfallURL: 'https://build.webkit.org/waterfall',
-        builders: {
-            'EFL Linux 64-bit Release WK2' : {version: '64-bit WK2'},
-        },
-        haveBuilderAccumulatedResults : false,
-        useDirectoryListingForOldBuilds: false,
-        useFlakinessDashboard: false,
-        resultsDirectoryNameFromBuilderName: function(builderName) {
-            return encodeURIComponent(builderName);
-        },
-        resultsDirectoryForBuildNumber: function(buildNumber, revision) {
-            return encodeURIComponent('r' + revision + ' (' + buildNumber + ')');
-        },
-        _builderApplies: function(builderName) {
-            return builderName.indexOf('EFL') != -1;
-        },
-    },
 };
 
 config.kTracURL = 'https://trac.webkit.org';
