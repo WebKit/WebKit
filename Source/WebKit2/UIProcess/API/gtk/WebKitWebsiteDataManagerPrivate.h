@@ -17,14 +17,16 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitWebsiteDataManagerPrivate_h
-#define WebKitWebsiteDataManagerPrivate_h
+#pragma once
 
 #include "APIWebsiteDataStore.h"
 #include "WebKitPrivate.h"
+#include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
 
 WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(WebKit::WebsiteDataStore::Configuration&&);
 API::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataManager*);
+void webkitWebsiteDataManagerAddProcessPool(WebKitWebsiteDataManager*, WebKit::WebProcessPool&);
+void webkitWebsiteDataManagerRemoveProcessPool(WebKitWebsiteDataManager*, WebKit::WebProcessPool&);
+const Vector<WebKit::WebProcessPool*>& webkitWebsiteDataManagerGetProcessPools(WebKitWebsiteDataManager*);
 
-#endif // WebKitWebsiteDataManagerPrivate_h

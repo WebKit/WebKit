@@ -25,6 +25,7 @@
 #define WebKitWebsiteDataManager_h
 
 #include <gio/gio.h>
+#include <webkit2/WebKitCookieManager.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitWebsiteData.h>
 
@@ -88,6 +89,9 @@ webkit_website_data_manager_get_indexeddb_directory                   (WebKitWeb
 
 WEBKIT_API const gchar *
 webkit_website_data_manager_get_websql_directory                      (WebKitWebsiteDataManager *manager);
+
+WEBKIT_API WebKitCookieManager *
+webkit_website_data_manager_get_cookie_manager                        (WebKitWebsiteDataManager *manager);
 
 WEBKIT_API void
 webkit_website_data_manager_fetch                                     (WebKitWebsiteDataManager *manager,

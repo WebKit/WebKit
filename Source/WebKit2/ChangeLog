@@ -1,3 +1,67 @@
+2017-02-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Update cookie manager API to properly work with ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=168230
+
+        Reviewed by Michael Catanzaro.
+
+        WebKitCookieManager is associated to a particular WebKitWebContext and uses the default session ID
+        unconditionally. It should be associated to a WebKitWebsiteDataManager instead and use its session ID. This
+        patch also adds support for handling cookies with WebKitWebsiteDataManager and deprecates
+        webkit_cookie_manager_get_domains_with_cookies(), webkit_cookie_manager_delete_cookies_for_domain() and
+        webkit_cookie_manager_delete_all_cookies(). It also adds API to get the the WebKitWebsiteDataManager of a
+        WebKitWebView, since it's the only way to get the WebKitCookieManager associated to an ephemeral web view.
+
+        * UIProcess/API/gtk/WebKitCookieManager.cpp:
+        (webkitCookieManagerDispose): Stop observing cookie changes.
+        (webkit_cookie_manager_class_init): Add dispose implementation.
+        (webkitCookieManagerCreate): Create the WebKitCookieManager with a WebKitWebsiteDataManager.
+        (webkit_cookie_manager_set_persistent_storage): Work with all contexts having the session.
+        (webkit_cookie_manager_set_accept_policy): Ditto.
+        (webkit_cookie_manager_get_accept_policy): Use any context having the session.
+        (webkit_cookie_manager_get_domains_with_cookies): Deprecate and implement using WebKitWebsiteDataManager.
+        (webkit_cookie_manager_get_domains_with_cookies_finish): Ditto.
+        (webkit_cookie_manager_delete_cookies_for_domain): Ditto.
+        (webkit_cookie_manager_delete_all_cookies): Ditto.
+        * UIProcess/API/gtk/WebKitCookieManager.h:
+        * UIProcess/API/gtk/WebKitCookieManagerPrivate.h:
+        * UIProcess/API/gtk/WebKitCustomProtocolManagerClient.cpp:
+        (attachCustomProtocolManagerClientToContext):
+        * UIProcess/API/gtk/WebKitDownloadClient.cpp:
+        (attachDownloadClientToContext):
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp:
+        (attachInjectedBundleClientToContext):
+        * UIProcess/API/gtk/WebKitSecurityManager.cpp:
+        (registerSecurityPolicyForURIScheme):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed): Call webkitWebsiteDataManagerAddProcessPool.
+        (webkitWebContextDispose): Call webkitWebsiteDataManagerRemoveProcessPool.
+        (webkit_web_context_get_cookie_manager): Return the WebKitCookieManager of the WebKitWebsiteDataManager.
+        (webkitWebContextGetProcessPool): Make it return a reference.
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Call webkitWebsiteDataManagerAddProcessPool when creating a ephemeral web view.
+        (webkitWebViewDispose): Call webkitWebsiteDataManagerRemoveProcessPool if needed.
+        (webkit_web_view_get_website_data_manager): Return the WebKitWebsiteDataManager or the context one.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebsiteData.cpp: Add support for Cookies type.
+        (recordContainsSupportedDataTypes):
+        (toWebKitWebsiteDataTypes):
+        * UIProcess/API/gtk/WebKitWebsiteData.h:
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.cpp:
+        (_WebKitWebsiteDataManagerPrivate::~_WebKitWebsiteDataManagerPrivate): Ensure all contexts were unregistered.
+        (webkitWebsiteDataManagerAddProcessPool): Register the process pool in the session.
+        (webkitWebsiteDataManagerRemoveProcessPool): Unregister the process poll from the session.
+        (webkitWebsiteDataManagerGetProcessPools): Return the list of proces pools registered.
+        (webkit_website_data_manager_get_cookie_manager): Return the WebKitCookieManager.
+        (toWebsiteDataTypes): Add Cookies.
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.h:
+        * UIProcess/API/gtk/WebKitWebsiteDataManagerPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Add new symbols.
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp:
+        (WebKit::WebsiteDataRecord::displayNameForCookieHostName): Handle localhost as a special case here for backwards
+        compatibility.
+
 2017-02-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Support data interaction on links

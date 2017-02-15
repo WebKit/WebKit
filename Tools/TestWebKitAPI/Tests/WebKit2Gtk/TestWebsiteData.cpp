@@ -33,6 +33,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
 
     if (g_str_equal(path, "/empty")) {
         const char* emptyHTML = "<html><body></body></html>";
+        soup_message_headers_replace(message->response_headers, "Set-Cookie", "foo=bar; Max-Age=60");
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, emptyHTML, strlen(emptyHTML));
         soup_message_body_complete(message->response_body);
         soup_message_set_status(message, SOUP_STATUS_OK);
@@ -237,6 +238,7 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
     g_assert(webkit_web_context_is_ephemeral(webContext.get()));
     GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(webContext.get()));
     g_assert(webkit_web_view_is_ephemeral(webView.get()));
+    g_assert(webkit_web_view_get_website_data_manager(webView.get()) == manager.get());
 
     g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
     webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/empty").data());
@@ -485,6 +487,36 @@ static void testWebsiteDataAppcache(WebsiteDataTest* test, gconstpointer)
     g_assert(!dataList);
 }
 
+static void testWebsiteDataCookies(WebsiteDataTest* test, gconstpointer)
+{
+    GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_COOKIES);
+    g_assert(!dataList);
+
+    test->loadURI(kServer->getURIForPath("/empty").data());
+    test->waitUntilLoadFinished();
+
+    dataList = test->fetch(WEBKIT_WEBSITE_DATA_COOKIES);
+    g_assert(dataList);
+    g_assert_cmpuint(g_list_length(dataList), ==, 1);
+    WebKitWebsiteData* data = static_cast<WebKitWebsiteData*>(dataList->data);
+    g_assert(data);
+    g_assert_cmpstr(webkit_website_data_get_name(data), ==, "127.0.0.1");
+    g_assert_cmpuint(webkit_website_data_get_types(data), ==, WEBKIT_WEBSITE_DATA_COOKIES);
+    // Cookies size is unknown.
+    g_assert_cmpuint(webkit_website_data_get_size(data, WEBKIT_WEBSITE_DATA_COOKIES), ==, 0);
+
+    GList removeList = { data, nullptr, nullptr };
+    test->remove(WEBKIT_WEBSITE_DATA_COOKIES, &removeList);
+    dataList = test->fetch(WEBKIT_WEBSITE_DATA_COOKIES);
+    g_assert(!dataList);
+
+    // Clear all.
+    static const WebKitWebsiteDataTypes cacheAndCookieTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_COOKIES | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
+    test->clear(cacheAndCookieTypes, 0);
+    dataList = test->fetch(cacheAndCookieTypes);
+    g_assert(!dataList);
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -496,6 +528,7 @@ void beforeAll()
     WebsiteDataTest::add("WebKitWebsiteData", "storage", testWebsiteDataStorage);
     WebsiteDataTest::add("WebKitWebsiteData", "databases", testWebsiteDataDatabases);
     WebsiteDataTest::add("WebKitWebsiteData", "appcache", testWebsiteDataAppcache);
+    WebsiteDataTest::add("WebKitWebsiteData", "cookies", testWebsiteDataCookies);
 }
 
 void afterAll()

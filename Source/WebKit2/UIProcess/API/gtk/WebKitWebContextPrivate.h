@@ -34,7 +34,7 @@
 #include "WebProcessPool.h"
 #include <WebCore/ResourceRequest.h>
 
-WebKit::WebProcessPool* webkitWebContextGetProcessPool(WebKitWebContext*);
+WebKit::WebProcessPool& webkitWebContextGetProcessPool(WebKitWebContext*);
 WebKitDownload* webkitWebContextGetOrCreateDownload(WebKit::DownloadProxy*);
 WebKitDownload* webkitWebContextStartDownload(WebKitWebContext*, const char* uri, WebKit::WebPageProxy*);
 void webkitWebContextRemoveDownload(WebKit::DownloadProxy*);

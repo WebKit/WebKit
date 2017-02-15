@@ -21,6 +21,7 @@
 #include "WebKitWebsiteDataManager.h"
 
 #include "APIWebsiteDataStore.h"
+#include "WebKitCookieManagerPrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebKitWebsiteDataPrivate.h"
 #include "WebsiteDataFetchOption.h"
@@ -69,6 +70,8 @@ using namespace WebKit;
  * Since: 2.10
  */
 
+using namespace WebKit;
+
 enum {
     PROP_0,
 
@@ -83,6 +86,11 @@ enum {
 };
 
 struct _WebKitWebsiteDataManagerPrivate {
+    ~_WebKitWebsiteDataManagerPrivate()
+    {
+        ASSERT(processPools.isEmpty());
+    }
+
     RefPtr<API::WebsiteDataStore> websiteDataStore;
     GUniquePtr<char> baseDataDirectory;
     GUniquePtr<char> baseCacheDirectory;
@@ -91,6 +99,9 @@ struct _WebKitWebsiteDataManagerPrivate {
     GUniquePtr<char> applicationCacheDirectory;
     GUniquePtr<char> indexedDBDirectory;
     GUniquePtr<char> webSQLDirectory;
+
+    GRefPtr<WebKitCookieManager> cookieManager;
+    Vector<WebProcessPool*> processPools;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitWebsiteDataManager, webkit_website_data_manager, G_TYPE_OBJECT)
@@ -364,6 +375,23 @@ API::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataMan
     return *priv->websiteDataStore;
 }
 
+void webkitWebsiteDataManagerAddProcessPool(WebKitWebsiteDataManager* manager, WebProcessPool& processPool)
+{
+    ASSERT(!manager->priv->processPools.contains(&processPool));
+    manager->priv->processPools.append(&processPool);
+}
+
+void webkitWebsiteDataManagerRemoveProcessPool(WebKitWebsiteDataManager* manager, WebProcessPool& processPool)
+{
+    ASSERT(manager->priv->processPools.contains(&processPool));
+    manager->priv->processPools.removeFirst(&processPool);
+}
+
+const Vector<WebProcessPool*>& webkitWebsiteDataManagerGetProcessPools(WebKitWebsiteDataManager* manager)
+{
+    return manager->priv->processPools;
+}
+
 /**
  * webkit_website_data_manager_new:
  * @first_option_name: name of the first option to set
@@ -576,6 +604,26 @@ const gchar* webkit_website_data_manager_get_websql_directory(WebKitWebsiteDataM
     return priv->webSQLDirectory.get();
 }
 
+/**
+ * webkit_website_data_manager_get_cookie_manager:
+ * @manager: a #WebKitWebsiteDataManager
+ *
+ * Get the #WebKitCookieManager of @manager.
+ *
+ * Returns: (transfer none): a #WebKitCookieManager
+ *
+ * Since: 2.16
+ */
+WebKitCookieManager* webkit_website_data_manager_get_cookie_manager(WebKitWebsiteDataManager* manager)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
+
+    if (!manager->priv->cookieManager)
+        manager->priv->cookieManager = adoptGRef(webkitCookieManagerCreate(manager));
+
+    return manager->priv->cookieManager.get();
+}
+
 static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes types)
 {
     OptionSet<WebsiteDataType> returnValue;
@@ -595,6 +643,8 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
         returnValue |= WebsiteDataType::IndexedDBDatabases;
     if (types & WEBKIT_WEBSITE_DATA_PLUGIN_DATA)
         returnValue |= WebsiteDataType::PlugInData;
+    if (types & WEBKIT_WEBSITE_DATA_COOKIES)
+        returnValue |= WebsiteDataType::Cookies;
     return returnValue;
 }
 

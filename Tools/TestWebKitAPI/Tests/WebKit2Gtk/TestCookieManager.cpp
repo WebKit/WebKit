@@ -52,6 +52,7 @@ public:
         , m_cookiesChanged(false)
         , m_finishLoopWhenCookiesChange(false)
     {
+        g_assert(webkit_website_data_manager_get_cookie_manager(webkit_web_context_get_website_data_manager(webkit_web_view_get_context(m_webView))) == m_cookieManager);
         g_signal_connect(m_cookieManager, "changed", G_CALLBACK(cookiesChangedCallback), this);
     }
 
@@ -113,7 +114,9 @@ public:
     static void getDomainsReadyCallback(GObject* object, GAsyncResult* result, gpointer userData)
     {
         GUniqueOutPtr<GError> error;
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         char** domains = webkit_cookie_manager_get_domains_with_cookies_finish(WEBKIT_COOKIE_MANAGER(object), result, &error.outPtr());
+        G_GNUC_END_IGNORE_DEPRECATIONS;
         g_assert(!error.get());
 
         CookieManagerTest* test = static_cast<CookieManagerTest*>(userData);
@@ -125,7 +128,9 @@ public:
     {
         g_strfreev(m_domains);
         m_domains = 0;
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         webkit_cookie_manager_get_domains_with_cookies(m_cookieManager, 0, getDomainsReadyCallback, this);
+        G_GNUC_END_IGNORE_DEPRECATIONS;
         g_main_loop_run(m_mainLoop);
 
         return m_domains;
@@ -144,12 +149,16 @@ public:
 
     void deleteCookiesForDomain(const char* domain)
     {
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         webkit_cookie_manager_delete_cookies_for_domain(m_cookieManager, domain);
+        G_GNUC_END_IGNORE_DEPRECATIONS;
     }
 
     void deleteAllCookies()
     {
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         webkit_cookie_manager_delete_all_cookies(m_cookieManager);
+        G_GNUC_END_IGNORE_DEPRECATIONS;
     }
 
     void waitUntilCookiesChanged()
@@ -320,6 +329,26 @@ static void testCookieManagerEphemeral(CookieManagerTest* test, gconstpointer)
     domains = test->getDomains();
     g_assert(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 0);
+
+    auto* viewDataManager = webkit_web_view_get_website_data_manager(webView.get());
+    g_assert(WEBKIT_IS_WEBSITE_DATA_MANAGER(viewDataManager));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(viewDataManager));
+    g_assert(viewDataManager != webkit_web_context_get_website_data_manager(webkit_web_view_get_context(test->m_webView)));
+    auto* cookieManager = webkit_website_data_manager_get_cookie_manager(viewDataManager);
+    g_assert(WEBKIT_IS_COOKIE_MANAGER(cookieManager));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(cookieManager));
+    g_assert(cookieManager != test->m_cookieManager);
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+    webkit_cookie_manager_get_domains_with_cookies(cookieManager, nullptr, [](GObject* object, GAsyncResult* result, gpointer userData) {
+        auto* test = static_cast<CookieManagerTest*>(userData);
+        GUniquePtr<char*> domains(webkit_cookie_manager_get_domains_with_cookies_finish(WEBKIT_COOKIE_MANAGER(object), result, nullptr));
+        g_assert(domains);
+        g_assert_cmpint(g_strv_length(domains.get()), ==, 1);
+        g_assert_cmpstr(domains.get()[0], ==, kFirstPartyDomain);
+        test->quitMainLoop();
+    }, test);
+    G_GNUC_END_IGNORE_DEPRECATIONS;
+    g_main_loop_run(test->m_mainLoop);
 }
 
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)

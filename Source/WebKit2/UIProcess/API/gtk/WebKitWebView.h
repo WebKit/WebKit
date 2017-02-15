@@ -277,6 +277,9 @@ webkit_web_view_new_with_user_content_manager        (WebKitUserContentManager  
 WEBKIT_API gboolean
 webkit_web_view_is_ephemeral                         (WebKitWebView             *web_view);
 
+WEBKIT_API WebKitWebsiteDataManager *
+webkit_web_view_get_website_data_manager             (WebKitWebView             *web_view);
+
 WEBKIT_API WebKitWebContext *
 webkit_web_view_get_context                          (WebKitWebView             *web_view);
 

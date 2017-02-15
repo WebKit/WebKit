@@ -108,6 +108,7 @@ static void testWebViewEphemeral(WebViewTest* test, gconstpointer)
     g_assert(!webkit_web_context_is_ephemeral(webkit_web_view_get_context(test->m_webView)));
     auto* manager = webkit_web_context_get_website_data_manager(test->m_webContext.get());
     g_assert(!webkit_website_data_manager_is_ephemeral(manager));
+    g_assert(webkit_web_view_get_website_data_manager(test->m_webView) == manager);
     webkit_website_data_manager_clear(manager, WEBKIT_WEBSITE_DATA_DISK_CACHE, 0, nullptr, [](GObject* manager, GAsyncResult* result, gpointer userData) {
         webkit_website_data_manager_clear_finish(WEBKIT_WEBSITE_DATA_MANAGER(manager), result, nullptr);
         static_cast<WebViewTest*>(userData)->quitMainLoop();
@@ -121,6 +122,7 @@ static void testWebViewEphemeral(WebViewTest* test, gconstpointer)
         nullptr));
     g_assert(webkit_web_view_is_ephemeral(webView.get()));
     g_assert(!webkit_web_context_is_ephemeral(webkit_web_view_get_context(webView.get())));
+    g_assert(webkit_web_view_get_website_data_manager(webView.get()) != manager);
 
     g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
     webkit_web_view_load_uri(webView.get(), gServer->getURIForPath("/").data());

@@ -28,9 +28,7 @@
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "WebCertificateInfo.h"
-#include "WebCookieManagerProxy.h"
 #include "WebGeolocationManagerProxy.h"
-#include "WebKitCookieManagerPrivate.h"
 #include "WebKitCustomProtocolManagerClient.h"
 #include "WebKitDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
@@ -79,11 +77,9 @@ using namespace WebKit;
  * You can define the #WebKitCacheModel and #WebKitProcessModel with
  * webkit_web_context_set_cache_model() and
  * webkit_web_context_set_process_model(), depending on the needs of
- * your application. You can access the #WebKitCookieManager or the
- * #WebKitSecurityManager to specify the behaviour of your application
- * regarding cookies and security, using
- * webkit_web_context_get_cookie_manager() and
- * webkit_web_context_get_security_manager() for that.
+ * your application. You can access the #WebKitSecurityManager to specify
+ * the behaviour of your application regarding security using
+ * webkit_web_context_get_security_manager().
  *
  * It is also possible to change your preferred language or enable
  * spell checking, using webkit_web_context_set_preferred_languages(),
@@ -157,7 +153,6 @@ struct _WebKitWebContextPrivate {
     RefPtr<WebProcessPool> processPool;
     bool clientsDetached;
 
-    GRefPtr<WebKitCookieManager> cookieManager;
     GRefPtr<WebKitFaviconDatabase> faviconDatabase;
     GRefPtr<WebKitSecurityManager> securityManager;
     URISchemeHandlerMap uriSchemeHandlers;
@@ -273,6 +268,8 @@ static void webkitWebContextConstructed(GObject* object)
     if (!priv->websiteDataManager)
         priv->websiteDataManager = adoptGRef(webkitWebsiteDataManagerCreate(websiteDataStoreConfigurationForWebProcessPoolConfiguration(configuration)));
 
+    webkitWebsiteDataManagerAddProcessPool(priv->websiteDataManager.get(), *priv->processPool);
+
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
     priv->processPool->setIgnoreTLSErrors(false);
 
@@ -301,6 +298,11 @@ static void webkitWebContextDispose(GObject* object)
         priv->processPool->initializeInjectedBundleClient(nullptr);
         priv->processPool->setDownloadClient(nullptr);
         priv->processPool->setCustomProtocolManagerClient(nullptr);
+    }
+
+    if (priv->websiteDataManager) {
+        webkitWebsiteDataManagerRemoveProcessPool(priv->websiteDataManager.get(), *priv->processPool);
+        priv->websiteDataManager = nullptr;
     }
 
     G_OBJECT_CLASS(webkit_web_context_parent_class)->dispose(object);
@@ -689,19 +691,15 @@ WebKitDownload* webkit_web_context_download_uri(WebKitWebContext* context, const
  * webkit_web_context_get_cookie_manager:
  * @context: a #WebKitWebContext
  *
- * Get the #WebKitCookieManager of @context.
+ * Get the #WebKitCookieManager of the @context's #WebKitWebsiteDataManager.
  *
  * Returns: (transfer none): the #WebKitCookieManager of @context.
  */
 WebKitCookieManager* webkit_web_context_get_cookie_manager(WebKitWebContext* context)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
 
-    WebKitWebContextPrivate* priv = context->priv;
-    if (!priv->cookieManager)
-        priv->cookieManager = adoptGRef(webkitCookieManagerCreate(priv->processPool->supplement<WebCookieManagerProxy>()));
-
-    return priv->cookieManager.get();
+    return webkit_website_data_manager_get_cookie_manager(context->priv->websiteDataManager.get());
 }
 
 static void ensureFaviconDatabase(WebKitWebContext* context)
@@ -1435,11 +1433,11 @@ GVariant* webkitWebContextInitializeWebExtensions(WebKitWebContext* context)
         context->priv->webExtensionsInitializationUserData.get());
 }
 
-WebProcessPool* webkitWebContextGetProcessPool(WebKitWebContext* context)
+WebProcessPool& webkitWebContextGetProcessPool(WebKitWebContext* context)
 {
     g_assert(WEBKIT_IS_WEB_CONTEXT(context));
 
-    return context->priv->processPool.get();
+    return *context->priv->processPool;
 }
 
 void webkitWebContextStartLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID, const WebCore::ResourceRequest& resourceRequest, CustomProtocolManagerProxy& manager)

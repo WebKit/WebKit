@@ -55,18 +55,22 @@ static void testWebContextEphemeral(Test* test, gconstpointer)
 
     GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
     g_assert(!webkit_web_view_is_ephemeral(webView.get()));
+    g_assert(webkit_web_view_get_website_data_manager(webView.get()) == webkit_web_context_get_website_data_manager(webkit_web_context_get_default()));
 
     webView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(test->m_webContext.get()));
     g_assert(!webkit_web_view_is_ephemeral(webView.get()));
+    g_assert(webkit_web_view_get_website_data_manager(webView.get()) == manager);
 
     GRefPtr<WebKitWebContext> context = adoptGRef(webkit_web_context_new_ephemeral());
     g_assert(webkit_web_context_is_ephemeral(context.get()));
     manager = webkit_web_context_get_website_data_manager(context.get());
     g_assert(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
     g_assert(webkit_website_data_manager_is_ephemeral(manager));
+    g_assert(webkit_web_view_get_website_data_manager(webView.get()) != manager);
 
     webView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(context.get()));
     g_assert(webkit_web_view_is_ephemeral(webView.get()));
+    g_assert(webkit_web_view_get_website_data_manager(webView.get()) == manager);
 
     GRefPtr<WebKitWebsiteDataManager> ephemeralManager = adoptGRef(webkit_website_data_manager_new_ephemeral());
     g_assert(webkit_website_data_manager_is_ephemeral(ephemeralManager.get()));

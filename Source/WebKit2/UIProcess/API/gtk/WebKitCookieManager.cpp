@@ -20,11 +20,13 @@
 #include "config.h"
 #include "WebKitCookieManager.h"
 
-#include "APIString.h"
 #include "SoupCookiePersistentStorageType.h"
 #include "WebCookieManagerProxy.h"
 #include "WebKitCookieManagerPrivate.h"
 #include "WebKitEnumTypes.h"
+#include "WebKitWebsiteDataManagerPrivate.h"
+#include "WebKitWebsiteDataPrivate.h"
+#include "WebsiteDataRecord.h"
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -35,15 +37,11 @@ using namespace WebKit;
  * @Short_description: Defines how to handle cookies in a #WebKitWebContext
  * @Title: WebKitCookieManager
  *
- * The #WebKitCookieManager defines how to handle cookies in a
- * #WebKitWebContext. Get it from the context with
- * webkit_web_context_get_cookie_manager(), and use it to set where to
- * store cookies, with webkit_cookie_manager_set_persistent_storage(),
- * to get the list of domains with cookies, with
- * webkit_cookie_manager_get_domains_with_cookies(), or to set the
- * acceptance policy, with webkit_cookie_manager_get_accept_policy()
- * (among other actions).
- *
+ * The WebKitCookieManager defines how to set up and handle cookies.
+ * You can get it from a #WebKitWebsiteDataManager with
+ * webkit_website_data_manager_get_cookie_manager(), and use it to set where to
+ * store cookies with webkit_cookie_manager_set_persistent_storage(),
+ * or to set the acceptance policy, with webkit_cookie_manager_get_accept_policy().
  */
 
 enum {
@@ -53,12 +51,7 @@ enum {
 };
 
 struct _WebKitCookieManagerPrivate {
-    ~_WebKitCookieManagerPrivate()
-    {
-        webCookieManager->stopObservingCookieChanges(WebCore::SessionID::defaultSessionID());
-    }
-
-    RefPtr<WebCookieManagerProxy> webCookieManager;
+    WebKitWebsiteDataManager* dataManager;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -108,9 +101,24 @@ static inline HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(WebKitCookieAccept
     }
 }
 
+static void webkitCookieManagerDispose(GObject* object)
+{
+    WebKitCookieManager* manager = WEBKIT_COOKIE_MANAGER(object);
+    if (manager->priv->dataManager) {
+        auto sessionID = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager).websiteDataStore().sessionID();
+        for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager))
+            processPool->supplement<WebCookieManagerProxy>()->stopObservingCookieChanges(sessionID);
+
+        manager->priv->dataManager = nullptr;
+    }
+
+    G_OBJECT_CLASS(webkit_cookie_manager_parent_class)->dispose(object);
+}
+
 static void webkit_cookie_manager_class_init(WebKitCookieManagerClass* findClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(findClass);
+    gObjectClass->dispose = webkitCookieManagerDispose;
 
     /**
      * WebKitCookieManager::changed:
@@ -127,26 +135,16 @@ static void webkit_cookie_manager_class_init(WebKitCookieManagerClass* findClass
                      G_TYPE_NONE, 0);
 }
 
-static void cookiesDidChange(WKCookieManagerRef, const void* clientInfo)
+WebKitCookieManager* webkitCookieManagerCreate(WebKitWebsiteDataManager* dataManager)
 {
-    g_signal_emit(WEBKIT_COOKIE_MANAGER(clientInfo), signals[CHANGED], 0);
-}
-
-WebKitCookieManager* webkitCookieManagerCreate(WebCookieManagerProxy* webCookieManager)
-{
-    WebKitCookieManager* manager = WEBKIT_COOKIE_MANAGER(g_object_new(WEBKIT_TYPE_COOKIE_MANAGER, NULL));
-    manager->priv->webCookieManager = webCookieManager;
-
-    WKCookieManagerClientV0 wkCookieManagerClient = {
-        {
-            0, // version
-            manager, // clientInfo
-        },
-        cookiesDidChange
-    };
-    WKCookieManagerSetClient(toAPI(webCookieManager), &wkCookieManagerClient.base);
-    manager->priv->webCookieManager->startObservingCookieChanges(WebCore::SessionID::defaultSessionID());
-
+    WebKitCookieManager* manager = WEBKIT_COOKIE_MANAGER(g_object_new(WEBKIT_TYPE_COOKIE_MANAGER, nullptr));
+    manager->priv->dataManager = dataManager;
+    auto sessionID = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager).websiteDataStore().sessionID();
+    for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager)) {
+        processPool->supplement<WebCookieManagerProxy>()->startObservingCookieChanges(sessionID, [manager] {
+            g_signal_emit(manager, signals[CHANGED], 0);
+        });
+    }
     return manager;
 }
 
@@ -161,17 +159,26 @@ WebKitCookieManager* webkitCookieManagerCreate(WebCookieManagerProxy* webCookieM
  * Cookies are initially read from @filename to create an initial set of cookies.
  * Then, non-session cookies will be written to @filename when the WebKitCookieManager::changed
  * signal is emitted.
- * By default, @cookie_manager doesn't store the cookies persistenly, so you need to call this
+ * By default, @cookie_manager doesn't store the cookies persistently, so you need to call this
  * method to keep cookies saved across sessions.
+ *
+ * This method should never be called on a #WebKitCookieManager associated to an ephemeral #WebKitWebsiteDataManager.
  */
 void webkit_cookie_manager_set_persistent_storage(WebKitCookieManager* manager, const char* filename, WebKitCookiePersistentStorage storage)
 {
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
     g_return_if_fail(filename);
+    g_return_if_fail(!webkit_website_data_manager_is_ephemeral(manager->priv->dataManager));
 
-    manager->priv->webCookieManager->stopObservingCookieChanges(WebCore::SessionID::defaultSessionID());
-    manager->priv->webCookieManager->setCookiePersistentStorage(String::fromUTF8(filename), toSoupCookiePersistentStorageType(storage));
-    manager->priv->webCookieManager->startObservingCookieChanges(WebCore::SessionID::defaultSessionID());
+    for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager)) {
+        auto* cookieManager = processPool->supplement<WebCookieManagerProxy>();
+
+        cookieManager->stopObservingCookieChanges(WebCore::SessionID::defaultSessionID());
+        cookieManager->setCookiePersistentStorage(String::fromUTF8(filename), toSoupCookiePersistentStorageType(storage));
+        cookieManager->startObservingCookieChanges(WebCore::SessionID::defaultSessionID(), [manager] {
+            g_signal_emit(manager, signals[CHANGED], 0);
+        });
+    }
 }
 
 /**
@@ -185,7 +192,8 @@ void webkit_cookie_manager_set_accept_policy(WebKitCookieManager* manager, WebKi
 {
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
-    manager->priv->webCookieManager->setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
+    for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager))
+        processPool->supplement<WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
 }
 
 static void webkitCookieManagerGetAcceptPolicyCallback(WKHTTPCookieAcceptPolicy policy, WKErrorRef, void* context)
@@ -210,8 +218,17 @@ void webkit_cookie_manager_get_accept_policy(WebKitCookieManager* manager, GCanc
 {
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
-    GTask* task = g_task_new(manager, cancellable, callback, userData);
-    manager->priv->webCookieManager->getHTTPCookieAcceptPolicy(toGenericCallbackFunction<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy>(task, webkitCookieManagerGetAcceptPolicyCallback));
+    GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
+
+    // The policy is the same in all process pools having the same session ID, so just ask any.
+    const auto& processPools = webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager);
+    if (processPools.isEmpty()) {
+        g_task_return_int(task.get(), WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY);
+        return;
+    }
+
+    processPools[0]->supplement<WebCookieManagerProxy>()->getHTTPCookieAcceptPolicy(
+        toGenericCallbackFunction<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy>(task.leakRef(), webkitCookieManagerGetAcceptPolicyCallback));
 }
 
 /**
@@ -233,25 +250,6 @@ WebKitCookieAcceptPolicy webkit_cookie_manager_get_accept_policy_finish(WebKitCo
     return returnValue == -1 ? WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY : static_cast<WebKitCookieAcceptPolicy>(returnValue);
 }
 
-static void webkitCookieManagerGetDomainsWithCookiesCallback(WKArrayRef wkDomains, WKErrorRef, void* context)
-{
-    GRefPtr<GTask> task = adoptGRef(G_TASK(context));
-    if (g_task_return_error_if_cancelled(task.get()))
-        return;
-
-    API::Array* domains = toImpl(wkDomains);
-    GPtrArray* returnValue = g_ptr_array_sized_new(domains->size());
-    for (size_t i = 0; i < domains->size(); ++i) {
-        API::String* domainString = static_cast<API::String*>(domains->at(i));
-        String domain = domainString->string();
-        if (domain.isEmpty())
-            continue;
-        g_ptr_array_add(returnValue, g_strdup(domain.utf8().data()));
-    }
-    g_ptr_array_add(returnValue, 0);
-    g_task_return_pointer(task.get(), g_ptr_array_free(returnValue, FALSE), reinterpret_cast<GDestroyNotify>(g_strfreev));
-}
-
 /**
  * webkit_cookie_manager_get_domains_with_cookies:
  * @cookie_manager: a #WebKitCookieManager
@@ -263,13 +261,32 @@ static void webkitCookieManagerGetDomainsWithCookiesCallback(WKArrayRef wkDomain
  *
  * When the operation is finished, @callback will be called. You can then call
  * webkit_cookie_manager_get_domains_with_cookies_finish() to get the result of the operation.
+ *
+ * Deprecated: 2.16: Use webkit_website_data_manager_fetch() instead.
  */
 void webkit_cookie_manager_get_domains_with_cookies(WebKitCookieManager* manager, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
     GTask* task = g_task_new(manager, cancellable, callback, userData);
-    manager->priv->webCookieManager->getHostnamesWithCookies(WebCore::SessionID::defaultSessionID(), toGenericCallbackFunction(task, webkitCookieManagerGetDomainsWithCookiesCallback));
+    webkit_website_data_manager_fetch(manager->priv->dataManager, WEBKIT_WEBSITE_DATA_COOKIES, cancellable, [](GObject* object, GAsyncResult* result, gpointer userData) {
+        GRefPtr<GTask> task = adoptGRef(G_TASK(userData));
+        GError* error = nullptr;
+        GUniquePtr<GList> dataList(webkit_website_data_manager_fetch_finish(WEBKIT_WEBSITE_DATA_MANAGER(object), result, &error));
+        if (error) {
+            g_task_return_error(task.get(), error);
+            return;
+        }
+
+        GPtrArray* domains = g_ptr_array_sized_new(g_list_length(dataList.get()));
+        for (GList* item = dataList.get(); item; item = g_list_next(item)) {
+            auto* data = static_cast<WebKitWebsiteData*>(item->data);
+            g_ptr_array_add(domains, g_strdup(webkit_website_data_get_name(data)));
+            webkit_website_data_unref(data);
+        }
+        g_ptr_array_add(domains, nullptr);
+        g_task_return_pointer(task.get(), g_ptr_array_free(domains, FALSE), reinterpret_cast<GDestroyNotify>(g_strfreev));
+    }, task);
 }
 
 /**
@@ -284,11 +301,13 @@ void webkit_cookie_manager_get_domains_with_cookies(WebKitCookieManager* manager
  *
  * Returns: (transfer full) (array zero-terminated=1): A %NULL terminated array of domain names
  *    or %NULL in case of error.
+ *
+ * Deprecated: 2.16: Use webkit_website_data_manager_fetch_finish() instead.
  */
 gchar** webkit_cookie_manager_get_domains_with_cookies_finish(WebKitCookieManager* manager, GAsyncResult* result, GError** error)
 {
-    g_return_val_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager), 0);
-    g_return_val_if_fail(g_task_is_valid(result, manager), 0);
+    g_return_val_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, manager), nullptr);
 
     return reinterpret_cast<char**>(g_task_propagate_pointer(G_TASK(result), error));
 }
@@ -299,13 +318,20 @@ gchar** webkit_cookie_manager_get_domains_with_cookies_finish(WebKitCookieManage
  * @domain: a domain name
  *
  * Remove all cookies of @cookie_manager for the given @domain.
+ *
+ * Deprecated: 2.16: Use webkit_website_data_manager_remove() instead.
  */
 void webkit_cookie_manager_delete_cookies_for_domain(WebKitCookieManager* manager, const gchar* domain)
 {
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
     g_return_if_fail(domain);
 
-    manager->priv->webCookieManager->deleteCookiesForHostname(WebCore::SessionID::defaultSessionID(), String::fromUTF8(domain));
+    WebsiteDataRecord record;
+    record.addCookieHostName(String::fromUTF8(domain));
+    auto* data = webkitWebsiteDataCreate(WTFMove(record));
+    GList dataList = { data, nullptr, nullptr };
+    webkit_website_data_manager_remove(manager->priv->dataManager, WEBKIT_WEBSITE_DATA_COOKIES, &dataList, nullptr, nullptr, nullptr);
+    webkit_website_data_unref(data);
 }
 
 /**
@@ -313,10 +339,12 @@ void webkit_cookie_manager_delete_cookies_for_domain(WebKitCookieManager* manage
  * @cookie_manager: a #WebKitCookieManager
  *
  * Delete all cookies of @cookie_manager
+ *
+ * Deprecated: 2.16: Use webkit_website_data_manager_clear() instead.
  */
 void webkit_cookie_manager_delete_all_cookies(WebKitCookieManager* manager)
 {
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
-    manager->priv->webCookieManager->deleteAllCookies(WebCore::SessionID::defaultSessionID());
+    webkit_website_data_manager_clear(manager->priv->dataManager, WEBKIT_WEBSITE_DATA_COOKIES, 0, nullptr, nullptr, nullptr);
 }

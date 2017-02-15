@@ -62,6 +62,7 @@
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWebViewSessionStatePrivate.h"
+#include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/CertificateInfo.h>
@@ -655,8 +656,10 @@ static void webkitWebViewConstructed(GObject* object)
     if (!priv->settings)
         priv->settings = adoptGRef(webkit_settings_new());
 
-    if (priv->isEphemeral && !webkit_web_context_is_ephemeral(priv->context.get()))
+    if (priv->isEphemeral && !webkit_web_context_is_ephemeral(priv->context.get())) {
         priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new_ephemeral());
+        webkitWebsiteDataManagerAddProcessPool(priv->websiteDataManager.get(), webkitWebContextGetProcessPool(priv->context.get()));
+    }
 
     webkitWebContextCreatePageForWebView(priv->context.get(), webView, priv->userContentManager.get(), priv->relatedView);
 
@@ -783,6 +786,11 @@ static void webkitWebViewDispose(GObject* object)
         // call this in finalize, not dispose, but finalize is used internally and we don't
         // have access to the instance pointer from the private struct destructor.
         webkitWebContextWebViewDestroyed(webView->priv->context.get(), webView);
+    }
+
+    if (webView->priv->websiteDataManager) {
+        webkitWebsiteDataManagerRemoveProcessPool(webView->priv->websiteDataManager.get(), webkitWebContextGetProcessPool(webView->priv->context.get()));
+        webView->priv->websiteDataManager = nullptr;
     }
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
@@ -2269,6 +2277,28 @@ gboolean webkit_web_view_is_ephemeral(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     return webView->priv->isEphemeral;
+}
+
+/**
+ * webkit_web_view_get_website_data_manager:
+ * @web_view: a #WebKitWebView
+ *
+ * Get the #WebKitWebsiteDataManager associated to @web_view. If @web_view is not ephemeral,
+ * the returned #WebKitWebsiteDataManager will be the same as the #WebKitWebsiteDataManager
+ * of @web_view's #WebKitWebContext.
+ *
+ * Returns: (transfer none): a #WebKitWebsiteDataManager
+ *
+ * Since: 2.16
+ */
+WebKitWebsiteDataManager* webkit_web_view_get_website_data_manager(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+
+    if (webView->priv->websiteDataManager)
+        return webView->priv->websiteDataManager.get();
+
+    return webkit_web_context_get_website_data_manager(webView->priv->context.get());
 }
 
 /**

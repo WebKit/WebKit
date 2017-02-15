@@ -17,12 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitCookieManagerPrivate_h
-#define WebKitCookieManagerPrivate_h
+#pragma once
 
-#include "WebKitCookieManager.h"
 #include "WebKitPrivate.h"
+#include "WebKitWebsiteDataManager.h"
 
-WebKitCookieManager* webkitCookieManagerCreate(WebKit::WebCookieManagerProxy*);
-
-#endif // WebKitCookieManagerPrivate_h
+WebKitCookieManager* webkitCookieManagerCreate(WebKitWebsiteDataManager*);

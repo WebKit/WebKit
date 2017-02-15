@@ -57,6 +57,5 @@ private:
 
 void attachCustomProtocolManagerClientToContext(WebKitWebContext* webContext)
 {
-    auto* processPool = webkitWebContextGetProcessPool(webContext);
-    processPool->setCustomProtocolManagerClient(std::make_unique<CustomProtocolManagerClient>(webContext));
+    webkitWebContextGetProcessPool(webContext).setCustomProtocolManagerClient(std::make_unique<CustomProtocolManagerClient>(webContext));
 }

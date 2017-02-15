@@ -73,7 +73,8 @@ static bool recordContainsSupportedDataTypes(const WebsiteDataRecord& record)
         WebsiteDataType::LocalStorage,
         WebsiteDataType::WebSQLDatabases,
         WebsiteDataType::IndexedDBDatabases,
-        WebsiteDataType::PlugInData
+        WebsiteDataType::PlugInData,
+        WebsiteDataType::Cookies
     };
     return record.types.contains(typesSupported);
 }
@@ -97,6 +98,8 @@ static WebKitWebsiteDataTypes toWebKitWebsiteDataTypes(OptionSet<WebsiteDataType
         returnValue |= WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES;
     if (types.contains(WebsiteDataType::PlugInData))
         returnValue |= WEBKIT_WEBSITE_DATA_PLUGIN_DATA;
+    if (types.contains(WebsiteDataType::Cookies))
+        returnValue |= WEBKIT_WEBSITE_DATA_COOKIES;
     return static_cast<WebKitWebsiteDataTypes>(returnValue);
 }
 

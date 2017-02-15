@@ -140,5 +140,5 @@ void attachInjectedBundleClientToContext(WebKitWebContext* webContext)
         0, // didReceiveSynchronousMessageFromInjectedBundle
         getInjectedBundleInitializationUserData
     };
-    WKContextSetInjectedBundleClient(toAPI(webkitWebContextGetProcessPool(webContext)), &wkInjectedBundleClient.base);
+    WKContextSetInjectedBundleClient(toAPI(&webkitWebContextGetProcessPool(webContext)), &wkInjectedBundleClient.base);
 }
