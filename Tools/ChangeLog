@@ -1,3 +1,12 @@
+2017-02-15  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Remove unused import from darwin.py
+        https://bugs.webkit.org/show_bug.cgi?id=168371
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/port/darwin.py: Remove unused 'time' module.
+
 2017-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Credentials stored by libsoup are used even StoredCredentials policy is DoNotAllowStoredCredentials

@@ -22,7 +22,6 @@
 
 import logging
 import os
-import time
 
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.executive import ScriptError
