@@ -46,7 +46,7 @@ public:
     {
     }
 
-    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type type = Type::Null)
+    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type type = Type::General)
         : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, type)
         , m_sslErrors(0)
     {

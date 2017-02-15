@@ -1,3 +1,19 @@
+2017-02-14  Basuke Suzuki  <Basuke.Suzuki@am.sony.com>
+
+        [CURL] ResourceError created with error information should have default type Type::General
+        https://bugs.webkit.org/show_bug.cgi?id=168345
+
+        Reviewed by Alex Christensen.
+
+        ResourceError has separate implementaion for each platform
+        so that the interface should be same.
+        On CURL port, the constructor with error information has
+        different default value on `type` parameter. It is Type::Null but other implementaitons have Type::General.
+        This causes some ResourceError is created inconsistent. 
+
+        * platform/network/curl/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+
 2017-02-14  Youenn Fablet  <youennf@gmail.com>
 
         [WebRTC] Add support for libwebrtc negotiation needed event
