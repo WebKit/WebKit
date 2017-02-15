@@ -3,11 +3,11 @@ CONSOLE MESSAGE: line 17: Refused to set unsafe header "User-Agent"
 CONSOLE MESSAGE: line 16: Refused to set unsafe header "Content-Transfer-Encoding"
 CONSOLE MESSAGE: line 17: Refused to set unsafe header "Content-Transfer-Encoding"
 
-FAIL XMLHttpRequest: setRequestHeader() - combining headers (Authorization) assert_equals: Combined header value should be t1,t2 expected "t1,t2" but got "t1, t2"
-FAIL XMLHttpRequest: setRequestHeader() - combining headers (Pragma) assert_equals: Combined header value should be t1,t2 expected "t1,t2" but got "t1, t2"
+PASS XMLHttpRequest: setRequestHeader() - combining headers (Authorization) 
+PASS XMLHttpRequest: setRequestHeader() - combining headers (Pragma) 
 FAIL XMLHttpRequest: setRequestHeader() - combining headers (User-Agent) assert_true: Combined header value should be t1,t2 expected true got false
 FAIL XMLHttpRequest: setRequestHeader() - combining headers (Content-Transfer-Encoding) assert_equals: Combined header value should be t1,t2 expected (string) "t1,t2" but got (undefined) undefined
-FAIL XMLHttpRequest: setRequestHeader() - combining headers (Content-Type) assert_equals: Combined header value should be t1,t2 expected "t1,t2" but got "t1, t2"
+PASS XMLHttpRequest: setRequestHeader() - combining headers (Content-Type) 
 PASS XMLHttpRequest: setRequestHeader() - combining headers (Overwrite) 
 PASS XMLHttpRequest: setRequestHeader() - combining headers (If) 
 PASS XMLHttpRequest: setRequestHeader() - combining headers (Status-URI) 

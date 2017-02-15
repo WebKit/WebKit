@@ -1,3 +1,16 @@
+2017-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION (r206014): HTTPHeaderMap does not consistently use comma without space to separate values of header fields
+        https://bugs.webkit.org/show_bug.cgi?id=168115
+
+        Reviewed by Darin Adler.
+
+        In r206014 HTTPHeaderMap::add() was updated to combine common headers with ',' instead of ", " to match the
+        fetch specification, but the uncommon headers are still combined with ", ".
+
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::add):
+
 2017-02-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         An assertion failure inside removeChildren
