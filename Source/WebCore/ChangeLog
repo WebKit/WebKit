@@ -1,3 +1,10 @@
+2017-02-14  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed followup to r212330 to fix Debug builds
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader): Add call to relaxAdoptionRequirement().
+
 2017-02-14  Matt Rajca  <mrajca@apple.com>
 
         Website policies: iframes should respect the autoplay policy of the top-level document
