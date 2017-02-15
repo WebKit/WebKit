@@ -189,6 +189,7 @@ SOFT_LINK_POINTER(AVFoundation, AVLayerVideoGravityResizeAspectFill, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVLayerVideoGravityResize, NSString *)
 
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetClientBundleIdentifierKey, NSString *)
+SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetRequiresCustomURLLoadingKey, NSString *)
 
 #define AVPlayer initAVPlayer()
 #define AVPlayerItem initAVPlayerItem()
@@ -210,6 +211,7 @@ SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetClientBundleIdentifierKey, NS
 #define AVPlayerItemDidPlayToEndTimeNotification getAVPlayerItemDidPlayToEndTimeNotification()
 #define AVURLAssetInheritURIQueryComponentFromReferencingURIKey getAVURLAssetInheritURIQueryComponentFromReferencingURIKey()
 #define AVURLAssetClientBundleIdentifierKey getAVURLAssetClientBundleIdentifierKey()
+#define AVURLAssetRequiresCustomURLLoadingKey getAVURLAssetRequiresCustomURLLoadingKey()
 #define AVAssetImageGeneratorApertureModeCleanAperture getAVAssetImageGeneratorApertureModeCleanAperture()
 #define AVURLAssetReferenceRestrictionsKey getAVURLAssetReferenceRestrictionsKey()
 #define AVLayerVideoGravityResizeAspect getAVLayerVideoGravityResizeAspect()
@@ -936,6 +938,9 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     String identifier = player()->sourceApplicationIdentifier();
     if (!identifier.isEmpty() && AVURLAssetClientBundleIdentifierKey)
         [options setObject:identifier forKey:AVURLAssetClientBundleIdentifierKey];
+
+    if (AVURLAssetRequiresCustomURLLoadingKey)
+        [options setObject:@YES forKey:AVURLAssetRequiresCustomURLLoadingKey];
 #endif
 
 #if ENABLE(AVF_CAPTIONS)
