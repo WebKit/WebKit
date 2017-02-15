@@ -1516,3 +1516,5 @@ webkit.org/b/167757 [ Sierra Release ] workers/bomb.html [ Pass Timeout ]
 webkit.org/b/167749 http/tests/media/track-in-band-hls-metadata-crash.html [ Pass Timeout ]
 
 webkit.org/b/167186 fast/backgrounds/hidpi-bitmap-background-on-subpixel-position.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/168087 media/video-zoom.html [ Pass Failure ]
