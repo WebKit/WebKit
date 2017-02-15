@@ -1,3 +1,14 @@
+2017-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add ENABLE_INTERSECTION_OBSERVER option to CMake.
+
+        It's now a runtime enabled feature so we should always build it.
+
+        Fixes: intersection-observer/intersection-observer-entry-interface.html
+               intersection-observer/intersection-observer-interface.html
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2017-02-10  Brian Burg  <bburg@apple.com>
 
         Add basic debugging macros for CMake
