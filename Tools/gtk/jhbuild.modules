@@ -240,9 +240,12 @@
     <dependencies>
       <dep package="glib-networking"/>
     </dependencies>
-    <branch module="libsoup" version="2.57.1"
-            repo="git.gnome.org"
-            tag="6acdbacc107c99fe6f05b78b81f4a40fb3fde9e9"/>
+    <branch module="/pub/GNOME/sources/libsoup/2.57/libsoup-2.57.1.tar.xz" version="2.57.1"
+            repo="ftp.gnome.org"
+            hash="sha256:ca1ca037e89e8bc7b782559f3ec5d89c9d0b836f505b2f95e008ed517fd6658f">
+      <patch file="libsoup-auth-Fix-async-authentication-when-flag-SOUP_MESSAGE.patch" strip="1"/>
+      <patch file="libsoup-auth-do-not-use-cached-credentials-in-lookup-method-.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="fontconfig" 

@@ -1,3 +1,21 @@
+2017-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Credentials stored by libsoup are used even StoredCredentials policy is DoNotAllowStoredCredentials
+        https://bugs.webkit.org/show_bug.cgi?id=168364
+
+        Reviewed by Michael Catanzaro.
+
+        This can happen if a previous load with allowed to use stored credentials authenticated successfully, saving the
+        credentials in libsoup. It's actually a libsoup bug, but since it's causing layout test failures and we have
+        patches for them, let's patch out jhbuild until we have a new libsoup version to depend on.
+
+        Fixes: http/tests/security/credentials-from-different-domains.html
+               http/tests/xmlhttprequest/cross-origin-no-authorization.html
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/libsoup-auth-Fix-async-authentication-when-flag-SOUP_MESSAGE.patch: Added.
+        * gtk/patches/libsoup-auth-do-not-use-cached-credentials-in-lookup-method-.patch: Added.
+
 2017-02-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Update cookie manager API to properly work with ephemeral sessions
