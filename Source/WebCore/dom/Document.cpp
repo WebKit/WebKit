@@ -2240,7 +2240,6 @@ void Document::destroyRenderTree()
     ASSERT(m_pageCacheState != InPageCache);
 
     FrameView* frameView = frame()->document() == this ? frame()->view() : nullptr;
-    ASSERT(frameView || pageCacheState() == InPageCache);
 
     SetForScope<bool> change(m_renderTreeBeingDestroyed, true);
 
