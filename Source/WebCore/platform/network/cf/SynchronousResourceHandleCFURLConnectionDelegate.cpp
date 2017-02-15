@@ -47,7 +47,7 @@
 #endif // PLATFORM(COCOA)
 
 #if PLATFORM(IOS)
-#include "WebCoreThread.h"
+#include "WebCoreThreadInternal.h"
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(WIN)

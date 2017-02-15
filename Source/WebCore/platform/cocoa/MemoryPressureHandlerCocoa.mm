@@ -36,7 +36,7 @@
 #if PLATFORM(IOS)
 #import "GraphicsServicesSPI.h"
 #import "SystemMemory.h"
-#import "WebCoreThread.h"
+#import "WebCoreThreadInternal.h"
 #endif
 
 #define ENABLE_FMW_FOOTPRINT_COMPARISON 0

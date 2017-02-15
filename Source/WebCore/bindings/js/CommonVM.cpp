@@ -34,6 +34,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/AtomicString.h>
 
+#if PLATFORM(IOS)
+#include "WebCoreThreadInternal.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {

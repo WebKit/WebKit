@@ -32,7 +32,7 @@
 #import "CoreGraphicsSPI.h"
 #import "FontCascade.h"
 #import "PlatformScreen.h"
-#import "WebCoreThread.h"
+#import "WebCoreThreadInternal.h"
 #import <ImageIO/ImageIO.h>
 #import <wtf/StdLibExtras.h>
 

@@ -30,7 +30,7 @@
 
 #if PLATFORM(IOS)
 #include "RuntimeApplicationChecks.h"
-#include "WebCoreThread.h"
+#include "WebCoreThreadInternal.h"
 #include <CoreFoundation/CFBundle.h>
 #endif
 

@@ -37,7 +37,7 @@
 #import "RenderObject.h"
 
 #if PLATFORM(IOS)
-#import "WebCoreThread.h"
+#import "WebCoreThreadInternal.h"
 #endif
 
 namespace WebCore {

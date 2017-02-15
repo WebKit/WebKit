@@ -85,9 +85,7 @@ WEBCORE_EXPORT void WebThreadUnlockGuardForMail();
 static inline bool WebThreadShouldYield(void) { return webThreadShouldYield; }
 static inline void WebThreadSetShouldYield() { webThreadShouldYield = true; }
 
-CFRunLoopRef WebThreadRunLoop(void);
 WEBCORE_EXPORT NSRunLoop* WebThreadNSRunLoop(void);
-WebThreadContext *WebThreadCurrentContext(void);
 
 WEBCORE_EXPORT void WebThreadSetDelegateSourceRunLoopMode(CFStringRef mode);
 

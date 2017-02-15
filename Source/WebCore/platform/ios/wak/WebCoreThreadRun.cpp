@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS)
 
-#include "WebCoreThread.h"
 #include "WebCoreThreadInternal.h"
 #include <mutex>
 #include <wtf/Condition.h>
