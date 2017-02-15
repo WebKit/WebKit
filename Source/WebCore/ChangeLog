@@ -1,3 +1,27 @@
+2017-02-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        An assertion failure inside removeChildren
+        https://bugs.webkit.org/show_bug.cgi?id=168069
+
+        Reviewed by Brent Fulgham.
+
+        The bug was caused by notifyRemovePendingSheet executing scripts synchronously where it shouldn't.
+
+        Removed the call to notifyRemovePendingSheetIfNeeded in notifyChildNodeRemoved. Instead, invoke it
+        in its call sites when they're safe.
+
+        Test: http/tests/security/move-iframe-within-focus-handler-inside-removal.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::takeAllChildrenFrom):
+        (WebCore::ContainerNode::notifyChildInserted):
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::parserRemoveChild):
+        (WebCore::ContainerNode::replaceAllChildren):
+        (WebCore::ContainerNode::removeChildren):
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::notifyChildNodeRemoved):
+
 2017-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] Several tests are timing out after r212349

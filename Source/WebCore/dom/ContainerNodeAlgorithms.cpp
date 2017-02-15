@@ -159,7 +159,6 @@ void notifyChildNodeRemoved(ContainerNode& insertionPoint, Node& child)
         return;
     }
     notifyNodeRemovedFromDocument(insertionPoint, child);
-    child.document().notifyRemovePendingSheetIfNeeded();
 }
 
 void addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode& container)
