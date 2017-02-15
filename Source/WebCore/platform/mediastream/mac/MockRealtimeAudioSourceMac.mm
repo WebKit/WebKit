@@ -149,6 +149,9 @@ void MockRealtimeAudioSourceMac::reconfigure()
 
 void MockRealtimeAudioSourceMac::render(double delta)
 {
+    if (m_muted || !m_enabled)
+        return;
+
     static double theta;
     static const double frequencies[] = { 1500., 500. };
     static const double tau = 2 * M_PI;

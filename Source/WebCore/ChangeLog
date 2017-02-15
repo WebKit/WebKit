@@ -1,3 +1,41 @@
+2017-02-15  Jer Noble  <jer.noble@apple.com>
+
+        Disabled Media Sources should render black/silence
+        https://bugs.webkit.org/show_bug.cgi?id=168281
+
+        Reviewed by Eric Carlson.
+
+        Test: webrtc/video-disabled-black.html
+
+        Pass the enabled flag setting down from the MediaStreamTrackPrivate to its underlying
+        source, including RealtimeMediaSource and RealtimeOutgoingAudio/VideoSource. When either
+        enabled is cleared or muted is set, generate empty (black or silent) media, as opposed to
+        pausing media or (worse) continuing to send generated media.
+
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::setEnabled):
+        (WebCore::MediaStreamTrackPrivate::sourceEnabledChanged):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::setEnabled):
+        * platform/mediastream/RealtimeMediaSource.h:
+        (WebCore::RealtimeMediaSource::enabled):
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSourceMac::render):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::sourceMutedChanged):
+        (WebCore::RealtimeOutgoingAudioSource::sourceEnabledChanged):
+        (WebCore::RealtimeOutgoingAudioSource::pullAudioData):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::sourceMutedChanged):
+        (WebCore::RealtimeOutgoingVideoSource::sourceEnabledChanged):
+        (WebCore::RealtimeOutgoingVideoSource::videoSampleAvailable):
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.h:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::generateFrame):
+
 2017-02-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Editing history scripts should not add the contenteditable attribute or override key events

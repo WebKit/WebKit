@@ -100,6 +100,8 @@ void MediaStreamTrackPrivate::setEnabled(bool enabled)
     // Always update the enabled state regardless of the track being ended.
     m_isEnabled = enabled;
 
+    m_source->setEnabled(enabled);
+
     for (auto& observer : m_observers)
         observer->trackEnabledChanged(*this);
 }
@@ -184,6 +186,12 @@ void MediaStreamTrackPrivate::sourceMutedChanged()
 {
     for (auto& observer : m_observers)
         observer->trackMutedChanged(*this);
+}
+
+void MediaStreamTrackPrivate::sourceEnabledChanged()
+{
+    for (auto& observer : m_observers)
+        observer->trackEnabledChanged(*this);
 }
 
 void MediaStreamTrackPrivate::sourceSettingsChanged()

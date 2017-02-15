@@ -96,6 +96,20 @@ void RealtimeMediaSource::setMuted(bool muted)
         observer->sourceMutedChanged();
 }
 
+void RealtimeMediaSource::setEnabled(bool enabled)
+{
+    if (m_stopped || m_enabled == enabled)
+        return;
+
+    m_enabled = enabled;
+
+    if (m_stopped)
+        return;
+
+    for (auto& observer : m_observers)
+        observer->sourceEnabledChanged();
+}
+
 void RealtimeMediaSource::settingsDidChange()
 {
     ASSERT(isMainThread());

@@ -69,6 +69,7 @@ public:
         // Source state changes.
         virtual void sourceStopped() = 0;
         virtual void sourceMutedChanged() = 0;
+        virtual void sourceEnabledChanged() = 0;
         virtual void sourceSettingsChanged() = 0;
 
         // Observer state queries.
@@ -116,6 +117,9 @@ public:
 
     virtual bool muted() const { return m_muted; }
     virtual void setMuted(bool);
+
+    virtual bool enabled() const { return m_enabled; }
+    virtual void setEnabled(bool);
 
     virtual bool readonly() const;
     virtual void setReadonly(bool readonly) { m_readonly = readonly; }
@@ -190,6 +194,7 @@ protected:
     virtual void applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
 
     bool m_muted { false };
+    bool m_enabled { true };
 
 private:
     WeakPtr<RealtimeMediaSource> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }

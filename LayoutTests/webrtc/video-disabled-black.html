@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+if (window.internals)
+    internals.useMockRTCPeerConnectionFactory("TwoRealPeerConnections");
+
+if (window.testRunner)
+    testRunner.setUserMediaPermission(true);
+
+video = document.getElementById("video");
+canvas = document.getElementById("canvas");
+// FIXME: We should use tracks
+
+function testImage()
+{
+    try {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+        assert_true(imageData.data.every( (pixel, index) => {
+            if (index % 4 === 3)
+                return pixel === 255;
+            return pixel === 0;
+        }));
+
+        finishTest();
+    } catch(e) {
+        errorTest(e);
+    }
+}
+
+function testStream(stream)
+{
+    video.srcObject = stream;
+    stream.getTracks()[0].enabled = false;
+    // Video may play with black frames
+    video.onplay = setTimeout(() => {
+        testImage();
+    }, 1000);
+}
+
+var finishTest, errorTest;
+promise_test((test) => {
+    return navigator.mediaDevices.getUserMedia({ video: true}).then((stream) => {
+        return new Promise((resolve, reject) => {
+            finishTest = resolve;
+            errorTest = reject;
+            createConnections((firstConnection) => {
+                firstConnection.addStream(stream);
+            }, (secondConnection) => {
+                secondConnection.onaddstream = (streamEvent) => { testStream(streamEvent.stream); };
+            });
+        });
+    });
+}, "Disabled source exchange");
+        </script>
+    </body>
+</html>

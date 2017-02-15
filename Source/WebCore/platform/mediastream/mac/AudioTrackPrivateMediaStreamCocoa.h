@@ -64,6 +64,7 @@ private:
     // RealtimeMediaSource::Observer
     void sourceStopped() final;
     void sourceMutedChanged()  final { }
+    void sourceEnabledChanged() final { }
     void sourceSettingsChanged() final { }
     bool preventSourceFromStopping() final { return false; }
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;

@@ -333,9 +333,11 @@ void MockRealtimeVideoSource::generateFrame()
     FloatRect frameRect(FloatPoint(), size);
     context.fillRect(FloatRect(FloatPoint(), size), Color::black);
 
-    drawText(context);
-    drawAnimation(context);
-    drawBoxes(context);
+    if (!m_muted && m_enabled) {
+        drawText(context);
+        drawAnimation(context);
+        drawBoxes(context);
+    }
 
     updateSampleBuffer();
 }

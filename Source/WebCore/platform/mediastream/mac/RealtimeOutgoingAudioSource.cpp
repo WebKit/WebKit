@@ -53,7 +53,14 @@ RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<RealtimeMediaSource
 
 void RealtimeOutgoingAudioSource::sourceMutedChanged()
 {
-    m_isMuted = m_audioSource->muted();
+    m_muted = m_audioSource->muted();
+    m_sampleConverter->setMuted(m_muted || !m_enabled);
+}
+
+void RealtimeOutgoingAudioSource::sourceEnabledChanged()
+{
+    m_enabled = m_audioSource->enabled();
+    m_sampleConverter->setMuted(m_muted || !m_enabled);
 }
 
 void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& streamDescription, size_t sampleCount)
@@ -86,8 +93,6 @@ void RealtimeOutgoingAudioSource::pullAudioData()
 
     m_sampleConverter->pullAvalaibleSamplesAsChunks(bufferList, LibWebRTCAudioFormat::chunkSampleCount, m_startFrame, [this] {
         m_startFrame += LibWebRTCAudioFormat::chunkSampleCount;
-        if (m_isMuted)
-            return;
         for (auto sink : m_sinks)
             sink->OnData(m_audioBuffer.data(), LibWebRTCAudioFormat::sampleSize, LibWebRTCAudioFormat::sampleRate, m_inputStreamDescription.numberOfChannels(), LibWebRTCAudioFormat::chunkSampleCount);
     });

@@ -98,6 +98,7 @@ private:
     // RealtimeMediaSourceObserver
     void sourceStopped() final;
     void sourceMutedChanged() final;
+    void sourceEnabledChanged() final;
     void sourceSettingsChanged() final;
     bool preventSourceFromStopping() final;
     void videoSampleAvailable(MediaSample&) final;

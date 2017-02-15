@@ -65,6 +65,7 @@ private:
     // RealtimeMediaSource::Observer API
     void sourceStopped() final { }
     void sourceMutedChanged() final;
+    void sourceEnabledChanged() final;
     void sourceSettingsChanged() final { }
     bool preventSourceFromStopping() final { return false; }
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
@@ -79,7 +80,8 @@ private:
 
     Vector<uint16_t> m_audioBuffer;
     uint64_t m_startFrame { 0 };
-    bool m_isMuted { false };
+    bool m_muted { false };
+    bool m_enabled { true };
 };
 
 } // namespace WebCore

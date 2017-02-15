@@ -1,3 +1,14 @@
+2017-02-15  Jer Noble  <jer.noble@apple.com>
+
+        Disabled Media Sources should render black/silence
+        https://bugs.webkit.org/show_bug.cgi?id=168281
+        <rdar://problem/30508003>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-disabled-black-expected.txt: Added.
+        * webrtc/video-disabled-black.html: Added.
+
 2017-02-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove ElCapitan flag from flaky test media/modern-media-controls/airplay-support/airplay-support.html.
