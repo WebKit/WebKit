@@ -56,7 +56,7 @@ static RefPtr<ShareableBitmap> convertCairoSurfaceToShareableBitmap(cairo_surfac
     return bitmap;
 }
 
-void WebDragClient::startDrag(DragImagef dragImage, const IntPoint& clientPosition, const IntPoint& globalPosition, const FloatPoint&, DataTransfer& dataTransfer, Frame&, DragSourceAction)
+void WebDragClient::startDrag(DragImage dragImage, const IntPoint& clientPosition, const IntPoint& globalPosition, const FloatPoint&, DataTransfer& dataTransfer, Frame&, DragSourceAction)
 {
     RefPtr<ShareableBitmap> bitmap = convertCairoSurfaceToShareableBitmap(dragImage.get().get());
     ShareableBitmap::Handle handle;
