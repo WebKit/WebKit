@@ -165,7 +165,7 @@ void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const
 {
 }
 
-void WebDragClient::startDrag(DragImageRef, const IntPoint&, const IntPoint&, const FloatPoint&, DataTransfer&, Frame&, bool)
+void WebDragClient::startDrag(WebCore::DragImage, const IntPoint&, const IntPoint&, const FloatPoint&, DataTransfer&, Frame&, WebCore::DragSourceAction)
 {
 }
 
