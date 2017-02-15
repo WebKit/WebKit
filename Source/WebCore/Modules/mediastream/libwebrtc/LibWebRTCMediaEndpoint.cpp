@@ -380,7 +380,11 @@ void LibWebRTCMediaEndpoint::stop()
 
 void LibWebRTCMediaEndpoint::OnRenegotiationNeeded()
 {
-    notImplemented();
+    callOnMainThread([protectedThis = makeRef(*this)] {
+        if (protectedThis->isStopped())
+            return;
+        protectedThis->m_peerConnectionBackend.markAsNeedingNegotiation();
+    });
 }
 
 static inline PeerConnectionStates::IceConnectionState iceConnectionState(webrtc::PeerConnectionInterface::IceConnectionState state)

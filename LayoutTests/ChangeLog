@@ -1,3 +1,15 @@
+2017-02-14  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Add support for libwebrtc negotiation needed event
+        https://bugs.webkit.org/show_bug.cgi?id=168267
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/RTCPeerConnection-more-media-to-negotiate-expected.txt:
+        * platform/gtk/fast/mediastream/RTCPeerConnection-more-media-to-negotiate-expected.txt: Copied from LayoutTests/fast/mediastream/RTCPeerConnection-more-media-to-negotiate-expected.txt.
+        * webrtc/negotiatedneeded-event-addStream-expected.txt: Added.
+        * webrtc/negotiatedneeded-event-addStream.html: Added.
+
 2017-02-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/placard-support/placard-support-airplay.html as flaky.

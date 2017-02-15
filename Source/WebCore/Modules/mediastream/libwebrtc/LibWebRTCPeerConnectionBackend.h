@@ -70,9 +70,6 @@ private:
     // FIXME: API to implement for real
     Vector<RefPtr<MediaStream>> getRemoteStreams() const final { return { }; }
     void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) final { }
-    bool isNegotiationNeeded() const final { return false; }
-    void markAsNeedingNegotiation() final;
-    void clearNegotiationNeededState() final { }
 
     void emulatePlatformEvent(const String&) final { }
 

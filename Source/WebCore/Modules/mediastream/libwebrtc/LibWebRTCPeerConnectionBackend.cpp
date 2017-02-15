@@ -201,11 +201,6 @@ void LibWebRTCPeerConnectionBackend::addVideoSource(Ref<RealtimeOutgoingVideoSou
     m_videoSources.append(WTFMove(source));
 }
 
-void LibWebRTCPeerConnectionBackend::markAsNeedingNegotiation()
-{
-    // FIXME: Implement this
-}
-
 Ref<RTCRtpReceiver> LibWebRTCPeerConnectionBackend::createReceiver(const String&, const String& trackKind, const String& trackId)
 {
     // FIXME: We need to create a source that will get fueled once we will receive OnAddStream.

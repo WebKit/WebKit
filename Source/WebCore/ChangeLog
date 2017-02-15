@@ -1,3 +1,34 @@
+2017-02-14  Youenn Fablet  <youennf@gmail.com>
+
+        [WebRTC] Add support for libwebrtc negotiation needed event
+        https://bugs.webkit.org/show_bug.cgi?id=168267
+
+        Reviewed by Eric Carlson.
+
+        Test: webrtc/negotiatedneeded-event-addStream.html
+
+        Moving generic code (markAsNeedingNegotiation) from MediaEndpointPeerConnection to PeerConnectionBackend.
+        This code handles the control of sending or not the negotiationneeded event.
+
+        Updating mock to use markAsNeedingNegotiation when streams are changed.
+        Updating libwebrtc backend to call markAsNeedingNegotiation when required by libwebrtc implementation.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::setLocalDescriptionTask):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::markAsNeedingNegotiation):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        (WebCore::PeerConnectionBackend::isNegotiationNeeded):
+        (WebCore::PeerConnectionBackend::clearNegotiationNeededState):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::OnRenegotiationNeeded):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * testing/MockLibWebRTCPeerConnection.cpp:
+        (WebCore::MockLibWebRTCPeerConnection::AddStream):
+        (WebCore::MockLibWebRTCPeerConnection::RemoveStream):
+
 2017-02-14  Brady Eidson  <beidson@apple.com>
 
         Unreviewed followup to r212330 to fix Debug builds

@@ -18,6 +18,7 @@ PASS Remote offer set
 PASS pc.getTransceivers().length is 2
 Create an answer for the audio only offer
 Set answer as local description
+PASS negotiationneededevent fired: There is local media not negotiated that needs to be negotiated in a follow-up offer
 PASS Answer set
 PASS successfullyParsed is true
 

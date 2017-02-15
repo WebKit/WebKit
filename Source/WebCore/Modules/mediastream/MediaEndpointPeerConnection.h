@@ -64,10 +64,6 @@ private:
     Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) final;
     void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) final;
 
-    bool isNegotiationNeeded() const final { return m_negotiationNeeded; };
-    void markAsNeedingNegotiation() final;
-    void clearNegotiationNeededState() final { m_negotiationNeeded = false; };
-
     void emulatePlatformEvent(const String& action) final;
 
     void runTask(Function<void ()>&&);
@@ -129,8 +125,6 @@ private:
     RefPtr<MediaEndpointSessionDescription> m_pendingRemoteDescription;
 
     HashMap<String, RefPtr<MediaStream>> m_remoteStreamMap;
-
-    bool m_negotiationNeeded { false };
 };
 
 } // namespace WebCore

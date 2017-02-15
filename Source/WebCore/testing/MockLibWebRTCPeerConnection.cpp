@@ -226,11 +226,17 @@ rtc::scoped_refptr<webrtc::DataChannelInterface> MockLibWebRTCPeerConnection::Cr
 bool MockLibWebRTCPeerConnection::AddStream(webrtc::MediaStreamInterface* stream)
 {
     m_stream = stream;
+    LibWebRTCProvider::callOnWebRTCSignalingThread([observer = &m_observer] {
+        observer->OnRenegotiationNeeded();
+    });
     return true;
 }
 
 void MockLibWebRTCPeerConnection::RemoveStream(webrtc::MediaStreamInterface*)
 {
+    LibWebRTCProvider::callOnWebRTCSignalingThread([observer = &m_observer] {
+        observer->OnRenegotiationNeeded();
+    });
     m_stream = nullptr;
 }
 

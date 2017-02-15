@@ -296,6 +296,17 @@ void PeerConnectionBackend::stop()
     doStop();
 }
 
+void PeerConnectionBackend::markAsNeedingNegotiation()
+{
+    if (m_negotiationNeeded)
+        return;
+    
+    m_negotiationNeeded = true;
+    
+    if (m_peerConnection.internalSignalingState() == PeerConnectionStates::SignalingState::Stable)
+        m_peerConnection.scheduleNegotiationNeededEvent();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
