@@ -1,3 +1,11 @@
+2017-02-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestExpectations for fast/frames/exponential-frames.html.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Mark a11y and media tests currently failing.

@@ -308,3 +308,6 @@ media/track/track-cues-enter-exit.html [ Pass Crash ]
 webkit.org/b/167127 pointer-lock/locked-element-removed-from-dom.html
 
 webkit.org/b/167857 pageoverlay/overlay-remove-reinsert-view.html [ Skip ]
+
+# rdar://problem/23643423
+[ Debug ] fast/frames/exponential-frames.html [ Crash ]
