@@ -1,3 +1,17 @@
+2017-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Special URLs without a host are invalid
+        https://bugs.webkit.org/show_bug.cgi?id=168461
+
+        Reviewed by Tim Horton.
+
+        http://? should be invalid.  This matches Chrome and the spec and the intent of my implementation
+        of URLParser which already fails with urls like http:// and this was just an oversight.
+        Covered by newly passing web platform tests.  Updated API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parse):
+
 2017-02-16  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add support for pagination.

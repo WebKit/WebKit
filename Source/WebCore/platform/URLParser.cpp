@@ -1449,6 +1449,8 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 if (isSlash || *c == '?' || *c == '#') {
                     auto iterator = CodePointIterator<CharacterType>(authorityOrHostBegin, c);
                     if (iterator.atEnd()) {
+                        if (m_urlIsSpecial)
+                            return failure();
                         m_url.m_userEnd = currentPosition(c);
                         m_url.m_passwordEnd = m_url.m_userEnd;
                         m_url.m_hostEnd = m_url.m_userEnd;

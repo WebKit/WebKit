@@ -919,11 +919,13 @@ TEST_F(URLParserTest, ParserDifferences)
         {"", "", "", "", 0, "", "", "", "http://:"},
         {"http", "", "", "", 0, "/", "", "", "http://:/"});
     checkURLDifferences("http:##foo",
-        {"http", "", "", "", 0, "", "", "#foo", "http://##foo"},
+        {"", "", "", "", 0, "", "", "", "http:##foo"},
         {"http", "", "", "", 0, "/", "", "#foo", "http:/##foo"});
     checkURLDifferences("http:??bar",
-        {"http", "", "", "", 0, "", "?bar", "", "http://??bar"},
+        {"", "", "", "", 0, "", "", "", "http:??bar"},
         {"http", "", "", "", 0, "/", "?bar", "", "http:/??bar"});
+    checkURL("asdf:##foo", {"asdf", "", "", "", 0, "", "", "#foo", "asdf:##foo"});
+    checkURL("asdf:??bar", {"asdf", "", "", "", 0, "", "?bar", "", "asdf:??bar"});
     checkRelativeURLDifferences("//C|/foo/bar", "file:///tmp/mock/path",
         {"file", "", "", "", 0, "/C:/foo/bar", "", "", "file:///C:/foo/bar"},
         {"", "", "", "", 0, "", "", "", "//C|/foo/bar"});

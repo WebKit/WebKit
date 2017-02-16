@@ -394,8 +394,8 @@ PASS Parsing: <file:> against <about:blank>
 PASS Parsing: <file:?q=v> against <about:blank> 
 PASS Parsing: <file:#frag> against <about:blank> 
 PASS Parsing: <http://[1:0::]> against <http://example.net/> 
-FAIL Parsing: <http://?> against <about:blank> assert_unreached: Expected URL to fail parsing Reached unreachable code
-FAIL Parsing: <http://#> against <about:blank> assert_unreached: Expected URL to fail parsing Reached unreachable code
+PASS Parsing: <http://?> against <about:blank> 
+PASS Parsing: <http://#> against <about:blank> 
 PASS Parsing: <sc://ñ> against <about:blank> 
 PASS Parsing: <sc://ñ?x> against <about:blank> 
 PASS Parsing: <sc://ñ#x> against <about:blank> 

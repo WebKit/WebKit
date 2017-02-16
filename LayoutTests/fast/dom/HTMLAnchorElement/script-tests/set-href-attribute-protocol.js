@@ -63,7 +63,7 @@ debug("Exception: " + e.description);
 debug("Set protocol to http on malformed URL");
 a.href = "foo:??bar";
 a.protocol = "http";
-shouldBe("a.href", "'http://??bar'");
+shouldBe("a.href", "'http:??bar'");
 
 // IE8 keeps the protocol if it is 'c:'.
 debug("Set protocol to a URL which points to a local file");
