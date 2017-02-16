@@ -27,9 +27,12 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include <CoreFoundation/CFRunLoop.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
+
+#if USE(CF)
+#include <CoreFoundation/CFRunLoop.h>
+#endif
 
 namespace Inspector {
 
@@ -53,8 +56,10 @@ public:
     virtual bool remoteControlAllowed() const = 0;
     virtual void dispatchMessageFromRemote(const String& message) = 0;
 
+#if USE(CF)
     // The dispatch block will be scheduled on a global run loop if null is returned.
     virtual CFRunLoopRef targetRunLoop() { return nullptr; }
+#endif
 private:
     unsigned m_identifier {0};
 };
