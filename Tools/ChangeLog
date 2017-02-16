@@ -1,5 +1,15 @@
 2017-02-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK] Add two new buildbots that build-only test on Debian stable and Ubuntu LTS.
+        https://bugs.webkit.org/show_bug.cgi?id=168321
+
+        This bots should be added to the trunk build scheduler.
+        Unreviewed fix after r212429.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
+2017-02-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [GTK] Add two new buildbots that build-only test on Debian stable and Ubuntu LTS
         https://bugs.webkit.org/show_bug.cgi?id=168321
 
