@@ -76,7 +76,7 @@ class IceCandidateCollection {
 // Class representation of a Session description.
 // An instance of this interface is supposed to be owned by one class at
 // a time and is therefore not expected to be thread safe.
-class SessionDescriptionInterface {
+class WEBRTC_EXPORT SessionDescriptionInterface {
  public:
   // Supported types:
   static const char kOffer[];
