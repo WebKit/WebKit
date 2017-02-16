@@ -42,7 +42,7 @@ public:
         Canceled,
     };
 
-    static RefPtr<AsyncStackTrace> create(RefPtr<ScriptCallStack>, bool singleShot, RefPtr<AsyncStackTrace> parent);
+    static RefPtr<AsyncStackTrace> create(Ref<ScriptCallStack>&&, bool singleShot, RefPtr<AsyncStackTrace> parent);
 
     bool isPending() const;
     bool isLocked() const;
@@ -56,12 +56,12 @@ public:
     ~AsyncStackTrace();
 
 private:
-    AsyncStackTrace(RefPtr<ScriptCallStack>, bool, RefPtr<AsyncStackTrace>);
+    AsyncStackTrace(Ref<ScriptCallStack>&&, bool, RefPtr<AsyncStackTrace>);
 
     void truncate(size_t maxDepth);
     void remove();
 
-    RefPtr<ScriptCallStack> m_callStack;
+    Ref<ScriptCallStack> m_callStack;
     RefPtr<AsyncStackTrace> m_parent;
     unsigned m_childCount { 0 };
     State m_state { State::Pending };

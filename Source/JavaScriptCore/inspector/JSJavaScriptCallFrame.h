@@ -42,9 +42,9 @@ public:
         return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
-    static JSJavaScriptCallFrame* create(JSC::VM& vm, JSC::Structure* structure, PassRefPtr<JavaScriptCallFrame> impl)
+    static JSJavaScriptCallFrame* create(JSC::VM& vm, JSC::Structure* structure, Ref<JavaScriptCallFrame>&& impl)
     {
-        JSJavaScriptCallFrame* instance = new (NotNull, JSC::allocateCell<JSJavaScriptCallFrame>(vm.heap)) JSJavaScriptCallFrame(vm, structure, impl);
+        JSJavaScriptCallFrame* instance = new (NotNull, JSC::allocateCell<JSJavaScriptCallFrame>(vm.heap)) JSJavaScriptCallFrame(vm, structure, WTFMove(impl));
         instance->finishCreation(vm);
         return instance;
     }
@@ -83,7 +83,7 @@ protected:
     void finishCreation(JSC::VM&);
 
 private:
-    JSJavaScriptCallFrame(JSC::VM&, JSC::Structure*, PassRefPtr<JavaScriptCallFrame>);
+    JSJavaScriptCallFrame(JSC::VM&, JSC::Structure*, Ref<JavaScriptCallFrame>&&);
     ~JSJavaScriptCallFrame();
 
     JavaScriptCallFrame* m_impl;

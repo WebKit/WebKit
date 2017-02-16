@@ -502,9 +502,9 @@ bool Debugger::hasBreakpoint(SourceID sourceID, const TextPosition& position, Br
     TemporaryPausedState pausedState(*this);
 
     NakedPtr<Exception> exception;
-    DebuggerCallFrame* debuggerCallFrame = currentDebuggerCallFrame();
+    DebuggerCallFrame& debuggerCallFrame = currentDebuggerCallFrame();
     JSObject* scopeExtensionObject = nullptr;
-    JSValue result = debuggerCallFrame->evaluateWithScopeExtension(breakpoint->condition, scopeExtensionObject, exception);
+    JSValue result = debuggerCallFrame.evaluateWithScopeExtension(breakpoint->condition, scopeExtensionObject, exception);
 
     // We can lose the debugger while executing JavaScript.
     if (!m_currentCallFrame)
@@ -911,11 +911,11 @@ void Debugger::didReachBreakpoint(CallFrame* callFrame)
     updateCallFrame(callFrame, AttemptPause);
 }
 
-DebuggerCallFrame* Debugger::currentDebuggerCallFrame()
+DebuggerCallFrame& Debugger::currentDebuggerCallFrame()
 {
     if (!m_currentDebuggerCallFrame)
         m_currentDebuggerCallFrame = DebuggerCallFrame::create(m_currentCallFrame);
-    return m_currentDebuggerCallFrame.get();
+    return *m_currentDebuggerCallFrame;
 }
 
 bool Debugger::isBlacklisted(SourceID sourceID) const

@@ -31,14 +31,14 @@
 
 namespace Inspector {
 
-RefPtr<AsyncStackTrace> AsyncStackTrace::create(RefPtr<ScriptCallStack> callStack, bool singleShot, RefPtr<AsyncStackTrace> parent)
+RefPtr<AsyncStackTrace> AsyncStackTrace::create(Ref<ScriptCallStack>&& callStack, bool singleShot, RefPtr<AsyncStackTrace> parent)
 {
-    ASSERT(callStack && callStack->size());
+    ASSERT(callStack->size());
     return adoptRef(*new AsyncStackTrace(WTFMove(callStack), singleShot, WTFMove(parent)));
 }
 
-AsyncStackTrace::AsyncStackTrace(RefPtr<ScriptCallStack> callStack, bool singleShot, RefPtr<AsyncStackTrace> parent)
-    : m_callStack(callStack)
+AsyncStackTrace::AsyncStackTrace(Ref<ScriptCallStack>&& callStack, bool singleShot, RefPtr<AsyncStackTrace> parent)
+    : m_callStack(WTFMove(callStack))
     , m_parent(parent)
     , m_singleShot(singleShot)
 {
@@ -104,8 +104,8 @@ RefPtr<Inspector::Protocol::Console::StackTrace> AsyncStackTrace::buildInspector
 
     auto* stackTrace = this;
     while (stackTrace) {
-        auto callStack = stackTrace->m_callStack;
-        ASSERT(callStack && callStack->size());
+        auto& callStack = stackTrace->m_callStack;
+        ASSERT(callStack->size());
 
         RefPtr<Inspector::Protocol::Console::StackTrace> protocolObject = Inspector::Protocol::Console::StackTrace::create()
             .setCallFrames(callStack->buildInspectorArray())
@@ -166,7 +166,7 @@ void AsyncStackTrace::truncate(size_t maxDepth)
     auto* currentNode = lastUnlockedAncestor;
     while (currentNode->m_parent) {
         auto& parentNode = currentNode->m_parent;
-        currentNode->m_parent = AsyncStackTrace::create(parentNode->m_callStack, true, parentNode->m_parent);
+        currentNode->m_parent = AsyncStackTrace::create(parentNode->m_callStack.copyRef(), true, parentNode->m_parent);
         currentNode = currentNode->m_parent.get();
 
         if (parentNode.get() == newStackTraceRoot)

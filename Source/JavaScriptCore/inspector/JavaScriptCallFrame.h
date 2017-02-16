@@ -37,9 +37,9 @@ namespace Inspector {
 
 class JavaScriptCallFrame : public RefCounted<JavaScriptCallFrame> {
 public:
-    static Ref<JavaScriptCallFrame> create(PassRefPtr<JSC::DebuggerCallFrame> debuggerCallFrame)
+    static Ref<JavaScriptCallFrame> create(Ref<JSC::DebuggerCallFrame>&& debuggerCallFrame)
     {
-        return adoptRef(*new JavaScriptCallFrame(debuggerCallFrame));
+        return adoptRef(*new JavaScriptCallFrame(WTFMove(debuggerCallFrame)));
     }
 
     JavaScriptCallFrame* caller();
@@ -58,9 +58,9 @@ public:
     JSC::JSValue evaluateWithScopeExtension(const String& script, JSC::JSObject* scopeExtension, NakedPtr<JSC::Exception>& exception) const { return m_debuggerCallFrame->evaluateWithScopeExtension(script, scopeExtension, exception); }
 
 private:
-    JavaScriptCallFrame(PassRefPtr<JSC::DebuggerCallFrame>);
+    JavaScriptCallFrame(Ref<JSC::DebuggerCallFrame>&&);
 
-    RefPtr<JSC::DebuggerCallFrame> m_debuggerCallFrame;
+    Ref<JSC::DebuggerCallFrame> m_debuggerCallFrame;
     RefPtr<JavaScriptCallFrame> m_caller;
 };
 

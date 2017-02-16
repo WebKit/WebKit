@@ -61,7 +61,7 @@ public:
         , m_lineNumber(lineNumber)
         , m_columnNumber(columnNumber)
         , m_sourceURL(sourceURL)
-        , m_callStack(callStack)
+        , m_callStack(WTFMove(callStack))
     {
     }
     String m_errorMessage;

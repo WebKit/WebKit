@@ -50,8 +50,8 @@ Ref<InspectorObject> TimelineRecordFactory::createGenericRecord(double startTime
     record->setDouble(ASCIILiteral("startTime"), startTime);
 
     if (maxCallStackDepth) {
-        RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(JSMainThreadExecState::currentState(), maxCallStackDepth);
-        if (stackTrace && stackTrace->size())
+        Ref<ScriptCallStack> stackTrace = createScriptCallStack(JSMainThreadExecState::currentState(), maxCallStackDepth);
+        if (stackTrace->size())
             record->setValue(ASCIILiteral("stackTrace"), stackTrace->buildInspectorArray());
     }
     return record;

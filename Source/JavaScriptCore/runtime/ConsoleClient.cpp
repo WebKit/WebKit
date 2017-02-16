@@ -147,11 +147,11 @@ void ConsoleClient::printConsoleMessage(MessageSource source, MessageType type, 
     WTFLogAlways("%s", builder.toString().utf8().data());
 }
 
-void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, MessageType type, MessageLevel level, JSC::ExecState* exec, RefPtr<ScriptArguments>&& arguments)
+void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, MessageType type, MessageLevel level, JSC::ExecState* exec, Ref<ScriptArguments>&& arguments)
 {
     bool isTraceMessage = type == MessageType::Trace;
     size_t stackSize = isTraceMessage ? ScriptCallStack::maxCallStackSizeToCapture : 1;
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, stackSize));
+    Ref<ScriptCallStack> callStack = createScriptCallStackForConsole(exec, stackSize);
     const ScriptCallFrame& lastCaller = callStack->at(0);
 
     StringBuilder builder;
@@ -190,7 +190,7 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
     }
 }
 
-void ConsoleClient::internalMessageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, RefPtr<ScriptArguments>&& arguments, ArgumentRequirement argumentRequirement)
+void ConsoleClient::internalMessageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, Ref<ScriptArguments>&& arguments, ArgumentRequirement argumentRequirement)
 {
     if (argumentRequirement == ArgumentRequired && !arguments->argumentCount())
         return;
@@ -198,7 +198,7 @@ void ConsoleClient::internalMessageWithTypeAndLevel(MessageType type, MessageLev
     messageWithTypeAndLevel(type, level, exec, WTFMove(arguments));
 }
 
-void ConsoleClient::logWithLevel(ExecState* exec, RefPtr<ScriptArguments>&& arguments, MessageLevel level)
+void ConsoleClient::logWithLevel(ExecState* exec, Ref<ScriptArguments>&& arguments, MessageLevel level)
 {
     internalMessageWithTypeAndLevel(MessageType::Log, level, exec, WTFMove(arguments), ArgumentRequired);
 }
@@ -208,42 +208,42 @@ void ConsoleClient::clear(ExecState* exec)
     internalMessageWithTypeAndLevel(MessageType::Clear, MessageLevel::Log, exec, ScriptArguments::createEmpty(exec), ArgumentNotRequired);
 }
 
-void ConsoleClient::dir(ExecState* exec, RefPtr<ScriptArguments>&& arguments)
+void ConsoleClient::dir(ExecState* exec, Ref<ScriptArguments>&& arguments)
 {
     internalMessageWithTypeAndLevel(MessageType::Dir, MessageLevel::Log, exec, WTFMove(arguments), ArgumentRequired);
 }
 
-void ConsoleClient::dirXML(ExecState* exec, RefPtr<ScriptArguments>&& arguments)
+void ConsoleClient::dirXML(ExecState* exec, Ref<ScriptArguments>&& arguments)
 {
     internalMessageWithTypeAndLevel(MessageType::DirXML, MessageLevel::Log, exec, WTFMove(arguments), ArgumentRequired);
 }
 
-void ConsoleClient::table(ExecState* exec, RefPtr<ScriptArguments>&& arguments)
+void ConsoleClient::table(ExecState* exec, Ref<ScriptArguments>&& arguments)
 {
     internalMessageWithTypeAndLevel(MessageType::Table, MessageLevel::Log, exec, WTFMove(arguments), ArgumentRequired);
 }
 
-void ConsoleClient::trace(ExecState* exec, RefPtr<ScriptArguments>&& arguments)
+void ConsoleClient::trace(ExecState* exec, Ref<ScriptArguments>&& arguments)
 {
     internalMessageWithTypeAndLevel(MessageType::Trace, MessageLevel::Log, exec, WTFMove(arguments), ArgumentNotRequired);
 }
 
-void ConsoleClient::assertion(ExecState* exec, RefPtr<ScriptArguments>&& arguments)
+void ConsoleClient::assertion(ExecState* exec, Ref<ScriptArguments>&& arguments)
 {
     internalMessageWithTypeAndLevel(MessageType::Assert, MessageLevel::Error, exec, WTFMove(arguments), ArgumentNotRequired);
 }
 
-void ConsoleClient::group(ExecState* exec, RefPtr<ScriptArguments>&& arguments)
+void ConsoleClient::group(ExecState* exec, Ref<ScriptArguments>&& arguments)
 {
     internalMessageWithTypeAndLevel(MessageType::StartGroup, MessageLevel::Log, exec, WTFMove(arguments), ArgumentNotRequired);
 }
 
-void ConsoleClient::groupCollapsed(ExecState* exec, RefPtr<ScriptArguments>&& arguments)
+void ConsoleClient::groupCollapsed(ExecState* exec, Ref<ScriptArguments>&& arguments)
 {
     internalMessageWithTypeAndLevel(MessageType::StartGroupCollapsed, MessageLevel::Log, exec, WTFMove(arguments), ArgumentNotRequired);
 }
 
-void ConsoleClient::groupEnd(ExecState* exec, RefPtr<ScriptArguments>&& arguments)
+void ConsoleClient::groupEnd(ExecState* exec, Ref<ScriptArguments>&& arguments)
 {
     internalMessageWithTypeAndLevel(MessageType::EndGroup, MessageLevel::Log, exec, WTFMove(arguments), ArgumentNotRequired);
 }

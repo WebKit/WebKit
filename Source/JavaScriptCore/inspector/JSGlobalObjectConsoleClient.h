@@ -45,18 +45,18 @@ public:
     static void setLogToSystemConsole(bool);
 
 protected:
-    void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, RefPtr<ScriptArguments>&&) override;
-    void count(JSC::ExecState*, RefPtr<ScriptArguments>&&) override;
+    void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, Ref<ScriptArguments>&&) override;
+    void count(JSC::ExecState*, Ref<ScriptArguments>&&) override;
     void profile(JSC::ExecState*, const String& title) override;
     void profileEnd(JSC::ExecState*, const String& title) override;
     void takeHeapSnapshot(JSC::ExecState*, const String& title) override;
     void time(JSC::ExecState*, const String& title) override;
     void timeEnd(JSC::ExecState*, const String& title) override;
-    void timeStamp(JSC::ExecState*, RefPtr<ScriptArguments>&&) override;
+    void timeStamp(JSC::ExecState*, Ref<ScriptArguments>&&) override;
 
 private:
     void warnUnimplemented(const String& method);
-    void internalAddMessage(MessageType, MessageLevel, JSC::ExecState*, RefPtr<ScriptArguments>&&);
+    void internalAddMessage(MessageType, MessageLevel, JSC::ExecState*, Ref<ScriptArguments>&&);
 
     void startConsoleProfile();
     void stopConsoleProfile();

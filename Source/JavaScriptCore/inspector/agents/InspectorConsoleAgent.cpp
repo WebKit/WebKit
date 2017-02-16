@@ -145,7 +145,7 @@ void InspectorConsoleAgent::startTiming(const String& title)
     }
 }
 
-void InspectorConsoleAgent::stopTiming(const String& title, PassRefPtr<ScriptCallStack> callStack)
+void InspectorConsoleAgent::stopTiming(const String& title, Ref<ScriptCallStack>&& callStack)
 {
     ASSERT(!title.isNull());
     if (title.isNull())
@@ -164,7 +164,7 @@ void InspectorConsoleAgent::stopTiming(const String& title, PassRefPtr<ScriptCal
 
     double elapsed = monotonicallyIncreasingTime() - startTime;
     String message = title + String::format(": %.3fms", elapsed * 1000);
-    addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Debug, message, callStack));
+    addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Debug, message, WTFMove(callStack)));
 }
 
 void InspectorConsoleAgent::takeHeapSnapshot(const String& title)
@@ -180,9 +180,9 @@ void InspectorConsoleAgent::takeHeapSnapshot(const String& title)
     m_frontendDispatcher->heapSnapshot(timestamp, snapshotData, title.isEmpty() ? nullptr : &title);
 }
 
-void InspectorConsoleAgent::count(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
+void InspectorConsoleAgent::count(JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
 {
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(state, ScriptCallStack::maxCallStackSizeToCapture));
+    Ref<ScriptCallStack> callStack = createScriptCallStackForConsole(state, ScriptCallStack::maxCallStackSizeToCapture);
 
     String title;
     String identifier;
@@ -203,7 +203,7 @@ void InspectorConsoleAgent::count(JSC::ExecState* state, PassRefPtr<ScriptArgume
     // FIXME: Web Inspector should have a better UI for counters, but for now we just log an updated counter value.
 
     String message = makeString(title, ": ", String::number(result.iterator->value));
-    addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Debug, message, callStack));
+    addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Debug, message, WTFMove(callStack)));
 }
 
 static bool isGroupMessage(MessageType type)

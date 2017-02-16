@@ -50,7 +50,7 @@ public:
 
     VM& vm() { return m_vm; }
 
-    JSC::DebuggerCallFrame* currentDebuggerCallFrame();
+    JSC::DebuggerCallFrame& currentDebuggerCallFrame();
     bool hasHandlerForExceptionCallback() const
     {
         ASSERT(m_reasonForPause == PausedForException);

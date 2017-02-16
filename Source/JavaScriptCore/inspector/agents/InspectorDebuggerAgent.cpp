@@ -230,9 +230,9 @@ void InspectorDebuggerAgent::didScheduleAsyncCall(JSC::ExecState* exec, int asyn
     if (!m_scriptDebugServer.breakpointsActive())
         return;
 
-    RefPtr<ScriptCallStack> callStack = createScriptCallStack(exec, m_asyncStackTraceDepth);
-    ASSERT(callStack && callStack->size());
-    if (!callStack || !callStack->size())
+    Ref<ScriptCallStack> callStack = createScriptCallStack(exec, m_asyncStackTraceDepth);
+    ASSERT(callStack->size());
+    if (!callStack->size())
         return;
 
     RefPtr<AsyncStackTrace> parentStackTrace;
