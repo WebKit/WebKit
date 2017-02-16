@@ -30,10 +30,10 @@ function test()
                 return testSource("await import('./not-found.js')");
             })
             .then(() => {
-                testSource("await import('./resources/cocoa.js').then((cocoa) => { console.log(`${cocoa.name} is ${cocoa.taste}.`); })");
+                return testSource("await import('./resources/cocoa.js').then((cocoa) => { console.log(`${cocoa.name} is ${cocoa.taste}.`); })");
             })
             .then(() => {
-                testSource("await import('./resources/drink.js').then((ns) => { console.log(`${ns.Cocoa.name} is ${ns.Cocoa.taste}. ${ns.Cappuccino.name} is ${ns.Cappuccino.taste}.`); })");
+                return testSource("await import('./resources/drink.js').then((ns) => { console.log(`${ns.Cocoa.name} is ${ns.Cocoa.taste}. ${ns.Cappuccino.name} is ${ns.Cappuccino.taste}.`); })");
             })
             .then(resolve);
         }
