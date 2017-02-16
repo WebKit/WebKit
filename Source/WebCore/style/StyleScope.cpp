@@ -170,7 +170,7 @@ void Scope::setSelectedStylesheetSetName(const String& name)
 }
 
 // This method is called whenever a top-level stylesheet has finished loading.
-void Scope::removePendingSheet(RemovePendingSheetNotificationType notification)
+void Scope::removePendingSheet()
 {
     // Make sure we knew this sheet was pending, and that our count isn't out of sync.
     ASSERT(m_pendingStyleSheetCount > 0);
@@ -178,11 +178,6 @@ void Scope::removePendingSheet(RemovePendingSheetNotificationType notification)
     m_pendingStyleSheetCount--;
     if (m_pendingStyleSheetCount)
         return;
-
-    if (notification == RemovePendingSheetNotifyLater) {
-        m_document.setNeedsNotifyRemoveAllPendingStylesheet();
-        return;
-    }
 
     didChangeActiveStyleSheetCandidates();
 

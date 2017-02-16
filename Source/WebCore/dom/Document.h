@@ -486,8 +486,6 @@ public:
 
     CSSFontSelector& fontSelector() { return m_fontSelector; }
 
-    void notifyRemovePendingSheetIfNeeded();
-
     WEBCORE_EXPORT bool haveStylesheetsLoaded() const;
 
     WEBCORE_EXPORT StyleSheetList& styleSheets();
@@ -1115,6 +1113,7 @@ public:
     void incrementLoadEventDelayCount() { ++m_loadEventDelayCount; }
     void decrementLoadEventDelayCount();
     bool isDelayingLoadEvent() const { return m_loadEventDelayCount; }
+    void checkCompleted();
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include <WebKitAdditions/DocumentIOS.h>
@@ -1205,7 +1204,6 @@ public:
     DocumentSharedObjectPool* sharedObjectPool() { return m_sharedObjectPool.get(); }
 
     void didRemoveAllPendingStylesheet();
-    void setNeedsNotifyRemoveAllPendingStylesheet() { m_needsNotifyRemoveAllPendingStylesheet = true; }
     void didClearStyleResolver();
 
     bool inStyleRecalc() const { return m_inStyleRecalc; }
@@ -1390,7 +1388,6 @@ private:
 
     std::unique_ptr<StyleResolver> m_userAgentShadowTreeStyleResolver;
     bool m_hasNodesWithPlaceholderStyle;
-    bool m_needsNotifyRemoveAllPendingStylesheet;
     // But sometimes you need to ignore pending stylesheet count to
     // force an immediate layout when requested by JS.
     bool m_ignorePendingStylesheets;
@@ -1755,12 +1752,6 @@ private:
 };
 
 Element* eventTargetElementForDocument(Document*);
-
-inline void Document::notifyRemovePendingSheetIfNeeded()
-{
-    if (m_needsNotifyRemoveAllPendingStylesheet)
-        didRemoveAllPendingStylesheet();
-}
 
 inline TextEncoding Document::textEncoding() const
 {

@@ -1,3 +1,62 @@
+2017-02-16  Antti Koivisto  <antti@apple.com>
+
+        Execute pending scripts asynchronously after stylesheet loads complete
+        https://bugs.webkit.org/show_bug.cgi?id=168367
+        rdar://problem/30561379
+
+        Reviewed by Andreas Kling.
+
+        The current synchronous execution is fragile and creates various problems.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::checkLoaded):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::takeAllChildrenFrom):
+        (WebCore::ContainerNode::notifyChildInserted):
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::parserRemoveChild):
+        (WebCore::ContainerNode::removeChildren):
+
+            Remove various places where we would trigger delayed synchronous execution.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::recalcStyle):
+
+            Trigger scroll to anchor at the end of style resolution instead of when style sheet load completes.
+
+        (WebCore::Document::didRemoveAllPendingStylesheet):
+
+            Call asynchronous script execution function.
+
+        * dom/Document.h:
+        (WebCore::Document::setNeedsNotifyRemoveAllPendingStylesheet): Deleted.
+        (WebCore::Document::notifyRemovePendingSheetIfNeeded): Deleted.
+        * dom/ScriptableDocumentParser.cpp:
+        (WebCore::ScriptableDocumentParser::ScriptableDocumentParser):
+        (WebCore::ScriptableDocumentParser::executeScriptsWaitingForStylesheetsSoon):
+        (WebCore::ScriptableDocumentParser::scriptsWaitingForStylesheetsExecutionTimerFired):
+
+            Add a timer for executing pending scripts.
+
+        (WebCore::ScriptableDocumentParser::detach):
+        * dom/ScriptableDocumentParser.h:
+        (WebCore::ScriptableDocumentParser::executeScriptsWaitingForStylesheets):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::removedFrom):
+        (WebCore::HTMLLinkElement::removePendingSheet):
+        * html/HTMLLinkElement.h:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::detach):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+
+            Stay in loading state if we have a pending script. This matches existing behavior.
+
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::removePendingSheet):
+        * style/StyleScope.h:
+
 2017-02-16  Anders Carlsson  <andersca@apple.com>
 
         Set the DHTML drag image in the DHTML type check
