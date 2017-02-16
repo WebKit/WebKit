@@ -1,3 +1,20 @@
+2017-02-16  Anders Carlsson  <andersca@apple.com>
+
+        Rename EventHandler::freeDataTransfer to invalidateDataTransfer
+        https://bugs.webkit.org/show_bug.cgi?id=168472
+
+        Reviewed by Tim Horton.
+
+        The code doesn't necessarily free the data transfer object, so rename the member function
+        to reflect that. Also, get rid of a goto.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::invalidateDataTransfer):
+        (WebCore::EventHandler::dragSourceEndedAt):
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::EventHandler::freeDataTransfer): Deleted.
+        * page/EventHandler.h:
+
 2017-02-16  Alex Christensen  <achristensen@webkit.org>
 
         Special URLs without a host are invalid
