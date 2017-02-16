@@ -980,6 +980,8 @@ webkit.org/b/160017 js/regress-139548.html [ Slow ]
 
 webkit.org/b/161088 imported/w3c/web-platform-tests/resource-timing/resource-timing.html [ Pass Failure ]
 
+webkit.org/b/168356 [ Debug ] imported/w3c/web-platform-tests/resource-timing/rt-resource-errors.html [ Skip ]
+
 # Only iOS has implemented lettepress.
 fast/text/letterpress-different.html [ ImageOnlyFailure ]
 
