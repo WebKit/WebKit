@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,12 @@ WebInspector.StateRestorationType = {
     Load: "state-restoration-load",
     Navigation: "state-restoration-navigation",
     Delayed: "state-restoration-delayed",
+};
+
+WebInspector.LayoutDirection = {
+    System: "system",
+    LTR: "ltr",
+    RTL: "rtl",
 };
 
 WebInspector.loaded = function()
@@ -237,6 +243,12 @@ WebInspector.contentLoaded = function()
     }
 
     document.body.classList.add(this.debuggableType);
+
+    let layoutDirection = WebInspector.settings.layoutDirection.value;
+    if (layoutDirection === WebInspector.LayoutDirection.System)
+        layoutDirection = InspectorFrontendHost.userInterfaceLayoutDirection();
+
+    document.body.setAttribute("dir", layoutDirection);
 
     function setTabSize() {
         document.body.style.tabSize = WebInspector.settings.tabSize.value;
@@ -2130,6 +2142,23 @@ WebInspector.setZoomFactor = function(factor)
     InspectorFrontendHost.setZoomFactor(factor);
     // Round-trip through the frontend host API in case the requested factor is not used.
     WebInspector.settings.zoomFactor.value = InspectorFrontendHost.zoomFactor();
+};
+
+WebInspector.getLayoutDirection = function()
+{
+    return WebInspector.settings.layoutDirection.value;
+};
+
+WebInspector.setLayoutDirection = function(value)
+{
+    if (!Object.values(WebInspector.LayoutDirection).includes(value))
+        WebInspector.reportInternalError("Unknown layout direction requested: " + value);
+
+    if (value === WebInspector.settings.layoutDirection.value)
+        return;
+
+    WebInspector.settings.layoutDirection.value = value;
+    window.location.reload();
 };
 
 WebInspector._showTabAtIndex = function(i, event)

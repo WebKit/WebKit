@@ -1,3 +1,33 @@
+2017-02-16  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add DebugUI setting to manually override UI layout direction
+        https://bugs.webkit.org/show_bug.cgi?id=168222
+
+        Reviewed by Joseph Pecoraro.
+
+        Expose three layout direction settings:
+         - System (inherit system UI layout direction)
+         - LTR (the default regardless of system language)
+         - RTL (under development, only accessible via this menu)
+
+        * UserInterface/Base/Main.js:
+        The UI layout direction is normally only set once per frontend load.
+        There is no expectation on macOS that applications can switch dynamically.
+        But, for DebugUI purposes we need to switch the layout direction quickly.
+        Store the new setting and trigger a hard reload of the frontend page.
+        If the 'system' setting is specified, fall back to the system layout
+        direction as provided by InspectorFrontendHost.
+
+        * UserInterface/Base/Setting.js:
+        Add an application-level setting for (user interface) layout direction.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WebInspector.SettingsTabContentView):
+        (WebInspector.SettingsTabContentView.prototype.layout):
+        (WebInspector.SettingsTabContentView.prototype.initialLayout): Deleted.
+        Make this a normal layout() method so that we can dirty the view
+        when DebugUI is turned on or off.
+
 2017-02-16  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: popovers shouldn't be dismissed when Web Inspector window is dragged

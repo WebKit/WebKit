@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2016 Devin Rousso <dcrousso+webkit@gmail.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,8 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
 
         // Ensures that the Settings tab is displayable from a pinned tab bar item.
         tabBarItem.representedObject = this;
+
+        WebInspector.notifications.addEventListener(WebInspector.Notification.DebugUIEnabledDidChange, this.needsLayout.bind(this, WebInspector.View.LayoutReason.Dirty));
     }
 
     static tabInfo()
@@ -61,8 +63,10 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
         return WebInspector.SettingsTabContentView.Type;
     }
 
-    initialLayout()
+    layout()
     {
+        this.element.removeChildren();
+
         let header = this.element.createChild("div", "header");
         header.textContent = WebInspector.UIString("Settings");
 
@@ -184,6 +188,31 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
                 option.selected = currentZoom === level;
             });
         });
+
+        if (WebInspector.isDebugUIEnabled()) {
+            this.element.appendChild(document.createElement("br"));
+
+            createContainer(WebInspector.unlocalizedString("Layout Direction:"), (valueControllerContainer) => {
+                let selectElement = valueControllerContainer.appendChild(document.createElement("select"));
+                selectElement.addEventListener("change", (event) => {
+                    WebInspector.setLayoutDirection(selectElement.value);
+                });
+
+                let currentLayoutDirection = WebInspector.settings.layoutDirection.value;
+                let options = new Map([
+                    [WebInspector.LayoutDirection.System, WebInspector.unlocalizedString("System Default")],
+                    [WebInspector.LayoutDirection.LTR, WebInspector.unlocalizedString("Left to Right (LTR)")],
+                    [WebInspector.LayoutDirection.RTL, WebInspector.unlocalizedString("Right to Left (RTL)")],
+                ]);
+
+                for (let [key, value] of options) {
+                    let optionElement = selectElement.appendChild(document.createElement("option"));
+                    optionElement.value = key;
+                    optionElement.textContent = value;
+                    optionElement.selected = currentLayoutDirection === key;
+                }
+            });
+        }
     }
 };
 
