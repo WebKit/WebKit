@@ -28,9 +28,9 @@ PASS ArrayBufferView request keeps setRequestHeader() Content-Type and charset
 PASS FormData request respects setRequestHeader("") 
 PASS FormData request has correct default Content-Type of "multipart/form-data;boundary=_" 
 PASS FormData request keeps setRequestHeader() Content-Type and charset 
-FAIL URLSearchParams respects setRequestHeader("") assert_unreached: Skipping test as could not create a URLSearchParams;  Reached unreachable code
-FAIL URLSearchParams request has correct default Content-Type of "application/x-www-form-urlencoded;charset=UTF-8" assert_unreached: Skipping test as could not create a URLSearchParams;  Reached unreachable code
-FAIL URLSearchParams request keeps setRequestHeader() Content-Type, with charset adjusted to UTF-8 assert_unreached: Skipping test as could not create a URLSearchParams;  Reached unreachable code
+PASS URLSearchParams respects setRequestHeader("") 
+FAIL URLSearchParams request has correct default Content-Type of "application/x-www-form-urlencoded;charset=UTF-8" assert_equals: expected "content-type: application/x-www-form-urlencoded;charset=utf-8" but got "content-type: text/plain;charset=utf-8"
+PASS URLSearchParams request keeps setRequestHeader() Content-Type, with charset adjusted to UTF-8 
 PASS ReadableStream request respects setRequestHeader("") 
 FAIL ReadableStream request with under type sends no Content-Type without setRequestHeader() call assert_equals: expected "" but got "content-type: text/plain;charset=utf-8"
 FAIL ReadableStream request keeps setRequestHeader() Content-Type and charset assert_equals: expected "content-type: application/xml;charset=ascii" but got "content-type: application/xml;charset=utf-8"

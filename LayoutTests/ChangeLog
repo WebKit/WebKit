@@ -1,3 +1,17 @@
+2017-02-16  Javier Fernandez  <jfernandez@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=168436
+
+        Unreviewed GTK+ gardening.
+
+        - imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm marked as slow
+        - rebaseline LayoutTests/platform/gtk/js/dom/constructor-length-expected.txt to it matches current Mac expected results.
+        - the tests http/tests/xmlhttprequest/redirections-and-user-headers.html marked as Failure (bug 168433)
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/js/dom/constructor-length-expected.txt:
+
 2017-02-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Web Inspector: allow import() inside the inspector
