@@ -1,3 +1,11 @@
+2017-02-16  Anders Carlsson  <andersca@apple.com>
+
+        Begin removing EFL code from WebCore.
+
+        Rubber-stamped by Alex Christensen.
+
+        * pal/PlatformEfl.cmake: Removed.
+
 2017-01-28  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Clean up PAL and WebCore’s build settings a little
