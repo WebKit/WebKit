@@ -27,7 +27,7 @@
  */
 
 #if PLATFORM(IOS)
-#import <QuartzCore/CATiledLayer.h>
+#import <QuartzCore/CALayer.h>
 #import <WebKitLegacy/WAKAppKitStubs.h>
 #import <WebKitLegacy/WAKView.h>
 #endif

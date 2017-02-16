@@ -78,7 +78,6 @@
 - (CGSize)size;
 - (void *)regionBeingDrawn;
 - (void)setContentsChanged;
-@property BOOL acceleratesDrawing;
 @property BOOL allowsGroupBlending;
 @property BOOL canDrawConcurrently;
 @property BOOL contentsOpaque;
@@ -88,11 +87,6 @@
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300 && __IPHONE_OS_VERSION_MAX_ALLOWED < 100000
 @property (copy) NSString *contentsFormat;
 #endif
-@end
-
-@interface CATiledLayer ()
-- (void)displayInRect:(CGRect)rect levelOfDetail:(int)levelOfDetail options:(NSDictionary *)dictionary;
-- (void)setNeedsDisplayInRect:(CGRect)rect levelOfDetail:(int)levelOfDetail options:(NSDictionary *)dictionary;
 @end
 
 #if PLATFORM(IOS)
@@ -196,8 +190,6 @@ CFTypeID CAMachPortGetTypeID(void);
 void CABackingStoreCollectBlocking(void);
 
 WTF_EXTERN_C_END
-
-extern NSString * const kCATiledLayerRemoveImmediately;
 
 extern NSString * const kCAFilterColorInvert;
 extern NSString * const kCAFilterColorMatrix;

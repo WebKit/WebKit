@@ -1,3 +1,14 @@
+2017-02-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up use of some CALayer-related SPI
+        https://bugs.webkit.org/show_bug.cgi?id=168401
+
+        Reviewed by Tim Horton.
+
+        Include CALayer.h not CATiledLayer.h.
+
+        * WebInspector/WebNodeHighlight.h:
+
 2017-02-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix the build after r212379

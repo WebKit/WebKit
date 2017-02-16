@@ -70,7 +70,7 @@ LegacyTileGridTile::LegacyTileGridTile(LegacyTileGrid* tileGrid, const IntRect& 
     [layer setEdgeAntialiasingMask:0];
     [layer setNeedsLayoutOnGeometryChange:NO];
     [layer setContentsScale:screenScale];
-    [layer setAcceleratesDrawing:m_tileGrid->tileCache().acceleratedDrawingEnabled()];
+    [layer setDrawsAsynchronously:m_tileGrid->tileCache().acceleratedDrawingEnabled()];
 
     // Host layer may have other sublayers. Keep the tile layers at the beginning of the array
     // so they are painted behind everything else.
