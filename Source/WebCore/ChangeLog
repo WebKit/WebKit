@@ -1,5 +1,15 @@
 2017-02-16  Anders Carlsson  <andersca@apple.com>
 
+        Set the DHTML drag image in the DHTML type check
+        https://bugs.webkit.org/show_bug.cgi?id=168451
+
+        Reviewed by Wenson Hsieh.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+
+2017-02-16  Anders Carlsson  <andersca@apple.com>
+
         Begin removing EFL code from WebCore.
 
         Rubber-stamped by Alex Christensen.

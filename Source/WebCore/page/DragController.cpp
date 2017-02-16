@@ -798,19 +798,21 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     ASSERT(state.dataTransfer);
 
     DataTransfer& dataTransfer = *state.dataTransfer;
-    if (state.type == DragSourceActionDHTML)
+    if (state.type == DragSourceActionDHTML) {
         dragImage = DragImage { dataTransfer.createDragImage(dragImageOffset) };
-    if (state.type == DragSourceActionSelection || !imageURL.isEmpty() || !linkURL.isEmpty())
+        // We allow DHTML/JS to set the drag image, even if its a link, image or text we're dragging.
+        // This is in the spirit of the IE API, which allows overriding of pasteboard data and DragOp.
+        if (dragImage) {
+            dragLoc = dragLocForDHTMLDrag(mouseDraggedPoint, dragOrigin, dragImageOffset, !linkURL.isEmpty());
+            m_dragOffset = dragImageOffset;
+        }
+    }
+
+    if (state.type == DragSourceActionSelection || !imageURL.isEmpty() || !linkURL.isEmpty()) {
         // Selection, image, and link drags receive a default set of allowed drag operations that
         // follows from:
         // http://trac.webkit.org/browser/trunk/WebKit/mac/WebView/WebHTMLView.mm?rev=48526#L3430
         m_sourceDragOperation = static_cast<DragOperation>(m_sourceDragOperation | DragOperationGeneric | DragOperationCopy);
-
-    // We allow DHTML/JS to set the drag image, even if its a link, image or text we're dragging.
-    // This is in the spirit of the IE API, which allows overriding of pasteboard data and DragOp.
-    if (dragImage) {
-        dragLoc = dragLocForDHTMLDrag(mouseDraggedPoint, dragOrigin, dragImageOffset, !linkURL.isEmpty());
-        m_dragOffset = dragImageOffset;
     }
 
     ASSERT(state.source);
