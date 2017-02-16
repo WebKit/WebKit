@@ -1,3 +1,71 @@
+2017-02-15  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: Inspector::fromProtocolString<T> should return std::optional<T>
+        https://bugs.webkit.org/show_bug.cgi?id=168018
+        <rdar://problem/30468779>
+
+        Reviewed by Joseph Pecoraro.
+
+        These methods parse untrusted string inputs, so they should return an optional instead
+        of asserting or crashing when the input is not usable.
+
+        Update various pieces of generated code to handle the error case gracefully.
+
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCBackendDispatcherImplementationGenerator._generate_conversions_for_command):
+        (ObjCBackendDispatcherImplementationGenerator._generate_invocation_for_command):
+        The local variable holding the ObjC-friendly converted value should take a std::optional
+        when converting an enum from a string into an NS_ENUM value. If the enum command parameter
+        is not optional, then send a response with a command failure message and return.
+
+        The optional enum parameter case is not handled correctly, but no existing code requires it.
+
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_header.py:
+        (ObjCProtocolTypeConversionsHeaderGenerator._generate_enum_from_protocol_string):
+        Fix signature and remove default case ASSERT_NOT_REACHED.
+
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_implementation.py:
+        (ObjCProtocolTypeConversionsImplementationGenerator._generate_type_factory_method_implementation):
+        Since this code assumes all inputs to be valid and throws an exception otherwise, we
+        try to convert the enum and throw an exception if it's nullopt. If it's valid, write to outValue.
+
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator._generate_init_method_for_payload):
+        The local variable holding the ObjC-friendly converted value should take a std::optional
+        when converting an enum from a string into an NS_ENUM value. If the enum command parameter
+        is not optional, then throw an exception if the value is nullopt. Otherwise, allow it to be empty.
+
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.protocol_to_objc_expression_for_member):
+        Unconditionally unwrap the optional. This expression is only used inside the typechecked
+        ObjC protocol objects. In this case we are guaranteed to have already initialized the enum with a valid
+        value, but must store it as a string inside a wrapped InspectorObject. The getter needs to
+        re-convert the stored string into an NS_ENUM value.
+
+        * inspector/scripts/codegen/objc_generator_templates.py:
+        Update type template for fromProtocolString<T>().
+
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/domain-availability.json-result:
+        * inspector/scripts/tests/generic/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/generic/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/generic/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+        * inspector/scripts/tests/generic/expected/worker-supported-domains.json-result:
+        * inspector/scripts/tests/ios/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result:
+        Rebaseline tests.
+
 2017-02-16  Keith Miller  <keith_miller@apple.com>
 
         ASSERTION FAILED: vm.heap.mutatorState() == MutatorState::Running || vm.apiLock().ownerThread() != std::this_thread::get_id()

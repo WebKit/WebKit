@@ -1039,7 +1039,7 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-ObjCEnumType fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(const String& value);
 
 inline String toProtocolString(TestProtocolPlatform value)
 {
@@ -1056,7 +1056,7 @@ inline String toProtocolString(TestProtocolPlatform value)
 }
 
 template<>
-inline TestProtocolPlatform fromProtocolString(const String& value)
+inline std::optional<TestProtocolPlatform> fromProtocolString(const String& value)
 {
     if (value == "all")
         return TestProtocolPlatformAll;
@@ -1066,8 +1066,7 @@ inline TestProtocolPlatform fromProtocolString(const String& value)
         return TestProtocolPlatformIOS;
     if (value == "macos")
         return TestProtocolPlatformMacOS;
-    ASSERT_NOT_REACHED();
-    return TestProtocolPlatformAll;
+    return std::nullopt;
 }
 
 
@@ -1086,7 +1085,7 @@ inline String toProtocolString(TestProtocolTypeDomainEnum value)
 }
 
 template<>
-inline TestProtocolTypeDomainEnum fromProtocolString(const String& value)
+inline std::optional<TestProtocolTypeDomainEnum> fromProtocolString(const String& value)
 {
     if (value == "shared")
         return TestProtocolTypeDomainEnumShared;
@@ -1096,8 +1095,7 @@ inline TestProtocolTypeDomainEnum fromProtocolString(const String& value)
         return TestProtocolTypeDomainEnumGreen;
     if (value == "blue")
         return TestProtocolTypeDomainEnumBlue;
-    ASSERT_NOT_REACHED();
-    return TestProtocolTypeDomainEnumShared;
+    return std::nullopt;
 }
 
 } // namespace Inspector
@@ -1154,7 +1152,9 @@ using namespace Inspector;
 + (void)_parseTypeDomainEnum:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    *outValue = @(Inspector::fromProtocolString<TestProtocolTypeDomainEnum>(payload));
+    std::optional<TestProtocolTypeDomainEnum> result = Inspector::fromProtocolString<TestProtocolTypeDomainEnum>(payload);
+    THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"TypeDomainEnum");
+    *outValue = @(result.value());
 }
 
 @end

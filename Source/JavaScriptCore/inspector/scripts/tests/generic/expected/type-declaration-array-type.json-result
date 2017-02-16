@@ -830,7 +830,7 @@ typedef NS_ENUM(NSInteger, TestProtocolDebuggerReason) {
 namespace Inspector {
 
 template<typename ObjCEnumType>
-ObjCEnumType fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(const String& value);
 
 inline String toProtocolString(TestProtocolPlatform value)
 {
@@ -847,7 +847,7 @@ inline String toProtocolString(TestProtocolPlatform value)
 }
 
 template<>
-inline TestProtocolPlatform fromProtocolString(const String& value)
+inline std::optional<TestProtocolPlatform> fromProtocolString(const String& value)
 {
     if (value == "all")
         return TestProtocolPlatformAll;
@@ -857,8 +857,7 @@ inline TestProtocolPlatform fromProtocolString(const String& value)
         return TestProtocolPlatformIOS;
     if (value == "macos")
         return TestProtocolPlatformMacOS;
-    ASSERT_NOT_REACHED();
-    return TestProtocolPlatformAll;
+    return std::nullopt;
 }
 
 
@@ -875,7 +874,7 @@ inline String toProtocolString(TestProtocolDebuggerReason value)
 }
 
 template<>
-inline TestProtocolDebuggerReason fromProtocolString(const String& value)
+inline std::optional<TestProtocolDebuggerReason> fromProtocolString(const String& value)
 {
     if (value == "Died")
         return TestProtocolDebuggerReasonDied;
@@ -883,8 +882,7 @@ inline TestProtocolDebuggerReason fromProtocolString(const String& value)
         return TestProtocolDebuggerReasonFainted;
     if (value == "Hungry")
         return TestProtocolDebuggerReasonHungry;
-    ASSERT_NOT_REACHED();
-    return TestProtocolDebuggerReasonDied;
+    return std::nullopt;
 }
 
 
@@ -960,7 +958,9 @@ using namespace Inspector;
 + (void)_parseReason:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    *outValue = @(Inspector::fromProtocolString<TestProtocolDebuggerReason>(payload));
+    std::optional<TestProtocolDebuggerReason> result = Inspector::fromProtocolString<TestProtocolDebuggerReason>(payload);
+    THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"Reason");
+    *outValue = @(result.value());
 }
 
 @end

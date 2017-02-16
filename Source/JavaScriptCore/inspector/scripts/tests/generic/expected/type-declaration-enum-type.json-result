@@ -858,7 +858,7 @@ typedef NS_ENUM(NSInteger, TestProtocolRuntimeTwoLeggedAnimals) {
 namespace Inspector {
 
 template<typename ObjCEnumType>
-ObjCEnumType fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(const String& value);
 
 inline String toProtocolString(TestProtocolPlatform value)
 {
@@ -875,7 +875,7 @@ inline String toProtocolString(TestProtocolPlatform value)
 }
 
 template<>
-inline TestProtocolPlatform fromProtocolString(const String& value)
+inline std::optional<TestProtocolPlatform> fromProtocolString(const String& value)
 {
     if (value == "all")
         return TestProtocolPlatformAll;
@@ -885,8 +885,7 @@ inline TestProtocolPlatform fromProtocolString(const String& value)
         return TestProtocolPlatformIOS;
     if (value == "macos")
         return TestProtocolPlatformMacOS;
-    ASSERT_NOT_REACHED();
-    return TestProtocolPlatformAll;
+    return std::nullopt;
 }
 
 
@@ -905,7 +904,7 @@ inline String toProtocolString(TestProtocolRuntimeFarmAnimals value)
 }
 
 template<>
-inline TestProtocolRuntimeFarmAnimals fromProtocolString(const String& value)
+inline std::optional<TestProtocolRuntimeFarmAnimals> fromProtocolString(const String& value)
 {
     if (value == "Pigs")
         return TestProtocolRuntimeFarmAnimalsPigs;
@@ -915,8 +914,7 @@ inline TestProtocolRuntimeFarmAnimals fromProtocolString(const String& value)
         return TestProtocolRuntimeFarmAnimalsCats;
     if (value == "Hens")
         return TestProtocolRuntimeFarmAnimalsHens;
-    ASSERT_NOT_REACHED();
-    return TestProtocolRuntimeFarmAnimalsPigs;
+    return std::nullopt;
 }
 
 inline String toProtocolString(TestProtocolRuntimeTwoLeggedAnimals value)
@@ -934,7 +932,7 @@ inline String toProtocolString(TestProtocolRuntimeTwoLeggedAnimals value)
 }
 
 template<>
-inline TestProtocolRuntimeTwoLeggedAnimals fromProtocolString(const String& value)
+inline std::optional<TestProtocolRuntimeTwoLeggedAnimals> fromProtocolString(const String& value)
 {
     if (value == "Ducks")
         return TestProtocolRuntimeTwoLeggedAnimalsDucks;
@@ -944,8 +942,7 @@ inline TestProtocolRuntimeTwoLeggedAnimals fromProtocolString(const String& valu
         return TestProtocolRuntimeTwoLeggedAnimalsCrows;
     if (value == "Flamingos")
         return TestProtocolRuntimeTwoLeggedAnimalsFlamingos;
-    ASSERT_NOT_REACHED();
-    return TestProtocolRuntimeTwoLeggedAnimalsDucks;
+    return std::nullopt;
 }
 
 } // namespace Inspector
@@ -1003,13 +1000,17 @@ using namespace Inspector;
 + (void)_parseFarmAnimals:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    *outValue = @(Inspector::fromProtocolString<TestProtocolRuntimeFarmAnimals>(payload));
+    std::optional<TestProtocolRuntimeFarmAnimals> result = Inspector::fromProtocolString<TestProtocolRuntimeFarmAnimals>(payload);
+    THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"FarmAnimals");
+    *outValue = @(result.value());
 }
 
 + (void)_parseTwoLeggedAnimals:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    *outValue = @(Inspector::fromProtocolString<TestProtocolRuntimeTwoLeggedAnimals>(payload));
+    std::optional<TestProtocolRuntimeTwoLeggedAnimals> result = Inspector::fromProtocolString<TestProtocolRuntimeTwoLeggedAnimals>(payload);
+    THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"TwoLeggedAnimals");
+    *outValue = @(result.value());
 }
 
 @end

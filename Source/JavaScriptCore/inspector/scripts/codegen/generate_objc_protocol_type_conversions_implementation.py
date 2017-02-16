@@ -125,7 +125,9 @@ class ObjCProtocolTypeConversionsImplementationGenerator(ObjCGenerator):
         lines.append('{')
         if isinstance(resolved_type, EnumType):
             lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);')
-            lines.append('    *outValue = @(Inspector::fromProtocolString<%s>(payload));' % self.objc_name_for_type(resolved_type))
+            lines.append('    std::optional<%(type)s> result = Inspector::fromProtocolString<%(type)s>(payload);' % {'type': self.objc_name_for_type(resolved_type)})
+            lines.append('    THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"%s");' % declaration.type.raw_name())
+            lines.append('    *outValue = @(result.value());')
         elif isinstance(resolved_type, (ArrayType, PrimitiveType)):
             lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE(payload, [%s class]);' % objc_class)
             lines.append('    *outValue = (%s *)payload;' % objc_class)

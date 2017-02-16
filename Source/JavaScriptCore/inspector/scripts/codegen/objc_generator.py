@@ -442,8 +442,8 @@ class ObjCGenerator(Generator):
         if category in [ObjCTypeCategory.Simple, ObjCTypeCategory.String]:
             if isinstance(member.type, EnumType):
                 if member.type.is_anonymous:
-                    return 'fromProtocolString<%s>(%s)' % (self.objc_enum_name_for_anonymous_enum_member(declaration, member), sub_expression)
-                return 'fromProtocolString<%s>(%s)' % (self.objc_enum_name_for_non_anonymous_enum(member.type), sub_expression)
+                    return 'fromProtocolString<%s>(%s).value()' % (self.objc_enum_name_for_anonymous_enum_member(declaration, member), sub_expression)
+                return 'fromProtocolString<%s>(%s).value()' % (self.objc_enum_name_for_non_anonymous_enum(member.type), sub_expression)
             return sub_expression
         if category is ObjCTypeCategory.Object:
             objc_class = self.objc_class_for_type(member.type)

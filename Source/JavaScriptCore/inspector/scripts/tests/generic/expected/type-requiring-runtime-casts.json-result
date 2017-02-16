@@ -1212,7 +1212,7 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-ObjCEnumType fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(const String& value);
 
 inline String toProtocolString(TestProtocolPlatform value)
 {
@@ -1229,7 +1229,7 @@ inline String toProtocolString(TestProtocolPlatform value)
 }
 
 template<>
-inline TestProtocolPlatform fromProtocolString(const String& value)
+inline std::optional<TestProtocolPlatform> fromProtocolString(const String& value)
 {
     if (value == "all")
         return TestProtocolPlatformAll;
@@ -1239,8 +1239,7 @@ inline TestProtocolPlatform fromProtocolString(const String& value)
         return TestProtocolPlatformIOS;
     if (value == "macos")
         return TestProtocolPlatformMacOS;
-    ASSERT_NOT_REACHED();
-    return TestProtocolPlatformAll;
+    return std::nullopt;
 }
 
 
@@ -1259,7 +1258,7 @@ inline String toProtocolString(TestProtocolTestUncastedAnimals value)
 }
 
 template<>
-inline TestProtocolTestUncastedAnimals fromProtocolString(const String& value)
+inline std::optional<TestProtocolTestUncastedAnimals> fromProtocolString(const String& value)
 {
     if (value == "Pigs")
         return TestProtocolTestUncastedAnimalsPigs;
@@ -1269,8 +1268,7 @@ inline TestProtocolTestUncastedAnimals fromProtocolString(const String& value)
         return TestProtocolTestUncastedAnimalsCats;
     if (value == "Hens")
         return TestProtocolTestUncastedAnimalsHens;
-    ASSERT_NOT_REACHED();
-    return TestProtocolTestUncastedAnimalsPigs;
+    return std::nullopt;
 }
 
 inline String toProtocolString(TestProtocolTestCastedAnimals value)
@@ -1288,7 +1286,7 @@ inline String toProtocolString(TestProtocolTestCastedAnimals value)
 }
 
 template<>
-inline TestProtocolTestCastedAnimals fromProtocolString(const String& value)
+inline std::optional<TestProtocolTestCastedAnimals> fromProtocolString(const String& value)
 {
     if (value == "Ducks")
         return TestProtocolTestCastedAnimalsDucks;
@@ -1298,8 +1296,7 @@ inline TestProtocolTestCastedAnimals fromProtocolString(const String& value)
         return TestProtocolTestCastedAnimalsCrows;
     if (value == "Flamingos")
         return TestProtocolTestCastedAnimalsFlamingos;
-    ASSERT_NOT_REACHED();
-    return TestProtocolTestCastedAnimalsDucks;
+    return std::nullopt;
 }
 
 } // namespace Inspector
@@ -1380,13 +1377,17 @@ using namespace Inspector;
 + (void)_parseUncastedAnimals:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    *outValue = @(Inspector::fromProtocolString<TestProtocolTestUncastedAnimals>(payload));
+    std::optional<TestProtocolTestUncastedAnimals> result = Inspector::fromProtocolString<TestProtocolTestUncastedAnimals>(payload);
+    THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"UncastedAnimals");
+    *outValue = @(result.value());
 }
 
 + (void)_parseCastedAnimals:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    *outValue = @(Inspector::fromProtocolString<TestProtocolTestCastedAnimals>(payload));
+    std::optional<TestProtocolTestCastedAnimals> result = Inspector::fromProtocolString<TestProtocolTestCastedAnimals>(payload);
+    THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"CastedAnimals");
+    *outValue = @(result.value());
 }
 
 + (void)_parseRecursiveObject1:(TestProtocolTestRecursiveObject1 **)outValue fromPayload:(id)payload
@@ -1461,7 +1462,9 @@ using namespace Inspector;
     self.number = [payload[@"number"] integerValue];
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"animals"], @"animals");
-    self.animals = fromProtocolString<TestProtocolTestCastedAnimals>(payload[@"animals"]);
+    std::optional<TestProtocolTestCastedAnimals> animals = fromProtocolString<TestProtocolTestCastedAnimals>(payload[@"animals"]);
+    THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(animals, @"animals");
+    self.animals = animals.value();
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"id"], @"id");
     self.identifier = [payload[@"id"] integerValue];
@@ -1523,7 +1526,7 @@ using namespace Inspector;
 
 - (TestProtocolTestCastedAnimals)animals
 {
-    return fromProtocolString<TestProtocolTestCastedAnimals>([super stringForKey:@"animals"]);
+    return fromProtocolString<TestProtocolTestCastedAnimals>([super stringForKey:@"animals"]).value();
 }
 
 - (void)setIdentifier:(int)identifier

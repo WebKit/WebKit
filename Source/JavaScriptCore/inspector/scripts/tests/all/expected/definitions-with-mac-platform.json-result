@@ -1006,7 +1006,7 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-ObjCEnumType fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(const String& value);
 
 inline String toProtocolString(TestProtocolPlatform value)
 {
@@ -1023,7 +1023,7 @@ inline String toProtocolString(TestProtocolPlatform value)
 }
 
 template<>
-inline TestProtocolPlatform fromProtocolString(const String& value)
+inline std::optional<TestProtocolPlatform> fromProtocolString(const String& value)
 {
     if (value == "all")
         return TestProtocolPlatformAll;
@@ -1033,8 +1033,7 @@ inline TestProtocolPlatform fromProtocolString(const String& value)
         return TestProtocolPlatformIOS;
     if (value == "macos")
         return TestProtocolPlatformMacOS;
-    ASSERT_NOT_REACHED();
-    return TestProtocolPlatformAll;
+    return std::nullopt;
 }
 
 

@@ -155,12 +155,11 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
     def _generate_enum_from_protocol_string(self, objc_enum_name, enum_values):
         lines = []
         lines.append('template<>')
-        lines.append('inline %s fromProtocolString(const String& value)' % objc_enum_name)
+        lines.append('inline std::optional<%s> fromProtocolString(const String& value)' % objc_enum_name)
         lines.append('{')
         for enum_value in enum_values:
             lines.append('    if (value == "%s")' % enum_value)
             lines.append('        return %s%s;' % (objc_enum_name, Generator.stylized_name_for_enum_value(enum_value)))
-        lines.append('    ASSERT_NOT_REACHED();')
-        lines.append('    return %s%s;' % (objc_enum_name, Generator.stylized_name_for_enum_value(enum_values[0])))
+        lines.append('    return std::nullopt;')
         lines.append('}')
         return '\n'.join(lines)

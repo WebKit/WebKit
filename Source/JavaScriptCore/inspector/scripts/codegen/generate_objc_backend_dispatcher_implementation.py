@@ -168,10 +168,19 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
             in_param_name = 'in_%s' % parameter.parameter_name
             objc_in_param_name = 'o_%s' % in_param_name
             objc_type = self.objc_type_for_param(domain, command.command_name, parameter, False)
+            if isinstance(parameter.type, EnumType):
+                objc_type = 'std::optional<%s>' % objc_type
             param_expression = in_param_expression(in_param_name, parameter)
             import_expression = self.objc_protocol_import_expression_for_parameter(param_expression, domain, command.command_name, parameter)
             if not parameter.is_optional:
                 lines.append('    %s = %s;' % (join_type_and_name(objc_type, objc_in_param_name), import_expression))
+
+                if isinstance(parameter.type, EnumType):
+                    lines.append('    if (!%s) {' % objc_in_param_name)
+                    lines.append('        backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, String::format("Parameter \'%%s\' of method \'%%s\' cannot be processed", "%s", "%s.%s"));' % (parameter.parameter_name, domain.domain_name, command.command_name))
+                    lines.append('        return;')
+                    lines.append('    }')
+
             else:
                 lines.append('    %s;' % join_type_and_name(objc_type, objc_in_param_name))
                 lines.append('    if (%s)' % in_param_name)
@@ -187,10 +196,15 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
         pairs.append('successCallback:successCallback')
         for parameter in command.call_parameters:
             in_param_name = 'in_%s' % parameter.parameter_name
-            objc_in_param_name = 'o_%s' % in_param_name
+            objc_in_param_expression = 'o_%s' % in_param_name
             if not parameter.is_optional:
-                pairs.append('%s:%s' % (parameter.parameter_name, objc_in_param_name))
+                # FIXME: we don't handle optional enum values in commands here because it isn't used anywhere yet.
+                # We'd need to change the delegate's signature to take std::optional for optional enum values.
+                if isinstance(parameter.type, EnumType):
+                    objc_in_param_expression = '%s.value()' % objc_in_param_expression
+
+                pairs.append('%s:%s' % (parameter.parameter_name, objc_in_param_expression))
             else:
-                optional_expression = '(%s ? &%s : nil)' % (in_param_name, objc_in_param_name)
+                optional_expression = '(%s ? &%s : nil)' % (in_param_name, objc_in_param_expression)
                 pairs.append('%s:%s' % (parameter.parameter_name, optional_expression))
         return '    [m_delegate %s%s];' % (command.command_name, ' '.join(pairs))
