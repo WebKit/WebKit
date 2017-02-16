@@ -36,6 +36,16 @@ PASS everything.stretch is "normal"
 PASS everything.unicodeRange is "U+0-7f"
 PASS everything.variant is "stacked-fractions"
 PASS everything.featureSettings is "'smcp' 1"
+PASS new FontFace('family_name', 'url(\'asdf\')', {}) did not throw exception.
+PASS new FontFace('family_name', newArrayBuffer, {}) did not throw exception.
+PASS new FontFace('family_name', new DataView(newArrayBuffer), {}) did not throw exception.
+PASS new FontFace('family_name', new Uint8Array(newArrayBuffer), {}) did not throw exception.
+PASS new FontFace('family_name', 5, {}) threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new FontFace('family_name', {}, {}) threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new FontFace('family_name', new Array(), {}) threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new FontFace('family_name', { toString: function() { return 5; } }, {}) threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS new FontFace('family_name', { toString: function() { throw "Error"; } }, {}) threw exception Error.
+PASS new FontFace('family_name', { toString: function() { return "url('asdf')"; } }, {}).family is "family_name"
 PASS new FontFace('family_name', 'url(\'asdf\')', {}).status is "unloaded"
 PASS promise1 is promise2
 PASS promise1 is promise3
