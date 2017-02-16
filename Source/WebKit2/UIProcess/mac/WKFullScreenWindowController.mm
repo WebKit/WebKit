@@ -556,6 +556,16 @@ static CAAnimation *zoomAnimation(const FloatRect& initialFrame, const FloatRect
     return scaleAnimation;
 }
 
+static CALayer *createMask(const FloatRect& bounds)
+{
+    CALayer *maskLayer = [CALayer layer];
+    maskLayer.anchorPoint = CGPointZero;
+    maskLayer.frame = bounds;
+    maskLayer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
+    maskLayer.autoresizingMask = (NSViewWidthSizable | NSViewHeightSizable);
+    return maskLayer;
+}
+
 static CAAnimation *maskAnimation(const FloatRect& initialFrame, const FloatRect& finalFrame, const FloatRect& screenFrame, CFTimeInterval duration, AnimationDirection direction)
 {
     CABasicAnimation *boundsAnimation = [CABasicAnimation animationWithKeyPath:@"bounds"];
@@ -601,11 +611,7 @@ static CAAnimation *fadeAnimation(CFTimeInterval duration, AnimationDirection di
     NSView* contentView = [[self window] contentView];
 
     [[_clipView layer] addAnimation:zoomAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateIn) forKey:@"fullscreen"];
-    CALayer *maskLayer = [CALayer layer];
-    maskLayer.anchorPoint = CGPointZero;
-    maskLayer.frame = NSRectToCGRect(contentView.bounds);
-    maskLayer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
-    maskLayer.autoresizingMask = (NSViewWidthSizable | NSViewHeightSizable);
+    CALayer *maskLayer = createMask(contentView.bounds);
     [maskLayer addAnimation:maskAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateIn) forKey:@"fullscreen"];
     [_clipView layer].mask = maskLayer;
 
@@ -636,9 +642,11 @@ static CAAnimation *fadeAnimation(CFTimeInterval duration, AnimationDirection di
     }
 
     [[_clipView layer] addAnimation:zoomAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateOut) forKey:@"fullscreen"];
-    [[_clipView layer].mask addAnimation:maskAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateOut) forKey:@"fullscreen"];
-
     NSView* contentView = [[self window] contentView];
+    CALayer *maskLayer = createMask(contentView.bounds);
+    [maskLayer addAnimation:maskAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateOut) forKey:@"fullscreen"];
+    [_clipView layer].mask = maskLayer;
+
     contentView.hidden = NO;
     [_backgroundView.get().layer addAnimation:fadeAnimation(duration, AnimateOut) forKey:@"fullscreen"];
 
