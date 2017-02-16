@@ -97,14 +97,14 @@ RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::importJwk(size_t lengthBits, CryptoAlgorith
 {
     if (keyData.kty != "oct")
         return nullptr;
-    if (!keyData.k)
+    if (keyData.k.isNull())
         return nullptr;
     Vector<uint8_t> octetSequence;
-    if (!base64URLDecode(keyData.k.value(), octetSequence))
+    if (!base64URLDecode(keyData.k, octetSequence))
         return nullptr;
     if (!callback(hash, keyData.alg))
         return nullptr;
-    if (usages && keyData.use && keyData.use.value() != "sig")
+    if (usages && !keyData.use.isNull() && keyData.use != "sig")
         return nullptr;
     if (keyData.usages && ((keyData.usages & usages) != usages))
         return nullptr;

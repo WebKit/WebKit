@@ -43,18 +43,18 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
     if (keyData.ext && !keyData.ext.value() && extractable)
         return nullptr;
 
-    if (!keyData.n || !keyData.e)
+    if (keyData.n.isNull() || keyData.e.isNull())
         return nullptr;
     Vector<uint8_t> modulus;
-    if (!WTF::base64URLDecode(keyData.n.value(), modulus))
+    if (!WTF::base64URLDecode(keyData.n, modulus))
         return nullptr;
     // Per RFC 7518 Section 6.3.1.1: https://tools.ietf.org/html/rfc7518#section-6.3.1.1
-    if (!modulus[0])
+    if (!modulus.isEmpty() && !modulus[0])
         modulus.remove(0);
     Vector<uint8_t> exponent;
-    if (!WTF::base64URLDecode(keyData.e.value(), exponent))
+    if (!WTF::base64URLDecode(keyData.e, exponent))
         return nullptr;
-    if (!keyData.d) {
+    if (keyData.d.isNull()) {
         // import public key
         auto publicKeyComponents = CryptoKeyDataRSAComponents::createPublic(WTFMove(modulus), WTFMove(exponent));
         // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.
@@ -63,27 +63,27 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
 
     // import private key
     Vector<uint8_t> privateExponent;
-    if (!WTF::base64URLDecode(keyData.d.value(), privateExponent))
+    if (!WTF::base64URLDecode(keyData.d, privateExponent))
         return nullptr;
-    if (!keyData.p && !keyData.q && !keyData.dp && !keyData.dp && !keyData.qi) {
+    if (keyData.p.isNull() && keyData.q.isNull() && keyData.dp.isNull() && keyData.dp.isNull() && keyData.qi.isNull()) {
         auto privateKeyComponents = CryptoKeyDataRSAComponents::createPrivate(WTFMove(modulus), WTFMove(exponent), WTFMove(privateExponent));
         // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.
         return CryptoKeyRSA::create(algorithm, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, *privateKeyComponents, extractable, usages);
     }
 
-    if (!keyData.p || !keyData.q || !keyData.dp || !keyData.dq || !keyData.qi)
+    if (keyData.p.isNull() || keyData.q.isNull() || keyData.dp.isNull() || keyData.dq.isNull() || keyData.qi.isNull())
         return nullptr;
     CryptoKeyDataRSAComponents::PrimeInfo firstPrimeInfo;
     CryptoKeyDataRSAComponents::PrimeInfo secondPrimeInfo;
-    if (!WTF::base64URLDecode(keyData.p.value(), firstPrimeInfo.primeFactor))
+    if (!WTF::base64URLDecode(keyData.p, firstPrimeInfo.primeFactor))
         return nullptr;
-    if (!WTF::base64URLDecode(keyData.dp.value(), firstPrimeInfo.factorCRTExponent))
+    if (!WTF::base64URLDecode(keyData.dp, firstPrimeInfo.factorCRTExponent))
         return nullptr;
-    if (!WTF::base64URLDecode(keyData.q.value(), secondPrimeInfo.primeFactor))
+    if (!WTF::base64URLDecode(keyData.q, secondPrimeInfo.primeFactor))
         return nullptr;
-    if (!WTF::base64URLDecode(keyData.dq.value(), secondPrimeInfo.factorCRTExponent))
+    if (!WTF::base64URLDecode(keyData.dq, secondPrimeInfo.factorCRTExponent))
         return nullptr;
-    if (!WTF::base64URLDecode(keyData.qi.value(), secondPrimeInfo.factorCRTCoefficient))
+    if (!WTF::base64URLDecode(keyData.qi, secondPrimeInfo.factorCRTCoefficient))
         return nullptr;
     if (!keyData.oth) {
         auto privateKeyComponents = CryptoKeyDataRSAComponents::createPrivateWithAdditionalData(WTFMove(modulus), WTFMove(exponent), WTFMove(privateExponent), WTFMove(firstPrimeInfo), WTFMove(secondPrimeInfo), { });

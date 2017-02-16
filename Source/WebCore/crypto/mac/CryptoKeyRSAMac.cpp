@@ -131,6 +131,11 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, 
         WTFLogAlways("Keys with more than two primes are not supported");
         return nullptr;
     }
+    // When an empty vector p is provided to CCRSACryptorCreateFromData to create a private key, it crashes.
+    // <rdar://problem/30550228> tracks the issue.
+    if (keyData.type() == CryptoKeyDataRSAComponents::Type::Private && keyData.firstPrimeInfo().primeFactor.isEmpty())
+        return nullptr;
+
     CCRSACryptorRef cryptor;
     // FIXME: It is so weired that we recaculate the private exponent from first prime factor and second prime factor,
     // given the fact that we have already had it. Also, the re-caculated private exponent may not match the given one.

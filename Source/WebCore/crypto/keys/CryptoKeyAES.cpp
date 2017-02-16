@@ -87,16 +87,16 @@ RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm
 {
     if (keyData.kty != "oct")
         return nullptr;
-    if (!keyData.k)
+    if (keyData.k.isNull())
         return nullptr;
     Vector<uint8_t> octetSequence;
-    if (!base64URLDecode(keyData.k.value(), octetSequence))
+    if (!base64URLDecode(keyData.k, octetSequence))
         return nullptr;
     if (!callback(octetSequence.size() * 8, keyData.alg))
         return nullptr;
-    if (usages && keyData.use && keyData.use.value() != "enc")
+    if (usages && !keyData.use.isNull() && keyData.use != "enc")
         return nullptr;
-    if (keyData.usages && ((keyData.usages & usages) != usages))
+    if (keyData.key_ops && ((keyData.usages & usages) != usages))
         return nullptr;
     if (keyData.ext && !keyData.ext.value() && extractable)
         return nullptr;

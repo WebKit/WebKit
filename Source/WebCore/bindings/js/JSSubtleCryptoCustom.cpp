@@ -359,61 +359,6 @@ static KeyData toKeyData(ExecState& state, SubtleCrypto::KeyFormat format, JSVal
     return result;
 }
 
-// FIXME: We should get rid of this once https://bugs.webkit.org/show_bug.cgi?id=163711 is fixed.
-static JSValue toJSValueFromJsonWebKey(JSDOMGlobalObject& globalObject, JsonWebKey&& key)
-{
-    ExecState& state = *globalObject.globalExec();
-    VM& vm = state.vm();
-
-    auto* result = constructEmptyObject(&state);
-    result->putDirect(vm, Identifier::fromString(&vm, "kty"), toJS<IDLDOMString>(state, key.kty));
-    if (key.use)
-        result->putDirect(vm, Identifier::fromString(&vm, "use"), toJS<IDLDOMString>(state, key.use.value()));
-    if (key.key_ops)
-        result->putDirect(vm, Identifier::fromString(&vm, "key_ops"), toJS<IDLSequence<IDLEnumeration<CryptoKeyUsage>>>(state, globalObject, key.key_ops.value()));
-    if (key.alg)
-        result->putDirect(vm, Identifier::fromString(&vm, "alg"), toJS<IDLDOMString>(state, key.alg.value()));
-    if (key.ext)
-        result->putDirect(vm, Identifier::fromString(&vm, "ext"), toJS<IDLBoolean>(state, key.ext.value()));
-    if (key.crv)
-        result->putDirect(vm, Identifier::fromString(&vm, "crv"), toJS<IDLDOMString>(state, key.crv.value()));
-    if (key.x)
-        result->putDirect(vm, Identifier::fromString(&vm, "x"), toJS<IDLDOMString>(state, key.x.value()));
-    if (key.y)
-        result->putDirect(vm, Identifier::fromString(&vm, "y"), toJS<IDLDOMString>(state, key.y.value()));
-    if (key.d)
-        result->putDirect(vm, Identifier::fromString(&vm, "d"), toJS<IDLDOMString>(state, key.d.value()));
-    if (key.n)
-        result->putDirect(vm, Identifier::fromString(&vm, "n"), toJS<IDLDOMString>(state, key.n.value()));
-    if (key.e)
-        result->putDirect(vm, Identifier::fromString(&vm, "e"), toJS<IDLDOMString>(state, key.e.value()));
-    if (key.p)
-        result->putDirect(vm, Identifier::fromString(&vm, "p"), toJS<IDLDOMString>(state, key.p.value()));
-    if (key.q)
-        result->putDirect(vm, Identifier::fromString(&vm, "q"), toJS<IDLDOMString>(state, key.q.value()));
-    if (key.dp)
-        result->putDirect(vm, Identifier::fromString(&vm, "dp"), toJS<IDLDOMString>(state, key.dp.value()));
-    if (key.dq)
-        result->putDirect(vm, Identifier::fromString(&vm, "dq"), toJS<IDLDOMString>(state, key.dq.value()));
-    if (key.qi)
-        result->putDirect(vm, Identifier::fromString(&vm, "qi"), toJS<IDLDOMString>(state, key.qi.value()));
-    if (key.oth) {
-        MarkedArgumentBuffer list;
-        for (auto& value : key.oth.value()) {
-            auto* info = constructEmptyObject(&state);
-            info->putDirect(vm, Identifier::fromString(&vm, "r"), toJS<IDLDOMString>(state, value.r));
-            info->putDirect(vm, Identifier::fromString(&vm, "d"), toJS<IDLDOMString>(state, value.d));
-            info->putDirect(vm, Identifier::fromString(&vm, "t"), toJS<IDLDOMString>(state, value.t));
-            list.append(info);
-        }
-        result->putDirect(vm, Identifier::fromString(&vm, "oth"), constructArray(&state, static_cast<Structure*>(nullptr), list));
-    }
-    if (key.k)
-        result->putDirect(vm, Identifier::fromString(&vm, "k"), toJS<IDLDOMString>(state, key.k.value()));
-
-    return result;
-}
-
 static RefPtr<CryptoKey> toCryptoKey(ExecState& state, JSValue value)
 {
     VM& vm = state.vm();
@@ -865,7 +810,7 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
             return;
         }
         case SubtleCrypto::KeyFormat::Jwk:
-            capturedPromise->resolve<IDLAny>(toJSValueFromJsonWebKey(*(capturedPromise->globalObject()), WTFMove(WTF::get<JsonWebKey>(key))));
+            capturedPromise->resolve<IDLDictionary<JsonWebKey>>(WTFMove(WTF::get<JsonWebKey>(key)));
             return;
         }
         ASSERT_NOT_REACHED();
@@ -954,7 +899,7 @@ static void jsSubtleCryptoFunctionWrapKeyPromise(ExecState& state, Ref<DeferredP
             bytes = WTF::get<Vector<uint8_t>>(key);
             break;
         case SubtleCrypto::KeyFormat::Jwk: {
-            auto jwk = toJSValueFromJsonWebKey(*(promise->globalObject()), WTFMove(WTF::get<JsonWebKey>(key)));
+            auto jwk = toJS<IDLDictionary<JsonWebKey>>(*(promise->globalObject()->globalExec()), *(promise->globalObject()), WTFMove(WTF::get<JsonWebKey>(key)));
             String jwkString = JSONStringify(promise->globalObject()->globalExec(), jwk, 0);
             CString jwkUtf8String = jwkString.utf8(StrictConversion);
             bytes.append(jwkUtf8String.data(), jwkUtf8String.length());

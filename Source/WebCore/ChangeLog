@@ -1,3 +1,47 @@
+2017-02-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] remove toJSValueFromJsonWebKey from custom SubtleCrypto binding codes
+        https://bugs.webkit.org/show_bug.cgi?id=167026
+
+        Reviewed by Chris Dumez.
+
+        Covered by existing tests.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::jsSubtleCryptoFunctionExportKeyPromise):
+        (WebCore::jsSubtleCryptoFunctionWrapKeyPromise):
+        (WebCore::toJSValueFromJsonWebKey): Deleted.
+        * crypto/JsonWebKey.h:
+        * crypto/JsonWebKey.idl:
+        * crypto/RsaOtherPrimesInfo.idl:
+        Change std::optional<String> to String in order to use toJS<IDLDictionary<JsonWebKey>>.
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::importKey):
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::importKey):
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::importKey):
+        * crypto/keys/CryptoKeyAES.cpp:
+        (WebCore::CryptoKeyAES::importJwk):
+        Only check if key_ops contains all of the specified usages when key_ops field of jwk is present,
+        as per the specification: https://www.w3.org/TR/WebCryptoAPI/#aes-cbc-operations
+        * crypto/keys/CryptoKeyAES.h:
+        * crypto/keys/CryptoKeyHMAC.cpp:
+        (WebCore::CryptoKeyHMAC::importJwk):
+        * crypto/keys/CryptoKeyHMAC.h:
+        * crypto/keys/CryptoKeyRSA.cpp:
+        (WebCore::CryptoKeyRSA::importJwk):
+        Accommodate the change from std::optional<String> to String.
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::create):
+        Add a null check for p.
+
 2017-02-16  Antti Koivisto  <antti@apple.com>
 
         Execute pending scripts asynchronously after stylesheet loads complete

@@ -94,14 +94,14 @@ void CryptoAlgorithmAES_KW::importKey(SubtleCrypto::KeyFormat format, KeyData&& 
         result = CryptoKeyAES::importRaw(parameters->identifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case SubtleCrypto::KeyFormat::Jwk: {
-        result = CryptoKeyAES::importJwk(parameters->identifier, WTFMove(WTF::get<JsonWebKey>(data)), extractable, usages, [](size_t length, const std::optional<String>& alg) -> bool {
+        result = CryptoKeyAES::importJwk(parameters->identifier, WTFMove(WTF::get<JsonWebKey>(data)), extractable, usages, [](size_t length, const String& alg) -> bool {
             switch (length) {
             case CryptoKeyAES::s_length128:
-                return !alg || alg.value() == ALG128;
+                return alg.isNull() || alg == ALG128;
             case CryptoKeyAES::s_length192:
-                return !alg || alg.value() == ALG192;
+                return alg.isNull() || alg == ALG192;
             case CryptoKeyAES::s_length256:
-                return !alg || alg.value() == ALG256;
+                return alg.isNull() || alg == ALG256;
             }
             return false;
         });

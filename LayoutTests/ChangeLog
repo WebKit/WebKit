@@ -1,3 +1,22 @@
+2017-02-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] remove toJSValueFromJsonWebKey from custom SubtleCrypto binding codes
+        https://bugs.webkit.org/show_bug.cgi?id=167026
+
+        Reviewed by Chris Dumez.
+
+        * crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html:
+        * crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-public.html:
+        Order of attributes inside JWK is different after this patch.
+
+        * crypto/subtle/aes-import-key-malformed-parameters-expected.txt:
+        * crypto/subtle/aes-import-key-malformed-parameters.html:
+        * crypto/subtle/hmac-import-key-malformed-parameters-expected.txt:
+        * crypto/subtle/hmac-import-key-malformed-parameters.html:
+        * crypto/subtle/rsa-import-key-malformed-parameters-expected.txt:
+        * crypto/subtle/rsa-import-key-malformed-parameters.html:
+        * crypto/workers/subtle/resources/aes-cbc-import-key-wrap-key.js:
+
 2017-02-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip imported/w3c/web-platform-tests/resource-timing/rt-resource-errors.html.

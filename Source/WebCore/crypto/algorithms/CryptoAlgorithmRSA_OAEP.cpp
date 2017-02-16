@@ -120,7 +120,7 @@ void CryptoAlgorithmRSA_OAEP::importKey(SubtleCrypto::KeyFormat format, KeyData&
         JsonWebKey key = WTFMove(WTF::get<JsonWebKey>(data));
 
         bool isUsagesAllowed = false;
-        if (key.d) {
+        if (!key.d.isNull()) {
             isUsagesAllowed = isUsagesAllowed || !(usages ^ CryptoKeyUsageDecrypt);
             isUsagesAllowed = isUsagesAllowed || !(usages ^ CryptoKeyUsageUnwrapKey);
             isUsagesAllowed = isUsagesAllowed || !(usages ^ (CryptoKeyUsageDecrypt | CryptoKeyUsageUnwrapKey));
@@ -135,7 +135,7 @@ void CryptoAlgorithmRSA_OAEP::importKey(SubtleCrypto::KeyFormat format, KeyData&
             return;
         }
 
-        if (usages && key.use && key.use.value() != "enc") {
+        if (usages && !key.use.isNull() && key.use != "enc") {
             exceptionCallback(DataError);
             return;
         }
@@ -143,19 +143,19 @@ void CryptoAlgorithmRSA_OAEP::importKey(SubtleCrypto::KeyFormat format, KeyData&
         bool isMatched = false;
         switch (rsaParameters.hashIdentifier) {
         case CryptoAlgorithmIdentifier::SHA_1:
-            isMatched = !key.alg || key.alg.value() == ALG1;
+            isMatched = key.alg.isNull() || key.alg == ALG1;
             break;
         case CryptoAlgorithmIdentifier::SHA_224:
-            isMatched = !key.alg || key.alg.value() == ALG224;
+            isMatched = key.alg.isNull() || key.alg == ALG224;
             break;
         case CryptoAlgorithmIdentifier::SHA_256:
-            isMatched = !key.alg || key.alg.value() == ALG256;
+            isMatched = key.alg.isNull() || key.alg == ALG256;
             break;
         case CryptoAlgorithmIdentifier::SHA_384:
-            isMatched = !key.alg || key.alg.value() == ALG384;
+            isMatched = key.alg.isNull() || key.alg == ALG384;
             break;
         case CryptoAlgorithmIdentifier::SHA_512:
-            isMatched = !key.alg || key.alg.value() == ALG512;
+            isMatched = key.alg.isNull() || key.alg == ALG512;
             break;
         default:
             break;

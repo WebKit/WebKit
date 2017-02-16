@@ -119,18 +119,18 @@ void CryptoAlgorithmHMAC::importKey(SubtleCrypto::KeyFormat format, KeyData&& da
         result = CryptoKeyHMAC::importRaw(hmacParameters.length.value_or(0), hmacParameters.hashIdentifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case SubtleCrypto::KeyFormat::Jwk: {
-        auto checkAlgCallback = [](CryptoAlgorithmIdentifier hash, const std::optional<String>& alg) -> bool {
+        auto checkAlgCallback = [](CryptoAlgorithmIdentifier hash, const String& alg) -> bool {
             switch (hash) {
             case CryptoAlgorithmIdentifier::SHA_1:
-                return !alg || alg.value() == ALG1;
+                return alg.isNull() || alg == ALG1;
             case CryptoAlgorithmIdentifier::SHA_224:
-                return !alg || alg.value() == ALG224;
+                return alg.isNull() || alg == ALG224;
             case CryptoAlgorithmIdentifier::SHA_256:
-                return !alg || alg.value() == ALG256;
+                return alg.isNull() || alg == ALG256;
             case CryptoAlgorithmIdentifier::SHA_384:
-                return !alg || alg.value() == ALG384;
+                return alg.isNull() || alg == ALG384;
             case CryptoAlgorithmIdentifier::SHA_512:
-                return !alg || alg.value() == ALG512;
+                return alg.isNull() || alg == ALG512;
             default:
                 return false;
             }

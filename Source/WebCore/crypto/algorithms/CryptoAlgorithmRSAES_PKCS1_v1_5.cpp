@@ -106,15 +106,15 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(SubtleCrypto::KeyFormat format, 
     switch (format) {
     case SubtleCrypto::KeyFormat::Jwk: {
         JsonWebKey key = WTFMove(WTF::get<JsonWebKey>(data));
-        if (usages && ((key.d && (usages ^ CryptoKeyUsageDecrypt)) || (!key.d && (usages ^ CryptoKeyUsageEncrypt)))) {
+        if (usages && ((!key.d.isNull() && (usages ^ CryptoKeyUsageDecrypt)) || (key.d.isNull() && (usages ^ CryptoKeyUsageEncrypt)))) {
             exceptionCallback(SYNTAX_ERR);
             return;
         }
-        if (usages && key.use && key.use.value() != "enc") {
+        if (usages && !key.use.isNull() && key.use != "enc") {
             exceptionCallback(DataError);
             return;
         }
-        if (key.alg && key.alg.value() != ALG) {
+        if (!key.alg.isNull() && key.alg != ALG) {
             exceptionCallback(DataError);
             return;
         }
