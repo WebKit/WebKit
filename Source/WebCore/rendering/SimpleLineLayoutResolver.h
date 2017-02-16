@@ -206,7 +206,15 @@ inline RunResolver::Iterator& RunResolver::Iterator::operator++()
 inline float RunResolver::Run::computeBaselinePosition() const
 {
     auto& resolver = m_iterator.resolver();
-    return resolver.m_lineHeight * lineIndex() + resolver.m_baseline + resolver.m_borderAndPaddingBefore;
+    auto offset = resolver.m_borderAndPaddingBefore + resolver.m_lineHeight * lineIndex();
+    if (!resolver.m_layout.isPaginated())
+        return offset + resolver.m_baseline;
+    for (auto& strutEntry : resolver.m_layout.struts()) {
+        if (strutEntry.lineBreak > lineIndex())
+            break;
+        offset += strutEntry.offset;
+    }
+    return offset + resolver.m_baseline;
 }
 
 inline RunResolver::Iterator& RunResolver::Iterator::operator--()

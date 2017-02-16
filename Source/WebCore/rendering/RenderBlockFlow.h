@@ -395,16 +395,16 @@ public:
     bool needsLayoutAfterRegionRangeChange() const override;
     WEBCORE_EXPORT RenderText* findClosestTextAtAbsolutePoint(const FloatPoint&);
 
-protected:
-    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
-    
     // A page break is required at some offset due to space shortage in the current fragmentainer.
     void setPageBreak(LayoutUnit offset, LayoutUnit spaceShortage);
-
     // Update minimum page height required to avoid fragmentation where it shouldn't occur (inside
     // unbreakable content, between orphans and widows, etc.). This will be used as a hint to the
     // column balancer to help set a good minimum column height.
     void updateMinimumPageHeight(LayoutUnit offset, LayoutUnit minHeight);
+
+protected:
+    void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
+    
     bool pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustment, LayoutUnit logicalOffset, LayoutUnit minimumLogicalHeight) const;
 
     // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.

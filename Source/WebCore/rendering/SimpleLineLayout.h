@@ -66,22 +66,31 @@ struct Run {
     ExpansionBehavior expansionBehavior { ForbidLeadingExpansion | ForbidTrailingExpansion };
 };
 
+struct SimplePaginationStrut {
+    unsigned lineBreak;
+    float offset;
+};
+
 class Layout {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef Vector<Run, 10> RunVector;
-    static std::unique_ptr<Layout> create(const RunVector&, unsigned lineCount);
+    using RunVector = Vector<Run, 10>;
+    using SimplePaginationStruts = Vector<SimplePaginationStrut, 4>;
+    static std::unique_ptr<Layout> create(const RunVector&, SimplePaginationStruts&, unsigned lineCount);
 
     unsigned lineCount() const { return m_lineCount; }
 
     unsigned runCount() const { return m_runCount; }
     const Run& runAt(unsigned i) const { return m_runs[i]; }
 
+    bool isPaginated() const { return !m_paginationStruts.isEmpty(); }
+    const SimplePaginationStruts& struts() const { return m_paginationStruts; }
 private:
-    Layout(const RunVector&, unsigned lineCount);
+    Layout(const RunVector&, SimplePaginationStruts&, unsigned lineCount);
 
     unsigned m_lineCount;
     unsigned m_runCount;
+    SimplePaginationStruts m_paginationStruts;
     Run m_runs[0];
 };
 

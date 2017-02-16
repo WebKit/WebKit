@@ -1,3 +1,39 @@
+2017-02-16  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add support for pagination.
+        https://bugs.webkit.org/show_bug.cgi?id=168355
+        <rdar://problem/30119769>
+
+        Reviewed by David Hyatt.
+
+        This patch adds basic support for paginated content including widows and orphans.
+
+        This is based on the normal line layout pagination logic. However there are 2 major
+        advantages here (and they allow us to have a much simpler logic):
+        1. all the lines are positioned by the time we start paginating them and
+        2. lines always have uniform heights. 
+
+        This is not enabled yet.
+
+        * rendering/RenderBlockFlow.h:
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::computeLineTopAndBottomWithOverflow):
+        (WebCore::SimpleLineLayout::computeLineBreakIndex):
+        (WebCore::SimpleLineLayout::setPageBreakForLine):
+        (WebCore::SimpleLineLayout::computeOffsetAfterLineBreak):
+        (WebCore::SimpleLineLayout::updateMinimumPageHeight):
+        (WebCore::SimpleLineLayout::adjustLinePositionsForPagination):
+        (WebCore::SimpleLineLayout::create):
+        (WebCore::SimpleLineLayout::Layout::create):
+        (WebCore::SimpleLineLayout::Layout::Layout):
+        * rendering/SimpleLineLayout.h:
+        (WebCore::SimpleLineLayout::Layout::isPaginated):
+        (WebCore::SimpleLineLayout::Layout::struts):
+        * rendering/SimpleLineLayoutFunctions.h:
+        (WebCore::SimpleLineLayout::computeFlowHeight):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::computeBaselinePosition):
+
 2017-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         The collector thread should only start when the mutator doesn't have heap access

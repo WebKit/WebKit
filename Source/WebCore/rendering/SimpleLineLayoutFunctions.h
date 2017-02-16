@@ -71,7 +71,12 @@ namespace SimpleLineLayout {
 
 inline LayoutUnit computeFlowHeight(const RenderBlockFlow& flow, const Layout& layout)
 {
-    return lineHeightFromFlow(flow) * layout.lineCount();
+    auto flowHeight = lineHeightFromFlow(flow) * layout.lineCount();
+    if (!layout.isPaginated())
+        return flowHeight;
+    for (auto& strutEntry : layout.struts())
+        flowHeight += strutEntry.offset;
+    return flowHeight;
 }
 
 inline LayoutUnit computeFlowFirstLineBaseline(const RenderBlockFlow& flow, const Layout& layout)
