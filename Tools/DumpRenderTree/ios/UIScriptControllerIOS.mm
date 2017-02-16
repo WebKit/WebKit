@@ -63,6 +63,11 @@ void UIScriptController::doAfterNextStablePresentationUpdate(JSValueRef callback
     doAsyncTask(callback);
 }
 
+void UIScriptController::doAfterVisibleContentRectUpdate(JSValueRef callback)
+{
+    doAsyncTask(callback);
+}
+
 void UIScriptController::zoomToScale(double scale, JSValueRef callback)
 {
     RefPtr<UIScriptController> protectedThis(this);

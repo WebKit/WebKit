@@ -38,7 +38,7 @@
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view;
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale;
 - (void)_didFinishScrolling;
-- (void)_updateVisibleContentRects;
+- (void)_scheduleVisibleContentRectUpdate;
 
 @end
 #endif
@@ -187,7 +187,7 @@
 - (void)_setStableStateOverride:(NSNumber *)overrideBoolean
 {
     m_stableStateOverride = overrideBoolean;
-    [self _updateVisibleContentRects];
+    [self _scheduleVisibleContentRectUpdate];
 }
 
 - (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content

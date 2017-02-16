@@ -1,3 +1,32 @@
+2017-02-16  Tim Horton  <timothy_horton@apple.com>
+
+        WKWebView inside a UICollectionView flashes when items are inserted above it
+        https://bugs.webkit.org/show_bug.cgi?id=168376
+        <rdar://problem/29322051>
+
+        Reviewed by Simon Fraser.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView _setStableStateOverride:]):
+        Update the one external caller of this internal method...
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::doAfterVisibleContentRectUpdate):
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::doAfterVisibleContentRectUpdate):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::doAfterVisibleContentRectUpdate):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::doAfterVisibleContentRectUpdate):
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::doAfterVisibleContentRectUpdate):
+        Expose doAfterVisibleContentRectUpdate to DRT and WKTR. It is called
+        back after we dispatch a visible content rect update from the UI process
+        to the Web Content process, so any messages sent from the block will arrive
+        after the visible content rect update.
+
 2017-02-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Add two new buildbots that build-only test on Debian stable and Ubuntu LTS.
