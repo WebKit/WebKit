@@ -48,6 +48,7 @@ class PerformanceNavigation;
 class PerformanceObserver;
 class PerformanceTiming;
 class ResourceResponse;
+class ResourceTiming;
 class ScriptExecutionContext;
 class URL;
 class UserTiming;
@@ -69,13 +70,13 @@ public:
     void clearResourceTimings();
     void setResourceTimingBufferSize(unsigned);
 
-    void addResourceTiming(const String& initiatorName, const URL& originalURL, const ResourceResponse&, const LoadTiming&);
-
     ExceptionOr<void> mark(const String& markName);
     void clearMarks(const String& markName);
 
     ExceptionOr<void> measure(const String& measureName, const String& startMark, const String& endMark);
     void clearMeasures(const String& measureName);
+
+    void addResourceTiming(ResourceTiming&&);
 
     void registerPerformanceObserver(PerformanceObserver&);
     void unregisterPerformanceObserver(PerformanceObserver&);

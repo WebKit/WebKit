@@ -356,7 +356,7 @@ void CSSFontSelector::beginLoadTimerFired()
         cachedResourceLoader.decrementRequestCount(*fontHandle);
     }
     // Ensure that if the request count reaches zero, the frame loader will know about it.
-    cachedResourceLoader.loadDone(nullptr);
+    cachedResourceLoader.loadDone();
     // New font loads may be triggered by layout after the document load is complete but before we have dispatched
     // didFinishLoading for the frame. Make sure the delegate is always dispatched by checking explicitly.
     if (m_document && m_document->frame())

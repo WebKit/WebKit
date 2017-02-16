@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Resource Timing - Element localName initiatorType</title>
+<meta name="author" title="JosephPecoraro" href="mailto:joepeck@webkit.org">
+<link rel="help" href="https://w3c.github.io/resource-timing/#dom-performanceresourcetiming-initiatortype">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/rt-utilities.js"></script>
+</head>
+<body>
+<h1>Resource Timing: Element localName initiatorType</h1>
+<div id="log"></div>
+<script>
+resource_entry_type_test({
+    name: "img - <img src>",
+    url: uniqueImageURL("img-src"),
+    initiatorType: "img",
+    generateResource(url) {
+        let img = document.createElement("img");
+        img.src = url;
+    }
+});
+
+resource_entry_type_test({
+    name: "img - <img srcset>",
+    url: uniqueImageURL("img-srcset"),
+    initiatorType: "img",
+    generateResource(url) {
+        let img = document.createElement("img");
+        img.srcset = `${url} 1x, ${url} 2x`;
+    }
+});
+
+resource_entry_type_test({
+    name: "img - <picture>",
+    url: uniqueImageURL("picture"),
+    initiatorType: "img",
+    generateResource(url) {
+        let picture = document.createElement("picture");
+        let source = picture.appendChild(document.createElement("source"));
+        source.srcset = `${url} 1x, ${url} 2x`;
+        let img = picture.appendChild(document.createElement("img"));
+        img.src = uniqueImageURL("inner-image"); // Different URL.
+        document.body.appendChild(picture);
+    }
+});
+
+resource_entry_type_test({
+    name: "image - <svg:image xlink:href>",
+    url: uniqueImageURL("svg-image"),
+    initiatorType: "image",
+    generateResource(url) {
+        const svgNamespace = "http://www.w3.org/2000/svg";
+        const xlinkNamespace = "http://www.w3.org/1999/xlink";
+        let svgElement = document.createElementNS(svgNamespace, "svg");
+        let imageElement = svgElement.appendChild(document.createElementNS(svgNamespace, "image"));
+        imageElement.setAttributeNS(xlinkNamespace, "xlink:href", url);
+        document.body.appendChild(svgElement);
+    }
+});
+
+resource_entry_type_test({
+    name: "input - <input type=image>",
+    url: uniqueImageURL("input-image"),
+    initiatorType: "input",
+    generateResource(url) {
+        let input = document.createElement("input");
+        input.type = "image";
+        input.src = url;
+        document.body.appendChild(input);
+    }
+});
+
+resource_entry_type_test({
+    name: "script - <script type=script>",
+    url: uniqueScriptURL("script"),
+    initiatorType: "script",
+    generateResource(url) {
+        let script = document.createElement("script");
+        script.src = url;
+        document.head.appendChild(script);
+    }
+});
+
+resource_entry_type_test({
+    name: "link - <link rel=stylesheet>",
+    url: uniqueStylesheetURL("link-stylesheet"),
+    initiatorType: "link",
+    generateResource(url) {
+        let link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = url;
+        document.head.appendChild(link);
+    }
+});
+
+resource_entry_type_test({
+    name: "iframe - <iframe src>",
+    url: uniqueDocumentURL("iframe"),
+    initiatorType: "iframe",
+    generateResource(url) {
+        let iframe = document.createElement("iframe");
+        iframe.src = url;
+        document.body.appendChild(iframe);
+    }
+});
+
+resource_entry_type_test({
+    name: "object - <object data>",
+    url: uniqueDataURL("object"),
+    initiatorType: "object",
+    generateResource(url) {
+        let object = document.createElement("object");
+        object.data = url;
+        document.body.appendChild(object);
+    }
+});
+
+resource_entry_type_test({
+    name: "embed - <embed data>",
+    url: uniqueDataURL("embed"),
+    initiatorType: "embed",
+    generateResource(url) {
+        let embed = document.createElement("embed");
+        embed.src = url;
+        document.body.appendChild(embed);
+    }
+});
+
+resource_entry_type_test({
+    name: "video - <video poster>",
+    url: uniqueImageURL("video"),
+    initiatorType: "video",
+    generateResource(url) {
+        let video = document.createElement("video");
+        video.poster = url;
+    }
+});
+
+// FIXME: <html manifest>?
+// FIXME: <track>?
+</script>
+</body>
+</html>

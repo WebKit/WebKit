@@ -1,0 +1,8 @@
+Resource Timing: Other initiatorType
+
+
+PASS Type: other - Worker 
+PASS Timing: other - Worker 
+TIMEOUT Type: other - EventSource Test timed out
+FAIL Timing: other - EventSource assert_true: previous test should have produced an entry expected true got false
+

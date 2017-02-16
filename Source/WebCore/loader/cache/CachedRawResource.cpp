@@ -204,6 +204,13 @@ void CachedRawResource::didSendData(unsigned long long bytesSent, unsigned long 
         c->dataSent(*this, bytesSent, totalBytesToBeSent);
 }
 
+void CachedRawResource::finishedTimingForWorkerLoad(ResourceTiming&& resourceTiming)
+{
+    CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
+    while (CachedRawResourceClient* c = w.next())
+        c->finishedTimingForWorkerLoad(*this, resourceTiming);
+}
+
 void CachedRawResource::switchClientsToRevalidatedResource()
 {
     ASSERT(m_loader);

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Resource Timing - Serialization</title>
+<meta name="author" title="JosephPecoraro" href="mailto:joepeck@webkit.org">
+<link rel="help" href="http://yoavweiss.github.io/resource-timing/#performanceresourcetiming">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/rt-utilities.js"></script>
+</head>
+<body>
+<h1>Resource Timing: Serialization</h1>
+<div id="log"></div>
+<script>
+test(function(t) {
+    assert_true(typeof PerformanceResourceTiming.prototype.toJSON === "function", "PerformanceResourceTiming has toJSON serializer");
+
+    let entries = performance.getEntriesByType("resource");
+    let serializedEntries = JSON.parse(JSON.stringify(entries));
+
+    assert_true(serializedEntries instanceof Array, "JSON.stringify and JSON.parse should have produced an object");
+    assert_greater_than_equal(serializedEntries.length, 2, "serialization should have serialized all entries");
+
+    let entry = entries[0];
+    let serializedEntry = serializedEntries[0];
+
+    let properties = new Map([
+        ["name", "string"],
+        ["entryType", "string"],
+        ["startTime", "number"],
+        ["duration", "number"],
+        ["initiatorType", "string"],
+        ["nextHopProtocol", "string"],
+        ["workerStart", "number"],
+        ["redirectStart", "number"],
+        ["redirectEnd", "number"],
+        ["fetchStart", "number"],
+        ["domainLookupStart", "number"],
+        ["domainLookupEnd", "number"],
+        ["connectStart", "number"],
+        ["connectEnd", "number"],
+        ["secureConnectionStart", "number"],
+        ["requestStart", "number"],
+        ["responseStart", "number"],
+        ["responseEnd", "number"],
+        ["transferSize", "number"],
+        ["encodedBodySize", "number"],
+        ["decodedBodySize", "number"],
+    ]);
+
+    let count = 0;
+    for (let [property, type] of properties) {
+        if (property in entry) {
+            assert_true(property in serializedEntry, `readonly property '${property}' should have been serialized`);
+            assert_equals(typeof serializedEntry[property], type, `property '${property}' had unexpected serialized type`);
+            count++;
+        }
+    }
+
+    assert_true(count >= 7, "more properties should have been serialized");
+});
+</script>
+</body>
+</html>

@@ -38,13 +38,17 @@
 #include "CrossOriginAccessControl.h"
 #include "CrossOriginPreflightChecker.h"
 #include "CrossOriginPreflightResultCache.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
+#include "LoadTiming.h"
+#include "Performance.h"
 #include "ProgressTracker.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
+#include "ResourceTiming.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
@@ -323,6 +327,26 @@ void DocumentThreadableLoader::didReceiveData(unsigned long, const char* data, i
     m_client->didReceiveData(data, dataLength);
 }
 
+void DocumentThreadableLoader::finishedTimingForWorkerLoad(CachedResource& resource, const ResourceTiming& resourceTiming)
+{
+    ASSERT(m_client);
+    ASSERT_UNUSED(resource, &resource == m_resource);
+    UNUSED_PARAM(resourceTiming);
+
+#if ENABLE(WEB_TIMING)
+    finishedTimingForWorkerLoad(resourceTiming);
+#endif
+}
+
+#if ENABLE(WEB_TIMING)
+void DocumentThreadableLoader::finishedTimingForWorkerLoad(const ResourceTiming& resourceTiming)
+{
+    ASSERT(m_options.initiatorContext == InitiatorContext::Worker);
+
+    m_client->didFinishTiming(resourceTiming);
+}
+#endif
+
 void DocumentThreadableLoader::notifyFinished(CachedResource& resource)
 {
     ASSERT(m_client);
@@ -411,6 +435,11 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     // If credentials mode is 'Omit', we should disable cookie sending.
     ASSERT(m_options.credentials != FetchOptions::Credentials::Omit);
 
+#if ENABLE(WEB_TIMING)
+    LoadTiming loadTiming;
+    loadTiming.markStartTimeAndFetchStart();
+#endif
+
     // FIXME: ThreadableLoaderOptions.sniffContent is not supported for synchronous requests.
     RefPtr<SharedBuffer> data;
     ResourceError error;
@@ -422,6 +451,10 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
             return;
         identifier = frameLoader.loadResourceSynchronously(request, m_options.allowCredentials, m_options.clientCredentialPolicy, error, response, data);
     }
+
+#if ENABLE(WEB_TIMING)
+    loadTiming.setResponseEnd(MonotonicTime::now());
+#endif
 
     if (!error.isNull() && response.httpStatusCode() <= 0) {
         if (requestURL.isLocalFile()) {
@@ -468,6 +501,19 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
 
     if (data)
         didReceiveData(identifier, data->data(), data->size());
+
+#if ENABLE(WEB_TIMING)
+    if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
+        ResourceTiming resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiator, loadTiming, response.networkLoadTiming(), response, securityOrigin());
+        if (options().initiatorContext == InitiatorContext::Worker)
+            finishedTimingForWorkerLoad(resourceTiming);
+        else {
+            if (document().domWindow() && document().domWindow()->performance())
+                document().domWindow()->performance()->addResourceTiming(WTFMove(resourceTiming));
+        }        
+    }
+#endif
+
     didFinishLoading(identifier, 0.0);
 }
 

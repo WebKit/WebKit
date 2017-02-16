@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Resource Timing - Ignored resources</title>
+<meta name="author" title="JosephPecoraro" href="mailto:joepeck@webkit.org">
+<link rel="help" href="https://w3c.github.io/resource-timing/#resources-included">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/rt-utilities.js"></script>
+</head>
+<body>
+<h1>Resource Timing: Ignored resources</h1>
+<div id="log"></div>
+<script>
+promise_test(function(t) {
+    let ignoredImageURL = "data:image/png,0";
+    let allowedImageURL = uniqueImageURL("img-allowed");
+
+    let ignoredImg = document.body.appendChild(document.createElement("img"));
+    ignoredImg.src = ignoredImageURL;
+
+    let allowedImg = document.body.appendChild(document.createElement("img"));
+    allowedImg.src = allowedImageURL;
+
+    return observeResources(1).then(([entry]) => {
+        checkResourceTimingEntryType(entry, {name: allowedImageURL});
+    });
+}, "data: URI resources do not create entries");
+</script>
+</body>
+</html>

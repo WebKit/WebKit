@@ -70,4 +70,26 @@ void LoadTiming::addRedirect(const URL& redirectingUrl, const URL& redirectedUrl
     m_hasCrossOriginRedirect = !redirectedSecurityOrigin.get().canRequest(redirectingUrl);
 }
 
+LoadTiming LoadTiming::isolatedCopy() const
+{
+    LoadTiming result;
+
+    result.m_referenceWallTime = m_referenceWallTime;
+    result.m_referenceMonotonicTime = m_referenceMonotonicTime;
+    result.m_startTime = m_startTime;
+    result.m_unloadEventStart = m_unloadEventStart;
+    result.m_unloadEventEnd = m_unloadEventEnd;
+    result.m_redirectStart = m_redirectStart;
+    result.m_redirectEnd = m_redirectEnd;
+    result.m_fetchStart = m_fetchStart;
+    result.m_responseEnd = m_responseEnd;
+    result.m_loadEventStart = m_loadEventStart;
+    result.m_loadEventEnd = m_loadEventEnd;
+    result.m_redirectCount = m_redirectCount;
+    result.m_hasCrossOriginRedirect = m_hasCrossOriginRedirect;
+    result.m_hasSameOriginAsPreviousDocument = m_hasSameOriginAsPreviousDocument;
+
+    return result;
+}
+
 } // namespace WebCore

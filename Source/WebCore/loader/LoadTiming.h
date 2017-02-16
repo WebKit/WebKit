@@ -70,6 +70,8 @@ public:
     MonotonicTime referenceMonotonicTime() const { return m_referenceMonotonicTime; }
     WallTime referenceWallTime() const { return m_referenceWallTime; }
 
+    LoadTiming isolatedCopy() const;
+
 private:
     WallTime m_referenceWallTime;
     MonotonicTime m_referenceMonotonicTime;

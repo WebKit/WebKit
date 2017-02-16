@@ -133,12 +133,12 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
 
     InspectorInstrumentation::willSendRequest(&m_frame, identifier, loader, request, redirectResponse);
 
-    // Report WebTiming for all frames.
-    if (loader && !request.isNull() && request.url() == loader->url())
-        request.setReportLoadTiming(true);
-
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
         request.setReportLoadTiming(true);
+    else if (loader && !request.isNull() && request.url() == loader->url()) {
+        // Report WebTiming for all frames.
+        request.setReportLoadTiming(true);
+    }
 }
 
 void ResourceLoadNotifier::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r, ResourceLoader* resourceLoader)

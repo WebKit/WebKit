@@ -145,6 +145,7 @@ private:
     bool usesDashboardBackwardCompatibilityMode() const;
 #endif
 
+    // ThreadableLoaderClient
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
     void didReceiveData(const char* data, int dataLength) override;

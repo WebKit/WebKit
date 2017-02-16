@@ -80,7 +80,7 @@ const AtomicString& CachedResourceRequest::initiatorName() const
     if (!m_initiatorName.isEmpty())
         return m_initiatorName;
 
-    static NeverDestroyed<AtomicString> defaultName("resource", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> defaultName("other", AtomicString::ConstructFromLiteral);
     return defaultName;
 }
 

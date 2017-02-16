@@ -1527,3 +1527,6 @@ webkit.org/b/168087 media/video-zoom.html [ Pass Failure ]
 [ Debug ] fast/frames/exponential-frames.html [ Skip ]
 
 webkit.org/b/167975 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-removed.html [ Pass Failure ]
+
+webkit.org/b/168415 [ ElCapitan ] imported/w3c/web-platform-tests/resource-timing/rt-cors.html [ Skip ]
+webkit.org/b/168415 [ ElCapitan ] imported/w3c/web-platform-tests/resource-timing/rt-cors.worker.html [ Skip ]

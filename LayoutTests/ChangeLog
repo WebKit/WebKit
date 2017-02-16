@@ -1,3 +1,25 @@
+2017-02-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Resource Timing] Support Resource Timing in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=168086
+        <rdar://problem/30430117>
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        Pre-emptively mark some tests as flakey that have seen flakiness.
+
+        * platform/mac/TestExpectations:
+        Skip some tests on ElCapitan because the network timing numbers appear incorrect.
+
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+        PerformanceResourceTiming is now available in Workers.
+
+        * performance-api/resource-timing-apis-expected.txt: Added.
+        * performance-api/resource-timing-apis.html: Added.
+        * performance-api/resources/resource-timing-api.js: Added.
+        Basic API test. We expect to fail nextHopProtocol and size properties right now.
+
 2017-02-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/media-controller/media-controller-ios-do-not-hide-controls-when-tapping-button.html as flaky.

@@ -40,7 +40,6 @@
 #include "DocumentThreadableLoader.h"
 #include "InspectorInstrumentation.h"
 #include "RuntimeEnabledFeatures.h"
-#include "ThreadableLoaderClient.h"
 
 namespace WebCore {
 

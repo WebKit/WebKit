@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Resource Timing - Element localName initiatorType</title>
+<meta name="author" title="JosephPecoraro" href="mailto:joepeck@webkit.org">
+<link rel="help" href="https://w3c.github.io/resource-timing/#dom-performanceresourcetiming-initiatortype">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/rt-utilities.js"></script>
+</head>
+<body>
+<h1>Resource Timing: Element localName initiatorType</h1>
+<div id="log"></div>
+<script>
+resource_entry_type_test({
+    name: "video - <video src>",
+    url: uniqueDataURL("video"),
+    initiatorType: "video",
+    generateResource(url) {
+        let video = document.createElement("video");
+        video.src = url;
+    }
+});
+
+resource_entry_type_test({
+    name: "audio - <audio src>",
+    url: uniqueDataURL("audio"),
+    initiatorType: "audio",
+    generateResource(url) {
+        let audio = document.createElement("audio");
+        audio.src = url;
+    }
+});
+</script>
+</body>
+</html>

@@ -34,7 +34,8 @@ typedef double DOMHighResTimeStamp;
 
 [
     Conditional=WEB_TIMING,
-    EnabledAtRuntime=ResourceTiming
+    EnabledAtRuntime=ResourceTiming,
+    Exposed=(Window,Worker),
 ] interface PerformanceResourceTiming : PerformanceEntry {
     readonly attribute DOMString initiatorType;
 
@@ -50,4 +51,6 @@ typedef double DOMHighResTimeStamp;
     readonly attribute DOMHighResTimeStamp requestStart;
     readonly attribute DOMHighResTimeStamp responseStart;
     readonly attribute DOMHighResTimeStamp responseEnd;
+
+    serializer = { inherit, attribute };
 };

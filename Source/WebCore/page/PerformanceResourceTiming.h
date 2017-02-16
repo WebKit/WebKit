@@ -41,16 +41,11 @@
 
 namespace WebCore {
 
-class ResourceResponse;
-class SecurityOrigin;
-class URL;
+class ResourceTiming;
 
 class PerformanceResourceTiming final : public PerformanceEntry {
 public:
-    static Ref<PerformanceResourceTiming> create(const AtomicString& initiatorType, const URL& originalURL, MonotonicTime timeOrigin, const ResourceResponse& response, const SecurityOrigin& initiatorSecurityOrigin, LoadTiming loadTiming)
-    {
-        return adoptRef(*new PerformanceResourceTiming(initiatorType, originalURL, timeOrigin, response, initiatorSecurityOrigin, loadTiming));
-    }
+    static Ref<PerformanceResourceTiming> create(MonotonicTime timeOrigin, ResourceTiming&&);
 
     AtomicString initiatorType() const { return m_initiatorType; }
 
@@ -70,15 +65,15 @@ public:
     bool isResource() const override { return true; }
 
 private:
-    PerformanceResourceTiming(const AtomicString& initatorType, const URL& originalURL, MonotonicTime timeOrigin, const ResourceResponse&, const SecurityOrigin&, LoadTiming);
+    PerformanceResourceTiming(MonotonicTime timeOrigin, ResourceTiming&&);
     ~PerformanceResourceTiming();
 
     double networkLoadTimeToDOMHighResTimeStamp(double deltaMilliseconds) const;
 
     AtomicString m_initiatorType;
     MonotonicTime m_timeOrigin;
-    NetworkLoadTiming m_timing;
     LoadTiming m_loadTiming;
+    NetworkLoadTiming m_networkLoadTiming;
     bool m_shouldReportDetails;
 };
 

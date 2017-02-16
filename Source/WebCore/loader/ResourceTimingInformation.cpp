@@ -35,46 +35,72 @@
 #include "HTMLFrameOwnerElement.h"
 #include "LoadTiming.h"
 #include "Performance.h"
+#include "ResourceTiming.h"
 #include "RuntimeEnabledFeatures.h"
 
 namespace WebCore {
 
-void ResourceTimingInformation::addResourceTiming(CachedResource* resource, Document& document, const LoadTiming& loadTiming)
+bool ResourceTimingInformation::shouldAddResourceTiming(CachedResource& resource)
+{
+    // FIXME: We can be less restrictive here.
+    // <https://github.com/w3c/resource-timing/issues/100>
+    if (!resource.resourceRequest().url().protocolIsInHTTPFamily())
+        return false;
+    if (resource.response().httpStatusCode() >= 400)
+        return false;
+    if (resource.errorOccurred())
+        return false;
+    if (resource.wasCanceled())
+        return false;
+
+    return true;
+}
+
+void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Document& document, ResourceTiming&& resourceTiming)
 {
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled());
-    if (resource && resource->resourceRequest().url().protocolIsInHTTPFamily()
-        && ((!resource->errorOccurred() && !resource->wasCanceled()) || resource->response().httpStatusCode() == 304)) {
-        auto initiatorIt = m_initiatorMap.find(resource);
-        if (initiatorIt != m_initiatorMap.end() && initiatorIt->value.added == NotYetAdded) {
-            Document* initiatorDocument = &document;
-            if (resource->type() == CachedResource::MainResource)
-                initiatorDocument = document.parentDocument();
-            if (!initiatorDocument)
-                return;
-            if (!initiatorDocument->domWindow())
-                return;
-            if (!initiatorDocument->domWindow()->performance())
-                return;
-            const InitiatorInfo& info = initiatorIt->value;
-            initiatorDocument->domWindow()->performance()->addResourceTiming(info.name, resource->resourceRequest().url(), resource->response(), loadTiming);
-            initiatorIt->value.added = Added;
-        }
-    }
+    if (!ResourceTimingInformation::shouldAddResourceTiming(resource))
+        return;
+
+    auto iterator = m_initiatorMap.find(&resource);
+    if (iterator == m_initiatorMap.end())
+        return;
+
+    InitiatorInfo& info = iterator->value;
+    if (info.added == Added)
+        return;
+
+    Document* initiatorDocument = &document;
+    if (resource.type() == CachedResource::MainResource)
+        initiatorDocument = document.parentDocument();
+    if (!initiatorDocument)
+        return;
+    if (!initiatorDocument->domWindow())
+        return;
+    if (!initiatorDocument->domWindow()->performance())
+        return;
+
+    resourceTiming.overrideInitiatorName(info.name);
+
+    initiatorDocument->domWindow()->performance()->addResourceTiming(WTFMove(resourceTiming));
+
+    info.added = Added;
 }
 
 void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const AtomicString& initiatorName, Frame* frame)
 {
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled());
     ASSERT(resource.get());
+
     if (resource->type() == CachedResource::MainResource) {
         // <iframe>s should report the initial navigation requested by the parent document, but not subsequent navigations.
         ASSERT(frame);
         if (frame->ownerElement()) {
-            InitiatorInfo info = { frame->ownerElement()->localName(), monotonicallyIncreasingTime(), NotYetAdded };
+            InitiatorInfo info = { frame->ownerElement()->localName(), NotYetAdded };
             m_initiatorMap.add(resource.get(), info);
         }
     } else {
-        InitiatorInfo info = { initiatorName, monotonicallyIncreasingTime(), NotYetAdded };
+        InitiatorInfo info = { initiatorName, NotYetAdded };
         m_initiatorMap.add(resource.get(), info);
     }
 }

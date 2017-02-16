@@ -168,26 +168,21 @@ void Performance::clearResourceTimings()
 void Performance::setResourceTimingBufferSize(unsigned size)
 {
     m_resourceTimingBufferSize = size;
-
-    if (isResourceTimingBufferFull())
-        dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, false, false));
 }
 
-void Performance::addResourceTiming(const String& initiatorName, const URL& originalURL, const ResourceResponse& response, const LoadTiming& loadTiming)
+void Performance::addResourceTiming(ResourceTiming&& resourceTiming)
 {
+    RefPtr<PerformanceResourceTiming> entry = PerformanceResourceTiming::create(m_timeOrigin, WTFMove(resourceTiming));
+
+    queueEntry(*entry);
+
     if (isResourceTimingBufferFull())
         return;
-
-    SecurityOrigin* securityOrigin = scriptExecutionContext()->securityOrigin();
-    if (!securityOrigin)
-        return;
-
-    RefPtr<PerformanceEntry> entry = PerformanceResourceTiming::create(initiatorName, originalURL, m_timeOrigin, response, *securityOrigin, loadTiming);
 
     m_resourceTimingBuffer.append(entry);
 
     if (isResourceTimingBufferFull())
-        dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, false, false));
+        dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, true, false));
 }
 
 bool Performance::isResourceTimingBufferFull() const

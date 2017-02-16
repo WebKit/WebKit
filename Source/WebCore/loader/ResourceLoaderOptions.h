@@ -87,6 +87,11 @@ enum class SameOriginDataURLFlag {
     Unset
 };
 
+enum class InitiatorContext {
+    Document,
+    Worker,
+};
+
 struct ResourceLoaderOptions : public FetchOptions {
     ResourceLoaderOptions() { }
 
@@ -118,6 +123,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     DefersLoadingPolicy defersLoadingPolicy { DefersLoadingPolicy::AllowDefersLoading };
     CachingPolicy cachingPolicy { CachingPolicy::AllowCaching };
     SameOriginDataURLFlag sameOriginDataURLFlag { SameOriginDataURLFlag::Unset };
+    InitiatorContext initiatorContext { InitiatorContext::Document };
 
     ClientCredentialPolicy clientCredentialPolicy { ClientCredentialPolicy::CannotAskClientForCredentials };
     unsigned maxRedirectCount { 20 };

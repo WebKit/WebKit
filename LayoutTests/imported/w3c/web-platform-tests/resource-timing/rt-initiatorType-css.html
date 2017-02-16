@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Resource Timing - CSS initiatorType</title>
+<meta name="author" title="JosephPecoraro" href="mailto:joepeck@webkit.org">
+<link rel="help" href="https://w3c.github.io/resource-timing/#dom-performanceresourcetiming-initiatortype">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/rt-utilities.js"></script>
+</head>
+<body>
+<h1>Resource Timing: CSS initiatorType</h1>
+<div id="log"></div>
+<script>
+resource_entry_type_test({
+    name: "css - background-image",
+    url: uniqueImageURL("background-image"),
+    initiatorType: "css",
+    generateResource(url) {
+        let div = document.createElement("div");
+        div.style.width = div.style.height = "100px";
+        div.style.backgroundImage = `url(${url})`;
+        document.body.appendChild(div);
+    },
+});
+
+resource_entry_type_test({
+    name: "css - @import",
+    url: uniqueStylesheetURL("import"),
+    initiatorType: "css",
+    generateResource(url) {
+        let style = document.createElement("style");
+        style.textContent = `@import "${url}"`;
+        document.head.appendChild(style);
+    }
+});
+</script>
+</body>
+</html>

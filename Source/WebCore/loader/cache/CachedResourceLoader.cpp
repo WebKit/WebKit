@@ -28,11 +28,11 @@
 #include "CachedResourceLoader.h"
 
 #include "CachedCSSStyleSheet.h"
-#include "CachedSVGDocument.h"
 #include "CachedFont.h"
 #include "CachedImage.h"
 #include "CachedRawResource.h"
 #include "CachedResourceRequest.h"
+#include "CachedSVGDocument.h"
 #include "CachedSVGFont.h"
 #include "CachedScript.h"
 #include "CachedXSLStyleSheet.h"
@@ -61,6 +61,7 @@
 #include "PlatformStrategies.h"
 #include "RenderElement.h"
 #include "ResourceLoadInfo.h"
+#include "ResourceTiming.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
@@ -715,6 +716,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
 #if ENABLE(WEB_TIMING)
     LoadTiming loadTiming;
     loadTiming.markStartTimeAndFetchStart();
+    InitiatorContext initiatorContext = request.options().initiatorContext;
 #endif
 
     if (request.resourceRequest().url().protocolIsInHTTPFamily())
@@ -769,12 +771,18 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
             logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::memoryCacheEntryDecisionKey(), DiagnosticLoggingKeys::usedKey());
             memoryCache.resourceAccessed(*resource);
 #if ENABLE(WEB_TIMING)
-            if (document() && RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
-                // FIXME (161170): The networkLoadTiming shouldn't be stored on the ResourceResponse.
-                resource->response().networkLoadTiming().reset();
-                loadTiming.setResponseEnd(MonotonicTime::now());
-                m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request.initiatorName(), frame());
-                m_resourceTimingInfo.addResourceTiming(resource.get(), *document(), loadTiming);
+            loadTiming.setResponseEnd(MonotonicTime::now());
+
+            if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled()) {
+                ResourceTiming resourceTiming = ResourceTiming::fromCache(url, request.initiatorName(), loadTiming);
+                if (initiatorContext == InitiatorContext::Worker) {
+                    ASSERT(is<CachedRawResource>(resource.get()));
+                    downcast<CachedRawResource>(resource.get())->finishedTimingForWorkerLoad(WTFMove(resourceTiming));
+                } else if (document()) {
+                    ASSERT(initiatorContext == InitiatorContext::Document);
+                    m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, request.initiatorName(), frame());
+                    m_resourceTimingInfo.addResourceTiming(*resource.get(), *document(), WTFMove(resourceTiming));
+                }
             }
 #endif
             if (forPreload == ForPreload::No)
@@ -825,9 +833,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(Ca
     ASSERT(resource.sessionID() == sessionID());
     ASSERT(resource.allowsCaching());
 
-#if ENABLE(WEB_TIMING)
-    AtomicString initiatorName = request.initiatorName();
-#endif
     CachedResourceHandle<CachedResource> newResource = createResource(resource.type(), WTFMove(request), resource.sessionID());
 
     LOG(ResourceLoading, "Resource %p created to revalidate %p", newResource.get(), &resource);
@@ -837,7 +842,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(Ca
     memoryCache.add(*newResource);
 #if ENABLE(WEB_TIMING)
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-        m_resourceTimingInfo.storeResourceTimingInitiatorInformation(newResource, initiatorName, frame());
+        m_resourceTimingInfo.storeResourceTimingInitiatorInformation(newResource, newResource->initiatorName(), frame());
 #endif
     return newResource;
 }
@@ -850,16 +855,13 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
 
     LOG(ResourceLoading, "Loading CachedResource for '%s'.", request.resourceRequest().url().stringCenterEllipsizedToLength().latin1().data());
 
-#if ENABLE(WEB_TIMING)
-    AtomicString initiatorName = request.initiatorName();
-#endif
     CachedResourceHandle<CachedResource> resource = createResource(type, WTFMove(request), sessionID());
 
     if (resource->allowsCaching() && !memoryCache.add(*resource))
         resource->setOwningCachedResourceLoader(this);
 #if ENABLE(WEB_TIMING)
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-        m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, initiatorName, frame());
+        m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, resource->initiatorName(), frame());
 #endif
     return resource;
 }
@@ -1140,17 +1142,10 @@ void CachedResourceLoader::removeCachedResource(CachedResource& resource)
     m_documentResources.remove(resource.url());
 }
 
-void CachedResourceLoader::loadDone(CachedResource* resource, bool shouldPerformPostLoadActions)
+void CachedResourceLoader::loadDone(bool shouldPerformPostLoadActions)
 {
     RefPtr<DocumentLoader> protectDocumentLoader(m_documentLoader);
     RefPtr<Document> protectDocument(m_document);
-
-#if ENABLE(WEB_TIMING)
-    if (resource && document() && RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
-        m_resourceTimingInfo.addResourceTiming(resource, *document(), resource->loader()->loadTiming());
-#else
-    UNUSED_PARAM(resource);
-#endif
 
     if (frame())
         frame()->loader().loadDone();

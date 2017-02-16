@@ -29,6 +29,7 @@ namespace WebCore {
 class CachedResource;
 class ResourceRequest;
 class ResourceResponse;
+class ResourceTiming;
 
 class CachedRawResourceClient : public CachedResourceClient {
 public:
@@ -41,6 +42,7 @@ public:
     virtual bool shouldCacheResponse(CachedResource&, const ResourceResponse&) { return true; }
     virtual void dataReceived(CachedResource&, const char* /* data */, int /* length */) { }
     virtual void redirectReceived(CachedResource&, ResourceRequest&, const ResourceResponse&) { }
+    virtual void finishedTimingForWorkerLoad(CachedResource&, const ResourceTiming&) { }
 #if USE(SOUP)
     virtual char* getOrCreateReadBuffer(CachedResource&, size_t /* requestedSize */, size_t& /* actualSize */) { return nullptr; }
 #endif

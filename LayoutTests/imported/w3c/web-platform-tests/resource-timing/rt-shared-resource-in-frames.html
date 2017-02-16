@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Resource Timing - Shared Entry has Distinct Entry per Frame</title>
+<meta name="author" title="JosephPecoraro" href="mailto:joepeck@webkit.org">
+<link rel="help" href="https://w3c.github.io/resource-timing/#processing-model">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/rt-utilities.js"></script>
+</head>
+<body>
+<h1>Resource Timing: Shared Entry has Distinct Entry per Frame</h1>
+<div id="log"></div>
+<iframe id="iframe1" src="resources/rt-iframe-1.html"></iframe>
+<iframe id="iframe2" src="resources/rt-iframe-2.html"></iframe>
+<script>
+setup({explicit_done: true});
+
+window.addEventListener("load", function() {
+    let mainFrameWindow = window;
+    let iframe1Window = document.getElementById("iframe1").contentWindow;
+    let iframe2Window = document.getElementById("iframe2").contentWindow;
+
+    let promises = [];
+    let sharedResourceURL = uniqueImageURL("shared");
+
+    mainFrameWindow.performance.clearResourceTimings();
+    promises.push(mainFrameWindow.fetch(sharedResourceURL));
+
+    wait(); // Ensure a DOMHighResTimeStamp change.
+
+    iframe1Window.performance.clearResourceTimings();
+    promises.push(iframe1Window.fetch(sharedResourceURL));
+
+    wait(); // Ensure a DOMHighResTimeStamp change.
+
+    iframe2Window.performance.clearResourceTimings();
+    promises.push(iframe2Window.fetch(sharedResourceURL));
+
+    Promise.all(promises).then(function() {
+        let mainFrameEntries = mainFrameWindow.performance.getEntriesByType("resource");
+        let iframe1Entries = iframe1Window.performance.getEntriesByType("resource");
+        let iframe2Entries = iframe2Window.performance.getEntriesByType("resource");
+
+        function checkContainsURL(url, list) {
+            for (let entry of list) {
+                if (entry.name === url)
+                    return true;
+            }
+            return false;
+        }
+
+        function assertSharedEntryIsDifferent(sharedEntry, list) {
+            for (let entry of list) {
+                if (entry.name === sharedResourceURL) {
+                    assert_not_equals(sharedEntry.startTime, entry.startTime, "shared entry should be different between contexts");
+                    return;
+                }
+            }
+        }
+
+        test(function(t) {
+            assert_true(checkContainsURL(sharedResourceURL, mainFrameEntries), "main frame should have an entry for the shared resource");
+            assert_equals(mainFrameEntries.length, 1, "window should have 1 resource entry");
+            assertSharedEntryIsDifferent(mainFrameEntries[0], iframe1Entries);
+            assertSharedEntryIsDifferent(mainFrameEntries[0], iframe2Entries);
+        }, "main frame has shared resource entry");
+
+        test(function(t) {
+            assert_true(checkContainsURL(sharedResourceURL, iframe1Entries), "iframe1 should have an entry for the shared resource");
+            assert_equals(iframe1Entries.length, 1, "iframe1 should have 1 resource entry");
+            assertSharedEntryIsDifferent(iframe1Entries[0], mainFrameEntries);
+            assertSharedEntryIsDifferent(iframe1Entries[0], iframe2Entries);
+        }, "iframe1 has shared resource entry");
+
+        test(function(t) {
+            assert_true(checkContainsURL(sharedResourceURL, iframe2Entries), "iframe2 should have an entry for the shared resource");
+            assert_equals(iframe2Entries.length, 1, "iframe2 should have 1 resource entry");
+            assertSharedEntryIsDifferent(iframe2Entries[0], iframe1Entries);
+            assertSharedEntryIsDifferent(iframe2Entries[0], mainFrameEntries);
+        }, "iframe2 has shared resource entry");
+
+        done();
+    });
+});
+</script>
+</body>
+</html>

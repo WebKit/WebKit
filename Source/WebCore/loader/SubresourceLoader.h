@@ -102,6 +102,10 @@ private:
 
     void notifyDone();
 
+#if ENABLE(WEB_TIMING)
+    void reportResourceTiming();
+#endif
+
 #if USE(QUICK_LOOK)
     bool shouldCreateQuickLookHandleForResponse(const ResourceResponse&) const;
 #endif

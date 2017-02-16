@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Resource Timing - Entries per Worker</title>
+<meta name="author" title="JosephPecoraro" href="mailto:joepeck@webkit.org">
+<link rel="help" href="https://w3c.github.io/resource-timing/#processing-model">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/rt-utilities.js"></script>
+</head>
+<body>
+<h1>Resource Timing: Entries per Worker</h1>
+<div id="log"></div>
+<script>
+setup({explicit_done: true});
+
+window.addEventListener("load", function() {
+    let worker1 = new Worker("resources/rt-worker-resources.js");
+    let worker2 = new Worker("resources/rt-worker-resources.js");
+
+    let worker1Entries = null;
+    let worker2Entries = null;
+
+    let promises = [];
+    let sharedResourceURL = uniqueImageURL("shared");
+
+    window.performance.clearResourceTimings();
+    promises.push(window.fetch(sharedResourceURL));
+
+    wait(); // Ensure a DOMHighResTimeStamp change.
+
+    worker1.postMessage({sharedResourceURL});
+    promises.push(new Promise(function(resolve, reject) {
+        worker1.addEventListener("message", function(event) {
+            worker1Entries = event.data;
+            resolve();
+        });
+    }));
+
+    worker2.postMessage({sharedResourceURL});
+    promises.push(new Promise(function(resolve, reject) {
+        worker2.addEventListener("message", function(event) {
+            worker2Entries = event.data;
+            resolve();
+        });
+    }));
+
+    Promise.all(promises).then(function() {
+        let supported = worker1Entries !== "error" && worker2Entries !== "error";
+        let windowEntries = window.performance.getEntriesByType("resource");
+
+        test(function() {
+            assert_true(supported);
+        }, "Workers have PerformanceObserver and PerformanceResourceTiming");
+
+        if (!supported) {
+            done();
+            return;
+        }
+
+        function checkContainsURL(url, list) {
+            for (let entry of list) {
+                if (entry.name === url)
+                    return true;
+            }
+            return false;
+        }
+
+        function assertSharedEntryIsDifferent(sharedEntry, list) {
+            for (let entry of list) {
+                if (entry.name === sharedResourceURL) {
+                    assert_not_equals(sharedEntry.startTime, entry.startTime, "shared entry should be different between contexts");
+                    return;
+                }
+            }
+        }
+
+        test(function(t) {
+            assert_true(checkContainsURL(sharedResourceURL, windowEntries), "window should have an entry for the shared resource");
+            assert_equals(windowEntries.length, 1, "window should have 1 resource entry");
+            assertSharedEntryIsDifferent(windowEntries[0], worker1Entries);
+            assertSharedEntryIsDifferent(windowEntries[0], worker2Entries);
+        }, "window has shared entry");
+
+        test(function(t) {
+            assert_true(checkContainsURL(sharedResourceURL, worker1Entries), "worker1 should have an entry for the shared resource");
+            assert_equals(worker1Entries.length, 1, "worker1 should have 1 resource entry");
+        }, "worker1 has shared entry");
+
+        test(function(t) {
+            assert_true(checkContainsURL(sharedResourceURL, worker2Entries), "worker2 should have an entry for the shared resource");
+            assert_equals(worker2Entries.length, 1, "worker2 should have 1 resource entry");
+        }, "worker2 has shared entry");
+
+        done();
+    });
+});
+</script>
+</body>
+</html>

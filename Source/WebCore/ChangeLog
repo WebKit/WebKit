@@ -1,3 +1,187 @@
+2017-02-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Resource Timing] Support Resource Timing in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=168086
+        <rdar://problem/30430117>
+
+        Reviewed by Alex Christensen.
+
+        Worker's load resources through the Document that loaded them. However,
+        their PerformanceResourceTiming entries should be added to the Performance
+        object inside the Worker context, not the Document's context.
+
+        This change adds an InitiatorContext to ResourceLoadOptions so that loaders
+        can determine if the load was initiated by the Document or a Worker. This
+        allows loaders to then know if the ResourceTiming data they collect should
+        be added to the Document's Performance object or forwarded on to the Worker's.
+
+        This adds a new ThreadableLoaderClient method intended only for the purpose
+        of adding the ResourceTiming information to the Worker's Performance object.
+        Unlike other ThreadableLoaderClient methods that are bridged and forwarded
+        on to a client inside the worker (e.g. XMLHttpRequest or FetchLoader) this
+        method never needs to be handled by clients and can be uniformly handled by
+        the WorkerThreadableLoader itself.
+
+        We also add a new ResourceTiming object that encapsulates all of the data
+        ultimately needed for a PerformanceResourceTimingEntry object. This allows
+        for all of the information to be gathered while loading on the Document
+        before serializing across to the Worker. That includes the Timing-Allow-Origin
+        check which uses the SecurityOrigin of the Worker.
+
+        This also modernizes and addresses issues in the Resource Timing implementation.
+        Better handling cases like loading from the Cache, Synchronous Loads, and
+        improving initiatorType information.
+
+        Tests: imported/w3c/web-platform-tests/resource-timing/rt-cors.html
+               imported/w3c/web-platform-tests/resource-timing/rt-cors.worker.html
+               imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-css.html
+               imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-element.html
+               imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-fetch.html
+               imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-media.html
+               imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-other.html
+               imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-script-module.html
+               imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-xmlhttprequest.html
+               imported/w3c/web-platform-tests/resource-timing/rt-initiatorType.worker.html
+               imported/w3c/web-platform-tests/resource-timing/rt-performance-extensions.html
+               imported/w3c/web-platform-tests/resource-timing/rt-performance-extensions.worker.html
+               imported/w3c/web-platform-tests/resource-timing/rt-resource-errors.html
+               imported/w3c/web-platform-tests/resource-timing/rt-resource-ignored.html
+               imported/w3c/web-platform-tests/resource-timing/rt-resources-per-frame.html
+               imported/w3c/web-platform-tests/resource-timing/rt-resources-per-worker.html
+               imported/w3c/web-platform-tests/resource-timing/rt-serialization.html
+               imported/w3c/web-platform-tests/resource-timing/rt-shared-resource-in-frames.html
+               imported/w3c/web-platform-tests/resource-timing/rt-shared-resource-in-workers.html
+               performance-api/resource-timing-apis.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        New files.
+
+        * platform/network/NetworkLoadTiming.h:
+        (WebCore::NetworkLoadTiming::reset): Deleted.
+        We no longer need to reset.
+
+        * loader/ResourceTiming.cpp: Added.
+        (WebCore::passesTimingAllowCheck):
+        (WebCore::ResourceTiming::fromCache):
+        (WebCore::ResourceTiming::fromLoad):
+        (WebCore::ResourceTiming::fromSynchronousLoad):
+        (WebCore::ResourceTiming::ResourceTiming):
+        (WebCore::ResourceTiming::isolatedCopy):
+        * loader/ResourceTiming.h: Added.
+        (WebCore::ResourceTiming::url):
+        (WebCore::ResourceTiming::initiator):
+        (WebCore::ResourceTiming::loadTiming):
+        (WebCore::ResourceTiming::networkLoadTiming):
+        (WebCore::ResourceTiming::allowTimingDetails):
+        (WebCore::ResourceTiming::overrideInitiatorName):
+        (WebCore::ResourceTiming::ResourceTiming):
+        Class that encapsulates all of the data needed for a PerformanceResourceTiming entry.
+        There are three static constructors indicating the different ways this object can
+        be constructed and the different data available at the time of construction.
+
+        * loader/ResourceLoaderOptions.h:
+        Add the new InitiatorContext, default to Document.
+
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::didFinishTiming):
+        New client method only used by WorkerThreadableLoader.
+
+        * loader/WorkerThreadableLoader.h:
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishTiming):
+        All loads initiated in a WorkerThreadableLoader get identified as InitiatorContext::Worker.
+        Add timing information to the Performance object when received. No need to inform clients.
+
+        * loader/DocumentThreadableLoader.h:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::finishedTimingForWorkerLoad):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        Provide APIs to pass timing data on to a WorkerThreadableLoader.
+        Create ResourceTiming data for synchronous loads.
+
+        * loader/LoadTiming.h:
+        * loader/LoadTiming.cpp:
+        (WebCore::LoadTiming::isolatedCopy):
+        Add isolatedCopy to allow this data to be passed across to a Worker.
+
+        * loader/ResourceTimingInformation.h:
+        * loader/ResourceTimingInformation.cpp:
+        (WebCore::ResourceTimingInformation::shouldAddResourceTiming):
+        (WebCore::ResourceTimingInformation::addResourceTiming):
+        (WebCore::ResourceTimingInformation::storeResourceTimingInitiatorInformation):
+        Refactor to remove unused / unnecessary bits. Extract out some helpful code.
+        Changed this to match when Blink decides when to add or ignore entries, however
+        this may change over time.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::notifyDone):
+        (WebCore::SubresourceLoader::reportResourceTiming):
+        * loader/SubresourceLoader.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::finishedTimingForWorkerLoad):
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedRawResourceClient.h:
+        (WebCore::CachedRawResourceClient::finishedTimingForWorkerLoad):
+        Plumbing to report timing information to Worker if this resource was loaded for a Worker.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::initiatorName):
+        Store the initiator name on the CachedResource like other data added to the original
+        CachedResourceRequest. This is a bit of a hack but follows an existing pattern, and
+        cleans up other hacks that worked around this later on.
+
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::revalidateResource):
+        (WebCore::CachedResourceLoader::loadResource):
+        Simply the creation of a ResourceTiming object for cache hits.
+        Report timing information to Worker if this resource was loaded for a Worker.
+
+        (WebCore::CachedResourceLoader::loadDone):
+        Eliminate this redundant point attempting to add a ResourceTiming entry.
+
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::initiatorName):
+        Update to match the spec. The fallback is "other".
+
+        * page/Performance.h:
+        * page/Performance.cpp:
+        (WebCore::Performance::setResourceTimingBufferSize):
+        (WebCore::Performance::addResourceTiming):
+        Update to support PerformanceObservers.
+        Update to match spec (event should bubble).
+
+        * page/PerformanceResourceTiming.h:
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::PerformanceResourceTiming::create):
+        (WebCore::PerformanceResourceTiming::PerformanceResourceTiming):
+        (WebCore::PerformanceResourceTiming::fetchStart):
+        (WebCore::PerformanceResourceTiming::domainLookupStart):
+        (WebCore::PerformanceResourceTiming::domainLookupEnd):
+        (WebCore::PerformanceResourceTiming::connectStart):
+        (WebCore::PerformanceResourceTiming::connectEnd):
+        (WebCore::PerformanceResourceTiming::secureConnectionStart):
+        (WebCore::PerformanceResourceTiming::requestStart):
+        (WebCore::PerformanceResourceTiming::responseStart):
+        (WebCore::PerformanceResourceTiming::responseEnd):
+        (WebCore::PerformanceResourceTiming::networkLoadTimeToDOMHighResTimeStamp):
+        Construct with a ResourceTiming object containing all the data we need for the entry.
+        Update to match spec for what is required, should fallback, should be zero, etc.
+
+        (WebCore::passesTimingAllowCheck): Deleted.
+        Extracted this to ResourceTiming creation time in the loading context,
+        since this can't be determined on the Worker context without also having
+        all of the header information from each resource response.
+
+        * page/PerformanceResourceTiming.idl:
+        Expose to Workers!
+
 2017-02-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop PassRefPtr in inspector/

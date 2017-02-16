@@ -5,5 +5,6 @@ This test validates that a 304 Not Modified resource appears in the buffer.
 
 PASS window.performance is defined 
 PASS window.performance.getEntriesByType is defined 
-FAIL There should be two entries assert_equals: There should be two entries expected 2 but got 0
+PASS There should be two entries 
+PASS Both entries should have the same name 
 

@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class CachedResourceClient;
+class ResourceTiming;
 class SubresourceLoader;
 
 class CachedRawResource final : public CachedResource {
@@ -40,7 +41,7 @@ public:
 
     virtual void setDataBufferingPolicy(DataBufferingPolicy);
 
-    // FIXME: This is exposed for the InpsectorInstrumentation for preflights in DocumentThreadableLoader. It's also really lame.
+    // FIXME: This is exposed for the InspectorInstrumentation for preflights in DocumentThreadableLoader. It's also really lame.
     unsigned long identifier() const { return m_identifier; }
 
     void clear();
@@ -48,6 +49,8 @@ public:
     bool canReuse(const ResourceRequest&) const;
 
     bool wasRedirected() const { return !m_redirectChain.isEmpty(); };
+
+    void finishedTimingForWorkerLoad(ResourceTiming&&);
 
 private:
     void didAddClient(CachedResourceClient&) final;

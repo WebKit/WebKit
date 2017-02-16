@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Resource Timing - Entries per Worker</title>
+<meta name="author" title="JosephPecoraro" href="mailto:joepeck@webkit.org">
+<link rel="help" href="https://w3c.github.io/resource-timing/#processing-model">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/rt-utilities.js"></script>
+</head>
+<body>
+<h1>Resource Timing: Entries per Worker</h1>
+<div id="log"></div>
+<script>
+setup({explicit_done: true});
+
+window.addEventListener("load", function() {
+    let worker1 = new Worker("resources/rt-worker-resources.js");
+    let worker2 = new Worker("resources/rt-worker-resources.js");
+
+    let worker1Entries = null;
+    let worker2Entries = null;
+
+    let promises = [];
+
+    window.performance.clearResourceTimings();
+    promises.push(window.loadResources(3));
+
+    wait(); // Ensure a DOMHighResTimeStamp change.
+
+    worker1.postMessage({n: 2});
+    promises.push(new Promise(function(resolve, reject) {
+        worker1.addEventListener("message", function(event) {
+            worker1Entries = event.data;
+            resolve();
+        });
+    }));
+
+    wait(); // Ensure a DOMHighResTimeStamp change.
+
+    worker2.postMessage({n: 15});
+    promises.push(new Promise(function(resolve, reject) {
+        worker2.addEventListener("message", function(event) {
+            worker2Entries = event.data;
+            resolve();
+        });
+    }));
+
+    Promise.all(promises).then(function() {
+        let supported = worker1Entries !== "error" && worker2Entries !== "error";
+        let windowEntries = window.performance.getEntriesByType("resource");
+
+        test(function() {
+            assert_true(supported);
+        }, "Workers have PerformanceObserver and PerformanceResourceTiming");
+
+        if (!supported) {
+            done();
+            return;
+        }
+
+        function checkContainsURL(url, list) {
+            for (let entry of list) {
+                if (entry.name === url)
+                    return true;
+            }
+            return false;
+        }
+
+        function assertDisjointEntries(list, otherList1, otherList2) {
+            for (let entry of list) {
+                assert_false(checkContainsURL(entry.name, otherList1), "a resource that should have been unique was not unique across contexts");
+                assert_false(checkContainsURL(entry.name, otherList2), "a resource that should have been unique was not unique across contexts");
+            }
+        }
+
+        test(function(t) {
+            assert_equals(windowEntries.length, 3, "window should have 3 resource entries");
+            assertDisjointEntries(windowEntries, worker1Entries, worker2Entries);
+        }, "window resources differ from other contexts");
+
+        test(function(t) {
+            assert_equals(worker1Entries.length, 2, "worker1 should have 2 resource entries");
+            assertDisjointEntries(worker1Entries, windowEntries, worker2Entries);
+        }, "worker1 resources differ from other contexts");
+
+        test(function(t) {
+            assert_equals(worker2Entries.length, 15, "worker2 should have 15 resource entries");
+            assertDisjointEntries(worker2Entries, worker1Entries, windowEntries);
+        }, "worker2 resources differ from other contexts");
+
+        done();
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Resource Timing - Entries per Frame</title>
+<meta name="author" title="JosephPecoraro" href="mailto:joepeck@webkit.org">
+<link rel="help" href="https://w3c.github.io/resource-timing/#processing-model">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/rt-utilities.js"></script>
+</head>
+<body>
+<h1>Resource Timing: Entries per Frame</h1>
+<div id="log"></div>
+<iframe id="iframe1" src="resources/rt-iframe-1.html"></iframe>
+<iframe id="iframe2" src="resources/rt-iframe-2.html"></iframe>
+<script>
+setup({explicit_done: true});
+
+window.addEventListener("load", function() {
+    let mainFrameWindow = window;
+    let iframe1Window = document.getElementById("iframe1").contentWindow;
+    let iframe2Window = document.getElementById("iframe2").contentWindow;
+
+    let promises = [];
+
+    mainFrameWindow.performance.clearResourceTimings();
+    promises.push(mainFrameWindow.loadResources(3));
+
+    wait(); // Ensure a DOMHighResTimeStamp change.
+
+    iframe1Window.performance.clearResourceTimings();
+    promises.push(iframe1Window.loadResources(2));
+
+    wait(); // Ensure a DOMHighResTimeStamp change.
+
+    iframe2Window.performance.clearResourceTimings();
+    promises.push(iframe2Window.loadResources(15));
+
+    Promise.all(promises).then(function() {
+        let mainFrameEntries = mainFrameWindow.performance.getEntriesByType("resource");
+        let iframe1Entries = iframe1Window.performance.getEntriesByType("resource");
+        let iframe2Entries = iframe2Window.performance.getEntriesByType("resource");
+
+        function checkContainsURL(url, list) {
+            for (let entry of list) {
+                if (entry.name === url)
+                    return true;
+            }
+            return false;
+        }
+
+        function assertDisjointEntries(list, otherList1, otherList2) {
+            for (let entry of list) {
+                assert_false(checkContainsURL(entry.name, otherList1), "a resource that should have been unique was not unique across contexts");
+                assert_false(checkContainsURL(entry.name, otherList2), "a resource that should have been unique was not unique across contexts");
+            }
+        }
+
+        test(function(t) {
+            assert_equals(mainFrameEntries.length, 3, "window should have 3 resource entries");
+            assertDisjointEntries(mainFrameEntries, iframe1Entries, iframe2Entries);
+        }, "main frame resources differ from other frames");
+
+        test(function(t) {
+            assert_equals(iframe1Entries.length, 2, "iframe1 should have 2 resource entries");
+            assertDisjointEntries(iframe1Entries, mainFrameEntries, iframe2Entries);
+        }, "iframe1 resources differ from other frames");
+
+        test(function(t) {
+            assert_equals(iframe2Entries.length, 15, "iframe2 should have 15 resource entries");
+            assertDisjointEntries(iframe2Entries, iframe1Entries, mainFrameEntries);
+        }, "iframe2 resources differ from other frames");
+
+        done();
+    });
+});
+</script>
+</body>
+</html>

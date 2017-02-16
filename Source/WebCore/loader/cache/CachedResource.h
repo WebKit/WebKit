@@ -45,7 +45,7 @@ class CachedResourceClient;
 class CachedResourceHandleBase;
 class CachedResourceLoader;
 class CachedResourceRequest;
-class InspectorResource;
+class LoadTiming;
 class MemoryCache;
 class SecurityOrigin;
 class SharedBuffer;
@@ -58,7 +58,6 @@ class TextResourceDecoder;
 class CachedResource {
     WTF_MAKE_NONCOPYABLE(CachedResource); WTF_MAKE_FAST_ALLOCATED;
     friend class MemoryCache;
-    friend class InspectorResource;
 
 public:
     enum Type {
@@ -206,6 +205,7 @@ public:
     void loadFrom(const CachedResource&);
 
     SecurityOrigin* origin() const { return m_origin.get(); }
+    AtomicString initiatorName() const { return m_initiatorName; }
 
     bool canDelete() const { return !hasClients() && !m_loader && !m_preloadCount && !m_handleCount && !m_resourceToRevalidate && !m_proxyResource; }
     bool hasOneHandle() const { return m_handleCount == 1; }
@@ -320,6 +320,7 @@ private:
 
     ResourceError m_error;
     RefPtr<SecurityOrigin> m_origin;
+    AtomicString m_initiatorName;
 
     double m_lastDecodedAccessTime { 0 }; // Used as a "thrash guard" in the cache
     double m_loadFinishTime { 0 };
