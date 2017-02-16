@@ -486,17 +486,6 @@ RefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard
     return WTFMove(reader.fragment);
 }
 
-Ref<DocumentFragment> Editor::createFragmentForImageAndURL(const String& url)
-{
-    auto imageElement = HTMLImageElement::create(*m_frame.document());
-    imageElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, url);
-
-    auto fragment = document().createDocumentFragment();
-    fragment->appendChild(imageElement);
-
-    return fragment;
-}
-
 void Editor::applyFontStyles(const String& fontFamily, double fontSize, unsigned fontTraits)
 {
     auto& cssValuePool = CSSValuePool::singleton();

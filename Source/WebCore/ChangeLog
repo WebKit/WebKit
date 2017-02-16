@@ -1,3 +1,25 @@
+2017-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Images are never read from the clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=168419
+
+        Reviewed by Sergio Villar Senin.
+
+        We write images in the clipboard, but we don't read them.
+
+        Fixes: editing/pasteboard/paste-image-using-image-data.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::createFragmentForImageAndURL): Moved from EditorMac.mm since it's cross-platform code.
+        * editing/Editor.h:
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::createFragmentFromPasteboardData): Check if there's an image in the selection, and use
+        Editor::createFragmentForImageAndURL in that case.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::createFragmentForImageAndURL): Deleted.
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::getClipboardContents): Check also if there's an image in the clipboard.
+
 2017-02-15  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r212311): NULL-dereference in HTMLMediaElement::prepareToPlay()

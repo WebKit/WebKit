@@ -27,7 +27,9 @@
 #include "config.h"
 #include "Editor.h"
 
+#include "Blob.h"
 #include "CachedImage.h"
+#include "DOMURL.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
 #include "HTMLEmbedElement.h"
@@ -54,6 +56,19 @@ static RefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pas
         return nullptr;
 
     const auto& selection = pasteboard.selectionData();
+    if (selection.hasImage()) {
+        Vector<uint8_t> buffer;
+        auto status = cairo_surface_write_to_png_stream(selection.image()->nativeImage().get(), [](void* output, const unsigned char* data, unsigned size) {
+            if (!reinterpret_cast<Vector<uint8_t>*>(output)->tryAppend(data, size))
+                return CAIRO_STATUS_WRITE_ERROR;
+            return CAIRO_STATUS_SUCCESS;
+        }, &buffer);
+        if (status == CAIRO_STATUS_SUCCESS) {
+            auto blob = Blob::create(WTFMove(buffer), "image/png");
+            return frame.editor().createFragmentForImageAndURL(DOMURL::createObjectURL(*frame.document(), blob));
+        }
+    }
+
     if (selection.hasMarkup() && frame.document())
         return createFragmentFromMarkup(*frame.document(), selection.markup(), emptyString(), DisallowScriptingAndPluginContent);
 
