@@ -93,6 +93,8 @@ private:
 
     void updatePrivateBrowsingValue(bool value);
 
+    void setPeerConnectionAndMediaStreamEnabled(bool value);
+
     void registerDefaultBoolValueForKey(const String&, bool);
     void registerDefaultUInt32ValueForKey(const String&, uint32_t);
 
