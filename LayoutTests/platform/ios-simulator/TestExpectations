@@ -2869,3 +2869,5 @@ webkit.org/b/168215 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 # rdar://problem/23643423
 [ Debug ] fast/frames/exponential-frames.html [ Skip ]
+
+webkit.org/b/168053 pageoverlay/overlay-remove-reinsert-view.html [ Pass Failure ]
