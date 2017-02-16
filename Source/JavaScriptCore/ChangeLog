@@ -1,3 +1,25 @@
+2017-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the build after r212424.
+
+        Add missing file.
+
+        * inspector/remote/RemoteInspector.cpp: Added.
+        (Inspector::RemoteInspector::startDisabled):
+        (Inspector::RemoteInspector::nextAvailableTargetIdentifier):
+        (Inspector::RemoteInspector::registerTarget):
+        (Inspector::RemoteInspector::unregisterTarget):
+        (Inspector::RemoteInspector::updateTarget):
+        (Inspector::RemoteInspector::updateClientCapabilities):
+        (Inspector::RemoteInspector::setRemoteInspectorClient):
+        (Inspector::RemoteInspector::setupFailed):
+        (Inspector::RemoteInspector::setupCompleted):
+        (Inspector::RemoteInspector::waitingForAutomaticInspection):
+        (Inspector::RemoteInspector::clientCapabilitiesDidChange):
+        (Inspector::RemoteInspector::stop):
+        (Inspector::RemoteInspector::listingForTarget):
+        (Inspector::RemoteInspector::updateHasActiveDebugSession):
+
 2017-02-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop PassRefPtr in bytecompiler/
