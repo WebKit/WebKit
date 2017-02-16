@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -214,6 +214,10 @@ private:
 
     HashMap<uint64_t, Function<void ()>> m_sandboxExtensionForBlobsCompletionHandlers;
     HashMap<uint64_t, Ref<NetworkResourceLoader>> m_waitingNetworkResourceLoaders;
+
+#if ENABLE(WEB_RTC)
+    bool m_webRTCEnabled { false };
+#endif
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);

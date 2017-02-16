@@ -1,4 +1,4 @@
-; Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+; Copyright (C) 2013-2017 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -208,3 +208,9 @@
     ;; FIXME: Should be removed after <rdar://problem/10463881> is fixed.
     (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
     (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2-journal"))
+
+#if ENABLE_WEB_RTC
+;; FIXME should be removed when <rdar://problem/30498072> is fixed.
+(if (positive? (string-length (param "ENABLE_WEB_RTC")))
+    (allow network*))
+#endif

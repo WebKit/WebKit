@@ -246,12 +246,12 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     parameters.uiProcessCookieStorageIdentifier.append(CFDataGetBytePtr(cookieStorageData.get()), CFDataGetLength(cookieStorageData.get()));
 #endif
 #if ENABLE(MEDIA_STREAM)
-    bool webRTCEnabled = m_defaultPageGroup->preferences().peerConnectionEnabled();
+    bool mediaStreamEnabled = m_defaultPageGroup->preferences().mediaStreamEnabled();
     if ([defaults objectForKey:@"ExperimentalPeerConnectionEnabled"])
-        webRTCEnabled = [defaults boolForKey:@"ExperimentalPeerConnectionEnabled"];
+        mediaStreamEnabled = [defaults boolForKey:@"ExperimentalPeerConnectionEnabled"];
     
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
-    if (webRTCEnabled)
+    if (mediaStreamEnabled)
         SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.audioCaptureExtensionHandle);
 #endif
 }
@@ -303,6 +303,13 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.recordReplayCacheLocation = [defaults stringForKey:WebKitRecordReplayCacheLocationDefaultsKey];
     if (parameters.recordReplayCacheLocation.isEmpty())
         parameters.recordReplayCacheLocation = parameters.diskCacheDirectory;
+#endif
+#if ENABLE(WEB_RTC)
+    bool webRTCEnabled = m_defaultPageGroup->preferences().peerConnectionEnabled();
+    if ([defaults objectForKey:@"ExperimentalPeerConnectionEnabled"])
+        webRTCEnabled = [defaults boolForKey:@"ExperimentalPeerConnectionEnabled"];
+    
+    parameters.webRTCEnabled = webRTCEnabled;
 #endif
 }
 

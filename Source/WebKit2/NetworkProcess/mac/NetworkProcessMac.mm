@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -105,6 +105,10 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
     if (!parameters.httpProxy.isNull() || !parameters.httpsProxy.isNull())
         overrideSystemProxies(parameters.httpProxy, parameters.httpsProxy);
+
+#if ENABLE(WEB_RTC)
+    m_webRTCEnabled = parameters.webRTCEnabled;
+#endif
 }
 
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
@@ -117,6 +121,11 @@ void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameter
     // Need to overide the default, because service has a different bundle ID.
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
     sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebKit.NetworkProcess" ofType:@"sb"]);
+
+#if ENABLE(WEB_RTC)
+    if (m_webRTCEnabled)
+        sandboxParameters.addParameter("ENABLE_WEB_RTC", "TRUE");
+#endif
 
     ChildProcess::initializeSandbox(parameters, sandboxParameters);
 }

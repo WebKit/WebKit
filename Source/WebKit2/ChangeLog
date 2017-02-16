@@ -1,5 +1,33 @@
 2017-02-16  Brent Fulgham  <bfulgham@apple.com>
 
+        [WebRTC][Mac] Conditionally add sandbox extensions to the Network Process
+        https://bugs.webkit.org/show_bug.cgi?id=168010
+        <rdar://problem/30245503>
+
+        Reviewed by Youenn Fablet.
+
+        Conditionally add sandbox extensions to the Network Process when the WebRTC/Media Capture
+        features are enabled.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode): Serialize new process configuration flag.
+        (WebKit::NetworkProcessCreationParameters::decode): Ditto.
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):  Remember state of WebRTC for when the
+        sandbox is established.
+        (WebKit::NetworkProcess::initializeSandbox): Add ENABLE_WEB_RTC parameter to sandbox launch state.
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in: Add conditional sandbox expansion to allow
+        bidirectional network access when the ENABLE_LIBWEBRTC flag is present in the sandbox launch parameters.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Use proper compile guards and check media stream
+        preference, rather than the peer connection preference.
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess): Notify NetworkProcess at launch time whether the
+        user wants WebRTC support.
+
+2017-02-16  Brent Fulgham  <bfulgham@apple.com>
+
         [WebRTC][Mac][WebKit2] Initial WebProcess does not support WebRTC
         https://bugs.webkit.org/show_bug.cgi?id=168438
         <rdar://problem/30401818>
