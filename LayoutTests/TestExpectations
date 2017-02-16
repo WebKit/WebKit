@@ -979,7 +979,6 @@ webkit.org/b/159755 fast/text/emoji-gender.html [ ImageOnlyFailure ]
 webkit.org/b/160017 js/regress-139548.html [ Slow ]
 
 webkit.org/b/161088 imported/w3c/web-platform-tests/resource-timing/resource-timing.html [ Pass Failure ]
-webkit.org/b/162414 imported/w3c/web-platform-tests/resource-timing/idlharness.html [ Pass Failure ]
 
 # Only iOS has implemented lettepress.
 fast/text/letterpress-different.html [ ImageOnlyFailure ]
