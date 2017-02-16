@@ -1184,6 +1184,7 @@ webkit.org/b/164293 [ Debug ] inspector/debugger/breakpoint-scope.html [ Pass Ti
 webkit.org/b/168090 [ Debug ] inspector/debugger/breakpoint-columns.html [ Pass Timeout ]
 webkit.org/b/161951 [ Release ] inspector/debugger/breakpoints/resolved-dump-each-line.html [ Pass Timeout ]
 webkit.org/b/167711 [ Debug ] inspector/debugger/probe-manager-add-remove-actions.html [ Slow ]
+webkit.org/b/168399 [ Debug ] inspector/debugger/search-scripts.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/dom/content-flow-content-nodes.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/dom/content-flow-content-removal.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/dom/content-flow-list.html [ Pass Timeout ]
