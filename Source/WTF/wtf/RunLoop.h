@@ -40,11 +40,6 @@
 #include <wtf/glib/GRefPtr.h>
 #endif
 
-#if USE(EFL_EVENT_LOOP)
-#include <Ecore.h>
-#include <wtf/efl/UniquePtrEfl.h>
-#endif
-
 namespace WTF {
 
 class RunLoop : public FunctionDispatcher {
@@ -114,10 +109,6 @@ public:
 #elif USE(COCOA_EVENT_LOOP)
         static void timerFired(CFRunLoopTimerRef, void*);
         RetainPtr<CFRunLoopTimerRef> m_timer;
-#elif USE(EFL_EVENT_LOOP)
-        static bool timerFired(void* data);
-        Ecore_Timer* m_timer;
-        bool m_isRepeating;
 #elif USE(GLIB_EVENT_LOOP)
         void updateReadyTime();
         GRefPtr<GSource> m_source;
@@ -170,14 +161,6 @@ private:
     static void performWork(void*);
     RetainPtr<CFRunLoopRef> m_runLoop;
     RetainPtr<CFRunLoopSourceRef> m_runLoopSource;
-#elif USE(EFL_EVENT_LOOP)
-    Mutex m_pipeLock;
-    EflUniquePtr<Ecore_Pipe> m_pipe;
-
-    Mutex m_wakeUpEventRequestedLock;
-    bool m_wakeUpEventRequested;
-
-    static void wakeUpEvent(void* data, void*, unsigned);
 #elif USE(GLIB_EVENT_LOOP)
     GRefPtr<GMainContext> m_mainContext;
     Vector<GRefPtr<GMainLoop>> m_mainLoops;

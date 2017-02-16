@@ -322,10 +322,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #endif /* PLATFORM(WIN_CAIRO) */
 
-/* --------- EFL port (Unix) --------- */
-#if PLATFORM(EFL)
-#endif /* PLATFORM(EFL) */
-
 /* --------- Gtk port (Unix, Windows, Mac) --------- */
 #if PLATFORM(GTK)
 #if !defined(ENABLE_KEYBOARD_KEY_ATTRIBUTE)

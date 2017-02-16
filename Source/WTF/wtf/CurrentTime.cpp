@@ -52,14 +52,11 @@
 #include <math.h>
 #include <stdint.h>
 #include <time.h>
-
-#elif PLATFORM(EFL)
-#include <Ecore.h>
 #else
 #include <sys/time.h>
 #endif
 
-#if USE(GLIB) && !PLATFORM(EFL)
+#if USE(GLIB)
 #include <glib.h>
 #endif
 
@@ -222,7 +219,7 @@ double currentTime()
 
 #endif // USE(QUERY_PERFORMANCE_COUNTER)
 
-#elif USE(GLIB) && !PLATFORM(EFL)
+#elif USE(GLIB)
 
 // Note: GTK on Windows will pick up the PLATFORM(WIN) implementation above which provides
 // better accuracy compared with Windows implementation of g_get_current_time:
@@ -233,13 +230,6 @@ double currentTime()
     GTimeVal now;
     g_get_current_time(&now);
     return static_cast<double>(now.tv_sec) + static_cast<double>(now.tv_usec / 1000000.0);
-}
-
-#elif PLATFORM(EFL)
-
-double currentTime()
-{
-    return ecore_time_unix_get();
 }
 
 #else
@@ -253,14 +243,7 @@ double currentTime()
 
 #endif
 
-#if PLATFORM(EFL)
-
-double monotonicallyIncreasingTime()
-{
-    return ecore_time_get();
-}
-
-#elif USE(GLIB)
+#if USE(GLIB)
 
 double monotonicallyIncreasingTime()
 {

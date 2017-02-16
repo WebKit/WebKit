@@ -86,7 +86,7 @@ void initializeMainThreadPlatform();
 void scheduleDispatchFunctionsOnMainThread();
 void dispatchFunctionsFromMainThread();
 
-#if OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)
+#if OS(DARWIN) && !PLATFORM(GTK)
 #if !USE(WEB_THREAD)
 // This version of initializeMainThread sets up the main thread as corresponding
 // to the process's main thread, and not necessarily the thread that calls this

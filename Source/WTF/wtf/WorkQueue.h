@@ -38,10 +38,6 @@
 #include <dispatch/dispatch.h>
 #endif
 
-#if USE(EFL_EVENT_LOOP)
-#include <DispatchQueueEfl.h>
-#endif
-
 #if USE(WINDOWS_EVENT_LOOP)
 #include <wtf/Vector.h>
 #endif
@@ -75,10 +71,7 @@ public:
 
     WTF_EXPORT_PRIVATE static void concurrentApply(size_t iterations, const std::function<void (size_t index)>&);
 
-#if USE(EFL_EVENT_LOOP)
-    void registerSocketEventHandler(int, std::function<void ()>);
-    void unregisterSocketEventHandler(int);
-#elif USE(COCOA_EVENT_LOOP)
+#if USE(COCOA_EVENT_LOOP)
     dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
 #elif USE(GLIB_EVENT_LOOP) || USE(GENERIC_EVENT_LOOP)
     RunLoop& runLoop() const { return *m_runLoop; }
@@ -99,9 +92,7 @@ private:
     void performWorkOnRegisteredWorkThread();
 #endif
 
-#if USE(EFL_EVENT_LOOP)
-    RefPtr<DispatchQueue> m_dispatchQueue;
-#elif USE(COCOA_EVENT_LOOP)
+#if USE(COCOA_EVENT_LOOP)
     static void executeFunction(void*);
     dispatch_queue_t m_dispatchQueue;
 #elif USE(WINDOWS_EVENT_LOOP)
