@@ -368,6 +368,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
             name: {title: WebInspector.UIString("Name"), width: "30%", sortable: true},
             value: {title: WebInspector.UIString("Value"), sortable: true}
         });
+        dataGrid.copyTextDelimiter = ": ";
 
         function addDataGridNode(nodeValue)
         {

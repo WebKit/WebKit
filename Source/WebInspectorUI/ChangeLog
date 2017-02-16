@@ -1,5 +1,21 @@
 2017-02-15  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Request headers when copied & pasted should follow HTTP format, colon instead of tab
+        https://bugs.webkit.org/show_bug.cgi?id=168155
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype.set copyTextDelimiter):
+        (WebInspector.DataGrid.prototype._copyTextForDataGridNode):
+        (WebInspector.DataGrid.prototype._copyTextForDataGridHeaders):
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._createNameValueDataGrid):
+        Allow instances of DataGrid to change the delimiter between items when copying rows.
+
+2017-02-15  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Split console should be allowed when docked bottom on Elements/Resources/Debugger/Storage tabs
         https://bugs.webkit.org/show_bug.cgi?id=168385
 

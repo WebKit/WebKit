@@ -132,6 +132,8 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         }
 
         this._updateScrollbarPadding();
+
+        this._copyTextDelimiter = "\t";
     }
 
     _updateScrollbarPadding()
@@ -1703,16 +1705,18 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         return (data instanceof Node ? data.textContent : data) || "";
     }
 
+    set copyTextDelimiter(value) { this._copyTextDelimiter = value; }
+
     _copyTextForDataGridNode(node)
     {
         let fields = node.dataGrid.orderedColumns.map((identifier) => this.textForDataGridNodeColumn(node, identifier));
-        return fields.join("\t");
+        return fields.join(this._copyTextDelimiter);
     }
 
     _copyTextForDataGridHeaders()
     {
         let fields = this.orderedColumns.map((identifier) => this.headerTableHeader(identifier).textContent);
-        return fields.join("\t");
+        return fields.join(this._copyTextDelimiter);
     }
 
     handleBeforeCopyEvent(event)
