@@ -1,3 +1,24 @@
+2017-02-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebRTC][Mac][WebKit2] Initial WebProcess does not support WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=168438
+        <rdar://problem/30401818>
+
+        Reviewed by Youenn Fablet.
+
+        The sandbox extension for microphone access does not take effect until the second WebProcess
+        is created, causing the initial browser tab to lack microphone support.
+
+        This patch checks the setting earlier in the boot process so that the initial WebProcess
+        instance gets the correct setting.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Move microphone sandbox extension here, so that the
+        initial WebProcess has the correct microphone access.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess): Move microphone sandbox extension from here to platform-specific file.
+        (WebKit::WebProcessPool::createWebPage): Remove unneeded preference checks.
+
 2017-02-16  Eric Carlson  <eric.carlson@apple.com>
 
         Add WebRTC as an off-by-default experimental feature menu item.

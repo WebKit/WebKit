@@ -245,6 +245,15 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     ASSERT(parameters.uiProcessCookieStorageIdentifier.isEmpty());
     parameters.uiProcessCookieStorageIdentifier.append(CFDataGetBytePtr(cookieStorageData.get()), CFDataGetLength(cookieStorageData.get()));
 #endif
+#if ENABLE(MEDIA_STREAM)
+    bool webRTCEnabled = m_defaultPageGroup->preferences().peerConnectionEnabled();
+    if ([defaults objectForKey:@"ExperimentalPeerConnectionEnabled"])
+        webRTCEnabled = [defaults boolForKey:@"ExperimentalPeerConnectionEnabled"];
+    
+    // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
+    if (webRTCEnabled)
+        SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.audioCaptureExtensionHandle);
+#endif
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)

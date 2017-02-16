@@ -72,7 +72,6 @@
 #include <WebCore/LinkHash.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/URLParser.h>
 #include <runtime/JSCInlines.h>
@@ -574,12 +573,6 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     if (!parameters.mediaKeyStorageDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeyStorageDirectory, SandboxExtension::ReadWrite, parameters.mediaKeyStorageDirectoryExtensionHandle);
 
-#if ENABLE(MEDIA_STREAM)
-    // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
-    if (RuntimeEnabledFeatures::sharedFeatures().mediaStreamEnabled())
-        SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.audioCaptureExtensionHandle);
-#endif
-    
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 
     parameters.cacheModel = cacheModel();
@@ -798,12 +791,8 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     } else if (pageConfiguration->relatedPage()) {
         // Sharing processes, e.g. when creating the page via window.open().
         process = &pageConfiguration->relatedPage()->process();
-    } else {
-#if ENABLE(MEDIA_STREAM)
-        RuntimeEnabledFeatures::sharedFeatures().setMediaStreamEnabled(pageConfiguration->preferences()->store().getBoolValueForKey(WebPreferencesKey::mediaStreamEnabledKey()));
-#endif
+    } else
         process = &createNewWebProcessRespectingProcessCountLimit();
-    }
 
     return process->createWebPage(pageClient, WTFMove(pageConfiguration));
 }
