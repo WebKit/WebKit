@@ -1,3 +1,13 @@
+2017-02-16  Filip Pizlo  <fpizlo@apple.com>
+
+        JSONParseTest needs to hold the lock when the VM is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=168450
+
+        Rubber stamped by Alex Christensen.
+
+        * API/tests/JSONParseTest.cpp:
+        (testJSONParse):
+
 2017-02-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop PassRefPtr in inspector/
