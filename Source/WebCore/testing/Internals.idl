@@ -504,4 +504,9 @@ enum EventThrottlingBehavior {
     [CallWith=Document] void setAsRunningUserScripts();
 
     void disableTileSizeUpdateDelay();
+    
+    [CallWith=ScriptState] boolean isGCRunning();
+    [CallWith=ScriptState] void addGCFinalizationCallback(any callback);
+    [CallWith=ScriptState] void stopSweeping();
+    [CallWith=ScriptState] void startSweeping();
 };

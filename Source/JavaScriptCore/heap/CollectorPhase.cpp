@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CollectorPhase.h"
+
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 
-enum class MutatorState {
-    // The mutator is running when it's not inside a Heap slow path.
-    Running,
+bool worldShouldBeSuspended(CollectorPhase phase)
+{
+    switch (phase) {
+    case CollectorPhase::NotRunning:
+    case CollectorPhase::Concurrent:
+        return false;
+        
+    case CollectorPhase::Begin:
+    case CollectorPhase::Fixpoint:
+    case CollectorPhase::Reloop:
+    case CollectorPhase::End:
+        return true;
+    }
     
-    // The mutator is in an allocation slow path.
-    Allocating,
-    
-    // The mutator is sweeping.
-    Sweeping,
-    
-    // The mutator is collecting.
-    Collecting
-};
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
 
 } // namespace JSC
 
 namespace WTF {
 
-class PrintStream;
+using namespace JSC;
 
-void printInternal(PrintStream&, JSC::MutatorState);
+void printInternal(PrintStream& out, JSC::CollectorPhase phase)
+{
+    switch (phase) {
+    case CollectorPhase::NotRunning:
+        out.print("NotRunning");
+        return;
+    case CollectorPhase::Begin:
+        out.print("Begin");
+        return;
+    case CollectorPhase::Fixpoint:
+        out.print("Fixpoint");
+        return;
+    case CollectorPhase::Concurrent:
+        out.print("Concurrent");
+        return;
+    case CollectorPhase::Reloop:
+        out.print("Reloop");
+        return;
+    case CollectorPhase::End:
+        out.print("End");
+        return;
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 } // namespace WTF
 

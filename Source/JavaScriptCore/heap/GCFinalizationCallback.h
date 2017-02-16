@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,28 +25,45 @@
 
 #pragma once
 
-#include "Heap.h"
+#include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
 
-class HelpingGCScope {
+class Heap;
+
+class JS_EXPORT_PRIVATE GCFinalizationCallback : public ThreadSafeRefCounted<GCFinalizationCallback> {
+    WTF_MAKE_NONCOPYABLE(GCFinalizationCallback);
+
 public:
-    HelpingGCScope(Heap& heap)
-        : m_heap(heap)
-        , m_oldState(m_heap.m_mutatorState)
+    GCFinalizationCallback();
+    virtual ~GCFinalizationCallback();
+    
+    virtual void didFinalize(Heap&) = 0;
+};
+
+template<typename Func>
+class GCFinalizationCallbackFuncAdaptor : public GCFinalizationCallback {
+public:
+    GCFinalizationCallbackFuncAdaptor(const Func& func)
+        : m_func(func)
     {
-        m_heap.m_mutatorState = MutatorState::HelpingGC;
     }
     
-    ~HelpingGCScope()
+    void didFinalize(Heap& heap) override
     {
-        m_heap.m_mutatorState = m_oldState;
+        m_func(this, heap);
     }
 
 private:
-    Heap& m_heap;
-    MutatorState m_oldState;
+    Func m_func;
 };
+
+template<typename Func>
+RefPtr<GCFinalizationCallbackFuncAdaptor<Func>> createGCFinalizationCallback(const Func& func)
+{
+    return adoptRef(new GCFinalizationCallbackFuncAdaptor<Func>(func));
+}
 
 } // namespace JSC
 

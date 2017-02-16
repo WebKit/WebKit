@@ -38,7 +38,6 @@
 #include "GetterSetter.h"
 #include "HeapProfiler.h"
 #include "HeapSnapshotBuilder.h"
-#include "HeapStatistics.h"
 #include "InitializeThreading.h"
 #include "Interpreter.h"
 #include "JIT.h"
@@ -1084,6 +1083,7 @@ static EncodedJSValue JSC_HOST_CALL functionDollarAgentGetReport(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDollarAgentLeaving(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionWaitForReport(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionHeapCapacity(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionFlashHeapAccess(ExecState*);
 
 struct Script {
     enum class StrictMode {
@@ -1366,6 +1366,7 @@ protected:
         addFunction(vm, "waitForReport", functionWaitForReport, 0);
 
         addFunction(vm, "heapCapacity", functionHeapCapacity, 0);
+        addFunction(vm, "flashHeapAccess", functionFlashHeapAccess, 0);
     }
     
     void addFunction(VM& vm, JSObject* object, const char* name, NativeFunction function, unsigned arguments)
@@ -2645,6 +2646,21 @@ EncodedJSValue JSC_HOST_CALL functionHeapCapacity(ExecState* exec)
 {
     VM& vm = exec->vm();
     return JSValue::encode(jsNumber(vm.heap.capacity()));
+}
+
+EncodedJSValue JSC_HOST_CALL functionFlashHeapAccess(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    
+    vm.heap.releaseAccess();
+    if (exec->argumentCount() >= 1) {
+        double ms = exec->argument(0).toNumber(exec);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        sleep(Seconds::fromMilliseconds(ms));
+    }
+    vm.heap.acquireAccess();
+    return JSValue::encode(jsUndefined());
 }
 
 template<typename ValueType>

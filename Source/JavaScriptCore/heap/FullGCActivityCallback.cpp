@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ void FullGCActivityCallback::doCollection()
     double startTime = WTF::monotonicallyIncreasingTime();
     if (heap.isPagedOut(startTime + pagingTimeOut)) {
         cancel();
-        heap.increaseLastFullGCLength(pagingTimeOut);
+        heap.increaseLastFullGCLength(Seconds(pagingTimeOut));
         return;
     }
 #endif
@@ -60,7 +60,7 @@ void FullGCActivityCallback::doCollection()
 
 double FullGCActivityCallback::lastGCLength()
 {
-    return m_vm->heap.lastFullGCLength();
+    return m_vm->heap.lastFullGCLength().seconds();
 }
 
 double FullGCActivityCallback::deathRate()

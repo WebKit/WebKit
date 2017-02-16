@@ -1,3 +1,14 @@
+2017-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        The collector thread should only start when the mutator doesn't have heap access
+        https://bugs.webkit.org/show_bug.cgi?id=167737
+
+        Reviewed by Keith Miller.
+        
+        Make more tests collect continuously.
+
+        * Scripts/run-jsc-stress-tests:
+
 2017-02-16  Tim Horton  <timothy_horton@apple.com>
 
         WKWebView inside a UICollectionView flashes when items are inserted above it

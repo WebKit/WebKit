@@ -200,6 +200,7 @@ typedef const char* optionString;
     v(double, largeHeapGrowthFactor, 1.24, Normal, nullptr) \
     v(double, minimumMutatorUtilization, 0, Normal, nullptr) \
     v(double, maximumMutatorUtilization, 0.7, Normal, nullptr) \
+    v(double, epsilonMutatorUtilization, 0.01, Normal, nullptr) \
     v(double, concurrentGCMaxHeadroom, 1.5, Normal, nullptr) \
     v(double, concurrentGCPeriodMS, 2, Normal, nullptr) \
     v(bool, useStochasticMutatorScheduler, true, Normal, nullptr) \
@@ -344,7 +345,6 @@ typedef const char* optionString;
     v(bool, useZombieMode, false, Normal, "debugging option to scribble over dead objects with 0xbadbeef0") \
     v(bool, useImmortalObjects, false, Normal, "debugging option to keep all objects alive forever") \
     v(bool, sweepSynchronously, false, Normal, "debugging option to sweep all dead objects synchronously at GC end before resuming mutator") \
-    v(bool, dumpObjectStatistics, false, Normal, nullptr) \
     v(unsigned, maxSingleAllocationSize, 0, Configurable, "debugging option to limit individual allocations to a max size (0 = limit not set, N = limit size in bytes)") \
     \
     v(gcLogLevel, logGC, GCLogging::None, Normal, "debugging option to log GC activity (0 = None, 1 = Basic, 2 = Verbose)") \

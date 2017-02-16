@@ -1,3 +1,33 @@
+2017-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        The collector thread should only start when the mutator doesn't have heap access
+        https://bugs.webkit.org/show_bug.cgi?id=167737
+
+        Reviewed by Keith Miller.
+
+        Added new tests in JSTests and LayoutTests.
+        
+        The WebCore changes involve:
+        
+        - Refactoring around new header discipline.
+        
+        - Adding crazy GC APIs to window.internals to enable us to test the GC's runloop discipline.
+
+        * ForwardingHeaders/heap/GCFinalizationCallback.h: Added.
+        * ForwardingHeaders/heap/IncrementalSweeper.h: Added.
+        * ForwardingHeaders/heap/MachineStackMarker.h: Added.
+        * ForwardingHeaders/heap/RunningScope.h: Added.
+        * bindings/js/CommonVM.cpp:
+        * testing/Internals.cpp:
+        (WebCore::Internals::parserMetaData):
+        (WebCore::Internals::isReadableStreamDisturbed):
+        (WebCore::Internals::isGCRunning):
+        (WebCore::Internals::addGCFinalizationCallback):
+        (WebCore::Internals::stopSweeping):
+        (WebCore::Internals::startSweeping):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-02-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] remove toJSValueFromJsonWebKey from custom SubtleCrypto binding codes

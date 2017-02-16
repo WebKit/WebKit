@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,19 +27,15 @@
 
 namespace JSC {
 
-enum class MutatorState {
-    // The mutator is running when it's not inside a Heap slow path.
-    Running,
-    
-    // The mutator is in an allocation slow path.
-    Allocating,
-    
-    // The mutator is sweeping.
-    Sweeping,
-    
-    // The mutator is collecting.
-    Collecting
+// Either the mutator has the conn (https://en.wikipedia.org/wiki/Conn_(nautical)), meaning that the
+// mutator will incrementally drive the collector when it calls into slow paths; or the collector has the
+// conn, meaning that the collector thread will drive the collector.
+enum class GCConductor : uint8_t {
+    Mutator,
+    Collector
 };
+
+const char* gcConductorShortName(GCConductor officer);
 
 } // namespace JSC
 
@@ -47,7 +43,7 @@ namespace WTF {
 
 class PrintStream;
 
-void printInternal(PrintStream&, JSC::MutatorState);
+void printInternal(PrintStream&, JSC::GCConductor);
 
 } // namespace WTF
 

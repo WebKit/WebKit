@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "GCConductor.h"
+
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 
-enum class MutatorState {
-    // The mutator is running when it's not inside a Heap slow path.
-    Running,
+const char* gcConductorShortName(GCConductor conn)
+{
+    switch (conn) {
+    case GCConductor::Mutator:
+        return "M";
+    case GCConductor::Collector:
+        return "C";
+    }
     
-    // The mutator is in an allocation slow path.
-    Allocating,
-    
-    // The mutator is sweeping.
-    Sweeping,
-    
-    // The mutator is collecting.
-    Collecting
-};
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 } // namespace JSC
 
 namespace WTF {
 
-class PrintStream;
+using namespace JSC;
 
-void printInternal(PrintStream&, JSC::MutatorState);
+void printInternal(PrintStream& out, GCConductor conn)
+{
+    switch (conn) {
+    case GCConductor::Mutator:
+        out.print("Mutator");
+        return;
+    case GCConductor::Collector:
+        out.print("Collector");
+        return;
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 } // namespace WTF
 

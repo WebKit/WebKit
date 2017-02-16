@@ -1,3 +1,26 @@
+2017-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        The collector thread should only start when the mutator doesn't have heap access
+        https://bugs.webkit.org/show_bug.cgi?id=167737
+
+        Reviewed by Keith Miller.
+        
+        When running in WebCore, the JSC GC may find itself completing draining in the parallel helpers
+        at a time when the main thread runloop is idle. If the mutator has the conn, then there will not
+        be any GC threads to receive the notification from the shared mark stack condition variable. So
+        nobody will know that we need to reloop.
+        
+        Fortunately, the SlotVisitor now knows that it has to schedule the stopIfNecessary timer in
+        addition to notifying the condition variable.
+        
+        This adds a variant of splay that quickly builds up a big enough heap to cause significant GCs to
+        happen and then waits until a GC is running. When it's running, it registers a callback to the
+        GC's finalize phase. When the callback runs, it finishes the test. This is a barely-sound test
+        that uses a lot of while box API from Internals, but it proves that the SlotVisitor's runloop
+        ping works: if I comment it out, this test will always fail. Otherwise it always succeeds.
+        
+        * js/dom/gc-slot-visitor-parallel-drain-pings-runloop-when-done.html: Added.
+
 2017-02-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] remove toJSValueFromJsonWebKey from custom SubtleCrypto binding codes
