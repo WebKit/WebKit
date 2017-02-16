@@ -30,14 +30,10 @@
 #include "Error.h"
 #include "JSCInlines.h"
 #include "JSModuleEnvironment.h"
-#include "JSPropertyNameIterator.h"
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL moduleNamespaceObjectSymbolIterator(ExecState*);
-
 const ClassInfo JSModuleNamespaceObject::s_info = { "ModuleNamespaceObject", &Base::s_info, nullptr, CREATE_METHOD_TABLE(JSModuleNamespaceObject) };
-
 
 JSModuleNamespaceObject::JSModuleNamespaceObject(VM& vm, Structure* structure)
     : Base(vm, structure)
@@ -45,7 +41,7 @@ JSModuleNamespaceObject::JSModuleNamespaceObject(VM& vm, Structure* structure)
 {
 }
 
-void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject* globalObject, AbstractModuleRecord* moduleRecord, const IdentifierSet& exports)
+void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject*, AbstractModuleRecord* moduleRecord, const IdentifierSet& exports)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -69,9 +65,7 @@ void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject* gl
         m_exports.add(identifier);
 
     m_moduleRecord.set(vm, this, moduleRecord);
-    JSFunction* iteratorFunction = JSFunction::create(vm, globalObject, 0, ASCIILiteral("[Symbol.iterator]"), moduleNamespaceObjectSymbolIterator, NoIntrinsic);
-    putDirect(vm, vm.propertyNames->iteratorSymbol, iteratorFunction, DontEnum);
-    putDirect(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Module"), DontEnum | ReadOnly);
+    putDirect(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Module"), DontEnum | DontDelete | ReadOnly);
 
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-getprototypeof
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-setprototypeof-v
@@ -181,10 +175,13 @@ bool JSModuleNamespaceObject::putByIndex(JSCell*, ExecState* exec, unsigned, JSV
     return false;
 }
 
-bool JSModuleNamespaceObject::deleteProperty(JSCell* cell, ExecState*, PropertyName propertyName)
+bool JSModuleNamespaceObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-delete-p
     JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
+    if (propertyName.isSymbol())
+        return JSObject::deleteProperty(thisObject, exec, propertyName);
+
     return !thisObject->m_exports.contains(propertyName.uid());
 }
 
@@ -206,17 +203,6 @@ bool JSModuleNamespaceObject::defineOwnProperty(JSObject*, ExecState* exec, Prop
     if (shouldThrow)
         throwTypeError(exec, scope, ASCIILiteral(NonExtensibleObjectPropertyDefineError));
     return false;
-}
-
-EncodedJSValue JSC_HOST_CALL moduleNamespaceObjectSymbolIterator(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSModuleNamespaceObject* object = jsDynamicCast<JSModuleNamespaceObject*>(vm, exec->thisValue());
-    if (!object)
-        return throwVMTypeError(exec, scope, ASCIILiteral("|this| should be a module namespace object"));
-    return JSValue::encode(JSPropertyNameIterator::create(exec, exec->lexicalGlobalObject()->propertyNameIteratorStructure(), object));
 }
 
 } // namespace JSC

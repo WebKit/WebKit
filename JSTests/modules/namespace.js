@@ -21,7 +21,7 @@ shouldBe('Cappuccino' in namespace, true);
 shouldBe('Matcha' in namespace, true);
 shouldBe('Mocha' in namespace, true);
 shouldBe('default' in namespace, true);
-shouldBe(Symbol.iterator in namespace, true);
+shouldBe(Symbol.iterator in namespace, false);
 shouldBe('Tea' in namespace, false);
 
 shouldBe(namespace.__proto__, undefined);
@@ -61,14 +61,8 @@ shouldBe(Reflect.getPrototypeOf(namespace), null);
 
 // These names should be shown in the code point order.
 shouldBe(JSON.stringify(Object.getOwnPropertyNames(namespace)), `["Cappuccino","Cocoa","Matcha","Mocha","default"]`);
-shouldBe(Object.getOwnPropertySymbols(namespace).length, 2);
-shouldBe(Object.getOwnPropertySymbols(namespace)[0], Symbol.iterator);
-shouldBe(Object.getOwnPropertySymbols(namespace)[1], Symbol.toStringTag);
-
-shouldBe(typeof namespace[Symbol.iterator], 'function');
-var array = Array.from(namespace);
-// These names should be shown in the code point order.
-shouldBe(JSON.stringify(array), `["Cappuccino","Cocoa","Matcha","Mocha","default"]`);
+shouldBe(Object.getOwnPropertySymbols(namespace).length, 1);
+shouldBe(Object.getOwnPropertySymbols(namespace)[0], Symbol.toStringTag);
 
 // The imported binding properties of the namespace object seen as writable, but, it does not mean that it is writable by users.
 shouldBe(JSON.stringify(Reflect.getOwnPropertyDescriptor(namespace, "Cocoa")), `{"value":"Cocoa","writable":true,"enumerable":true,"configurable":false}`);
@@ -79,10 +73,9 @@ shouldThrow(() => {
     namespace.Cocoa = 'Cocoa';
 }, `TypeError: Attempted to assign to readonly property.`);
 
-// In the case of non imported properties, we just return the original descriptor.
-// But still these properties cannot be changed.
-shouldBe(JSON.stringify(Reflect.getOwnPropertyDescriptor(namespace, Symbol.iterator)), `{"writable":true,"enumerable":false,"configurable":true}`);
+shouldBe(JSON.stringify(Reflect.getOwnPropertyDescriptor(namespace, Symbol.toStringTag)), `{"value":"Module","writable":false,"enumerable":false,"configurable":false}`);
 shouldThrow(() => {
-    namespace[Symbol.iterator] = 42;
+    namespace[Symbol.toStringTag] = 42;
 }, `TypeError: Attempted to assign to readonly property.`);
 
+shouldBe(Reflect.deleteProperty(namespace, Symbol.toStringTag), false);

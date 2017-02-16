@@ -4,4 +4,4 @@ export let length = 42;
 export let hello = 44;
 
 let array = new Uint8Array(ns);
-shouldBe(array.length, 2);
+shouldBe(array.length, 0);

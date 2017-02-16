@@ -1,3 +1,24 @@
+2017-02-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Update module namespace object according to the latest ECMA262
+        https://bugs.webkit.org/show_bug.cgi?id=168280
+
+        Reviewed by Saam Barati.
+
+        Reflect updates to the module namespace object.
+
+        1. @@iterator property is dropped[1].
+        2. @@toStringTag property becomes non-configurable[1].
+        3. delete with Symbol should be delegated to the JSObject's one[2].
+
+        [1]: https://tc39.github.io/ecma262/#sec-module-namespace-objects
+        [2]: https://github.com/tc39/ecma262/pull/767
+
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        (JSC::JSModuleNamespaceObject::deleteProperty):
+        (JSC::moduleNamespaceObjectSymbolIterator): Deleted.
+
 2017-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the build after r212424.

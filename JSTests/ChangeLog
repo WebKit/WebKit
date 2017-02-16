@@ -1,3 +1,16 @@
+2017-02-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Update module namespace object according to the latest ECMA262
+        https://bugs.webkit.org/show_bug.cgi?id=168280
+
+        Reviewed by Saam Barati.
+
+        * modules/namespace-object-symbol-iterator-name.js:
+        * modules/namespace-object-typed-array-fast-path.js:
+        * modules/namespace.js:
+        (shouldBe.JSON.stringify.Reflect.getOwnPropertyDescriptor):
+        (shouldThrow):
+
 2017-02-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Implement (Shared)ArrayBuffer.prototype.byteLength
