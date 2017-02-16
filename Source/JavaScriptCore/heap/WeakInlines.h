@@ -71,20 +71,23 @@ template<typename T> inline auto Weak<T>::operator=(Weak&& other) -> Weak&
 template<typename T> inline T* Weak<T>::operator->() const
 {
     ASSERT(m_impl && m_impl->state() == WeakImpl::Live);
-    return jsCast<T*>(m_impl->jsValue().asCell());
+    // We can't use jsCast here since we could be called in a finalizer.
+    return static_cast<T*>(m_impl->jsValue().asCell());
 }
 
 template<typename T> inline T& Weak<T>::operator*() const
 {
     ASSERT(m_impl && m_impl->state() == WeakImpl::Live);
-    return *jsCast<T*>(m_impl->jsValue().asCell());
+    // We can't use jsCast here since we could be called in a finalizer.
+    return *static_cast<T*>(m_impl->jsValue().asCell());
 }
 
 template<typename T> inline T* Weak<T>::get() const
 {
     if (!m_impl || m_impl->state() != WeakImpl::Live)
-        return 0;
-    return jsCast<T*>(m_impl->jsValue().asCell());
+        return nullptr;
+    // We can't use jsCast here since we could be called in a finalizer.
+    return static_cast<T*>(m_impl->jsValue().asCell());
 }
 
 template<typename T> inline bool Weak<T>::was(T* other) const
