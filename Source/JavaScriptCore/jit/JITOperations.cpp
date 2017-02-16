@@ -211,7 +211,7 @@ EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(ExecState* exec, Struct
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (stubInfo->considerCaching(exec->codeBlock(), baseValue.structureOrNull()) && !slot.isTaintedByOpaqueObject() && (slot.isCacheableValue() || slot.isCacheableGetter() || slot.isUnset()))
-        repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Pure);
+        repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Try);
 
     return JSValue::encode(slot.getPureResult());
 }

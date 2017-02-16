@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "ComplexGetStatus.h"
+#include "GetterSetterAccessCase.h"
 #include "LLIntData.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
@@ -227,7 +228,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                 case ComplexGetStatus::Inlineable: {
                     std::unique_ptr<CallLinkStatus> callLinkStatus =
                         std::make_unique<CallLinkStatus>();
-                    if (CallLinkInfo* callLinkInfo = access.callLinkInfo()) {
+                    if (CallLinkInfo* callLinkInfo = access.as<GetterSetterAccessCase>().callLinkInfo()) {
                         *callLinkStatus = CallLinkStatus::computeFor(
                             locker, profiledBlock, *callLinkInfo, callExitSiteData);
                     }

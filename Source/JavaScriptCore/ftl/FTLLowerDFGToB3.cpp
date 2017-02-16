@@ -626,7 +626,7 @@ private:
             compilePutStructure();
             break;
         case TryGetById:
-            compileGetById(AccessType::GetPure);
+            compileGetById(AccessType::TryGet);
             break;
         case GetById:
         case GetByIdFlush:
@@ -2814,7 +2814,7 @@ private:
     
     void compileGetById(AccessType type)
     {
-        ASSERT(type == AccessType::Get || type == AccessType::GetPure);
+        ASSERT(type == AccessType::Get || type == AccessType::TryGet);
         switch (m_node->child1().useKind()) {
         case CellUse: {
             setJSValue(getById(lowCell(m_node->child1()), type));

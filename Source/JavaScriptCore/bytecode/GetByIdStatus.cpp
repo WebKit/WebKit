@@ -28,6 +28,8 @@
 
 #include "CodeBlock.h"
 #include "ComplexGetStatus.h"
+#include "GetterSetterAccessCase.h"
+#include "IntrinsicGetterAccessCase.h"
 #include "JSCInlines.h"
 #include "JSScope.h"
 #include "LLIntData.h"
@@ -231,19 +233,19 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                     break;
                 }
                 case AccessCase::IntrinsicGetter: {
-                    intrinsicFunction = access.intrinsicFunction();
+                    intrinsicFunction = access.as<IntrinsicGetterAccessCase>().intrinsicFunction();
                     break;
                 }
                 case AccessCase::Getter: {
                     callLinkStatus = std::make_unique<CallLinkStatus>();
-                    if (CallLinkInfo* callLinkInfo = access.callLinkInfo()) {
+                    if (CallLinkInfo* callLinkInfo = access.as<GetterSetterAccessCase>().callLinkInfo()) {
                         *callLinkStatus = CallLinkStatus::computeFor(
                             locker, profiledBlock, *callLinkInfo, callExitSiteData);
                     }
                     break;
                 }
                 case AccessCase::CustomAccessorGetter: {
-                    domJIT = access.domJIT();
+                    domJIT = access.as<GetterSetterAccessCase>().domJIT();
                     if (!domJIT)
                         return GetByIdStatus(slowPathState, true);
                     result.m_state = Custom;

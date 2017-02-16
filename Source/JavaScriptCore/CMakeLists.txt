@@ -185,6 +185,7 @@ set(JavaScriptCore_SOURCES
     builtins/BuiltinExecutables.cpp
     builtins/BuiltinExecutableCreator.cpp
 
+    bytecode/AccessCase.cpp
     bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp
     bytecode/ArithProfile.cpp
     bytecode/ArrayAllocationProfile.cpp
@@ -218,9 +219,11 @@ set(JavaScriptCore_SOURCES
     bytecode/FunctionCodeBlock.cpp
     bytecode/GetByIdStatus.cpp
     bytecode/GetByIdVariant.cpp
+    bytecode/GetterSetterAccessCase.cpp
     bytecode/InlineAccess.cpp
     bytecode/InlineCallFrame.cpp
     bytecode/InlineCallFrameSet.cpp
+    bytecode/IntrinsicGetterAccessCase.cpp
     bytecode/JumpTable.cpp
     bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp
     bytecode/LazyOperandValueProfile.cpp
@@ -233,6 +236,7 @@ set(JavaScriptCore_SOURCES
     bytecode/PreciseJumpTargets.cpp
     bytecode/ProgramCodeBlock.cpp
     bytecode/PropertyCondition.cpp
+    bytecode/ProxyableAccessCase.cpp
     bytecode/PutByIdFlags.cpp
     bytecode/PutByIdStatus.cpp
     bytecode/PutByIdVariant.cpp

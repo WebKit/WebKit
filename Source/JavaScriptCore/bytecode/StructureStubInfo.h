@@ -47,7 +47,7 @@ class PolymorphicAccess;
 
 enum class AccessType : int8_t {
     Get,
-    GetPure,
+    TryGet,
     Put,
     In
 };

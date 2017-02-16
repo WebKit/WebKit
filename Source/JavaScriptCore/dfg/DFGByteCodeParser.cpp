@@ -4531,7 +4531,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 m_inlineStackTop->m_profiledBlock, m_dfgCodeBlock,
                 m_inlineStackTop->m_stubInfos, m_dfgStubInfos,
                 currentCodeOrigin(), uid);
-            AccessType type = op_try_get_by_id == opcodeID ? AccessType::GetPure : AccessType::Get;
+            AccessType type = op_try_get_by_id == opcodeID ? AccessType::TryGet : AccessType::Get;
 
             unsigned opcodeLength = opcodeID == op_try_get_by_id ? OPCODE_LENGTH(op_try_get_by_id) : OPCODE_LENGTH(op_get_by_id);
 

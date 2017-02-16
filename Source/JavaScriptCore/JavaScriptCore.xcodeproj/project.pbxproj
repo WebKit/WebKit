@@ -1304,6 +1304,11 @@
 		534902851C7276B70012BCB8 /* TypedArrayCTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 534902821C7242C80012BCB8 /* TypedArrayCTest.cpp */; };
 		534C457C1BC72411007476A7 /* JSTypedArrayViewConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 534C457B1BC72411007476A7 /* JSTypedArrayViewConstructor.h */; };
 		534C457E1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 534C457D1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp */; };
+		534E034E1E4D4B1600213F64 /* AccessCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 534E034D1E4D4B1600213F64 /* AccessCase.h */; };
+		534E03501E4D95ED00213F64 /* AccessCase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 534E034F1E4D95ED00213F64 /* AccessCase.cpp */; };
+		534E03541E53BD2900213F64 /* IntrinsicGetterAccessCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 534E03531E53BD2900213F64 /* IntrinsicGetterAccessCase.h */; };
+		534E03561E53BEDE00213F64 /* ProxyableAccessCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 534E03551E53BEDE00213F64 /* ProxyableAccessCase.h */; };
+		534E03581E53BF2F00213F64 /* GetterSetterAccessCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 534E03571E53BF2F00213F64 /* GetterSetterAccessCase.h */; };
 		53529A4C1C457B75000B49C6 /* APIUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 53529A4B1C457B75000B49C6 /* APIUtils.h */; };
 		535557141D9D9EA5006D583B /* WasmMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 535557131D9D9EA5006D583B /* WasmMemory.h */; };
 		535557161D9DFA32006D583B /* WasmMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 535557151D9DFA32006D583B /* WasmMemory.cpp */; };
@@ -1311,6 +1316,9 @@
 		5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */; };
 		53917E7B1B7906FA000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */; };
 		539FB8BA1C99DA7C00940FA1 /* JSArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */; };
+		53B0BE341E561AC900A8FC29 /* GetterSetterAccessCase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE331E561AC900A8FC29 /* GetterSetterAccessCase.cpp */; };
+		53B0BE361E561B0900A8FC29 /* ProxyableAccessCase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE351E561B0900A8FC29 /* ProxyableAccessCase.cpp */; };
+		53B0BE381E561B2400A8FC29 /* IntrinsicGetterAccessCase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE371E561B2400A8FC29 /* IntrinsicGetterAccessCase.cpp */; };
 		53D444DC1DAF08AB00B92784 /* B3WasmAddressValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D444DB1DAF08AB00B92784 /* B3WasmAddressValue.h */; };
 		53D444DE1DAF09A000B92784 /* B3WasmAddressValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53D444DD1DAF09A000B92784 /* B3WasmAddressValue.cpp */; };
 		53F40E851D58F9770099A1B6 /* WasmSections.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E841D58F9770099A1B6 /* WasmSections.h */; };
@@ -3741,6 +3749,11 @@
 		534C457A1BC703DC007476A7 /* TypedArrayConstructor.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = TypedArrayConstructor.js; sourceTree = "<group>"; };
 		534C457B1BC72411007476A7 /* JSTypedArrayViewConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypedArrayViewConstructor.h; sourceTree = "<group>"; };
 		534C457D1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedArrayViewConstructor.cpp; sourceTree = "<group>"; };
+		534E034D1E4D4B1600213F64 /* AccessCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessCase.h; sourceTree = "<group>"; };
+		534E034F1E4D95ED00213F64 /* AccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessCase.cpp; sourceTree = "<group>"; };
+		534E03531E53BD2900213F64 /* IntrinsicGetterAccessCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntrinsicGetterAccessCase.h; sourceTree = "<group>"; };
+		534E03551E53BEDE00213F64 /* ProxyableAccessCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyableAccessCase.h; sourceTree = "<group>"; };
+		534E03571E53BF2F00213F64 /* GetterSetterAccessCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetterSetterAccessCase.h; sourceTree = "<group>"; };
 		53529A4B1C457B75000B49C6 /* APIUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIUtils.h; sourceTree = "<group>"; };
 		535557131D9D9EA5006D583B /* WasmMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmMemory.h; sourceTree = "<group>"; };
 		535557151D9DFA32006D583B /* WasmMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmMemory.cpp; sourceTree = "<group>"; };
@@ -3751,6 +3764,9 @@
 		53917E831B791CB8000EBD33 /* TypedArrayPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = TypedArrayPrototype.js; path = builtins/TypedArrayPrototype.js; sourceTree = SOURCE_ROOT; };
 		539EB0711D553DF800C82EF7 /* testWasm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testWasm.cpp; sourceTree = "<group>"; };
 		539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayInlines.h; sourceTree = "<group>"; };
+		53B0BE331E561AC900A8FC29 /* GetterSetterAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetterSetterAccessCase.cpp; sourceTree = "<group>"; };
+		53B0BE351E561B0900A8FC29 /* ProxyableAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyableAccessCase.cpp; sourceTree = "<group>"; };
+		53B0BE371E561B2400A8FC29 /* IntrinsicGetterAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntrinsicGetterAccessCase.cpp; sourceTree = "<group>"; };
 		53D444DB1DAF08AB00B92784 /* B3WasmAddressValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3WasmAddressValue.h; path = b3/B3WasmAddressValue.h; sourceTree = "<group>"; };
 		53D444DD1DAF09A000B92784 /* B3WasmAddressValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3WasmAddressValue.cpp; path = b3/B3WasmAddressValue.cpp; sourceTree = "<group>"; };
 		53F256E11B87E28000B4B768 /* JSTypedArrayViewPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedArrayViewPrototype.cpp; sourceTree = "<group>"; };
@@ -6012,6 +6028,21 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		534E03521E53BBA900213F64 /* accessCase */ = {
+			isa = PBXGroup;
+			children = (
+				534E034F1E4D95ED00213F64 /* AccessCase.cpp */,
+				534E034D1E4D4B1600213F64 /* AccessCase.h */,
+				53B0BE371E561B2400A8FC29 /* IntrinsicGetterAccessCase.cpp */,
+				534E03531E53BD2900213F64 /* IntrinsicGetterAccessCase.h */,
+				53B0BE351E561B0900A8FC29 /* ProxyableAccessCase.cpp */,
+				534E03551E53BEDE00213F64 /* ProxyableAccessCase.h */,
+				53B0BE331E561AC900A8FC29 /* GetterSetterAccessCase.cpp */,
+				534E03571E53BF2F00213F64 /* GetterSetterAccessCase.h */,
+			);
+			name = accessCase;
+			sourceTree = "<group>";
+		};
 		650FDF8D09D0FCA700769E54 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -7299,6 +7330,7 @@
 		969A078F0ED1D3AE00F1F681 /* bytecode */ = {
 			isa = PBXGroup;
 			children = (
+				534E03521E53BBA900213F64 /* accessCase */,
 				5370B4F31BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp */,
 				5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */,
 				79A228331D35D71E00D8E067 /* ArithProfile.cpp */,
@@ -7980,6 +8012,7 @@
 				0F6B8AE51C4EFE1700969052 /* B3FixSSA.h in Headers */,
 				0F725CB01C506D3B00AD943A /* B3FoldPathConstants.h in Headers */,
 				0FEC85161BDACDAC0080FF74 /* B3FrequencyClass.h in Headers */,
+				534E03561E53BEDE00213F64 /* ProxyableAccessCase.h in Headers */,
 				0FEC85171BDACDAC0080FF74 /* B3FrequentedBlock.h in Headers */,
 				0FEC85191BDACDAC0080FF74 /* B3Generate.h in Headers */,
 				0FEC851A1BDACDAC0080FF74 /* B3GenericFrequentedBlock.h in Headers */,
@@ -8435,6 +8468,7 @@
 				0FEA0A12170513DB00BB722C /* FTLState.h in Headers */,
 				A7FCC26D17A0B6AA00786D1A /* FTLSwitchCase.h in Headers */,
 				0F235BE217178E1C00690C7F /* FTLThunks.h in Headers */,
+				534E03541E53BD2900213F64 /* IntrinsicGetterAccessCase.h in Headers */,
 				0FEA0A201708B00700BB722C /* FTLTypedPointer.h in Headers */,
 				0FDB2CCA173DA523007B3C1B /* FTLValueFromBlock.h in Headers */,
 				0F5A6284188C98D40072C9DF /* FTLValueRange.h in Headers */,
@@ -8449,6 +8483,7 @@
 				52B310FB1974AE610080857C /* FunctionHasExecutedCache.h in Headers */,
 				FE4BFF2C1AD476E700088F87 /* FunctionOverrides.h in Headers */,
 				BC18C4050E16F5CD00B34460 /* FunctionPrototype.h in Headers */,
+				534E03581E53BF2F00213F64 /* GetterSetterAccessCase.h in Headers */,
 				62D2D3901ADF103F000206C1 /* FunctionRareData.h in Headers */,
 				FEA0C4031CDD7D1D00481991 /* FunctionWhitelist.h in Headers */,
 				2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */,
@@ -8716,6 +8751,7 @@
 				A503FA1E188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h in Headers */,
 				7013CA8C1B491A9400CAE613 /* JSJob.h in Headers */,
 				BC18C4160E16F5CD00B34460 /* JSLexicalEnvironment.h in Headers */,
+				534E034E1E4D4B1600213F64 /* AccessCase.h in Headers */,
 				BC18C4230E16F5CD00B34460 /* JSLock.h in Headers */,
 				C25D709C16DE99F400FCA6BC /* JSManagedValue.h in Headers */,
 				2A4BB7F318A41179008A0FCD /* JSManagedValueInternal.h in Headers */,
@@ -10118,6 +10154,7 @@
 				0F235BE117178E1C00690C7F /* FTLThunks.cpp in Sources */,
 				0F5A6283188C98D40072C9DF /* FTLValueRange.cpp in Sources */,
 				2A83638918D7D0FE0000EBCC /* FullGCActivityCallback.cpp in Sources */,
+				53B0BE381E561B2400A8FC29 /* IntrinsicGetterAccessCase.cpp in Sources */,
 				14AD911B1DCA97FD0014F9FE /* FunctionCodeBlock.cpp in Sources */,
 				147F39CB107EC37600427A48 /* FunctionConstructor.cpp in Sources */,
 				147341E31DC2CE9600AA29BA /* FunctionExecutable.cpp in Sources */,
@@ -10319,6 +10356,7 @@
 				53486BBB1C18E84500F6F3AF /* JSTypedArray.cpp in Sources */,
 				0F2B66FA17B6B5AB00A7AE3F /* JSTypedArrayConstructors.cpp in Sources */,
 				0F2B66FC17B6B5AB00A7AE3F /* JSTypedArrayPrototypes.cpp in Sources */,
+				53B0BE361E561B0900A8FC29 /* ProxyableAccessCase.cpp in Sources */,
 				0F2B66FE17B6B5AB00A7AE3F /* JSTypedArrays.cpp in Sources */,
 				534C457E1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp in Sources */,
 				DEA7E2441BBC677200D78440 /* JSTypedArrayViewPrototype.cpp in Sources */,
@@ -10338,6 +10376,7 @@
 				AD2FCBE81DB58DAD00B3E736 /* JSWebAssemblyRuntimeError.cpp in Sources */,
 				AD2FCBEA1DB58DAD00B3E736 /* JSWebAssemblyTable.cpp in Sources */,
 				1442566115EDE98D0066A49B /* JSWithScope.cpp in Sources */,
+				534E03501E4D95ED00213F64 /* AccessCase.cpp in Sources */,
 				86E3C618167BABEE006D760A /* JSWrapperMap.mm in Sources */,
 				14280870107EC1340013E7B2 /* JSWrapperObject.cpp in Sources */,
 				BCFD8C920EEB2EE700283848 /* JumpTable.cpp in Sources */,
@@ -10578,6 +10617,7 @@
 				1ACF7377171CA6FB00C9BB1E /* Weak.cpp in Sources */,
 				14E84F9E14EE1ACC00D6D5D4 /* WeakBlock.cpp in Sources */,
 				14F7256514EE265E00B1652B /* WeakHandleOwner.cpp in Sources */,
+				53B0BE341E561AC900A8FC29 /* GetterSetterAccessCase.cpp in Sources */,
 				A7CA3AE317DA41AE006538AF /* WeakMapConstructor.cpp in Sources */,
 				A7CA3AEB17DA5168006538AF /* WeakMapData.cpp in Sources */,
 				A7CA3AE517DA41AE006538AF /* WeakMapPrototype.cpp in Sources */,

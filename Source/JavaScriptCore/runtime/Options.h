@@ -228,7 +228,6 @@ typedef const char* optionString;
     v(bool, clobberAllRegsInFTLICSlowPath, !ASSERT_DISABLED, Normal, nullptr) \
     v(bool, useAccessInlining, true, Normal, nullptr) \
     v(unsigned, maxAccessVariantListSize, 8, Normal, nullptr) \
-    v(unsigned, megamorphicLoadCost, 999, Normal, nullptr) /* This used to be 10, but we're temporarily testing what happens when the feature is disabled. */\
     v(bool, usePolyvariantDevirtualization, true, Normal, nullptr) \
     v(bool, usePolymorphicAccessInlining, true, Normal, nullptr) \
     v(bool, usePolymorphicCallInlining, true, Normal, nullptr) \

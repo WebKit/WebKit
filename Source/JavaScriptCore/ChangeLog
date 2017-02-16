@@ -1,3 +1,176 @@
+2017-02-16  Keith Miller  <keith_miller@apple.com>
+
+        Refactor AccessCase to be more like B3Value
+        https://bugs.webkit.org/show_bug.cgi?id=168408
+
+        Reviewed by Filip Pizlo.
+
+        This patch makes AccessCase (and new subclasses) more like B3Value. In the new system each
+        type has an associated AccessCase subclass. For instance any getter should use the
+        GetterSetterAccessCase subclass. The new system is easier to follow since you no longer need
+        to know exactly which members are used by which types. The subclass to AccessType mapping is:
+
+        GetterSetterAccessCase:
+            Getter
+            CustomAccessorGetter
+            CustomValueGetter
+            Setter
+
+        ProxyableAccessCase:
+            Load
+            Miss
+            GetGetter
+
+        IntrinsicGetterAccessCase:
+            IntrinsicGetter
+
+        AccessCase:
+            Everything else
+
+        It also has the additional advantage that it uses less memory for the cases where we would have needed
+        rare data in the past but that case would only use a small bit of it.
+
+        This patch also removes megamorphic loads and renames some TryGetById related enum values from Pure to Try.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/AccessCase.cpp: Added.
+        (JSC::AccessCase::AccessCase):
+        (JSC::AccessCase::create):
+        (JSC::AccessCase::~AccessCase):
+        (JSC::AccessCase::fromStructureStubInfo):
+        (JSC::AccessCase::clone):
+        (JSC::AccessCase::commit):
+        (JSC::AccessCase::guardedByStructureCheck):
+        (JSC::AccessCase::doesCalls):
+        (JSC::AccessCase::couldStillSucceed):
+        (JSC::AccessCase::canReplace):
+        (JSC::AccessCase::dump):
+        (JSC::AccessCase::visitWeak):
+        (JSC::AccessCase::propagateTransitions):
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generate):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AccessCase.h: Added.
+        (JSC::AccessCase::as):
+        (JSC::AccessCase::create):
+        (JSC::AccessCase::type):
+        (JSC::AccessCase::state):
+        (JSC::AccessCase::offset):
+        (JSC::AccessCase::structure):
+        (JSC::AccessCase::newStructure):
+        (JSC::AccessCase::conditionSet):
+        (JSC::AccessCase::alternateBase):
+        (JSC::AccessCase::additionalSet):
+        (JSC::AccessCase::viaProxy):
+        (JSC::AccessCase::isGetter):
+        (JSC::AccessCase::isAccessor):
+        (JSC::AccessCase::dumpImpl):
+        (JSC::AccessCase::resetState):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/GetterSetterAccessCase.cpp: Added.
+        (JSC::GetterSetterAccessCase::GetterSetterAccessCase):
+        (JSC::GetterSetterAccessCase::create):
+        (JSC::GetterSetterAccessCase::~GetterSetterAccessCase):
+        (JSC::GetterSetterAccessCase::clone):
+        (JSC::GetterSetterAccessCase::alternateBase):
+        (JSC::GetterSetterAccessCase::dumpImpl):
+        (JSC::GetterSetterAccessCase::emitDOMJITGetter):
+        * bytecode/GetterSetterAccessCase.h: Added.
+        (JSC::GetterSetterAccessCase::callLinkInfo):
+        (JSC::GetterSetterAccessCase::customSlotBase):
+        (JSC::GetterSetterAccessCase::domJIT):
+        * bytecode/IntrinsicGetterAccessCase.cpp: Added.
+        (JSC::IntrinsicGetterAccessCase::IntrinsicGetterAccessCase):
+        (JSC::IntrinsicGetterAccessCase::create):
+        (JSC::IntrinsicGetterAccessCase::~IntrinsicGetterAccessCase):
+        (JSC::IntrinsicGetterAccessCase::clone):
+        * bytecode/IntrinsicGetterAccessCase.h: Added.
+        (JSC::IntrinsicGetterAccessCase::intrinsicFunction):
+        (JSC::IntrinsicGetterAccessCase::intrinsic):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        (WTF::printInternal):
+        (JSC::AccessCase::AccessCase): Deleted.
+        (JSC::AccessCase::tryGet): Deleted.
+        (JSC::AccessCase::get): Deleted.
+        (JSC::AccessCase::megamorphicLoad): Deleted.
+        (JSC::AccessCase::replace): Deleted.
+        (JSC::AccessCase::transition): Deleted.
+        (JSC::AccessCase::setter): Deleted.
+        (JSC::AccessCase::in): Deleted.
+        (JSC::AccessCase::getLength): Deleted.
+        (JSC::AccessCase::getIntrinsic): Deleted.
+        (JSC::AccessCase::~AccessCase): Deleted.
+        (JSC::AccessCase::fromStructureStubInfo): Deleted.
+        (JSC::AccessCase::clone): Deleted.
+        (JSC::AccessCase::commit): Deleted.
+        (JSC::AccessCase::guardedByStructureCheck): Deleted.
+        (JSC::AccessCase::alternateBase): Deleted.
+        (JSC::AccessCase::doesCalls): Deleted.
+        (JSC::AccessCase::couldStillSucceed): Deleted.
+        (JSC::AccessCase::canBeReplacedByMegamorphicLoad): Deleted.
+        (JSC::AccessCase::canReplace): Deleted.
+        (JSC::AccessCase::dump): Deleted.
+        (JSC::AccessCase::visitWeak): Deleted.
+        (JSC::AccessCase::propagateTransitions): Deleted.
+        (JSC::AccessCase::generateWithGuard): Deleted.
+        (JSC::AccessCase::generate): Deleted.
+        (JSC::AccessCase::generateImpl): Deleted.
+        (JSC::AccessCase::emitDOMJITGetter): Deleted.
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessCase::type): Deleted.
+        (JSC::AccessCase::state): Deleted.
+        (JSC::AccessCase::offset): Deleted.
+        (JSC::AccessCase::viaProxy): Deleted.
+        (JSC::AccessCase::structure): Deleted.
+        (JSC::AccessCase::newStructure): Deleted.
+        (JSC::AccessCase::conditionSet): Deleted.
+        (JSC::AccessCase::intrinsicFunction): Deleted.
+        (JSC::AccessCase::intrinsic): Deleted.
+        (JSC::AccessCase::domJIT): Deleted.
+        (JSC::AccessCase::additionalSet): Deleted.
+        (JSC::AccessCase::customSlotBase): Deleted.
+        (JSC::AccessCase::isGetter): Deleted.
+        (JSC::AccessCase::callLinkInfo): Deleted.
+        (JSC::AccessCase::RareData::RareData): Deleted.
+        * bytecode/ProxyableAccessCase.cpp: Added.
+        (JSC::ProxyableAccessCase::ProxyableAccessCase):
+        (JSC::ProxyableAccessCase::create):
+        (JSC::ProxyableAccessCase::~ProxyableAccessCase):
+        (JSC::ProxyableAccessCase::clone):
+        (JSC::ProxyableAccessCase::dumpImpl):
+        * bytecode/ProxyableAccessCase.h: Added.
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::reset):
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileTryGetById):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetById):
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::IntrinsicGetterAccessCase::canEmitIntrinsicGetter):
+        (JSC::IntrinsicGetterAccessCase::emitIntrinsicGetter):
+        (JSC::AccessCase::canEmitIntrinsicGetter): Deleted.
+        (JSC::AccessCase::emitIntrinsicGetter): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_try_get_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_try_get_by_id):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::tryRepatchIn):
+        * jit/Repatch.h:
+        * runtime/Options.h:
+
 2017-02-16  Filip Pizlo  <fpizlo@apple.com>
 
         JSONParseTest needs to hold the lock when the VM is destroyed

@@ -39,8 +39,10 @@
 #include "FunctionCodeBlock.h"
 #include "GCAwareJITStubRoutine.h"
 #include "GetterSetter.h"
+#include "GetterSetterAccessCase.h"
 #include "ICStats.h"
 #include "InlineAccess.h"
+#include "IntrinsicGetterAccessCase.h"
 #include "JIT.h"
 #include "JITInlines.h"
 #include "JSCInlines.h"
@@ -176,18 +178,18 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                 }
             }
 
-            newCase = AccessCase::getLength(vm, codeBlock, AccessCase::ArrayLength);
+            newCase = AccessCase::create(vm, codeBlock, AccessCase::ArrayLength);
         } else if (isJSString(baseValue))
-            newCase = AccessCase::getLength(vm, codeBlock, AccessCase::StringLength);
+            newCase = AccessCase::create(vm, codeBlock, AccessCase::StringLength);
         else if (DirectArguments* arguments = jsDynamicCast<DirectArguments*>(vm, baseValue)) {
             // If there were overrides, then we can handle this as a normal property load! Guarding
             // this with such a check enables us to add an IC case for that load if needed.
             if (!arguments->overrodeThings())
-                newCase = AccessCase::getLength(vm, codeBlock, AccessCase::DirectArgumentsLength);
+                newCase = AccessCase::create(vm, codeBlock, AccessCase::DirectArgumentsLength);
         } else if (ScopedArguments* arguments = jsDynamicCast<ScopedArguments*>(vm, baseValue)) {
             // Ditto.
             if (!arguments->overrodeThings())
-                newCase = AccessCase::getLength(vm, codeBlock, AccessCase::ScopedArgumentsLength);
+                newCase = AccessCase::create(vm, codeBlock, AccessCase::ScopedArgumentsLength);
         }
     }
     
@@ -267,7 +269,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
         if (slot.isCacheableCustom() && slot.domJIT())
             domJIT = slot.domJIT();
 
-        if (kind == GetByIDKind::Pure) {
+        if (kind == GetByIDKind::Try) {
             AccessCase::AccessType type;
             if (slot.isCacheableValue())
                 type = AccessCase::Load;
@@ -278,27 +280,28 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             else
                 RELEASE_ASSERT_NOT_REACHED();
 
-            newCase = AccessCase::tryGet(vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet());
-        } else if (!loadTargetFromProxy && getter && AccessCase::canEmitIntrinsicGetter(getter, structure))
-            newCase = AccessCase::getIntrinsic(vm, codeBlock, getter, slot.cachedOffset(), structure, conditionSet);
+            newCase = ProxyableAccessCase::create(vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet());
+        } else if (!loadTargetFromProxy && getter && IntrinsicGetterAccessCase::canEmitIntrinsicGetter(getter, structure))
+            newCase = IntrinsicGetterAccessCase::create(vm, codeBlock, slot.cachedOffset(), structure, conditionSet, getter);
         else {
-            AccessCase::AccessType type;
-            if (slot.isCacheableValue())
-                type = AccessCase::Load;
-            else if (slot.isUnset())
-                type = AccessCase::Miss;
-            else if (slot.isCacheableGetter())
-                type = AccessCase::Getter;
-            else if (slot.attributes() & CustomAccessor)
-                type = AccessCase::CustomAccessorGetter;
-            else
-                type = AccessCase::CustomValueGetter;
+            if (slot.isCacheableValue() || slot.isUnset()) {
+                newCase = ProxyableAccessCase::create(vm, codeBlock, slot.isUnset() ? AccessCase::Miss : AccessCase::Load,
+                    offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet());
+            } else {
+                AccessCase::AccessType type;
+                if (slot.isCacheableGetter())
+                    type = AccessCase::Getter;
+                else if (slot.attributes() & CustomAccessor)
+                    type = AccessCase::CustomAccessorGetter;
+                else
+                    type = AccessCase::CustomValueGetter;
 
-            newCase = AccessCase::get(
-                vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy,
-                slot.watchpointSet(), slot.isCacheableCustom() ? slot.customGetter() : nullptr,
-                slot.isCacheableCustom() ? slot.slotBase() : nullptr,
-                domJIT);
+                newCase = GetterSetterAccessCase::create(
+                    vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy,
+                    slot.watchpointSet(), slot.isCacheableCustom() ? slot.customGetter() : nullptr,
+                    slot.isCacheableCustom() ? slot.slotBase() : nullptr,
+                    domJIT);
+            }
         }
     }
 
@@ -386,7 +389,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                 }
             }
 
-            newCase = AccessCase::replace(vm, codeBlock, structure, slot.cachedOffset());
+            newCase = AccessCase::create(vm, codeBlock, AccessCase::Replace, slot.cachedOffset(), structure);
         } else {
             ASSERT(slot.type() == PutPropertySlot::NewProperty);
 
@@ -419,7 +422,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                     return GiveUpOnCache;
             }
 
-            newCase = AccessCase::transition(vm, codeBlock, structure, newStructure, offset, conditionSet);
+            newCase = AccessCase::create(vm, codeBlock, offset, structure, newStructure, conditionSet);
         }
     } else if (slot.isCacheableCustom() || slot.isCacheableSetter()) {
         if (slot.isCacheableCustom()) {
@@ -433,7 +436,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                     return GiveUpOnCache;
             }
 
-            newCase = AccessCase::setter(
+            newCase = GetterSetterAccessCase::create(
                 vm, codeBlock, slot.isCustomAccessor() ? AccessCase::CustomAccessorSetter : AccessCase::CustomValueSetter, structure, invalidOffset, conditionSet,
                 slot.customSetter(), slot.base());
         } else {
@@ -450,7 +453,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
             } else
                 offset = slot.cachedOffset();
 
-            newCase = AccessCase::setter(
+            newCase = GetterSetterAccessCase::create(
                 vm, codeBlock, AccessCase::Setter, structure, offset, conditionSet);
         }
     }
@@ -513,8 +516,8 @@ static InlineCacheAction tryRepatchIn(
 
     LOG_IC((ICEvent::InAddAccessCase, structure->classInfo(), ident));
 
-    std::unique_ptr<AccessCase> newCase = AccessCase::in(
-        vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, structure, conditionSet);
+    std::unique_ptr<AccessCase> newCase = AccessCase::create(
+        vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, invalidOffset, structure, conditionSet);
 
     AccessGenerationResult result = stubInfo.addAccessCase(codeBlock, ident, WTFMove(newCase));
     

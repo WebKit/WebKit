@@ -33,6 +33,7 @@
 #include "CCallHelpers.h"
 #include "CallFrame.h"
 #include "CodeBlock.h"
+#include "IntrinsicGetterAccessCase.h"
 #include "JSArrayBufferView.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
@@ -48,7 +49,7 @@ typedef CCallHelpers::ImmPtr ImmPtr;
 typedef CCallHelpers::TrustedImm64 TrustedImm64;
 typedef CCallHelpers::Imm64 Imm64;
 
-bool AccessCase::canEmitIntrinsicGetter(JSFunction* getter, Structure* structure)
+bool IntrinsicGetterAccessCase::canEmitIntrinsicGetter(JSFunction* getter, Structure* structure)
 {
 
     switch (getter->intrinsic()) {
@@ -68,7 +69,7 @@ bool AccessCase::canEmitIntrinsicGetter(JSFunction* getter, Structure* structure
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void AccessCase::emitIntrinsicGetter(AccessGenerationState& state)
+void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state)
 {
     CCallHelpers& jit = *state.jit;
     JSValueRegs valueRegs = state.valueRegs;

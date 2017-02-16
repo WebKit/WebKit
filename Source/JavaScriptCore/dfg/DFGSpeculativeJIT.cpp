@@ -1006,7 +1006,7 @@ void SpeculativeJIT::compileTryGetById(Node* node)
 
         base.use();
 
-        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->identifierNumber(), JITCompiler::Jump(), NeedToSpill, AccessType::GetPure);
+        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->identifierNumber(), JITCompiler::Jump(), NeedToSpill, AccessType::TryGet);
 
         jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
         break;
@@ -1023,7 +1023,7 @@ void SpeculativeJIT::compileTryGetById(Node* node)
 
         JITCompiler::Jump notCell = m_jit.branchIfNotCell(baseRegs);
 
-        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->identifierNumber(), notCell, NeedToSpill, AccessType::GetPure);
+        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->identifierNumber(), notCell, NeedToSpill, AccessType::TryGet);
 
         jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
         break;

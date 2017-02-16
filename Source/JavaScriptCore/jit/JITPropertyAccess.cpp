@@ -579,7 +579,7 @@ void JIT::emit_op_try_get_by_id(Instruction* currentInstruction)
 
     JITGetByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset), RegisterSet::stubUnavailableRegisters(),
-        ident->impl(), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::GetPure);
+        ident->impl(), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::TryGet);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
