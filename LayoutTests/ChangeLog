@@ -1,5 +1,13 @@
 2017-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline http/tests/xmlhttprequest/xmlhttprequest-test-custom-headers.html.
+
+        We always expect ',' since r212355.
+
+        * platform/gtk/http/tests/xmlhttprequest/xmlhttprequest-test-custom-headers-expected.txt: Added.
+
+2017-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Mark several reftests as image only failures.
 
         * platform/gtk/TestExpectations:
