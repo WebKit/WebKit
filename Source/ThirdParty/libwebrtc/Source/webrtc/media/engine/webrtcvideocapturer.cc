@@ -49,10 +49,20 @@ class WebRtcVcmFactory : public WebRtcVcmFactoryInterface {
   virtual rtc::scoped_refptr<webrtc::VideoCaptureModule> Create(
       int id,
       const char* device) {
+#if RTC_HAS_ASAN
+    // FIXME: this shouldn't be necessary.
+    return nullptr;
+#else
     return webrtc::VideoCaptureFactory::Create(id, device);
+#endif
   }
   virtual webrtc::VideoCaptureModule::DeviceInfo* CreateDeviceInfo(int id) {
+#if RTC_HAS_ASAN
+    // FIXME: this shouldn't be necessary.
+    return nullptr;
+#else
     return webrtc::VideoCaptureFactory::CreateDeviceInfo(id);
+#endif
   }
   virtual void DestroyDeviceInfo(webrtc::VideoCaptureModule::DeviceInfo* info) {
     delete info;
