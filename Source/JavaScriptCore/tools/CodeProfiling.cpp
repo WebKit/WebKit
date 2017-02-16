@@ -48,7 +48,7 @@ WTF::MetaAllocatorTracker* CodeProfiling::s_tracker = 0;
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 #endif
 
-#if (OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK) && CPU(X86_64)) || (OS(LINUX) && CPU(X86))
+#if (OS(DARWIN) && !PLATFORM(GTK) && CPU(X86_64)) || (OS(LINUX) && CPU(X86))
 // Helper function to start & stop the timer.
 // Presently we're using the wall-clock timer, since this seems to give the best results.
 static void setProfileTimer(unsigned usec)
@@ -66,7 +66,7 @@ static void setProfileTimer(unsigned usec)
 #pragma clang diagnostic pop
 #endif
 
-#if OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK) && CPU(X86_64)
+#if OS(DARWIN) && !PLATFORM(GTK) && CPU(X86_64)
 static void profilingTimer(int, siginfo_t*, void* uap)
 {
     mcontext_t context = static_cast<ucontext_t*>(uap)->uc_mcontext;
@@ -141,7 +141,7 @@ void CodeProfiling::begin(const SourceCode& source)
     if (alreadyProfiling)
         return;
 
-#if (OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK) && CPU(X86_64)) || (OS(LINUX) && CPU(X86))
+#if (OS(DARWIN) && !PLATFORM(GTK) && CPU(X86_64)) || (OS(LINUX) && CPU(X86))
     // Regsiter a signal handler & itimer.
     struct sigaction action;
     action.sa_sigaction = reinterpret_cast<void (*)(int, siginfo_t *, void *)>(profilingTimer);
@@ -165,7 +165,7 @@ void CodeProfiling::end()
     if (s_profileStack)
         return;
 
-#if (OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK) && CPU(X86_64)) || (OS(LINUX) && CPU(X86))
+#if (OS(DARWIN) && !PLATFORM(GTK) && CPU(X86_64)) || (OS(LINUX) && CPU(X86))
     // Stop profiling
     setProfileTimer(0);
 #endif

@@ -34,9 +34,7 @@
 #include "JSObject.h"
 #include "VM.h"
 
-#if PLATFORM(EFL)
-#include <wtf/MainThread.h>
-#elif USE(GLIB)
+#if USE(GLIB)
 #include <glib.h>
 #endif
 
@@ -51,11 +49,6 @@ const double timerSlop = 2.0; // Fudge factor to avoid performance cost of reset
 #if USE(CF)
 GCActivityCallback::GCActivityCallback(Heap* heap)
     : GCActivityCallback(heap->vm())
-{
-}
-#elif PLATFORM(EFL)
-GCActivityCallback::GCActivityCallback(Heap* heap)
-    : GCActivityCallback(heap->vm(), WTF::isMainThread())
 {
 }
 #elif USE(GLIB)
@@ -97,24 +90,6 @@ void GCActivityCallback::cancelTimer()
     m_nextFireTime = 0;
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade);
 }
-#elif PLATFORM(EFL)
-void GCActivityCallback::scheduleTimer(double newDelay)
-{
-    if (newDelay * timerSlop > m_delay)
-        return;
-
-    stop();
-    m_delay = newDelay;
-    
-    ASSERT(!m_timer);
-    m_timer = add(newDelay, this);
-}
-
-void GCActivityCallback::cancelTimer()
-{
-    m_delay = s_hour;
-    stop();
-}
 #elif USE(GLIB)
 void GCActivityCallback::scheduleTimer(double newDelay)
 {
@@ -149,13 +124,6 @@ void GCActivityCallback::cancelTimer()
 
 void GCActivityCallback::didAllocate(size_t bytes)
 {
-#if PLATFORM(EFL)
-    if (!isEnabled())
-        return;
-
-    ASSERT(WTF::isMainThread());
-#endif
-
     // The first byte allocated in an allocation cycle will report 0 bytes to didAllocate. 
     // We pretend it's one byte so that we don't ignore this allocation entirely.
     if (!bytes)

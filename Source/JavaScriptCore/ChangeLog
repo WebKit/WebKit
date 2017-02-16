@@ -1,3 +1,28 @@
+2017-02-16  Anders Carlsson  <andersca@apple.com>
+
+        Remove EFL from JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=168459
+
+        Reviewed by Geoffrey Garen.
+
+        * heap/GCActivityCallback.cpp:
+        (JSC::GCActivityCallback::GCActivityCallback):
+        (JSC::GCActivityCallback::cancelTimer):
+        (JSC::GCActivityCallback::didAllocate):
+        * heap/GCActivityCallback.h:
+        * heap/HeapTimer.cpp:
+        (JSC::HeapTimer::add): Deleted.
+        (JSC::HeapTimer::stop): Deleted.
+        (JSC::HeapTimer::timerEvent): Deleted.
+        * heap/HeapTimer.h:
+        * inspector/EventLoop.cpp:
+        (Inspector::EventLoop::cycle):
+        * jsc.cpp:
+        (main):
+        * tools/CodeProfiling.cpp:
+        (JSC::CodeProfiling::begin):
+        (JSC::CodeProfiling::end):
+
 2017-02-15  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: Inspector::fromProtocolString<T> should return std::optional<T>

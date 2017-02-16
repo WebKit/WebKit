@@ -122,10 +122,6 @@
 #include <arm/arch.h>
 #endif
 
-#if PLATFORM(EFL)
-#include <Ecore.h>
-#endif
-
 #if !defined(PATH_MAX)
 #define PATH_MAX 4096
 #endif
@@ -3232,10 +3228,6 @@ int main(int argc, char** argv)
     timeBeginPeriod(1);
 #endif
 
-#if PLATFORM(EFL)
-    ecore_init();
-#endif
-
 #if PLATFORM(GTK)
     if (!setlocale(LC_ALL, ""))
         WTFLogAlways("Locale not supported by C library.\n\tUsing the fallback 'C' locale.");
@@ -3257,10 +3249,6 @@ int main(int argc, char** argv)
         res = jscmain(argc, argv);
     EXCEPT(res = 3)
     finalizeStatsAtEndOfTesting();
-
-#if PLATFORM(EFL)
-    ecore_shutdown();
-#endif
 
     jscExit(res);
 }

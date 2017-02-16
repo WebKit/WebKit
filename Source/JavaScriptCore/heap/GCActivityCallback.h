@@ -75,14 +75,6 @@ protected:
         , m_delay(s_decade)
     {
     }
-#elif PLATFORM(EFL)
-    static constexpr double s_hour = 3600;
-    GCActivityCallback(VM* vm, bool flag)
-        : HeapTimer(vm)
-        , m_enabled(flag)
-        , m_delay(s_hour)
-    {
-    }
 #elif USE(GLIB)
     GCActivityCallback(VM* vm)
         : HeapTimer(vm)

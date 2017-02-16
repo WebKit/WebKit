@@ -34,9 +34,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
-#if PLATFORM(EFL)
-#include <Ecore.h>
-#elif USE(GLIB)
+#if USE(GLIB)
 #include <glib.h>
 #endif
 
@@ -108,60 +106,6 @@ void HeapTimer::cancelTimer()
     m_isScheduled = false;
 }
 
-#elif PLATFORM(EFL)
-
-HeapTimer::HeapTimer(VM* vm)
-    : m_vm(vm)
-    , m_apiLock(&vm->apiLock())
-    , m_timer(0)
-{
-}
-
-HeapTimer::~HeapTimer()
-{
-    stop();
-}
-
-Ecore_Timer* HeapTimer::add(double delay, void* agent)
-{
-    return ecore_timer_add(delay, reinterpret_cast<Ecore_Task_Cb>(timerEvent), agent);
-}
-    
-void HeapTimer::stop()
-{
-    if (!m_timer)
-        return;
-
-    ecore_timer_del(m_timer);
-    m_timer = 0;
-}
-
-bool HeapTimer::timerEvent(void* info)
-{
-    HeapTimer* agent = static_cast<HeapTimer*>(info);
-    
-    JSLockHolder locker(agent->m_vm);
-    agent->doWork();
-    agent->m_timer = 0;
-    
-    return ECORE_CALLBACK_CANCEL;
-}
-
-void HeapTimer::scheduleTimer(double intervalInSeconds)
-{
-    if (ecore_timer_freeze_get(m_timer))
-        ecore_timer_thaw(m_timer);
-
-    double targetTime = currentTime() + intervalInSeconds;
-    ecore_timer_interval_set(m_timer, targetTime);
-    m_isScheduled = true;
-}
-
-void HeapTimer::cancelTimer()
-{
-    ecore_timer_freeze(m_timer);
-    m_isScheduled = false;
-}
 #elif USE(GLIB)
 
 static GSourceFuncs heapTimerSourceFunctions = {

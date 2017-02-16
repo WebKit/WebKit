@@ -35,7 +35,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-#if USE(GLIB) && !PLATFORM(EFL)
+#if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
 #endif
 
@@ -76,11 +76,6 @@ protected:
     CFRunLoopTimerContext m_context;
 
     Lock m_shutdownMutex;
-#elif PLATFORM(EFL)
-    static bool timerEvent(void*);
-    Ecore_Timer* add(double delay, void* agent);
-    void stop();
-    Ecore_Timer* m_timer;
 #elif USE(GLIB)
     void timerDidFire();
     GRefPtr<GSource> m_timer;
