@@ -1,3 +1,28 @@
+2017-02-16  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] scroll with transparent background not repainted after scrollY >= 32768
+        https://bugs.webkit.org/show_bug.cgi?id=154283
+
+        Reviewed by Carlos Garcia Campos.
+
+        Due to a limitation of the pixman backend, which uses 16 bits to hold signed integers, cairo is
+        not able to draw anything when using transformation matrices with values bigger than 32768. When
+        drawing patterns into large pages, the matrices values can overflow those 16 bits, so cairo doesn't
+        draw anything in, which causes the reported transparent backgrounds.
+
+        The patch modifies the transformation matrices both from the current context and the pattern we
+        are painting, to avoid them to hold values that cannot stored in 16 bits.
+
+        There's still the possibility that this happens, but it would require using a pattern with a size
+        bigger than 32768.
+
+        Based on a previous patch by Gwang Yoon Hwang  <yoon@igalia.com>.
+
+        Test: fast/backgrounds/background-repeat-long-scroll.html
+
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::drawPatternToCairoContext):
+
 2017-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Images are never read from the clipboard
