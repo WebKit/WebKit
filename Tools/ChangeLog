@@ -1,3 +1,19 @@
+2017-02-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Add two new buildbots that build-only test on Debian stable and Ubuntu LTS
+        https://bugs.webkit.org/show_bug.cgi?id=168321
+
+        Reviewed by Michael Catanzaro.
+
+        The additionalArgument --default-cmake-features is used both to
+        skip the JHBuild (InstallGtkDependencies) build step and to build
+        with the default features from the CMake config.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (Factory.__init__):
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+
 2017-02-15  Lucas Forschler  <lforschler@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=168386

@@ -72,6 +72,8 @@
                     { "name": "gtk-linux-slave-7", "platform": "gtk" },
                     { "name": "gtk-linux-slave-8", "platform": "gtk" },
                     { "name": "gtk-linux-slave-9", "platform": "gtk" },
+                    { "name": "gtk-linux-slave-10", "platform": "gtk" },
+                    { "name": "gtk-linux-slave-11", "platform": "gtk" },
 
                     { "name": "jsconly-linux-szeged-slave-1", "platform": "jsc-only" },
                     { "name": "jsconly-linux-szeged-slave-2", "platform": "jsc-only" },
@@ -300,6 +302,18 @@
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--display-server=wayland"],
                       "slavenames": ["gtk-linux-slave-9"]
+                    },
+                    {
+                      "name": "GTK Linux 64-bit Release Debian Stable (Build)", "type": "Build", "builddir": "gtk-linux-64-release-debian",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--default-cmake-features"],
+                      "slavenames": ["gtk-linux-slave-10"]
+                    },
+                    {
+                      "name": "GTK Linux 64-bit Release Ubuntu LTS (Build)", "type": "Build", "builddir": "gtk-linux-64-release-ubuntu",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--default-cmake-features"],
+                      "slavenames": ["gtk-linux-slave-11"]
                     },
                     {
                       "name": "WinCairo 64-Bit Release", "type": "Build", "builddir": "win-cairo-release",
