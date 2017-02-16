@@ -132,7 +132,6 @@ WK_EXPORT WKCacheModel WKContextGetCacheModel(WKContextRef context);
 
 // FIXME: Move these to WKDeprecatedFunctions.cpp once support for Mavericks has been dropped.
 WK_EXPORT void WKContextSetProcessModel(WKContextRef, WKProcessModel);
-WK_EXPORT WKProcessModel WKContextGetProcessModel(WKContextRef);
 
 WK_EXPORT void WKContextSetMaximumNumberOfProcesses(WKContextRef context, unsigned numberOfProcesses);
 WK_EXPORT unsigned WKContextGetMaximumNumberOfProcesses(WKContextRef context);
