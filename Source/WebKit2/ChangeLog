@@ -1,5 +1,14 @@
 2017-02-16  Aakash Jain  <aakash_jain@apple.com>
 
+        Remove unused WKContextGetProcessSuppressionEnabled and WKContextSetProcessSuppressionEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=168460
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/mac/WKContextPrivateMac.h:
+
+2017-02-16  Aakash Jain  <aakash_jain@apple.com>
+
         Removed unused method WKContextGetProcessModel
         https://bugs.webkit.org/show_bug.cgi?id=168457
 
