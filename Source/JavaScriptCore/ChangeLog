@@ -1,3 +1,16 @@
+2017-02-15  Guillaume Emont  <guijemont@igalia.com>
+
+        MIPS: add missing implementations of load8SignedExtendTo32()
+
+        JSC: missing implementations of MacroAssemblerMIPS::load8SignedExtendTo32()
+        https://bugs.webkit.org/show_bug.cgi?id=168350
+
+        Reviewed by Yusuke Suzuki.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::load8SignedExtendTo32):
+        Add missing implementations
+
 2017-02-15  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r212169.

@@ -746,6 +746,23 @@ public:
         m_assembler.lbu(dest, addrTempRegister, 0);
     }
 
+    void load8SignedExtendTo32(ImplicitAddress address, RegisterID dest)
+    {
+        if (address.offset >= -32768 && address.offset <= 32767
+            && !m_fixedWidth)
+            m_assembler.lb(dest, address.base, address.offset);
+        else {
+            /*
+                lui     addrTemp, (offset + 0x8000) >> 16
+                addu    addrTemp, addrTemp, base
+                lb      dest, (offset & 0xffff)(addrTemp)
+              */
+            m_assembler.lui(addrTempRegister, (address.offset + 0x8000) >> 16);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            m_assembler.lb(dest, addrTempRegister, address.offset);
+        }
+    }
+
     void load8SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
         if (address.offset >= -32768 && address.offset <= 32767
@@ -773,6 +790,22 @@ public:
             m_assembler.lb(dest, addrTempRegister, address.offset);
         }
     }
+
+    ALWAYS_INLINE void load8SignedExtendTo32(AbsoluteAddress address, RegisterID dest)
+    {
+        load8SignedExtendTo32(address.m_ptr, dest);
+    }
+
+    void load8SignedExtendTo32(const void* address, RegisterID dest)
+    {
+        /*
+            li  addrTemp, address
+            lb  dest, 0(addrTemp)
+        */
+        move(TrustedImmPtr(address), addrTempRegister);
+        m_assembler.lb(dest, addrTempRegister, 0);
+    }
+
 
     void load32(ImplicitAddress address, RegisterID dest)
     {
