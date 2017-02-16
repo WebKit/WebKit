@@ -1339,12 +1339,19 @@ void printSimpleLineLayoutCoverage()
     unsigned textLength = 0;
     unsigned unsupportedTextLength = 0;
     unsigned numberOfUnsupportedLeafBlocks = 0;
+    unsigned supportedButForcedToLineLayoutTextLength = 0;
+    unsigned numberOfSupportedButForcedToLineLayoutLeafBlocks = 0;
     for (const auto* flow : leafRenderers) {
         auto flowLength = textLengthForSubtree(*flow);
         textLength += flowLength;
         auto reasons = canUseForWithReason(*flow, IncludeReasons::All);
-        if (reasons == NoReason)
+        if (reasons == NoReason) {
+            if (flow->lineLayoutPath() == RenderBlockFlow::ForceLineBoxesPath) {
+                supportedButForcedToLineLayoutTextLength += flowLength;
+                ++numberOfSupportedButForcedToLineLayoutLeafBlocks;
+            }
             continue;
+        }
         ++numberOfUnsupportedLeafBlocks;
         unsupportedTextLength += flowLength;
         for (auto reasonItem = EndOfReasons >> 1; reasonItem != NoReason; reasonItem >>= 1) {
@@ -1356,14 +1363,18 @@ void printSimpleLineLayoutCoverage()
         }
     }
     stream << "---------------------------------------------------\n";
-    stream << "Number of text blocks: total(" <<  leafRenderers.size() << ") non-simple(" << numberOfUnsupportedLeafBlocks << ")\nText length: total(" <<
+    stream << "Number of blocks: total(" <<  leafRenderers.size() << ") non-simple(" << numberOfUnsupportedLeafBlocks << ")\nContent length: total(" <<
         textLength << ") non-simple(" << unsupportedTextLength << ")\n";
     for (const auto reasonEntry : flowStatistics) {
         printReason(reasonEntry.key, stream);
         stream << ": " << (float)reasonEntry.value / (float)textLength * 100 << "%\n";
     }
-    stream << "simple line layout coverage: " << (float)(textLength - unsupportedTextLength) / (float)textLength * 100 << "%\n";
-    stream << "---------------------------------------------------\n";
+    if (supportedButForcedToLineLayoutTextLength) {
+        stream << "Simple line layout potential coverage: " << (float)(textLength - unsupportedTextLength) / (float)textLength * 100 << "%\n\n";
+        stream << "Simple line layout actual coverage: " << (float)(textLength - unsupportedTextLength - supportedButForcedToLineLayoutTextLength) / (float)textLength * 100 << "%\nForced line layout blocks: " << numberOfSupportedButForcedToLineLayoutLeafBlocks << " content length: " << supportedButForcedToLineLayoutTextLength << "(" << (float)supportedButForcedToLineLayoutTextLength / (float)textLength * 100 << "%)";
+    } else
+        stream << "Simple line layout coverage: " << (float)(textLength - unsupportedTextLength) / (float)textLength * 100 << "%";
+    stream << "\n---------------------------------------------------\n";
     WTFLogAlways("%s", stream.release().utf8().data());
 }
 #endif

@@ -1,3 +1,21 @@
+2017-02-16  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add forced line layout info to coverage print.
+        https://bugs.webkit.org/show_bug.cgi?id=168470
+
+        Reviewed by Simon Fraser.
+
+        This is about potential vs. actual coverage:
+
+        Simple line layout potential coverage: 65.05%
+        Simple line layout actual coverage: 46.60%
+        Forced line layout blocks: 4 content length: 57(18.45%)
+
+        Not testable.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::printSimpleLineLayoutCoverage):
+
 2017-02-16  Anders Carlsson  <andersca@apple.com>
 
         Rename DataTransfer functions to indicate whether they are for dragging or dropping
