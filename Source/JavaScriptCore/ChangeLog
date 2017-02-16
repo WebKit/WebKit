@@ -1,5 +1,20 @@
 2017-02-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Web Inspector: allow import() inside the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=167457
+
+        Reviewed by Ryosuke Niwa.
+
+        We relax import module hook to accept null SourceOrigin.
+        Such a script can be evaluated from the inspector console.
+
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderImportModule):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncImportModule):
+
+2017-02-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Update module namespace object according to the latest ECMA262
         https://bugs.webkit.org/show_bug.cgi?id=168280
 

@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("RuntimeManager");
+
+    suite.addTestCase({
+        name: "RuntimeManager.prototype.evaluateInInspectedWindow.ImportFromConsole",
+        description: "Test evaluating an import expression from console.",
+        test(resolve, reject) {
+            function testSource(expression, count) {
+                let promise = WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.MessageAdded);
+                return new Promise((resolve, reject) => {
+                    WebInspector.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (result, wasThrown) => {
+                        promise.then(() => {
+                            InspectorTest.log("Source: " + expression);
+                            InspectorTest.expectThat(result.isUndefined(), "Transformed. Should log the value or an exception.");
+                            resolve();
+                        });
+                    });
+                })
+            }
+
+            testSource("await import('')", 0)
+            .then(() => {
+                return testSource("await import('./not-found.js')");
+            })
+            .then(() => {
+                testSource("await import('./resources/cocoa.js').then((cocoa) => { console.log(`${cocoa.name} is ${cocoa.taste}.`); })");
+            })
+            .then(() => {
+                testSource("await import('./resources/drink.js').then((ns) => { console.log(`${ns.Cocoa.name} is ${ns.Cocoa.taste}. ${ns.Cappuccino.name} is ${ns.Cappuccino.taste}.`); })");
+            })
+            .then(resolve);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for RuntimeManager operations.</p>
+</body>
+</html>
