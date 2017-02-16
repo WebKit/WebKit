@@ -102,6 +102,10 @@ namespace JSC  {
         // Global object in which execution began.
         JS_EXPORT_PRIVATE JSGlobalObject* vmEntryGlobalObject();
 
+        // We need a special version of vmEntryGlobalObject for detaching the debugger since
+        // could be called by a finalizer.
+        JSGlobalObject* vmEntryGlobalObjectForDebuggerDetach();
+
         // Global object in which the currently executing code was defined.
         // Differs from vmEntryGlobalObject() during function calls across web browser frames.
         JSGlobalObject* lexicalGlobalObject() const;

@@ -197,6 +197,21 @@ JSGlobalObject* CallFrame::vmEntryGlobalObject()
     return vm().entryScope->globalObject();
 }
 
+JSGlobalObject* CallFrame::vmEntryGlobalObjectForDebuggerDetach()
+{
+    if (callee()->isObject()) {
+        JSGlobalObject* global = static_cast<JSObject*>(callee())->globalObject();
+        if (this == global->globalExec())
+            return global;
+    }
+    // If we're not an object, we're wasm, and therefore we're executing code and the below is safe.
+
+    // For any ExecState that's not a globalExec, the
+    // dynamic global object must be set since code is running
+    ASSERT(vm().entryScope);
+    return vm().entryScope->globalObject();
+}
+
 CallFrame* CallFrame::callerFrame(VMEntryFrame*& currVMEntryFrame)
 {
     if (callerFrameOrVMEntryFrame() == currVMEntryFrame) {

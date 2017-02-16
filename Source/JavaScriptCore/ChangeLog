@@ -1,5 +1,22 @@
 2017-02-16  Keith Miller  <keith_miller@apple.com>
 
+        ASSERTION FAILED: vm.heap.mutatorState() == MutatorState::Running || vm.apiLock().ownerThread() != std::this_thread::get_id()
+        https://bugs.webkit.org/show_bug.cgi?id=168354
+
+        Reviewed by Filip Pizlo.
+
+        Add a new vmEntryGlobalObject method for the debugger so that
+        the debugger does not crash in debug builds when trying to
+        detach itself from a global object.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::detach):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::vmEntryGlobalObjectForDebuggerDetach):
+        * interpreter/CallFrame.h:
+
+2017-02-16  Keith Miller  <keith_miller@apple.com>
+
         Refactor AccessCase to be more like B3Value
         https://bugs.webkit.org/show_bug.cgi?id=168408
 
