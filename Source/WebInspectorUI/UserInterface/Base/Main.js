@@ -217,6 +217,7 @@ WebInspector.contentLoaded = function()
     window.addEventListener("resize", this._windowResized.bind(this));
     window.addEventListener("keydown", this._windowKeyDown.bind(this));
     window.addEventListener("keyup", this._windowKeyUp.bind(this));
+    window.addEventListener("mousedown", this._mouseDown.bind(this), true);
     window.addEventListener("mousemove", this._mouseMoved.bind(this), true);
     window.addEventListener("pagehide", this._pageHidden.bind(this));
     window.addEventListener("contextmenu", this._contextMenuRequested.bind(this));
@@ -347,12 +348,15 @@ WebInspector.contentLoaded = function()
     this._closeToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this.close, this);
 
     this._undockToolbarButton = new WebInspector.ButtonToolbarItem("undock", WebInspector.UIString("Detach into separate window"), null, "Images/Undock.svg");
+    this._undockToolbarButton.element.classList.add(WebInspector.Popover.IgnoreAutoDismissClassName);
     this._undockToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._undock, this);
 
     this._dockRightToolbarButton = new WebInspector.ButtonToolbarItem("dock-right", WebInspector.UIString("Dock to right of window"), null, "Images/DockRight.svg");
+    this._dockRightToolbarButton.element.classList.add(WebInspector.Popover.IgnoreAutoDismissClassName);
     this._dockRightToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._dockRight, this);
 
     this._dockBottomToolbarButton = new WebInspector.ButtonToolbarItem("dock-bottom", WebInspector.UIString("Dock to bottom of window"), null, "Images/DockBottom.svg");
+    this._dockBottomToolbarButton.element.classList.add(WebInspector.Popover.IgnoreAutoDismissClassName);
     this._dockBottomToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._dockBottom, this);
 
     this._togglePreviousDockConfigurationKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "D", this._togglePreviousDockConfiguration.bind(this));
@@ -415,8 +419,9 @@ WebInspector.contentLoaded = function()
 
     this.modifierKeys = {altKey: false, metaKey: false, shiftKey: false};
 
-    this.toolbar.element.addEventListener("mousedown", this._toolbarMouseDown.bind(this));
-    document.getElementById("docked-resizer").addEventListener("mousedown", this._dockedResizerMouseDown.bind(this));
+    let dockedResizerElement = document.getElementById("docked-resizer");
+    dockedResizerElement.classList.add(WebInspector.Popover.IgnoreAutoDismissClassName);
+    dockedResizerElement.addEventListener("mousedown", this._dockedResizerMouseDown.bind(this));
 
     this._dockingAvailable = false;
 
@@ -1486,6 +1491,12 @@ WebInspector._windowKeyUp = function(event)
     this._updateModifierKeys(event);
 };
 
+WebInspector._mouseDown = function(event)
+{
+    if (this.toolbar.element.isSelfOrAncestor(event.target))
+        this._toolbarMouseDown(event);
+};
+
 WebInspector._mouseMoved = function(event)
 {
     this._updateModifierKeys(event);
@@ -1713,6 +1724,8 @@ WebInspector._dockedResizerMouseDown = function(event)
         !event.target.classList.contains("flexible-space") && !event.target.classList.contains("item-section"))
         return;
 
+    event[WebInspector.Popover.EventPreventDismissSymbol] = true;
+
     let windowProperty = this._dockConfiguration === WebInspector.DockConfiguration.Bottom ? "innerHeight" : "innerWidth";
     let eventScreenProperty = this._dockConfiguration === WebInspector.DockConfiguration.Bottom ? "screenY" : "screenX";
     let eventClientProperty = this._dockConfiguration === WebInspector.DockConfiguration.Bottom ? "clientY" : "clientX";
@@ -1775,6 +1788,8 @@ WebInspector._moveWindowMouseDown = function(event)
     if (!event.target.classList.contains("toolbar") && !event.target.classList.contains("flexible-space") &&
         !event.target.classList.contains("item-section"))
         return;
+
+    event[WebInspector.Popover.EventPreventDismissSymbol] = true;
 
     if (WebInspector.Platform.name === "mac") {
         // New Mac releases can start a window drag.

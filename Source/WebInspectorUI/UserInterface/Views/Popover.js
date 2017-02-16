@@ -167,8 +167,10 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         switch (event.type) {
         case "mousedown":
         case "scroll":
-            if (!this._element.contains(event.target) && !event.target.enclosingNodeOrSelfWithClass(WebInspector.Popover.IgnoreAutoDismissClassName))
+            if (!this._element.contains(event.target) && !event.target.enclosingNodeOrSelfWithClass(WebInspector.Popover.IgnoreAutoDismissClassName)
+                && !event[WebInspector.Popover.EventPreventDismissSymbol]) {
                 this.dismiss();
+            }
             break;
         case "resize":
             if (this._resizeHandler)
@@ -598,3 +600,4 @@ WebInspector.Popover.ContentPadding = 5;
 WebInspector.Popover.AnchorSize = new WebInspector.Size(22, 11);
 WebInspector.Popover.ShadowEdgeInsets = new WebInspector.EdgeInsets(WebInspector.Popover.ShadowPadding);
 WebInspector.Popover.IgnoreAutoDismissClassName = "popover-ignore-auto-dismiss";
+WebInspector.Popover.EventPreventDismissSymbol = Symbol("popover-event-prevent-dismiss");

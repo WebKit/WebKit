@@ -1,3 +1,23 @@
+2017-02-16  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: popovers shouldn't be dismissed when Web Inspector window is dragged
+        https://bugs.webkit.org/show_bug.cgi?id=166935
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector._mouseDown): Created.
+        (WebInspector._dockedResizerMouseDown):
+        (WebInspector._moveWindowMouseDown):
+        Applies Popover.EventPreventDismissSymbol whenever a mousedown event is fired for an element
+        that controls the positioning or size of the WebInspector window.
+
+        * UserInterface/Views/Popover.js:
+        (WebInspector.Popover.prototype._handleEvent):
+        (WebInspector.Popover.EventPreventDismissSymbol):
+        Do not dismiss the popover if Popover.EventPreventDismissSymbol is applied to the event.
+
 2017-02-15  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Request headers when copied & pasted should follow HTTP format, colon instead of tab
