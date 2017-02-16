@@ -32,30 +32,19 @@
 
 namespace WebCore {
 
-struct CaptureDeviceInfo {
-public:
-    String m_persistentDeviceID;
-    String m_localizedName;
-    String m_sourceId;
-    String m_groupID { emptyString() };
-    bool m_enabled { true };
-    RealtimeMediaSource::Type m_sourceType { RealtimeMediaSource::None };
-    RealtimeMediaSourceSettings::VideoFacingMode m_position { RealtimeMediaSourceSettings::Unknown };
-};
-
 class CaptureDeviceManager {
 public:
-    virtual Vector<CaptureDeviceInfo>& captureDeviceList() = 0;
-    virtual void refreshCaptureDeviceList() { }
+    virtual Vector<CaptureDevice>& captureDevices() = 0;
+    virtual void refreshCaptureDevices() { }
     virtual Vector<CaptureDevice> getSourcesInfo();
     virtual Vector<String> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, const MediaConstraints&, String&);
     virtual RefPtr<RealtimeMediaSource> sourceWithUID(const String&, RealtimeMediaSource::Type, const MediaConstraints*, String&);
 
 protected:
     virtual ~CaptureDeviceManager();
-    virtual RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDeviceInfo&, const MediaConstraints*, String&) = 0;
+    virtual RefPtr<RealtimeMediaSource> createMediaSourceForCaptureDeviceWithConstraints(const CaptureDevice&, const MediaConstraints*, String&) = 0;
 
-    bool captureDeviceFromDeviceID(const String& captureDeviceID, CaptureDeviceInfo& source);
+    bool captureDeviceFromDeviceID(const String& captureDeviceID, CaptureDevice& source);
 };
 
 } // namespace WebCore

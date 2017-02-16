@@ -47,21 +47,20 @@ CaptureDeviceManager::~CaptureDeviceManager()
 Vector<CaptureDevice> CaptureDeviceManager::getSourcesInfo()
 {
     Vector<CaptureDevice> sourcesInfo;
-    for (auto captureDevice : captureDeviceList()) {
-        if (!captureDevice.m_enabled || captureDevice.m_sourceType == RealtimeMediaSource::None)
+    for (auto captureDevice : captureDevices()) {
+        if (!captureDevice.enabled() || captureDevice.type() == CaptureDevice::DeviceType::Unknown)
             continue;
 
-        CaptureDevice::SourceKind kind = captureDevice.m_sourceType == RealtimeMediaSource::Video ? CaptureDevice::SourceKind::Video : CaptureDevice::SourceKind::Audio;
-        sourcesInfo.append(CaptureDevice(captureDevice.m_persistentDeviceID, kind, captureDevice.m_localizedName, captureDevice.m_groupID));
+        sourcesInfo.append(captureDevice);
     }
     LOG(Media, "CaptureDeviceManager::getSourcesInfo(%p), found %zu active devices", this, sourcesInfo.size());
     return sourcesInfo;
 }
 
-bool CaptureDeviceManager::captureDeviceFromDeviceID(const String& captureDeviceID, CaptureDeviceInfo& foundDevice)
+bool CaptureDeviceManager::captureDeviceFromDeviceID(const String& captureDeviceID, CaptureDevice& foundDevice)
 {
-    for (auto& device : captureDeviceList()) {
-        if (device.m_persistentDeviceID == captureDeviceID) {
+    for (auto& device : captureDevices()) {
+        if (device.persistentId() == captureDeviceID) {
             foundDevice = device;
             return true;
         }
@@ -81,11 +80,12 @@ Vector<String> CaptureDeviceManager::bestSourcesForTypeAndConstraints(RealtimeMe
         }
     } sortBasedOnFitnessScore;
 
-    for (auto& captureDevice : captureDeviceList()) {
-        if (!captureDevice.m_enabled)
+    CaptureDevice::DeviceType deviceType = type == RealtimeMediaSource::Video ? CaptureDevice::DeviceType::Video : CaptureDevice::DeviceType::Audio;
+    for (auto& captureDevice : captureDevices()) {
+        if (!captureDevice.enabled() || captureDevice.type() != deviceType)
             continue;
 
-        if (RefPtr<RealtimeMediaSource> captureSource = sourceWithUID(captureDevice.m_persistentDeviceID, type, &constraints, invalidConstraint))
+        if (auto captureSource = createMediaSourceForCaptureDeviceWithConstraints(captureDevice, &constraints, invalidConstraint))
             bestSources.append(captureSource.leakRef());
     }
 
@@ -103,11 +103,15 @@ Vector<String> CaptureDeviceManager::bestSourcesForTypeAndConstraints(RealtimeMe
 
 RefPtr<RealtimeMediaSource> CaptureDeviceManager::sourceWithUID(const String& deviceUID, RealtimeMediaSource::Type type, const MediaConstraints* constraints, String& invalidConstraint)
 {
-    for (auto& captureDevice : captureDeviceList()) {
-        if (captureDevice.m_persistentDeviceID != deviceUID || captureDevice.m_sourceType != type)
+    for (auto& captureDevice : captureDevices()) {
+        if (type == RealtimeMediaSource::None)
             continue;
 
-        if (!captureDevice.m_enabled)
+        CaptureDevice::DeviceType deviceType = type == RealtimeMediaSource::Video ? CaptureDevice::DeviceType::Video : CaptureDevice::DeviceType::Audio;
+        if (captureDevice.persistentId() != deviceUID || captureDevice.type() != deviceType)
+            continue;
+
+        if (!captureDevice.enabled())
             continue;
 
         if (auto mediaSource = createMediaSourceForCaptureDeviceWithConstraints(captureDevice, constraints, invalidConstraint))

@@ -70,13 +70,13 @@ const AtomicString& MockRealtimeMediaSource::mockVideoSourceName()
 
 CaptureDevice MockRealtimeMediaSource::audioDeviceInfo()
 {
-    static NeverDestroyed<CaptureDevice> deviceInfo(mockAudioSourcePersistentID(), CaptureDevice::SourceKind::Audio, mockAudioSourceName(), "");
+    static NeverDestroyed<CaptureDevice> deviceInfo(mockAudioSourcePersistentID(), CaptureDevice::DeviceType::Audio, mockAudioSourceName(), "");
     return deviceInfo;
 }
 
 CaptureDevice MockRealtimeMediaSource::videoDeviceInfo()
 {
-    static NeverDestroyed<CaptureDevice> deviceInfo(mockVideoSourcePersistentID(), CaptureDevice::SourceKind::Video, mockVideoSourceName(), "");
+    static NeverDestroyed<CaptureDevice> deviceInfo(mockVideoSourcePersistentID(), CaptureDevice::DeviceType::Video, mockVideoSourceName(), "");
     return deviceInfo;
 }
 

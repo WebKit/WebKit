@@ -103,7 +103,7 @@ void MediaDevicesRequest::start()
                 continue;
 
             auto groupId = hashID(deviceInfo.groupId());
-            auto deviceType = deviceInfo.kind() == CaptureDevice::SourceKind::Audio ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
+            auto deviceType = deviceInfo.type() == CaptureDevice::DeviceType::Audio ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
             devices.append(MediaDeviceInfo::create(scriptExecutionContext(), label, id, groupId, deviceType));
         }
 

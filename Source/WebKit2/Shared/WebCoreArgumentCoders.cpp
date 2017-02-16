@@ -2422,7 +2422,8 @@ void ArgumentCoder<CaptureDevice>::encode(Encoder& encoder, const WebCore::Captu
     encoder << device.persistentId();
     encoder << device.label();
     encoder << device.groupId();
-    encoder.encodeEnum(device.kind());
+    encoder << device.enabled();
+    encoder.encodeEnum(device.type());
 }
 
 bool ArgumentCoder<CaptureDevice>::decode(Decoder& decoder, WebCore::CaptureDevice& device)
@@ -2439,14 +2440,19 @@ bool ArgumentCoder<CaptureDevice>::decode(Decoder& decoder, WebCore::CaptureDevi
     if (!decoder.decode(groupId))
         return false;
 
-    CaptureDevice::SourceKind kind;
-    if (!decoder.decodeEnum(kind))
+    bool enabled;
+    if (!decoder.decode(enabled))
+        return false;
+
+    CaptureDevice::DeviceType type;
+    if (!decoder.decodeEnum(type))
         return false;
 
     device.setPersistentId(persistentId);
     device.setLabel(label);
     device.setGroupId(groupId);
-    device.setKind(kind);
+    device.setType(type);
+    device.setEnabled(enabled);
 
     return true;
 }
