@@ -729,7 +729,7 @@ Ref<DataTransfer> EventHandler::createDraggingDataTransfer() const
     auto pasteboard = std::make_unique<Pasteboard>(NSDragPboard);
 #pragma clang diagnostic pop
     pasteboard->clear();
-    return DataTransfer::createForDragAndDrop();
+    return DataTransfer::createForDrag();
 }
 
 #endif

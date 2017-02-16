@@ -1,5 +1,24 @@
 2017-02-16  Anders Carlsson  <andersca@apple.com>
 
+        Rename DataTransfer functions to indicate whether they are for dragging or dropping
+        https://bugs.webkit.org/show_bug.cgi?id=168478
+
+        Reviewed by Tim Horton.
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::createForDrag):
+        (WebCore::DataTransfer::createForDrop):
+        (WebCore::DataTransfer::createForDragAndDrop): Deleted.
+        * dom/DataTransfer.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::dragExited):
+        (WebCore::DragController::performDragOperation):
+        (WebCore::DragController::tryDHTMLDrag):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::createDraggingDataTransfer):
+
+2017-02-16  Anders Carlsson  <andersca@apple.com>
+
         Rename EventHandler::freeDataTransfer to invalidateDataTransfer
         https://bugs.webkit.org/show_bug.cgi?id=168472
 

@@ -75,8 +75,8 @@ public:
     Pasteboard& pasteboard() { return *m_pasteboard; }
 
 #if ENABLE(DRAG_SUPPORT)
-    static Ref<DataTransfer> createForDragAndDrop();
-    static Ref<DataTransfer> createForDragAndDrop(DataTransferAccessPolicy, const DragData&);
+    static Ref<DataTransfer> createForDrag();
+    static Ref<DataTransfer> createForDrop(DataTransferAccessPolicy, const DragData&);
 
     bool dropEffectIsUninitialized() const { return m_dropEffect == "uninitialized"; }
 

@@ -231,12 +231,12 @@ void DataTransfer::setDragImage(Element*, int, int)
 
 #else
 
-Ref<DataTransfer> DataTransfer::createForDragAndDrop()
+Ref<DataTransfer> DataTransfer::createForDrag()
 {
     return adoptRef(*new DataTransfer(DataTransferAccessPolicy::Writable, Pasteboard::createForDragAndDrop(), DragAndDrop));
 }
 
-Ref<DataTransfer> DataTransfer::createForDragAndDrop(DataTransferAccessPolicy policy, const DragData& dragData)
+Ref<DataTransfer> DataTransfer::createForDrop(DataTransferAccessPolicy policy, const DragData& dragData)
 {
     return adoptRef(*new DataTransfer(policy, Pasteboard::createForDragAndDrop(dragData), DragAndDrop, dragData.containsFiles()));
 }
