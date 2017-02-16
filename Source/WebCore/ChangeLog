@@ -1,3 +1,18 @@
+2017-02-15  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r212311): NULL-dereference in HTMLMediaElement::prepareToPlay()
+        https://bugs.webkit.org/show_bug.cgi?id=168404
+        <rdar://problem/30547188>
+
+        Reviewed by Brian Weinstein.
+
+        Prior to r212311, m_player was always guaranteed to be initialized when calling
+        prepareToPlay(). r212311 began calling prepareToPlay() on a subsequent run-loop iteration
+        after creating m_player. So now check whether m_player is NULL before calling methods on it.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareToPlay):
+
 2017-02-15  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] delete CaptureDeviceInfo struct

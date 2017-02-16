@@ -2558,7 +2558,8 @@ void HTMLMediaElement::prepareToPlay()
     if (m_havePreparedToPlay)
         return;
     m_havePreparedToPlay = true;
-    m_player->prepareToPlay();
+    if (m_player)
+        m_player->prepareToPlay();
 }
 
 void HTMLMediaElement::fastSeek(double time)
