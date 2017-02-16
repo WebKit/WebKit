@@ -1,3 +1,16 @@
+2017-02-16  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Make form validation accessible on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=168400
+
+        Reviewed by Chris Dumez.
+
+        Hide the popover content of form validation from accessibility (since its not interactable)
+        and instead announce the message.
+
+        * platform/ios/ValidationBubbleIOS.mm:
+        (WebCore::ValidationBubble::show):
+
 2017-02-16  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up use of some CALayer-related SPI

@@ -41,6 +41,9 @@ SOFT_LINK_CLASS(UIKit, UITapGestureRecognizer);
 SOFT_LINK_CLASS(UIKit, UIView);
 SOFT_LINK_CLASS(UIKit, UIViewController);
 SOFT_LINK_CONSTANT(UIKit, UIFontTextStyleCallout, UIFontTextStyle);
+SOFT_LINK_CONSTANT(UIKit, UIAccessibilityAnnouncementNotification, UIAccessibilityNotifications);
+#define UIAccessibilityPostNotification getUIAccessibilityPostNotification
+SOFT_LINK(UIKit, UIAccessibilityPostNotification, void, (UIAccessibilityNotifications n, id argument), (n, argument));
 
 @interface WebValidationBubbleTapRecognizer : NSObject
 @end
@@ -134,7 +137,12 @@ void ValidationBubble::show()
     // Protect the validation bubble so it stays alive until it is effectively presented. UIKit does not deal nicely with
     // dismissing a popover that is being presented.
     RefPtr<ValidationBubble> protectedThis(this);
-    [m_presentingViewController presentViewController:m_popoverController.get() animated:NO completion:[protectedThis]() { }];
+    [m_presentingViewController presentViewController:m_popoverController.get() animated:NO completion:[protectedThis]() {
+        // Hide this popover from VoiceOver and instead announce the message.
+        [protectedThis->m_popoverController.get().view setAccessibilityElementsHidden:YES];
+    }];
+
+    UIAccessibilityPostNotification(getUIAccessibilityAnnouncementNotification(), m_message);
 }
 
 static UIViewController *fallbackViewController(UIView *view)
