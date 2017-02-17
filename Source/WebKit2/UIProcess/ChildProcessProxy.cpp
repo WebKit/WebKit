@@ -55,7 +55,7 @@ void ChildProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchO
     if (m_alwaysRunsAtBackgroundPriority)
         launchOptions.extraInitializationData.add(ASCIILiteral("always-runs-at-background-priority"), "true");
 
-#if ENABLE(DEVELOPER_MODE) && (PLATFORM(GTK) || PLATFORM(EFL))
+#if ENABLE(DEVELOPER_MODE) && PLATFORM(GTK)
     const char* varname;
     switch (launchOptions.processType) {
     case ProcessLauncher::ProcessType::Web:
@@ -79,7 +79,7 @@ void ChildProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchO
     const char* processCmdPrefix = getenv(varname);
     if (processCmdPrefix && *processCmdPrefix)
         launchOptions.processCmdPrefix = String::fromUTF8(processCmdPrefix);
-#endif // !defined(NDEBUG) && (PLATFORM(GTK) || PLATFORM(EFL)
+#endif // ENABLE(DEVELOPER_MODE) && PLATFORM(GTK)
 }
 
 void ChildProcessProxy::connect()

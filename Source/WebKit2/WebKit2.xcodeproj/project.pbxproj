@@ -9216,7 +9216,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "WKBASE_H=${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}/WKBase.h\n\nunifdef -B -D__APPLE__ -UBUILDING_GTK__ -UUSE_SOUP -UBUILDING_EFL__ -UBUILDING_QT__ -o \"${WKBASE_H}\".unifdef \"${WKBASE_H}\"\n\ncase $? in\n0)\n    rm \"${WKBASE_H}\".unifdef\n    ;;\n1)\n    mv \"${WKBASE_H}\"{.unifdef,}\n    ;;\n*)\n    exit 1\nesac\n";
+			shellScript = "WKBASE_H=${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}/WKBase.h\n\nunifdef -B -D__APPLE__ -UBUILDING_GTK__ -UUSE_SOUP -o \"${WKBASE_H}\".unifdef \"${WKBASE_H}\"\n\ncase $? in\n0)\n    rm \"${WKBASE_H}\".unifdef\n    ;;\n1)\n    mv \"${WKBASE_H}\"{.unifdef,}\n    ;;\n*)\n    exit 1\nesac\n";
 		};
 		37E531011B2391090074F0DF /* Copy iOS Sandbox Profiles for Manual Sandboxing */ = {
 			isa = PBXShellScriptBuildPhase;

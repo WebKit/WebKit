@@ -822,11 +822,7 @@ bool WebChromeClient::shouldNotifyOnFormChanges()
 
 bool WebChromeClient::selectItemWritingDirectionIsNatural()
 {
-#if PLATFORM(EFL)
-    return true;
-#else
     return false;
-#endif
 }
 
 bool WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
@@ -1015,7 +1011,7 @@ Color WebChromeClient::underlayColor() const
 
 void WebChromeClient::pageExtendedBackgroundColorDidChange(Color backgroundColor) const
 {
-#if PLATFORM(MAC) || PLATFORM(EFL)
+#if PLATFORM(MAC)
     m_page.send(Messages::WebPageProxy::PageExtendedBackgroundColorDidChange(backgroundColor));
 #else
     UNUSED_PARAM(backgroundColor);

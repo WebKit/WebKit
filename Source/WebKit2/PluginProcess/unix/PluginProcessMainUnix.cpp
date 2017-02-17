@@ -39,8 +39,6 @@
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
-#elif PLATFORM(EFL) && HAVE_ECORE_X
-#include <Ecore_X.h>
 #endif
 
 #if defined(XP_UNIX)
@@ -60,11 +58,6 @@ public:
     {
 #if PLATFORM(GTK)
         gtk_init(nullptr, nullptr);
-#elif PLATFORM(EFL)
-#ifdef HAVE_ECORE_X
-        if (!ecore_x_init(0))
-#endif
-            return false;
 #endif
 
         return true;

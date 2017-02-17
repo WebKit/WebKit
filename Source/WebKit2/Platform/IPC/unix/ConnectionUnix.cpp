@@ -149,8 +149,6 @@ void Connection::platformInvalidate()
 
 #if PLATFORM(GTK)
     m_socketMonitor.stop();
-#elif PLATFORM(EFL)
-    m_connectionQueue->unregisterSocketEventHandler(m_socketDescriptor);
 #endif
 
     m_socketDescriptor = -1;
@@ -382,11 +380,6 @@ bool Connection::open()
         ASSERT_NOT_REACHED();
         return G_SOURCE_REMOVE;
     });
-#elif PLATFORM(EFL)
-    m_connectionQueue->registerSocketEventHandler(m_socketDescriptor,
-        [protectedThis] {
-            protectedThis->readyReadHandler();
-        });
 #endif
 
     // Schedule a call to readyReadHandler. Data may have arrived before installation of the signal handler.

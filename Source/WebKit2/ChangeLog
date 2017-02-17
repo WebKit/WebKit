@@ -1,3 +1,73 @@
+2017-02-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Remove EFL from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=168511
+
+        Reviewed by Alex Christensen.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::platformInvalidate):
+        (IPC::Connection::open):
+        * Platform/Module.h:
+        * PlatformEfl.cmake: Removed.
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+        * Shared/NativeWebKeyboardEvent.h:
+        (WebKit::NativeWebKeyboardEvent::isFakeEventForComposition):
+        (WebKit::NativeWebKeyboardEvent::isFiltered): Deleted.
+        * Shared/NativeWebMouseEvent.h:
+        (WebKit::NativeWebMouseEvent::nativeEvent):
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent): Deleted.
+        * Shared/NativeWebTouchEvent.h:
+        (WebKit::NativeWebTouchEvent::nativeEvent):
+        * Shared/NativeWebWheelEvent.h:
+        (WebKit::NativeWebWheelEvent::nativeEvent):
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKTextChecker.cpp:
+        * UIProcess/API/C/WKTextChecker.h:
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::getLaunchOptions):
+        * UIProcess/CoordinatedGraphics/PageViewportController.cpp:
+        (WebKit::PageViewportController::pixelAlignedFloatPoint):
+        * UIProcess/InspectorServer/WebInspectorServer.h:
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp:
+        * UIProcess/PageClient.h:
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::scanPlugin):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::getPluginDisplay):
+        (WebKit::x11Screen):
+        (WebKit::displayDepth):
+        (WebKit::rootWindowID):
+        (WebKit::NetscapePluginX11::paint):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::selectItemWritingDirectionIsNatural):
+        (WebKit::WebChromeClient::pageExtendedBackgroundColorDidChange):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldEraseMarkersAfterChangeSelection):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::saveViewStateToItem):
+        (WebKit::WebFrameLoaderClient::restoreViewState):
+        (WebKit::WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * config.h:
+
 2017-02-15  Brady Eidson  <beidson@apple.com>
 
         Stop backing up localStorage databases to iCloud by default.

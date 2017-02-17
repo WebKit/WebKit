@@ -39,10 +39,6 @@ struct KeypressCommand;
 }
 #endif
 
-#if PLATFORM(EFL)
-#include <Evas.h>
-#endif
-
 #if PLATFORM(GTK)
 #include "InputMethodFilter.h"
 #include <WebCore/CompositionResults.h>
@@ -64,9 +60,6 @@ public:
 #elif PLATFORM(GTK)
     NativeWebKeyboardEvent(const NativeWebKeyboardEvent&);
     NativeWebKeyboardEvent(GdkEvent*, const WebCore::CompositionResults&, InputMethodFilter::EventFakedForComposition, Vector<String>&& commands);
-#elif PLATFORM(EFL)
-    NativeWebKeyboardEvent(const Evas_Event_Key_Down*, bool);
-    NativeWebKeyboardEvent(const Evas_Event_Key_Up*);
 #elif PLATFORM(IOS)
     NativeWebKeyboardEvent(::WebEvent *);
 #endif
@@ -77,9 +70,6 @@ public:
     GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
     const WebCore::CompositionResults& compositionResults() const  { return m_compositionResults; }
     bool isFakeEventForComposition() const { return m_fakeEventForComposition; }
-#elif PLATFORM(EFL)
-    const void* nativeEvent() const { return m_nativeEvent; }
-    bool isFiltered() const { return m_isFiltered; }
 #elif PLATFORM(IOS)
     ::WebEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #endif
@@ -91,9 +81,6 @@ private:
     GUniquePtr<GdkEvent> m_nativeEvent;
     WebCore::CompositionResults m_compositionResults;
     bool m_fakeEventForComposition;
-#elif PLATFORM(EFL)
-    const void* m_nativeEvent;
-    bool m_isFiltered;
 #elif PLATFORM(IOS)
     RetainPtr<::WebEvent> m_nativeEvent;
 #endif

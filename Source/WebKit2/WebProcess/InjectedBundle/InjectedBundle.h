@@ -40,10 +40,6 @@
 typedef struct _GModule GModule;
 #endif
 
-#if PLATFORM(EFL)
-#include <Eina.h>
-#endif
-
 #if USE(FOUNDATION)
 OBJC_CLASS NSBundle;
 OBJC_CLASS NSMutableDictionary;
@@ -67,8 +63,6 @@ namespace WebKit {
 typedef NSBundle *PlatformBundle;
 #elif PLATFORM(GTK)
 typedef ::GModule* PlatformBundle;
-#elif PLATFORM(EFL)
-typedef Eina_Module* PlatformBundle;
 #endif
 
 class InjectedBundleScriptWorld;

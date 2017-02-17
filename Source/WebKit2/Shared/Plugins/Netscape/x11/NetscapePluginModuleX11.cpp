@@ -186,9 +186,6 @@ void NetscapePluginModule::determineQuirks()
 #if CPU(X86_64)
             m_pluginQuirks.add(PluginQuirks::IgnoreRightClickInWindowlessMode);
 #endif
-#if PLATFORM(EFL)
-            m_pluginQuirks.add(PluginQuirks::ForceFlashWindowlessMode);
-#endif
             m_pluginQuirks.add(PluginQuirks::DoNotCancelSrcStreamInWindowedMode);
             break;
         }

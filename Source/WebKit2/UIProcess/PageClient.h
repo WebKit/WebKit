@@ -148,10 +148,6 @@ public:
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&) = 0;
 #endif
 
-#if PLATFORM(EFL)
-    virtual void updateTextInputState() = 0;
-#endif // PLATFORM(EFL)
-
     virtual void handleDownloadRequest(DownloadProxy*) = 0;
 
     virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) { return false; }

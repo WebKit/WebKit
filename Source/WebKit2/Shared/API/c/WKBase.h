@@ -34,10 +34,6 @@
 #include <WebKit/WKBaseGtk.h>
 #endif
 
-#if defined(BUILDING_EFL__)
-#include <WebKit/WKBaseEfl.h>
-#endif
-
 #if defined(__APPLE__) && !defined(BUILDING_GTK__)
 #include <WebKit/WKBaseMac.h>
 #endif

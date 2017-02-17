@@ -84,7 +84,7 @@ void WebsiteDataStore::registerSharedResourceLoadObserver()
     m_websiteDataStore->registerSharedResourceLoadObserver();
 }
     
-#if !PLATFORM(COCOA) && !PLATFORM(EFL) && !PLATFORM(GTK)
+#if !PLATFORM(COCOA) && !PLATFORM(GTK)
 WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
 {
     // FIXME: Fill everything in.

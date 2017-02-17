@@ -192,13 +192,6 @@ public:
         SoupRequestManager,
         SoupCustomProtocolRequestManager,
 #endif
-#if PLATFORM(EFL)
-        PopupMenuItem,
-#if ENABLE(TOUCH_EVENTS)
-        TouchPoint,
-        TouchEvent,
-#endif
-#endif
     };
 
     virtual ~Object()

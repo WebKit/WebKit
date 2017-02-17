@@ -31,12 +31,6 @@
 #define DEFAULT_WEBKIT_TABSTOLINKS_ENABLED false
 #endif
 
-#if PLATFORM(EFL)
-#define DEFAULT_SELECTION_PAINTING_WITHOUT_SELECTION_GAPS_ENABLED true
-#else
-#define DEFAULT_SELECTION_PAINTING_WITHOUT_SELECTION_GAPS_ENABLED false
-#endif
-
 #if ENABLE(SMOOTH_SCROLLING)
 #define DEFAULT_WEBKIT_SCROLL_ANIMATOR_ENABLED true
 #else
@@ -233,7 +227,7 @@
     macro(ShadowDOMEnabled, shadowDOMEnabled, Bool, bool, true, "Shadow DOM", "HTML Shadow DOM prototype") \
     macro(FetchAPIEnabled, fetchAPIEnabled, Bool, bool, true, "", "") \
     macro(DownloadAttributeEnabled, downloadAttributeEnabled, Bool, bool, true, "", "") \
-    macro(SelectionPaintingWithoutSelectionGapsEnabled, selectionPaintingWithoutSelectionGapsEnabled, Bool, bool, DEFAULT_SELECTION_PAINTING_WITHOUT_SELECTION_GAPS_ENABLED, "", "") \
+    macro(SelectionPaintingWithoutSelectionGapsEnabled, selectionPaintingWithoutSelectionGapsEnabled, Bool, bool, false, "", "") \
     macro(ApplePayEnabled, applePayEnabled, Bool, bool, false, "", "") \
     macro(ApplePayCapabilityDisclosureAllowed, applePayCapabilityDisclosureAllowed, Bool, bool, true, "", "") \
     macro(VisualViewportEnabled, visualViewportEnabled, Bool, bool, true, "", "") \
@@ -345,7 +339,7 @@
     macro(PictographFontFamily, pictographFontFamily, String, String, "Apple Color Emoji", "", "") \
     \
 
-#elif PLATFORM(GTK) || PLATFORM(EFL)
+#elif PLATFORM(GTK)
 
 #define FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
     macro(StandardFontFamily, standardFontFamily, String, String, "Times", "", "") \

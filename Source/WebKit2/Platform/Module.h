@@ -37,11 +37,6 @@
 typedef struct _GModule GModule;
 #endif
 
-#if PLATFORM(EFL)
-#include <Eina.h>
-#include <wtf/efl/UniquePtrEfl.h>
-#endif
-
 namespace WebKit {
 
 class Module {
@@ -76,8 +71,6 @@ private:
 #endif
 #elif PLATFORM(GTK)
     GModule* m_handle;
-#elif PLATFORM(EFL)
-    EflUniquePtr<Eina_Module> m_module;
 #endif
 };
 

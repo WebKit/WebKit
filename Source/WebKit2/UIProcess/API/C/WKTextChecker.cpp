@@ -27,7 +27,7 @@
 #include "WKTextChecker.h"
 #include "TextChecker.h"
 
-#if defined(BUILDING_EFL__) || defined(BUILDING_GTK__)
+#if defined(BUILDING_GTK__)
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
 #include "WebTextChecker.h"
@@ -40,7 +40,7 @@ void WKTextCheckerSetTestingMode(bool enabled)
     TextChecker::setTestingMode(enabled);
 }
 
-#if defined(BUILDING_EFL__) || defined(BUILDING_GTK__)
+#if defined(BUILDING_GTK__)
 
 void WKTextCheckerSetClient(const WKTextCheckerClientBase* wkClient)
 {

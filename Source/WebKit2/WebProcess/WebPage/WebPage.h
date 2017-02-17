@@ -78,7 +78,7 @@
 #include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
 
-#if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+#if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
 #include "WebPageAccessibilityObject.h"
 #include <wtf/glib/GRefPtr.h>
 #endif
@@ -498,7 +498,7 @@ public:
     GeolocationPermissionRequestManager& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager; }
 #endif
 
-#if PLATFORM(IOS) || PLATFORM(EFL)
+#if PLATFORM(IOS)
     void savePageState(WebCore::HistoryItem&);
     void restorePageState(const WebCore::HistoryItem&);
 #endif
@@ -648,10 +648,6 @@ public:
 
     SandboxExtensionTracker& sandboxExtensionTracker() { return m_sandboxExtensionTracker; }
 
-#if PLATFORM(EFL)
-    void setThemePath(const String&);
-#endif
-
 #if PLATFORM(GTK)
     void setComposition(const String& text, const Vector<WebCore::CompositionUnderline>& underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeLength);
     void confirmComposition(const String& text, int64_t selectionStart, int64_t selectionLength);
@@ -701,14 +697,9 @@ public:
 #if ENABLE(SERVICE_CONTROLS)
     void replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference&);
 #endif
-
-#elif PLATFORM(EFL)
-    void confirmComposition(const String& compositionString);
-    void setComposition(const WTF::String& compositionString, const WTF::Vector<WebCore::CompositionUnderline>& underlines, uint64_t cursorPosition);
-    void cancelComposition();
 #endif
 
-#if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+#if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
     void updateAccessibilityTree();
 #endif
 
@@ -1337,7 +1328,7 @@ private:
 
     RetainPtr<NSDictionary> m_dataDetectionContext;
 
-#elif HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+#elif HAVE(ACCESSIBILITY) && PLATFORM(GTK)
     GRefPtr<WebPageAccessibilityObject> m_accessibilityObject;
 #endif
 

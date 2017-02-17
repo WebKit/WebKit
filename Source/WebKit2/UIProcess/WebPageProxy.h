@@ -569,9 +569,6 @@ public:
     void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);
     void commitPageTransitionViewport();
 #endif
-#if PLATFORM(EFL)
-    void setThemePath(const String&);
-#endif
 
 #if PLATFORM(GTK)
     void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
@@ -629,13 +626,6 @@ public:
     void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize);
     CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const;
 #endif // PLATFORM(MAC)
-
-#if PLATFORM(EFL)
-    void handleInputMethodKeydown(bool& handled);
-    void confirmComposition(const String&);
-    void setComposition(const String&, Vector<WebCore::CompositionUnderline>&, int);
-    void cancelComposition();
-#endif
 
 #if PLATFORM(GTK)
     PlatformWidget viewWidget();
@@ -1114,12 +1104,6 @@ public:
     void setFooterBannerHeightForTesting(int);
 #endif
 
-#if PLATFORM(EFL) && HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)
-    bool accessibilityObjectReadByPoint(const WebCore::IntPoint&);
-    bool accessibilityObjectReadPrevious();
-    bool accessibilityObjectReadNext();
-#endif
-
 #if USE(UNIFIED_TEXT_CHECKING)
     void checkTextOfParagraph(const String& text, uint64_t checkingTypes, int32_t insertionPoint, Vector<WebCore::TextCheckingResult>& results);
 #endif
@@ -1396,9 +1380,6 @@ private:
 #if PLATFORM(GTK)
     void getEditorCommandsForKeyEvent(const AtomicString&, Vector<String>&);
     void bindAccessibilityTree(const String&);
-#endif
-#if PLATFORM(EFL)
-    void getEditorCommandsForKeyEvent(Vector<String>&);
 #endif
 
     // Popup Menu.

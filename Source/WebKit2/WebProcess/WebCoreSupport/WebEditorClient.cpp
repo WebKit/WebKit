@@ -297,7 +297,7 @@ void WebEditorClient::redo()
     m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(static_cast<uint32_t>(WebPageProxy::Redo)), Messages::WebPageProxy::ExecuteUndoRedo::Reply(result));
 }
 
-#if !PLATFORM(GTK) && !PLATFORM(COCOA) && !PLATFORM(EFL)
+#if !PLATFORM(GTK) && !PLATFORM(COCOA)
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
     if (m_page->handleEditingKeyboardEvent(event))
@@ -437,7 +437,7 @@ void WebEditorClient::textWillBeDeletedInTextField(Element* element)
 bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType type) const
 {
     // This prevents erasing spelling markers on OS X Lion or later to match AppKit on these Mac OS X versions.
-#if PLATFORM(COCOA) || PLATFORM(EFL)
+#if PLATFORM(COCOA)
     return type != TextCheckingTypeSpelling;
 #else
     UNUSED_PARAM(type);

@@ -341,10 +341,6 @@ messages -> WebPage LegacyReceiver {
     SetCanRunBeforeUnloadConfirmPanel(bool canRunBeforeUnloadConfirmPanel)
     SetCanRunModal(bool canRunModal)
 
-#if PLATFORM(EFL)
-    SetThemePath(String themePath)
-#endif
-
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     CommitPageTransitionViewport()
 #endif
@@ -396,11 +392,6 @@ messages -> WebPage LegacyReceiver {
     SetMinimumLayoutSize(WebCore::IntSize minimumLayoutSize)
     SetAutoSizingShouldExpandToViewHeight(bool shouldExpand)
 
-#if PLATFORM(EFL)
-    ConfirmComposition(String compositionString)
-    SetComposition(String compositionString, Vector<WebCore::CompositionUnderline> underlines, uint64_t cursorPosition)
-    CancelComposition()
-#endif
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     FindZoomableAreaForPoint(WebCore::IntPoint point, WebCore::IntSize area)
 #endif

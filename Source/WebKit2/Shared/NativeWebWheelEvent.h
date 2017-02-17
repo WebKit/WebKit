@@ -33,11 +33,6 @@
 OBJC_CLASS NSView;
 #endif
 
-#if PLATFORM(EFL)
-#include <Evas.h>
-#include <WebCore/AffineTransform.h>
-#endif
-
 #if PLATFORM(GTK)
 #include <WebCore/GUniquePtrGtk.h>
 typedef union _GdkEvent GdkEvent;
@@ -52,16 +47,12 @@ public:
 #elif PLATFORM(GTK)
     NativeWebWheelEvent(const NativeWebWheelEvent&);
     NativeWebWheelEvent(GdkEvent*);
-#elif PLATFORM(EFL)
-    NativeWebWheelEvent(const Evas_Event_Mouse_Wheel*, const WebCore::AffineTransform& toWebContent, const WebCore::AffineTransform& toDeviceScreen);
 #endif
 
 #if USE(APPKIT)
     NSEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(GTK)
     GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
-#elif PLATFORM(EFL)
-    const Evas_Event_Mouse_Wheel* nativeEvent() const { return m_nativeEvent; }
 #elif PLATFORM(IOS)
     const void* nativeEvent() const { return 0; }
 #endif
@@ -71,8 +62,6 @@ private:
     RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(GTK)
     GUniquePtr<GdkEvent> m_nativeEvent;
-#elif PLATFORM(EFL)
-    const Evas_Event_Mouse_Wheel* m_nativeEvent;
 #endif
 };
 
