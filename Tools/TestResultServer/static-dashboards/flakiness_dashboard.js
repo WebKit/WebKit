@@ -77,16 +77,6 @@ var PLATFORMS = {
             }
         }
     },
-    'EFL': {
-        expectationsDirectory: 'efl',
-        subPlatforms: {
-            'LINUX': {
-                subPlatforms: {
-                    'WK2': { fallbackPlatforms: ['EFL', 'WK2'], expectationsDirectory: 'efl-wk2' }
-                }
-            }
-        }
-    },
     'WK2': {
         basePlatform: true,
         expectationsDirectory: 'wk2'
@@ -360,8 +350,6 @@ function determineBuilderPlatform(builderNameUpperCase)
         return determineWKPlatform(builderNameUpperCase, 'APPLE_IOS_SIMULATOR');
     if (string.contains(builderNameUpperCase, 'GTK LINUX'))
         return determineWKPlatform(builderNameUpperCase, 'GTK_LINUX');
-    if (string.contains(builderNameUpperCase, 'EFL'))
-        return determineWKPlatform(builderNameUpperCase, 'EFL_LINUX');
 }
 
 function platformAndBuildType(builderName)

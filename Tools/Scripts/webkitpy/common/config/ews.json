@@ -5,12 +5,6 @@
             "xan.lopez@gmail.com"
         ]
     },
-    "EFL WK2 EWS": {
-        "port": "efl-wk2",
-        "watchers": [
-            "gyuyoung.kim@webkit.org"
-        ]
-    },
     "Win EWS": {
         "port": "win",
         "watchers": [

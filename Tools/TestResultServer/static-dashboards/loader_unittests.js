@@ -82,7 +82,7 @@ test('results files loading', 9, function() {
 test('expectations files loading', 1, function() {
     resetGlobals();
     g_history.parseCrossDashboardParameters();
-    var expectedLoadedPlatforms = ["efl", "efl-wk2", "gtk", "gtk-wk2",
+    var expectedLoadedPlatforms = ["gtk", "gtk-wk2",
         "mac", "mac-lion", "mac-wk2", "mac-wk2", "win", "wk2"];
     var loadedPlatforms = [];
     var resourceLoader = new loader.Loader();

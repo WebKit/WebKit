@@ -21,9 +21,9 @@ LOAD_BUILDBOT_DATA([
                     "Apple iOS 10 Simulator Debug WK2 (Tests)", 
                     "Apple iOS 10 Simulator Release WK1 (Tests)", 
                     "Apple iOS 10 Simulator Release WK2 (Tests)", 
-                    "EFL Linux 64-bit Release WK2", 
                     "GTK Linux 64-bit Debug (Tests)", 
-                    "GTK Linux 64-bit Release (Tests)"
+                    "GTK Linux 64-bit Release (Tests)",
+                    "GTK Linux 64-bit Release Wayland (Tests)"
                 ]
             }
         }, 
