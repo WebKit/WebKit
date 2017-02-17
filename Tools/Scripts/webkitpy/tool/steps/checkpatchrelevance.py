@@ -50,7 +50,7 @@ class CheckPatchRelevance(AbstractStep):
 
     def _changes_are_relevant(self, changed_files):
         # In the default case, all patches are relevant
-        if self._options.group is None:
+        if self._options.group != 'jsc':
             return True
 
         patterns = self.group_to_paths_mapping[self._options.group]

@@ -1,3 +1,12 @@
+2017-02-17  Aakash Jain  <aakash_jain@apple.com>
+
+        Fix failure from r212579.
+
+        Unreviewed build-fix.
+
+        * Scripts/webkitpy/tool/steps/checkpatchrelevance.py:
+        (CheckPatchRelevance._changes_are_relevant): Return true for all groups others than jsc for now.
+
 2017-02-17  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
 
         EWS should run JavaScriptCore tests
