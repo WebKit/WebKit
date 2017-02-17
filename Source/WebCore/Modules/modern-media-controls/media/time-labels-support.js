@@ -41,12 +41,11 @@ class TimeLabelsSupport extends MediaControllerSupport
     syncControl()
     {
         const media = this.mediaController.media;
-        if (isNaN(media.duration))
-            return;
+        const shouldShowZeroDurations = isNaN(media.duration) || media.duration === Number.POSITIVE_INFINITY;
 
-        this.control.elapsedTimeLabel.value = media.currentTime;
-        this.control.remainingTimeLabel.value = media.currentTime - media.duration;
-        this.control.labelsMayDisplayTimesOverAnHour = media.duration >= (60 * 60);
+        this.control.elapsedTimeLabel.value = shouldShowZeroDurations ? 0 : media.currentTime;
+        this.control.remainingTimeLabel.value = shouldShowZeroDurations ? 0 : (media.currentTime - media.duration);
+        this.control.labelsMayDisplayTimesOverAnHour = !shouldShowZeroDurations && media.duration >= (60 * 60);
     }
 
 }

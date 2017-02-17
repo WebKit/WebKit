@@ -1,3 +1,25 @@
+2017-02-17  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Improve handling of live broadcast video
+        https://bugs.webkit.org/show_bug.cgi?id=168506
+        <rdar://problem/30432094>
+
+        Reviewed by Dean Jackson.
+
+        Rebase existing tests to match new, correct behavior and add a new test to explicitly
+        check the text-align property on the status label. 
+
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-on-audio-expected.txt:
+        * media/modern-media-controls/controls-visibility-support/controls-visibility-support-controls-on-audio.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-audio-background-expected.txt:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-audio-background.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-status-label-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-status-label.html:
+        * media/modern-media-controls/status-label/status-label-font.html:
+        * media/modern-media-controls/status-label/status-label-text-align-expected.txt: Added.
+        * media/modern-media-controls/status-label/status-label-text-align.html: Added.
+        * media/modern-media-controls/status-label/status-label-text-selection.html:
+
 2017-02-17  Per Arne Vollan  <pvollan@apple.com>
 
         Apply SVG styles paint-order, stroke-linejoin, and stroke-linecap on DOM text.

@@ -1,3 +1,40 @@
+2017-02-17  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Improve handling of live broadcast video
+        https://bugs.webkit.org/show_bug.cgi?id=168506
+        <rdar://problem/30432094>
+
+        Reviewed by Dean Jackson.
+
+        We improve the handling of live broadcast video by:
+        
+            - checking that we have a media source before deciding to show the controls
+              bar and start button
+            - support a mode where neither the status text nor the scrubber is visible
+              in case we're still waiting on sufficient data to determine the video
+              time and we haven't really started loading data yet
+            - not showing time labels when we have an infinite duration
+            - ensuring the status label is left-aligned
+
+        Test: media/modern-media-controls/status-label/status-label-text-align.html
+
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.js:
+        (MacOSInlineMediaControls.prototype.layout):
+        * Modules/modern-media-controls/controls/status-label.css:
+        (.status-label):
+        * Modules/modern-media-controls/controls/status-label.js:
+        (StatusLabel.prototype.get enabled):
+        (StatusLabel.prototype.set enabled):
+        * Modules/modern-media-controls/media/controls-visibility-support.js:
+        (ControlsVisibilitySupport.prototype._updateControls):
+        (ControlsVisibilitySupport):
+        * Modules/modern-media-controls/media/status-support.js:
+        (StatusSupport.prototype.syncControl):
+        (StatusSupport):
+        * Modules/modern-media-controls/media/time-labels-support.js:
+        (TimeLabelsSupport.prototype.syncControl):
+        (TimeLabelsSupport):
+
 2017-02-17  Anders Carlsson  <andersca@apple.com>
 
         Begin overhauling the pasteboard implementation

@@ -41,15 +41,19 @@ class StatusSupport extends MediaControllerSupport
     syncControl()
     {
         const media = this.mediaController.media;
+        const isLiveBroadcast = media.duration === Number.POSITIVE_INFINITY;
+        const isPlayable = media.readyState > HTMLMediaElement.HAVE_METADATA && !media.error;
 
         if (!!media.error)
             this.control.text = UIString("Error");
-        else if (media.duration === Number.POSITIVE_INFINITY && media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA)
+        else if (isLiveBroadcast && media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA)
             this.control.text = UIString("Live Broadcast");
-        else if (media.readyState <= HTMLMediaElement.HAVE_NOTHING && media.networkState === HTMLMediaElement.NETWORK_LOADING)
+        else if (!isPlayable && media.networkState === HTMLMediaElement.NETWORK_LOADING)
             this.control.text = UIString("Loading");
         else
             this.control.text = "";
+
+        this.control.enabled = isLiveBroadcast || !isPlayable;
     }
 
 }

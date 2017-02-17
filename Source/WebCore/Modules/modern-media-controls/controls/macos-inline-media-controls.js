@@ -87,7 +87,7 @@ class MacOSInlineMediaControls extends MacOSMediaControls
         this.leftContainer.layout();
         this.rightContainer.layout();
 
-        const middleContainer = !!this.statusLabel.text ? this.statusLabel : this.timeControl;
+        const middleContainer = this.statusLabel.enabled ? this.statusLabel : this.timeControl;
         this.controlsBar.children = [this._backgroundTint, this.leftContainer, middleContainer, this.rightContainer, this._volumeSliderContainer];
 
         if (middleContainer === this.timeControl)

@@ -6,7 +6,7 @@
 
 window.jsTestIsAsync = true;
 
-description("Testing the <code>StatusLabel</code> font is correctly set when hosted in media controls.");
+description("Testing the <code>StatusLabel</code> text-align is correctly set when hosted in media controls.");
 
 const mediaControls = new MacOSInlineMediaControls({ width: 600, height: 300 });
 mediaControls.showsStartButton = false;
@@ -16,7 +16,7 @@ document.body.appendChild(mediaControls.element);
 
 scheduler.frameDidFire = function()
 {
-    shouldBeEqualToString("window.getComputedStyle(mediaControls.statusLabel.element).fontFamily", "-apple-system");
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.statusLabel.element).textAlign", "left");
     mediaControls.element.remove();
     debug("");
     finishMediaControlsTest();

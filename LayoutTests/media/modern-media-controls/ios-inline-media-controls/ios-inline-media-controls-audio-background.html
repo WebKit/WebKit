@@ -12,8 +12,7 @@ const mediaControls = window.internals.shadowRoot(document.querySelector('audio'
 
 shouldBecomeEqual("mediaControls.querySelector('.controls-bar') instanceof HTMLDivElement", "true", () => {
     shouldBeEqualToString("getComputedStyle(mediaControls.querySelector('.controls-bar'), ':before').webkitAppearance", "none");
-    shouldBeEqualToString("getComputedStyle(mediaControls.querySelector('.controls-bar'), ':before').backgroundColor", "rgb(212, 212, 212)");
-    finishJSTest();
+    shouldBecomeEqualToString("getComputedStyle(mediaControls.querySelector('.controls-bar'), ':before').backgroundColor", "rgb(212, 212, 212)", finishJSTest);
 });
 
 </script>

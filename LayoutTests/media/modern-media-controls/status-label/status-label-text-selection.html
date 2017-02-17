@@ -10,6 +10,7 @@ description("Testing that text selection is turned off for <code>StatusLabel</co
 
 const mediaControls = new MacOSInlineMediaControls({ width: 600, height: 300 });
 mediaControls.showsStartButton = false;
+mediaControls.statusLabel.enabled = true;
 mediaControls.statusLabel.text = "Hello";
 document.body.appendChild(mediaControls.element);
 

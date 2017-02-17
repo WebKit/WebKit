@@ -7,7 +7,7 @@ Default state
 PASS mediaControls.controlsBar.children.includes(mediaControls.statusLabel) is false
 PASS mediaControls.controlsBar.children.includes(mediaControls.timeControl) is true
 
-After setting statusLabel
+After setting statusLabel.enabled = true
 PASS mediaControls.controlsBar.children.includes(mediaControls.statusLabel) is true
 PASS mediaControls.controlsBar.children.includes(mediaControls.timeControl) is false
 

@@ -20,15 +20,16 @@ scheduler.frameDidFire = function()
         debug("Default state");
         shouldBeFalse("mediaControls.controlsBar.children.includes(mediaControls.statusLabel)");
         shouldBeTrue("mediaControls.controlsBar.children.includes(mediaControls.timeControl)");
-        mediaControls.statusLabel.text = "Hello World!";
+        mediaControls.statusLabel.enabled = true;
     } else if (numberOfFrames == 2) {
         debug("");
-        debug("After setting statusLabel");
+        debug("After setting statusLabel.enabled = true");
         shouldBeTrue("mediaControls.controlsBar.children.includes(mediaControls.statusLabel)");
         shouldBeFalse("mediaControls.controlsBar.children.includes(mediaControls.timeControl)");
         debug("");
         finishMediaControlsTest();
     }
+
 };
 
 </script>
