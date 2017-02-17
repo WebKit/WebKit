@@ -1,8 +1,0 @@
-prefix=@CMAKE_INSTALL_PREFIX@
-includedir=${prefix}/include
-
-Name: ewebkit2-extension
-Description: Extension for WebKit2/EFL(ewebkit2)
-Version: @PROJECT_VERSION@
-Requires: eina
-Cflags: -I${includedir}/@WebKit2_OUTPUT_NAME@-@PROJECT_VERSION_MAJOR@/extension -I${includedir}/@WebKit2_OUTPUT_NAME@-@PROJECT_VERSION_MAJOR@
