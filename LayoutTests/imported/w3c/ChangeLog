@@ -1,3 +1,16 @@
+2017-02-16  Chris Dumez  <cdumez@apple.com>
+
+        <input>.labels is empty if type changes from text->hidden->checkbox
+        https://bugs.webkit.org/show_bug.cgi?id=168358
+
+        Reviewed by Ryosuke Niwa.
+
+        Re-sync web-platform-test from:
+        https://github.com/w3c/web-platform-tests/pull/4804
+
+        * web-platform-tests/html/semantics/forms/the-label-element/labelable-elements-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-label-element/labelable-elements.html:
+
 2017-02-16  Alex Christensen  <achristensen@webkit.org>
 
         Special URLs without a host are invalid

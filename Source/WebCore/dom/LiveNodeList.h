@@ -113,8 +113,8 @@ ALWAYS_INLINE bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationTyp
         return attrName == HTMLNames::nameAttr;
     case InvalidateOnIdNameAttrChange:
         return attrName == HTMLNames::idAttr || attrName == HTMLNames::nameAttr;
-    case InvalidateOnForAttrChange:
-        return attrName == HTMLNames::forAttr;
+    case InvalidateOnForTypeAttrChange:
+        return attrName == HTMLNames::forAttr || attrName == HTMLNames::typeAttr;
     case InvalidateForFormControls:
         return attrName == HTMLNames::nameAttr || attrName == HTMLNames::idAttr || attrName == HTMLNames::forAttr
             || attrName == HTMLNames::formAttr || attrName == HTMLNames::typeAttr;

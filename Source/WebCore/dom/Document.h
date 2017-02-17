@@ -230,7 +230,7 @@ enum NodeListInvalidationType {
     InvalidateOnClassAttrChange,
     InvalidateOnIdNameAttrChange,
     InvalidateOnNameAttrChange,
-    InvalidateOnForAttrChange,
+    InvalidateOnForTypeAttrChange,
     InvalidateForFormControls,
     InvalidateOnHRefAttrChange,
     InvalidateOnAnyAttrChange,

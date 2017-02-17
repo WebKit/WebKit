@@ -1,3 +1,22 @@
+2017-02-16  Chris Dumez  <cdumez@apple.com>
+
+        <input>.labels is empty if type changes from text->hidden->checkbox
+        https://bugs.webkit.org/show_bug.cgi?id=168358
+
+        Reviewed by Ryosuke Niwa.
+
+        We were invalidating LabelsNodeLists on 'for' attribute change.
+        We now also invalidate them of 'type' attribute change since
+        HTMLInputElements whose type is 'hidden' do not support labels.
+
+        No new tests, updated existing test.
+
+        * dom/Document.h:
+        * dom/LiveNodeList.h:
+        (WebCore::shouldInvalidateTypeOnAttributeChange):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::LabelsNodeList):
+
 2017-02-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove even more EFL from WebCore
