@@ -1,3 +1,53 @@
+2017-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Remove EFL-specific files in Tools.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * ImageDiff/efl: Removed.
+        * ImageDiff/efl/ImageDiff.cpp: Removed.
+        * MiniBrowser/efl: Removed.
+        * MiniBrowser/efl/CMakeLists.txt: Removed.
+        * MiniBrowser/efl/main.c: Removed.
+        * Scripts/run-efl-tests: Removed.
+        * Scripts/update-webkitefl-libs: Removed.
+        * Scripts/webkitpy/port/efl.py: Removed.
+        * Scripts/webkitpy/port/efl_unittest.py: Removed.
+        * TestWebKitAPI/Tests/WebKit2/efl: Removed.
+        * TestWebKitAPI/Tests/WebKit2/efl/WKViewClientWebProcessCallbacks.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKit2/efl/WKViewClientWebProcessCallbacks_Bundle.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKit2/efl/WKViewScrollTo.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKit2/efl/scrollTo.html: Removed.
+        * TestWebKitAPI/efl: Removed.
+        * TestWebKitAPI/efl/InjectedBundleController.cpp: Removed.
+        * TestWebKitAPI/efl/PlatformUtilities.cpp: Removed.
+        * TestWebKitAPI/efl/PlatformWebView.cpp: Removed.
+        * TestWebKitAPI/efl/main.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/efl: Removed.
+        * WebKitTestRunner/InjectedBundle/efl/ActivateFontsEfl.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/efl/FontManagement.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/efl/FontManagement.h: Removed.
+        * WebKitTestRunner/InjectedBundle/efl/InjectedBundleEfl.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/efl/TestRunnerEfl.cpp: Removed.
+        * WebKitTestRunner/efl: Removed.
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp: Removed.
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp: Removed.
+        * WebKitTestRunner/efl/TestControllerEfl.cpp: Removed.
+        * WebKitTestRunner/efl/main.cpp: Removed.
+        * efl: Removed.
+        * efl/install-dependencies: Removed.
+        * efl/jhbuild-optional.modules: Removed.
+        * efl/jhbuild.modules: Removed.
+        * efl/jhbuildrc: Removed.
+        * efl/patches: Removed.
+        * efl/patches/evas-fix-build-with-giflib5.patch: Removed.
+        * efl/patches/fontconfig-C-11-requires-a-space-between-literal-and-identifier.patch: Removed.
+        * efl/patches/gst-libav.patch: Removed.
+        * efl/patches/gst-plugins-base-rtp-rtcpbuffer-fix-typo-in-enum.patch: Removed.
+        * efl/patches/gst-plugins-good-Revert-qtdemux-expose-streams-with-first-moof-for-fr.patch: Removed.
+        * efl/patches/gst-plugins-good-use-the-tfdt-decode-time.patch: Removed.
+        * efl/patches/openwebrtc-gst-plugins-clang-warning-fix.patch: Removed.
+
 2017-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-weight in @font-face can cause a font to be downloaded even when it's not used
