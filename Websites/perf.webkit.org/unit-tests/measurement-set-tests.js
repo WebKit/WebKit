@@ -8,40 +8,40 @@ const MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 require('../tools/js/v3-models.js');
 const MockModels = require('./resources/mock-v3-models.js').MockModels;
 
-describe('MeasurementSet', function () {
+describe('MeasurementSet', () => {
     MockModels.inject();
     let requests = MockRemoteAPI.inject();
 
-    beforeEach(function () {
+    beforeEach(() => {
         MeasurementSet._set = null;
     });
 
     function waitForMeasurementSet()
     {
-        return Promise.resolve().then(function () {
+        return Promise.resolve().then(() => {
             return Promise.resolve();
-        }).then(function () {
+        }).then(() => {
             return Promise.resolve();
         });
     }
 
-    describe('findSet', function () {
-        it('should create a new MeasurementSet for a new pair of platform and matric', function () {
+    describe('findSet', () => {
+        it('should create a new MeasurementSet for a new pair of platform and matric', () => {
             assert.notEqual(MeasurementSet.findSet(1, 1, 3000), MeasurementSet.findSet(1, 2, 3000));
             assert.notEqual(MeasurementSet.findSet(1, 1, 3000), MeasurementSet.findSet(2, 1, 3000));
         });
 
-        it('should not create a new MeasurementSet when the same pair of platform and matric are requested', function () {
+        it('should not create a new MeasurementSet when the same pair of platform and matric are requested', () => {
             assert.equal(MeasurementSet.findSet(1, 1), MeasurementSet.findSet(1, 1));
         });
     });
 
-    describe('findClusters', function () {
+    describe('findClusters', () => {
 
-        it('should return clusters that exist', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 1467852503940);
-            var callCount = 0;
-            var promise = set.fetchBetween(1465084800000, 1470268800000, function () {
+        it('should return clusters that exist', () => {
+            const set = MeasurementSet.findSet(1, 1, 1467852503940);
+            let callCount = 0;
+            const promise = set.fetchBetween(1465084800000, 1470268800000, () => {
                 callCount++;
             });
             assert.equal(requests.length, 1);
@@ -58,39 +58,39 @@ describe('MeasurementSet', function () {
                 'clusterCount': 5,
                 'status': 'OK'});
 
-            promise.then(function () {
+            return promise.then(() => {
                 assert.deepEqual(set.findClusters(0, Date.now()), [1449532800000, 1454716800000, 1459900800000, 1465084800000, 1470268800000]);
-                done();
-            }).catch(function (error) {
-                done(error);
             });
         });
 
     });
 
-    describe('fetchBetween', function () {
-        it('should always request the cached primary cluster first', function () {
-            var set = MeasurementSet.findSet(1, 1, 3000);
-            set.fetchBetween(1000, 2000, function () { assert.notReached(); });
+    describe('fetchBetween', () => {
+        it('should always request the cached primary cluster first', () => {
+            const set = MeasurementSet.findSet(1, 1, 3000);
+            let callCount = 0;
+            set.fetchBetween(1000, 2000, () => callCount++);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
+            assert.equal(callCount, 0);
         });
 
-        it('should not request the cached primary cluster twice', function () {
-            var set = MeasurementSet.findSet(1, 1, 3000);
-            set.fetchBetween(1000, 2000, function () { assert.notReached(); });
+        it('should not request the cached primary cluster twice', () => {
+            const set = MeasurementSet.findSet(1, 1, 3000);
+            let callCount = 0;
+            set.fetchBetween(1000, 2000, () => callCount++);
             assert.equal(requests.length, 1);
+            assert.equal(callCount, 0);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
-            set.fetchBetween(2000, 3000, function () { assert.notReached(); });
+            set.fetchBetween(2000, 3000, () => callCount++);
             assert.equal(requests.length, 1);
+            assert.equal(callCount, 0);
         });
 
-        it('should invoke the callback when the up-to-date cached primary cluster is fetched and it matches the requested range', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 3000);
-            var callCount = 0;
-            var promise = set.fetchBetween(2000, 3000, function () {
-                callCount++;
-            });
+        it('should invoke the callback when the requested range is in the cached primary cluster', () => {
+            const set = MeasurementSet.findSet(1, 1, 3000);
+            let callCount = 0;
+            const promise = set.fetchBetween(2000, 3000, () => callCount++);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -105,21 +105,16 @@ describe('MeasurementSet', function () {
                 'clusterCount': 2,
                 'status': 'OK'});
 
-            promise.then(function () {
+            return promise.then(() => {
                 assert.equal(callCount, 1);
                 assert.equal(requests.length, 1);
-                done();
-            }).catch(function (error) {
-                done(error);
             });
         });
 
-        it('should invoke the callback and fetch a secondary cluster when the cached primary cluster is up-to-date and within in the requested range', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 3000);
-            var callCount = 0;
-            var promise = set.fetchBetween(1000, 3000, function () {
-                callCount++;
-            });
+        it('should invoke the callback and fetch a secondary cluster when the cached primary cluster is within the requested range', () => {
+            const set = MeasurementSet.findSet(1, 1, 3000);
+            let callCount = 0;
+            const promise = set.fetchBetween(1000, 3000, () => callCount++);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -134,21 +129,17 @@ describe('MeasurementSet', function () {
                 'clusterCount': 2,
                 'status': 'OK'});
 
-            waitForMeasurementSet().then(function () {
+            return waitForMeasurementSet().then(() => {
                 assert.equal(callCount, 1);
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '../data/measurement-set-1-1-2000.json');
-                done();
-            }).catch(function (error) {
-                done(error);
             });
         });
 
-        it('should request additional secondary clusters as requested', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 5000);
-            set.fetchBetween(2000, 3000, function () {
-                assert.notReached();
-            });
+        it('should request additional secondary clusters as requested', () => {
+            const set = MeasurementSet.findSet(1, 1, 5000);
+            let callCountForWaitingCallback = 0;
+            set.fetchBetween(2000, 3000, () => callCountForWaitingCallback++);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -163,31 +154,27 @@ describe('MeasurementSet', function () {
                 'clusterCount': 4,
                 'status': 'OK'});
 
-            var callCount = 0;
-            waitForMeasurementSet().then(function () {
+            let callCount = 0;
+            return waitForMeasurementSet().then(() => {
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '../data/measurement-set-1-1-3000.json');
 
-                set.fetchBetween(0, 7000, function () { callCount++; });
+                set.fetchBetween(0, 7000, () => callCount++);
 
                 return waitForMeasurementSet();
-            }).then(function () {
+            }).then(() => {
+                assert.equal(callCountForWaitingCallback, 0);
                 assert.equal(callCount, 1);
                 assert.equal(requests.length, 4);
                 assert.equal(requests[2].url, '../data/measurement-set-1-1-2000.json');
                 assert.equal(requests[3].url, '../data/measurement-set-1-1-4000.json');
-
-                done();
-            }).catch(function (error) {
-                done(error);
             });
         });
 
-        it('should request secondary clusters which forms a superset of the requested range', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 5000);
-            set.fetchBetween(2707, 4207, function () {
-                assert.notReached();
-            });
+        it('should request secondary clusters which forms a superset of the requested range', () => {
+            const set = MeasurementSet.findSet(1, 1, 5000);
+            let callCount = 0;
+            const promise = set.fetchBetween(2707, 4207, () => callCount++);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -202,21 +189,18 @@ describe('MeasurementSet', function () {
                 'clusterCount': 3,
                 'status': 'OK'});
 
-            waitForMeasurementSet().then(function () {
+            return waitForMeasurementSet().then(() => {
                 assert.equal(requests.length, 3);
                 assert.equal(requests[1].url, '../data/measurement-set-1-1-3000.json');
                 assert.equal(requests[2].url, '../data/measurement-set-1-1-4000.json');
-                done();
-            }).catch(function (error) {
-                done(error);
+                assert.equal(callCount, 1); // 4000-4207
             });
         });
 
-        it('should not request secondary clusters that are not requested', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 5000);
-            set.fetchBetween(3200, 3700, function () {
-                assert.notReached();
-            });
+        it('should not request secondary clusters that are not requested', () => {
+            const set = MeasurementSet.findSet(1, 1, 5000);
+            let callCountForWaitingCallback = 0;
+            set.fetchBetween(3200, 3700, () => callCountForWaitingCallback++);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -231,33 +215,31 @@ describe('MeasurementSet', function () {
                 'clusterCount': 4,
                 'status': 'OK'});
 
-            var callCount = 0;
-            waitForMeasurementSet().then(function () {
+            let callCount = 0;
+            return waitForMeasurementSet().then(() => {
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '../data/measurement-set-1-1-4000.json');
-                set.fetchBetween(1207, 1293, function () { callCount++; });
+                set.fetchBetween(1207, 1293, () => callCount++);
                 return waitForMeasurementSet();
-            }).then(function () {
+            }).then(() => {
+                assert.equal(callCountForWaitingCallback, 0);
                 assert.equal(callCount, 0);
                 assert.equal(requests.length, 3);
                 assert.equal(requests[2].url, '../data/measurement-set-1-1-2000.json');
-                set.fetchBetween(1964, 3401, function () { callCount++; });
+                set.fetchBetween(1964, 3401, () => callCount++);
                 return waitForMeasurementSet();
-            }).then(function () {
+            }).then(() => {
+                assert.equal(callCountForWaitingCallback, 0);
                 assert.equal(callCount, 0);
                 assert.equal(requests.length, 4);
                 assert.equal(requests[3].url, '../data/measurement-set-1-1-3000.json');
-                done();
-            }).catch(function (error) {
-                done(error);
             });
         });
 
-        it('should not request a cluster before the very first cluster', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 5000);
-            set.fetchBetween(0, 3000, function () {
-                assert.notReached();
-            });
+        it('should not request a cluster before the very first cluster', () => {
+            const set = MeasurementSet.findSet(1, 1, 5000);
+            let callCount = 0;
+            set.fetchBetween(0, 3000, () => callCount++);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -272,41 +254,33 @@ describe('MeasurementSet', function () {
                 'clusterCount': 1,
                 'status': 'OK'});
 
-            var callCount = 0;
-            waitForMeasurementSet().then(function () {
+            return waitForMeasurementSet().then(() => {
                 assert.equal(requests.length, 1);
-                done();
-            }).catch(function (error) {
-                done(error);
+                assert.equal(callCount, 1);
             });
         });
 
-        it('should invoke the callback when the fetching of the primray cluster fails', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 3000);
-            var callCount = 0;
-            set.fetchBetween(1000, 3000, function () {
-                callCount++;
-            });
+        it('should invoke the callback when the fetching of the primray cluster fails', () => {
+            const set = MeasurementSet.findSet(1, 1, 3000);
+            let callCount = 0;
+            let rejected = false;
+            set.fetchBetween(1000, 3000, () => callCount++).catch(() => rejected = true);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
             requests[0].reject(500);
 
-            waitForMeasurementSet().then(function () {
+            return waitForMeasurementSet().then(() => {
                 assert.equal(callCount, 1);
                 assert.equal(requests.length, 1);
-                done();
-            }).catch(function (error) {
-                done(error);
+                assert(rejected);
             });
         });
 
-        it('should request the uncached primary cluster when the cached cluster is outdated', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 3005);
-            var callCount = 0;
-            set.fetchBetween(1000, 2000, function () {
-                callCount++;
-            });
+        it('should request the uncached primary cluster when the cached cluster is outdated', () => {
+            const set = MeasurementSet.findSet(1, 1, 3005);
+            let callCount = 0;
+            set.fetchBetween(1000, 2000, () => callCount++);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -321,43 +295,33 @@ describe('MeasurementSet', function () {
                 'clusterCount': 2,
                 'status': 'OK'});
 
-            Promise.resolve().then(function () {
+            return waitForMeasurementSet().then(() => {
                 assert.equal(callCount, 0);
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '../api/measurement-set?platform=1&metric=1');
-                done();
-            }).catch(function (error) {
-                done(error);
             });
         });
 
-        it('should request the uncached primary cluster when the cached cluster is 404', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 3005);
-            var callCount = 0;
-            set.fetchBetween(1000, 2000, function () {
-                callCount++;
-            });
+        it('should request the uncached primary cluster when the cached cluster is 404', () => {
+            const set = MeasurementSet.findSet(1, 1, 3005);
+            let callCount = 0;
+            set.fetchBetween(1000, 2000, () => callCount++);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
             requests[0].reject(404);
 
-            waitForMeasurementSet().then(function () {
+            return waitForMeasurementSet().then(() => {
                 assert.equal(callCount, 0);
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '../api/measurement-set?platform=1&metric=1');
-                done();
-            }).catch(function (error) {
-                done(error);
             });
         });
 
-        it('should request the uncached primary cluster when noCache is true', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 3000);
-            var callCount = 0;
-            set.fetchBetween(1000, 3000, function () {
-                callCount++;
-            });
+        it('should request the uncached primary cluster when noCache is true', () => {
+            const set = MeasurementSet.findSet(1, 1, 3000);
+            let callCount = 0;
+            set.fetchBetween(1000, 3000, () => callCount++);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -372,8 +336,8 @@ describe('MeasurementSet', function () {
                 'clusterCount': 2,
                 'status': 'OK'});
 
-            var noCacheFetchCount = 0;
-            waitForMeasurementSet().then(function () {
+            let noCacheFetchCount = 0;
+            return waitForMeasurementSet().then(() => {
                 assert.equal(callCount, 1);
                 assert.equal(noCacheFetchCount, 0);
                 assert.equal(set._sortedClusters.length, 1);
@@ -391,12 +355,10 @@ describe('MeasurementSet', function () {
                     'clusterCount': 2,
                     'status': 'OK'});
 
-                set.fetchBetween(1000, 3000, function () {
-                    noCacheFetchCount++;
-                }, true /* noCache */);
+                set.fetchBetween(1000, 3000, () => noCacheFetchCount++, true /* noCache */);
 
                 return waitForMeasurementSet();
-            }).then(function () {
+            }).then(() => {
                 assert.equal(callCount, 2);
                 assert.equal(noCacheFetchCount, 0);
                 assert.equal(set._sortedClusters.length, 2);
@@ -415,7 +377,7 @@ describe('MeasurementSet', function () {
                     'status': 'OK'});
 
                 return waitForMeasurementSet();
-            }).then(function () {
+            }).then(() => {
                 assert.equal(callCount, 2);
                 assert.equal(noCacheFetchCount, 1);
                 assert.equal(set._sortedClusters.length, 2);
@@ -434,31 +396,23 @@ describe('MeasurementSet', function () {
                     'status': 'OK'});
 
                 return waitForMeasurementSet();
-            }).then(function () {
+            }).then(() => {
                 assert.equal(callCount, 3);
                 assert.equal(noCacheFetchCount, 2);
                 assert.equal(set._sortedClusters.length, 2);
                 assert.equal(requests.length, 4);
-
-                done();
-            }).catch(function (error) {
-                done(error);
             });
         });
 
-        it('should not request the primary cluster twice when multiple clients request it but should invoke all callbacks', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 3000);
-            var callCount = 0;
-            set.fetchBetween(2000, 3000, function () {
-                callCount++;
-            });
+        it('should not request the primary cluster twice when multiple clients request it but should invoke all callbacks', () => {
+            const set = MeasurementSet.findSet(1, 1, 3000);
+            let callCount = 0;
+            set.fetchBetween(2000, 3000, () => callCount++);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
-            var alternativeCallCount = 0;
-            set.fetchBetween(2000, 3000, function () {
-                alternativeCallCount++;
-            });
+            let alternativeCallCount = 0;
+            set.fetchBetween(2000, 3000, () => alternativeCallCount++);
 
             requests[0].resolve({
                 'clusterStart': 1000,
@@ -471,20 +425,17 @@ describe('MeasurementSet', function () {
                 'clusterCount': 2,
                 'status': 'OK'});
 
-            waitForMeasurementSet().then(function () {
+            return waitForMeasurementSet().then(() => {
                 assert.equal(callCount, 1);
                 assert.equal(alternativeCallCount, 1);
                 assert.equal(requests.length, 1);
-                done();
-            }).catch(function (error) {
-                done(error);
             });
         });
 
-        it('should invoke callback for each secondary clusters that are fetched or rejected', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 5000);
-            var callCountFor4000 = 0;
-            set.fetchBetween(3200, 3700, function () { callCountFor4000++; });
+        it('should invoke callback for each secondary clusters that are fetched or rejected', () => {
+            const set = MeasurementSet.findSet(1, 1, 5000);
+            let callCountFor4000 = 0;
+            set.fetchBetween(3200, 3700, () => callCountFor4000++);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -499,23 +450,23 @@ describe('MeasurementSet', function () {
                 'clusterCount': 4,
                 'status': 'OK'});
 
-            var callCountFor4000To5000 = 0;
-            var callCountFor2000 = 0;
-            var callCountFor2000To4000 = 0;
-            waitForMeasurementSet().then(function () {
+            let callCountFor4000To5000 = 0;
+            let callCountFor2000 = 0;
+            let callCountFor2000To4000 = 0;
+            return waitForMeasurementSet().then(() => {
                 assert.equal(callCountFor4000, 0);
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '../data/measurement-set-1-1-4000.json');
 
-                set.fetchBetween(3708, 4800, function () { callCountFor4000To5000++; });
+                set.fetchBetween(3708, 4800, () => callCountFor4000To5000++);
                 return waitForMeasurementSet();
-            }).then(function () {
+            }).then(() => {
                 assert.equal(callCountFor4000To5000, 1);
                 assert.equal(requests.length, 2);
 
-                set.fetchBetween(1207, 1293, function () { callCountFor2000++; });
+                set.fetchBetween(1207, 1293, () => callCountFor2000++);
                 return waitForMeasurementSet();
-            }).then(function () {
+            }).then(() => {
                 assert.equal(callCountFor2000, 0);
                 assert.equal(requests.length, 3);
                 assert.equal(requests[2].url, '../data/measurement-set-1-1-2000.json');
@@ -528,15 +479,15 @@ describe('MeasurementSet', function () {
                     'lastModified': 5000,
                     'status': 'OK'});
                 return waitForMeasurementSet();
-            }).then(function () {
+            }).then(() => {
                 assert.equal(requests.length, 3);
                 assert.equal(callCountFor4000, 0);
                 assert.equal(callCountFor4000To5000, 1);
                 assert.equal(callCountFor2000, 1);
 
-                set.fetchBetween(1964, 3401, function () { callCountFor2000To4000++; });
+                set.fetchBetween(1964, 3401, () => { callCountFor2000To4000++; });
                 return waitForMeasurementSet();
-            }).then(function () {
+            }).then(() => {
                 assert.equal(callCountFor2000To4000, 1);
                 assert.equal(requests.length, 4);
                 assert.equal(requests[3].url, '../data/measurement-set-1-1-3000.json');
@@ -549,7 +500,7 @@ describe('MeasurementSet', function () {
                     'lastModified': 5000,
                     'status': 'OK'});
                 return waitForMeasurementSet();
-            }).then(function () {
+            }).then(() => {
                 assert.equal(callCountFor4000, 0);
                 assert.equal(callCountFor4000To5000, 1);
                 assert.equal(callCountFor2000, 1);
@@ -564,31 +515,27 @@ describe('MeasurementSet', function () {
                     'lastModified': 5000,
                     'status': 'OK'});
                 return waitForMeasurementSet();
-            }).then(function () {
+            }).then(() => {
                 assert.equal(callCountFor4000, 1);
                 assert.equal(callCountFor4000To5000, 2);
                 assert.equal(callCountFor2000, 1);
                 assert.equal(callCountFor2000To4000, 3);
                 assert.equal(requests.length, 4);
-
-                done();
-            }).catch(function (error) {
-                done(error);
-            })
+            });
         });
 
     });
 
-    describe('hasFetchedRange', function () {
+    describe('hasFetchedRange', () => {
 
-        it('should return false when no clusters had been fetched', function () {
+        it('should return false when no clusters had been fetched', () => {
             var set = MeasurementSet.findSet(1, 1, 3000);
             assert(!set.hasFetchedRange(2000, 3000));
         });
 
-        it('should return true when a single cluster contains the entire range', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 3000);
-            var promise = set.fetchBetween(2000, 3000);
+        it('should return true when a single cluster contains the entire range', () => {
+            const set = MeasurementSet.findSet(1, 1, 3000);
+            const promise = set.fetchBetween(2000, 3000);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -603,18 +550,15 @@ describe('MeasurementSet', function () {
                 'clusterCount': 2,
                 'status': 'OK'});
 
-            promise.then(function () {
+            return promise.then(() => {
                 assert(set.hasFetchedRange(2001, 2999));
                 assert(set.hasFetchedRange(2000, 3000));
-                done();
-            }).catch(function (error) {
-                done(error);
             });
         });
 
-        it('should return false when the range starts before the fetched cluster', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 3000);
-            var promise = set.fetchBetween(2000, 3000);
+        it('should return false when the range starts before the fetched cluster', () => {
+            const set = MeasurementSet.findSet(1, 1, 3000);
+            const promise = set.fetchBetween(2000, 3000);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -629,17 +573,14 @@ describe('MeasurementSet', function () {
                 'clusterCount': 2,
                 'status': 'OK'});
 
-            promise.then(function () {
+            return promise.then(() => {
                 assert(!set.hasFetchedRange(1500, 3000));
-                done();
-            }).catch(function (error) {
-                done(error);
             });
         });
 
-        it('should return false when the range ends after the fetched cluster', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 3000);
-            var promise = set.fetchBetween(2000, 3000);
+        it('should return false when the range ends after the fetched cluster', () => {
+            const set = MeasurementSet.findSet(1, 1, 5000);
+            const promise = set.fetchBetween(2000, 3000);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -648,23 +589,33 @@ describe('MeasurementSet', function () {
                 'clusterSize': 1000,
                 'formatMap': [],
                 'configurations': {current: []},
-                'startTime': 2000,
-                'endTime': 3000,
-                'lastModified': 3000,
-                'clusterCount': 2,
+                'startTime': 4000,
+                'endTime': 5000,
+                'lastModified': 5000,
+                'clusterCount': 3,
                 'status': 'OK'});
 
-            promise.then(function () {
+            return waitForMeasurementSet().then(() => {
+                assert.equal(requests.length, 2);
+                assert.equal(requests[1].url, '../data/measurement-set-1-1-3000.json');
+                requests[1].resolve({
+                    'clusterStart': 1000,
+                    'clusterSize': 1000,
+                    'formatMap': [],
+                    'configurations': {current: []},
+                    'startTime': 2000,
+                    'endTime': 3000,
+                    'lastModified': 5000,
+                    'clusterCount': 3,
+                    'status': 'OK'});
+            }).then(() => {
                 assert(!set.hasFetchedRange(2500, 3500));
-                done();
-            }).catch(function (error) {
-                done(error);
             });
         });
 
-        it('should return true when the range is within two fetched clusters', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 5000);
-            var promise = set.fetchBetween(2000, 3000);
+        it('should return true when the range is within two fetched clusters', () => {
+            const set = MeasurementSet.findSet(1, 1, 5000);
+            set.fetchBetween(2000, 3000);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -679,7 +630,7 @@ describe('MeasurementSet', function () {
                 'clusterCount': 2,
                 'status': 'OK'});
 
-            waitForMeasurementSet().then(function () {
+            return waitForMeasurementSet().then(() => {
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '../data/measurement-set-1-1-3000.json');
                 requests[1].resolve({
@@ -692,17 +643,14 @@ describe('MeasurementSet', function () {
                     'lastModified': 5000,
                     'clusterCount': 2,
                     'status': 'OK'});                
-            }).then(function () {
+            }).then(() => {
                 assert(set.hasFetchedRange(2500, 3500));
-                done();
-            }).catch(function (error) {
-                done(error);
             });
         });
 
-        it('should return false when there is a cluster missing in the range', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 5000);
-            var promise = set.fetchBetween(2000, 5000);
+        it('should return false when there is a cluster missing in the range', () => {
+            const set = MeasurementSet.findSet(1, 1, 5000);
+            set.fetchBetween(2000, 5000);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -717,7 +665,7 @@ describe('MeasurementSet', function () {
                 'clusterCount': 4,
                 'status': 'OK'});
 
-            waitForMeasurementSet().then(function () {
+            return waitForMeasurementSet().then(() => {
                 assert.equal(requests.length, 3);
                 assert.equal(requests[1].url, '../data/measurement-set-1-1-3000.json');
                 assert.equal(requests[2].url, '../data/measurement-set-1-1-4000.json');
@@ -731,13 +679,32 @@ describe('MeasurementSet', function () {
                     'lastModified': 5000,
                     'clusterCount': 2,
                     'status': 'OK'});
-            }).then(function () {
+            }).then(() => {
                 assert(!set.hasFetchedRange(2500, 4500));
                 assert(set.hasFetchedRange(2100, 2300));
                 assert(set.hasFetchedRange(4000, 4800));
-                done();
-            }).catch(function (error) {
-                done(error);
+            });
+        });
+
+        it('should return true even when the range extends beyond the primary cluster', () => {
+            const set = MeasurementSet.findSet(1, 1, 3000);
+            const promise = set.fetchBetween(2000, 3000);
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
+
+            requests[0].resolve({
+                'clusterStart': 1000,
+                'clusterSize': 1000,
+                'formatMap': [],
+                'configurations': {current: []},
+                'startTime': 2000,
+                'endTime': 3000,
+                'lastModified': 3000,
+                'clusterCount': 2,
+                'status': 'OK'});
+
+            return promise.then(() => {
+                assert(set.hasFetchedRange(2001, 5000));
             });
         });
 
@@ -803,7 +770,7 @@ describe('MeasurementSet', function () {
 
         let builder;
         let webkit;
-        beforeEach(function () {
+        beforeEach(() => {
             builder = new Builder(7, {name: 'EFL Linux 64-bit Release WK2 (Perf)', buildUrl: 'http://build.webkit.org/builders/$builderName/$buildNumber'});
             webkit = new Repository(1, {name: 'WebKit', url: 'http://trac.webkit.org/changeset/$1'});
         });
@@ -982,7 +949,7 @@ describe('MeasurementSet', function () {
 
     });
 
-    describe('fetchSegmentation', function () {
+    describe('fetchSegmentation', () => {
 
         var simpleSegmentableValues = [
             1546.5603, 1548.1536, 1563.5452, 1539.7823, 1546.4184, 1548.9299, 1532.5444, 1546.2800, 1547.1760, 1551.3507,
@@ -1008,9 +975,9 @@ describe('MeasurementSet', function () {
             return runs;
         }
 
-        it('should be able to segment a single cluster', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 5000);
-            var promise = set.fetchBetween(4000, 5000);
+        it('should be able to segment a single cluster', () => {
+            const set = MeasurementSet.findSet(1, 1, 5000);
+            const promise = set.fetchBetween(4000, 5000);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -1027,13 +994,13 @@ describe('MeasurementSet', function () {
 
             var timeSeries;
             assert.equal(set.fetchedTimeSeries('current', false, false).length(), 0);
-            waitForMeasurementSet().then(function () {
+            return waitForMeasurementSet().then(() => {
                 timeSeries = set.fetchedTimeSeries('current', false, false);
                 assert.equal(timeSeries.length(), 45);
                 assert.equal(timeSeries.firstPoint().time, 4000);
                 assert.equal(timeSeries.lastPoint().time, 4880);
                 return set.fetchSegmentation('segmentTimeSeriesByMaximizingSchwarzCriterion', [], 'current', false);
-            }).then(function (segmentation) {
+            }).then((segmentation) => {
                 assert.equal(segmentation.length, 4);
 
                 assert.equal(segmentation[0].time, 4000);
@@ -1045,13 +1012,12 @@ describe('MeasurementSet', function () {
                 assert.almostEqual(segmentation[2].value, 1581.872);
                 assert.equal(segmentation[2].value, segmentation[3].value);
                 assert.equal(segmentation[3].time, 4880);
-                done();
-            }).catch(done);
+            });
         });
 
-        it('should be able to segment two clusters', function (done) {
-            var set = MeasurementSet.findSet(1, 1, 5000);
-            var promise = set.fetchBetween(3000, 5000);
+        it('should be able to segment two clusters', () => {
+            const set = MeasurementSet.findSet(1, 1, 5000);
+            const promise = set.fetchBetween(3000, 5000);
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../data/measurement-set-1-1.json');
 
@@ -1066,12 +1032,12 @@ describe('MeasurementSet', function () {
                 'clusterCount': 4,
                 'status': 'OK'});
 
-            waitForMeasurementSet().then(function () {
+            return waitForMeasurementSet().then(() => {
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '../data/measurement-set-1-1-4000.json');
                 return set.fetchSegmentation('segmentTimeSeriesByMaximizingSchwarzCriterion', [], 'current', false);
-            }).then(function (segmentation) {
-                var timeSeries = set.fetchedTimeSeries('current', false, false);
+            }).then((segmentation) => {
+                const timeSeries = set.fetchedTimeSeries('current', false, false);
                 assert.equal(timeSeries.length(), 15);
                 assert.equal(timeSeries.firstPoint().time, 4000);
                 assert.equal(timeSeries.lastPoint().time, 4462);
@@ -1098,9 +1064,9 @@ describe('MeasurementSet', function () {
                     'clusterCount': 4,
                     'status': 'OK'});
                 return waitForMeasurementSet();
-            }).then(function () {
+            }).then(() => {
                 return set.fetchSegmentation('segmentTimeSeriesByMaximizingSchwarzCriterion', [], 'current', false);
-            }).then(function (segmentation) {
+            }).then((segmentation) => {
                 var timeSeries = set.fetchedTimeSeries('current', false, false);
                 assert.equal(timeSeries.length(), 45);
                 assert.equal(timeSeries.firstPoint().time, 3000);
@@ -1116,8 +1082,7 @@ describe('MeasurementSet', function () {
                 assert.almostEqual(segmentation[2].value, 1581.872);
                 assert.equal(segmentation[2].value, segmentation[3].value);
                 assert.equal(segmentation[3].time, timeSeries.lastPoint().time);
-                done();
-            }).catch(done);
+            });
         });
 
     });

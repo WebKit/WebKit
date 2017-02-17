@@ -161,12 +161,13 @@ class MeasurementSet {
     hasFetchedRange(startTime, endTime)
     {
         console.assert(startTime < endTime);
-        var foundStart = false;
-        var previousEndTime = null;
+        let foundStart = false;
+        let previousEndTime = null;
+        endTime = Math.min(endTime, this._primaryClusterEndTime);
         for (var cluster of this._sortedClusters) {
-            var containsStart = cluster.startTime() <= startTime && startTime <= cluster.endTime();
-            var containsEnd = cluster.startTime() <= endTime && endTime <= cluster.endTime();
-            var preceedingClusterIsMissing = previousEndTime !== null && previousEndTime != cluster.startTime();
+            const containsStart = cluster.startTime() <= startTime && startTime <= cluster.endTime();
+            const containsEnd = cluster.startTime() <= endTime && endTime <= cluster.endTime();
+            const preceedingClusterIsMissing = previousEndTime !== null && previousEndTime != cluster.startTime();
             if (containsStart && containsEnd)
                 return true;
             if (containsStart)

@@ -1,8 +1,3 @@
-var assert = require('assert');
-
-if (!assert.notReached)
-    assert.notReached = function () { assert(false, 'This code path should not be reached'); }
-
 var MockRemoteAPI = {
     url: function (path)
     {

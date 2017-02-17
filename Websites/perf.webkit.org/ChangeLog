@@ -1,3 +1,33 @@
+2017-02-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Modernize and fix measurement-set tests
+        https://bugs.webkit.org/show_bug.cgi?id=168484
+
+        Reviewed by Joseph Pecoraro.
+
+        Modernized and fixed the tests in measurement-set-tests.js.
+
+        1. Return a promise instead of manually calling done in then/catch hanlders.
+        2. Use arrow function everywhere.
+        3. Explicitly assert the number of calls to callbacks instead of asserting never reached.
+
+        The test case labled "should return false when the range ends after the fetched cluster"
+        was incorrectly asserting that hasFetchedRange returns false when the end time is after
+        the primary cluster's end time. Test an interval before the primary cluster instead.
+
+        Added a test case for hasFetchedRange returning true when the end time appears after
+        the end of the primary cluster and fixed hasFetchedRange to that end. Since there are
+        no data points after the primary cluster which is chronologically the last cluster,
+        there is nothing to fetch beyond its end time.
+
+        * public/v3/models/measurement-set.js:
+        (MeasurementSet.prototype.hasFetchedRange): Fixed the bug that this function returned
+        false when the end time was after the primary cluster's end by truncating the range by
+        the end of the primary cluster.
+        * unit-tests/measurement-set-tests.js:
+        * unit-tests/resources/mock-remote-api.js:
+        (assert.notReached.assert.notReached): Deleted. It's no longer used by any tests.
+
 2017-02-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update ReadMe.md and merge it with Install.md
