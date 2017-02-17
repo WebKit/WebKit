@@ -226,6 +226,9 @@ void TiledCoreAnimationDrawingArea::updateRootLayers()
     }
 
     [m_hostingLayer setSublayers:m_viewOverlayRootLayer ? @[ m_rootLayer.get(), m_viewOverlayRootLayer->platformLayer() ] : @[ m_rootLayer.get() ]];
+    
+    if (m_debugInfoLayer)
+        [m_hostingLayer addSublayer:m_debugInfoLayer.get()];
 }
 
 void TiledCoreAnimationDrawingArea::attachViewOverlayGraphicsLayer(Frame* frame, GraphicsLayer* viewOverlayRootLayer)

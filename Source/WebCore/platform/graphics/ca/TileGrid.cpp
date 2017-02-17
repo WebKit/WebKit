@@ -352,9 +352,9 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
     }
 
     // Move tiles newly outside the coverage rect into the cohort map.
-    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        TileInfo& tileInfo = it->value;
-        TileIndex tileIndex = it->key;
+    for (auto& entry : m_tiles) {
+        TileInfo& tileInfo = entry.value;
+        TileIndex tileIndex = entry.key;
 
         PlatformCALayer* tileLayer = tileInfo.layer.get();
         IntRect tileRect = rectForTileIndex(tileIndex);
@@ -371,10 +371,8 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
             if (tileInfo.cohort == VisibleTileCohort) {
                 tileInfo.cohort = currCohort;
                 ++tilesInCohort;
-
-                if (m_controller.unparentsOffscreenTiles())
-                    tileLayer->removeFromSuperlayer();
-            } else if (m_controller.unparentsOffscreenTiles() && m_controller.shouldAggressivelyRetainTiles() && tileLayer->superlayer()) {
+                tileLayer->removeFromSuperlayer();
+            } else if (m_controller.shouldAggressivelyRetainTiles() && tileLayer->superlayer()) {
                 // Aggressive tile retention means we'll never remove cohorts, but we need to make sure they're unparented.
                 // We can't immediately unparent cohorts comprised of secondary tiles that never touch the primary coverage rect,
                 // because that would defeat the usefulness of prepopulateRect(); instead, age prepopulated tiles out as if they were being removed.
@@ -411,9 +409,9 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
         m_cohortList.clear();
     }
 
-    if (m_controller.unparentsOffscreenTiles() && (validationPolicy & UnparentAllTiles)) {
-        for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
-            it->value.layer->removeFromSuperlayer();
+    if (validationPolicy & UnparentAllTiles) {
+        for (auto& tile : m_tiles.values())
+            tile.layer->removeFromSuperlayer();
     }
 
     auto boundsAtLastRevalidate = m_controller.boundsAtLastRevalidate();
@@ -531,7 +529,7 @@ void TileGrid::cohortRemovalTimerFired()
 
 IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTileType)
 {
-    if (m_controller.unparentsOffscreenTiles() && !m_controller.isInWindow())
+    if (!m_controller.isInWindow())
         return IntRect();
 
     FloatRect scaledRect(rect);
@@ -579,9 +577,7 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
                 ++tilesInCohort;
             }
 
-            bool shouldParentTileLayer = (!m_controller.unparentsOffscreenTiles() || m_controller.isInWindow()) && !tileInfo.layer->superlayer();
-
-            if (shouldParentTileLayer)
+            if (!tileInfo.layer->superlayer())
                 m_containerLayer.get().appendSublayer(*tileInfo.layer);
         }
     }

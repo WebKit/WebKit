@@ -125,9 +125,6 @@ public:
     virtual void setScrollingPerformanceLoggingEnabled(bool) = 0;
     virtual bool scrollingPerformanceLoggingEnabled() const = 0;
     
-    virtual void setUnparentsOffscreenTiles(bool) = 0;
-    virtual bool unparentsOffscreenTiles() const = 0;
-    
     virtual double retainedTileBackingStoreMemory() const = 0;
 
     virtual void setHasMargins(bool marginTop, bool marginBottom, bool marginLeft, bool marginRight) = 0;
