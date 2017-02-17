@@ -83,9 +83,7 @@ public:
 
     void suspendAnimationsForDocument(Document*);
     void resumeAnimationsForDocument(Document*);
-    bool animationsAreSuspendedForDocument(Document*);
     void startAnimationsIfNotSuspended(Document*);
-    void detachFromDocument(Document*);
 
     bool isRunningAnimationOnRenderer(RenderElement&, CSSPropertyID, AnimationBase::RunningState) const;
     bool isRunningAcceleratedAnimationOnRenderer(RenderElement&, CSSPropertyID, AnimationBase::RunningState) const;
@@ -149,8 +147,7 @@ private:
     
     Vector<EventToDispatch> m_eventsToDispatch;
     Vector<Ref<Element>> m_elementChangesToDispatch;
-    HashSet<Document*> m_suspendedDocuments;
-
+    
     double m_beginAnimationUpdateTime;
 
     typedef HashSet<RefPtr<AnimationBase>> AnimationsSet;
