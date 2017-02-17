@@ -319,7 +319,8 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
     displayName()
     {
         // Can be overridden by subclasses.
-        return WebInspector.TimelineTabContentView.displayNameForRecord(this.record);
+        const includeDetails = true;
+        return WebInspector.TimelineTabContentView.displayNameForRecord(this.record, true);
     }
 
     iconClassNames()

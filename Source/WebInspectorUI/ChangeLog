@@ -1,3 +1,16 @@
+2017-02-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Timeline DataGridNodes are lacking detail in title
+        https://bugs.webkit.org/show_bug.cgi?id=168529
+        <rdar://problem/30579959>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode.prototype.displayName):
+        Include detailed information for DataGridNode display names, since we
+        want to show maximum detail for records in the DataGrid.
+
 2017-02-16  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add DebugUI setting to manually override UI layout direction
