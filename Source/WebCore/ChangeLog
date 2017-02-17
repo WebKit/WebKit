@@ -1,3 +1,23 @@
+2017-02-17  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] Fast replay on video hide/unhide on platforms with limited video buffer pools
+        https://bugs.webkit.org/show_bug.cgi?id=168505
+
+        Reviewed by Žan Doberšek.
+
+        The WebKit code isn't consuming the video samples when the video layer is hidden,
+        so the buffers aren't being returned to the pool and starve the decoder when the
+        buffer pool runs out of buffers (on platforms using a buffer pool and a custom
+        allocator, such as OMX on the Raspberry Pi 2). When the video layer is restored,
+        the pipeline tries to catch up and the user sees the video "going fast forward".
+
+        The added code "consumes" (removes and unrefs) the buffer in that case. However,
+        the sample isn't completely removed because it still holds important info (eg:
+        caps) needed for the proper operation of the video element.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushTextureToCompositor):
+
 2017-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Stop removing the fragment identifier from resource requests

@@ -674,8 +674,16 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
 
     LockHolder holder(m_platformLayerProxy->lock());
 
-    if (!m_platformLayerProxy->isActive())
+    if (!m_platformLayerProxy->isActive()) {
+        // Consume the buffer (so it gets eventually unreffed) but keep the rest of the info.
+        const GstStructure* info = gst_sample_get_info(m_sample.get());
+        GstStructure* infoCopy = nullptr;
+        if (info)
+            infoCopy = gst_structure_copy(info);
+        m_sample = adoptGRef(gst_sample_new(nullptr, gst_sample_get_caps(m_sample.get()),
+            gst_sample_get_segment(m_sample.get()), infoCopy));
         return;
+    }
 
 #if USE(GSTREAMER_GL)
     std::unique_ptr<GstVideoFrameHolder> frameHolder = std::make_unique<GstVideoFrameHolder>(m_sample.get(), texMapFlagFromOrientation(m_videoSourceOrientation));
