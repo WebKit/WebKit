@@ -1,3 +1,17 @@
+2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r212151. rdar://problem/30090186
+
+    2017-02-10  Zalan Bujtas  <zalan@apple.com>
+
+            Mail hangs when removing multiple rows from large table.
+            https://bugs.webkit.org/show_bug.cgi?id=168103
+            <rdar://problem/30090186>
+
+            Reviewed by Ryosuke Niwa.
+
+            * DOM/large-table-edit.html: Added.
+
 2017-02-09  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r211746. rdar://problem/30107622
