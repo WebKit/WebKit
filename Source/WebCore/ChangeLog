@@ -1,3 +1,19 @@
+2017-02-17  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: Subtitles menu in media controls allows multiple items to be selected
+        https://bugs.webkit.org/show_bug.cgi?id=168168
+        <rdar://problem/30488605>
+
+        Reviewed by Dean Jackson.
+
+        Ensure that only a single audio track and a single text track can be selected
+        in the tracks panel at any given point.
+
+        * Modules/modern-media-controls/media/tracks-support.js:
+        (TracksSupport.prototype.tracksPanelSelectionDidChange):
+        (TracksSupport.prototype._sortedTrackList):
+        (TracksSupport):
+
 2017-02-17  Jeremy Jones  <jeremyj@apple.com>
 
         Invalidate WebAVSampleBufferStatusChangeListener when MediaPlayerPrivateMediaStreamAVFObjC is deallocated.
