@@ -9,7 +9,7 @@
 
         <style>
 
-        video::cue { -webkit-text-stroke: 4px black; }
+        video::cue { -webkit-text-stroke: 4px black; paint-order: stroke; stroke-linecap: round; stroke-linejoin: round;}
 
         </style>
 
@@ -19,6 +19,9 @@
         {
             testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).webkitTextStrokeWidth", "4px");
             testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).webkitTextStrokeColor", "rgb(0, 0, 0)");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).paintOrder", "stroke");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).strokeLinejoin", "round");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).strokeLinecap", "round");
             endTest();
         }
 

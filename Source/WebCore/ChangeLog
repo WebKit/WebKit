@@ -1,3 +1,107 @@
+2017-02-17  Per Arne Vollan  <pvollan@apple.com>
+
+        Apply SVG styles paint-order, stroke-linejoin, and stroke-linecap on DOM text.
+        https://bugs.webkit.org/show_bug.cgi?id=168044
+        rdar://problem/30165746
+
+        Reviewed by Simon Fraser.
+
+        This patch moves these styles out of svg, and sets the properties on video cues.
+
+        Tests: fast/css/parsing-paint-order.html
+               fast/css/parsing-stroke-linecap.html
+               fast/css/parsing-stroke-linejoin.html
+               fast/css/parsing-stroke-width.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::paintOrder):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSProperties.json:
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::svgPropertyValue):
+        (WebCore::paintOrder): Deleted.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::isValidCueStyleProperty):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::cssPropertyWithTextEdgeColor):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::paintTypesForPaintOrder):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setPaintOrder):
+        (WebCore::RenderStyle::paintOrder):
+        (WebCore::RenderStyle::initialPaintOrder):
+        (WebCore::RenderStyle::setCapStyle):
+        (WebCore::RenderStyle::capStyle):
+        (WebCore::RenderStyle::initialCapStyle):
+        (WebCore::RenderStyle::setJoinStyle):
+        (WebCore::RenderStyle::joinStyle):
+        (WebCore::RenderStyle::initialJoinStyle):
+        (WebCore::RenderStyle::strokeWidth):
+        (WebCore::RenderStyle::setStrokeWidth):
+        (WebCore::RenderStyle::hasVisibleStroke):
+        (WebCore::RenderStyle::setStrokeOpacity):
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::diff):
+        (WebCore::SVGRenderStyle::paintTypesForPaintOrder): Deleted.
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::initialBufferedRendering):
+        (WebCore::SVGRenderStyle::initialFillRule):
+        (WebCore::SVGRenderStyle::initialMaskType):
+        (WebCore::SVGRenderStyle::setBufferedRendering):
+        (WebCore::SVGRenderStyle::setFillRule):
+        (WebCore::SVGRenderStyle::setMaskType):
+        (WebCore::SVGRenderStyle::bufferedRendering):
+        (WebCore::SVGRenderStyle::fillRule):
+        (WebCore::SVGRenderStyle::strokeMiterLimit):
+        (WebCore::SVGRenderStyle::maskType):
+        (WebCore::SVGRenderStyle::hasStroke):
+        (WebCore::SVGRenderStyle::setBitDefaults):
+        (WebCore::SVGRenderStyle::InheritedFlags::operator==):
+        (WebCore::SVGRenderStyle::initialCapStyle): Deleted.
+        (WebCore::SVGRenderStyle::initialJoinStyle): Deleted.
+        (WebCore::SVGRenderStyle::initialPaintOrder): Deleted.
+        (WebCore::SVGRenderStyle::setCapStyle): Deleted.
+        (WebCore::SVGRenderStyle::setJoinStyle): Deleted.
+        (WebCore::SVGRenderStyle::setPaintOrder): Deleted.
+        (WebCore::SVGRenderStyle::capStyle): Deleted.
+        (WebCore::SVGRenderStyle::joinStyle): Deleted.
+        (WebCore::SVGRenderStyle::strokeWidth): Deleted.
+        (WebCore::SVGRenderStyle::paintOrder): Deleted.
+        (WebCore::SVGRenderStyle::hasVisibleStroke): Deleted.
+        (WebCore::SVGRenderStyle::setStrokeWidth): Deleted.
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (WebCore::StyleStrokeData::StyleStrokeData):
+        (WebCore::StyleStrokeData::operator==):
+        * rendering/style/SVGRenderStyleDefs.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::strokeShape):
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::strokeShape):
+        (WebCore::RenderSVGPath::shapeDependentStrokeContains):
+        (WebCore::RenderSVGPath::shouldStrokeZeroLengthSubpath):
+        (WebCore::RenderSVGPath::zeroLengthLinecapPath):
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::strokeShape):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::strokeShape):
+        (WebCore::RenderSVGShape::fillStrokeMarkers):
+        (WebCore::RenderSVGShape::strokeWidth):
+        (WebCore::RenderSVGShape::hasSmoothStroke):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::strokeBoundingBox):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paint):
+        (WebCore::SVGInlineTextBox::paintDecoration):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::applyStrokeStyleToContext):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+
 2017-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Handle Settings::allowsAnySSLCertificate() in SSL sockets

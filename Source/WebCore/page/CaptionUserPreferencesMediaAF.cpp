@@ -368,6 +368,11 @@ String CaptionUserPreferencesMediaAF::cssPropertyWithTextEdgeColor(CSSPropertyID
     if (important)
         builder.appendLiteral(" !important");
     builder.append(';');
+    if (id == CSSPropertyWebkitTextStroke) {
+        builder.append(" paint-order: stroke;");
+        builder.append(" stroke-linejoin: round;");
+        builder.append(" stroke-linecap: round;");
+    }
     
     return builder.toString();
 }

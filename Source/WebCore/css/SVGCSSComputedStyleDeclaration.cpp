@@ -30,41 +30,6 @@
 
 namespace WebCore {
 
-static Ref<CSSValue> paintOrder(PaintOrder paintOrder)
-{
-    if (paintOrder == PaintOrderNormal)
-        return CSSPrimitiveValue::createIdentifier(CSSValueNormal);
-
-    auto paintOrderList = CSSValueList::createSpaceSeparated();
-    switch (paintOrder) {
-    case PaintOrderNormal:
-        ASSERT_NOT_REACHED();
-        break;
-    case PaintOrderFill:
-        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueFill));
-        break;
-    case PaintOrderFillMarkers:
-        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueFill));
-        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
-        break;
-    case PaintOrderStroke:
-        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueStroke));
-        break;
-    case PaintOrderStrokeMarkers:
-        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueStroke));
-        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
-        break;
-    case PaintOrderMarkers:
-        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
-        break;
-    case PaintOrderMarkersStroke:
-        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
-        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueStroke));
-        break;
-    }
-    return WTFMove(paintOrderList);
-}
-
 static RefPtr<CSSPrimitiveValue> glyphOrientationToCSSPrimitiveValue(EGlyphOrientation orientation)
 {
     switch (orientation) {
@@ -148,10 +113,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
             return CSSPrimitiveValue::create(svgStyle.colorRendering());
         case CSSPropertyShapeRendering:
             return CSSPrimitiveValue::create(svgStyle.shapeRendering());
-        case CSSPropertyStrokeLinecap:
-            return CSSPrimitiveValue::create(svgStyle.capStyle());
-        case CSSPropertyStrokeLinejoin:
-            return CSSPrimitiveValue::create(svgStyle.joinStyle());
         case CSSPropertyStrokeMiterlimit:
             return CSSPrimitiveValue::create(svgStyle.strokeMiterLimit(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyStrokeOpacity:
@@ -229,8 +190,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
             return CSSPrimitiveValue::create(svgStyle.vectorEffect());
         case CSSPropertyMaskType:
             return CSSPrimitiveValue::create(svgStyle.maskType());
-        case CSSPropertyPaintOrder:
-            return paintOrder(svgStyle.paintOrder());
         case CSSPropertyMarker:
         case CSSPropertyEnableBackground:
         case CSSPropertyColorProfile:

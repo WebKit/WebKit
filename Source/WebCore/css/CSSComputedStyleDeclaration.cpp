@@ -2479,6 +2479,41 @@ static Ref<CSSValueList> valueForContentPositionAndDistributionWithOverflowAlign
     return result;
 }
 
+static Ref<CSSValue> paintOrder(PaintOrder paintOrder)
+{
+    if (paintOrder == PaintOrderNormal)
+        return CSSPrimitiveValue::createIdentifier(CSSValueNormal);
+    
+    auto paintOrderList = CSSValueList::createSpaceSeparated();
+    switch (paintOrder) {
+    case PaintOrderNormal:
+        ASSERT_NOT_REACHED();
+        break;
+    case PaintOrderFill:
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueFill));
+        break;
+    case PaintOrderFillMarkers:
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueFill));
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
+        break;
+    case PaintOrderStroke:
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueStroke));
+        break;
+    case PaintOrderStrokeMarkers:
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueStroke));
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
+        break;
+    case PaintOrderMarkers:
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
+        break;
+    case PaintOrderMarkersStroke:
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueStroke));
+        break;
+    }
+    return WTFMove(paintOrderList);
+}
+
 inline static bool isFlexOrGrid(ContainerNode* element)
 {
     return element && element->computedStyle() && element->computedStyle()->isDisplayFlexibleOrGridBox();
@@ -3806,8 +3841,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return zoomAdjustedPixelValueForLength(style->svgStyle().rx(), *style);
         case CSSPropertyRy:
             return zoomAdjustedPixelValueForLength(style->svgStyle().ry(), *style);
-        case CSSPropertyStrokeWidth:
-            return zoomAdjustedPixelValueForLength(style->svgStyle().strokeWidth(), *style);
         case CSSPropertyStrokeDashoffset:
             return zoomAdjustedPixelValueForLength(style->svgStyle().strokeDashOffset(), *style);
         case CSSPropertyX:
@@ -3816,6 +3849,15 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return zoomAdjustedPixelValueForLength(style->svgStyle().y(), *style);
         case CSSPropertyWebkitTextZoom:
             return cssValuePool.createValue(style->textZoom());
+
+        case CSSPropertyPaintOrder:
+            return paintOrder(style->paintOrder());
+        case CSSPropertyStrokeLinecap:
+            return CSSPrimitiveValue::create(style->capStyle());
+        case CSSPropertyStrokeLinejoin:
+            return CSSPrimitiveValue::create(style->joinStyle());
+        case CSSPropertyStrokeWidth:
+            return zoomAdjustedPixelValueForLength(style->strokeWidth(), *style);
 
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
         case CSSPropertyAll:
@@ -3930,12 +3972,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyMarkerMid:
         case CSSPropertyMarkerStart:
         case CSSPropertyMaskType:
-        case CSSPropertyPaintOrder:
         case CSSPropertyShapeRendering:
         case CSSPropertyStroke:
         case CSSPropertyStrokeDasharray:
-        case CSSPropertyStrokeLinecap:
-        case CSSPropertyStrokeLinejoin:
         case CSSPropertyStrokeMiterlimit:
         case CSSPropertyStrokeOpacity:
         case CSSPropertyAlignmentBaseline:

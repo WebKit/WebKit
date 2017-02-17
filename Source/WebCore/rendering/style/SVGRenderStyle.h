@@ -53,13 +53,11 @@ public:
     static EBaselineShift initialBaselineShift() { return BS_BASELINE; }
     static EVectorEffect initialVectorEffect() { return VE_NONE; }
     static EBufferedRendering initialBufferedRendering() { return BR_AUTO; }
-    static LineCap initialCapStyle() { return ButtCap; }
     static WindRule initialClipRule() { return RULE_NONZERO; }
     static EColorInterpolation initialColorInterpolation() { return CI_SRGB; }
     static EColorInterpolation initialColorInterpolationFilters() { return CI_LINEARRGB; }
     static EColorRendering initialColorRendering() { return CR_AUTO; }
     static WindRule initialFillRule() { return RULE_NONZERO; }
-    static LineJoin initialJoinStyle() { return MiterJoin; }
     static EShapeRendering initialShapeRendering() { return SR_AUTO; }
     static ETextAnchor initialTextAnchor() { return TA_START; }
     static EGlyphOrientation initialGlyphOrientationHorizontal() { return GO_0DEG; }
@@ -86,7 +84,6 @@ public:
     static String initialMarkerMidResource() { return String(); }
     static String initialMarkerEndResource() { return String(); }
     static EMaskType initialMaskType() { return MT_LUMINANCE; }
-    static PaintOrder initialPaintOrder() { return PaintOrderNormal; }
     static SVGLengthValue initialBaselineShiftValue();
     static SVGLengthValue initialKerning();
 
@@ -96,19 +93,16 @@ public:
     void setBaselineShift(EBaselineShift val) { m_nonInheritedFlags.flagBits.baselineShift = val; }
     void setVectorEffect(EVectorEffect val) { m_nonInheritedFlags.flagBits.vectorEffect = val; }
     void setBufferedRendering(EBufferedRendering val) { m_nonInheritedFlags.flagBits.bufferedRendering = val; }
-    void setCapStyle(LineCap val) { m_inheritedFlags.capStyle = val; }
     void setClipRule(WindRule val) { m_inheritedFlags.clipRule = val; }
     void setColorInterpolation(EColorInterpolation val) { m_inheritedFlags.colorInterpolation = val; }
     void setColorInterpolationFilters(EColorInterpolation val) { m_inheritedFlags.colorInterpolationFilters = val; }
     void setColorRendering(EColorRendering val) { m_inheritedFlags.colorRendering = val; }
     void setFillRule(WindRule val) { m_inheritedFlags.fillRule = val; }
-    void setJoinStyle(LineJoin val) { m_inheritedFlags.joinStyle = val; }
     void setShapeRendering(EShapeRendering val) { m_inheritedFlags.shapeRendering = val; }
     void setTextAnchor(ETextAnchor val) { m_inheritedFlags.textAnchor = val; }
     void setGlyphOrientationHorizontal(EGlyphOrientation val) { m_inheritedFlags.glyphOrientationHorizontal = val; }
     void setGlyphOrientationVertical(EGlyphOrientation val) { m_inheritedFlags.glyphOrientationVertical = val; }
     void setMaskType(EMaskType val) { m_nonInheritedFlags.flagBits.maskType = val; }
-    void setPaintOrder(PaintOrder val) { m_inheritedFlags.paintOrder = val; }
     void setCx(const Length&);
     void setCy(const Length&);
     void setR(const Length&);
@@ -123,7 +117,6 @@ public:
 
     void setStrokeDashArray(const Vector<SVGLengthValue>&);
     void setStrokeMiterLimit(float);
-    void setStrokeWidth(const Length&);
     void setStrokeDashOffset(const Length&);
     void setKerning(const SVGLengthValue&);
     void setStopOpacity(float);
@@ -150,13 +143,11 @@ public:
     EBaselineShift baselineShift() const { return (EBaselineShift) m_nonInheritedFlags.flagBits.baselineShift; }
     EVectorEffect vectorEffect() const { return (EVectorEffect) m_nonInheritedFlags.flagBits.vectorEffect; }
     EBufferedRendering bufferedRendering() const { return (EBufferedRendering) m_nonInheritedFlags.flagBits.bufferedRendering; }
-    LineCap capStyle() const { return (LineCap) m_inheritedFlags.capStyle; }
     WindRule clipRule() const { return (WindRule) m_inheritedFlags.clipRule; }
     EColorInterpolation colorInterpolation() const { return (EColorInterpolation) m_inheritedFlags.colorInterpolation; }
     EColorInterpolation colorInterpolationFilters() const { return (EColorInterpolation) m_inheritedFlags.colorInterpolationFilters; }
     EColorRendering colorRendering() const { return (EColorRendering) m_inheritedFlags.colorRendering; }
     WindRule fillRule() const { return (WindRule) m_inheritedFlags.fillRule; }
-    LineJoin joinStyle() const { return (LineJoin) m_inheritedFlags.joinStyle; }
     EShapeRendering shapeRendering() const { return (EShapeRendering) m_inheritedFlags.shapeRendering; }
     ETextAnchor textAnchor() const { return (ETextAnchor) m_inheritedFlags.textAnchor; }
     EGlyphOrientation glyphOrientationHorizontal() const { return (EGlyphOrientation) m_inheritedFlags.glyphOrientationHorizontal; }
@@ -171,7 +162,6 @@ public:
     const String& strokePaintUri() const { return m_strokeData->paintUri; }
     Vector<SVGLengthValue> strokeDashArray() const { return m_strokeData->dashArray; }
     float strokeMiterLimit() const { return m_strokeData->miterLimit; }
-    const Length& strokeWidth() const { return m_strokeData->width; }
     const Length& strokeDashOffset() const { return m_strokeData->dashOffset; }
     SVGLengthValue kerning() const { return m_textData->kerning; }
     float stopOpacity() const { return m_stopData->opacity; }
@@ -194,8 +184,6 @@ public:
     const String& markerMidResource() const { return m_inheritedResourceData->markerMid; }
     const String& markerEndResource() const { return m_inheritedResourceData->markerEnd; }
     EMaskType maskType() const { return (EMaskType) m_nonInheritedFlags.flagBits.maskType; }
-    PaintOrder paintOrder() const { return (PaintOrder) m_inheritedFlags.paintOrder; }
-    Vector<PaintType, 3> paintTypesForPaintOrder() const;
 
     const SVGPaintType& visitedLinkFillPaintType() const { return m_fillData->visitedLinkPaintType; }
     const Color& visitedLinkFillPaintColor() const { return m_fillData->visitedLinkPaintColor; }
@@ -209,7 +197,6 @@ public:
     bool hasMasker() const { return !maskerResource().isEmpty(); }
     bool hasMarkers() const { return !markerStartResource().isEmpty() || !markerMidResource().isEmpty() || !markerEndResource().isEmpty(); }
     bool hasStroke() const { return strokePaintType() != SVG_PAINTTYPE_NONE; }
-    bool hasVisibleStroke() const { return hasStroke() && !strokeWidth().isZero(); }
     bool hasFill() const { return fillPaintType() != SVG_PAINTTYPE_NONE; }
     bool isolatesBlending() const { return hasMasker() || shadow(); }
 
@@ -230,14 +217,11 @@ private:
         unsigned shapeRendering : 2; // EShapeRendering
         unsigned clipRule : 1; // WindRule
         unsigned fillRule : 1; // WindRule
-        unsigned capStyle : 2; // LineCap
-        unsigned joinStyle : 2; // LineJoin
         unsigned textAnchor : 2; // ETextAnchor
         unsigned colorInterpolation : 2; // EColorInterpolation
         unsigned colorInterpolationFilters : 2; // EColorInterpolation
         unsigned glyphOrientationHorizontal : 3; // EGlyphOrientation
         unsigned glyphOrientationVertical : 3; // EGlyphOrientation
-        unsigned paintOrder : 3; // PaintOrder
     };
 
     struct NonInheritedFlags {
@@ -396,12 +380,6 @@ inline void SVGRenderStyle::setStrokeMiterLimit(float limit)
         m_strokeData.access().miterLimit = limit;
 }
 
-inline void SVGRenderStyle::setStrokeWidth(const Length& width)
-{
-    if (!(m_strokeData->width == width))
-        m_strokeData.access().width = width;
-}
-
 inline void SVGRenderStyle::setStrokeDashOffset(const Length& offset)
 {
     if (!(m_strokeData->dashOffset == offset))
@@ -487,13 +465,10 @@ inline void SVGRenderStyle::setBitDefaults()
     m_inheritedFlags.fillRule = initialFillRule();
     m_inheritedFlags.shapeRendering = initialShapeRendering();
     m_inheritedFlags.textAnchor = initialTextAnchor();
-    m_inheritedFlags.capStyle = initialCapStyle();
-    m_inheritedFlags.joinStyle = initialJoinStyle();
     m_inheritedFlags.colorInterpolation = initialColorInterpolation();
     m_inheritedFlags.colorInterpolationFilters = initialColorInterpolationFilters();
     m_inheritedFlags.glyphOrientationHorizontal = initialGlyphOrientationHorizontal();
     m_inheritedFlags.glyphOrientationVertical = initialGlyphOrientationVertical();
-    m_inheritedFlags.paintOrder = initialPaintOrder();
 
     m_nonInheritedFlags.flags = 0;
     m_nonInheritedFlags.flagBits.alignmentBaseline = initialAlignmentBaseline();
@@ -510,14 +485,11 @@ inline bool SVGRenderStyle::InheritedFlags::operator==(const InheritedFlags& oth
         && shapeRendering == other.shapeRendering
         && clipRule == other.clipRule
         && fillRule == other.fillRule
-        && capStyle == other.capStyle
-        && joinStyle == other.joinStyle
         && textAnchor == other.textAnchor
         && colorInterpolation == other.colorInterpolation
         && colorInterpolationFilters == other.colorInterpolationFilters
         && glyphOrientationHorizontal == other.glyphOrientationHorizontal
-        && glyphOrientationVertical == other.glyphOrientationVertical
-        && paintOrder == other.paintOrder;
+        && glyphOrientationVertical == other.glyphOrientationVertical;
 }
 
 } // namespace WebCore

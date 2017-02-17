@@ -1242,6 +1242,25 @@ public:
     void setApplePayButtonType(ApplePayButtonType type) { SET_VAR(m_rareNonInheritedData, applePayButtonType, static_cast<unsigned>(type)); }
 #endif
 
+    // Support for paint-order, stroke-linecap, and stroke-linejoin from https://drafts.fxtf.org/paint/.
+    void setPaintOrder(PaintOrder order) { SET_VAR(m_rareInheritedData, paintOrder, order); }
+    PaintOrder paintOrder() const { return static_cast<PaintOrder>(m_rareInheritedData->paintOrder); }
+    static PaintOrder initialPaintOrder() { return PaintOrderNormal; }
+    Vector<PaintType, 3> paintTypesForPaintOrder() const;
+    
+    void setCapStyle(LineCap val) { SET_VAR(m_rareInheritedData, capStyle, val); }
+    LineCap capStyle() const { return static_cast<LineCap>(m_rareInheritedData->capStyle); }
+    static LineCap initialCapStyle() { return ButtCap; }
+    
+    void setJoinStyle(LineJoin val) { SET_VAR(m_rareInheritedData, joinStyle, val); }
+    LineJoin joinStyle() const { return static_cast<LineJoin>(m_rareInheritedData->joinStyle); }
+    static LineJoin initialJoinStyle() { return MiterJoin; }
+    
+    const Length& strokeWidth() const { return m_rareInheritedData->strokeWidth; }
+    void setStrokeWidth(Length&& w) { SET_VAR(m_rareInheritedData, strokeWidth, WTFMove(w)); }
+    bool hasVisibleStroke() const { return svgStyle().hasStroke() && !strokeWidth().isZero(); }
+
+    
     const SVGRenderStyle& svgStyle() const { return m_svgStyle; }
     SVGRenderStyle& accessSVGStyle() { return m_svgStyle.access(); }
 
@@ -1256,8 +1275,6 @@ public:
     void setStrokePaintColor(const Color& color) { accessSVGStyle().setStrokePaint(SVG_PAINTTYPE_RGBCOLOR, color, emptyString()); }
     float strokeOpacity() const { return svgStyle().strokeOpacity(); }
     void setStrokeOpacity(float f) { accessSVGStyle().setStrokeOpacity(f); }
-    const Length& strokeWidth() const { return svgStyle().strokeWidth(); }
-    void setStrokeWidth(Length&& w) { accessSVGStyle().setStrokeWidth(WTFMove(w)); }
     Vector<SVGLengthValue> strokeDashArray() const { return svgStyle().strokeDashArray(); }
     void setStrokeDashArray(Vector<SVGLengthValue> array) { accessSVGStyle().setStrokeDashArray(array); }
     const Length& strokeDashOffset() const { return svgStyle().strokeDashOffset(); }

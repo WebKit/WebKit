@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("This tests checks that all of the input values for stroke-linecap parse correctly.");
+
+            function test(value)
+            {
+                var div = document.createElement("div");
+                div.setAttribute("style", value);
+                document.body.appendChild(div);
+
+                var result = div.style.getPropertyValue("stroke-linecap");
+                
+                document.body.removeChild(div);
+                return result;
+            }
+
+            function testComputedStyle(value)
+            {
+                var div = document.createElement("div");
+                div.setAttribute("style", value);
+                document.body.appendChild(div);
+
+                var result = window.getComputedStyle(div).strokeLinecap;
+                document.body.removeChild(div);
+                return result;
+            }
+
+            function testComputedStyleInherited(value)
+            {
+                var div = document.createElement("div");
+                div.setAttribute("style", value);
+
+                var div2 = document.createElement("div");
+                div.appendChild(div2);
+                
+                document.body.appendChild(div);
+
+                var result = window.getComputedStyle(div2).strokeLinecap;
+                document.body.removeChild(div);
+                return result;
+            }
+
+            shouldBe('testComputedStyleInherited("stroke-linecap: butt;")', '"butt"');
+            shouldBe('testComputedStyleInherited("stroke-linecap: round;")', '"round"');
+            shouldBe('testComputedStyleInherited("stroke-linecap: square;")', '"square"');
+
+            shouldBe('testComputedStyle(";")', '"butt"');
+            shouldBe('test("stroke-linecap: butt;")', '"butt"');
+            shouldBe('test("stroke-linecap: round;")', '"round"');
+            shouldBe('test("stroke-linecap: square;")', '"square"');
+
+            shouldBeEqualToString('test("stroke-linecap: rnd;")', '');
+            shouldBeEqualToString('test("stroke-linecap: but;")', '');
+            shouldBeEqualToString('test("stroke-linecap: 10px;")', '');
+            shouldBeEqualToString('test("stroke-linecap: 10%;")', '');
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

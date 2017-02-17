@@ -145,46 +145,6 @@ void SVGRenderStyle::copyNonInheritedFrom(const SVGRenderStyle& other)
     m_nonInheritedResourceData = other.m_nonInheritedResourceData;
 }
 
-Vector<PaintType, 3> SVGRenderStyle::paintTypesForPaintOrder() const
-{
-    Vector<PaintType, 3> paintOrder;
-    switch (this->paintOrder()) {
-    case PaintOrderNormal:
-        FALLTHROUGH;
-    case PaintOrderFill:
-        paintOrder.append(PaintTypeFill);
-        paintOrder.append(PaintTypeStroke);
-        paintOrder.append(PaintTypeMarkers);
-        break;
-    case PaintOrderFillMarkers:
-        paintOrder.append(PaintTypeFill);
-        paintOrder.append(PaintTypeMarkers);
-        paintOrder.append(PaintTypeStroke);
-        break;
-    case PaintOrderStroke:
-        paintOrder.append(PaintTypeStroke);
-        paintOrder.append(PaintTypeFill);
-        paintOrder.append(PaintTypeMarkers);
-        break;
-    case PaintOrderStrokeMarkers:
-        paintOrder.append(PaintTypeStroke);
-        paintOrder.append(PaintTypeMarkers);
-        paintOrder.append(PaintTypeFill);
-        break;
-    case PaintOrderMarkers:
-        paintOrder.append(PaintTypeMarkers);
-        paintOrder.append(PaintTypeFill);
-        paintOrder.append(PaintTypeStroke);
-        break;
-    case PaintOrderMarkersStroke:
-        paintOrder.append(PaintTypeMarkers);
-        paintOrder.append(PaintTypeStroke);
-        paintOrder.append(PaintTypeFill);
-        break;
-    };
-    return paintOrder;
-}
-
 StyleDifference SVGRenderStyle::diff(const SVGRenderStyle& other) const
 {
     // NOTE: All comparisions that may return StyleDifferenceLayout have to go before those who return StyleDifferenceRepaint
@@ -215,11 +175,6 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle& other) const
     if (miscNotEqual && m_miscData->baselineShiftValue != other.m_miscData->baselineShiftValue)
         return StyleDifferenceLayout;
 
-    // These properties affect the cached stroke bounding box rects.
-    if (m_inheritedFlags.capStyle != other.m_inheritedFlags.capStyle
-        || m_inheritedFlags.joinStyle != other.m_inheritedFlags.joinStyle)
-        return StyleDifferenceLayout;
-
     // Shadow changes require relayouts, as they affect the repaint rects.
     if (m_shadowData != other.m_shadowData)
         return StyleDifferenceLayout;
@@ -230,8 +185,7 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle& other) const
 
     // Some stroke properties, requires relayouts, as the cached stroke boundaries need to be recalculated.
     if (m_strokeData != other.m_strokeData) {
-        if (m_strokeData->width != other.m_strokeData->width
-            || m_strokeData->paintType != other.m_strokeData->paintType
+        if (m_strokeData->paintType != other.m_strokeData->paintType
             || m_strokeData->paintColor != other.m_strokeData->paintColor
             || m_strokeData->paintUri != other.m_strokeData->paintUri
             || m_strokeData->miterLimit != other.m_strokeData->miterLimit

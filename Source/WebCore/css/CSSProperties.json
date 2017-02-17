@@ -1824,8 +1824,7 @@
         },
         "paint-order": {
             "codegen-properties": {
-                "converter": "PaintOrder",
-                "svg": true
+                "converter": "PaintOrder"
             }
         },
         "pointer-events": {
@@ -1960,8 +1959,7 @@
                 "square"
             ],
             "codegen-properties": {
-                "name-for-methods": "CapStyle",
-                "svg": true
+                "name-for-methods": "CapStyle"
             }
         },
         "stroke-linejoin": {
@@ -1972,8 +1970,7 @@
                 "bevel"
             ],
             "codegen-properties": {
-                "name-for-methods": "JoinStyle",
-                "svg": true
+                "name-for-methods": "JoinStyle"
             }
         },
         "stroke-miterlimit": {

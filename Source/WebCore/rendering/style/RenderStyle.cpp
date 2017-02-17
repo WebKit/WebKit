@@ -914,6 +914,12 @@ StyleDifference RenderStyle::diff(const RenderStyle& other, unsigned& changedCon
             return svgChange;
     }
 
+    // These properties affect the cached stroke bounding box rects.
+    if (m_rareInheritedData->capStyle != other.m_rareInheritedData->capStyle
+        || m_rareInheritedData->joinStyle != other.m_rareInheritedData->joinStyle
+        || m_rareInheritedData->strokeWidth != other.m_rareInheritedData->strokeWidth)
+        return StyleDifferenceLayout;
+
     if (changeRequiresLayout(other, changedContextSensitiveProperties))
         return StyleDifferenceLayout;
 
@@ -2216,5 +2222,46 @@ void RenderStyle::setDashboardRegion(int type, const String& label, Length&& top
 }
 
 #endif
+
+Vector<PaintType, 3> RenderStyle::paintTypesForPaintOrder() const
+{
+    Vector<PaintType, 3> paintOrder;
+    switch (this->paintOrder()) {
+    case PaintOrderNormal:
+        FALLTHROUGH;
+    case PaintOrderFill:
+        paintOrder.append(PaintTypeFill);
+        paintOrder.append(PaintTypeStroke);
+        paintOrder.append(PaintTypeMarkers);
+        break;
+    case PaintOrderFillMarkers:
+        paintOrder.append(PaintTypeFill);
+        paintOrder.append(PaintTypeMarkers);
+        paintOrder.append(PaintTypeStroke);
+        break;
+    case PaintOrderStroke:
+        paintOrder.append(PaintTypeStroke);
+        paintOrder.append(PaintTypeFill);
+        paintOrder.append(PaintTypeMarkers);
+        break;
+    case PaintOrderStrokeMarkers:
+        paintOrder.append(PaintTypeStroke);
+        paintOrder.append(PaintTypeMarkers);
+        paintOrder.append(PaintTypeFill);
+        break;
+    case PaintOrderMarkers:
+        paintOrder.append(PaintTypeMarkers);
+        paintOrder.append(PaintTypeFill);
+        paintOrder.append(PaintTypeStroke);
+        break;
+    case PaintOrderMarkersStroke:
+        paintOrder.append(PaintTypeMarkers);
+        paintOrder.append(PaintTypeStroke);
+        paintOrder.append(PaintTypeFill);
+        break;
+    };
+    return paintOrder;
+}
+
 
 } // namespace WebCore

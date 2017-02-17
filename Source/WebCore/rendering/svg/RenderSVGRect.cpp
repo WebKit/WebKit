@@ -120,7 +120,7 @@ void RenderSVGRect::fillShape(GraphicsContext& context) const
 
 void RenderSVGRect::strokeShape(GraphicsContext& context) const
 {
-    if (!style().svgStyle().hasVisibleStroke())
+    if (!style().hasVisibleStroke())
         return;
 
     if (m_usePathFallback) {

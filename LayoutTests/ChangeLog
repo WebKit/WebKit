@@ -1,3 +1,21 @@
+2017-02-17  Per Arne Vollan  <pvollan@apple.com>
+
+        Apply SVG styles paint-order, stroke-linejoin, and stroke-linecap on DOM text.
+        https://bugs.webkit.org/show_bug.cgi?id=168044
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/parsing-paint-order-expected.txt: Added.
+        * fast/css/parsing-paint-order.html: Added.
+        * fast/css/parsing-stroke-linecap-expected.txt: Added.
+        * fast/css/parsing-stroke-linecap.html: Added.
+        * fast/css/parsing-stroke-linejoin-expected.txt: Added.
+        * fast/css/parsing-stroke-linejoin.html: Added.
+        * fast/css/parsing-stroke-width-expected.txt: Added.
+        * fast/css/parsing-stroke-width.html: Added.
+        * media/track/track-css-stroke-cues-expected.txt:
+        * media/track/track-css-stroke-cues.html:
+
 2017-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         Fixed elements bounce when rubber-banding at the bottom of the page

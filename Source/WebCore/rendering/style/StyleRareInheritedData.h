@@ -136,6 +136,11 @@ public:
 
     unsigned hangingPunctuation : 4;
 
+    unsigned paintOrder : 3; // PaintOrder
+    unsigned capStyle : 2; // LineCap
+    unsigned joinStyle : 2; // LineJoin
+    Length strokeWidth;
+    
     AtomicString hyphenationString;
     short hyphenationLimitBefore;
     short hyphenationLimitAfter;

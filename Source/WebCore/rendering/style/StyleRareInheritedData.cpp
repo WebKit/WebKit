@@ -125,6 +125,10 @@ StyleRareInheritedData::StyleRareInheritedData()
     , trailingWord(static_cast<unsigned>(RenderStyle::initialTrailingWord()))
 #endif
     , hangingPunctuation(RenderStyle::initialHangingPunctuation())
+    , paintOrder(RenderStyle::initialPaintOrder())
+    , capStyle(RenderStyle::initialCapStyle())
+    , joinStyle(RenderStyle::initialJoinStyle())
+    , strokeWidth(RenderStyle::initialOneLength())
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
     , hyphenationLimitLines(-1)
@@ -207,6 +211,10 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , trailingWord(o.trailingWord)
 #endif
     , hangingPunctuation(o.hangingPunctuation)
+    , paintOrder(o.paintOrder)
+    , capStyle(o.capStyle)
+    , joinStyle(o.joinStyle)
+    , strokeWidth(o.strokeWidth)
     , hyphenationString(o.hyphenationString)
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
     , hyphenationLimitAfter(o.hyphenationLimitAfter)
@@ -313,6 +321,10 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && trailingWord == o.trailingWord
 #endif
         && hangingPunctuation == o.hangingPunctuation
+        && paintOrder == o.paintOrder
+        && capStyle == o.capStyle
+        && joinStyle == o.joinStyle
+        && strokeWidth == o.strokeWidth
         && customProperties == o.customProperties
         && arePointingToEqualData(listStyleImage, o.listStyleImage);
 }
