@@ -83,7 +83,6 @@ private:
     void stopParsing() final;
     bool isWaitingForScripts() const override;
     bool isExecutingScript() const final;
-    bool hasScriptsWaitingForStylesheets() const final;
     void executeScriptsWaitingForStylesheets() final;
     void suspendScheduledTasks() final;
     void resumeScheduledTasks() final;

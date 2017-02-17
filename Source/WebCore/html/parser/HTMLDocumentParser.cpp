@@ -87,7 +87,7 @@ HTMLDocumentParser::~HTMLDocumentParser()
 
 void HTMLDocumentParser::detach()
 {
-    ScriptableDocumentParser::detach();
+    DocumentParser::detach();
 
     if (m_scriptRunner)
         m_scriptRunner->detach();
@@ -536,11 +536,6 @@ void HTMLDocumentParser::notifyFinished(PendingScript& pendingScript)
     m_scriptRunner->executeScriptsWaitingForLoad(pendingScript);
     if (!isWaitingForScripts())
         resumeParsingAfterScriptExecution();
-}
-
-bool HTMLDocumentParser::hasScriptsWaitingForStylesheets() const
-{
-    return m_scriptRunner && m_scriptRunner->hasScriptsWaitingForStylesheets();
 }
 
 void HTMLDocumentParser::executeScriptsWaitingForStylesheets()

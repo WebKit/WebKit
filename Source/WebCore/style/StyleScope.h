@@ -82,7 +82,11 @@ public:
     void setSelectedStylesheetSetName(const String&);
 
     void addPendingSheet() { m_pendingStyleSheetCount++; }
-    void removePendingSheet();
+    enum RemovePendingSheetNotificationType {
+        RemovePendingSheetNotifyImmediately,
+        RemovePendingSheetNotifyLater
+    };
+    void removePendingSheet(RemovePendingSheetNotificationType = RemovePendingSheetNotifyImmediately);
 
     bool hasPendingSheets() const { return m_pendingStyleSheetCount > 0; }
 
