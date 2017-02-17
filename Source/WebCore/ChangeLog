@@ -1,3 +1,18 @@
+2017-02-17  Jeremy Jones  <jeremyj@apple.com>
+
+        Invalidate WebAVSampleBufferStatusChangeListener when MediaPlayerPrivateMediaStreamAVFObjC is deallocated.
+        https://bugs.webkit.org/show_bug.cgi?id=168488
+
+        Reviewed by Jer Noble.
+
+        Fixes periodically crashing test: fast/mediastream/MediaStream-video-element-track-stop.html
+
+        WebAVSampleBufferStatusChangeListener has an unretained referecne to MediaPlayerPrivateMediaStreamAVFObjC
+        that must be invaldated when MediaPlayerPrivateMediaStreamAVFObjC is deallocated.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC):
+
 2017-02-17  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Improve handling of live broadcast video

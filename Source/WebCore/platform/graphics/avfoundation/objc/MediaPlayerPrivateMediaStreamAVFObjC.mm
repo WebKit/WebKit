@@ -180,6 +180,8 @@ MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
 
     destroyLayer();
 
+    [m_statusChangeListener invalidate];
+
     m_audioTrackMap.clear();
     m_videoTrackMap.clear();
 }
