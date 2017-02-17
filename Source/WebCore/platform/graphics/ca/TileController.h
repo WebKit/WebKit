@@ -138,7 +138,6 @@ private:
 
     void scheduleTileRevalidation(double interval);
 
-    bool isInWindow() const { return m_isInWindow; }
     float topContentInset() const { return m_topContentInset; }
 
     // TiledBacking member functions.
@@ -152,6 +151,7 @@ private:
     void setScrollability(Scrollability) override;
     void prepopulateRect(const FloatRect&) override;
     void setIsInWindow(bool) override;
+    bool isInWindow() const override { return m_isInWindow; }
     void setTileCoverage(TileCoverage) override;
     void revalidateTiles() override;
     void forceRepaint() override;

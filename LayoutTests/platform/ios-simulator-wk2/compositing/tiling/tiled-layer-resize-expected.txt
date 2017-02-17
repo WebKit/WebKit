@@ -9,6 +9,7 @@ Tiled layer
       (tile cache coverage 0, 0 808 x 1024)
       (tile size 512 x 512)
       (top left tile 0, 0 tiles grid 2 x 2)
+      (in window 1)
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)
@@ -19,6 +20,7 @@ Tiled layer
           (tile cache coverage 0, 0 800 x 1024)
           (tile size 512 x 512)
           (top left tile 0, 0 tiles grid 2 x 2)
+          (in window 1)
         )
       )
     )

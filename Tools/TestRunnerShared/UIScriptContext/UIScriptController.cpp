@@ -377,6 +377,18 @@ void UIScriptController::platformClearAllCallbacks()
 }
 #endif
 
+#if !PLATFORM(COCOA)
+
+void UIScriptController::removeViewFromWindow(JSValueRef)
+{
+}
+
+void UIScriptController::addViewToWindow(JSValueRef)
+{
+}
+
+#endif // !PLATFORM(COCOA)
+
 #if !PLATFORM(MAC)
 
 void UIScriptController::insertText(JSStringRef, int, int)

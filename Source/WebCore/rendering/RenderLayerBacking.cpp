@@ -107,37 +107,25 @@ static ScrollingCoordinator* scrollingCoordinatorFromLayer(RenderLayer& layer)
 
 RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
     : m_owningLayer(layer)
-    , m_viewportConstrainedNodeID(0)
-    , m_scrollingNodeID(0)
-    , m_artificiallyInflatedBounds(false)
-    , m_isMainFrameRenderViewLayer(false)
-    , m_usingTiledCacheLayer(false)
-    , m_requiresOwnBackingStore(true)
-    , m_canCompositeFilters(false)
-#if ENABLE(FILTERS_LEVEL_2)
-    , m_canCompositeBackdropFilters(false)
-#endif
-    , m_backgroundLayerPaintsFixedRootBackground(false)
 {
     Page* page = renderer().frame().page();
 
     if (layer.isRootLayer() && page) {
         m_isMainFrameRenderViewLayer = renderer().frame().isMainFrame();
-        m_usingTiledCacheLayer = page->chrome().client().shouldUseTiledBackingForFrameView(renderer().frame().view());
+        m_isMainFrameLayerWithTiledBacking = page->chrome().client().shouldUseTiledBackingForFrameView(renderer().frame().view());
     }
     
     createPrimaryGraphicsLayer();
 
-    if (m_usingTiledCacheLayer && page) {
-        TiledBacking* tiledBacking = this->tiledBacking();
-
+    if (TiledBacking* tiledBacking = this->tiledBacking()) {
         tiledBacking->setIsInWindow(page->isInWindow());
 
-        if (m_isMainFrameRenderViewLayer)
+        if (m_isMainFrameLayerWithTiledBacking && page) {
             tiledBacking->setUnparentsOffscreenTiles(true);
 
-        tiledBacking->setScrollingPerformanceLoggingEnabled(page->settings().scrollingPerformanceLoggingEnabled());
-        adjustTiledBackingCoverage();
+            tiledBacking->setScrollingPerformanceLoggingEnabled(page->settings().scrollingPerformanceLoggingEnabled());
+            adjustTiledBackingCoverage();
+        }
     }
 }
 
@@ -215,7 +203,7 @@ TiledBacking* RenderLayerBacking::tiledBacking() const
     return m_graphicsLayer->tiledBacking();
 }
 
-static TiledBacking::TileCoverage computeTileCoverage(RenderLayerBacking* backing)
+static TiledBacking::TileCoverage computePageTiledBackingCoverage(RenderLayerBacking* backing)
 {
     // FIXME: When we use TiledBacking for overflow, this should look at RenderView scrollability.
     FrameView& frameView = backing->owningLayer().renderer().view().frameView();
@@ -235,16 +223,16 @@ static TiledBacking::TileCoverage computeTileCoverage(RenderLayerBacking* backin
 
 void RenderLayerBacking::adjustTiledBackingCoverage()
 {
-    if (!m_usingTiledCacheLayer)
+    if (!m_isMainFrameLayerWithTiledBacking)
         return;
 
-    TiledBacking::TileCoverage tileCoverage = computeTileCoverage(this);
+    TiledBacking::TileCoverage tileCoverage = computePageTiledBackingCoverage(this);
     tiledBacking()->setTileCoverage(tileCoverage);
 }
 
 void RenderLayerBacking::setTiledBackingHasMargins(bool hasExtendedBackgroundOnLeftAndRight, bool hasExtendedBackgroundOnTopAndBottom)
 {
-    if (!m_usingTiledCacheLayer)
+    if (!m_isMainFrameLayerWithTiledBacking)
         return;
 
     tiledBacking()->setHasMargins(hasExtendedBackgroundOnTopAndBottom, hasExtendedBackgroundOnTopAndBottom, hasExtendedBackgroundOnLeftAndRight, hasExtendedBackgroundOnLeftAndRight);
@@ -302,10 +290,10 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
         layerName.truncate(maxLayerNameLength);
         layerName.append("...");
     }
-    m_graphicsLayer = createGraphicsLayer(layerName, m_usingTiledCacheLayer ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::Normal);
+    m_graphicsLayer = createGraphicsLayer(layerName, m_isMainFrameLayerWithTiledBacking ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::Normal);
 
-    if (m_usingTiledCacheLayer) {
-        m_childContainmentLayer = createGraphicsLayer("TiledBacking containment");
+    if (m_isMainFrameLayerWithTiledBacking) {
+        m_childContainmentLayer = createGraphicsLayer("Page TiledBacking containment");
         m_graphicsLayer->addChild(m_childContainmentLayer.get());
     }
 
@@ -486,7 +474,7 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
         return false;
 #endif
 
-    if (m_usingTiledCacheLayer)
+    if (m_isMainFrameLayerWithTiledBacking)
         return false;
 
     if (layerOrAncestorIsTransformedOrUsingCompositedScrolling(m_owningLayer))
@@ -1345,7 +1333,7 @@ bool RenderLayerBacking::updateDescendantClippingLayer(bool needsDescendantClip)
     bool layersChanged = false;
 
     if (needsDescendantClip) {
-        if (!m_childContainmentLayer && !m_usingTiledCacheLayer) {
+        if (!m_childContainmentLayer && !m_isMainFrameLayerWithTiledBacking) {
             m_childContainmentLayer = createGraphicsLayer("child clipping");
             m_childContainmentLayer->setMasksToBounds(true);
             layersChanged = true;
@@ -1850,7 +1838,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
 
 void RenderLayerBacking::updateRootLayerConfiguration()
 {
-    if (!m_usingTiledCacheLayer)
+    if (!m_isMainFrameLayerWithTiledBacking)
         return;
 
     Color backgroundColor;
@@ -2234,7 +2222,7 @@ GraphicsLayer* RenderLayerBacking::childForSuperlayers() const
 
 bool RenderLayerBacking::paintsIntoWindow() const
 {
-    if (m_usingTiledCacheLayer)
+    if (m_isMainFrameLayerWithTiledBacking)
         return false;
 
     if (m_owningLayer.isRootLayer()) {

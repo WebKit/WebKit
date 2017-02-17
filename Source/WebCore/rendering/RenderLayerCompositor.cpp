@@ -453,7 +453,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     if (GraphicsLayer* rootLayer = rootGraphicsLayer()) {
 #if PLATFORM(IOS)
         FloatRect exposedRect = frameView.exposedContentRect();
-        LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " flushPendingLayerChanges (root " << isFlushRoot << ") exposedRect " << exposedRect);
+        LOG_WITH_STREAM(Compositing, stream << "\nRenderLayerCompositor " << this << " flushPendingLayerChanges (root " << isFlushRoot << ") exposedRect " << exposedRect);
         rootLayer->flushCompositingState(exposedRect);
 #else
         // Having a m_clipLayer indicates that we're doing scrolling via GraphicsLayers.
@@ -462,8 +462,9 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
         if (frameView.viewExposedRect())
             visibleRect.intersect(frameView.viewExposedRect().value());
 
-        LOG_WITH_STREAM(Compositing,  stream << "RenderLayerCompositor " << this << " flushPendingLayerChanges(" << isFlushRoot << ") " << visibleRect);
+        LOG_WITH_STREAM(Compositing,  stream << "\nRenderLayerCompositor " << this << " flushPendingLayerChanges(" << isFlushRoot << ") " << visibleRect);
         rootLayer->flushCompositingState(visibleRect);
+        LOG_WITH_STREAM(Compositing,  stream << "RenderLayerCompositor " << this << " flush complete\n");
 #endif
     }
     
@@ -1790,7 +1791,7 @@ void RenderLayerCompositor::frameViewDidLayout()
 void RenderLayerCompositor::rootFixedBackgroundsChanged()
 {
     RenderLayerBacking* renderViewBacking = m_renderView.layer()->backing();
-    if (renderViewBacking && renderViewBacking->usingTiledBacking())
+    if (renderViewBacking && renderViewBacking->isMainFrameLayerWithTiledBacking())
         setCompositingLayersNeedRebuild();
 }
 
@@ -2061,11 +2062,13 @@ GraphicsLayer* RenderLayerCompositor::footerLayer() const
 
 void RenderLayerCompositor::setIsInWindowForLayerIncludingDescendants(RenderLayer& layer, bool isInWindow)
 {
-    if (layer.isComposited() && layer.backing()->usingTiledBacking())
-        layer.backing()->tiledBacking()->setIsInWindow(isInWindow);
+    if (layer.isComposited()) {
+        if (auto* backing = layer.backing()->tiledBacking())
+            backing->setIsInWindow(isInWindow);
+    }
 
     // No need to recurse if we don't have any other tiled layers.
-    if (hasNonMainLayersWithTiledBacking())
+    if (!hasNonMainLayersWithTiledBacking())
         return;
 
     for (RenderLayer* childLayer = layer.firstChild(); childLayer; childLayer = childLayer->nextSibling())
@@ -2876,7 +2879,7 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
 bool RenderLayerCompositor::supportsFixedRootBackgroundCompositing() const
 {
     RenderLayerBacking* renderViewBacking = m_renderView.layer()->backing();
-    return renderViewBacking && renderViewBacking->usingTiledBacking();
+    return renderViewBacking && renderViewBacking->isMainFrameLayerWithTiledBacking();
 }
 
 bool RenderLayerCompositor::needsFixedRootBackgroundLayer(const RenderLayer& layer) const
@@ -2985,7 +2988,7 @@ bool RenderLayerCompositor::documentUsesTiledBacking() const
     if (!backing)
         return false;
 
-    return backing->usingTiledBacking();
+    return backing->isMainFrameLayerWithTiledBacking();
 }
 
 bool RenderLayerCompositor::isMainFrameCompositor() const

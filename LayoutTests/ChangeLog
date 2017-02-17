@@ -1,5 +1,77 @@
 2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211662. rdar://problem/30467322
+
+    2017-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+            Correctly set the "inWindow" flag for TileControllers that aren't the page tiles, and clarify "usingTiledBacking" logic
+            https://bugs.webkit.org/show_bug.cgi?id=167774
+
+            Reviewed by Tim Horton.
+
+            Rebase to include the "in window" output.
+
+            tiled-drawing/background-transparency-toggle.html was sensitive to the length of the output, so give the body
+            a fixed size.
+
+            * compositing/tiling/offscreen-tiled-layer-expected.txt:
+            * compositing/tiling/transform-origin-tiled-expected.txt:
+            * platform/mac-wk1/compositing/tiling/offscreen-tiled-layer-expected.txt:
+            * platform/mac-wk1/compositing/tiling/transform-origin-tiled-expected.txt:
+            * platform/mac-wk2/compositing/tiling/rotated-tiled-clamped-expected.txt:
+            * platform/mac-wk2/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt:
+            * platform/mac-wk2/compositing/tiling/tile-cache-zoomed-expected.txt:
+            * platform/mac-wk2/compositing/tiling/tiled-layer-resize-expected.txt:
+            * platform/mac/compositing/tiling/rotated-tiled-clamped-expected.txt:
+            * platform/mac/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt:
+            * platform/mac/compositing/tiling/tiled-layer-resize-expected.txt:
+            * tiled-drawing/background-transparency-toggle-expected.txt:
+            * tiled-drawing/background-transparency-toggle.html:
+            * tiled-drawing/scrolling/fast-scroll-div-latched-div-expected.txt:
+            * tiled-drawing/scrolling/fast-scroll-div-latched-div-with-handler-expected.txt:
+            * tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-expected.txt:
+            * tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler-expected.txt:
+            * tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe-expected.txt:
+            * tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe-with-handler-expected.txt:
+            * tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-expected.txt:
+            * tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler-expected.txt:
+            * tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-expected.txt:
+            * tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-with-handler-expected.txt:
+            * tiled-drawing/scrolling/fast-scroll-select-latched-select-expected.txt:
+            * tiled-drawing/scrolling/fast-scroll-select-latched-select-with-handler-expected.txt:
+            * tiled-drawing/scrolling/fixed-background/fixed-background-no-image-expected.txt:
+            * tiled-drawing/scrolling/fixed-background/fixed-body-background-body-layer-expected.txt:
+            * tiled-drawing/scrolling/fixed-background/fixed-body-background-expected.txt:
+            * tiled-drawing/scrolling/fixed-background/fixed-body-background-opacity-expected.txt:
+            * tiled-drawing/scrolling/fixed-background/fixed-body-background-positioned-expected.txt:
+            * tiled-drawing/scrolling/fixed-background/fixed-body-background-transformed-expected.txt:
+            * tiled-drawing/scrolling/fixed-background/fixed-body-background-zoomed-expected.txt:
+            * tiled-drawing/scrolling/fixed-background/fixed-html-background-expected.txt:
+            * tiled-drawing/scrolling/fixed-background/fixed-non-propagated-body-background-expected.txt:
+            * tiled-drawing/scrolling/fixed/four-bars-zoomed-expected.txt:
+            * tiled-drawing/simple-document-with-margin-tiles-expected.txt:
+            * tiled-drawing/tile-coverage-after-scroll-expected.txt:
+            * tiled-drawing/tile-coverage-after-scroll-speculative-expected.txt:
+            * tiled-drawing/tile-coverage-scroll-to-bottom-expected.txt:
+            * tiled-drawing/tile-coverage-slow-scrolling-expected.txt:
+            * tiled-drawing/tile-coverage-speculative-expected.txt:
+            * tiled-drawing/tile-coverage-view-exposed-rect-expected.txt:
+            * tiled-drawing/tile-size-both-scrollable-expected.txt:
+            * tiled-drawing/tile-size-horizontally-scrollable-expected.txt:
+            * tiled-drawing/tile-size-slow-zoomed-expected.txt:
+            * tiled-drawing/tile-size-unscrollable-expected.txt:
+            * tiled-drawing/tile-size-vertically-scrollable-expected.txt:
+            * tiled-drawing/tile-size-view-exposed-rect-expected.txt:
+            * tiled-drawing/tiled-backing-in-window-expected.txt: Added.
+            * tiled-drawing/tiled-backing-in-window.html: Added.
+            * tiled-drawing/tiled-drawing-scroll-position-page-cache-restoration-expected.txt:
+            * tiled-drawing/tiled-drawing-zoom-expected.txt:
+            * tiled-drawing/tiled-drawing-zoom-scrolled-expected.txt:
+            * tiled-drawing/use-tiled-drawing-expected.txt:
+            * tiled-drawing/visible-rect-content-inset-expected.txt:
+
+2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211501. rdar://problem/29904368
 
     2017-02-01  Antoine Quint  <graouts@apple.com>

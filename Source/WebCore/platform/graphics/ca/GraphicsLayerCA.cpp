@@ -3510,6 +3510,9 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, int inden
         IntRect gridExtent = tiledBacking()->tileGridExtent();
         writeIndent(textStream, indent + 1);
         textStream << "(top left tile " << gridExtent.x() << ", " << gridExtent.y() << " tiles grid " << gridExtent.width() << " x " << gridExtent.height() << ")\n";
+
+        writeIndent(textStream, indent + 1);
+        textStream << "(in window " << tiledBacking()->isInWindow() << ")\n";
     }
     
     if (behavior & LayerTreeAsTextIncludeContentLayers) {

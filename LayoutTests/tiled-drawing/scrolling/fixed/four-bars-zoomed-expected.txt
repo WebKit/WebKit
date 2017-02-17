@@ -49,6 +49,7 @@
       (tile cache coverage 0, 0 341 x 445)
       (tile size 785 x 512)
       (top left tile 0, 0 tiles grid 1 x 2)
+      (in window 1)
       (children 4
         (GraphicsLayer
           (position -4.00 -4.00)

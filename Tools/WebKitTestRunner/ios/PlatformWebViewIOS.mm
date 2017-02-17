@@ -166,6 +166,16 @@ void PlatformWebView::setWindowIsKey(bool isKey)
         [m_window makeKeyWindow];
 }
 
+void PlatformWebView::addToWindow()
+{
+    [m_window.rootViewController.view addSubview:m_view];
+}
+
+void PlatformWebView::removeFromWindow()
+{
+    [m_view removeFromSuperview];
+}
+
 void PlatformWebView::resizeTo(unsigned width, unsigned height, WebViewSizingMode viewSizingMode)
 {
     WKRect frame = windowFrame();

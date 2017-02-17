@@ -48,6 +48,14 @@ extern NavigationController* gNavigationController;
 extern PolicyDelegate* policyDelegate;
 extern DefaultPolicyDelegate *defaultPolicyDelegate;
 
+#if PLATFORM(IOS)
+OBJC_CLASS UIWindow;
+extern UIWindow *mainWindow;
+#else
+OBJC_CLASS NSWindow;
+extern NSWindow *mainWindow;
+#endif
+
 void setWaitToDumpWatchdog(CFRunLoopTimerRef);
 bool shouldSetWaitToDumpWatchdog();
 

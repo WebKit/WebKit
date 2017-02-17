@@ -140,6 +140,10 @@ public:
 
     void uiScriptComplete(JSStringRef result);
 
+    // These use a callback to allow the client to know when view visibility state updates get to the web process.
+    void removeViewFromWindow(JSValueRef);
+    void addViewToWindow(JSValueRef);
+
 private:
     UIScriptController(UIScriptContext&);
     
