@@ -68,6 +68,7 @@ extern "C" {
     M(StorageAPI) \
     M(TextInput) \
     M(ViewGestures) \
+    M(ViewState) \
     M(VirtualMemory) \
     M(VisibleRects) \
 

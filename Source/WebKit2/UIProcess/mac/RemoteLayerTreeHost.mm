@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RemoteLayerTreeHost.h"
 
+#import "Logging.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreePropertyApplier.h"
 #import "RemoteLayerTreeTransaction.h"
@@ -47,6 +48,8 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(m_drawingArea.isAlwaysOnLoggingAllowed(), ViewState, __VA_ARGS__)
 
 RemoteLayerTreeHost::RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy& drawingArea)
     : m_drawingArea(drawingArea)
@@ -72,6 +75,10 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
 
     bool rootLayerChanged = false;
     LayerOrView *rootLayer = getLayer(transaction.rootLayerID());
+    
+    if (!rootLayer)
+        RELEASE_LOG_IF_ALLOWED("%p RemoteLayerTreeHost::updateLayerTree - failed to find root layer with ID %llu", this, transaction.rootLayerID());
+
     if (m_rootLayer != rootLayer) {
         m_rootLayer = rootLayer;
         rootLayerChanged = true;
@@ -194,9 +201,7 @@ void RemoteLayerTreeHost::clearLayers()
     }
 
     m_layers.clear();
-
-    if (m_rootLayer)
-        m_rootLayer = nullptr;
+    m_rootLayer = nullptr;
 }
 
 static NSString* const WKLayerIDPropertyKey = @"WKLayerID";

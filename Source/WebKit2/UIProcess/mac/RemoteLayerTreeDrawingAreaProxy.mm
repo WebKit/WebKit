@@ -473,4 +473,9 @@ bool RemoteLayerTreeDrawingAreaProxy::hasVisibleContent() const
     return m_remoteLayerTreeHost.rootLayer();
 }
 
+bool RemoteLayerTreeDrawingAreaProxy::isAlwaysOnLoggingAllowed() const
+{
+    return m_webPageProxy.isAlwaysOnLoggingAllowed();
+}
+
 } // namespace WebKit

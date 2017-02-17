@@ -135,6 +135,8 @@ CFStringRef kAXSAllowForceWebScalingEnabledNotification;
 #endif
 #endif
 
+#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(_page && _page->isAlwaysOnLoggingAllowed(), ViewState, __VA_ARGS__)
+
 @interface UIScrollView (UIScrollViewInternal)
 - (void)_adjustForAutomaticKeyboardInfo:(NSDictionary*)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;
 - (BOOL)_isScrollingToTop;
@@ -273,6 +275,8 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 
     BOOL _delayUpdateVisibleContentRects;
     BOOL _hadDelayedUpdateVisibleContentRects;
+    
+    int _activeAnimatedResizeCount;
 
     Vector<std::function<void ()>> _snapshotsDeferredDuringResize;
     RetainPtr<NSMutableArray> _stableStatePresentationUpdateCallbacks;
@@ -1309,6 +1313,9 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         }
         return;
     }
+
+    if (_activeAnimatedResizeCount)
+        RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _didCommitLayerTree:] - %d animated resizes in flight", self, _activeAnimatedResizeCount);
 
     CGSize newContentSize = roundScrollViewContentSize(*_page, [_contentView frame].size);
     [_scrollView _setContentSizePreservingContentOffsetDuringRubberband:newContentSize];
@@ -4294,6 +4301,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         return;
     }
 
+    ++_activeAnimatedResizeCount;
     _resizeAnimationTransformAdjustments = CATransform3DIdentity;
 
     NSUInteger indexOfContentView = [[_scrollView subviews] indexOfObject:_contentView.get()];
@@ -4364,12 +4372,13 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
     if (!_resizeAnimationView) {
         // Paranoia. If _resizeAnimationView is null we'll end up setting a zero scale on the content view.
-        ASSERT_NOT_REACHED();
+        RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _endAnimatedResize:] - _resizeAnimationView is nil", self);
         _dynamicViewportUpdateMode = DynamicViewportUpdateMode::NotResizing;
         [_contentView setHidden:NO];
         return;
     }
     
+    --_activeAnimatedResizeCount;
     NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
     [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
     [_scrollView insertSubview:[_contentView unscaledView] atIndex:indexOfResizeAnimationView + 1];
