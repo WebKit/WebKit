@@ -1078,6 +1078,15 @@
         "description": "An API to discover and communicate with devices over the Bluetooth."
     },
     {
+        "name": "WebUSB",
+        "status": {
+            "status": "Not Considering"
+        },
+        "url": "https://wicg.github.io/webusb/",
+        "keywords": ["USB"],
+        "description": "An an API for securely providing access to Universal Serial Bus devices from web pages."
+    },
+    {
         "name": "requestIdleCallback",
         "status": {
             "status": "Under Consideration"

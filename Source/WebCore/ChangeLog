@@ -1,3 +1,9 @@
+2017-02-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add WebUSB to features.json as a "Not Considering".
+
+        * features.json:
+
 2017-02-16  Alex Christensen  <achristensen@webkit.org>
 
         Remove old URL parser
