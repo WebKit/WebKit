@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,12 +34,7 @@
 
 namespace WebKit {
 
-static int linkTimeVersion()
-{
-    return NSVersionOfLinkTimeLibrary("WebKit");
-}
-
-bool linkedOnOrAfter(LibraryVersion version)
+bool linkedOnOrAfter(int libraryVersion, uint32_t sdkVersion)
 {
 #if PLATFORM(IOS)
     // Always make new features available for Safari.
@@ -47,12 +42,15 @@ bool linkedOnOrAfter(LibraryVersion version)
         return true;
 #endif
 
-    int linkedVersion = linkTimeVersion();
-    if (linkedVersion == -1) {
-        // Not linked against WebKit.
+    // If the app was build against a new enough SDK, it definitely passes the linked-on-or-after check.
+    if (dyld_get_program_sdk_version() >= sdkVersion)
         return true;
-    }
-    return linkedVersion >= static_cast<int>(version);
+
+    // If the app was built against an older SDK, we might still consider it linked-on-or-after
+    // by checking the linked WebKit library version number, if one exists.
+
+    int linkedVersion = NSVersionOfLinkTimeLibrary("WebKit");
+    return linkedVersion == -1 ? false : linkedVersion >= libraryVersion;
 }
 
 }

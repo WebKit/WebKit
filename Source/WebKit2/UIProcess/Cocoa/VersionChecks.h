@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import <wtf/spi/darwin/dyldSPI.h>
+
 namespace WebKit {
 
 /*
@@ -33,15 +35,41 @@ namespace WebKit {
     For example the version 1.2.3 is returned as 0x00010203 and version 200.3.5 is returned as 0x00C80305
     A version of -1 is returned if the main executable did not link against WebKit.
 
-    Please use the current WebKit version number, available in WebKit2/Configurations/Version.xcconfig,
+    Use the current WebKit version number, available in WebKit2/Configurations/Version.xcconfig,
     when adding a new version constant.
 */
-enum class LibraryVersion {
-    FirstWithNetworkCache = 0x02590116, // 601.1.22
-    FirstWithMediaTypesRequiringUserActionForPlayback = 0x025A0121, // 602.1.33
-    FirstWithExceptionsForDuplicateCompletionHandlerCalls = 0x025B0111, // 603.1.17
+
+struct FirstWebKitWithNetworkCache {
+    static const int LibraryVersion { 0x02590116 }; // 601.1.22
+#if PLATFORM(IOS)
+    static const uint32_t SDKVersion { DYLD_IOS_VERSION_9_0 };
+#elif PLATFORM(MAC)
+    static const uint32_t SDKVersion { DYLD_MACOSX_VERSION_10_11 };
+#endif
 };
 
-bool linkedOnOrAfter(LibraryVersion);
+struct FirstWebKitWithMediaTypesRequiringUserActionForPlayback {
+    static const int LibraryVersion { 0x025A0121 }; // 602.1.33
+#if PLATFORM(IOS)
+    static const uint32_t SDKVersion { DYLD_IOS_VERSION_10_0 };
+#elif PLATFORM(MAC)
+    static const uint32_t SDKVersion { DYLD_MACOSX_VERSION_10_12 };
+#endif
+};
+
+struct FirstWebKitWithExceptionsForDuplicateCompletionHandlerCalls {
+    static const int LibraryVersion { 0x025B0111 }; // 603.1.17
+#if PLATFORM(IOS)
+    static const uint32_t SDKVersion { DYLD_IOS_VERSION_10_3 };
+#elif PLATFORM(MAC)
+    static const uint32_t SDKVersion { DYLD_MACOSX_VERSION_10_12_4 };
+#endif
+};
+
+bool linkedOnOrAfter(int libraryVersion, uint32_t sdkVersion);
+template <typename VersionInfo> bool linkedOnOrAfter()
+{
+    return linkedOnOrAfter(VersionInfo::LibraryVersion, VersionInfo::SDKVersion);
+}
 
 }

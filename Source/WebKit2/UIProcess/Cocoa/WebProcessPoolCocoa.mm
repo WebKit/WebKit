@@ -463,7 +463,7 @@ bool WebProcessPool::isNetworkCacheEnabled()
 
     bool networkCacheEnabledByDefaults = [defaults boolForKey:WebKitNetworkCacheEnabledDefaultsKey];
 
-    return networkCacheEnabledByDefaults && linkedOnOrAfter(LibraryVersion::FirstWithNetworkCache);
+    return networkCacheEnabledByDefaults && linkedOnOrAfter<FirstWebKitWithNetworkCache>();
 #else
     return false;
 #endif
