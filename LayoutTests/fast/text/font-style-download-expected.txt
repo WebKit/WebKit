@@ -1,0 +1,6 @@
+font-style-download.html - didFinishLoading
+Ahem.ttf - willSendRequest <NSURLRequest URL Ahem.ttf, main document URL font-style-download.html, http method GET> redirectResponse (null)
+Ahem.ttf - didReceiveResponse <NSURLResponse Ahem.ttf, http status code 0>
+Ahem.ttf - didFinishLoading
+This test makes sure that unnecessary fonts aren't downloaded. The test fails if Ahem.otf is downloaded.
+Hello

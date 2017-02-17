@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpResourceLoadCallbacks();
+    testRunner.dumpAsText();
+}
+if (window.internals) {
+    internals.invalidateFontCache();
+    internals.clearMemoryCache();
+}
+</script>
+<style>
+@font-face {
+    font-family: "WebFont";
+    font-style: italic;
+    src: url("../../resources/Ahem.ttf") format("truetype");
+}
+@font-face {
+    font-family: "WebFont";
+    font-style: normal;
+    src: url("../../resources/Ahem.otf") format("opentype");
+}
+</style>
+</head>
+<body>
+This test makes sure that unnecessary fonts aren't downloaded. The test fails if Ahem.otf is downloaded.
+<div style="font: italic 100px 'WebFont';">Hello</div>
+</body>
+</html>

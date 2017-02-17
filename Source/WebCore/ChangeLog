@@ -1,5 +1,53 @@
 2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212513. rdar://problem/30301317
+
+    2017-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            font-weight in @font-face can cause a font to be downloaded even when it's not used
+            https://bugs.webkit.org/show_bug.cgi?id=168114
+            <rdar://problem/30301317>
+
+            Reviewed by Darin Adler.
+
+            There were two problems with our font loading code.
+
+            When we are in the middle of a download, we will use a special interstitial font,
+            and this special font has a flag set which will cause it to be invisible when it is
+            drawn. However, when we start using this font during the load, we give it a
+            unicode-range of U+0-0 which means that it will never be used, and fallback will
+            happen to other weights immediately.
+
+            The second problem with the font loading code is that this interstital font is just
+            Times. Times doesn't support every character, which means that if we are trying
+            to render some exotic character, we fall back to other weights. The solution here
+            is to use LastResort as the interstitial font, because it supports all characters.
+            Because its metrics are reasonable and we don't ever actually paint this
+            interstitial font, this choice is no worse than Times.
+
+            Tests: fast/text/font-style-download.html
+                   fast/text/font-weight-download-2.html
+                   fast/text/font-weight-download.html
+                   fast/text/font-weight-fallback.html
+
+            * css/CSSFontFace.cpp:
+            (WebCore::CSSFontFace::font):
+            * css/CSSSegmentedFontFace.cpp:
+            (WebCore::appendFont):
+            (WebCore::CSSSegmentedFontFace::fontRanges):
+            (WebCore::appendFontWithInvalidUnicodeRangeIfLoading): Deleted.
+            * platform/graphics/Font.h:
+            (WebCore::Font::widthForGlyph):
+            * platform/graphics/FontCache.h:
+            * platform/graphics/freetype/FontCacheFreeType.cpp:
+            (WebCore::FontCache::lastResortFallbackFontForEveryCharacter):
+            * platform/graphics/mac/FontCacheMac.mm:
+            (WebCore::FontCache::lastResortFallbackFontForEveryCharacter):
+            * platform/graphics/win/FontCacheWin.cpp:
+            (WebCore::FontCache::lastResortFallbackFontForEveryCharacter):
+
+2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212441. rdar://problem/30357253
 
     2017-02-16  Chris Fleizach  <cfleizach@apple.com>

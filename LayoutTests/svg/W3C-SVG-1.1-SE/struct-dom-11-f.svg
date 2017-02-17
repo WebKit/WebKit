@@ -44,7 +44,7 @@
       </font-face-src>
     </font-face>
   </defs>
-  <g id="test-body-content" font-family="SVGFreeSansASCII,sans-serif" font-size="18">
+  <g id="test-body-content" font-family="sans-serif" font-size="18">
 
     <text x='10' y='40' font-size='13'>Test getIntersectionList and getEnclosureList return value liveness</text>
 
