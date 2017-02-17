@@ -1,3 +1,21 @@
+2017-02-17  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RTL: CodeMirror text editor instances have scrollbars on left and right
+        https://bugs.webkit.org/show_bug.cgi?id=168274
+
+        Reviewed by Matt Baker.
+
+        CodeMirror doesn't draw its own scrollbar correctly when content is in RTL,
+        so it draws an extra scrollbar on the right side. And, for the majority of
+        cases, we don't want to view CSS / JS content aligned to the right.
+
+        Manually set the "dir" attribute for all CodeMirror editor instances to "ltr".
+        Clients can override this if custom RTL layout is available in a particular case.
+
+        * UserInterface/Views/CodeMirrorEditor.js:
+        (WebInspector.CodeMirrorEditor.create):
+        (WebInspector.CodeMirrorEditor):
+
 2017-02-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Timeline DataGridNodes are lacking detail in title

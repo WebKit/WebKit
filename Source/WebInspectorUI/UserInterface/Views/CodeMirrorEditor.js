@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,17 @@
 
 WebInspector.CodeMirrorEditor = class CodeMirrorEditor
 {
-    static create(place, options)
+    static create(element, options)
     {
         if (options.lineSeparator === undefined)
             options.lineSeparator = "\n";
 
-        let codeMirror = new CodeMirror(place, options);
+        // CodeMirror's manual scrollbar positioning results in double scrollbars,
+        // nor does it handle braces and brackets well, so default to using LTR.
+        // Clients can override this if custom layout for RTL is available.
+        element.setAttribute("dir", "ltr");
+
+        let codeMirror = new CodeMirror(element, options);
 
         // Override some Mac specific keybindings.
         if (WebInspector.Platform.name === "mac") {
