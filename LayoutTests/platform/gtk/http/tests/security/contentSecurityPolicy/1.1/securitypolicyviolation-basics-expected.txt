@@ -3,7 +3,7 @@ Check that a SecurityPolicyViolationEvent handler exists, and that events can be
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS typeof document.onsecuritypolicyviolation is "object"
+FAIL typeof document.onsecuritypolicyviolation should be object. Was undefined.
 PASS typeof SecurityPolicyViolationEvent is "function"
 PASS typeof window.e is "object"
 PASS window.e.documentURI is "documentURIValue"
