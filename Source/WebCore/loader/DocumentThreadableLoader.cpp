@@ -94,6 +94,8 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     , m_contentSecurityPolicy(WTFMove(contentSecurityPolicy))
     , m_shouldLogError(shouldLogError)
 {
+    relaxAdoptionRequirement();
+
     // Setting a referrer header is only supported in the async code path.
     ASSERT(m_async || m_referrer.isEmpty());
 

@@ -1,5 +1,16 @@
 2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212335. rdar://problem/29899473
+
+    2017-02-14  Brady Eidson  <beidson@apple.com>
+
+            Unreviewed followup to r212330 to fix Debug builds
+
+            * loader/DocumentThreadableLoader.cpp:
+            (WebCore::DocumentThreadableLoader::DocumentThreadableLoader): Add call to relaxAdoptionRequirement().
+
+2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212330. rdar://problem/29899473
 
     2017-02-14  Brady Eidson  <beidson@apple.com>
