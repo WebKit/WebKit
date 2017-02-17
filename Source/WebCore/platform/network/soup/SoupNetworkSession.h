@@ -58,9 +58,6 @@ public:
 
     static void clearOldSoupCache(const String& cacheDirectory);
 
-#if PLATFORM(EFL)
-    static void setProxySettingsFromEnvironment();
-#endif
     static void setProxySettings(const SoupNetworkProxySettings&);
     void setupProxy();
 

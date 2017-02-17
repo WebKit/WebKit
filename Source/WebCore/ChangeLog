@@ -1,3 +1,35 @@
+2017-02-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Remove even more EFL from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=168485
+
+        Reviewed by Alex Christensen.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+        (atkRole):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::copy):
+        * platform/ContextMenuItem.h:
+        * platform/graphics/OpenGLESShims.h:
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::createPlatformDisplay):
+        * platform/graphics/PlatformDisplay.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::platformInit):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::setContentsToImage):
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.cpp:
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.h:
+        * platform/network/soup/ResourceErrorSoup.cpp:
+        (WebCore::ResourceError::timeoutError):
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::setProxySettingsFromEnvironment): Deleted.
+        * platform/network/soup/SoupNetworkSession.h:
+
 2017-02-16  Daniel Bates  <dabates@apple.com>
 
         Remove Chromium-specific code to call FrameLoaderClient::redirectDataToPlugin(nullptr)

@@ -536,7 +536,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
     }
 }
 
-#if !PLATFORM(GTK) && !PLATFORM(EFL)
+#if !PLATFORM(GTK)
 static cairo_status_t writeFunction(void* output, const unsigned char* data, unsigned int length)
 {
     if (!reinterpret_cast<Vector<unsigned char>*>(output)->tryAppend(data, length))

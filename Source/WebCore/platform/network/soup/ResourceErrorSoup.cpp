@@ -86,8 +86,8 @@ ResourceError ResourceError::tlsError(SoupRequest* request, unsigned tlsErrors, 
 
 ResourceError ResourceError::timeoutError(const URL& failingURL)
 {
-    // FIXME: This should probably either be integrated into Errors(Gtk/EFL).h or the
-    // networking errors from those files should be moved here.
+    // FIXME: This should probably either be integrated into ErrorsGtk.h or the
+    // networking errors from that file should be moved here.
 
     // Use the same value as in NSURLError.h
     static const int timeoutError = -1001;

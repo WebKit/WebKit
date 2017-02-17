@@ -255,28 +255,6 @@ void SoupNetworkSession::setupProxy()
     soup_session_abort(m_soupSession.get());
 }
 
-#if PLATFORM(EFL)
-// FIXME: This function should not exist at all and we don't want to accidentally use it in other ports.
-// The correct way to set proxy settings from the environment is to use a GProxyResolver that does so.
-// It also lacks the rather important https_proxy and ftp_proxy variables, and the uppercase versions of
-// all four variables, all of which you almost surely want to be respected if you're setting http_proxy,
-// and all of which would be supported via the default proxy resolver in non-GNOME/Ubuntu environments
-// (at least, I think that's right). Additionally, it is incorrect for WebKit to respect this environment
-// variable when running in a GNOME or Ubuntu environment, where GNOME proxy configuration should be
-// respected instead. The only reason to retain this function is to not alter the incorrect behavior for EFL.
-void SoupNetworkSession::setProxySettingsFromEnvironment()
-{
-    const char* httpProxy = getenv("http_proxy");
-    if (!httpProxy)
-        return;
-
-    gProxySettings.defaultProxyURL = httpProxy;
-    const char* httpProxyExceptions = getenv("no_proxy");
-    if (httpProxyExceptions)
-        gProxySettings.ignoreHosts.reset(g_strsplit(httpProxyExceptions, ",", -1));
-}
-#endif
-
 void SoupNetworkSession::setProxySettings(const SoupNetworkProxySettings& settings)
 {
     gProxySettings = settings;

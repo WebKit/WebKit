@@ -20,7 +20,7 @@
 #include "config.h"
 #include "TextureMapperGC3DPlatformLayer.h"
 
-#if USE(TEXTURE_MAPPER) && !PLATFORM(EFL)
+#if USE(TEXTURE_MAPPER)
 
 #if USE(OPENGL_ES_2)
 #include <GLES2/gl2.h>
@@ -128,4 +128,4 @@ void TextureMapperGC3DPlatformLayer::paintToTextureMapper(TextureMapper& texture
 
 } // namespace WebCore
 
-#endif // USE(TEXTURE_MAPPER) && !PLATFORM(EFL)
+#endif // USE(TEXTURE_MAPPER)

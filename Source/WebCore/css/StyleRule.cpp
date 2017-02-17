@@ -146,8 +146,6 @@ Ref<StyleRuleBase> StyleRuleBase::copy() const
         break;
     }
     CRASH();
-    // HACK: EFL won't build without this (old GCC with crappy -Werror=return-type)
-    return Ref<StyleRuleBase>(*static_cast<StyleRuleBase*>(nullptr));
 }
 
 RefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const

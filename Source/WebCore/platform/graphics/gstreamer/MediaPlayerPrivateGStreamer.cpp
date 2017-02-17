@@ -175,7 +175,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_audioSourceProvider(std::make_unique<AudioSourceProviderGStreamer>())
 #endif
 {
-#if USE(GLIB) && !PLATFORM(EFL)
+#if USE(GLIB)
     m_readyTimerHandler.setPriority(G_PRIORITY_DEFAULT_IDLE);
 #endif
 }

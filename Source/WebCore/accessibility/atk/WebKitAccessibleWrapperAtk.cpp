@@ -357,8 +357,6 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     AtkAttributeSet* attributeSet = nullptr;
 #if PLATFORM(GTK)
     attributeSet = addToAtkAttributeSet(attributeSet, "toolkit", "WebKitGtk");
-#elif PLATFORM(EFL)
-    attributeSet = addToAtkAttributeSet(attributeSet, "toolkit", "WebKitEfl");
 #endif
 
     AccessibilityObject* coreObject = core(object);
@@ -532,8 +530,6 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
 #if PLATFORM(GTK)
         // ATK_ROLE_COLOR_CHOOSER is defined as a dialog (i.e. it's what appears when you push the button).
         return ATK_ROLE_PUSH_BUTTON;
-#elif PLATFORM(EFL)
-        return ATK_ROLE_COLOR_CHOOSER;
 #endif
     case ListRole:
         return ATK_ROLE_LIST;
