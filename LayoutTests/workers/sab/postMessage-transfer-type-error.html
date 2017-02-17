@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Checks that worker.postMessage rejects SharedArrayBuffers in the transfer list");
+
+function postMessageTransferSharedArrayBuffer()
+{
+    var sab = new SharedArrayBuffer(4);
+    var memory = new Int32Array(sab);
+    new Worker("null-worker.js").postMessage(memory, [sab]);
+}
+
+shouldThrowErrorName("postMessageTransferSharedArrayBuffer()", "TypeError");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

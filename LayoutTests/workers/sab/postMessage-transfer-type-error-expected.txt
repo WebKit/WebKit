@@ -1,0 +1,10 @@
+Checks that worker.postMessage rejects SharedArrayBuffers in the transfer list
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS postMessageTransferSharedArrayBuffer() threw exception TypeError: Type error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
