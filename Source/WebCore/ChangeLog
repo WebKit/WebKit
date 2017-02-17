@@ -1,5 +1,29 @@
 2017-02-17  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Improve handling of <video> with only audio tracks
+        https://bugs.webkit.org/show_bug.cgi?id=167836
+        <rdar://problem/30255812>
+
+        Reviewed by Dean Jackson.
+
+        We now check for the availability of video tracks before considering a <video>
+        element is displaying an actual video file and turning auto-hide on. We also
+        check that we have video tracks before enabling the fullscreen button. This
+        brings the behavior of a <video> pointing to a resource with no video tracks
+        to be the same as an <audio> element.
+
+        Test: media/modern-media-controls/media-controller/media-controller-video-with-only-audio.html
+
+        * Modules/modern-media-controls/media/controls-visibility-support.js:
+        (ControlsVisibilitySupport.prototype.get tracksToMonitor):
+        (ControlsVisibilitySupport.prototype._updateControls):
+        (ControlsVisibilitySupport):
+        * Modules/modern-media-controls/media/fullscreen-support.js:
+        (FullscreenSupport.prototype.syncControl):
+        (FullscreenSupport):
+
+2017-02-17  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Toggle playback when clicking on the video on macOS
         https://bugs.webkit.org/show_bug.cgi?id=168515
         <rdar://problem/30577441>

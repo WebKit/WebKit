@@ -48,6 +48,11 @@ class ControlsVisibilitySupport extends MediaControllerSupport
         return ["loadedmetadata", "play", "pause"];
     }
 
+    get tracksToMonitor()
+    {
+        return [this.mediaController.media.videoTracks];
+    }
+
     handleEvent()
     {
         this._updateControls();
@@ -58,8 +63,8 @@ class ControlsVisibilitySupport extends MediaControllerSupport
     _updateControls()
     {
         const media = this.mediaController.media;
-        const isVideo = media instanceof HTMLVideoElement;
-        let shouldShowControls = this.mediaController.media.controls && !!media.currentSrc;
+        const isVideo = media instanceof HTMLVideoElement && media.videoTracks.length > 0;
+        let shouldShowControls = media.controls && !!media.currentSrc;
         if (isVideo)
             shouldShowControls = shouldShowControls && media.readyState > HTMLMediaElement.HAVE_NOTHING;
 
