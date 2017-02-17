@@ -1,3 +1,11 @@
+2017-02-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestExpectations for fast/css/appearance-apple-pay-button.html.
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2017-02-17  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Improve handling of live broadcast video

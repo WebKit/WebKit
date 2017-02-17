@@ -764,7 +764,7 @@ fast/css-intrinsic-dimensions/height-tables.html [ ImageOnlyFailure ]
 # integral hittest vs. subpixel table
 fast/table/hittest-tablecell-with-borders-right-edge.html [ Pass Failure ]
 fast/table/hittest-tablecell-right-edge.html [ Pass Failure ]
-fast/css/appearance-apple-pay-button.html [ Failure ]
+fast/css/appearance-apple-pay-button.html [ ImageOnlyFailure ]
 
 webkit.org/b/150598 fast/repaint/table-hover-on-link.html [ Pass Failure ]
 
