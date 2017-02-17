@@ -2183,6 +2183,13 @@ void Document::frameDestroyed()
     FrameDestructionObserver::frameDestroyed();
 }
 
+void Document::didBecomeCurrentDocumentInView()
+{
+    ASSERT(view());
+    if (!hasLivingRenderTree())
+        createRenderTree();
+}
+
 void Document::attachToCachedFrame(CachedFrameBase& cachedFrame)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(cachedFrame.document() == this);
@@ -2204,7 +2211,6 @@ void Document::destroyRenderTree()
 {
     ASSERT(hasLivingRenderTree());
     ASSERT(frame());
-    ASSERT(frame()->view());
     ASSERT(page());
 
     FrameView* frameView = frame()->document() == this ? frame()->view() : nullptr;
