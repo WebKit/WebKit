@@ -106,7 +106,7 @@ FloatRect ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition(const
     LayoutRect visualViewport(FrameView::visibleDocumentRect(visibleContentRect, headerHeight(), footerHeight(), totalContentsSize(), scale));
     LayoutRect layoutViewport(m_layoutViewport);
 
-    LOG_WITH_STREAM(Scrolling, stream << "\nScrolling thread: " << "(visibleContentOrigin " << visibleContentOrigin << ")");
+    LOG_WITH_STREAM(Scrolling, stream << "\nScrolling thread: " << "(visibleContentOrigin " << visibleContentOrigin << ") fixed behavior " << m_behaviorForFixed);
     LOG_WITH_STREAM(Scrolling, stream << "  layoutViewport: " << layoutViewport);
     LOG_WITH_STREAM(Scrolling, stream << "  visualViewport: " << visualViewport);
     LOG_WITH_STREAM(Scrolling, stream << "  scroll positions: min: " << minLayoutViewportOrigin() << " max: "<< maxLayoutViewportOrigin());

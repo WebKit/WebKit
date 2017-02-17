@@ -281,6 +281,11 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, int indent
         writeIndent(ts, indent + 1);
         ts << "(max layout viewport origin " << m_maxLayoutViewportOrigin << ")\n";
     }
+    
+    if (m_behaviorForFixed == StickToViewportBounds) {
+        writeIndent(ts, indent + 1);
+        ts << "(fixed behavior: stick to viewport)\n";
+    }
 
     if (!m_eventTrackingRegions.asynchronousDispatchRegion.isEmpty()) {
         ++indent;

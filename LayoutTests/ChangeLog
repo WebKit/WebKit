@@ -1,5 +1,21 @@
 2017-02-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Fixed elements bounce when rubber-banding at the bottom of the page
+        https://bugs.webkit.org/show_bug.cgi?id=168493
+        rdar://problem/30567713
+
+        Reviewed by Tim Horton.
+
+        * fast/visual-viewport/rubberbanding-viewport-rects-expected.txt:
+        * fast/visual-viewport/rubberbanding-viewport-rects-extended-background-expected.txt: Copied from LayoutTests/fast/visual-viewport/rubberbanding-viewport-rects-expected.txt.
+        * fast/visual-viewport/rubberbanding-viewport-rects-extended-background.html: Copied from LayoutTests/fast/visual-viewport/rubberbanding-viewport-rects.html.
+        * fast/visual-viewport/rubberbanding-viewport-rects.html:
+        * platform/ios-simulator-wk2/fast/visual-viewport/rubberbanding-viewport-rects-expected.txt:
+        * platform/ios-simulator-wk2/fast/visual-viewport/rubberbanding-viewport-rects-extended-background-expected.txt: Copied from LayoutTests/platform/ios-simulator-wk2/fast/visual-viewport/rubberbanding-viewport-rects-expected.txt.
+        * platform/mac-wk1/fast/visual-viewport/rubberbanding-viewport-rects-extended-background-expected.txt: Added.
+
+2017-02-17  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (209396): Apple Pay buttons do not render
         https://bugs.webkit.org/show_bug.cgi?id=168523
         rdar://problem/30451563

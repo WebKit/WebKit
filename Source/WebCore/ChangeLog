@@ -1,5 +1,40 @@
 2017-02-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Fixed elements bounce when rubber-banding at the bottom of the page
+        https://bugs.webkit.org/show_bug.cgi?id=168493
+        rdar://problem/30567713
+
+        Reviewed by Tim Horton.
+
+        FrameView::visibleDocumentRect() was computing a bad visible rect when bottom-rubber-banding,
+        by adding rubberBandBottom which is negative, rather than subtracting.
+
+        Log some more scrolling stuff.
+
+        Ironically, the existing test didn't test stick-to-viewport fixed position because
+        backgroundShouldExtendBeyondPage() is off by default in WTR, so clone it to a test
+        that sets this, to test both behaviors.
+
+        This also revealed that dynamic changes to backgroundShouldExtendBeyondPage() need
+        to be propagated to the scrolling tree, which is fixed in AsyncScrollingCoordinator::frameViewLayoutUpdated().
+
+        Test: fast/visual-viewport/rubberbanding-viewport-rects-extended-background.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateLayoutViewport):
+        (WebCore::FrameView::visibleDocumentRect):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::scheduleTreeStateCommit):
+        (WebCore::ScrollingCoordinatorMac::commitTreeState):
+
+2017-02-17  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (209396): Apple Pay buttons do not render
         https://bugs.webkit.org/show_bug.cgi?id=168523
         rdar://problem/30451563
