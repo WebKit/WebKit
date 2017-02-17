@@ -43,40 +43,6 @@
 #include <wtf/StringExtras.h>
 #include <wtf/text/StringBuilder.h>
 
-#if OS(DARWIN) && USE(APPLE_INTERNAL_SDK)
-#include <dlfcn.h>
-#include <CoreFoundation/CFString.h>
-#include <SystemConfiguration/SystemConfiguration.h>
-#include <WebCore/SoftLinking.h>
-SOFT_LINK_PRIVATE_FRAMEWORK(CrashReporterSupport);
-SOFT_LINK(CrashReporterSupport, CRGetUserUUID, CFStringRef, (void), ());
-static const char* getUserUUID()
-{
-    static CFStringRef (*softLinkCRGetUserUUID)(void);
-    static constexpr const size_t maxBytes = 37;
-    static char userUUID[maxBytes] = { '\0' };
-    static bool failed = true;
-    static std::once_flag once;
-    std::call_once(once, [] {
-        softLinkCRGetUserUUID = (CFStringRef (*)(void)) dlsym(CrashReporterSupportLibrary(), "CRGetUserUUID");
-        if (!softLinkCRGetUserUUID) {
-            dataLog("Failed getting user UUID: ", dlerror(), "\n");
-            return;
-        }
-        CFStringRef userUUIDString = CRGetUserUUID();
-        CFIndex length = CFStringGetLength(userUUIDString);
-        CFRange range = CFRangeMake(0, length);
-        CFIndex numConvertedCharacters = CFStringGetBytes(userUUIDString, range, kCFStringEncodingASCII, 0, false, reinterpret_cast<UInt8*>(userUUID), maxBytes - 1, nullptr);
-        if (numConvertedCharacters <= 0 || static_cast<size_t>(numConvertedCharacters) >= maxBytes) {
-            dataLog("Failed getting user UUID: ", numConvertedCharacters, numConvertedCharacters, maxBytes, "\n");
-            return;
-        }
-        failed = false;
-    });
-    return failed ? nullptr : userUUID;
-}
-#endif
-
 #if PLATFORM(COCOA)
 #include <crt_externs.h>
 #endif
@@ -383,29 +349,6 @@ static void recomputeDependentOptions()
     
 #if !CPU(X86_64) && !CPU(ARM64)
     Options::useConcurrentGC() = false;
-#endif
-#if OS(DARWIN) && USE(APPLE_INTERNAL_SDK)
-    if (Options::enableABTesting() && Options::useConcurrentGC()) {
-        // Run an A/B test on concurrent GC: if it was going to be on, turn it
-        // off with some probability. Do this deterministically per unique user
-        // identifier so that crashes don't skew statistics, and do it in a
-        // manner which can be reconstructed from a crash trace.
-        uint32_t accumulator = 0;
-        const char* userUUID = getUserUUID();
-        if (!userUUID) {
-            dataLog("A/B test: not setting useConcurrentGC because we failed to obtain the user UUID\n");
-        } else {
-            for (const char* c = userUUID; *c; ++c)
-                accumulator += *c;
-            accumulator = (accumulator & 0xFFFFu) ^ (accumulator >> 16);
-            accumulator = (accumulator & 0xFF) ^ (accumulator >> 8);
-            accumulator = (accumulator & 0xF) ^ (accumulator >> 4);
-            accumulator = (accumulator & 0x3) ^ (accumulator >> 2);
-            accumulator = (accumulator & 0x1) ^ (accumulator >> 1);
-            Options::useConcurrentGC() = accumulator;
-            dataLog("A/B test: setting useConcurrentGC to ", Options::useConcurrentGC(), " based on user UUID ", userUUID, "\n");
-        }
-    }
 #endif
     
 #if OS(WINDOWS) && CPU(X86) 
