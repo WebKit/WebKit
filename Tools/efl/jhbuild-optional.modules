@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<moduleset>
+
+  <repository type="tarball" name="ftp.gnome.org"
+      href="http://ftp.gnome.org"/>
+
+  <autotools id="at-spi2-core"
+          autogenargs="--disable-introspection">
+    <branch module="pub/GNOME/sources/at-spi2-core/2.10/at-spi2-core-2.10.0.tar.xz" version="2.10.0"
+          repo="ftp.gnome.org"
+          hash="sha256:964155c7574220a00e11e1c0d91f2d3017ed603920eb1333ff9cbdb6a22744db">
+    </branch>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="at-spi2-atk">
+    <branch module="pub/GNOME/sources/at-spi2-atk/2.10/at-spi2-atk-2.10.0.tar.xz" version="2.10.0"
+            repo="ftp.gnome.org"
+            hash="sha256:dea7ff2f9bc9bbdb0351112616d738de718b55739cd2511afecac51604c31a94">
+    </branch>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="atk"/>
+      <dep package="at-spi2-core"/>
+    </dependencies>
+  </autotools>
+
+</moduleset>

@@ -1,0 +1,13 @@
+diff --git a/gst/videorepair/Makefile.am b/gst/videorepair/Makefile.am
+index 34487b5..34c3887 100644
+--- a/gst/videorepair/Makefile.am
++++ b/gst/videorepair/Makefile.am
+@@ -17,7 +17,7 @@ plugin_LTLIBRARIES = libgstvideorepair.la
+ libgstvideorepair_la_SOURCES = gstvideorepair.c
+ 
+ # compiler and linker flags used to compile this plugin, set in configure.ac
+-libgstvideorepair_la_CFLAGS = $(GST_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS) -Wall -Wextra -Werror
++libgstvideorepair_la_CFLAGS = $(GST_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS) -Wall -Wextra
+ libgstvideorepair_la_LIBADD = $(GST_LIBS) -lgstvideo-1.0
+ libgstvideorepair_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
+ if !GST_PLUGIN_BUILD_STATIC

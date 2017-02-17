@@ -1,0 +1,135 @@
+#!/bin/bash
+
+# This script needs to be run with root rights.
+if [ $UID -ne 0 ]; then
+    sudo $0
+    exit 0
+fi
+
+function printNotSupportedMessageAndExit() {
+    echo
+    echo "Currently this script only works for distributions supporting apt-get."
+    echo "Please add support for your distribution."
+    echo
+    exit 1
+}
+
+function checkCmakeVersion() {
+    CMAKE_VERSION=`cmake --version`
+
+    VERSION=`echo "$CMAKE_VERSION" | awk '{split($3,num,".");
+    if (!(num[1]>2 || num[2]>8 || num[3]>=10))
+        printf $3}'`
+
+    if [ -n "${VERSION}" ]; then
+        echo "Warning: CMake version detected (${VERSION}) is lower then 2.8.10."
+        echo "  This will probably cause errors, as older version didn't support CMAKE_NINJA_FORCE_RESPONSE_FILE,"
+        echo "  which is needed now for building. (look at: https://lists.webkit.org/pipermail/webkit-gtk/2014-March/001809.html )"
+        echo ""
+
+        if [ -f "/etc/issue" ]; then
+            ubuntu_version=`cat /etc/issue`
+            if [[ $ubuntu_version == *Ubuntu\ 12.04* ]]; then
+                echo "  For Ubuntu 12.04 or 12.10 You might consider adding ppa from https://launchpad.net/~kalakris/+archive/ubuntu/cmake"
+            fi
+        fi
+    fi
+}
+
+function checkInstaller {
+    # apt-get - Debian based distributions
+    apt-get --version &> /dev/null
+    if [ $? -eq 0 ]; then
+        installDependenciesWithApt
+        checkCmakeVersion;
+        exit 0
+    fi
+
+    printNotSupportedMessageAndExit
+}
+
+# If the package $1 is available, prints it. Otherwise prints $2.
+# Useful for handling when a package is renamed on new versions of Debian/Ubuntu.
+function aptIfElse {
+    if apt-cache show $1 &>/dev/null; then
+        echo $1
+    else
+        echo $2
+    fi
+}
+
+function installDependenciesWithApt {
+    # These are dependencies necessary for building WebKitEFL.
+    apt-get install \
+        bison \
+        cmake \
+        doxygen \
+        flex \
+        g++ \
+        geoclue-2.0 \
+        gperf \
+        gtk-doc-tools \
+        libatk1.0-dev \
+        libdbus-1-dev \
+        libedit-dev \
+        libenchant-dev \
+        libespeak-dev \
+        libfaad-dev \
+        libffi-dev \
+        libfreetype6-dev \
+        $(aptIfElse libgcrypt20-dev libgcrypt11-dev) \
+        $(aptIfElse libgeoclue-2-dev libgeoclue-dev) \
+        libgif-dev \
+        libgl1-mesa-dev \
+        libgpg-error-dev \
+        libhyphen-dev \
+        libicu-dev \
+        libjpeg-dev \
+        libjson-glib-dev \
+        liblua5.1-0-dev \
+        libluajit-5.1-dev \
+        libmpg123-dev \
+        liborc-0.4-dev \
+        libosmesa6-dev \
+        libp11-kit-dev \
+        $(aptIfElse libpng-dev libpng12-dev) \
+        libpoppler-cpp-dev \
+        libpulse-dev \
+        libraw-dev \
+        librsvg2-dev \
+        libspectre-dev \
+        libsqlite3-dev \
+        libssl-dev \
+        libtheora-dev \
+        libtiff5-dev \
+        libudev-dev \
+        libvorbis-dev \
+        libwebp-dev \
+        libxcomposite-dev \
+        libxcursor-dev \
+        libxinerama-dev \
+        libxrandr-dev \
+        libxrender-dev \
+        libxss-dev \
+        libxt-dev \
+        libxtst-dev \
+        ninja-build \
+        ragel \
+        ruby \
+        subversion \
+        x11proto-print-dev
+
+    # These are dependencies necessary for building WebKitEFL and not available on ARM64.
+    apt-get install \
+        luajit
+
+    # These are dependencies necessary for running tests.
+    apt-get install \
+        apache2 \
+        $(aptIfElse libapache2-mod-php7.0 libapache2-mod-php5) \
+        libruby \
+        xvfb
+}
+
+checkInstaller
+

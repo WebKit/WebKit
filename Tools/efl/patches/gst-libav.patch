@@ -1,0 +1,20 @@
+--- a/gst-libs/ext/libav/libavcodec/arm/videodsp_armv5te.S
++++ b/gst-libs/ext/libav/libavcodec/arm/videodsp_armv5te.S
+@@ -27,6 +27,7 @@
+         subs            r2,  r2,  #1
+         pld             [r0]
+         add             r0,  r0,  r1
++        it              ne
+         bne             1b
+         bx              lr
+
+--- a/gst-libs/ext/libav/libswresample/arm/audio_convert_neon.S
++++ b/gst-libs/ext/libav/libswresample/arm/audio_convert_neon.S
+@@ -134,6 +134,7 @@ function swri_oldapi_conv_fltp_to_s16_nch_neon, export=1
+         itt             lt
+         ldrlt           r1,  [r1]
+         blt             X(swri_oldapi_conv_flt_to_s16_neon)
++        it              eq
+         beq             X(swri_oldapi_conv_fltp_to_s16_2ch_neon)
+ 
+         push            {r4-r8, lr}
