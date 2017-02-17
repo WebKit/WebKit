@@ -184,7 +184,7 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
             [0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4].forEach((level) => {
                 let option = select.createChild("option");
                 option.value = level;
-                option.textContent = `${Math.round(level * 100)}%`;
+                option.textContent = Number.percentageString(level, 0);
                 option.selected = currentZoom === level;
             });
         });

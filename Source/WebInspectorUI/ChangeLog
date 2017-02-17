@@ -1,5 +1,16 @@
 2017-02-17  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: Loc: Zoom level in Settings tab needs to use localized formatting
+        https://bugs.webkit.org/show_bug.cgi?id=168465
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WebInspector.SettingsTabContentView.prototype.layout):
+        (WebInspector.SettingsTabContentView):
+
+2017-02-17  Brian Burg  <bburg@apple.com>
+
         Web Inspector: RTL: CodeMirror text editor instances have scrollbars on left and right
         https://bugs.webkit.org/show_bug.cgi?id=168274
 
