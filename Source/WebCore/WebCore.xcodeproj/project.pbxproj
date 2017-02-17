@@ -951,6 +951,10 @@
 		1AEF4E69170E174800AB2799 /* CachedSVGDocumentClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEF4E68170E174800AB2799 /* CachedSVGDocumentClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF326790D78B9440068F0C4 /* EditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326770D78B9440068F0C4 /* EditorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF4CEEC18BC3C1B00BC2D34 /* VisitedLinkStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF4CEEB18BC3C1B00BC2D34 /* VisitedLinkStore.cpp */; };
+		1AF5E4D41E56735B004A1F01 /* PasteboardWriterData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF5E4D21E56735A004A1F01 /* PasteboardWriterData.cpp */; };
+		1AF5E4D51E56735B004A1F01 /* PasteboardWriterData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF5E4D31E56735A004A1F01 /* PasteboardWriterData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1AF5E4E21E5779B1004A1F01 /* PasteboardWriter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF5E4E01E5779B1004A1F01 /* PasteboardWriter.mm */; };
+		1AF5E4E31E5779B1004A1F01 /* PasteboardWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF5E4E11E5779B1004A1F01 /* PasteboardWriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF62EE614DA22A70041556C /* ScrollingCoordinatorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */; };
 		1AF62EE714DA22A70041556C /* ScrollingCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF62EE414DA22A70041556C /* ScrollingCoordinator.cpp */; };
 		1AF62EE814DA22A70041556C /* ScrollingCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF62EE514DA22A70041556C /* ScrollingCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7832,6 +7836,7 @@
 		1A2AAC570DC2A3B100A20D9A /* ApplicationCacheStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheStorage.h; sourceTree = "<group>"; };
 		1A2E6E580CC55213004A2062 /* SQLValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLValue.h; sourceTree = "<group>"; };
 		1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteAuthorizer.cpp; sourceTree = "<group>"; };
+		1A2F67891E577ABD00997FD1 /* NSPasteboardSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSPasteboardSPI.h; sourceTree = "<group>"; };
 		1A3586DD15264C450022A659 /* RenderMultiColumnFlowThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMultiColumnFlowThread.cpp; sourceTree = "<group>"; };
 		1A3586DE15264C450022A659 /* RenderMultiColumnFlowThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMultiColumnFlowThread.h; sourceTree = "<group>"; };
 		1A3763691A2E68BB009A7EE2 /* StorageNamespaceProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceProvider.cpp; sourceTree = "<group>"; };
@@ -8129,6 +8134,10 @@
 		1AEF4E68170E174800AB2799 /* CachedSVGDocumentClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedSVGDocumentClient.h; sourceTree = "<group>"; };
 		1AF326770D78B9440068F0C4 /* EditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorClient.h; sourceTree = "<group>"; };
 		1AF4CEEB18BC3C1B00BC2D34 /* VisitedLinkStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkStore.cpp; sourceTree = "<group>"; };
+		1AF5E4D21E56735A004A1F01 /* PasteboardWriterData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PasteboardWriterData.cpp; sourceTree = "<group>"; };
+		1AF5E4D31E56735A004A1F01 /* PasteboardWriterData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardWriterData.h; sourceTree = "<group>"; };
+		1AF5E4E01E5779B1004A1F01 /* PasteboardWriter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardWriter.mm; sourceTree = "<group>"; };
+		1AF5E4E11E5779B1004A1F01 /* PasteboardWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardWriter.h; sourceTree = "<group>"; };
 		1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingCoordinatorMac.mm; sourceTree = "<group>"; };
 		1AF62EE414DA22A70041556C /* ScrollingCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingCoordinator.cpp; sourceTree = "<group>"; };
 		1AF62EE514DA22A70041556C /* ScrollingCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingCoordinator.h; sourceTree = "<group>"; };
@@ -18063,6 +18072,8 @@
 				93500F3113FDE3BE0099EC24 /* NSScrollerImpDetails.h */,
 				52F52E1014A0134F00ACC397 /* NSScrollerImpDetails.mm */,
 				4B2709810AF2E5E00065127F /* PasteboardMac.mm */,
+				1AF5E4E01E5779B1004A1F01 /* PasteboardWriter.mm */,
+				1AF5E4E11E5779B1004A1F01 /* PasteboardWriter.h */,
 				CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */,
 				CDEA762F146084EE008B31F1 /* PlatformClockCA.h */,
 				CDAA8D0714D385600061EA60 /* PlatformClockCM.h */,
@@ -19034,6 +19045,7 @@
 				1C6466271A12C3F90094603C /* NSFontSPI.h */,
 				9321D58F1A3906FA008052BE /* NSImmediateActionGestureRecognizerSPI.h */,
 				937F4CCD1A2D4B0100BB39F5 /* NSMenuSPI.h */,
+				1A2F67891E577ABD00997FD1 /* NSPasteboardSPI.h */,
 				93F1E1EB1A40FDDC00348D13 /* NSPopoverSPI.h */,
 				7C0406121C66EE9C00AF0711 /* NSScrollerImpSPI.h */,
 				F40EA8AA1B867D6500CE5581 /* NSScrollingInputFilterSPI.h */,
@@ -22961,6 +22973,8 @@
 				E1513D501677F08800149FCB /* NotImplemented.cpp */,
 				98EB1F941313FE0500D0E1EA /* NotImplemented.h */,
 				4B2708C50AF19EE40065127F /* Pasteboard.h */,
+				1AF5E4D21E56735A004A1F01 /* PasteboardWriterData.cpp */,
+				1AF5E4D31E56735A004A1F01 /* PasteboardWriterData.h */,
 				C5F765B414E1D414006C899B /* PasteboardStrategy.h */,
 				A14978701ABAF3A500CEF7E4 /* PlatformContentFilter.h */,
 				BC5C76291497FE1400BC4775 /* PlatformEvent.h */,
@@ -25584,6 +25598,7 @@
 				D0B0556809C6700100307E43 /* CreateLinkCommand.h in Headers */,
 				514C766E0CE923A1007EF3CD /* Credential.h in Headers */,
 				3792917A1985EF3900F4B661 /* CredentialBase.h in Headers */,
+				1AF5E4E31E5779B1004A1F01 /* PasteboardWriter.h in Headers */,
 				3792917E1987678F00F4B661 /* CredentialCocoa.h in Headers */,
 				51A052331058774F00CC9E95 /* CredentialStorage.h in Headers */,
 				2D481F02146B5C5500AA7834 /* CrossfadeGeneratedImage.h in Headers */,
@@ -25832,6 +25847,7 @@
 				2D29ECC6192ECC8300984B78 /* DisplayRefreshMonitorClient.h in Headers */,
 				2D29ECCA192F1F1D00984B78 /* DisplayRefreshMonitorIOS.h in Headers */,
 				2DE70023192FE82A00B0975C /* DisplayRefreshMonitorMac.h in Headers */,
+				1AF5E4D51E56735B004A1F01 /* PasteboardWriterData.h in Headers */,
 				2D29ECC8192ECC8300984B78 /* DisplayRefreshMonitorManager.h in Headers */,
 				CD52481B18E200ED0008A07D /* DisplaySleepDisabler.h in Headers */,
 				5D8C4DC01428222C0026CE72 /* DisplaySleepDisablerCocoa.h in Headers */,
@@ -31134,6 +31150,7 @@
 				9493B6BE1D74B4120088E780 /* MediaQueryBlockWatcher.cpp in Sources */,
 				4E19592B0A39DACC00220FE5 /* MediaQueryEvaluator.cpp in Sources */,
 				7CB5CA3F1E525C7100FAEF13 /* MediaQueryExpression.cpp in Sources */,
+				1AF5E4D41E56735B004A1F01 /* PasteboardWriterData.cpp in Sources */,
 				D3A94A38122DABAC00A37BBC /* MediaQueryList.cpp in Sources */,
 				D3AA10F3123A98AA0092152B /* MediaQueryMatcher.cpp in Sources */,
 				9493B6C01D74B4120088E780 /* MediaQueryParser.cpp in Sources */,
@@ -31751,6 +31768,7 @@
 				A78FE13B12366B1000ACE8D0 /* SpellChecker.cpp in Sources */,
 				B8DBDB4D130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp in Sources */,
 				4512502215DCE37D002F84E2 /* SpinButtonElement.cpp in Sources */,
+				1AF5E4E21E5779B1004A1F01 /* PasteboardWriter.mm in Sources */,
 				93309E11099E64920056E581 /* SplitElementCommand.cpp in Sources */,
 				93309E13099E64920056E581 /* SplitTextNodeCommand.cpp in Sources */,
 				93309E15099E64920056E581 /* SplitTextNodeContainingElementCommand.cpp in Sources */,

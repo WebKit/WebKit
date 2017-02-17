@@ -1,3 +1,33 @@
+2017-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Begin overhauling the pasteboard implementation
+        https://bugs.webkit.org/show_bug.cgi?id=168525
+
+        Reviewed by Tim Horton.
+
+        Add a new PasteboardWriterData object. This object will hold data that is going
+        to be written to the pasteboard at some point. Currently it only supports plain text.
+
+        Also add a Mac-only PasteboardWriter class which can convert a PasteboardWriterDataObject
+        into an object that conforms to NSPasteboardWriting.
+
+        The basic idea is that instead of doing a bunch of pasteboard operations,
+        we'll just package all the pasteboard data up into an object and ship it over to WebKit.
+
+        This code is currently unused but will be adopted by a new drag implementation (in an upcoming patch).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/PasteboardWriterData.cpp: Added.
+        (WebCore::PasteboardWriterData::PasteboardWriterData):
+        (WebCore::PasteboardWriterData::~PasteboardWriterData):
+        (WebCore::PasteboardWriterData::isEmpty):
+        (WebCore::PasteboardWriterData::setPlainText):
+        * platform/PasteboardWriterData.h: Added.
+        * platform/mac/PasteboardWriter.h: Added.
+        * platform/mac/PasteboardWriter.mm: Added.
+        (WebCore::createPasteboardWriting):
+        * platform/spi/mac/NSPasteboardSPI.h: Added.
+
 2017-02-17  Per Arne Vollan  <pvollan@apple.com>
 
         Apply SVG styles paint-order, stroke-linejoin, and stroke-linecap on DOM text.

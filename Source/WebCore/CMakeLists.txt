@@ -2093,6 +2093,7 @@ set(WebCore_SOURCES
     platform/MainThreadSharedTimer.cpp
     platform/MemoryPressureHandler.cpp
     platform/NotImplemented.cpp
+    platform/PasteboardWriterData.cpp
     platform/PlatformSpeechSynthesisUtterance.cpp
     platform/PlatformSpeechSynthesisVoice.cpp
     platform/PlatformSpeechSynthesizer.cpp
