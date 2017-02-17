@@ -1,3 +1,20 @@
+2017-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Handle Settings::allowsAnySSLCertificate() in SSL sockets
+        https://bugs.webkit.org/show_bug.cgi?id=168521
+
+        Reviewed by Michael Catanzaro.
+
+        When Settings::allowsAnySSLCertificate() is enabled, connect to accept-certificate signal of the GTlsConnection
+        to always accept the certificates.
+
+        Fixes: http/tests/websocket/tests/hybi/simple-wss.html
+
+        * platform/network/soup/SocketStreamHandleImplSoup.cpp:
+        (WebCore::wssConnectionAcceptCertificateCallback):
+        (WebCore::wssSocketClientEventCallback):
+        (WebCore::SocketStreamHandleImpl::create):
+
 2017-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         Fixed elements bounce when rubber-banding at the bottom of the page

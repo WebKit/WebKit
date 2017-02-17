@@ -35,6 +35,7 @@
 #if USE(SOUP)
 
 #include "Logging.h"
+#include "Settings.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
 #include "URL.h"
@@ -48,14 +49,31 @@
 
 namespace WebCore {
 
+static gboolean wssConnectionAcceptCertificateCallback(GTlsConnection*, GTlsCertificate*, GTlsCertificateFlags)
+{
+    return TRUE;
+}
+
+static void wssSocketClientEventCallback(GSocketClient*, GSocketClientEvent event, GSocketConnectable*, GIOStream* connection)
+{
+    if (event != G_SOCKET_CLIENT_TLS_HANDSHAKING)
+        return;
+
+    g_signal_connect(connection, "accept-certificate", G_CALLBACK(wssConnectionAcceptCertificateCallback), nullptr);
+}
+
 Ref<SocketStreamHandleImpl> SocketStreamHandleImpl::create(const URL& url, SocketStreamHandleClient& client, SessionID, const String&)
 {
     Ref<SocketStreamHandleImpl> socket = adoptRef(*new SocketStreamHandleImpl(url, client));
 
     unsigned port = url.port() ? url.port().value() : (url.protocolIs("wss") ? 443 : 80);
     GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
-    if (url.protocolIs("wss"))
+    if (url.protocolIs("wss")) {
         g_socket_client_set_tls(socketClient.get(), TRUE);
+        // FIXME: this is only used by tests, but using Settings from here is a layering violation.
+        if (Settings::allowsAnySSLCertificate())
+            g_signal_connect(socketClient.get(), "event", G_CALLBACK(wssSocketClientEventCallback), nullptr);
+    }
     Ref<SocketStreamHandle> protectedSocketStreamHandle = socket.copyRef();
     g_socket_client_connect_to_host_async(socketClient.get(), url.host().utf8().data(), port, socket->m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(connectedCallback), &protectedSocketStreamHandle.leakRef());
