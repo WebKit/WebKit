@@ -1178,13 +1178,13 @@ RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTM
     return nullptr;
 }
 
-void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
+void WebFrameLoaderClient::redirectDataToPlugin(Widget& pluginWidget)
 {
     // Ideally, this function shouldn't be necessary, see <rdar://problem/4852889>
-    if (!pluginWidget || pluginWidget->isPluginView())
-        m_manualLoader = toPluginView(pluginWidget);
+    if (pluginWidget.isPluginView())
+        m_manualLoader = toPluginView(&pluginWidget);
     else 
-        m_manualLoader = static_cast<EmbeddedWidget*>(pluginWidget);
+        m_manualLoader = static_cast<EmbeddedWidget*>(&pluginWidget);
 }
 
 PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement* element, const URL& /*baseURL*/, const Vector<String>& paramNames, const Vector<String>& paramValues)
