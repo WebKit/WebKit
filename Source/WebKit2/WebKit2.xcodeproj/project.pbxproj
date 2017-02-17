@@ -934,6 +934,7 @@
 		511B24AB132E097200065A0C /* WebIconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 511B24A9132E097200065A0C /* WebIconDatabase.h */; };
 		511F8A7B138B460900A95F44 /* SecItemShimLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F8A77138B460900A95F44 /* SecItemShimLibrary.h */; };
 		511F8A81138B485D00A95F44 /* SecItemShimLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */; };
+		5120C8311E54EDDE0025B250 /* LocalStorageDatabaseTrackerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5120C8301E54E2650025B250 /* LocalStorageDatabaseTrackerIOS.mm */; };
 		512127C31908239A00DAF35C /* WebPasteboardOverrides.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512127C11908239A00DAF35C /* WebPasteboardOverrides.cpp */; };
 		512127C41908239A00DAF35C /* WebPasteboardOverrides.h in Headers */ = {isa = PBXBuildFile; fileRef = 512127C21908239A00DAF35C /* WebPasteboardOverrides.h */; };
 		51217460164C20E30037A5C1 /* ShareableResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5121745E164C20E30037A5C1 /* ShareableResource.cpp */; };
@@ -3097,6 +3098,7 @@
 		511B24A9132E097200065A0C /* WebIconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabase.h; sourceTree = "<group>"; };
 		511F8A77138B460900A95F44 /* SecItemShimLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SecItemShimLibrary.h; path = ../../WebProcess/mac/SecItemShimLibrary.h; sourceTree = "<group>"; };
 		511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SecItemShimLibrary.mm; path = ../../WebProcess/mac/SecItemShimLibrary.mm; sourceTree = "<group>"; };
+		5120C8301E54E2650025B250 /* LocalStorageDatabaseTrackerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalStorageDatabaseTrackerIOS.mm; sourceTree = "<group>"; };
 		512127C11908239A00DAF35C /* WebPasteboardOverrides.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPasteboardOverrides.cpp; sourceTree = "<group>"; };
 		512127C21908239A00DAF35C /* WebPasteboardOverrides.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPasteboardOverrides.h; sourceTree = "<group>"; };
 		5121745E164C20E30037A5C1 /* ShareableResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableResource.cpp; sourceTree = "<group>"; };
@@ -4507,6 +4509,7 @@
 		1A44B95816B73F8C00B7BBD8 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				5120C82D1E54E2040025B250 /* ios */,
 				1A1D8B9F1731A36300141DA4 /* LocalStorageDatabase.cpp */,
 				1A1D8BA01731A36300141DA4 /* LocalStorageDatabase.h */,
 				1A8C728A1738477C000A6554 /* LocalStorageDatabaseTracker.cpp */,
@@ -5770,6 +5773,14 @@
 				510523711C73D22B007993CB /* WebIDBConnectionToServer.messages.in */,
 			);
 			path = IndexedDB;
+			sourceTree = "<group>";
+		};
+		5120C82D1E54E2040025B250 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				5120C8301E54E2650025B250 /* LocalStorageDatabaseTrackerIOS.mm */,
+			);
+			path = ios;
 			sourceTree = "<group>";
 		};
 		5123CF18133D25E60056F800 /* cg */ = {
@@ -9821,6 +9832,7 @@
 				BCDE059C11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp in Sources */,
 				51871B5B127CB89D00F76232 /* WebContextMenu.cpp in Sources */,
 				BC111A5B112F4FBB00337BAB /* WebContextMenuClient.cpp in Sources */,
+				5120C8311E54EDDE0025B250 /* LocalStorageDatabaseTrackerIOS.mm in Sources */,
 				51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */,
 				512935D71288D19400A4B695 /* WebContextMenuItem.cpp in Sources */,
 				510FBB9A1288C95E00AFFDF4 /* WebContextMenuItemData.cpp in Sources */,

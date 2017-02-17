@@ -210,6 +210,10 @@ String LocalStorageDatabaseTracker::databasePath(const String& filename) const
         return String();
     }
 
+#if PLATFORM(IOS)
+    platformMaybeExcludeFromBackup();
+#endif
+
     return pathByAppendingComponent(m_localStorageDirectory, filename);
 }
 

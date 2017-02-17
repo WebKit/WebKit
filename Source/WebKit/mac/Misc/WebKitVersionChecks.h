@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <wtf/spi/darwin/dyldSPI.h>
+
 /*
     Version numbers are based on the 'current library version' specified in the WebKit build rules.
     All of these methods return or take version numbers with each part shifted to the left 2 bytes.
@@ -77,6 +79,14 @@
 #define WEBKIT_FIRST_VERSION_WITH_INSECURE_CONTENT_BLOCKING 3454
 #define WEBKIT_FIRST_VERSION_WITH_CONTENT_SECURITY_POLICY_SOURCE_STAR_PROTOCOL_RESTRICTION 3555
 #endif // PLATFORM(IOS)
+
+enum class SDKVersion : uint32_t {
+#if PLATFORM(IOS)
+    FirstToExcludeLocalStorageFromBackup = DYLD_IOS_VERSION_11_0,
+#endif
+};
+
+bool linkedOnOrAfter(SDKVersion);
 
 #ifdef __cplusplus
 extern "C" {

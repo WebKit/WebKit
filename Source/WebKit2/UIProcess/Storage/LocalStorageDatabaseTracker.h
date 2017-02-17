@@ -90,6 +90,12 @@ private:
 
     WebCore::SQLiteDatabase m_database;
     HashSet<String> m_origins;
+
+#if PLATFORM(IOS)
+    void platformMaybeExcludeFromBackup() const;
+
+    mutable bool m_hasExcludedFromBackup { false };
+#endif
 };
 
 } // namespace WebKit

@@ -27,6 +27,7 @@
  */
 
 #import "WebKitVersionChecks.h"
+
 #import <mach-o/dyld.h>
 
 static int WebKitLinkTimeVersion(void);
@@ -65,4 +66,9 @@ static int WebKitLinkTimeVersion(void)
     // Third party applications do not link against WebKit, but rather against UIKit.
     return NSVersionOfLinkTimeLibrary("UIKit");
 #endif
+}
+
+bool linkedOnOrAfter(SDKVersion sdkVersion)
+{
+    return dyld_get_program_sdk_version() >= static_cast<uint32_t>(sdkVersion);
 }

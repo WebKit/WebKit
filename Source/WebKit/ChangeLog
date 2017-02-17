@@ -1,3 +1,12 @@
+2017-02-15  Brady Eidson  <beidson@apple.com>
+
+        Stop backing up localStorage databases to iCloud by default.
+        <rdar://problem/29045531> and https://bugs.webkit.org/show_bug.cgi?id=168388
+
+        Reviewed by Geoffrey Garen.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2017-02-15  Aakash Jain  <aakash_jain@apple.com>
 
         revert DOMTextEvent.h and DOMHTMLCanvasElement.h to private header
