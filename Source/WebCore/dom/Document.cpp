@@ -2223,8 +2223,8 @@ void Document::attachToCachedFrame(CachedFrameBase& cachedFrame)
 
 void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)
 {
+    ASSERT_UNUSED(cachedFrame, cachedFrame.view());
     ASSERT_WITH_SECURITY_IMPLICATION(cachedFrame.document() == this);
-    ASSERT(cachedFrame.view());
     ASSERT(m_frame == &cachedFrame.view()->frame());
     ASSERT(m_pageCacheState == Document::InPageCache);
     detachFromFrame();

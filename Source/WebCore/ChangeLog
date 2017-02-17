@@ -1,5 +1,18 @@
 2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212174. rdar://problem/29904368
+
+    2017-02-10  Daniel Bates  <dabates@apple.com>
+
+            Attempt to fix the build following <https://trac.webkit.org/changeset/212173>
+            (https://bugs.webkit.org/show_bug.cgi?id=166774)
+
+            * dom/Document.cpp:
+            (WebCore::Document::detachFromCachedFrame): Use ASSER_UNUSED() instead of ASSERT() since
+            the parameter cachedFrame is unused in non-debug build.
+
+2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212173. rdar://problem/29904368
 
     2017-02-10  Daniel Bates  <dabates@apple.com>
