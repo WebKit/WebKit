@@ -32,7 +32,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "AudioCaptureSourceProviderObjC.h"
 #include "FontCascade.h"
 #include "MockRealtimeAudioSource.h"
 #include <CoreAudio/CoreAudioTypes.h>
@@ -46,14 +45,7 @@ namespace WebCore {
 class WebAudioBufferList;
 class WebAudioSourceProviderAVFObjC;
 
-class MockRealtimeAudioSourceMac final : public MockRealtimeAudioSource, public AudioCaptureSourceProviderObjC {
-public:
-
-    // AudioCaptureSourceProviderObjC
-    void addObserver(AudioSourceObserverObjC&) final;
-    void removeObserver(AudioSourceObserverObjC&) final;
-    void start() final;
-
+class MockRealtimeAudioSourceMac final : public MockRealtimeAudioSource {
 private:
     friend class MockRealtimeAudioSource;
     MockRealtimeAudioSourceMac(const String&);
@@ -77,7 +69,6 @@ private:
     RetainPtr<CMFormatDescriptionRef> m_formatDescription;
     AudioStreamBasicDescription m_streamFormat;
     RefPtr<WebAudioSourceProviderAVFObjC> m_audioSourceProvider;
-    Vector<AudioSourceObserverObjC*> m_observers;
 };
 
 } // namespace WebCore

@@ -1,3 +1,62 @@
+2017-02-17  Jer Noble  <jer.noble@apple.com>
+
+        Refactoring: Remove AudioSourceObserverObjC and AudioCaptureSourceProviderObjC
+        https://bugs.webkit.org/show_bug.cgi?id=168520
+
+        Reviewed by Youenn Fablet.
+
+        Having AudioCaptureSourceProviderObjC as the type provided to WebAudioSourceProviderAVFObjC
+        (and only ever to WebAudioSourceProviderAVFObjC) makes it impossible for that class to add
+        an observer on RealtimeMediaSource, of which all classes inheriting from
+        WebAudioSourceProviderAVFObjC are subclasses. There is no need to treat
+        WebAudioSourceProviderAVFObjC as an "observer", since the only thing it will ever observe is
+        the object which created it and hold an explicit reference to it. So replace all instances
+        of the "observer" pattern with direct calls to the necessary (newly non-virtual) methods.
+        This allows WebAudioSourceProviderAVFObjC to register as an observer directly on
+        RealtimeMediaSource, to listen for audioSamplesAvailable() instead of process(), and remove
+        a lot of unnecessary conversion code and observer duplication.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/RealtimeMediaSource.h:
+        (WebCore::RealtimeMediaSource::Observer::sourceStopped):
+        (WebCore::RealtimeMediaSource::Observer::sourceMutedChanged):
+        (WebCore::RealtimeMediaSource::Observer::sourceEnabledChanged):
+        (WebCore::RealtimeMediaSource::Observer::sourceSettingsChanged):
+        (WebCore::RealtimeMediaSource::Observer::preventSourceFromStopping):
+        * platform/mediastream/mac/AVAudioCaptureSource.h:
+        * platform/mediastream/mac/AVAudioCaptureSource.mm:
+        (WebCore::AVAudioCaptureSource::shutdownCaptureSession):
+        (WebCore::AVAudioCaptureSource::captureOutputDidOutputSampleBufferFromConnection):
+        (WebCore::AVAudioCaptureSource::addObserver): Deleted.
+        (WebCore::AVAudioCaptureSource::removeObserver): Deleted.
+        (WebCore::AVAudioCaptureSource::start): Deleted.
+        * platform/mediastream/mac/AudioCaptureSourceProviderObjC.h: Removed.
+        * platform/mediastream/mac/AudioSourceObserverObjC.h: Removed.
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSourceMac::emitSampleBuffers):
+        (WebCore::MockRealtimeAudioSourceMac::reconfigure):
+        (WebCore::MockRealtimeAudioSourceMac::audioSourceProvider):
+        (WebCore::MockRealtimeAudioSourceMac::addObserver): Deleted.
+        (WebCore::MockRealtimeAudioSourceMac::removeObserver): Deleted.
+        (WebCore::MockRealtimeAudioSourceMac::start): Deleted.
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.cpp:
+        (WebCore::RealtimeIncomingAudioSource::audioSourceProvider):
+        (WebCore::RealtimeIncomingAudioSource::addObserver): Deleted.
+        (WebCore::RealtimeIncomingAudioSource::removeObserver): Deleted.
+        (WebCore::RealtimeIncomingAudioSource::start): Deleted.
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.h:
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::create):
+        (WebCore::WebAudioSourceProviderAVFObjC::WebAudioSourceProviderAVFObjC):
+        (WebCore::WebAudioSourceProviderAVFObjC::setClient):
+        (WebCore::WebAudioSourceProviderAVFObjC::audioSamplesAvailable):
+        (WebCore::WebAudioSourceProviderAVFObjC::process): Deleted.
+
 2017-02-17  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: Subtitles menu in media controls allows multiple items to be selected

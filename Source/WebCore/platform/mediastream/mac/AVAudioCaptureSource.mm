@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #import "AudioSampleBufferList.h"
-#import "AudioSourceObserverObjC.h"
 #import "CAAudioStreamDescription.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
@@ -117,25 +116,6 @@ void AVAudioCaptureSource::updateSettings(RealtimeMediaSourceSettings& settings)
     settings.setDeviceId(id());
 }
 
-void AVAudioCaptureSource::addObserver(AudioSourceObserverObjC& observer)
-{
-    LockHolder lock(m_lock);
-    m_observers.append(&observer);
-    if (m_inputDescription)
-        observer.prepare(&m_inputDescription->streamDescription());
-}
-
-void AVAudioCaptureSource::removeObserver(AudioSourceObserverObjC& observer)
-{
-    LockHolder lock(m_lock);
-    m_observers.removeFirst(&observer);
-}
-
-void AVAudioCaptureSource::start()
-{
-    startProducingData();
-}
-
 void AVAudioCaptureSource::setupCaptureSession()
 {
     RetainPtr<AVCaptureDeviceInputType> audioIn = adoptNS([allocAVCaptureDeviceInputInstance() initWithDevice:device() error:nil]);
@@ -165,9 +145,8 @@ void AVAudioCaptureSource::shutdownCaptureSession()
         m_audioConnection = nullptr;
         m_inputDescription = nullptr;
 
-        for (auto& observer : m_observers)
-            observer->unprepare();
-        m_observers.shrink(0);
+        if (m_audioSourceProvider)
+            m_audioSourceProvider->unprepare();
     }
 
     // Don't hold the lock when destroying the audio provider, it will call back into this object
@@ -194,20 +173,12 @@ void AVAudioCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
     if (!m_inputDescription || *m_inputDescription != *streamDescription) {
         m_inputDescription = std::make_unique<CAAudioStreamDescription>(*streamDescription);
 
-        if (!m_observers.isEmpty()) {
-            for (auto& observer : m_observers)
-                observer->prepare(streamDescription);
-        }
+        if (m_audioSourceProvider)
+            m_audioSourceProvider->prepare(streamDescription);
     }
 
     m_list = std::make_unique<WebAudioBufferList>(*m_inputDescription, sampleBuffer);
     audioSamplesAvailable(toMediaTime(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)), *m_list, CAAudioStreamDescription(*streamDescription), CMSampleBufferGetNumSamples(sampleBuffer));
-
-    if (m_observers.isEmpty())
-        return;
-
-    for (auto& observer : m_observers)
-        observer->process(formatDescription, sampleBuffer);
 }
 
 AudioSourceProvider* AVAudioCaptureSource::audioSourceProvider()

@@ -97,31 +97,13 @@ RealtimeMediaSourceSupportedConstraints& RealtimeIncomingAudioSource::supportedC
     return m_supportedConstraints;
 }
 
-void RealtimeIncomingAudioSource::addObserver(AudioSourceObserverObjC& observer)
-{
-    m_audioSourceObservers.append(observer);
-    if (m_formatDescription) {
-        const auto* description = CMAudioFormatDescriptionGetStreamBasicDescription(m_formatDescription.get());
-        observer.prepare(description);
-    }
-}
-
-void RealtimeIncomingAudioSource::removeObserver(AudioSourceObserverObjC& observer)
-{
-    m_audioSourceObservers.removeFirstMatching([&observer](const auto& registeredObserver) {
-        return &observer == &registeredObserver.get();
-    });
-}
-
-void RealtimeIncomingAudioSource::start()
-{
-    startProducingData();
-}
-
 AudioSourceProvider* RealtimeIncomingAudioSource::audioSourceProvider()
 {
-    if (!m_audioSourceProvider)
+    if (!m_audioSourceProvider) {
         m_audioSourceProvider = WebAudioSourceProviderAVFObjC::create(*this);
+        const auto* description = CMAudioFormatDescriptionGetStreamBasicDescription(m_formatDescription.get());
+        m_audioSourceProvider->prepare(description);
+    }
 
     return m_audioSourceProvider.get();
 }

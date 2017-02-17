@@ -66,11 +66,8 @@ private:
     void RemoveSink(rtc::VideoSinkInterface<webrtc::VideoFrame>*) final;
 
     // RealtimeMediaSource::Observer API
-    bool preventSourceFromStopping() final { return false; }
-    void sourceStopped() final { }
     void sourceMutedChanged() final;
     void sourceEnabledChanged() final;
-    void sourceSettingsChanged() final { }
     void videoSampleAvailable(MediaSample&) final;
 
     Vector<rtc::VideoSinkInterface<webrtc::VideoFrame>*> m_sinks;

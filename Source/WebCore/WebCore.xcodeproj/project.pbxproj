@@ -161,7 +161,6 @@
 		076970871463AD8700F502CF /* TextTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 076970851463AD8700F502CF /* TextTrackList.h */; };
 		076EC1331E44F56D00E5D813 /* AudioTrackPrivateMediaStreamCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076EC1321E44F2CB00E5D813 /* AudioTrackPrivateMediaStreamCocoa.cpp */; };
 		076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */; };
-		07707CB01E205EE300005BF7 /* AudioSourceObserverObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 07707CAF1E205EC400005BF7 /* AudioSourceObserverObjC.h */; };
 		077664FC183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 077664FA183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp */; };
 		077664FD183E6B5C00133B92 /* JSQuickTimePluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 077664FB183E6B5C00133B92 /* JSQuickTimePluginReplacement.h */; };
 		0779BF0E18453168000B6AE7 /* HTMLMediaElementMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 0779BF0B18453168000B6AE7 /* HTMLMediaElementMediaStream.h */; };
@@ -7285,8 +7284,6 @@
 		076EC1321E44F2CB00E5D813 /* AudioTrackPrivateMediaStreamCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioTrackPrivateMediaStreamCocoa.cpp; sourceTree = "<group>"; };
 		076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlayerPrivateAVFoundation.cpp; sourceTree = "<group>"; };
 		076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateAVFoundation.h; sourceTree = "<group>"; };
-		07707CAF1E205EC400005BF7 /* AudioSourceObserverObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSourceObserverObjC.h; sourceTree = "<group>"; };
-		07707CB11E20649C00005BF7 /* AudioCaptureSourceProviderObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioCaptureSourceProviderObjC.h; sourceTree = "<group>"; };
 		077664FA183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSQuickTimePluginReplacement.cpp; sourceTree = "<group>"; };
 		077664FB183E6B5C00133B92 /* JSQuickTimePluginReplacement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSQuickTimePluginReplacement.h; sourceTree = "<group>"; };
 		0779BF0B18453168000B6AE7 /* HTMLMediaElementMediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLMediaElementMediaStream.h; sourceTree = "<group>"; };
@@ -15465,8 +15462,6 @@
 		0729B14D17CFCCA0004F1D60 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				07707CB11E20649C00005BF7 /* AudioCaptureSourceProviderObjC.h */,
-				07707CAF1E205EC400005BF7 /* AudioSourceObserverObjC.h */,
 				076EC1321E44F2CB00E5D813 /* AudioTrackPrivateMediaStreamCocoa.cpp */,
 				07C046C61E42512F007201E7 /* AudioTrackPrivateMediaStreamCocoa.h */,
 				070363D8181A1CDC00C074A5 /* AVAudioCaptureSource.h */,
@@ -25346,7 +25341,6 @@
 				073B87691E4385AC0071C0EC /* AudioSampleDataSource.h in Headers */,
 				FD8C46EC154608E700A5910C /* AudioScheduledSourceNode.h in Headers */,
 				CDA7982A170A3D0000D45C55 /* AudioSession.h in Headers */,
-				07707CB01E205EE300005BF7 /* AudioSourceObserverObjC.h in Headers */,
 				FD31608912B026F700C1A359 /* AudioSourceProvider.h in Headers */,
 				CD8A7BBC197735FE00CBD643 /* AudioSourceProviderAVFObjC.h in Headers */,
 				FD62F52E145898D80094B0ED /* AudioSourceProviderClient.h in Headers */,

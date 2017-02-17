@@ -27,7 +27,6 @@
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
 
-#include "AudioSourceObserverObjC.h"
 #include "AudioTrackPrivateMediaStream.h"
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudioTypes.h>
@@ -63,10 +62,6 @@ private:
 
     // RealtimeMediaSource::Observer
     void sourceStopped() final;
-    void sourceMutedChanged()  final { }
-    void sourceEnabledChanged() final { }
-    void sourceSettingsChanged() final { }
-    bool preventSourceFromStopping() final { return false; }
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 
     static OSStatus inputProc(void*, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 inBusNumber, UInt32 numberOfFrames, AudioBufferList*);

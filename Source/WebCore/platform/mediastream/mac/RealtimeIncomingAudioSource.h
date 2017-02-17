@@ -32,18 +32,19 @@
 
 #if USE(LIBWEBRTC)
 
-#include "AudioCaptureSourceProviderObjC.h"
 #include "LibWebRTCMacros.h"
 #include "RealtimeMediaSource.h"
 #include <CoreAudio/CoreAudioTypes.h>
 #include <webrtc/api/mediastreaminterface.h>
 #include <wtf/RetainPtr.h>
 
+typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
+
 namespace WebCore {
 
 class WebAudioSourceProviderAVFObjC;
 
-class RealtimeIncomingAudioSource final : public RealtimeMediaSource, private webrtc::AudioTrackSinkInterface, private AudioCaptureSourceProviderObjC {
+class RealtimeIncomingAudioSource final : public RealtimeMediaSource, private webrtc::AudioTrackSinkInterface {
 public:
     static Ref<RealtimeIncomingAudioSource> create(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
 
@@ -67,11 +68,6 @@ private:
 
     AudioSourceProvider* audioSourceProvider() final;
 
-    // AudioCaptureSourceProviderObjC API
-    void addObserver(AudioSourceObserverObjC&) final;
-    void removeObserver(AudioSourceObserverObjC&) final;
-    void start() final;
-
     RealtimeMediaSourceSettings m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
@@ -81,7 +77,6 @@ private:
 
     RefPtr<WebAudioSourceProviderAVFObjC> m_audioSourceProvider;
     RetainPtr<CMFormatDescriptionRef> m_formatDescription;
-    Vector<std::reference_wrapper<AudioSourceObserverObjC>> m_audioSourceObservers;
 };
 
 } // namespace WebCore

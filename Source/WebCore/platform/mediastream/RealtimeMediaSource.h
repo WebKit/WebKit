@@ -67,13 +67,13 @@ public:
         virtual ~Observer() { }
         
         // Source state changes.
-        virtual void sourceStopped() = 0;
-        virtual void sourceMutedChanged() = 0;
-        virtual void sourceEnabledChanged() = 0;
-        virtual void sourceSettingsChanged() = 0;
+        virtual void sourceStopped() { }
+        virtual void sourceMutedChanged() { }
+        virtual void sourceEnabledChanged() { }
+        virtual void sourceSettingsChanged() { }
 
         // Observer state queries.
-        virtual bool preventSourceFromStopping() = 0;
+        virtual bool preventSourceFromStopping() { return false; }
         
         // Called on the main thread.
         virtual void videoSampleAvailable(MediaSample&) { }

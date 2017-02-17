@@ -78,24 +78,6 @@ RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::createMuted(const Strin
     return source;
 }
 
-void MockRealtimeAudioSourceMac::addObserver(AudioSourceObserverObjC& observer)
-{
-    m_observers.append(&observer);
-    if (m_streamFormat.mSampleRate)
-        observer.prepare(&m_streamFormat);
-}
-
-void MockRealtimeAudioSourceMac::removeObserver(AudioSourceObserverObjC& observer)
-{
-    m_observers.removeFirst(&observer);
-}
-
-void MockRealtimeAudioSourceMac::start()
-{
-    startProducingData();
-}
-
-
 void MockRealtimeAudioSourceMac::emitSampleBuffers(uint32_t frameCount)
 {
     ASSERT(m_formatDescription);
@@ -104,24 +86,6 @@ void MockRealtimeAudioSourceMac::emitSampleBuffers(uint32_t frameCount)
     m_bytesEmitted += frameCount;
 
     audioSamplesAvailable(toMediaTime(startTime), *m_audioBufferList, CAAudioStreamDescription(m_streamFormat), frameCount);
-
-    CMSampleBufferRef sampleBuffer;
-    OSStatus result = CMAudioSampleBufferCreateWithPacketDescriptions(nullptr, nullptr, true, nullptr, nullptr, m_formatDescription.get(), frameCount, startTime, nullptr, &sampleBuffer);
-    ASSERT(sampleBuffer);
-    ASSERT(!result);
-
-    if (!sampleBuffer)
-        return;
-
-    auto buffer = adoptCF(sampleBuffer);
-    result = CMSampleBufferSetDataBufferFromAudioBufferList(sampleBuffer, kCFAllocatorDefault, kCFAllocatorDefault, 0, m_audioBufferList->list());
-    ASSERT(!result);
-
-    result = CMSampleBufferSetDataReady(sampleBuffer);
-    ASSERT(!result);
-
-    for (const auto& observer : m_observers)
-        observer->process(m_formatDescription.get(), sampleBuffer);
 }
 
 void MockRealtimeAudioSourceMac::reconfigure()
@@ -142,9 +106,6 @@ void MockRealtimeAudioSourceMac::reconfigure()
     CMFormatDescriptionRef formatDescription;
     CMAudioFormatDescriptionCreate(NULL, &m_streamFormat, 0, NULL, 0, NULL, NULL, &formatDescription);
     m_formatDescription = adoptCF(formatDescription);
-
-    for (auto& observer : m_observers)
-        observer->prepare(&m_streamFormat);
 }
 
 void MockRealtimeAudioSourceMac::render(double delta)
@@ -222,8 +183,10 @@ bool MockRealtimeAudioSourceMac::applySampleRate(int sampleRate)
 
 AudioSourceProvider* MockRealtimeAudioSourceMac::audioSourceProvider()
 {
-    if (!m_audioSourceProvider)
+    if (!m_audioSourceProvider) {
         m_audioSourceProvider = WebAudioSourceProviderAVFObjC::create(*this);
+        m_audioSourceProvider->prepare(&m_streamFormat);
+    }
 
     return m_audioSourceProvider.get();
 }
