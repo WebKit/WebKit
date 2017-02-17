@@ -27,6 +27,8 @@
 
 int main(int argc, char * argv[])
 {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitLinkedOnOrAfterEverything"];
+
     @autoreleasepool {
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }

@@ -67,6 +67,8 @@ int main(int argc, const char* argv[])
     _argc = argc;
     _argv = argv;
 
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitLinkedOnOrAfterEverything"];
+
     UIApplicationMain(argc, (char**)argv, @"WebKitTestRunnerApp", @"WebKitTestRunnerApp");
     return 0;
 }

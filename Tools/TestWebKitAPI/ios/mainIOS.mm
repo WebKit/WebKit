@@ -31,6 +31,19 @@ int main(int argc, char** argv)
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"TestWebKitAPI"];
+
+    // Set up user defaults.
+    NSMutableDictionary *argumentDomain = [[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] mutableCopy];
+    if (!argumentDomain)
+        argumentDomain = [[NSMutableDictionary alloc] init];
+    
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [NSNumber numberWithBool:YES],    @"WebKitLinkedOnOrAfterEverything",
+                          nil];
+
+    [argumentDomain addEntriesFromDictionary:dict];
+    [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain forName:NSArgumentDomain];
+
     bool passed = TestWebKitAPI::TestsController::singleton().run(argc, argv);
 
     [pool drain];

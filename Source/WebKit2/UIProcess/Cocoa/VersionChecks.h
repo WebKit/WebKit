@@ -29,47 +29,17 @@
 
 namespace WebKit {
 
-/*
-    Version numbers are based on the 'current library version' specified in the WebKit build rules.
-    All of these methods return or take version numbers with each part shifted to the left 2 bytes.
-    For example the version 1.2.3 is returned as 0x00010203 and version 200.3.5 is returned as 0x00C80305
-    A version of -1 is returned if the main executable did not link against WebKit.
-
-    Use the current WebKit version number, available in WebKit2/Configurations/Version.xcconfig,
-    when adding a new version constant.
-*/
-
-struct FirstWebKitWithNetworkCache {
-    static const int LibraryVersion { 0x02590116 }; // 601.1.22
+enum class SDKVersion : uint32_t {
 #if PLATFORM(IOS)
-    static const uint32_t SDKVersion { DYLD_IOS_VERSION_9_0 };
+    FirstWithNetworkCache = DYLD_IOS_VERSION_9_0,
+    FirstWithMediaTypesRequiringUserActionForPlayback = DYLD_IOS_VERSION_10_0,
+    FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_IOS_VERSION_10_3,
 #elif PLATFORM(MAC)
-    static const uint32_t SDKVersion { DYLD_MACOSX_VERSION_10_11 };
+    FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
+    FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_12_4,
 #endif
 };
 
-struct FirstWebKitWithMediaTypesRequiringUserActionForPlayback {
-    static const int LibraryVersion { 0x025A0121 }; // 602.1.33
-#if PLATFORM(IOS)
-    static const uint32_t SDKVersion { DYLD_IOS_VERSION_10_0 };
-#elif PLATFORM(MAC)
-    static const uint32_t SDKVersion { DYLD_MACOSX_VERSION_10_12 };
-#endif
-};
-
-struct FirstWebKitWithExceptionsForDuplicateCompletionHandlerCalls {
-    static const int LibraryVersion { 0x025B0111 }; // 603.1.17
-#if PLATFORM(IOS)
-    static const uint32_t SDKVersion { DYLD_IOS_VERSION_10_3 };
-#elif PLATFORM(MAC)
-    static const uint32_t SDKVersion { DYLD_MACOSX_VERSION_10_12_4 };
-#endif
-};
-
-bool linkedOnOrAfter(int libraryVersion, uint32_t sdkVersion);
-template <typename VersionInfo> bool linkedOnOrAfter()
-{
-    return linkedOnOrAfter(VersionInfo::LibraryVersion, VersionInfo::SDKVersion);
-}
+bool linkedOnOrAfter(SDKVersion);
 
 }

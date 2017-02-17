@@ -26,31 +26,33 @@
 #import "config.h"
 #import "VersionChecks.h"
 
-#import <mach-o/dyld.h>
-
-#if PLATFORM(IOS)
 #import <WebCore/RuntimeApplicationChecks.h>
-#endif
+#import <mach-o/dyld.h>
+#import <mutex>
 
 namespace WebKit {
 
-bool linkedOnOrAfter(int libraryVersion, uint32_t sdkVersion)
+static NSString * const WebKitLinkedOnOrAfterEverythingKey = @"WebKitLinkedOnOrAfterEverything";
+
+bool linkedOnOrAfter(SDKVersion sdkVersion)
 {
+     static bool linkedOnOrAfterEverything;
+     static std::once_flag once;
+     std::call_once(once, [] {
+        bool isSafari = false;
 #if PLATFORM(IOS)
-    // Always make new features available for Safari.
-    if (WebCore::IOSApplication::isMobileSafari())
-        return true;
+        if (WebCore::IOSApplication::isMobileSafari())
+            isSafari = true;
+#elif PLATFORM(MAC)
+        if (WebCore::MacApplication::isSafari())
+            isSafari = true;
 #endif
 
-    // If the app was build against a new enough SDK, it definitely passes the linked-on-or-after check.
-    if (dyld_get_program_sdk_version() >= sdkVersion)
-        return true;
+        if (isSafari || [[NSUserDefaults standardUserDefaults] boolForKey:WebKitLinkedOnOrAfterEverythingKey])
+            linkedOnOrAfterEverything = true;
+    });
 
-    // If the app was built against an older SDK, we might still consider it linked-on-or-after
-    // by checking the linked WebKit library version number, if one exists.
-
-    int linkedVersion = NSVersionOfLinkTimeLibrary("WebKit");
-    return linkedVersion == -1 ? false : linkedVersion >= libraryVersion;
+    return linkedOnOrAfterEverything ? true : dyld_get_program_sdk_version() >= static_cast<uint32_t>(sdkVersion);
 }
 
 }
