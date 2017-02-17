@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -54,15 +54,21 @@ HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Documen
 
 bool HTMLFrameElementBase::isURLAllowed() const
 {
-    if (document().page() && document().page()->subframeCount() >= Page::maxNumberOfFrames)
-        return false;
-
     if (m_URL.isEmpty())
         return true;
 
-    const URL& completeURL = document().completeURL(m_URL);
+    return isURLAllowed(document().completeURL(m_URL));
+}
 
-    if (protocolIsJavaScript(completeURL)) { 
+bool HTMLFrameElementBase::isURLAllowed(const URL& completeURL) const
+{
+    if (document().page() && document().page()->subframeCount() >= Page::maxNumberOfFrames)
+        return false;
+
+    if (completeURL.isEmpty())
+        return true;
+
+    if (protocolIsJavaScript(completeURL)) {
         Document* contentDoc = this->contentDocument();
         if (contentDoc && !ScriptController::canAccessFromCurrentOrigin(contentDoc->frame()))
             return false;

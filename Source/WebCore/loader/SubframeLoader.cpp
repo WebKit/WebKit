@@ -91,7 +91,7 @@ bool SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerElement, const Str
     if (!frame)
         return false;
 
-    if (!scriptURL.isEmpty())
+    if (!scriptURL.isEmpty() && ownerElement.isURLAllowed(scriptURL))
         frame->script().executeIfJavaScriptURL(scriptURL);
 
     return true;

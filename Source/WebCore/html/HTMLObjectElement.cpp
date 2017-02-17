@@ -324,7 +324,7 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
     if (!renderer()) // Do not load the plugin if beforeload removed this element or its renderer.
         return;
 
-    bool success = beforeLoadAllowedLoad && hasValidClassId();
+    bool success = beforeLoadAllowedLoad && hasValidClassId() && allowedToLoadFrameURL(url);
     if (success)
         success = requestObject(url, serviceType, paramNames, paramValues);
     if (!success && hasFallbackContent())

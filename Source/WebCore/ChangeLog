@@ -1,5 +1,39 @@
 2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212350. rdar://problem/30450379
+
+    2017-02-14  Brent Fulgham  <bfulgham@apple.com>
+
+            Revalidate URL after events that could trigger navigations
+            https://bugs.webkit.org/show_bug.cgi?id=168071
+            <rdar://problem/30450379>
+
+            Reviewed by Ryosuke Niwa.
+
+            When arbitary javascript runs during a load, we should revalidate
+            the URLs involved to make sure they are still valid.
+
+            Tests: http/tests/plugins/navigation-during-load-embed.html
+                   http/tests/plugins/navigation-during-load.html
+
+            * html/HTMLEmbedElement.cpp:
+            (WebCore::HTMLEmbedElement::updateWidget): Confirm we are still allowed to
+            load the URL after executing JS callbacks.
+            * html/HTMLFrameElementBase.cpp:
+            (WebCore::HTMLFrameElementBase::isURLAllowed): Split existing function into
+            existing protected method, and a new public method that checks a passed URL
+            for validity.
+            * html/HTMLFrameElementBase.h:
+            * html/HTMLFrameOwnerElement.h:
+            (WebCore::HTMLFrameOwnerElement::isURLAllowed):
+            * html/HTMLObjectElement.cpp:
+            (WebCore::HTMLObjectElement::updateWidget): Confirm we are still allowed to
+            load the URL after executing JS callbacks.
+            * loader/SubframeLoader.cpp:
+            (WebCore::SubframeLoader::requestFrame): Ditto.
+
+2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212335. rdar://problem/29899473
 
     2017-02-14  Brady Eidson  <beidson@apple.com>
