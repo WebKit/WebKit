@@ -91,6 +91,9 @@ CompositeAnimation& AnimationControllerPrivate::ensureCompositeAnimation(RenderE
         renderer.setIsCSSAnimating(true);
     }
 
+    if (animationsAreSuspendedForDocument(&renderer.document()))
+        result.iterator->value->suspendAnimations();
+
     return *result.iterator->value;
 }
 
@@ -316,8 +319,23 @@ void AnimationControllerPrivate::resumeAnimations()
     m_isSuspended = false;
 }
 
+bool AnimationControllerPrivate::animationsAreSuspendedForDocument(Document* document)
+{
+    return isSuspended() || m_suspendedDocuments.contains(document);
+}
+
+void AnimationControllerPrivate::detachFromDocument(Document* document)
+{
+    m_suspendedDocuments.remove(document);
+}
+
 void AnimationControllerPrivate::suspendAnimationsForDocument(Document* document)
 {
+    if (animationsAreSuspendedForDocument(document))
+        return;
+
+    m_suspendedDocuments.add(document);
+
     AnimationPrivateUpdateBlock updateBlock(*this);
 
     for (auto& animation : m_compositeAnimations) {
@@ -330,6 +348,11 @@ void AnimationControllerPrivate::suspendAnimationsForDocument(Document* document
 
 void AnimationControllerPrivate::resumeAnimationsForDocument(Document* document)
 {
+    if (!animationsAreSuspendedForDocument(document))
+        return;
+
+    detachFromDocument(document);
+
     AnimationPrivateUpdateBlock updateBlock(*this);
 
     for (auto& animation : m_compositeAnimations) {
@@ -342,7 +365,7 @@ void AnimationControllerPrivate::resumeAnimationsForDocument(Document* document)
 
 void AnimationControllerPrivate::startAnimationsIfNotSuspended(Document* document)
 {
-    if (!isSuspended() || allowsNewAnimationsWhileSuspended())
+    if (!animationsAreSuspendedForDocument(document) || allowsNewAnimationsWhileSuspended())
         resumeAnimationsForDocument(document);
 }
 
@@ -711,6 +734,16 @@ void AnimationController::serviceAnimations()
     m_data->animationFrameCallbackFired();
 }
 #endif
+
+bool AnimationController::animationsAreSuspendedForDocument(Document* document)
+{
+    return m_data->animationsAreSuspendedForDocument(document);
+}
+
+void AnimationController::detachFromDocument(Document* document)
+{
+    return m_data->detachFromDocument(document);
+}
 
 void AnimationController::suspendAnimationsForDocument(Document* document)
 {

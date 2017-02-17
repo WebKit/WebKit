@@ -744,7 +744,7 @@ ExceptionOr<bool> Internals::animationsAreSuspended() const
     if (!document || !document->frame())
         return Exception { INVALID_ACCESS_ERR };
 
-    return document->frame()->animation().isSuspended();
+    return document->frame()->animation().animationsAreSuspendedForDocument(document);
 }
 
 ExceptionOr<void> Internals::suspendAnimations() const
@@ -753,7 +753,13 @@ ExceptionOr<void> Internals::suspendAnimations() const
     if (!document || !document->frame())
         return Exception { INVALID_ACCESS_ERR };
 
-    document->frame()->animation().suspendAnimations();
+    document->frame()->animation().suspendAnimationsForDocument(document);
+
+    for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
+        if (Document* document = frame->document())
+            frame->animation().suspendAnimationsForDocument(document);
+    }
+
     return { };
 }
 
@@ -763,7 +769,13 @@ ExceptionOr<void> Internals::resumeAnimations() const
     if (!document || !document->frame())
         return Exception { INVALID_ACCESS_ERR };
 
-    document->frame()->animation().resumeAnimations();
+    document->frame()->animation().resumeAnimationsForDocument(document);
+
+    for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
+        if (Document* document = frame->document())
+            frame->animation().resumeAnimationsForDocument(document);
+    }
+
     return { };
 }
 

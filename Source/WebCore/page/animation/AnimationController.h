@@ -74,8 +74,10 @@ public:
     void serviceAnimations();
 #endif
 
-    void suspendAnimationsForDocument(Document*);
-    void resumeAnimationsForDocument(Document*);
+    WEBCORE_EXPORT void suspendAnimationsForDocument(Document*);
+    WEBCORE_EXPORT void resumeAnimationsForDocument(Document*);
+    WEBCORE_EXPORT bool animationsAreSuspendedForDocument(Document*);
+    void detachFromDocument(Document*);
     void startAnimationsIfNotSuspended(Document*);
 
     void beginAnimationUpdate();
