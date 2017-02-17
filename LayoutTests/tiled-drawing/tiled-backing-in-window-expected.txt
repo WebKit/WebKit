@@ -55,11 +55,7 @@ Tiled box
       (tile cache coverage 0, 0 1024 x 1016)
       (tile size 512 x 512)
       (top left tile 0, 0 tiles grid 2 x 2)
-<<<<<<< Updated upstream
-      (in window 0)
-=======
       (in window 1)
->>>>>>> Stashed changes
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)
