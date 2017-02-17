@@ -243,12 +243,7 @@ WebInspector.contentLoaded = function()
     }
 
     document.body.classList.add(this.debuggableType);
-
-    let layoutDirection = WebInspector.settings.layoutDirection.value;
-    if (layoutDirection === WebInspector.LayoutDirection.System)
-        layoutDirection = InspectorFrontendHost.userInterfaceLayoutDirection();
-
-    document.body.setAttribute("dir", layoutDirection);
+    document.body.setAttribute("dir", this.resolvedLayoutDirection());
 
     function setTabSize() {
         document.body.style.tabSize = WebInspector.settings.tabSize.value;
@@ -2144,10 +2139,14 @@ WebInspector.setZoomFactor = function(factor)
     WebInspector.settings.zoomFactor.value = InspectorFrontendHost.zoomFactor();
 };
 
-WebInspector.getLayoutDirection = function()
+WebInspector.resolvedLayoutDirection = function()
 {
-    return WebInspector.settings.layoutDirection.value;
-};
+    let layoutDirection = WebInspector.settings.layoutDirection.value;
+    if (layoutDirection === WebInspector.LayoutDirection.System)
+        layoutDirection = InspectorFrontendHost.userInterfaceLayoutDirection();
+
+    return layoutDirection;
+}
 
 WebInspector.setLayoutDirection = function(value)
 {

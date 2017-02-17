@@ -143,8 +143,9 @@ WebInspector.TabBar = class TabBar extends WebInspector.View
 
             this.updateLayout();
 
-            var previousTabBarItem = this._tabBarItems[this._tabBarItems.indexOf(tabBarItem) - 1] || null;
-            var previousTabBarItemSizeAndPosition = previousTabBarItem ? beforeTabSizesAndPositions.get(previousTabBarItem) : null;
+            let tabBarItems = this._tabBarItemsFromLeftToRight();
+            let previousTabBarItem = tabBarItems[tabBarItems.indexOf(tabBarItem) - 1] || null;
+            let previousTabBarItemSizeAndPosition = previousTabBarItem ? beforeTabSizesAndPositions.get(previousTabBarItem) : null;
 
             if (previousTabBarItemSizeAndPosition)
                 beforeTabSizesAndPositions.set(tabBarItem, {left: previousTabBarItemSizeAndPosition.left + previousTabBarItemSizeAndPosition.width, width: 0});
@@ -233,12 +234,22 @@ WebInspector.TabBar = class TabBar extends WebInspector.View
             this.element.classList.add("animating");
             this.element.classList.add("closing-tab");
 
-            var left = 0;
-            for (var currentTabBarItem of this._tabBarItems) {
-                var sizeAndPosition = beforeTabSizesAndPositions.get(currentTabBarItem);
+            // For RTL, we need to place extra space between pinned tab and first normal tab.
+            // From left to right there is pinned tabs, extra space, then normal tabs. Compute
+            // how much extra space we need to additionally add for normal tab items.
+            let extraSpaceBetweenNormalAndPinnedTabs = 0;
+            if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL) {
+                extraSpaceBetweenNormalAndPinnedTabs = this.element.getBoundingClientRect().width;
+                for (let currentTabBarItem of this._tabBarItemsFromLeftToRight())
+                    extraSpaceBetweenNormalAndPinnedTabs -= currentTabBarItem.element.getBoundingClientRect().width;
+            }
+
+            let left = 0;
+            for (let currentTabBarItem of this._tabBarItemsFromLeftToRight()) {
+                let sizeAndPosition = beforeTabSizesAndPositions.get(currentTabBarItem);
 
                 if (!(currentTabBarItem instanceof WebInspector.PinnedTabBarItem)) {
-                    currentTabBarItem.element.style.left = left + "px";
+                    currentTabBarItem.element.style.left = extraSpaceBetweenNormalAndPinnedTabs + left + "px";
                     left += sizeAndPosition.width;
                     lastNormalTabBarItem = currentTabBarItem;
                 } else
@@ -409,6 +420,11 @@ WebInspector.TabBar = class TabBar extends WebInspector.View
     }
 
     // Private
+
+    _tabBarItemsFromLeftToRight()
+    {
+        return WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.LTR ? this._tabBarItems : this._tabBarItems.slice().reverse();
+    }
 
     _findTabBarItem(tabBarItemOrIndex)
     {
@@ -665,7 +681,7 @@ WebInspector.TabBar = class TabBar extends WebInspector.View
         // FIXME: Animate the tabs that move to make room for the selected tab. This was causing me trouble when I tried.
 
         let left = 0;
-        for (let tabBarItem of this._tabBarItems) {
+        for (let tabBarItem of this._tabBarItemsFromLeftToRight()) {
             if (tabBarItem !== this._selectedTabBarItem && tabBarItem !== this._newTabTabBarItem && parseFloat(tabBarItem.element.style.left) !== left)
                 tabBarItem.element.style.left = left + "px";
             left += parseFloat(tabBarItem.element.style.width);
@@ -685,8 +701,8 @@ WebInspector.TabBar = class TabBar extends WebInspector.View
             this.element.classList.remove("static-layout");
             this._clearTabBarItemSizesAndPositions();
         } else {
-            var left = 0;
-            for (var tabBarItem of this._tabBarItems) {
+            let left = 0;
+            for (let tabBarItem of this._tabBarItemsFromLeftToRight()) {
                 if (tabBarItem === this._selectedTabBarItem)
                     tabBarItem.element.style.left = left + "px";
                 left += parseFloat(tabBarItem.element.style.width);

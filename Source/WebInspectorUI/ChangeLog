@@ -1,3 +1,71 @@
+2017-02-17  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RTL: add TabBar support for RTL layout
+        https://bugs.webkit.org/show_bug.cgi?id=168446
+
+        Reviewed by Matt Baker.
+
+        There are two types of changes needed:
+         - Flip leading and trailing borders and margins for the tab items.
+         - Enumerate tabs in reverse order when performing manual layout.
+
+        Along the way, I added some color variables local to TabBar.css to
+        reduce the number of redundant border-style and color declarations.
+
+        * UserInterface/Base/Main.js:
+        Change this to resolvedLayoutDirection(), and resolve "System" to "ltr" or "rtl".
+        This makes it suitable for use in manual layout without worrying about "System".
+        Fix the one existing use-site to not do its own resolution of "System".
+
+        * UserInterface/Views/TabBar.css:
+        Define commonly used colors and border styles and adopt var() usages.
+        Flip borders that should vary in RTL vs LTR, but not all of them. In
+        many cases, the border is not direction-dependent and looks the same
+        on both sides. Also, no need to swap animated properties as all manual
+        layout is done from the left edge.
+
+        (.tab-bar):
+        (body.window-inactive .tab-bar):
+        (.tab-bar > .top-border):
+        (body.window-inactive .tab-bar > .top-border):
+        (.tab-bar > .item):
+        (body[dir=ltr] .tab-bar > :nth-child(n + 2 of .item),):
+        (body[dir=rtl] .tab-bar > :nth-child(n + 2 of .item),):
+        (.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover):
+        (body[dir=ltr] .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover,):
+        (body[dir=rtl] .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover,):
+        (body.window-inactive .tab-bar > .item):
+        (body[dir=ltr].window-inactive .tab-bar > .item):
+        (body[dir=rtl].window-inactive .tab-bar > .item):
+        (.tab-bar > .item > .close):
+        (body[dir=ltr] .tab-bar > .item > .close):
+        (body[dir=rtl] .tab-bar > .item > .close):
+        (.tab-bar > .item:not(.pinned) > .flex-space:last-child):
+        (body[dir=ltr] .tab-bar > .item:not(.pinned) > .flex-space:last-child):
+        (body[dir=rtl] .tab-bar > .item:not(.pinned) > .flex-space:last-child):
+        (.tab-bar > .item > .title):
+        (body[dir=ltr] .tab-bar > .item > .title):
+        (body[dir=rtl] .tab-bar > .item > .title):
+        (.tab-bar.collapsed > .item > .close):
+        (body[dir=ltr] .tab-bar.collapsed > .item > .close):
+        (body[dir=rtl] .tab-bar.collapsed > .item > .close):
+
+        * UserInterface/Views/TabBar.js:
+        When doing manual layout, keep doing calculations with respect to the left edge
+        and keep the list of tab items in logical (LTR) order, as in the DOM. But, when
+        manually positioning tab items for RTL layout direction, reverse the tab items
+        so that it matches the screen/layout order of the flipped flexbox items.
+
+        (WebInspector.TabBar.prototype.insertTabBarItem):
+        (WebInspector.TabBar.prototype.removeTabBarItem.animateTabs):
+        In RTL, put extra space after closing a tab to the left of normal tabs. This
+        matches the behavior of LTR, but requires some additional measurement since we
+        still position tabs using `left` and can't simply infer the leftover space.
+
+        (WebInspector.TabBar.prototype._tabBarItemsFromLeftToRight): Added.
+        (WebInspector.TabBar.prototype._handleMouseMoved):
+        (WebInspector.TabBar.prototype._handleMouseUp):
+
 2017-02-17  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Zoom level UI out of sync with setting value

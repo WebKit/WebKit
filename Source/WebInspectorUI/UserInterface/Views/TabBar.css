@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
     justify-content: space-between;
     flex-wrap: wrap;
 
-    border-bottom: 1px solid hsl(0, 0%, 65%);
+    border-bottom: var(--tab-item-medium-border-style);
 
     background-image: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
     background-size: 100% 200%;
@@ -43,13 +43,21 @@
     overflow: hidden;
 
     outline: none;
+
+    --tab-item-dark-border-color: hsl(0, 0%, 59%);
+    --tab-item-medium-border-color: hsl(0, 0%, 65%);
+    --tab-item-light-border-color: hsl(0, 0%, 85%);
+    --tab-item-extra-light-border-color: hsl(0, 0%, 92%);
+
+    --tab-item-medium-border-style: 1px solid var(--tab-item-medium-border-color);
+    --tab-item-light-border-style: 1px solid var(--tab-item-light-border-color);
 }
 
 body.window-inactive .tab-bar {
-    border-bottom-color: hsl(0, 0%, 85%);
+    border-bottom-color: var(--tab-item-light-border-color);
 
     background-image: none !important;
-    background-color: hsl(0, 0%, 92%) !important;
+    background-color: var(--tab-item-extra-light-border-color) !important;
 }
 
 .tab-bar > .top-border {
@@ -59,13 +67,13 @@ body.window-inactive .tab-bar {
     right: 0;
     height: 1px;
 
-    background-color: hsl(0, 0%, 65%);
+    background-color: var(--tab-item-medium-border-color);
 
     z-index: 0;
 }
 
 body.window-inactive .tab-bar > .top-border {
-    background-color: hsl(0, 0%, 85%);
+    background-color: var(--tab-item-light-border-color);
 }
 
 .tab-bar > .item {
@@ -86,7 +94,7 @@ body.window-inactive .tab-bar > .top-border {
     background-image: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
     background-size: 100% 200%;
 
-    border-top: 1px solid hsl(0, 0%, 65%);
+    border-top: var(--tab-item-medium-border-style);
 
     height: 100%;
     line-height: 15px;
@@ -98,9 +106,14 @@ body.window-inactive .tab-bar > .top-border {
     /* transition-delay: 50ms; */
 }
 
-.tab-bar > :nth-child(n + 2 of .item),
-.tab-bar.dragging-tab > .item.selected {
-    border-left: 1px solid hsl(0, 0%, 65%);
+body[dir=ltr] .tab-bar > :nth-child(n + 2 of .item),
+body[dir=ltr] .tab-bar.dragging-tab > .item.selected {
+    border-left: var(--tab-item-medium-border-style);
+}
+
+body[dir=rtl] .tab-bar > :nth-child(n + 2 of .item),
+body[dir=rtl] .tab-bar.dragging-tab > .item.selected {
+    border-right: var(--tab-item-medium-border-style);
 }
 
 .tab-bar > .item.pinned {
@@ -117,22 +130,34 @@ body.window-inactive .tab-bar > .top-border {
 
 .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover {
     background-position: 0 100%;
-    border-top-color: hsl(0, 0%, 59%);
-    border-left-color: hsl(0, 0%, 59%);
+    border-top-color: var(--tab-item-dark-border-color);
 }
 
-.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover + .item {
-    border-left-color: hsl(0, 0%, 59%);
+body[dir=ltr] .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover,
+body[dir=ltr] .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover + .item {
+    border-left-color: var(--tab-item-dark-border-color);
+}
+
+body[dir=rtl] .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover,
+body[dir=rtl] .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover + .item {
+    border-right-color: var(--tab-item-dark-border-color);
 }
 
 body.window-inactive .tab-bar > .item {
-    border-left-color: hsl(0, 0%, 85%) !important;
-    border-top-color: hsl(0, 0%, 85%) !important;
+    border-top-color: var(--tab-item-light-border-color) !important;
 
     background-image: none !important;
-    background-color: hsl(0, 0%, 92%) !important;
+    background-color: var(--tab-item-extra-light-border-color) !important;
 
     transition: none;
+}
+
+body[dir=ltr].window-inactive .tab-bar > .item {
+    border-left-color: var(--tab-item-light-border-color) !important;
+}
+
+body[dir=rtl].window-inactive .tab-bar > .item {
+    border-right-color: var(--tab-item-light-border-color) !important;
 }
 
 body.window-inactive .tab-bar > .item.selected {
@@ -154,11 +179,19 @@ body.window-inactive .tab-bar > .item.selected {
     background-image: url(../Images/Close.svg);
     background-repeat: no-repeat;
 
-    margin-right: 4px;
-
     transition-property: background-color, opacity;
     transition-duration: 250ms, 500ms;
     transition-delay: 0, 50ms;
+
+    --tab-item-close-button-margin-end: 4px;
+}
+
+body[dir=ltr] .tab-bar > .item > .close {
+    margin-right: var(--tab-item-close-button-margin-end);
+}
+
+body[dir=rtl] .tab-bar > .item > .close {
+    margin-left: var(--tab-item-close-button-margin-end);
 }
 
 body:not(.window-inactive) .tab-bar > .item:hover > .close {
@@ -187,7 +220,15 @@ body:not(.window-inactive) .tab-bar.single-tab > .item.default-tab:hover > .clos
 }
 
 .tab-bar > .item:not(.pinned) > .flex-space:last-child {
-    margin-right: 16px;
+    --tab-item-unpinned-trailing-flex-space-margin-end: 16px;
+}
+
+body[dir=ltr] .tab-bar > .item:not(.pinned) > .flex-space:last-child {
+    margin-right: var(--tab-item-unpinned-trailing-flex-space-margin-end);
+}
+
+body[dir=rtl] .tab-bar > .item:not(.pinned) > .flex-space:last-child {
+    margin-left: var(--tab-item-unpinned-trailing-flex-space-margin-end);
 }
 
 .tab-bar > .item > .icon {
@@ -222,14 +263,22 @@ body:not(.window-inactive) .tab-bar.single-tab > .item.default-tab:hover > .clos
 }
 
 .tab-bar > .item > .title {
-    margin-left: 6px;
-
     color: hsla(0, 0%, 0%, 0.55);
 
     display: flex;
 
     min-width: 0;
     max-width: 400px;
+
+    --tab-item-title-margin-start: 6px;
+}
+
+body[dir=ltr] .tab-bar > .item > .title {
+    margin-left: var(--tab-item-title-margin-start);
+}
+
+body[dir=rtl] .tab-bar > .item > .title {
+    margin-right: var(--tab-item-title-margin-start);
 }
 
 .tab-bar > .item > .title > .content {
@@ -258,7 +307,15 @@ body:not(.window-inactive) .tab-bar.single-tab > .item.default-tab:hover > .clos
 
 .tab-bar.collapsed > .item > .close {
     display: none;
-    margin-right: 0;
+    --tab-item-close-button-margin-end: 0;
+}
+
+body[dir=ltr] .tab-bar.collapsed > .item > .close {
+    margin-right: var(--tab-item-close-button-margin-end);
+}
+
+body[dir=rtl] .tab-bar.collapsed > .item > .close {
+    margin-left: var(--tab-item-close-button-margin-end);
 }
 
 .tab-bar.hide-titles > .item > .title {
@@ -305,13 +362,13 @@ body:not(.window-inactive) .tab-bar.single-tab > .item.default-tab:hover > .clos
 .tab-bar.dragging-tab > .item.selected,
 .tab-bar.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)),
 .tab-bar.animating.closing-tab > .item.selected {
-    border-right: 1px solid hsl(0, 0%, 65%);
+    border-right: var(--tab-item-medium-border-style);
 }
 
 body.window-inactive .tab-bar.dragging-tab > .item.selected,
 body.window-inactive .tab-bar.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)),
 body.window-inactive .tab-bar.animating.closing-tab > .item.selected {
-    border-right-color: hsl(0, 0%, 85%) !important;
+    border-right-color: var(--tab-item-light-border-color) !important;
 }
 
 .tab-bar.dragging-tab > .item.selected {
