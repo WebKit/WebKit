@@ -86,18 +86,6 @@ if (NOT DEFINED CPACK_SOURCE_IGNORE_FILES)
 
 
     if (NOT WEBKIT_CPACK_ALL_PORTS)
-
-        # All file and directory patterns that Efl uses
-        set(FILE_PATTERNS_Efl
-            "/cairo/" "/Cairo/" "cairo\\\\." "Cairo\\\\."
-            "/efl/" "/Efl/" "efl\\\\." "Efl\\\\."
-            "/glib/" "/Glib/" "glib\\\\." "Glib\\\\."
-            "/gobject/" "/Gobject/" "gobject\\\\." "Gobject\\\\."
-            "/icu/" "/Icu/" "icu\\\\." "Icu\\\\."
-            "/posix/" "/Posix/" "posix\\\\." "Posix\\\\."
-            "/soup/" "/Soup/" "soup\\\\." "Soup\\\\."
-            )
-
         # File and Directory patterns that no CMake-ified port uses
         set(FILE_PATTERNS_UNKNOWN_PORTS
             "/carbon/" "/Carbon/" "carbon\\\\." "Carbon\\\\."

@@ -1,3 +1,14 @@
+2017-02-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Remove EFL from Source/cmake
+        https://bugs.webkit.org/show_bug.cgi?id=168512
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsEfl.cmake: Removed.
+        * Source/cmake/WebKitPackaging.cmake:
+        * Source/cmake/eflsymbols.filter: Removed.
+
 2017-02-16  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Use env command to set PYTHONPATH if cmake is new enough
