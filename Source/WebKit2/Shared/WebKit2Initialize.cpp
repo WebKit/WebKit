@@ -41,12 +41,11 @@
 
 namespace WebKit {
 
-void InitializeWebKit2(ProcessType processType)
+void InitializeWebKit2()
 {
 #if PLATFORM(COCOA)
     InitWebCoreSystemInterface();
 #endif
-    platformInitializeWebKit2(processType);
 #if PLATFORM(IOS)
     InitWebCoreThreadSystemInterface();
 #endif

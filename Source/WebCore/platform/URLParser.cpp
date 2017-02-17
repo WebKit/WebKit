@@ -1117,17 +1117,6 @@ URLParser::URLParser(const String& input, const URL& base, const TextEncoding& e
             ASSERT(allValuesEqual(parser.result(), m_url));
     }
 #endif
-
-#if COMPARE_URLPARSERS
-    ASSERT(URLParser::enabled());
-    URLParser::setEnabled(false);
-    URL parsedWithOldParser = URL(base, input, encoding);
-    if (parsedWithOldParser != m_url)
-        WTFLogAlways("URLParser Differs: Input <%s> Base <%s> Encoding <%s>", input.utf8().data(), base.string().utf8().data(), encoding.name());
-    else
-        WTFLogAlways("URLParser Same: Input <%s> Base <%s> Encoding <%s>", input.utf8().data(), base.string().utf8().data(), encoding.name());
-    URLParser::setEnabled(true);
-#endif
 }
 
 template<typename CharacterType>
@@ -2868,18 +2857,6 @@ bool URLParser::internalValuesConsistent(const URL& url)
         && (url.m_isValid ? url.m_fragmentEnd == url.m_string.length() : !url.m_fragmentEnd);
     // FIXME: Why do we even store m_fragmentEnd?
     // It should be able to be deduced from m_isValid and m_string.length() to save memory.
-}
-
-static bool urlParserEnabled = true;
-
-void URLParser::setEnabled(bool enabled)
-{
-    urlParserEnabled = enabled;
-}
-
-bool URLParser::enabled()
-{
-    return urlParserEnabled;
 }
 
 } // namespace WebCore

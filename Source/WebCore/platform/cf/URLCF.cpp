@@ -47,11 +47,8 @@ URL::URL(CFURLRef url)
     // FIXME: Why is it OK to ignore base URL here?
     CString urlBytes;
     getURLBytes(url, urlBytes);
-    if (URLParser::enabled()) {
-        URLParser parser(urlBytes.data());
-        *this = parser.result();
-    } else
-        parse(urlBytes.data());
+    URLParser parser(urlBytes.data());
+    *this = parser.result();
 }
 
 #if !USE(FOUNDATION)

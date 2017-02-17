@@ -201,8 +201,6 @@ void NetworkProcess::lowMemoryHandler(Critical critical)
 
 void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&& parameters)
 {
-    URLParser::setEnabled(parameters.urlParserEnabled);
-
     platformInitializeNetworkProcess(parameters);
 
     WTF::setCurrentThreadIsUserInitiated();

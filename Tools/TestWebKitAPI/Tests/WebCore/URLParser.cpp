@@ -88,12 +88,7 @@ const TestTabs testTabsValueForSurrogatePairs = TestTabs::No;
 
 static void checkURL(const String& urlString, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
-    bool wasEnabled = URLParser::enabled();
-    URLParser::setEnabled(true);
     auto url = URL(URL(), urlString);
-    URLParser::setEnabled(false);
-    auto oldURL = URL(URL(), urlString);
-    URLParser::setEnabled(wasEnabled);
     
     EXPECT_TRUE(eq(parts.protocol, url.protocol().toString()));
     EXPECT_TRUE(eq(parts.user, url.user()));
@@ -104,20 +99,8 @@ static void checkURL(const String& urlString, const ExpectedParts& parts, TestTa
     EXPECT_TRUE(eq(parts.query, url.query()));
     EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
     EXPECT_TRUE(eq(parts.string, url.string()));
-    
-    EXPECT_TRUE(eq(parts.protocol, oldURL.protocol().toString()));
-    EXPECT_TRUE(eq(parts.user, oldURL.user()));
-    EXPECT_TRUE(eq(parts.password, oldURL.pass()));
-    EXPECT_TRUE(eq(parts.host, oldURL.host()));
-    EXPECT_EQ(parts.port, oldURL.port().value_or(0));
-    EXPECT_TRUE(eq(parts.path, oldURL.path()));
-    EXPECT_TRUE(eq(parts.query, oldURL.query()));
-    EXPECT_TRUE(eq(parts.fragment, oldURL.fragmentIdentifier()));
-    EXPECT_TRUE(eq(parts.string, oldURL.string()));
-    
-    EXPECT_TRUE(URLParser::allValuesEqual(url, oldURL));
+
     EXPECT_TRUE(URLParser::internalValuesConsistent(url));
-    EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
 
     if (testTabs == TestTabs::No)
         return;
@@ -132,12 +115,7 @@ static void checkURL(const String& urlString, const ExpectedParts& parts, TestTa
 
 static void checkRelativeURL(const String& urlString, const String& baseURLString, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
-    bool wasEnabled = URLParser::enabled();
-    URLParser::setEnabled(true);
     auto url = URL(URL(URL(), baseURLString), urlString);
-    URLParser::setEnabled(false);
-    auto oldURL = URL(URL(URL(), baseURLString), urlString);
-    URLParser::setEnabled(wasEnabled);
     
     EXPECT_TRUE(eq(parts.protocol, url.protocol().toString()));
     EXPECT_TRUE(eq(parts.user, url.user()));
@@ -149,19 +127,7 @@ static void checkRelativeURL(const String& urlString, const String& baseURLStrin
     EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
     EXPECT_TRUE(eq(parts.string, url.string()));
     
-    EXPECT_TRUE(eq(parts.protocol, oldURL.protocol().toString()));
-    EXPECT_TRUE(eq(parts.user, oldURL.user()));
-    EXPECT_TRUE(eq(parts.password, oldURL.pass()));
-    EXPECT_TRUE(eq(parts.host, oldURL.host()));
-    EXPECT_EQ(parts.port, oldURL.port().value_or(0));
-    EXPECT_TRUE(eq(parts.path, oldURL.path()));
-    EXPECT_TRUE(eq(parts.query, oldURL.query()));
-    EXPECT_TRUE(eq(parts.fragment, oldURL.fragmentIdentifier()));
-    EXPECT_TRUE(eq(parts.string, oldURL.string()));
-    
-    EXPECT_TRUE(URLParser::allValuesEqual(url, oldURL));
     EXPECT_TRUE(URLParser::internalValuesConsistent(url));
-    EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
     
     if (testTabs == TestTabs::No)
         return;
@@ -177,12 +143,8 @@ static void checkRelativeURL(const String& urlString, const String& baseURLStrin
 
 static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
 {
-    bool wasEnabled = URLParser::enabled();
-    URLParser::setEnabled(true);
+    UNUSED_PARAM(partsOld); // FIXME: Remove all the old expected parts.
     auto url = URL(URL(), urlString);
-    URLParser::setEnabled(false);
-    auto oldURL = URL(URL(), urlString);
-    URLParser::setEnabled(wasEnabled);
     
     EXPECT_TRUE(eq(partsNew.protocol, url.protocol().toString()));
     EXPECT_TRUE(eq(partsNew.user, url.user()));
@@ -194,19 +156,7 @@ static void checkURLDifferences(const String& urlString, const ExpectedParts& pa
     EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));
     EXPECT_TRUE(eq(partsNew.string, url.string()));
     
-    EXPECT_TRUE(eq(partsOld.protocol, oldURL.protocol().toString()));
-    EXPECT_TRUE(eq(partsOld.user, oldURL.user()));
-    EXPECT_TRUE(eq(partsOld.password, oldURL.pass()));
-    EXPECT_TRUE(eq(partsOld.host, oldURL.host()));
-    EXPECT_EQ(partsOld.port, oldURL.port().value_or(0));
-    EXPECT_TRUE(eq(partsOld.path, oldURL.path()));
-    EXPECT_TRUE(eq(partsOld.query, oldURL.query()));
-    EXPECT_TRUE(eq(partsOld.fragment, oldURL.fragmentIdentifier()));
-    EXPECT_TRUE(eq(partsOld.string, oldURL.string()));
-    
-    EXPECT_FALSE(URLParser::allValuesEqual(url, oldURL));
     EXPECT_TRUE(URLParser::internalValuesConsistent(url));
-    EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
     
     if (testTabs == TestTabs::No)
         return;
@@ -222,12 +172,8 @@ static void checkURLDifferences(const String& urlString, const ExpectedParts& pa
 
 static void checkRelativeURLDifferences(const String& urlString, const String& baseURLString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
 {
-    bool wasEnabled = URLParser::enabled();
-    URLParser::setEnabled(true);
+    UNUSED_PARAM(partsOld); // FIXME: Remove all the old expected parts.
     auto url = URL(URL(URL(), baseURLString), urlString);
-    URLParser::setEnabled(false);
-    auto oldURL = URL(URL(URL(), baseURLString), urlString);
-    URLParser::setEnabled(wasEnabled);
     
     EXPECT_TRUE(eq(partsNew.protocol, url.protocol().toString()));
     EXPECT_TRUE(eq(partsNew.user, url.user()));
@@ -239,19 +185,7 @@ static void checkRelativeURLDifferences(const String& urlString, const String& b
     EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));
     EXPECT_TRUE(eq(partsNew.string, url.string()));
     
-    EXPECT_TRUE(eq(partsOld.protocol, oldURL.protocol().toString()));
-    EXPECT_TRUE(eq(partsOld.user, oldURL.user()));
-    EXPECT_TRUE(eq(partsOld.password, oldURL.pass()));
-    EXPECT_TRUE(eq(partsOld.host, oldURL.host()));
-    EXPECT_EQ(partsOld.port, oldURL.port().value_or(0));
-    EXPECT_TRUE(eq(partsOld.path, oldURL.path()));
-    EXPECT_TRUE(eq(partsOld.query, oldURL.query()));
-    EXPECT_TRUE(eq(partsOld.fragment, oldURL.fragmentIdentifier()));
-    EXPECT_TRUE(eq(partsOld.string, oldURL.string()));
-    
-    EXPECT_FALSE(URLParser::allValuesEqual(url, oldURL));
     EXPECT_TRUE(URLParser::internalValuesConsistent(url));
-    EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
     
     if (testTabs == TestTabs::No)
         return;

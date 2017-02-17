@@ -381,8 +381,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
 
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 
-    parameters.urlParserEnabled = URLParser::enabled();
-    
     // Add any platform specific parameters
     platformInitializeNetworkProcess(parameters);
 
@@ -549,8 +547,6 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
 
     WebProcessCreationParameters parameters;
 
-    parameters.urlParserEnabled = URLParser::enabled();
-    
     parameters.injectedBundlePath = m_resolvedPaths.injectedBundlePath;
     if (!parameters.injectedBundlePath.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(parameters.injectedBundlePath, SandboxExtension::ReadOnly, parameters.injectedBundlePathExtensionHandle);

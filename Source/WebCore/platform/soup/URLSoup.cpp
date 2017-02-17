@@ -43,11 +43,8 @@ URL::URL(SoupURI* soupURI)
     }
 
     GUniquePtr<gchar> urlString(soup_uri_to_string(soupURI, FALSE));
-    if (URLParser::enabled()) {
-        URLParser parser(String::fromUTF8(urlString.get()));
-        *this = parser.result();
-    } else
-        parse(String::fromUTF8(urlString.get()));
+    URLParser parser(String::fromUTF8(urlString.get()));
+    *this = parser.result();
 
     if (!isValid())
         return;

@@ -1,3 +1,39 @@
+2017-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Remove old URL parser
+        https://bugs.webkit.org/show_bug.cgi?id=168483
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * Shared/Cocoa/WebKit2InitializeCocoa.mm: Removed.
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * Shared/WebKit2Initialize.cpp:
+        (WebKit::InitializeWebKit2):
+        * Shared/WebKit2Initialize.h:
+        (): Deleted.
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/efl/WebKit2InitializeEFL.cpp: Removed.
+        * Shared/gtk/WebKit2InitializeGTK.cpp: Removed.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2017-02-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Add additional test infrastructure and unit tests for data interaction

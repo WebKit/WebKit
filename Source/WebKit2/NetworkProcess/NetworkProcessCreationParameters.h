@@ -73,7 +73,6 @@ struct NetworkProcessCreationParameters {
 #endif
     bool shouldSuppressMemoryPressureHandler { false };
     bool shouldUseTestingNetworkSession;
-    bool urlParserEnabled { false };
     std::chrono::milliseconds loadThrottleLatency { 0ms };
 
     Vector<String> urlSchemesRegisteredForCustomProtocols;

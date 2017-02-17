@@ -1,3 +1,58 @@
+2017-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Remove old URL parser
+        https://bugs.webkit.org/show_bug.cgi?id=168483
+
+        Reviewed by Tim Horton.
+
+        * platform/URL.cpp:
+        (WebCore::isSchemeFirstChar):
+        (WebCore::isSchemeChar):
+        (WebCore::URL::URL):
+        (WebCore::URL::setProtocol):
+        (WebCore::URL::setHost):
+        (WebCore::URL::removePort):
+        (WebCore::URL::setPort):
+        (WebCore::URL::setHostAndPort):
+        (WebCore::URL::setUser):
+        (WebCore::URL::setPass):
+        (WebCore::URL::setFragmentIdentifier):
+        (WebCore::URL::setQuery):
+        (WebCore::URL::setPath):
+        (WebCore::URL::serialize):
+        (WebCore::isUserInfoChar): Deleted.
+        (WebCore::isHostnameChar): Deleted.
+        (WebCore::isIPv6Char): Deleted.
+        (WebCore::isPathSegmentEndChar): Deleted.
+        (WebCore::appendASCII): Deleted.
+        (WebCore::findFirstOf): Deleted.
+        (WebCore::checkEncodedString): Deleted.
+        (WebCore::URL::init): Deleted.
+        (WebCore::appendEscapingBadChars): Deleted.
+        (WebCore::escapeAndAppendNonHierarchicalPart): Deleted.
+        (WebCore::copyPathRemovingDots): Deleted.
+        (WebCore::hasSlashDotOrDotDot): Deleted.
+        (WebCore::URL::parse): Deleted.
+        (WebCore::cannotBeABaseURL): Deleted.
+        (WebCore::isDefaultPortForScheme): Deleted.
+        (WebCore::hostPortIsEmptyButCredentialsArePresent): Deleted.
+        (WebCore::isNonFileHierarchicalScheme): Deleted.
+        (WebCore::isCanonicalHostnameLowercaseForScheme): Deleted.
+        (WebCore::findHostnamesInMailToURL): Deleted.
+        (WebCore::findHostnameInHierarchicalURL): Deleted.
+        (WebCore::encodeHostnames): Deleted.
+        (WebCore::encodeRelativeString): Deleted.
+        (WebCore::substituteBackslashes): Deleted.
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::URLParser):
+        (WebCore::URLParser::setEnabled): Deleted.
+        (WebCore::URLParser::enabled): Deleted.
+        * platform/URLParser.h:
+        * platform/cf/URLCF.cpp:
+        (WebCore::URL::URL):
+        * platform/mac/URLMac.mm:
+        (WebCore::URL::URL):
+
 2017-02-16  Anders Carlsson  <andersca@apple.com>
 
         Build fixes.

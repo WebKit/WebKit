@@ -43,9 +43,6 @@ public:
 
     WEBCORE_EXPORT static bool allValuesEqual(const URL&, const URL&);
     WEBCORE_EXPORT static bool internalValuesConsistent(const URL&);
-
-    WEBCORE_EXPORT static bool enabled();
-    WEBCORE_EXPORT static void setEnabled(bool);
     
     typedef Vector<WTF::KeyValuePair<String, String>> URLEncodedForm;
     WEBCORE_EXPORT static URLEncodedForm parseURLEncodedForm(StringView);

@@ -239,9 +239,7 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 }
 
 void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
-{
-    URLParser::setEnabled(parameters.urlParserEnabled);
-    
+{    
     ASSERT(m_pageMap.isEmpty());
 
 #if OS(LINUX)

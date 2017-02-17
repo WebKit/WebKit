@@ -102,7 +102,6 @@ list(APPEND WebKit2_SOURCES
     Shared/Cocoa/CompletionHandlerCallChecker.mm
     Shared/Cocoa/DataDetectionResult.mm
     Shared/Cocoa/LoadParametersCocoa.mm
-    Shared/Cocoa/WebKit2InitializeCocoa.mm
     Shared/Cocoa/WKNSArray.mm
     Shared/Cocoa/WKNSData.mm
     Shared/Cocoa/WKNSDictionary.mm

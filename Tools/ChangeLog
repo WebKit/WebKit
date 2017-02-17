@@ -1,3 +1,16 @@
+2017-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Remove old URL parser
+        https://bugs.webkit.org/show_bug.cgi?id=168483
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::checkURL):
+        (TestWebKitAPI::checkRelativeURL):
+        (TestWebKitAPI::checkURLDifferences):
+        (TestWebKitAPI::checkRelativeURLDifferences):
+
 2017-02-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Add additional test infrastructure and unit tests for data interaction

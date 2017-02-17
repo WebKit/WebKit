@@ -75,7 +75,7 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     // so ensure that we have an outstanding transaction here.
     xpc_transaction_begin();
 
-    InitializeWebKit2(ChildProcess);
+    InitializeWebKit2();
 
     if (!delegate.checkEntitlements())
         exit(EXIT_FAILURE);

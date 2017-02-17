@@ -43,11 +43,8 @@ URL::URL(NSURL *url)
     // FIXME: Why is it OK to ignore base URL here?
     CString urlBytes;
     getURLBytes(reinterpret_cast<CFURLRef>(url), urlBytes);
-    if (URLParser::enabled()) {
-        URLParser parser(urlBytes.data());
-        *this = parser.result();
-    } else
-        parse(urlBytes.data());
+    URLParser parser(urlBytes.data());
+    *this = parser.result();
 }
 
 URL::operator NSURL *() const

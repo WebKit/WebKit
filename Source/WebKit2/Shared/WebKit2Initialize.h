@@ -27,12 +27,6 @@
 
 namespace WebKit {
 
-enum ProcessType {
-    ChildProcess,
-    UIProcess,
-};
-
-void InitializeWebKit2(ProcessType = UIProcess);
-void platformInitializeWebKit2(ProcessType);
+void InitializeWebKit2();
 
 };
