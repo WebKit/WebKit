@@ -95,7 +95,7 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 
 Ref<DataTransfer> EventHandler::createDraggingDataTransfer() const
 {
-    return DataTransfer::createForDragAndDrop();
+    return DataTransfer::createForDrag();
 }
 
 #endif
