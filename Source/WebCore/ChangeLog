@@ -1,3 +1,17 @@
+2017-02-16  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(r212439): Web Inspector Toolbar / Window appears broken
+        https://bugs.webkit.org/show_bug.cgi?id=168494
+
+        Reviewed by Joseph Pecoraro.
+
+        Missed one conversion from acceleratesDrawing to drawsAsynchronously, which
+        caused non-Whippet GrpahicsContext shadow drawing to happen unexpectedly.
+
+        * platform/graphics/ca/cocoa/WebTiledBackingLayer.mm:
+        (-[WebTiledBackingLayer drawsAsynchronously]):
+        (-[WebTiledBackingLayer acceleratesDrawing]): Deleted.
+
 2017-02-16  Chris Dumez  <cdumez@apple.com>
 
         <input>.labels is empty if type changes from text->hidden->checkbox

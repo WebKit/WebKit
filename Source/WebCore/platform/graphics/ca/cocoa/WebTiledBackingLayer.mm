@@ -108,7 +108,7 @@ using namespace WebCore;
     _tileController->setAcceleratesDrawing(acceleratesDrawing);
 }
 
-- (BOOL)acceleratesDrawing
+- (BOOL)drawsAsynchronously
 {
     return _tileController ? _tileController->acceleratesDrawing() : NO;
 }
