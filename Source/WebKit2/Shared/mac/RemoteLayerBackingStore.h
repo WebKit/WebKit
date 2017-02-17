@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteLayerBackingStore_h
-#define RemoteLayerBackingStore_h
+#pragma once
 
 #include "ShareableBitmap.h"
 #include <WebCore/FloatRect.h>
@@ -51,7 +50,7 @@ public:
     RemoteLayerBackingStore(PlatformCALayerRemote*);
     ~RemoteLayerBackingStore();
 
-    void ensureBackingStore(WebCore::FloatSize, float scale, bool acceleratesDrawing, bool isOpaque);
+    void ensureBackingStore(WebCore::FloatSize, float scale, bool acceleratesDrawing, bool deepColor, bool isOpaque);
 
     void setNeedsDisplay(const WebCore::IntRect);
     void setNeedsDisplay();
@@ -99,7 +98,11 @@ private:
     void drawInContext(WebCore::GraphicsContext&, CGImageRef backImage);
     void clearBackingStore();
     void swapToValidFrontBuffer();
-    
+
+#if USE(IOSURFACE)
+    WebCore::IOSurface::Format surfaceBufferFormat() const;
+#endif
+
     WebCore::IntSize backingStoreSize() const;
 
     PlatformCALayerRemote* m_layer;
@@ -141,7 +144,8 @@ private:
 
     RetainPtr<CGContextRef> m_frontContextPendingFlush;
 
-    bool m_acceleratesDrawing;
+    bool m_acceleratesDrawing { false };
+    bool m_deepColor { false };
 
     WebCore::RepaintRectList m_paintingRects;
 
@@ -149,5 +153,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // RemoteLayerBackingStore_h

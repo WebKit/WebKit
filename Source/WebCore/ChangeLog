@@ -1,3 +1,64 @@
+2017-02-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow PlatformCALayers to specify that they want deep color backing store
+        https://bugs.webkit.org/show_bug.cgi?id=168495
+
+        Reviewed by Tim Horton.
+        
+        Currently capable iOS devices get deep color backing store by virtue of a supports
+        check in PlatformCALayerCocoa::PlatformCALayerCocoa(), and LegacyTileGridTile.
+
+        Future work will make layer contents format selection more complex, so express the need
+        for deep color on PlatformCALayer, and have the creators of PlatformCALayer (mainly the
+        flavors of GraphicsLayerCA) choose for them to support deep color. A bit of special-casing
+        is needed to propagte the state to TileControllers.
+        
+        The deep-colorness now propagates from PlatformCALayerRemote to RemoteLayerBackingStore,
+        instead of RemoteLayerBackingStore looking at the properties of the screen directly.
+
+        Remove PlatformCALayer::LayerTypeWebTiledLayer which was only used for the old CATiledLayers
+        that we no longer use.
+
+        An iphone7 test verifies that page tiles, normal layers and tiled layers get the deep
+        color state set on them.
+
+        Test: tiled-drawing/ios/iphone7/compositing-layers-deep-color.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createPlatformCALayer):
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::canHaveBackingStore):
+        (WebCore::operator<<):
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::setZoomedOutContentsScale):
+        (WebCore::TileController::setAcceleratesDrawing):
+        (WebCore::TileController::setWantsDeepColorBackingStore):
+        (WebCore::TileController::createTileLayer):
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::updateTileLayerProperties):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayerCocoa::PlatformCALayerCocoa):
+        (PlatformCALayerCocoa::commonInit):
+        (PlatformCALayerCocoa::wantsDeepColorBackingStore):
+        (PlatformCALayerCocoa::setWantsDeepColorBackingStore):
+        (layerContentsFormat):
+        (PlatformCALayerCocoa::updateContentsFormat):
+        * platform/graphics/ca/cocoa/WebTiledBackingLayer.h:
+        * platform/graphics/ca/cocoa/WebTiledBackingLayer.mm:
+        (-[WebTiledBackingLayer setWantsDeepColorBackingStore:]):
+        (-[WebTiledBackingLayer wantsDeepColorBackingStore]):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::wantsDeepColorBackingStore):
+        (PlatformCALayerWin::setWantsDeepColorBackingStore):
+        (printLayer):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+
 2017-02-17  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: Make sure to unprepare WebAudioSourceProviderAVFObjC when its owner is destroyed.

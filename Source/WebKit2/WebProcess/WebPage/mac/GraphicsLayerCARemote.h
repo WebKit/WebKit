@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GraphicsLayerCARemote_h
-#define GraphicsLayerCARemote_h
+#pragma once
 
 #include <WebCore/GraphicsLayerCA.h>
 #include <WebCore/PlatformLayer.h>
@@ -61,5 +60,3 @@ private:
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_GRAPHICSLAYER(WebKit::GraphicsLayerCARemote, isGraphicsLayerCARemote())
-
-#endif // GraphicsLayerCARemote_h

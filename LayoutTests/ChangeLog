@@ -1,3 +1,15 @@
+2017-02-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow PlatformCALayers to specify that they want deep color backing store
+        https://bugs.webkit.org/show_bug.cgi?id=168495
+
+        Reviewed by Tim Horton.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * tiled-drawing/ios/iphone7/compositing-layers-deep-color-expected.txt: Added.
+        * tiled-drawing/ios/iphone7/compositing-layers-deep-color.html: Added.
+
 2017-02-17  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Improve handling of <video> with only audio tracks

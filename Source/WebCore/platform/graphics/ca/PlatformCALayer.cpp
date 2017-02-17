@@ -66,6 +66,14 @@ PlatformCALayer::~PlatformCALayer()
     setOwner(nullptr);
 }
 
+bool PlatformCALayer::canHaveBackingStore() const
+{
+    return m_layerType == LayerType::LayerTypeWebLayer
+        || m_layerType == LayerType::LayerTypeTiledBackingLayer
+        || m_layerType == LayerType::LayerTypePageTiledBackingLayer
+        || m_layerType == LayerType::LayerTypeTiledBackingTileLayer;
+}
+
 void PlatformCALayer::drawRepaintIndicator(CGContextRef context, PlatformCALayer* platformCALayer, int repaintCount, CGColorRef customBackgroundColor)
 {
     char text[16]; // that's a lot of repaints
@@ -176,9 +184,6 @@ TextStream& operator<<(TextStream& ts, PlatformCALayer::LayerType layerType)
         break;
     case PlatformCALayer::LayerTypeTransformLayer:
         ts << "transform-layer";
-        break;
-    case PlatformCALayer::LayerTypeWebTiledLayer:
-        ts << "tiled-layer";
         break;
     case PlatformCALayer::LayerTypeTiledBackingLayer:
         ts << "tiled-backing-layer";

@@ -27,6 +27,7 @@
 #include "GraphicsLayerCARemote.h"
 #include "PlatformCAAnimationRemote.h"
 #include "PlatformCALayerRemote.h"
+#include <WebCore/PlatformScreen.h>
 
 using namespace WebCore;
 
@@ -43,7 +44,12 @@ bool GraphicsLayerCARemote::filtersCanBeComposited(const FilterOperations& filte
 
 PassRefPtr<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
 {
-    return PlatformCALayerRemote::create(layerType, owner, m_context);
+    auto result = PlatformCALayerRemote::create(layerType, owner, m_context);
+
+    if (result->canHaveBackingStore())
+        result->setWantsDeepColorBackingStore(screenSupportsExtendedColor());
+
+    return result;
 }
 
 PassRefPtr<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformLayer* platformLayer, PlatformCALayerClient* owner)

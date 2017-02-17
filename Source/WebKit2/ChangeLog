@@ -1,3 +1,46 @@
+2017-02-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow PlatformCALayers to specify that they want deep color backing store
+        https://bugs.webkit.org/show_bug.cgi?id=168495
+
+        Reviewed by Tim Horton.
+
+        Currently capable iOS devices get deep color backing store by virtue of a supports
+        check in PlatformCALayerCocoa::PlatformCALayerCocoa(), and LegacyTileGridTile.
+
+        Future work will make layer contents format selection more complex, so express the need
+        for deep color on PlatformCALayer, and have the creators of PlatformCALayer (mainly the
+        flavors of GraphicsLayerCA) choose for them to support deep color. A bit of special-casing
+        is needed to propagte the state to TileControllers.
+        
+        The deep-colorness now propagates from PlatformCALayerRemote to RemoteLayerBackingStore,
+        instead of RemoteLayerBackingStore looking at the properties of the screen directly.
+
+        Remove PlatformCALayer::LayerTypeWebTiledLayer which was only used for the old CATiledLayers
+        that we no longer use.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::ensureBackingStore):
+        (WebKit::RemoteLayerBackingStore::bytesPerPixel):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        (WebKit::RemoteLayerBackingStore::surfaceBufferFormat):
+        (WebKit::bufferFormat): Deleted.
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.cpp:
+        (WebKit::GraphicsLayerCARemote::createPlatformCALayer):
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::PlatformCALayerRemote):
+        (WebKit::PlatformCALayerRemote::updateBackingStore):
+        (WebKit::PlatformCALayerRemote::wantsDeepColorBackingStore):
+        (WebKit::PlatformCALayerRemote::setWantsDeepColorBackingStore):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.cpp:
+        (WebKit::PlatformCALayerRemoteTiledBacking::wantsDeepColorBackingStore):
+        (WebKit::PlatformCALayerRemoteTiledBacking::setWantsDeepColorBackingStore):
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.h:
+
 2017-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Action sheet should not dismiss when a DDAction with user interface is being presented

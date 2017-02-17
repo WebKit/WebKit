@@ -43,6 +43,9 @@ class TiledBacking;
 - (WebCore::TiledBacking*)tiledBacking;
 - (void)invalidate;
 
+- (void)setWantsDeepColorBackingStore:(BOOL)wantsDeepColor;
+- (BOOL)wantsDeepColorBackingStore;
+
 @end
 
 #endif // WebTiledBackingLayer_h

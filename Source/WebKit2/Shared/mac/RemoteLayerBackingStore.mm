@@ -37,7 +37,6 @@
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/PlatformCALayerClient.h>
-#import <WebCore/PlatformScreen.h>
 #import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/WebLayer.h>
 
@@ -48,16 +47,6 @@
 using namespace WebCore;
 
 namespace WebKit {
-
-#if USE(IOSURFACE)
-static WebCore::IOSurface::Format bufferFormat(bool isOpaque)
-{
-    if (screenSupportsExtendedColor())
-        return isOpaque ? WebCore::IOSurface::Format::RGB10 : WebCore::IOSurface::Format::RGB10A8;
-
-    return WebCore::IOSurface::Format::RGBA;
-}
-#endif // USE(IOSURFACE)
 
 RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer)
     : m_layer(layer)
@@ -81,14 +70,15 @@ RemoteLayerBackingStore::~RemoteLayerBackingStore()
         context->backingStoreWillBeDestroyed(*this);
 }
 
-void RemoteLayerBackingStore::ensureBackingStore(FloatSize size, float scale, bool acceleratesDrawing, bool isOpaque)
+void RemoteLayerBackingStore::ensureBackingStore(FloatSize size, float scale, bool acceleratesDrawing, bool deepColor, bool isOpaque)
 {
-    if (m_size == size && m_scale == scale && m_acceleratesDrawing == acceleratesDrawing && m_isOpaque == isOpaque)
+    if (m_size == size && m_scale == scale && m_deepColor == deepColor && m_acceleratesDrawing == acceleratesDrawing && m_isOpaque == isOpaque)
         return;
 
     m_size = size;
     m_scale = scale;
     m_acceleratesDrawing = acceleratesDrawing;
+    m_deepColor = deepColor;
     m_isOpaque = isOpaque;
 
     if (m_frontBuffer) {
@@ -187,7 +177,7 @@ IntSize RemoteLayerBackingStore::backingStoreSize() const
 unsigned RemoteLayerBackingStore::bytesPerPixel() const
 {
 #if USE(IOSURFACE)
-    switch (bufferFormat(m_isOpaque)) {
+    switch (surfaceBufferFormat()) {
     case WebCore::IOSurface::Format::RGBA: return 4;
     case WebCore::IOSurface::Format::YUV422: return 2;
     case WebCore::IOSurface::Format::RGB10: return 4;
@@ -212,7 +202,7 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
         std::swap(m_frontBuffer, m_backBuffer);
 
         if (!m_frontBuffer.surface)
-            m_frontBuffer.surface = WebCore::IOSurface::create(expandedScaledSize, sRGBColorSpaceRef(), bufferFormat(m_isOpaque));
+            m_frontBuffer.surface = WebCore::IOSurface::create(expandedScaledSize, sRGBColorSpaceRef(), surfaceBufferFormat());
 
         setBufferVolatility(BufferType::Front, false);
         return;
@@ -364,7 +354,6 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
         break;
     case PlatformCALayer::LayerTypeLayer:
     case PlatformCALayer::LayerTypeTransformLayer:
-    case PlatformCALayer::LayerTypeWebTiledLayer:
     case PlatformCALayer::LayerTypeTiledBackingLayer:
     case PlatformCALayer::LayerTypePageTiledBackingLayer:
     case PlatformCALayer::LayerTypeRootLayer:
@@ -490,5 +479,15 @@ void RemoteLayerBackingStore::Buffer::discard()
 #endif
     bitmap = nullptr;
 }
+
+#if USE(IOSURFACE)
+WebCore::IOSurface::Format RemoteLayerBackingStore::surfaceBufferFormat() const
+{
+    if (m_deepColor)
+        return m_isOpaque ? WebCore::IOSurface::Format::RGB10 : WebCore::IOSurface::Format::RGB10A8;
+
+    return WebCore::IOSurface::Format::RGBA;
+}
+#endif // USE(IOSURFACE)
 
 } // namespace WebKit

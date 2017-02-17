@@ -519,6 +519,15 @@ void PlatformCALayerWin::setAcceleratesDrawing(bool)
 {
 }
 
+bool PlatformCALayerWin::wantsDeepColorBackingStore() const
+{
+    return false;
+}
+
+void PlatformCALayerWin::setWantsDeepColorBackingStore(bool)
+{
+}
+
 CFTypeRef PlatformCALayerWin::contents() const
 {
     return CACFLayerGetContents(m_layer.get());
@@ -745,7 +754,6 @@ static void printLayer(StringBuilder& builder, const PlatformCALayer* layer, int
     case PlatformCALayer::LayerTypeWebLayer: layerTypeName = "web-layer"; break;
     case PlatformCALayer::LayerTypeSimpleLayer: layerTypeName = "simple-layer"; break;
     case PlatformCALayer::LayerTypeTransformLayer: layerTypeName = "transform-layer"; break;
-    case PlatformCALayer::LayerTypeWebTiledLayer: layerTypeName = "web-tiled-layer"; break;
     case PlatformCALayer::LayerTypeTiledBackingLayer: layerTypeName = "tiled-backing-layer"; break;
     case PlatformCALayer::LayerTypePageTiledBackingLayer: layerTypeName = "page-tiled-backing-layer"; break;
     case PlatformCALayer::LayerTypeTiledBackingTileLayer: layerTypeName = "tiled-backing-tile-layer"; break;

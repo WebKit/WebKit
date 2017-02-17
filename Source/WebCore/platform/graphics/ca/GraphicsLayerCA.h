@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GraphicsLayerCA_h
-#define GraphicsLayerCA_h
+#pragma once
 
 #include "GraphicsLayer.h"
 #include "PlatformCAAnimation.h"
@@ -594,5 +593,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_GRAPHICSLAYER(WebCore::GraphicsLayerCA, isGraphicsLayerCA())
-
-#endif // GraphicsLayerCA_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformCALayerCocoa_h
-#define PlatformCALayerCocoa_h
+#pragma once
 
 #include "PlatformCALayer.h"
 
@@ -111,6 +110,9 @@ public:
     bool acceleratesDrawing() const override;
     void setAcceleratesDrawing(bool) override;
 
+    bool wantsDeepColorBackingStore() const override;
+    void setWantsDeepColorBackingStore(bool) override;
+
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
 
@@ -180,16 +182,17 @@ private:
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
 
+    void updateContentsFormat();
+
     AVPlayerLayer *avPlayerLayer() const;
 
     RetainPtr<NSObject> m_delegate;
     std::unique_ptr<PlatformCALayerList> m_customSublayers;
     GraphicsLayer::CustomAppearance m_customAppearance;
     std::unique_ptr<FloatRoundedRect> m_shapeRoundedRect;
+    bool m_wantsDeepColorBackingStore { false };
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(WebCore::PlatformCALayerCocoa, isPlatformCALayerCocoa())
-
-#endif // PlatformCALayerCocoa_h

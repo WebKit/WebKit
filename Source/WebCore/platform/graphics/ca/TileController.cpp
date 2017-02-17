@@ -157,6 +157,7 @@ void TileController::setZoomedOutContentsScale(float scale)
 
     if (m_zoomedOutContentsScale == scale)
         return;
+
     m_zoomedOutContentsScale = scale;
 
     if (m_zoomedOutTileGrid && m_zoomedOutTileGrid->scale() != m_zoomedOutContentsScale)
@@ -167,7 +168,17 @@ void TileController::setAcceleratesDrawing(bool acceleratesDrawing)
 {
     if (m_acceleratesDrawing == acceleratesDrawing)
         return;
+
     m_acceleratesDrawing = acceleratesDrawing;
+    tileGrid().updateTileLayerProperties();
+}
+
+void TileController::setWantsDeepColorBackingStore(bool wantsDeepColorBackingStore)
+{
+    if (m_wantsDeepColorBackingStore == wantsDeepColorBackingStore)
+        return;
+
+    m_wantsDeepColorBackingStore = wantsDeepColorBackingStore;
 
     tileGrid().updateTileLayerProperties();
 }
@@ -723,6 +734,7 @@ RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect,
 
     layer->setContentsScale(m_deviceScaleFactor * temporaryScaleFactor);
     layer->setAcceleratesDrawing(m_acceleratesDrawing);
+    layer->setWantsDeepColorBackingStore(m_wantsDeepColorBackingStore);
 
     layer->setNeedsDisplay();
 

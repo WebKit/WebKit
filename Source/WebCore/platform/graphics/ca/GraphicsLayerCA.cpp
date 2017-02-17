@@ -39,6 +39,7 @@
 #include "Logging.h"
 #include "PlatformCAFilters.h"
 #include "PlatformCALayer.h"
+#include "PlatformScreen.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
 #include "TextStream.h"
@@ -341,7 +342,12 @@ bool GraphicsLayerCA::filtersCanBeComposited(const FilterOperations& filters)
 PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
 {
 #if PLATFORM(COCOA)
-    return PlatformCALayerCocoa::create(layerType, owner);
+    auto result = PlatformCALayerCocoa::create(layerType, owner);
+    
+    if (result->canHaveBackingStore())
+        result->setWantsDeepColorBackingStore(screenSupportsExtendedColor());
+    
+    return result;
 #elif PLATFORM(WIN)
     return PlatformCALayerWin::create(layerType, owner);
 #endif
@@ -3497,6 +3503,11 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, int inden
 
         writeIndent(textStream, indent + 1);
         textStream << "(in window " << tiledBacking()->isInWindow() << ")\n";
+    }
+    
+    if (m_layer->wantsDeepColorBackingStore()) {
+        writeIndent(textStream, indent + 1);
+        textStream << "(deep color 1)\n";
     }
     
     if (behavior & LayerTreeAsTextIncludeContentLayers) {

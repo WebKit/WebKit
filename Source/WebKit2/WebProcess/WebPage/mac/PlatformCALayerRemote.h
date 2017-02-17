@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformCALayerRemote_h
-#define PlatformCALayerRemote_h
+#pragma once
 
 #include "RemoteLayerTreeTransaction.h"
 #include <WebCore/PlatformCALayer.h>
@@ -115,6 +114,9 @@ public:
 
     bool acceleratesDrawing() const override;
     void setAcceleratesDrawing(bool) override;
+
+    bool wantsDeepColorBackingStore() const override;
+    void setWantsDeepColorBackingStore(bool) override;
 
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
@@ -208,10 +210,12 @@ private:
 
     RemoteLayerTreeTransaction::LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;
-    PlatformCALayerRemote* m_superlayer;
-    PlatformCALayerRemote* m_maskLayer;
+    PlatformCALayerRemote* m_superlayer { nullptr };
+    PlatformCALayerRemote* m_maskLayer { nullptr };
     HashMap<String, RefPtr<WebCore::PlatformCAAnimation>> m_animations;
-    bool m_acceleratesDrawing;
+
+    bool m_acceleratesDrawing { false };
+    bool m_wantsDeepColorBackingStore { false };
 
     RemoteLayerTreeContext* m_context;
 };
@@ -219,5 +223,3 @@ private:
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(WebKit::PlatformCALayerRemote, isPlatformCALayerRemote())
-
-#endif // PlatformCALayerRemote_h

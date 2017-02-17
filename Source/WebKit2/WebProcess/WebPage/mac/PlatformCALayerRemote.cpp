@@ -74,9 +74,6 @@ PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(const PlatformCA
 
 PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
     : PlatformCALayer(layerType, owner)
-    , m_superlayer(nullptr)
-    , m_maskLayer(nullptr)
-    , m_acceleratesDrawing(false)
     , m_context(&context)
 {
     if (owner)
@@ -85,8 +82,6 @@ PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALaye
 
 PlatformCALayerRemote::PlatformCALayerRemote(const PlatformCALayerRemote& other, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
     : PlatformCALayer(other.layerType(), owner)
-    , m_superlayer(nullptr)
-    , m_maskLayer(nullptr)
     , m_acceleratesDrawing(other.acceleratesDrawing())
     , m_context(&context)
 {
@@ -206,7 +201,7 @@ void PlatformCALayerRemote::updateBackingStore()
     if (!m_properties.backingStore)
         return;
 
-    m_properties.backingStore->ensureBackingStore(m_properties.bounds.size(), m_properties.contentsScale, m_acceleratesDrawing, m_properties.opaque);
+    m_properties.backingStore->ensureBackingStore(m_properties.bounds.size(), m_properties.contentsScale, m_acceleratesDrawing, m_wantsDeepColorBackingStore, m_properties.opaque);
 }
 
 void PlatformCALayerRemote::setNeedsDisplayInRect(const FloatRect& rect)
@@ -598,6 +593,17 @@ bool PlatformCALayerRemote::acceleratesDrawing() const
 void PlatformCALayerRemote::setAcceleratesDrawing(bool acceleratesDrawing)
 {
     m_acceleratesDrawing = acceleratesDrawing;
+    updateBackingStore();
+}
+
+bool PlatformCALayerRemote::wantsDeepColorBackingStore() const
+{
+    return m_wantsDeepColorBackingStore;
+}
+
+void PlatformCALayerRemote::setWantsDeepColorBackingStore(bool wantsDeepColorBackingStore)
+{
+    m_wantsDeepColorBackingStore = wantsDeepColorBackingStore;
     updateBackingStore();
 }
 
