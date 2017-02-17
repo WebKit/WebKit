@@ -36,7 +36,6 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
-#include "CachedFrame.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -834,6 +833,23 @@ DOMImplementation& Document::implementation()
 bool Document::hasManifest() const
 {
     return documentElement() && documentElement()->hasTagName(htmlTag) && documentElement()->hasAttributeWithoutSynchronization(manifestAttr);
+}
+
+bool Document::hasEverCalledWindowOpen() const
+{
+    auto& topDocument = this->topDocument();
+    if (&topDocument == this)
+        return m_hasEverCalledWindowOpen;
+    return topDocument.hasEverCalledWindowOpen();
+}
+
+void Document::markHasCalledWindowOpen()
+{
+    auto& topDocument = this->topDocument();
+    if (&topDocument == this)
+        m_hasEverCalledWindowOpen = true;
+    else
+        topDocument.markHasCalledWindowOpen();
 }
 
 DocumentType* Document::doctype() const
@@ -2206,28 +2222,16 @@ void Document::didBecomeCurrentDocumentInFrame()
     }
 }
 
+void Document::disconnectFromFrame()
+{
+    observeFrame(nullptr);
+}
+
 void Document::frameDestroyed()
 {
-    // detachFromFrame() must be called before destroying the Frame.
+    // disconnectFromFrame() must be called before destroying the Frame.
     ASSERT_WITH_SECURITY_IMPLICATION(!m_frame);
     FrameDestructionObserver::frameDestroyed();
-}
-
-void Document::attachToCachedFrame(CachedFrameBase& cachedFrame)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(cachedFrame.document() == this);
-    ASSERT(cachedFrame.view());
-    ASSERT(m_pageCacheState == Document::InPageCache);
-    observeFrame(&cachedFrame.view()->frame());
-}
-
-void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(cachedFrame.document() == this);
-    ASSERT(cachedFrame.view());
-    ASSERT(m_frame == &cachedFrame.view()->frame());
-    ASSERT(m_pageCacheState == Document::InPageCache);
-    detachFromFrame();
 }
 
 void Document::destroyRenderTree()
@@ -2346,7 +2350,7 @@ void Document::prepareForDestruction()
     }
 #endif
 
-    detachFromFrame();
+    disconnectFromFrame();
 
     m_hasPreparedForDestruction = true;
 }
