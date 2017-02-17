@@ -1,3 +1,16 @@
+2017-02-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Add additional test infrastructure and unit tests for data interaction
+        https://bugs.webkit.org/show_bug.cgi?id=168439
+        <rdar://problem/30557942>
+
+        Reviewed by Tim Horton.
+
+        Adds two new _WKTestingDelegate protocol methods that are fired when a 'start data interaction' request has been
+        sent to the web process, and when a response has been received. See Tools/ChangeLog for more details.
+
+        * UIProcess/API/Cocoa/_WKTestingDelegate.h:
+
 2017-02-16  Aakash Jain  <aakash_jain@apple.com>
 
         Remove unused method WKBundlePageCopyContextMenuItemTitle

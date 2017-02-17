@@ -80,17 +80,25 @@ using namespace TestWebKitAPI;
 @end
 
 static double progressIncrementStep = 0.033;
-static double progressTimeStep = 0.03;
+static double progressTimeStep = 0.016;
+
+static NSArray *dataInteractionEventNames()
+{
+    static NSArray *eventNames = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^() {
+        eventNames = @[ DataInteractionEnterEventName, DataInteractionOverEventName, DataInteractionPerformOperationEventName, DataInteractionLeaveEventName, DataInteractionStartEventName ];
+    });
+    return eventNames;
+}
 
 @implementation DataInteractionSimulator
 
-- (instancetype)initWithWebView:(WKWebView *)webView startLocation:(CGPoint)startLocation endLocation:(CGPoint)endLocation
+- (instancetype)initWithWebView:(TestWKWebView *)webView
 {
     if (self = [super init]) {
         _webView = webView;
         _gestureRecognizer = adoptNS([[MockLongPressGestureRecognizer alloc] initWithWindow:webView.window]);
-        _startLocation = startLocation;
-        _endLocation = endLocation;
 
         [_gestureRecognizer setMockNumberOfTouches:0];
         [_webView _setTestingDelegate:self];
@@ -106,18 +114,47 @@ static double progressTimeStep = 0.03;
     [super dealloc];
 }
 
-- (void)run
+- (void)_resetSimulatedState
 {
     _gestureProgress = 0;
     _phase = DataInteractionUnrecognized;
-    _isDoneWithDataInteraction = NO;
+    _isDoneWithCurrentRun = false;
+    _didTryToBeginDataInteraction = NO;
+    _observedEventNames = adoptNS([[NSMutableArray alloc] init]);
+}
+
+- (NSArray *)observedEventNames
+{
+    return _observedEventNames.get();
+}
+
+- (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation
+{
+    [self _resetSimulatedState];
+
+    RetainPtr<DataInteractionSimulator> strongSelf = self;
+    for (NSString *eventName in dataInteractionEventNames()) {
+        DataInteractionSimulator *weakSelf = strongSelf.get();
+        [weakSelf->_webView performAfterReceivingMessage:eventName action:^() {
+            [weakSelf->_observedEventNames addObject:eventName];
+        }];
+    }
+
+    _startLocation = startLocation;
+    _endLocation = endLocation;
     [_gestureRecognizer setMockNumberOfTouches:1];
 
-    [self _recognizeGestureAtLocation:_startLocation withState:UIGestureRecognizerStateBegan];
+    if (self.externalItemProvider) {
+        _phase = DataInteractionBegan;
+        _dataInteractionInfo = adoptNS([[MockDataInteractionInfo alloc] initWithProvider:self.externalItemProvider location:startLocation window:[_webView window]]);
+    } else
+        [self _recognizeGestureAtLocation:_startLocation withState:UIGestureRecognizerStateBegan];
+
     [self _scheduleAdvanceProgress];
 
-    TestWebKitAPI::Util::run(&_isDoneWithDataInteraction);
+    Util::run(&_isDoneWithCurrentRun);
     [_gestureRecognizer setMockNumberOfTouches:0];
+    [_webView clearMessageHandlers:dataInteractionEventNames()];
 }
 
 - (void)_advanceProgress
@@ -140,7 +177,6 @@ static double progressTimeStep = 0.03;
         [self _scheduleAdvanceProgress];
         break;
     case DataInteractionEntered:
-        [_dataInteractionInfo setMockLocationInWindow:self._currentLocation];
         [_webView _simulateDataInteractionUpdated:_dataInteractionInfo.get()];
         [self _scheduleAdvanceProgress];
         break;
@@ -151,6 +187,12 @@ static double progressTimeStep = 0.03;
 
 - (void)_finishDataInteraction
 {
+    if (_phase == DataInteractionUnrecognized) {
+        [self _recognizeGestureAtLocation:self._currentLocation withState:UIGestureRecognizerStateEnded];
+        _isDoneWithCurrentRun = true;
+        return;
+    }
+
     _phase = DataInteractionPerforming;
     [_webView _simulateDataInteractionPerformOperation:_dataInteractionInfo.get()];
     [_webView _simulateDataInteractionEnded:_dataInteractionInfo.get()];
@@ -177,6 +219,16 @@ static double progressTimeStep = 0.03;
     [_webView _simulateDataInteractionGestureRecognized];
 }
 
+- (UIItemProvider *)externalItemProvider
+{
+    return _externalItemProvider.get();
+}
+
+- (void)setExternalItemProvider:(UIItemProvider *)externalItemProvider
+{
+    _externalItemProvider = externalItemProvider;
+}
+
 #pragma mark - _WKTestingDelegate
 
 - (UILongPressGestureRecognizer *)dataInteractionGestureRecognizer
@@ -186,11 +238,18 @@ static double progressTimeStep = 0.03;
 
 - (void)webViewDidPerformDataInteractionControllerOperation:(WKWebView *)webView
 {
-    _isDoneWithDataInteraction = true;
+    _isDoneWithCurrentRun = true;
 }
 
 - (void)webView:(WKWebView *)webView beginDataInteractionWithSourceIndex:(NSInteger)sourceIndex gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
+    _didTryToBeginDataInteraction = YES;
+
+    if (self.forceRequestToFail) {
+        [_webView _simulateFailedDataInteractionWithIndex:sourceIndex];
+        return;
+    }
+
     _phase = DataInteractionBegan;
 
     // End the data interaction gesture recognizer.
@@ -201,6 +260,20 @@ static double progressTimeStep = 0.03;
     NSArray *items = [_webView _simulatedItemsForDataInteractionWithIndex:sourceIndex];
     _dataInteractionInfo = adoptNS([[MockDataInteractionInfo alloc] initWithItems:items location:location window:[_webView window]]);
     [_webView _simulateWillBeginDataInteractionWithIndex:sourceIndex withSession:nil];
+}
+
+- (void)webViewDidSendDataInteractionStartRequest:(WKWebView *)webView
+{
+    // This addresses a race condition in the testing harness wherein the web process might take longer than usual to process the
+    // request to start data interaction, and in the meantime, DataInteractionSimulator would end up completing the rest of the test
+    // before a response from the web process is received. We instead defer test progress until after the web process has indicated
+    // whether or not data interaction should commence.
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_advanceProgress) object:nil];
+}
+
+- (void)webView:(WKWebView *)webView didReceiveDataInteractionStartResponse:(BOOL)started
+{
+    [self _scheduleAdvanceProgress];
 }
 
 @end

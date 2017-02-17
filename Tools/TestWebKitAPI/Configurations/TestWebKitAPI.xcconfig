@@ -32,6 +32,6 @@ OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) -lgtest -force_load $(
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework Cocoa -framework Carbon;
 
 // FIXME: This should not be built on iOS. Instead we should create and use a TestWebKitAPI application.
-OTHER_LDFLAGS_PLATFORM[sdk=iphone*] = -framework WebCore -framework CoreGraphics -framework UIKit;
+OTHER_LDFLAGS_PLATFORM[sdk=iphone*] = -framework WebCore -framework CoreGraphics -framework UIKit -framework MobileCoreServices;
 
 LD_RUNPATH_SEARCH_PATHS = "@loader_path";

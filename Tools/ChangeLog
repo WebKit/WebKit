@@ -1,5 +1,86 @@
 2017-02-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [WK2] Add additional test infrastructure and unit tests for data interaction
+        https://bugs.webkit.org/show_bug.cgi?id=168439
+        <rdar://problem/30557942>
+
+        Reviewed by Tim Horton.
+
+        Adds test support for additional data interaction scenarios that we currently cannot test, and also adds 7 new
+        test cases to DataInteractionTests. Most of the changes here refactor and augment DataInteractionSimulator to
+        support data interaction from  See per-method descriptions below for more details.
+
+        * Configurations/TestWebKitAPI.xcconfig:
+
+        Add MobileCoreServices to the list of additional frameworks to link against on iOS.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
+        Add a new build phase that copies additional resources from WebKitAdditions/Resources/TestWebKitAPI and dumps
+        them into TestWebKitAPI.resources/ in the build directory, if the WebKitAdditions folder exists.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (-[TestWKWebView editorContainsImageElement]):
+        (-[TestWKWebView editorValue]):
+
+        New helper methods for querying information from the "editor" element in a test page.
+
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::runTestsExpectingToObserveEvents): Deleted.
+
+        Moves logic for capturing events during a simulated data interaction run from the test file to
+        DataInteractionSimulator. See -[DataInteractionSimulator observedEventNames].
+
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestMessageHandler removeMessage:]):
+        (-[TestWKWebView clearMessageHandlers:]):
+
+        Add the ability to clear message handlers from the TestWKWebView.
+
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (dataInteractionEventNames):
+        (-[DataInteractionSimulator initWithWebView:]):
+        (-[DataInteractionSimulator _resetSimulatedState]):
+
+        Moves logic to clear test harness state from any previous runs into a helper. Called at the beginning when
+        simulating data interaction.
+
+        (-[DataInteractionSimulator observedEventNames]):
+
+        Returns a list of the names of events relevant to data interaction that were observed over the course of the
+        most recent run.
+
+        (-[DataInteractionSimulator runFrom:to:]):
+
+        Changes -run to -runFrom:to:, which takes window-relative start and end locations. This allows the test harness
+        to run the same data interaction for multiple simulated gestures.
+
+        (-[DataInteractionSimulator _advanceProgress]):
+        (-[DataInteractionSimulator _finishDataInteraction]):
+        (-[DataInteractionSimulator externalItemProvider]):
+        (-[DataInteractionSimulator setExternalItemProvider:]):
+
+        Adds the -externalItemProvider property to DataInteractionSimulator. Setting this skips the gesture recognition
+        phase of a test run.
+
+        (-[DataInteractionSimulator webViewDidPerformDataInteractionControllerOperation:]):
+        (-[DataInteractionSimulator webView:beginDataInteractionWithSourceIndex:gestureRecognizer:]):
+        (-[DataInteractionSimulator webViewDidSendDataInteractionStartRequest:]):
+        (-[DataInteractionSimulator webView:didReceiveDataInteractionStartResponse:]):
+
+        While a request to start data interaction is in flight, put the remainder of the test on hold until the web
+        process returns. Then continue the test by scheduling a progress advance call. This addresses a race condition
+        wherein the the web process might take longer than usual to process the request to start data interaction, and
+        in the meantime, DataInteractionSimulator would end up completing the rest of the test before a response from
+        the web process is received, which then causes no simulated delegate methods to be fired.
+
+        (-[DataInteractionSimulator initWithWebView:startLocation:endLocation:]): Deleted.
+        (-[DataInteractionSimulator run]): Deleted.
+
+2017-02-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Remove unused test pages in TestWebKitAPI
         https://bugs.webkit.org/show_bug.cgi?id=168462
 

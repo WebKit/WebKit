@@ -2391,6 +2391,7 @@
 				8DD76F9B0486AA7600D96B5E /* Frameworks */,
 				8DD76F9E0486AA7600D96B5E /* CopyFiles */,
 				BCB9F4FB112384C000A137E0 /* Copy Resources */,
+				F471CB8B1E565C0F0028055C /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -2500,6 +2501,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F471CB8B1E565C0F0028055C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			name = "Copy additional resources";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "ADDITIONAL_RESOURCES_PATH=\"usr/local/include/WebKitAdditions/Resources/TestWebKitAPI\"\nDESTINATION_PATH=\"$TARGET_BUILD_DIR/TestWebKitAPI.resources\"\nif [ -d $TARGET_BUILD_DIR/$ADDITIONAL_RESOURCES_PATH ]; then\n    cp $TARGET_BUILD_DIR/$ADDITIONAL_RESOURCES_PATH/* $DESTINATION_PATH\nelif [ -d $SDKROOT/$ADDITIONAL_RESOURCES_PATH ]; then\n    cp $SDKROOT/$ADDITIONAL_RESOURCES_PATH/* $DESTINATION_PATH\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		7C83DE961D0A590C00FEBCF3 /* Sources */ = {

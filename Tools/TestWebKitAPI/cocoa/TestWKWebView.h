@@ -32,6 +32,7 @@
 @end
 
 @interface TestWKWebView : WKWebView
+- (void)clearMessageHandlers:(NSArray *)messageNames;
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action;
 - (void)loadTestPageNamed:(NSString *)pageName;
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName;

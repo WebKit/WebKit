@@ -43,6 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, readonly) UILongPressGestureRecognizer *dataInteractionGestureRecognizer;
+- (void)webViewDidSendDataInteractionStartRequest:(WKWebView *)webView;
+- (void)webView:(WKWebView *)webView didReceiveDataInteractionStartResponse:(BOOL)started;
 - (void)webViewDidPerformDataInteractionControllerOperation:(WKWebView *)webView;
 - (void)webView:(WKWebView *)webView beginDataInteractionWithSourceIndex:(NSInteger)sourceIndex gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
 #endif // TARGET_OS_PHONE

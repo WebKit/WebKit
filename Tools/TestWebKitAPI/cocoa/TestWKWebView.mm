@@ -59,6 +59,11 @@ SOFT_LINK_CLASS(UIKit, UIWindow)
     _messageHandlers[message] = [handler copy];
 }
 
+- (void)removeMessage:(NSString *)message
+{
+    [_messageHandlers removeObjectForKey:message];
+}
+
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     dispatch_block_t handler = _messageHandlers[message.body];
@@ -185,6 +190,12 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     _hostWindow.hidden = NO;
     [_hostWindow addSubview:self];
 #endif
+}
+
+- (void)clearMessageHandlers:(NSArray *)messageNames
+{
+    for (NSString *messageName in messageNames)
+        [_testHandler removeMessage:messageName];
 }
 
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action

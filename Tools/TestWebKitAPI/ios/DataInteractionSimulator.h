@@ -25,9 +25,9 @@
 
 #if ENABLE(DATA_INTERACTION)
 
+#import "TestWKWebView.h"
 #import <UIKit/UIItemProvider.h>
 #import <UIKit/UIKit.h>
-#import <WebKit/WebKit.h>
 #import <WebKit/_WKTestingDelegate.h>
 #import <wtf/BlockPtr.h>
 
@@ -37,6 +37,8 @@
 extern NSString * const DataInteractionEnterEventName;
 extern NSString * const DataInteractionOverEventName;
 extern NSString * const DataInteractionPerformOperationEventName;
+extern NSString * const DataInteractionLeaveEventName;
+extern NSString * const DataInteractionStartEventName;
 
 typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     DataInteractionUnrecognized = 1,
@@ -46,19 +48,26 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 };
 
 @interface DataInteractionSimulator : NSObject<_WKTestingDelegate> {
-    RetainPtr<WKWebView> _webView;
+    RetainPtr<TestWKWebView> _webView;
     RetainPtr<MockLongPressGestureRecognizer> _gestureRecognizer;
     RetainPtr<MockDataInteractionInfo> _dataInteractionInfo;
+    RetainPtr<NSMutableArray> _observedEventNames;
+    RetainPtr<UIItemProvider> _externalItemProvider;
     CGPoint _startLocation;
     CGPoint _endLocation;
 
     double _gestureProgress;
-    bool _isDoneWithDataInteraction;
+    bool _isDoneWithCurrentRun;
     DataInteractionPhase _phase;
 }
 
-- (instancetype)initWithWebView:(WKWebView *)webView startLocation:(CGPoint)startLocation endLocation:(CGPoint)endLocation;
-- (void)run;
+- (instancetype)initWithWebView:(TestWKWebView *)webView;
+- (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation;
+
+@property (nonatomic) BOOL forceRequestToFail;
+@property (nonatomic, strong) UIItemProvider *externalItemProvider;
+@property (nonatomic, readonly) BOOL didTryToBeginDataInteraction;
+@property (nonatomic, readonly) NSArray *observedEventNames;
 
 @end
 
