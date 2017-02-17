@@ -1,3 +1,10 @@
+2017-02-16  Keith Miller  <keith_miller@apple.com>
+
+        Fix merge issue with r212085 (rdar://problem/29939864).
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::callerGetter):
+
 2017-02-12  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r211609.
