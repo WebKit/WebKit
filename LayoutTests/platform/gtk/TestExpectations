@@ -824,6 +824,11 @@ fast/images/image-map-outline-with-scale-transform.html [ ImageOnlyFailure ]
 
 webkit.org/b/168433 http/tests/xmlhttprequest/redirections-and-user-headers.html [ Failure ]
 
+webkit.org/b/168501 pageoverlay/overlay-remove-reinsert-view.html [ Failure ]
+
+# WebKit2 plug-ins: No support for getting the form value.
+plugins/form-value.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1690,8 +1695,6 @@ webkit.org/b/143990 media/track/track-css-matching-timestamps.html [ Timeout Pas
 webkit.org/b/143990 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Timeout Pass ]
 webkit.org/b/143990 media/track/track-disabled-addcue.html [ Timeout Pass ]
 webkit.org/b/143990 media/track/track-disabled.html [ Timeout Pass ]
-
-webkit.org/b/132055 media/track/track-datacue.html  [ Timeout ]
 
 webkit.org/b/130971 media/track/track-remove-track.html [ Timeout ]
 
@@ -2767,6 +2770,8 @@ webkit.org/b/163833 svg/custom/getscreenctm-in-mixed-content2.xhtml [ Failure ]
 
 webkit.org/b/163857 imported/w3c/web-platform-tests/touch-events/create-touch-touchlist.html [ Skip ]
 webkit.org/b/163858 fast/events/touch/touch-constructor.html [ Skip ]
+webkit.org/b/163858 imported/w3c/web-platform-tests/touch-events/touch-retargeting.html [ Skip ]
+webkit.org/b/163858 imported/w3c/web-platform-tests/touch-events/touch-touchevent-constructor.html [ Skip ]
 
 webkit.org/b/163970 fast/block/positioning/fixed-container-with-relative-parent.html [ ImageOnlyFailure ]
 
@@ -2834,9 +2839,9 @@ webkit.org/b/168373 fast/mediastream/RTCPeerConnection-more-media-to-negotiate.h
 webkit.org/b/168373 fullscreen/video-controls-rtl.html [ Failure ]
 webkit.org/b/168373 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplaythrough.html [ Failure ]
 webkit.org/b/168373 media/media-preload-no-delay-loadevent.html [ Failure ]
-webkit.org/b/168373 media/track/track-datacue.html [ Failure ]
 webkit.org/b/168373 media/video-background-playback.html [ Failure ]
 webkit.org/b/168373 media/video-concurrent-playback.html [ Failure ]
+webkit.org/b/132055 media/track/track-datacue.html [ Failure ]
 
 webkit.org/b/168426 fast/html/marquee-scroll.html [ ImageOnlyFailure ]
 webkit.org/b/168426 fast/multicol/columns-on-body.html [ ImageOnlyFailure ]
@@ -2856,6 +2861,9 @@ webkit.org/b/168429 fast/text/simple-line-layout-simple-text-but-complex-font-pa
 webkit.org/b/168430 fast/inline/outline-corners-with-offset.html [ ImageOnlyFailure ]
 
 webkit.org/b/168431 fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
+
+webkit.org/b/168415 imported/w3c/web-platform-tests/resource-timing/rt-cors.html [ Failure ]
+webkit.org/b/168415 imported/w3c/web-platform-tests/resource-timing/rt-cors.worker.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
