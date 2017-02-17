@@ -1,3 +1,23 @@
+2017-02-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop PassRefPtr from ArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=168455
+
+        Reviewed by Geoffrey Garen.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readArrayBufferView):
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitData):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::shouldWaitForLoadingOfResource):
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        (WebCore::CDMSessionAVFoundationObjC::generateKeyRequest):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+
 2017-02-16  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION(r212439): Web Inspector Toolbar / Window appears broken

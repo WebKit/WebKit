@@ -38,6 +38,7 @@
 #import <AVFoundation/AVAsset.h>
 #import <AVFoundation/AVAssetResourceLoader.h>
 #import <objc/objc-runtime.h>
+#import <runtime/TypedArrayInlines.h>
 #import <wtf/MainThread.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
@@ -100,7 +101,8 @@ RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& 
     destinationURL = String();
 
     RefPtr<ArrayBuffer> keyRequestBuffer = ArrayBuffer::create([keyRequest.get() bytes], [keyRequest.get() length]);
-    return Uint8Array::create(keyRequestBuffer, 0, keyRequestBuffer->byteLength());
+    unsigned byteLength = keyRequestBuffer->byteLength();
+    return Uint8Array::create(WTFMove(keyRequestBuffer), 0, byteLength);
 }
 
 void CDMSessionAVFoundationObjC::releaseKeys()

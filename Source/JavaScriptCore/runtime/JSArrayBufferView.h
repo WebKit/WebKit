@@ -122,12 +122,12 @@ protected:
         ConstructionContext(Structure*, uint32_t length, void* vector);
         
         JS_EXPORT_PRIVATE ConstructionContext(
-            VM&, Structure*, PassRefPtr<ArrayBuffer>,
+            VM&, Structure*, RefPtr<ArrayBuffer>&&,
             unsigned byteOffset, unsigned length);
         
         enum DataViewTag { DataView };
         ConstructionContext(
-            Structure*, PassRefPtr<ArrayBuffer>,
+            Structure*, RefPtr<ArrayBuffer>&&,
             unsigned byteOffset, unsigned length, DataViewTag);
         
         bool operator!() const { return !m_structure; }
@@ -162,8 +162,8 @@ public:
     ArrayBuffer* possiblySharedBuffer();
     JSArrayBuffer* unsharedJSBuffer(ExecState* exec);
     JSArrayBuffer* possiblySharedJSBuffer(ExecState* exec);
-    PassRefPtr<ArrayBufferView> unsharedImpl();
-    PassRefPtr<ArrayBufferView> possiblySharedImpl();
+    RefPtr<ArrayBufferView> unsharedImpl();
+    RefPtr<ArrayBufferView> possiblySharedImpl();
     bool isNeutered() { return hasArrayBuffer() && !vector(); }
     void neuter();
     

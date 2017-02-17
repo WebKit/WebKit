@@ -103,7 +103,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
 }
 
 JSArrayBufferView::ConstructionContext::ConstructionContext(
-    VM& vm, Structure* structure, PassRefPtr<ArrayBuffer> arrayBuffer,
+    VM& vm, Structure* structure, RefPtr<ArrayBuffer>&& arrayBuffer,
     unsigned byteOffset, unsigned length)
     : m_structure(structure)
     , m_length(length)
@@ -116,7 +116,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
 }
 
 JSArrayBufferView::ConstructionContext::ConstructionContext(
-    Structure* structure, PassRefPtr<ArrayBuffer> arrayBuffer,
+    Structure* structure, RefPtr<ArrayBuffer>&& arrayBuffer,
     unsigned byteOffset, unsigned length, DataViewTag)
     : m_structure(structure)
     , m_length(length)

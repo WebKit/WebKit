@@ -556,7 +556,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
 
         scope.release();
         return JSValue::encode(ViewClass::create(
-            exec, structure, arrayBuffer,
+            exec, structure, WTFMove(arrayBuffer),
             thisObject->byteOffset() + offset * ViewClass::elementSize,
             length));
     }

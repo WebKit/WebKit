@@ -253,7 +253,7 @@ protected:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
     JS_EXPORT_PRIVATE static ArrayBuffer* slowDownAndWasteMemory(JSArrayBufferView*);
-    JS_EXPORT_PRIVATE static PassRefPtr<ArrayBufferView> getTypedArrayImpl(JSArrayBufferView*);
+    JS_EXPORT_PRIVATE static RefPtr<ArrayBufferView> getTypedArrayImpl(JSArrayBufferView*);
 
 private:
     friend class LLIntOffsetsExtractor;

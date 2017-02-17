@@ -36,12 +36,12 @@ public:
     static const unsigned StructureFlags = Base::StructureFlags;
     
 protected:
-    JSArrayBuffer(VM&, Structure*, PassRefPtr<ArrayBuffer>);
+    JSArrayBuffer(VM&, Structure*, RefPtr<ArrayBuffer>&&);
     void finishCreation(VM&, JSGlobalObject*);
     
 public:
     // This function will register the new wrapper with the vm's TypedArrayController.
-    JS_EXPORT_PRIVATE static JSArrayBuffer* create(VM&, Structure*, PassRefPtr<ArrayBuffer>);
+    JS_EXPORT_PRIVATE static JSArrayBuffer* create(VM&, Structure*, RefPtr<ArrayBuffer>&&);
 
     ArrayBuffer* impl() const { return m_impl; }
     

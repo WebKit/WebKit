@@ -32,22 +32,22 @@
 
 namespace JSC {
 
-DataView::DataView(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned byteLength)
-    : ArrayBufferView(buffer, byteOffset)
+DataView::DataView(RefPtr<ArrayBuffer>&& buffer, unsigned byteOffset, unsigned byteLength)
+    : ArrayBufferView(WTFMove(buffer), byteOffset)
     , m_byteLength(byteLength)
 {
 }
 
 Ref<DataView> DataView::create(
-    PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned byteLength)
+    RefPtr<ArrayBuffer>&& buffer, unsigned byteOffset, unsigned byteLength)
 {
-    return adoptRef(*new DataView(buffer, byteOffset, byteLength));
+    return adoptRef(*new DataView(WTFMove(buffer), byteOffset, byteLength));
 }
 
-Ref<DataView> DataView::create(PassRefPtr<ArrayBuffer> passedBuffer)
+Ref<DataView> DataView::create(RefPtr<ArrayBuffer>&& buffer)
 {
-    RefPtr<ArrayBuffer> buffer = passedBuffer;
-    return create(buffer, 0, buffer->byteLength());
+    unsigned byteLength = buffer->byteLength();
+    return create(WTFMove(buffer), 0, byteLength);
 }
 
 JSArrayBufferView* DataView::wrap(ExecState* exec, JSGlobalObject* globalObject)

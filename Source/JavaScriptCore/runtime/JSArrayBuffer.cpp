@@ -35,7 +35,7 @@ namespace JSC {
 const ClassInfo JSArrayBuffer::s_info = {
     "ArrayBuffer", &Base::s_info, 0, CREATE_METHOD_TABLE(JSArrayBuffer)};
 
-JSArrayBuffer::JSArrayBuffer(VM& vm, Structure* structure, PassRefPtr<ArrayBuffer> arrayBuffer)
+JSArrayBuffer::JSArrayBuffer(VM& vm, Structure* structure, RefPtr<ArrayBuffer>&& arrayBuffer)
     : Base(vm, structure)
     , m_impl(arrayBuffer.get())
 {
@@ -50,12 +50,11 @@ void JSArrayBuffer::finishCreation(VM& vm, JSGlobalObject* globalObject)
 }
 
 JSArrayBuffer* JSArrayBuffer::create(
-    VM& vm, Structure* structure, PassRefPtr<ArrayBuffer> passedBuffer)
+    VM& vm, Structure* structure, RefPtr<ArrayBuffer>&& buffer)
 {
-    RefPtr<ArrayBuffer> buffer = passedBuffer;
     JSArrayBuffer* result =
         new (NotNull, allocateCell<JSArrayBuffer>(vm.heap))
-        JSArrayBuffer(vm, structure, buffer);
+        JSArrayBuffer(vm, structure, WTFMove(buffer));
     result->finishCreation(vm, structure->globalObject());
     return result;
 }

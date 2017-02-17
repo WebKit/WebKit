@@ -97,14 +97,14 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createUninit
 
 template<typename Adaptor>
 JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
-    ExecState* exec, Structure* structure, PassRefPtr<ArrayBuffer> passedBuffer,
+    ExecState* exec, Structure* structure, RefPtr<ArrayBuffer>&& buffer,
     unsigned byteOffset, unsigned length)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    RefPtr<ArrayBuffer> buffer = passedBuffer;
     size_t size = sizeof(typename Adaptor::Type);
-    if (!ArrayBufferView::verifySubRangeLength(buffer, byteOffset, length, size)) {
+    ASSERT(buffer);
+    if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, length, size)) {
         throwException(exec, scope, createRangeError(exec, "Length out of range of buffer"));
         return nullptr;
     }
@@ -112,7 +112,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
         throwException(exec, scope, createRangeError(exec, "Byte offset is not aligned"));
         return nullptr;
     }
-    ConstructionContext context(vm, structure, buffer, byteOffset, length);
+    ConstructionContext context(vm, structure, WTFMove(buffer), byteOffset, length);
     ASSERT(context);
     JSGenericTypedArrayView* result =
         new (NotNull, allocateCell<JSGenericTypedArrayView>(vm.heap))
@@ -123,10 +123,9 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
 
 template<typename Adaptor>
 JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
-    VM& vm, Structure* structure, PassRefPtr<typename Adaptor::ViewType> impl)
+    VM& vm, Structure* structure, RefPtr<typename Adaptor::ViewType>&& impl)
 {
-    RefPtr<ArrayBuffer> buffer = impl->possiblySharedBuffer();
-    ConstructionContext context(vm, structure, buffer, impl->byteOffset(), impl->length());
+    ConstructionContext context(vm, structure, impl->possiblySharedBuffer(), impl->byteOffset(), impl->length());
     ASSERT(context);
     JSGenericTypedArrayView* result =
         new (NotNull, allocateCell<JSGenericTypedArrayView>(vm.heap))
@@ -138,9 +137,9 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
 template<typename Adaptor>
 JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
     Structure* structure, JSGlobalObject* globalObject,
-    PassRefPtr<typename Adaptor::ViewType> impl)
+    RefPtr<typename Adaptor::ViewType>&& impl)
 {
-    return create(globalObject->vm(), structure, impl);
+    return create(globalObject->vm(), structure, WTFMove(impl));
 }
 
 template<typename Adaptor>
@@ -322,13 +321,13 @@ bool JSGenericTypedArrayView<Adaptor>::set(
 }
 
 template<typename Adaptor>
-PassRefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::possiblySharedTypedImpl()
+RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::possiblySharedTypedImpl()
 {
     return Adaptor::ViewType::create(possiblySharedBuffer(), byteOffset(), length());
 }
 
 template<typename Adaptor>
-PassRefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::unsharedTypedImpl()
+RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::unsharedTypedImpl()
 {
     return Adaptor::ViewType::create(unsharedBuffer(), byteOffset(), length());
 }
@@ -590,8 +589,7 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
 }
 
 template<typename Adaptor>
-PassRefPtr<ArrayBufferView>
-JSGenericTypedArrayView<Adaptor>::getTypedArrayImpl(JSArrayBufferView* object)
+RefPtr<ArrayBufferView> JSGenericTypedArrayView<Adaptor>::getTypedArrayImpl(JSArrayBufferView* object)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
     return thisObject->possiblySharedTypedImpl();

@@ -29,7 +29,6 @@
 #include "TypedArrayType.h"
 #include <algorithm>
 #include <limits.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -48,16 +47,16 @@ public:
         return !m_buffer || m_buffer->isNeutered();
     }
     
-    PassRefPtr<ArrayBuffer> possiblySharedBuffer() const
+    RefPtr<ArrayBuffer> possiblySharedBuffer() const
     {
         if (isNeutered())
-            return 0;
+            return nullptr;
         return m_buffer;
     }
     
-    PassRefPtr<ArrayBuffer> unsharedBuffer() const
+    RefPtr<ArrayBuffer> unsharedBuffer() const
     {
-        PassRefPtr<ArrayBuffer> result = possiblySharedBuffer();
+        RefPtr<ArrayBuffer> result = possiblySharedBuffer();
         RELEASE_ASSERT(!result->isShared());
         return result;
     }
@@ -100,9 +99,9 @@ public:
 
     // Helper to verify that a given sub-range of an ArrayBuffer is
     // within range.
-    static bool verifySubRangeLength(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned numElements, size_t size)
+    static bool verifySubRangeLength(const ArrayBuffer& buffer, unsigned byteOffset, unsigned numElements, size_t size)
     {
-        unsigned byteLength = buffer->byteLength();
+        unsigned byteLength = buffer.byteLength();
         if (byteOffset > byteLength)
             return false;
         unsigned remainingElements = (byteLength - byteOffset) / size;
@@ -114,7 +113,7 @@ public:
     virtual JSArrayBufferView* wrap(ExecState*, JSGlobalObject*) = 0;
     
 protected:
-    JS_EXPORT_PRIVATE ArrayBufferView(PassRefPtr<ArrayBuffer>, unsigned byteOffset);
+    JS_EXPORT_PRIVATE ArrayBufferView(RefPtr<ArrayBuffer>&&, unsigned byteOffset);
 
     inline bool setImpl(ArrayBufferView*, unsigned byteOffset);
 
@@ -130,20 +129,20 @@ protected:
     // output offset is in number of bytes from the underlying buffer's view.
     template <typename T>
     static void clampOffsetAndNumElements(
-        PassRefPtr<ArrayBuffer> buffer,
+        const ArrayBuffer& buffer,
         unsigned arrayByteOffset,
         unsigned *offset,
         unsigned *numElements)
     {
         unsigned maxOffset = (UINT_MAX - arrayByteOffset) / sizeof(T);
         if (*offset > maxOffset) {
-            *offset = buffer->byteLength();
+            *offset = buffer.byteLength();
             *numElements = 0;
             return;
         }
         *offset = arrayByteOffset + *offset * sizeof(T);
-        *offset = std::min(buffer->byteLength(), *offset);
-        unsigned remainingElements = (buffer->byteLength() - *offset) / sizeof(T);
+        *offset = std::min(buffer.byteLength(), *offset);
+        unsigned remainingElements = (buffer.byteLength() - *offset) / sizeof(T);
         *numElements = std::min(remainingElements, *numElements);
     }
 

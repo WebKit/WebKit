@@ -49,9 +49,9 @@ MAKE_S_INFO(Uint32);
 MAKE_S_INFO(Float32);
 MAKE_S_INFO(Float64);
 
-JSUint8Array* createUint8TypedArray(ExecState* exec, Structure* structure, RefPtr<ArrayBuffer>&& passedBuffer, unsigned byteOffset, unsigned length)
+JSUint8Array* createUint8TypedArray(ExecState* exec, Structure* structure, RefPtr<ArrayBuffer>&& buffer, unsigned byteOffset, unsigned length)
 {
-    return JSUint8Array::create(exec, structure, std::forward<RefPtr<ArrayBuffer>>(passedBuffer), byteOffset, length);
+    return JSUint8Array::create(exec, structure, WTFMove(buffer), byteOffset, length);
 }
 
 

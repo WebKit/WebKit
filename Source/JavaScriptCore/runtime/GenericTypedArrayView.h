@@ -33,12 +33,12 @@ namespace JSC {
 template<typename Adaptor>
 class GenericTypedArrayView : public ArrayBufferView {
 protected:
-    GenericTypedArrayView(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
+    GenericTypedArrayView(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
 
 public:
     static RefPtr<GenericTypedArrayView> create(unsigned length);
     static RefPtr<GenericTypedArrayView> create(const typename Adaptor::Type* array, unsigned length);
-    static RefPtr<GenericTypedArrayView> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
+    static RefPtr<GenericTypedArrayView> create(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
     
     static RefPtr<GenericTypedArrayView> createUninitialized(unsigned length);
     

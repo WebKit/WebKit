@@ -72,7 +72,8 @@ ExceptionOr<Ref<FontFace>> FontFace::create(Document& document, const String& fa
             return { };
         },
         [&] (RefPtr<ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> {
-            auto arrayBufferView = JSC::Uint8Array::create(arrayBuffer, 0, arrayBuffer->byteLength());
+            unsigned byteLength = arrayBuffer->byteLength();
+            auto arrayBufferView = JSC::Uint8Array::create(WTFMove(arrayBuffer), 0, byteLength);
             dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
             return { };
         }

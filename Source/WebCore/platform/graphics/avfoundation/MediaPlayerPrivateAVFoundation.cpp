@@ -41,7 +41,9 @@
 #include "Settings.h"
 #include "SoftLinking.h"
 #include <CoreMedia/CoreMedia.h>
+#include <heap/HeapInlines.h>
 #include <runtime/DataView.h>
+#include <runtime/TypedArrayInlines.h>
 #include <runtime/Uint16Array.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -1028,7 +1030,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     RefPtr<ArrayBuffer> initDataBuffer = initData->unsharedBuffer();
 
     // Use a DataView to read uint32 values from the buffer, as Uint32Array requires the reads be aligned on 4-byte boundaries. 
-    RefPtr<JSC::DataView> initDataView = JSC::DataView::create(initDataBuffer, 0, initDataBuffer->byteLength());
+    RefPtr<JSC::DataView> initDataView = JSC::DataView::create(initDataBuffer.copyRef(), 0, initDataBuffer->byteLength());
     uint32_t offset = 0;
     bool status = true;
 
@@ -1037,7 +1039,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!status || offset + keyURILength > initData->length())
         return false;
 
-    RefPtr<Uint16Array> keyURIArray = Uint16Array::create(initDataBuffer, offset, keyURILength);
+    RefPtr<Uint16Array> keyURIArray = Uint16Array::create(initDataBuffer.copyRef(), offset, keyURILength);
     if (!keyURIArray)
         return false;
 
@@ -1049,7 +1051,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!status || offset + keyIDLength > initData->length())
         return false;
 
-    RefPtr<Uint8Array> keyIDArray = Uint8Array::create(initDataBuffer, offset, keyIDLength);
+    RefPtr<Uint8Array> keyIDArray = Uint8Array::create(initDataBuffer.copyRef(), offset, keyIDLength);
     if (!keyIDArray)
         return false;
 
@@ -1061,7 +1063,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!status || offset + certificateLength > initData->length())
         return false;
 
-    certificate = Uint8Array::create(initDataBuffer, offset, certificateLength);
+    certificate = Uint8Array::create(WTFMove(initDataBuffer), offset, certificateLength);
     if (!certificate)
         return false;
 

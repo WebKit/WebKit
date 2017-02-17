@@ -107,9 +107,9 @@ public:
     static JSGenericTypedArrayView* create(ExecState*, Structure*, unsigned length);
     static JSGenericTypedArrayView* createWithFastVector(ExecState*, Structure*, unsigned length, void* vector);
     static JSGenericTypedArrayView* createUninitialized(ExecState*, Structure*, unsigned length);
-    static JSGenericTypedArrayView* create(ExecState*, Structure*, PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
-    static JSGenericTypedArrayView* create(VM&, Structure*, PassRefPtr<typename Adaptor::ViewType> impl);
-    static JSGenericTypedArrayView* create(Structure*, JSGlobalObject*, PassRefPtr<typename Adaptor::ViewType> impl);
+    static JSGenericTypedArrayView* create(ExecState*, Structure*, RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
+    static JSGenericTypedArrayView* create(VM&, Structure*, RefPtr<typename Adaptor::ViewType>&& impl);
+    static JSGenericTypedArrayView* create(Structure*, JSGlobalObject*, RefPtr<typename Adaptor::ViewType>&& impl);
     
     unsigned byteLength() const { return m_length * sizeof(typename Adaptor::Type); }
     size_t byteSize() const { return sizeOf(m_length, sizeof(typename Adaptor::Type)); }
@@ -225,8 +225,8 @@ public:
     // then it will have thrown an exception.
     bool set(ExecState*, unsigned offset, JSObject*, unsigned objectOffset, unsigned length, CopyType type = CopyType::Unobservable);
     
-    PassRefPtr<typename Adaptor::ViewType> possiblySharedTypedImpl();
-    PassRefPtr<typename Adaptor::ViewType> unsharedTypedImpl();
+    RefPtr<typename Adaptor::ViewType> possiblySharedTypedImpl();
+    RefPtr<typename Adaptor::ViewType> unsharedTypedImpl();
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -291,7 +291,7 @@ protected:
     // Allocates the full-on native buffer and moves data into the C heap if
     // necessary. Note that this never allocates in the GC heap.
     static ArrayBuffer* slowDownAndWasteMemory(JSArrayBufferView*);
-    static PassRefPtr<ArrayBufferView> getTypedArrayImpl(JSArrayBufferView*);
+    static RefPtr<ArrayBufferView> getTypedArrayImpl(JSArrayBufferView*);
 
 private:
     // Returns true if successful, and false on error; it will throw on error.

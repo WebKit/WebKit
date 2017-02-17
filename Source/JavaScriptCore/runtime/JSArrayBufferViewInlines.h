@@ -61,14 +61,14 @@ inline ArrayBuffer* JSArrayBufferView::existingBufferInButterfly()
     return butterfly()->indexingHeader()->arrayBuffer();
 }
 
-inline PassRefPtr<ArrayBufferView> JSArrayBufferView::possiblySharedImpl()
+inline RefPtr<ArrayBufferView> JSArrayBufferView::possiblySharedImpl()
 {
     return methodTable()->getTypedArrayImpl(this);
 }
 
-inline PassRefPtr<ArrayBufferView> JSArrayBufferView::unsharedImpl()
+inline RefPtr<ArrayBufferView> JSArrayBufferView::unsharedImpl()
 {
-    PassRefPtr<ArrayBufferView> result = possiblySharedImpl();
+    RefPtr<ArrayBufferView> result = possiblySharedImpl();
     RELEASE_ASSERT(!result->isShared());
     return result;
 }

@@ -1,3 +1,75 @@
+2017-02-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop PassRefPtr from ArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=168455
+
+        Reviewed by Geoffrey Garen.
+
+        This patch finally drops all the PassRefPtr in JSC.
+        We changed PassRefPtr<ArrayBuffer> to RefPtr<ArrayBuffer>&&.
+        Since ArrayBuffer may be nullptr if the array is neutered,
+        we hold it as RefPtr<> instead of Ref<>.
+
+        And we also drops 2 files, TypedArrayBase.h and IntegralTypedArrayBase.h.
+        They are not used (and they are not referenced from the project file).
+
+        * inspector/JavaScriptCallFrame.h:
+        * jsc.cpp:
+        (functionDollarAgentReceiveBroadcast):
+        * runtime/ArrayBufferView.cpp:
+        (JSC::ArrayBufferView::ArrayBufferView):
+        * runtime/ArrayBufferView.h:
+        (JSC::ArrayBufferView::possiblySharedBuffer):
+        (JSC::ArrayBufferView::unsharedBuffer):
+        (JSC::ArrayBufferView::verifySubRangeLength):
+        (JSC::ArrayBufferView::clampOffsetAndNumElements):
+        * runtime/ClassInfo.h:
+        * runtime/DataView.cpp:
+        (JSC::DataView::DataView):
+        (JSC::DataView::create):
+        * runtime/DataView.h:
+        * runtime/GenericTypedArrayView.h:
+        * runtime/GenericTypedArrayViewInlines.h:
+        (JSC::GenericTypedArrayView<Adaptor>::GenericTypedArrayView):
+        (JSC::GenericTypedArrayView<Adaptor>::create):
+        (JSC::GenericTypedArrayView<Adaptor>::subarray):
+        * runtime/IntegralTypedArrayBase.h: Removed.
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::JSArrayBuffer):
+        (JSC::JSArrayBuffer::create):
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::arrayBufferProtoFuncSlice):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::possiblySharedImpl):
+        (JSC::JSArrayBufferView::unsharedImpl):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::slowDownAndWasteMemory):
+        (JSC::JSCell::getTypedArrayImpl):
+        * runtime/JSCell.h:
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::create):
+        (JSC::JSDataView::possiblySharedTypedImpl):
+        (JSC::JSDataView::unsharedTypedImpl):
+        (JSC::JSDataView::getTypedArrayImpl):
+        * runtime/JSDataView.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::create):
+        (JSC::JSGenericTypedArrayView<Adaptor>::possiblySharedTypedImpl):
+        (JSC::JSGenericTypedArrayView<Adaptor>::unsharedTypedImpl):
+        (JSC::JSGenericTypedArrayView<Adaptor>::getTypedArrayImpl):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * runtime/JSTypedArrays.cpp:
+        (JSC::createUint8TypedArray):
+        * runtime/TypedArrayBase.h: Removed.
+
 2017-02-16  Keith Miller  <keith_miller@apple.com>
 
         ASSERTION FAILED: vm.heap.mutatorState() == MutatorState::Running || vm.apiLock().ownerThread() != std::this_thread::get_id()

@@ -135,7 +135,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
         }
 
         scope.release();
-        return ViewClass::create(exec, structure, buffer, offset, length);
+        return ViewClass::create(exec, structure, WTFMove(buffer), offset, length);
     }
     ASSERT(!offset && !lengthOpt);
     

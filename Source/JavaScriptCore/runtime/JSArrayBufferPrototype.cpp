@@ -65,7 +65,7 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
     
     Structure* structure = callee->globalObject()->arrayBufferStructure(newBuffer->sharingMode());
     
-    JSArrayBuffer* result = JSArrayBuffer::create(vm, structure, newBuffer);
+    JSArrayBuffer* result = JSArrayBuffer::create(vm, structure, WTFMove(newBuffer));
     
     return JSValue::encode(result);
 }
