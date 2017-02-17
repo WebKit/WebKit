@@ -1,3 +1,33 @@
+2017-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Remove EFL-specific files in Source.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * editing/efl: Removed.
+        * page/efl: Removed.
+        * platform/audio/efl: Removed.
+        * platform/efl: Removed.
+        * platform/efl/DefaultTheme: Removed.
+        * platform/efl/DefaultTheme/widget: Removed.
+        * platform/efl/DefaultTheme/widget/button: Removed.
+        * platform/efl/DefaultTheme/widget/check: Removed.
+        * platform/efl/DefaultTheme/widget/combo: Removed.
+        * platform/efl/DefaultTheme/widget/entry: Removed.
+        * platform/efl/DefaultTheme/widget/progressbar: Removed.
+        * platform/efl/DefaultTheme/widget/radio: Removed.
+        * platform/efl/DefaultTheme/widget/scrollbar: Removed.
+        * platform/efl/DefaultTheme/widget/search: Removed.
+        * platform/efl/DefaultTheme/widget/search/cancel: Removed.
+        * platform/efl/DefaultTheme/widget/search/decoration: Removed.
+        * platform/efl/DefaultTheme/widget/search/field: Removed.
+        * platform/efl/DefaultTheme/widget/slider: Removed.
+        * platform/efl/DefaultTheme/widget/spinner: Removed.
+        * platform/gamepad/efl: Removed.
+        * platform/graphics/efl: Removed.
+        * platform/graphics/surfaces/efl: Removed.
+        * platform/network/efl: Removed.
+
 2017-02-16  Simon Fraser  <simon.fraser@apple.com>
 
         Add WebUSB to features.json as a "Not Considering".

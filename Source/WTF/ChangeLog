@@ -1,3 +1,12 @@
+2017-02-16  Alex Christensen  <achristensen@webkit.org>
+
+        Remove EFL-specific files in Source.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * wtf/text/efl: Removed.
+        * wtf/text/efl/TextBreakIteratorInternalICUEfl.cpp: Removed.
+
 2017-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         The collector thread should only start when the mutator doesn't have heap access
