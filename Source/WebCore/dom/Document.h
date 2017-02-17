@@ -81,6 +81,7 @@ class CSSFontSelector;
 class CSSStyleDeclaration;
 class CSSStyleSheet;
 class CachedCSSStyleSheet;
+class CachedFrameBase;
 class CachedResourceLoader;
 class CachedScript;
 class CanvasRenderingContext;
@@ -375,9 +376,6 @@ public:
     WEBCORE_EXPORT bool hasFocus() const;
 
     bool hasManifest() const;
-
-    bool hasEverCalledWindowOpen() const;
-    void markHasCalledWindowOpen();
     
     WEBCORE_EXPORT ExceptionOr<Ref<Element>> createElementForBindings(const AtomicString& tagName);
     WEBCORE_EXPORT Ref<DocumentFragment> createDocumentFragment();
@@ -564,7 +562,6 @@ public:
 
     void didBecomeCurrentDocumentInFrame();
     void destroyRenderTree();
-    void disconnectFromFrame();
     void prepareForDestruction();
 
     // Override ScriptExecutionContext methods to do additional work
@@ -1302,6 +1299,9 @@ public:
     void didRemoveInDocumentShadowRoot(ShadowRoot&);
     const HashSet<ShadowRoot*>& inDocumentShadowRoots() const { return m_inDocumentShadowRoots; }
 
+    void attachToCachedFrame(CachedFrameBase&);
+    void detachFromCachedFrame(CachedFrameBase&);
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1314,6 +1314,8 @@ private:
     friend class Node;
     friend class IgnoreDestructiveWriteCountIncrementer;
     friend class IgnoreOpensDuringUnloadCountIncrementer;
+
+    void detachFromFrame() { observeFrame(nullptr); }
 
     void updateTitleElement(Element* newTitleElement);
     void frameDestroyed() final;
@@ -1493,7 +1495,6 @@ private:
     bool m_bParsing;
 
     Timer m_styleRecalcTimer;
-    bool m_hasEverCalledWindowOpen { false };
     bool m_pendingStyleRecalcShouldForce;
     bool m_inStyleRecalc;
     bool m_closeAfterStyleRecalc;

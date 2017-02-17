@@ -297,5 +297,3 @@ animatedImageAsyncDecodingEnabled initial=true
 es6ModulesEnabled initial=false
 
 shouldSuppressKeyboardInputDuringProvisionalNavigation initial=false
-
-allowsPageCacheWithWindowOpener initial=false

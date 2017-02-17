@@ -2511,25 +2511,31 @@ void FrameLoader::dispatchOnloadEvents()
 
 void FrameLoader::frameDetached()
 {
-    // Calling stopAllLoaders can cause the frame to be deallocated, including the frame loader.
+    // Calling stopAllLoaders() can cause the frame to be deallocated, including the frame loader.
     Ref<Frame> protectedFrame(m_frame);
 
-    stopAllLoaders();
-    m_frame.document()->stopActiveDOMObjects();
+    if (m_frame.document()->pageCacheState() != Document::InPageCache) {
+        stopAllLoaders();
+        m_frame.document()->stopActiveDOMObjects();
+    }
+
     detachFromParent();
 }
 
 void FrameLoader::detachFromParent()
 {
+    // Calling stopAllLoaders() can cause the frame to be deallocated, including the frame loader.
     Ref<Frame> protect(m_frame);
 
     closeURL();
     history().saveScrollPositionAndViewStateToItem(history().currentItem());
     detachChildren();
-    // stopAllLoaders() needs to be called after detachChildren(), because detachedChildren()
-    // will trigger the unload event handlers of any child frames, and those event
-    // handlers might start a new subresource load in this frame.
-    stopAllLoaders();
+    if (m_frame.document()->pageCacheState() != Document::InPageCache) {
+        // stopAllLoaders() needs to be called after detachChildren() if the document is not in the page cache,
+        // because detachedChildren() will trigger the unload event handlers of any child frames, and those event
+        // handlers might start a new subresource load in this frame.
+        stopAllLoaders();
+    }
 
     InspectorInstrumentation::frameDetachedFromParent(m_frame);
 

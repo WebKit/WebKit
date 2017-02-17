@@ -52,7 +52,9 @@ public:
 protected:
     CachedFrameBase(Frame&);
     ~CachedFrameBase();
-    
+
+    void pruneDetachedChildFrames();
+
     RefPtr<Document> m_document;
     RefPtr<DocumentLoader> m_documentLoader;
     RefPtr<FrameView> m_view;

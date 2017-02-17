@@ -5401,11 +5401,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setExperimentalNotificationsEnabled(enabled);
 
-    hr = prefsPrivate->allowsPageCacheWithWindowOpener(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings.setAllowsPageCacheWithWindowOpener(enabled);
-
     hr = prefsPrivate->isWebSecurityEnabled(&enabled);
     if (FAILED(hr))
         return hr;

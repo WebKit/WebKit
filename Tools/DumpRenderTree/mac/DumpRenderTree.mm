@@ -972,7 +972,6 @@ static void resetWebPreferencesToConsistentValues(const TestOptions& options)
     // The back/forward cache is causing problems due to layouts during transition from one page to another.
     // So, turn it off for now, but we might want to turn it back on some day.
     [preferences setUsesPageCache:NO];
-    [preferences setAllowsPageCacheWithWindowOpener:NO];
     [preferences setAcceleratedCompositingEnabled:YES];
 #if USE(CA)
     [preferences setCanvasUsesAcceleratedDrawing:YES];
