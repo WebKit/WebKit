@@ -34,10 +34,6 @@
 typedef struct _GdkEventScroll GdkEventScroll;
 #endif
 
-#if PLATFORM(EFL)
-typedef struct _Evas_Event_Mouse_Wheel Evas_Event_Mouse_Wheel;
-#endif
-
 namespace WebCore {
 
 // The ScrollByPixelWheelEvent is a fine-grained event that specifies the precise number of pixels to scroll.
@@ -121,10 +117,6 @@ public:
 
 #if PLATFORM(GTK)
     explicit PlatformWheelEvent(GdkEventScroll*);
-#endif
-
-#if PLATFORM(EFL)
-    explicit PlatformWheelEvent(const Evas_Event_Mouse_Wheel*);
 #endif
 
 #if PLATFORM(COCOA)

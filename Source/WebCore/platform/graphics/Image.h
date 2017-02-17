@@ -163,10 +163,6 @@ public:
     virtual GdkPixbuf* getGdkPixbuf() { return nullptr; }
 #endif
 
-#if PLATFORM(EFL)
-    virtual Evas_Object* getEvasObject(Evas*) { return nullptr; }
-#endif
-
     virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
         const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode = BlendModeNormal);
 

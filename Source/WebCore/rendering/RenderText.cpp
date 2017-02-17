@@ -1508,7 +1508,7 @@ int RenderText::previousOffset(int current) const
     return result;
 }
 
-#if PLATFORM(COCOA) || PLATFORM(EFL) || PLATFORM(GTK)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
 
 const UChar hangulChoseongStart = 0x1100;
 const UChar hangulChoseongEnd = 0x115F;
@@ -1555,7 +1555,7 @@ int RenderText::previousOffsetForBackwardDeletion(int current) const
 
     // FIXME: Seems like this fancier case could be used on all platforms now, no
     // need for the #else case below.
-#if PLATFORM(COCOA) || PLATFORM(EFL) || PLATFORM(GTK)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     bool sawRegionalIndicator = false;
     bool sawEmojiGroupCandidate = false;
     bool sawEmojiFitzpatrickModifier = false;

@@ -2695,7 +2695,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     // In ATK, there is a distinction between generic text block elements and other
     // generic containers; AX API does not make this distinction.
     if (is<RenderTableCell>(m_renderer))
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
         return DivRole;
 #else
         return GroupRole;
@@ -2793,7 +2793,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return GroupRole;
 
     if (m_renderer->isRenderBlockFlow()) {
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
         // For ATK, GroupRole maps to ATK_ROLE_PANEL. Panels are most commonly found (and hence
         // expected) in UI elements; not text blocks.
         return m_renderer->isAnonymousBlock() ? DivRole : GroupRole;

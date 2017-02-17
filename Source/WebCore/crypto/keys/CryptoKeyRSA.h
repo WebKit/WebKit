@@ -31,12 +31,12 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#if OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)
+#if OS(DARWIN) && !PLATFORM(GTK)
 typedef struct _CCRSACryptor *CCRSACryptorRef;
 typedef CCRSACryptorRef PlatformRSAKey;
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
 typedef struct _PlatformRSAKeyGnuTLS PlatformRSAKeyGnuTLS;
 typedef PlatformRSAKeyGnuTLS *PlatformRSAKey;
 #endif

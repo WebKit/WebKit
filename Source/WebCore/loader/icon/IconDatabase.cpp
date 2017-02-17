@@ -71,7 +71,7 @@ static const int updateTimerDelay = 5;
 
 static bool checkIntegrityOnOpen = false;
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
 // We are not interested in icons that have been unused for more than
 // 30 days, delete them even if they have not been explicitly released.
 static const int notUsedIconExpirationTime = 60*60*24*30;
@@ -1184,7 +1184,7 @@ void IconDatabase::performURLImport()
 {
     ASSERT_ICON_SYNC_THREAD();
 
-# if PLATFORM(GTK) || PLATFORM(EFL)
+# if PLATFORM(GTK)
     // Do not import icons not used in the last 30 days. They will be automatically pruned later if nobody retains them.
     // Note that IconInfo.stamp is only set when the icon data is retrieved from the server (and thus is not updated whether
     // we use it or not). This code works anyway because the IconDatabase downloads icons again if they are older than 4 days,

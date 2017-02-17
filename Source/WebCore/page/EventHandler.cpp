@@ -3680,7 +3680,7 @@ bool EventHandler::isKeyboardOptionTab(KeyboardEvent& event)
 
 bool EventHandler::eventInvertsTabsToLinksClientCallResult(KeyboardEvent& event)
 {
-#if PLATFORM(COCOA) || PLATFORM(EFL)
+#if PLATFORM(COCOA)
     return isKeyboardOptionTab(event);
 #else
     UNUSED_PARAM(event);

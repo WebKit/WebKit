@@ -74,8 +74,6 @@ using PlatformCursor = RefPtr<SharedCursor>;
 using PlatformCursor = NSCursor *;
 #elif PLATFORM(GTK)
 using PlatformCursor = GRefPtr<GdkCursor>;
-#elif PLATFORM(EFL)
-using PlatformCursor = const char*;
 #endif
 
 class Cursor {

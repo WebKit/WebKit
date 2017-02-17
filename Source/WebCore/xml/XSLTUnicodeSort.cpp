@@ -37,11 +37,11 @@
 #include <wtf/Vector.h>
 #include <wtf/unicode/Collator.h>
 
-#if OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)
+#if OS(DARWIN) && !PLATFORM(GTK)
 #include "SoftLinking.h"
 #endif
 
-#if OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)
+#if OS(DARWIN) && !PLATFORM(GTK)
 
 SOFT_LINK_LIBRARY(libxslt)
 SOFT_LINK(libxslt, xsltComputeSortResult, xmlXPathObjectPtr*, (xsltTransformContextPtr ctxt, xmlNodePtr sort), (ctxt, sort))

@@ -271,8 +271,6 @@ String InspectorFrontendHost::port()
 {
 #if PLATFORM(GTK)
     return ASCIILiteral("gtk");
-#elif PLATFORM(EFL)
-    return ASCIILiteral("efl");
 #else
     return ASCIILiteral("unknown");
 #endif

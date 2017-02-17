@@ -58,7 +58,7 @@ bool AccessibilityTableHeaderContainer::computeAccessibilityIsIgnored() const
     if (!m_parent)
         return true;
     
-#if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(IOS) || PLATFORM(GTK)
     return true;
 #endif
 

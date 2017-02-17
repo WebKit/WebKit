@@ -48,7 +48,7 @@
 #include <wtf/text/StringBuffer.h>
 #include <wtf/unicode/UTF8.h>
 
-#if OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)
+#if OS(DARWIN) && !PLATFORM(GTK)
 #include "SoftLinking.h"
 
 SOFT_LINK_LIBRARY(libxslt);

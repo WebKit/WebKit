@@ -78,8 +78,6 @@ private:
 #elif PLATFORM(GTK)
     Icon();
     GdkPixbuf* m_icon;
-#elif PLATFORM(EFL)
-    Icon();
 #endif
 };
 

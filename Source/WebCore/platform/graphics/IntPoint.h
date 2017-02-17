@@ -146,9 +146,6 @@ public:
     explicit IntPoint(const D2D1_POINT_2F&); // Don't do this implicitly, since it's lossy.
     operator D2D1_POINT_2F() const;
     operator D2D1_POINT_2U() const;
-#elif PLATFORM(EFL)
-    explicit IntPoint(const Evas_Point&);
-    operator Evas_Point() const;
 #endif
 
 private:

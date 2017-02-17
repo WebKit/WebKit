@@ -62,7 +62,7 @@ protected:
     String getExtensions() override;
 
 private:
-#if (PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN) || PLATFORM(IOS))
+#if (PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(IOS))
     bool isVertexArrayObjectSupported();
 #endif
 };

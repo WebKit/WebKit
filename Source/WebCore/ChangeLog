@@ -1,3 +1,102 @@
+2017-02-16  Anders Carlsson  <andersca@apple.com>
+
+        Remove EFL from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=168477
+
+        Reviewed by Brian Burg.
+
+        * accessibility/AccessibilityList.cpp:
+        (WebCore::AccessibilityList::childHasPseudoVisibleListItemMarkers):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canSetValueAttribute):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::AccessibilityObject):
+        (WebCore::AccessibilityObject::textIteratorBehaviorForTextRange):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::computeAccessibilityIsIgnored):
+        * accessibility/AccessibilityTableHeaderContainer.cpp:
+        (WebCore::AccessibilityTableHeaderContainer::computeAccessibilityIsIgnored):
+        * crypto/CryptoKey.cpp:
+        * crypto/keys/CryptoKeyRSA.h:
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        * editing/Editor.cpp:
+        (WebCore::Editor::performCutOrCopy):
+        (WebCore::Editor::copyImage):
+        * editing/Editor.h:
+        * editing/FrameSelection.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::requiresAcceleratedCompositingForWebGL):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::port):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::performURLImport):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::populate):
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded):
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::eventInvertsTabsToLinksClientCallResult):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * platform/ContextMenuItem.h:
+        * platform/Cursor.h:
+        * platform/DragData.h:
+        * platform/DragImage.h:
+        * platform/FileSystem.h:
+        * platform/LocalizedStrings.h:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+        * platform/NotImplemented.h:
+        * platform/Pasteboard.h:
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformSpeechSynthesizer.h:
+        * platform/PlatformWheelEvent.h:
+        * platform/Widget.h:
+        * platform/graphics/ANGLEWebKitBridge.h:
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/Icon.h:
+        * platform/graphics/Image.h:
+        (WebCore::Image::getEvasObject): Deleted.
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::createVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::deleteVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::isVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::bindVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::supportsExtension):
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::createForCurrentGLContext):
+        (WebCore::GraphicsContext3D::reshape):
+        (WebCore::GraphicsContext3D::createVertexArray):
+        (WebCore::GraphicsContext3D::deleteVertexArray):
+        (WebCore::GraphicsContext3D::isVertexArray):
+        (WebCore::GraphicsContext3D::bindVertexArray):
+        * platform/graphics/opengl/TemporaryOpenGLSetting.cpp:
+        * platform/network/NetworkStateNotifier.h:
+        * platform/posix/FileSystemPOSIX.cpp:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::previousOffsetForBackwardDeletion):
+        * xml/XSLStyleSheetLibxslt.cpp:
+        * xml/XSLTExtensions.cpp:
+        * xml/XSLTProcessorLibxslt.cpp:
+        * xml/XSLTUnicodeSort.cpp:
+
 2017-02-16  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Add forced line layout info to coverage print.
