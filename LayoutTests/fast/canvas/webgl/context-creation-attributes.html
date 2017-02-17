@@ -27,7 +27,7 @@ function testContextCreation(parameters)
 function run() {
     testContextCreation({});
     testContextCreation({stencil: true});
-    testContextCreation({preferLowPowerToHighPerformance: true});
+    testContextCreation({powerPreference: "default"});
     testContextCreation({failIfMajorPerformanceCaveat: true});
 }
 

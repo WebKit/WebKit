@@ -27,6 +27,12 @@
 
 namespace WebCore {
 
+enum class GraphicsContext3DPowerPreference {
+    Default,
+    LowPower,
+    HighPerformance
+};
+
 struct GraphicsContext3DAttributes {
     // WebGLContextAttributes
     bool alpha { true };
@@ -35,8 +41,9 @@ struct GraphicsContext3DAttributes {
     bool antialias { true };
     bool premultipliedAlpha { true };
     bool preserveDrawingBuffer { false };
-    bool preferLowPowerToHighPerformance { false };
     bool failIfMajorPerformanceCaveat { false };
+    using PowerPreference = GraphicsContext3DPowerPreference;
+    PowerPreference powerPreference { PowerPreference::Default };
 
     // Additional attributes.
     bool forceSoftwareRenderer { false };
@@ -44,7 +51,7 @@ struct GraphicsContext3DAttributes {
     bool useGLES3 { false };
     bool noExtensions { false };
     float devicePixelRatio { 1 };
-    bool initialPreferLowPowerToHighPerformance { false };
+    PowerPreference initialPowerPreference { PowerPreference::Default };
 };
 
 }

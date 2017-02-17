@@ -402,9 +402,9 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     if (frame->settings().forceSoftwareWebGLRendering())
         attributes.forceSoftwareRenderer = true;
 
-    attributes.initialPreferLowPowerToHighPerformance = attributes.preferLowPowerToHighPerformance;
+    attributes.initialPowerPreference = attributes.powerPreference;
     if (frame->settings().preferLowPowerWebGLRendering())
-        attributes.preferLowPowerToHighPerformance = true;
+        attributes.powerPreference = GraphicsContext3DPowerPreference::LowPower;
 
     if (page)
         attributes.devicePixelRatio = page->deviceScaleFactor();
@@ -536,7 +536,7 @@ void WebGLRenderingContextBase::registerWithWebGLStateTracker()
     if (!tracker)
         return;
 
-    m_trackerToken = tracker->token(m_attributes.initialPreferLowPowerToHighPerformance);
+    m_trackerToken = tracker->token(m_attributes.initialPowerPreference);
 }
 
 void WebGLRenderingContextBase::initializeNewContext()

@@ -1,5 +1,25 @@
 2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212316. rdar://problem/30504444
+
+    2017-02-13  Dean Jackson  <dino@apple.com>
+
+            Rename preferLowPowerToHighPerformance to powerPreference
+            https://bugs.webkit.org/show_bug.cgi?id=168269
+            <rdar://problem/30504444>
+
+            Reviewed by Chris Dumez.
+
+            Handle the rename in the test case. Since Settings.in has
+            preferLowPowerWebGLRendering initial=true
+            we will override the incoming request and set the value to
+            "low-power". This behaviour will change in a subsequent bug.
+
+            * fast/canvas/webgl/context-creation-attributes-expected.txt:
+            * fast/canvas/webgl/context-creation-attributes.html:
+
+2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212314. rdar://problem/27685077
 
     2017-02-14  Jeremy Jones  <jeremyj@apple.com>
