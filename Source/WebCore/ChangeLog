@@ -1,5 +1,38 @@
 2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212153. rdar://problem/30467120
+
+    2017-02-10  Simon Fraser  <simon.fraser@apple.com>
+
+            Make sure the "inwindow" flag propagates to TiledBackings for masks and reflections
+            https://bugs.webkit.org/show_bug.cgi?id=168127
+            rdar://problem/30467120
+
+            Reviewed by Tim Horton.
+
+            Replace the special-case, but wrong, GraphicsLayer traversal in setIsInWindowIncludingDescendants()
+            which forgot to hit masks and replica layers with a generic traverse() function, which
+            is then used for setting 'inWindow' as well as resetting tracked repaints.
+
+            Tests: compositing/tiling/tiled-mask-inwindow.html
+                   compositing/tiling/tiled-reflection-inwindow.html
+
+            * page/PageOverlayController.cpp:
+            (WebCore::PageOverlayController::layerWithDocumentOverlays):
+            (WebCore::PageOverlayController::layerWithViewOverlays):
+            * platform/graphics/GraphicsLayer.cpp:
+            (WebCore::GraphicsLayer::setIsInWindow):
+            (WebCore::GraphicsLayer::setReplicatedByLayer):
+            (WebCore::GraphicsLayer::traverse):
+            (WebCore::GraphicsLayer::setIsInWindowIncludingDescendants): Deleted.
+            * platform/graphics/GraphicsLayer.h:
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::setIsInWindow):
+            (WebCore::RenderLayerCompositor::resetTrackedRepaintRects):
+            (WebCore::resetTrackedRepaintRectsRecursive): Deleted.
+
+2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212152. rdar://problem/30459055
 
     2017-02-09  Simon Fraser  <simon.fraser@apple.com>

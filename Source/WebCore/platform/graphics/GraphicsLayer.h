@@ -514,7 +514,7 @@ public:
     virtual void deviceOrPageScaleFactorChanged() { }
     WEBCORE_EXPORT void noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 
-    void setIsInWindowIncludingDescendants(bool);
+    void setIsInWindow(bool);
 
     // Some compositing systems may do internal batching to synchronize compositing updates
     // with updates drawn into the window. These methods flush internal batched state on this layer
@@ -558,6 +558,8 @@ public:
     virtual bool isGraphicsLayerCARemote() const { return false; }
     virtual bool isGraphicsLayerTextureMapper() const { return false; }
     virtual bool isCoordinatedGraphicsLayer() const { return false; }
+
+    static void traverse(GraphicsLayer&, std::function<void (GraphicsLayer&)>);
 
 protected:
     WEBCORE_EXPORT explicit GraphicsLayer(Type, GraphicsLayerClient&);

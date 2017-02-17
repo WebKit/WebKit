@@ -2063,8 +2063,11 @@ void RenderLayerCompositor::setIsInWindow(bool isInWindow)
     if (!inCompositingMode())
         return;
 
-    if (GraphicsLayer* rootLayer = rootGraphicsLayer())
-        rootLayer->setIsInWindowIncludingDescendants(isInWindow);
+    if (GraphicsLayer* rootLayer = rootGraphicsLayer()) {
+        GraphicsLayer::traverse(*rootLayer, [isInWindow](GraphicsLayer& layer) {
+            layer.setIsInWindow(isInWindow);
+        });
+    }
 
     if (isInWindow) {
         if (m_rootLayerAttachment != RootLayerUnattached)
@@ -2892,24 +2895,13 @@ GraphicsLayer* RenderLayerCompositor::fixedRootBackgroundLayer() const
     return nullptr;
 }
 
-static void resetTrackedRepaintRectsRecursive(GraphicsLayer& graphicsLayer)
-{
-    graphicsLayer.resetTrackedRepaints();
-
-    for (auto* childLayer : graphicsLayer.children())
-        resetTrackedRepaintRectsRecursive(*childLayer);
-
-    if (GraphicsLayer* replicaLayer = graphicsLayer.replicaLayer())
-        resetTrackedRepaintRectsRecursive(*replicaLayer);
-
-    if (GraphicsLayer* maskLayer = graphicsLayer.maskLayer())
-        resetTrackedRepaintRectsRecursive(*maskLayer);
-}
-
 void RenderLayerCompositor::resetTrackedRepaintRects()
 {
-    if (GraphicsLayer* rootLayer = rootGraphicsLayer())
-        resetTrackedRepaintRectsRecursive(*rootLayer);
+    if (GraphicsLayer* rootLayer = rootGraphicsLayer()) {
+        GraphicsLayer::traverse(*rootLayer, [](GraphicsLayer& layer) {
+            layer.resetTrackedRepaints();
+        });
+    }
 }
 
 void RenderLayerCompositor::setTracksRepaints(bool tracksRepaints)

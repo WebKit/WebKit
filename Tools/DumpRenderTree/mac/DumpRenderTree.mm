@@ -1830,11 +1830,6 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
 {
     WebView *webView = [mainFrame webView];
 
-#if PLATFORM(MAC)
-    if (![webView superview])
-        [[mainWindow contentView] addSubview:webView];
-#endif
-
 #if PLATFORM(IOS)
     adjustWebDocumentForStandardViewport(gWebBrowserView, gWebScrollView);
     [webView _setAllowsMessaging:YES];
@@ -2091,6 +2086,13 @@ static void runTest(const string& inputLine)
         gTestRunner->closeWebInspector();
         gTestRunner->setDeveloperExtrasEnabled(false);
     }
+
+#if PLATFORM(MAC)
+    // Make sure the WebView is parented, since the test may have unparented it.
+    WebView *webView = [mainFrame webView];
+    if (![webView superview])
+        [[mainWindow contentView] addSubview:webView];
+#endif
 
     if (gTestRunner->closeRemainingWindowsWhenComplete()) {
         NSArray* array = [DumpRenderTreeWindow openWindows];
