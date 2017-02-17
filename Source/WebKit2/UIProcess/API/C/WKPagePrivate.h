@@ -42,9 +42,6 @@ enum {
 };
 typedef unsigned WKPageDebugPaintFlags;
 
-WK_EXPORT void WKPageSetDebugPaintFlags(WKPageDebugPaintFlags flags);
-WK_EXPORT WKPageDebugPaintFlags WKPageGetDebugPaintFlags(void);
-
 WK_EXPORT WKStringRef WKPageCopyStandardUserAgentWithApplicationName(WKStringRef);
 
 enum {
