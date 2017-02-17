@@ -417,6 +417,8 @@ typedef const char* optionString;
     v(bool, useCodeCache, true, Normal, "If false, the unlinked byte code cache will not be used.") \
     \
     v(bool, useWebAssembly, false, Normal, "Expose the WebAssembly global object.") \
+    \
+    v(bool, enableABTesting, true, Normal, "If true, A/B testing will be performed to modify options, if false no A/B testing will be performed.") \
 
 enum OptionEquivalence {
     SameOption,
