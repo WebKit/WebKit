@@ -147,11 +147,11 @@ svg/custom/image-with-prefix-in-webarchive.svg [ WontFix ]
 media/video-does-not-loop.html [ WontFix Timeout ]
 
 # Requires media engine closed caption support.
-media/media-captions.html [ WontFix Failure ]
+media/media-captions.html [ WontFix Timeout Failure Crash ]
 
 # Legacy full screen API tests are now obsolete.
 # This passes while it's marked as a WontFix - check it.
-media/media-fullscreen-inline.html [ WontFix Pass ]
+media/media-fullscreen-inline.html [ WontFix Crash Pass ]
 media/media-fullscreen-not-in-document.html [ WontFix Timeout Crash ]
 
 # Features that we want eventually:
@@ -270,7 +270,6 @@ webkit.org/b/165394 media/media-source/media-source-seek-detach-crash.html [ Ski
 
 # Encrypted Media Extensions are not enabled.
 webkit.org/b/99024 media/encrypted-media [ Skip ]
-webkit.org/b/99024 fast/events/constructors/media-key-event-constructor.html [ Timeout ]
 
 # CSS Filters is disabled
 webkit.org/b/99026 css3/filters [ Skip ]
@@ -1183,7 +1182,6 @@ webkit.org/b/143709 media/media-fragments/TC0064.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0065.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0066.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0067.html [ Timeout Pass ]
-webkit.org/b/132248 media/media-fragments/TC0068.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0070.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0072.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0078.html [ Failure Crash Pass ]
@@ -1242,7 +1240,6 @@ webkit.org/b/132273 fast/regions/assert-hit-test-image.html [ Failure Pass Crash
 webkit.org/b/132277 fast/images/image-map-multiple-xhtml.xhtml [ Failure Pass ]
 webkit.org/b/132277 fast/images/image-map-multiple.html [ Failure Pass ]
 webkit.org/b/132277 fast/images/image-map-zoom.html [ Failure Pass ]
-webkit.org/b/132277 fast/images/imagemap-case.html [ Failure Pass ]
 webkit.org/b/132277 fast/images/imagemap-dynamic-area-updates.html [ Failure Pass ]
 
 webkit.org/b/132425 fast/multicol/scrolling-overflow.html [ Failure Pass ]
@@ -1548,7 +1545,6 @@ webkit.org/b/149916 inspector/css/stylesheet-events-multiple-documents.html [ Pa
 webkit.org/b/149916 inspector/css/stylesheet-with-mutations.html [ Pass Slow ]
 webkit.org/b/149916 inspector/heap/garbageCollected.html [ Pass Slow ]
 webkit.org/b/149916 inspector/heap/gc.html [ Pass Slow ]
-webkit.org/b/149916 inspector/indexeddb/requestDatabaseNames.html [ Pass Slow ]
 webkit.org/b/149916 inspector/network/client-blocked-load.html [ Pass Slow ]
 webkit.org/b/149916 inspector/page/filter-cookies-for-domain.html [ Pass Slow ]
 webkit.org/b/149916 inspector/page/main-frame-resource.html [ Pass Slow ]
@@ -1694,7 +1690,7 @@ webkit.org/b/143875 media/track/track-css-matching.html [ Timeout Pass ]
 webkit.org/b/143986 fast/dom/Node/mutation-blur.html [ Timeout Pass ]
 webkit.org/b/143987 media/auto-play-in-sandbox-with-allow-scripts.html [ Timeout Pass ]
 
-webkit.org/b/143990 media/track/track-css-matching-timestamps.html [ Timeout Pass ]
+webkit.org/b/143990 media/track/track-css-matching-timestamps.html [ Timeout Crash Pass ]
 webkit.org/b/143990 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Timeout Pass ]
 webkit.org/b/143990 media/track/track-disabled-addcue.html [ Timeout Pass ]
 webkit.org/b/143990 media/track/track-disabled.html [ Timeout Pass ]
@@ -1714,8 +1710,6 @@ webkit.org/b/145171 fast/events/tabindex-focus-blur-all.html [ Timeout Pass ]
 # This tests timeout since the upgrade of GTK to 3.16 and Cairo to 1.14 on the JHBuild
 webkit.org/b/146731 fast/events/touch/tap-highlight-color.html [ Timeout ]
 webkit.org/b/146731 fast/events/touch/touch-scaled-scrolled.html [ Timeout ]
-
-webkit.org/b/153061 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm [ Timeout ]
 
 webkit.org/b/153468 inspector/dom-debugger/node-removed.html [ Timeout ]
 
@@ -1931,10 +1925,6 @@ webkit.org/b/42194 fast/events/5056619.html [ Failure ]
 webkit.org/b/42194 http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
 
 # svg/ failures
-webkit.org/b/42457 svg/custom/embedded-svg-allowed-in-dashboard.xml [ Failure ]
-webkit.org/b/42457 svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html [ Failure ]
-webkit.org/b/42457 svg/custom/manually-parsed-svg-allowed-in-dashboard.html [ Failure ]
-webkit.org/b/42457 svg/custom/svg-allowed-in-dashboard-object.html [ Failure ]
 Bug(GTK) svg/custom/gradient-attr-update.svg [ Failure Pass ]
 Bug(GTK) svg/custom/pointer-events-on-svg-with-pointer.xhtml [ Failure Pass ]
 Bug(GTK) svg/custom/pointer-events-on-svg-without-pointer.xhtml [ Failure Pass ]
@@ -2756,7 +2746,6 @@ webkit.org/b/163531 media/video-volume-slider-drag.html [ Failure ]
 
 webkit.org/b/163823 media/audio-playback-restriction-autoplay.html [ Failure ]
 webkit.org/b/163823 media/audio-playback-restriction-play-muted.html [ Failure ]
-webkit.org/b/163823 media/audio-playback-restriction-play.html [ Failure ]
 webkit.org/b/163823 media/context-menu-actions.html [ Failure ]
 webkit.org/b/163823 media/video-defaultmuted.html [ Failure ]
 webkit.org/b/163823 media/video-volume-slider.html [ Failure ]
@@ -2819,7 +2808,7 @@ webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-
 webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.html [ Failure ]
 webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html [ Failure ]
 
-webkit.org/b/145260 media/audio-playback-restriction-play.html  [ Failure ]
+webkit.org/b/145260 media/audio-playback-restriction-play.html [ Failure ]
 
 webkit.org/b/168188 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
 
@@ -2891,8 +2880,6 @@ imported/w3c/css/css-color-3/t422-rgba-onscreen-b.xht [ Pass ]
 imported/w3c/css/css-color-3/t422-rgba-onscreen-multiple-boxes-c.xht [ Pass ]
 imported/w3c/css/css-color-3/t425-hsla-onscreen-multiple-boxes-c.xht [ Pass ]
 
-imported/w3c/css/css-multicol-1/multicol-zero-height-001.xht [ Pass ]
-
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ Pass ]
 
 webkit.org/b/142548 editing/selection/extend-by-character-007.html [ Pass ]
@@ -2906,7 +2893,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element
 # Some Apple ports don't support RTL scrollbars.
 fast/scrolling/rtl-scrollbars.html [ Pass ]
 fast/scrolling/rtl-scrollbars-simple.html [ Pass ]
-fast/scrolling/rtl-scrollbars-overflow-contents.html [ Pass ]
 fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ Pass ]
 fast/scrolling/rtl-scrollbars-overflow-padding.html [ Pass ]
 fast/scrolling/rtl-scrollbars-overflow-simple.html [ Pass ]
@@ -2925,7 +2911,6 @@ fast/scrolling/rtl-scrollbars-positioning.html [ Pass ]
 fast/scrolling/rtl-scrollbars-listbox-select-left.html [ Pass ]
 fast/scrolling/rtl-scrollbars-listbox-select-right.html [ Pass ]
 fast/scrolling/rtl-scrollbars-listbox-simple.html [ Pass ]
-fast/scrolling/rtl-scrollbars-listbox.html [ Pass ]
 fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars.html [ Pass ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
@@ -2992,8 +2977,6 @@ webkit.org/b/160119 fast/images/composited-animated-gif-outside-viewport.html [ 
 webkit.org/b/160119 fast/layers/layer-visibility-sublayer.html [ Failure ]
 webkit.org/b/160119 fast/layers/layer-visibility.html [ Failure ]
 
-webkit.org/b/160119 fast/multicol/mixed-opacity-fixed-test.html [ Failure ]
-
 webkit.org/b/160119 fast/regions/fullscreen/full-screen-video-from-region.html [ Crash Pass ]
 
 webkit.org/b/160119 fast/repaint/selection-gap-fixed-child.html [ Failure ]
@@ -3021,7 +3004,6 @@ webkit.org/b/160119 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/160119 media/broken-video.html [ Crash Pass ]
 webkit.org/b/160119 media/click-volume-bar-not-pausing.html [ Timeout Failure Pass ]
 webkit.org/b/160119 media/media-can-load-when-hidden.html [ Timeout Pass ]
-webkit.org/b/160119 media/media-captions.html [ Timeout Failure Crash ]
 webkit.org/b/160119 media/media-captions-no-controls.html [ Timeout Pass ]
 webkit.org/b/160119 media/media-continues-playing-after-replace-source.html [ Timeout Pass ]
 webkit.org/b/160119 media/media-controller-drag-crash.html [ Timeout Pass ]
@@ -3029,17 +3011,12 @@ webkit.org/b/160119 media/media-controller-time.html [ Timeout Pass ]
 webkit.org/b/160119 media/media-controller-time-constant.html [ Timeout Pass ]
 webkit.org/b/160119 media/media-controller-timeupdate.html [ Timeout Pass ]
 webkit.org/b/160119 media/media-controller-unpause.html [ Timeout Pass ]
-webkit.org/b/160119 media/media-fullscreen-inline.html [ Crash Pass ]
-webkit.org/b/160119 media/restore-from-page-cache.html [ Timeout Pass Failure ]
 webkit.org/b/160119 media/video-playbackrate.html [ Crash Pass ]
 webkit.org/b/160119 media/video-poster.html [ Crash Pass ]
 webkit.org/b/160119 media/webkit-media-controls-display.html [ Crash Pass ]
 
-webkit.org/b/160119 media/media-fragments/TC0068.html [ Crash Pass ]
-
 webkit.org/b/160119 media/track/audio/audio-track-mkv-vorbis-enabled.html [ Crash Pass ]
 
-webkit.org/b/160119 media/track/track-css-matching-timestamps.html [ Crash Pass ]
 webkit.org/b/160119 media/track/track-cues-seeking.html [ Timeout Pass ]
 webkit.org/b/160119 media/track/track-cues-sorted-before-dispatch.html [ Timeout Pass ]
 webkit.org/b/160119 media/track/track-delete-during-setup.html [ Timeout Pass ]
