@@ -1,0 +1,20 @@
+
+RUN(internals.settings.setAllowsInlineMediaPlayback(false))
+RUN(internals.settings.setAllowsInlineMediaPlaybackAfterFullscreen(true))
+RUN(internals.settings.setFullScreenEnabled(false))
+RUN(internals.setMediaElementRestrictions(video, "NoRestrictions"))
+RUN(video.loop = true)
+RUN(video.src = findMediaFile("video", "content/test"))
+RUN(video.play())
+EVENT(webkitbeginfullscreen)
+RUN(video.currentTime = 5)
+RUN(video.webkitExitFullscreen())
+EVENT(webkitendfullscreen)
+EXPECTED (video.paused == 'false') OK
+RUN(video.ontimeupdate = timeupdate)
+RUN(video.ontimeupdate = null)
+Looped
+EXPECTED (video.playsInline == 'false') OK
+EXPECTED (video.paused == 'false') OK
+END OF TEST
+

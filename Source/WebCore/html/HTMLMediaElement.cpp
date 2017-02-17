@@ -5418,6 +5418,8 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     if (m_videoFullscreenMode == mode)
         return;
 
+    m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
+
 #if ENABLE(FULLSCREEN_API)
     if (document().settings()->fullScreenEnabled()) {
         if (mode == VideoFullscreenModeStandard) {
@@ -5481,9 +5483,9 @@ void HTMLMediaElement::exitFullscreen()
         if (!document().settings() || !document().settings()->allowsInlineMediaPlaybackAfterFullscreen() || isVideoTooSmallForInlinePlayback())
             pauseInternal();
         else {
-            // Allow inline playback, but set 'playsinline' so pausing and starting again (e.g. when scrubbing) won't go back to fullscreen.
+            // Allow inline playback, but set a flag so pausing and starting again (e.g. when scrubbing or looping) won't go back to fullscreen.
             // Also set the controls attribute so the user will be able to control playback.
-            setBooleanAttribute(HTMLNames::playsinlineAttr, true);
+            m_temporarilyAllowingInlinePlaybackAfterFullscreen = true;
             setControls(true);
         }
     }

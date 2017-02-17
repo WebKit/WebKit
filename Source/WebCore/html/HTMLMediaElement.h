@@ -485,6 +485,8 @@ public:
 
     double playbackStartedTime() const { return m_playbackStartedTime; }
 
+    bool isTemporarilyAllowingInlinePlaybackAfterFullscreen() const {return m_temporarilyAllowingInlinePlaybackAfterFullscreen; }
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
@@ -882,6 +884,8 @@ private:
     VideoFullscreenMode m_videoFullscreenMode { VideoFullscreenModeNone };
     bool m_preparedForInline;
     std::function<void()> m_preparedForInlineCompletionHandler;
+
+    bool m_temporarilyAllowingInlinePlaybackAfterFullscreen { false };
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
