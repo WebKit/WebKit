@@ -14,11 +14,11 @@ describe('CloseButton', () => {
             closeButton.listenToAction('activate', () => {
                 activateCount++;
             });
-            expect(activateCount).toBe(0);
+            expect(activateCount).to.be(0);
             closeButton.content().querySelector('a').click();
-            expect(activateCount).toBe(1);
+            expect(activateCount).to.be(1);
             closeButton.content().querySelector('a').click();
-            expect(activateCount).toBe(2);
+            expect(activateCount).to.be(2);
         });
     });
 

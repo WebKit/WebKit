@@ -1,5 +1,19 @@
 2017-02-16  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Use expect.js instead of expect in browser tests
+        https://bugs.webkit.org/show_bug.cgi?id=168492
+
+        Reviewed by Joseph Pecoraro.
+
+        Use expect.js (https://github.com/Automattic/expect.js) instead of expect (https://github.com/mjackson/expect).
+
+        * browser-tests/close-button-tests.js:
+        * browser-tests/component-base-tests.js:
+        * browser-tests/editable-text-tests.js:
+        * browser-tests/index.html:
+
+2017-02-16  Ryosuke Niwa  <rniwa@webkit.org>
+
         Modernize and fix measurement-set tests
         https://bugs.webkit.org/show_bug.cgi?id=168484
 
