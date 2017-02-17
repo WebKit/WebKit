@@ -322,7 +322,7 @@ class SVNMirrorTest(unittest.TestCase):
         SVNMirror = None
         for builder in self.config['builders']:
             if builder['name'] == builderName:
-                SVNMirror = builder.pop('SVNMirror', 'http://svn.webkit.org/repository/webkit/')
+                SVNMirror = builder.pop('SVNMirror', 'https://svn.webkit.org/repository/webkit/')
         return SVNMirror
 
     def test_CheckOutSource(self):
