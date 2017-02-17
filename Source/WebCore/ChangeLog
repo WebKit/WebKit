@@ -1,3 +1,28 @@
+2017-02-16  Daniel Bates  <dabates@apple.com>
+
+        Remove Chromium-specific code to call FrameLoaderClient::redirectDataToPlugin(nullptr)
+        https://bugs.webkit.org/show_bug.cgi?id=168417
+        <rdar://problem/30541748>
+
+        Reviewed by Brent Fulgham.
+
+        Remove Chromium-specific code that was added in r125500 to call FrameLoaderClient::redirectDataToPlugin(nullptr)
+        in PluginDocument::detachFromPluginElement(). Calling redirectDataToPlugin() with nullptr was used by the
+        Chromium port to signify that the plugin document was being destroyed so that they could tear down their
+        plugin widget. And PluginDocument::detachFromPluginElement() is the only place that calls redirectDataToPlugin()
+        passing nullptr. No other port made use of this machinery and the Chromium port has long since been removed
+        from the Open Source WebKit Project. We should remove this code.
+
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::appendBytes): Pass the plugin widget by reference.
+        (WebCore::PluginDocument::detachFromPluginElement): Remove call to FrameLoaderClient::redirectDataToPlugin().
+        This call was only used by the Chromium port as means to be notified when the plugin document was being
+        destroyed. No other port made use of this notification or needed such a notification.
+        * loader/EmptyClients.cpp: Change argument of redirectDataToPlugin() from Widget* to Widget& to convey
+        that this function always takes a valid Widget. Also remove unnecessary argument name as the data type
+        of the argument and the name of the function sufficiently describes the purpose of the argument.
+        * loader/FrameLoaderClient.h: Ditto.
+
 2017-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-weight in @font-face can cause a font to be downloaded even when it's not used

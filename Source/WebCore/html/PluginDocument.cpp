@@ -128,7 +128,7 @@ void PluginDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
 
     if (RenderWidget* renderer = m_embedElement->renderWidget()) {
         if (Widget* widget = renderer->widget()) {
-            frame->loader().client().redirectDataToPlugin(widget);
+            frame->loader().client().redirectDataToPlugin(*widget);
             // In a plugin document, the main resource is the plugin. If we have a null widget, that means
             // the loading of the plugin was cancelled, which gives us a null mainResourceLoader(), so we
             // need to have this call in a null check of the widget or of mainResourceLoader().
@@ -168,7 +168,6 @@ void PluginDocument::detachFromPluginElement()
 {
     // Release the plugin Element so that we don't have a circular reference.
     m_pluginElement = nullptr;
-    frame()->loader().client().redirectDataToPlugin(nullptr);
 }
 
 void PluginDocument::cancelManualPluginLoad()

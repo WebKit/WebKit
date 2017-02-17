@@ -424,7 +424,7 @@ class EmptyFrameLoaderClient final : public FrameLoaderClient {
     ObjectContentType objectContentType(const URL&, const String&) final { return ObjectContentType::None; }
     String overrideMediaType() const final { return { }; }
 
-    void redirectDataToPlugin(Widget*) final { }
+    void redirectDataToPlugin(Widget&) final { }
     void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) final { }
 
     void registerForIconNotification(bool) final { }
