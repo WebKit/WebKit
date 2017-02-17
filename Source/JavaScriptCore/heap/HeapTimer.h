@@ -77,6 +77,7 @@ protected:
 
     Lock m_shutdownMutex;
 #elif USE(GLIB)
+    static const long s_decade;
     void timerDidFire();
     GRefPtr<GSource> m_timer;
 #endif

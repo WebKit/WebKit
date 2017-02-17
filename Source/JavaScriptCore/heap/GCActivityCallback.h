@@ -79,7 +79,7 @@ protected:
     GCActivityCallback(VM* vm)
         : HeapTimer(vm)
         , m_enabled(true)
-        , m_delay(-1)
+        , m_delay(s_decade)
     {
     }
 #else

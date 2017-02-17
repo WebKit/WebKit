@@ -1,3 +1,45 @@
+2017-02-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] GCActivityCallback::scheduleTimer() keeps pushing dispatch into the future
+        https://bugs.webkit.org/show_bug.cgi?id=168363
+
+        Reviewed by Carlos Garcia Campos.
+
+        Mimic the USE(CF) implementation of GCActivityCallback and HeapTimer by
+        scheduling the timer a decade into the future instead of completely
+        cancelling it. That way new dispatch times for GCActivityCallback can be
+        computed by simply deducting the difference in the new and previous
+        delay from the GSource's current dispatch time. Previously we handled an
+        extra 'paused' state (where m_delay was -1) and allowed for a delay of
+        an infinite value to be valid, complicating the next dispatch time
+        computation.
+
+        HeapTimer gains the static s_decade variable. The dispatch function in
+        heapTimerSourceFunctions only dispatches the callback, which now delays
+        the GSource by a decade. HeapTimer::scheduleTimer() simply schedules the
+        source to dispatch in the specified amount of time, and cancelTimer()
+        'cancels' the source by setting the dispatch time to a decade.
+
+        GCActivityCallback constructor initializes the delay to the s_decade
+        value and immediately sets the ready time for GSource a decade into the
+        future, avoiding the default -1 value as the ready time that would cause
+        problems in scheduleTimer(). scheduleTimer() doesn't special-case the
+        zero-delay value anymore, instead it just computes the difference
+        between the old and the new delay and rolls back the GSource's ready
+        time for that amount. cancelTimer() sets m_delay to the decade value and
+        delays the GSource for that same amount.
+
+        * heap/GCActivityCallback.cpp:
+        (JSC::GCActivityCallback::GCActivityCallback):
+        (JSC::GCActivityCallback::scheduleTimer):
+        (JSC::GCActivityCallback::cancelTimer):
+        * heap/GCActivityCallback.h:
+        * heap/HeapTimer.cpp:
+        (JSC::HeapTimer::HeapTimer):
+        (JSC::HeapTimer::scheduleTimer):
+        (JSC::HeapTimer::cancelTimer):
+        * heap/HeapTimer.h:
+
 2017-02-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop PassRefPtr from ArrayBuffer
