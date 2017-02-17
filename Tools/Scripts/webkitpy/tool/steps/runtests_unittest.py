@@ -40,7 +40,7 @@ class RunTestsTest(unittest.TestCase):
         tool = MockTool(log_executive=True)
         tool._deprecated_port.run_python_unittests_command = lambda: None
         tool._deprecated_port.run_perl_unittests_command = lambda: None
-        step = RunTests(tool, MockOptions(test=True, non_interactive=True, quiet=False, build_style="release", iterate_on_new_tests=0))
+        step = RunTests(tool, MockOptions(test=True, non_interactive=True, quiet=False, build_style="release", iterate_on_new_tests=0, group=None))
 
         if sys.platform != "cygwin":
             expected_logs = """Running bindings generation tests

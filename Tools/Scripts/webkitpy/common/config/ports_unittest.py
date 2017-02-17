@@ -1,4 +1,5 @@
 # Copyright (c) 2009, Google Inc. All rights reserved.
+# Copyright (C) 2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -38,6 +39,10 @@ class DeprecatedPortTest(unittest.TestCase):
         self.assertEqual(MacPort().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit"))
         self.assertEqual(MacPort().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug"])
         self.assertEqual(MacPort().build_webkit_command(build_style="release"), DeprecatedPort().script_shell_command("build-webkit") + ["--release"])
+
+        self.assertEqual(MacPort().build_jsc_command(), DeprecatedPort().script_shell_command("build-jsc"))
+        self.assertEqual(MacPort().build_jsc_command(build_style="release"), DeprecatedPort().script_shell_command("build-jsc") + ["--release"])
+        self.assertEqual(MacPort().build_jsc_command(build_style="debug"), DeprecatedPort().script_shell_command("build-jsc") + ["--debug"])
 
     def test_gtk_wk2_port(self):
         self.assertEqual(GtkWK2Port().flag(), "--port=gtk-wk2")

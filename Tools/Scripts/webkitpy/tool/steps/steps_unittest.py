@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -28,6 +29,7 @@
 
 import unittest
 
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.tool.mocktool import MockOptions, MockTool
@@ -38,6 +40,7 @@ from webkitpy.tool import steps
 class StepsTest(unittest.TestCase):
     def _step_options(self):
         options = MockOptions()
+        options.group = None
         options.non_interactive = True
         options.port = 'MOCK port'
         options.quiet = True
@@ -111,7 +114,7 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
 Running Perl unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl'], cwd=/mock-checkout
 Running JavaScriptCore tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast'], cwd=/mock-checkout
 Running bindings generation tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-bindings-tests'], cwd=/mock-checkout
 Running run-webkit-tests
@@ -133,10 +136,111 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
 Running Perl unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl'], cwd=/mock-checkout
 Running JavaScriptCore tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast'], cwd=/mock-checkout
 Running bindings generation tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-bindings-tests'], cwd=/mock-checkout
 Running run-webkit-tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--debug', '--quiet'], cwd=/mock-checkout
 """
         OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+
+    def test_runtests_jsc(self):
+        mock_options = self._step_options()
+        mock_options.non_interactive = False
+        mock_options.build_style = "release"
+        mock_options.group = "jsc"
+        step = steps.RunTests(MockTool(log_executive=True), mock_options)
+        tool = MockTool(log_executive=True)
+        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
+        tool._deprecated_port = DeprecatedPort()
+        step = steps.RunTests(tool, mock_options)
+        expected_logs = """MOCK run_command: ['perl', 'Tools/Scripts/webkit-build-directory', '--configuration', '--release', '--mac'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--release', '--json-output=/MOCK output of child process/jsc_test_results.json'], cwd=/mock-checkout
+"""
+        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+
+    def test_runtests_jsc_debug(self):
+        mock_options = self._step_options()
+        mock_options.non_interactive = False
+        mock_options.build_style = "debug"
+        mock_options.group = "jsc"
+        tool = MockTool(log_executive=True)
+        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
+        tool._deprecated_port = DeprecatedPort()
+        step = steps.RunTests(tool, mock_options)
+        expected_logs = """MOCK run_command: ['perl', 'Tools/Scripts/webkit-build-directory', '--configuration', '--release', '--mac'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--debug', '--json-output=/MOCK output of child process/jsc_test_results.json'], cwd=/mock-checkout
+"""
+        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+
+    def test_build_jsc_debug(self):
+        mock_options = self._step_options()
+        mock_options.non_interactive = False
+        mock_options.build_style = "debug"
+        mock_options.build = True
+        mock_options.architecture = True
+        mock_options.group = "jsc"
+        tool = MockTool(log_executive=True)
+        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
+        tool._deprecated_port = DeprecatedPort()
+        step = steps.Build(tool, mock_options)
+        expected_logs = """Building WebKit
+MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--debug', 'ARCHS=True'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'TERM': 'none', 'MOCK_ENVIRON_COPY': '1'}
+"""
+        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+
+    def test_build_jsc(self):
+        mock_options = self._step_options()
+        mock_options.non_interactive = False
+        mock_options.build_style = "release"
+        mock_options.build = True
+        mock_options.architecture = True
+        mock_options.group = "jsc"
+        tool = MockTool(log_executive=True)
+        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
+        tool._deprecated_port = DeprecatedPort()
+        step = steps.Build(tool, mock_options)
+        expected_logs = """Building WebKit
+MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--release', 'ARCHS=True'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'TERM': 'none', 'MOCK_ENVIRON_COPY': '1'}
+"""
+        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+
+    def test_patch_relevant(self):
+        self.maxDiff = None
+        mock_options = self._step_options()
+        tool = MockTool(log_executive=True)
+        tool.scm()._mockChangedFiles = ["JSTests/MockFile1", "ChangeLog"]
+        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
+        tool._deprecated_port = DeprecatedPort()
+        step = steps.CheckPatchRelevance(tool, mock_options)
+        expected_logs = """Checking relevance of patch
+"""
+        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+
+    def test_patch_relevant_jsc(self):
+        self.maxDiff = None
+        mock_options = self._step_options()
+        mock_options.group = "jsc"
+        tool = MockTool(log_executive=True)
+        tool.scm()._mockChangedFiles = ["JSTests/MockFile1", "ChangeLog"]
+        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
+        tool._deprecated_port = DeprecatedPort()
+        step = steps.CheckPatchRelevance(tool, mock_options)
+        expected_logs = """Checking relevance of patch
+"""
+        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+
+    def test_patch_not_relevant_jsc(self):
+        self.maxDiff = None
+        mock_options = self._step_options()
+        mock_options.group = "jsc"
+        tool = MockTool(log_executive=True)
+        tool.scm()._mockChangedFiles = ["Tools/ChangeLog", "Tools/Scripts/webkitpy/tool/steps/steps_unittest.py"]
+        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
+        tool._deprecated_port = DeprecatedPort()
+        step = steps.CheckPatchRelevance(tool, mock_options)
+        expected_logs = """Checking relevance of patch
+This patch does not have relevant changes.
+"""
+        with self.assertRaises(ScriptError):
+            OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)

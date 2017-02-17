@@ -44,5 +44,11 @@
         "port": "mac",
         "name": "mac-32bit-ews",
         "architecture": "i386"
+    },
+    "JSC EWS": {
+        "port": "mac",
+        "name": "jsc-ews",
+        "group": "jsc",
+        "runTests": true
     }
 }

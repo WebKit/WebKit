@@ -89,6 +89,7 @@ class DownloadCommandsTest(CommandsTest):
         options.update = True
         options.architecture = 'MOCK ARCH'
         options.iterate_on_new_tests = 0
+        options.group = None
         return options
 
     def test_build(self):

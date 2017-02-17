@@ -1,4 +1,4 @@
-# Copyright (C) 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2014, 2017 Apple Inc. All rights reserved.
 # Copyright (C) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@ all_queue_names = [
     "gtk-wk2-ews",
     "ios-ews",
     "ios-sim-ews",
+    "jsc-ews",
     "mac-ews",
     "mac-wk2-ews",
     "mac-debug-ews",

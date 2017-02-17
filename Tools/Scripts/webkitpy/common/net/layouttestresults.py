@@ -28,6 +28,7 @@
 
 import logging
 
+from webkitpy.common.net.abstracttestresults import AbstractTestResults
 from webkitpy.common.net.resultsjsonparser import ParsedJSONResults
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
 from webkitpy.layout_tests.models import test_results
@@ -45,7 +46,7 @@ def path_for_layout_test(test_name):
 # FIXME: This should be unified with ResultsSummary or other NRWT layout tests code
 # in the layout_tests package.
 # This doesn't belong in common.net, but we don't have a better place for it yet.
-class LayoutTestResults(object):
+class LayoutTestResults(AbstractTestResults):
     @classmethod
     def results_from_string(cls, string):
         if not string:

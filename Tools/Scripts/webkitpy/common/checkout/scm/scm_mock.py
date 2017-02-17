@@ -1,4 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright (C) 2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -37,6 +38,7 @@ class MockSCM(object):
         self.added_paths = set()
         self._filesystem = filesystem or MockFileSystem()
         self._executive = executive or MockExecutive()
+        self._mockChangedFiles = ["MockFile1"]
 
     def add(self, destination_path):
         self.add_list([destination_path])
@@ -71,7 +73,7 @@ class MockSCM(object):
         return self._filesystem.join(self.checkout_root, *comps)
 
     def changed_files(self, git_commit=None):
-        return ["MockFile1"]
+        return self._mockChangedFiles
 
     def changed_files_for_revision(self, revision):
         return ["MockFile1"]

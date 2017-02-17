@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -53,9 +54,14 @@ class RunTests(AbstractStep):
             Options.iterate_on_new_tests,
             Options.non_interactive,
             Options.quiet,
+            Options.group,
         ]
 
     def run(self, state):
+        if self._options.group == "jsc":
+            self._run_javascriptcore_tests()
+            return
+
         if self._options.iterate_on_new_tests:
             _log.info("Running run-webkit-tests on new tests")
             self._run_webkit_tests(self._options.iterate_on_new_tests)
@@ -142,4 +148,12 @@ class RunTests(AbstractStep):
                 args.append(test)
             args.append("--iterations=%d" % iterate_on_new_tests)
 
+        self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)
+
+    def _run_javascriptcore_tests(self):
+        args = self._tool.deprecated_port().run_javascriptcore_tests_command(self._options.build_style)
+
+        results_directory = self._tool.port_factory.get().jsc_results_directory()
+        results_file_path = self._tool.filesystem.join(results_directory, "jsc_test_results.json")
+        args.append("--json-output=%s" % results_file_path)
         self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)

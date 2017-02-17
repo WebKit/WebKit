@@ -1,5 +1,5 @@
 # Copyright (c) 2009, 2011 Google Inc. All rights reserved.
-# Copyright (c) 2009 Apple Inc. All rights reserved.
+# Copyright (c) 2009, 2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -84,6 +84,14 @@ class BuildAndTest(AbstractSequencedCommand):
         steps.Update,
         steps.Build,
         steps.RunTests,
+    ]
+
+
+class CheckPatchRelevance(AbstractSequencedCommand):
+    name = "check-patch-relevance"
+    help_text = "Check if this patch needs to be tested"
+    steps = [
+        steps.CheckPatchRelevance,
     ]
 
 

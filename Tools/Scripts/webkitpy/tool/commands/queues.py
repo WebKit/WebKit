@@ -1,5 +1,5 @@
 # Copyright (c) 2009 Google Inc. All rights reserved.
-# Copyright (c) 2009 Apple Inc. All rights reserved.
+# Copyright (c) 2009, 2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -62,6 +62,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
     watchers = [
     ]
 
+    _skip_status = "Skip"
     _pass_status = "Pass"
     _fail_status = "Fail"
     _error_status = "Error"
@@ -242,6 +243,10 @@ class AbstractPatchQueue(AbstractQueue):
     def _did_error(self, patch, reason):
         message = "%s: %s" % (self._error_status, reason)
         self._update_status(message, patch)
+        self._release_work_item(patch)
+
+    def _did_skip(self, patch):
+        self._update_status(self._skip_status, patch)
         self._release_work_item(patch)
 
     def _unlock_patch(self, patch):

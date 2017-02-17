@@ -1,3 +1,136 @@
+2017-02-17  Srinivasan Vijayaraghavan  <svijayaraghavan@apple.com>
+
+        EWS should run JavaScriptCore tests
+        https://bugs.webkit.org/show_bug.cgi?id=162458
+
+        Reviewed by Alexey Proskuryakov.
+
+        * QueueStatusServer/config/queues.py: Add jsc-ews queue.
+        * QueueStatusServer/model/queuestatus.py:
+        (QueueStatus.did_skip): Returns whether patch was skipped, based on status.
+        * QueueStatusServer/handlers/statusbubble.py:
+        (StatusBubble._should_show_bubble_for): Add logic to hide jsc-ews bubble if the patch does not touch jsc.
+        * Scripts/webkitpy/common/checkout/scm/scm_mock.py:
+        (MockSCM.__init__): Add _mockChangedFiles variable.
+        (MockSCM.changed_files): Change to use _mockChangedFiles variables.
+        * Scripts/webkitpy/common/config/ews.json: Add config info for JSC EWS.
+        * Scripts/webkitpy/common/config/ports.py: Add support for JSC EWS in Mac Port.
+        (DeprecatedPort._append_build_style_flag): Helper function to append build_style to a command.
+        (DeprecatedPort.build_jsc_command): Added - command to build JSC only (quicker than building all of WebKit).
+        (DeprecatedPort.run_javascriptcore_tests_command): Allow JSC EWS to only run JSC tests.
+        (MacPort.run_webkit_tests_command): Check for JSC.
+        * Scripts/webkitpy/common/config/ports_mock.py:
+        (MockPort.run_javascriptcore_tests_command): Add build_style argument.
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        (DeprecatedPortTest.test_mac_port): Add unit tests for build-jsc shell command.
+        * Scripts/webkitpy/common/net/abstracttestresults.py: Added.
+        (AbstractTestResults): Abstract superclass of JSCTestResults and JSCTestResults.
+        (AbstractTestResults.test_results): Stub.
+        (AbstractTestResults.failing_tests): Stub.
+        (AbstractTestResults.did_exceed_test_failure_limit): Stub.
+        * Scripts/webkitpy/common/net/jsctestresults.py: Added.
+        (JSCTestResults): Added.
+        (JSCTestResults.intersection): Return a JSCTestResults object with failures common to both input objects.
+        (JSCTestResults.results_from_string): Use json library to parse results.
+        (JSCTestResults.__init__): Initialize members.
+        (JSCTestResults.equals): This enables unit testing.
+        (JSCTestResults.is_subset): Checks if one set of failures is a subset of another.
+        (JSCTestResults.all_passed): Getter.
+        (JSCTestResults.failing_tests): Getter.
+        (JSCTestResults.did_exceed_test_failure_limit): Getter.
+        * Scripts/webkitpy/common/net/jsctestresults_unittest.py: Added.
+        (JSCTestResultsTest): Class to test JSCTestResults.
+        (JSCTestResultsTest.test_results_from_string): Tests parsing.
+        (JSCTestResultsTest.test_intersection_api_tests): Unit test for intersection() class method.
+        (JSCTestResultsTest.test_intersection_stress_tests): Unit test for intersection() class method.
+        (JSCTestResultsTest.test_intersection_general_case): Unit test for intersection() class method.
+        * Scripts/webkitpy/port/base.py:
+        (Port.jsc_results_directory): Returns the directory for the JSC test results JSON file.
+        * Scripts/webkitpy/tool/bot/earlywarningsystemtask.py:
+        (EarlyWarningSystemTask.run): Add check_patch_relevance step.
+        * Scripts/webkitpy/tool/bot/jscews_unittest.py: Added.
+        (MockPatchAnalysisTask): Mocked-out version of PatchAnalysisTask that doesn't run commands.
+        (MockPatchAnalysisTask.__init__): Sets attributes.
+        (MockPatchAnalysisTask._test): Override to not run command.
+        (MockPatchAnalysisTask._build_and_test_without_patch): Override to not run command.
+        (MockPatchAnalysisTask.validate): Assume mocked patch is valid for purposes of testing retry logic.
+        (MockPatchAnalysisTask.test_run_count): Specific to the mocked version, to test retry logic.
+        (MockJSCEarlyWarningSystem): Mocked-out version of AbstarctEarlyWarningSystem so we can provide test results.
+        (MockJSCEarlyWarningSystem.__init__): Sets attributes, also sets group to jsc.
+        (MockJSCEarlyWarningSystem.test_results): Returns test results provided by us, instead of using a JSON reader.
+        (JSCEarlyWarningSystemTest): Class to test retry logic in below situations.
+        (JSCEarlyWarningSystemTest._create_task): Helper function to abstract out common code.
+        (JSCEarlyWarningSystemTest._results_indicate_all_passed): False if input is None or has failures, else True.
+        (JSCEarlyWarningSystemTest.test_success_case): Clean patch on clean tree.
+        (JSCEarlyWarningSystemTest.test_test_failure): Failed patch on clean tree.
+        (JSCEarlyWarningSystemTest.test_fix): Patch that fixes all tree redness.
+        (JSCEarlyWarningSystemTest.test_ineffective_patch): Patch that has same failures as tree.
+        (JSCEarlyWarningSystemTest.test_partially_effective_patch): Patch fixes some failures but adds no new failures.
+        (JSCEarlyWarningSystemTest.test_different_test_failures_in_patch_and_tree): Patch has some failures not in tree.
+        (JSCEarlyWarningSystemTest.test_first_results_could_not_be_read): Patch results not readable.
+        (JSCEarlyWarningSystemTest.test_second_results_could_not_be_read): Patch results not readable on second run.
+        (JSCEarlyWarningSystemTest.test_clean_results_could_not_be_read): Results from clean tree not readable.
+        (JSCEarlyWarningSystemTest.test_flaky_results_on_clean_tree_pass): Patch has one flake and no failures.
+        (JSCEarlyWarningSystemTest.test_flaky_results_on_clean_tree_pass_v2): Patch has one flake and no failures.
+        (JSCEarlyWarningSystemTest.test_flaky_results_on_clean_tree_failure): Patch has flakes and failed tests.
+        (JSCEarlyWarningSystemTest.test_flaky_results_on_red_tree_pass): Patch has same failures as tree, plus a flake.
+        * Scripts/webkitpy/tool/bot/jsctestresultsreader.py: Added.
+        (JSCTestResultsReader): Reads results file.
+        (JSCTestResultsReader.__init__): Sets attributes.
+        (JSCTestResultsReader._read_file_contents): Reads file.
+        (JSCTestResultsReader.results): Reads the results file and returns a JSCTestResults object.
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        (PatchIsNotApplicable): Exception for when patch doesn't have relevant changes.
+        (PatchAnalysisTask._check_patch_relevance): Added.
+        (PatchAnalysisTask._build): Check for JSC.
+        (PatchAnalysisTask._build_without_patch): Check for JSC.
+        (PatchAnalysisTask._test): Check for JSC.
+        (PatchAnalysisTask._build_and_test_without_patch): Check for JSC.
+        (PatchAnalysisTask._retry_jsc_tests): Retry logic for JSC EWS.
+        (PatchAnalysisTask._retry_layout_tests): Retry logic for layout tests EWS.
+        (PatchAnalysisTask._test_patch): Add retry logic for JSC.
+        * Scripts/webkitpy/tool/commands/download.py:
+        (CheckPatchRelevance): Add check-patch-relevance command.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem._create_task): Abstract out to enable mocking.
+        (AbstractEarlyWarningSystem.begin_work_queue): Use JSCTestResultsReader not LayoutTestResultsReader in JSC EWS.
+        (AbstractEarlyWarningSystem.review_patch): Handle PatchIsApplicable.
+        (AbstractEarlyWarningSystem.test_results): _layout_test_results_reader -> _test_results_reader.
+        (AbstractEarlyWarningSystem.archive_last_test_results): _layout_test_results_reader -> _test_results_reader.
+        (AbstractEarlyWarningSystem.group): This attribute determines the type of EWS (eg. JSC).
+        (AbstractEarlyWarningSystem.load_ews_classes): Add _group, and make classes of type cls to enable mocking.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (TestEWS): Sample layout test EWS class used for unit testing.
+        (TestJSCEWS): Sample JSC EWS class used for unit testing.
+        (AbstractEarlyWarningSystemTest.test_failing_tests_message.TestEWS): Add _group.
+        (AbstractEarlyWarningSystemTest.test_failing_jsc_tests_message.TestEWS): Added test for jsc failures message.
+        (AbstractEarlyWarningSystemTest): Add _group variable.
+        (EarlyWarningSystemTest._default_expected_logs): Add check-patch-relevance step, inconclusive logs, and group.
+        (EarlyWarningSystemTest._test_ews): Add logs_are_conclusive option to pass through to default_expected_logs().
+        (EarlyWarningSystemTest.test_inconclusive_test_results): Test not removing patch from queue if not conclusive.
+        (MockAbstractEarlyWarningSystemForInconclusiveJSCResults): Added.
+        (MockAbstractEarlyWarningSystemForInconclusiveJSCResults._test_patch): Simulates running tests but not getting a conclusive result.
+        (MockEarlyWarningSystemTaskForInconclusiveJSCResults): Added.
+        (MockEarlyWarningSystemTaskForInconclusiveJSCResults._create_task): Use MockEarlyWarningSystemTask (not EarlyWarningSystemTask).
+        * Scripts/webkitpy/tool/steps/__init__.py: Add CheckPatchRelevance import.
+        * Scripts/webkitpy/tool/steps/build.py:
+        (Build.options): Check for JSC.
+        (Build.build): Check for JSC.
+        (Build.run): Check for JSC.
+        * Scripts/webkitpy/tool/steps/checkpatchrelevance.py: Added.
+        (CheckPatchRelevance): Added.
+        (CheckPatchRelevance._does_contain_change_in_paths): Abstract function to perform regex matching.
+        (CheckPatchRelevance.run): Check if changed files in patch belong in certain folders.
+        * Scripts/webkitpy/tool/steps/options.py:
+        (Options): Add --group command line option.
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.options): Add group.
+        (RunTests.run): Check for JSC.
+        (RunTests._run_webkit_tests): Check for JSC.
+        (RunTests): Add _group attribute.
+        (RunTests._run_javascriptcore_tests): New.
+        * Scripts/webkitpy/tool/steps/steps_unittest.py: Unit tests.
+
 2017-02-17  Aakash Jain  <aakash_jain@apple.com>
 
         Fix tools that were broken by Efl removal
