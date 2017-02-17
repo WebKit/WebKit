@@ -1,3 +1,26 @@
+2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r212146. rdar://problem/28656664
+
+    2017-02-10  Mark Lam  <mark.lam@apple.com>
+
+            StructureStubInfo::considerCaching() should write barrier its owner CodeBlock when buffering a new Structure.
+            https://bugs.webkit.org/show_bug.cgi?id=168137
+            <rdar://problem/28656664>
+
+            Reviewed by Filip Pizlo.
+
+            If we're adding a new structure to StructureStubInfo's bufferedStructures, we
+            should write barrier the StubInfo's owner CodeBlock because that structure may be
+            collected during the next GC.  Write barrier-ing the owner CodeBlock ensures that
+            CodeBlock::finalizeBaselineJITInlineCaches() is called on it during the GC,
+            which, in turn, gives the StructureStubInfo the opportunity to filter out the
+            dead structure.
+
+            * bytecode/StructureStubInfo.h:
+            (JSC::StructureStubInfo::considerCaching):
+            * jit/JITOperations.cpp:
+
 2017-02-16  Keith Miller  <keith_miller@apple.com>
 
         Fix merge issue with r212085 (rdar://problem/29939864).
