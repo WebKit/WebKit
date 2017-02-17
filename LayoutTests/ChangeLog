@@ -1,5 +1,23 @@
 2017-02-17  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Toggle playback when clicking on the video on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=168515
+        <rdar://problem/30577441>
+
+        Reviewed by Dean Jackson.
+
+        * media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause.html: Added.
+        * media/modern-media-controls/media-controller/media-controller-click-on-video-background-to-dismiss-tracks-panel-should-not-toggle-playback-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-click-on-video-background-to-dismiss-tracks-panel-should-not-toggle-playback.html: Added.
+        * media/modern-media-controls/media-controller/media-controller-click-on-video-controls-should-not-pause-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-click-on-video-controls-should-not-pause.html: Added.
+        * media/modern-media-controls/media-documents/click-on-video-should-not-pause-expected.txt:
+        * media/modern-media-controls/media-documents/click-on-video-should-not-pause.html:
+        * platform/ios-simulator/TestExpectations:
+
+2017-02-17  Antoine Quint  <graouts@apple.com>
+
         REGRESSION: Subtitles menu in media controls allows multiple items to be selected
         https://bugs.webkit.org/show_bug.cgi?id=168168
         <rdar://problem/30488605>

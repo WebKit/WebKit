@@ -29,8 +29,8 @@ let video;
         
         const bounds = video.getBoundingClientRect();
         debug("");
-        debug("Clicking on video");
-        window.eventSender.mouseMoveTo(bounds.left + 10, bounds.top + 10);
+        debug("Clicking on video controls");
+        window.eventSender.mouseMoveTo(bounds.left + 5, bounds.bottom - 5);
         window.eventSender.mouseDown();
         window.eventSender.mouseUp();
 

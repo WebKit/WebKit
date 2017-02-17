@@ -141,6 +141,7 @@ class MacOSInlineMediaControls extends MacOSMediaControls
 
     handleEvent(event)
     {
+        super.handleEvent(event);
         this._volumeSliderContainer.visible = event.type === "mouseenter" || event.relatedTarget === this._volumeSliderContainer.element;
     }
 

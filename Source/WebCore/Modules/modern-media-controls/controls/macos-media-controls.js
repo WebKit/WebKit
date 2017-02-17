@@ -36,6 +36,9 @@ class MacOSMediaControls extends MediaControls
         this.tracksButton = new TracksButton(this);
         this.tracksPanel = new TracksPanel;
         this.volumeSlider = new VolumeSlider;
+
+        this.element.addEventListener("mousedown", this);
+        this.element.addEventListener("click", this);
     }
 
     // Public
@@ -54,6 +57,25 @@ class MacOSMediaControls extends MediaControls
         this.tracksButton.element.focus();
         this.controlsBar.userInteractionEnabled = true;
         this.tracksPanel.hide();
+    }
+
+    // Protected
+
+    handleEvent(event)
+    {
+        if (event.currentTarget !== this.element)
+            return;
+
+        // Only notify that the background was clicked when the "mousedown" event
+        // was also received, which wouldn't happen if the "mousedown" event caused
+        // the tracks panel to be hidden.
+        if (event.type === "mousedown")
+            this._receivedMousedown = true;
+        else if (event.type === "click") {
+            if (this._receivedMousedown && event.target === this.element && this.delegate && typeof this.delegate.macOSControlsBackgroundWasClicked === "function")
+                this.delegate.macOSControlsBackgroundWasClicked();
+            delete this._receivedMousedown
+        }
     }
 
 }

@@ -58,6 +58,8 @@ class MediaController
             media.addEventListener("webkitfullscreenchange", this);
     }
 
+    // Public
+
     get layoutTraits()
     {
         let traits = window.navigator.platform === "MacIntel" ? LayoutTraits.macOS : LayoutTraits.iOS;
@@ -81,6 +83,14 @@ class MediaController
         return traits;
     }
 
+    togglePlayback()
+    {
+        if (this.media.paused)
+            this.media.play();
+        else
+            this.media.pause();
+    }
+
     // Protected
 
     set pageScaleFactor(pageScaleFactor)
@@ -92,6 +102,13 @@ class MediaController
     set usesLTRUserInterfaceLayoutDirection(flag)
     {
         this.controls.usesLTRUserInterfaceLayoutDirection = flag;
+    }
+
+    macOSControlsBackgroundWasClicked()
+    {
+        // Toggle playback when clicking on the video but not on any controls on macOS.
+        if (this.media.controls)
+            this.togglePlayback();
     }
 
     handleEvent(event)
@@ -137,6 +154,7 @@ class MediaController
         }
 
         this.controls = new ControlsClass;
+        this.controls.delegate = this;
 
         if (this.shadowRoot.host && this.shadowRoot.host.dataset.autoHideDelay)
             this.controls.controlsBar.autoHideDelay = this.shadowRoot.host.dataset.autoHideDelay;

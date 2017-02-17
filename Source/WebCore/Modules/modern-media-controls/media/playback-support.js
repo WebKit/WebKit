@@ -40,11 +40,7 @@ class PlaybackSupport extends MediaControllerSupport
 
     buttonWasPressed(control)
     {
-        const media = this.mediaController.media;
-        if (media.paused)
-            media.play();
-        else
-            media.pause();
+        this.mediaController.togglePlayback();
     }
 
     syncControl()
