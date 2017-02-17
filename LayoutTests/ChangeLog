@@ -1,3 +1,11 @@
+2017-02-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip js/dom/gc-slot-visitor-parallel-drain-pings-runloop-when-done.html on El Capitan.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2017-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-weight in @font-face can cause a font to be downloaded even when it's not used
