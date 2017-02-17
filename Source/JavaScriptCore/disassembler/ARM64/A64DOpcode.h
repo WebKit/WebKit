@@ -164,11 +164,21 @@ protected:
         bufferPrintf("#%d", immediate);
     }
 
+    void appendSignedImmediate64(int64_t immediate)
+    {
+        bufferPrintf("#%" PRIi64, immediate);
+    }
+    
     void appendUnsignedImmediate(unsigned immediate)
     {
         bufferPrintf("#%u", immediate);
     }
 
+    void appendUnsignedHexImmediate(unsigned immediate)
+    {
+        bufferPrintf("#0x%x", immediate);
+    }
+    
     void appendUnsignedImmediate64(uint64_t immediate)
     {
         bufferPrintf("#0x%" PRIx64, immediate);
@@ -312,7 +322,7 @@ private:
     static const char* const s_opNames[4];
 
 public:
-    static const uint32_t mask = 0x1fe00010;
+    static const uint32_t mask = 0x1fe00000;
     static const uint32_t pattern = 0x1a800000;
 
     DEFINE_STATIC_FORMAT(A64DOpcodeConditionalSelect, thisObj);
@@ -325,6 +335,25 @@ public:
     unsigned sBit() { return (m_opcode >> 29) & 0x1; }
     unsigned condition() { return (m_opcode >> 12) & 0xf; }
     unsigned op2() { return (m_opcode >> 10) & 0x3; }
+};
+
+class A64DOpcodeDataProcessing1Source : public A64DOpcode {
+private:
+    static const char* const s_opNames[8];
+    
+public:
+    static const uint32_t mask = 0x5fe00000;
+    static const uint32_t pattern = 0x5ac00000;
+    
+    DEFINE_STATIC_FORMAT(A64DOpcodeDataProcessing1Source, thisObj);
+    
+    const char* format();
+    
+    const char* opName() { return s_opNames[opNameIndex()]; }
+    unsigned sBit() { return (m_opcode >> 29) & 0x1; }
+    unsigned opCode() { return (m_opcode >> 10) & 0x3f; }
+    unsigned opCode2() { return (m_opcode >> 16) & 0x1f; }
+    unsigned opNameIndex() { return (opCode() & 0x7); }
 };
 
 class A64DOpcodeDataProcessing2Source : public A64DOpcode {
@@ -358,7 +387,7 @@ public:
 
     const char* format();
 
-    const char* opName() { return ra() == 31 ? s_opNames[opNum() & 0xf] : s_pseudoOpNames[opNum() & 0xf]; }
+    const char* opName() { return ra() == 31 ? s_pseudoOpNames[opNum() & 0xf] : s_opNames[opNum() & 0xf]; }
     unsigned ra() { return (m_opcode >> 10) & 0x1f; }
     unsigned op54() { return (m_opcode >> 29) & 0x3; }
     unsigned op31() { return (m_opcode >> 21) & 0x7; }
@@ -368,7 +397,7 @@ public:
 
 class A64OpcodeExceptionGeneration : public A64DOpcode {
 public:
-    static const uint32_t mask = 0xff000010;
+    static const uint32_t mask = 0xff000000;
     static const uint32_t pattern = 0xd4000000;
 
     DEFINE_STATIC_FORMAT(A64OpcodeExceptionGeneration, thisObj);
@@ -420,6 +449,20 @@ public:
     unsigned op() { return (m_opcode >> 14) & 0x3; }
     unsigned opCode2() { return m_opcode & 0x1f; }
     unsigned opNum() { return (m_opcode >> 3) & 0x3; }
+};
+
+class A64DOpcodeFloatingPointConditionalSelect : public A64DOpcodeFloatingPointOps {
+public:
+    static const uint32_t mask = 0x5f200c00;
+    static const uint32_t pattern = 0x1e200c00;
+    
+    DEFINE_STATIC_FORMAT(A64DOpcodeFloatingPointConditionalSelect, thisObj);
+    
+    const char* format();
+    
+    const char* opName() { return "fcsel"; }
+    
+    unsigned condition() { return (m_opcode >> 12) & 0xf; }
 };
 
 class A64DOpcodeFloatingPointDataProcessing1Source : public A64DOpcodeFloatingPointOps {
@@ -509,28 +552,20 @@ public:
     unsigned immediate7() { return (m_opcode >> 5) & 0x7f; }
 };
 
-class A64DOpcodeDmbIsh : public A64DOpcode {
-public:
-    static const uint32_t mask = 0xffffffff;
-    static const uint32_t pattern = 0xd5033bbf;
+class A64DOpcodeDmb : public A64DOpcode {
+    static const char* const s_optionNames[16];
 
-    DEFINE_STATIC_FORMAT(A64DOpcodeDmbIsh, thisObj);
+public:
+    static const uint32_t mask = 0xfffff0ff;
+    static const uint32_t pattern = 0xd50330bf;
+
+    DEFINE_STATIC_FORMAT(A64DOpcodeDmb, thisObj);
 
     const char* format();
 
     const char* opName() { return "dmb"; }
-};
-
-class A64DOpcodeDmbIshSt : public A64DOpcode {
-public:
-    static const uint32_t mask = 0xffffffff;
-    static const uint32_t pattern = 0xd5033abf;
-
-    DEFINE_STATIC_FORMAT(A64DOpcodeDmbIshSt, thisObj);
-
-    const char* format();
-
-    const char* opName() { return "dmb"; }
+    const char* option() { return s_optionNames[crM()]; }
+    unsigned crM() { return (m_opcode >> 8) & 0xf; }
 };
 
 class A64DOpcodeLoadStore : public A64DOpcode {
@@ -657,7 +692,7 @@ public:
     const char* format();
 
     bool isTst() { return ((opNumber() == 6) && (rd() == 31)); }
-    bool isMov() { return ((opNumber() == 2) && (rn() == 31)); }
+    bool isMov() { return ((opc() == 1) && (rn() == 31)); }
     unsigned opNumber() { return (opc() << 1) | nBit(); }
     unsigned shift() { return (m_opcode >> 22) & 0x3; }
     int immediate6() { return (static_cast<int>((m_opcode >> 10) & 0x3f) << 26) >> 26; }
