@@ -5,7 +5,7 @@
 }
 </style>
 <p>
-This test checks that the fallback font is used for layout while a webfont is loading.
+This test checks that the fallback font is not used for layout while a webfont is loading.
 </p>
 Target:
 <div>
@@ -26,10 +26,10 @@ function checkSize() {
     var targetWidth = document.getElementById('target').offsetWidth;
     var referenceWidth = document.getElementById('reference').offsetWidth;
     var result = document.getElementById('result');
-    if (targetWidth == referenceWidth)
-        result.innerText = 'PASS: The width of target text and reference text is the same.';
+    if (targetWidth != referenceWidth)
+        result.innerText = 'PASS: The width of target text and reference text are different.';
     else
-        result.innerText = 'FAIL: The width of target text and reference text is different: ' + targetWidth + ' != ' + referenceWidth;
+        result.innerText = 'FAIL: The width of target text and reference text are the same.';
 }
 
 checkSize();

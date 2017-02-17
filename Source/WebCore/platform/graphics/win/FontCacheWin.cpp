@@ -338,6 +338,11 @@ RefPtr<Font> FontCache::fontFromDescriptionAndLogFont(const FontDescription& fon
     return fontData;
 }
 
+Ref<Font> FontCache::lastResortFallbackFontForEveryCharacter(const FontDescription& fontDescription)
+{
+    return lastResortFallbackFont(fontDescription);
+}
+
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, fallbackFontName, ());

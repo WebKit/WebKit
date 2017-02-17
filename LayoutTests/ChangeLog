@@ -1,3 +1,29 @@
+2017-02-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-weight in @font-face can cause a font to be downloaded even when it's not used
+        https://bugs.webkit.org/show_bug.cgi?id=168114
+        <rdar://problem/30301317>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/font-style-download-expected.txt: Added.
+        * fast/text/font-style-download.html: Added.
+        * fast/text/font-weight-download-2-expected.txt: Added.
+        * fast/text/font-weight-download-2.html: Added.
+        * fast/text/font-weight-download-expected.txt: Added.
+        * fast/text/font-weight-download.html: Added.
+        * fast/text/font-weight-fallback-expected.html: Added.
+        * fast/text/font-weight-fallback.html: Added.
+        * http/tests/webfont/fallback-font-while-loading-expected.txt: We don't want to use the
+        fallback font while an earlier font is loading because the fallback font might require
+        an extra download. This represents a policy change.
+        * http/tests/webfont/fallback-font-while-loading.html: Ditto.
+        * resources/Ahem_CJK.ttf: Added.
+        * svg/W3C-SVG-1.1-SE/struct-dom-11-f.svg: The metrics of LastResort are different from
+        the metrics of the previous interstitial font, which means the new font causes elements
+        to intersect when they previously didn't. However, the web font isn't actually necessary
+        here, so we can just stop using it, thereby sidestepping the entire problem.
+
 2017-02-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip imported/w3c/web-platform-tests/resource-timing tests on Debug.

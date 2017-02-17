@@ -94,13 +94,8 @@ private:
     bool m_syntheticItalic;
 };
 
-static void appendFontWithInvalidUnicodeRangeIfLoading(FontRanges& ranges, Ref<FontAccessor>&& fontAccessor, const Vector<CSSFontFace::UnicodeRange>& unicodeRanges)
+static void appendFont(FontRanges& ranges, Ref<FontAccessor>&& fontAccessor, const Vector<CSSFontFace::UnicodeRange>& unicodeRanges)
 {
-    if (fontAccessor->isLoading()) {
-        ranges.appendRange({ 0, 0, WTFMove(fontAccessor) });
-        return;
-    }
-
     if (unicodeRanges.isEmpty()) {
         ranges.appendRange({ 0, 0x7FFFFFFF, WTFMove(fontAccessor) });
         return;
@@ -132,7 +127,7 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
             auto fontAccessor = CSSFontAccessor::create(face, fontDescription, syntheticBold, syntheticItalic);
             if (result.isNull() && !fontAccessor->font())
                 continue;
-            appendFontWithInvalidUnicodeRangeIfLoading(result, WTFMove(fontAccessor), face->ranges());
+            appendFont(result, WTFMove(fontAccessor), face->ranges());
         }
     }
     return result;
