@@ -99,9 +99,7 @@ struct PrintInfo;
 - (void)_willInvokeUIScrollViewDelegateCallback;
 - (void)_didInvokeUIScrollViewDelegateCallback;
 
-- (void)_updateVisibleContentRects;
-- (void)_updateVisibleContentRectAfterScrollInView:(UIScrollView *)scrollView;
-- (void)_updateContentRectsWithState:(BOOL)inStableState;
+- (void)_scheduleVisibleContentRectUpdate;
 
 - (void)_didFinishLoadForMainFrame;
 - (void)_didFailLoadForMainFrame;

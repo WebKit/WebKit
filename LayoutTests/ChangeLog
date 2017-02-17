@@ -1,5 +1,27 @@
 2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212459. rdar://problem/29322051
+
+    2017-02-16  Tim Horton  <timothy_horton@apple.com>
+
+            WKWebView inside a UICollectionView flashes when items are inserted above it
+            https://bugs.webkit.org/show_bug.cgi?id=168376
+            <rdar://problem/29322051>
+
+            Reviewed by Simon Fraser.
+
+            * scrollingcoordinator/ios/sync-layer-positions-after-scroll.html:
+            * scrollingcoordinator/ios/sync-layer-positions-after-scroll-expected.txt:
+            Make use of doAfterVisibleContentRectUpdate; we previously were
+            guaranteed by message ordering that our uiScriptComplete message
+            would arrive after the visible content rect update, but that is
+            no longer the case.
+
+            Also, adjust to have a initial scale and flexible viewport in order
+            to work around https://bugs.webkit.org/show_bug.cgi?id=168403.
+
+2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212350. rdar://problem/30450379
 
     2017-02-14  Brent Fulgham  <bfulgham@apple.com>

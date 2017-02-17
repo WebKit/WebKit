@@ -1,5 +1,83 @@
 2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212459. rdar://problem/29322051
+
+    2017-02-16  Tim Horton  <timothy_horton@apple.com>
+
+            WKWebView inside a UICollectionView flashes when items are inserted above it
+            https://bugs.webkit.org/show_bug.cgi?id=168376
+            <rdar://problem/29322051>
+
+            Reviewed by Simon Fraser.
+
+            Previously, we would immediately send visible content rect updates
+            whenever we scrolled, or our frame or bounds changed, or ... a whole
+            bunch of other things. This message would be immediately sent to the
+            Web Content process, and coalesced at the whims of the Web Content process
+            main thread. However, if we received multiple such updates within the
+            same runloop cycle in the UI process, the Web Content process could
+            send back layer tree commits for intermediate states that would
+            never make it to the screen.
+
+            In the UICollectionView case, UIKit would first scroll to the new location
+            (potentially putting the WKWebView totally off-screen), and then update
+            our frame (back on screen), and we would get two layer tree commits;
+            one, with less tile coverage than needed to cover the area, and another
+            with full coverage.
+
+            Instead, wait until just before we commit the UI-side layer tree (and
+            thus everyone is done moving things around) to push the new visible
+            rect info to the Web Content process.
+
+            So far, I have not found a way to test that reliably fails before
+            and reliably passes after without adding a ton of supporting code to WebKit.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _didInvokeUIScrollViewDelegateCallback]):
+            (-[WKWebView _didCommitLayerTree:]):
+            (-[WKWebView _didFinishScrolling]):
+            (-[WKWebView scrollViewDidScroll:]):
+            (-[WKWebView scrollViewDidZoom:]):
+            (-[WKWebView scrollViewDidEndZooming:withView:atScale:]):
+            (-[WKWebView _scrollViewDidInterruptDecelerating:]):
+            (-[WKWebView _didScroll]):
+            (-[WKWebView _enclosingScrollerScrollingEnded:]):
+            (-[WKWebView _frameOrBoundsChanged]):
+            (-[WKWebView _scheduleVisibleContentRectUpdate]):
+            (-[WKWebView _scrollViewIsInStableState:]):
+            (-[WKWebView _scheduleVisibleContentRectUpdateAfterScrollInView:]):
+            (-[WKWebView _keyboardChangedWithInfo:adjustScrollView:]):
+            (-[WKWebView _setObscuredInsets:]):
+            (-[WKWebView _endInteractiveObscuredInsetsChange]):
+            (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+            (-[WKWebView _endAnimatedResize]):
+            (-[WKWebView _updateVisibleContentRects]): Deleted.
+            (-[WKWebView _updateVisibleContentRectAfterScrollInView:]): Deleted.
+            * UIProcess/API/Cocoa/WKWebViewInternal.h:
+            * UIProcess/ios/WKContentView.mm:
+            (-[WKContentView _didCommitLayerTree:]):
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:userObject:]):
+            (-[WKContentView _stopAssistingNode]):
+            * UIProcess/ios/WKScrollView.mm:
+            (-[WKScrollView setContentInset:]):
+            Have existing callers of _updateVisibleContentRect* instead call
+            _scheduleVisibleContentRectUpdate*.
+
+            In _scheduleVisibleContentRectUpdate, schedule a pre-commit callback
+            in which we will compute the new visible content rect information
+            and send it to the Web Content process.
+
+            Keep track of the stable state of the scroll view which most recently
+            scheduled an update, and use that to inform _updateVisibleContentRects.
+            This matches the previous behavior where the updates might get coalesced
+            in the Web Content process, and the most recent update wins.
+
+            Make a few callers of _updateVisibleContentRectAfterScrollInView
+            that passed in our scroll view just use _scheduleVisibleContentRectUpdate instead.
+
+2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212312. rdar://problem/30505482
 
     2017-02-14  Simon Fraser  <simon.fraser@apple.com>
