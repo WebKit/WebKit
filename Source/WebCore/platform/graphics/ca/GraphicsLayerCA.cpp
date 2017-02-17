@@ -1332,32 +1332,16 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
     if (intersectsCoverageRect != m_intersectsCoverageRect) {
         m_uncommittedChanges |= CoverageRectChanged;
         m_intersectsCoverageRect = intersectsCoverageRect;
-
-        if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
-            maskLayer->m_uncommittedChanges |= CoverageRectChanged;
-            maskLayer->m_intersectsCoverageRect = intersectsCoverageRect;
-        }
     }
 
     if (visibleRectChanged) {
         m_uncommittedChanges |= CoverageRectChanged;
         m_visibleRect = rects.visibleRect;
-
-        if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
-            // FIXME: this assumes that the mask layer has the same geometry as this layer (which is currently always true).
-            maskLayer->m_uncommittedChanges |= CoverageRectChanged;
-            maskLayer->m_visibleRect = rects.visibleRect;
-        }
     }
 
     if (coverageRectChanged) {
         m_uncommittedChanges |= CoverageRectChanged;
         m_coverageRect = rects.coverageRect;
-
-        if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
-            maskLayer->m_uncommittedChanges |= CoverageRectChanged;
-            maskLayer->m_coverageRect = rects.coverageRect;
-        }
     }
 }
 
@@ -1423,8 +1407,10 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
     
     childCommitState.ancestorIsViewportConstrained |= m_isViewportConstrained;
 
-    if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer))
+    if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
+        maskLayer->setVisibleAndCoverageRects(rects, m_isViewportConstrained || commitState.ancestorIsViewportConstrained);
         maskLayer->commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition);
+    }
 
     const Vector<GraphicsLayer*>& childLayers = children();
     size_t numChildren = childLayers.size();

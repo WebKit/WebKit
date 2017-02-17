@@ -1,5 +1,29 @@
 2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212172. rdar://problem/30476807
+
+    2017-02-10  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (r211845): [ios-simulator] LayoutTest compositing/masks/solid-color-masked.html is a flaky failure
+            https://bugs.webkit.org/show_bug.cgi?id=168054
+
+            Reviewed by Tim Horton.
+
+            When adding mask layers, there was an ordering dependency. There was a hack in GraphicsLayerCA::setVisibleAndCoverageRects()
+            to propagate m_intersectsCoverageRect to masks. However, if GraphicsLayerCA::setVisibleAndCoverageRects()
+            ran on the masked layer before the mask was added, nothing updated the "m_intersectsCoverageRect" state of the mask layer.
+
+            Fix by explicitly calling setVisibleAndCoverageRects() on the mask layer, passing the same rects and
+            viewport-constrained state as for its host layer (we already assume that their geometry matches).
+
+            Tested by compositing/masks/solid-color-masked.html
+
+            * platform/graphics/ca/GraphicsLayerCA.cpp:
+            (WebCore::GraphicsLayerCA::setVisibleAndCoverageRects):
+            (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+
+2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212153. rdar://problem/30467120
 
     2017-02-10  Simon Fraser  <simon.fraser@apple.com>
