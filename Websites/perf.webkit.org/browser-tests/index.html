@@ -10,12 +10,14 @@
 mocha.setup('bdd');
 
 </script>
+<script src="../unit-tests/resources/mock-remote-api.js"></script>
 </head>
 <body>
 <div id="mocha"></div>
 <script src="component-base-tests.js"></script>
 <script src="close-button-tests.js"></script>
 <script src="editable-text-tests.js"></script>
+<script src="time-series-chart-tests.js"></script>
 <script>
 
 afterEach(() => {
@@ -33,29 +35,32 @@ class BrowsingContext {
         iframe.style.top = '0px';
         BrowsingContext._iframes.push(iframe);
 
-        this._iframe = iframe;
+        this.iframe = iframe;
         this.symbols = {};
-        this.global = this._iframe.contentWindow;
-        this.document = this._iframe.contentDocument;
+        this.global = this.iframe.contentWindow;
+        this.document = this.iframe.contentDocument;
     }
 
     importScripts(pathList, ...symbolList)
     {
-        const doc = this._iframe.contentDocument;
-        const global = this._iframe.contentWindow;
+        const doc = this.iframe.contentDocument;
+        const global = this.iframe.contentWindow;
 
-        return Promise.all(pathList.map((path) => {
+        pathList = pathList.map((path) => `../public/v3/${path}`);
+
+        return Promise.all(['../unit-tests/resources/mock-remote-api.js', ...pathList].map((path) => {
             return new Promise((resolve, reject) => {
                 let script = doc.createElement('script');
                 script.addEventListener('load', resolve);
                 script.addEventListener('error', reject);
-                script.src = '../public/v3/' + path;
+                script.src = path;
                 script.async = false;
                 doc.body.appendChild(script);
             });
         })).then(() => {
             const script = doc.createElement('script');
             script.textContent = `window.importedSymbols = [${symbolList.join(', ')}];`;
+            global.RemoteAPI = global.MockRemoteAPI;
             doc.body.appendChild(script);
 
             const importedSymbols = global.importedSymbols;
@@ -79,8 +84,36 @@ class BrowsingContext {
 }
 BrowsingContext._iframes = [];
 
+function waitForComponentsToRender(context)
+{
+    if (!context._dummyComponent) {
+        const ComponentBase = context.symbols.ComponentBase;
+        context._dummyComponent = class SomeComponent extends ComponentBase {
+            constructor(resolve)
+            {
+                super();
+                this._resolve = resolve;
+            }
+            render() { setTimeout(this._resolve, 0); }
+        }
+        ComponentBase.defineElement('dummy-component', context._dummyComponent);
+    }
+    return new Promise((resolve) => {
+        const instance = new context._dummyComponent(resolve);
+        context.document.body.appendChild(instance.element());
+        instance.enqueueToRender();
+    });
+}
+
+function wait(milliseconds)
+{
+    return new Promise((resolve) => {
+        setTimeout(resolve, milliseconds);
+    });
+}
+
 mocha.checkLeaks();
-mocha.globals(['expect', 'BrowsingContext']);
+mocha.globals(['expect', 'BrowsingContext', 'wait', 'waitForComponentsToRender']);
 mocha.run();
 
 </script>

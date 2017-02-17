@@ -2,27 +2,6 @@
 describe('EditableText', () => {
     const scripts = ['instrumentation.js', 'components/base.js', 'components/editable-text.js'];
 
-    function waitToRender(context)
-    {
-        if (!context._dummyComponent) {
-            const ComponentBase = context.symbols.ComponentBase;
-            context._dummyComponent = class SomeComponent extends ComponentBase {
-                constructor(resolve)
-                {
-                    super();
-                    this._resolve = resolve;
-                }
-                render() { setTimeout(this._resolve, 0); }
-            }
-            ComponentBase.defineElement('dummy-component', context._dummyComponent);
-        }
-        return new Promise((resolve) => {
-            const instance = new context._dummyComponent(resolve);
-            context.document.body.appendChild(instance.element());
-            instance.enqueueToRender();
-        });
-    }
-
     it('show the set text', () => {
         const context = new BrowsingContext();
         let editableText;
@@ -185,7 +164,7 @@ describe('EditableText', () => {
             return waitForComponentsToRender(context);
         }).then(() => {
             editableText.content('action-button').dispatchEvent(new MouseEvent('mousedown'));
-            return new Promise((resolve) => setTimeout(resolve, 0));
+            return wait(0);
         }).then(() => {
             editableText.content('text-field').blur();
             editableText.content('action-button').dispatchEvent(new MouseEvent('mouseup'));

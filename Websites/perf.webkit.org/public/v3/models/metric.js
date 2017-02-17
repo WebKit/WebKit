@@ -60,10 +60,11 @@ class Metric extends LabeledObject {
     unit() { return RunsData.unitFromMetricName(this.name()); }
     isSmallerBetter() { return RunsData.isSmallerBetter(this.unit()); }
 
-    makeFormatter(sigFig, alwaysShowSign)
+    makeFormatter(sigFig, alwaysShowSign) { return Metric.makeFormatter(this.unit(), sigFig, alwaysShowSign); }
+
+    static makeFormatter(unit, sigFig = 2, alwaysShowSign)
     {
-        var unit = this.unit();
-        var isMiliseconds = false;
+        let isMiliseconds = false;
         if (unit == 'ms') {
             isMiliseconds = true;
             unit = 's';
@@ -75,16 +76,30 @@ class Metric extends LabeledObject {
         var divisor = unit == 'B' ? 1024 : 1000;
         var suffix = ['\u03BC', 'm', '', 'K', 'M', 'G', 'T', 'P', 'E'];
         var threshold = sigFig >= 3 ? divisor : (divisor / 10);
-        return function (value) {
+        let formatter = function (value, maxAbsValue = 0) {
             var i;
             var sign = value >= 0 ? (alwaysShowSign ? '+' : '') : '-';
             value = Math.abs(value);
-            for (i = isMiliseconds ? 1 : 2; value < 1 && i > 0; i--)
+            let sigFigForValue = sigFig;
+
+            // The number of sig-figs to reduce in order to match that of maxAbsValue
+            // e.g. 0.5 instead of 0.50 when maxAbsValue is 2.
+            let adjustment = 0;
+            if (maxAbsValue && value)
+                adjustment = Math.max(0, Math.floor(Math.log(maxAbsValue) / Math.log(10)) - Math.floor(Math.log(value) / Math.log(10)));
+
+            for (i = isMiliseconds ? 1 : 2; value && value < 1 && i > 0; i--)
                 value *= divisor;
             for (; value >= threshold; i++)
                 value /= divisor;
-            return sign + value.toPrecision(Math.max(2, sigFig)) + ' ' + suffix[i] + (unit || '');
+
+            if (adjustment) // Make the adjustment only for decimal positions below 1.
+                adjustment = Math.min(adjustment, Math.max(0, -Math.floor(Math.log(value) / Math.log(10))));
+
+            return sign + value.toPrecision(sigFig - adjustment) + ' ' + suffix[i] + (unit || '');
         }
+        formatter.divisor = divisor;
+        return formatter;
     };
 }
 

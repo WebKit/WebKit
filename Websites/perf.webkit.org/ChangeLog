@@ -1,3 +1,58 @@
+2017-02-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add tests for the time series chart and fix bugs I found along the way
+        https://bugs.webkit.org/show_bug.cgi?id=168499
+
+        Reviewed by Antti Koivisto.
+
+        Add basic tests for the time series chart.
+
+        Replaced the "ondata" callback set in the options by "dataChange" action now that ComponentBase provides
+        a facility for defining event-like actions.
+
+        Also fixed bugs I encountered while writing these tests see below for descriptions.
+
+        * browser-tests/editable-text-tests.js:
+        (waitToRender): Moved to index.html
+        * browser-tests/index.html:
+        (waitToRender): Moved from editable-text-tests.js.
+        (wait): Added.
+        * browser-tests/time-series-chart-tests.js: Added.
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase.prototype.configure):
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart): Removed the code to set display and position inline properties. This is now done inside
+        cssTemplate with :host pseudo class.
+        (TimeSeriesChart.prototype._ensureCanvas): Don't strech the canvas to 100% of width and height. This was
+        causing a flush of contents where the canvas is momentarily streched by the browser and the script later
+        updates with the content with the correct aspect ratio.
+        (TimeSeriesChart.cssTemplate): Added :host rule to set display: block and position: relative.
+        (TimeSeriesChart._updateAllCharts): Deleted.
+        (TimeSeriesChart.prototype.render): Only run the code for axis when options.axis is defined. Also, avoid
+        setting the fill style because we never fill for axis drawing.
+        (TimeSeriesChart.prototype._computeHorizontalRenderingMetrics): Ditto. Fallback to sensible values when
+        options.axis is not defined.
+        (TimeSeriesChart.prototype._renderYAxis): Now computeValueGrid generates a sequence of {time, label}.
+        (TimeSeriesChart.prototype._renderTimeSeries): Don't draw the shades for confidence intervals unless its
+        fill style is defined. Otherwise, we'd end up drawing black shade and mask the actual data points.
+        (TimeSeriesChart.prototype._ensureSampledTimeSeries): Dispatch newly added "dataChange" action instead of
+        calling "ondata" callback in options dictionary.
+        (TimeSeriesChart.computeTimeGrid): Modernized to use const/let. Also fixed the bug that we were emitting
+        the date even when the entire time range fit within a 24-hour interval.
+        (TimeSeriesChart.computeValueGrid): Rewritten to make MB/GB use a nice round number instead of 0.98GB.
+        We were using a power of 10 to round up the stepping value but the value formatter used a power of 1024
+        to divide byte measurements (e.g. for memory). Use formatter.divisor to find the right scaling factor for
+        each kind.
+        * public/v3/models/metric.js:
+        (Metric.prototype.makeFormatter):
+        (Metric.makeFormatter): Extracted from the one on the prototype so that tests don't need a metric object
+        just to test TimeSeriesChart. Added the second argument which specifies the maximum absolute value of the
+        range we're formatting. This is needed to use the same number of decimal points when the most significant
+        digit of some value is smaller than that of the biggest one. For example, we were emitting 0.50GB instead
+        of 0.5G along with 2.0GB. The "adjustment" reduces the number of significant figures in these cases.
+        * public/v3/pages/dashboard-page.js:
+        (DashboardPage.prototype._createChartForCell):
+
 2017-02-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use expect.js instead of expect in browser tests

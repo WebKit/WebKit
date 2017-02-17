@@ -52,8 +52,8 @@ class ChartPaneBase extends ComponentBase {
         mainOptions.selection.onchange = this._mainSelectionDidChange.bind(this);
         mainOptions.selection.onzoom = this._mainSelectionDidZoom.bind(this);
         mainOptions.annotations.onclick = this._openAnalysisTask.bind(this);
-        mainOptions.ondata = this._didFetchData.bind(this);
         this._mainChart = new InteractiveTimeSeriesChart(this._createSourceList(true), mainOptions);
+        this._mainChart.listenToAction('dataChange', () => this._didFetchData())
         this.renderReplace(this.content().querySelector('.chart-pane-main'), this._mainChart);
 
         this._mainChartStatus = new ChartPaneStatusView(result.metric, this._mainChart, this._requestOpeningCommitViewer.bind(this));
