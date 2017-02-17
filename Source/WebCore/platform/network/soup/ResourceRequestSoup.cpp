@@ -208,13 +208,7 @@ GUniquePtr<SoupURI> ResourceRequest::createSoupURI() const
         return GUniquePtr<SoupURI>(soup_uri_new(urlString.utf8().data()));
     }
 
-    GUniquePtr<SoupURI> soupURI;
-    if (m_url.hasFragmentIdentifier()) {
-        URL url = m_url;
-        url.removeFragmentIdentifier();
-        soupURI.reset(soup_uri_new(url.string().utf8().data()));
-    } else
-        soupURI = m_url.createSoupURI();
+    GUniquePtr<SoupURI> soupURI = m_url.createSoupURI();
 
     // Versions of libsoup prior to 2.42 have a soup_uri_new that will convert empty passwords that are not
     // prefixed by a colon into null. Some parts of soup like the SoupAuthenticationManager will only be active

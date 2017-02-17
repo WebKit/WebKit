@@ -1,3 +1,21 @@
+2017-02-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Stop removing the fragment identifier from resource requests
+        https://bugs.webkit.org/show_bug.cgi?id=168509
+
+        Reviewed by Sergio Villar Senin.
+
+        I don't know why, but have always removed the fragment identifier from the URL when creating the SoupURI that
+        is passed to libsoup. Maybe it was a bug in a very old version of libsoup, but it doesn't look necessary anymore
+        and it's causing several layout test failures.
+
+        Fixes: http/tests/svg/svg-use-external.html
+               imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-same-origin-with-hash.html
+               imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-same-origin-with-hash.html
+
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::createSoupURI): Do not remove the fragment identifier from the URL.
+
 2017-02-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop PassRefPtr from ArrayBuffer
