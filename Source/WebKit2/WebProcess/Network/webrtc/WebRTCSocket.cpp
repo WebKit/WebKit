@@ -54,10 +54,10 @@ WebRTCSocket::WebRTCSocket(LibWebRTCSocketFactory& factory, uint64_t identifier)
 {
 }
 
-void WebRTCSocket::signalAddressReady(const String& address)
+void WebRTCSocket::signalAddressReady(const RTCNetwork::SocketAddress& address)
 {
     signalOnNetworkThread(m_factory, m_identifier, [address](LibWebRTCSocket& socket) {
-        socket.signalAddressReady(address);
+        socket.signalAddressReady(address.value);
     });
 }
 

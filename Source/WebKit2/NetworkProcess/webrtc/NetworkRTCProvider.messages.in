@@ -23,9 +23,9 @@
 #if USE(LIBWEBRTC)
 
 messages -> NetworkRTCProvider {
-    CreateUDPSocket(int identifier, String localAddress, uint16_t minPort, uint16_t maxPort)
-    CreateServerTCPSocket(int identifier, String localAddress, uint16_t minPort, uint16_t maxPort, int options)
-    CreateClientTCPSocket(int identifier, String localAddress, String remoteAddress, int options)
+    CreateUDPSocket(int identifier, WebKit::RTCNetwork::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort)
+    CreateServerTCPSocket(int identifier, WebKit::RTCNetwork::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort, int options)
+    CreateClientTCPSocket(int identifier, WebKit::RTCNetwork::SocketAddress localAddress, WebKit::RTCNetwork::SocketAddress remoteAddress, int options)
     CreateResolver(uint64_t identifier, String address)
     StopResolver(uint64_t identifier)
 }

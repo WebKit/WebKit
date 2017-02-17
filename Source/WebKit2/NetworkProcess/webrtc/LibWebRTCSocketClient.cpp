@@ -82,7 +82,7 @@ void LibWebRTCSocketClient::setOption(int option, int value)
 void LibWebRTCSocketClient::signalReadPacket(rtc::AsyncPacketSocket*, const char* value, size_t length, const rtc::SocketAddress& address, const rtc::PacketTime& packetTime)
 {
     auto buffer = WebCore::SharedBuffer::create(value, length);
-    m_rtcProvider.sendFromMainThread([identifier = m_identifier, buffer = WTFMove(buffer), address, packetTime](IPC::Connection& connection) {
+    m_rtcProvider.sendFromMainThread([identifier = m_identifier, buffer = WTFMove(buffer), address = RTCNetwork::isolatedCopy(address), packetTime](IPC::Connection& connection) {
         IPC::DataReference data(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
         connection.send(Messages::WebRTCSocket::SignalReadPacket(data, RTCNetwork::IPAddress(address.ipaddr()), address.port(), packetTime.timestamp), identifier);
     });
@@ -97,9 +97,8 @@ void LibWebRTCSocketClient::signalSentPacket(rtc::AsyncPacketSocket*, const rtc:
 
 void LibWebRTCSocketClient::signalAddressReady(rtc::AsyncPacketSocket*, const rtc::SocketAddress& address)
 {
-    m_rtcProvider.sendFromMainThread([identifier = m_identifier, address](IPC::Connection& connection) {
-        auto addressString = address.ToString();
-        connection.send(Messages::WebRTCSocket::SignalAddressReady(String(addressString.data(), addressString.length())), identifier);
+    m_rtcProvider.sendFromMainThread([identifier = m_identifier, address = RTCNetwork::isolatedCopy(address)](IPC::Connection& connection) {
+        connection.send(Messages::WebRTCSocket::SignalAddressReady(RTCNetwork::SocketAddress(address)), identifier);
     });
 }
 

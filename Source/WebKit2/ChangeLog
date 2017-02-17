@@ -1,3 +1,46 @@
+2017-02-16  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] libwebrtc socket addresses should not be passed as strings
+        https://bugs.webkit.org/show_bug.cgi?id=168474
+
+        Reviewed by Alex Christensen.
+
+        Removing all seralization of socket addresses as strings.
+        Instead, a dedicated serialization is provided.
+        This allows proper handling of various cases like addresses with both hostnames and resolved IPs.
+
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.cpp:
+        (WebKit::LibWebRTCSocketClient::signalReadPacket):
+        (WebKit::LibWebRTCSocketClient::signalSentPacket):
+        (WebKit::LibWebRTCSocketClient::signalAddressReady):
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createUDPSocket):
+        (WebKit::NetworkRTCProvider::createServerTCPSocket):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in:
+        * NetworkProcess/webrtc/NetworkRTCSocket.cpp:
+        (WebKit::NetworkRTCSocket::sendTo):
+        * NetworkProcess/webrtc/NetworkRTCSocket.h:
+        * NetworkProcess/webrtc/NetworkRTCSocket.messages.in:
+        * Shared/RTCNetwork.cpp:
+        (WebKit::RTCNetwork::SocketAddress::decode):
+        (WebKit::RTCNetwork::SocketAddress::encode):
+        * Shared/RTCNetwork.h:
+        (WebKit::RTCNetwork::SocketAddress::SocketAddress):
+        * WebProcess/Network/webrtc/LibWebRTCSocket.cpp:
+        (WebKit::LibWebRTCSocket::signalAddressReady):
+        (WebKit::LibWebRTCSocket::SendTo):
+        * WebProcess/Network/webrtc/LibWebRTCSocket.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::CreateServerTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::CreateUdpSocket):
+        (WebKit::LibWebRTCSocketFactory::CreateClientTcpSocket):
+        * WebProcess/Network/webrtc/WebRTCSocket.cpp:
+        (WebKit::WebRTCSocket::signalAddressReady):
+        * WebProcess/Network/webrtc/WebRTCSocket.h:
+        * WebProcess/Network/webrtc/WebRTCSocket.messages.in:
+
 2017-02-16  Daniel Bates  <dabates@apple.com>
 
         Remove Chromium-specific code to call FrameLoaderClient::redirectDataToPlugin(nullptr)

@@ -52,7 +52,7 @@ public:
 private:
     void signalReadPacket(const IPC::DataReference&, const RTCNetwork::IPAddress&, uint16_t port, int64_t);
     void signalSentPacket(int, int64_t);
-    void signalAddressReady(const String&);
+    void signalAddressReady(const RTCNetwork::SocketAddress&);
     void signalConnect();
     void signalClose(int);
     

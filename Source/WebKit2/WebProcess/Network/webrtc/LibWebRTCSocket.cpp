@@ -71,9 +71,9 @@ rtc::SocketAddress LibWebRTCSocket::GetRemoteAddress() const
     return m_remoteAddress;
 }
 
-void LibWebRTCSocket::signalAddressReady(const String& address)
+void LibWebRTCSocket::signalAddressReady(const rtc::SocketAddress& address)
 {
-    m_localAddress.FromString(address.utf8().data());
+    m_localAddress = address;
     m_state = (m_type == Type::ClientTCP) ? STATE_CONNECTED : STATE_BOUND;
     SignalAddressReady(this, m_localAddress);
 }
@@ -136,7 +136,7 @@ int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAdd
     sendOnMainThread([identifier, buffer = WTFMove(buffer), address, options](IPC::Connection& connection) {
         IPC::DataReference data(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
         String srtpAuthKey = authKey(options);
-        Messages::NetworkRTCSocket::SendTo message(data, RTCNetwork::IPAddress(address.ipaddr()), address.port(), options.packet_id, options.packet_time_params.rtp_sendtime_extension_id, srtpAuthKey, options.packet_time_params.srtp_packet_index, options.dscp);
+        Messages::NetworkRTCSocket::SendTo message(data, RTCNetwork::SocketAddress(address), options.packet_id, options.packet_time_params.rtp_sendtime_extension_id, srtpAuthKey, options.packet_time_params.srtp_packet_index, options.dscp);
         connection.send(WTFMove(message), identifier);
     });
     return size;

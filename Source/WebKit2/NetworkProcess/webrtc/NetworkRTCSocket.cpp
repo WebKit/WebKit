@@ -42,11 +42,9 @@ NetworkRTCSocket::NetworkRTCSocket(uint64_t identifier, NetworkRTCProvider& rtcP
 {
 }
 
-void NetworkRTCSocket::sendTo(const IPC::DataReference& data, const RTCNetwork::IPAddress& address, uint16_t port, int packetID, int rtpSendtimeExtensionID, String srtpAuth, int64_t srtpPacketIndex, int dscp)
+void NetworkRTCSocket::sendTo(const IPC::DataReference& data, const RTCNetwork::SocketAddress& socketAddress, int packetID, int rtpSendtimeExtensionID, String srtpAuth, int64_t srtpPacketIndex, int dscp)
 {
     auto buffer = WebCore::SharedBuffer::create(data.data(), data.size());
-
-    rtc::SocketAddress socketAddress(address.value, port);
 
     rtc::PacketOptions options;
     options.packet_id = packetID;
@@ -60,7 +58,7 @@ void NetworkRTCSocket::sendTo(const IPC::DataReference& data, const RTCNetwork::
         options.packet_time_params.srtp_auth_tag_len = -1;
     
     m_rtcProvider.callSocket(m_identifier, [buffer = WTFMove(buffer), socketAddress, options](LibWebRTCSocketClient& client) {
-        client.sendTo(buffer.get(), socketAddress, options);
+        client.sendTo(buffer.get(), socketAddress.value, options);
     });
 }
 

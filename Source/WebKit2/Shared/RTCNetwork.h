@@ -57,6 +57,18 @@ struct RTCNetwork {
         rtc::IPAddress value;
     };
 
+    static rtc::SocketAddress isolatedCopy(const rtc::SocketAddress&);
+
+    struct SocketAddress {
+        SocketAddress() = default;
+        explicit SocketAddress(const rtc::SocketAddress& address): value(address) { }
+
+        void encode(IPC::Encoder&) const;
+        static bool decode(IPC::Decoder&, SocketAddress&);
+
+        rtc::SocketAddress value;
+    };
+
     std::string name;
     std::string description;
     IPAddress prefix;

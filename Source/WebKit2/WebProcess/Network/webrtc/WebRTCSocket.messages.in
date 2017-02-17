@@ -25,7 +25,7 @@
 messages -> WebRTCSocket {
     SignalReadPacket(IPC::DataReference data, WebKit::RTCNetwork::IPAddress address, uint16_t port, int64_t timestamp)
     SignalSentPacket(int packetSize, int64_t timestamp)
-    SignalAddressReady(String address)
+    SignalAddressReady(WebKit::RTCNetwork::SocketAddress address)
     SignalConnect()
     SignalClose(int error)
 }

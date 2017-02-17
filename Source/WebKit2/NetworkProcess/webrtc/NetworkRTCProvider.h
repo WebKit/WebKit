@@ -29,6 +29,7 @@
 
 #include "LibWebRTCSocketClient.h"
 #include "NetworkRTCMonitor.h"
+#include "RTCNetwork.h"
 #include <CFNetwork/CFHost.h>
 #include <WebCore/LibWebRTCMacros.h>
 #include <webrtc/base/sigslot.h>
@@ -68,9 +69,9 @@ public:
 private:
     explicit NetworkRTCProvider(NetworkConnectionToWebProcess&);
 
-    void createUDPSocket(uint64_t, const String&, uint16_t, uint16_t);
-    void createClientTCPSocket(uint64_t, const String&, const String&, int);
-    void createServerTCPSocket(uint64_t, const String&, uint16_t minPort, uint16_t maxPort, int);
+    void createUDPSocket(uint64_t, const RTCNetwork::SocketAddress&, uint16_t, uint16_t);
+    void createClientTCPSocket(uint64_t, const RTCNetwork::SocketAddress&, const RTCNetwork::SocketAddress&, int);
+    void createServerTCPSocket(uint64_t, const RTCNetwork::SocketAddress&, uint16_t minPort, uint16_t maxPort, int);
     void createResolver(uint64_t, const String&);
     void stopResolver(uint64_t);
 
