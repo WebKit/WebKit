@@ -27,6 +27,7 @@
 #import "WebProcess.h"
 
 #import "CustomProtocolManager.h"
+#import "Logging.h"
 #import "ObjCObjectGraph.h"
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
@@ -52,6 +53,7 @@
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/NSAccessibilitySPI.h>
 #import <WebCore/PerformanceLogging.h>
+#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/VNodeTracker.h>
 #import <WebCore/WebCoreNSURLExtras.h>
@@ -442,7 +444,14 @@ RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& o
 
 void WebProcess::destroyRenderingResources()
 {
-    WKDestroyRenderingResources();
+#if !RELEASE_LOG_DISABLED
+    double startTime = monotonicallyIncreasingTime();
+#endif
+    CABackingStoreCollectBlocking();
+#if !RELEASE_LOG_DISABLED
+    double endTime = monotonicallyIncreasingTime();
+#endif
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::destroyRenderingResources() took %.2fms", this, (endTime - startTime) * 1000.0);
 }
 
 } // namespace WebKit

@@ -1292,6 +1292,10 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
         MemoryPressureHandler::singleton().releaseMemory(Critical::Yes, Synchronous::Yes);
 
     setAllLayerTreeStatesFrozen(true);
+    
+#if PLATFORM(COCOA)
+    destroyRenderingResources();
+#endif
 
     markAllLayersVolatile([this, shouldAcknowledgeWhenReadyToSuspend] {
         RELEASE_LOG(ProcessSuspension, "%p - WebProcess::markAllLayersVolatile() Successfuly marked all layers as volatile", this);

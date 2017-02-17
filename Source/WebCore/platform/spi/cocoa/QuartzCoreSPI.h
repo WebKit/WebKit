@@ -28,6 +28,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#include <QuartzCore/CABackingStore.h>
 #include <QuartzCore/CAColorMatrix.h>
 #include <QuartzCore/CARenderServer.h>
 
@@ -196,6 +197,8 @@ CAMachPortRef CAMachPortCreate(mach_port_t);
 mach_port_t CAMachPortGetPort(CAMachPortRef);
 CFTypeID CAMachPortGetTypeID(void);
 
+void CABackingStoreCollectBlocking(void);
+
 WTF_EXTERN_C_END
 
 // FIXME: Move this into the APPLE_INTERNAL_SDK block once it's in an SDK.
@@ -246,4 +249,5 @@ extern NSString * const kCAContentsFormatRGBA10XR;
 
 @protocol CAAnimationDelegate <NSObject>
 @end
-#endif
+
+#endif // USE(APPLE_INTERNAL_SDK)

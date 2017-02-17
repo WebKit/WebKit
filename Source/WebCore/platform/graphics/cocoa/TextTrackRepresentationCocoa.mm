@@ -32,7 +32,7 @@
 #include "GraphicsContextCG.h"
 #include "IntRect.h"
 
-#import <WebCore/QuartzCoreSPI.h>
+#import "QuartzCoreSPI.h"
 
 #if PLATFORM(IOS)
 #include "WebCoreThread.h"
