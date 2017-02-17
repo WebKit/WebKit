@@ -90,6 +90,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     RetainPtr<_WKActivatedElementInfo> _elementInfo;
     UIView *_view;
     BOOL _needsLinkIndicator;
+    BOOL _isPresentingDDUserInterface;
 }
 
 - (id <WKActionSheetAssistantDelegate>)delegate
@@ -545,10 +546,10 @@ static const CGFloat presentationElementRectPadding = 15;
     NSMutableArray *elementActions = [NSMutableArray array];
     for (NSUInteger actionNumber = 0; actionNumber < [dataDetectorsActions count]; actionNumber++) {
         DDAction *action = [dataDetectorsActions objectAtIndex:actionNumber];
+        RetainPtr<WKActionSheetAssistant> retainedSelf = self;
         _WKElementAction *elementAction = [_WKElementAction elementActionWithTitle:[action localizedName] actionHandler:^(_WKActivatedElementInfo *actionInfo) {
-            [[getDDDetectionControllerClass() sharedController] performAction:action
-                                                          fromAlertController:_interactionSheet.get()
-                                                          interactionDelegate:self];
+            retainedSelf.get()->_isPresentingDDUserInterface = action.hasUserInterface;
+            [[getDDDetectionControllerClass() sharedController] performAction:action fromAlertController:retainedSelf.get()->_interactionSheet.get() interactionDelegate:retainedSelf.get()];
         }];
         elementAction.dismissalHandler = ^{
             return (BOOL)!action.hasUserInterface;
@@ -573,11 +574,12 @@ static const CGFloat presentationElementRectPadding = 15;
     if ([delegate respondsToSelector:@selector(actionSheetAssistantDidStopInteraction:)])
         [delegate actionSheetAssistantDidStopInteraction:self];
 
-    [_interactionSheet doneWithSheet];
+    [_interactionSheet doneWithSheet:!_isPresentingDDUserInterface];
     [_interactionSheet setSheetDelegate:nil];
     _interactionSheet = nil;
     _elementInfo = nil;
     _needsLinkIndicator = NO;
+    _isPresentingDDUserInterface = NO;
 }
 
 @end

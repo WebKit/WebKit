@@ -119,9 +119,9 @@
     return YES;
 }
 
-- (void)doneWithSheet
+- (void)doneWithSheet:(BOOL)dismiss
 {
-    if (_currentPresentingViewController)
+    if (dismiss && _currentPresentingViewController)
         [_currentPresentingViewController dismissViewControllerAnimated:YES completion:nil];
 
     _currentPresentingViewController = nil;

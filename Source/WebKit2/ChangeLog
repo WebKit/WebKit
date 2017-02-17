@@ -1,3 +1,27 @@
+2017-02-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Action sheet should not dismiss when a DDAction with user interface is being presented
+        https://bugs.webkit.org/show_bug.cgi?id=168528
+        <rdar://problem/30515324>
+
+        Reviewed by Beth Dakin.
+
+        After r211643, -[WKActionSheet doneWithSheet] now dismisses the presenting view controller. This is called when
+        interaction with the sheet is finished and is a reasonable thing to do in most cases. However, when using data
+        detectors, we don't want to dismiss the presenting view controller, since DataDetector handles dismissing on its
+        own and expects that its completion handler will be invoked.
+
+        To fix this, we add a parameter to doneWithSheet: to indicate whether or not we should additionally dismiss the
+        presenting view controller, and pass in NO in the case where we are handing control over to DataDetector.
+
+        * UIProcess/ios/WKActionSheet.h:
+        * UIProcess/ios/WKActionSheet.mm:
+        (-[WKActionSheet doneWithSheet:]):
+        (-[WKActionSheet doneWithSheet]): Deleted.
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+        (-[WKActionSheetAssistant cleanupSheet]):
+
 2017-02-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove EFL from WebKit2
