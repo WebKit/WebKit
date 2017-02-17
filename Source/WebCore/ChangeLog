@@ -1,3 +1,21 @@
+2017-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (209396): Apple Pay buttons do not render
+        https://bugs.webkit.org/show_bug.cgi?id=168523
+        rdar://problem/30451563
+
+        Reviewed by Geoffrey Garen.
+
+        The new CSS parser mistakenly converted -apple-pay-button values to
+        -webkit-pay-button, breaking -webkit-appearance: -apple-pay-button.
+
+        Fix by excluding "-apple-pay" prefixed values from the conversion.
+
+        Test: fast/css/appearance-apple-pay-button.html
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::isAppleLegacyCssValueKeyword):
+
 2017-02-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r212463.
