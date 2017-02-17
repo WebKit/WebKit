@@ -1060,3 +1060,7 @@ http/tests/ssl/media-stream
 
 animations/font-variations
 fast/text/variations
+
+fast/history/page-cache-after-window-open.html [ Skip ]
+fast/history/page-cache-back-navigation-crash.html [ Skip ]
+fast/history/page-cache-with-opener.html [ Skip ]
