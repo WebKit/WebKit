@@ -72,16 +72,14 @@ void PageOverlayController::createRootLayersIfNeeded()
 #endif
 }
 
-GraphicsLayer& PageOverlayController::documentOverlayRootLayer()
+GraphicsLayer* PageOverlayController::documentOverlayRootLayer() const
 {
-    createRootLayersIfNeeded();
-    return *m_documentOverlayRootLayer;
+    return m_documentOverlayRootLayer.get();
 }
 
-GraphicsLayer& PageOverlayController::viewOverlayRootLayer()
+GraphicsLayer* PageOverlayController::viewOverlayRootLayer() const
 {
-    createRootLayersIfNeeded();
-    return *m_viewOverlayRootLayer;
+    return m_viewOverlayRootLayer.get();
 }
 
 static void updateOverlayGeometry(PageOverlay& overlay, GraphicsLayer& graphicsLayer)
@@ -93,6 +91,50 @@ static void updateOverlayGeometry(PageOverlay& overlay, GraphicsLayer& graphicsL
 
     graphicsLayer.setPosition(overlayFrame.location());
     graphicsLayer.setSize(overlayFrame.size());
+}
+
+GraphicsLayer& PageOverlayController::layerWithDocumentOverlays()
+{
+    createRootLayersIfNeeded();
+
+    bool inWindow = m_mainFrame.page() ? m_mainFrame.page()->isInWindow() : false;
+
+    for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
+        PageOverlay& overlay = *overlayAndLayer.key;
+        if (overlay.overlayType() != PageOverlay::OverlayType::Document)
+            continue;
+
+        GraphicsLayer& layer = *overlayAndLayer.value;
+        layer.setIsInWindowIncludingDescendants(inWindow);
+        updateOverlayGeometry(overlay, layer);
+        
+        if (!layer.parent())
+            m_documentOverlayRootLayer->addChild(&layer);
+    }
+
+    return *m_documentOverlayRootLayer;
+}
+
+GraphicsLayer& PageOverlayController::layerWithViewOverlays()
+{
+    createRootLayersIfNeeded();
+
+    bool inWindow = m_mainFrame.page() ? m_mainFrame.page()->isInWindow() : false;
+
+    for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
+        PageOverlay& overlay = *overlayAndLayer.key;
+        if (overlay.overlayType() != PageOverlay::OverlayType::View)
+            continue;
+
+        GraphicsLayer& layer = *overlayAndLayer.value;
+        layer.setIsInWindowIncludingDescendants(inWindow);
+        updateOverlayGeometry(overlay, layer);
+        
+        if (!layer.parent())
+            m_viewOverlayRootLayer->addChild(&layer);
+    }
+
+    return *m_viewOverlayRootLayer;
 }
 
 void PageOverlayController::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay, PageOverlay::FadeMode fadeMode)
@@ -201,12 +243,6 @@ GraphicsLayer& PageOverlayController::layerForOverlay(PageOverlay& overlay) cons
 {
     ASSERT(m_pageOverlays.contains(&overlay));
     return *m_overlayGraphicsLayers.get(&overlay);
-}
-
-void PageOverlayController::willAttachRootLayer()
-{
-    for (auto& overlayAndLayer : m_overlayGraphicsLayers)
-        updateOverlayGeometry(*overlayAndLayer.key, *overlayAndLayer.value);
 }
 
 void PageOverlayController::didChangeViewSize()
@@ -360,6 +396,12 @@ void PageOverlayController::didChangeOverlayBackgroundColor(PageOverlay& overlay
 bool PageOverlayController::shouldSkipLayerInDump(const GraphicsLayer*, LayerTreeAsTextBehavior behavior) const
 {
     return !(behavior & LayerTreeAsTextIncludePageOverlayLayers);
+}
+
+void PageOverlayController::tiledBackingUsageChanged(const GraphicsLayer* graphicsLayer, bool usingTiledBacking)
+{
+    if (usingTiledBacking)
+        graphicsLayer->tiledBacking()->setIsInWindow(m_mainFrame.page()->isInWindow());
 }
 
 } // namespace WebKit

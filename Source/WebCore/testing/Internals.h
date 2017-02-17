@@ -464,7 +464,7 @@ public:
 
     enum class PageOverlayType { View, Document };
     ExceptionOr<Ref<MockPageOverlay>> installMockPageOverlay(PageOverlayType);
-    ExceptionOr<String> pageOverlayLayerTreeAsText() const;
+    ExceptionOr<String> pageOverlayLayerTreeAsText(unsigned short flags) const;
 
     void setPageMuted(const String&);
     String pageMediaState();

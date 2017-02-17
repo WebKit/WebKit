@@ -805,9 +805,7 @@ void RenderLayerCompositor::appendDocumentOverlayLayers(Vector<GraphicsLayer*>& 
     if (!page)
         return;
 
-    PageOverlayController& pageOverlayController = frame.mainFrame().pageOverlayController();
-    pageOverlayController.willAttachRootLayer();
-    childList.append(&pageOverlayController.documentOverlayRootLayer());
+    childList.append(&frame.mainFrame().pageOverlayController().layerWithDocumentOverlays());
 }
 
 void RenderLayerCompositor::layerBecameNonComposited(const RenderLayer& layer)
@@ -2060,27 +2058,13 @@ GraphicsLayer* RenderLayerCompositor::footerLayer() const
 }
 #endif
 
-void RenderLayerCompositor::setIsInWindowForLayerIncludingDescendants(RenderLayer& layer, bool isInWindow)
-{
-    if (layer.isComposited()) {
-        if (auto* backing = layer.backing()->tiledBacking())
-            backing->setIsInWindow(isInWindow);
-    }
-
-    // No need to recurse if we don't have any other tiled layers.
-    if (!hasNonMainLayersWithTiledBacking())
-        return;
-
-    for (RenderLayer* childLayer = layer.firstChild(); childLayer; childLayer = childLayer->nextSibling())
-        setIsInWindowForLayerIncludingDescendants(*childLayer, isInWindow);
-}
-
 void RenderLayerCompositor::setIsInWindow(bool isInWindow)
 {
-    setIsInWindowForLayerIncludingDescendants(*m_renderView.layer(), isInWindow);
-    
     if (!inCompositingMode())
         return;
+
+    if (GraphicsLayer* rootLayer = rootGraphicsLayer())
+        rootLayer->setIsInWindowIncludingDescendants(isInWindow);
 
     if (isInWindow) {
         if (m_rootLayerAttachment != RootLayerUnattached)
@@ -3513,11 +3497,8 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
                 return;
 
             page->chrome().client().attachRootGraphicsLayer(&frame, rootGraphicsLayer());
-            if (frame.isMainFrame()) {
-                PageOverlayController& pageOverlayController = frame.mainFrame().pageOverlayController();
-                pageOverlayController.willAttachRootLayer();
-                page->chrome().client().attachViewOverlayGraphicsLayer(&frame, &pageOverlayController.viewOverlayRootLayer());
-            }
+            if (frame.isMainFrame())
+                page->chrome().client().attachViewOverlayGraphicsLayer(&frame, &frame.mainFrame().pageOverlayController().layerWithViewOverlays());
             break;
         }
         case RootLayerAttachedViaEnclosingFrame: {
@@ -3602,9 +3583,7 @@ void RenderLayerCompositor::rootLayerAttachmentChanged()
     if (!frame.isMainFrame())
         return;
 
-    PageOverlayController& pageOverlayController = frame.mainFrame().pageOverlayController();
-    pageOverlayController.willAttachRootLayer();
-    m_rootContentLayer->addChild(&pageOverlayController.documentOverlayRootLayer());
+    m_rootContentLayer->addChild(&frame.mainFrame().pageOverlayController().layerWithDocumentOverlays());
 }
 
 void RenderLayerCompositor::notifyIFramesOfCompositingChange()

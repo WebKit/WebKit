@@ -514,6 +514,8 @@ public:
     virtual void deviceOrPageScaleFactorChanged() { }
     WEBCORE_EXPORT void noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 
+    void setIsInWindowIncludingDescendants(bool);
+
     // Some compositing systems may do internal batching to synchronize compositing updates
     // with updates drawn into the window. These methods flush internal batched state on this layer
     // and descendant layers, and this layer only.

@@ -1997,6 +1997,23 @@ ExceptionOr<bool> Internals::isPageBoxVisible(int pageNumber)
     return document->isPageBoxVisible(pageNumber);
 }
 
+static LayerTreeFlags toLayerTreeFlags(unsigned short flags)
+{
+    LayerTreeFlags layerTreeFlags = 0;
+    if (flags & Internals::LAYER_TREE_INCLUDES_VISIBLE_RECTS)
+        layerTreeFlags |= LayerTreeFlagsIncludeVisibleRects;
+    if (flags & Internals::LAYER_TREE_INCLUDES_TILE_CACHES)
+        layerTreeFlags |= LayerTreeFlagsIncludeTileCaches;
+    if (flags & Internals::LAYER_TREE_INCLUDES_REPAINT_RECTS)
+        layerTreeFlags |= LayerTreeFlagsIncludeRepaintRects;
+    if (flags & Internals::LAYER_TREE_INCLUDES_PAINTING_PHASES)
+        layerTreeFlags |= LayerTreeFlagsIncludePaintingPhases;
+    if (flags & Internals::LAYER_TREE_INCLUDES_CONTENT_LAYERS)
+        layerTreeFlags |= LayerTreeFlagsIncludeContentLayers;
+
+    return layerTreeFlags;
+}
+
 // FIXME: Remove the document argument. It is almost always the same as
 // contextDocument(), with the exception of a few tests that pass a
 // different document, and could just make the call through another Internals
@@ -2007,20 +2024,20 @@ ExceptionOr<String> Internals::layerTreeAsText(Document& document, unsigned shor
         return Exception { INVALID_ACCESS_ERR };
 
     LayerTreeFlags layerTreeFlags = 0;
-    if (flags & LAYER_TREE_INCLUDES_VISIBLE_RECTS)
+    if (flags & Internals::LAYER_TREE_INCLUDES_VISIBLE_RECTS)
         layerTreeFlags |= LayerTreeFlagsIncludeVisibleRects;
-    if (flags & LAYER_TREE_INCLUDES_TILE_CACHES)
+    if (flags & Internals::LAYER_TREE_INCLUDES_TILE_CACHES)
         layerTreeFlags |= LayerTreeFlagsIncludeTileCaches;
-    if (flags & LAYER_TREE_INCLUDES_REPAINT_RECTS)
+    if (flags & Internals::LAYER_TREE_INCLUDES_REPAINT_RECTS)
         layerTreeFlags |= LayerTreeFlagsIncludeRepaintRects;
-    if (flags & LAYER_TREE_INCLUDES_PAINTING_PHASES)
+    if (flags & Internals::LAYER_TREE_INCLUDES_PAINTING_PHASES)
         layerTreeFlags |= LayerTreeFlagsIncludePaintingPhases;
-    if (flags & LAYER_TREE_INCLUDES_CONTENT_LAYERS)
+    if (flags & Internals::LAYER_TREE_INCLUDES_CONTENT_LAYERS)
         layerTreeFlags |= LayerTreeFlagsIncludeContentLayers;
-    if (flags & LAYER_TREE_INCLUDES_ACCELERATES_DRAWING)
+    if (flags & Internals::LAYER_TREE_INCLUDES_ACCELERATES_DRAWING)
         layerTreeFlags |= LayerTreeFlagsIncludeAcceleratesDrawing;
 
-    return document.frame()->layerTreeAsText(layerTreeFlags);
+    return document.frame()->layerTreeAsText(toLayerTreeFlags(flags));
 }
 
 ExceptionOr<String> Internals::repaintRectsAsText() const
@@ -3231,7 +3248,7 @@ ExceptionOr<Ref<MockPageOverlay>> Internals::installMockPageOverlay(PageOverlayT
     return MockPageOverlayClient::singleton().installOverlay(document->frame()->mainFrame(), type == PageOverlayType::View ? PageOverlay::OverlayType::View : PageOverlay::OverlayType::Document);
 }
 
-ExceptionOr<String> Internals::pageOverlayLayerTreeAsText() const
+ExceptionOr<String> Internals::pageOverlayLayerTreeAsText(unsigned short flags) const
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
@@ -3239,7 +3256,7 @@ ExceptionOr<String> Internals::pageOverlayLayerTreeAsText() const
 
     document->updateLayout();
 
-    return MockPageOverlayClient::singleton().layerTreeAsText(document->frame()->mainFrame());
+    return MockPageOverlayClient::singleton().layerTreeAsText(document->frame()->mainFrame(), toLayerTreeFlags(flags));
 }
 
 void Internals::setPageMuted(const String& states)

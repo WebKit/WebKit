@@ -8,7 +8,7 @@ View-relative:
   (children 1
     (GraphicsLayer
       (anchor 0.00 0.00)
-      (bounds 785.00 585.00)
+      (bounds 800.00 600.00)
       (drawsContent 1)
       (backgroundColor #00000000)
     )

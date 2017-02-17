@@ -48,6 +48,116 @@
 
 2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211683. rdar://problem/30467272
+
+    2017-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+            Clean up how GraphicsLayer's "inWindow" state is set, and fix some issues with Page Overlays
+            https://bugs.webkit.org/show_bug.cgi?id=167850
+
+            Reviewed by Tim Horton.
+
+            RenderLayerCompositor::setIsInWindowForLayerIncludingDescendants() walked the RenderLayer
+            tree to set the GraphicsLayer's "inWindow" state. This had the problem of skipping non-primary
+            GraphicsLayers. We also never did this work for page overlay layers.
+
+            Fix by giving GraphicsLayers a recursive function that sets the inWindow state, and call that
+            from RenderLayerCompositor::setIsInWindow() and PageOverlayController.
+
+            PageOverlayController also needs to implement tiledBackingUsageChanged so that tiled backings
+            created dynamically get the correct in-window state.
+
+            Page overlays also had some serious issues in MiniBrowser, in that they disappeared on reload,
+            and on hide/show web view. This was because the overlay root layers were re-parented, but
+            addChild() for each overlay's layer wasn't called. Clean up by replacing willAttachRootLayer() followed
+            by viewOverlayRootLayer()/documentOverlayRootLayer() with single calls that set up the layers,
+            update the inWindow state, and return the layer.
+
+            Make it possible to dump tile caches in page overlay tests.
+
+            Make showGraphicsLayers() always dump page overlay layers (source of much confusion).
+
+            Test: pageoverlay/overlay-remove-reinsert-view.html
+
+            * page/PageOverlayController.cpp:
+            (WebCore::PageOverlayController::documentOverlayRootLayer):
+            (WebCore::PageOverlayController::viewOverlayRootLayer):
+            (WebCore::PageOverlayController::layerWithDocumentOverlays):
+            (WebCore::PageOverlayController::layerWithViewOverlays):
+            (WebCore::PageOverlayController::tiledBackingUsageChanged):
+            (WebCore::PageOverlayController::willAttachRootLayer): Deleted.
+            * page/PageOverlayController.h:
+            * platform/graphics/GraphicsLayer.cpp:
+            (WebCore::GraphicsLayer::setIsInWindowIncludingDescendants):
+            (WebCore::dumpChildren):
+            * platform/graphics/GraphicsLayer.h:
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::appendDocumentOverlayLayers):
+            (WebCore::RenderLayerCompositor::setIsInWindow):
+            (WebCore::RenderLayerCompositor::attachRootLayer):
+            (WebCore::RenderLayerCompositor::rootLayerAttachmentChanged):
+            (WebCore::RenderLayerCompositor::setIsInWindowForLayerIncludingDescendants): Deleted.
+            * rendering/RenderLayerCompositor.h:
+            * testing/Internals.cpp:
+            (WebCore::toLayerTreeFlags):
+            (WebCore::Internals::layerTreeAsText):
+            (WebCore::Internals::pageOverlayLayerTreeAsText):
+            * testing/Internals.h:
+            * testing/Internals.idl:
+            * testing/MockPageOverlayClient.cpp:
+            (WebCore::MockPageOverlayClient::layerTreeAsText):
+            * testing/MockPageOverlayClient.h:
+
+2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r211662. rdar://problem/30467322
+
+    2017-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+            Correctly set the "inWindow" flag for TileControllers that aren't the page tiles, and clarify "usingTiledBacking" logic
+            https://bugs.webkit.org/show_bug.cgi?id=167774
+
+            Reviewed by Tim Horton.
+
+            RenderLayerBacking had some very confusing "usingTiledCacheLayer" uses.
+
+            Its member variable, m_usingTiledCacheLayer, really meant "m_isMainFrameLayerWithTiledBacking" so make it so.
+            It had a usingTiledBacking(), which returned the same thing, which this patch replaces with isMainFrameLayerWithTiledBacking().
+
+            The fact that usingTiledBacking() was only true for the page tiled layer tripped up
+            RenderLayerCompositor::setIsInWindowForLayerIncludingDescendants(), which would only ever call setIsInWindow()
+            on the page tiled layer. These changes fix that.
+
+            Also make a way for tests to unparent the web view via UIScriptController, and dump out the "in window"
+            status of TileBackings when dumping tile caches.
+
+            Test: tiled-drawing/tiled-backing-in-window.html
+
+            * platform/graphics/TiledBacking.h:
+            * platform/graphics/ca/GraphicsLayerCA.cpp:
+            (WebCore::GraphicsLayerCA::dumpAdditionalProperties):
+            * platform/graphics/ca/TileController.h:
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::RenderLayerBacking):
+            (WebCore::computePageTiledBackingCoverage):
+            (WebCore::RenderLayerBacking::adjustTiledBackingCoverage):
+            (WebCore::RenderLayerBacking::setTiledBackingHasMargins):
+            (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+            (WebCore::RenderLayerBacking::shouldClipCompositedBounds):
+            (WebCore::RenderLayerBacking::updateDescendantClippingLayer):
+            (WebCore::RenderLayerBacking::updateRootLayerConfiguration):
+            (WebCore::RenderLayerBacking::paintsIntoWindow):
+            (WebCore::computeTileCoverage): Deleted.
+            * rendering/RenderLayerBacking.h:
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+            (WebCore::RenderLayerCompositor::rootFixedBackgroundsChanged):
+            (WebCore::RenderLayerCompositor::setIsInWindowForLayerIncludingDescendants):
+            (WebCore::RenderLayerCompositor::supportsFixedRootBackgroundCompositing):
+            (WebCore::RenderLayerCompositor::documentUsesTiledBacking):
+
+2017-02-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r211501. rdar://problem/29904368
 
     2017-02-01  Antoine Quint  <graouts@apple.com>
