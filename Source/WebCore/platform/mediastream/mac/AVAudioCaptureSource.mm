@@ -96,6 +96,7 @@ AVAudioCaptureSource::AVAudioCaptureSource(AVCaptureDeviceTypedef* device, const
     
 AVAudioCaptureSource::~AVAudioCaptureSource()
 {
+    shutdownCaptureSession();
 }
 
 void AVAudioCaptureSource::initializeCapabilities(RealtimeMediaSourceCapabilities& capabilities)

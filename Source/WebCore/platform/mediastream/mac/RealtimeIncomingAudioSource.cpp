@@ -51,6 +51,14 @@ RealtimeIncomingAudioSource::RealtimeIncomingAudioSource(rtc::scoped_refptr<webr
 {
 }
 
+RealtimeIncomingAudioSource::~RealtimeIncomingAudioSource()
+{
+    if (m_audioSourceProvider) {
+        m_audioSourceProvider->unprepare();
+        m_audioSourceProvider = nullptr;
+    }
+}
+
 void RealtimeIncomingAudioSource::OnData(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames)
 {
     // FIXME: Implement this.

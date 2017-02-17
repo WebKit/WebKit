@@ -1,3 +1,32 @@
+2017-02-17  Jer Noble  <jer.noble@apple.com>
+
+        Refactoring: Make sure to unprepare WebAudioSourceProviderAVFObjC when its owner is destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=168532
+
+        Reviewed by Youenn Fablet.
+
+        Because WebAudioSourceProviderAVFObjC has a back-pointer to the object which creted it, make
+        sure that back-pointer is invalidated once the creating object is destroyed by calling
+        WebAudioSOurceProviderAVFObjC::unprepare().
+
+        Drive-by Fix: In WebAudioSourceProviderAVFObjC::audioSamplesAvailable(), PlatformAudioData will
+        always be of the WebAudioBufferList type. If this ever becomes untrue, an invalid downcast will
+        be caught by downcast<>, so just remove the is<> check.
+
+        * platform/mediastream/mac/AVAudioCaptureSource.mm:
+        (WebCore::AVAudioCaptureSource::~AVAudioCaptureSource):
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSourceMac::~MockRealtimeAudioSourceMac):
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.cpp:
+        (WebCore::RealtimeIncomingAudioSource::~RealtimeIncomingAudioSource):
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::~WebAudioSourceProviderAVFObjC):
+        (WebCore::WebAudioSourceProviderAVFObjC::setClient):
+        (WebCore::WebAudioSourceProviderAVFObjC::unprepare):
+        (WebCore::WebAudioSourceProviderAVFObjC::audioSamplesAvailable):
+
 2017-02-17  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Improve handling of <video> with only audio tracks

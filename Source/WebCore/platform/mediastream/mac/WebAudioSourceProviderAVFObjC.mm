@@ -73,7 +73,7 @@ WebAudioSourceProviderAVFObjC::~WebAudioSourceProviderAVFObjC()
         AudioConverterDispose(m_converter);
         m_converter = nullptr;
     }
-    if (m_connected)
+    if (m_connected && m_captureSource)
         m_captureSource->removeObserver(*this);
 }
 
@@ -127,6 +127,9 @@ void WebAudioSourceProviderAVFObjC::setClient(AudioSourceProviderClient* client)
         return;
 
     m_client = client;
+
+    if (!m_captureSource)
+        return;
 
     if (m_client && !m_connected) {
         m_connected = true;
@@ -213,6 +216,11 @@ void WebAudioSourceProviderAVFObjC::unprepare()
     m_ringBuffer = nullptr;
     m_list = nullptr;
     m_listBufferSize = 0;
+    if (m_captureSource) {
+        m_captureSource->removeObserver(*this);
+        m_captureSource = nullptr;
+    }
+
     if (m_converter) {
         // FIXME: make and use a smart pointer for AudioConverter
         AudioConverterDispose(m_converter);
@@ -222,7 +230,7 @@ void WebAudioSourceProviderAVFObjC::unprepare()
 
 void WebAudioSourceProviderAVFObjC::audioSamplesAvailable(const MediaTime&, const PlatformAudioData& data, const AudioStreamDescription&, size_t frameCount)
 {
-    if (!m_ringBuffer || !is<WebAudioBufferList>(data))
+    if (!m_ringBuffer)
         return;
 
     auto& bufferList = downcast<WebAudioBufferList>(data);

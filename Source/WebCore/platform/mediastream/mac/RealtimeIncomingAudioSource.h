@@ -50,6 +50,7 @@ public:
 
 private:
     RealtimeIncomingAudioSource(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
+    ~RealtimeIncomingAudioSource();
 
     // webrtc::AudioTrackSinkInterface API
     void OnData(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames) final;

@@ -71,6 +71,14 @@ MockRealtimeAudioSourceMac::MockRealtimeAudioSourceMac(const String& name)
 {
 }
 
+MockRealtimeAudioSourceMac::~MockRealtimeAudioSourceMac()
+{
+    if (m_audioSourceProvider) {
+        m_audioSourceProvider->unprepare();
+        m_audioSourceProvider = nullptr;
+    }
+}
+
 RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::createMuted(const String& name)
 {
     auto source = adoptRef(new MockRealtimeAudioSource(name));

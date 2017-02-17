@@ -49,6 +49,7 @@ class MockRealtimeAudioSourceMac final : public MockRealtimeAudioSource {
 private:
     friend class MockRealtimeAudioSource;
     MockRealtimeAudioSourceMac(const String&);
+    ~MockRealtimeAudioSourceMac();
 
     bool applySampleRate(int) final;
     bool applySampleSize(int) final { return false; }
