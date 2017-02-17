@@ -35,7 +35,9 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
         // Ensures that the Settings tab is displayable from a pinned tab bar item.
         tabBarItem.representedObject = this;
 
-        WebInspector.notifications.addEventListener(WebInspector.Notification.DebugUIEnabledDidChange, this.needsLayout.bind(this, WebInspector.View.LayoutReason.Dirty));
+        let boundNeedsLayout = this.needsLayout.bind(this, WebInspector.View.LayoutReason.Dirty);
+        WebInspector.notifications.addEventListener(WebInspector.Notification.DebugUIEnabledDidChange, boundNeedsLayout);
+        WebInspector.settings.zoomFactor.addEventListener(WebInspector.Setting.Event.Changed, boundNeedsLayout);
     }
 
     static tabInfo()

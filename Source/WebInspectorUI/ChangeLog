@@ -1,3 +1,15 @@
+2017-02-17  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Zoom level UI out of sync with setting value
+        https://bugs.webkit.org/show_bug.cgi?id=168522
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WebInspector.SettingsTabContentView):
+        Trigger a layout whenever the zoomFactor setting is changed. This is needed since the
+        zoomFactor setting can also be modified by global keyboard shortcuts.
+
 2017-02-17  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Loc: Zoom level in Settings tab needs to use localized formatting
