@@ -1,3 +1,34 @@
+2017-02-18  Chris Dumez  <cdumez@apple.com>
+
+        Recursive MessagePort.postMessage() calls causes tab to become unresponsive
+        https://bugs.webkit.org/show_bug.cgi?id=168548
+        <rdar://problem/29808005>
+
+        Reviewed by Darin Adler.
+
+        MessagePort::dispatchMessages() was getting messages one by one of the
+        channel's MessageQueue and firing the MessageEvent for each of them.
+        The issue is that we can get stuck in an infinite loop if the
+        MessageEvent handler posts a message on the same post.
+
+        To address the issue, we now takes all messages from the queue before
+        iterating over them to fire the event. This way, if new messages are
+        added to the queue in one of the MessageEvent handlers, they will not
+        be processed until the next event loop iteration, as is expected.
+
+        Test: fast/events/message-port-postMessage-recursive.html
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::dispatchMessages):
+        * dom/MessagePortChannel.h:
+        (WebCore::MessagePortChannel::EventData::EventData):
+        * dom/default/PlatformMessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::postMessageToRemote):
+        * dom/default/PlatformMessagePortChannel.h:
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::takeMessage):
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::takeAllMessages):
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::appendAndCheckEmpty):
+
 2017-02-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove COORDINATED_GRAPHICS_MULTIPROCESS

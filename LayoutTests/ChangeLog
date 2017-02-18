@@ -1,3 +1,17 @@
+2017-02-18  Chris Dumez  <cdumez@apple.com>
+
+        Recursive MessagePort.postMessage() calls causes tab to become unresponsive
+        https://bugs.webkit.org/show_bug.cgi?id=168548
+        <rdar://problem/29808005>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage. The test used to time out, it now passes.
+        The test also passes on Firefox and Chrome.
+
+        * fast/events/message-port-postMessage-recursive-expected.txt: Added.
+        * fast/events/message-port-postMessage-recursive.html: Added.
+
 2017-02-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations of a few more tests that are failing.

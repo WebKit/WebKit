@@ -37,12 +37,6 @@
 
 namespace WebCore {
 
-PlatformMessagePortChannel::EventData::EventData(RefPtr<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray> channels)
-    : m_message(WTFMove(message))
-    , m_channels(WTFMove(channels))
-{
-}
-
 void MessagePortChannel::createChannel(MessagePort* port1, MessagePort* port2)
 {
     Ref<PlatformMessagePortChannel::MessagePortQueue> queue1 = PlatformMessagePortChannel::MessagePortQueue::create();
@@ -86,27 +80,26 @@ void MessagePortChannel::disentangle()
         remote->setRemotePort(nullptr);
 }
 
-void MessagePortChannel::postMessageToRemote(RefPtr<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray> channels)
+void MessagePortChannel::postMessageToRemote(Ref<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray> channels)
 {
     LockHolder lock(m_channel->m_mutex);
     if (!m_channel->m_outgoingQueue)
         return;
-    bool wasEmpty = m_channel->m_outgoingQueue->appendAndCheckEmpty(std::make_unique<PlatformMessagePortChannel::EventData>(WTFMove(message), WTFMove(channels)));
+    bool wasEmpty = m_channel->m_outgoingQueue->appendAndCheckEmpty(std::make_unique<EventData>(WTFMove(message), WTFMove(channels)));
     if (wasEmpty && m_channel->m_remotePort)
         m_channel->m_remotePort->messageAvailable();
 }
 
-bool MessagePortChannel::tryGetMessageFromRemote(RefPtr<SerializedScriptValue>& message, std::unique_ptr<MessagePortChannelArray>& channels)
+auto MessagePortChannel::takeMessageFromRemote() -> std::unique_ptr<EventData>
 {
     LockHolder lock(m_channel->m_mutex);
-    auto result = m_channel->m_incomingQueue->tryGetMessage();
-    if (!result)
-        return false;
+    return m_channel->m_incomingQueue->takeMessage();
+}
 
-    message = result->message();
-    channels = result->channels();
-
-    return true;
+auto MessagePortChannel::takeAllMessagesFromRemote() -> Deque<std::unique_ptr<EventData>>
+{
+    LockHolder lock(m_channel->m_mutex);
+    return m_channel->m_incomingQueue->takeAllMessages();
 }
 
 void MessagePortChannel::close()

@@ -64,6 +64,7 @@ namespace WTF {
 
         std::unique_ptr<DataType> waitForMessage();
         std::unique_ptr<DataType> tryGetMessage();
+        Deque<std::unique_ptr<DataType>> takeAllMessages();
         std::unique_ptr<DataType> tryGetMessageIgnoringKilled();
         template<typename Predicate>
         std::unique_ptr<DataType> waitForMessageFilteredWithTimeout(MessageQueueWaitResult&, Predicate&&, WallTime absoluteTime);
@@ -182,6 +183,15 @@ namespace WTF {
             return nullptr;
 
         return m_queue.takeFirst();
+    }
+
+    template<typename DataType>
+    inline auto MessageQueue<DataType>::takeAllMessages() -> Deque<std::unique_ptr<DataType>>
+    {
+        LockHolder lock(m_mutex);
+        if (m_killed)
+            return { };
+        return WTFMove(m_queue);
     }
 
     template<typename DataType>
