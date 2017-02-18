@@ -190,6 +190,13 @@ private:
     bool isBitmapImage() const override { return true; }
     void dump(TextStream&) const override;
 
+    // Animated images over a certain size are considered large enough that we'll only hang on to one frame at a time.
+#if !PLATFORM(IOS)
+    static const unsigned LargeAnimationCutoff = 5242880;
+#else
+    static const unsigned LargeAnimationCutoff = 2097152;
+#endif
+
     mutable ImageSource m_source;
 
     size_t m_currentFrame { 0 }; // The index of the current frame of animation.

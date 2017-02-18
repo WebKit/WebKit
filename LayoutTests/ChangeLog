@@ -1,5 +1,25 @@
 2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212265. rdar://problem/30231732
+
+    2017-02-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            The current frame of an image should not deleted if another frame is asynchronously being decoded
+            https://bugs.webkit.org/show_bug.cgi?id=167618
+
+            Reviewed by Simon Fraser.
+
+            This test did not crash on Mac when running it without this patch. But
+            the new ASSERT_IMPLIES(), which is added to BitmapImage::draw(), fires
+            when the other changes are not included. So the bug could have happened
+            without the patch but the crash did not since it requires a thread
+            contention in the system underlying components.
+
+            * fast/images/animated-image-draw-while-decode-expected.txt: Added.
+            * fast/images/animated-image-draw-while-decode.html: Added.
+
+2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212218. rdar://problem/30339793
 
     2017-02-12  Ryosuke Niwa  <rniwa@webkit.org>

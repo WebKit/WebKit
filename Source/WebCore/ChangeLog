@@ -1,5 +1,69 @@
 2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212265. rdar://problem/30231732
+
+    2017-02-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            The current frame of an image should not deleted if another frame is asynchronously being decoded
+            https://bugs.webkit.org/show_bug.cgi?id=167618
+
+            Reviewed by Simon Fraser.
+
+            Test: fast/images/animated-image-draw-while-decode.html
+
+            If the memory cache asks the BitmapImage to destroy all its frames while
+            the next frame is being decoded, a thread contention may happen. This can
+            happen when BitmapImage::draw() is called and the next frame is not ready
+            yet for drawing, so the current frame has to be drawn. This will invoke
+            a frame decoding in the same image from the drawing committing thread.
+
+            We can avoid that by destroying all the frames except the current frame if
+            the image is asynchronously decoding its frames. This should not add extra
+            memory overhead because building the image frame cache and then destroying
+            it, when needed, is an on-going process. The frames will be allocated and
+            decoded all the time and all of them can be destroyed except the current one.
+
+            * platform/graphics/BitmapImage.cpp:
+            (WebCore::BitmapImage::destroyDecodedData):
+            (WebCore::BitmapImage::destroyDecodedDataIfNecessary):
+            The logic of destroying the ImageFrames was split among BitmapImage, ImageSource
+            and ImageFrameCache. Move all the logic to BitmapImage and have ImageFrameCache
+            be responsible only for destroying a range of ImageFrames.
+
+            (WebCore::BitmapImage::draw): add an ASSERT_IMPLIES to ensure the current frame
+            is ready to be rendered if the next frame is being decoded.
+
+            * platform/graphics/BitmapImage.h: Move a const from ImageFrameCache.h to BitmapImage.h.
+
+            * platform/graphics/ImageFrameCache.cpp:
+            (WebCore::ImageFrameCache::destroyDecodedData):
+            (WebCore::ImageFrameCache::destroyDecodedDataIfNecessary): Deleted.
+            * platform/graphics/ImageFrameCache.h:
+            (WebCore::ImageFrameCache::destroyAllDecodedData):
+            (WebCore::ImageFrameCache::destroyAllDecodedDataExcludeFrame):
+            (WebCore::ImageFrameCache::destroyDecodedDataBeforeFrame):
+            Make ImageFrameCache be responsible for destroying a range of ImageFrames.
+            This range might include all the frames, all the frames but up to a specific
+            frame, or all the frames but exclude one frame in the middle.
+
+            * platform/graphics/ImageSource.cpp:
+            (WebCore::ImageSource::clear): No need to call clearFrameBufferCache() from clear().
+            The decision to call clearFrameBufferCache() or clear() is moved to
+            BitmapImage::destroyDecodedData().
+
+            (WebCore::ImageSource::destroyDecodedData): Deleted.
+            (WebCore::ImageSource::destroyDecodedDataIfNecessary): Deleted.
+            These functions are replaced by another set of functions in ImageSource.h.
+
+            * platform/graphics/ImageSource.h:
+            (WebCore::ImageSource::destroyAllDecodedData):
+            (WebCore::ImageSource::destroyAllDecodedDataExcludeFrame):
+            (WebCore::ImageSource::destroyDecodedDataBeforeFrame):
+            (WebCore::ImageSource::hasDecodingQueue):
+            These are new wrappers which call the corresponding ImageFrameCache functions.
+
+2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212218. rdar://problem/30339793
 
     2017-02-12  Ryosuke Niwa  <rniwa@webkit.org>

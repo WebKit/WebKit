@@ -260,6 +260,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication()
 #define ASSERT(assertion) ((void)0)
 #define ASSERT_AT(assertion, file, line, function) ((void)0)
 #define ASSERT_NOT_REACHED() ((void)0)
+#define ASSERT_IMPLIES(condition, assertion) ((void)0)
 #define NO_RETURN_DUE_TO_ASSERT
 
 #define ASSERT_UNUSED(variable, assertion) ((void)variable)
@@ -296,6 +297,13 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication()
 #define ASSERT_NOT_REACHED() do { \
     WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, 0); \
     CRASH(); \
+} while (0)
+
+#define ASSERT_IMPLIES(condition, assertion) do { \
+    if ((condition) && !(assertion)) { \
+        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #condition " => " #assertion); \
+        CRASH(); \
+    } \
 } while (0)
 
 #define ASSERT_UNUSED(variable, assertion) ASSERT(assertion)
