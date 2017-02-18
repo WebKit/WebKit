@@ -147,6 +147,8 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
         childrenChanged(change);
     }
 
+    document().notifyRemovePendingSheetIfNeeded();
+
     // FIXME: assert that we don't dispatch events here since this container node is still disconnected.
     for (auto& child : children) {
         RELEASE_ASSERT(!child->parentNode() && &child->treeScope() == &treeScope());
@@ -357,6 +359,9 @@ void ContainerNode::notifyChildInserted(Node& child, ChildChangeSource source)
 
     childrenChanged(change);
 
+    // Some call sites may have deleted child nodes. Calling it earlier results in bugs like webkit.org/b/168069.
+    document().notifyRemovePendingSheetIfNeeded();
+
     for (auto& target : postInsertionNotificationTargets)
         target->finishedInsertingSubtree();
 }
@@ -544,13 +549,13 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
         notifyChildRemoved(child, prev, next, ChildChangeSourceAPI);
     }
 
-
     if (document().svgExtensions()) {
         Element* shadowHost = this->shadowHost();
         if (!shadowHost || !shadowHost->hasTagName(SVGNames::useTag))
             document().accessSVGExtensions().rebuildElements();
     }
 
+    document().notifyRemovePendingSheetIfNeeded();
     dispatchSubtreeModifiedEvent();
 
     return { };
@@ -610,6 +615,7 @@ void ContainerNode::parserRemoveChild(Node& oldChild)
     removeBetween(prev, next, oldChild);
 
     notifyChildRemoved(oldChild, prev, next, ChildChangeSourceParser);
+    document().notifyRemovePendingSheetIfNeeded();
 }
 
 // this differs from other remove functions because it forcibly removes all the children,
@@ -647,6 +653,7 @@ void ContainerNode::removeChildren()
             document().accessSVGExtensions().rebuildElements();
     }
 
+    document().notifyRemovePendingSheetIfNeeded();
     dispatchSubtreeModifiedEvent();
 }
 
