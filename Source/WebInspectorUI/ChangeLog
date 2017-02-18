@@ -1,3 +1,29 @@
+2017-02-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Use Maps in FrameResourceManager instead of objects
+        https://bugs.webkit.org/show_bug.cgi?id=168549
+        <rdar://problem/30590110>
+
+        Reviewed by Joseph Pecoraro.
+
+        Use Map for _frameIdentifierMap and _resourceRequestIdentifierMap.
+
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype.initialize):
+        (WebInspector.FrameResourceManager.prototype.get frames):
+        (WebInspector.FrameResourceManager.prototype.frameForIdentifier):
+        (WebInspector.FrameResourceManager.prototype.frameDidDetach):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestWillBeSent):
+        (WebInspector.FrameResourceManager.prototype.markResourceRequestAsServedFromMemoryCache):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestWasServedFromMemoryCache):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestDidReceiveResponse):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestDidReceiveData):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestDidFinishLoading):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestDidFailLoading):
+        (WebInspector.FrameResourceManager.prototype._addNewResourceToFrameOrTarget):
+        (WebInspector.FrameResourceManager.prototype._processMainFrameResourceTreePayload):
+        (WebInspector.FrameResourceManager.prototype._createFrame):
+
 2017-02-17  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: Inspector window should dock to the left when using RTL layout direction

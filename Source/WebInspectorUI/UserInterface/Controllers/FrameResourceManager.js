@@ -45,9 +45,9 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
     {
         var oldMainFrame = this._mainFrame;
 
-        this._frameIdentifierMap = {};
+        this._frameIdentifierMap = new Map;
         this._mainFrame = null;
-        this._resourceRequestIdentifierMap = {};
+        this._resourceRequestIdentifierMap = new Map;
         this._orphanedResources = new Map;
 
         if (this._mainFrame !== oldMainFrame)
@@ -65,16 +65,12 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
 
     get frames()
     {
-        var frames = [];
-        for (var key in this._frameIdentifierMap)
-            frames.push(this._frameIdentifierMap[key]);
-
-        return frames;
+        return [...this._frameIdentifierMap.values()];
     }
 
     frameForIdentifier(frameId)
     {
-        return this._frameIdentifierMap[frameId] || null;
+        return this._frameIdentifierMap.get(frameId) || null;
     }
 
     frameDidNavigate(framePayload)
@@ -155,7 +151,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         if (frame.parentFrame)
             frame.parentFrame.removeChildFrame(frame);
 
-        delete this._frameIdentifierMap[frame.id];
+        this._frameIdentifierMap.delete(frame.id);
 
         var oldMainFrame = this._mainFrame;
 
@@ -186,7 +182,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         var originalRequestWillBeSentTimestamp = timestamp;
 
         var elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
-        var resource = this._resourceRequestIdentifierMap[requestIdentifier];
+        let resource = this._resourceRequestIdentifierMap.get(requestIdentifier);
         if (resource) {
             // This is an existing request which is being redirected, update the resource.
             console.assert(redirectResponse);
@@ -201,7 +197,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         resource = this._addNewResourceToFrameOrTarget(requestIdentifier, frameIdentifier, loaderIdentifier, request.url, type, request.method, request.headers, request.postData, elapsedTime, null, null, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp, targetId);
 
         // Associate the resource with the requestIdentifier so it can be found in future loading events.
-        this._resourceRequestIdentifierMap[requestIdentifier] = resource;
+        this._resourceRequestIdentifierMap.set(requestIdentifier, resource);
     }
 
     markResourceRequestAsServedFromMemoryCache(requestIdentifier)
@@ -212,7 +208,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         if (this._waitingForMainFrameResourceTreePayload)
             return;
 
-        var resource = this._resourceRequestIdentifierMap[requestIdentifier];
+        let resource = this._resourceRequestIdentifierMap.get(requestIdentifier);
 
         // We might not have a resource if the inspector was opened during the page load (after resourceRequestWillBeSent is called).
         // We don't want to assert in this case since we do likely have the resource, via PageAgent.getResourceTree. The Resource
@@ -231,7 +227,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         if (this._waitingForMainFrameResourceTreePayload)
             return;
 
-        console.assert(!(requestIdentifier in this._resourceRequestIdentifierMap));
+        console.assert(!this._resourceRequestIdentifierMap.has(requestIdentifier));
 
         var elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
         var initiatorSourceCodeLocation = this._initiatorSourceCodeLocationFromPayload(initiator);
@@ -259,7 +255,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
             return;
 
         var elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
-        var resource = this._resourceRequestIdentifierMap[requestIdentifier];
+        let resource = this._resourceRequestIdentifierMap.get(requestIdentifier);
 
         // We might not have a resource if the inspector was opened during the page load (after resourceRequestWillBeSent is called).
         // We don't want to assert in this case since we do likely have the resource, via PageAgent.getResourceTree. The Resource
@@ -273,7 +269,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
             // Associate the resource with the requestIdentifier so it can be found in future loading events.
             // and roll it back to an unfinished state, we know now it is still loading.
             if (resource) {
-                this._resourceRequestIdentifierMap[requestIdentifier] = resource;
+                this._resourceRequestIdentifierMap.set(requestIdentifier, resource);
                 resource.revertMarkAsFinished();
             }
         }
@@ -284,7 +280,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
             resource = this._addNewResourceToFrameOrTarget(requestIdentifier, frameIdentifier, loaderIdentifier, response.url, type, null, response.requestHeaders, null, elapsedTime, null, null, null);
 
             // Associate the resource with the requestIdentifier so it can be found in future loading events.
-            this._resourceRequestIdentifierMap[requestIdentifier] = resource;
+            this._resourceRequestIdentifierMap.set(requestIdentifier, resource);
         }
 
         if (response.fromDiskCache)
@@ -301,7 +297,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         if (this._waitingForMainFrameResourceTreePayload)
             return;
 
-        var resource = this._resourceRequestIdentifierMap[requestIdentifier];
+        let resource = this._resourceRequestIdentifierMap.get(requestIdentifier);
         var elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
 
         // We might not have a resource if the inspector was opened during the page load (after resourceRequestWillBeSent is called).
@@ -326,7 +322,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
 
         // By now we should always have the Resource. Either it was fetched when the inspector first opened with
         // PageAgent.getResourceTree, or it was a currently loading resource that we learned about in resourceRequestDidReceiveResponse.
-        var resource = this._resourceRequestIdentifierMap[requestIdentifier];
+        let resource = this._resourceRequestIdentifierMap.get(requestIdentifier);
         console.assert(resource);
         if (!resource)
             return;
@@ -337,7 +333,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         if (sourceMapURL)
             WebInspector.sourceMapManager.downloadSourceMap(sourceMapURL, resource.url, resource);
 
-        delete this._resourceRequestIdentifierMap[requestIdentifier];
+        this._resourceRequestIdentifierMap.delete(requestIdentifier);
     }
 
     resourceRequestDidFailLoading(requestIdentifier, canceled, timestamp)
@@ -350,7 +346,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
 
         // By now we should always have the Resource. Either it was fetched when the inspector first opened with
         // PageAgent.getResourceTree, or it was a currently loading resource that we learned about in resourceRequestDidReceiveResponse.
-        var resource = this._resourceRequestIdentifierMap[requestIdentifier];
+        let resource = this._resourceRequestIdentifierMap.get(requestIdentifier);
         console.assert(resource);
         if (!resource)
             return;
@@ -361,7 +357,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         if (resource === resource.parentFrame.provisionalMainResource)
             resource.parentFrame.clearProvisionalLoad();
 
-        delete this._resourceRequestIdentifierMap[requestIdentifier];
+        this._resourceRequestIdentifierMap.delete(requestIdentifier);
     }
 
     executionContextCreated(contextPayload)
@@ -428,7 +424,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
             console.assert(!targetId);
             resource = new WebInspector.Resource(url, null, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, elapsedTime, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp);
             frame = new WebInspector.Frame(frameIdentifier, frameName, frameSecurityOrigin, loaderIdentifier, resource);
-            this._frameIdentifierMap[frame.id] = frame;
+            this._frameIdentifierMap.set(frame.id, frame);
 
             // If we don't have a main frame, assume this is it. This can change later in
             // frameDidNavigate when the parent frame is known.
@@ -532,8 +528,8 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         console.assert(mainFramePayload);
         console.assert(mainFramePayload.frame);
 
-        this._resourceRequestIdentifierMap = {};
-        this._frameIdentifierMap = {};
+        this._resourceRequestIdentifierMap = new Map;
+        this._frameIdentifierMap = new Map;
 
         var oldMainFrame = this._mainFrame;
 
@@ -550,7 +546,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         var mainResource = new WebInspector.Resource(payload.url || "about:blank", payload.mimeType, null, payload.loaderId);
         var frame = new WebInspector.Frame(payload.id, payload.name, payload.securityOrigin, payload.loaderId, mainResource);
 
-        this._frameIdentifierMap[frame.id] = frame;
+        this._frameIdentifierMap.set(frame.id, frame);
 
         mainResource.markAsFinished();
 
