@@ -1,5 +1,65 @@
 2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212035. rdar://problem/30433204
+
+    2017-02-09  Filip Pizlo  <fpizlo@apple.com>
+
+            SharedArrayBuffer does not need to be in the transfer list
+            https://bugs.webkit.org/show_bug.cgi?id=168079
+
+            Reviewed by Geoffrey Garen and Keith Miller.
+
+            Tests: workers/sab/multi-memory-multi-buffer.html
+                   workers/sab/multi-memory.html
+                   workers/sab/no-transfer.html
+                   workers/sab/postMessage-clones.html
+                   workers/sab/sent-from-worker-no-transfer.html
+                   workers/sab/sent-from-worker-transfer.html
+
+            The SAB API that we originally implemented required that SABs get put in transfer lists
+            when they are sent to workers.
+
+            The new SAB API that everyone is converging towards requires that you do not put the
+            SAB in the transfer list. That's supposed to be an error. Instead, anytime that a SAB
+            is part of any message to or from a dedicated worker then it is automatically shared.
+
+            The new API provides a lot more clarity about what is supposed to happen in contexts
+            that support transfering but don't support sharing.
+
+            Right now this patch allows both styles to work, but I hope we can disable the transfer
+            list capability soon.
+
+            * bindings/js/IDBBindingUtilities.cpp:
+            (WebCore::deserializeIDBValueToJSValue):
+            * bindings/js/JSMessageEventCustom.cpp:
+            (WebCore::JSMessageEvent::data):
+            * bindings/js/SerializedScriptValue.cpp:
+            (WebCore::CloneSerializer::serialize):
+            (WebCore::CloneSerializer::CloneSerializer):
+            (WebCore::CloneSerializer::dumpIfTerminal):
+            (WebCore::CloneDeserializer::deserialize):
+            (WebCore::CloneDeserializer::CloneDeserializer):
+            (WebCore::CloneDeserializer::readTerminal):
+            (WebCore::SerializedScriptValue::SerializedScriptValue):
+            (WebCore::SerializedScriptValue::create):
+            (WebCore::SerializedScriptValue::deserialize):
+            * bindings/js/SerializedScriptValue.h:
+            (): Deleted.
+            * dom/CustomEvent.cpp:
+            (WebCore::CustomEvent::trySerializeDetail):
+            * dom/ErrorEvent.cpp:
+            (WebCore::ErrorEvent::trySerializeError):
+            * dom/MessageEvent.cpp:
+            (WebCore::MessageEvent::trySerializeData):
+            * dom/PopStateEvent.cpp:
+            (WebCore::PopStateEvent::trySerializeState):
+            * workers/DedicatedWorkerGlobalScope.cpp:
+            (WebCore::DedicatedWorkerGlobalScope::postMessage):
+            * workers/Worker.cpp:
+            (WebCore::Worker::postMessage):
+
+2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
+
         Rollout r212488. rdar://problem/29904368
 
 2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>

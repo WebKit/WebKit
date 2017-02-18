@@ -33,3 +33,21 @@ function wake(memory, index)
     }
 }
 
+function checkBufferSharing(shouldShareBuffer)
+{
+    var set = new Set();
+    for (var i = 1; i < arguments.length; ++i)
+        set.add(arguments[i].buffer);
+    if (shouldShareBuffer) {
+        if (set.size != 1) {
+            postMessage("Error: buffers should be shared but are not shared (set.size == " + set.size + ")");
+            postMessage("error");
+        }
+    } else {
+        if (set.size != arguments.length - 1) {
+            postMessage("Error: buffers should not be shared but are shared");
+            postMessage("error");
+        }
+    }
+}
+

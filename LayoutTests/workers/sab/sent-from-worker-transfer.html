@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+</head>
+<body>
+<script>
+function getOrCreate(id, tagName)
+{
+    var element = document.getElementById(id);
+    if (element)
+        return element;
+    
+    element = document.createElement(tagName);
+    element.id = id;
+    var parent = document.body || document.documentElement;
+    var refNode = parent.firstChild;
+    
+    parent.insertBefore(element, refNode);
+    return element;
+}
+
+function debug(msg)
+{
+    var span = document.createElement("span");
+    getOrCreate("console", "div").appendChild(span); // insert it first so XHTML knows the namespace
+    span.innerHTML = msg + '<br />';
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var verbose = false;
+
+var sab;
+var memory;
+
+var numWorkers = 0;
+function startWorker(file)
+{
+    if (verbose)
+        debug("Starting worker: " + file);
+    numWorkers++;
+    var worker = new Worker(file);
+    worker.onmessage = function(event) {
+        if (event.data == "done") {
+            if (verbose)
+                debug("Finished worker: " + file);
+            if (--numWorkers)
+                return;
+            debug("All workers done!");
+            done();
+            return;
+        }
+        if (event.data.indexOf("Error") == 0) {
+            debug("Test failed: "+ event.data);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        if (verbose)
+            debug("Event from " + file + ": " + event.data);
+    };
+    worker.postMessage(memory, [sab]);
+}
+
+function done()
+{
+    for (var i = 0; i < 3; ++i) {
+        if (memory[i] != 1)
+            throw "Error: Bad value at memory[" + i + "]: " + memory[i];
+    }
+    for (var i = 3; i < memory.length; ++i) {
+        if (memory[i] != 0)
+            throw "Error: Bad value at memory[" + i + "]: " + memory[i];
+    }
+    debug("Test passed!");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var sabCreator = new Worker("sab-creator-transfer.js");
+sabCreator.onmessage = function(event) {
+    memory = event.data;
+    sab = memory.buffer;
+    
+    startWorker("simple-worker-1.js");
+    startWorker("simple-worker-2.js");
+};
+
+</script>
+</body>
+</html>

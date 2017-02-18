@@ -318,5 +318,16 @@ bool ArrayBuffer::transferTo(ArrayBufferContents& result)
     return true;
 }
 
+bool ArrayBuffer::shareWith(ArrayBufferContents& result)
+{
+    if (!m_contents.m_data || !isShared()) {
+        result.m_data = nullptr;
+        return false;
+    }
+    
+    m_contents.shareWith(result);
+    return true;
+}
+
 } // namespace JSC
 

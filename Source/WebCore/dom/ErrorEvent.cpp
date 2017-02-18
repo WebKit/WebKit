@@ -90,7 +90,7 @@ JSValue ErrorEvent::sanitizedErrorValue(ExecState& exec, JSGlobalObject& globalO
 RefPtr<SerializedScriptValue> ErrorEvent::trySerializeError(ExecState& exec)
 {
     if (!m_triedToSerialize) {
-        m_serializedDetail = SerializedScriptValue::create(exec, m_error, NonThrowing);
+        m_serializedDetail = SerializedScriptValue::create(exec, m_error, SerializationErrorMode::NonThrowing);
         m_triedToSerialize = true;
     }
     return m_serializedDetail;

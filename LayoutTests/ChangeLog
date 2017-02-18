@@ -1,5 +1,41 @@
 2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212035. rdar://problem/30433204
+
+    2017-02-09  Filip Pizlo  <fpizlo@apple.com>
+
+            SharedArrayBuffer does not need to be in the transfer list
+            https://bugs.webkit.org/show_bug.cgi?id=168079
+
+            Reviewed by Geoffrey Garen and Keith Miller.
+
+            This adds tests that ensure that SABs behave correctly (are either cloned or shared)
+            depending on context, and that we currently share SABs whether they are in the transfer
+            list or not. This also adds tests for SABs being passed around via more complicated
+            data structures.
+
+            * workers/sab/multi-memory-expected.txt: Added.
+            * workers/sab/multi-memory-multi-buffer-expected.txt: Added.
+            * workers/sab/multi-memory-multi-buffer.html: Added.
+            * workers/sab/multi-memory-worker-1.js: Added.
+            (onmessage):
+            * workers/sab/multi-memory-worker-2.js: Added.
+            (onmessage):
+            * workers/sab/multi-memory.html: Added.
+            * workers/sab/no-transfer-expected.txt: Added.
+            * workers/sab/no-transfer.html: Added.
+            * workers/sab/postMessage-clones-expected.txt: Added.
+            * workers/sab/postMessage-clones.html: Added.
+            * workers/sab/sab-creator-no-transfer.js: Added.
+            * workers/sab/sab-creator-transfer.js: Added.
+            * workers/sab/sent-from-worker-no-transfer-expected.txt: Added.
+            * workers/sab/sent-from-worker-no-transfer.html: Added.
+            * workers/sab/sent-from-worker-transfer-expected.txt: Added.
+            * workers/sab/sent-from-worker-transfer.html: Added.
+            * workers/sab/worker-resources.js:
+
+2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
+
         Rollout r212488. rdar://problem/29904368
 
 2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
