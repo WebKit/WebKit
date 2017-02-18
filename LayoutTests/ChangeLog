@@ -1,5 +1,11 @@
 2017-02-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Update expectations of a few more tests that are failing.
+
+        * platform/gtk/TestExpectations:
+
+2017-02-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-textarea.html.
 
         Selection is always directional for us.
