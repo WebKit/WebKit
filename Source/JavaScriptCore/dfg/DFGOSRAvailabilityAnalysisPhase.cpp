@@ -95,9 +95,55 @@ public:
                 }
             }
         } while (changed);
+
+        if (validationEnabled()) {
+
+            for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+                BasicBlock* block = m_graph.block(blockIndex);
+                if (!block)
+                    continue;
+                
+                calculator.beginBlock(block);
+                
+                for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
+                    if (block->at(nodeIndex)->origin.exitOK) {
+                        // If we're allowed to exit here, the heap must be in a state
+                        // where exiting wouldn't crash. These particular fields are
+                        // required for correctness because we use them during OSR exit
+                        // to do meaningful things. It would be wrong for any of them
+                        // to be dead.
+
+                        AvailabilityMap availabilityMap = calculator.m_availability;
+                        availabilityMap.pruneByLiveness(m_graph, block->at(nodeIndex)->origin.forExit);
+
+                        for (auto heapPair : availabilityMap.m_heap) {
+                            switch (heapPair.key.kind()) {
+                            case ActivationScopePLoc:
+                            case ActivationSymbolTablePLoc:
+                            case FunctionActivationPLoc:
+                            case FunctionExecutablePLoc:
+                            case StructurePLoc:
+                                if (heapPair.value.isDead()) {
+                                    dataLogLn("PromotedHeapLocation is dead, but should not be: ", heapPair.key);
+                                    availabilityMap.dump(WTF::dataFile());
+                                    CRASH();
+                                }
+                                break;
+
+                            default:
+                                break;
+                            }
+                        }
+                    }
+
+                    calculator.executeNode(block->at(nodeIndex));
+                }
+            }
+        }
         
         return true;
     }
+
 };
 
 bool performOSRAvailabilityAnalysis(Graph& graph)

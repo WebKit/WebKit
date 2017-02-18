@@ -132,6 +132,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             if (property.location() != PromotedLocationDescriptor(StructurePLoc))
                 continue;
 
+            RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits(Structure::info()));
             structure = jsCast<Structure*>(JSValue::decode(values[i]));
             break;
         }
@@ -163,10 +164,14 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         JSScope* activation = nullptr;
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
-            if (property.location() == PromotedLocationDescriptor(FunctionExecutablePLoc))
+            if (property.location() == PromotedLocationDescriptor(FunctionExecutablePLoc)) {
+                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits(FunctionExecutable::info()));
                 executable = jsCast<FunctionExecutable*>(JSValue::decode(values[i]));
-            if (property.location() == PromotedLocationDescriptor(FunctionActivationPLoc))
+            }
+            if (property.location() == PromotedLocationDescriptor(FunctionActivationPLoc)) {
+                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits(JSScope::info()));
                 activation = jsCast<JSScope*>(JSValue::decode(values[i]));
+            }
         }
         RELEASE_ASSERT(executable && activation);
 
@@ -184,10 +189,13 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         SymbolTable* table = nullptr;
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
-            if (property.location() == PromotedLocationDescriptor(ActivationScopePLoc))
+            if (property.location() == PromotedLocationDescriptor(ActivationScopePLoc)) {
+                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits(JSScope::info()));
                 scope = jsCast<JSScope*>(JSValue::decode(values[i]));
-            else if (property.location() == PromotedLocationDescriptor(ActivationSymbolTablePLoc))
+            } else if (property.location() == PromotedLocationDescriptor(ActivationSymbolTablePLoc)) {
+                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits(SymbolTable::info()));
                 table = jsCast<SymbolTable*>(JSValue::decode(values[i]));
+            }
         }
         RELEASE_ASSERT(scope);
         RELEASE_ASSERT(table);
