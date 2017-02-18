@@ -153,6 +153,9 @@ void WebInspectorUI::requestSetDockSide(DockSide side)
     case DockSide::Right:
         webProcess.parentProcessConnection()->send(Messages::WebInspectorProxy::AttachRight(), m_inspectedPageIdentifier);
         break;
+    case DockSide::Left:
+        webProcess.parentProcessConnection()->send(Messages::WebInspectorProxy::AttachLeft(), m_inspectedPageIdentifier);
+        break;
     case DockSide::Bottom:
         webProcess.parentProcessConnection()->send(Messages::WebInspectorProxy::AttachBottom(), m_inspectedPageIdentifier);
         break;
@@ -170,6 +173,10 @@ void WebInspectorUI::setDockSide(DockSide side)
 
     case DockSide::Right:
         sideString = "right";
+        break;
+
+    case DockSide::Left:
+        sideString = "left";
         break;
 
     case DockSide::Bottom:

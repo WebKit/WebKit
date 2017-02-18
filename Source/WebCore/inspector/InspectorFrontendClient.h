@@ -41,6 +41,7 @@ public:
     enum class DockSide {
         Undocked = 0,
         Right,
+        Left,
         Bottom,
     };
 

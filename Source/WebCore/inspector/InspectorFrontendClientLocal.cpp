@@ -261,6 +261,9 @@ void InspectorFrontendClientLocal::setAttachedWindow(DockSide dockSide)
     case DockSide::Right:
         side = "right";
         break;
+    case DockSide::Left:
+        side = "left";
+        break;
     case DockSide::Bottom:
         side = "bottom";
         break;

@@ -35,6 +35,7 @@ messages -> WebInspectorProxy {
 
     AttachBottom()
     AttachRight()
+    AttachLeft()
     Detach()
 
     AttachAvailabilityChanged(bool available)

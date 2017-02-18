@@ -65,7 +65,8 @@ class WebPreferences;
 
 enum class AttachmentSide {
     Bottom,
-    Right
+    Right,
+    Left,
 };
 
 class WebInspectorProxy : public API::ObjectImpl<API::Object::Type::Inspector>, public IPC::MessageReceiver {
@@ -125,6 +126,7 @@ public:
     AttachmentSide attachmentSide() const { return m_attachmentSide; }
     bool isAttached() const { return m_isAttached; }
     void attachRight();
+    void attachLeft();
     void attachBottom();
     void attach(AttachmentSide = AttachmentSide::Bottom);
     void detach();

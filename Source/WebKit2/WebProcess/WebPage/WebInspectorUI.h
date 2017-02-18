@@ -66,6 +66,7 @@ public:
 
     void attachedBottom() { setDockSide(DockSide::Bottom); }
     void attachedRight() { setDockSide(DockSide::Right); }
+    void attachedLeft() { setDockSide(DockSide::Left); }
     void detached() { setDockSide(DockSide::Undocked); }
 
     void setDockSide(DockSide);

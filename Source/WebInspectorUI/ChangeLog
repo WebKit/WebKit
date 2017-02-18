@@ -1,5 +1,43 @@
 2017-02-17  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: RTL: Inspector window should dock to the left when using RTL layout direction
+        https://bugs.webkit.org/show_bug.cgi?id=168273
+        <rdar://problem/29949325>
+
+        Reviewed by Matt Baker.
+
+        Add the ability to dock Web Inspector to the left of the inspected view.
+        The frontend decides whether the Dock to Side button docks left or right
+        based on the current layout direction.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        Rename the "Dock to Right" button to "Dock to Side" instead. It's easier to just
+        have one button than to try and conditionally hide one or the other based on
+        the layout direction. Change the dock callback and the icon used for the button
+        depending on layout direction.
+
+        (WebInspector.resolvedLayoutDirection):
+        Refactor getLayoutDirection() to resolvedLayoutDirection() so callers get back
+        either "ltr" or "rtl".
+
+        Flip the dock side if layout direction changes while docked to the side.
+
+        Adjust various code paths to account for the existing of left docking. In particular,
+        resize rejection needs special-casing for resizing leftward from beyond the right side
+        of the Inspector view when it is docked to the left. Improve related comments since it
+        took me an unbelievable amount of time to understand what this code is supposed to do.
+
+        * UserInterface/Views/Main.css:
+        (body.docked.right):
+        (body.docked.left #docked-resizer):
+        (body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer):
+        (body.docked.right #navigation-sidebar.collapsed > .resizer): Deleted.
+        Add .docked.left analogues to rules for .docked.right.
+
+2017-02-17  Brian Burg  <bburg@apple.com>
+
         Web Inspector: RTL: add TabBar support for RTL layout
         https://bugs.webkit.org/show_bug.cgi?id=168446
 

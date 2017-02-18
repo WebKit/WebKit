@@ -60,6 +60,10 @@ body.docked.right {
     border-left: 1px solid var(--border-color);
 }
 
+body.docked.left {
+    border-right: 1px solid var(--border-color);
+}
+
 #docked-resizer {
     display: none;
 
@@ -68,11 +72,12 @@ body.docked.right {
 
 body.docked #docked-resizer {
     display: block;
+
+    position: absolute;
+    top: 0;
 }
 
 body.docked.bottom #docked-resizer {
-    position: absolute;
-    top: 0;
     left: 0;
     right: 0;
     height: 3px;
@@ -81,9 +86,15 @@ body.docked.bottom #docked-resizer {
 }
 
 body.docked.right #docked-resizer {
-    position: absolute;
-    top: 0;
     left: 0;
+    bottom: 0;
+    width: 3px;
+
+    cursor: col-resize;
+}
+
+body.docked.left #docked-resizer {
+    right: 0;
     bottom: 0;
     width: 3px;
 
@@ -132,7 +143,7 @@ input[type=range]::-webkit-slider-runnable-track {
     height: 100%;
 }
 
-body.docked.right #navigation-sidebar.collapsed > .resizer {
+body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
     pointer-events: none;
 }
 

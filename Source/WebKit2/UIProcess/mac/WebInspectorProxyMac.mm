@@ -287,6 +287,9 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
         case AttachmentSide::Right:
             initialRect = NSMakeRect(0, 0, inspectorPagePreferences().inspectorAttachedWidth(), NSHeight(inspectedViewFrame));
             break;
+        case AttachmentSide::Left:
+            initialRect = NSMakeRect(0, 0, NSWidth(inspectedViewFrame) - inspectorPagePreferences().inspectorAttachedWidth(), NSHeight(inspectedViewFrame));
+            break;
         }
     } else {
         initialRect = NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight);
@@ -562,6 +565,23 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
         inspectorFrame = NSMakeRect(parentWidth - inspectorWidth, 0, inspectorWidth, NSHeight(parentBounds) - insetExcludingBanners);
         break;
     }
+
+    case AttachmentSide::Left: {
+        if (!currentDimension)
+            currentDimension = NSWidth([m_inspectorView frame]);
+
+        CGFloat parentWidth = NSWidth(parentBounds);
+        CGFloat inspectorWidth = InspectorFrontendClientLocal::constrainedAttachedWindowWidth(currentDimension, parentWidth);
+
+        // Preserve the top position of the inspected view so banners in Safari still work. But don't use that
+        // top position for the inspector view since the banners only stretch as wide as the the inspected view.
+        inspectedViewFrame = NSMakeRect(inspectorWidth, 0, NSWidth(inspectedViewFrame), inspectedViewTop);
+        CGFloat insetExcludingBanners = 0;
+        if ([inspectedView isKindOfClass:[WKView class]])
+            insetExcludingBanners = ((WKView *)inspectedView)._topContentInset - ((WKView *)inspectedView)._totalHeightOfBanners;
+        inspectorFrame = NSMakeRect(0, 0, inspectorWidth, NSHeight(parentBounds) - insetExcludingBanners);
+        break;
+    }
     }
 
     if (NSEqualRects([m_inspectorView frame], inspectorFrame) && NSEqualRects([inspectedView frame], inspectedViewFrame))
@@ -609,6 +629,10 @@ void WebInspectorProxy::platformAttach()
         break;
     case AttachmentSide::Right:
         [m_inspectorView setAutoresizingMask:NSViewHeightSizable | NSViewMinXMargin];
+        currentDimension = inspectorPagePreferences().inspectorAttachedWidth();
+        break;
+    case AttachmentSide::Left:
+        [m_inspectorView setAutoresizingMask:NSViewHeightSizable | NSViewMaxXMargin];
         currentDimension = inspectorPagePreferences().inspectorAttachedWidth();
         break;
     }

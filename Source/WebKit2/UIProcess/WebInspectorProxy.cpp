@@ -217,6 +217,11 @@ void WebInspectorProxy::attachRight()
     attach(AttachmentSide::Right);
 }
 
+void WebInspectorProxy::attachLeft()
+{
+    attach(AttachmentSide::Left);
+}
+
 void WebInspectorProxy::attach(AttachmentSide side)
 {
     if (!m_inspectedPage || !canAttach())
@@ -239,6 +244,10 @@ void WebInspectorProxy::attach(AttachmentSide side)
 
     case AttachmentSide::Right:
         m_inspectorPage->process().send(Messages::WebInspectorUI::AttachedRight(), m_inspectorPage->pageID());
+        break;
+
+    case AttachmentSide::Left:
+        m_inspectorPage->process().send(Messages::WebInspectorUI::AttachedLeft(), m_inspectorPage->pageID());
         break;
     }
 
@@ -490,6 +499,10 @@ void WebInspectorProxy::createInspectorPage(IPC::Attachment connectionIdentifier
 
             case AttachmentSide::Right:
                 m_inspectorPage->process().send(Messages::WebInspectorUI::AttachedRight(), m_inspectorPage->pageID());
+                break;
+
+            case AttachmentSide::Left:
+                m_inspectorPage->process().send(Messages::WebInspectorUI::AttachedLeft(), m_inspectorPage->pageID());
                 break;
             }
         } else

@@ -1,3 +1,37 @@
+2017-02-17  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RTL: Inspector window should dock to the left when using RTL layout direction
+        https://bugs.webkit.org/show_bug.cgi?id=168273
+        <rdar://problem/29949325>
+
+        Reviewed by Matt Baker.
+
+        Add the ability to dock Web Inspector to the left of the inspected view.
+        The frontend decides whether the Dock to Side button docks left or right
+        based on the current layout direction.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::attachLeft):
+        (WebKit::WebInspectorProxy::attach):
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in:
+        Add plumbing for new dock configuration.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
+        (WebKit::WebInspectorProxy::platformAttach):
+        Adapt existing sizing logic to work for docking to left.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::requestSetDockSide):
+        (WebKit::WebInspectorUI::setDockSide):
+        * WebProcess/WebPage/WebInspectorUI.h:
+        (WebKit::WebInspectorUI::attachedLeft):
+        * WebProcess/WebPage/WebInspectorUI.messages.in:
+        Add plumbing for new dock configuration.
+
 2017-02-16  Simon Fraser  <simon.fraser@apple.com>
 
         Allow PlatformCALayers to specify that they want deep color backing store
