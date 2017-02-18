@@ -1,0 +1,3 @@
+
+FAIL text field selection for the input textarea assert_equals: initial selectionDirection expected "none" but got "forward"
+
