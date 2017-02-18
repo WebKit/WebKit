@@ -1,3 +1,9 @@
+2017-02-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Update expectations of several tests.
+
+        * platform/gtk/TestExpectations:
+
 2017-02-16  Simon Fraser  <simon.fraser@apple.com>
 
         Allow PlatformCALayers to specify that they want deep color backing store

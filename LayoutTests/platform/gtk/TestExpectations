@@ -707,6 +707,8 @@ webkit.org/b/167579 fast/forms/validation-message-detached-iframe.html [ Skip ]
 webkit.org/b/167579 fast/forms/validation-message-detached-iframe2.html [ Skip ]
 webkit.org/b/167579 fast/forms/validation-messages.html [ Skip ]
 webkit.org/b/167579 http/tests/navigation/navigation-dismisses-validation-bubbles.html [ Skip ]
+webkit.org/b/167579 fast/forms/validation-bubble-escape-key-dismiss.html [ Skip ]
+webkit.org/b/167579 fast/forms/validation-message-minimum-font-size.html [ Skip ]
 
 # Tests failing with GStreamer 1.6.3
 webkit.org/b/154390 http/tests/media/video-referer.html [ Failure ]
@@ -827,6 +829,9 @@ webkit.org/b/168501 pageoverlay/overlay-remove-reinsert-view.html [ Failure ]
 
 # WebKit2 plug-ins: No support for getting the form value.
 plugins/form-value.html [ Skip ]
+
+# We don't have LastResource font.
+fast/text/font-weight-download-2.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -2841,6 +2846,7 @@ webkit.org/b/132055 media/track/track-datacue.html [ Failure ]
 webkit.org/b/168426 fast/html/marquee-scroll.html [ ImageOnlyFailure ]
 webkit.org/b/168426 fast/multicol/columns-on-body.html [ ImageOnlyFailure ]
 webkit.org/b/168426 imported/blink/animations/display-inline-style-adjust.html [ ImageOnlyFailure ]
+webkit.org/b/168426 fast/html/details-comment-crash.html [ ImageOnlyFailure ]
 
 webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html [ ImageOnlyFailure ]
 
@@ -2859,6 +2865,11 @@ webkit.org/b/168431 fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
 
 webkit.org/b/168415 imported/w3c/web-platform-tests/resource-timing/rt-cors.html [ Failure ]
 webkit.org/b/168415 imported/w3c/web-platform-tests/resource-timing/rt-cors.worker.html [ Failure ]
+
+webkit.org/b/168551 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
+webkit.org/b/168551 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
+
+webkit.org/b/168552 [ Release ] fast/text/hyphenate-locale.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
