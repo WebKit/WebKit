@@ -341,10 +341,6 @@ messages -> WebPage LegacyReceiver {
     SetCanRunBeforeUnloadConfirmPanel(bool canRunBeforeUnloadConfirmPanel)
     SetCanRunModal(bool canRunModal)
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    CommitPageTransitionViewport()
-#endif
-
 #if PLATFORM(GTK)
     SetComposition(String text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
     ConfirmComposition(String text, int64_t selectionStart, int64_t selectionLength)
@@ -391,10 +387,6 @@ messages -> WebPage LegacyReceiver {
 
     SetMinimumLayoutSize(WebCore::IntSize minimumLayoutSize)
     SetAutoSizingShouldExpandToViewHeight(bool shouldExpand)
-
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    FindZoomableAreaForPoint(WebCore::IntPoint point, WebCore::IntSize area)
-#endif
 
 #if PLATFORM(COCOA)
     HandleAlternativeTextUIResult(String result)

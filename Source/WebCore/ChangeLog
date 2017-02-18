@@ -1,3 +1,13 @@
+2017-02-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Remove COORDINATED_GRAPHICS_MULTIPROCESS
+        https://bugs.webkit.org/show_bug.cgi?id=168514
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
 2017-02-17  Simon Fraser  <simon.fraser@apple.com>
 
         Allow properties in CSSProperties.json that don't trigger code generation

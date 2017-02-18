@@ -78,10 +78,6 @@ public:
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection&, IPC::Decoder&) = 0;
-#endif
-
 #if USE(COORDINATED_GRAPHICS_THREADED)
     virtual void contentsSizeChanged(const WebCore::IntSize&) { };
     virtual void didChangeViewportAttributes(WebCore::ViewportAttributes&&) { };

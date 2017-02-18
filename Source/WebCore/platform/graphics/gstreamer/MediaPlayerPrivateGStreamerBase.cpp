@@ -618,7 +618,7 @@ void MediaPlayerPrivateGStreamerBase::acceleratedRenderingStateChanged()
     m_renderingCanBeAccelerated = m_player && m_player->client().mediaPlayerAcceleratedCompositingEnabled() && m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player);
 }
 
-#if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS_MULTIPROCESS)
+#if USE(TEXTURE_MAPPER_GL)
 void MediaPlayerPrivateGStreamerBase::updateTexture(BitmapTextureGL& texture, GstVideoInfo& videoInfo)
 {
     GstBuffer* buffer = gst_sample_get_buffer(m_sample.get());

@@ -903,10 +903,6 @@ public:
 
     WebPageCreationParameters creationParameters();
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    void findZoomableAreaForPoint(const WebCore::IntPoint&, const WebCore::IntSize&);
-#endif
-
     void handleDownloadRequest(DownloadProxy*);
 
     void advanceToNextMisspelling(bool startBeforeSelection);
@@ -1336,12 +1332,6 @@ private:
     void cancelNotification(uint64_t notificationID);
     void clearNotifications(const Vector<uint64_t>& notificationIDs);
     void didDestroyNotification(uint64_t notificationID);
-
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    void pageDidRequestScroll(const WebCore::IntPoint&);
-    void pageTransitionViewportReady();
-    void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
-#endif
 
     void didChangeContentSize(const WebCore::IntSize&);
 

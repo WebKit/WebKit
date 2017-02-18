@@ -210,7 +210,7 @@ protected:
     mutable FloatSize m_videoSize;
     bool m_usingFallbackVideoSink;
     bool m_renderingCanBeAccelerated { false };
-#if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS_MULTIPROCESS)
+#if USE(TEXTURE_MAPPER_GL)
     void updateTexture(BitmapTextureGL&, GstVideoInfo&);
 #endif
 #if USE(GSTREAMER_GL)

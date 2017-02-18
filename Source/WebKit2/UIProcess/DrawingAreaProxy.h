@@ -48,7 +48,6 @@ class MachSendRight;
 namespace WebKit {
 
 class LayerTreeContext;
-class CoordinatedLayerTreeHostProxy;
 class UpdateInfo;
 class WebPageProxy;
 

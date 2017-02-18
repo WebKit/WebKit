@@ -136,10 +136,6 @@
 #include "RemoteScrollingCoordinatorProxy.h"
 #endif
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-#include "CoordinatedLayerTreeHostProxyMessages.h"
-#endif
-
 #if ENABLE(VIBRATION)
 #include "WebVibrationProxy.h"
 #endif
@@ -4104,31 +4100,6 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t f
 
     m_uiClient->runBeforeUnloadConfirmPanel(this, message, frame, [reply](bool result) { reply->send(result); });
 }
-
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-void WebPageProxy::pageDidRequestScroll(const IntPoint& point)
-{
-    m_pageClient.pageDidRequestScroll(point);
-}
-
-void WebPageProxy::pageTransitionViewportReady()
-{
-    m_pageClient.pageTransitionViewportReady();
-}
-
-void WebPageProxy::didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect)
-{
-    m_pageClient.didRenderFrame(contentsSize, coveredRect);
-}
-
-void WebPageProxy::commitPageTransitionViewport()
-{
-    if (!isValid())
-        return;
-
-    process().send(Messages::WebPage::CommitPageTransitionViewport(), m_pageID);
-}
-#endif
 
 void WebPageProxy::didChangeViewportProperties(const ViewportAttributes& attr)
 {

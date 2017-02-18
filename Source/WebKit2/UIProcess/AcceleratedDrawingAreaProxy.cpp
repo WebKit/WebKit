@@ -37,10 +37,6 @@
 #include "WebProcessProxy.h"
 #include <WebCore/Region.h>
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-#include "CoordinatedLayerTreeHostProxy.h"
-#endif
-
 #if PLATFORM(WAYLAND)
 #include "WaylandCompositor.h"
 #include <WebCore/PlatformDisplay.h>
@@ -51,16 +47,8 @@ using namespace WebCore;
 namespace WebKit {
 
 AcceleratedDrawingAreaProxy::AcceleratedDrawingAreaProxy(WebPageProxy& webPageProxy)
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    : DrawingAreaProxy(DrawingAreaTypeCoordinated, webPageProxy)
-#else
     : DrawingAreaProxy(DrawingAreaTypeImpl, webPageProxy)
-#endif
 {
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    // Construct the proxy early to allow messages to be sent to the web process while AC is entered there.
-    m_coordinatedLayerTreeHostProxy = std::make_unique<CoordinatedLayerTreeHostProxy>(webPageProxy);
-#endif
 }
 
 AcceleratedDrawingAreaProxy::~AcceleratedDrawingAreaProxy()

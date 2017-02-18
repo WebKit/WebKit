@@ -610,10 +610,6 @@ public:
     void pageDidRequestScroll(const WebCore::IntPoint&);
 #endif
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    void commitPageTransitionViewport();
-#endif
-
 #if ENABLE(CONTEXT_MENUS)
     WebContextMenu* contextMenu();
     WebContextMenu* contextMenuAtPointInWindow(const WebCore::IntPoint&);
@@ -1147,10 +1143,6 @@ private:
 
 #if USE(COORDINATED_GRAPHICS)
     void sendViewportAttributesChanged(const WebCore::ViewportArguments&);
-#endif
-
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    void findZoomableAreaForPoint(const WebCore::IntPoint&, const WebCore::IntSize& area);
 #endif
 
     void didChangeSelectedIndexForActivePopupMenu(int32_t newIndex);

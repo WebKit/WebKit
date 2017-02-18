@@ -29,9 +29,7 @@
 
 #include "LayerTreeHost.h"
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-#include "CoordinatedLayerTreeHost.h"
-#elif USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS_THREADED)
 #include "ThreadedCoordinatedLayerTreeHost.h"
 #elif PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
 #include "LayerTreeHostGtk.h"
@@ -45,8 +43,6 @@ RefPtr<LayerTreeHost> LayerTreeHost::create(WebPage& webPage)
 {
 #if USE(COORDINATED_GRAPHICS_THREADED)
     return ThreadedCoordinatedLayerTreeHost::create(webPage);
-#elif USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    return CoordinatedLayerTreeHost::create(webPage);
 #elif PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
     return LayerTreeHostGtk::create(webPage);
 #else

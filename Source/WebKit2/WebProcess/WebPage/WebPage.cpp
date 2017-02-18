@@ -238,10 +238,6 @@
 #include <wtf/RefCountedLeakCounter.h>
 #endif
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-#include "CoordinatedLayerTreeHostMessages.h"
-#endif
-
 #if ENABLE(DATA_DETECTION)
 #include <WebCore/DataDetection.h>
 #endif
@@ -520,9 +516,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     webProcess.addMessageReceiver(Messages::WebPage::messageReceiverName(), m_pageID, *this);
 
     // FIXME: This should be done in the object constructors, and the objects themselves should be message receivers.
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    webProcess.addMessageReceiver(Messages::CoordinatedLayerTreeHost::messageReceiverName(), m_pageID, *this);
-#endif
     webProcess.addMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID, *this);
     webProcess.addMessageReceiver(Messages::WebInspectorUI::messageReceiverName(), m_pageID, *this);
     webProcess.addMessageReceiver(Messages::RemoteWebInspectorUI::messageReceiverName(), m_pageID, *this);
@@ -621,9 +614,6 @@ WebPage::~WebPage()
     webProcess.removeMessageReceiver(Messages::WebPage::messageReceiverName(), m_pageID);
 
     // FIXME: This should be done in the object destructors, and the objects themselves should be message receivers.
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    webProcess.removeMessageReceiver(Messages::CoordinatedLayerTreeHost::messageReceiverName(), m_pageID);
-#endif
     webProcess.removeMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID);
     webProcess.removeMessageReceiver(Messages::WebInspectorUI::messageReceiverName(), m_pageID);
     webProcess.removeMessageReceiver(Messages::RemoteWebInspectorUI::messageReceiverName(), m_pageID);
@@ -2053,8 +2043,6 @@ void WebPage::pageDidRequestScroll(const IntPoint& point)
 {
 #if USE(COORDINATED_GRAPHICS_THREADED)
     drawingArea()->scroll(IntRect(point, IntSize()), IntSize());
-#elif USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    send(Messages::WebPageProxy::PageDidRequestScroll(point));
 #endif
 }
 #endif
@@ -2667,14 +2655,6 @@ void WebPage::didStartPageTransition()
 
 void WebPage::didCompletePageTransition()
 {
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    // m_mainFrame can be null since r170163.
-    if (m_mainFrame && m_mainFrame->coreFrame()->view()->delegatesScrolling()) {
-        // Wait until the UI process sent us the visible rect it wants rendered.
-        send(Messages::WebPageProxy::PageTransitionViewportReady());
-    } else
-#endif
-        
     m_drawingArea->setLayerTreeStateIsFrozen(false);
 }
 
@@ -4000,14 +3980,6 @@ bool WebPage::windowAndWebPageAreFocused() const
 
 void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    if (decoder.messageReceiverName() == Messages::CoordinatedLayerTreeHost::messageReceiverName()) {
-        if (m_drawingArea)
-            m_drawingArea->didReceiveCoordinatedLayerTreeHostMessage(connection, decoder);
-        return;
-    }
-#endif
-
     if (decoder.messageReceiverName() == Messages::WebInspector::messageReceiverName()) {
         if (WebInspector* inspector = this->inspector())
             inspector->didReceiveMessage(connection, decoder);
@@ -4506,13 +4478,6 @@ bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
 
     return platformCanHandleRequest(request);
 }
-
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-void WebPage::commitPageTransitionViewport()
-{
-    m_drawingArea->setLayerTreeStateIsFrozen(false);
-}
-#endif
 
 #if PLATFORM(COCOA)
 void WebPage::handleAlternativeTextUIResult(const String& result)

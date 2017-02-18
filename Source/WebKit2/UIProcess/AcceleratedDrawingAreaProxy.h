@@ -32,8 +32,6 @@
 
 namespace WebKit {
 
-class CoordinatedLayerTreeHostProxy;
-
 class AcceleratedDrawingAreaProxy : public DrawingAreaProxy {
 public:
     explicit AcceleratedDrawingAreaProxy(WebPageProxy&);
@@ -41,10 +39,6 @@ public:
 
     bool isInAcceleratedCompositingMode() const { return alwaysUseCompositing() || !m_layerTreeContext.isEmpty(); }
     void visibilityDidChange();
-
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    CoordinatedLayerTreeHostProxy& coordinatedLayerTreeHostProxy() const { return *m_coordinatedLayerTreeHostProxy.get(); }
-#endif
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     void setNativeSurfaceHandleForCompositing(uint64_t);
@@ -75,10 +69,6 @@ protected:
     void updateAcceleratedCompositingMode(const LayerTreeContext&);
 
     bool alwaysUseCompositing() const;
-
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    std::unique_ptr<CoordinatedLayerTreeHostProxy> m_coordinatedLayerTreeHostProxy;
-#endif
 
     // The state ID corresponding to our current backing store. Updated whenever we allocate
     // a new backing store. Any messages received that correspond to an earlier state are ignored,

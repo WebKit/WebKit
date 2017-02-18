@@ -95,12 +95,6 @@ messages -> WebPageProxy {
     HandleInputMethodKeydown() -> (bool handled)
 #endif
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    PageDidRequestScroll(WebCore::IntPoint point)
-    PageTransitionViewportReady()
-    DidFindZoomableArea(WebCore::IntPoint target, WebCore::IntRect area)
-#endif
-
     DidChangeContentSize(WebCore::IntSize newSize)
 
 #if ENABLE(INPUT_TYPE_COLOR)

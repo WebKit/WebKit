@@ -1,5 +1,60 @@
 2017-02-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Remove COORDINATED_GRAPHICS_MULTIPROCESS
+        https://bugs.webkit.org/show_bug.cgi?id=168514
+
+        Reviewed by Darin Adler.
+
+        * Shared/DrawingAreaInfo.h:
+        * UIProcess/API/C/CoordinatedGraphics/WKView.cpp:
+        (WKViewFindZoomableAreaForRect):
+        * UIProcess/AcceleratedDrawingAreaProxy.cpp:
+        (WebKit::AcceleratedDrawingAreaProxy::AcceleratedDrawingAreaProxy):
+        * UIProcess/AcceleratedDrawingAreaProxy.h:
+        (WebKit::AcceleratedDrawingAreaProxy::coordinatedLayerTreeHostProxy): Deleted.
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp: Removed.
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h: Removed.
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.messages.in: Removed.
+        * UIProcess/CoordinatedGraphics/PageViewportController.cpp:
+        (WebKit::PageViewportController::pageTransitionViewportReady):
+        * UIProcess/CoordinatedGraphics/WebPageProxyCoordinatedGraphics.cpp: Removed.
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::pageDidRequestScroll): Deleted.
+        (WebKit::WebPageProxy::pageTransitionViewportReady): Deleted.
+        (WebKit::WebPageProxy::didRenderFrame): Deleted.
+        (WebKit::WebPageProxy::commitPageTransitionViewport): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::AcceleratedDrawingArea):
+        (WebKit::AcceleratedDrawingArea::updateBackingStoreState):
+        (WebKit::AcceleratedDrawingArea::didReceiveCoordinatedLayerTreeHostMessage): Deleted.
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::commitSceneState):
+        (WebKit::CoordinatedLayerTreeHost::createCoordinatedSurface):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/WebPageCoordinatedGraphics.cpp: Removed.
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::pageDidRequestScroll):
+        (WebKit::WebPage::didCompletePageTransition):
+        (WebKit::WebPage::didReceiveMessage):
+        (WebKit::WebPage::commitPageTransitionViewport): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2017-02-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Cannot paste primary selection into web view in Wayland
         https://bugs.webkit.org/show_bug.cgi?id=166949
 
