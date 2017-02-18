@@ -150,6 +150,7 @@ static inline void executeTakeAllChildrenTask(HTMLConstructionSiteTask& task)
     task.parent->takeAllChildrenFrom(task.oldParent());
     // Notice that we don't need to manually attach the moved children
     // because takeAllChildrenFrom does that work for us.
+    RELEASE_ASSERT(!task.parent->parentNode());
 }
 
 static inline void executeTask(HTMLConstructionSiteTask& task)

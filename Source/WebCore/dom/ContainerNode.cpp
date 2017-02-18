@@ -132,21 +132,27 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
             mutation.willRemoveChild(child);
     }
 
-    // FIXME: We need to do notifyMutationObserversNodeWillDetach() for each child,
-    // probably inside removeDetachedChildrenInContainer.
+    disconnectSubframesIfNeeded(*oldParent, DescendantsOnly);
+    {
+        NoEventDispatchAssertion assertNoEventDispatch;
 
-    oldParent->removeDetachedChildren();
+        oldParent->document().nodeChildrenWillBeRemoved(*oldParent);
 
+        WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+        while (RefPtr<Node> child = oldParent->m_firstChild) {
+            oldParent->removeBetween(nullptr, child->nextSibling(), *child);
+            notifyChildNodeRemoved(*oldParent, *child);
+        }
+        ChildChange change = { AllChildrenRemoved, nullptr, nullptr, ChildChangeSourceParser };
+        childrenChanged(change);
+    }
+
+    // FIXME: assert that we don't dispatch events here since this container node is still disconnected.
     for (auto& child : children) {
-        destroyRenderTreeIfNeeded(child);
-
-        // FIXME: We need a no mutation event version of adoptNode.
-        auto adoptedChild = document().adoptNode(child).releaseReturnValue();
-        parserAppendChild(adoptedChild);
-        // FIXME: Together with adoptNode above, the tree scope might get updated recursively twice
-        // (if the document changed or oldParent was in a shadow tree, AND *this is in a shadow tree).
-        // Can we do better?
-        treeScope().adoptIfNeeded(adoptedChild);
+        RELEASE_ASSERT(!child->parentNode() && &child->treeScope() == &treeScope());
+        ASSERT(!ensurePreInsertionValidity(child, nullptr).hasException());
+        treeScope().adoptIfNeeded(child);
+        parserAppendChild(child);
     }
 }
 
@@ -481,11 +487,6 @@ static void willRemoveChild(ContainerNode& container, Node& child)
 
     if (is<ContainerNode>(child))
         disconnectSubframesIfNeeded(downcast<ContainerNode>(child), RootAndDescendants);
-
-    if (child.parentNode() != &container)
-        return;
-
-    child.document().nodeWillBeRemoved(child); // e.g. mutation event listener can create a new range.
 }
 
 static void willRemoveChildren(ContainerNode& container)
@@ -503,9 +504,6 @@ static void willRemoveChildren(ContainerNode& container)
     }
 
     disconnectSubframesIfNeeded(container, DescendantsOnly);
-
-    container.document().nodeChildrenWillBeRemoved(container);
-
 }
 
 void ContainerNode::disconnectDescendantFrames()
@@ -529,13 +527,15 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
 
     willRemoveChild(*this, child);
 
-    // Mutation events might have moved this child into a different parent.
+    // Mutation events in willRemoveChild might have moved this child into a different parent.
     if (child->parentNode() != this)
         return Exception { NOT_FOUND_ERR };
 
     {
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         NoEventDispatchAssertion assertNoEventDispatch;
+
+        document().nodeWillBeRemoved(child);
 
         Node* prev = child->previousSibling();
         Node* next = child->nextSibling();
@@ -592,15 +592,17 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
 
 void ContainerNode::parserRemoveChild(Node& oldChild)
 {
+    disconnectSubframesIfNeeded(*this, DescendantsOnly);
+
     NoEventDispatchAssertion assertNoEventDispatch;
+
+    document().nodeChildrenWillBeRemoved(*this);
 
     ASSERT(oldChild.parentNode() == this);
     ASSERT(!oldChild.isDocumentFragment());
 
     Node* prev = oldChild.previousSibling();
     Node* next = oldChild.nextSibling();
-
-    oldChild.updateAncestorConnectedSubframeCountForRemoval();
 
     ChildListMutationScope(*this).willRemoveChild(oldChild);
     oldChild.notifyMutationObserversNodeWillDetach();
@@ -627,6 +629,8 @@ void ContainerNode::removeChildren()
     {
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         NoEventDispatchAssertion assertNoEventDispatch;
+
+        document().nodeChildrenWillBeRemoved(*this);
 
         while (RefPtr<Node> child = m_firstChild) {
             removeBetween(0, child->nextSibling(), *child);

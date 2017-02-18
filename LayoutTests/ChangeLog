@@ -1,5 +1,30 @@
 2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212218. rdar://problem/30339793
+
+    2017-02-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+            parserRemoveChild should unload subframes
+            https://bugs.webkit.org/show_bug.cgi?id=168151
+
+            Reviewed by Darin Adler.
+
+            Add two W3C-style testharness tests for unloading iframes inside the adoption agency algorithm.
+
+            Also added a test to make sure ContainerNode::takeAllChildrenFrom adjusts the focused element and DOM ranges.
+
+            * fast/css/stylesheet-candidate-nodes-crash-expected.txt: Rebaselined. The difference comes from the fact
+            iframe now is unloaded in parserRemoveChild as expected and then reloaded in parserAppendChild inside
+            insertErrorMessageBlock as opposed to after the parser had completed as if the iframe had never been detached.
+            * fast/parser/adoption-agency-clear-focus-range-expected.txt: Added.
+            * fast/parser/adoption-agency-clear-focus-range.html: Added.
+            * fast/parser/adoption-agency-unload-iframe-1-expected.txt: Added.
+            * fast/parser/adoption-agency-unload-iframe-1.html: Added.
+            * fast/parser/adoption-agency-unload-iframe-2-expected.txt: Added.
+            * fast/parser/adoption-agency-unload-iframe-2.html: Added.
+
+2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212035. rdar://problem/30433204
 
     2017-02-09  Filip Pizlo  <fpizlo@apple.com>
