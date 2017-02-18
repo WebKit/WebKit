@@ -4200,6 +4200,26 @@
             "codegen-properties": {
                 "enable-if": "ENABLE_APPLE_PAY"
             }
+        },
+        "fill-color" : {
+            "codegen-properties": {
+                "skip-codegen": true
+            }
+        },
+        "fill-image" : {
+            "codegen-properties": {
+                "skip-codegen": true
+            }
+        },
+        "fill-origin" : {
+            "codegen-properties": {
+                "skip-codegen": true
+            }
+        },
+        "fill-position" : {
+            "codegen-properties": {
+                "skip-codegen": true
+            }
         }
     }
 }

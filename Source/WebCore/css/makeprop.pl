@@ -106,7 +106,14 @@ for my $name (@allNames) {
 sub isPropertyEnabled($)
 {
     my ($optionsHashRef) = @_;
-    if (!$optionsHashRef->{"codegen-properties"} || !$optionsHashRef->{"codegen-properties"}{"enable-if"}) {
+
+    if (!exists($optionsHashRef->{"codegen-properties"})) {
+        return 1;
+    }
+    if ($optionsHashRef->{"codegen-properties"}{"skip-codegen"}) {
+        return 0;
+    }
+    if (!exists($optionsHashRef->{"codegen-properties"}{"enable-if"})) {
         return 1;
     }
     if (exists($defines{$optionsHashRef->{"codegen-properties"}{"enable-if"}})) {
@@ -134,6 +141,8 @@ sub addProperty($$)
             for my $codegenOptionName (keys %$codegenProperties) {
                 if ($codegenOptionName eq "enable-if") {
                     next;
+                } elsif ($codegenOptionName eq "skip-codegen") {
+                    next;
                 } elsif ($codegenOptionName eq "high-priority") {
                     $nameIsHighPriority{$name} = 1;
                 } elsif ($codegenOptionName eq "aliases") {
@@ -144,7 +153,7 @@ sub addProperty($$)
                     # internal-only properties exist to make it easier to parse compound properties (e.g. background-repeat) as if they were shorthands.
                     push @internalProprerties, $name
                 } else {
-                    die "Unrecognized codegen property \"$optionName\" for $name property.";
+                    die "Unrecognized codegen property \"$codegenOptionName\" for $name property.";
                 }
             }
         } elsif ($optionName eq "animatable") {
