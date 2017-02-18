@@ -1,3 +1,18 @@
+2017-02-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Cannot paste primary selection into web view in Wayland
+        https://bugs.webkit.org/show_bug.cgi?id=166949
+
+        Reviewed by Carlos Garcia Campos.
+
+        Once upon a time, primary selection (middle-click paste) was not supported in Wayland. At
+        the time, I changed this function to report that primary selection was unsupported. But
+        nowadays, primary selection works fine in all GTK+ applications except WebKit. All we have
+        to do to make it work in WebKit is change this return value.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::supportsGlobalSelection):
+
 2017-02-17  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: Inspector window should dock to the left when using RTL layout direction
