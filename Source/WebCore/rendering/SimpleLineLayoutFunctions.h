@@ -57,6 +57,7 @@ IntPoint computeFirstRunLocation(const RenderObject&, const Layout&);
 
 Vector<IntRect> collectAbsoluteRects(const RenderObject&, const Layout&, const LayoutPoint& accumulatedOffset);
 Vector<FloatQuad> collectAbsoluteQuads(const RenderObject&, const Layout&, bool* wasFixed);
+unsigned textOffsetForPoint(const LayoutPoint&, const RenderText&, const Layout&);
 
 LayoutUnit lineHeightFromFlow(const RenderBlockFlow&);
 LayoutUnit baselineFromFlow(const RenderBlockFlow&);

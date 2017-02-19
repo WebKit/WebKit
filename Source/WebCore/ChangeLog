@@ -1,3 +1,40 @@
+2017-02-19  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Implement positionForPoint.
+        https://bugs.webkit.org/show_bug.cgi?id=168565
+        <rdar://problem/30593370>
+
+        Reviewed by Antti Koivisto.
+
+        With this patch, now we don't need to switch over to line box tree anymore when positionForPoint()
+        is called on a single RenderText content (which is the majority of the simple line content).
+        This patch also adds a new positionForPoint method which returns a Position object instead of VisiblePosition.
+        Some of the positionForPoint() callsites are only interested in the Position object so constructing a VisiblePosition
+        (which could potentially kick off a layout) is a waste. At this point the non-simple line layout codepath still constructs
+        a VisiblePosition and that should be addresses as part of webkit.org/b/168566.
+
+        Covered by existing tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::caretRangeFromPoint):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::positionForPoint):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::positionForPoint):
+        * rendering/RenderObject.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint):
+        * rendering/RenderText.h:
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::positionForPoint):
+        * rendering/SimpleLineLayoutFunctions.h:
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::runForPoint):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::logicalLeft):
+        (WebCore::SimpleLineLayout::RunResolver::Run::logicalRight):
+
 2017-02-19  Antti Koivisto  <antti@apple.com>
 
         Execute pending scripts asynchronously after stylesheet loads complete

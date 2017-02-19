@@ -58,6 +58,8 @@ public:
 
         unsigned start() const;
         unsigned end() const;
+        float logicalLeft() const;
+        float logicalRight() const;
 
         FloatRect rect() const;
         float expansion() const;
@@ -113,6 +115,7 @@ public:
 
     Range<Iterator> rangeForRect(const LayoutRect&) const;
     Range<Iterator> rangeForRenderer(const RenderObject&) const;
+    Iterator runForPoint(const LayoutPoint&) const;
 
 private:
     enum class IndexType { First, Last };
@@ -171,6 +174,16 @@ inline unsigned RunResolver::Run::start() const
 inline unsigned RunResolver::Run::end() const
 {
     return m_iterator.simpleRun().end;
+}
+
+inline float RunResolver::Run::logicalLeft() const
+{
+    return m_iterator.simpleRun().logicalLeft;
+}
+
+inline float RunResolver::Run::logicalRight() const
+{
+    return m_iterator.simpleRun().logicalRight;
 }
 
 inline float RunResolver::Run::expansion() const

@@ -195,6 +195,30 @@ Range<RunResolver::Iterator> RunResolver::rangeForRenderer(const RenderObject& r
     return Range<Iterator>(rangeBegin, run);
 }
 
+RunResolver::Iterator RunResolver::runForPoint(const LayoutPoint& point) const
+{
+    if (!m_lineHeight)
+        return end();
+    unsigned lineIndex = lineIndexForHeight(point.y(), IndexType::Last);
+    auto x = point.x() - m_borderAndPaddingBefore;
+    auto it = begin();
+    it.advanceLines(lineIndex);
+    // Point is at the left side of the first run on this line.
+    if ((*it).logicalLeft() > x)
+        return it;
+    // Advance to the first candidate run on this line.
+    while (it != end() && (*it).logicalRight() < x && lineIndex == it.lineIndex())
+        ++it;
+    // We jumped to the next line so the point is at the right side of the previous line.
+    if (it.lineIndex() > lineIndex)
+        return --it;
+    // Now we have a candidate run.
+    // Find the last run that still contains this point (taking overlapping runs with odd word spacing values into account).
+    while (it != end() && (*it).logicalLeft() <= x && lineIndex == it.lineIndex())
+        ++it;
+    return --it;
+}
+
 LineResolver::Iterator::Iterator(RunResolver::Iterator runIterator)
     : m_runIterator(runIterator)
 {

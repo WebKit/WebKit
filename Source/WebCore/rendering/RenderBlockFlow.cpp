@@ -3548,13 +3548,20 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
     return createVisiblePosition(0, DOWNSTREAM);
 }
 
+Position RenderBlockFlow::positionForPoint(const LayoutPoint& point)
+{
+    // FIXME: It supports single text child only (which is the majority of simple line layout supported content at this point).
+    if (!simpleLineLayout() || firstChild() != lastChild() || !is<RenderText>(firstChild()))
+        return positionForPoint(point, nullptr).deepEquivalent();
+    return downcast<RenderText>(*firstChild()).positionForPoint(point);
+}
+
 VisiblePosition RenderBlockFlow::positionForPoint(const LayoutPoint& point, const RenderRegion* region)
 {
     if (auto fragment = renderNamedFlowFragment())
         return fragment->positionForPoint(point, region);
     return RenderBlock::positionForPoint(point, region);
 }
-
 
 void RenderBlockFlow::addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*)
 {

@@ -217,6 +217,21 @@ Vector<FloatQuad> collectAbsoluteQuads(const RenderObject& renderer, const Layou
     return quads;
 }
 
+unsigned textOffsetForPoint(const LayoutPoint& point, const RenderText& renderer, const Layout& layout)
+{
+    auto& flow = downcast<RenderBlockFlow>(*renderer.parent());
+    ASSERT(flow.firstChild() == flow.lastChild());
+    auto resolver = runResolver(flow, layout);
+    auto it = resolver.runForPoint(point);
+    if (it == resolver.end())
+        return renderer.textLength();
+    auto run = *it;
+    auto& style = flow.style();
+    TextRun textRun(run.text(), run.logicalLeft(), run.expansion(), run.expansionBehavior());
+    textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
+    return run.start() + style.fontCascade().offsetForPosition(textRun, point.x() - run.logicalLeft(), true);
+}
+
 #if ENABLE(TREE_DEBUGGING)
 static void printPrefix(int& printedCharacters, int depth)
 {

@@ -1549,6 +1549,12 @@ void RenderObject::destroy()
     delete this;
 }
 
+Position RenderObject::positionForPoint(const LayoutPoint& point)
+{
+    // FIXME: This should just create a Position object instead (webkit.org/b/168566). 
+    return positionForPoint(point, nullptr).deepEquivalent();
+}
+
 VisiblePosition RenderObject::positionForPoint(const LayoutPoint&, const RenderRegion*)
 {
     return createVisiblePosition(caretMinOffset(), DOWNSTREAM);
