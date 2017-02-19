@@ -1779,6 +1779,12 @@ webkit.org/b/168373 media/media-source/media-source-error-crash.html [ Timeout ]
 webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
 webkit.org/b/168373 media/video-multiple-concurrent-playback.html [ Timeout ]
 
+# Need ~60 seconds to complete.
+webkit.org/b/168568 http/tests/xmlhttprequest/resetting-timeout-to-zero.html [ Timeout ]
+webkit.org/b/168568 http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html [ Timeout ]
+
+webkit.org/b/168569 http/tests/appcache/main-resource-fallback-for-network-error-crash.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2880,6 +2886,9 @@ webkit.org/b/168555 fast/text/initial-advance-in-intermediate-run-complex.html [
 webkit.org/b/168556 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 
 webkit.org/b/168557 imported/blink/compositing/draws-content/webgl-simple-background.html [ ImageOnlyFailure ]
+
+webkit.org/b/168572 intersection-observer/intersection-observer-entry-interface.html [ Failure ]
+webkit.org/b/168572 js/dom/regress-157246.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
