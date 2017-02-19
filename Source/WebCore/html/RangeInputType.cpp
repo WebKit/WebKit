@@ -136,7 +136,7 @@ bool RangeInputType::isSteppable() const
 #if !PLATFORM(IOS)
 void RangeInputType::handleMouseDownEvent(MouseEvent& event)
 {
-    if (element().isDisabledOrReadOnly())
+    if (element().isDisabledFormControl())
         return;
 
     Node* targetNode = event.target()->toNode();
@@ -158,7 +158,7 @@ void RangeInputType::handleTouchEvent(TouchEvent& event)
 #if PLATFORM(IOS)
     typedSliderThumbElement().handleTouchEvent(event);
 #elif ENABLE(TOUCH_SLIDER)
-    if (element().isDisabledOrReadOnly())
+    if (element().isDisabledFormControl())
         return;
 
     if (event.type() == eventNames().touchendEvent) {
@@ -193,7 +193,7 @@ void RangeInputType::disabledAttributeChanged()
 
 void RangeInputType::handleKeydownEvent(KeyboardEvent& event)
 {
-    if (element().isDisabledOrReadOnly())
+    if (element().isDisabledFormControl())
         return;
 
     const String& key = event.keyIdentifier();

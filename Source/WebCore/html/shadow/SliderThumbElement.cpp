@@ -352,7 +352,7 @@ void SliderThumbElement::defaultEventHandler(Event& event)
     // FIXME: Should handle this readonly/disabled check in more general way.
     // Missing this kind of check is likely to occur elsewhere if adding it in each shadow element.
     HTMLInputElement* input = hostInput();
-    if (!input || input->isDisabledOrReadOnly()) {
+    if (!input || input->isDisabledFormControl()) {
         stopDragging();
         HTMLDivElement::defaultEventHandler(event);
         return;
@@ -385,7 +385,7 @@ void SliderThumbElement::defaultEventHandler(Event& event)
 bool SliderThumbElement::willRespondToMouseMoveEvents()
 {
     const HTMLInputElement* input = hostInput();
-    if (input && !input->isDisabledOrReadOnly() && m_inDragMode)
+    if (input && !input->isDisabledFormControl() && m_inDragMode)
         return true;
 
     return HTMLDivElement::willRespondToMouseMoveEvents();
@@ -394,7 +394,7 @@ bool SliderThumbElement::willRespondToMouseMoveEvents()
 bool SliderThumbElement::willRespondToMouseClickEvents()
 {
     const HTMLInputElement* input = hostInput();
-    if (input && !input->isDisabledOrReadOnly())
+    if (input && !input->isDisabledFormControl())
         return true;
 
     return HTMLDivElement::willRespondToMouseClickEvents();

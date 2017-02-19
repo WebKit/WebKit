@@ -49,7 +49,7 @@ function testInput(dragsFromEdge) {
     lastInputEventCounter = inputEventCounter;
     lastChangeEventCounter = changeEventCounter;
     dragMouse();
-    shouldBe('input.value', '"100"');
+    shouldBeEqualToString('input.value', '100');
     shouldBeGreaterThanOrEqual('inputEventCounter', 'lastInputEventCounter + 1');
     shouldBe('changeEventCounter', 'lastChangeEventCounter + 1');
 
@@ -60,9 +60,9 @@ function testInput(dragsFromEdge) {
     lastInputEventCounter = inputEventCounter;
     lastChangeEventCounter = changeEventCounter;
     dragMouse();
-    shouldBe('input.value', '"50"');
-    shouldBe('lastInputEventCounter', 'inputEventCounter');
-    shouldBe('lastChangeEventCounter', 'changeEventCounter');
+    shouldBeEqualToString('input.value', '100');
+    shouldBeGreaterThanOrEqual('inputEventCounter', 'lastInputEventCounter + 1');
+    shouldBe('changeEventCounter', 'lastChangeEventCounter + 1');
 
     debug('disabled=true');
     input.readOnly = false;
@@ -71,9 +71,9 @@ function testInput(dragsFromEdge) {
     lastInputEventCounter = inputEventCounter;
     lastChangeEventCounter = changeEventCounter;
     dragMouse();
-    shouldBe('input.value', '"50"');
-    shouldBe('lastInputEventCounter', 'inputEventCounter');
-    shouldBe('lastChangeEventCounter', 'changeEventCounter');
+    shouldBeEqualToString('input.value', '50');
+    shouldBe('inputEventCounter', 'lastInputEventCounter');
+    shouldBe('changeEventCounter', 'lastChangeEventCounter');
 }
 
 var parent = document.createElement('div');

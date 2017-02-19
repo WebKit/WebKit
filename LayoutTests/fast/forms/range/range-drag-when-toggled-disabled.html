@@ -71,9 +71,14 @@ function testInput(id, field) {
     // Attempt to drag to right edge. Should not change.
     lastInputEventCounter = inputEventCounter;
     dragToRightEdge();
-    shouldBe('input.value', '"0"');
-    shouldBe('lastInputEventCounter', 'inputEventCounter');
 
+    if (field == 'disabled') {
+        shouldBeEqualToString('input.value', '0');
+        shouldBe('inputEventCounter', 'lastInputEventCounter');
+    } else {
+        shouldBeEqualToString('input.value', '100');
+        shouldBe('inputEventCounter', 'lastInputEventCounter + 1');
+    }
     stopDrag();
 }
 

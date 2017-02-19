@@ -257,11 +257,11 @@ input.removeAttribute('disabled');
 
 input.readOnly = true;
 sendKey(input, 'Up');
-shouldBe('input.value', '"1"');
+shouldBeEqualToString('input.value', '2');
 sendKey(input, 'Home');
-shouldBe('input.value', '"1"');
+shouldBeEqualToString('input.value', '100');
 sendKey(input, 'PageUp');
-shouldBe('input.value', '"1"');
+shouldBeEqualToString('input.value', '100');
 input.readOnly = false;
 
 debug('');

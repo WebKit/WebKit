@@ -1,5 +1,30 @@
 2017-02-18  Chris Dumez  <cdumez@apple.com>
 
+        <input type=range readonly> doesn't act per spec
+        https://bugs.webkit.org/show_bug.cgi?id=168422
+        <rdar://problem/30593189>
+
+        Reviewed by Ryosuke Niwa.
+
+        'readonly' attribute should not apply to <input type=range> as per the HTML
+        specification:
+        - https://html.spec.whatwg.org/#the-input-element:attr-input-readonly-3
+
+        Firefox and Edge already behave as per the specification.
+
+        No new tests, updated existing tests.
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleMouseDownEvent):
+        (WebCore::RangeInputType::handleTouchEvent):
+        (WebCore::RangeInputType::handleKeydownEvent):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::defaultEventHandler):
+        (WebCore::SliderThumbElement::willRespondToMouseMoveEvents):
+        (WebCore::SliderThumbElement::willRespondToMouseClickEvents):
+
+2017-02-18  Chris Dumez  <cdumez@apple.com>
+
         Recursive MessagePort.postMessage() calls causes tab to become unresponsive
         https://bugs.webkit.org/show_bug.cgi?id=168548
         <rdar://problem/29808005>
