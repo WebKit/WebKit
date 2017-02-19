@@ -1,5 +1,13 @@
 2017-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline fast/visual-viewport/rubberbanding-viewport-rects-extended-background.html again.
+
+        This matches what bots expect now.
+
+        * platform/gtk/fast/visual-viewport/rubberbanding-viewport-rects-extended-background-expected.txt:
+
+2017-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline http/tests/loading/server-redirect-for-provisional-load-caching.html.
 
         I think we are just setting the FirstPartyForCookies to our request a bit earlier when redirecting.
