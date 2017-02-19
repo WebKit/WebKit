@@ -225,7 +225,7 @@ void MarkedSpace::lastChanceToFinalize()
 
 void MarkedSpace::sweep()
 {
-    m_heap->sweeper()->stopSweeping();
+    m_heap->sweeper()->willFinishSweeping();
     forEachAllocator(
         [&] (MarkedAllocator& allocator) -> IterationStatus {
             allocator.sweep();

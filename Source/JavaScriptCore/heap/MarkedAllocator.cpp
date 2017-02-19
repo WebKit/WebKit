@@ -216,14 +216,6 @@ void* MarkedAllocator::allocateSlowCaseImpl(GCDeferralContext* deferralContext, 
 
     m_heap->collectIfNecessaryOrDefer(deferralContext);
     
-    // Goofy corner case: the GC called a callback and now this allocator has a currentBlock. This only
-    // happens when running WebKit tests, which inject a callback into the GC's finalization.
-    if (UNLIKELY(m_currentBlock)) {
-        if (crashOnFailure)
-            return allocate(deferralContext);
-        return tryAllocate(deferralContext);
-    }
-    
     void* result = tryAllocateWithoutCollecting();
     
     if (LIKELY(result != 0))

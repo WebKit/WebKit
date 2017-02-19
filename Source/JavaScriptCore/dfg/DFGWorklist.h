@@ -93,7 +93,7 @@ private:
     
     void removeAllReadyPlansForVM(VM&, Vector<RefPtr<Plan>, 8>&);
 
-    void dump(const AbstractLocker&, PrintStream&) const;
+    void dump(const LockHolder&, PrintStream&) const;
     
     CString m_threadName;
     
@@ -132,10 +132,37 @@ Worklist* existingGlobalFTLWorklistOrNull();
 Worklist& ensureGlobalWorklistFor(CompilationMode);
 
 // Simplify doing things for all worklists.
-unsigned numberOfWorklists();
-Worklist& ensureWorklistForIndex(unsigned index);
-Worklist* existingWorklistForIndexOrNull(unsigned index);
-Worklist& existingWorklistForIndex(unsigned index);
+inline unsigned numberOfWorklists() { return 2; }
+inline Worklist& ensureWorklistForIndex(unsigned index)
+{
+    switch (index) {
+    case 0:
+        return ensureGlobalDFGWorklist();
+    case 1:
+        return ensureGlobalFTLWorklist();
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return ensureGlobalDFGWorklist();
+    }
+}
+inline Worklist* existingWorklistForIndexOrNull(unsigned index)
+{
+    switch (index) {
+    case 0:
+        return existingGlobalDFGWorklistOrNull();
+    case 1:
+        return existingGlobalFTLWorklistOrNull();
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+inline Worklist& existingWorklistForIndex(unsigned index)
+{
+    Worklist* result = existingWorklistForIndexOrNull(index);
+    RELEASE_ASSERT(result);
+    return *result;
+}
 
 #endif // ENABLE(DFG_JIT)
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2009, 2015-2016 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *  Copyright (C) 2009 Acision BV. All rights reserved.
  *
@@ -311,18 +311,6 @@ void MachineThreads::removeThreadIfFound(PlatformThread platformThread)
         }
         delete t;
     }
-}
-
-SUPPRESS_ASAN
-void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, CurrentThreadState& currentThreadState)
-{
-    if (currentThreadState.registerState) {
-        void* registersBegin = currentThreadState.registerState;
-        void* registersEnd = reinterpret_cast<void*>(roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(currentThreadState.registerState + 1)));
-        conservativeRoots.add(registersBegin, registersEnd, jitStubRoutines, codeBlocks);
-    }
-
-    conservativeRoots.add(currentThreadState.stackTop, currentThreadState.stackOrigin, jitStubRoutines, codeBlocks);
 }
 
 MachineThreads::Thread::Thread(const PlatformThread& platThread, void* base, void* end)
@@ -1032,11 +1020,8 @@ static void growBuffer(size_t size, void** buffer, size_t* capacity)
     *buffer = fastMalloc(*capacity);
 }
 
-void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, CurrentThreadState* currentThreadState)
+void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks)
 {
-    if (currentThreadState)
-        gatherFromCurrentThread(conservativeRoots, jitStubRoutines, codeBlocks, *currentThreadState);
-
     size_t size;
     size_t capacity = 0;
     void* buffer = nullptr;
@@ -1049,13 +1034,6 @@ void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoot
 
     conservativeRoots.add(buffer, static_cast<char*>(buffer) + size, jitStubRoutines, codeBlocks);
     fastFree(buffer);
-}
-
-NEVER_INLINE int callWithCurrentThreadState(const ScopedLambda<void(CurrentThreadState&)>& lambda)
-{
-    DECLARE_AND_COMPUTE_CURRENT_THREAD_STATE(state);
-    lambda(state);
-    return 42; // Suppress tail call optimization.
 }
 
 } // namespace JSC

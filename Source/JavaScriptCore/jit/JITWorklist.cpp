@@ -99,7 +99,7 @@ private:
 
 class JITWorklist::Thread : public AutomaticThread {
 public:
-    Thread(const AbstractLocker& locker, JITWorklist& worklist)
+    Thread(const LockHolder& locker, JITWorklist& worklist)
         : AutomaticThread(locker, worklist.m_lock, worklist.m_condition)
         , m_worklist(worklist)
     {
@@ -107,7 +107,7 @@ public:
     }
     
 protected:
-    PollResult poll(const AbstractLocker&) override
+    PollResult poll(const LockHolder&) override
     {
         RELEASE_ASSERT(m_worklist.m_numAvailableThreads);
         

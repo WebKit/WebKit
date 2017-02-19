@@ -38,7 +38,6 @@
 #include "JSString.h"
 #include "JSCInlines.h"
 #include "SlotVisitorInlines.h"
-#include "StopIfNecessaryTimer.h"
 #include "SuperSampler.h"
 #include "VM.h"
 #include <wtf/Lock.h>
@@ -76,13 +75,12 @@ static void validate(JSCell* cell)
 }
 #endif
 
-SlotVisitor::SlotVisitor(Heap& heap, CString codeName)
+SlotVisitor::SlotVisitor(Heap& heap)
     : m_bytesVisited(0)
     , m_visitCount(0)
     , m_isInParallelMode(false)
     , m_markingVersion(MarkedSpace::initialVersion)
     , m_heap(heap)
-    , m_codeName(codeName)
 #if !ASSERT_DISABLED
     , m_isCheckingForDefaultMarkViolation(false)
     , m_isDraining(false)
@@ -471,12 +469,9 @@ void SlotVisitor::optimizeForStoppedMutator()
     m_canOptimizeForStoppedMutator = true;
 }
 
-NEVER_INLINE void SlotVisitor::drain(MonotonicTime timeout)
+void SlotVisitor::drain(MonotonicTime timeout)
 {
-    if (!m_isInParallelMode) {
-        dataLog("FATAL: attempting to drain when not in parallel mode.\n");
-        RELEASE_ASSERT_NOT_REACHED();
-    }
+    RELEASE_ASSERT(m_isInParallelMode);
     
     auto locker = holdLock(m_rightToRun);
     
@@ -586,7 +581,7 @@ bool SlotVisitor::hasWork(const AbstractLocker&)
         || !m_heap.m_sharedMutatorMarkStack->isEmpty();
 }
 
-NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode, MonotonicTime timeout)
+SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode, MonotonicTime timeout)
 {
     ASSERT(m_isInParallelMode);
     
@@ -621,22 +616,8 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
                 if (hasElapsed(timeout))
                     return SharedDrainResult::TimedOut;
                 
-                if (didReachTermination(locker)) {
+                if (didReachTermination(locker))
                     m_heap.m_markingConditionVariable.notifyAll();
-                    
-                    // If we're in concurrent mode, then we know that the mutator will eventually do
-                    // the right thing because:
-                    // - It's possible that the collector has the conn. In that case, the collector will
-                    //   wake up from the notification above. This will happen if the app released heap
-                    //   access. Native apps can spend a lot of time with heap access released.
-                    // - It's possible that the mutator will allocate soon. Then it will check if we
-                    //   reached termination. This is the most likely outcome in programs that allocate
-                    //   a lot.
-                    // - WebCore never releases access. But WebCore has a runloop. The runloop will check
-                    //   if we reached termination.
-                    // So, this tells the runloop that it's got things to do.
-                    m_heap.m_stopIfNecessaryTimer->scheduleSoon();
-                }
 
                 auto isReady = [&] () -> bool {
                     return hasWork(locker)
@@ -678,9 +659,7 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainInParallelPassively(MonotonicTi
     
     ASSERT(Options::numberOfGCMarkers());
     
-    if (Options::numberOfGCMarkers() == 1
-        || (m_heap.m_worldState.load() & Heap::mutatorWaitingBit)
-        || !m_heap.hasHeapAccess()
+    if (!m_heap.hasHeapAccess()
         || m_heap.collectorBelievesThatTheWorldIsStopped()) {
         // This is an optimization over drainInParallel() when we have a concurrent mutator but
         // otherwise it is not profitable.
@@ -705,9 +684,6 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainInParallelPassively(MonotonicTi
 
 void SlotVisitor::donateAll()
 {
-    if (isEmpty())
-        return;
-    
     donateAll(holdLock(m_heap.m_markingMutex));
 }
 
@@ -779,11 +755,7 @@ void SlotVisitor::mergeOpaqueRootsIfProfitable()
     
 void SlotVisitor::donate()
 {
-    if (!m_isInParallelMode) {
-        dataLog("FATAL: Attempting to donate when not in parallel mode.\n");
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-    
+    ASSERT(m_isInParallelMode);
     if (Options::numberOfGCMarkers() == 1)
         return;
     

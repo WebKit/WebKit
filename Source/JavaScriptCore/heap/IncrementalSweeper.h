@@ -37,11 +37,11 @@ class IncrementalSweeper : public HeapTimer {
 public:
     JS_EXPORT_PRIVATE explicit IncrementalSweeper(Heap*);
 
-    JS_EXPORT_PRIVATE void startSweeping();
+    void startSweeping();
 
     JS_EXPORT_PRIVATE void doWork() override;
     bool sweepNextBlock();
-    JS_EXPORT_PRIVATE void stopSweeping();
+    void willFinishSweeping();
 
 private:
     void doSweep(double startTime);

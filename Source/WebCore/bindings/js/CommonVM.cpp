@@ -30,7 +30,6 @@
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
 #include <heap/HeapInlines.h>
-#include "heap/MachineStackMarker.h"
 #include <runtime/VM.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/AtomicString.h>

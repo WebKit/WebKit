@@ -138,9 +138,6 @@
 #include "WritingDirection.h"
 #include "XMLHttpRequest.h"
 #include <bytecode/CodeBlock.h>
-#include <heap/GCFinalizationCallback.h>
-#include <heap/IncrementalSweeper.h>
-#include <heap/RunningScope.h>
 #include <inspector/InspectorAgentBase.h>
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
@@ -234,15 +231,10 @@
 #include "QuickLook.h"
 #endif
 
-using JSC::ArgList;
 using JSC::CallData;
 using JSC::CallType;
 using JSC::CodeBlock;
-using JSC::DeferGCForAWhile;
-using JSC::ExecState;
 using JSC::FunctionExecutable;
-using JSC::GCFinalizationCallback;
-using JSC::Heap;
 using JSC::Identifier;
 using JSC::JSFunction;
 using JSC::JSGlobalObject;
@@ -250,11 +242,8 @@ using JSC::JSObject;
 using JSC::JSValue;
 using JSC::MarkedArgumentBuffer;
 using JSC::PropertySlot;
-using JSC::RunningScope;
 using JSC::ScriptExecutable;
 using JSC::StackVisitor;
-using JSC::Strong;
-using JSC::VM;
 
 using namespace Inspector;
 
@@ -1694,8 +1683,8 @@ private:
 
 String Internals::parserMetaData(JSC::JSValue code)
 {
-    VM& vm = contextDocument()->vm();
-    ExecState* exec = vm.topCallFrame;
+    JSC::VM& vm = contextDocument()->vm();
+    JSC::ExecState* exec = vm.topCallFrame;
     ScriptExecutable* executable;
 
     if (!code || code.isNull() || code.isUndefined()) {
@@ -3548,7 +3537,7 @@ void Internals::setShowAllPlugins(bool show)
 
 #if ENABLE(READABLE_STREAM_API)
 
-bool Internals::isReadableStreamDisturbed(ExecState& state, JSValue stream)
+bool Internals::isReadableStreamDisturbed(JSC::ExecState& state, JSValue stream)
 {
     JSGlobalObject* globalObject = state.vmEntryGlobalObject();
     JSVMClientData* clientData = static_cast<JSVMClientData*>(state.vm().clientData);
@@ -3721,49 +3710,6 @@ void Internals::setAsRunningUserScripts(Document& document)
 {
     if (document.page())
         document.page()->setAsRunningUserScripts();
-}
-
-bool Internals::isGCRunning(ExecState& exec)
-{
-    return !!exec.vm().heap.collectionScope();
-}
-
-void Internals::addGCFinalizationCallback(ExecState& exec, JSValue value)
-{
-    VM& vm = exec.vm();
-    Strong<JSC::Unknown> callback(vm, value);
-    Strong<JSGlobalObject> globalObject(vm, exec.lexicalGlobalObject());
-    exec.vm().heap.addFinalizationCallback(
-        JSC::createGCFinalizationCallback(
-            [=] (GCFinalizationCallback*, Heap&) mutable {
-                // This code is basically unsound. Everything in JSC assumes that some allocations, like
-                // string allocations, are pure: they aren't going to clobber the heap. So, any JS code
-                // you supply to this callback better be super careful that it doesn't violate that
-                // assumption in some scary way. This kind of hack is really only appropriate for test
-                // code.
-                ExecState* exec = globalObject->globalExec();
-                VM& vm = exec->vm();
-                DeferGCForAWhile deferGC(vm.heap);
-                RunningScope runningScope(vm.heap);
-                auto scope = DECLARE_CATCH_SCOPE(vm);
-                CallData callData;
-                CallType callType = JSC::getCallData(callback.get(), callData);
-                JSC::call(exec, callback.get(), callType, callData, JSC::jsNull(), ArgList());
-                if (scope.exception()) {
-                    dataLog("Warning: got exception.\n");
-                    scope.clearException();
-                }
-            }));
-}
-
-void Internals::stopSweeping(ExecState& exec)
-{
-    exec.vm().heap.sweeper()->stopSweeping();
-}
-
-void Internals::startSweeping(ExecState& exec)
-{
-    exec.vm().heap.sweeper()->startSweeping();
 }
 
 } // namespace WebCore

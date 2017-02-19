@@ -1,5 +1,0 @@
-Testing if the GC SlotVisitor pings the runloop when done.
-Running 200 iterations of splay...
-GC finished.
-Test passed.
-

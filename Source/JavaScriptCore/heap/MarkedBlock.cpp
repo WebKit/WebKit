@@ -26,12 +26,12 @@
 #include "config.h"
 #include "MarkedBlock.h"
 
+#include "HelpingGCScope.h"
 #include "JSCell.h"
 #include "JSDestructibleObject.h"
 #include "JSCInlines.h"
 #include "MarkedBlockInlines.h"
 #include "SuperSampler.h"
-#include "SweepingScope.h"
 
 namespace JSC {
 
@@ -409,7 +409,8 @@ Subspace* MarkedBlock::Handle::subspace() const
 
 FreeList MarkedBlock::Handle::sweep(SweepMode sweepMode)
 {
-    SweepingScope sweepingScope(*heap());
+    // FIXME: Maybe HelpingGCScope should just be called SweepScope?
+    HelpingGCScope helpingGCScope(*heap());
     
     m_allocator->setIsUnswept(NoLockingNecessary, this, false);
     

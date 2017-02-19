@@ -530,11 +530,6 @@ public:
 #endif
 
     void setAsRunningUserScripts(Document&);
-    
-    bool isGCRunning(JSC::ExecState&);
-    void addGCFinalizationCallback(JSC::ExecState&, JSC::JSValue);
-    void stopSweeping(JSC::ExecState&);
-    void startSweeping(JSC::ExecState&);
 
 private:
     explicit Internals(Document&);

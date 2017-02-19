@@ -1,3 +1,18 @@
+2017-02-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r212466.
+        https://bugs.webkit.org/show_bug.cgi?id=168577
+
+        causes crashes on AArch64 on linux, maybe it's causing crashes
+        on iOS too (Requested by pizlo on #webkit).
+
+        Reverted changeset:
+
+        "The collector thread should only start when the mutator
+        doesn't have heap access"
+        https://bugs.webkit.org/show_bug.cgi?id=167737
+        http://trac.webkit.org/changeset/212466
+
 2017-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Rebaseline fast/visual-viewport/rubberbanding-viewport-rects-extended-background.html again.
