@@ -111,12 +111,7 @@ private:
     enum PendingSheetType { Unknown, ActiveSheet, InactiveSheet };
     void addPendingSheet(PendingSheetType);
 
-    enum RemovePendingSheetNotificationType {
-        RemovePendingSheetNotifyImmediately,
-        RemovePendingSheetNotifyLater
-    };
-
-    void removePendingSheet(RemovePendingSheetNotificationType = RemovePendingSheetNotifyImmediately);
+    void removePendingSheet();
 
     LinkLoader m_linkLoader;
     Style::Scope* m_styleScope { nullptr };

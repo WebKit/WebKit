@@ -327,7 +327,7 @@ void HTMLLinkElement::removedFrom(ContainerNode& insertionPoint)
         clearSheet();
 
     if (styleSheetIsLoading())
-        removePendingSheet(RemovePendingSheetNotifyLater);
+        removePendingSheet();
     
     if (m_styleScope) {
         m_styleScope->removeStyleSheetCandidateNode(*this);
@@ -554,7 +554,7 @@ void HTMLLinkElement::addPendingSheet(PendingSheetType type)
     m_styleScope->addPendingSheet();
 }
 
-void HTMLLinkElement::removePendingSheet(RemovePendingSheetNotificationType notification)
+void HTMLLinkElement::removePendingSheet()
 {
     PendingSheetType type = m_pendingSheetType;
     m_pendingSheetType = Unknown;
@@ -569,10 +569,7 @@ void HTMLLinkElement::removePendingSheet(RemovePendingSheetNotificationType noti
         return;
     }
 
-    m_styleScope->removePendingSheet(
-        notification == RemovePendingSheetNotifyImmediately
-        ? Style::Scope::RemovePendingSheetNotifyImmediately
-        : Style::Scope::RemovePendingSheetNotifyLater);
+    m_styleScope->removePendingSheet();
 }
 
 } // namespace WebCore

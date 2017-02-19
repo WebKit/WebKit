@@ -68,6 +68,7 @@
 #include "ResourceHandle.h"
 #include "ResourceLoadObserver.h"
 #include "SchemeRegistry.h"
+#include "ScriptableDocumentParser.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"
@@ -1056,6 +1057,9 @@ bool DocumentLoader::isLoadingInAPISense() const
         if (document.processingLoadEvent())
             return true;
         if (document.hasActiveParser())
+            return true;
+        auto* scriptableParser = document.scriptableDocumentParser();
+        if (scriptableParser && scriptableParser->hasScriptsWaitingForStylesheets())
             return true;
     }
     return frameLoader()->subframeIsLoading();

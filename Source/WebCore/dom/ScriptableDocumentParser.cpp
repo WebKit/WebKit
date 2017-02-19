@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "Settings.h"
+#include "StyleScope.h"
 
 namespace WebCore {
 
@@ -35,12 +36,45 @@ ScriptableDocumentParser::ScriptableDocumentParser(Document& document, ParserCon
     : DecodedDataDocumentParser(document)
     , m_wasCreatedByScript(false)
     , m_parserContentPolicy(parserContentPolicy)
+    , m_scriptsWaitingForStylesheetsExecutionTimer(*this, &ScriptableDocumentParser::scriptsWaitingForStylesheetsExecutionTimerFired)
 {
     if (!pluginContentIsAllowed(m_parserContentPolicy))
         m_parserContentPolicy = allowPluginContent(m_parserContentPolicy);
 
     if (scriptingContentIsAllowed(m_parserContentPolicy) && !document.settings().scriptMarkupEnabled())
         m_parserContentPolicy = disallowScriptingContent(m_parserContentPolicy);
+}
+
+void ScriptableDocumentParser::executeScriptsWaitingForStylesheetsSoon()
+{
+    ASSERT(!document()->styleScope().hasPendingSheets());
+
+    if (m_scriptsWaitingForStylesheetsExecutionTimer.isActive())
+        return;
+    if (!hasScriptsWaitingForStylesheets())
+        return;
+
+    m_scriptsWaitingForStylesheetsExecutionTimer.startOneShot(0);
+}
+
+void ScriptableDocumentParser::scriptsWaitingForStylesheetsExecutionTimerFired()
+{
+    ASSERT(!isDetached());
+
+    Ref<ScriptableDocumentParser> protectedThis(*this);
+
+    if (!document()->styleScope().hasPendingSheets())
+        executeScriptsWaitingForStylesheets();
+
+    if (!isDetached())
+        document()->checkCompleted();
+}
+
+void ScriptableDocumentParser::detach()
+{
+    m_scriptsWaitingForStylesheetsExecutionTimer.stop();
+
+    DecodedDataDocumentParser::detach();
 }
 
 };

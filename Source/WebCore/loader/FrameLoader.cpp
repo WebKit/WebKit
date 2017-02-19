@@ -787,6 +787,10 @@ void FrameLoader::checkCompleted()
     if (m_frame.document()->isDelayingLoadEvent())
         return;
 
+    auto* scriptableParser = m_frame.document()->scriptableDocumentParser();
+    if (scriptableParser && scriptableParser->hasScriptsWaitingForStylesheets())
+        return;
+
     // Any frame that hasn't completed yet?
     if (!allChildrenAreComplete())
         return;

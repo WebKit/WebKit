@@ -443,7 +443,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_referencingNodeCount(0)
     , m_settings(frame ? Ref<Settings>(frame->settings()) : Settings::create(nullptr))
     , m_hasNodesWithPlaceholderStyle(false)
-    , m_needsNotifyRemoveAllPendingStylesheet(false)
     , m_ignorePendingStylesheets(false)
     , m_pendingSheetLayout(NoLayoutWithPendingSheets)
     , m_cachedResourceLoader(m_frame ? Ref<CachedResourceLoader>(m_frame->loader().activeDocumentLoader()->cachedResourceLoader()) : CachedResourceLoader::create(nullptr))
@@ -1846,6 +1845,9 @@ void Document::recalcStyle(Style::Change change)
     // to check if any other elements ended up under the mouse pointer due to re-layout.
     if (m_hoveredElement && !m_hoveredElement->renderer())
         frameView.frame().mainFrame().eventHandler().dispatchFakeMouseMoveEventSoon();
+
+    if (m_gotoAnchorNeededAfterStylesheetsLoad && !styleScope().hasPendingSheets())
+        frameView.scrollToFragment(m_url);
 }
 
 bool Document::needsStyleRecalc() const
@@ -2623,7 +2625,7 @@ void Document::explicitClose()
         return;
     }
 
-    m_frame->loader().checkCompleted();
+    checkCompleted();
 }
 
 void Document::implicitClose()
@@ -3073,19 +3075,17 @@ Frame* Document::findUnsafeParentScrollPropagationBoundary()
 
 void Document::didRemoveAllPendingStylesheet()
 {
-    m_needsNotifyRemoveAllPendingStylesheet = false;
-
     if (m_pendingSheetLayout == DidLayoutWithPendingSheets) {
+        // Painting is disabled when doing layouts with pending sheets to avoid FOUC.
+        // We need to force paint when coming out from this state.
+        // FIXME: This is not very elegant.
         m_pendingSheetLayout = IgnoreLayoutWithPendingSheets;
         if (renderView())
             renderView()->repaintViewAndCompositedLayers();
     }
 
-    if (ScriptableDocumentParser* parser = scriptableDocumentParser())
-        parser->executeScriptsWaitingForStylesheets();
-
-    if (m_gotoAnchorNeededAfterStylesheetsLoad && view())
-        view()->scrollToFragment(m_url);
+    if (auto* parser = scriptableDocumentParser())
+        parser->executeScriptsWaitingForStylesheetsSoon();
 }
 
 bool Document::usesStyleBasedEditability() const
@@ -6038,8 +6038,13 @@ void Document::decrementLoadEventDelayCount()
 
 void Document::loadEventDelayTimerFired()
 {
-    if (frame())
-        frame()->loader().checkCompleted();
+    checkCompleted();
+}
+
+void Document::checkCompleted()
+{
+    if (auto* frame = this->frame())
+        frame->loader().checkCompleted();
 }
 
 double Document::monotonicTimestamp() const
