@@ -1,5 +1,13 @@
 2017-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline http/tests/loading/server-redirect-for-provisional-load-caching.html.
+
+        I think we are just setting the FirstPartyForCookies to our request a bit earlier when redirecting.
+
+        * platform/gtk/http/tests/loading/server-redirect-for-provisional-load-caching-expected.txt: Added.
+
+2017-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Update expectations of a few more tests and rebaseline fast/visual-viewport/rubberbanding-viewport-rects-extended-background.html.
 
         * platform/gtk/TestExpectations:
