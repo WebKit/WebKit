@@ -1494,7 +1494,7 @@ webkit.org/b/167441 media/modern-media-controls/placard-support/placard-support-
 
 webkit.org/b/167442 media/modern-media-controls/airplay-support/airplay-support.html [ Pass Timeout ]
 
-webkit.org/b/165874 [ Debug ] streams/pipe-to.html [ Pass Failure ]
+webkit.org/b/165874 streams/pipe-to.html [ Pass Failure ]
 
 # New Encrypted Media API not enabled on Mac
 media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]
