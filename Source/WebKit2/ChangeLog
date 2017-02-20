@@ -1,5 +1,33 @@
 2017-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Remove code under USE(GRAPHICS_SURFACE)
+        https://bugs.webkit.org/show_bug.cgi?id=168592
+
+        Reviewed by Michael Catanzaro.
+
+        This was only used by EFL port.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<CoordinatedGraphicsLayerState>::encode):
+        (IPC::ArgumentCoder<CoordinatedGraphicsLayerState>::decode):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::syncPlatformLayerIfNeeded):
+        (WebKit::CoordinatedGraphicsScene::deleteLayer):
+        (WebKit::CoordinatedGraphicsScene::assignImageBackingToLayer):
+        (WebKit::CoordinatedGraphicsScene::purgeGLResources):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::Handle::encode):
+        (WebKit::WebCoordinatedSurface::Handle::decode):
+        (WebKit::WebCoordinatedSurface::create):
+        (WebKit::WebCoordinatedSurface::createGraphicsContext):
+        (WebKit::WebCoordinatedSurface::createHandle):
+        (WebKit::WebCoordinatedSurface::copyToTexture):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.h:
+
+2017-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Reduce platform ifdefs in WebKit2 custom protocols implementation
         https://bugs.webkit.org/show_bug.cgi?id=165028
 

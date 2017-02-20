@@ -51,10 +51,6 @@
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/TranslateTransformOperation.h>
 
-#if USE(GRAPHICS_SURFACE)
-#include <WebCore/GraphicsSurface.h>
-#endif
-
 using namespace WebCore;
 using namespace WebKit;
 
@@ -585,17 +581,6 @@ bool ArgumentCoder<TextureMapperAnimations>::decode(Decoder& decoder, TextureMap
     return decoder.decode(animations.animations());
 }
 
-#if USE(GRAPHICS_SURFACE)
-void ArgumentCoder<WebCore::GraphicsSurfaceToken>::encode(Encoder& encoder, const WebCore::GraphicsSurfaceToken& token)
-{
-#if OS(DARWIN)
-    encoder << Attachment(token.frontBufferHandle, MACH_MSG_TYPE_MOVE_SEND);
-    encoder << Attachment(token.backBufferHandle, MACH_MSG_TYPE_MOVE_SEND);
-#elif OS(LINUX)
-    encoder << token.frontBufferHandle;
-#endif
-}
-
 bool ArgumentCoder<WebCore::GraphicsSurfaceToken>::decode(Decoder& decoder, WebCore::GraphicsSurfaceToken& token)
 {
 #if OS(DARWIN)
@@ -692,15 +677,6 @@ void ArgumentCoder<CoordinatedGraphicsLayerState>::encode(Encoder& encoder, cons
 
     encoder << state.tilesToUpdate;
 
-#if USE(GRAPHICS_SURFACE)
-    if (state.platformLayerChanged) {
-        encoder << state.platformLayerSize;
-        encoder << state.platformLayerToken;
-        encoder << state.platformLayerFrontBuffer;
-        encoder << state.platformLayerSurfaceFlags;
-    }
-#endif
-
     if (state.committedScrollOffsetChanged)
         encoder << state.committedScrollOffset;
 }
@@ -779,22 +755,6 @@ bool ArgumentCoder<CoordinatedGraphicsLayerState>::decode(Decoder& decoder, Coor
 
     if (!decoder.decode(state.tilesToUpdate))
         return false;
-
-#if USE(GRAPHICS_SURFACE)
-    if (state.platformLayerChanged) {
-        if (!decoder.decode(state.platformLayerSize))
-            return false;
-
-        if (!decoder.decode(state.platformLayerToken))
-            return false;
-
-        if (!decoder.decode(state.platformLayerFrontBuffer))
-            return false;
-
-        if (!decoder.decode(state.platformLayerSurfaceFlags))
-            return false;
-    }
-#endif
 
     if (state.committedScrollOffsetChanged && !decoder.decode(state.committedScrollOffset))
         return false;

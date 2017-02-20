@@ -1,3 +1,51 @@
+2017-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remove code under USE(GRAPHICS_SURFACE)
+        https://bugs.webkit.org/show_bug.cgi?id=168592
+
+        Reviewed by Michael Catanzaro.
+
+        This was only used by EFL port.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/opengl/GLPlatformSurface.cpp: Removed.
+        * platform/graphics/surfaces/GLTransportSurface.cpp: Removed.
+        * platform/graphics/surfaces/GLTransportSurface.h: Removed.
+        * platform/graphics/surfaces/GraphicsSurface.cpp: Removed.
+        * platform/graphics/surfaces/GraphicsSurface.h: Removed.
+        * platform/graphics/surfaces/GraphicsSurfaceToken.h: Removed.
+        * platform/graphics/surfaces/egl/EGLConfigSelector.cpp: Removed.
+        * platform/graphics/surfaces/egl/EGLConfigSelector.h: Removed.
+        * platform/graphics/surfaces/egl/EGLContext.cpp: Removed.
+        * platform/graphics/surfaces/egl/EGLContext.h: Removed.
+        * platform/graphics/surfaces/egl/EGLHelper.cpp: Removed.
+        * platform/graphics/surfaces/egl/EGLHelper.h: Removed.
+        * platform/graphics/surfaces/egl/EGLSurface.cpp: Removed.
+        * platform/graphics/surfaces/egl/EGLSurface.h: Removed.
+        * platform/graphics/surfaces/egl/EGLXSurface.cpp: Removed.
+        * platform/graphics/surfaces/egl/EGLXSurface.h: Removed.
+        * platform/graphics/surfaces/glx/GLXConfigSelector.h: Removed.
+        * platform/graphics/surfaces/glx/GLXContext.cpp: Removed.
+        * platform/graphics/surfaces/glx/GLXContext.h: Removed.
+        * platform/graphics/surfaces/glx/GLXSurface.cpp: Removed.
+        * platform/graphics/surfaces/glx/GLXSurface.h: Removed.
+        * platform/graphics/surfaces/glx/X11Helper.cpp: Removed.
+        * platform/graphics/surfaces/glx/X11Helper.h: Removed.
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayer.h:
+        (WebCore::TextureMapperPlatformLayer::setClient):
+        * platform/graphics/texmap/TextureMapperSurfaceBackingStore.cpp: Removed.
+        * platform/graphics/texmap/TextureMapperSurfaceBackingStore.h: Removed.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::setContentsNeedsDisplay):
+        (WebCore::CoordinatedGraphicsLayer::setContentsToPlatformLayer):
+        (WebCore::CoordinatedGraphicsLayer::syncPlatformLayer):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+        (WebCore::CoordinatedGraphicsLayerState::CoordinatedGraphicsLayerState):
+
 2017-02-20  Dean Jackson  <dino@apple.com>
 
         Add 'webglcontextchanged' WebGLContextEvent

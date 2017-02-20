@@ -43,11 +43,6 @@ WebCoordinatedSurface::Handle::Handle()
 void WebCoordinatedSurface::Handle::encode(IPC::Encoder& encoder) const
 {
     encoder << m_size << m_flags;
-#if USE(GRAPHICS_SURFACE)
-    encoder << m_graphicsSurfaceToken;
-    if (m_graphicsSurfaceToken.isValid())
-        return;
-#endif
     encoder << m_bitmapHandle;
 }
 
@@ -57,12 +52,6 @@ bool WebCoordinatedSurface::Handle::decode(IPC::Decoder& decoder, Handle& handle
         return false;
     if (!decoder.decode(handle.m_flags))
         return false;
-#if USE(GRAPHICS_SURFACE)
-    if (!decoder.decode(handle.m_graphicsSurfaceToken))
-        return false;
-    if (handle.m_graphicsSurfaceToken.isValid())
-        return true;
-#endif
     if (!decoder.decode(handle.m_bitmapHandle))
         return false;
 
@@ -71,45 +60,14 @@ bool WebCoordinatedSurface::Handle::decode(IPC::Decoder& decoder, Handle& handle
 
 RefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags)
 {
-#if USE(GRAPHICS_SURFACE)
-    if (auto surface = createWithSurface(size, flags))
-        return surface;
-#endif
-
     if (auto bitmap = ShareableBitmap::createShareable(size, (flags & SupportsAlpha) ? ShareableBitmap::SupportsAlpha : ShareableBitmap::NoFlags))
         return create(size, flags, WTFMove(bitmap));
 
     return nullptr;
 }
 
-#if USE(GRAPHICS_SURFACE)
-RefPtr<WebCoordinatedSurface> WebCoordinatedSurface::createWithSurface(const IntSize& size, CoordinatedSurface::Flags flags)
-{
-    GraphicsSurface::Flags surfaceFlags =
-        GraphicsSurface::SupportsSoftwareWrite
-        | GraphicsSurface::SupportsCopyToTexture
-        | GraphicsSurface::SupportsSharing;
-
-    if (flags & SupportsAlpha)
-        surfaceFlags |= GraphicsSurface::SupportsAlpha;
-
-    // This might return null, if the system is unable to provide a new graphics surface.
-    // In that case, this function would return null and allow falling back to ShareableBitmap.
-    RefPtr<GraphicsSurface> surface = GraphicsSurface::create(size, surfaceFlags);
-    if (!surface)
-        return nullptr;
-
-    return adoptRef(new WebCoordinatedSurface(size, flags, WTFMove(surface)));
-}
-#endif
-
 std::unique_ptr<GraphicsContext> WebCoordinatedSurface::createGraphicsContext(const IntRect& rect)
 {
-#if USE(GRAPHICS_SURFACE)
-    if (isBackedByGraphicsSurface())
-        return m_graphicsSurface->beginPaint(rect, 0 /* Write without retaining pixels*/);
-#endif
-
     ASSERT(m_bitmap);
     auto graphicsContext = m_bitmap->createGraphicsContext();
     graphicsContext->clip(rect);
@@ -128,36 +86,12 @@ WebCoordinatedSurface::WebCoordinatedSurface(const IntSize& size, CoordinatedSur
 {
 }
 
-#if USE(GRAPHICS_SURFACE)
-WebCoordinatedSurface::WebCoordinatedSurface(const WebCore::IntSize& size, CoordinatedSurface::Flags flags, RefPtr<WebCore::GraphicsSurface> surface)
-    : CoordinatedSurface(size, flags)
-    , m_graphicsSurface(surface)
-{
-}
-
-Ref<WebCoordinatedSurface> WebCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags, RefPtr<GraphicsSurface> surface)
-{
-    return adoptRef(*new WebCoordinatedSurface(size, flags, surface));
-}
-#endif
-
 WebCoordinatedSurface::~WebCoordinatedSurface()
 {
 }
 
 RefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const Handle& handle)
 {
-#if USE(GRAPHICS_SURFACE)
-    if (handle.graphicsSurfaceToken().isValid()) {
-        GraphicsSurface::Flags surfaceFlags = 0;
-        if (handle.m_flags & SupportsAlpha)
-            surfaceFlags |= GraphicsSurface::SupportsAlpha;
-        RefPtr<GraphicsSurface> surface = GraphicsSurface::create(handle.m_size, surfaceFlags, handle.m_graphicsSurfaceToken);
-        if (surface)
-            return adoptRef(new WebCoordinatedSurface(handle.m_size, handle.m_flags, WTFMove(surface)));
-    }
-#endif
-
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle.m_bitmapHandle);
     if (!bitmap)
         return nullptr;
@@ -170,11 +104,6 @@ bool WebCoordinatedSurface::createHandle(Handle& handle)
     handle.m_size = m_size;
     handle.m_flags = m_flags;
 
-#if USE(GRAPHICS_SURFACE)
-    handle.m_graphicsSurfaceToken = m_graphicsSurface ? m_graphicsSurface->exportToken() : GraphicsSurfaceToken();
-    if (handle.m_graphicsSurfaceToken.isValid())
-        return true;
-#endif
     if (!m_bitmap->createHandle(handle.m_bitmapHandle))
         return false;
 
@@ -191,22 +120,6 @@ void WebCoordinatedSurface::paintToSurface(const IntRect& rect, CoordinatedSurfa
 void WebCoordinatedSurface::copyToTexture(RefPtr<WebCore::BitmapTexture> passTexture, const IntRect& target, const IntPoint& sourceOffset)
 {
     RefPtr<BitmapTexture> texture(passTexture);
-
-#if USE(GRAPHICS_SURFACE)
-    if (isBackedByGraphicsSurface()) {
-        RefPtr<BitmapTextureGL> textureGL = toBitmapTextureGL(texture.get());
-        if (textureGL) {
-            uint32_t textureID = textureGL->id();
-            uint32_t textureTarget = textureGL->textureTarget();
-            m_graphicsSurface->copyToGLTexture(textureTarget, textureID, target, sourceOffset);
-            return;
-        }
-
-        RefPtr<Image> image = m_graphicsSurface->createReadOnlyImage(IntRect(sourceOffset, target.size()));
-        texture->updateContents(image.get(), target, IntPoint::zero(), BitmapTexture::UpdateCanModifyOriginalImageData);
-        return;
-    }
-#endif
 
     ASSERT(m_bitmap);
     RefPtr<Image> image = m_bitmap->createImage();

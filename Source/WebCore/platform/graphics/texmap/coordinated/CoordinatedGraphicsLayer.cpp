@@ -120,10 +120,6 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
     , m_movingVisibleRect(false)
     , m_pendingContentsScaleAdjustment(false)
     , m_pendingVisibleRectAdjustment(false)
-#if USE(GRAPHICS_SURFACE)
-    , m_isValidPlatformLayer(false)
-    , m_pendingPlatformLayerOperation(None)
-#endif
 #if USE(COORDINATED_GRAPHICS_THREADED)
     , m_shouldSyncPlatformLayer(false)
     , m_shouldUpdatePlatformLayer(false)
@@ -379,10 +375,7 @@ bool GraphicsLayer::supportsContentsTiling()
 
 void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 {
-#if USE(GRAPHICS_SURFACE)
-    if (m_platformLayer)
-        m_pendingPlatformLayerOperation |= SyncPlatformLayer;
-#elif USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS_THREADED)
     if (m_platformLayer)
         m_shouldUpdatePlatformLayer = true;
 #endif
@@ -393,30 +386,7 @@ void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 
 void CoordinatedGraphicsLayer::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose)
 {
-#if USE(GRAPHICS_SURFACE)
-    if (m_platformLayer) {
-        ASSERT(m_platformLayerToken.isValid());
-        if (!platformLayer) {
-            m_pendingPlatformLayerOperation |= DestroyPlatformLayer;
-            m_pendingPlatformLayerOperation &= ~CreatePlatformLayer;
-        }  else if ((m_platformLayerSize != platformLayer->platformLayerSize()) || (m_platformLayerToken != platformLayer->graphicsSurfaceToken())) {
-            // m_platformLayerToken can be different to platformLayer->graphicsSurfaceToken(), even if m_platformLayer equals platformLayer.
-            m_pendingPlatformLayerOperation |= RecreatePlatformLayer;
-        }
-    } else {
-        if (platformLayer)
-            m_pendingPlatformLayerOperation |= CreateAndSyncPlatformLayer;
-    }
-
-    m_platformLayer = platformLayer;
-    // m_platformLayerToken is updated only here. 
-    // In detail, when GraphicsContext3D is changed or reshaped, m_platformLayerToken is changed and setContentsToPlatformLayer() is always called.
-    m_platformLayerSize = m_platformLayer ? m_platformLayer->platformLayerSize() : IntSize();
-    m_platformLayerToken = m_platformLayer ? m_platformLayer->graphicsSurfaceToken() : GraphicsSurfaceToken();
-    ASSERT(!(!m_platformLayerToken.isValid() && m_platformLayer));
-
-    notifyFlushRequired();
-#elif USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS_THREADED)
     if (m_platformLayer != platformLayer)
         m_shouldSyncPlatformLayer = true;
 
@@ -724,22 +694,7 @@ void CoordinatedGraphicsLayer::syncAnimations()
 
 void CoordinatedGraphicsLayer::syncPlatformLayer()
 {
-#if USE(GRAPHICS_SURFACE)
-    destroyPlatformLayerIfNeeded();
-    createPlatformLayerIfNeeded();
-
-    if (!(m_pendingPlatformLayerOperation & SyncPlatformLayer))
-        return;
-
-    m_pendingPlatformLayerOperation &= ~SyncPlatformLayer;
-
-    if (!m_isValidPlatformLayer)
-        return;
-
-    ASSERT(m_platformLayer);
-    m_layerState.platformLayerFrontBuffer = m_platformLayer->copyToGraphicsSurface();
-    m_layerState.platformLayerShouldSwapBuffers = true;
-#elif USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS_THREADED)
     if (!m_shouldSyncPlatformLayer)
         return;
 
@@ -761,39 +716,6 @@ void CoordinatedGraphicsLayer::updatePlatformLayer()
         m_platformLayer->swapBuffersIfNeeded();
 #endif
 }
-
-#if USE(GRAPHICS_SURFACE)
-void CoordinatedGraphicsLayer::destroyPlatformLayerIfNeeded()
-{
-    if (!(m_pendingPlatformLayerOperation & DestroyPlatformLayer))
-        return;
-
-    if (m_isValidPlatformLayer) {
-        m_isValidPlatformLayer = false;
-        m_layerState.platformLayerToken = GraphicsSurfaceToken();
-        m_layerState.platformLayerChanged = true;
-    }
-
-    m_pendingPlatformLayerOperation &= ~DestroyPlatformLayer;
-}
-
-void CoordinatedGraphicsLayer::createPlatformLayerIfNeeded()
-{
-    if (!(m_pendingPlatformLayerOperation & CreatePlatformLayer))
-        return;
-
-    ASSERT(m_platformLayer);
-    if (!m_isValidPlatformLayer) {
-        m_layerState.platformLayerSize = m_platformLayer->platformLayerSize();
-        m_layerState.platformLayerToken = m_platformLayer->graphicsSurfaceToken();
-        m_layerState.platformLayerSurfaceFlags = m_platformLayer->graphicsSurfaceFlags();
-        m_layerState.platformLayerChanged = true;
-        m_isValidPlatformLayer = true;
-    }
-
-    m_pendingPlatformLayerOperation &= ~CreatePlatformLayer;
-}
-#endif
 
 void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 {
