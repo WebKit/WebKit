@@ -1,5 +1,22 @@
 2017-02-20  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: RTL: adjust positioning of scope bar items with multiple values
+        https://bugs.webkit.org/show_bug.cgi?id=168575
+
+        Reviewed by Matt Baker.
+
+        Mirror the leading margin as necessary. Adjust the <select> positioning
+        so that the popup is really close to the scope bar item's position.
+
+        * UserInterface/Views/ScopeBar.css:
+        (body[dir=ltr] .scope-bar > li.multiple > select):
+        (body[dir=rtl] .scope-bar > li.multiple > select):
+        (.scope-bar > li.multiple > .arrows):
+        (body[dir=ltr] .scope-bar > li.multiple > .arrows):
+        (body[dir=rtl] .scope-bar > li.multiple > .arrows):
+
+2017-02-20  Brian Burg  <bburg@apple.com>
+
         Web Inspector: RTL: sidebar expand/collapse icons need to be flipped
         https://bugs.webkit.org/show_bug.cgi?id=168276
         <rdar://problem/30506999>

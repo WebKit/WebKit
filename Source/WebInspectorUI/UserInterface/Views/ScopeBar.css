@@ -57,6 +57,16 @@
     bottom: 0;
 }
 
+body[dir=ltr] .scope-bar > li.multiple > select {
+    top: -5px;
+    left: -4px;
+}
+
+body[dir=rtl] .scope-bar > li.multiple > select {
+    top: -6px;
+    left: -10px;
+}
+
 .scope-bar > li.multiple.selected > select {
     display: block;
 }
@@ -66,9 +76,17 @@
     height: 12px;
     display: inline-block;
     vertical-align: -2px;
-    margin-left: 6px;
     margin-top: -1px;
     margin-bottom: -1px;
+    --scope-bar-select-arrows-margin-start: 6px;
+}
+
+body[dir=ltr] .scope-bar > li.multiple > .arrows {
+    margin-left: var(--scope-bar-select-arrows-margin-start);
+}
+
+body[dir=rtl] .scope-bar > li.multiple > .arrows {
+    margin-right: var(--scope-bar-select-arrows-margin-start);
 }
 
 .scope-bar > li.multiple:matches(.selected, :hover, :active) > .arrows {
