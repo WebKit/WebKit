@@ -1,3 +1,16 @@
+2017-02-20  Florian Bruhin  <git@the-compiler.org>
+
+        Handle EINTR during webkitpy server process select()
+        https://bugs.webkit.org/show_bug.cgi?id=168361
+
+        Reviewed by Michael Catanzaro.
+
+        Otherwise, on my machine, resizing the terminal run-webkit-tests is running in
+        makes it die.
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess._wait_for_data_and_update_buffers_using_select):
+
 2017-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ test /webkit2/WebKitWebView/default-menu.

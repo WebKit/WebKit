@@ -245,7 +245,9 @@ class ServerProcess(object):
         except select.error, e:
             # We can ignore EINVAL since it's likely the process just crashed and we'll
             # figure that out the next time through the loop in _read().
-            if e.args[0] == errno.EINVAL:
+            # We also ignore EINTR as we can resume reading the next time
+            # through the loop in _read().
+            if e.args[0] in [errno.EINVAL, errno.EINTR]:
                 return
             raise
 
