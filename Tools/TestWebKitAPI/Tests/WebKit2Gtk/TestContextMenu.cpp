@@ -371,16 +371,7 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
 
     GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().data()));
     const char* linksHTML =
-        "<html><head>"
-        " <script>"
-        "    window.onload = function () {"
-        "      window.getSelection().removeAllRanges();"
-        "      var select_range = document.createRange();"
-        "      select_range.selectNodeContents(document.getElementById('text_to_select'));"
-        "      window.getSelection().addRange(select_range);"
-        "    }"
-        " </script>"
-        "</head><body>"
+        "<html><body>"
         " <a style='position:absolute; left:1; top:1' href='http://www.webkitgtk.org' title='WebKitGTK+ Title'>WebKitGTK+ Website</a>"
         " <img style='position:absolute; left:1; top:10' src='blank.ico' width=5 height=5></img>"
         " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK+ Logo'><img src='blank.ico' width=5 height=5></img></a>"
@@ -388,6 +379,12 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
         " <video style='position:absolute; left:1; top:50' width='300' height='300' controls='controls' preload='none'><source src='silence.mpg' type='video/mpeg' /></video>"
         " <audio style='position:absolute; left:1; top:60' width='50' height='20' controls='controls' preload='none'><source src='track.ogg' type='audio/ogg' /></audio>"
         " <p style='position:absolute; left:1; top:90' id='text_to_select'>Lorem ipsum.</p>"
+        " <script>"
+        "  window.getSelection().removeAllRanges();"
+        "  var select_range = document.createRange();"
+        "  select_range.selectNodeContents(document.getElementById('text_to_select'));"
+        "  window.getSelection().addRange(select_range);"
+        " </script>"
         "</body></html>";
     test->loadHtml(linksHTML, baseDir.get());
     test->waitUntilLoadFinished();

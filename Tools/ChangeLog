@@ -1,3 +1,13 @@
+2017-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ test /webkit2/WebKitWebView/default-menu.
+
+        It can happen that the window onload event is dispatched after the load finished is received in the UI
+        process. Move the script to select the text to the body instead of using a window onload handler.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestContextMenu.cpp:
+        (testContextMenuDefaultMenu):
+
 2017-02-20  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Remove compilation flag ENABLE_CSS_GRID_LAYOUT
