@@ -1,3 +1,84 @@
+2017-02-19  Dean Jackson  <dino@apple.com>
+
+        Activate/deactivate high performance GPU when requested
+        https://bugs.webkit.org/show_bug.cgi?id=168559
+        <rdar://problem/30592266>
+
+        Reviewed by Jon Lee.
+
+        Respect the high-performance powerPreference for WebGL, by managing an
+        object that enables the high-performance GPU. If a WebGL context wants
+        high-performance, and it is visible, then a manager class in GraphicsContext3D
+        creates and retains the object, causing all the WebGL contexts to move GPUs.
+        If all the high-performance contexts are not visible, such as in a background tab,
+        then the manager will release the object, allowing the GPU to power down.
+
+        The swapping back from the high-performance GPU happens on a timer, to make
+        sure we don't churn between GPUs if the user is swapping between a lot of tabs,
+        or windows.
+
+        Unfortunately testing this change properly requires hardware with
+        multiple GPUs. I plan to write an API test that fakes most of the
+        system interaction, such as occluding the page. An API test might
+        also be able to verify if the system has more than one GPU. Otherwise
+        I'll have to plumb everything through Internals.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::isHighPerformanceContext): Helper to detect if the GraphicsContext3D actually
+        used high-performance mode.
+        (WebCore::WebGLRenderingContextBase::create): Add logging if we are
+        actually overriding a high-performance request.
+        (WebCore::WebGLRenderingContextBase::WebGLRenderingContextBase): If we are high-performance,
+        then register for activity state changes.
+        (WebCore::WebGLRenderingContextBase::addActivityStateChangeObserverIfNecessary):
+        (WebCore::WebGLRenderingContextBase::removeActivityStateChangeObserver):
+        (WebCore::WebGLRenderingContextBase::destroyGraphicsContext3D): Call removeActivityStateChangeObserver
+        as the GC3D is destroyed.
+        (WebCore::WebGLRenderingContextBase::maybeRestoreContext): If the context was
+        restored successfully, and came back in high-performance, then we need
+        to listen for activity state changes as usual.
+        (WebCore::WebGLRenderingContextBase::activityStateDidChange): If we changed visibility,
+        tell the GC3D.
+        * html/canvas/WebGLRenderingContextBase.h: Class inherits ActivityStateChangeObserver.
+
+        * page/Settings.in: No longer force low-power everywhere.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::setContextVisibility): Empty implementation for non-Mac.
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::powerPreferenceUsedForCreation): Tells clients what power preference
+        was actually used during creation (e.g. a single GPU system will use default, even if
+        they requested high-performance).
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3DManager::GraphicsContext3DManager): Helper class to
+        look after all GraphicsContext3Ds.
+        (WebCore::GraphicsContext3DManager::hasTooManyContexts): We have a limit on the
+        number of contexts we can keep alive at any one time.
+        (WebCore::manager): Helper to return the static instance.
+        (WebCore::displayWasReconfigured): Send a message to all the contexts.
+        (WebCore::GraphicsContext3DManager::addContext):
+        (WebCore::GraphicsContext3DManager::removeContext):
+        (WebCore::GraphicsContext3DManager::addContextRequiringHighPerformance):
+        (WebCore::GraphicsContext3DManager::removeContextRequiringHighPerformance):
+        (WebCore::GraphicsContext3DManager::updateHighPerformanceState): Check if the number
+        of contexts requiring high-performance means we need to enable/disable that GPU.
+        (WebCore::GraphicsContext3DManager::disableHighPerformanceGPUTimerFired): Releases our
+        object that keeps the high-performance GPU on.
+        (WebCore::GraphicsContext3DManager::recycleContextIfNecessary): Get rid of the first (oldest)
+        context. This code was in GC3D proper, but it made more sense here in the helper.
+        (WebCore::setPixelFormat): All contexts are created muxable now.
+        (WebCore::GraphicsContext3D::create): Use the manager.
+        (WebCore::GraphicsContext3D::GraphicsContext3D): Ditto.
+        (WebCore::GraphicsContext3D::~GraphicsContext3D): Add logging.
+        (WebCore::GraphicsContext3D::checkGPUStatusIfNecessary): Better logging.
+        (WebCore::GraphicsContext3D::updateCGLContext):
+        (WebCore::GraphicsContext3D::setContextVisibility): This is the responder to the
+        ActivityStateChanges in the WebGLRenderingContext.
+        (WebCore::activeContexts): Deleted.
+        (WebCore::addActiveContext): Deleted.
+        (WebCore::removeActiveContext): Deleted.
+
 2017-02-20  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Remove compilation flag ENABLE_CSS_GRID_LAYOUT
