@@ -148,7 +148,7 @@ void ColorInputType::setValue(const String& value, bool valueChanged, TextFieldE
 
 void ColorInputType::handleDOMActivateEvent(Event& event)
 {
-    if (element().isDisabledOrReadOnly() || !element().renderer())
+    if (element().isDisabledFormControl() || !element().renderer())
         return;
 
     if (!ScriptController::processingUserGesture())
@@ -186,7 +186,7 @@ bool ColorInputType::shouldResetOnDocumentActivation()
 
 void ColorInputType::didChooseColor(const Color& color)
 {
-    if (element().isDisabledOrReadOnly() || color == valueAsColor())
+    if (element().isDisabledFormControl() || color == valueAsColor())
         return;
     EventQueueScope scope;
     element().setValueFromRenderer(color.serialized());

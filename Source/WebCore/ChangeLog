@@ -1,3 +1,24 @@
+2017-02-19  Chris Dumez  <cdumez@apple.com>
+
+        <input type=color readonly> doesn't act per spec
+        https://bugs.webkit.org/show_bug.cgi?id=168421
+        <rdar://problem/30593185>
+
+        Reviewed by Ryosuke Niwa.
+
+        The 'readonly' attribute should not apply to <input type=color> as per the
+        HTML specification:
+        - https://html.spec.whatwg.org/#the-input-element:attr-input-readonly-3
+
+        Chrome / Firefox and Edge already behave as per the specification.
+
+        Tests: fast/forms/color/input-color-disabled.html
+               fast/forms/color/input-color-readonly.html
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::handleDOMActivateEvent):
+        (WebCore::ColorInputType::didChooseColor):
+
 2017-02-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r212466.

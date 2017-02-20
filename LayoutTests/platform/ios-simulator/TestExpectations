@@ -1328,9 +1328,12 @@ fast/flexbox/vertical-box-form-controls.html [ Failure ]
 fast/forms/autofocus-opera-003.html [ Failure ]
 fast/forms/button-inner-block-reuse.html [ Failure ]
 fast/forms/button-with-float.html [ ImageOnlyFailure ]
-fast/forms/color/color-setrangetext.html [ Failure ]
+
+# <input type=color> is not supported on iOS.
 fast/forms/color/input-color-onchange-event.html [ Failure ]
+fast/forms/color/input-color-readonly.html [ Failure ]
 fast/forms/color/input-value-sanitization-color.html [ Failure ]
+fast/forms/color/color-setrangetext.html [ Failure ]
 
 fast/forms/datalist/datalist-fallback-content.html [ ImageOnlyFailure ]
 fast/forms/datalist/datalist-nonoption-child.html [ Failure ]

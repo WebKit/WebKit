@@ -1,0 +1,14 @@
+Tests that it is possible to select a color on a input type=color that is marked as readOnly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS onChangeCount is 0
+input event dispatched - value is:  #ff0000
+change event dispatched - value changed to #ff0000
+PASS onChangeCount is 1
+PASS input.value is "#ff0000"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
