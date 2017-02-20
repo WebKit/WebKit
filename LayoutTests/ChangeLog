@@ -1,3 +1,10 @@
+2017-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Fix tests reporting missing results.
+
+        * media/media-session-restrictions-expected.txt: Renamed from LayoutTests/platform/mac/media/media-session-restrictions-expected.txt.
+        * platform/gtk/TestExpectations:
+
 2017-02-19  Dean Jackson  <dino@apple.com>
 
         Activate/deactivate high performance GPU when requested
