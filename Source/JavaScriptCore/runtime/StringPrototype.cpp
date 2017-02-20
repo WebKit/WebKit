@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2008, 2013, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *  Copyright (C) 2015 Jordan Harband (ljharb@gmail.com)
  *
@@ -539,18 +539,19 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
                     OUT_OF_MEMORY(exec, scope);
 
                 unsigned i = 0;
+                cachedCall.clearArguments();
                 for (; i < regExp->numSubpatterns() + 1; ++i) {
                     int matchStart = ovector[i * 2];
                     int matchLen = ovector[i * 2 + 1] - matchStart;
 
                     if (matchStart < 0)
-                        cachedCall.setArgument(i, jsUndefined());
+                        cachedCall.appendArgument(jsUndefined());
                     else
-                        cachedCall.setArgument(i, jsSubstring(&vm, source, matchStart, matchLen));
+                        cachedCall.appendArgument(jsSubstring(&vm, source, matchStart, matchLen));
                 }
 
-                cachedCall.setArgument(i++, jsNumber(result.start));
-                cachedCall.setArgument(i++, string);
+                cachedCall.appendArgument(jsNumber(result.start));
+                cachedCall.appendArgument(string);
 
                 cachedCall.setThis(jsUndefined());
                 JSValue jsResult = cachedCall.call();
@@ -578,18 +579,19 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
                     OUT_OF_MEMORY(exec, scope);
 
                 unsigned i = 0;
+                cachedCall.clearArguments();
                 for (; i < regExp->numSubpatterns() + 1; ++i) {
                     int matchStart = ovector[i * 2];
                     int matchLen = ovector[i * 2 + 1] - matchStart;
 
                     if (matchStart < 0)
-                        cachedCall.setArgument(i, jsUndefined());
+                        cachedCall.appendArgument(jsUndefined());
                     else
-                        cachedCall.setArgument(i, jsSubstring(&vm, source, matchStart, matchLen));
+                        cachedCall.appendArgument(jsSubstring(&vm, source, matchStart, matchLen));
                 }
 
-                cachedCall.setArgument(i++, jsNumber(result.start));
-                cachedCall.setArgument(i++, string);
+                cachedCall.appendArgument(jsNumber(result.start));
+                cachedCall.appendArgument(string);
 
                 cachedCall.setThis(jsUndefined());
                 JSValue jsResult = cachedCall.call();

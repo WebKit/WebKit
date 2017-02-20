@@ -1,3 +1,44 @@
+2017-02-20  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r212618. rdar://problem/30475767
+
+    2017-02-19  Mark Lam  <mark.lam@apple.com>
+
+            CachedCall should let GC know to keep its arguments alive.
+            https://bugs.webkit.org/show_bug.cgi?id=168567
+            <rdar://problem/30475767>
+
+            Reviewed by Saam Barati.
+
+            We fix this by having CachedCall use a MarkedArgumentBuffer to store its
+            arguments instead of a Vector.
+
+            Also declared CachedCall, MarkedArgumentBuffer, and ProtoCallFrame as
+            WTF_FORBID_HEAP_ALLOCATION because they rely on being stack allocated for
+            correctness.
+
+            * interpreter/CachedCall.h:
+            (JSC::CachedCall::CachedCall):
+            (JSC::CachedCall::call):
+            (JSC::CachedCall::clearArguments):
+            (JSC::CachedCall::appendArgument):
+            (JSC::CachedCall::setArgument): Deleted.
+            * interpreter/CallFrame.h:
+            (JSC::ExecState::emptyList):
+            * interpreter/Interpreter.cpp:
+            (JSC::Interpreter::prepareForRepeatCall):
+            * interpreter/Interpreter.h:
+            * interpreter/ProtoCallFrame.h:
+            * runtime/ArgList.cpp:
+            (JSC::MarkedArgumentBuffer::expandCapacity):
+            * runtime/ArgList.h:
+            (JSC::MarkedArgumentBuffer::ensureCapacity):
+            * runtime/StringPrototype.cpp:
+            (JSC::replaceUsingRegExpSearch):
+            * runtime/VM.cpp:
+            (JSC::VM::VM):
+            * runtime/VM.h:
+
 2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r212177. rdar://problem/30205880
