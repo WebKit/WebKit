@@ -1,5 +1,17 @@
 2017-02-19  Mark Lam  <mark.lam@apple.com>
 
+        functionTestWasmModuleFunctions() should use a MarkedArgumentBuffer for storing args instead of a Vector.
+        https://bugs.webkit.org/show_bug.cgi?id=168574
+
+        Reviewed by Filip Pizlo.
+
+        * jsc.cpp:
+        (callWasmFunction):
+        (functionTestWasmModuleFunctions):
+        * runtime/ArgList.h:
+
+2017-02-19  Mark Lam  <mark.lam@apple.com>
+
         CachedCall should let GC know to keep its arguments alive.
         https://bugs.webkit.org/show_bug.cgi?id=168567
         <rdar://problem/30475767>

@@ -3069,7 +3069,8 @@ static JSValue box(ExecState* exec, VM& vm, JSValue wasmValue)
     return JSValue::decode(bitwise_cast<uint64_t>(result));
 }
 
-static JSValue callWasmFunction(VM* vm, JSGlobalObject* globalObject, JSWebAssemblyCallee* wasmCallee, Vector<JSValue>& boxedArgs)
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=168582.
+static JSValue callWasmFunction(VM* vm, JSGlobalObject* globalObject, JSWebAssemblyCallee* wasmCallee, const ArgList& boxedArgs)
 {
     JSValue firstArgument;
     int argCount = 1;
@@ -3135,7 +3136,7 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
             JSObject* result = jsCast<JSObject*>(test->getIndexQuickly(0));
             JSArray* arguments = jsCast<JSArray*>(test->getIndexQuickly(1));
 
-            Vector<JSValue> boxedArgs;
+            MarkedArgumentBuffer boxedArgs;
             for (unsigned argIndex = 0; argIndex < arguments->length(); ++argIndex)
                 boxedArgs.append(box(exec, vm, arguments->getIndexQuickly(argIndex)));
 
@@ -3150,7 +3151,7 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
                 dataLog("Arguments: ");
                 CommaPrinter comma(", ");
                 for (unsigned argIndex = 0; argIndex < arguments->length(); ++argIndex)
-                    dataLog(comma, valueWithTypeOfWasmValue(exec, vm, boxedArgs[argIndex], arguments->getIndexQuickly(argIndex)));
+                    dataLog(comma, valueWithTypeOfWasmValue(exec, vm, boxedArgs.at(argIndex), arguments->getIndexQuickly(argIndex)));
                 dataLogLn();
 
                 WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, toCString(" (callResult == ", valueWithTypeOfWasmValue(exec, vm, callResult, result), ", expected == ", valueWithTypeOfWasmValue(exec, vm, expected, result), ")").data());
