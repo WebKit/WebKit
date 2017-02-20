@@ -1,5 +1,11 @@
 2017-02-20  Jon Lee  <jonlee@apple.com>
 
+        Fix build error for iOS. Unreviewed.
+
+        * platform/graphics/GraphicsContext3D.cpp: Move stub function into !PLATFORM(COCOA) instead of !PLATFORM(MAC).
+
+2017-02-20  Jon Lee  <jonlee@apple.com>
+
         Unreviewed, rolling out r212639.
 
         Have a fix for the linker error on iOS.
