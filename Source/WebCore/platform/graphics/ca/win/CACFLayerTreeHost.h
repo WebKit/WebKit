@@ -69,6 +69,7 @@ public:
     void setPage(Page*);
     virtual void paint(HDC = nullptr);
     virtual void resize() = 0;
+    virtual void setScaleFactor(float) = 0;
     void flushPendingGraphicsLayerChangesSoon();
     virtual void setShouldInvertColors(bool);
 #if USE(AVFOUNDATION)

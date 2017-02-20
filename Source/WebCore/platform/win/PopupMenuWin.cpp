@@ -31,6 +31,7 @@
 #include "FontSelector.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "GDIUtilities.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HWndDC.h"
@@ -130,6 +131,9 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
     calculatePositionAndSize(r, view);
     if (clientRect().isEmpty())
         return;
+
+    if (view && view->frame().page())
+        m_scaleFactor = view->frame().page()->deviceScaleFactor();
 
     HWND hostWindow = view->hostWindow()->platformPageClient();
 
@@ -958,7 +962,7 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
                 if (scrollbarCapturingMouse() || scrollBarRect.contains(mousePoint)) {
                     // Put the point into coordinates relative to the scroll bar
                     mousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
-                    PlatformMouseEvent event(hWnd, message, wParam, MAKELPARAM(mousePoint.x(), mousePoint.y()));
+                    PlatformMouseEvent event(hWnd, message, wParam, makeScaledPoint(mousePoint, m_scaleFactor));
                     scrollbar()->mouseMoved(event);
                     break;
                 }
@@ -995,7 +999,7 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
                 if (scrollBarRect.contains(mousePoint)) {
                     // Put the point into coordinates relative to the scroll bar
                     mousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
-                    PlatformMouseEvent event(hWnd, message, wParam, MAKELPARAM(mousePoint.x(), mousePoint.y()));
+                    PlatformMouseEvent event(hWnd, message, wParam, makeScaledPoint(mousePoint, m_scaleFactor));
                     scrollbar()->mouseDown(event);
                     setScrollbarCapturingMouse(true);
                     break;
@@ -1022,7 +1026,7 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
                     setScrollbarCapturingMouse(false);
                     // Put the point into coordinates relative to the scroll bar
                     mousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
-                    PlatformMouseEvent event(hWnd, message, wParam, MAKELPARAM(mousePoint.x(), mousePoint.y()));
+                    PlatformMouseEvent event(hWnd, message, wParam, makeScaledPoint(mousePoint, m_scaleFactor));
                     scrollbar()->mouseUp(event);
                     // FIXME: This is a hack to work around Scrollbar not invalidating correctly when it doesn't have a parent widget
                     RECT r = scrollBarRect;

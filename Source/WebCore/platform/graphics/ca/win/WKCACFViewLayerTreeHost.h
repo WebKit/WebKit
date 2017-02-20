@@ -46,6 +46,7 @@ private:
 
     virtual void initializeContext(void* userData, PlatformCALayer*);
     virtual void resize();
+    virtual void setScaleFactor(float);
     virtual void destroyRenderer();
     virtual void flushContext();
     virtual void contextDidChange();

@@ -42,8 +42,6 @@ namespace WebCore {
 static IntPoint positionForEvent(HWND hWnd, LPARAM lParam)
 {
     IntPoint point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-    float inverseScaleFactor = 1.0f / deviceScaleFactorForWindow(hWnd);
-    point.scale(inverseScaleFactor, inverseScaleFactor);
     return point;
 }
 
