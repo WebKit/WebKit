@@ -1256,8 +1256,6 @@ void Heap::stopTheWorld()
         if (JITWorklist::instance()->completeAllForVM(*m_vm))
             setGCDidJIT();
     }
-#else
-    UNUSED_PARAM(conn);
 #endif // ENABLE(JIT)
     
     vm()->shadowChicken().update(*vm(), vm()->topCallFrame);
