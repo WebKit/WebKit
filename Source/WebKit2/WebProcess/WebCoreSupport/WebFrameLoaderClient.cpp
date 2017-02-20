@@ -1479,9 +1479,10 @@ void WebFrameLoaderClient::recreatePlugin(Widget* widget)
 #endif
 }
 
-void WebFrameLoaderClient::redirectDataToPlugin(Widget& pluginWidget)
+void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 {
-    m_pluginView = static_cast<PluginView*>(&pluginWidget);
+    if (pluginWidget)
+        m_pluginView = static_cast<PluginView*>(pluginWidget);
 }
 
 #if ENABLE(WEBGL)

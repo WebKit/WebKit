@@ -208,7 +208,7 @@ private:
     RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::URL&, const Vector<WTF::String>&,
         const Vector<WTF::String>&, const WTF::String&, bool) override;
     void recreatePlugin(WebCore::Widget*) override;
-    void redirectDataToPlugin(WebCore::Widget&) override;
+    void redirectDataToPlugin(WebCore::Widget* pluginWidget) override;
 
 #if ENABLE(WEBGL)
     WebCore::WebGLLoadPolicy webGLPolicyForURL(const String&) const override;

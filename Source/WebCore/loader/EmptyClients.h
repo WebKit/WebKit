@@ -394,7 +394,7 @@ public:
     ObjectContentType objectContentType(const URL&, const String&) override { return ObjectContentType::None; }
     String overrideMediaType() const override { return String(); }
 
-    void redirectDataToPlugin(Widget&) override { }
+    void redirectDataToPlugin(Widget*) override { }
     void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) override { }
 
     void registerForIconNotification(bool) override { }

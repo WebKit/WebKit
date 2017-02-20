@@ -2058,13 +2058,16 @@ void WebFrameLoaderClient::recreatePlugin(Widget*)
 {
 }
 
-void WebFrameLoaderClient::redirectDataToPlugin(Widget& pluginWidget)
+void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 {
+    if (!pluginWidget)
+        return;
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     WebHTMLRepresentation *representation = (WebHTMLRepresentation *)[[m_webFrame.get() _dataSource] representation];
 
-    NSView *pluginView = pluginWidget.platformWidget();
+    NSView *pluginView = pluginWidget->platformWidget();
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if ([pluginView isKindOfClass:[NETSCAPE_PLUGIN_VIEW class]])

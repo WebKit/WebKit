@@ -1,3 +1,7 @@
+2017-02-20  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Rollout r212538. rdar://problem/30541748
+
 2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
 
         A/B test concurrent GC
