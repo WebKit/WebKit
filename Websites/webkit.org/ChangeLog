@@ -1,3 +1,10 @@
+2017-02-20  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Unreviewed, add CSS Grid Layout examples for a blog post.
+
+        * demos/css-grid/index.html: Added.
+        * demos/css-grid/responsive-grid.html: Added.
+
 2017-02-06  Jon Davis  <jond@apple.com>
 
         Add a survey to learn how people use WebKit Nightly builds
