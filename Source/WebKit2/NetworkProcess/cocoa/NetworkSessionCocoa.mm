@@ -470,8 +470,10 @@ NetworkSessionCocoa::NetworkSessionCocoa(WebCore::SessionID sessionID, CustomPro
         configuration._sourceApplicationAuditTokenData = (NSData *)data.get();
 
     auto& sourceApplicationBundleIdentifier = globalSourceApplicationBundleIdentifier();
-    if (!sourceApplicationBundleIdentifier.isEmpty())
+    if (!sourceApplicationBundleIdentifier.isEmpty()) {
         configuration._sourceApplicationBundleIdentifier = sourceApplicationBundleIdentifier;
+        configuration._sourceApplicationAuditTokenData = nil;
+    }
 
     auto& sourceApplicationSecondaryIdentifier = globalSourceApplicationSecondaryIdentifier();
     if (!sourceApplicationSecondaryIdentifier.isEmpty())
