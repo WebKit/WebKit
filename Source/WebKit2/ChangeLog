@@ -1,3 +1,46 @@
+2017-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r212345): [GTK] ASSERT(cookieChangeCallbackMap().contains(jar)) failed in WebCore::stopObservingCookieChanges:54
+        https://bugs.webkit.org/show_bug.cgi?id=168375
+
+        Reviewed by Alex Christensen.
+
+        Simplify the cookies change notification. The current approach of the UI process telling the network process
+        when to start and stop observing cookie changes is quite fragile and error prone. In the GTK+ port we always
+        observe cookies, so our cookie manager always calls start in the constructor and stop in the destructor.
+        Everything would be a lot simpler if the network process always monitored cookies.
+
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::NetworkSessionSoup): Set cookies observer handler for the session.
+        (WebKit::NetworkSessionSoup::~NetworkSessionSoup): Remove the cookies observer handler.
+        * UIProcess/API/gtk/WebKitCookieManager.cpp:
+        (_WebKitCookieManagerPrivate::~_WebKitCookieManagerPrivate): Remove the cookies observer callback.
+        (webkit_cookie_manager_class_init): Remove dispose implementation that is no longer needed.
+        (webkitCookieManagerCreate): Set the cookies observer callback.
+        (webkit_cookie_manager_set_persistent_storage): Remove code to start/stop observing cookies when the jar
+        changes, the network process deals with that now.
+        (webkitCookieManagerDispose): Deleted.
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::startObservingCookieChanges): Remove the optional callback method in favor of an
+        explicit method to the set the callback that doesn't send the StartObservingCookieChanges message to the network
+        process.
+        (WebKit::WebCookieManagerProxy::stopObservingCookieChanges): Do not change the callback map here.
+        (WebKit::WebCookieManagerProxy::setCookieObserverCallback): Add the callback to the map or remove the session if
+        nullptr is given.
+        * UIProcess/WebCookieManagerProxy.h:
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::notifyCookiesDidChange): Send CookiesDidChange message to the UI process.
+        (WebKit::WebCookieManager::startObservingCookieChanges): Use notifyCookiesDidChange().
+        * WebProcess/Cookies/WebCookieManager.h:
+        * WebProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy): Set the policy on all sessions. Code moved from
+        WebFrameNetworkingContext since it doesn't belong there.
+        (WebKit::WebCookieManager::setCookiePersistentStorage): Use new method to set the cookie storage in the
+        NetworkStorageSession.
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts): Deleted.
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h:
+
 2017-02-19  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Support termination of unresponsive WebContent processes that are in the background

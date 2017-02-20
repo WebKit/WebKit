@@ -74,6 +74,8 @@ public:
     SoupNetworkSession* soupNetworkSession() const { return m_session.get(); };
     SoupNetworkSession& getOrCreateSoupNetworkSession() const;
     SoupCookieJar* cookieStorage() const;
+    void setCookieStorage(SoupCookieJar*);
+    void setCookieObserverHandler(Function<void ()>&&);
     void getCredentialFromPersistentStorage(const ProtectionSpace&, Function<void (Credential&&)> completionHandler);
     void saveCredentialToPersistentStorage(const ProtectionSpace&, const Credential&);
 #else
@@ -90,8 +92,11 @@ private:
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     RetainPtr<CFURLStorageSessionRef> m_platformSession;
 #elif USE(SOUP)
+    static void cookiesDidChange(NetworkStorageSession*);
+
     mutable std::unique_ptr<SoupNetworkSession> m_session;
-    mutable GRefPtr<SoupCookieJar> m_cookieStorage;
+    GRefPtr<SoupCookieJar> m_cookieStorage;
+    Function<void ()> m_cookieObserverHandler;
 #if USE(LIBSECRET)
     Function<void (Credential&&)> m_persisentStorageCompletionHandler;
     GRefPtr<GCancellable> m_persisentStorageCancellable;

@@ -27,7 +27,6 @@
 #include "WebCookieManager.h"
 
 #include "ChildProcess.h"
-#include "WebFrameNetworkingContext.h"
 #include "WebKitSoupCookieJarSqlite.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SoupNetworkSession.h>
@@ -41,7 +40,22 @@ namespace WebKit {
 
 void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
-    WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(policy);
+    SoupCookieJarAcceptPolicy soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
+    switch (policy) {
+    case HTTPCookieAcceptPolicyAlways:
+        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_ALWAYS;
+        break;
+    case HTTPCookieAcceptPolicyNever:
+        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NEVER;
+        break;
+    case HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
+        soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
+        break;
+    }
+
+    NetworkStorageSession::forEach([soupPolicy] (const NetworkStorageSession& session) {
+        soup_cookie_jar_set_accept_policy(session.cookieStorage(), soupPolicy);
+    });
 }
 
 HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
@@ -75,7 +89,7 @@ void WebCookieManager::setCookiePersistentStorage(const String& storagePath, uin
 
     auto& storageSession = NetworkStorageSession::defaultStorageSession();
     soup_cookie_jar_set_accept_policy(jar.get(), soup_cookie_jar_get_accept_policy(storageSession.cookieStorage()));
-    storageSession.getOrCreateSoupNetworkSession().setCookieJar(jar.get());
+    storageSession.setCookieStorage(jar.get());
 }
 
 } // namespace WebKit

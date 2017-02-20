@@ -133,17 +133,22 @@ void WebCookieManagerProxy::addCookie(WebCore::SessionID sessionID, const WebCor
     processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::AddCookie(sessionID, cookie, hostname));
 }
 
-void WebCookieManagerProxy::startObservingCookieChanges(WebCore::SessionID sessionID, std::function<void ()>&& callback)
+void WebCookieManagerProxy::startObservingCookieChanges(WebCore::SessionID sessionID)
 {
-    if (callback)
-        m_cookieObservers.set(sessionID, WTFMove(callback));
     processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::StartObservingCookieChanges(sessionID));
 }
 
 void WebCookieManagerProxy::stopObservingCookieChanges(WebCore::SessionID sessionID)
 {
-    m_cookieObservers.remove(sessionID);
     processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::StopObservingCookieChanges(sessionID));
+}
+
+void WebCookieManagerProxy::setCookieObserverCallback(WebCore::SessionID sessionID, std::function<void ()>&& callback)
+{
+    if (callback)
+        m_cookieObservers.set(sessionID, WTFMove(callback));
+    else
+        m_cookieObservers.remove(sessionID);
 }
 
 void WebCookieManagerProxy::cookiesDidChange(WebCore::SessionID sessionID)

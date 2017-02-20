@@ -89,12 +89,17 @@ void WebCookieManager::addCookie(SessionID sessionID, const Cookie& cookie, cons
         WebCore::addCookie(*storageSession, URL(URL(), hostname), cookie);
 }
 
+void WebCookieManager::notifyCookiesDidChange(SessionID sessionID)
+{
+    ASSERT(RunLoop::isMain());
+    m_process->send(Messages::WebCookieManagerProxy::CookiesDidChange(sessionID), 0);
+}
+
 void WebCookieManager::startObservingCookieChanges(SessionID sessionID)
 {
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID)) {
         WebCore::startObservingCookieChanges(*storageSession, [this, sessionID] {
-            ASSERT(RunLoop::isMain());
-            m_process->send(Messages::WebCookieManagerProxy::CookiesDidChange(sessionID), 0);
+            notifyCookiesDidChange(sessionID);
         });
     }
 }

@@ -21,39 +21,16 @@
 
 #if USE(SOUP)
 
-#include "NetworkStorageSession.h"
-#include <libsoup/soup.h>
-#include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
-
 namespace WebCore {
 
-static HashMap<SoupCookieJar*, std::function<void ()>>& cookieChangeCallbackMap()
+void startObservingCookieChanges(const NetworkStorageSession&, std::function<void ()>&&)
 {
-    static NeverDestroyed<HashMap<SoupCookieJar*, std::function<void ()>>> map;
-    return map;
+    ASSERT_NOT_REACHED();
 }
 
-static void soupCookiesChanged(SoupCookieJar* jar)
+void stopObservingCookieChanges(const NetworkStorageSession&)
 {
-    if (auto callback = cookieChangeCallbackMap().get(jar))
-        callback();
-}
-
-void startObservingCookieChanges(const NetworkStorageSession& storageSession, std::function<void ()>&& callback)
-{
-    auto* jar = storageSession.cookieStorage();
-    ASSERT(!cookieChangeCallbackMap().contains(jar));
-    cookieChangeCallbackMap().add(jar, WTFMove(callback));
-    g_signal_connect(jar, "changed", G_CALLBACK(soupCookiesChanged), nullptr);
-}
-
-void stopObservingCookieChanges(const NetworkStorageSession& storageSession)
-{
-    auto* jar = storageSession.cookieStorage();
-    ASSERT(cookieChangeCallbackMap().contains(jar));
-    cookieChangeCallbackMap().remove(jar);
-    g_signal_handlers_disconnect_by_func(jar, reinterpret_cast<void*>(soupCookiesChanged), nullptr);
+    ASSERT_NOT_REACHED();
 }
 
 }

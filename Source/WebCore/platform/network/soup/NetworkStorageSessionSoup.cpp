@@ -51,10 +51,13 @@ NetworkStorageSession::NetworkStorageSession(SessionID sessionID, std::unique_pt
     : m_sessionID(sessionID)
     , m_session(WTFMove(session))
 {
+    setCookieStorage(m_session ? m_session->cookieJar() : nullptr);
 }
 
 NetworkStorageSession::~NetworkStorageSession()
 {
+    g_signal_handlers_disconnect_matched(m_cookieStorage.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+
 #if USE(LIBSECRET)
     g_cancellable_cancel(m_persisentStorageCancellable.get());
 #endif
@@ -89,23 +92,42 @@ void NetworkStorageSession::switchToNewTestingSession()
 SoupNetworkSession& NetworkStorageSession::getOrCreateSoupNetworkSession() const
 {
     if (!m_session)
-        m_session = std::make_unique<SoupNetworkSession>(cookieStorage());
+        m_session = std::make_unique<SoupNetworkSession>(m_cookieStorage.get());
     return *m_session;
+}
+
+void NetworkStorageSession::cookiesDidChange(NetworkStorageSession* session)
+{
+    if (session->m_cookieObserverHandler)
+        session->m_cookieObserverHandler();
 }
 
 SoupCookieJar* NetworkStorageSession::cookieStorage() const
 {
-    if (m_session) {
-        m_cookieStorage = nullptr;
-        ASSERT(m_session->cookieJar());
-        return m_session->cookieJar();
-    }
+    RELEASE_ASSERT(!m_session || m_session->cookieJar() == m_cookieStorage.get());
+    return m_cookieStorage.get();
+}
 
-    if (!m_cookieStorage) {
+void NetworkStorageSession::setCookieStorage(SoupCookieJar* jar)
+{
+    if (m_cookieStorage)
+        g_signal_handlers_disconnect_matched(m_cookieStorage.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+
+    // We always have a valid cookieStorage.
+    if (jar)
+        m_cookieStorage = jar;
+    else {
         m_cookieStorage = adoptGRef(soup_cookie_jar_new());
         soup_cookie_jar_set_accept_policy(m_cookieStorage.get(), SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY);
     }
-    return m_cookieStorage.get();
+    g_signal_connect_swapped(m_cookieStorage.get(), "changed", G_CALLBACK(cookiesDidChange), this);
+    if (m_session && m_session->cookieJar() != m_cookieStorage.get())
+        m_session->setCookieJar(m_cookieStorage.get());
+}
+
+void NetworkStorageSession::setCookieObserverHandler(Function<void ()>&& handler)
+{
+    m_cookieObserverHandler = WTFMove(handler);
 }
 
 #if USE(LIBSECRET)

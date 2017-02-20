@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkSessionSoup.h"
 
+#include "NetworkProcess.h"
+#include "WebCookieManager.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
@@ -37,10 +39,15 @@ namespace WebKit {
 NetworkSessionSoup::NetworkSessionSoup(SessionID sessionID)
     : NetworkSession(sessionID)
 {
+    networkStorageSession().setCookieObserverHandler([this] {
+        NetworkProcess::singleton().supplement<WebCookieManager>()->notifyCookiesDidChange(m_sessionID);
+    });
 }
 
 NetworkSessionSoup::~NetworkSessionSoup()
 {
+    if (auto* storageSession = NetworkStorageSession::storageSession(m_sessionID))
+        storageSession->setCookieObserverHandler(nullptr);
 }
 
 SoupSession* NetworkSessionSoup::soupSession() const

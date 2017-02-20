@@ -74,8 +74,10 @@ public:
     void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
     void getHTTPCookieAcceptPolicy(std::function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>);
 
-    void startObservingCookieChanges(WebCore::SessionID, std::function<void ()>&& = nullptr);
+    void startObservingCookieChanges(WebCore::SessionID);
     void stopObservingCookieChanges(WebCore::SessionID);
+
+    void setCookieObserverCallback(WebCore::SessionID, std::function<void ()>&&);
 
 #if USE(SOUP)
     void setCookiePersistentStorage(const String& storagePath, uint32_t storageType);

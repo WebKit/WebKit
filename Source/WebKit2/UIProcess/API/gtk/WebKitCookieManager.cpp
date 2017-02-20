@@ -51,6 +51,13 @@ enum {
 };
 
 struct _WebKitCookieManagerPrivate {
+    ~_WebKitCookieManagerPrivate()
+    {
+        auto sessionID = webkitWebsiteDataManagerGetDataStore(dataManager).websiteDataStore().sessionID();
+        for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(dataManager))
+            processPool->supplement<WebCookieManagerProxy>()->setCookieObserverCallback(sessionID, nullptr);
+    }
+
     WebKitWebsiteDataManager* dataManager;
 };
 
@@ -101,24 +108,9 @@ static inline HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(WebKitCookieAccept
     }
 }
 
-static void webkitCookieManagerDispose(GObject* object)
-{
-    WebKitCookieManager* manager = WEBKIT_COOKIE_MANAGER(object);
-    if (manager->priv->dataManager) {
-        auto sessionID = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager).websiteDataStore().sessionID();
-        for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager))
-            processPool->supplement<WebCookieManagerProxy>()->stopObservingCookieChanges(sessionID);
-
-        manager->priv->dataManager = nullptr;
-    }
-
-    G_OBJECT_CLASS(webkit_cookie_manager_parent_class)->dispose(object);
-}
-
 static void webkit_cookie_manager_class_init(WebKitCookieManagerClass* findClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(findClass);
-    gObjectClass->dispose = webkitCookieManagerDispose;
 
     /**
      * WebKitCookieManager::changed:
@@ -141,7 +133,7 @@ WebKitCookieManager* webkitCookieManagerCreate(WebKitWebsiteDataManager* dataMan
     manager->priv->dataManager = dataManager;
     auto sessionID = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager).websiteDataStore().sessionID();
     for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager)) {
-        processPool->supplement<WebCookieManagerProxy>()->startObservingCookieChanges(sessionID, [manager] {
+        processPool->supplement<WebCookieManagerProxy>()->setCookieObserverCallback(sessionID, [manager] {
             g_signal_emit(manager, signals[CHANGED], 0);
         });
     }
@@ -170,15 +162,8 @@ void webkit_cookie_manager_set_persistent_storage(WebKitCookieManager* manager, 
     g_return_if_fail(filename);
     g_return_if_fail(!webkit_website_data_manager_is_ephemeral(manager->priv->dataManager));
 
-    for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager)) {
-        auto* cookieManager = processPool->supplement<WebCookieManagerProxy>();
-
-        cookieManager->stopObservingCookieChanges(WebCore::SessionID::defaultSessionID());
-        cookieManager->setCookiePersistentStorage(String::fromUTF8(filename), toSoupCookiePersistentStorageType(storage));
-        cookieManager->startObservingCookieChanges(WebCore::SessionID::defaultSessionID(), [manager] {
-            g_signal_emit(manager, signals[CHANGED], 0);
-        });
-    }
+    for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager))
+        processPool->supplement<WebCookieManagerProxy>()->setCookiePersistentStorage(String::fromUTF8(filename), toSoupCookiePersistentStorageType(storage));
 }
 
 /**
