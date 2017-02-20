@@ -1,3 +1,15 @@
+2017-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Call SoupNetworkSession::setShouldIgnoreTLSErrors when testRunner.setAllowsAnySSLCertificate() is called
+        https://bugs.webkit.org/show_bug.cgi?id=168571
+
+        Reviewed by Michael Catanzaro.
+
+        Fixes: http/tests/ssl/upgrade-origin-usage.html
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setAllowsAnySSLCertificate):
+
 2017-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r212218): Assertion failures in and after parserRemoveChild

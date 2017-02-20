@@ -45,6 +45,10 @@
 #include "ColorChooser.h"
 #endif
 
+#if USE(SOUP)
+#include "SoupNetworkSession.h"
+#endif
+
 namespace WebCore {
 
 InternalSettings::Backup::Backup(Settings& settings)
@@ -759,6 +763,9 @@ ExceptionOr<void> InternalSettings::setSystemLayoutDirection(const String& direc
 void InternalSettings::setAllowsAnySSLCertificate(bool allowsAnyCertificate)
 {
     Settings::setAllowsAnySSLCertificate(allowsAnyCertificate);
+#if USE(SOUP)
+    SoupNetworkSession::setShouldIgnoreTLSErrors(allowsAnyCertificate);
+#endif
 }
 
 ExceptionOr<bool> InternalSettings::deferredCSSParserEnabled()
