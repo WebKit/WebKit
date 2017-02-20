@@ -1,0 +1,9 @@
+
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script src='readable-stream-byob-request.js'></script>
+<script>
+'use strict';
+fetch_tests_from_worker(new Worker('readable-stream-byob-request.js'));
+</script>

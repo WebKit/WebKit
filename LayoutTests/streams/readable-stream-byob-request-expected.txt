@@ -1,0 +1,6 @@
+
+PASS ReadableStreamBYOBRequest instances should have the correct list of properties 
+PASS By default, byobRequest should be undefined 
+PASS ReadableStreamBYOBRequest instances should have the correct list of properties 
+PASS By default, byobRequest should be undefined 
+

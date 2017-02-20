@@ -78,6 +78,14 @@ function privateInitializeReadableByteStreamController(stream, underlyingByteSou
     return this;
 }
 
+function privateInitializeReadableStreamBYOBRequest(controller, view)
+{
+    "use strict";
+
+    this.@associatedReadableByteStreamController = controller;
+    this.@view = view;
+}
+
 function isReadableByteStreamController(controller)
 {
     "use strict";

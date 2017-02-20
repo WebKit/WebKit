@@ -80,8 +80,18 @@ function byobRequest()
 {
     "use strict";
 
-    //FIXME: Implement appropriate behavior.
-    @throwTypeError("ReadableByteStreamController byobRequest is not implemented");
+    if (!@isReadableByteStreamController(this))
+        throw @makeGetterTypeError("ReadableByteStreamController", "byobRequest");
+
+    if (this.@byobRequest === @undefined && this.@pendingPullIntos.length) {
+        const firstDescriptor = this.@pendingPullIntos[0];
+        const view = new @Uint8Array(firstDescriptor.buffer,
+            firstDescriptor.byteOffset + firstDescriptor.bytesFilled,
+            firstDescriptor.byteLength - firstDescriptor.bytesFilled);
+        this.@byobRequest = new @ReadableStreamBYOBRequest(this, view);
+    }
+
+    return this.@byobRequest;
 }
 
 function desiredSize()

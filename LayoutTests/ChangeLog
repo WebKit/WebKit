@@ -1,3 +1,18 @@
+2017-02-20  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Add ReadableByteStreamController byobRequest attribute
+        https://bugs.webkit.org/show_bug.cgi?id=168319
+
+        Reviewed by Youenn Fablet.
+
+        Added tests related to ReadableStreamBYOBRequest as a dedicated object
+        and also as an attribute of ReadableByteStreamController.
+
+        * streams/readable-byte-stream-controller.js: Updated with byobRequest attribute test.
+        * streams/readable-stream-byob-request-expected.txt: Added.
+        * streams/readable-stream-byob-request.html: Added.
+        * streams/readable-stream-byob-request.js: Added to cover tests related to ReadableStreamBYOBRequest.
+
 2017-02-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/canvas/webgl/context-creation-attributes.html after r212650.

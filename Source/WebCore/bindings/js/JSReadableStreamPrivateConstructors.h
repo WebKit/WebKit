@@ -34,6 +34,7 @@ JSC::JSObject* createReadableStreamDefaultControllerPrivateConstructor(JSC::VM&,
 
 #if ENABLE(READABLE_BYTE_STREAM_API)
 JSC::JSObject* createReadableByteStreamControllerPrivateConstructor(JSC::VM&, JSDOMGlobalObject&);
+JSC::JSObject* createReadableStreamBYOBRequestPrivateConstructor(JSC::VM&, JSDOMGlobalObject&);
 #endif
 
 } // namespace WebCore

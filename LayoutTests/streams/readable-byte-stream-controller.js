@@ -12,8 +12,7 @@ test(function() {
 
 test(() => {
     const methods = ['close', 'constructor', 'enqueue', 'error'];
-    // FIXME: Add byobRequest when implemented.
-    const properties = methods.concat(['desiredSize']).sort();
+    const properties = methods.concat(['byobRequest', 'desiredSize']).sort();
 
     let controller;
 
@@ -35,6 +34,12 @@ test(() => {
         assert_equals(propDesc.writable, true, 'method should be writable');
         assert_equals(typeof controller[m], 'function', 'should have be a method');
     }
+
+    const byobRequestPropDesc = Object.getOwnPropertyDescriptor(proto, 'byobRequest');
+    assert_equals(byobRequestPropDesc.enumerable, false, 'byobRequest should be non-enumerable');
+    assert_equals(byobRequestPropDesc.configurable, true, 'byobRequest should be configurable');
+    assert_not_equals(byobRequestPropDesc.get, undefined, 'byobRequest should have a getter');
+    assert_equals(byobRequestPropDesc.set, undefined, 'byobRequest should not have a setter');
 
     const desiredSizePropDesc = Object.getOwnPropertyDescriptor(proto, 'desiredSize');
     assert_equals(desiredSizePropDesc.enumerable, false, 'desiredSize should be non-enumerable');

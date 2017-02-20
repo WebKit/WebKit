@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2016 Canon Inc.
- * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2017 Canon Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -29,15 +28,13 @@
 
 [
     Conditional=READABLE_STREAM_API&READABLE_BYTE_STREAM_API,
-    CustomConstructor(ReadableStream stream, any underlyingByteSource, unsigned long highWaterMark),
+    CustomConstructor(ReadableByteStreamController controller, TypedArray view),
     Exposed=(Window,Worker),
     JSBuiltin,
     NoInterfaceObject
-] interface ReadableByteStreamController {
-    [NotEnumerable] void enqueue(optional any chunk);
-    [NotEnumerable] void close();
-    [NotEnumerable] void error(optional any error);
+] interface ReadableStreamBYOBRequest {
+    [NotEnumerable] void respond(optional any bytesWritten);
+    [NotEnumerable] void respondWithNewView(optional any view);
 
-    [NotEnumerable] readonly attribute ReadableStreamBYOBRequest byobRequest;
-    [NotEnumerable] readonly attribute double desiredSize;
+    [NotEnumerable] readonly attribute TypedArray view;
 };

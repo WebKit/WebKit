@@ -1,3 +1,40 @@
+2017-02-20  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Add ReadableByteStreamController byobRequest attribute
+        https://bugs.webkit.org/show_bug.cgi?id=168319
+
+        Reviewed by Youenn Fablet.
+
+        Added ReadableByteStreamController byobRequest attribute.
+
+        Added tests related to ReadableStreamBYOBRequest as a dedicated object
+        and also as an attribute of ReadableByteStreamController.
+
+        * CMakeLists.txt: Added new files.
+        * DerivedSources.cpp: Added new files.
+        * DerivedSources.make: Added new files.
+        * Modules/streams/ReadableByteStreamController.idl: Added byobRequest support.
+        * Modules/streams/ReadableByteStreamController.js: Added byobRequest support.
+        * Modules/streams/ReadableByteStreamInternals.js:
+        (privateInitializeReadableStreamBYOBRequest): Added constructor.
+        * Modules/streams/ReadableStreamBYOBRequest.idl: Added.
+        * Modules/streams/ReadableStreamBYOBRequest.js: Added.
+        (respond): Not implemented yet.
+        (respondWithNewView): Not implemented yet.
+        (view): Not implemented yet.
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+        * bindings/js/JSDOMGlobalObject.cpp: Added ReadableStreamBYOBRequest support.
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        (WebCore::JSDOMGlobalObject::finishCreation):
+        (WebCore::JSDOMGlobalObject::visitChildren):
+        * bindings/js/JSReadableStreamPrivateConstructors.cpp: Added ReadableStreamBYOBRequest support.
+        (WebCore::constructJSReadableByteStreamController):
+        (WebCore::constructJSReadableStreamBYOBRequest):
+        (WebCore::JSBuiltinReadableStreamBYOBRequestPrivateConstructor::initializeExecutable):
+        (WebCore::createReadableStreamBYOBRequestPrivateConstructor):
+        * bindings/js/JSReadableStreamPrivateConstructors.h: Added ReadableStreamBYOBRequest support.
+        * bindings/js/WebCoreBuiltinNames.h: Added ReadableStreamBYOBRequest support.
+
 2017-02-20  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Custom scale factor is not applied in all cases.

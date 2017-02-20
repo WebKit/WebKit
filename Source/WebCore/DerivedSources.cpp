@@ -386,6 +386,7 @@
 #include "JSRange.cpp"
 #include "JSReadableByteStreamController.cpp"
 #include "JSReadableStream.cpp"
+#include "JSReadableStreamBYOBRequest.cpp"
 #include "JSReadableStreamDefaultController.cpp"
 #include "JSReadableStreamDefaultReader.cpp"
 #include "JSRequestAnimationFrameCallback.cpp"
