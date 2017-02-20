@@ -385,7 +385,7 @@ public:
     WTF::SymbolRegistry m_symbolRegistry;
     TemplateRegistryKeyTable m_templateRegistryKeytable;
     CommonIdentifiers* propertyNames;
-    const MarkedArgumentBuffer* emptyList; // Lists are supposed to be allocated on the stack to have their elements properly marked, which is not the case here - but this list has nothing to mark.
+    const ArgList* emptyList;
     SmallStrings smallStrings;
     NumericStrings numericStrings;
     DateInstanceCache dateInstanceCache;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,13 @@
 #pragma once
 
 #include "Register.h"
+#include <wtf/ForbidHeapAllocation.h>
 
 namespace JSC {
 
 struct JS_EXPORT_PRIVATE ProtoCallFrame {
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
     Register codeBlockValue;
     Register calleeValue;
     Register argCountAndCodeOriginValue;
