@@ -1,0 +1,8 @@
+  
+We should see three changed events.
+
+Saw webglcontextchanged event.
+
+Saw webglcontextchanged event.
+
+Saw webglcontextchanged event.
