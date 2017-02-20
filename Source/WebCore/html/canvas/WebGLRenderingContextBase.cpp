@@ -403,7 +403,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
         attributes.forceSoftwareRenderer = true;
 
     attributes.initialPowerPreference = attributes.powerPreference;
-    if (frame->settings().preferLowPowerWebGLRendering())
+    if (frame->settings().forceWebGLUsesLowPower())
         attributes.powerPreference = GraphicsContext3DPowerPreference::LowPower;
 
     if (page)
