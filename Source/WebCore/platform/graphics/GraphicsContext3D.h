@@ -1130,6 +1130,9 @@ public:
     void forceContextLost();
     void recycleContext();
 
+    void dispatchContextChangedNotification();
+    void simulateContextChanged();
+
     void paintRenderingResultsToCanvas(ImageBuffer*);
     RefPtr<ImageData> paintRenderingResultsToImageData();
     bool paintCompositedResultsToCanvas(ImageBuffer*);
@@ -1422,7 +1425,8 @@ private:
 
     friend class GraphicsContext3DPrivate;
     std::unique_ptr<GraphicsContext3DPrivate> m_private;
-    
+
+    // FIXME: Layering violation.
     WebGLRenderingContextBase* m_webglContext;
 
     bool m_isForWebGL2 { false };

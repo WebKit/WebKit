@@ -1,5 +1,21 @@
 2017-02-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212650. rdar://problem/30604254
+
+    2017-02-20  Jon Lee  <jonlee@apple.com>
+
+            Unreviewed, rolling out r212639.
+
+            Have a fix for the linker error on iOS.
+
+            Reverted changeset:
+
+            "Unreviewed, rolling out r212637."
+            https://bugs.webkit.org/show_bug.cgi?id=168595
+            http://trac.webkit.org/changeset/212639
+
+2017-02-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212633. rdar://problem/30592266
 
     2017-02-19  Dean Jackson  <dino@apple.com>

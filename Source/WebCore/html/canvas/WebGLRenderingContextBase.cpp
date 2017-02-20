@@ -5771,6 +5771,17 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     canvas().dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, false, true, emptyString()));
 }
 
+void WebGLRenderingContextBase::dispatchContextChangedEvent()
+{
+    canvas().dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextchangedEvent, false, true, emptyString()));
+}
+
+void WebGLRenderingContextBase::simulateContextChanged()
+{
+    if (m_context)
+        m_context->simulateContextChanged();
+}
+
 String WebGLRenderingContextBase::ensureNotNull(const String& text) const
 {
     if (text.isNull())

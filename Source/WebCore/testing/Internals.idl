@@ -508,4 +508,6 @@ enum EventThrottlingBehavior {
     [CallWith=Document] void setAsRunningUserScripts();
 
     void disableTileSizeUpdateDelay();
+
+    [Conditional=WEBGL] void simulateWebGLContextChanged(WebGLRenderingContextBase context);
 };

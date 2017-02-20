@@ -189,8 +189,10 @@ static void displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlag
 void GraphicsContext3DManager::updateAllContexts()
 {
 #if PLATFORM(MAC)
-    for (auto* context : m_contexts)
+    for (auto* context : m_contexts) {
         context->updateCGLContext();
+        context->dispatchContextChangedNotification();
+    }
 #endif
 }
 
@@ -718,6 +720,11 @@ void GraphicsContext3D::setContextLostCallback(std::unique_ptr<ContextLostCallba
 
 void GraphicsContext3D::setErrorMessageCallback(std::unique_ptr<ErrorMessageCallback>)
 {
+}
+
+void GraphicsContext3D::simulateContextChanged()
+{
+    manager().updateAllContexts();
 }
 
 }

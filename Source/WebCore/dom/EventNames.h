@@ -241,6 +241,7 @@ namespace WebCore {
     macro(volumechange) \
     macro(waiting) \
     macro(waitingforkey) \
+    macro(webglcontextchanged) \
     macro(webglcontextcreationerror) \
     macro(webglcontextlost) \
     macro(webglcontextrestored) \
