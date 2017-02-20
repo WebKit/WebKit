@@ -1,5 +1,20 @@
 2017-02-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211750. rdar://problem/30383964
+
+    2017-02-06  Simon Fraser  <simon.fraser@apple.com>
+
+            Safari pages are blank sometimes (missing tiles)
+            https://bugs.webkit.org/show_bug.cgi?id=167904
+
+            Reviewed by Tim Horton.
+
+            New result; this test detected the bug.
+
+            * tiled-drawing/tiled-backing-in-window-expected.txt:
+
+2017-02-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212650. rdar://problem/30604254
 
     2017-02-20  Jon Lee  <jonlee@apple.com>

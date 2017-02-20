@@ -1,5 +1,42 @@
 2017-02-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r211750. rdar://problem/30383964
+
+    2017-02-06  Simon Fraser  <simon.fraser@apple.com>
+
+            Safari pages are blank sometimes (missing tiles)
+            https://bugs.webkit.org/show_bug.cgi?id=167904
+
+            Reviewed by Tim Horton.
+
+            After r211683 we failed to udpate the "inWindow" flag on the page tiled layer, because
+            usingTiledBacking() on GraphicsLayer confusingly was false for the page tiled layer.
+
+            Fix by removing usingTiledBacking() entirely, and checking for tiledBacking(),
+            looking at the layer type when necessary.
+
+            Tested by tiled-drawing/tiled-backing-in-window.html
+
+            * platform/graphics/GraphicsLayer.cpp:
+            (WebCore::GraphicsLayer::GraphicsLayer):
+            (WebCore::GraphicsLayer::setIsInWindowIncludingDescendants): This is the bug fix.
+            (WebCore::GraphicsLayer::getDebugBorderInfo):
+            (WebCore::GraphicsLayer::dumpProperties):
+            * platform/graphics/GraphicsLayer.h:
+            (WebCore::GraphicsLayer::usingTiledBacking): Deleted.
+            * platform/graphics/ca/GraphicsLayerCA.cpp:
+            (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+            (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+            (WebCore::GraphicsLayerCA::changeLayerTypeTo):
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::willDestroyLayer):
+            (WebCore::RenderLayerBacking::compositingLayerType):
+            * rendering/RenderLayerCompositor.cpp: A bit more logging.
+            (WebCore::RenderLayerCompositor::setIsInWindow):
+            (WebCore::RenderLayerCompositor::attachRootLayer):
+
+2017-02-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212651. rdar://problem/30604254
 
     2017-02-20  Jon Lee  <jonlee@apple.com>

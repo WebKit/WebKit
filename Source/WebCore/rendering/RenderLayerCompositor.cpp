@@ -2060,6 +2060,8 @@ GraphicsLayer* RenderLayerCompositor::footerLayer() const
 
 void RenderLayerCompositor::setIsInWindow(bool isInWindow)
 {
+    LOG(Compositing, "RenderLayerCompositor %p setIsInWindow %d", this, isInWindow);
+
     if (!inCompositingMode())
         return;
 
@@ -3477,6 +3479,8 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
 {
     if (!m_rootContentLayer)
         return;
+
+    LOG(Compositing, "RenderLayerCompositor %p attachRootLayer %d", this, attachment);
 
     switch (attachment) {
         case RootLayerUnattached:

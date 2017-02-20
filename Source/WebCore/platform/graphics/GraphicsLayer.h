@@ -540,7 +540,6 @@ public:
     // Return an estimate of the backing store memory cost (in bytes). May be incorrect for tiled layers.
     WEBCORE_EXPORT virtual double backingStoreMemoryEstimate() const;
 
-    bool usingTiledBacking() const { return m_usingTiledBacking; }
     virtual TiledBacking* tiledBacking() const { return 0; }
 
     void resetTrackedRepaints();
@@ -631,7 +630,6 @@ protected:
     bool m_contentsOpaque : 1;
     bool m_preserves3D: 1;
     bool m_backfaceVisibility : 1;
-    bool m_usingTiledBacking : 1;
     bool m_masksToBounds : 1;
     bool m_drawsContent : 1;
     bool m_contentsVisible : 1;
