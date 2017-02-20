@@ -93,7 +93,7 @@ void WebDragClient::startDrag(DragImage image, const IntPoint& point, const IntP
     m_page->willStartDrag();
 
     // FIXME: Seems this message should be named StartDrag, not SetDragImage.
-    m_page->send(Messages::WebPageProxy::SetDragImage(frame.view()->contentsToWindow(point), handle, { }, dragSourceAction == DragSourceActionLink));
+    m_page->send(Messages::WebPageProxy::SetDragImage(frame.view()->contentsToWindow(point), handle, std::nullopt, { }, dragSourceAction));
 }
 
 static WebCore::CachedImage* cachedImage(Element& element)

@@ -1441,7 +1441,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     [self ensurePositionInformationIsUpToDate:request];
 
 #if ENABLE(DATA_INTERACTION)
-    if (_positionInformation.hasDataInteractionAtPosition) {
+    if (_positionInformation.hasSelectionAtPosition) {
         // If the position might initiate a data interaction, we don't want to consider the content at this position to be selectable.
         // FIXME: This should be renamed to something more precise, such as textSelectionShouldRecognizeGestureAtPoint:
         return NO;
@@ -1461,14 +1461,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (_positionInformation.isImage || _positionInformation.isLink)
         return YES;
 
-    return _positionInformation.hasDataInteractionAtPosition;
+    return _positionInformation.hasSelectionAtPosition;
 }
 
 - (UILongPressGestureRecognizer *)_dataInteractionGestureRecognizer
 {
-    if ([_webView._testingDelegate respondsToSelector:@selector(dataInteractionGestureRecognizer)])
-        return _webView._testingDelegate.dataInteractionGestureRecognizer;
-
     return _dataInteractionGestureRecognizer.get();
 }
 
@@ -1487,7 +1484,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     [self ensurePositionInformationIsUpToDate:request];
 
 #if ENABLE(DATA_INTERACTION)
-    if (_positionInformation.hasDataInteractionAtPosition) {
+    if (_positionInformation.hasSelectionAtPosition) {
         // If the position might initiate data interaction, we don't want to change the selection.
         // FIXME: This should be renamed to something more precise, such as textInteractionShouldRecognizeGestureAtPoint:
         return NO;

@@ -875,7 +875,10 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         }
         m_client.willPerformDragSourceAction(DragSourceActionSelection, dragOrigin, dataTransfer);
         if (!dragImage) {
-            dragImage = DragImage { dissolveDragImageToFraction(createDragImageForSelection(src), DragImageAlpha) };
+            TextIndicatorData textIndicator;
+            dragImage = DragImage { dissolveDragImageToFraction(createDragImageForSelection(src, textIndicator), DragImageAlpha) };
+            if (textIndicator.contentImage)
+                dragImage.setIndicatorData(textIndicator);
             dragLoc = dragLocForSelectionDrag(src);
             dragImageAnchorPoint = dragImageAnchorPointForSelectionDrag(src, mouseDraggedPoint);
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
@@ -956,11 +959,14 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
         m_client.willPerformDragSourceAction(DragSourceActionLink, dragOrigin, dataTransfer);
         if (!dragImage) {
-            dragImage = DragImage { createDragImageForLink(linkURL, hitTestResult.textContent(), src.settings().fontRenderingMode()) };
+            TextIndicatorData textIndicator;
+            dragImage = DragImage { createDragImageForLink(element, linkURL, hitTestResult.textContent(), textIndicator, src.settings().fontRenderingMode(), m_page.deviceScaleFactor()) };
             IntSize size = dragImageSize(dragImage.get());
             m_dragOffset = IntPoint(-size.width() / 2, -LinkDragBorderInset);
             dragLoc = IntPoint(mouseDraggedPoint.x() + m_dragOffset.x(), mouseDraggedPoint.y() + m_dragOffset.y());
             dragImage = DragImage { platformAdjustDragImageForDeviceScaleFactor(dragImage.get(), m_page.deviceScaleFactor()) };
+            if (textIndicator.contentImage)
+                dragImage.setIndicatorData(textIndicator);
         }
         doSystemDrag(WTFMove(dragImage), dragLoc, mouseDraggedPoint, { }, dataTransfer, src, DragSourceActionLink);
 
@@ -978,7 +984,10 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         m_client.willPerformDragSourceAction(DragSourceActionAttachment, dragOrigin, dataTransfer);
         
         if (!dragImage) {
-            dragImage = DragImage { dissolveDragImageToFraction(createDragImageForSelection(src), DragImageAlpha) };
+            TextIndicatorData textIndicator;
+            dragImage = DragImage { dissolveDragImageToFraction(createDragImageForSelection(src, textIndicator), DragImageAlpha) };
+            if (textIndicator.contentImage)
+                dragImage.setIndicatorData(textIndicator);
             dragLoc = dragLocForSelectionDrag(src);
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }

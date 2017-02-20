@@ -19,7 +19,11 @@
 #include "config.h"
 #include "DragImage.h"
 
+#include "Element.h"
 #include "Image.h"
+#include "TextFlags.h"
+#include "TextIndicator.h"
+#include "URL.h"
 #include <cairo.h>
 #include <gdk/gdk.h>
 
@@ -84,6 +88,11 @@ DragImageRef createDragImageFromImage(Image* image, ImageOrientationDescription)
 }
 
 DragImageRef createDragImageIconForCachedImageFilename(const String&)
+{
+    return nullptr;
+}
+
+DragImageRef createDragImageForLink(Element&, URL&, const String&, TextIndicatorData&, FontRenderingMode, float)
 {
     return nullptr;
 }

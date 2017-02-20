@@ -269,10 +269,10 @@ void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& type
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
-void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& dragImageHandle, const FloatPoint&, bool isLinkDrag)
+void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& dragImageHandle, std::optional<TextIndicatorData>, const FloatPoint&, uint64_t action)
 {
     if (auto dragImage = ShareableBitmap::create(dragImageHandle))
-        m_pageClient.setDragImage(clientPosition, WTFMove(dragImage), isLinkDrag);
+        m_pageClient.setDragImage(clientPosition, WTFMove(dragImage), static_cast<DragSourceAction>(action));
 
     process().send(Messages::WebPage::DidStartDrag(), m_pageID);
 }

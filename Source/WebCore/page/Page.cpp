@@ -2191,7 +2191,7 @@ void Page::accessibilitySettingsDidChange()
 
 #if ENABLE(DATA_INTERACTION)
 
-bool Page::hasDataInteractionAtPosition(const FloatPoint& position) const
+bool Page::hasSelectionAtPosition(const FloatPoint& position) const
 {
     auto currentSelection = m_mainFrame->selection().selection();
     if (!currentSelection.isRange())

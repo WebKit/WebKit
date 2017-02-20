@@ -30,6 +30,7 @@
 
 #import "BitmapImage.h"
 #import "CoreGraphicsSPI.h"
+#import "Element.h"
 #import "FontCascade.h"
 #import "FontDescription.h"
 #import "FontSelector.h"
@@ -37,6 +38,7 @@
 #import "Image.h"
 #import "URL.h"
 #import "StringTruncator.h"
+#import "TextIndicator.h"
 #import "TextRun.h"
 #import <wtf/NeverDestroyed.h>
 
@@ -265,7 +267,7 @@ static void drawDoubledAtPoint(NSString *string, NSPoint textPoint, NSColor *top
         drawAtPoint(string, textPoint, font, topColor);
 }
 
-DragImageRef createDragImageForLink(URL& url, const String& title, FontRenderingMode)
+DragImageRef createDragImageForLink(Element&, URL& url, const String& title, TextIndicatorData&, FontRenderingMode, float)
 {
     NSString *label = nsStringNilIfEmpty(title);
     NSURL *cocoaURL = url;

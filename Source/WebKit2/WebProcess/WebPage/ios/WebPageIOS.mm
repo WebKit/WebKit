@@ -2549,7 +2549,7 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
     }
 
 #if ENABLE(DATA_INTERACTION)
-    info.hasDataInteractionAtPosition = m_page->hasDataInteractionAtPosition(adjustedPoint);
+    info.hasSelectionAtPosition = m_page->hasSelectionAtPosition(adjustedPoint);
 #endif
     info.adjustedPointForNodeRespondingToClickEvents = adjustedPoint;
 }

@@ -571,7 +571,7 @@ public:
     bool isUtilityPage() const { return m_isUtilityPage; }
 
 #if ENABLE(DATA_INTERACTION)
-    WEBCORE_EXPORT bool hasDataInteractionAtPosition(const FloatPoint&) const;
+    WEBCORE_EXPORT bool hasSelectionAtPosition(const FloatPoint&) const;
 #endif
 
 private:

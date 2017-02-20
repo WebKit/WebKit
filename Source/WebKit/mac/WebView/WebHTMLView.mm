@@ -2389,7 +2389,8 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
     if (!coreFrame)
         return nil;
 
-    auto dragImage = createDragImageForSelection(*coreFrame);
+    TextIndicatorData textIndicator;
+    auto dragImage = createDragImageForSelection(*coreFrame, textIndicator);
     [dragImage _web_dissolveToFraction:WebDragImageAlpha];
 
     return dragImage.autorelease();
@@ -7373,7 +7374,8 @@ static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
 #if PLATFORM(IOS)
     return selectionImage(coreFrame, forceBlackText);
 #else
-    return createDragImageForSelection(*coreFrame, forceBlackText).autorelease();
+    TextIndicatorData textIndicator;
+    return createDragImageForSelection(*coreFrame, textIndicator, forceBlackText).autorelease();
 #endif
 }
 

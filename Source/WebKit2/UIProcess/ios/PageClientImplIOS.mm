@@ -353,7 +353,7 @@ bool PageClientImpl::executeSavedCommandBySelector(const String&)
     return false;
 }
 
-void PageClientImpl::setDragImage(const IntPoint&, PassRefPtr<ShareableBitmap>, bool)
+void PageClientImpl::setDragImage(const IntPoint&, PassRefPtr<ShareableBitmap>, DragSourceAction)
 {
     notImplemented();
 }
@@ -773,9 +773,9 @@ void PageClientImpl::didHandleStartDataInteractionRequest(bool started)
     [m_contentView _didHandleStartDataInteractionRequest:started];
 }
 
-void PageClientImpl::startDataInteractionWithImage(const IntPoint& clientPosition, const ShareableBitmap::Handle& image, const FloatPoint& anchorPoint, bool isLink)
+void PageClientImpl::startDataInteractionWithImage(const IntPoint& clientPosition, const ShareableBitmap::Handle& image, std::optional<WebCore::TextIndicatorData> indicatorData, const FloatPoint& anchorPoint, uint64_t action)
 {
-    [m_contentView _startDataInteractionWithImage:ShareableBitmap::create(image)->makeCGImageCopy() atClientPosition:CGPointMake(clientPosition.x(), clientPosition.y()) anchorPoint:anchorPoint isLink:isLink];
+    [m_contentView _startDataInteractionWithImage:ShareableBitmap::create(image)->makeCGImageCopy() withIndicatorData:indicatorData atClientPosition:CGPointMake(clientPosition.x(), clientPosition.y()) anchorPoint:anchorPoint action:action];
 }
 #endif
 
