@@ -4538,6 +4538,8 @@
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
 		AD03AAFA1468455300A39B5B /* CSSValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD03AAF81468453900A39B5B /* CSSValue.cpp */; };
 		AD20B18D18E9D237005A8083 /* JSNodeListCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = AD20B18C18E9D216005A8083 /* JSNodeListCustom.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AD412B241E57C766008AF157 /* SplitTestInitializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD412B221E57C6DE008AF157 /* SplitTestInitializer.cpp */; };
+		AD412B251E57C773008AF157 /* SplitTestInitializer.h in Headers */ = {isa = PBXBuildFile; fileRef = AD412B231E57C6DE008AF157 /* SplitTestInitializer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4495F3141FC08900541EDF /* EventListenerMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD4495F1141FC08900541EDF /* EventListenerMap.cpp */; };
 		AD4495F4141FC08900541EDF /* EventListenerMap.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4495F2141FC08900541EDF /* EventListenerMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD49914318F0815100BF0092 /* HTMLUnknownElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AD49914118F0815100BF0092 /* HTMLUnknownElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12291,6 +12293,8 @@
 		ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderMenuList.h; sourceTree = "<group>"; };
 		AD03AAF81468453900A39B5B /* CSSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValue.cpp; sourceTree = "<group>"; };
 		AD20B18C18E9D216005A8083 /* JSNodeListCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNodeListCustom.h; sourceTree = "<group>"; };
+		AD412B221E57C6DE008AF157 /* SplitTestInitializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SplitTestInitializer.cpp; sourceTree = "<group>"; };
+		AD412B231E57C6DE008AF157 /* SplitTestInitializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplitTestInitializer.h; sourceTree = "<group>"; };
 		AD4495F1141FC08900541EDF /* EventListenerMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventListenerMap.cpp; sourceTree = "<group>"; };
 		AD4495F2141FC08900541EDF /* EventListenerMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventListenerMap.h; sourceTree = "<group>"; };
 		AD49914118F0815100BF0092 /* HTMLUnknownElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLUnknownElement.h; sourceTree = "<group>"; };
@@ -22554,6 +22558,8 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				AD412B221E57C6DE008AF157 /* SplitTestInitializer.cpp */,
+				AD412B231E57C6DE008AF157 /* SplitTestInitializer.h */,
 				49E912A40EFAC8E6009D0CAF /* animation */,
 				FD31604012B026A300C1A359 /* audio */,
 				1AE42F670AA4B8CB00C8612D /* cf */,
@@ -28327,6 +28333,7 @@
 				5B30695E18B3D3450099D5E8 /* WebGLDrawBuffers.h in Headers */,
 				6EBF0E5512A8929800DB1709 /* WebGLExtension.h in Headers */,
 				49C7B9CF1042D32F0009D447 /* WebGLFramebuffer.h in Headers */,
+                                AD412B251E57C773008AF157 /* SplitTestInitializer.h in Headers */,
 				6E47E66110B7944B00B186C8 /* WebGLGetInfo.h in Headers */,
 				463763091E26FDD7008CD46D /* CPUTime.h in Headers */,
 				49FFBF3F11C93EE3006A7118 /* WebGLLayer.h in Headers */,
@@ -30924,6 +30931,7 @@
 				1A58E86D1D19E42D00C0EA73 /* PaymentCoordinator.cpp in Sources */,
 				1ADA4A1C1D22F2C0005A9A15 /* PaymentMerchantSessionCocoa.mm in Sources */,
 				1A8A646E1D19FF8700D0E00F /* PaymentMethodCocoa.mm in Sources */,
+				AD412B241E57C766008AF157 /* SplitTestInitializer.cpp in Sources */,
 				1A58E8671D19D80E00C0EA73 /* PaymentRequest.cpp in Sources */,
 				1A8A64671D19FDFF00D0E00F /* PaymentRequestValidator.cpp in Sources */,
 				B27535640B053814002CE64F /* PDFDocumentImage.cpp in Sources */,

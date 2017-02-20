@@ -1,3 +1,23 @@
+2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
+
+        A/B test concurrent GC
+        https://bugs.webkit.org/show_bug.cgi?id=168453
+        <rdar://problem/30553220>
+
+        Landed on behalf of JF Bastien.
+
+        Reviewed by Alexey Proskuryakov.
+
+        Initialize the WTF::SplitTest singleton using the anonymous UUID
+        from crash reporter. This makes it easy to figure out which A/B
+        split tests were enabled from a particular crash log.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/SplitTestInitializer.cpp: Added.
+        (getUUID):
+        (InitWebCoreSplitTest):
+        * platform/SplitTestInitializer.h: Copied from Source/WebKit2/WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm.
+
 2017-02-20  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r212652. rdar://problem/30435303
