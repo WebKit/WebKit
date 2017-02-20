@@ -109,7 +109,6 @@
 .objc_class_name_DOMText
 .objc_class_name_DOMTextEvent
 .objc_class_name_DOMTimeRanges
-.objc_class_name_DOMTokenList
 .objc_class_name_DOMTreeWalker
 .objc_class_name_DOMUIEvent
 .objc_class_name_DOMWheelEvent

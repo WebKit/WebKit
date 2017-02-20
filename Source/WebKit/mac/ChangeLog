@@ -1,3 +1,12 @@
+2017-02-20  Aakash Jain  <aakash_jain@apple.com>
+
+        Stop exporting DOMTokenList from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=168544
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKit.exp:
+
 2017-02-20  Alexey Proskuryakov  <ap@apple.com>
 
         Clean up how WebKit exports _WebCreateFragment
