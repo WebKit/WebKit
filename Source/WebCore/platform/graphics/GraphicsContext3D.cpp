@@ -655,6 +655,12 @@ unsigned GraphicsContext3D::getChannelBitsByFormat(GC3Denum format)
     }
 }
 
+#if !PLATFORM(MAC)
+void GraphicsContext3D::setContextVisibility(bool)
+{
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(GRAPHICS_CONTEXT_3D)

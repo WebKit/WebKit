@@ -1,5 +1,22 @@
 2017-02-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212633. rdar://problem/30592266
+
+    2017-02-19  Dean Jackson  <dino@apple.com>
+
+            Activate/deactivate high performance GPU when requested
+            https://bugs.webkit.org/show_bug.cgi?id=168559
+            <rdar://problem/30592266>
+
+            Reviewed by Jon Lee.
+
+            We no longer force low-power, so the WebGL canvas creation attributes now
+            return the value that was passed in.
+
+            * fast/canvas/webgl/context-creation-attributes-expected.txt:
+
+2017-02-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212621. rdar://problem/30563318
 
     2017-02-18  Ryosuke Niwa  <rniwa@webkit.org>

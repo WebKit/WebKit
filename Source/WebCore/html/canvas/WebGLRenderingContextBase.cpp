@@ -351,6 +351,11 @@ private:
     WebGLRenderingContextBase* m_context;
 };
 
+static bool isHighPerformanceContext(const RefPtr<GraphicsContext3D>& context)
+{
+    return context->powerPreferenceUsedForCreation() == WebGLPowerPreference::HighPerformance;
+}
+
 std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTMLCanvasElement& canvas, WebGLContextAttributes& attributes, const String& type)
 {
 #if ENABLE(WEBGL2)
@@ -403,8 +408,11 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
         attributes.forceSoftwareRenderer = true;
 
     attributes.initialPowerPreference = attributes.powerPreference;
-    if (frame->settings().forceWebGLUsesLowPower())
+    if (frame->settings().forceWebGLUsesLowPower()) {
+        if (attributes.powerPreference == GraphicsContext3DPowerPreference::HighPerformance)
+            LOG(WebGL, "Overriding powerPreference from high-performance to low-power.");
         attributes.powerPreference = GraphicsContext3DPowerPreference::LowPower;
+    }
 
     if (page)
         attributes.devicePixelRatio = page->deviceScaleFactor();
@@ -509,6 +517,8 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCa
     initializeNewContext();
     registerWithWebGLStateTracker();
     m_checkForContextLossHandlingTimer.startOneShot(checkContextLossHandlingDelay);
+
+    addActivityStateChangeObserverIfNecessary();
 }
 
 // We check for context loss handling after a few seconds to give the JS a chance to register the event listeners
@@ -637,6 +647,31 @@ void WebGLRenderingContextBase::addCompressedTextureFormat(GC3Denum format)
         m_compressedTextureFormats.append(format);
 }
 
+void WebGLRenderingContextBase::addActivityStateChangeObserverIfNecessary()
+{
+    // We are only interested in visibility changes for contexts
+    // that are using the high-performance GPU.
+    if (!isHighPerformanceContext(m_context))
+        return;
+
+    auto* page = canvas().document().page();
+    if (!page)
+        return;
+
+    page->addActivityStateChangeObserver(*this);
+
+    // We won't get a state change right away, so
+    // make sure the context knows if it visible or not.
+    if (m_context)
+        m_context->setContextVisibility(page->isVisible());
+}
+
+void WebGLRenderingContextBase::removeActivityStateChangeObserver()
+{
+    if (auto* page = canvas().document().page())
+        page->removeActivityStateChangeObserver(*this);
+}
+
 WebGLRenderingContextBase::~WebGLRenderingContextBase()
 {
     // Remove all references to WebGLObjects so if they are the last reference
@@ -668,6 +703,8 @@ void WebGLRenderingContextBase::destroyGraphicsContext3D()
 {
     if (m_isPendingPolicyResolution)
         return;
+
+    removeActivityStateChangeObserver();
 
     if (m_context) {
         m_context->setContextLostCallback(nullptr);
@@ -5726,6 +5763,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     }
 
     m_context = context;
+    addActivityStateChangeObserverIfNecessary();
     m_contextLost = false;
     setupFlags();
     initializeNewContext();
@@ -5967,6 +6005,16 @@ void WebGLRenderingContextBase::vertexAttribDivisor(GC3Duint index, GC3Duint div
     m_context->vertexAttribDivisor(index, divisor);
 }
 
+
+void WebGLRenderingContextBase::activityStateDidChange(ActivityState::Flags oldActivityState, ActivityState::Flags newActivityState)
+{
+    if (!m_context)
+        return;
+
+    ActivityState::Flags changed = oldActivityState ^ newActivityState;
+    if (changed & ActivityState::IsVisible)
+        m_context->setContextVisibility(newActivityState & ActivityState::IsVisible);
+}
 
 } // namespace WebCore
 

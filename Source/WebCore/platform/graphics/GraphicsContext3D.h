@@ -1140,6 +1140,9 @@ public:
 #if PLATFORM(MAC)
     void updateCGLContext();
 #endif
+    void setContextVisibility(bool);
+
+    GraphicsContext3DPowerPreference powerPreferenceUsedForCreation() const { return m_powerPreferenceUsedForCreation; }
 
     // Support for buffer creation and deletion
     Platform3DObject createBuffer();
@@ -1377,6 +1380,7 @@ private:
     friend class Extensions3DOpenGLCommon;
 
     GraphicsContext3DAttributes m_attrs;
+    GraphicsContext3DPowerPreference m_powerPreferenceUsedForCreation { GraphicsContext3DPowerPreference::Default };
     RenderStyle m_renderStyle;
     Vector<Vector<float>> m_vertexArray;
 

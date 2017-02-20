@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "ActivityStateChangeObserver.h"
 #include "CanvasRenderingContext.h"
 #include "GraphicsContext3D.h"
 #include "ImageBuffer.h"
@@ -107,7 +108,7 @@ inline bool clip2D(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height,
     return (*clippedX != x || *clippedY != y || *clippedWidth != width || *clippedHeight != height);
 }
 
-class WebGLRenderingContextBase : public CanvasRenderingContext, public ActiveDOMObject {
+class WebGLRenderingContextBase : public CanvasRenderingContext, private ActivityStateChangeObserver, public ActiveDOMObject {
 public:
     static std::unique_ptr<WebGLRenderingContextBase> create(HTMLCanvasElement&, WebGLContextAttributes&, const String&);
     virtual ~WebGLRenderingContextBase();
@@ -367,6 +368,9 @@ protected:
 
     void destroyGraphicsContext3D();
     void markContextChanged();
+
+    void addActivityStateChangeObserverIfNecessary();
+    void removeActivityStateChangeObserver();
 
     // Query whether it is built on top of compliant GLES2 implementation.
     bool isGLES2Compliant() { return m_isGLES2Compliant; }
@@ -804,6 +808,8 @@ private:
     bool validateArrayBufferType(const char* functionName, GC3Denum type, std::optional<JSC::TypedArrayType>);
     void registerWithWebGLStateTracker();
     void checkForContextLossHandling();
+
+    void activityStateDidChange(ActivityState::Flags oldActivityState, ActivityState::Flags newActivityState) override;
 
     WebGLStateTracker::Token m_trackerToken;
     Timer m_checkForContextLossHandlingTimer;
