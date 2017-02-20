@@ -1,3 +1,16 @@
+2017-02-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r212632.
+
+        This change appears to have caused API test failures.
+
+        Reverted changeset:
+
+        "Reduce platform ifdefs in WebKit2 custom protocols
+        implementation"
+        https://bugs.webkit.org/show_bug.cgi?id=165028
+        http://trac.webkit.org/changeset/212632
+
 2017-02-20  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Fix some memory leaks in libwebrtc binding code

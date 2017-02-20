@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
@@ -28,6 +27,10 @@
 #include "WebProcessPool.h"
 #include <WebCore/ResourceRequest.h>
 
+#if PLATFORM(GTK)
+#include <WebCore/ErrorsGtk.h>
+#endif
+
 namespace WebKit {
 
 CustomProtocolManagerProxy::CustomProtocolManagerProxy(ChildProcessProxy* childProcessProxy, WebProcessPool& processPool)
@@ -43,9 +46,15 @@ CustomProtocolManagerProxy::~CustomProtocolManagerProxy()
     m_childProcessProxy->removeMessageReceiver(Messages::CustomProtocolManagerProxy::messageReceiverName());
 }
 
+void CustomProtocolManagerProxy::processDidClose()
+{
+    m_processPool.customProtocolManagerClient().invalidate(*this);
+}
+
 void CustomProtocolManagerProxy::startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest& request)
 {
-    m_processPool.customProtocolManagerClient().startLoading(*this, customProtocolID, request);
+    if (!m_processPool.customProtocolManagerClient().startLoading(*this, customProtocolID, request))
+        didFailWithError(customProtocolID, WebCore::cannotShowURLError(request));
 }
 
 void CustomProtocolManagerProxy::stopLoading(uint64_t customProtocolID)
@@ -53,19 +62,9 @@ void CustomProtocolManagerProxy::stopLoading(uint64_t customProtocolID)
     m_processPool.customProtocolManagerClient().stopLoading(*this, customProtocolID);
 }
 
-void CustomProtocolManagerProxy::processDidClose()
+void CustomProtocolManagerProxy::didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse& response)
 {
-    m_processPool.customProtocolManagerClient().invalidate(*this);
-}
-
-void CustomProtocolManagerProxy::wasRedirectedToRequest(uint64_t customProtocolID, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
-{
-    m_childProcessProxy->send(Messages::CustomProtocolManager::WasRedirectedToRequest(customProtocolID, request, redirectResponse), 0);
-}
-
-void CustomProtocolManagerProxy::didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse& response, uint32_t cacheStoragePolicy)
-{
-    m_childProcessProxy->send(Messages::CustomProtocolManager::DidReceiveResponse(customProtocolID, response, cacheStoragePolicy), 0);
+    m_childProcessProxy->send(Messages::CustomProtocolManager::DidReceiveResponse(customProtocolID, response, 0), 0);
 }
 
 void CustomProtocolManagerProxy::didLoadData(uint64_t customProtocolID, const IPC::DataReference& data)

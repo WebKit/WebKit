@@ -36,9 +36,10 @@ public:
     }
 
 private:
-    void startLoading(CustomProtocolManagerProxy& manager, uint64_t customProtocolID, const ResourceRequest& request) override
+    bool startLoading(CustomProtocolManagerProxy& manager, uint64_t customProtocolID, const ResourceRequest& request) override
     {
         webkitWebContextStartLoadingCustomProtocol(m_webContext, customProtocolID, request, manager);
+        return true;
     }
 
     void stopLoading(CustomProtocolManagerProxy&, uint64_t customProtocolID) override

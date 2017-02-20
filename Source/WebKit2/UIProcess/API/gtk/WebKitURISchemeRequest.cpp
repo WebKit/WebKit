@@ -193,7 +193,7 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
         // First chunk read. In case of empty reply an empty API::Data is sent to the networking process.
         ResourceResponse response(URL(URL(), String::fromUTF8(priv->uri)), String::fromUTF8(priv->mimeType.data()),
             priv->streamLength, emptyString());
-        priv->manager->didReceiveResponse(priv->requestID, response, 0);
+        priv->manager->didReceiveResponse(priv->requestID, response);
         priv->manager->didLoadData(priv->requestID, webData);
     } else if (bytesRead || (!bytesRead && !priv->streamLength)) {
         // Subsequent chunk read. We only send an empty API::Data to the networking process when stream length is unknown.

@@ -420,8 +420,6 @@ set(WebKit2_SOURCES
 
     UIProcess/Launcher/ProcessLauncher.cpp
 
-    UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.cpp
-
     UIProcess/Network/NetworkProcessProxy.cpp
 
     UIProcess/Notifications/NotificationPermissionRequest.cpp

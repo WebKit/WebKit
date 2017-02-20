@@ -41,7 +41,7 @@ class CustomProtocolManagerClient {
 public:
     virtual ~CustomProtocolManagerClient() { }
 
-    virtual void startLoading(WebKit::CustomProtocolManagerProxy&, uint64_t /* customProtocolID */, const WebCore::ResourceRequest&) { }
+    virtual bool startLoading(WebKit::CustomProtocolManagerProxy&, uint64_t /* customProtocolID */, const WebCore::ResourceRequest&) { return false; }
     virtual void stopLoading(WebKit::CustomProtocolManagerProxy&, uint64_t /* customProtocolID */) { }
 
     virtual void invalidate(WebKit::CustomProtocolManagerProxy&) { }

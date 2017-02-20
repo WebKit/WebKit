@@ -59,11 +59,12 @@ public:
 
     void processDidClose();
 
-    void wasRedirectedToRequest(uint64_t customProtocolID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
-    void didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse&, uint32_t cacheStoragePolicy);
+#if USE(SOUP)
+    void didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse&);
     void didLoadData(uint64_t customProtocolID, const IPC::DataReference&);
     void didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError&);
     void didFinishLoading(uint64_t customProtocolID);
+#endif
 
 private:
     // IPC::MessageReceiver
