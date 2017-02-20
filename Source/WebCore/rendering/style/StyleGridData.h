@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_GRID_LAYOUT)
-
 #include "GridArea.h"
 #include "GridTrackSize.h"
 #include "RenderStyleConstants.h"
@@ -110,5 +108,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_GRID_LAYOUT)

@@ -176,9 +176,6 @@ my @features = (
     { option => "css-device-adaptation", desc => "Toggle CSS Device Adaptation support",
       define => "ENABLE_CSS_DEVICE_ADAPTATION", default => 0, value => \$cssDeviceAdaptation },
 
-    { option => "css-grid-layout", desc => "Toggle CSS Grid Layout support",
-      define => "ENABLE_CSS_GRID_LAYOUT", default => 1, value => \$cssGridLayoutSupport },
-
     { option => "css-image-orientation", desc => "Toggle CSS image-orientation support",
       define => "ENABLE_CSS_IMAGE_ORIENTATION", default => (isEfl() || isGtk()), value => \$cssImageOrientationSupport },
 

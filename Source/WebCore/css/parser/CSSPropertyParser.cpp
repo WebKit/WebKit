@@ -2791,7 +2791,6 @@ static RefPtr<CSSPrimitiveValue> consumeBackgroundSize(CSSPropertyID property, C
     return createPrimitiveValuePair(horizontal.releaseNonNull(), vertical.releaseNonNull(), property == CSSPropertyWebkitBackgroundSize ? Pair::IdenticalValueEncoding::Coalesce : Pair::IdenticalValueEncoding::DoNotCoalesce);
 }
 
-#if ENABLE(CSS_GRID_LAYOUT)
 static RefPtr<CSSValueList> consumeGridAutoFlow(CSSParserTokenRange& range)
 {
     RefPtr<CSSPrimitiveValue> rowOrColumnValue = consumeIdent<CSSValueRow, CSSValueColumn>(range);
@@ -2808,7 +2807,6 @@ static RefPtr<CSSValueList> consumeGridAutoFlow(CSSParserTokenRange& range)
         parsedValues->append(denseAlgorithm.releaseNonNull());
     return parsedValues;
 }
-#endif
 
 static RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
 {
@@ -2879,7 +2877,6 @@ static RefPtr<CSSValue> consumeCommaSeparatedBackgroundComponent(CSSPropertyID p
     return result;
 }
 
-#if ENABLE(CSS_GRID_LAYOUT)
 static RefPtr<CSSPrimitiveValue> consumeSelfPositionKeyword(CSSParserTokenRange& range)
 {
     CSSValueID id = range.peek().id();
@@ -3300,7 +3297,6 @@ static RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange& range)
     ASSERT(columnCount);
     return CSSGridTemplateAreasValue::create(gridAreaMap, rowCount, columnCount);
 }
-#endif
 
 #if ENABLE(CSS_REGIONS)
 static RefPtr<CSSValue> consumeFlowProperty(CSSParserTokenRange& range)
@@ -3794,11 +3790,9 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyWebkitAnimationTrigger:
 #endif
         return consumeAnimationPropertyList(property, m_range, m_context);
-#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyGridColumnGap:
     case CSSPropertyGridRowGap:
         return consumeLength(m_range, m_context.mode, ValueRangeNonNegative);
-#endif
     case CSSPropertyShapeMargin:
         return consumeLengthOrPercent(m_range, m_context.mode, ValueRangeNonNegative);
     case CSSPropertyShapeImageThreshold:
@@ -4012,7 +4006,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyWebkitMaskRepeatX:
     case CSSPropertyWebkitMaskRepeatY:
         return nullptr;
-#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyAlignItems:
         if (!m_context.cssGridLayoutEnabled)
             return nullptr;
@@ -4051,7 +4044,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         if (!m_context.cssGridLayoutEnabled)
             return nullptr;
         return consumeGridAutoFlow(m_range);
-#endif
 #if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitFlowInto:
     case CSSPropertyWebkitFlowFrom:
@@ -4995,7 +4987,6 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
     return true;
 }
 
-#if ENABLE(CSS_GRID_LAYOUT)
 // FIXME-NEWPARSER: Hack to work around the fact that we aren't using CSSCustomIdentValue
 // for stuff yet. This can be replaced by CSSValue::isCustomIdentValue() once we switch
 // to using CSSCustomIdentValue everywhere.
@@ -5262,7 +5253,6 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
     
     return true;
 }
-#endif
 
 bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
 {
@@ -5425,7 +5415,6 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeTransformOrigin(important);
     case CSSPropertyPerspectiveOrigin:
         return consumePerspectiveOrigin(important);
-#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyGridGap: {
         RefPtr<CSSValue> rowGap = consumeLength(m_range, m_context.mode, ValueRangeNonNegative);
         RefPtr<CSSValue> columnGap = consumeLength(m_range, m_context.mode, ValueRangeNonNegative);
@@ -5446,7 +5435,6 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeGridTemplateShorthand(CSSPropertyGridTemplate, important);
     case CSSPropertyGrid:
         return consumeGridShorthand(important);
-#endif
     case CSSPropertyWebkitMarquee:
         return consumeShorthandGreedily(webkitMarqueeShorthand(), important);
     default:

@@ -214,14 +214,8 @@
                 "-webkit-inline-flex",
                 "contents",
                 "none",
-                {
-                    "value": "grid",
-                    "enable-if": "ENABLE_CSS_GRID_LAYOUT"
-                },
-                {
-                    "value": "inline-grid",
-                    "enable-if": "ENABLE_CSS_GRID_LAYOUT"
-                }
+                "grid",
+                "inline-grid"
             ],
             "codegen-properties": {
                 "custom": "Inherit|Value",
@@ -3078,8 +3072,7 @@
         "justify-self": {
             "codegen-properties": {
                 "initial": "initialSelfAlignment",
-                "converter": "SelfOrDefaultAlignmentData",
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                "converter": "SelfOrDefaultAlignmentData"
             }
         },
         "justify-items": {
@@ -3088,8 +3081,7 @@
                     "-webkit-justify-items"
                 ],
                 "initial": "initialSelfAlignment",
-                "converter": "SelfOrDefaultAlignmentData",
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                "converter": "SelfOrDefaultAlignmentData"
             }
         },
         "grid": {
@@ -3103,8 +3095,7 @@
                     "grid-auto-columns",
                     "grid-column-gap",
                     "grid-row-gap"
-                ],
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                ]
             }
         },
         "grid-area": {
@@ -3114,41 +3105,35 @@
                     "grid-column-start",
                     "grid-row-end",
                     "grid-column-end"
-                ],
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                ]
             }
         },
         "grid-auto-columns": {
             "codegen-properties": {
-                "converter": "GridTrackSizeList",
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                "converter": "GridTrackSizeList"
             }
         },
         "grid-auto-rows": {
             "codegen-properties": {
-                "converter": "GridTrackSizeList",
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                "converter": "GridTrackSizeList"
             }
         },
         "grid-column-end": {
             "codegen-properties": {
                 "name-for-methods": "GridItemColumnEnd",
-                "conditional-converter": "GridPosition",
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                "conditional-converter": "GridPosition"
             }
         },
         "grid-column-gap": {
             "codegen-properties": {
                 "initial": "initialZeroLength",
-                "converter": "Length",
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                "converter": "Length"
             }
         },
         "grid-column-start": {
             "codegen-properties": {
                 "name-for-methods": "GridItemColumnStart",
-                "conditional-converter": "GridPosition",
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                "conditional-converter": "GridPosition"
             }
         },
         "grid-template": {
@@ -3157,41 +3142,35 @@
                     "grid-template-rows",
                     "grid-template-columns",
                     "grid-template-areas"
-                ],
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                ]
             }
         },
         "grid-template-columns": {
             "codegen-properties": {
-                "custom": "All",
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                "custom": "All"
             }
         },
         "grid-template-rows": {
             "codegen-properties": {
-                "custom": "All",
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                "custom": "All"
             }
         },
         "grid-row-end": {
             "codegen-properties": {
                 "name-for-methods": "GridItemRowEnd",
-                "conditional-converter": "GridPosition",
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                "conditional-converter": "GridPosition"
             }
         },
         "grid-row-gap": {
             "codegen-properties": {
                 "initial": "initialZeroLength",
-                "converter": "Length",
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                "converter": "Length"
             }
         },
         "grid-row-start": {
             "codegen-properties": {
                 "name-for-methods": "GridItemRowStart",
-                "conditional-converter": "GridPosition",
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                "conditional-converter": "GridPosition"
             }
         },
         "grid-column": {
@@ -3199,8 +3178,7 @@
                 "longhands": [
                     "grid-column-start",
                     "grid-column-end"
-                ],
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                ]
             }
         },
         "grid-gap": {
@@ -3208,8 +3186,7 @@
                 "longhands": [
                     "grid-row-gap",
                     "grid-column-gap"
-                ],
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                ]
             }
         },
         "grid-row": {
@@ -3217,20 +3194,17 @@
                 "longhands": [
                     "grid-row-start",
                     "grid-row-end"
-                ],
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                ]
             }
         },
         "grid-template-areas": {
             "codegen-properties": {
-                "custom": "All",
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                "custom": "All"
             }
         },
         "grid-auto-flow": {
             "codegen-properties": {
-                "converter": "GridAutoFlow",
-                "enable-if": "ENABLE_CSS_GRID_LAYOUT"
+                "converter": "GridAutoFlow"
             }
         },
         "-webkit-hyphenate-character": {

@@ -31,8 +31,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_GRID_LAYOUT)
-
 #include "GridPositionsResolver.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
@@ -202,5 +200,3 @@ public:
 typedef HashMap<String, GridArea> NamedGridAreaMap;
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_GRID_LAYOUT)

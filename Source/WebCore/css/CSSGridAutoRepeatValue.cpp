@@ -31,8 +31,6 @@
 #include "config.h"
 #include "CSSGridAutoRepeatValue.h"
 
-#if ENABLE(CSS_GRID_LAYOUT)
-
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -49,5 +47,3 @@ String CSSGridAutoRepeatValue::customCSSText() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_GRID_LAYOUT)

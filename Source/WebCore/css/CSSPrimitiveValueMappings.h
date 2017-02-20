@@ -1379,14 +1379,12 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EDisplay e)
     case WEBKIT_INLINE_FLEX:
         m_value.valueID = CSSValueInlineFlex;
         break;
-#if ENABLE(CSS_GRID_LAYOUT)
     case GRID:
         m_value.valueID = CSSValueGrid;
         break;
     case INLINE_GRID:
         m_value.valueID = CSSValueInlineGrid;
         break;
-#endif
     case NONE:
         m_value.valueID = CSSValueNone;
         break;

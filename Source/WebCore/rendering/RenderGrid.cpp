@@ -27,8 +27,6 @@
 #include "config.h"
 #include "RenderGrid.h"
 
-#if ENABLE(CSS_GRID_LAYOUT)
-
 #include "GridArea.h"
 #include "GridPositionsResolver.h"
 #include "LayoutRepainter.h"
@@ -2714,5 +2712,3 @@ const char* RenderGrid::renderName() const
 }
 
 } // namespace WebCore
-
-#endif /* ENABLE(CSS_GRID_LAYOUT) */

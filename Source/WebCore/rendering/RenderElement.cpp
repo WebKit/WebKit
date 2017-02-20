@@ -76,9 +76,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
 
-#if ENABLE(CSS_GRID_LAYOUT)
 #include "RenderGrid.h"
-#endif
 
 namespace WebCore {
 
@@ -208,11 +206,9 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     case WEBKIT_FLEX:
     case WEBKIT_INLINE_FLEX:
         return createRenderer<RenderFlexibleBox>(element, WTFMove(style));
-#if ENABLE(CSS_GRID_LAYOUT)
     case GRID:
     case INLINE_GRID:
         return createRenderer<RenderGrid>(element, WTFMove(style));
-#endif
     }
     ASSERT_NOT_REACHED();
     return nullptr;

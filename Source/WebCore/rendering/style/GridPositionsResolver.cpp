@@ -31,8 +31,6 @@
 #include "config.h"
 #include "GridPositionsResolver.h"
 
-#if ENABLE(CSS_GRID_LAYOUT)
-
 #include "GridArea.h"
 #include "RenderBox.h"
 #include <cstdlib>
@@ -409,5 +407,3 @@ GridSpan GridPositionsResolver::resolveGridPositionsFromStyle(const RenderStyle&
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_GRID_LAYOUT)

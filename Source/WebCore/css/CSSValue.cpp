@@ -62,11 +62,9 @@
 #include "CSSValueList.h"
 #include "CSSVariableReferenceValue.h"
 
-#if ENABLE(CSS_GRID_LAYOUT)
 #include "CSSGridAutoRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
-#endif
 
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "DeprecatedCSSOMValueList.h"
@@ -168,14 +166,12 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSUnsetValue>(*this, other);
         case RevertClass:
             return compareCSSValues<CSSRevertValue>(*this, other);
-#if ENABLE(CSS_GRID_LAYOUT)
         case GridAutoRepeatClass:
             return compareCSSValues<CSSGridAutoRepeatValue>(*this, other);
         case GridLineNamesClass:
             return compareCSSValues<CSSGridLineNamesValue>(*this, other);
         case GridTemplateAreasClass:
             return compareCSSValues<CSSGridTemplateAreasValue>(*this, other);
-#endif
         case PrimitiveClass:
             return compareCSSValues<CSSPrimitiveValue>(*this, other);
         case ReflectClass:
@@ -264,14 +260,12 @@ String CSSValue::cssText() const
         return downcast<CSSUnsetValue>(*this).customCSSText();
     case RevertClass:
         return downcast<CSSRevertValue>(*this).customCSSText();
-#if ENABLE(CSS_GRID_LAYOUT)
     case GridAutoRepeatClass:
         return downcast<CSSGridAutoRepeatValue>(*this).customCSSText();
     case GridLineNamesClass:
         return downcast<CSSGridLineNamesValue>(*this).customCSSText();
     case GridTemplateAreasClass:
         return downcast<CSSGridTemplateAreasValue>(*this).customCSSText();
-#endif
     case PrimitiveClass:
         return downcast<CSSPrimitiveValue>(*this).customCSSText();
     case ReflectClass:
@@ -373,7 +367,6 @@ void CSSValue::destroy()
     case RevertClass:
         delete downcast<CSSRevertValue>(this);
         return;
-#if ENABLE(CSS_GRID_LAYOUT)
     case GridAutoRepeatClass:
         delete downcast<CSSGridAutoRepeatValue>(this);
         return;
@@ -383,7 +376,6 @@ void CSSValue::destroy()
     case GridTemplateAreasClass:
         delete downcast<CSSGridTemplateAreasValue>(this);
         return;
-#endif
     case PrimitiveClass:
         delete downcast<CSSPrimitiveValue>(this);
         return;

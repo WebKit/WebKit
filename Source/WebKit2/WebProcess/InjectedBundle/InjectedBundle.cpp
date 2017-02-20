@@ -197,10 +197,8 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     if (preference == "WebKitShadowDOMEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(enabled);
 
-#if ENABLE(CSS_GRID_LAYOUT)
     if (preference == "WebKitCSSGridLayoutEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCSSGridLayoutEnabled(enabled);
-#endif
 
     if (preference == "WebKitCustomElementsEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCustomElementsEnabled(enabled);

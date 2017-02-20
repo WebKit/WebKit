@@ -96,9 +96,7 @@ public:
     String charset;
     CSSParserMode mode { HTMLStandardMode };
     bool isHTMLDocument { false };
-#if ENABLE(CSS_GRID_LAYOUT)
     bool cssGridLayoutEnabled { false };
-#endif
 #if ENABLE(TEXT_AUTOSIZING)
     bool textAutosizingEnabled { false };
 #endif
@@ -132,9 +130,7 @@ struct CSSParserContextHash {
             hash ^= StringHash::hash(key.charset);
         unsigned bits = key.isHTMLDocument                  << 0
             & key.isHTMLDocument                            << 1
-#if ENABLE(CSS_GRID_LAYOUT)
             & key.cssGridLayoutEnabled                      << 2
-#endif
 #if ENABLE(TEXT_AUTOSIZING)
             & key.textAutosizingEnabled                     << 3
 #endif

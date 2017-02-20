@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_GRID_LAYOUT)
-
 #include "Grid.h"
 #include "RenderBlock.h"
 
@@ -213,5 +211,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderGrid, isRenderGrid())
-
-#endif // ENABLE(CSS_GRID_LAYOUT)

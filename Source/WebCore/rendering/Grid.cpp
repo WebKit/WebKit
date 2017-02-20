@@ -26,8 +26,6 @@
 #include "config.h"
 #include "Grid.h"
 
-#if ENABLE(CSS_GRID_LAYOUT)
-
 #include "GridArea.h"
 #include "RenderGrid.h"
 
@@ -238,5 +236,3 @@ std::unique_ptr<GridArea> GridIterator::nextEmptyGridArea(unsigned fixedTrackSpa
 }
 
 } // namespace WebCore
-
-#endif  /* ENABLE(CSS_GRID_LAYOUT) */

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_GRID_LAYOUT)
-
 #include "GridPositionsResolver.h"
 #include "OrderIterator.h"
 #include <wtf/HashMap.h>
@@ -129,5 +127,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif  /* ENABLE(CSS_GRID_LAYOUT) */

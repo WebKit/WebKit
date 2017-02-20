@@ -161,10 +161,8 @@ public:
     bool downloadAttributeEnabled() const { return m_isDownloadAttributeEnabled; }
 #endif
 
-#if ENABLE(CSS_GRID_LAYOUT)
     void setCSSGridLayoutEnabled(bool isEnabled) { m_cssGridLayoutEnabled = isEnabled; }
     bool isCSSGridLayoutEnabled() const { return m_cssGridLayoutEnabled; }
-#endif
 
 #if ENABLE(INTERSECTION_OBSERVER)
     void setIntersectionObserverEnabled(bool isEnabled) { m_intersectionObserverEnabled = isEnabled; }
@@ -282,9 +280,7 @@ private:
     bool m_isDownloadAttributeEnabled { false };
 #endif
 
-#if ENABLE(CSS_GRID_LAYOUT)
     bool m_cssGridLayoutEnabled { true };
-#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
     bool m_encryptedMediaAPIEnabled { false };

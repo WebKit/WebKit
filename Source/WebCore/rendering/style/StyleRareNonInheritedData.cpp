@@ -54,10 +54,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 #if ENABLE(FILTERS_LEVEL_2)
     , backdropFilter(StyleFilterData::create())
 #endif
-#if ENABLE(CSS_GRID_LAYOUT)
     , grid(StyleGridData::create())
     , gridItem(StyleGridItemData::create())
-#endif
 #if ENABLE(CSS_SCROLL_SNAP)
     , scrollSnapPort(StyleScrollSnapPort::create())
     , scrollSnapArea(StyleScrollSnapArea::create())
@@ -133,10 +131,8 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
 #if ENABLE(FILTERS_LEVEL_2)
     , backdropFilter(o.backdropFilter)
 #endif
-#if ENABLE(CSS_GRID_LAYOUT)
     , grid(o.grid)
     , gridItem(o.gridItem)
-#endif
 #if ENABLE(CSS_SCROLL_SNAP)
     , scrollSnapPort(o.scrollSnapPort)
     , scrollSnapArea(o.scrollSnapArea)
@@ -239,10 +235,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 #if ENABLE(FILTERS_LEVEL_2)
         && backdropFilter == o.backdropFilter
 #endif
-#if ENABLE(CSS_GRID_LAYOUT)
         && grid == o.grid
         && gridItem == o.gridItem
-#endif
 #if ENABLE(CSS_SCROLL_SNAP)
         && scrollSnapPort == o.scrollSnapPort
         && scrollSnapArea == o.scrollSnapArea

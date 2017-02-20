@@ -98,11 +98,9 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantLigatures);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantNumeric);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantEastAsian);
-#if ENABLE(CSS_GRID_LAYOUT)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateAreas);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateColumns);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateRows);
-#endif // ENABLE(CSS_GRID_LAYOUT)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageOutset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageRepeat);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageSlice);
@@ -1664,7 +1662,6 @@ inline void StyleBuilderCustom::applyValueFontSize(StyleResolver& styleResolver,
     styleResolver.setFontDescription(fontDescription);
 }
 
-#if ENABLE(CSS_GRID_LAYOUT)
 inline void StyleBuilderCustom::applyInitialGridTemplateAreas(StyleResolver& styleResolver)
 {
     styleResolver.style()->setNamedGridArea(RenderStyle::initialNamedGridArea());
@@ -1763,7 +1760,6 @@ inline void StyleBuilderCustom::applyValueGridTemplateRows(StyleResolver& styleR
 
     SET_TRACKS_DATA(tracksData, styleResolver.style(), Row);
 }
-#endif // ENABLE(CSS_GRID_LAYOUT)
 
 void StyleBuilderCustom::applyValueAlt(StyleResolver& styleResolver, CSSValue& value)
 {

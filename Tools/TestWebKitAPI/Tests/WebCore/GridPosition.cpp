@@ -31,7 +31,6 @@ namespace TestWebKitAPI {
 
 TEST(GridPositionTest, GridPositionLimits)
 {
-#if ENABLE(CSS_GRID_LAYOUT)
 
     WebCore::GridPosition gridPosition;
 
@@ -69,7 +68,6 @@ TEST(GridPositionTest, GridPositionLimits)
     gridPosition.setSpanPosition(INT_MIN, "");
     EXPECT_EQ(gridPosition.spanPosition(), -1000000);
 
-#endif // ENABLE(CSS_GRID_LAYOUT)
 }
 
 } // namespace TestWebKitAPI

@@ -1011,11 +1011,7 @@ bool Position::isCandidate() const
     if (is<HTMLHtmlElement>(*m_anchorNode))
         return false;
 
-    if (is<RenderBlockFlow>(*renderer)
-#if ENABLE(CSS_GRID_LAYOUT)
-        || is<RenderGrid>(*renderer)
-#endif
-        || is<RenderFlexibleBox>(*renderer)) {
+    if (is<RenderBlockFlow>(*renderer) || is<RenderGrid>(*renderer) || is<RenderFlexibleBox>(*renderer)) {
         RenderBlock& block = downcast<RenderBlock>(*renderer);
         if (block.logicalHeight() || is<HTMLBodyElement>(*m_anchorNode)) {
             if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(block))

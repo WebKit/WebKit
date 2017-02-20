@@ -1,3 +1,20 @@
+2017-02-20  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Remove compilation flag ENABLE_CSS_GRID_LAYOUT
+        https://bugs.webkit.org/show_bug.cgi?id=167693
+
+        Reviewed by Sergio Villar Senin.
+
+        CSS Grid Layout has been enabled by default in r211415,
+        and Safari 10.1 is shipping it.
+        It seems like a good moment to remove the compilation flag.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmake/tools/vsprops/FeatureDefines.props:
+        * Source/cmake/tools/vsprops/FeatureDefinesCairo.props:
+
 2017-02-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove EFL from Source/cmake

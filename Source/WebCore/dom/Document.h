@@ -383,9 +383,7 @@ public:
 
     static CustomElementNameValidationStatus validateCustomElementName(const AtomicString&);
 
-#if ENABLE(CSS_GRID_LAYOUT)
     bool isCSSGridLayoutEnabled() const;
-#endif
 #if ENABLE(CSS_REGIONS)
     RefPtr<DOMNamedFlowCollection> webkitGetNamedFlows();
 #endif

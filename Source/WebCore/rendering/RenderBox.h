@@ -311,7 +311,6 @@ public:
     void clearOverrideLogicalContentHeight();
     void clearOverrideLogicalContentWidth();
 
-#if ENABLE(CSS_GRID_LAYOUT)
     std::optional<LayoutUnit> overrideContainingBlockContentLogicalWidth() const;
     std::optional<LayoutUnit> overrideContainingBlockContentLogicalHeight() const;
     bool hasOverrideContainingBlockLogicalWidth() const;
@@ -325,7 +324,6 @@ public:
     void setExtraInlineOffset(LayoutUnit);
     void setExtraBlockOffset(LayoutUnit);
     void clearExtraInlineAndBlockOffests();
-#endif
 
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     
@@ -653,10 +651,8 @@ protected:
 private:
     void updateShapeOutsideInfoAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle);
 
-#if ENABLE(CSS_GRID_LAYOUT)
     void updateGridPositionAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle);
     bool isGridItem() const { return parent() && parent()->isRenderGrid(); }
-#endif
 
     bool scrollLayer(ScrollDirection, ScrollGranularity, float multiplier, Element** stopElement);
 

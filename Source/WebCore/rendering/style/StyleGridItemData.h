@@ -30,8 +30,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_GRID_LAYOUT)
-
 #include "GridPosition.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -65,5 +63,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_GRID_LAYOUT)

@@ -317,9 +317,7 @@ private:
 #endif
 
     void adjustRenderStyle(RenderStyle&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element*);
-#if ENABLE(CSS_GRID_LAYOUT)
     std::unique_ptr<GridPosition> adjustNamedGridItemPosition(const NamedGridAreaMap&, const NamedGridLinesMap&, const GridPosition&, GridPositionSide) const;
-#endif
     
     void adjustStyleForInterCharacterRuby();
     

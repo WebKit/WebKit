@@ -208,11 +208,7 @@ RenderStyle RenderStyle::replace(RenderStyle&& newStyle)
 
 bool RenderStyle::isCSSGridLayoutEnabled()
 {
-#if ENABLE(CSS_GRID_LAYOUT)
     return RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled();
-#else
-    return false;
-#endif
 }
 
 static StyleSelfAlignmentData resolvedSelfAlignment(const StyleSelfAlignmentData& value, ItemPosition normalValueBehavior)
@@ -583,11 +579,9 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
             }
         }
 
-#if ENABLE(CSS_GRID_LAYOUT)
         if (m_rareNonInheritedData->grid != other.m_rareNonInheritedData->grid
             || m_rareNonInheritedData->gridItem != other.m_rareNonInheritedData->gridItem)
             return true;
-#endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
         // If regions change, trigger a relayout to re-calc regions.

@@ -177,7 +177,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getShorthandValue(flexShorthand());
     case CSSPropertyFlexFlow:
         return getShorthandValue(flexFlowShorthand());
-#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyGridArea:
         return getShorthandValue(gridAreaShorthand());
     case CSSPropertyGridTemplate:
@@ -188,7 +187,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return getShorthandValue(gridColumnShorthand());
     case CSSPropertyGridRow:
         return getShorthandValue(gridRowShorthand());
-#endif
     case CSSPropertyFont:
         return fontValue();
     case CSSPropertyMargin:

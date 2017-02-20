@@ -1131,14 +1131,10 @@ CustomElementNameValidationStatus Document::validateCustomElementName(const Atom
     return CustomElementNameValidationStatus::Valid;
 }
 
-#if ENABLE(CSS_GRID_LAYOUT)
-
 bool Document::isCSSGridLayoutEnabled() const
 {
     return RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled();
 }
-
-#endif
 
 #if ENABLE(CSS_REGIONS)
 

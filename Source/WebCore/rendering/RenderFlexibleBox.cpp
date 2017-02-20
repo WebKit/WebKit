@@ -1405,11 +1405,7 @@ void RenderFlexibleBox::alignChildren(const Vector<LineContext>& lineContexts)
                 // yet for FlexibleBox.
                 // Defaulting to Stretch for now, as it what most of FlexBox based renders
                 // expect as default.
-#if ENABLE(CSS_GRID_LAYOUT)
                 ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
-#else
-                ASSERT_NOT_REACHED();
-#endif
                 FALLTHROUGH;
             case ItemPositionStretch: {
                 applyStretchAlignmentToChild(*child, lineCrossAxisExtent);
@@ -1445,11 +1441,7 @@ void RenderFlexibleBox::alignChildren(const Vector<LineContext>& lineContexts)
             case ItemPositionRight:
                 // FIXME: https://webkit.org/b/135460 - The extended grammar is not supported
                 // yet for FlexibleBox.
-#if ENABLE(CSS_GRID_LAYOUT)
                 ASSERT(RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled());
-#else
-                ASSERT_NOT_REACHED();
-#endif
                 break;
             default:
                 ASSERT_NOT_REACHED();

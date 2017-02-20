@@ -140,10 +140,8 @@
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicStringHash.h>
 
-#if ENABLE(CSS_GRID_LAYOUT)
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
-#endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
@@ -717,9 +715,7 @@ static EDisplay equivalentBlockDisplay(const RenderStyle& style, const Document&
     case BOX:
     case FLEX:
     case WEBKIT_FLEX:
-#if ENABLE(CSS_GRID_LAYOUT)
     case GRID:
-#endif
         return display;
 
     case LIST_ITEM:
@@ -734,10 +730,8 @@ static EDisplay equivalentBlockDisplay(const RenderStyle& style, const Document&
     case INLINE_FLEX:
     case WEBKIT_INLINE_FLEX:
         return FLEX;
-#if ENABLE(CSS_GRID_LAYOUT)
     case INLINE_GRID:
         return GRID;
-#endif
 
     case INLINE:
     case COMPACT:

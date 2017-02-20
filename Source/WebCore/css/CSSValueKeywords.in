@@ -1330,8 +1330,6 @@ display-p3
 reduce
 no-preference
 
-#if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 // auto-repeat
 auto-fill
 auto-fit
-#endif
