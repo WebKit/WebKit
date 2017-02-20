@@ -26,11 +26,20 @@
 #ifndef GDIUtilties_h
 #define GDIUtilties_h
 
+#include <IntPoint.h>
+
 #include <windows.h>
 
 namespace WebCore {
 
 WEBCORE_EXPORT float deviceScaleFactorForWindow(HWND);
+
+inline LPARAM makeScaledPoint(IntPoint point, float scaleFactor)
+{
+    float inverseScaleFactor = 1.0f / scaleFactor;
+    point.scale(inverseScaleFactor, inverseScaleFactor);
+    return MAKELPARAM(point.x(), point.y());
+}
 
 } // namespace WebCore
 

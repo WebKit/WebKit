@@ -124,12 +124,6 @@ void WKCACFViewLayerTreeHost::contextDidChange()
 
 void WKCACFViewLayerTreeHost::initializeContext(void* userData, PlatformCALayer* layer)
 {
-#if HAVE(CACFLAYER_SETCONTENTSSCALE)
-    float scaleFactor = deviceScaleFactorForWindow(nullptr);
-    CACFLayerSetTransform(layer->platformLayer(), CATransform3DMakeScale(scaleFactor, scaleFactor, 1));
-    CACFLayerSetContentsScale(layer->platformLayer(), scaleFactor);
-#endif
-
     WKCACFViewSetContextUserData(m_view.get(), userData);
     WKCACFViewSetLayer(m_view.get(), layer->platformLayer());
     WKCACFViewSetContextDidChangeCallback(m_view.get(), contextDidChangeCallback, this);
@@ -138,6 +132,14 @@ void WKCACFViewLayerTreeHost::initializeContext(void* userData, PlatformCALayer*
 void WKCACFViewLayerTreeHost::resize()
 {
     m_viewNeedsUpdate = true;
+}
+
+void WKCACFViewLayerTreeHost::setScaleFactor(float scaleFactor)
+{
+#if HAVE(CACFLAYER_SETCONTENTSSCALE)
+    CACFLayerSetTransform(rootLayer()->platformLayer(), CATransform3DMakeScale(scaleFactor, scaleFactor, 1));
+    CACFLayerSetContentsScale(rootLayer()->platformLayer(), scaleFactor);
+#endif
 }
 
 bool WKCACFViewLayerTreeHost::createRenderer()

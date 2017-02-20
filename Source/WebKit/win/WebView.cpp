@@ -1659,7 +1659,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     Frame* targetFrame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : &m_page->focusController().focusedOrMainFrame();
 
     targetFrame->view()->setCursor(pointerCursor());
-    PlatformMouseEvent mouseEvent(m_viewWindow, WM_RBUTTONUP, wParam, lParam);
+    PlatformMouseEvent mouseEvent(m_viewWindow, WM_RBUTTONUP, wParam, makeScaledPoint(IntPoint(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)), deviceScaleFactor()));
     bool handledEvent = targetFrame->eventHandler().sendContextMenuEvent(mouseEvent);
     if (!handledEvent)
         return false;
@@ -1827,7 +1827,7 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
     // Create our event.
     // On WM_MOUSELEAVE we need to create a mouseout event, so we force the position
     // of the event to be at (MINSHORT, MINSHORT).
-    LPARAM position = (message == WM_MOUSELEAVE) ? ((MINSHORT << 16) | MINSHORT) : lParam;
+    LPARAM position = (message == WM_MOUSELEAVE) ? ((MINSHORT << 16) | MINSHORT) : makeScaledPoint(IntPoint(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)), deviceScaleFactor());
     PlatformMouseEvent mouseEvent(m_viewWindow, message, wParam, position, m_mouseActivated);
 
     setMouseActivated(false);
@@ -7160,6 +7160,7 @@ void WebView::setAcceleratedCompositing(bool accelerated)
             ASSERT(m_viewWindow);
             m_layerTreeHost->setWindow(m_viewWindow);
             m_layerTreeHost->setPage(page());
+            m_layerTreeHost->setScaleFactor(deviceScaleFactor());
 
             // FIXME: We could perhaps get better performance by never allowing this layer to
             // become tiled (or choosing a higher-than-normal tiling threshold).
