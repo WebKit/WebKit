@@ -230,13 +230,13 @@ LibWebRTCMediaEndpoint::StatsCollector::StatsCollector(Ref<LibWebRTCMediaEndpoin
 void LibWebRTCMediaEndpoint::StatsCollector::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& report)
 {
     callOnMainThread([protectedThis = rtc::scoped_refptr<LibWebRTCMediaEndpoint::StatsCollector>(this), report] {
-        if (protectedThis->m_endpoint.isStopped())
+        if (protectedThis->m_endpoint->isStopped())
             return;
 
         // FIXME: Fulfill promise with the report
         UNUSED_PARAM(report);
 
-        protectedThis->m_endpoint.m_peerConnectionBackend.getStatsFailed(protectedThis->m_promise, Exception { TypeError, ASCIILiteral("Stats API is not yet implemented") });
+        protectedThis->m_endpoint->m_peerConnectionBackend.getStatsFailed(protectedThis->m_promise, Exception { TypeError, ASCIILiteral("Stats API is not yet implemented") });
     });
 }
 
