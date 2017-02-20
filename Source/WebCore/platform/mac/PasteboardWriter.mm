@@ -33,14 +33,16 @@
 
 namespace WebCore {
 
-RetainPtr<id <NSPasteboardWriting>> createPasteboardWriting(const PasteboardWriterData& data)
+RetainPtr<id <NSPasteboardWriting>> createPasteboardWriter(const PasteboardWriterData& data)
 {
     auto pasteboardItem = adoptNS([[NSPasteboardItem alloc] init]);
 
     if (auto& plainText = data.plainText()) {
         [pasteboardItem setString:plainText->text forType:NSPasteboardTypeString];
-        if (plainText->canSmartCopyOrDelete)
-            [pasteboardItem setData:nil forType:_NXSmartPaste];
+        if (plainText->canSmartCopyOrDelete) {
+            auto smartPasteType = adoptNS((__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)_NXSmartPaste, nullptr));
+            [pasteboardItem setData:nil forType:smartPasteType.get()];
+        }
     }
 
     return pasteboardItem;

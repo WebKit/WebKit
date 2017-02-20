@@ -4691,6 +4691,42 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
     
     return [NSArray arrayWithObject:[path lastPathComponent]];
 }
+
+// MARK: NSDraggingSource
+
+- (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context
+{
+    ASSERT(![self _webView] || [self _isTopHTMLView]);
+
+    Page* page = core([self _webView]);
+    if (!page)
+        return NSDragOperationNone;
+
+    return (NSDragOperation)page->dragController().sourceDragOperation();
+}
+
+- (void)draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation
+{
+    ASSERT(![self _webView] || [self _isTopHTMLView]);
+
+    NSPoint windowLocation = [self.window convertRectFromScreen:{ screenPoint, NSZeroSize }].origin;
+
+    if (Page* page = core([self _webView]))
+        page->dragController().dragEnded();
+
+    [[self _frame] _dragSourceEndedAt:windowLocation operation:operation];
+
+    // Prevent queued mouseDragged events from coming after the drag and fake mouseUp event.
+    _private->ignoringMouseDraggedEvents = YES;
+
+    // Once the dragging machinery kicks in, we no longer get mouse drags or the up event.
+    // WebCore expects to get balanced down/up's, so we must fake up a mouseup.
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:windowLocation modifierFlags:[NSApp currentEvent].modifierFlags timestamp:[NSDate timeIntervalSinceReferenceDate] windowNumber:self.window. windowNumber context:nullptr eventNumber:0 clickCount:0 pressure:0];
+
+    // This will also update the mouseover state.
+    [self mouseUp:fakeEvent];
+}
+
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
 #if !PLATFORM(IOS)

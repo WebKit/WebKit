@@ -1,3 +1,30 @@
+2017-02-17  Anders Carlsson  <andersca@apple.com>
+
+        Add a new drag code path and use it for dragging plain text
+        https://bugs.webkit.org/show_bug.cgi?id=168534
+
+        Reviewed by Geoffrey Garen.
+
+        * WebCoreSupport/WebDragClient.h:
+        Add new members.
+
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::useLegacyDragClient):
+        Return false here.
+
+        (WebDragClient::beginDrag):
+        New client member function. Create an NSDraggingItem and use it to begin a dragging session.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView draggingSession:sourceOperationMaskForDraggingContext:]):
+        Get the source operation mask from WebCore.
+
+        (-[WebHTMLView draggingSession:endedAtPoint:operation:]):
+        Send a fake mouse up event.
+
+        * WebView/WebHTMLViewInternal.h:
+        Declare that WebHTMLView conforms to NSDraggingSource.
+
 2017-02-20  Alexey Proskuryakov  <ap@apple.com>
 
         List of WebCore symbols to re-export from WebKitLegacy should be built automatically

@@ -38,6 +38,11 @@ namespace WebCore {
     class KeyboardEvent;
 }
 
+#if PLATFORM(MAC)
+@interface WebHTMLView () <NSDraggingSource>
+@end
+#endif
+
 @interface WebHTMLView (WebInternal)
 - (void)_selectionChanged;
 #if !PLATFORM(IOS)

@@ -43,6 +43,8 @@
 
 #if !PLATFORM(IOS)
 #import <Carbon/Carbon.h> // for GetCurrentEventTime()
+#import <WebKit/WebHTMLView.h>
+#import <objc/runtime.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 #endif
 
@@ -138,6 +140,35 @@ BOOL replayingSavedEvents;
 
 @implementation EventSendingController
 
+#if PLATFORM(MAC)
+static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSource(WebHTMLView *self, id _cmd, NSArray<NSDraggingItem *> *items, NSEvent *event, id<NSDraggingSource> source)
+{
+    ASSERT(!draggingInfo);
+
+    WebFrameView *webFrameView = ^ {
+        for (NSView *superview = self.superview; superview; superview = superview.superview) {
+            if ([superview isKindOfClass:WebFrameView.class])
+                return (WebFrameView *)superview;
+        }
+
+        ASSERT_NOT_REACHED();
+        return (WebFrameView *)nil;
+    }();
+
+    WebView *webView = webFrameView.webFrame.webView;
+
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+    for (NSDraggingItem *item in items)
+        [pasteboard writeObjects:@[ item.item ]];
+
+    draggingInfo = [[DumpRenderTreeDraggingInfo alloc] initWithImage:nil offset:NSZeroSize pasteboard:pasteboard source:source];
+    [webView draggingUpdated:draggingInfo];
+    [EventSendingController replaySavedEvents];
+
+    return nullptr;
+}
+#endif
+
 + (void)initialize
 {
     webkitDomEventNames = [[NSArray alloc] initWithObjects:
@@ -188,6 +219,15 @@ BOOL replayingSavedEvents;
         @"unload",
         @"zoom",
         nil];
+
+#if PLATFORM(MAC)
+    // Add an implementation of -[WebHTMLView beginDraggingSessionWithItems:event:source:].
+    SEL selector = @selector(beginDraggingSessionWithItems:event:source:);
+    const char* typeEncoding = method_getTypeEncoding(class_getInstanceMethod(NSView.class, selector));
+
+    if (!class_addMethod(WebHTMLView.class, selector, reinterpret_cast<IMP>(drt_WebHTMLView_beginDraggingSessionWithItemsEventSource), typeEncoding))
+        ASSERT_NOT_REACHED();
+#endif
 }
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector

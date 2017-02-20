@@ -29,15 +29,17 @@
  */
 
 #import "config.h"
-#import "DumpRenderTreeMac.h"
 #import "DumpRenderTreePasteboard.h"
+
+#import "DumpRenderTreeMac.h"
 
 #if !PLATFORM(IOS)
 
 #import <WebKit/WebTypesInternal.h>
+#import <wtf/Assertions.h>
+#import <wtf/RetainPtr.h>
 
-@interface LocalPasteboard : NSPasteboard
-{
+@interface LocalPasteboard : NSPasteboard {
     NSMutableArray *typesArray;
     NSMutableSet *typesSet;
     NSMutableDictionary *dataByType;
@@ -202,7 +204,7 @@ static NSMutableDictionary *localPasteboards;
 {
     CFDataRef data = NULL;
     if (string) {
-        if ([string length] == 0)
+        if (!string.length)
             data = CFDataCreate(NULL, NULL, 0);
         else
             data = CFStringCreateExternalRepresentation(NULL, (CFStringRef)string, kCFStringEncodingUTF8, 0);
@@ -211,6 +213,25 @@ static NSMutableDictionary *localPasteboards;
     if (data)
         CFRelease(data);
     return result;
+}
+
+- (BOOL)writeObjects:(NSArray<id <NSPasteboardWriting>> *)objects
+{
+    for (id <NSPasteboardWriting> object in objects) {
+        for (NSString *type in [object writableTypesForPasteboard:self]) {
+            auto pasteboardType = adoptNS((__bridge NSString *)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)type, kUTTagClassNSPboardType));
+
+            [self addTypes:@[ pasteboardType.get() ] owner:self];
+
+            id propertyList = [object pasteboardPropertyListForType:type];
+            if ([propertyList isKindOfClass:NSData.class])
+                [self setData:propertyList forType:pasteboardType.get()];
+            else
+                ASSERT_NOT_REACHED();
+        }
+    }
+
+    return YES;
 }
 
 @end

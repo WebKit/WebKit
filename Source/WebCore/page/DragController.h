@@ -33,19 +33,20 @@
 
 namespace WebCore {
 
-    class DataTransfer;
-    class Document;
-    class DragClient;
-    class DragData;
-    class Element;
-    class Frame;
-    class FrameSelection;
-    class HTMLInputElement;
-    class IntRect;
-    class Page;
-    class PlatformMouseEvent;
+class DataTransfer;
+class Document;
+class DragClient;
+class DragData;
+class Element;
+class Frame;
+class FrameSelection;
+class HTMLInputElement;
+class IntRect;
+class Page;
+class PlatformMouseEvent;
 
-    struct DragState;
+struct DragItem;
+struct DragState;
 
     class DragController {
         WTF_MAKE_NONCOPYABLE(DragController); WTF_MAKE_FAST_ALLOCATED;
@@ -113,6 +114,9 @@ namespace WebCore {
 
         void doImageDrag(Element&, const IntPoint&, const IntRect&, DataTransfer&, Frame&, IntPoint&);
         void doSystemDrag(DragImage, const IntPoint&, const IntPoint&, const IntRect& dragImageBounds, DataTransfer&, Frame&, DragSourceAction);
+
+        void beginDrag(DragItem, Frame&, const IntPoint& mouseDownPoint, const IntPoint& mouseDraggedPoint, DataTransfer&, DragSourceAction);
+
         void cleanupAfterSystemDrag();
         void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String& label);
 #if ENABLE(ATTACHMENT_ELEMENT)

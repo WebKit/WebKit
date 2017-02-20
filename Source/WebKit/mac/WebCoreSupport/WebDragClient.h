@@ -32,12 +32,18 @@
 class WebDragClient : public WebCore::DragClient {
 public:
     WebDragClient(WebView*);
+
+    bool useLegacyDragClient() override;
+
     void willPerformDragDestinationAction(WebCore::DragDestinationAction, const WebCore::DragData&) override;
     void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&) override;
     WebCore::DragDestinationAction actionMaskForDrag(const WebCore::DragData&) override;
     void dragControllerDestroyed() override;
     WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint) override;
     void startDrag(WebCore::DragImage, const WebCore::IntPoint& dragPos, const WebCore::IntPoint& eventPos, const WebCore::FloatPoint&, WebCore::DataTransfer&, WebCore::Frame&, WebCore::DragSourceAction) override;
+
+    void beginDrag(WebCore::DragItem, WebCore::Frame&, const WebCore::IntPoint& mouseDownPosition, const WebCore::IntPoint& mouseDraggedPosition, WebCore::DataTransfer&, WebCore::DragSourceAction) override;
+
     void declareAndWriteDragImage(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String&, WebCore::Frame*) override;
 #if ENABLE(ATTACHMENT_ELEMENT)
     void declareAndWriteAttachment(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String& path, WebCore::Frame*) override;

@@ -25,16 +25,19 @@
 
 #pragma once
 
-#if PLATFORM(MAC)
-
-#import <wtf/RetainPtr.h>
+#include "DragImage.h"
+#include "FloatPoint.h"
+#include "PasteboardWriterData.h"
 
 namespace WebCore {
 
-class PasteboardWriterData;
+struct DragItem final {
+    DragImage image;
 
-WEBCORE_EXPORT RetainPtr<id <NSPasteboardWriting>> createPasteboardWriter(const PasteboardWriterData&);
+    // Where the image should be positioned relative to the cursor.
+    FloatPoint imageAnchorPoint;
+
+    PasteboardWriterData data;
+};
 
 }
-
-#endif

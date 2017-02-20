@@ -109,7 +109,7 @@
 		A1158D59189274360088C17B /* PixelDumpSupportIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1158D57189273EB0088C17B /* PixelDumpSupportIOS.mm */; };
 		A134E531188FC27000901D06 /* DumpRenderTreeMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = A134E52F188FC27000901D06 /* DumpRenderTreeMain.mm */; };
 		A134E53618905EFF00901D06 /* AccessibilityCommonMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */; };
-		A8B91ADA0CF3B32F008F91FF /* DumpRenderTreePasteboard.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B91AD70CF3B32F008F91FF /* DumpRenderTreePasteboard.m */; };
+		A8B91ADA0CF3B32F008F91FF /* DumpRenderTreePasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8B91AD70CF3B32F008F91FF /* DumpRenderTreePasteboard.mm */; };
 		A8B91ADC0CF3B32F008F91FF /* DumpRenderTreeWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8B91AD90CF3B32F008F91FF /* DumpRenderTreeWindow.mm */; };
 		A8D79CEB0FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m in Sources */ = {isa = PBXBuildFile; fileRef = A8D79CE90FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m */; };
 		A9BB7C5C1C505278002C525B /* AccessibilityTextMarkerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A9BB7C5B1C505278002C525B /* AccessibilityTextMarkerIOS.mm */; };
@@ -343,7 +343,7 @@
 		A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = DumpRenderTree.h; sourceTree = "<group>"; };
 		A817090308B164D300CCB9FB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A84F608908B136DA00E9745F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		A8B91AD70CF3B32F008F91FF /* DumpRenderTreePasteboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DumpRenderTreePasteboard.m; path = mac/DumpRenderTreePasteboard.m; sourceTree = "<group>"; };
+		A8B91AD70CF3B32F008F91FF /* DumpRenderTreePasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DumpRenderTreePasteboard.mm; path = mac/DumpRenderTreePasteboard.mm; sourceTree = "<group>"; };
 		A8B91AD90CF3B32F008F91FF /* DumpRenderTreeWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DumpRenderTreeWindow.mm; path = mac/DumpRenderTreeWindow.mm; sourceTree = "<group>"; };
 		A8B91ADD0CF3B372008F91FF /* DumpRenderTreeWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreeWindow.h; path = mac/DumpRenderTreeWindow.h; sourceTree = "<group>"; };
 		A8B91ADF0CF3B372008F91FF /* DumpRenderTreePasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreePasteboard.h; path = mac/DumpRenderTreePasteboard.h; sourceTree = "<group>"; };
@@ -780,7 +780,7 @@
 			isa = PBXGroup;
 			children = (
 				A8B91ADF0CF3B372008F91FF /* DumpRenderTreePasteboard.h */,
-				A8B91AD70CF3B32F008F91FF /* DumpRenderTreePasteboard.m */,
+				A8B91AD70CF3B32F008F91FF /* DumpRenderTreePasteboard.mm */,
 				2DA2E3A31E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.h */,
 				2DA2E3A41E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.mm */,
 				A8B91ADD0CF3B372008F91FF /* DumpRenderTreeWindow.h */,
@@ -1111,7 +1111,7 @@
 				9830F31F15C81181005AB206 /* DumpRenderTreeCommon.cpp in Sources */,
 				BCA18B7B0C9B08F100114369 /* DumpRenderTreeDraggingInfo.mm in Sources */,
 				A8D79CEB0FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m in Sources */,
-				A8B91ADA0CF3B32F008F91FF /* DumpRenderTreePasteboard.m in Sources */,
+				A8B91ADA0CF3B32F008F91FF /* DumpRenderTreePasteboard.mm in Sources */,
 				A8B91ADC0CF3B32F008F91FF /* DumpRenderTreeWindow.mm in Sources */,
 				BCA18B620C9B08C200114369 /* EditingDelegate.mm in Sources */,
 				BCA18B700C9B08DB00114369 /* EventSendingController.mm in Sources */,

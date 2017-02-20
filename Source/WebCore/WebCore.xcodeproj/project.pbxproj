@@ -952,6 +952,7 @@
 		1AF4CEEC18BC3C1B00BC2D34 /* VisitedLinkStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF4CEEB18BC3C1B00BC2D34 /* VisitedLinkStore.cpp */; };
 		1AF5E4D41E56735B004A1F01 /* PasteboardWriterData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF5E4D21E56735A004A1F01 /* PasteboardWriterData.cpp */; };
 		1AF5E4D51E56735B004A1F01 /* PasteboardWriterData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF5E4D31E56735A004A1F01 /* PasteboardWriterData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1AF5E4D91E5677A9004A1F01 /* DragItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF5E4D71E5677A9004A1F01 /* DragItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF5E4E21E5779B1004A1F01 /* PasteboardWriter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF5E4E01E5779B1004A1F01 /* PasteboardWriter.mm */; };
 		1AF5E4E31E5779B1004A1F01 /* PasteboardWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF5E4E11E5779B1004A1F01 /* PasteboardWriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF62EE614DA22A70041556C /* ScrollingCoordinatorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */; };
@@ -8135,6 +8136,7 @@
 		1AF4CEEB18BC3C1B00BC2D34 /* VisitedLinkStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkStore.cpp; sourceTree = "<group>"; };
 		1AF5E4D21E56735A004A1F01 /* PasteboardWriterData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PasteboardWriterData.cpp; sourceTree = "<group>"; };
 		1AF5E4D31E56735A004A1F01 /* PasteboardWriterData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardWriterData.h; sourceTree = "<group>"; };
+		1AF5E4D71E5677A9004A1F01 /* DragItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragItem.h; sourceTree = "<group>"; };
 		1AF5E4E01E5779B1004A1F01 /* PasteboardWriter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardWriter.mm; sourceTree = "<group>"; };
 		1AF5E4E11E5779B1004A1F01 /* PasteboardWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardWriter.h; sourceTree = "<group>"; };
 		1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingCoordinatorMac.mm; sourceTree = "<group>"; };
@@ -22924,6 +22926,7 @@
 				A7B6E69D0B291A9600D0529F /* DragData.h */,
 				A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */,
 				A7CFB3D00B7ED10A0070C32D /* DragImage.h */,
+				1AF5E4D71E5677A9004A1F01 /* DragItem.h */,
 				1CA19E150DC255CA0065A994 /* EventLoop.h */,
 				262EC41C1D110B1F00BA78FC /* EventTrackingRegions.cpp */,
 				262EC4191D078F3D00BA78FC /* EventTrackingRegions.h */,
@@ -28735,6 +28738,7 @@
 				0C3F1F5B10C8871200D72CE1 /* WebGLUniformLocation.h in Headers */,
 				6F995A261A7078B100A735F4 /* WebGLVertexArrayObject.h in Headers */,
 				77A17A7812F28642004E02F6 /* WebGLVertexArrayObjectOES.h in Headers */,
+				1AF5E4D91E5677A9004A1F01 /* DragItem.h in Headers */,
 				A5E2123C1E4924A400CE1044 /* WebHeapAgent.h in Headers */,
 				A5840E25187B8AC200843B10 /* WebInjectedScriptHost.h in Headers */,
 				A584FE301864CB8400843B10 /* WebInjectedScriptManager.h in Headers */,
