@@ -195,9 +195,11 @@ void XMLDocumentParser::end()
     if (m_parserPaused)
         return;
 
-    if (m_sawError)
+    if (m_sawError) {
         insertErrorMessageBlock();
-    else {
+        if (isDetached()) // Inserting an error message may have ran arbitrary scripts.
+            return;
+    } else {
         updateLeafTextNode();
         document()->styleScope().didChangeStyleSheetEnvironment();
     }
@@ -214,6 +216,8 @@ void XMLDocumentParser::finish()
     // FIXME: We should ASSERT(!m_parserStopped) here, since it does not
     // makes sense to call any methods on DocumentParser once it's been stopped.
     // However, FrameLoader::stop calls DocumentParser::finish unconditionally.
+
+    Ref<XMLDocumentParser> protectedThis(*this);
 
     if (m_parserPaused)
         m_finishCalled = true;
