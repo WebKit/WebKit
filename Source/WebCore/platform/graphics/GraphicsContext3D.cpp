@@ -659,6 +659,10 @@ unsigned GraphicsContext3D::getChannelBitsByFormat(GC3Denum format)
 void GraphicsContext3D::setContextVisibility(bool)
 {
 }
+
+void GraphicsContext3D::simulateContextChanged()
+{
+}
 #endif
 
 } // namespace WebCore

@@ -665,6 +665,9 @@ webkit.org/b/153466 inspector/sampling-profiler [ Skip ]
 # This requires a specific font on Mac
 fast/text/hidpi-text-selection-gap-between-words.html [ Skip ]
 
+# webglcontextchanged event not supported
+fast/canvas/webgl/webglcontextchangedevent.html [ Skip ]
+
 # Test requires hardcoded font names, which I do not have for this port.
 fast/text/han-generic-font-families.html [ WontFix ]
 fast/text/hangul-generic-font-families.html [ WontFix ]

@@ -51,6 +51,7 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     DoNotCheckConstants,
     JSCustomMarkFunction,
     NoInterfaceObject,
+    ExportMacro=WEBCORE_EXPORT,
 ] interface WebGLRenderingContextBase {
 
     // back-reference to the canvas

@@ -1,3 +1,21 @@
+2017-02-20  Dean Jackson  <dino@apple.com>
+
+        Add 'webglcontextchanged' WebGLContextEvent
+        https://bugs.webkit.org/show_bug.cgi?id=168595
+        <rdar://problem/30604254>
+
+        Reviewed by Antoine Quint.
+
+        Add a new webglcontextchanged event. This test only
+        runs on Cocoa platforms at the moment, because it
+        needs GraphicsContext3D to keep track of all
+        active contexts in order to dispatch events.
+
+        * fast/canvas/webgl/webglcontextchangedevent-expected.txt: Added.
+        * fast/canvas/webgl/webglcontextchangedevent.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
 2017-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Fix tests reporting missing results.
