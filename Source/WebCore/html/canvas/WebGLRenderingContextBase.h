@@ -340,8 +340,6 @@ public:
     void recycleContext();
     void forceRestoreContext();
     void loseContextImpl(LostContextMode);
-    void dispatchContextChangedEvent();
-    WEBCORE_EXPORT void simulateContextChanged();
 
     GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
     WebGLContextGroup* contextGroup() const { return m_contextGroup.get(); }

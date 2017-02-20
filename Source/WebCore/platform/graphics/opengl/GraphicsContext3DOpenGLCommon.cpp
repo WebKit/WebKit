@@ -1895,14 +1895,6 @@ void GraphicsContext3D::recycleContext()
 #endif
 }
 
-void GraphicsContext3D::dispatchContextChangedNotification()
-{
-#if ENABLE(WEBGL)
-    if (m_webglContext)
-        m_webglContext->dispatchContextChangedEvent();
-#endif
-}
-
 void GraphicsContext3D::texImage2DDirect(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
 {
     makeContextCurrent();

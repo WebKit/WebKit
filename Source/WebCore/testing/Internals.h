@@ -71,7 +71,6 @@ class SourceBuffer;
 class StyleSheet;
 class TimeRanges;
 class TypeConversions;
-class WebGLRenderingContextBase;
 class XMLHttpRequest;
 
 class Internals final : public RefCounted<Internals>, private ContextDestructionObserver {
@@ -531,10 +530,6 @@ public:
 #endif
 
     void setAsRunningUserScripts(Document&);
-
-#if ENABLE(WEBGL)
-    void simulateWebGLContextChanged(WebGLRenderingContextBase&);
-#endif
 
 private:
     explicit Internals(Document&);

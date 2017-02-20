@@ -3784,6 +3784,3 @@ imported/w3c/web-platform-tests/webrtc [ Skip ]
 
 # WebCrypto tests are failing.
 webkit.org/b/165090 imported/w3c/WebCryptoAPI [ Skip ]
-
-# webglcontextchanged event not supported
-fast/canvas/webgl/webglcontextchangedevent.html [ Skip ]

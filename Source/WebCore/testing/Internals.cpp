@@ -134,7 +134,6 @@
 #include "UserMediaController.h"
 #include "ViewportArguments.h"
 #include "WebCoreJSClientData.h"
-#include "WebGLRenderingContextBase.h"
 #include "WorkerThread.h"
 #include "WritingDirection.h"
 #include "XMLHttpRequest.h"
@@ -3712,13 +3711,5 @@ void Internals::setAsRunningUserScripts(Document& document)
     if (document.page())
         document.page()->setAsRunningUserScripts();
 }
-
-#if ENABLE(WEBGL)
-void Internals::simulateWebGLContextChanged(WebGLRenderingContextBase& context)
-{
-    context.simulateContextChanged();
-}
-#endif
-
 
 } // namespace WebCore
