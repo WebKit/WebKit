@@ -1,3 +1,17 @@
+2017-02-20  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RTL: sidebar expand/collapse icons need to be flipped
+        https://bugs.webkit.org/show_bug.cgi?id=168276
+        <rdar://problem/30506999>
+
+        Reviewed by Matt Baker.
+
+        The sidebars themselves are already flipped due to the layout direction change, but the
+        icons have a directional design and need to be manually flipped based on the layout direction.
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WebInspector.ContentBrowserTabContentView):
+
 2017-02-17  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Use Maps in FrameResourceManager instead of objects
