@@ -1,3 +1,11 @@
+2017-02-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/canvas/webgl/context-creation-attributes.html after r212650.
+
+        Unreviewed test gardening.
+
+        * fast/canvas/webgl/context-creation-attributes-expected.txt:
+
 2017-02-20  Jon Lee  <jonlee@apple.com>
 
         Unreviewed, rolling out r212639.
