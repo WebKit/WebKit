@@ -1,3 +1,19 @@
+2017-02-19  Chris Dumez  <cdumez@apple.com>
+
+        onbeforeunload event return value coercion is not per-spec
+        https://bugs.webkit.org/show_bug.cgi?id=168382
+
+        Reviewed by Darin Adler.
+
+        Add test case to check that the value returned by a beforeunload event handler
+        is already converted to a string, even if the returnValue attribute is also
+        set on the BeforeUnloadEvent. The existing code did not handle this properly
+        and it has been fixed in this patch.
+
+        * fast/events/before-unload-return-string-conversion-expected.txt: Added.
+        * fast/events/before-unload-return-string-conversion.html: Added.
+        * fast/events/resources/before-unload-return-string-conversion-frame.html: Added.
+
 2017-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r212218): Assertion failures in and after parserRemoveChild

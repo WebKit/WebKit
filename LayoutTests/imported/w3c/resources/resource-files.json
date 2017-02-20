@@ -66,6 +66,7 @@
         "web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation_unload_data_url-1.html",
         "web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigation_unload_same_origin-1.html",
         "web-platform-tests/html/browsers/browsing-the-web/unloading-documents/base.html",
+        "web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-canceling-1.html",
         "web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-on-history-back-1.html",
         "web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-on-navigation-of-parent-1.html",
         "web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-on-navigation-of-parent-2.html",

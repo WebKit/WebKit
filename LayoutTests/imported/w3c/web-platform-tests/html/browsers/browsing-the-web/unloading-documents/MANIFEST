@@ -19,6 +19,7 @@ support 005a.html
 support 005b.html
 005.html
 base.html
+support beforeunload-canceling-1.html
 support beforeunload-on-history-back-1.html
 beforeunload-on-history-back.html
 support beforeunload-on-navigation-of-parent-1.html

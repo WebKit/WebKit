@@ -25,6 +25,7 @@
 #include "Event.h"
 #include "Frame.h"
 #include "HTMLElement.h"
+#include "JSDOMConvert.h"
 #include "JSDocument.h"
 #include "JSEvent.h"
 #include "JSEventTarget.h"
@@ -71,6 +72,16 @@ void JSEventListener::visitJSFunction(SlotVisitor& visitor)
         return;
 
     visitor.append(m_jsFunction);
+}
+
+static void handleBeforeUnloadEventReturnValue(BeforeUnloadEvent& event, const String& returnValue)
+{
+    if (returnValue.isNull())
+        return;
+
+    event.preventDefault();
+    if (event.returnValue().isEmpty())
+        event.setReturnValue(returnValue);
 }
 
 void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
@@ -159,8 +170,9 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
             event->target()->uncaughtExceptionInEventHandler();
             reportException(exec, exception);
         } else {
-            if (!retval.isUndefinedOrNull() && is<BeforeUnloadEvent>(*event))
-                downcast<BeforeUnloadEvent>(*event).setReturnValue(retval.toWTFString(exec));
+            if (is<BeforeUnloadEvent>(*event))
+                handleBeforeUnloadEventReturnValue(downcast<BeforeUnloadEvent>(*event), convert<IDLNullable<IDLDOMString>>(*exec, retval, StringConversionConfiguration::Normal));
+
             if (m_isAttribute) {
                 if (retval.isFalse())
                     event->preventDefault();

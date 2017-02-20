@@ -21,6 +21,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/004.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/005.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/base.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-canceling-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-canceling.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-on-history-back-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-on-history-back.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-on-navigation-of-parent-1.html

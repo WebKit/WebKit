@@ -2975,6 +2975,16 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
         m_frame.document()->removeAllEventListeners();
 }
 
+static bool shouldAskForNavigationConfirmation(const BeforeUnloadEvent& event)
+{
+    // Web pages can request we ask for confirmation before navigating by:
+    // - Cancelling the BeforeUnloadEvent (modern way)
+    // - Setting the returnValue attribute on the BeforeUnloadEvent to a non-empty string.
+    // - Returning a non-empty string from the event handler, which is then set as returnValue
+    //   attribute on the BeforeUnloadEvent.
+    return event.defaultPrevented() || !event.returnValue().isEmpty();
+}
+
 bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLoaderBeingNavigated)
 {
     DOMWindow* domWindow = m_frame.document()->domWindow();
@@ -2998,7 +3008,8 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
 
     if (!beforeUnloadEvent->defaultPrevented())
         document->defaultEventHandler(beforeUnloadEvent.get());
-    if (beforeUnloadEvent->returnValue().isNull())
+
+    if (!shouldAskForNavigationConfirmation(beforeUnloadEvent))
         return true;
 
     // If the navigating FrameLoader has already shown a beforeunload confirmation panel for the current navigation attempt,

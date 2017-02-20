@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<script>
+
+parent.toStringCalled = false;
+
+window.runTest = function() {
+    window.onbeforeunload = function(e) {
+        e.returnValue = "PASS";
+        return { toString: function () { parent.toStringCalled = true; return "FAIL"; } };
+    }
+
+    const listener = function(e) {
+        parent.event = e;
+        parent.shouldBeTrue("event.defaultPrevented");
+        parent.shouldBeEqualToString("event.returnValue", "PASS");
+        parent.shouldBeTrue("toStringCalled");
+        parent.setTimeout(function() {
+            parent.finishJSTest();
+        }, 0);
+    }
+
+    window.addEventListener("beforeunload", listener);
+    window.location.href = "about:blank";
+}
+</script>

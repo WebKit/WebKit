@@ -1,3 +1,36 @@
+2017-02-19  Chris Dumez  <cdumez@apple.com>
+
+        onbeforeunload event return value coercion is not per-spec
+        https://bugs.webkit.org/show_bug.cgi?id=168382
+
+        Reviewed by Darin Adler.
+
+        Update handling of value returned by onbeforeunload event listeners
+        to match Firefox and the specification:
+        - https://html.spec.whatwg.org/#the-event-handler-processing-algorithm (step 4)
+
+        Namely, the following changes were made:
+        - Only set the event's returnValue attribute to the returned value if the attribute
+          value is the empty string (so as to not override the attribute value if it has
+          explicitly been set by JS).
+        - Cancel the event when the return value is not null by calling preventDefault().
+
+        Additionally, the following changes were made:
+        - Ask the user to confirm the navigation if the event was canceled, not just if the
+          returnValue attribute was set to a non-empty string.
+        as per:
+        - https://html.spec.whatwg.org/#prompt-to-unload-a-document (step 8)
+
+        Tests: fast/events/before-unload-return-string-conversion.html
+               imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-canceling.html
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::handleBeforeUnloadEventReturnValue):
+        (WebCore::JSEventListener::handleEvent):
+        * loader/FrameLoader.cpp:
+        (WebCore::shouldAskForNavigationConfirmation):
+        (WebCore::FrameLoader::dispatchBeforeUnloadEvent):
+
 2017-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Call SoupNetworkSession::setShouldIgnoreTLSErrors when testRunner.setAllowsAnySSLCertificate() is called
