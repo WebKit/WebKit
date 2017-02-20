@@ -173,7 +173,9 @@ struct NetworkMessageData : public rtc::MessageData {
 void NetworkRTCProvider::OnMessage(rtc::Message* message)
 {
     ASSERT(message->message_id == 1);
-    static_cast<NetworkMessageData*>(message->pdata)->callback();
+    auto* data = static_cast<NetworkMessageData*>(message->pdata);
+    data->callback();
+    delete data;
 }
 
 void NetworkRTCProvider::callOnRTCNetworkThread(Function<void()>&& callback)

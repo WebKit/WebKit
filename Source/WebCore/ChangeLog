@@ -1,3 +1,19 @@
+2017-02-20  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Fix some memory leaks in libwebrtc binding code
+        https://bugs.webkit.org/show_bug.cgi?id=168596
+
+        Reviewed by Eric Carlson.
+
+        Covered by manual testing.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::StatsCollector::StatsCollector): Using the libwebrtc way of creating such objects.
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        (WebCore::LibWebRTCMediaEndpoint::StatsCollector::create):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::PeerConnectionFactoryAndThreads::OnMessage):
+
 2017-02-20  Alexey Proskuryakov  <ap@apple.com>
 
         Clean up how WebKit exports _WebCreateFragment

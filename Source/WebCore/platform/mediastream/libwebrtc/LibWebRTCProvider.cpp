@@ -65,7 +65,9 @@ struct ThreadMessageData : public rtc::MessageData {
 void PeerConnectionFactoryAndThreads::OnMessage(rtc::Message* message)
 {
     ASSERT(message->message_id == 1);
-    static_cast<ThreadMessageData*>(message->pdata)->callback();
+    auto* data = static_cast<ThreadMessageData*>(message->pdata);
+    data->callback();
+    delete data;
 }
 
 void LibWebRTCProvider::callOnWebRTCNetworkThread(Function<void()>&& callback)

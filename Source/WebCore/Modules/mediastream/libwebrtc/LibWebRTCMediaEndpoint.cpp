@@ -219,8 +219,8 @@ void LibWebRTCMediaEndpoint::getStats(MediaStreamTrack* track, const DeferredPro
     m_backend->GetStats(StatsCollector::create(*this, promise, track).get());
 }
 
-LibWebRTCMediaEndpoint::StatsCollector::StatsCollector(LibWebRTCMediaEndpoint& endpoint, const DeferredPromise& promise, MediaStreamTrack* track)
-    : m_endpoint(endpoint)
+LibWebRTCMediaEndpoint::StatsCollector::StatsCollector(Ref<LibWebRTCMediaEndpoint>&& endpoint, const DeferredPromise& promise, MediaStreamTrack* track)
+    : m_endpoint(WTFMove(endpoint))
     , m_promise(promise)
 {
     if (track)

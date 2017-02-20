@@ -143,19 +143,16 @@ private:
         LibWebRTCMediaEndpoint& m_endpoint;
     };
 
-    class StatsCollector final : public webrtc::RTCStatsCollectorCallback {
+    class StatsCollector : public webrtc::RTCStatsCollectorCallback {
     public:
-        static rtc::scoped_refptr<StatsCollector> create(LibWebRTCMediaEndpoint& endpoint, const DeferredPromise& promise, MediaStreamTrack* track) { return new StatsCollector(endpoint, promise, track); }
+        static rtc::scoped_refptr<StatsCollector> create(Ref<LibWebRTCMediaEndpoint>&& endpoint, const DeferredPromise& promise, MediaStreamTrack* track) { return new rtc::RefCountedObject<StatsCollector>(WTFMove(endpoint), promise, track); }
 
-        int AddRef() const { return m_endpoint.AddRef(); }
-        int Release() const { return m_endpoint.Release(); }
+        StatsCollector(Ref<LibWebRTCMediaEndpoint>&&, const DeferredPromise&, MediaStreamTrack*);
 
     private:
-        StatsCollector(LibWebRTCMediaEndpoint&, const DeferredPromise&, MediaStreamTrack*);
-
         void OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>&) final;
 
-        LibWebRTCMediaEndpoint& m_endpoint;
+        Ref<LibWebRTCMediaEndpoint> m_endpoint;
         const DeferredPromise& m_promise;
         String m_id;
     };
