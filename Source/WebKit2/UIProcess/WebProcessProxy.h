@@ -55,6 +55,7 @@ struct PluginInfo;
 namespace WebKit {
 
 class NetworkProcessProxy;
+class UnresponsiveWebProcessTerminator;
 class WebBackForwardListItem;
 class WebPageGroup;
 class WebProcessPool;
@@ -83,6 +84,7 @@ public:
 
     WTF::IteratorRange<WebPageProxyMap::const_iterator::Values> pages() const { return m_pageMap.values(); }
     unsigned pageCount() const { return m_pageMap.size(); }
+    unsigned visiblePageCount() const { return m_visiblePageCounter.value(); }
 
     void addVisitedLinkStore(VisitedLinkStore&);
     void addWebUserContentControllerProxy(WebUserContentControllerProxy&);
@@ -99,6 +101,8 @@ public:
     void frameCreated(uint64_t, WebFrameProxy*);
     void disconnectFramesFromPage(WebPageProxy*); // Including main frame.
     size_t frameCountInPage(WebPageProxy*) const; // Including main frame.
+
+    VisibleWebPageToken visiblePageToken() const;
 
     void updateTextCheckerState();
 
@@ -189,6 +193,8 @@ private:
 
     static const HashSet<String>& platformPathsWithAssumedReadAccess();
 
+    void updateBackgroundResponsivenessTimer();
+
     // IPC::Connection::Client
     friend class WebConnectionToWebProcess;
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -247,6 +253,9 @@ private:
 
     enum class NoOrMaybe { No, Maybe } m_isResponsive;
     Vector<std::function<void(bool webProcessIsResponsive)>> m_isResponsiveCallbacks;
+
+    VisibleWebPageCounter m_visiblePageCounter;
+    std::unique_ptr<UnresponsiveWebProcessTerminator> m_backgroundResponsivenessTimer;
 };
 
 } // namespace WebKit

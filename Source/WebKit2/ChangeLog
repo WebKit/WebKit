@@ -1,3 +1,68 @@
+2017-02-19  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Support termination of unresponsive WebContent processes that are in the background
+        https://bugs.webkit.org/show_bug.cgi?id=168479
+        <rdar://problem/30558745>
+
+        Reviewed by Antti Koivisto.
+
+        Support termination of unresponsive WebContent processes that are in the background.
+        This protects us against cases where a background tab is unresponsive and has high CPU
+        usage, thus draining the battery without the user knowing about it (e.g.
+        <rdar://problem/29808005>).
+
+        The feature works as follows:
+        - If a WebProcessProxy has pages but none of them are visible, then it will check
+          regularly if its associated WebContent process is still responsive.
+        - Every time we find that the WebContent process is responsive, we exponentially
+          back off the timer to avoid waking up the process too often. The timer initially
+          uses a 20 seconds interval and can back off up to 8 hours.
+        - If the WebContent process is unresponsive, then we terminate it. No notification
+          is shown to the user and the termination is not immediately observable since the
+          tab is not visible and its title remains. The tab is not immediately reloaded
+          so as to avoid getting back into a bad state in the background (and have a
+          yo-yo effect).
+        - If the user switches to a tab that was previously killed for being unresponsive
+          while in the background, we will then reload the tab in a fresh WebContent
+          process. The crash banner will only be shown if the tab has ever been visible.
+          If it wasn't ever visible (e.g. session restore case), then it will look as if
+          the tab loads for the first time when the user switches to it.
+
+        The functionality is disabled by default and can be enabled by the client via the new
+        WKContextSetUnresponsiveBackgroundProcessesTerminationEnabled() private API.
+
+        * CMakeLists.txt:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetUnresponsiveBackgroundProcessesTerminationEnabled):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/UnresponsiveWebProcessTerminator.cpp: Added.
+        (WebKit::UnresponsiveWebProcessTerminator::UnresponsiveWebProcessTerminator):
+        (WebKit::UnresponsiveWebProcessTerminator::updateState):
+        (WebKit::pagesCopy):
+        (WebKit::UnresponsiveWebProcessTerminator::timerFired):
+        * UIProcess/UnresponsiveWebProcessTerminator.h: Added.
+        (WebKit::UnresponsiveWebProcessTerminator::shouldBeActive):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::reloadAfterBeingKilledInBackground):
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        (WebKit::WebPageProxy::terminateProcess):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::m_backgroundResponsivenessTimer):
+        (WebKit::WebProcessProxy::createWebPage):
+        (WebKit::WebProcessProxy::addExistingWebPage):
+        (WebKit::WebProcessProxy::removeWebPage):
+        (WebKit::WebProcessProxy::updateBackgroundResponsivenessTimer):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::visiblePageCount):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-02-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove COORDINATED_GRAPHICS_MULTIPROCESS

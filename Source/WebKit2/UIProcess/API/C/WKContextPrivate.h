@@ -62,6 +62,8 @@ WK_EXPORT void WKContextSetCanHandleHTTPSServerTrustEvaluation(WKContextRef cont
 
 WK_EXPORT void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef context, bool value);
 
+WK_EXPORT void WKContextSetUnresponsiveBackgroundProcessesTerminationEnabled(WKContextRef context, bool value);
+
 WK_EXPORT void WKContextSetIconDatabasePath(WKContextRef context, WKStringRef iconDatabasePath);
 
 WK_EXPORT void WKContextAllowSpecificHTTPSCertificateForHost(WKContextRef context, WKCertificateInfoRef certificate, WKStringRef host);

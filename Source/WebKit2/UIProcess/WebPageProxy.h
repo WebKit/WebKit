@@ -233,6 +233,10 @@ typedef GenericCallback<EditingRange> EditingRangeCallback;
 typedef GenericCallback<const String&> StringCallback;
 typedef GenericCallback<API::SerializedScriptValue*, bool, const WebCore::ExceptionDetails&> ScriptValueCallback;
 
+enum VisibleWebPageCounterType { };
+using VisibleWebPageCounter = RefCounter<VisibleWebPageCounterType>;
+using VisibleWebPageToken = VisibleWebPageCounter::Token;
+
 #if PLATFORM(GTK)
 typedef GenericCallback<API::Error*> PrintFinishedCallback;
 #endif
@@ -671,7 +675,8 @@ public:
 
     double estimatedProgress() const;
 
-    void terminateProcess();
+    enum class TerminationReason { UnresponsiveWhileInBackground, Other };
+    void terminateProcess(TerminationReason = TerminationReason::Other);
 
     SessionState sessionState(const std::function<bool (WebBackForwardListItem&)>& = nullptr) const;
     RefPtr<API::Navigation> restoreFromSessionState(SessionState, bool navigate);
@@ -1570,6 +1575,7 @@ private:
     void dispatchActivityStateChange();
     void viewDidLeaveWindow();
     void viewDidEnterWindow();
+    void reloadAfterBeingKilledInBackground();
 
 #if PLATFORM(MAC)
     void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, const UserData&);
@@ -1925,6 +1931,7 @@ private:
     UserObservablePageCounter::Token m_pageIsUserObservableCount;
     ProcessSuppressionDisabledToken m_preventProcessSuppressionCount;
     HiddenPageThrottlingAutoIncreasesCounter::Token m_hiddenPageDOMTimerThrottlingAutoIncreasesCount;
+    VisibleWebPageToken m_visiblePageToken;
         
     WebCore::ScrollPinningBehavior m_scrollPinningBehavior;
     std::optional<WebCore::ScrollbarOverlayStyle> m_scrollbarOverlayStyle;
@@ -1943,6 +1950,7 @@ private:
     bool m_hasHadSelectionChangesFromUserInteraction { false };
     bool m_needsHiddenContentEditableQuirk { false };
     bool m_needsPlainTextQuirk { false };
+    bool m_hasEverBeenVisible { false };
 
 #if ENABLE(MEDIA_SESSION)
     bool m_hasMediaSessionWithActiveMediaElements { false };
@@ -1968,6 +1976,7 @@ private:
 #endif
 
     bool m_isUsingHighPerformanceWebGL { false };
+    bool m_wasKilledForBeingUnresponsiveWhileInBackground { false };
         
     WeakPtrFactory<WebPageProxy> m_weakPtrFactory;
 };

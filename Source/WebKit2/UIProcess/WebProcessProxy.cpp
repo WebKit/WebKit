@@ -36,6 +36,7 @@
 #include "PluginProcessManager.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
+#include "UnresponsiveWebProcessTerminator.h"
 #include "UserData.h"
 #include "WebBackForwardListItem.h"
 #include "WebIconDatabase.h"
@@ -101,6 +102,8 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool)
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
     , m_throttler(*this)
     , m_isResponsive(NoOrMaybe::Maybe)
+    , m_visiblePageCounter([this](RefCounterEvent) { updateBackgroundResponsivenessTimer(); })
+    , m_backgroundResponsivenessTimer(processPool.configuration().unresponsiveBackgroundProcessesTerminationEnabled() ? std::make_unique<UnresponsiveWebProcessTerminator>(*this) : nullptr)
 {
     WebPasteboardProxy::singleton().addWebProcessProxy(*this);
 
@@ -255,6 +258,8 @@ Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API
     m_pageMap.set(pageID, webPage.ptr());
     globalPageMap().set(pageID, webPage.ptr());
 
+    updateBackgroundResponsivenessTimer();
+
     return webPage;
 }
 
@@ -265,12 +270,16 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy* webPage, uint64_t pageID)
 
     m_pageMap.set(pageID, webPage);
     globalPageMap().set(pageID, webPage);
+
+    updateBackgroundResponsivenessTimer();
 }
 
 void WebProcessProxy::removeWebPage(uint64_t pageID)
 {
     m_pageMap.remove(pageID);
     globalPageMap().remove(pageID);
+
+    updateBackgroundResponsivenessTimer();
     
     Vector<uint64_t> itemIDsToRemove;
     for (auto& idAndItem : m_backForwardListItemMap) {
@@ -708,6 +717,11 @@ size_t WebProcessProxy::frameCountInPage(WebPageProxy* page) const
     return result;
 }
 
+auto WebProcessProxy::visiblePageToken() const -> VisibleWebPageToken
+{
+    return m_visiblePageCounter.count();
+}
+
 RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(uint64_t identifier)
 {
     if (!UserInitiatedActionMap::isValidKey(identifier) || !identifier)
@@ -1071,6 +1085,12 @@ void WebProcessProxy::didReceiveMainThreadPing()
     bool isWebProcessResponsive = true;
     for (auto& callback : isResponsiveCallbacks)
         callback(isWebProcessResponsive);
+}
+
+void WebProcessProxy::updateBackgroundResponsivenessTimer()
+{
+    if (m_backgroundResponsivenessTimer)
+        m_backgroundResponsivenessTimer->updateState();
 }
 
 #if !PLATFORM(COCOA)

@@ -397,6 +397,11 @@ void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef contextRef, 
     toImpl(contextRef)->configuration().setDiskCacheSpeculativeValidationEnabled(value);
 }
 
+void WKContextSetUnresponsiveBackgroundProcessesTerminationEnabled(WKContextRef contextRef, bool value)
+{
+    toImpl(contextRef)->configuration().setUnresponsiveBackgroundProcessesTerminationEnabled(value);
+}
+
 WKCookieManagerRef WKContextGetCookieManager(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->supplement<WebCookieManagerProxy>());
