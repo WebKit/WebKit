@@ -1,5 +1,15 @@
 2017-02-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212651. rdar://problem/30604254
+
+    2017-02-20  Jon Lee  <jonlee@apple.com>
+
+            Fix build error for iOS. Unreviewed.
+
+            * platform/graphics/GraphicsContext3D.cpp: Move stub function into !PLATFORM(COCOA) instead of !PLATFORM(MAC).
+
+2017-02-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212650. rdar://problem/30604254
 
     2017-02-20  Jon Lee  <jonlee@apple.com>

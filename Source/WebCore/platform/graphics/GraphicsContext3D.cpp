@@ -659,7 +659,9 @@ unsigned GraphicsContext3D::getChannelBitsByFormat(GC3Denum format)
 void GraphicsContext3D::setContextVisibility(bool)
 {
 }
+#endif
 
+#if !PLATFORM(COCOA)
 void GraphicsContext3D::simulateContextChanged()
 {
 }
