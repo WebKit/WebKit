@@ -1,3 +1,23 @@
+2017-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Test fast/events/message-port-postMessage-recursive.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=168570
+
+        Reviewed by Michael Catanzaro.
+
+        This has recently been added and the patch is good. It's just revealing a problem with our timers. The test is
+        posting a message recursively, and also starts a timeout timer to finish the test. The timeout timer is never
+        fired for us, because WebCore timers have lower priority than the one used by
+        postMessage. ScriptExecutionContext uses Document::postTask, that uses scheduleOnMainThread, that uses
+        RunLoop::dispatch(). We are not setting any priority for the timer used by RunLoop::dispatch, so it's using the
+        default. RunLoop::dispatch is normally used to schedule tasks between threads, or just to ensure something is
+        run in a different run loop iteration, but in general nothing urgent as a graphics redraw or something like
+        that. It's quite common to use g_idle_add to schedule tasks between threads, so I think it makes sense to use
+        G_PRIORITY_DEFAULT_IDLE for the RunLoop timer.
+
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::RunLoop):
+
 2017-02-19  Mark Lam  <mark.lam@apple.com>
 
         CachedCall should let GC know to keep its arguments alive.
