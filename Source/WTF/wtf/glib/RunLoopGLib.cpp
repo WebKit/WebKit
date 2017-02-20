@@ -61,7 +61,6 @@ RunLoop::RunLoop()
 
     m_source = adoptGRef(g_source_new(&runLoopSourceFunctions, sizeof(GSource)));
     g_source_set_name(m_source.get(), "[WebKit] RunLoop work");
-    g_source_set_priority(m_source.get(), G_PRIORITY_DEFAULT_IDLE);
     g_source_set_can_recurse(m_source.get(), TRUE);
     g_source_set_callback(m_source.get(), [](gpointer userData) -> gboolean {
         static_cast<RunLoop*>(userData)->performWork();

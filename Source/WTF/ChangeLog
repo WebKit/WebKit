@@ -1,3 +1,16 @@
+2017-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed, rolling out r212622.
+
+        Caused several test failures
+
+        Reverted changeset:
+
+        "[GTK] Test fast/events/message-port-postMessage-
+        recursive.html times out"
+        https://bugs.webkit.org/show_bug.cgi?id=168570
+        http://trac.webkit.org/changeset/212622
+
 2017-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test fast/events/message-port-postMessage-recursive.html times out
