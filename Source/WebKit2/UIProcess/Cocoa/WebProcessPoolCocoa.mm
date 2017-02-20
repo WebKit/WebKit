@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebProcessPool.h"
 
+#import "CustomProtocolManagerClient.h"
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkProcessMessages.h"
 #import "NetworkProcessProxy.h"
@@ -126,6 +127,8 @@ void WebProcessPool::updateProcessSuppressionState()
     else if (!m_pluginProcessManagerProcessSuppressionDisabledToken)
         m_pluginProcessManagerProcessSuppressionDisabledToken = PluginProcessManager::singleton().processSuppressionDisabledToken();
 #endif
+
+    setCustomProtocolManagerClient(std::make_unique<CustomProtocolManagerClient>());
 }
 
 NSMutableDictionary *WebProcessPool::ensureBundleParameters()
@@ -264,9 +267,6 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
     parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
     parameters.uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-
-    for (const auto& scheme : globalURLSchemesWithCustomProtocolHandlers())
-        parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 

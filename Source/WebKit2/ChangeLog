@@ -1,3 +1,58 @@
+2017-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reduce platform ifdefs in WebKit2 custom protocols implementation
+        https://bugs.webkit.org/show_bug.cgi?id=165028
+
+        Reviewed by Darin Adler.
+
+        Make mac implementation use the APICustomProtocolManagerClient to share more code with the soup based ports.
+
+        * CMakeLists.txt: Add CustomProtocolManagerProxy.cpp.
+        * PlatformEfl.cmake: Remove CustomProtocolManagerProxySoup.cpp.
+        * PlatformGTK.cmake: Ditto.
+        * PlatformMac.cmake: Remove CustomProtocolManagerProxyMac.mm.
+        * UIProcess/API/APICustomProtocolManagerClient.h:
+        (API::CustomProtocolManagerClient::startLoading): Make it void, since we were always returning true and the
+        returned value was ignored.
+        * UIProcess/API/efl/ewk_url_scheme_request.cpp:
+        (EwkUrlSchemeRequest::finish): Update to new CustomProtocolManagerProxy API.
+        * UIProcess/API/gtk/WebKitCustomProtocolManagerClient.cpp:
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestReadCallback): Ditto.
+        * UIProcess/Cocoa/CustomProtocolManagerClient.h: Added.
+        * UIProcess/Cocoa/CustomProtocolManagerClient.mm: Added.
+        (-[WKCustomProtocolLoader initWithCustomProtocolManagerProxy:customProtocolID:request:]):
+        (-[WKCustomProtocolLoader dealloc]):
+        (-[WKCustomProtocolLoader connection:didFailWithError:]):
+        (-[WKCustomProtocolLoader connection:didReceiveResponse:]):
+        (-[WKCustomProtocolLoader connection:didReceiveData:]):
+        (-[WKCustomProtocolLoader connection:willSendRequest:redirectResponse:]):
+        (-[WKCustomProtocolLoader connectionDidFinishLoading:]):
+        (WebKit::CustomProtocolManagerClient::startLoading):
+        (WebKit::CustomProtocolManagerClient::stopLoading):
+        (WebKit::CustomProtocolManagerClient::invalidate):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitialize): Set the CustomProtocolManagerClient.
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess): Remove code that is now shared.
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.cpp: Added.
+        (WebKit::CustomProtocolManagerProxy::startLoading):
+        (WebKit::CustomProtocolManagerProxy::processDidClose):
+        (WebKit::CustomProtocolManagerProxy::wasRedirectedToRequest):
+        (WebKit::CustomProtocolManagerProxy::didReceiveResponse):
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::globalURLSchemesWithCustomProtocolHandlers): Just moved here to use it from ensureNetworkProcess().
+        (WebKit::WebProcessPool::WebProcessPool): Remove soup ifdefs.
+        (WebKit::WebProcessPool::setCustomProtocolManagerClient): Moved from the soup implementation.
+        (WebKit::WebProcessPool::ensureNetworkProcess): Initialize custom protocols parameters.
+        (WebKit::WebProcessPool::registerSchemeForCustomProtocol): Register the protocol if not already registered globally.
+        (WebKit::WebProcessPool::unregisterSchemeForCustomProtocol): Remove soup ifdefs.
+        * UIProcess/WebProcessPool.h: Remove soup ifdefs.
+        * UIProcess/efl/RequestManagerClientEfl.cpp:
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess): Remove code that is now shared.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-02-20  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Remove compilation flag ENABLE_CSS_GRID_LAYOUT
