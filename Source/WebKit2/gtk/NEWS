@@ -1,3 +1,22 @@
+==================
+WebKitGTK+ 2.15.90
+==================
+
+What's new in WebKitGTK+ 2.15.90?
+
+  - Add an API to add a custom tab into the print dialog.
+  - Update cookie manager API to properly work with ephemeral sessions.
+  - Fix rendering issues in long documents with transparent background.
+  - Handle extended colors in cairo and texture mapper backends.
+  - Release unused UpdateAtlas and reduce the tile coverage on memory pressure.
+  - The media backend now stores preloaded media in /var/tmp instead of user cache dir.
+  - Fix a deadlock when the media player is destroyed.
+  - Fast replay on video hide/unhide on platforms with limited video buffer pools.
+  - Fix network process crashes when loading custom URI schemes.
+  - Fix video rendering when switching to accelerated compositing mode.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Brazilian Portuguese.
+
 =================
 WebKitGTK+ 2.15.4
 =================
