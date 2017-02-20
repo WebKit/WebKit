@@ -155,10 +155,12 @@ static bool isAppleLegacyCssValueKeyword(const char* valueKeyword, unsigned leng
 {
     static const char applePrefix[] = "-apple-";
     static const char appleSystemPrefix[] = "-apple-system";
+    static const char applePayPrefix[] = "-apple-pay";
     static const char* appleWirelessPlaybackTargetActive = getValueName(CSSValueAppleWirelessPlaybackTargetActive);
     
     return hasPrefix(valueKeyword, length, applePrefix)
     && !hasPrefix(valueKeyword, length, appleSystemPrefix)
+    && !hasPrefix(valueKeyword, length, applePayPrefix)
     && !WTF::equal(reinterpret_cast<const LChar*>(valueKeyword), reinterpret_cast<const LChar*>(appleWirelessPlaybackTargetActive), length);
 }
 

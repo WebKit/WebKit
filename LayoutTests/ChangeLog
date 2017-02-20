@@ -1,3 +1,20 @@
+2017-02-20  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r212558. rdar://problem/30451563
+
+    2017-02-17  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (209396): Apple Pay buttons do not render
+            https://bugs.webkit.org/show_bug.cgi?id=168523
+            rdar://problem/30451563
+
+            Reviewed by Geoffrey Garen.
+
+            Ref test that masks out the middle and corners of the buttons.
+
+            * fast/css/appearance-apple-pay-button-expected.html: Added.
+            * fast/css/appearance-apple-pay-button.html: Added.
+
 2017-02-17  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r212354. rdar://problem/30450371
