@@ -1,3 +1,13 @@
+2017-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up how WebKit exports _WebCreateFragment
+        https://bugs.webkit.org/show_bug.cgi?id=168579
+
+        Reviewed by Dan Bernstein.
+
+        * editing/Editor.h: Removed the declaration of _WebCreateFragment, SOFT_LINK doesn't need it.
+        * editing/cocoa/EditorCocoa.mm: Moved a FIXME comment here.
+
 2017-02-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r212637.

@@ -58,6 +58,7 @@ SOFT_LINK_PRIVATE_FRAMEWORK(WebKitLegacy)
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(WebKit, WebKitLegacy)
 #endif
 
+// FIXME: Get rid of this and change NSAttributedString conversion so it doesn't use WebKitLegacy (cf. rdar://problem/30597352).
 SOFT_LINK(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, NSAttributedString *string, WebCore::FragmentAndResources& result), (document, string, result))
 
 namespace WebCore {

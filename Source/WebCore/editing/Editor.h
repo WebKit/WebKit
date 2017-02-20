@@ -589,9 +589,3 @@ inline bool Editor::markedTextMatchesAreHighlighted() const
 }
 
 } // namespace WebCore
-
-#if PLATFORM(COCOA)
-// This function is declared here but defined in the WebKitLegacy framework.
-// FIXME: Get rid of this and change this so it doesn't use WebKitLegacy.
-extern "C" void _WebCreateFragment(WebCore::Document&, NSAttributedString *, WebCore::FragmentAndResources&);
-#endif

@@ -38,6 +38,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebArchive.h"
+#import "WebCreateFragmentInternal.h"
 #import "WebDataSourceInternal.h"
 #import "WebDelegateImplementationCaching.h"
 #import "WebDocument.h"

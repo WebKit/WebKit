@@ -1,3 +1,13 @@
+2017-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up how WebKit exports _WebCreateFragment
+        https://bugs.webkit.org/show_bug.cgi?id=168579
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebCreateFragmentInternal.h: Added a private header.
+        * WebCoreSupport/WebEditorClient.mm: Include the new header that declares _WebCreateFragment.
+
 2017-02-20  Aakash Jain  <aakash_jain@apple.com>
 
         Stop exporting DOMNodeFilter

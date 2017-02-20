@@ -791,6 +791,7 @@
 		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; };
 		DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = DD89681E09AA87240097E7F0 /* WebElementDictionary.h */; };
 		DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */; };
+		E13E782C1E5A7365001849D1 /* WebCreateFragmentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = E13E782B1E5A7365001849D1 /* WebCreateFragmentInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E15663190FB61C1F00C199CA /* WebDownload.mm in Sources */ = {isa = PBXBuildFile; fileRef = E15663180FB61C1F00C199CA /* WebDownload.mm */; };
 		E169836211346D1B00894115 /* ProxyRuntimeObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E169836111346D1B00894115 /* ProxyRuntimeObject.h */; };
 		E169836C11346D5600894115 /* ProxyRuntimeObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = E169836B11346D5600894115 /* ProxyRuntimeObject.mm */; };
@@ -1547,6 +1548,7 @@
 		DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTypesInternal.h; sourceTree = "<group>"; };
 		DD89681E09AA87240097E7F0 /* WebElementDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebElementDictionary.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebElementDictionary.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		E13E782B1E5A7365001849D1 /* WebCreateFragmentInternal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = WebCreateFragmentInternal.h; sourceTree = "<group>"; };
 		E15663180FB61C1F00C199CA /* WebDownload.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDownload.mm; sourceTree = "<group>"; };
 		E169836111346D1B00894115 /* ProxyRuntimeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyRuntimeObject.h; sourceTree = "<group>"; };
 		E169836B11346D5600894115 /* ProxyRuntimeObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProxyRuntimeObject.mm; sourceTree = "<group>"; };
@@ -2579,6 +2581,7 @@
 				14D8252E0AF955090004F057 /* WebChromeClient.mm */,
 				065AD5A10B0C32C7005A2B1D /* WebContextMenuClient.h */,
 				065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */,
+				E13E782B1E5A7365001849D1 /* WebCreateFragmentInternal.h */,
 				598AD9191201CEC900ABAE4E /* WebDeviceOrientationClient.h */,
 				598AD91D1201CECF00ABAE4E /* WebDeviceOrientationClient.mm */,
 				A70936AD0B5608DC00CDB48E /* WebDragClient.h */,
@@ -2909,6 +2912,7 @@
 				93D437701D57ABEF00AB85EA /* DOMRGBColor.h in Headers */,
 				93D437721D57ABEF00AB85EA /* DOMRGBColorInternal.h in Headers */,
 				93D437731D57ABEF00AB85EA /* DOMStyleSheet.h in Headers */,
+				E13E782C1E5A7365001849D1 /* WebCreateFragmentInternal.h in Headers */,
 				93D437751D57ABEF00AB85EA /* DOMStyleSheetInternal.h in Headers */,
 				93D437761D57ABEF00AB85EA /* DOMStyleSheetList.h in Headers */,
 				93D437781D57ABEF00AB85EA /* DOMStyleSheetListInternal.h in Headers */,

@@ -1,3 +1,12 @@
+2017-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up how WebKit exports _WebCreateFragment
+        https://bugs.webkit.org/show_bug.cgi?id=168579
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebCreateFragmentInternal.h.
+
 2017-02-15  Brady Eidson  <beidson@apple.com>
 
         Stop backing up localStorage databases to iCloud by default.
