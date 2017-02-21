@@ -431,7 +431,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
             // to see if the command key is down like it normally would. So we need to do that check
             // before calling WebInspector.openURL.
             var alwaysOpenExternally = event ? event.metaKey : false;
-            WebInspector.openURL(anchorElement.href, this._frame, alwaysOpenExternally, anchorElement.lineNumber);
+            WebInspector.openURL(anchorElement.href, this._frame, {alwaysOpenExternally, lineNumber: anchorElement.lineNumber});
         }
 
         // Start a timeout since this is a single click, if the timeout is canceled before it fires,

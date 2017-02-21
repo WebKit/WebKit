@@ -38,8 +38,7 @@ WebInspector.appendContextMenuItemsForSourceCode = function(contextMenu, sourceC
     if (sourceCode.url) {
         contextMenu.appendItem(WebInspector.UIString("Open in New Tab"), () => {
             const frame = null;
-            const alwaysOpenExternally = true;
-            WebInspector.openURL(sourceCode.url, frame, alwaysOpenExternally);
+            WebInspector.openURL(sourceCode.url, frame, {alwaysOpenExternally: true});
         });
 
         contextMenu.appendItem(WebInspector.UIString("Copy Link Address"), () => {

@@ -356,7 +356,7 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
             return;
 
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
-            WebInspector.showRepresentedObject(treeElement.representedObject);
+            WebInspector.showRepresentedObject(treeElement.representedObject, null, {ignoreNetworkTab: true});
             return;
         }
 
@@ -367,7 +367,7 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
         if (treeElement.representedObject instanceof WebInspector.DOMSearchMatchObject)
             WebInspector.showMainFrameDOMTree(treeElement.representedObject.domNode);
         else if (treeElement.representedObject instanceof WebInspector.SourceCodeSearchMatchObject)
-            WebInspector.showOriginalOrFormattedSourceCodeTextRange(treeElement.representedObject.sourceCodeTextRange);
+            WebInspector.showOriginalOrFormattedSourceCodeTextRange(treeElement.representedObject.sourceCodeTextRange, {ignoreNetworkTab: true});
     }
 
     _treeElementDoubleClick(event)
@@ -376,10 +376,9 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
         if (!treeElement)
             return;
 
-        const options = {ignoreSearchTab: true};
         if (treeElement.representedObject instanceof WebInspector.DOMSearchMatchObject)
-            WebInspector.showMainFrameDOMTree(treeElement.representedObject.domNode, options);
+            WebInspector.showMainFrameDOMTree(treeElement.representedObject.domNode, {ignoreSearchTab: true});
         else if (treeElement.representedObject instanceof WebInspector.SourceCodeSearchMatchObject)
-            WebInspector.showOriginalOrFormattedSourceCodeTextRange(treeElement.representedObject.sourceCodeTextRange, options);
+            WebInspector.showOriginalOrFormattedSourceCodeTextRange(treeElement.representedObject.sourceCodeTextRange, {ignoreNetworkTab: true, ignoreSearchTab: true});
     }
 };

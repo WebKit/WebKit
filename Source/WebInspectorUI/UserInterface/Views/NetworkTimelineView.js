@@ -188,7 +188,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
     showContentViewForTreeElement(treeElement)
     {
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
-            WebInspector.showSourceCode(treeElement.representedObject);
+            WebInspector.showSourceCode(treeElement.representedObject, {ignoreNetworkTab: true});
             return;
         }
 

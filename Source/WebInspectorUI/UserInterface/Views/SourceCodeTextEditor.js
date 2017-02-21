@@ -1669,9 +1669,9 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
         var sourceCodeLocation = this._sourceCodeLocationForEditorPosition(this.tokenTrackingController.candidate.hoveredTokenRange.start);
         if (this.sourceCode instanceof WebInspector.SourceMapResource)
-            WebInspector.showOriginalOrFormattedSourceCodeLocation(sourceCodeLocation);
+            WebInspector.showOriginalOrFormattedSourceCodeLocation(sourceCodeLocation, {ignoreNetworkTab: true});
         else
-            WebInspector.showSourceCodeLocation(sourceCodeLocation);
+            WebInspector.showSourceCodeLocation(sourceCodeLocation, {ignoreNetworkTab: true});
     }
 
     tokenTrackingControllerNewHighlightCandidate(tokenTrackingController, candidate)

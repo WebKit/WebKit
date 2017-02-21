@@ -56,7 +56,10 @@ WebInspector.NetworkTabContentView = class NetworkTabContentView extends WebInsp
 
     canShowRepresentedObject(representedObject)
     {
-        return representedObject instanceof WebInspector.Resource;
+        if (!(representedObject instanceof WebInspector.Resource))
+            return false;
+
+        return this._navigationSidebarPanel.hasRepresentedObject(representedObject);
     }
 
     get supportsSplitContentBrowser()

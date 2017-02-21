@@ -810,24 +810,24 @@ WebInspector.handlePossibleLinkClick = function(event, frame, alwaysOpenExternal
     event.preventDefault();
     event.stopPropagation();
 
-    this.openURL(anchorElement.href, frame, false, anchorElement.lineNumber);
+    this.openURL(anchorElement.href, frame, {lineNumber: anchorElement.lineNumber});
 
     return true;
 };
 
-WebInspector.openURL = function(url, frame, alwaysOpenExternally, lineNumber)
+WebInspector.openURL = function(url, frame, options = {})
 {
     console.assert(url);
     if (!url)
         return;
 
-    console.assert(typeof lineNumber === "undefined" || typeof lineNumber === "number", "lineNumber should be a number.");
+    console.assert(typeof options.lineNumber === "undefined" || typeof options.lineNumber === "number", "lineNumber should be a number.");
 
     // If alwaysOpenExternally is not defined, base it off the command/meta key for the current event.
-    if (alwaysOpenExternally === undefined || alwaysOpenExternally === null)
-        alwaysOpenExternally = window.event ? window.event.metaKey : false;
+    if (options.alwaysOpenExternally === undefined || options.alwaysOpenExternally === null)
+        options.alwaysOpenExternally = window.event ? window.event.metaKey : false;
 
-    if (alwaysOpenExternally) {
+    if (options.alwaysOpenExternally) {
         InspectorFrontendHost.openInNewTab(url);
         return;
     }
@@ -844,8 +844,8 @@ WebInspector.openURL = function(url, frame, alwaysOpenExternally, lineNumber)
     let simplifiedURL = removeURLFragment(url);
     var resource = frame.url === simplifiedURL ? frame.mainResource : frame.resourceForURL(simplifiedURL, searchChildFrames);
     if (resource) {
-        var position = new WebInspector.SourceCodePosition(lineNumber, 0);
-        this.showSourceCode(resource, position);
+        let positionToReveal = new WebInspector.SourceCodePosition(options.lineNumber, 0);
+        this.showSourceCode(resource, Object.shallowMerge(options, {positionToReveal}));
         return;
     }
 

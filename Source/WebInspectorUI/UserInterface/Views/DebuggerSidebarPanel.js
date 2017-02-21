@@ -782,7 +782,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             return;
 
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
-            WebInspector.showSourceCode(treeElement.representedObject);
+            WebInspector.showSourceCode(treeElement.representedObject, {ignoreNetworkTab: true});
             return;
         }
 
@@ -792,12 +792,12 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
                 WebInspector.debuggerManager.activeCallFrame = callFrame;
 
             if (callFrame.sourceCodeLocation)
-                WebInspector.showSourceCodeLocation(callFrame.sourceCodeLocation);
+                WebInspector.showSourceCodeLocation(callFrame.sourceCodeLocation, {ignoreNetworkTab: true});
             return;
         }
 
         if (treeElement instanceof WebInspector.IssueTreeElement) {
-            WebInspector.showSourceCodeLocation(treeElement.issueMessage.sourceCodeLocation);
+            WebInspector.showSourceCodeLocation(treeElement.issueMessage.sourceCodeLocation, {ignoreNetworkTab: true});
             return;
         }
 
@@ -806,7 +806,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         let breakpoint = treeElement.breakpoint;
         if (treeElement.treeOutline === this._pauseReasonTreeOutline) {
-            WebInspector.showSourceCodeLocation(breakpoint.sourceCodeLocation);
+            WebInspector.showSourceCodeLocation(breakpoint.sourceCodeLocation, {ignoreNetworkTab: true});
             return;
         }
 
@@ -817,7 +817,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (!(treeElement.parent.representedObject instanceof WebInspector.SourceCode))
             return;
 
-        WebInspector.showSourceCodeLocation(breakpoint.sourceCodeLocation);
+        WebInspector.showSourceCodeLocation(breakpoint.sourceCodeLocation, {ignoreNetworkTab: true});
     }
 
     _compareTopLevelTreeElements(a, b)

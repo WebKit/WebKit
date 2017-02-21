@@ -225,6 +225,15 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         this.reset();
     }
 
+    hasRepresentedObject(representedObject)
+    {
+        const comparator = (dataGridNode) => dataGridNode.resource === representedObject;
+        const skipHidden = true;
+        const stayWithin = false;
+        const dontPopulate = true;
+        return this._dataGrid.findNode(comparator, skipHidden, stayWithin, dontPopulate);
+    }
+
     // Private
 
     _processPendingRecords()

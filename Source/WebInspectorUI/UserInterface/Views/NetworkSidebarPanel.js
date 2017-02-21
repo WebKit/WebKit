@@ -94,6 +94,11 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
         return !this.restoringState || !this._restoredShowingNetworkGridContentView;
     }
 
+    hasRepresentedObject(representedObject)
+    {
+        return this._networkGridView.hasRepresentedObject(representedObject);
+    }
+
     // Protected
 
     saveStateToCookie(cookie)

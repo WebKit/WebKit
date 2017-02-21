@@ -652,14 +652,13 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
                 contextMenu.appendItem(WebInspector.UIString("Open in New Tab"), () => {
                     const frame = null;
-                    const alwaysOpenExternally = true;
-                    WebInspector.openURL(url, frame, alwaysOpenExternally);
+                    WebInspector.openURL(url, frame, {alwaysOpenExternally: true});
                 });
 
                 if (WebInspector.frameResourceManager.resourceForURL(url)) {
                     contextMenu.appendItem(WebInspector.UIString("Reveal in Resources Tab"), () => {
                         let frame = WebInspector.frameResourceManager.frameForIdentifier(node.frameIdentifier);
-                        WebInspector.openURL(url, frame);
+                        WebInspector.openURL(url, frame, {ignoreNetworkTab: true});
                     });
                 }
 
@@ -1514,7 +1513,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                         return;
 
                     let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber || 0);
-                    WebInspector.showSourceCodeLocation(sourceCodeLocation);
+                    WebInspector.showSourceCodeLocation(sourceCodeLocation, {ignoreNetworkTab: true});
                 });
                 result.release();
             });

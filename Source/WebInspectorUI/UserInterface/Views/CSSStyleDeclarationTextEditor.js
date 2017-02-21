@@ -1680,7 +1680,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             if (!sourceCode || !range)
                 return false;
 
-            WebInspector.showSourceCodeLocation(sourceCode.createSourceCodeLocation(range.startLine, range.startColumn));
+            WebInspector.showSourceCodeLocation(sourceCode.createSourceCodeLocation(range.startLine, range.startColumn), {ignoreNetworkTab: true});
             return true;
         }
 

@@ -138,9 +138,9 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
 
         contextMenu.appendItem(WebInspector.UIString("Show Source"), () => {
             if (event.metaKey)
-                WebInspector.showOriginalUnformattedSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation);
+                WebInspector.showOriginalUnformattedSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation, {ignoreNetworkTab: true});
             else
-                WebInspector.showSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation);
+                WebInspector.showSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation, {ignoreNetworkTab: true});
         });
 
         // Only used one colon temporarily since single-colon pseudo elements are valid CSS.

@@ -1,3 +1,63 @@
+2017-02-21  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Prefer Resources tab over Network tab when showing files
+        https://bugs.webkit.org/show_bug.cgi?id=168021
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.handlePossibleLinkClick):
+        (WebInspector.openURL):
+        Add `options` parameter to provide greater customization.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser.prototype.bestTabContentViewForRepresentedObject):
+        Add logic for `ignoreNetworkTab` option that will ignore instances of NetworkTabContentView.
+
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems):
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.showMainResourceForFrame):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.tokenTrackingControllerHighlightedRangeWasClicked.showRangeInSourceCode):
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel.prototype.cssStyleDeclarationTextEditorShowProperty):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WebInspector.appendContextMenuItemsForSourceCode):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView.prototype._mouseWasClicked.followLink):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._populateTagContextMenu):
+        (WebInspector.DOMTreeElement.prototype._showCustomElementDefinition):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView.prototype.showContentViewForTreeElement):
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._appendMenusItemsForObject):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype._dataGridNodeGoToArrowClicked):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WebInspector.SearchSidebarPanel.prototype._treeSelectionDidChange):
+        (WebInspector.SearchSidebarPanel.prototype._treeElementDoubleClick):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.tokenTrackingControllerHighlightedRangeWasClicked):
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype._popoverCallStackTreeSelectionDidChange):
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem.prototype.populateContextMenu):
+        Change arguments of functions to change content views to ignore the Network tab.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView.prototype.hasRepresentedObject):
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        (WebInspector.NetworkSidebarPanel.prototype.hasRepresentedObject):
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WebInspector.NetworkTabContentView.prototype.canShowRepresentedObject):
+        Ensure that the Network tab can only display resources that it has entries for in its view.
+
 2017-02-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: console scope bar's unread message indicator is misaligned

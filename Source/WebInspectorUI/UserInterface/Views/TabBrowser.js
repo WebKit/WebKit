@@ -115,6 +115,9 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
             if (options.ignoreSearchTab && tabContentView instanceof WebInspector.SearchTabContentView)
                 continue;
 
+            if (options.ignoreNetworkTab && tabContentView instanceof WebInspector.NetworkTabContentView)
+                continue;
+
             if (tabContentView.canShowRepresentedObject(representedObject))
                 return tabContentView;
         }
