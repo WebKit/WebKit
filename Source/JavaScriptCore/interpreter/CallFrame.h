@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2007-2008, 2011, 2013-2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -119,7 +119,7 @@ namespace JSC  {
 
         AtomicStringTable* atomicStringTable() const { return vm().atomicStringTable(); }
         const CommonIdentifiers& propertyNames() const { return *vm().propertyNames; }
-        const MarkedArgumentBuffer& emptyList() const { return *vm().emptyList; }
+        const ArgList& emptyList() const { return *vm().emptyList; }
         Interpreter* interpreter() { return vm().interpreter; }
         Heap* heap() { return &vm().heap; }
 

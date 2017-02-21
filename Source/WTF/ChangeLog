@@ -1,3 +1,22 @@
+2017-02-20  Mark Lam  <mark.lam@apple.com>
+
+        [Re-landing] CachedCall should let GC know to keep its arguments alive.
+        https://bugs.webkit.org/show_bug.cgi?id=168567
+        <rdar://problem/30475767>
+
+        Reviewed by Saam Barati.
+
+        Added a WTF_FORBID_HEAP_ALLOCATION that will cause a compilation failure if
+        a class declared with it is malloced.
+
+        While this doesn't prevent that class declared WTF_FORBID_HEAP_ALLOCATION from
+        being embedded in another class that is heap allocated, it does at minimum
+        document the intent and gives the users of this class a chance to do the
+        right thing.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/ForbidHeapAllocation.h: Added.
+
 2017-02-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r212685.
