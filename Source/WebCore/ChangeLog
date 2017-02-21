@@ -1,5 +1,19 @@
 2017-02-21  Jer Noble  <jer.noble@apple.com>
 
+        Pulling too quickly from an AudioSampleDataSource should increase the pre-buffer amount
+        https://bugs.webkit.org/show_bug.cgi?id=168645
+
+        Reviewed by Eric Carlson.
+
+        If a pull operation runs past the end of the buffered range of a CARingBuffer, the underrun
+        is zero-filled, causing an audible glitch.  In this case, bias m_outputSampleOffset by the
+        amount of the underrun, which should keep the underrun from reoccurring.
+
+        * platform/audio/mac/AudioSampleDataSource.cpp:
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+
+2017-02-21  Jer Noble  <jer.noble@apple.com>
+
         AudioSampleBufferList::zeroABL() takes a byte-count, not a sample-count.
         https://bugs.webkit.org/show_bug.cgi?id=168635
 

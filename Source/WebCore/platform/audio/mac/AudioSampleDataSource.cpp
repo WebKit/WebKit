@@ -253,7 +253,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
 
     LOG(MediaCaptureSamples, "** pullSamples: asking for %ld samples at time = %lld (was %lld)", sampleCount, timeStamp, timeStamp - m_outputSampleOffset);
 
-    int64_t framesAvailable = sampleCount;
+    uint64_t framesAvailable = sampleCount;
     if (timeStamp < startFrame || timeStamp + sampleCount > endFrame) {
         if (timeStamp + sampleCount < startFrame || timeStamp > endFrame)
             framesAvailable = 0;
@@ -263,6 +263,14 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
             framesAvailable = timeStamp + sampleCount - endFrame;
 
         LOG(MediaCaptureSamples, "** pullSamplesInternal: sample %lld is not completely in range [%lld .. %lld], returning %lld frames", timeStamp, startFrame, endFrame, framesAvailable);
+
+        if (framesAvailable < sampleCount) {
+            const double twentyMS = .02;
+            double sampleRate = m_outputDescription->sampleRate();
+            auto delta = static_cast<int64_t>(timeStamp) - endFrame;
+            if (delta > 0 && delta < sampleRate * twentyMS)
+                m_outputSampleOffset -= delta;
+        }
 
         if (!framesAvailable) {
             AudioSampleBufferList::zeroABL(buffer, byteCount);
