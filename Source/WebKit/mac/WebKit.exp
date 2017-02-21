@@ -98,6 +98,7 @@
 .objc_class_name_DOMNode
 .objc_class_name_DOMNodeIterator
 .objc_class_name_DOMNodeList
+.objc_class_name_DOMObject
 .objc_class_name_DOMOverflowEvent
 .objc_class_name_DOMProcessingInstruction
 .objc_class_name_DOMProgressEvent
@@ -121,13 +122,16 @@
 .objc_class_name_WebCoreStatistics
 .objc_class_name_WebDataSource
 .objc_class_name_WebDatabaseManager
+.objc_class_name_WebDatabaseQuotaManager
 .objc_class_name_WebDefaultPolicyDelegate
 .objc_class_name_WebDeviceOrientation
 .objc_class_name_WebDeviceOrientationProviderMock
 .objc_class_name_WebDownload
+.objc_class_name_WebFixedPositionContent
 .objc_class_name_WebFormDelegate
 .objc_class_name_WebFrame
 .objc_class_name_WebFrameView
+.objc_class_name_WebGeolocation
 .objc_class_name_WebGeolocationPosition
 .objc_class_name_WebHTMLRepresentation
 .objc_class_name_WebHTMLView
@@ -135,7 +139,10 @@
 .objc_class_name_WebHistoryItem
 .objc_class_name_WebInspector
 .objc_class_name_WebKitStatistics
+.objc_class_name_WebNavigationData
+.objc_class_name_WebNotification
 .objc_class_name_WebPluginDatabase
+.objc_class_name_WebPolicyDecisionListener
 .objc_class_name_WebPreferences
 .objc_class_name_WebResource
 .objc_class_name_WebScriptCallFrame
@@ -145,6 +152,8 @@
 .objc_class_name_WebTextIterator
 .objc_class_name_WebUserContentURLPattern
 .objc_class_name_WebView
+.objc_class_name_WebVisiblePosition
+.objc_class_name_WKQuadObject
 _DOMException
 _DOMRangeException
 _DOMEventException
