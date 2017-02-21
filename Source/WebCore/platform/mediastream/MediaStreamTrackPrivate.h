@@ -48,6 +48,7 @@ public:
         virtual void trackSettingsChanged(MediaStreamTrackPrivate&) = 0;
         virtual void trackEnabledChanged(MediaStreamTrackPrivate&) = 0;
         virtual void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) { };
+        virtual void audioSamplesAvailable(MediaStreamTrackPrivate&) { };
     };
 
     static Ref<MediaStreamTrackPrivate> create(Ref<RealtimeMediaSource>&&);
@@ -102,6 +103,7 @@ private:
     void sourceSettingsChanged() final;
     bool preventSourceFromStopping() final;
     void videoSampleAvailable(MediaSample&) final;
+    void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 
     Vector<Observer*> m_observers;
     Ref<RealtimeMediaSource> m_source;

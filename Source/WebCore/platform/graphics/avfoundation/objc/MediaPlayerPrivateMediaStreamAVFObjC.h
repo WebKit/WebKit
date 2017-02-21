@@ -190,6 +190,7 @@ private:
     void trackSettingsChanged(MediaStreamTrackPrivate&) override { };
     void trackEnabledChanged(MediaStreamTrackPrivate&) override { };
     void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) override;
+    void audioSamplesAvailable(MediaStreamTrackPrivate&) override;
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     void setVideoFullscreenLayer(PlatformLayer*, std::function<void()> completionHandler) override;

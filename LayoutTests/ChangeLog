@@ -1,3 +1,13 @@
+2017-02-20  Jer Noble  <jer.noble@apple.com>
+
+        Local audio-only stream will not trigger playback to begin
+        https://bugs.webkit.org/show_bug.cgi?id=168412
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/local-audio-playing-event-expected.txt: Added.
+        * fast/mediastream/local-audio-playing-event.html: Added.
+
 2017-02-20  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Implement absoluteQuadsForRange.

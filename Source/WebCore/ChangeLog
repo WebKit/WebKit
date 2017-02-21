@@ -1,3 +1,28 @@
+2017-02-20  Jer Noble  <jer.noble@apple.com>
+
+        Local audio-only stream will not trigger playback to begin
+        https://bugs.webkit.org/show_bug.cgi?id=168412
+
+        Reviewed by Youenn Fablet.
+
+        Test: fast/mediastream/local-audio-playing-event.html
+
+        With video-bearing streams, the first video sample emitted from the stream causes the
+        readyState to move from HAVE_NOTHING to HAVE_ENOUGH_DATA. Wire up this same behavior for
+        audio-bearing streams. Add a MediaStreamTrackPrivate::Observer callback method
+        audioSamplesAvailable(), which gets passed up to MediaPlayerPrivateMediaStreamAVFObjC.
+        Because this callback may be (and probably will be) called on a background thread, run the
+        updateReadyState() task in a scheduledDeferredTask().
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::audioSamplesAvailable):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateTracks):
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::audioSamplesAvailable):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        (WebCore::MediaStreamTrackPrivate::Observer::audioSamplesAvailable):
+
 2017-02-20  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Implement absoluteQuadsForRange.

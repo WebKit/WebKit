@@ -213,6 +213,12 @@ void MediaStreamTrackPrivate::videoSampleAvailable(MediaSample& mediaSample)
         observer->sampleBufferUpdated(*this, mediaSample);
 }
 
+void MediaStreamTrackPrivate::audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)
+{
+    for (auto& observer : m_observers)
+        observer->audioSamplesAvailable(*this);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
