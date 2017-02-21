@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2009, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -63,12 +63,24 @@ void MarkedArgumentBuffer::markLists(SlotVisitor& visitor, ListSet& markSet)
     }
 }
 
+void MarkedArgumentBuffer::slowEnsureCapacity(size_t requestedCapacity)
+{
+    int newCapacity = Checked<int>(requestedCapacity).unsafeGet();
+    expandCapacity(newCapacity);
+}
+
 void MarkedArgumentBuffer::expandCapacity()
 {
     int newCapacity = (Checked<int>(m_capacity) * 2).unsafeGet();
+    expandCapacity(newCapacity);
+}
+
+void MarkedArgumentBuffer::expandCapacity(int newCapacity)
+{
+    ASSERT(m_capacity < newCapacity);
     size_t size = (Checked<size_t>(newCapacity) * sizeof(EncodedJSValue)).unsafeGet();
     EncodedJSValue* newBuffer = static_cast<EncodedJSValue*>(fastMalloc(size));
-    for (int i = 0; i < m_capacity; ++i) {
+    for (int i = 0; i < m_size; ++i) {
         newBuffer[i] = m_buffer[i];
         addMarkSet(JSValue::decode(m_buffer[i]));
     }
@@ -82,7 +94,8 @@ void MarkedArgumentBuffer::expandCapacity()
 
 void MarkedArgumentBuffer::slowAppend(JSValue v)
 {
-    if (m_size >= m_capacity)
+    ASSERT(m_size <= m_capacity);
+    if (m_size == m_capacity)
         expandCapacity();
 
     slotFor(m_size) = JSValue::encode(v);
