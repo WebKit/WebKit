@@ -1,3 +1,46 @@
+2017-02-20  Anders Carlsson  <andersca@apple.com>
+
+        Use the new drag code path when dragging links
+        https://bugs.webkit.org/show_bug.cgi?id=168612
+
+        Reviewed by Tim Horton.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::copyURL):
+        Use userVisibleString instead of fillInUserVisibleForm.
+
+        (WebCore::Editor::pasteboardWriterURL):
+        New function that returns a PasteboardWriterData::URL for a given URL + title.
+
+        * editing/Editor.h:
+        Add new members.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::userVisibleString):
+        (WebCore::Editor::fillInUserVisibleForm): Deleted.
+        Add a getter instead of a function that fills in a struct member.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        Add the new DragItem code path when dragging links.
+
+        * platform/PasteboardWriterData.cpp:
+        (WebCore::PasteboardWriterData::isEmpty):
+        Check for m_url as well.
+
+        (WebCore::PasteboardWriterData::setURL):
+        Set m_url.
+
+        * platform/PasteboardWriterData.h:
+        Add new members.
+
+        * platform/mac/PasteboardWriter.mm:
+        (WebCore::toUTI):
+        New helper function that returns an UTI from a pasteboard type.
+
+        (WebCore::createPasteboardWriter):
+        Handle converting URLs to the various pasteboard types.
+
 2017-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add plumbing to the UI process for TextIndicatorData when computing the drag image

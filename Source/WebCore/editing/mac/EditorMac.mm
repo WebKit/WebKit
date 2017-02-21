@@ -251,9 +251,9 @@ static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& 
     cachedImage = tentativeCachedImage;
 }
 
-void Editor::fillInUserVisibleForm(PasteboardURL& pasteboardURL)
+String Editor::userVisibleString(const URL& url)
 {
-    pasteboardURL.userVisibleForm = client()->userVisibleString(pasteboardURL.url);
+    return client()->userVisibleString(url);
 }
 
 void Editor::selectionWillChange()

@@ -219,7 +219,12 @@ static NSMutableDictionary *localPasteboards;
 {
     for (id <NSPasteboardWriting> object in objects) {
         for (NSString *type in [object writableTypesForPasteboard:self]) {
-            auto pasteboardType = adoptNS((__bridge NSString *)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)type, kUTTagClassNSPboardType));
+            auto pasteboardType = ^{
+                if (UTTypeIsDynamic((__bridge CFStringRef)type))
+                    return adoptNS((__bridge NSString *)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)type, kUTTagClassNSPboardType));
+
+                return retainPtr(type);
+            }();
 
             [self addTypes:@[ pasteboardType.get() ] owner:self];
 

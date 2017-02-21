@@ -41,6 +41,9 @@ bool PasteboardWriterData::isEmpty() const
     if (m_plainText)
         return false;
 
+    if (m_url)
+        return false;
+
     return true;
 }
 
@@ -49,6 +52,13 @@ void PasteboardWriterData::setPlainText(PlainText plainText)
     ASSERT(!m_plainText);
 
     m_plainText = WTFMove(plainText);
+}
+
+void PasteboardWriterData::setURL(URL url)
+{
+    ASSERT(!m_url);
+
+    m_url = WTFMove(url);
 }
 
 }

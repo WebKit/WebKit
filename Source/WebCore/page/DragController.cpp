@@ -933,10 +933,15 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     }
 
     if (!linkURL.isEmpty() && (m_dragSourceAction & DragSourceActionLink)) {
+        PasteboardWriterData pasteboardWriterData;
+
         if (!dataTransfer.pasteboard().hasData()) {
             // Simplify whitespace so the title put on the dataTransfer resembles what the user sees
             // on the web page. This includes replacing newlines with spaces.
-            src.editor().copyURL(linkURL, hitTestResult.textContent().simplifyWhiteSpace(), dataTransfer.pasteboard());
+            if (mustUseLegacyDragClient)
+                src.editor().copyURL(linkURL, hitTestResult.textContent().simplifyWhiteSpace(), dataTransfer.pasteboard());
+            else
+                pasteboardWriterData.setURL(src.editor().pasteboardWriterURL(linkURL, hitTestResult.textContent().simplifyWhiteSpace()));
         } else {
             // Make sure the pasteboard also contains trustworthy link data
             // but don't overwrite more general pasteboard types.
@@ -967,8 +972,20 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             dragImage = DragImage { platformAdjustDragImageForDeviceScaleFactor(dragImage.get(), m_page.deviceScaleFactor()) };
             if (textIndicator.contentImage)
                 dragImage.setIndicatorData(textIndicator);
+            dragImageAnchorPoint = FloatPoint { 0.5, static_cast<float>((size.height() - LinkDragBorderInset) / size.height()) };
         }
-        doSystemDrag(WTFMove(dragImage), dragLoc, mouseDraggedPoint, { }, dataTransfer, src, DragSourceActionLink);
+
+        if (mustUseLegacyDragClient) {
+            doSystemDrag(WTFMove(dragImage), dragLoc, mouseDraggedPoint, { }, dataTransfer, src, DragSourceActionLink);
+            return true;
+        }
+
+        DragItem dragItem;
+        dragItem.image = WTFMove(dragImage);
+        dragItem.imageAnchorPoint = dragImageAnchorPoint;
+        dragItem.data = WTFMove(pasteboardWriterData);
+
+        beginDrag(WTFMove(dragItem), src, dragOrigin, mouseDraggedPoint, dataTransfer, DragSourceActionSelection);
 
         return true;
     }

@@ -1346,10 +1346,23 @@ void Editor::copyURL(const URL& url, const String& title, Pasteboard& pasteboard
     pasteboardURL.title = title;
 
 #if PLATFORM(MAC)
-    fillInUserVisibleForm(pasteboardURL);
+    pasteboardURL.userVisibleForm = userVisibleString(url);
 #endif
 
     pasteboard.write(pasteboardURL);
+}
+
+PasteboardWriterData::URL Editor::pasteboardWriterURL(const URL& url, const String& title)
+{
+    PasteboardWriterData::URL result;
+
+    result.url = url;
+    result.title = title;
+#if PLATFORM(MAC)
+    result.userVisibleForm = userVisibleString(url);
+#endif
+
+    return result;
 }
 
 #if !PLATFORM(IOS)

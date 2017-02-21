@@ -33,6 +33,11 @@
 
 namespace WebCore {
 
+static RetainPtr<NSString> toUTI(NSString *pasteboardType)
+{
+    return adoptNS((__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)pasteboardType, nullptr));
+}
+
 RetainPtr<id <NSPasteboardWriting>> createPasteboardWriter(const PasteboardWriterData& data)
 {
     auto pasteboardItem = adoptNS([[NSPasteboardItem alloc] init]);
@@ -43,6 +48,39 @@ RetainPtr<id <NSPasteboardWriting>> createPasteboardWriter(const PasteboardWrite
             auto smartPasteType = adoptNS((__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)_NXSmartPaste, nullptr));
             [pasteboardItem setData:nil forType:smartPasteType.get()];
         }
+    }
+
+    if (auto& url = data.url()) {
+        NSURL *cocoaURL = url->url;
+        NSString *userVisibleString = url->userVisibleForm;
+        NSString *title = (NSString *)url->title;
+        if (!title.length) {
+            title = cocoaURL.path.lastPathComponent;
+            if (!title.length)
+                title = userVisibleString;
+        }
+
+        // WebURLsWithTitlesPboardType.
+        auto paths = adoptNS([[NSArray alloc] initWithObjects:@[ @[ cocoaURL.absoluteString ] ], @[ url->title.stripWhiteSpace() ], nil]);
+        [pasteboardItem setPropertyList:paths.get() forType:toUTI(@"WebURLsWithTitlesPboardType").get()];
+
+        // NSURLPboardType.
+        if (NSURL *baseCocoaURL = cocoaURL.baseURL)
+            [pasteboardItem setPropertyList:@[ cocoaURL.relativeString, baseCocoaURL.absoluteString ] forType:toUTI(NSURLPboardType).get()];
+        else if (cocoaURL)
+            [pasteboardItem setPropertyList:@[ cocoaURL.absoluteString, @"" ] forType:toUTI(NSURLPboardType).get()];
+        else
+            [pasteboardItem setPropertyList:@[ @"", @"" ] forType:toUTI(NSURLPboardType).get()];
+
+        if (cocoaURL.fileURL)
+            [pasteboardItem setString:cocoaURL.absoluteString forType:(NSString *)kUTTypeFileURL];
+        [pasteboardItem setString:userVisibleString forType:(NSString *)kUTTypeURL];
+
+        // WebURLNamePboardType.
+        [pasteboardItem setString:title forType:@"public.url-name"];
+
+        // NSPasteboardTypeString.
+        [pasteboardItem setString:userVisibleString forType:NSPasteboardTypeString];
     }
 
     return pasteboardItem;

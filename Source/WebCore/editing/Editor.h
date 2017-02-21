@@ -35,6 +35,7 @@
 #include "EditorInsertAction.h"
 #include "FindOptions.h"
 #include "FrameSelection.h"
+#include "PasteboardWriterData.h"
 #include "TextChecking.h"
 #include "TextEventInputType.h"
 #include "TextIteratorBehavior.h"
@@ -147,6 +148,7 @@ public:
 
     WEBCORE_EXPORT void copyURL(const URL&, const String& title);
     void copyURL(const URL&, const String& title, Pasteboard&);
+    PasteboardWriterData::URL pasteboardWriterURL(const URL&, const String& title);
 #if !PLATFORM(IOS)
     WEBCORE_EXPORT void copyImage(const HitTestResult&);
 #endif
@@ -526,7 +528,7 @@ private:
     RefPtr<DocumentFragment> createFragmentForImageResourceAndAddResource(RefPtr<ArchiveResource>&&);
     RefPtr<DocumentFragment> createFragmentAndAddResources(NSAttributedString *);
     FragmentAndResources createFragment(NSAttributedString *);
-    void fillInUserVisibleForm(PasteboardURL&);
+    String userVisibleString(const URL&);
 
     static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
     static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
