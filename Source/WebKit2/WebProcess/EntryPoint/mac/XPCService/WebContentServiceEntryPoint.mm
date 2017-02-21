@@ -30,8 +30,6 @@
 #import "WebProcess.h"
 #import "XPCServiceEntryPoint.h"
 
-#import <WebCore/SplitTestInitializer.h>
-
 #if PLATFORM(IOS)
 #import <WebCore/GraphicsServicesSPI.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
@@ -52,10 +50,6 @@ void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t init
     GSInitialize();
     InitWebCoreThreadSystemInterface();
 #endif // PLATFORM(IOS)
-
-    // Initialize split testing early, so that other initialization can
-    // determine which experiments to run.
-    initSplitTest();
 
     XPCServiceInitializer<WebProcess, XPCServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage, priorityBoostMessage);
 }
