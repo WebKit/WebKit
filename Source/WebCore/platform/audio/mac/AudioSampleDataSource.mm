@@ -288,19 +288,10 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
         }
     }
 
-    if (m_volume >= .95) {
-        m_ringBuffer->fetch(&buffer, sampleCount, timeStamp, mode == Copy ? CARingBuffer::Copy : CARingBuffer::Mix);
-        return true;
-    }
+    m_ringBuffer->fetch(&buffer, sampleCount, timeStamp, mode == Copy ? CARingBuffer::Copy : CARingBuffer::Mix);
 
-    if (m_scratchBuffer->copyFrom(*m_ringBuffer.get(), sampleCount, timeStamp, mode == Copy ? CARingBuffer::Copy : CARingBuffer::Mix)) {
-        AudioSampleBufferList::zeroABL(buffer, sampleCount);
-        return false;
-    }
-
-    m_scratchBuffer->applyGain(m_volume);
-    if (m_scratchBuffer->copyTo(buffer, sampleCount))
-        AudioSampleBufferList::zeroABL(buffer, byteCount);
+    if (m_volume < .95)
+        AudioSampleBufferList::applyGain(buffer, m_volume, m_outputDescription->format());
 
     return true;
 }
