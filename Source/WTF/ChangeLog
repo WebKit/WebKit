@@ -1,3 +1,25 @@
+2017-02-17  JF Bastien  <jfbastien@apple.com>
+
+        A/B test concurrent GC
+        https://bugs.webkit.org/show_bug.cgi?id=168453
+        <rdar://problem/30553220>
+
+        Reviewed by Phil Pizlo.
+
+        Add the SplitTest singleton which can be used for A/B split
+        testing of features. It is currently initialized for WebKit2
+        WebContent processes, but the class is usable anywhere WTF can be
+        used (it returns an optional, which is valueless if not
+        initialized).
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/SplitTest.cpp: Added.
+        (WTF::SplitTest::singleton):
+        (WTF::SplitTest::initialize):
+        (WTF::SplitTest::enableBooleanExperiment):
+        * wtf/SplitTest.h: Added.
+
 2017-02-21  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r212692. rdar://problem/30475767

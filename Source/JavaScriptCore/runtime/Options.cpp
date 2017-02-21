@@ -39,6 +39,7 @@
 #include <wtf/Compiler.h>
 #include <wtf/DataLog.h>
 #include <wtf/NumberOfCores.h>
+#include <wtf/SplitTest.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -319,6 +320,17 @@ static void overrideDefaults()
         Options::concurrentGCPeriodMS() = 10;
     } else
         Options::useStochasticMutatorScheduler() = true;
+
+    if (Options::useConcurrentGCSplitTesting()) {
+        if (Options::useConcurrentGC()) {
+            // Run an A/B split test on concurrent GC: if it was going to be on,
+            // turn it off with some probability. Do this deterministically per
+            // unique user identifier so that crashes don't skew statistics, and
+            // do it in a manner which can be reconstructed from a crash trace.
+            std::optional<bool> enableExperiment = SplitTest::singleton().enableBooleanExperiment();
+            Options::useConcurrentGC() = enableExperiment.value_or(true);
+        }
+    }
 }
 
 static void recomputeDependentOptions()

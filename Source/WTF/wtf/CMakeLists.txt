@@ -110,6 +110,7 @@ set(WTF_HEADERS
     Seconds.h
     SegmentedVector.h
     SmallPtrSet.h
+    SplitTest.h
     StackBounds.h
     StackStats.h
     StaticConstructors.h
@@ -222,6 +223,7 @@ set(WTF_SOURCES
     SHA1.cpp
     Seconds.cpp
     SixCharacterHash.cpp
+    SplitTest.cpp
     StackBounds.cpp
     StackStats.cpp
     StringPrintStream.cpp

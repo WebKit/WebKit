@@ -335,6 +335,8 @@
 		A8A47486151A825B004123FF /* WTFThreadData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4737A151A825B004123FF /* WTFThreadData.cpp */; };
 		A8A47487151A825B004123FF /* WTFThreadData.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4737B151A825B004123FF /* WTFThreadData.h */; };
 		A8A4748C151A8264004123FF /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4748B151A8264004123FF /* config.h */; };
+		AD412B201E57BC92008AF157 /* SplitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD412B1E1E57BC92008AF157 /* SplitTest.cpp */; };
+		AD412B211E57BC92008AF157 /* SplitTest.h in Headers */ = {isa = PBXBuildFile; fileRef = AD412B1F1E57BC92008AF157 /* SplitTest.h */; };
 		AD7C434B1DD2A4A70026888B /* Expected.h in Headers */ = {isa = PBXBuildFile; fileRef = AD7C434A1DD2A4A70026888B /* Expected.h */; };
 		ADF2CE661E39F106006889DB /* MemoryFootprint.h in Headers */ = {isa = PBXBuildFile; fileRef = ADF2CE641E39F106006889DB /* MemoryFootprint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ADF2CE671E39F106006889DB /* MemoryFootprint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADF2CE651E39F106006889DB /* MemoryFootprint.cpp */; };
@@ -712,6 +714,8 @@
 		A8A4737A151A825B004123FF /* WTFThreadData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WTFThreadData.cpp; sourceTree = "<group>"; };
 		A8A4737B151A825B004123FF /* WTFThreadData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFThreadData.h; sourceTree = "<group>"; };
 		A8A4748B151A8264004123FF /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		AD412B1E1E57BC92008AF157 /* SplitTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SplitTest.cpp; sourceTree = "<group>"; };
+		AD412B1F1E57BC92008AF157 /* SplitTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplitTest.h; sourceTree = "<group>"; };
 		AD7C434A1DD2A4A70026888B /* Expected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Expected.h; sourceTree = "<group>"; };
 		ADF2CE641E39F106006889DB /* MemoryFootprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryFootprint.h; sourceTree = "<group>"; };
 		ADF2CE651E39F106006889DB /* MemoryFootprint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryFootprint.cpp; sourceTree = "<group>"; };
@@ -870,6 +874,8 @@
 		A876DBD6151816E500DADB95 /* wtf */ = {
 			isa = PBXGroup;
 			children = (
+				AD412B1E1E57BC92008AF157 /* SplitTest.cpp */,
+				AD412B1F1E57BC92008AF157 /* SplitTest.h */,
 				2CDED0F018115C3F004DBA70 /* cf */,
 				E4A0AD3B1A96251900536DF6 /* cocoa */,
 				A8A47281151A825A004123FF /* dtoa */,
@@ -1456,6 +1462,7 @@
 				0FC4488316FE9FE100844BE9 /* ProcessID.h in Headers */,
 				143F61201565F0F900DB514A /* RAMSize.h in Headers */,
 				A8A47415151A825B004123FF /* RandomNumber.h in Headers */,
+				AD412B211E57BC92008AF157 /* SplitTest.h in Headers */,
 				A8A47416151A825B004123FF /* RandomNumberSeed.h in Headers */,
 				0F725CAC1C50461600AD943A /* RangeSet.h in Headers */,
 				0F87105A16643F190090B0AD /* RawPointer.h in Headers */,
@@ -1725,6 +1732,7 @@
 				A8A47443151A825B004123FF /* StringStatics.cpp in Sources */,
 				93F1993E19D7958D00C2390B /* StringView.cpp in Sources */,
 				93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */,
+				AD412B201E57BC92008AF157 /* SplitTest.cpp in Sources */,
 				93934BD318A1E8C300D0D6A1 /* StringViewObjC.mm in Sources */,
 				A8A473B7151A825B004123FF /* strtod.cc in Sources */,
 				52183012C99E476A84EEBEA8 /* SymbolImpl.cpp in Sources */,
