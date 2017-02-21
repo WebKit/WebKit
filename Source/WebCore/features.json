@@ -1069,6 +1069,16 @@
         "keywords": ["visual viewport", "viewport", "viewportapi"]
     },
     {
+        "name": "Web Audio",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://www.w3.org/TR/webaudio/",
+        "keywords": ["audio, webaudio"],
+        "description": "A high-level JavaScript API for processing and synthesizing audio in web applications."
+        "comment": "WebKit's implementation does not match the current specification.",
+    },
+    {
         "name": "Web Bluetooth",
         "status": {
             "status": "Not Considering"
@@ -1076,6 +1086,15 @@
         "url": "https://webbluetoothcg.github.io/web-bluetooth/",
         "keywords": ["bluetooth"],
         "description": "An API to discover and communicate with devices over the Bluetooth."
+    },
+    {
+        "name": "Web MIDI",
+        "status": {
+            "status": "Not Considering"
+        },
+        "url": "https://www.w3.org/TR/webmidi/",
+        "keywords": ["MIDI, music, synthesizer, keyboard"],
+        "description": "An API supporting the Musical Instrument Digital Interface (MIDI) protocol, enabling web applications to enumerate and select MIDI input and output devices on the client system and send and receive MIDI messages."
     },
     {
         "name": "WebUSB",

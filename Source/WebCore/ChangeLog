@@ -1,3 +1,9 @@
+2017-02-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Add Web Audio and Web MIDI to features.json.
+
+        * features.json:
+
 2017-02-21  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r207669): Crash after mutating selector text
