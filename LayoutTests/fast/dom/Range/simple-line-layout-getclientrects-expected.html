@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<head>
+<title>This tests that simple and normal line layout produce the same getClientRects result.</title>
+<style>
+.rangeBox {
+    position:absolute;
+    outline: 5px solid green;
+}
+
+.box {
+    width: 400px;
+    line-height: 40px;
+}
+
+.outer {
+    outline: 2px solid green;
+}
+
+#test8 {
+    -webkit-transform: translate(50px, 100px) rotate(50deg);
+}
+</style>
+</head>
+<body>
+<div class="box" id="test1">1 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+<div class="box" id="test2">2 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+<div class="box" id="test3">3 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+<div class="box" id="test4">4 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do <div class="outer">eiusmod tempor</div> incididunt ut labore etdolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+<div class="box" id="test5">5 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do <div class="outer">eiusmod tempor</div> incididunt ut labore etdolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+<div class="box" id="test6">6 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+<div class="box" id="test7">7 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+<div class="box" id="test8">8 <div>Lorem ipsum dolor sit amet,</div> consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+<div class="box" id="test9">9 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+<div class="box" id="test10">10 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+<script>
+    if (window.internals)
+        internals.settings.setSimpleLineLayoutEnabled(false);
+
+    function visualizeClientRects(range) {
+    	var rects = range.getClientRects();
+        for (var i = 0; i < rects.length; ++i) {
+        	var rect = rects[i];
+        	rangeBox = document.createElement('div');
+        	rangeBox.className = "rangeBox";
+        	var style = "";
+        	style += "left: "   + rect.left + "px;";
+        	style += "top: "    + rect.top + "px;";
+        	style += "width: "  + (rect.right - rect.left) + "px;";
+        	style += "height: " + (rect.bottom - rect.top) + "px;";
+        	rangeBox.setAttribute("style", style);
+        	document.documentElement.appendChild(rangeBox);
+        }
+    }
+
+    var range = document.createRange();
+    range.selectNode(document.getElementById('test1'));
+    visualizeClientRects(range);
+
+    range = document.createRange();
+    range.setStart(document.getElementById('test2').firstChild, 10);
+    range.selectNodeContents(document.getElementById('test2'));
+    visualizeClientRects(range);
+
+    range = document.createRange();
+    range.setStart(document.getElementById('test3').firstChild, 11);
+    range.setEnd(document.getElementById('test3').lastChild, 200);
+    visualizeClientRects(range);
+
+    range = document.createRange();
+    range.selectNode(document.getElementById('test4'));
+    visualizeClientRects(range);
+
+    range = document.createRange();
+    range.selectNodeContents(document.getElementById('test5'));
+    visualizeClientRects(range);
+
+    range = document.createRange();
+    range.setStart(document.getElementById('test6').firstChild, 11);
+    range.setEnd(document.getElementById('test6').lastChild, 0);
+    visualizeClientRects(range);
+
+    range = document.createRange();
+    range.setStart(document.getElementById('test7'), 0);
+    visualizeClientRects(range);
+
+    range = document.createRange();
+    range.setStart(document.getElementById('test8').firstChild, 0);
+    visualizeClientRects(range);
+
+    range = document.createRange();
+    range.setStartBefore(document.getElementById('test9'));
+    range.setEndAfter(document.getElementById('test9').firstChild);
+    visualizeClientRects(range);
+
+    range = document.createRange();
+    range.setStartBefore(document.getElementById('test10'));
+    range.setEndBefore(document.getElementById('test10').firstChild);
+    visualizeClientRects(range);
+</script>
+</body>
+</html>
