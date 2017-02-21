@@ -57,11 +57,40 @@ static inline size_t alignTo16Bytes(size_t size)
     return (size + 15) & ~15;
 }
 
+static const double Tau = 2 * M_PI;
+static const double BipBopDuration = 0.07;
+static const double BipBopVolume = 0.5;
+static const double BipFrequency = 1500;
+static const double BopFrequency = 500;
+static const double HumFrequency = 150;
+static const double HumVolume = 0.1;
+
+template <typename AudioSampleType>
+static void writeHum(float amplitude, float frequency, float sampleRate, AudioSampleType *p, uint64_t count)
+{
+    float humPeriod = sampleRate / frequency;
+    for (uint64_t i = 0; i < count; ++i)
+        *p++ = amplitude * sin(i * Tau / humPeriod);
+}
+
+template <typename AudioSampleType>
+static void addHum(float amplitude, float frequency, float sampleRate, uint64_t start, AudioSampleType *p, uint64_t count)
+{
+    float humPeriod = sampleRate / frequency;
+    for (uint64_t i = start, end = start + count; i < end; ++i) {
+        AudioSampleType a = amplitude * sin(i * Tau / humPeriod);
+        a += *p;
+        *p++ = a;
+    }
+}
+
 RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::create(const String& name, const MediaConstraints* constraints)
 {
     auto source = adoptRef(new MockRealtimeAudioSourceMac(name));
     if (constraints && source->applyConstraints(*constraints))
         source = nullptr;
+
+    source->applySampleRate(44100);
 
     return source;
 }
@@ -90,8 +119,8 @@ void MockRealtimeAudioSourceMac::emitSampleBuffers(uint32_t frameCount)
 {
     ASSERT(m_formatDescription);
 
-    CMTime startTime = CMTimeMake(m_bytesEmitted, m_sampleRate);
-    m_bytesEmitted += frameCount;
+    CMTime startTime = CMTimeMake(m_samplesEmitted, m_sampleRate);
+    m_samplesEmitted += frameCount;
 
     audioSamplesAvailable(toMediaTime(startTime), *m_audioBufferList, CAAudioStreamDescription(m_streamFormat), frameCount);
 }
@@ -121,54 +150,24 @@ void MockRealtimeAudioSourceMac::render(double delta)
     if (m_muted || !m_enabled)
         return;
 
-    static double theta;
-    static const double frequencies[] = { 1500., 500. };
-    static const double tau = 2 * M_PI;
-
     if (!m_audioBufferList)
         reconfigure();
 
     uint32_t totalFrameCount = alignTo16Bytes(delta * m_sampleRate);
     uint32_t frameCount = std::min(totalFrameCount, m_maximiumFrameCount);
-    double elapsed = elapsedTime();
 
     while (frameCount) {
+        uint32_t bipBopStart = m_samplesRendered % m_bipBopBuffer.size();
+        uint32_t bipBopRemain = m_bipBopBuffer.size() - bipBopStart;
+        uint32_t bipBopCount = std::min(frameCount, bipBopRemain);
         for (auto& audioBuffer : m_audioBufferList->buffers()) {
             audioBuffer.mDataByteSize = frameCount * m_streamFormat.mBytesPerFrame;
-            float *buffer = static_cast<float *>(audioBuffer.mData);
-            for (uint32_t frame = 0; frame < frameCount; ++frame) {
-                int phase = fmod(elapsed, 2) * 15;
-                double increment = 0;
-                bool silent = true;
-
-                switch (phase) {
-                case 0:
-                case 14: {
-                    int index = fmod(elapsed, 1) * 2;
-                    increment = tau * frequencies[index] / m_sampleRate;
-                    silent = false;
-                    break;
-                }
-                default:
-                    break;
-                }
-
-                if (silent) {
-                    buffer[frame] = 0;
-                    continue;
-                }
-
-                float tone = sin(theta) * 0.25;
-                buffer[frame] = tone;
-
-                theta += increment;
-                if (theta > tau)
-                    theta -= tau;
-                elapsed += 1 / m_sampleRate;
-            }
+            memcpy(audioBuffer.mData, &m_bipBopBuffer[bipBopStart], sizeof(Float32) * bipBopCount);
+            addHum(HumVolume, HumFrequency, m_sampleRate, m_samplesRendered, static_cast<float*>(audioBuffer.mData), bipBopCount);
         }
-        emitSampleBuffers(frameCount);
-        totalFrameCount -= frameCount;
+        emitSampleBuffers(bipBopCount);
+        m_samplesRendered += bipBopCount;
+        totalFrameCount -= bipBopCount;
         frameCount = std::min(totalFrameCount, m_maximiumFrameCount);
     }
 }
@@ -185,6 +184,18 @@ bool MockRealtimeAudioSourceMac::applySampleRate(int sampleRate)
     m_formatDescription = nullptr;
     m_audioBufferList = nullptr;
     m_audioBufferListBufferSize = 0;
+
+    size_t sampleCount = 2 * m_sampleRate;
+
+    m_bipBopBuffer.grow(sampleCount);
+    m_bipBopBuffer.fill(0);
+
+    size_t bipBopSampleCount = ceil(BipBopDuration * m_sampleRate);
+    size_t bipStart = 0;
+    size_t bopStart = m_sampleRate;
+
+    addHum(BipBopVolume, BipFrequency, m_sampleRate, 0, m_bipBopBuffer.data() + bipStart, bipBopSampleCount);
+    addHum(BipBopVolume, BopFrequency, m_sampleRate, 0, m_bipBopBuffer.data() + bopStart, bipBopSampleCount);
 
     return true;
 }

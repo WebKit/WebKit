@@ -35,6 +35,7 @@
 #include "FontCascade.h"
 #include "MockRealtimeAudioSource.h"
 #include <CoreAudio/CoreAudioTypes.h>
+#include <wtf/Vector.h>
 
 OBJC_CLASS AVAudioPCMBuffer;
 typedef struct OpaqueCMClock* CMClockRef;
@@ -64,12 +65,15 @@ private:
     std::unique_ptr<WebAudioBufferList> m_audioBufferList;
 
     uint32_t m_maximiumFrameCount;
-    uint32_t m_sampleRate { 44100 };
-    uint64_t m_bytesEmitted { 0 };
+    uint32_t m_sampleRate { 0 };
+    uint64_t m_samplesEmitted { 0 };
+    uint64_t m_samplesRendered { 0 };
 
     RetainPtr<CMFormatDescriptionRef> m_formatDescription;
     AudioStreamBasicDescription m_streamFormat;
     RefPtr<WebAudioSourceProviderAVFObjC> m_audioSourceProvider;
+
+    Vector<float> m_bipBopBuffer;
 };
 
 } // namespace WebCore
