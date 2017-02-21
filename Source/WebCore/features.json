@@ -345,6 +345,15 @@
         "description": "An API that can be used to understand the visibility and position of DOM elements relative to a containing element or to the top-level viewport."
     },
     {
+        "name": "Media Capture and Streams",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://w3c.github.io/mediacapture-main/",
+        "keywords": ["mediastream", "getusermedia"],
+        "description": "A set of JavaScript APIs that allow local media, including audio and video, to be requested."
+    },
+    {
         "name": "Navigation Timing Level 1",
         "status": {
             "status": "Done"
