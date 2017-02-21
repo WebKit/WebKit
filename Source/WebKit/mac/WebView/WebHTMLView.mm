@@ -778,6 +778,7 @@ const float _WebHTMLViewPrintingMaximumShrinkFactor = PrintContext::maximumShrin
 // Fake URL scheme.
 #define WebDataProtocolScheme @"webkit-fake-url"
 
+#if !PLATFORM(IOS)
 // <rdar://problem/4985524> References to WebCoreScrollView as a subview of a WebHTMLView may be present
 // in some NIB files, so NSUnarchiver must be still able to look up this now-unused class.
 @interface WebCoreScrollView : NSScrollView
@@ -786,7 +787,6 @@ const float _WebHTMLViewPrintingMaximumShrinkFactor = PrintContext::maximumShrin
 @implementation WebCoreScrollView
 @end
 
-#if !PLATFORM(IOS)
 // We need this to be able to safely reference the CachedImage for the promised drag data
 static CachedImageClient& promisedDataClient()
 {

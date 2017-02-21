@@ -118,7 +118,6 @@
 .objc_class_name_WebArchive
 .objc_class_name_WebBackForwardList
 .objc_class_name_WebCache
-.objc_class_name_WebCoreScrollView
 .objc_class_name_WebCoreStatistics
 .objc_class_name_WebDataSource
 .objc_class_name_WebDatabaseManager

@@ -1,5 +1,16 @@
 2017-02-20  Aakash Jain  <aakash_jain@apple.com>
 
+        Stop exporting interface WebCoreScrollView on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=168536
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit.exp: Moved symbol for WebCoreScrollView interface to mac specific file.
+        * WebKit.mac.exp: Ditto.
+        * WebView/WebHTMLView.mm: WebCoreScrollView shouldn't be defined for iOS platform.
+
+2017-02-20  Aakash Jain  <aakash_jain@apple.com>
+
         Exclude various mac-specific header files from iOS build
         https://bugs.webkit.org/show_bug.cgi?id=168621
 
