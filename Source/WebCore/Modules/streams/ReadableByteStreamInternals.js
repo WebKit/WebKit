@@ -95,6 +95,15 @@ function isReadableByteStreamController(controller)
     return @isObject(controller) && !!controller.@underlyingByteSource;
 }
 
+function isReadableStreamBYOBRequest(byobRequest)
+{
+    "use strict";
+
+    // Same test mechanism as in isReadableStreamDefaultController (ReadableStreamInternals.js).
+    // See corresponding function for explanations.
+    return @isObject(byobRequest) && !!byobRequest.@associatedReadableByteStreamController;
+}
+
 function isReadableStreamBYOBReader(reader)
 {
     "use strict";

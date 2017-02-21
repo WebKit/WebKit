@@ -45,6 +45,8 @@ function view()
 {
     "use strict";
 
-    // FIXME: Implement appropriate behavior.
-    @throwTypeError("ReadableByteStreamController view is not implemented");
+    if (!@isReadableStreamBYOBRequest(this))
+        throw @makeGetterTypeError("ReadableStreamBYOBRequest", "view");
+
+    return this.@view;
 }

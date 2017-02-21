@@ -66,4 +66,23 @@ test(function() {
     assert_equals(controller.byobRequest, undefined, "by default byobRequest should be undefined");
 }, "By default, byobRequest should be undefined");
 
+test(function() {
+
+    let controller;
+    const autoAllocateChunkSize = 128;
+    const rs = new ReadableStream({
+        autoAllocateChunkSize,
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    rs.getReader().read();
+    const byobReq = controller.byobRequest;
+
+    assert_equals(byobReq.view.length, autoAllocateChunkSize, "byobRequest length should be equal to autoAllocateChunkSize value")
+
+}, "byobRequest.view length should be equal to autoAllocateChunkSize")
+
 done();
