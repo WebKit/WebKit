@@ -149,6 +149,12 @@ static WebsiteDataStore::Configuration legacyWebsiteDataStoreConfiguration(API::
     return configuration;
 }
 
+static HashSet<String, ASCIICaseInsensitiveHash>& globalURLSchemesWithCustomProtocolHandlers()
+{
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> set;
+    return set;
+}
+
 WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     : m_configuration(configuration.copy())
     , m_haveInitialEmptyProcess(false)
@@ -157,9 +163,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_automationClient(std::make_unique<API::AutomationClient>())
     , m_downloadClient(std::make_unique<API::DownloadClient>())
     , m_historyClient(std::make_unique<API::LegacyContextHistoryClient>())
-#if USE(SOUP)
     , m_customProtocolManagerClient(std::make_unique<API::CustomProtocolManagerClient>())
-#endif
     , m_visitedLinkStore(VisitedLinkStore::create())
     , m_visitedLinksPopulated(false)
     , m_plugInAutoStartProvider(this)
@@ -300,6 +304,14 @@ void WebProcessPool::setAutomationClient(std::unique_ptr<API::AutomationClient> 
         m_automationClient = WTFMove(automationClient);
 }
 
+void WebProcessPool::setCustomProtocolManagerClient(std::unique_ptr<API::CustomProtocolManagerClient>&& customProtocolManagerClient)
+{
+    if (!customProtocolManagerClient)
+        m_customProtocolManagerClient = std::make_unique<API::CustomProtocolManagerClient>();
+    else
+        m_customProtocolManagerClient = WTFMove(customProtocolManagerClient);
+}
+
 void WebProcessPool::setMaximumNumberOfProcesses(unsigned maximumNumberOfProcesses)
 {
     // Guard against API misuse.
@@ -352,6 +364,12 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
     parameters.cacheModel = cacheModel();
     parameters.diskCacheSizeOverride = m_configuration->diskCacheSizeOverride();
     parameters.canHandleHTTPSServerTrustEvaluation = m_canHandleHTTPSServerTrustEvaluation;
+
+    for (auto& scheme : globalURLSchemesWithCustomProtocolHandlers())
+        parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
+
+    for (auto& scheme : m_urlSchemesRegisteredForCustomProtocols)
+        parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
 
     parameters.diskCacheDirectory = m_configuration->diskCacheDirectory();
     if (!parameters.diskCacheDirectory.isEmpty())
@@ -959,12 +977,6 @@ void WebProcessPool::registerURLSchemeAsCORSEnabled(const String& urlScheme)
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsCORSEnabled(urlScheme));
 }
 
-HashSet<String, ASCIICaseInsensitiveHash>& WebProcessPool::globalURLSchemesWithCustomProtocolHandlers()
-{
-    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> set;
-    return set;
-}
-
 void WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const String& urlScheme)
 {
     if (!urlScheme)
@@ -1357,17 +1369,14 @@ void WebProcessPool::setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(
 
 void WebProcessPool::registerSchemeForCustomProtocol(const String& scheme)
 {
-#if USE(SOUP)
-    m_urlSchemesRegisteredForCustomProtocols.add(scheme);
-#endif
+    if (!globalURLSchemesWithCustomProtocolHandlers().contains(scheme))
+        m_urlSchemesRegisteredForCustomProtocols.add(scheme);
     sendToNetworkingProcess(Messages::CustomProtocolManager::RegisterScheme(scheme));
 }
 
 void WebProcessPool::unregisterSchemeForCustomProtocol(const String& scheme)
 {
-#if USE(SOUP)
     m_urlSchemesRegisteredForCustomProtocols.remove(scheme);
-#endif
     sendToNetworkingProcess(Messages::CustomProtocolManager::UnregisterScheme(scheme));
 }
 

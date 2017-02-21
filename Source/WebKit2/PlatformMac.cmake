@@ -259,8 +259,6 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/Launcher/mac/ProcessLauncherMac.mm
 
-    UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm
-
     UIProcess/Network/mac/NetworkProcessProxyMac.mm
 
     UIProcess/Plugins/mac/PluginInfoStoreMac.mm

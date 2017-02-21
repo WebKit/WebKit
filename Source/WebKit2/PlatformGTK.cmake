@@ -302,8 +302,6 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/linux/MemoryPressureMonitor.cpp
 
-    UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp
-
     UIProcess/Plugins/gtk/PluginInfoCache.cpp
 
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
