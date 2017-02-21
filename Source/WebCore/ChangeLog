@@ -1,3 +1,9 @@
+2017-02-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix ImageBitmap comment to not insert a <canvas>.
+
+        * features.json:
+
 2017-02-21  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add alternate classification method
