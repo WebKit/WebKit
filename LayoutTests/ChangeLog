@@ -1,3 +1,14 @@
+2017-02-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ASSERTION FAILED: m_normalWorld->hasOneRef() under WorkerThread::stop
+        https://bugs.webkit.org/show_bug.cgi?id=168356
+        <rdar://problem/30592486>
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations:
+        Unskip tests now that they no longer trigger assertions.
+
 2017-02-20  Jer Noble  <jer.noble@apple.com>
 
         Local audio-only stream will not trigger playback to begin

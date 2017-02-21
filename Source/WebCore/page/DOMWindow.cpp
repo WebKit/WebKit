@@ -2027,6 +2027,11 @@ void DOMWindow::removeAllEventListeners()
         controller->removeAllDeviceEventListeners(this);
 #endif
 
+#if ENABLE(WEB_TIMING)
+    if (m_performance)
+        m_performance->removeAllEventListeners();
+#endif
+
     removeAllUnloadEventListeners(this);
     removeAllBeforeUnloadEventListeners(this);
 }
