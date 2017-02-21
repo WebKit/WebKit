@@ -41,7 +41,7 @@ JSModuleNamespaceObject::JSModuleNamespaceObject(VM& vm, Structure* structure)
 {
 }
 
-void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject*, AbstractModuleRecord* moduleRecord, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&& resolutions)
+void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject*, AbstractModuleRecord* moduleRecord, const IdentifierSet& exports)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -54,25 +54,17 @@ void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject*, A
     //     The list is ordered as if an Array of those String values had been sorted using Array.prototype.sort using SortCompare as comparefn.
     //
     // Sort the exported names by the code point order.
-    std::sort(resolutions.begin(), resolutions.end(), [] (const auto& lhs, const auto& rhs) {
-        return codePointCompare(lhs.first.impl(), rhs.first.impl()) < 0;
+    Vector<UniquedStringImpl*> temporaryVector(exports.size(), nullptr);
+    std::transform(exports.begin(), exports.end(), temporaryVector.begin(), [](const RefPtr<WTF::UniquedStringImpl>& ref) {
+        return ref.get();
     });
+    std::sort(temporaryVector.begin(), temporaryVector.end(), [] (UniquedStringImpl* lhs, UniquedStringImpl* rhs) {
+        return codePointCompare(lhs, rhs) < 0;
+    });
+    for (auto* identifier : temporaryVector)
+        m_exports.add(identifier);
 
     m_moduleRecord.set(vm, this, moduleRecord);
-    {
-        unsigned moduleRecordOffset = 0;
-        m_names.reserveCapacity(resolutions.size());
-        for (const auto& pair : resolutions) {
-            moduleRecordAt(moduleRecordOffset).set(vm, this, pair.second.moduleRecord);
-            m_names.append(pair.first);
-            m_exports.add(pair.first.impl(), ExportEntry {
-                pair.second.localName,
-                moduleRecordOffset
-            });
-            ++moduleRecordOffset;
-        }
-    }
-
     putDirect(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Module"), DontEnum | DontDelete | ReadOnly);
 
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-getprototypeof
@@ -95,22 +87,6 @@ void JSModuleNamespaceObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_moduleRecord);
-    for (unsigned i = 0; i < thisObject->m_names.size(); ++i)
-        visitor.appendHidden(thisObject->moduleRecordAt(i));
-}
-
-static JSValue getValue(JSModuleEnvironment* environment, PropertyName localName, ScopeOffset& scopeOffset)
-{
-    SymbolTable* symbolTable = environment->symbolTable();
-    {
-        ConcurrentJSLocker locker(symbolTable->m_lock);
-        auto iter = symbolTable->find(locker, localName.uid());
-        ASSERT(iter != symbolTable->end(locker));
-        SymbolTableEntry& entry = iter->value;
-        ASSERT(!entry.isNull());
-        scopeOffset = entry.scopeOffset();
-    }
-    return environment->variableAt(scopeOffset).get();
 }
 
 bool JSModuleNamespaceObject::getOwnPropertySlot(JSObject* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -128,29 +104,40 @@ bool JSModuleNamespaceObject::getOwnPropertySlot(JSObject* cell, ExecState* exec
     if (propertyName.isSymbol())
         return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 
+    // FIXME: Add IC for module namespace object.
+    // https://bugs.webkit.org/show_bug.cgi?id=160590
+    slot.disableCaching();
     slot.setIsTaintedByOpaqueObject();
-
-    auto iterator = thisObject->m_exports.find(propertyName.uid());
-    if (iterator == thisObject->m_exports.end())
+    if (!thisObject->m_exports.contains(propertyName.uid()))
         return false;
-    ExportEntry& exportEntry = iterator->value;
 
     switch (slot.internalMethodType()) {
-    case PropertySlot::InternalMethodType::GetOwnProperty:
-    case PropertySlot::InternalMethodType::Get: {
-        JSModuleEnvironment* environment = thisObject->moduleRecordAt(exportEntry.moduleRecordOffset)->moduleEnvironment();
-        ScopeOffset scopeOffset;
-        JSValue value = getValue(environment, exportEntry.localName, scopeOffset);
+    case PropertySlot::InternalMethodType::Get:
+    case PropertySlot::InternalMethodType::GetOwnProperty: {
+        AbstractModuleRecord* moduleRecord = thisObject->moduleRecord();
+
+        AbstractModuleRecord::Resolution resolution = moduleRecord->resolveExport(exec, Identifier::fromUid(exec, propertyName.uid()));
+        ASSERT(resolution.type != AbstractModuleRecord::Resolution::Type::NotFound && resolution.type != AbstractModuleRecord::Resolution::Type::Ambiguous);
+
+        AbstractModuleRecord* targetModule = resolution.moduleRecord;
+        JSModuleEnvironment* targetEnvironment = targetModule->moduleEnvironment();
+
+        PropertySlot trampolineSlot(targetEnvironment, PropertySlot::InternalMethodType::Get);
+        bool found = targetEnvironment->methodTable(vm)->getOwnPropertySlot(targetEnvironment, exec, resolution.localName, trampolineSlot);
+        ASSERT_UNUSED(found, found);
+
+        JSValue value = trampolineSlot.getValue(exec, propertyName);
+        ASSERT(!scope.exception());
+
         // If the value is filled with TDZ value, throw a reference error.
         if (!value) {
             throwVMError(exec, scope, createTDZError(exec));
             return false;
         }
 
-        slot.setValueModuleNamespace(thisObject, DontDelete, value, environment, scopeOffset);
+        slot.setValue(thisObject, DontDelete, value);
         return true;
     }
-
     case PropertySlot::InternalMethodType::HasProperty: {
         // Do not perform [[Get]] for [[HasProperty]].
         // [[Get]] / [[GetOwnProperty]] onto namespace object could throw an error while [[HasProperty]] just returns true here.
@@ -202,8 +189,8 @@ void JSModuleNamespaceObject::getOwnPropertyNames(JSObject* cell, ExecState* exe
 {
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-ownpropertykeys
     JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
-    for (const auto& name : thisObject->m_names)
-        propertyNames.add(name.impl());
+    for (const auto& name : thisObject->m_exports)
+        propertyNames.add(name.get());
     return JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 

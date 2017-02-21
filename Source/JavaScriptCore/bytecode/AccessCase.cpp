@@ -37,10 +37,7 @@
 #include "HeapInlines.h"
 #include "IntrinsicGetterAccessCase.h"
 #include "JSCJSValueInlines.h"
-#include "JSModuleEnvironment.h"
-#include "JSModuleNamespaceObject.h"
 #include "LinkBuffer.h"
-#include "ModuleNamespaceAccessCase.h"
 #include "PolymorphicAccess.h"
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
@@ -68,7 +65,6 @@ std::unique_ptr<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
-    case ModuleNamespaceLoad:
     case Replace:
         break;
     default:
@@ -152,7 +148,6 @@ bool AccessCase::guardedByStructureCheck() const
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
-    case ModuleNamespaceLoad:
         return false;
     default:
         return true;
@@ -198,13 +193,6 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
         return other.type() == type();
-    case ModuleNamespaceLoad: {
-        if (other.type() != type())
-            return false;
-        auto& thisCase = this->as<ModuleNamespaceAccessCase>();
-        auto& otherCase = this->as<ModuleNamespaceAccessCase>();
-        return thisCase.moduleNamespaceObject() == otherCase.moduleNamespaceObject();
-    }
     default:
         if (!guardedByStructureCheck() || !other.guardedByStructureCheck())
             return false;
@@ -250,12 +238,6 @@ bool AccessCase::visitWeak(VM& vm) const
     } else if (type() == IntrinsicGetter) {
         auto& intrinsic = this->as<IntrinsicGetterAccessCase>();
         if (intrinsic.intrinsicFunction() && !Heap::isMarked(intrinsic.intrinsicFunction()))
-            return false;
-    } else if (type() == ModuleNamespaceLoad) {
-        auto& accessCase = this->as<ModuleNamespaceAccessCase>();
-        if (accessCase.moduleNamespaceObject() && !Heap::isMarked(accessCase.moduleNamespaceObject()))
-            return false;
-        if (accessCase.moduleEnvironment() && !Heap::isMarked(accessCase.moduleEnvironment()))
             return false;
     }
 
@@ -359,11 +341,6 @@ void AccessCase::generateWithGuard(
             valueRegs.payloadGPR());
         jit.boxInt32(valueRegs.payloadGPR(), valueRegs);
         state.succeed();
-        return;
-    }
-
-    case ModuleNamespaceLoad: {
-        this->as<ModuleNamespaceAccessCase>().emit(state, fallThrough);
         return;
     }
 
@@ -1014,7 +991,6 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
-    case ModuleNamespaceLoad:
         // These need to be handled by generateWithGuard(), since the guard is part of the
         // algorithm. We can be sure that nobody will call generate() directly for these since they
         // are not guarded by structure checks.

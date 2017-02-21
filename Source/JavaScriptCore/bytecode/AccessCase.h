@@ -95,8 +95,7 @@ public:
         ArrayLength,
         StringLength,
         DirectArgumentsLength,
-        ScopedArgumentsLength,
-        ModuleNamespaceLoad,
+        ScopedArgumentsLength
     };
 
     enum State : uint8_t {

@@ -23,7 +23,6 @@
 #include "JSCJSValue.h"
 #include "PropertyName.h"
 #include "PropertyOffset.h"
-#include "ScopeOffset.h"
 #include <wtf/Assertions.h>
 
 namespace JSC {
@@ -33,7 +32,6 @@ class GetterSetter;
 class ExecState;
 class GetterSetter;
 class JSObject;
-class JSModuleEnvironment;
 
 // ECMA 262-3 8.6.1
 // Property attributes
@@ -88,12 +86,6 @@ public:
         VMInquiry, // Our VM is just poking around. When this is the InternalMethodType, getOwnPropertySlot is not allowed to do user observable actions.
     };
 
-    enum class AdditionalDataType : uint8_t {
-        None,
-        DOMJIT, // Annotated with DOMJIT information.
-        ModuleNamespace, // ModuleNamespaceObject's environment access.
-    };
-
     explicit PropertySlot(const JSValue thisValue, InternalMethodType internalMethodType)
         : m_offset(invalidOffset)
         , m_thisValue(thisValue)
@@ -102,7 +94,6 @@ public:
         , m_cacheability(CachingAllowed)
         , m_propertyType(TypeUnset)
         , m_internalMethodType(internalMethodType)
-        , m_additionalDataType(AdditionalDataType::None)
         , m_isTaintedByOpaqueObject(false)
     {
     }
@@ -172,21 +163,7 @@ public:
 
     DOMJIT::GetterSetter* domJIT() const
     {
-        if (m_additionalDataType == AdditionalDataType::DOMJIT)
-            return m_additionalData.domJIT;
-        return nullptr;
-    }
-
-    struct ModuleNamespaceSlot {
-        JSModuleEnvironment* environment;
-        unsigned scopeOffset;
-    };
-
-    std::optional<ModuleNamespaceSlot> moduleNamespaceSlot() const
-    {
-        if (m_additionalDataType == AdditionalDataType::ModuleNamespace)
-            return m_additionalData.moduleNamespaceSlot;
-        return std::nullopt;
+        return m_domJIT;
     }
 
     void setValue(JSObject* slotBase, unsigned attributes, JSValue value)
@@ -229,14 +206,6 @@ public:
         m_offset = invalidOffset;
     }
 
-    void setValueModuleNamespace(JSObject* slotBase, unsigned attributes, JSValue value, JSModuleEnvironment* environment, ScopeOffset scopeOffset)
-    {
-        setValue(slotBase, attributes, value);
-        m_additionalDataType = AdditionalDataType::ModuleNamespace;
-        m_additionalData.moduleNamespaceSlot.environment = environment;
-        m_additionalData.moduleNamespaceSlot.scopeOffset = scopeOffset.offset();
-    }
-
     void setCustom(JSObject* slotBase, unsigned attributes, GetValueFunc getValue)
     {
         ASSERT(attributes == attributesForStructure(attributes));
@@ -251,7 +220,7 @@ public:
         m_offset = invalidOffset;
     }
     
-    void setCacheableCustom(JSObject* slotBase, unsigned attributes, GetValueFunc getValue)
+    void setCacheableCustom(JSObject* slotBase, unsigned attributes, GetValueFunc getValue, DOMJIT::GetterSetter* domJIT = nullptr)
     {
         ASSERT(attributes == attributesForStructure(attributes));
         
@@ -263,15 +232,7 @@ public:
         m_slotBase = slotBase;
         m_propertyType = TypeCustom;
         m_offset = !invalidOffset;
-    }
-
-    void setCacheableCustom(JSObject* slotBase, unsigned attributes, GetValueFunc getValue, DOMJIT::GetterSetter* domJIT)
-    {
-        setCacheableCustom(slotBase, attributes, getValue);
-        if (domJIT) {
-            m_additionalDataType = AdditionalDataType::DOMJIT;
-            m_additionalData.domJIT = domJIT;
-        }
+        m_domJIT = domJIT;
     }
 
     void setCustomGetterSetter(JSObject* slotBase, unsigned attributes, CustomGetterSetter* getterSetter)
@@ -367,11 +328,7 @@ private:
     CacheabilityType m_cacheability;
     PropertyType m_propertyType;
     InternalMethodType m_internalMethodType;
-    AdditionalDataType m_additionalDataType;
-    union {
-        DOMJIT::GetterSetter* domJIT;
-        ModuleNamespaceSlot moduleNamespaceSlot;
-    } m_additionalData;
+    DOMJIT::GetterSetter* m_domJIT { nullptr };
     bool m_isTaintedByOpaqueObject;
 };
 

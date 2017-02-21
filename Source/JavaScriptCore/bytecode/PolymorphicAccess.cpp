@@ -645,9 +645,6 @@ void printInternal(PrintStream& out, AccessCase::AccessType type)
     case AccessCase::ScopedArgumentsLength:
         out.print("ScopedArgumentsLength");
         return;
-    case AccessCase::ModuleNamespaceLoad:
-        out.print("ModuleNamespaceLoad");
-        return;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
