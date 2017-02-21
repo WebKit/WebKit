@@ -1,3 +1,9 @@
+2017-02-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the bad JSON.
+
+        * features.json:
+
 2017-02-21  Andreas Kling  <akling@apple.com>
 
         [iOS] WebKit1 should use shared memory pressure handler code.

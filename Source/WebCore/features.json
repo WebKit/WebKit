@@ -1075,8 +1075,8 @@
         },
         "url": "https://www.w3.org/TR/webaudio/",
         "keywords": ["audio, webaudio"],
-        "description": "A high-level JavaScript API for processing and synthesizing audio in web applications."
-        "comment": "WebKit's implementation does not match the current specification.",
+        "description": "A high-level JavaScript API for processing and synthesizing audio in web applications.",
+        "comment": "WebKit's implementation does not match the current specification."
     },
     {
         "name": "Web Bluetooth",
