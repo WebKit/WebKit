@@ -1,5 +1,21 @@
 2017-02-21  Jer Noble  <jer.noble@apple.com>
 
+        Make logging in high-priority audio threads less expensive
+        https://bugs.webkit.org/show_bug.cgi?id=168639
+
+        Reviewed by Jon Lee.
+
+        Logging from inside a high-priority audio thread will make a number of calls to malloc, block, and
+        therefore cause audio glitches. Make this logging less expensive by dispatching to the main thread
+        before creating and outputting the log string.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/mac/AudioSampleDataSource.mm: Renamed from Source/WebCore/platform/audio/mac/AudioSampleDataSource.cpp.
+        (WebCore::AudioSampleDataSource::pushSamplesInternal):
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+
+2017-02-21  Jer Noble  <jer.noble@apple.com>
+
         Give the Mock audio input a "hum" to make drop-outs more detectable
         https://bugs.webkit.org/show_bug.cgi?id=168641
 

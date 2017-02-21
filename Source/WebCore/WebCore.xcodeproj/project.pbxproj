@@ -144,7 +144,7 @@
 		07394ECA1BAB2CD700BE99CD /* MediaDevicesRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		073B87661E4385AC0071C0EC /* AudioSampleBufferList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073B87621E43859D0071C0EC /* AudioSampleBufferList.cpp */; };
 		073B87671E4385AC0071C0EC /* AudioSampleBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87631E43859D0071C0EC /* AudioSampleBufferList.h */; };
-		073B87681E4385AC0071C0EC /* AudioSampleDataSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073B87641E43859D0071C0EC /* AudioSampleDataSource.cpp */; };
+		073B87681E4385AC0071C0EC /* AudioSampleDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 073B87641E43859D0071C0EC /* AudioSampleDataSource.mm */; };
 		073B87691E4385AC0071C0EC /* AudioSampleDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87651E43859D0071C0EC /* AudioSampleDataSource.h */; };
 		073BE34017D17E01002BD431 /* JSNavigatorUserMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073BE33E17D17E01002BD431 /* JSNavigatorUserMedia.cpp */; };
 		073BE34117D17E01002BD431 /* JSNavigatorUserMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 073BE33F17D17E01002BD431 /* JSNavigatorUserMedia.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7270,7 +7270,7 @@
 		073B87581E40DCFD0071C0EC /* CAAudioStreamDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAudioStreamDescription.h; sourceTree = "<group>"; };
 		073B87621E43859D0071C0EC /* AudioSampleBufferList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSampleBufferList.cpp; sourceTree = "<group>"; };
 		073B87631E43859D0071C0EC /* AudioSampleBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleBufferList.h; sourceTree = "<group>"; };
-		073B87641E43859D0071C0EC /* AudioSampleDataSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSampleDataSource.cpp; sourceTree = "<group>"; };
+		073B87641E43859D0071C0EC /* AudioSampleDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSampleDataSource.mm; sourceTree = "<group>"; };
 		073B87651E43859D0071C0EC /* AudioSampleDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleDataSource.h; sourceTree = "<group>"; };
 		073BE33E17D17E01002BD431 /* JSNavigatorUserMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorUserMedia.cpp; sourceTree = "<group>"; };
 		073BE33F17D17E01002BD431 /* JSNavigatorUserMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorUserMedia.h; sourceTree = "<group>"; };
@@ -25107,7 +25107,7 @@
 				CD2F4A2618D8A3490063746D /* AudioHardwareListenerMac.h */,
 				073B87621E43859D0071C0EC /* AudioSampleBufferList.cpp */,
 				073B87631E43859D0071C0EC /* AudioSampleBufferList.h */,
-				073B87641E43859D0071C0EC /* AudioSampleDataSource.cpp */,
+				073B87641E43859D0071C0EC /* AudioSampleDataSource.mm */,
 				073B87651E43859D0071C0EC /* AudioSampleDataSource.h */,
 				CD54DE4917469C6D005E5B36 /* AudioSessionMac.cpp */,
 				073B87571E40DCFD0071C0EC /* CAAudioStreamDescription.cpp */,
@@ -29327,7 +29327,7 @@
 				FD31608512B026F700C1A359 /* AudioResampler.cpp in Sources */,
 				FD31608712B026F700C1A359 /* AudioResamplerKernel.cpp in Sources */,
 				073B87661E4385AC0071C0EC /* AudioSampleBufferList.cpp in Sources */,
-				073B87681E4385AC0071C0EC /* AudioSampleDataSource.cpp in Sources */,
+				073B87681E4385AC0071C0EC /* AudioSampleDataSource.mm in Sources */,
 				FD8C46EB154608E700A5910C /* AudioScheduledSourceNode.cpp in Sources */,
 				CDA79824170A258300D45C55 /* AudioSession.cpp in Sources */,
 				CDA79827170A279100D45C55 /* AudioSessionIOS.mm in Sources */,
