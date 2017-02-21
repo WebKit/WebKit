@@ -25,35 +25,30 @@
 
 #pragma once
 
-#include "APIObject.h"
-
-#include <wtf/RefPtr.h>
+#if HAVE(CORE_PREDICTION)
+#include "CorePredictionSPI.h"
+#endif
+#include "ResourceLoadStatisticsClassifierBase.h"
+#include <CoreFoundation/CoreFoundation.h>
+#include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class WebResourceLoadStatisticsManager : public API::ObjectImpl<API::Object::Type::WebResourceLoadStatisticsManager> {
+class ResourceLoadStatisticsClassifier : public ResourceLoadStatisticsClassifierBase {
+
 public:
-    static Ref<WebResourceLoadStatisticsManager> create()
-    {
-        return adoptRef(*new WebResourceLoadStatisticsManager());
-    }
-    static void setPrevalentResource(const String& hostName, bool value);
-    static bool isPrevalentResource(const String& hostName);
-    static void setHasHadUserInteraction(const String& hostName, bool value);
-    static bool hasHadUserInteraction(const String& hostName);
-    static void setSubframeUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
-    static void setSubresourceUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
-    static void setSubresourceUniqueRedirectTo(const String& hostName, const String& hostNameRedirectedTo);
-    static void setTimeToLiveUserInteraction(double seconds);
-    static void setReducedTimestampResolution(double seconds);
-    static void fireDataModificationHandler();
-    static void setNotifyPagesWhenDataRecordsWereScanned(bool);
-    static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value);
-    static void setMinimumTimeBetweeenDataRecordsRemoval(double seconds);
-    static void resetToConsistentState();
+    ResourceLoadStatisticsClassifier()
+        : ResourceLoadStatisticsClassifierBase() { }
 
 private:
+    bool classify(const unsigned, const unsigned, const unsigned) override;
+    String storagePath();
+    bool shouldUseCorePrediction();
+#if HAVE(CORE_PREDICTION)
+    struct svm_model* m_corePredictionModel;
+    bool m_useCorePrediction { true };
+#endif
 };
 
-} // namespace WebKit
+}

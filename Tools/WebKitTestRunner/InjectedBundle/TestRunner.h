@@ -354,6 +354,9 @@ public:
     bool isStatisticsPrevalentResource(JSStringRef hostName);
     void setStatisticsHasHadUserInteraction(JSStringRef hostName, bool value);
     bool isStatisticsHasHadUserInteraction(JSStringRef hostName);
+    void setStatisticsSubframeUnderTopFrameOrigin(JSStringRef hostName, JSStringRef topFrameHostName);
+    void setStatisticsSubresourceUnderTopFrameOrigin(JSStringRef hostName, JSStringRef topFrameHostName);
+    void setStatisticsSubresourceUniqueRedirectTo(JSStringRef hostName, JSStringRef hostNameRedirectedTo);
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);

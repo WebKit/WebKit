@@ -38,6 +38,9 @@ extern "C" {
     WK_EXPORT bool WKResourceLoadStatisticsManagerIsPrevalentResource(WKStringRef hostName);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetHasHadUserInteraction(WKStringRef hostName, bool value);
     WK_EXPORT bool WKResourceLoadStatisticsManagerIsHasHadUserInteraction(WKStringRef hostName);
+    WK_EXPORT void WKResourceLoadStatisticsManagerSetSubframeUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName);
+    WK_EXPORT void WKResourceLoadStatisticsManagerSetSubresourceUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName);
+    WK_EXPORT void WKResourceLoadStatisticsManagerSetSubresourceUniqueRedirectTo(WKStringRef hostName, WKStringRef hostNameRedirectedTo);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetTimeToLiveUserInteraction(double seconds);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetReducedTimestampResolution(double seconds);
     WK_EXPORT void WKResourceLoadStatisticsManagerFireDataModificationHandler();

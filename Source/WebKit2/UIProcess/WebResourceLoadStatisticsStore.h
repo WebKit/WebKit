@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include "Connection.h"
+#include "ResourceLoadStatisticsClassifier.h"
 #include "WebsiteDataRecord.h"
 #include <WebCore/ResourceLoadStatisticsStore.h>
 #include <wtf/Vector.h>
@@ -76,7 +77,6 @@ private:
 
     void processStatisticsAndDataRecords();
 
-    bool hasPrevalentResourceCharacteristics(const WebCore::ResourceLoadStatistics&);
     void classifyResource(WebCore::ResourceLoadStatistics&);
     void removeDataRecords();
 
@@ -89,8 +89,9 @@ private:
     std::unique_ptr<WebCore::KeyedDecoder> createDecoderFromDisk(const String& label) const;
 
     Ref<WebCore::ResourceLoadStatisticsStore> m_resourceLoadStatisticsStore;
+    ResourceLoadStatisticsClassifier m_resourceLoadStatisticsClassifier;
     Ref<WTF::WorkQueue> m_statisticsQueue;
-    String m_storagePath;
+    String m_statisticsStoragePath;
     bool m_resourceLoadStatisticsEnabled { false };
 
     double m_lastTimeDataRecordsWereRemoved { 0 };

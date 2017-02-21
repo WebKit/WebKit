@@ -61,6 +61,21 @@ bool WebResourceLoadStatisticsManager::hasHadUserInteraction(const String& hostN
     return WebCore::ResourceLoadObserver::sharedObserver().hasHadUserInteraction(URL(URL(), hostName));
 }
 
+void WebResourceLoadStatisticsManager::setSubframeUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName)
+{
+    WebCore::ResourceLoadObserver::sharedObserver().setSubframeUnderTopFrameOrigin(URL(URL(), hostName), URL(URL(), topFrameHostName));
+}
+
+void WebResourceLoadStatisticsManager::setSubresourceUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName)
+{
+    WebCore::ResourceLoadObserver::sharedObserver().setSubresourceUnderTopFrameOrigin(URL(URL(), hostName), URL(URL(), topFrameHostName));
+}
+
+void WebResourceLoadStatisticsManager::setSubresourceUniqueRedirectTo(const String& hostName, const String& hostNameRedirectedTo)
+{
+    WebCore::ResourceLoadObserver::sharedObserver().setSubresourceUniqueRedirectTo(URL(URL(), hostName), URL(URL(), hostNameRedirectedTo));
+}
+
 void WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction(double seconds)
 {
     WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(seconds);

@@ -56,6 +56,21 @@ bool WKResourceLoadStatisticsManagerIsHasHadUserInteraction(WKStringRef hostName
     return WebResourceLoadStatisticsManager::hasHadUserInteraction(toWTFString(hostName));
 }
 
+void WKResourceLoadStatisticsManagerSetSubframeUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName)
+{
+    WebResourceLoadStatisticsManager::setSubframeUnderTopFrameOrigin(toWTFString(hostName), toWTFString(topFrameHostName));
+}
+
+void WKResourceLoadStatisticsManagerSetSubresourceUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName)
+{
+    WebResourceLoadStatisticsManager::setSubresourceUnderTopFrameOrigin(toWTFString(hostName), toWTFString(topFrameHostName));
+}
+
+void WKResourceLoadStatisticsManagerSetSubresourceUniqueRedirectTo(WKStringRef hostName, WKStringRef hostNameRedirectedTo)
+{
+    WebResourceLoadStatisticsManager::setSubresourceUniqueRedirectTo(toWTFString(hostName), toWTFString(hostNameRedirectedTo));
+}
+
 void WKResourceLoadStatisticsManagerSetTimeToLiveUserInteraction(double seconds)
 {
     WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction(seconds);

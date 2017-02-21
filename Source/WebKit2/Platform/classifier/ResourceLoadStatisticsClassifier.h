@@ -25,35 +25,28 @@
 
 #pragma once
 
-#include "APIObject.h"
+#include <wtf/Platform.h>
 
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
+#if PLATFORM(COCOA)
+#include "ResourceLoadStatisticsClassifierCocoa.h"
+#else
+
+#include "ResourceLoadStatisticsClassifierBase.h"
 
 namespace WebKit {
 
-class WebResourceLoadStatisticsManager : public API::ObjectImpl<API::Object::Type::WebResourceLoadStatisticsManager> {
+class ResourceLoadStatisticsClassifier : public ResourceLoadStatisticsClassifierBase {
 public:
-    static Ref<WebResourceLoadStatisticsManager> create()
+    ResourceLoadStatisticsClassifier()
+    : ResourceLoadStatisticsClassifierBase() { }
+    
+protected:
+    bool classify(const unsigned a, const unsigned b, const unsigned c) override
     {
-        return adoptRef(*new WebResourceLoadStatisticsManager());
+        return classifyWithVectorThreshold(a, b, c);
     }
-    static void setPrevalentResource(const String& hostName, bool value);
-    static bool isPrevalentResource(const String& hostName);
-    static void setHasHadUserInteraction(const String& hostName, bool value);
-    static bool hasHadUserInteraction(const String& hostName);
-    static void setSubframeUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
-    static void setSubresourceUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
-    static void setSubresourceUniqueRedirectTo(const String& hostName, const String& hostNameRedirectedTo);
-    static void setTimeToLiveUserInteraction(double seconds);
-    static void setReducedTimestampResolution(double seconds);
-    static void fireDataModificationHandler();
-    static void setNotifyPagesWhenDataRecordsWereScanned(bool);
-    static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value);
-    static void setMinimumTimeBetweeenDataRecordsRemoval(double seconds);
-    static void resetToConsistentState();
-
-private:
 };
 
-} // namespace WebKit
+}
+
+#endif
