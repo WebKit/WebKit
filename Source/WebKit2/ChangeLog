@@ -1,3 +1,9 @@
+2017-02-21  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * PlatformMac.cmake:
+
 2017-02-21  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC][Mac] Network process sandbox does not allow WebRTC networking

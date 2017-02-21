@@ -238,6 +238,7 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/Cocoa/AutomationClient.mm
     UIProcess/Cocoa/AutomationSessionClient.mm
+    UIProcess/Cocoa/CustomProtocolManagerClient.mm
     UIProcess/Cocoa/DiagnosticLoggingClient.mm
     UIProcess/Cocoa/DownloadClient.mm
     UIProcess/Cocoa/FindClient.mm

@@ -467,6 +467,7 @@ list(APPEND WebCore_SOURCES
     platform/mac/MediaRemoteSoftLink.cpp
     platform/mac/NSScrollerImpDetails.mm
     platform/mac/PasteboardMac.mm
+    platform/mac/PasteboardWriter.mm
     platform/mac/PlatformClockCA.cpp
     platform/mac/PlatformClockCM.mm
     platform/mac/PlatformEventFactoryMac.mm
