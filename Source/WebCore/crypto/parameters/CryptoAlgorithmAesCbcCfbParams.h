@@ -33,11 +33,11 @@
 
 namespace WebCore {
 
-class CryptoAlgorithmAesCbcParams final : public CryptoAlgorithmParameters {
+class CryptoAlgorithmAesCbcCfbParams final : public CryptoAlgorithmParameters {
 public:
     BufferSource iv;
 
-    Class parametersClass() const final { return Class::AesCbcParams; }
+    Class parametersClass() const final { return Class::AesCbcCfbParams; }
 
     const Vector<uint8_t>& ivVector()
     {
@@ -54,6 +54,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(AesCbcParams)
+SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(AesCbcCfbParams)
 
 #endif // ENABLE(SUBTLE_CRYPTO)

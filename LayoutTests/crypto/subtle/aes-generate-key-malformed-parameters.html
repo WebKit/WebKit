@@ -33,6 +33,10 @@ shouldReject('crypto.subtle.generateKey({name: "aes-kw", length: 128}, extractab
 shouldReject('crypto.subtle.generateKey({name: "aes-kw", length: 128}, extractable, ["verify"])');
 shouldReject('crypto.subtle.generateKey({name: "aes-kw", length: 128}, extractable, ["deriveKey"])');
 shouldReject('crypto.subtle.generateKey({name: "aes-kw", length: 128}, extractable, ["deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "aes-cfb-8", length: 128}, extractable, ["sign"])');
+shouldReject('crypto.subtle.generateKey({name: "aes-cfb-8", length: 128}, extractable, ["verify"])');
+shouldReject('crypto.subtle.generateKey({name: "aes-cfb-8", length: 128}, extractable, ["deriveKey"])');
+shouldReject('crypto.subtle.generateKey({name: "aes-cfb-8", length: 128}, extractable, ["deriveBits"])');
 // Wrong length
 shouldReject('crypto.subtle.generateKey({name: "aes-cbc", length: 111}, extractable, ["encrypt"])');
 shouldReject('crypto.subtle.generateKey({name: "aes-kw", length: 111}, extractable, ["wrapKey"])');

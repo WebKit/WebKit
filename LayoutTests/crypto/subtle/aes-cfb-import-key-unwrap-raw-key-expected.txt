@@ -1,0 +1,10 @@
+Test unwrapping a raw key with AES-CFB using an imported key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS bytesToASCIIString(unwrappedKey) is expectedRawKey
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

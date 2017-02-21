@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "CryptoAlgorithmIdentifier.h"
-#include <wtf/TypeCasts.h>
-#include <wtf/text/WTFString.h>
+#include "config.h"
+#include "CryptoAlgorithmAES_CFB.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "ExceptionCode.h"
+#include "NotImplemented.h"
+
 namespace WebCore {
 
-class CryptoAlgorithmParameters {
-public:
-    enum class Class {
-        None,
-        AesCbcCfbParams,
-        AesKeyGenParams,
-        HmacKeyParams,
-        RsaHashedKeyGenParams,
-        RsaHashedImportParams,
-        RsaKeyGenParams,
-        RsaOaepParams,
-    };
+void CryptoAlgorithmAES_CFB::platformEncrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&)
+{
+    notImplemented();
+}
 
-    // FIXME: Consider merging name and identifier.
-    String name;
-    CryptoAlgorithmIdentifier identifier;
-
-    virtual ~CryptoAlgorithmParameters() { }
-
-    virtual Class parametersClass() const { return Class::None; }
-};
+void CryptoAlgorithmAES_CFB::platformDecrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&)
+{
+    notImplemented();
+}
 
 } // namespace WebCore
-
-#define SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(ToClassName) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CryptoAlgorithm##ToClassName) \
-static bool isType(const WebCore::CryptoAlgorithmParameters& parameters) { return parameters.parametersClass() == WebCore::CryptoAlgorithmParameters::Class::ToClassName; } \
-SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(SUBTLE_CRYPTO)

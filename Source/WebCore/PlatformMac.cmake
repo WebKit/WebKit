@@ -179,6 +179,7 @@ list(APPEND WebCore_SOURCES
     crypto/WebKitSubtleCrypto.cpp
 
     crypto/algorithms/CryptoAlgorithmAES_CBC.cpp
+    crypto/algorithms/CryptoAlgorithmAES_CFB.cpp
     crypto/algorithms/CryptoAlgorithmAES_KW.cpp
     crypto/algorithms/CryptoAlgorithmHMAC.cpp
     crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp

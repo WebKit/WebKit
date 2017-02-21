@@ -32,6 +32,7 @@
 #include "JsonWebKey.h"
 #include "SubtleCrypto.h"
 #include <wtf/Function.h>
+#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
 

@@ -9,7 +9,7 @@
 <div id="console"></div>
 
 <script>
-description("Test decrypting using AES-CBC with malformed parameters");
+description("Test decrypting using AES-CBC/AES-CFB with malformed parameters");
 
 jsTestIsAsync = true;
 
@@ -23,6 +23,16 @@ crypto.subtle.importKey("raw", rawKey, "aes-cbc", extractable, ["decrypt"]).then
     shouldReject('crypto.subtle.decrypt({name: "aes-cbc", iv: asciiToUint8Array("")}, key, cipherText)');
     shouldReject('crypto.subtle.decrypt({name: "aes-cbc", iv: asciiToUint8Array("j")}, key, cipherText)');
     shouldReject('crypto.subtle.decrypt({name: "aes-cbc", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd")}, key, cipherText)');
+
+    finishJSTest();
+});
+
+crypto.subtle.importKey("raw", rawKey, "aes-cfb-8", extractable, ["decrypt"]).then(function(result) {
+    key = result;
+    // Wrong iv length
+    shouldReject('crypto.subtle.decrypt({name: "aes-cfb-8", iv: asciiToUint8Array("")}, key, cipherText)');
+    shouldReject('crypto.subtle.decrypt({name: "aes-cfb-8", iv: asciiToUint8Array("j")}, key, cipherText)');
+    shouldReject('crypto.subtle.decrypt({name: "aes-cfb-8", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd")}, key, cipherText)');
 
     finishJSTest();
 });

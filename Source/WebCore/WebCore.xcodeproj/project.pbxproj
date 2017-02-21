@@ -2326,6 +2326,10 @@
 		5597F8271D91C3130066BC21 /* ImageFrameCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5597F8251D91C3130066BC21 /* ImageFrameCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		55A336F71D8209F40022C4C7 /* NativeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 55A336F61D8209F40022C4C7 /* NativeImage.h */; };
 		55A336F91D821E3C0022C4C7 /* ImageBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 55A336F81D821E3C0022C4C7 /* ImageBackingStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		570440531E5278B200356601 /* CryptoAlgorithmAES_CFB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5712526A1E52527C008FF369 /* CryptoAlgorithmAES_CFB.cpp */; };
+		570440581E53851600356601 /* CryptoAlgorithmAES_CFBMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 570440571E53851600356601 /* CryptoAlgorithmAES_CFBMac.cpp */; };
+		5704405A1E53936200356601 /* JSAesCbcCfbParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 570440591E53936200356601 /* JSAesCbcCfbParams.h */; };
+		5704405C1E53937900356601 /* JSAesCbcCfbParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5704405B1E53937900356601 /* JSAesCbcCfbParams.cpp */; };
 		5706A6961DDE5C9500A03B14 /* CryptoAlgorithmRsaOaepParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5706A6951DDE5C9500A03B14 /* CryptoAlgorithmRsaOaepParams.h */; };
 		5706A6981DDE5E4600A03B14 /* JSRsaOaepParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5706A6971DDE5E4600A03B14 /* JSRsaOaepParams.h */; };
 		5706A69A1DDE5E8500A03B14 /* JSRsaOaepParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5706A6991DDE5E8500A03B14 /* JSRsaOaepParams.cpp */; };
@@ -2334,11 +2338,10 @@
 		5709E8CF1D413D9A003244AC /* WebKitSubtleCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 5709E8CB1D413CE3003244AC /* WebKitSubtleCrypto.h */; };
 		570A99DA1D417408004EC630 /* JSWebKitSubtleCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF8F62180745D800132674 /* JSWebKitSubtleCrypto.cpp */; };
 		570A99DB1D41A2F3004EC630 /* JSWebKitSubtleCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF8F63180745D800132674 /* JSWebKitSubtleCrypto.h */; };
+		571252691E524EB1008FF369 /* CryptoAlgorithmAES_CFB.h in Headers */ = {isa = PBXBuildFile; fileRef = 571252681E524EB1008FF369 /* CryptoAlgorithmAES_CFB.h */; };
 		571F21891DA57C54005C9EFD /* JSSubtleCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 571F21881DA57C54005C9EFD /* JSSubtleCrypto.h */; };
 		571F218B1DA57C7B005C9EFD /* JSSubtleCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 571F218A1DA57C7A005C9EFD /* JSSubtleCrypto.cpp */; };
-		572093D31DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 572093D21DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcParams.h */; };
-		572093D51DDCED8E00310AB0 /* JSAesCbcParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 572093D41DDCED8E00310AB0 /* JSAesCbcParams.h */; };
-		572093D71DDCEDA700310AB0 /* JSAesCbcParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572093D61DDCEDA700310AB0 /* JSAesCbcParams.cpp */; };
+		572093D31DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 572093D21DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h */; };
 		572A7F211C6E5719009C6149 /* SimulatedClick.h in Headers */ = {isa = PBXBuildFile; fileRef = 572A7F201C6E5719009C6149 /* SimulatedClick.h */; };
 		572A7F231C6E5A66009C6149 /* SimulatedClick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572A7F221C6E5A66009C6149 /* SimulatedClick.cpp */; };
 		573489391DAC6B6E00DC0667 /* CryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 573489381DAC6B6D00DC0667 /* CryptoAlgorithmParameters.h */; };
@@ -9684,6 +9687,9 @@
 		55A336F61D8209F40022C4C7 /* NativeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeImage.h; sourceTree = "<group>"; };
 		55A336F81D821E3C0022C4C7 /* ImageBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBackingStore.h; sourceTree = "<group>"; };
 		55D408F71A7C631800C78450 /* SVGImageClients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageClients.h; sourceTree = "<group>"; };
+		570440571E53851600356601 /* CryptoAlgorithmAES_CFBMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_CFBMac.cpp; sourceTree = "<group>"; };
+		570440591E53936200356601 /* JSAesCbcCfbParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAesCbcCfbParams.h; sourceTree = "<group>"; };
+		5704405B1E53937900356601 /* JSAesCbcCfbParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAesCbcCfbParams.cpp; sourceTree = "<group>"; };
 		5706A6941DDE5BF800A03B14 /* RsaOaepParams.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RsaOaepParams.idl; sourceTree = "<group>"; };
 		5706A6951DDE5C9500A03B14 /* CryptoAlgorithmRsaOaepParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRsaOaepParams.h; sourceTree = "<group>"; };
 		5706A6971DDE5E4600A03B14 /* JSRsaOaepParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRsaOaepParams.h; sourceTree = "<group>"; };
@@ -9691,12 +9697,12 @@
 		5709E8CA1D413CE3003244AC /* WebKitSubtleCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitSubtleCrypto.cpp; sourceTree = "<group>"; };
 		5709E8CB1D413CE3003244AC /* WebKitSubtleCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitSubtleCrypto.h; sourceTree = "<group>"; };
 		5709E8CC1D413CE3003244AC /* WebKitSubtleCrypto.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitSubtleCrypto.idl; sourceTree = "<group>"; };
+		571252681E524EB1008FF369 /* CryptoAlgorithmAES_CFB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAES_CFB.h; sourceTree = "<group>"; };
+		5712526A1E52527C008FF369 /* CryptoAlgorithmAES_CFB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_CFB.cpp; sourceTree = "<group>"; };
 		571F21881DA57C54005C9EFD /* JSSubtleCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSubtleCrypto.h; sourceTree = "<group>"; };
 		571F218A1DA57C7A005C9EFD /* JSSubtleCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSubtleCrypto.cpp; sourceTree = "<group>"; };
-		572093D11DDCEA4B00310AB0 /* AesCbcParams.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AesCbcParams.idl; sourceTree = "<group>"; };
-		572093D21DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesCbcParams.h; sourceTree = "<group>"; };
-		572093D41DDCED8E00310AB0 /* JSAesCbcParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAesCbcParams.h; sourceTree = "<group>"; };
-		572093D61DDCEDA700310AB0 /* JSAesCbcParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAesCbcParams.cpp; sourceTree = "<group>"; };
+		572093D11DDCEA4B00310AB0 /* AesCbcCfbParams.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AesCbcCfbParams.idl; sourceTree = "<group>"; };
+		572093D21DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesCbcCfbParams.h; sourceTree = "<group>"; };
 		572A7F201C6E5719009C6149 /* SimulatedClick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulatedClick.h; sourceTree = "<group>"; };
 		572A7F221C6E5A66009C6149 /* SimulatedClick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimulatedClick.cpp; sourceTree = "<group>"; };
 		573489381DAC6B6D00DC0667 /* CryptoAlgorithmParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmParameters.h; sourceTree = "<group>"; };
@@ -23380,6 +23386,7 @@
 			isa = PBXGroup;
 			children = (
 				E125F843182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp */,
+				570440571E53851600356601 /* CryptoAlgorithmAES_CFBMac.cpp */,
 				E1FE137C184D270200892F13 /* CryptoAlgorithmAES_KWMac.cpp */,
 				E125F8371822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp */,
 				E1BB84AC1822CA7400525043 /* CryptoAlgorithmRegistryMac.cpp */,
@@ -23398,6 +23405,8 @@
 			children = (
 				E125F83F1824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp */,
 				E125F8401824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h */,
+				5712526A1E52527C008FF369 /* CryptoAlgorithmAES_CFB.cpp */,
+				571252681E524EB1008FF369 /* CryptoAlgorithmAES_CFB.h */,
 				E1FE1378184D21BB00892F13 /* CryptoAlgorithmAES_KW.cpp */,
 				E1FE1379184D21BB00892F13 /* CryptoAlgorithmAES_KW.h */,
 				E125F82F1822F11B00D84CD9 /* CryptoAlgorithmHMAC.cpp */,
@@ -23444,9 +23453,9 @@
 		E1C657141816015F00256CDD /* parameters */ = {
 			isa = PBXGroup;
 			children = (
-				572093D11DDCEA4B00310AB0 /* AesCbcParams.idl */,
+				572093D11DDCEA4B00310AB0 /* AesCbcCfbParams.idl */,
 				577483101DADC49900716EF9 /* AesKeyGenParams.idl */,
-				572093D21DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcParams.h */,
+				572093D21DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h */,
 				E125F8391824104800D84CD9 /* CryptoAlgorithmAesCbcParamsDeprecated.h */,
 				577483111DADC55D00716EF9 /* CryptoAlgorithmAesKeyGenParams.h */,
 				E19AC3F61824E5D100349426 /* CryptoAlgorithmAesKeyGenParamsDeprecated.h */,
@@ -23621,8 +23630,8 @@
 		E1FF8F61180745C600132674 /* Crypto */ = {
 			isa = PBXGroup;
 			children = (
-				572093D61DDCEDA700310AB0 /* JSAesCbcParams.cpp */,
-				572093D41DDCED8E00310AB0 /* JSAesCbcParams.h */,
+				5704405B1E53937900356601 /* JSAesCbcCfbParams.cpp */,
+				570440591E53936200356601 /* JSAesCbcCfbParams.h */,
 				577483151DAEC32200716EF9 /* JSAesKeyGenParams.cpp */,
 				577483131DAEC2EA00716EF9 /* JSAesKeyGenParams.h */,
 				5739E1301DAC7FD100E14383 /* JSCryptoAlgorithmParameters.cpp */,
@@ -25425,6 +25434,7 @@
 				7C77C3D11DEE472400A50BFA /* BlobPropertyBag.h in Headers */,
 				2EDEF1F5121B0EFC00726DB2 /* BlobRegistry.h in Headers */,
 				2EDEF1F7121B0EFC00726DB2 /* BlobRegistryImpl.h in Headers */,
+				5704405A1E53936200356601 /* JSAesCbcCfbParams.h in Headers */,
 				2EB4BCD3121F03E300EC4885 /* BlobResourceHandle.h in Headers */,
 				976D6C7F122B8A3D001FD1F7 /* BlobURL.h in Headers */,
 				BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */,
@@ -25617,7 +25627,7 @@
 				E172AF6E180F24C600FBADB9 /* CryptoAlgorithm.h in Headers */,
 				E125F8421824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h in Headers */,
 				E1FE137B184D21BB00892F13 /* CryptoAlgorithmAES_KW.h in Headers */,
-				572093D31DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcParams.h in Headers */,
+				572093D31DDCEB9A00310AB0 /* CryptoAlgorithmAesCbcCfbParams.h in Headers */,
 				E125F83A1824104800D84CD9 /* CryptoAlgorithmAesCbcParamsDeprecated.h in Headers */,
 				577483121DADC55D00716EF9 /* CryptoAlgorithmAesKeyGenParams.h in Headers */,
 				E19AC3F71824E5D100349426 /* CryptoAlgorithmAesKeyGenParamsDeprecated.h in Headers */,
@@ -26468,7 +26478,6 @@
 				44EFF6431A6FF92700D45EEC /* IOTypesSPI.h in Headers */,
 				07AC47021952102100EE9723 /* ISOVTTCue.h in Headers */,
 				418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */,
-				572093D51DDCED8E00310AB0 /* JSAesCbcParams.h in Headers */,
 				577483141DAEC2EB00716EF9 /* JSAesKeyGenParams.h in Headers */,
 				FDA15ECA12B03F50003A583A /* JSAnalyserNode.h in Headers */,
 				12A253E31C8FFF6600C22295 /* JSAnimatable.h in Headers */,
@@ -27846,6 +27855,7 @@
 				083DAEA90F01A7FB00342754 /* RenderTextControlSingleLine.h in Headers */,
 				BCEA488E097D93020094C9E4 /* RenderTextFragment.h in Headers */,
 				E4C91A16180999F100A17F6D /* RenderTextLineBoxes.h in Headers */,
+				571252691E524EB1008FF369 /* CryptoAlgorithmAES_CFB.h in Headers */,
 				BCEA488A097D93020094C9E4 /* RenderTheme.h in Headers */,
 				1A299FE81D7F5FA600A60093 /* RenderThemeCocoa.h in Headers */,
 				FED13D520CEA949700D89466 /* RenderThemeIOS.h in Headers */,
@@ -29228,6 +29238,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				570440531E5278B200356601 /* CryptoAlgorithmAES_CFB.cpp in Sources */,
 				41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */,
 				37F57AB91A50726900876F98 /* AccessibilityARIAGrid.cpp in Sources */,
 				37F57ABA1A50726F00876F98 /* AccessibilityARIAGridCell.cpp in Sources */,
@@ -29942,6 +29953,7 @@
 				D000EBA211BDAFD400C47726 /* FrameLoaderStateMachine.cpp in Sources */,
 				86BA766E166427A8005BE5D1 /* FrameLoadRequest.cpp in Sources */,
 				93309E0D099E64920056E581 /* FrameSelection.cpp in Sources */,
+				570440581E53851600356601 /* CryptoAlgorithmAES_CFBMac.cpp in Sources */,
 				4A8C96EB0BE69032004EEFF0 /* FrameSelectionMac.mm in Sources */,
 				C4CD629A18383766007EBAF1 /* FrameSnapshotting.cpp in Sources */,
 				65A21484097A3F5300B9050A /* FrameTree.cpp in Sources */,
@@ -30264,7 +30276,6 @@
 				AD9FF6E11908391D003B61E0 /* IOSurfacePoolCocoa.mm in Sources */,
 				07AC47011952102100EE9723 /* ISOVTTCue.cpp in Sources */,
 				418F88040FF957AE0080F045 /* JSAbstractWorker.cpp in Sources */,
-				572093D71DDCEDA700310AB0 /* JSAesCbcParams.cpp in Sources */,
 				577483161DAEC32300716EF9 /* JSAesKeyGenParams.cpp in Sources */,
 				FDA15EC912B03F50003A583A /* JSAnalyserNode.cpp in Sources */,
 				31A795C61888BADC00382F90 /* JSANGLEInstancedArrays.cpp in Sources */,
@@ -31338,6 +31349,7 @@
 				1A8A646C1D19FF8700D0E00F /* PaymentCocoa.mm in Sources */,
 				1A8A646D1D19FF8700D0E00F /* PaymentContactCocoa.mm in Sources */,
 				1A58E86D1D19E42D00C0EA73 /* PaymentCoordinator.cpp in Sources */,
+				5704405C1E53937900356601 /* JSAesCbcCfbParams.cpp in Sources */,
 				1ADA4A1C1D22F2C0005A9A15 /* PaymentMerchantSessionCocoa.mm in Sources */,
 				1A8A646E1D19FF8700D0E00F /* PaymentMethodCocoa.mm in Sources */,
 				1A58E8671D19D80E00C0EA73 /* PaymentRequest.cpp in Sources */,

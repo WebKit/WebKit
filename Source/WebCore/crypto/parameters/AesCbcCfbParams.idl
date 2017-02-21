@@ -23,10 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// This is a unified dictionary for AesCbcParams and AesCfbParams.
+// https://www.w3.org/TR/WebCryptoAPI/#dfn-AesCbcParams, and
+// https://www.w3.org/TR/2014/CR-WebCryptoAPI-20141211/#dfn-AesCfbParams
 [
     Conditional=SUBTLE_CRYPTO,
-    ImplementedAs=CryptoAlgorithmAesCbcParams
-] dictionary AesCbcParams : CryptoAlgorithmParameters {
+    ImplementedAs=CryptoAlgorithmAesCbcCfbParams
+] dictionary AesCbcCfbParams : CryptoAlgorithmParameters {
     // The initialization vector. MUST be 16 bytes.
     required BufferSource iv;
 };

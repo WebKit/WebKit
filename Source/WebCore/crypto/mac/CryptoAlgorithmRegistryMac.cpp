@@ -29,6 +29,7 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithmAES_CBC.h"
+#include "CryptoAlgorithmAES_CFB.h"
 #include "CryptoAlgorithmAES_KW.h"
 #include "CryptoAlgorithmHMAC.h"
 #include "CryptoAlgorithmRSAES_PKCS1_v1_5.h"
@@ -45,6 +46,7 @@ namespace WebCore {
 void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
 {
     registerAlgorithm<CryptoAlgorithmAES_CBC>();
+    registerAlgorithm<CryptoAlgorithmAES_CFB>();
     registerAlgorithm<CryptoAlgorithmAES_KW>();
     registerAlgorithm<CryptoAlgorithmHMAC>();
     registerAlgorithm<CryptoAlgorithmRSAES_PKCS1_v1_5>();

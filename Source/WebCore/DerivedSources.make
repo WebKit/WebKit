@@ -265,7 +265,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/crypto/RsaOtherPrimesInfo.idl \
     $(WebCore)/crypto/SubtleCrypto.idl \
     $(WebCore)/crypto/WebKitSubtleCrypto.idl \
-    $(WebCore)/crypto/parameters/AesCbcParams.idl \
+    $(WebCore)/crypto/parameters/AesCbcCfbParams.idl \
     $(WebCore)/crypto/parameters/AesKeyGenParams.idl \
     $(WebCore)/crypto/parameters/HmacKeyParams.idl \
     $(WebCore)/crypto/parameters/RsaHashedImportParams.idl \

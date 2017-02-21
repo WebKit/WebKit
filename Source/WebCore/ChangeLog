@@ -1,3 +1,88 @@
+2017-02-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Add support for AES-CFB
+        https://bugs.webkit.org/show_bug.cgi?id=168344
+        <rdar://problem/20940221>
+
+        Reviewed by Brent Fulgham.
+
+        This patch adds support for AES-CFB. Operations of AES-CFB include: encrypt, decrypt, generateKey,
+        importKey, exportKey, wrapKey, and unwrapKey. This implementation follows a slightly old version
+        of WebCryptoAPI spec: https://www.w3.org/TR/2014/CR-WebCryptoAPI-20141211/#aes-cfb.
+
+        Tests: crypto/subtle/aes-cbc-cfb-decrypt-malformed-parameters.html
+               crypto/subtle/aes-cbc-cfb-encrypt-malformed-parameters.html
+               crypto/subtle/aes-cbc-import-key-unwrap-jwk-rsa-key-public.html
+               crypto/subtle/aes-cfb-generate-export-key-jwk-length-128.html
+               crypto/subtle/aes-cfb-generate-export-key-jwk-length-192.html
+               crypto/subtle/aes-cfb-generate-export-key-jwk-length-256.html
+               crypto/subtle/aes-cfb-generate-export-raw-key.html
+               crypto/subtle/aes-cfb-generate-key-encrypt-decrypt.html
+               crypto/subtle/aes-cfb-generate-key.html
+               crypto/subtle/aes-cfb-import-jwk-key-length-128.html
+               crypto/subtle/aes-cfb-import-jwk-key-length-192.html
+               crypto/subtle/aes-cfb-import-jwk-key-length-256.html
+               crypto/subtle/aes-cfb-import-key-decrypt.html
+               crypto/subtle/aes-cfb-import-key-encrypt.html
+               crypto/subtle/aes-cfb-import-key-unwrap-jwk-key.html
+               crypto/subtle/aes-cfb-import-key-unwrap-raw-key.html
+               crypto/subtle/aes-cfb-import-key-wrap-jwk-key.html
+               crypto/subtle/aes-cfb-import-key-wrap-raw-key.html
+               crypto/subtle/aes-cfb-import-raw-key.html
+               crypto/workers/subtle/aes-cfb-import-key-decrypt.html
+               crypto/workers/subtle/aes-cfb-import-key-encrypt.html
+               crypto/workers/subtle/aes-cfb-import-key-unwrap-key.html
+               crypto/workers/subtle/aes-cfb-import-key-wrap-key.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add CryptoAlgorithmAES_CFB.cpp,
+        change AesCbcParams.idl to AesCbcCfbParams.idl.
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        Add support for AES-CFB.
+        * crypto/CryptoAlgorithm.h:
+        Include <wtf/Variant.h>.
+        * crypto/CryptoAlgorithmParameters.h:
+        Add support for AES-CFB.
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::encrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::decrypt):
+        Rename CryptoAlgorithmAesCbcParams to CryptoAlgorithmAesCbcCfbParams.
+        * crypto/algorithms/CryptoAlgorithmAES_CFB.cpp: Added.
+        (WebCore::usagesAreInvalidForCryptoAlgorithmAES_CFB):
+        (WebCore::CryptoAlgorithmAES_CFB::create):
+        (WebCore::CryptoAlgorithmAES_CFB::identifier):
+        (WebCore::CryptoAlgorithmAES_CFB::encrypt):
+        (WebCore::CryptoAlgorithmAES_CFB::decrypt):
+        (WebCore::CryptoAlgorithmAES_CFB::generateKey):
+        (WebCore::CryptoAlgorithmAES_CFB::importKey):
+        (WebCore::CryptoAlgorithmAES_CFB::exportKey):
+        * crypto/algorithms/CryptoAlgorithmAES_CFB.h: Added.
+        * crypto/gnutls/CryptoAlgorithmAES_CFBGnuTLS.cpp: Added.
+        (WebCore::CryptoAlgorithmAES_CFB::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CFB::platformDecrypt):
+        Add dummy support of AES_CFB for GTK+.
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        (WebCore::transformAES_CBC):
+        Drop conditional PLATFORM(COCOA).
+        (WebCore::CryptoAlgorithmAES_CBC::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::platformDecrypt):
+        Rename CryptoAlgorithmAesCbcParams to CryptoAlgorithmAesCbcCfbParams.
+        * crypto/mac/CryptoAlgorithmAES_CFBMac.cpp: Added.
+        (WebCore::transformAES_CFB):
+        (WebCore::CryptoAlgorithmAES_CFB::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CFB::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        Add support for AES-CFB.
+        * crypto/parameters/AesCbcCfbParams.idl: Renamed from Source/WebCore/crypto/parameters/AesCbcParams.idl.
+        * crypto/parameters/CryptoAlgorithmAesCbcCfbParams.h: Renamed from Source/WebCore/crypto/parameters/CryptoAlgorithmAesCbcParams.h.
+        Since dictionaries AesCbcParams and AesCfbParams are essentially the same, I combine them together in our implementations.
+
 2017-02-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the ToT iOS build
