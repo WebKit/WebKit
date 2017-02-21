@@ -1,3 +1,17 @@
+2017-02-20  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC][Mac] Activate libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=167293
+        <rdar://problem/30401864>
+
+        Reviewed by Alex Christensen.
+
+        Doing some clean-up.
+
+        * Configurations/libwebrtc.xcconfig:
+        * Source/webrtc/base/checks.h:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2017-02-17  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS ASAN build after r212401

@@ -1,0 +1,31 @@
+Test RTCPeerConnection 'icecandidate' event and gathering done
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Local description set
+PASS End of test promise chain
+PASS Got candidate
+PASS event.candidate instanceof RTCIceCandidate is true
+PASS event.candidate.sdpMLineIndex is 0
+PASS event.candidate.sdpMid is pc.getTransceivers()[0].mid
+PASS event.candidate.candidate: candidate:1 1 UDP 2013266431 192.168.0.100 38838 typ host
+
+PASS Got candidate
+PASS event.candidate instanceof RTCIceCandidate is true
+PASS event.candidate.sdpMLineIndex is 0
+PASS event.candidate.sdpMid is pc.getTransceivers()[0].mid
+PASS event.candidate.candidate: candidate:2 1 TCP 1019216383 192.168.0.100 9 typ host tcptype active
+
+PASS Got candidate
+PASS event.candidate instanceof RTCIceCandidate is true
+PASS event.candidate.sdpMLineIndex is 0
+PASS event.candidate.sdpMid is pc.getTransceivers()[0].mid
+PASS event.candidate.candidate: candidate:3 1 UDP 1677722111 172.18.0.1 47989 typ srflx raddr 192.168.0.100 rport 47989
+
+PASS Got end of candidates
+PASS event.candidate is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

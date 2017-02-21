@@ -1,0 +1,21 @@
+Tests RTCPeerConnection [add|remove]Stream.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Got a stream.
+PASS pc.addStream(null) threw exception TypeError: Argument 1 ('stream') to RTCPeerConnection.addStream must be an instance of MediaStream.
+PASS pc.getLocalStreams().length is 0
+PASS Got another stream.
+PASS stream.id === stream2.id is false
+PASS onAddStream was called.
+PASS pc.getStreamById(stream.id) is stream
+PASS pc.getStreamById(stream2.id) is null
+PASS pc.getLocalStreams().length is 1
+PASS pc.getLocalStreams().length is 1
+PASS onRemoveStream was called.
+PASS pc.getLocalStreams().length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

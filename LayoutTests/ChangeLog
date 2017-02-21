@@ -1,3 +1,31 @@
+2017-02-20  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC][Mac] Activate libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=167293
+        <rdar://problem/30401864>
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        * fast/mediastream/RTCPeerConnection-addIceCandidate-expected.txt:
+        * fast/mediastream/RTCPeerConnection-addTrack-reuse-sender-expected.txt:
+        * fast/mediastream/RTCPeerConnection-icecandidate-event-expected.txt:
+        * fast/mediastream/RTCPeerConnection-legacy-stream-based-api-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/mediastream/RTCPeerConnection-AddRemoveStream-expected.txt: Added.
+        * platform/gtk/fast/mediastream/RTCPeerConnection-addIceCandidate-expected.txt: Copied from LayoutTests/fast/mediastream/RTCPeerConnection-addIceCandidate-expected.txt.
+        * platform/gtk/fast/mediastream/RTCPeerConnection-addTrack-reuse-sender-expected.txt: Copied from LayoutTests/fast/mediastream/RTCPeerConnection-addTrack-reuse-sender-expected.txt.
+        * platform/gtk/fast/mediastream/RTCPeerConnection-closed-state-expected.txt: Added.
+        * platform/gtk/fast/mediastream/RTCPeerConnection-icecandidate-event-expected.txt: Copied from LayoutTests/fast/mediastream/RTCPeerConnection-icecandidate-event-expected.txt.
+        * platform/gtk/fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event-expected.txt: Added.
+        * platform/gtk/fast/mediastream/RTCPeerConnection-legacy-stream-based-api-expected.txt: Copied from LayoutTests/fast/mediastream/RTCPeerConnection-legacy-stream-based-api-expected.txt.
+        * platform/gtk/fast/mediastream/RTCPeerConnection-onnegotiationneeded-expected.txt: Added.
+        * platform/gtk/fast/mediastream/RTCPeerConnection-overloaded-operations-params-expected.txt: Added.
+        * platform/gtk/fast/mediastream/RTCRtpSender-replaceTrack-expected.txt: Added.
+        * platform/gtk/fast/mediastream/no-media-call-expected.txt: Added.
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2017-02-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         ASSERTION FAILED: m_normalWorld->hasOneRef() under WorkerThread::stop

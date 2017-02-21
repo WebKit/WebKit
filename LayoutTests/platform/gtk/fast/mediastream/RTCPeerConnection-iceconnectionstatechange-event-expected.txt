@@ -1,0 +1,38 @@
+Test RTCPeerConnection 'iceconnectionstatechange' event
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Local description set
+PASS pc.getTransceivers().length is 3
+PASS pc.iceConnectionState is 'new'
+PASS End of test promise chain
+
+PASS Got icetransportstatechange event
+expectedState is "checking"
+PASS pc.iceConnectionState is expectedState
+
+PASS Got icetransportstatechange event
+expectedState is "connected"
+PASS pc.iceConnectionState is expectedState
+
+PASS Got icetransportstatechange event
+expectedState is "completed"
+PASS pc.iceConnectionState is expectedState
+
+PASS Got icetransportstatechange event
+expectedState is "failed"
+PASS pc.iceConnectionState is expectedState
+
+PASS Got icetransportstatechange event
+expectedState is "disconnected"
+PASS pc.iceConnectionState is expectedState
+
+PASS Got icetransportstatechange event
+expectedState is "new"
+PASS pc.iceConnectionState is expectedState
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
