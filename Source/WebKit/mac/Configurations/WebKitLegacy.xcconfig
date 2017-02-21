@@ -24,7 +24,7 @@
 #include "FeatureDefines.xcconfig"
 #include "Version.xcconfig"
 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *.defs *.nib *.pdf *.tiff CarbonUtils.m CarbonWindowAdapter.mm CarbonWindowContentView.m CarbonWindowFrame.m HIViewAdapter.m HIWebView.mm OutlookQuirksUserScript.js PopupMenuMac.mm SearchPopupMenuMac.mm WebClipView.* WebDashboardRegion.* WebDynamicScrollBarsView.* WebIconDatabase.* WebIconDatabasePrivate.* WebInspectorClient.mm WebJavaScriptTextInputPanel.* WebNSEventExtras.* WebNSPasteboardExtras.* WebNSWindowExtras.* WebPanelAuthenticationHandler.* WebPluginsPrivate.* WebStringTruncator.* WebTextCompletionController.*;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *.defs *.nib *.pdf *.tiff CarbonUtils.* CarbonWindowAdapter.* CarbonWindowContentView.* CarbonWindowFrame.* HIViewAdapter.* HIWebView.* OutlookQuirksUserScript.js PopupMenuMac.* SearchPopupMenuMac.* WebClipView.* WebDashboardRegion.* WebDynamicScrollBarsView.* WebIconDatabase.* WebIconDatabasePrivate.* WebInspectorClient.* WebJavaScriptTextInputPanel.* WebNSEventExtras.* WebNSPasteboardExtras.* WebNSWindowExtras.* WebPanelAuthenticationHandler.* WebPluginsPrivate.* WebStringTruncator.* WebTextCompletionController.*;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = *IOS.mm MemoryMeasure.h WebCaretChangeListener.h WebFixedPositionContent.h WebFrameIOS.h WebFrameIPhone.h WebGeolocationCoreLocationProvider.h WebGeolocationPrivate.h WebGeolocationProviderIOS.h WebMIMETypeRegistry.h WebNSStringExtrasIOS.h WebNSStringExtrasIPhone.h WebPDFViewIOS.h WebPDFViewIPhone.h WebPDFViewPlaceholder.h WebSelectionRect.h WebUIKitDelegate.h WebUIKitSupport.h WebVisiblePosition.h DOMHTMLTextAreaElementPrivate.h DOMUIKitExtensions.h;
 
 EXPORTED_SYMBOLS_FILE = $(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH));

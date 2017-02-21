@@ -1,3 +1,12 @@
+2017-02-20  Aakash Jain  <aakash_jain@apple.com>
+
+        Exclude various mac-specific header files from iOS build
+        https://bugs.webkit.org/show_bug.cgi?id=168621
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebKitLegacy.xcconfig:
+
 2017-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add plumbing to the UI process for TextIndicatorData when computing the drag image
