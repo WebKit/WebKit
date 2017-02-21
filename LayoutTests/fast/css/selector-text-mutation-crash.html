@@ -1,0 +1,14 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style id=s>
+body[foo] [id=d] { color: green };
+</style>
+<body>
+<div id=d>PASS</div>
+<script>
+d.offsetLeft;
+s.sheet.cssRules.item(0).selectorText = "body[foo]";
+document.body.setAttribute("foo", "foo");
+</script>
