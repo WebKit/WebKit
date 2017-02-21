@@ -473,7 +473,7 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
     callbackAggregator->callIfNeeded();
 }
 
-void WebsiteDataStore::fetchDataForTopPrivatelyOwnedDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyOwnedDomains, std::function<void(Vector<WebsiteDataRecord>)> completionHandler)
+void WebsiteDataStore::fetchDataForTopPrivatelyOwnedDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyOwnedDomains, std::function<void(Vector<WebsiteDataRecord>&&, Vector<String>&&)> completionHandler)
 {
     fetchData(dataTypes, fetchOptions, [topPrivatelyOwnedDomains, completionHandler, this](auto existingDataRecords) {
         Vector<WebsiteDataRecord> matchingDataRecords;
@@ -498,7 +498,7 @@ void WebsiteDataStore::fetchDataForTopPrivatelyOwnedDomains(OptionSet<WebsiteDat
                     break;
             }
         }
-        completionHandler(matchingDataRecords);
+        completionHandler(WTFMove(matchingDataRecords), WTFMove(domainsWithDataRecords));
     });
 }
     
@@ -1027,11 +1027,11 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
     callbackAggregator->callIfNeeded();
 }
 
-void WebsiteDataStore::removeDataForTopPrivatelyOwnedDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyOwnedDomains, std::function<void()> completionHandler)
+void WebsiteDataStore::removeDataForTopPrivatelyOwnedDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyOwnedDomains, std::function<void(Vector<String>)> completionHandler)
 {
-    fetchDataForTopPrivatelyOwnedDomains(dataTypes, fetchOptions, topPrivatelyOwnedDomains, [dataTypes, completionHandler, this](auto websiteDataRecords) {
-        this->removeData(dataTypes, websiteDataRecords, [completionHandler]() {
-            completionHandler();
+    fetchDataForTopPrivatelyOwnedDomains(dataTypes, fetchOptions, topPrivatelyOwnedDomains, [dataTypes, completionHandler, this](auto websiteDataRecords, auto domainsWithDataRecords) {
+        this->removeData(dataTypes, websiteDataRecords, [domainsWithDataRecords, completionHandler]() {
+            completionHandler(domainsWithDataRecords);
         });
     });
 }

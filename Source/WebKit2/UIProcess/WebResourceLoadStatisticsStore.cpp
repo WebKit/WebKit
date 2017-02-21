@@ -128,7 +128,8 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
 
     // Switch to the main thread to get the default website data store
     RunLoop::main().dispatch([prevalentResourceDomains = WTFMove(prevalentResourceDomains), this] () mutable {
-        WebProcessProxy::deleteWebsiteDataForTopPrivatelyOwnedDomainsInAllPersistentDataStores(dataTypesToRemove, prevalentResourceDomains, notifyPages, [this]() mutable {
+        WebProcessProxy::deleteWebsiteDataForTopPrivatelyOwnedDomainsInAllPersistentDataStores(dataTypesToRemove, prevalentResourceDomains, notifyPages, [this](Vector<String> domainsWithDeletedWebsiteData) mutable {
+            this->coreStore().updateStatisticsForRemovedDataRecords(domainsWithDeletedWebsiteData);
             m_dataRecordsRemovalPending = false;
         });
     });

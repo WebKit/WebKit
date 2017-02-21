@@ -1,5 +1,29 @@
 2017-02-21  John Wilander  <wilander@apple.com>
 
+        Resource Load Statistics: Only scan website data store once per session ID + reinstate removal counting
+        https://bugs.webkit.org/show_bug.cgi?id=168541
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::deleteWebsiteDataForTopPrivatelyOwnedDomainsInAllPersistentDataStores):
+            The CallbackAggregator now merges a list of domains for which we
+            have removed data records and eventually reports this back to the
+            caller.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+            Now reports back to its WebCore::ResourceLoadStatisticsStore
+            which domains have had data records removed.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataForTopPrivatelyOwnedDomains):
+            The completion handler now handles data record removal counting.
+        (WebKit::WebsiteDataStore::removeDataForTopPrivatelyOwnedDomains):
+            The completion handler now handles data record removal counting.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
+2017-02-21  John Wilander  <wilander@apple.com>
+
         Resource Load Statistics: Add alternate classification method
         https://bugs.webkit.org/show_bug.cgi?id=168347
         <rdar://problem/30352793>

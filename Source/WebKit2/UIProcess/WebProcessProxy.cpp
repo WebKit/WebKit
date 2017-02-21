@@ -203,12 +203,16 @@ WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
     return globalPageMap().get(pageID);
 }
 
-void WebProcessProxy::deleteWebsiteDataForTopPrivatelyOwnedDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<String>& topPrivatelyOwnedDomains, bool shouldNotifyPage, std::function<void()> completionHandler)
+void WebProcessProxy::deleteWebsiteDataForTopPrivatelyOwnedDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<String>& topPrivatelyOwnedDomains, bool shouldNotifyPage, std::function<void(Vector<String>)> completionHandler)
 {
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator(std::function<void()> completionHandler)
+        explicit CallbackAggregator(std::function<void(Vector<String>)> completionHandler)
             : completionHandler(WTFMove(completionHandler))
         {
+        }
+        void addDomainsWithDeletedWebsiteData(const Vector<String>& domains)
+        {
+            domainsWithDeletedWebsiteData.appendVector(domains);
         }
         
         void addPendingCallback()
@@ -227,23 +231,28 @@ void WebProcessProxy::deleteWebsiteDataForTopPrivatelyOwnedDomainsInAllPersisten
         void callIfNeeded()
         {
             if (!pendingCallbacks)
-                completionHandler();
+                completionHandler(domainsWithDeletedWebsiteData);
         }
         
         unsigned pendingCallbacks = 0;
-        std::function<void()> completionHandler;
+        std::function<void(Vector<String>)> completionHandler;
+        Vector<String> domainsWithDeletedWebsiteData;
     };
     
     RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
 
+    HashSet<WebCore::SessionID> visitedSessionIDs;
     for (auto& page : globalPageMap()) {
-        if (!page.value->websiteDataStore().isPersistent())
+        auto& dataStore = page.value->websiteDataStore();
+        if (!dataStore.isPersistent() || visitedSessionIDs.contains(dataStore.sessionID()))
             continue;
+        visitedSessionIDs.add(dataStore.sessionID());
         callbackAggregator->addPendingCallback();
-        page.value->websiteDataStore().removeDataForTopPrivatelyOwnedDomains(dataTypes, { }, topPrivatelyOwnedDomains, [callbackAggregator, shouldNotifyPage, page]() {
+        dataStore.removeDataForTopPrivatelyOwnedDomains(dataTypes, { }, topPrivatelyOwnedDomains, [callbackAggregator, shouldNotifyPage, page](auto domainsWithDeletedWebsiteData) {
             if (shouldNotifyPage)
                 page.value->postMessageToInjectedBundle("WebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished", nullptr);
-            WTF::RunLoop::main().dispatch([callbackAggregator] {
+            WTF::RunLoop::main().dispatch([callbackAggregator, domainsWithDeletedWebsiteData] {
+                callbackAggregator->addDomainsWithDeletedWebsiteData(domainsWithDeletedWebsiteData);
                 callbackAggregator->removePendingCallback();
             });
         });
