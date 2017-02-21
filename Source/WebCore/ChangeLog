@@ -1,3 +1,9 @@
+2017-02-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, update WebCrypto API feature status.
+
+        * features.json:
+
 2017-02-21  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the bad JSON.

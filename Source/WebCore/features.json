@@ -520,20 +520,19 @@
         }
     },
     {
-        "name": "WebCrypto",
+        "name": "Web Cryptography API",
         "status": {
-            "status": "Partial Support",
+            "status": "In Development",
             "enabled-by-default": true
         },
         "url": "http://www.w3.org/TR/WebCryptoAPI/",
-        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=122679",
-        "keywords": ["webcrypto"],
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=160880",
+        "keywords": ["webcrypto", "web cryptography api", "crypto"],
         "category": "webapps",
         "description": "A JavaScript API for web applications to perform cryptographic operations.",
         "contact": {
-            "name": "Jon Davis",
-            "twitter": "@jonathandavis",
-            "email": "web-evangelist@apple.com"
+            "name": "Jiewen Tan",
+            "email": "jiewen_tan@apple.com"
         }
     },
     {
