@@ -746,12 +746,6 @@ a custom implementation for each.
 
 @interface WebView (WebViewIOS)
 + (void)enableWebThread;
-+ (void)garbageCollectNow;
-+ (void)purgeInactiveFontData;
-+ (void)drainLayerPool;
-+ (void)discardAllCompiledCode;
-+ (void)registerForMemoryNotifications;
-+ (void)releaseFastMallocMemoryOnCurrentThread;
 + (BOOL)isCharacterSmartReplaceExempt:(unichar)character isPreviousCharacter:(BOOL)b;
 
 /*!

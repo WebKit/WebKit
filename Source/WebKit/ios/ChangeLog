@@ -1,3 +1,14 @@
+2017-02-21  Andreas Kling  <akling@apple.com>
+
+        [iOS] WebKit1 should use shared memory pressure handler code.
+        <https://webkit.org/b/168653>
+
+        Reviewed by Antti Koivisto.
+
+        * Misc/WebUIKitSupport.mm:
+        (WebKitInitialize): Don't unconditionally install a memory warning handler just
+        because the framework is loaded.
+
 2017-02-20  Alexey Proskuryakov  <ap@apple.com>
 
         List of WebCore symbols to re-export from WebKitLegacy should be built automatically

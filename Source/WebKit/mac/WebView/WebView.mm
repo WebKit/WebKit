@@ -1673,73 +1673,10 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     return self;
 }
 
-+ (void)_handleMemoryWarning
-{
-    ASSERT(WebThreadIsCurrent());
-    WebKit::MemoryMeasure totalMemory("Memory warning: Overall memory change from [WebView _handleMemoryWarning].");
-
-    // Always peform the following.
-    [WebView purgeInactiveFontData];
-
-    // Only perform the remaining if a non-simple document was created.
-    if (!didOneTimeInitialization)
-        return;
-
-    tileControllerMemoryHandler().trimUnparentedTilesToTarget(0);
-
-    [WebStorageManager closeIdleLocalStorageDatabases];
-    StorageThread::releaseFastMallocFreeMemoryInAllThreads();
-
-    [WebView _releaseMemoryNow];
-}
-
-+ (void)registerForMemoryNotifications
-{
-    BOOL shouldAutoClearPressureOnMemoryRelease = !WebCore::IOSApplication::isMobileSafari();
-
-    MemoryPressureHandler::singleton().installMemoryReleaseBlock(^{
-        [WebView _handleMemoryWarning];
-    }, shouldAutoClearPressureOnMemoryRelease);
-
-    static dispatch_source_t memoryNotificationEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, DISPATCH_MEMORYPRESSURE_WARN, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
-    dispatch_source_set_event_handler(memoryNotificationEventSource, ^{
-        // Set memory pressure flag and schedule releasing memory in web thread runloop exit.
-        MemoryPressureHandler::singleton().setReceivedMemoryPressure(WebCore::MemoryPressureReasonVMPressure);
-    });
-
-    dispatch_resume(memoryNotificationEventSource);
-
-    if (!shouldAutoClearPressureOnMemoryRelease) {
-        // Listen to memory status notification to reset the memory pressure flag.
-        static dispatch_source_t memoryStatusEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE,
-                                                                                    0,
-                                                                                    DISPATCH_MEMORYPRESSURE_WARN | DISPATCH_MEMORYPRESSURE_NORMAL,
-                                                                                    dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
-        dispatch_source_set_event_handler(memoryStatusEventSource, ^{
-            unsigned long currentStatus = dispatch_source_get_data(memoryStatusEventSource);
-            if (currentStatus == DISPATCH_MEMORYPRESSURE_NORMAL)
-                MemoryPressureHandler::singleton().clearMemoryPressure();
-            else if (currentStatus == DISPATCH_MEMORYPRESSURE_WARN)
-                MemoryPressureHandler::singleton().setReceivedMemoryPressure(WebCore::MemoryPressureReasonVMStatus);
-        });
-
-        dispatch_resume(memoryStatusEventSource);
-    }
-}
-
 + (void)_releaseMemoryNow
 {
-    ASSERT(WebThreadIsCurrent());
-    [WebView discardAllCompiledCode];
-    [WebView garbageCollectNow];
-    [WebView purgeInactiveFontData];
-    [WebView drainLayerPool];
-    [WebCache emptyInMemoryResources];
-    [WebView releaseFastMallocMemoryOnCurrentThread];
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        // Clear the main thread's TCMalloc thread cache.
-        [WebView releaseFastMallocMemoryOnCurrentThread];
+    WebThreadRun(^{
+        WebCore::releaseMemory(Critical::Yes, Synchronous::Yes);
     });
 }
 
@@ -1756,40 +1693,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         [WebView _releaseMemoryNow];
         dispatch_async(dispatch_get_main_queue(), handler);
     });
-}
-
-+ (void)releaseFastMallocMemoryOnCurrentThread
-{
-    WebKit::MemoryMeasure measurer("Memory warning: Releasing fast malloc memory to system.");
-    WTF::releaseFastMallocFreeMemory();
-}
-
-+ (void)garbageCollectNow
-{
-    ASSERT(WebThreadIsCurrent());
-    WebKit::MemoryMeasure measurer("Memory warning: Calling JavaScript GC.");
-    WebCore::GCController::singleton().garbageCollectNow();
-}
-
-+ (void)purgeInactiveFontData
-{
-    ASSERT(WebThreadIsCurrent());
-    WebKit::MemoryMeasure measurer("Memory warning: Purging inactive font data.");
-    FontCache::singleton().purgeInactiveFontData();
-}
-
-+ (void)drainLayerPool
-{
-    ASSERT(WebThreadIsCurrent());
-    WebKit::MemoryMeasure measurer("Memory warning: Draining layer pool.");
-    WebCore::LegacyTileCache::drainLayerPool();
-}
-
-+ (void)discardAllCompiledCode
-{
-    ASSERT(WebThreadIsCurrent());
-    WebKit::MemoryMeasure measurer("Memory warning: Discarding JIT'ed code.");
-    WebCore::GCController::singleton().deleteAllCode(PreventCollectionAndDeleteAllCode);
 }
 
 + (BOOL)isCharacterSmartReplaceExempt:(unichar)character isPreviousCharacter:(BOOL)b
@@ -2041,16 +1944,6 @@ static NSMutableSet *knownPluginMIMETypes()
 + (BOOL)_isUnderMemoryPressure
 {
     return MemoryPressureHandler::singleton().isUnderMemoryPressure();
-}
-
-+ (void)_clearMemoryPressure
-{
-    MemoryPressureHandler::singleton().clearMemoryPressure();
-}
-
-+ (BOOL)_shouldWaitForMemoryClearMessage
-{
-    return MemoryPressureHandler::singleton().shouldWaitForMemoryClearMessage();
 }
 
 #endif // PLATFORM(IOS)
@@ -9952,7 +9845,13 @@ void WebInstallMemoryPressureHandler(void)
         std::call_once(onceFlag, [] {
             auto& memoryPressureHandler = MemoryPressureHandler::singleton();
             memoryPressureHandler.setLowMemoryHandler([] (Critical critical, Synchronous synchronous) {
+#if PLATFORM(IOS)
+                WebThreadRun(^{
+#endif
                 WebCore::releaseMemory(critical, synchronous);
+#if PLATFORM(IOS)
+                });
+#endif
             });
             memoryPressureHandler.install();
         });

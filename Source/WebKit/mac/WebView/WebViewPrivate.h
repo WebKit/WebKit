@@ -441,21 +441,11 @@ Could be worth adding to the API.
 
 - (NSUInteger)_renderTreeSize;
 
-/*!
- * @method _handleMemoryWarning
- * @discussion Try to release memory since we got a memory warning from the system. This method is
- * also used by other internal clients. See <rdar://9582500>.
- */
-+ (void)_handleMemoryWarning;
-
 - (void)_setResourceLoadSchedulerSuspended:(BOOL)suspend;
 + (void)_setTileCacheLayerPoolCapacity:(unsigned)capacity;
 
 + (void)_setAllowCookies:(BOOL)allow;
 + (BOOL)_allowCookies;
-+ (BOOL)_isUnderMemoryPressure;
-+ (void)_clearMemoryPressure;
-+ (BOOL)_shouldWaitForMemoryClearMessage;
 + (void)_releaseMemoryNow;
 
 - (void)_replaceCurrentHistoryItem:(WebHistoryItem *)item;

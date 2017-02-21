@@ -1,3 +1,28 @@
+2017-02-21  Andreas Kling  <akling@apple.com>
+
+        [iOS] WebKit1 should use shared memory pressure handler code.
+        <https://webkit.org/b/168653>
+
+        Reviewed by Antti Koivisto.
+
+        Register a WebThread-aware memory callback with the shared MemoryPressureHandler
+        and get rid of the old iOS WebKit1 specific implementation. Some of it was even
+        dead code since MobileSafari has been using WebKit2 for quite a while.
+
+        * WebView/WebView.h:
+        * WebView/WebView.mm:
+        (WebInstallMemoryPressureHandler):
+        (+[WebView _handleMemoryWarning]): Deleted.
+        (+[WebView registerForMemoryNotifications]): Deleted.
+        (+[WebView releaseFastMallocMemoryOnCurrentThread]): Deleted.
+        (+[WebView garbageCollectNow]): Deleted.
+        (+[WebView purgeInactiveFontData]): Deleted.
+        (+[WebView drainLayerPool]): Deleted.
+        (+[WebView discardAllCompiledCode]): Deleted.
+        (+[WebView _clearMemoryPressure]): Deleted.
+        (+[WebView _shouldWaitForMemoryClearMessage]): Deleted.
+        * WebView/WebViewPrivate.h:
+
 2017-02-20  Aakash Jain  <aakash_jain@apple.com>
 
         Stop exporting interface WebCoreScrollView on iOS

@@ -32,6 +32,12 @@
 #import "LayerPool.h"
 #import <notify.h>
 
+#if PLATFORM(IOS)
+#import "LegacyTileCache.h"
+#import "TileControllerMemoryHandlerIOS.h"
+#endif
+
+
 extern "C" void _sqlite3_purgeEligiblePagerCacheMemory(void);
 
 namespace WebCore {
@@ -46,6 +52,11 @@ void platformReleaseMemory(Critical)
 
     for (auto& pool : LayerPool::allLayerPools())
         pool->drain();
+
+#if PLATFORM(IOS)
+    LegacyTileCache::drainLayerPool();
+    tileControllerMemoryHandler().trimUnparentedTilesToTarget(0);
+#endif
 
 #if USE(IOSURFACE)
     IOSurfacePool::sharedPool().discardAllSurfaces();

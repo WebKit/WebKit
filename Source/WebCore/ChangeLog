@@ -1,3 +1,25 @@
+2017-02-21  Andreas Kling  <akling@apple.com>
+
+        [iOS] WebKit1 should use shared memory pressure handler code.
+        <https://webkit.org/b/168653>
+
+        Reviewed by Antti Koivisto.
+
+        Remove iOS WebKit1 specific members and code from MemoryPressureHandler in favor
+        of using the same code that iOS WebKit2 and macOS WebKit uses.
+
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::platformReleaseMemory): Add two cleanup calls that were only in the iOS WebView code.
+        * platform/MemoryPressureHandler.h:
+        (WebCore::MemoryPressureHandler::m_releaseMemoryBlock): Deleted.
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::respondToMemoryPressureCallback): Deleted.
+        (WebCore::MemoryPressureHandler::installMemoryReleaseBlock): Deleted.
+        (WebCore::MemoryPressureHandler::setReceivedMemoryPressure): Deleted.
+        (WebCore::MemoryPressureHandler::clearMemoryPressure): Deleted.
+        (WebCore::MemoryPressureHandler::shouldWaitForMemoryClearMessage): Deleted.
+        (WebCore::MemoryPressureHandler::respondToMemoryPressureIfNeeded): Deleted.
+
 2017-02-21  Anders Carlsson  <andersca@apple.com>
 
         Fix two failing WebKit legacy tests
