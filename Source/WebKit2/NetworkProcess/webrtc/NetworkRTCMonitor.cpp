@@ -35,6 +35,11 @@
 
 namespace WebKit {
 
+NetworkRTCMonitor::~NetworkRTCMonitor()
+{
+    ASSERT(!m_manager);
+}
+
 void NetworkRTCMonitor::startUpdating()
 {
     m_isStarted = true;
@@ -49,6 +54,8 @@ void NetworkRTCMonitor::stopUpdating()
 {
     m_isStarted = false;
     m_rtcProvider.callOnRTCNetworkThread([this]() {
+        if (!m_manager)
+            return;
         m_manager->StopUpdating();
         m_manager = nullptr;
     });

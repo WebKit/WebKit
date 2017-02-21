@@ -1,3 +1,19 @@
+2017-02-21  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] NetworkRTCMonitor should ensure clearing its manager only once
+        https://bugs.webkit.org/show_bug.cgi?id=168661
+
+        Reviewed by Alex Christensen.
+
+        Making sure NetworkRTCMonitor manager is cleared only once.
+        ALso ensuring that manager does not get destroyed as part of NetworkRTCMonitor destructor.
+        The manager needs to be destroyed in the RTC network thread.
+
+        * NetworkProcess/webrtc/NetworkRTCMonitor.cpp:
+        (WebKit::NetworkRTCMonitor::~NetworkRTCMonitor):
+        (WebKit::NetworkRTCMonitor::stopUpdating):
+        * NetworkProcess/webrtc/NetworkRTCMonitor.h:
+
 2017-02-21  Brent Fulgham  <bfulgham@apple.com>
 
         [WebRTC][Mac][WebKit2] Revise sandbox to limit connections to UDP and TCP
