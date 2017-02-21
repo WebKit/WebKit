@@ -530,6 +530,7 @@
         "keywords": ["webcrypto", "web cryptography api", "crypto"],
         "category": "webapps",
         "description": "A JavaScript API for web applications to perform cryptographic operations.",
+        "comment": "The webkit-prefixed 'subtle' attribute which gives access to WebKitSubtleCrypto is deprecated. Work continues on the SubtleCrypto interface exposed by the 'subtle' attribute.",
         "contact": {
             "name": "Jiewen Tan",
             "email": "jiewen_tan@apple.com"
