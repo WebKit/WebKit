@@ -1,3 +1,54 @@
+2017-02-20  Mark Lam  <mark.lam@apple.com>
+
+        [Re-landing] CachedCall should let GC know to keep its arguments alive.
+        https://bugs.webkit.org/show_bug.cgi?id=168567
+        <rdar://problem/30475767>
+
+        Reviewed by Saam Barati.
+
+        We fix this by having CachedCall use a MarkedArgumentBuffer to store its
+        arguments instead of a Vector.
+
+        Also declared CachedCall, MarkedArgumentBuffer, and ProtoCallFrame as
+        WTF_FORBID_HEAP_ALLOCATION because they rely on being stack allocated for
+        correctness.
+
+        Update: the original patch has a bug in MarkedArgumentBuffer::expandCapacity()
+        where it was copying and calling addMarkSet() on values in m_buffer beyond m_size
+        (up to m_capacity).  As a result, depending on the pre-existing values in
+        m_inlineBuffer, this may result in a computed Heap pointer that is wrong, and
+        subsequently, manifest as a crash.  This is likely to be the cause of the PLT
+        regression.
+
+        I don't have a new test for this fix because the issue relies on sufficiently bad
+        values randomly showing up in m_inlineBuffer when we do an ensureCapacity() which
+        calls expandCapacity().
+
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        (JSC::CachedCall::call):
+        (JSC::CachedCall::clearArguments):
+        (JSC::CachedCall::appendArgument):
+        (JSC::CachedCall::setArgument): Deleted.
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::emptyList):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::prepareForRepeatCall):
+        * interpreter/Interpreter.h:
+        * interpreter/ProtoCallFrame.h:
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::slowEnsureCapacity):
+        (JSC::MarkedArgumentBuffer::expandCapacity):
+        (JSC::MarkedArgumentBuffer::slowAppend):
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::append):
+        (JSC::MarkedArgumentBuffer::ensureCapacity):
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2017-02-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r212618.

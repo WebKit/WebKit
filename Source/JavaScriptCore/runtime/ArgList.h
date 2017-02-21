@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2009, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -22,12 +22,14 @@
 #pragma once
 
 #include "CallFrame.h"
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/HashSet.h>
 
 namespace JSC {
 
 class MarkedArgumentBuffer {
     WTF_MAKE_NONCOPYABLE(MarkedArgumentBuffer);
+    WTF_FORBID_HEAP_ALLOCATION;
     friend class VM;
     friend class ArgList;
 
@@ -73,7 +75,8 @@ public:
 
     void append(JSValue v)
     {
-        if (m_size >= m_capacity || mallocBase())
+        ASSERT(m_size <= m_capacity);
+        if (m_size == m_capacity || mallocBase())
             return slowAppend(v);
 
         slotFor(m_size) = JSValue::encode(v);
@@ -94,8 +97,16 @@ public:
         
     static void markLists(SlotVisitor&, ListSet&);
 
+    void ensureCapacity(size_t requestedCapacity)
+    {
+        if (requestedCapacity > static_cast<size_t>(m_capacity))
+            slowEnsureCapacity(requestedCapacity);
+    }
+
 private:
     void expandCapacity();
+    void expandCapacity(int newCapacity);
+    void slowEnsureCapacity(size_t requestedCapacity);
 
     void addMarkSet(JSValue);
 
