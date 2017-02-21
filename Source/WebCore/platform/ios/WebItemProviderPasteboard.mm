@@ -149,7 +149,7 @@ static BOOL isImageType(NSString *type)
                 continue;
 
             [itemRepresentationsCopy removeObjectForKey:typeIdentifier];
-            [objectToWrite registerLoadHandlersToItemProvider:itemProvider.get()];
+            [itemProvider registerObject:objectToWrite options:nil];
         }
 
         // Secondly, WebKit uses some custom type representations and/or type identifiers, so we need to write these as well.

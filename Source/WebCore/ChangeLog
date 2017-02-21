@@ -1,3 +1,12 @@
+2017-02-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the ToT iOS build
+
+        Adopt updated UIKit SPI and remove calls to the deprecated version.
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard setItems:]):
+
 2017-02-21  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] WebView is not painting in accelerated compositing mode.
