@@ -152,9 +152,6 @@ public:
     bool isStatisticsPrevalentResource(WKStringRef hostName);
     void setStatisticsHasHadUserInteraction(WKStringRef hostName, bool value);
     bool isStatisticsHasHadUserInteraction(WKStringRef hostName);
-    void setStatisticsSubframeUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName);
-    void setStatisticsSubresourceUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName);
-    void setStatisticsSubresourceUniqueRedirectTo(WKStringRef hostName, WKStringRef hostNameRedirectedTo);
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void statisticsFireDataModificationHandler();
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);

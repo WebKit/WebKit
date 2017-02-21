@@ -1,5 +1,18 @@
 2017-02-20  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, rolling out r212685.
+
+        This change broke the 32-bit Sierra build.
+
+        Reverted changeset:
+
+        "Resource Load Statistics: Add alternate classification
+        method"
+        https://bugs.webkit.org/show_bug.cgi?id=168347
+        http://trac.webkit.org/changeset/212685
+
+2017-02-20  Ryan Haddad  <ryanhaddad@apple.com>
+
         Add mac-wk1 baseline for fast/canvas/webgl/context-creation-attributes.html
         https://bugs.webkit.org/show_bug.cgi?id=168623
 

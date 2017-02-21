@@ -375,33 +375,6 @@ void ResourceLoadObserver::clearPrevalentResource(const URL& url)
     statistics.isPrevalentResource = false;
 }
 
-void ResourceLoadObserver::setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame)
-{
-    if (subframe.isBlankURL() || subframe.isEmpty() || topFrame.isBlankURL() || topFrame.isEmpty())
-        return;
-    
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(subframe));
-    statistics.subframeUnderTopFrameOrigins.add(primaryDomain(topFrame));
-}
-
-void ResourceLoadObserver::setSubresourceUnderTopFrameOrigin(const URL& subresource, const URL& topFrame)
-{
-    if (subresource.isBlankURL() || subresource.isEmpty() || topFrame.isBlankURL() || topFrame.isEmpty())
-        return;
-    
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(subresource));
-    statistics.subresourceUnderTopFrameOrigins.add(primaryDomain(topFrame));
-}
-
-void ResourceLoadObserver::setSubresourceUniqueRedirectTo(const URL& subresource, const URL& hostNameRedirectedTo)
-{
-    if (subresource.isBlankURL() || subresource.isEmpty() || hostNameRedirectedTo.isBlankURL() || hostNameRedirectedTo.isEmpty())
-        return;
-    
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(subresource));
-    statistics.subresourceUniqueRedirectsTo.add(primaryDomain(hostNameRedirectedTo));
-}
-
 void ResourceLoadObserver::setTimeToLiveUserInteraction(double seconds)
 {
     m_store->setTimeToLiveUserInteraction(seconds);

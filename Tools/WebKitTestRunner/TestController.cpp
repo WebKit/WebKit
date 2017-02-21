@@ -2229,21 +2229,6 @@ bool TestController::isStatisticsHasHadUserInteraction(WKStringRef hostName)
     return WKResourceLoadStatisticsManagerIsHasHadUserInteraction(hostName);
 }
 
-void TestController::setStatisticsSubframeUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName)
-{
-    WKResourceLoadStatisticsManagerSetSubframeUnderTopFrameOrigin(hostName, topFrameHostName);
-}
-
-void TestController::setStatisticsSubresourceUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName)
-{
-    WKResourceLoadStatisticsManagerSetSubresourceUnderTopFrameOrigin(hostName, topFrameHostName);
-}
-    
-void TestController::setStatisticsSubresourceUniqueRedirectTo(WKStringRef hostName, WKStringRef hostNameRedirectedTo)
-{
-    WKResourceLoadStatisticsManagerSetSubresourceUniqueRedirectTo(hostName, hostNameRedirectedTo);
-}
-
 void TestController::setStatisticsTimeToLiveUserInteraction(double seconds)
 {
     WKResourceLoadStatisticsManagerSetTimeToLiveUserInteraction(seconds);

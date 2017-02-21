@@ -1148,17 +1148,10 @@
 		6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */; };
 		659C551E130006410025C0C2 /* InjectedBundlePageResourceLoadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */; };
 		65B86F1E12F11DE300B7DD8A /* WKBundleInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6B2E09BA1E57B88100C8A8B9 /* CorePredictionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B2E09B91E57B88100C8A8B9 /* CorePredictionSPI.h */; };
 		6BE9699C1E43B3FF008B7483 /* WKResourceLoadStatisticsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BE9699B1E43B3FF008B7483 /* WKResourceLoadStatisticsManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6BE9699E1E43B41D008B7483 /* WKResourceLoadStatisticsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BE9699D1E43B41D008B7483 /* WKResourceLoadStatisticsManager.cpp */; };
 		6BE969A01E43B86E008B7483 /* WebResourceLoadStatisticsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BE9699F1E43B86E008B7483 /* WebResourceLoadStatisticsManager.h */; };
 		6BE969A21E43B8A4008B7483 /* WebResourceLoadStatisticsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BE969A11E43B8A4008B7483 /* WebResourceLoadStatisticsManager.cpp */; };
-		6BE969C11E54D452008B7483 /* corePrediction_model in Resources */ = {isa = PBXBuildFile; fileRef = 6BE969C01E54D452008B7483 /* corePrediction_model */; };
-		6BE969C51E54D4A4008B7483 /* ResourceLoadStatisticsClassifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BE969C41E54D4A4008B7483 /* ResourceLoadStatisticsClassifier.h */; };
-		6BE969C71E54D4B6008B7483 /* ResourceLoadStatisticsClassifierBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BE969C61E54D4B6008B7483 /* ResourceLoadStatisticsClassifierBase.cpp */; };
-		6BE969CA1E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BE969C81E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.cpp */; };
-		6BE969CB1E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BE969C91E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h */; };
-		6BE969CD1E54E054008B7483 /* ResourceLoadStatisticsClassifierBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BE969CC1E54E054008B7483 /* ResourceLoadStatisticsClassifierBase.h */; };
 		6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		728E86F11795188C0087879E /* WebColorPickerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 728E86EF1795188C0087879E /* WebColorPickerMac.h */; };
 		728E86F21795188C0087879E /* WebColorPickerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 728E86F01795188C0087879E /* WebColorPickerMac.mm */; };
@@ -3345,17 +3338,10 @@
 		6546A82A13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageResourceLoadClient.h; sourceTree = "<group>"; };
 		65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleInspector.cpp; sourceTree = "<group>"; };
 		65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleInspector.h; sourceTree = "<group>"; };
-		6B2E09B91E57B88100C8A8B9 /* CorePredictionSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorePredictionSPI.h; sourceTree = "<group>"; };
 		6BE9699B1E43B3FF008B7483 /* WKResourceLoadStatisticsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKResourceLoadStatisticsManager.h; sourceTree = "<group>"; };
 		6BE9699D1E43B41D008B7483 /* WKResourceLoadStatisticsManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKResourceLoadStatisticsManager.cpp; sourceTree = "<group>"; };
 		6BE9699F1E43B86E008B7483 /* WebResourceLoadStatisticsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceLoadStatisticsManager.h; sourceTree = "<group>"; };
 		6BE969A11E43B8A4008B7483 /* WebResourceLoadStatisticsManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoadStatisticsManager.cpp; sourceTree = "<group>"; };
-		6BE969C01E54D452008B7483 /* corePrediction_model */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = corePrediction_model; sourceTree = "<group>"; };
-		6BE969C41E54D4A4008B7483 /* ResourceLoadStatisticsClassifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadStatisticsClassifier.h; sourceTree = "<group>"; };
-		6BE969C61E54D4B6008B7483 /* ResourceLoadStatisticsClassifierBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadStatisticsClassifierBase.cpp; sourceTree = "<group>"; };
-		6BE969C81E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadStatisticsClassifierCocoa.cpp; sourceTree = "<group>"; };
-		6BE969C91E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadStatisticsClassifierCocoa.h; sourceTree = "<group>"; };
-		6BE969CC1E54E054008B7483 /* ResourceLoadStatisticsClassifierBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadStatisticsClassifierBase.h; sourceTree = "<group>"; };
 		6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebProcess.sb.in; path = WebProcess/com.apple.WebProcess.sb.in; sourceTree = "<group>"; };
 		6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKInspectorPrivateMac.h; path = mac/WKInspectorPrivateMac.h; sourceTree = "<group>"; };
 		728E86EF1795188C0087879E /* WebColorPickerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPickerMac.h; sourceTree = "<group>"; };
@@ -4368,7 +4354,6 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				6BE969BF1E54D452008B7483 /* ResourceLoadStatistics */,
 				37F8C94F1AE22BD8007DAB9E /* mac */,
 				7CB16FE11724B9B5007A0A95 /* PlugInSandboxProfiles */,
 				A78CCDD5193AC9E3005ECC25 /* SandboxProfiles */,
@@ -6130,36 +6115,6 @@
 			name = Cocoa;
 			sourceTree = "<group>";
 		};
-		6BE969BF1E54D452008B7483 /* ResourceLoadStatistics */ = {
-			isa = PBXGroup;
-			children = (
-				6BE969C01E54D452008B7483 /* corePrediction_model */,
-			);
-			name = ResourceLoadStatistics;
-			path = Resources/ResourceLoadStatistics;
-			sourceTree = "<group>";
-		};
-		6BE969C21E54D467008B7483 /* classifier */ = {
-			isa = PBXGroup;
-			children = (
-				6BE969C31E54D467008B7483 /* cocoa */,
-				6BE969C61E54D4B6008B7483 /* ResourceLoadStatisticsClassifierBase.cpp */,
-				6BE969C41E54D4A4008B7483 /* ResourceLoadStatisticsClassifier.h */,
-				6BE969CC1E54E054008B7483 /* ResourceLoadStatisticsClassifierBase.h */,
-			);
-			path = classifier;
-			sourceTree = "<group>";
-		};
-		6BE969C31E54D467008B7483 /* cocoa */ = {
-			isa = PBXGroup;
-			children = (
-				6BE969C81E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.cpp */,
-				6BE969C91E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h */,
-				6B2E09B91E57B88100C8A8B9 /* CorePredictionSPI.h */,
-			);
-			path = cocoa;
-			sourceTree = "<group>";
-		};
 		6EE849C41368D9040038D481 /* mac */ = {
 			isa = PBXGroup;
 			children = (
@@ -7060,7 +7015,6 @@
 		BC2E6E74114196F000A63B1E /* Platform */ = {
 			isa = PBXGroup;
 			children = (
-				6BE969C21E54D467008B7483 /* classifier */,
 				3709504118A88BA40087AE5D /* cf */,
 				1AA2E51A12E4C05600BC4966 /* cg */,
 				4450AEBE1DC3FAAC009943F2 /* cocoa */,
@@ -7943,7 +7897,6 @@
 				41DC45961E3D6E2200B11F51 /* NetworkRTCProvider.h in Headers */,
 				7C1BA33E1A4A0E600043E249 /* APIDictionary.h in Headers */,
 				1F7D36C118DA513F00D9D659 /* APIDownloadClient.h in Headers */,
-				6BE969CB1E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h in Headers */,
 				516A4A5D120A2CCD00C05B7F /* APIError.h in Headers */,
 				317FE7C51C487A6C00A0CA89 /* APIExperimentalFeature.h in Headers */,
 				00B9661618E24CBA00CE1F88 /* APIFindClient.h in Headers */,
@@ -8364,7 +8317,6 @@
 				3309344A1315B9220097A7BC /* WebCookieManagerProxyMessages.h in Headers */,
 				BC1DD7B2114DC396005ADAF3 /* WebCoreArgumentCoders.h in Headers */,
 				512F589B12A8838800629530 /* WebCredential.h in Headers */,
-				6BE969C51E54D4A4008B7483 /* ResourceLoadStatisticsClassifier.h in Headers */,
 				1AA83F6D1A5B63FF00026EC6 /* WebDatabaseProvider.h in Headers */,
 				CD19A26E1A13E834008D650E /* WebDiagnosticLoggingClient.h in Headers */,
 				1A5B1C5518987EDF004FCF9B /* WebDocumentLoader.h in Headers */,
@@ -8450,7 +8402,6 @@
 				512127C41908239A00DAF35C /* WebPasteboardOverrides.h in Headers */,
 				7C4694D11A51E36800AD5845 /* WebPasteboardProxy.h in Headers */,
 				7C4694CA1A4B4EA100AD5845 /* WebPasteboardProxyMessages.h in Headers */,
-				6B2E09BA1E57B88100C8A8B9 /* CorePredictionSPI.h in Headers */,
 				1AB1F7971D1B3613007C9BD1 /* WebPaymentCoordinatorMessages.h in Headers */,
 				1AB1F78C1D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.h in Headers */,
 				1AB1F77E1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.h in Headers */,
@@ -8569,7 +8520,6 @@
 				BC7B633D12A45D1200D174A4 /* WKBundlePageGroup.h in Headers */,
 				1AB474D8184D43FD0051B622 /* WKBundlePageLoaderClient.h in Headers */,
 				ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */,
-				6BE969CD1E54E054008B7483 /* ResourceLoadStatisticsClassifierBase.h in Headers */,
 				1AB474EA184D45130051B622 /* WKBundlePagePolicyClient.h in Headers */,
 				BC1B419811D41D570011E8DD /* WKBundlePagePrivate.h in Headers */,
 				1AB474DA184D44250051B622 /* WKBundlePageResourceLoadClient.h in Headers */,
@@ -9103,7 +9053,6 @@
 				7A5E394A1D5BD8BE00B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
 				93A2A3461D246125002B59D3 /* mediaIcon.pdf in Resources */,
-				6BE969C11E54D452008B7483 /* corePrediction_model in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9692,7 +9641,6 @@
 				51795567162876CB00FA43B6 /* NetworkProcessMac.mm in Sources */,
 				5163199416289A6000E22F00 /* NetworkProcessMessageReceiver.cpp in Sources */,
 				E14A954916E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp in Sources */,
-				6BE969CA1E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.cpp in Sources */,
 				5179556D162877B100FA43B6 /* NetworkProcessProxy.cpp in Sources */,
 				516319921628980A00E22F00 /* NetworkProcessProxyMac.mm in Sources */,
 				513A163C163088F6005D7D22 /* NetworkProcessProxyMessageReceiver.cpp in Sources */,
@@ -10037,7 +9985,6 @@
 				D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */,
 				BCC43AC7127B99DE00317F16 /* WebPopupMenuMac.mm in Sources */,
 				BC5750981268F3C6006F0F12 /* WebPopupMenuProxyMac.mm in Sources */,
-				6BE969C71E54D4B6008B7483 /* ResourceLoadStatisticsClassifierBase.cpp in Sources */,
 				BCD59800112B57BE00EC8C23 /* WebPreferences.cpp in Sources */,
 				7C85FD7F19341665000177C4 /* WebPreferencesKeys.cpp in Sources */,
 				BC84EB1812A7100C0083F2DA /* WebPreferencesMac.mm in Sources */,
