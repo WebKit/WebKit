@@ -1,3 +1,14 @@
+2017-02-21  Jer Noble  <jer.noble@apple.com>
+
+        AudioSampleBufferList::zeroABL() takes a byte-count, not a sample-count.
+        https://bugs.webkit.org/show_bug.cgi?id=168635
+
+        Reviewed by Jon Lee.
+
+        * platform/audio/mac/AudioSampleDataSource.cpp:
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+        (WebCore::AudioSampleDataSource::pullAvalaibleSamplesAsChunks):
+
 2017-02-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r212681): Crash when dragging links without a drag image

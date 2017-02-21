@@ -207,16 +207,17 @@ void AudioSampleDataSource::pushSamples(const MediaTime& sampleTime, const Platf
 bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t& sampleCount, uint64_t timeStamp, double /*hostTime*/, PullMode mode)
 {
     ASSERT(m_lock.isHeld());
+    size_t byteCount = sampleCount * m_outputDescription->bytesPerFrame();
 
     ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
     if (buffer.mNumberBuffers != m_ringBuffer->channelCount()) {
-        AudioSampleBufferList::zeroABL(buffer, sampleCount);
+        AudioSampleBufferList::zeroABL(buffer, byteCount);
         sampleCount = 0;
         return false;
     }
 
     if (!m_ringBuffer || m_muted || m_inputSampleOffset == MediaTime::invalidTime()) {
-        AudioSampleBufferList::zeroABL(buffer, sampleCount);
+        AudioSampleBufferList::zeroABL(buffer, byteCount);
         sampleCount = 0;
         return false;
     }
@@ -228,7 +229,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
     if (m_transitioningFromPaused) {
         uint64_t buffered = endFrame - m_timeStamp;
         if (buffered < sampleCount * 2) {
-            AudioSampleBufferList::zeroABL(buffer, sampleCount);
+            AudioSampleBufferList::zeroABL(buffer, byteCount);
             sampleCount = 0;
             return false;
         }
@@ -264,7 +265,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
         LOG(MediaCaptureSamples, "** pullSamplesInternal: sample %lld is not completely in range [%lld .. %lld], returning %lld frames", timeStamp, startFrame, endFrame, framesAvailable);
 
         if (!framesAvailable) {
-            AudioSampleBufferList::zeroABL(buffer, sampleCount);
+            AudioSampleBufferList::zeroABL(buffer, byteCount);
             return false;
         }
     }
@@ -281,7 +282,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
 
     m_scratchBuffer->applyGain(m_volume);
     if (m_scratchBuffer->copyTo(buffer, sampleCount))
-        AudioSampleBufferList::zeroABL(buffer, sampleCount);
+        AudioSampleBufferList::zeroABL(buffer, byteCount);
 
     return true;
 }
@@ -316,7 +317,8 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
 {
     std::unique_lock<Lock> lock(m_lock, std::try_to_lock);
     if (!lock.owns_lock() || !m_ringBuffer) {
-        AudioSampleBufferList::zeroABL(buffer, sampleCount);
+        size_t byteCount = sampleCount * m_outputDescription->bytesPerFrame();
+        AudioSampleBufferList::zeroABL(buffer, byteCount);
         return false;
     }
 
