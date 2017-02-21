@@ -1,5 +1,33 @@
 2017-02-20  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: RTL: hierarchical path components need spacing and icon adjustments
+        https://bugs.webkit.org/show_bug.cgi?id=168581
+
+        Reviewed by Matt Baker.
+
+        Flip a bunch of padding, margin, and offsets. Flip the chevron using a CSS transform.
+
+        * UserInterface/Views/HierarchicalPathComponent.css:
+        (.hierarchical-path-component):
+        (.hierarchical-path-component > .icon):
+        (.hierarchical-path-component > :matches(.icon, .selector-arrows)):
+        (body[dir=ltr] .hierarchical-path-component > :matches(.icon, .selector-arrows)):
+        (body[dir=rtl] .hierarchical-path-component > :matches(.icon, .selector-arrows)):
+        (.hierarchical-path-component > .selector-arrows):
+        (.hierarchical-path-component > select):
+        (body[dir=ltr] .hierarchical-path-component > select):
+        (body[dir=rtl] .hierarchical-path-component > select):
+        (.hierarchical-path-component > .separator):
+        (body[dir=ltr] .hierarchical-path-component > .separator):
+        (body[dir=rtl] .hierarchical-path-component > .separator):
+        (.hierarchical-path-component.text-only):
+        (body[dir=ltr] .hierarchical-path-component.text-only):
+        (body[dir=rtl] .hierarchical-path-component.text-only):
+        (body[dir=ltr] .hierarchical-path-component.text-only > select):
+        (body[dir=rtl] .hierarchical-path-component.text-only > select):
+
+2017-02-20  Brian Burg  <bburg@apple.com>
+
         Web Inspector: RTL: adjust positioning of scope bar items with multiple values
         https://bugs.webkit.org/show_bug.cgi?id=168575
 

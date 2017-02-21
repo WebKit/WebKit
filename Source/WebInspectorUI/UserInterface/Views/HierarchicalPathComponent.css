@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,9 @@
 
     font-size: 11px;
     font-family: -apple-system, sans-serif;
+
+    --path-component-icon-margin-start: 4px;
+    --path-component-icon-margin-end: 3px;
 }
 
 .hierarchical-path-component.show-selector-arrows {
@@ -55,14 +58,27 @@
 
 .hierarchical-path-component > .icon {
     vertical-align: top;
-    margin: 2px 3px 2px 4px;
     width: 16px;
     height: 16px;
 }
 
+.hierarchical-path-component > :matches(.icon, .selector-arrows) {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+body[dir=ltr] .hierarchical-path-component > :matches(.icon, .selector-arrows) {
+    margin-left: var(--path-component-icon-margin-start);
+    margin-right: var(--path-component-icon-margin-end);
+}
+
+body[dir=rtl] .hierarchical-path-component > :matches(.icon, .selector-arrows) {
+    margin-left: var(--path-component-icon-margin-end);
+    margin-right: var(--path-component-icon-margin-start);
+}
+
 .hierarchical-path-component > .selector-arrows {
     vertical-align: top;
-    margin: 2px 3px 2px 4px;
     width: 5px;
     height: 16px;
     opacity: 0.6;
@@ -94,12 +110,23 @@
 .hierarchical-path-component > select {
     opacity: 0;
 
- /* Positioned so the text in the menu aligns with the text in .title. */
     position: absolute;
     top: -1px;
-    left: 13px;
-    right: 0;
     bottom: 0;
+
+    --path-component-select-offset-start: 13px;
+    --path-component-select-offset-end: 0;
+}
+
+/* Positioned so the text in the menu aligns with the text in .title. */
+body[dir=ltr] .hierarchical-path-component > select {
+    left: var(--path-component-select-offset-start);
+    right: var(--path-component-select-offset-end);
+}
+
+body[dir=rtl] .hierarchical-path-component > select {
+    left: var(--path-component-select-offset-end);
+    right: var(--path-component-select-offset-start);
 }
 
 .hierarchical-path:not(.always-show-last-path-component-separator) > .hierarchical-path-component:last-child > .separator {
@@ -119,15 +146,41 @@
     width: 7px;
     height: 20px;
 
-    margin-left: 2px;
+    --path-component-separator-margin-start: 2px;
+}
+
+body[dir=ltr] .hierarchical-path-component > .separator {
+    margin-left: var(--path-component-separator-margin-start);
+}
+
+body[dir=rtl] .hierarchical-path-component > .separator {
+    margin-right: var(--path-component-separator-margin-start);
+    /* Flip the icon horizontally. */
+    transform: scaleX(-1);
 }
 
 .hierarchical-path-component.text-only {
-    padding-left: 5px;
-    padding-right: 1px;
+    --text-only-path-component-padding-start: 5px;
+    --text-only-path-component-padding-end: 1px;
+    --text-only-path-component-select-offset-start: -8px;
 }
 
-.hierarchical-path-component.text-only > select {
+body[dir=ltr] .hierarchical-path-component.text-only {
+    padding-left: var(--text-only-path-component-padding-start);
+    padding-right: var(--text-only-path-component-padding-end);
+}
+
+body[dir=rtl] .hierarchical-path-component.text-only {
+    padding-left: var(--text-only-path-component-padding-end);
+    padding-right: var(--text-only-path-component-padding-start);
+}
+
+body[dir=ltr] .hierarchical-path-component.text-only > select {
  /* Positions so the text in the menu aligns with the text in .title for text only path components. */
-    left: -8px;
+    left: var(--text-only-path-component-select-offset-start);
+}
+
+body[dir=rtl] .hierarchical-path-component.text-only > select {
+ /* Positions so the text in the menu aligns with the text in .title for text only path components. */
+    right: var(--text-only-path-component-select-offset-start);
 }
