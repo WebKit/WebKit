@@ -140,9 +140,8 @@ void XMLErrors::insertErrorMessageBlock()
         rootElement->parserAppendChild(body);
 
         m_document.parserRemoveChild(*documentElement);
-        if (!documentElement->parentNode())
-            body->parserAppendChild(*documentElement);
 
+        body->parserAppendChild(*documentElement);
         m_document.parserAppendChild(rootElement);
 
         documentElement = WTFMove(body);

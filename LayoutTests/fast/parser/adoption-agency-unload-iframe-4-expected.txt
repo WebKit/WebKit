@@ -1,3 +1,0 @@
-
-PASS An element removed by the adoption agency algorithm must not be inserted if it had been inserted elsewhere 
-
