@@ -1,3 +1,42 @@
+2017-02-21  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Refactor Device class
+        https://bugs.webkit.org/show_bug.cgi?id=168332
+
+        Reviewed by Alexey Proskuryakov.
+
+        Separate the more specific SimulatedDevice from the abstract
+        idea of a device.
+
+        * Scripts/webkitpy/xcode/device.py: Added.
+        (Device):  Base device class.
+        (Device.__init__): Initialize _host, name and udid.
+        (Device.install_app): Function declaration.
+        (Device.launch_app): Ditto.
+        (Device.__eq__): Compare two devices by udid.
+        (Device.__ne__): Ditto.
+        (Device.__repr__): Return device name and udid in formatted string.
+        * Scripts/webkitpy/xcode/simulated_device.py: Copied from Tools/Scripts/webkitpy/xcode/simulator.py.
+        (SimulatedDevice):
+        (SimulatedDevice.__init__): Call Device.__init__ first.
+        (SimulatedDevice.delete): Device -> SimulatedDevice.
+        (SimulatedDevice.reset): Ditto.
+        (SimulatedDevice.__eq__): Moved to device.py.
+        (SimulatedDevice.__ne__): Ditto.
+        (SimulatedDevice.__repr__): Call Device __repr__ first.
+        (DeviceType): Kept in Scripts/webkitpy/xcode/simulator.py.
+        (Runtime): Kept in Scripts/webkitpy/xcode/simulator.py.
+        (Device): Renamed SimulatedDevice.
+        (Simulator): Kept in Scripts/webkitpy/xcode/simulator.py.
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator): Define Simulator.Device class as None.
+        (Simulator.__init__): Import SimulatedDevice as Simulator.Device.
+        (Simulator.delete_device): Use Simulator.Device.
+        (Simulator.reset_device): Ditto.
+        (Simulator._parse_devices): Ditto.
+        (Simulator.lookup_or_create_device): Make 
+        (Device): Moved to simulated_device as SimulatedDevice.
+
 2017-02-21  JF Bastien  <jfbastien@apple.com>
 
         Fix cmake build
