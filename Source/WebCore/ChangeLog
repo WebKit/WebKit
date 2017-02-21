@@ -1,3 +1,54 @@
+2017-02-21  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] ICE candidates should be filtered according a policy
+        https://bugs.webkit.org/show_bug.cgi?id=168348
+
+        Reviewed by Alex Christensen.
+
+        Covered by manual tests. Should be covered in the future by layout tests with dedicated internals API.
+
+        Adding support for ICE candidate filtering at RTCPeerConnection level.
+        If ICE candidate filtering is on (by default), host candidates are stored and not sent immediately.
+        Reflexive candidates are purged from raddr information to not leak the host IP address.
+
+        Stored candidates may be advertised to the JS layer if RTCController is notified of a change of filtering policy.
+        To implement that, PeerConnectionBackend stores all filtered out candidates and RTCPeerConnection register
+        themselves to RTCController to get notifications of filtering policy changes.
+
+        Making RTCPeerConnection use setPendingActivity throughout its lifetime.
+        This ensures it does not get collected until the page is off or close() is called on the object.
+
+        Adding support for enumerating or not all interfaces at libwebrtc level.
+        This choice is done at creation of the peer connection.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::enableICECandidateFiltering):
+        (WebCore::PeerConnectionBackend::disableICECandidateFiltering):
+        (WebCore::filterICECandidate):
+        (WebCore::PeerConnectionBackend::newICECandidate):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCController.cpp: Added.
+        (WebCore::RTCController::remove):
+        (WebCore::RTCController::add):
+        (WebCore::RTCController::disableICECandidateFiltering):
+        (WebCore::RTCController::enableICECandidateFiltering):
+        * Modules/mediastream/RTCController.h: Added.
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::create):
+        (WebCore::RTCPeerConnection::close):
+        (WebCore::RTCPeerConnection::rtcController):
+        (WebCore::RTCPeerConnection::registerToController):
+        (WebCore::RTCPeerConnection::unregisterFromController):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::OnIceCandidate):
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.h:
+        (WebCore::Page::rtcController):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::LibWebRTCProvider::createPeerConnection):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+
 2017-02-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, update WebCrypto API feature status.

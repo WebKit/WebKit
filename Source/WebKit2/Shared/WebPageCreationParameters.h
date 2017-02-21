@@ -145,6 +145,13 @@ struct WebPageCreationParameters {
     WebCore::LayoutMilestones observedLayoutMilestones;
 
     String overrideContentSecurityPolicy;
+
+#if ENABLE(WEB_RTC)
+    bool disableICECandidateFiltering { false };
+#if USE(LIBWEBRTC)
+    bool enableEnumeratingAllNetworkInterfaces { false };
+#endif
+#endif
 };
 
 } // namespace WebKit

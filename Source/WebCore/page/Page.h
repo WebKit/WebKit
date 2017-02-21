@@ -29,6 +29,7 @@
 #include "PageVisibilityState.h"
 #include "Pagination.h"
 #include "PlatformScreen.h"
+#include "RTCController.h"
 #include "Region.h"
 #include "ScrollTypes.h"
 #include "SessionID.h"
@@ -223,6 +224,7 @@ public:
     PointerLockController& pointerLockController() const { return *m_pointerLockController; }
 #endif
     LibWebRTCProvider& libWebRTCProvider() { return m_libWebRTCProvider.get(); }
+    RTCController& rtcController() { return m_rtcController; }
 
     ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient.get(); }
     void updateValidationBubbleStateIfNeeded();
@@ -640,6 +642,7 @@ private:
     std::unique_ptr<WebGLStateTracker> m_webGLStateTracker;
 
     UniqueRef<LibWebRTCProvider> m_libWebRTCProvider;
+    RTCController m_rtcController;
 
     int m_nestedRunLoopCount { 0 };
     std::function<void()> m_unnestCallback;

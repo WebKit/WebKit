@@ -46,6 +46,7 @@ namespace WebCore {
 
 class MediaStreamTrack;
 class PeerConnectionBackend;
+class RTCController;
 class RTCIceCandidate;
 class RTCPeerConnectionErrorCallback;
 class RTCSessionDescription;
@@ -136,10 +137,17 @@ public:
     PeerConnectionStates::IceGatheringState internalIceGatheringState() const { return m_iceGatheringState; }
     PeerConnectionStates::IceConnectionState internalIceConnectionState() const { return m_iceConnectionState; }
 
+    void disableICECandidateFiltering() { m_backend->disableICECandidateFiltering(); }
+    void enableICECandidateFiltering() { m_backend->enableICECandidateFiltering(); }
+
 private:
     RTCPeerConnection(ScriptExecutionContext&);
 
     void completeAddTransceiver(RTCRtpTransceiver&, const RtpTransceiverInit&);
+
+    RTCController& rtcController();
+    void registerToController();
+    void unregisterFromController();
 
     // EventTarget implementation.
     void refEventTarget() final { ref(); }

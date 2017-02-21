@@ -551,6 +551,15 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     m_page->settings().setContentDispositionAttachmentSandboxEnabled(true);
     setSmartInsertDeleteEnabled(parameters.smartInsertDeleteEnabled);
 #endif
+
+#if ENABLE(WEB_RTC)
+    if (parameters.disableICECandidateFiltering)
+        disableICECandidateFiltering();
+#if USE(LIBWEBRTC)
+    if (parameters.enableEnumeratingAllNetworkInterfaces)
+        enableEnumeratingAllNetworkInterfaces();
+#endif
+#endif
 }
 
 void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)

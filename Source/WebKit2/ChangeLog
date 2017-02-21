@@ -1,5 +1,32 @@
 2017-02-21  Youenn Fablet  <youenn@apple.com>
 
+        [WebRTC] ICE candidates should be filtered according a policy
+        https://bugs.webkit.org/show_bug.cgi?id=168348
+
+        Reviewed by Alex Christensen.
+
+        Adding the possibility for the UI process to control the ICE candidate filtering and whether libwebrtc can
+        enumerate all interfaces or not.
+
+        Disabling ICE candidate filtering for the moment.
+        Enabling to enumerate all interfaces for the moment.
+
+        In the future, ICE candidate filtering should be tied to getUserMedia.
+        Interface enumeration should be disabled with the default configuration.
+        We should do that once we have sufficient testing in various network infrastructures.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::disableICECandidateFiltering):
+        (WebKit::WebPage::enableICECandidateFiltering):
+        (WebKit::WebPage::disableEnumeratingAllNetworkInterfaces):
+        (WebKit::WebPage::enableEnumeratingAllNetworkInterfaces):
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2017-02-21  Youenn Fablet  <youenn@apple.com>
+
         [WebRTC] NetworkRTCMonitor should ensure clearing its manager only once
         https://bugs.webkit.org/show_bug.cgi?id=168661
 

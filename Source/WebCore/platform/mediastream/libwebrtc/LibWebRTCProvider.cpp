@@ -151,7 +151,10 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
 
     std::unique_ptr<cricket::BasicPortAllocator> portAllocator;
     staticFactoryAndThreads().signalingThread->Invoke<void>(RTC_FROM_HERE, [&]() {
-        portAllocator.reset(new cricket::BasicPortAllocator(&networkManager, &packetSocketFactory));
+        auto basicPortAllocator = std::make_unique<cricket::BasicPortAllocator>(&networkManager, &packetSocketFactory);
+        if (!m_enableEnumeratingAllNetworkInterfaces)
+            basicPortAllocator->set_flags(basicPortAllocator->flags() | cricket::PORTALLOCATOR_DISABLE_ADAPTER_ENUMERATION);
+        portAllocator = WTFMove(basicPortAllocator);
     });
 
     return createActualPeerConnection(observer, WTFMove(portAllocator));

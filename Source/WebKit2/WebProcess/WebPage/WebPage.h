@@ -57,6 +57,7 @@
 #include <WebCore/HysteresisActivity.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSizeHash.h>
+#include <WebCore/LibWebRTCProvider.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PageVisibilityState.h>
@@ -1173,6 +1174,15 @@ private:
 #if ENABLE(SANDBOX_EXTENSIONS)
     void grantUserMediaDeviceSandboxExtensions(const MediaDeviceSandboxExtensions&);
     void revokeUserMediaDeviceSandboxExtensions(const Vector<String>&);
+#endif
+#endif
+
+#if ENABLE(WEB_RTC)
+    void disableICECandidateFiltering() { m_page->rtcController().disableICECandidateFiltering(); }
+    void enableICECandidateFiltering() { m_page->rtcController().enableICECandidateFiltering(); }
+#if USE(LIBWEBRTC)
+    void disableEnumeratingAllNetworkInterfaces() { m_page->libWebRTCProvider().disableEnumeratingAllNetworkInterfaces(); }
+    void enableEnumeratingAllNetworkInterfaces() { m_page->libWebRTCProvider().enableEnumeratingAllNetworkInterfaces(); }
 #endif
 #endif
 

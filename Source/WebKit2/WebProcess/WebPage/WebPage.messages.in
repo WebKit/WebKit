@@ -306,6 +306,15 @@ messages -> WebPage LegacyReceiver {
 #endif
 #endif
 
+#if ENABLE(WEB_RTC)
+    DisableICECandidateFiltering()
+    EnableICECandidateFiltering()
+#endif
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+    EnableEnumeratingAllNetworkInterfaces()
+    DisableEnumeratingAllNetworkInterfaces()
+#endif
+
     # Notification
     DidReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed)
 

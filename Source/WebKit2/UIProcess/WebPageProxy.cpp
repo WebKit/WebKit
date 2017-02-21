@@ -5587,6 +5587,15 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.observedLayoutMilestones = m_observedLayoutMilestones;
     parameters.overrideContentSecurityPolicy = m_overrideContentSecurityPolicy;
 
+#if ENABLE(WEB_RTC)
+    // FIXME: We should tie ICE filtering with getUserMedia permission.
+    parameters.disableICECandidateFiltering = true;
+#if USE(LIBWEBRTC)
+    // FIXME: Turn down network interface enumeration by default.
+    parameters.enableEnumeratingAllNetworkInterfaces = true;
+#endif
+#endif
+
     return parameters;
 }
 

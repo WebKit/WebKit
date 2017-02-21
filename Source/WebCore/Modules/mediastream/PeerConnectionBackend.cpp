@@ -39,6 +39,7 @@
 #include "RTCIceCandidate.h"
 #include "RTCIceCandidateEvent.h"
 #include "RTCPeerConnection.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -267,6 +268,63 @@ void PeerConnectionBackend::fireICECandidateEvent(RefPtr<RTCIceCandidate>&& cand
     ASSERT(isMainThread());
 
     m_peerConnection.fireEvent(RTCIceCandidateEvent::create(false, false, WTFMove(candidate)));
+}
+
+void PeerConnectionBackend::enableICECandidateFiltering()
+{
+    m_shouldFilterICECandidates = true;
+}
+
+void PeerConnectionBackend::disableICECandidateFiltering()
+{
+    m_shouldFilterICECandidates = false;
+    for (auto& pendingICECandidate : m_pendingICECandidates)
+        fireICECandidateEvent(RTCIceCandidate::create(WTFMove(pendingICECandidate.sdp), WTFMove(pendingICECandidate.mid), 0));
+    m_pendingICECandidates.clear();
+}
+
+static inline String filterICECandidate(String&& sdp)
+{
+    ASSERT(!sdp.contains(" host "));
+
+    if (!sdp.contains(" raddr "))
+        return WTFMove(sdp);
+
+    Vector<String> items;
+    sdp.split(' ', items);
+
+    bool skipNextItem = false;
+    bool isFirst = true;
+    StringBuilder filteredSDP;
+    for (auto& item : items) {
+        if (skipNextItem) {
+            skipNextItem = false;
+            continue;
+        }
+        if (item == "raddr" || item == "rport") {
+            skipNextItem = true;
+            continue;
+        }
+        if (isFirst)
+            isFirst = false;
+        else
+            filteredSDP.append(" ");
+        filteredSDP.append(item);
+    }
+    return filteredSDP.toString();
+}
+
+void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid)
+{
+    if (!m_shouldFilterICECandidates) {
+        fireICECandidateEvent(RTCIceCandidate::create(WTFMove(sdp), WTFMove(mid), 0));
+        return;
+    }
+    if (sdp.contains(" host ")) {
+        m_pendingICECandidates.append(PendingICECandidate { WTFMove(sdp), WTFMove(mid)});
+        return;
+    }
+    fireICECandidateEvent(RTCIceCandidate::create(filterICECandidate(WTFMove(sdp)), WTFMove(mid), 0));
 }
 
 void PeerConnectionBackend::doneGatheringCandidates()

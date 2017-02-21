@@ -36,7 +36,6 @@
 #include "PlatformStrategies.h"
 #include "RTCDataChannel.h"
 #include "RTCDataChannelEvent.h"
-#include "RTCIceCandidate.h"
 #include "RTCPeerConnection.h"
 #include "RTCSessionDescription.h"
 #include "RTCTrackEvent.h"
@@ -446,7 +445,7 @@ void LibWebRTCMediaEndpoint::OnIceCandidate(const webrtc::IceCandidateInterface 
     callOnMainThread([protectedThis = makeRef(*this), mid = WTFMove(candidateMid), sdp = WTFMove(candidateSDP)] {
         if (protectedThis->isStopped())
             return;
-        protectedThis->m_peerConnectionBackend.fireICECandidateEvent(RTCIceCandidate::create(String(sdp), String(mid), 0));
+        protectedThis->m_peerConnectionBackend.newICECandidate(String(sdp), String(mid));
     });
 }
 

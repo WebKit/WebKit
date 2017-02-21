@@ -101,6 +101,10 @@ public:
 
     virtual void emulatePlatformEvent(const String& action) = 0;
 
+    void newICECandidate(String&& sdp, String&& mid);
+    void disableICECandidateFiltering();
+    void enableICECandidateFiltering();
+
 protected:
     void fireICECandidateEvent(RefPtr<RTCIceCandidate>&&);
     void doneGatheringCandidates();
@@ -137,7 +141,15 @@ private:
     std::optional<PeerConnection::SessionDescriptionPromise> m_offerAnswerPromise;
     std::optional<DOMPromise<void>> m_setDescriptionPromise;
     std::optional<DOMPromise<void>> m_addIceCandidatePromise;
-    
+
+    bool m_shouldFilterICECandidates { true };
+    struct PendingICECandidate {
+        // Fields described in https://www.w3.org/TR/webrtc/#idl-def-rtcicecandidateinit.
+        String sdp;
+        String mid;
+    };
+    Vector<PendingICECandidate> m_pendingICECandidates;
+
     bool m_negotiationNeeded { false };
 };
 

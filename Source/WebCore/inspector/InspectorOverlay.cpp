@@ -44,6 +44,7 @@
 #include "PageConfiguration.h"
 #include "PolygonShape.h"
 #include "PseudoElement.h"
+#include "RTCController.h"
 #include "RectangleShape.h"
 #include "RenderBoxModelObject.h"
 #include "RenderElement.h"
