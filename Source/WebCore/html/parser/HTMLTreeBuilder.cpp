@@ -1490,10 +1490,8 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
         m_tree.insertAlreadyParsedChild(commonAncestor.get(), *lastNode);
         // 11.
         auto newItem = m_tree.createElementFromSavedToken(formattingElementRecord->stackItem());
-        // 12.
-        m_tree.takeAllChildren(newItem, *furthestBlock);
-        // 13.
-        m_tree.reparent(*furthestBlock, newItem);
+        // 12. & 13.
+        m_tree.takeAllChildrenAndReparent(newItem, *furthestBlock);
         // 14.
         m_tree.activeFormattingElements().swapTo(*formattingElement, newItem.copyRef(), bookmark);
         // 15.
