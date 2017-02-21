@@ -196,6 +196,8 @@ void generate(Code& code, CCallHelpers& jit)
         pcToOriginMap.appendItem(jit.labelIgnoringWatchpoints(), inst.origin->origin());
     };
 
+    Disassembler* disassembler = code.disassembler();
+
     for (BasicBlock* block : code) {
         context.currentBlock = block;
         context.indexInBlock = UINT_MAX;
@@ -203,7 +205,13 @@ void generate(Code& code, CCallHelpers& jit)
         CCallHelpers::Label label = jit.label();
         *context.blockLabels[block] = label;
 
+        if (disassembler)
+            disassembler->startBlock(block, jit); 
+
         if (code.isEntrypoint(block)) {
+            if (disassembler)
+                disassembler->startEntrypoint(jit); 
+
             jit.emitFunctionPrologue();
             if (code.frameSize())
                 jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), MacroAssembler::stackPointerRegister);
@@ -214,6 +222,9 @@ void generate(Code& code, CCallHelpers& jit)
                 else
                     jit.storeDouble(entry.reg().fpr(), argFor(entry));
             }
+
+            if (disassembler)
+                disassembler->endEntrypoint(jit); 
         }
         
         ASSERT(block->size() >= 1);
@@ -221,8 +232,12 @@ void generate(Code& code, CCallHelpers& jit)
             context.indexInBlock = i;
             Inst& inst = block->at(i);
             addItem(inst);
+            auto start = jit.labelIgnoringWatchpoints();
             CCallHelpers::Jump jump = inst.generate(jit, context);
             ASSERT_UNUSED(jump, !jump.isSet());
+            auto end = jit.labelIgnoringWatchpoints();
+            if (disassembler)
+                disassembler->addInst(&inst, start, end);
         }
 
         context.indexInBlock = block->size() - 1;
@@ -236,6 +251,7 @@ void generate(Code& code, CCallHelpers& jit)
         if (isReturn(block->last().kind.opcode)) {
             // We currently don't represent the full prologue/epilogue in Air, so we need to
             // have this override.
+            auto start = jit.labelIgnoringWatchpoints();
             if (code.frameSize()) {
                 for (const RegisterAtOffset& entry : code.calleeSaveRegisters()) {
                     if (entry.reg().isGPR())
@@ -248,10 +264,18 @@ void generate(Code& code, CCallHelpers& jit)
                 jit.emitFunctionEpilogueWithEmptyFrame();
             jit.ret();
             addItem(block->last());
+            auto end = jit.labelIgnoringWatchpoints();
+            if (disassembler)
+                disassembler->addInst(&block->last(), start, end);
             continue;
         }
 
+        auto start = jit.labelIgnoringWatchpoints();
         CCallHelpers::Jump jump = block->last().generate(jit, context);
+        auto end = jit.labelIgnoringWatchpoints();
+        if (disassembler)
+            disassembler->addInst(&block->last(), start, end);
+
         // The jump won't be set for patchpoints. It won't be set for Oops because then it won't have
         // any successors.
         if (jump.isSet()) {
@@ -282,9 +306,15 @@ void generate(Code& code, CCallHelpers& jit)
 
     pcToOriginMap.appendItem(jit.label(), Origin());
     // FIXME: Make late paths have Origins: https://bugs.webkit.org/show_bug.cgi?id=153689
+    if (disassembler)
+        disassembler->startLatePath(jit);
+
     for (auto& latePath : context.latePaths)
         latePath->run(jit, context);
-    pcToOriginMap.appendItem(jit.label(), Origin());
+
+    if (disassembler)
+        disassembler->endLatePath(jit);
+    pcToOriginMap.appendItem(jit.labelIgnoringWatchpoints(), Origin());
 }
 
 } } } // namespace JSC::B3::Air

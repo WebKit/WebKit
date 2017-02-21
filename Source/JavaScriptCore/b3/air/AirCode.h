@@ -29,6 +29,7 @@
 
 #include "AirArg.h"
 #include "AirBasicBlock.h"
+#include "AirDisassembler.h"
 #include "AirSpecial.h"
 #include "AirStackSlot.h"
 #include "AirTmp.h"
@@ -51,6 +52,7 @@ namespace Air {
 
 class BlockInsertionSet;
 class CCallSpecial;
+class Disassembler;
 
 typedef void WasmBoundsCheckGeneratorFunction(CCallHelpers&, GPRReg, unsigned);
 typedef SharedTask<WasmBoundsCheckGeneratorFunction> WasmBoundsCheckGenerator;
@@ -275,6 +277,9 @@ public:
     // it's mainly for validating the results from JSAir.
     unsigned jsHash() const;
 
+    void setDisassembler(std::unique_ptr<Disassembler>&& disassembler) { m_disassembler = WTFMove(disassembler); }
+    Disassembler* disassembler() { return m_disassembler.get(); }
+
 private:
     friend class ::JSC::B3::Procedure;
     friend class BlockInsertionSet;
@@ -310,6 +315,7 @@ private:
     Vector<CCallHelpers::Label> m_entrypointLabels; // This is empty until code generation.
     RefPtr<WasmBoundsCheckGenerator> m_wasmBoundsCheckGenerator;
     const char* m_lastPhaseName;
+    std::unique_ptr<Disassembler> m_disassembler;
 };
 
 } } } // namespace JSC::B3::Air

@@ -29,6 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "AirCode.h"
+#include "AirDisassembler.h"
 #include "B3Generate.h"
 #include "B3ProcedureInlines.h"
 #include "B3StackSlot.h"
@@ -56,6 +57,9 @@ void compile(State& state, Safepoint::Result& safepointResult)
     Graph& graph = state.graph;
     CodeBlock* codeBlock = graph.m_codeBlock;
     VM& vm = graph.m_vm;
+
+    if (shouldDumpDisassembly())
+        state.proc->code().setDisassembler(std::make_unique<B3::Air::Disassembler>());
 
     {
         GraphSafepoint safepoint(state.graph, safepointResult);
@@ -151,6 +155,13 @@ void compile(State& state, Safepoint::Result& safepointResult)
     state.generatedFunction = bitwise_cast<GeneratedFunction>(
         state.finalizer->b3CodeLinkBuffer->entrypoint().executableAddress());
     state.jitCode->initializeB3Byproducts(state.proc->releaseByproducts());
+
+    if (B3::Air::Disassembler* disassembler = state.proc->code().disassembler()) {
+        dataLogLn("\nGenerated FTL JIT code for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ", instruction count = ", state.graph.m_codeBlock->instructionCount(), ":");
+        LinkBuffer& linkBuffer = *state.finalizer->b3CodeLinkBuffer;
+        disassembler->dump(state.proc->code(), WTF::dataFile(), linkBuffer);
+        linkBuffer.didAlreadyDisassemble();
+    }
 }
 
 } } // namespace JSC::FTL
