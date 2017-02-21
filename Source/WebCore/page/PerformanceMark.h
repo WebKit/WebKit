@@ -35,8 +35,6 @@ namespace WebCore {
 class PerformanceMark final : public PerformanceEntry {
 public:
     static Ref<PerformanceMark> create(const String& name, double startTime) { return adoptRef(*new PerformanceMark(name, startTime)); }
-
-    bool isMark() const override { return true; }
     
 private:
     PerformanceMark(const String& name, double startTime)

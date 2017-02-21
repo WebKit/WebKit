@@ -1,3 +1,21 @@
+2017-02-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unnecessary PerformanceEntry virtual methods
+        https://bugs.webkit.org/show_bug.cgi?id=168633
+
+        Reviewed by Ryosuke Niwa.
+
+        * page/PerformanceEntry.h:
+        (WebCore::PerformanceEntry::isResource):
+        (WebCore::PerformanceEntry::isMark):
+        (WebCore::PerformanceEntry::isMeasure):
+        Implement based on the Type.
+
+        * page/PerformanceMark.h:
+        * page/PerformanceMeasure.h:
+        * page/PerformanceResourceTiming.h:
+        Remove virtual overrides.
+
 2017-02-20  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC][Mac] Activate libwebrtc

@@ -61,9 +61,9 @@ public:
 
     static std::optional<Type> parseEntryTypeString(const String& entryType);
 
-    virtual bool isResource() const { return false; }
-    virtual bool isMark() const { return false; }
-    virtual bool isMeasure() const { return false; }
+    bool isResource() const { return m_type == Type::Resource; }
+    bool isMark() const { return m_type == Type::Mark; }
+    bool isMeasure() const { return m_type == Type::Measure; }
 
     static bool startTimeCompareLessThan(const RefPtr<PerformanceEntry>& a, const RefPtr<PerformanceEntry>& b)
     {

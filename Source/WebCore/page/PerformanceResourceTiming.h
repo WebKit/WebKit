@@ -62,8 +62,6 @@ public:
     double responseStart() const;
     double responseEnd() const;
 
-    bool isResource() const override { return true; }
-
 private:
     PerformanceResourceTiming(MonotonicTime timeOrigin, ResourceTiming&&);
     ~PerformanceResourceTiming();
