@@ -11951,6 +11951,7 @@
 		};
 		5C63F6631E414AB6002CA531 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -11958,6 +11959,7 @@
 		};
 		5C63F6641E414AB6002CA531 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -11965,6 +11967,7 @@
 		};
 		5C63F6651E414AB6002CA531 /* Production */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
