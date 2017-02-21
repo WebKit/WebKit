@@ -25,22 +25,25 @@
 
 #pragma once
 
+#include "AbstractModuleRecord.h"
 #include "JSDestructibleObject.h"
-#include <wtf/ListHashSet.h>
+#include "ScopeOffset.h"
 
 namespace JSC {
 
-class AbstractModuleRecord;
-
-class JSModuleNamespaceObject : public JSDestructibleObject {
+class JSModuleNamespaceObject final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | GetOwnPropertySlotIsImpureForPropertyAbsence | IsImmutablePrototypeExoticObject;
 
-    static JSModuleNamespaceObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, AbstractModuleRecord* moduleRecord, const IdentifierSet& exports)
+    static JSModuleNamespaceObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, AbstractModuleRecord* moduleRecord, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&& resolutions)
     {
-        JSModuleNamespaceObject* object = new (NotNull, allocateCell<JSModuleNamespaceObject>(exec->vm().heap)) JSModuleNamespaceObject(exec->vm(), structure);
-        object->finishCreation(exec, globalObject, moduleRecord, exports);
+        JSModuleNamespaceObject* object =
+            new (
+                NotNull,
+                allocateCell<JSModuleNamespaceObject>(exec->vm().heap, JSModuleNamespaceObject::allocationSize(resolutions.size())))
+            JSModuleNamespaceObject(exec->vm(), structure);
+        object->finishCreation(exec, globalObject, moduleRecord, WTFMove(resolutions));
         return object;
     }
 
@@ -61,17 +64,50 @@ public:
     AbstractModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
 
 protected:
-    JS_EXPORT_PRIVATE void finishCreation(ExecState*, JSGlobalObject*, AbstractModuleRecord*, const IdentifierSet& exports);
+    JS_EXPORT_PRIVATE void finishCreation(ExecState*, JSGlobalObject*, AbstractModuleRecord*, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&&);
     JS_EXPORT_PRIVATE JSModuleNamespaceObject(VM&, Structure*);
 
 private:
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    typedef WTF::ListHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> OrderedIdentifierSet;
+    WriteBarrierBase<AbstractModuleRecord>& moduleRecordAt(unsigned offset)
+    {
+        return moduleRecords()[offset];
+    }
 
-    OrderedIdentifierSet m_exports;
+    WriteBarrierBase<AbstractModuleRecord>* moduleRecords()
+    {
+        return bitwise_cast<WriteBarrierBase<AbstractModuleRecord>*>(bitwise_cast<char*>(this) + offsetOfModuleRecords());
+    }
+
+    static size_t offsetOfModuleRecords()
+    {
+        return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<AbstractModuleRecord>)>(sizeof(JSModuleNamespaceObject));
+    }
+
+    static size_t allocationSize(unsigned moduleRecords)
+    {
+        return offsetOfModuleRecords() + moduleRecords * sizeof(WriteBarrier<AbstractModuleRecord>);
+    }
+
+    struct ExportEntry {
+        Identifier localName;
+        unsigned moduleRecordOffset;
+    };
+
+    typedef HashMap<RefPtr<UniquedStringImpl>, ExportEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> ExportMap;
+
+    ExportMap m_exports;
+    Vector<Identifier> m_names;
     WriteBarrier<AbstractModuleRecord> m_moduleRecord;
 };
+
+inline bool isJSModuleNamespaceObject(JSCell* cell)
+{
+    return cell->classInfo(*cell->vm()) == JSModuleNamespaceObject::info();
+}
+
+inline bool isJSModuleNamespaceObject(JSValue v) { return v.isCell() && isJSModuleNamespaceObject(v.asCell()); }
 
 } // namespace JSC

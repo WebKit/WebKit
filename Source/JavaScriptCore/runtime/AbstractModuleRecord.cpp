@@ -697,9 +697,10 @@ JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(ExecState* exe
     IdentifierSet exportedNames;
     getExportedNames(exec, this, exportedNames);
 
-    IdentifierSet unambiguousNames;
+    Vector<std::pair<Identifier, Resolution>> resolutions;
     for (auto& name : exportedNames) {
-        const AbstractModuleRecord::Resolution resolution = resolveExport(exec, Identifier::fromUid(exec, name.get()));
+        Identifier ident = Identifier::fromUid(exec, name.get());
+        const Resolution resolution = resolveExport(exec, ident);
         switch (resolution.type) {
         case Resolution::Type::NotFound:
             throwSyntaxError(exec, scope, makeString("Exported binding name '", String(name.get()), "' is not found."));
@@ -713,12 +714,12 @@ JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(ExecState* exe
             break;
 
         case Resolution::Type::Resolved:
-            unambiguousNames.add(name);
+            resolutions.append({ WTFMove(ident), resolution });
             break;
         }
     }
 
-    m_moduleNamespaceObject.set(vm, this, JSModuleNamespaceObject::create(exec, globalObject, globalObject->moduleNamespaceObjectStructure(), this, unambiguousNames));
+    m_moduleNamespaceObject.set(vm, this, JSModuleNamespaceObject::create(exec, globalObject, globalObject->moduleNamespaceObjectStructure(), this, WTFMove(resolutions)));
     return m_moduleNamespaceObject.get();
 }
 

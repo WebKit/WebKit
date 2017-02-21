@@ -40,11 +40,6 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JSModuleEnvironment* moduleEnvironment()
-    {
-        ASSERT(m_moduleEnvironment);
-        return m_moduleEnvironment.get();
-    }
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
     static JSModuleRecord* create(ExecState*, VM&, Structure*, const Identifier&, const SourceCode&, const VariableEnvironment&, const VariableEnvironment&);
 

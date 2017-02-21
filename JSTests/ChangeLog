@@ -1,5 +1,42 @@
 2017-02-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        JSModuleNamespace object should have IC
+        https://bugs.webkit.org/show_bug.cgi?id=160590
+
+        Reviewed by Saam Barati.
+
+        * modules/module-assert-access-binding.js: Added.
+        * modules/module-assert-access-namespace.js: Added.
+        * modules/namespace-empty.js: Added.
+        (from.string_appeared_here.access):
+        (i.shouldThrow):
+        * stress/module-namespace-access-change.js: Added.
+        (shouldBe):
+        (access):
+        (import.string_appeared_here.then):
+        * stress/module-namespace-access-non-constant.js: Added.
+        (shouldBe):
+        (import.string_appeared_here.then):
+        * stress/module-namespace-access-poly.js: Added.
+        (shouldBe):
+        (access):
+        (import.string_appeared_here.then):
+        * stress/module-namespace-access-transitive-exports.js: Added.
+        (shouldBe):
+        (import.string_appeared_here.then):
+        * stress/module-namespace-access.js: Added.
+        (shouldBe):
+        (import.string_appeared_here.then):
+        * stress/resources/module-namespace-access-transitive-exports-2.js: Added.
+        (export.cocoa):
+        (export.change):
+        * stress/resources/module-namespace-access-transitive-exports.js: Added.
+        * stress/resources/module-namespace-access.js: Added.
+        (export.cocoa):
+        (export.change):
+
+2017-02-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         ASSERTION FAILED: "!scope.exception()" with Object.isSealed/isFrozen and uninitialized module bindings
         https://bugs.webkit.org/show_bug.cgi?id=168605
 
