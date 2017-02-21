@@ -1,5 +1,21 @@
 2017-02-21  Jer Noble  <jer.noble@apple.com>
 
+        Make TrackPrivateBase ThreadSafeRefCounted, so that it can be retained in non-main threads
+        https://bugs.webkit.org/show_bug.cgi?id=168642
+
+        Reviewed by Eric Carlson.
+
+        AudioTrackPrivateMediaStreamCocoa has two entry points from background threads:
+        audioSamplesAvailable() and render(). Protect against being destroyed mid-execution by
+        retaining this for the duration of those methods.
+
+        * platform/graphics/TrackPrivateBase.h:
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::render):
+
+2017-02-21  Jer Noble  <jer.noble@apple.com>
+
         Pulling too quickly from an AudioSampleDataSource should increase the pre-buffer amount
         https://bugs.webkit.org/show_bug.cgi?id=168645
 

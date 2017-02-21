@@ -180,6 +180,7 @@ OSStatus AudioTrackPrivateMediaStreamCocoa::setupAudioUnit()
 
 void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& sampleTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
 {
+    Ref<AudioTrackPrivateMediaStreamCocoa> protectedThis { *this };
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
 
     std::lock_guard<Lock> lock(m_internalStateLock);
@@ -228,6 +229,8 @@ void AudioTrackPrivateMediaStreamCocoa::sourceStopped()
 
 OSStatus AudioTrackPrivateMediaStreamCocoa::render(UInt32 sampleCount, AudioBufferList& ioData, UInt32 /*inBusNumber*/, const AudioTimeStamp& timeStamp, AudioUnitRenderActionFlags& actionFlags)
 {
+    Ref<AudioTrackPrivateMediaStreamCocoa> protectedThis { *this };
+
     std::unique_lock<Lock> lock(m_internalStateLock, std::try_to_lock);
     if (!lock.owns_lock())
         return kAudioConverterErr_UnspecifiedError;
