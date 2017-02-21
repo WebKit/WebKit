@@ -49,8 +49,7 @@ EXECUTABLE_PREFIX = lib;
 EXPORTED_SYMBOLS_FILE = ;
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
-OTHER_LDFLAGS[sdk=macos*] = $(ASAN_OTHER_LDFLAGS) -framework AppKit -weak-lwebrtc;
-
+OTHER_LDFLAGS[sdk=macos*] = $(ASAN_OTHER_LDFLAGS) -framework AppKit;
 OTHER_LDFLAGS[sdk=iphoneos*] = $(ASAN_OTHER_LDFLAGS) -lAccessibility -F$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PhonyWebKitLegacy;
 OTHER_LDFLAGS[sdk=iphonesimulator*] = $(ASAN_OTHER_LDFLAGS) -lAccessibility -F$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PhonyWebKitLegacy;
 SECT_ORDER_FLAGS = ;

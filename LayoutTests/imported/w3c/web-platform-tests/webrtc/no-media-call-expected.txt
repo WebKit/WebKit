@@ -1,5 +1,7 @@
 
-FAIL Can set up a basic WebRTC call with no data. assert_unreached: WebRTC called error callback for setRemoteDescription first Reached unreachable code
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Can set up a basic WebRTC call with no data. Test timed out
 iceConnectionState info
 
 

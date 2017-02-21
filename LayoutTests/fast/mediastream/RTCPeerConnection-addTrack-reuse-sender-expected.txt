@@ -4,28 +4,28 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 *** Remote description with audio offer set
-FAIL pc.getSenders().length should be 1. Was 0.
-FAIL pc.getReceivers().length should be 1. Was 0.
-FAIL pc.getReceivers()[0].track.kind should be audio. Threw exception TypeError: undefined is not an object (evaluating 'pc.getReceivers()[0].track')
-FAIL pc.getTransceivers().length should be 1. Was 0.
+PASS pc.getSenders().length is 1
+PASS pc.getReceivers().length is 1
+PASS pc.getReceivers()[0].track.kind is 'audio'
+PASS pc.getTransceivers().length is 1
 
 *** Check unused sender
 audioSender = pc.getSenders()[0]
-FAIL audioSender.track should be null. Threw exception TypeError: undefined is not an object (evaluating 'audioSender.track')
+PASS audioSender.track is null
 
 *** Adding a video track should not reuse audioSender (wrong kind)
 senderFromAddTrack = pc.addTrack(videoTrack, stream)
 PASS senderFromAddTrack is not audioSender
 
 *** An extra sender should have been added
-FAIL pc.getSenders().length should be 2. Was 1.
-FAIL pc.getSenders().includes(audioSender) should be true. Was false.
+PASS pc.getSenders().length is 2
+PASS pc.getSenders().includes(audioSender) is true
 PASS pc.getSenders().includes(senderFromAddTrack) is true
 
 *** Adding an audio track should reuse audioSender
 senderFromAddTrack = pc.addTrack(audioTrack, stream)
-FAIL senderFromAddTrack should be undefined (of type undefined). Was [object RTCRtpSender] (of type object).
-FAIL audioSender.track should be [object MediaStreamTrack]. Threw exception TypeError: undefined is not an object (evaluating 'audioSender.track')
+PASS senderFromAddTrack is audioSender
+PASS audioSender.track is audioTrack
 
 *** The number of senders should not have changed
 PASS pc.getSenders().length is 2

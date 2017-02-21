@@ -8,6 +8,7 @@ COMBINE_HIDPI_IMAGES = NO;
 ENABLE_STRICT_OBJC_MSGSEND = YES;
 HEADER_SEARCH_PATHS = Source Source/third_party/jsoncpp/source/include Source/third_party/libsrtp/crypto/include Source/third_party/libsrtp/include Source/third_party/boringssl/src/include Source/third_party/libyuv/include Source/third_party/usrsctp/usrsctplib Source/third_party/usrsctp/usrsctplib/usrsctplib Source/webrtc/sdk/objc/Framework/Headers Source/webrtc/common_audio/signal_processing/include Source/webrtc/modules/audio_coding/codecs/isac/main/include Source/third_party/opus/src/celt Source/third_party/opus/src/include Source/third_party/opus/src/src Source/webrtc/modules/audio_device/mac Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet Source/webrtc/modules/audio_device/ios;
 
+INSTALL_PATH = /usr/local/lib;
 PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libwebrtc;
 USE_HEADERMAP = NO;
 WARNING_CFLAGS = -Wno-exit-time-destructors -Wno-objc-property-no-attribute -Wno-objc-missing-super-calls -Wno-deprecated-declarations;
@@ -20,4 +21,4 @@ GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) WEBRTC_IOS;
 
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = *_sse.cc *_sse2.cc macutils.cc macwindowpicker.cc audio_device_mac.cc audio_mixer_manager_mac.cc;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = macutils.cc macwindowpicker.cc audio_device_mac.cc audio_mixer_manager_mac.cc;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = voice_processing_audio_unit.mm;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = audio_device_ios.mm voice_processing_audio_unit.mm audio_device_not_implemented_ios.mm RTCAudioSessionConfiguration.m RTCAudioSessionDelegateAdapter.mm RTCAudioSession.mm RTCAudioSession+Configuration.mm RTCUIApplication.mm;

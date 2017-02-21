@@ -11,7 +11,23 @@ PASS Remote description set
 
 *** Define sdpMid, badSdpMid, sdpMLineIndex and badSdpMLineIndex for testing
 PASS sdpMLineIndex is not badSdpMLineIndex
-FAIL Error in promise chain: TypeError: undefined is not an object (evaluating 'pc.getTransceivers()[0].mid')
+PASS sdpMid is not null
+PASS sdpMid is not badSdpMid
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: badSdpMid})) rejected with OperationError (DOM Exception 34): sdpMid did not match any media description
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMLineIndex: badSdpMLineIndex})) rejected with OperationError (DOM Exception 34): sdpMLineIndex is out of range
+*** A (bad) sdpMid takes precedesce over valid sdpMLineIndex
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: badSdpMid, sdpMLineIndex: sdpMLineIndex})) rejected with OperationError (DOM Exception 34): sdpMid did not match any media description
+*** Test bad candidate content with valid sdpMid
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', sdpMid: sdpMid})) rejected with OperationError (DOM Exception 34): Invalid candidate content
+*** Test bad candidate content with valid sdpMLineIndex
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', sdpMLineIndex: sdpMLineIndex})) rejected with OperationError (DOM Exception 34): Invalid candidate content
+
+*** Test some OK input
+PASS promise pc.addIceCandidate({candidate: validCandidate, sdpMid: sdpMid}) fulfilled with undefined
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMLineIndex: sdpMLineIndex})) fulfilled with undefined
+*** A valid sdpMid takes precedesce over a bad sdpMLineIndex
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: sdpMid, sdpMLineIndex: badSdpMLineIndex})) fulfilled with undefined
+PASS End of test promise chain
 PASS successfullyParsed is true
 
 TEST COMPLETE

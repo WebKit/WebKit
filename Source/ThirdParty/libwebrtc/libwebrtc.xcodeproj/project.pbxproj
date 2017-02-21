@@ -2413,6 +2413,7 @@
 		5CFD53801E4BA4F500482908 /* audio_session_observer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53791E4BA4F500482908 /* audio_session_observer.h */; };
 		5CFD53811E4BA4F500482908 /* voice_processing_audio_unit.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD537A1E4BA4F500482908 /* voice_processing_audio_unit.h */; };
 		5CFD53821E4BA4F500482908 /* voice_processing_audio_unit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD537B1E4BA4F500482908 /* voice_processing_audio_unit.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		5CFD53841E4BBD8D00482908 /* audio_device_not_implemented_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53831E4BBD8D00482908 /* audio_device_not_implemented_ios.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		5CFD538D1E4BD3A300482908 /* compare_neon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53851E4BD3A300482908 /* compare_neon.cc */; };
 		5CFD538E1E4BD3A300482908 /* compare_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53861E4BD3A300482908 /* compare_neon64.cc */; };
 		5CFD538F1E4BD3A300482908 /* rotate_neon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53871E4BD3A300482908 /* rotate_neon.cc */; };
@@ -11022,6 +11023,7 @@
 				5C11A01D1E457578004F0987 /* audio_device_dummy.cc in Sources */,
 				5C119FFE1E457400004F0987 /* audio_device_generic.cc in Sources */,
 				5C11A00B1E457448004F0987 /* audio_device_mac.cc in Sources */,
+				5CFD53841E4BBD8D00482908 /* audio_device_not_implemented_ios.mm in Sources */,
 				5CDD84171E439B2900621E92 /* audio_encoder.cc in Sources */,
 				5CDD8CA71E43C6F700621E92 /* audio_encoder_cng.cc in Sources */,
 				5CDD8FF31E43CDF400621E92 /* audio_encoder_copy_red.cc in Sources */,

@@ -29,7 +29,6 @@
 #include "WebPageGroup.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcessPool.h"
-#include <dlfcn.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadingPrimitives.h>
 
@@ -195,19 +194,6 @@ FOR_EACH_WEBKIT_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
 FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
 
 #undef DEFINE_PREFERENCE_GETTER_AND_SETTERS
-
-bool checkWebRTCAvailability()
-{
-#if USE(LIBWEBRTC)
-    void* libwebrtcLibrary = dlopen("libwebrtc.dylib", RTLD_NOW);
-    if (!libwebrtcLibrary)
-        return false;
-    dlclose(libwebrtcLibrary);
-    return true;
-#else
-    return true;
-#endif
-}
 
 #define DEFINE_EXPERIMENTAL_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
     void WebPreferences::set##KeyUpper(const Type& value) \
