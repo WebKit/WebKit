@@ -112,9 +112,8 @@ struct NetworkProcessCreationParameters {
     String recordReplayMode;
     String recordReplayCacheLocation;
 #endif
-
 #if ENABLE(WEB_RTC)
-    bool webRTCEnabled { false };
+    SandboxExtension::Handle webRTCNetworkingHandle;
 #endif
 };
 

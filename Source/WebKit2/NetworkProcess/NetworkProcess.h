@@ -215,10 +215,6 @@ private:
     HashMap<uint64_t, Function<void ()>> m_sandboxExtensionForBlobsCompletionHandlers;
     HashMap<uint64_t, Ref<NetworkResourceLoader>> m_waitingNetworkResourceLoaders;
 
-#if ENABLE(WEB_RTC)
-    bool m_webRTCEnabled { false };
-#endif
-
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);
     void setCookieStoragePartitioningEnabled(bool);

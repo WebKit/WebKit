@@ -72,6 +72,9 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.parentBundleDirectoryExtensionHandle);
 #endif
+#if ENABLE(WEB_RTC)
+    SandboxExtension::consumePermanently(parameters.webRTCNetworkingHandle);
+#endif
     m_diskCacheDirectory = parameters.diskCacheDirectory;
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)

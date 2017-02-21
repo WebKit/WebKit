@@ -1,5 +1,30 @@
 2017-02-21  Youenn Fablet  <youenn@apple.com>
 
+        [WebRTC][Mac] Network process sandbox does not allow WebRTC networking
+        https://bugs.webkit.org/show_bug.cgi?id=168594
+
+        Reviewed by Brent Fulgham.
+
+        UIProcess was passing a boolean to know whether WebRTC networking is allowed or not to the network process.
+        This boolean was known to late for the sandbox to be relaxed.
+        A sandbox extension is now used instead to relax the sandbox.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        (WebKit::NetworkProcess::initializeSandbox):
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
+2017-02-21  Youenn Fablet  <youenn@apple.com>
+
         [WebRTC] ICE candidates should be filtered according a policy
         https://bugs.webkit.org/show_bug.cgi?id=168348
 

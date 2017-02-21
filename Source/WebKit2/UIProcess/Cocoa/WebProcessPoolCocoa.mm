@@ -308,8 +308,9 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     bool webRTCEnabled = m_defaultPageGroup->preferences().peerConnectionEnabled();
     if ([defaults objectForKey:@"ExperimentalPeerConnectionEnabled"])
         webRTCEnabled = [defaults boolForKey:@"ExperimentalPeerConnectionEnabled"];
-    
-    parameters.webRTCEnabled = webRTCEnabled;
+
+    if (webRTCEnabled)
+        SandboxExtension::createHandleForGenericExtension("com.apple.webkit.webrtc", parameters.webRTCNetworkingHandle);
 #endif
 }
 

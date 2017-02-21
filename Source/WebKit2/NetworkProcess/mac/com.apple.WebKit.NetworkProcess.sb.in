@@ -209,12 +209,44 @@
     (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
     (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2-journal"))
 
-#if ENABLE_WEB_RTC
+(macro (with-filter form)
+   (let* ((ps (cdr form))
+          (extra-filter (car ps))
+          (rules (cdr ps)))
+    `(letrec
+        ((collect
+             (lambda (l filters non-filters)
+                 (if (null? l)
+                     (list filters non-filters)
+                     (let* 
+                         ((x (car l))
+                          (rest (cdr l)))
+                         (if (sbpl-filter? x)
+                             (collect rest (cons x filters) non-filters)
+                             (collect rest filters (cons x non-filters)))))))
+         (inject-filter
+             (lambda args
+                 (let* ((collected (collect args '() '()))
+                        (filters (car collected))
+                        (non-filters (cadr collected)))
+                 (if (null? filters)
+                     (cons ,extra-filter non-filters)
+                     (cons (require-all (apply require-any filters) ,extra-filter) non-filters)))))
+         (orig-allow allow)
+         (orig-deny deny)
+         (wrapper
+             (lambda (action)
+                 (lambda args (apply action (apply inject-filter args))))))
+        (set! allow (wrapper orig-allow))
+        (set! deny (wrapper orig-deny))
+        ,@rules
+        (set! deny orig-deny)
+        (set! allow orig-allow))))
+
 ;; FIXME should be removed when <rdar://problem/30498072> is fixed.
-(if (positive? (string-length (param "ENABLE_WEB_RTC")))
+(with-filter (extension "com.apple.webkit.webrtc")
     (allow network*
         (local udp)
         (remote udp)
         (local tcp)
         (remote tcp)))
-#endif
