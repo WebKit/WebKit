@@ -45,7 +45,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const auto featureVectorLengthThreshold = 3;
 static auto minimumTimeBetweeenDataRecordsRemoval = 60;
 static OptionSet<WebKit::WebsiteDataType> dataTypesToRemove;
 static auto notifyPages = false;
@@ -59,7 +58,7 @@ Ref<WebResourceLoadStatisticsStore> WebResourceLoadStatisticsStore::create(const
 WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory)
     : m_resourceLoadStatisticsStore(ResourceLoadStatisticsStore::create())
     , m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue"))
-    , m_storagePath(resourceLoadStatisticsDirectory)
+    , m_statisticsStoragePath(resourceLoadStatisticsDirectory)
 {
 }
 
@@ -83,40 +82,11 @@ void WebResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval(do
         minimumTimeBetweeenDataRecordsRemoval = seconds;
 }
 
-bool WebResourceLoadStatisticsStore::hasPrevalentResourceCharacteristics(const ResourceLoadStatistics& resourceStatistic)
-{
-    auto subresourceUnderTopFrameOriginsCount = resourceStatistic.subresourceUnderTopFrameOrigins.size();
-    auto subresourceUniqueRedirectsToCount = resourceStatistic.subresourceUniqueRedirectsTo.size();
-    auto subframeUnderTopFrameOriginsCount = resourceStatistic.subframeUnderTopFrameOrigins.size();
-    
-    if (!subresourceUnderTopFrameOriginsCount
-        && !subresourceUniqueRedirectsToCount
-        && !subframeUnderTopFrameOriginsCount)
-        return false;
-
-    if (subresourceUnderTopFrameOriginsCount > featureVectorLengthThreshold
-        || subresourceUniqueRedirectsToCount > featureVectorLengthThreshold
-        || subframeUnderTopFrameOriginsCount > featureVectorLengthThreshold)
-        return true;
-
-    // The resource is considered prevalent if the feature vector
-    // is longer than the threshold.
-    // Vector length for n dimensions is sqrt(a^2 + (...) + n^2).
-    double vectorLength = 0;
-    vectorLength += subresourceUnderTopFrameOriginsCount * subresourceUnderTopFrameOriginsCount;
-    vectorLength += subresourceUniqueRedirectsToCount * subresourceUniqueRedirectsToCount;
-    vectorLength += subframeUnderTopFrameOriginsCount * subframeUnderTopFrameOriginsCount;
-
-    ASSERT(vectorLength > 0);
-
-    return sqrt(vectorLength) > featureVectorLengthThreshold;
-}
-    
 void WebResourceLoadStatisticsStore::classifyResource(ResourceLoadStatistics& resourceStatistic)
 {
-    if (!resourceStatistic.isPrevalentResource && hasPrevalentResourceCharacteristics(resourceStatistic)) {
+    if (!resourceStatistic.isPrevalentResource
+        && m_resourceLoadStatisticsClassifier.hasPrevalentResourceCharacteristics(resourceStatistic))
         resourceStatistic.isPrevalentResource = true;
-    }
 }
 
 void WebResourceLoadStatisticsStore::removeDataRecords()
@@ -248,11 +218,11 @@ void WebResourceLoadStatisticsStore::applicationWillTerminate()
 
 String WebResourceLoadStatisticsStore::persistentStoragePath(const String& label) const
 {
-    if (m_storagePath.isEmpty())
+    if (m_statisticsStoragePath.isEmpty())
         return emptyString();
 
     // TODO Decide what to call this file
-    return pathByAppendingComponent(m_storagePath, label + "_resourceLog.plist");
+    return pathByAppendingComponent(m_statisticsStoragePath, label + "_resourceLog.plist");
 }
 
 void WebResourceLoadStatisticsStore::writeEncoderToDisk(KeyedEncoder& encoder, const String& label) const
@@ -265,8 +235,8 @@ void WebResourceLoadStatisticsStore::writeEncoderToDisk(KeyedEncoder& encoder, c
     if (resourceLog.isEmpty())
         return;
 
-    if (!m_storagePath.isEmpty())
-        makeAllDirectories(m_storagePath);
+    if (!m_statisticsStoragePath.isEmpty())
+        makeAllDirectories(m_statisticsStoragePath);
 
     auto handle = openFile(resourceLog, OpenForWrite);
     if (!handle)

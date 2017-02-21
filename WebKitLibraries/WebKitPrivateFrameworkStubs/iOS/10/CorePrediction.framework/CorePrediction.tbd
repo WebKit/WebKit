@@ -1,0 +1,18 @@
+--- !tapi-tbd-v2
+archs:
+  - armv7
+  - armv7s
+  - arm64
+exports:
+  -
+    archs:
+      - armv7
+      - armv7s
+      - arm64
+    symbols:
+      - _svm_load_model
+      - _svm_predict_values
+install-name: /System/Library/PrivateFrameworks/CorePrediction.framework
+objc-constraint: none
+platform: ios
+...

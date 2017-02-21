@@ -58,6 +58,10 @@ public:
     WEBCORE_EXPORT bool isPrevalentResource(const URL&);
     WEBCORE_EXPORT void clearPrevalentResource(const URL&);
 
+    WEBCORE_EXPORT void setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame);
+    WEBCORE_EXPORT void setSubresourceUnderTopFrameOrigin(const URL& subresource, const URL& topFrame);
+    WEBCORE_EXPORT void setSubresourceUniqueRedirectTo(const URL& subresource, const URL& hostNameRedirectedTo);
+
     WEBCORE_EXPORT void setTimeToLiveUserInteraction(double seconds);
     WEBCORE_EXPORT void setReducedTimestampResolution(double seconds);
 
