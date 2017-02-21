@@ -1,5 +1,19 @@
 2017-02-21  Andreas Kling  <akling@apple.com>
 
+        [iOS] Remove old WebKit1 MemoryMeasure helper.
+        <https://webkit.org/b/168675>
+
+        Reviewed by Sam Weinig.
+
+        Remove the MemoryMeasure logging helper from the WebKit1 days. It was using an old way
+        of measuring memory, and we were only using it in a single place anyway.
+
+        * Misc/MemoryMeasure.h: Removed.
+        * Misc/MemoryMeasure.mm: Removed.
+        * WebKit.iOS.exp:
+
+2017-02-21  Andreas Kling  <akling@apple.com>
+
         [iOS] WebKit1 should use shared memory pressure handler code.
         <https://webkit.org/b/168653>
 

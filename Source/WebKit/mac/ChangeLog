@@ -1,5 +1,17 @@
 2017-02-21  Andreas Kling  <akling@apple.com>
 
+        [iOS] Remove old WebKit1 MemoryMeasure helper.
+        <https://webkit.org/b/168675>
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        * Misc/WebCache.mm:
+        (+[WebCache emptyInMemoryResources]):
+        * WebView/WebView.mm:
+
+2017-02-21  Andreas Kling  <akling@apple.com>
+
         [iOS] WebKit1 should use shared memory pressure handler code.
         <https://webkit.org/b/168653>
 

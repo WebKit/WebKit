@@ -41,7 +41,6 @@
 #import <wtf/RunLoop.h>
 
 #if PLATFORM(IOS)
-#import "MemoryMeasure.h"
 #import "WebFrameInternal.h"
 #import <WebCore/CachedImage.h>
 #import <WebCore/Frame.h>
@@ -131,8 +130,6 @@
     // schedule this method on the WebThread as well so as to pick up all the
     // dead resources left behind after closing the WebViews
     WebThreadRun(^{
-        WebKit::MemoryMeasure measurer("[WebCache emptyInMemoryResources]");
-
         // Toggling the cache model like this forces the cache to evict all its in-memory resources.
         WebCacheModel cacheModel = [WebView _cacheModel];
         [WebView _setCacheModel:WebCacheModelDocumentViewer];
