@@ -2227,13 +2227,6 @@ void Document::disconnectFromFrame()
     observeFrame(nullptr);
 }
 
-void Document::didBecomeCurrentDocumentInView()
-{
-    ASSERT(view());
-    if (!hasLivingRenderTree())
-        createRenderTree();
-}
-
 void Document::frameDestroyed()
 {
     // disconnectFromFrame() must be called before destroying the Frame.
