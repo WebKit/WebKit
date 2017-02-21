@@ -1,3 +1,15 @@
+2017-02-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebRTC][Mac][WebKit2] Revise sandbox to limit connections to UDP and TCP
+        https://bugs.webkit.org/show_bug.cgi?id=168664
+        <rdar://problem/30600587>
+
+        Reviewed by Youenn Fablet.
+
+        Add filters to the WebRTC rule to limit network traffic to UDP and TCP.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2017-02-21  Maureen Daum  <mdaum@apple.com>
 
         Check what LocalStorage data exists in deleteDatabasesModifiedSince() before attempting deletion.

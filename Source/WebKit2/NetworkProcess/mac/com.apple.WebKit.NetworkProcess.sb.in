@@ -212,5 +212,9 @@
 #if ENABLE_WEB_RTC
 ;; FIXME should be removed when <rdar://problem/30498072> is fixed.
 (if (positive? (string-length (param "ENABLE_WEB_RTC")))
-    (allow network*))
+    (allow network*
+        (local udp)
+        (remote udp)
+        (local tcp)
+        (remote tcp)))
 #endif
