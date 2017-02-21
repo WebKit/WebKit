@@ -77,7 +77,8 @@ private:
     rtc::scoped_refptr<webrtc::AudioTrackInterface> m_audioTrack;
 
     RefPtr<WebAudioSourceProviderAVFObjC> m_audioSourceProvider;
-    RetainPtr<CMFormatDescriptionRef> m_formatDescription;
+    AudioStreamBasicDescription m_streamFormat;
+    uint64_t m_numberOfFrames;
 };
 
 } // namespace WebCore
