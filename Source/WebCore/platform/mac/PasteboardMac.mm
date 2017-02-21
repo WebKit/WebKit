@@ -306,7 +306,13 @@ void Pasteboard::read(PasteboardPlainText& text)
 
     Vector<String> types;
     strategy.getTypes(types, m_pasteboardName);
-    
+
+    if (types.contains(String(NSPasteboardTypeString))) {
+        text.text = strategy.stringForType(NSPasteboardTypeString, m_pasteboardName);
+        text.isURL = false;
+        return;
+    }
+
     if (types.contains(String(NSStringPboardType))) {
         text.text = strategy.stringForType(NSStringPboardType, m_pasteboardName);
         text.isURL = false;
@@ -566,7 +572,7 @@ static String utiTypeFromCocoaType(const String& type)
 static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName)
 {
     // UTI may not do these right, so make sure we get the right, predictable result
-    if (cocoaType == String(NSStringPboardType)) {
+    if (cocoaType == String(NSStringPboardType) || cocoaType == String(NSPasteboardTypeString)) {
         resultTypes.add(ASCIILiteral("text/plain"));
         return;
     }
