@@ -1,5 +1,28 @@
 2017-02-20  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: RTL: back/forward navigation buttons should not be flipped
+        https://bugs.webkit.org/show_bug.cgi?id=168275
+        <rdar://problem/30506897>
+
+        Reviewed by Matt Baker.
+
+        The leading button is always "back" and the trailing button is always "forward", but
+        in RTL the icons are swapped so that it still looks like '< >' from left-to-right.
+
+        Rename the two arrows in the SVG to "left" and "right" arrows, and use them appropriately
+        in ContentBrowser for back-forward icons based on the layout direction.
+
+        * UserInterface/Images/BackForwardArrows.svg:
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser):
+        * UserInterface/Views/FindBanner.css:
+        (.find-banner > button.segmented.left > .glyph):
+        (.find-banner > button.segmented.left:active:not(:disabled) > .glyph):
+        (.find-banner > button.segmented.right > .glyph):
+        (.find-banner > button.segmented.right:active:not(:disabled) > .glyph):
+
+2017-02-20  Brian Burg  <bburg@apple.com>
+
         Web Inspector: RTL: hierarchical path components need spacing and icon adjustments
         https://bugs.webkit.org/show_bug.cgi?id=168581
 

@@ -20,15 +20,15 @@
     </style>
 
     <defs>
-        <symbol id="back-arrow-symbol" viewBox="0 0 10 16"><path fill="inherit" d="M 3.20540064 7.75983283 L 9.3448 1.6244 L 7.7388 0.0174 L -0.0002 7.7514 L 0.0091993759 7.76080523 L 0.0018 7.7682 L 7.7358 15.5072 L 9.3428 13.9012 L 3.20540064 7.75983283 Z"/></symbol>
-        <symbol id="forward-arrow-symbol" viewBox="0 0 10 16"><path fill="inherit" d="M 6.13924933 7.75978283 L 0.0018 13.9012 L 1.6088 15.5072 L 9.3428 7.7682 L 9.33545066 7.76085523 L 9.3449 7.7514 L 1.6059 0.0174 L -0.0001 1.6244 L 6.13924933 7.75978283 Z"/></symbol>
+        <symbol id="left-arrow-symbol" viewBox="0 0 10 16"><path fill="inherit" d="M 3.20540064 7.75983283 L 9.3448 1.6244 L 7.7388 0.0174 L -0.0002 7.7514 L 0.0091993759 7.76080523 L 0.0018 7.7682 L 7.7358 15.5072 L 9.3428 13.9012 L 3.20540064 7.75983283 Z"/></symbol>
+        <symbol id="right-arrow-symbol" viewBox="0 0 10 16"><path fill="inherit" d="M 6.13924933 7.75978283 L 0.0018 13.9012 L 1.6088 15.5072 L 9.3428 7.7682 L 9.33545066 7.76085523 L 9.3449 7.7514 L 1.6059 0.0174 L -0.0001 1.6244 L 6.13924933 7.75978283 Z"/></symbol>
     </defs>
 
-    <svg id="back-arrow-mask"><use fill="currentColor" xlink:href="#back-arrow-symbol"/></svg>
-    <svg id="back-arrow-normal"><use xlink:href="#back-arrow-symbol"/></svg>
-    <svg id="back-arrow-active"><use xlink:href="#back-arrow-symbol"/></svg>
+    <svg id="left-arrow-mask"><use fill="currentColor" xlink:href="#left-arrow-symbol"/></svg>
+    <svg id="left-arrow-normal"><use xlink:href="#left-arrow-symbol"/></svg>
+    <svg id="left-arrow-active"><use xlink:href="#left-arrow-symbol"/></svg>
 
-    <svg id="forward-arrow-mask"><use fill="currentColor" xlink:href="#forward-arrow-symbol"/></svg>
-    <svg id="forward-arrow-normal"><use xlink:href="#forward-arrow-symbol"/></svg>
-    <svg id="forward-arrow-active"><use xlink:href="#forward-arrow-symbol"/></svg>
+    <svg id="right-arrow-mask"><use fill="currentColor" xlink:href="#right-arrow-symbol"/></svg>
+    <svg id="right-arrow-normal"><use xlink:href="#right-arrow-symbol"/></svg>
+    <svg id="right-arrow-active"><use xlink:href="#right-arrow-symbol"/></svg>
 </svg>

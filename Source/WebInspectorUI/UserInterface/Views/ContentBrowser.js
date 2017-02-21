@@ -42,12 +42,17 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
             this._backKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Left, this._backButtonClicked.bind(this), this.element);
             this._forwardKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Right, this._forwardButtonClicked.bind(this), this.element);
 
-            this._backButtonNavigationItem = new WebInspector.ButtonNavigationItem("back", WebInspector.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName), "Images/BackForwardArrows.svg#back-arrow-mask", 8, 13);
+            let leftArrow = "Images/BackForwardArrows.svg#left-arrow-mask";
+            let rightArrow = "Images/BackForwardArrows.svg#right-arrow-mask";
+            let backButtonImage = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? rightArrow : leftArrow;
+            let forwardButtonImage = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? leftArrow : rightArrow;
+
+            this._backButtonNavigationItem = new WebInspector.ButtonNavigationItem("back", WebInspector.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName), backButtonImage, 8, 13);
             this._backButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._backButtonClicked, this);
             this._backButtonNavigationItem.enabled = false;
             this._navigationBar.addNavigationItem(this._backButtonNavigationItem);
 
-            this._forwardButtonNavigationItem = new WebInspector.ButtonNavigationItem("forward", WebInspector.UIString("Forward (%s)").format(this._forwardKeyboardShortcut.displayName), "Images/BackForwardArrows.svg#forward-arrow-mask", 8, 13);
+            this._forwardButtonNavigationItem = new WebInspector.ButtonNavigationItem("forward", WebInspector.UIString("Forward (%s)").format(this._forwardKeyboardShortcut.displayName), forwardButtonImage, 8, 13);
             this._forwardButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._forwardButtonClicked, this);
             this._forwardButtonNavigationItem.enabled = false;
             this._navigationBar.addNavigationItem(this._forwardButtonNavigationItem);
