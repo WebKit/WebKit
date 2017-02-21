@@ -45,10 +45,6 @@ class TransformOperations;
 struct Length;
 
 class FilterOperations;
-
-#if USE(GRAPHICS_SURFACE)
-struct GraphicsSurfaceToken;
-#endif
 }
 
 namespace IPC {
@@ -72,13 +68,6 @@ template<> struct ArgumentCoder<WebCore::TextureMapperAnimation> {
     static void encode(Encoder&, const WebCore::TextureMapperAnimation&);
     static bool decode(Decoder&, WebCore::TextureMapperAnimation&);
 };
-
-#if USE(GRAPHICS_SURFACE)
-template<> struct ArgumentCoder<WebCore::GraphicsSurfaceToken> {
-    static void encode(Encoder&, const WebCore::GraphicsSurfaceToken&);
-    static bool decode(Decoder&, WebCore::GraphicsSurfaceToken&);
-};
-#endif
 
 template<> struct ArgumentCoder<WebCore::SurfaceUpdateInfo> {
     static void encode(Encoder&, const WebCore::SurfaceUpdateInfo&);
