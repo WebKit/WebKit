@@ -1,3 +1,27 @@
+2017-02-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r212681): Crash when dragging links without a drag image
+        https://bugs.webkit.org/show_bug.cgi?id=168648
+
+        Reviewed by Tim Horton.
+
+        This happens in GTK+ port, because we don't use a drag image for links.
+
+        Fixes: editing/pasteboard/drop-link.html
+               editing/pasteboard/drop-text-without-selection.html
+               editing/pasteboard/files-during-page-drags.html
+               fast/events/content-changed-during-drop.html
+               fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html
+               fast/events/drag-and-drop-link-into-focused-contenteditable.html
+               fast/events/drag-and-drop-link.html
+               fast/events/drag-in-frames.html
+               fast/events/drag-parent-node.html
+               fast/events/shift-drag-selection-on-link-triggers-drag-n-drop.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag): Do not try to use drag image and its size when createDragImageForLink
+        returns nullptr.
+
 2017-02-21  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r212699.

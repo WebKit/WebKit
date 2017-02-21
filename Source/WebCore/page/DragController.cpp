@@ -966,13 +966,15 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         if (!dragImage) {
             TextIndicatorData textIndicator;
             dragImage = DragImage { createDragImageForLink(element, linkURL, hitTestResult.textContent(), textIndicator, src.settings().fontRenderingMode(), m_page.deviceScaleFactor()) };
-            IntSize size = dragImageSize(dragImage.get());
-            m_dragOffset = IntPoint(-size.width() / 2, -LinkDragBorderInset);
-            dragLoc = IntPoint(mouseDraggedPoint.x() + m_dragOffset.x(), mouseDraggedPoint.y() + m_dragOffset.y());
-            dragImage = DragImage { platformAdjustDragImageForDeviceScaleFactor(dragImage.get(), m_page.deviceScaleFactor()) };
-            if (textIndicator.contentImage)
-                dragImage.setIndicatorData(textIndicator);
-            dragImageAnchorPoint = FloatPoint { 0.5, static_cast<float>((size.height() - LinkDragBorderInset) / size.height()) };
+            if (dragImage) {
+                IntSize size = dragImageSize(dragImage.get());
+                m_dragOffset = IntPoint(-size.width() / 2, -LinkDragBorderInset);
+                dragLoc = IntPoint(mouseDraggedPoint.x() + m_dragOffset.x(), mouseDraggedPoint.y() + m_dragOffset.y());
+                dragImage = DragImage { platformAdjustDragImageForDeviceScaleFactor(dragImage.get(), m_page.deviceScaleFactor()) };
+                if (textIndicator.contentImage)
+                    dragImage.setIndicatorData(textIndicator);
+                dragImageAnchorPoint = FloatPoint { 0.5, static_cast<float>((size.height() - LinkDragBorderInset) / size.height()) };
+            }
         }
 
         if (mustUseLegacyDragClient) {
