@@ -4034,7 +4034,7 @@ END
 
                     GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
-                    my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $interface, $functionImplementationName);
+                    my $functionString = GenerateParametersCheck(\@implContent, $function, $interface, $functionImplementationName);
                     GenerateImplementationFunctionCall($function, $functionString, "    ", $interface);
                 }
             } else {
@@ -4084,7 +4084,7 @@ END
 
                     GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
-                    my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $interface, $functionImplementationName);
+                    my $functionString = GenerateParametersCheck(\@implContent, $function, $interface, $functionImplementationName);
                     GenerateImplementationFunctionCall($function, $functionString, "    ", $interface);
                 }
             }
@@ -4481,7 +4481,7 @@ sub GenerateCallWithUsingReferences
     my $stateReference = "state";
     my $globalObject = "jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())";
 
-    return GenerateCallWith($callWith, $outputArray, $returnValue, $function, $statePointer, $stateReference, $globalObject);
+    return GenerateCallWith($callWith, $outputArray, $returnValue, $returnValue, $function, $statePointer, $stateReference, $globalObject, $globalObject);
 }
 
 # FIXME: We should remove GenerateCallWithUsingPointers and combine GenerateCallWithUsingReferences and GenerateCallWith
@@ -4493,12 +4493,25 @@ sub GenerateCallWithUsingPointers
     my $stateReference = "*state";
     my $globalObject = "jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())";
 
-    return GenerateCallWith($callWith, $outputArray, $returnValue, $function, $statePointer, $stateReference, $globalObject);
+    return GenerateCallWith($callWith, $outputArray, $returnValue, $returnValue, $function, $statePointer, $stateReference, $globalObject, $globalObject);
+}
+
+sub GenerateConstructorCallWithUsingPointers
+{
+    my ($callWith, $outputArray, $visibleInterfaceName, $function) = @_;
+
+    my $statePointer = "state";
+    my $stateReference = "*state";
+    my $globalObject = "castedThis->globalObject()";
+    my $contextMissing = "throwConstructorScriptExecutionContextUnavailableError(*state, throwScope, \"${visibleInterfaceName}\")";
+    my $scriptExecutionContextAccessor = "castedThis";
+
+    return GenerateCallWith($callWith, $outputArray, "", $contextMissing, $function, $statePointer, $stateReference, $globalObject, $scriptExecutionContextAccessor);
 }
 
 sub GenerateCallWith
 {
-    my ($callWith, $outputArray, $returnValue, $function, $statePointer, $stateReference, $globalObject) = @_;
+    my ($callWith, $outputArray, $returnValue, $contextMissing, $function, $statePointer, $stateReference, $globalObject, $scriptExecutionContextAccessor) = @_;
 
     return () unless $callWith;
 
@@ -4506,16 +4519,16 @@ sub GenerateCallWith
     push(@callWithArgs, $stateReference) if $codeGenerator->ExtendedAttributeContains($callWith, "ScriptState");
     push(@callWithArgs, "*${globalObject}") if $codeGenerator->ExtendedAttributeContains($callWith, "GlobalObject");
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptExecutionContext")) {
-        push(@$outputArray, "    auto* context = $globalObject->scriptExecutionContext();\n");
-        push(@$outputArray, "    if (!context)\n");
-        push(@$outputArray, "        return" . ($returnValue ? " " . $returnValue : "") . ";\n");
+        push(@$outputArray, "    auto* context = ${scriptExecutionContextAccessor}->scriptExecutionContext();\n");
+        push(@$outputArray, "    if (UNLIKELY(!context))\n");
+        push(@$outputArray, "        return" . ($contextMissing ? " " . $contextMissing : "") . ";\n");
         push(@callWithArgs, "*context");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "Document")) {
         $implIncludes{"Document.h"} = 1;
-        push(@$outputArray, "    auto* context = $globalObject->scriptExecutionContext();\n");
-        push(@$outputArray, "    if (!context)\n");
-        push(@$outputArray, "        return" . ($returnValue ? " " . $returnValue : "") . ";\n");
+        push(@$outputArray, "    auto* context = ${scriptExecutionContextAccessor}->scriptExecutionContext();\n");
+        push(@$outputArray, "    if (UNLIKELY(!context))\n");
+        push(@$outputArray, "        return" . ($contextMissing ? " " . $contextMissing : "") . ";\n");
         push(@$outputArray, "    ASSERT(context->isDocument());\n");
         push(@$outputArray, "    auto& document = downcast<Document>(*context);\n");
         push(@callWithArgs, "document");
@@ -4537,17 +4550,14 @@ sub GenerateCallWith
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ActiveWindow")) {
         $implIncludes{"JSDOMWindowBase.h"} = 1;
         push(@callWithArgs, "activeDOMWindow($statePointer)");
-        
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "FirstWindow")) {
         $implIncludes{"JSDOMWindowBase.h"} = 1;
         push(@callWithArgs, "firstDOMWindow($statePointer)");
-        
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "CallerWindow")) {
         $implIncludes{"JSDOMWindowBase.h"} = 1;
         push(@callWithArgs, "callerDOMWindow($statePointer)");
-        
     }
 
     return @callWithArgs;
@@ -4632,29 +4642,32 @@ sub GenerateParametersCheck
 
     my $interfaceName = $interface->type->name;
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
-    my @arguments;
-    my $functionName;
     my $implementedBy = $function->extendedAttributes->{ImplementedBy};
     my $numArguments = @{$function->arguments};
     my $conditional = $function->extendedAttributes->{Conditional};
+    my $isConstructor = $function->extendedAttributes->{Constructor} || $function->extendedAttributes->{NamedConstructor};
+
+    my @arguments;
+    my $functionName;
 
     if ($implementedBy) {
         AddToImplIncludes("${implementedBy}.h", $conditional);
         unshift(@arguments, "impl") if !$function->isStatic;
         $functionName = "WebCore::${implementedBy}::${functionImplementationName}";
-    } elsif ($function->isStatic) {
+    } elsif ($function->isStatic || $isConstructor) {
         $functionName = "${interfaceName}::${functionImplementationName}";
     } else {
         $functionName = "impl.${functionImplementationName}";
     }
 
     my $quotedFunctionName;
-    if (!$function->extendedAttributes->{Constructor}) {
+    if (!$isConstructor) {
         my $name = $function->name;
         $quotedFunctionName = "\"$name\"";
         push(@arguments, GenerateCallWithUsingPointers($function->extendedAttributes->{CallWith}, \@$outputArray, "JSValue::encode(jsUndefined())", $function));
     } else {
         $quotedFunctionName = "nullptr";
+        push(@arguments, GenerateConstructorCallWithUsingPointers($function->extendedAttributes->{ConstructorCallWith}, \@$outputArray, $visibleInterfaceName, $function));
     }
 
     my $argumentIndex = 0;
@@ -4783,7 +4796,7 @@ sub GenerateParametersCheck
     my $functionString = "$functionName(" . join(", ", @arguments) . ")";
     $functionString = "propagateException(*state, throwScope, $functionString)" if NeedsExplicitPropagateExceptionCall($function);
 
-    return ($functionString, scalar @arguments);
+    return $functionString;
 }
 
 sub GenerateDictionaryHeader
@@ -6092,53 +6105,14 @@ sub GenerateConstructorDefinition
             push(@$outputArray, "    auto* castedThis = jsCast<${constructorClassName}*>(state->jsCallee());\n");
             push(@$outputArray, "    ASSERT(castedThis);\n");
 
-            my @constructorArgList;
-
             $implIncludes{"<runtime/Error.h>"} = 1;
 
             GenerateArgumentsCountCheck($outputArray, $function, $interface);
 
-            # FIXME: For now, we do not support SVG constructors.
-            # FIXME: Currently [Constructor(...)] does not yet support optional arguments without [Default=...]
-            my ($dummy, $paramIndex) = GenerateParametersCheck($outputArray, $function, $interface, "constructorCallback");
+            my $functionImplementationName = $generatingNamedConstructor ? "createForJSConstructor" : "create";
+            my $functionString = GenerateParametersCheck($outputArray, $function, $interface, $functionImplementationName);
 
-            push(@constructorArgList, "*state") if $codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{ConstructorCallWith}, "ScriptState");;
-
-            if ($codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{ConstructorCallWith}, "ScriptExecutionContext")) {
-                push(@constructorArgList, "*context");
-                push(@$outputArray, "    ScriptExecutionContext* context = castedThis->scriptExecutionContext();\n");
-                push(@$outputArray, "    if (UNLIKELY(!context))\n");
-                push(@$outputArray, "        return throwConstructorScriptExecutionContextUnavailableError(*state, throwScope, \"${visibleInterfaceName}\");\n");
-            }
-
-            if ($codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{ConstructorCallWith}, "Document")) {
-                $implIncludes{"Document.h"} = 1;
-                push(@constructorArgList, "document");
-                push(@$outputArray, "    ScriptExecutionContext* context = castedThis->scriptExecutionContext();\n");
-                push(@$outputArray, "    if (UNLIKELY(!context))\n");
-                push(@$outputArray, "        return throwConstructorScriptExecutionContextUnavailableError(*state, throwScope, \"${visibleInterfaceName}\");\n");
-                push(@$outputArray, "    ASSERT(context->isDocument());\n");
-                push(@$outputArray, "    auto& document = downcast<Document>(*context);\n");
-            }
-
-            push(@constructorArgList, "*castedThis->document()") if $generatingNamedConstructor;
-
-            my $index = 0;
-            foreach my $argument (@{$function->arguments}) {
-                last if $index eq $paramIndex;
-
-                push(@constructorArgList, PassArgumentExpression($argument->name, $argument));
-
-                $index++;
-            }
-
-            my $constructorArg = join(", ", @constructorArgList);
-            if ($generatingNamedConstructor) {
-                push(@$outputArray, "    auto object = ${interfaceName}::createForJSConstructor(${constructorArg});\n");
-            } else {
-                push(@$outputArray, "    auto object = ${interfaceName}::create(${constructorArg});\n");
-            }
-
+            push(@$outputArray, "    auto object = ${functionString};\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{ConstructorCallWith}, "ScriptState");
 
             my $IDLType = GetIDLType($interface, $interface->type);

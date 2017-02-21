@@ -229,13 +229,13 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(Ex
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto* context = castedThis->scriptExecutionContext();
+    if (UNLIKELY(!context))
+        return throwConstructorScriptExecutionContextUnavailableError(*state, throwScope, "TestInterface");
     auto str1 = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto str2 = state->argument(1).isUndefined() ? ASCIILiteral("defaultString") : convert<IDLDOMString>(*state, state->uncheckedArgument(1), StringConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    ScriptExecutionContext* context = castedThis->scriptExecutionContext();
-    if (UNLIKELY(!context))
-        return throwConstructorScriptExecutionContextUnavailableError(*state, throwScope, "TestInterface");
     auto object = TestInterface::create(*context, WTFMove(str1), WTFMove(str2));
     return JSValue::encode(toJSNewlyCreated<IDLInterface<TestInterface>>(*state, *castedThis->globalObject(), throwScope, WTFMove(object)));
 }
@@ -867,7 +867,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMeth
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
     auto strArg = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -942,7 +942,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMe
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
     auto strArg = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());

@@ -21,6 +21,7 @@
 [
     ConstructorMayThrowException,
     JSGenerateToNativeObject,
+    ConstructorCallWith=Document,
     NamedConstructor=Option(optional DOMString data, optional DOMString value, optional boolean defaultSelected = false, optional boolean selected = false),
 ] interface HTMLOptionElement : HTMLElement {
     [Reflect] attribute boolean disabled;

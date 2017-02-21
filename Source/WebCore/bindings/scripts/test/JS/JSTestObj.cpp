@@ -1550,15 +1550,15 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::construct(ExecStat
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto testCallback = convert<IDLCallbackInterface<JSTestCallbackInterface>>(*state, state->uncheckedArgument(0), *castedThis->globalObject(), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(state, scope, 0, "testCallback", "TestObject", nullptr); });
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto testCallbackFunction = convert<IDLCallbackFunction<JSTestCallbackFunction>>(*state, state->uncheckedArgument(1), *castedThis->globalObject(), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(state, scope, 1, "testCallbackFunction", "TestObject", nullptr); });
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    ScriptExecutionContext* context = castedThis->scriptExecutionContext();
+    auto* context = castedThis->scriptExecutionContext();
     if (UNLIKELY(!context))
         return throwConstructorScriptExecutionContextUnavailableError(*state, throwScope, "TestObject");
     ASSERT(context->isDocument());
     auto& document = downcast<Document>(*context);
+    auto testCallback = convert<IDLCallbackInterface<JSTestCallbackInterface>>(*state, state->uncheckedArgument(0), *castedThis->globalObject(), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(state, scope, 0, "testCallback", "TestObject", nullptr); });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto testCallbackFunction = convert<IDLCallbackFunction<JSTestCallbackFunction>>(*state, state->uncheckedArgument(1), *castedThis->globalObject(), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(state, scope, 1, "testCallbackFunction", "TestObject", nullptr); });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestObj::create(document, testCallback.releaseNonNull(), testCallbackFunction.releaseNonNull());
     return JSValue::encode(toJSNewlyCreated<IDLInterface<TestObj>>(*state, *castedThis->globalObject(), WTFMove(object)));
 }
@@ -2924,7 +2924,7 @@ static inline JSValue jsTestObjWithScriptExecutionContextAttributeGetter(ExecSta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return jsUndefined();
     auto& impl = thisObject.wrapped();
     JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), impl.withScriptExecutionContextAttribute(*context));
@@ -2959,7 +2959,7 @@ static inline JSValue jsTestObjWithScriptExecutionContextAttributeRaisesGetter(E
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return jsUndefined();
     auto& impl = thisObject.wrapped();
     JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), throwScope, impl.withScriptExecutionContextAttributeRaises(*context));
@@ -2978,7 +2978,7 @@ static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttribute
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return jsUndefined();
     auto& impl = thisObject.wrapped();
     JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), impl.withScriptExecutionContextAndScriptStateAttribute(state, *context));
@@ -2997,7 +2997,7 @@ static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttribute
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return jsUndefined();
     auto& impl = thisObject.wrapped();
     JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), throwScope, impl.withScriptExecutionContextAndScriptStateAttributeRaises(state, *context));
@@ -3016,7 +3016,7 @@ static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpace
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return jsUndefined();
     auto& impl = thisObject.wrapped();
     JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), impl.withScriptExecutionContextAndScriptStateWithSpacesAttribute(state, *context));
@@ -4584,7 +4584,7 @@ static inline bool setJSTestObjWithScriptExecutionContextAttributeFunction(ExecS
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "withScriptExecutionContextAttribute", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return false;
     impl.setWithScriptExecutionContextAttribute(*context, *nativeValue);
     return true;
@@ -4625,7 +4625,7 @@ static inline bool setJSTestObjWithScriptExecutionContextAttributeRaisesFunction
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "withScriptExecutionContextAttributeRaises", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return false;
     impl.setWithScriptExecutionContextAttributeRaises(*context, *nativeValue);
     return true;
@@ -4647,7 +4647,7 @@ static inline bool setJSTestObjWithScriptExecutionContextAndScriptStateAttribute
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "withScriptExecutionContextAndScriptStateAttribute", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return false;
     impl.setWithScriptExecutionContextAndScriptStateAttribute(state, *context, *nativeValue);
     return true;
@@ -4669,7 +4669,7 @@ static inline bool setJSTestObjWithScriptExecutionContextAndScriptStateAttribute
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "withScriptExecutionContextAndScriptStateAttributeRaises", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return false;
     impl.setWithScriptExecutionContextAndScriptStateAttributeRaises(state, *context, *nativeValue);
     return true;
@@ -4691,7 +4691,7 @@ static inline bool setJSTestObjWithScriptExecutionContextAndScriptStateWithSpace
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "withScriptExecutionContextAndScriptStateWithSpacesAttribute", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return false;
     impl.setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(state, *context, *nativeValue);
     return true;
@@ -6039,7 +6039,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionC
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
     impl.withScriptExecutionContext(*context);
     return JSValue::encode(jsUndefined());
@@ -6058,7 +6058,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionC
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
     impl.withScriptExecutionContextAndScriptState(*state, *context);
     return JSValue::encode(jsUndefined());
@@ -6077,7 +6077,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionC
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(toJS<IDLInterface<TestObj>>(*state, *castedThis->globalObject(), throwScope, impl.withScriptExecutionContextAndScriptStateObjException(*state, *context)));
 }
@@ -6095,7 +6095,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionC
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(toJS<IDLInterface<TestObj>>(*state, *castedThis->globalObject(), impl.withScriptExecutionContextAndScriptStateWithSpaces(*state, *context)));
 }
@@ -6130,7 +6130,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithDocumentArgument
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
-    if (!context)
+    if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
     ASSERT(context->isDocument());
     auto& document = downcast<Document>(*context);

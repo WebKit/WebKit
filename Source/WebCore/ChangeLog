@@ -1,3 +1,40 @@
+2017-02-20  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add support for constructors that have variadic parameters
+        https://bugs.webkit.org/show_bug.cgi?id=168614
+
+        Reviewed by Alex Christensen.
+
+        In preparation of removing some more custom bindings, move the constructor calling
+        code over to using GenerateParametersCheck completely. This required
+        - Removing special case of NamedConstructors automatically getting a Document passed
+          to them. The three named constructors that expected this have been updated to add
+          the required attributes.
+        - Add a version of the GenerateCallWith prologue for constructors.
+        - Remove now unnecessary argumentCount return value from GenerateParametersCheck.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateCallWithUsingReferences):
+        (GenerateCallWithUsingPointers):
+        (GenerateConstructorCallWithUsingPointers):
+        (GenerateCallWith):
+        (GenerateParametersCheck):
+        (GenerateConstructorDefinition):
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        Update results for more consistent placement of ScriptExecutionContext and Document
+        accessors, add UNLIKELY to context checks, and remove automatic Document passing
+        for NamedConstructors.
+
+        * html/HTMLAudioElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLOptionElement.idl:
+        Add ConstructorCallWith=Document.
+
 2017-02-20  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add alternate classification method
