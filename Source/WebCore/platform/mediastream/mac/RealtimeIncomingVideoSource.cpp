@@ -110,14 +110,14 @@ void RealtimeIncomingVideoSource::OnFrame(const webrtc::VideoFrame& frame)
     CMVideoFormatDescriptionRef formatDescription;
     OSStatus ostatus = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, &formatDescription);
     if (ostatus != noErr) {
-        LOG_ERROR("Failed to initialize CMVideoFormatDescription: %d", ostatus);
+        LOG_ERROR("Failed to initialize CMVideoFormatDescription: %d", static_cast<int>(ostatus));
         return;
     }
 
     CMSampleBufferRef sampleBuffer;
     ostatus = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, formatDescription, &timingInfo, &sampleBuffer);
     if (ostatus != noErr) {
-        LOG_ERROR("Failed to create the sample buffer: %d", ostatus);
+        LOG_ERROR("Failed to create the sample buffer: %d", static_cast<int>(ostatus));
         return;
     }
     CFRelease(formatDescription);
