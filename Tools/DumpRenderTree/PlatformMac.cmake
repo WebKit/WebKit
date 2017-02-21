@@ -73,7 +73,6 @@ list(APPEND DumpRenderTree_ObjC_SOURCES
     DumpRenderTreeFileDraggingSource.m
 
     mac/AppleScriptController.m
-    mac/DumpRenderTreePasteboard.m
     mac/NavigationController.m
     mac/ObjCController.m
     mac/ObjCPlugin.m
@@ -96,6 +95,7 @@ list(APPEND DumpRenderTree_ObjCpp_SOURCES
     mac/DumpRenderTree.mm
     mac/DumpRenderTreeDraggingInfo.mm
     mac/DumpRenderTreeMain.mm
+    mac/DumpRenderTreePasteboard.mm
     mac/DumpRenderTreeSpellChecker.mm
     mac/DumpRenderTreeWindow.mm
     mac/EditingDelegate.mm

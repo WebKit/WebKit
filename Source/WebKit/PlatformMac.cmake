@@ -188,7 +188,7 @@ list(APPEND WebKit_SOURCES
     mac/Misc/WebKitLogging.m
     mac/Misc/WebKitNSStringExtras.mm
     mac/Misc/WebKitStatistics.m
-    mac/Misc/WebKitVersionChecks.m
+    mac/Misc/WebKitVersionChecks.mm
     mac/Misc/WebLocalizableStrings.mm
     mac/Misc/WebLocalizableStringsInternal.mm
     mac/Misc/WebNSControlExtras.m
@@ -372,7 +372,6 @@ set(C99_FILES
     mac/Misc/WebKitLogging.m
     mac/Misc/WebKitStatistics.m
     mac/Misc/WebKitSystemBits.m
-    mac/Misc/WebKitVersionChecks.m
     mac/Misc/WebNSArrayExtras.m
     mac/Misc/WebNSControlExtras.m
     mac/Misc/WebNSDataExtras.m
