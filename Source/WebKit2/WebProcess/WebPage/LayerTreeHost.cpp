@@ -31,8 +31,6 @@
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
 #include "ThreadedCoordinatedLayerTreeHost.h"
-#elif PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
-#include "LayerTreeHostGtk.h"
 #endif
 
 using namespace WebCore;
@@ -43,8 +41,6 @@ RefPtr<LayerTreeHost> LayerTreeHost::create(WebPage& webPage)
 {
 #if USE(COORDINATED_GRAPHICS_THREADED)
     return ThreadedCoordinatedLayerTreeHost::create(webPage);
-#elif PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
-    return LayerTreeHostGtk::create(webPage);
 #else
     UNUSED_PARAM(webPage);
     return nullptr;

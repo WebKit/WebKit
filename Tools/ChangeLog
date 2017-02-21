@@ -1,3 +1,12 @@
+2017-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remove ENABLE_THREADED_COMPOSITOR build option
+        https://bugs.webkit.org/show_bug.cgi?id=168606
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2017-02-20  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC][Mac] Activate libwebrtc
