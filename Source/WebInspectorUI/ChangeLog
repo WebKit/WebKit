@@ -1,3 +1,15 @@
+2017-02-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RTL: console scope bar's unread message indicator is misaligned
+        https://bugs.webkit.org/show_bug.cgi?id=168625
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/LogContentView.css:
+        (.log-scope-bar > li.unread::before):
+        (body[dir=ltr] .log-scope-bar > li.unread::before):
+        (body[dir=rtl] .log-scope-bar > li.unread::before):
+
 2017-02-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Tooltip for "Show console tab" should read "Show Console tab"

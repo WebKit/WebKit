@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,19 @@
 
     -webkit-clip-path: circle(50% at 50% 50%);
     animation: unread-background-pulse 1.5s ease-in-out infinite alternate-reverse;
+
+    --unread-indicator-margin-start: -10px;
+    --unread-indicator-margin-end: 2px;
+}
+
+body[dir=ltr] .log-scope-bar > li.unread::before {
+    margin-left: var(--unread-indicator-margin-start);
+    margin-right: var(--unread-indicator-margin-end);
+}
+
+body[dir=rtl] .log-scope-bar > li.unread::before {
+    margin-left: var(--unread-indicator-margin-end);
+    margin-right: var(--unread-indicator-margin-start);
 }
 
 .log-scope-bar > li.unread:hover::before {
