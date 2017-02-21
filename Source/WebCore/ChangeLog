@@ -1,3 +1,21 @@
+2017-02-21  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (203941): iAd Producer: Clicking buttons in Preview does not work
+        https://bugs.webkit.org/show_bug.cgi?id=168677
+        <rdar://problem/30640101>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add quirk to initMouseEvent to unbreak iAd Producer.
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::initMouseEventQuirk):
+        * dom/MouseEvent.h:
+        * dom/MouseEvent.idl:
+        * platform/RuntimeApplicationChecks.h:
+        * platform/RuntimeApplicationChecks.mm:
+        (WebCore::MacApplication::isIADProducer):
+
 2017-02-21  Jer Noble  <jer.noble@apple.com>
 
         AudioSampleDataSource doesn't need to use the m_scratchBuffer on the pulling thread
