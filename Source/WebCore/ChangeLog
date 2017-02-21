@@ -1,3 +1,22 @@
+2017-02-21  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r212667. rdar://problem/29852056
+
+    2017-02-20  Brent Fulgham  <bfulgham@apple.com>
+
+            Nullptr dereferences when stopping a load
+            https://bugs.webkit.org/show_bug.cgi?id=168608
+            <rdar://problem/29852056>
+
+            Reviewed by Ryosuke Niwa.
+
+            Don't attempt to notify a detached frame's load client that the load is
+            stopped.
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::stopLoading): Check for null frame loader and
+            bypass dereferencing it.
+
 2017-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r212218): Assertion failures in and after parserRemoveChild
