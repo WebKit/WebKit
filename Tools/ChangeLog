@@ -1,3 +1,14 @@
+2017-02-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Improve bot watcher's dashboard performance
+        https://bugs.webkit.org/show_bug.cgi?id=168624
+        <rdar://problem/30190109>
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Trac.js:
+        There was an unnecessary linear complexity algorithm in indexOfRevision().
+
 2017-02-21  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r212699.

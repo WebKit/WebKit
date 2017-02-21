@@ -37,6 +37,7 @@ Trac = function(baseURL, options)
     }
 
     this.recordedCommits = []; // Will be sorted in ascending order.
+    this.recordedCommitIndicesByRevisionNumber = {};
 };
 
 BaseObject.addConstructorFunctions(Trac);
@@ -223,11 +224,6 @@ Trac.prototype = {
         if (!dataDocument)
             return;
 
-        var recordedRevisionNumbers = this.recordedCommits.reduce(function(previousResult, commit) {
-            previousResult[commit.revisionNumber] = commit;
-            return previousResult;
-        }, {});
-
         var knownCommitsWereUpdated = false;
         var newCommits = [];
 
@@ -235,19 +231,25 @@ Trac.prototype = {
         var commitInfoElement;
         while (commitInfoElement = commitInfoElements.iterateNext()) {
             var commit = this._convertCommitInfoElementToObject(dataDocument, commitInfoElement);
-            if (commit.revisionNumber in recordedRevisionNumbers) {
+            var knownCommitIndex = this.recordedCommitIndicesByRevisionNumber[commit.revisionNumber];
+            if (knownCommitIndex >= 0) {
                 // Author could have changed, as commit queue replaces it after the fact.
-                console.assert(recordedRevisionNumbers[commit.revisionNumber].revisionNumber === commit.revisionNumber);
-                if (recordedRevisionNumbers[commit.revisionNumber].author != commit.author) {
-                    recordedRevisionNumbers[commit.revisionNumber].author = commit.author;
+                console.assert(this.recordedCommits[knownCommitIndex].revisionNumber === commit.revisionNumber);
+                if (this.recordedCommits[knownCommitIndex].author != commit.author) {
+                    this.recordedCommits[knownCommitIndex].author = commit.author;
                     knownCommitWasUpdated = true;
                 }
             } else
                 newCommits.push(commit);
         }
 
-        if (newCommits.length)
+        if (newCommits.length) {
             this.recordedCommits = newCommits.concat(this.recordedCommits).sort(function(a, b) { return a.date - b.date; });
+            this.recordedCommitIndicesByRevisionNumber = {};
+            this.recordedCommits.forEach(function(curentValue, index) {
+                this.recordedCommitIndicesByRevisionNumber[curentValue.revisionNumber] = index;
+            }, this);
+        }
 
         if (newCommits.length || knownCommitsWereUpdated)
             this.dispatchEventToListeners(Trac.Event.CommitsUpdated, null);
@@ -318,13 +320,12 @@ Trac.prototype = {
         return Trac.NO_MORE_REVISIONS;
     },
 
-    indexOfRevision: function(revision)
+    indexOfRevision: function(revisionNumber)
     {
-        var commits = this.recordedCommits;
-        for (var i = 0; i < commits.length; ++i) {
-            if (commits[i].revisionNumber === revision)
-                return i;
-        }
-        return -1;
+        var result = this.recordedCommitIndicesByRevisionNumber[revisionNumber];
+        // FIXME: Update callers to handle undefined result.
+        if (result === undefined)
+            return -1;
+        return result;
     },
 };
