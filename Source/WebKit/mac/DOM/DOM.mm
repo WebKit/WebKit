@@ -210,7 +210,9 @@ static inline WKQuad zeroQuad()
     return { CGPointZero, CGPointZero, CGPointZero, CGPointZero };
 }
 
-@implementation WKQuadObject
+@implementation WKQuadObject {
+    WKQuad _quad;
+}
 
 - (id)initWithQuad:(WKQuad)quad
 {
