@@ -35,7 +35,7 @@
 #if ASAN_ENABLED
 extern "C" void __asan_poison_memory_region(void const volatile *addr, size_t size);
 extern "C" void __asan_unpoison_memory_region(void const volatile *addr, size_t size);
-extern "C" bool __asan_address_is_poisoned(void const volatile *addr);
+extern "C" int __asan_address_is_poisoned(void const volatile *addr);
 #endif
 
 namespace WTF {
