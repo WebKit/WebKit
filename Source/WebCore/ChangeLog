@@ -1,5 +1,23 @@
 2017-02-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212730. rdar://problem/30515072
+
+    2017-02-21  Per Arne Vollan  <pvollan@apple.com>
+
+            [Win] WebView is not painting in accelerated compositing mode.
+            https://bugs.webkit.org/show_bug.cgi?id=168654
+
+            Reviewed by Brent Fulgham.
+
+            Initializing the uncommitted layer change flags to CoverageRectChanged in GraphicsLayerCA,
+            stops WebView painting in accelerated mode.
+
+            Covered by existing tests.
+
+            * platform/graphics/ca/GraphicsLayerCA.h:
+
+2017-02-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212831. rdar://problem/30628889
 
     2017-02-22  Per Arne Vollan  <pvollan@apple.com>
