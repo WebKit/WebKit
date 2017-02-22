@@ -1,3 +1,36 @@
+2017-02-22  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Set the pagination strut on the flow when the first line does not fit the page.
+        https://bugs.webkit.org/show_bug.cgi?id=168738
+        <rdar://problem/30659469>
+
+        Reviewed by Antti Koivisto.
+
+        The pagination strut for the first line is tracked by the parent RenderBlockFlow and not by
+        the line itself (see RenderBlockFlow::adjustLinePositionForPagination()). Also renamed *PaginationStrut* to
+        *LineStrut* to make sure we don't confuse it with the block level strut.
+
+        Not enabled yet.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::computeLineTopAndBottomWithOverflow):
+        (WebCore::SimpleLineLayout::computeLineBreakIndex):
+        (WebCore::SimpleLineLayout::setPageBreakForLine):
+        (WebCore::SimpleLineLayout::adjustLinePositionsForPagination):
+        (WebCore::SimpleLineLayout::create):
+        (WebCore::SimpleLineLayout::Layout::create):
+        (WebCore::SimpleLineLayout::Layout::Layout):
+        * rendering/SimpleLineLayout.h:
+        (WebCore::SimpleLineLayout::Layout::hasLineStruts):
+        (WebCore::SimpleLineLayout::Layout::struts):
+        (WebCore::SimpleLineLayout::Layout::hasPaginationStruts): Deleted.
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        * rendering/SimpleLineLayoutFunctions.h:
+        (WebCore::SimpleLineLayout::computeFlowHeight):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::computeBaselinePosition):
+
 2017-02-22  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Disable libwebrtc stderr logging in release mode
