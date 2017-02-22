@@ -692,6 +692,14 @@ media/session [ Skip ]
 # WebRTC backend not enabled by default.
 webrtc [ Skip ]
 fast/mediastream/getUserMedia-webaudio.html [ Skip ]
+fast/mediastream/RTCPeerConnection-AddRemoveStream.html [ Skip ]
+fast/mediastream/RTCPeerConnection-closed-state.html [ Skip ]
+fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Skip ]
+fast/mediastream/RTCPeerConnection-more-media-to-negotiate.html [ Skip ]
+fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Skip ]
+fast/mediastream/RTCPeerConnection-overloaded-operations-params.html [ Skip ]
+fast/mediastream/RTCRtpSender-replaceTrack.html [ Skip ]
+fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Pass Failure ]
 
 # Only iOS WK1 has testRunner.setPagePaused.
 fast/dom/timer-fire-after-page-pause.html [ Skip ]

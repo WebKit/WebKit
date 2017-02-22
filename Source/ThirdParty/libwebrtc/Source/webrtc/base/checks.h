@@ -211,7 +211,7 @@ DEFINE_RTC_CHECK_OP_IMPL(Gt)
 #endif
 
 // This is identical to LogMessageVoidify but in name.
-class WEBRTC_EXPORT FatalMessageVoidify {
+class FatalMessageVoidify {
  public:
   FatalMessageVoidify() { }
   // This has to be an operator with a precedence lower than << but

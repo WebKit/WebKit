@@ -1,9 +1,5 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Can send empty strings across a WebRTC data channel. Test timed out
+FAIL Can send empty strings across a WebRTC data channel. assert_unreached: Error TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription Reached unreachable code
 Messages exchanged
 
-Sent: [empty string]
-Sent: "done"
 

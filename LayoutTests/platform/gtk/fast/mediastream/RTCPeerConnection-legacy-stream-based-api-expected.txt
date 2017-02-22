@@ -48,6 +48,11 @@ PASS pc.getLocalStreams().length is 1
 Test applying a remote description offering a stream with two tracks
 Create remote offer
 Got remote offer, set it
+PASS Got 'addstream' event (before setRemoteDescription promise fulfilled)
+PASS remoteStream.getTracks().length is 2
+PASS pc.getRemoteStreams().length is 1
+PASS pc.getRemoteStreams()[0] is remoteStream
+PASS pc.getStreamById(remoteStream.id) is remoteStream
 Remote offer set
 PASS End of test promise chain
 

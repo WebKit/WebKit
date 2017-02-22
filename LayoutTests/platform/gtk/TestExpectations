@@ -340,6 +340,15 @@ webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disa
 webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure ]
 webkit.org/b/161956 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
 
+# Test skipped in the main expectation file.
+fast/mediastream/RTCPeerConnection-AddRemoveStream.html [ Pass ]
+fast/mediastream/RTCPeerConnection-closed-state.html [ Pass ]
+fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Pass ]
+fast/mediastream/RTCPeerConnection-more-media-to-negotiate.html [ Pass ]
+fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Pass ]
+fast/mediastream/RTCPeerConnection-overloaded-operations-params.html [ Pass ]
+fast/mediastream/RTCRtpSender-replaceTrack.html [ Pass ]
+
 # Proximity Events is not supported.
 webkit.org/b/99060 proximity [ Failure ]
 webkit.org/b/99060 proximity/event-after-navigation.html [ Timeout ]

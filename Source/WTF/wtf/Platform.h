@@ -1213,4 +1213,8 @@
 #define HAVE_CORE_PREDICTION 1
 #endif
 
+#if PLATFORM(MAC) && ENABLE(WEB_RTC)
+#define USE_LIBWEBRTC 1
+#endif
+
 #endif /* WTF_Platform_h */

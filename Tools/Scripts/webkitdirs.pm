@@ -2137,6 +2137,8 @@ sub setupMacWebKitEnvironment($)
 
     prependToEnvironmentVariableList("DYLD_FRAMEWORK_PATH", $dyldFrameworkPath);
     prependToEnvironmentVariableList("__XPC_DYLD_FRAMEWORK_PATH", $dyldFrameworkPath);
+    prependToEnvironmentVariableList("DYLD_LIBRARY_PATH", $dyldFrameworkPath);
+    prependToEnvironmentVariableList("__XPC_DYLD_LIBRARY_PATH", $dyldFrameworkPath);
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
 
     setUpGuardMallocIfNeeded();

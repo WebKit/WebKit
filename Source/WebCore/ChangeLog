@@ -1,3 +1,14 @@
+2017-02-21  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC][Mac] Activate libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=167293
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/WebCore.xcconfig:
+        * Configurations/WebCoreTestSupport.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-02-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WinCairo build after r212703.

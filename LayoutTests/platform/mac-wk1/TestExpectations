@@ -94,6 +94,9 @@ fast/mediastream
 http/tests/media/media-stream
 http/tests/ssl/media-stream
 
+# Skip WebRTC for now in WK1
+imported/w3c/web-platform-tests/webrtc [ Skip ]
+
 # These tests test the Shadow DOM based HTML form validation UI but Mac WK1 is using native dialogs instead.
 fast/forms/validation-message-on-listbox.html
 fast/forms/validation-message-on-menulist.html
