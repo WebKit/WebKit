@@ -1,5 +1,11 @@
 2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Mark http/tests/media/video-redirect.html as timing out.
+
+        * platform/gtk/TestExpectations:
+
+2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Remove duplicated entries.
 
         * platform/gtk/TestExpectations:
