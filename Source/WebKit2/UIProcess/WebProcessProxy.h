@@ -54,8 +54,8 @@ struct PluginInfo;
 
 namespace WebKit {
 
+class BackgroundProcessResponsivenessTimer;
 class NetworkProcessProxy;
-class UnresponsiveWebProcessTerminator;
 class WebBackForwardListItem;
 class WebPageGroup;
 class WebProcessPool;
@@ -255,7 +255,7 @@ private:
     Vector<std::function<void(bool webProcessIsResponsive)>> m_isResponsiveCallbacks;
 
     VisibleWebPageCounter m_visiblePageCounter;
-    std::unique_ptr<UnresponsiveWebProcessTerminator> m_backgroundResponsivenessTimer;
+    std::unique_ptr<BackgroundProcessResponsivenessTimer> m_backgroundResponsivenessTimer;
 };
 
 } // namespace WebKit

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "UnresponsiveWebProcessTerminator.h"
+#include "BackgroundProcessResponsivenessTimer.h"
 
 #include "Logging.h"
 
@@ -33,14 +33,14 @@ namespace WebKit {
 static const std::chrono::seconds initialInterval { 20s };
 static const std::chrono::seconds maximumInterval { 8h };
 
-UnresponsiveWebProcessTerminator::UnresponsiveWebProcessTerminator(WebProcessProxy& webProcessProxy)
+BackgroundProcessResponsivenessTimer::BackgroundProcessResponsivenessTimer(WebProcessProxy& webProcessProxy)
     : m_webProcessProxy(webProcessProxy)
     , m_interval(initialInterval)
-    , m_timer(RunLoop::main(), this, &UnresponsiveWebProcessTerminator::timerFired)
+    , m_timer(RunLoop::main(), this, &BackgroundProcessResponsivenessTimer::timerFired)
 {
 }
 
-void UnresponsiveWebProcessTerminator::updateState()
+void BackgroundProcessResponsivenessTimer::updateState()
 {
     if (!shouldBeActive()) {
         if (m_timer.isActive()) {
@@ -54,17 +54,10 @@ void UnresponsiveWebProcessTerminator::updateState()
         m_timer.startOneShot(m_interval);
 }
 
-static Vector<RefPtr<WebPageProxy>> pagesCopy(WTF::IteratorRange<WebProcessProxy::WebPageProxyMap::const_iterator::Values> pages)
-{
-    Vector<RefPtr<WebPageProxy>> vector;
-    for (auto& page : pages)
-        vector.append(page);
-    return vector;
-}
-
-void UnresponsiveWebProcessTerminator::timerFired()
+void BackgroundProcessResponsivenessTimer::timerFired()
 {
     ASSERT(shouldBeActive());
+    // WebProcessProxy::responsive() takes care of calling processDidBecomeUnresponsive for us.
     m_webProcessProxy.isResponsive([this](bool processIsResponsive) {
         if (processIsResponsive) {
             // Exponential backoff to avoid waking up the process too often.
@@ -73,9 +66,9 @@ void UnresponsiveWebProcessTerminator::timerFired()
             return;
         }
 
-        RELEASE_LOG_ERROR(PerformanceLogging, "Killing a background WebProcess because it is not responsive");
-        for (auto& page : pagesCopy(m_webProcessProxy.pages()))
-            page->terminateProcess(WebPageProxy::TerminationReason::UnresponsiveWhileInBackground);
+        RELEASE_LOG_ERROR(PerformanceLogging, "Notified the client that a background WebProcess has become unresponsive");
+        WTFLogAlways("Notified the client that a background WebProcess has become unresponsive");
+        m_interval = initialInterval;
     });
 }
 

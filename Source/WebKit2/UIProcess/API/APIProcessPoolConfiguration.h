@@ -55,9 +55,6 @@ public:
     bool diskCacheSpeculativeValidationEnabled() const { return m_diskCacheSpeculativeValidationEnabled; }
     void setDiskCacheSpeculativeValidationEnabled(bool enabled) { m_diskCacheSpeculativeValidationEnabled = enabled; }
 
-    bool unresponsiveBackgroundProcessesTerminationEnabled() const { return m_unresponsiveBackgroundProcessesTerminationEnabled; }
-    void setUnresponsiveBackgroundProcessesTerminationEnabled(bool enabled) { m_unresponsiveBackgroundProcessesTerminationEnabled = enabled; }
-
     WebKit::CacheModel cacheModel() const { return m_cacheModel; }
     void setCacheModel(WebKit::CacheModel cacheModel) { m_cacheModel = cacheModel; }
 
@@ -124,7 +121,6 @@ private:
 
     unsigned m_maximumProcessCount { 0 };
     bool m_diskCacheSpeculativeValidationEnabled { false };
-    bool m_unresponsiveBackgroundProcessesTerminationEnabled { false };
     WebKit::CacheModel m_cacheModel { WebKit::CacheModelPrimaryWebBrowser };
     int64_t m_diskCacheSizeOverride { -1 };
 

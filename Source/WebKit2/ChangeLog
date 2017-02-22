@@ -1,3 +1,35 @@
+2017-02-22  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Call processDidBecomeUnresponsive delegate when a background process is unresponsive
+        https://bugs.webkit.org/show_bug.cgi?id=168683
+        <rdar://problem/30558745>
+
+        Reviewed by Dan Bernstein.
+
+        Call processDidBecomeUnresponsive delegate when a background process is unresponsive
+        instead of killing it on WebKit side. This gives the client the choice about what it
+        wants to do about this process.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/BackgroundProcessResponsivenessTimer.cpp: Renamed from Source/WebKit2/UIProcess/UnresponsiveWebProcessTerminator.cpp.
+        (WebKit::BackgroundProcessResponsivenessTimer::BackgroundProcessResponsivenessTimer):
+        (WebKit::BackgroundProcessResponsivenessTimer::updateState):
+        (WebKit::BackgroundProcessResponsivenessTimer::timerFired):
+        * UIProcess/BackgroundProcessResponsivenessTimer.h: Renamed from Source/WebKit2/UIProcess/UnresponsiveWebProcessTerminator.h.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        (WebKit::WebPageProxy::terminateProcess):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::m_backgroundResponsivenessTimer):
+        * UIProcess/WebProcessProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         NetworkProcess: Stop disabling buffering when NETWORK_CACHE is disabled in build

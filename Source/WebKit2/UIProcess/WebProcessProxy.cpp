@@ -29,6 +29,7 @@
 #include "APIFrameHandle.h"
 #include "APIPageGroupHandle.h"
 #include "APIPageHandle.h"
+#include "BackgroundProcessResponsivenessTimer.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"
 #include "Logging.h"
@@ -36,7 +37,6 @@
 #include "PluginProcessManager.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
-#include "UnresponsiveWebProcessTerminator.h"
 #include "UserData.h"
 #include "WebBackForwardListItem.h"
 #include "WebIconDatabase.h"
@@ -103,7 +103,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool)
     , m_throttler(*this)
     , m_isResponsive(NoOrMaybe::Maybe)
     , m_visiblePageCounter([this](RefCounterEvent) { updateBackgroundResponsivenessTimer(); })
-    , m_backgroundResponsivenessTimer(processPool.configuration().unresponsiveBackgroundProcessesTerminationEnabled() ? std::make_unique<UnresponsiveWebProcessTerminator>(*this) : nullptr)
+    , m_backgroundResponsivenessTimer(std::make_unique<BackgroundProcessResponsivenessTimer>(*this))
 {
     WebPasteboardProxy::singleton().addWebProcessProxy(*this);
 

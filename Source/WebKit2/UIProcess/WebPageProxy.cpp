@@ -712,7 +712,6 @@ void WebPageProxy::reattachToWebProcess()
     ASSERT(m_process->state() == WebProcessProxy::State::Terminated);
 
     m_isValid = true;
-    m_wasKilledForBeingUnresponsiveWhileInBackground = false;
     m_process->removeWebPage(m_pageID);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
@@ -1514,30 +1513,14 @@ void WebPageProxy::viewDidEnterWindow()
     }
 }
 
-void WebPageProxy::reloadAfterBeingKilledInBackground()
-{
-    ASSERT(!isValid());
-
-    RELEASE_LOG_IF_ALLOWED("%p - Reloading tab that was killed in the background", this);
-
-    // Only report as a crash if the page was ever visible, otherwise silently reload.
-    if (m_hasEverBeenVisible)
-        processDidCrash();
-    else
-        reattachToWebProcessForReload();
-}
-
 void WebPageProxy::dispatchActivityStateChange()
 {
 #if PLATFORM(COCOA)
     m_activityStateChangeDispatcher->invalidate();
 #endif
 
-    if (!isValid()) {
-        if (m_potentiallyChangedActivityStateFlags & ActivityState::IsVisible && m_wasKilledForBeingUnresponsiveWhileInBackground)
-            reloadAfterBeingKilledInBackground();
+    if (!isValid())
         return;
-    }
 
     // If the visibility state may have changed, then so may the visually idle & occluded agnostic state.
     if (m_potentiallyChangedActivityStateFlags & ActivityState::IsVisible)
@@ -1576,10 +1559,9 @@ void WebPageProxy::dispatchActivityStateChange()
 #endif
 
     if (changed & ActivityState::IsVisible) {
-        if (isViewVisible()) {
-            m_hasEverBeenVisible = true;
+        if (isViewVisible())
             m_visiblePageToken = m_process->visiblePageToken();
-        } else {
+        else {
             m_visiblePageToken = nullptr;
 
             // If we've started the responsiveness timer as part of telling the web process to update the backing store
@@ -2394,7 +2376,7 @@ void WebPageProxy::setCustomTextEncodingName(const String& encodingName)
     m_process->send(Messages::WebPage::SetCustomTextEncodingName(encodingName), m_pageID);
 }
 
-void WebPageProxy::terminateProcess(TerminationReason terminationReason)
+void WebPageProxy::terminateProcess()
 {
     // NOTE: This uses a check of m_isValid rather than calling isValid() since
     // we want this to run even for pages being closed or that already closed.
@@ -2403,7 +2385,6 @@ void WebPageProxy::terminateProcess(TerminationReason terminationReason)
 
     m_process->requestTermination();
     resetStateAfterProcessExited();
-    m_wasKilledForBeingUnresponsiveWhileInBackground = terminationReason == TerminationReason::UnresponsiveWhileInBackground;
 }
 
 SessionState WebPageProxy::sessionState(const std::function<bool (WebBackForwardListItem&)>& filter) const

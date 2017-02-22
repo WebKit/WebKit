@@ -675,8 +675,7 @@ public:
 
     double estimatedProgress() const;
 
-    enum class TerminationReason { UnresponsiveWhileInBackground, Other };
-    void terminateProcess(TerminationReason = TerminationReason::Other);
+    void terminateProcess();
 
     SessionState sessionState(const std::function<bool (WebBackForwardListItem&)>& = nullptr) const;
     RefPtr<API::Navigation> restoreFromSessionState(SessionState, bool navigate);
@@ -1575,7 +1574,6 @@ private:
     void dispatchActivityStateChange();
     void viewDidLeaveWindow();
     void viewDidEnterWindow();
-    void reloadAfterBeingKilledInBackground();
 
 #if PLATFORM(MAC)
     void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, const UserData&);
@@ -1950,7 +1948,6 @@ private:
     bool m_hasHadSelectionChangesFromUserInteraction { false };
     bool m_needsHiddenContentEditableQuirk { false };
     bool m_needsPlainTextQuirk { false };
-    bool m_hasEverBeenVisible { false };
 
 #if ENABLE(MEDIA_SESSION)
     bool m_hasMediaSessionWithActiveMediaElements { false };
@@ -1976,7 +1973,6 @@ private:
 #endif
 
     bool m_isUsingHighPerformanceWebGL { false };
-    bool m_wasKilledForBeingUnresponsiveWhileInBackground { false };
         
     WeakPtrFactory<WebPageProxy> m_weakPtrFactory;
 };

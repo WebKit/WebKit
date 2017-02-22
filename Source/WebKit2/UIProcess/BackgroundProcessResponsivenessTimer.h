@@ -30,9 +30,9 @@
 
 namespace WebKit {
 
-class UnresponsiveWebProcessTerminator {
+class BackgroundProcessResponsivenessTimer {
 public:
-    explicit UnresponsiveWebProcessTerminator(WebProcessProxy&);
+    explicit BackgroundProcessResponsivenessTimer(WebProcessProxy&);
     void updateState();
 
 private:
@@ -41,7 +41,7 @@ private:
 
     WebProcessProxy& m_webProcessProxy;
     std::chrono::seconds m_interval;
-    RunLoop::Timer<UnresponsiveWebProcessTerminator> m_timer;
+    RunLoop::Timer<BackgroundProcessResponsivenessTimer> m_timer;
 };
 
 }
