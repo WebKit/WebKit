@@ -127,11 +127,9 @@
 .objc_class_name_WebDeviceOrientation
 .objc_class_name_WebDeviceOrientationProviderMock
 .objc_class_name_WebDownload
-.objc_class_name_WebFixedPositionContent
 .objc_class_name_WebFormDelegate
 .objc_class_name_WebFrame
 .objc_class_name_WebFrameView
-.objc_class_name_WebGeolocation
 .objc_class_name_WebGeolocationPosition
 .objc_class_name_WebHTMLRepresentation
 .objc_class_name_WebHTMLView
@@ -152,8 +150,6 @@
 .objc_class_name_WebTextIterator
 .objc_class_name_WebUserContentURLPattern
 .objc_class_name_WebView
-.objc_class_name_WebVisiblePosition
-.objc_class_name_WKQuadObject
 _DOMException
 _DOMRangeException
 _DOMEventException
