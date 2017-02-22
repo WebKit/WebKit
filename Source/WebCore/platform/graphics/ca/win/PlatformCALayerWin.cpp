@@ -530,7 +530,7 @@ void PlatformCALayerWin::setWantsDeepColorBackingStore(bool)
 
 bool PlatformCALayerWin::supportsSubpixelAntialiasedText() const
 {
-    return false
+    return false;
 }
 
 void PlatformCALayerWin::setSupportsSubpixelAntialiasedText(bool)
