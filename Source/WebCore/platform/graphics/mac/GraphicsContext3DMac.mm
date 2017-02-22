@@ -265,16 +265,9 @@ void GraphicsContext3DManager::updateHighPerformanceState()
         if (!m_pixelFormatObj) {
             LOG(WebGL, "Turning on high-performance GPU.");
 
-            static NeverDestroyed<Vector<CGLPixelFormatAttribute>> pixelFormatAttributes;
-            Vector<CGLPixelFormatAttribute>& attributes = pixelFormatAttributes.get();
-            if (!attributes.size()) {
-                attributes.append(kCGLPFAAccelerated);
-                attributes.append(kCGLPFAColorSize);
-                attributes.append(static_cast<CGLPixelFormatAttribute>(32));
-                attributes.append(static_cast<CGLPixelFormatAttribute>(0));
-            }
+            CGLPixelFormatAttribute attributes[] = { kCGLPFAAccelerated, kCGLPFAColorSize, static_cast<CGLPixelFormatAttribute>(32), static_cast<CGLPixelFormatAttribute>(0) };
             GLint numPixelFormats = 0;
-            CGLChoosePixelFormat(attributes.data(), &m_pixelFormatObj, &numPixelFormats);
+            CGLChoosePixelFormat(attributes, &m_pixelFormatObj, &numPixelFormats);
         }
 
     } else if (m_pixelFormatObj) {

@@ -1,3 +1,16 @@
+2017-02-21  Dean Jackson  <dino@apple.com>
+
+        No need for static attributes when creating a pixel format
+        https://bugs.webkit.org/show_bug.cgi?id=168688
+        <rdar://problem/30642256>
+
+        Reviewed by Myles Maxfield.
+
+        Just create the attributes when needed.
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3DManager::updateHighPerformanceState):
+
 2017-02-20  Filip Pizlo  <fpizlo@apple.com>
 
         The collector thread should only start when the mutator doesn't have heap access
