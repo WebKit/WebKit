@@ -201,7 +201,7 @@
 		9398101D0824BF01008DF038 /* WebKitLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AEB17D032C1735008635CE /* WebKitLogging.h */; settings = {ATTRIBUTES = (); }; };
 		9398101E0824BF01008DF038 /* WebKitNSStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7082F56F038EADAA00A80180 /* WebKitNSStringExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9398101F0824BF01008DF038 /* WebKitStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = F53444CE02E87CBA018635CA /* WebKitStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		939810200824BF01008DF038 /* WebKitStatisticsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F53444D202E87D4B018635CA /* WebKitStatisticsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		939810200824BF01008DF038 /* WebKitStatisticsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F53444D202E87D4B018635CA /* WebKitStatisticsPrivate.h */; };
 		939810210824BF01008DF038 /* WebNSControlExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 9345DDB20365FFD0008635CE /* WebNSControlExtras.h */; };
 		939810220824BF01008DF038 /* WebNSImageExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 8398847A03426FB000BC5F5E /* WebNSImageExtras.h */; };
 		939810230824BF01008DF038 /* WebNSPasteboardExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2B2474033A2DA800C1A526 /* WebNSPasteboardExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
