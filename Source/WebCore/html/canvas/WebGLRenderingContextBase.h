@@ -777,10 +777,10 @@ protected:
     WebGLBuffer* validateBufferDataParameters(const char* functionName, GC3Denum target, GC3Denum usage);
 
     // Helper function for tex{Sub}Image2D to make sure image is ready.
-    bool validateHTMLImageElement(const char* functionName, HTMLImageElement*);
-    bool validateHTMLCanvasElement(const char* functionName, HTMLCanvasElement*);
+    bool validateHTMLImageElement(const char* functionName, HTMLImageElement*, ExceptionCode&);
+    bool validateHTMLCanvasElement(const char* functionName, HTMLCanvasElement*, ExceptionCode&);
 #if ENABLE(VIDEO)
-    bool validateHTMLVideoElement(const char* functionName, HTMLVideoElement*);
+    bool validateHTMLVideoElement(const char* functionName, HTMLVideoElement*, ExceptionCode&);
 #endif
 
     // Helper functions for vertexAttribNf{v}.

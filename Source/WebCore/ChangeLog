@@ -1,3 +1,28 @@
+2017-02-21  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r207720): /more/conformance/conformance/quickCheckAPI-S_V.html test fails
+        https://bugs.webkit.org/show_bug.cgi?id=168632
+        <rdar://problem/30620129>
+
+        Reviewed by Darin Adler.
+
+        After r207720, the following WebGL conformance tests started failing:
+        - /more/conformance/conformance/quickCheckAPI-S_V.html
+        - /context/context-lost.html
+
+        We started throwing security errors in case where we did not before.
+        Chrome and Firefox are both passing these tests so our new behavior was not interoperable.
+
+        This patch reverts part of r207720 to restore our previous behavior.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::texSubImage2D):
+        (WebCore::WebGLRenderingContextBase::texImage2D):
+        (WebCore::WebGLRenderingContextBase::validateHTMLImageElement):
+        (WebCore::WebGLRenderingContextBase::validateHTMLCanvasElement):
+        (WebCore::WebGLRenderingContextBase::validateHTMLVideoElement):
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2017-02-21  Dean Jackson  <dino@apple.com>
 
         No need for static attributes when creating a pixel format
