@@ -555,6 +555,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
 
                 cachedCall.setThis(jsUndefined());
                 JSValue jsResult = cachedCall.call();
+                RETURN_IF_EXCEPTION(scope, encodedJSValue());
                 replacements.append(jsResult.toWTFString(exec));
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
@@ -595,6 +596,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
 
                 cachedCall.setThis(jsUndefined());
                 JSValue jsResult = cachedCall.call();
+                RETURN_IF_EXCEPTION(scope, encodedJSValue());
                 replacements.append(jsResult.toWTFString(exec));
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
@@ -734,6 +736,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingStringSearch(VM& vm, ExecState* 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     const String& string = jsString->value(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     String searchString = searchValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
