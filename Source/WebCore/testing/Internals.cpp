@@ -134,7 +134,9 @@
 #include "UserMediaController.h"
 #include "ViewportArguments.h"
 #include "WebCoreJSClientData.h"
+#if ENABLE(WEBGL)
 #include "WebGLRenderingContextBase.h"
+#endif
 #include "WorkerThread.h"
 #include "WritingDirection.h"
 #include "XMLHttpRequest.h"
