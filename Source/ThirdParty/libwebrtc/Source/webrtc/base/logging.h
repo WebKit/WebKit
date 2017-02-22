@@ -59,6 +59,7 @@
 
 #include "webrtc/base/basictypes.h"
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/base/export.h"
 #include "webrtc/base/thread_annotations.h"
 
 namespace rtc {
@@ -137,7 +138,7 @@ class LogSink {
   virtual void OnLogMessage(const std::string& message) = 0;
 };
 
-class LogMessage {
+class WEBRTC_EXPORT LogMessage {
  public:
   LogMessage(const char* file, int line, LoggingSeverity sev,
              LogErrorContext err_ctx = ERRCTX_NONE, int err = 0,

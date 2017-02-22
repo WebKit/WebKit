@@ -1,3 +1,15 @@
+2017-02-22  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Disable libwebrtc stderr logging in release mode
+        https://bugs.webkit.org/show_bug.cgi?id=168734
+
+        Reviewed by Tim Horton.
+
+        No change of behavior.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::initializePeerConnectionFactoryAndThreads):
+
 2017-02-22  Jer Noble  <jer.noble@apple.com>
 
         MediaStreamSourceNode never receives audio from MockRealtimeAudioSourceMac.

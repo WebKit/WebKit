@@ -84,6 +84,9 @@ void LibWebRTCProvider::callOnWebRTCSignalingThread(Function<void()>&& callback)
 
 static void initializePeerConnectionFactoryAndThreads()
 {
+#if defined(NDEBUG)
+    rtc::LogMessage::LogToDebug(rtc::LS_NONE);
+#endif
     auto& factoryAndThreads = staticFactoryAndThreads();
 
     ASSERT(!factoryAndThreads.factory);
