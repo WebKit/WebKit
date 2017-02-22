@@ -393,6 +393,8 @@ typedef const char* optionString;
     v(bool, logB3PhaseTimes, false, Normal, nullptr) \
     v(double, rareBlockPenalty, 0.001, Normal, nullptr) \
     v(bool, airSpillsEverything, false, Normal, nullptr) \
+    v(bool, airForceBriggsAllocator, false, Normal, nullptr) \
+    v(bool, airForceIRCAllocator, false, Normal, nullptr) \
     v(bool, logAirRegisterPressure, false, Normal, nullptr) \
     v(unsigned, maxB3TailDupBlockSize, 3, Normal, nullptr) \
     v(unsigned, maxB3TailDupBlockSuccessors, 3, Normal, nullptr) \

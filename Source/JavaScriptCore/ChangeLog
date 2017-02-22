@@ -1,3 +1,42 @@
+2017-02-21  Saam Barati  <sbarati@apple.com>
+
+        Add the Briggs optimistic allocator to run on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=168454
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds the Briggs allocator to Air:
+        http://www.cs.utexas.edu/users/mckinley/380C/lecs/briggs-thesis-1992.pdf
+        It uses it by default on ARM64. I was measuring an 8-10% speedup
+        in the phase because of this. I also wasn't able to detect a slowdown 
+        for generated code on ARM64. There are still a few things we can do
+        to speed things up even further. Moving the interference graph into
+        a BitVector was another 10-20% speedup. We should consider doing this
+        in a follow up patch. This is especially important now, since making
+        register allocation faster has a direct impact on startup time for
+        Wasm modules.
+        
+        I abstracted away the common bits between Briggs and IRC, and moved
+        them into a common super class. In a follow up to this patch, I plan
+        on implementing biased coloring for both Briggs and IRC (this is
+        described in Briggs's thesis). I was able to detect a 1% slowdown
+        with Briggs on Octane for x86-64. This is because the register file
+        for x86-64 is smaller than ARM64. When I implemented biased coloring,
+        I was no longer able to detect this slowdown. I still think it's a
+        sensible plan to run Briggs on ARM64 and IRC on x86-64.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        * b3/air/AirGraphColoring.cpp: Copied from Source/JavaScriptCore/b3/air/AirIteratedRegisterCoalescing.cpp.
+        (JSC::B3::Air::allocateRegistersByGraphColoring):
+        (JSC::B3::Air::iteratedRegisterCoalescing): Deleted.
+        * b3/air/AirGraphColoring.h: Copied from Source/JavaScriptCore/b3/air/AirIteratedRegisterCoalescing.h.
+        * b3/air/AirIteratedRegisterCoalescing.cpp: Removed.
+        * b3/air/AirIteratedRegisterCoalescing.h: Removed.
+        * runtime/Options.h:
+
 2017-02-21  Mark Lam  <mark.lam@apple.com>
 
         Add more missing exception checks detected by running marathon.js.

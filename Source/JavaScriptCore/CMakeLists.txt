@@ -87,10 +87,10 @@ set(JavaScriptCore_SOURCES
     b3/air/AirFixPartialRegisterStalls.cpp
     b3/air/AirGenerate.cpp
     b3/air/AirGenerated.cpp
+    b3/air/AirGraphColoring.cpp
     b3/air/AirHandleCalleeSaves.cpp
     b3/air/AirInsertionSet.cpp
     b3/air/AirInst.cpp
-    b3/air/AirIteratedRegisterCoalescing.cpp
     b3/air/AirKind.cpp
     b3/air/AirLogRegisterPressure.cpp
     b3/air/AirLowerAfterRegAlloc.cpp

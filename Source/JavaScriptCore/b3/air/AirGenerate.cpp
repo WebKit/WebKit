@@ -35,8 +35,8 @@
 #include "AirFixObviousSpills.h"
 #include "AirFixPartialRegisterStalls.h"
 #include "AirGenerationContext.h"
+#include "AirGraphColoring.h"
 #include "AirHandleCalleeSaves.h"
-#include "AirIteratedRegisterCoalescing.h"
 #include "AirLogRegisterPressure.h"
 #include "AirLowerAfterRegAlloc.h"
 #include "AirLowerEntrySwitch.h"
@@ -89,7 +89,7 @@ void prepareForGeneration(Code& code)
     if (Options::airSpillsEverything())
         spillEverything(code);
     else
-        iteratedRegisterCoalescing(code);
+        allocateRegistersByGraphColoring(code);
 
     if (Options::logAirRegisterPressure()) {
         dataLog("Register pressure after register allocation:\n");
