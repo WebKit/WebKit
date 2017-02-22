@@ -1,5 +1,11 @@
 2017-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove the extra `'s errornously added during the final editing.
+
+        * ReadMe.md:
+
+2017-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add ReadMe.md to WebKit
         https://bugs.webkit.org/show_bug.cgi?id=168413
 

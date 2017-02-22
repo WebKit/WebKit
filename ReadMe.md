@@ -27,13 +27,13 @@ On Windows, follow the [instructions on our website](https://webkit.org/webkit-o
 Run the following command to clone WebKit's Git SVN repository:
 
 ```
-`git clone git://git.webkit.org/WebKit.git WebKit`
+git clone git://git.webkit.org/WebKit.git WebKit
 ```
 
 If you want to be able to commit changes to the repository, or just want to check out branches that aren’t contained in WebKit.git, you will need track WebKit's Subversion repository. You can run the following command to configure this and other options of the new Git clone for WebKit development.
 
 ```
-`Tools/Scripts/webkit-patch setup-git-clone`
+Tools/Scripts/webkit-patch setup-git-clone
 ```
 
 For information about this, and other aspects of using Git with WebKit, read [the wiki page](https://trac.webkit.org/wiki/UsingGitWithWebKit).
@@ -43,7 +43,7 @@ For information about this, and other aspects of using Git with WebKit, read [th
 Run the following command to check out WebKit's subversion repository:
 
 ```
-`svn checkout https://svn.webkit.org/repository/webkit/trunk WebKit`
+svn checkout https://svn.webkit.org/repository/webkit/trunk WebKit
 ```
 
 ## Building WebKit
@@ -63,7 +63,7 @@ Install Xcode and its command line tools if you haven't done so already:
 Run the following command to build a debug build with debugging symbols and assertions:
 
 ```
-`Tools/Scripts/build-webkit --debug`
+Tools/Scripts/build-webkit --debug
 ```
 
 For performance testing, and other purposes, use `--release` instead.
@@ -87,14 +87,14 @@ Without this step, you will see the error message: "`target specifies product ty
 Run the following command to build a debug build with debugging symbols and assertions for iOS:
 
 ```
-`Tools/Scripts/build-webkit --debug --ios-simulator.`
+Tools/Scripts/build-webkit --debug --ios-simulator.
 ```
 
 You can also change the default build configuration using the following commands:
 
 ```
-`Tools/Scripts/set-webkit-configuration --debug
-Tools/Scripts/set-webkit-configuration --release`
+Tools/Scripts/set-webkit-configuration --debug
+Tools/Scripts/set-webkit-configuration --release
 ```
 
 ## Running WebKit
@@ -104,7 +104,7 @@ Tools/Scripts/set-webkit-configuration --release`
 Run the following command to launch Safari with your local build of WebKit:
 
 ```
-`Tools/Scripts/run-safari --debug`
+Tools/Scripts/run-safari --debug
 ```
 
 The `run-safari` script sets the `DYLD_FRAMEWORK_PATH` environment variable to point to your build products, and then launches `/Applications/Safari.app`. `DYLD_FRAMEWORK_PATH` tells the system loader to prefer your build products over the frameworks installed in `/System/Library/Frameworks`.
@@ -112,7 +112,7 @@ The `run-safari` script sets the `DYLD_FRAMEWORK_PATH` environment variable to p
 To run other applications with your local build of WebKit, run the following command:
 
 ```
-`Tools/Scripts/run-webkit-app <application-path>`
+Tools/Scripts/run-webkit-app <application-path>
 ```
 
 ### iOS Simulator
@@ -120,7 +120,7 @@ To run other applications with your local build of WebKit, run the following com
 Run the following command to launch iOS simulator with your local build of WebKit:
 
 ```
-`run-safari --debug --ios-simulator`
+run-safari --debug --ios-simulator
 ```
 
 In both cases, if you have built release builds instead, use `--release` instead of `--debug`.
