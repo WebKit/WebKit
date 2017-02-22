@@ -43,6 +43,6 @@ if (USE_COORDINATED_GRAPHICS)
 else ()
     list(APPEND WebCore_SOURCES
         platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
-        platform/graphics/texmap/TextureMapperBackingStore.cpp
+        platform/graphics/texmap/TextureMapperTiledBackingStore.cpp
     )
 endif ()

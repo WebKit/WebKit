@@ -1,3 +1,9 @@
+2017-02-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WinCairo build after r212703.
+
+        * platform/TextureMapper.cmake:
+
 2017-02-21  Per Arne Vollan  <pvollan@apple.com>
 
         Add support for CSS properties paint-order, stroke-linecap, and stroke-linejoin in text rendering.
