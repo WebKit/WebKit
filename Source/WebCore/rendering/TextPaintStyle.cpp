@@ -68,7 +68,10 @@ TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& line
     paintStyle.useLetterpressEffect = lineStyle.textDecorationsInEffect() & TextDecorationLetterpress;
 #endif
     paintStyle.strokeWidth = lineStyle.textStrokeWidth();
-
+    paintStyle.paintOrder = lineStyle.paintOrder();
+    paintStyle.lineJoin = lineStyle.joinStyle();
+    paintStyle.lineCap = lineStyle.capStyle();
+    
     if (paintInfo.forceTextColor()) {
         paintStyle.fillColor = paintInfo.forcedTextColor();
         paintStyle.strokeColor = paintInfo.forcedTextColor();
@@ -192,6 +195,8 @@ void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paint
             context.setStrokeColor(paintStyle.strokeColor);
         if (paintStyle.strokeWidth != context.strokeThickness())
             context.setStrokeThickness(paintStyle.strokeWidth);
+        context.setLineJoin(paintStyle.lineJoin);
+        context.setLineCap(paintStyle.lineCap);
     }
 }
 

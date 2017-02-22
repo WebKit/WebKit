@@ -299,24 +299,24 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         if (decorations & TextDecorationOverline)
             paintDecoration(paintInfo.context(), TextDecorationOverline, fragment);
 
-        auto paintOrder = style.paintTypesForPaintOrder();
+        auto paintOrder = RenderStyle::paintTypesForPaintOrder(style.paintOrder());
         for (unsigned i = 0; i < paintOrder.size(); ++i) {
             switch (paintOrder.at(i)) {
-            case PaintTypeFill:
+            case PaintType::Fill:
                 if (!hasFill)
                     continue;
                 m_paintingResourceMode = ApplyToFillMode | ApplyToTextMode;
                 ASSERT(selectionStyle);
                 paintText(paintInfo.context(), style, *selectionStyle, fragment, hasSelection, paintSelectedTextOnly);
                 break;
-            case PaintTypeStroke:
+            case PaintType::Stroke:
                 if (!hasVisibleStroke)
                     continue;
                 m_paintingResourceMode = ApplyToStrokeMode | ApplyToTextMode;
                 ASSERT(selectionStyle);
                 paintText(paintInfo.context(), style, *selectionStyle, fragment, hasSelection, paintSelectedTextOnly);
                 break;
-            case PaintTypeMarkers:
+            case PaintType::Markers:
                 continue;
             }
         }

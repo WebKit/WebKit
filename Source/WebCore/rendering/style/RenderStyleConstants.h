@@ -726,4 +726,21 @@ TextStream& operator<<(TextStream&, EFillRepeat);
 TextStream& operator<<(TextStream&, EMaskSourceType);
 TextStream& operator<<(TextStream&, Edge);
 
+// These are all minimized combinations of paint-order.
+enum class PaintOrder {
+    Normal,
+    Fill,
+    FillMarkers,
+    Stroke,
+    StrokeMarkers,
+    Markers,
+    MarkersStroke
+};
+
+enum class PaintType {
+    Fill,
+    Stroke,
+    Markers
+};
+
 } // namespace WebCore

@@ -1237,10 +1237,10 @@ public:
 #endif
 
     // Support for paint-order, stroke-linecap, and stroke-linejoin from https://drafts.fxtf.org/paint/.
-    void setPaintOrder(PaintOrder order) { SET_VAR(m_rareInheritedData, paintOrder, order); }
+    void setPaintOrder(PaintOrder order) { SET_VAR(m_rareInheritedData, paintOrder, static_cast<unsigned>(order)); }
     PaintOrder paintOrder() const { return static_cast<PaintOrder>(m_rareInheritedData->paintOrder); }
-    static PaintOrder initialPaintOrder() { return PaintOrderNormal; }
-    Vector<PaintType, 3> paintTypesForPaintOrder() const;
+    static PaintOrder initialPaintOrder() { return PaintOrder::Normal; }
+    static Vector<PaintType, 3> paintTypesForPaintOrder(PaintOrder);
     
     void setCapStyle(LineCap val) { SET_VAR(m_rareInheritedData, capStyle, val); }
     LineCap capStyle() const { return static_cast<LineCap>(m_rareInheritedData->capStyle); }

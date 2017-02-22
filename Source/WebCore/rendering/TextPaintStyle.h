@@ -26,6 +26,8 @@
 #pragma once
 
 #include "Color.h"
+#include "GraphicsTypes.h"
+#include "RenderStyleConstants.h"
 
 namespace WebCore {
 
@@ -47,6 +49,9 @@ struct TextPaintStyle {
 #if ENABLE(LETTERPRESS)
     bool useLetterpressEffect { false };
 #endif
+    PaintOrder paintOrder { PaintOrder::Normal };
+    LineJoin lineJoin { MiterJoin };
+    LineCap lineCap { ButtCap };
 };
 
 TextPaintStyle computeTextPaintStyle(const Frame&, const RenderStyle&, const PaintInfo&);

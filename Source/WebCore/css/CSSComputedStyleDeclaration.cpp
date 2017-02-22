@@ -2465,32 +2465,32 @@ static Ref<CSSValueList> valueForContentPositionAndDistributionWithOverflowAlign
 
 static Ref<CSSValue> paintOrder(PaintOrder paintOrder)
 {
-    if (paintOrder == PaintOrderNormal)
+    if (paintOrder == PaintOrder::Normal)
         return CSSPrimitiveValue::createIdentifier(CSSValueNormal);
     
     auto paintOrderList = CSSValueList::createSpaceSeparated();
     switch (paintOrder) {
-    case PaintOrderNormal:
+    case PaintOrder::Normal:
         ASSERT_NOT_REACHED();
         break;
-    case PaintOrderFill:
+    case PaintOrder::Fill:
         paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueFill));
         break;
-    case PaintOrderFillMarkers:
+    case PaintOrder::FillMarkers:
         paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueFill));
         paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
         break;
-    case PaintOrderStroke:
+    case PaintOrder::Stroke:
         paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueStroke));
         break;
-    case PaintOrderStrokeMarkers:
+    case PaintOrder::StrokeMarkers:
         paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueStroke));
         paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
         break;
-    case PaintOrderMarkers:
+    case PaintOrder::Markers:
         paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
         break;
-    case PaintOrderMarkersStroke:
+    case PaintOrder::MarkersStroke:
         paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
         paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueStroke));
         break;

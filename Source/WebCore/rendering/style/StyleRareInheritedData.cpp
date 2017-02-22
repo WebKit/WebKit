@@ -125,7 +125,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , trailingWord(static_cast<unsigned>(RenderStyle::initialTrailingWord()))
 #endif
     , hangingPunctuation(RenderStyle::initialHangingPunctuation())
-    , paintOrder(RenderStyle::initialPaintOrder())
+    , paintOrder(static_cast<unsigned>(RenderStyle::initialPaintOrder()))
     , capStyle(RenderStyle::initialCapStyle())
     , joinStyle(RenderStyle::initialJoinStyle())
     , strokeWidth(RenderStyle::initialOneLength())

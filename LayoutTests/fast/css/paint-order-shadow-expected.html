@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        div {
+            position: absolute;
+            font-size: 80px;
+            color: gray;
+            width: 200px;
+            left: 0px;
+        }
+
+        .bg-color-gray {
+            background-color: gray;
+
+            /* Clip used to isolate a part of the shadow */
+            -webkit-clip-path: inset(30px 75px 30px 115px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-color-gray" style="paint-order: fill; top: 0px">&#x25fc;</div>
+<div class="bg-color-gray" style="paint-order: fill markers; top: 100px">&#x25fc;</div>
+<div class="bg-color-gray" style="paint-order: stroke; top: 200px">&#x25fc;</div>
+<div class="bg-color-gray" style="paint-order: stroke markers; top: 300px">&#x25fc;</div>
+<div class="bg-color-gray" style="paint-order: markers; top: 400px">&#x25fc;</div>
+<div class="bg-color-gray" style="paint-order: markers stroke; top: 500px">&#x25fc;</div>
+
+</body>
+</html>

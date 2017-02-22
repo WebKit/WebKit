@@ -2217,41 +2217,41 @@ void RenderStyle::setDashboardRegion(int type, const String& label, Length&& top
 
 #endif
 
-Vector<PaintType, 3> RenderStyle::paintTypesForPaintOrder() const
+Vector<PaintType, 3> RenderStyle::paintTypesForPaintOrder(PaintOrder order)
 {
     Vector<PaintType, 3> paintOrder;
-    switch (this->paintOrder()) {
-    case PaintOrderNormal:
+    switch (order) {
+    case PaintOrder::Normal:
         FALLTHROUGH;
-    case PaintOrderFill:
-        paintOrder.append(PaintTypeFill);
-        paintOrder.append(PaintTypeStroke);
-        paintOrder.append(PaintTypeMarkers);
+    case PaintOrder::Fill:
+        paintOrder.append(PaintType::Fill);
+        paintOrder.append(PaintType::Stroke);
+        paintOrder.append(PaintType::Markers);
         break;
-    case PaintOrderFillMarkers:
-        paintOrder.append(PaintTypeFill);
-        paintOrder.append(PaintTypeMarkers);
-        paintOrder.append(PaintTypeStroke);
+    case PaintOrder::FillMarkers:
+        paintOrder.append(PaintType::Fill);
+        paintOrder.append(PaintType::Markers);
+        paintOrder.append(PaintType::Stroke);
         break;
-    case PaintOrderStroke:
-        paintOrder.append(PaintTypeStroke);
-        paintOrder.append(PaintTypeFill);
-        paintOrder.append(PaintTypeMarkers);
+    case PaintOrder::Stroke:
+        paintOrder.append(PaintType::Stroke);
+        paintOrder.append(PaintType::Fill);
+        paintOrder.append(PaintType::Markers);
         break;
-    case PaintOrderStrokeMarkers:
-        paintOrder.append(PaintTypeStroke);
-        paintOrder.append(PaintTypeMarkers);
-        paintOrder.append(PaintTypeFill);
+    case PaintOrder::StrokeMarkers:
+        paintOrder.append(PaintType::Stroke);
+        paintOrder.append(PaintType::Markers);
+        paintOrder.append(PaintType::Fill);
         break;
-    case PaintOrderMarkers:
-        paintOrder.append(PaintTypeMarkers);
-        paintOrder.append(PaintTypeFill);
-        paintOrder.append(PaintTypeStroke);
+    case PaintOrder::Markers:
+        paintOrder.append(PaintType::Markers);
+        paintOrder.append(PaintType::Fill);
+        paintOrder.append(PaintType::Stroke);
         break;
-    case PaintOrderMarkersStroke:
-        paintOrder.append(PaintTypeMarkers);
-        paintOrder.append(PaintTypeStroke);
-        paintOrder.append(PaintTypeFill);
+    case PaintOrder::MarkersStroke:
+        paintOrder.append(PaintType::Markers);
+        paintOrder.append(PaintType::Stroke);
+        paintOrder.append(PaintType::Fill);
         break;
     };
     return paintOrder;

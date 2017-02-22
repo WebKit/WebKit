@@ -1,3 +1,44 @@
+2017-02-21  Per Arne Vollan  <pvollan@apple.com>
+
+        Add support for CSS properties paint-order, stroke-linecap, and stroke-linejoin in text rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=168601
+        rdar://problem/30583872
+
+        Reviewed by Simon Fraser.
+
+        Text rendering should respect the CSS properties paint-order, stroke-linecap, and stroke-linejoin,
+        see https://drafts.fxtf.org/paint/. The text rendering changes are mainly in the TextPainter class,
+        where text is painted in three phases (fill, stroke, markers), where the order follows the
+        paint-order property. The linecap and linejoin properties are set on the graphics context before
+        rendering the text.
+
+        Tests: fast/css/paint-order.html
+               fast/css/paint-order-shadow.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::paintOrder):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertPaintOrder):
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextPaintStyle):
+        (WebCore::updateGraphicsContext):
+        * rendering/TextPaintStyle.h:
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::paintTextAndEmphasisMarksIfNeeded):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::paintTypesForPaintOrder):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setPaintOrder):
+        (WebCore::RenderStyle::initialPaintOrder):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/SVGRenderStyleDefs.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::fillStrokeMarkers):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paint):
+
 2017-02-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         [User Timing] Throw a SyntaxError for performance.measure if mark name is not found
