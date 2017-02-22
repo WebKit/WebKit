@@ -1208,13 +1208,4 @@
 #endif
 #endif /* PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201 && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 */
 
-/* CorePrediction only exists on 64-bit platforms. */
-#if USE(JSVALUE64) && (PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200))
-#define HAVE_CORE_PREDICTION 1
-#endif
-
-#if PLATFORM(MAC) && ENABLE(WEB_RTC)
-#define USE_LIBWEBRTC 1
-#endif
-
 #endif /* WTF_Platform_h */

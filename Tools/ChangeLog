@@ -72,33 +72,6 @@
         * WebKitTestRunner/TestController.cpp:
         (WTR::TestController::resetPreferencesToConsistentValues):
 
-2017-02-21  John Wilander  <wilander@apple.com>
-
-        Resource Load Statistics: Add alternate classification method
-        https://bugs.webkit.org/show_bug.cgi?id=168347
-        <rdar://problem/30352793>
-
-        Reviewed by Alex Christensen.
-
-        Added three testRunner functions to facilitate layout tests:
-        - setStatisticsSubframeUnderTopFrameOrigin()
-        - setStatisticsSubresourceUnderTopFrameOrigin()
-        - setStatisticsSubresourceUniqueRedirectTo()
-
-        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
-        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
-        (WTR::TestRunner::setStatisticsSubframeUnderTopFrameOrigin):
-        (WTR::TestRunner::setStatisticsSubresourceUnderTopFrameOrigin):
-        (WTR::TestRunner::setStatisticsSubresourceUniqueRedirectTo):
-        * WebKitTestRunner/InjectedBundle/TestRunner.h:
-        * WebKitTestRunner/TestController.cpp:
-        (WTR::TestController::setStatisticsSubframeUnderTopFrameOrigin):
-        (WTR::TestController::setStatisticsSubresourceUnderTopFrameOrigin):
-        (WTR::TestController::setStatisticsSubresourceUniqueRedirectTo):
-        * WebKitTestRunner/TestController.h:
-        * WebKitTestRunner/TestInvocation.cpp:
-        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
-
 2017-02-21  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Refactor Device class

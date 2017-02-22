@@ -42,9 +42,6 @@ public:
     static bool isPrevalentResource(const String& hostName);
     static void setHasHadUserInteraction(const String& hostName, bool value);
     static bool hasHadUserInteraction(const String& hostName);
-    static void setSubframeUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
-    static void setSubresourceUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
-    static void setSubresourceUniqueRedirectTo(const String& hostName, const String& hostNameRedirectedTo);
     static void setTimeToLiveUserInteraction(double seconds);
     static void setReducedTimestampResolution(double seconds);
     static void fireDataModificationHandler();

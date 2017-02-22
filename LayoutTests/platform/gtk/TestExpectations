@@ -939,7 +939,11 @@ webkit.org/b/131546 media/track/track-in-band.html [ Crash Timeout Failure ]
 
 webkit.org/b/163782 media/video-played-ranges-1.html [ Crash Pass ]
 
-webkit.org/b/168171 http/tests/loading/resourceLoadStatistics [ Crash ]
+webkit.org/b/168171 http/tests/loading/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html [ Crash ]
+webkit.org/b/168171 http/tests/loading/resourceLoadStatistics/non-prevalent-resource-without-user-interaction.html [ Crash ]
+webkit.org/b/168171 http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html [ Crash ]
+webkit.org/b/168171 http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction.html [ Crash ]
+webkit.org/b/168171 http/tests/loading/resourceLoadStatistics/prevalent-resource-without-user-interaction.html [ Crash ]
 
 webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating.html [ Crash ]
 webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating_index.html [ Crash ]

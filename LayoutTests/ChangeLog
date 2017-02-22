@@ -142,36 +142,6 @@
         * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/more/conformance/quickCheckAPI-S_V.html: Added.
         * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/more/conformance/quickCheckAPI.js: Added.
 
-2017-02-21  John Wilander  <wilander@apple.com>
-
-        Resource Load Statistics: Add alternate classification method
-        https://bugs.webkit.org/show_bug.cgi?id=168347
-        <rdar://problem/30352793>
-
-        Reviewed by Alex Christensen.
-
-        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-mixed-statistics-expected.txt: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-mixed-statistics.html: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins-expected.txt: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins.html: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-under-top-frame-origins-expected.txt: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-under-top-frame-origins.html: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-unique-redirects-to-expected.txt: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-unique-redirects-to.html: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-statistics-expected.txt: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-statistics.html: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins-expected.txt: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins.html: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins-expected.txt: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins.html: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to-expected.txt: Added.
-        * http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to.html: Added.
-        * platform/gtk/TestExpectations:
-            The whole http/tests/loading/resourceLoadStatistics marked as crashing based on
-            Carlos Garcia Campos's assessment in https://bugs.webkit.org/show_bug.cgi?id=168171.
-        * platform/wk2/TestExpectations:
-            The above tests are only valid for WebKit2. Marked as [ Pass ].
-
 2017-02-21  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Add ReadableStreamBYOBRequest view getter
