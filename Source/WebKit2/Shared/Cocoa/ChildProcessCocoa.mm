@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-void ChildProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageName, IPC::StringReference messageReceiverName)
+void ChildProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
     WKSetCrashReportApplicationSpecificInformation((__bridge CFStringRef)[NSString stringWithFormat:@"Received invalid message: '%s::%s'", messageReceiverName.toString().data(), messageName.toString().data()]);
     CRASH();

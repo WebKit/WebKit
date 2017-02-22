@@ -447,4 +447,12 @@ void WebProcess::destroyRenderingResources()
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::destroyRenderingResources() took %.2fms", this, (endTime - startTime) * 1000.0);
 }
 
+// FIXME: This should live somewhere else, and it should have the implementation in line instead of calling out to WKSI.
+WK_EXTERN void _WKSetCrashReportApplicationSpecificInformation(NSString *infoString);
+
+void _WKSetCrashReportApplicationSpecificInformation(NSString *infoString)
+{
+    return WKSetCrashReportApplicationSpecificInformation((__bridge CFStringRef)infoString);
+}
+
 } // namespace WebKit

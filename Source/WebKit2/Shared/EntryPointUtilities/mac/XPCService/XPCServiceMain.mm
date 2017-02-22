@@ -30,6 +30,9 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
+extern "C"
+void _WKSetCrashReportApplicationSpecificInformation(NSString *infoString);
+
 namespace WebKit {
 
 static void XPCServiceEventHandler(xpc_connection_t peer)
@@ -112,6 +115,18 @@ int main(int argc, char** argv)
 #endif
 
     if (bootstrap) {
+#if PLATFORM(MAC)
+        if (const char* webKitBundleVersion = xpc_dictionary_get_string(bootstrap.get(), "WebKitBundleVersion")) {
+            CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
+            NSString *expectedBundleVersion = (NSString *)CFBundleGetValueForInfoDictionaryKey(webKitBundle, kCFBundleVersionKey);
+
+            if (strcmp(webKitBundleVersion, expectedBundleVersion.UTF8String)) {
+                _WKSetCrashReportApplicationSpecificInformation([NSString stringWithFormat:@"WebKit framework version mismatch: '%s'", webKitBundleVersion]);
+                __builtin_trap();
+            }
+        }
+#endif
+
         if (xpc_object_t languages = xpc_dictionary_get_value(bootstrap.get(), "OverrideLanguages")) {
             @autoreleasepool {
                 NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];

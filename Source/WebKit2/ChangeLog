@@ -1,3 +1,31 @@
+2017-02-22  Anders Carlsson  <andersca@apple.com>
+
+        Crash if there's a mismatch between the WebKit used by the UI process and child processes respectively
+        https://bugs.webkit.org/show_bug.cgi?id=168739
+        Part of rdar://problem/30631411.
+
+        Reviewed by Geoffrey Garen.
+
+        If the UI process and web process for some reason end up using different versions of the WebKit framework, weird things happen
+        because the message format is different between versions. To avoid this, send along the WebKit bundle version from the UI process
+        in the XPC bootstrap message, check that it matches inside the XPC main functions. If there's a mismatch, crash.
+
+        * Shared/Cocoa/ChildProcessCocoa.mm:
+        (WebKit::ChildProcess::didReceiveInvalidMessage):
+        Fix parameters.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (main):
+        Check for the bundle version and crash if it's not what we expect.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        Initialize the bundle version.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::_WKSetCrashReportApplicationSpecificInformation):
+        Export this so we can call it from the XPC services without having to link WKSI.
+
 2017-02-22  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Call processDidBecomeUnresponsive delegate when a background process is unresponsive
