@@ -549,7 +549,12 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 #endif
 
 #if PLATFORM(MAC)
-    _impl = std::make_unique<WebKit::WebViewImpl>(self, self, processPool, WTFMove(pageConfiguration));
+    _impl = WebKit::WebViewImpl::maybeCreate(self, self, processPool, WTFMove(pageConfiguration));
+    if (!_impl) {
+        [NSException raise:NSInternalInconsistencyException format:@"WKWebView initialization failed. Unable to create a new WebProcess."];
+        return;
+    }
+
     _page = &_impl->page();
 
     _impl->setAutomaticallyAdjustsContentInsets(true);

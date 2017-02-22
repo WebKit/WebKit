@@ -904,7 +904,12 @@ Some other editing-related methods still unimplemented:
     InitializeWebKit2();
 
     _data = [[WKViewData alloc] init];
-    _data->_impl = std::make_unique<WebViewImpl>(self, nullptr, processPool, WTFMove(configuration));
+
+    _data->_impl = WebViewImpl::maybeCreate(self, nullptr, processPool, WTFMove(configuration));
+    if (!_data->_impl) {
+        [NSException raise:NSInternalInconsistencyException format:@"[WKView initWithFrame:processPool:configuration:] failed to create a new WebProcess"];
+        return nil;
+    }
 
     [self maybeInstallIconLoadingClient];
 

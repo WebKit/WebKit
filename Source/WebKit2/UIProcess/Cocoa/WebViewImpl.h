@@ -120,7 +120,7 @@ class WebViewImpl {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebViewImpl);
 public:
-    WebViewImpl(NSView <WebViewImplDelegate> *, WKWebView *outerWebView, WebProcessPool&, Ref<API::PageConfiguration>&&);
+    static std::unique_ptr<WebViewImpl> maybeCreate(NSView <WebViewImplDelegate> *, WKWebView *outerWebView, WebProcessPool&, Ref<API::PageConfiguration>&&);
 
     ~WebViewImpl();
 
@@ -523,6 +523,8 @@ public:
 #endif // HAVE(TOUCH_BAR)
 
 private:
+    WebViewImpl(NSView <WebViewImplDelegate> *, std::unique_ptr<PageClientImpl>&&, Ref<WebPageProxy>&&, WebProcessPool&);
+
 #if HAVE(TOUCH_BAR)
     void setUpTextTouchBar(NSTouchBar *);
     void updateTextTouchBar();

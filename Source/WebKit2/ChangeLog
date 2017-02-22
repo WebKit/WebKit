@@ -1,3 +1,32 @@
+2017-02-21  Brady Eidson  <beidson@apple.com>
+
+        Refactor WebViewImpl creation in preparation for supporting multiple WebsiteDataStores.
+        https://bugs.webkit.org/show_bug.cgi?id=168676
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]): Allow for WebViewImpl creation to fail.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:processPool:configuration:]): Ditto.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::maybeCreate):
+        (WebKit::WebViewImpl::WebViewImpl):
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess): New WebProcess creation might fail. Handle it.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::warmInitialProcess):
+        (WebKit::WebProcessPool::maybeCreateNewWebProcessRespectingProcessCountLimit): This can now fail
+          if the process will have a non-default WebsiteDataStore but we've already reached the process cap.
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::createNewWebProcessRespectingProcessCountLimit): Deleted.
+        * UIProcess/WebProcessPool.h:
+
 2017-02-21  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] WebKit2 should assert that libwebrtc transmitted IP addresses family is IP4 or IP6
