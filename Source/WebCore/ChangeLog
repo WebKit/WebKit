@@ -1,5 +1,20 @@
 2017-02-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r212831. rdar://problem/30628889
+
+    2017-02-22  Per Arne Vollan  <pvollan@apple.com>
+
+            [Win] Compile fix.
+            https://bugs.webkit.org/show_bug.cgi?id=168713
+
+            Reviewed by Brent Fulgham.
+
+            The include file <ANGLE/ShaderLang.h> is not found.
+
+            * testing/Internals.cpp:
+
+2017-02-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r212730. rdar://problem/30515072
 
     2017-02-21  Per Arne Vollan  <pvollan@apple.com>
