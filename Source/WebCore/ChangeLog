@@ -1,3 +1,19 @@
+2017-02-22  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][EME] Fix issue with allowed systems extraction
+        https://bugs.webkit.org/show_bug.cgi?id=168717
+
+        Reviewed by Carlos Garcia Campos.
+
+        The allowed systems were not being extracted from the need-context
+        message because the loop was not stopping on the right condition.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::extractEventsAndSystemsFromMessage): Fix wrong
+        condition.
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleProtectionEvent):
+        Add better debug category.
+
 2017-02-22  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r207669): Crash after mutating selector text
