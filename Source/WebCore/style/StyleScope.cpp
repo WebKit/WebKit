@@ -48,6 +48,7 @@
 #include "UserContentController.h"
 #include "UserContentURLPattern.h"
 #include "UserStyleSheet.h"
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -91,6 +92,7 @@ StyleResolver& Scope::resolver()
         return m_document.userAgentShadowTreeStyleResolver();
 
     if (!m_resolver) {
+        SetForScope<bool> isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
         m_resolver = std::make_unique<StyleResolver>(m_document);
         m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
     }
@@ -451,6 +453,7 @@ void Scope::updateStyleResolver(Vector<RefPtr<CSSStyleSheet>>& activeStyleSheets
     }
     auto& styleResolver = resolver();
 
+    SetForScope<bool> isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
     if (updateType == Reset) {
         styleResolver.ruleSets().resetAuthorStyle();
         styleResolver.appendAuthorStyleSheets(activeStyleSheets);
@@ -521,6 +524,10 @@ void Scope::clearPendingUpdate()
 
 void Scope::scheduleUpdate(UpdateType update)
 {
+    // FIXME: The m_isUpdatingStyleResolver test is here because extension stylesheets can get us here from StyleResolver::appendAuthorStyleSheets.
+    if (update == UpdateType::ContentsOrInterpretation && !m_isUpdatingStyleResolver)
+        clearResolver();
+
     if (!m_pendingUpdate || *m_pendingUpdate < update) {
         m_pendingUpdate = update;
         if (m_shadowRoot)
