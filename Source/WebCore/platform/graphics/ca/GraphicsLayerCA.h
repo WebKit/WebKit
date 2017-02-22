@@ -587,7 +587,13 @@ private:
 
     FloatSize m_pixelAlignmentOffset;
 
+#if PLATFORM(WIN)
+    // FIXME: when initializing m_uncommittedChanges to a non-zero value, nothing is painted on Windows, see https://bugs.webkit.org/show_bug.cgi?id=168666.
+    LayerChangeFlags m_uncommittedChanges { 0 };
+#else
     LayerChangeFlags m_uncommittedChanges { CoverageRectChanged };
+#endif
+
     bool m_isCommittingChanges { false };
 };
 
