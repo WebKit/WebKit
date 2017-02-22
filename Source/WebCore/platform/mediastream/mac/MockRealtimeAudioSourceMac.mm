@@ -203,6 +203,9 @@ bool MockRealtimeAudioSourceMac::applySampleRate(int sampleRate)
 AudioSourceProvider* MockRealtimeAudioSourceMac::audioSourceProvider()
 {
     if (!m_audioSourceProvider) {
+        if (!m_audioBufferList)
+            reconfigure();
+
         m_audioSourceProvider = WebAudioSourceProviderAVFObjC::create(*this);
         m_audioSourceProvider->prepare(&m_streamFormat);
     }

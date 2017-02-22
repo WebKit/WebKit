@@ -1,3 +1,13 @@
+2017-02-22  Jer Noble  <jer.noble@apple.com>
+
+        MediaStreamSourceNode never receives audio from a getUserMedia() created stream
+        https://bugs.webkit.org/show_bug.cgi?id=168731
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/mock-media-source-webaudio-expected.txt: Added.
+        * fast/mediastream/mock-media-source-webaudio.html: Added.
+
 2017-02-22  Chris Dumez  <cdumez@apple.com>
 
         Do not aggressively throttle DOM timers until they've reached their max nesting level

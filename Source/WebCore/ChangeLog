@@ -1,3 +1,18 @@
+2017-02-22  Jer Noble  <jer.noble@apple.com>
+
+        MediaStreamSourceNode never receives audio from MockRealtimeAudioSourceMac.
+        https://bugs.webkit.org/show_bug.cgi?id=168731
+
+        Reviewed by Eric Carlson.
+
+        Test: fast/mediastream/mock-media-source-webaudio.html
+
+        Because the audioSourceProvider can be created before the mock source is configured, explicitly configure the
+        source if necessary after creating the audioSourceProvider.
+
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSourceMac::audioSourceProvider):
+
 2017-02-22  Chris Dumez  <cdumez@apple.com>
 
         Do not aggressively throttle DOM timers until they've reached their max nesting level
