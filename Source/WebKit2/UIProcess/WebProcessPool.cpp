@@ -557,7 +557,7 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
     platformResolvePathsForSandboxExtensions();
 }
 
-WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore)
+WebProcessProxy& WebProcessPool::createNewWebProcess()
 {
     ensureNetworkProcess();
 
@@ -693,7 +693,7 @@ void WebProcessPool::warmInitialProcess()
     if (m_processes.size() >= maximumNumberOfProcesses())
         return;
 
-    createNewWebProcess(nullptr);
+    createNewWebProcess();
     m_haveInitialEmptyProcess = true;
 }
 
@@ -769,25 +769,20 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 #endif
 }
 
-WebProcessProxy* WebProcessPool::maybeCreateNewWebProcessRespectingProcessCountLimit(WebsiteDataStore* websiteDataStore)
+WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit()
 {
     if (m_processes.size() < maximumNumberOfProcesses())
-        return &createNewWebProcess(websiteDataStore);
-
-    // If a non-default WebsiteDataStore was passed in and we couldn't make a new web process for it,
-    // we should not return an existing process.
-    if (websiteDataStore && websiteDataStore != &API::WebsiteDataStore::defaultDataStore()->websiteDataStore())
-        return nullptr;
+        return createNewWebProcess();
 
     // Choose the process with fewest pages.
     auto& process = *std::min_element(m_processes.begin(), m_processes.end(), [](const RefPtr<WebProcessProxy>& a, const RefPtr<WebProcessProxy>& b) {
         return a->pageCount() < b->pageCount();
     });
 
-    return process.get();
+    return *process;
 }
 
-RefPtr<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
+Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
     if (!pageConfiguration->pageGroup())
         pageConfiguration->setPageGroup(m_defaultPageGroup.ptr());
@@ -797,23 +792,21 @@ RefPtr<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<A
         pageConfiguration->setUserContentController(&pageConfiguration->pageGroup()->userContentController());
     if (!pageConfiguration->visitedLinkStore())
         pageConfiguration->setVisitedLinkStore(m_visitedLinkStore.ptr());
-
-    bool pageHasWebsiteDataStore = pageConfiguration->websiteDataStore();
-    if (!pageHasWebsiteDataStore) {
+    if (!pageConfiguration->websiteDataStore()) {
         ASSERT(!pageConfiguration->sessionID().isValid());
         pageConfiguration->setWebsiteDataStore(m_websiteDataStore.get());
         pageConfiguration->setSessionID(pageConfiguration->preferences()->privateBrowsingEnabled() ? SessionID::legacyPrivateSessionID() : SessionID::defaultSessionID());
     }
 
     RefPtr<WebProcessProxy> process;
-    if (m_haveInitialEmptyProcess && !pageHasWebsiteDataStore) {
+    if (m_haveInitialEmptyProcess) {
         process = m_processes.last();
         m_haveInitialEmptyProcess = false;
     } else if (pageConfiguration->relatedPage()) {
         // Sharing processes, e.g. when creating the page via window.open().
         process = &pageConfiguration->relatedPage()->process();
     } else
-        process = maybeCreateNewWebProcessRespectingProcessCountLimit(&pageConfiguration->websiteDataStore()->websiteDataStore());
+        process = &createNewWebProcessRespectingProcessCountLimit();
 
     return process->createWebPage(pageClient, WTFMove(pageConfiguration));
 }

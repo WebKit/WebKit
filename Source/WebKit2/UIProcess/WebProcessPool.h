@@ -170,7 +170,7 @@ public:
 
     API::WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
 
-    RefPtr<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
+    Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
 
     const String& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
 
@@ -258,7 +258,7 @@ public:
 
     void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
 
-    WebProcessProxy* maybeCreateNewWebProcessRespectingProcessCountLimit(WebsiteDataStore*); // Will return an existing one if limit is met.
+    WebProcessProxy& createNewWebProcessRespectingProcessCountLimit(); // Will return an existing one if limit is met.
     void warmInitialProcess();
 
     bool shouldTerminate(WebProcessProxy*);
@@ -397,7 +397,7 @@ private:
     void platformInitializeWebProcess(WebProcessCreationParameters&);
     void platformInvalidateContext();
 
-    WebProcessProxy& createNewWebProcess(WebsiteDataStore*);
+    WebProcessProxy& createNewWebProcess();
 
     void requestWebContentStatistics(StatisticsRequest*);
     void requestNetworkingStatistics(StatisticsRequest*);

@@ -1229,20 +1229,10 @@ static NSTrackingAreaOptions trackingAreaOptions()
     return options;
 }
 
-std::unique_ptr<WebViewImpl> WebViewImpl::maybeCreate(NSView <WebViewImplDelegate> *view, WKWebView *outerWebView, WebProcessPool& processPool, Ref<API::PageConfiguration>&& configuration)
-{
-    auto pageClient = std::make_unique<PageClientImpl>(view, outerWebView);
-    auto webPage = processPool.createWebPage(*pageClient, WTFMove(configuration));
-    if (!webPage)
-        return nullptr;
-
-    return std::unique_ptr<WebViewImpl>(new WebViewImpl(view, WTFMove(pageClient), *webPage, processPool));
-}
-
-WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, std::unique_ptr<PageClientImpl>&& pageClient, Ref<WebPageProxy>&& page, WebProcessPool& processPool)
+WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWebView, WebProcessPool& processPool, Ref<API::PageConfiguration>&& configuration)
     : m_view(view)
-    , m_pageClient(WTFMove(pageClient))
-    , m_page(WTFMove(page))
+    , m_pageClient(std::make_unique<PageClientImpl>(view, outerWebView))
+    , m_page(processPool.createWebPage(*m_pageClient, WTFMove(configuration)))
     , m_weakPtrFactory(this)
     , m_needsViewFrameInWindowCoordinates(m_page->preferences().pluginsEnabled())
     , m_intrinsicContentSize(CGSizeMake(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric))

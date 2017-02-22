@@ -716,13 +716,8 @@ void WebPageProxy::reattachToWebProcess()
     m_process->removeWebPage(m_pageID);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
-    auto* newProcess = m_process->processPool().maybeCreateNewWebProcessRespectingProcessCountLimit(m_websiteDataStore.ptr());
-    if (!newProcess) {
-        WTFLogAlways("Couldn't reattach to a new web process");
-        return;
-    }
+    m_process = m_process->processPool().createNewWebProcessRespectingProcessCountLimit();
 
-    m_process = *newProcess;
     ASSERT(m_process->state() != ChildProcessProxy::State::Terminated);
     if (m_process->state() == ChildProcessProxy::State::Running)
         processDidFinishLaunching();
