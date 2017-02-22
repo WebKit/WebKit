@@ -1,3 +1,9 @@
+2017-02-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Add the Web Authentication API as "Under Consideration".
+
+        * features.json:
+
 2017-02-22  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Set the pagination strut on the flow when the first line does not fit the page.

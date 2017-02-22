@@ -1083,9 +1083,18 @@
             "status": "In Development"
         },
         "url": "https://www.w3.org/TR/webaudio/",
-        "keywords": ["audio, webaudio"],
+        "keywords": ["audio", "webaudio"],
         "description": "A high-level JavaScript API for processing and synthesizing audio in web applications.",
         "comment": "WebKit's implementation does not match the current specification."
+    },
+    {
+        "name": "Web Authentication",
+        "status": {
+            "status": "Under Consideration"
+        },
+        "url": "https://w3c.github.io/webauthn/",
+        "keywords": ["authentication", "credentials"],
+        "description": "An API enabling the creation and use of strong, attested, cryptographic scoped credentials by web applications, for the purpose of strongly authenticating users."
     },
     {
         "name": "Web Bluetooth",
