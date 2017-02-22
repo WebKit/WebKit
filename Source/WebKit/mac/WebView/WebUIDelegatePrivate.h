@@ -139,6 +139,7 @@ extern NSString *WebConsoleMessageAppCacheMessageSource;
 extern NSString *WebConsoleMessageRenderingMessageSource;
 extern NSString *WebConsoleMessageCSSMessageSource;
 extern NSString *WebConsoleMessageSecurityMessageSource;
+extern NSString *WebConsoleMessageContentBlockerMessageSource;
 extern NSString *WebConsoleMessageOtherMessageSource;
 
 // Message Levels.
