@@ -2898,6 +2898,11 @@ webkit.org/b/168557 imported/blink/compositing/draws-content/webgl-simple-backgr
 webkit.org/b/168572 intersection-observer/intersection-observer-entry-interface.html [ Failure ]
 webkit.org/b/168572 js/dom/regress-157246.html [ Failure ]
 
+webkit.org/b/168647 fast/mediastream/RTCPeerConnection-more-media-to-negotiate.html [ Failure ]
+webkit.org/b/168647 imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html [ Failure ]
+webkit.org/b/168647 imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Failure ]
+webkit.org/b/168647 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
