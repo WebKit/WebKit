@@ -1474,6 +1474,8 @@ void Heap::stopThePeriphery(GCConductor conn)
             && conn == GCConductor::Collector)
             setGCDidJIT();
     }
+#else
+    UNUSED_PARAM(conn);
 #endif // ENABLE(JIT)
     
     vm()->shadowChicken().update(*vm(), vm()->topCallFrame);

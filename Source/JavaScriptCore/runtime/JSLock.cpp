@@ -26,6 +26,7 @@
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
+#include "MachineStackMarker.h"
 #include "SamplingProfiler.h"
 #include <thread>
 
