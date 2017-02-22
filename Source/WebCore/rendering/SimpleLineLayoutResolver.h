@@ -29,23 +29,11 @@
 #include "RenderBlockFlow.h"
 #include "SimpleLineLayoutFlowContents.h"
 #include "SimpleLineLayoutFunctions.h"
+#include <wtf/IteratorRange.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 namespace SimpleLineLayout {
-
-template <class IteratorType>
-class Range {
-public:
-    Range(IteratorType begin, IteratorType end) : m_begin(begin), m_end(end) { }
-
-    IteratorType begin() const { return m_begin; }
-    IteratorType end() const { return m_end; }
-
-private:
-    IteratorType m_begin;
-    IteratorType m_end;
-};
 
 class RunResolver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -113,10 +101,10 @@ public:
     Iterator begin() const;
     Iterator end() const;
 
-    Range<Iterator> rangeForRect(const LayoutRect&) const;
-    Range<Iterator> rangeForRenderer(const RenderObject&) const;
+    WTF::IteratorRange<Iterator> rangeForRect(const LayoutRect&) const;
+    WTF::IteratorRange<Iterator> rangeForRenderer(const RenderObject&) const;
     Iterator runForPoint(const LayoutPoint&) const;
-    Range<Iterator> rangeForRendererWithOffsets(const RenderObject&, unsigned start, unsigned end) const;
+    WTF::IteratorRange<Iterator> rangeForRendererWithOffsets(const RenderObject&, unsigned start, unsigned end) const;
 
 private:
     enum class IndexType { First, Last };
@@ -158,7 +146,7 @@ public:
     Iterator begin() const;
     Iterator end() const;
 
-    Range<Iterator> rangeForRect(const LayoutRect&) const;
+    WTF::IteratorRange<Iterator> rangeForRect(const LayoutRect&) const;
 
 private:
     RunResolver m_runResolver;
@@ -296,10 +284,10 @@ inline LineResolver::Iterator LineResolver::end() const
     return Iterator(m_runResolver.end());
 }
 
-inline Range<LineResolver::Iterator> LineResolver::rangeForRect(const LayoutRect& rect) const
+inline WTF::IteratorRange<LineResolver::Iterator> LineResolver::rangeForRect(const LayoutRect& rect) const
 {
     auto runRange = m_runResolver.rangeForRect(rect);
-    return Range<Iterator>(Iterator(runRange.begin()), Iterator(runRange.end()));
+    return { Iterator(runRange.begin()), Iterator(runRange.end()) };
 }
 
 inline RunResolver runResolver(const RenderBlockFlow& flow, const Layout& layout)

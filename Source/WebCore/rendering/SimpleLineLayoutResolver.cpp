@@ -145,27 +145,27 @@ unsigned RunResolver::lineIndexForHeight(LayoutUnit height, IndexType type) cons
     return std::min<unsigned>(y / m_lineHeight, m_layout.lineCount() - 1);
 }
 
-Range<RunResolver::Iterator> RunResolver::rangeForRect(const LayoutRect& rect) const
+WTF::IteratorRange<RunResolver::Iterator> RunResolver::rangeForRect(const LayoutRect& rect) const
 { 
     if (!m_lineHeight)
-        return Range<Iterator>(begin(), end());
+        return { begin(), end() };
 
     unsigned firstLine = lineIndexForHeight(rect.y(), IndexType::First);
     unsigned lastLine = std::max(firstLine, lineIndexForHeight(rect.maxY(), IndexType::Last));
 
     auto rangeBegin = begin().advanceLines(firstLine);
     if (rangeBegin == end())
-        return Range<Iterator>(end(), end());
+        return { end(), end() };
     auto rangeEnd = rangeBegin;
     ASSERT(lastLine >= firstLine);
     rangeEnd.advanceLines(lastLine - firstLine + 1);
-    return Range<Iterator>(rangeBegin, rangeEnd);
+    return { rangeBegin, rangeEnd };
 }
 
-Range<RunResolver::Iterator> RunResolver::rangeForRenderer(const RenderObject& renderer) const
+WTF::IteratorRange<RunResolver::Iterator> RunResolver::rangeForRenderer(const RenderObject& renderer) const
 {
     if (begin() == end())
-        return Range<Iterator>(end(), end());
+        return { end(), end() };
     FlowContents::Iterator segment = m_flowContents.begin();
     auto run = begin();
     ASSERT(segment->start <= (*run).start());
@@ -183,7 +183,7 @@ Range<RunResolver::Iterator> RunResolver::rangeForRenderer(const RenderObject& r
     // Do we actually have a run for this renderer?
     // Collapsed whitespace with dedicated renderer could end up with no run at all.
     if (run == end() || (segment->start != segment->end && segment->end <= (*run).start()))
-        return Range<Iterator>(end(), end());
+        return { end(), end() };
 
     auto rangeBegin = run;
     // Move beyond the end of the segment.
@@ -192,7 +192,7 @@ Range<RunResolver::Iterator> RunResolver::rangeForRenderer(const RenderObject& r
     // Special case when segment == run.
     if (run == rangeBegin)
         ++run;
-    return Range<Iterator>(rangeBegin, run);
+    return { rangeBegin, run };
 }
 
 RunResolver::Iterator RunResolver::runForPoint(const LayoutPoint& point) const
@@ -219,7 +219,7 @@ RunResolver::Iterator RunResolver::runForPoint(const LayoutPoint& point) const
     return --it;
 }
 
-Range<RunResolver::Iterator> RunResolver::rangeForRendererWithOffsets(const RenderObject& renderer, unsigned startOffset, unsigned endOffset) const
+WTF::IteratorRange<RunResolver::Iterator> RunResolver::rangeForRendererWithOffsets(const RenderObject& renderer, unsigned startOffset, unsigned endOffset) const
 {
     ASSERT(startOffset <= endOffset);
     auto range = rangeForRenderer(renderer);
