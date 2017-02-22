@@ -1,5 +1,14 @@
 2017-02-21  Aakash Jain  <aakash_jain@apple.com>
 
+        Export various NSString symbols from WebFramePrivate.h
+        https://bugs.webkit.org/show_bug.cgi?id=168702
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKit.exp:
+
+2017-02-21  Aakash Jain  <aakash_jain@apple.com>
+
         Export various NSString symbols from WebPreferencesPrivate.h
         https://bugs.webkit.org/show_bug.cgi?id=168701
 
