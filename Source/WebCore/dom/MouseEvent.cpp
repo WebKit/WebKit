@@ -28,10 +28,16 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLIFrameElement.h"
+#include "JSDOMConvert.h"
+#include "JSEventTarget.h"
+#include "JSEventTargetCustom.h"
 #include "PlatformMouseEvent.h"
+#include "RuntimeApplicationChecks.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
+
+using namespace JSC;
 
 Ref<MouseEvent> MouseEvent::create(const AtomicString& type, const MouseEventInit& initializer, IsTrusted isTrusted)
 {
@@ -168,6 +174,34 @@ void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool c
 
     // FIXME: m_isSimulated is not set to false here.
     // FIXME: m_dataTransfer is not set to 0 here.
+}
+
+// FIXME: We need this quirk because iAd Producer is calling this function with a relatedTarget that is not an EventTarget (rdar://problem/30640101).
+// We should remove this quirk when possible.
+void MouseEvent::initMouseEventQuirk(ExecState& state, ScriptExecutionContext& scriptExecutionContext, const AtomicString& type, bool canBubble, bool cancelable, DOMWindow* view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, JSValue relatedTargetValue)
+{
+    EventTarget* relatedTarget = nullptr;
+#if PLATFORM(MAC)
+    if (MacApplication::isIAdProducer()) {
+        // jsEventTargetCast() does not throw and will silently convert bad input to nullptr.
+        auto jsRelatedTarget = jsEventTargetCast(relatedTargetValue);
+        if (!jsRelatedTarget && !relatedTargetValue.isUndefinedOrNull())
+            scriptExecutionContext.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Calling initMouseEvent() with a relatedTarget that is not an EventTarget is deprecated."));
+        relatedTarget = jsRelatedTarget ? &jsRelatedTarget->wrapped() : nullptr;
+    } else {
+#else
+    UNUSED_PARAM(scriptExecutionContext);
+#endif
+        // This is what the bindings generator would have produced.
+        auto throwScope = DECLARE_THROW_SCOPE(state.vm());
+        relatedTarget = convert<IDLNullable<IDLInterface<EventTarget>>>(state, relatedTargetValue, [](ExecState& state, ThrowScope& scope) {
+            throwArgumentTypeError(state, scope, 14, "relatedTarget", "MouseEvent", "initMouseEvent", "EventTarget");
+        });
+        RETURN_IF_EXCEPTION(throwScope, void());
+#if PLATFORM(MAC)
+    }
+#endif
+    initMouseEvent(type, canBubble, cancelable, view, detail, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget);
 }
 
 EventInterface MouseEvent::eventInterface() const

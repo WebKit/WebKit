@@ -53,6 +53,7 @@ bool isSolidStateNetworksDownloader();
 WEBCORE_EXPORT bool isVersions();
 WEBCORE_EXPORT bool isHRBlock();
 WEBCORE_EXPORT bool isAppStore();
+WEBCORE_EXPORT bool isIAdProducer();
 
 } // MacApplication
 
