@@ -1,0 +1,13 @@
+Tests that DOM timers on hidden pages that have not reached max nesting level are not throttled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS timerIntervalWhilePageVisible is within 20 of 10
+PASS timerIntervalWhilePageVisible is within 20 of 10
+PASS timerIntervalWhilePageVisible is within 20 of 10
+PASS timerIntervalWhilePageVisible is within 20 of 10
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

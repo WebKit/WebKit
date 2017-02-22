@@ -2,7 +2,7 @@
 <head>
     <script src="../../resources/js-test-pre.js"></script>
     <script>
-        description('<a href="https://bugs.webkit.org/show_bug.cgi?id=98474">Bug 98474</a>: Throttle DOM timers on hidden pages.');
+        description('Tests that DOM timers on hidden pages that have not reached max nesting level are not throttled.');
 
         var jsTestIsAsync = true;
         var previousTime = new Date().getTime();
@@ -11,19 +11,13 @@
         var isPageVisible = true;
         var timeoutInterval = 10;
         var tolerance = 20;
-        var maxNestingLevel = 5;
 
         function testTimer()
         {
             var date = new Date();
             var time = date.getTime();
-            if (!isPageVisible && timerCount >= maxNestingLevel) {
-                timerIntervalWhilePageHidden = time - previousTime;
-                shouldBeTrue("timerIntervalWhilePageHidden > (timeoutInterval + tolerance)");
-            } else {
-                timerIntervalWhilePageVisible = time - previousTime;
-                shouldBeCloseTo("timerIntervalWhilePageVisible", timeoutInterval, tolerance);
-            }
+            timerIntervalWhilePageVisible = time - previousTime;
+            shouldBeCloseTo("timerIntervalWhilePageVisible", timeoutInterval, tolerance);
 
             timerCount++;
             previousTime = time;
@@ -31,10 +25,10 @@
             if (timerCount == 1) {
                 testRunner.setPageVisibility("hidden");
                 isPageVisible = false;
-            } else if (timerCount == maxNestingLevel + 1) {
+            } else if (timerCount == 3) {
                 testRunner.resetPageVisibility();
                 isPageVisible = true;
-            } else if (timerCount > maxNestingLevel + 1){
+            } else if (timerCount > 3){
                 finishJSTest();
                 return;
             }
@@ -59,9 +53,6 @@
     </script>
 </head>
 <body onload="runTest()">
-    <p>
-    This test measures the time taken to fire a <span class="timeoutInterval"></span>ms DOM Timer when the page visibility is set to "visible", "hidden" and then back to "visible".  Due to hidden page timer throttling, the timer should fire close to <span id="alignmentInterval"></span>s when page is hidden.  And it should fire close to <span class="timeoutInterval"></span>ms, when the page is visible.
-    </p>
     <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

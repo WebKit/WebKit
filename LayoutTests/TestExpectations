@@ -109,8 +109,6 @@ webkit.org/b/139903 editing/spelling/grammar-paste.html [ Timeout Pass ]
 # media/W3C/video/networkState/networkState_during_progress.html is flaky
 webkit.org/b/76280 media/W3C/video/networkState/networkState_during_progress.html [ Pass Failure ]
 
-webkit.org/b/118301 fast/dom/timer-throttling-hidden-page.html [ Skip ]
-
 # This test will run slowly in debug mode, but is plenty fast in release.
 [ Debug ] js/slow-stress/emscripten-memops.html [ Skip ]
 

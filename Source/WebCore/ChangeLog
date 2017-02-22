@@ -1,3 +1,20 @@
+2017-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Do not aggressively throttle DOM timers until they've reached their max nesting level
+        https://bugs.webkit.org/show_bug.cgi?id=168700
+        <rdar://problem/29808005>
+
+        Reviewed by Simon Fraser.
+
+        Do not aggressively throttle DOM timers until they've actually areached their max
+        nesting level (5). This overly aggressive throttling of non-nested timers is what
+        was causing Google Maps to use 100% CPU in background tabs for several minutes.
+
+        Test: fast/dom/timer-throttling-hidden-page-non-nested.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::timerAlignmentInterval):
+
 2017-02-22  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream iOS] Respond to capture interruptions and notifications

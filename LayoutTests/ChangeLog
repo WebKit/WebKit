@@ -1,3 +1,19 @@
+2017-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Do not aggressively throttle DOM timers until they've reached their max nesting level
+        https://bugs.webkit.org/show_bug.cgi?id=168700
+        <rdar://problem/29808005>
+
+        Reviewed by Simon Fraser.
+
+        Add layout test coverage.
+
+        * TestExpectations:
+        * fast/dom/timer-throttling-hidden-page-expected.txt:
+        * fast/dom/timer-throttling-hidden-page-non-nested-expected.txt: Added.
+        * fast/dom/timer-throttling-hidden-page-non-nested.html: Added.
+        * fast/dom/timer-throttling-hidden-page.html:
+
 2017-02-22  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r207669): Crash after mutating selector text
