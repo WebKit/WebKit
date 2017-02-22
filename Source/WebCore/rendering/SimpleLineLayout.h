@@ -76,20 +76,22 @@ class Layout {
 public:
     using RunVector = Vector<Run, 10>;
     using SimplePaginationStruts = Vector<SimplePaginationStrut, 4>;
-    static std::unique_ptr<Layout> create(const RunVector&, SimplePaginationStruts&, unsigned lineCount);
+    static std::unique_ptr<Layout> create(const RunVector&, SimplePaginationStruts&, unsigned lineCount, bool isPaginated);
 
     unsigned lineCount() const { return m_lineCount; }
 
     unsigned runCount() const { return m_runCount; }
     const Run& runAt(unsigned i) const { return m_runs[i]; }
 
-    bool isPaginated() const { return !m_paginationStruts.isEmpty(); }
+    bool isPaginated() const { return m_isPaginated; }
+    bool hasPaginationStruts() const { return !m_paginationStruts.isEmpty(); }
     const SimplePaginationStruts& struts() const { return m_paginationStruts; }
 private:
-    Layout(const RunVector&, SimplePaginationStruts&, unsigned lineCount);
+    Layout(const RunVector&, SimplePaginationStruts&, unsigned lineCount, bool isPaginated);
 
     unsigned m_lineCount;
     unsigned m_runCount;
+    bool m_isPaginated;
     SimplePaginationStruts m_paginationStruts;
     Run m_runs[0];
 };
