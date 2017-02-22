@@ -6218,6 +6218,8 @@
 		E1284AEA10447DEE00EAEB52 /* PageTransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1284AE910447DEE00EAEB52 /* PageTransitionEvent.cpp */; };
 		E1284BB110449FFA00EAEB52 /* JSPageTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1284BAF10449FFA00EAEB52 /* JSPageTransitionEvent.h */; };
 		E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1284BB010449FFA00EAEB52 /* JSPageTransitionEvent.cpp */; };
+		E12DE7171E4B749C00F9ACCF /* GridTrackSizingAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12DE7151E4B748700F9ACCF /* GridTrackSizingAlgorithm.cpp */; };
+		E12DE7181E4B74A600F9ACCF /* GridTrackSizingAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = E12DE7161E4B748700F9ACCF /* GridTrackSizingAlgorithm.h */; };
 		E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = E12EDB7A0B308A78002704B6 /* EventTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12EDBE90B308E0B002704B6 /* EventTarget.cpp */; };
 		E134F5AB12EE343F004EC58D /* IntRectHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E134F5AA12EE343F004EC58D /* IntRectHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14361,6 +14363,8 @@
 		E1284AE910447DEE00EAEB52 /* PageTransitionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageTransitionEvent.cpp; sourceTree = "<group>"; };
 		E1284BAF10449FFA00EAEB52 /* JSPageTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPageTransitionEvent.h; sourceTree = "<group>"; };
 		E1284BB010449FFA00EAEB52 /* JSPageTransitionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPageTransitionEvent.cpp; sourceTree = "<group>"; };
+		E12DE7151E4B748700F9ACCF /* GridTrackSizingAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GridTrackSizingAlgorithm.cpp; sourceTree = "<group>"; };
+		E12DE7161E4B748700F9ACCF /* GridTrackSizingAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridTrackSizingAlgorithm.h; sourceTree = "<group>"; };
 		E12EDB7A0B308A78002704B6 /* EventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTarget.h; sourceTree = "<group>"; };
 		E12EDBE90B308E0B002704B6 /* EventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTarget.cpp; sourceTree = "<group>"; };
 		E134F5AA12EE343F004EC58D /* IntRectHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntRectHash.h; sourceTree = "<group>"; };
@@ -24100,6 +24104,8 @@
 				935C477409AC4D8D00A6AAB4 /* GapRects.h */,
 				E112F4701E3A85F200D6CDFD /* Grid.cpp */,
 				E112F46F1E3A85D800D6CDFD /* Grid.h */,
+				E12DE7151E4B748700F9ACCF /* GridTrackSizingAlgorithm.cpp */,
+				E12DE7161E4B748700F9ACCF /* GridTrackSizingAlgorithm.h */,
 				4969B0F013D0B33F00DF3521 /* HitTestingTransformState.cpp */,
 				4969B0F113D0B33F00DF3521 /* HitTestingTransformState.h */,
 				2D8287F416E4A0380086BD00 /* HitTestLocation.cpp */,
@@ -26168,6 +26174,7 @@
 				A12705C31656BD6500C2E27C /* GridPosition.h in Headers */,
 				CDF7483F18FEBCEC0006ECC0 /* GridPositionsResolver.h in Headers */,
 				A12A1050166444FD008FA311 /* GridTrackSize.h in Headers */,
+				E12DE7181E4B74A600F9ACCF /* GridTrackSizingAlgorithm.h in Headers */,
 				26EA89A71B4F2B75008C5FD2 /* HashableActionList.h in Headers */,
 				8482B7461198C35400BFB005 /* HashChangeEvent.h in Headers */,
 				A8748BE012CBF2DC001FBA41 /* HashTools.h in Headers */,
@@ -30003,6 +30010,7 @@
 				B2A015AA0AF6CD53006BCE0E /* GraphicsTypes.cpp in Sources */,
 				E112F4711E3A861200D6CDFD /* Grid.cpp in Sources */,
 				CDF7483E18FEBCEC0006ECC0 /* GridPositionsResolver.cpp in Sources */,
+				E12DE7171E4B749C00F9ACCF /* GridTrackSizingAlgorithm.cpp in Sources */,
 				F55B3DBF1251F12D003EF269 /* HiddenInputType.cpp in Sources */,
 				515BE19B1D54F6C100DD7C68 /* HIDGamepad.cpp in Sources */,
 				515BE19D1D54F6C100DD7C68 /* HIDGamepadProvider.cpp in Sources */,
