@@ -521,9 +521,6 @@ void Scope::clearPendingUpdate()
 
 void Scope::scheduleUpdate(UpdateType update)
 {
-    if (update == UpdateType::ContentsOrInterpretation)
-        clearResolver();
-
     if (!m_pendingUpdate || *m_pendingUpdate < update) {
         m_pendingUpdate = update;
         if (m_shadowRoot)
