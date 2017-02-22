@@ -1,3 +1,25 @@
+2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Test fast/events/message-port-postMessage-recursive.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=168570
+
+        Reviewed by Michael Catanzaro.
+
+        This has recently been added and the patch is good. It's just revealing a problem with our timers. The test is
+        posting a message recursively, and also starts a timeout timer to finish the test. The timeout timer is never
+        fired for us, because WebCore timers have lower priority than the one used by postMessage. ScriptExecutionContext
+        uses Document::postTask, that uses scheduleOnMainThread, that uses RunLoop::dispatch(). We are not setting any
+        priority for the timer used by RunLoop::dispatch, so it's using the default.
+        Use a RunLoop::Timer to schedule tasks to the main thread instead of using RunLoop::dispatch(). This allows us
+        to use a different priority, that is now set to G_PRIORITY_HIGH_IDLE + 20 to match WebCore timers. But it also
+        avoids the double queue we had with RunLoop::dispatch(), because scheduleOnMainThread() also queues the tasks.
+
+        * wtf/glib/MainThreadGLib.cpp:
+        (WTF::MainThreadDispatcher::MainThreadDispatcher):
+        (WTF::MainThreadDispatcher::schedule):
+        (WTF::MainThreadDispatcher::fired):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
 2017-02-21  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC][Mac] Activate libwebrtc
