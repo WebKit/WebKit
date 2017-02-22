@@ -2901,6 +2901,8 @@ webkit.org/b/168647 imported/w3c/web-platform-tests/webrtc/datachannel-emptystri
 webkit.org/b/168647 imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Failure ]
 webkit.org/b/168647 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Failure ]
 
+webkit.org/b/168719 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
