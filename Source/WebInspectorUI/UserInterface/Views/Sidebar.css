@@ -62,11 +62,13 @@
     display: block;
 }
 
-.sidebar.right > .resizer {
+body[dir=ltr] .sidebar.right > .resizer,
+body[dir=rtl] .sidebar.left > .resizer {
     left: -3px;
 }
 
-.sidebar.left > .resizer {
+body[dir=ltr] .sidebar.left > .resizer,
+body[dir=rtl] .sidebar.right > .resizer {
     right: -3px;
 }
 
@@ -74,10 +76,12 @@
     display: none;
 }
 
-.sidebar.left {
+body[dir=ltr] .sidebar.left,
+body[dir=rtl] .sidebar.right {
     border-right: 1px solid var(--border-color);
 }
 
-.sidebar.right {
+body[dir=ltr] .sidebar.right,
+body[dir=rtl] .sidebar.left {
     border-left: 1px solid var(--border-color);
 }

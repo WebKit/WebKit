@@ -254,6 +254,9 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
         if (this._side === WebInspector.Sidebar.Sides.Left)
             positionDelta *= -1;
 
+        if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL)
+            positionDelta *= -1;
+
         var newWidth = positionDelta + this._widthBeforeResize;
         this.width = newWidth;
         this.collapsed = (newWidth < (this.minimumWidth / 2));

@@ -1,3 +1,24 @@
+2017-02-22  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: RTL: Sidebar borders are on the wrong side
+        https://bugs.webkit.org/show_bug.cgi?id=168743
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/Sidebar.css:
+        (body[dir=ltr] .sidebar.right > .resizer, body[dir=rtl] .sidebar.left > .resizer):
+        (body[dir=ltr] .sidebar.left > .resizer, body[dir=rtl] .sidebar.right > .resizer):
+        (body[dir=ltr] .sidebar.left, body[dir=rtl] .sidebar.right):
+        (body[dir=ltr] .sidebar.right, body[dir=rtl] .sidebar.left):
+        (.sidebar.right > .resizer): Deleted.
+        (.sidebar.left > .resizer): Deleted.
+        (.sidebar.left): Deleted.
+        (.sidebar.right): Deleted.
+
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar.prototype.resizerDragging):
+        Reverse the change if the direction is RTL.
+
 2017-02-22  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: Settings tab labels need adjustment
