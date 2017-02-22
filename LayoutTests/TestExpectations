@@ -699,6 +699,14 @@ fast/mediastream/RTCPeerConnection-overloaded-operations-params.html [ Skip ]
 fast/mediastream/RTCRtpSender-replaceTrack.html [ Skip ]
 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Pass Failure ]
 
+# See webkit.org/b/168736
+fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure  ]
+fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html [ Failure  ]
+fast/mediastream/RTCPeerConnection-legacy-stream-based-api.html [ Failure  ]
+imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html [ Failure  ]
+imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Failure  ]
+imported/w3c/web-platform-tests/webrtc/promises-call.html [ Failure  ]
+
 # Only iOS WK1 has testRunner.setPagePaused.
 fast/dom/timer-fire-after-page-pause.html [ Skip ]
 

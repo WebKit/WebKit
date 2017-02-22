@@ -1,3 +1,12 @@
+2017-02-22  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Some webrtc tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=168736
+
+        Unreviewed.
+
+        * TestExpectations: Marking some tests as failing until we fix them.
+
 2017-02-22  Jer Noble  <jer.noble@apple.com>
 
         MediaStreamSourceNode never receives audio from a getUserMedia() created stream
