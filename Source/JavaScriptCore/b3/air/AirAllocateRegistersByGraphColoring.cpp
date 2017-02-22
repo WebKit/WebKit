@@ -250,6 +250,23 @@ protected:
         return true;
     }
 
+    void addBias(IndexType u, IndexType v)
+    {
+        // We implement biased coloring as proposed by Briggs. See section
+        // 5.3.3 of his thesis for more information: http://www.cs.utexas.edu/users/mckinley/380C/lecs/briggs-thesis-1992.pdf
+        // The main idea of biased coloring is this:
+        // We try to coalesce a move between u and v, but the conservative heuristic
+        // fails. We don't want coalesce the move because we don't want to risk
+        // creating an uncolorable graph. However, if the conservative heuristic fails,
+        // it's not proof that the graph is uncolorable if the move were indeed coalesced.
+        // So, when we go to color the tmps, we'll remember that we really want the
+        // same register for u and v, and if legal, we will assign them to the same register.
+        if (!isPrecolored(u)) 
+            m_biases.add(u, IndexTypeSet()).iterator->value.add(v);
+        if (!isPrecolored(v))
+            m_biases.add(v, IndexTypeSet()).iterator->value.add(u);
+    }
+
     IndexType selectSpill()
     {
         if (!m_hasSelectedSpill) {
@@ -327,12 +344,31 @@ protected:
         // Try to color the Tmp on the stack.
         m_coloredTmp.resize(m_adjacencyList.size());
 
+        {
+            Vector<IndexType, 4> nowAliasedBiases;
+            for (IndexType key : m_biases.keys()) {
+                if (key != getAlias(key))
+                    nowAliasedBiases.append(key);
+            }
+            for (IndexType key : nowAliasedBiases) {
+                IndexTypeSet keysBiases(m_biases.take(key));
+                auto addResult = m_biases.add(getAlias(key), IndexTypeSet());
+                if (addResult.isNewEntry) {
+                    ASSERT(!addResult.iterator->value.size());
+                    addResult.iterator->value = WTFMove(keysBiases);
+                } else {
+                    IndexTypeSet& setToAddTo = addResult.iterator->value;
+                    for (IndexType tmp : keysBiases)
+                        setToAddTo.add(tmp);
+                }
+            }
+        }
+
         while (!m_selectStack.isEmpty()) {
             unsigned tmpIndex = m_selectStack.takeLast();
-            m_isOnSelectStack.quickClear(tmpIndex);
             ASSERT(!isPrecolored(tmpIndex));
             ASSERT(!m_coloredTmp[tmpIndex]);
-            RELEASE_ASSERT(getAlias(tmpIndex) == tmpIndex);
+            ASSERT(getAlias(tmpIndex) == tmpIndex);
 
             RegisterSet coloredRegisters;
             for (IndexType adjacentTmpIndex : m_adjacencyList[tmpIndex]) {
@@ -346,11 +382,25 @@ protected:
             }
 
             bool colorAssigned = false;
-            for (Reg reg : m_regsInPriorityOrder) {
-                if (!coloredRegisters.get(reg)) {
-                    m_coloredTmp[tmpIndex] = reg;
-                    colorAssigned = true;
-                    break;
+            auto iter = m_biases.find(tmpIndex);
+            if (iter != m_biases.end()) {
+                for (IndexType desiredBias : iter->value) {
+                    if (Reg desiredColor = m_coloredTmp[getAlias(desiredBias)]) {
+                        if (!coloredRegisters.get(desiredColor)) {
+                            m_coloredTmp[tmpIndex] = desiredColor;
+                            colorAssigned = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!colorAssigned) {
+                for (Reg reg : m_regsInPriorityOrder) {
+                    if (!coloredRegisters.get(reg)) {
+                        m_coloredTmp[tmpIndex] = reg;
+                        colorAssigned = true;
+                        break;
+                    }
                 }
             }
 
@@ -474,6 +524,10 @@ protected:
     Vector<Vector<IndexType, 0, UnsafeVectorOverflow, 4>, 0, UnsafeVectorOverflow> m_adjacencyList;
     Vector<IndexType, 0, UnsafeVectorOverflow> m_degrees;
 
+    using IndexTypeSet = HashSet<IndexType, typename DefaultHash<IndexType>::Hash, WTF::UnsignedWithZeroKeyHashTraits<IndexType>>;
+
+    HashMap<IndexType, IndexTypeSet, typename DefaultHash<IndexType>::Hash, WTF::UnsignedWithZeroKeyHashTraits<IndexType>> m_biases;
+
     // Instead of keeping track of the move instructions, we just keep their operands around and use the index
     // in the vector as the "identifier" for the move.
     struct MoveOperands {
@@ -483,7 +537,7 @@ protected:
     Vector<MoveOperands, 0, UnsafeVectorOverflow> m_coalescingCandidates;
 
     // List of every move instruction associated with a Tmp.
-    Vector<HashSet<IndexType, typename DefaultHash<IndexType>::Hash, WTF::UnsignedWithZeroKeyHashTraits<IndexType>>> m_moveList;
+    Vector<IndexTypeSet> m_moveList;
 
     // Colors.
     Vector<Reg, 0, UnsafeVectorOverflow> m_coloredTmp;
@@ -550,6 +604,7 @@ protected:
     using Base::hasBeenSimplified;
     using Base::addToSpill;
     using Base::m_interferenceEdges;
+    using Base::addBias;
 
 public:
     Briggs(Code& code, const Vector<Reg>& regsInPriorityOrder, IndexType lastPrecoloredRegisterIndex, unsigned tmpArraySize, const HashSet<unsigned>& unspillableTmps, const UseCounts<Tmp>& useCounts)
@@ -685,6 +740,8 @@ protected:
                 dataLog("    Safe Coalescing\n");
             return true;
         }
+
+        addBias(u, v);
 
         if (traceDebug)
             dataLog("    Failed coalescing.\n");
@@ -907,6 +964,7 @@ protected:
     using Base::m_interferenceEdges;
     using Base::m_adjacencyList;
     using Base::dumpInterferenceGraphInDot;
+    using Base::addBias;
 
 public:
     IRC(Code& code, const Vector<Reg>& regsInPriorityOrder, IndexType lastPrecoloredRegisterIndex, unsigned tmpArraySize, const HashSet<unsigned>& unspillableTmps, const UseCounts<Tmp>& useCounts)
@@ -1026,6 +1084,8 @@ protected:
             m_activeMoves.quickSet(moveIndex);
             if (traceDebug)
                 dataLog("    Failed coalescing, added to active moves.\n");
+
+            addBias(u, v);
         }
     }
 

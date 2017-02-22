@@ -1,3 +1,24 @@
+2017-02-22  Saam Barati  <sbarati@apple.com>
+
+        Add biased coloring to Briggs and IRC
+        https://bugs.webkit.org/show_bug.cgi?id=168611
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements biased coloring as proposed by Briggs. See section
+        5.3.3 of his thesis for more information: http://www.cs.utexas.edu/users/mckinley/380C/lecs/briggs-thesis-1992.pdf
+
+        The main idea of biased coloring is this:
+        We try to coalesce a move between u and v, but the conservative heuristic
+        fails. We don't want coalesce the move because we don't want to risk
+        creating an uncolorable graph. However, if the conservative heuristic fails,
+        it's not proof that the graph is uncolorable if the move were indeed coalesced.
+        So, when we go to color the tmps, we'll remember that we really want the
+        same register for u and v, and if legal during coloring, we will
+        assign them to the same register.
+
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+
 2017-02-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         JSModuleNamespace object should have IC
