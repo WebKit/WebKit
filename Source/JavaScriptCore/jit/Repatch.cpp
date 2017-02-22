@@ -47,8 +47,10 @@
 #include "JIT.h"
 #include "JITInlines.h"
 #include "JSCInlines.h"
+#include "JSModuleNamespaceObject.h"
 #include "JSWebAssembly.h"
 #include "LinkBuffer.h"
+#include "ModuleNamespaceAccessCase.h"
 #include "PolymorphicAccess.h"
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
@@ -192,6 +194,11 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             if (!arguments->overrodeThings())
                 newCase = AccessCase::create(vm, codeBlock, AccessCase::ScopedArgumentsLength);
         }
+    }
+
+    if (!propertyName.isSymbol() && isJSModuleNamespaceObject(baseValue) && !slot.isUnset()) {
+        if (auto moduleNamespaceSlot = slot.moduleNamespaceSlot())
+            newCase = ModuleNamespaceAccessCase::create(vm, codeBlock, jsCast<JSModuleNamespaceObject*>(baseValue), moduleNamespaceSlot->environment, ScopeOffset(moduleNamespaceSlot->scopeOffset));
     }
     
     if (!newCase) {
