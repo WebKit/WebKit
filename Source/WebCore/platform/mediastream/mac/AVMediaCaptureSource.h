@@ -39,6 +39,7 @@ OBJC_CLASS AVCaptureDevice;
 OBJC_CLASS AVCaptureOutput;
 OBJC_CLASS AVCaptureSession;
 OBJC_CLASS AVCaptureVideoDataOutput;
+OBJC_CLASS NSError;
 OBJC_CLASS WebCoreAVMediaCaptureSourceObserver;
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
@@ -53,7 +54,12 @@ public:
 
     virtual void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) = 0;
 
-    virtual void captureSessionIsRunningDidChange(bool);
+    void captureSessionIsRunningDidChange(bool);
+    void captureSessionRuntimeError(RetainPtr<NSError>);
+
+    enum class InterruptionReason { None, VideoNotAllowedInBackground, AudioInUse, VideoInUse, VideoNotAllowedInSideBySide };
+    void captureSessionBeginInterruption(RetainPtr<NSNotification>);
+    void captureSessionEndInterruption(RetainPtr<NSNotification>);
 
     AVCaptureSession *session() const { return m_session.get(); }
 
@@ -98,7 +104,8 @@ private:
     RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;
-    bool m_isRunning { false};
+    InterruptionReason m_interruption { InterruptionReason::None };
+    bool m_isRunning { false };
 };
 
 } // namespace WebCore

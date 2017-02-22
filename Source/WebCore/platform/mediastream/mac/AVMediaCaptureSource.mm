@@ -38,6 +38,7 @@
 #import <AVFoundation/AVCaptureInput.h>
 #import <AVFoundation/AVCaptureOutput.h>
 #import <AVFoundation/AVCaptureSession.h>
+#import <AVFoundation/AVError.h>
 #import <objc/runtime.h>
 #import <wtf/MainThread.h>
 
@@ -72,20 +73,24 @@ SOFT_LINK_CLASS(AVFoundation, AVCaptureVideoDataOutput)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeAudio, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeMuxed, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeVideo, NSString *)
-SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPreset1280x720, NSString *)
-SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPreset640x480, NSString *)
-SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPreset352x288, NSString *)
-SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPresetLow, NSString *)
-SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionDidStopRunningNotification, NSString *)
 
 #define AVMediaTypeAudio getAVMediaTypeAudio()
 #define AVMediaTypeMuxed getAVMediaTypeMuxed()
 #define AVMediaTypeVideo getAVMediaTypeVideo()
-#define AVCaptureSessionPreset1280x720 getAVCaptureSessionPreset1280x720()
-#define AVCaptureSessionPreset640x480 getAVCaptureSessionPreset640x480()
-#define AVCaptureSessionPreset352x288 getAVCaptureSessionPreset352x288()
-#define AVCaptureSessionPresetLow getAVCaptureSessionPresetLow()
-#define AVCaptureSessionDidStopRunningNotification getAVCaptureSessionDidStopRunningNotification()
+
+#if PLATFORM(IOS)
+SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionRuntimeErrorNotification, NSString *)
+SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionWasInterruptedNotification, NSString *)
+SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionInterruptionEndedNotification, NSString *)
+SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionInterruptionReasonKey, NSString *)
+SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVCaptureSessionErrorKey, NSString *)
+
+#define AVCaptureSessionRuntimeErrorNotification getAVCaptureSessionRuntimeErrorNotification()
+#define AVCaptureSessionWasInterruptedNotification getAVCaptureSessionWasInterruptedNotification()
+#define AVCaptureSessionInterruptionEndedNotification getAVCaptureSessionInterruptionEndedNotification()
+#define AVCaptureSessionInterruptionReasonKey getAVCaptureSessionInterruptionReasonKey()
+#define AVCaptureSessionErrorKey getAVCaptureSessionErrorKey()
+#endif
 
 using namespace WebCore;
 
@@ -96,13 +101,20 @@ using namespace WebCore;
 
 -(id)initWithCallback:(AVMediaCaptureSource*)callback;
 -(void)disconnect;
--(void)captureOutput:(AVCaptureOutputType *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnectionType *)connection;
--(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(void*)context;
+-(void)addNotificationObservers;
+-(void)removeNotificationObservers;
+-(void)captureOutput:(AVCaptureOutputType*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnectionType*)connection;
+-(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context;
+#if PLATFORM(IOS)
+-(void)sessionRuntimeError:(NSNotification*)notification;
+-(void)beginSessionInterrupted:(NSNotification*)notification;
+-(void)endSessionInterrupted:(NSNotification*)notification;
+#endif
 @end
 
 namespace WebCore {
 
-static NSArray* sessionKVOProperties();
+static NSArray<NSString*>* sessionKVOProperties();
 
 static dispatch_queue_t globaAudioCaptureSerialQueue()
 {
@@ -130,6 +142,13 @@ AVMediaCaptureSource::AVMediaCaptureSource(AVCaptureDeviceTypedef* device, const
     , m_objcObserver(adoptNS([[WebCoreAVMediaCaptureSourceObserver alloc] initWithCallback:this]))
     , m_device(device)
 {
+#if PLATFORM(IOS)
+    static_assert(static_cast<int>(InterruptionReason::VideoNotAllowedInBackground) == static_cast<int>(AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableInBackground), "InterruptionReason::VideoNotAllowedInBackground is not AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableInBackground as expected");
+    static_assert(static_cast<int>(InterruptionReason::VideoNotAllowedInSideBySide) == AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps, "InterruptionReason::VideoNotAllowedInSideBySide is not AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps as expected");
+    static_assert(static_cast<int>(InterruptionReason::VideoInUse) == AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient, "InterruptionReason::VideoInUse is not AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient as expected");
+    static_assert(static_cast<int>(InterruptionReason::AudioInUse) == AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient, "InterruptionReason::AudioInUse is not AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient as expected");
+#endif
+    
     setPersistentID(device.uniqueID);
     setMuted(true);
 }
@@ -138,11 +157,15 @@ AVMediaCaptureSource::~AVMediaCaptureSource()
 {
     [m_objcObserver disconnect];
 
-    if (m_session) {
-        for (NSString *keyName in sessionKVOProperties())
-            [m_session removeObserver:m_objcObserver.get() forKeyPath:keyName];
+    if (!m_session)
+        return;
+
+    for (NSString *keyName in sessionKVOProperties())
+        [m_session removeObserver:m_objcObserver.get() forKeyPath:keyName];
+
+    if ([m_session isRunning])
         [m_session stopRunning];
-    }
+
 }
 
 void AVMediaCaptureSource::startProducingData()
@@ -152,7 +175,8 @@ void AVMediaCaptureSource::startProducingData()
     
     if ([m_session isRunning])
         return;
-    
+
+    [m_objcObserver addNotificationObservers];
     [m_session startRunning];
 }
 
@@ -161,6 +185,7 @@ void AVMediaCaptureSource::stopProducingData()
     if (!m_session || ![m_session isRunning])
         return;
 
+    [m_objcObserver removeNotificationObservers];
     [m_session stopRunning];
 }
 
@@ -223,7 +248,7 @@ void AVMediaCaptureSource::setupSession()
         return;
 
     m_session = adoptNS([allocAVCaptureSessionInstance() init]);
-    for (NSString *keyName in sessionKVOProperties())
+    for (NSString* keyName in sessionKVOProperties())
         [m_session addObserver:m_objcObserver.get() forKeyPath:keyName options:NSKeyValueObservingOptionNew context:(void *)nil];
 
     [m_session beginConfiguration];
@@ -253,6 +278,35 @@ void AVMediaCaptureSource::captureSessionIsRunningDidChange(bool state)
     });
 }
 
+#if PLATFORM(IOS)
+void AVMediaCaptureSource::captureSessionRuntimeError(RetainPtr<NSError> error)
+{
+    if (!m_isRunning || error.get().code != AVErrorMediaServicesWereReset)
+        return;
+
+    // Try to restart the session, but reset m_isRunning immediately so if it fails we won't try again.
+    [m_session startRunning];
+    m_isRunning = [m_session isRunning];
+}
+
+void AVMediaCaptureSource::captureSessionBeginInterruption(RetainPtr<NSNotification> notification)
+{
+    m_interruption = static_cast<AVMediaCaptureSource::InterruptionReason>([notification.get().userInfo[AVCaptureSessionInterruptionReasonKey] integerValue]);
+}
+
+void AVMediaCaptureSource::captureSessionEndInterruption(RetainPtr<NSNotification>)
+{
+    InterruptionReason reason = m_interruption;
+
+    m_interruption = InterruptionReason::None;
+    if (reason != InterruptionReason::VideoNotAllowedInSideBySide || m_isRunning)
+        return;
+
+    [m_session startRunning];
+    m_isRunning = [m_session isRunning];
+}
+#endif
+
 void AVMediaCaptureSource::setVideoSampleBufferDelegate(AVCaptureVideoDataOutputType* videoOutput)
 {
     [videoOutput setSampleBufferDelegate:m_objcObserver.get() queue:globaVideoCaptureSerialQueue()];
@@ -269,7 +323,7 @@ AudioSourceProvider* AVMediaCaptureSource::audioSourceProvider()
     return nullptr;
 }
 
-NSArray* sessionKVOProperties()
+NSArray<NSString*>* sessionKVOProperties()
 {
     static NSArray* keys = [@[@"running"] retain];
     return keys;
@@ -286,6 +340,7 @@ NSArray* sessionKVOProperties()
         return nil;
 
     m_callback = callback;
+
     return self;
 }
 
@@ -293,9 +348,32 @@ NSArray* sessionKVOProperties()
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     m_callback = 0;
+    [self removeNotificationObservers];
 }
 
-- (void)captureOutput:(AVCaptureOutputType *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnectionType *)connection
+- (void)addNotificationObservers
+{
+#if PLATFORM(IOS)
+    ASSERT(m_callback);
+
+    NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
+    AVCaptureSessionType* session = m_callback->session();
+
+    [center addObserver:self selector:@selector(sessionRuntimeError:) name:AVCaptureSessionRuntimeErrorNotification object:session];
+    [center addObserver:self selector:@selector(beginSessionInterrupted:) name:AVCaptureSessionWasInterruptedNotification object:session];
+    [center addObserver:self selector:@selector(endSessionInterrupted:) name:AVCaptureSessionInterruptionEndedNotification object:session];
+#endif
+}
+
+- (void)removeNotificationObservers
+{
+#if PLATFORM(IOS)
+    ASSERT(m_callback);
+    [[NSNotificationCenter defaultCenter] removeObserver:m_callback->session()];
+#endif
+}
+
+- (void)captureOutput:(AVCaptureOutputType*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnectionType*)connection
 {
     if (!m_callback)
         return;
@@ -303,7 +381,7 @@ NSArray* sessionKVOProperties()
     m_callback->captureOutputDidOutputSampleBufferFromConnection(captureOutput, sampleBuffer, connection);
 }
 
--(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(void*)context
+- (void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
 {
     UNUSED_PARAM(object);
     UNUSED_PARAM(context);
@@ -327,6 +405,33 @@ NSArray* sessionKVOProperties()
     if ([keyPath isEqualToString:@"running"])
         m_callback->captureSessionIsRunningDidChange([newValue boolValue]);
 }
+
+#if PLATFORM(IOS)
+- (void)sessionRuntimeError:(NSNotification*)notification
+{
+    NSError *error = notification.userInfo[AVCaptureSessionErrorKey];
+    LOG(Media, "WebCoreAVMediaCaptureSourceObserver::sessionRuntimeError(%p) - error = %s", self, [[error localizedDescription] UTF8String]);
+
+    if (m_callback)
+        m_callback->captureSessionRuntimeError(error);
+}
+
+-(void)beginSessionInterrupted:(NSNotification*)notification
+{
+    LOG(Media, "WebCoreAVMediaCaptureSourceObserver::beginSessionInterrupted(%p) - reason = %d", self, [notification.userInfo[AVCaptureSessionInterruptionReasonKey] integerValue]);
+
+    if (m_callback)
+        m_callback->captureSessionBeginInterruption(notification);
+}
+
+- (void)endSessionInterrupted:(NSNotification*)notification
+{
+    LOG(Media, "WebCoreAVMediaCaptureSourceObserver::endSessionInterrupted(%p) ", self);
+
+    if (m_callback)
+        m_callback->captureSessionEndInterruption(notification);
+}
+#endif
 
 @end
 

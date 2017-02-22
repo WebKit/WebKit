@@ -1,3 +1,44 @@
+2017-02-22  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream iOS] Respond to capture interruptions and notifications
+        https://bugs.webkit.org/show_bug.cgi?id=168610
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayer): Drive-by cleanup: don't create
+        a sample buffer display layer unless there is an active video track.
+
+        * platform/mediastream/mac/AVMediaCaptureSource.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::AVMediaCaptureSource): Add static_asserts to ensure that
+        WebCore::InterruptionReason values map directly to AVCaptureSessionInterruptionReason values.
+        (WebCore::AVMediaCaptureSource::~AVMediaCaptureSource): Minor cleanup.
+        (WebCore::AVMediaCaptureSource::startProducingData): Start listening for notifications before
+        starting the session.
+        (WebCore::AVMediaCaptureSource::stopProducingData): Remove the notification observers before
+        stopping the session.
+        (WebCore::AVMediaCaptureSource::setupSession): Minor style cleanup.
+        (WebCore::AVMediaCaptureSource::captureSessionRuntimeError): New. When the error is AVErrorMediaServicesWereReset,
+        sometimes caused by a mediaserverd crash, try to restart the session one time.
+        (WebCore::AVMediaCaptureSource::captureSessionBeginInterruption): Store the interruption reason.
+        (WebCore::AVMediaCaptureSource::captureSessionEndInterruption): Try to restart the session if
+        it was interrupted because the app went into multi-app layout mode.
+        (WebCore::sessionKVOProperties): Drive-by cleanup.
+        (-[WebCoreAVMediaCaptureSourceObserver initWithCallback:]):
+        (-[WebCoreAVMediaCaptureSourceObserver disconnect]):
+        (-[WebCoreAVMediaCaptureSourceObserver addNotificationObservers]):
+        (-[WebCoreAVMediaCaptureSourceObserver removeNotificationObservers]):
+        (-[WebCoreAVMediaCaptureSourceObserver sessionRuntimeError:]):
+        (-[WebCoreAVMediaCaptureSourceObserver beginSessionInterrupted:]):
+        (-[WebCoreAVMediaCaptureSourceObserver endSessionInterrupted:]):
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::initializeCapabilities): Not all AVCaptureSession preset strings
+        are available on all platforms so load with SOFT_LINK_POINTER_OPTIONAL and NULL check before use.
+        (WebCore::sizeForPreset): Ditto.
+        (WebCore::AVVideoCaptureSource::bestSessionPresetForVideoDimensions): Ditto.
+
 2017-02-22  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: ensureLineBoxes for paginated content.
