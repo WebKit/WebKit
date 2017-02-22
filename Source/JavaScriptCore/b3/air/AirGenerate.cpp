@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirAllocateRegistersByGraphColoring.h"
 #include "AirAllocateStack.h"
 #include "AirCode.h"
 #include "AirDumpAsJS.h"
@@ -35,7 +36,6 @@
 #include "AirFixObviousSpills.h"
 #include "AirFixPartialRegisterStalls.h"
 #include "AirGenerationContext.h"
-#include "AirGraphColoring.h"
 #include "AirHandleCalleeSaves.h"
 #include "AirLogRegisterPressure.h"
 #include "AirLowerAfterRegAlloc.h"

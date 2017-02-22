@@ -1451,8 +1451,8 @@
 		795B19981D78BE3500262FA0 /* MapBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 795B19961D78BE3500262FA0 /* MapBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		795F099D1E03600500BBE37F /* B3Compile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 795F099C1E03600500BBE37F /* B3Compile.cpp */; };
 		7964656A1B952FF0003059EE /* GetPutInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 796465681B952FF0003059EE /* GetPutInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7965A1191E5D3FFE001BA50D /* AirGraphColoring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7965A1171E5D3FFE001BA50D /* AirGraphColoring.cpp */; };
-		7965A11A1E5D3FFE001BA50D /* AirGraphColoring.h in Headers */ = {isa = PBXBuildFile; fileRef = 7965A1181E5D3FFE001BA50D /* AirGraphColoring.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7965C2161E5D799600B7591D /* AirAllocateRegistersByGraphColoring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7965C2141E5D799600B7591D /* AirAllocateRegistersByGraphColoring.cpp */; };
+		7965C2171E5D799600B7591D /* AirAllocateRegistersByGraphColoring.h in Headers */ = {isa = PBXBuildFile; fileRef = 7965C2151E5D799600B7591D /* AirAllocateRegistersByGraphColoring.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		796FB43A1DFF8C3F0039C95D /* JSWebAssemblyHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 796FB4391DFF8C3F0039C95D /* JSWebAssemblyHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		797E07A91B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 797E07A71B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp */; };
 		797E07AA1B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3946,8 +3946,8 @@
 		795B19961D78BE3500262FA0 /* MapBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapBase.h; sourceTree = "<group>"; };
 		795F099C1E03600500BBE37F /* B3Compile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Compile.cpp; path = b3/B3Compile.cpp; sourceTree = "<group>"; };
 		796465681B952FF0003059EE /* GetPutInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPutInfo.h; sourceTree = "<group>"; };
-		7965A1171E5D3FFE001BA50D /* AirGraphColoring.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirGraphColoring.cpp; path = b3/air/AirGraphColoring.cpp; sourceTree = "<group>"; };
-		7965A1181E5D3FFE001BA50D /* AirGraphColoring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirGraphColoring.h; path = b3/air/AirGraphColoring.h; sourceTree = "<group>"; };
+		7965C2141E5D799600B7591D /* AirAllocateRegistersByGraphColoring.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirAllocateRegistersByGraphColoring.cpp; path = b3/air/AirAllocateRegistersByGraphColoring.cpp; sourceTree = "<group>"; };
+		7965C2151E5D799600B7591D /* AirAllocateRegistersByGraphColoring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirAllocateRegistersByGraphColoring.h; path = b3/air/AirAllocateRegistersByGraphColoring.h; sourceTree = "<group>"; };
 		796FB4391DFF8C3F0039C95D /* JSWebAssemblyHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyHelpers.h; path = js/JSWebAssemblyHelpers.h; sourceTree = "<group>"; };
 		797E07A71B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalLexicalEnvironment.cpp; sourceTree = "<group>"; };
 		797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalLexicalEnvironment.h; sourceTree = "<group>"; };
@@ -5446,6 +5446,8 @@
 		0FEC84B31BDACD880080FF74 /* air */ = {
 			isa = PBXGroup;
 			children = (
+				7965C2141E5D799600B7591D /* AirAllocateRegistersByGraphColoring.cpp */,
+				7965C2151E5D799600B7591D /* AirAllocateRegistersByGraphColoring.h */,
 				0FEC85481BDACDC70080FF74 /* AirAllocateStack.cpp */,
 				0FEC85491BDACDC70080FF74 /* AirAllocateStack.h */,
 				0FEC854A1BDACDC70080FF74 /* AirArg.cpp */,
@@ -5479,8 +5481,6 @@
 				0FEC85541BDACDC70080FF74 /* AirGenerate.h */,
 				0FEC85921BDB1E100080FF74 /* AirGenerated.cpp */,
 				0FEC85551BDACDC70080FF74 /* AirGenerationContext.h */,
-				7965A1171E5D3FFE001BA50D /* AirGraphColoring.cpp */,
-				7965A1181E5D3FFE001BA50D /* AirGraphColoring.h */,
 				0FEC85561BDACDC70080FF74 /* AirHandleCalleeSaves.cpp */,
 				0FEC85571BDACDC70080FF74 /* AirHandleCalleeSaves.h */,
 				0FEC85581BDACDC70080FF74 /* AirInsertionSet.cpp */,
@@ -8665,7 +8665,6 @@
 				8B9F6D561D5912FA001C739F /* IterationKind.h in Headers */,
 				FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */,
 				70113D4C1A8DB093003848C4 /* IteratorOperations.h in Headers */,
-				7965A11A1E5D3FFE001BA50D /* AirGraphColoring.h in Headers */,
 				70DC3E0A1B2DF2C700054299 /* IteratorPrototype.h in Headers */,
 				BC18C4130E16F5CD00B34460 /* JavaScript.h in Headers */,
 				A503FA1A188E0FB000110F14 /* JavaScriptCallFrame.h in Headers */,
@@ -9249,6 +9248,7 @@
 				AD2FCBF31DB58DAD00B3E736 /* WebAssemblyInstancePrototype.h in Headers */,
 				AD2FCC191DB59CB200B3E736 /* WebAssemblyInstancePrototype.lut.h in Headers */,
 				ADE8029A1E08F1DE0058DE78 /* WebAssemblyLinkErrorConstructor.h in Headers */,
+				7965C2171E5D799600B7591D /* AirAllocateRegistersByGraphColoring.h in Headers */,
 				ADE8029C1E08F1DE0058DE78 /* WebAssemblyLinkErrorPrototype.h in Headers */,
 				AD2FCBF51DB58DAD00B3E736 /* WebAssemblyMemoryConstructor.h in Headers */,
 				AD2FCC1A1DB59CB200B3E736 /* WebAssemblyMemoryConstructor.lut.h in Headers */,
@@ -9979,7 +9979,6 @@
 				0FD3E4011B618AAF00C80E1E /* DFGAdaptiveInferredPropertyValueWatchpoint.cpp in Sources */,
 				0F18D3CF1B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.cpp in Sources */,
 				0F2DD8111AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.cpp in Sources */,
-				7965A1191E5D3FFE001BA50D /* AirGraphColoring.cpp in Sources */,
 				0F2DD8131AB3D8BE00BBB8E8 /* DFGArgumentsUtilities.cpp in Sources */,
 				0F485321187750560083B687 /* DFGArithMode.cpp in Sources */,
 				0F63948415E48118006A597C /* DFGArrayMode.cpp in Sources */,
@@ -10680,6 +10679,7 @@
 				ADBC54D41DF8EA2B005BF738 /* WebAssemblyToJSCallee.cpp in Sources */,
 				0FC8150B14043C0E00CFA603 /* WriteBarrierSupport.cpp in Sources */,
 				A7E5AB3A1799E4B200D2833D /* X86Disassembler.cpp in Sources */,
+				7965C2161E5D799600B7591D /* AirAllocateRegistersByGraphColoring.cpp in Sources */,
 				863C6D9C1521111A00585E4E /* YarrCanonicalizeUCS2.cpp in Sources */,
 				65FB63A41C8EA09C0020719B /* YarrCanonicalizeUnicode.cpp in Sources */,
 				86704B8412DBA33700A9FE7B /* YarrInterpreter.cpp in Sources */,

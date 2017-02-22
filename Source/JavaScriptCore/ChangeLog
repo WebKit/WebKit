@@ -1,3 +1,15 @@
+2017-02-22  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Rename AirGraphColoring.* files to AirAllocateRegistersByGraphColoring.* to be more consistent with the rest of the Air file names.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp: Copied from Source/JavaScriptCore/b3/air/AirGraphColoring.cpp.
+        * b3/air/AirAllocateRegistersByGraphColoring.h: Copied from Source/JavaScriptCore/b3/air/AirGraphColoring.h.
+        * b3/air/AirGenerate.cpp:
+        * b3/air/AirGraphColoring.cpp: Removed.
+        * b3/air/AirGraphColoring.h: Removed.
+
 2017-02-21  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC][Mac] Activate libwebrtc

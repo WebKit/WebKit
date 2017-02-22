@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "AirGraphColoring.h"
+#include "AirAllocateRegistersByGraphColoring.h"
 
 #if ENABLE(B3_JIT)
 
