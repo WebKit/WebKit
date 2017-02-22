@@ -2058,6 +2058,8 @@
 		AD2FCC301DB83D4900B3E736 /* JSWebAssembly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD2FCC2E1DB839F700B3E736 /* JSWebAssembly.cpp */; };
 		AD2FCC311DB83D4900B3E736 /* JSWebAssembly.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCC2F1DB839F700B3E736 /* JSWebAssembly.h */; };
 		AD2FCC331DC4045400B3E736 /* WasmFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD2FCC321DC4045300B3E736 /* WasmFormat.cpp */; };
+		AD4252511E5D0E14009D2A97 /* FullCodeOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4252501E5D0DEB009D2A97 /* FullCodeOrigin.h */; };
+		AD4252531E5D0F47009D2A97 /* FullCodeOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD4252521E5D0F22009D2A97 /* FullCodeOrigin.cpp */; };
 		AD4937C31DDBE6140077C807 /* AbstractModuleRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD4937C11DDBE60A0077C807 /* AbstractModuleRecord.cpp */; };
 		AD4937C41DDBE6140077C807 /* AbstractModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4937C21DDBE60A0077C807 /* AbstractModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4937C71DDD0AAE0077C807 /* WebAssemblyModuleRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD4937C51DDCDCF00077C807 /* WebAssemblyModuleRecord.cpp */; };
@@ -4595,6 +4597,8 @@
 		AD2FCC2E1DB839F700B3E736 /* JSWebAssembly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebAssembly.cpp; sourceTree = "<group>"; };
 		AD2FCC2F1DB839F700B3E736 /* JSWebAssembly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebAssembly.h; sourceTree = "<group>"; };
 		AD2FCC321DC4045300B3E736 /* WasmFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmFormat.cpp; sourceTree = "<group>"; };
+		AD4252501E5D0DEB009D2A97 /* FullCodeOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullCodeOrigin.h; sourceTree = "<group>"; };
+		AD4252521E5D0F22009D2A97 /* FullCodeOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FullCodeOrigin.cpp; sourceTree = "<group>"; };
 		AD4937C11DDBE60A0077C807 /* AbstractModuleRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractModuleRecord.cpp; sourceTree = "<group>"; };
 		AD4937C21DDBE60A0077C807 /* AbstractModuleRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractModuleRecord.h; sourceTree = "<group>"; };
 		AD4937C51DDCDCF00077C807 /* WebAssemblyModuleRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyModuleRecord.cpp; path = js/WebAssemblyModuleRecord.cpp; sourceTree = "<group>"; };
@@ -7424,6 +7428,8 @@
 				0FB105831675480C00F8AB6E /* ExitKind.h */,
 				0F0B83AA14BCF5B900885B4F /* ExpressionRangeInfo.h */,
 				0F666EBF183566F900D017F1 /* FullBytecodeLiveness.h */,
+				AD4252521E5D0F22009D2A97 /* FullCodeOrigin.cpp */,
+				AD4252501E5D0DEB009D2A97 /* FullCodeOrigin.h */,
 				14AD91161DCA97FD0014F9FE /* FunctionCodeBlock.cpp */,
 				14AD91071DCA92940014F9FE /* FunctionCodeBlock.h */,
 				0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */,
@@ -8914,6 +8920,7 @@
 				A700873E17CBE8D300C3E643 /* MapPrototype.h in Headers */,
 				C2B916C214DA014E00CBAC86 /* MarkedAllocator.h in Headers */,
 				0F7DF1461E2BEF6A0095951B /* MarkedAllocatorInlines.h in Headers */,
+				AD4252511E5D0E14009D2A97 /* FullCodeOrigin.h in Headers */,
 				142D6F0913539A2800B02E86 /* MarkedBlock.h in Headers */,
 				0F7C5FB81D888A0C0044F5E2 /* MarkedBlockInlines.h in Headers */,
 				141448CB13A176EC00F5BA1A /* MarkedBlockSet.h in Headers */,
@@ -10448,6 +10455,7 @@
 				0FB5467D14F5CFD6002C2989 /* MethodOfGettingAValueProfile.cpp in Sources */,
 				E3794E751B77EB97005543AE /* ModuleAnalyzer.cpp in Sources */,
 				E355F3521B7DC85300C50DC5 /* ModuleLoaderPrototype.cpp in Sources */,
+				AD4252531E5D0F47009D2A97 /* FullCodeOrigin.cpp in Sources */,
 				14AD91181DCA97FD0014F9FE /* ModuleProgramCodeBlock.cpp in Sources */,
 				147341E41DC2CE9600AA29BA /* ModuleProgramExecutable.cpp in Sources */,
 				0F1FB3901E173A6B00A9BE50 /* MutatorScheduler.cpp in Sources */,

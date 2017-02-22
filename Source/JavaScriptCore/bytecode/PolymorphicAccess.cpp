@@ -31,6 +31,7 @@
 #include "BinarySwitch.h"
 #include "CCallHelpers.h"
 #include "CodeBlock.h"
+#include "FullCodeOrigin.h"
 #include "Heap.h"
 #include "JITOperations.h"
 #include "JSCInlines.h"
@@ -524,7 +525,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     linkBuffer.link(failure, stubInfo.slowPathStartLocation());
     
     if (verbose)
-        dataLog(*codeBlock, " ", stubInfo.codeOrigin, ": Generating polymorphic access stub for ", listDump(cases), "\n");
+        dataLog(FullCodeOrigin(codeBlock, stubInfo.codeOrigin), ": Generating polymorphic access stub for ", listDump(cases), "\n");
 
     MacroAssemblerCodeRef code = FINALIZE_CODE_FOR(
         codeBlock, linkBuffer,

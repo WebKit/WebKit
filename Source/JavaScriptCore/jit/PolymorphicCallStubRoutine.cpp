@@ -30,6 +30,7 @@
 
 #include "CallLinkInfo.h"
 #include "CodeBlock.h"
+#include "FullCodeOrigin.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
 
@@ -77,7 +78,7 @@ PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(
     for (PolymorphicCallCase callCase : cases) {
         m_variants.append(WriteBarrier<JSCell>(vm, owner, callCase.variant().rawCalleeCell()));
         if (shouldDumpDisassemblyFor(callerFrame->codeBlock()))
-            dataLog("Linking polymorphic call in ", *callerFrame->codeBlock(), " at ", callerFrame->codeOrigin(), " to ", callCase.variant(), ", codeBlock = ", pointerDump(callCase.codeBlock()), "\n");
+            dataLog("Linking polymorphic call in ", FullCodeOrigin(callerFrame->codeBlock(), callerFrame->codeOrigin()), " to ", callCase.variant(), ", codeBlock = ", pointerDump(callCase.codeBlock()), "\n");
         if (CodeBlock* codeBlock = callCase.codeBlock())
             codeBlock->linkIncomingPolymorphicCall(callerFrame, m_callNodes.add(&info));
     }
