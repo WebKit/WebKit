@@ -1,3 +1,90 @@
+2017-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make sampling algorithm more stable and introduce an abstraction for sampled data
+        https://bugs.webkit.org/show_bug.cgi?id=168693
+
+        Reviewed by Chris Dumez.
+
+        Before this patch, TimeSeriesChart's resampling resulted in some points poping up and disappearing as
+        the width of a chart is changed. e.g. when resizing the browser window. The bug was by caused by
+        the sample for a given width not always including all points for a smaller width so as the width is
+        expanded, some point may be dropped.
+
+        Fixed this by using a much simpler algorithm of always picking a point when the time interval between
+        the preceding point and the succeeding point is larger than the minimum space we allow for a given width.
+
+        Also introduced a new abstraction around the sample data: TimeSeriesView. A TimeSeriesView provides
+        a similar API to TimeSeries for a subset of the time series filtered by a time range a custom function.
+        This paves a way to adding the ability to select baseline, etc... on the chart status view.
+
+        TimeSeriesView can be in two modes:
+        Mode 1. The view represents a contiguous subrange of TimeSeries - In this mode, this._data references
+                the underlying TimeSeries's _data directly, and we use _startingIndex to adjust index given to
+                find the relative index. Finding the next point or the previous point of a given point is done
+                via looking up the point's seriesIndex and doing a simple arithmetic. In general, an index is
+                converted to the absolute index in the underlying TimeSeries's _data array.
+
+        Mode 2. The view represents a filtered non-contiguous subset of TimeSeries -  In this mode, this._data is
+                its own array. Finding the next point or the previous point of a given point requires finding
+                a sibling point in the underlying TimeSeries which is in this view. Since this may result in O(n)
+                traversal and a hash lookup, we lazily build a map of each point to its position in _data instead.
+
+        * public/v3/components/chart-status-view.js:
+        (ChartStatusView.prototype.updateStatusIfNeeded): Call selectedPoints instead of sampledDataBetween for
+        clarity. This function now returns a TimeSeriesView instead of a raw array.
+
+        * public/v3/components/interactive-time-series-chart.js:
+        (InteractiveTimeSeriesChart.prototype.currentPoint): Updated now that _sampledTimeSeriesData contains
+        an array of TimeSeriesView's. Note that diff is either 0, -1, or 1.
+        (InteractiveTimeSeriesChart.prototype.selectedPoints): Ditto. sampledDataBetween no longer exists since
+        we can simply call viewTimeRange on TimeSeriesView returned by sampledDataBetween.
+        (InteractiveTimeSeriesChart.prototype.firstSelectedPoint): Ditto.
+        (InteractiveTimeSeriesChart.prototype._sampleTimeSeries): Use add since excludedPoints is now a Set.
+
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart.prototype.sampledDataBetween): Deleted.
+        (TimeSeriesChart.prototype.firstSampledPointBetweenTime): Deleted.
+        (TimeSeriesChart.prototype._ensureSampledTimeSeries): Modernized the code. Use the the time interval of
+        the chart divided by the number of allowed points as the time interval used in the new sampling algorithm.
+        (TimeSeriesChart.prototype._sampleTimeSeries): Rewritten. We also create TimeSeriesView here.
+        (TimeSeriesChart.prototype._sampleTimeSeries.findMedian): Deleted.
+        (TimeSeriesChart.prototype._updateCanvasSizeIfClientSizeChanged): Fixed a bug that the canvas size wasn't
+        set to the correct value on Chrome when a high DPI screen is used.
+
+        * public/v3/models/time-series.js:
+        (TimeSeries.prototype.viewBetweenPoints): Renamed from dataBetweenPoints. Now returns a TimeSeriesView.
+        (TimeSeriesView): Added. This constructor is to be called by viewBetweenPoints, viewTimeRange, and filter.
+        (TimeSeriesView.prototype._buildPointIndexMap): Added. Used in mode (2).
+        (TimeSeriesView.prototype.length): Added.
+        (TimeSeriesView.prototype.firstPoint): Added.
+        (TimeSeriesView.prototype.lastPoint): Added.
+        (TimeSeriesView.prototype.nextPoint): Added. Note index is always a position in this._data. In mode (1),
+        this is the position of the point in the underlying TimeSeries' _data. In mode (2), this is the position
+        of the point in this._data which is dictinct from the underlying TimeSeries' _data.
+        (TimeSeriesView.prototype.previousPoint): Ditto.
+        (TimeSeriesView.prototype.findPointByIndex): Added. Finds the point using the positional index from the
+        beginning of this view. findPointByIndex(0) on one view may not be same as findPointByIndex(0) of another.
+        (TimeSeriesView.prototype.findById): Added. This is O(n).
+        (TimeSeriesView.prototype.values): Added. Returns the value of each point in this view.
+        (TimeSeriesView.prototype.filter): Added. Creates a new view with a subset of data points the predicate
+        function returned true.
+        (TimeSeriesView.prototype.viewTimeRange): Added. Creates a new view with a subset of data points for the
+        given time ragne. When the resultant view would include all points of this view, it simply returns itself
+        as an optimization.
+        (TimeSeriesView.prototype.firstPointInTimeRange): Added. Returns the first point in the view which lies
+        within the specified time range.
+        (TimeSeriesView.prototype.Symbol.iterator): Added. Iterates over each point in the view.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskChartPane.prototype.selectedPoints): Use selectedPoints in lieu of getting selection and then
+        calling sampledDataBetween with that range.
+
+        * public/v3/pages/summary-page.js:
+        (SummaryPageConfigurationGroup.set _medianForTimeRange): Modernized.
+
+        * unit-tests/time-series-tests.js: Added tests for TimeSeries and TimeSeriesView. Already caught bugs!
+        (addPointsToSeries):
+
 2017-02-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add tests for the time series chart and fix bugs I found along the way

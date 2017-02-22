@@ -131,22 +131,6 @@ class TimeSeriesChart extends ComponentBase {
         return null;
     }
 
-    sampledDataBetween(type, startTime, endTime)
-    {
-        var data = this.sampledTimeSeriesData(type);
-        if (!data)
-            return null;
-        return data.filter(function (point) { return startTime <= point.time && point.time <= endTime; });
-    }
-
-    firstSampledPointBetweenTime(type, startTime, endTime)
-    {
-        var data = this.sampledTimeSeriesData(type);
-        if (!data)
-            return null;
-        return data.find(function (point) { return startTime <= point.time && point.time <= endTime; });
-    }
-
     setAnnotations(annotations)
     {
         this._annotations = annotations;
@@ -497,29 +481,28 @@ class TimeSeriesChart extends ComponentBase {
 
         Instrumentation.startMeasuringTime('TimeSeriesChart', 'ensureSampledTimeSeries');
 
-        var self = this;
-        var startTime = this._startTime;
-        var endTime = this._endTime;
-        this._sampledTimeSeriesData = this._sourceList.map(function (source, sourceIndex) {
-            var timeSeries = self._fetchedTimeSeries[sourceIndex];
+        const startTime = this._startTime;
+        const endTime = this._endTime;
+        this._sampledTimeSeriesData = this._sourceList.map((source, sourceIndex) => {
+            const timeSeries = this._fetchedTimeSeries[sourceIndex];
             if (!timeSeries)
                 return null;
 
             // A chart with X px width shouldn't have more than 2X / <radius-of-points> data points.
-            var maximumNumberOfPoints = 2 * metrics.chartWidth / (source.pointRadius || 2);
+            const maximumNumberOfPoints = 2 * metrics.chartWidth / (source.pointRadius || 2);
 
-            var pointAfterStart = timeSeries.findPointAfterTime(startTime);
-            var pointBeforeStart = (pointAfterStart ? timeSeries.previousPoint(pointAfterStart) : null) || timeSeries.firstPoint();
-            var pointAfterEnd = timeSeries.findPointAfterTime(endTime) || timeSeries.lastPoint();
+            const pointAfterStart = timeSeries.findPointAfterTime(startTime);
+            const pointBeforeStart = (pointAfterStart ? timeSeries.previousPoint(pointAfterStart) : null) || timeSeries.firstPoint();
+            const pointAfterEnd = timeSeries.findPointAfterTime(endTime) || timeSeries.lastPoint();
             if (!pointBeforeStart || !pointAfterEnd)
                 return null;
 
             // FIXME: Move this to TimeSeries.prototype.
-            var filteredData = timeSeries.dataBetweenPoints(pointBeforeStart, pointAfterEnd);
+            const view = timeSeries.viewBetweenPoints(pointBeforeStart, pointAfterEnd);
             if (!source.sampleData)
-                return filteredData;
+                return view;
 
-            return self._sampleTimeSeries(filteredData, maximumNumberOfPoints, filteredData.slice(-1).map(function (point) { return point.id; }));
+            return this._sampleTimeSeries(view, (endTime - startTime) / maximumNumberOfPoints, new Set);
         });
 
         Instrumentation.endMeasuringTime('TimeSeriesChart', 'ensureSampledTimeSeries');
@@ -529,49 +512,24 @@ class TimeSeriesChart extends ComponentBase {
         return true;
     }
 
-    _sampleTimeSeries(data, maximumNumberOfPoints, excludedPoints)
+    _sampleTimeSeries(view, minimumTimeDiff, excludedPoints)
     {
+        if (view.length() < 2)
+            return view;
+
         Instrumentation.startMeasuringTime('TimeSeriesChart', 'sampleTimeSeries');
 
-        // FIXME: Do this in O(n) using quickselect: https://en.wikipedia.org/wiki/Quickselect
-        function findMedian(list, startIndex, indexAfterEnd)
-        {
-            var sortedList = list.slice(startIndex, indexAfterEnd).sort(function (a, b) { return a.value - b.value; });
-            return sortedList[Math.floor(sortedList.length / 2)];
-        }
-
-        var samplingSize = Math.ceil(data.length / maximumNumberOfPoints);
-
-        var totalTimeDiff = data[data.length - 1].time - data[0].time;
-        var timePerSample = totalTimeDiff / maximumNumberOfPoints;
-
-        var sampledData = [];
-        var lastIndex = data.length - 1;
-        var i = 0;
-        while (i <= lastIndex) {
-            var startPoint = data[i];
-            var j;
-            for (j = i; j <= lastIndex; j++) {
-                var endPoint = data[j];
-                if (excludedPoints.includes(endPoint.id)) {
-                    j--;
-                    break;
-                }
-                if (endPoint.time - startPoint.time >= timePerSample)
-                    break;
-            }
-            if (i < j - 1) {
-                sampledData.push(findMedian(data, i, j));
-                i = j;
-            } else {
-                sampledData.push(startPoint);
-                i++;
-            }
-        }
+        const sampledData = view.filter((point, i) => {
+            if (excludedPoints.has(point.id))
+                return true;
+            let previousPoint = view.previousPoint(point) || point;
+            let nextPoint = view.nextPoint(point) || point;
+            return nextPoint.time - previousPoint.time >= minimumTimeDiff;
+        });
 
         Instrumentation.endMeasuringTime('TimeSeriesChart', 'sampleTimeSeries');
 
-        Instrumentation.reportMeasurement('TimeSeriesChart', 'samplingRatio', '%', sampledData.length / data.length * 100);
+        Instrumentation.reportMeasurement('TimeSeriesChart', 'samplingRatio', '%', sampledData.length() / view.length() * 100);
 
         return sampledData;
     }
@@ -624,6 +582,8 @@ class TimeSeriesChart extends ComponentBase {
         var scale = window.devicePixelRatio;
         canvas.width = newWidth * scale;
         canvas.height = newHeight * scale;
+        canvas.style.width = newWidth + 'px';
+        canvas.style.height = newHeight + 'px';
         this._contextScaleX = scale;
         this._contextScaleY = scale;
         this._width = newWidth;

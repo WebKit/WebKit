@@ -74,14 +74,148 @@ var TimeSeries = class {
 
     findPointAfterTime(time) { return this._data.find(function (point) { return point.time >= time; }); }
 
-    dataBetweenPoints(firstPoint, lastPoint)
+    viewBetweenPoints(firstPoint, lastPoint)
     {
         console.assert(firstPoint.series == this);
         console.assert(lastPoint.series == this);
-        return this._data.slice(firstPoint.seriesIndex, lastPoint.seriesIndex + 1);
+        return new TimeSeriesView(this, firstPoint.seriesIndex, lastPoint.seriesIndex + 1);
+    }
+};
+
+class TimeSeriesView {
+    constructor(timeSeries, startingIndex, afterEndingIndex, filteredData = null)
+    {
+        console.assert(timeSeries instanceof TimeSeries);
+        console.assert(startingIndex <= afterEndingIndex);
+        console.assert(afterEndingIndex <= timeSeries._data.length);
+        this._timeSeries = timeSeries;
+        this._data = filteredData || timeSeries._data;
+        this._values = null;
+        this._length = afterEndingIndex - startingIndex;
+        this._startingIndex = startingIndex;
+        this._afterEndingIndex = afterEndingIndex;
+        this._pointIndexMap = null;
+
+        if (this._data != timeSeries._data) {
+            this._findIndexForPoint = (point) => {
+                if (this._pointIndexMap == null)
+                    this._buildPointIndexMap();
+                return this._pointIndexMap.get(point);
+            }
+        } else
+            this._findIndexForPoint = (point) => { return point.seriesIndex; }
     }
 
-};
+    _buildPointIndexMap()
+    {
+        this._pointIndexMap = new Map;
+        const data = this._data;
+        const length = data.length;
+        for (let i = 0; i < length; i++)
+            this._pointIndexMap.set(data[i], i);
+    }
+
+    length() { return this._length; }
+
+    firstPoint() { return this._length ? this._data[this._startingIndex] : null; }
+    lastPoint() { return this._length ? this._data[this._afterEndingIndex - 1] : null; }
+
+    nextPoint(point)
+    {
+        let index = this._findIndexForPoint(point);
+        index++;
+        if (index == this._afterEndingIndex)
+            return null;
+        return this._data[index];
+    }
+
+    previousPoint(point)
+    {
+        const index = this._findIndexForPoint(point);
+        if (index == this._startingIndex)
+            return null;
+        return this._data[index - 1];
+    }
+
+    findPointByIndex(index)
+    {
+        index += this._startingIndex;
+        if (index < 0 || index >= this._afterEndingIndex)
+            return null;
+        return this._data[index];
+    }
+
+    findById(id)
+    {
+        for (let point of this) {
+            if (point.id == id)
+                return point;
+        }
+        return null;
+    }
+
+    values()
+    {
+        if (this._values == null) {
+            this._values = new Array(this._length);
+            let i = 0;
+            for (let point of this)
+                this._values[i++] = point.value;
+        }
+        return this._values;
+    }
+
+    filter(callback)
+    {
+        const data = this._data;
+        const filteredData = [];
+        for (let i = this._startingIndex; i < this._afterEndingIndex; i++) {
+            if (callback(data[i], i))
+                filteredData.push(data[i]);
+        }
+        return new TimeSeriesView(this._timeSeries, 0, filteredData.length, filteredData);
+    }
+
+    viewTimeRange(startTime, endTime)
+    {
+        const data = this._data;
+        let startingIndex = null;
+        let endingIndex = null;
+        for (let i = this._startingIndex; i < this._afterEndingIndex; i++) {
+            if (startingIndex == null && data[i].time >= startTime)
+                startingIndex = i;
+            if (data[i].time <= endTime)
+                endingIndex = i;
+        }
+        if (startingIndex == null || endingIndex == null)
+            return new TimeSeriesView(this._timeSeries, 0, 0, data);
+        return new TimeSeriesView(this._timeSeries, startingIndex, endingIndex + 1, data);
+    }
+
+    firstPointInTimeRange(startTime, endTime)
+    {
+        console.assert(startTime <= endTime);
+        for (let point of this) {
+            if (point.time > endTime)
+                return null;
+            if (point.time >= startTime)
+                return point;
+        }
+        return null;
+    }
+
+    [Symbol.iterator]()
+    {
+        const data = this._data;
+        const end = this._afterEndingIndex;
+        let i = this._startingIndex;
+        return {
+            next() {
+                return {value: data[i], done: i++ == end};
+            }
+        };
+    }
+}
 
 if (typeof module != 'undefined')
     module.exports.TimeSeries = TimeSeries;

@@ -24,11 +24,7 @@ class AnalysisTaskChartPane extends ChartPaneBase {
 
     selectedPoints()
     {
-        var selection = this._mainChart ? this._mainChart.currentSelection() : null;
-        if (!selection)
-            return null;
-
-        return this._mainChart.sampledDataBetween('current', selection[0], selection[1]);
+        return this._mainChart ? this._mainChart.selectedPoints('current') : null;
     }
 }
 

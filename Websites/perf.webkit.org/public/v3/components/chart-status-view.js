@@ -50,14 +50,15 @@ class ChartStatusView extends ComponentBase {
                 return false;
 
             if (selection) {
-                var data = this._chart.sampledDataBetween('current', selection[0], selection[1]);
-                if (!data)
+                const view = this._chart.selectedPoints('current');
+                if (!view)
                     return false;
 
-                if (data && data.length > 1) {
+                if (view && view.length() > 1) {
+                    console.log(view.length(), view.firstPoint(), view.lastPoint())
                     this._usedSelection = selection;
-                    currentPoint = data[data.length - 1];
-                    previousPoint = data[0];
+                    currentPoint = view.lastPoint();
+                    previousPoint = view.firstPoint();
                 }
             } else  {
                 currentPoint = this._chart.currentPoint();

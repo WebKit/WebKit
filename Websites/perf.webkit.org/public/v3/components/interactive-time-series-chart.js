@@ -23,6 +23,7 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
             return null;
 
         if (!this._sampledTimeSeriesData) {
+            // FIXME: Why are we not using diff in this code path?
             this._ensureFetchedTimeSeries();
             for (var series of this._fetchedTimeSeries) {
                 var point = series.findById(id);
@@ -32,15 +33,15 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
             return null;
         }
 
-        for (var data of this._sampledTimeSeriesData) {
-            if (!data)
+        for (var view of this._sampledTimeSeriesData) {
+            if (!view)
                 continue;
-            var index = data.findIndex(function (point) { return point.id == id; });
-            if (index < 0)
+            let point = view.findById(id);
+            if (!point)
                 continue;
-            if (diff)
-                index += diff;
-            return data[Math.min(Math.max(0, index), data.length)];
+            if (!diff)
+                return point;
+            return (point && diff > 0 ? view.nextPoint(point) : view.previousPoint(point)) || point;
         }
         return null;
     }
@@ -49,14 +50,16 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
 
     selectedPoints(type)
     {
-        var selection = this._selectionTimeRange;
-        return selection ? this.sampledDataBetween(type, selection[0], selection[1]) : null;
+        const selection = this._selectionTimeRange;
+        const data = this.sampledTimeSeriesData(type);
+        return selection && data ? data.viewTimeRange(selection[0], selection[1]) : null;
     }
 
     firstSelectedPoint(type)
     {
-        var selection = this._selectionTimeRange;
-        return selection ? this.firstSampledPointBetweenTime(type, selection[0], selection[1]) : null;
+        const selection = this._selectionTimeRange;
+        const data = this.sampledTimeSeriesData(type);
+        return selection && data ? data.firstPointInTimeRange(selection[0], selection[1]) : null;
     }
 
     lockedIndicator() { return this._indicatorIsLocked ? this.currentPoint() : null; }
@@ -383,10 +386,10 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
         return metrics;
     }
 
-    _sampleTimeSeries(data, maximumNumberOfPoints, excludedPoints)
+    _sampleTimeSeries(data, minimumTimeDiff, excludedPoints)
     {
         if (this._indicatorID)
-            excludedPoints.push(this._indicatorID);
+            excludedPoints.add(this._indicatorID);
         return super._sampleTimeSeries(data, maximumNumberOfPoints, excludedPoints);
     }
 

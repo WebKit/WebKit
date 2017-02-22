@@ -364,13 +364,12 @@ class SummaryPageConfigurationGroup {
         if (!timeSeries.firstPoint())
             return NaN;
 
-        var startPoint = timeSeries.findPointAfterTime(timeRange[0]) || timeSeries.lastPoint();
-        var afterEndPoint = timeSeries.findPointAfterTime(timeRange[1]) || timeSeries.lastPoint();
-        var endPoint = timeSeries.previousPoint(afterEndPoint);
+        const startPoint = timeSeries.findPointAfterTime(timeRange[0]) || timeSeries.lastPoint();
+        const afterEndPoint = timeSeries.findPointAfterTime(timeRange[1]) || timeSeries.lastPoint();
+        let endPoint = timeSeries.previousPoint(afterEndPoint);
         if (!endPoint || startPoint == afterEndPoint)
             endPoint = afterEndPoint;
 
-        var points = timeSeries.dataBetweenPoints(startPoint, endPoint).map(function (point) { return point.value; });
-        return Statistics.median(points);
+        return Statistics.median(timeSeries.viewBetweenPoints(startPoint, endPoint).values());
     }
 }
