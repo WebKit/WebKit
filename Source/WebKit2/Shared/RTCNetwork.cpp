@@ -65,15 +65,20 @@ bool RTCNetwork::IPAddress::decode(IPC::Decoder& decoder, IPAddress& result)
     int family;
     if (!decoder.decode(family))
         return false;
+
+    ASSERT(family == AF_INET || family == AF_INET6);
+
     IPC::DataReference data;
     if (!decoder.decode(data))
         return false;
+
     if (family == AF_INET) {
         if (data.size() != sizeof(in_addr))
             return false;
         result.value = rtc::IPAddress(*reinterpret_cast<const in_addr*>(data.data()));
         return true;
     }
+
     if (data.size() != sizeof(in6_addr))
         return false;
     result.value = rtc::IPAddress(*reinterpret_cast<const in6_addr*>(data.data()));
@@ -82,12 +87,16 @@ bool RTCNetwork::IPAddress::decode(IPC::Decoder& decoder, IPAddress& result)
 
 void RTCNetwork::IPAddress::encode(IPC::Encoder& encoder) const
 {
-    encoder << value.family();
-    if (value.family() == AF_INET) {
+    auto family = value.family();
+    ASSERT(family == AF_INET || family == AF_INET6);
+    encoder << family;
+
+    if (family == AF_INET) {
         auto address = value.ipv4_address();
         encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(&address), sizeof(address));
         return;
     }
+
     auto address = value.ipv6_address();
     encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(&address), sizeof(address));
 }
