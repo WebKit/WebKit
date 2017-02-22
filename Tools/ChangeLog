@@ -1,3 +1,16 @@
+2017-02-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        AutoInstaller should not skip the install step if the package is downloaded but not installed
+        https://bugs.webkit.org/show_bug.cgi?id=168737
+
+        Reviewed by Ryosuke Niwa.
+
+        Don't skip the install step if the package target path don't exists.
+        Fix the description for "should_refresh" optional argument.
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller.install):
+
 2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not use g_return_if_fail in EventSenderProxy::continuousMouseScrollBy
