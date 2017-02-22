@@ -193,6 +193,8 @@ _WebElementImageAltStringKey
 _WebElementImageKey
 _WebElementImageRectKey
 _WebElementImageURLKey
+_WebElementIsContentEditableKey
+_WebElementIsInScrollBarKey
 _WebElementIsSelectedKey
 _WebElementLinkIsLiveKey
 _WebElementLinkLabelKey
@@ -200,6 +202,8 @@ _WebElementLinkTargetFrameKey
 _WebElementLinkTitleKey
 _WebElementLinkURLKey
 _WebElementMediaURLKey
+_WebElementSpellingToolTipKey
+_WebElementTitleKey
 _WebFrameCanSuspendActiveDOMObjects
 _WebFrameHasPlugins
 _WebFrameHasUnloadListener
