@@ -45,8 +45,17 @@
 
 .content-view.settings > .setting-container > .setting-name {
     width: 50%;
-    margin-right: 6px;
-    text-align: right;
+    text-align: end;
+
+    --setting-name-margin-end: 6px;
+}
+
+body[dir=ltr] .content-view.settings > .setting-container > .setting-name {
+    margin-right: var(--setting-name-margin-end);
+}
+
+body[dir=rtl] .content-view.settings > .setting-container > .setting-name {
+    margin-left: var(--setting-name-margin-end);
 }
 
 .content-view.settings > .setting-container > .setting-value-controller {
@@ -61,7 +70,16 @@
 
 .content-view.settings > .setting-container > .setting-value-controller input[type="checkbox"] {
     font-size: 16px;
-    margin-right: 4px;
+
+    --settings-input-checkbox-margin-end: 4px;
+}
+
+body[dir=ltr] .content-view.settings > .setting-container > .setting-value-controller input[type="checkbox"] {
+    margin-right: var(--settings-input-checkbox-margin-end);
+}
+
+body[dir=rtl] .content-view.settings > .setting-container > .setting-value-controller input[type="checkbox"] {
+    margin-left: var(--settings-input-checkbox-margin-end);
 }
 
 .content-view.settings > .setting-container > .setting-value-controller select {
@@ -78,6 +96,19 @@
 
 .content-view.settings > .setting-container > .setting-value-controller input[type="number"] {
     max-width: 48px;
-    margin: 0 5px 0 2px;
-    text-align: right;
+    margin: 0;
+    text-align: end;
+
+    --settings-input-number-margin-start: 2px;
+    --settings-input-number-margin-end: 5px;
+}
+
+body[dir=ltr] .content-view.settings > .setting-container > .setting-value-controller input[type="number"] {
+    margin-left: var(--settings-input-number-margin-start);
+    margin-right: var(--settings-input-number-margin-end);
+}
+
+body[dir=rtl] .content-view.settings > .setting-container > .setting-value-controller input[type="number"] {
+    margin-left: var(--settings-input-number-margin-end);
+    margin-right: var(--settings-input-number-margin-start);
 }
