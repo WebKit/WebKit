@@ -76,6 +76,10 @@ void StochasticSpaceTimeMutatorScheduler::beginCollection()
     m_bytesAllocatedThisCycleAtTheEnd = 
         Options::concurrentGCMaxHeadroom() *
         std::max<double>(m_bytesAllocatedThisCycleAtTheBeginning, m_heap.m_maxEdenSize);
+    
+    if (Options::logGC())
+        dataLog("ca=", m_bytesAllocatedThisCycleAtTheBeginning / 1024, "kb h=", (m_bytesAllocatedThisCycleAtTheEnd - m_bytesAllocatedThisCycleAtTheBeginning) / 1024, "kb ");
+    
     m_beforeConstraints = MonotonicTime::now();
 }
 
@@ -117,6 +121,11 @@ void StochasticSpaceTimeMutatorScheduler::synchronousDrainingDidStall()
     Snapshot snapshot(*this);
     
     double resumeProbability = mutatorUtilization(snapshot);
+    if (resumeProbability < Options::epsilonMutatorUtilization()) {
+        m_plannedResumeTime = MonotonicTime::infinity();
+        return;
+    }
+    
     bool shouldResume = m_random.get() < resumeProbability;
     
     if (shouldResume) {
@@ -135,8 +144,10 @@ MonotonicTime StochasticSpaceTimeMutatorScheduler::timeToStop()
     case Stopped:
         return MonotonicTime::now();
     case Resumed: {
-        // Once we're running, we keep going.
-        // FIXME: Maybe force stop when we run out of headroom?
+        // Once we're running, we keep going unless we run out of headroom.
+        Snapshot snapshot(*this);
+        if (mutatorUtilization(snapshot) < Options::epsilonMutatorUtilization())
+            return MonotonicTime::now();
         return MonotonicTime::infinity();
     } }
     

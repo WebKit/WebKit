@@ -97,7 +97,7 @@ void IncrementalSweeper::startSweeping()
     m_currentAllocator = m_vm->heap.objectSpace().firstAllocator();
 }
 
-void IncrementalSweeper::willFinishSweeping()
+void IncrementalSweeper::stopSweeping()
 {
     m_currentAllocator = nullptr;
     if (m_vm)

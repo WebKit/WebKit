@@ -41,8 +41,11 @@ void printInternal(PrintStream& out, MutatorState state)
     case MutatorState::Allocating:
         out.print("Allocating");
         return;
-    case MutatorState::HelpingGC:
-        out.print("HelpingGC");
+    case MutatorState::Sweeping:
+        out.print("Sweeping");
+        return;
+    case MutatorState::Collecting:
+        out.print("Collecting");
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();

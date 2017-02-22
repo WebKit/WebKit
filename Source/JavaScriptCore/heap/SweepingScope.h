@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,28 @@
 
 #pragma once
 
+#include "Heap.h"
+
 namespace JSC {
 
-enum class MutatorState {
-    // The mutator is running when it's not inside a Heap slow path.
-    Running,
+class SweepingScope {
+public:
+    SweepingScope(Heap& heap)
+        : m_heap(heap)
+        , m_oldState(m_heap.m_mutatorState)
+    {
+        m_heap.m_mutatorState = MutatorState::Sweeping;
+    }
     
-    // The mutator is in an allocation slow path.
-    Allocating,
-    
-    // The mutator is sweeping.
-    Sweeping,
-    
-    // The mutator is collecting.
-    Collecting
+    ~SweepingScope()
+    {
+        m_heap.m_mutatorState = m_oldState;
+    }
+
+private:
+    Heap& m_heap;
+    MutatorState m_oldState;
 };
 
 } // namespace JSC
-
-namespace WTF {
-
-class PrintStream;
-
-void printInternal(PrintStream&, JSC::MutatorState);
-
-} // namespace WTF
 

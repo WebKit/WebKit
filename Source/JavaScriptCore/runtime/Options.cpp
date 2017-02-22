@@ -317,7 +317,11 @@ static void overrideDefaults()
         Options::maximumMutatorUtilization() = 0.6;
         Options::concurrentGCMaxHeadroom() = 1.4;
         Options::minimumGCPauseMS() = 1;
-        Options::gcIncrementScale() = 1;
+        Options::useStochasticMutatorScheduler() = false;
+        if (WTF::numberOfProcessorCores() <= 1)
+            Options::gcIncrementScale() = 1;
+        else
+            Options::gcIncrementScale() = 0;
     }
 }
 

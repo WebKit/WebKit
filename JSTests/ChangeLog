@@ -1,3 +1,114 @@
+2017-02-20  Filip Pizlo  <fpizlo@apple.com>
+
+        The collector thread should only start when the mutator doesn't have heap access
+        https://bugs.webkit.org/show_bug.cgi?id=167737
+
+        Reviewed by Keith Miller.
+        
+        Add versions of splay that flash heap access, to simulate what might happen if a third-party app
+        was running concurrent GC. In this case, we might actually start the collector thread.
+
+        * stress/splay-flash-access-1ms.js: Added.
+        (performance.now):
+        (this.Setup.setup.setup):
+        (this.TearDown.tearDown.tearDown):
+        (Benchmark):
+        (BenchmarkResult):
+        (BenchmarkResult.prototype.valueOf):
+        (BenchmarkSuite):
+        (alert):
+        (Math.random):
+        (BenchmarkSuite.ResetRNG):
+        (RunStep):
+        (BenchmarkSuite.RunSuites):
+        (BenchmarkSuite.CountBenchmarks):
+        (BenchmarkSuite.GeometricMean):
+        (BenchmarkSuite.GeometricMeanTime):
+        (BenchmarkSuite.AverageAbovePercentile):
+        (BenchmarkSuite.GeometricMeanLatency):
+        (BenchmarkSuite.FormatScore):
+        (BenchmarkSuite.prototype.NotifyStep):
+        (BenchmarkSuite.prototype.NotifyResult):
+        (BenchmarkSuite.prototype.NotifyError):
+        (BenchmarkSuite.prototype.RunSingleBenchmark):
+        (RunNextSetup):
+        (RunNextBenchmark):
+        (RunNextTearDown):
+        (BenchmarkSuite.prototype.RunStep):
+        (GeneratePayloadTree):
+        (GenerateKey):
+        (SplayUpdateStats):
+        (InsertNewNode):
+        (SplaySetup):
+        (SplayTearDown):
+        (SplayRun):
+        (SplayTree):
+        (SplayTree.prototype.isEmpty):
+        (SplayTree.prototype.insert):
+        (SplayTree.prototype.remove):
+        (SplayTree.prototype.find):
+        (SplayTree.prototype.findMax):
+        (SplayTree.prototype.findGreatestLessThan):
+        (SplayTree.prototype.exportKeys):
+        (SplayTree.prototype.splay_):
+        (SplayTree.Node):
+        (SplayTree.Node.prototype.traverse_):
+        (jscSetUp):
+        (jscTearDown):
+        (jscRun):
+        (averageAbovePercentile):
+        (printPercentile):
+        * stress/splay-flash-access.js: Added.
+        (performance.now):
+        (this.Setup.setup.setup):
+        (this.TearDown.tearDown.tearDown):
+        (Benchmark):
+        (BenchmarkResult):
+        (BenchmarkResult.prototype.valueOf):
+        (BenchmarkSuite):
+        (alert):
+        (Math.random):
+        (BenchmarkSuite.ResetRNG):
+        (RunStep):
+        (BenchmarkSuite.RunSuites):
+        (BenchmarkSuite.CountBenchmarks):
+        (BenchmarkSuite.GeometricMean):
+        (BenchmarkSuite.GeometricMeanTime):
+        (BenchmarkSuite.AverageAbovePercentile):
+        (BenchmarkSuite.GeometricMeanLatency):
+        (BenchmarkSuite.FormatScore):
+        (BenchmarkSuite.prototype.NotifyStep):
+        (BenchmarkSuite.prototype.NotifyResult):
+        (BenchmarkSuite.prototype.NotifyError):
+        (BenchmarkSuite.prototype.RunSingleBenchmark):
+        (RunNextSetup):
+        (RunNextBenchmark):
+        (RunNextTearDown):
+        (BenchmarkSuite.prototype.RunStep):
+        (GeneratePayloadTree):
+        (GenerateKey):
+        (SplayUpdateStats):
+        (InsertNewNode):
+        (SplaySetup):
+        (SplayTearDown):
+        (SplayRun):
+        (SplayTree):
+        (SplayTree.prototype.isEmpty):
+        (SplayTree.prototype.insert):
+        (SplayTree.prototype.remove):
+        (SplayTree.prototype.find):
+        (SplayTree.prototype.findMax):
+        (SplayTree.prototype.findGreatestLessThan):
+        (SplayTree.prototype.exportKeys):
+        (SplayTree.prototype.splay_):
+        (SplayTree.Node):
+        (SplayTree.Node.prototype.traverse_):
+        (jscSetUp):
+        (jscTearDown):
+        (jscRun):
+        (averageAbovePercentile):
+        (printPercentile):
+
 2017-02-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r212712.

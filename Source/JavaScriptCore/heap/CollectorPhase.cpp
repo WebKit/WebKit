@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CollectorPhase.h"
 
-#include "Heap.h"
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 
-class HelpingGCScope {
-public:
-    HelpingGCScope(Heap& heap)
-        : m_heap(heap)
-        , m_oldState(m_heap.m_mutatorState)
-    {
-        m_heap.m_mutatorState = MutatorState::HelpingGC;
+bool worldShouldBeSuspended(CollectorPhase phase)
+{
+    switch (phase) {
+    case CollectorPhase::NotRunning:
+    case CollectorPhase::Concurrent:
+        return false;
+        
+    case CollectorPhase::Begin:
+    case CollectorPhase::Fixpoint:
+    case CollectorPhase::Reloop:
+    case CollectorPhase::End:
+        return true;
     }
     
-    ~HelpingGCScope()
-    {
-        m_heap.m_mutatorState = m_oldState;
-    }
-
-private:
-    Heap& m_heap;
-    MutatorState m_oldState;
-};
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
 
 } // namespace JSC
+
+namespace WTF {
+
+using namespace JSC;
+
+void printInternal(PrintStream& out, JSC::CollectorPhase phase)
+{
+    switch (phase) {
+    case CollectorPhase::NotRunning:
+        out.print("NotRunning");
+        return;
+    case CollectorPhase::Begin:
+        out.print("Begin");
+        return;
+    case CollectorPhase::Fixpoint:
+        out.print("Fixpoint");
+        return;
+    case CollectorPhase::Concurrent:
+        out.print("Concurrent");
+        return;
+    case CollectorPhase::Reloop:
+        out.print("Reloop");
+        return;
+    case CollectorPhase::End:
+        out.print("End");
+        return;
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WTF
 

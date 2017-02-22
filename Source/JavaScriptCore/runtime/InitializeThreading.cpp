@@ -31,7 +31,6 @@
 
 #include "ExecutableAllocator.h"
 #include "Heap.h"
-#include "HeapStatistics.h"
 #include "Identifier.h"
 #include "JSDateMath.h"
 #include "JSGlobalObject.h"
@@ -60,8 +59,6 @@ void initializeThreading()
         WTF::initializeThreading();
         WTF::initializeGCThreads();
         Options::initialize();
-        if (Options::recordGCPauseTimes())
-            HeapStatistics::initialize();
 #if ENABLE(WRITE_BARRIER_PROFILING)
         WriteBarrierCounters::initialize();
 #endif

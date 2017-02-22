@@ -56,7 +56,7 @@ class SlotVisitor {
     friend class Heap;
 
 public:
-    SlotVisitor(Heap&);
+    SlotVisitor(Heap&, CString codeName);
     ~SlotVisitor();
 
     MarkStackArray& collectorMarkStack() { return m_collectorStack; }
@@ -167,6 +167,8 @@ public:
     void setIgnoreNewOpaqueRoots(bool value) { m_ignoreNewOpaqueRoots = value; }
 
     void donateAll();
+    
+    const char* codeName() const { return m_codeName.data(); }
 
 private:
     friend class ParallelModeEnabler;
@@ -227,6 +229,8 @@ private:
     bool m_mutatorIsStopped { false };
     bool m_canOptimizeForStoppedMutator { false };
     Lock m_rightToRun;
+    
+    CString m_codeName;
     
 public:
 #if !ASSERT_DISABLED
