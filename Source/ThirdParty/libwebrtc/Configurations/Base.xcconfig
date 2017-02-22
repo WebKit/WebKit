@@ -44,7 +44,8 @@ PREBINDING = NO;
 STRIP_INSTALLED_PRODUCT = NO;
 WARNING_CFLAGS = -Wexit-time-destructors -Wglobal-constructors;
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx;
+VALID_ARCHS = $(ARCHS_STANDARD_64_BIT);
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(TARGET_MAC_OS_X_VERSION_MAJOR$(MACOSX_DEPLOYMENT_TARGET:suffix:identifier));
 TARGET_MAC_OS_X_VERSION_MAJOR_10 = 101000;
