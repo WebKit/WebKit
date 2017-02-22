@@ -123,7 +123,7 @@ ExceptionOr<double> UserTiming::findExistingMarkStartTime(const String& markName
 
     PerformanceTiming* timing = m_performance.timing();
     if (!timing)
-        return 0.0;
+        return Exception { SYNTAX_ERR, makeString("No mark named '", markName, "' exists") };
 
     if (auto function = restrictedMarkFunction(markName)) {
         double value = static_cast<double>(((*timing).*(function))());

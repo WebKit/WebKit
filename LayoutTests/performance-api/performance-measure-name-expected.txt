@@ -1,0 +1,23 @@
+Tests performance.measure startName/endName must exist.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS performance.mark("existing-mark-name") did not throw exception.
+PASS performance.measure("measure-name", "x") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.measure("measure-name", "existing-mark-name", "x") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS performance.mark("x") did not throw exception.
+PASS performance.measure("measure-name", "x") did not throw exception.
+PASS performance.measure("measure-name", "existing-mark-name", "x") did not throw exception.
+
+Starting worker: resources/measure-name.js
+PASS [Worker] performance.mark("existing-mark-name") did not throw exception.
+PASS [Worker] performance.measure("measure-name", "x") threw exception SyntaxError (DOM Exception 12): No mark named 'x' exists.
+PASS [Worker] performance.measure("measure-name", "existing-mark-name", "x") threw exception SyntaxError (DOM Exception 12): No mark named 'x' exists.
+PASS [Worker] performance.mark("x") did not throw exception.
+PASS [Worker] performance.measure("measure-name", "x") did not throw exception.
+PASS [Worker] performance.measure("measure-name", "existing-mark-name", "x") did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
