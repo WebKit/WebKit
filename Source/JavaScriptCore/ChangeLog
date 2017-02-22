@@ -1,3 +1,19 @@
+2017-02-21  Mark Lam  <mark.lam@apple.com>
+
+        Add missing exception checks detected by running marathon.js.
+        https://bugs.webkit.org/show_bug.cgi?id=168687
+
+        Reviewed by Saam Barati.
+
+        When running the marathon.js test from https://bugs.webkit.org/show_bug.cgi?id=168580,
+        we get some crashes due to missing exception checks.  This patch adds those
+        missing exception checks.
+
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::toPropertyKey):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getPrimitiveNumber):
+
 2017-02-20  Filip Pizlo  <fpizlo@apple.com>
 
         The collector thread should only start when the mutator doesn't have heap access
