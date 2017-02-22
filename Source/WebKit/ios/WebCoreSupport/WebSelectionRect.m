@@ -27,7 +27,17 @@
 
 #import "WebSelectionRect.h"
 
-@implementation WebSelectionRect
+@implementation WebSelectionRect {
+    CGRect m_rect;
+    WKWritingDirection m_writingDirection;
+    BOOL m_isLineBreak;
+    BOOL m_isFirstOnLine;
+    BOOL m_isLastOnLine;
+    BOOL m_containsStart;
+    BOOL m_containsEnd;
+    BOOL m_isInFixedPosition;
+    BOOL m_isHorizontal;
+}
 
 @synthesize rect = m_rect;
 @synthesize writingDirection = m_writingDirection;

@@ -29,17 +29,7 @@
 #import <Foundation/Foundation.h>
 #import <WebKitLegacy/WebFrameIOS.h>
 
-@interface WebSelectionRect : NSObject <NSCopying> {
-    CGRect m_rect;
-    WKWritingDirection m_writingDirection;
-    BOOL m_isLineBreak;
-    BOOL m_isFirstOnLine;
-    BOOL m_isLastOnLine;
-    BOOL m_containsStart;
-    BOOL m_containsEnd;
-    BOOL m_isInFixedPosition;
-    BOOL m_isHorizontal;
-}
+@interface WebSelectionRect : NSObject <NSCopying>
 
 @property (nonatomic, assign) CGRect rect;
 @property (nonatomic, assign) WKWritingDirection writingDirection;
