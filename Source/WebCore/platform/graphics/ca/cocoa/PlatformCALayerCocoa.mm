@@ -705,6 +705,26 @@ void PlatformCALayerCocoa::setWantsDeepColorBackingStore(bool wantsDeepColorBack
     updateContentsFormat();
 }
 
+bool PlatformCALayerCocoa::supportsSubpixelAntialiasedText() const
+{
+    return m_supportsSubpixelAntialiasedText;
+}
+
+void PlatformCALayerCocoa::setSupportsSubpixelAntialiasedText(bool supportsSubpixelAntialiasedText)
+{
+    if (supportsSubpixelAntialiasedText == m_supportsSubpixelAntialiasedText)
+        return;
+    
+    m_supportsSubpixelAntialiasedText = supportsSubpixelAntialiasedText;
+
+    if (usesTiledBackingLayer()) {
+        [static_cast<WebTiledBackingLayer *>(m_layer.get()) setSupportsSubpixelAntialiasedText:m_supportsSubpixelAntialiasedText];
+        return;
+    }
+
+    updateContentsFormat();
+}
+
 CFTypeRef PlatformCALayerCocoa::contents() const
 {
     return [m_layer contents];
@@ -975,7 +995,7 @@ void PlatformCALayerCocoa::updateCustomAppearance(GraphicsLayer::CustomAppearanc
 }
 
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
-static NSString *layerContentsFormat(bool wantsDeepColor)
+static NSString *layerContentsFormat(bool wantsDeepColor, bool supportsSubpixelAntialiasedFonts)
 {
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300
     if (wantsDeepColor)
@@ -983,6 +1003,14 @@ static NSString *layerContentsFormat(bool wantsDeepColor)
 #else
     UNUSED_PARAM(wantsDeepColor);
 #endif
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    if (supportsSubpixelAntialiasedFonts)
+        return kCAContentsFormatRGBA8ColorRGBA8LinearGlyphMask;
+#else
+    UNUSED_PARAM(supportsSubpixelAntialiasedFonts);
+#endif
+
     return nil;
 }
 #endif
@@ -992,7 +1020,7 @@ void PlatformCALayerCocoa::updateContentsFormat()
     if (m_layerType == LayerTypeWebLayer || m_layerType == LayerTypeTiledBackingTileLayer) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
-        if (NSString *formatString = layerContentsFormat(wantsDeepColorBackingStore()))
+        if (NSString *formatString = layerContentsFormat(wantsDeepColorBackingStore(), supportsSubpixelAntialiasedText()))
             [m_layer setContentsFormat:formatString];
 #endif
         END_BLOCK_OBJC_EXCEPTIONS
@@ -1107,7 +1135,7 @@ void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformC
         graphicsContext.setIsCALayerContext(true);
         graphicsContext.setIsAcceleratedContext(platformCALayer->acceleratesDrawing());
         
-        if (!layerContents->platformCALayerContentsOpaque()) {
+        if (!layerContents->platformCALayerContentsOpaque() && !platformCALayer->supportsSubpixelAntialiasedText()) {
             // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
             graphicsContext.setShouldSmoothFonts(false);
         }

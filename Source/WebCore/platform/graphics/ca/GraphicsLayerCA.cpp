@@ -738,6 +738,15 @@ void GraphicsLayerCA::setContentsOpaque(bool opaque)
     noteLayerPropertyChanged(ContentsOpaqueChanged);
 }
 
+void GraphicsLayerCA::setSupportsSubpixelAntialiasedText(bool supportsSubpixelAntialiasedText)
+{
+    if (m_supportsSubpixelAntialiasedText == supportsSubpixelAntialiasedText)
+        return;
+
+    GraphicsLayer::setSupportsSubpixelAntialiasedText(supportsSubpixelAntialiasedText);
+    noteLayerPropertyChanged(SupportsSubpixelAntialiasedTextChanged);
+}
+
 void GraphicsLayerCA::setBackfaceVisibility(bool visible)
 {
     if (m_backfaceVisibility == visible)
@@ -1671,6 +1680,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & AcceleratesDrawingChanged)
         updateAcceleratesDrawing();
 
+    if (m_uncommittedChanges & SupportsSubpixelAntialiasedTextChanged)
+        updateSupportsSubpixelAntialiasedText();
+
     if (m_uncommittedChanges & DebugIndicatorsChanged)
         updateDebugBorder();
 
@@ -2200,6 +2212,11 @@ void GraphicsLayerCA::updateCoverage()
 void GraphicsLayerCA::updateAcceleratesDrawing()
 {
     m_layer->setAcceleratesDrawing(m_acceleratesDrawing);
+}
+
+void GraphicsLayerCA::updateSupportsSubpixelAntialiasedText()
+{
+    m_layer->setSupportsSubpixelAntialiasedText(m_supportsSubpixelAntialiasedText);
 }
 
 static void setLayerDebugBorder(PlatformCALayer& layer, Color borderColor, float borderWidth)

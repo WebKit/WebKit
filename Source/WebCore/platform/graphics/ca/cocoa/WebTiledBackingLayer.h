@@ -46,6 +46,9 @@ class TiledBacking;
 - (void)setWantsDeepColorBackingStore:(BOOL)wantsDeepColor;
 - (BOOL)wantsDeepColorBackingStore;
 
+- (void)setSupportsSubpixelAntialiasedText:(BOOL)supportsSubpixelAntialiasedText;
+- (BOOL)supportsSubpixelAntialiasedText;
+
 @end
 
 #endif // WebTiledBackingLayer_h

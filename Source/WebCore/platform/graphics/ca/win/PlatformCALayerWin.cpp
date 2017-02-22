@@ -528,6 +528,15 @@ void PlatformCALayerWin::setWantsDeepColorBackingStore(bool)
 {
 }
 
+bool PlatformCALayerWin::supportsSubpixelAntialiasedText() const
+{
+    return false
+}
+
+void PlatformCALayerWin::setSupportsSubpixelAntialiasedText(bool)
+{
+}
+
 CFTypeRef PlatformCALayerWin::contents() const
 {
     return CACFLayerGetContents(m_layer.get());

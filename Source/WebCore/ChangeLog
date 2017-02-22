@@ -1,3 +1,57 @@
+2017-02-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support to PlatformCALayer/GraphicsLayerCA for subpixel-antialiased text, with a Setting and a MiniBrowser switch
+        https://bugs.webkit.org/show_bug.cgi?id=168620
+        <rdar://problem/30617772>
+
+        Reviewed by Tim Horton.
+
+        Add a Setting for subpixel-antialiased layer text. Plumb this through GraphicsLayerCA and
+        PlatformCALayer, where it ultimately affects the layer contents format.
+        
+        TileControllers are slightly special because we communicate with them via an Obj-C
+        WebTiledBackingLayer.
+
+        Test: compositing/contents-format/subpixel-antialiased-text-enabled.html
+
+        * page/Settings.in:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        (WebCore::GraphicsLayer::dumpProperties):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::supportsSubpixelAntialiasedText):
+        (WebCore::GraphicsLayer::setSupportsSubpixelAntialiasedText):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setSupportsSubpixelAntialiasedText):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateSupportsSubpixelAntialiasedText):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::drawRepaintIndicator):
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::setWantsDeepColorBackingStore):
+        (WebCore::TileController::setSupportsSubpixelAntialiasedText):
+        (WebCore::TileController::setTilesOpaque):
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::updateTileLayerProperties):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayerCocoa::supportsSubpixelAntialiasedText):
+        (PlatformCALayerCocoa::setSupportsSubpixelAntialiasedText):
+        (layerContentsFormat):
+        (PlatformCALayerCocoa::updateContentsFormat):
+        (PlatformCALayer::drawLayerContents):
+        * platform/graphics/ca/cocoa/WebTiledBackingLayer.h:
+        * platform/graphics/ca/cocoa/WebTiledBackingLayer.mm:
+        (-[WebTiledBackingLayer drawsAsynchronously]):
+        (-[WebTiledBackingLayer setSupportsSubpixelAntialiasedText:]):
+        (-[WebTiledBackingLayer supportsSubpixelAntialiasedText]):
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+
 2017-02-21  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (203941): iAd Producer: Clicking buttons in Preview does not work

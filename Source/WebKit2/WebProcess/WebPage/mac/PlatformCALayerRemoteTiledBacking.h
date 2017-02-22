@@ -56,7 +56,10 @@ private:
 
     bool wantsDeepColorBackingStore() const override;
     void setWantsDeepColorBackingStore(bool) override;
-    
+
+    bool supportsSubpixelAntialiasedText() const override;
+    void setSupportsSubpixelAntialiasedText(bool) override;
+
     float contentsScale() const override;
     void setContentsScale(float) override;
     

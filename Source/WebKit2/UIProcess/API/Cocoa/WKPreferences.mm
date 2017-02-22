@@ -365,6 +365,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setTextAutosizingEnabled(enabled);
 }
 
+- (BOOL)_subpixelAntialiasedLayerTextEnabled
+{
+    return _preferences->subpixelAntialiasedLayerTextEnabled();
+}
+
+- (void)_setSubpixelAntialiasedLayerTextEnabled:(BOOL)enabled
+{
+    _preferences->setSubpixelAntialiasedLayerTextEnabled(enabled);
+}
+
 - (BOOL)_developerExtrasEnabled
 {
     return _preferences->developerExtrasEnabled();

@@ -142,6 +142,7 @@ std::unique_ptr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const Str
 #if PLATFORM(COCOA) && USE(CA)
     graphicsLayer->setAcceleratesDrawing(compositor().acceleratedDrawingEnabled());
     graphicsLayer->setUsesDisplayListDrawing(compositor().displayListDrawingEnabled());
+    graphicsLayer->setSupportsSubpixelAntialiasedText(renderer().settings().subpixelAntialiasedLayerTextEnabled());
 #endif
     
     return graphicsLayer;

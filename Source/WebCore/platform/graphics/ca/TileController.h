@@ -74,6 +74,9 @@ public:
     bool wantsDeepColorBackingStore() const { return m_wantsDeepColorBackingStore; }
     WEBCORE_EXPORT void setWantsDeepColorBackingStore(bool);
 
+    bool supportsSubpixelAntialiasedText() const { return m_supportsSubpixelAntialiasedText; }
+    WEBCORE_EXPORT void setSupportsSubpixelAntialiasedText(bool);
+
     WEBCORE_EXPORT void setTilesOpaque(bool);
     bool tilesAreOpaque() const { return m_tilesAreOpaque; }
 
@@ -221,6 +224,7 @@ private:
     bool m_scrollingPerformanceLoggingEnabled { false };
     bool m_acceleratesDrawing { false };
     bool m_wantsDeepColorBackingStore { false };
+    bool m_supportsSubpixelAntialiasedText { false };
     bool m_tilesAreOpaque { false };
     bool m_hasTilesWithTemporaryScaleFactor { false }; // Used to make low-res tiles when zooming.
     bool m_inLiveResize { false };

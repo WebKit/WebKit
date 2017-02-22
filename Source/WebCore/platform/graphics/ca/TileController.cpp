@@ -179,7 +179,15 @@ void TileController::setWantsDeepColorBackingStore(bool wantsDeepColorBackingSto
         return;
 
     m_wantsDeepColorBackingStore = wantsDeepColorBackingStore;
+    tileGrid().updateTileLayerProperties();
+}
 
+void TileController::setSupportsSubpixelAntialiasedText(bool supportsSubpixelAntialiasedText)
+{
+    if (m_supportsSubpixelAntialiasedText == supportsSubpixelAntialiasedText)
+        return;
+
+    m_supportsSubpixelAntialiasedText = supportsSubpixelAntialiasedText;
     tileGrid().updateTileLayerProperties();
 }
 
@@ -187,8 +195,8 @@ void TileController::setTilesOpaque(bool opaque)
 {
     if (opaque == m_tilesAreOpaque)
         return;
-    m_tilesAreOpaque = opaque;
 
+    m_tilesAreOpaque = opaque;
     tileGrid().updateTileLayerProperties();
 }
 

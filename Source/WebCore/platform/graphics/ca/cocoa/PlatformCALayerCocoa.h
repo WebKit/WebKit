@@ -113,6 +113,9 @@ public:
     bool wantsDeepColorBackingStore() const override;
     void setWantsDeepColorBackingStore(bool) override;
 
+    bool supportsSubpixelAntialiasedText() const override;
+    void setSupportsSubpixelAntialiasedText(bool) override;
+
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
 
@@ -191,6 +194,7 @@ private:
     GraphicsLayer::CustomAppearance m_customAppearance;
     std::unique_ptr<FloatRoundedRect> m_shapeRoundedRect;
     bool m_wantsDeepColorBackingStore { false };
+    bool m_supportsSubpixelAntialiasedText { false };
 };
 
 } // namespace WebCore

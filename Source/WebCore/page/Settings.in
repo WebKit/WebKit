@@ -201,6 +201,7 @@ textAutosizingEnabled initial=defaultTextAutosizingEnabled(), setNeedsStyleRecal
 textAutosizingWindowSizeOverride type=IntSize, setNeedsStyleRecalcInAllFrames=1, conditional=TEXT_AUTOSIZING
 minimumZoomFontSize type=float, initial=defaultMinimumZoomFontSize(), conditional=TEXT_AUTOSIZING
 
+subpixelAntialiasedLayerTextEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 simpleLineLayoutEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
 simpleLineLayoutDebugBordersEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 

@@ -116,6 +116,12 @@ void PlatformCALayer::drawRepaintIndicator(CGContextRef context, PlatformCALayer
         CGContextStrokeRect(context, indicatorBox);
     }
 
+    if (!platformCALayer->isOpaque() && platformCALayer->supportsSubpixelAntialiasedText()) {
+        // Draw a gray shadow behind the repaint count.
+        CGContextSetRGBFillColor(context, 1, 1, 1, 0.4);
+        platformCALayer->drawTextAtPoint(context, indicatorBox.x() + 7, indicatorBox.y() + 24, CGSizeMake(1, -1), 22, text, strlen(text));
+    }
+
     if (platformCALayer->acceleratesDrawing())
         CGContextSetRGBFillColor(context, 1, 0, 0, 1);
     else

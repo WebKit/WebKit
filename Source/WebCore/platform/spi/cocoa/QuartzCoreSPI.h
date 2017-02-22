@@ -221,6 +221,10 @@ extern NSString * const kCAContextIgnoresHitTest;
 extern NSString * const kCAContentsFormatRGBA10XR;
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+extern NSString * const kCAContentsFormatRGBA8ColorRGBA8LinearGlyphMask;
+#endif
+
 #if (PLATFORM(APPLETV) && __TV_OS_VERSION_MAX_ALLOWED < 100000) \
     || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MAX_ALLOWED < 30000) \
     || (PLATFORM(IOS) && TARGET_OS_IOS && __IPHONE_OS_VERSION_MAX_ALLOWED < 100000) \
