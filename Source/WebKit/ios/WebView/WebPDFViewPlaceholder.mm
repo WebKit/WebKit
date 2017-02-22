@@ -102,7 +102,19 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
 #pragma mark WebPDFViewPlaceholder implementation
 
-@implementation WebPDFViewPlaceholder
+@implementation WebPDFViewPlaceholder {
+    NSString *_title;
+    NSArray *_pageRects;
+    NSArray *_pageYOrigins;
+    CGPDFDocumentRef _document;
+    WebDataSource *_dataSource; // weak to prevent cycles.
+    
+    NSObject<WebPDFViewPlaceholderDelegate> *_delegate;
+    
+    BOOL _didFinishLoad;
+    
+    CGSize _containerSize;
+}
 
 @synthesize delegate = _delegate;
 @synthesize pageRects = _pageRects;

@@ -37,19 +37,7 @@
     be drawn to the UI by some other object (ideally the delegate of this class) while still interfacing
     with WAK and WebKit correctly.
 */
-@interface WebPDFViewPlaceholder : WAKView <WebPDFDocumentView, WebPDFDocumentRepresentation> {
-    NSString *_title;
-    NSArray *_pageRects;
-    NSArray *_pageYOrigins;
-    CGPDFDocumentRef _document;
-    WebDataSource *_dataSource; // weak to prevent cycles.
-
-    NSObject<WebPDFViewPlaceholderDelegate> *_delegate;
-
-    BOOL _didFinishLoad;
-
-    CGSize _containerSize;
-}
+@interface WebPDFViewPlaceholder : WAKView <WebPDFDocumentView, WebPDFDocumentRepresentation>
 
 /*!
     @method setAsPDFDocRepAndView
