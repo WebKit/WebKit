@@ -1,3 +1,19 @@
+2017-02-23  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Compilation fails if using ninja together with icecream and cmake > 3.5
+        https://bugs.webkit.org/show_bug.cgi?id=168770
+
+        Reviewed by Carlos Garcia Campos.
+
+        If using cmake >= 3.6 together with ninja generator and icecream, the
+        build will fail as icecream does not correctly handle the response
+        files and it's not passing compiler flags from there to the compiler
+        itself (in our case it's not passing -fPIC which leads to the
+        failure while linking). Don't enable the ninja's response files
+        support if we fulfill the preconditions.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2017-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add GTK+ build instruction to ReadMe.md
