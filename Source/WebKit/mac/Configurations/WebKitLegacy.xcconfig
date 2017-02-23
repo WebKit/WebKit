@@ -33,7 +33,7 @@ EXPORTED_SYMBOLS_FILE_armv7 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/
 EXPORTED_SYMBOLS_FILE_armv7k = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/WebKitLegacy.generated.exp;
 EXPORTED_SYMBOLS_FILE_armv7s = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/WebKitLegacy.generated.exp;
 EXPORTED_SYMBOLS_FILE_arm64 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/WebKitLegacy.generated.exp;
-EXPORTED_SYMBOLS_FILE_i386 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/WebKitLegacy.generated.exp;
+EXPORTED_SYMBOLS_FILE_i386 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/WebKitLegacy.i386.exp;
 EXPORTED_SYMBOLS_FILE_x86_64[sdk=iphonesimulator*] = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/WebKitLegacy.generated.exp;
 EXPORTED_SYMBOLS_FILE_x86_64[sdk=macosx*] = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/WebKitLegacy.LP64.exp;
 
