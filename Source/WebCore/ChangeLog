@@ -1,3 +1,19 @@
+2017-02-23  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] RealtimeOutgoingAudioSource does not need to upsample audio buffers
+        https://bugs.webkit.org/show_bug.cgi?id=168796
+
+        Reviewed by Jer Noble.
+
+        Covered by manual testing.
+        Limiting RealtimeOutgoingAudioSource conversion to interleaving and float-to-integer.
+        Removed the sample rate conversion.
+
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::libwebrtcAudioFormat):
+        (WebCore::RealtimeOutgoingAudioSource::audioSamplesAvailable):
+        (WebCore::RealtimeOutgoingAudioSource::pullAudioData):
+
 2017-02-23  Alex Christensen  <achristensen@webkit.org>
 
         Re-soft-link CoreVideo after r212906
