@@ -155,6 +155,7 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
                     frOffset += sizeof(Register);
                 }
                 ++marshalledGPRs;
+                jit.zeroExtend32ToPtr(gprReg, gprReg); // Clear non-int32 and non-tag bits.
                 jit.boxInt32(gprReg, JSValueRegs(gprReg), DoNotHaveTagRegisters);
                 jit.store64(gprReg, calleeFrame.withOffset(calleeFrameOffset));
                 calleeFrameOffset += sizeof(Register);

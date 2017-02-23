@@ -1,3 +1,35 @@
+2017-02-22  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: clear out insignificant i32 bits when calling JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=166677
+
+        Reviewed by Keith Miller.
+
+        When WebAssembly calls JavaScript it needs to clear out the
+        insignificant bits of int32 values:
+
+          +------------------- tag
+          |  +---------------- insignificant
+          |  |   +------------ 32-bit integer value
+          |  |   |
+          |--|---|-------|
+        0xffff0000ffffffff
+
+        At least some JavaScript code assumes that these bits are all
+        zero. In the wasm-to-wasm.js example we store a 64-bit value in an
+        object with lo / hi fields, each containing 32-bit integers. We
+        then load these back, and the baseline compiler fails its
+        comparison because it first checks the value are the same type
+        (yes, because the int32 tag is set in both), and then whether they
+        have the same value (no, because comparing the two registers
+        fails). We could argue that the baseline compiler is wrong for
+        performing a 64-bit comparison, but it doesn't really matter
+        because there's not much of a point in breaking that invariant for
+        WebAssembly's sake.
+
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToJs):
+
 2017-02-22  Keith Miller  <keith_miller@apple.com>
 
         Remove the demand executable allocator
