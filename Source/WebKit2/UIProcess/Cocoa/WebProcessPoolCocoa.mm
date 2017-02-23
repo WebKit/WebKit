@@ -249,12 +249,14 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     parameters.uiProcessCookieStorageIdentifier.append(CFDataGetBytePtr(cookieStorageData.get()), CFDataGetLength(cookieStorageData.get()));
 #endif
 #if ENABLE(MEDIA_STREAM)
+    // Allow microphone access if either preference is set because WebRTC requires microphone access.
     bool mediaStreamEnabled = m_defaultPageGroup->preferences().mediaStreamEnabled();
+    bool webRTCEnabled = m_defaultPageGroup->preferences().peerConnectionEnabled();
     if ([defaults objectForKey:@"ExperimentalPeerConnectionEnabled"])
-        mediaStreamEnabled = [defaults boolForKey:@"ExperimentalPeerConnectionEnabled"];
+        webRTCEnabled = [defaults boolForKey:@"ExperimentalPeerConnectionEnabled"];
     
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
-    if (mediaStreamEnabled)
+    if (mediaStreamEnabled || webRTCEnabled)
         SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.audioCaptureExtensionHandle);
 #endif
 }
