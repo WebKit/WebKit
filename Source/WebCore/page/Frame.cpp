@@ -256,7 +256,14 @@ void Frame::setView(RefPtr<FrameView>&& view)
     if (m_eventHandler)
         m_eventHandler->clear();
 
+    bool hadLivingRenderTree = m_doc ? m_doc->hasLivingRenderTree() : false;
+    if (hadLivingRenderTree)
+        m_doc->destroyRenderTree();
+
     m_view = WTFMove(view);
+
+    if (hadLivingRenderTree && m_view)
+        m_doc->didBecomeCurrentDocumentInView();
 
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
