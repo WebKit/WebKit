@@ -37,6 +37,23 @@
  /* Needed to make the negative z-index on .selection-area works. Otherwise the background-color from .syntax-highlighted hides the selection. */
     background-color: transparent !important;
     color: black;
+
+    --item-padding-start: 17px;
+    --item-padding-end: 6px;
+
+    --item-parent-margin-start: -15px;
+
+    --item-parent-before-padding-end: 2px;
+
+    --item-parent-shadow-after-margin-start: -2px;
+
+    --item-pseudo-class-enabled-selection-before-start: 2px;
+
+    --single-item-padding-start: 2px;
+
+    --sublist-margin-start: 4px;
+    --sublist-padding-start: 1px;
+    --sublist-border-width-start: 9px;
 }
 
 .tree-outline.dom li.hovered:not(.selected) .selection-area {
@@ -77,8 +94,15 @@
 
 .tree-outline.dom ol {
     list-style-type: none;
-    padding-left: 14px;
     margin: 0;
+}
+
+body[dir=ltr] .tree-outline.dom ol {
+    padding-left: calc(var(--sublist-margin-start) + var(--sublist-padding-start) + var(--sublist-border-width-start));
+}
+
+body[dir=rtl] .tree-outline.dom ol {
+    padding-right: calc(var(--sublist-margin-start) + var(--sublist-padding-start) + var(--sublist-border-width-start));
 }
 
 .tree-outline.dom ol.children {
@@ -90,25 +114,41 @@
 }
 
 .tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded {
-    margin-left: 4px;
-    padding-left: 1px;
-    border-left: 9px solid hsla(0, 0%, 83%, 0.5);
+    border: 0 solid hsla(0, 0%, 83%, 0.5);
+}
+
+body[dir=ltr] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded {
+    margin-left: var(--sublist-margin-start);
+    padding-left: var(--sublist-padding-start);
+    border-left-width: var(--sublist-border-width-start);
+}
+
+body[dir=rtl] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded {
+    margin-right: var(--sublist-margin-start);
+    padding-right: var(--sublist-padding-start);
+    border-right-width: var(--sublist-border-width-start);
 }
 
 .tree-outline.dom li.selected + ol.children.expanded {
-    border-left-color: hsl(0, 0%, 83%);
+    border-color: hsl(0, 0%, 83%);
 }
 
 .tree-outline.dom li {
-    padding: 0 6px 0 17px;
     word-wrap: break-word;
+}
+
+body[dir=ltr] .tree-outline.dom li {
+    padding: 0 var(--item-padding-end) 0 var(--item-padding-start);
+}
+
+body[dir=rtl] .tree-outline.dom li {
+    padding: 0 var(--item-padding-start) 0 var(--item-padding-end);
 }
 
 .tree-outline.dom li.pseudo-class-enabled > .selection-area::before {
     display: inline-block;
     position: absolute;
     top: 4px;
-    left: 2px;
     width: 5px;
     height: 5px;
     content: "";
@@ -116,8 +156,20 @@
     border-radius: 50%;
 }
 
-.tree-outline.dom.single-node li {
-    padding-left: 2px;
+body[dir=rtl] .tree-outline.dom li.pseudo-class-enabled > .selection-area::before {
+    left: var(--item-pseudo-class-enabled-selection-before-start);
+}
+
+body[dir=rtl] .tree-outline.dom li.pseudo-class-enabled > .selection-area::before {
+    right: var(--item-pseudo-class-enabled-selection-before-start);
+}
+
+body[dir=ltr] .tree-outline.dom.single-node li {
+    padding-left: var(--single-item-padding-start);
+}
+
+body[dir=rtl] .tree-outline.dom.single-node li {
+    padding-right: var(--single-item-padding-start);
 }
 
 .tree-outline.dom:focus li.selected {
@@ -133,31 +185,48 @@
 }
 
 .tree-outline.dom li.parent {
-    margin-left: -15px;
     line-height: 13px;
 }
 
-.tree-outline.dom li .html-tag.close {
-    margin-left: -13px;
+body[dir=ltr] .tree-outline.dom li.parent {
+    margin-left: var(--item-parent-margin-start);
+}
+
+body[dir=rtl] .tree-outline.dom li.parent {
+    margin-right: var(--item-parent-margin-start);
+}
+
+body[dir=ltr] .tree-outline.dom li .html-tag.close {
+    margin-left: calc(-1 * var(--sublist-margin-start) - var(--sublist-border-width-start));
+}
+
+body[dir=rtl] .tree-outline.dom li .html-tag.close {
+    margin-right: calc(-1 * var(--sublist-margin-start) - var(--sublist-border-width-start));
 }
 
 .tree-outline.dom li.parent::before {
     position: relative;
     z-index: 20;
-
-    float: left;
-
+    width: 13px;
+    height: 13px;
     content: "";
-
     background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
     background-size: 13px 13px;
     background-repeat: no-repeat;
+}
 
-    width: 13px;
-    height: 13px;
+body[dir=rtl] .tree-outline.dom li.parent::before {
+    transform: scaleX(-1);
+}
 
-    margin-left: 0;
-    padding-right: 2px;
+body[dir=ltr] .tree-outline.dom li.parent::before {
+    float: left;
+    padding-right: var(--item-parent-before-padding-end);
+}
+
+body[dir=rtl] .tree-outline.dom li.parent::before {
+    float: right;
+    padding-left: var(--item-parent-before-padding-end);
 }
 
 .tree-outline.dom:focus li.parent.selected::before {
@@ -193,9 +262,16 @@
     width: calc(100% + 8px);
     height: 1.2em;
     margin-top: -13px;
-    margin-left: -2px;
     content: "";
     background-color: hsla(0, 0%, 90%, 0.5);
+}
+
+body[dir=ltr] .tree-outline.dom li.parent.shadow::after {
+    margin-left: var(--item-parent-shadow-after-margin-start);
+}
+
+body[dir=rtl] .tree-outline.dom li.parent.shadow::after {
+    margin-right: var(--item-parent-shadow-after-margin-start);
 }
 
 .tree-outline.dom li.parent.shadow + ol.children.expanded {

@@ -1,5 +1,49 @@
 2017-02-23  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: RTL: DOM Tree spacing is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=168744
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Utilities.js:
+        (Element.prototype.totalOffsetRight):
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom):
+        (.tree-outline.dom ol):
+        (body[dir=ltr] .tree-outline.dom ol):
+        (body[dir=rtl] .tree-outline.dom ol):
+        (.tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded):
+        (body[dir=ltr] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded):
+        (body[dir=rtl] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded):
+        (.tree-outline.dom li.selected + ol.children.expanded):
+        (.tree-outline.dom li):
+        (body[dir=ltr] .tree-outline.dom li):
+        (body[dir=rtl] .tree-outline.dom li):
+        (.tree-outline.dom li.pseudo-class-enabled > .selection-area::before):
+        (body[dir=rtl] .tree-outline.dom li.pseudo-class-enabled > .selection-area::before):
+        (body[dir=ltr] .tree-outline.dom.single-node li):
+        (body[dir=rtl] .tree-outline.dom.single-node li):
+        (.tree-outline.dom li.parent):
+        (body[dir=ltr] .tree-outline.dom li.parent):
+        (body[dir=rtl] .tree-outline.dom li.parent):
+        (body[dir=ltr] .tree-outline.dom li .html-tag.close):
+        (body[dir=rtl] .tree-outline.dom li .html-tag.close):
+        (.tree-outline.dom li.parent::before):
+        (body[dir=rtl] .tree-outline.dom li.parent::before):
+        (body[dir=ltr] .tree-outline.dom li.parent::before):
+        (.tree-outline.dom li.parent.shadow::after):
+        (body[dir=ltr] .tree-outline.dom li.parent.shadow::after):
+        (body[dir=rtl] .tree-outline.dom li.parent.shadow::after):
+        (.tree-outline.dom.single-node li): Deleted.
+        (.tree-outline.dom li .html-tag.close): Deleted.
+
+        * UserInterface/Views/TreeElement.js:
+        (WebInspector.TreeElement.prototype.isEventWithinDisclosureTriangle):
+        Calculate the position of the ::before triangle based on the layout direction.
+
+2017-02-23  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: RTL: navigation sidebar section disclosure triangles and tree element icons should be aligned right
         https://bugs.webkit.org/show_bug.cgi?id=168284
 

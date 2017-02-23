@@ -372,6 +372,14 @@ Object.defineProperty(Element.prototype, "totalOffsetLeft",
     }
 });
 
+Object.defineProperty(Element.prototype, "totalOffsetRight",
+{
+    get: function()
+    {
+        return this.getBoundingClientRect().right;
+    }
+});
+
 Object.defineProperty(Element.prototype, "totalOffsetTop",
 {
     get: function()
