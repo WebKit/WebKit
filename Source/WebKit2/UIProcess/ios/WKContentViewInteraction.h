@@ -190,6 +190,7 @@ struct WKAutoCorrectionData {
 
 #if ENABLE(DATA_INTERACTION)
     WebKit::WKDataInteractionState _dataInteractionState;
+    BOOL _isPerformingDataInteractionOperation;
 #endif
 }
 

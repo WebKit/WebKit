@@ -1,3 +1,20 @@
+2017-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Data interaction causes selection to fall out of sync between web/UI processes
+        https://bugs.webkit.org/show_bug.cgi?id=168735
+        <rdar://problem/30657817>
+
+        Reviewed by Tim Horton.
+
+        Fixes a bug with data interaction causing selection state to fall out of sync between the UI and web processes,
+        and also introduces testing infrastructure and tests for grabbing UI-side selection view rects in TestWebKitAPI.
+        While performing a data interaction operation, we now lift restrictions for assisting the focused node.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:userObject:]):
+
 2017-02-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash attempting to load Flash plugin in Wayland

@@ -121,6 +121,7 @@ static NSArray *dataInteractionEventNames()
     _isDoneWithCurrentRun = false;
     _didTryToBeginDataInteraction = NO;
     _observedEventNames = adoptNS([[NSMutableArray alloc] init]);
+    _finalSelectionRects = @[ ];
 }
 
 - (NSArray *)observedEventNames
@@ -155,6 +156,12 @@ static NSArray *dataInteractionEventNames()
     Util::run(&_isDoneWithCurrentRun);
     [_gestureRecognizer setMockNumberOfTouches:0];
     [_webView clearMessageHandlers:dataInteractionEventNames()];
+    _finalSelectionRects = [_webView selectionRectsAfterPresentationUpdate];
+}
+
+- (NSArray *)finalSelectionRects
+{
+    return _finalSelectionRects.get();
 }
 
 - (void)_advanceProgress

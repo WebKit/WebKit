@@ -1,3 +1,26 @@
+2017-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Data interaction causes selection to fall out of sync between web/UI processes
+        https://bugs.webkit.org/show_bug.cgi?id=168735
+        <rdar://problem/30657817>
+
+        Reviewed by Tim Horton.
+
+        Adds a new method to TestWKWebView for querying selection view rects from the UI process and augments data
+        interaction unit tests to check for selection rects using this new hook.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (makeCGRectValue):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView selectionRectsAfterPresentationUpdate]):
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[DataInteractionSimulator _resetSimulatedState]):
+        (-[DataInteractionSimulator runFrom:to:]):
+        (-[DataInteractionSimulator finalSelectionRects]):
+
 2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Better handle Thread and RunLoop initialization

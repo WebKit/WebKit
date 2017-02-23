@@ -259,6 +259,29 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 
 @end
 
+#if PLATFORM(IOS)
+
+@implementation TestWKWebView (IOSOnly)
+
+- (RetainPtr<NSArray>)selectionRectsAfterPresentationUpdate
+{
+    RetainPtr<TestWKWebView> retainedSelf = self;
+
+    __block bool isDone = false;
+    __block RetainPtr<NSArray> selectionRects;
+    [self _doAfterNextPresentationUpdate:^() {
+        selectionRects = adoptNS([[retainedSelf _uiTextSelectionRects] retain]);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+    return selectionRects;
+}
+
+@end
+
+#endif
+
 #if PLATFORM(MAC)
 @implementation TestWKWebView (MacOnly)
 - (void)mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure

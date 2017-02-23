@@ -47,6 +47,11 @@
 
 @end
 
+static NSValue *makeCGRectValue(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
+{
+    return [NSValue valueWithCGRect:CGRectMake(x, y, width, height)];
+}
+
 namespace TestWebKitAPI {
 
 TEST(DataInteractionTests, ImageToContentEditable)
@@ -63,6 +68,7 @@ TEST(DataInteractionTests, ImageToContentEditable)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
+    EXPECT_TRUE([[dataInteractionSimulator finalSelectionRects] isEqualToArray:@[ makeCGRectValue(1, 201, 215, 174) ]]);
 }
 
 TEST(DataInteractionTests, ImageToTextarea)
@@ -81,6 +87,9 @@ TEST(DataInteractionTests, ImageToTextarea)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
+
+    NSArray *expectedSelectionRects = [NSArray arrayWithObjects:makeCGRectValue(6, 203, 188, 14), makeCGRectValue(6, 217, 188, 14), makeCGRectValue(6, 231, 66, 14), nil];
+    EXPECT_TRUE([[dataInteractionSimulator finalSelectionRects] isEqualToArray:expectedSelectionRects]);
 }
 
 TEST(DataInteractionTests, ContentEditableToContentEditable)
@@ -99,6 +108,7 @@ TEST(DataInteractionTests, ContentEditableToContentEditable)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
+    EXPECT_TRUE([[dataInteractionSimulator finalSelectionRects] isEqualToArray:@[ makeCGRectValue(1, 201, 961, 227) ]]);
 }
 
 TEST(DataInteractionTests, ContentEditableToTextarea)
@@ -117,6 +127,7 @@ TEST(DataInteractionTests, ContentEditableToTextarea)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
+    EXPECT_TRUE([[dataInteractionSimulator finalSelectionRects] isEqualToArray:@[ makeCGRectValue(6, 203, 990, 232) ]]);
 }
 
 TEST(DataInteractionTests, LinkToInput)
@@ -134,6 +145,7 @@ TEST(DataInteractionTests, LinkToInput)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
+    EXPECT_TRUE([[dataInteractionSimulator finalSelectionRects] isEqualToArray:@[ makeCGRectValue(101, 273, 2613, 232) ]]);
 }
 
 TEST(DataInteractionTests, BackgroundImageLinkToInput)
@@ -151,6 +163,7 @@ TEST(DataInteractionTests, BackgroundImageLinkToInput)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
+    EXPECT_TRUE([[dataInteractionSimulator finalSelectionRects] isEqualToArray:@[ makeCGRectValue(101, 241, 2613, 232) ]]);
 }
 
 TEST(DataInteractionTests, CanPreventStart)
@@ -167,6 +180,7 @@ TEST(DataInteractionTests, CanPreventStart)
     NSArray *observedEventNames = [dataInteractionSimulator observedEventNames];
     EXPECT_FALSE([observedEventNames containsObject:DataInteractionEnterEventName]);
     EXPECT_FALSE([observedEventNames containsObject:DataInteractionOverEventName]);
+    EXPECT_TRUE([[dataInteractionSimulator finalSelectionRects] isEqualToArray:@[ ]]);
 }
 
 TEST(DataInteractionTests, CanPreventOperation)
@@ -183,6 +197,7 @@ TEST(DataInteractionTests, CanPreventOperation)
     NSArray *observedEventNames = [dataInteractionSimulator observedEventNames];
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
+    EXPECT_TRUE([[dataInteractionSimulator finalSelectionRects] isEqualToArray:@[ ]]);
 }
 
 TEST(DataInteractionTests, EnterAndLeaveEvents)
@@ -201,6 +216,7 @@ TEST(DataInteractionTests, EnterAndLeaveEvents)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionLeaveEventName]);
     EXPECT_FALSE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
+    EXPECT_TRUE([[dataInteractionSimulator finalSelectionRects] isEqualToArray:@[ ]]);
 }
 
 TEST(DataInteractionTests, HandlesDataInteractionFailureGracefully)
@@ -235,6 +251,7 @@ TEST(DataInteractionTests, ExternalSourceUTF8PlainTextOnly)
     [dataInteractionSimulator setExternalItemProvider:simulatedItemProvider.get()];
     [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     EXPECT_WK_STREQ(textPayload.UTF8String, [webView stringByEvaluatingJavaScript:@"editor.textContent"].UTF8String);
+    EXPECT_TRUE([[dataInteractionSimulator finalSelectionRects] isEqualToArray:@[ makeCGRectValue(1, 201, 1936, 227) ]]);
 }
 
 TEST(DataInteractionTests, ExternalSourceJPEGOnly)
@@ -253,6 +270,7 @@ TEST(DataInteractionTests, ExternalSourceJPEGOnly)
     [dataInteractionSimulator setExternalItemProvider:simulatedItemProvider.get()];
     [dataInteractionSimulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     EXPECT_TRUE([webView editorContainsImageElement]);
+    EXPECT_TRUE([[dataInteractionSimulator finalSelectionRects] isEqualToArray:@[ makeCGRectValue(1, 201, 215, 174) ]]);
 }
 
 } // namespace TestWebKitAPI

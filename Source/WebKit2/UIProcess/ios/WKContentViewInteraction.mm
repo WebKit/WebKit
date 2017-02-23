@@ -645,6 +645,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [_dataInteractionGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_dataInteractionGestureRecognizer.get()];
     [self teardownDataInteractionDelegates];
+    _isPerformingDataInteractionOperation = NO;
 #endif
 
     _inspectorNodeSearchEnabled = NO;
@@ -3773,6 +3774,9 @@ static bool isAssistableInputType(InputType type)
     else {
         // The default behavior is to allow node assistance if the user is interacting or the keyboard is already active.
         shouldShowKeyboard = userIsInteracting || _textSelectionAssistant;
+#if ENABLE(DATA_INTERACTION)
+        shouldShowKeyboard |= _isPerformingDataInteractionOperation;
+#endif
     }
     if (!shouldShowKeyboard)
         return;

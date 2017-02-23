@@ -53,6 +53,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     RetainPtr<MockDataInteractionInfo> _dataInteractionInfo;
     RetainPtr<NSMutableArray> _observedEventNames;
     RetainPtr<UIItemProvider> _externalItemProvider;
+    RetainPtr<NSArray *> _finalSelectionRects;
     CGPoint _startLocation;
     CGPoint _endLocation;
 
@@ -68,6 +69,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 @property (nonatomic, strong) UIItemProvider *externalItemProvider;
 @property (nonatomic, readonly) BOOL didTryToBeginDataInteraction;
 @property (nonatomic, readonly) NSArray *observedEventNames;
+@property (nonatomic, readonly) NSArray *finalSelectionRects;
 
 @end
 

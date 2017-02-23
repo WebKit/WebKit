@@ -24,6 +24,7 @@
  */
 
 #import <WebKit/WebKit.h>
+#import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
 
@@ -40,6 +41,12 @@
 - (void)waitForMessage:(NSString *)message;
 - (void)performAfterLoading:(dispatch_block_t)actions;
 @end
+
+#if PLATFORM(IOS)
+@interface TestWKWebView (IOSOnly)
+@property (nonatomic, readonly) RetainPtr<NSArray> selectionRectsAfterPresentationUpdate;
+@end
+#endif
 
 #if PLATFORM(MAC)
 @interface TestWKWebView (MacOnly)
