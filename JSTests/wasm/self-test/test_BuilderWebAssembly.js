@@ -4,9 +4,8 @@ import Builder from '../Builder.js';
 (function EmptyModule() {
     const builder = new Builder();
     const bin = builder.WebAssembly();
-    // Note: this will change as we update version number.
     assert.eq(bin.hexdump().trim(),
-              "00000000 00 61 73 6d 0d 00 00 00                          |·asm····        |");
+              "00000000 00 61 73 6d 01 00 00 00                          |·asm····        |");
 })();
 
 (function EmptyModule() {
@@ -27,6 +26,6 @@ import Builder from '../Builder.js';
         .End()
         .WebAssembly();
     assert.eq(bin.hexdump().trim(),
-              ["00000000 00 61 73 6d 0d 00 00 00 00 0a 05 4f 48 48 41 49  |·asm·······OHHAI|",
+              ["00000000 00 61 73 6d 01 00 00 00 00 0a 05 4f 48 48 41 49  |·asm·······OHHAI|",
                "00000010 de ad c0 fe                                      |····            |"].join("\n"));
 })();

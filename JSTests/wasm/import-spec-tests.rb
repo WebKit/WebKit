@@ -82,12 +82,13 @@ FileUtils.mkdir($resultDirectory)
 
 $wabtScript = File.join($wabtDirectory, "test", "run-gen-spec-js.py")
 
-Dir.entries(File.join($specDirectory, "interpreter", "test")).each {
+Dir.entries(File.join($specDirectory, "test", "core")).each {
     | wast |
 
     next if File.extname(wast) != ".wast"
+    next if File.extname(File.basename(wast, ".wast")) == ".fail"
 
-    stdout, stderr, status = Open3.capture3("#{$wabtScript} #{File.join($specDirectory, "interpreter", "test", wast)}")
+    stdout, stderr, status = Open3.capture3("#{$wabtScript} #{File.join($specDirectory, "test", "core", wast)}")
     if stderr != ""
         puts "Skipping making test for file: #{wast} because of a wabt error"
         puts "The error is:\n--------------\n #{stderr}\n--------------\n" if $verbose

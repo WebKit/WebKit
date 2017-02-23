@@ -4,7 +4,7 @@
                 ],
     "preamble": [
         { "name": "magic number", "type": "uint32", "value": 1836278016, "description": "NULL character followed by 'asm'" },
-        { "name": "version",      "type": "uint32", "value":         13, "description": "Version number, will be reset to 1 for MVP" }
+        { "name": "version",      "type": "uint32", "value":          1, "description": "Version number" }
     ],
     "type" : {
         "i32":     { "type": "varint7", "value":  -1, "b3type": "B3::Int32" },
