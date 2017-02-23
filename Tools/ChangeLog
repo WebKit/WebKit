@@ -1,3 +1,15 @@
+2017-02-23  Saam Barati  <sbarati@apple.com>
+
+        Speculative fix for jsc timing out tests
+        https://bugs.webkit.org/show_bug.cgi?id=168791
+
+        Rubber Stamped by Keith Miller.
+
+        Play musical chairs with IRC and Briggs options on
+        ftl-eager and ftl-eager-no-cjit.
+
+        * Scripts/run-jsc-stress-tests:
+
 2017-02-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Improve error message when the WPT server fails to start.
