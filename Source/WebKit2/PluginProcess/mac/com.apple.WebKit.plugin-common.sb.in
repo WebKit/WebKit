@@ -251,7 +251,9 @@
     (global-name "com.apple.SystemConfiguration.PPPController")
     (global-name "com.apple.SystemConfiguration.configd")
     (global-name "com.apple.UNCUserNotification")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
     (global-name "com.apple.audio.VDCAssistant")
+#endif
     (global-name "com.apple.audio.audiohald")
     (global-name "com.apple.audio.coreaudiod")
     (global-name "com.apple.cfnetwork.AuthBrokerAgent")
