@@ -1,5 +1,17 @@
 2017-02-23  Brent Fulgham  <bfulgham@apple.com>
 
+        [Mac] Remove unneeded sandbox exceptions for media elements
+        https://bugs.webkit.org/show_bug.cgi?id=168767
+
+        Reviewed by Alex Christensen.
+
+        Remove several sandbox exceptions that have not been needed for the past four
+        or five macOS releases.
+        
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2017-02-23  Brent Fulgham  <bfulgham@apple.com>
+
         [Mac] Remove com.apple.audio.VDCAssistant from sandboxes
         https://bugs.webkit.org/show_bug.cgi?id=168764
         <rdar://problem/16736919>

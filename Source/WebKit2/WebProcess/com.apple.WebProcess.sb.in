@@ -1,4 +1,4 @@
-; Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+; Copyright (C) 2010-2017 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -100,14 +100,7 @@
        ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
        (home-subpath "/Library/Fonts")
 
-       ;; FIXME: These should be removed when <rdar://problem/9217757> is fixed.
-       (home-subpath "/Library/Audio/Plug-Ins/Components")
-       (home-subpath "/Library/Preferences/QuickTime Preferences")
-       (home-literal "/Library/Caches/com.apple.coreaudio.components.plist")
-       (subpath "/Library/Audio/Plug-Ins/Components")
        (subpath "/Library/Audio/Plug-Ins/HAL")
-       (subpath "/Library/Video/Plug-Ins")
-       (subpath "/Library/QuickTime")
 
        (home-subpath "/Library/Dictionaries"))
 
