@@ -87,6 +87,10 @@ function testGamepad() {
     return navigator.getGamepads;
 }
 
+function testWebRTC() {
+    return window.RTCPeerConnection;
+}
+
 function testSpringAnimation() {
     return CSS.supports("transition-timing-function", "spring(1 100 10 0)");
 }
@@ -151,6 +155,7 @@ window.addEventListener("load", function () {
         <div class="test" id="UserTiming"><p>User Timing</p></div>
         <div class="test" id="WebAnimations"><p>Web Animations</p></div>
         <div class="test" id="WebGL2"><p>WebGL 2.0</p></div>
+        <div class="test" id="WebRTC"><p>WebRTC</p></div>
     </div>
 </body>
 </html>

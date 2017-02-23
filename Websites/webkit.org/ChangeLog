@@ -1,3 +1,12 @@
+2017-02-23  Alex Christensen  <achristensen@webkit.org>
+
+        Add WebRTC to experimental-features.html
+        https://bugs.webkit.org/show_bug.cgi?id=168757
+
+        Reviewed by Tim Horton.
+
+        * experimental-features.html:
+
 2017-02-23  Jon Davis  <jond@apple.com>
 
         Fixed saving survey data
