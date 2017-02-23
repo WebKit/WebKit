@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(DATA_INTERACTION)
+#if 0
 
 #import "DataInteractionSimulator.h"
 #import "PlatformUtilities.h"
