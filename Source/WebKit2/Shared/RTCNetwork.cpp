@@ -66,7 +66,10 @@ bool RTCNetwork::IPAddress::decode(IPC::Decoder& decoder, IPAddress& result)
     if (!decoder.decode(family))
         return false;
 
-    ASSERT(family == AF_INET || family == AF_INET6);
+    ASSERT(family == AF_INET || family == AF_INET6 || family == AF_UNSPEC);
+
+    if (family == AF_UNSPEC)
+        return true;
 
     IPC::DataReference data;
     if (!decoder.decode(data))
@@ -88,8 +91,11 @@ bool RTCNetwork::IPAddress::decode(IPC::Decoder& decoder, IPAddress& result)
 void RTCNetwork::IPAddress::encode(IPC::Encoder& encoder) const
 {
     auto family = value.family();
-    ASSERT(family == AF_INET || family == AF_INET6);
+    ASSERT(family == AF_INET || family == AF_INET6 || family == AF_UNSPEC);
     encoder << family;
+
+    if (family == AF_UNSPEC)
+        return;
 
     if (family == AF_INET) {
         auto address = value.ipv4_address();
@@ -149,7 +155,6 @@ void RTCNetwork::SocketAddress::encode(IPC::Encoder& encoder) const
     auto hostname = value.hostname();
     encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(hostname.data()), hostname.length());
 
-    encoder << value.IsUnresolvedIP();
     if (value.IsUnresolvedIP()) {
         encoder << true;
         return;

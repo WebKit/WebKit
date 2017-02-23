@@ -1,3 +1,22 @@
+2017-02-23  Jer Noble  <jer.noble@apple.com>
+
+        ASSERT in RTCNetwork::IPAddress::decode()
+        https://bugs.webkit.org/show_bug.cgi?id=168792
+
+        Reviewed by Tim Horton.
+
+        An ASSERT added to RTCNetwork::IPAddress::decode in r212781 was hit due to a bad encode of SocketAddress; an
+        extra boolean value was added to the encoder unnecessarily, leading to garbage data being decoded in the following
+        IPAddress.
+
+        Drive-by-fix: allow the IPAddress encoder/decoder to pass through a value of AF_UNSPEC for an IPAddress to support
+        passing through an "empty" IPAddress value.
+
+        * Shared/RTCNetwork.cpp:
+        (WebKit::RTCNetwork::IPAddress::decode):
+        (WebKit::RTCNetwork::IPAddress::encode):
+        (WebKit::RTCNetwork::SocketAddress::encode):
+
 2017-02-23  Eric Carlson  <eric.carlson@apple.com>
 
         [WebRTC][Mac][WebKit2] WebRTC requires media capture
