@@ -1,3 +1,25 @@
+2017-02-23  Beth Dakin  <bdakin@apple.com> + Dan Saunders  <dasau@microsoft.com>
+
+        No reliable way to get a snapshot of WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=161450
+        -and corresponding-
+        <rdar://problem/23846039>
+
+        Reviewed by Tim Horton.
+
+        This patch adds a new API to WKWebView to snapshot a rect:
+        takeSnapshotWithConfiguration:completionHandler:
+
+        It also adds a new API object WKSnapshotConfiguration.
+
+        * UIProcess/API/Cocoa/WKSnapshotConfiguration.h: Added.
+        * UIProcess/API/Cocoa/WKSnapshotConfiguration.mm: Added.
+        (-[WKSnapshotConfiguration copyWithZone:]):
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-02-23  Jer Noble  <jer.noble@apple.com>
 
         ASSERT in RTCNetwork::IPAddress::decode()

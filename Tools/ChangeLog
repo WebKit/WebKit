@@ -1,3 +1,20 @@
+2017-02-23  Beth Dakin  <bdakin@apple.com> + Dan Saunders  <dasau@microsoft.com>
+
+        No reliable way to get a snapshot of WKWebView (macOS)
+        https://bugs.webkit.org/show_bug.cgi?id=161450
+        -and corresponding-
+        <rdar://problem/23846039>
+
+        Reviewed by Tim Horton.
+
+        Test for WKWebView’s new API takeSnapshotWithConfiguration:completionHandler:
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKWebViewSnapshot.mm: Added.
+        (convertToCGImage):
+        (getPixelIndex):
+        (TEST):
+
 2017-02-23  Saam Barati  <sbarati@apple.com>
 
         Speculative fix for jsc timing out tests

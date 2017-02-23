@@ -61,6 +61,7 @@
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKSharedAPICast.h"
+#import "WKSnapshotConfiguration.h"
 #import "WKUIDelegate.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKUserContentControllerInternal.h"
@@ -931,6 +932,67 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
         rawHandler(body, nil);
     });
 }
+
+#if PLATFORM(MAC)
+- (void)takeSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void(^)(NSImage *, NSError *))completionHandler
+{
+    CGRect rectInViewCoordinates = snapshotConfiguration && !CGRectIsNull(snapshotConfiguration.rect) ? snapshotConfiguration.rect : self.bounds;
+    CGFloat snapshotWidth;
+    if (snapshotConfiguration)
+        snapshotWidth = snapshotConfiguration.snapshotWidth.doubleValue ?: rectInViewCoordinates.size.width;
+    else
+        snapshotWidth = self.bounds.size.width;
+
+    auto handler = makeBlockPtr(completionHandler);
+    CGFloat imageScale = snapshotWidth / rectInViewCoordinates.size.width;
+    CGFloat imageHeight = imageScale * rectInViewCoordinates.size.height;
+
+    // Need to scale by device scale factor or the image will be distorted.
+    CGFloat deviceScale = _page->deviceScaleFactor();
+    WebCore::IntSize bitmapSize(snapshotWidth, imageHeight);
+    bitmapSize.scale(deviceScale, deviceScale);
+
+    // Software snapshot will not capture elements rendered with hardware acceleration (WebGL, video, etc).
+    _page->takeSnapshot(WebCore::enclosingIntRect(rectInViewCoordinates), bitmapSize, WebKit::SnapshotOptionsInViewCoordinates, [handler, snapshotWidth, imageHeight](const WebKit::ShareableBitmap::Handle& imageHandle, WebKit::CallbackBase::Error errorCode) {
+        if (errorCode != WebKit::ScriptValueCallback::Error::None) {
+            auto error = createNSError(callbackErrorCode(errorCode));
+            handler(nil, error.get());
+            return;
+        }
+
+        RefPtr<WebKit::ShareableBitmap> bitmap = WebKit::ShareableBitmap::create(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
+        RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
+        RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:NSMakeSize(snapshotWidth, imageHeight)]);
+        handler(nsImage.get(), nil);
+    });
+}
+
+#elif PLATFORM(IOS)
+- (void)takeSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void(^)(UIImage *, NSError *))completionHandler
+{
+    CGRect rectInViewCoordinates = snapshotConfiguration && !CGRectIsNull(snapshotConfiguration.rect) ? snapshotConfiguration.rect : self.bounds;
+    CGFloat snapshotWidth;
+    if (snapshotConfiguration)
+        snapshotWidth = snapshotConfiguration.snapshotWidth.doubleValue ?: rectInViewCoordinates.size.width;
+    else
+        snapshotWidth = self.bounds.size.width;
+
+    auto handler = makeBlockPtr(completionHandler);
+    CGFloat deviceScale = _page->deviceScaleFactor();
+
+    [self _snapshotRect:rectInViewCoordinates intoImageOfWidth:(snapshotWidth * deviceScale) completionHandler:^(CGImageRef snapshotImage) {
+        RetainPtr<NSError> error;
+        RetainPtr<UIImage> uiImage;
+
+        if (!snapshotImage)
+            error = createNSError(WKErrorUnknown);
+        else
+            uiImage = adoptNS([[UIImage alloc] initWithCGImage:snapshotImage scale:deviceScale orientation:UIImageOrientationUp]);
+
+        handler(uiImage.get(), error.get());
+    }];
+}
+#endif
 
 - (NSString *)customUserAgent
 {
