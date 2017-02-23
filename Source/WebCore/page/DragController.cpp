@@ -253,8 +253,12 @@ bool DragController::performDragOperation(const DragData& dragData)
     if (operationForLoad(dragData) == DragOperationNone)
         return false;
 
+    auto urlString = dragData.asURL();
+    if (urlString.isEmpty())
+        return false;
+
     m_client.willPerformDragDestinationAction(DragDestinationActionLoad, dragData);
-    m_page.mainFrame().loader().load(FrameLoadRequest(&m_page.mainFrame(), ResourceRequest(dragData.asURL()), shouldOpenExternalURLsPolicy));
+    m_page.mainFrame().loader().load(FrameLoadRequest(&m_page.mainFrame(), { urlString }, shouldOpenExternalURLsPolicy));
     return true;
 }
 

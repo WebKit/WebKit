@@ -84,8 +84,16 @@ void PlatformPasteboard::getPathnamesForType(Vector<String>&, const String&)
 {
 }
 
-String PlatformPasteboard::stringForType(const String&)
+String PlatformPasteboard::stringForType(const String& type)
 {
+    NSArray *values = [m_pasteboard valuesForPasteboardType:type inItemSet:[NSIndexSet indexSetWithIndex:0]];
+    for (id value in values) {
+        if ([value isKindOfClass:[NSURL class]])
+            return [(NSURL *)value absoluteString];
+
+        if ([value isKindOfClass:[NSString class]])
+            return (NSString *)value;
+    }
     return String();
 }
 

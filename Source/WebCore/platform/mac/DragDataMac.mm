@@ -220,10 +220,14 @@ bool DragData::containsPromise() const
     return files.size() == 1;
 }
 
+#if !ENABLE(DATA_INTERACTION)
+
 bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
 {
     return !asURL(filenamePolicy).isEmpty();
 }
+
+#endif
 
 String DragData::asURL(FilenameConversionPolicy, String* title) const
 {
