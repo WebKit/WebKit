@@ -1,3 +1,13 @@
+2017-02-23  Aakash Jain  <aakash_jain@apple.com>
+
+        Move instance member from WebFixedPositionContent to implementation file
+        https://bugs.webkit.org/show_bug.cgi?id=168766
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebFixedPositionContent.h: Moving instance member to implementation file.
+        * WebCoreSupport/WebFixedPositionContent.mm: Ditto.
+
 2017-02-22  Aakash Jain  <aakash_jain@apple.com>
 
         Move instance members from WebPDFView to implementation file

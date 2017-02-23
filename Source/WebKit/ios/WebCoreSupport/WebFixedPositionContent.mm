@@ -84,7 +84,9 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 {
 }
 
-@implementation WebFixedPositionContent
+@implementation WebFixedPositionContent {
+    struct WebFixedPositionContentData* _private;
+}
 
 - (id)initWithWebView:(WebView *)webView
 {

@@ -39,9 +39,7 @@ typedef NS_ENUM(NSInteger, WebFixedPositionAnchorEdge) {
 // like position:fixed layers.
 // Can be called without taking the WebThread lock.
 
-@interface WebFixedPositionContent : NSObject {
-    struct WebFixedPositionContentData* _private;
-}
+@interface WebFixedPositionContent : NSObject
 
 - (id)initWithWebView:(WebView *)webView;
 
