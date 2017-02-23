@@ -25,12 +25,7 @@
 
 #import <WebKitLegacy/WebDocumentPrivate.h>
 
-@interface WebPDFView : WAKView <WebPDFDocumentView, WebPDFDocumentRepresentation> {
-    BOOL dataSourceHasBeenSet;
-    CGPDFDocumentRef _PDFDocument;
-    NSString *_title;
-    CGRect *_pageRects;
-}
+@interface WebPDFView : WAKView <WebPDFDocumentView, WebPDFDocumentRepresentation>
 
 - (unsigned)pageNumberForRect:(CGRect)rect;
 - (unsigned)totalPages;

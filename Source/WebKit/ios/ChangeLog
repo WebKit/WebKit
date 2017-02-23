@@ -1,5 +1,15 @@
 2017-02-22  Aakash Jain  <aakash_jain@apple.com>
 
+        Move instance members from WebPDFView to implementation file
+        https://bugs.webkit.org/show_bug.cgi?id=168765
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebPDFViewIOS.h: Moving instance members to implementation file.
+        * WebView/WebPDFViewIOS.mm: Ditto.
+
+2017-02-22  Aakash Jain  <aakash_jain@apple.com>
+
         Export m_isLoggingEnabled symbol from MemoryMeasure.h
         https://bugs.webkit.org/show_bug.cgi?id=168760
 

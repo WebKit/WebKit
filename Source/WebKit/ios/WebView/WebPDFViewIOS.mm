@@ -67,7 +67,12 @@ static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
     return CGColorCreate(graySpace, components);
 }
 
-@implementation WebPDFView
+@implementation WebPDFView {
+    BOOL dataSourceHasBeenSet;
+    CGPDFDocumentRef _PDFDocument;
+    NSString *_title;
+    CGRect *_pageRects;
+}
 
 + (NSArray *)supportedMIMETypes
 {
