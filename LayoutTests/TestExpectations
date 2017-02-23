@@ -687,7 +687,8 @@ webkit.org/b/146182 editing/selection/leak-document-with-selection-inside.html [
 # Media Sessions is not yet enabled by default: ENABLE(MEDIA_SESSION)
 media/session [ Skip ]
 
-# WebRTC backend not enabled by default.
+# WebRTC backend not enabled by default on Mac/iOS.
+# GTK enables some of this tests on their TestExpectations file.
 webrtc [ Skip ]
 fast/mediastream/getUserMedia-webaudio.html [ Skip ]
 fast/mediastream/RTCPeerConnection-AddRemoveStream.html [ Skip ]

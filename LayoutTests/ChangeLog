@@ -1,3 +1,14 @@
+2017-02-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] MediaStream and WebRTC layout test gardening
+
+        Unreviewed.
+
+        * TestExpectations: Clarify some comments.
+        * platform/gtk/TestExpectations: Unskip most of the MediaStream / WebRTC tests for GTK and mark the expected failures accordingly.
+        * platform/gtk/fast/mediastream/RTCPeerConnection-more-media-to-negotiate-expected.txt: Removed. The test passes on GTK with the
+        general test expectation.
+
 2017-02-23  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Drag and drop is always moving the content even if copy is requested

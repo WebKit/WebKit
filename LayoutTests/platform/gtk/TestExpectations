@@ -322,7 +322,22 @@ webkit.org/b/99036 fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
 webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 
-# Mediastream implementation is not complete yet.
+# WebRTC / MediaStream implementation is not complete yet.
+# Some of this tests are skipped on the general TestExpectations,
+# Enable them here and list the individual expectations in order to get
+# notifications of new failures.
+fast/mediastream [ Pass ]
+webrtc [ Pass ]
+# GTK uses OWR instead of libwebrtc
+webrtc/libwebrtc [ Skip ]
+# Some WebRTC features like datachannel are still not implemented
+webrtc/datachannel/basic.html [ Timeout ]
+webrtc/no-port-zero-in-upd-candidates.html [ Timeout ]
+webrtc/video-disabled-black.html [ Failure ]
+webrtc/video.html [ Failure ]
+# The MediaStream implementation is also still not completed
+webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout ]
+webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/mock-media-source.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout ]
@@ -333,20 +348,15 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-events.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-statsSelector.html [ Failure ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Timeout Pass ]
 webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Failure ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-remove-tracks.html [ Failure ]
 webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Timeout ]
 webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure ]
 webkit.org/b/161956 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
+webkit.org/b/168773 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Failure ]
 
-# Test skipped in the main expectation file.
-fast/mediastream/RTCPeerConnection-AddRemoveStream.html [ Pass ]
-fast/mediastream/RTCPeerConnection-closed-state.html [ Pass ]
-fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Pass ]
-fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Pass ]
-fast/mediastream/RTCPeerConnection-overloaded-operations-params.html [ Pass ]
-fast/mediastream/RTCRtpSender-replaceTrack.html [ Pass ]
 
 # Proximity Events is not supported.
 webkit.org/b/99060 proximity [ Failure ]
@@ -2852,7 +2862,6 @@ webkit.org/b/168369 accessibility/gtk/text-at-offset-textinput.html [ Failure ]
 webkit.org/b/168370 accessibility/hidden-th-still-column-header.html [ Failure ]
 webkit.org/b/168370 accessibility/selected-text-range-aria-elements.html [ Failure ]
 
-webkit.org/b/168373 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Failure ]
 webkit.org/b/168373 fullscreen/video-controls-rtl.html [ Failure ]
 webkit.org/b/168373 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplaythrough.html [ Failure ]
 webkit.org/b/168373 media/media-preload-no-delay-loadevent.html [ Failure ]
@@ -2900,11 +2909,6 @@ webkit.org/b/168557 imported/blink/compositing/draws-content/webgl-simple-backgr
 
 webkit.org/b/168572 intersection-observer/intersection-observer-entry-interface.html [ Failure ]
 webkit.org/b/168572 js/dom/regress-157246.html [ Failure ]
-
-webkit.org/b/168647 fast/mediastream/RTCPeerConnection-more-media-to-negotiate.html [ Failure ]
-webkit.org/b/168647 imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html [ Failure ]
-webkit.org/b/168647 imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Failure ]
-webkit.org/b/168647 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Failure ]
 
 webkit.org/b/168719 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
 
