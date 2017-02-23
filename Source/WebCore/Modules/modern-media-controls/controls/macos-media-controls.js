@@ -68,8 +68,9 @@ class MacOSMediaControls extends MediaControls
 
         // Only notify that the background was clicked when the "mousedown" event
         // was also received, which wouldn't happen if the "mousedown" event caused
-        // the tracks panel to be hidden.
-        if (event.type === "mousedown")
+        // the tracks panel to be hidden, unless we're in fullscreen in which case
+        // we can simply check that the panel is not currently presented.
+        if (event.type === "mousedown" && !this.tracksPanel.presented)
             this._receivedMousedown = true;
         else if (event.type === "click") {
             if (this._receivedMousedown && event.target === this.element && this.delegate && typeof this.delegate.macOSControlsBackgroundWasClicked === "function")

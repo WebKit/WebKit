@@ -1,5 +1,27 @@
 2017-02-22  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Clicking on the video doesn't toggle playback state in fullscreen on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=168755
+        <rdar://problem/30664484>
+
+        Reviewed by Dean Jackson.
+
+        We now call super in the handleEvent() method of MacOSFullscreenMediaControls if we're not dealing
+        with an event type and target combination that was specifically registered in this class's scope.
+        We had mistakenly added the call to super.handleEvent(event) in the wrong method when fixing
+        https://bugs.webkit.org/show_bug.cgi?id=168515.
+
+        Test: media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen.html
+
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        (MacOSFullscreenMediaControls.prototype.handleEvent):
+        (MacOSFullscreenMediaControls.prototype._handleMousedown):
+        * Modules/modern-media-controls/controls/macos-media-controls.js:
+        (MacOSMediaControls.prototype.handleEvent):
+        (MacOSMediaControls):
+
+2017-02-22  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Scrubber stops moving while scrubbing on macOS
         https://bugs.webkit.org/show_bug.cgi?id=168518
         <rdar://problem/30577637>

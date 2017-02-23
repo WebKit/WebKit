@@ -1,0 +1,44 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4" style="position: absolute; top: 0; left: 0; width: 800px;" controls autoplay></video>
+<script type="text/javascript">
+
+description("Testing that clicking on a fullscreen video's background pauses it.");
+
+window.jsTestIsAsync = true;
+
+const media = document.querySelector("video");
+const mediaControls = window.internals.shadowRoot(media);
+
+media.addEventListener("play", () => {
+    shouldBecomeEqual("mediaControls.querySelector('button.fullscreen') instanceof HTMLButtonElement", "true", () => {
+        debug("");
+        debug("Entering fullscreen");
+        pressOnElement(mediaControls.querySelector("button.fullscreen"));
+    });
+});
+
+
+media.addEventListener("webkitfullscreenchange", () => {
+    shouldBeTrue("media.webkitDisplayingFullscreen");
+    shouldBeFalse("media.paused");
+
+    const bounds = media.getBoundingClientRect();
+    debug("");
+    debug("Clicking on video background");
+    eventSender.mouseMoveTo(bounds.left + 5, bounds.top + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    shouldBeTrue("media.paused");
+
+    debug("");
+    media.remove();
+    finishJSTest();
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

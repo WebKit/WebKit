@@ -73,7 +73,7 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
 
         this.controlsBar.children = [new BackgroundTint, this._leftContainer, this._centerContainer, this._rightContainer, this.timeControl];
 
-        this.element.addEventListener("mousedown", this);
+        this.controlsBar.element.addEventListener("mousedown", this);
     }
 
     // Public
@@ -91,17 +91,14 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
 
     handleEvent(event)
     {
-        switch (event.type) {
-        case "mousedown":
+        if (event.type === "mousedown" && event.currentTarget === this.controlsBar.element)
             this._handleMousedown(event);
-            break;
-        case "mousemove":
+        else if (event.type === "mousemove" && event.currentTarget === this.element)
             this._handleMousemove(event);
-            break;
-        case "mouseup":
+        else if (event.type === "mouseup" && event.currentTarget === this.element)
             this._handleMouseup(event);
-            break;
-        }
+        else
+            super.handleEvent(event);
     }
 
     layout()
@@ -128,12 +125,8 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
 
     _handleMousedown(event)
     {
-        super.handleEvent(event);
-
-        if (event.target !== this.controlsBar.element)
-            return;
-
         event.preventDefault();
+        event.stopPropagation();
 
         this._lastDragPoint = this._pointForEvent(event);
 

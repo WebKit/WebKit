@@ -2812,6 +2812,7 @@ media/modern-media-controls/scrubber-support/scrubber-support-click.html [ Skip 
 media/modern-media-controls/media-documents/click-on-video-should-not-pause.html [ Skip ]
 media/modern-media-controls/media-documents/click-on-video-should-not-pause.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause.html [ Skip ]
+media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-click-on-video-background-to-dismiss-tracks-panel-should-not-toggle-playback.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-click-on-video-controls-should-not-pause.html [ Skip ]
 
