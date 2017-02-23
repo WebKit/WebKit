@@ -35,6 +35,7 @@
 #include "PluginSearchPath.h"
 #include "ProcessExecutablePath.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/PlatformDisplay.h>
 #include <limits.h>
 #include <stdlib.h>
 
@@ -75,6 +76,8 @@ bool PluginInfoStore::getPluginInfo(const String& pluginPath, PluginModuleInfo& 
     if (PluginInfoCache::singleton().getPluginInfo(pluginPath, plugin)) {
 #if ENABLE(PLUGIN_PROCESS_GTK2)
         if (plugin.requiresGtk2) {
+            if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::X11)
+                return false;
             String pluginProcessPath = executablePathOfPluginProcess();
             pluginProcessPath.append('2');
             if (!fileExists(pluginProcessPath))

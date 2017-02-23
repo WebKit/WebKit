@@ -1,3 +1,25 @@
+2017-02-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash attempting to load Flash plugin in Wayland
+        https://bugs.webkit.org/show_bug.cgi?id=163159
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that we check if the current diplay is X11 or Wayland also in the plugin process, but with GTK2
+        plugins the display is always X11. We should early reject plugins requiring GTK2 in the UI process when the
+        current display is Wayland.
+
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp:
+        (WebKit::PluginInfoStore::getPluginInfo):
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::scanPlugin):
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::createPluginContainer): Add an assert to ensure this message is never received on a
+        non-X11 display.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::createPluginContainer): Never send CreatePluginContainer message to the UI process if the
+        display is not X11.
+
 2017-02-23  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream iOS] Allow web process sandbox to be extended for media capture
