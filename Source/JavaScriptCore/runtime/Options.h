@@ -418,7 +418,7 @@ typedef const char* optionString;
     \
     v(bool, useWebAssembly, false, Normal, "Expose the WebAssembly global object.") \
     \
-    v(bool, useConcurrentGCSplitTesting, true, Normal, "If true, A/B split testing will be performed on the concurrent GC, yielding a 50% chance that concurrent GC is disabled.") \
+    v(bool, useConcurrentGCSplitTesting, false, Normal, "If true, A/B split testing will be performed on the concurrent GC, yielding a 50% chance that concurrent GC is disabled.") \
 
 enum OptionEquivalence {
     SameOption,
