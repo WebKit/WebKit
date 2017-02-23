@@ -1,3 +1,18 @@
+2017-02-23  Alex Christensen  <achristensen@webkit.org>
+
+        Re-soft-link CoreVideo after r212906
+        https://bugs.webkit.org/show_bug.cgi?id=168803
+
+        Reviewed by Jer Noble.
+
+        CoreVideo should be soft linked to reduce startup time.
+        Linking against the framework just for a few symbols used in one file was the wrong solution.
+
+        * Configurations/WebCore.xcconfig:
+        * platform/cocoa/CoreVideoSoftLink.cpp:
+        * platform/cocoa/CoreVideoSoftLink.h:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+
 2017-02-23  Chris Dumez  <cdumez@apple.com>
 
         Report domains using abnormally high CPU usage via enhanced privacy logging

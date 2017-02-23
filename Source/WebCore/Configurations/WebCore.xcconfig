@@ -68,7 +68,7 @@ WK_IOS_BINCOMPAT_LDFLAGS_V10_0 = $(WK_IOS_BINCOMPAT_LDFLAGS_V9_3);
 
 LIBWEBRTC_LDFLAGS = $(LIBWEBRTC_LDFLAGS_$(ENABLE_WEB_RTC));
 LIBWEBRTC_LDFLAGS_ = ;
-LIBWEBRTC_LDFLAGS_ENABLE_WEB_RTC = -framework VideoToolbox -framework CoreMedia -framework CoreVideo -weak-lwebrtc;
+LIBWEBRTC_LDFLAGS_ENABLE_WEB_RTC = -framework VideoToolbox -framework CoreMedia -weak-lwebrtc;
 
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_PLATFORM)
 OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE;

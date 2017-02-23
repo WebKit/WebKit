@@ -35,6 +35,7 @@
 #include <webrtc/media/base/videoframe.h>
 
 #include "CoreMediaSoftLink.h"
+#include "CoreVideoSoftLink.h"
 
 namespace WebCore {
 
