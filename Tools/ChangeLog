@@ -1,3 +1,28 @@
+2017-02-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Remove Yosemite-specific font lookup code
+        https://bugs.webkit.org/show_bug.cgi?id=168682
+
+        Reviewed by Zalan Bujtas.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (fontWhitelist):
+        (adjustFonts):
+        (createWebViewAndOffscreenWindow):
+        (drt_NSFontManager_availableFontFamilies): Deleted.
+        (drt_NSFontManager_availableFonts): Deleted.
+        (swizzleNSFontManagerMethods): Deleted.
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        (WTR::activateFonts):
+        (WTR::allowedFontFamilySet): Deleted.
+        (WTR::systemHiddenFontFamilySet): Deleted.
+        (WTR::wtr_NSFontManager_availableFontFamilies): Deleted.
+        (WTR::wtr_NSFontManager_availableFonts): Deleted.
+        (WTR::swizzleNSFontManagerMethods): Deleted.
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::generateWhitelist):
+        (WTR::TestController::platformInitializeContext):
+
 2017-02-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         AutoInstaller should not skip the install step if the package is downloaded but not installed

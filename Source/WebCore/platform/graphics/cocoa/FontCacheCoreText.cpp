@@ -791,7 +791,6 @@ void FontCache::setFontWhitelist(const Vector<String>& inputWhitelist)
         whitelist.add(item);
 }
 
-#if ENABLE(PLATFORM_FONT_LOOKUP)
 static bool isSystemFont(const AtomicString& family)
 {
     return family.length() >= 1 && family[0] == '.';
@@ -805,7 +804,6 @@ static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& fam
 
     return adoptCF(CTFontCreateForCSS(family.string().createCFString().get(), toCoreTextFontWeight(weight), requestedTraits, size));
 }
-#endif
 
 static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSymbolicTraits desiredTraits, FontWeight weight, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, const FontVariationSettings& variationSettings, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const TextRenderingMode& textRenderingMode, float size)
 {
@@ -813,13 +811,8 @@ static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSym
         return nullptr;
 
     auto foundFont = platformFontWithFamilySpecialCase(family, weight, desiredTraits, size);
-    if (!foundFont) {
-#if ENABLE(PLATFORM_FONT_LOOKUP)
+    if (!foundFont)
         foundFont = platformFontLookupWithFamily(family, desiredTraits, weight, size);
-#else
-        foundFont = platformFontWithFamily(family, desiredTraits, weight, textRenderingMode, size);
-#endif
-    }
     return preparePlatformFont(foundFont.get(), textRenderingMode, fontFaceFeatures, fontFaceVariantSettings, featureSettings, variantSettings, variationSettings);
 }
 
