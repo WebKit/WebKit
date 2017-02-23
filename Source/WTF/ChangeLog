@@ -1,3 +1,41 @@
+2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Better handle Thread and RunLoop initialization
+        https://bugs.webkit.org/show_bug.cgi?id=167828
+
+        Reviewed by Yusuke Suzuki.
+
+        Make initialization functions more independent so that they can run in different
+        order. WTF::initializeMainThread initializes WTF threading, so that neither WTF nor JSC theading need to be
+        initialized before. RunLoop::initializeMainRunLoop() requires main thread to be initialized in some
+        ports, so it initializes main thread too. WebKit1 always calls WTF::initializeMainThreadToProcessMainThread()
+        before RunLoop::initializeMainRunLoop() so there's no problem there. GC threads are initialized alwayas by the
+        main thread. The rules should be simpler now:
+
+          - JSC::initializeThreading: should always be called when JSC is used.
+          - WTF::initializeThreading: only needs to be explicitly called when JSC is not used and process doesn't
+            initialize a main thread or main run loop.
+          - WTF::initializeMainThread: only needs to be explicitly called if process initializes a main thread but not a
+            main run loop.
+          - WTF::initializeMainThreadToProcessMainThread(): should always be called in WebKit1 before
+            RunLoop::initializeMainRunLoop().
+          - RunLoop::initializeMainRunLoop(): to initialize the main run loop. The only requirement is JSC::initializeThreading()
+            to be called before if JSC is used.
+
+        * wtf/MainThread.cpp:
+        (WTF::initializeMainThreadOnce): Use pthread_once to initialize the main thread also in GTK+ port.
+        (WTF::initializeMainThreadToProcessMainThreadOnce): Call initializeThreading() before the platform
+        initialization and initializeGCThreads() after it.
+        (WTF::initializeMainThread): Ditto.
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::initializeMainRunLoop): Call initializeMainThread().
+        * wtf/glib/MainThreadGLib.cpp:
+        (WTF::initializeMainThreadPlatform):
+        (WTF::isMainThread):
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::initializeMainThreadPlatform): Remove call to initializeGCThreads().
+        (WTF::initializeMainThreadToProcessMainThreadPlatform): Ditto.
+
 2017-02-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Remove Yosemite-specific font lookup code

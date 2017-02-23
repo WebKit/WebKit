@@ -52,6 +52,7 @@ void RunLoop::initializeMainRunLoop()
 {
     if (s_mainRunLoop)
         return;
+    initializeMainThread();
     s_mainRunLoop = &RunLoop::current();
 }
 

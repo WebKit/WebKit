@@ -1,3 +1,14 @@
+2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Better handle Thread and RunLoop initialization
+        https://bugs.webkit.org/show_bug.cgi?id=167828
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading): Do not initialize double_conversion, that is already initialized by WTF, and GC
+        threads that will be initialized by WTF main thread when needed.
+
 2017-02-22  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: clear out insignificant i32 bits when calling JavaScript

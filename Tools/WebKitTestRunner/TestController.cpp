@@ -331,7 +331,6 @@ const char* TestController::libraryPathForTesting()
 void TestController::initialize(int argc, const char* argv[])
 {
     JSC::initializeThreading();
-    WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
     platformInitialize();

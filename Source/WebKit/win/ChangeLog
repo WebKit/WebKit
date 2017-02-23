@@ -1,3 +1,15 @@
+2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Better handle Thread and RunLoop initialization
+        https://bugs.webkit.org/show_bug.cgi?id=167828
+
+        Reviewed by Yusuke Suzuki.
+
+        Remove unnecessary call to WTF::initializeMainThread().
+
+        * WebView.cpp:
+        (WebView::WebView):
+
 2017-02-20  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Custom scale factor is not applied in all cases.

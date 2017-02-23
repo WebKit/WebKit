@@ -82,8 +82,6 @@ void initializeMainThreadPlatform()
     ASSERT(!mainThreadPthread);
     ASSERT(!mainThreadNSThread);
 #endif
-
-    initializeGCThreads();
 }
 
 #if !USE(WEB_THREAD)
@@ -98,8 +96,6 @@ void initializeMainThreadToProcessMainThreadPlatform()
     mainThreadEstablishedAsPthreadMain = true;
     mainThreadPthread = 0;
     mainThreadNSThread = nil;
-    
-    initializeGCThreads();
 }
 #endif // !USE(WEB_THREAD)
 
