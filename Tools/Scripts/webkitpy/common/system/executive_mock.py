@@ -42,12 +42,20 @@ class MockProcess(object):
         self.stderr = StringIO.StringIO(stderr)
         self.stdin = StringIO.StringIO()
         self.returncode = 0
+        self._is_running = False
 
     def wait(self):
-        return
+        self._is_running = False
+        return self.returncode
 
     def communicate(self, input=None):
+        self._is_running = False
         return (self.stdout, self.stderr)
+
+    def poll(self):
+        if self._is_running:
+            return None
+        return self.returncode
 
 
 # FIXME: This should be unified with MockExecutive2
@@ -146,6 +154,7 @@ class MockExecutive(object):
             _log.info("MOCK popen: %s%s%s" % (args, cwd_string, env_string))
         if not self._proc:
             self._proc = MockProcess()
+        self._proc._is_running = True
         return self._proc
 
     def run_in_parallel(self, commands):

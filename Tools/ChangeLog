@@ -1,3 +1,39 @@
+2017-02-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Improve error message when the WPT server fails to start.
+        https://bugs.webkit.org/show_bug.cgi?id=168759
+
+        Reviewed by Ryosuke Niwa.
+
+        Check if the WPT server is running after 1 second, and if is not
+        print useful information for helping the user to debug the issue.
+
+        Using check_running_pid() to check if the process is still running
+        doesn't work. A process started via subprocess popen that has ended
+        will be in a zombie state until a call to wait/communicate/poll
+        is done, or until the object is deleted or garbage collected.
+
+        This adds also support for testing the behaviour of subprocess
+        poll() on the unit tests that use MockProcess.
+
+        A new test is added also for the battery of tests for the WPT
+        server.
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockProcess.__init__):
+        (MockProcess.wait):
+        (MockProcess.communicate):
+        (MockProcess.poll):
+        (MockExecutive.popen):
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer.__init__):
+        (WebPlatformTestServer._prepare_config):
+        (WebPlatformTestServer._spawn_process):
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server_unittest.py:
+        (TestWebPlatformTestServer.test_corrupted_subserver_files):
+        (TestWebPlatformTestServer):
+        (TestWebPlatformTestServer.test_server_fails_to_start_throws_exception):
+
 2017-02-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, temporarily disable DataInteractionTests in TestWebKitAPI.

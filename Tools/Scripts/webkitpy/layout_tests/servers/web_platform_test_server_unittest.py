@@ -97,3 +97,19 @@ class TestWebPlatformTestServer(unittest.TestCase):
         server.start()
         self.assertFalse(host.filesystem.exists("/mock/output_dir/wpttest_servers.json"))
         server.stop()
+
+    def test_server_fails_to_start_throws_exception(self):
+        host = MockHost()
+        options = optparse.Values()
+        options.ensure_value("results_directory", "/mock/output_dir")
+        port = Port(host, "test", options)
+        server = WebPlatformTestServer(port, "wpttest", "/mock/output_dir/pid.txt")
+        server._check_that_all_ports_are_available = lambda: True
+        server._is_server_running_on_all_ports = lambda: True
+        host.filesystem.write_text_file("/mock-checkout/LayoutTests/resources/testharness.js", "0")
+        host.filesystem.write_text_file("/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/resources/testharness.js", "0")
+
+        server.start()
+        server.stop()
+        server._process.poll = lambda: 1
+        self.assertRaises(ServerError, server.start)
