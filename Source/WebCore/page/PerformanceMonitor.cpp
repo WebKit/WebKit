@@ -31,8 +31,10 @@
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Logging.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "PerformanceLogging.h"
+#include "PublicSuffix.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -45,6 +47,8 @@ static const std::chrono::minutes backgroundCPUUsageMeasurementDuration { 5 };
 static const std::chrono::minutes cpuUsageSamplingInterval { 10 };
 
 static const std::chrono::seconds memoryUsageMeasurementDelay { 10 };
+
+static const double postPageLoadCPUUsageDomainReportingThreshold { 20.0 }; // Reporting pages using over 20% CPU is roughly equivalent to reporting the 10% worst pages.
 
 static inline ActivityStateForCPUSampling activityStateForCPUSampling(ActivityState::Flags state)
 {
@@ -122,6 +126,23 @@ void PerformanceMonitor::activityStateChanged(ActivityState::Flags oldState, Act
     }
 }
 
+static void reportPageOverPostLoadCPUUsageThreshold(Page& page)
+{
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    auto* document = page.mainFrame().document();
+    if (!document)
+        return;
+
+    String domain = topPrivatelyControlledDomain(document->url().host());
+    if (domain.isEmpty())
+        return;
+
+    page.diagnosticLoggingClient().logDiagnosticMessageWithEnhancedPrivacy(DiagnosticLoggingKeys::domainCausingEnergyDrainKey(), domain, ShouldSample::No);
+#else
+    UNUSED_PARAM(page);
+#endif
+}
+
 void PerformanceMonitor::measurePostLoadCPUUsage()
 {
     if (!m_page.isOnlyNonUtilityPage()) {
@@ -142,6 +163,9 @@ void PerformanceMonitor::measurePostLoadCPUUsage()
     double cpuUsage = cpuTime.value().percentageCPUUsageSince(*m_postLoadCPUTime);
     RELEASE_LOG_IF_ALLOWED(PerformanceLogging, "measurePostLoadCPUUsage: Process was using %.1f%% CPU after the page load.", cpuUsage);
     m_page.diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::postPageLoadCPUUsageKey(), DiagnosticLoggingKeys::foregroundCPUUsageToDiagnosticLoggingKey(cpuUsage), ShouldSample::No);
+
+    if (cpuUsage > postPageLoadCPUUsageDomainReportingThreshold)
+        reportPageOverPostLoadCPUUsageThreshold(m_page);
 }
 
 void PerformanceMonitor::measurePostLoadMemoryUsage()

@@ -343,6 +343,11 @@ String DiagnosticLoggingKeys::documentLoaderStoppingKey()
     return ASCIILiteral("documentLoaderStopping");
 }
 
+String DiagnosticLoggingKeys::domainCausingEnergyDrainKey()
+{
+    return ASCIILiteral("DomainCausingEnergyDrain");
+}
+
 String DiagnosticLoggingKeys::domainVisitedKey()
 {
     return ASCIILiteral("DomainVisited");

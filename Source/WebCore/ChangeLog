@@ -1,3 +1,21 @@
+2017-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Report domains using abnormally high CPU usage via enhanced privacy logging
+        https://bugs.webkit.org/show_bug.cgi?id=168794
+        <rdar://problem/29964018>
+
+        Reviewed by Ryosuke Niwa.
+
+        Report domains using abnormally high CPU usage (> 20%) via enhanced privacy
+        logging.
+
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::domainCausingEnergyDrainKey):
+        * page/DiagnosticLoggingKeys.h:
+        * page/PerformanceMonitor.cpp:
+        (WebCore::reportPageOverPostLoadCPUUsageThreshold):
+        (WebCore::PerformanceMonitor::measurePostLoadCPUUsage):
+
 2017-02-23  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Adjust RunResolver::lineIndexForHeight with line struts.
