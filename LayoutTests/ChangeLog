@@ -1,5 +1,13 @@
 2017-02-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK] Gardening of some flaky tests
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations: Update some expectations or add new cases of flaky tests.
+
+2017-02-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [GTK] MediaStream and WebRTC layout test gardening
 
         Unreviewed.
