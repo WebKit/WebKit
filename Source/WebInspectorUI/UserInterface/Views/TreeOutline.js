@@ -651,7 +651,13 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
             // Keep all the elements at the same depth once the maximum is reached.
             childrenSubstring += i === maximumTreeDepth ? " .children" : " > .children";
             styleText += `.${WebInspector.TreeOutline.ElementStyleClassName}:not(.${WebInspector.TreeOutline.CustomIndentStyleClassName})${childrenSubstring} > .item { `;
-            styleText += "padding-left: " + (baseLeftPadding + (depthPadding * i)) + "px; }\n";
+
+            if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL)
+                styleText += "padding-right: ";
+            else
+                styleText += "padding-left: ";
+
+            styleText += (baseLeftPadding + (depthPadding * i)) + "px; }\n";
         }
 
         WebInspector.TreeOutline._styleElement.textContent = styleText;

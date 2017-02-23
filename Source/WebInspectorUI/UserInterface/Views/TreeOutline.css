@@ -25,12 +25,15 @@
 
 .tree-outline,
 .tree-outline .children {
-    padding: 0;
     margin: 0;
-
+    padding: 0;
+    list-style: none;
     outline: none;
 
-    list-style: none;
+    --tree-outline-icon-margin-start: 16px;
+    --tree-outline-icon-margin-end: 3px;
+
+    --tree-outline-status-margin-start: 4px;
 }
 
 .tree-outline .children {
@@ -58,6 +61,16 @@
 .tree-outline.large .item {
     height: 36px;
     line-height: 34px;
+
+    --tree-outline-icon-margin-end: 6px;
+}
+
+body[dir=ltr] .tree-outline .item :matches(.disclosure-button, .icon) {
+    float: left;
+}
+
+body[dir=rtl] .tree-outline .item :matches(.disclosure-button, .icon) {
+    float: right;
 }
 
 .tree-outline.hide-disclosure-buttons > .children {
@@ -68,27 +81,29 @@
     display: none;
 }
 
-.tree-outline:not(.hide-disclosure-buttons) .item:not(.parent) > .icon {
-    margin-left: 16px;
+body[dir=ltr] .tree-outline:not(.hide-disclosure-buttons) .item:not(.parent) > .icon {
+    margin-left: var(--tree-outline-icon-margin-start);
+}
+
+body[dir=rtl] .tree-outline:not(.hide-disclosure-buttons) .item:not(.parent) > .icon {
+    margin-right: var(--tree-outline-icon-margin-start);
 }
 
 .tree-outline .item .disclosure-button {
     display: none;
-
-    float: left;
-
     width: 16px;
     height: 16px;
-
-    border: 0;
-
     background-color: transparent;
     background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 13px 13px;
-
+    border: none;
     -webkit-appearance: none;
+}
+
+body[dir=rtl] .tree-outline .item .disclosure-button {
+    transform: scaleX(-1);
 }
 
 .tree-outline.hide-disclosure-buttons .item .disclosure-button {
@@ -112,14 +127,18 @@
 }
 
 .tree-outline .item .icon {
-    float: left;
     position: relative;
-
     width: 16px;
     height: 16px;
-
     margin-top: 1px;
-    margin-right: 3px;
+}
+
+body[dir=ltr] .tree-outline .item .icon {
+    margin-right: var(--tree-outline-icon-margin-end);
+}
+
+body[dir=rtl] .tree-outline .item .icon {
+    margin-left: var(--tree-outline-icon-margin-end);
 }
 
 .tree-outline.compact .item .icon {
@@ -127,20 +146,24 @@
 }
 
 .tree-outline.large .item .icon {
-    margin-top: 5px;
-    margin-right: 6px;
-
     width: 24px;
     height: 24px;
+    margin-top: 5px;
 }
 
 .tree-outline .item .status {
-    float: right;
-
-    margin-left: 4px;
     margin-top: 1px;
-
     line-height: 1em;
+}
+
+body[dir=ltr] .tree-outline .item .status {
+    float: right;
+    margin-left: var(--tree-outline-status-margin-start);
+}
+
+body[dir=rtl] .tree-outline .item .status {
+    float: left;
+    margin-right: var(--tree-outline-status-margin-start);
 }
 
 .tree-outline.large .item .status {
