@@ -1,3 +1,17 @@
+2017-02-23  Saam Barati  <sbarati@apple.com>
+
+        Make Briggs fixpoint validation run only with validateGraphAtEachPhase
+        https://bugs.webkit.org/show_bug.cgi?id=168795
+
+        Rubber stamped by Keith Miller.
+
+        The Briggs allocator was running intensive validation
+        on each step of the fixpoint. Instead, it now will just
+        do it when shouldValidateIRAtEachPhase() is true because
+        doing this for all !ASSERT_DISABLED builds takes too long.
+
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+
 2017-02-23  Filip Pizlo  <fpizlo@apple.com>
 
         SpeculativeJIT::compilePutByValForIntTypedArray should only do the constant-folding optimization when the constant passes the type check

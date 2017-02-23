@@ -645,6 +645,8 @@ public:
         auto assertInvariants = [&] () {
             if (ASSERT_DISABLED)
                 return;
+            if (!shouldValidateIRAtEachPhase())
+                return;
 
             IndexType firstNonRegIndex = m_lastPrecoloredRegisterIndex + 1;
             unsigned registerCount = this->registerCount();
