@@ -48,11 +48,6 @@ svn checkout https://svn.webkit.org/repository/webkit/trunk WebKit
 
 ## Building WebKit
 
-The following instructions are for building WebKit on Mac. For other ports, follow these instructions on our website:
-
-* [Windows](https://webkit.org/webkit-on-windows/)
-* [GTK+](https://trac.webkit.org/wiki/BuildingGtk)
-
 ### Building Mac Port
 
 Install Xcode and its command line tools if you haven't done so already:
@@ -74,7 +69,7 @@ You can open `WebKit.xcworkspace` to build and debug WebKit within WebKit.
 
 If you don't use a custom build location in Xcode preferences, you have to update the workspace settings to use `WebKitBuild` directory.  In menu bar, choose File > Workspace Settings, then click the Advanced button, select "Custom", "Relative to Workspace", and enter `WebKitBuild` for both Products and Intermediates.
 
-### Building  iOS Port
+### Building iOS Port
 
 The first time after you install a new Xcode, you will need to run the following command to enable Xcode to build command line tools for iOS Simulator:
 
@@ -90,12 +85,30 @@ Run the following command to build a debug build with debugging symbols and asse
 Tools/Scripts/build-webkit --debug --ios-simulator.
 ```
 
-You can also change the default build configuration using the following commands:
+### Building GTK+ Port
+
+Install the dependencies by running the following command:
+```
+Tools/gtk/install-dependencies
+```
+
+Then run the following command to build additional dependencies:
+```
+Tools/Scripts/update-webkitgtk-libs
+```
+
+Run the following command to build WebKit with debugging symbols for GTK+ port:
 
 ```
-Tools/Scripts/set-webkit-configuration --debug
-Tools/Scripts/set-webkit-configuration --release
+Tools/Scripts/build-webkit --debug --gtk.
 ```
+
+Note that the procedure for building a release tarball is different.
+For more information, see the [wiki page](https://trac.webkit.org/wiki/BuildingGtk).
+
+### Building Windows Port
+
+For building WebKit on Windows, see the [wiki page](https://webkit.org/webkit-on-windows/).
 
 ## Running WebKit
 
