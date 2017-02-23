@@ -1,3 +1,9 @@
+2017-02-23  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, fix the cloop build. Needed a #if.
+
+        * jit/ExecutableAllocator.cpp:
+
 2017-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Better handle Thread and RunLoop initialization
