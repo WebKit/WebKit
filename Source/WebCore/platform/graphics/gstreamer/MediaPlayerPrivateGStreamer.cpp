@@ -171,9 +171,6 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_readyTimerHandler(RunLoop::main(), this, &MediaPlayerPrivateGStreamer::readyTimerFired)
     , m_totalBytes(0)
     , m_preservesPitch(false)
-#if ENABLE(WEB_AUDIO)
-    , m_audioSourceProvider(std::make_unique<AudioSourceProviderGStreamer>())
-#endif
 {
 #if USE(GLIB)
     m_readyTimerHandler.setPriority(G_PRIORITY_DEFAULT_IDLE);
@@ -1991,6 +1988,7 @@ GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
     if (webkitGstCheckVersion(1, 4, 2)) {
 #if ENABLE(WEB_AUDIO)
         audioSinkBin = gst_bin_new("audio-sink");
+        ensureAudioSourceProvider();
         m_audioSourceProvider->configureAudioBin(audioSinkBin, nullptr);
         return audioSinkBin;
 #else
@@ -2013,6 +2011,7 @@ GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
         gst_element_add_pad(audioSinkBin, gst_ghost_pad_new("sink", pad.get()));
 
 #if ENABLE(WEB_AUDIO)
+        ensureAudioSourceProvider();
         m_audioSourceProvider->configureAudioBin(audioSinkBin, scale);
 #else
         GstElement* convert = gst_element_factory_make("audioconvert", nullptr);
@@ -2031,6 +2030,7 @@ GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
 
 #if ENABLE(WEB_AUDIO)
     audioSinkBin = gst_bin_new("audio-sink");
+    ensureAudioSourceProvider();
     m_audioSourceProvider->configureAudioBin(audioSinkBin, nullptr);
     return audioSinkBin;
 #endif
@@ -2044,6 +2044,20 @@ GstElement* MediaPlayerPrivateGStreamer::audioSink() const
     g_object_get(m_pipeline.get(), "audio-sink", &sink, nullptr);
     return sink;
 }
+
+#if ENABLE(WEB_AUDIO)
+void MediaPlayerPrivateGStreamer::ensureAudioSourceProvider()
+{
+    if (!m_audioSourceProvider)
+        m_audioSourceProvider = std::make_unique<AudioSourceProviderGStreamer>();
+}
+
+AudioSourceProvider* MediaPlayerPrivateGStreamer::audioSourceProvider()
+{
+    ensureAudioSourceProvider();
+    return m_audioSourceProvider.get();
+}
+#endif
 
 void MediaPlayerPrivateGStreamer::createGSTPlayBin()
 {
