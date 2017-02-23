@@ -126,6 +126,18 @@ class LayoutNode
 
     set children(children)
     {
+        if (children.length === this._children.length) {
+            let arraysDiffer = false;
+            for (let i = children.length - 1; i >= 0; --i) {
+                if (children[i] !== this._children[i]) {
+                    arraysDiffer = true;
+                    break;
+                }
+            }
+            if (!arraysDiffer)
+                return;
+        }
+
         while (this._children.length)
             this.removeChild(this._children[0]);
 

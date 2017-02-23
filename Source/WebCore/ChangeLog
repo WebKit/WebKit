@@ -1,5 +1,28 @@
 2017-02-22  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Scrubber stops moving while scrubbing on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=168518
+        <rdar://problem/30577637>
+
+        Reviewed by Dean Jackson.
+
+        As we start to scrub, controlValueWillStartChanging() is called on
+        ScrubberSupport and pauses the media if it's not already paused. This
+        causes the play/pause button to change icon and for layout() to be
+        called on MacOSInlineMediaControls. This in turns sets the .children
+        property on the .controlsBar and eventually yields a DOM manipulation
+        which re-inserts the scrubber's DOM hierarchy, causing stutters during
+        user interaction.
+
+        Our solution is to make the .children setter smarter about identifying
+        that the children list hasn't changed and that no DOM invalidation is
+        necessary.
+
+        * Modules/modern-media-controls/controls/layout-node.js:
+        (LayoutNode.prototype.set children):
+
+2017-02-22  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Controls bar may disappear while captions menu is visible
         https://bugs.webkit.org/show_bug.cgi?id=168751
         <rdar://problem/30663411>

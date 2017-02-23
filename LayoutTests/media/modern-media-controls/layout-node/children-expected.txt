@@ -20,6 +20,11 @@ PASS node.element.firstElementChild === a.element is true
 PASS node.element.firstElementChild.nextElementSibling === b.element is true
 PASS node.element.lastElementChild === c.element is true
 
+Set children to be a copy of itself
+PASS node.children[0].needsLayout is false
+PASS node.children[1].needsLayout is false
+PASS node.children[2].needsLayout is false
+
 Set children to [b, a]
 PASS node.children.length === 2 is true
 PASS node.children[0] === b is true

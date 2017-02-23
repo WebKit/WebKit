@@ -42,6 +42,12 @@ scheduler.frameDidFire = function()
         shouldBeTrue("node.element.firstElementChild.nextElementSibling === b.element");
         shouldBeTrue("node.element.lastElementChild === c.element");
         debug("");
+        debug("Set children to be a copy of itself");
+        node.children = Array.from(node.children);
+        shouldBeFalse("node.children[0].needsLayout");
+        shouldBeFalse("node.children[1].needsLayout");
+        shouldBeFalse("node.children[2].needsLayout");
+        debug("");
         debug("Set children to [b, a]");
         node.children = [b, a];
         shouldBeTrue("node.children.length === 2");
