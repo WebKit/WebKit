@@ -1,5 +1,23 @@
 2017-02-22  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Controls bar may disappear while captions menu is visible
+        https://bugs.webkit.org/show_bug.cgi?id=168751
+        <rdar://problem/30663411>
+
+        Reviewed by Dean Jackson.
+
+        We now prevent the controls bar from fading out due to the auto-hide timer firing
+        when the tracks panel is up, and wait until the track panel is hidden before fading
+        the controls bar.
+
+        Test: media/modern-media-controls/tracks-panel/tracks-panel-prevent-controls-bar-from-fading.html
+
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        (ControlsBar.prototype.set userInteractionEnabled):
+        (ControlsBar.prototype._autoHideTimerFired):
+
+2017-02-22  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Can't set the volume slider with macOS inline controls
         https://bugs.webkit.org/show_bug.cgi?id=168747
         <rdar://problem/30605528>

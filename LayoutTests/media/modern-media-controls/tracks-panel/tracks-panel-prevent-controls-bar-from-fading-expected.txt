@@ -1,0 +1,18 @@
+Showing the tracks panel should suspend the auto-hide behavior until it's hidden.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+mediaControls.showTracksPanel()
+PASS mediaControls.tracksPanel.element.parentNode became mediaControls.element
+
+We've waited long enough so that the controls bar should be faded should the tracks panel not be visible
+PASS mediaControls.controlsBar.faded is false
+
+mediaControls.hideTracksPanel()
+PASS mediaControls.controlsBar.faded is true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

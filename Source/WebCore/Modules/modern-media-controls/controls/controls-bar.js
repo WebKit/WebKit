@@ -70,6 +70,10 @@ class ControlsBar extends LayoutNode
 
         this._userInteractionEnabled = flag;
         this.markDirtyProperty("userInteractionEnabled");
+
+        if (this._userInteractionEnabled && this._controlsShouldFadeWhenUserInteractionBecomesEnabled)
+            this.faded = true;
+        delete this._controlsShouldFadeWhenUserInteractionBecomesEnabled;
     }
 
     get fadesWhileIdle()
@@ -240,7 +244,16 @@ class ControlsBar extends LayoutNode
             return;
 
         this._cancelAutoHideTimer();
-        this.faded = this._fadesWhileIdle;
+        if (!this._fadesWhileIdle)
+            return;
+
+        // We don't want to fade the controls when user interaction becomes disabled
+        // because secondary UI attached to the controls is being shown and we want
+        // to wait until it no longer is to fade the controls out.
+        if (!this._userInteractionEnabled)
+            this._controlsShouldFadeWhenUserInteractionBecomesEnabled = true;
+        else
+            this.faded = true;
     }
 
 }
