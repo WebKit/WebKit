@@ -1,5 +1,14 @@
 2017-02-22  Aakash Jain  <aakash_jain@apple.com>
 
+        Export m_isLoggingEnabled symbol from MemoryMeasure.h
+        https://bugs.webkit.org/show_bug.cgi?id=168760
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKit.iOS.exp: Exporting m_isLoggingEnabled symbol.
+
+2017-02-22  Aakash Jain  <aakash_jain@apple.com>
+
         Move instance members from WebPDFViewPlaceholder.h to implementation file
         https://bugs.webkit.org/show_bug.cgi?id=168705
 
