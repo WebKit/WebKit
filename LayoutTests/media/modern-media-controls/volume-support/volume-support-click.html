@@ -47,6 +47,9 @@ scheduler.frameDidFire = function() {
         eventSender.mouseDown();
         eventSender.mouseUp();
 
+        // Ensure the volume slider remains visible.
+        shouldBeTrue("mediaController.controls.volumeSlider.parent.visible");
+
         scheduler.frameDidFire = null;
     }
 };

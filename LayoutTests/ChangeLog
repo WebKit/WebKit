@@ -1,3 +1,19 @@
+2017-02-22  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Can't set the volume slider with macOS inline controls
+        https://bugs.webkit.org/show_bug.cgi?id=168747
+        <rdar://problem/30605528>
+
+        Reviewed by Dean Jackson.
+
+        Add some assertions to check that the volume slider container remains visible
+        after interacting with the volume slider.
+
+        * media/modern-media-controls/volume-support/volume-support-click-expected.txt:
+        * media/modern-media-controls/volume-support/volume-support-click.html:
+        * media/modern-media-controls/volume-support/volume-support-drag-expected.txt:
+        * media/modern-media-controls/volume-support/volume-support-drag.html:
+
 2017-02-22  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Some webrtc tests are failing

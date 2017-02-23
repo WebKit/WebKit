@@ -72,6 +72,10 @@ scheduler.frameDidFire = function() {
         debug("");
         debug("We finished dragging to set the volume to 1");
         shouldBe("media.volume", "1");
+
+        // Ensure the volume slider remains visible.
+        shouldBeTrue("mediaController.controls.volumeSlider.parent.visible");
+
         container.remove();
         media.remove();
         finishMediaControlsTest();

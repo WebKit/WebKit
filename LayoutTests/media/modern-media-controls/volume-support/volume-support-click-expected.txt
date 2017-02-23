@@ -3,6 +3,7 @@ Testing the VolumeSupport behavior when clicking the volume slider.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS mediaController.controls.volumeSlider.parent.visible is true
 PASS media.volume is 0.5
 PASS successfullyParsed is true
 

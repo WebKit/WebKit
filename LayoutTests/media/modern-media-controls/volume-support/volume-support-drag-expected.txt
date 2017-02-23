@@ -15,6 +15,7 @@ PASS media.volume is 0.5
 
 We finished dragging to set the volume to 1
 PASS media.volume is 1
+PASS mediaController.controls.volumeSlider.parent.visible is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

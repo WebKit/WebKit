@@ -141,8 +141,12 @@ class MacOSInlineMediaControls extends MacOSMediaControls
 
     handleEvent(event)
     {
-        super.handleEvent(event);
-        this._volumeSliderContainer.visible = event.type === "mouseenter" || event.relatedTarget === this._volumeSliderContainer.element;
+        if (event.type === "mouseenter" && event.currentTarget === this.muteButton.element)
+            this._volumeSliderContainer.visible = true;
+        else if (event.type === "mouseleave" && (event.currentTarget === this.muteButton.element || event.currentTarget === this._volumeSliderContainer.element))
+            this._volumeSliderContainer.visible = this._volumeSliderContainer.element.contains(event.relatedTarget);
+        else
+            super.handleEvent(event);
     }
 
     controlsBarVisibilityDidChange(controlsBar)
