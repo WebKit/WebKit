@@ -1866,6 +1866,7 @@ webkit.org/b/157179 editing/pasteboard/dataTransfer-setData-getData.html [ Failu
 webkit.org/b/157179 editing/pasteboard/drag-and-drop-image-contenteditable.html [ Failure Timeout ]
 webkit.org/b/157179 editing/pasteboard/drag-and-drop-inputimage-contenteditable.html [ Failure Timeout ]
 webkit.org/b/157179 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html [ Failure Timeout ]
+webkit.org/b/157179 editing/pasteboard/drag-drop-copy-content.html [ Failure ]
 webkit.org/b/157179 editing/pasteboard/drag-drop-input-textarea.html [ Failure ]
 webkit.org/b/157179 editing/pasteboard/drag-drop-modifies-page.html [ Failure ]
 webkit.org/b/157179 editing/pasteboard/drag-drop-url-text.html [ Failure ]

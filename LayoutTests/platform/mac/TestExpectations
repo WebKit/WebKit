@@ -1534,3 +1534,5 @@ webkit.org/b/168415 [ ElCapitan ] imported/w3c/web-platform-tests/resource-timin
 webkit.org/b/168415 [ ElCapitan ] imported/w3c/web-platform-tests/resource-timing/rt-cors.worker.html [ Skip ]
 
 webkit.org/b/212466 [ ElCapitan ] js/dom/gc-slot-visitor-parallel-drain-pings-runloop-when-done.html [ Skip ]
+
+webkit.org/b/168503 editing/pasteboard/drag-drop-copy-content.html [ Failure ]
