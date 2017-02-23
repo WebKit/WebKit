@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,11 +60,6 @@ typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
 
 #if ENABLE(ASSEMBLER)
 
-#if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
-class DemandExecutableAllocator;
-#endif
-
-#if ENABLE(EXECUTABLE_ALLOCATOR_FIXED)
 #if defined(FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB) && FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB > 0
 static const size_t fixedExecutableMemoryPoolSize = FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB * 1024 * 1024;
 #elif CPU(ARM)
@@ -101,13 +96,6 @@ static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
     // Use regular memcpy for writes outside the JIT region.
     return memcpy(dst, src, n);
 }
-
-#else // ENABLE(EXECUTABLE_ALLOCATOR_FIXED)
-static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
-{
-    return memcpy(dst, src, n);
-}
-#endif
 
 class ExecutableAllocator {
     enum ProtectionSetting { Writable, Executable };
