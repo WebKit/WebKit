@@ -27,6 +27,11 @@
 
 (import "system.sb")
 
+;;; process-info* defaults to allow; deny it and then allow operations we actually need.
+(deny process-info*)
+(allow process-info-pidinfo)
+(allow process-info-setcontrol (target self))
+
 ;; Utility functions
 (define (home-literal home-relative-literal)
     (literal (string-append (param "HOME_DIR") home-relative-literal)))

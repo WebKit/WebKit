@@ -1,3 +1,20 @@
+2017-02-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Tighten sandbox to deny process-info* access
+        https://bugs.webkit.org/show_bug.cgi?id=168704
+        <rdar://problem/16371441>
+
+        Reviewed by Alex Christensen.
+
+        Tighten the various WebKit sandboxes by denying access to process-info.
+        Add back specific features needed to run WebKit tests and to do browsing
+        of websites (including plugins).
+
+        * DatabaseProcess/mac/com.apple.WebKit.Databases.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-02-22  Anders Carlsson  <andersca@apple.com>
 
         Crash if there's a mismatch between the WebKit used by the UI process and child processes respectively
