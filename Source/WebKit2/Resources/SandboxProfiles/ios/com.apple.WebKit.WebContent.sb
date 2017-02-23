@@ -101,3 +101,27 @@
 ;; Allow CoreMedia to communicate with mediaserverd in order to implement custom media loading
 (allow mach-lookup
     (global-name "com.apple.coremedia.customurlloader.xpc"))
+
+;; Media capture, microphone access
+(with-filter (extension "com.apple.webkit.microphone")
+    (allow device-microphone))
+
+;; Media capture, camera access
+(with-filter (extension "com.apple.webkit.camera")
+    (shared-preferences-read "com.apple.coremedia")
+    (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
+    (allow mach-lookup (extension "com.apple.app-sandbox.mach"))
+    (allow mach-lookup
+        (global-name "com.apple.coremedia.videoqueue")
+        (global-name "com.apple.cmio.AppleCameraAssistant")
+        ;; Apple DAL assistants
+        (global-name "com.apple.cmio.VDCAssistant")
+        (global-name "com.apple.cmio.AVCAssistant")
+        (global-name "com.apple.cmio.IIDCVideoAssistant")
+        ;; QuickTimeIIDCDigitizer assistant
+        (global-name "com.apple.IIDCAssistant"))
+    (allow iokit-open
+        ;; QuickTimeUSBVDCDigitizer
+        (iokit-user-client-class "IOUSBDeviceUserClientV2")
+        (iokit-user-client-class "IOUSBInterfaceUserClientV2"))
+    (allow device-camera))
