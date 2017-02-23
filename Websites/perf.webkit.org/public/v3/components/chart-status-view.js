@@ -55,7 +55,6 @@ class ChartStatusView extends ComponentBase {
                     return false;
 
                 if (view && view.length() > 1) {
-                    console.log(view.length(), view.firstPoint(), view.lastPoint())
                     this._usedSelection = selection;
                     currentPoint = view.lastPoint();
                     previousPoint = view.firstPoint();

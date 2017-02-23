@@ -101,7 +101,9 @@ function waitForComponentsToRender(context)
     return new Promise((resolve) => {
         const instance = new context._dummyComponent(resolve);
         context.document.body.appendChild(instance.element());
-        instance.enqueueToRender();
+        setTimeout(() => {
+            instance.enqueueToRender();
+        }, 0);
     });
 }
 
@@ -112,8 +114,61 @@ function wait(milliseconds)
     });
 }
 
+function canvasImageData(canvas)
+{
+    return canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+}
+
+function canvasRefTest(canvas1, canvas2, shouldMatch)
+{
+    expect(canvas1.offsetWidth).to.be(canvas2.offsetWidth);
+    expect(canvas2.offsetHeight).to.be(canvas2.offsetHeight);
+    const data1 = canvasImageData(canvas1).data;
+    const data2 = canvasImageData(canvas2).data;
+    expect(data1.length).to.be.a('number');
+    expect(data1.length).to.be(data2.length);
+
+    let match = true;
+    for (let i = 0; i < data1.length; i++) {
+        if (data1[i] != data2[i]) {
+            match = false;
+            break;
+        }
+    }
+
+    if (match == shouldMatch)
+        return;
+
+    [canvas1, canvas2].forEach((canvas) => {
+        let image = document.createElement('img');
+        image.src = canvas.toDataURL();
+        image.style.display = 'block';
+        document.body.appendChild(image);
+    });
+
+    throw new Error(shouldMatch ? 'Canvas contents were different' : 'Canvas contents were identical');
+}
+
+const CanvasTest = {
+    fillCanvasBeforeRedrawCheck(canvas)
+    {
+        const canvasContext = canvas.getContext('2d');
+        canvasContext.fillStyle = 'white';
+        canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+    },
+
+    hasCanvasBeenRedrawn(canvas)
+    {
+        return canvasImageData(canvas).data.some((value) => value != 255);
+    },
+
+    canvasImageData(canvas) { return canvasImageData(canvas); },
+    expectCanvasesMatch(canvas1, canvas2) { return canvasRefTest(canvas1, canvas2, true); },
+    expectCanvasesMismatch(canvas1, canvas2) { return canvasRefTest(canvas1, canvas2, false); },
+}
+
 mocha.checkLeaks();
-mocha.globals(['expect', 'BrowsingContext', 'wait', 'waitForComponentsToRender']);
+mocha.globals(['expect', 'BrowsingContext', 'CanvasTest', 'wait', 'waitForComponentsToRender']);
 mocha.run();
 
 </script>

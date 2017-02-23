@@ -1,3 +1,80 @@
+2017-02-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add tests for InteractiveTimeSeriesChart and adopt actions
+        https://bugs.webkit.org/show_bug.cgi?id=168750
+
+        Reviewed by Chris Dumez.
+
+        Added tests for InteractiveTimeSeriesChart.
+
+        Also replaced selection.onchange, selection.onzoom, indicator.onchange, annotations.onclick callbacks
+        by "selectionChange", "zoom", "indicatorChange", and "annotationClick" actions respectively.
+
+        Also fixed various bugs and bad code I encountered while writing these tests.
+
+        * browser-tests/index.html:
+        (waitForComponentsToRender): Delay the call to enqueueToRender until the next run loop because there
+        might be outstanding promises that just got resolved. e.g. for fetching measurement sets JSONs. Let
+        all those promises get resolved first. Otherwise, some tests become racy.
+        (canvasImageData): Extracted from time-series-chart-tests.js.
+        (canvasRefTest): Ditto.
+        (CanvasTest): Ditto.
+        (CanvasTest.fillCanvasBeforeRedrawCheck): Ditto.
+        (CanvasTest.hasCanvasBeenRedrawn): Ditto.
+        (CanvasTest.canvasImageData): Ditto.
+        (CanvasTest.expectCanvasesMatch): Ditto.
+        (CanvasTest.expectCanvasesMismatch): Ditto.
+
+        * browser-tests/time-series-chart-tests.js: Fixed some test cases where dpr multipler was not doing
+        the right thing anymore in Safari under a high DPI screen. Also added a lot of test cases for interactive
+        time series chart and one for rendering annotations.
+        (scripts): Moved.
+        (posixTime): Added. A helper function for sampleCluster.
+        (dayInMilliseconds): Ditto.
+        (sampleCluster): Moved here. Made the same cluster more artifical for an easier testing.
+        (createChartWithSampleCluster): Moved out of one of the tests.
+        (respondWithSampleCluster): Ditto.
+
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase.prototype.configure): Adopted new actions in InteractiveTimeSeriesChart.
+
+        * public/v3/components/chart-status-view.js:
+        (ChartStatusView.prototype.updateStatusIfNeeded): Removed a superflous console.log.
+
+        * public/v3/components/chart-styles.js:
+        (ChartStyles.mainChartOptions): Set zoomButton to true. InteractiveTimeSeriesChart used to determine
+        whether to show the zoom button or not based on the precense of the zoom callback. We made it explicit.
+
+        * public/v3/components/interactive-time-series-chart.js:
+        (InteractiveTimeSeriesChart.prototype.setIndicator): Explicitly call _notifySelectionChanged with false
+        instead of relying on undefined to be treated as falsey.
+        (InteractiveTimeSeriesChart.prototype._createCanvas): Use id instead of selector to find elements.
+        (InteractiveTimeSeriesChart.htmlTemplate):
+        (InteractiveTimeSeriesChart.cssTemplate):
+        (InteractiveTimeSeriesChart.prototype._mouseMove): Explicitly call _startOrContinueDragging with false
+        instead of relying on undefined treated as falsey. Also added the missing call to enqueueToRender found
+        by new tests. This was working fine on the dashboard due to other components invoking enqueueToRender
+        but won't work in a standalone instance of InteractiveTimeSeriesChart.
+        (InteractiveTimeSeriesChart.prototype._mouseLeave): Ditto, adding the missing call to enqueueToRender.
+        (InteractiveTimeSeriesChart.prototype._click): Removed the assignment to _forceRender when calling
+        _mouseMove in an early exist, which does set this flag and invokes enqueueToRender, and added the missing
+        call to enqueueToRender in the other code path.
+        (InteractiveTimeSeriesChart.prototype._startOrContinueDragging): Replaced annotations.onclick callback
+        by the newly added "annotationClick" action, and added the missing call to enqueueToRender.
+        (InteractiveTimeSeriesChart.prototype._endDragging): Use arrow function.
+        (InteractiveTimeSeriesChart.prototype._notifyIndicatorChanged): Replaced indicator.onchange callback by
+        the newly added "indicatorChange" action.
+        (InteractiveTimeSeriesChart.prototype._notifySelectionChanged): Replaced selection.onchange callback by
+        the newly added "selectionChange" action.
+        (InteractiveTimeSeriesChart.prototype._renderChartContent): Show the zoom button when options.zoomButton
+        is set instead of relying on the presence of selection.onzoom especially now that the callback has been
+        replaced by the "zoom" action.
+
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart.prototype.setAnnotations): Added the missing call to enqueueToRender.
+
+        * public/v3/main.js:
+
 2017-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make sampling algorithm more stable and introduce an abstraction for sampled data

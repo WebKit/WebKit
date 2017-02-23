@@ -129,6 +129,7 @@ class ChartStyles {
         var options = this.dashboardOptions(valueFormatter);
         options.axis.xAxisEndPadding = 5;
         options.axis.yAxisWidth = 5;
+        options.zoomButton = true;
         options.selection = {
             lineStyle: '#f93',
             lineWidth: 2,

@@ -40,20 +40,17 @@ class ChartPaneBase extends ComponentBase {
             return;
 
         var formatter = result.metric.makeFormatter(4);
-        var self = this;
 
-        var overviewOptions = ChartStyles.overviewChartOptions(formatter);
-        overviewOptions.selection.onchange = this._overviewSelectionDidChange.bind(this);
-        this._overviewChart = new InteractiveTimeSeriesChart(this._createSourceList(false), overviewOptions);
+        this._overviewChart = new InteractiveTimeSeriesChart(this._createSourceList(false), ChartStyles.overviewChartOptions(formatter));
+        this._overviewChart.listenToAction('selectionChange', this._overviewSelectionDidChange.bind(this));
         this.renderReplace(this.content().querySelector('.chart-pane-overview'), this._overviewChart);
 
-        var mainOptions = ChartStyles.mainChartOptions(formatter);
-        mainOptions.indicator.onchange = this._indicatorDidChange.bind(this);
-        mainOptions.selection.onchange = this._mainSelectionDidChange.bind(this);
-        mainOptions.selection.onzoom = this._mainSelectionDidZoom.bind(this);
-        mainOptions.annotations.onclick = this._openAnalysisTask.bind(this);
-        this._mainChart = new InteractiveTimeSeriesChart(this._createSourceList(true), mainOptions);
-        this._mainChart.listenToAction('dataChange', () => this._didFetchData())
+        this._mainChart = new InteractiveTimeSeriesChart(this._createSourceList(true), ChartStyles.mainChartOptions(formatter));
+        this._mainChart.listenToAction('dataChange', () => this._didFetchData());
+        this._mainChart.listenToAction('indicatorChange', this._indicatorDidChange.bind(this));
+        this._mainChart.listenToAction('selectionChange', this._mainSelectionDidChange.bind(this));
+        this._mainChart.listenToAction('zoom', this._mainSelectionDidZoom.bind(this));
+        this._mainChart.listenToAction('annotationClick', this._openAnalysisTask.bind(this));
         this.renderReplace(this.content().querySelector('.chart-pane-main'), this._mainChart);
 
         this._mainChartStatus = new ChartPaneStatusView(result.metric, this._mainChart, this._requestOpeningCommitViewer.bind(this));

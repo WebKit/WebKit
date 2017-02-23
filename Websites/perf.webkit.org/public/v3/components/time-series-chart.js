@@ -135,6 +135,8 @@ class TimeSeriesChart extends ComponentBase {
     {
         this._annotations = annotations;
         this._annotationRows = null;
+
+        this.enqueueToRender();
     }
 
     render()
