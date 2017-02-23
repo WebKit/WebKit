@@ -67,7 +67,6 @@ void BackgroundProcessResponsivenessTimer::timerFired()
         }
 
         RELEASE_LOG_ERROR(PerformanceLogging, "Notified the client that a background WebProcess has become unresponsive");
-        WTFLogAlways("Notified the client that a background WebProcess has become unresponsive");
         m_interval = initialInterval;
     });
 }

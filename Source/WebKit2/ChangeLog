@@ -1,3 +1,10 @@
+2017-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop console logging landed by mistake as part of r212832.
+
+        * UIProcess/BackgroundProcessResponsivenessTimer.cpp:
+        (WebKit::BackgroundProcessResponsivenessTimer::timerFired):
+
 2017-02-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Tighten sandbox to deny process-info* access
