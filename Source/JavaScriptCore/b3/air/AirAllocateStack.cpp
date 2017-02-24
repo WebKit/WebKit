@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -134,7 +134,7 @@ void allocateStack(Code& code)
 
             Inst::forEachDef<Arg>(
                 block->get(instIndex), block->get(instIndex + 1),
-                [&] (Arg& arg, Arg::Role, Arg::Type, Arg::Width) {
+                [&] (Arg& arg, Arg::Role, Bank, Width) {
                     if (!arg.isStack())
                         return;
                     StackSlot* slot = arg.stackSlot();
@@ -159,7 +159,7 @@ void allocateStack(Code& code)
             if (!inst.hasNonArgEffects()) {
                 bool ok = true;
                 inst.forEachArg(
-                    [&] (Arg& arg, Arg::Role role, Arg::Type, Arg::Width) {
+                    [&] (Arg& arg, Arg::Role role, Bank, Width) {
                         if (Arg::isEarlyDef(role)) {
                             ok = false;
                             return;
@@ -262,7 +262,7 @@ void allocateStack(Code& code)
         for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
             Inst& inst = block->at(instIndex);
             inst.forEachArg(
-                [&] (Arg& arg, Arg::Role role, Arg::Type, Arg::Width width) {
+                [&] (Arg& arg, Arg::Role role, Bank, Width width) {
                     auto stackAddr = [&] (int32_t offset) -> Arg {
                         return Arg::stackAddr(offset, code.frameSize(), width);
                     };
@@ -272,13 +272,13 @@ void allocateStack(Code& code)
                         StackSlot* slot = arg.stackSlot();
                         if (Arg::isZDef(role)
                             && slot->kind() == StackSlotKind::Spill
-                            && slot->byteSize() > Arg::bytes(width)) {
+                            && slot->byteSize() > bytes(width)) {
                             // Currently we only handle this simple case because it's the only one
                             // that arises: ZDef's are only 32-bit right now. So, when we hit these
                             // assertions it means that we need to implement those other kinds of
                             // zero fills.
                             RELEASE_ASSERT(slot->byteSize() == 8);
-                            RELEASE_ASSERT(width == Arg::Width32);
+                            RELEASE_ASSERT(width == Width32);
 
                             RELEASE_ASSERT(isValidForm(StoreZero32, Arg::Stack));
                             insertionSet.insert(

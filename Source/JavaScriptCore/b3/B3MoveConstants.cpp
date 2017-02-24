@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirArg.h"
 #include "B3BasicBlockInlines.h"
 #include "B3Dominators.h"
 #include "B3InsertionSetInlines.h"
@@ -207,7 +208,7 @@ private:
                                     return false;
                                 return Air::Arg::isValidAddrForm(
                                     static_cast<int32_t>(offset),
-                                    Air::Arg::widthForBytes(memoryValue->accessByteSize()));
+                                    widthForBytes(memoryValue->accessByteSize()));
                             });
                         
                         if (bestPointer) {

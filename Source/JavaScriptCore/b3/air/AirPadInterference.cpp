@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ void padInterference(Code& code)
             bool hasEarlyDef = false;
             bool hasLate = false;
             inst.forEachArg(
-                [&] (Arg&, Arg::Role role, Arg::Type, Arg::Width) {
+                [&] (Arg&, Arg::Role role, Bank, Width) {
                     switch (role) {
                     case Arg::EarlyDef:
                         hasEarlyDef = true;

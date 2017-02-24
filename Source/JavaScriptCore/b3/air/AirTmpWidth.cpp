@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,9 +63,9 @@ void TmpWidth::recompute(Code& code)
     
     auto assumeTheWorst = [&] (Tmp tmp) {
         Widths& widths = m_width.add(tmp, Widths()).iterator->value;
-        Arg::Type type = Arg(tmp).type();
-        widths.use = Arg::conservativeWidth(type);
-        widths.def = Arg::conservativeWidth(type);
+        Bank bank = Arg(tmp).bank();
+        widths.use = conservativeWidth(bank);
+        widths.def = conservativeWidth(bank);
     };
     
     // Assume the worst for registers.
@@ -92,8 +92,8 @@ void TmpWidth::recompute(Code& code)
                 if (inst.args[0].isTmp()) {
                     // Make sure that both sides of the Move have a width already initialized. The
                     // fixpoint below assumes that it never has to add things to the HashMap.
-                    m_width.add(inst.args[0].tmp(), Widths(Arg::GP));
-                    m_width.add(inst.args[1].tmp(), Widths(Arg::GP));
+                    m_width.add(inst.args[0].tmp(), Widths(GP));
+                    m_width.add(inst.args[1].tmp(), Widths(GP));
                     
                     moves.append(&inst);
                     continue;
@@ -101,23 +101,23 @@ void TmpWidth::recompute(Code& code)
                 if (inst.args[0].isImm()
                     && inst.args[0].value() >= 0) {
                     Tmp tmp = inst.args[1].tmp();
-                    Widths& widths = m_width.add(tmp, Widths(Arg::GP)).iterator->value;
+                    Widths& widths = m_width.add(tmp, Widths(GP)).iterator->value;
                     
                     if (inst.args[0].value() <= std::numeric_limits<int8_t>::max())
-                        widths.def = std::max(widths.def, Arg::Width8);
+                        widths.def = std::max(widths.def, Width8);
                     else if (inst.args[0].value() <= std::numeric_limits<int16_t>::max())
-                        widths.def = std::max(widths.def, Arg::Width16);
+                        widths.def = std::max(widths.def, Width16);
                     else if (inst.args[0].value() <= std::numeric_limits<int32_t>::max())
-                        widths.def = std::max(widths.def, Arg::Width32);
+                        widths.def = std::max(widths.def, Width32);
                     else
-                        widths.def = std::max(widths.def, Arg::Width64);
+                        widths.def = std::max(widths.def, Width64);
 
                     continue;
                 }
             }
             inst.forEachTmp(
-                [&] (Tmp& tmp, Arg::Role role, Arg::Type type, Arg::Width width) {
-                    Widths& widths = m_width.add(tmp, Widths(type)).iterator->value;
+                [&] (Tmp& tmp, Arg::Role role, Bank bank, Width width) {
+                    Widths& widths = m_width.add(tmp, Widths(bank)).iterator->value;
                     
                     if (Arg::isAnyUse(role))
                         widths.use = std::max(widths.use, width);
@@ -125,7 +125,7 @@ void TmpWidth::recompute(Code& code)
                     if (Arg::isZDef(role))
                         widths.def = std::max(widths.def, width);
                     else if (Arg::isAnyDef(role))
-                        widths.def = Arg::conservativeWidth(type);
+                        widths.def = conservativeWidth(bank);
                 });
         }
     }

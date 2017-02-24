@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -115,7 +115,7 @@ private:
 
         Inst::forEachDefWithExtraClobberedRegs<Arg>(
             &inst, &inst,
-            [&] (const Arg& arg, Arg::Role, Arg::Type, Arg::Width) {
+            [&] (const Arg& arg, Arg::Role, Bank, Width) {
                 if (verbose)
                     dataLog("        Clobbering ", arg, "\n");
                 m_state.clobber(arg);
@@ -237,7 +237,7 @@ private:
         // information from the liveness analysis. We also can't handle late uses, because we don't
         // look at late clobbers when doing this.
         bool didThings = false;
-        auto handleArg = [&] (Arg& arg, Arg::Role role, Arg::Type, Arg::Width width) {
+        auto handleArg = [&] (Arg& arg, Arg::Role role, Bank, Width width) {
             if (!isSpillSlot(arg))
                 return;
             if (!Arg::isEarlyUse(role))
@@ -248,7 +248,7 @@ private:
             // Try to get a register if at all possible.
             if (const RegSlot* alias = m_state.getRegSlot(arg.stackSlot())) {
                 switch (width) {
-                case Arg::Width64:
+                case Width64:
                     if (alias->mode != RegSlot::AllBits)
                         return;
                     if (verbose)
@@ -256,7 +256,7 @@ private:
                     arg = Tmp(alias->reg);
                     didThings = true;
                     return;
-                case Arg::Width32:
+                case Width32:
                     if (verbose)
                         dataLog("    Replacing ", arg, " with ", alias->reg, " (subwidth case)\n");
                     arg = Tmp(alias->reg);
@@ -288,9 +288,9 @@ private:
         inst = instCopy;
         ASSERT(inst.isValidForm());
         inst.forEachArg(
-            [&] (Arg& arg, Arg::Role role, Arg::Type type, Arg::Width width) {
+            [&] (Arg& arg, Arg::Role role, Bank bank, Width width) {
                 Arg argCopy = arg;
-                handleArg(arg, role, type, width);
+                handleArg(arg, role, bank, width);
                 if (!inst.isValidForm())
                     arg = argCopy;
             });

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,16 +60,16 @@ CString varName(Reg reg)
     return toCString("Reg.", reg.debugName());
 }
 
-CString varNameForTmpWithTypeAndIndex(Arg::Type type, unsigned index)
+CString varNameForTmpWithBankAndIndex(Bank bank, unsigned index)
 {
-    return toCString(type == Arg::FP ? "f" : "", "tmp", index);
+    return toCString(bank == FP ? "f" : "", "tmp", index);
 }
 
 CString varName(Tmp tmp)
 {
     if (tmp.isReg())
         return varName(tmp.reg());
-    return varNameForTmpWithTypeAndIndex(Arg(tmp).type(), tmp.tmpIndex());
+    return varNameForTmpWithBankAndIndex(Arg(tmp).bank(), tmp.tmpIndex());
 }
 
 } // anonymous namespace
@@ -96,11 +96,11 @@ void dumpAsJS(Code& code, PrintStream& out)
             out.println("code.addStackSlot(1, Spill);");
     }
     
-    Arg::forEachType(
-        [&] (Arg::Type type) {
-            for (unsigned i = code.numTmps(type); i--;) {
+    forEachBank(
+        [&] (Bank bank) {
+            for (unsigned i = code.numTmps(bank); i--;) {
                 out.println(
-                    "let ", varNameForTmpWithTypeAndIndex(type, i), " = code.newTmp(", type, ");");
+                    "let ", varNameForTmpWithBankAndIndex(bank, i), " = code.newTmp(", bank, ");");
             }
         });
     
@@ -123,7 +123,7 @@ void dumpAsJS(Code& code, PrintStream& out)
             out.println("inst = new Inst(", inst.kind.opcode, ");");
             
             inst.forEachArg(
-                [&] (Arg& arg, Arg::Role, Arg::Type, Arg::Width) {
+                [&] (Arg& arg, Arg::Role, Bank, Width) {
                     switch (arg.kind()) {
                     case Arg::Invalid:
                         RELEASE_ASSERT_NOT_REACHED();
@@ -216,9 +216,9 @@ void dumpAsJS(Code& code, PrintStream& out)
                 
                 out.println("inst.patchArgData = [];");
                 inst.forEachArg(
-                    [&] (Arg&, Arg::Role role, Arg::Type type, Arg::Width width) {
+                    [&] (Arg&, Arg::Role role, Bank bank, Width width) {
                         out.println(
-                            "inst.patchArgData.push({role: Arg.", role, ", type: ", type,
+                            "inst.patchArgData.push({role: Arg.", role, ", type: ", bank,
                             ", width: ", width, "});");
                     });
             }

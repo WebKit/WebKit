@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@ public:
                     continue;
 
                 int32_t offset = memoryValue->offset();
-                Air::Arg::Width width = Air::Arg::widthForBytes(memoryValue->accessByteSize());
+                Width width = memoryValue->accessWidth();
                 if (!Air::Arg::isValidAddrForm(offset, width)) {
                     Value* base = memoryValue->lastChild();
                     Value* offsetValue = m_insertionSet.insertIntConstant(index, memoryValue->origin(), pointerType(), offset);

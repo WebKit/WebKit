@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,10 +41,10 @@ Code::Code(Procedure& proc)
     , m_lastPhaseName("initial")
 {
     // Come up with initial orderings of registers. The user may replace this with something else.
-    Arg::forEachType(
-        [&] (Arg::Type type) {
+    forEachBank(
+        [&] (Bank bank) {
             Vector<Reg> result;
-            RegisterSet all = type == Arg::GP ? RegisterSet::allGPRs() : RegisterSet::allFPRs();
+            RegisterSet all = bank == GP ? RegisterSet::allGPRs() : RegisterSet::allFPRs();
             all.exclude(RegisterSet::stackRegisters());
             all.exclude(RegisterSet::reservedHardwareRegisters());
             RegisterSet calleeSave = RegisterSet::calleeSaveRegisters();
@@ -58,7 +58,7 @@ Code::Code(Procedure& proc)
                     if (calleeSave.get(reg))
                         result.append(reg);
                 });
-            setRegsInPriorityOrder(type, result);
+            setRegsInPriorityOrder(bank, result);
         });
 }
 
@@ -66,20 +66,20 @@ Code::~Code()
 {
 }
 
-void Code::setRegsInPriorityOrder(Arg::Type type, const Vector<Reg>& regs)
+void Code::setRegsInPriorityOrder(Bank bank, const Vector<Reg>& regs)
 {
-    regsInPriorityOrderImpl(type) = regs;
+    regsInPriorityOrderImpl(bank) = regs;
     m_mutableRegs = RegisterSet();
-    Arg::forEachType(
-        [&] (Arg::Type type) {
-            for (Reg reg : regsInPriorityOrder(type))
+    forEachBank(
+        [&] (Bank bank) {
+            for (Reg reg : regsInPriorityOrder(bank))
                 m_mutableRegs.set(reg);
         });
 }
 
 void Code::pinRegister(Reg reg)
 {
-    Vector<Reg>& regs = regsInPriorityOrderImpl(Arg(Tmp(reg)).type());
+    Vector<Reg>& regs = regsInPriorityOrderImpl(Arg(Tmp(reg)).bank());
     regs.removeFirst(reg);
     m_mutableRegs.clear(reg);
     ASSERT(!regs.contains(reg));

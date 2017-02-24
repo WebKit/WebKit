@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+# Copyright (C) 2015-2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -44,19 +44,19 @@ class Opcode
 end
 
 class Arg
-    attr_reader :role, :type, :width
+    attr_reader :role, :bank, :width
 
-    def initialize(role, type, width)
+    def initialize(role, bank, width)
         @role = role
-        @type = type
+        @bank = bank
         @width = width
     end
 
     def widthCode
         if width == "Ptr"
-            "Arg::pointerWidth()"
+            "pointerWidth()"
         else
-            "Arg::Width#{width}"
+            "Width#{width}"
         end
     end
 end
@@ -255,9 +255,9 @@ class Parser
         result
     end
 
-    def consumeType
+    def consumeBank
         result = token.string
-        parseError("Expected type (G or F)") unless isGF(result)
+        parseError("Expected bank (G or F)") unless isGF(result)
         advance
         result
     end
@@ -369,11 +369,11 @@ class Parser
                     loop {
                         role = consumeRole
                         consume(":")
-                        type = consumeType
+                        bank = consumeBank
                         consume(":")
                         width = consumeWidth
                         
-                        signature << Arg.new(role, type, width)
+                        signature << Arg.new(role, bank, width)
                         
                         break unless token == ","
                         consume(",")
@@ -430,7 +430,7 @@ class Parser
                                 if signature[index].role != "U"
                                     parseError("Form has an immediate for a non-use argument")
                                 end
-                                if signature[index].type != "G"
+                                if signature[index].bank != "G"
                                     parseError("Form has an immediate for a non-general-purpose argument")
                                 end
                             end
@@ -655,7 +655,7 @@ writeH("OpcodeUtils") {
                     raise
                 end
 
-                outp.puts "functor(args[#{index}], Arg::#{role}, Arg::#{arg.type}P, #{arg.widthCode});"
+                outp.puts "functor(args[#{index}], Arg::#{role}, #{arg.bank}P, #{arg.widthCode});"
             }
         end
     }
@@ -793,7 +793,7 @@ writeH("OpcodeGenerated") {
                 # Some kinds of Args reqire additional validation.
                 case kind.name
                 when "Tmp"
-                    outp.puts "if (!args[#{index}].tmp().is#{arg.type}P())"
+                    outp.puts "if (!args[#{index}].tmp().is#{arg.bank}P())"
                     outp.puts "OPGEN_RETURN(false);"
                 when "Imm"
                     outp.puts "if (!Arg::isValidImmForm(args[#{index}].value()))"
@@ -1086,7 +1086,7 @@ writeH("OpcodeGenerated") {
                 end
                 case kind.name
                 when "Tmp"
-                    if overload.signature[index].type == "G"
+                    if overload.signature[index].bank == "G"
                         outp.print "args[#{index}].gpr()"
                     else
                         outp.print "args[#{index}].fpr()"
@@ -1168,7 +1168,7 @@ File.open("JSAir_opcode.js", "w") {
                         raise
                     end
                     
-                    outp.puts "inst.visitArg(#{index}, func, Arg.#{role}, #{arg.type}P, #{arg.width});"
+                    outp.puts "inst.visitArg(#{index}, func, Arg.#{role}, #{arg.bank}P, #{arg.width});"
                 }
                 outp.puts "break;"
             }

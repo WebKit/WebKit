@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +58,14 @@ static void usage()
 
 using namespace JSC;
 using namespace JSC::B3::Air;
+
+using JSC::B3::FP;
+using JSC::B3::GP;
+using JSC::B3::Width;
+using JSC::B3::Width8;
+using JSC::B3::Width16;
+using JSC::B3::Width32;
+using JSC::B3::Width64;
 
 namespace {
 
@@ -151,11 +159,11 @@ void testShuffleSimpleSwap()
     loadConstant(root, 4, Tmp(GPRInfo::regT3));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT2), Arg::widthArg(Width32));
 
     int32_t things[4];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -186,11 +194,11 @@ void testShuffleSimpleShift()
     loadConstant(root, 4, Tmp(GPRInfo::regT3));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Width32));
 
     int32_t things[5];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -227,16 +235,16 @@ void testShuffleLongShift()
     loadConstant(root, 8, Tmp(GPRInfo::regT7));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT4), Tmp(GPRInfo::regT5), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT5), Tmp(GPRInfo::regT6), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT6), Tmp(GPRInfo::regT7), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT4), Tmp(GPRInfo::regT5), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT5), Tmp(GPRInfo::regT6), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT6), Tmp(GPRInfo::regT7), Arg::widthArg(Width32));
 
     int32_t things[8];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -279,16 +287,16 @@ void testShuffleLongShiftBackwards()
     loadConstant(root, 8, Tmp(GPRInfo::regT7));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT6), Tmp(GPRInfo::regT7), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT5), Tmp(GPRInfo::regT6), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT4), Tmp(GPRInfo::regT5), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT6), Tmp(GPRInfo::regT7), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT5), Tmp(GPRInfo::regT6), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT4), Tmp(GPRInfo::regT5), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32));
 
     int32_t things[8];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -327,12 +335,12 @@ void testShuffleSimpleRotate()
     loadConstant(root, 4, Tmp(GPRInfo::regT3));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT0), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT0), Arg::widthArg(Width32));
 
     int32_t things[4];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -363,12 +371,12 @@ void testShuffleSimpleBroadcast()
     loadConstant(root, 4, Tmp(GPRInfo::regT3));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT2), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT3), Arg::widthArg(Width32));
 
     int32_t things[4];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -392,7 +400,7 @@ void testShuffleBroadcastAllRegs()
     B3::Procedure proc;
     Code& code = proc.code();
 
-    const Vector<Reg>& regs = code.regsInPriorityOrder(Arg::GP);
+    const Vector<Reg>& regs = code.regsInPriorityOrder(GP);
 
     BasicBlock* root = code.addBlock();
     root->append(Move, nullptr, Arg::imm(35), Tmp(GPRInfo::regT0));
@@ -404,7 +412,7 @@ void testShuffleBroadcastAllRegs()
     Inst& shuffle = root->append(Shuffle, nullptr);
     for (Reg reg : regs) {
         if (reg != Reg(GPRInfo::regT0))
-            shuffle.append(Tmp(GPRInfo::regT0), Tmp(reg), Arg::widthArg(Arg::Width32));
+            shuffle.append(Tmp(GPRInfo::regT0), Tmp(reg), Arg::widthArg(Width32));
     }
 
     StackSlot* slot = code.addStackSlot(sizeof(int32_t) * regs.size(), StackSlotKind::Locked);
@@ -412,7 +420,7 @@ void testShuffleBroadcastAllRegs()
         root->append(Move32, nullptr, Tmp(regs[i]), Arg::stack(slot, i * sizeof(int32_t)));
 
     Vector<int32_t> things(regs.size(), 666);
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things[0])), base);
     for (unsigned i = 0; i < regs.size(); ++i) {
         root->append(Move32, nullptr, Arg::stack(slot, i * sizeof(int32_t)), Tmp(GPRInfo::regT0));
@@ -444,16 +452,16 @@ void testShuffleTreeShift()
     loadConstant(root, 8, Tmp(GPRInfo::regT7));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT5), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT6), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT7), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT2), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT3), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT4), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT5), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT6), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT7), Arg::widthArg(Width32));
 
     int32_t things[8];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -496,16 +504,16 @@ void testShuffleTreeShiftBackward()
     loadConstant(root, 8, Tmp(GPRInfo::regT7));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT7), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT6), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT5), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT7), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT6), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT5), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT4), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT3), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT2), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32));
 
     int32_t things[8];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -551,16 +559,16 @@ void testShuffleTreeShiftOtherBackward()
     loadConstant(root, 8, Tmp(GPRInfo::regT7));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT4), Tmp(GPRInfo::regT7), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT5), Tmp(GPRInfo::regT6), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT5), Tmp(GPRInfo::regT5), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT6), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT6), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT7), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT7), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT4), Tmp(GPRInfo::regT7), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT5), Tmp(GPRInfo::regT6), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT5), Tmp(GPRInfo::regT5), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT6), Tmp(GPRInfo::regT4), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT6), Tmp(GPRInfo::regT3), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT7), Tmp(GPRInfo::regT2), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT7), Tmp(GPRInfo::regT1), Arg::widthArg(Width32));
 
     int32_t things[8];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -601,13 +609,13 @@ void testShuffleMultipleShifts()
     loadConstant(root, 6, Tmp(GPRInfo::regT5));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT5), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT4), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT5), Arg::widthArg(Width32));
 
     int32_t things[6];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -644,15 +652,15 @@ void testShuffleRotateWithFringe()
     loadConstant(root, 6, Tmp(GPRInfo::regT5));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT0), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT5), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT0), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT3), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT4), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT5), Arg::widthArg(Width32));
 
     int32_t things[6];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -689,15 +697,15 @@ void testShuffleRotateWithFringeInWeirdOrder()
     loadConstant(root, 6, Tmp(GPRInfo::regT5));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT0), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT5), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT3), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT4), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT0), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT5), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Width32));
 
     int32_t things[6];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -734,15 +742,15 @@ void testShuffleRotateWithLongFringe()
     loadConstant(root, 6, Tmp(GPRInfo::regT5));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT0), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT4), Tmp(GPRInfo::regT5), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT0), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT3), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT4), Tmp(GPRInfo::regT5), Arg::widthArg(Width32));
 
     int32_t things[6];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -779,15 +787,15 @@ void testShuffleMultipleRotates()
     loadConstant(root, 6, Tmp(GPRInfo::regT5));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT0), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT4), Tmp(GPRInfo::regT5), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT5), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT0), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT4), Tmp(GPRInfo::regT5), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT5), Tmp(GPRInfo::regT3), Arg::widthArg(Width32));
 
     int32_t things[6];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -824,14 +832,14 @@ void testShuffleShiftAndRotate()
     loadConstant(root, 6, Tmp(GPRInfo::regT5));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT0), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT4), Tmp(GPRInfo::regT5), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT0), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT4), Tmp(GPRInfo::regT5), Arg::widthArg(Width32));
 
     int32_t things[6];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -859,21 +867,21 @@ void testShuffleShiftAllRegs()
     B3::Procedure proc;
     Code& code = proc.code();
 
-    const Vector<Reg>& regs = code.regsInPriorityOrder(Arg::GP);
+    const Vector<Reg>& regs = code.regsInPriorityOrder(GP);
 
     BasicBlock* root = code.addBlock();
     for (unsigned i = 0; i < regs.size(); ++i)
         loadConstant(root, 35 + i, Tmp(regs[i]));
     Inst& shuffle = root->append(Shuffle, nullptr);
     for (unsigned i = 1; i < regs.size(); ++i)
-        shuffle.append(Tmp(regs[i - 1]), Tmp(regs[i]), Arg::widthArg(Arg::Width32));
+        shuffle.append(Tmp(regs[i - 1]), Tmp(regs[i]), Arg::widthArg(Width32));
 
     StackSlot* slot = code.addStackSlot(sizeof(int32_t) * regs.size(), StackSlotKind::Locked);
     for (unsigned i = 0; i < regs.size(); ++i)
         root->append(Move32, nullptr, Tmp(regs[i]), Arg::stack(slot, i * sizeof(int32_t)));
 
     Vector<int32_t> things(regs.size(), 666);
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things[0])), base);
     for (unsigned i = 0; i < regs.size(); ++i) {
         root->append(Move32, nullptr, Arg::stack(slot, i * sizeof(int32_t)), Tmp(GPRInfo::regT0));
@@ -895,22 +903,22 @@ void testShuffleRotateAllRegs()
     B3::Procedure proc;
     Code& code = proc.code();
 
-    const Vector<Reg>& regs = code.regsInPriorityOrder(Arg::GP);
+    const Vector<Reg>& regs = code.regsInPriorityOrder(GP);
 
     BasicBlock* root = code.addBlock();
     for (unsigned i = 0; i < regs.size(); ++i)
         loadConstant(root, 35 + i, Tmp(regs[i]));
     Inst& shuffle = root->append(Shuffle, nullptr);
     for (unsigned i = 1; i < regs.size(); ++i)
-        shuffle.append(Tmp(regs[i - 1]), Tmp(regs[i]), Arg::widthArg(Arg::Width32));
-    shuffle.append(Tmp(regs.last()), Tmp(regs[0]), Arg::widthArg(Arg::Width32));
+        shuffle.append(Tmp(regs[i - 1]), Tmp(regs[i]), Arg::widthArg(Width32));
+    shuffle.append(Tmp(regs.last()), Tmp(regs[0]), Arg::widthArg(Width32));
 
     StackSlot* slot = code.addStackSlot(sizeof(int32_t) * regs.size(), StackSlotKind::Locked);
     for (unsigned i = 0; i < regs.size(); ++i)
         root->append(Move32, nullptr, Tmp(regs[i]), Arg::stack(slot, i * sizeof(int32_t)));
 
     Vector<int32_t> things(regs.size(), 666);
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things[0])), base);
     for (unsigned i = 0; i < regs.size(); ++i) {
         root->append(Move32, nullptr, Arg::stack(slot, i * sizeof(int32_t)), Tmp(GPRInfo::regT0));
@@ -939,11 +947,11 @@ void testShuffleSimpleSwap64()
     loadConstant(root, 40000000000000000ll, Tmp(GPRInfo::regT3));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width64),
-        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width64));
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Width64),
+        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT2), Arg::widthArg(Width64));
 
     int64_t things[4];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int64_t)));
     root->append(Move, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int64_t)));
@@ -975,11 +983,11 @@ void testShuffleSimpleShift64()
     loadConstant(root, 50000000000000000ll, Tmp(GPRInfo::regT4));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width64),
-        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width64));
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Width64),
+        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Width64));
 
     int64_t things[5];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int64_t)));
     root->append(Move, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int64_t)));
@@ -1012,11 +1020,11 @@ void testShuffleSwapMixedWidth()
     loadConstant(root, 40000000000000000ll, Tmp(GPRInfo::regT3));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32),
-        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width64));
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Width32),
+        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT2), Arg::widthArg(Width64));
 
     int64_t things[4];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int64_t)));
     root->append(Move, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int64_t)));
@@ -1048,11 +1056,11 @@ void testShuffleShiftMixedWidth()
     loadConstant(root, 50000000000000000ll, Tmp(GPRInfo::regT4));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width64),
-        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width32));
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT3), Arg::widthArg(Width64),
+        Tmp(GPRInfo::regT3), Tmp(GPRInfo::regT4), Arg::widthArg(Width32));
 
     int64_t things[5];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int64_t)));
     root->append(Move, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int64_t)));
@@ -1088,12 +1096,12 @@ void testShuffleShiftMemory()
     root->append(Move, nullptr, Arg::immPtr(&memory), Tmp(GPRInfo::regT2));
     root->append(
         Shuffle, nullptr,
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32),
         Arg::addr(Tmp(GPRInfo::regT2), 0 * sizeof(int32_t)),
-        Arg::addr(Tmp(GPRInfo::regT2), 1 * sizeof(int32_t)), Arg::widthArg(Arg::Width32));
+        Arg::addr(Tmp(GPRInfo::regT2), 1 * sizeof(int32_t)), Arg::widthArg(Width32));
 
     int32_t things[2];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -1127,19 +1135,19 @@ void testShuffleShiftMemoryLong()
     root->append(
         Shuffle, nullptr,
         
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32),
         
         Tmp(GPRInfo::regT1), Arg::addr(Tmp(GPRInfo::regT3), 0 * sizeof(int32_t)),
-        Arg::widthArg(Arg::Width32),
+        Arg::widthArg(Width32),
         
         Arg::addr(Tmp(GPRInfo::regT3), 0 * sizeof(int32_t)),
-        Arg::addr(Tmp(GPRInfo::regT3), 1 * sizeof(int32_t)), Arg::widthArg(Arg::Width32),
+        Arg::addr(Tmp(GPRInfo::regT3), 1 * sizeof(int32_t)), Arg::widthArg(Width32),
 
         Arg::addr(Tmp(GPRInfo::regT3), 1 * sizeof(int32_t)), Tmp(GPRInfo::regT2),
-        Arg::widthArg(Arg::Width32));
+        Arg::widthArg(Width32));
 
     int32_t things[3];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -1167,7 +1175,7 @@ void testShuffleShiftMemoryAllRegs()
     memory[0] = 35;
     memory[1] = 36;
 
-    Vector<Reg> regs = code.regsInPriorityOrder(Arg::GP);
+    Vector<Reg> regs = code.regsInPriorityOrder(GP);
     regs.removeFirst(Reg(GPRInfo::regT0));
 
     BasicBlock* root = code.addBlock();
@@ -1178,16 +1186,16 @@ void testShuffleShiftMemoryAllRegs()
         Shuffle, nullptr,
         
         Tmp(regs[0]), Arg::addr(Tmp(GPRInfo::regT0), 0 * sizeof(int32_t)),
-        Arg::widthArg(Arg::Width32),
+        Arg::widthArg(Width32),
         
         Arg::addr(Tmp(GPRInfo::regT0), 0 * sizeof(int32_t)),
-        Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int32_t)), Arg::widthArg(Arg::Width32),
+        Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int32_t)), Arg::widthArg(Width32),
 
         Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int32_t)), Tmp(regs[1]),
-        Arg::widthArg(Arg::Width32));
+        Arg::widthArg(Width32));
 
     for (unsigned i = 2; i < regs.size(); ++i)
-        shuffle.append(Tmp(regs[i - 1]), Tmp(regs[i]), Arg::widthArg(Arg::Width32));
+        shuffle.append(Tmp(regs[i - 1]), Tmp(regs[i]), Arg::widthArg(Width32));
 
     Vector<int32_t> things(regs.size(), 666);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things[0])), Tmp(GPRInfo::regT0));
@@ -1217,7 +1225,7 @@ void testShuffleShiftMemoryAllRegs64()
     memory[0] = 35000000000000ll;
     memory[1] = 36000000000000ll;
 
-    Vector<Reg> regs = code.regsInPriorityOrder(Arg::GP);
+    Vector<Reg> regs = code.regsInPriorityOrder(GP);
     regs.removeFirst(Reg(GPRInfo::regT0));
 
     BasicBlock* root = code.addBlock();
@@ -1228,16 +1236,16 @@ void testShuffleShiftMemoryAllRegs64()
         Shuffle, nullptr,
         
         Tmp(regs[0]), Arg::addr(Tmp(GPRInfo::regT0), 0 * sizeof(int64_t)),
-        Arg::widthArg(Arg::Width64),
+        Arg::widthArg(Width64),
         
         Arg::addr(Tmp(GPRInfo::regT0), 0 * sizeof(int64_t)),
-        Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int64_t)), Arg::widthArg(Arg::Width64),
+        Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int64_t)), Arg::widthArg(Width64),
 
         Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int64_t)), Tmp(regs[1]),
-        Arg::widthArg(Arg::Width64));
+        Arg::widthArg(Width64));
 
     for (unsigned i = 2; i < regs.size(); ++i)
-        shuffle.append(Tmp(regs[i - 1]), Tmp(regs[i]), Arg::widthArg(Arg::Width64));
+        shuffle.append(Tmp(regs[i - 1]), Tmp(regs[i]), Arg::widthArg(Width64));
 
     Vector<int64_t> things(regs.size(), 666);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things[0])), Tmp(GPRInfo::regT0));
@@ -1278,7 +1286,7 @@ void testShuffleShiftMemoryAllRegsMixedWidth()
     memory[0] = 35000000000000ll;
     memory[1] = 36000000000000ll;
 
-    Vector<Reg> regs = code.regsInPriorityOrder(Arg::GP);
+    Vector<Reg> regs = code.regsInPriorityOrder(GP);
     regs.removeFirst(Reg(GPRInfo::regT0));
 
     BasicBlock* root = code.addBlock();
@@ -1289,18 +1297,18 @@ void testShuffleShiftMemoryAllRegsMixedWidth()
         Shuffle, nullptr,
         
         Tmp(regs[0]), Arg::addr(Tmp(GPRInfo::regT0), 0 * sizeof(int64_t)),
-        Arg::widthArg(Arg::Width32),
+        Arg::widthArg(Width32),
         
         Arg::addr(Tmp(GPRInfo::regT0), 0 * sizeof(int64_t)),
-        Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int64_t)), Arg::widthArg(Arg::Width64),
+        Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int64_t)), Arg::widthArg(Width64),
 
         Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int64_t)), Tmp(regs[1]),
-        Arg::widthArg(Arg::Width32));
+        Arg::widthArg(Width32));
 
     for (unsigned i = 2; i < regs.size(); ++i) {
         shuffle.append(
             Tmp(regs[i - 1]), Tmp(regs[i]),
-            (i & 1) ? Arg::widthArg(Arg::Width32) : Arg::widthArg(Arg::Width64));
+            (i & 1) ? Arg::widthArg(Width32) : Arg::widthArg(Width64));
     }
 
     Vector<int64_t> things(regs.size(), 666);
@@ -1340,19 +1348,19 @@ void testShuffleRotateMemory()
     root->append(
         Shuffle, nullptr,
         
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32),
 
         Tmp(GPRInfo::regT1), Arg::addr(Tmp(GPRInfo::regT2), 0 * sizeof(int32_t)),
-        Arg::widthArg(Arg::Width32),
+        Arg::widthArg(Width32),
         
         Arg::addr(Tmp(GPRInfo::regT2), 0 * sizeof(int32_t)),
-        Arg::addr(Tmp(GPRInfo::regT2), 1 * sizeof(int32_t)), Arg::widthArg(Arg::Width32),
+        Arg::addr(Tmp(GPRInfo::regT2), 1 * sizeof(int32_t)), Arg::widthArg(Width32),
 
         Arg::addr(Tmp(GPRInfo::regT2), 1 * sizeof(int32_t)), Tmp(GPRInfo::regT0),
-        Arg::widthArg(Arg::Width32));
+        Arg::widthArg(Width32));
 
     int32_t things[2];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
     root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
@@ -1385,19 +1393,19 @@ void testShuffleRotateMemory64()
     root->append(
         Shuffle, nullptr,
         
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width64),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width64),
 
         Tmp(GPRInfo::regT1), Arg::addr(Tmp(GPRInfo::regT2), 0 * sizeof(int64_t)),
-        Arg::widthArg(Arg::Width64),
+        Arg::widthArg(Width64),
         
         Arg::addr(Tmp(GPRInfo::regT2), 0 * sizeof(int64_t)),
-        Arg::addr(Tmp(GPRInfo::regT2), 1 * sizeof(int64_t)), Arg::widthArg(Arg::Width64),
+        Arg::addr(Tmp(GPRInfo::regT2), 1 * sizeof(int64_t)), Arg::widthArg(Width64),
 
         Arg::addr(Tmp(GPRInfo::regT2), 1 * sizeof(int64_t)), Tmp(GPRInfo::regT0),
-        Arg::widthArg(Arg::Width64));
+        Arg::widthArg(Width64));
 
     int64_t things[2];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int64_t)));
     root->append(Move, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int64_t)));
@@ -1430,19 +1438,19 @@ void testShuffleRotateMemoryMixedWidth()
     root->append(
         Shuffle, nullptr,
         
-        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Width32),
 
         Tmp(GPRInfo::regT1), Arg::addr(Tmp(GPRInfo::regT2), 0 * sizeof(int64_t)),
-        Arg::widthArg(Arg::Width64),
+        Arg::widthArg(Width64),
         
         Arg::addr(Tmp(GPRInfo::regT2), 0 * sizeof(int64_t)),
-        Arg::addr(Tmp(GPRInfo::regT2), 1 * sizeof(int64_t)), Arg::widthArg(Arg::Width32),
+        Arg::addr(Tmp(GPRInfo::regT2), 1 * sizeof(int64_t)), Arg::widthArg(Width32),
 
         Arg::addr(Tmp(GPRInfo::regT2), 1 * sizeof(int64_t)), Tmp(GPRInfo::regT0),
-        Arg::widthArg(Arg::Width64));
+        Arg::widthArg(Width64));
 
     int64_t things[2];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(Move, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int64_t)));
     root->append(Move, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int64_t)));
@@ -1468,7 +1476,7 @@ void testShuffleRotateMemoryAllRegs64()
     memory[0] = 35000000000000ll;
     memory[1] = 36000000000000ll;
 
-    Vector<Reg> regs = code.regsInPriorityOrder(Arg::GP);
+    Vector<Reg> regs = code.regsInPriorityOrder(GP);
     regs.removeFirst(Reg(GPRInfo::regT0));
 
     BasicBlock* root = code.addBlock();
@@ -1479,18 +1487,18 @@ void testShuffleRotateMemoryAllRegs64()
         Shuffle, nullptr,
         
         Tmp(regs[0]), Arg::addr(Tmp(GPRInfo::regT0), 0 * sizeof(int64_t)),
-        Arg::widthArg(Arg::Width64),
+        Arg::widthArg(Width64),
         
         Arg::addr(Tmp(GPRInfo::regT0), 0 * sizeof(int64_t)),
-        Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int64_t)), Arg::widthArg(Arg::Width64),
+        Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int64_t)), Arg::widthArg(Width64),
 
         Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int64_t)), Tmp(regs[1]),
-        Arg::widthArg(Arg::Width64),
+        Arg::widthArg(Width64),
 
-        regs.last(), regs[0], Arg::widthArg(Arg::Width64));
+        regs.last(), regs[0], Arg::widthArg(Width64));
 
     for (unsigned i = 2; i < regs.size(); ++i)
-        shuffle.append(Tmp(regs[i - 1]), Tmp(regs[i]), Arg::widthArg(Arg::Width64));
+        shuffle.append(Tmp(regs[i - 1]), Tmp(regs[i]), Arg::widthArg(Width64));
 
     Vector<int64_t> things(regs.size(), 666);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things[0])), Tmp(GPRInfo::regT0));
@@ -1520,7 +1528,7 @@ void testShuffleRotateMemoryAllRegsMixedWidth()
     memory[0] = 35000000000000ll;
     memory[1] = 36000000000000ll;
 
-    Vector<Reg> regs = code.regsInPriorityOrder(Arg::GP);
+    Vector<Reg> regs = code.regsInPriorityOrder(GP);
     regs.removeFirst(Reg(GPRInfo::regT0));
 
     BasicBlock* root = code.addBlock();
@@ -1531,18 +1539,18 @@ void testShuffleRotateMemoryAllRegsMixedWidth()
         Shuffle, nullptr,
         
         Tmp(regs[0]), Arg::addr(Tmp(GPRInfo::regT0), 0 * sizeof(int64_t)),
-        Arg::widthArg(Arg::Width32),
+        Arg::widthArg(Width32),
         
         Arg::addr(Tmp(GPRInfo::regT0), 0 * sizeof(int64_t)),
-        Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int64_t)), Arg::widthArg(Arg::Width64),
+        Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int64_t)), Arg::widthArg(Width64),
 
         Arg::addr(Tmp(GPRInfo::regT0), 1 * sizeof(int64_t)), Tmp(regs[1]),
-        Arg::widthArg(Arg::Width32),
+        Arg::widthArg(Width32),
 
-        regs.last(), regs[0], Arg::widthArg(Arg::Width32));
+        regs.last(), regs[0], Arg::widthArg(Width32));
 
     for (unsigned i = 2; i < regs.size(); ++i)
-        shuffle.append(Tmp(regs[i - 1]), Tmp(regs[i]), Arg::widthArg(Arg::Width64));
+        shuffle.append(Tmp(regs[i - 1]), Tmp(regs[i]), Arg::widthArg(Width64));
 
     Vector<int64_t> things(regs.size(), 666);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things[0])), Tmp(GPRInfo::regT0));
@@ -1575,11 +1583,11 @@ void testShuffleSwapDouble()
     loadDoubleConstant(root, 4, Tmp(FPRInfo::fpRegT3), Tmp(GPRInfo::regT0));
     root->append(
         Shuffle, nullptr,
-        Tmp(FPRInfo::fpRegT2), Tmp(FPRInfo::fpRegT3), Arg::widthArg(Arg::Width64),
-        Tmp(FPRInfo::fpRegT3), Tmp(FPRInfo::fpRegT2), Arg::widthArg(Arg::Width64));
+        Tmp(FPRInfo::fpRegT2), Tmp(FPRInfo::fpRegT3), Arg::widthArg(Width64),
+        Tmp(FPRInfo::fpRegT3), Tmp(FPRInfo::fpRegT2), Arg::widthArg(Width64));
 
     double things[4];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(MoveDouble, nullptr, Tmp(FPRInfo::fpRegT0), Arg::addr(base, 0 * sizeof(double)));
     root->append(MoveDouble, nullptr, Tmp(FPRInfo::fpRegT1), Arg::addr(base, 1 * sizeof(double)));
@@ -1610,10 +1618,10 @@ void testShuffleShiftDouble()
     loadDoubleConstant(root, 4, Tmp(FPRInfo::fpRegT3), Tmp(GPRInfo::regT0));
     root->append(
         Shuffle, nullptr,
-        Tmp(FPRInfo::fpRegT2), Tmp(FPRInfo::fpRegT3), Arg::widthArg(Arg::Width64));
+        Tmp(FPRInfo::fpRegT2), Tmp(FPRInfo::fpRegT3), Arg::widthArg(Width64));
 
     double things[4];
-    Tmp base = code.newTmp(Arg::GP);
+    Tmp base = code.newTmp(GP);
     root->append(Move, nullptr, Arg::bigImm(bitwise_cast<intptr_t>(&things)), base);
     root->append(MoveDouble, nullptr, Tmp(FPRInfo::fpRegT0), Arg::addr(base, 0 * sizeof(double)));
     root->append(MoveDouble, nullptr, Tmp(FPRInfo::fpRegT1), Arg::addr(base, 1 * sizeof(double)));

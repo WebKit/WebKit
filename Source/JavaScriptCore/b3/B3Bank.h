@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,40 +20,57 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #pragma once
 
 #if ENABLE(B3_JIT)
 
-#include "B3Value.h"
-#include "GPRInfo.h"
+#include "B3Type.h"
 
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE WasmAddressValue : public Value {
-public:
-    static bool accepts(Kind kind) { return kind == WasmAddress; }
-
-    ~WasmAddressValue();
-
-    GPRReg pinnedGPR() const { return m_pinnedGPR; }
-
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
-    Value* cloneImpl() const override;
-
-private:
-    friend class Procedure;
-
-    WasmAddressValue(Origin, Value*, GPRReg);
-
-    GPRReg m_pinnedGPR;
+enum Bank : int8_t {
+    GP,
+    FP
 };
+
+static const unsigned numBanks = 2;
+
+template<typename Func>
+void forEachBank(const Func& func)
+{
+    func(GP);
+    func(FP);
+}
+
+inline Bank bankForType(Type type)
+{
+    switch (type) {
+    case Void:
+        ASSERT_NOT_REACHED();
+        return GP;
+    case Int32:
+    case Int64:
+        return GP;
+    case Float:
+    case Double:
+        return FP;
+    }
+    ASSERT_NOT_REACHED();
+    return GP;
+}
 
 } } // namespace JSC::B3
 
+namespace WTF {
+
+class PrintStream;
+
+void printInternal(PrintStream&, JSC::B3::Bank);
+
+} // namespace WTF
 
 #endif // ENABLE(B3_JIT)
+

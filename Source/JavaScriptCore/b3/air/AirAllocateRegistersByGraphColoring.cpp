@@ -48,7 +48,7 @@ bool traceDebug = false;
 bool reportStats = false;
 
 // The AbstractColoringAllocator defines all the code that is independant
-// from the type or register and can be shared when allocating registers.
+// from the bank or register and can be shared when allocating registers.
 template<typename IndexType, typename TmpMapper>
 class AbstractColoringAllocator {
 public:
@@ -1375,9 +1375,9 @@ protected:
 };
 
 // This perform all the tasks that are specific to certain register type.
-template<Arg::Type type, template<typename, typename> class AllocatorType>
-class ColoringAllocator : public AllocatorType<unsigned, AbsoluteTmpMapper<type>> {
-    using TmpMapper = AbsoluteTmpMapper<type>;
+template<Bank bank, template<typename, typename> class AllocatorType>
+class ColoringAllocator : public AllocatorType<unsigned, AbsoluteTmpMapper<bank>> {
+    using TmpMapper = AbsoluteTmpMapper<bank>;
     using Base = AllocatorType<unsigned, TmpMapper>;
     using Base::m_isOnSelectStack;
     using Base::m_selectStack;
@@ -1409,10 +1409,10 @@ class ColoringAllocator : public AllocatorType<unsigned, AbsoluteTmpMapper<type>
 public:
 
     ColoringAllocator(Code& code, TmpWidth& tmpWidth, const UseCounts<Tmp>& useCounts, const HashSet<unsigned>& unspillableTmp)
-        : Base(code, code.regsInPriorityOrder(type), TmpMapper::lastMachineRegisterIndex(), tmpArraySize(code), unspillableTmp, useCounts)
+        : Base(code, code.regsInPriorityOrder(bank), TmpMapper::lastMachineRegisterIndex(), tmpArraySize(code), unspillableTmp, useCounts)
         , m_tmpWidth(tmpWidth)
     {
-        if (type == Arg::GP) {
+        if (bank == GP) {
             m_framePointerIndex = TmpMapper::absoluteIndex(Tmp(MacroAssembler::framePointerRegister));
             m_interferesWithFramePointer.ensureSize(tmpArraySize(code));
         }
@@ -1512,7 +1512,7 @@ public:
     {
         ASSERT(!tmp.isReg());
         ASSERT(m_coloredTmp.size());
-        ASSERT(tmp.isGP() == (type == Arg::GP));
+        ASSERT(tmp.isGP() == (bank == GP));
 
         Reg reg = m_coloredTmp[TmpMapper::absoluteIndex(tmp)];
         if (!reg) {
@@ -1527,7 +1527,7 @@ public:
 protected:
     static unsigned tmpArraySize(Code& code)
     {
-        unsigned numTmps = code.numTmps(type);
+        unsigned numTmps = code.numTmps(bank);
         return TmpMapper::absoluteIndex(numTmps);
     }
 
@@ -1552,7 +1552,7 @@ protected:
         if (leftTmp == rightTmp)
             return false;
 
-        if (leftTmp.isGP() != (type == Arg::GP) || rightTmp.isGP() != (type == Arg::GP))
+        if (leftTmp.isGP() != (bank == GP) || rightTmp.isGP() != (bank == GP))
             return false;
 
         unsigned leftIndex = TmpMapper::absoluteIndex(leftTmp);
@@ -1585,9 +1585,9 @@ protected:
         m_coalescingCandidates.clear();
         m_worklistMoves.clear();
 
-        TmpLiveness<type> liveness(m_code);
+        TmpLiveness<bank> liveness(m_code);
         for (BasicBlock* block : m_code) {
-            typename TmpLiveness<type>::LocalCalc localCalc(liveness, block);
+            typename TmpLiveness<bank>::LocalCalc localCalc(liveness, block);
             for (unsigned instIndex = block->size(); instIndex--;) {
                 Inst& inst = block->at(instIndex);
                 Inst* nextInst = block->get(instIndex + 1);
@@ -1599,15 +1599,15 @@ protected:
         buildLowPriorityMoveList();
     }
 
-    void build(Inst* prevInst, Inst* nextInst, const typename TmpLiveness<type>::LocalCalc& localCalc)
+    void build(Inst* prevInst, Inst* nextInst, const typename TmpLiveness<bank>::LocalCalc& localCalc)
     {
         if (traceDebug)
             dataLog("Building between ", pointerDump(prevInst), " and ", pointerDump(nextInst), ":\n");
 
         Inst::forEachDefWithExtraClobberedRegs<Tmp>(
             prevInst, nextInst,
-            [&] (const Tmp& arg, Arg::Role, Arg::Type argType, Arg::Width) {
-                if (argType != type)
+            [&] (const Tmp& arg, Arg::Role, Bank argBank, Width) {
+                if (argBank != bank)
                     return;
                 
                 // All the Def()s interfere with each other and with all the extra clobbered Tmps.
@@ -1615,8 +1615,8 @@ protected:
                 // do not need interference edges in our implementation.
                 Inst::forEachDef<Tmp>(
                     prevInst, nextInst,
-                    [&] (Tmp& otherArg, Arg::Role, Arg::Type argType, Arg::Width) {
-                        if (argType != type)
+                    [&] (Tmp& otherArg, Arg::Role, Bank argBank, Width) {
+                        if (argBank != bank)
                             return;
                         
                         if (traceDebug)
@@ -1631,7 +1631,7 @@ protected:
             // coalesce the Move even if the two Tmp never interfere anywhere.
             Tmp defTmp;
             Tmp useTmp;
-            prevInst->forEachTmp([&defTmp, &useTmp] (Tmp& argTmp, Arg::Role role, Arg::Type, Arg::Width) {
+            prevInst->forEachTmp([&defTmp, &useTmp] (Tmp& argTmp, Arg::Role role, Bank, Width) {
                 if (Arg::isLateDef(role))
                     defTmp = argTmp;
                 else {
@@ -1695,17 +1695,17 @@ protected:
         }
     }
 
-    void addEdges(Inst* prevInst, Inst* nextInst, typename TmpLiveness<type>::LocalCalc::Iterable liveTmps)
+    void addEdges(Inst* prevInst, Inst* nextInst, typename TmpLiveness<bank>::LocalCalc::Iterable liveTmps)
     {
         // All the Def()s interfere with everthing live.
         Inst::forEachDefWithExtraClobberedRegs<Tmp>(
             prevInst, nextInst,
-            [&] (const Tmp& arg, Arg::Role, Arg::Type argType, Arg::Width) {
-                if (argType != type)
+            [&] (const Tmp& arg, Arg::Role, Bank argBank, Width) {
+                if (argBank != bank)
                     return;
                 
                 for (const Tmp& liveTmp : liveTmps) {
-                    ASSERT(liveTmp.isGP() == (type == Arg::GP));
+                    ASSERT(liveTmp.isGP() == (bank == GP));
                     
                     if (traceDebug)
                         dataLog("    Adding def-live edge: ", arg, ", ", liveTmp, "\n");
@@ -1713,7 +1713,7 @@ protected:
                     addEdge(arg, liveTmp);
                 }
 
-                if (type == Arg::GP && !arg.isGPR())
+                if (bank == GP && !arg.isGPR())
                     m_interferesWithFramePointer.quickSet(TmpMapper::absoluteIndex(arg));
             });
     }
@@ -1729,8 +1729,8 @@ protected:
     // that Move32's are not coalescable.
     static bool mayBeCoalescableImpl(const Inst& inst, TmpWidth* tmpWidth)
     {
-        switch (type) {
-        case Arg::GP:
+        switch (bank) {
+        case GP:
             switch (inst.kind.opcode) {
             case Move:
             case Move32:
@@ -1739,7 +1739,7 @@ protected:
                 return false;
             }
             break;
-        case Arg::FP:
+        case FP:
             switch (inst.kind.opcode) {
             case MoveFloat:
             case MoveDouble:
@@ -1755,8 +1755,8 @@ protected:
         if (!inst.args[0].isTmp() || !inst.args[1].isTmp())
             return false;
 
-        ASSERT(inst.args[0].type() == type);
-        ASSERT(inst.args[1].type() == type);
+        ASSERT(inst.args[0].bank() == bank);
+        ASSERT(inst.args[1].bank() == bank);
 
         // We can coalesce a Move32 so long as either of the following holds:
         // - The input is already zero-filled.
@@ -1769,8 +1769,8 @@ protected:
             if (!tmpWidth)
                 return false;
 
-            if (tmpWidth->defWidth(inst.args[0].tmp()) > Arg::Width32
-                && tmpWidth->useWidth(inst.args[1].tmp()) > Arg::Width32)
+            if (tmpWidth->defWidth(inst.args[0].tmp()) > Width32
+                && tmpWidth->useWidth(inst.args[1].tmp()) > Width32)
                 return false;
         }
         
@@ -1792,9 +1792,9 @@ public:
     {
         padInterference(m_code);
 
-        allocateOnType<Arg::GP>();
+        allocateOnBank<GP>();
         m_numIterations = 0;
-        allocateOnType<Arg::FP>();
+        allocateOnBank<FP>();
 
         fixSpillsAfterTerminals();
 
@@ -1803,10 +1803,10 @@ public:
     }
 
 private:
-    template<Arg::Type type>
-    void allocateOnType()
+    template<Bank bank>
+    void allocateOnBank()
     {
-        HashSet<unsigned> unspillableTmps = computeUnspillableTmps<type>();
+        HashSet<unsigned> unspillableTmps = computeUnspillableTmps<bank>();
 
         // FIXME: If a Tmp is used only from a Scratch role and that argument is !admitsStack, then
         // we should add the Tmp to unspillableTmps. That will help avoid relooping only to turn the
@@ -1837,23 +1837,23 @@ private:
             auto doAllocation = [&] (auto& allocator) -> bool {
                 allocator.allocate();
                 if (!allocator.requiresSpilling()) {
-                    this->assignRegistersToTmp<type>(allocator);
+                    this->assignRegistersToTmp<bank>(allocator);
                     if (traceDebug)
                         dataLog("Successfull allocation at iteration ", m_numIterations, ":\n", m_code);
 
                     return true;
                 }
 
-                this->addSpillAndFill<type>(allocator, unspillableTmps);
+                this->addSpillAndFill<bank>(allocator, unspillableTmps);
                 return false;
             };
             
             bool done;
             if ((isARM64() || Options::airForceBriggsAllocator()) && !Options::airForceIRCAllocator()) {
-                ColoringAllocator<type, Briggs> allocator(m_code, m_tmpWidth, m_useCounts, unspillableTmps);
+                ColoringAllocator<bank, Briggs> allocator(m_code, m_tmpWidth, m_useCounts, unspillableTmps);
                 done = doAllocation(allocator);
             } else {
-                ColoringAllocator<type, IRC> allocator(m_code, m_tmpWidth, m_useCounts, unspillableTmps);
+                ColoringAllocator<bank, IRC> allocator(m_code, m_tmpWidth, m_useCounts, unspillableTmps);
                 done = doAllocation(allocator);
             }
             if (done)
@@ -1861,7 +1861,7 @@ private:
         }
     }
 
-    template<Arg::Type type>
+    template<Bank bank>
     HashSet<unsigned> computeUnspillableTmps()
     {
 
@@ -1874,8 +1874,8 @@ private:
             unsigned admitStackCount { 0 };
         };
 
-        unsigned numTmps = m_code.numTmps(type);
-        unsigned arraySize = AbsoluteTmpMapper<type>::absoluteIndex(numTmps);
+        unsigned numTmps = m_code.numTmps(bank);
+        unsigned arraySize = AbsoluteTmpMapper<bank>::absoluteIndex(numTmps);
 
         Vector<Range, 0, UnsafeVectorOverflow> ranges;
         ranges.fill(Range(), arraySize);
@@ -1883,13 +1883,13 @@ private:
         unsigned globalIndex = 0;
         for (BasicBlock* block : m_code) {
             for (Inst& inst : *block) {
-                inst.forEachArg([&] (Arg& arg, Arg::Role, Arg::Type argType, Arg::Width) {
+                inst.forEachArg([&] (Arg& arg, Arg::Role, Bank argBank, Width) {
                     if (arg.isTmp() && inst.admitsStack(arg)) {
-                        if (argType != type)
+                        if (argBank != bank)
                             return;
 
                         Tmp tmp = arg.tmp();
-                        Range& range = ranges[AbsoluteTmpMapper<type>::absoluteIndex(tmp)];
+                        Range& range = ranges[AbsoluteTmpMapper<bank>::absoluteIndex(tmp)];
                         range.count++;
                         range.admitStackCount++;
                         if (globalIndex < range.first) {
@@ -1902,10 +1902,10 @@ private:
                     }
 
                     arg.forEachTmpFast([&] (Tmp& tmp) {
-                        if (tmp.isGP() != (type == Arg::GP))
+                        if (tmp.isGP() != (bank == GP))
                             return;
 
-                        Range& range = ranges[AbsoluteTmpMapper<type>::absoluteIndex(tmp)];
+                        Range& range = ranges[AbsoluteTmpMapper<bank>::absoluteIndex(tmp)];
                         range.count++;
                         if (globalIndex < range.first) {
                             range.first = globalIndex;
@@ -1919,7 +1919,7 @@ private:
             }
             ++globalIndex;
         }
-        for (unsigned i = AbsoluteTmpMapper<type>::lastMachineRegisterIndex() + 1; i < ranges.size(); ++i) {
+        for (unsigned i = AbsoluteTmpMapper<bank>::lastMachineRegisterIndex() + 1; i < ranges.size(); ++i) {
             Range& range = ranges[i];
             if (range.last - range.first <= 1 && range.count > range.admitStackCount)
                 unspillableTmps.add(i);
@@ -1928,7 +1928,7 @@ private:
         return unspillableTmps;
     }
 
-    template<Arg::Type type, typename AllocatorType>
+    template<Bank bank, typename AllocatorType>
     void assignRegistersToTmp(const AllocatorType& allocator)
     {
         for (BasicBlock* block : m_code) {
@@ -1944,15 +1944,15 @@ private:
                 // equivalent if the destination's high bits are not observable or if the source's high
                 // bits are all zero. Note that we don't have the opposite optimization for other
                 // architectures, which may prefer Move over Move32, because Move is canonical already.
-                if (type == Arg::GP && inst.kind.opcode == Move
+                if (bank == GP && inst.kind.opcode == Move
                     && inst.args[0].isTmp() && inst.args[1].isTmp()) {
-                    if (m_tmpWidth.useWidth(inst.args[1].tmp()) <= Arg::Width32
-                        || m_tmpWidth.defWidth(inst.args[0].tmp()) <= Arg::Width32)
+                    if (m_tmpWidth.useWidth(inst.args[1].tmp()) <= Width32
+                        || m_tmpWidth.defWidth(inst.args[0].tmp()) <= Width32)
                         inst.kind.opcode = Move32;
                 }
 
                 inst.forEachTmpFast([&] (Tmp& tmp) {
-                    if (tmp.isReg() || tmp.isGP() == (type != Arg::GP))
+                    if (tmp.isReg() || tmp.isGP() == (bank != GP))
                         return;
 
                     Tmp aliasTmp = allocator.getAlias(tmp);
@@ -1980,18 +1980,18 @@ private:
         }
     }
 
-    static unsigned stackSlotMinimumWidth(Arg::Width width)
+    static unsigned stackSlotMinimumWidth(Width width)
     {
-        return width <= Arg::Width32 ? 4 : 8;
+        return width <= Width32 ? 4 : 8;
     }
 
-    template<Arg::Type type, typename AllocatorType>
+    template<Bank bank, typename AllocatorType>
     void addSpillAndFill(const AllocatorType& allocator, HashSet<unsigned>& unspillableTmps)
     {
         HashMap<Tmp, StackSlot*> stackSlots;
         for (Tmp tmp : allocator.spilledTmps()) {
             // All the spilled values become unspillable.
-            unspillableTmps.add(AbsoluteTmpMapper<type>::absoluteIndex(tmp));
+            unspillableTmps.add(AbsoluteTmpMapper<bank>::absoluteIndex(tmp));
 
             // Allocate stack slot for each spilled value.
             StackSlot* stackSlot = m_code.addStackSlot(
@@ -2015,18 +2015,18 @@ private:
                 // Move is the canonical way to move data between GPRs.
                 bool canUseMove32IfDidSpill = false;
                 bool didSpill = false;
-                if (type == Arg::GP && inst.kind.opcode == Move) {
-                    if ((inst.args[0].isTmp() && m_tmpWidth.width(inst.args[0].tmp()) <= Arg::Width32)
-                        || (inst.args[1].isTmp() && m_tmpWidth.width(inst.args[1].tmp()) <= Arg::Width32))
+                if (bank == GP && inst.kind.opcode == Move) {
+                    if ((inst.args[0].isTmp() && m_tmpWidth.width(inst.args[0].tmp()) <= Width32)
+                        || (inst.args[1].isTmp() && m_tmpWidth.width(inst.args[1].tmp()) <= Width32))
                         canUseMove32IfDidSpill = true;
                 }
 
                 // Try to replace the register use by memory use when possible.
                 inst.forEachArg(
-                    [&] (Arg& arg, Arg::Role role, Arg::Type argType, Arg::Width width) {
+                    [&] (Arg& arg, Arg::Role role, Bank argBank, Width width) {
                         if (!arg.isTmp())
                             return;
-                        if (argType != type)
+                        if (argBank != bank)
                             return;
                         if (arg.isReg())
                             return;
@@ -2047,16 +2047,16 @@ private:
                                 return;
                         }
                         
-                        Arg::Width spillWidth = m_tmpWidth.requiredWidth(arg.tmp());
+                        Width spillWidth = m_tmpWidth.requiredWidth(arg.tmp());
                         if (Arg::isAnyDef(role) && width < spillWidth)
                             return;
                         ASSERT(inst.kind.opcode == Move || !(Arg::isAnyUse(role) && width > spillWidth));
                         
-                        if (spillWidth != Arg::Width32)
+                        if (spillWidth != Width32)
                             canUseMove32IfDidSpill = false;
                         
                         stackSlotEntry->value->ensureSize(
-                            canUseMove32IfDidSpill ? 4 : Arg::bytes(width));
+                            canUseMove32IfDidSpill ? 4 : bytes(width));
                         arg = Arg::stack(stackSlotEntry->value);
                         didSpill = true;
                     });
@@ -2065,8 +2065,8 @@ private:
                     inst.kind.opcode = Move32;
 
                 // For every other case, add Load/Store as needed.
-                inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Arg::Type argType, Arg::Width) {
-                    if (tmp.isReg() || argType != type)
+                inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Bank argBank, Width) {
+                    if (tmp.isReg() || argBank != bank)
                         return;
 
                     auto stackSlotEntry = stackSlots.find(tmp);
@@ -2079,22 +2079,22 @@ private:
                         return;
                     }
 
-                    Arg::Width spillWidth = m_tmpWidth.requiredWidth(tmp);
+                    Width spillWidth = m_tmpWidth.requiredWidth(tmp);
                     Opcode move = Oops;
                     switch (stackSlotMinimumWidth(spillWidth)) {
                     case 4:
-                        move = type == Arg::GP ? Move32 : MoveFloat;
+                        move = bank == GP ? Move32 : MoveFloat;
                         break;
                     case 8:
-                        move = type == Arg::GP ? Move : MoveDouble;
+                        move = bank == GP ? Move : MoveDouble;
                         break;
                     default:
                         RELEASE_ASSERT_NOT_REACHED();
                         break;
                     }
 
-                    tmp = m_code.newTmp(type);
-                    unspillableTmps.add(AbsoluteTmpMapper<type>::absoluteIndex(tmp));
+                    tmp = m_code.newTmp(bank);
+                    unspillableTmps.add(AbsoluteTmpMapper<bank>::absoluteIndex(tmp));
 
                     Arg arg = Arg::stack(stackSlotEntry->value);
                     if (Arg::isAnyUse(role) && role != Arg::Scratch)

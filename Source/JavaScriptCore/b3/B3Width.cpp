@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,40 +20,39 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "B3Width.h"
 
 #if ENABLE(B3_JIT)
 
-#include "B3Value.h"
-#include "GPRInfo.h"
+#include <wtf/PrintStream.h>
 
-namespace JSC { namespace B3 {
+namespace WTF {
 
-class JS_EXPORT_PRIVATE WasmAddressValue : public Value {
-public:
-    static bool accepts(Kind kind) { return kind == WasmAddress; }
+void printInternal(PrintStream& out, JSC::B3::Width width)
+{
+    switch (width) {
+    case JSC::B3::Width8:
+        out.print("8");
+        return;
+    case JSC::B3::Width16:
+        out.print("16");
+        return;
+    case JSC::B3::Width32:
+        out.print("32");
+        return;
+    case JSC::B3::Width64:
+        out.print("64");
+        return;
+    }
 
-    ~WasmAddressValue();
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
-    GPRReg pinnedGPR() const { return m_pinnedGPR; }
-
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
-    Value* cloneImpl() const override;
-
-private:
-    friend class Procedure;
-
-    WasmAddressValue(Origin, Value*, GPRReg);
-
-    GPRReg m_pinnedGPR;
-};
-
-} } // namespace JSC::B3
-
+} // namespace WTF
 
 #endif // ENABLE(B3_JIT)
+

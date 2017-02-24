@@ -110,6 +110,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirValidate.cpp
 
     b3/B3ArgumentRegValue.cpp
+    b3/B3Bank.cpp
     b3/B3BasicBlock.cpp
     b3/B3BlockInsertionSet.cpp
     b3/B3BreakCriticalEdges.cpp
@@ -178,6 +179,7 @@ set(JavaScriptCore_SOURCES
     b3/B3VariableValue.cpp
     b3/B3WasmAddressValue.cpp
     b3/B3WasmBoundsCheckValue.cpp
+    b3/B3Width.cpp
 
     bindings/ScriptFunctionCall.cpp
     bindings/ScriptObject.cpp

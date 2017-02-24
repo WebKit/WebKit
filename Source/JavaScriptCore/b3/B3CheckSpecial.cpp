@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -110,9 +110,9 @@ void CheckSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallba
 {
     Inst hidden = hiddenBranch(inst);
     hidden.forEachArg(
-        [&] (Arg& arg, Arg::Role role, Arg::Type type, Arg::Width width) {
+        [&] (Arg& arg, Arg::Role role, Bank bank, Width width) {
             unsigned index = &arg - &hidden.args[0];
-            callback(inst.args[1 + index], role, type, width);
+            callback(inst.args[1 + index], role, bank, width);
         });
 
     std::optional<unsigned> firstRecoverableIndex;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,10 +62,10 @@ Arg marshallCCallArgumentImpl(unsigned& argumentCount, unsigned& stackOffset, Va
 Arg marshallCCallArgument(
     unsigned& gpArgumentCount, unsigned& fpArgumentCount, unsigned& stackOffset, Value* child)
 {
-    switch (Arg::typeForB3Type(child->type())) {
-    case Arg::GP:
+    switch (bankForType(child->type())) {
+    case GP:
         return marshallCCallArgumentImpl<GPRInfo>(gpArgumentCount, stackOffset, child);
-    case Arg::FP:
+    case FP:
         return marshallCCallArgumentImpl<FPRInfo>(fpArgumentCount, stackOffset, child);
     }
     RELEASE_ASSERT_NOT_REACHED();

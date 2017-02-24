@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@ bool Inst::hasArgEffects()
 {
     bool result = false;
     forEachArg(
-        [&] (Arg&, Arg::Role role, Arg::Type, Arg::Width) {
+        [&] (Arg&, Arg::Role role, Bank, Width) {
             if (Arg::isAnyDef(role))
                 result = true;
         });

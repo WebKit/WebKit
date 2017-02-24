@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,10 @@
 #if ENABLE(B3_JIT)
 
 #include "AirTmp.h"
+#include "B3Bank.h"
 #include "B3Common.h"
 #include "B3Type.h"
+#include "B3Width.h"
 #include <wtf/Optional.h>
 
 #if COMPILER(GCC) && ASSERT_DISABLED
@@ -161,34 +163,6 @@ public:
         // imply that we're Use'ing any registers that the Arg contains.
         UseAddr
     };
-
-    enum Type : int8_t {
-        GP,
-        FP
-    };
-
-    static const unsigned numTypes = 2;
-
-    template<typename Functor>
-    static void forEachType(const Functor& functor)
-    {
-        functor(GP);
-        functor(FP);
-    }
-
-    enum Width : int8_t {
-        Width8,
-        Width16,
-        Width32,
-        Width64
-    };
-
-    static Width pointerWidth()
-    {
-        if (sizeof(void*) == 8)
-            return Width64;
-        return Width32;
-    }
 
     enum Signedness : int8_t {
         Signed,
@@ -387,70 +361,6 @@ public:
             return true;
         }
         ASSERT_NOT_REACHED();
-    }
-
-    static Type typeForB3Type(B3::Type type)
-    {
-        switch (type) {
-        case Void:
-            ASSERT_NOT_REACHED();
-            return GP;
-        case Int32:
-        case Int64:
-            return GP;
-        case Float:
-        case Double:
-            return FP;
-        }
-        ASSERT_NOT_REACHED();
-        return GP;
-    }
-
-    static Width widthForB3Type(B3::Type type)
-    {
-        switch (type) {
-        case Void:
-            ASSERT_NOT_REACHED();
-            return Width8;
-        case Int32:
-        case Float:
-            return Width32;
-        case Int64:
-        case Double:
-            return Width64;
-        }
-        ASSERT_NOT_REACHED();
-    }
-
-    static Width conservativeWidth(Type type)
-    {
-        return type == GP ? pointerWidth() : Width64;
-    }
-
-    static Width minimumWidth(Type type)
-    {
-        return type == GP ? Width8 : Width32;
-    }
-
-    static unsigned bytes(Width width)
-    {
-        return 1 << width;
-    }
-
-    static Width widthForBytes(unsigned bytes)
-    {
-        switch (bytes) {
-        case 0:
-        case 1:
-            return Width8;
-        case 2:
-            return Width16;
-        case 3:
-        case 4:
-            return Width32;
-        default:
-            return Width64;
-        }
     }
 
     Arg()
@@ -978,7 +888,7 @@ public:
         ASSERT_NOT_REACHED();
     }
 
-    bool hasType() const
+    bool hasBank() const
     {
         switch (kind()) {
         case Imm:
@@ -993,14 +903,14 @@ public:
     }
     
     // The type is ambiguous for some arg kinds. Call with care.
-    Type type() const
+    Bank bank() const
     {
         return isGP() ? GP : FP;
     }
 
-    bool isType(Type type) const
+    bool isBank(Bank bank) const
     {
-        switch (type) {
+        switch (bank) {
         case GP:
             return isGP();
         case FP:
@@ -1011,7 +921,7 @@ public:
 
     bool canRepresent(Value* value) const;
 
-    bool isCompatibleType(const Arg& other) const;
+    bool isCompatibleBank(const Arg& other) const;
 
     bool isGPR() const
     {
@@ -1184,7 +1094,7 @@ public:
     void forEachFast(const Functor&);
 
     template<typename Thing, typename Functor>
-    void forEach(Role, Type, Width, const Functor&);
+    void forEach(Role, Bank, Width, const Functor&);
 
     // This is smart enough to know that an address arg in a Def or UseDef rule will use its
     // tmps and never def them. For example, this:
@@ -1193,12 +1103,12 @@ public:
     //
     // This defs (%rcx) but uses %rcx.
     template<typename Functor>
-    void forEachTmp(Role argRole, Type argType, Width argWidth, const Functor& functor)
+    void forEachTmp(Role argRole, Bank argBank, Width argWidth, const Functor& functor)
     {
         switch (m_kind) {
         case Tmp:
             ASSERT(isAnyUse(argRole) || isAnyDef(argRole));
-            functor(m_base, argRole, argType, argWidth);
+            functor(m_base, argRole, argBank, argWidth);
             break;
         case Addr:
             functor(m_base, Use, GP, argRole == UseAddr ? argWidth : pointerWidth());
@@ -1359,8 +1269,6 @@ namespace WTF {
 
 JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Kind);
 JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Role);
-JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Type);
-JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Width);
 JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Arg::Signedness);
 
 template<typename T> struct DefaultHash;

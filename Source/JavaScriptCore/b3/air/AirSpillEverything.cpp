@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,7 +70,7 @@ void spillEverything(Code& code)
             // code is suboptimal.
             Inst::forEachDefWithExtraClobberedRegs<Tmp>(
                 block->get(index - 1), block->get(index),
-                [&] (const Tmp& tmp, Arg::Role, Arg::Type, Arg::Width) {
+                [&] (const Tmp& tmp, Arg::Role, Bank, Width) {
                     if (tmp.isReg())
                         registerSet.set(tmp.reg());
                 });
@@ -85,12 +85,12 @@ void spillEverything(Code& code)
     }
 
     // Allocate a stack slot for each tmp.
-    Vector<StackSlot*> allStackSlots[Arg::numTypes];
-    for (unsigned typeIndex = 0; typeIndex < Arg::numTypes; ++typeIndex) {
-        Vector<StackSlot*>& stackSlots = allStackSlots[typeIndex];
-        Arg::Type type = static_cast<Arg::Type>(typeIndex);
-        stackSlots.resize(code.numTmps(type));
-        for (unsigned tmpIndex = code.numTmps(type); tmpIndex--;)
+    Vector<StackSlot*> allStackSlots[numBanks];
+    for (unsigned bankIndex = 0; bankIndex < numBanks; ++bankIndex) {
+        Vector<StackSlot*>& stackSlots = allStackSlots[bankIndex];
+        Bank bank = static_cast<Bank>(bankIndex);
+        stackSlots.resize(code.numTmps(bank));
+        for (unsigned tmpIndex = code.numTmps(bank); tmpIndex--;)
             stackSlots[tmpIndex] = code.addStackSlot(8, StackSlotKind::Spill);
     }
 
@@ -110,7 +110,7 @@ void spillEverything(Code& code)
                         continue;
 
                     if (inst.admitsStack(i)) {
-                        StackSlot* stackSlot = allStackSlots[arg.type()][arg.tmpIndex()];
+                        StackSlot* stackSlot = allStackSlots[arg.bank()][arg.tmpIndex()];
                         arg = Arg::stack(stackSlot);
                         continue;
                     }
@@ -119,11 +119,11 @@ void spillEverything(Code& code)
 
             // Now fall back on spilling using separate Move's to load/store the tmp.
             inst.forEachTmp(
-                [&] (Tmp& tmp, Arg::Role role, Arg::Type type, Arg::Width) {
+                [&] (Tmp& tmp, Arg::Role role, Bank bank, Width) {
                     if (tmp.isReg())
                         return;
                     
-                    StackSlot* stackSlot = allStackSlots[type][tmp.tmpIndex()];
+                    StackSlot* stackSlot = allStackSlots[bank][tmp.tmpIndex()];
                     Arg arg = Arg::stack(stackSlot);
 
                     // Need to figure out a register to use. How we do that depends on the role.
@@ -131,7 +131,7 @@ void spillEverything(Code& code)
                     switch (role) {
                     case Arg::Use:
                     case Arg::ColdUse:
-                        for (Reg reg : code.regsInPriorityOrder(type)) {
+                        for (Reg reg : code.regsInPriorityOrder(bank)) {
                             if (!setBefore.get(reg)) {
                                 setBefore.set(reg);
                                 chosenReg = reg;
@@ -141,7 +141,7 @@ void spillEverything(Code& code)
                         break;
                     case Arg::Def:
                     case Arg::ZDef:
-                        for (Reg reg : code.regsInPriorityOrder(type)) {
+                        for (Reg reg : code.regsInPriorityOrder(bank)) {
                             if (!setAfter.get(reg)) {
                                 setAfter.set(reg);
                                 chosenReg = reg;
@@ -155,7 +155,7 @@ void spillEverything(Code& code)
                     case Arg::LateColdUse:
                     case Arg::Scratch:
                     case Arg::EarlyDef:
-                        for (Reg reg : code.regsInPriorityOrder(type)) {
+                        for (Reg reg : code.regsInPriorityOrder(bank)) {
                             if (!setBefore.get(reg) && !setAfter.get(reg)) {
                                 setAfter.set(reg);
                                 setBefore.set(reg);
@@ -173,7 +173,7 @@ void spillEverything(Code& code)
 
                     tmp = Tmp(chosenReg);
 
-                    Opcode move = type == Arg::GP ? Move : MoveDouble;
+                    Opcode move = bank == GP ? Move : MoveDouble;
 
                     if (Arg::isAnyUse(role) && role != Arg::Scratch)
                         insertionSet.insert(instIndex, move, inst.origin, arg, tmp);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,7 +90,7 @@ public:
 
                 // forEachArg must return Arg&'s that point into the args array.
                 inst.forEachArg(
-                    [&] (Arg& arg, Arg::Role, Arg::Type, Arg::Width) {
+                    [&] (Arg& arg, Arg::Role, Bank, Width) {
                         VALIDATE(&arg >= &inst.args[0], ("At ", arg, " in ", inst, " in ", *block));
                         VALIDATE(&arg <= &inst.args.last(), ("At ", arg, " in ", inst, " in ", *block));
                     });

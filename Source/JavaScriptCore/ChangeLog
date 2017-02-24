@@ -1,3 +1,239 @@
+2017-02-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Move Arg::Type and Arg::Width out into the B3 namespace, since they are general concepts
+        https://bugs.webkit.org/show_bug.cgi?id=168833
+
+        Reviewed by Saam Barati.
+        
+        I want to use the Air::Arg::Type and Air::Arg::Width concepts in B3. We are already
+        doing this a bit, and it's akward because of the namespacing. Throughout B3 we take the
+        approach that if something is not specific to Air, then it should be in the B3
+        namespace.
+        
+        This moves Air::Arg::Type to B3::Bank. This moves Air::Arg::Width to B3::Width.
+        
+        I renamed Arg::Type to Bank because there is already a B3::Type and because Arg::Type
+        was never really a type. Its purpose was always to identify register banks, and we use
+        this enum when the thing we care about is whether the value is most appropriate for
+        GPRs or FPRs.
+        
+        I kept both as non-enum classes because I think that we've learned that terse compiler
+        code is a good thing. I don't want to say Bank::GP when I can say GP. With Width, the
+        argument is even stronger, since you cannot say Width::8 but you can say Width8.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3Bank.cpp: Added.
+        (WTF::printInternal):
+        * b3/B3Bank.h: Added.
+        (JSC::B3::forEachBank):
+        (JSC::B3::bankForType):
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::forEachArg):
+        * b3/B3LegalizeMemoryOffsets.cpp:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::tmp):
+        (JSC::B3::Air::LowerToAir::scaleForShl):
+        (JSC::B3::Air::LowerToAir::effectiveAddr):
+        (JSC::B3::Air::LowerToAir::addr):
+        (JSC::B3::Air::LowerToAir::createGenericCompare):
+        (JSC::B3::Air::LowerToAir::createBranch):
+        (JSC::B3::Air::LowerToAir::createCompare):
+        (JSC::B3::Air::LowerToAir::createSelect):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3MemoryValue.cpp:
+        (JSC::B3::MemoryValue::accessWidth):
+        * b3/B3MemoryValue.h:
+        * b3/B3MoveConstants.cpp:
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::forEachArg):
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        * b3/B3Value.h:
+        * b3/B3Variable.h:
+        (JSC::B3::Variable::width):
+        (JSC::B3::Variable::bank):
+        * b3/B3WasmAddressValue.h:
+        * b3/B3Width.cpp: Added.
+        (WTF::printInternal):
+        * b3/B3Width.h: Added.
+        (JSC::B3::pointerWidth):
+        (JSC::B3::widthForType):
+        (JSC::B3::conservativeWidth):
+        (JSC::B3::minimumWidth):
+        (JSC::B3::bytes):
+        (JSC::B3::widthForBytes):
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        * b3/air/AirAllocateStack.cpp:
+        (JSC::B3::Air::allocateStack):
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::canRepresent):
+        (JSC::B3::Air::Arg::isCompatibleBank):
+        (JSC::B3::Air::Arg::isCompatibleType): Deleted.
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::hasBank):
+        (JSC::B3::Air::Arg::bank):
+        (JSC::B3::Air::Arg::isBank):
+        (JSC::B3::Air::Arg::forEachTmp):
+        (JSC::B3::Air::Arg::forEachType): Deleted.
+        (JSC::B3::Air::Arg::pointerWidth): Deleted.
+        (JSC::B3::Air::Arg::typeForB3Type): Deleted.
+        (JSC::B3::Air::Arg::widthForB3Type): Deleted.
+        (JSC::B3::Air::Arg::conservativeWidth): Deleted.
+        (JSC::B3::Air::Arg::minimumWidth): Deleted.
+        (JSC::B3::Air::Arg::bytes): Deleted.
+        (JSC::B3::Air::Arg::widthForBytes): Deleted.
+        (JSC::B3::Air::Arg::hasType): Deleted.
+        (JSC::B3::Air::Arg::type): Deleted.
+        (JSC::B3::Air::Arg::isType): Deleted.
+        * b3/air/AirArgInlines.h:
+        (JSC::B3::Air::ArgThingHelper<Tmp>::forEach):
+        (JSC::B3::Air::ArgThingHelper<Arg>::forEach):
+        (JSC::B3::Air::ArgThingHelper<Reg>::forEach):
+        (JSC::B3::Air::Arg::forEach):
+        * b3/air/AirCCallSpecial.cpp:
+        (JSC::B3::Air::CCallSpecial::forEachArg):
+        * b3/air/AirCCallingConvention.cpp:
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::Code):
+        (JSC::B3::Air::Code::setRegsInPriorityOrder):
+        (JSC::B3::Air::Code::pinRegister):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::regsInPriorityOrder):
+        (JSC::B3::Air::Code::newTmp):
+        (JSC::B3::Air::Code::numTmps):
+        (JSC::B3::Air::Code::regsInPriorityOrderImpl):
+        * b3/air/AirCustom.cpp:
+        (JSC::B3::Air::PatchCustom::isValidForm):
+        (JSC::B3::Air::ShuffleCustom::isValidForm):
+        * b3/air/AirCustom.h:
+        (JSC::B3::Air::PatchCustom::forEachArg):
+        (JSC::B3::Air::CCallCustom::forEachArg):
+        (JSC::B3::Air::ColdCCallCustom::forEachArg):
+        (JSC::B3::Air::ShuffleCustom::forEachArg):
+        (JSC::B3::Air::WasmBoundsCheckCustom::forEachArg):
+        * b3/air/AirDumpAsJS.cpp:
+        (JSC::B3::Air::dumpAsJS):
+        * b3/air/AirEliminateDeadCode.cpp:
+        (JSC::B3::Air::eliminateDeadCode):
+        * b3/air/AirEmitShuffle.cpp:
+        (JSC::B3::Air::emitShuffle):
+        * b3/air/AirEmitShuffle.h:
+        (JSC::B3::Air::ShufflePair::ShufflePair):
+        (JSC::B3::Air::ShufflePair::width):
+        * b3/air/AirFixObviousSpills.cpp:
+        * b3/air/AirFixPartialRegisterStalls.cpp:
+        (JSC::B3::Air::fixPartialRegisterStalls):
+        * b3/air/AirInst.cpp:
+        (JSC::B3::Air::Inst::hasArgEffects):
+        * b3/air/AirInst.h:
+        (JSC::B3::Air::Inst::forEachTmp):
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::forEach):
+        (JSC::B3::Air::Inst::forEachDef):
+        (JSC::B3::Air::Inst::forEachDefWithExtraClobberedRegs):
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::TmpLivenessAdapter::numIndices):
+        (JSC::B3::Air::TmpLivenessAdapter::acceptsBank):
+        (JSC::B3::Air::TmpLivenessAdapter::valueToIndex):
+        (JSC::B3::Air::TmpLivenessAdapter::indexToValue):
+        (JSC::B3::Air::StackSlotLivenessAdapter::acceptsBank):
+        (JSC::B3::Air::RegLivenessAdapter::acceptsBank):
+        (JSC::B3::Air::AbstractLiveness::AbstractLiveness):
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::execute):
+        (JSC::B3::Air::TmpLivenessAdapter::acceptsType): Deleted.
+        (JSC::B3::Air::StackSlotLivenessAdapter::acceptsType): Deleted.
+        (JSC::B3::Air::RegLivenessAdapter::acceptsType): Deleted.
+        * b3/air/AirLogRegisterPressure.cpp:
+        (JSC::B3::Air::logRegisterPressure):
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * b3/air/AirLowerMacros.cpp:
+        (JSC::B3::Air::lowerMacros):
+        * b3/air/AirPadInterference.cpp:
+        (JSC::B3::Air::padInterference):
+        * b3/air/AirReportUsedRegisters.cpp:
+        (JSC::B3::Air::reportUsedRegisters):
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/air/AirTmpInlines.h:
+        (JSC::B3::Air::AbsoluteTmpMapper<Arg::GP>::absoluteIndex): Deleted.
+        (JSC::B3::Air::AbsoluteTmpMapper<Arg::GP>::lastMachineRegisterIndex): Deleted.
+        (JSC::B3::Air::AbsoluteTmpMapper<Arg::GP>::tmpFromAbsoluteIndex): Deleted.
+        (JSC::B3::Air::AbsoluteTmpMapper<Arg::FP>::absoluteIndex): Deleted.
+        (JSC::B3::Air::AbsoluteTmpMapper<Arg::FP>::lastMachineRegisterIndex): Deleted.
+        (JSC::B3::Air::AbsoluteTmpMapper<Arg::FP>::tmpFromAbsoluteIndex): Deleted.
+        * b3/air/AirTmpWidth.cpp:
+        (JSC::B3::Air::TmpWidth::recompute):
+        * b3/air/AirTmpWidth.h:
+        (JSC::B3::Air::TmpWidth::width):
+        (JSC::B3::Air::TmpWidth::requiredWidth):
+        (JSC::B3::Air::TmpWidth::defWidth):
+        (JSC::B3::Air::TmpWidth::useWidth):
+        (JSC::B3::Air::TmpWidth::Widths::Widths):
+        * b3/air/AirUseCounts.h:
+        (JSC::B3::Air::UseCounts::UseCounts):
+        * b3/air/AirValidate.cpp:
+        * b3/air/opcode_generator.rb:
+        * b3/air/testair.cpp:
+        (JSC::B3::Air::compile): Deleted.
+        (JSC::B3::Air::invoke): Deleted.
+        (JSC::B3::Air::compileAndRun): Deleted.
+        (JSC::B3::Air::testSimple): Deleted.
+        (JSC::B3::Air::loadConstantImpl): Deleted.
+        (JSC::B3::Air::loadConstant): Deleted.
+        (JSC::B3::Air::loadDoubleConstant): Deleted.
+        (JSC::B3::Air::testShuffleSimpleSwap): Deleted.
+        (JSC::B3::Air::testShuffleSimpleShift): Deleted.
+        (JSC::B3::Air::testShuffleLongShift): Deleted.
+        (JSC::B3::Air::testShuffleLongShiftBackwards): Deleted.
+        (JSC::B3::Air::testShuffleSimpleRotate): Deleted.
+        (JSC::B3::Air::testShuffleSimpleBroadcast): Deleted.
+        (JSC::B3::Air::testShuffleBroadcastAllRegs): Deleted.
+        (JSC::B3::Air::testShuffleTreeShift): Deleted.
+        (JSC::B3::Air::testShuffleTreeShiftBackward): Deleted.
+        (JSC::B3::Air::testShuffleTreeShiftOtherBackward): Deleted.
+        (JSC::B3::Air::testShuffleMultipleShifts): Deleted.
+        (JSC::B3::Air::testShuffleRotateWithFringe): Deleted.
+        (JSC::B3::Air::testShuffleRotateWithFringeInWeirdOrder): Deleted.
+        (JSC::B3::Air::testShuffleRotateWithLongFringe): Deleted.
+        (JSC::B3::Air::testShuffleMultipleRotates): Deleted.
+        (JSC::B3::Air::testShuffleShiftAndRotate): Deleted.
+        (JSC::B3::Air::testShuffleShiftAllRegs): Deleted.
+        (JSC::B3::Air::testShuffleRotateAllRegs): Deleted.
+        (JSC::B3::Air::testShuffleSimpleSwap64): Deleted.
+        (JSC::B3::Air::testShuffleSimpleShift64): Deleted.
+        (JSC::B3::Air::testShuffleSwapMixedWidth): Deleted.
+        (JSC::B3::Air::testShuffleShiftMixedWidth): Deleted.
+        (JSC::B3::Air::testShuffleShiftMemory): Deleted.
+        (JSC::B3::Air::testShuffleShiftMemoryLong): Deleted.
+        (JSC::B3::Air::testShuffleShiftMemoryAllRegs): Deleted.
+        (JSC::B3::Air::testShuffleShiftMemoryAllRegs64): Deleted.
+        (JSC::B3::Air::combineHiLo): Deleted.
+        (JSC::B3::Air::testShuffleShiftMemoryAllRegsMixedWidth): Deleted.
+        (JSC::B3::Air::testShuffleRotateMemory): Deleted.
+        (JSC::B3::Air::testShuffleRotateMemory64): Deleted.
+        (JSC::B3::Air::testShuffleRotateMemoryMixedWidth): Deleted.
+        (JSC::B3::Air::testShuffleRotateMemoryAllRegs64): Deleted.
+        (JSC::B3::Air::testShuffleRotateMemoryAllRegsMixedWidth): Deleted.
+        (JSC::B3::Air::testShuffleSwapDouble): Deleted.
+        (JSC::B3::Air::testShuffleShiftDouble): Deleted.
+        (JSC::B3::Air::testX86VMULSD): Deleted.
+        (JSC::B3::Air::testX86VMULSDDestRex): Deleted.
+        (JSC::B3::Air::testX86VMULSDOp1DestRex): Deleted.
+        (JSC::B3::Air::testX86VMULSDOp2DestRex): Deleted.
+        (JSC::B3::Air::testX86VMULSDOpsDestRex): Deleted.
+        (JSC::B3::Air::testX86VMULSDAddr): Deleted.
+        (JSC::B3::Air::testX86VMULSDAddrOpRexAddr): Deleted.
+        (JSC::B3::Air::testX86VMULSDDestRexAddr): Deleted.
+        (JSC::B3::Air::testX86VMULSDRegOpDestRexAddr): Deleted.
+        (JSC::B3::Air::testX86VMULSDAddrOpDestRexAddr): Deleted.
+        (JSC::B3::Air::testX86VMULSDBaseNeedsRex): Deleted.
+        (JSC::B3::Air::testX86VMULSDIndexNeedsRex): Deleted.
+        (JSC::B3::Air::testX86VMULSDBaseIndexNeedRex): Deleted.
+        (JSC::B3::Air::run): Deleted.
+
 2017-02-24  Keith Miller  <keith_miller@apple.com>
 
         We should be able to use std::tuples as keys in HashMap

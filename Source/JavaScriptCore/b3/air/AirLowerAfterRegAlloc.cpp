@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,11 +81,11 @@ void lowerAfterRegAlloc(Code& code)
         }
     }
 
-    auto getScratches = [&] (RegisterSet set, Arg::Type type) -> std::array<Arg, 2> {
+    auto getScratches = [&] (RegisterSet set, Bank bank) -> std::array<Arg, 2> {
         std::array<Arg, 2> result;
         for (unsigned i = 0; i < 2; ++i) {
             bool found = false;
-            for (Reg reg : code.regsInPriorityOrder(type)) {
+            for (Reg reg : code.regsInPriorityOrder(bank)) {
                 if (!set.get(reg)) {
                     result[i] = Tmp(reg);
                     set.set(reg);
@@ -96,7 +96,7 @@ void lowerAfterRegAlloc(Code& code)
             if (!found) {
                 result[i] = Arg::stack(
                     code.addStackSlot(
-                        Arg::bytes(Arg::conservativeWidth(type)),
+                        bytes(conservativeWidth(bank)),
                         StackSlotKind::Spill));
             }
         }
@@ -116,7 +116,7 @@ void lowerAfterRegAlloc(Code& code)
                 for (unsigned i = 0; i < inst.args.size(); i += 3) {
                     Arg src = inst.args[i + 0];
                     Arg dst = inst.args[i + 1];
-                    Arg::Width width = inst.args[i + 2].width();
+                    Width width = inst.args[i + 2].width();
 
                     // The used register set contains things live after the shuffle. But
                     // emitShuffle() wants a scratch register that is not just dead but also does not
@@ -130,8 +130,8 @@ void lowerAfterRegAlloc(Code& code)
                     
                     pairs.append(ShufflePair(src, dst, width));
                 }
-                std::array<Arg, 2> gpScratch = getScratches(set, Arg::GP);
-                std::array<Arg, 2> fpScratch = getScratches(set, Arg::FP);
+                std::array<Arg, 2> gpScratch = getScratches(set, GP);
+                std::array<Arg, 2> fpScratch = getScratches(set, FP);
                 insertionSet.insertInsts(
                     instIndex, emitShuffle(code, pairs, gpScratch, fpScratch, inst.origin));
                 inst = Inst();
@@ -158,7 +158,7 @@ void lowerAfterRegAlloc(Code& code)
                     Value* child = value->child(i);
                     Arg src = inst.args[result ? (i >= 1 ? i + 1 : i) : i ];
                     Arg dst = destinations[i];
-                    Arg::Width width = Arg::widthForB3Type(child->type());
+                    Width width = widthForType(child->type());
                     pairs.append(ShufflePair(src, dst, width));
 
                     auto excludeRegisters = [&] (Tmp tmp) {
@@ -169,8 +169,8 @@ void lowerAfterRegAlloc(Code& code)
                     dst.forEachTmpFast(excludeRegisters);
                 }
 
-                std::array<Arg, 2> gpScratch = getScratches(preUsed, Arg::GP);
-                std::array<Arg, 2> fpScratch = getScratches(preUsed, Arg::FP);
+                std::array<Arg, 2> gpScratch = getScratches(preUsed, GP);
+                std::array<Arg, 2> fpScratch = getScratches(preUsed, FP);
                 
                 // Also need to save all live registers. Don't need to worry about the result
                 // register.
@@ -181,9 +181,9 @@ void lowerAfterRegAlloc(Code& code)
                     [&] (Reg reg) {
                         Tmp tmp(reg);
                         Arg arg(tmp);
-                        Arg::Width width = Arg::conservativeWidth(arg.type());
+                        Width width = conservativeWidth(arg.bank());
                         StackSlot* stackSlot =
-                            code.addStackSlot(Arg::bytes(width), StackSlotKind::Spill);
+                            code.addStackSlot(bytes(width), StackSlotKind::Spill);
                         pairs.append(ShufflePair(arg, Arg::stack(stackSlot), width));
                         stackSlots.append(stackSlot);
                     });
@@ -205,12 +205,12 @@ void lowerAfterRegAlloc(Code& code)
                     [&] (Reg reg) {
                         Tmp tmp(reg);
                         Arg arg(tmp);
-                        Arg::Width width = Arg::conservativeWidth(arg.type());
+                        Width width = conservativeWidth(arg.bank());
                         StackSlot* stackSlot = stackSlots[stackSlotIndex++];
                         pairs.append(ShufflePair(Arg::stack(stackSlot), arg, width));
                     });
                 if (result) {
-                    ShufflePair pair(result, originalResult, Arg::widthForB3Type(value->type()));
+                    ShufflePair pair(result, originalResult, widthForType(value->type()));
                     pairs.append(pair);
                 }
 
@@ -219,8 +219,8 @@ void lowerAfterRegAlloc(Code& code)
                 if (originalResult.isReg())
                     liveRegs.set(originalResult.reg());
 
-                gpScratch = getScratches(liveRegs, Arg::GP);
-                fpScratch = getScratches(liveRegs, Arg::FP);
+                gpScratch = getScratches(liveRegs, GP);
+                fpScratch = getScratches(liveRegs, FP);
                 
                 insertionSet.insertInsts(
                     instIndex + 1, emitShuffle(code, pairs, gpScratch, fpScratch, inst.origin));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,7 +94,7 @@ public:
         for (Value* value : m_procedure.values()) {
             switch (value->opcode()) {
             case Phi: {
-                m_phiToTmp[value] = m_code.newTmp(Arg::typeForB3Type(value->type()));
+                m_phiToTmp[value] = m_code.newTmp(value->resultBank());
                 if (verbose)
                     dataLog("Phi tmp for ", *value, ": ", m_phiToTmp[value], "\n");
                 break;
@@ -107,7 +107,7 @@ public:
         for (B3::StackSlot* stack : m_procedure.stackSlots())
             m_stackToStack.add(stack, m_code.addStackSlot(stack));
         for (Variable* variable : m_procedure.variables())
-            m_variableToTmp.add(variable, m_code.newTmp(Arg::typeForB3Type(variable->type())));
+            m_variableToTmp.add(variable, m_code.newTmp(variable->bank()));
 
         // Figure out which blocks are not rare.
         m_fastWorklist.push(m_procedure[0]);
@@ -361,7 +361,7 @@ private:
 
             Tmp& realTmp = m_valueToTmp[value];
             if (!realTmp) {
-                realTmp = m_code.newTmp(Arg::typeForB3Type(value->type()));
+                realTmp = m_code.newTmp(value->resultBank());
                 if (m_procedure.isFastConstant(value->key()))
                     m_code.addFastTmp(realTmp);
                 if (verbose)
@@ -427,7 +427,7 @@ private:
         return true;
     }
     
-    std::optional<unsigned> scaleForShl(Value* shl, int32_t offset, std::optional<Arg::Width> width = std::nullopt)
+    std::optional<unsigned> scaleForShl(Value* shl, int32_t offset, std::optional<Width> width = std::nullopt)
     {
         if (shl->opcode() != Shl)
             return std::nullopt;
@@ -450,7 +450,7 @@ private:
     }
 
     // This turns the given operand into an address.
-    Arg effectiveAddr(Value* address, int32_t offset, Arg::Width width)
+    Arg effectiveAddr(Value* address, int32_t offset, Width width)
     {
         ASSERT(Arg::isValidAddrForm(offset, width));
 
@@ -538,7 +538,7 @@ private:
             return Arg();
 
         int32_t offset = value->offset();
-        Arg::Width width = Arg::widthForBytes(value->accessByteSize());
+        Width width = value->accessWidth();
 
         Arg result = effectiveAddr(value->lastChild(), offset, width);
         ASSERT(result.isValidForm(width));
@@ -1137,8 +1137,8 @@ private:
     template<typename CompareFunctor, typename TestFunctor, typename CompareDoubleFunctor, typename CompareFloatFunctor>
     Inst createGenericCompare(
         Value* value,
-        const CompareFunctor& compare, // Signature: (Arg::Width, Arg relCond, Arg, Arg) -> Inst
-        const TestFunctor& test, // Signature: (Arg::Width, Arg resCond, Arg, Arg) -> Inst
+        const CompareFunctor& compare, // Signature: (Width, Arg relCond, Arg, Arg) -> Inst
+        const TestFunctor& test, // Signature: (Width, Arg resCond, Arg, Arg) -> Inst
         const CompareDoubleFunctor& compareDouble, // Signature: (Arg doubleCond, Arg, Arg) -> Inst
         const CompareFloatFunctor& compareFloat, // Signature: (Arg doubleCond, Arg, Arg) -> Inst
         bool inverted = false)
@@ -1300,7 +1300,7 @@ private:
                 Arg rightImm = imm(right);
 
                 auto tryCompare = [&] (
-                    Arg::Width width, ArgPromise&& left, ArgPromise&& right) -> Inst {
+                    Width width, ArgPromise&& left, ArgPromise&& right) -> Inst {
                     if (Inst result = compare(width, relCond, left, right))
                         return result;
                     if (Inst result = compare(width, relCond.flipped(), right, left))
@@ -1309,7 +1309,7 @@ private:
                 };
 
                 auto tryCompareLoadImm = [&] (
-                    Arg::Width width, B3::Opcode loadOpcode, Arg::Signedness signedness) -> Inst {
+                    Width width, B3::Opcode loadOpcode, Arg::Signedness signedness) -> Inst {
                     if (rightImm && rightImm.isRepresentableAs(width, signedness)) {
                         if (Inst result = tryCompare(width, loadPromise(left, loadOpcode), rightImm)) {
                             commitInternal(left);
@@ -1325,7 +1325,7 @@ private:
                     return Inst();
                 };
 
-                Arg::Width width = Arg::widthForB3Type(value->child(0)->type());
+                Width width = value->child(0)->resultWidth();
                 
                 if (canCommitInternal) {
                     // First handle compares that involve fewer bits than B3's type system supports.
@@ -1338,22 +1338,22 @@ private:
                     //     Branch(@3)
                 
                     if (relCond.isSignedCond()) {
-                        if (Inst result = tryCompareLoadImm(Arg::Width8, Load8S, Arg::Signed))
+                        if (Inst result = tryCompareLoadImm(Width8, Load8S, Arg::Signed))
                             return result;
                     }
                 
                     if (relCond.isUnsignedCond()) {
-                        if (Inst result = tryCompareLoadImm(Arg::Width8, Load8Z, Arg::Unsigned))
+                        if (Inst result = tryCompareLoadImm(Width8, Load8Z, Arg::Unsigned))
                             return result;
                     }
 
                     if (relCond.isSignedCond()) {
-                        if (Inst result = tryCompareLoadImm(Arg::Width16, Load16S, Arg::Signed))
+                        if (Inst result = tryCompareLoadImm(Width16, Load16S, Arg::Signed))
                             return result;
                     }
                 
                     if (relCond.isUnsignedCond()) {
-                        if (Inst result = tryCompareLoadImm(Arg::Width16, Load16Z, Arg::Unsigned))
+                        if (Inst result = tryCompareLoadImm(Width16, Load16Z, Arg::Unsigned))
                             return result;
                     }
 
@@ -1402,11 +1402,11 @@ private:
             return compareDouble(doubleCond, leftPromise, rightPromise);
         };
 
-        Arg::Width width = Arg::widthForB3Type(value->type());
+        Width width = value->resultWidth();
         Arg resCond = Arg::resCond(MacroAssembler::NonZero).inverted(inverted);
         
         auto tryTest = [&] (
-            Arg::Width width, ArgPromise&& left, ArgPromise&& right) -> Inst {
+            Width width, ArgPromise&& left, ArgPromise&& right) -> Inst {
             if (Inst result = test(width, resCond, left, right))
                 return result;
             if (Inst result = test(width, resCond, right, left))
@@ -1457,7 +1457,7 @@ private:
                     rightImm64 = bitImm64(right);
                 }
                 
-                auto tryTestLoadImm = [&] (Arg::Width width, Arg::Signedness signedness, B3::Opcode loadOpcode) -> Inst {
+                auto tryTestLoadImm = [&] (Width width, Arg::Signedness signedness, B3::Opcode loadOpcode) -> Inst {
                     if (!hasRightConst)
                         return Inst();
                     // Signed loads will create high bits, so if the immediate has high bits
@@ -1491,16 +1491,16 @@ private:
                 if (canCommitInternal) {
                     // First handle test's that involve fewer bits than B3's type system supports.
 
-                    if (Inst result = tryTestLoadImm(Arg::Width8, Arg::Unsigned, Load8Z))
+                    if (Inst result = tryTestLoadImm(Width8, Arg::Unsigned, Load8Z))
                         return result;
                     
-                    if (Inst result = tryTestLoadImm(Arg::Width8, Arg::Signed, Load8S))
+                    if (Inst result = tryTestLoadImm(Width8, Arg::Signed, Load8S))
                         return result;
                     
-                    if (Inst result = tryTestLoadImm(Arg::Width16, Arg::Unsigned, Load16Z))
+                    if (Inst result = tryTestLoadImm(Width16, Arg::Unsigned, Load16Z))
                         return result;
                     
-                    if (Inst result = tryTestLoadImm(Arg::Width16, Arg::Signed, Load16S))
+                    if (Inst result = tryTestLoadImm(Width16, Arg::Signed, Load16S))
                         return result;
 
                     // This allows us to use a 32-bit test for 64-bit BitAnd if the immediate is
@@ -1508,7 +1508,7 @@ private:
                     // as if we were pondering using a 32-bit test for
                     // BitAnd(SExt(Load(ptr)), const), in the sense that in both cases we have
                     // to worry about high bits. So, we use the "Signed" version of this helper.
-                    if (Inst result = tryTestLoadImm(Arg::Width32, Arg::Signed, Load))
+                    if (Inst result = tryTestLoadImm(Width32, Arg::Signed, Load))
                         return result;
                     
                     // This is needed to handle 32-bit test for arbitrary 32-bit immediates.
@@ -1517,7 +1517,7 @@ private:
                     
                     // Now handle test's that involve a load.
                     
-                    Arg::Width width = Arg::widthForB3Type(value->child(0)->type());
+                    Width width = value->child(0)->resultWidth();
                     if (Inst result = tryTest(width, loadPromise(left), tmpPromise(right))) {
                         commitInternal(left);
                         return result;
@@ -1532,15 +1532,15 @@ private:
                 // Now handle test's that involve an immediate and a tmp.
 
                 if (hasRightConst) {
-                    if ((width == Arg::Width32 && rightConst == 0xffffffff)
-                        || (width == Arg::Width64 && rightConst == -1)) {
+                    if ((width == Width32 && rightConst == 0xffffffff)
+                        || (width == Width64 && rightConst == -1)) {
                         if (Inst result = tryTest(width, tmpPromise(left), tmpPromise(left)))
                             return result;
                     }
                     if (isRepresentableAs<uint32_t>(rightConst)) {
-                        if (Inst result = tryTest(Arg::Width32, tmpPromise(left), rightImm))
+                        if (Inst result = tryTest(Width32, tmpPromise(left), rightImm))
                             return result;
-                        if (Inst result = tryTest(Arg::Width32, tmpPromise(left), rightImm64))
+                        if (Inst result = tryTest(Width32, tmpPromise(left), rightImm64))
                             return result;
                     }
                     if (Inst result = tryTest(width, tmpPromise(left), rightImm))
@@ -1568,22 +1568,22 @@ private:
             if (canCommitInternal && value->as<MemoryValue>()) {
                 // Handle things like Branch(Load8Z(value))
 
-                if (Inst result = tryTest(Arg::Width8, loadPromise(value, Load8Z), Arg::bitImm(-1))) {
+                if (Inst result = tryTest(Width8, loadPromise(value, Load8Z), Arg::bitImm(-1))) {
                     commitInternal(value);
                     return result;
                 }
 
-                if (Inst result = tryTest(Arg::Width8, loadPromise(value, Load8S), Arg::bitImm(-1))) {
+                if (Inst result = tryTest(Width8, loadPromise(value, Load8S), Arg::bitImm(-1))) {
                     commitInternal(value);
                     return result;
                 }
 
-                if (Inst result = tryTest(Arg::Width16, loadPromise(value, Load16Z), Arg::bitImm(-1))) {
+                if (Inst result = tryTest(Width16, loadPromise(value, Load16Z), Arg::bitImm(-1))) {
                     commitInternal(value);
                     return result;
                 }
 
-                if (Inst result = tryTest(Arg::Width16, loadPromise(value, Load16S), Arg::bitImm(-1))) {
+                if (Inst result = tryTest(Width16, loadPromise(value, Load16S), Arg::bitImm(-1))) {
                     commitInternal(value);
                     return result;
                 }
@@ -1612,26 +1612,26 @@ private:
         return createGenericCompare(
             value,
             [this] (
-                Arg::Width width, const Arg& relCond,
+                Width width, const Arg& relCond,
                 ArgPromise& left, ArgPromise& right) -> Inst {
                 switch (width) {
-                case Arg::Width8:
+                case Width8:
                     if (isValidForm(Branch8, Arg::RelCond, left.kind(), right.kind())) {
                         return left.inst(right.inst(
                             Branch8, m_value, relCond,
                             left.consume(*this), right.consume(*this)));
                     }
                     return Inst();
-                case Arg::Width16:
+                case Width16:
                     return Inst();
-                case Arg::Width32:
+                case Width32:
                     if (isValidForm(Branch32, Arg::RelCond, left.kind(), right.kind())) {
                         return left.inst(right.inst(
                             Branch32, m_value, relCond,
                             left.consume(*this), right.consume(*this)));
                     }
                     return Inst();
-                case Arg::Width64:
+                case Width64:
                     if (isValidForm(Branch64, Arg::RelCond, left.kind(), right.kind())) {
                         return left.inst(right.inst(
                             Branch64, m_value, relCond,
@@ -1642,26 +1642,26 @@ private:
                 ASSERT_NOT_REACHED();
             },
             [this] (
-                Arg::Width width, const Arg& resCond,
+                Width width, const Arg& resCond,
                 ArgPromise& left, ArgPromise& right) -> Inst {
                 switch (width) {
-                case Arg::Width8:
+                case Width8:
                     if (isValidForm(BranchTest8, Arg::ResCond, left.kind(), right.kind())) {
                         return left.inst(right.inst(
                             BranchTest8, m_value, resCond,
                             left.consume(*this), right.consume(*this)));
                     }
                     return Inst();
-                case Arg::Width16:
+                case Width16:
                     return Inst();
-                case Arg::Width32:
+                case Width32:
                     if (isValidForm(BranchTest32, Arg::ResCond, left.kind(), right.kind())) {
                         return left.inst(right.inst(
                             BranchTest32, m_value, resCond,
                             left.consume(*this), right.consume(*this)));
                     }
                     return Inst();
-                case Arg::Width64:
+                case Width64:
                     if (isValidForm(BranchTest64, Arg::ResCond, left.kind(), right.kind())) {
                         return left.inst(right.inst(
                             BranchTest64, m_value, resCond,
@@ -1695,20 +1695,20 @@ private:
         return createGenericCompare(
             value,
             [this] (
-                Arg::Width width, const Arg& relCond,
+                Width width, const Arg& relCond,
                 ArgPromise& left, ArgPromise& right) -> Inst {
                 switch (width) {
-                case Arg::Width8:
-                case Arg::Width16:
+                case Width8:
+                case Width16:
                     return Inst();
-                case Arg::Width32:
+                case Width32:
                     if (isValidForm(Compare32, Arg::RelCond, left.kind(), right.kind(), Arg::Tmp)) {
                         return left.inst(right.inst(
                             Compare32, m_value, relCond,
                             left.consume(*this), right.consume(*this), tmp(m_value)));
                     }
                     return Inst();
-                case Arg::Width64:
+                case Width64:
                     if (isValidForm(Compare64, Arg::RelCond, left.kind(), right.kind(), Arg::Tmp)) {
                         return left.inst(right.inst(
                             Compare64, m_value, relCond,
@@ -1719,20 +1719,20 @@ private:
                 ASSERT_NOT_REACHED();
             },
             [this] (
-                Arg::Width width, const Arg& resCond,
+                Width width, const Arg& resCond,
                 ArgPromise& left, ArgPromise& right) -> Inst {
                 switch (width) {
-                case Arg::Width8:
-                case Arg::Width16:
+                case Width8:
+                case Width16:
                     return Inst();
-                case Arg::Width32:
+                case Width32:
                     if (isValidForm(Test32, Arg::ResCond, left.kind(), right.kind(), Arg::Tmp)) {
                         return left.inst(right.inst(
                             Test32, m_value, resCond,
                             left.consume(*this), right.consume(*this), tmp(m_value)));
                     }
                     return Inst();
-                case Arg::Width64:
+                case Width64:
                     if (isValidForm(Test64, Arg::ResCond, left.kind(), right.kind(), Arg::Tmp)) {
                         return left.inst(right.inst(
                             Test64, m_value, resCond,
@@ -1793,36 +1793,32 @@ private:
 
         return createGenericCompare(
             m_value->child(0),
-            [&] (
-                Arg::Width width, const Arg& relCond,
-                ArgPromise& left, ArgPromise& right) -> Inst {
+            [&] (Width width, const Arg& relCond, ArgPromise& left, ArgPromise& right) -> Inst {
                 switch (width) {
-                case Arg::Width8:
+                case Width8:
                     // FIXME: Support these things.
                     // https://bugs.webkit.org/show_bug.cgi?id=151504
                     return Inst();
-                case Arg::Width16:
+                case Width16:
                     return Inst();
-                case Arg::Width32:
+                case Width32:
                     return createSelectInstruction(config.moveConditionally32, relCond, left, right);
-                case Arg::Width64:
+                case Width64:
                     return createSelectInstruction(config.moveConditionally64, relCond, left, right);
                 }
                 ASSERT_NOT_REACHED();
             },
-            [&] (
-                Arg::Width width, const Arg& resCond,
-                ArgPromise& left, ArgPromise& right) -> Inst {
+            [&] (Width width, const Arg& resCond, ArgPromise& left, ArgPromise& right) -> Inst {
                 switch (width) {
-                case Arg::Width8:
+                case Width8:
                     // FIXME: Support more things.
                     // https://bugs.webkit.org/show_bug.cgi?id=151504
                     return Inst();
-                case Arg::Width16:
+                case Width16:
                     return Inst();
-                case Arg::Width32:
+                case Width32:
                     return createSelectInstruction(config.moveConditionallyTest32, resCond, left, right);
-                case Arg::Width64:
+                case Width64:
                     return createSelectInstruction(config.moveConditionallyTest64, resCond, left, right);
                 }
                 ASSERT_NOT_REACHED();
@@ -2535,9 +2531,9 @@ private:
                 patchpointValue->lateClobbered().clear(patchpointValue->resultConstraint.reg());
 
             for (unsigned i = patchpointValue->numGPScratchRegisters; i--;)
-                inst.args.append(m_code.newTmp(Arg::GP));
+                inst.args.append(m_code.newTmp(GP));
             for (unsigned i = patchpointValue->numFPScratchRegisters; i--;)
-                inst.args.append(m_code.newTmp(Arg::FP));
+                inst.args.append(m_code.newTmp(FP));
             
             m_insts.last().append(WTFMove(inst));
             m_insts.last().appendVector(after);
@@ -2619,8 +2615,8 @@ private:
             } else if (isValidForm(opcode, Arg::ResCond, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                 sources.append(tmp(left));
                 sources.append(tmp(right));
-                sources.append(m_code.newTmp(Arg::typeForB3Type(m_value->type())));
-                sources.append(m_code.newTmp(Arg::typeForB3Type(m_value->type())));
+                sources.append(m_code.newTmp(m_value->resultBank()));
+                sources.append(m_code.newTmp(m_value->resultBank()));
             }
 
             // There is a really hilarious case that arises when we do BranchAdd32(%x, %x). We won't emit
@@ -2682,13 +2678,13 @@ private:
 
             Value* ptr = value->child(0);
 
-            Arg temp = m_code.newTmp(Arg::GP);
+            Arg temp = m_code.newTmp(GP);
             append(Inst(Move32, value, tmp(ptr), temp));
             if (value->offset()) {
                 if (imm(value->offset()))
                     append(Add64, imm(value->offset()), temp);
                 else {
-                    Arg bigImm = m_code.newTmp(Arg::GP);
+                    Arg bigImm = m_code.newTmp(GP);
                     append(Move, Arg::bigImm(value->offset()), bigImm);
                     append(Add64, bigImm, temp);
                 }

@@ -270,6 +270,10 @@
 		0F2BDC4F15228BF300CD8910 /* DFGValueSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2BDC4E15228BE700CD8910 /* DFGValueSource.cpp */; };
 		0F2BDC5115228FFD00CD8910 /* DFGVariableEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2BDC5015228FFA00CD8910 /* DFGVariableEvent.cpp */; };
 		0F2C63AA1E4FA42E00C13839 /* RunningScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2C63A91E4FA42C00C13839 /* RunningScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F2C63AF1E60AE4100C13839 /* B3Bank.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2C63AB1E60AE3C00C13839 /* B3Bank.cpp */; };
+		0F2C63B01E60AE4300C13839 /* B3Bank.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2C63AC1E60AE3C00C13839 /* B3Bank.h */; };
+		0F2C63B11E60AE4500C13839 /* B3Width.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2C63AD1E60AE3C00C13839 /* B3Width.cpp */; };
+		0F2C63B21E60AE4700C13839 /* B3Width.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2C63AE1E60AE3D00C13839 /* B3Width.h */; };
 		0F2D4DDD19832D34007D4B19 /* DebuggerScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D4DDB19832D34007D4B19 /* DebuggerScope.cpp */; };
 		0F2D4DDE19832D34007D4B19 /* DebuggerScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2D4DDC19832D34007D4B19 /* DebuggerScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2D4DE819832DAC007D4B19 /* ToThisStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D4DE519832DAC007D4B19 /* ToThisStatus.cpp */; };
@@ -2756,6 +2760,10 @@
 		0F2BDC4E15228BE700CD8910 /* DFGValueSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGValueSource.cpp; path = dfg/DFGValueSource.cpp; sourceTree = "<group>"; };
 		0F2BDC5015228FFA00CD8910 /* DFGVariableEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGVariableEvent.cpp; path = dfg/DFGVariableEvent.cpp; sourceTree = "<group>"; };
 		0F2C63A91E4FA42C00C13839 /* RunningScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunningScope.h; sourceTree = "<group>"; };
+		0F2C63AB1E60AE3C00C13839 /* B3Bank.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Bank.cpp; path = b3/B3Bank.cpp; sourceTree = "<group>"; };
+		0F2C63AC1E60AE3C00C13839 /* B3Bank.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Bank.h; path = b3/B3Bank.h; sourceTree = "<group>"; };
+		0F2C63AD1E60AE3C00C13839 /* B3Width.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Width.cpp; path = b3/B3Width.cpp; sourceTree = "<group>"; };
+		0F2C63AE1E60AE3D00C13839 /* B3Width.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Width.h; path = b3/B3Width.h; sourceTree = "<group>"; };
 		0F2D4DDB19832D34007D4B19 /* DebuggerScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerScope.cpp; sourceTree = "<group>"; };
 		0F2D4DDC19832D34007D4B19 /* DebuggerScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerScope.h; sourceTree = "<group>"; };
 		0F2D4DDF19832D91007D4B19 /* TypeProfilerLog.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeProfilerLog.cpp; sourceTree = "<group>"; };
@@ -5284,6 +5292,8 @@
 				0FEC84B31BDACD880080FF74 /* air */,
 				0FEC84B41BDACDAC0080FF74 /* B3ArgumentRegValue.cpp */,
 				0FEC84B51BDACDAC0080FF74 /* B3ArgumentRegValue.h */,
+				0F2C63AB1E60AE3C00C13839 /* B3Bank.cpp */,
+				0F2C63AC1E60AE3C00C13839 /* B3Bank.h */,
 				0FEC84B61BDACDAC0080FF74 /* B3BasicBlock.cpp */,
 				0FEC84B71BDACDAC0080FF74 /* B3BasicBlock.h */,
 				0FEC84B81BDACDAC0080FF74 /* B3BasicBlockInlines.h */,
@@ -5440,6 +5450,8 @@
 				53D444DB1DAF08AB00B92784 /* B3WasmAddressValue.h */,
 				5341FC6F1DAC33E500E7E4D7 /* B3WasmBoundsCheckValue.cpp */,
 				5341FC711DAC343C00E7E4D7 /* B3WasmBoundsCheckValue.h */,
+				0F2C63AD1E60AE3C00C13839 /* B3Width.cpp */,
+				0F2C63AE1E60AE3D00C13839 /* B3Width.h */,
 				0FEC85AE1BDB5D5E0080FF74 /* testb3.cpp */,
 			);
 			name = b3;
@@ -7915,6 +7927,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F2C63B21E60AE4700C13839 /* B3Width.h in Headers */,
 				0FFA549816B8835300B3A982 /* A64DOpcode.h in Headers */,
 				0F1FE51C1922A3BC006987C5 /* AbortReason.h in Headers */,
 				860161E30F3A83C100F84710 /* AbstractMacroAssembler.h in Headers */,
@@ -8390,6 +8403,7 @@
 				0F2FCCFF18A60070001A27F8 /* DFGThreadData.h in Headers */,
 				0FC097A2146B28CC00CF2442 /* DFGThunks.h in Headers */,
 				0FD8A32817D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.h in Headers */,
+				0F2C63B01E60AE4300C13839 /* B3Bank.h in Headers */,
 				0FD8A32A17D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h in Headers */,
 				0FD8A32C17D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h in Headers */,
 				0FE7211E193B9C590031F6ED /* DFGTransition.h in Headers */,
@@ -9806,6 +9820,7 @@
 				0FB3878F1BFBC44D00E3AB1E /* AirOptimizeBlockOrder.cpp in Sources */,
 				0F9CABC81DB54A780008E83B /* AirPadInterference.cpp in Sources */,
 				0FEC85831BDACDC70080FF74 /* AirPhaseScope.cpp in Sources */,
+				0F2C63B11E60AE4500C13839 /* B3Width.cpp in Sources */,
 				0F45703C1BE45F0A0062A629 /* AirReportUsedRegisters.cpp in Sources */,
 				0F338DFD1BED51270013C88F /* AirSimplifyCFG.cpp in Sources */,
 				0FEC85871BDACDC70080FF74 /* AirSpecial.cpp in Sources */,
@@ -10531,6 +10546,7 @@
 				14280844107EC0930013E7B2 /* RegExpPrototype.cpp in Sources */,
 				6540C7A01B82E1C3000F6B79 /* RegisterAtOffset.cpp in Sources */,
 				6540C7A11B82E1C3000F6B79 /* RegisterAtOffsetList.cpp in Sources */,
+				0F2C63AF1E60AE4100C13839 /* B3Bank.cpp in Sources */,
 				0FC3141518146D7000033232 /* RegisterSet.cpp in Sources */,
 				0FD0E5EC1E43D3530006AB08 /* GCConductor.cpp in Sources */,
 				A57D23ED1891B5540031C7FA /* RegularExpression.cpp in Sources */,

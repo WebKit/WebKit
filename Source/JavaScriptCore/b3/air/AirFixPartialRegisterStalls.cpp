@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,7 +120,7 @@ void updateDistances(Inst& inst, FPDefDistance& localDistance, unsigned& distanc
         return;
     }
 
-    inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Arg::Type, Arg::Width) {
+    inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Bank, Width) {
         ASSERT_WITH_MESSAGE(tmp.isReg(), "This phase must be run after register allocation.");
 
         if (tmp.isFPR() && Arg::isAnyDef(role))
@@ -210,7 +210,7 @@ void fixPartialRegisterStalls(Code& code)
             if (hasPartialXmmRegUpdate(inst)) {
                 RegisterSet defs;
                 RegisterSet uses;
-                inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Arg::Type, Arg::Width) {
+                inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Bank, Width) {
                     if (tmp.isFPR()) {
                         if (Arg::isAnyDef(role))
                             defs.set(tmp.fpr());

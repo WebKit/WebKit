@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,15 +73,15 @@ bool Arg::usesTmp(Air::Tmp tmp) const
 
 bool Arg::canRepresent(Value* value) const
 {
-    return isType(typeForB3Type(value->type()));
+    return isBank(bankForType(value->type()));
 }
 
-bool Arg::isCompatibleType(const Arg& other) const
+bool Arg::isCompatibleBank(const Arg& other) const
 {
-    if (hasType())
-        return other.isType(type());
-    if (other.hasType())
-        return isType(other.type());
+    if (hasBank())
+        return other.isBank(bank());
+    if (other.hasBank())
+        return isBank(other.bank());
     return true;
 }
 
@@ -287,40 +287,6 @@ void printInternal(PrintStream& out, Arg::Role role)
         return;
     case Arg::Scratch:
         out.print("Scratch");
-        return;
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-void printInternal(PrintStream& out, Arg::Type type)
-{
-    switch (type) {
-    case Arg::GP:
-        out.print("GP");
-        return;
-    case Arg::FP:
-        out.print("FP");
-        return;
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-void printInternal(PrintStream& out, Arg::Width width)
-{
-    switch (width) {
-    case Arg::Width8:
-        out.print("8");
-        return;
-    case Arg::Width16:
-        out.print("16");
-        return;
-    case Arg::Width32:
-        out.print("32");
-        return;
-    case Arg::Width64:
-        out.print("64");
         return;
     }
 

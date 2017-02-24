@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,40 +20,88 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #pragma once
 
 #if ENABLE(B3_JIT)
 
-#include "B3Value.h"
-#include "GPRInfo.h"
+#include "B3Bank.h"
+#include "B3Type.h"
 
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE WasmAddressValue : public Value {
-public:
-    static bool accepts(Kind kind) { return kind == WasmAddress; }
-
-    ~WasmAddressValue();
-
-    GPRReg pinnedGPR() const { return m_pinnedGPR; }
-
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
-    Value* cloneImpl() const override;
-
-private:
-    friend class Procedure;
-
-    WasmAddressValue(Origin, Value*, GPRReg);
-
-    GPRReg m_pinnedGPR;
+enum Width : int8_t {
+    Width8,
+    Width16,
+    Width32,
+    Width64
 };
+
+inline Width pointerWidth()
+{
+    if (sizeof(void*) == 8)
+        return Width64;
+    return Width32;
+}
+
+inline Width widthForType(Type type)
+{
+    switch (type) {
+    case Void:
+        ASSERT_NOT_REACHED();
+        return Width8;
+    case Int32:
+    case Float:
+        return Width32;
+    case Int64:
+    case Double:
+        return Width64;
+    }
+    ASSERT_NOT_REACHED();
+}
+
+inline Width conservativeWidth(Bank bank)
+{
+    return bank == GP ? pointerWidth() : Width64;
+}
+
+inline Width minimumWidth(Bank bank)
+{
+    return bank == GP ? Width8 : Width32;
+}
+
+inline unsigned bytes(Width width)
+{
+    return 1 << width;
+}
+
+inline Width widthForBytes(unsigned bytes)
+{
+    switch (bytes) {
+    case 0:
+    case 1:
+        return Width8;
+    case 2:
+        return Width16;
+    case 3:
+    case 4:
+        return Width32;
+    default:
+        return Width64;
+    }
+}
 
 } } // namespace JSC::B3
 
+namespace WTF {
+
+class PrintStream;
+
+void printInternal(PrintStream&, JSC::B3::Width);
+
+} // namespace WTF
 
 #endif // ENABLE(B3_JIT)
+

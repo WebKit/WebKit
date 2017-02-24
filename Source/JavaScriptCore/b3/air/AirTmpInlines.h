@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,11 +39,11 @@ inline Tmp::Tmp(const Arg& arg)
 
 // When a Hash structure is too slow or when Sets contains most values, you can
 // use direct array addressing with Tmps.
-template<Arg::Type type>
+template<Bank bank>
 struct AbsoluteTmpMapper;
 
 template<>
-struct AbsoluteTmpMapper<Arg::GP> {
+struct AbsoluteTmpMapper<GP> {
     static unsigned absoluteIndex(const Tmp& tmp)
     {
         ASSERT(tmp.isGP());
@@ -68,7 +68,7 @@ struct AbsoluteTmpMapper<Arg::GP> {
 };
 
 template<>
-struct AbsoluteTmpMapper<Arg::FP> {
+struct AbsoluteTmpMapper<FP> {
     static unsigned absoluteIndex(const Tmp& tmp)
     {
         ASSERT(tmp.isFP());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 #if ENABLE(B3_JIT)
 
-#include "AirArg.h"
+#include "B3Bank.h"
 #include "B3Effects.h"
 #include "B3FrequentedBlock.h"
 #include "B3Kind.h"
@@ -35,9 +35,11 @@
 #include "B3SparseCollection.h"
 #include "B3Type.h"
 #include "B3ValueKey.h"
+#include "B3Width.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TriState.h>
 
 namespace JSC { namespace B3 {
 
@@ -86,8 +88,8 @@ public:
     void setType(Type type) { m_type = type; }
 
     // This is useful when lowering. Note that this is only valid for non-void values.
-    Air::Arg::Type airType() const { return Air::Arg::typeForB3Type(type()); }
-    Air::Arg::Width airWidth() const { return Air::Arg::widthForB3Type(type()); }
+    Bank resultBank() const { return bankForType(type()); }
+    Width resultWidth() const { return widthForType(type()); }
 
     AdjacencyList& children() { return m_children; } 
     const AdjacencyList& children() const { return m_children; }

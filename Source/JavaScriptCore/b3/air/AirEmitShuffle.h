@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ public:
     {
     }
     
-    ShufflePair(const Arg& src, const Arg& dst, Arg::Width width)
+    ShufflePair(const Arg& src, const Arg& dst, Width width)
         : m_src(src)
         , m_dst(dst)
         , m_width(width)
@@ -57,14 +57,14 @@ public:
 
     // The width determines the kind of move we do. You can only choose Width32 or Width64 right now.
     // For GP, it picks between Move32 and Move. For FP, it picks between MoveFloat and MoveDouble.
-    Arg::Width width() const { return m_width; }
+    Width width() const { return m_width; }
 
     void dump(PrintStream&) const;
     
 private:
     Arg m_src;
     Arg m_dst;
-    Arg::Width m_width { Arg::Width8 };
+    Width m_width { Width8 };
 };
 
 // Create a Shuffle instruction.
@@ -102,7 +102,7 @@ Inst createShuffle(Value* origin, const Vector<ShufflePair>&);
 // NOTE: Use this method (and its friend below) to emit shuffles after register allocation. Before
 // register allocation it is much better to simply use the Shuffle instruction.
 Vector<Inst> emitShuffle(
-    Code& code, Vector<ShufflePair>, std::array<Arg, 2> scratch, Arg::Type, Value* origin);
+    Code& code, Vector<ShufflePair>, std::array<Arg, 2> scratch, Bank, Value* origin);
 
 // Perform a shuffle that involves any number of types. Pass scratch registers or memory locations
 // for each type according to the rules above.

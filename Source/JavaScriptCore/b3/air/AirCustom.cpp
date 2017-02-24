@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ bool PatchCustom::isValidForm(Inst& inst)
     RegisterSet clobberedLate = inst.extraClobberedRegs();
     bool ok = true;
     inst.forEachTmp(
-        [&] (Tmp& tmp, Arg::Role role, Arg::Type, Arg::Width) {
+        [&] (Tmp& tmp, Arg::Role role, Bank, Width) {
             if (!tmp.isReg())
                 return;
             if (Arg::isLateDef(role) || Arg::isLateUse(role))
@@ -138,7 +138,7 @@ bool ShuffleCustom::isValidForm(Inst& inst)
             if (arg.isSomeImm())
                 continue;
 
-            if (!arg.isCompatibleType(inst.args[i + 1]))
+            if (!arg.isCompatibleBank(inst.args[i + 1]))
                 return false;
         } else {
             ASSERT(mode == 1);

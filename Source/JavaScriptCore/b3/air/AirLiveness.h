@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-template<Arg::Type adapterType>
+template<Bank adapterBank>
 struct TmpLivenessAdapter {
     typedef Tmp Thing;
     typedef HashSet<unsigned> IndexSet;
@@ -48,12 +48,12 @@ struct TmpLivenessAdapter {
 
     static unsigned numIndices(Code& code)
     {
-        unsigned numTmps = code.numTmps(adapterType);
-        return AbsoluteTmpMapper<adapterType>::absoluteIndex(numTmps);
+        unsigned numTmps = code.numTmps(adapterBank);
+        return AbsoluteTmpMapper<adapterBank>::absoluteIndex(numTmps);
     }
-    static bool acceptsType(Arg::Type type) { return type == adapterType; }
-    static unsigned valueToIndex(Tmp tmp) { return AbsoluteTmpMapper<adapterType>::absoluteIndex(tmp); }
-    static Tmp indexToValue(unsigned index) { return AbsoluteTmpMapper<adapterType>::tmpFromAbsoluteIndex(index); }
+    static bool acceptsBank(Bank bank) { return bank == adapterBank; }
+    static unsigned valueToIndex(Tmp tmp) { return AbsoluteTmpMapper<adapterBank>::absoluteIndex(tmp); }
+    static Tmp indexToValue(unsigned index) { return AbsoluteTmpMapper<adapterBank>::tmpFromAbsoluteIndex(index); }
 };
 
 struct StackSlotLivenessAdapter {
@@ -69,7 +69,7 @@ struct StackSlotLivenessAdapter {
     {
         return code.stackSlots().size();
     }
-    static bool acceptsType(Arg::Type) { return true; }
+    static bool acceptsBank(Bank) { return true; }
     static unsigned valueToIndex(StackSlot* stackSlot) { return stackSlot->index(); }
     StackSlot* indexToValue(unsigned index) { return m_code.stackSlots()[index]; }
 
@@ -88,7 +88,7 @@ struct RegLivenessAdapter {
         return Reg::maxIndex() + 1;
     }
 
-    static bool acceptsType(Arg::Type) { return true; }
+    static bool acceptsBank(Bank) { return true; }
     static unsigned valueToIndex(Reg reg) { return reg.index(); }
     Reg indexToValue(unsigned index) { return Reg::fromIndex(index); }
 };
@@ -110,8 +110,8 @@ public:
             typename Adapter::IndexSet& liveAtTail = m_liveAtTail[block];
 
             block->last().forEach<typename Adapter::Thing>(
-                [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type, Arg::Width) {
-                    if (Arg::isLateUse(role) && Adapter::acceptsType(type))
+                [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                    if (Arg::isLateUse(role) && Adapter::acceptsBank(bank))
                         liveAtTail.add(Adapter::valueToIndex(thing));
                 });
         }
@@ -139,8 +139,8 @@ public:
 
                 // Handle the early def's of the first instruction.
                 block->at(0).forEach<typename Adapter::Thing>(
-                    [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type, Arg::Width) {
-                        if (Arg::isEarlyDef(role) && Adapter::acceptsType(type))
+                    [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                        if (Arg::isEarlyDef(role) && Adapter::acceptsBank(bank))
                             m_workset.remove(Adapter::valueToIndex(thing));
                     });
 
@@ -254,23 +254,23 @@ public:
             if (instIndex + 1 < m_block->size()) {
                 Inst& nextInst = m_block->at(instIndex + 1);
                 nextInst.forEach<typename Adapter::Thing>(
-                    [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type, Arg::Width) {
-                        if (Arg::isEarlyDef(role) && Adapter::acceptsType(type))
+                    [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                        if (Arg::isEarlyDef(role) && Adapter::acceptsBank(bank))
                             workset.remove(Adapter::valueToIndex(thing));
                     });
             }
             
             // Then handle def's.
             inst.forEach<typename Adapter::Thing>(
-                [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type, Arg::Width) {
-                    if (Arg::isLateDef(role) && Adapter::acceptsType(type))
+                [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                    if (Arg::isLateDef(role) && Adapter::acceptsBank(bank))
                         workset.remove(Adapter::valueToIndex(thing));
                 });
 
             // Then handle use's.
             inst.forEach<typename Adapter::Thing>(
-                [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type, Arg::Width) {
-                    if (Arg::isEarlyUse(role) && Adapter::acceptsType(type))
+                [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                    if (Arg::isEarlyUse(role) && Adapter::acceptsBank(bank))
                         workset.add(Adapter::valueToIndex(thing));
                 });
 
@@ -278,8 +278,8 @@ public:
             if (instIndex) {
                 Inst& prevInst = m_block->at(instIndex - 1);
                 prevInst.forEach<typename Adapter::Thing>(
-                    [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type, Arg::Width) {
-                        if (Arg::isLateUse(role) && Adapter::acceptsType(type))
+                    [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                        if (Arg::isLateUse(role) && Adapter::acceptsBank(bank))
                             workset.add(Adapter::valueToIndex(thing));
                     });
             }
@@ -379,11 +379,11 @@ private:
     IndexMap<BasicBlock, typename Adapter::IndexSet> m_liveAtTail;
 };
 
-template<Arg::Type type>
-using TmpLiveness = AbstractLiveness<TmpLivenessAdapter<type>>;
+template<Bank bank>
+using TmpLiveness = AbstractLiveness<TmpLivenessAdapter<bank>>;
 
-typedef AbstractLiveness<TmpLivenessAdapter<Arg::GP>> GPLiveness;
-typedef AbstractLiveness<TmpLivenessAdapter<Arg::FP>> FPLiveness;
+typedef AbstractLiveness<TmpLivenessAdapter<GP>> GPLiveness;
+typedef AbstractLiveness<TmpLivenessAdapter<FP>> FPLiveness;
 typedef AbstractLiveness<StackSlotLivenessAdapter> StackSlotLiveness;
 typedef AbstractLiveness<RegLivenessAdapter> RegLiveness;
 
