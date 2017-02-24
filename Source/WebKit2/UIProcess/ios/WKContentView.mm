@@ -572,7 +572,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         [self updateFixedClippingView:fixedPositionRect];
 
         // We need to push the new content bounds to the webview to update fixed position rects.
-        [_webView _scheduleVisibleContentRectUpdate];
+        [_webView _updateVisibleContentRects];
     }
     
     // Updating the selection requires a full editor state. If the editor state is missing post layout

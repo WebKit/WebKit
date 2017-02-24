@@ -1,8 +1,7 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<!DOCTYPE html>
 
 <html>
 <head>
-    <meta name="viewport" content="initial-scale=1.0">
     <style>
         body {
             width: 1300px;
@@ -76,9 +75,7 @@
                 };
 
                 uiController.sendEventStream(JSON.stringify(movedFingerDownStream), function() {
-                    uiController.doAfterVisibleContentRectUpdate(function () {
-                        uiController.uiScriptComplete(JSON.stringify(uiController.contentVisibleRect));
-                    });
+                    uiController.uiScriptComplete(JSON.stringify(uiController.contentVisibleRect));
                 });
             })();`;
         }
@@ -105,7 +102,7 @@
                 testRunner.runUIScript(getDragUIScript(xPos, startY, xPos, endY), function(visibleRectAfterScroll) {
                     var result = 'visibleRectAfterScroll: ' + visibleRectAfterScroll + '\n' + internals.layerTreeAsText(document);
                     document.getElementById('layers').textContent = result;
-                    // Now send the final touch up.
+                    // Now send the finel touch up.
                     testRunner.runUIScript(getFingerUpUIScript(xPos, endY), function() {
                         testRunner.notifyDone();
                     });

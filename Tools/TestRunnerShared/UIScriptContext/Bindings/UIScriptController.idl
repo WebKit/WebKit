@@ -31,8 +31,6 @@ interface UIScriptController {
     void doAfterPresentationUpdate(object callback); // Call the callback after sending a message to the WebProcess and receiving a subsequent update.
     void doAfterNextStablePresentationUpdate(object callback);
 
-    void doAfterVisibleContentRectUpdate(object callback);
-
     void simulateAccessibilitySettingsChangeNotification(object callback);
 
     // Interaction.
