@@ -619,7 +619,7 @@ class TimeSeriesChart extends ComponentBase {
 
         let previousDate = null;
         let previousMonth = null;
-        while (currentTime <= max && result.length < maxLabels) {
+        while (currentTime <= max) {
             const time = new Date(currentTime);
             const month = time.getUTCMonth() + 1;
             const date = time.getUTCDate();
@@ -713,7 +713,38 @@ class TimeSeriesChart extends ComponentBase {
                 diff: 31 * DAY,
                 next: function (date) {
                     date.setUTCHours(0);
-                    date.setUTCMonth(date.getUTCMonth() + 1);
+                    const dayOfMonth = date.getUTCDate();
+                    if (dayOfMonth > 1 && dayOfMonth < 15)
+                        date.setUTCDate(15);
+                    else {
+                        if (dayOfMonth != 15)
+                            date.setUTCDate(1);
+                        date.setUTCMonth(date.getUTCMonth() + 1);
+                    }
+                }
+            },
+            {
+                diff: 60 * DAY,
+                next: function (date) {
+                    date.setUTCHours(0);
+                    date.setUTCDate(1);
+                    date.setUTCMonth(date.getUTCMonth() + 2);
+                }
+            },
+            {
+                diff: 90 * DAY,
+                next: function (date) {
+                    date.setUTCHours(0);
+                    date.setUTCDate(1);
+                    date.setUTCMonth(date.getUTCMonth() + 3);
+                }
+            },
+            {
+                diff: 120 * DAY,
+                next: function (date) {
+                    date.setUTCHours(0);
+                    date.setUTCDate(1);
+                    date.setUTCMonth(date.getUTCMonth() + 4);
                 }
             },
         ];

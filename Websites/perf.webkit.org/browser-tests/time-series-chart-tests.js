@@ -306,6 +306,64 @@ describe('TimeSeriesChart', () => {
                 checkGridItem(labels[1], '1/29', '2017-01-29T00:00:00Z');
             });
         });
+
+        it('should generate seven one-month labels for six and half months interval starting before 15th when maxLabels is 7', () => {
+            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+                const endTime = new Date('2017-01-15T18:53:00Z');
+                const labels = TimeSeriesChart.computeTimeGrid(new Date('2016-07-12T18:53:00Z'), new Date('2017-01-18T08:17:53Z'), 7);
+                expect(labels).to.be.a('array');
+                expect(labels.length).to.be(7);
+                checkGridItem(labels[0], '7/15', '2016-07-15T00:00:00Z');
+                checkGridItem(labels[1], '8/15', '2016-08-15T00:00:00Z');
+                checkGridItem(labels[2], '9/15', '2016-09-15T00:00:00Z');
+                checkGridItem(labels[3], '10/15', '2016-10-15T00:00:00Z');
+                checkGridItem(labels[4], '11/15', '2016-11-15T00:00:00Z');
+                checkGridItem(labels[5], '12/15', '2016-12-15T00:00:00Z');
+                checkGridItem(labels[6], '1/15', '2017-01-15T00:00:00Z');
+            });
+        });
+
+        it('should generate seven one-month labels for six months interval staring after 15th when maxLabels is 7', () => {
+            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+                const endTime = new Date('2017-01-15T18:53:00Z');
+                const labels = TimeSeriesChart.computeTimeGrid(new Date('2016-07-18T18:53:00Z'), new Date('2017-01-18T08:17:53Z'), 7);
+                expect(labels).to.be.a('array');
+                expect(labels.length).to.be(6);
+                checkGridItem(labels[0], '8/1', '2016-08-01T00:00:00Z');
+                checkGridItem(labels[1], '9/1', '2016-09-01T00:00:00Z');
+                checkGridItem(labels[2], '10/1', '2016-10-01T00:00:00Z');
+                checkGridItem(labels[3], '11/1', '2016-11-01T00:00:00Z');
+                checkGridItem(labels[4], '12/1', '2016-12-01T00:00:00Z');
+            });
+        });
+
+        it('should generate six two-months labels for one year interval when maxLabels is 7', () => {
+            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+                const endTime = new Date('2017-01-15T18:53:00Z');
+                const labels = TimeSeriesChart.computeTimeGrid(new Date('2016-07-11T18:53:00Z'), new Date('2017-07-27T08:17:53Z'), 7);
+                expect(labels).to.be.a('array');
+                expect(labels.length).to.be(6);
+                checkGridItem(labels[0], '9/1', '2016-09-01T00:00:00Z');
+                checkGridItem(labels[1], '11/1', '2016-11-01T00:00:00Z');
+                checkGridItem(labels[2], '1/1', '2017-01-01T00:00:00Z');
+                checkGridItem(labels[3], '3/1', '2017-03-01T00:00:00Z');
+                checkGridItem(labels[4], '5/1', '2017-05-01T00:00:00Z');
+                checkGridItem(labels[5], '7/1', '2017-07-01T00:00:00Z');
+            });
+        });
+
+        it('should generate four three-months labels for one year interval when maxLabels is 5', () => {
+            return new BrowsingContext().importScripts(scripts, 'TimeSeriesChart').then((TimeSeriesChart) => {
+                const endTime = new Date('2017-01-15T18:53:00Z');
+                const labels = TimeSeriesChart.computeTimeGrid(new Date('2016-07-11T18:53:00Z'), new Date('2017-07-27T08:17:53Z'), 5);
+                expect(labels).to.be.a('array');
+                expect(labels.length).to.be(4);
+                checkGridItem(labels[0], '10/1', '2016-10-01T00:00:00Z');
+                checkGridItem(labels[1], '1/1', '2017-01-01T00:00:00Z');
+                checkGridItem(labels[2], '4/1', '2017-04-01T00:00:00Z');
+                checkGridItem(labels[3], '7/1', '2017-07-01T00:00:00Z');
+            });
+        });
     });
 
     describe('computeValueGrid', () => {

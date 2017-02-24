@@ -1,3 +1,19 @@
+2017-02-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r212542): Make TimeSeriesChart.computeTimeGrid stops x-axis grid prematurely
+        https://bugs.webkit.org/show_bug.cgi?id=168812
+
+        Reviewed by Joseph Pecoraro.
+
+        Add time iterator of two months, three months, and four months with some tests.
+
+        Also for one-month time iterator, round the day of month to 1 or 15 whichever is closer.
+
+        * browser-tests/time-series-chart-tests.js: Added more tests.
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart._timeIterators.next):
+        (TimeSeriesChart._timeIterators):
+
 2017-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add tests for InteractiveTimeSeriesChart and adopt actions
