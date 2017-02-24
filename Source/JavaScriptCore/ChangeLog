@@ -1,5 +1,15 @@
 2017-02-23  Filip Pizlo  <fpizlo@apple.com>
 
+        verifyEdges should not run in release
+        <rdar://problem/30537798>
+
+        Reviewed by Keith Miller and Mark Lam.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
+2017-02-23  Filip Pizlo  <fpizlo@apple.com>
+
         Disable concurrent GC A:B testing.
 
         * runtime/Options.h:
