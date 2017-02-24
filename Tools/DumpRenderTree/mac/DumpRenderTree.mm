@@ -842,10 +842,12 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setLinkPreloadEnabled:YES];
     [preferences setModernMediaControlsEnabled:YES];
     // FIXME: InputEvents
+    [preferences setResourceTimingEnabled:YES];
     [preferences setSubtleCryptoEnabled:YES];
     [preferences setUserTimingEnabled:YES];
     [preferences setWebAnimationsEnabled:YES];
     [preferences setWebGL2Enabled:YES];
+    [preferences setPeerConnectionEnabled:YES];
 }
 
 // Called before each test.
@@ -951,9 +953,6 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
     
     [preferences setMediaStreamEnabled:YES];
-    [preferences setPeerConnectionEnabled:YES];
-
-    [preferences setResourceTimingEnabled:YES];
 
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
