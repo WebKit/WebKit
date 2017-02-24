@@ -11,7 +11,7 @@ const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "op
 const media = document.querySelector("video");
 const mediaController = createControls(shadowRoot, media, null);
 
-shouldBeFalse("mediaController.controls.showsStartButton");
+shouldBeTrue("mediaController.controls.showsStartButton");
 
 shadowRoot.host.remove();
 media.remove();

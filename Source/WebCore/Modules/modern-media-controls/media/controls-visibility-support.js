@@ -63,10 +63,8 @@ class ControlsVisibilitySupport extends MediaControllerSupport
     _updateControls()
     {
         const media = this.mediaController.media;
+        const shouldShowControls = !!media.controls;
         const isVideo = media instanceof HTMLVideoElement && media.videoTracks.length > 0;
-        let shouldShowControls = media.controls && !!media.currentSrc;
-        if (isVideo)
-            shouldShowControls = shouldShowControls && media.readyState > HTMLMediaElement.HAVE_NOTHING;
 
         const controls = this.mediaController.controls;
         controls.startButton.visible = shouldShowControls;

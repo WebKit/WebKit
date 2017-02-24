@@ -13,9 +13,9 @@ const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "op
 const media = document.querySelector("audio");
 const mediaController = createControls(shadowRoot, media, null);
 
-debug("Media has not begun loading yet, no UI is showing yet as we wait for enough information to tell if we'll be able to play");
-shouldBeFalse("mediaController.controls.controlsBar.visible");
-shouldBeFalse("mediaController.controls.startButton.visible");
+debug("Media has not begun loading yet");
+shouldBeTrue("mediaController.controls.controlsBar.visible");
+shouldBeTrue("mediaController.controls.startButton.visible");
 
 media.addEventListener("loadedmetadata", function() {
     debug("");

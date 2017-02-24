@@ -1,3 +1,28 @@
+2017-02-23  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] No controls are shown for <audio preload="none">
+        https://bugs.webkit.org/show_bug.cgi?id=168800
+        <rdar://problem/30652142>
+
+        Reviewed by Eric Carlson.
+
+        A media element's currentSrc property will only be set when data has started
+        to load. In the case where preload="none" is used, regardless of whether a
+        source is specified, currentSrc would be the empty string and we wouldn't
+        show controls at all. Identifying whether a source is specified is a little
+        tricky because it could be specified in a variety of ways and dynamically
+        as well.
+
+        So instead we optimistically show controls always provided the "controls"
+        attribute is set.
+
+        * Modules/modern-media-controls/media/controls-visibility-support.js:
+        (ControlsVisibilitySupport.prototype._updateControls):
+        (ControlsVisibilitySupport):
+        * Modules/modern-media-controls/media/start-support.js:
+        (StartSupport.prototype._shouldShowStartButton):
+        (StartSupport):
+
 2017-02-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Resource Timing] Gather timing information with reliable responseEnd time

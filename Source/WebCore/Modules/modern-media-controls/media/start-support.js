@@ -77,9 +77,6 @@ class StartSupport extends MediaControllerSupport
         if (media.webkitDisplayingFullscreen)
             return false;
 
-        if (!media.currentSrc)
-            return false;
-
         if (media.error)
             return false;
 
